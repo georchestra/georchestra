@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+						http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean id="proxy" 
+          class="com.camptocamp.security.Proxy">
+<!--          <property name="defaultTarget" value="${proxy.defaultTarget}/sec/"/>-->
+          <property name="headerManagement" ref="headerManagementBean"/>
+          <property name="defaultCharset" value="UTF-8"/>
+          <property name="targets">
+               <map>
+                <entry key="extractorapp" value="${proxy.defaultTarget}/extractorapp-private/" />
+                <entry key="gssec" value="${proxy.defaultTarget}/geoserver-security/" />
+                <entry key="mapfishapp" value="${proxy.defaultTarget}/mapfishapp-private/" />
+                <entry key="geonetwork" value="${proxy.defaultTarget}/geonetwork-private/" />
+                <entry key="geoserver" value="${geoserver.server}/geoserver-private/" />
+                <entry key="test" value="${test.url}" />
+               </map>
+          </property>
+          <property name="requireCharsetContentTypes">
+            <list>
+                <value>application/xml</value>
+                <value>text/xml</value>
+                <!-- OGC Service Exception -->
+                <value>application/vnd.ogc.se_xml</value>
+                <value>application/vnd.ogc.se+xml</value>
+                <!-- OGC Success (SLD Put) -->
+                <value>application/vnd.ogc.success+xml</value>
+                <!-- WMS Capabilities -->
+                <value>application/vnd.ogc.wms_xml</value>
+                <!-- WMC -->
+                <value>application/vnd.ogc.context+xml</value>
+                <!-- GML -->
+                <value>application/vnd.ogc.gml</value>
+                <!-- SLD -->
+                <value>application/vnd.ogc.sld+xml</value>
+                <!-- KML -->
+                <value>application/vnd.google-earth.kml+xml</value>
+            </list>
+          </property>
+    </bean>
+          
+    <bean id="headerManagementBean"
+          class="com.camptocamp.security.HeadersManagementStrategy">
+        <property name="headerProviders">
+            <list>
+                <bean class="com.camptocamp.security.SecurityRequestHeaderProvider"/>
+                <bean class="com.camptocamp.security.LdapUserDetailsRequestHeaderProvider">
+                    <constructor-arg index="0" ref="ldapUserSearch"/>
+                    <constructor-arg index="1">
+                        <map>
+                            <entry key="sec-email" value="mail"/>
+                        </map>
+                    </constructor-arg>
+                </bean>
+            </list>
+        </property>
+        <property name="filters">
+            <list>
+                <bean class="com.camptocamp.security.SecurityRequestHeaderFilter">
+                    <property name="trustedHosts">
+                        <list>
+                            <value>localhost</value>
+                            <value>127.0.0.1</value>
+                            <value>127.0.1.1</value>
+                            <value>${public.host}</value>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="properties-loader"
+        class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
+        p:locations="/WEB-INF/security-proxy.properties" />
+    
+</beans>

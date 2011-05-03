@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  - Sample namespace-based configuration
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:sec="http://www.springframework.org/schema/security"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd                                                                          
+                        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd">
+
+    <bean id="properties-loader"
+        class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
+        p:locations="/WEB-INF/security-proxy.properties" />
+
+    <!-- lists the secured URLS order is important.  The first match is the one that is used-->
+    <sec:http entry-point-ref="casProcessingFilterEntryPoint" path-type="regex">
+        <sec:intercept-url pattern=".*\?.*login.*" access="ROLE_SV_USER,ROLE_SV_EDITOR,ROLE_SV_REVIEWER,ROLE_SV_ADMIN" />
+        <sec:intercept-url pattern="/gssec/.*" access="ROLE_GS_ADMIN" />
+<!--        <sec:intercept-url pattern=".*\?.*login.*" access="IS_AUTHENTICATED_FULLY" />-->
+        <sec:intercept-url pattern=".*" access="IS_AUTHENTICATED_ANONYMOUSLY,ROLE_SV_USER,ROLE_SV_EDITOR,ROLE_SV_REVIEWER,ROLE_SV_ADMIN" />
+        <sec:http-basic/>
+        <sec:anonymous granted-authority="ROLE_ANONYMOUS"/>
+        <sec:logout logout-success-url="${logout-success-url}"/>
+        
+        <!-- Limits the number of concurrent sessions a user can have -->
+        <!--<sec:concurrent-session-control max-sessions="1" exception-if-maximum-exceeded="true"/>-->
+    </sec:http>
+
+    <sec:authentication-manager alias="authenticationManager"/>
+
+    <!-- basic auth config -->    
+    <bean id="basicProcessingFilter" class="org.springframework.security.ui.basicauth.BasicProcessingFilter">
+            <property name="authenticationManager"><ref bean="authenticationManager"/></property>
+            <property name="authenticationEntryPoint"><ref bean="basicAuthenticationEntryPoint"/></property>
+    </bean>
+    
+    <bean id="basicAuthenticationEntryPoint"
+        class="org.springframework.security.ui.basicauth.BasicProcessingFilterEntryPoint">
+        <property name="realmName"><value>GeoOrchestra</value></property>
+    </bean>
+    
+    <bean id="ldapDaoAuthenticationProvider"
+      class="org.springframework.security.providers.dao.DaoAuthenticationProvider">
+      <sec:custom-authentication-provider />
+      
+      <property name="userDetailsService">
+         <ref local="userService" />
+      </property>
+      <property name="passwordEncoder">
+         <bean id="ldapPasswordEncoder" class="org.springframework.security.providers.ldap.authenticator.LdapShaPasswordEncoder"/>
+      </property>
+    </bean>
+    <!-- End basic auth config -->
+    
+    <!-- start cas config -->
+    <bean id="casProcessingFilter" class="org.springframework.security.ui.cas.CasProcessingFilter">
+        <sec:custom-filter after="CAS_PROCESSING_FILTER"/>
+        <property name="authenticationManager" ref="authenticationManager"/>
+        <property name="authenticationFailureUrl" value="/casfailed.jsp"/>
+        <property name="defaultTargetUrl" value="/"/>
+<!--        <property name="useRelativeContext" value="true" />-->
+        <property name="proxyGrantingTicketStorage" ref="proxyGrantingTicketStorage" />
+        <property name="proxyReceptorUrl" value="/receptor" />
+    </bean>
+
+    <bean id="casProcessingFilterEntryPoint" class="org.springframework.security.ui.cas.CasProcessingFilterEntryPoint">
+        <property name="loginUrl" value="${casLoginUrl}"/>
+        <property name="serviceProperties" ref="serviceProperties"/>
+    </bean>
+
+    <bean id="casAuthenticationProvider" class="org.springframework.security.providers.cas.CasAuthenticationProvider">
+        <sec:custom-authentication-provider />
+        <property name="userDetailsService" ref="userService"/>
+        <property name="serviceProperties" ref="serviceProperties" />
+        <property name="ticketValidator">
+                <bean class="org.jasig.cas.client.validation.Cas20ServiceTicketValidator">
+                        <constructor-arg index="0" value="${casTicketValidation}" />
+                        <property name="proxyGrantingTicketStorage" ref="proxyGrantingTicketStorage" />
+                        <property name="proxyCallbackUrl" value="${casCallbackUrl}" />
+            </bean>
+        </property>
+        <property name="key" value="security-proxy"/>
+    </bean>
+
+    <bean id="proxyGrantingTicketStorage" class="org.jasig.cas.client.proxy.ProxyGrantingTicketStorageImpl">
+      <constructor-arg index="0" value="7200000" />
+    </bean>
+
+    <bean id="serviceProperties" class="org.springframework.security.ui.cas.ServiceProperties">
+        <property name="service" value="${proxyCallback}"/>
+        <property name="sendRenew" value="false"/>
+    </bean>
+    
+    <!-- end cas config -->
+    
+    <!-- start shared ldap config -->
+    
+    <bean id="userService" class="org.springframework.security.userdetails.ldap.LdapUserDetailsService">
+        <constructor-arg index="0" ref="ldapUserSearch" />
+        <constructor-arg index="1" ref="ldapAuthoritiesPopulator" />
+    </bean>
+
+    <bean id="ldapUserSearch" class="org.springframework.security.ldap.search.FilterBasedLdapUserSearch">
+        <constructor-arg index="0" value="${userSearchBaseDN}" />
+        <constructor-arg index="1" value="${userSearchFilter}" />
+        <constructor-arg index="2" ref="ldapContextSource" />
+    </bean>
+
+    <bean id="ldapAuthoritiesPopulator" class="org.springframework.security.ldap.populator.DefaultLdapAuthoritiesPopulator">
+        <constructor-arg index="0" ref="ldapContextSource" />
+        <constructor-arg index="1" value="${authoritiesBaseDN}" />
+        <!-- the following properties are shown with their default values -->
+        <property name="rolePrefix" value="ROLE_"/>
+        <property name="convertToUpperCase" value="true"/>
+        <property name="groupSearchFilter" value="${groupSearchFilter}"/>
+        <property name="groupRoleAttribute" value="${groupRoleAttribute}"/>
+    </bean>
+
+   <bean id="ldapContextSource"
+        class="org.springframework.ldap.core.support.LdapContextSource">
+        <property name="pooled" value="true" />
+        <property name="url" value="${ldapUrl}"/>
+        <property name="userDn" value="${ldapAdminDn}" />
+        <property name="password" value="${ldap.admin.password}" />
+        <property name="baseEnvironmentProperties">
+            <map>
+                <entry>
+                    <key>
+                        <value>java.naming.security.authentication</value>
+                    </key>
+                    <value>simple</value>
+                </entry>
+            </map>
+        </property>
+    </bean>
+    
+    <!-- end shared ldap config -->
+
+</beans>

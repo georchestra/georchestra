@@ -1,0 +1,23 @@
+public_host=drebretagne-geobretagne.int.lsn.camptocamp.com
+
+#LDAP config
+ldapUrl=ldaps://localhost:636/
+userSearchBaseDN=ou=users,dc=geobretagne,dc=fr
+authoritiesBaseDN=ou=groups,dc=geobretagne,dc=fr
+ldapAdminDn=cn=admin,dc=geobretagne,dc=fr
+ldap.admin.password=gerlsSnFd6SmM
+
+defaultTarget.port=8080
+public.ssl=443
+private.ssl=8443
+geoserver.server=http://${public_host}:${defaultTarget.port}
+
+camptocamp.security.loglevel=ALL
+jasig.loglevel=ALL
+springframework.loglevel=ALL
+logdir=/srv/tomcat/tomcat1/logs
+# options are StandardOut, FileAppender or HTMLAppender (zero or more and comma separated) 
+log.appender=FileAppender
+
+# dev should not need a test url 
+test.url=

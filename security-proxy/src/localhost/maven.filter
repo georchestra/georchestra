@@ -1,0 +1,20 @@
+public_host=localhost
+
+#LDAP config
+ldapUrl=ldaps://drebretagne-geobretagne.int.lsn.camptocamp.com:636/
+userSearchBaseDN=ou=users,dc=geobretagne,dc=fr
+authoritiesBaseDN=ou=groups,dc=geobretagne,dc=fr
+ldapAdminDn=cn=admin,dc=geobretagne,dc=fr
+ldap.admin.password=gerlsSnFd6SmM
+
+defaultTarget.port=8090
+private.ssl=9443
+public.ssl=10443
+geoserver.server=${public_host}:${defaultTarget.port}
+
+camptocamp.security.loglevel=ALL
+jasig.loglevel=ALL
+springframework.loglevel=ALL
+logdir=logs
+# options are StandardOut, FileAppender or HTMLAppender (zero or more and comma separated) 
+log.appender=StandardOut
