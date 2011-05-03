@@ -1,0 +1,48 @@
+
+dn: cn=USER,ou=groups,ou=system
+objectClass: groupOfUniqueNames
+objectClass: top
+cn: USER
+uniquemember: uid=jesseeichar,ou=users,ou=system
+uniquemember: uid=jeichar,ou=users,ou=system
+uniquemember: uid=moovida,ou=users,ou=system
+
+dn: cn=ADMIN,ou=groups,ou=system
+objectClass: groupOfUniqueNames
+objectClass: top
+cn: ADMIN
+uniquemember: uid=jeichar,ou=users,ou=system
+
+dn: uid=jesseeichar,ou=users,ou=system
+objectClass: organizationalPerson
+objectClass: person
+objectClass: inetOrgPerson
+objectClass: top
+cn: jesseeichar
+description: USER
+sn: Person
+uid: jesseeichar
+userpassword:: e1NIQX15cU5pNkY1UHo2QnpVN29vanlWYjBlcGR2VFE9
+
+dn: uid=jeichar,ou=users,ou=system
+objectClass: organizationalPerson
+objectClass: person
+objectClass: inetOrgPerson
+objectClass: top
+cn: jeichar
+description: USER
+description: ADMIN
+sn: Person
+uid: jeichar
+userpassword:: e1NIQX1XV0t3cEx1enZWRUNnUXNMb296bFBocVBlbEU9
+
+dn: uid=moovida,ou=users,ou=system
+objectClass: organizationalPerson
+objectClass: person
+objectClass: inetOrgPerson
+objectClass: top
+cn: moovida
+description: USER
+sn: Person
+uid: moovida
+userpassword:: e1NIQX0wR2ZGSkJ4S3A0Zy9aN3Q3enFTZVIwczNmeE09
