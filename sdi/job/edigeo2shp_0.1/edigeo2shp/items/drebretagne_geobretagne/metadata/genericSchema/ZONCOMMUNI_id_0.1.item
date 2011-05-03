@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TalendMetadata:GenericSchemaConnection xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:TalendMetadata="http://www.talend.org" mappingTypeUsed="true" mappingTypeId="postgres_id">
+  <tables id="_DFIeMQUTEd-3zekN7QZqDQ" label="metadata">
+    <columns label="TEX4_id" sourceType="VARCHAR" talendType="id_String"/>
+    <columns label="TEX_id" sourceType="VARCHAR" talendType="id_String"/>
+    <columns label="TEX3_id" sourceType="VARCHAR" talendType="id_String"/>
+    <columns label="TEX7_id" sourceType="VARCHAR" talendType="id_String"/>
+    <columns label="TEX5_id" sourceType="VARCHAR" talendType="id_String"/>
+    <columns label="TEX2_id" sourceType="VARCHAR" talendType="id_String"/>
+    <columns label="TEX9_id" sourceType="VARCHAR" talendType="id_String"/>
+    <columns label="TEX10_id" sourceType="VARCHAR" talendType="id_String"/>
+    <columns label="TEX6_id" sourceType="VARCHAR" talendType="id_String"/>
+    <columns label="TEX8_id" sourceType="VARCHAR" talendType="id_String"/>
+    <columns label="the_geom" sourceType="GEOMETRY" talendType="id_Geometry"/>
+  </tables>
+</TalendMetadata:GenericSchemaConnection>

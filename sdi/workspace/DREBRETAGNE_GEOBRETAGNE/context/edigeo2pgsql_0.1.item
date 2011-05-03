@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<talendfile:ContextType xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:talendfile="platform:/resource/org.talend.model/model/TalendFile.xsd" confirmationNeeded="false" name="Default">
+  <contextParameter comment="" name="edigeo_Password" prompt="edigeo_Password?" promptNeeded="false" type="id_Password" value=""/>
+  <contextParameter comment="" name="edigeo_Schema" prompt="edigeo_Schema?" promptNeeded="false" type="id_String" value="public"/>
+  <contextParameter comment="" name="edigeo_Login" prompt="edigeo_Login?" promptNeeded="false" type="id_String" value="postgres"/>
+  <contextParameter comment="" name="edigeo_Port" prompt="edigeo_Port?" promptNeeded="false" type="id_String" value="5432"/>
+  <contextParameter comment="" name="edigeo_Server" prompt="edigeo_Server?" promptNeeded="false" type="id_String" value="localhost"/>
+  <contextParameter comment="" name="edigeo_Database" prompt="edigeo_Database?" promptNeeded="false" type="id_String" value="drebretagne_geobretagne"/>
+  <contextParameter comment="" name="edigeoDir" prompt="Quel est le répertoire source des fichiers EDIGéO ?" promptNeeded="true" type="id_Directory" value=""/>
+  <contextParameter comment="" name="tmpDir" prompt="tmpDir?" promptNeeded="false" type="id_Directory" value="/tmp/"/>
+</talendfile:ContextType>
