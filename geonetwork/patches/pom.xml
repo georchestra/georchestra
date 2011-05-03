@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.geoorchestra</groupId>
+    <artifactId>geonetwork-patches</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+    <name>Geonetwork Patches</name>
+    <properties>
+        <checkout>${basedir}/../svn_gn</checkout>
+				<patches>${basedir}/patches</patches>
+        <server>testtomcat</server>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+    <build>
+        <plugins>
+          <plugin>
+             <artifactId>maven-resources-plugin</artifactId>
+             <version>2.4.3</version>
+             <executions>
+               <execution>
+                 <id>copy-configuration-files</id>
+                 <!-- here the phase you need -->
+                 <phase>generate-resources</phase>
+                 <goals>
+                   <goal>copy-resources</goal>
+                 </goals>
+                 <configuration>
+                   <outputDirectory>${checkout}/web/src</outputDirectory>
+                   <resources>
+                     <resource>
+                       <directory>${basedir}/src</directory>
+                       <filtering>false</filtering>
+                     </resource>
+                   </resources>
+                 </configuration>            
+               </execution>
+             </executions>
+           </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.1</version>
+                <executions>
+                    <execution>
+                        <id>clean-svn</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>sh</executable>
+                            <commandlineArgs>scripts/clean_svn.sh ${checkout}</commandlineArgs>
+                            <outputFile>${project.build.directory}/checkout_geonetwork.log</outputFile>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>checkout</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>sh</executable>
+                            <commandlineArgs>scripts/checkout_geonetwork.sh ${checkout} ${patches} ${server}</commandlineArgs>
+                            <outputFile>${project.build.directory}/checkout_geonetwork.log</outputFile>
+                        </configuration>
+                    </execution>
+									</executions>
+             </plugin>
+        </plugins>
+    </build>
+</project>

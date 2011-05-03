@@ -1,0 +1,14 @@
+Configuration information is in patches/src/<server_id>/ primarily maven.filter
+
+Before a build one must create a directory in patches/src/ to contain the configuration for the target server. Next one must create the configuration files.  See existing examples.
+
+Next you can build.  The recommended method is to use cockpit/trunk/deploy.sh
+
+cd cockpit/trunk/
+./deploy.sh <server_id> geonetwork
+
+the alternative is the following (execute in geonetwork/trunk)
+
+mvn clean install -Dserver=<server_id>
+scp target/geonetwork-private.war <desination server>
+
