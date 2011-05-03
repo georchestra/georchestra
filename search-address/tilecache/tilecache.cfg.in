@@ -1,0 +1,3 @@
+[cache]
+type = Disk
+base = /var/sig/tilecache/${vars:instanceid}_tilecache

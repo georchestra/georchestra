@@ -1,0 +1,4 @@
+# Serve pylons static files via apache:
+Alias /${vars:instanceid}/wsgi/app/   ${buildout:directory}/${vars:package}/public/app/
+Alias /${vars:instanceid}/wsgi/build/ ${buildout:directory}/${vars:package}/public/build/
+Alias /${vars:instanceid}/wsgi/lib/   ${buildout:directory}/${vars:package}/public/lib/

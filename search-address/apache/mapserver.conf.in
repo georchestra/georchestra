@@ -1,0 +1,16 @@
+ScriptAlias /${vars:instanceid}/mapserv /usr/lib/cgi-bin/mapserv
+<Location /${vars:instanceid}/mapserv>
+   # If you use tilecache and want to prevent direct WMS access, uncomment 
+   # the following lines:
+   #Order Deny,Allow
+   #Deny from all
+   #Allow from 127.0.0.1
+
+   SetHandler fcgid-script
+   # MapServer run in FastCGI mode by default.
+   # If mod_fcgid is not available, replace 'fcgid-script' by 'cgi-script' to
+   # use the CGI mode.
+   SetEnv MS_MAPFILE ${buildout:directory}/mapserver/${vars:package}.map
+   SetEnv MS_MAPFILE_PATTERN "^${buildout:directory}/mapserver/${vars:package}.map$"
+</Location>
+

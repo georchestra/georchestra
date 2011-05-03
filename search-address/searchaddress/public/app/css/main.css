@@ -1,0 +1,38 @@
+html, body {
+    background-color: white;
+    font-family: tahoma, arial, verdana, sans-serif;
+}
+.app-accordion-body {
+    padding: 3px;
+}
+.x-toolbar .maxExtent {
+    background: url('../images/map_magnify.png') top left no-repeat;
+}
+.x-toolbar .mapZoomIn {
+    background: url('../images/zoom_in.png') top left no-repeat;
+}
+.x-toolbar .mapZoomOut {
+    background: url('../images/zoom_out.png') top left no-repeat;
+}
+.x-toolbar .mapHistoryPrevious {
+    background: url('../images/arrow_left.png') top left no-repeat;
+}
+.x-toolbar .mapHistoryNext {
+    background: url('../images/arrow_right.png') top left no-repeat;
+}
+.x-toolbar .mapMeasureLength {
+    background: url('../images/ruler.png') top left no-repeat;
+}
+.x-toolbar .mapMeasureArea {
+    background: url('../images/ruler_square.png') top left no-repeat;
+}
+.x-toolbar .mapMeasurePosition {
+    background: url('../images/bullet_orange.png') top left no-repeat;
+}
+.x-toolbar .permalink {
+    background: url('../images/permalink.png') top left no-repeat;
+}
+.olControlScaleLine {
+    padding: 2px;
+    background-color: rgba(255, 255, 255, 0.6);
+}
