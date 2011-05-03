@@ -1,0 +1,113 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>OpenLayers ScaleBar Example</title>
+    
+    <link rel="stylesheet" href="../theme/default/scalebar-thin.css" type="text/css" />
+    <style type="text/css">
+        body {
+            font-family: sans-serif;
+            font-size: 0.9em;
+        }
+        #map {
+            width: 512px;
+            height: 256px;
+            border: 1px solid gray;
+        }
+        #docs {
+            width: 512px;
+            margin: 1em 0;
+        }
+    </style>
+    <script src="http://openlayers.org/dev/lib/OpenLayers.js"></script>
+    <script src="../lib/OpenLayers/Control/ScaleBar.js"></script>
+    <script type="text/javascript">
+
+        var map, scalebar;
+
+        function init(){
+
+            map = new OpenLayers.Map('map');
+            var layer = new OpenLayers.Layer.WMS(
+                "OpenLayers WMS",
+                "http://labs.metacarta.com/wms/vmap0",
+                {layers: 'basic'}
+            );
+            map.addLayer(layer);
+            
+            scalebar = new OpenLayers.Control.ScaleBar();
+            map.addControl(scalebar);
+            
+            map.zoomToMaxExtent();
+        }
+
+
+        function updateProperties() {
+            var displaySystem = document.getElementById("displaySystem").value;
+            scalebar.displaySystem = displaySystem;
+            var divEl = document.getElementById("divisions");
+            var divisions = parseInt(divEl.value);
+            divisions = Math.max(1, Math.min(isNaN(divisions) ? 0 : divisions, 4));
+            divEl.value = divisions;
+            scalebar.divisions = divisions;
+            var subEl = document.getElementById("subdivisions");
+            var subdivisions = parseInt(subEl.value);
+            subdivisions = Math.max(1, Math.min(isNaN(subdivisions) ? 0 : subdivisions, 4));
+            subEl.value = subdivisions;
+            scalebar.subdivisions = subdivisions;
+            scalebar.showMinorMeasures = document.getElementById("showMinorMeasures").checked;
+            scalebar.singleLine = document.getElementById("singleLine").checked;
+            scalebar.abbreviateLabel = document.getElementById("abbreviateLabel").checked;
+            scalebar.update();
+        }
+    </script>
+  </head>
+  <body onload="init()">
+    <h1 id="title">OpenLayers ScaleBar Example</h1>
+
+	<div id="tags"></div>
+
+	<p id="shortdesc">
+            Demonstrate a map with a scale bar.
+	</p>
+
+    <div id="map"></div>
+
+    <div id="docs">
+        Set properties for the scale bar with the options argument for the
+        constructor.  Scale bar style (including bar color/graphics) is
+        controlled with CSS.  See the default style.css for scale bar related
+        selectors.  To use CSS with the scale bar, add your stylesheet
+        explicitly to your page with a link tag (as with this page).
+    </div>
+    
+    <div>
+        <select name="displaySystem" id="displaySystem"
+                onchange="updateProperties();">
+            <option value="metric" selected="selected">metric</option>
+            <option value="english">english</option>
+        </select>
+        display system
+        <br />
+        <input type="text" id="divisions" maxlength="2" size="2"
+               onchange="updateProperties();" value="2" />
+        <label for="divisions">major divisions</label>
+        <br />
+        <input type="text" id="subdivisions" maxlength="2" size="2"
+               onchange="updateProperties();" value="2" />
+        <label for="divisions">subdivisions per major division</label>
+        <br />
+        <input type="checkbox" id="abbreviateLabel"
+               onclick="updateProperties();" />
+        <label for="abbreviateLabel">abbreviated label</label>
+        <br />
+        <input type="checkbox" id="showMinorMeasures"
+               onclick="updateProperties();" />
+        <label for="showMinorMeasures">show subdivision measures (use CSS to reduce font size)</label>
+        <br />
+        <input type="checkbox" id="singleLine"
+               onclick="updateProperties();" />
+        <label for="singleLine">single line display (best with abbreviated label)</label>
+        <br />
+    </div>
+  </body>
+</html>

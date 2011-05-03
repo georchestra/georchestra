@@ -1,0 +1,96 @@
+<html>
+<head>
+  <script src="../../lib/OpenLayers.js"></script>
+  <script type="text/javascript">
+    function test_Control_ScaleBar_constructor(t) {
+        t.plan(2);
+        var control = new OpenLayers.Control.ScaleBar();
+        t.ok(control instanceof OpenLayers.Control.ScaleBar,
+             "new OpenLayers.Control.ScaleBar returns object" );
+        t.eq(control.displayClass,  "olControlScaleBar",
+             "displayClass is correct" );
+    }
+
+    function test_ScaleBar_getHandsomeNumber(t) {
+        var numbers = [
+            {low: 1, high: 100, best: 1},
+            {low: 0.1, high: 10, best: 1},
+            {low: 1.1, high: 10, best: 10},
+            {low: 1.1, high: 9.9, best: 2},
+            {low: 2.1, high: 9.9, best: 3},
+            {low: 0.21, high: 0.23, best: 0.225},
+            {low: 959, high: 1234, best: 1000},
+            {low: 100123, high: 100456, best: 100250}
+        ];
+        t.plan(numbers.length);
+        var func = OpenLayers.Control.ScaleBar.prototype.getHandsomeNumber;
+        var obj, high, low, best;
+        for(var i=0; i<numbers.length; ++i) {
+            obj = numbers[i];
+            var nice = func(obj.low, obj.high);
+            t.eq(nice.value, obj.best,
+                 obj.best + " is best between " + obj.low + " and " + obj.high);
+        }
+    }
+
+    function test_Control_ScaleBar_update(t) {
+        t.plan(10);
+        var control = new OpenLayers.Control.ScaleBar();
+
+        // test that update gets scale from map
+        var scale = Math.random();
+        var map = {
+            getScale: function() {
+                return scale;
+            },
+            baseLayer: true,
+            events: {
+                register: function() {},
+                unregister: function() {}
+            }
+        };
+        control.map = map;
+        control.draw();
+        control.update();
+        t.eq(control.scale, scale, "update correctly gets scale from map");
+        
+        // test that update uses scale from arguments
+        map.getScale = function() {
+            return "foo";
+        };
+        scale = Math.random();
+        control.update(scale);
+        t.eq(control.scale, scale,
+             "update with scale correctly sets control scale");
+
+        // test that update works with default properties at scale 1:100000
+        control.draw();
+        control.update(100000);
+        t.eq(control.subProps.units, "kilometers",
+             "(1:100000 metric) subdivision display units correctly set");
+        t.eq(control.subProps.abbr, "km",
+             "(1:100000 metric) subdivision display length correctly set");
+        t.eq(control.subProps.length, 1,
+             "(1:100000 metric) subdivision display length correctly set");
+        t.eq(Math.round(control.subProps.pixels), 28,
+             "(1:100000 metric) subdivision pixel length correctly set");
+
+        // test that update works with non-default properties at scale 1:250000
+        control.displaySystem = "english";
+        control.update(250000);
+        t.eq(control.subProps.units, "miles",
+             "(1:250000 english) subdivision display units correctly set");
+        t.eq(control.subProps.abbr, "mi",
+             "(1:250000 english) subdivision display length correctly set");
+        t.eq(control.subProps.length, 2,
+             "(1:250000 english) subdivision display length correctly set");
+        t.eq(Math.round(control.subProps.pixels), 36,
+             "(1:250000 english) subdivision pixel length correctly set");
+        
+    }
+    
+  </script>
+</head>
+<body>
+</body>
+</html>

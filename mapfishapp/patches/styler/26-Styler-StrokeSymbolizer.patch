@@ -1,0 +1,21 @@
+Index: lib/Styler/widgets/StrokeSymbolizer.js
+===================================================================
+--- lib/Styler/widgets/StrokeSymbolizer.js	(révision 1251)
++++ lib/Styler/widgets/StrokeSymbolizer.js	(copie de travail)
+@@ -39,7 +39,7 @@
+         
+         if(!this.symbolizer) {
+             this.symbolizer = {};
+-        }        
++        }
+         Ext.applyIf(this.symbolizer, this.defaultSymbolizer);
+ 
+         this.items = [{
+@@ -91,6 +91,7 @@
+                 listeners: {
+                     change: function(field, value) {
+                         this.symbolizer["strokeWidth"] = value;
++                        this.symbolizer["stroke"] = (value > 0 ? true : false);
+                         this.fireEvent("change", this.symbolizer);
+                     },
+                     scope: this

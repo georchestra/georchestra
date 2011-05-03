@@ -1,0 +1,22 @@
+Index: Styler/widgets/TextSymbolizer.js
+===================================================================
+--- Styler/widgets/TextSymbolizer.js	(revision 475)
++++ Styler/widgets/TextSymbolizer.js	(working copy)
+@@ -127,7 +127,7 @@
+         }, {
+             xtype: "gx_fillsymbolizer",
+             symbolizer: this.symbolizer,
+-            width: 213,
++            width: 220,
+             labelWidth: 70,
+             listeners: {
+                 change: function(symbolizer) {
+@@ -160,7 +160,7 @@
+                     fillColor: this.symbolizer.haloColor,
+                     fillOpacity: this.symbolizer.haloOpacity
+                 },
+-                width: 190,
++                width: 220,
+                 labelWidth: 60,
+                 listeners: {
+                     change: function(symbolizer) {

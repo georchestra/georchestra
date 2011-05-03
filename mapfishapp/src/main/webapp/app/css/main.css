@@ -1,0 +1,212 @@
+/* 
+ * hide the OpenLayer.Control.ScaleLine bottom part
+ */
+.olControlScaleLineBottom {
+  display: none;
+}
+
+/* 
+ * give the map a white background (useful for ovmap)
+ */
+div.olMapViewport {
+  background-color:#B6D0CD; /*white;*/
+  text-align:left;
+}
+
+/* 
+ * ovmap styling
+ */
+.olControlOverviewMapElement {
+  -moz-border-radius: 1em 0 0 0;
+  -webkit-border-radius: 1em 0 0 0;
+  background-color:#e0e0e0;
+  padding:10px 18px 10px 10px;
+}
+
+/* 
+ * fix the scaleline position into the bbar
+ */
+.olControlScaleLine{
+  position: absolute;
+  left: 5px;
+  bottom: 5px;
+}
+
+.mouseposition {
+  width: 180px;
+}
+
+.measure_path {
+  background-image: url(../img/ruler.png) !important;
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.measure_area {
+  background-image: url(../img/ruler_square.png) !important;
+  width: 20px !important;
+  height: 20px !important;
+}
+
+/*
+ * layer tree
+ */
+.gx-tree-layer-actions {
+    float: right;
+}
+.gx-tree-layer-action {
+    background-position: center center;
+    background-repeat: no-repeat;
+    border: 0 none;
+    height: 16px;
+    margin: 1px;
+    padding: 0;
+    vertical-align: top;
+    width: 16px;
+}
+.gx-tree-layer-actions .up {
+    background: transparent url(../img/famfamfam/bullet_arrow_up.png);
+}
+.gx-tree-layer-actions .down {
+    background: transparent url(../img/famfamfam/bullet_arrow_down.png);
+}
+.gx-tree-layer-actions .delete {
+    background: transparent url(../img/famfamfam/delete.gif);
+}
+.gx-tree-layer-panel {
+    background: none;
+    border-style: none;
+    position: relative;
+}
+.gx-tree-layer-panel-bwrap {
+    overflow: visible;
+}
+.geob-tree-layer-panel-body {
+}
+.geob-tree-node .x-tree-elbow, .geob-tree-node .x-tree-elbow-end {
+   width: 0px !important;    
+}
+
+.x-tree-node-collapsed .x-tree-node-icon, .x-tree-node-expanded .x-tree-node-icon, .x-tree-node-leaf .gx-tree-layer-icon {
+   width: 0px !important;
+}
+.geob-tree-node {
+    border-bottom: thin dotted #D7D7D7;
+    padding: 3px 0 0 3px;
+}
+.geob-toolbar {
+    background: none; !important;
+    border-style: none; !important;
+}
+.geob-btn-style {
+    background-image: url(../img/famfamfam/map_edit.png) !important;
+}
+.geob-btn-metadata {
+    background-image: url(../img/famfamfam/application_view_list.gif) !important;
+}
+.geob-btn-query {
+    background-image: url(../img/famfamfam/cog.gif) !important;
+}
+.x-btn-icon .geob-btn-info {
+    background: transparent url(../img/famfamfam/information.png);
+}
+.geob-save-map {
+    background-image: url(../img/famfamfam/folder_page.gif) !important;
+}
+.geob-load-map {
+    background-image: url(../img/famfamfam/map_go.gif) !important;
+}
+
+/* make sure that menu width is correct in IE8 strict mode (See http://extjs.com/forum/showthread.php?t=70701) */
+.x-layer[style]{
+ width: auto !important;
+}
+
+#waiter {
+	position:absolute;
+	top:0px;
+	left:50%;
+	margin-left: -62px;
+	z-index:100;
+	visibility:hidden;
+}
+#waiter span {
+	background:#EFAE00 none repeat scroll 0 0;
+	padding:2px;
+	-moz-border-radius: 0 0 4px 4px;
+	-webkit-border-radius: 0 0 4px 4px;
+}
+
+.olControlLoadingPanel {
+	background-image: url(../img/loadingbar.gif) !important;
+	background-position:center;
+	background-repeat:no-repeat;
+	width:100px;
+	height:11px;
+	bottom:6px;
+	left:100px;
+	position:absolute;
+}
+
+.x-combo-list-item {
+    border:1px solid #FFFFFF;
+    font:12px tahoma,arial,helvetica,sans-serif;
+    padding:2px;
+    white-space:nowrap;
+}
+.x-combo-list-item span {
+    color: #666;
+    font-style: italic;
+}
+
+.olControlAttribution {
+    font-size: smaller; 
+    left:0em;
+    bottom:0em;
+    position: absolute; 
+    display: block;
+}
+.olControlAttribution a img {
+    display: none;
+}
+.geob-layers-form-text a img {
+    display: none;
+}
+
+.white-bg {
+	background:#ffffff;
+}
+
+.bold-text {
+	font:12px tahoma,arial,helvetica,sans-serif;
+	font-weight: bold;
+}
+
+.geob-btn-sync {
+    background-image: url(../img/famfamfam/database_save.png) !important;
+}
+
+.geob-btn-cancel {
+    background-image: url(../img/famfamfam/cross.gif) !important;
+}
+
+.olControlOverviewMapMinimizeButton {
+    right: 0px;
+    bottom: 80px;
+    cursor: pointer;
+}
+.olControlOverviewMapMaximizeButton {
+    right: 0px;
+    bottom: 80px;
+    cursor: pointer;
+}
+
+/* metadata link in treenode */
+.x-tree-node a, .x-dd-drag-ghost a {
+    color:#201AEF;
+}
+
+/* cursor pointer on field label hover */
+.layer-editing-panel .x-form-item-label span {
+	cursor: pointer;
+}

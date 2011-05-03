@@ -1,0 +1,668 @@
+Index: theme/css/styler.css
+===================================================================
+--- theme/css/styler.css	(révision 1352)
++++ theme/css/styler.css	(copie de travail)
+@@ -59,3 +59,13 @@
+ .x-btn-icon .magnify {
+     background-image: url(../img/magnifier.png);
+ }
++
++.x-btn-icon .point {
++    background: transparent url(../img/bullet_orange.png);
++}
++.x-btn-icon .linestring {
++    background: transparent url(../img/line_orange.png);
++}
++.x-btn-icon .polygon {
++    background: transparent url(../img/shape_square_orange.png);
++}
+\ No newline at end of file
+Index: theme/img/shape_square_orange.png
+===================================================================
+Impossible d'afficher : fichier considéré comme binaire.
+svn:mime-type = application/octet-stream
+
+Modification de propriétés sur theme/img/shape_square_orange.png
+___________________________________________________________________
+Ajouté : svn:mime-type
+   + application/octet-stream
+
+Index: theme/img/line_orange.png
+===================================================================
+Impossible d'afficher : fichier considéré comme binaire.
+svn:mime-type = application/octet-stream
+
+Modification de propriétés sur theme/img/line_orange.png
+___________________________________________________________________
+Ajouté : svn:mime-type
+   + application/octet-stream
+
+Index: theme/img/bullet_orange.png
+===================================================================
+Impossible d'afficher : fichier considéré comme binaire.
+svn:mime-type = application/octet-stream
+
+Modification de propriétés sur theme/img/bullet_orange.png
+___________________________________________________________________
+Ajouté : svn:mime-type
+   + application/octet-stream
+
+Index: lib/Styler/widgets/FilterPanel.js
+===================================================================
+--- lib/Styler/widgets/FilterPanel.js	(révision 1352)
++++ lib/Styler/widgets/FilterPanel.js	(copie de travail)
+@@ -3,21 +3,14 @@
+  */
+ 
+ /**
++ * @requires Styler/widgets/BaseFilterPanel.js
+  * @include Styler/widgets/form/ComparisonComboBox.js
+  */
+ 
+ Ext.namespace("Styler");
+-Styler.FilterPanel = Ext.extend(Ext.Panel, {
++Styler.FilterPanel = Ext.extend(Styler.BaseFilterPanel, {
+     
+     /**
+-     * Property: filter
+-     * {OpenLayers.Filter} Optional non-logical filter provided in the initial
+-     *     configuration.  To retreive the filter, use <getFilter> instead
+-     *     of accessing this property directly.
+-     */
+-    filter: null,
+-    
+-    /**
+      * Property: attributes
+      * {GeoExt.data.AttributeStore} A configured attributes store for use in
+      *     the filter property combo.
+@@ -31,16 +24,7 @@
+     attributesComboConfig: null,
+ 
+     initComponent: function() {
+-        
+-        var defConfig = {
+-            plain: true,
+-            border: false
+-        };
+-        Ext.applyIf(this, defConfig);
+-        
+-        if(!this.filter) {
+-            this.filter = this.createDefaultFilter();
+-        }
++    
+         if(!this.attributes) {
+             this.attributes = new GeoExt.data.AttributeStore();
+         }
+@@ -66,20 +50,7 @@
+         };
+         this.attributesComboConfig = this.attributesComboConfig || {};
+         Ext.applyIf(this.attributesComboConfig, defAttributesComboConfig);
+-
+-        this.items = this.createFilterItems();
+         
+-        this.addEvents(
+-            /**
+-             * Event: change
+-             * Fires when the filter changes.
+-             *
+-             * Listener arguments:
+-             * filter - {OpenLayers.Filter} This filter.
+-             */
+-            "change"
+-        ); 
+-
+         Styler.FilterPanel.superclass.initComponent.call(this);
+     },
+     
+Index: lib/Styler/widgets/SpatialFilterPanel.js
+===================================================================
+--- lib/Styler/widgets/SpatialFilterPanel.js	(révision 0)
++++ lib/Styler/widgets/SpatialFilterPanel.js	(révision 0)
+@@ -0,0 +1,162 @@
++/**
++ * Copyright (c) 2009 Camptocamp
++ */
++ 
++/**
++ * @requires Styler/widgets/BaseFilterPanel.js
++ * @include Styler/widgets/form/SpatialComboBox.js
++ * 
++ */
++ 
++Ext.namespace("Styler");
++Styler.SpatialFilterPanel = Ext.extend(Styler.BaseFilterPanel, {
++    
++    /**
++     * Property: comboConfig
++     * {Object}
++     */
++    comboConfig: null,
++    
++    /**
++     * Property: feature
++     * {OpenLayers.Feature.Vector} feature whose geom is used by this filter
++     */
++    feature: null,
++    
++    /**
++     * Property: map
++     * {OpenLayers.Map} the map object
++     */
++    map: null,
++    
++    // workaround an OpenLayers bug when 2 vector layers are involved
++    zindex: null,
++    
++    /**
++     * Property: toggleGroup
++     * {String} the toggleGroup for the modify feature button
++     */
++    toggleGroup: null,
++
++    initComponent: function() {     
++        var allowedTypes = [[OpenLayers.Filter.Spatial.INTERSECTS, 
++            "intersection avec"]];
++        switch (this.feature.geometry.CLASS_NAME) {
++            case "OpenLayers.Geometry.Polygon":
++                allowedTypes.push([OpenLayers.Filter.Spatial.WITHIN, 
++                    "within"]);
++            case "OpenLayers.Geometry.LineString":
++                allowedTypes.push([OpenLayers.Filter.Spatial.CONTAINS, 
++                    "contains"]);
++        }
++        var defComboConfig = {
++            xtype: "gx_spatialcombo",
++            value: this.filter.type,
++            allowedTypes: allowedTypes,
++            listeners: {
++                select: function(combo, record) {
++                    this.filter.type = record.get("value");
++                    this.fireEvent("change", this.filter);
++                },
++                scope: this
++            },
++            width: 120
++        };
++        this.comboConfig = this.comboConfig || {}; 
++        Ext.applyIf(this.comboConfig, defComboConfig);
++        
++        var ModifyFeature = OpenLayers.Control.ModifyFeature;
++        this.mfControl = new ModifyFeature(
++            this.feature.layer, {
++                standalone: true,
++                mode: ModifyFeature.RESHAPE | ModifyFeature.DRAG
++            }
++        );
++        this.map.addControl(this.mfControl);
++        
++        Styler.SpatialFilterPanel.superclass.initComponent.call(this);
++    },
++    
++    /**
++     * Method: createDefaultFilter
++     * May be overridden to change the default filter.
++     *
++     * Returns:
++     * {OpenLayers.Filter} By default, returns a spatial filter.
++     */
++    createDefaultFilter: function() {
++        return new OpenLayers.Filter.Spatial({
++            value: this.feature.geometry
++        });
++    },
++    
++    /**
++     * Method: tearDown
++     * To be run before panel is removed from parent.
++     *
++     * Returns:
++     * {Boolean} By default, true to enable panel removal.
++     */
++    tearDown: function() {
++        this.mfControl.unselectFeature(this.feature);
++        this.feature.layer.destroyFeatures([this.feature]);
++        return true;
++    },
++    
++    /**
++     * Method: createFilterItems
++     * Creates a panel config containing filter parts.
++     */
++    createFilterItems: function() {
++        var className = this.feature.geometry.CLASS_NAME;
++        var cls = className.substr(className.lastIndexOf('.')+1).toLowerCase();
++        return [{
++            layout: "column",
++            border: false,
++            defaults: {border: false},
++            items: [{
++                width: this.comboConfig.width, 
++                items: [this.comboConfig]
++            }, {
++                items: [{
++                    xtype: "button", 
++                    iconCls: cls,
++                    tooltip: "Modify geometry",
++                    enableToggle: true,
++                    toggleGroup: this.toggleGroup,
++                    listeners: {
++                        "toggle": function(btn, pressed) {
++                            var feature = this.feature;
++                            if (pressed) {
++                                var geometry = feature.geometry;
++                                if (geometry.CLASS_NAME == "OpenLayers.Geometry.Point") {
++                                    this.map.setCenter(
++                                        geometry.getBounds().getCenterLonLat()
++                                    );
++                                } else {
++                                    this.map.zoomToExtent(
++                                        geometry.getBounds().scale(1.05)
++                                    );
++                                }
++                                // zindex hack (might need a rework of the handler feature 's
++                                // moveLayerToTop and moveLayerBack methods to manage this)
++                                zindex = feature.layer.getZIndex();
++                                this.mfControl.activate();
++                                this.mfControl.selectFeature(feature);
++                                feature.layer.setZIndex(this.map.Z_INDEX_BASE['Feature']+1);
++                            } else {
++                                this.mfControl.unselectFeature(feature);
++                                this.mfControl.deactivate();
++                                feature.layer.setZIndex(zindex);
++                            }
++                        },
++                        scope: this
++                    }
++                }]
++            }]
++        }];
++    }
++
++});
++
++Ext.reg('gx_spatialfilterpanel', Styler.SpatialFilterPanel); 
+Index: lib/Styler/widgets/form/SpatialComboBox.js
+===================================================================
+--- lib/Styler/widgets/form/SpatialComboBox.js	(révision 0)
++++ lib/Styler/widgets/form/SpatialComboBox.js	(révision 0)
+@@ -0,0 +1,40 @@
++/**
++ * Copyright (c) 2009 Camptocamp
++ */
++
++Ext.namespace("Styler.form");
++Styler.form.SpatialComboBox = Ext.extend(Ext.form.ComboBox, {
++    
++    allowedTypes: [
++        [OpenLayers.Filter.Spatial.INTERSECTS, "intersects"],
++        [OpenLayers.Filter.Spatial.WITHIN, "within"],
++        [OpenLayers.Filter.Spatial.CONTAINS, "contains"]
++    ],
++
++    allowBlank: false,
++
++    mode: "local",
++
++    triggerAction: "all",
++
++    width: 100,
++
++    editable: false,
++  
++    initComponent: function() {
++        var defConfig = {
++            displayField: "name",
++            valueField: "value",
++            store: new Ext.data.SimpleStore({
++                data: this.allowedTypes,
++                fields: ["value", "name"]
++            }),
++            value: (this.value === undefined) ? this.allowedTypes[0][0] : this.value
++        };
++        Ext.applyIf(this, defConfig);
++        
++        Styler.form.SpatialComboBox.superclass.initComponent.call(this);
++    }
++});
++
++Ext.reg("gx_spatialcombo", Styler.form.SpatialComboBox);
+\ No newline at end of file
+Index: lib/Styler/widgets/FilterBuilder.js
+===================================================================
+--- lib/Styler/widgets/FilterBuilder.js	(révision 1352)
++++ lib/Styler/widgets/FilterBuilder.js	(copie de travail)
+@@ -4,6 +4,7 @@
+ 
+ /**
+  * @include Styler/widgets/FilterPanel.js
++ * @include Styler/widgets/SpatialFilterPanel.js
+  */
+ 
+ Ext.namespace("Styler");
+@@ -43,6 +44,26 @@
+      *     be added.
+      */
+     allowGroups: true,
++    
++    /**
++     * Property: allowSpatial
++     * {Boolean} Allow spatial conditions to be added.  Default is false.
++     */
++    allowSpatial: false,
++    
++    /**
++     * Property: vectorLayer
++     * {OpenLayers.Layer.Vector} The vector layer used to draw features
++     *      If none is provided, it will be created.
++     */
++    vectorLayer: null,
++    
++    /**
++     * Property: map
++     * {OpenLayers.Map} The map object to which we add our vectorLayer
++     *      required if allowSpatial is true
++     */
++    map: null,
+ 
+     initComponent: function() {
+         var defConfig = {
+@@ -86,7 +107,27 @@
+         ];
+         
+         this.bbar = this.createToolBar();
+-
++        
++        if (this.allowSpatial) {
++            this.controls = [];
++            var layer = this.createVectorLayer();
++            this.tbar = this.createEditionToolBar(layer);
++            this.vectorLayer = layer;
++            
++            // register to events modifying panel's visibility 
++            // so that we hide our vectorLayer when not visible
++            // accordion
++            this.on('expand', this.setUp, this);
++            this.on('collapse', this.tearDown, this);
++            // tabs
++            this.on('activate', this.setUp, this);
++            this.on('deactivate', this.tearDown, this);
++            // manual enable/disable
++            this.on('enable', this.setUp, this);
++            this.on('disable', this.tearDown, this);
++            // for card layouts, we have no event to listen to !
++        }
++        
+         this.addEvents(
+             /**
+              * Event: change
+@@ -102,6 +143,26 @@
+         Styler.FilterBuilder.superclass.initComponent.call(this);
+     },
+     
++    deactivateControls: function() {
++        var controls = this.controls;
++        for (var i=0,l=controls.length; i<l; i++) {
++            controls[i].deactivate();
++        }
++    },
++    
++    setUp: function() {
++        if (this.vectorLayer) {
++            this.vectorLayer.setVisibility(true);
++        }
++    },
++    
++    tearDown: function() {
++        this.deactivateControls();
++        if (this.vectorLayer) {
++            this.vectorLayer.setVisibility(false);
++        }
++    },
++    
+     /**
+      * Method: createToolBar
+      */
+@@ -119,7 +180,7 @@
+                 text: "add group",
+                 iconCls: "add",
+                 handler: function() {
+-                    this.addCondition(true);
++                    this.addCondition('group');
+                 },
+                 scope: this
+             });
+@@ -128,6 +189,42 @@
+     },
+     
+     /**
++     * Method: createEditionToolBar
++     */
++    createEditionToolBar: function(layer) {
++        var createDrawControl = function(handler, controls) {
++            var control = new OpenLayers.Control.DrawFeature(layer, handler)
++            controls.push(control);
++            return control;
++        };
++        return new Ext.Toolbar({
++            items: [
++                new GeoExt.Action({
++                    control: createDrawControl(OpenLayers.Handler.Point, this.controls),
++                    map: this.map,
++                    toggleGroup: "querier",
++                    tooltip: "Ajouter une condition géographique sur la base d'un point",
++                    iconCls: "drawpoint"
++                }),
++                new GeoExt.Action({
++                    control: createDrawControl(OpenLayers.Handler.Path, this.controls),
++                    map: this.map,
++                    toggleGroup: "querier",
++                    tooltip: "Ajouter une condition géographique sur la base d'une ligne",
++                    iconCls: "drawline"
++                }),
++                new GeoExt.Action({
++                    control: createDrawControl(OpenLayers.Handler.Polygon, this.controls),
++                    map: this.map,
++                    toggleGroup: "querier",
++                    tooltip: "Ajouter une condition géographique sur la base d'un polygone",
++                    iconCls: "drawpolygon"
++                })
++            ]
++        });
++    },
++    
++    /**
+      * APIMethod: getFilter
+      * Returns a filter that fits the model in the Filter Encoding
+      *     specification.  Use this method instead of directly accessing
+@@ -273,11 +370,41 @@
+         return filter;
+     },
+     
+-    createDefaultFilter: function() {
+-        return new OpenLayers.Filter.Comparison();
++    createDefaultFilter: function(feature) {
++        if(feature instanceof OpenLayers.Feature.Vector) {
++            return new OpenLayers.Filter.Spatial({
++                value: feature.geometry,
++                type: OpenLayers.Filter.Spatial.INTERSECTS
++            });
++        } else {
++            return new OpenLayers.Filter.Comparison();
++        }
+     },
+     
+     /**
++     * Method: createVectorLayer
++     *
++     * Returns:
++     * {OpenLayers.Layer.Vector}
++     */
++    createVectorLayer: function() {
++        var layer = (this.vectorLayer) ? 
++            this.vectorLayer : new OpenLayers.Layer.Vector('filter_builder', {
++                displayInLayerSwitcher: false
++            });
++        if(OpenLayers.Util.indexOf(this.map.layers, layer) < 0) {
++            this.map.addLayer(layer);
++        }
++        layer.events.on({
++            "featureadded": function(options) {
++                this.addCondition("spatial", options.feature);
++            },
++            scope: this
++        });
++        return layer;
++    },
++    
++    /**
+      * Method: wrapFilter
+      * Given a non-logical filter, this creates parent filters depending on
+      *     the <defaultBuilderType>.
+@@ -311,27 +438,47 @@
+      *     modifies the filter and adds a panel representing the new condition
+      *     or group of conditions.
+      */
+-    addCondition: function(group) {
++    addCondition: function(conditionType, feature) {
+         var filter, type;
+-        if(group) {
+-            type = "gx_filterbuilder";
+-            filter = this.wrapFilter(this.createDefaultFilter());
+-        } else {
+-            type = "gx_filterpanel";
+-            filter = this.createDefaultFilter();
+-        }
+-        var newChild = this.newRow({
+-            xtype: type,
+-            filter: filter,
+-            attributes: this.attributes,
+-            customizeFilterOnInit: group && false,
++        
++        var cfg = {
++            customizeFilterOnInit: (conditionType == "group") && false,
+             listeners: {
+                 change: function() {
+                     this.fireEvent("change", this);
+                 },
+                 scope: this
+             }
+-        });
++        };
++        
++        switch (conditionType) {
++        case "group":  
++            filter = this.wrapFilter(this.createDefaultFilter());
++            Ext.apply(cfg, {
++                xtype: "gx_filterbuilder",
++                filter: filter,
++                attributes: this.attributes
++            });
++            break;
++        case "spatial":
++            filter = this.createDefaultFilter(feature);
++            Ext.apply(cfg, {
++                xtype: "gx_spatialfilterpanel",
++                filter: filter,
++                feature: feature,
++                toggleGroup: "querier",
++                map: this.map
++            });
++            break;
++        default:
++            filter = this.createDefaultFilter();
++            Ext.apply(cfg, {
++                xtype: "gx_filterpanel",
++                filter: filter,
++                attributes: this.attributes
++            });
++        }
++        var newChild = this.newRow(cfg);
+         this.childFiltersPanel.add(newChild);
+         this.filter.filters[0].filters.push(filter);
+         this.childFiltersPanel.doLayout();
+@@ -347,6 +494,7 @@
+         var parent = this.filter.filters[0].filters;
+         if(parent.length > 1) {
+             parent.remove(filter);
++            panel.getComponent(1).getComponent(0).tearDown();
+             this.childFiltersPanel.remove(panel);
+         }
+         this.fireEvent("change", this);
+Index: lib/Styler/widgets/BaseFilterPanel.js
+===================================================================
+--- lib/Styler/widgets/BaseFilterPanel.js	(révision 0)
++++ lib/Styler/widgets/BaseFilterPanel.js	(révision 0)
+@@ -0,0 +1,72 @@
++/**
++ * Copyright (c) 2009 Camptocamp
++ */
++
++Ext.namespace("Styler");
++Styler.BaseFilterPanel = Ext.extend(Ext.Panel, {
++    
++    /**
++     * Property: filter
++     * {OpenLayers.Filter} Optional non-logical filter provided in the initial
++     *     configuration.  To retrieve the filter, use <getFilter> instead
++     *     of accessing this property directly.
++     */
++    filter: null,
++
++    initComponent: function() {
++        
++        var defConfig = {
++            plain: true,
++            border: false
++        };
++        Ext.applyIf(this, defConfig);
++        
++        if(!this.filter) {
++            this.filter = this.createDefaultFilter();
++        }
++
++        this.items = this.createFilterItems();
++        
++        this.addEvents(
++            /**
++             * Event: change
++             * Fires when the filter changes.
++             *
++             * Listener arguments:
++             * filter - {OpenLayers.Filter} This filter.
++             */
++            "change"
++        );
++
++        Styler.BaseFilterPanel.superclass.initComponent.call(this);
++    },
++    
++    /**
++     * Method: createDefaultFilter
++     * Overridden by children to change the default filter.
++     *
++     * Returns:
++     * {OpenLayers.Filter}
++     */
++    createDefaultFilter: function() {
++        return new OpenLayers.Filter();
++    },
++    
++    /**
++     * Method: createFilterItems
++     * Creates a panel config containing filter parts.
++     */
++    createFilterItems: function() {
++        return [];
++    },
++    
++    /**
++     * Method: tearDown
++     * To be run before panel is removed from parent.
++     *      May return false to cancel the remove
++     */
++    tearDown: function() {
++        return true;
++    }
++    
++});
+\ No newline at end of file

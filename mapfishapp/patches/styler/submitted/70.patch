@@ -1,0 +1,180 @@
+Index: lib/Styler/widgets/TextSymbolizer.js
+===================================================================
+--- lib/Styler/widgets/TextSymbolizer.js	(revision 287)
++++ lib/Styler/widgets/TextSymbolizer.js	(working copy)
+@@ -24,7 +24,7 @@
+     
+     /**
+      * Property: attributes
+-     * {Styler.data.AttributesStore} A configured attributes store for use in
++     * {GeoExt.data.AttributeStore} A configured attributes store for use in
+      *     the filter property combo.
+      */
+     attributes: null,
+@@ -210,4 +210,4 @@
+     
+ });
+ 
+-Ext.reg('gx_textsymbolizer', Styler.TextSymbolizer); 
+\ No newline at end of file
++Ext.reg('gx_textsymbolizer', Styler.TextSymbolizer); 
+Index: lib/Styler/widgets/FilterPanel.js
+===================================================================
+--- lib/Styler/widgets/FilterPanel.js	(revision 287)
++++ lib/Styler/widgets/FilterPanel.js	(working copy)
+@@ -3,7 +3,6 @@
+  */
+ 
+ /**
+- * @include Styler/data/AttributesStore.js
+  * @include Styler/widgets/form/ComparisonComboBox.js
+  */
+ 
+@@ -20,7 +19,7 @@
+     
+     /**
+      * Property: attributes
+-     * {Styler.data.AttributesStore} A configured attributes store for use in
++     * {GeoExt.data.AttributeStore} A configured attributes store for use in
+      *     the filter property combo.
+      */
+     attributes: null,
+@@ -43,7 +42,7 @@
+             this.filter = this.createDefaultFilter();
+         }
+         if(!this.attributes) {
+-            this.attributes = new Styler.data.AttributesStore();
++            this.attributes = new GeoExt.data.AttributeStore();
+         }
+ 
+         var defAttributesComboConfig = {
+@@ -140,4 +139,4 @@
+ 
+ });
+ 
+-Ext.reg('gx_filterpanel', Styler.FilterPanel); 
+\ No newline at end of file
++Ext.reg('gx_filterpanel', Styler.FilterPanel); 
+Index: lib/Styler/widgets/RuleBuilder.js
+===================================================================
+--- lib/Styler/widgets/RuleBuilder.js	(revision 287)
++++ lib/Styler/widgets/RuleBuilder.js	(working copy)
+@@ -18,7 +18,7 @@
+     
+     /**
+      * Property: attributes
+-     * {GeoExt.data.AttributesStore} A configured attributes store for use in
++     * {GeoExt.data.AttributeStore} A configured attributes store for use in
+      *     the filter property combo.
+      */
+     attributes: null,
+@@ -304,4 +304,4 @@
+ 
+ });
+ 
+-Ext.reg('gx_rulebuilder', Styler.RuleBuilder); 
+\ No newline at end of file
++Ext.reg('gx_rulebuilder', Styler.RuleBuilder); 
+Index: lib/Styler/widgets/RulePanel.js
+===================================================================
+--- lib/Styler/widgets/RulePanel.js	(revision 287)
++++ lib/Styler/widgets/RulePanel.js	(working copy)
+@@ -29,7 +29,7 @@
+     
+     /**
+      * Property: attributes
+-     * {GeoExt.data.AttributesStore} A configured attributes store for use in
++     * {GeoExt.data.AttributeStore} A configured attributes store for use in
+      *     the filter property combo.
+      */
+     attributes: null,
+@@ -367,4 +367,4 @@
+ 
+ });
+ 
+-Ext.reg('gx_rulepanel', Styler.RulePanel); 
+\ No newline at end of file
++Ext.reg('gx_rulepanel', Styler.RulePanel); 
+Index: lib/Styler/SchemaManager.js
+===================================================================
+--- lib/Styler/SchemaManager.js	(revision 287)
++++ lib/Styler/SchemaManager.js	(working copy)
+@@ -2,7 +2,6 @@
+  * Copyright (c) 2008 The Open Planning Project
+  * 
+  * @requires Styler.js
+- * @include Styler/data/AttributesStore.js
+  */
+ 
+ Styler.SchemaManager = OpenLayers.Class({
+@@ -14,11 +13,11 @@
+     map: null,
+     
+     /**
+-     * Property: attributesStores
++     * Property: attributeStores
+      * {Object} Hash, keyed by the id property of the map's layers, with
+      *     an attributes store for the layer.
+      */
+-    attributesStores: null,
++    attributeStores: null,
+     
+     /**
+      * Property: matchGeomProperty
+@@ -35,12 +34,12 @@
+      */
+     initialize: function(map) {
+         this.map = map;
+-        this.attributesStores = {};
++        this.attributeStores = {};
+         var layer;
+         for(var i=0; i<this.map.layers.length; ++i) {
+             layer = this.map.layers[i];
+             if(layer instanceof OpenLayers.Layer.WMS) {
+-                this.attributesStores[layer.id] = new Styler.data.AttributesStore({
++                this.attributeStores[layer.id] = new GeoExt.data.AttributeStore({
+                     url: layer.url.split("?")[0].replace("/wms", "/wfs"),
+                     baseParams: {
+                         version: "1.1.1",
+@@ -61,8 +60,8 @@
+      */
+     loadAll: function(callback) {
+         var loaders = [];
+-        for(var id in this.attributesStores) {
+-            loaders.push(this.createLoader(this.attributesStores[id]));
++        for(var id in this.attributeStores) {
++            loaders.push(this.createLoader(this.attributeStores[id]));
+         }
+         Styler.dispatch(loaders, callback);
+     },
+@@ -87,7 +86,7 @@
+      * {String} The geometry attribute name.
+      */
+     getGeometryName: function(layer) {
+-        var store = this.attributesStores[layer.id];
++        var store = this.attributeStores[layer.id];
+         var index = store.find("type", this.matchGeomProperty);
+         var name;
+         if(index > -1) {
+@@ -109,7 +108,7 @@
+      * {String} The symbol type or undefined if not specific.
+      */
+     getSymbolType: function(layer) {
+-        var store = this.attributesStores[layer.id];
++        var store = this.attributeStores[layer.id];
+         var index = store.find("type", this.matchGeomProperty);
+         var type;
+         if(index > -1) {
+Index: lib/Styler.js
+===================================================================
+--- lib/Styler.js	(revision 287)
++++ lib/Styler.js	(working copy)
+@@ -755,7 +755,7 @@
+                 modifyScaleTipContext: (function(panel, data) {
+                     data.mapZoom = this.map.getZoom();
+                 }).createDelegate(this),
+-                attributes: new Styler.data.AttributesStore({
++                attributes: new GeoExt.data.AttributeStore({
+                     url: "/geoserver/wfs?",
+                     baseParams: {
+                         version: "1.1.1",

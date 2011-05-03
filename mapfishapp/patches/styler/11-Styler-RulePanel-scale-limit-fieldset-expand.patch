@@ -1,0 +1,14 @@
+Index: src/main/webapp/lib/styler/lib/Styler/widgets/RulePanel.js
+===================================================================
+--- src/main/webapp/lib/styler/lib/Styler/widgets/RulePanel.js	(revision 379)
++++ src/main/webapp/lib/styler/lib/Styler/widgets/RulePanel.js	(working copy)
+@@ -234,6 +234,9 @@
+                             this.fireEvent("change", this, this.rule)
+                         },
+                         expand: function(){
++                            if (this.scaleLimitPanel.scaleSlider) {
++                                this.scaleLimitPanel.scaleSlider.syncThumbs();
++                            }
+                             var changed = false;
+                             if (this.scaleLimitPanel.limitMinScale) {
+                                 this.rule.minScaleDenominator = this.scaleLimitPanel.minScaleDenominator;

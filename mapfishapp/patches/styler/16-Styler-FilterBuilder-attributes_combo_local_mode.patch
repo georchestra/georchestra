@@ -1,0 +1,12 @@
+Index: lib/Styler/widgets/FilterPanel.js
+===================================================================
+--- lib/Styler/widgets/FilterPanel.js	(révision 430)
++++ lib/Styler/widgets/FilterPanel.js	(copie de travail)
+@@ -32,6 +32,7 @@
+         var defAttributesComboConfig = {
+             xtype: "combo",
+             store: this.attributes,
++            mode: 'local',
+             editable: false,
+             triggerAction: "all",
+             hideLabel: true,

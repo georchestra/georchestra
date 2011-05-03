@@ -1,0 +1,29 @@
+Index: lib/Styler/widgets/FilterPanel.js
+===================================================================
+--- lib/Styler/widgets/FilterPanel.js	(révision 351)
++++ lib/Styler/widgets/FilterPanel.js	(copie de travail)
+@@ -3,7 +3,7 @@
+  */
+ 
+ /**
+- * @include Styler/widgets/BaseFilterPanel.js
++ * @requires Styler/widgets/BaseFilterPanel.js
+  * @include Styler/widgets/form/ComparisonComboBox.js
+  */
+ 
+Index: lib/Styler/widgets/SpatialFilterPanel.js
+===================================================================
+--- lib/Styler/widgets/SpatialFilterPanel.js	(révision 351)
++++ lib/Styler/widgets/SpatialFilterPanel.js	(copie de travail)
+@@ -3,8 +3,9 @@
+  */
+  
+ /**
+- * @include Styler/widgets/BaseFilterPanel.js
++ * @requires Styler/widgets/BaseFilterPanel.js
+  * @include Styler/widgets/form/SpatialComboBox.js
++ * 
+  */
+  
+ Ext.namespace("Styler");
+

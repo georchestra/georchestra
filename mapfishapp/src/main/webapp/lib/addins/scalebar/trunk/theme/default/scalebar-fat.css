@@ -1,0 +1,67 @@
+.olControlScaleBar {
+    bottom: 10px;
+    left: 15px;
+    font-family: sans-serif;
+    color: #00008B;
+}
+
+.olControlScaleBarBar {
+    height: 11px;
+    top: 12px;
+    background-color: #00008B;
+    background-image: url('img/scalebar-bar.png');
+    background-position: 0 0;
+    background-repeat: repeat-x;
+}
+
+.olControlScaleBarBarAlt {
+    height: 11px;
+    top: 12px;
+    background-color: #00008B;
+    background-image: url('img/scalebar-bar.png');
+    background-position: 0 0;
+    background-repeat: repeat-x;
+}
+
+.olControlScaleBarMarkerMajor {
+    height: 13px;
+    width: 13px;
+    top: 12px;
+    background-image: url('img/scalebar-marker.png');
+    background-position: 0 0;
+    background-repeat: no-repeat;
+    z-index: 5000;
+}
+
+.olControlScaleBarMarkerMinor {
+    height: 13px;
+    width: 13px;
+    top: 12px;
+    background-image: url('img/scalebar-marker.png');
+    background-position: 0 0;
+    background-repeat: no-repeat;
+    z-index: 5000;
+}
+
+.olControlScaleBarNumbersBox {
+    height: 13px;
+    width: 40px;
+    top: 24px;
+    font-size: 9px;
+}
+
+.olControlScaleBarLabelBox {
+    height: 15px;
+    top: -2px;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+}
+
+.olControlScaleBarLabelBoxSingleLine {
+    height: 15px;
+    width: 35px;
+    top: 0px;
+    left: 10px;
+    font-size: 13px;
+}

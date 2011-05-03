@@ -1,0 +1,18 @@
+Index: lib/Styler/widgets/SpatialFilterPanel.js
+===================================================================
+--- lib/Styler/widgets/SpatialFilterPanel.js	(révision 472)
++++ lib/Styler/widgets/SpatialFilterPanel.js	(copie de travail)
+@@ -70,9 +70,11 @@
+         this.comboConfig = this.comboConfig || {}; 
+         Ext.applyIf(this.comboConfig, defComboConfig);
+         
+-        this.mfControl = new OpenLayers.Control.ModifyFeature(
++        var ModifyFeature = OpenLayers.Control.ModifyFeature;
++        this.mfControl = new ModifyFeature(
+             this.feature.layer, {
+-                standalone: true
++                standalone: true,
++                mode: ModifyFeature.RESHAPE | ModifyFeature.DRAG
+             }
+         );
+         this.map.addControl(this.mfControl);

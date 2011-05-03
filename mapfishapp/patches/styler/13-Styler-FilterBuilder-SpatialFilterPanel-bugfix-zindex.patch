@@ -1,0 +1,44 @@
+Index: lib/Styler/widgets/SpatialFilterPanel.js
+===================================================================
+--- lib/Styler/widgets/SpatialFilterPanel.js	(révision 391)
++++ lib/Styler/widgets/SpatialFilterPanel.js	(copie de travail)
+@@ -29,6 +29,9 @@
+      */
+     map: null,
+     
++    // workaround an OpenLayers bug when 2 vector layers are involved
++    zindex: null,
++    
+     /**
+      * Property: toggleGroup
+      * {String} the toggleGroup for the modify feature button
+@@ -112,12 +115,26 @@
+                         "toggle": function(btn, pressed) {
+                             var feature = this.feature;
+                             if (pressed) {
+-                                this.map.zoomToExtent(
+-                                    feature.geometry.getBounds().scale(1.05)
+-                                );
++                                var geometry = feature.geometry;
++                                if (geometry.CLASS_NAME == "OpenLayers.Geometry.Point") {
++                                    this.map.setCenter(
++                                        geometry.getBounds().getCenterLonLat()
++                                    );
++                                } else {
++                                    this.map.zoomToExtent(
++                                        geometry.getBounds().scale(1.05)
++                                    );
++                                }
++                                // zindex hack (might need a rework of the handler feature 's
++                                // moveLayerToTop and moveLayerBack methods to manage this)
++                                zindex = feature.layer.getZIndex();
++                                this.mfControl.activate();
+                                 this.mfControl.selectFeature(feature);
++                                feature.layer.setZIndex(this.map.Z_INDEX_BASE['Feature']+1);
+                             } else {
+                                 this.mfControl.unselectFeature(feature);
++                                this.mfControl.deactivate();
++                                feature.layer.setZIndex(zindex);
+                             }
+                         },
+                         scope: this
