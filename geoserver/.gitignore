@@ -1,0 +1,8 @@
+pom.properties
+target
+.project
+.classpath
+*.bak
+geoserver.log
+meta_jdbc_h2
+test-reports

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+   <!-- ======================== FILTER CHAIN ======================= -->
+
+  <bean id="casFilterChainProxy" class="org.acegisecurity.util.FilterChainProxy">
+    <property name="filterInvocationDefinitionSource">
+      <value>
+        CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
+        PATTERN_TYPE_APACHE_ANT
+        /wfs/**=httpSessionContextIntegrationFilterWithASCFalse,securityProxyFilter,anonymousProcessingFilter,owsExceptionTranslationFilter
+        /ows/**=httpSessionContextIntegrationFilterWithASCFalse,securityProxyFilter,anonymousProcessingFilter,owsExceptionTranslationFilter
+        /wfsv/**=httpSessionContextIntegrationFilterWithASCFalse,securityProxyFilter,anonymousProcessingFilter,owsExceptionTranslationFilter
+        /wms/**=httpSessionContextIntegrationFilterWithASCFalse,securityProxyFilter,anonymousProcessingFilter,owsExceptionTranslationFilter
+        /wcs/**=httpSessionContextIntegrationFilterWithASCFalse,securityProxyFilter,anonymousProcessingFilter,owsExceptionTranslationFilter
+        /rest/**=httpSessionContextIntegrationFilterWithASCFalse,securityProxyFilter,anonymousProcessingFilter,owsExceptionTranslationFilter
+        /**=securityProxyFilter,anonymousProcessingFilter,owsExceptionTranslationFilter,restFilterInvocationInterceptor
+      </value>
+    </property>
+  </bean>
+
+  <!-- ======================== AUTHENTICATION ======================= -->
+  <bean id="securityProxyFilter"
+    class="org.georchestra.security.ProxyProcessingFilter">
+    <property name="securityProxyServers">
+        <list>
+            <value>localhost</value>
+            <value>127.0.0.1</value>
+        </list>
+    </property>
+  </bean>
+
+</beans>

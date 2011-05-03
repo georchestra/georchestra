@@ -1,0 +1,273 @@
+<html>
+<head>
+
+ <!-- --
+
+  (c) 2005 David Blasby, The Open Planning Project (openplans.org)
+  Released under the GPL license.
+
+ Okay, this is not great JavaScript, since I learned JScript to write this and
+ it only took me 2 days.  Ugly it is.
+
+ The concepts in this are detailed more here:
+
+      http://geoserver.org/display/GEOS/OSGIS+2005+presentation
+                ** info about WMS and WFS queries
+                ** diagram of the actual queries being used in this application
+
+      http://udig.refractions.net/confluence/display/GOWS/TOC
+                ** more info on WFS and WMS queries
+                ** HIGHLY LIKELY TO MOVE SITES
+
+
+   Basically, this lets you type in a few parameters and then constructs a
+   WFS insert feature request that looks like this:
+
+
+   	<wfs:Transaction service="WFS" version="1.0.0"
+   	  xmlns:wfs="http://www.opengis.net/wfs"
+   	  xmlns:tiger="http://www.census.gov"
+   	  xmlns:gml="http://www.opengis.net/gml"
+   	  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   	>
+   	  <wfs:Insert>
+   	    <tiger:poi>
+
+   	      <tiger:NAME> ** ACTUAL NAME HERE ** </tiger:NAME>
+
+   	      <tiger:the_geom>
+   	        <gml:Point srsName="http://www.opengis.net/gml/srs/epsg.xml#4326">
+   	              <gml:coordinates decimal="." cs="," ts=" ">
+                      ** ACTUAL COORDINATE HERE **
+   	              </gml:coordinates>
+   	        </gml:Point>
+   	       </tiger:the_geom>
+
+   	       <tiger:THUMBNAIL> ** ACTUAL THUMBNAIL URL HERE ** </tiger:THUMBNAIL>
+   	       <tiger:MAINPAGE>  ** ACTUAL MAINPAGE  URL HERE ** </tiger:MAINPAGE>
+
+   	    </tiger:poi>
+   	  </wfs:Insert>
+   	</wfs:Transaction>
+
+
+ -->
+
+
+<script>
+
+var xmlhttp;
+
+var SERVERHOSTNAME ="localhost:8080";
+
+function init()
+{
+     formElement = document.getElementsByName("newFeatureForm")[0];
+
+       formElement.elements[0].value = getValue("x");
+       formElement.elements[1].value =  getValue("y");
+
+}
+
+function getValue(name)
+{
+  str = window.location+"";
+  indx = str.indexOf("?"+name+"=");
+  if (indx==-1)
+        indx = str.indexOf("&"+name+"=");
+  if (indx == -1)
+     return "";
+  indx2 = str.indexOf("&",indx+1);
+  if (indx2 == -1)
+    indx2 = str.length;
+
+  return str.substring(indx+2+name.length,indx2);
+}
+
+function validate()
+{
+    result = true;
+	formElement = document.getElementsByName("newFeatureForm")[0];
+
+	for (t=0;t<formElement.elements.length;t++)
+	{
+	   if ( (formElement.elements[t].value ==null) || (formElement.elements[t].value.length==0) )
+	   {
+	      alert(formElement.elements[t].name+" is blank");
+	      result = false;
+	   }
+	}
+	return result;
+}
+
+function getXML(url,post,procfunction)
+{
+	try {
+		if (!(window.XMLHttpRequest))
+		{
+			 //ie
+			xmlhttp =  new ActiveXObject("Microsoft.XMLHTTP");
+			xmlhttp.onreadystatechange = procfunction;
+			xmlhttp.open("POST", url, true);
+			xmlhttp.send(post);
+		}
+		else
+		{
+			// everyone else
+
+				xmlhttp =  new XMLHttpRequest();
+				xmlhttp.onreadystatechange = procfunction;
+				xmlhttp.open("POST", url, true);
+				xmlhttp.send(post);
+		}
+	 }
+	 catch(e)
+	 {
+		alert(e);
+		alert("if you just got a security exception, its because you need to serve the .html file from the same server as where you're sending the XML requests to!");
+	 }
+}
+
+
+function commit()
+{
+     if (validate() == false)
+       return;
+
+        URL  = "http://"+SERVERHOSTNAME+"/geoserver/wfs/Transaction";
+        XML  = makeXML();
+
+
+    getXML(URL,XML,XMLProgressFunction);
+
+}
+
+function makeXML()
+{
+    formElement = document.getElementsByName("newFeatureForm")[0];
+
+	x=    formElement.elements[0].value ;
+	y=    formElement.elements[1].value ;
+	name= formElement.elements[2].value ;
+	thumb=formElement.elements[3].value ;
+	main= formElement.elements[4].value ;
+
+
+	XML  = '<?xml version="1.0" encoding="UTF-8"?>'+"\n";
+	XML += '<wfs:Transaction service="WFS" version="1.0.0"'+"\n";
+	XML += '  xmlns:wfs="http://www.opengis.net/wfs"'+"\n";
+	XML += '  xmlns:tiger="http://www.census.gov"'+"\n";
+	XML += '  xmlns:gml="http://www.opengis.net/gml"'+"\n";
+	XML += '  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'+"\n";
+	XML += '>'+"\n";
+	XML += '  <wfs:Insert>'+"\n";
+	XML += '    <tiger:poi>'+"\n";
+	XML += ''+"\n";
+	XML += '      <tiger:NAME>'+name+'</tiger:NAME>'+"\n";
+	XML += '    '+"\n";
+	XML += '      <tiger:the_geom>'+"\n";
+	XML += '        <gml:Point srsName="http://www.opengis.net/gml/srs/epsg.xml#4326">'+"\n";
+	XML += '              <gml:coordinates decimal="." cs="," ts=" ">'+"\n";
+	XML += x+","+y+"\n";
+	XML += '              </gml:coordinates>'+"\n";
+	XML += '        </gml:Point>'+"\n";
+	XML += '       </tiger:the_geom>'+"\n";
+	XML += '             '+"\n";
+	XML += '       <tiger:THUMBNAIL>'+thumb+'</tiger:THUMBNAIL>'+"\n";
+	XML += '       <tiger:MAINPAGE>'+main+'</tiger:MAINPAGE>        '+"\n";
+	XML += '      '+"\n";
+	XML += '    </tiger:poi>'+"\n";
+	XML += '  </wfs:Insert>'+"\n";
+	XML += '</wfs:Transaction>'+"\n";
+
+	return XML;
+}
+
+function transactionError(xml)
+{
+  alert("couldnt process insert request\n "+xml);
+}
+
+function XMLProgressFunction()
+{
+  if ( (xmlhttp.readyState == 4) && (xmlhttp.status == 200) )
+  {
+
+       //we got a good response.  We need to process it!
+       if (xmlhttp.responseXML == null)
+       {
+           transactionError(xmlhttp.responseText);
+           return false;
+       }
+	   tr_node =  getElements(xmlhttp.responseXML,"wfs","WFS_TransactionResponse")[0];
+	   if (tr_node == null)
+	   {
+	   	   transactionError(xmlhttp.responseText);
+           return false;
+	    }
+	   ir_nodes = getElements(tr_node,"wfs","InsertResult");
+	   if (ir_nodes == null)
+	   {
+	   	   		transactionError(xmlhttp.responseText);
+	              return false;
+	    }
+
+
+	   if (ir_nodes.length !=1)
+	    {
+	   	   	   		transactionError(xmlhttp.responseText);
+	   	              return false;
+	    }
+		 formElement = document.getElementsByName("backViewForm")[0];
+
+    	 formElement.submit();
+	    return true;
+  }
+}
+
+//browser capabilities
+function getElements(node,tag_prefix,tag_name)
+{
+    if (window.XMLHttpRequest)
+    {
+       //netscape
+       return node.getElementsByTagName(tag_name);
+    }
+    else
+    {
+      //ie has no idea of namespaces/prefixes
+      return node.getElementsByTagName(tag_prefix+":"+tag_name);
+    }
+}
+
+
+</script>
+
+</head>
+
+<body onload="init()">
+
+
+<form name=newFeatureForm>
+<h2>Add a New Location</h2>
+
+<table>
+
+<tr><td>Longitude</td><td>     <input type=text name=x size=50>         </td></tr>
+<tr><td>Latitude</td><td>      <input type=text name=y size=50>         </td></tr>
+<tr><td>Name</td><td>          <input type=text name=name size=50>      </td></tr>
+<tr><td>Url thumbnail</td><td> <input type=text name=thumbnail size=50 value="pics/example_Ti.jpg"> </td></tr>
+<tr><td>Url mainpage</td><td>  <input type=text name=mainpage size=50 value="pics/example_L.jpg">  </td></tr>
+<tr><td></td><td align=right>  <input type=button name=mainpage size=50 onclick ="commit()" value="Commit">  </td></tr>
+</table>
+</form>
+
+<form name="backViewForm" action=popup.html>
+<input type=hidden name=x>
+<input type=hidden name=y>
+</form>
+
+
+</body>
+
+</html>

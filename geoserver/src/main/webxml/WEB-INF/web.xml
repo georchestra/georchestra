@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
+<web-app>
+  <display-name>GeoServer</display-name>
+  <description>Web Mapping, Feature and Coverage Services</description>
+
+  <context-param>
+    <param-name>serviceStrategy</param-name>
+    <!-- Meaning of the different values :
+    	 
+         PARTIAL-BUFFER2
+         - Partially buffers the first xKb to disk. Once that has buffered, the the 
+           result is streamed to the user. This will allow for most errors to be caught
+           early. 
+    	   
+         BUFFER
+         - stores the entire response in memory first, before sending it off to
+           the user (may run out of memory)
+
+         SPEED
+         - outputs directly to the response (and cannot recover in the case of an
+           error)
+
+         FILE
+         - outputs to the local filesystem first, before sending it off to the user
+      -->
+    <param-value>SPEED</param-value>
+  </context-param>
+  
+  <!-- If true, enable versioning datastore as well -->
+  <context-param>
+    <param-name>enableVersioning</param-name>
+    <param-value>true</param-value>
+  </context-param>
+  
+  <context-param>
+	<!-- see comments on the PARTIAL-BUFFER strategy -->
+	<!-- this sets the size of the buffer.  default is "50" = 50kb -->
+
+	<param-name>PARTIAL_BUFFER_STRATEGY_SIZE</param-name>
+	<param-value>50</param-value>
+  </context-param>
+  
+	<!-- pick up all spring application contexts -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+        <!-- custom configuration [erilem]
+		<param-value>classpath*:/applicationContext.xml classpath*:/applicationSecurityContext.xml</param-value>
+        -->
+		<param-value>classpath*:/applicationContext.xml classpath*:/applicationSecurityContext.xml /WEB-INF/applicationContext-acegi-security-cas.xml</param-value>
+	</context-param>
+	
+	<!-- 
+	<context-param>
+	  <param-name>PROXY_BASE_URL</param-name>
+	  <param-value>http://82.58.146.45/</param-value>
+	</context-param>
+	 -->
+   
+    <context-param>
+      <param-name>GEOSERVER_DATA_DIR</param-name>
+      <param-value>${GEOSERVER_DATA_DIR}</param-value>
+    </context-param>
+    <context-param>
+      <param-name>GEOWEBCACHE_CACHE_DIR</param-name>
+      <param-value>${GEOSERVER_DATA_DIR}/cache/</param-value>
+    </context-param>
+    <context-param>
+      <param-name>GEOSERVER_WMS_URL</param-name>
+      <param-value>${GEOSERVER_URL}/wms?request=GetCapabilities</param-value>
+    </context-param>
+
+   <!--  If you want to use your security system instead of the GeoServer one, comment out
+         this filter and the associated filter mapping below. Beware, when you do no 
+         user checking will be done for anything, not even for the admin console
+   -->
+   <filter>
+     <filter-name>Acegi Filter Chain Proxy</filter-name>
+     <filter-class>org.acegisecurity.util.FilterToBeanProxy</filter-class>
+     <init-param>
+       <!-- custom configuration [erilem]
+       <param-name>targetClass</param-name>
+       <param-value>org.acegisecurity.util.FilterChainProxy</param-value>
+       -->
+       <param-name>targetBean</param-name>
+       <param-value>casFilterChainProxy</param-value>
+     </init-param>
+   </filter>
+
+
+   <filter>
+    <filter-name>Set Character Encoding</filter-name>
+    <filter-class>org.vfny.geoserver.filters.SetCharacterEncodingFilter</filter-class>
+    <init-param>
+      <param-name>encoding</param-name>
+      <param-value>UTF-8</param-value>
+    </init-param>
+  </filter>
+
+   <filter>
+    <filter-name>Reverse Proxy Filter</filter-name>
+    <filter-class>org.geoserver.filters.ReverseProxyFilter</filter-class>
+    <init-param>
+      <param-name>enabled</param-name>
+      <param-value>false</param-value>
+      <description>
+        Whether to enable the reverse proxy filter or not. Defaults to false. Set to true
+        in order for GeoServer to perform URL translation for the proxyfied base URL on
+        textual content whose MIME type matches one of the regular expressions set through
+        the mime-types init parameter.
+      </description>
+    </init-param>
+    <init-param>
+      <param-name>mime-types</param-name>
+      <param-value>text/html.*,text/css.*,text/javascript.*,application/x-javascript.*</param-value>
+      <description>
+        Comma separated list of response MIME types the filter shall process in order to translate
+        absolute urls using the configured proxyBaseUrl. Each token in the comma separated list
+        is interpreted as a java regular expression.
+      </description>
+    </init-param>
+   </filter>
+   
+   <filter>
+     <filter-name>GZIP Compression Filter</filter-name>
+     <filter-class>org.geoserver.filters.GZIPFilter</filter-class>
+     <init-param>
+         <!-- The compressed-types parameter is a comma-separated list of regular expressions.
+              If a mime type matches any of the regular expressions then it will be compressed.
+              -->
+         <param-name>compressed-types</param-name>
+         <param-value>text/.*,.*xml.*,application/json,application/x-javascript</param-value>
+     </init-param>
+   </filter>
+
+   <filter>
+     <filter-name>Request Logging Filter</filter-name>
+     <filter-class>org.geoserver.filters.LoggingFilter</filter-class>
+     <init-param>
+         <!-- The 'enabled' parameter is a boolean value, "true" (case-insensitive) for true or
+              any other value for false.  If enabled, then the logging will be performed;
+              otherwise the logging filter will have no effect.  If not specified, this 
+              parameter defaults to false.
+              -->
+         <param-name>enabled</param-name>
+         <param-value>false</param-value>
+     </init-param>
+     <init-param>
+     <!-- The 'log-request-bodies' parameter is a boolean value, "true" (case-insensitive) for
+          true or any other value for false.  If enabled, then the logging will include the body
+          of POST and PUT requests.  If not specified, this parameter defaults to false.
+          Note that this may noticeably degrade responsiveness of your geoserver since it will
+          not begin to process requests until the entire request body has been received by the 
+          server.
+          -->
+     <param-name>log-request-bodies</param-name>
+     <param-value>false</param-value>
+     </init-param>
+   </filter>
+
+  <filter-mapping>
+    <filter-name>GZIP Compression Filter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  
+  <filter-mapping>
+    <filter-name>Reverse Proxy Filter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <filter-mapping>
+    <filter-name>Request Logging Filter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+ 
+  <!-- 
+    If you want to use your security system comment out this one too
+  -->
+  <filter-mapping>
+    <filter-name>Acegi Filter Chain Proxy</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+   
+  
+    <filter-mapping>
+    <filter-name>Set Character Encoding</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  
+  <!-- logging initializer, should be first thing to execute -->
+  <listener>
+    <listener-class>org.geoserver.GeoserverInitStartupListener</listener-class>
+  </listener>
+  
+  <!-- logging initializer, should execute before spring context startup -->
+  <listener>
+    <listener-class>org.geoserver.logging.LoggingStartupContextListener</listener-class>
+  </listener>
+  
+
+  <!--  spring context loader -->
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  
+   
+  <!-- spring dispatcher servlet, dispatches incoming requests to controllers -->
+  <servlet>
+    <servlet-name>dispatcher</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>	
+  </servlet>
+  
+  <!-- configuration files hider -->
+  <servlet>
+    <servlet-name>hider</servlet-name>
+    <servlet-class>org.vfny.geoserver.servlets.FileHiderServlet</servlet-class>  
+  </servlet>
+  
+  <servlet>
+  	<servlet-name>kmlreflector</servlet-name>
+  	<servlet-class>org.vfny.geoserver.wms.servlets.KMLReflector</servlet-class>
+  </servlet>
+	
+   <!-- Struts config needs to load before all the other servlets. -->
+   <servlet>
+    <servlet-name>action</servlet-name>
+    <servlet-class>org.vfny.geoserver.config.web.MultipleActionServlet</servlet-class>
+    <init-param>
+      <param-name>config</param-name>
+      <param-value>/WEB-INF/struts-config.xml,classpath*:/WEB-INF/struts-config.xml</param-value>
+    </init-param>
+    <init-param>
+      <param-name>debug</param-name>
+      <param-value>2</param-value>
+    </init-param>
+    <init-param>
+      <param-name>detail</param-name>
+      <param-value>2</param-value>
+    </init-param>
+    <load-on-startup>2</load-on-startup>
+  </servlet>
+  <servlet>
+   <servlet-name>TestWfsPost</servlet-name>
+   <servlet-class>org.vfny.geoserver.wfs.servlets.TestWfsPost</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>action</servlet-name>
+    <url-pattern>*.do</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>kmlreflector</servlet-name>
+	<url-pattern>/wms/kml_reflect</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>dispatcher</servlet-name>
+	<url-pattern>/rest/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>dispatcher</servlet-name>
+	<url-pattern>/wms/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>dispatcher</servlet-name>
+	<url-pattern>/wcs/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>dispatcher</servlet-name>
+	<url-pattern>/wfs/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>dispatcher</servlet-name>
+  	<url-pattern>/ows/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>dispatcher</servlet-name>
+    <url-pattern>/wfsv/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>dispatcher</servlet-name>
+    <url-pattern>/wcs111/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>dispatcher</servlet-name>
+    <url-pattern>/kml/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>hider</servlet-name>
+    <url-pattern>/data/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+   <servlet-name>TestWfsPost</servlet-name>
+   <url-pattern>/TestWfsPost/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+   <servlet-name>dispatcher</servlet-name>
+   <url-pattern>/styles/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+   <servlet-name>dispatcher</servlet-name>
+   <url-pattern>/www/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+   <servlet-name>dispatcher</servlet-name>
+   <url-pattern>/temp/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+   <servlet-name>dispatcher</servlet-name>
+   <url-pattern>/history/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+   <servlet-name>dispatcher</servlet-name>
+   <url-pattern>/gwc/*</url-pattern>
+  </servlet-mapping>
+          
+  <mime-mapping>
+   <extension>xsl</extension>
+   <mime-type>text/xml</mime-type>
+  </mime-mapping>
+  <mime-mapping>
+    <extension>sld</extension>
+    <mime-type>text/xml</mime-type>
+  </mime-mapping>
+		      
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+ 
+  <error-page>
+  	<exception-type>java.lang.Exception</exception-type>
+		<location>/WEB-INF/pages/errors/Exception.jsp</location>
+  </error-page>
+  <error-page>
+  	<exception-type>javax.servlet.ServletException</exception-type>
+		<location>/WEB-INF/pages/errors/Exception.jsp</location>
+  </error-page>
+  <error-page>
+  	<exception-type>org.vfny.geoserver.global.ConfigurationException</exception-type>
+		<location>/WEB-INF/pages/errors/Exception.jsp</location>
+  </error-page>
+
+  <taglib>
+    <taglib-uri>/tags/struts-bean</taglib-uri>
+    <taglib-location>/WEB-INF/struts-bean.tld</taglib-location>
+  </taglib>
+
+  <taglib>
+    <taglib-uri>/tags/struts-html</taglib-uri>
+    <taglib-location>/WEB-INF/struts-html.tld</taglib-location>
+  </taglib>
+
+  <taglib>
+    <taglib-uri>/tags/struts-logic</taglib-uri>
+    <taglib-location>/WEB-INF/struts-logic.tld</taglib-location>
+  </taglib>
+
+  <taglib>
+    <taglib-uri>/tags/struts-nested</taglib-uri>
+    <taglib-location>/WEB-INF/struts-nested.tld</taglib-location>
+  </taglib>
+
+  <taglib>
+    <taglib-uri>/tags/struts-tiles</taglib-uri>
+    <taglib-location>/WEB-INF/struts-tiles.tld</taglib-location>
+  </taglib>  
+  
+  <!-- spring taglib -->
+  <taglib>
+  	<taglib-uri>/tags/spring</taglib-uri>
+  	<taglib-location>/WEB-INF/tld/spring.tld</taglib-location>
+  </taglib>
+</web-app>

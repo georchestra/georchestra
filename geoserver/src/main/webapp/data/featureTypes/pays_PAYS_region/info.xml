@@ -1,0 +1,26 @@
+<featureType datastore = "pays" >
+  <name>PAYS_region</name>
+  <!--
+    native wich EPGS code for the FeatureTypeInfoDTO
+  -->
+  <SRS>2154</SRS>
+  <SRSHandling>0</SRSHandling>
+  <title>pays</title>
+  <abstract>Generated from pays</abstract>
+  <wmspath>/</wmspath>
+  <numDecimals value = "0" />
+  <keywords>pays, PAYS_region</keywords>
+  <latLonBoundingBox dynamic = "false" maxx = "-0.9693166182578931" maxy = "48.96353293169225" minx = "-5.022409494963915" miny = "47.179319941045804" />
+  <nativeBBox dynamic = "false" maxx = "400594.5" maxy = "6881488.6" minx = "111335.2" miny = "6704491.9" />
+  <!--
+    the default style this FeatureTypeInfoDTO can be represented by.
+    at least must contain the "default" attribute
+  -->
+  <styles default = "polygon" />
+  <cacheinfo enabled = "false" maxage = "" />
+  <searchable enabled = "false" />
+  <regionateAttribute value = "null" />
+  <regionateStrategy value = "best_guess" />
+  <regionateFeatureLimit value = "15" />
+  <maxFeatures>0</maxFeatures>
+</featureType>

@@ -1,0 +1,528 @@
+/*-----------------------
+General styles
+-----------------------*/
+body {
+background: #fff;
+color: #0076a1;
+font-family: Tahoma, "Lucida Sans Unicode", "Lucida Grande", Verdana, sans-serif;
+text-align:left !important; /* override blueprint's ie.css */
+}
+
+h1, 
+h2, 
+h3, 
+h4, 
+h5, 
+h6 {
+color: #0082b6;
+font-family: Tahoma, "Lucida Sans", "Lucida Sans Unicode", "Lucida Grande", Verdana, sans-serif;
+height: auto; /* override blueprint's screen.css */
+}
+
+strong, 
+em,
+dt, 
+b, 
+i {
+font-family: Tahoma, "Lucida Sans", "Lucida Sans Unicode", "Lucida Grande", Verdana, sans-serif;
+}
+
+a {
+color: #0076a1;
+text-decoration: none;
+outline: none !important; /* avoid ugly dotted border for Firefox */
+}
+
+a:hover {
+color: #cc6d00;
+text-decoration: underline;
+}
+
+a img {
+border: none; 
+}
+
+div {
+outline: none !important; /* avoid ugly dotted border for Firefox, when listeners are added via js */
+}
+
+table, 
+td, 
+th {
+vertical-align: baseline; /* override blueprint's screen.css */
+}
+
+.error, 
+.notice, 
+.success { /* override blueprint.css */
+border: 0 none transparent;
+margin-bottom: 0;
+padding: 0;
+background: transparent;
+border-color: transparent;
+}
+
+/*-----------------------
+Utility Classes
+-----------------------*/
+.selfclear:after {
+content: ".";
+display: block;
+height: 0;
+clear: both;
+visibility: hidden;
+}
+
+.selfclear {
+display: inline-block; /* IE 7 */
+}
+
+.selfclear {
+display: block;
+}
+
+* html .selfclear {
+height: 1px; /* IE < 7 */
+}
+
+.leftwise {
+float:left;
+}
+
+.rightwise {
+float:right;
+}
+
+.nobreak {
+white-space: nowrap;
+}
+
+.hidden {
+display: none;
+}
+
+.wrap {
+width: 990px;
+margin: 0 auto; 
+padding: 0;
+}
+
+/* GeoServer Default Style */
+
+table.page {
+ text-align: left;
+ width: 100%;
+ border-collapse: collapse;
+ border-spacing: 0;
+
+}
+tr.header {
+ vertical-align: bottom;
+ white-space: nowrap;
+}
+td.gutter {
+ width: 12em;
+ min-width: 12em; 
+ white-space: nowrap; 
+}
+.project {
+ font-size: 110%;
+ font-weight: bold;
+ color: #08809f;
+ border: 1px solid #0076a1;
+ border-width: 0 0 2px;
+ display: block;
+}
+.project a {
+ display: block;
+ padding: 0 0 0 30px;
+ background: url(./images/logo.png) 0 50% no-repeat;
+ border: 1px solid #c6e09b;
+ border-width: 0 0 2px;
+ text-decoration: none;
+ min-height: 25px;
+ _height: 25px; /*old IE*/
+}
+* html .project a { /* IE6 transparency fix */
+background-image: none;
+filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, sizingMethod=crop, src='/geoserver/images/logo.png');
+zoom: 1;
+}
+
+.license {
+ font-size: 90%;
+ font-weight: normal;
+ font-style: italic;
+ color: #08809f;
+}
+.site-head {
+padding: 0;
+border: 1px solid #0076a1;
+border-width: 0 0 2px;
+}
+
+.site-head div {
+border: 1px solid #c6e09b;
+border-width: 0 0 2px;
+text-align: right;
+}
+
+.site {
+ font-size: 1.1em;
+ font-weight: bold;
+ float: left;
+ padding: 0;
+ min-height: 25px;
+ _height: 25px; /*old IE*/
+}
+
+.contact {
+ font-size: 90%;
+}
+
+/*
+ * SideBar
+ */
+td.sidebar {
+ vertical-align: top;
+ width: 12em; 
+}
+/*
+ * SideBar Actions
+ */
+table.actions {
+ text-align: left;
+ width: 100%;
+ border: 1px solid #68ae0f;
+ border-spacing: 0;
+ background: #f6feec;
+ -moz-border-radius: 5px;
+ -webkit-border-radius: 5px;
+ border-radius: 5px;
+ padding: 0.25em;
+ margin: 0 0 1em;
+}
+table.actions a:visited,
+table.actions a:link {
+ color: #256e81;
+ text-decoration: none;
+}
+table.actions a:hover {
+ color: #256e81;
+ text-decoration: underline;
+}
+/*
+ * SideBar Status
+ */
+table.status {
+ width: 100%;
+ border: 1px solid #68ae0f;
+ border-spacing: 0;
+ -moz-border-radius: 5px;
+ -webkit-border-radius: 5px;
+ border-radius: 5px;
+ padding: 0.25em;
+ margin: 0.5em 0 1em;
+}
+table.status td.module {
+ vertical-align: top;
+ text-align: right;
+ white-space: nowrap;
+ width: 10%;
+ font-size: 90%; 
+}
+table.status td.health {
+ vertical-align: center;
+}
+table.progress {
+ border-width: 1px;
+ border-style: raised;
+ border-color: #68ae0f;
+ text-align: left;
+ width: 100%;
+ height: 1em;
+}
+table.progress td.good {
+ background-color: #080;
+}
+table.progress td.bad {
+ background-color: #d00;
+}
+table.progress td.disabled {
+ background-color: #999;
+}
+/*
+ * Sidebar Config Actions
+ */
+table.state {
+ width: 100%;
+ font-size: 70%;  
+}
+table.state td.node {
+ white-space: nowrap;
+ text-align: left;
+}
+table.state td.timestamp {
+ white-space: nowrap;
+ text-align: right;
+}
+table.control {
+ width: 100%;
+ font-size: 90%; 
+ text-align: left;
+ border: 1px solid #68ae0f;
+ border-spacing: 0;
+ -moz-border-radius: 5px;
+ -webkit-border-radius: 5px;
+ border-radius: 5px;
+ padding: 0.25em;
+ margin: 0 0 1em;
+}
+/*
+ * Sidebar Messages
+ */
+.messages {
+
+}
+.messages ul {
+ border: 1px solid #0076a1;
+ border-spacing: 0;
+ -moz-border-radius: 5px;
+ -webkit-border-radius: 5px;
+ border-radius: 5px;
+ background: #5cc1e6;
+ color: #fff;
+ margin: 0 0 1em;
+ padding: 0.25em 0.25em 0.25em 1.25em;
+ list-style-type: square;
+}
+.messages li {
+ font-size: 0.85em;
+}
+/*
+ * Header Locator
+ */
+td.locator {
+ white-space: nowrap; 
+ padding: 0.25em 0 0.25em 0.5em; 
+ border-width: 0 0 1px 0;
+ border-style: solid;
+ border-color: #68ae0f;
+}
+table.main {
+ text-align: left;
+ width: 100%;
+ border: 1px solid #0077a3;
+ border-spacing: 0;
+ margin: 0.5em 0 0;
+ background: #fff;
+ -moz-border-radius: 5px;
+ -webkit-border-radius: 5px;
+ border-radius: 5px;
+}
+
+tr.bar {
+ color: #256E81;
+ vertical-align: center;    
+}
+.bar a:visited,
+.bar a:link {
+ color: #256E81;
+ text-decoration: none;
+}
+.bar a:hover {
+ color: #256E81;
+ text-decoration: underline;
+}
+td.locator {
+ white-space: nowrap; 
+ padding: 0.25em 0 0.25em 0.5em; 
+ border-width: 0 0 1px 0;
+ border-style: solid;
+ border-color: #c6e09b;
+}
+span.locator {
+ font-size: 0.8em;
+ color: #9cb07a;
+ padding-bottom: 0.5em;
+}
+span.locator a {
+ color: #72a629;
+ text-decoration: none;
+}
+span.locator a:hover {
+ color: #26b2dd;
+}
+td.loginStatus {
+ text-align: right;
+ padding: 0.25em 0.5em 0.25em 0; 
+ border-width: 0 0 1px 0;
+ border-style: solid;
+ border-color: #c6e09b; 
+}
+span.loginStatus {
+ font-size: 90%;
+}
+/* title */
+table.title {
+ width: 100%;
+ text-align: left;
+ border: 1px solid #68ae0f;
+ border-spacing: 0;
+ -moz-border-radius: 5px;
+ -webkit-border-radius: 5px;
+ padding: 0;  
+}
+table.title td.title {
+ vertical-align: top; 
+ padding: 0.5em;
+}
+table.title td.icon {
+ width: 64px;
+ vertical-align: middle; 
+ text-align: center;
+ padding: 2px;
+}
+table.title td.menu {
+ font-size: 90%;
+ background: #c6e09b;
+ width: 6em;
+ vertical-align: top;
+}
+td.title h1 {
+ font-family: Tahoma, "Lucida Sans", "Lucida Sans Unicode", "Lucida Grande", Verdana, sans-serif;
+ font-size: 170%; 
+ white-space: nowrap; 
+ margin: 2px;
+}
+
+td.title .abstract {
+ font-size: 0.9em;
+ color: #444;
+}
+
+/* menuator */
+table.menu {
+ width: 6em;
+ vertical-align: top;
+ white-space: nowrap; 
+ font-size: 1em;
+}
+td.item {
+ text-align: left;
+}
+.menu a:visited,
+.menu a:link {
+ color: #256E81;
+ text-decoration: none;
+}
+.menu a:hover {
+ color: #256E81;
+ text-decoration: underline;
+}
+td.application {
+ vertical-align: top;
+ background-color: #fff;  
+ -moz-border-radius: 0 0 5px 5px;  
+ -webkit-border-radius: 0 0 5px 5px;
+ border-radius: 0 0 5px 5px;
+ padding: 5px;
+ color: #262523;
+}
+td.application table.title {
+ background-color: #f6feec;
+ width: 100%;
+ border-spacing: 0;
+ -moz-border-radius: 0 5px 5px 0; 
+ -webkit-border-radius: 0 5px 5px 0;
+ border-radius: 0 5px 5px 0;
+}
+td.administration {
+ background-color: #f0f0f0;
+ -moz-border-radius: 0 0 5px 5px; 
+ -webkit-border-radius: 0 0 5px 5px; 
+ border-radius: 0 0 5px 5px; 
+}
+td.administration table.title {
+ background-color: #cdcdcd; 
+ width: 100%;
+ border-spacing: 0;
+ -moz-border-radius: 0 5px 5px 0;
+ -webkit-border-radius: 0 5px 5px 0;
+ border-radius: 0 5px 5px 0;
+}
+td.configuration {
+ vertical-align: top;
+ background-color: #fff;
+ -moz-border-radius: 0 0 5px 5px;
+ -webkit-border-radius: 0 0 5px 5px;
+ border-radius: 0 0 5px 5px;
+ padding: 5px;
+ color: #262523;
+}
+td.configuration table.title {
+ background-color: #f6feec;  
+ width: 100%;
+ border-spacing: 0;
+ -moz-border-radius: 0 5px 5px 0;
+ -webkit-border-radius: 0 5px 5px 0;
+ border-radius: 0 5px 5px 0;
+}
+td.data {
+ vertical-align: top;
+ background-color: #fff;
+ -moz-border-radius: 0 0 5px 5px;
+ -webkit-border-radius: 0 0 5px 5px;
+ border-radius: 0 0 5px 5px;
+}
+td.data table.title {
+ background-color: #f6feec;  
+ width: 100%;
+ border-spacing: 0;
+ -moz-border-radius: 0 5px 5px 0;
+ -webkit-border-radius: 0 5px 5px 0;
+ border-radius: 0 5px 5px 0;
+}
+/* Main Page */
+table.info {
+ text-align: left;
+ vertical-align: top;
+ width: 100%;
+ border: 0;
+}
+table.info td.label {
+ vertical-align: top;
+ text-align: right;
+ color: #262523;
+ font-size: 0.8em;
+}
+table.info td.datum {
+ vertical-align: top;
+ color: #0082b6;
+}
+td.datum textarea,
+td.datum input,
+td.datum select {
+ font-size:0.9em;
+ font-family: Tahoma, "Lucida Sans Unicode", "Lucida Grande", Verdana, sans-serif;
+}
+
+.greyedout  {
+font-family: serif;
+text-align: right;
+color: #969696;
+}
+
+.greyedout2  {
+font-family: "Courier New", Courier, monospace;
+font-size: 11px;
+color: #969696;
+}
+.code { 
+font-family : "Courier New", Courier, monospace;
+}
+
+.info-text {
+font-size: 0.8em;
+}
+

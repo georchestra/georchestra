@@ -1,0 +1,11 @@
+ldapUrl=ldaps://drebretagne-geobretagne.int.lsn.camptocamp.com:636/
+
+GEOSERVER_DATA_DIR=${basedir}/../../bretagne-test-tomcat-6.0.20/webapps/geoserver-private/data
+GEOSERVER_URL=http://localhost:43080/geoserver
+
+casLoginUrl=https://localhost:43443/cas/login
+casProxyValidateUrl=https://localhost:43443/cas/proxyValidate
+casCallbackUrl=https://localhost:43443/geoserver/j_acegi_cas_security_check
+
+logLocation=/tmp/geoserver-geob.log
+logConfig=VERBOSE_LOGGING.properties

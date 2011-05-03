@@ -1,0 +1,1042 @@
+<html>
+<head>
+<title>Geoserver TIGER Demo</title>
+</head>
+
+
+ <!-- --
+
+  (c) 2005 David Blasby, The Open Planning Project (openplans.org)
+  Released under the GPL license.
+
+ Okay, this is not great JavaScript, since I learned JScript to write this and
+ it only took me 2 days.  Ugly it is.
+
+
+ You should ignore most of the stuff in here since it would be better done in
+ Mapbuilder (http://mapbuilder.sourceforge.net/).
+
+ You should completely ignore all the navigation stuff (i.e. draw the bounding
+ box and it zooms in).
+
+ The concepts in this are detailed more here:
+
+      http://geoserver.org/display/GEOS/OSGIS+2005+presentation
+                ** info about WMS and WFS queries
+                ** diagram of the actual queries being used in this application
+
+      http://udig.refractions.net/confluence/display/GOWS/TOC
+                ** more info on WFS and WMS queries
+                ** HIGHLY LIKELY TO MOVE SITES
+
+
+ Dont forget to look at the log (scroll down to the bottom of the page) to
+ see the queries happening.
+
+
+ I'd like to see the thumbnail popup and click-and-goto-site turned into
+ mapbuilder widges.
+
+ Basically, the popup works like this:
+
+ For a mousemove event:
+     a) kill any old timers running
+     b) setup a new timer (1/2 a second I think)
+     c) save the current mouse location
+     d) kill the popup thumbnail (if present)
+
+ When the timer (from above) expires
+     a) check to see if the current mouse location is the same as the
+        old location
+     b) check to see if the mouse is actually over top of the map
+
+     c) find the real-world coordinates of the mouse
+     d) send a WFS GetFeature - see presenation above, popupFunction() below, and
+        the log on the html page (scroll down to the bottom)
+        to see if there are any POI's (points of interest) under the mouse.
+        Use the HTTPXMLRequest (AJAX) technique.
+
+     e) if there is a POI under the mouse, then make a little popup based on the
+        "thumbnail" URL you got from the Feature.
+
+
+
+ The click-event works the same way:
+
+   a)  Check to see if the mouse is actually over top of the map
+   b)  Find the real-world coordinates of the mouse
+   c)  send a WFS GetFeature - see presenation above, popupFunction() below, and
+        the log on the html page (scroll down to the bottom)
+        to see if there are any POI's (points of interest) under the mouse.
+        Use the HTTPXMLRequest (AJAX) technique.
+
+   d) IF there was a POI feature, extract the mainpage URL and go there
+      IF no POI feature, go to the "addfeature.html" page and put the
+          real-world coordinate as http-get variables
+            (http://.../addfeature.html?x=...&y=...)
+
+
+See the addfeature.html for how the insert-a-feature code works.
+
+-->
+
+<head>
+
+<script>
+
+var drawbox=0;   // 1= draw the bbox, 0=dont
+var ancorX = 0;  // bbox - first click point
+var ancorY = 0; // bbox - first click point
+
+
+
+var SERVERHOSTNAME = window.location.host;
+
+var SERVERURL = "http://"+SERVERHOSTNAME+"/geoserver/wms";
+
+
+
+var CURRENTBBOX = new Rectangle(
+                -74.02924949245278,40.70060354838641,
+                   -73.9883552568504-(-74.02924949245278),
+                   40.72110115289822-(40.70060354838641)
+                );
+
+
+
+
+// popupTimer
+// 1. mousemove - kill timer &  set timer if over image and not drawing
+// 2. mouseout  - kill timer
+
+var popupTimer = null; //timer for hovering mouse
+var popupX     = null;  //in page coordinates
+var popupY     = null;
+var xmlhttp    = null;
+var xmlhttpClick    = null;
+
+var currentPopupX = null;
+var currentPopupY = null;
+
+
+var WMSCLICKX;
+var WMSCLICKY;
+
+function clearPopupTimer()
+{
+   if (popupTimer != null)
+   {
+        clearTimeout(popupTimer);
+        popupTimer = null;
+   }
+}
+
+function setPopupTimer(x,y)
+{
+   if (  (x==popupX) && (y==popupY) )
+      return; // already set at this location or we've already tried here
+
+   clearPopupTimer()
+   popupX = x;
+   popupY = y;
+
+   popupTimer = setTimeout("popupFunction()", 500);
+
+}
+
+
+//handle a request to popup
+//send the XML
+function popupFunction()
+{
+      //kill any current requests!
+   if (xmlhttp !=null)
+   {
+      xmlhttp.abort();
+      xmlhttp = null;
+   }
+
+
+
+   clearPopupTimer();
+  // alert("sending xml");
+
+   // find the location
+    imgElement = document.getElementsByName("myImage")[0];
+
+   	img_x = popupX-locationLeft(imgElement);
+   	img_y = popupY-locationTop(imgElement);
+
+    //convert to WFS coordinates
+       WMSX = CURRENTBBOX.x +  img_x/img_width* (CURRENTBBOX.width);
+	   WMSY = CURRENTBBOX.y+CURRENTBBOX.height -  img_y/img_height* (CURRENTBBOX.height);
+
+
+  URL  = "http://"+SERVERHOSTNAME+"/geoserver/wfs/GetFeature";
+
+  XML  = '<?xml version="1.0" encoding="UTF-8"?>'+"\n";
+  XML += '<wfs:GetFeature service="WFS" version="1.0.0"'+"\n";
+  XML += '  outputFormat="GML2"'+"\n";
+  XML += '  xmlns:topp="http://www.openplans.org/topp"'+"\n";
+  XML += '  xmlns:wfs="http://www.opengis.net/wfs"'+"\n";
+  XML += '  xmlns:ogc="http://www.opengis.net/ogc"'+"\n";
+  XML += '  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'+"\n";
+  XML += '  xmlns:gml="http://www.opengis.net/gml">'+"\n";
+  XML += '  '+"\n";
+  XML += '  <Query typeName="tiger:poi">'+"\n";
+  XML += '     <ogc:Filter>'+"\n";
+  XML += '     <ogc:Intersects>'+"\n";
+  XML += '        <ogc:PropertyName>the_geom</ogc:PropertyName>'+"\n";
+  XML += '        <gml:Box srsName="http://www.opengis.net/gml/srs/epsg.xml#4326">'+"\n";
+  XML += '		<gml:coordinates>';
+  XML += makeBBOXCoords(WMSX ,WMSY,CURRENTBBOX.width/imgElement.width*5,CURRENTBBOX.height/imgElement.height*5 );
+  XML += '</gml:coordinates>'+"\n";
+  XML += '	</gml:Box>'+"\n";
+  XML += '     </ogc:Intersects>'+"\n";
+  XML += '     </ogc:Filter>'+"\n";
+  XML += '   '+"\n";
+  XML += '  </Query>'+"\n";
+  XML += '</wfs:GetFeature>'+"\n";
+
+  log("sending xml:");
+  log (XML);
+
+  getXML(URL,XML,XMLProgressFunction);
+}
+
+
+function makeBBOXCoords(x,y,pix_x,pix_y)
+{
+    return (x-pix_x)+","+(y-pix_y)+" "+(x+pix_x)+","+(y+pix_y);
+}
+
+function mouseout()
+{
+     clearPopupTimer();
+}
+
+function XMLProgressFunction()
+{
+  if ( (xmlhttp.readyState == 4) && (xmlhttp.status == 200) )
+  {
+       log("XML reponse received");
+       //we got a good response.  We need to process it!
+       if (xmlhttp.responseXML == null)
+           return;
+	   fc_node =  getElements(xmlhttp.responseXML,"wfs","FeatureCollection")[0];
+	   if (fc_node == null)
+	      return;
+	   fm_nodes = getElements(fc_node,"gml","featureMember");
+	   if (fm_nodes == null)
+	      return;
+
+	      log("   XML has "+fm_nodes.length +" features!");
+
+	   if (fm_nodes.length ==0)
+	      return;
+
+	   fm = fm_nodes[0]; // just want 1st
+
+	   if (fm == null)
+	      return;
+
+	   poi_nodes = getElements(fm,"tiger","poi");
+
+	   if ( (poi_nodes==null) ||(poi_nodes.length!=1))
+	       return;
+	   poi_feature = poi_nodes[0];
+
+
+	   feature_name = getElements(poi_feature,"tiger","NAME")[0].firstChild.nodeValue;
+	   feature_thumb = getElements(poi_feature,"tiger","THUMBNAIL")[0].firstChild.nodeValue;
+	   feature_page = getElements(poi_feature,"tiger","MAINPAGE")[0].firstChild.nodeValue;
+	   log("dealing with feature [name="+feature_name+", thumb="+feature_thumb+", page="+feature_page+"]");
+	   doPopupImage(feature_thumb,popupX,popupY);
+  }
+}
+
+function doPopupImage(feature_thumb,x,y)
+{
+   if ((feature_thumb ==null) || (x==null) || (y==null))
+   {
+      log("doPopupImage-- null argument");
+      return;
+   }
+
+    div_to_modify = document.getElementById("popupImageDiv");
+
+
+
+	  currentPopupX = x;
+	  currentPopupY = y;
+log("div_to_modify.style.display:"+div_to_modify.style.display);
+
+
+      img_to_modify = document.getElementsByName("popupImage")[0];
+      img_to_modify.style.display = 'none';
+      img_to_modify.src = feature_thumb;
+
+      div_to_modify.style.left = x+"px";
+   	  div_to_modify.style.top = y+"px";
+}
+
+function popupImageloaded()
+{
+     //document.getElementById("popupImageDiv").style.border="0px";
+     log("popupImageloaded");
+
+    // div_to_modify = document.getElementById("popupImageDiv");
+
+	//div_to_modify.style.left = currentPopupX+"px";
+	//div_to_modify.style.top = currentPopupY+"px";
+	//div_to_modify.style.clip = 'rect(0,100px,100px,0)';
+	//div_to_modify.style.display ='block';
+
+	div_to_modify.style.clip = 'rect(0,100px,100px,0)';
+
+	img_to_modify = document.getElementsByName("popupImage")[0];
+	img_to_modify.style.display = 'block';
+}
+
+
+//browser capabilities
+function getElements(node,tag_prefix,tag_name)
+{
+    if (window.XMLHttpRequest)
+    {
+       //netscape
+       return node.getElementsByTagName(tag_name);
+    }
+    else
+    {
+      //ie has no idea of namespaces/prefixes
+      return node.getElementsByTagName(tag_prefix+":"+tag_name);
+    }
+}
+
+function getXML(url,post,procfunction)
+{
+	try {
+		if (!(window.XMLHttpRequest))
+		{
+			 //ie
+			xmlhttp =  new ActiveXObject("Microsoft.XMLHTTP");
+			xmlhttp.onreadystatechange = procfunction;
+			xmlhttp.open("POST", url, true);
+			xmlhttp.send(post);
+		}
+		else
+		{
+			// everyone else
+
+				xmlhttp =  new XMLHttpRequest();
+				xmlhttp.onreadystatechange = procfunction;
+				xmlhttp.open("POST", url, true);
+				xmlhttp.send(post);
+		}
+	 }
+	 catch(e)
+	 {
+		alert(e);
+		alert("if you just got a security exception, its because you need to serve the .html file from the same server as where you're sending the XML requests to!");
+	 }
+}
+
+
+//example request
+//LAYERS=tiger:giant_polygon,tiger:poly_landmarks,tiger:tiger_roads,tiger:poi&FORMAT=image/png&TRANSPARENT=TRUE&HEIGHT=406&REQUEST=GetMap&BBOX=-73.97302178046496,40.787394475928735,-73.92662067167969,40.810652315640866&WIDTH=810&STYLES=,,,&SRS=EPSG:4326&VERSION=1.1.1
+//return the request url
+function getMapURL()
+{
+  url = SERVERURL;
+  url += "?LAYERS=tiger:giant_polygon,tiger:poly_landmarks,tiger:tiger_roads,tiger:poi&FORMAT=image/png&TRANSPARENT=TRUE&HEIGHT=406&REQUEST=GetMap&WIDTH=810&STYLES=,,,&SRS=EPSG:4326&VERSION=1.1.1";
+  url += "&BBOX="+CURRENTBBOX.x+","+CURRENTBBOX.y+","+(CURRENTBBOX.x+CURRENTBBOX.width)+","+(CURRENTBBOX.y+CURRENTBBOX.height);
+
+  return url;
+
+    //text += "&BBOX=-73.97302178046496,40.787394475928735,-73.92662067167969,40.810652315640866"
+}
+
+
+//attach mouse listeners
+function setup()
+{
+	document.onmousedown = mousedown;
+	document.onmouseup  = mouseup;
+	document.onmousemove = mousemove;
+	document.onmouseout = mouseout;
+
+	 document.body.style.cursor ='wait';
+	imgElement = document.getElementsByName("myImage")[0];
+	imgElement.src = getMapURL();
+
+	log("page loaded");
+}
+
+
+
+
+function Rectangle(startX, startY, rect_width, rect_height)
+{
+	this.width = rect_width;
+	this.height = rect_height;
+	this.x = startX;
+	this.y = startY;
+
+}
+
+
+
+
+
+
+// returns true if the (x,y) location is inside the image
+function onImg(x,y)
+{
+
+	imgElement = document.getElementsByName("myImage")[0];
+
+
+	//img_x =imgElement.offsetLeft-imgElement.scrollLeft;
+	//img_y =imgElement.offsetTop-imgElement.scrollTop;
+
+	img_x = locationLeft(imgElement);
+	img_y = locationTop(imgElement);
+
+	img_width=imgElement.width;
+	img_height=imgElement.height;
+
+    if ( (x<img_x) ||(x>(img_x+img_width)))
+    	return false;
+
+    if ((y<img_y) ||(y>(img_y+img_height)))
+    	return false;
+
+   return true;
+}
+
+
+//handle the mouse being clicked down
+// records the location of the click
+function mousedown(e)
+{
+
+	var xPage;
+	var yPage;
+
+	  var xPage = (navigator.appName == 'Netscape')? e.pageX : event.x+document.body.scrollLeft;
+	  var yPage = (navigator.appName == 'Netscape')? e.pageY : event.y+document.body.scrollTop;
+
+
+
+    if (!(onImg(xPage,yPage)))
+    {
+        log("mouse down event NOT on image");
+        return false; // dont process if outside the image
+    }
+
+     log("mouse down event at page location (x="+xPage+",y="+yPage+")");
+
+
+	 ancorX = xPage;
+     ancorY = yPage;
+
+	drawbox=1;  // start drawing box
+
+	//top.status= "ancor (x="+ancorX+" y="+ancorY+")";
+
+	return false;  //trickle up event
+}
+
+//find the screen location of an element
+function locationLeft(element)
+{
+    offsetTotal = element.offsetLeft;
+    scrollTotal = 0; //element.scrollLeft but we dont want to deal with scrolling - already in page coords
+
+    if (element.tagName != "BODY")
+    {
+       if (element.offsetParent != null)
+      	 return offsetTotal+scrollTotal+locationLeft(element.offsetParent);
+    }
+    return offsetTotal+scrollTotal;
+}
+
+//find the screen location of an element
+function locationTop(element)
+{
+    offsetTotal = element.offsetTop;
+    scrollTotal = 0; //element.scrollTop but we dont want to deal with scrolling - already in page coords
+
+
+    if (element.tagName != "BODY")
+    {
+       if (element.offsetParent != null)
+      	 return offsetTotal+scrollTotal+locationTop(element.offsetParent);
+    }
+    return offsetTotal+scrollTotal;
+}
+
+
+
+//takes a rect in page coordinates and converts to image
+function convertToImageCoordinate(rect)
+{
+    imgElement = document.getElementsByName("myImage")[0];
+
+	//img_x =imgElement.offsetLeft-imgElement.scrollLeft;
+	//img_y =imgElement.offsetTop-imgElement.scrollTop;
+
+	//alert(imgElement.offsetParent.offsetParent.offsetLeft  );
+    //alert(locationLeft(imgElement));
+
+	img_x = locationLeft(imgElement);
+	img_y = locationTop(imgElement);
+
+    return(new Rectangle(rect.x-img_x,rect.y-img_y,rect.width,rect.height));
+}
+
+function handleZoom(pageRect)
+{
+   imgRect = convertToImageCoordinate(pageRect);
+
+    imgElement = document.getElementsByName("myImage")[0];
+
+
+   	img_width=imgElement.width;
+	img_height=imgElement.height;
+
+
+   log("zoom to image coordinate (x="+imgRect.x+", y="+imgRect.y+", width="+imgRect.width+", height="+imgRect.height+")");
+
+   xminImage = imgRect.x;
+   yminImage = imgRect.y;
+
+   xmaxImage = imgRect.x + imgRect.width;
+   ymaxImage = imgRect.y + imgRect.height;
+
+   // okay, now we calculate the center of the bbox in WMS coordinates
+   centerWMSX = CURRENTBBOX.x +  (xminImage+xmaxImage)/2.0/img_width* (CURRENTBBOX.width);
+   centerWMSY = CURRENTBBOX.y+CURRENTBBOX.height -  (yminImage+ymaxImage)/2.0/img_height* (CURRENTBBOX.height);
+
+   //get aspect x & y
+
+   aspectX = imgRect.width/img_width;
+   aspectY = imgRect.height/img_height;
+
+   if (aspectX > aspectY) // choose largest (least zoom)
+      aspect = aspectX;
+   else
+      aspect = aspectY;
+
+   //have center and a zoom ratio!
+
+   sizeX = CURRENTBBOX.width *  aspect;
+   sizeY = CURRENTBBOX.height *  aspect;
+
+
+   xminWMS = centerWMSX - sizeX/2.0;
+   yminWMS = centerWMSY - sizeY/2.0; // opposite of page coords (Y goes up)
+
+
+   CURRENTBBOX= new Rectangle(xminWMS,yminWMS, sizeX,sizeY);
+
+
+   src = getMapURL();
+
+   log("setting img location to "+src);
+   document.body.style.cursor ='wait';
+   imgElement.src = src;
+}
+
+//rect is where mouse clicked
+function handleClick(rect)
+{
+
+    imgElement = document.getElementsByName("myImage")[0];
+
+   	img_x = rect.x-locationLeft(imgElement);
+   	img_y = rect.y-locationTop(imgElement);
+
+
+
+
+       WMSCLICKX = CURRENTBBOX.x +  img_x/img_width* (CURRENTBBOX.width);
+  	   WMSCLICKY = CURRENTBBOX.y+CURRENTBBOX.height -  img_y/img_height* (CURRENTBBOX.height);
+
+
+    URL  = "http://"+SERVERHOSTNAME+"/geoserver/wfs/GetFeature";
+
+    XML  = '<?xml version="1.0" encoding="UTF-8"?>'+"\n";
+    XML += '<wfs:GetFeature service="WFS" version="1.0.0"'+"\n";
+    XML += '  outputFormat="GML2"'+"\n";
+    XML += '  xmlns:topp="http://www.openplans.org/topp"'+"\n";
+    XML += '  xmlns:wfs="http://www.opengis.net/wfs"'+"\n";
+    XML += '  xmlns:ogc="http://www.opengis.net/ogc"'+"\n";
+    XML += '  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'+"\n";
+    XML += '  xmlns:gml="http://www.opengis.net/gml">'+"\n";
+    XML += '  '+"\n";
+    XML += '  <Query typeName="tiger:poi">'+"\n";
+    XML += '     <ogc:Filter>'+"\n";
+    XML += '     <ogc:Intersects>'+"\n";
+    XML += '        <ogc:PropertyName>the_geom</ogc:PropertyName>'+"\n";
+    XML += '        <gml:Box srsName="http://www.opengis.net/gml/srs/epsg.xml#4326">'+"\n";
+    XML += '		<gml:coordinates>';
+    XML += makeBBOXCoords(WMSCLICKX ,WMSCLICKY,CURRENTBBOX.width/imgElement.width*5,CURRENTBBOX.height/imgElement.height*5 );
+    XML += '</gml:coordinates>'+"\n";
+    XML += '	</gml:Box>'+"\n";
+    XML += '     </ogc:Intersects>'+"\n";
+    XML += '     </ogc:Filter>'+"\n";
+    XML += '   '+"\n";
+    XML += '  </Query>'+"\n";
+    XML += '</wfs:GetFeature>'+"\n";
+
+    log("sending xml:");
+    log (XML);
+
+  getXMLClick(URL,XML,XMLProgressFunctionClick);
+}
+
+function getXMLClick(url,post,procfunction)
+{
+	try {
+		if (!(window.XMLHttpRequest))
+		{
+			 //ie
+			xmlhttpClick =  new ActiveXObject("Microsoft.XMLHTTP");
+			xmlhttpClick.onreadystatechange = procfunction;
+			xmlhttpClick.open("POST", url, true);
+			xmlhttpClick.send(post);
+		}
+		else
+		{
+			// everyone else
+
+				xmlhttpClick =  new XMLHttpRequest();
+				xmlhttpClick.onreadystatechange = procfunction;
+				xmlhttpClick.open("POST", url, true);
+				xmlhttpClick.send(post);
+		}
+	 }
+	 catch(e)
+	 {
+		alert(e);
+		alert("if you just got a security exception, its because you need to serve the .html file from the same server as where you're sending the XML requests to!");
+	 }
+}
+
+
+
+function XMLProgressFunctionClick()
+{
+  if ( (xmlhttpClick.readyState == 4) && (xmlhttpClick.status == 200) )
+  {
+       log("XML reponse received");
+       //we got a good response.  We need to process it!
+       if (xmlhttpClick.responseXML == null)
+           return;
+	   fc_node =  getElements(xmlhttpClick.responseXML,"wfs","FeatureCollection")[0];
+	   if (fc_node == null)
+	      return;
+	   fm_nodes = getElements(fc_node,"gml","featureMember");
+	   if (fm_nodes == null)
+	      return;
+
+	   log("   XML has "+fm_nodes.length +" features!");
+
+	   if (fm_nodes.length ==0)
+	   {
+	       addNewFeature(WMSCLICKX,WMSCLICKY);
+	   }
+
+	   fm = fm_nodes[0]; // just want 1st
+
+	   if (fm == null)
+	      return;
+
+	   poi_nodes = getElements(fm,"tiger","poi");
+
+	   if ( (poi_nodes==null) ||(poi_nodes.length!=1))
+	       return;
+	   poi_feature = poi_nodes[0];
+
+
+	   feature_name = getElements(poi_feature,"tiger","NAME")[0].firstChild.nodeValue;
+	   feature_thumb = getElements(poi_feature,"tiger","THUMBNAIL")[0].firstChild.nodeValue;
+	   feature_page = getElements(poi_feature,"tiger","MAINPAGE")[0].firstChild.nodeValue;
+	   log("dealing with feature [name="+feature_name+", thumb="+feature_thumb+", page="+feature_page+"]");
+	   window.location =   feature_page ;
+  }
+}
+
+function addNewFeature(x,y)
+{
+    formElement = document.getElementsByName("newFeatureForm")[0];
+    formElement.elements[0].value = WMSCLICKX;
+    formElement.elements[1].value = WMSCLICKY;
+    formElement.submit();
+}
+
+//handle mouse up
+function mouseup(e)
+{
+   if (drawbox ==0)
+       return false; // dont zoom
+
+         rect = getCurrentDrawingBBox(e);
+         drawbox=0;
+         drawBox(0,0,0,0);
+         if ( (rect.width>2) || (rect.height>2) )
+         {
+   		 	log("mouse up event -- zoom");
+   		 	handleZoom(rect);
+   		 }
+   		 else
+   		 {
+   		    log("mouse up event -- click");
+   		    handleClick(rect)
+   		 }
+
+	return false;
+}
+
+// assumes (1) ancor set (2) "e" is event with the mouse location in it.
+// returns a new Rectangle() with the screen dimensions of the bbox
+function getCurrentDrawingBBox(e)
+{
+	var X = (navigator.appName == 'Netscape')? e.pageX : event.x+document.body.scrollLeft;
+	var Y = (navigator.appName == 'Netscape')? e.pageY : event.y+document.body.scrollTop;
+
+
+        imgElement = document.getElementsByName("myImage")[0];
+
+		//img_x =imgElement.offsetLeft-imgElement.scrollLeft;
+		//img_y =imgElement.offsetTop-imgElement.scrollTop;
+
+		//		log("image1 x="+img_x+",y="+img_y);
+
+   	img_x = locationLeft(imgElement);
+	img_y = locationTop(imgElement);
+
+
+		//log("image x="+img_x+",y="+img_y);
+
+		img_width=imgElement.width;
+		img_height=imgElement.height;
+
+             //constrain BBOX to image location on the page
+		if (X<img_x)
+		   X =  img_x;
+
+		if (X>(img_x+img_width))
+		   X= (img_x+img_width);
+
+	    if (Y<img_y)
+		   Y=  img_y;
+
+	    if (Y>(img_y+img_height))
+	       Y= (img_y+img_height);
+
+	        var startX;
+		    var startY;
+		    var width;
+		    var height;
+
+
+		      // flip around the bbox if the user moves mouse left of the ancor point
+		    if (ancorX<X)
+		    {
+		       startX = ancorX;
+		       width=(X-ancorX);
+		    }
+		    else
+		    {
+		       startX = X;
+		       width=(ancorX-X);
+		    }
+
+
+		    if (ancorY<Y)
+		     {
+		        startY = ancorY;
+		        height=(Y-ancorY);
+		     }
+		     else
+		     {
+		        startY = Y;
+		        height=(ancorY-Y);
+			 }
+
+    return new Rectangle(startX,startY,width,height);
+}
+
+// popupTimer
+// 1. mousemove - kill timer &  set timer if over image and not drawing
+//handle moving them mouse
+// draw the bounding box (properly clipped) if required
+function mousemove(e)
+{
+	  var xPage = (navigator.appName == 'Netscape')? e.pageX : event.x+document.body.scrollLeft;
+	  var yPage = (navigator.appName == 'Netscape')? e.pageY : event.y+document.body.scrollTop;
+
+
+	clearPopupTimer();
+
+          //kill popup
+          //div_to_modify = document.getElementById("popupImageDiv");
+
+         	//ie has bug - dont kill if the mouse hasnt actually moved!
+          if  (!( (xPage == currentPopupX) && (yPage == currentPopupY) ))
+          {
+			  img_to_modify = document.getElementsByName("popupImage")[0];
+			  img_to_modify.style.display = 'none';
+			  //div_to_modify.style.clip = 'rect(0,0px, 0px,0)';
+			  //div_to_modify.style.display = 'none';
+		   }
+
+	if (!(drawbox))
+	{
+	         //if over image then setup the timer
+		     if (onImg(xPage,yPage))
+		     {
+		         setPopupTimer(xPage,yPage);
+  			 }
+
+         return true;  //nothing to draw
+	}
+
+
+    bboxRect = getCurrentDrawingBBox(e);
+
+ //   log("bbox:"+bboxRect.x+" "+bboxRect.y+" "+bboxRect.width+" "+bboxRect.height);
+
+    drawBox(bboxRect.x,bboxRect.y,bboxRect.width,bboxRect.height)
+
+   return false; //trickle event up
+}
+
+//draw the box.
+// you would think you could just draw the box with a single DIV, but
+// IE has a "minimum" height for the div, so we draw it as 4 line
+function drawBox(startX,startY,width,height)
+{
+
+    //premade divs to modify
+	  div_to_modifyA = document.getElementById("bboxDivA");
+	  div_to_modifyB = document.getElementById("bboxDivB");
+	  div_to_modifyC = document.getElementById("bboxDivC");
+	  div_to_modifyD = document.getElementById("bboxDivD");
+
+    //top
+      div_to_modifyA.style.left = startX+"px";
+	  div_to_modifyA.style.top = startY+"px";
+	  div_to_modifyA.style.width = width+"px";
+      div_to_modifyA.style.height = "1px";
+      div_to_modifyA.style.clip = 'rect(0,'+width+'px,'+1+'px,0)';
+
+
+
+    //bottom
+
+	  div_to_modifyB.style.left = startX+"px";
+	  div_to_modifyB.style.top = (startY+height)+"px";
+	  div_to_modifyB.style.width = width+"px";
+	  div_to_modifyB.style.height = "1px";
+	  div_to_modifyB.style.clip = 'rect(0,'+width+'px,'+1+'px,0)';
+
+
+
+    //right
+
+          div_to_modifyC.style.left = (startX+width)+"px";
+		  div_to_modifyC.style.top =  startY+"px";
+		  div_to_modifyC.style.width ="1px";
+	      div_to_modifyC.style.height = height+"px";
+	      div_to_modifyC.style.clip = 'rect(0,'+1+'px,'+height+'px,0)';
+
+
+    //left
+
+  		  div_to_modifyD.style.left = (startX)+"px";
+		  div_to_modifyD.style.top =  startY+"px";
+		  div_to_modifyD.style.width ="1px";
+	      div_to_modifyD.style.height = height+"px";
+	      div_to_modifyD.style.clip = 'rect(0,'+1+'px,'+height+'px,0)';
+}
+
+function log(text)
+{
+  IFrameElement = document.getElementsByName("logFrame")[0];
+
+
+
+	  //get doc
+	  if (IFrameElement.contentDocument)
+	  {
+		IFrameDoc = IFrameElement.contentDocument;
+	  }
+	  else if (IFrameElement.contentWindow)
+	  {
+		IFrameDoc = IFrameElement.contentWindow.document;
+	  }
+	  else if (IFrameElement.document)
+	  {
+		IFrameDoc = IFrameElement.document;
+	  }
+	  else
+	  {
+		return true;
+	  }
+
+
+     //put a <div><pre></pre></div>
+  if (IFrameDoc.body.getElementsByTagName("div")[0] ==null)
+  {
+
+ 	   divNode = IFrameDoc.createElement("div");
+ 	   preNode = IFrameDoc.createElement("pre");
+ 	   preNode.appendChild(IFrameDoc.createTextNode(""));
+ 	   divNode.appendChild(preNode);
+
+       IFrameDoc.body.appendChild(divNode);
+
+
+       //alert(IFrameDoc.body.getElementsByTagName("div")[0] );
+   }
+
+
+   // add the text
+   //<div><pre>  text<br>  </pre></div>
+  preNode = IFrameDoc.body.getElementsByTagName("pre")[0];
+
+  textNode = IFrameDoc.createTextNode(text) ;
+
+  preNode.appendChild(  textNode  );
+  preNode.appendChild(  IFrameDoc.createElement("br")  );
+//  textNode.scrollIntoView(true);
+}
+
+function zoomout()
+{
+   // okay, now we calculate the center of the bbox in WMS coordinates
+   centerWMSX = CURRENTBBOX.x + CURRENTBBOX.width/2.0;
+   centerWMSY = CURRENTBBOX.y + CURRENTBBOX.height/2.0;
+
+
+   aspect = 2.0;
+
+   //have center and a zoom ratio!
+
+   sizeX = CURRENTBBOX.width *  aspect;
+   sizeY = CURRENTBBOX.height *  aspect;
+
+
+   xminWMS = centerWMSX - sizeX/2.0;
+   yminWMS = centerWMSY - sizeY/2.0; // opposite of page coords (Y goes up)
+
+
+   CURRENTBBOX= new Rectangle(xminWMS,yminWMS, sizeX,sizeY);
+
+
+   src = getMapURL();
+
+   log("setting img location to "+src);
+   document.body.style.cursor ='wait';
+   imgElement.src = src;
+}
+
+
+
+function moveup()
+{
+   CURRENTBBOX.y = CURRENTBBOX.y +CURRENTBBOX.height/2.0;
+
+      src = getMapURL();
+
+      log("setting img location to "+src);
+      document.body.style.cursor ='wait';
+      imgElement.src = src;
+}
+function movedown()
+{
+   CURRENTBBOX.y = CURRENTBBOX.y -CURRENTBBOX.height/2.0;
+
+      src = getMapURL();
+
+      log("setting img location to "+src);
+      document.body.style.cursor ='wait';
+      imgElement.src = src;
+}
+function moveleft()
+{
+      CURRENTBBOX.x = CURRENTBBOX.x -CURRENTBBOX.width/2.0;
+
+      src = getMapURL();
+
+      log("setting img location to "+src);
+      document.body.style.cursor ='wait';
+      imgElement.src = src;
+}
+function moveright()
+{
+       CURRENTBBOX.x = CURRENTBBOX.x +CURRENTBBOX.width/2.0;
+
+      src = getMapURL();
+
+      log("setting img location to "+src);
+      document.body.style.cursor ='wait';
+      imgElement.src = src;
+}
+
+
+
+
+</script>
+
+</head>
+
+
+
+
+
+<body onload="setup()">
+
+
+<h2>OpenPlans.org Geoserver WFS/WMS Demonstration Application</h2>
+<button type="button"  onclick="zoomout()" value="Zoom Out">Zoom Out</button>
+<table name="imgTable">
+<tr><td colspan=3><button style='background-color: #eecccc;width: 100%; height: 20px;' onclick="moveup()">up</button></td></tr>
+<tr><td><button style='background-color: #eecccc;width: 20px; height: 407px' onclick="moveleft()"><</button></td>
+<td>
+<div id="abc">
+<div id="mydiv2" style="" >
+	<img name="myImage" src="original.png" onload='document.body.style.cursor ="";'>
+	<div id="bboxDivA"  STYLE="position:absolute; padding:0px; top:00px; left:0px; width:00px; height:00px; border:1px #FF0000 solid;"></DIV>
+	<div id="bboxDivB"  STYLE="position:absolute; padding:0px; top:00px; left:0px; width:00px; height:00px; border:1px #FF0000 solid;"></DIV>
+	<div id="bboxDivC"  STYLE="position:absolute; padding:0px; top:00px; left:0px; width:00px; height:00px; border:1px #FF0000 solid;"></DIV>
+	<div id="bboxDivD"  STYLE="position:absolute; padding:0px; top:00px; left:0px; width:00px; height:00px; border:1px #FF0000 solid;"></DIV>
+	<div id="popupImageDiv" STYLE="position:absolute; padding:0px; top:00px; left:0px; width:00px; height:00px; border:0px #FF0000 solid;clip: rect(0,0px,0px,0)">
+	<img name="popupImage" onload="popupImageloaded()"></DIV>
+</div>
+</div>
+</td>
+<td halign=right><button style='background-color: #eecccc;width: 20px; height: 407px;align: right;' onclick="moveright()">></button></td></tr>
+<tr> <td colspan=3><button style='background-color: #eecccc;width: 100%; height: 20px;' onclick="movedown()">down</button></td></tR>
+</table>
+
+<center>Hover over the yellow and red dots to see a thumbnail of a picture. Then click on the picture to see it full size.<br>
+You can also click anywhere on the map to add your own image.</center>
+
+<br>
+<br>
+<h3><center>DEBUG LOG</center></h3>
+<iframe width=90% height=150px name=logFrame >
+</iframe>
+
+<form name="newFeatureForm" action=add_feature.html>
+<input type=hidden name=x>
+<input type=hidden name=y>
+</form>
+
+</body>
+</html>

@@ -1,0 +1,23 @@
+<html>
+  <head>
+    <script src="http://dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=6.2&mkt=en-us"></script>
+    <script>
+     var map;
+
+     function OnPageLoad()
+     {
+        map = new VEMap('map');
+        map.LoadMap();
+
+        var geoRssLayer = new VEShapeLayer();
+        var geoRssLayerSpec = new VEShapeSourceSpecification(VEDataType.GeoRSS, "http://sigma.openplans.org:8080/geoserver/wms/reflect?layers=states&format=rss&format_options=encoding:latlong", geoRssLayer);
+        map.ImportShapeLayerData(geoRssLayerSpec,null,false);
+    }
+   </script>
+ </head>
+ <body onload="OnPageLoad();">
+    <div id="map" style="position:relative;width:800px;height:600px;"></div>
+    Microsoft Virtual Earth and GeoRSS demo. Will work only if loaded in Internet Explorer.
+  </body>
+
+</html>

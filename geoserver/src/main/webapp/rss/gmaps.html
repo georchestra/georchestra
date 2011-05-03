@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <title>Google Maps JavaScript API Example</title>
+    <!-- 
+       This Google key is for http://localhost:8080, so you won't be able to see the RSS demo unless it's served from there.
+       If you need another key/port combination, grab another key here: http://www.google.com/apis/maps/signup.html 
+     -->
+    <script src="http://maps.google.com/maps?file=api&amp;v=2.x&amp;key=ABQIAAAAIeWnOWItAsdtOsR3kxiUQhTwM0brOpm-All5BF6PoaKBxRWWERSQAgEHUq2jStqEx-kpNgzntg87iw"
+      type="text/javascript"></script>
+    <script type="text/javascript">
+
+    //<![CDATA[
+
+    function load() {
+      if (GBrowserIsCompatible()) {
+        var map = new GMap2(document.getElementById("map"));
+        map.addControl(new GLargeMapControl());
+        map.setCenter(new GLatLng(40,-98), 4);
+
+        var geoXml = new GGeoXml("http://sigma.openplans.org:8080/geoserver/wms/reflect?layers=states&format=rss&format_options=encoding:latlong");
+        map.addOverlay(geoXml);
+      }
+    }
+
+   //]]>
+    </script>
+  </head>
+  <body onload="load()" onunload="GUnload()">
+    <div id="map" style="width: 800px; height: 600px"></div>
+    Gmaps and GeoRSS demo. Will work only if loaded from http://localhost:8080/geoserver.
+  </body>
+</html>
