@@ -1,0 +1,24 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.georchestra</groupId>
+  <artifactId>root</artifactId>
+  <packaging>pom</packaging>
+  <version>0.9</version>
+  <name>Root project of the georchestra project</name>
+  <url>http://maven.apache.org</url>
+
+  <modules>
+		<module>mif-2.5.8</module>
+		<module>cas-server-webapp</module>
+		<module>doc</module>
+		<module>embedded-ldap</module>
+		<module>epsg-extension</module>
+		<module>extractorapp</module>
+		<module>geonetwork</module>
+		<module>geoserver</module>
+		<module>geoserver-security</module>
+		<module>mapfishapp</module>
+		<module>security-proxy</module>
+	</modules>
+</project>
