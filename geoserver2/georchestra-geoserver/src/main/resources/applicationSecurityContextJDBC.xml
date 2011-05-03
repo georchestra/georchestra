@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+                        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd">
+
+
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName">
+			<value>com.mysql.jdbc.Driver</value>
+		</property>
+		<property name="url">
+			<value>jdbc:mysql://localhost:3306/cas_admin_dev</value>
+		</property>
+		<property name="username">
+			<value>cas_admin</value>
+		</property>
+		<property name="password">
+			<value>bobleponge</value>
+		</property>
+	</bean>
+
+	<bean id="userDetailsService"
+		class="org.geoserver.security.GeoserverSecurityUserDao">
+    <property name="userManagerDelegate" ref="userDetailsServiceDelegate" />
+    <property name="groupManagerDelegate" ref="userDetailsServiceDelegate" />
+  </bean>
+
+	<bean id="userDetailsServiceDelegate"
+		class="org.geoserver.security.ExtendedJdbcUserDetailsService">
+		<property name="rolePrefix" value="ROLE_" />
+		<property name="dataSource" ref="dataSource" />
+		<property name="authenticationManager">
+			<ref bean="authenticationManager" />
+		</property>
+		<property name="usersByUsernameQuery">
+      <value>
+        <![CDATA[
+				SELECT email,password,enabled FROM users WHERE email = ?
+        ]]>
+      </value>
+		</property>
+		<property name="userExistsSql">
+      <value>
+        <![CDATA[
+				SELECT email FROM users WHERE email = ?
+        ]]>
+      </value>
+		</property>
+		<property name="authoritiesByUsernameQuery">
+      <value>
+        <![CDATA[
+				SELECT users.email,roles.role_name
+				FROM users
+				JOIN authorities ON authorities.user_id = users.id
+				JOIN roles ON roles.id = authorities.role_id
+				WHERE users.email = ?
+        ]]>
+      </value>
+		</property>
+		<property name="changePasswordSql">
+      <value>
+        <![CDATA[
+				UPDATE users SET password = ? WHERE email = ?
+        ]]>
+      </value>
+		</property>
+		<property name="updateUserSql">
+      <value>
+        <![CDATA[
+				UPDATE users SET password = ?, enabled = ? WHERE email = ?
+        ]]>
+      </value>
+		</property>
+	</bean>
+</beans>
