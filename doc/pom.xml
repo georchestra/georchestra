@@ -1,0 +1,76 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>geobretagne-doc</groupId>
+    <artifactId>geobretagne-doc</artifactId>
+    <packaging>war</packaging>
+    <version>1.0</version>
+    <name>geobretagne doc webapp</name>
+    <url>http://maven.apache.org</url>
+ 
+
+    <build>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-war-plugin</artifactId>
+          <configuration>
+            <warName>doc</warName>
+            <webResources>
+              <resource>
+                <directory>target/docbkx</directory>
+                <filtering>false</filtering>
+              </resource>
+            </webResources>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>com.agilejava.docbkx</groupId>
+          <artifactId>docbkx-maven-plugin</artifactId>
+          <executions>
+            <execution>
+              <goals>
+                <goal>generate-html</goal>
+                <goal>generate-pdf</goal>
+              </goals>
+              <phase>generate-sources</phase>
+            </execution>
+          </executions>
+          <dependencies>
+            <dependency>
+              <groupId>org.docbook</groupId>
+              <artifactId>docbook-xml</artifactId>
+              <version>4.4</version>
+              <scope>runtime</scope>
+            </dependency>
+          </dependencies>
+	    <configuration>
+          	<htmlStylesheet>./css/default.css</htmlStylesheet>
+            </configuration>
+        </plugin>
+        <plugin>
+          <artifactId>maven-antrun-plugin</artifactId>
+          <executions>
+             <execution>
+              <phase>generate-sources</phase>
+              <configuration>
+                <tasks>
+                  <copy todir="./target/docbkx/html/img">
+                    <fileset dir="./src/docbkx/img" />
+                  </copy>
+                  <copy todir="./target/docbkx/html/css">
+                    <fileset dir="./src/docbkx/css" />
+                  </copy>
+               </tasks>
+              </configuration>
+              <goals>
+                <goal>run</goal>
+              </goals>
+            </execution>
+         </executions>
+        </plugin>
+      </plugins>
+    </build>
+
+</project>
+

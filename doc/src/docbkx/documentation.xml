@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+<!ENTITY introduction   SYSTEM "introduction.xml">
+<!ENTITY catalogue      SYSTEM "catalogue.xml">
+<!ENTITY visualisateur  SYSTEM "visualisateur.xml">
+<!ENTITY extracteur     SYSTEM "extracteur.xml">
+<!ENTITY conclusion     SYSTEM "conclusion.xml">
+]>
+<book xml:lang="fr">
+    <title>Documentation de GeoBretagne</title>
+
+    &introduction;
+
+    &catalogue;
+
+    &visualisateur;
+
+    &extracteur;
+
+    &conclusion;
+   
+</book>

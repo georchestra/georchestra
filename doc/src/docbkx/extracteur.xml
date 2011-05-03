@@ -1,0 +1,19 @@
+<chapter id="extractor">
+  <title>Extracteur</title>
+  <para>L'Extracteur permet d'extraire des données géographiques simplement
+  ; le processus prévient l'utilisateur par mail lorsque la tâche est
+  terminée.
+  </para>
+
+  <para>
+    L'application se présente sous la forme suivante, dans votre navigateur
+    internet :
+  </para>
+
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="./img/extractorapp.png" width="15cm" align="center" />
+    </imageobject>
+  </mediaobject>
+
+</chapter>

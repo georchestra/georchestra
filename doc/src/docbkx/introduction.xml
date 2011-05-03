@@ -1,0 +1,59 @@
+<chapter id="introduction">
+
+  <title>Introduction</title>
+
+  <para>Ici le texte concernant une rapide introduction &#xE0; G&#xE9;oBretagne, Contextualisation, ...</para>
+
+  <sect1 id="introduction_sect1_1">
+
+    <title>sous-partie de l'introduction</title>
+
+    <para>Dans ce document, nous tacherons de présenter les différentes
+    facettes offertes par DocBook dans le cadre de la rédaction de la documentation
+    du projet Géobretagne. Notez que pour réaliser un lien hypertexte, vous pouvez
+    utiliser une balise ulink ; ainsi, le site officiel de geobretagne sera défini
+    de la façon suivante :  <ulink url="http://www.geobretagne.fr/">Site de
+    GéoBretagne</ulink>
+    </para>
+
+  </sect1>
+
+
+  <sect1 id="introduction_sect1_2">
+
+    <title>Contextualisation du projet</title>
+
+    <para>
+      Ici est décrit la seconde section de l'introduction. Il est possible apparemment de définir jusqu'à 5
+    niveaux de sections, de sect1 à sect5. Sur internet, la documentation indique que :</para>
+
+    <blockquote>
+      <attribution><ulink
+                       url="http://www.ibiblio.org/oswg/oswg-nightly/oswg/en_US.ISO_8859-1/articles/DocBook-Intro/docbook-intro.html#STEP5">A
+      Practical introduction to DocBook</ulink></attribution>
+
+      <para>Adding subsections and sub-subsections is also simple. A second
+      level section starts and ends with "sect2" tags, third level with
+      "sect3", and so on. The standard DocBook DTD only supports up to a
+      level 5 section, so there are no "sect6", "sect7" or higher
+      tags. Unless you're doing a massively long and professional book,
+      however, you probably won't need more than 5 section levels.</para>
+
+    </blockquote>
+
+
+    <para>une balise sect2 doit etre fille d'une balise sect1, et ainsi de suite
+    jusqu'à l'éventuel cinquième niveau d'imbrication.</para>
+
+    <para>
+      Ce canevas de documentation a été écrit par
+      <email>pierre.mauduit@camptocamp.com</email>. Il introduira les
+      principales balises utiles pour la rédaction d'une documentation avec
+      DocBook.
+    </para>
+
+  </sect1>
+
+
+
+</chapter>

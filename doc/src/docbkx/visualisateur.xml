@@ -1,0 +1,22 @@
+<chapter id="viewer">
+  <title>Visualisateur</title>
+  <para>
+    Le visualisateur intégré dans le projet est basé sur le logiciel
+    <emphasis>MapFish</emphasis>, développé par
+    <emphasis>CamptoCamp</emphasis>. Ce logiciel est lui-même basé sur les
+    briques libres <emphasis>GeoExt</emphasis> et
+    <emphasis>OpenLayers</emphasis>.
+  </para>
+
+  <para>
+    Ci-dessous, nous présentons l'aspect graphique de l'application tel que
+    visible dans un navigateur internet :
+  </para>
+
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="./img/mapfishapp.png" width="15cm" align="center" />
+    </imageobject>
+  </mediaobject>
+
+</chapter>
