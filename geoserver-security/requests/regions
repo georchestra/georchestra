@@ -1,0 +1,4 @@
+#!/bin/sh
+
+curl -H "sec-roles: ROLE_GS_ADMIN_District1, ROLE_GS_ADMIN_District2" http://localhost:10080/gssec/ws/regions
+

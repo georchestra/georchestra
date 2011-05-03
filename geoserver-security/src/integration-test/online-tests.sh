@@ -1,0 +1,1 @@
+../../../../integration-testing/trunk/online-tests.sh
