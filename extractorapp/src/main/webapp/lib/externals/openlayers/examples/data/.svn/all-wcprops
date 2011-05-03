@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/data
+END
+line.json
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/data/line.json
+END
+roads.json
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/data/roads.json
+END
+point.json
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/data/point.json
+END
+poly.json
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/data/poly.json
+END

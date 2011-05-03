@@ -1,0 +1,7 @@
+[GeoExt.js]
+root = ../lib
+license = geoext-license.js
+exclude =
+    GeoExt.js
+    GeoExt/SingleFile.js
+    overrides/override-ext-ajax.js

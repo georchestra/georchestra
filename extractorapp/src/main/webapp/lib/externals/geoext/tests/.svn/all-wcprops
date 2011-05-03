@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/!svn/ver/2394/sandbox/camptocamp/geobretagne/tests
+END
+xml_eq.js
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/!svn/ver/2216/sandbox/camptocamp/geobretagne/tests/xml_eq.js
+END
+geom_eq.js
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/!svn/ver/2216/sandbox/camptocamp/geobretagne/tests/geom_eq.js
+END
+run-tests.html
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/!svn/ver/2216/sandbox/camptocamp/geobretagne/tests/run-tests.html
+END
+index.html
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/!svn/ver/2216/sandbox/camptocamp/geobretagne/tests/index.html
+END
+list-tests.html
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/!svn/ver/2216/sandbox/camptocamp/geobretagne/tests/list-tests.html
+END

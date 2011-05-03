@@ -1,0 +1,1217 @@
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples
+END
+wms-v13.html
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/wms-v13.html
+END
+arcims.html
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/arcims.html
+END
+proxy.cgi
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/proxy.cgi
+END
+tilecache.html
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/tilecache.html
+END
+animator.js
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/animator.js
+END
+sundials.html
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/sundials.html
+END
+wfs-filter.html
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/wfs-filter.html
+END
+canvas.js
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/canvas.js
+END
+split-feature.html
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/split-feature.html
+END
+wideshort.jpg
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/wideshort.jpg
+END
+xyz-offset.js
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/xyz-offset.js
+END
+mapserver_untiled.html
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/mapserver_untiled.html
+END
+kamap.html
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/kamap.html
+END
+gml-layer.html
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/gml-layer.html
+END
+teleportation.html
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/teleportation.html
+END
+xyz-esri.html
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/xyz-esri.html
+END
+image-layer.html
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/image-layer.html
+END
+panel.html
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/panel.html
+END
+xml.html
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/xml.html
+END
+wmts.js
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/wmts.js
+END
+controls.html
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/controls.html
+END
+kamap.txt
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/kamap.txt
+END
+georss-markers.html
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/georss-markers.html
+END
+transform-feature.html
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/transform-feature.html
+END
+google-reproject.html
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/google-reproject.html
+END
+regular-polygons.html
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/regular-polygons.html
+END
+boxes-vector.html
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/boxes-vector.html
+END
+WMSDescribeLayerParser.html
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/WMSDescribeLayerParser.html
+END
+filter.html
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/filter.html
+END
+custom-control.html
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/custom-control.html
+END
+strategy-bbox.html
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/strategy-bbox.html
+END
+graphic-name.html
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/graphic-name.html
+END
+lite.html
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/lite.html
+END
+thinlong.jpg
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/thinlong.jpg
+END
+wmts-getfeatureinfo.html
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/wmts-getfeatureinfo.html
+END
+overviewmap.html
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/overviewmap.html
+END
+marker-shadow.html
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/marker-shadow.html
+END
+events.html
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/events.html
+END
+example-list.html
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/example-list.html
+END
+markersTextLayer.html
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/markersTextLayer.html
+END
+marker_shadow.png
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/marker_shadow.png
+END
+drag-feature.html
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/drag-feature.html
+END
+mm.html
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/mm.html
+END
+WMSPost.html
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/WMSPost.html
+END
+vector-features.html
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/vector-features.html
+END
+wrapDateLine.html
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/wrapDateLine.html
+END
+style.css
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/style.css
+END
+layerswitcher.html
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/layerswitcher.html
+END
+getfeatureinfo-control.html
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/getfeatureinfo-control.html
+END
+popups.html
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/popups.html
+END
+draw-feature.html
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/draw-feature.html
+END
+projected-map.html
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/projected-map.html
+END
+mouse-position.html
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/mouse-position.html
+END
+select-feature-openpopup.html
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/select-feature-openpopup.html
+END
+filter-strategy.js
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/filter-strategy.js
+END
+osm.html
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/osm.html
+END
+wfs-states.html
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/wfs-states.html
+END
+georss.html
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/georss.html
+END
+google-v3.html
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/google-v3.html
+END
+wms-long-url.html
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/wms-long-url.html
+END
+popupMatrix.jpg
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/popupMatrix.jpg
+END
+wfs-states.js
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/wfs-states.js
+END
+buffer.html
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/buffer.html
+END
+worldwind.html
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/worldwind.html
+END
+custom-control-point.html
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/custom-control-point.html
+END
+yahoo.html
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/yahoo.html
+END
+modify-feature.html
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/modify-feature.html
+END
+styles-rotation.html
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/styles-rotation.html
+END
+doubleSetCenter.html
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/doubleSetCenter.html
+END
+styles-unique.html
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/styles-unique.html
+END
+wmts-capabilities.js
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/wmts-capabilities.js
+END
+notile.html
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/notile.html
+END
+snap-split.html
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/snap-split.html
+END
+wmst.html
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/wmst.html
+END
+xhtml.html
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/xhtml.html
+END
+kml-track.js
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/kml-track.js
+END
+wfs-protocol.html
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/wfs-protocol.html
+END
+protocol-gears.html
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/protocol-gears.html
+END
+KMLParser.html
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/KMLParser.html
+END
+ve-novibrate.html
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/ve-novibrate.html
+END
+kml-track.kml
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/kml-track.kml
+END
+editingtoolbar.html
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/editingtoolbar.html
+END
+getfeatureinfo.html
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/getfeatureinfo.html
+END
+urban.html
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/urban.html
+END
+wmts-getfeatureinfo.js
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/wmts-getfeatureinfo.js
+END
+osm-layer.html
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/osm-layer.html
+END
+ordering.html
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/ordering.html
+END
+vector-features-with-text.html
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/vector-features-with-text.html
+END
+arcims-thematic.html
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/arcims-thematic.html
+END
+strategy-cluster-threshold.html
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/strategy-cluster-threshold.html
+END
+xyz-offset.html
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/xyz-offset.html
+END
+pan-zoom-panels.html
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/pan-zoom-panels.html
+END
+boxes.html
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/boxes.html
+END
+editingtoolbar-outside.html
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/editingtoolbar-outside.html
+END
+intersects.html
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/intersects.html
+END
+filter-strategy.html
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/filter-strategy.html
+END
+wmc.html
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/wmc.html
+END
+web-mercator.html
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/web-mercator.html
+END
+transition.html
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/transition.html
+END
+wfs-filter.js
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/wfs-filter.js
+END
+wmts.html
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/wmts.html
+END
+mapguide.html
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/mapguide.html
+END
+example.html
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/example.html
+END
+kml-layer.html
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/kml-layer.html
+END
+accessible.html
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/accessible.html
+END
+outOfRangeMarkers.html
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/outOfRangeMarkers.html
+END
+navigation-history.html
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/navigation-history.html
+END
+mousewheel-interval.html
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/mousewheel-interval.html
+END
+wfs-reprojection.html
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/wfs-reprojection.html
+END
+late-render.html
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/late-render.html
+END
+markerResize.html
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/markerResize.html
+END
+markers.html
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/markers.html
+END
+mapserver.html
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/mapserver.html
+END
+fractional-zoom.html
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/fractional-zoom.html
+END
+sos.html
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/sos.html
+END
+wfs-protocol-transactions.html
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/wfs-protocol-transactions.html
+END
+mvs.html
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/mvs.html
+END
+google-v3-alloverlays.js
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/google-v3-alloverlays.js
+END
+wms.html
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/wms.html
+END
+custom-style.html
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/custom-style.html
+END
+wfs-reprojection.js
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/wfs-reprojection.js
+END
+georss-flickr.html
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/georss-flickr.html
+END
+wms-long-url.js
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/wms-long-url.js
+END
+wfs-protocol-transactions.js
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/wfs-protocol-transactions.js
+END
+resize-features.html
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/resize-features.html
+END
+snapping.html
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/snapping.html
+END
+graticule.html
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/graticule.html
+END
+dynamic-text-layer.html
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/dynamic-text-layer.html
+END
+wmts-capabilities.html
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/wmts-capabilities.html
+END
+SLDSelect.html
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/SLDSelect.html
+END
+kml-track.html
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/kml-track.html
+END
+behavior-fixed-http-gml.html
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/behavior-fixed-http-gml.html
+END
+getfeature-wfs.html
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/getfeature-wfs.html
+END
+animated_panning.html
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/animated_panning.html
+END
+highlight-feature.html
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/highlight-feature.html
+END
+measure.html
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/measure.html
+END
+fullScreen.html
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/fullScreen.html
+END
+styles-context.html
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/styles-context.html
+END
+navtoolbar.html
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/navtoolbar.html
+END
+select-feature.html
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/select-feature.html
+END
+navtoolbar-alwaysZoom.html
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/navtoolbar-alwaysZoom.html
+END
+all-overlays.html
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/all-overlays.html
+END
+canvas.html
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/canvas.html
+END
+navigation-control.html
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/navigation-control.html
+END
+strategy-cluster.html
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/strategy-cluster.html
+END
+all-overlays-google.html
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/all-overlays-google.html
+END
+spherical-mercator.html
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/spherical-mercator.html
+END
+wfs-snap-split.html
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/wfs-snap-split.html
+END
+popupMatrix.html
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/popupMatrix.html
+END
+style-rules.html
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/style-rules.html
+END
+all-overlays-google.js
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/all-overlays-google.js
+END
+point-track-markers.html
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/point-track-markers.html
+END
+google-v3-alloverlays.html
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/google-v3-alloverlays.html
+END
+georss.xml
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/georss.xml
+END
+stylemap.html
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/stylemap.html
+END
+web-mercator.js
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/web-mercator.js
+END
+zoomLevels.html
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/zoomLevels.html
+END
+style-rules.js
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/style-rules.js
+END
+example.js
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/example.js
+END
+geojson.html
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/geojson.html
+END
+strategy-paging.html
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/strategy-paging.html
+END
+yelp-georss.xml
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/yelp-georss.xml
+END
+osm-google.html
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/osm-google.html
+END
+getfeatureinfo-popup.html
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/getfeatureinfo-popup.html
+END
+wms-untiled.html
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/wms-untiled.html
+END
+google-v3.js
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/google-v3.js
+END
+vector-formats.html
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/vector-formats.html
+END
+google.html
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/google.html
+END
+sld-parser.html
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/sld-parser.html
+END
+restricted-extent.html
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/restricted-extent.html
+END
+navtoolbar-outsidemap.html
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/navtoolbar-outsidemap.html
+END
+bing.html
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/bing.html
+END
+osm-google.js
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/osm-google.js
+END
+multiserver.html
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/multiserver.html
+END
+layerLoadMonitoring.html
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/layerLoadMonitoring.html
+END
+layer-opacity.html
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/layer-opacity.html
+END
+arcgis93rest.html
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/arcgis93rest.html
+END
+sld.html
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/sld.html
+END
+setextent.html
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/setextent.html
+END
+small.jpg
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/small.jpg
+END
+widelong.jpg
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/widelong.jpg
+END
+click.html
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/click.html
+END
+debug.html
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/debug.html
+END
+symbolizers-fill-stroke-graphic.html
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/symbolizers-fill-stroke-graphic.html
+END
+document-drag.html
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/document-drag.html
+END
+baseLayers.html
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/baseLayers.html
+END
+GMLParser.html
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/GMLParser.html
+END
+zoomify.html
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/zoomify.html
+END
+select-feature-multilayer.html
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/select-feature-multilayer.html
+END
+hover-handler.html
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/hover-handler.html
+END
+textfile.txt
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/textfile.txt
+END
+click-handler.html
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/click-handler.html
+END
+browser-name.html
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/browser-name.html
+END
+multimap-mercator.html
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/multimap-mercator.html
+END
+tms.html
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/tms.html
+END
+attribution.html
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/attribution.html
+END
+sundials-spherical-mercator.html
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/sundials-spherical-mercator.html
+END
+outOfRangeMarkers.txt
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/outOfRangeMarkers.txt
+END
+Jugl.js
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/Jugl.js
+END
+gutter.html
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/gutter.html
+END
+rotate-features.html
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/rotate-features.html
+END
+ve.html
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/examples/ve.html
+END

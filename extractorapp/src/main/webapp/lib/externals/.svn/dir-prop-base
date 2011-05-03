@@ -1,0 +1,13 @@
+K 13
+svn:externals
+V 299
+mapfish            http://www.mapfish.org/svn/mapfish/sandbox/camptocamp/MapFishGeoBretagne/mapfish
+openlayers         http://svn.openlayers.org/sandbox/camptocamp/geobretagne
+geoext             http://svn.geoext.org/sandbox/camptocamp/geobretagne
+ext                http://svn.geoext.org/ext/2.2.1
+
+K 13
+svn:mergeinfo
+V 0
+
+END

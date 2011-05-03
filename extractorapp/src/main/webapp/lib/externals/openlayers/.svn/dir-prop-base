@@ -1,0 +1,11 @@
+K 9
+svk:merge
+V 125
+76602705-b2f4-40f5-acac-f44cb1479b19:/local/openlayers:3114
+76602705-b2f4-40f5-acac-f44cb1479b19:/local/openlayersfoss4g:4612
+K 13
+svn:mergeinfo
+V 116
+/trunk:9457-9468
+/trunk/openlayers:9457-9468,9470-9476,9478-9558,9560-9580,9582-9591,9593-9607,9609-9618,10794-10801
+END

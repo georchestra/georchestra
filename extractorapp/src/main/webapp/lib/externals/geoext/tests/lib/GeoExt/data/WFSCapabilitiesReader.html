@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html debug="true">
+  <head>
+    <script type="text/javascript" src="../../../../../ext/adapter/ext/ext-base.js"></script>
+    <script type="text/javascript" src="../../../../../ext/ext-all-debug.js"></script>
+
+    <script type="text/javascript" src="../../../../../openlayers/lib/OpenLayers.js"></script>
+    <script type="text/javascript" src="../../../../lib/GeoExt.js"></script>
+    <script type="text/javascript" src="WFSCapabilitiesReader.js"></script>
+
+    <script type="text/javascript">
+      
+        function test_constructor(t) {
+            t.plan(2);
+            var reader = new GeoExt.data.WFSCapabilitiesReader();
+
+            var fields = reader.recordType.prototype.fields;
+
+            // 1 test
+            t.eq(fields.items.length, 5, 'number of default items is correct');
+
+            var reader = new GeoExt.data.WFSCapabilitiesReader({},[
+                {name: "foo"},
+                {name: "bar"}
+            ]);
+
+            var fields = reader.recordType.prototype.fields;
+
+            //1 test
+            t.ok(fields.items[2].name == 'foo' &&
+                 fields.items[3].name == 'bar',
+                 'field values set from configuration are correct');
+        }
+        
+        function test_read(t) {
+            t.plan(9);
+
+            var reader = new GeoExt.data.WFSCapabilitiesReader();
+
+            var records = reader.read({responseXML : doc});
+
+            //1 test
+            t.eq(records.totalRecords, 5, 'readRecords returns correct number of records');
+            
+            var record = records.records[0];
+
+            //3 tests -- testing the fields of a record
+            t.eq(record.get("name"), "archsites", "[0] correct layer name");
+            t.eq(record.get("title"), "Spearfish archeological sites", "[0] correct layer title");
+            t.eq(record.get("namespace"), "http://www.openplans.org/spearfish", "[0] correct layer namespace");
+            t.eq(
+                record.get("abstract"),
+               "Sample data from GRASS, archeological sites location, Spearfish, South Dakota, USA",
+                "[0] correct layer abstract"
+            );
+
+            //3 tests -- Testing the layer field (and its default protocol)
+            var layer = record.get("layer");
+            t.eq(layer.CLASS_NAME, "OpenLayers.Layer.Vector", "[0] layer field is of type OpenLayers.Layer.Vector");
+            t.eq(layer.protocol.CLASS_NAME, "OpenLayers.Protocol.WFS.v1_0_0", "[0] protocol is of type OpenLayers.Protocol.WFS.v1_0_0");
+            t.eq(layer.protocol.url, "http://someserver.com:8080/geoserver/wfs?", "[0] protocol has correct URL");
+            t.eq(layer.protocol.featureNS, "http://www.openplans.org/spearfish", "[0] protocol has correct featureNS");
+        }
+        
+    </script>
+  <body>
+    <div id="map"></div>
+  </body>
+</html>

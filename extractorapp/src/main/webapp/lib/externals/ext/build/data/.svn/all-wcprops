@@ -1,0 +1,113 @@
+K 25
+svn:wc:ra_dav:version-url
+V 34
+/!svn/ver/184/ext/2.2.1/build/data
+END
+XmlReader-min.js
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/!svn/ver/184/ext/2.2.1/build/data/XmlReader-min.js
+END
+JsonStore-min.js
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/!svn/ver/184/ext/2.2.1/build/data/JsonStore-min.js
+END
+DataReader-min.js
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/!svn/ver/184/ext/2.2.1/build/data/DataReader-min.js
+END
+JsonReader-min.js
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/!svn/ver/184/ext/2.2.1/build/data/JsonReader-min.js
+END
+Store-min.js
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/!svn/ver/184/ext/2.2.1/build/data/Store-min.js
+END
+Tree-min.js
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/!svn/ver/184/ext/2.2.1/build/data/Tree-min.js
+END
+Connection-min.js
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/!svn/ver/184/ext/2.2.1/build/data/Connection-min.js
+END
+ArrayReader-min.js
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/!svn/ver/184/ext/2.2.1/build/data/ArrayReader-min.js
+END
+ScriptTagProxy-min.js
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/!svn/ver/184/ext/2.2.1/build/data/ScriptTagProxy-min.js
+END
+StoreMgr-min.js
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/!svn/ver/184/ext/2.2.1/build/data/StoreMgr-min.js
+END
+SimpleStore-min.js
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/!svn/ver/184/ext/2.2.1/build/data/SimpleStore-min.js
+END
+GroupingStore-min.js
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/!svn/ver/184/ext/2.2.1/build/data/GroupingStore-min.js
+END
+MemoryProxy-min.js
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/!svn/ver/184/ext/2.2.1/build/data/MemoryProxy-min.js
+END
+DataProxy-min.js
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/!svn/ver/184/ext/2.2.1/build/data/DataProxy-min.js
+END
+SortTypes-min.js
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/!svn/ver/184/ext/2.2.1/build/data/SortTypes-min.js
+END
+DataField-min.js
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/!svn/ver/184/ext/2.2.1/build/data/DataField-min.js
+END
+Record-min.js
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/!svn/ver/184/ext/2.2.1/build/data/Record-min.js
+END
+HttpProxy-min.js
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/!svn/ver/184/ext/2.2.1/build/data/HttpProxy-min.js
+END

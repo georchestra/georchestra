@@ -1,0 +1,185 @@
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/Format
+END
+WMSDescribeLayer.js
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/Format/WMSDescribeLayer.js
+END
+GeoJSON.js
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/Format/GeoJSON.js
+END
+WMTSCapabilities.js
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/Format/WMTSCapabilities.js
+END
+WKT.js
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/Format/WKT.js
+END
+WFSCapabilities.js
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/Format/WFSCapabilities.js
+END
+JSON.js
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/Format/JSON.js
+END
+OWSContext.js
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/Format/OWSContext.js
+END
+CSWGetRecords.js
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/Format/CSWGetRecords.js
+END
+SOSCapabilities.js
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/Format/SOSCapabilities.js
+END
+WFSDescribeFeatureType.js
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/Format/WFSDescribeFeatureType.js
+END
+GML.js
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/Format/GML.js
+END
+WMSCapabilities.js
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/Format/WMSCapabilities.js
+END
+SOSGetObservation.js
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/Format/SOSGetObservation.js
+END
+SLD.js
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/Format/SLD.js
+END
+KML.js
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/Format/KML.js
+END
+WFST.js
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/Format/WFST.js
+END
+SOSGetFeatureOfInterest.js
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/Format/SOSGetFeatureOfInterest.js
+END
+Text.js
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/Format/Text.js
+END
+CSWGetDomain.js
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/Format/CSWGetDomain.js
+END
+Context.js
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/Format/Context.js
+END
+Filter.js
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/Format/Filter.js
+END
+ArcXML.js
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/Format/ArcXML.js
+END
+WMC.js
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/Format/WMC.js
+END
+WMSGetFeatureInfo.js
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/Format/WMSGetFeatureInfo.js
+END
+GPX.js
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/Format/GPX.js
+END
+OSM.js
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/Format/OSM.js
+END
+WFS.js
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/Format/WFS.js
+END
+Atom.js
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/Format/Atom.js
+END
+XML.js
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/Format/XML.js
+END
+GeoRSS.js
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/Format/GeoRSS.js
+END

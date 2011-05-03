@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/BaseTypes
+END
+Class.js
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/BaseTypes/Class.js
+END
+Element.js
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/BaseTypes/Element.js
+END
+LonLat.js
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/BaseTypes/LonLat.js
+END
+Bounds.js
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/BaseTypes/Bounds.js
+END
+Size.js
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/BaseTypes/Size.js
+END
+Pixel.js
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/BaseTypes/Pixel.js
+END

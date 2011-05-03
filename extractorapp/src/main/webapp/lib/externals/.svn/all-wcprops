@@ -1,0 +1,11 @@
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/geobretagne2/!svn/ver/1305/extractorapp/trunk/src/main/webapp/lib/externals
+END
+.gitignore
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/geobretagne2/!svn/ver/1145/extractorapp/trunk/src/main/webapp/lib/externals/.gitignore
+END

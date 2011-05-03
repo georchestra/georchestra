@@ -1,0 +1,77 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>GeoExt Tree Tools</title>
+
+        <script type="text/javascript" src="http://extjs.cachefly.net/builds/ext-cdn-771.js"></script>
+        <link rel="stylesheet" type="text/css" href="http://extjs.cachefly.net/ext-2.2.1/resources/css/ext-all.css" />
+        <link rel="stylesheet" type="text/css" href="http://extjs.cachefly.net/ext-2.2.1/examples/shared/examples.css" />
+
+        <!--
+        <script type"text/javascript" src="../../ext/adapter/ext/ext-base.js"></script>
+        <script type"text/javascript" src="../../ext/ext-all-debug.js"></script>
+        <link rel="stylesheet" type="text/css" href="../../ext/resources/css/ext-all.css"></script>
+        -->
+
+        <script src="http://openlayers.org/api/2.8/OpenLayers.js"></script>
+        <script type="text/javascript" src="../lib/GeoExt.js"></script>
+
+        <script type="text/javascript" src="tree-tools.js"></script>
+
+        <style type="text/css">
+        .gx-tree-layer-actions {
+            float: right;
+        }
+        .gx-tree-layer-action {
+            background-position: center center;
+            background-repeat: no-repeat;
+            border: 0 none;
+            height: 16px;
+            margin: 0;
+            padding: 0;
+            vertical-align: top;
+            width: 16px;
+        }
+        .gx-tree-layer-actions .delete {
+            background: transparent url(resources/img/delete.gif);
+        }
+        .gx-tree-layer-actions .up {
+            background: transparent url(resources/img/move_up.png);
+        }
+        .gx-tree-layer-actions .down {
+            background: transparent url(resources/img/move_down.png);
+        }
+        .gx-tree-layer-actions .tbar {
+            background: transparent url(resources/img/info.png);
+        }
+        .gx-tree-layer-actions .disabled {
+            opacity: 0.2;
+        }
+        .gx-toolbar {
+            background: none;
+            border-style: none;
+            left: 15;
+        }
+        .x-tree-node-el {
+            border-bottom: 1px solid #ddd;
+        }
+        .x-tree-node-collapsed .x-tree-node-icon, .x-tree-node-expanded .x-tree-node-icon, .x-tree-node-leaf .gx-tree-layer-icon {
+           width: 0px; !important;
+        }
+    </style>
+
+    </head>
+    <body>
+        <div id="desc">
+            <h1>GeoExt Tree Node UI</h1>
+
+            <p>This example shows how to add tools (actions) and components in
+            tree nodes. The tools added here allow moving the layers up and
+            down and deleting them. The component added for each node is a
+            toolbar including an opacity slider which acts on the node's
+            layer.</p>
+
+            <p>The js is not minified so it is readable. See
+            <a href="tree-tools.js">tree-tools.js</a>.</p>
+        </div>
+    </body>
+</html>

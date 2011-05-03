@@ -1,0 +1,95 @@
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/!svn/ver/2217/sandbox/camptocamp/geobretagne/tests/lib/GeoExt/widgets
+END
+Action.html
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/!svn/ver/2216/sandbox/camptocamp/geobretagne/tests/lib/GeoExt/widgets/Action.html
+END
+LegendPanel.html
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/!svn/ver/2216/sandbox/camptocamp/geobretagne/tests/lib/GeoExt/widgets/LegendPanel.html
+END
+UrlLegend.html
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/!svn/ver/2216/sandbox/camptocamp/geobretagne/tests/lib/GeoExt/widgets/UrlLegend.html
+END
+VectorLegend.html
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/2216/sandbox/camptocamp/geobretagne/tests/lib/GeoExt/widgets/VectorLegend.html
+END
+FeatureRenderer.html
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/!svn/ver/2216/sandbox/camptocamp/geobretagne/tests/lib/GeoExt/widgets/FeatureRenderer.html
+END
+WMSLegend.html
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/!svn/ver/2216/sandbox/camptocamp/geobretagne/tests/lib/GeoExt/widgets/WMSLegend.html
+END
+ZoomSlider.html
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/!svn/ver/2216/sandbox/camptocamp/geobretagne/tests/lib/GeoExt/widgets/ZoomSlider.html
+END
+LayerLegend.html
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/!svn/ver/2216/sandbox/camptocamp/geobretagne/tests/lib/GeoExt/widgets/LayerLegend.html
+END
+MapPanel.html
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/2216/sandbox/camptocamp/geobretagne/tests/lib/GeoExt/widgets/MapPanel.html
+END
+LegendImage.html
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/!svn/ver/2216/sandbox/camptocamp/geobretagne/tests/lib/GeoExt/widgets/LegendImage.html
+END
+Popup.html
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/!svn/ver/2216/sandbox/camptocamp/geobretagne/tests/lib/GeoExt/widgets/Popup.html
+END
+form.html
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/!svn/ver/2216/sandbox/camptocamp/geobretagne/tests/lib/GeoExt/widgets/form.html
+END
+LayerOpacitySlider.html
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/!svn/ver/2216/sandbox/camptocamp/geobretagne/tests/lib/GeoExt/widgets/LayerOpacitySlider.html
+END
+PrintMapPanel.html
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/!svn/ver/2216/sandbox/camptocamp/geobretagne/tests/lib/GeoExt/widgets/PrintMapPanel.html
+END
+form.js
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/!svn/ver/2216/sandbox/camptocamp/geobretagne/tests/lib/GeoExt/widgets/form.js
+END

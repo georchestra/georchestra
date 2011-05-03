@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html debug="true">
+  <head>
+    <script type="text/javascript" src="../../../../../openlayers/lib/OpenLayers.js"></script>
+    <script type="text/javascript" src="../../../../../ext/adapter/ext/ext-base.js"></script>
+    <script type="text/javascript" src="../../../../../ext/ext-all.js"></script>
+    <script type="text/javascript" src="../../../../lib/GeoExt.js"></script>
+
+    <script type="text/javascript">
+
+        function loadMapPanel() {
+            var mapPanel = new GeoExt.MapPanel({
+                // panel options
+                id: "map-panel",
+                title: "GeoExt MapPanel",
+                renderTo: "mappanel",
+                height: 400,
+                width: 600,
+                // map panel-specific options
+                layers: [
+                    new OpenLayers.Layer.WMS("test", '/ows', {layers: 'a'})
+                ],
+                center: new OpenLayers.LonLat(5, 45),
+                zoom: 4
+            });
+
+            return mapPanel;
+        }
+
+        function test_legendurl_layers_array(t) {
+            t.plan(4);
+            var l, url, expectedUrl;
+            var mapPanel = loadMapPanel();
+            var layer1 = new OpenLayers.Layer.WMS("test", '/ows', {layers: ['a,b', 'c,d']});
+            var layer2 = new OpenLayers.Layer.WMS("test", '/ows', {layers: ['x', 'y']});
+            mapPanel.map.addLayers([layer1, layer2]);
+            l = new GeoExt.WMSLegend({
+                renderTo: 'legendwms',
+                layerRecord: mapPanel.layers.getAt(1)
+            });
+            l.render();
+
+            t.eq(l.items.length, 5, "We expect 5 items");
+            url = l.items.get(1).url;
+            expectedUrl = "/ows?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetLegendGraphic&EXCEPTIONS=application%2Fvnd.ogc.se_xml&FORMAT=image%2Fgif&LAYER=a&SCALE=27683990.15625";
+            t.eq(url, expectedUrl, "GetLegendGraphic url is generated correctly");
+            l.destroy();
+
+            l = new GeoExt.WMSLegend({
+                renderTo: 'legendwms',
+                layerRecord: mapPanel.layers.getAt(2)
+            });
+            l.render();
+
+            t.eq(l.items.length, 3, "We expect 3 items");
+            url = l.items.get(1).url;
+            expectedUrl = "/ows?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetLegendGraphic&EXCEPTIONS=application%2Fvnd.ogc.se_xml&FORMAT=image%2Fgif&LAYER=x&SCALE=27683990.15625";
+            t.eq(url, expectedUrl, "GetLegendGraphic url is generated correctly");
+            l.destroy();
+        }
+
+        function test_legendurl(t) {
+            t.plan(7);
+
+            var l, url, expectedUrl;
+            var mapPanel = loadMapPanel();
+            l = new GeoExt.WMSLegend({
+                renderTo: 'legendwms',
+                useScaleParameter: false,
+                layerRecord: mapPanel.layers.getAt(0)
+            });
+            l.render();
+
+            url = l.items.get(1).url;
+            expectedUrl = "/ows?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetLegendGraphic&EXCEPTIONS=application%2Fvnd.ogc.se_xml&FORMAT=image%2Fgif&LAYER=a";
+            t.eq(url, expectedUrl, "GetLegendGraphic url is generated correctly");
+            l.destroy()
+
+            l = new GeoExt.WMSLegend({
+                renderTo: 'legendwms',
+                layerRecord: mapPanel.layers.getAt(0)
+            });
+            l.render();
+
+            url = l.items.get(1).url;
+            expectedUrl = "/ows?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetLegendGraphic&EXCEPTIONS=application%2Fvnd.ogc.se_xml&FORMAT=image%2Fgif&LAYER=a&SCALE=27683990.15625";
+            t.eq(url, expectedUrl, "GetLegendGraphic url is generated correctly");
+            l.destroy();
+            
+            mapPanel.map.layers[0].params.STYLES = "bar";
+            mapPanel.layers.getAt(0).set("styles", [{
+                name: "bar",
+                legend: {href: "foo"}
+            }]);
+            l = new GeoExt.WMSLegend({
+                renderTo: 'legendwms',
+                layerRecord: mapPanel.layers.getAt(0)
+            });
+            l.render();
+            url = l.items.get(1).url;
+            t.eq(url, "foo", "legend url from styles field of layer record used correctly.");
+            l.destroy();
+            mapPanel.map.layers[0].params.STYLES = "";
+            
+            l = new GeoExt.WMSLegend({
+                renderTo: 'legendwms',
+                layerRecord: mapPanel.layers.getAt(0),
+                defaultStyleIsFirst: true
+            });
+            l.render();
+            url = l.items.get(1).url;
+            t.eq(url, "foo", "legend url from styles field of layer record used correctly when defaultStyleIsFirst set to true and layer has no STYLES param.");
+            l.destroy();
+
+            mapPanel.map.layers[0].params.SLD = "sld";
+            l = new GeoExt.WMSLegend({
+                renderTo: 'legendwms',
+                layerRecord: mapPanel.layers.getAt(0),
+                defaultStyleIsFirst: true
+            });
+            l.render();
+            url = l.items.get(1).url;
+            expectedUrl = "/ows?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetLegendGraphic&EXCEPTIONS=application%2Fvnd.ogc.se_xml&FORMAT=image%2Fgif&SLD=sld&LAYER=a&SCALE=27683990.15625";
+            t.eq(url, expectedUrl, "GetLegendGraphic url is generated when layer has SLD set");
+            l.destroy();
+            delete mapPanel.map.layers[0].params.SLD;
+
+            mapPanel.map.layers[0].params.SLD_BODY = "sld_body";
+            l = new GeoExt.WMSLegend({
+                renderTo: 'legendwms',
+                layerRecord: mapPanel.layers.getAt(0),
+                defaultStyleIsFirst: true
+            });
+            l.render();
+            url = l.items.get(1).url;
+            expectedUrl = "/ows?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetLegendGraphic&EXCEPTIONS=application%2Fvnd.ogc.se_xml&FORMAT=image%2Fgif&SLD_BODY=sld_body&LAYER=a&SCALE=27683990.15625";
+            t.eq(url, expectedUrl, "GetLegendGraphic url is generated when layer has SLD_BODY set");
+
+            mapPanel.map.zoomIn();
+            url = l.items.get(1).url;
+            expectedUrl = "/ows?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetLegendGraphic&EXCEPTIONS=application%2Fvnd.ogc.se_xml&FORMAT=image%2Fgif&SLD_BODY=sld_body&LAYER=a&SCALE=13841995.078125";
+            t.eq(url, expectedUrl, "GetLegendGraphic url changes when map scale changes");
+
+            l.destroy();
+            delete mapPanel.map.layers[0].params.SLD_BODY;
+
+            mapPanel.destroy();
+        }
+
+        function test_update(t) {
+            t.plan(8);
+
+            // set up
+
+            var mapPanel = loadMapPanel();
+            var layerRecord = mapPanel.layers.getAt(0);
+
+            var url, expectedUrl, cmp;
+
+            var l = new GeoExt.WMSLegend({
+                renderTo: 'legendwms',
+                layerRecord: layerRecord
+            });
+
+            // test
+
+            // #1
+            layerRecord.get("layer").mergeNewParams({
+                layers: "b"
+            });
+            l.update();
+            t.ok(!l.getComponent("a"),
+                 "update removes old components");
+            t.ok(l.getComponent("b"),
+                 "update adds new components");
+
+            // #2
+            layerRecord.get("layer").mergeNewParams({
+                layers: "b,c",
+                foo: "bar"
+            });
+            l.update();
+            t.ok(l.getComponent("b"),
+                 "update does not remove components to be updated");
+            expectedUrl = "/ows?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetLegendGraphic&EXCEPTIONS=application%2Fvnd.ogc.se_xml&FORMAT=image%2Fgif&FOO=bar&LAYER=b&SCALE=27683990.15625";
+            t.eq(l.getComponent("b").url, expectedUrl,
+                 "update updates component URL");
+            expectedUrl = "/ows?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetLegendGraphic&EXCEPTIONS=application%2Fvnd.ogc.se_xml&FORMAT=image%2Fgif&FOO=bar&LAYER=c&SCALE=27683990.15625";
+            t.eq(l.getComponent("c").url, expectedUrl,
+                 "update sets correct URL in new component");
+
+            // #3
+            layerRecord.get("layer").mergeNewParams({
+                layers: "c",
+                styles: "style1"
+            });
+            expectedUrl = "/ows?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetLegendGraphic&EXCEPTIONS=application%2Fvnd.ogc.se_xml&FORMAT=image%2Fgif&FOO=bar&LAYER=c&STYLE=style1&SCALE=27683990.15625";
+            l.update();
+            t.eq(l.getComponent("c").url, expectedUrl,
+                 "update sets correct STYLE params in URL");
+
+            // #4
+            layerRecord.set("styles", [{
+                name: "style1",
+                legend: {
+                    href: "http://url-to-legend.org/"
+                }
+            }]);
+            l.update();
+            expectedUrl = "http://url-to-legend.org/";
+            t.eq(l.getComponent("c").url, expectedUrl,
+                 "update uses the legend href from the styles field");
+
+            // #5
+            layerRecord.get("layer").mergeNewParams({
+                layers: "c",
+                styles: null,
+                sld: "http://url-to-sld.org/"
+            });
+            l.update();
+            expectedUrl = "/ows?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetLegendGraphic&EXCEPTIONS=application%2Fvnd.ogc.se_xml&FORMAT=image%2Fgif&FOO=bar&SLD=http%3A%2F%2Furl-to-sld.org%2F&LAYER=c&SCALE=27683990.15625";
+            t.eq(l.getComponent("c").url, expectedUrl,
+                 "update does not use the legend href from the " +
+                 "styles field if SLD is set in the layer params");
+
+            // tear down
+
+            l.destroy()
+        }
+
+
+    </script>
+  <body>
+    <div id="legendwms"></div>
+    <div id="mappanel"></div>
+  </body>
+</html>

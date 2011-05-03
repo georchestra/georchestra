@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html debug="true">
+  <head>
+    <script type="text/javascript" src="../../mfbase/openlayers/lib/OpenLayers.js"></script>
+    <script type="text/javascript" src="../../mfbase/ext/adapter/ext/ext-base.js"></script>
+    <script type="text/javascript" src="../../mfbase/ext/ext-all-debug.js"></script>
+    <script type="text/javascript" src="../../mfbase/mapfish/MapFish.js"></script>
+
+    <script type="text/javascript">
+    function test_theobvious(t) {
+        t.plan(4);
+
+        t.eq(2+2, 4, "t.eq");
+
+        t.ok(2>1, "t.ok");
+
+        t.like("15", /[\d]+/, "t.like");
+
+        t.html_eq(document.getElementById("sample_id"),
+                  "<div id=\"sample_id\" class=\"sample\">some text</div>",
+                  "t.html_eq");
+    }
+    </script>
+  </head>
+
+  <body>
+    <div class="sample" id="sample_id">some text</div>
+  </body>
+</html>

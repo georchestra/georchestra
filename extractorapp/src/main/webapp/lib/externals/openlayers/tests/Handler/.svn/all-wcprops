@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/tests/Handler
+END
+Path.html
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/tests/Handler/Path.html
+END
+Drag.html
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/tests/Handler/Drag.html
+END
+MouseWheel.html
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/tests/Handler/MouseWheel.html
+END
+Keyboard.html
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/tests/Handler/Keyboard.html
+END
+Hover.html
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/tests/Handler/Hover.html
+END
+Click.html
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/tests/Handler/Click.html
+END
+Polygon.html
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/tests/Handler/Polygon.html
+END
+Point.html
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/tests/Handler/Point.html
+END
+RegularPolygon.html
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/tests/Handler/RegularPolygon.html
+END
+Feature.html
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/tests/Handler/Feature.html
+END

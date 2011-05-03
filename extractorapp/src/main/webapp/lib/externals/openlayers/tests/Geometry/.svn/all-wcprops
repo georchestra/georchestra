@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/tests/Geometry
+END
+LineString.html
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/tests/Geometry/LineString.html
+END
+MultiPolygon.html
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/tests/Geometry/MultiPolygon.html
+END
+Curve.html
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/tests/Geometry/Curve.html
+END
+MultiPoint.html
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/tests/Geometry/MultiPoint.html
+END
+Rectangle.html
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/tests/Geometry/Rectangle.html
+END
+Polygon.html
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/tests/Geometry/Polygon.html
+END
+Surface.html
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/tests/Geometry/Surface.html
+END
+MultiLineString.html
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/tests/Geometry/MultiLineString.html
+END
+Point.html
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/tests/Geometry/Point.html
+END
+LinearRing.html
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/tests/Geometry/LinearRing.html
+END
+Collection.html
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/tests/Geometry/Collection.html
+END

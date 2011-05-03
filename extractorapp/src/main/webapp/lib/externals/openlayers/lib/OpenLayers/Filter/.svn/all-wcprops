@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/Filter
+END
+FeatureId.js
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/Filter/FeatureId.js
+END
+Comparison.js
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/Filter/Comparison.js
+END
+Logical.js
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/Filter/Logical.js
+END
+Spatial.js
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/!svn/ver/10877/sandbox/camptocamp/geobretagne/lib/OpenLayers/Filter/Spatial.js
+END

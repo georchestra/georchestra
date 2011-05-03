@@ -1,0 +1,119 @@
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/!svn/ver/2465/sandbox/camptocamp/geobretagne/lib/GeoExt/data
+END
+ScaleStore.js
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/2216/sandbox/camptocamp/geobretagne/lib/GeoExt/data/ScaleStore.js
+END
+PrintProvider.js
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/!svn/ver/2465/sandbox/camptocamp/geobretagne/lib/GeoExt/data/PrintProvider.js
+END
+FeatureStore.js
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/2216/sandbox/camptocamp/geobretagne/lib/GeoExt/data/FeatureStore.js
+END
+WMCReader.js
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/!svn/ver/2216/sandbox/camptocamp/geobretagne/lib/GeoExt/data/WMCReader.js
+END
+LayerRecord.js
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/2216/sandbox/camptocamp/geobretagne/lib/GeoExt/data/LayerRecord.js
+END
+FeatureReader.js
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/!svn/ver/2216/sandbox/camptocamp/geobretagne/lib/GeoExt/data/FeatureReader.js
+END
+AttributeStore.js
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/!svn/ver/2216/sandbox/camptocamp/geobretagne/lib/GeoExt/data/AttributeStore.js
+END
+WMSDescribeLayerStore.js
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/!svn/ver/2216/sandbox/camptocamp/geobretagne/lib/GeoExt/data/WMSDescribeLayerStore.js
+END
+AttributeReader.js
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/!svn/ver/2216/sandbox/camptocamp/geobretagne/lib/GeoExt/data/AttributeReader.js
+END
+WFSCapabilitiesStore.js
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/!svn/ver/2216/sandbox/camptocamp/geobretagne/lib/GeoExt/data/WFSCapabilitiesStore.js
+END
+WMSDescribeLayerReader.js
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/!svn/ver/2216/sandbox/camptocamp/geobretagne/lib/GeoExt/data/WMSDescribeLayerReader.js
+END
+LayerStore.js
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/2216/sandbox/camptocamp/geobretagne/lib/GeoExt/data/LayerStore.js
+END
+PrintPage.js
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/!svn/ver/2388/sandbox/camptocamp/geobretagne/lib/GeoExt/data/PrintPage.js
+END
+FeatureRecord.js
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/!svn/ver/2216/sandbox/camptocamp/geobretagne/lib/GeoExt/data/FeatureRecord.js
+END
+WFSCapabilitiesReader.js
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/!svn/ver/2216/sandbox/camptocamp/geobretagne/lib/GeoExt/data/WFSCapabilitiesReader.js
+END
+WMSCapabilitiesStore.js
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/!svn/ver/2216/sandbox/camptocamp/geobretagne/lib/GeoExt/data/WMSCapabilitiesStore.js
+END
+LayerReader.js
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/2216/sandbox/camptocamp/geobretagne/lib/GeoExt/data/LayerReader.js
+END
+WMSCapabilitiesReader.js
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/!svn/ver/2216/sandbox/camptocamp/geobretagne/lib/GeoExt/data/WMSCapabilitiesReader.js
+END
+ProtocolProxy.js
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/!svn/ver/2216/sandbox/camptocamp/geobretagne/lib/GeoExt/data/ProtocolProxy.js
+END

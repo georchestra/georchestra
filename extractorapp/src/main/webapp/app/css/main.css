@@ -1,0 +1,90 @@
+.geob-btn-cancel {
+    background-image: url(../img/famfamfam/cross.gif) !important;
+}
+.geob-btn-extract {
+    background-image: url(../img/famfamfam/tick.gif) !important;
+}
+.x-btn-icon .geob-btn-info {
+    background: transparent url(../img/famfamfam/information.png);
+}
+/* make sure that menu width is correct in IE8 strict mode (See http://extjs.com/forum/showthread.php?t=70701) */
+.x-layer[style]{
+ width: auto !important;
+}
+
+#waiter {
+	position:absolute;
+	top:0px;
+	left:50%;
+	margin-left: -62px;
+	z-index:100;
+	visibility:hidden;
+}
+#waiter span {
+	background:#EFAE00 none repeat scroll 0 0;
+	padding:2px;
+	-moz-border-radius: 0 0 4px 4px;
+	-webkit-border-radius: 0 0 4px 4px;
+}
+
+.x-form-trigger-no-width {
+    width: 0 !important;
+}
+
+.bbox-fieldset {
+    padding: 0 5px 8px 8px;
+}
+.bbox-panel table {
+    width: 100%;
+}
+.bbox-panel-cell {
+    padding-right: 10px;
+}
+
+.olControlAttribution {
+    font-size: smaller; 
+    left:1em;
+    bottom:1em;
+    position: absolute; 
+    display: block;
+}
+.olControlAttribution a img {
+    display: none;
+}
+
+.olControlMousePosition {
+	bottom:0px !important;
+	display:block;
+	background:#EBEBEB none repeat scroll 0 0;
+	padding:3px;
+	font-family:Arial;
+	font-size:smaller;
+	right:0px !important;
+}
+
+.olControlLoadingPanel {
+	background-image: url(../img/loadingbar.gif) !important;
+	background-position:center;
+	background-repeat:no-repeat;
+	width:100px;
+	height:11px;
+	top:5px;
+	right:5px;
+	position:absolute;
+}
+
+.paneltext {
+	padding: 4px;
+	font-family: tahoma,arial,helvetica;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: normal;
+	font-size: 12px;
+	line-height: 100%;
+	word-spacing: normal;
+	letter-spacing: normal;
+	text-decoration: none;
+	text-transform: none;
+	text-align: justify;
+	text-indent: 0ex;
+}

@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 37
+/!svn/ver/184/ext/2.2.1/build/adapter
+END
+ext-base-min.js
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/!svn/ver/184/ext/2.2.1/build/adapter/ext-base-min.js
+END
+jquery-bridge-min.js
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/!svn/ver/184/ext/2.2.1/build/adapter/jquery-bridge-min.js
+END
+prototype-bridge-min.js
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/!svn/ver/184/ext/2.2.1/build/adapter/prototype-bridge-min.js
+END
+yui-bridge-min.js
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/!svn/ver/184/ext/2.2.1/build/adapter/yui-bridge-min.js
+END

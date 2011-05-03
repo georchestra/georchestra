@@ -1,0 +1,18 @@
+Les données que vous avez extraites sont disponibles au téléchargement.  
+<p>
+Cliquer sur le lien suivant pour télécharger les données extraites:
+</p><p> 
+<a href="{link}">{link}</a>
+</p><p>
+Les couches suivantes ont été extraites avec succès:
+</p><p>
+{successes}
+</p><p>
+L'extraction des couches suivantes a échoué. Le fichier failures.html contient plus d'informations:
+</p><p>
+{failures}
+</p><p>
+L'extraction des couches suivantes a été annulée. La zone demandée a été trop grande:
+</p><p>
+{oversized}
+</p>
