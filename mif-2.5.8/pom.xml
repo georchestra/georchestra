@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- =======================================================================    
+        Maven Project Configuration File                                        
+                                                                                
+        The Geotools Project                                                    
+            http://www.geotools.org/                                            
+                                                                                
+        Version: $Id: pom.xml 32874 2009-04-27 13:02:43Z aaime $              
+     ======================================================================= -->
+  <project xmlns="http://maven.apache.org/POM/4.0.0" 
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+           xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+                               http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+
+  <!-- =========================================================== -->
+  <!--     Module Description                                      -->
+  <!-- =========================================================== -->
+  <groupId>org.geotools</groupId>
+  <artifactId>gt-mif</artifactId>
+  <version>2.5.8</version>
+  <packaging>jar</packaging>
+  <name>MapInfo MIF format module</name>
+  <url>http://maven.geotools.fr/reports/modules/unsupported/mif/</url>
+
+  <scm>
+    <connection>
+      scm:svn:http://svn.geotools.org/trunk/modules/unsupported/mif/
+    </connection>
+    <url>http://svn.geotools.org/trunk/modules/unsupported/mif/</url>
+  </scm>
+
+  <description>
+    (todo)
+  </description>
+
+  <licenses>
+    <license>
+      <name>Lesser General Public License (LGPL)</name>
+      <url>http://www.gnu.org/copyleft/lesser.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+
+  <!-- =========================================================== -->
+  <!--     Developers and Contributors                             -->
+  <!-- =========================================================== -->
+  <developers>
+    <developer>
+      <name>Luca Sigfrido Percich</name>
+      <id>lpercich</id>
+      <email>luca.percich@ama-mi.it</email>
+      <organization>AMA-MI</organization>
+      <roles>
+        <role>Module Mantainer</role>
+        <role>Java Developer</role>
+      </roles>
+    </developer>    
+    <developer>
+      <name>Ray Gallagher</name>
+      <id>omyar</id>
+      <email>omyar@users.sourceforge.net</email>
+      <organization>none</organization>
+      <roles>
+        <role>Former Module Maintainer</role>
+        <role>Java Developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <name>Jianhui Jin</name>
+      <id></id>
+      <email></email>
+      <organization>CCG</organization>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+    </developer>
+  </developers>
+
+
+  <!-- =========================================================== -->
+  <!--     Dependency Management                                   -->
+  <!-- =========================================================== -->
+  <dependencies>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-main</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+ <build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+		</plugins>
+ </build>
+
+	<pluginRepositories>
+		<pluginRepository>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
+        <id>osgeo</id>
+        <name>Open Source Geospatial Foundation Repository</name>
+        <url>http://download.osgeo.org/webdav/geotools/</url>
+    </pluginRepository>
+  </pluginRepositories>
+	<repositories>
+		<repository>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
+        <id>osgeo</id>
+        <name>Open Source Geospatial Foundation Repository</name>
+        <url>http://download.osgeo.org/webdav/geotools/</url>
+    </repository>
+  </repositories>
+</project>
