@@ -1,0 +1,26 @@
+# applicationContext-security.xml
+
+logout-success-url=https://c2cpc61.camptocamp.com/cas/logout
+casLoginUrl=https://c2cpc61.camptocamp.com/cas
+casTicketValidation=https://localhost:8443/cas
+casCallbackUrl=https://localhost:8443/receptor
+proxyCallback=http://c2cpc61.camptocamp.com/j_spring_cas_security_check
+userSearchBaseDN=ou=users,dc=georchestra,dc=org
+userSearchFilter=(uid={0})
+authoritiesBaseDN=ou=groups,dc=georchestra,dc=org
+groupSearchFilter=(memberUid={1})
+groupRoleAttribute=cn
+ldapUrl=ldaps://localhost:636/
+ldapAdminDn=cn=admin,dc=georchestra,dc=org
+ldap.admin.password=uNg9aiFa
+
+
+# proxy-servlet.xml
+
+proxy.extractorapp.target=http://localhost:8080/extractorapp-private
+proxy.geoserver-security.target=http://localhost:8080/geoserver-security
+proxy.mapfishapp.target=http://localhost:8080/mapfishapp-private
+proxy.geonetwork.target=http://localhost:8080/geonetwork-private
+proxy.geoserver.target=http://localhost:8180/geoserver-private
+test.url=
+public.host=c2cpc61.camptocamp.com

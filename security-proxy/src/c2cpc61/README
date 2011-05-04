@@ -1,0 +1,5 @@
+This directory will be copied into the webapp if the war 
+is created with a -Dserver=c2cpc61 parameter.
+
+This is used by the cockpit/trunk/deploy-servers.sh script when
+deploying to the demo server

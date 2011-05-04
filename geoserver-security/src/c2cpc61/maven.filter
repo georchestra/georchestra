@@ -1,0 +1,19 @@
+public_host=c2cpc61.camptocamp.com
+
+ldapUrl=ldaps://localhost:636/
+userSearchBaseDN=ou=users,dc=georchestra,dc=org
+authoritiesBaseDN=dc=georchestra,dc=org
+ldapAdminDn=cn=admin,dc=georchestra,dc=org
+ldapAdminPassword=uNg9aiFa
+
+securityDir=/srv/tomcat/geoserver/webapps/geoserver-private/data/security/
+capabilitiesURL=http://${public_host}:8180/geoserver-private/wms?service=wms&request=getcapabilities&version=1.3.0
+
+# useless ?
+privelegedAdminUser=extractorapp_priveleged_admin
+privelegedAdminPass=gerlsSnFd6SmM
+
+camptocamp.security.loglevel=INFO
+logdir=/srv/tomcat/tomcat1/logs
+# options are StandardOut, FileAppender or HTMLAppender (zero or more and comma separated) 
+log.appender=FileAppender
