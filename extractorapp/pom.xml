@@ -72,12 +72,12 @@
             <artifactId>gt-main</artifactId>
             <version>${m2.version}</version>
         </dependency>
-<!--        <dependency>
+        <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-wfs</artifactId>
             <version>${m2.version}</version>
-	    <scope>provided</scope>
-        </dependency>-->
+	    			<scope>provided</scope>  <!-- provided because a version based on 2.7 is in webapp/WEB-INF/lib -->
+        </dependency>
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-shapefile</artifactId>

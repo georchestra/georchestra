@@ -27,6 +27,7 @@
         <plugin>
           <groupId>com.agilejava.docbkx</groupId>
           <artifactId>docbkx-maven-plugin</artifactId>
+					<version>2.0.10</version>
           <executions>
             <execution>
               <goals>
@@ -44,9 +45,9 @@
               <scope>runtime</scope>
             </dependency>
           </dependencies>
-	    <configuration>
+	    		<configuration>
           	<htmlStylesheet>./css/default.css</htmlStylesheet>
-            </configuration>
+          </configuration>
         </plugin>
         <plugin>
           <artifactId>maven-antrun-plugin</artifactId>
