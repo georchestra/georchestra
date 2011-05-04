@@ -1,15 +1,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>extractorapp</groupId>
+		<parent>
+			<groupId>org.georchestra</groupId>
+			<artifactId>root</artifactId>
+			<version>1.0</version>
+		</parent>
     <artifactId>extractorapp</artifactId>
     <packaging>war</packaging>
     <version>1.0</version>
-    <name>extractorapp Maven Webapp</name>
-    <url>http://maven.apache.org</url>
-    <properties>
-        <m2.version>2.6.2</m2.version>
-    </properties>
+    <name>Extractorapp Webapp</name>
+    <url>http://www.georchestra.org</url>
+
     <dependencies>
         <dependency>
             <groupId>org.tuckey</groupId>
@@ -25,7 +27,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
-            <version>2.5.6</version>
+            <version>${spring.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -39,22 +41,16 @@
             <version>1.4</version>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-            <version>2.5.6</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
             <version>1.1.2</version>
             <scope>compile</scope>
-        </dependency>
+        </dependency><!---->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
             <version>2.4</version>
-            <scope>compile</scope>
+						<scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>taglibs</groupId>
@@ -70,53 +66,53 @@
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-main</artifactId>
-            <version>${m2.version}</version>
+            <version>${gt.version}</version>
         </dependency>
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-wfs</artifactId>
-            <version>${m2.version}</version>
-	    			<scope>provided</scope>  <!-- provided because a version based on 2.7 is in webapp/WEB-INF/lib -->
+            <version>${gt.version}</version>
+	    			<scope>provided</scope> <!-- provided because a version based on 2.7 is in webapp/WEB-INF/lib -->
         </dependency>
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-shapefile</artifactId>
-            <version>${m2.version}</version>
+            <version>${gt.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.geotools</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>gt-mif</artifactId>
-            <version>2.6.1</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-geotiff</artifactId>
-            <version>${m2.version}</version>
+            <version>${gt.version}</version>
         </dependency>
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-image</artifactId>
-            <version>${m2.version}</version>
+            <version>${gt.version}</version>
         </dependency>
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-render</artifactId>
-            <version>${m2.version}</version>
+            <version>${gt.version}</version>
         </dependency>
         <dependency>
             <groupId>org.geotools.xsd</groupId>
             <artifactId>gt-xsd-wfs</artifactId>
-            <version>${m2.version}</version>
+            <version>${gt.version}</version>
         </dependency>
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-wms</artifactId>
-            <version>${m2.version}</version>
+            <version>${gt.version}</version>
         </dependency>
         <dependency>
           <groupId>org.geotools.ogc</groupId>
           <artifactId>net.opengis.wfs</artifactId>
-          <version>${m2.version}</version>
+          <version>${gt.version}</version>
           <exclusions>
             <exclusion>
               <groupId>org.geotools</groupId>
@@ -124,6 +120,17 @@
             </exclusion>
           </exclusions>
         </dependency>
+        <!-- geotools - handles ESPG -->
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-epsg-hsql</artifactId>
+            <version>${gt.version}</version>
+        </dependency>
+<!--        <dependency>
+						<groupId>${project.groupId}</groupId>
+            <artifactId>epsg-extension</artifactId>
+            <version>${project.version}</version>
+        </dependency>-->
         <dependency>
           <groupId>xpp3</groupId>
           <artifactId>xpp3</artifactId>
@@ -133,48 +140,6 @@
           <groupId>commons-httpclient</groupId>
           <artifactId>commons-httpclient</artifactId>
           <version>3.1</version>
-        </dependency>
-        <!-- geotools - handles ESPG -->
-        <dependency>
-            <groupId>org.geotools</groupId>
-            <artifactId>gt-epsg-hsql</artifactId>
-            <version>${m2.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>epsg</groupId>
-            <artifactId>epsg</artifactId>
-            <version>1.0-${m2.version}</version>
-        </dependency>
-        <!-- libraries for testing -->
-        <dependency>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scala-library</artifactId>
-            <version>2.7.7</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.scalatest</groupId>
-            <artifactId>scalatest</artifactId>
-            <version>1.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.scala-tools.testing</groupId>
-            <artifactId>scalacheck</artifactId>
-            <version>1.6</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>1.8.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.5</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -193,66 +158,6 @@
             <version>1.1.1</version>
         </dependency>
     </dependencies>
-    <repositories>
-        <repository>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <id>mapfish</id>
-            <url>http://dev.mapfish.org/maven/repository</url>
-        </repository>
-        <repository>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <id>ibiblio</id>
-            <name>Ibiblio - the public's library and digital archive</name>
-            <url>http://www.ibiblio.org/maven2</url>
-        </repository>
-        <!--  geotools -->
-        <repository>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <id>osgeo</id>
-            <name>Open Source Geospatial Foundation Repository</name>
-            <url>http://download.osgeo.org/webdav/geotools/</url>
-        </repository>
-        <repository>
-            <id>opengeo</id>
-            <name>Geotools repository</name>
-            <url>http://download.osgeo.org/webdav/geotools/</url>
-        </repository>
-<!--        <repository>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <id>central</id>
-            <name>Maven Repository Switchboard</name>
-            <url>http://repo1.maven.org/maven2</url>
-        </repository>-->
-        <!-- scala repository, used for testing -->
-        <repository>
-            <id>scala-tools.org</id>
-            <name>Scala-tools Maven2 Repository</name>
-            <url>http://scala-tools.org/repo-releases</url>
-        </repository>
-        <repository>
-            <id>scala-tools.org - snapshots</id>
-            <name>Scala-Tools Maven2 Repository - snapshots</name>
-            <url>http://scala-tools.org/repo-snapshots</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>scala-tools.org</id>
-            <name>Scala-tools Maven2 Repository</name>
-            <url>http://scala-tools.org/repo-releases</url>
-        </pluginRepository>
-    </pluginRepositories>
 
     <build>
         <finalName>extractorapp-private</finalName>
