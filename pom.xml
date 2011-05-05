@@ -95,14 +95,6 @@
 			<name>Scala-tools Maven2 Repository</name>
 			<url>http://scala-tools.org/repo-releases</url>
 		</repository>
-		<repository>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<id>ibiblio</id>
-			<name>Ibiblio - the public's library and digital archive</name>
-			<url>http://www.ibiblio.org/maven2</url>
-		</repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
