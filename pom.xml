@@ -29,6 +29,12 @@
 		<module>mapfishapp</module>
 		<module>security-proxy</module>
 	</modules>
+	<build>
+		<pluginManagement>
+			<plugins>
+			</plugins>
+		</pluginManagement>
+	</build>
 	<profiles>
 		<profile>
 			<id>demo</id>
