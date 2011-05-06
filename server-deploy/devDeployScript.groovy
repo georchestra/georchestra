@@ -1,8 +1,16 @@
 
 def ssh = new SSH(log:log,settings:settings,host:"drebretagne-geobretagne.int.lsn.camptocamp.com")
-def artifacts = new Artifacts(project)
-//ssh.scp("devDeployScript.groovy","/tmp/devDeployScript.groovy")
+def aliasFunction = Artifacts.versionNumToPrivateMapping {artifact ->
+    if (artifact.name.startsWith ("cas-server-webapp")) return "cas.war"
+    else if (artifact.name.startsWith ("security-proxy")) return "ROOT.war"
+    else return null
+}
 
+def artifacts = new Artifacts(project,aliasFunction)
+
+artifacts.each{println it.alias}
+
+/*
 def deployer = new SSHWarDeployer(
   log:log,
   ssh:ssh,
@@ -12,5 +20,5 @@ def deployer = new SSHWarDeployer(
   stopServerCommand:"sudo /etc/init.d/tomcat-tomcat1 stop"
   )
   
-  println(artifacts.simpleNameMap)
 deployer.deploy(artifacts.simpleNameMap['security-proxy-1.0'])
+*/
