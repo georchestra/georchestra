@@ -8,8 +8,6 @@ def aliasFunction = Artifacts.versionNumToPrivateMapping {artifact ->
 
 def artifacts = new Artifacts(project,aliasFunction)
 
-artifacts.each{println it.alias}
-
 /*
 def deployer = new SSHWarDeployer(
   log:log,

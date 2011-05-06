@@ -32,6 +32,11 @@
 	<build>
 		<pluginManagement>
 			<plugins>
+				<plugin>
+					<groupId>org.codehaus.groovy.maven</groupId>
+					<artifactId>gmaven-plugin</artifactId>
+					<version>1.0</version>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
