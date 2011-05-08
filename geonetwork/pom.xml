@@ -9,56 +9,8 @@
 	<artifactId>geonetwork</artifactId>
 	<packaging>pom</packaging>
 	<name>GeOrchestra Geonetwork</name>
-	<properties>
-		<checkout>${basedir}/svn_gn</checkout>
-		<patches>${basedir}/patches</patches>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
 	<modules>
-		<module>patches</module>
+		<module>gn_checkout</module>
 	</modules>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.1</version>
-				<executions>
-					<execution>
-						<id>clean</id>
-						<phase>clean</phase>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<configuration>
-							<executable>sh</executable>
-							<commandlineArgs>clean_svn.sh ${server}</commandlineArgs>
-						</configuration>
-					</execution>
-					<execution>
-						<id>check_env</id>
-						<phase>initialize</phase>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<configuration>
-							<executable>sh</executable>
-							<commandlineArgs>check_env.sh ${server}</commandlineArgs>
-						</configuration>
-					</execution>
-					<execution>
-						<id>install</id>
-						<phase>install</phase>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<configuration>
-							<executable>sh</executable>
-							<commandlineArgs>install.sh ${server}</commandlineArgs>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+
 </project>
