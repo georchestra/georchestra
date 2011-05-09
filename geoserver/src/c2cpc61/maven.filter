@@ -5,5 +5,5 @@ casLoginUrl=https://c2cpc61.camptocamp.com/cas/login
 casProxyValidateUrl=https://c2cpc61.camptocamp.com/cas/proxyValidate
 casCallbackUrl=https://c2cpc61.camptocamp.com/geoserver/j_acegi_cas_security_check
 
-logLocation=/srv/tomcat/tomcat1/logs/geoserver.log
+logLocation=/srv/tomcat/geoserver/logs/geoserver.log
 logConfig=VERBOSE_LOGGING.properties
