@@ -44,8 +44,16 @@ class Artifacts {
         }
     }
 
-    def foreach(closure) {
+    def each(Closure closure) {
         artifacts.each {closure(it)}
+    }
+
+    def find(Closure closure) {
+        return artifacts.find {closure(it)}
+    }
+
+    def findAll(Closure closure) {
+        return artifacts.findAll {closure(it)}
     }
 
     private def toSimpleNameMap() {

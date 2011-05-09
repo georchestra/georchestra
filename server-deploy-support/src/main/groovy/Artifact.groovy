@@ -20,7 +20,7 @@ class Artifact {
         else return noExtClosure()
     }
 
-    String toString() {return file.path}
+    String toString() {return "$name -> file.path"}
 
 
     boolean equals(o) {

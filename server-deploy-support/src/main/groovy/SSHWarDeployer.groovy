@@ -1,3 +1,6 @@
+/**
+ * Deploy to a unix based server using SSH
+ */
 class SSHWarDeployer {
     private def config
     def log
@@ -35,23 +38,40 @@ class SSHWarDeployer {
         validateNonNull('log', 'webappDir', 'startServerCommand', 'stopServerCommand')
     }
 
-    def deploy(Object... warFiles) {
-        if (warFiles == null) {
+    def copy(alterations) {
+        return new SSHWarDeployer(config + alterations)
+    }
+
+    def deploy(Object... warArtifacts) {
+        if (warArtifacts == null) {
             throw new AssertionError("At least one file must be declared to be deployed")
         }
-        warFiles.each {file ->
-            if (!(file instanceof File)) {
-                file = new File(file.toString())
+        try {
+            warArtifacts.each {artifact ->
+                if (artifact instanceof File) {
+                    artifact = new Artifact(artifact, {return it.name})
+                } else if (!(artifact instanceof Artifact)) {
+                    artifact = new Artifact(new File(artifact.toString), {return it.name})
+                }
+
+                ssh.exec "mkdir -p $tmpDir", ssh.zeroCode
+                ssh.exec "rm -f $tmpDir/*", ssh.zeroCode
+                ssh.scp artifact, "$tmpDir/${artifact.name}"
             }
 
-            ssh.exec "mkdir -p $tmpDir", ssh.zeroCode
-            ssh.scp file, tmpDir
+            ssh.exec stopServerCommand, ssh.zeroCode
+            try {
+                warArtifacts.each {artifact ->
+                    ssh.exec "rm -rf $webappDir/${artifact.simpleName}"
+                    ssh.exec "rm -f $webappDir/${artifact.name}"
+                }
+                ssh.exec "cp $tmpDir/* $webappDir", ssh.zeroCode
+            } finally {
+                ssh.exec startServerCommand, ssh.zeroCode
+            }
+        } finally {
+            ssh.exec "rm -f $tmpDir/*"
         }
-
-        ssh.exec stopServerCommand, ssh.zeroCode
-        ssh.exec "cp $tmpDir/* $webappDir", ssh.zeroCode
-        ssh.exec startServerCommand, ssh.zeroCode
-        ssh.exec "rm -f $tmpDir/*"
     }
 
     private def set(param, setClosure) {

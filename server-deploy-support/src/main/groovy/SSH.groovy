@@ -79,6 +79,8 @@ Another option is to provide the username and either path privateKey or a passwo
         final File srcFile, destFile
         if (src instanceof File) {
             srcFile = src
+        } else if (src instanceof Artifact) {
+            srcFile = src.file
         } else {
             srcFile = new File(src.toString())
         }
@@ -152,9 +154,10 @@ Another option is to provide the username and either path privateKey or a passwo
                     written += len
                     if ((System.currentTimeMillis() - last) > 5000) {
                         last = System.currentTimeMillis()
+                        final def mb = 1024*1024
                         log.info("${Math.round(written / total * 1000) / 10}% written: " +
-                                "${Math.round(written / 1000)}/${Math.round(total / 1000)}KB " +
-                                "time: ${Math.round((last - start) * 10000) / 10}ms")
+                                "${Math.round(written / mb * 10) / 10}/${Math.round(total / mb * 10 ) / 10}MB " +
+                                "time: ${Math.round((last - start) / 100) / 10}s")
                     }
                 }
             }

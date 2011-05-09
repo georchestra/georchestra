@@ -4,13 +4,13 @@ import static org.junit.Assert.assertNull
 import static org.junit.Assert.assertNotNull
 
 class ArtifactsTest {
+    def project = new Object(){
+        def version = "1.0"
+        def warDir = ArtifactsTest.class.getClassLoader().getResource(".").getFile() + "wardir"
+        def properties = ["warsDir":warDir]
+    }
     @Test
     void artifacts() {
-        def project = new Object(){
-            def version = "1.0"
-            def warDir = ArtifactsTest.class.getClassLoader().getResource(".").getFile() + "wardir"
-            def properties = ["warsDir":warDir]
-        }
         def aliasFunction = Artifacts.versionNumToPrivateMapping {
             if(it.name.startsWith("anotherfile"))
                 return "aliased.war"
@@ -29,10 +29,33 @@ class ArtifactsTest {
 
         assertNotNull artifacts.artifacts.find{it.name == "versioned-private.war"}
 
-        artifacts.foreach {a ->
+        artifacts.each {a ->
             assert a.name == aliasFunction(a.file)
             if(a.file.name.endsWith(".war"))
                 assert a.name.endsWith(".war")
         }
+    }
+    @Test
+    void find() {
+        def artifacts = new Artifacts(project)
+
+        assertEquals artifacts.artifacts.find{return it.name == "versioned-private.war"}, artifacts.find{return it.name == "versioned-private.war"}
+    }
+    @Test
+    void findAll() {
+        def artifacts = new Artifacts(project)
+
+        assertEquals artifacts.artifacts.findAll{return it.name.endsWith(".war")}, artifacts.findAll{return it.name.endsWith(".war")}
+    }
+    @Test
+    void each() {
+        def artifacts = new Artifacts(project)
+        def foundByEach = [] as Set
+
+        artifacts.each {
+            foundByEach << it
+        }
+
+        assertEquals(artifacts.artifacts as Set, foundByEach)
     }
 }
