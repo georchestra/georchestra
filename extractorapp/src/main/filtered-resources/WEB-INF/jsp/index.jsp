@@ -30,7 +30,7 @@
         }
     </style>
     <link rel="stylesheet" type="text/css" href="resources/app/css/main.css" />
-    <title lang="fr" dir="ltr">GeoBretagne</title>
+    <title lang="fr" dir="ltr">GeOrchestra Extractor</title>
 </head>
 
 <body>
@@ -96,13 +96,13 @@
         <c:when test='${c.fake}'>
         GEOB.data.services = [
             {
-                text: "drebretagne WMS",
+                text: "BRGM Risques",
                 owstype: "WMS",
-                owsurl: "http://c2cpc83.camptocamp.com/geoserver/wms"
+                owsurl: "http://geoservices.brgm.fr/risques"
             }, {
-                text: "drebretagne WFS",
-                owstype: "WFS",
-                owsurl: "http://c2cpc83.camptocamp.com/geoserver/wfs"
+                text: "Gest'eau",
+                owstype: "WMS",
+                owsurl: "http://gesteau.oieau.fr/service"
             }
         ];
 
@@ -113,16 +113,8 @@
                 layername: "Sentiers_littoraux"
             }, {
                 owstype: "WMS",
-                owsurl: "http://c2cpc83.camptocamp.com/geoserver/wms",
-                layername: "geob:communes_geofla"
-            }, {
-                owstype: "WFS",
-                owsurl: "http://c2cpc83.camptocamp.com/geoserver/wfs",
-                layername: "geob:communes_geofla"
-            }, {
-                owstype: "WMS",
-                owsurl: "http://c2cpc83.camptocamp.com/geoserver/wms",
-                layername: "geob:SC1000_0050_7130_L93"
+                owsurl: "http://sd1878-2.sivit.org/geoserver/wms",
+                layername: "topp:RCLC90_L2E"
             }
         ];
         // we want all layers unchecked by default

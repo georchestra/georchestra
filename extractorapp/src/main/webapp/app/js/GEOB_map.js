@@ -18,7 +18,6 @@
  */
 
 /*
- * @include GEOB_config.js
  * @include OpenLayers/Map.js
  * @include OpenLayers/Layer/WMS.js
  * @include OpenLayers/Layer/Vector.js
@@ -97,10 +96,6 @@ GEOB.map = (function() {
             var map = new OpenLayers.Map({
                 controls: [
                     new OpenLayers.Control.Navigation(),
-                    new OpenLayers.Control.MousePosition({
-                        numDigits: 0,
-                        suffix: ' - ' + GEOB.config.GLOBAL_EPSG
-                    }),
                     new OpenLayers.Control.PanPanel(),
                     new OpenLayers.Control.ZoomPanel(),
                     new OpenLayers.Control.Attribution()
