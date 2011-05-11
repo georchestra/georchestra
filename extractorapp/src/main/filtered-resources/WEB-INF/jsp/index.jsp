@@ -30,7 +30,7 @@
         }
     </style>
     <link rel="stylesheet" type="text/css" href="resources/app/css/main.css" />
-    <title lang="fr" dir="ltr">GeOrchestra Extractor</title>
+    <title lang="fr" dir="ltr">geOrchestra - extracteur</title>
 </head>
 
 <body>
