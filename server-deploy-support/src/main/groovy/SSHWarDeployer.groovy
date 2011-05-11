@@ -29,7 +29,8 @@ class SSHWarDeployer {
         }
         log = ssh.log
         log = config['log']
-        set 'projectProperties', {projectProperties = it}
+        projectProperties = config['projectProperties']
+
         set 'tmpDir', {tmpDir = it}
         set 'webappDir', {webappDir = it}
         set 'startServerCommand', {startServerCommand = it}
@@ -46,13 +47,26 @@ class SSHWarDeployer {
         if (warArtifacts == null) {
             throw new AssertionError("At least one file must be declared to be deployed")
         }
+
+        def flattened = []
+
+        (warArtifacts as List).flatten().each {artifact ->
+            if (artifact instanceof File) {
+                flattened << new Artifact(artifact, {return it.name})
+            } else if (artifact instanceof Artifacts) {
+                flattened << artifact.artifacts
+            } else if(artifact instanceof Artifact) {
+                flattened << artifact
+            } else {
+                flattened << new Artifact(new File(artifact.toString()), {return it.name})
+            }
+
+        }
+
+        flattened.flatten()
+
         try {
-            warArtifacts.each {artifact ->
-                if (artifact instanceof File) {
-                    artifact = new Artifact(artifact, {return it.name})
-                } else if (!(artifact instanceof Artifact)) {
-                    artifact = new Artifact(new File(artifact.toString), {return it.name})
-                }
+            flattened.each {artifact ->
 
                 ssh.exec "mkdir -p $tmpDir", ssh.zeroCode
                 ssh.exec "rm -f $tmpDir/*", ssh.zeroCode
@@ -61,7 +75,7 @@ class SSHWarDeployer {
 
             ssh.exec stopServerCommand, ssh.zeroCode
             try {
-                warArtifacts.each {artifact ->
+                flattened.each { artifact ->
                     ssh.exec "rm -rf $webappDir/${artifact.simpleName}"
                     ssh.exec "rm -f $webappDir/${artifact.name}"
                 }

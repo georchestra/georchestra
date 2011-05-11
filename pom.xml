@@ -56,7 +56,7 @@
 		<profile>
 			<id>c2cpc61</id>
 			<properties>
-				<server>dev</server>
+				<server>c2cpc61</server>
 			</properties>
 		</profile>
 	</profiles>

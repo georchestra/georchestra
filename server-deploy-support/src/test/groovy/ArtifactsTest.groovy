@@ -53,6 +53,7 @@ class ArtifactsTest {
         def foundByEach = [] as Set
 
         artifacts.each {
+            assert it instanceof Artifact
             foundByEach << it
         }
 

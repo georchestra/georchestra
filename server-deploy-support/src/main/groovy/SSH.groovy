@@ -6,26 +6,29 @@ import com.jcraft.jsch.Session
 class SSH {
     final def log
     final def host
+    final def settings
     final def jsch
     private def usingSSHPrivateKey
     private def password
     private def username
     final def sessionConfig
+    final def mb = 1024*1024
 
     SSH(config) {
         this(config['log'],
-                config['settings'],
-                config['host'],
-                config['username'],
-                config['privateKey'],
-                config['passphrase'],
-                config['password'],
-                config['sessionConfig'])
+            config['settings'],
+            config['host'],
+            config['username'],
+            config['privateKey'],
+            config['passphrase'],
+            config['password'],
+            config['sessionConfig'])
     }
 
     SSH(log, settings, host, username = null, privateKey = null, passphrase = null, password = null, sessionConfig = null) {
         this.log = log
         this.host = host
+        this.settings = settings
         this.jsch = new JSch();
         this.username = username
         this.password = password
@@ -35,8 +38,9 @@ class SSH {
             this.sessionConfig.put("StrictHostKeyChecking", "no");
         }
 
+        def serverSettings
         if (username == null || (privateKey == null && password == null)) {
-            def serverSettings = settings.properties['servers'].find {server -> server.id == host}
+            serverSettings = settings.properties['servers'].find {server -> server.id == host}
             if (serverSettings == null) {
                 throw new AssertionError("""
 Unable to find server settings for $host in the maven settings.xml (typically in ~/.m2/settings.xml) 
@@ -76,26 +80,51 @@ Another option is to provide the username and either path privateKey or a passwo
      * @param dest either a string or file of the file (not directory) to copy to
      */
     def scp(src, dest) {
-        final File srcFile, destFile
+        println("class = "+src.getClass())
+        final File srcFile
         if (src instanceof File) {
+            println("file")
             srcFile = src
         } else if (src instanceof Artifact) {
+            println("artifact")
             srcFile = src.file
         } else {
+            println("other")
             srcFile = new File(src.toString())
         }
-        if (dest instanceof File) {
-            destFile = dest
-        } else {
-            destFile = new File(dest.toString())
+        log.info("scp $srcFile $username@$host:$dest")
+        def written = streamCopy(srcFile.newInputStream(),dest,srcFile.lastModified(), srcFile.length(),true)
+        log.info("scp complete: ${Math.round(written / mb * 10) / 10}MB copied")
+    }
+
+    /**
+     * Copy a stream to a file on the remote server
+     *
+     * @param src an input stream to copy to dest file
+     * @param dest a string or file (cannot be a directory it must be the file)
+     * @param lastModified the lastModified date to sent.  Default is current time
+     * @param length length of stream if -1 then length is assumed to be unknown.  Default is -1
+     * @param hideStartStopLog If the start and end messages should not be logged (in case of scp it already makes the logs)
+     */
+    def streamCopy(src, dest, lastModified = System.currentTimeMillis(), length = -1, hideStartStopLog=false) {
+
+        if(dest instanceof File) {
+            dest = dest.path
+        } else if(dest instanceof Artifact) {
+            dest = dest.file.path
         }
-        log.info("scp $srcFile $username@$host:$destFile")
+
+        if(!hideStartStopLog) {
+            log.info("streamCopy to $username@$host:$dest")
+        }
 
         boolean ptimestamp = false;
+        def written = 0
+
 
         def channelFac = {session ->
-            // exec 'scp -t destFile' remotely
-            String command = "scp " + (ptimestamp ? "-p" : "") + " -t " + destFile;
+            // exec 'scp -t dest' remotely
+            String command = "scp " + (ptimestamp ? "-p" : "") + " -t " + dest;
             Channel channel = session.openChannel("exec");
             ((ChannelExec) channel).setCommand(command);
 
@@ -113,10 +142,10 @@ Another option is to provide the username and either path privateKey or a passwo
             }
             String command
             if (ptimestamp) {
-                command = "T " + (srcFile.lastModified() / 1000) + " 0";
+                command = "T " + (lastModified / 1000) + " 0";
                 // The access time should be sent here,
                 // but it is not accessible with JavaAPI ;-<
-                command += (" " + (srcFile.lastModified() / 1000) + " 0\n");
+                command += (" " + (lastModified / 1000) + " 0\n");
                 out.write(command.getBytes()); out.flush();
                 if (checkAck(input) != 0) {
                     throw new AssertionError("An host did not respond with an ACK after setting timestamp")
@@ -124,55 +153,69 @@ Another option is to provide the username and either path privateKey or a passwo
             }
 
             // send "C0644 filesize filename", where filename should not include '/'
-            long filesize = srcFile.length();
-            command = "C0644 " + filesize + " ";
-            if (srcFile.path.lastIndexOf('/') > 0) {
-                command += srcFile.path.substring(srcFile.path.lastIndexOf('/') + 1);
-            }
-            else {
-                command += srcFile.path;
-            }
-            command += "\n";
-            out.write(command.getBytes()); out.flush();
-            if (checkAck(input) != 0) {
-                throw new AssertionError("An host did not respond with an ACK after setting file size")
+            if(length > -1) {
+                long filesize = length;
+                command = "C0644 " + filesize + " ";
+                if (dest.lastIndexOf('/') > 0) {
+                    command += dest.substring(dest.lastIndexOf('/') + 1);
+                }
+                else {
+                    command += dest.path;
+                }
+                command += "\n";
+                out.write(command.getBytes()); out.flush();
+                if (checkAck(input) != 0) {
+                    throw new AssertionError("An host did not respond with an ACK after setting file size")
+                }
             }
 
             // send a content of srcFile
             byte[] buf = new byte[1024];
 
-            srcFile.withInputStream { fis ->
-                def written = 0
-                def total = srcFile.length()
+            try {
+
+                def total = length;
                 def start = System.currentTimeMillis()
                 def last = start
 
                 while (true) {
-                    int len = fis.read(buf, 0, buf.length);
+                    int len = src.read(buf, 0, buf.length);
                     if (len <= 0) break;
                     out.write(buf, 0, len);
                     written += len
                     if ((System.currentTimeMillis() - last) > 5000) {
                         last = System.currentTimeMillis()
-                        final def mb = 1024*1024
-                        log.info("${Math.round(written / total * 1000) / 10}% written: " +
-                                "${Math.round(written / mb * 10) / 10}/${Math.round(total / mb * 10 ) / 10}MB " +
+                        def percentageWritten
+                        if(length < 0) {
+                            percentageWritten = "?"
+                        } else {
+                            percentageWritten = Math.round(written / total * 1000) / 10
+                        }
+                        log.info("${percentageWritten}% written: " +
+                                "${Math.round(written / mb * 10) / 10}/${total < 0 ? "?" : Math.round(total / mb * 10 ) / 10}MB " +
                                 "time: ${Math.round((last - start) / 100) / 10}s")
                     }
                 }
+
+            } finally {
+                src.close()
             }
 
             // send '\0'
             buf[0] = 0;
             out.write(buf, 0, 1); out.flush();
             if (checkAck(input) != 0) {
-                throw new AssertionError("An error occurred when trying to copy " + srcFile + " to " + host + ":" + destFile)
+                throw new AssertionError("An error occurred when trying to copy to " + host + ":" + dest)
             }
             out.close();
 
         }
 
-        log.info("scp complete")
+        if(!hideStartStopLog) {
+            log.info("streamCopy complete: ${Math.round(written / mb * 10) / 10}MB copied")
+        }
+
+        return written
     }
 
     private int checkAck(input) throws IOException {

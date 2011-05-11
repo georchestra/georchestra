@@ -12,30 +12,6 @@
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>cas-server-webapp</artifactId>
-			<version>${project.version}</version>
-			<type>war</type>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>extractorapp</artifactId>
-			<version>${project.version}</version>
-			<type>war</type>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>mapfishapp</artifactId>
-			<version>${project.version}</version>
-			<type>war</type>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>security-proxy</artifactId>
-			<version>${project.version}</version>
-			<type>war</type>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
 			<artifactId>server-deploy-support</artifactId>
 			<version>${project.version}</version>
 			<type>jar</type>
@@ -45,7 +21,21 @@
 		<warsDir>target/wars</warsDir>
 	</properties>
 	<build>
+    <defaultGoal>generate-resources</defaultGoal>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>2.4.1</version>
+				<executions>
+					<execution>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>clean</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
@@ -90,4 +80,100 @@
 			</plugin>
 		</plugins>
 	</build>
+	
+	<profiles>
+		<profile>
+			<id>deploy-all</id>
+			<properties>
+				<deployAll>true</deployAll>
+			</properties>
+			<dependencies>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>cas-server-webapp</artifactId>
+					<version>${project.version}</version>
+					<type>war</type>
+				</dependency>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>extractorapp</artifactId>
+					<version>${project.version}</version>
+					<type>war</type>
+				</dependency>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>mapfishapp</artifactId>
+					<version>${project.version}</version>
+					<type>war</type>
+				</dependency>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>security-proxy</artifactId>
+					<version>${project.version}</version>
+					<type>war</type>
+				</dependency>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>geobretagne-doc</artifactId>
+					<version>${project.version}</version>
+					<type>war</type>
+				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>cas</id>
+			<dependencies>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>cas-server-webapp</artifactId>
+					<version>${project.version}</version>
+					<type>war</type>
+				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>proxy</id>
+			<dependencies>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>security-proxy</artifactId>
+					<version>${project.version}</version>
+					<type>war</type>
+				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>doc</id>
+			<dependencies>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>geobretagne-doc</artifactId>
+					<version>${project.version}</version>
+					<type>war</type>
+				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>extractorapp</id>
+			<dependencies>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>extractorapp</artifactId>
+					<version>${project.version}</version>
+					<type>war</type>
+				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>mapfishapp</id>
+			<dependencies>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>mapfishapp</artifactId>
+					<version>${project.version}</version>
+					<type>war</type>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
 </project>

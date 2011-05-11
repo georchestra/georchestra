@@ -13,38 +13,57 @@ class C2CDeploy {
     final def ssh
     final def settings
     final def log
-    final def properties
+    final def projectProperties
+    def aliasFunction
+    def artifacts
+    def tomcat1Deployer
+    def geoserverDeployer
 
     C2CDeploy(project, ssh) {
         this.project = project
-        this.settings = project.settings
-        this.log = project.log
-        this.properties = project.properties
+        this.settings = ssh.settings
+        this.log = ssh.log
+        this.projectProperties = project.properties
         this.ssh = ssh
+        this.aliasFunction = Artifacts.versionNumToPrivateMapping {artifact ->
+            if (artifact.name.startsWith("cas-server-webapp")) return "cas.war"
+            else if (artifact.name.startsWith("security-proxy")) return "ROOT.war"
+            else if (artifact.name.startsWith("geobretagne-doc")) return "doc.war"
+            else return null
+        }
+
+        this.artifacts = new Artifacts(project, aliasFunction)
+
+        this.tomcat1Deployer = new SSHWarDeployer(
+                log: log,
+                ssh: ssh,
+                projectProperties: projectProperties,
+                webappDir: "/srv/tomcat/tomcat1/webapps",
+                startServerCommand: "sudo /etc/init.d/tomcat-tomcat1 start",
+                stopServerCommand: "sudo /etc/init.d/tomcat-tomcat1 stop"
+        )
+
+        this.geoserverDeployer = tomcat1Deployer.copy(
+                webappDir: "/srv/tomcat/geoserver/webapps",
+                startServerCommand: "sudo /etc/init.d/tomcat-geoserver start",
+                stopServerCommand: "sudo /etc/init.d/tomcat-geoserver stop"
+        )
+
     }
 
-    def aliasFunction = Artifacts.versionNumToPrivateMapping {artifact ->
-        if (artifact.name.startsWith("cas-server-webapp")) return "cas.war"
-        else if (artifact.name.startsWith("security-proxy")) return "ROOT.war"
-        else return null
+
+    def updateApacheConf() {
+        def input = this.getClass().classLoader.getResourceAsStream("/c2c/var/www/server/proxypass-tomcat.conf")
+        ssh.streamCopy(input, "/var/www/${ssh.host}/conf/proxypass-tomcat.conf")
     }
 
-    def artifacts = new Artifacts(project,aliasFunction)
+    def updateTomcatConf() {
+        def input = this.getClass().classLoader.getResourceAsStream("/c2c/tomcat/bin/setenv-local.sh")
+        ssh.streamCopy(input, "/srv/tomcat/tomcat1/bin/setenv-local.sh")
 
-    def tomcat1Deployer = new SSHWarDeployer(
-            log: log,
-            ssh: ssh,
-            projectProperties: properties,
-            webappDir: "/srv/tomcat/tomcat1/webapps",
-            startServerCommand: "sudo /etc/init.d/tomcat-tomcat1 start",
-            stopServerCommand: "sudo /etc/init.d/tomcat-tomcat1 stop"
-    )
-
-    def geoserverDeployer = tomcat1Deployer.copy (
-            webappDir: "/srv/tomcat/geoserver/webapps",
-            startServerCommand: "sudo /etc/init.d/tomcat-geoserver start",
-            stopServerCommand: "sudo /etc/init.d/tomcat-geoserver stop"
-    )
+        input = this.getClass().classLoader.getResourceAsStream("/c2c/tomcat/conf/server.xml")
+        ssh.streamCopy(input, "/srv/tomcat/tomcat1/conf/server.xml")
+    }
 
     def deploy() {
         def tomcat1 = artifacts.findAll {return !(it.name.startsWith("geoserver"))}
@@ -54,5 +73,11 @@ class C2CDeploy {
         if (geoserver != null) {
             geoserverDeployer.deploy(geoserver)
         }
+
+        if(projectProperties['deployAll'] != null) {
+            updateApacheConf()
+            updateTomcatConf()
+        }
     }
+
 }

@@ -10,7 +10,6 @@
 	<packaging>war</packaging>
 	<name>Cas enabled Geoserver</name>
 	<properties>
-		<server>localhost</server>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<certificate>${basedir}/../../cas-server-webapp/trunk/certificates/server.jks</certificate>
 		<sslPort>8443</sslPort>
