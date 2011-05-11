@@ -18,6 +18,7 @@
  */
 
 /*
+ * @include GEOB_config.js
  * @include OpenLayers/Map.js
  * @include OpenLayers/Layer/WMS.js
  * @include OpenLayers/Layer/Vector.js
@@ -98,7 +99,7 @@ GEOB.map = (function() {
                     new OpenLayers.Control.Navigation(),
                     new OpenLayers.Control.MousePosition({
                         numDigits: 0,
-                        suffix: ' - EPSG:2154'
+                        suffix: ' - ' + GEOB.config.GLOBAL_EPSG
                     }),
                     new OpenLayers.Control.PanPanel(),
                     new OpenLayers.Control.ZoomPanel(),

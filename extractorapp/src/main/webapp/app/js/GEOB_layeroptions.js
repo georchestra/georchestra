@@ -218,12 +218,12 @@ GEOB.layeroptions = (function() {
          */
         setOptions: function(options, global) {
             layerOptionsPanel.getLayout().setActiveItem(global ? 0 : 1);
+            if(!options) {
+                return;
+            }
             if(global) {
                 // global properties
-                if(!options) {
-                    return;
-                }
-
+                
                 // restore values
                 options.bbox && getFieldSet('globalBbox').items.itemAt(0).setBbox(options.bbox);
                 options.projection && getCombo('globalProjections').setValue(options.projection);
@@ -232,13 +232,8 @@ GEOB.layeroptions = (function() {
                 options.globalVectorFormats && getCombo('globalVectorFormats').setValue(options.globalVectorFormat);
 
                 vectorLayer.setVisibility(true);
-            }
-            else {
-                if(!options) {
-                    return;
-                }
+            } else {
                 // custom properties
-
                 // reload store for projections combo
                 var formats, projections = GEOB.config.SUPPORTED_REPROJECTIONS;
                 if(options.owsType == "WFS") {
@@ -308,7 +303,7 @@ GEOB.layeroptions = (function() {
                                     getCombo('globalProjections', {
                                         fieldLabel: 'Projection de sortie',
                                         store_data: GEOB.config.SUPPORTED_REPROJECTIONS,
-                                        value: "EPSG:2154"
+                                        value: GEOB.config.GLOBAL_EPSG
                                     }),
                                     getNumberField('globalResolution', {
                                         fieldLabel: 'Résolution raster (m/pixel)',

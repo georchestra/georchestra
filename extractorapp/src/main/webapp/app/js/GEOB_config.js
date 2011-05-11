@@ -91,17 +91,17 @@ GEOB.config = (function() {
         } else if (Ext.isChrome) {
             vectorAbility = 35;
         } else if (Ext.isGecko) {
-            vectorAbility = 9;
+            vectorAbility = 25;
         } else if (Ext.isIE) {
-            vectorAbility = 3;
-        } else if (Ext.isOpera) {
             vectorAbility = 5;
+        } else if (Ext.isOpera) {
+            vectorAbility = 10;
         } else if (Ext.isSafari) {
-            vectorAbility = 8;
+            vectorAbility = 35;
         } else {
             // we don't want to prevent future browsers
             // from displaying a great number of features
-            vectorAbility = 50;
+            vectorAbility = 100;
         }
         return vectorAbility;
     };
@@ -184,7 +184,7 @@ GEOB.config = (function() {
 
         /**
          * Constant: LOGOUT_URL
-         * The login url.
+         * The logout url.
          */
         LOGOUT_URL: "/j_spring_security_logout",
 
