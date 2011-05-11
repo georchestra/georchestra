@@ -65,7 +65,7 @@ if(sec_roles != null) {
             font: normal 12px arial,tahoma,sans-serif;
         }
     </style>
-    <title lang="fr" dir="ltr">GeoBretagne</title>
+    <title lang="fr" dir="ltr">geOrchestra - visualiseur</title>
     <link rel="stylesheet" type="text/css" href="lib/externals/ext/resources/css/ext-all.css" />
     <link rel="stylesheet" type="text/css" href="lib/externals/ext/resources/css/xtheme-gray.css" />
     <link rel="stylesheet" type="text/css" href="lib/externals/mapfish/mapfish.css" />
