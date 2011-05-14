@@ -205,14 +205,15 @@ GEOB.config = (function() {
          * Constant: GLOBAL_EPSG
          * Projection of the global layer
          */
-        GLOBAL_EPSG: "EPSG:900913",
+        GLOBAL_EPSG: "EPSG:4326",
 
         /**
          * Constant: GLOBAL_MAX_EXTENT
          * Max extent of the global layer
          */
-        GLOBAL_MAX_EXTENT: new OpenLayers.Bounds(-20037508.34, -20037508.34, 20037508.34, 20037508.34),
-
+//        GLOBAL_MAX_EXTENT: new OpenLayers.Bounds(-20037508.34, -20037508.34, 20037508.34, 20037508.34),
+        GLOBAL_MAX_EXTENT: new OpenLayers.Bounds(-10,40,10,50),
+        
         /**
          * Constant: BASE_LAYER_NAME
          * The WMS base layer which will be displayed under each extracted layer.
@@ -224,9 +225,9 @@ GEOB.config = (function() {
          * default WMS base layer options
          */
         BASE_LAYER_OPTIONS: {
-            projection: "EPSG:900913",
+            projection: "EPSG:4326",
             maxExtent: new OpenLayers.Bounds(
-                -20037508.34, -20037508.34, 20037508.34, 20037508.34),
+                -10,40,10,50),
             isBaseLayer: true,
             maxResolution: "auto",
             displayInLayerSwitcher: false,

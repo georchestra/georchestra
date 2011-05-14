@@ -323,4 +323,14 @@ Another option is to provide the username and either path privateKey or a passwo
             session.disconnect()
         }
     }
+    
+    def changeHost(newHost) {
+      return new SSH(
+        log:log
+        settings:settings
+        host:newHost
+        sessionConfig:sessionConfig
+      )
+      
+    }
 }

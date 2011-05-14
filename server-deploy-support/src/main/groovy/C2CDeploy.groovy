@@ -25,14 +25,8 @@ class C2CDeploy {
         this.log = ssh.log
         this.projectProperties = project.properties
         this.ssh = ssh
-        this.aliasFunction = Artifacts.versionNumToPrivateMapping {artifact ->
-            if (artifact.name.startsWith("cas-server-webapp")) return "cas.war"
-            else if (artifact.name.startsWith("security-proxy")) return "ROOT.war"
-            else if (artifact.name.startsWith("geobretagne-doc")) return "doc.war"
-            else return null
-        }
 
-        this.artifacts = new Artifacts(project, aliasFunction)
+        this.artifacts = new Artifacts(project, Artifacts.standardGeorchestraAliasFunction)
 
         this.tomcat1Deployer = new SSHWarDeployer(
                 log: log,
