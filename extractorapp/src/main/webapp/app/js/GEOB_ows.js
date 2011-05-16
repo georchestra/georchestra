@@ -394,6 +394,7 @@ GEOB.ows = (function() {
                 url: record.get("owsURL"),
                 featureType: featureType,
                 featureNS: featureNS,
+                srsNameInQuery: true, // see http://trac.osgeo.org/openlayers/ticket/2228
                 srsName: map.getProjection(),
                 version: WFS_BASE_PARAMS["VERSION"]
             }, options || {});

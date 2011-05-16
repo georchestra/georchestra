@@ -175,6 +175,7 @@ GEOB.referentials = (function() {
                 url: GEOB.config.GEOSERVER_WFS_URL,
                 protocolOptions: {
                     srsName: GEOB.config.GLOBAL_EPSG,
+                    srsNameInQuery: true, // see http://trac.osgeo.org/openlayers/ticket/2228
                     url: GEOB.config.GEOSERVER_WFS_URL
                 }
             },
@@ -211,12 +212,12 @@ GEOB.referentials = (function() {
             return;
         }
         var bounds = feature.bounds || feature.geometry.getBounds();
-        // clone bounds to fix a projection issue since the same feature
-        // was returned multiple times
-        bounds = bounds.clone();
         if (!bounds) {
             return;
         }
+        // clone bounds to fix a projection issue since the same feature
+        // was returned multiple times
+        bounds = bounds.clone();
         var currentSrs = map.getProjection();
         if (currentSrs != GEOB.config.GLOBAL_EPSG) {
             // reproject to match the current srs
