@@ -8,7 +8,7 @@
 		</parent>
     <artifactId>extractorapp</artifactId>
     <packaging>war</packaging>
-    <version>1.0</version>
+
     <name>Extractorapp Webapp</name>
     <url>http://www.georchestra.org</url>
 
