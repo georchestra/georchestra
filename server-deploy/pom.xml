@@ -83,7 +83,7 @@
 	
 	<profiles>
 		<profile>
-			<id>deploy-all</id>
+			<id>all</id>
 			<properties>
 				<deployAll>true</deployAll>
 			</properties>
@@ -118,6 +118,12 @@
 					<version>${project.version}</version>
 					<type>war</type>
 				</dependency>
+				<dependency>
+					<groupId>org.geonetwork-opensource</groupId>
+					<artifactId>geonetwork-main</artifactId>
+					<version>2.6.4-SNAPSHOT</version>
+					<type>war</type>
+				</dependency>
 			</dependencies>
 		</profile>
 		<profile>
@@ -127,6 +133,17 @@
 					<groupId>${project.groupId}</groupId>
 					<artifactId>cas-server-webapp</artifactId>
 					<version>${project.version}</version>
+					<type>war</type>
+				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>geonetwork</id>
+			<dependencies>
+				<dependency>
+					<groupId>org.geonetwork-opensource</groupId>
+					<artifactId>geonetwork-main</artifactId>
+					<version>2.6.4-SNAPSHOT</version>
 					<type>war</type>
 				</dependency>
 			</dependencies>

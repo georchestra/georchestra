@@ -1,24 +1,24 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
-		<groupId>org.jasig.cas</groupId>
-		<artifactId>cas-server</artifactId>
-		<version>3.3.3</version>
+		<groupId>org.georchestra</groupId>
+		<artifactId>root</artifactId>
+    <version>1.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.georchestra</groupId>
-	<artifactId>root</artifactId>
-	<version>1.0</version>
+	<artifactId>cas-server-webapp</artifactId>
 	<packaging>war</packaging>
 	<name>JA-SIG CAS Web Application</name>
 	<properties>
-		<cas.version>localhost</cas.version>
+		<cas.version>3.3.3</cas.version>
+		<spring.version>2.5.6</spring.version>
+		<spring.security.version>2.0.4</spring.security.version>
 	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-cas-client</artifactId>
-			<version>2.0.4</version>
+			<version>${spring.security.version}</version>
 			<scope>runtime</scope>
 			<exclusions>
 				<exclusion>
@@ -131,7 +131,7 @@
 			</plugin>
 		</plugins>
 	</build>
-	<repositories>
+<!--	<repositories>
 		<repository>
 			<id>jetty-repository</id>
 			<name>Jetty Maven2 Repository</name>
@@ -142,5 +142,5 @@
 			<name>JA-SIG Maven2 Repository</name>
 			<url>http://developer.ja-sig.org/maven2</url>
 		</repository>
-	</repositories>
+	</repositories>-->
 </project>

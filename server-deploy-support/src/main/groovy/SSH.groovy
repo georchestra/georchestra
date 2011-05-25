@@ -80,16 +80,12 @@ Another option is to provide the username and either path privateKey or a passwo
      * @param dest either a string or file of the file (not directory) to copy to
      */
     def scp(src, dest) {
-        println("class = "+src.getClass())
         final File srcFile
         if (src instanceof File) {
-            println("file")
             srcFile = src
         } else if (src instanceof Artifact) {
-            println("artifact")
             srcFile = src.file
         } else {
-            println("other")
             srcFile = new File(src.toString())
         }
         log.info("scp $srcFile $username@$host:$dest")
@@ -326,9 +322,9 @@ Another option is to provide the username and either path privateKey or a passwo
     
     def changeHost(newHost) {
       return new SSH(
-        log:log
-        settings:settings
-        host:newHost
+        log:log,
+        settings:settings,
+        host:newHost,
         sessionConfig:sessionConfig
       )
       

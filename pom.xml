@@ -28,6 +28,7 @@
 		<module>geoserver-security</module>
 		<module>mapfishapp</module>
 		<module>security-proxy</module>
+		<module>server-deploy-support</module>
 	</modules>
 	<build>
 		<pluginManagement>
