@@ -253,7 +253,7 @@ public class SLDClassifier {
             rule.setSymbolizers(new Symbolizer[] {symbolizers.next()});
             rule.setFilter(filter.getGISFilter());
             rule.setName(filter.getName());
-
+            rule.setTitle(filter.getName());
             fts.addRule(rule);     
         }
 
