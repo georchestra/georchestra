@@ -85,7 +85,7 @@
 		<profile>
 			<id>all</id>
 			<properties>
-				<deployAll>true</deployAll>
+				<!--<deployAll>true</deployAll>-->
 			</properties>
 			<dependencies>
 				<dependency>

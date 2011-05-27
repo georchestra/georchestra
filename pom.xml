@@ -49,6 +49,12 @@
 			</properties>
 		</profile>
 		<profile>
+			<id>brest</id>
+			<properties>
+				<server>brest</server>
+			</properties>
+		</profile>
+		<profile>
 			<id>dev</id>
 			<properties>
 				<server>dev</server>

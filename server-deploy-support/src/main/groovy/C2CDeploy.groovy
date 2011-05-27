@@ -71,6 +71,7 @@ class C2CDeploy {
         if(projectProperties['deployAll'] != null) {
             updateApacheConf()
             updateTomcatConf()
+            //updateTrustStore() TODO
         }
     }
 
