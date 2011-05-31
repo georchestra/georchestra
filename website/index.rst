@@ -1,0 +1,90 @@
+.. geOrchestra website master file, created by
+   sphinx-quickstart on Mon Sep 21 16:47:05 2009.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+.. http://www.source-gratuit.com/349-telecharger-template-gratuit-Delivering.html
+.. http://www.source-gratuit.com/479-telecharger-template-gratuit-Corporate-Ltd.html
+        
+.. _`georchestra.index`:
+
+=============
+geOrchestra
+=============
+
+.. image:: documentation/_static/georchestra_viewer.png
+   :width: 300px
+   :class: around-right
+   :alt: visualiseur geOrchestra
+
+Le projet geOrchestra a pour objectif de développer une Infrastructure de 
+Données Spatiales modulaire, interopérable et Open Source.
+
+Il intègre les meilleurs composants cartographiques du web dans une 
+Infrastructure de Données Spatiales riche en fonctionnalités, libre,
+interopérable et facilement réutilisable. 
+
+Référencé par l'Adullact_, geOrchestra propose une solution clef en
+main pour publier et partager vos données localisées sur
+intranet et internet. Son code source est disponible sous licence libre.
+
+.. image:: _static/flyer_small.png
+   :class: around-left
+   :target: _static/flyer_georchestra.pdf
+
+Pour une présentation visuelle de la solution geOrchestra et de ses composants, nous vous invitons à consulter cet :ref:`georchestra.documentation.overview`.
+
+Vous pouvez trouver de l’aide grâce à la liste de diffusion communautaire : voir la section Communauté.
+
+Enfin tenez vous au courant des évolutions du projet via 
+`le blog <http://blog.georchestra.org>`_ et le compte `Twitter <https://twitter.com/#!/georchestra>`_ dédié.
+
+Fonctionnalités principales
+=============================
+
+geOrchestra propose une suite de modules complètement indépendants et interopérables :
+
+* un visualiseur,
+* un catalogue,
+* un extracteur,
+* un geopublisher,
+* un site éditorial.
+
+Ces différents modules sont faiblement couplés, ce qui signifie que le 
+fonctionnement de chaque module n'affecte pas les autres. La communication 
+entre modules utilise les standards de l'OGC.
+
+Une communauté d'utilisateurs et de développeurs
+===============================================
+
+Implémentation des standards
+=============================
+
+geOrchestra repose sur les standards de l'OGC, notamment :
+
+* `WMS <http://www.opengeospatial.org/standards/wms>`_ : Web Map Service
+* `WMTS <http://www.opengeospatial.org/standards/wmts>`_ : Web Map Tile Service
+* `WFS <http://www.opengeospatial.org/standards/wfs>`_ : Web Feature Service
+* `WCS <http://www.opengeospatial.org/standards/wcs>`_ : Web Coverage Service
+* `WMC <http://www.opengeospatial.org/standards/wmc>`_ : Web Map Context
+* `SLD <http://www.opengeospatial.org/standards/sld>`_ : Styled Layer Descriptor
+* `FE <http://www.opengeospatial.org/standards/filter>`_ : Filter Encoding
+* `CSW <http://www.opengeospatial.org/standards/cat>`_ : Catalog Service
+
+Support Professionnel
+======================
+
+Plusieurs sociétés fournissent un support commercial pour vous aider dans 
+l'établissement de votre infrastructure de données spatiales.
+
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   
+   documentation/index
+   documentation/rfc/index
+   community
+   download
+   about
+
+.. _Adullact: https://adullact.net/projects/georchestra/
+

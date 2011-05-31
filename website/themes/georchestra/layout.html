@@ -1,0 +1,205 @@
+{%- block doctype -%}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+{%- endblock %}
+{%- set reldelim1 = reldelim1 is not defined and ' &raquo;' or reldelim1 %}
+{%- set reldelim2 = reldelim2 is not defined and ' |' or reldelim2 %}
+{%- macro relbar() %}
+    <div class="related">
+<!--       <h3>{{ _('Navigation') }}</h3> -->
+      <ul>
+        {%- for rellink in rellinks %}
+        <li class="right" {% if loop.first %}style="margin-right: 10px"{% endif %}>
+          <a href="{{ pathto(rellink[0]) }}" title="{{ rellink[1]|striptags }}"
+             accesskey="{{ rellink[2] }}">{{ rellink[3] }}</a>
+          {%- if not loop.first %}{{ reldelim2 }}{% endif %}</li>
+        {%- endfor %}
+        {%- block rootrellink %}
+        <li><a href="{{ pathto(master_doc) }}">Home</a>{{ reldelim1 }}</li>
+        {%- endblock %}
+        {%- for parent in parents %}
+          <li><a href="{{ parent.link|e }}" accesskey="U">{{ parent.title }}</a>{{ reldelim1 }}</li>
+        {%- endfor %}
+        {%- block relbaritems %} {% endblock %}
+      </ul>
+    </div>
+{%- endmacro %}
+{%- macro sidebar() %}
+      {%- if builder != 'htmlhelp' %}
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+          {%- block sidebarsearch %}
+          {%- if pagename != "search" %}
+          <!-- <h3>{% if builder == 'web' %}{{ _('Keyword search')}}{% else %}{{ _('Quick search') }}{% endif %}</h3>-->
+            <form class="search" action="{{ pathto('search') }}" style="display:inline;" method="get">
+              <input type="text" name="q" size="18" /> <input type="image" title="Chercher" src="{{ pathto('_static/', 1) }}find.png" />
+              <input type="hidden" name="check_keywords" value="yes" />
+              <input type="hidden" name="area" value="default" />
+            </form>
+            {%- if builder == 'web' %}
+            <p style="font-size: 90%">{{ _('Enter a module, class or function name.') }}</p>
+            {%- endif %}
+          {%- endif %}
+          {%- endblock %}
+        </div>
+      </div>
+      {%- endif %}
+{%- endmacro -%}
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    {{ metatags }}
+    {%- if builder != 'htmlhelp' %}
+      {%- set titlesuffix = " &mdash; " + docstitle|e %}
+    {%- endif %}
+    <title>geOrchestra</title>
+    {%- if builder == 'web' %}
+    <link rel="stylesheet" href="{{ pathto('index') }}?do=stylesheet{%
+      if in_admin_panel %}&admin=yes{% endif %}" type="text/css" />
+    {%- for link, type, title in page_links %}
+    <link rel="alternate" type="{{ type|e(true) }}" title="{{ title|e(true) }}" href="{{ link|e(true) }}" />
+    {%- endfor %}
+    {%- else %}
+    <link rel="stylesheet" href="{{ pathto('_static/' + style, 1) }}" type="text/css" />
+    <link rel="stylesheet" href="{{ pathto('_static/pygments.css', 1) }}" type="text/css" />
+    {%- endif %}
+    {%- if builder != 'htmlhelp' %}
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '{{ pathto("", 1) }}',
+        VERSION:     '{{ release|e }}',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '{{ file_suffix }}',
+        HAS_SOURCE:  {{ has_source|lower }}
+      };
+    </script>
+    {%- for scriptfile in script_files %}
+    <script type="text/javascript" src="{{ pathto(scriptfile, 1) }}"></script>
+    {%- endfor %}
+    {%- if use_opensearch %}
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="{% trans docstitle=docstitle|e %}Search within {{ docstitle }}{% endtrans %}"
+          href="{{ pathto('_static/opensearch.xml', 1) }}"/>
+    {%- endif %}
+    {%- if favicon %}
+    <link rel="shortcut icon" href="{{ pathto('_static/' + favicon, 1) }}"/>
+    {%- endif %}
+    {%- endif %}
+{%- block linktags %}
+    {%- if hasdoc('about') %}
+    <link rel="author" title="{{ _('About these documents') }}" href="{{ pathto('about') }}" />
+    {%- endif %}
+    {%- if hasdoc('genindex') %}
+    <link rel="index" title="{{ _('Index') }}" href="{{ pathto('genindex') }}" />
+    {%- endif %}
+    {%- if hasdoc('search') %}
+    <link rel="search" title="{{ _('Search') }}" href="{{ pathto('search') }}" />
+    {%- endif %}
+    {%- if hasdoc('copyright') %}
+    <link rel="copyright" title="{{ _('Copyright') }}" href="{{ pathto('copyright') }}" />
+    {%- endif %}
+    <link rel="top" title="{{ docstitle|e }}" href="{{ pathto('index') }}" />
+    {%- if parents %}
+    <link rel="up" title="{{ parents[-1].title|striptags }}" href="{{ parents[-1].link|e }}" />
+    {%- endif %}
+    {%- if next %}
+    <link rel="next" title="{{ next.title|striptags }}" href="{{ next.link|e }}" />
+    {%- endif %}
+    {%- if prev %}
+    <link rel="prev" title="{{ prev.title|striptags }}" href="{{ prev.link|e }}" />
+    {%- endif %}
+{%- endblock %}
+{%- block extrahead %} {% endblock %}
+  </head>
+  <body>
+
+{%- block document %}
+<div class="wrapper">
+    <div id="header">
+        <div id="logo"><a href="{{ pathto(master_doc) }}"><img alt="logo geOrchestra" title="Retour à la page principale" width="200px" src="{{ pathto('_static/georchestra_logo.png',1) }}"/></a></div>
+{%- block sidebar1 %} {# possible location for sidebar #} {% endblock %}
+		{%- block sidebar2 %}{{ sidebar() }}{% endblock %}
+	</div>
+	<div id="main" class="middle">
+	    <div id="menu">
+		<ul class="menu">
+		    <li class="" id="current"><a href="{{ pathto(master_doc) }}"><span>Accueil</span></a></li>
+		    <li class=""><a href="{{ pathto('documentation/index.html',1) }}"><span>Documentation</span></a></li>
+		    <li class=""><a href="{{ pathto('download.html',1) }}"><span>Téléchargement</span></a></li>
+		    		    <li class=""><a href="{{ pathto('community.html',1) }}"><span>Communauté</span></a></li>
+                    <li class=""><a href="http://csm-bretagne.fr/redmine/projects/georchestra/wiki"><span>Développement</span></a></li>
+		    <li class=""><a href="http://blog.georchestra.org"><span>Blog</span></a></li>
+		    <li class=""><a href="{{ pathto('about.html',1) }}"><span>À propos</span></a></li>
+		</ul>
+	   </div>
+	   <div class="navlink" style="">
+        	{%- block relbar1 %}{{ relbar() }}{% endblock %}
+           </div>
+	   <div id="content" class="body">
+	    {% block body %} {% endblock %}
+	   </div>
+{%- endblock %}
+
+        <div id="rightbar">
+           <h1><a href="http://blog.georchestra.org">Actualités</a></h1>
+            <script charset="ISO-8859-1" src="http://landmark-project.com/feed2js/feed2js.php?src=http://blog.georchestra.org/feed/atom&num=3&desc=75"></script>
+            
+            <script src="http://widgets.twimg.com/j/2/widget.js"></script>
+        <script>
+        new TWTR.Widget({
+          version: 2,
+          type: 'search',
+          search: 'geOrchestra',
+          interval: 6000,
+          subject: 'Tweet sur geOrchestra',
+          width: 180,
+          height: 200,
+          theme: {
+            shell: {
+              background: '#56006B',
+              color: '#ffffff'
+            },
+            tweets: {
+              background: '#ffffff',
+              color: '#444444',
+              links: '#1985b5'
+            }
+          },
+          features: {
+            scrollbar: false,
+            loop: true,
+            live: true,
+            hashtags: true,
+            timestamp: true,
+            avatars: false,
+            toptweets: true,
+            behavior: 'default'
+          }
+        }).render().start();
+        </script>
+        </div>
+      <div class="clearer"></div>
+    </div>
+
+{%- block footer %}
+    <div id="footer">
+    Site web et documents sous licence <a href="http://creativecommons.org/licenses/by-sa/2.5/">Creative Common License Attribution-Share Alike 2.5 Generic</a> geOrchestra PSC.
+	<div class="footer_right">
+	    <ul class="menu">
+		<li class="item60"><a class="externe" href="mailto:psc@georchestra.org"><span>Contact</span></a></li>
+	    </ul>
+	</div>
+    
+	{%- if last_updated %}
+	    {% trans last_updated=last_updated|e %}Last updated on {{ last_updated }}.{% endtrans %}
+	{%- endif %}
+	{%- if show_sphinx %}
+	    {% trans sphinx_version=sphinx_version|e %}Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> {{ sphinx_version }}.{% endtrans %}
+	{%- endif %}
+      </div>
+    </div>
+{%- endblock %}
+</div>
+  </body>
+</html>

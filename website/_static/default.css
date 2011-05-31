@@ -1,0 +1,660 @@
+/*
+ * Camptocamp colors :
+ * - normal text: #444
+ * - orange: #56006B
+ * - brown: #7d0000
+ * - gray-blue: #758398
+
+/*****************************/
+/*** Core html setup stuff ***/
+/*****************************/
+
+html {
+  height: 100%;
+  margin-bottom: 1px;
+}
+
+form {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+	font-family: Arial,Helvetica,sans-serif;
+	margin: 0px 0px 0px 0px;
+	font-size: 14px;
+	color: #444;
+        margin: auto;
+        min-width: 990px;
+        width: 800px;
+        background-color: #EEEEEE;
+/*         background: #e8e8e8 url(../images/bg.png) center center scroll repeat-y; */
+}
+
+.clearer {
+    clear: both;
+    float:none;
+}
+h2 {
+    margin-left: 20px;
+}
+h3 {
+    margin-left: 40px;
+}
+
+h1 a.toc-backref {
+    color: #444444 !important;
+}
+h2 a.toc-backref {
+    color: #444444 !important;
+}
+h3 a.toc-backref {
+    color: #444444 !important;
+}
+
+a:link, a:visited {
+    text-decoration: none;
+    font-weight: bold;
+    color: #56006B;
+}
+
+a:hover {
+    text-decoration: underline;
+    font-weight: bold;
+    color: #56006B;
+}
+
+input.button { cursor: pointer; }
+
+p { margin-top: 0; margin-bottom: 5px; }
+
+img { border: 0 none; }
+
+/*****************************************/
+/*** Template specific layout elements ***/
+/*****************************************/
+
+div.wrapper {
+    background-color: #FFFFFF;border: 1px solid #DDDDDD;
+/*     padding: 10px; */
+}
+
+div.clear {
+    clear: both;
+}
+
+div#header {
+        position: relative;
+        height: 60px;
+        text-align:left;
+}
+
+div#logo {
+        position: absolute;
+        width: 126px;
+        height: 60px;
+        left: 25px;
+}
+
+div#lang_choice {
+	position: absolute;
+	right: 0;
+	top: 20px;
+}
+
+div.search {
+	position: absolute;
+	width: 200px;
+	right: 0;
+	top: 65px;
+	text-align: right;
+}
+div.search form {
+	margin: 0;
+        display:inline;
+}
+div.search input {
+	width: 100px;
+	border: 1px solid #666;
+	margin: 0 0 0 5px;
+	color: #444;
+	font-size: 13px;
+    font-family: Arial,Helvetica,sans-serif;
+}
+
+
+div#leftmenus {
+	float: left;
+	width: 180px; 
+}
+
+div#leftmenus ul {
+	list-style-type: none;
+	padding-left: 0px;
+}
+
+div#leftmenus ul li {
+	padding: 8px 0;
+	border-bottom: 1px dotted #444;
+	font-size: 14px;
+}
+
+div#leftmenus ul li ul {
+	margin-top: 0;
+	margin-bottom: 2px;
+}
+
+div#leftmenus ul li ul li {
+	border-bottom: none;
+	padding: 8px 0 0 0;
+	padding-left: 20px;
+}
+
+div#leftmenus a {
+	color: #444;
+	font-weight: bold;
+}
+
+div#leftmenus ul li#current a {
+	font-weight: bold;
+}
+div#leftmenus ul li.active a {
+	color: #56006B;
+}
+
+div#leftmenus ul li ul li a {
+	font-weight: normal;
+	line-height: 90%;
+	display: block;
+	color: #56006B;
+}
+div#leftmenus ul li#current ul li a {
+	font-weight: normal;
+}
+
+
+ul#membershipmenu  {
+	margin-top: 40px;
+/*         border-left: 10px solid #ccc; */
+	background-color: #f5f5f5;
+}
+div #leftmenus ul#membershipmenu li {
+	padding-left: 15px;
+	border-bottom: none;
+	font-weight: bold;
+	margin-bottom: 10px;
+}
+div#leftmenus ul#membershipmenu li ul li a{
+	font-weight: normal;
+	color: #444;
+}
+div#leftmenus ul#membershipmenu li ul li#current a{
+	font-weight: bold;
+	color: #56006B;
+}
+
+div#main {
+	position:relative;
+}
+
+div#menu ul.menu {
+	background-image:url("navigation.png");
+	height:2em;
+	padding-top: 10px;
+}
+
+div#menu ul.menu li {
+	padding: 5px 5px;
+	display:inline;
+}
+
+div#content {
+        padding: 10px;
+        width: 700px;
+        float:left;
+}
+
+div#content div#intro_text {
+	padding-top: 5px;
+	margin-bottom: 20px;
+}
+
+
+div#rightbar {
+	width: 200px;
+	float:right;
+        font-size: 0.8em;
+}
+
+div.frontpage_column_left {
+	float: left;
+	width: 340px;
+}
+
+
+div.frontpage_column_right {
+	float: right;
+	width: 200px;
+	margin-left: 0px;
+	padding: 13px 0px 0 20px;
+}
+
+div.frontpage_column_right .title {
+	font-weight: bold;
+	margin: 0 0 10px 0;
+	padding: 2px 4px;
+	color: #fff;
+	background-color: #56006B;
+}
+
+
+/*div.frontpage div.article {
+        float: left;
+        margin-right: 20px;
+}*/
+
+div.frontpage div.article_column {
+	float: left;
+}
+div.frontpage .article_column.column_separator {
+	border-left: 1px dotted #aaa;
+	padding-left: 10px;
+	margin-left: 10px;
+}
+
+div.article_abstract {
+	margin: 0px 0px 40px 0px;
+}
+
+div.author_and_date {
+	margin: 5px 0px;
+	font-size: 11px;
+	color: #aaa;
+}
+
+/* editing */
+
+div.componentheading {
+	font-size: 16px;
+	font-weight: bold;
+	margin-bottom: 20px;
+}
+
+div#content form fieldset {
+	margin-bottom: 20px;
+}
+
+.buttonheading {
+	float: right;
+	margin-left: 10px;
+}
+.article .buttonheading {
+	margin-top: 0px;
+}
+
+table.adminform input#title {
+	width: 350px;
+}
+
+/* Tooltips */
+
+.tool-tip {
+    float: left;
+    background: #ffc;
+    border: 1px solid #D4D5AA;
+    padding: 5px;
+    max-width: 200px;
+}
+
+.tool-title {
+    padding: 0;
+    margin: 0;
+    font-size: 100%;
+    font-weight: bold;
+    margin-top: -15px;
+    padding-top: 15px;
+    padding-bottom: 5px;
+    background: url(../../system/images/selector-arrow.png) no-repeat;
+}
+
+.tool-text {
+    font-size: 100%;
+    margin: 0;
+}
+
+
+/* Section layout */
+ul.section li {
+	margin-bottom: 5px;
+}
+ul.section .small {
+	font-size: 10px;
+}
+
+/* Category layout */
+tr.sectiontableentry1 td,
+tr.sectiontableentry2 td {
+	padding-right: 10px;
+	padding-bottom: 5px;
+}
+
+
+div.category_blog .article_column {
+	float: left;
+}
+div.category_blog .article_column.column_separator {
+	border-left: 1px dotted #aaa;
+	padding-left: 10px;
+	margin-left: 10px;
+}
+
+div#footer {
+/* 	border-top: 1px dotted #444; */
+        background-color: #CCCCCC;
+	margin-top: 10px;
+	bottom: 0px;
+	padding: 5px 0;
+	clear:both;
+	position: relative;
+	width:100%;
+        height:200px;
+}
+
+div.footer_right {
+	float: right;
+	margin-right:1em;
+}
+div.footer_right ul {
+	margin: 0;
+}
+div.footer_right ul li {
+	display: inline;
+	padding-left: 20px;
+}
+
+
+/* Sitemap */
+div.xmap .componentheading {
+	font-size: 20px;
+}
+div.xmap .contentpaneopen {
+/*         overflow: hidden; */
+}
+
+div.xmap ul li {
+	white-space: normal!important;
+}
+
+/*** login form styling ***/
+
+form#form-login {
+	margin-top: 40px;
+}
+form#form-login fieldset {
+	border: none;
+	margin: 0;
+	padding: 0;
+}
+form#form-login input {
+	width: 100px;
+}
+form#form-login p input {
+	border: 1px solid #444;
+	width: 180px;
+}
+
+form#form-login div {
+	margin-bottom: 10px;
+}
+
+form#form-login ul {
+}
+form#form-login ul li {
+	border: none;
+	font-size: 12px;
+	font-weight: normal;
+	padding: 5px 0;
+}
+
+/*** wordpress_categories module styling ***/
+
+#wp-latest-cats ul {
+	list-style-type: none;
+	padding-left: 0;
+	margin: 10px 0;
+}
+#wp-latest-cats ul li {
+	margin-bottom: 2px;
+}
+
+#wp-latest-cats li a {
+	color: #444;
+}
+#wp-latest-cats li.current-cat a {
+	color: #ff6800;
+}
+#wp-latest-cats li img {
+	vertical-align: middle;
+}
+
+/*** wordpress_tagcloud module styling ***/
+
+#wp-tag-cloud {
+	margin: 10px 0;
+	padding: 10px 10px 15px 10px;
+	background-color: #f5f5f5;
+}
+
+/*** wordpress_latest module styling ***/
+
+ul.wp-latest-latest {
+	list-style-type: none;
+	padding-left: 0;
+}
+ul.wp-latest-latest li {
+	margin-bottom: 20px;
+}
+
+.wp-latest-title {
+	margin-bottom: 5px;
+}
+
+.wp-latest-title a {
+	font-weight: bold;
+}
+
+ul.wp-latest-latest a {
+	color: #7d0000;
+}
+
+.wp-latest-date-readmore {
+	margin-top: 3px;
+}
+
+
+/*** wordpress_archives module styling ***/
+
+div#wp-archives h3 {
+	font-size: 14px;
+}
+div#wp-archives ul {
+	list-style-type: none;
+	padding-left: 0;
+}
+
+
+/***** Joom!fish styling ******/
+
+div#lang_choice div#jflanguageselection {
+  float: none;
+  margin: 0;
+  padding: 0;
+}
+
+div#lang_choice div#jflanguageselection ul {
+  margin: 0;
+}
+
+div#lang_choice div#jflanguageselection li {
+  margin-left: 10px;
+}
+
+div#jflanguageselection a span {
+  font-size: 13px;
+}
+div#jflanguageselection li a span {
+  font-weight: normal;
+}
+div#jflanguageselection li#active_language a span {
+  font-weight: bold;
+}
+
+div.offline {
+    background: #fffebb;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 1.2em;
+    padding: 5px;
+}
+div.related {
+	position:relative;
+}
+
+div.related ul {
+	height:2em;
+}
+
+div.related ul {
+	list-style-image:none;
+	list-style-position:outside;
+	list-style-type:none;
+	margin:0;
+	padding:0 0 0 10px;
+}
+
+div.related ul li.right {
+	float:right;
+	margin-right:5px;
+}
+
+div.related ul li {
+	/* float:left; */
+	height:2em;
+	margin:0;
+	padding:0;
+}
+
+div.related li {
+	display:inline;
+}
+
+img.illustration { border: 1px solid black; }
+
+img.around-left {
+	float:left;
+	padding:20px;
+}
+
+img.around-right {
+	float:right;
+	padding:5px;
+}
+
+h1:hover > a.headerlink, h2:hover > a.headerlink, h3:hover > a.headerlink, h4:hover > a.headerlink, h5:hover > a.headerlink, h6:hover > a.headerlink, dt:hover > a.headerlink {
+	visibility:visible;
+}
+
+a.headerlink:hover {
+	background-color:#CCCCCC;
+	color:white !important;
+}
+
+a.headerlink {
+	visibility:hidden;
+}
+
+a.headerlink:hover {
+	background-color:#CCCCCC;
+	color:white !important;
+}
+
+a.headerlink {
+	color:#56006B !important;
+	font-size:1em;
+	margin-left:6px;
+	padding:0 4px;
+	text-decoration:none !important;
+}
+
+.middle {
+    /*min-height:800px;*/
+}
+
+.note {
+    border:1px solid #FF6309;
+    margin:1em;
+}
+.note p.first {
+    background-color:#FF6309;
+    color: white;
+    padding:0.2em 0.5em;
+}
+.note p.last {
+    padding:0.2em 0.5em;
+}
+
+/**
+**
+**/
+
+div.admonition, div.warning {
+    font-size: 0.9em;
+    margin: 1em 0 1em 0;
+    border: 1px solid #86989B;
+    background-color: #f7f7f7;
+    padding: 0;
+}
+
+div.admonition p, div.warning p {
+    margin: 0.5em 1em 0.5em 1em;
+    padding: 0;
+}
+
+div.admonition pre, div.warning pre {
+    margin: 0.4em 1em 0.4em 1em;
+}
+
+div.admonition p.admonition-title,
+div.warning p.admonition-title {
+    margin: 0;
+    padding: 0.1em 0 0.1em 0.5em;
+    color: white;
+    border-bottom: 1px solid #86989B;
+    font-weight: bold;
+    background-color: #AFC1C4;
+}
+
+div.warning {
+    border: 1px solid #940000;
+}
+
+div.warning p.admonition-title {
+    background-color: #CF0000;
+    border-bottom-color: #940000;
+}
+
+div.admonition ul, div.admonition ol,
+div.warning ul, div.warning ol {
+    margin: 0.1em 0.5em 0.5em 3em;
+    padding: 0;
+}
+
+div.sphinxsidebar {
+    float:right;
+}
+
+div.navlink {
+    display:none;
+}
