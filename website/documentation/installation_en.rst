@@ -42,7 +42,14 @@ Once all of the artifacts are built then they can be deployed with the server-de
 Deploy
 ======
 
-The first step that needs to be done is 
+The first step that needs to be done is to create a deployScript.  The name of the file is important, it must follow the form <platform_id>DeployScript.groovy.  See the technical information section below for more detailed information on how to write a deployScript.
+
+Once the script is written then the projects can be deployed by executing:
+
+  * mvn -Pfull,platform_id  -- This will deploy all war files as well as configure all ancillary systems that are required like openLDAP, server certificates, apache configuration, tomcat configuration, etc...
+  * mvn -Pupdate,platform_id  -- This will deploy all war files but leave the rest of the system alone
+  * mvn -P<app>,platform_id  -- Substitue <project> for the app you want to deploy.  For example: mvn -Pcas,platform_id
+
 
 =====================
 Technical Information
@@ -101,3 +108,18 @@ To reiterate.  The server-deploy module provides a way to very simply write depl
  * Be extremely flexible so that it is easy to write script that deploy all wars to a single server even deploy the same artifact to several servers for scaling and the other artifacts to other servers.
 
 Currently the server-deploy-support provides only rudimentary support but extra classes can be added to assist in writing deploy scripts for other types of server configurations.
+
+============================
+Random technical information
+============================
+
+Java SSL, Keystores and Truststores
+===================================
+
+A Keystore stores a servers certificates and credentials and is used when a server wants to authenticate with another server.  If you want a tomcat (for example) to have a certificate you need to create a Keystore and put the certificate into that Keystore.  Often the certificates are in DEM format so you can use a script like:  https://github.com/jesseeichar/jvm-security-scripts/blob/master/ImportDem.java or https://github.com/jesseeichar/jvm-security-scripts/blob/master/ImportDem.scala to convert the DEM and install it into a Keystore.  Naturally you need a Keystore before you can install anything into one so you can create one using the: https://github.com/jesseeichar/jvm-security-scripts/blob/master/create_empty_Keystore script that (obviously) creates an empty Keystore.
+
+That is all good, but for 2 servers to connect one server needs a certificate and the other server needs to trust that certificate.  That is where Truststores come in.  By default the JVM ships with a Truststore with the major certificate vendors so if your certificate was created by one of them then you are good.  If not then you need to create a custom Truststore.  You start out with an empty Keystore (see above script for creating that) then you can import a servers certificate into that Keystore using one of the scripts: https://github.com/jesseeichar/jvm-security-scripts/blob/master/InstallCert.java or https://github.com/jesseeichar/jvm-security-scripts/blob/master/InstallCert.scala.  The scripts essentially query the target server for its certificate
+then install that certificate into the Truststore.  
+
+One major gotcha is that the certificate and hostname are tied together so if the server has multiple aliases you need to choose the one you will use.
+
