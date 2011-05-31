@@ -191,6 +191,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
+										<classifier>${server}</classifier>
                     <warName>extractorapp-private</warName>
                     <filters>
                       <filter>${basedir}/src/${server}/maven.filter</filter>
