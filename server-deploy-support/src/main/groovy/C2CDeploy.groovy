@@ -14,17 +14,44 @@ class C2CDeploy {
     final def settings
     final def log
     final def projectProperties
-    def aliasFunction
-    def artifacts
-    def tomcat1Deployer
-    def geoserverDeployer
+    final char[] keystorePass=Utils.randomString(8).toCharArray()
+    def remoteKeystoreFile = "/srv/tomcat/tomcat1/conf/server.jks"
 
+    /**
+     * The function for mapping maven artifact names to the final war names.  Default is Artifacts.standardGeorchestraAliasFunction
+     */
+    def aliasFunction
+    /**
+     * The artifacts to publish.  By default all of the war files in project.properties['warsDir']
+     */
+    def artifacts
+    /**
+     * The deployer for deploying all apps except for geoserver
+     */
+    def tomcat1Deployer
+    /**
+     * The deployer for deploying geoserver
+     */
+    def geoserverDeployer
+    /**
+     * The directory to put the apache configuration file
+     *
+     * The default is "/var/www/${ssh.host}/conf"
+     */
+    def apacheConfDir
+
+    /**
+     * Create a new C2CDeploy object
+     * @param project the maven project object, used to get the logger and project properties
+     * @param ssh the SSH object for uploading files and executing commands
+     */
     C2CDeploy(project, ssh) {
         this.project = project
         this.settings = ssh.settings
         this.log = ssh.log
         this.projectProperties = project.properties
         this.ssh = ssh
+        this.apacheConfDir = "/var/www/${ssh.host}/conf"
 
         this.artifacts = new Artifacts(project, Artifacts.standardGeorchestraAliasFunction)
 
@@ -45,21 +72,43 @@ class C2CDeploy {
 
     }
 
-
+    /**
+     * Sets the proxypass configuration for apache
+     */
     def updateApacheConf() {
-        def input = this.getClass().classLoader.getResourceAsStream("/c2c/var/www/server/proxypass-tomcat.conf")
-        ssh.streamCopy(input, "/var/www/${ssh.host}/conf/proxypass-tomcat.conf")
+        ssh.scpResource("c2c/var/www/server/conf/proxypass-tomcat.conf", "$apacheConfDir/proxypass-tomcat.conf",
+        ["@host@" : ssh.host])
+        ssh.exec("sudo apache2ctl graceful",SSH.zeroCode)
     }
 
+    /**
+     * This method updates the tomcat server configuration.  It copies the files from the classpath to the
+     * server.  Specifically it copies:  /c2c/tomcat/bin/setenv-local.sh and /c2c/tomcat/conf/server.xml
+     */
     def updateTomcatConf() {
-        def input = this.getClass().classLoader.getResourceAsStream("/c2c/tomcat/bin/setenv-local.sh")
-        ssh.streamCopy(input, "/srv/tomcat/tomcat1/bin/setenv-local.sh")
-
-        input = this.getClass().classLoader.getResourceAsStream("/c2c/tomcat/conf/server.xml")
-        ssh.streamCopy(input, "/srv/tomcat/tomcat1/conf/server.xml")
+        def substitutions =
+            ["@keystoreFile@" : remoteKeystoreFile,
+             "@keystorePass@" : new String(keystorePass)
+            ]
+        ssh.scpResource("c2c/tomcat/bin/setenv-local.sh", "/srv/tomcat/tomcat1/bin/setenv-local.sh",substitutions)
+        ssh.scpResource("c2c/tomcat/conf/server.xml", "/srv/tomcat/tomcat1/conf/server.xml",substitutions)
+        ssh.scpResource("c2c/tomcat/conf/epsg.properties", "/srv/tomcat/tomcat1/conf/epsg.properties",substitutions)
     }
 
+    def updateTrustStore() {
+        def keystoreFile = File.createTempFile("keystore","jks")
+        Utils.createKeystore(log,keystoreFile,keystorePass,true)
+        Utils.importCertificate(log,keystoreFile,keystorePass,ssh.host,443)
+        ssh.scp(keystoreFile,this.remoteKeystoreFile)
+    }
+
+    /**
+     * This is the complete install method.  It is called to deploy the configured artifacts as well
+     * as configure the server (if deployAll property is true)
+     */
     def deploy() {
+        systemConfiguration()
+
         def tomcat1 = artifacts.findAll {return !(it.name.startsWith("geoserver"))}
         tomcat1Deployer.deploy(tomcat1)
 
@@ -68,11 +117,24 @@ class C2CDeploy {
             geoserverDeployer.deploy(geoserver)
         }
 
-        if(projectProperties['deployAll'] != null) {
-            updateApacheConf()
-            updateTomcatConf()
-            //updateTrustStore() TODO
-        }
     }
 
+    /**
+     * if the deployAll property exists and == true (case is not important) the this
+     * method updates the tomcat and apache configurations as well as creating the database for geonetwork
+     * and creates the trustStore
+     */
+    def systemConfiguration() {
+        def key = 'deployAll'
+        def deployAll = System.getProperty(key) == null ? projectProperties[key] : System.getProperty(key)
+        if( deployAll != null && "true".equalsIgnoreCase(deployAll)) {
+            log.info("deployAll is true so updating server configuration")
+
+            updateApacheConf()
+            updateTomcatConf()
+            updateTrustStore()
+        } else {
+            log.info("deployAll is *NOT* true so *NOT* updating server configuration")
+        }
+    }
 }

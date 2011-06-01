@@ -89,8 +89,42 @@ Another option is to provide the username and either path privateKey or a passwo
             srcFile = new File(src.toString())
         }
         log.info("scp $srcFile $username@$host:$dest")
-        def written = streamCopy(srcFile.newInputStream(),dest,srcFile.lastModified(), srcFile.length(),true)
-        log.info("scp complete: ${Math.round(written / mb * 10) / 10}MB copied")
+        def written = streamCopy(srcFile.newInputStream(),dest, srcFile.length(), srcFile.lastModified(), true)
+        if(written < mb) {
+            log.info("scp complete: ${written} bytes copied")
+        } else {
+            log.info("scp complete: ${Math.round(written / mb * 10.0) / 10.0}MB copied")
+        }
+    }
+
+    /**
+     * Copy a file from the classpath to the remote server.  Note the file should be small enough to fit into memory
+     *
+     * @param resource the path of the file to load from the provided class loader
+     * @param dest the destination path
+     * @param classLoader the classloader to use to get the resource.  By default it is the SSH classloader
+     */
+    def scpResource(resource,dest,substitutions =[:], classLoader = SSH.class.classLoader) {
+        def stream = new BufferedReader(new InputStreamReader(classLoader.getResourceAsStream(resource)))
+        def all = new StringBuilder()
+        def next = stream.readLine()
+
+        while(next != null) {
+            substitutions.each{ key,value ->
+                next = next.replaceAll(key,value)
+            }
+            all.append(next).append("\n")
+            next = stream.readLine()
+        }
+
+        def a = all.toString().getBytes("UTF-8")
+        log.info("scp $resource $username@$host:$dest")
+        streamCopy(new ByteArrayInputStream(a),dest,a.length, System.currentTimeMillis(), true)
+        if(a.length < mb) {
+            log.info("scp complete: ${a.length} bytes copied")
+        } else {
+            log.info("scp complete: ${Math.round(a.length / (mb * 10.0)) / 10.0}MB copied")
+        }
     }
 
     /**
@@ -99,10 +133,14 @@ Another option is to provide the username and either path privateKey or a passwo
      * @param src an input stream to copy to dest file
      * @param dest a string or file (cannot be a directory it must be the file)
      * @param lastModified the lastModified date to sent.  Default is current time
-     * @param length length of stream if -1 then length is assumed to be unknown.  Default is -1
+     * @param length length of stream, this is required so that the the remote file can be correctly created
      * @param hideStartStopLog If the start and end messages should not be logged (in case of scp it already makes the logs)
      */
-    def streamCopy(src, dest, lastModified = System.currentTimeMillis(), length = -1, hideStartStopLog=false) {
+    def streamCopy(src, dest, length ,lastModified = System.currentTimeMillis(),  hideStartStopLog=false) {
+
+        if(src == null){
+            throw new IllegalArgumentException("src is not permitted to be null")
+        }
 
         if(dest instanceof File) {
             dest = dest.path
@@ -201,6 +239,7 @@ Another option is to provide the username and either path privateKey or a passwo
             buf[0] = 0;
             out.write(buf, 0, 1); out.flush();
             if (checkAck(input) != 0) {
+                println("An error occurred when trying to copy to " + host + ":" + dest)
                 throw new AssertionError("An error occurred when trying to copy to " + host + ":" + dest)
             }
             out.close();
@@ -227,7 +266,7 @@ Another option is to provide the username and either path privateKey or a passwo
             StringBuffer sb = new StringBuffer();
             int c = input.read();
             sb.append((char) c);
-            while (c != '\n') {
+            while (c != -1) {
                 c = input.read();
                 sb.append((char) c);
             }
