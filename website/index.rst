@@ -54,7 +54,7 @@ fonctionnement de chaque module n'affecte pas les autres. La communication
 entre modules utilise les standards de l'OGC.
 
 Une communauté d'utilisateurs et de développeurs
-===============================================
+================================================
 
 Implémentation des standards
 =============================
