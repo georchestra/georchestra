@@ -6,6 +6,26 @@ Installation Guide
 
 While the goal of the project is to be able to publish raw built artifacts to a central repository and have a configuration system that modifies their configuration for a particular deployment platform, that is not currently the situation.  As it stands the configurations are built along with the artifacts and as such one must do a full build for each platform you want to deploy to.  
 
+Preconditions
+=============
+The following precondition must be met before deploying georchestra
+
+ * An LDAP server is installed, currently the Embedded-LDAP module is not deployed so another LDAP server is required.  
+   Typically we use OpenLDAP.  The LDAP needs to be configured with users and Groups/Roles (and obviously an admin user.)  Each user MUST have certain fields including:  
+    * mail
+    * uid (maybe)
+    * cn (maybe)
+   There are also special rules for Groups/Roles in the LDAP.  
+    * Groups/Roles starting with EL_ will be mapped to Geonetwork groups
+    * Groups/Roles starting with SV_ are roles that are common for all applications.  (In the case of Geonetwork SV_ roles map to profiles, in other applications it has different meaning)
+      * SV_ADMIN gives administrative rights to all applications
+      * SV_EDITOR gives editing rights within an application if it applies (Currently this is observed by Geonetwork and Mapfishapp only)
+      * SV_Reviewer gives review rights (Currently only observed by Geonetwork)
+      * SV_User give read only rights in all applications but since the user is logged in it may give extra access to the application (application dependent)
+    * GS_ADMIN is a special role for administrating Geoserver.  SV_ADMIN give full admin access to geoserver but GS_ADMIN gives access to the geoserver security application for configuring access to each layer in geoserver.  A user with GS_ADMIN '''must''' also have a GS_ADMIN_<FOO> role.  the <FOO> indicates what "region/group" that administrator has rights to administer.
+ * A certificate for the outward facing server.  To use the default C2CDeploy an apache2 install is required with a certificate configured as well as https.
+ * A database must be available for Geonetwork to store its data in.  The connection parameters for the database is configured as part of the geonetwork configuration (See below) 
+
 Configuration
 =============
 
