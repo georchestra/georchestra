@@ -144,8 +144,8 @@ Les membres fondateurs sont :
 * Fabrice Phung
 * Yves Jacolin
 
-Mise à jour : 01/04/2011 
-
 Les membres suivants ont été ajoutés à la PSC, après discussion et consensus :
+* François Van Der Biest
+* Pierre Mauduit
 
-
+Mise à jour : 06/06/2011 
