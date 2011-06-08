@@ -5,6 +5,7 @@ Editeur – mode d’emploi
 ========================
 
 :author: Lydie Vinsonneau
+:author: Yves Jacolin
 
 Introduction
 ============
