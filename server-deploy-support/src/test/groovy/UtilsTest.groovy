@@ -4,6 +4,7 @@ import java.security.KeyStore
 
 
 class UtilsTest {
+    
     @Test
     void randomString() {
         def all = []
@@ -25,25 +26,26 @@ class UtilsTest {
 
     @Test
     void createKeystoreWithCertificate() {
-        def tmp = File.createTempFile("xxxx",".jks")
+        def tmp = File.createTempFile("xxxx", ".jks")
         tmp.delete()
         tmp.deleteOnExit()
         def passphrase = "xyzabc".toCharArray()
-        def keystore = Utils.createKeystore(null,tmp, passphrase,true)
+        def keystore = Utils.createKeystore(null, tmp, passphrase, true)
         def cert = keystore.getCertificate("georchestra")
-        def key = keystore.getKey("georchestra",passphrase)
+        def key = keystore.getKey("georchestra", passphrase)
         assertNotNull(cert)
         assertNotNull(key)
 
         cert = keystore.getCertificate("localhost")
         assertNotNull(cert)
-        assertEquals(2,keystore.size())
+        assertEquals(2, keystore.size())
+        
+        check(tmp)
     }
-    @Test
-    void check() {
+    void check(keyStore) {
         def store = KeyStore.getInstance(KeyStore.getDefaultType())
-        def is = new FileInputStream("/tmp/server.jks")
-        def passphrase = "password".toCharArray()
+        def is = new FileInputStream(keyStore)
+        def passphrase = "xyzabc".toCharArray()
         store.load(is, passphrase)
         is.close()
         def aliases = store.aliases()
