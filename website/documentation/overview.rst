@@ -62,18 +62,17 @@ latéraux repliables offrent une surface de visualisation maximale sur de petits
 écrans, alors que le chargement par tuiles optimise l'affichage sur de grands 
 écrans.
 
-Les configurations de cartes sont enregistrées dans des documents très légers 
-appelés "contextes" qui peuvent être rechargés, modifiés, échangés avec des tiers.
+.. note::
+    Les configurations de cartes sont enregistrées dans des documents très légers 
+    appelés "contextes" qui peuvent être rechargés, modifiés, échangés avec des tiers.
 
-Le visualiseur peut être inséré dans un site existant. Sa configuration de 
-démarrage est personnalisable par l'administrateur du site :
-données chargées par défaut, projection, emprise, catalogue et serveurs ciblés, 
-performance des navigateurs...
+    Le visualiseur peut être inséré dans un site existant. Sa configuration de 
+    démarrage est personnalisable par l'administrateur du site :
+    données chargées par défaut, projection, emprise, catalogue et serveurs ciblés, 
+    performance des navigateurs...
 
 Styleur
 ---------
-
-.. image:: _static/mapfishapp_styler_1.png
 
 Le styleur est une fonction avancée du visualiseur pour personnaliser les cartes 
 selon les attentes précises de l'utilisateur.
@@ -85,10 +84,12 @@ Le styleur ne télécharge aucune donnée : les serveurs font le travail. Il peu
 travailler sur des données très volumineuses comme le cadastre avec le même niveau
 de performance.
 
-Les styles fabriqués peuvent être conservés ou échangés avec des tiers. 
-L'utilisateur peut ainsi construire sa propre bibliothèque de cartes
-correspondant à ses besoins.
- 
+.. image:: _static/mapfishapp_styler_1.png
+
+.. note::
+    Les styles fabriqués peuvent être conservés ou échangés avec des tiers. 
+    L'utilisateur peut ainsi construire sa propre bibliothèque de cartes
+    correspondant à ses besoins.
 
 Requêteur
 ----------
@@ -103,7 +104,6 @@ par l'utilisateur) et attributaires
 obtenir le résultat souhaité.
 
 .. image:: _static/mapfishapp_requeter_1.png
-
 
 Impression
 -----------
@@ -163,7 +163,7 @@ styles... Si le format de prédilection des données est SHAPE, Geoserver sait
 composer avec de nombreuses autres sources de données et peut donc 
 s'intégrer à des systèmes d'information existants. 
 
-Geoserver propose de plus le Web Processing Service, un service de traitement de 
+Geoserver propose de plus un Web Processing Service, un service de traitement de 
 données puissant aux capacités comparables aux systèmes d'information géographique. 
 
 
