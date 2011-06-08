@@ -35,13 +35,15 @@ class Utils {
         if (shouldAddSelfSignedCertificate) {
             def alias = "georchestra"
             def pass = new String(passphrase)
+            def env = [:]
+            env.LANG = 'en'
             def cmd = "keytool -genkey -alias $alias -keystore ${outFile} -storepass ${pass} -keypass ${pass} -keyalg RSA -keysize 2048"
 
             if(System.getProperty("os.name").toLowerCase().startsWith("windows") ){
                 cmd = cmd.replace("keytool -genkey","keytool.exe -genkey")
                 assert(cmd.contains(".exe"))
             }
-            def process=cmd.execute()
+            def process=cmd.execute(env.collect { k, v -> "$k=$v" }, null)
             process.withWriter {writer ->
                 writer.write("localhost\n")
                 writer.write("C2C\n")
