@@ -31,7 +31,12 @@ Installation
 
 .. image:: _static/logo_installer.png
 
-Une documentation est en cours de rédaction, contactez nous si vous désirez y 
+.. toctree::
+   :maxdepth: 1
+   
+   installation_en
+
+Une documentation en français est en cours de rédaction, contactez nous si vous désirez y 
 contribuer !
 
 Utilisation
@@ -40,12 +45,17 @@ Utilisation
 Une documentation est en cours de transposition sur le site, contactez nous si vous désirez y 
 contribuer !
 
-.. Administration
+.. Administrateur
 .. ---------------
 
-.. Utilisation
-.. ------------
+Utilisateur
+------------
 
+.. toctree::
+   :maxdepth: 1
+   
+   utilisateur/edition
+   
 F.A.Q.
 ========
 

@@ -22,7 +22,7 @@ The following precondition must be met before deploying georchestra
    geonetwork configuration (See below)    
    
 The LDAP needs to be configured with users and Groups/Roles (and obviously an 
-admin user.)  Each user MUST have certain fields including:
+admin user). Each user MUST have certain fields including:
    
   * mail
   * uid (maybe)
