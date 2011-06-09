@@ -86,7 +86,7 @@ class SSHWarDeployer {
                 ssh.exec startServerCommand, ssh.zeroCode
             }
         } finally {
-            ssh.exec "rm -f $tmpDir/*"
+            ssh.exec "rm -rf $tmpDir"
         }
     }
 
