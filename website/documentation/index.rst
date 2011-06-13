@@ -34,7 +34,7 @@ Installation
 .. toctree::
    :maxdepth: 1
    
-   installation_en
+   installation_fr
 
 Une documentation en français est en cours de rédaction, contactez nous si vous désirez y 
 contribuer !
