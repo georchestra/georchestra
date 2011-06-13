@@ -13,6 +13,9 @@ La première partie explique où se trouve la gestion des accès en fonction de
 l'outil utilisé. La section suivante illustre le concept de groupe et de région 
 au sein de geOrchestra.
 
+Vous pouvez accéder à la page :ref:`georchestra.documentation.installation_fr` 
+pour d'autres informations à ce sujet.
+
 Gestion
 =========
 
