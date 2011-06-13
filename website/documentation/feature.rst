@@ -11,8 +11,8 @@ Visualiseur
 
 * se déplacer, zoomer dans la carte
 * ajouter de nouvelles couches issue du catalogue ou d'un service WMS distant ;
-* modifier la sémiologie d'une couche et sauver le style ;
-* réaliser des requêtes sur une couche pour filtrer les données affichées ;
+* **modifier la sémiologie** d'une couche WMS locale ou distante et sauver le style ;
+* **réaliser des requêtes sur une couche** pour filtrer les données affichées ;
 * sauver la liste des couches ouvertes, la zone de visualisation dans un fichier 
   de contexte ;
 * lire un fichier de contexte ;
@@ -22,7 +22,7 @@ Visualiseur
 Catalogue
 ==========
 
-* profile français pour les métadonnées ;
+* profile français pour les métadonnées (compatible INSPIRE) ;
 * moissoner des catalogues distants ;
 * être moissoné par un catalogue distant ;
 * gestion fine des droits de publication ;
