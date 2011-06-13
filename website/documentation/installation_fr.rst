@@ -11,7 +11,7 @@ un build complet pour chaque plate-forme de déploiement.
 
 Préconditions
 =============
-Les conditions suivantes doivent être satisfaites avant de déployer geOrchestra
+Les conditions suivantes doivent être satisfaites avant de déployer geOrchestra :
 
  * Un annuaire LDAP est installé. Actuellement, le module intégré d'annuaire LDAP 
    n'est pas déployé, un annuaire LDAP externe est donc requis. 
@@ -21,7 +21,7 @@ Les conditions suivantes doivent être satisfaites avant de déployer geOrchestr
    avec https et un certificat configuré.
  * Une base de données pour permettre à Geonetwork de stocker ses données.
    La connexion à la base est configurée dans la configuration Geonetwork 
-   (Voir plus loin)    
+   (voir plus loin)    
    
 En plus des utilisateurs, l'annuaire LDAP doit contenir la liste des groupes/rôles, et
 évidemment un utilisateur administrateur. Chaque utilisateur DOIT être décrit avec
@@ -39,12 +39,12 @@ L'annuaire doit également respecter certaines règles pour le nommage des group
    applications ils ont une signification différente)
     
   * SV_ADMIN donne des permissions administrateur dans toutes les applications (hors geoserver)
-  * SV_EDITOR donne des droits en écriture dans une application si cette notion a un sens (Actuellement,
+  * SV_EDITOR donne des droits en écriture dans une application si cette notion a un sens (actuellement,
     cela concerne seulement Geonetwork et Mapfishapp)
-  * SV_REVIEWER donne des droits de relecteur validateur (Actuellement, cela concerne seulement Geonetwork)
+  * SV_REVIEWER donne des droits de relecteur validateur (actuellement, cela concerne seulement Geonetwork)
   * SV_USER donne seulement des droits en lecture seule dans toutes les applications mais, 
     l'utilisateur étant authentifié, il peut bénéficier d'autres permissions (dépendantes de l'application)
-  * GS_ADMIN est un rôle spécial pour l'administration de Geoserver (attention: ADMINISTRATOR pour GS2).
+  * GS_ADMIN est un rôle spécial pour l'administration de Geoserver (attention : ADMINISTRATOR pour GS2).
     SV_ADMIN donne un accès complet à la configuration de geoserver, mais GS_ADMIN donne accès limité à la
     configuration des permissions d'accès aux couches. Un utilisateur avec un rôle GS_ADMIN '''doit''' également
     avoir un rôle GS_ADMIN_<FOO>. Le <FOO> indique quel "regroupement de couches" l'utilisateur/administrateur
@@ -67,7 +67,7 @@ existante pour ensuite les adapter à la nouvelle plate-forme.
 Après avoir édité les fichiers de configuration de chaque projet, une section *profile* 
 doit être ajoutée dans le *pom.xml* racine comme suit (notez que platform_id
 doit correspondre à l'identifiant que vous avez choisi pour désigner
-la plate-forme cible.):
+la plate-forme cible.) :
 
 ::
     
@@ -113,14 +113,14 @@ nom de ce script est important, il doit suivre la syntaxe
 Voir la section technique ci-dessous pour davantage d'informations sur la façon
 de rédiger un script de déploiement.
 
-Une fois le script écrit, les projets peuvent être déployés en exécutant:
+Une fois le script écrit, les projets peuvent être déployés en exécutant :
 
   * mvn -Pfull,platform_id  -- Ceci va déployer tous les fichiers war et 
     configurer tous les systèmes tiers tels que  openLDAP, les certificats serveur,
     la configuration apache, la configuration tomcat, etc...
   * mvn -Pupdate,platform_id  -- Ceci va déployer tous les fichiers war, mais ne touche
     pas au reste du système
-  * mvn -P<app>,platform_id  -- Substituez <project> pour l'application que vous souhaitez
+  * mvn -P<app>,platform_id  -- Substituez <app> pour l'application que vous souhaitez
     déployer. Par exemple: mvn -Pcas,platform_id
 
 
@@ -131,7 +131,7 @@ Informations techniques
 Mécanisme de déploiement
 ========================
 
-Le mécanisme de déploiement consiste en deux modules:
+Le mécanisme de déploiement consiste en deux modules :
  * server-deploy
  * server-deploy-support
 
@@ -140,7 +140,7 @@ indépendantes de la plateforme) pour simplifier l'écriture de scripts de dépl
 vers tous systèmes et serveurs web. Des exemples de classes :
 
  * SSH - fournit des commandes scp et ssh indépendantes de la plateforme, permettant de déployer vers
-   tout serveur équipé d'ssh depuis windows ou linux
+   tout serveur équipé d'ssh depuis windows ou linux ;
  * SSHTomcatDeployer - Permet le dépôt de fichiers war sur un serveur tomcat
    en trois lignes de code. Cela inclut la copie du fichier sur le serveur distant, 
    la mise à jour des wars existants, le redémarrage de tomcat si nécessaire.
@@ -189,9 +189,9 @@ Pour résumer. Le module server-deploy fournit un moyen d'écrire facilement des
 de déploiement pour déployer un système entier sur un ou plusieurs serveurs. 
 Les objectifs de ce module sont :
 
- * Fournir un moyen décrire très facilement des scripts de déploiement
- * Etre indépendant du système, de façon à ce que qu'un script fonctionne sur toute plate-forme
- * Ne pas nécessiter d'installation autre que maven et java
+ * Fournir un moyen décrire très facilement des scripts de déploiement.
+ * Etre indépendant du système, de façon à ce que qu'un script fonctionne sur toute plate-forme.
+ * Ne pas nécessiter d'installation autre que maven et java.
  * Rester très flexible, pour qu'il soit facile d'écrire des scripts qui déploie
    tous les war sur un seul serveur, ou un module sur plusieurs serveurs pour 
    des questions de charge et tous les autres sur un autre serveur.
@@ -224,7 +224,7 @@ l'autre doit faire confiance à ce certificat. C'est ici que le truststore inter
 les JVM sont fournies avec un truststore approuvant les principaux fournisseurs de certificats.
 Si vous avec acquis un certificat auprès de ces fournisseurs, tout va bien. Sinon, 
 vous devez créer un keystore (voir les scripts ci-dessus), puis importer
-le certificat serveur dans le truststore en utilisant l'un de ces scripts:
+le certificat serveur dans le truststore en utilisant l'un de ces scripts :
 https://github.com/jesseeichar/jvm-security-scripts/blob/master/InstallCert.java 
 ou https://github.com/jesseeichar/jvm-security-scripts/blob/master/InstallCert.scala. 
 Ces scripts demandent au serveur cible leur certificat, puis l'installent dans 
