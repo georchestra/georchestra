@@ -108,8 +108,7 @@ Déploiement
 ===========
 
 La première étape à effectuer est la création d'un script de déploiement. Le 
-nom de ce script est important, il doit suivre la syntaxe
- <platform_id>DeployScript.groovy. 
+nom de ce script est important, il doit suivre la syntaxe <platform_id>DeployScript.groovy. 
 Voir la section technique ci-dessous pour davantage d'informations sur la façon
 de rédiger un script de déploiement.
 

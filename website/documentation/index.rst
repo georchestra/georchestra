@@ -35,6 +35,7 @@ Installation
    :maxdepth: 1
    
    installation_fr
+   security
 
 Une documentation en français est en cours de rédaction, contactez nous si vous désirez y 
 contribuer !

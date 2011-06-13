@@ -4,7 +4,7 @@
 # You can set these variables from the command line.
 SPHINXOPTS    =
 SPHINXBUILD   = buildout/bin/sphinx-build
-PAPER         =
+PAPER         = a4
 BUILDDIR      = _build
 
 # Internal variables.
@@ -71,6 +71,10 @@ latex:
 	@echo "Build finished; the LaTeX files are in $(BUILDDIR)/latex."
 	@echo "Run \`make all-pdf' or \`make all-ps' in that directory to" \
 	      "run these through (pdf)latex."
+pdf: 
+	$(SPHINXBUILD) -b pdf $(ALLSPHINXOPTS) _build/pdf 
+	@echo 
+	@echo "Build finished. The PDF files are in _build/pdf." 
 
 changes:
 	$(SPHINXBUILD) -b changes $(ALLSPHINXOPTS) $(BUILDDIR)/changes

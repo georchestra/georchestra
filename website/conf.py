@@ -22,7 +22,7 @@ import sys, os
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = []
+extensions = ['sphinx.ext.todo', 'sphinx.ext.ifconfig', 'rst2pdf.pdfbuilder']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -189,3 +189,34 @@ htmlhelp_basename = ''
 
 # If false, no module index is generated.
 #latex_use_modindex = True
+
+
+# -- Options for PDF output ----------------------------------------------------
+
+# Grouping the document tree into PDF files. List of tuples
+# (source start file, target name, title, author).
+pdf_documents = [
+    ('index', u'georchestra', u'georchestra', u'Camptocamp'),
+]
+
+# A comma-separated list of custom stylesheets. Example:
+pdf_stylesheets = ['kerning','a4']
+
+# Create a compressed PDF
+# Use True/False or 1/0
+# Example: compressed=True
+#pdf_compressed=False
+
+# A colon-separated list of folders to search for fonts. Example:
+# pdf_font_path=['/usr/share/fonts', '/usr/share/texmf-dist/fonts/']
+# Language to be used for hyphenation support
+pdf_language="fr_FR"
+
+# If false, no index is generated.
+#pdf_use_index = True
+
+# If false, no modindex is generated.
+#pdf_use_modindex = True
+
+# If false, no coverpage is generated.
+#pdf_use_coverpage = True
