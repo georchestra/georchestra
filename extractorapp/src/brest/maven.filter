@@ -1,12 +1,12 @@
 maxCoverageExtractionSize=99999999
 
-host=c2cpc61.camptocamp.com
+host=hcu169.dit.cb
 
 # The base url of the extractorapp as accessible from outside the intranet
 servletUrl=http://c2cpc61.camptocamp.com/extractorapp
 
 # Hostname of the geoserver that is secured for geobretagne.
-secureHost=c2cpc61.camptocamp.com
+secureHost=hcu169.dit.cb
 
 # Email properties
 smtpHost=psemail.epfl.ch
