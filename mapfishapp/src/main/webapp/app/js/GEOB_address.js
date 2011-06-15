@@ -29,7 +29,7 @@ GEOB.address = (function() {
      * Constant: URL
      * {String} The URL to the OpenAddresses web service.
      */
-    var URL = "http://c2cpc83.camptocamp.com/addrapp/addresses";
+    var URL = "/addrapp/addresses";
 
     /**
      * Property: map
