@@ -24,6 +24,7 @@
  * @include OpenLayers/Control/SelectFeature.js
  * @include OpenLayers/Control/ModifyFeature.js
  * @include OpenLayers/Control/DrawFeature.js
+ * @include OpenLayers/Control/Snapping.js
  * @include OpenLayers/Feature/Vector.js
  * @include OpenLayers/Handler/Point.js
  * @include OpenLayers/Handler/Path.js
@@ -98,6 +99,12 @@ GEOB.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
      * {OpenLayers.Control.DrawFeature}
      */
     drawFeature: null,
+
+    /**
+     * Property: snap
+     * {OpenLayers.Control.Snapping}
+     */
+    snap: null,
 
     /**
      * Property: modifyFeature
@@ -459,6 +466,9 @@ GEOB.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
                 handlerOptions: handlerOptions
             }
         );
+
+        this.snap = new OpenLayers.Control.Snapping({layer: this.layer});
+        this.map.addControl(this.snap);
         
         return labels[typeName];
     },
@@ -642,7 +652,7 @@ GEOB.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
      */
     tearDown: function() {
         // deactivate controls
-        Ext.each([this.drawFeature, this.selectFeature, this.modifyFeature], function(control) {
+        Ext.each([this.drawFeature, this.selectFeature, this.modifyFeature, this.snap], function(control) {
             control.deactivate();
         });
         // remove & destroy vector layer
@@ -655,7 +665,7 @@ GEOB.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
      */
     setUp: function() {
         // activate controls
-        Ext.each([this.drawFeature, this.selectFeature, this.modifyFeature], function(control) {
+        Ext.each([this.drawFeature, this.selectFeature, this.modifyFeature, this.snap], function(control) {
             control.activate();
         });
         // remove & destroy vector layer
@@ -668,7 +678,7 @@ GEOB.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
      */
     destroy: function() {
         // deactivate & remove controls
-        Ext.each([this.drawFeature, this.selectFeature, this.modifyFeature], function(control) {
+        Ext.each([this.drawFeature, this.selectFeature, this.modifyFeature, this.snap], function(control) {
             control.deactivate();
             this.map.removeControl(control);
         });
