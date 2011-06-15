@@ -31,7 +31,7 @@ def ssh = new SSH(log:log,settings:settings,host:"server1")
 def server1Deployer = new SSHWarDeployer(
         log: log,
         ssh: ssh,
-        projectProperties: projectProperties,
+        projectProperties: project.properties,
         webappDir: "/srv/tomcat/tomcat1/webapps",
         startServerCommand: "sudo /etc/init.d/tomcat-tomcat1 start",
         stopServerCommand: "sudo /etc/init.d/tomcat-tomcat1 stop"
