@@ -66,12 +66,11 @@ class SSHWarDeployer {
         flattened = flattened.flatten()
 
         try {
+            ssh.exec "mkdir -p $tmpDir", ssh.zeroCode
             flattened.each {artifact ->
 
                 assert(artifact instanceof Artifact)
 
-                ssh.exec "mkdir -p $tmpDir", ssh.zeroCode
-                ssh.exec "rm -f $tmpDir/*", ssh.zeroCode
                 ssh.scp artifact, "$tmpDir/${artifact.name}"
             }
 
@@ -86,7 +85,7 @@ class SSHWarDeployer {
                 ssh.exec startServerCommand, ssh.zeroCode
             }
         } finally {
-            ssh.exec "rm -rf $tmpDir"
+            ssh.exec "rm -rf $tmpDir", ssh.zeroCode
         }
     }
 
