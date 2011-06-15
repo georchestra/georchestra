@@ -45,7 +45,7 @@ class Artifacts {
             def explicitAlias = explictMapping(file)
             if (explicitAlias != null) return explicitAlias
             else {
-                def regex = /(.+)-.+\.war/
+                def regex = /(.+)-\d.+\.war/
                 if (file.name ==~ regex) {
                     def matcher = file.name =~ regex
                     return matcher[0][1]+"-private.war"
