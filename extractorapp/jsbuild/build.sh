@@ -28,7 +28,7 @@ ${mkdir} -p ${releasepath}
 (cd ${buildpath};
  if [ ! -d ${venv} ]; then
      echo "creating virtual env and installing jstools..."
-     ${python} go-jstools.py ${venv} > /dev/null
+     ${python} go-jstools.py ${venv} --no-site-packages > /dev/null
      echo "done."
  fi;
  echo "running jsbuild for main app..."
