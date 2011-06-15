@@ -1,7 +1,7 @@
 .. _`georchestra.documentation.rfc`:
 
 ====================
-Propositions de RFC
+Gestion des RFC
 ====================
 
 Cette section détaille le fonctionnement des RFC (*Request For Comment*). Les RFC sont des propositions 
@@ -72,9 +72,9 @@ les membres du PSC, et pas seulement ceux qui ont effectivement voté.
 Implémentation d'une RFC
 ===========================
 
-.. Les RFC sont rédigées sur le `wiki du projet <http://csm-bretagne.fr/redmine/>`_.
-
-Les RFC sont disponibles à cette page :ref:`georchestra.documentation.rfc.index`.
+Les RFC proposées, discutées et votées sont disponible dans la section `RFC dans
+le wiki <http://csm-bretagne.fr/redmine/projects/georchestra/wiki/RFC>`_ de la 
+forge.
 
 Quand le vote est-il obligatoire ?
 ====================================
