@@ -107,7 +107,18 @@ the file is important, it must follow the form <platform_id>DeployScript.groovy.
 See the technical information section below for more detailed information on how 
 to write a deployScript.
 
-Once the script is written then the projects can be deployed by executing:
+The second step is to add the credentials for the target server in the maven settings 
+file.  Typically that file is in $HOME/.m2/settings.xml.  The normal maven settings
+is used, so read http://maven.apache.org/settings.html#Servers for details.  Not all
+parameters are used by deploy.  Only 
+ * id
+ * host (not shown in the maven page, it is the hostname of the target server)
+ * username 
+ * password (optional)
+ * privateKey (optional)
+ * passphrase (optional)
+
+Now the system can be deployed by executing:
 
   * mvn -Pfull,platform_id  -- This will deploy all war files as well as 
     configure all ancillary systems that are required like openLDAP, server 
