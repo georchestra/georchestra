@@ -47,6 +47,16 @@ class ArtifactsTest {
 
         assertEquals artifacts.artifacts.findAll{return it.name.endsWith(".war")}, artifacts.findAll{return it.name.endsWith(".war")}
     }
+
+    @Test
+    void standardGeorchestraMapping() {
+        def artifacts = new Artifacts(project, Artifacts.standardGeorchestraAliasFunction)
+
+        assertNotNull artifacts.artifacts.find{it.name == "doc.war"}
+        assertNotNull artifacts.artifacts.find{it.name == "cas.war"}
+        assertNotNull artifacts.artifacts.find{it.name == "ROOT.war"}
+        assertNotNull artifacts.artifacts.find{it.name == "geonetwork-private.war"}
+    }
     @Test
     void each() {
         def artifacts = new Artifacts(project)
