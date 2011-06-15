@@ -4,7 +4,9 @@
 Documentation
 ===============
 
-Cette section rassemble la documentation autour du projet geOrchestra.
+Cette section rassemble la documentation autour du projet geOrchestra. Vous 
+pouvez télécahrger la documentation en un seul fichier PDF : 
+`georchestra.pdf <georchestra.pdf>`_
 
 Gouvernance
 ==============
@@ -55,6 +57,7 @@ Utilisateur
 .. toctree::
    :maxdepth: 1
    
+   utilisateur/visualiser_intro
    utilisateur/edition
    
 F.A.Q.
