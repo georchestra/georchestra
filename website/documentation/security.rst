@@ -9,7 +9,7 @@ La mise en place de droit d'accès est fondamentale au sein d'une Infrastructure
 de Données Spatiales. Cette page a pour objectif d'expliquer son fonctionnement 
 au sein de geOrchestra.
 
-La première partie explique où se trouve la gestion des accès en fonction de 
+La première partie décrit les interfaces de gestion des accès en fonction de 
 l'outil utilisé. La section suivante illustre le concept de groupe et de région 
 au sein de geOrchestra.
 
@@ -22,10 +22,28 @@ Gestion
 Catalogue
 ----------
 
-La gestion des droits se fait dans l'interface dédié au catalogue. Soit en 
-recherchant une fiche de métadonnées (bouton *Autres actions*), soit après 
-avoir sauver la fiche de métadonnées, le bouton *Autres actions* est disponible 
-en haut de la page.
+La gestion de droits du catalogue permet d'attribuer à des groupes d'utilisateurs
+des permissions sur les métadonnées. 
+
+- ``Publier`` autorise la consultation de la fiche. Associée au 
+  groupe spécial ``Tous``, cette permission autorise tout public à consulter la 
+  métadonnée
+- ``Télécharger`` autorise le téléchargement des données depuis la fiche
+- ``Carte interactive`` autorise le chargement des données 
+  sur la carte interactive du catalogue
+
+L'interface se présente sous la forme d'une matrice groupes/actions: 
+en cochant une case, on autorise un groupe d'utilisateurs (lignes)
+à effectuer une action (colonnes).
+
+Les permissions peuvent être appliquées à une unique fiche (bouton
+``autres actions > privilèges``) ou à un ensemble de fiches (après recherche, 
+cocher les fiches puis ``actions sur la sélection > mettre à jour les privilèges``).
+
+A noter qu'un auteur reçoit toutes les permissions sur les fiches qu'il a 
+produites, même si les droits ne les lui attribuent pas. Les administrateurs
+ont bien évidemment tous les droits.
+
 
 Serveur cartographique
 -----------------------
@@ -61,7 +79,7 @@ Serveur cartographique
 Notion de groupe
 =================
 
-Il faut comprendre ces groupes comme des "tags" que l'on applique à un utilisateur.
+On peut comprendre les  groupes comme des "tags" que l'on applique à un utilisateur.
 
  * EL_* : groupe structurel (accès en fonction de la structure)
  * SV_* : groupe fonctionnel (accès en fonction des fonctionnalités, si j'ose dire)
