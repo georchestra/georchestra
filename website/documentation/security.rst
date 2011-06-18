@@ -22,27 +22,56 @@ Gestion
 Catalogue
 ----------
 
+Principes
+.........
+
 La gestion de droits du catalogue permet d'attribuer à des groupes d'utilisateurs
-des permissions sur les métadonnées. 
+des permissions sur les métadonnées. Dans le catalogue, on appelle ces
+permissions des *privilèges*.
 
-- ``Publier`` autorise la consultation de la fiche. Associée au 
-  groupe spécial ``Tous``, cette permission autorise tout public à consulter la 
-  métadonnée
-- ``Télécharger`` autorise le téléchargement des données depuis la fiche
-- ``Carte interactive`` autorise le chargement des données 
-  sur la carte interactive du catalogue
+- le privilège ``Publier`` autorise la consultation de la fiche par l'interface
+  ou par le protocole CSW . Associé au groupe spécial ``Tous``, 
+  ce privilège autorise tout public à consulter la métadonnée.
 
-L'interface se présente sous la forme d'une matrice groupes/actions: 
-en cochant une case, on autorise un groupe d'utilisateurs (lignes)
-à effectuer une action (colonnes).
+- le privilège ``Télécharger`` autorise le téléchargement des données.
+  Une section ``Options de transfert`` apparaît dans la fiche avec un lien
+  de téléchargement.
 
-Les permissions peuvent être appliquées à une unique fiche (bouton
-``autres actions > privilèges``) ou à un ensemble de fiches (après recherche, 
-cocher les fiches puis ``actions sur la sélection > mettre à jour les privilèges``).
+- le privilège ``Carte interactive`` autorise le chargement des données 
+  sur la carte interactive du catalogue. Une section ``Options de transfert`` 
+  apparaît dans la fiche avec un lien ``Carte interactive``.
 
-A noter qu'un auteur reçoit toutes les permissions sur les fiches qu'il a 
-produites, même si les droits ne les lui attribuent pas. Les administrateurs
-ont bien évidemment tous les droits.
+Pour résoudre les privilèges d'un utilisateur, les règles suivantes sont appliquées :
+
+- les administrateurs du catalogue ont bien évidemment tous les privilèges,
+- un auteur reçoit automatiquement tous les privilèges sur les fiches qu'il a 
+  produites,
+- un utilisateur reçoit les privilèges attribués à ses groupes.
+
+
+Interface
+.........
+
+Les privilèges peuvent être appliqués à une unique fiche avec le menu 
+|autres_actions| ou, après recherche de fiches, à un ensemble de fiches
+avec le menu |action_selection|.
+
+.. |autres_actions| image:: _static/security_geonetwork_autresactions.png
+                    :alt: menu autres actions
+.. |action_selection| image:: _static/security_geonetwork_menuselection.png
+                      :alt: menu actions sur la sélection
+
+
+L'interface de gestion des privilèges se présente sous la forme d'une matrice 
+avec les groupes en ligne et les privilèges en colonne. En cochant une case, 
+on attribue à un groupe   le privilège lui permettant d'effectuer une action. 
+On peut cocher autant de cases que souhaité.
+
+.. image:: _static/security_geonetwork_matrix.png
+   :alt: matrice des privilèges et des groupes
+   :align: left
+
+
 
 
 Serveur cartographique
