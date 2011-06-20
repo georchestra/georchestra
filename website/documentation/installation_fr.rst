@@ -112,6 +112,24 @@ nom de ce script est important, il doit suivre la syntaxe <platform_id>DeployScr
 Voir la section technique ci-dessous pour davantage d'informations sur la façon
 de rédiger un script de déploiement.
 
+La deuxième étape est d'ajouter les informations de connexion pour le
+serveur de destination dans le fichier de configuration de maven. En
+régle générale, ce fichier est situé dans $HOME/.m2/settings.xml. Ce
+fichier n'étant pas spécifique au processus de déploiement de
+geOrchestra, les informations sur sa syntaxe se trouvent sur le site
+officiel, à l'addresse suivante :
+http://maven.apache.org/settings.html#Servers . Tous les paramêtres ne
+sont pas utiles pour un déploiement, seulement :
+
+* identifiant (id, celui-ci doit correspondre au profil maven ajouté
+  dans le pom.xml)
+* l'hôte (host, cela n'est pas dans la documentationd e maven, mais
+  correspond au nom d'hôte du serveur cible)
+* nom d'utilisateur (username)
+* mot de passe (password, optionel)
+* clé privée (privateKey, optionel)
+* Phrase de passe (passphrase, optionel)
+
 Une fois le script écrit, les projets peuvent être déployés en exécutant :
 
   * mvn -Pfull,platform_id  -- Ceci va déployer tous les fichiers war et 
