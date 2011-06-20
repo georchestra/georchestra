@@ -7,6 +7,14 @@ project.
 The installation of the address database isn't described here. We assume here
 that the database is up and running.
 
+Pre-install
+============
+
+You need to install some package before:
+
+   apt-get install python2.6 python2.6-dev lippq-dev libgeos-c1 libgeos-dev
+   apt-get install package build-essentials
+
 Install
 =======
 
@@ -62,7 +70,7 @@ The application comes with an Apache configuration. To execute the application
 in Apache you just need to include that configuration from your global Apache
 configuration. This is done by using the ``Include`` Apache directive::
 
-    Include /path/to/search-address/apache/*.conf
+    Include /path/to/search-address/apache/wsgi.conf
 
 You can now restart or reload Apache, and test the following URL to make sure
 search-address is functional::
