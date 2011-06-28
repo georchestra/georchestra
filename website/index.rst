@@ -81,7 +81,6 @@ l'établissement de votre infrastructure de données spatiales.
    :hidden:
    
    documentation/index
-   documentation/rfc/index
    community
    download
    about
