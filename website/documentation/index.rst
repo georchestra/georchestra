@@ -59,10 +59,10 @@ Utilisateur
 ------------
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    
-   utilisateur/visualiser_intro
-   utilisateur/edition
+   utilisateur/index
+   
    
 F.A.Q.
 ========
