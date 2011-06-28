@@ -52,8 +52,13 @@ Utilisation
 Une documentation est en cours de transposition sur le site, contactez nous si vous désirez y 
 contribuer !
 
-.. Administrateur
-.. ---------------
+Administrateur
+---------------
+
+.. toctree::
+   :maxdepth: 2
+
+   administrateur/index
 
 Utilisateur
 ------------
