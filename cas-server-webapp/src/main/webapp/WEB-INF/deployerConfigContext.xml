@@ -99,9 +99,7 @@
               <value>${ldapUrl}</value>
             </list>
           </property>
-          <property name="userDn" value="${cas.userDn}"/>
-          <property name="password" value="${cas.userPassword}"/>
-          <property name="baseEnvironmentProperties">
+         <property name="baseEnvironmentProperties">
             <map>
               <entry>
                 <key>
