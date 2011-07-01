@@ -1,3 +1,5 @@
+.. _`georchestra.documentation.security`:
+
 ==================================
 Gestion des droits et sécurité
 ==================================
