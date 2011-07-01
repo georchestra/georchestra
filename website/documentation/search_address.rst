@@ -49,7 +49,7 @@ dépendences :
         
         ./buildout/bin/buildout -c buildout_mine.cfg
 
-Le processus de buildout devrait se terminer avec l'affichage de ce qui suite :
+Le processus de buildout devrait se terminer avec l'affichage de ce qui suit :
 
 ::
     
