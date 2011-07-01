@@ -15,6 +15,8 @@ You need to install some package before:
    apt-get install python2.6 python2.6-dev lippq-dev libgeos-c1 libgeos-dev
    apt-get install package build-essentials
 
+You need PostgreSQL >= 8.4, as we need FTS wildcard (*).
+
 Install
 =======
 
