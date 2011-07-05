@@ -30,6 +30,7 @@
  * @include GEOB_waiter.js
  * @include GEOB_ajaxglobal.js
  * @include GEOB_config.js
+ * @include GEOB_util.js
  * @include GEOB_FeatureDataModel.js
  */
 
@@ -229,6 +230,15 @@ GEOB.resultspanel = (function() {
                     // this deactivates Feature handler, 
                     // and moves search_results layer back to normal z-index
                     return true;
+                },
+                // we detect cells which contain URLs and open their content in a new tab
+                "cellclick": function(grid, rowIndex, columnIndex) {
+                    var record = grid.getStore().getAt(rowIndex);  // Get the Record
+                    var fieldName = grid.getColumnModel().getDataIndex(columnIndex); // Get field name
+                    var data = record.get(fieldName);
+                    if (data && GEOB.util.isUrl(data)) {
+                        window.open(data);
+                    }
                 }
             }
         });
