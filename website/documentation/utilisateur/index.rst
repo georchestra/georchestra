@@ -1,8 +1,8 @@
 .. _`georchestra.documentation.utilisateur.index`:
 
-=========================
-Documentation utilsateur
-=========================
+==========================
+Documentation utilisateur
+==========================
 
 Cette section rassemble la documentation autour du projet geOrchestra pour les 
 utilisateurs de l'IDS.
