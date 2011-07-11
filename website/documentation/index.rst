@@ -41,6 +41,7 @@ Installation
    :maxdepth: 1
    
    installation_fr
+   postinstall
    search_address
    security
 
