@@ -1,7 +1,7 @@
 .. _`georchestra.documentation.postinstall`:
 
 =============================
-Préocédure post-installation
+Procédure post-installation
 =============================
 
 Configuration des référentiels

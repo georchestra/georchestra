@@ -88,8 +88,8 @@ Pour corriger ce problème :
 * utiliser l'url avec le namespace : http://monserver/geoserver/monNamespace/wms.
 
 
-La recherche par adresse ne fonctionne pas ?
----------------------------------------------
+La recherche par adresse ne fonctionne pas ...
+----------------------------------------------
 
 Il faut installer le module :ref:`georchestra.documentation.search_address`.
 
@@ -99,7 +99,7 @@ Comment brancher la recherche référentiels ?
 Voir :ref:`georchestra.documentation.postinstall`.
 
 
-En mode édition, la page ralenti fortement, j'ai un emssage d'erreur
+En mode édition, la page ralenti fortement, j'ai un message d'erreur
 ---------------------------------------------------------------------
 
 Les performances JavaScript sont très dépendantes du navigateur web utilisé et 
