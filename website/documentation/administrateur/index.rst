@@ -10,4 +10,4 @@ administrateurs de l'IDS.
 .. toctree::
    :maxdepth: 1
    
-..   geoserver/index
+   geoserver/index
