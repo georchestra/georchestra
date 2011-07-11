@@ -63,3 +63,60 @@ geOrchestra utilise les standards proposées par l'OGC, notamment :
 * `FE <http://www.opengeospatial.org/standards/filter>`_ : Filter Encoding
 * `CSW <http://www.opengeospatial.org/standards/cat>`_ : Catalog Service
 
+Quelle est cette limite de 114 Ko qui apparait parfois dans mapfishapp ?
+-------------------------------------------------------------------------
+
+C'est une limite dans le code javascript de la Mapfishapp, afin d'éviter des 
+traitements potentiellement trop lourds coté client. On limite volontairement la 
+taille des flux XML acceptables, et cette limite est évolutive selon le 
+navigateur. Exemple : IE 6 => faible capacité à parser du XML => limite basse.
+
+Il y a trois raisons pour que cela arrive :
+
+* la liste de tous les codes EPSG est listé dans le GetCapabilities ;
+* toutes les couches sont dans le même namespace ou vous n'utilisez pas de 
+  namespace dans l'URL des services (http://monserver/geoserver/wms par exemple) ;
+* vous avez trop de couches dans le namespace (même raison que le point précédent).
+
+Au final cela entraine une taille trop importante pour le fichier XML du 
+GetCapabilities.
+
+Pour corriger ce problème :
+
+* lister les codes EPSG qui doivent être disponible dans GeoServer ;
+* placer les couches dans différents namespace ;
+* utiliser l'url avec le namespace : http://monserver/geoserver/monNamespace/wms.
+
+
+La recherche par adresse ne fonctionne pas ?
+---------------------------------------------
+
+Il faut installer le module :ref:`georchestra.documentation.search_address`.
+
+Comment brancher la recherche référentiels ?
+---------------------------------------------
+
+Voir :ref:`georchestra.documentation.postinstall`.
+
+
+En mode édition, la page ralenti fortement, j'ai un emssage d'erreur
+---------------------------------------------------------------------
+
+Les performances JavaScript sont très dépendantes du navigateur web utilisé et 
+IE n'est pas réputé pour avoir d'excellentes performances en la matière. 
+Généralement on a ce problème dans l'éditeur lorsque l'on veut éditer une couche 
+présentant une quantité élevé de sommet/point.
+
+Il n'y a pas de solution.
+
+Comment étendre les types de format possibles dans l'extracteur ?
+------------------------------------------------------------------
+
+Ce n'est pas possible pour le moment. Vous pouvez financer cette évolution.
+
+Impossible d’ajouter une couche raster (ecw, jpg2000, ...)
+----------------------------------------------------------
+
+Il faut installer des plugins supplémentaires dans GeoServer. Voir le blog de 
+`geomatips <http://geomatips.blogspot.com/2010/02/support-de-lecw-dans-geoserver.html>`_ 
+ou la doc de GeoServer.
