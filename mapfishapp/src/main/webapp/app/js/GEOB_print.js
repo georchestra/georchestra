@@ -24,6 +24,7 @@
  * @include GeoExt/data/PrintPage.js
  * @include GeoExt/plugins/PrintPageField.js
  * @include GeoExt/plugins/PrintProviderField.js
+ * @include OpenLayers/Format/GeoJSON.js
  */
 
 Ext.namespace("GEOB");
