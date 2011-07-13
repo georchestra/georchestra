@@ -290,9 +290,12 @@ GEOB.layerfinder = (function() {
                    record: "keyword",
                    id: "id"
                 }, keywordType);
-                Ext.each(myReader.read(response).records, function(record) {
-                    appendKeyword(tree, record.get('name'));
-                });
+                var r = myReader.read(response);
+                if (r.records) {
+                    Ext.each(r.records, function(record) {
+                        appendKeyword(tree, record.get('name'));
+                    });
+                }
                 mask.hide();
             },
             failure: function() {
