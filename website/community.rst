@@ -25,8 +25,9 @@ Le projet dispose actuellement de 3 listes :
   pour améliorer le projet geOrchestra). L'inscription est libre.
   
 * `georchestra-psc@googlegroups.com <https://groups.google.com/group/georchestra-psc?hl=fr>`_ est la liste 
-  à utiliser pour adresser un message privé au PSC. 
+  utilisée par le PSC pour ses communications internes. 
   L'inscription et la consultation des messages est réservée aux membres du PSC.
+  Pour contacter le PSC, utilisez l'adresse psc chez georchestra point org.
 
 Qui développe geOrchestra ?
 ===========================
