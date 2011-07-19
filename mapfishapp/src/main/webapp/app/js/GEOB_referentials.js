@@ -204,14 +204,14 @@ GEOB.referentials = (function() {
         if (feature.bounds) {
             var bounds = feature.bounds;
             if (bounds.getWidth() + bounds.getHeight() == 0) {
-                map.setCenter(bounds.getCenterLonLat()); 
+                map.setCenter(bounds.getCenterLonLat(), map.baseLayer.numZoomLevels-1); 
             } else {
                 map.zoomToExtent(bounds.scale(1.05));
             }
         } else if (feature.geometry) {
             var geometry = feature.geometry;
             if (geometry.CLASS_NAME == 'OpenLayers.Geometry.Point') {
-                map.setCenter(geometry.getBounds().getCenterLonLat()); 
+                map.setCenter(geometry.getBounds().getCenterLonLat(), map.baseLayer.numZoomLevels-1); 
             } else {
                 map.zoomToExtent(geometry.getBounds().scale(1.05));
             }

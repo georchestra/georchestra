@@ -48,7 +48,7 @@ GEOB.address = (function() {
         var a = new GeoExt.ux.OpenAddressesSearchCombo({
             map: map, 
             url: URL,
-            zoom: map.numZoomLevels,
+            zoom: map.baseLayer.numZoomLevels-1,
             tpl: '<tpl for="."><div class="x-combo-list-item" qtip="{housenumber}, {street} - {city}">{housenumber}, {street} - {city}</div></tpl>',
             fieldLabel: "Aller à",
             lang: 'fr',

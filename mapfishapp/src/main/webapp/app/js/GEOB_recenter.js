@@ -97,7 +97,7 @@ GEOB.recenter = (function() {
                     );
              
                     // center map to POI
-                    map.setCenter(lonlat, map.numZoomLevels - 2);
+                    map.setCenter(lonlat, map.baseLayer.numZoomLevels - 5);
                 }
             }
         });	

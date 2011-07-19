@@ -226,7 +226,7 @@ GEOB.referentials = (function() {
                 new OpenLayers.Projection(currentSrs));
         }
         if (bounds.getWidth() + bounds.getHeight() === 0) {
-            map.setCenter(bounds.getCenterLonLat()); 
+            map.setCenter(bounds.getCenterLonLat(), map.baseLayer.numZoomLevels-1); 
         } else {
             map.zoomToExtent(bounds.scale(1.05));
         }
