@@ -1,3 +1,4 @@
+set -x
 #
 # Variables
 # 
@@ -34,6 +35,7 @@ ${mkdir} -p ${mapfishreleasepath}
      ${python} go-jstools.py ${venv} --no-site-packages > /dev/null
      echo "done."
  fi;
+ 
  echo "running jsbuild for main app..."
  ${venv}/bin/jsbuild -o "${mapfishreleasepath}" main.cfg
  echo "running jsbuild for edit app..."

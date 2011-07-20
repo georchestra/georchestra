@@ -194,8 +194,15 @@ if(sec_roles != null) {
         // remove the loading element
         Ext.get("loading").remove();
 
+
+        <% 
+          String proxyHost = "/proxy/?url=";
+          if(request.getContextPath().equals("/mapfishapp")) {
+            proxyHost = "/mapfishapp/ws/ogcproxy/?url=";
+          }
+        %>
         // set proxy host
-        OpenLayers.ProxyHost = '/proxy/?url=';
+        OpenLayers.ProxyHost = '<%= proxyHost %>';
         
         // mapfishapp initial state: open a WMC, or a mix of WMS layers and servers ?
         GEOB.initstate = ${c.data};

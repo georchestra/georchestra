@@ -88,9 +88,14 @@
         // remove the loading element
         Ext.get("loading").remove();
 
+        <% 
+          String proxyHost = "/proxy/?url=";
+          if(request.getContextPath().equals("/mapfishapp")) {
+            proxyHost = "/mapfishapp/ws/ogcproxy/?url=";
+          }
+        %>
         // set proxy host
-        OpenLayers.ProxyHost = '/proxy/?url=';
-
+        OpenLayers.ProxyHost = '<%= proxyHost %>';
         GEOB.data.debug = ${c.debug};
     <c:choose>
         <c:when test='${c.fake}'>
