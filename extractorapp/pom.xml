@@ -160,23 +160,6 @@
   </dependencies>
   <build>
     <finalName>extractorapp-private</finalName>
-    <testSourceDirectory>src/test/scala</testSourceDirectory>
-    <testResources>
-      <testResource>
-        <filtering>false</filtering>
-        <directory>src/test/scala</directory>
-        <excludes>
-          <exclude>**/*.scala</exclude>
-        </excludes>
-      </testResource>
-      <testResource>
-        <filtering>false</filtering>
-        <directory>src/test/resources</directory>
-        <includes>
-          <include>**</include>
-        </includes>
-      </testResource>
-    </testResources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -272,38 +255,6 @@
           <encoding>UTF-8</encoding>
           <source>1.6</source>
           <target>1.6</target>
-        </configuration>
-      </plugin>
-      <plugin>
-        <!--Compile Scala tests-->
-        <groupId>org.scala-tools</groupId>
-        <artifactId>maven-scala-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>ScalaCompiler</id>
-            <goals>
-              <goal>compile</goal>
-              <goal>testCompile</goal>
-            </goals>
-            <configuration>
-              <sendJavaToScalac>false</sendJavaToScalac>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <useSystemClassLoader>false</useSystemClassLoader>
-          <argLine>-Xmx512m</argLine>
-          <systemPropertyVariables>
-            <log4j.configuration>${basedir}/src/main/webapp/WEB-INF/classes/log4j.properties</log4j.configuration>
-          </systemPropertyVariables>
-          <includes>
-            <include>**/*Spec.class</include>
-            <include>**/*Test.class</include>
-          </includes>
         </configuration>
       </plugin>
       <plugin>
