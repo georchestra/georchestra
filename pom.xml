@@ -58,6 +58,12 @@
 			</properties>
 		</profile>
 		<profile>
+			<id>testtomcat</id>
+			<properties>
+				<server>testtomcat</server>
+			</properties>
+		</profile>
+		<profile>
 			<id>brest</id>
 			<properties>
 				<server>brest</server>
@@ -80,7 +86,8 @@
 		<repository>
 			<snapshots>
 				<enabled>true</enabled>
-			</snapshots>
+        <checksumPolicy>ignore</checksumPolicy>
+      </snapshots>
 			<id>mapfish</id>
 			<url>http://dev.mapfish.org/maven/repository</url>
 		</repository>
@@ -118,11 +125,6 @@
 		</repository>
 	</repositories>
 	<pluginRepositories>
-		<pluginRepository>
-			<id>scala-tools.org</id>
-			<name>Scala-tools Maven2 Repository</name>
-			<url>http://scala-tools.org/repo-releases</url>
-		</pluginRepository>
 	  <pluginRepository>
 	   <id>codehaus-snapshot-plugins</id>
 	   <name>codehaus-shapshot-plugins</name>
@@ -141,6 +143,14 @@
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
+			<snapshots>
+				<enabled>true</enabled>
+        <checksumPolicy>ignore</checksumPolicy>
+      </snapshots>
+			<id>mapfish</id>
+			<url>http://dev.mapfish.org/maven/repository</url>
 		</pluginRepository>
 	</pluginRepositories>
 </project>
