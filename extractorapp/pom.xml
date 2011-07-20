@@ -218,21 +218,15 @@
                 <version>6.1.9</version>
                 <configuration>
                     <webApp>${basedir}/target/extractorapp.war</webApp>
-                    <stopPort>${STOP_PORT}</stopPort>
-                    <stopKey>${STOP_PORT}</stopKey>
                     <scanIntervalSeconds>5</scanIntervalSeconds>
                     <scanTargets>
-                        <scanTarget>src/main/webapp/js/app</scanTarget>
-                        <scanTarget>src/main/java</scanTarget>
+                      <scanTarget>src/main/java</scanTarget>
+                      <scanTarget>src/main/resources</scanTarget>
                     </scanTargets>
                     <systemProperties>
                         <systemProperty>
                             <name>org.geotools.referencing.forceXY</name>
                             <value>true</value>
-                        </systemProperty>
-                        <systemProperty>
-                            <name>geobretagne_production</name>
-                            <value>false</value>
                         </systemProperty>
                         <systemProperty>
                             <name>org.mortbay.util.FileResource.checkAliases</name>

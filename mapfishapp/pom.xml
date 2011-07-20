@@ -195,11 +195,10 @@
 				<artifactId>maven-jetty-plugin</artifactId>
 				<version>6.1.9</version>
 				<configuration>
-					<stopPort>${STOP_PORT}</stopPort>
-					<stopKey>${STOP_PORT}</stopKey>
 					<scanIntervalSeconds>5</scanIntervalSeconds>
 					<scanTargets>
-						<scanTarget>src/main/webapp/js/app</scanTarget>
+						<scanTarget>src/main/java/</scanTarget>
+						<scanTarget>src/main/resources/</scanTarget>
 					</scanTargets>
 				</configuration>
 			</plugin>
