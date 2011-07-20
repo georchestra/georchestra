@@ -204,7 +204,7 @@ if(sec_roles != null) {
         // set proxy host
         OpenLayers.ProxyHost = '<%= proxyHost %>';
         
-        // mapfishapp initial state: open a WMC, or a mix of WMS layers and servers ?
+        // mapfishapp initial state: open a WMC, or a mix of WMS layers and servers
         GEOB.initstate = ${c.data};
 
     <c:choose>

@@ -266,13 +266,17 @@ GEOB.resultspanel = (function() {
             "select": new OpenLayers.Style(
                 OpenLayers.Util.extend(selStyle, {
                     cursor: "pointer",
-                    strokeWidth: 3
+                    strokeWidth: 3,
+                    graphicZIndex: 1000
                 })
             )
         });
         return new OpenLayers.Layer.Vector("search_results", {
             displayInLayerSwitcher: false,
-            styleMap: styleMap
+            styleMap: styleMap,
+            rendererOptions: {
+                zIndexing: true
+            }
         });
     };
     
