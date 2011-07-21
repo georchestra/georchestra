@@ -40,7 +40,7 @@
         <property name="emailTemplateFile" 
                   value="/WEB-INF/templates/extractor-email-template.txt"/>
         <property name="emailSubject"
-                  value="Votre démande d'éxtraction"/>
+                  value="Votre demande d'extraction"/>
         <property name="maxCoverageExtractionSize"
                   value="${maxCoverageExtractionSize}"/>
         <property name="adminCredentials">

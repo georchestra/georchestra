@@ -1,18 +1,36 @@
-Les données que vous avez extraites sont disponibles au téléchargement.  
+Le job d'extraction que vous avez soumis à la plateforme geOrchestra est maintenant terminé.
+<br/>
+
+Voici un récapitulatif de votre demande et de son statut.
+<br/>
+
 <p>
-Cliquer sur le lien suivant pour télécharger les données extraites:
+Les couches suivantes ont été extraites avec succès :
+</p>
+<p>
+{successes}
+</p>
+
+<p>
+L'extraction des couches suivantes a échoué : 
+</p>
+<p>
+{failures}
+</p>
+Nous vous invitons à consulter le fichier failures.html (dans l'archive) pour plus d'information.
+<br/>
+
+<p>
+L'extraction des couches suivantes a été automatiquement annulée :
+</p>
+<p>
+{oversized}
+</p>
+Il est probable que la zone d'extraction soit trop grande.
+<br/>
+
+<p>
+Cliquer sur le lien suivant pour télécharger votre archive :
 </p><p> 
 <a href="{link}">{link}</a>
-</p><p>
-Les couches suivantes ont été extraites avec succès:
-</p><p>
-{successes}
-</p><p>
-L'extraction des couches suivantes a échoué. Le fichier failures.html contient plus d'informations:
-</p><p>
-{failures}
-</p><p>
-L'extraction des couches suivantes a été annulée. La zone demandée a été trop grande:
-</p><p>
-{oversized}
 </p>

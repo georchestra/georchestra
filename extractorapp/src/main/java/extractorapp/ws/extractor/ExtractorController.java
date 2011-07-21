@@ -90,7 +90,7 @@ public class ExtractorController implements ServletContextAware {
                 }
             }
         } else {
-            LOG.warn("request for a non-exsting extraction archive: "+file+" requested by "+request.getRemoteAddr());
+            LOG.warn("request for a non-existing extraction archive: "+file+" requested by "+request.getRemoteAddr());
             response.sendError(404, "Requested file not found");
         }
     }
