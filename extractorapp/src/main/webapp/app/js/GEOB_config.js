@@ -26,7 +26,7 @@ GEOB.config = (function() {
      * {String} The URL to the Camptocamp GeoBretagne dev host.
      */
     var URL_DEV =
-        "http://drebretagne-geobretagne.int.lsn.camptocamp.com/";
+        "http://c2cpc83.camptocamp.com/";
 
     /**
      * Constant: HOST_EXCEPTIONS
@@ -218,16 +218,15 @@ GEOB.config = (function() {
          * Constant: BASE_LAYER_NAME
          * The WMS base layer which will be displayed under each extracted layer.
          */
-        BASE_LAYER_NAME: "base_layers",
+        BASE_LAYER_NAME: "geob_pub:countries",
 
         /**
          * Constant: BASE_LAYER_OPTIONS
          * default WMS base layer options
          */
         BASE_LAYER_OPTIONS: {
-            projection: "EPSG:4326",
-            maxExtent: new OpenLayers.Bounds(
-                -10,40,10,50),
+            projection: this.GLOBAL_EPSG,
+            maxExtent: this.GLOBAL_MAX_EXTENT,
             isBaseLayer: true,
             maxResolution: "auto",
             displayInLayerSwitcher: false,
