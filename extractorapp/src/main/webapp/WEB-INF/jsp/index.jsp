@@ -90,8 +90,8 @@
 
         <% 
           String proxyHost = "/proxy/?url=";
-          if(request.getContextPath().equals("/mapfishapp")) {
-            proxyHost = "/mapfishapp/ws/ogcproxy/?url=";
+          if(request.getContextPath().equals("/extractorapp")) {
+            proxyHost = "/extractorapp/ws/ogcproxy/?url=";
           }
         %>
         // set proxy host
