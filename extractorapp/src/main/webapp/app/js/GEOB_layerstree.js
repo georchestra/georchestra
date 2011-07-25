@@ -594,16 +594,17 @@ GEOB.layerstree = (function() {
          * Return the layers tree config.
          */
         create: function() {
-            rootNode = new Ext.tree.AsyncTreeNode({
-                text: 'invisible root node',
+            rootNode = new Ext.tree.TreeNode({
+                text: "Votre panier d'extraction",
+                expanded: true,
                 children: []
             });
             return {
                 xtype: 'treepanel',
                 root: rootNode,
                 autoScroll: true,
-                rootVisible: false,
-                expanded: true, //FIXME: expanded is compulsory
+                rootVisible: true,
+                expanded: true, // mandatory
                 loader: {
                     preloadChildren: true
                 },
