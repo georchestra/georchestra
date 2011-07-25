@@ -282,6 +282,13 @@ GEOB.config = (function() {
          * Constant: LAYERS_CHECKED
          * Layers checked by default or not ?
          */
-        LAYERS_CHECKED: true
+        LAYERS_CHECKED: true,
+        
+        /**
+         * Constant: DEFAULT_BUFFER_VALUE
+         * Default buffer value in meters.
+         * Valid values are : 0, 10, 50, 100, 500, 1000, 5000, 10000
+         */
+        DEFAULT_BUFFER_VALUE: 0
     };
 })();

@@ -43,7 +43,8 @@ GEOB.referentials = (function() {
          * Event: beforelayerchange
          * Fires when a layer selection is about to change
          */
-        "recenter");
+        "recenter"
+    );
 
     /*
      * Property: map
@@ -56,6 +57,12 @@ GEOB.referentials = (function() {
      * {String} the GeoServer namespace with localization layers
      */
     var namespace = null;
+    
+    /*
+     * Property: buffer
+     * {Integer} the current buffer value, in meters
+     */
+    var buffer = 0;
     
     /*
      * Property: comboPanel
@@ -135,7 +142,7 @@ GEOB.referentials = (function() {
                 owsURL: protocol.url,
                 typeName: namespace + ':' + record.get('name')
             }, {
-                success: function() {
+                "success": function() {
                     // create new formPanel with search combo
                     var panel = new Ext.form.FormPanel({
                         items: [
@@ -151,7 +158,7 @@ GEOB.referentials = (function() {
                     comboPanel.enable();
                     cbPanels[idx] = panel;
                 },
-                failure: function() {
+                "failure": function() {
                     GEOB.waiter.hide();
                 },
                 scope: this
@@ -166,7 +173,7 @@ GEOB.referentials = (function() {
      * Creates the layer combo from WFSCapabilities
      *
      * Returns:
-     * {Ext.form.ComboBox} the comobobox
+     * {Ext.form.ComboBox} the combobox
      */
     var createLayerCombo = function() {
     
@@ -186,6 +193,7 @@ GEOB.referentials = (function() {
     
         return new Ext.form.ComboBox({
             fieldLabel: 'Couche',
+            emptyText: 'Choisissez une couche',
             store: store,
             displayField: 'title',
             width: 160,
@@ -198,7 +206,51 @@ GEOB.referentials = (function() {
             }
         });
     };
-
+    
+    
+    /*
+     * Method: createBufferCombo
+     * Creates the buffer combobox
+     *
+     * Returns:
+     * {Ext.form.ComboBox} the combobox
+     */
+    var createBufferCombo = function() {
+    
+        var store = new Ext.data.SimpleStore({
+            fields: ['value', 'text'],
+            data: [
+                [0,'aucun'],
+                [10,'10 mètres'],
+                [50,'50 mètres'],
+                [100,'100 mètres'],
+                [500,'500 mètres'],
+                [1000,'1 kilomètre'],
+                [5000,'5 kilomètres'],
+                [10000,'10 kilomètres']
+            ]
+        });
+    
+        return new Ext.form.ComboBox({
+            fieldLabel: 'Buffer',
+            mode: 'local',
+            value: GEOB.config.DEFAULT_BUFFER_VALUE,
+            store: store,
+            displayField: 'text',
+            valueField: 'value',
+            width: 160,
+            listWidth: 160+18,
+            triggerAction: "all",
+            editable: false,
+            listeners: {
+                "select": function(cb, record, idx) {
+                    buffer = record.get('value');
+                },
+                scope: this
+            }
+        });
+    };
+    
     /*
      * Method: onComboSelect
      * Callback executed on result selection: zoom to feature
@@ -218,18 +270,51 @@ GEOB.referentials = (function() {
         // clone bounds to fix a projection issue since the same feature
         // was returned multiple times
         bounds = bounds.clone();
+
         var currentSrs = map.getProjection();
         if (currentSrs != GEOB.config.GLOBAL_EPSG) {
             // reproject to match the current srs
             bounds.transform(
                 new OpenLayers.Projection(GEOB.config.GLOBAL_EPSG),
-                new OpenLayers.Projection(currentSrs));
+                new OpenLayers.Projection(currentSrs)
+            );
         }
-        if (bounds.getWidth() + bounds.getHeight() === 0) {
-            map.setCenter(bounds.getCenterLonLat(), map.baseLayer.numZoomLevels-1); 
+        
+        // Handle positive buffer values:
+        if (buffer > 0) {
+            var units = map.getProjectionObject().getUnits();
+            if (units == 'm' || units == 'meters') {
+                bounds.left -= buffer;
+                bounds.bottom -= buffer;
+                bounds.right += buffer;
+                bounds.top += buffer;
+            } else if (units == 'degrees') {
+                // temporarily transform to a SRS with metric coords
+                bounds.transform(
+                    new OpenLayers.Projection(currentSrs),
+                    new OpenLayers.Projection("EPSG:900913")
+                );
+                bounds.left -= buffer;
+                bounds.bottom -= buffer;
+                bounds.right += buffer;
+                bounds.top += buffer;
+                bounds.transform(
+                    new OpenLayers.Projection("EPSG:900913"),
+                    new OpenLayers.Projection(currentSrs)
+                );
+            }
+        }
+        
+        // Handle zero size bounding boxes:
+        if (bounds.getWidth() + bounds.getHeight() > 0) {
+            map.zoomToExtent(bounds.scale(1.05)); // scale() does not modify the object it applies to
         } else {
-            map.zoomToExtent(bounds.scale(1.05));
+            map.setCenter(bounds.getCenterLonLat(), map.baseLayer.numZoomLevels-1); 
+            // the default extraction area is the visible area:
+            bounds = map.getExtent();
         }
+        
+        // Send the bounds object to the layer options (using current map SRS):
         observable.fireEvent('recenter', bounds);
     };
     
@@ -292,7 +377,7 @@ GEOB.referentials = (function() {
                     protocol: record.get('layer').protocol
                 }),
                 listeners: {
-                    beforeload: function(store, options) {
+                    "beforeload": function(store, options) {
                         // add a filter to the options passed to proxy.load, 
                         // proxy.load passes these options to protocol.read
                         var queryString = store.baseParams['query'];
@@ -334,13 +419,13 @@ GEOB.referentials = (function() {
             tpl: buildTemplate(attributes),
             pageSize: 0,
             itemSelector: 'div.search-item',
-            emptyText: disabled ? 'Choisissez une couche' : '',
+            emptyText: disabled ? '' : 'localité ?',
             store: store,
             listeners: {
-                select : function(combo, record, index) {
+                "select": function(combo, record, index) {
                     onComboSelect(record);
                 },
-                specialkey: function(combo, event) {
+                "specialkey": function(combo, event) {
                     if (event.getKey() == event.ENTER) {
                         onComboSelect(record);
                     }
@@ -352,7 +437,7 @@ GEOB.referentials = (function() {
         // hack in order to show the result dataview even
         // in case of "too many features" warning message
         store.on({
-            load: function(){
+            "load": function(){
                 cb.focus();
                 // this one is for IE, 
                 // since it's not able to focus the element:
@@ -390,6 +475,7 @@ GEOB.referentials = (function() {
         create: function(m, ns) {
         	map = m;
             namespace = ns;
+            buffer = GEOB.config.DEFAULT_BUFFER_VALUE;
             
             comboPanel = new Ext.Panel({
                 layout: 'card',
@@ -419,22 +505,21 @@ GEOB.referentials = (function() {
                     border: false
                 },
                 items: [{
-                    html: "<span>Le recentrage modifiera également l'emprise de la couche sélectionnée, si celle-ci est visible.</span>",
+                    html: "<span>Le recentrage modifie également l'emprise de la couche sélectionnée, lorsque celle-ci est visible.</span>",
                     region: 'north',
                     bodyCssClass: 'paneltext',
                     height: 50
                 },{
-                        xtype: 'form',
-                        labelWidth: 50,
-                        //height: 20,
-                        region: 'center',
-                        labelSeparator: ' :',
-                        items: [
-                            createLayerCombo()
-                        ]
-                    },
-                    comboPanel
-                ]
+                    xtype: 'form',
+                    labelWidth: 50,
+                    //height: 20,
+                    region: 'center',
+                    labelSeparator: ' :',
+                    items: [
+                        createLayerCombo(),
+                        createBufferCombo()
+                    ]
+                }, comboPanel]
             };
         }
     };

@@ -139,7 +139,7 @@ Ext.namespace("GEOB");
                 layout: "border",
                 items: [{
                     region: "north",
-                    html: "Configurez les paramètres généraux de votre extraction en utilisant le panneau ci-contre à droite (affiché en sélectionnant 'Paramètres par défaut').<br/><br/>Vous pouvez ensuite lancer l'extraction en cliquant sur le bouton 'Extraire les couches cochées'.<br/><br/>Si vous souhaitez préciser des paramètres d'extraction spécifiques pour une couche donnée, sélectionnez la dans l'arbre ci-dessous.",
+                    html: ["Configurez les paramètres généraux de votre extraction en utilisant le panneau ci-contre à droite (affiché en sélectionnant 'Paramètres par défaut').", "Vous pouvez ensuite lancer l'extraction en cliquant sur le bouton 'Extraire les couches cochées'.", "Si vous souhaitez préciser des paramètres d'extraction spécifiques pour une couche donnée, sélectionnez la dans l'arbre ci-dessous."].join('<br/><br/>'),
                     bodyCssClass: 'paneltext',
                     height: 170,
                     autoScroll: true,
