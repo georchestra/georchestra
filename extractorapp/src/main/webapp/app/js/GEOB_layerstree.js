@@ -655,40 +655,44 @@ GEOB.layerstree = (function() {
                     }
                 }
             });
-            // TODO: don't show (or hide) this node if there's no single layer.
-            var layersNode = new Ext.tree.AsyncTreeNode({
-                text: "Couches OGC",
-                checked: GEOB.config.LAYERS_CHECKED,
-                expanded: true, //FIXME: expanded is compulsory
-                qtip: "Couches OGC disponibles pour extraction",
-                //leaf: false,
-                children: [],
-                listeners: {"checkchange": checker}
-            });
             
-            new Ext.tree.TreeSorter(layersNode, {
-                dir: "asc",
-                leafAttr: 'leaf',
-                property: "text",
-                caseSensitive: false
-            });
+            rootNode.appendChild([globalPropertiesNode]);
             
-            // TODO: don't show (or hide) this node if there's no service.
-            var servicesNode = new Ext.tree.AsyncTreeNode({
-                text: "Services OGC",
-                checked: GEOB.config.LAYERS_CHECKED,
-                expanded: true, //FIXME: expanded is compulsory
-                qtip: "Services OGC dont les couches peuvent être extraites",
-                //leaf: false,
-                children: [],
-                listeners: {"checkchange": checker}
-            });
+            if (GEOB.data.layers && GEOB.data.layers.length) {
+                var layersNode = new Ext.tree.AsyncTreeNode({
+                    text: "Couches OGC",
+                    checked: GEOB.config.LAYERS_CHECKED,
+                    expanded: true, //FIXME: expanded is compulsory
+                    qtip: "Couches OGC disponibles pour extraction",
+                    //leaf: false,
+                    children: [],
+                    listeners: {"checkchange": checker}
+                });
+                
+                new Ext.tree.TreeSorter(layersNode, {
+                    dir: "asc",
+                    leafAttr: 'leaf',
+                    property: "text",
+                    caseSensitive: false
+                });
+                
+                rootNode.appendChild([layersNode]);
+            }
+            
+            if (GEOB.data.services && GEOB.data.services.length) {
+                var servicesNode = new Ext.tree.AsyncTreeNode({
+                    text: "Services OGC",
+                    checked: GEOB.config.LAYERS_CHECKED,
+                    expanded: true, //FIXME: expanded is compulsory
+                    qtip: "Services OGC dont les couches peuvent être extraites",
+                    //leaf: false,
+                    children: [],
+                    listeners: {"checkchange": checker}
+                });
 
-            rootNode.appendChild([
-                globalPropertiesNode,
-                layersNode,
-                servicesNode
-            ]);
+                rootNode.appendChild([servicesNode]);
+            }
+            
             
             // we create a counter which will be decreased each time 
             // an XHR request is over / increased when one more is required
