@@ -213,7 +213,6 @@ Ext.namespace("GEOR");
                 if (global) {
                     layerOptionsPanel.setTitle("Paramètres d'extraction communs à toutes les couches", 'config-layers');
                 } else {
-                    console.log(options);
                     layerOptionsPanel.setTitle("Paramètres d'extraction spécifiques à la couche "+options.layerName, (options.owsType == 'WCS') ? 
                         'raster-layer' : 'vector-layer'
                     );
