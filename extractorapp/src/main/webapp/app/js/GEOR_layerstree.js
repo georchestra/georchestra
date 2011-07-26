@@ -498,6 +498,7 @@ GEOR.layerstree = (function() {
                                     success: function(response) {
                                         parentNode.appendChild(new Ext.tree.TreeNode({
                                             text: 'Vecteur - '+GEOR.util.shortenLayerName(owsinfo.text, 26),
+                                            iconCls: 'vector-layer',
                                             owsinfo: owsinfo,
                                             checked: GEOR.config.LAYERS_CHECKED,
                                             qtip: '<b>'+owsinfo.text+'</b><br/>' + tip,
@@ -519,6 +520,7 @@ GEOR.layerstree = (function() {
                                                 owsinfo.exportinfo.owsType = "WCS";
                                                 parentNode.appendChild(new Ext.tree.TreeNode({
                                                     text: 'Raster - '+GEOR.util.shortenLayerName(owsinfo.text, 26),
+                                                    iconCls: 'raster-layer',
                                                     owsinfo: owsinfo,
                                                     checked: GEOR.config.LAYERS_CHECKED,
                                                     qtip: '<b>'+owsinfo.text+'</b><br/>' + tip,
@@ -553,6 +555,7 @@ GEOR.layerstree = (function() {
         } else if (owsinfo.owstype == "WFS") {
             parentNode.appendChild(new Ext.tree.TreeNode({
                 text: 'Vecteur - '+GEOR.util.shortenLayerName(owsinfo.text, 26),
+                iconCls: 'vector-layer',
                 owsinfo: owsinfo,
                 checked: GEOR.config.LAYERS_CHECKED,
                 qtip: '<b>'+owsinfo.text+'</b><br/>' + tip,
@@ -597,6 +600,7 @@ GEOR.layerstree = (function() {
             rootNode = new Ext.tree.TreeNode({
                 text: "Votre panier d'extraction",
                 expanded: true,
+                iconCls: 'basket',
                 children: []
             });
             return {
@@ -638,6 +642,7 @@ GEOR.layerstree = (function() {
 
             globalPropertiesNode = new Ext.tree.TreeNode({
                 text: "Paramètres par défaut",
+                iconCls: 'config-layers',
                 qtip: "<b>Paramètres par défaut</b><br/>"+
                     "Ces paramètres sont appliqués à l'extraction de toute couche "+
                     "ne faisant pas l'objet de paramètres spécifiques.",

@@ -1,15 +1,21 @@
-.geob-btn-extract {
-    background-image: url(../img/famfamfam/tick.gif) !important;
+.geor-btn-extract {
+    background-image: url(../img/famfamfam/basket_go.png) !important;
 }
-/* Useless ?
-.geob-btn-cancel {
-    background-image: url(../img/famfamfam/cross.gif) !important;
+.basket {
+    background-image: url(../img/famfamfam/basket.gif) !important;
 }
-
-.x-btn-icon .geor-btn-info {
-    background: transparent url(../img/famfamfam/information.png);
+.vector-layer {
+    background-image: url(../img/geosilk/vector.png) !important;
 }
-*/
+.raster-layer {
+    background-image: url(../img/geosilk/raster.png) !important;
+}
+.config-layers {
+    background-image: url(../img/famfamfam/cog.gif) !important;
+}
+.home {
+    background-image: url(../img/famfamfam/house.png) !important;
+}
 
 /* make sure that menu width is correct in IE8 strict mode (See http://extjs.com/forum/showthread.php?t=70701) */
 .x-layer[style]{
