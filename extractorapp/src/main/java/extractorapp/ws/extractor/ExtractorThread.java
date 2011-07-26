@@ -292,7 +292,7 @@ public class ExtractorThread extends Thread {
         
         if (!validRecipients) {
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(_emailParams.getFrom()));
-            message.setSubject("[ERREUR] Message non délivré: " + _emailParams.getSubject(), _emailParams.getSubjectEncoding());
+            message.setSubject("[ERREUR] Message non délivré : " + _emailParams.getSubject(), _emailParams.getSubjectEncoding());
         } else {
             message.setSubject(_emailParams.getSubject(), _emailParams.getSubjectEncoding());
         }

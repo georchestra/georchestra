@@ -7,6 +7,6 @@ package extractorapp.ws.extractor;
  */
 public class OversizedCoverageRequestException extends RuntimeException{
     public OversizedCoverageRequestException(String name) {
-        super("La zone demandée est trop grande pour la chouche "+name);
+        super("La zone demandée est trop grande pour la couche "+name);
     }
 }
