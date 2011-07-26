@@ -1,12 +1,16 @@
-.geob-btn-cancel {
-    background-image: url(../img/famfamfam/cross.gif) !important;
-}
 .geob-btn-extract {
     background-image: url(../img/famfamfam/tick.gif) !important;
 }
-.x-btn-icon .geob-btn-info {
+/* Useless ?
+.geob-btn-cancel {
+    background-image: url(../img/famfamfam/cross.gif) !important;
+}
+
+.x-btn-icon .geor-btn-info {
     background: transparent url(../img/famfamfam/information.png);
 }
+*/
+
 /* make sure that menu width is correct in IE8 strict mode (See http://extjs.com/forum/showthread.php?t=70701) */
 .x-layer[style]{
  width: auto !important;

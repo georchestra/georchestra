@@ -1,34 +1,34 @@
 /*
  * Copyright (C) 2009  Camptocamp
  *
- * This file is part of GeoBretagne
+ * This file is part of geOrchestra
  *
  * MapFish Client is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * GeoBretagne is distributed in the hope that it will be useful,
+ * geOrchestra is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GeoBretagne.  If not, see <http://www.gnu.org/licenses/>.
+ * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
- * @include GEOB_data.js
- * @include GEOB_ows.js
- * @include GEOB_util.js
- * @include GEOB_waiter.js
- * @include GEOB_config.js
+ * @include GEOR_data.js
+ * @include GEOR_ows.js
+ * @include GEOR_util.js
+ * @include GEOR_waiter.js
+ * @include GEOR_config.js
  * @include OpenLayers/Control/SelectFeature.js
  */
 
-Ext.namespace("GEOB");
+Ext.namespace("GEOR");
 
-GEOB.layerstree = (function() {
+GEOR.layerstree = (function() {
     /*
      * Private
      */
@@ -144,7 +144,7 @@ GEOB.layerstree = (function() {
                     }
                     if(owsinfo.baselayer == undefined) {
                         // baselayer has never been created
-                        owsinfo.baselayer = GEOB.map.getBaseLayer({
+                        owsinfo.baselayer = GEOR.map.getBaseLayer({
                             projection: owsinfo.layer.projection,
                             maxExtent: owsinfo.layer.maxExtent
                         });
@@ -244,7 +244,7 @@ GEOB.layerstree = (function() {
         Ext.each(servicesInfo, function(item, index, allItems) {
             var serviceNode = new Ext.tree.AsyncTreeNode({
                 text: item.text,
-                checked: GEOB.config.LAYERS_CHECKED,
+                checked: GEOR.config.LAYERS_CHECKED,
                 expanded: true, //FIXME: expanded is mandatory (and it should not be)
                 //qtip: "List of layers",
                 //leaf: false,
@@ -267,12 +267,12 @@ GEOB.layerstree = (function() {
     };
  
     var appendNodesFromWFSCap = function(wfsinfo, parentNode) {
-        GEOB.ows.WFSCapabilities({
+        GEOR.ows.WFSCapabilities({
             storeOptions: {
                 url: wfsinfo.owsurl,
                 protocolOptions: {
-                    maxFeatures: GEOB.config.MAX_FEATURES,
-                    srsName: GEOB.config.GLOBAL_EPSG,
+                    maxFeatures: GEOR.config.MAX_FEATURES,
+                    srsName: GEOR.config.GLOBAL_EPSG,
                     url: wfsinfo.owsurl
                 }
             },
@@ -285,8 +285,8 @@ GEOB.layerstree = (function() {
                         owsurl: wfsinfo.owsurl,
                         layer: record.get("layer"),
                         exportinfo: {
-                            srs: GEOB.config.GLOBAL_EPSG,
-                            bbox: GEOB.config.GLOBAL_MAX_EXTENT,
+                            srs: GEOR.config.GLOBAL_EPSG,
+                            bbox: GEOR.config.GLOBAL_MAX_EXTENT,
                             owsType: wfsinfo.owstype, // WFS
                             owsUrl: wfsinfo.owsurl,
                             layerName: record.get("name"),
@@ -299,14 +299,14 @@ GEOB.layerstree = (function() {
                     owsinfo.layer.addOptions({
                         alwaysInRange: true,
                         opacity: 0.7,
-                        projection: GEOB.config.GLOBAL_EPSG,
-                        maxExtent: GEOB.config.GLOBAL_MAX_EXTENT
+                        projection: GEOR.config.GLOBAL_EPSG,
+                        maxExtent: GEOR.config.GLOBAL_MAX_EXTENT
                     });
                     owsinfo.layer.events.register("featuresadded", {}, function(evt) {
-                        if(evt.features.length == GEOB.config.MAX_FEATURES) {
-                            GEOB.util.infoDialog({
+                        if(evt.features.length == GEOR.config.MAX_FEATURES) {
+                            GEOR.util.infoDialog({
                                 msg: "Le nombre maximal d'objets a été atteint : seulement " +
-                                GEOB.config.MAX_FEATURES + " objets sont affichés."
+                                GEOR.config.MAX_FEATURES + " objets sont affichés."
                             });
                         }
                     });
@@ -332,7 +332,7 @@ GEOB.layerstree = (function() {
                 checkNullCounter(); // OK
             },
             failure: function() {
-                GEOB.util.errorDialog({
+                GEOR.util.errorDialog({
                     msg: "La requête WFSCapabilities sur "+wfsinfo.owsurl+" n'a pas abouti"
                 });
                 checkNullCounter(); // OK
@@ -344,7 +344,7 @@ GEOB.layerstree = (function() {
      * Method: appendNodesFromWMSCap
      */
     var appendNodesFromWMSCap = function(wmsinfo, parentNode) {
-        GEOB.ows.WMSCapabilities({
+        GEOR.ows.WMSCapabilities({
             storeOptions: {
                 url: wmsinfo.owsurl,
                 layerOptions: {
@@ -383,7 +383,7 @@ GEOB.layerstree = (function() {
                             new OpenLayers.Projection(srs));
                     }
                     if(!(srs && maxExtent)) {
-                        GEOB.util.errorDialog({
+                        GEOR.util.errorDialog({
                             msg: "Impossible de trouver une projection supportée " +
                                  "pour la couche: " + record.get("title")
                         });
@@ -427,7 +427,7 @@ GEOB.layerstree = (function() {
                 checkNullCounter(); // OK
             },
             failure: function() {
-                GEOB.util.errorDialog({
+                GEOR.util.errorDialog({
                     msg: "La requête WMSCapabilities sur "+wmsinfo.owsurl+" n'a pas abouti"
                 });
                 checkNullCounter(); // OK
@@ -455,7 +455,7 @@ GEOB.layerstree = (function() {
             
             // NOTE for the future: do not query N times the same server with the same request
             // keep a local db of responses :-)
-            GEOB.ows.WMSDescribeLayer(
+            GEOR.ows.WMSDescribeLayer(
                 owsinfo.layer.params.LAYERS,
                 {
                     storeOptions: {
@@ -491,15 +491,15 @@ GEOB.layerstree = (function() {
                                 //console.log('compteur incrémenté de 1 (b) -> '+counter);
                                 
                                 Ext.Ajax.request({
-                                    url: GEOB.ows.WFSDescribeFeatureTypeUrl(
+                                    url: GEOR.ows.WFSDescribeFeatureTypeUrl(
                                         owsinfo.exportinfo.owsUrl,
                                         owsinfo.exportinfo.layerName),
                                     disableCaching: false,
                                     success: function(response) {
                                         parentNode.appendChild(new Ext.tree.TreeNode({
-                                            text: 'Vecteur - '+GEOB.util.shortenLayerName(owsinfo.text, 26),
+                                            text: 'Vecteur - '+GEOR.util.shortenLayerName(owsinfo.text, 26),
                                             owsinfo: owsinfo,
-                                            checked: GEOB.config.LAYERS_CHECKED,
+                                            checked: GEOR.config.LAYERS_CHECKED,
                                             qtip: '<b>'+owsinfo.text+'</b><br/>' + tip,
                                             leaf: true
                                         }));
@@ -508,7 +508,7 @@ GEOB.layerstree = (function() {
                                     failure: function(response) {
                                         var regex = new RegExp("/wfs/WfsDispatcher");
                                         var wcs_url = owsinfo.exportinfo.owsUrl.replace(regex, "/wcs/WcsDispatcher");
-                                        var wcs_fullurl = GEOB.ows.WCSDescribeCoverageUrl(wcs_url,owsinfo.exportinfo.layerName);
+                                        var wcs_fullurl = GEOR.ows.WCSDescribeCoverageUrl(wcs_url,owsinfo.exportinfo.layerName);
                                         counter += 1; // une requete XHR (c) en plus est necessaire (WCSDescribeCoverage)
                                         //console.log('compteur incrémenté de 1 (c) -> '+counter);
                                         Ext.Ajax.request({
@@ -518,9 +518,9 @@ GEOB.layerstree = (function() {
                                                 owsinfo.exportinfo.owsUrl = wcs_url;
                                                 owsinfo.exportinfo.owsType = "WCS";
                                                 parentNode.appendChild(new Ext.tree.TreeNode({
-                                                    text: 'Raster - '+GEOB.util.shortenLayerName(owsinfo.text, 26),
+                                                    text: 'Raster - '+GEOR.util.shortenLayerName(owsinfo.text, 26),
                                                     owsinfo: owsinfo,
-                                                    checked: GEOB.config.LAYERS_CHECKED,
+                                                    checked: GEOR.config.LAYERS_CHECKED,
                                                     qtip: '<b>'+owsinfo.text+'</b><br/>' + tip,
                                                     leaf: true
                                                 }));
@@ -528,7 +528,7 @@ GEOB.layerstree = (function() {
                                             },
                                             failure: function(response) {
                                                 checkNullCounter();  // XHR (c)
-                                                GEOB.util.errorDialog({
+                                                GEOR.util.errorDialog({
                                                     msg: "Le service d'extraction " + wcs_fullurl + " n'est pas valide."
                                                 });
                                             },
@@ -544,7 +544,7 @@ GEOB.layerstree = (function() {
                     },
                     failure: function() {
                         checkNullCounter(); // XHR (a)
-                        GEOB.util.errorDialog({
+                        GEOR.util.errorDialog({
                             msg: "La requête WMSDescribeLayer sur "+owsinfo.owsurl+" n'a pas abouti"
                         });
                     }
@@ -552,9 +552,9 @@ GEOB.layerstree = (function() {
             );
         } else if (owsinfo.owstype == "WFS") {
             parentNode.appendChild(new Ext.tree.TreeNode({
-                text: 'Vecteur - '+GEOB.util.shortenLayerName(owsinfo.text, 26),
+                text: 'Vecteur - '+GEOR.util.shortenLayerName(owsinfo.text, 26),
                 owsinfo: owsinfo,
-                checked: GEOB.config.LAYERS_CHECKED,
+                checked: GEOR.config.LAYERS_CHECKED,
                 qtip: '<b>'+owsinfo.text+'</b><br/>' + tip,
                 leaf: true
             }));
@@ -644,24 +644,24 @@ GEOB.layerstree = (function() {
                 leaf: true,
                 owsinfo: {
                     layer: new OpenLayers.Layer("fake_base_layer", {
-                        projection: GEOB.config.GLOBAL_EPSG,
-                        maxExtent: GEOB.config.GLOBAL_MAX_EXTENT,
+                        projection: GEOR.config.GLOBAL_EPSG,
+                        maxExtent: GEOR.config.GLOBAL_MAX_EXTENT,
                         maxResolution: "auto",
                         displayInLayerSwitcher: false
                     }),
                     exportinfo: {
-                        srs: GEOB.config.GLOBAL_EPSG,
-                        bbox: GEOB.config.GLOBAL_MAX_EXTENT
+                        srs: GEOR.config.GLOBAL_EPSG,
+                        bbox: GEOR.config.GLOBAL_MAX_EXTENT
                     }
                 }
             });
             
             rootNode.appendChild([globalPropertiesNode]);
             
-            if (GEOB.data.layers && GEOB.data.layers.length) {
+            if (GEOR.data.layers && GEOR.data.layers.length) {
                 var layersNode = new Ext.tree.AsyncTreeNode({
                     text: "Couches OGC",
-                    checked: GEOB.config.LAYERS_CHECKED,
+                    checked: GEOR.config.LAYERS_CHECKED,
                     expanded: true, //FIXME: expanded is compulsory
                     qtip: "Couches OGC disponibles pour extraction",
                     //leaf: false,
@@ -679,10 +679,10 @@ GEOB.layerstree = (function() {
                 rootNode.appendChild([layersNode]);
             }
             
-            if (GEOB.data.services && GEOB.data.services.length) {
+            if (GEOR.data.services && GEOR.data.services.length) {
                 var servicesNode = new Ext.tree.AsyncTreeNode({
                     text: "Services OGC",
-                    checked: GEOB.config.LAYERS_CHECKED,
+                    checked: GEOR.config.LAYERS_CHECKED,
                     expanded: true, //FIXME: expanded is compulsory
                     qtip: "Services OGC dont les couches peuvent être extraites",
                     //leaf: false,
@@ -697,18 +697,18 @@ GEOB.layerstree = (function() {
             // we create a counter which will be decreased each time 
             // an XHR request is over / increased when one more is required
             // when it's back to 0, we shall hide the load mask.
-            counter = GEOB.data.layers.length + GEOB.data.services.length;
+            counter = GEOR.data.layers.length + GEOR.data.services.length;
             // at the beginning, we only know that one capabilities request is
             // required for each layer and each service.
             
             //console.log('compteur initial -> '+counter+' ('+
-            //  GEOB.data.layers.length+' couches et '+GEOB.data.services.length+' services)');
+            //  GEOR.data.layers.length+' couches et '+GEOR.data.services.length+' services)');
             
             // create and append layers nodes to layersNode node
-            appendNodesFromLayerList(GEOB.data.layers, layersNode);
+            appendNodesFromLayerList(GEOR.data.layers, layersNode);
 
             // create and append layers nodes to servicesNode node
-            appendNodesFromServiceList(GEOB.data.services, servicesNode);
+            appendNodesFromServiceList(GEOR.data.services, servicesNode);
 
             // default selection is global properties node
             selectionModel.select(globalPropertiesNode);
@@ -735,13 +735,13 @@ GEOB.layerstree = (function() {
             var checkedNodes = getChecked(rootNode), node;
             var l = checkedNodes.length;
             if (l === 0) {
-                GEOB.util.infoDialog({
+                GEOR.util.infoDialog({
                     msg: "Vous devez choisir au moins une couche, "+
                         "en cochant une case dans l'arbre."
                 });
             } else {
                 observable.fireEvent('beforeextract');
-                GEOB.waiter.show();
+                GEOR.waiter.show();
                 
                 var global = globalPropertiesNode.attributes.owsinfo.exportinfo;
                 var out = {
@@ -783,21 +783,21 @@ GEOB.layerstree = (function() {
                 }
                 
                 Ext.Ajax.request({
-                    url: GEOB.config.EXTRACTOR_BATCH_URL,
+                    url: GEOR.config.EXTRACTOR_BATCH_URL,
                     success: function(response) {
                         // disable button
                         button.disable();
                         window.setTimeout(function(){
                             button.enable();
-                        }, GEOB.config.EXTRACT_BTN_DISABLE_TIME*1000);
+                        }, GEOR.config.EXTRACT_BTN_DISABLE_TIME*1000);
                         // info window
-                        GEOB.util.infoDialog({
+                        GEOR.util.infoDialog({
                             msg: "Extraction en cours.\n" +
                                  "Un email vous sera envoyé lorsque l'extraction sera terminée."
                         });
                     },
                     failure: function(response) {
-                        GEOB.util.errorDialog({
+                        GEOR.util.errorDialog({
                             msg: "La requête d'extraction n'a pas abouti."
                         });
                     },

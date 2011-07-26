@@ -54,7 +54,7 @@ public class WcsReaderRequest {
     public final double groundResolutionX;
 
     /*
-     * Not required for geobretagne
+     * Not required for geOrchestra
      * 
      * public final String timeStart, timeEnd; public final int resx, resy;
      * public final _responseCrs;

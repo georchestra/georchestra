@@ -1,20 +1,20 @@
 /*
  * Copyright (C) 2009  Camptocamp
  *
- * This file is part of GeoBretagne
+ * This file is part of geOrchestra
  *
  * MapFish Client is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * GeoBretagne is distributed in the hope that it will be useful,
+ * geOrchestra is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GeoBretagne.  If not, see <http://www.gnu.org/licenses/>.
+ * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 
@@ -35,13 +35,13 @@
  * @include OpenLayers/Util.js
  */
 
-Ext.namespace("GEOB");
+Ext.namespace("GEOR");
 
 /**
- * Module: GEOB.ows
+ * Module: GEOR.ows
  * A utility module for creating OWS stores, sending OWS requests, etc.
  */
-GEOB.ows = (function() {
+GEOR.ows = (function() {
     /*
      * Private
      */
@@ -194,7 +194,7 @@ GEOB.ows = (function() {
          * type - {String} The symbol type
          */
         getSymbolTypeFromAttributeStore: function(store) {
-            var matchGeomProperty = GEOB.ows.matchGeomProperty;
+            var matchGeomProperty = GEOR.ows.matchGeomProperty;
             var idx = store.find("type", matchGeomProperty);
             var ret;
 
@@ -334,7 +334,7 @@ GEOB.ows = (function() {
                 }, WMS_BASE_PARAMS),
                 layerOptions: Ext.apply({}, 
                     layerOptions, 
-                    GEOB.ows.defaultLayerOptions
+                    GEOR.ows.defaultLayerOptions
                 ),
                 fields: defaultRecordFields
             }, options.storeOptions);

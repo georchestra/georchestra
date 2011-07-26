@@ -69,7 +69,7 @@ import extractorapp.ws.extractor.FileUtils;
  * constructing a GridCoverage object
  * 
  * Be warned that not all of the API is supported because they are not required
- * for Geobretagne but this class could be the start of support for a
+ * for geOrchestra but this class could be the start of support for a
  * full-fledged WCS client
  * 
  * @see #readToFile(File, String, GeneralParameterValue[])
@@ -496,22 +496,22 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
     /*-------------------------  Unsupported methods  --------------------*/
     @Override
     public String[] listSubNames() {
-        throw new UnsupportedOperationException("Does not need to be implemented for geobretagne");
+        throw new UnsupportedOperationException("Does not need to be implemented for geOrchestra");
     }
 
     @Override
     public int getGridCoverageCount() {
-        throw new UnsupportedOperationException("Does not need to be implemented for geobretagne");
+        throw new UnsupportedOperationException("Does not need to be implemented for geOrchestra");
     }
 
     @Override
     public ServiceInfo getInfo() {
-        throw new UnsupportedOperationException("Does not need to be implemented for geobretagne");
+        throw new UnsupportedOperationException("Does not need to be implemented for geOrchestra");
     }
 
     @Override
     public String getCurrentSubname() {
-        throw new UnsupportedOperationException("Does not need to be implemented for geobretagne");
+        throw new UnsupportedOperationException("Does not need to be implemented for geOrchestra");
     }
 
 }

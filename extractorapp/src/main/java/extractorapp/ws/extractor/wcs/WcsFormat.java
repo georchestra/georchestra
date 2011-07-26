@@ -65,7 +65,7 @@ public class WcsFormat extends AbstractGridFormat {
     /*-------------------------  Unsupported methods--------------------*/
     @Override
     public ParameterValueGroup getReadParameters () {
-        throw new UnsupportedOperationException ("Does not need to be implemented for geobretagne");
+        throw new UnsupportedOperationException ("Does not need to be implemented for geOrchestra");
     }
 
     /*-------------------------  write support is not planned  --------------------*/

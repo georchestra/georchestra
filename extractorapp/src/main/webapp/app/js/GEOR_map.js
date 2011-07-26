@@ -1,20 +1,20 @@
 /*
  * Copyright (C) 2009  Camptocamp
  *
- * This file is part of GeoBretagne
+ * This file is part of geOrchestra
  *
  * MapFish Client is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * GeoBretagne is distributed in the hope that it will be useful,
+ * geOrchestra is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GeoBretagne.  If not, see <http://www.gnu.org/licenses/>.
+ * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -32,9 +32,9 @@
  * @include OpenLayers/Control/LoadingPanel.js
  */
 
-Ext.namespace("GEOB");
+Ext.namespace("GEOR");
 
-GEOB.map = (function() {
+GEOR.map = (function() {
 
     /*
      * Private
@@ -133,9 +133,9 @@ GEOB.map = (function() {
         getBaseLayer: function(options) {
             return new OpenLayers.Layer.WMS(
                 "Couche de base",
-                GEOB.config.GEOSERVER_WMS_URL,
-                {layers: GEOB.config.BASE_LAYER_NAME}, 
-                OpenLayers.Util.applyDefaults(options, GEOB.config.BASE_LAYER_OPTIONS)
+                GEOR.config.GEOSERVER_WMS_URL,
+                {layers: GEOR.config.BASE_LAYER_NAME}, 
+                OpenLayers.Util.applyDefaults(options, GEOR.config.BASE_LAYER_OPTIONS)
             );
         }
     };

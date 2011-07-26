@@ -1,33 +1,33 @@
 /*
  * Copyright (C) 2009  Camptocamp
  *
- * This file is part of GeoBretagne
+ * This file is part of geOrchestra
  *
  * MapFish Client is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * GeoBretagne is distributed in the hope that it will be useful,
+ * geOrchestra is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GeoBretagne.  If not, see <http://www.gnu.org/licenses/>.
+ * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
  * @requires OpenLayers/Request.js
  * @include OpenLayers/Request/XMLHttpRequest.js
- * @include GEOB_waiter.js
- * @include GEOB_util.js
- * @include GEOB_config.js
+ * @include GEOR_waiter.js
+ * @include GEOR_util.js
+ * @include GEOR_config.js
  */
 
-Ext.namespace("GEOB");
+Ext.namespace("GEOR");
 
-GEOB.ajaxglobal = (function() {
+GEOR.ajaxglobal = (function() {
 
     /**
      * FIXME
@@ -86,7 +86,7 @@ GEOB.ajaxglobal = (function() {
                 break;
         }
         if (text) {
-            GEOB.util.errorDialog({
+            GEOR.util.errorDialog({
                 title: "Erreur HTTP "+options.request.status,
                 msg: "Une erreur est survenue.<br />" + text
             });
@@ -108,20 +108,20 @@ GEOB.ajaxglobal = (function() {
      */
     var handleComplete = function(options) {
     
-        GEOB.waiter.hide();
+        GEOR.waiter.hide();
         var request = options.request, runCallbacks = true;
 
         if (httpSuccess(request)) {
             // deal with too big responses
-            if (request.responseText.length > GEOB.config.MAX_LENGTH) {
-                GEOB.util.confirmDialog({
+            if (request.responseText.length > GEOR.config.MAX_LENGTH) {
+                GEOR.util.confirmDialog({
                     title: 'Attention : risque de blocage du navigateur',
                     msg: [
                         "Les données provenant du serveur sont trop",
                         "volumineuses.<br />Le serveur a envoyé",
                         "" + Math.round(request.responseText.length/1024) + "KO",
                         "(la limite est à",
-                        "" + Math.round(GEOB.config.MAX_LENGTH/1024) + "KO).",
+                        "" + Math.round(GEOR.config.MAX_LENGTH/1024) + "KO).",
                         "<br />Voulez-vous tout de même continuer ?"
                     ].join(" "),
                     width: 420,
@@ -168,7 +168,7 @@ GEOB.ajaxglobal = (function() {
 
         /**
          * APIMethod: init
-         * Initialize GEOB.ajaxglobal
+         * Initialize GEOR.ajaxglobal
          */
         init: function() {
             OpenLayers.Request.events.on({

@@ -6,12 +6,12 @@
     <script type="text/javascript" src="../../../../lib/externals/ext/ext-all-debug.js"></script>
     <script type="text/javascript" src="../../../../lib/externals/mapfish/MapFish.js"></script>
 
-    <script type="text/javascript" src="../../GEOB_config.js"></script>
+    <script type="text/javascript" src="../../GEOR_config.js"></script>
     <script type="text/javascript">
     function test_GetBaseURL(t) {
         t.plan(10);
 
-        var url, base, o = GEOB.config;
+        var url, base, o = GEOR.config;
 
         url = "http://foo.bar/foo/bar";
         base = o._getBaseURL(url);
@@ -74,7 +74,7 @@
     function test_GetAppURL(t) {
         t.plan(3);
 
-        var url, base, o = GEOB.config;
+        var url, base, o = GEOR.config;
 
         url = "http://foo.bar/foo/bar";
         base = o._getAppURL(url);

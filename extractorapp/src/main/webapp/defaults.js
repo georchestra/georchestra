@@ -1,6 +1,6 @@
-Ext.namespace("GEOB", "GEOB.data");
+Ext.namespace("GEOR", "GEOR.data");
 
-Ext.apply(GEOB.data, {
+Ext.apply(GEOR.data, {
    services: [{
         text: "geobretagne.fr WMS NS=geob",
         owstype: "WMS",

@@ -2,33 +2,33 @@
 /*
  * Copyright (C) 2009  Camptocamp
  *
- * This file is part of GeoBretagne
+ * This file is part of geOrchestra
  *
  * MapFish Client is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * GeoBretagne is distributed in the hope that it will be useful,
+ * geOrchestra is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GeoBretagne.  If not, see <http://www.gnu.org/licenses/>.
+ * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
- * @include GEOB_data.js
+ * @include GEOR_data.js
  * @include OpenLayers/Control/ZoomToMaxExtent.js
  * @include OpenLayers/Control/ZoomBox.js
  * @include OpenLayers/Control/NavigationHistory.js
  * @include GeoExt/widgets/Action.js
  */
 
-Ext.namespace("GEOB");
+Ext.namespace("GEOR");
 
-GEOB.toolbar = (function() {
+GEOR.toolbar = (function() {
     /*
      * Private
      */
@@ -101,10 +101,10 @@ GEOB.toolbar = (function() {
         items.push('->');
 
         // insert a login or logout link in the toolbar
-        var login_html = '<div style="margin-right:1em;margin-right:1em;font:11px tahoma,verdana,helvetica;"><a href="' + GEOB.config.LOGIN_URL +
-            '" style="text-decoration:none;" onclick="return GEOB.toolbar.confirmLogin()">Connexion</a></div>';
-        if(!GEOB.data.anonymous) {
-            login_html = '<div style="margin-right:1em;margin-right:1em;font:11px tahoma,verdana,helvetica;">'+GEOB.data.username + '&nbsp;<a href="' + GEOB.config.LOGOUT_URL +
+        var login_html = '<div style="margin-right:1em;margin-right:1em;font:11px tahoma,verdana,helvetica;"><a href="' + GEOR.config.LOGIN_URL +
+            '" style="text-decoration:none;" onclick="return GEOR.toolbar.confirmLogin()">Connexion</a></div>';
+        if(!GEOR.data.anonymous) {
+            login_html = '<div style="margin-right:1em;margin-right:1em;font:11px tahoma,verdana,helvetica;">'+GEOR.data.username + '&nbsp;<a href="' + GEOR.config.LOGOUT_URL +
                 '" style="text-decoration:none;">déconnexion</a></div>';
         }
         items.push(Ext.DomHelper.append(Ext.getBody(), login_html));

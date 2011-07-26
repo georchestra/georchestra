@@ -2,33 +2,33 @@
 /*
  * Copyright (C) 2009  Camptocamp
  *
- * This file is part of GeoBretagne
+ * This file is part of geOrchestra
  *
  * MapFish Client is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * GeoBretagne is distributed in the hope that it will be useful,
+ * geOrchestra is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GeoBretagne.  If not, see <http://www.gnu.org/licenses/>.
+ * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
- * @include GEOB_config.js
+ * @include GEOR_config.js
  * @include Ext.ux/form/TwinTriggerComboBox.js
  * @include GeoExt.ux/widgets/form/BoundingBoxPanel.js
  * @include OpenLayers/Control/DrawFeature.js
  * @include OpenLayers/Handler/RegularPolygon.js
  */
 
-Ext.namespace("GEOB");
+Ext.namespace("GEOR");
 
-GEOB.layeroptions = (function() {
+GEOR.layeroptions = (function() {
     /*
      * Private
      */
@@ -235,12 +235,12 @@ GEOB.layeroptions = (function() {
             } else {
                 // custom properties
                 // reload store for projections combo
-                var formats, projections = GEOB.config.SUPPORTED_REPROJECTIONS;
+                var formats, projections = GEOR.config.SUPPORTED_REPROJECTIONS;
                 if(options.owsType == "WFS") {
-                    formats = GEOB.config.SUPPORTED_VECTOR_FORMATS;
+                    formats = GEOR.config.SUPPORTED_VECTOR_FORMATS;
                     getNumberField('customResolution').hideAll();
                 } else {
-                    formats = GEOB.config.SUPPORTED_RASTER_FORMATS;
+                    formats = GEOR.config.SUPPORTED_RASTER_FORMATS;
                     getNumberField('customResolution').showAll();
                 }
                 getCombo('customFormats').getStore().loadData(formats);
@@ -302,12 +302,12 @@ GEOB.layeroptions = (function() {
                                 items: [
                                     getCombo('globalProjections', {
                                         fieldLabel: 'Projection de sortie',
-                                        store_data: GEOB.config.SUPPORTED_REPROJECTIONS,
-                                        value: GEOB.config.GLOBAL_EPSG
+                                        store_data: GEOR.config.SUPPORTED_REPROJECTIONS,
+                                        value: GEOR.config.GLOBAL_EPSG
                                     }),
                                     getNumberField('globalResolution', {
                                         fieldLabel: 'Résolution raster (m/pixel)',
-                                        //value: GEOB.config.GLOBAL_MAX_EXTENT.getWidth() / GEOB.config.DEFAULT_WCS_EXTRACTION_WIDTH
+                                        //value: GEOR.config.GLOBAL_MAX_EXTENT.getWidth() / GEOR.config.DEFAULT_WCS_EXTRACTION_WIDTH
                                         value: 0.5,
                                         allowBlank: false,
                                         listeners: {
@@ -315,10 +315,10 @@ GEOB.layeroptions = (function() {
                                             // global validation for extractor params to check if
                                             // extraction is allowed.
                                             "valid": function() {
-                                                Ext.getCmp("geob-btn-extract-id").enable();
+                                                Ext.getCmp("geor-btn-extract-id").enable();
                                             },
                                             "invalid": function() {
-                                                Ext.getCmp("geob-btn-extract-id").disable();
+                                                Ext.getCmp("geor-btn-extract-id").disable();
                                             },
                                             scope: this
                                         }
@@ -331,13 +331,13 @@ GEOB.layeroptions = (function() {
                                 items: [
                                     getCombo('globalRasterFormats', {
                                         fieldLabel: 'Format de sortie raster',
-                                        store_data: GEOB.config.SUPPORTED_RASTER_FORMATS,
-                                        value: GEOB.config.SUPPORTED_RASTER_FORMATS[0][0]
+                                        store_data: GEOR.config.SUPPORTED_RASTER_FORMATS,
+                                        value: GEOR.config.SUPPORTED_RASTER_FORMATS[0][0]
                                     }),
                                     getCombo('globalVectorFormats', {
                                         fieldLabel: 'Format de sortie vecteur',
-                                        store_data: GEOB.config.SUPPORTED_VECTOR_FORMATS,
-                                        value: GEOB.config.SUPPORTED_VECTOR_FORMATS[0][0]
+                                        store_data: GEOR.config.SUPPORTED_VECTOR_FORMATS,
+                                        value: GEOR.config.SUPPORTED_VECTOR_FORMATS[0][0]
                                     })
                                 ]
                             }, {

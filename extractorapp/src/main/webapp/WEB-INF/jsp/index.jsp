@@ -65,19 +65,19 @@
     
     <script type="text/javascript" src="resources/lib/addins/loadingPanel/trunk/lib/OpenLayers/Control/LoadingPanel.js"></script>
 
-    <script type="text/javascript" src="resources/app/js/GEOB_util.js"></script>
-    <script type="text/javascript" src="resources/app/js/GEOB_ows.js"></script>
-    <script type="text/javascript" src="resources/app/js/GEOB_waiter.js"></script>
-    <script type="text/javascript" src="resources/app/js/GEOB_data.js"></script>
-    <script type="text/javascript" src="resources/app/js/GEOB_config.js"></script>
-    <script type="text/javascript" src="resources/app/js/GEOB_proj4jsdefs.js"></script>
-    <script type="text/javascript" src="resources/app/js/GEOB_toolbar.js"></script>
-    <script type="text/javascript" src="resources/app/js/GEOB_map.js"></script>
-    <script type="text/javascript" src="resources/app/js/GEOB_layerstree.js"></script>
-    <script type="text/javascript" src="resources/app/js/GEOB_layeroptions.js"></script>
-    <script type="text/javascript" src="resources/app/js/GEOB_referentials.js"></script>
-    <script type="text/javascript" src="resources/app/js/GEOB_ajaxglobal.js"></script>
-    <script type="text/javascript" src="resources/app/js/GEOB.js"></script>
+    <script type="text/javascript" src="resources/app/js/GEOR_util.js"></script>
+    <script type="text/javascript" src="resources/app/js/GEOR_ows.js"></script>
+    <script type="text/javascript" src="resources/app/js/GEOR_waiter.js"></script>
+    <script type="text/javascript" src="resources/app/js/GEOR_data.js"></script>
+    <script type="text/javascript" src="resources/app/js/GEOR_config.js"></script>
+    <script type="text/javascript" src="resources/app/js/GEOR_proj4jsdefs.js"></script>
+    <script type="text/javascript" src="resources/app/js/GEOR_toolbar.js"></script>
+    <script type="text/javascript" src="resources/app/js/GEOR_map.js"></script>
+    <script type="text/javascript" src="resources/app/js/GEOR_layerstree.js"></script>
+    <script type="text/javascript" src="resources/app/js/GEOR_layeroptions.js"></script>
+    <script type="text/javascript" src="resources/app/js/GEOR_referentials.js"></script>
+    <script type="text/javascript" src="resources/app/js/GEOR_ajaxglobal.js"></script>
+    <script type="text/javascript" src="resources/app/js/GEOR.js"></script>
         </c:when>
         <c:otherwise>
     <script type="text/javascript" src="resources/lib/externals/ext/ext-all.js"></script>
@@ -96,10 +96,10 @@
         %>
         // set proxy host
         OpenLayers.ProxyHost = '<%= proxyHost %>';
-        GEOB.data.debug = ${c.debug};
+        GEOR.data.debug = ${c.debug};
     <c:choose>
         <c:when test='${c.fake}'>
-        GEOB.data.services = [
+        GEOR.data.services = [/*
             {
                 text: "BRGM Risques",
                 owstype: "WMS",
@@ -108,10 +108,10 @@
                 text: "Gest'eau",
                 owstype: "WMS",
                 owsurl: "http://gesteau.oieau.fr/service"
-            }
+            }*/
         ];
 
-        GEOB.data.layers = [
+        GEOR.data.layers = [
             {
                 owstype: "WMS",
                 owsurl: "http://geolittoral.application.equipement.gouv.fr/wms/metropole",
@@ -123,23 +123,23 @@
             }
         ];
         // we want all layers unchecked by default
-        GEOB.config.LAYERS_CHECKED = false;
+        GEOR.config.LAYERS_CHECKED = false;
         </c:when>
         <c:otherwise>
-        GEOB.data.layers = ${c.layers};
-        GEOB.data.services = ${c.services};
+        GEOR.data.layers = ${c.layers};
+        GEOR.data.services = ${c.services};
         // layers come from catalog: we want them all checked
-        GEOB.config.LAYERS_CHECKED = true;
+        GEOR.config.LAYERS_CHECKED = true;
         </c:otherwise>
     </c:choose>
     </script>
     <c:choose>
         <c:when test='<%= request.getParameter("jsc") != null %>'>
-        <!-- Force GEOB.data.services and GEOB.data.layers from an external JS file -->
+        <!-- Force GEOR.data.services and GEOR.data.layers from an external JS file -->
     <script type="text/javascript" src="<%=request.getParameter("jsc") %>"></script>
     <script type="text/javascript">
         // we want all layers unchecked by default
-        GEOB.config.LAYERS_CHECKED = false;
+        GEOR.config.LAYERS_CHECKED = false;
     </script>
         </c:when>
     </c:choose>
@@ -153,9 +153,9 @@
     <c:choose>
         <c:when test='<%= anonymous == false %>'>
     <script type="text/javascript">
-        GEOB.data.anonymous = false;
-        GEOB.data.username = "<%=request.getHeader("sec-username") %>";
-        GEOB.data.email = "<%=request.getHeader("sec-email") %>";
+        GEOR.data.anonymous = false;
+        GEOR.data.username = "<%=request.getHeader("sec-username") %>";
+        GEOR.data.email = "<%=request.getHeader("sec-email") %>";
     </script>
         </c:when>
     </c:choose>

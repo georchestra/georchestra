@@ -1,37 +1,37 @@
 /*
  * Copyright (C) 2009  Camptocamp
  *
- * This file is part of GeoBretagne
+ * This file is part of geOrchestra
  *
  * MapFish Client is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * GeoBretagne is distributed in the hope that it will be useful,
+ * geOrchestra is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GeoBretagne.  If not, see <http://www.gnu.org/licenses/>.
+ * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
  * @include lang/fr.js
- * @include GEOB_proj4jsdefs.js
- * @include GEOB_data.js
- * @include GEOB_map.js
- * @include GEOB_ajaxglobal.js
- * @include GEOB_waiter.js
- * @include GEOB_toolbar.js
- * @include GEOB_layerstree.js
- * @include GEOB_layeroptions.js
- * @include GEOB_referentials.js
+ * @include GEOR_proj4jsdefs.js
+ * @include GEOR_data.js
+ * @include GEOR_map.js
+ * @include GEOR_ajaxglobal.js
+ * @include GEOR_waiter.js
+ * @include GEOR_toolbar.js
+ * @include GEOR_layerstree.js
+ * @include GEOR_layeroptions.js
+ * @include GEOR_referentials.js
  * @include GeoExt/widgets/MapPanel.js
  */
 
-Ext.namespace("GEOB");
+Ext.namespace("GEOR");
 
 (function() {
 
@@ -41,21 +41,21 @@ Ext.namespace("GEOB");
      * Handler for extract all checked layers button.
      */
     var extractHandler = function(b) {
-        email = email || GEOB.data.email;
+        email = email || GEOR.data.email;
         var emailRegexp = /^([\w\-\'\-]+)(\.[\w-\'\-]+)*@([\w\-]+\.){1,5}([A-Za-z]){2,4}$/;
 
         if (emailRegexp.test(email)) {
-            GEOB.layerstree.extract(email, b);
+            GEOR.layerstree.extract(email, b);
         } else {
             // prompt for valid email and process the extraction using a callback
             Ext.Msg.prompt('Email', 'Saisissez une adresse email valide : ', function(btn, text){
                 if (btn == 'ok'){
                     if (emailRegexp.test(text)) {
                         email = text;
-                        GEOB.layerstree.extract(email, b);
+                        GEOR.layerstree.extract(email, b);
                     }
                     else {
-                        GEOB.util.errorDialog({
+                        GEOR.util.errorDialog({
                             msg: "L'email n'est pas valide. Abandon de l'extraction."
                         });
                     }
@@ -92,10 +92,10 @@ Ext.namespace("GEOB");
          * Initialize the application.
          */
 
-        GEOB.ajaxglobal.init();
-        GEOB.waiter.init();
-        var map = GEOB.map.create();
-        var vectorLayer = GEOB.map.createVectorLayer();
+        GEOR.ajaxglobal.init();
+        GEOR.waiter.init();
+        var map = GEOR.map.create();
+        var vectorLayer = GEOR.map.createVectorLayer();
 
         /*
          * Create the page's layout.
@@ -115,7 +115,7 @@ Ext.namespace("GEOB");
                     border: false
                 },
                 items: [
-                    GEOB.layeroptions.create(map, {
+                    GEOR.layeroptions.create(map, {
                         region: "north",
                         vectorLayer: vectorLayer,
                         height: 105
@@ -125,7 +125,7 @@ Ext.namespace("GEOB");
                         xtype: "gx_mappanel",
                         id: "mappanel",
                         map: map,
-                        tbar: GEOB.toolbar.create(map)
+                        tbar: GEOR.toolbar.create(map)
                     }
                 ]
             }, {
@@ -160,12 +160,12 @@ Ext.namespace("GEOB");
                         region: "center",
                         layout: "fit",
                         title: "Configuration",
-                        items: GEOB.layerstree.create(),
+                        items: GEOR.layerstree.create(),
                         bbar: [ '->',
                             {
-                                id: "geob-btn-extract-id",
+                                id: "geor-btn-extract-id",
                                 text: "Extraire les couches cochées",
-                                iconCls: "geob-btn-extract",
+                                iconCls: "geor-btn-extract",
                                 handler: function() {
                                     extractHandler(this);
                                 }
@@ -183,7 +183,7 @@ Ext.namespace("GEOB");
                             Ext.apply({
                                 height: 150,
                                 region: 'north'
-                            }, GEOB.referentials.create(map, "geob_loc")),
+                            }, GEOR.referentials.create(map, "geob_loc")),
                             {
                                 xtype: 'container',
                                 autoEl: 'div',
@@ -198,18 +198,18 @@ Ext.namespace("GEOB");
         });
         
         var saveLayerOptions = function() {
-            GEOB.layerstree.saveExportOptions(GEOB.layeroptions.getOptions());
+            GEOR.layerstree.saveExportOptions(GEOR.layeroptions.getOptions());
         };
         
-        GEOB.layerstree.events.on({
+        GEOR.layerstree.events.on({
             "beforelayerchange": saveLayerOptions,
             "beforeextract": saveLayerOptions,
-            "layerchange": GEOB.layeroptions.setOptions
+            "layerchange": GEOR.layeroptions.setOptions
         });
-        GEOB.referentials.events.on({
-            "recenter": GEOB.layeroptions.setBbox
+        GEOR.referentials.events.on({
+            "recenter": GEOR.layeroptions.setBbox
         });
 
-        GEOB.layerstree.init(map, vectorLayer);
+        GEOR.layerstree.init(map, vectorLayer);
     });
 })();
