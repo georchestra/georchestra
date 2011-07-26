@@ -667,9 +667,8 @@ GEOR.layerstree = (function() {
                 var layersNode = new Ext.tree.AsyncTreeNode({
                     text: "Couches OGC",
                     checked: GEOR.config.LAYERS_CHECKED,
-                    expanded: true, //FIXME: expanded is compulsory
+                    expanded: true, // mandatory
                     qtip: "Couches OGC disponibles pour extraction",
-                    //leaf: false,
                     children: [],
                     listeners: {"checkchange": checker}
                 });
@@ -688,9 +687,8 @@ GEOR.layerstree = (function() {
                 var servicesNode = new Ext.tree.AsyncTreeNode({
                     text: "Services OGC",
                     checked: GEOR.config.LAYERS_CHECKED,
-                    expanded: true, //FIXME: expanded is compulsory
+                    expanded: true, // mandatory
                     qtip: "Services OGC dont les couches peuvent être extraites",
-                    //leaf: false,
                     children: [],
                     listeners: {"checkchange": checker}
                 });
@@ -811,6 +809,37 @@ GEOR.layerstree = (function() {
                 });
                 
             }
+        },
+        
+        /**
+         * APIMethod: getSelectedLayersCount
+         * returns the number of selected layers
+         */
+        getSelectedLayersCount: function() {
+            var count = 0;
+            rootNode.cascade(function(n) {
+                if (n.isLeaf() && n.isSelected() && n.parentNode !== rootNode) {
+                    count += 1;
+                }
+            });
+            return count;
+        },
+        
+        /**
+         * APIMethod: selectAllLayers
+         * check all leaf layers in tree
+         *
+         * returns the number of checked nodes
+         */
+        selectAllLayers: function() {
+            var count = 0;
+            rootNode.cascade(function(n) {
+                if (n.isLeaf() && !n.isSelected() && n.parentNode !== rootNode) {
+                    count += 1;
+                    n.getUI().toggleCheck(true);
+                }
+            });
+            return count;
         }
     };
 })();

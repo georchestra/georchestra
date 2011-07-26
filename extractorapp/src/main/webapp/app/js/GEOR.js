@@ -170,7 +170,19 @@ Ext.namespace("GEOR");
                                 text: "Extraire les couches cochées",
                                 iconCls: "geor-btn-extract",
                                 handler: function() {
-                                    extractHandler(this);
+                                    if (GEOR.layerstree.getSelectedLayersCount() > 0) {
+                                        extractHandler(this);
+                                    } else {
+                                        var dialog = Ext.Msg.confirm('Aucune couche dans le panier', 
+                                        "Vous n'avez pas sélectionné de couche pour l'extraction. Tout extraire ?", function(btn, text){
+                                            if (btn == 'yes'){
+                                                GEOR.layerstree.selectAllLayers();
+                                                extractHandler(this);
+                                            } else {
+                                                dialog.hide();
+                                            }
+                                        }, this);
+                                    }
                                 }
                             }
                         ]
