@@ -115,7 +115,7 @@ GEOR.layeroptions = (function() {
         if(!numberfields[ref]) {
             var opts = {
                 anchor: '-20',
-                decimalPrecision: 10
+                decimalPrecision: 6 // TODO: 6 in case map units is degrees, else 0
             };
             numberfields[ref] = new Ext.form.NumberField(
                 Ext.apply(opts, options));
@@ -212,9 +212,6 @@ GEOR.layeroptions = (function() {
          * options - {Object} object from which layer options values
          * are read.
          * global - {Boolean} true if options refer to global options
-         *
-         * Returns:
-         * {Boolean} true if layer options have been loaded successfully.
          */
         setOptions: function(options, global) {
             layerOptionsPanel.getLayout().setActiveItem(global ? 0 : 1);
@@ -224,13 +221,13 @@ GEOR.layeroptions = (function() {
             if(global) {
                 // global properties
                 
-                // restore values
+                // restore BBox in form fields & map
                 options.bbox && getFieldSet('globalBbox').items.itemAt(0).setBbox(options.bbox);
+                // restore combo values
                 options.projection && getCombo('globalProjections').setValue(options.projection);
                 options.resolution && getNumberField('globalResolution').setValue(options.resolution);
                 options.globalRasterFormats && getCombo('globalRasterFormats').setValue(options.globalRasterFormat);
                 options.globalVectorFormats && getCombo('globalVectorFormats').setValue(options.globalVectorFormat);
-
                 vectorLayer.setVisibility(true);
             } else {
                 // custom properties

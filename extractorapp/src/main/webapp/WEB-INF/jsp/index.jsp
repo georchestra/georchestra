@@ -99,8 +99,8 @@
         GEOR.data.debug = ${c.debug};
     <c:choose>
         <c:when test='${c.fake}'>
-        GEOR.data.services = [/*
-            {
+        GEOR.data.services = [
+            /*{
                 text: "BRGM Risques",
                 owstype: "WMS",
                 owsurl: "http://geoservices.brgm.fr/risques"
@@ -113,6 +113,10 @@
 
         GEOR.data.layers = [
             {
+                layername: "ortho",
+                owstype: "WMS",
+                owsurl: "http://bmo.openstreetmap.fr/ows"
+            },{
                 owstype: "WMS",
                 owsurl: "http://geolittoral.application.equipement.gouv.fr/wms/metropole",
                 layername: "Sentiers_littoraux"
@@ -120,6 +124,10 @@
                 owstype: "WMS",
                 owsurl: "http://sd1878-2.sivit.org/geoserver/wms",
                 layername: "topp:RCLC90_L2E"
+            }, {
+                owstype: "WMS",
+                owsurl: "http://geoservices.brgm.fr/risques",
+                layername: "BASIAS_LOCALISE"
             }
         ];
         // we want all layers unchecked by default

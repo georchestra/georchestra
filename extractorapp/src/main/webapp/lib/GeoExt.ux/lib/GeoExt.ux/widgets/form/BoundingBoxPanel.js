@@ -156,15 +156,9 @@ GeoExt.ux.form.BoundingBoxPanel = Ext.extend(Ext.Panel, {
         }
 
         this.items = [
-            {},
-            this.top,
-            {},
-            this.left,
-            this.button || {},
-            this.right,
-            {},
-            this.bottom,
-            {}
+            {}, this.top, {},
+            this.left, this.button || {}, this.right,
+            {}, this.bottom, {}
         ];
 
         GeoExt.ux.form.BoundingBoxPanel.superclass.initComponent.apply(this, arguments);
@@ -343,7 +337,7 @@ GeoExt.ux.form.BoundingBoxPanel = Ext.extend(Ext.Panel, {
      * Get the current bbox bounds from the feature vector.
      */
     getBboxFromFeature: function() {
-        if (this.vectorLayer) {
+        if (this.vectorLayer &&  this.vectorLayer.features.length) {
             return this.vectorLayer.features[0].geometry.getBounds();
         }
     }

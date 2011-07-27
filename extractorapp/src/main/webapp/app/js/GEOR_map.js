@@ -135,7 +135,16 @@ GEOR.map = (function() {
                 "Couche de base",
                 GEOR.config.GEOSERVER_WMS_URL,
                 {layers: GEOR.config.BASE_LAYER_NAME}, 
-                OpenLayers.Util.applyDefaults(options, GEOR.config.BASE_LAYER_OPTIONS)
+                OpenLayers.Util.applyDefaults(options, {
+                    projection: GEOR.config.GLOBAL_EPSG,
+                    maxExtent: GEOR.config.GLOBAL_MAX_EXTENT,
+                    isBaseLayer: true,
+                    maxResolution: "auto",
+                    displayInLayerSwitcher: false,
+                    singleTile: true,
+                    ratio: 1,
+                    transitionEffect: 'resize'
+                })
             );
         }
     };

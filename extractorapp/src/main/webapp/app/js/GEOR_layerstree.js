@@ -98,35 +98,21 @@ GEOR.layerstree = (function() {
         "beforeextract");
 
     /**
-     * Method: removeAllLayers
-     * Remove all layers from OpenLayers map.
-     */
-    var removeAllLayers = function() {
-        if(map && map.layers) {
-            while(map.layers.length > 0) {
-                map.removeLayer(map.layers[0]);
-            }
-        }
-    };
-
-    /**
      * Property: selectionModel
      * {Ext.tree.DefaultSelectionModel} The tree selection model.
      */
     var selectionModel = new Ext.tree.DefaultSelectionModel({
         listeners: {
             'beforeselect': function(sm, newnode, oldnode){
-                if(!newnode.attributes.leaf) {
+                if(!newnode.isLeaf()) {
                     // only leaf nodes are selectable
                     return false;
                 }
                 if(oldnode) {
                     //save options in oldnode.attributes.owsinfo
                     var owsinfo = oldnode.attributes.owsinfo;
-                    owsinfo.extent = map.getExtent();
-
+                    owsinfo.extent = map.getExtent(); // strange ...
                     observable.fireEvent('beforelayerchange');
-
                     if (sf) {
                         map.removeControl(sf);
                     }
@@ -136,24 +122,39 @@ GEOR.layerstree = (function() {
                 return true;
             },
             'selectionchange': function(sm, node){
-                if(node.attributes.leaf) {
+                if(node.isLeaf()) {
                     var owsinfo = node.attributes.owsinfo;
                     if(owsinfo.layer == undefined) {
                         alert("ERREUR: owsinfo.layer devrait être toujours défini");
                         return;
                     }
+                    var mapCRS = owsinfo.layer.projection; // FIXME: we might need a better process to find the suitable SRS
+                    var baselayerOptions = {
+                        projection: mapCRS, 
+                        maxExtent: owsinfo.layer.maxExtent,
+                        units: (typeof mapCRS == "string") ? 
+                            new OpenLayers.Projection(this.projection).getUnits() : 
+                            mapCRS.getUnits()
+                    };
                     if(owsinfo.baselayer == undefined) {
                         // baselayer has never been created
-                        owsinfo.baselayer = GEOR.map.getBaseLayer({
-                            projection: owsinfo.layer.projection,
-                            maxExtent: owsinfo.layer.maxExtent
-                        });
+                        owsinfo.baselayer = GEOR.map.getBaseLayer(baselayerOptions);
                     }
                     if(!owsinfo.extent) {
                         owsinfo.extent = owsinfo.layer.maxExtent;
                     }
                     map.addLayer(owsinfo.baselayer);
-                    map.addLayer(owsinfo.layer);
+                    
+                    // At this step, the map maxExtent / projection / units ... is not set to a correct value,
+                    //  even though the baselayer has correct params.
+                    // That's why we're doing this:
+                    map.setOptions(baselayerOptions);
+                    // (might be an Openlayers bug - we'll see if things have changed on library update)
+
+                    if (owsinfo.layer.CLASS_NAME != "OpenLayers.Layer") {
+                        map.addLayer(owsinfo.layer);
+                    }
+
                     // if layer has a strategy then activate it
                     if(owsinfo.layer.strategies && (owsinfo.layer.strategies.length == 1)) {
                         // TODO: show a mask on the layer tree to prevent selecting
@@ -165,7 +166,12 @@ GEOR.layerstree = (function() {
                         strategy.activate();
                     }
                     map.addLayer(vectorLayer);
-                    map.zoomToExtent(owsinfo.extent.clone().scale(1.1));
+                    
+                    // This is in order to set the vector layer to the SRS of the map:
+                    vectorLayer.addOptions({projection: owsinfo.baselayer.projection}); 
+
+                    // FIXME: seems like this .scale(1.5) is not taken into account
+                    map.zoomToExtent(owsinfo.extent.scale(1.5));
                     
                     // Hovering features :
                     if (owsinfo.layer.CLASS_NAME == "OpenLayers.Layer.Vector") {
@@ -175,12 +181,25 @@ GEOR.layerstree = (function() {
                         });
                         map.addControl(sf);
                     }
+                    observable.fireEvent('layerchange', owsinfo.exportinfo, (node==globalPropertiesNode));
                 }
-                observable.fireEvent('layerchange', owsinfo.exportinfo, (node==globalPropertiesNode));
             }
         }
     });
 
+
+    /**
+     * Method: removeAllLayers
+     * Remove all layers from OpenLayers map.
+     */
+    var removeAllLayers = function() {
+        if(map && map.layers) {
+            while(map.layers.length > 0) {
+                map.removeLayer(map.layers[0]);
+            }
+        }
+    };
+    
     /**
      * Method: getChecked
      * Retrieve an array of checked nodes, or an array of a specific
@@ -190,7 +209,7 @@ GEOR.layerstree = (function() {
      * startNode - {TreeNode} The node to start from, defaults to the root
      * a - {String} attribute (optional) Defaults to null (return the actual nodes)
      */
-    getChecked = function(startNode, a){
+    var getChecked = function(startNode, a){
         var r = [];
         var f = function(){
             if(this.attributes.checked && this.isLeaf() && 
@@ -245,7 +264,7 @@ GEOR.layerstree = (function() {
             var serviceNode = new Ext.tree.AsyncTreeNode({
                 text: item.text,
                 checked: GEOR.config.LAYERS_CHECKED,
-                expanded: true, //FIXME: expanded is mandatory (and it should not be)
+                expanded: true,
                 //qtip: "List of layers",
                 //leaf: false,
                 children: [],
@@ -496,6 +515,8 @@ GEOR.layerstree = (function() {
                                         owsinfo.exportinfo.layerName),
                                     disableCaching: false,
                                     success: function(response) {
+                                        // FIXME with http://bmo.openstreetmap.fr/ows, orthophoto appears as vector here !!
+                                        // see http://csm-bretagne.fr/redmine/issues/1941
                                         parentNode.appendChild(new Ext.tree.TreeNode({
                                             text: 'Vecteur - '+GEOR.util.shortenLayerName(owsinfo.text, 26),
                                             iconCls: 'vector-layer',
@@ -648,7 +669,7 @@ GEOR.layerstree = (function() {
                     "ne faisant pas l'objet de paramètres spécifiques.",
                 leaf: true,
                 owsinfo: {
-                    layer: new OpenLayers.Layer("fake_base_layer", {
+                    layer: new OpenLayers.Layer("fake_layer", { 
                         projection: GEOR.config.GLOBAL_EPSG,
                         maxExtent: GEOR.config.GLOBAL_MAX_EXTENT,
                         maxResolution: "auto",
@@ -670,7 +691,9 @@ GEOR.layerstree = (function() {
                     expanded: true, // mandatory
                     qtip: "Couches OGC disponibles pour extraction",
                     children: [],
-                    listeners: {"checkchange": checker}
+                    listeners: {
+                        "checkchange": checker
+                    }
                 });
                 
                 new Ext.tree.TreeSorter(layersNode, {
@@ -690,7 +713,9 @@ GEOR.layerstree = (function() {
                     expanded: true, // mandatory
                     qtip: "Services OGC dont les couches peuvent être extraites",
                     children: [],
-                    listeners: {"checkchange": checker}
+                    listeners: {
+                        "checkchange": checker
+                    }
                 });
 
                 rootNode.appendChild([servicesNode]);
@@ -738,77 +763,74 @@ GEOR.layerstree = (function() {
             var checkedNodes = getChecked(rootNode), node;
             var l = checkedNodes.length;
             if (l === 0) {
-                GEOR.util.infoDialog({
-                    msg: "Vous devez choisir au moins une couche, "+
-                        "en cochant une case dans l'arbre."
-                });
-            } else {
-                observable.fireEvent('beforeextract');
-                GEOR.waiter.show();
-                
-                var global = globalPropertiesNode.attributes.owsinfo.exportinfo;
-                var out = {
-                    emails: [email],
-                    globalProperties: {
-                        projection: global.projection,
-                        resolution: global.resolution,
-                        rasterFormat: global.globalRasterFormat,
-                        vectorFormat: global.globalVectorFormat,
-                        bbox: {
-                            srs: global.srs,
-                            value: global.bbox.toArray()
-                        }
-                    },
-                    layers: new Array(l)
-                };
-                
-                var local;
-                for (var i=0; i<l; i++) {
-                    local = checkedNodes[i].attributes.owsinfo.exportinfo;
-                    out.layers[i] = {
-                        projection: (local.projection && 
-                            local.projection.length) ? 
-                                local.projection : null,
-                        resolution: (typeof(local.resolution) == "number") ?
-                            local.resolution : null,
-                        format: (local.format && 
-                            local.format.length) ? 
-                                local.format : null,
-                        bbox: (local.bboxFromGlobal !== false) ? null : {
-                            srs: local.srs,
-                            value: local.bbox.toArray()
-                        },
-                        owsUrl: local.owsUrl,
-                        owsType: local.owsType,
-                        layerName: local.layerName,
-                        namespace: local.namespace
-                    };
-                }
-                
-                Ext.Ajax.request({
-                    url: GEOR.config.EXTRACTOR_BATCH_URL,
-                    success: function(response) {
-                        // disable button
-                        button.disable();
-                        window.setTimeout(function(){
-                            button.enable();
-                        }, GEOR.config.EXTRACT_BTN_DISABLE_TIME*1000);
-                        // info window
-                        GEOR.util.infoDialog({
-                            msg: "Extraction en cours.\n" +
-                                 "Un email vous sera envoyé lorsque l'extraction sera terminée."
-                        });
-                    },
-                    failure: function(response) {
-                        GEOR.util.errorDialog({
-                            msg: "La requête d'extraction n'a pas abouti."
-                        });
-                    },
-                    jsonData: out,
-                    scope: this
-                });
-                
+                return;
             }
+            
+            observable.fireEvent('beforeextract');
+            GEOR.waiter.show();
+            
+            var global = globalPropertiesNode.attributes.owsinfo.exportinfo;
+            var out = {
+                emails: [email],
+                globalProperties: {
+                    projection: global.projection,
+                    resolution: global.resolution,
+                    rasterFormat: global.globalRasterFormat,
+                    vectorFormat: global.globalVectorFormat,
+                    bbox: {
+                        srs: global.srs,
+                        value: global.bbox.toArray()
+                    }
+                },
+                layers: new Array(l)
+            };
+            
+            var local;
+            for (var i=0; i<l; i++) {
+                local = checkedNodes[i].attributes.owsinfo.exportinfo;
+                out.layers[i] = {
+                    projection: (local.projection && 
+                        local.projection.length) ? 
+                            local.projection : null,
+                    resolution: (typeof(local.resolution) == "number") ?
+                        local.resolution : null,
+                    format: (local.format && 
+                        local.format.length) ? 
+                            local.format : null,
+                    bbox: (local.bboxFromGlobal !== false) ? null : {
+                        srs: local.srs,
+                        value: local.bbox.toArray()
+                    },
+                    owsUrl: local.owsUrl,
+                    owsType: local.owsType,
+                    layerName: local.layerName,
+                    namespace: local.namespace
+                };
+            }
+            
+            Ext.Ajax.request({
+                url: GEOR.config.EXTRACTOR_BATCH_URL,
+                success: function(response) {
+                    // disable button
+                    button.disable();
+                    window.setTimeout(function(){
+                        button.enable();
+                    }, GEOR.config.EXTRACT_BTN_DISABLE_TIME*1000);
+                    // info window
+                    GEOR.util.infoDialog({
+                        msg: "Extraction en cours.\n" +
+                             "Un email vous sera envoyé lorsque l'extraction sera terminée."
+                    });
+                },
+                failure: function(response) {
+                    GEOR.util.errorDialog({
+                        msg: "La requête d'extraction n'a pas abouti."
+                    });
+                },
+                jsonData: out,
+                scope: this
+            });
+
         },
         
         /**

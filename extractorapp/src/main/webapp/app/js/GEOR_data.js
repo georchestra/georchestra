@@ -29,20 +29,20 @@ GEOR.data = (function() {
         /**
          * Property: layers
          * Initial layers data used as extractorapp inputs
-         * can be dynamically in index.jsp
+         * can be dynamically set in index.jsp
          */
         layers: [],
 
         /**
          * Property: services
          * Initial services data used as extractorapp inputs
-         * can be dynamically in index.jsp
+         * can be dynamically set in index.jsp
          */
         services: [],
 
         /**
          * Property: anonymous
-         * dynamically in index.jsp
+         * dynamically set in index.jsp
          */
         anonymous: true,
         

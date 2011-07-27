@@ -212,28 +212,13 @@ GEOR.config = (function() {
          * Max extent of the global layer
          */
 //        GLOBAL_MAX_EXTENT: new OpenLayers.Bounds(-20037508.34, -20037508.34, 20037508.34, 20037508.34),
-        GLOBAL_MAX_EXTENT: new OpenLayers.Bounds(-10,40,10,50),
+        GLOBAL_MAX_EXTENT: new OpenLayers.Bounds(-180,-90,180,90),
         
         /**
          * Constant: BASE_LAYER_NAME
          * The WMS base layer which will be displayed under each extracted layer.
          */
         BASE_LAYER_NAME: "geob_pub:countries",
-
-        /**
-         * Constant: BASE_LAYER_OPTIONS
-         * default WMS base layer options
-         */
-        BASE_LAYER_OPTIONS: {
-            projection: this.GLOBAL_EPSG,
-            maxExtent: this.GLOBAL_MAX_EXTENT,
-            isBaseLayer: true,
-            maxResolution: "auto",
-            displayInLayerSwitcher: false,
-            singleTile: true,
-            ratio: 1,
-            transitionEffect: 'resize'
-        },
 
         /**
          * Constant: DEFAULT_WCS_EXTRACTION_WIDTH
