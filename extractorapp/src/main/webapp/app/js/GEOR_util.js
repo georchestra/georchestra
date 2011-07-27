@@ -17,6 +17,10 @@
  * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+ * @include OpenLayers/Projection.js
+ */
+ 
 Ext.namespace("GEOR");
 
 GEOR.util = (function() {
@@ -166,7 +170,26 @@ GEOR.util = (function() {
         isUrl: function(s) {
             var regexp = /(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
             return regexp.test(s);
-        }
+        },
         
+        /**
+         * APIMethod: getUnitsForCRS
+         *
+         * Parameters:
+         * crs - {String|OpenLayers.Projection} crs string or projection object
+         *
+         * Returns:
+         * {String} either 'm' for meters or 'degrees'
+         */
+        getUnitsForCRS: function(crs) {
+            return (typeof crs == "string") ? 
+                new OpenLayers.Projection(crs).getUnits() : 
+                crs.getUnits();
+        },
+        
+        unitsTranslations: {
+            'degrees': 'degrés',
+            'm': 'mètres'
+        }
     };
 })();

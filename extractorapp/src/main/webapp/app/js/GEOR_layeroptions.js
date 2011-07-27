@@ -20,6 +20,7 @@
 
 /*
  * @include GEOR_config.js
+ * @include GEOR_util.js
  * @include Ext.ux/form/TwinTriggerComboBox.js
  * @include GeoExt.ux/widgets/form/BoundingBoxPanel.js
  * @include OpenLayers/Control/DrawFeature.js
@@ -155,6 +156,15 @@ GEOR.layeroptions = (function() {
         return fieldsets[ref];
     };
 
+    /**
+     * Method: getFieldsetTitle
+     * Return the fieldset title, based on current map projection
+     */
+    var getFieldsetTitle = function() {
+        return "Emprise (en "+
+            GEOR.util.unitsTranslations[GEOR.util.getUnitsForCRS(map.projection)]+
+            ", SRS = "+((typeof map.projection == "string") ? map.projection : map.projection.toString()) +")";
+    };
 
     /*
      * Public
@@ -223,6 +233,7 @@ GEOR.layeroptions = (function() {
                 
                 // restore BBox in form fields & map
                 options.bbox && getFieldSet('globalBbox').items.itemAt(0).setBbox(options.bbox);
+                
                 // restore combo values
                 options.projection && getCombo('globalProjections').setValue(options.projection);
                 options.resolution && getNumberField('globalResolution').setValue(options.resolution);
@@ -258,9 +269,10 @@ GEOR.layeroptions = (function() {
                 else {
                     getFieldSet('customBbox').toggleCollapse();
                 }
+                getFieldSet('customBbox').setTitle(getFieldsetTitle());
             }
         },
-
+        
         /**
          * APIMethod: create
          * Returns the layer options panel.
@@ -342,7 +354,7 @@ GEOR.layeroptions = (function() {
                                 layout: 'form',
                                 items: [
                                     getFieldSet('globalBbox', {
-                                        title: "Emprise"
+                                        title: getFieldsetTitle()
                                     })
                                 ]
                             }

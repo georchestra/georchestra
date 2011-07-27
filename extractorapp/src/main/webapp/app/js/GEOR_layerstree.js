@@ -132,9 +132,7 @@ GEOR.layerstree = (function() {
                     var baselayerOptions = {
                         projection: mapCRS, 
                         maxExtent: owsinfo.layer.maxExtent,
-                        units: (typeof mapCRS == "string") ? 
-                            new OpenLayers.Projection(this.projection).getUnits() : 
-                            mapCRS.getUnits()
+                        units: GEOR.util.getUnitsForCRS(mapCRS)
                     };
                     if(owsinfo.baselayer == undefined) {
                         // baselayer has never been created
