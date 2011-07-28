@@ -161,9 +161,11 @@ GEOR.layeroptions = (function() {
      * Return the fieldset title, based on current map projection
      */
     var getFieldsetTitle = function() {
+        var crs = (typeof map.projection == "string") ? map.projection : map.projection.toString();
         return "Emprise (en "+
-            GEOR.util.unitsTranslations[GEOR.util.getUnitsForCRS(map.projection)]+
-            ", SRS = "+((typeof map.projection == "string") ? map.projection : map.projection.toString()) +")";
+            GEOR.util.unitsTranslations[GEOR.util.getUnitsForCRS(crs)]+
+            ', SRS = <a href="http://spatialreference.org/ref/epsg/'+crs.split(':')[1]+
+            '/" target="_blank" style="text-decoration:none">'+crs+'</a>)';
     };
 
     /*
