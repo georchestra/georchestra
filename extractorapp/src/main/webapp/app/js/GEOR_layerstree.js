@@ -69,6 +69,12 @@ GEOR.layerstree = (function() {
      * {Ext.tree.TreeNode} The global properties tree node.
      */
     var globalPropertiesNode;
+    
+    /**
+     * Property: maxLayerNameLength
+     * {Integer} maximum number of chars for layer name
+     */
+    var maxLayerNameLength = 30;
 
     /**
      * Property: observable
@@ -504,8 +510,7 @@ GEOR.layerstree = (function() {
                         if (owsinfo.exportinfo.owsType == 'WCS') {
                             parentNode.appendChild(
                                 new Ext.tree.TreeNode({
-                                    text: 'Raster - ' + 
-                                        GEOR.util.shortenLayerName(owsinfo.text, 26),
+                                    text: GEOR.util.shortenLayerName(owsinfo.text, maxLayerNameLength),
                                     iconCls: 'raster-layer',
                                     owsinfo: owsinfo,
                                     checked: GEOR.config.LAYERS_CHECKED,
@@ -535,8 +540,7 @@ GEOR.layerstree = (function() {
                                 disableCaching: false,
                                 success: function(response) {
                                     parentNode.appendChild(new Ext.tree.TreeNode({
-                                        text: 'Vecteur - ' + 
-                                            GEOR.util.shortenLayerName(owsinfo.text, 26),
+                                        text: GEOR.util.shortenLayerName(owsinfo.text, maxLayerNameLength),
                                         iconCls: 'vector-layer',
                                         owsinfo: owsinfo,
                                         checked: GEOR.config.LAYERS_CHECKED,
@@ -558,7 +562,7 @@ GEOR.layerstree = (function() {
                                             owsinfo.exportinfo.owsUrl = wcs_url;
                                             owsinfo.exportinfo.owsType = "WCS";
                                             parentNode.appendChild(new Ext.tree.TreeNode({
-                                                text: 'Raster - '+GEOR.util.shortenLayerName(owsinfo.text, 26),
+                                                text: GEOR.util.shortenLayerName(owsinfo.text, maxLayerNameLength),
                                                 iconCls: 'raster-layer',
                                                 owsinfo: owsinfo,
                                                 checked: GEOR.config.LAYERS_CHECKED,
@@ -594,7 +598,7 @@ GEOR.layerstree = (function() {
             );
         } else if (owsinfo.owstype == "WFS") {
             parentNode.appendChild(new Ext.tree.TreeNode({
-                text: 'Vecteur - '+GEOR.util.shortenLayerName(owsinfo.text, 26),
+                text: GEOR.util.shortenLayerName(owsinfo.text, maxLayerNameLength),
                 iconCls: 'vector-layer',
                 owsinfo: owsinfo,
                 checked: GEOR.config.LAYERS_CHECKED,

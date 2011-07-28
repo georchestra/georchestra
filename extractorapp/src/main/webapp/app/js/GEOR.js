@@ -128,8 +128,8 @@ Ext.namespace("GEOR");
                 region: "west",
                 border: false,
                 width: 300,
-                minWidth: 200,
-                maxWidth: 400,
+                minWidth: 300,
+                maxWidth: 500,
                 split: true,
                 collapseMode: 'mini',
                 layout: "border",
@@ -219,7 +219,11 @@ Ext.namespace("GEOR");
                 if (global) {
                     layerOptionsPanel.setTitle("Paramètres d'extraction communs à toutes les couches", 'config-layers');
                 } else {
-                    layerOptionsPanel.setTitle("Paramètres d'extraction spécifiques à la couche "+options.layerName, (options.owsType == 'WCS') ? 
+                    var isRaster = (options.owsType == 'WCS');
+                    layerOptionsPanel.setTitle("Paramètres d'extraction spécifiques à la couche "+options.layerName+
+                        (isRaster ? 
+                        ' (raster)' : ' (vecteur)'), 
+                        isRaster ? 
                         'raster-layer' : 'vector-layer'
                     );
                 }

@@ -131,7 +131,8 @@ GEOR.util = (function() {
                 msg: options.msg,
                 width: options.width || 400,
                 buttons: Ext.Msg.OK,
-                icon: Ext.MessageBox.INFO
+                icon: Ext.MessageBox.INFO,
+                modal: false
             });
         },
         
