@@ -507,11 +507,10 @@ GEOR.layerstree = (function() {
                                         owsinfo.exportinfo.layerName),
                                     disableCaching: false,
                                     success: function(response) {
-                                        // FIXME with http://bmo.openstreetmap.fr/ows, orthophoto appears as vector here !!
-                                        // see http://csm-bretagne.fr/redmine/issues/1941
                                         parentNode.appendChild(new Ext.tree.TreeNode({
-                                            text: 'Vecteur - '+GEOR.util.shortenLayerName(owsinfo.text, 26),
-                                            iconCls: 'vector-layer',
+                                            text: ((owsinfo.exportinfo.owsType == 'WCS') ? 'Raster':'Vecteur') + ' - ' + 
+                                                GEOR.util.shortenLayerName(owsinfo.text, 26),
+                                            iconCls: ((owsinfo.exportinfo.owsType == 'WCS') ? 'raster':'vector')+'-layer',
                                             owsinfo: owsinfo,
                                             checked: GEOR.config.LAYERS_CHECKED,
                                             qtip: '<b>'+owsinfo.text+'</b><br/>' + tip,
