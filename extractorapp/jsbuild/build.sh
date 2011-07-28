@@ -36,16 +36,6 @@ ${mkdir} -p ${releasepath}
  echo "done.")
 
 #
-# MapFish resources
-#
-mapfishpath="${webapppath}/lib/externals/mapfish"
-mapfishreleasepath="${releasepath}/mapfish"
-echo "copying MapFish resources..."
-${mkdir} -p ${mapfishreleasepath}
-${cp} -r "${mapfishpath}/img" "${mapfishreleasepath}"
-echo "done."
-
-#
 # OpenLayers resources
 #
 openlayerspath="${webapppath}/lib/externals/openlayers"

@@ -11,7 +11,6 @@
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
     <link rel="stylesheet" type="text/css" href="resources/lib/externals/ext/resources/css/ext-all.css" />
     <link rel="stylesheet" type="text/css" href="resources/lib/externals/ext/resources/css/xtheme-gray.css" />
-    <link rel="stylesheet" type="text/css" href="resources/lib/externals/mapfish/mapfish.css" />
     <link rel="stylesheet" type="text/css" href="resources/app/openlayers_gray_theme/style.css" />
     <style type="text/css">
         body {
@@ -52,16 +51,12 @@
     <script type="text/javascript" src="resources/lib/externals/geoext/lib/overrides/override-ext-ajax.js"></script>
     <script type="text/javascript" src="resources/lib/externals/ext/ext-all-debug.js"></script>
     <script type="text/javascript" src="resources/lib/Ext.ux/lib/Ext.ux.js"></script>
-    <script type="text/javascript" src="resources/lib/proj4js/lib/proj4js.js"></script>
-    <script type="text/javascript" src="resources/lib/proj4js/lib/projCode/lcc.js"></script>
-    <script type="text/javascript" src="resources/lib/proj4js/lib/projCode/merc.js"></script>
+    <script type="text/javascript" src="resources/lib/proj4js/lib/proj4js-compressed.js"></script>
     <script type="text/javascript" src="resources/lib/externals/openlayers/lib/Firebug/firebug.js"></script>
     <script type="text/javascript" src="resources/lib/externals/openlayers/lib/OpenLayers.js"></script>
     <script type="text/javascript" src="resources/lib/externals/openlayers/lib/OpenLayers/Lang/fr.js"></script>
     <script type="text/javascript" src="resources/lib/externals/geoext/lib/GeoExt.js"></script>
     <script type="text/javascript" src="resources/lib/GeoExt.ux/lib/GeoExt.ux.js"></script>
-    <script type="text/javascript" src="resources/lib/externals/mapfish/MapFish.js"></script>
-    <script type="text/javascript" src="resources/lib/externals/mapfish/lang/fr.js"></script>
     
     <script type="text/javascript" src="resources/lib/addins/loadingPanel/trunk/lib/OpenLayers/Control/LoadingPanel.js"></script>
 

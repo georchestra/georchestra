@@ -98,3 +98,33 @@
 	text-align: justify;
 	text-indent: 0ex;
 }
+
+.zoomin {
+    background-image:url(../img/mapfish/icon_zoomin.png) !important;
+    height:20px !important;
+    width:20px !important;
+}
+
+.zoomfull {
+    background-image:url(../img/mapfish/icon_zoomfull.png) !important;
+    height:20px !important;
+    width:20px !important;
+}
+
+.pan {
+    background-image:url(../img/mapfish/icon_pan.png) !important;
+    height:20px !important;
+    width:20px !important;
+}
+
+.back {
+    background-image:url(../img/mapfish/resultset_previous.png) !important;
+    height:20px !important;
+    width:20px !important;
+}
+
+.next {
+    background-image:url(../img/mapfish/resultset_next.png) !important;
+    height:20px !important;
+    width:20px !important;
+}

@@ -1,13 +1,7 @@
-
 /*
- * Copyright (C) 2009  Camptocamp
+ * Copyright (C) Camptocamp
  *
  * This file is part of geOrchestra
- *
- * MapFish Client is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
  *
  * geOrchestra is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -41,10 +35,11 @@ GEOR.toolbar = (function() {
      * map - {OpenLayers.Map} The application map.
      *
      * Returns:
-     * {Ext.Toolbar} The toolbar.
+     * {Array} The toolbar items.
      */
     var createTbar = function(map) {
-        var tbar = new Ext.Toolbar(), ctrl, items = [];
+        var tbar = new Ext.Toolbar();
+        var ctrl, items = [];
 
         ctrl = new OpenLayers.Control.ZoomToMaxExtent();
         items.push(new GeoExt.Action({
@@ -109,24 +104,21 @@ GEOR.toolbar = (function() {
         }
         items.push(Ext.DomHelper.append(Ext.getBody(), login_html));
 
-	items.push("-");
+        items.push("-");
 
         items.push({
             text: "Aide",
             tooltip: "Afficher l'aide",
             handler: function() {
-                        if(Ext.isIE) 
-                          window.open("/doc/html/documentation.html#extractor");
-                        else
-                          window.open("/doc/html/documentation.html#extractor", "Aide de l'extrateur", "menubar=no,status=no,scrollbars=yes");
-                    }
+                if(Ext.isIE) {
+                    window.open("/doc/html/documentation.html#extractor");
+                } else {
+                    window.open("/doc/html/documentation.html#extractor", "Aide de l'extrateur", "menubar=no,status=no,scrollbars=yes");
+                }
+            }
         });
 
-        // this is a bit unusual to set the buttons in the
-        // toolbar afterwards the creation of the toolbar,
-        // but it works, and we need a reference to the toolbar
-        tbar.buttons = items;
-        return tbar;
+        return items;
     };
 
 
