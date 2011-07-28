@@ -48,7 +48,8 @@ GeoExt.ux.form.BoundingBoxPanel = Ext.extend(Ext.Panel, {
      *  ``Object`` Default options to be applied to all fields.
      */
     defaultsOptions:  {
-        allowBlank: false
+        allowBlank: false,
+        decimalPrecision: 6
     },
 
     /** api: config[northOptions]

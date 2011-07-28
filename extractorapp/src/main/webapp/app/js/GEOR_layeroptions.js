@@ -110,7 +110,7 @@ GEOR.layeroptions = (function() {
         if(!numberfields[ref]) {
             var opts = {
                 anchor: '-20',
-                decimalPrecision: 6 // TODO: 6 in case map units is degrees, else 0
+                decimalPrecision: 2
             };
             numberfields[ref] = new Ext.form.NumberField(
                 Ext.apply(opts, options));
