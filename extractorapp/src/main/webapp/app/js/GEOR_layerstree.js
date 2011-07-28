@@ -258,8 +258,7 @@ GEOR.layerstree = (function() {
                 checked: GEOR.config.LAYERS_CHECKED,
                 expanded: true,
                 iconCls: 'ogc-server',
-                //qtip: "List of layers",
-                //leaf: false,
+                qtip: "Service OGC <b>"+item.text+"</b><br/>"+item.owsurl,
                 children: [],
                 listeners: {"checkchange": checker}
             });
