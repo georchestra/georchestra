@@ -126,7 +126,7 @@ GEOR.layerstree = (function() {
                     var mapCRS = owsinfo.layer.projection; // FIXME: we might need a better process to find the suitable SRS
                     var baselayerOptions = {
                         projection: mapCRS, 
-                        maxExtent: owsinfo.layer.maxExtent,
+                        maxExtent: owsinfo.layer.maxExtent.scale(1.5),
                         units: GEOR.util.getUnitsForCRS(mapCRS)
                     };
                     if(owsinfo.baselayer == undefined) {
@@ -163,8 +163,7 @@ GEOR.layerstree = (function() {
                     // This is in order to set the vector layer to the SRS of the map:
                     vectorLayer.addOptions({projection: owsinfo.baselayer.projection}); 
 
-                    // FIXME: seems like this .scale(1.5) is not taken into account
-                    map.zoomToExtent(owsinfo.extent.scale(1.5));
+                    map.zoomToExtent(owsinfo.extent.scale(1.1));
                     
                     // Hovering features :
                     if (owsinfo.layer.CLASS_NAME == "OpenLayers.Layer.Vector") {
