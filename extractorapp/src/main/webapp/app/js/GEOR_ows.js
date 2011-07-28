@@ -169,12 +169,12 @@ GEOR.ows = (function() {
         
         /**
          * Property: defaultLayerOptions
-         * {Object} Default OpenLayers WMS layer options
+         * {Object} Default WMS layer options
          */
         defaultLayerOptions: {
-            singleTile: false,
-            buffer: 0,
-            tileSize: new OpenLayers.Size(512, 512)
+            singleTile: true,
+            ratio: 1,
+            transitionEffect: 'resize'
         },
 
         /**
