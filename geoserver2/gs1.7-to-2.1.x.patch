@@ -1,0 +1,2797 @@
+Index: src/release/pom.xml
+===================================================================
+--- src/release/pom.xml	(révision 16007)
++++ src/release/pom.xml	(copie de travail)
+@@ -6,7 +6,7 @@
+  <parent>
+   <groupId>org.geoserver</groupId>
+   <artifactId>geoserver</artifactId>
+-  <version>2.1.0</version>
++  <version>2.1.0-georchestra</version>
+  </parent>
+  <groupId>org.geoserver</groupId>
+  <artifactId>release</artifactId>
+Index: src/release/installer/mac/console/pom.xml
+===================================================================
+--- src/release/installer/mac/console/pom.xml	(révision 16007)
++++ src/release/installer/mac/console/pom.xml	(copie de travail)
+@@ -6,7 +6,7 @@
+   <modelVersion>4.0.0</modelVersion>
+   <groupId>org.geoserver</groupId>
+   <artifactId>console</artifactId>
+-  <version>2.1.0</version>
++  <version>2.1.0-georchestra</version>
+   <description>GeoServer Console Monitor</description>
+   <name>GeoServer Console</name>
+ 
+Index: src/release/installer/win/GeoServerEXE.nsi
+===================================================================
+--- src/release/installer/win/GeoServerEXE.nsi	(révision 16007)
++++ src/release/installer/win/GeoServerEXE.nsi	(copie de travail)
+@@ -819,7 +819,7 @@
+   WriteCreds:
+     Delete "$DataDir\security\users.properties"
+     FileOpen $R9 "$DataDir\security\users.properties" w
+-    FileWrite $R9 "$GSUser=$GSPass,ROLE_ADMINISTRATOR"
++    FileWrite $R9 "$GSUser=$GSPass,ROLE_SV_ADMIN"
+     FileClose $R9
+ 	
+   NoWriteCreds:
+Index: src/gwc/pom.xml
+===================================================================
+--- src/gwc/pom.xml	(révision 16007)
++++ src/gwc/pom.xml	(copie de travail)
+@@ -6,7 +6,7 @@
+   <parent>
+     <groupId>org.geoserver</groupId>
+     <artifactId>geoserver</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+ 
+   <groupId>org.geoserver</groupId>
+Index: src/platform/pom.xml
+===================================================================
+--- src/platform/pom.xml	(révision 16007)
++++ src/platform/pom.xml	(copie de travail)
+@@ -6,7 +6,7 @@
+  <parent>
+   <groupId>org.geoserver</groupId>
+   <artifactId>geoserver</artifactId>
+-  <version>2.1.0</version>
++  <version>2.1.0-georchestra</version>
+  </parent>
+ 
+  <groupId>org.geoserver</groupId>
+Index: src/main/src/test/java/org/geoserver/security/impl/GeoServerUserDaoTest.java
+===================================================================
+--- src/main/src/test/java/org/geoserver/security/impl/GeoServerUserDaoTest.java	(révision 16007)
++++ src/main/src/test/java/org/geoserver/security/impl/GeoServerUserDaoTest.java	(copie de travail)
+@@ -39,7 +39,7 @@
+     @Override
+     protected void setUp() throws Exception {
+         props = new Properties();
+-        props.put("admin", "gs,ROLE_ADMINISTRATOR");
++        props.put("admin", "gs,ROLE_SV_ADMIN");
+         props.put("wfs", "webFeatureService,ROLE_WFS_READ,ROLE_WFS_WRITE");
+         props.put("disabledUser", "nah,ROLE_TEST,disabled");
+         dao = new TestableUserDao(props);
+@@ -55,7 +55,7 @@
+         assertEquals("admin", admin.getUsername());
+         assertEquals("gs", admin.getPassword());
+         assertEquals(1, admin.getAuthorities().length);
+-        assertEquals("ROLE_ADMINISTRATOR", admin.getAuthorities()[0].getAuthority());
++        assertEquals("ROLE_SV_ADMIN", admin.getAuthorities()[0].getAuthority());
+     }
+     
+     public void testMissingUser() throws Exception {
+Index: src/main/src/main/java/applicationSecurityContext.xml
+===================================================================
+--- src/main/src/main/java/applicationSecurityContext.xml	(révision 16007)
++++ src/main/src/main/java/applicationSecurityContext.xml	(copie de travail)
+@@ -94,7 +94,7 @@
+       <value>
+         CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
+         PATTERN_TYPE_APACHE_ANT 
+-        /config/**=ROLE_ADMINISTRATOR
++        /config/**=ROLE_SV_ADMIN
+         /**=IS_AUTHENTICATED_ANONYMOUSLY
+       </value>
+     </property>
+Index: src/main/src/main/java/org/geoserver/security/SecureCatalogImpl.java
+===================================================================
+--- src/main/src/main/java/org/geoserver/security/SecureCatalogImpl.java	(révision 16007)
++++ src/main/src/main/java/org/geoserver/security/SecureCatalogImpl.java	(copie de travail)
+@@ -52,6 +52,9 @@
+ import org.springframework.security.SpringSecurityException;
+ import org.springframework.security.context.SecurityContextHolder;
+ 
++import org.geoserver.security.collection.SecureList;
++import org.geoserver.security.collection.SecurityAccessCheck;
++
+ /**
+  * Wraps the catalog and applies the security directives provided by a {@link ResourceAccessManager}
+  * or a {@link DataAccessManager} registered in the Spring application context
+@@ -675,15 +678,33 @@
+      * 
+      * @return
+      */
+-    protected <T extends ResourceInfo> List<T> filterResources(Authentication user,
++    protected <T extends ResourceInfo> List<T> filterResources(final Authentication user,
+             List<T> resources) {
+         List<T> result = new ArrayList<T>();
+         for (T original : resources) {
+-            T secured = checkAccess(user, original);
+-            if (secured != null)
+-                result.add(secured);
++            try {
++                T secured = checkAccess(user, original);
++                if (secured != null)
++                    result.add(secured);
++                
++            // even if there is a security exception we will add it to the 
++            // list because the secure list will check it again.
++            //
++            // This is to fix http://jira.codehaus.org/browse/GEOS-3803
++            // the idea is that the user can request the list of resources
++            // but no exception should be thrown until a request is made for the
++            // actual layer itself
++            } catch (InsufficientAuthenticationException iae){
++                result.add(original);
++            } catch (AccessDeniedException ade) {
++                result.add(original);
++            }
+         }
+-        return result;
++        return new SecureList<T>(result, new SecurityAccessCheck<T>() {
++            public T checkAccess(T item) { 
++                return SecureCatalogImpl.this.checkAccess(user, item);
++            }
++        });
+     }
+ 
+     /**
+@@ -695,14 +716,31 @@
+      * 
+      * @return
+      */
+-    protected <T extends StoreInfo> List<T> filterStores(Authentication user, List<T> resources) {
++    protected <T extends StoreInfo> List<T> filterStores(final Authentication user, List<T> resources) {
+         List<T> result = new ArrayList<T>();
+         for (T original : resources) {
+-            T secured = checkAccess(user, original);
+-            if (secured != null)
+-                result.add(secured);
++            try {
++                T secured = checkAccess(user, original);
++                if (secured != null)
++                    result.add(secured);
++            // even if there is a security exception we will add it to the 
++            // list because the secure list will check it again.
++            //
++            // This is to fix http://jira.codehaus.org/browse/GEOS-3803
++            // the idea is that the user can request the list of resources
++            // but no exception should be thrown until a request is made for the
++            // actual layer itself
++            } catch (InsufficientAuthenticationException iae){
++                result.add(original);
++            } catch (AccessDeniedException ade) {
++                result.add(original);
++            }
+         }
+-        return result;
++        return new SecureList<T>(result, new SecurityAccessCheck<T>() {
++            public T checkAccess(T item) { 
++                return SecureCatalogImpl.this.checkAccess(user, item);
++            }
++        });
+     }
+ 
+     /**
+@@ -714,14 +752,31 @@
+      * 
+      * @return
+      */
+-    protected List<LayerGroupInfo> filterGroups(Authentication user, List<LayerGroupInfo> groups) {
++    protected List<LayerGroupInfo> filterGroups(final Authentication user, List<LayerGroupInfo> groups) {
+         List<LayerGroupInfo> result = new ArrayList<LayerGroupInfo>();
+         for (LayerGroupInfo original : groups) {
+-            LayerGroupInfo secured = checkAccess(user, original);
+-            if (secured != null)
+-                result.add(secured);
++            try{
++                LayerGroupInfo secured = checkAccess(user, original);
++                if (secured != null)
++                    result.add(secured);
++            // even if there is a security exception we will add it to the 
++            // list because the secure list will check it again.
++            //
++            // This is to fix http://jira.codehaus.org/browse/GEOS-3803
++            // the idea is that the user can request the list of resources
++            // but no exception should be thrown until a request is made for the
++            // actual layer itself
++            } catch (InsufficientAuthenticationException iae){
++                result.add(original);
++            } catch (AccessDeniedException ade) {
++                result.add(original);
++            }
+         }
+-        return result;
++        return new SecureList<LayerGroupInfo>(result, new SecurityAccessCheck<LayerGroupInfo>() {
++            public LayerGroupInfo checkAccess(LayerGroupInfo item) { 
++                return SecureCatalogImpl.this.checkAccess(user, item);
++            }
++        });
+     }
+ 
+     /**
+@@ -733,14 +788,31 @@
+      * 
+      * @return
+      */
+-    protected List<LayerInfo> filterLayers(Authentication user, List<LayerInfo> layers) {
++    protected List<LayerInfo> filterLayers(final Authentication user, List<LayerInfo> layers) {
+         List<LayerInfo> result = new ArrayList<LayerInfo>();
+         for (LayerInfo original : layers) {
+-            LayerInfo secured = checkAccess(user, original);
+-            if (secured != null)
+-                result.add(secured);
++            try {
++                LayerInfo secured = checkAccess(user, original);
++                if (secured != null)
++                    result.add(secured);
++            // even if there is a security exception we will add it to the 
++            // list because the secure list will check it again.
++            //
++            // This is to fix http://jira.codehaus.org/browse/GEOS-3803
++            // the idea is that the user can request the list of resources
++            // but no exception should be thrown until a request is made for the
++            // actual layer itself
++            } catch (InsufficientAuthenticationException iae){
++                result.add(original);
++            } catch (AccessDeniedException ade) {
++                result.add(original);
++            }
+         }
+-        return result;
++        return new SecureList<LayerInfo>(result, new SecurityAccessCheck<LayerInfo>() {
++            public LayerInfo checkAccess(LayerInfo item) { 
++                return SecureCatalogImpl.this.checkAccess(user, item);
++            }
++        });
+     }
+ 
+     /**
+@@ -752,15 +824,33 @@
+      * 
+      * @return
+      */
+-    protected <T extends NamespaceInfo> List<T> filterNamespaces(Authentication user,
++    protected <T extends NamespaceInfo> List<T> filterNamespaces(final Authentication user,
+             List<T> namespaces) {
+         List<T> result = new ArrayList<T>();
+         for (T original : namespaces) {
+-            T secured = checkAccess(user, original);
+-            if (secured != null)
+-                result.add(secured);
++            try {
++                T secured = checkAccess(user, original);
++                if (secured != null)
++                    result.add(secured);
++            // even if there is a security exception we will add it to the 
++            // list because the secure list will check it again.
++            //
++            // This is to fix http://jira.codehaus.org/browse/GEOS-3803
++            // the idea is that the user can request the list of resources
++            // but no exception should be thrown until a request is made for the
++            // actual layer itself
++            } catch (InsufficientAuthenticationException iae){
++                result.add(original);
++            } catch (AccessDeniedException ade) {
++                result.add(original);
++            }
++
+         }
+-        return result;
++        return new SecureList<T>(result, new SecurityAccessCheck<T>() {
++            public T checkAccess(T item) { 
++                return SecureCatalogImpl.this.checkAccess(user, item);
++            }
++        });
+     }
+ 
+     /**
+@@ -772,15 +862,33 @@
+      * 
+      * @return
+      */
+-    protected <T extends WorkspaceInfo> List<T> filterWorkspaces(Authentication user,
++    protected <T extends WorkspaceInfo> List<T> filterWorkspaces(final Authentication user,
+             List<T> workspaces) {
+         List<T> result = new ArrayList<T>();
+         for (T original : workspaces) {
+-            T secured = checkAccess(user, original);
+-            if (secured != null)
+-                result.add(secured);
++            try {
++                T secured = checkAccess(user, original);
++                if (secured != null)
++                    result.add(secured);
++            // even if there is a security exception we will add it to the 
++            // list because the secure list will check it again.
++            //
++            // This is to fix http://jira.codehaus.org/browse/GEOS-3803
++            // the idea is that the user can request the list of resources
++            // but no exception should be thrown until a request is made for the
++            // actual layer itself
++            } catch (InsufficientAuthenticationException iae){
++                result.add(original);
++            } catch (AccessDeniedException ade) {
++                result.add(original);
++            }
++
+         }
+-        return result;
++        return new SecureList<T>(result, new SecurityAccessCheck<T>() {
++            public T checkAccess(T item) { 
++                return SecureCatalogImpl.this.checkAccess(user, item);
++            }
++        });
+     }
+     
+     // -------------------------------------------------------------------
+Index: src/main/src/main/java/org/geoserver/security/impl/rest.properties.template
+===================================================================
+--- src/main/src/main/java/org/geoserver/security/impl/rest.properties.template	(révision 16007)
++++ src/main/src/main/java/org/geoserver/security/impl/rest.properties.template	(copie de travail)
+@@ -14,5 +14,5 @@
+ #/**;POST,DELETE,PUT=ROLE_ADMINISTRATOR
+ #
+ #
+-/**;GET=ROLE_ADMINISTRATOR
+-/**;POST,DELETE,PUT=ROLE_ADMINISTRATOR
+\ No newline at end of file
++/**;GET=ROLE_SV_ADMIN
++/**;POST,DELETE,PUT=ROLE_SV_ADMIN
+Index: src/main/src/main/java/org/geoserver/security/impl/GeoserverUserDao.java
+===================================================================
+--- src/main/src/main/java/org/geoserver/security/impl/GeoserverUserDao.java	(révision 16007)
++++ src/main/src/main/java/org/geoserver/security/impl/GeoserverUserDao.java	(copie de travail)
+@@ -93,9 +93,9 @@
+                         if ((global != null) && (global.getAdminUsername() != null)
+                                 && !global.getAdminUsername().trim().equals("")) {
+                             p.put(global.getAdminUsername(), global.getAdminPassword()
+-                                    + ",ROLE_ADMINISTRATOR");
++                                    + ",ROLE_SV_ADMIN");
+                         } else {
+-                            p.put("admin", "geoserver,ROLE_ADMINISTRATOR");
++                            p.put("admin", "geoserver,ROLE_SV_ADMIN");
+                         }
+ 
+                         os = new FileOutputStream(propFile);
+@@ -137,13 +137,13 @@
+ 
+     /**
+      * Get the list of roles currently known by users (there's guarantee the well known
+-     * ROLE_ADMINISTRATOR will be part of the lot)
++     * ROLE_SV_ADMIN will be part of the lot)
+      */
+     public List<String> getRoles() {
+         checkUserMap();
+         
+         Set<String> roles = new TreeSet<String>();
+-        roles.add("ROLE_ADMINISTRATOR");
++        roles.add("ROLE_SV_ADMIN");
+         for (User user : getUsers()) {
+             for (GrantedAuthority ga : user.getAuthorities()) {
+                 roles.add(ga.getAuthority());
+Index: src/main/src/main/java/org/geoserver/security/impl/EditableUserDAO.java
+===================================================================
+--- src/main/src/main/java/org/geoserver/security/impl/EditableUserDAO.java	(révision 16007)
++++ src/main/src/main/java/org/geoserver/security/impl/EditableUserDAO.java	(copie de travail)
+@@ -112,7 +112,7 @@
+ 	  true,
+ 	  true,
+ 	  new GrantedAuthority[]{
+-	  new GrantedAuthorityImpl("ROLE_ADMINISTRATOR")
++	  new GrantedAuthorityImpl("ROLE_SV_ADMIN")
+ 	  }
+ 	  ));
+   }
+Index: src/main/src/main/java/org/geoserver/security/impl/SecureTreeNode.java
+===================================================================
+--- src/main/src/main/java/org/geoserver/security/impl/SecureTreeNode.java	(révision 16007)
++++ src/main/src/main/java/org/geoserver/security/impl/SecureTreeNode.java	(copie de travail)
+@@ -30,7 +30,7 @@
+     /**
+      * The role given to the administrators
+      */
+-    static final String ROOT_ROLE = "ROLE_ADMINISTRATOR";
++    static final String ROOT_ROLE = "ROLE_SV_ADMIN";
+ 
+     Map<String, SecureTreeNode> children = new HashMap<String, SecureTreeNode>();
+ 
+Index: src/main/pom.xml
+===================================================================
+--- src/main/pom.xml	(révision 16007)
++++ src/main/pom.xml	(copie de travail)
+@@ -6,7 +6,7 @@
+  <parent>
+   <groupId>org.geoserver</groupId>
+   <artifactId>geoserver</artifactId>
+-  <version>2.1.0</version>
++  <version>2.1.0-georchestra</version>
+  </parent>
+  
+  <groupId>org.geoserver</groupId>
+Index: src/community/release/pom.xml
+===================================================================
+--- src/community/release/pom.xml	(révision 16007)
++++ src/community/release/pom.xml	(copie de travail)
+@@ -6,7 +6,7 @@
+  <parent>
+   <groupId>org.geoserver</groupId>
+   <artifactId>community</artifactId>
+-  <version>2.1.0</version>
++  <version>2.1.0-georchestra</version>
+  </parent>
+  <groupId>org.geoserver.community</groupId>
+  <artifactId>release</artifactId>
+Index: src/community/python/pom.xml
+===================================================================
+--- src/community/python/pom.xml	(révision 16007)
++++ src/community/python/pom.xml	(copie de travail)
+@@ -4,7 +4,7 @@
+  <parent>
+   <groupId>org.geoserver</groupId>
+   <artifactId>community</artifactId>
+-  <version>2.1.0</version>
++  <version>2.1.0-georchestra</version>
+  </parent>
+  <groupId>org.geoserver.community</groupId>
+  <artifactId>python</artifactId>
+@@ -25,7 +25,7 @@
+   <dependency>
+    <groupId>org.geoserver</groupId>
+    <artifactId>rest</artifactId>
+-   <version>2.1.0</version>
++   <version>2.1.0-georchestra</version>
+   </dependency>
+   <dependency>
+    <groupId>org.restlet</groupId>
+@@ -34,27 +34,27 @@
+   <dependency>
+    <groupId>org.geoserver</groupId>
+    <artifactId>main</artifactId>
+-   <version>2.1.0</version>
++   <version>2.1.0-georchestra</version>
+   </dependency>
+   <dependency>
+    <groupId>org.geoserver</groupId>
+    <artifactId>wfs</artifactId>
+-   <version>2.1.0</version>
++   <version>2.1.0-georchestra</version>
+   </dependency>
+   <dependency>
+    <groupId>org.geoserver</groupId>
+    <artifactId>wms</artifactId>
+-   <version>2.1.0</version>
++   <version>2.1.0-georchestra</version>
+   </dependency>
+   <dependency>
+    <groupId>org.geoserver</groupId>
+    <artifactId>wfs</artifactId>
+-   <version>2.1.0</version>
++   <version>2.1.0-georchestra</version>
+   </dependency>
+   <dependency>
+    <groupId>org.geoserver.web</groupId>
+    <artifactId>web-core</artifactId>
+-   <version>2.1.0</version>
++   <version>2.1.0-georchestra</version>
+   </dependency>
+   <dependency>
+    <groupId>org.geotools</groupId>
+@@ -74,7 +74,7 @@
+   <dependency>
+    <groupId>org.geoserver</groupId>
+    <artifactId>main</artifactId>
+-   <version>2.1.0</version>
++   <version>2.1.0-georchestra</version>
+    <scope>test</scope>
+    <classifier>tests</classifier>
+   </dependency>
+Index: src/community/proxy/pom.xml
+===================================================================
+--- src/community/proxy/pom.xml	(révision 16007)
++++ src/community/proxy/pom.xml	(copie de travail)
+@@ -5,12 +5,12 @@
+   <parent>
+     <groupId>org.geoserver</groupId>
+     <artifactId>community</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+   <groupId>org.geoserver.community</groupId>
+   <artifactId>proxy</artifactId>
+   <packaging>jar</packaging>
+-  <version>2.1.0</version>
++  <version>2.1.0-georchestra</version>
+   <name>HTTP Proxy Extension</name>
+   
+   <repositories>
+Index: src/community/dxf/pom.xml
+===================================================================
+--- src/community/dxf/pom.xml	(révision 16007)
++++ src/community/dxf/pom.xml	(copie de travail)
+@@ -8,13 +8,13 @@
+   <parent>
+     <groupId>org.geoserver</groupId>
+     <artifactId>community</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+ 
+   <groupId>org.geoserver</groupId>
+   <artifactId>dxf</artifactId>
+   <packaging>jar</packaging>
+-  <version>2.1.0</version>
++  <version>2.1.0-georchestra</version>
+   <name>DXF output format</name>
+ 
+     <dependencies>
+Index: src/community/cite/loader/pom.xml
+===================================================================
+--- src/community/cite/loader/pom.xml	(révision 16007)
++++ src/community/cite/loader/pom.xml	(copie de travail)
+@@ -7,7 +7,7 @@
+   <parent>
+     <groupId>org.geoserver</groupId>
+     <artifactId>community</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+    </parent>
+ 
+   <groupId>org.geoserver.cite</groupId>
+Index: src/community/upload/pom.xml
+===================================================================
+--- src/community/upload/pom.xml	(révision 16007)
++++ src/community/upload/pom.xml	(copie de travail)
+@@ -5,12 +5,12 @@
+   <parent>
+     <groupId>org.geoserver</groupId>
+     <artifactId>community</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+   <groupId>org.geoserver.community</groupId>
+   <artifactId>upload</artifactId>
+   <packaging>jar</packaging>
+-  <version>2.1.0</version>
++  <version>2.1.0-georchestra</version>
+   <name>RESTful File Upload</name>
+   
+   <repositories>
+@@ -26,12 +26,12 @@
+     <dependency>
+       <groupId>org.geoserver</groupId>
+       <artifactId>rest</artifactId>
+-      <version>2.1.0</version>
++      <version>2.1.0-georchestra</version>
+     </dependency>
+     <dependency>
+       <groupId>org.geoserver</groupId>
+       <artifactId>main</artifactId>
+-      <version>2.1.0</version>
++      <version>2.1.0-georchestra</version>
+     </dependency>
+ <!--    <dependency>
+       <groupId>org.geoserver</groupId>
+@@ -43,7 +43,7 @@
+     <dependency>
+       <groupId>org.geoserver</groupId>
+       <artifactId>main</artifactId>
+-      <version>2.1.0</version>
++      <version>2.1.0-georchestra</version>
+       <classifier>tests</classifier>
+       <scope>test</scope>
+     </dependency>
+Index: src/community/ftp/src/main/java/org/geoserver/ftp/GSFTPUserManager.java
+===================================================================
+--- src/community/ftp/src/main/java/org/geoserver/ftp/GSFTPUserManager.java	(révision 16007)
++++ src/community/ftp/src/main/java/org/geoserver/ftp/GSFTPUserManager.java	(copie de travail)
+@@ -48,7 +48,7 @@
+     /**
+      * The role given to the administrators
+      */
+-    private static final String ADMIN_ROLE = "ROLE_ADMINISTRATOR";
++    private static final String ADMIN_ROLE = "ROLE_SV_ADMIN";
+ 
+     /**
+      * The default user
+Index: src/community/ftp/pom.xml
+===================================================================
+--- src/community/ftp/pom.xml	(révision 16007)
++++ src/community/ftp/pom.xml	(copie de travail)
+@@ -3,12 +3,12 @@
+    <parent>
+       <groupId>org.geoserver</groupId>
+       <artifactId>community</artifactId>
+-      <version>2.1.0</version>
++      <version>2.1.0-georchestra</version>
+    </parent>
+    <groupId>org.geoserver.community</groupId>
+    <artifactId>ftp</artifactId>
+    <packaging>jar</packaging>
+-   <version>2.1.0</version>
++   <version>2.1.0-georchestra</version>
+    <name>GeoServer Embedded FTP server</name>
+ 
+    <dependencies>
+Index: src/community/translator/pom.xml
+===================================================================
+--- src/community/translator/pom.xml	(révision 16007)
++++ src/community/translator/pom.xml	(copie de travail)
+@@ -7,13 +7,13 @@
+     <parent>
+         <groupId>org.geoserver</groupId>
+         <artifactId>community</artifactId>
+-        <version>2.1.0</version>
++        <version>2.1.0-georchestra</version>
+     </parent>
+ 
+     <groupId>org.geoserver</groupId>
+     <artifactId>translator</artifactId>
+     <packaging>jar</packaging>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+     <name>Web User Interface translation extension</name>
+ 
+     <dependencies>
+Index: src/community/printing/pom.xml
+===================================================================
+--- src/community/printing/pom.xml	(révision 16007)
++++ src/community/printing/pom.xml	(copie de travail)
+@@ -7,7 +7,7 @@
+   <parent>
+     <groupId>org.geoserver</groupId>
+     <artifactId>community</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+   <repositories>
+     <repository>
+@@ -19,7 +19,7 @@
+   <groupId>org.geoserver.community</groupId>
+   <artifactId>printing</artifactId>
+   <packaging>jar</packaging>
+-  <version>2.1.0</version>
++  <version>2.1.0-georchestra</version>
+   <name>Printing Module</name>
+ 
+   <dependencies>
+Index: src/community/pom.xml
+===================================================================
+--- src/community/pom.xml	(révision 16007)
++++ src/community/pom.xml	(copie de travail)
+@@ -5,7 +5,7 @@
+   <parent>
+     <groupId>org.geoserver</groupId>
+     <artifactId>geoserver</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+ 
+   <groupId>org.geoserver</groupId>
+Index: src/community/sfs/pom.xml
+===================================================================
+--- src/community/sfs/pom.xml	(révision 16007)
++++ src/community/sfs/pom.xml	(copie de travail)
+@@ -6,7 +6,7 @@
+   <parent>
+     <groupId>org.geoserver</groupId>
+     <artifactId>community</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+ 
+   <groupId>org.geoserver.community</groupId>
+Index: src/community/geoxacml/src/test/java/org/geoserver/xacml/geoxacml/GeoXACMLPDPControllerTest.java
+===================================================================
+--- src/community/geoxacml/src/test/java/org/geoserver/xacml/geoxacml/GeoXACMLPDPControllerTest.java	(révision 16007)
++++ src/community/geoxacml/src/test/java/org/geoserver/xacml/geoxacml/GeoXACMLPDPControllerTest.java	(copie de travail)
+@@ -46,7 +46,7 @@
+         providerManager.setProviders(list);
+ 
+         Authentication admin = new TestingAuthenticationToken("admin", "geoserver",
+-                new GrantedAuthority[] { new XACMLRole("ROLE_ADMINISTRATOR") });
++                new GrantedAuthority[] { new XACMLRole("ROLE_SV_ADMIN") });
+         // Authentication anonymous = new TestingAuthenticationToken("anonymous", null, null);
+         SecurityContextHolder.getContext().setAuthentication(admin);
+ 
+Index: src/community/geoxacml/src/test/resources/lockedDownMixed/geoxacml/byRequest/Admin.xml
+===================================================================
+--- src/community/geoxacml/src/test/resources/lockedDownMixed/geoxacml/byRequest/Admin.xml	(révision 16007)
++++ src/community/geoxacml/src/test/resources/lockedDownMixed/geoxacml/byRequest/Admin.xml	(copie de travail)
+@@ -15,7 +15,7 @@
+ 				</SubjectMatch>
+ 			 -->
+ 				<SubjectMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:anyURI-equal">
+-					<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#anyURI">ROLE_ADMINISTRATOR</AttributeValue>					                                                                         
++					<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#anyURI">ROLE_SV_ADMIN</AttributeValue>					                                                                         
+ 					<SubjectAttributeDesignator AttributeId="urn:oasis:names:tc:xacml:2.0:subject:role"
+ 						DataType="http://www.w3.org/2001/XMLSchema#anyURI" />
+ 				</SubjectMatch>			 	
+@@ -27,4 +27,4 @@
+ 	<!-- Admin is able to do anything -->
+ 	<PolicyIdReference>org:geoserver:policy:PermitAll</PolicyIdReference>
+ 	
+-</PolicySet>
+\ No newline at end of file
++</PolicySet>
+Index: src/community/geoxacml/src/test/resources/urltest/geoxacml/byRequest/Admin.xml
+===================================================================
+--- src/community/geoxacml/src/test/resources/urltest/geoxacml/byRequest/Admin.xml	(révision 16007)
++++ src/community/geoxacml/src/test/resources/urltest/geoxacml/byRequest/Admin.xml	(copie de travail)
+@@ -8,7 +8,7 @@
+ 		<Subjects>
+ 			<Subject>
+ 				<SubjectMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:anyURI-equal">
+-					<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#anyURI">ROLE_ADMINISTRATOR</AttributeValue>					                                                                         
++					<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#anyURI">ROLE_SV_ADMIN</AttributeValue>					                                                                         
+ 					<SubjectAttributeDesignator AttributeId="urn:oasis:names:tc:xacml:2.0:subject:role"
+ 						DataType="http://www.w3.org/2001/XMLSchema#anyURI" />
+ 				</SubjectMatch>			 	
+@@ -19,4 +19,4 @@
+ 	<!-- Admin is able to do anything -->
+ 	<PolicyIdReference>org:geoserver:policy:PermitAll</PolicyIdReference>
+ 	
+-</PolicySet>
+\ No newline at end of file
++</PolicySet>
+Index: src/community/geoxacml/src/test/resources/lockedDownHide/geoxacml/byRequest/Admin.xml
+===================================================================
+--- src/community/geoxacml/src/test/resources/lockedDownHide/geoxacml/byRequest/Admin.xml	(révision 16007)
++++ src/community/geoxacml/src/test/resources/lockedDownHide/geoxacml/byRequest/Admin.xml	(copie de travail)
+@@ -15,7 +15,7 @@
+ 				</SubjectMatch>
+ 			 -->
+ 				<SubjectMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:anyURI-equal">
+-					<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#anyURI">ROLE_ADMINISTRATOR</AttributeValue>					                                                                         
++					<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#anyURI">ROLE_SV_ADMIN</AttributeValue>					                                                                         
+ 					<SubjectAttributeDesignator AttributeId="urn:oasis:names:tc:xacml:2.0:subject:role"
+ 						DataType="http://www.w3.org/2001/XMLSchema#anyURI" />
+ 				</SubjectMatch>			 	
+@@ -27,4 +27,4 @@
+ 	<!-- Admin is able to do anything -->
+ 	<PolicyIdReference>org:geoserver:policy:PermitAll</PolicyIdReference>
+ 	
+-</PolicySet>
+\ No newline at end of file
++</PolicySet>
+Index: src/community/geoxacml/src/test/resources/complex/geoxacml/byRequest/Admin.xml
+===================================================================
+--- src/community/geoxacml/src/test/resources/complex/geoxacml/byRequest/Admin.xml	(révision 16007)
++++ src/community/geoxacml/src/test/resources/complex/geoxacml/byRequest/Admin.xml	(copie de travail)
+@@ -15,7 +15,7 @@
+ 				</SubjectMatch>
+ 			 -->
+ 				<SubjectMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:anyURI-equal">
+-					<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#anyURI">ROLE_ADMINISTRATOR</AttributeValue>					                                                                         
++					<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#anyURI">ROLE_SV_ADMIN</AttributeValue>					                                                                         
+ 					<SubjectAttributeDesignator AttributeId="urn:oasis:names:tc:xacml:2.0:subject:role"
+ 						DataType="http://www.w3.org/2001/XMLSchema#anyURI" />
+ 				</SubjectMatch>			 	
+@@ -27,4 +27,4 @@
+ 	<!-- Admin is able to do anything -->
+ 	<PolicyIdReference>org:geoserver:policy:PermitAll</PolicyIdReference>
+ 	
+-</PolicySet>
+\ No newline at end of file
++</PolicySet>
+Index: src/community/geoxacml/src/test/resources/lockedDown/geoxacml/byRequest/Admin.xml
+===================================================================
+--- src/community/geoxacml/src/test/resources/lockedDown/geoxacml/byRequest/Admin.xml	(révision 16007)
++++ src/community/geoxacml/src/test/resources/lockedDown/geoxacml/byRequest/Admin.xml	(copie de travail)
+@@ -15,7 +15,7 @@
+ 				</SubjectMatch>
+ 			 -->
+ 				<SubjectMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:anyURI-equal">
+-					<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#anyURI">ROLE_ADMINISTRATOR</AttributeValue>					                                                                         
++					<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#anyURI">ROLE_SV_ADMIN</AttributeValue>					                                                                         
+ 					<SubjectAttributeDesignator AttributeId="urn:oasis:names:tc:xacml:2.0:subject:role"
+ 						DataType="http://www.w3.org/2001/XMLSchema#anyURI" />
+ 				</SubjectMatch>			 	
+@@ -27,4 +27,4 @@
+ 	<!-- Admin is able to do anything -->
+ 	<PolicyIdReference>org:geoserver:policy:PermitAll</PolicyIdReference>
+ 	
+-</PolicySet>
+\ No newline at end of file
++</PolicySet>
+Index: src/community/geoxacml/src/test/resources/publicRead/geoxacml/byRequest/Admin.xml
+===================================================================
+--- src/community/geoxacml/src/test/resources/publicRead/geoxacml/byRequest/Admin.xml	(révision 16007)
++++ src/community/geoxacml/src/test/resources/publicRead/geoxacml/byRequest/Admin.xml	(copie de travail)
+@@ -15,7 +15,7 @@
+ 				</SubjectMatch>
+ 			 -->
+ 				<SubjectMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:anyURI-equal">
+-					<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#anyURI">ROLE_ADMINISTRATOR</AttributeValue>					                                                                         
++					<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#anyURI">ROLE_SV_ADMIN</AttributeValue>					                                                                         
+ 					<SubjectAttributeDesignator AttributeId="urn:oasis:names:tc:xacml:2.0:subject:role"
+ 						DataType="http://www.w3.org/2001/XMLSchema#anyURI" />
+ 				</SubjectMatch>			 	
+@@ -27,4 +27,4 @@
+ 	<!-- Admin is able to do anything -->
+ 	<PolicyIdReference>org:geoserver:policy:PermitAll</PolicyIdReference>
+ 	
+-</PolicySet>
+\ No newline at end of file
++</PolicySet>
+Index: src/community/geoxacml/src/test/resources/wideOpen/geoxacml/byRequest/Admin.xml
+===================================================================
+--- src/community/geoxacml/src/test/resources/wideOpen/geoxacml/byRequest/Admin.xml	(révision 16007)
++++ src/community/geoxacml/src/test/resources/wideOpen/geoxacml/byRequest/Admin.xml	(copie de travail)
+@@ -15,7 +15,7 @@
+ 				</SubjectMatch>
+ 			 -->
+ 				<SubjectMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:anyURI-equal">
+-					<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#anyURI">ROLE_ADMINISTRATOR</AttributeValue>					                                                                         
++					<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#anyURI">ROLE_SV_ADMIN</AttributeValue>					                                                                         
+ 					<SubjectAttributeDesignator AttributeId="urn:oasis:names:tc:xacml:2.0:subject:role"
+ 						DataType="http://www.w3.org/2001/XMLSchema#anyURI" />
+ 				</SubjectMatch>			 	
+@@ -27,4 +27,4 @@
+ 	<!-- Admin is able to do anything -->
+ 	<PolicyIdReference>org:geoserver:policy:PermitAll</PolicyIdReference>
+ 	
+-</PolicySet>
+\ No newline at end of file
++</PolicySet>
+Index: src/community/geoxacml/src/test/resources/lockedDownChallenge/geoxacml/byRequest/Admin.xml
+===================================================================
+--- src/community/geoxacml/src/test/resources/lockedDownChallenge/geoxacml/byRequest/Admin.xml	(révision 16007)
++++ src/community/geoxacml/src/test/resources/lockedDownChallenge/geoxacml/byRequest/Admin.xml	(copie de travail)
+@@ -15,7 +15,7 @@
+ 				</SubjectMatch>
+ 			 -->
+ 				<SubjectMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:anyURI-equal">
+-					<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#anyURI">ROLE_ADMINISTRATOR</AttributeValue>					                                                                         
++					<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#anyURI">ROLE_SV_ADMIN</AttributeValue>					                                                                         
+ 					<SubjectAttributeDesignator AttributeId="urn:oasis:names:tc:xacml:2.0:subject:role"
+ 						DataType="http://www.w3.org/2001/XMLSchema#anyURI" />
+ 				</SubjectMatch>			 	
+@@ -27,4 +27,4 @@
+ 	<!-- Admin is able to do anything -->
+ 	<PolicyIdReference>org:geoserver:policy:PermitAll</PolicyIdReference>
+ 	
+-</PolicySet>
+\ No newline at end of file
++</PolicySet>
+Index: src/community/geoxacml/src/test/resources/publicReadGeoRestricted/geoxacml/byRequest/Admin.xml
+===================================================================
+--- src/community/geoxacml/src/test/resources/publicReadGeoRestricted/geoxacml/byRequest/Admin.xml	(révision 16007)
++++ src/community/geoxacml/src/test/resources/publicReadGeoRestricted/geoxacml/byRequest/Admin.xml	(copie de travail)
+@@ -15,7 +15,7 @@
+ 				</SubjectMatch>
+ 			 -->
+ 				<SubjectMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:anyURI-equal">
+-					<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#anyURI">ROLE_ADMINISTRATOR</AttributeValue>					                                                                         
++					<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#anyURI">ROLE_SV_ADMIN</AttributeValue>					                                                                         
+ 					<SubjectAttributeDesignator AttributeId="urn:oasis:names:tc:xacml:2.0:subject:role"
+ 						DataType="http://www.w3.org/2001/XMLSchema#anyURI" />
+ 				</SubjectMatch>			 	
+@@ -27,4 +27,4 @@
+ 	<!-- Admin is able to do anything -->
+ 	<PolicyIdReference>org:geoserver:policy:PermitAll</PolicyIdReference>
+ 	
+-</PolicySet>
+\ No newline at end of file
++</PolicySet>
+Index: src/community/geoxacml/src/main/java/org/geoserver/xacml/geoxacml/XACMLConstants.java
+===================================================================
+--- src/community/geoxacml/src/main/java/org/geoserver/xacml/geoxacml/XACMLConstants.java	(révision 16007)
++++ src/community/geoxacml/src/main/java/org/geoserver/xacml/geoxacml/XACMLConstants.java	(copie de travail)
+@@ -97,7 +97,7 @@
+ 
+     public final static String RoleEnablementRole = "ROLE_ROLE_ENABLEMENT";
+ 
+-    public final static String AdminRole = "ROLE_ADMINISTRATOR";
++    public final static String AdminRole = "ROLE_SV_ADMIN";
+ 
+     public final static String AnonymousRole = "ROLE_ANONYMOUS";
+ 
+Index: src/community/geoxacml/src/main/resources/geoserverdatadir/geoxacml/byRequest/Admin.xml
+===================================================================
+--- src/community/geoxacml/src/main/resources/geoserverdatadir/geoxacml/byRequest/Admin.xml	(révision 16007)
++++ src/community/geoxacml/src/main/resources/geoserverdatadir/geoxacml/byRequest/Admin.xml	(copie de travail)
+@@ -8,7 +8,7 @@
+ 		<Subjects>
+ 			<Subject>
+ 				<SubjectMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:anyURI-equal">
+-					<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#anyURI">ROLE_ADMINISTRATOR</AttributeValue>					                                                                         
++					<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#anyURI">ROLE_SV_ADMIN</AttributeValue>					                                                                         
+ 					<SubjectAttributeDesignator AttributeId="urn:oasis:names:tc:xacml:2.0:subject:role"
+ 						DataType="http://www.w3.org/2001/XMLSchema#anyURI" />
+ 				</SubjectMatch>			 	
+@@ -19,4 +19,4 @@
+ 	<!-- Admin is able to do anything -->
+ 	<PolicyIdReference>org:geoserver:policy:PermitAll</PolicyIdReference>
+ 	
+-</PolicySet>
+\ No newline at end of file
++</PolicySet>
+Index: src/community/geoxacml/pom.xml
+===================================================================
+--- src/community/geoxacml/pom.xml	(révision 16007)
++++ src/community/geoxacml/pom.xml	(copie de travail)
+@@ -7,7 +7,7 @@
+   <parent>
+     <groupId>org.geoserver</groupId>		
+ 	<artifactId>community</artifactId>
+-	<version>2.1.0</version>
++	<version>2.1.0-georchestra</version>
+   </parent>
+ 
+   <groupId>org.geoserver</groupId>
+Index: src/community/spatialite/pom.xml
+===================================================================
+--- src/community/spatialite/pom.xml	(révision 16007)
++++ src/community/spatialite/pom.xml	(copie de travail)
+@@ -6,7 +6,7 @@
+   <parent>
+     <groupId>org.geoserver</groupId>
+     <artifactId>community</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+ 
+   <groupId>org.geoserver.community</groupId>
+Index: src/community/hello_web/pom.xml
+===================================================================
+--- src/community/hello_web/pom.xml	(révision 16007)
++++ src/community/hello_web/pom.xml	(copie de travail)
+@@ -6,7 +6,7 @@
+         <parent>
+           <groupId>org.geoserver</groupId>
+           <artifactId>web2</artifactId>
+-          <version>2.1.0</version>
++          <version>2.1.0-georchestra</version>
+         </parent>
+ 
+         <groupId>org.geoserver</groupId>
+@@ -19,7 +19,7 @@
+           <dependency>
+             <groupId>org.geoserver.web</groupId>
+             <artifactId>web-core</artifactId>
+-            <version>2.1.0</version>
++            <version>2.1.0-georchestra</version>
+           </dependency>
+         </dependencies>
+ 
+Index: src/community/statusreporter/core/pom.xml
+===================================================================
+--- src/community/statusreporter/core/pom.xml	(révision 16007)
++++ src/community/statusreporter/core/pom.xml	(copie de travail)
+@@ -31,12 +31,12 @@
+ 		<dependency>
+                         <groupId>org.geoserver</groupId>
+                         <artifactId>wfs</artifactId>
+-			<version>2.1.0</version>
++			<version>2.1.0-georchestra</version>
+                 </dependency>
+ 		<dependency>
+                         <groupId>org.geoserver</groupId>
+                         <artifactId>wms</artifactId>
+-			<version>2.1.0</version>
++			<version>2.1.0-georchestra</version>
+                 </dependency>
+ 		<dependency>
+                         <groupId>org.geoserver</groupId>
+Index: src/community/Issues/pom.xml
+===================================================================
+--- src/community/Issues/pom.xml	(révision 16007)
++++ src/community/Issues/pom.xml	(copie de travail)
+@@ -8,7 +8,7 @@
+ 	<parent>
+ 		<groupId>org.geoserver</groupId>
+ 		<artifactId>community</artifactId>
+-		<version>2.1.0</version>
++		<version>2.1.0-georchestra</version>
+ 	</parent>
+ 
+ 	<build>
+@@ -34,7 +34,7 @@
+ 		<dependency>
+ 			<groupId>org.geoserver</groupId>
+ 			<artifactId>main</artifactId>
+-			<version>2.1.0</version>
++			<version>2.1.0-georchestra</version>
+ 		</dependency>
+ 		<dependency>
+ 			<groupId>org.hibernate</groupId>
+Index: src/community/openplans-authentication/pom.xml
+===================================================================
+--- src/community/openplans-authentication/pom.xml	(révision 16007)
++++ src/community/openplans-authentication/pom.xml	(copie de travail)
+@@ -8,13 +8,13 @@
+   <parent>
+     <groupId>org.geoserver</groupId>
+     <artifactId>community</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+ 
+   <groupId>org.geoserver</groupId>
+   <artifactId>OpenPlans-Auth</artifactId>
+   <packaging>jar</packaging>
+-  <version>2.1.0</version>
++  <version>2.1.0-georchestra</version>
+   <name>OpenPlans.org Authentication Module</name>
+ 
+   <repositories>
+@@ -35,13 +35,13 @@
+     <dependency>
+       <groupId>org.geoserver</groupId>
+       <artifactId>main</artifactId>
+-      <version>2.1.0</version>
++      <version>2.1.0-georchestra</version>
+     </dependency>
+     
+     <dependency>
+       <groupId>org.geoserver</groupId>
+       <artifactId>main</artifactId>
+-      <version>2.1.0</version>
++      <version>2.1.0-georchestra</version>
+       <classifier>tests</classifier>
+       <scope>test</scope>
+     </dependency>
+Index: src/community/kml-ows5/pom.xml
+===================================================================
+--- src/community/kml-ows5/pom.xml	(révision 16007)
++++ src/community/kml-ows5/pom.xml	(copie de travail)
+@@ -7,7 +7,7 @@
+   <parent>
+     <groupId>org.geoserver</groupId>
+     <artifactId>community</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+ 
+   <groupId>org.geoserver</groupId>
+@@ -19,19 +19,19 @@
+     <dependency>
+       <groupId>org.geoserver</groupId>
+       <artifactId>wms</artifactId>
+-      <version>2.1.0</version>
++      <version>2.1.0-georchestra</version>
+     </dependency>
+     <dependency>
+       <groupId>org.geoserver</groupId>
+       <artifactId>wms</artifactId>
+-      <version>2.1.0</version>
++      <version>2.1.0-georchestra</version>
+       <classifier>tests</classifier>
+       <scope>test</scope>
+     </dependency>
+     <dependency>
+       <groupId>org.geoserver</groupId>
+       <artifactId>main</artifactId>
+-      <version>2.1.0</version>
++      <version>2.1.0-georchestra</version>
+       <classifier>tests</classifier>
+       <scope>test</scope>
+     </dependency>
+Index: src/community/restconfig-java/pom.xml
+===================================================================
+--- src/community/restconfig-java/pom.xml	(révision 16007)
++++ src/community/restconfig-java/pom.xml	(copie de travail)
+@@ -4,7 +4,7 @@
+ 	<groupId>org.geoserver</groupId>
+ 	<artifactId>restconfig-java</artifactId>
+ 	<name>restconfig-java</name>
+-	<version>2.1.0</version>
++	<version>2.1.0-georchestra</version>
+ 	<packaging>jar</packaging>
+ 	<description>Geoserver REST Configuration Client SDK</description>
+ 	<properties>
+@@ -15,7 +15,7 @@
+ 	<parent>
+ 		<groupId>org.geoserver</groupId>
+ 		<artifactId>community</artifactId>
+-		<version>2.1.0</version>
++		<version>2.1.0-georchestra</version>
+ 	</parent>
+ 
+         <repositories>
+Index: src/community/monitoring/pom.xml
+===================================================================
+--- src/community/monitoring/pom.xml	(révision 16007)
++++ src/community/monitoring/pom.xml	(copie de travail)
+@@ -4,7 +4,7 @@
+  <parent>
+   <groupId>org.geoserver</groupId>
+   <artifactId>community</artifactId>
+-  <version>2.1.0</version>
++  <version>2.1.0-georchestra</version>
+  </parent>
+  <groupId>org.geoserver.community</groupId>
+  <artifactId>monitoring</artifactId>
+@@ -14,17 +14,17 @@
+   <dependency>
+    <groupId>org.geoserver</groupId>
+    <artifactId>main</artifactId>
+-   <version>2.1.0</version>
++   <version>2.1.0-georchestra</version>
+   </dependency>
+   <dependency>
+    <groupId>org.geoserver</groupId>
+    <artifactId>rest</artifactId>
+-   <version>2.1.0</version>
++   <version>2.1.0-georchestra</version>
+   </dependency>
+   <dependency>
+    <groupId>org.geoserver.web</groupId>
+    <artifactId>web-core</artifactId>
+-   <version>2.1.0</version>
++   <version>2.1.0-georchestra</version>
+   </dependency>
+   <dependency>
+    <groupId>javax.persistence</groupId>
+@@ -74,32 +74,32 @@
+   <dependency>
+    <groupId>org.geoserver</groupId>
+    <artifactId>main</artifactId>
+-   <version>2.1.0</version>
++   <version>2.1.0-georchestra</version>
+    <scope>test</scope>
+    <classifier>tests</classifier>
+   </dependency>
+   <dependency>
+    <groupId>org.geoserver</groupId>
+    <artifactId>wfs</artifactId>
+-   <version>2.1.0</version>
++   <version>2.1.0-georchestra</version>
+    <scope>test</scope>
+   </dependency>
+   <dependency>
+    <groupId>org.geoserver</groupId>
+    <artifactId>wms</artifactId>
+-   <version>2.1.0</version>
++   <version>2.1.0-georchestra</version>
+    <scope>test</scope>
+   </dependency>
+   <dependency>
+    <groupId>org.geoserver</groupId>
+    <artifactId>wcs1_0</artifactId>
+-   <version>2.1.0</version>
++   <version>2.1.0-georchestra</version>
+    <scope>test</scope>
+   </dependency>
+   <dependency>
+    <groupId>org.geoserver</groupId>
+    <artifactId>wcs1_1</artifactId>
+-   <version>2.1.0</version>
++   <version>2.1.0-georchestra</version>
+    <scope>test</scope>
+   </dependency>
+   <dependency>
+Index: src/community/QueryUsers/pom.xml
+===================================================================
+--- src/community/QueryUsers/pom.xml	(révision 16007)
++++ src/community/QueryUsers/pom.xml	(copie de travail)
+@@ -8,7 +8,7 @@
+   <parent>
+     <groupId>org.geoserver</groupId>
+     <artifactId>community</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+ 
+   <groupId>org.geoserver</groupId>
+@@ -46,7 +46,7 @@
+     <dependency>
+       <groupId>org.geoserver</groupId>
+       <artifactId>main</artifactId>
+-      <version>2.1.0</version>
++      <version>2.1.0-georchestra</version>
+     </dependency>
+     <dependency>
+       <groupId>org.geoserver</groupId>
+Index: src/community/css/pom.xml
+===================================================================
+--- src/community/css/pom.xml	(révision 16007)
++++ src/community/css/pom.xml	(copie de travail)
+@@ -3,12 +3,12 @@
+   <parent>
+     <groupId>org.geoserver</groupId>
+     <artifactId>community</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+   <groupId>org.geoserver.community</groupId>
+   <artifactId>css</artifactId>
+   <packaging>jar</packaging>
+-  <version>2.1.0</version>
++  <version>2.1.0-georchestra</version>
+   <name>GeoServer CSS Styling</name>
+ 
+   <repositories>
+Index: src/community/istyler/pom.xml
+===================================================================
+--- src/community/istyler/pom.xml	(révision 16007)
++++ src/community/istyler/pom.xml	(copie de travail)
+@@ -5,22 +5,22 @@
+   <parent>
+     <artifactId>community</artifactId>
+     <groupId>org.geoserver</groupId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+   <groupId>org.geoserver.community</groupId>
+   <artifactId>istyler</artifactId>
+-  <version>2.1.0</version>
++  <version>2.1.0-georchestra</version>
+   <name>Interactive Styler Web Plugin</name>
+   <dependencies>
+     <dependency>
+       <groupId>org.geoserver.web</groupId>
+       <artifactId>web-core</artifactId>
+-      <version>2.1.0</version>
++      <version>2.1.0-georchestra</version>
+     </dependency>
+     <dependency>
+       <groupId>org.geoserver.web</groupId>
+       <artifactId>web-core</artifactId>
+-      <version>2.1.0</version>
++      <version>2.1.0-georchestra</version>
+       <classifier>tests</classifier>
+       <scope>test</scope>
+     </dependency>
+@@ -33,7 +33,7 @@
+     <dependency>
+       <groupId>org.geoserver</groupId>
+       <artifactId>main</artifactId>
+-      <version>2.1.0</version>
++      <version>2.1.0-georchestra</version>
+       <classifier>tests</classifier>
+       <scope>test</scope>
+     </dependency>
+Index: src/community/gss/pom.xml
+===================================================================
+--- src/community/gss/pom.xml	(révision 16007)
++++ src/community/gss/pom.xml	(copie de travail)
+@@ -3,12 +3,12 @@
+    <parent>
+       <groupId>org.geoserver</groupId>
+       <artifactId>community</artifactId>
+-      <version>2.1.0</version>
++      <version>2.1.0-georchestra</version>
+    </parent>
+    <groupId>org.geoserver.community</groupId>
+    <artifactId>gss</artifactId>
+    <packaging>jar</packaging>
+-   <version>2.1.0</version>
++   <version>2.1.0-georchestra</version>
+    <name>GeoServer Synchronization Service</name>
+ 
+    <dependencies>
+Index: src/community/importer/pom.xml
+===================================================================
+--- src/community/importer/pom.xml	(révision 16007)
++++ src/community/importer/pom.xml	(copie de travail)
+@@ -8,13 +8,13 @@
+   <parent>
+     <groupId>org.geoserver</groupId>
+     <artifactId>community</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+ 
+   <groupId>org.geoserver</groupId>
+   <artifactId>importer</artifactId>
+   <packaging>jar</packaging>
+-  <version>2.1.0</version>
++  <version>2.1.0-georchestra</version>
+   <name>Mass layer importer module</name>
+ 
+   <!-- declare depenency on geoserver main -->
+@@ -22,19 +22,19 @@
+     <dependency>
+       <groupId>org.geoserver</groupId>
+       <artifactId>main</artifactId>
+-      <version>2.1.0</version>
++      <version>2.1.0-georchestra</version>
+     </dependency>
+ 
+     <dependency>
+       <groupId>org.geoserver.web</groupId>
+       <artifactId>web-core</artifactId>
+-      <version>2.1.0</version>
++      <version>2.1.0-georchestra</version>
+     </dependency>
+     
+     <dependency>
+       <groupId>org.geoserver.web</groupId>
+       <artifactId>web-demo</artifactId>
+-      <version>2.1.0</version>
++      <version>2.1.0-georchestra</version>
+     </dependency>
+     
+     <dependency>
+@@ -51,7 +51,7 @@
+     <dependency>
+       <groupId>org.geoserver</groupId>
+       <artifactId>main</artifactId>
+-      <version>2.1.0</version>
++      <version>2.1.0-georchestra</version>
+       <classifier>tests</classifier>
+       <scope>test</scope>
+     </dependency>
+Index: src/community/hibernate/pom.xml
+===================================================================
+--- src/community/hibernate/pom.xml	(révision 16007)
++++ src/community/hibernate/pom.xml	(copie de travail)
+@@ -5,12 +5,12 @@
+     <groupId>org.geoserver.community</groupId>
+     <artifactId>hibernate</artifactId>
+     <packaging>jar</packaging>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+     <name>Hibernate Catalog</name>
+     <url>http://maven.apache.org</url>
+ 
+     <properties>
+-        <gsversion>2.1.0</gsversion>
++        <gsversion>2.1.0-georchestra</gsversion>
+     </properties>
+ 
+ 
+@@ -18,7 +18,7 @@
+     <parent>
+         <groupId>org.geoserver</groupId>
+         <artifactId>community</artifactId>
+-          <version>2.1.0</version>
++          <version>2.1.0-georchestra</version>
+     </parent>
+ 
+     <repositories>
+Index: src/community/preferences/web/pom.xml
+===================================================================
+--- src/community/preferences/web/pom.xml	(révision 16007)
++++ src/community/preferences/web/pom.xml	(copie de travail)
+@@ -8,7 +8,7 @@
+   <parent>
+     <groupId>org.geoserver</groupId>		
+     <artifactId>community</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+ 
+   <groupId>org.geoserver</groupId>
+@@ -26,7 +26,7 @@
+     <dependency>
+ 	    <groupId>org.geoserver</groupId>
+ 	    <artifactId>main</artifactId>
+-	    <version>2.1.0</version>
++	    <version>2.1.0-georchestra</version>
+     </dependency>    
+   </dependencies>
+ </project>
+Index: src/community/wps-sextante/pom.xml
+===================================================================
+--- src/community/wps-sextante/pom.xml	(révision 16007)
++++ src/community/wps-sextante/pom.xml	(copie de travail)
+@@ -7,7 +7,7 @@
+     <parent>
+         <groupId>org.geoserver.community</groupId>
+         <artifactId>wps</artifactId>
+-        <version>2.1.0</version>
++        <version>2.1.0-georchestra</version>
+     </parent>
+ 
+     <groupId>org.geoserver.community</groupId>
+Index: src/community/hello/pom.xml
+===================================================================
+--- src/community/hello/pom.xml	(révision 16007)
++++ src/community/hello/pom.xml	(copie de travail)
+@@ -7,7 +7,7 @@
+   <parent>
+     <groupId>org.geoserver</groupId>		
+ 	<artifactId>community</artifactId>
+-	<version>2.1.0</version>
++	<version>2.1.0-georchestra</version>
+   </parent>
+ 
+   <groupId>org.geoserver</groupId>
+@@ -20,7 +20,7 @@
+     <dependency>
+       <groupId>org.geoserver</groupId>
+       <artifactId>main</artifactId>
+-      <version>2.1.0</version>
++      <version>2.1.0-georchestra</version>
+     </dependency>
+   </dependencies>
+ 
+Index: src/community/sldService/pom.xml
+===================================================================
+--- src/community/sldService/pom.xml	(révision 16007)
++++ src/community/sldService/pom.xml	(copie de travail)
+@@ -6,7 +6,7 @@
+  <parent>
+    <groupId>org.geoserver</groupId>
+    <artifactId>community</artifactId>
+-   <version>2.1.0</version>
++   <version>2.1.0-georchestra</version>
+  </parent>
+   
+  <groupId>org.geoserver.community</groupId>
+@@ -18,22 +18,22 @@
+   <dependency>
+    <groupId>org.geoserver</groupId>
+    <artifactId>main</artifactId>
+-   <version>2.1.0</version>
++   <version>2.1.0-georchestra</version>
+   </dependency>
+   <dependency>
+    <groupId>org.geoserver</groupId>
+    <artifactId>rest</artifactId>
+-   <version>2.1.0</version>
++   <version>2.1.0-georchestra</version>
+   </dependency>
+   <dependency>
+    <groupId>org.geoserver.extension</groupId>
+    <artifactId>restconfig</artifactId>
+-   <version>2.1.0</version>
++   <version>2.1.0-georchestra</version>
+   </dependency>
+   <dependency>
+    <groupId>org.geoserver</groupId>
+    <artifactId>wms</artifactId>
+-   <version>2.1.0</version>
++   <version>2.1.0-georchestra</version>
+   </dependency>
+   <dependency>
+     <groupId>jdom</groupId>
+Index: src/community/geosync/pom.xml
+===================================================================
+--- src/community/geosync/pom.xml	(révision 16007)
++++ src/community/geosync/pom.xml	(copie de travail)
+@@ -6,7 +6,7 @@
+ 	<parent>
+ 		<groupId>org.geoserver</groupId>
+ 		<artifactId>geoserver</artifactId>
+-		<version>2.1.0</version>
++		<version>2.1.0-georchestra</version>
+ 	</parent>
+ 
+ 	<groupId>org.geoserver</groupId>
+@@ -19,7 +19,7 @@
+ 		<dependency>
+ 			<groupId>org.geoserver</groupId>
+ 			<artifactId>wfs</artifactId>
+-			<version>2.1.0</version>
++			<version>2.1.0-georchestra</version>
+ 		</dependency>
+         <dependency>
+             <groupId>rome</groupId>
+@@ -39,7 +39,7 @@
+         <dependency>
+             <groupId>org.geoserver</groupId>
+             <artifactId>main</artifactId>
+-            <version>2.1.0</version>
++            <version>2.1.0-georchestra</version>
+             <classifier>tests</classifier>
+             <scope>test</scope>
+         </dependency>
+Index: src/community/inspire/pom.xml
+===================================================================
+--- src/community/inspire/pom.xml	(révision 16007)
++++ src/community/inspire/pom.xml	(copie de travail)
+@@ -5,13 +5,13 @@
+  <parent>
+   <groupId>org.geoserver</groupId>
+   <artifactId>community</artifactId>
+-  <version>2.1.0</version>
++  <version>2.1.0-georchestra</version>
+  </parent>
+ 
+  <groupId>org.geoserver.community</groupId>
+  <artifactId>inspire</artifactId>
+  <packaging>jar</packaging>
+- <version>2.1.0</version>
++ <version>2.1.0-georchestra</version>
+  <name>GeoServer INSPIRE Extensions</name>
+ 
+  <dependencies>
+Index: src/community/scriptlet/pom.xml
+===================================================================
+--- src/community/scriptlet/pom.xml	(révision 16007)
++++ src/community/scriptlet/pom.xml	(copie de travail)
+@@ -5,12 +5,12 @@
+     <parent>
+         <groupId>org.geoserver</groupId>
+         <artifactId>community</artifactId>
+-        <version>2.1.0</version>
++        <version>2.1.0-georchestra</version>
+     </parent>
+     <groupId>org.geoserver.community</groupId>
+     <artifactId>scriptlet</artifactId>
+     <packaging>jar</packaging>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+     <name>JavaScript REST Extension Support</name>
+ 
+     <repositories>
+@@ -26,22 +26,22 @@
+         <dependency>
+             <groupId>org.geoserver</groupId>
+             <artifactId>rest</artifactId>
+-            <version>2.1.0</version>
++            <version>2.1.0-georchestra</version>
+         </dependency>
+         <dependency>
+             <groupId>org.geoserver</groupId>
+             <artifactId>main</artifactId>
+-            <version>2.1.0</version>
++            <version>2.1.0-georchestra</version>
+         </dependency>
+         <dependency>
+             <groupId>org.geoserver.web</groupId>
+             <artifactId>web-core</artifactId>
+-            <version>2.1.0</version>
++            <version>2.1.0-georchestra</version>
+         </dependency>
+         <dependency>
+             <groupId>org.geoserver</groupId>
+             <artifactId>main</artifactId>
+-            <version>2.1.0</version>
++            <version>2.1.0-georchestra</version>
+             <classifier>tests</classifier>
+             <scope>test</scope>
+         </dependency>
+Index: src/community/dds/pom.xml
+===================================================================
+--- src/community/dds/pom.xml	(révision 16007)
++++ src/community/dds/pom.xml	(copie de travail)
+@@ -9,13 +9,13 @@
+ 	<parent>
+ 		<groupId>org.geoserver</groupId>
+ 		<artifactId>community</artifactId>
+-		<version>2.1.0</version>
++		<version>2.1.0-georchestra</version>
+ 	</parent>
+ 
+ 	<groupId>org.geoserver</groupId>
+ 	<artifactId>dds</artifactId>
+ 	<packaging>jar</packaging>
+-	<version>2.1.0</version>
++	<version>2.1.0-georchestra</version>
+ 	<name>WorldWind Format Module</name>
+ 
+ 
+Index: src/community/dbconfig/pom.xml
+===================================================================
+--- src/community/dbconfig/pom.xml	(révision 16007)
++++ src/community/dbconfig/pom.xml	(copie de travail)
+@@ -5,13 +5,13 @@
+  <parent>
+   <groupId>org.geoserver</groupId>
+   <artifactId>community</artifactId>
+-  <version>2.1.0</version>
++  <version>2.1.0-georchestra</version>
+  </parent>
+ 
+  <groupId>org.geoserver.community</groupId>
+  <artifactId>dbconfig</artifactId>
+  <packaging>jar</packaging>
+- <version>2.1.0</version>
++ <version>2.1.0-georchestra</version>
+  <name>Hibernate Catalog/Configuration Module</name>
+ 
+  <dependencies>
+Index: src/pom.xml
+===================================================================
+--- src/pom.xml	(révision 16007)
++++ src/pom.xml	(copie de travail)
+@@ -8,7 +8,7 @@
+  <groupId>org.geoserver</groupId>
+  <artifactId>geoserver</artifactId>
+  <packaging>pom</packaging>
+- <version>2.1.0</version>
++ <version>2.1.0-georchestra</version>
+  <name>GeoServer</name>
+ 
+  <scm>
+@@ -70,6 +70,18 @@
+       <enabled>false</enabled>
+     </snapshots>
+   </repository>
++
++  <repository>
++    <id>local repo</id>
++    <name>Local Repository</name>
++    <url>file:///home/pmauduit/.m2/repository</url>
++    <snapshots>
++      <enabled>true</enabled>
++    </snapshots>
++  </repository>
++
++
++
+  </repositories>
+ 
+  <pluginRepositories>
+@@ -1374,7 +1386,7 @@
+  </modules>
+ 
+  <properties>
+-  <gs.version>2.1.0</gs.version>
++  <gs.version>2.1.0-georchestra</gs.version>
+   <gt.version>2.7.1</gt.version>
+   <gwc.version>1.2.6</gwc.version>
+   <spring.version>2.5.5</spring.version>
+Index: src/wcs1_0/pom.xml
+===================================================================
+--- src/wcs1_0/pom.xml	(révision 16007)
++++ src/wcs1_0/pom.xml	(copie de travail)
+@@ -7,7 +7,7 @@
+   <parent>
+     <groupId>org.geoserver</groupId>
+     <artifactId>geoserver</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+ 
+   <groupId>org.geoserver</groupId>
+Index: src/wcs/pom.xml
+===================================================================
+--- src/wcs/pom.xml	(révision 16007)
++++ src/wcs/pom.xml	(copie de travail)
+@@ -6,7 +6,7 @@
+  <parent>
+   <groupId>org.geoserver</groupId>
+   <artifactId>geoserver</artifactId>
+-  <version>2.1.0</version>
++  <version>2.1.0-georchestra</version>
+  </parent>
+  
+  <groupId>org.geoserver</groupId>
+Index: src/wcs1_1/src/test/java/org/geoserver/wcs/ResourceAccessManagerWCSTest.java
+===================================================================
+--- src/wcs1_1/src/test/java/org/geoserver/wcs/ResourceAccessManagerWCSTest.java	(révision 16007)
++++ src/wcs1_1/src/test/java/org/geoserver/wcs/ResourceAccessManagerWCSTest.java	(copie de travail)
+@@ -74,7 +74,7 @@
+ 
+         File users = new File(security, "users.properties");
+         Properties props = new Properties();
+-        props.put("admin", "geoserver,ROLE_ADMINISTRATOR");
++        props.put("admin", "geoserver,ROLE_SV_ADMIN");
+         props.put("cite", "cite,ROLE_DUMMY");
+         props.put("cite_noworld", "cite,ROLE_DUMMY");
+         props.put("cite_noworld_challenge", "cite,ROLE_DUMMY");
+Index: src/wcs1_1/pom.xml
+===================================================================
+--- src/wcs1_1/pom.xml	(révision 16007)
++++ src/wcs1_1/pom.xml	(copie de travail)
+@@ -7,7 +7,7 @@
+   <parent>
+     <groupId>org.geoserver</groupId>
+     <artifactId>geoserver</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+ 
+   <groupId>org.geoserver</groupId>
+Index: src/wfs/src/test/java/org/geoserver/wfs/SecuredGetFeatureTest.java
+===================================================================
+--- src/wfs/src/test/java/org/geoserver/wfs/SecuredGetFeatureTest.java	(révision 16007)
++++ src/wfs/src/test/java/org/geoserver/wfs/SecuredGetFeatureTest.java	(copie de travail)
+@@ -38,7 +38,7 @@
+         
+         File users = new File(security, "users.properties");
+         Properties props = new Properties();
+-        props.put("admin", "geoserver,ROLE_ADMINISTRATOR");
++        props.put("admin", "geoserver,ROLE_SV_ADMIN");
+         props.put("cite", "cite,ROLE_CITE_READER");
+         props.store(new FileOutputStream(users), "");
+         
+Index: src/wfs/src/test/java/org/geoserver/wfs/ResourceAccessManagerWFSTest.java
+===================================================================
+--- src/wfs/src/test/java/org/geoserver/wfs/ResourceAccessManagerWFSTest.java	(révision 16007)
++++ src/wfs/src/test/java/org/geoserver/wfs/ResourceAccessManagerWFSTest.java	(copie de travail)
+@@ -119,7 +119,7 @@
+ 
+         File users = new File(security, "users.properties");
+         Properties props = new Properties();
+-        props.put("admin", "geoserver,ROLE_ADMINISTRATOR");
++        props.put("admin", "geoserver,ROLE_SV_ADMIN");
+         props.put("cite", "cite,ROLE_DUMMY");
+         props.put("cite_readfilter", "cite,ROLE_DUMMY");
+         props.put("cite_readatts", "cite,ROLE_DUMMY");
+Index: src/wfs/src/main/java/org/geoserver/wfs/DescribeFeatureType.java
+===================================================================
+--- src/wfs/src/main/java/org/geoserver/wfs/DescribeFeatureType.java	(révision 16007)
++++ src/wfs/src/main/java/org/geoserver/wfs/DescribeFeatureType.java	(copie de travail)
+@@ -6,6 +6,7 @@
+ 
+ import java.util.ArrayList;
+ import java.util.List;
++import java.util.Map;
+ 
+ import javax.xml.XMLConstants;
+ import javax.xml.namespace.QName;
+@@ -67,7 +68,7 @@
+     public void setCatalog(Catalog catalog) {
+         this.catalog = catalog;
+     }
+-
++    @SuppressWarnings({ "deprecation", "unchecked" })
+     public FeatureTypeInfo[] run(DescribeFeatureTypeType request)
+         throws WFSException {
+         List<QName> names = new ArrayList<QName>(request.getTypeName());
+@@ -100,6 +101,10 @@
+         }
+ 
+         //list of catalog handles
++
++        // PMT C2C : unresolved (but unused for now)
++//        Map<String, FeatureTypeInfo> infos = catalog.getFeatureTypeInfos();
++        // end PMT C2C
+         List<FeatureTypeInfo> requested = new ArrayList<FeatureTypeInfo>(names.size());
+ 
+         if (names.isEmpty()) {
+@@ -116,6 +121,9 @@
+                 String namespaceURI = name.getNamespaceURI();
+                 String typeName = name.getLocalPart();
+                 FeatureTypeInfo typeInfo;
++                
++                String prefixedName = name.getPrefix() + ":" + name.getLocalPart();
++
+                 if (citeConformance && XMLConstants.NULL_NS_URI.equals(namespaceURI)) {
+                     // under cite conformance, the typeName shall be completely resolved. If there's
+                     // no namespace URI and we ask the catalog with only the localName, the catalog
+@@ -124,19 +132,39 @@
+                 } else {
+                     typeInfo = catalog.getFeatureTypeByName(namespaceURI, typeName);
+                 }
+-               
+-
++                
++             // PMT c2c : not sure for this backport from GS 1.7.6
++             // left commented out for now
++             //                
++//               
++//                FeatureTypeInfo meta = infos.get(prefixedName);
++//             
++//                if(meta == null){
++//                    // not found
++//                    String msg = "Could not find type: " + name;
++//                    if (citeConformance) {
++//                        msg += ". \nStrict WFS protocol conformance is being applied.\n"
++//                            + "Make sure the type name is correctly qualified";
++//                    }
++//                    throw new WFSException(msg);
++//                } else if (meta.isEnabled()) {
++//                    requested.add(meta);
++//                }
++// end PMT
++                
+                 if (typeInfo != null && typeInfo.enabled()) {
+                     requested.add(typeInfo);
+-                } else {
+-                    // not found
+-                    String msg = "Could not find type: " + name;
+-                    if (citeConformance) {
+-                        msg += ". \nStrict WFS protocol conformance is being applied.\n"
+-                                + "Make sure the type name is correctly qualified";
+-                    }
+-                    throw new WFSException(msg);
+-                }
++                } 
++                
++//                else {
++//                    // not found
++//                    String msg = "Could not find type: " + name;
++//                    if (citeConformance) {
++//                        msg += ". \nStrict WFS protocol conformance is being applied.\n"
++//                                + "Make sure the type name is correctly qualified";
++//                    }
++//                    throw new WFSException(msg);
++//                }
+             }
+         }
+ 
+Index: src/wfs/src/main/java/org/geoserver/wfs/xml/v1_0_0/WFSConfiguration.java
+===================================================================
+--- src/wfs/src/main/java/org/geoserver/wfs/xml/v1_0_0/WFSConfiguration.java	(révision 16007)
++++ src/wfs/src/main/java/org/geoserver/wfs/xml/v1_0_0/WFSConfiguration.java	(copie de travail)
+@@ -45,6 +45,7 @@
+ import org.picocontainer.MutablePicoContainer;
+ import org.picocontainer.Parameter;
+ import org.picocontainer.defaults.SetterInjectionComponentAdapter;
++import org.springframework.security.AccessDeniedException;
+ 
+ /**
+  * Parser configuration for wfs 1.0.
+@@ -172,6 +173,7 @@
+ 
+         Collection featureTypes = catalog.getFeatureTypes();
+         for (Iterator f = featureTypes.iterator(); f.hasNext();) {
++            try {
+             FeatureTypeInfo meta = (FeatureTypeInfo) f.next();
+             if ( !meta.enabled() ) {
+                 continue;
+@@ -188,6 +190,9 @@
+             }
+ 
+             featureTypeCache.put(featureType);
++            } catch (AccessDeniedException e) {
++                // Ignore featureType
++            }
+         }
+     }
+ 
+Index: src/wfs/src/main/java/org/geoserver/wfs/xml/FeatureTypeSchemaBuilder.java
+===================================================================
+--- src/wfs/src/main/java/org/geoserver/wfs/xml/FeatureTypeSchemaBuilder.java	(révision 16007)
++++ src/wfs/src/main/java/org/geoserver/wfs/xml/FeatureTypeSchemaBuilder.java	(copie de travail)
+@@ -61,6 +61,7 @@
+ import org.opengis.feature.type.Name;
+ import org.opengis.feature.type.PropertyDescriptor;
+ import org.opengis.feature.type.Schema;
++import org.springframework.security.AccessDeniedException;
+ 
+ /**
+  * Builds a {@link org.eclipse.xsd.XSDSchema} from {@link FeatureTypeInfo}
+@@ -328,8 +329,12 @@
+         Collection featureTypeInfos = catalog.getFeatureTypes();
+ 
+         for (Iterator i = featureTypeInfos.iterator(); i.hasNext();) {
+-            FeatureTypeInfo meta = (FeatureTypeInfo) i.next();
+-            
++            final FeatureTypeInfo meta;
++            try{
++                meta = (FeatureTypeInfo) i.next();
++            }catch(AccessDeniedException e) {
++                continue;
++            }
+             // don't build schemas for disabled feature types
+             if(!meta.enabled())
+                 continue;
+Index: src/wfs/pom.xml
+===================================================================
+--- src/wfs/pom.xml	(révision 16007)
++++ src/wfs/pom.xml	(copie de travail)
+@@ -7,7 +7,7 @@
+   <parent>
+     <groupId>org.geoserver</groupId>
+     <artifactId>geoserver</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+ 
+   <groupId>org.geoserver</groupId>
+Index: src/restconfig/src/main/java/org/geoserver/catalog/rest/CoverageStoreFileResource.java
+===================================================================
+--- src/restconfig/src/main/java/org/geoserver/catalog/rest/CoverageStoreFileResource.java	(révision 16007)
++++ src/restconfig/src/main/java/org/geoserver/catalog/rest/CoverageStoreFileResource.java	(copie de travail)
+@@ -128,6 +128,7 @@
+             }
+             
+             CoverageInfo cinfo = builder.buildCoverage( reader, customParameters );
++            cinfo.setTitle(cinfo.getName());
+             
+             //check if the name of the coverage was specified
+             String coverageName = form.getFirstValue("coverageName");
+Index: src/restconfig/src/main/java/org/geoserver/catalog/rest/DataStoreFileResource.java
+===================================================================
+--- src/restconfig/src/main/java/org/geoserver/catalog/rest/DataStoreFileResource.java	(révision 16007)
++++ src/restconfig/src/main/java/org/geoserver/catalog/rest/DataStoreFileResource.java	(copie de travail)
+@@ -183,8 +183,13 @@
+         };
+         getResponse().setEntity( fmt.toRepresentation( directory ) );
+     }
+-    
++
+     @Override
++    protected File findPrimaryFile(File directory, String format) {
++        return super.findPrimaryFile(directory, format);    //To change body of overridden methods use File | Settings | File Templates.
++    }
++
++    @Override
+     public void handlePut() {
+         String workspace = getAttribute("workspace");
+         String datastore = getAttribute("datastore");
+Index: src/restconfig/pom.xml
+===================================================================
+--- src/restconfig/pom.xml	(révision 16007)
++++ src/restconfig/pom.xml	(copie de travail)
+@@ -6,7 +6,7 @@
+  <parent>
+   <groupId>org.geoserver</groupId>
+   <artifactId>geoserver</artifactId>
+-  <version>2.1.0</version>
++  <version>2.1.0-georchestra</version>
+  </parent>
+ 
+  <groupId>org.geoserver</groupId>
+@@ -18,17 +18,17 @@
+   <dependency>
+    <groupId>org.geoserver</groupId>
+    <artifactId>main</artifactId>
+-   <version>2.1.0</version>
++   <version>2.1.0-georchestra</version>
+   </dependency>
+   <dependency>
+    <groupId>org.geoserver</groupId>
+    <artifactId>rest</artifactId>
+-   <version>2.1.0</version>
++   <version>2.1.0-georchestra</version>
+   </dependency>
+   <dependency>
+    <groupId>org.geoserver</groupId>
+    <artifactId>wms</artifactId>
+-   <version>2.1.0</version>
++   <version>2.1.0-georchestra</version>
+   </dependency>
+   <dependency>
+    <groupId>jdom</groupId>
+Index: src/maven/archetype/wfsOutputFormat/src/main/resources/archetype-resources/pom.xml
+===================================================================
+--- src/maven/archetype/wfsOutputFormat/src/main/resources/archetype-resources/pom.xml	(révision 16007)
++++ src/maven/archetype/wfsOutputFormat/src/main/resources/archetype-resources/pom.xml	(copie de travail)
+@@ -29,7 +29,7 @@
+   <dependency>
+    <groupId>org.geoserver</groupId>
+    <artifactId>wfs</artifactId>
+-   <version>2.1.0</version>
++   <version>2.1.0-georchestra</version>
+   </dependency>
+   <dependency>
+    <groupId>junit</groupId>
+@@ -40,14 +40,14 @@
+   <dependency>
+    <groupId>org.geoserver</groupId>
+    <artifactId>wfs</artifactId>
+-   <version>2.1.0</version>
++   <version>2.1.0-georchestra</version>
+    <classifier>tests</classifier>
+    <scope>test</scope>
+   </dependency>
+   <dependency>
+    <groupId>org.geoserver</groupId>
+    <artifactId>main</artifactId>
+-   <version>2.1.0</version>
++   <version>2.1.0-georchestra</version>
+    <classifier>tests</classifier>
+    <scope>test</scope>
+   </dependency>
+Index: src/maven/archetype/wfsOutputFormat/pom.xml
+===================================================================
+--- src/maven/archetype/wfsOutputFormat/pom.xml	(révision 16007)
++++ src/maven/archetype/wfsOutputFormat/pom.xml	(copie de travail)
+@@ -5,7 +5,7 @@
+   <parent>
+     <groupId>org.geoserver.maven</groupId>
+     <artifactId>archetype</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+ 
+   <groupId>org.geoserver.maven</groupId>
+Index: src/maven/archetype/pom.xml
+===================================================================
+--- src/maven/archetype/pom.xml	(révision 16007)
++++ src/maven/archetype/pom.xml	(copie de travail)
+@@ -6,7 +6,7 @@
+  <parent>
+   <groupId>org.geoserver</groupId>
+   <artifactId>maven</artifactId>
+-  <version>2.1.0</version>
++  <version>2.1.0-georchestra</version>
+  </parent>
+ 
+  <groupId>org.geoserver.maven</groupId>
+Index: src/maven/archetype/webPlugin/src/main/resources/archetype-resources/pom.xml
+===================================================================
+--- src/maven/archetype/webPlugin/src/main/resources/archetype-resources/pom.xml	(révision 16007)
++++ src/maven/archetype/webPlugin/src/main/resources/archetype-resources/pom.xml	(copie de travail)
+@@ -19,12 +19,12 @@
+   <dependency>
+    <groupId>org.geoserver.web</groupId>
+    <artifactId>web-core</artifactId>
+-   <version>2.1.0</version>
++   <version>2.1.0-georchestra</version>
+   </dependency>
+   <dependency>
+    <groupId>org.geoserver.web</groupId>
+    <artifactId>web-core</artifactId>
+-   <version>2.1.0</version>
++   <version>2.1.0-georchestra</version>
+    <classifier>tests</classifier>
+    <scope>test</scope>
+   </dependency>
+@@ -37,7 +37,7 @@
+   <dependency>
+    <groupId>org.geoserver</groupId>
+    <artifactId>main</artifactId>
+-   <version>2.1.0</version>
++   <version>2.1.0-georchestra</version>
+    <classifier>tests</classifier>
+    <scope>test</scope>
+   </dependency>
+Index: src/maven/archetype/webPlugin/pom.xml
+===================================================================
+--- src/maven/archetype/webPlugin/pom.xml	(révision 16007)
++++ src/maven/archetype/webPlugin/pom.xml	(copie de travail)
+@@ -5,7 +5,7 @@
+   <parent>
+     <groupId>org.geoserver.maven</groupId>
+     <artifactId>archetype</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+ 
+   <groupId>org.geoserver.maven</groupId>
+Index: src/maven/config/pom.xml
+===================================================================
+--- src/maven/config/pom.xml	(révision 16007)
++++ src/maven/config/pom.xml	(copie de travail)
+@@ -6,7 +6,7 @@
+  <parent>
+   <groupId>org.geoserver</groupId>
+   <artifactId>maven</artifactId>
+-  <version>2.1.0</version>
++  <version>2.1.0-georchestra</version>
+  </parent>
+  
+  <groupId>org.geoserver.maven</groupId>
+Index: src/maven/pom.xml
+===================================================================
+--- src/maven/pom.xml	(révision 16007)
++++ src/maven/pom.xml	(copie de travail)
+@@ -6,7 +6,7 @@
+  <parent>
+   <groupId>org.geoserver</groupId>
+   <artifactId>geoserver</artifactId>
+-  <version>2.1.0</version>
++  <version>2.1.0-georchestra</version>
+  </parent>
+  
+  <groupId>org.geoserver</groupId>
+Index: src/wms/src/test/java/org/geoserver/wms/ResourceAccessManagerWMSTest.java
+===================================================================
+--- src/wms/src/test/java/org/geoserver/wms/ResourceAccessManagerWMSTest.java	(révision 16007)
++++ src/wms/src/test/java/org/geoserver/wms/ResourceAccessManagerWMSTest.java	(copie de travail)
+@@ -95,7 +95,7 @@
+ 
+         File users = new File(security, "users.properties");
+         Properties props = new Properties();
+-        props.put("admin", "geoserver,ROLE_ADMINISTRATOR");
++        props.put("admin", "geoserver,ROLE_SV_ADMIN");
+         props.put("cite", "cite,ROLE_DUMMY");
+         props.put("cite_nostates", "cite,ROLE_DUMMY");
+         props.put("cite_noinfo", "cite,ROLE_DUMMY");
+Index: src/wms/pom.xml
+===================================================================
+--- src/wms/pom.xml	(révision 16007)
++++ src/wms/pom.xml	(copie de travail)
+@@ -7,7 +7,7 @@
+   <parent>
+     <groupId>org.geoserver</groupId>
+     <artifactId>geoserver</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+ 
+   <groupId>org.geoserver</groupId>
+Index: src/ows/pom.xml
+===================================================================
+--- src/ows/pom.xml	(révision 16007)
++++ src/ows/pom.xml	(copie de travail)
+@@ -5,7 +5,7 @@
+  <parent>
+   <groupId>org.geoserver</groupId>
+   <artifactId>geoserver</artifactId>
+-  <version>2.1.0</version>
++  <version>2.1.0-georchestra</version>
+  </parent>
+  
+  <groupId>org.geoserver</groupId>
+Index: src/extension/imagemap/pom.xml
+===================================================================
+--- src/extension/imagemap/pom.xml	(révision 16007)
++++ src/extension/imagemap/pom.xml	(copie de travail)
+@@ -7,7 +7,7 @@
+   <parent>
+     <groupId>org.geoserver</groupId>
+     <artifactId>extension</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+ 
+   <groupId>org.geoserver.extension</groupId>
+Index: src/extension/charts/pom.xml
+===================================================================
+--- src/extension/charts/pom.xml	(révision 16007)
++++ src/extension/charts/pom.xml	(copie de travail)
+@@ -3,7 +3,7 @@
+   <parent>
+     <groupId>org.geoserver</groupId>
+     <artifactId>extension</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+ 
+   <modelVersion>4.0.0</modelVersion>
+Index: src/extension/control-flow/pom.xml
+===================================================================
+--- src/extension/control-flow/pom.xml	(révision 16007)
++++ src/extension/control-flow/pom.xml	(copie de travail)
+@@ -5,11 +5,11 @@
+   <parent>
+     <artifactId>extension</artifactId>
+     <groupId>org.geoserver</groupId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+   <groupId>org.geoserver.extension</groupId>
+   <artifactId>control-flow</artifactId>
+-  <version>2.1.0</version>
++  <version>2.1.0-georchestra</version>
+   <name>OWS request flow controller</name>
+   <dependencies>
+     <dependency>
+Index: src/extension/wfsv/pom.xml
+===================================================================
+--- src/extension/wfsv/pom.xml	(révision 16007)
++++ src/extension/wfsv/pom.xml	(copie de travail)
+@@ -7,7 +7,7 @@
+   <parent>
+     <groupId>org.geoserver</groupId>
+     <artifactId>extension</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+ 
+   <groupId>org.geoserver</groupId>
+Index: src/extension/sqlserver/pom.xml
+===================================================================
+--- src/extension/sqlserver/pom.xml	(révision 16007)
++++ src/extension/sqlserver/pom.xml	(copie de travail)
+@@ -6,7 +6,7 @@
+   <parent>
+     <groupId>org.geoserver</groupId>
+     <artifactId>extension</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+ 
+   <groupId>org.geoserver.extension</groupId>
+Index: src/extension/ogr/pom.xml
+===================================================================
+--- src/extension/ogr/pom.xml	(révision 16007)
++++ src/extension/ogr/pom.xml	(copie de travail)
+@@ -6,7 +6,7 @@
+   <parent>
+     <groupId>org.geoserver</groupId>
+     <artifactId>extension</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+ 
+   <groupId>org.geoserver.extension</groupId>
+Index: src/extension/feature-pregeneralized/pom.xml
+===================================================================
+--- src/extension/feature-pregeneralized/pom.xml	(révision 16007)
++++ src/extension/feature-pregeneralized/pom.xml	(copie de travail)
+@@ -7,13 +7,13 @@
+   <parent>
+     <groupId>org.geoserver</groupId>		
+     <artifactId>extension</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+ 
+   <groupId>org.geoserver.extension</groupId>
+   <artifactId>feature-pregeneralized</artifactId>
+   <packaging>jar</packaging>
+-  <version>2.1.0</version>
++  <version>2.1.0-georchestra</version>
+   <name>Feature Generalization Extension</name>
+ 
+   <dependencies>
+Index: src/extension/pom.xml
+===================================================================
+--- src/extension/pom.xml	(révision 16007)
++++ src/extension/pom.xml	(copie de travail)
+@@ -6,7 +6,7 @@
+   <parent>
+     <groupId>org.geoserver</groupId>
+     <artifactId>geoserver</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+ 
+   <groupId>org.geoserver</groupId>
+Index: src/extension/validation/pom.xml
+===================================================================
+--- src/extension/validation/pom.xml	(révision 16007)
++++ src/extension/validation/pom.xml	(copie de travail)
+@@ -6,7 +6,7 @@
+  <parent>
+   <groupId>org.geoserver</groupId>
+   <artifactId>geoserver</artifactId>
+-  <version>2.1.0</version>
++  <version>2.1.0-georchestra</version>
+  </parent>
+ 
+  <groupId>org.geoserver.extension</groupId>
+@@ -18,7 +18,7 @@
+   <dependency>
+    <groupId>org.geoserver</groupId>
+    <artifactId>main</artifactId>
+-   <version>2.1.0</version>
++   <version>2.1.0-georchestra</version>
+   </dependency>
+  </dependencies>
+ 
+Index: src/extension/geosearch/pom.xml
+===================================================================
+--- src/extension/geosearch/pom.xml	(révision 16007)
++++ src/extension/geosearch/pom.xml	(copie de travail)
+@@ -6,7 +6,7 @@
+  <parent>
+   <groupId>org.geoserver</groupId>
+   <artifactId>extension</artifactId>
+-  <version>2.1.0</version>
++  <version>2.1.0-georchestra</version>
+  </parent>
+ 
+  <groupId>org.geoserver.extension</groupId>
+@@ -18,22 +18,22 @@
+   <dependency>
+    <groupId>org.geoserver</groupId>
+    <artifactId>rest</artifactId>
+-   <version>2.1.0</version>
++   <version>2.1.0-georchestra</version>
+   </dependency>
+   <dependency>
+    <groupId>org.geoserver</groupId>
+    <artifactId>main</artifactId>
+-   <version>2.1.0</version>
++   <version>2.1.0-georchestra</version>
+   </dependency>
+   <dependency>
+    <groupId>org.geoserver.web</groupId>
+    <artifactId>web-core</artifactId>
+-   <version>2.1.0</version>
++   <version>2.1.0-georchestra</version>
+   </dependency>
+   <dependency>
+    <groupId>org.geoserver</groupId>
+    <artifactId>wms</artifactId>
+-   <version>2.1.0</version>
++   <version>2.1.0-georchestra</version>
+   </dependency>
+   <dependency>
+    <groupId>com.h2database</groupId>
+@@ -62,7 +62,7 @@
+   <dependency>
+    <groupId>org.geoserver</groupId>
+    <artifactId>main</artifactId>
+-   <version>2.1.0</version>
++   <version>2.1.0-georchestra</version>
+    <classifier>tests</classifier>
+    <scope>test</scope>
+   </dependency>
+Index: src/extension/excel/pom.xml
+===================================================================
+--- src/extension/excel/pom.xml	(révision 16007)
++++ src/extension/excel/pom.xml	(copie de travail)
+@@ -3,7 +3,7 @@
+   <parent>
+     <groupId>org.geoserver</groupId>
+     <artifactId>extension</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+ 
+   <modelVersion>4.0.0</modelVersion>
+Index: src/extension/arcsde/pom.xml
+===================================================================
+--- src/extension/arcsde/pom.xml	(révision 16007)
++++ src/extension/arcsde/pom.xml	(copie de travail)
+@@ -6,7 +6,7 @@
+    <parent>
+       <groupId>org.geoserver</groupId>
+       <artifactId>extension</artifactId>
+-      <version>2.1.0</version>
++      <version>2.1.0-georchestra</version>
+    </parent>
+ 
+    <groupId>org.geoserver.extension</groupId>
+Index: src/extension/querylayer/pom.xml
+===================================================================
+--- src/extension/querylayer/pom.xml	(révision 16007)
++++ src/extension/querylayer/pom.xml	(copie de travail)
+@@ -5,7 +5,7 @@
+   <parent>
+     <groupId>org.geoserver</groupId>
+     <artifactId>extension</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+   <groupId>org.geoserver.extension</groupId>
+   <artifactId>querylayer</artifactId>
+Index: src/extension/oracle/pom.xml
+===================================================================
+--- src/extension/oracle/pom.xml	(révision 16007)
++++ src/extension/oracle/pom.xml	(copie de travail)
+@@ -6,7 +6,7 @@
+   <parent>
+     <groupId>org.geoserver</groupId>
+     <artifactId>extension</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+ 
+   <groupId>org.geoserver.extension</groupId>
+Index: src/extension/mysql/pom.xml
+===================================================================
+--- src/extension/mysql/pom.xml	(révision 16007)
++++ src/extension/mysql/pom.xml	(copie de travail)
+@@ -6,7 +6,7 @@
+   <parent>
+     <groupId>org.geoserver</groupId>
+     <artifactId>extension</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+ 
+   <groupId>org.geoserver.extension</groupId>
+Index: src/extension/jp2k/pom.xml
+===================================================================
+--- src/extension/jp2k/pom.xml	(révision 16007)
++++ src/extension/jp2k/pom.xml	(copie de travail)
+@@ -6,7 +6,7 @@
+   <parent>
+     <groupId>org.geoserver</groupId>
+     <artifactId>extension</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+ 
+   <groupId>org.geoserver.extension</groupId>
+Index: src/extension/db2/pom.xml
+===================================================================
+--- src/extension/db2/pom.xml	(révision 16007)
++++ src/extension/db2/pom.xml	(copie de travail)
+@@ -6,7 +6,7 @@
+   <parent>
+     <groupId>org.geoserver</groupId>
+     <artifactId>extension</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+ 
+   <groupId>org.geoserver.extension</groupId>
+Index: src/extension/h2/pom.xml
+===================================================================
+--- src/extension/h2/pom.xml	(révision 16007)
++++ src/extension/h2/pom.xml	(copie de travail)
+@@ -6,7 +6,7 @@
+   <parent>
+     <groupId>org.geoserver</groupId>
+     <artifactId>extension</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+ 
+   <groupId>org.geoserver.extension</groupId>
+Index: src/extension/wps/wps-core/pom.xml
+===================================================================
+--- src/extension/wps/wps-core/pom.xml	(révision 16007)
++++ src/extension/wps/wps-core/pom.xml	(copie de travail)
+@@ -7,7 +7,7 @@
+     <parent>
+         <groupId>org.geoserver.extension</groupId>
+         <artifactId>wps</artifactId>
+-        <version>2.1.0</version>
++        <version>2.1.0-georchestra</version>
+     </parent>
+ 
+     <groupId>org.geoserver.extension</groupId>
+Index: src/extension/wps/web-wps/pom.xml
+===================================================================
+--- src/extension/wps/web-wps/pom.xml	(révision 16007)
++++ src/extension/wps/web-wps/pom.xml	(copie de travail)
+@@ -7,7 +7,7 @@
+     <parent>
+         <groupId>org.geoserver.extension</groupId>
+         <artifactId>wps</artifactId>
+-        <version>2.1.0</version>
++        <version>2.1.0-georchestra</version>
+     </parent>
+ 
+     <groupId>org.geoserver.extension</groupId>
+Index: src/extension/wps/pom.xml
+===================================================================
+--- src/extension/wps/pom.xml	(révision 16007)
++++ src/extension/wps/pom.xml	(copie de travail)
+@@ -7,7 +7,7 @@
+     <parent>
+         <groupId>org.geoserver</groupId>
+         <artifactId>extension</artifactId>
+-        <version>2.1.0</version>
++        <version>2.1.0-georchestra</version>
+     </parent>
+ 
+     <groupId>org.geoserver.extension</groupId>
+Index: src/extension/imagemosaic-jdbc/pom.xml
+===================================================================
+--- src/extension/imagemosaic-jdbc/pom.xml	(révision 16007)
++++ src/extension/imagemosaic-jdbc/pom.xml	(copie de travail)
+@@ -6,7 +6,7 @@
+   <parent>
+     <groupId>org.geoserver</groupId>
+     <artifactId>extension</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+ 
+   <groupId>org.geoserver.extension</groupId>
+Index: src/extension/app-schema/sample-data-access-test/pom.xml
+===================================================================
+--- src/extension/app-schema/sample-data-access-test/pom.xml	(révision 16007)
++++ src/extension/app-schema/sample-data-access-test/pom.xml	(copie de travail)
+@@ -7,7 +7,7 @@
+ 	<parent>
+ 		<groupId>org.geoserver.extension</groupId>
+ 		<artifactId>app-schema</artifactId>
+-		<version>2.1.0</version>
++		<version>2.1.0-georchestra</version>
+ 	</parent>
+ 
+ 	<groupId>org.geoserver.extension</groupId>
+Index: src/extension/app-schema/pom.xml
+===================================================================
+--- src/extension/app-schema/pom.xml	(révision 16007)
++++ src/extension/app-schema/pom.xml	(copie de travail)
+@@ -6,7 +6,7 @@
+   <parent>
+     <groupId>org.geoserver</groupId>		
+     <artifactId>extension</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+ 
+   <groupId>org.geoserver.extension</groupId>
+Index: src/extension/app-schema/app-schema-test/pom.xml
+===================================================================
+--- src/extension/app-schema/app-schema-test/pom.xml	(révision 16007)
++++ src/extension/app-schema/app-schema-test/pom.xml	(copie de travail)
+@@ -7,7 +7,7 @@
+ 	<parent>
+ 		<groupId>org.geoserver.extension</groupId>
+ 		<artifactId>app-schema</artifactId>
+-		<version>2.1.0</version>
++		<version>2.1.0-georchestra</version>
+ 	</parent>
+ 
+ 	<groupId>org.geoserver.extension</groupId>
+Index: src/web/wfs/pom.xml
+===================================================================
+--- src/web/wfs/pom.xml	(révision 16007)
++++ src/web/wfs/pom.xml	(copie de travail)
+@@ -7,13 +7,13 @@
+   <parent>
+     <groupId>org.geoserver</groupId>    
+     <artifactId>web</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+ 
+   <groupId>org.geoserver.web</groupId>
+   <artifactId>web-wfs</artifactId>
+   <packaging>jar</packaging>
+-  <version>2.1.0</version>
++  <version>2.1.0-georchestra</version>
+   <name>WFS UI Module</name>
+   
+   <dependencies>
+Index: src/web/app/pom.xml
+===================================================================
+--- src/web/app/pom.xml	(révision 16007)
++++ src/web/app/pom.xml	(copie de travail)
+@@ -5,12 +5,12 @@
+   <parent>
+     <groupId>org.geoserver</groupId>
+     <artifactId>web</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+   <groupId>org.geoserver.web</groupId>
+   <artifactId>web-app</artifactId>
+   <packaging>jar</packaging>
+-  <version>2.1.0</version>
++  <version>2.1.0-georchestra</version>
+   <name>GeoServer Web Application</name>
+   <dependencies>
+     <dependency>
+@@ -253,7 +253,7 @@
+         <dependency>
+           <groupId>org.geoserver.extension</groupId>
+           <artifactId>arcsde</artifactId> 
+-          <version>2.1.0</version>
++          <version>2.1.0-georchestra</version>
+         </dependency>
+       </dependencies>
+     </profile>
+@@ -282,7 +282,7 @@
+         <dependency>
+           <groupId>org.geoserver.extension</groupId>
+           <artifactId>sqlserver</artifactId> 
+-          <version>2.1.0</version>
++          <version>2.1.0-georchestra</version>
+         </dependency>
+       </dependencies>
+     </profile>
+@@ -292,7 +292,7 @@
+         <dependency>
+           <groupId>org.geoserver.extension</groupId>
+           <artifactId>oracle</artifactId> 
+-          <version>2.1.0</version>
++          <version>2.1.0-georchestra</version>
+         </dependency>
+       </dependencies>
+     </profile>
+@@ -302,7 +302,7 @@
+         <dependency>
+           <groupId>org.geoserver.extension</groupId>
+           <artifactId>mysql</artifactId> 
+-          <version>2.1.0</version>
++          <version>2.1.0-georchestra</version>
+         </dependency>
+       </dependencies>
+     </profile>
+Index: src/web/gwc/pom.xml
+===================================================================
+--- src/web/gwc/pom.xml	(révision 16007)
++++ src/web/gwc/pom.xml	(copie de travail)
+@@ -7,13 +7,13 @@
+   <parent>
+     <groupId>org.geoserver</groupId>    
+     <artifactId>web</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+ 
+   <groupId>org.geoserver.web</groupId>
+   <artifactId>web-gwc</artifactId>
+   <packaging>jar</packaging>
+-  <version>2.1.0</version>
++  <version>2.1.0-georchestra</version>
+   <name>GWC UI Module</name>
+   
+   <dependencies>
+Index: src/web/demo/pom.xml
+===================================================================
+--- src/web/demo/pom.xml	(révision 16007)
++++ src/web/demo/pom.xml	(copie de travail)
+@@ -10,13 +10,13 @@
+   <parent>
+     <groupId>org.geoserver</groupId>    
+     <artifactId>web</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+ 
+   <groupId>org.geoserver.web</groupId>
+   <artifactId>web-demo</artifactId>
+   <packaging>jar</packaging>
+-  <version>2.1.0</version>
++  <version>2.1.0-georchestra</version>
+   <name>Demoes Module</name>
+   
+   <dependencies>
+Index: src/web/wms/pom.xml
+===================================================================
+--- src/web/wms/pom.xml	(révision 16007)
++++ src/web/wms/pom.xml	(copie de travail)
+@@ -7,13 +7,13 @@
+   <parent>
+     <groupId>org.geoserver</groupId>    
+     <artifactId>web</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+ 
+   <groupId>org.geoserver.web</groupId>
+   <artifactId>web-wms</artifactId>
+   <packaging>jar</packaging>
+-  <version>2.1.0</version>
++  <version>2.1.0-georchestra</version>
+   <name>WMS UI Module</name>
+   
+   <dependencies>
+Index: src/web/security/src/test/java/org/geoserver/web/security/service/ServiceAccessRulePageTest.java
+===================================================================
+--- src/web/security/src/test/java/org/geoserver/web/security/service/ServiceAccessRulePageTest.java	(révision 16007)
++++ src/web/security/src/test/java/org/geoserver/web/security/service/ServiceAccessRulePageTest.java	(copie de travail)
+@@ -14,7 +14,7 @@
+     protected void setUpInternal() throws Exception {
+         dao = ServiceAccessRuleDAO.get();
+         dao.getRules();
+-        rule = new ServiceAccessRule("wms", "GetMap", "ROLE_ADMINISTRATOR");
++        rule = new ServiceAccessRule("wms", "GetMap", "ROLE_SV_ADMIN");
+         dao.addRule(rule);
+         login();
+         tester.startPage(ServiceAccessRulePage.class);
+Index: src/web/security/src/main/java/org/geoserver/web/security/user/UserListProvider.java
+===================================================================
+--- src/web/security/src/main/java/org/geoserver/web/security/user/UserListProvider.java	(révision 16007)
++++ src/web/security/src/main/java/org/geoserver/web/security/user/UserListProvider.java	(copie de travail)
+@@ -75,7 +75,7 @@
+ 
+         public Object getPropertyValue(User item) {
+             for (GrantedAuthority ga : item.getAuthorities()) {
+-                if(ga.getAuthority().equals("ROLE_ADMINISTRATOR"))
++                if(ga.getAuthority().equals("ROLE_SV_ADMIN"))
+                     return true;
+             }
+             return false;
+Index: src/web/security/pom.xml
+===================================================================
+--- src/web/security/pom.xml	(révision 16007)
++++ src/web/security/pom.xml	(copie de travail)
+@@ -7,13 +7,13 @@
+ 	<parent>
+ 		<groupId>org.geoserver</groupId>
+ 		<artifactId>web</artifactId>
+-		<version>2.1.0</version>
++		<version>2.1.0-georchestra</version>
+ 	</parent>
+ 
+ 	<groupId>org.geoserver.web</groupId>
+ 	<artifactId>web-security</artifactId>
+ 	<packaging>jar</packaging>
+-	<version>2.1.0</version>
++	<version>2.1.0-georchestra</version>
+ 	<name>Security UI Module</name>
+ 
+ 	<dependencies>
+Index: src/web/core/src/test/java/org/geoserver/web/GeoServerWicketTestSupport.java
+===================================================================
+--- src/web/core/src/test/java/org/geoserver/web/GeoServerWicketTestSupport.java	(révision 16007)
++++ src/web/core/src/test/java/org/geoserver/web/GeoServerWicketTestSupport.java	(copie de travail)
+@@ -46,7 +46,7 @@
+             "admin",
+             "geoserver",
+             new GrantedAuthority[]{
+-                new GrantedAuthorityImpl("ROLE_ADMINISTRATOR")
++                new GrantedAuthorityImpl("ROLE_SV_ADMIN")
+             }
+             )
+         );
+Index: src/web/core/src/main/java/org/geoserver/web/GeoServerHomePage.java
+===================================================================
+--- src/web/core/src/main/java/org/geoserver/web/GeoServerHomePage.java	(révision 16007)
++++ src/web/core/src/main/java/org/geoserver/web/GeoServerHomePage.java	(copie de travail)
+@@ -112,7 +112,7 @@
+             return false;
+         
+         for (GrantedAuthority authority : authentication.getAuthorities()) {
+-            if ("ROLE_ADMINISTRATOR".equals(authority.getAuthority()))
++            if ("ROLE_SV_ADMIN".equals(authority.getAuthority()))
+                 return true;
+         }
+         return false;
+Index: src/web/core/src/main/java/org/geoserver/web/AdminComponentAuthorizer.java
+===================================================================
+--- src/web/core/src/main/java/org/geoserver/web/AdminComponentAuthorizer.java	(révision 16007)
++++ src/web/core/src/main/java/org/geoserver/web/AdminComponentAuthorizer.java	(copie de travail)
+@@ -19,7 +19,7 @@
+             return false;
+ 
+         for (GrantedAuthority authority : authentication.getAuthorities()) {
+-            if ("ROLE_ADMINISTRATOR".equals(authority.getAuthority()))
++            if ("ROLE_SV_ADMIN".equals(authority.getAuthority()))
+                 return true;
+         }
+         return false;
+Index: src/web/core/pom.xml
+===================================================================
+--- src/web/core/pom.xml	(révision 16007)
++++ src/web/core/pom.xml	(copie de travail)
+@@ -7,13 +7,13 @@
+   <parent>
+     <groupId>org.geoserver</groupId>    
+     <artifactId>web</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+ 
+   <groupId>org.geoserver.web</groupId>
+   <artifactId>web-core</artifactId>
+   <packaging>jar</packaging>
+-  <version>2.1.0</version>
++  <version>2.1.0-georchestra</version>
+   <name>Core UI Module</name>
+   
+   <dependencies>
+Index: src/web/pom.xml
+===================================================================
+--- src/web/pom.xml	(révision 16007)
++++ src/web/pom.xml	(copie de travail)
+@@ -7,13 +7,13 @@
+   <parent>
+     <groupId>org.geoserver</groupId>    
+     <artifactId>geoserver</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+ 
+   <groupId>org.geoserver</groupId>
+   <artifactId>web</artifactId>
+   <packaging>pom</packaging>
+-  <version>2.1.0</version>
++  <version>2.1.0-georchestra</version>
+   <name>GeoServer Web Modules</name>
+   
+   <build>
+Index: src/web/wcs/pom.xml
+===================================================================
+--- src/web/wcs/pom.xml	(révision 16007)
++++ src/web/wcs/pom.xml	(copie de travail)
+@@ -7,13 +7,13 @@
+   <parent>
+     <groupId>org.geoserver</groupId>    
+     <artifactId>web</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+ 
+   <groupId>org.geoserver.web</groupId>
+   <artifactId>web-wcs</artifactId>
+   <packaging>jar</packaging>
+-  <version>2.1.0</version>
++  <version>2.1.0-georchestra</version>
+   <name>WCS UI Module</name>
+   
+   <dependencies>
+Index: src/rest/pom.xml
+===================================================================
+--- src/rest/pom.xml	(révision 16007)
++++ src/rest/pom.xml	(copie de travail)
+@@ -8,7 +8,7 @@
+   <parent>
+     <groupId>org.geoserver</groupId> 
+     <artifactId>geoserver</artifactId>
+-    <version>2.1.0</version>
++    <version>2.1.0-georchestra</version>
+   </parent>
+ 
+   <groupId>org.geoserver</groupId>
+@@ -16,6 +16,19 @@
+   <packaging>jar</packaging>
+   <name>REST Support Module</name>
+ 
++   <repositories>
++      <repository>
++         <id>codehaus</id>
++         <name>codehaus</name>
++         <url>http://repository.codehaus.org/</url>
++      </repository>
++      <repository>
++         <id>restlet</id>
++         <name>restlet</name>
++         <url>http://maven.restlet.org/</url>
++      </repository>
++   </repositories>
++
+   <dependencies>
+     <dependency>
+       <groupId>org.geoserver</groupId>
