@@ -13,6 +13,9 @@
 .config-layers {
     background-image: url(../img/famfamfam/cog.gif) !important;
 }
+.ogc-server {
+    background-image: url(../img/geosilk/server_map.png) !important;
+}
 .home {
     background-image: url(../img/famfamfam/house.png) !important;
 }
