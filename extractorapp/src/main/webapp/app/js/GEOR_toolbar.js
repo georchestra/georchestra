@@ -94,18 +94,7 @@ GEOR.toolbar = (function() {
         }));
 
         items.push('->');
-
-        // insert a login or logout link in the toolbar
-        var login_html = '<div style="margin-right:1em;margin-right:1em;font:11px tahoma,verdana,helvetica;"><a href="' + GEOR.config.LOGIN_URL +
-            '" style="text-decoration:none;" onclick="return GEOR.toolbar.confirmLogin()">Connexion</a></div>';
-        if(!GEOR.data.anonymous) {
-            login_html = '<div style="margin-right:1em;margin-right:1em;font:11px tahoma,verdana,helvetica;">'+GEOR.data.username + '&nbsp;<a href="' + GEOR.config.LOGOUT_URL +
-                '" style="text-decoration:none;">déconnexion</a></div>';
-        }
-        items.push(Ext.DomHelper.append(Ext.getBody(), login_html));
-
-        items.push("-");
-
+        
         items.push({
             text: "Aide",
             tooltip: "Afficher l'aide",
@@ -117,6 +106,22 @@ GEOR.toolbar = (function() {
                 }
             }
         });
+        items.push("-");
+
+        // insert a login or logout link in the toolbar
+        items.push(
+            Ext.DomHelper.append(Ext.getBody(), 
+                GEOR.data.anonymous ?
+                    '<div class="login"><a href="' + GEOR.config.LOGIN_URL +
+                    '" class="nounderline" onclick="return GEOR.toolbar.confirmLogin()">'+
+                    'Connexion</a></div>' :
+                    '<div class="login">'+GEOR.data.username + 
+                    '&nbsp;<a href="' + GEOR.config.LOGOUT_URL +
+                    '" class="nounderline">déconnexion</a></div>'
+            )
+        );
+
+        
 
         return items;
     };

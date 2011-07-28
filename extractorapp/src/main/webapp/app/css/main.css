@@ -128,3 +128,12 @@
     height:20px !important;
     width:20px !important;
 }
+
+.login {
+	margin: 0 .5em;
+	font: 11px tahoma,verdana,helvetica;	
+}
+
+.nounderline {
+	text-decoration: none;	
+}
