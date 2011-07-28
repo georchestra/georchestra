@@ -73,6 +73,12 @@ GEOR.referentials = (function() {
     var cbPanels = [];
     
     /*
+     * Property: formElementSize
+     * {Integer} size in pixels of the form elements
+     */
+    var formElementSize = 160;
+    
+    /*
      * Method: buildTemplate
      * Returns the template suitable for the currently selected layer
      *
@@ -187,12 +193,12 @@ GEOR.referentials = (function() {
         });
     
         return new Ext.form.ComboBox({
-            fieldLabel: 'Couche',
-            emptyText: 'Choisissez une couche',
+            fieldLabel: 'Référentiel',
+            emptyText: 'sélectionnez',
             store: store,
             displayField: 'title',
-            width: 160,
-            listWidth: 160+18,
+            width: formElementSize,
+            listWidth: formElementSize+18,
             triggerAction: "all",
             editable: false,
             listeners: {
@@ -233,8 +239,8 @@ GEOR.referentials = (function() {
             store: store,
             displayField: 'text',
             valueField: 'value',
-            width: 160,
-            listWidth: 160+18,
+            width: formElementSize,
+            listWidth: formElementSize+18,
             triggerAction: "all",
             editable: false,
             listeners: {
@@ -399,16 +405,16 @@ GEOR.referentials = (function() {
         }
 
         var cb = new Ext.form.ComboBox({
-            fieldLabel: 'Aller à',
+            fieldLabel: 'Recentrer sur',
             loadingText: 'Chargement...',
             name: 'nothing',
             mode: 'remote',
             minChars: 2,
             disabled: disabled,
             forceSelection: true,
-            width: 160+18,
+            width: formElementSize,
             queryDelay: 100,
-            listWidth: 160+18,
+            listWidth: formElementSize,
             hideTrigger: true,
             queryParam: 'query', // do not modify
             tpl: buildTemplate(attributes),
@@ -471,6 +477,7 @@ GEOR.referentials = (function() {
         	map = m;
             namespace = ns;
             buffer = GEOR.config.DEFAULT_BUFFER_VALUE;
+            var labelWidth = 85;
             
             comboPanel = new Ext.Panel({
                 layout: 'card',
@@ -480,7 +487,7 @@ GEOR.referentials = (function() {
                 defaults: {
                     labelSeparator: ' :',
                     loadingText: 'Chargement...',
-                    labelWidth: 50,
+                    labelWidth: labelWidth,
                     frame: false,
                     border: false
                 },
@@ -506,8 +513,7 @@ GEOR.referentials = (function() {
                     height: 50
                 },{
                     xtype: 'form',
-                    labelWidth: 50,
-                    //height: 20,
+                    labelWidth: labelWidth,
                     region: 'center',
                     labelSeparator: ' :',
                     items: [
