@@ -99,7 +99,8 @@ GEOR.referentials = (function() {
                 "</strong>";
         }
         return new Ext.XTemplate(
-            '<tpl for="."><div class="search-item">'+
+            '<tpl for=".">'+
+            '<div class="search-item {[xindex % 2 === 0 ? "even" : "odd"]}">'+
             s.join(' - ')+'</div></tpl>');
     };
     
@@ -195,10 +196,10 @@ GEOR.referentials = (function() {
         return new Ext.form.ComboBox({
             fieldLabel: 'Référentiel',
             emptyText: 'sélectionnez',
+            forceSelection: true,
             store: store,
             displayField: 'title',
             width: formElementSize,
-            listWidth: formElementSize+18,
             triggerAction: "all",
             editable: false,
             listeners: {
@@ -238,9 +239,9 @@ GEOR.referentials = (function() {
             value: GEOR.config.DEFAULT_BUFFER_VALUE,
             store: store,
             displayField: 'text',
+            forceSelection: true,
             valueField: 'value',
             width: formElementSize,
-            listWidth: formElementSize+18,
             triggerAction: "all",
             editable: false,
             listeners: {
@@ -411,10 +412,11 @@ GEOR.referentials = (function() {
             mode: 'remote',
             minChars: 2,
             disabled: disabled,
+            editable: true,
             forceSelection: true,
+            selectOnFocus: true,
             width: formElementSize,
             queryDelay: 100,
-            listWidth: formElementSize,
             hideTrigger: true,
             queryParam: 'query', // do not modify
             tpl: buildTemplate(attributes),

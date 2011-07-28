@@ -137,3 +137,10 @@
 .nounderline {
 	text-decoration: none;	
 }
+
+.even {
+	background: #F0F0F0
+}
+.odd {
+	background: #FEFFFF
+}
