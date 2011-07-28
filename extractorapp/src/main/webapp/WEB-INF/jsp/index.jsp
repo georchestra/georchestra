@@ -95,7 +95,7 @@
     <c:choose>
         <c:when test='${c.fake}'>
         GEOR.data.services = [
-            /*{
+            {
                 text: "BRGM Risques",
                 owstype: "WMS",
                 owsurl: "http://geoservices.brgm.fr/risques"
@@ -103,9 +103,21 @@
                 text: "Gest'eau",
                 owstype: "WMS",
                 owsurl: "http://gesteau.oieau.fr/service"
-            }*/
+            },{
+                text: "Sivit",
+                owstype: "WMS",
+                owsurl: "http://sd1878-2.sivit.org/geoserver/wms"
+            },{
+                text: "GeoLittoral",
+                owstype: "WMS",
+                owsurl: "http://geolittoral.application.equipement.gouv.fr/wms/metropole"
+            },{
+                text: "BMO/OSM",
+                owstype: "WMS",
+                owsurl: "http://bmo.openstreetmap.fr/ows"
+            }
         ];
-
+/*
         GEOR.data.layers = [
             {
                 layername: "ortho",
@@ -124,7 +136,7 @@
                 owsurl: "http://geoservices.brgm.fr/risques",
                 layername: "BASIAS_LOCALISE"
             }
-        ];
+        ];*/
         // we want all layers unchecked by default
         GEOR.config.LAYERS_CHECKED = false;
         </c:when>

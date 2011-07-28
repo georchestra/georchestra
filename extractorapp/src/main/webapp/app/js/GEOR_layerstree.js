@@ -466,6 +466,7 @@ GEOR.layerstree = (function() {
             
             // NOTE for the future: do not query N times the same server with the same request
             // keep a local db of responses :-)
+            // see http://csm-bretagne.fr/redmine/issues/1928
             GEOR.ows.WMSDescribeLayer(
                 owsinfo.layer.params.LAYERS,
                 {
@@ -476,90 +477,117 @@ GEOR.layerstree = (function() {
                         if(owsinfo.exportinfo == undefined) {
                             owsinfo.exportinfo = {};
                         }
-                        if(records.length > 0) {
-                            owsinfo.exportinfo.owsType = records[0].get("owsType");
-                            owsinfo.exportinfo.owsUrl = records[0].get("owsURL");
-                            owsinfo.exportinfo.layerName = records[0].get("layerName");
-                            owsinfo.exportinfo.layerType = records[0].get("layerType");
+                        if(records.length == 0) {
+                            GEOR.util.infoDialog({
+                                msg: "La couche <b>"+owsinfo.text+"</b> n'est pas disponible.<br/>"+
+                                    "Raison : la requête WMS DescribeLayer sur "+owsinfo.owsurl+" n'a pas permis d'identifier un service d'extraction."
+                            });
+                            checkNullCounter(); // XHR (a)
+                            return;
+                        }
+                        owsinfo.exportinfo.owsType = records[0].get("owsType");
+                        owsinfo.exportinfo.owsUrl = records[0].get("owsURL");
+                        owsinfo.exportinfo.layerName = records[0].get("layerName");
+                        owsinfo.exportinfo.layerType = records[0].get("layerType");
 
-                            if(((owsinfo.exportinfo.owsType == "WFS") ||
-                                (owsinfo.exportinfo.owsType == "WCS")) &&
-                                owsinfo.exportinfo.owsUrl) {
-                                /////////////////////////////////////////////////////////////////////
-                                // Hack to overcome geoserver bug: DescribeLayer request always
-                                // returns WFS (even when the service should be WCS).
-                                // See: https://jira.codehaus.org/browse/GEOS-2631
-                                //
-                                // The hack performs a "ping" request on the service using a WFS
-                                // DescribeFeatureType: if it succeeds, a WFS node is inserted
-                                // in the tree (as normal), and if it fails, then it tries to
-                                // guess the WCS service url, and insert a WCS node in the tree
-                                // only if ping to the new WCS service url succeeds (using a WCS
-                                // DescribeCoverage request).
-                                /////////////////////////////////////////////////////////////////////
-                                    
-                                counter += 1; // une requete XHR (b) en plus est necessaire (WFSDescribeFeatureType)
-                                //console.log('compteur incrémenté de 1 (b) -> '+counter);
-                                
-                                Ext.Ajax.request({
-                                    url: GEOR.ows.WFSDescribeFeatureTypeUrl(
-                                        owsinfo.exportinfo.owsUrl,
-                                        owsinfo.exportinfo.layerName),
-                                    disableCaching: false,
-                                    success: function(response) {
-                                        parentNode.appendChild(new Ext.tree.TreeNode({
-                                            text: ((owsinfo.exportinfo.owsType == 'WCS') ? 'Raster':'Vecteur') + ' - ' + 
-                                                GEOR.util.shortenLayerName(owsinfo.text, 26),
-                                            iconCls: ((owsinfo.exportinfo.owsType == 'WCS') ? 'raster':'vector')+'-layer',
-                                            owsinfo: owsinfo,
-                                            checked: GEOR.config.LAYERS_CHECKED,
-                                            qtip: '<b>'+owsinfo.text+'</b><br/>' + tip,
-                                            leaf: true
-                                        }));
-                                        checkNullCounter(); // XHR (b)
-                                    },
-                                    failure: function(response) {
-                                        var regex = new RegExp("/wfs/WfsDispatcher");
-                                        var wcs_url = owsinfo.exportinfo.owsUrl.replace(regex, "/wcs/WcsDispatcher");
-                                        var wcs_fullurl = GEOR.ows.WCSDescribeCoverageUrl(wcs_url,owsinfo.exportinfo.layerName);
-                                        counter += 1; // une requete XHR (c) en plus est necessaire (WCSDescribeCoverage)
-                                        //console.log('compteur incrémenté de 1 (c) -> '+counter);
-                                        Ext.Ajax.request({
-                                            url: wcs_fullurl,
-                                            disableCaching: false,
-                                            success: function(response) {
-                                                owsinfo.exportinfo.owsUrl = wcs_url;
-                                                owsinfo.exportinfo.owsType = "WCS";
-                                                parentNode.appendChild(new Ext.tree.TreeNode({
-                                                    text: 'Raster - '+GEOR.util.shortenLayerName(owsinfo.text, 26),
-                                                    iconCls: 'raster-layer',
-                                                    owsinfo: owsinfo,
-                                                    checked: GEOR.config.LAYERS_CHECKED,
-                                                    qtip: '<b>'+owsinfo.text+'</b><br/>' + tip,
-                                                    leaf: true
-                                                }));
-                                                checkNullCounter(); // XHR (c)
-                                            },
-                                            failure: function(response) {
-                                                checkNullCounter();  // XHR (c)
-                                                GEOR.util.errorDialog({
-                                                    msg: "Le service d'extraction " + wcs_fullurl + " n'est pas valide."
-                                                });
-                                            },
-                                            scope: this
-                                        });
-                                        checkNullCounter(); // XHR (b)
-                                    },
-                                    scope: this
-                                });
-                            }
+                        if (!(((owsinfo.exportinfo.owsType == "WFS") ||
+                            (owsinfo.exportinfo.owsType == "WCS")) &&
+                            owsinfo.exportinfo.owsUrl)) {
+                            GEOR.util.infoDialog({
+                                msg: "La couche <b>"+owsinfo.text+"</b> n'est pas disponible.<br/>"+
+                                    "Raison : la requête WMS DescribeLayer sur "+owsinfo.owsurl+" n'a pas permis d'identifier un service d'extraction convenable."
+                            });
+                            checkNullCounter(); // XHR (a)
+                            return;
+                        }
+                        
+                        if (owsinfo.exportinfo.owsType == 'WCS') {
+                            parentNode.appendChild(
+                                new Ext.tree.TreeNode({
+                                    text: 'Raster - ' + 
+                                        GEOR.util.shortenLayerName(owsinfo.text, 26),
+                                    iconCls: 'raster-layer',
+                                    owsinfo: owsinfo,
+                                    checked: GEOR.config.LAYERS_CHECKED,
+                                    qtip: '<b>'+owsinfo.text+'</b><br/>' + tip,
+                                    leaf: true
+                                })
+                            );
+                        } else {
+                            /////////////////////////////////////////////////////////////////////
+                            // Hack to overcome a geoserver bug: DescribeLayer request always
+                            // returns WFS (even when the service should be WCS).
+                            // See: https://jira.codehaus.org/browse/GEOS-2631
+                            //
+                            // The hack performs a "ping" request on the service using a WFS
+                            // DescribeFeatureType: if it succeeds, a WFS node is inserted
+                            // in the tree (as normal), and if it fails, then it tries to
+                            // guess the WCS service url, and insert a WCS node in the tree
+                            // only if ping to the new WCS service url succeeds (using a WCS
+                            // DescribeCoverage request).
+                            /////////////////////////////////////////////////////////////////////
+                            counter += 1; // une requete XHR (b) en plus est necessaire (WFSDescribeFeatureType)
+                            //console.log('compteur incrémenté de 1 (b) -> '+counter);
+                            Ext.Ajax.request({
+                                url: GEOR.ows.WFSDescribeFeatureTypeUrl(
+                                    owsinfo.exportinfo.owsUrl,
+                                    owsinfo.exportinfo.layerName),
+                                disableCaching: false,
+                                success: function(response) {
+                                    parentNode.appendChild(new Ext.tree.TreeNode({
+                                        text: 'Vecteur - ' + 
+                                            GEOR.util.shortenLayerName(owsinfo.text, 26),
+                                        iconCls: 'vector-layer',
+                                        owsinfo: owsinfo,
+                                        checked: GEOR.config.LAYERS_CHECKED,
+                                        qtip: '<b>'+owsinfo.text+'</b><br/>' + tip,
+                                        leaf: true
+                                    }));
+                                    checkNullCounter(); // XHR (b)
+                                },
+                                failure: function(response) {
+                                    var regex = new RegExp("/wfs/WfsDispatcher");
+                                    var wcs_url = owsinfo.exportinfo.owsUrl.replace(regex, "/wcs/WcsDispatcher");
+                                    var wcs_fullurl = GEOR.ows.WCSDescribeCoverageUrl(wcs_url,owsinfo.exportinfo.layerName);
+                                    counter += 1; // une requete XHR (c) en plus est necessaire (WCSDescribeCoverage)
+                                    //console.log('compteur incrémenté de 1 (c) -> '+counter);
+                                    Ext.Ajax.request({
+                                        url: wcs_fullurl,
+                                        disableCaching: false,
+                                        success: function(response) {
+                                            owsinfo.exportinfo.owsUrl = wcs_url;
+                                            owsinfo.exportinfo.owsType = "WCS";
+                                            parentNode.appendChild(new Ext.tree.TreeNode({
+                                                text: 'Raster - '+GEOR.util.shortenLayerName(owsinfo.text, 26),
+                                                iconCls: 'raster-layer',
+                                                owsinfo: owsinfo,
+                                                checked: GEOR.config.LAYERS_CHECKED,
+                                                qtip: '<b>'+owsinfo.text+'</b><br/>' + tip,
+                                                leaf: true
+                                            }));
+                                            checkNullCounter(); // XHR (c)
+                                        },
+                                        failure: function(response) {
+                                            checkNullCounter();  // XHR (c)
+                                            GEOR.util.infoDialog({
+                                                msg: "La couche <b>"+owsinfo.text+"</b> n'est pas disponible.<br/>"+
+                                                    "Raison : le service WCS " + wcs_fullurl + " n'est pas valide."
+                                            });
+                                        },
+                                        scope: this
+                                    });
+                                    checkNullCounter(); // XHR (b)
+                                },
+                                scope: this
+                            });
                         }
                         checkNullCounter(); // XHR (a)
                     },
                     failure: function() {
                         checkNullCounter(); // XHR (a)
-                        GEOR.util.errorDialog({
-                            msg: "La requête WMSDescribeLayer sur "+owsinfo.owsurl+" n'a pas abouti"
+                        GEOR.util.infoDialog({
+                            msg: "La couche <b>"+owsinfo.text+"</b> n'est pas disponible.<br/>"+
+                                "Raison : la requête WMS DescribeLayer sur "+owsinfo.owsurl+" n'a pas abouti."
                         });
                     }
                 }
