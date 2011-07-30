@@ -509,7 +509,7 @@ GEOR.referentials = (function() {
                     border: false
                 },
                 items: [{
-                    html: "<span>Le recentrage modifie également l'emprise de la couche sélectionnée, lorsque celle-ci est visible.</span>",
+                    html: "<span>Cet outil permet de calquer l'emprise d'extraction courante sur celle d'une entité de référence.</span>",
                     region: 'north',
                     bodyCssClass: 'paneltext',
                     height: 50
