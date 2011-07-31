@@ -86,7 +86,6 @@ Ext.namespace("GEOR");
          * Initialize the application.
          */
 
-        GEOR.ajaxglobal.init();
         GEOR.waiter.init();
         var map = GEOR.map.create();
         var vectorLayer = GEOR.map.createVectorLayer();
@@ -230,6 +229,8 @@ Ext.namespace("GEOR");
             "recenter": GEOR.layeroptions.setBbox
         });
 
-        GEOR.layerstree.init(map, vectorLayer);
+        // we monitor ajax requests only when the layer tree has finished loading
+        // so that the user is not bothered with useless popups
+        GEOR.layerstree.init(map, vectorLayer, GEOR.ajaxglobal.init);
     });
 })();

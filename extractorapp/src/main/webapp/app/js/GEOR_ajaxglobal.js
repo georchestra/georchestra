@@ -172,5 +172,6 @@ GEOR.ajaxglobal = (function() {
                 scope: this
             });
         }
+        
     };
 })();

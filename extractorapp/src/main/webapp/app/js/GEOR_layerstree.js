@@ -87,7 +87,13 @@ GEOR.layerstree = (function() {
      * {Integer} maximum number of chars for layer name
      */
     var maxLayerNameLength = 30;
-
+    
+    /**
+     * Property: callback
+     * {Function} to be executed when all layers have finished loading
+     */
+    var callback;
+    
     /**
      * Property: observable
      * {Ext.util.Obervable}
@@ -265,6 +271,7 @@ GEOR.layerstree = (function() {
         //console.log('compteur décrémenté de 1 -> '+counter);
         if (counter === 0) {
             mask.hide();
+            callback && callback.call();
         }
     };
 
@@ -852,10 +859,12 @@ GEOR.layerstree = (function() {
          * Parameters:
          * m - {OpenLayers.Map} The map instance.
          * v - {OpenLayers.Layer.Vector} The vector layer.
+         * c - {Function} the callback to execute once all layers have finished loading
          */
-        init: function(m, v) {
+        init: function(m, v, c) {
             map = m;
             vectorLayer = v;
+            callback = c;
 
             globalPropertiesNode = new Ext.tree.TreeNode({
                 text: "Paramètres par défaut",
