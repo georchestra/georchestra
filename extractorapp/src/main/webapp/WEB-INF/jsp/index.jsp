@@ -115,13 +115,29 @@
                 text: "BMO/OSM",
                 owstype: "WMS",
                 owsurl: "http://bmo.openstreetmap.fr/ows"
+            },{
+                text: "BMO/OSM",
+                owstype: "WFS",
+                owsurl: "http://bmo.openstreetmap.fr/ows"
+            }, {
+                text: "BMO/OSM fake",
+                owstype: "WMS",
+                owsurl: "http://bmo.openstreetmap.fr/ows2"
             }
         ];
-/*
+
         GEOR.data.layers = [
             {
                 layername: "ortho",
                 owstype: "WMS",
+                owsurl: "http://bmo.openstreetmap.fr/ows"
+            }, {
+                layername: "fake layer",
+                owstype: "WFS",
+                owsurl: "http://bmo.openstreetmap.fr/ows"
+            },{
+                layername: "voies",
+                owstype: "WFS",
                 owsurl: "http://bmo.openstreetmap.fr/ows"
             },{
                 owstype: "WMS",
@@ -136,7 +152,7 @@
                 owsurl: "http://geoservices.brgm.fr/risques",
                 layername: "BASIAS_LOCALISE"
             }
-        ];*/
+        ];
         // we want all layers unchecked by default
         GEOR.config.LAYERS_CHECKED = false;
         </c:when>

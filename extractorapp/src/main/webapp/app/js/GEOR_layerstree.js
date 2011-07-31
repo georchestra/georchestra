@@ -63,6 +63,18 @@ GEOR.layerstree = (function() {
      * {Ext.tree.AsyncTreeNode} The root tree node.
      */
     var rootNode;
+    
+    /**
+     * Property: servicesNode
+     * {Ext.tree.AsyncTreeNode} The "OGC services" tree node.
+     */
+    var servicesNode;
+    
+    /**
+     * Property: layersNode
+     * {Ext.tree.AsyncTreeNode} The "Single layers" tree node.
+     */
+    var layersNode;
 
     /**
      * Property: globalPropertiesNode
@@ -96,7 +108,13 @@ GEOR.layerstree = (function() {
          * Event: beforeextract
          * Fires before extraction is performed
          */
-        "beforeextract");
+        "beforeextract",
+        /**
+         * Event: loaderror
+         * Fires each time an error occurs during layer/service check
+         */
+        "loaderror"
+    );
 
     /**
      * Property: selectionModel
@@ -153,6 +171,9 @@ GEOR.layerstree = (function() {
                     if (owsinfo.layer.CLASS_NAME != "OpenLayers.Layer") {
                         map.addLayer(owsinfo.layer);
                     }
+                    
+                    // TODO: find a way to override strategy (a box strategy might be better than a fixed one, 
+                    // since the max number of retrievable features is set)
 
                     // if layer has a strategy then activate it
                     if(owsinfo.layer.strategies && (owsinfo.layer.strategies.length == 1)) {
@@ -230,7 +251,7 @@ GEOR.layerstree = (function() {
      *      append children nodes.
      */
     var appendNodesFromLayerList = function(layersInfo, parentNode) {
-        Ext.each(layersInfo, function(item, index, allItems) {
+        Ext.each(layersInfo, function(item) {
             if(item.owstype == "WMS") {
                 appendNodesFromWMSCap(item, parentNode);
             } else if (item.owstype == "WFS") {
@@ -258,32 +279,22 @@ GEOR.layerstree = (function() {
      *      append children nodes.
      */
     var appendNodesFromServiceList = function(servicesInfo, parentNode) {
+        var nodeBaseConfig = {
+            checked: GEOR.config.LAYERS_CHECKED,
+            expanded: true,
+            children: [],
+            listeners: {"checkchange": checker}
+        };
         Ext.each(servicesInfo, function(item, index, allItems) {
-            var serviceNode = new Ext.tree.AsyncTreeNode({
-                text: item.text,
-                checked: GEOR.config.LAYERS_CHECKED,
-                expanded: true,
-                iconCls: 'ogc-server',
-                qtip: "Service OGC <b>"+item.text+"</b><br/>"+item.owsurl,
-                children: [],
-                listeners: {"checkchange": checker}
-            });
-            new Ext.tree.TreeSorter(serviceNode, {
-                leafAttr: "leaf",
-                dir: "asc",
-                property: "text",
-                caseSensitive: false
-            });
-            parentNode.appendChild(serviceNode);
             if(item.owstype == "WMS") {
-                appendNodesFromWMSCap(item, serviceNode);
+                appendNodesFromWMSCap(item, nodeBaseConfig);
             } else if (item.owstype == "WFS") {
-                appendNodesFromWFSCap(item, serviceNode);
+                appendNodesFromWFSCap(item, nodeBaseConfig);
             }
         });
     };
  
-    var appendNodesFromWFSCap = function(wfsinfo, parentNode) {
+    var appendNodesFromWFSCap = function(wfsinfo, node) {
         GEOR.ows.WFSCapabilities({
             storeOptions: {
                 url: wfsinfo.owsurl,
@@ -294,7 +305,20 @@ GEOR.layerstree = (function() {
                 }
             },
             success: function(store, records) {
-                
+                if (!(node instanceof Ext.tree.TreeNode)) {
+                    var serviceNode = new Ext.tree.AsyncTreeNode(Ext.apply({
+                        text: wfsinfo.text,
+                        qtip: "Service WFS <b>"+wfsinfo.text+"</b><br/>"+wfsinfo.owsurl,
+                        iconCls: 'wfs-server',
+                    }, node));
+                    new Ext.tree.TreeSorter(serviceNode, {
+                        leafAttr: "leaf",
+                        dir: "asc",
+                        property: "text",
+                        caseSensitive: false
+                    });
+                    servicesNode.appendChild(serviceNode);
+                }
                 var appendRecord = function(record) {
                     var owsinfo = {
                         text: record.get("title") || record.get("name"),
@@ -327,8 +351,12 @@ GEOR.layerstree = (function() {
                             });
                         }
                     });
-
-                    appendLayerChild(owsinfo, parentNode);
+                    
+                    if (node instanceof Ext.tree.TreeNode) {
+                        appendLayerChild(owsinfo, node);
+                    } else {
+                        appendLayerChild(owsinfo, serviceNode);
+                    }
                 };
 
                 if(wfsinfo.layername) {
@@ -341,6 +369,22 @@ GEOR.layerstree = (function() {
                     });
                     if(index >= 0) {
                         appendRecord(records[index]);
+                    } else {
+                        layersNode.appendChild(new Ext.tree.TreeNode({
+                            text: GEOR.util.shortenLayerName(wfsinfo.layername, maxLayerNameLength),
+                            disabled: true,
+                            iconCls: 'error-layer',
+                            checked: false,
+                            qtip: "La couche WFS <b>"+wfsinfo.layername+"</b> n'existe pas sur le service spécifié ("+wfsinfo.owsurl+")",
+                            leaf: true
+                        }));
+                        
+                        observable.fireEvent('loaderror', {
+                            service: wfsinfo.owsurl,
+                            layer: wfsinfo.layername,
+                            msg: "Couche non existante"
+                        });
+                        
                     }
                 } else {
                     // append all records
@@ -349,8 +393,20 @@ GEOR.layerstree = (function() {
                 checkNullCounter(); // OK
             },
             failure: function() {
-                GEOR.util.errorDialog({
-                    msg: "La requête WFSCapabilities sur "+wfsinfo.owsurl+" n'a pas abouti"
+                
+                var serviceNode = new Ext.tree.AsyncTreeNode(Ext.applyIf({
+                    text: wfsinfo.text,
+                    iconCls: 'server-error',
+                    checked: false,
+                    disabled: true,
+                    qtip: "Service WFS <b>"+wfsinfo.text+"</b> : non disponible<br/>"+wfsinfo.owsurl,
+                }, node));
+                servicesNode.appendChild(serviceNode);
+                
+                var msg = "La requête WFSCapabilities sur "+wfsinfo.owsurl+" n'a pas abouti";
+                observable.fireEvent('loaderror', {
+                    service: wfsinfo.owsurl,
+                    msg: msg
                 });
                 checkNullCounter(); // OK
             }
@@ -360,7 +416,7 @@ GEOR.layerstree = (function() {
     /**
      * Method: appendNodesFromWMSCap
      */
-    var appendNodesFromWMSCap = function(wmsinfo, parentNode) {
+    var appendNodesFromWMSCap = function(wmsinfo, node) {
         GEOR.ows.WMSCapabilities({
             storeOptions: {
                 url: wmsinfo.owsurl,
@@ -369,6 +425,25 @@ GEOR.layerstree = (function() {
                 }
             },
             success: function(store, records) {
+                var parentNode;
+                if (!(node instanceof Ext.tree.TreeNode)) {
+                    // create service node and append it to services node
+                    var serviceNode = new Ext.tree.AsyncTreeNode(Ext.apply({
+                        text: wmsinfo.text,
+                        qtip: "Service WMS <b>"+wmsinfo.text+"</b><br/>"+wmsinfo.owsurl,
+                        iconCls: 'wms-server',
+                    }, node));
+                    new Ext.tree.TreeSorter(serviceNode, {
+                        leafAttr: "leaf",
+                        dir: "asc",
+                        property: "text",
+                        caseSensitive: false
+                    });
+                    servicesNode.appendChild(serviceNode);
+                    parentNode = serviceNode;
+                } else {
+                    parentNode = layersNode;
+                }
                 
                 var appendRecord = function(record) {
                     var maxExtent, srs;
@@ -400,9 +475,24 @@ GEOR.layerstree = (function() {
                             new OpenLayers.Projection(srs));
                     }
                     if(!(srs && maxExtent)) {
-                        GEOR.util.errorDialog({
-                            msg: "Impossible de trouver une projection supportée " +
-                                 "pour la couche: " + record.get("title")
+                        
+                        // append error node here
+                        parentNode.appendChild(new Ext.tree.TreeNode({
+                            text: GEOR.util.shortenLayerName(wmsinfo.layername, maxLayerNameLength),
+                            disabled: true,
+                            iconCls: 'error-layer',
+                            checked: false,
+                            qtip: "Impossible de trouver une projection supportée " +
+                                 "pour la couche WMS <b>"+wmsinfo.layername+"</b>",
+                            leaf: true
+                        }));
+                        
+                        var msg = "Impossible de trouver une projection supportée " +
+                                 "pour la couche : " + record.get("title");
+                        observable.fireEvent('loaderror', {
+                            service: wmsinfo.owsurl,
+                            layer: record.get("title"),
+                            msg: msg
                         });
                         return;
                     }
@@ -423,10 +513,14 @@ GEOR.layerstree = (function() {
                         projection: srs,
                         maxExtent: maxExtent
                     });
-
-                    appendLayerChild(owsinfo, parentNode);
+                    if (node instanceof Ext.tree.TreeNode) {
+                        appendLayerChild(owsinfo, node);
+                    } else {
+                        appendLayerChild(owsinfo, serviceNode);
+                    }
                 };
 
+                // one layer has been given to us, not the whole service
                 if(wmsinfo.layername) {
                     // look for the layername and append it
                     var index = store.findBy(function(record, id) {
@@ -436,6 +530,23 @@ GEOR.layerstree = (function() {
                     });
                     if(index >= 0) {
                         appendRecord(records[index]);
+                    } else {
+                        
+                        layersNode.appendChild(new Ext.tree.TreeNode({
+                            text: GEOR.util.shortenLayerName(wmsinfo.layername, maxLayerNameLength),
+                            disabled: true,
+                            iconCls: 'error-layer',
+                            checked: false,
+                            qtip: "La couche WMS <b>"+wmsinfo.layername+"</b> n'existe pas sur le service spécifié ("+wmsinfo.owsurl+")",
+                            leaf: true
+                        }));
+                        
+                        observable.fireEvent('loaderror', {
+                            service: wmsinfo.owsurl,
+                            layer: wmsinfo.layername,
+                            msg: "Couche non existante"
+                        });
+
                     }
                 } else {
                     // append all records
@@ -444,8 +555,20 @@ GEOR.layerstree = (function() {
                 checkNullCounter(); // OK
             },
             failure: function() {
-                GEOR.util.errorDialog({
-                    msg: "La requête WMSCapabilities sur "+wmsinfo.owsurl+" n'a pas abouti"
+                
+                var serviceNode = new Ext.tree.AsyncTreeNode(Ext.applyIf({
+                    text: wmsinfo.text,
+                    disabled: true,
+                    checked: false,
+                    iconCls: 'server-error',
+                    qtip: "Service WMS <b>"+wmsinfo.text+"</b> : non disponible<br/>"+wmsinfo.owsurl,
+                }, node));
+                servicesNode.appendChild(serviceNode);
+                
+                var msg = "La requête WMSCapabilities sur "+wmsinfo.owsurl+" n'a pas abouti";
+                observable.fireEvent('loaderror', {
+                    service: wmsinfo.owsurl,
+                    msg: msg
                 });
                 checkNullCounter(); // OK
             }
@@ -484,10 +607,22 @@ GEOR.layerstree = (function() {
                             owsinfo.exportinfo = {};
                         }
                         if(records.length == 0) {
-                            GEOR.util.infoDialog({
-                                msg: "La couche <b>"+owsinfo.text+"</b> n'est pas disponible.<br/>"+
-                                    "Raison : la requête WMS DescribeLayer sur "+owsinfo.owsurl+" n'a pas permis d'identifier un service d'extraction."
+                            
+                            parentNode.appendChild(new Ext.tree.TreeNode({
+                                text: GEOR.util.shortenLayerName(owsinfo.text, maxLayerNameLength),
+                                disabled: true,
+                                iconCls: 'error-layer',
+                                checked: false,
+                                qtip: "La couche <b>"+owsinfo.text+"</b> n'est pas disponible : aucun service d'extraction",
+                                leaf: true
+                            }));
+                            
+                            observable.fireEvent('loaderror', {
+                                service: owsinfo.owsurl,
+                                layer: owsinfo.text,
+                                msg: "Aucun service d'extraction."
                             });
+
                             checkNullCounter(); // XHR (a)
                             return;
                         }
@@ -499,10 +634,22 @@ GEOR.layerstree = (function() {
                         if (!(((owsinfo.exportinfo.owsType == "WFS") ||
                             (owsinfo.exportinfo.owsType == "WCS")) &&
                             owsinfo.exportinfo.owsUrl)) {
-                            GEOR.util.infoDialog({
-                                msg: "La couche <b>"+owsinfo.text+"</b> n'est pas disponible.<br/>"+
-                                    "Raison : la requête WMS DescribeLayer sur "+owsinfo.owsurl+" n'a pas permis d'identifier un service d'extraction convenable."
+
+                            parentNode.appendChild(new Ext.tree.TreeNode({
+                                text: GEOR.util.shortenLayerName(owsinfo.text, maxLayerNameLength),
+                                disabled: true,
+                                iconCls: 'error-layer',
+                                checked: false,
+                                qtip: "La couche <b>"+owsinfo.text+"</b> n'est pas disponible : aucun service d'extraction convenable",
+                                leaf: true
+                            }));
+                                
+                            observable.fireEvent('loaderror', {
+                                service: owsinfo.owsurl,
+                                layer: owsinfo.text,
+                                msg: "Aucun service d'extraction convenable."
                             });
+                            
                             checkNullCounter(); // XHR (a)
                             return;
                         }
@@ -573,10 +720,22 @@ GEOR.layerstree = (function() {
                                         },
                                         failure: function(response) {
                                             checkNullCounter();  // XHR (c)
-                                            GEOR.util.infoDialog({
-                                                msg: "La couche <b>"+owsinfo.text+"</b> n'est pas disponible.<br/>"+
-                                                    "Raison : le service WCS " + wcs_fullurl + " n'est pas valide."
+                                            
+                                            parentNode.appendChild(new Ext.tree.TreeNode({
+                                                text: GEOR.util.shortenLayerName(owsinfo.text, maxLayerNameLength),
+                                                disabled: true,
+                                                iconCls: 'error-layer',
+                                                checked: false,
+                                                qtip: "La couche <b>"+owsinfo.text+"</b> n'est pas disponible : lLe service WCS " + wcs_fullurl + " n'est pas valide",
+                                                leaf: true
+                                            }));
+                                            
+                                            observable.fireEvent('loaderror', {
+                                                service: owsinfo.owsurl,
+                                                layer: owsinfo.text,
+                                                msg: "Le service WCS " + wcs_fullurl + " n'est pas valide."
                                             });
+
                                         },
                                         scope: this
                                     });
@@ -589,9 +748,23 @@ GEOR.layerstree = (function() {
                     },
                     failure: function() {
                         checkNullCounter(); // XHR (a)
-                        GEOR.util.infoDialog({
-                            msg: "La couche <b>"+owsinfo.text+"</b> n'est pas disponible.<br/>"+
-                                "Raison : la requête WMS DescribeLayer sur "+owsinfo.owsurl+" n'a pas abouti."
+                        
+                        var msg = "La couche <b>"+owsinfo.text+"</b> n'est pas disponible : la requête WMS DescribeLayer sur "+owsinfo.owsurl+" n'a pas abouti.";
+                        
+                        parentNode.appendChild(new Ext.tree.TreeNode({
+                            text: GEOR.util.shortenLayerName(owsinfo.text, maxLayerNameLength),
+                            disabled: true,
+                            iconCls: 'error-layer',
+                            checked: false,
+                            qtip: msg,
+                            leaf: true
+                        }));
+                        
+                        
+                        observable.fireEvent('loaderror', {
+                            service: owsinfo.owsurl,
+                            layer: owsinfo.text,
+                            msg: msg
                         });
                     }
                 }
@@ -708,7 +881,7 @@ GEOR.layerstree = (function() {
             rootNode.appendChild([globalPropertiesNode]);
             
             if (GEOR.data.layers && GEOR.data.layers.length) {
-                var layersNode = new Ext.tree.AsyncTreeNode({
+                layersNode = new Ext.tree.AsyncTreeNode({
                     text: "Couches OGC",
                     checked: GEOR.config.LAYERS_CHECKED,
                     expanded: true, // mandatory
@@ -730,7 +903,7 @@ GEOR.layerstree = (function() {
             }
             
             if (GEOR.data.services && GEOR.data.services.length) {
-                var servicesNode = new Ext.tree.AsyncTreeNode({
+                servicesNode = new Ext.tree.AsyncTreeNode({
                     text: "Services OGC",
                     checked: GEOR.config.LAYERS_CHECKED,
                     expanded: true, // mandatory

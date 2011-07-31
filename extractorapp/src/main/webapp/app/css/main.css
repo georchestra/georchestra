@@ -13,8 +13,17 @@
 .config-layers {
     background-image: url(../img/famfamfam/cog.gif) !important;
 }
-.ogc-server {
+.error-layer {
+    background-image: url(../img/geosilk/error.png) !important;
+}
+.wms-server {
     background-image: url(../img/geosilk/server_map.png) !important;
+}
+.wfs-server {
+    background-image: url(../img/geosilk/server_vector.png) !important;
+}
+.server-error {
+    background-image: url(../img/geosilk/server_error.png) !important;
 }
 .home {
     background-image: url(../img/famfamfam/house.png) !important;

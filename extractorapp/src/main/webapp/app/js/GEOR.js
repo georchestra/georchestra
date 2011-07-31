@@ -102,7 +102,7 @@ Ext.namespace("GEOR");
                 region: "center",
                 layout: "border",
                 id: 'layerconfig',
-                title: "Paramètres d'extraction communs à toutes les couches",
+                title: "Paramètres d'extraction appliqués par défaut à toutes les couches du panier",
                 iconCls: 'config-layers',
                 defaults: {
                     defaults: {
@@ -154,7 +154,6 @@ Ext.namespace("GEOR");
                         border: false
                     },                    
                     items: [{
-                        region: "center",
                         layout: "fit",
                         title: "Configuration",
                         items: GEOR.layerstree.create(),
@@ -181,10 +180,8 @@ Ext.namespace("GEOR");
                             }
                         ]
                     }, {
-                        region: "south",
                         layout:"border",
                         title: "Recentrage",
-                        border: false,
                         defaults: {
                             border: false
                         },
@@ -217,7 +214,7 @@ Ext.namespace("GEOR");
                 GEOR.layeroptions.setOptions(options, global);
                 var layerOptionsPanel = Ext.getCmp('layerconfig');
                 if (global) {
-                    layerOptionsPanel.setTitle("Paramètres d'extraction appliqués par défaut à toutes les couches", 'config-layers');
+                    layerOptionsPanel.setTitle("Paramètres d'extraction appliqués par défaut à toutes les couches du panier", 'config-layers');
                 } else {
                     var isRaster = (options.owsType == 'WCS');
                     layerOptionsPanel.setTitle("Paramètres d'extraction spécifiques à la couche "+options.layerName+
