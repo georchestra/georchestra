@@ -96,7 +96,7 @@ GEOR.map = (function() {
                     new OpenLayers.Control.ZoomPanel(),
                     new OpenLayers.Control.Attribution(),
                     new OpenLayers.Control.OutOfRangeLayers({
-                        prefix: "Couche non visible à cette échelle : ",
+                        prefix: "Couche probablement non visible à cette échelle : ",
                         autoActivate: true
                     })
                 ],

@@ -73,6 +73,7 @@
     <script type="text/javascript" src="resources/app/js/GEOR_referentials.js"></script>
     <script type="text/javascript" src="resources/app/js/GEOR_ajaxglobal.js"></script>
     <script type="text/javascript" src="resources/app/js/GEOR.js"></script>
+    <script type="text/javascript" src="resources/app/js/OpenLayers.Control.OutOfRangeLayers.js"></script>
         </c:when>
         <c:otherwise>
     <script type="text/javascript" src="resources/lib/externals/ext/ext-all.js"></script>
