@@ -86,7 +86,7 @@ GEOR.layerstree = (function() {
      * Property: maxLayerNameLength
      * {Integer} maximum number of chars for layer name
      */
-    var maxLayerNameLength = 30;
+    var maxLayerNameLength = 100; //30;
     
     /**
      * Property: callback
@@ -834,7 +834,8 @@ GEOR.layerstree = (function() {
             return {
                 xtype: 'treepanel',
                 root: rootNode,
-                autoScroll: true,
+                autoScroll: Ext.isIE(), // true only for browsers who don't understand CSS3 (~ IE).
+                bodyCssClass: 'overflow-x-hidden', // CSS3 only
                 rootVisible: true,
                 expanded: true, // mandatory
                 loader: {
