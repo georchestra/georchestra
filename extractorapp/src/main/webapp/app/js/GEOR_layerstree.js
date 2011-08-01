@@ -238,7 +238,7 @@ GEOR.layerstree = (function() {
         var r = [];
         var f = function(){
             if(this.attributes.checked && this.isLeaf() && 
-                this.attributes.owsinfo) {
+                this.attributes.owsinfo && !this.disabled) {
                 r.push(!a ? this : (a == 'id' ? this.id : this.attributes[a]));
             }
         };
@@ -455,7 +455,8 @@ GEOR.layerstree = (function() {
                 var appendRecord = function(record) {
                     var maxExtent, srs;
                     var bbox = record.get("bbox");
-                    for(var p in bbox) {
+                    
+                    for(var p in bbox) { // TODO: try to find a better SRS. see http://csm-bretagne.fr/redmine/issues/1949
                         srs = bbox[p].srs;
                         maxExtent = OpenLayers.Bounds.fromArray(bbox[p].bbox);
                         break;
@@ -464,15 +465,17 @@ GEOR.layerstree = (function() {
                         // no bbox found!
                         // we need to build one here...
                         var srslist = record.get("srs");
+                        
                         for (var key in srslist) {
                             if (!srslist.hasOwnProperty(key)) {
                                 continue;
                             }
+                            // TODO: try to find a better SRS. see http://csm-bretagne.fr/redmine/issues/1949
                             if (key != "EPSG:WGS84(DD)" && srslist[key] === true) {
                                 // bug "EPSG:WGS84(DD)" is not a valid srs
                                 // http://jira.codehaus.org/browse/GEOS-3223
                                 // don't take such a layer in account
-                                srs = key
+                                srs = key;
                                 break;
                             }
                         }
@@ -481,6 +484,7 @@ GEOR.layerstree = (function() {
                             new OpenLayers.Projection("EPSG:4326"),
                             new OpenLayers.Projection(srs));
                     }
+                    
                     if(!(srs && maxExtent)) {
                         
                         // append error node here
@@ -875,7 +879,7 @@ GEOR.layerstree = (function() {
                 leaf: true,
                 owsinfo: {
                     layer: new OpenLayers.Layer("fake_layer", { 
-                        projection: GEOR.config.GLOBAL_EPSG,
+                        projection: GEOR.config.GLOBAL_EPSG, // this one is also used as default export SRS
                         maxExtent: GEOR.config.GLOBAL_MAX_EXTENT,
                         maxResolution: "auto",
                         displayInLayerSwitcher: false
@@ -1045,7 +1049,8 @@ GEOR.layerstree = (function() {
         getSelectedLayersCount: function() {
             var count = 0;
             rootNode.cascade(function(n) {
-                if (n.isLeaf() && n.isSelected() && n.parentNode !== rootNode) {
+                if (n.isLeaf() && n.isSelected() && 
+                    n.parentNode !== rootNode && !this.disabled) {
                     count += 1;
                 }
             });
@@ -1061,7 +1066,8 @@ GEOR.layerstree = (function() {
         selectAllLayers: function() {
             var count = 0;
             rootNode.cascade(function(n) {
-                if (n.isLeaf() && !n.isSelected() && n.parentNode !== rootNode) {
+                if (n.isLeaf() && !n.isSelected() && 
+                    n.parentNode !== rootNode && !this.disabled) {
                     count += 1;
                     n.getUI().toggleCheck(true);
                 }
