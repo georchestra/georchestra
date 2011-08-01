@@ -25,7 +25,7 @@
  * @include OpenLayers/Control/Navigation.js
  * @include OpenLayers/Control/MousePosition.js
  * @include OpenLayers/Control/LoadingPanel.js
- * @include OpenLayers/Control/OutOfRangeLayers.js
+ * @include OpenLayers.Control.OutOfRangeLayers.js
  */
 
 Ext.namespace("GEOR");
