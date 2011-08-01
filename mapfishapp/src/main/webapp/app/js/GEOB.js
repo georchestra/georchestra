@@ -13,7 +13,6 @@
  */
 
 /*
- * @include lang/fr.js
  * @include GEOB_map.js
  * @include GEOB_mappanel.js
  * @include GEOB_managelayers.js

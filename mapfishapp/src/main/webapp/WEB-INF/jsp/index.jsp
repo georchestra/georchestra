@@ -68,7 +68,6 @@ if(sec_roles != null) {
     <title lang="fr" dir="ltr">geOrchestra - visualiseur</title>
     <link rel="stylesheet" type="text/css" href="lib/externals/ext/resources/css/ext-all.css" />
     <link rel="stylesheet" type="text/css" href="lib/externals/ext/resources/css/xtheme-gray.css" />
-    <link rel="stylesheet" type="text/css" href="lib/externals/mapfish/mapfish.css" />
     <link rel="stylesheet" type="text/css" href="lib/styler/theme/css/styler.css" />
     <link rel="stylesheet" type="text/css" href="Ext.ux/lib/Ext.ux/widgets/palettecombobox/palettecombobox.ux.css" />
     <link rel="stylesheet" type="text/css" href="Ext.ux/lib/Ext.ux/widgets/colorpicker/color-picker.ux.css" />
@@ -103,8 +102,6 @@ if(sec_roles != null) {
     <script type="text/javascript" src="lib/externals/openlayers/lib/OpenLayers.js"></script>
     <script type="text/javascript" src="lib/externals/openlayers/lib/OpenLayers/Lang/fr.js"></script>
     <script type="text/javascript" src="lib/externals/geoext/lib/GeoExt.js"></script>
-    <script type="text/javascript" src="lib/externals/mapfish/MapFish.js"></script>
-    <script type="text/javascript" src="lib/externals/mapfish/lang/fr.js"></script>
     <script type="text/javascript" src="lib/externals/sandbox/ux/OpenAddressesSearchCombo/lib/GeoExt.ux/OpenAddressesSearchCombo.js"></script>
 
     <script type="text/javascript" src="lib/addins/loadingPanel/trunk/lib/OpenLayers/Control/LoadingPanel.js"></script>
