@@ -198,7 +198,7 @@ GEOR.config = (function() {
 
         /**
          * Constant: GLOBAL_EPSG
-         * Projection of the global layer
+         * SRS of the map used to select the global extraction parameters
          */
         GLOBAL_EPSG: "EPSG:4326",
 

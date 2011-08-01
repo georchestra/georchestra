@@ -25,6 +25,7 @@
  * @include OpenLayers/Control/Navigation.js
  * @include OpenLayers/Control/MousePosition.js
  * @include OpenLayers/Control/LoadingPanel.js
+ * @include OpenLayers/Control/OutOfRangeLayers.js
  */
 
 Ext.namespace("GEOR");
@@ -93,7 +94,11 @@ GEOR.map = (function() {
                     new OpenLayers.Control.Navigation(),
                     new OpenLayers.Control.PanPanel(),
                     new OpenLayers.Control.ZoomPanel(),
-                    new OpenLayers.Control.Attribution()
+                    new OpenLayers.Control.Attribution(),
+                    new OpenLayers.Control.OutOfRangeLayers({
+                        prefix: "Couche non visible à cette échelle : ",
+                        autoActivate: true
+                    })
                 ],
                 theme: null
             });
