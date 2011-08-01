@@ -114,12 +114,7 @@ GEOR.layerstree = (function() {
          * Event: beforeextract
          * Fires before extraction is performed
          */
-        "beforeextract",
-        /**
-         * Event: loaderror
-         * Fires each time an error occurs during layer/service check
-         */
-        "loaderror"
+        "beforeextract"
     );
 
     /**
@@ -385,13 +380,6 @@ GEOR.layerstree = (function() {
                             qtip: "La couche WFS <b>"+wfsinfo.layername+"</b> n'existe pas sur le service spécifié ("+wfsinfo.owsurl+")",
                             leaf: true
                         }));
-                        
-                        observable.fireEvent('loaderror', {
-                            service: wfsinfo.owsurl,
-                            layer: wfsinfo.layername,
-                            msg: "Couche non existante"
-                        });
-                        
                     }
                 } else {
                     // append all records
@@ -409,12 +397,6 @@ GEOR.layerstree = (function() {
                     qtip: "Service WFS <b>"+wfsinfo.text+"</b> : non disponible<br/>"+wfsinfo.owsurl,
                 }, node));
                 servicesNode.appendChild(serviceNode);
-                
-                var msg = "La requête WFSCapabilities sur "+wfsinfo.owsurl+" n'a pas abouti";
-                observable.fireEvent('loaderror', {
-                    service: wfsinfo.owsurl,
-                    msg: msg
-                });
                 checkNullCounter(); // OK
             }
         });
@@ -497,14 +479,6 @@ GEOR.layerstree = (function() {
                                  "pour la couche WMS <b>"+wmsinfo.layername+"</b>",
                             leaf: true
                         }));
-                        
-                        var msg = "Impossible de trouver une projection supportée " +
-                                 "pour la couche : " + record.get("title");
-                        observable.fireEvent('loaderror', {
-                            service: wmsinfo.owsurl,
-                            layer: record.get("title"),
-                            msg: msg
-                        });
                         return;
                     }
 
@@ -551,13 +525,6 @@ GEOR.layerstree = (function() {
                             qtip: "La couche WMS <b>"+wmsinfo.layername+"</b> n'existe pas sur le service spécifié ("+wmsinfo.owsurl+")",
                             leaf: true
                         }));
-                        
-                        observable.fireEvent('loaderror', {
-                            service: wmsinfo.owsurl,
-                            layer: wmsinfo.layername,
-                            msg: "Couche non existante"
-                        });
-
                     }
                 } else {
                     // append all records
@@ -576,11 +543,6 @@ GEOR.layerstree = (function() {
                 }, node));
                 servicesNode.appendChild(serviceNode);
                 
-                var msg = "La requête WMSCapabilities sur "+wmsinfo.owsurl+" n'a pas abouti";
-                observable.fireEvent('loaderror', {
-                    service: wmsinfo.owsurl,
-                    msg: msg
-                });
                 checkNullCounter(); // OK
             }
         });
@@ -628,12 +590,6 @@ GEOR.layerstree = (function() {
                                 leaf: true
                             }));
                             
-                            observable.fireEvent('loaderror', {
-                                service: owsinfo.owsurl,
-                                layer: owsinfo.text,
-                                msg: "Aucun service d'extraction."
-                            });
-
                             checkNullCounter(); // XHR (a)
                             return;
                         }
@@ -654,12 +610,6 @@ GEOR.layerstree = (function() {
                                 qtip: "La couche <b>"+owsinfo.text+"</b> n'est pas disponible : aucun service d'extraction convenable",
                                 leaf: true
                             }));
-                                
-                            observable.fireEvent('loaderror', {
-                                service: owsinfo.owsurl,
-                                layer: owsinfo.text,
-                                msg: "Aucun service d'extraction convenable."
-                            });
                             
                             checkNullCounter(); // XHR (a)
                             return;
@@ -740,12 +690,6 @@ GEOR.layerstree = (function() {
                                                 qtip: "La couche <b>"+owsinfo.text+"</b> n'est pas disponible : lLe service WCS " + wcs_fullurl + " n'est pas valide",
                                                 leaf: true
                                             }));
-                                            
-                                            observable.fireEvent('loaderror', {
-                                                service: owsinfo.owsurl,
-                                                layer: owsinfo.text,
-                                                msg: "Le service WCS " + wcs_fullurl + " n'est pas valide."
-                                            });
 
                                         },
                                         scope: this
@@ -770,13 +714,6 @@ GEOR.layerstree = (function() {
                             qtip: msg,
                             leaf: true
                         }));
-                        
-                        
-                        observable.fireEvent('loaderror', {
-                            service: owsinfo.owsurl,
-                            layer: owsinfo.text,
-                            msg: msg
-                        });
                     }
                 }
             );
