@@ -404,6 +404,7 @@ GEOB.config = (function() {
             "wmsc_url": "wms_url"
             */
             "http://drebretagne-geobretagne.int.lsn.camptocamp.com/geoserver/gwc/service/wms": "http://drebretagne-geobretagne.int.lsn.camptocamp.com/geoserver/wms",
+            "http://osm.geobretagne.fr/service/wms": "http://maps.qualitystreetmap.org/geob_wms",
             "http://geobretagne.fr/geoserver/gwc/service/wms": undefined // no trailing comma
         },
         
