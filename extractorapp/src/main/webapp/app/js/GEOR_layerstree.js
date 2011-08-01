@@ -834,7 +834,7 @@ GEOR.layerstree = (function() {
             return {
                 xtype: 'treepanel',
                 root: rootNode,
-                autoScroll: Ext.isIE(), // true only for browsers who don't understand CSS3 (~ IE).
+                autoScroll: Ext.isIE, // true only for browsers who don't understand CSS3 (~ IE).
                 bodyCssClass: 'overflow-x-hidden', // CSS3 only
                 rootVisible: true,
                 expanded: true, // mandatory
