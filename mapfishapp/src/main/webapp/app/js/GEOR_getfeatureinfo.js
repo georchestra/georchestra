@@ -1,26 +1,26 @@
 /*
  * Copyright (C) Camptocamp
  *
- * This file is part of GeoBretagne
+ * This file is part of geOrchestra
  *
- * GeoBretagne is distributed in the hope that it will be useful,
+ * geOrchestra is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GeoBretagne.  If not, see <http://www.gnu.org/licenses/>.
+ * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
  * @include OpenLayers/Control/WMSGetFeatureInfo.js
  * @include OpenLayers/Format/WMSGetFeatureInfo.js
- * @include GEOB_FeatureDataModel.js
+ * @include GEOR_FeatureDataModel.js
  */
 
-Ext.namespace("GEOB");
+Ext.namespace("GEOR");
 
-GEOB.getfeatureinfo = (function() {
+GEOR.getfeatureinfo = (function() {
 
     /*
      * Private
@@ -60,7 +60,7 @@ GEOB.getfeatureinfo = (function() {
     
     /**
      * Property: model
-     * {GEOB.FeatureDataModel} data model
+     * {GEOR.FeatureDataModel} data model
      */
     var model = null;
     
@@ -78,7 +78,7 @@ GEOB.getfeatureinfo = (function() {
         var features = info.features;
         
         if (!model) {
-            model = new GEOB.FeatureDataModel({
+            model = new GEOR.FeatureDataModel({
                 features: features
             });
         }
@@ -200,7 +200,7 @@ GEOB.getfeatureinfo = (function() {
                 }
                 ctrl = new OpenLayers.Control.WMSGetFeatureInfo({
                     layers: [layer],
-                    maxFeatures: GEOB.config.MAX_FEATURES,
+                    maxFeatures: GEOR.config.MAX_FEATURES,
                     infoFormat: 'application/vnd.ogc.gml'
                 });
                 ctrl.events.on(ctrlEventsConfig);

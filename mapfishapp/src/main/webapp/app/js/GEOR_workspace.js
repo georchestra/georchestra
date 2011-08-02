@@ -1,27 +1,27 @@
 /*
  * Copyright (C) Camptocamp
  *
- * This file is part of GeoBretagne
+ * This file is part of geOrchestra
  *
- * GeoBretagne is distributed in the hope that it will be useful,
+ * geOrchestra is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GeoBretagne.  If not, see <http://www.gnu.org/licenses/>.
+ * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
  * @include OpenLayers/Request/XMLHttpRequest.js
- * @include GEOB_wmc.js
- * @include GEOB_waiter.js
- * @include GEOB_util.js
+ * @include GEOR_wmc.js
+ * @include GEOR_waiter.js
+ * @include GEOR_util.js
  */
 
-Ext.namespace("GEOB");
+Ext.namespace("GEOR");
 
-GEOB.workspace = (function() {
+GEOR.workspace = (function() {
     /*
      * Private
      */
@@ -32,10 +32,10 @@ GEOB.workspace = (function() {
      */
     var saveBtnHandler = function() {
         var formPanel = this.ownerCt;
-        GEOB.waiter.show();
+        GEOR.waiter.show();
         OpenLayers.Request.POST({
             url: "ws/wmc/",
-            data: GEOB.wmc.write({
+            data: GEOR.wmc.write({
                 id: formPanel.getForm().findField('filename').getValue()
             }),
             success: function(response) {
@@ -62,14 +62,14 @@ GEOB.workspace = (function() {
                 formPanel.ownerCt.close();
                 var o = Ext.decode(action.response.responseText);
                 // GET WMC content
-                GEOB.waiter.show();
+                GEOR.waiter.show();
                 OpenLayers.Request.GET({
                     url: o.filepath, 
                     success: function(response) {
                         try {
-                            GEOB.wmc.read(response.responseText);
+                            GEOR.wmc.read(response.responseText);
                         } catch(err) {
-                            GEOB.util.errorDialog({
+                            GEOR.util.errorDialog({
                                 msg: "Le contexte n'est pas valide."
                             });
                         }
@@ -195,11 +195,11 @@ GEOB.workspace = (function() {
                     // top right corner of menu should be aligned with bottom right corner of its parent
                     items: [{
                         text: "Sauvegarder la carte",
-                        iconCls: "geob-save-map",
+                        iconCls: "geor-save-map",
                         handler: saveWMC
                     },{
                         text: "Charger une carte",
-                        iconCls: "geob-load-map",
+                        iconCls: "geor-load-map",
                         handler: loadWMC
                     }]
                 })

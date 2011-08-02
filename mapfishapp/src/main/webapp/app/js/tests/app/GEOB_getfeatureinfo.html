@@ -5,12 +5,12 @@
     <script type="text/javascript" src="../../../../lib/externals/ext/adapter/ext/ext-base.js"></script>
     <script type="text/javascript" src="../../../../lib/externals/ext/ext-all-debug.js"></script>
 
-    <script type="text/javascript" src="../../GEOB_getfeatureinfo.js"></script>
+    <script type="text/javascript" src="../../GEOR_getfeatureinfo.js"></script>
     <script type="text/javascript">
     function test_GuessType(t) {
         t.plan(4);
 
-        var input, o = GEOB.getfeatureinfo.FeatureDataModel.prototype;
+        var input, o = GEOR.getfeatureinfo.FeatureDataModel.prototype;
 
         input = "123456789";
         type = o.guessType(input);

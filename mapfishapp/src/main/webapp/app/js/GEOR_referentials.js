@@ -1,31 +1,31 @@
 /*
  * Copyright (C) Camptocamp
  *
- * This file is part of GeoBretagne
+ * This file is part of geOrchestra
  *
- * GeoBretagne is distributed in the hope that it will be useful,
+ * geOrchestra is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GeoBretagne.  If not, see <http://www.gnu.org/licenses/>.
+ * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
- * @include GEOB_ows.js
- * @include GEOB_util.js
- * @include GEOB_config.js
- * @include GEOB_waiter.js
+ * @include GEOR_ows.js
+ * @include GEOR_util.js
+ * @include GEOR_config.js
+ * @include GEOR_waiter.js
  * @include OpenLayers/Filter/Logical.js
  * @include OpenLayers/Filter/Comparison.js
  * @include GeoExt/data/FeatureStore.js
  * @include GeoExt/data/ProtocolProxy.js
  */
  
-Ext.namespace("GEOB");
+Ext.namespace("GEOR");
 
-GEOB.referentials = (function() {
+GEOR.referentials = (function() {
 
     /*
      * Property: map
@@ -68,7 +68,7 @@ GEOB.referentials = (function() {
         var s = new Array(l);
         for (var i=0;i<l;i++) {
             s[i]="<strong>"+
-                "{[GEOB.util.stringUpperCase(values.feature.attributes."+
+                "{[GEOR.util.stringUpperCase(values.feature.attributes."+
                 items[i]+")]}"+
                 "</strong>";
         }
@@ -110,12 +110,12 @@ GEOB.referentials = (function() {
 
         // check if panel already exists
         if (!cbPanels[idx]) {
-            GEOB.waiter.show();
+            GEOR.waiter.show();
             comboPanel.disable();
             
             var protocol = record.get('layer').protocol;
             
-            var attStore = GEOB.ows.WFSDescribeFeatureType({
+            var attStore = GEOR.ows.WFSDescribeFeatureType({
                 owsURL: protocol.url,
                 typeName: nsAlias + ':' + idx
             }, {
@@ -137,7 +137,7 @@ GEOB.referentials = (function() {
                     cbPanels[idx] = panel;
                 },
                 failure: function() {
-                    GEOB.waiter.hide();
+                    GEOR.waiter.hide();
                 },
                 scope: this
             });
@@ -155,13 +155,13 @@ GEOB.referentials = (function() {
      */
     var createLayerCombo = function() {
 
-        var store = GEOB.ows.WFSCapabilities({
+        var store = GEOR.ows.WFSCapabilities({
             storeOptions: {
-                url: GEOB.config.GEOSERVER_WFS_URL,
+                url: GEOR.config.GEOSERVER_WFS_URL,
                 protocolOptions: {
                     srsName: map.getProjection(),
                     // required so that we do not use the proxy if on same machine:
-                    url: GEOB.config.GEOSERVER_WFS_URL
+                    url: GEOR.config.GEOSERVER_WFS_URL
                 }
             },
             vendorParams: {
@@ -229,7 +229,7 @@ GEOB.referentials = (function() {
         var l = stringAttributes.length;
         // we need to replace accentuated chars by their unaccentuated version
         // and toUpperCase is required, since all the DBF data is UPPERCASED
-        queryString = GEOB.util.stringDeaccentuate(queryString);
+        queryString = GEOR.util.stringDeaccentuate(queryString);
         var filterValue = '*' + queryString.toUpperCase() + '*';
             
         if (l == 1) {

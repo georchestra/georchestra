@@ -1,15 +1,15 @@
 /*
  * Copyright (C) Camptocamp
  *
- * This file is part of GeoBretagne
+ * This file is part of geOrchestra
  *
- * GeoBretagne is distributed in the hope that it will be useful,
+ * geOrchestra is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GeoBretagne.  If not, see <http://www.gnu.org/licenses/>.
+ * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -35,7 +35,7 @@
  * @include GeoExt/plugins/AttributeForm.js
  */
 
-Ext.namespace('GEOB.Editing');
+Ext.namespace('GEOR.Editing');
 
 GeoExt.form.recordToField.TIPTRANSLATIONS = {
     "required": "obligatoire",
@@ -63,7 +63,7 @@ GeoExt.form.recordToField.TIPTRANSLATIONS = {
 
 /**
  */
-GEOB.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
+GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
 
     /**
      * Property: layer
@@ -162,7 +162,7 @@ GEOB.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
         // create vector layer based on the passed protocol
         // and display it
         this.layer = new OpenLayers.Layer.Vector(
-            "GEOB.Editing.LayerEditingPanel", {
+            "GEOR.Editing.LayerEditingPanel", {
             strategies: [
                 new OpenLayers.Strategy.BBOX(), 
                 this.strategy
@@ -201,7 +201,7 @@ GEOB.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
             '->',
             {
                 text: 'Tout annuler',
-                iconCls: 'geob-btn-cancel',
+                iconCls: 'geor-btn-cancel',
                 handler: function() {
                     this.layer.refresh({ force: true });
                     this.lastFeature = null;
@@ -210,7 +210,7 @@ GEOB.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
             },
             {
                 text: 'Synchroniser',
-                iconCls: 'geob-btn-sync',
+                iconCls: 'geor-btn-sync',
                 handler: function() {
                     if (!this.isFeatureDirty()) {
                         if (this.layer.selectedFeatures.length > 0) {
@@ -372,7 +372,7 @@ GEOB.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
             }
         }, this);
 
-        GEOB.Editing.LayerEditingPanel.superclass.initComponent.apply(this, arguments);
+        GEOR.Editing.LayerEditingPanel.superclass.initComponent.apply(this, arguments);
     },
 
     /**
@@ -444,7 +444,7 @@ GEOB.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
         this.map.addControl(this.modifyFeature);
         this.modifyFeature.activate();
 
-        var type = GEOB.ows.getSymbolTypeFromAttributeStore(this.attributeStore);
+        var type = GEOR.ows.getSymbolTypeFromAttributeStore(this.attributeStore);
         var handlerOptions = {};
         var typeName = type.type;
         if (type.multi=='Multi') {
@@ -679,9 +679,9 @@ GEOB.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
         });
         // remove & destroy vector layer
         this.layer.destroy();
-        GEOB.Editing.LayerEditingPanel.superclass.destroy.apply(this, arguments);
+        GEOR.Editing.LayerEditingPanel.superclass.destroy.apply(this, arguments);
     }
 
 });
 
-Ext.reg("geob_layereditingpanel", GEOB.Editing.LayerEditingPanel);
+Ext.reg("geor_layereditingpanel", GEOR.Editing.LayerEditingPanel);

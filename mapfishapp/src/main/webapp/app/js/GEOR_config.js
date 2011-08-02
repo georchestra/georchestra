@@ -1,24 +1,24 @@
 /*
  * Copyright (C) Camptocamp
  *
- * This file is part of GeoBretagne
+ * This file is part of geOrchestra
  *
- * GeoBretagne is distributed in the hope that it will be useful,
+ * geOrchestra is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GeoBretagne.  If not, see <http://www.gnu.org/licenses/>.
+ * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-Ext.namespace("GEOB");
+Ext.namespace("GEOR");
 
-GEOB.config = (function() {
+GEOR.config = (function() {
 
     /**
      * Constant: URL_DEV
-     * {String} The URL to the Camptocamp GeoBretagne dev host.
+     * {String} The URL to the Camptocamp geOrchestra dev host.
      */
     var URL_DEV =
         "http://c2cpc83.camptocamp.com/";
@@ -83,9 +83,9 @@ GEOB.config = (function() {
     var getUrlObj = function(url) {
         url = url || window.location.href;
         if (urlObj === null) {
-            urlObj = OpenLayers.Util.createUrlObject(url,
-                {ignorePort80:true}
-            );
+            urlObj = OpenLayers.Util.createUrlObject(url, {
+                ignorePort80:true
+            });
         }
         return urlObj;
     };
@@ -288,7 +288,7 @@ GEOB.config = (function() {
          * The absolute URL to GeoServer WMS.
          */
         //GEOSERVER_WMS_ABSOLUTE_URL: getAbsoluteBaseURL() + "geoserver/wms",
-        // seems useless now that we have GEOB.config.WMSC2WMS
+        // seems useless now that we have GEOR.config.WMSC2WMS
 
         /**
          * Constant: GEOWEBCACHE_WMS_URL
@@ -350,7 +350,7 @@ GEOB.config = (function() {
          * Constant: DEFAULT_ATTRIBUTION
          * Default attribution for layers which don't have one
          */
-        DEFAULT_ATTRIBUTION: 'GeoBretagne',
+        DEFAULT_ATTRIBUTION: '',
         
         /**
          * Constant: THESAURUS_NAME
@@ -380,22 +380,22 @@ GEOB.config = (function() {
         /**
          * Constant: OVMAP_LAYER_NAME
          * The name of the base layer which will be displayed in the overview map
-         * Note that is must be served by the server at url GEOB.config.GEOSERVER_WMS_URL as image/png
-         * see also GEOB.config.OSM_AS_OVMAP
+         * Note that is must be served by the server at url GEOR.config.GEOSERVER_WMS_URL as image/png
+         * see also GEOR.config.OSM_AS_OVMAP
          */
         OVMAP_LAYER_NAME: "geob_loc:DEPARTEMENT",
 
         /**
          * Constant: OSM_AS_OVMAP
-         * Boolean: if true, use OSM mapnik as overview map baselayer instead of GEOB.config.OVMAP_LAYER_NAME
+         * Boolean: if true, use OSM mapnik as overview map baselayer instead of GEOR.config.OVMAP_LAYER_NAME
          */
         OSM_AS_OVMAP: true,
         
         /**
          * Constant: WMSC2WMS
-         * Hash allowing correspondance between WMS-C server URLs and WMS server URLs
-         * This assumes that layers share the same name
-         * Eventually, GeoBretagne can setup a WMS server configured to consume WMS-C and serve them as WMS ...
+         * Hash allowing correspondance between WMS-C server URLs and WMS server URLs for print
+         * This assumes that layers share the same name on both servers
+         * Eventually, Administrator can setup a mirror WMS server configured to consume WMS-C and serve them as WMS ...
          */
         WMSC2WMS: {
             /*

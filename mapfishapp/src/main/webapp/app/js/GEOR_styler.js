@@ -1,15 +1,15 @@
 /*
  * Copyright (C) Camptocamp
  *
- * This file is part of GeoBretagne
+ * This file is part of geOrchestra
  *
- * GeoBretagne is distributed in the hope that it will be useful,
+ * geOrchestra is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GeoBretagne.  If not, see <http://www.gnu.org/licenses/>.
+ * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -23,15 +23,15 @@
  * @include Styler/Util.js
  * @include Ext.ux/widgets/colorpicker/ext.ux.ColorPicker.js
  * @include Ext.ux/widgets/colorpicker/ext.ux.ColorPickerField.js
- * @include GEOB_ClassificationPanel.js
- * @include GEOB_ows.js
- * @include GEOB_config.js
- * @include GEOB_util.js
+ * @include GEOR_ClassificationPanel.js
+ * @include GEOR_ows.js
+ * @include GEOR_config.js
+ * @include GEOR_util.js
  */
 
-Ext.namespace("GEOB");
+Ext.namespace("GEOR");
 
-GEOB.styler = (function() {
+GEOR.styler = (function() {
     /*
      * Private
      */
@@ -169,7 +169,7 @@ GEOB.styler = (function() {
                 observable.fireEvent(
                     "sldready",
                     wmsLayerRecord,
-                    GEOB.config.MAPFISHAPP_URL + pathToSLD
+                    GEOR.config.MAPFISHAPP_URL + pathToSLD
                 );
             }
             callback.apply(scope, [true]);
@@ -199,7 +199,7 @@ GEOB.styler = (function() {
                     observable.fireEvent(
                         "sldready",
                         wmsLayerRecord,
-                        GEOB.config.MAPFISHAPP_URL + pathToSLD
+                        GEOR.config.MAPFISHAPP_URL + pathToSLD
                     );
                     mask.hide();
                     callback.apply(scope, [true]);
@@ -237,7 +237,7 @@ GEOB.styler = (function() {
      */
     var createSLD = function(rules) {
         if (!validateRules(rules)) {
-            GEOB.util.errorDialog({
+            GEOR.util.errorDialog({
                 msg: "Des classes ne sont pas valides, " +
                      "vérifier que les champs sont corrects"
             });
@@ -511,7 +511,7 @@ GEOB.styler = (function() {
             var idx = attributes.find("name", f.property);
             if (idx > -1) {
                 var rec = attributes.getAt(idx), type = rec.get("type");
-                if (GEOB.util.isStringType(type)) {
+                if (GEOR.util.isStringType(type)) {
                     f.value += "";
                 }
             }
@@ -545,7 +545,7 @@ GEOB.styler = (function() {
             border: false,
             attributes: attributes,
             attributesComboConfig: {
-                tpl: GEOB.util.getAttributesComboTpl()
+                tpl: GEOR.util.getAttributesComboTpl()
             },
             rule: rule,
             nestedFilters: false,
@@ -601,7 +601,7 @@ GEOB.styler = (function() {
      */
     var getSymbolTypeFromFeature = function(callback, scope) {
         var map = wmsLayerRecord.get("layer").map;
-        var protocol = GEOB.ows.WFSProtocol(wfsInfo, map);
+        var protocol = GEOR.ows.WFSProtocol(wfsInfo, map);
         protocol.read({
             maxFeatures: 1,
             callback: function(response) {
@@ -632,10 +632,10 @@ GEOB.styler = (function() {
      */
     var getSymbolTypeFromSchema = function(callback, scope) {
         var cb = function(st, recs, opts) {
-            var type = GEOB.ows.getSymbolTypeFromAttributeStore(st).type;
+            var type = GEOR.ows.getSymbolTypeFromAttributeStore(st).type;
             callback.apply(scope, [type]);
         };
-        GEOB.ows.WFSDescribeFeatureType(wfsInfo, {
+        GEOR.ows.WFSDescribeFeatureType(wfsInfo, {
             extractFeatureNS: true,
             success: cb
         });
@@ -789,7 +789,7 @@ GEOB.styler = (function() {
             layout: "fit",
             border: false,
             items: {
-                xtype: 'geob.classifpanel',
+                xtype: 'geor.classifpanel',
                 attributes: attributes,
                 symbolType: sType,
                 wfsInfo: wfsInfo,
@@ -863,7 +863,7 @@ GEOB.styler = (function() {
          */
         var url = wmsLayerRecord.get("layer").params.SLD;
         if (url) {
-              var path = GEOB.util.getAppRelativePath(url);
+              var path = GEOR.util.getAppRelativePath(url);
               getSLD(path);
         }
 
@@ -970,11 +970,11 @@ GEOB.styler = (function() {
              * initialization of the styler window.
              */
 
-            GEOB.ows.WMSDescribeLayer(layerRecord, {
+            GEOR.ows.WMSDescribeLayer(layerRecord, {
                 success: function(st, recs, opts) {
                     // store the WFS information in a private
                     // attribute of the instance
-                    wfsInfo = GEOB.ows.getWfsInfo(recs);
+                    wfsInfo = GEOR.ows.getWfsInfo(recs);
                     if (!wfsInfo) {
                         giveup([
                             "Opération impossible :",
@@ -983,11 +983,11 @@ GEOB.styler = (function() {
                     } else {
                         mask.msg = "Lecture des attributs de la couche";
                         mask.show();
-                        var store = GEOB.ows.WFSDescribeFeatureType(wfsInfo, {
+                        var store = GEOR.ows.WFSDescribeFeatureType(wfsInfo, {
                             storeOptions: {
                                 // ignore geometry columns
                                 ignore: {
-                                    type : GEOB.ows.matchGeomProperty
+                                    type : GEOR.ows.matchGeomProperty
                                 }
                             },
                             success: function(st, recs, opts) {

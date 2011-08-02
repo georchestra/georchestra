@@ -135,42 +135,41 @@ if(sec_roles != null) {
     <script type="text/javascript" src="lib/styler/lib/Styler/widgets/tips/SliderTip.js"></script>
     <script type="text/javascript" src="lib/styler/lib/Styler/widgets/TextSymbolizer.js"></script>
 
-
-    <script type="text/javascript" src="app/js/GEOB_config.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_config.js"></script>
             <c:choose>
                 <c:when test='${c.edit}'>
-    <script type="text/javascript" src="app/js/GEOB_Editing/GEOB_LayerEditingPanel.js"></script>
-    <script type="text/javascript" src="app/js/GEOB_Editing/GEOB_EditingPanel.js"></script>
-    <script type="text/javascript" src="app/js/GEOB_editing.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_Editing/GEOR_LayerEditingPanel.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_Editing/GEOR_EditingPanel.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_editing.js"></script>
                 </c:when>
                 <c:otherwise>
-    <script type="text/javascript" src="app/js/GEOB_querier.js"></script>
-    <script type="text/javascript" src="app/js/GEOB_styler.js"></script>
-    <script type="text/javascript" src="app/js/GEOB_getfeatureinfo.js"></script>
-    <script type="text/javascript" src="app/js/GEOB_resultspanel.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_querier.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_styler.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_getfeatureinfo.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_resultspanel.js"></script>
                 </c:otherwise>
             </c:choose>
-    <script type="text/javascript" src="app/js/GEOB_util.js"></script>
-    <script type="text/javascript" src="app/js/GEOB_FeatureDataModel.js"></script>
-    <script type="text/javascript" src="app/js/GEOB_ClassificationPanel.js"></script>
-    <script type="text/javascript" src="app/js/GEOB_ows.js"></script>
-    <script type="text/javascript" src="app/js/GEOB_wmc.js"></script>
-    <script type="text/javascript" src="app/js/GEOB_waiter.js"></script>
-    <script type="text/javascript" src="app/js/GEOB_referentials.js"></script>
-    <script type="text/javascript" src="app/js/GEOB_recenter.js"></script>
-    <script type="text/javascript" src="app/js/GEOB_address.js"></script>
-    <script type="text/javascript" src="app/js/GEOB_proj4jsdefs.js"></script>
-    <script type="text/javascript" src="app/js/GEOB_scalecombo.js"></script>
-    <script type="text/javascript" src="app/js/GEOB_toolbar.js"></script>
-    <script type="text/javascript" src="app/js/GEOB_workspace.js"></script>
-    <script type="text/javascript" src="app/js/GEOB_mappanel.js"></script>
-    <script type="text/javascript" src="app/js/GEOB_managelayers.js"></script>
-    <script type="text/javascript" src="app/js/GEOB_layerfinder.js"></script>
-    <script type="text/javascript" src="app/js/GEOB_print.js"></script>
-    <script type="text/javascript" src="app/js/GEOB_map.js"></script>
-    <script type="text/javascript" src="app/js/GEOB_ajaxglobal.js"></script>
-    <script type="text/javascript" src="app/js/GEOB_mapinit.js"></script>
-    <script type="text/javascript" src="app/js/GEOB.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_util.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_FeatureDataModel.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_ClassificationPanel.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_ows.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_wmc.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_waiter.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_referentials.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_recenter.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_address.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_proj4jsdefs.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_scalecombo.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_toolbar.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_workspace.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_mappanel.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_managelayers.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_layerfinder.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_print.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_map.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_ajaxglobal.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_mapinit.js"></script>
+    <script type="text/javascript" src="app/js/GEOR.js"></script>
     <script type="text/javascript" src="https://getfirebug.com/firebug-lite-beta.js"></script>
         </c:when>
         <c:otherwise>
@@ -202,13 +201,13 @@ if(sec_roles != null) {
         OpenLayers.ProxyHost = '<%= proxyHost %>';
         
         // mapfishapp initial state: open a WMC, or a mix of WMS layers and servers
-        GEOB.initstate = ${c.data};
+        GEOR.initstate = ${c.data};
 
     <c:choose>
         <c:when test='<%= anonymous == false %>'>
         // security stuff
-        GEOB.config.ANONYMOUS = false;
-        GEOB.config.USERNAME = "<%=request.getHeader("sec-username") %>";
+        GEOR.config.ANONYMOUS = false;
+        GEOR.config.USERNAME = "<%=request.getHeader("sec-username") %>";
         </c:when>
     </c:choose>
     

@@ -1,27 +1,27 @@
 /*
  * Copyright (C) Camptocamp
  *
- * This file is part of GeoBretagne
+ * This file is part of geOrchestra
  *
- * GeoBretagne is distributed in the hope that it will be useful,
+ * geOrchestra is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GeoBretagne.  If not, see <http://www.gnu.org/licenses/>.
+ * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
- * @include GEOB_ows.js
- * @include GEOB_Editing/GEOB_LayerEditingPanel.js
+ * @include GEOR_ows.js
+ * @include GEOR_Editing/GEOR_LayerEditingPanel.js
  */
 
-Ext.namespace("GEOB.Editing");
+Ext.namespace("GEOR.Editing");
 
 /**
  */
-GEOB.Editing.EditingPanel = Ext.extend(Ext.Panel, {
+GEOR.Editing.EditingPanel = Ext.extend(Ext.Panel, {
 
     /**
      * Property: map
@@ -37,7 +37,7 @@ GEOB.Editing.EditingPanel = Ext.extend(Ext.Panel, {
 
     /**
      * Property: store
-     * {GEOB.ows.WFSCapabilities}
+     * {GEOR.ows.WFSCapabilities}
      */
     store: null,
 
@@ -96,7 +96,7 @@ GEOB.Editing.EditingPanel = Ext.extend(Ext.Panel, {
                 this.items.get(1).layout.activeItem.tearDown();
             }
             if (!this.items.get(1).findById(record.get('name'))) {
-                GEOB.ows.WFSDescribeFeatureType(
+                GEOR.ows.WFSDescribeFeatureType(
                     {
                         owsURL: this.store.url,
                         typeName: this.nsAlias + ":" + record.get('name')
@@ -130,7 +130,7 @@ GEOB.Editing.EditingPanel = Ext.extend(Ext.Panel, {
         }, this);
 
         // call parent initComponent
-        GEOB.Editing.EditingPanel.superclass.initComponent.call(this);  
+        GEOR.Editing.EditingPanel.superclass.initComponent.call(this);  
 
     },
 
@@ -144,7 +144,7 @@ GEOB.Editing.EditingPanel = Ext.extend(Ext.Panel, {
      */
     createLayerEditingPanel: function(name, attributeStore, protocol) {
         var panel = this.items.get(1).add({
-            xtype: "geob_layereditingpanel",
+            xtype: "geor_layereditingpanel",
             map: this.map,
             id: name,
             border: false,
@@ -175,4 +175,4 @@ GEOB.Editing.EditingPanel = Ext.extend(Ext.Panel, {
 
 });
 
-Ext.reg("geob_editingpanel", GEOB.Editing.EditingPanel);
+Ext.reg("geor_editingpanel", GEOR.Editing.EditingPanel);

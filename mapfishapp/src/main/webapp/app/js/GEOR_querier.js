@@ -1,15 +1,15 @@
 /*
  * Copyright (C) Camptocamp
  *
- * This file is part of GeoBretagne
+ * This file is part of geOrchestra
  *
- * GeoBretagne is distributed in the hope that it will be useful,
+ * geOrchestra is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GeoBretagne.  If not, see <http://www.gnu.org/licenses/>.
+ * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -39,14 +39,14 @@
  * @include GeoExt/data/LayerRecord.js
  * @include GeoExt/data/AttributeStore.js
  * @include Styler/widgets/FilterBuilder.js
- * @include GEOB_waiter.js
- * @include GEOB_ows.js
- * @include GEOB_util.js
+ * @include GEOR_waiter.js
+ * @include GEOR_ows.js
+ * @include GEOR_util.js
  */
 
-Ext.namespace("GEOB");
+Ext.namespace("GEOR");
 
-GEOB.querier = (function() {
+GEOR.querier = (function() {
 
     /*
      * Private
@@ -149,7 +149,7 @@ GEOB.querier = (function() {
                 }
             } else if (!(f.value && f.type && 
                 (f.property || f.CLASS_NAME == "OpenLayers.Filter.Spatial"))) {
-                GEOB.util.infoDialog({
+                GEOR.util.infoDialog({
                     msg: "Vous devez remplir les champs des filtres marqués en rouge."
                 });
                 return false;
@@ -178,8 +178,8 @@ GEOB.querier = (function() {
         
         // we need to pass the geometry name at protocol creation, 
         // so that the format has the correct geometryName too.
-        GEOB.ows.WFSProtocol(record, map, {geometryName: geometryName}).read({
-            maxFeatures: GEOB.config.MAX_FEATURES,
+        GEOR.ows.WFSProtocol(record, map, {geometryName: geometryName}).read({
+            maxFeatures: GEOR.config.MAX_FEATURES,
             filter: filter,
             callback: function(response) {
                 // Houston, we've got a pb ...
@@ -201,7 +201,7 @@ GEOB.querier = (function() {
                     return;
                 }
                 
-                var model =  (attStore.getCount() > 0) ? new GEOB.FeatureDataModel({
+                var model =  (attStore.getCount() > 0) ? new GEOR.FeatureDataModel({
                     attributeStore: attStore
                 }) : null;
 
@@ -223,9 +223,9 @@ GEOB.querier = (function() {
      */
     var buildPanel = function(store, records, options) {
 
-        var r = GEOB.ows.getWfsInfo(records);
+        var r = GEOR.ows.getWfsInfo(records);
         if (!r) {
-            GEOB.util.errorDialog({
+            GEOR.util.errorDialog({
                 msg: "Impossible d'obtenir "+
                     " l'adresse de la couche WFS."
             });
@@ -233,20 +233,20 @@ GEOB.querier = (function() {
         }
         
         record = r;
-        GEOB.waiter.show();
+        GEOR.waiter.show();
         
-        attStore = GEOB.ows.WFSDescribeFeatureType(record, {
+        attStore = GEOR.ows.WFSDescribeFeatureType(record, {
             extractFeatureNS: true,
             success: function() {
                 // we get the geometry column name, and remove the corresponding record from store
-                var idx = attStore.find('type', GEOB.ows.matchGeomProperty);
+                var idx = attStore.find('type', GEOR.ows.matchGeomProperty);
                 if (idx > -1) { 
                     // we have a geometry
                     var r = attStore.getAt(idx);
                     geometryName = r.get('name');
                     attStore.remove(r);
                 } else {
-                    GEOB.util.errorDialog({
+                    GEOR.util.errorDialog({
                         msg: "La couche ne possède pas de colonne géométrique."
                     });
                     return;
@@ -255,13 +255,13 @@ GEOB.querier = (function() {
                 observable.fireEvent("ready", {
                     xtype: 'gx_filterbuilder',
                     title: "Requêteur sur "+
-                        GEOB.util.shortenLayerName(layerRecord),
+                        GEOR.util.shortenLayerName(layerRecord),
                     defaultBuilderType: Styler.FilterBuilder.ALL_OF,
                     filterPanelOptions: {
                         attributesComboConfig: {
                             displayField: "name",
                             listWidth: 165,
-                            tpl: GEOB.util.getAttributesComboTpl()
+                            tpl: GEOR.util.getAttributesComboTpl()
                         }
                     },
                     allowGroups: false,
@@ -284,7 +284,7 @@ GEOB.querier = (function() {
                 
             },
             failure: function() {
-                GEOB.util.errorDialog({
+                GEOR.util.errorDialog({
                     msg: "Impossible d'obtenir "+
                         "les caractéristiques de la couche demandée"
                 });
@@ -345,8 +345,8 @@ GEOB.querier = (function() {
                 this.events.fireEvent("showrequest"); 
             } else {
                 // build the querier panel
-                GEOB.waiter.show();
-                GEOB.ows.WMSDescribeLayer(r, {
+                GEOR.waiter.show();
+                GEOR.ows.WMSDescribeLayer(r, {
                     success: function(store, records, options) {
                         layerRecord = r;
                         buildPanel(store, records, options);

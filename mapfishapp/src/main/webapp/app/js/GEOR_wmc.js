@@ -1,15 +1,15 @@
 /*
  * Copyright (C) Camptocamp
  *
- * This file is part of GeoBretagne
+ * This file is part of geOrchestra
  *
- * GeoBretagne is distributed in the hope that it will be useful,
+ * geOrchestra is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GeoBretagne.  If not, see <http://www.gnu.org/licenses/>.
+ * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -17,13 +17,13 @@
  * @include OpenLayers/Format/WMC/v1_0_0.js
  * @include OpenLayers/Format/WMC/v1_1_0.js
  * @include GeoExt/data/WMCReader.js
- * @include GEOB_util.js
- * @include GEOB_ows.js
+ * @include GEOR_util.js
+ * @include GEOR_ows.js
  */
 
-Ext.namespace("GEOB");
+Ext.namespace("GEOR");
 
-GEOB.wmc = (function() {
+GEOR.wmc = (function() {
     /*
      * Private
      */
@@ -133,7 +133,7 @@ GEOB.wmc = (function() {
         init: function(ls) {
             layerStore = ls;
             wmcFormat = new OpenLayers.Format.WMC({
-                //layerOptions: GEOB.ows.defaultLayerOptions
+                //layerOptions: GEOR.ows.defaultLayerOptions
                 // why should we apply default layer options and not use those provided by the WMC ?
             });
             wmcReader = new GeoExt.data.WMCReader(
@@ -174,7 +174,7 @@ GEOB.wmc = (function() {
             if(map.getProjection() && (newContext.projection !== map.getProjection())) {
                 // bounding box from wmc does not have the same projection system
                 // as the current map
-                GEOB.util.errorDialog({
+                GEOR.util.errorDialog({
                     msg: "Le fichier .wmc ne peut pas être restauré. Son système de " +
                         "référence spatiale est différent de celui de la carte en cours."
                 });

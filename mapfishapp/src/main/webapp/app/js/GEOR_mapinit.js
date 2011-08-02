@@ -1,29 +1,29 @@
 /*
  * Copyright (C) Camptocamp
  *
- * This file is part of GeoBretagne
+ * This file is part of geOrchestra
  *
- * GeoBretagne is distributed in the hope that it will be useful,
+ * geOrchestra is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GeoBretagne.  If not, see <http://www.gnu.org/licenses/>.
+ * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
- * @include GEOB_wmc.js
- * @include GEOB_config.js
- * @include GEOB_ows.js
- * @include GEOB_waiter.js
+ * @include GEOR_wmc.js
+ * @include GEOR_config.js
+ * @include GEOR_ows.js
+ * @include GEOR_waiter.js
  * @include GeoExt/data/LayerRecord.js
  * @include GeoExt/data/WMSCapabilitiesReader.js
  */
 
-Ext.namespace("GEOB");
+Ext.namespace("GEOR");
 
-GEOB.mapinit = (function() {
+GEOR.mapinit = (function() {
     /*
      * Private
      */
@@ -36,7 +36,7 @@ GEOB.mapinit = (function() {
     
     /**
      * Property: initState
-     * {Array} shorthand for GEOB.initstate
+     * {Array} shorthand for GEOR.initstate
      */
     var initState = null;
     
@@ -47,22 +47,22 @@ GEOB.mapinit = (function() {
      * Parameters:
      * wmcUrl - {String} The WMC document URL.
      * resetMap - {String} Specifies if resetMap must be passed to
-     *            the GEOB.wmc.read function.
+     *            the GEOR.wmc.read function.
      * callback - {Function} Callback function to be called once the
                   WMC is read.
      */
     var updateStoreFromWMC = function(wmcUrl, resetMap, callback) {
-        GEOB.waiter.show();
+        GEOR.waiter.show();
         OpenLayers.Request.GET({
             url: wmcUrl,
             success: function(response) {
                 try {
-                    GEOB.wmc.read(response.responseText, resetMap);
+                    GEOR.wmc.read(response.responseText, resetMap);
                     if (callback) {
                         callback();
                     }
                 } catch(err) {
-                    GEOB.util.errorDialog({
+                    GEOR.util.errorDialog({
                         msg: "Le contexte n'est pas valide."
                     });
                 }
@@ -75,7 +75,7 @@ GEOB.mapinit = (function() {
      * Convenience method for getting unique WMS server URLs 
      *
      * Parameters:
-     * initState - {Array} GEOB.initstate array
+     * initState - {Array} GEOR.initstate array
      *
      * Returns:
      * {Object} a hash with keys "WMSLayer" and "WMS" indexing arrays of 
@@ -223,14 +223,14 @@ GEOB.mapinit = (function() {
         });
         if (errors.length) {
             var plural = (errors.length>1) ? "s" : "";
-            GEOB.util.errorDialog({
+            GEOR.util.errorDialog({
                 title: errors.length + " couche" + plural + " non importée" + plural,
                 msg: "Les couches nommées " + errors.join(', ') + 
                     " n'ont pas pu être chargées : SRS incompatible ou couche non existante"
             });
         } else {
             var plural = (count>1) ? "s" : "";
-            GEOB.util.infoDialog({
+            GEOR.util.infoDialog({
                 msg: count + " couche" + plural + " importée" + plural
             });
         }
@@ -249,7 +249,7 @@ GEOB.mapinit = (function() {
     var createStores = function(wmsServers, callback, scope) {
         var count = wmsServers.length;
         var stores = {};
-        GEOB.waiter.show();
+        GEOR.waiter.show();
         
         var capabilitiesCallback = function() {
             count -= 1;
@@ -258,7 +258,7 @@ GEOB.mapinit = (function() {
             }
         };
         Ext.each(wmsServers, function(wmsServerUrl) {
-            stores[wmsServerUrl] = new GEOB.ows.WMSCapabilities({
+            stores[wmsServerUrl] = new GEOR.ows.WMSCapabilities({
                 storeOptions: {
                     url: wmsServerUrl
                 },
@@ -273,7 +273,7 @@ GEOB.mapinit = (function() {
      * Load WMS layers.
      *
      * Parameters:
-     * initState - {Array} GEOB.initstate array
+     * initState - {Array} GEOR.initstate array
      */
     var loadLayers = function(initState) {
         var wmsServers = getUniqueWmsServers(initState);
@@ -293,13 +293,13 @@ GEOB.mapinit = (function() {
         init: function(ls) {
             layerStore = ls;
 
-            if (!GEOB.initstate || GEOB.initstate === null || 
-                !GEOB.initstate[0]) {
+            if (!GEOR.initstate || GEOR.initstate === null || 
+                !GEOR.initstate[0]) {
                 // load default WMC
-                updateStoreFromWMC(GEOB.config.DEFAULT_WMC, true);
+                updateStoreFromWMC(GEOR.config.DEFAULT_WMC, true);
                 return;
             }
-            initState = GEOB.initstate;
+            initState = GEOR.initstate;
             
             // determine whether to load WMC or WMS layers or WMS services
 
@@ -314,7 +314,7 @@ GEOB.mapinit = (function() {
                 // properly configured when adding the other layers
                 // to the map
                 updateStoreFromWMC(
-                    GEOB.config.DEFAULT_WMC, true,
+                    GEOR.config.DEFAULT_WMC, true,
                     function() {
                         loadLayers(initState);
                     }

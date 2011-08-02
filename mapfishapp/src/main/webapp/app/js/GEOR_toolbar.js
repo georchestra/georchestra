@@ -1,15 +1,15 @@
 /*
  * Copyright (C) Camptocamp
  *
- * This file is part of GeoBretagne
+ * This file is part of geOrchestra
  *
- * GeoBretagne is distributed in the hope that it will be useful,
+ * geOrchestra is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GeoBretagne.  If not, see <http://www.gnu.org/licenses/>.
+ * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -25,13 +25,13 @@
  * @include GeoExt/widgets/Action.js
  * @include GeoExt/widgets/LegendPanel.js
  * @include GeoExt/widgets/WMSLegend.js
- * @include GEOB_workspace.js
- * @include GEOB_print.js
+ * @include GEOR_workspace.js
+ * @include GEOR_print.js
  */
 
-Ext.namespace("GEOB");
+Ext.namespace("GEOR");
 
-GEOB.toolbar = (function() {
+GEOR.toolbar = (function() {
     /*
      * Private
      */
@@ -242,17 +242,17 @@ GEOB.toolbar = (function() {
             },
             autoScroll: true
         });
-        GEOB.print.setLegend(legendPanel);
+        GEOR.print.setLegend(legendPanel);
 
-        items.push(GEOB.print.getAction());
+        items.push(GEOR.print.getAction());
 
         items.push('->');
 
         // insert a login or logout link in the toolbar
-        var login_html = '<div style="margin-right:1em;font:11px tahoma,verdana,helvetica;"><a href="' + GEOB.config.LOGIN_URL +
-            '" style="text-decoration:none;" onclick="return GEOB.toolbar.confirmLogin()">Connexion</a></div>';
-        if(!GEOB.config.ANONYMOUS) {
-            login_html = '<div style="margin-right:1em;font:11px tahoma,verdana,helvetica;">'+GEOB.config.USERNAME + '&nbsp;<a href="' + GEOB.config.LOGOUT_URL +
+        var login_html = '<div style="margin-right:1em;font:11px tahoma,verdana,helvetica;"><a href="' + GEOR.config.LOGIN_URL +
+            '" style="text-decoration:none;" onclick="return GEOR.toolbar.confirmLogin()">Connexion</a></div>';
+        if(!GEOR.config.ANONYMOUS) {
+            login_html = '<div style="margin-right:1em;font:11px tahoma,verdana,helvetica;">'+GEOR.config.USERNAME + '&nbsp;<a href="' + GEOR.config.LOGOUT_URL +
                 '" style="text-decoration:none;">déconnexion</a></div>';
         }
         items.push(Ext.DomHelper.append(Ext.getBody(), login_html));
@@ -302,7 +302,7 @@ GEOB.toolbar = (function() {
             }
         });
 
-        items.push(GEOB.workspace.create());
+        items.push(GEOR.workspace.create());
 
         // this is a bit unusual to set the buttons in the
         // toolbar afterwards the creation of the toolbar,

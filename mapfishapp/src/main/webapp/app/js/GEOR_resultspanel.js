@@ -1,15 +1,15 @@
 /*
  * Copyright (C) Camptocamp
  *
- * This file is part of GeoBretagne
+ * This file is part of geOrchestra
  *
- * GeoBretagne is distributed in the hope that it will be useful,
+ * geOrchestra is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GeoBretagne.  If not, see <http://www.gnu.org/licenses/>.
+ * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -22,16 +22,16 @@
  * @include OpenLayers/Renderer/SVG.js
  * @include OpenLayers/Renderer/VML.js
  * @include OpenLayers/Control/SelectFeature.js
- * @include GEOB_waiter.js
- * @include GEOB_ajaxglobal.js
- * @include GEOB_config.js
- * @include GEOB_util.js
- * @include GEOB_FeatureDataModel.js
+ * @include GEOR_waiter.js
+ * @include GEOR_ajaxglobal.js
+ * @include GEOR_config.js
+ * @include GEOR_util.js
+ * @include GEOR_FeatureDataModel.js
  */
 
-Ext.namespace("GEOB");
+Ext.namespace("GEOR");
 
-GEOB.resultspanel = (function() {
+GEOR.resultspanel = (function() {
 
     /*
      * Private
@@ -66,7 +66,7 @@ GEOB.resultspanel = (function() {
     
     /**
      * Property: model
-     * {GEOB.FeatureDataModel} data model
+     * {GEOR.FeatureDataModel} data model
      */
     var model = null;
     
@@ -85,7 +85,7 @@ GEOB.resultspanel = (function() {
         if (t === 0) {
             return;
         }
-        GEOB.waiter.show();
+        GEOR.waiter.show();
         var data = new Array(t), att;
         for (var i=0; i<t; i++) {
             data[i] = [];
@@ -174,10 +174,10 @@ GEOB.resultspanel = (function() {
         var plural = (c>1) ? "s" : "";
         
         var tbtext = new Ext.Toolbar.TextItem({
-            text: (c == GEOB.config.MAX_FEATURES) ? 
+            text: (c == GEOR.config.MAX_FEATURES) ? 
                 ' <span ext:qtip="Utilisez un navigateur plus performant '+
                 'pour augmenter le nombre d\'objets affichables">'+
-                'Nombre maximum d\'objets atteint ('+GEOB.config.MAX_FEATURES+')</span>': 
+                'Nombre maximum d\'objets atteint ('+GEOR.config.MAX_FEATURES+')</span>': 
                 c+" résultat"+plural
         });
         
@@ -231,7 +231,7 @@ GEOB.resultspanel = (function() {
                     var record = grid.getStore().getAt(rowIndex);  // Get the Record
                     var fieldName = grid.getColumnModel().getDataIndex(columnIndex); // Get field name
                     var data = record.get(fieldName);
-                    if (data && GEOB.util.isUrl(data)) {
+                    if (data && GEOR.util.isUrl(data)) {
                         window.open(data);
                     }
                 }
@@ -288,7 +288,7 @@ GEOB.resultspanel = (function() {
         
         var features = options.features;
         if (!features || features.length === 0) {
-            GEOB.waiter.hide();
+            GEOR.waiter.hide();
             observable.fireEvent("panel", {
                 bodyStyle: 'padding:1em;',
                 html: '<p>Aucun objet ne correspond à votre requête.</p>'
@@ -305,7 +305,7 @@ GEOB.resultspanel = (function() {
             model = options.model;
         } else {
             // we need to compute the model from the features we got.
-            model = new GEOB.FeatureDataModel({
+            model = new GEOR.FeatureDataModel({
                 features: features
             });
         }

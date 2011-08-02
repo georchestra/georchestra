@@ -1,27 +1,27 @@
 /*
  * Copyright (C) Camptocamp
  *
- * This file is part of GeoBretagne
+ * This file is part of geOrchestra
  *
- * GeoBretagne is distributed in the hope that it will be useful,
+ * geOrchestra is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GeoBretagne.  If not, see <http://www.gnu.org/licenses/>.
+ * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
- * @include GEOB_Editing/GEOB_EditingPanel.js
- * @include GEOB_Editing/GEOB_LayerEditingPanel.js
- * @include GEOB_ows.js
- * @include GEOB_config.js
+ * @include GEOR_Editing/GEOR_EditingPanel.js
+ * @include GEOR_Editing/GEOR_LayerEditingPanel.js
+ * @include GEOR_ows.js
+ * @include GEOR_config.js
  */
 
-Ext.namespace("GEOB");
+Ext.namespace("GEOR");
 
-GEOB.editing = (function() {
+GEOR.editing = (function() {
 
     /*
      * Private
@@ -44,15 +44,15 @@ GEOB.editing = (function() {
          * Create the editing panel.
          *
          * Returns:
-         * {<GEOB.Editing.EditingPanel>} The editing panel config.
+         * {<GEOR.Editing.EditingPanel>} The editing panel config.
          */
         create: function(map) {
-            var store = GEOB.ows.WFSCapabilities({
+            var store = GEOR.ows.WFSCapabilities({
                 storeOptions: {
-                    url: GEOB.config.GEOSERVER_WFS_URL,
+                    url: GEOR.config.GEOSERVER_WFS_URL,
                     protocolOptions: {
                         srsName: map.getProjection(),
-                        url: GEOB.config.GEOSERVER_WFS_URL
+                        url: GEOR.config.GEOSERVER_WFS_URL
                     },
                     layerOptions: {
                         dispayInLayerSwitcher: false
@@ -63,7 +63,7 @@ GEOB.editing = (function() {
                 }
             });
             return {
-                xtype: "geob_editingpanel",
+                xtype: "geor_editingpanel",
                 map: map,
                 store: store,
                 nsAlias: NSALIAS

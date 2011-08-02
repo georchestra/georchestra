@@ -1,15 +1,15 @@
 /*
  * Copyright (C) Camptocamp
  *
- * This file is part of GeoBretagne
+ * This file is part of geOrchestra
  *
- * GeoBretagne is distributed in the hope that it will be useful,
+ * geOrchestra is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GeoBretagne.  If not, see <http://www.gnu.org/licenses/>.
+ * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -20,14 +20,14 @@
  * @include OpenLayers/Filter/Comparison.js
  * @include Ext.ux/widgets/tree/TreeStoreNode.js
  * @include Ext.ux/widgets/tree/XmlTreeLoader.js
- * @include GEOB_ows.js
- * @include GEOB_util.js
- * @include GEOB_config.js
+ * @include GEOR_ows.js
+ * @include GEOR_util.js
+ * @include GEOR_config.js
  */
 
-Ext.namespace("GEOB");
+Ext.namespace("GEOR");
 
-GEOB.layerfinder = (function() {
+GEOR.layerfinder = (function() {
 
     /*
      * Private
@@ -79,7 +79,7 @@ GEOB.layerfinder = (function() {
 
                         metadataURL = null;
                         if (record.identifier && record.identifier[0]) {
-                            metadataURL = GEOB.config.GEONETWORK_URL+
+                            metadataURL = GEOR.config.GEONETWORK_URL+
                                 '/metadata.show?uuid='+ record.identifier[0].value
                             name += ' - <a href="'+metadataURL +
                                 '" target="_blank" onclick="window.open(this.href);return false;">métadonnées</a>';
@@ -132,7 +132,7 @@ GEOB.layerfinder = (function() {
     var appendKeyword = function(tree, keyword) {
         if (!xmlTreeLoader) {
             xmlTreeLoader = new Ext.ux.tree.XmlTreeLoader({
-                url: GEOB.config.GEONETWORK_URL + '/csw',
+                url: GEOR.config.GEONETWORK_URL + '/csw',
                 parseInput: function(treeLoader, treeNode) {
                     var getRecordsFormat = new OpenLayers.Format.CSWGetRecords({
                         maxRecords: 100
@@ -188,7 +188,7 @@ GEOB.layerfinder = (function() {
             }
         }));
 
-        if (!treeSorter && GEOB.config.CSW_GETDOMAIN_SORTING) {
+        if (!treeSorter && GEOR.config.CSW_GETDOMAIN_SORTING) {
             treeSorter = new Ext.tree.TreeSorter(tree, {
                 folderSort: false,
                 caseSensitive: false,
@@ -218,18 +218,18 @@ GEOB.layerfinder = (function() {
     };
 
     /**
-     * Method: buildGeobTree
-     * Creates GeoBretagne keyword list in tree
+     * Method: buildGeorTree
+     * Creates geOrchestra keyword list in tree
      *
      * Parameters:
      * tree - {Ext.tree.TreePanel} the treePanel to append the nodes to
      */
-    var buildGeobTree = function(tree) {
+    var buildGeorTree = function(tree) {
         mask.show();
         cleanTree(tree);
         var getDomainFormat = new OpenLayers.Format.CSWGetDomain();
         OpenLayers.Request.POST({
-            url: GEOB.config.GEONETWORK_URL + '/csw',
+            url: GEOR.config.GEONETWORK_URL + '/csw',
             data: getDomainFormat.write({PropertyName: "subject"}),
             success: function(response) {
                 var r = getDomainFormat.read(response.responseText);
@@ -240,7 +240,7 @@ GEOB.layerfinder = (function() {
             },
             failure: function() {
                 mask.hide();
-                GEOB.util.errorDialog({
+                GEOR.util.errorDialog({
                     msg: "La requête CSW getDomain a échoué"
                 });
             }
@@ -258,13 +258,13 @@ GEOB.layerfinder = (function() {
         mask.show();
         cleanTree(tree);
         if (!key) {
-            GEOB.util.errorDialog({
+            GEOR.util.errorDialog({
                 title: "Erreur sur le thésaurus",
                 msg: "Absence de clé pour accéder à ce thésaurus"
             });
         }
         OpenLayers.Request.GET({
-            url: GEOB.config.GEONETWORK_URL + '/xml.search.keywords',
+            url: GEOR.config.GEONETWORK_URL + '/xml.search.keywords',
             params: {
                 pNewSearch: 'true',
                 pKeyword: '*',
@@ -295,7 +295,7 @@ GEOB.layerfinder = (function() {
             },
             failure: function() {
                 mask.hide();
-                GEOB.util.errorDialog({
+                GEOR.util.errorDialog({
                     msg: "La requête des mots clés a échoué"
                 });
             }
@@ -345,7 +345,7 @@ GEOB.layerfinder = (function() {
         var thesauriStore = new Ext.data.Store({
             autoLoad: true,
             proxy: new Ext.data.HttpProxy({
-                url: GEOB.config.GEONETWORK_URL + '/xml.thesaurus.getList',
+                url: GEOR.config.GEONETWORK_URL + '/xml.thesaurus.getList',
                 method: 'GET',
                 disableCaching: false
             }),
@@ -359,13 +359,13 @@ GEOB.layerfinder = (function() {
                     store.each(function(r) {
                         r.set('name', r.get('name').replace(regexp, ''));
                     });
-                    // ajout du record GEOB.config.THESAURUS_NAME
+                    // ajout du record GEOR.config.THESAURUS_NAME
                     var v = [];
-                    v['name'] = GEOB.config.THESAURUS_NAME;
-                    v['key'] = GEOB.config.THESAURUS_NAME;
+                    v['name'] = GEOR.config.THESAURUS_NAME;
+                    v['key'] = GEOR.config.THESAURUS_NAME;
                     store.add([new recordType(v)]);
 
-                    var defKey = GEOB.config.DEFAULT_THESAURUS_KEY;
+                    var defKey = GEOR.config.DEFAULT_THESAURUS_KEY;
                     combo.setValue(defKey);
                     var r = store.query('key', defKey).first();
                     combo.fireEvent('select', combo, r);
@@ -387,8 +387,8 @@ GEOB.layerfinder = (function() {
             displayField: 'name',
             listeners: {
                 "select": function(combo, record){
-                    if (record.get('key') == GEOB.config.THESAURUS_NAME) {
-                        buildGeobTree(tree);
+                    if (record.get('key') == GEOR.config.THESAURUS_NAME) {
+                        buildGeorTree(tree);
                     } else {
                         buildInspireTree(tree, record.get('key'));
                     }
@@ -441,7 +441,7 @@ GEOB.layerfinder = (function() {
      * {Ext.Panel}
      */
     var createOgcPanel = function(options) {
-        var store = new GEOB.ows.WMSCapabilities();
+        var store = new GEOR.ows.WMSCapabilities();
 
         /**
          * Property: cbxSm
@@ -501,7 +501,7 @@ GEOB.layerfinder = (function() {
                 proxy : new Ext.data.HttpProxy({
                     method: 'GET',
                     disableCaching: false,
-                    url: 'app/js/GEOB_wmslist.js'
+                    url: 'app/js/GEOR_wmslist.js'
                 }),
                 reader: new Ext.data.JsonReader({
                     root: 'servers',
@@ -579,14 +579,14 @@ GEOB.layerfinder = (function() {
                 // we're coming from the geocatalog
                 // convert records to layer records
                 var data = record.data;
-                var store = new GEOB.ows.WMSCapabilities({
+                var store = new GEOR.ows.WMSCapabilities({
                     storeOptions: {
                         url: data.wmsurl
                     },
                     success: function(store, records) {
                         var index = store.find("name", this.layerName);
                         if(index < 0) {
-                            GEOB.util.errorDialog({
+                            GEOR.util.errorDialog({
                                 msg: "La couche n'a pas été trouvée dans le service WMS. " +
                                      "Peut-être n'avez-vous pas les droits d'accès suffisants pour accéder à cette couche."
                             });
@@ -595,7 +595,7 @@ GEOB.layerfinder = (function() {
                         var r = records[index];
                         var srs = this.layerStore.map.getProjection();
                         if(!r.get('srs') || (r.get('srs')[srs] !== true)) {
-                            GEOB.util.errorDialog({
+                            GEOR.util.errorDialog({
                                 msg: "La projection de la couche n'est pas compatible."
                             });
                             return;
@@ -755,8 +755,8 @@ Ext.app.WMSUrlField = Ext.extend(Ext.form.TwinTriggerField, {
             this.onTrigger1Click();
             return;
         }
-        if (!GEOB.util.isUrl(v)) {
-            GEOB.util.errorDialog({
+        if (!GEOR.util.isUrl(v)) {
+            GEOR.util.errorDialog({
                 msg: "URL non conforme."
             });
             return;
@@ -777,7 +777,7 @@ Ext.app.WMSUrlField = Ext.extend(Ext.form.TwinTriggerField, {
                     var notDisplayed = t - store.getCount();
                     if (notDisplayed > 0) {
                         var plural = (notDisplayed > 1) ? 's' : '';
-                        GEOB.util.infoDialog({
+                        GEOR.util.infoDialog({
                            msg: "Le serveur publie "+notDisplayed+
                             " couche"+plural+" dont la projection n'est pas compatible"
                         });

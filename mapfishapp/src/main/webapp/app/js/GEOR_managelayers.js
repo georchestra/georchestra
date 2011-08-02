@@ -1,15 +1,15 @@
 /*
  * Copyright (C) Camptocamp
  *
- * This file is part of GeoBretagne
+ * This file is part of geOrchestra
  *
- * GeoBretagne is distributed in the hope that it will be useful,
+ * geOrchestra is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GeoBretagne.  If not, see <http://www.gnu.org/licenses/>.
+ * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -17,13 +17,13 @@
  * @include GeoExt/widgets/tips/LayerOpacitySliderTip.js
  * @include GeoExt/widgets/LayerOpacitySlider.js
  * @include GeoExt/widgets/tree/LayerContainer.js
- * @include GEOB_layerfinder.js
- * @include GEOB_util.js
+ * @include GEOR_layerfinder.js
+ * @include GEOR_util.js
  */
 
-Ext.namespace("GEOB");
+Ext.namespace("GEOR");
 
-GEOB.managelayers = (function() {
+GEOR.managelayers = (function() {
     /*
      * Private
      */
@@ -34,12 +34,12 @@ GEOB.managelayers = (function() {
      */
     var LayerNode = Ext.extend(GeoExt.tree.LayerNode, {
         constructor: function(config) {
-            config.text = GEOB.util.shortenLayerName(config.layer);
+            config.text = GEOR.util.shortenLayerName(config.layer);
             config.qtip = config.layer.name;
             LayerNode.superclass.constructor.apply(this, [config]);
         }
     });
-    Ext.tree.TreePanel.nodeTypes.geob_layer = LayerNode;
+    Ext.tree.TreePanel.nodeTypes.geor_layer = LayerNode;
 
     /**
      * Property: observable
@@ -88,7 +88,7 @@ GEOB.managelayers = (function() {
             layer.map.raiseLayer(layer, +1);
             break;
         case "delete":
-            GEOB.util.confirmDialog({
+            GEOR.util.confirmDialog({
                 msg: "Voulez-vous réellement supprimer la couche "+
                     layerRecord.get('title')+" ?",
                 width: 360,
@@ -153,7 +153,7 @@ GEOB.managelayers = (function() {
         
         return {
             xtype: 'box',
-            cls: "geob-layers-form-text",
+            cls: "geor-layers-form-text",
             autoEl: {
                 tag: 'span',
                 html: ' | source : '+attrDisplay
@@ -177,7 +177,7 @@ GEOB.managelayers = (function() {
                           " à 1:" + OpenLayers.Number.format(layer.minScale, 0);
         return {
             xtype: 'box',
-            cls: "geob-layers-form-text",
+            cls: "geor-layers-form-text",
             autoEl: {
                 tag: 'span',
                 'ext:qtip': "Plage de visibilité (indicative) :<br />de "+visibilityText,
@@ -200,7 +200,7 @@ GEOB.managelayers = (function() {
         return {
             xtype: 'button',
             disabled: !(layerRecord.get("queryable")),
-            iconCls: 'geob-btn-info',
+            iconCls: 'geor-btn-info',
             allowDepress: false, // false is required here because
                                  // we do not have a default button
                                  // in toggleGroup
@@ -209,7 +209,7 @@ GEOB.managelayers = (function() {
             tooltip: "Interroger les objets de cette couche",
             listeners: {
                 "toggle": function(btn, pressed) {
-                    GEOB.getfeatureinfo.toggle(layerRecord, pressed);
+                    GEOR.getfeatureinfo.toggle(layerRecord, pressed);
                 }
             }
         };
@@ -232,7 +232,7 @@ GEOB.managelayers = (function() {
         if (formats && formats.length) {
             for (var i=0, len=formats.length; i<len; i++) {
                 var value = formats[i].value || formats[i];
-                if (GEOB.config.ACCEPTED_MIME_TYPES.indexOf(value) > -1) {
+                if (GEOR.config.ACCEPTED_MIME_TYPES.indexOf(value) > -1) {
                     formatMenuItems.push(new Ext.menu.CheckItem({
                         text: value,
                         value: value,
@@ -337,7 +337,7 @@ GEOB.managelayers = (function() {
             url = layerRecord.get("metadataURLs")[0];
             url = (url.href) ? url.href : url;
             menuItems.push({
-                iconCls: 'geob-btn-metadata',
+                iconCls: 'geor-btn-metadata',
                 text: "Fiche de métadonnées",
                 listeners: {
                     "click": function(btn, pressed) {
@@ -346,24 +346,24 @@ GEOB.managelayers = (function() {
                 }
             });
         }
-        if (GEOB.styler && queryable) {
+        if (GEOR.styler && queryable) {
             menuItems.push({
-                iconCls: 'geob-btn-style',
+                iconCls: 'geor-btn-style',
                 text: "Editer la symbologie",
                 listeners: {
                     "click": function(btn, pressed) {
-                        GEOB.styler.create(layerRecord);
+                        GEOR.styler.create(layerRecord);
                     }
                 }
             });
         }
-        if (GEOB.querier && queryable) {
+        if (GEOR.querier && queryable) {
             menuItems.push({
-                iconCls: 'geob-btn-query',
+                iconCls: 'geor-btn-query',
                 text: "Construire une requête",
                 listeners: {
                     "click": function(btn, pressed) {
-                        GEOB.querier.create(layerRecord);
+                        GEOR.querier.create(layerRecord);
                     }
                 }
             });
@@ -406,7 +406,7 @@ GEOB.managelayers = (function() {
 
         // buttons in the toolbar
         var buttons = [];
-        if (GEOB.getfeatureinfo) {
+        if (GEOR.getfeatureinfo) {
             buttons.push(createGfiButton(layerRecord));
         }
         buttons = buttons.concat([{
@@ -434,12 +434,12 @@ GEOB.managelayers = (function() {
                 // we use our own class for the panel
                 // body, this is to avoid the white
                 // background of .x-panel-body
-                cls: "geob-tree-layer-panel-body"
+                cls: "geor-tree-layer-panel-body"
             },
             items: [
                 {
                     xtype: "toolbar",
-                    cls: "geob-toolbar",
+                    cls: "geor-toolbar",
                     buttons: buttons
                 }, 
                 formatVisibility(layerRecord), 
@@ -483,8 +483,8 @@ GEOB.managelayers = (function() {
                 layerStore: layerStore,
                 loader: {
                     baseAttrs: {
-                        nodeType: "geob_layer",
-                        cls: "geob-tree-node",
+                        nodeType: "geor_layer",
+                        cls: "geor-tree-node",
                         actions: [{
                             action: "delete",
                             qtip: "supprimer cette couche"
@@ -548,7 +548,7 @@ GEOB.managelayers = (function() {
                     text: 'Ajouter des couches',
                     handler: function() {
                         if (!layerFinder) {
-                            layerFinder = GEOB.layerfinder.create(layerStore);
+                            layerFinder = GEOR.layerfinder.create(layerStore);
                         }
                         layerFinder.show();
                     }

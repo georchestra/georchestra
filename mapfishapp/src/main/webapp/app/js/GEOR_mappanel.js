@@ -1,15 +1,15 @@
 /*
  * Copyright (C) Camptocamp
  *
- * This file is part of GeoBretagne
+ * This file is part of geOrchestra
  *
- * GeoBretagne is distributed in the hope that it will be useful,
+ * geOrchestra is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GeoBretagne.  If not, see <http://www.gnu.org/licenses/>.
+ * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -17,16 +17,16 @@
  * @include OpenLayers/Control/ScaleLine.js
  * @include OpenLayers/Control/LoadingPanel.js
  * @include GeoExt/widgets/MapPanel.js
- * @include GEOB_toolbar.js
- * @include GEOB_scalecombo.js
- * @include GEOB_proj4jsdefs.js
+ * @include GEOR_toolbar.js
+ * @include GEOR_scalecombo.js
+ * @include GEOR_proj4jsdefs.js
  */
 
-Ext.namespace("GEOB");
+Ext.namespace("GEOR");
 
-GEOB.mappanel = (function() {
+GEOR.mappanel = (function() {
 
-    var cmp_id = 'GEOB_mappanel';
+    var cmp_id = 'GEOR_mappanel';
 
     /**
      * Method: buildMousePositionCtrl
@@ -142,7 +142,7 @@ GEOB.mappanel = (function() {
         // Scale combobox
         items.push(Ext.apply({
             width: 130
-        }, GEOB.scalecombo.create(map)));
+        }, GEOR.scalecombo.create(map)));
 
         return {
             items: items
@@ -168,7 +168,7 @@ GEOB.mappanel = (function() {
                 id: "mappanel",
                 map: map,
                 layers: layerStore,
-                tbar: GEOB.toolbar.create(layerStore),
+                tbar: GEOR.toolbar.create(layerStore),
                 bbar: new Ext.Toolbar(buildBbarCfg(map)),
                 // hack for better ergonomics:
                 updateMapSize: function(){}

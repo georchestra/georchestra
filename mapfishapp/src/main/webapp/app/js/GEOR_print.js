@@ -1,20 +1,20 @@
 /*
  * Copyright (C) Camptocamp
  *
- * This file is part of GeoBretagne
+ * This file is part of geOrchestra
  *
- * GeoBretagne is distributed in the hope that it will be useful,
+ * geOrchestra is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GeoBretagne.  If not, see <http://www.gnu.org/licenses/>.
+ * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
- * @include GEOB_config.js
- * @include GEOB_util.js
+ * @include GEOR_config.js
+ * @include GEOR_util.js
  * @include GeoExt/data/PrintProvider.js
  * @include GeoExt/data/PrintPage.js
  * @include GeoExt/plugins/PrintPageField.js
@@ -22,9 +22,9 @@
  * @include OpenLayers/Format/GeoJSON.js
  */
 
-Ext.namespace("GEOB");
+Ext.namespace("GEOR");
 
-GEOB.print = (function() {
+GEOR.print = (function() {
 
     /*
      * Private
@@ -34,7 +34,7 @@ GEOB.print = (function() {
      * Property: cmpId
      * {String} The component id.
      */
-    var cmpId = 'GEOB_print';
+    var cmpId = 'GEOR_print';
 
     /**
      * Property: mask
@@ -112,7 +112,7 @@ GEOB.print = (function() {
             if (r.get('attribution').title && attr.indexOf(r.get('attribution').title) < 0) {
                 attr.push(r.get('attribution').title);
             } else if (!r.get('attribution').title && !defaultAttr) {
-                attr.push(GEOB.config.DEFAULT_ATTRIBUTION);
+                attr.push(GEOR.config.DEFAULT_ATTRIBUTION);
                 defaultAttr = true;
             }
         });
@@ -135,7 +135,7 @@ GEOB.print = (function() {
         printProvider = new GeoExt.data.PrintProvider({
             url: "pdf",
             baseParams: {
-                url: GEOB.config.MAPFISHAPP_URL + "pdf"
+                url: GEOR.config.MAPFISHAPP_URL + "pdf"
             },
             listeners: {
                 "loadcapabilities": function() {
@@ -158,7 +158,7 @@ GEOB.print = (function() {
                 },
                 "printexception": function() {
                     mask.hide();
-                    GEOB.util.errorDialog({
+                    GEOR.util.errorDialog({
                         title: 'Impression impossible',
                         msg: [
                             'Le service d\'impression a signalé une erreur.',
@@ -168,13 +168,13 @@ GEOB.print = (function() {
                 },
                 "encodelayer": function(pp, layer, encLayer) {
                     //console.log(layer.url); // debug
-                    if (GEOB.config.WMSC2WMS.hasOwnProperty(layer.url)) {
-                        if (GEOB.config.WMSC2WMS[layer.url] !== undefined) {
+                    if (GEOR.config.WMSC2WMS.hasOwnProperty(layer.url)) {
+                        if (GEOR.config.WMSC2WMS[layer.url] !== undefined) {
                             //console.log(layer.name + ' - tuilée avec WMS référencé'); // debug
-                            encLayer.baseURL = GEOB.config.WMSC2WMS[layer.url];
+                            encLayer.baseURL = GEOR.config.WMSC2WMS[layer.url];
                         } else {
                             //console.log(layer.name + ' - tuilée sans WMS référencé'); // debug
-                            GEOB.util.infoDialog({
+                            GEOR.util.infoDialog({
                                 title: 'Couche non disponible pour impression',
                                 msg: [
                                     'La couche ' + layer.name + ' ne peut pas encore être imprimée.',
@@ -190,7 +190,7 @@ GEOB.print = (function() {
 
     var showWindow = function() {
         if (!printPage) {
-            GEOB.util.errorDialog({
+            GEOR.util.errorDialog({
                 title: 'Impression non disponible',
                 msg: [
                     'Le service d\'impression est actuellement inaccessible.',

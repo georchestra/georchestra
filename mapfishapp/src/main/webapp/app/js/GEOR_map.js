@@ -1,15 +1,15 @@
 /*
  * Copyright (C) Camptocamp
  *
- * This file is part of GeoBretagne
+ * This file is part of geOrchestra
  *
- * GeoBretagne is distributed in the hope that it will be useful,
+ * geOrchestra is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GeoBretagne.  If not, see <http://www.gnu.org/licenses/>.
+ * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -24,15 +24,15 @@
  * @include OpenLayers/Layer/XYZ.js
  * @include GeoExt/data/LayerRecord.js
  * @include GeoExt/data/LayerStore.js
- * @include GEOB_config.js
- * @include GEOB_ows.js
- * @include GEOB_wmc.js
- * @include GEOB_proj4jsdefs.js
+ * @include GEOR_config.js
+ * @include GEOR_ows.js
+ * @include GEOR_wmc.js
+ * @include GEOR_proj4jsdefs.js
  */
 
-Ext.namespace("GEOB");
+Ext.namespace("GEOR");
 
-GEOB.map = (function() {
+GEOR.map = (function() {
 
     /*
      * Private
@@ -97,7 +97,7 @@ GEOB.map = (function() {
      * {OpenLayers.Control.OverviewMap} The control.
      */
     var createOverviewMap = function(mapOptions) {
-        if (GEOB.config.OSM_AS_OVMAP) {
+        if (GEOR.config.OSM_AS_OVMAP) {
             var u = '.tile.openstreetmap.org/${z}/${x}/${y}.png';
             return new OpenLayers.Control.OverviewMap({
                 mapOptions: {
@@ -133,9 +133,9 @@ GEOB.map = (function() {
                 title: 'carte de situation',
                 minRectSize: 10,
                 layers: [new OpenLayers.Layer.WMS(
-                    "__geob_overview__",
-                    GEOB.config.GEOSERVER_WMS_URL,
-                    {layers: GEOB.config.OVMAP_LAYER_NAME, format: 'image/png'},
+                    "__geor_overview__",
+                    GEOR.config.GEOSERVER_WMS_URL,
+                    {layers: GEOR.config.OVMAP_LAYER_NAME, format: 'image/png'},
                     {singleTile: true}
                 )]
             });
@@ -153,8 +153,8 @@ GEOB.map = (function() {
         // the default projection is EPSG:2154 and the default
         // max extent is (83000,6700000,420000,6900000).
         //
-        // max extent can be overriden in the WMC, see GEOB.initmap
-        // and GEOB.wmc
+        // max extent can be overriden in the WMC, see GEOR.initmap
+        // and GEOR.wmc
 
         var options = {
             projection: 'EPSG:2154',
@@ -248,7 +248,7 @@ GEOB.map = (function() {
                     }
                 }
                 r.set('attribution', {
-                    title: a || GEOB.config.DEFAULT_ATTRIBUTION
+                    title: a || GEOR.config.DEFAULT_ATTRIBUTION
                 });
             }
             
@@ -264,7 +264,7 @@ GEOB.map = (function() {
         });
         
         if (errors.length > 0) {
-            GEOB.util.infoDialog({
+            GEOR.util.infoDialog({
                 title: 'Avertissement suite au chargement de couche',
                 msg: errors.join('<br />')
             });
@@ -326,7 +326,7 @@ GEOB.map = (function() {
      */
     var createLayerStore = function() {
         var recordType = GeoExt.data.LayerRecord.create(
-            GEOB.ows.getRecordFields()
+            GEOR.ows.getRecordFields()
         );
         map = createMap();
 

@@ -1,32 +1,37 @@
 /*
  * Copyright (C) Camptocamp
  *
- * This file is part of GeoBretagne
+ * This file is part of geOrchestra
  *
- * GeoBretagne is distributed in the hope that it will be useful,
+ * geOrchestra is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GeoBretagne.  If not, see <http://www.gnu.org/licenses/>.
+ * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
- * @include GEOB_map.js
- * @include GEOB_mappanel.js
- * @include GEOB_managelayers.js
- * @include GEOB_recenter.js
- * @include GEOB_address.js
- * @include GEOB_referentials.js
- * @include GEOB_ajaxglobal.js
- * @include GEOB_waiter.js
- * @include GEOB_config.js
- * @include GEOB_mapinit.js
- * @include GEOB_print.js
+ * @include GEOR_map.js
+ * @include GEOR_mappanel.js
+ * @include GEOR_managelayers.js
+ * @include GEOR_recenter.js
+ * @include GEOR_address.js
+ * @include GEOR_referentials.js
+ * @include GEOR_ajaxglobal.js
+ * @include GEOR_waiter.js
+ * @include GEOR_config.js
+ * @include GEOR_mapinit.js
+ * @include GEOR_print.js
+ * @include GEOR_getfeatureinfo.js
+ * @include GEOR_resultspanel.js
+ * @include GEOR_querier.js
+ * @include GEOR_styler.js
+ * @include GEOR_wmc.js
  */
 
-Ext.namespace("GEOB");
+Ext.namespace("GEOR");
 
 (function() {
 
@@ -59,29 +64,29 @@ Ext.namespace("GEOB");
          */
 
         // deactivate styler and queryer if anonymous
-        if (GEOB.config.ANONYMOUS) {
-            GEOB.styler = null;
-            GEOB.querier = null;
+        if (GEOR.config.ANONYMOUS) {
+            GEOR.styler = null;
+            GEOR.querier = null;
         }
 
-        GEOB.ajaxglobal.init();
-        var layerStore = GEOB.map.create();
+        GEOR.ajaxglobal.init();
+        var layerStore = GEOR.map.create();
         var map = layerStore.map;
-        GEOB.wmc.init(layerStore);
-        GEOB.print.init(layerStore);
-        if (GEOB.getfeatureinfo) {
-            GEOB.getfeatureinfo.init(map);
+        GEOR.wmc.init(layerStore);
+        GEOR.print.init(layerStore);
+        if (GEOR.getfeatureinfo) {
+            GEOR.getfeatureinfo.init(map);
         }
-        if (GEOB.querier) {
-            GEOB.querier.init(map);
+        if (GEOR.querier) {
+            GEOR.querier.init(map);
         }
-        if (GEOB.resultspanel) {
-            GEOB.resultspanel.init(map);
+        if (GEOR.resultspanel) {
+            GEOR.resultspanel.init(map);
         }
-        GEOB.waiter.init();
+        GEOR.waiter.init();
 
         // handle layerstore initialisation with wms/services/wmc from "panier"
-        GEOB.mapinit.init(layerStore);
+        GEOR.mapinit.init(layerStore);
 
         /*
          * Create the page's layout.
@@ -91,21 +96,21 @@ Ext.namespace("GEOB");
             new Ext.Panel({
                 // this panel contains the "manager layer" and
                 // "querier" components
-                region: (GEOB.editing !== undefined) ? "north" : "center",
+                region: (GEOR.editing !== undefined) ? "north" : "center",
                 height: 270, // has no effect when region is
                              // "center"
                 layout: "card",
                 activeItem: 0,
                 title: "Couches disponibles",
-                split: (GEOB.editing !== undefined),
-                collapsible: (GEOB.editing !== undefined),
-                collapsed: (GEOB.editing !== undefined),
+                split: (GEOR.editing !== undefined),
+                collapsible: (GEOR.editing !== undefined),
+                collapsed: (GEOR.editing !== undefined),
                 defaults: {
                     border:false
                 },
                 items: [
                     Ext.apply({
-                    }, GEOB.managelayers.create(layerStore))
+                    }, GEOR.managelayers.create(layerStore))
                 ]
             }),
             new Ext.TabPanel({
@@ -129,22 +134,22 @@ Ext.namespace("GEOB");
                 items: [
                     Ext.apply({
                         title: "GeoNames"
-                    }, GEOB.recenter.create(map)),
+                    }, GEOR.recenter.create(map)),
                     Ext.apply({
                         title: "Adresses"
-                    }, GEOB.address.create(map)),
+                    }, GEOR.address.create(map)),
                     Ext.apply({
                         title: "Référentiels"
-                    }, GEOB.referentials.create(map, "geob_loc"))
+                    }, GEOR.referentials.create(map, "geob_loc"))
                 ]
             })
         ];
-        if (GEOB.editing) {
+        if (GEOR.editing) {
             eastItems.push(
                 Ext.apply({
                     region: "center", 
                     title: "Edition"
-                }, GEOB.editing.create(map))
+                }, GEOR.editing.create(map))
             );
         }
 
@@ -152,7 +157,7 @@ Ext.namespace("GEOB");
         // the "search results" panel
         var southPanel = new Ext.Panel({
             region: "south",
-            hidden: !GEOB.resultspanel, // hide this panel if
+            hidden: !GEOR.resultspanel, // hide this panel if
                                         // the resultspanel
                                         // module is undefined
             collapsible: true,
@@ -175,15 +180,15 @@ Ext.namespace("GEOB");
                 "collapse": function() {
                     // when the user collapses the panel
                     // hide the features in the layer
-                    if (GEOB.resultspanel) {
-                        GEOB.resultspanel.hide();
+                    if (GEOR.resultspanel) {
+                        GEOR.resultspanel.hide();
                     }
                 },
                 "expand": function() {
                     // when the user expands the panel
                     // show the features in the layer
-                    if (GEOB.resultspanel) {
-                        GEOB.resultspanel.show();
+                    if (GEOR.resultspanel) {
+                        GEOR.resultspanel.show();
                     }
                 }
             }
@@ -194,7 +199,7 @@ Ext.namespace("GEOB");
             layout: "border",
             items: [
                 Ext.apply({region: "center"}, 
-                    GEOB.mappanel.create(layerStore)), 
+                    GEOR.mappanel.create(layerStore)), 
                 { 
                     region: "east",
                     layout: "border",
@@ -218,9 +223,9 @@ Ext.namespace("GEOB");
          * acting as a mediator between the modules with
          * the objective of making them independent.
          */
-        if (GEOB.querier) {
+        if (GEOR.querier) {
             var querierTitle;
-            GEOB.querier.events.on({
+            GEOR.querier.events.on({
                 "ready": function(panelCfg) {
                     // clear the previous filterbuilder panel, if exists
                     if (eastItems[0].getComponent(1)) {
@@ -253,8 +258,8 @@ Ext.namespace("GEOB");
                     eastItems[0].doLayout(); // required
                 },
                 "search": function(panelCfg) {
-                    if (GEOB.resultspanel) {
-                        GEOB.resultspanel.clean();
+                    if (GEOR.resultspanel) {
+                        GEOR.resultspanel.clean();
                     }
                     southPanel.removeAll();
                     var panel = Ext.apply({
@@ -265,18 +270,18 @@ Ext.namespace("GEOB");
                     southPanel.expand();  
                 },
                 "searchresults": function(options) {
-                    if (GEOB.resultspanel) {
-                        GEOB.resultspanel.populate(options);
+                    if (GEOR.resultspanel) {
+                        GEOR.resultspanel.populate(options);
                     }
                 }
             });
         }
 
-        if (GEOB.getfeatureinfo) {
-            GEOB.getfeatureinfo.events.on({
+        if (GEOR.getfeatureinfo) {
+            GEOR.getfeatureinfo.events.on({
                 "search": function(panelCfg) {
-                    if (GEOB.resultspanel) {
-                        GEOB.resultspanel.clean();
+                    if (GEOR.resultspanel) {
+                        GEOR.resultspanel.clean();
                     }
                     southPanel.removeAll();
                     var panel = Ext.apply({
@@ -287,15 +292,15 @@ Ext.namespace("GEOB");
                     southPanel.expand();  
                 },
                 "searchresults": function(options) {
-                    if (GEOB.resultspanel) {
-                        GEOB.resultspanel.populate(options);
+                    if (GEOR.resultspanel) {
+                        GEOR.resultspanel.populate(options);
                     }
                 }
             });
         }
         
-        if (GEOB.resultspanel) {
-            GEOB.resultspanel.events.on({
+        if (GEOR.resultspanel) {
+            GEOR.resultspanel.events.on({
                 "panel": function(panelCfg) {
                     southPanel.removeAll();
                     southPanel.add(panelCfg);
@@ -313,17 +318,17 @@ Ext.namespace("GEOB");
             });
         };
 
-        GEOB.managelayers.events.on({
+        GEOR.managelayers.events.on({
             "selectstyle": function(layerRecord, styles) {
                 updateLayerParams(layerRecord, null, styles);
             }
         });
 
-        if (GEOB.styler) {
-            GEOB.styler.events.on({
+        if (GEOR.styler) {
+            GEOR.styler.events.on({
                 "sldready": function(layerRecord, sld) {
                     updateLayerParams(layerRecord, sld, null);
-                    GEOB.managelayers.unselectStyles(layerRecord);
+                    GEOR.managelayers.unselectStyles(layerRecord);
                 }
             });
         }

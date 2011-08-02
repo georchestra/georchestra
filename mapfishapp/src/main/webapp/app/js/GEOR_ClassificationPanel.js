@@ -1,36 +1,35 @@
 /*
  * Copyright (C) Camptocamp
  *
- * This file is part of GeoBretagne
+ * This file is part of geOrchestra
  *
- * GeoBretagne is distributed in the hope that it will be useful,
+ * geOrchestra is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GeoBretagne.  If not, see <http://www.gnu.org/licenses/>.
+ * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
  * @include Ext.ux/widgets/spinner/NumberSpinner.js
  * @include Ext.ux/widgets/spinner/Spinner.js
- * @include Ext.ux/widgets/spinner/SpinnerStrategy.js
  * @include Ext.ux/widgets/palettecombobox/PaletteComboBox.js
  * @include Ext.ux/widgets/colorpicker/ext.ux.ColorPicker.js
  * @include Ext.ux/widgets/colorpicker/ext.ux.ColorPickerField.js
- * @include GEOB_util.js
- * @include GEOB_ows.js
+ * @include GEOR_util.js
+ * @include GEOR_ows.js
  */
 
-Ext.namespace('GEOB');
+Ext.namespace('GEOR');
 
 /*
-   Class: GEOB.ClassificationPanel
+   Class: GEOR.ClassificationPanel
    Inherits from: 
    - Ext.Panel
 */
-GEOB.ClassificationPanel = Ext.extend(Ext.Panel, {
+GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
 
     /**
      * Property: attributes
@@ -167,7 +166,7 @@ GEOB.ClassificationPanel = Ext.extend(Ext.Panel, {
             forceSelection: true,
             triggerAction: 'all',
             selectOnFocus:true,
-            tpl: GEOB.util.getAttributesComboTpl(),
+            tpl: GEOR.util.getAttributesComboTpl(),
             fieldLabel: 'Attribut',
             value: this.attributes.getAt(0).get("name")
         });
@@ -368,7 +367,7 @@ GEOB.ClassificationPanel = Ext.extend(Ext.Panel, {
         );
     
         // call parent initComponent
-        GEOB.ClassificationPanel.superclass.initComponent.call(this);  
+        GEOR.ClassificationPanel.superclass.initComponent.call(this);  
     },
     
     /*
@@ -382,7 +381,7 @@ GEOB.ClassificationPanel = Ext.extend(Ext.Panel, {
      */
     filldsClassifType: function(dataType) {
         var data = [['Valeurs uniques', 'unique_values']];
-        if(GEOB.util.isNumericType(dataType)) {
+        if(GEOR.util.isNumericType(dataType)) {
             data.push(['Plages de couleurs', 'choropleths']);
             if ((this.symbolType == 'Point') || (this.symbolType == 'Line')) {
                 data.push(['Symboles proportionnels', 'prop_symbols']);
@@ -522,7 +521,7 @@ GEOB.ClassificationPanel = Ext.extend(Ext.Panel, {
         
         // common parameters
         var request = {
-            wfs_url: GEOB.ows.getWFSCapURL(this.wfsInfo),
+            wfs_url: GEOR.ows.getWFSCapURL(this.wfsInfo),
             layer_name: this.wfsInfo.get("typeName"),
             attribute_name: this.cbAttribute.getValue(),
             type: this.cbClassifType.getValue(),
@@ -564,4 +563,4 @@ GEOB.ClassificationPanel = Ext.extend(Ext.Panel, {
 
 });
 
-Ext.reg('geob.classifpanel', GEOB.ClassificationPanel);
+Ext.reg('geor.classifpanel', GEOR.ClassificationPanel);
