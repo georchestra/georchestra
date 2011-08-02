@@ -34,7 +34,7 @@
  * @include GeoExt/widgets/Action.js
  * @include GeoExt/plugins/AttributeForm.js
  */
-
+ 
 Ext.namespace('GEOR.Editing');
 
 GeoExt.form.recordToField.TIPTRANSLATIONS = {

@@ -9,7 +9,7 @@
  * give the map a white background (useful for ovmap)
  */
 div.olMapViewport {
-  background-color:#B6D0CD; /*white;*/
+  background-color:white;
   text-align:left;
 }
 

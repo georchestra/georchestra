@@ -17,6 +17,11 @@
  * @include GEOR_Editing/GEOR_LayerEditingPanel.js
  * @include GEOR_ows.js
  * @include GEOR_config.js
+ The two following items are for GeoExt.form.toFilter (pulled by GeoExt.plugins.AttributeForm)
+ Note that OpenLayers/Filter/Comparison.js is also added in the [first] section of jsbuild
+ in order to be sure that its namespaces are defined before GeoExt.form.toFilter is read
+ * @include OpenLayers/Filter/Logical.js
+ * @include OpenLayers/Filter/Comparison.js
  */
 
 Ext.namespace("GEOR");
