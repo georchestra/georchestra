@@ -213,7 +213,7 @@ GEOR.FeatureDataModel.prototype = {
      */
     isEmpty: function() {
         for (var key in this.dataModel) {
-            if (!this.dataModel.hasOwnProperty(key)) {
+            if (!this.dataModel.hasOwnProperty(key) || key == this.dummyAttributeName) {
                 continue;
             }
             return false;

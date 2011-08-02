@@ -77,7 +77,7 @@ GEOR.getfeatureinfo = (function() {
         
         var features = info.features;
         
-        if (!model) {
+        if (!model || model.isEmpty()) {
             model = new GEOR.FeatureDataModel({
                 features: features
             });

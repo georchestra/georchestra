@@ -15,7 +15,7 @@
       <Server service="OGC:WMS" version="1.1.1">
         <OnlineResource xlink:type="simple" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://osm.geobretagne.fr/service/wms"/>
       </Server>
-      <Name>osm:map</Name>
+      <Name>osm:google</Name>
       <Title>OpenStreetMap</Title>
       <MetadataURL>
         <OnlineResource xlink:type="simple" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://wiki.openstreetmap.org/" />
