@@ -10,27 +10,52 @@ dpis:
 # the allowed scales
 #===========================================================================
 scales:
-  - 200
-  - 500
-  - 1000
-  - 2000
-  - 5000
-  - 10000
-  - 25000
-  - 50000
-  - 100000
-  - 250000
-  - 500000
-  - 1000000
-  - 2000000
-#  - 25000
-#  - 50000
-#  - 100000
-#  - 200000
-#  - 500000
-#  - 1000000
-#  - 2000000
-#  - 4000000
+  - 266
+  - 533
+  - 1066
+  - 2132
+  - 4265
+  - 8530
+  - 17061
+  - 34123
+  - 68247
+  - 136494
+  - 272989
+  - 545978
+  - 1091957
+  - 2183915
+  - 4367830
+  - 8735660
+  - 17471320
+  - 34942641
+  - 69885282
+  - 139770565
+  - 279541131
+  - 559082263
+
+  #~ TODO: Float support instead of Integer
+  #~ - 266.591197934
+  #~ - 533.182395867
+  #~ - 1066.364791734
+  #~ - 2132.729583468
+  #~ - 4265.459166936
+  #~ - 8530.918333871
+  #~ - 17061.836667742
+  #~ - 34123.673335484
+  #~ - 68247.346670968
+  #~ - 136494.693341936
+  #~ - 272989.386683873
+  #~ - 545978.773367746
+  #~ - 1091957.546735491
+  #~ - 2183915.093470982
+  #~ - 4367830.186941965
+  #~ - 8735660.373883929
+  #~ - 17471320.747767858
+  #~ - 34942641.495535716
+  #~ - 69885282.991071432
+  #~ - 139770565.982142864
+  #~ - 279541131.964285732
+  #~ - 559082263.928571464
 
 #===========================================================================
 # the list of allowed hosts
@@ -87,14 +112,14 @@ layouts:
               intervals: 5
               condition: showScalebar
         - !columns
-          absoluteX: 450 
+          absoluteX: 450
           absoluteY: 102
           width: 200
           items:
             - !text
               text: |
-                Echelle: 1:${format %,d scale}    
-              condition: showScalebar    
+                Echelle: 1:${format %,d scale}
+              condition: showScalebar
         - !columns
           absoluteX: 400
           absoluteY: 220
@@ -104,7 +129,7 @@ layouts:
               maxWidth: 30
               maxHeight: 30
               url: 'file://${configDir}/Arrow_North_CFCF.svg'
-              condition: showNorth    
+              condition: showNorth
         - !columns
           absoluteX: 285
           absoluteY: 186
@@ -185,8 +210,8 @@ layouts:
           items:
             - !text
               text: |
-                Echelle: 1:${format %,d scale}    
-              condition: showScalebar    
+                Echelle: 1:${format %,d scale}
+              condition: showScalebar
         - !columns
           absoluteX: 640
           absoluteY: 227
@@ -196,11 +221,11 @@ layouts:
               maxWidth: 30
               maxHeight: 30
               url: 'file://${configDir}/Arrow_North_CFCF.svg'
-              condition: showNorth  
+              condition: showNorth
         - !columns
           absoluteX: 525
           absoluteY: 193
-          width: 200  
+          width: 200
           items:
             - !map
               width: 80
@@ -222,7 +247,7 @@ layouts:
               classSpace: 3
               condition: showLegend
       footer: *commonFooter
-                
+
   #===========================================================================
   A3 portrait:
   #===========================================================================
@@ -265,8 +290,8 @@ layouts:
           items:
             - !text
               text: |
-                Echelle: 1:${format %,d scale}    
-              condition: showScalebar    
+                Echelle: 1:${format %,d scale}
+              condition: showScalebar
         - !columns
           absoluteX: 582
           absoluteY: 220
@@ -276,11 +301,11 @@ layouts:
               maxWidth: 30
               maxHeight: 30
               url: 'file://${configDir}/Arrow_North_CFCF.svg'
-              condition: showNorth  
+              condition: showNorth
         - !columns
           absoluteX: 465
           absoluteY: 190
-          width: 200  
+          width: 200
           items:
             - !map
               width: 80
@@ -288,7 +313,7 @@ layouts:
               overviewMap: 10
               condition: showOverview
         - !columns
-          absoluteX: 630 
+          absoluteX: 630
           #875
           absoluteY: 1030
           #1440
@@ -303,10 +328,10 @@ layouts:
               classFontSize: 8
               classSpace: 5
               condition: showLegend
-          
+
       footer: *commonFooter
-            
-                
+
+
   #===========================================================================
   A3 paysage:
   #===========================================================================
@@ -349,8 +374,8 @@ layouts:
           items:
             - !text
               text: |
-                Echelle: 1:${format %,d scale}    
-              condition: showScalebar    
+                Echelle: 1:${format %,d scale}
+              condition: showScalebar
         - !columns
           absoluteX: 925
           absoluteY: 250
@@ -360,11 +385,11 @@ layouts:
               maxWidth: 30
               maxHeight: 30
               url: 'file://${configDir}/Arrow_North_CFCF.svg'
-              condition: showNorth  
+              condition: showNorth
         - !columns
           absoluteX: 809
           absoluteY: 214
-          width: 200  
+          width: 200
           items:
             - !map
               width: 80

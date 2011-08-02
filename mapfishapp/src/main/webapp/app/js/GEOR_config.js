@@ -449,6 +449,8 @@ GEOR.config = (function() {
          * {Array} The map's scales.
          */
         MAP_SCALES : [
+            266.591197934,
+            533.182395867,
             1066.364791734,
             2132.729583468,
             4265.459166936,
@@ -500,15 +502,41 @@ GEOR.config = (function() {
          * {Float} The max extent ymax coordinate
          */
         MAP_YMAX: 6900000,
-
-
+        
+        /**
+         * Constant: MAP_POS_SRS1
+         * {String} The cursor position will be displayed using this SRS
+         */
         MAP_POS_SRS1: "EPSG:2154",
+        
+        /**
+         * Constant: MAP_POS_SRS2
+         * {String} The cursor position will be displayed using this SRS
+         */
         MAP_POS_SRS2: "EPSG:3948",
+        
+        /**
+         * Constant: TILE_SINGLE
+         * {Boolean} When false, activates WMS tiled requests
+         */
         TILE_SINGLE: false,
+        
+        /**
+         * Constant: TILE_WIDTH
+         * {Integer} Width of the WMS tiles in pixels
+         */
         TILE_WIDTH: 512,
+        
+        /**
+         * Constant: TILE_HEIGHT
+         * {Integer} Height of the WMS tiles in pixels
+         */
         TILE_HEIGHT: 512,
 
-
+        /**
+         * Constant: GEONAMES_FILTERS
+         * {Object} Describes the geonames options
+         */
         GEONAMES_FILTERS: {
             country: 'FR',         // France
             adminCode1: 'A2',      // Bretagne
@@ -525,8 +553,11 @@ GEOR.config = (function() {
          * Should always be >= 1
          */
         GEONAMES_ZOOMLEVEL: 5,
-        
-        
+
+        /**
+         * Constant: HELP_URL
+         * {String} URL of the help ressource
+         */
         HELP_URL: "/doc/html/documentation.html#viewer"
         // No trailing comma
 

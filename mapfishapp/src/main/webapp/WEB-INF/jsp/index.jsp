@@ -24,7 +24,7 @@ if(sec_roles != null) {
     }
 }
 %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="fr" xml:lang="fr">
 
@@ -81,7 +81,7 @@ if(sec_roles != null) {
         <span>Chargement ...</span>
     </div>
     <div id="loading">
-        <img src="app/img/loading.gif" alt="chargement" width="32" height="32" style="margin-right:8px;float:left;vertical-align:top;"/> 
+        <img src="app/img/loading.gif" alt="chargement" width="32" height="32" style="margin-right:8px;float:left;vertical-align:top;"/>
         <span id="loading-msg">Chargement...</span>
     </div>
     <script type="text/javascript">
