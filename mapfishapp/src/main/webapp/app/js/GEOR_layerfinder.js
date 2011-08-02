@@ -132,7 +132,7 @@ GEOR.layerfinder = (function() {
     var appendKeyword = function(tree, keyword) {
         if (!xmlTreeLoader) {
             xmlTreeLoader = new Ext.ux.tree.XmlTreeLoader({
-                url: GEOR.config.GEONETWORK_URL + '/csw',
+                url: GEOR.config.CSW_URL,
                 parseInput: function(treeLoader, treeNode) {
                     var getRecordsFormat = new OpenLayers.Format.CSWGetRecords({
                         maxRecords: 100
@@ -146,8 +146,8 @@ GEOR.layerfinder = (function() {
                                 version: "1.1.0",
                                 Filter: new OpenLayers.Filter.Comparison({
                                     type: OpenLayers.Filter.Comparison.EQUAL_TO,
-                                    property: "subject",
-									value: treeNode.text
+                                    property: GEOR.config.CSW_GETDOMAIN_PROPERTY,
+                                    value: treeNode.text
                                 })
                             },
                             ElementSetName: {
@@ -229,8 +229,8 @@ GEOR.layerfinder = (function() {
         cleanTree(tree);
         var getDomainFormat = new OpenLayers.Format.CSWGetDomain();
         OpenLayers.Request.POST({
-            url: GEOR.config.GEONETWORK_URL + '/csw',
-            data: getDomainFormat.write({PropertyName: "subject"}),
+            url: GEOR.config.CSW_URL,
+            data: getDomainFormat.write({PropertyName: GEOR.config.CSW_GETDOMAIN_PROPERTY}),
             success: function(response) {
                 var r = getDomainFormat.read(response.responseText);
                 Ext.each(r.DomainValues[0].ListOfValues, function (item) {

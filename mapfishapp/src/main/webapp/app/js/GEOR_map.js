@@ -48,28 +48,7 @@ GEOR.map = (function() {
      * Constant: SCALES
      * {Array} The map's scales.
      */
-    var SCALES = [
-        1066.364791734,
-        2132.729583468,
-        4265.459166936,
-        8530.918333871,
-        17061.836667742,
-        34123.673335484,
-        68247.346670968,
-        136494.693341936,
-        272989.386683873,
-        545978.773367746,
-        1091957.546735491,
-        2183915.093470982,
-        4367830.186941965,
-        8735660.373883929,
-        17471320.747767858,
-        34942641.495535716,
-        69885282.991071432,
-        139770565.982142864,
-        279541131.964285732,
-        559082263.928571464
-    ];
+    var SCALES = null;
     
     /**
      * Method: createMainBaseLayer
@@ -150,21 +129,19 @@ GEOR.map = (function() {
      * {OpenLayers.Map} The map instance.
      */
     var createMap = function() {
-        // the default projection is EPSG:2154 and the default
-        // max extent is (83000,6700000,420000,6900000).
-        //
         // max extent can be overriden in the WMC, see GEOR.initmap
         // and GEOR.wmc
 
         var options = {
-            projection: 'EPSG:2154',
+            projection: GEOR.config.MAP_SRS,
             units: 'm',
             allOverlays: true,
             scales: SCALES,
             maxExtent: new OpenLayers.Bounds(
-                //-357823.2365,6037008.6939,2146865.3059,8541697.2363
-                83000, 6700000,
-                420000, 6900000
+                GEOR.config.MAP_XMIN,
+                GEOR.config.MAP_YMIN,
+                GEOR.config.MAP_XMAX,
+                GEOR.config.MAP_YMAX
             ),
             theme: null
         };
@@ -363,6 +340,7 @@ GEOR.map = (function() {
          * {GeoExt.data.LayerStore} The application's global layer store.
          */
         create: function() {
+            SCALES = GEOR.config.MAP_SCALES;
             return createLayerStore();
         }
     };

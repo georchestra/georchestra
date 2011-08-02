@@ -18,6 +18,7 @@
  * @include OpenLayers/Control/LoadingPanel.js
  * @include GeoExt/widgets/MapPanel.js
  * @include GEOR_toolbar.js
+ * @include GEOR_config.js
  * @include GEOR_scalecombo.js
  * @include GEOR_proj4jsdefs.js
  */
@@ -119,25 +120,25 @@ GEOR.mappanel = (function() {
         // greedy spacer
         items.push("->");
 
-        // EPSG:2154 mouse position
+        // First mouse position
         div = Ext.DomHelper.append(Ext.getBody(), {
             tag: "div", 
-            qtip: "Coordonnées du pointeur en Lambert 93",
-            id: cmp_id+"_mp2154", 
+            qtip: "Coordonnées du pointeur en "+GEOR.config.MAP_POS_SRS1,
+            id: cmp_id+"_mp1", 
             cls: "mouseposition"
         });
         items.push(div);
-        map.addControl(buildMousePositionCtrl("EPSG:2154", div));
+        map.addControl(buildMousePositionCtrl(GEOR.config.MAP_POS_SRS1, div));
 
-        // EPSG:3948 mouse position
+        // Second mouse position
         div = Ext.DomHelper.append(Ext.getBody(), {
             tag: "div", 
-            qtip: "Coordonnées du pointeur en RGF93/CC48",
-            id: cmp_id+"_mp3948", 
+            qtip: "Coordonnées du pointeur en "+GEOR.config.MAP_POS_SRS2,
+            id: cmp_id+"_mp2", 
             cls: "mouseposition"
         });
         items.push(div);
-        map.addControl(buildMousePositionCtrl("EPSG:3948", div));
+        map.addControl(buildMousePositionCtrl(GEOR.config.MAP_POS_SRS2, div));
 
         // Scale combobox
         items.push(Ext.apply({

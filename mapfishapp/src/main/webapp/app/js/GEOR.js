@@ -44,7 +44,7 @@ Ext.namespace("GEOR");
         OpenLayers.Lang.setCode('fr');
         OpenLayers.Number.thousandsSeparator = " ";
         OpenLayers.ImgPath = 'app/img/openlayers/';
-        OpenLayers.DOTS_PER_INCH = 25.4 / 0.28;
+        OpenLayers.DOTS_PER_INCH = GEOR.config.MAP_DOTS_PER_INCH;
         OpenLayers.IMAGE_RELOAD_ATTEMPTS = 5;
 
         /*

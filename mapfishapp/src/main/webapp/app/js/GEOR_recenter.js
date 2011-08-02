@@ -12,6 +12,10 @@
  * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+ * @include GEOR_config.js
+ */
+
 Ext.namespace("GEOR");
 
 GEOR.recenter = (function() {
@@ -43,14 +47,7 @@ GEOR.recenter = (function() {
                 {name: 'lng'}
             ]),
             // geonames filters
-            baseParams: {
-                country: 'FR',         // France
-                adminCode1: 'A2',      // Bretagne
-                style: 'short',        // verbosity of results
-                lang: 'fr',
-                featureClass: 'P',     // class category: populated places
-                maxRows: 20            // maximal number of results	
-            }
+            baseParams: GEOR.config.GEONAMES_FILTERS
         });
 
         // Template to present results
@@ -92,7 +89,7 @@ GEOR.recenter = (function() {
                     );
              
                     // center map to POI
-                    map.setCenter(lonlat, map.baseLayer.numZoomLevels - 5);
+                    map.setCenter(lonlat, map.baseLayer.numZoomLevels - GEOR.config.GEONAMES_ZOOMLEVEL);
                 }
             }
         });	

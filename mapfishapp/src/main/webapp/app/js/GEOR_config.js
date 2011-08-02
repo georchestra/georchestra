@@ -413,6 +413,122 @@ GEOR.config = (function() {
          * true to case insensitive sort (client side) the keywords got from a CSW getDomain request
          * false to disable client side sorting (which is preferable in case of too many keywords)
          */
-        CSW_GETDOMAIN_SORTING: false
+        CSW_GETDOMAIN_SORTING: false,
+
+
+        /**
+         * Constant: MAP_DOTS_PER_INCH
+         * {Float} Sets the resolution used for scale computation
+         */
+        MAP_DOTS_PER_INCH: 25.4 / 0.28,
+
+
+        /**
+         * Constant: URL
+         * {String} The URL to the OpenAddresses web service.
+         */
+        ADDRESS_URL: "/addrapp/addresses",
+
+
+        /**
+         * Constant: NS_EDIT
+         * {String} The editing layers' namespace alias as defined in
+         *    the GeoServer configuration.
+         */
+        NS_EDIT: "GEOR_edit",
+
+
+        CSW_URL: getBaseURL() + "geonetwork/srv/fr/csw",
+
+
+        CSW_GETDOMAIN_PROPERTY: "subject",
+
+
+        /**
+         * Constant: MAP_SCALES
+         * {Array} The map's scales.
+         */
+        MAP_SCALES : [
+            1066.364791734,
+            2132.729583468,
+            4265.459166936,
+            8530.918333871,
+            17061.836667742,
+            34123.673335484,
+            68247.346670968,
+            136494.693341936,
+            272989.386683873,
+            545978.773367746,
+            1091957.546735491,
+            2183915.093470982,
+            4367830.186941965,
+            8735660.373883929,
+            17471320.747767858,
+            34942641.495535716,
+            69885282.991071432,
+            139770565.982142864,
+            279541131.964285732,
+            559082263.928571464
+        ],
+
+        /**
+         * Constant: MAP_SRS
+         * {String} The default map SRS code
+         */
+        MAP_SRS: "EPSG:2154",
+
+        /**
+         * Constant: MAP_XMIN
+         * {Float} The max extent xmin coordinate
+         */
+        MAP_XMIN: 83000,
+
+        /**
+         * Constant: MAP_YMIN
+         * {Float} The max extent ymin coordinate
+         */
+        MAP_YMIN: 6700000,
+
+        /**
+         * Constant: MAP_XMAX
+         * {Float} The max extent xmax coordinate
+         */
+        MAP_XMAX: 420000,
+
+        /**
+         * Constant: MAP_YSMAX
+         * {Float} The max extent ymax coordinate
+         */
+        MAP_YMAX: 6900000,
+
+
+        MAP_POS_SRS1: "EPSG:2154",
+        MAP_POS_SRS2: "EPSG:3948",
+        TILE_SINGLE: false,
+        TILE_WIDTH: 512,
+        TILE_HEIGHT: 512,
+
+
+        GEONAMES_FILTERS: {
+            country: 'FR',         // France
+            adminCode1: 'A2',      // Bretagne
+            style: 'short',        // verbosity of results
+            lang: 'fr',
+            featureClass: 'P',     // class category: populated places
+            maxRows: 20            // maximal number of results
+        },
+
+        /**
+         * Constant: GEONAMES_ZOOMLEVEL
+         * {Integer} The number of zoom levels from maximum zoom level
+         *           to zoom to, when using GeoNames recentering
+         * Should always be >= 1
+         */
+        GEONAMES_ZOOMLEVEL: 5,
+        
+        
+        HELP_URL: "/doc/html/documentation.html#viewer"
+        // No trailing comma
+
     };
 })();

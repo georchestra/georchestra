@@ -27,6 +27,7 @@
  * @include GeoExt/widgets/WMSLegend.js
  * @include GEOR_workspace.js
  * @include GEOR_print.js
+ * @include GEOR_config.js
  */
 
 Ext.namespace("GEOR");
@@ -264,9 +265,9 @@ GEOR.toolbar = (function() {
             tooltip: "Afficher l'aide",
             handler: function() {
                 if(Ext.isIE) {
-                    window.open("/doc/html/documentation.html#viewer");
+                    window.open(GEOR.config.HELP_URL);
                 } else {
-                    window.open("/doc/html/documentation.html#viewer", "Aide de l'extracteur", "menubar=no,status=no,scrollbars=yes");
+                    window.open(GEOR.config.HELP_URL, "Aide de l'extracteur", "menubar=no,status=no,scrollbars=yes");
                 }
             }
         });

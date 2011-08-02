@@ -32,7 +32,7 @@ GEOR.editing = (function() {
      * {String} The editing layers' namespace alias as defined in
      *    the GeoServer configuration.
      */
-    var NSALIAS = "geob_edit";
+    var NSALIAS = null;
 
     /*
      * Public
@@ -47,6 +47,7 @@ GEOR.editing = (function() {
          * {<GEOR.Editing.EditingPanel>} The editing panel config.
          */
         create: function(map) {
+            NSALIAS = GEOR.config.NS_EDIT;
             var store = GEOR.ows.WFSCapabilities({
                 storeOptions: {
                     url: GEOR.config.GEOSERVER_WFS_URL,

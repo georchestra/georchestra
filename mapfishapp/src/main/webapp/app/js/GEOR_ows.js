@@ -152,9 +152,9 @@ GEOR.ows = (function() {
          * {Object} Default OpenLayers WMS layer options
          */
         defaultLayerOptions: {
-            singleTile: false,
+            singleTile: GEOR.config.TILE_SINGLE,
             buffer: 0,
-            tileSize: new OpenLayers.Size(512, 512)
+            tileSize: new OpenLayers.Size(GEOR.config.TILE_WIDTH, GEOR.config.TILE_HEIGHT)
         },
 
         getRecordFields: function() {

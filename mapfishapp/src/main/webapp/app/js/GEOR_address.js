@@ -16,6 +16,7 @@ Ext.namespace("GEOR");
 
 /*
  * @include GeoExt.ux/OpenAddressesSearchCombo.js
+ * @include GEOR_config.js
  */
 
 GEOR.address = (function() {
@@ -24,7 +25,7 @@ GEOR.address = (function() {
      * Constant: URL
      * {String} The URL to the OpenAddresses web service.
      */
-    var URL = "/addrapp/addresses";
+    var URL = null;
 
     /**
      * Property: map
@@ -73,6 +74,7 @@ GEOR.address = (function() {
          * {Ext.FormPanel} recenter panel config 
          */
         create: function(m) {
+            URL = GEOR.config.ADDRESS_URL;
             map = m;
             return {
                 xtype: 'form',
