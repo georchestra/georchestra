@@ -177,11 +177,11 @@ Ext.namespace("GEOR");
             hidden: !GEOR.resultspanel, // hide this panel if
                                         // the resultspanel
                                         // module is undefined
-            collapsible: true,
             split: true,
             layout: "fit",
-            title: "Résultats de requête",
+            collapsible: true,
             collapsed: true,
+            collapseMode: "mini",
             height: 150,
             defaults: {
                 border: false,
