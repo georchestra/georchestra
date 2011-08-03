@@ -409,10 +409,7 @@ GEOR.layerstree = (function() {
     var appendNodesFromWMSCap = function(wmsinfo, node) {
         GEOR.ows.WMSCapabilities({
             storeOptions: {
-                url: wmsinfo.owsurl,
-                layerOptions: {
-                    singleTile: true
-                }
+                url: wmsinfo.owsurl
             },
             success: function(store, records) {
                 var parentNode;
