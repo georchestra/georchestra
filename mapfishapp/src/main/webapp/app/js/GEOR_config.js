@@ -435,7 +435,7 @@ GEOR.config = (function() {
          * {String} The editing layers' namespace alias as defined in
          *    the GeoServer configuration.
          */
-        NS_EDIT: "GEOR_edit",
+        NS_EDIT: "geob_edit",
 
 
         CSW_URL: getBaseURL() + "geonetwork/srv/fr/csw",
