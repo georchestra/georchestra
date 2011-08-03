@@ -155,7 +155,7 @@ GEOR.layeroptions = (function() {
      * Return the fieldset title, based on current map projection
      */
     var getFieldsetTitle = function() {
-        var crs = (typeof map.projection == "string") ? map.projection : map.projection.toString();
+        var crs = map.getProjection();
         return "Emprise (en "+
             GEOR.util.unitsTranslations[GEOR.util.getUnitsForCRS(crs)]+
             ', SRS = <a href="http://spatialreference.org/ref/epsg/'+crs.split(':')[1]+
@@ -236,6 +236,7 @@ GEOR.layeroptions = (function() {
                 options.globalRasterFormats && getCombo('globalRasterFormats').setValue(options.globalRasterFormat);
                 options.globalVectorFormats && getCombo('globalVectorFormats').setValue(options.globalVectorFormat);
                 vectorLayer.setVisibility(true);
+                getFieldSet('globalBbox').setTitle(getFieldsetTitle());
             } else {
                 // custom properties
                 // reload store for projections combo
@@ -350,7 +351,12 @@ GEOR.layeroptions = (function() {
                                 layout: 'form',
                                 items: [
                                     getFieldSet('globalBbox', {
-                                        title: getFieldsetTitle()
+                                        title: 'fake' // will be appropriately set
+                                                      // when the default layer
+                                                      // is selected. We cannot
+                                                      // initially set it to ''
+                                                      // or it will never be
+                                                      // displayed
                                     })
                                 ]
                             }
