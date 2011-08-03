@@ -553,7 +553,28 @@ GEOR.config = (function() {
          * Should always be >= 1
          */
         GEONAMES_ZOOMLEVEL: 5,
-
+        
+        /**
+         * Constant: ROLES_FOR_STYLER
+         * {Array} roles required for the styler to show up
+         * Empty array means the module is available for everyone
+         */
+        ROLES_FOR_STYLER: ['ROLE_SV_USER'],
+        
+        /**
+         * Constant: ROLES_FOR_QUERIER
+         * {Array} roles required for the querier to show up
+         * Empty array means the module is available for everyone
+         */
+        ROLES_FOR_QUERIER: [],
+        
+        /**
+         * Constant: ROLES_FOR_PRINTER
+         * {Array} roles required to be able to print
+         * Empty array means printing is available for everyone
+         */
+        ROLES_FOR_PRINTER: ['ROLE_SV_USER'], 
+        
         /**
          * Constant: HELP_URL
          * {String} URL of the help ressource

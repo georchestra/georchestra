@@ -243,9 +243,11 @@ GEOR.toolbar = (function() {
             },
             autoScroll: true
         });
-        GEOR.print.setLegend(legendPanel);
-
-        items.push(GEOR.print.getAction());
+        
+        if (GEOR.print) {
+            GEOR.print.setLegend(legendPanel);
+            items.push(GEOR.print.getAction());
+        }
 
         items.push('->');
 

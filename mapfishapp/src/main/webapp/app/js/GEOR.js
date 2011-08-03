@@ -34,12 +34,27 @@ Ext.namespace("GEOR");
 
 (function() {
 
+    var checkRoles = function(module, okRoles) {
+        // module is available for everyone if okRoles is empty:
+        var ok = (okRoles.length == 0);
+        // else, check existence of required role to activate module:
+        for (var i=0, l=okRoles.length; i<l; i++) {
+            if (GEOR.config.ROLES.indexOf(okRoles[i]) >= 0) {
+                ok = true;
+                break;
+            }
+        }
+        // nullify module if no permission to use:
+        if (!ok) {
+            GEOR[module] = null;
+        }
+    };
+    
     Ext.onReady(function() {
-
+        
         /*
          * Setting of OpenLayers global vars.
          */
-
         OpenLayers.Lang.setCode('fr');
         OpenLayers.Number.thousandsSeparator = " ";
         OpenLayers.ImgPath = 'app/img/openlayers/';
@@ -49,7 +64,6 @@ Ext.namespace("GEOR");
         /*
          * Setting of Ext global vars.
          */
-
         Ext.BLANK_IMAGE_URL = "lib/externals/ext/resources/images/default/s.gif";
         Ext.apply(Ext.MessageBox.buttonText, {
             yes: "Oui",
@@ -59,20 +73,24 @@ Ext.namespace("GEOR");
         });
         
         /*
+         * Security stuff
+         * Deactivate modules if current user roles do not match
+         */
+        checkRoles('styler', GEOR.config.ROLES_FOR_STYLER);
+        checkRoles('querier', GEOR.config.ROLES_FOR_QUERIER);
+        checkRoles('print', GEOR.config.ROLES_FOR_PRINTER);
+            
+        /*
          * Initialize the application.
          */
-
-        // deactivate styler and queryer if anonymous
-        if (GEOR.config.ANONYMOUS) {
-            GEOR.styler = null;
-            GEOR.querier = null;
-        }
-
         GEOR.ajaxglobal.init();
         var layerStore = GEOR.map.create();
         var map = layerStore.map;
+        
         GEOR.wmc.init(layerStore);
-        GEOR.print.init(layerStore);
+        if (GEOR.print) {
+            GEOR.print.init(layerStore);
+        }
         if (GEOR.getfeatureinfo) {
             GEOR.getfeatureinfo.init(map);
         }
@@ -84,13 +102,13 @@ Ext.namespace("GEOR");
         }
         GEOR.waiter.init();
 
-        // handle layerstore initialisation with wms/services/wmc from "panier"
+        // handle layerstore initialisation 
+        // with wms/services/wmc from "panier"
         GEOR.mapinit.init(layerStore);
 
         /*
          * Create the page's layout.
          */
-
         var eastItems = [
             new Ext.Panel({
                 // this panel contains the "manager layer" and

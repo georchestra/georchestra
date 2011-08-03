@@ -2,13 +2,16 @@
 <%@ page contentType="text/html"%>
 <%@ page pageEncoding="UTF-8"%>
 <%@ page isELIgnored="false" %>
+<%@ page import="org.apache.commons.lang.StringUtils"%>
 <%
 String LOGIN_URL = "?login";
 Boolean anonymous = true;
 Boolean editor = false;
 String sec_roles = request.getHeader("sec-roles");
+String js_roles = "";
 if(sec_roles != null) {
     String[] roles = sec_roles.split(",");
+    String[] js_roles_array = new String[roles.length];
     for (int i = 0; i < roles.length; i++) {
         if(roles[i].equals("ROLE_ANONYMOUS")) {
             // default is anonymous already
@@ -21,7 +24,10 @@ if(sec_roles != null) {
         else {
             anonymous = false;
         }
+        // this array does not have the ROLE_ANONYMOUS value
+        js_roles_array[i] = "'"+roles[i]+"'";
     }
+    js_roles = StringUtils.join(js_roles_array, ", ");
 }
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -190,7 +196,6 @@ if(sec_roles != null) {
         // remove the loading element
         Ext.get("loading").remove();
 
-
         <% 
           String proxyHost = "/proxy/?url=";
           if(request.getContextPath().equals("/mapfishapp")) {
@@ -203,14 +208,14 @@ if(sec_roles != null) {
         // mapfishapp initial state: open a WMC, or a mix of WMS layers and servers
         GEOR.initstate = ${c.data};
 
+        // security stuff
     <c:choose>
         <c:when test='<%= anonymous == false %>'>
-        // security stuff
         GEOR.config.ANONYMOUS = false;
         GEOR.config.USERNAME = "<%=request.getHeader("sec-username") %>";
         </c:when>
     </c:choose>
-    
+        GEOR.config.ROLES = [<%= js_roles %>];
     </script>
     <noscript><p>Cette application nécessite le support de JavaScript par votre navigateur. Merci de l'activer.</p></noscript>
 </body>
