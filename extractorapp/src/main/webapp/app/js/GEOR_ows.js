@@ -174,7 +174,8 @@ GEOR.ows = (function() {
         defaultLayerOptions: {
             singleTile: true,
             ratio: 1,
-            transitionEffect: 'resize'
+            transitionEffect: 'resize',
+            isBaseLayer: false
         },
 
         /**
