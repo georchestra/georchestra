@@ -148,14 +148,18 @@ GEOR.layerstree = (function() {
                         alert("ERREUR: owsinfo.layer devrait être toujours défini");
                         return;
                     }
-                    var mapCRS = owsinfo.layer.projection; // FIXME: we might need a better process to find the suitable SRS
-                    var baselayerOptions = {
-                        projection: mapCRS, 
-                        maxExtent: owsinfo.layer.maxExtent.scale(1.5),
-                        units: GEOR.util.getUnitsForCRS(mapCRS)
-                    };
                     if(owsinfo.baselayer == undefined) {
                         // baselayer has never been created
+
+                        // FIXME: we might need a better process to find the
+                        // suitable SRS
+                        var mapCRS = owsinfo.layer.projection;
+
+                        var baselayerOptions = {
+                            projection: mapCRS, 
+                            maxExtent: owsinfo.layer.maxExtent.scale(1.5),
+                            units: GEOR.util.getUnitsForCRS(mapCRS)
+                        };
                         owsinfo.baselayer = GEOR.map.getBaseLayer(baselayerOptions);
                     }
                     if(!owsinfo.extent) {
