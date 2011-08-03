@@ -163,11 +163,8 @@ GEOR.layerstree = (function() {
                     }
                     map.addLayer(owsinfo.baselayer);
                     
-                    // At this step, the map maxExtent / projection / units ... is not set to a correct value,
-                    //  even though the baselayer has correct params.
-                    // That's why we're doing this:
-                    map.setOptions(baselayerOptions);
-                    // (might be an Openlayers bug - we'll see if things have changed on library update)
+                    // HACK: we need to reset the state of the map
+                    map.layerContainerOrigin = null;
 
                     if (owsinfo.layer.CLASS_NAME != "OpenLayers.Layer") {
                         map.addLayer(owsinfo.layer);
