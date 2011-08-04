@@ -79,15 +79,12 @@ OpenLayers.Control.OutOfRangeLayers =
      * Update OOR string.
      */
     updateText: function() {
-        var oorLayers = [];
         if (this.map && this.map.layers) {
-            var mapScale = this.map.getScale();
+            var oorLayers = [];
             for(var i=0, len=this.map.layers.length; i<len; i++) {
                 var layer = this.map.layers[i];
-                if (layer.getVisibility() && 
-                    ((layer.minScale && mapScale > layer.minScale) || 
-                    (layer.maxScale && mapScale < layer.maxScale))) {
-                        
+                if (!layer.isBaseLayer && layer.getVisibility() &&
+                    !layer.calculateInRange()) {
                     oorLayers.push(layer.name);
                 }
             }

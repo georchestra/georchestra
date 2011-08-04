@@ -341,7 +341,6 @@ GEOR.layerstree = (function() {
                     // on adding the layer to the map
                     owsinfo.layer.strategies[0].autoActivate = false;
                     owsinfo.layer.addOptions({
-                        alwaysInRange: true,
                         opacity: 0.7,
                         projection: GEOR.config.GLOBAL_EPSG,
                         maxExtent: GEOR.config.GLOBAL_MAX_EXTENT
@@ -491,7 +490,6 @@ GEOR.layerstree = (function() {
                         }
                     };
                     owsinfo.layer.addOptions({
-                        alwaysInRange: true,
                         opacity: 0.7,
                         projection: srs,
                         maxExtent: maxExtent
