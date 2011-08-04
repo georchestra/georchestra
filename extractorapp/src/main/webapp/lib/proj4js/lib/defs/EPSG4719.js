@@ -1,0 +1,1 @@
+Proj4js.defs["EPSG:4719"] = "+proj=longlat +ellps=intl +towgs84=211,147,111,0,0,0,0 +no_defs";
