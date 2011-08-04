@@ -441,6 +441,13 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
                 standalone: true
             }
         );
+
+        // this is necessary for the drag control's feature handler
+        // not to stop "click" events when a feature is selected
+        this.modifyFeature.dragControl.handlers.feature.stopClick = false;
+        this.modifyFeature.dragControl.handlers.feature.stopDown = false;
+        this.modifyFeature.dragControl.handlers.feature.stopUp = false;
+
         this.map.addControl(this.modifyFeature);
         this.modifyFeature.activate();
 
