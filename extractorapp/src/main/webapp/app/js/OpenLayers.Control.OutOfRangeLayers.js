@@ -84,7 +84,10 @@ OpenLayers.Control.OutOfRangeLayers =
             var mapScale = this.map.getScale();
             for(var i=0, len=this.map.layers.length; i<len; i++) {
                 var layer = this.map.layers[i];
-                if (layer.getVisibility() && ((layer.minScale && mapScale > layer.minScale) || (layer.maxScale && mapScale < layer.maxScale))) {
+                if (layer.getVisibility() && 
+                    ((layer.minScale && mapScale > layer.minScale) || 
+                    (layer.maxScale && mapScale < layer.maxScale))) {
+                        
                     oorLayers.push(layer.name);
                 }
             }
