@@ -71,6 +71,12 @@ Ext.namespace("GEOR");
         OpenLayers.IMAGE_RELOAD_ATTEMPTS = 5;
 
         /*
+         * Setting of proj4js global vars.
+         */
+
+        Proj4js.libPath = 'resources/lib/proj4js/lib/';
+
+        /*
          * Setting of Ext global vars.
          */
 
