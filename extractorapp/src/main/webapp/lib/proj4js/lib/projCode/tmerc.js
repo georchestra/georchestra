@@ -90,7 +90,7 @@ Proj4js.Proj.tmerc = {
       var temp = this.lat0 + p.y/(this.a * this.k0);
       var h = Math.cos(temp);
       con = Math.sqrt((1.0 - h * h)/(1.0 + g * g));
-      lat = Math.asinz(con);
+      lat = Proj4js.common.asinz(con);
       if (temp < 0)
         lat = -lat;
       if ((g == 0) && (h == 0)) {
@@ -104,7 +104,7 @@ Proj4js.Proj.tmerc = {
 
       con = (this.ml0 + y / this.k0) / this.a;
       phi = con;
-      for (i=0;;i++) {
+      for (i=0;true;i++) {
         delta_phi=((con + this.e1 * Math.sin(2.0*phi) - this.e2 * Math.sin(4.0*phi) + this.e3 * Math.sin(6.0*phi)) / this.e0) - phi;
         phi += delta_phi;
         if (Math.abs(delta_phi) <= Proj4js.common.EPSLN) break;

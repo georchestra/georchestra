@@ -71,8 +71,9 @@ Proj4js.Proj.stere = {
 // Stereographic forward equations--mapping lat,long to x,y
   forward: function(p) {
     var lon = p.x;
+    lon = Proj4js.common.adjust_lon(lon - this.long0);
     var lat = p.y;
-    var x, y
+    var x, y;
     
     if (this.sphere) {
     	var  sinphi, cosphi, coslam, sinlam;
@@ -108,7 +109,7 @@ Proj4js.Proj.stere = {
     		if (Math.abs(lat - Proj4js.common.HALF_PI) < this.TOL) {
           F_ERROR;
         }
-        y = this.akm1 * Math.tan(Proj4js.common.FORTPI + .5 * lat)
+        y = this.akm1 * Math.tan(Proj4js.common.FORTPI + .5 * lat);
     		x = sinlam * y;
     		y *= coslam;
     		break;
@@ -154,7 +155,7 @@ Proj4js.Proj.stere = {
   inverse: function(p) {
     var x = (p.x - this.x0)/this.a;   /* descale and de-offset */
     var y = (p.y - this.y0)/this.a;
-    var lon, lat
+    var lon, lat;
 
     var cosphi, sinphi, tp=0.0, phi_l=0.0, rho, halfe=0.0, pi2=0.0;
     var i;
@@ -198,6 +199,8 @@ Proj4js.Proj.stere = {
     		lon = (x == 0. && y == 0.) ? 0. : Math.atan2(x, y);
     		break;
     	}
+        p.x = Proj4js.common.adjust_lon(lon + this.long0);
+        p.y = lat;
     } else {
     	rho = Math.sqrt(x*x + y*y);
     	switch (this.mode) {
@@ -221,7 +224,7 @@ Proj4js.Proj.stere = {
     	case this.N_POLE:
     		y = -y;
     	case this.S_POLE:
-        tp = - rho / this.akm1
+        tp = - rho / this.akm1;
     		phi_l = Proj4js.common.HALF_PI - 2. * Math.atan(tp);
     		pi2 = -Proj4js.common.HALF_PI;
     		halfe = -.5 * this.e;
@@ -233,8 +236,8 @@ Proj4js.Proj.stere = {
     		if (Math.abs(phi_l - lat) < this.CONV) {
     			if (this.mode == this.S_POLE) lat = -lat;
     			lon = (x == 0. && y == 0.) ? 0. : Math.atan2(x, y);
-          p.x = lon;
-          p.y = lat
+          p.x = Proj4js.common.adjust_lon(lon + this.long0);
+          p.y = lat;
     			return p;
     		}
     	}

@@ -65,17 +65,26 @@ Proj4js = {
     *     projected Cartesian (x,y), but should always have x,y properties.
     */
     transform: function(source, dest, point) {
-        if (!source.readyToUse || !dest.readyToUse) {
-            this.reportError("Proj4js initialization for "+source.srsCode+" not yet complete");
+        if (!source.readyToUse) {
+            this.reportError("Proj4js initialization for:"+source.srsCode+" not yet complete");
+            return point;
+        }
+        if (!dest.readyToUse) {
+            this.reportError("Proj4js initialization for:"+dest.srsCode+" not yet complete");
             return point;
         }
         
         // Workaround for Spherical Mercator
-        if ((source.srsProjNumber =="900913" && dest.datumCode != "WGS84") ||
-            (dest.srsProjNumber == "900913" && source.datumCode != "WGS84")) {
+        if ((source.srsProjNumber =="900913" && dest.datumCode != "WGS84" && !dest.datum_params) ||
+            (dest.srsProjNumber == "900913" && source.datumCode != "WGS84" && !source.datum_params)) {
             var wgs84 = Proj4js.WGS84;
             this.transform(source, wgs84, point);
             source = wgs84;
+        }
+
+        // DGR, 2010/11/12
+        if (source.axis!="enu") {
+            this.adjust_axis(source,false,point);
         }
 
         // Transform source points to long/lat, if they aren't already.
@@ -114,6 +123,12 @@ Proj4js = {
                 point.y /= dest.to_meter;
             }
         }
+
+        // DGR, 2010/11/12
+        if (dest.axis!="enu") {
+            this.adjust_axis(dest,true,point);
+        }
+
         return point;
     }, // transform()
 
@@ -197,6 +212,50 @@ Proj4js = {
       }
       return point;
     }, // cs_datum_transform
+
+    /**
+     * Function: adjust_axis
+     * Normalize or de-normalized the x/y/z axes.  The normal form is "enu"
+     * (easting, northing, up).
+     * Parameters:
+     * crs {Proj4js.Proj} the coordinate reference system
+     * denorm {Boolean} when false, normalize
+     * point {Object} the coordinates to adjust
+     */
+    adjust_axis: function(crs, denorm, point) {
+        var xin= point.x, yin= point.y, zin= point.z || 0.0;
+        var v, t;
+        for (var i= 0; i<3; i++) {
+            if (denorm && i==2 && point.z===undefined) { continue; }
+                 if (i==0) { v= xin; t= 'x'; }
+            else if (i==1) { v= yin; t= 'y'; }
+            else           { v= zin; t= 'z'; }
+            switch(crs.axis[i]) {
+            case 'e':
+                point[t]= v;
+                break;
+            case 'w':
+                point[t]= -v;
+                break;
+            case 'n':
+                point[t]= v;
+                break;
+            case 's':
+                point[t]= -v;
+                break;
+            case 'u':
+                if (point[t]!==undefined) { point.z= v; }
+                break;
+            case 'd':
+                if (point[t]!==undefined) { point.z= -v; }
+                break;
+            default :
+                alert("ERROR: unknow axis ("+crs.axis[i]+") - check definition of "+src.projName);
+                return null;
+            }
+        }
+        return point;
+    },
 
     /**
      * Function: reportError
@@ -298,7 +357,8 @@ Proj4js = {
     
 /**
  * The following properties and methods handle dynamic loading of JSON objects.
- *
+ */
+ 
     /**
      * Property: scriptName
      * {String} The filename of this script without any path.
@@ -420,7 +480,7 @@ Proj4js.Proj = Proj4js.Class({
   /**
    * Property: projName
    * The projection class for this projection, e.g. lcc (lambert conformal conic,
-   * or merc for mercator.  These are exactly equicvalent to their Proj4 
+   * or merc for mercator).  These are exactly equivalent to their Proj4 
    * counterparts.
    */
   projName: null,
@@ -434,16 +494,78 @@ Proj4js.Proj = Proj4js.Class({
    * The datum specified for the projection
    */
   datum: null,
+  /**
+   * Property: x0
+   * The x coordinate origin
+   */
+  x0: 0,
+  /**
+   * Property: y0
+   * The y coordinate origin
+   */
+  y0: 0,
+  /**
+   * Property: localCS
+   * Flag to indicate if the projection is a local one in which no transforms
+   * are required.
+   */
+  localCS: false,
 
   /**
-   * Constructor: initialize
-   * Constructor for Proj4js.Proj objects
+  * Property: queue
+  * Buffer (FIFO) to hold callbacks waiting to be called when projection loaded.
+  */
+  queue: null,
+
+  /**
+  * Constructor: initialize
+  * Constructor for Proj4js.Proj objects
   *
   * Parameters:
   * srsCode - a code for map projection definition parameters.  These are usually
   * (but not always) EPSG codes.
   */
-  initialize: function(srsCode) {
+  initialize: function(srsCode, callback) {
+      this.srsCodeInput = srsCode;
+      
+      //Register callbacks prior to attempting to process definition
+      this.queue = [];
+      if( callback ){
+           this.queue.push( callback );
+      }
+      
+      //check to see if this is a WKT string
+      if ((srsCode.indexOf('GEOGCS') >= 0) ||
+          (srsCode.indexOf('GEOCCS') >= 0) ||
+          (srsCode.indexOf('PROJCS') >= 0) ||
+          (srsCode.indexOf('LOCAL_CS') >= 0)) {
+            this.parseWKT(srsCode);
+            this.deriveConstants();
+            this.loadProjCode(this.projName);
+            return;
+      }
+      
+      // DGR 2008-08-03 : support urn and url
+      if (srsCode.indexOf('urn:') == 0) {
+          //urn:ORIGINATOR:def:crs:CODESPACE:VERSION:ID
+          var urn = srsCode.split(':');
+          if ((urn[1] == 'ogc' || urn[1] =='x-ogc') &&
+              (urn[2] =='def') &&
+              (urn[3] =='crs')) {
+              srsCode = urn[4]+':'+urn[urn.length-1];
+          }
+      } else if (srsCode.indexOf('http://') == 0) {
+          //url#ID
+          var url = srsCode.split('#');
+          if (url[0].match(/epsg.org/)) {
+            // http://www.epsg.org/#
+            srsCode = 'EPSG:'+url[1];
+          } else if (url[0].match(/RIG.xml/)) {
+            //http://librairies.ign.fr/geoportail/resources/RIG.xml#
+            //http://interop.ign.fr/registers/ign/RIG.xml#
+            srsCode = 'IGNF:'+url[1];
+          }
+      }
       this.srsCode = srsCode.toUpperCase();
       if (this.srsCode.indexOf("EPSG") == 0) {
           this.srsCode = this.srsCode;
@@ -463,6 +585,7 @@ Proj4js.Proj = Proj4js.Class({
           this.srsAuth = '';
           this.srsProjNumber = this.srsCode;
       }
+      
       this.loadProjDefinition();
   },
   
@@ -498,7 +621,7 @@ Proj4js.Proj = Proj4js.Class({
  */
     loadFromService: function() {
       //else load from web service
-      var url = Proj4js.defsLookupService +'/' + this.srsAuth +'/'+ this.srsProjNumber + '/proj4js';
+      var url = Proj4js.defsLookupService +'/' + this.srsAuth +'/'+ this.srsProjNumber + '/proj4js/';
       Proj4js.loadScript(url, 
             Proj4js.bind(this.defsLoaded, this),
             Proj4js.bind(this.defsFailed, this),
@@ -535,7 +658,7 @@ Proj4js.Proj = Proj4js.Class({
  */
    defsFailed: function() {
       Proj4js.reportError('failed to load projection definition for: '+this.srsCode);
-      Proj4js.extend(Proj4js.defs[this.srsCode], Proj4js.defs['WGS84']);  //set it to something so it can at least continue
+      Proj4js.defs[this.srsCode] = Proj4js.defs['WGS84'];  //set it to something so it can at least continue
       this.defsLoaded();
     },
 
@@ -606,7 +729,160 @@ Proj4js.Proj = Proj4js.Class({
       Proj4js.extend(this, Proj4js.Proj[this.projName]);
       this.init();
       this.readyToUse = true;
+      if( this.queue ) {
+        var item;
+        while( (item = this.queue.shift()) ) {
+          item.call( this, this );
+        }
+      }
   },
+
+/**
+ * Function: parseWKT
+ * Parses a WKT string to get initialization parameters
+ *
+ */
+ wktRE: /^(\w+)\[(.*)\]$/,
+ parseWKT: function(wkt) {
+    var wktMatch = wkt.match(this.wktRE);
+    if (!wktMatch) return;
+    var wktObject = wktMatch[1];
+    var wktContent = wktMatch[2];
+    var wktTemp = wktContent.split(",");
+    var wktName;
+    if (wktObject.toUpperCase() == "TOWGS84") {
+      wktName = wktObject;  //no name supplied for the TOWGS84 array
+    } else {
+      wktName = wktTemp.shift();
+    }
+    wktName = wktName.replace(/^\"/,"");
+    wktName = wktName.replace(/\"$/,"");
+    
+    /*
+    wktContent = wktTemp.join(",");
+    var wktArray = wktContent.split("],");
+    for (var i=0; i<wktArray.length-1; ++i) {
+      wktArray[i] += "]";
+    }
+    */
+    
+    var wktArray = new Array();
+    var bkCount = 0;
+    var obj = "";
+    for (var i=0; i<wktTemp.length; ++i) {
+      var token = wktTemp[i];
+      for (var j=0; j<token.length; ++j) {
+        if (token.charAt(j) == "[") ++bkCount;
+        if (token.charAt(j) == "]") --bkCount;
+      }
+      obj += token;
+      if (bkCount === 0) {
+        wktArray.push(obj);
+        obj = "";
+      } else {
+        obj += ",";
+      }
+    }
+    
+    //do something based on the type of the wktObject being parsed
+    //add in variations in the spelling as required
+    switch (wktObject) {
+      case 'LOCAL_CS':
+        this.projName = 'identity'
+        this.localCS = true;
+        this.srsCode = wktName;
+        break;
+      case 'GEOGCS':
+        this.projName = 'longlat'
+        this.geocsCode = wktName;
+        if (!this.srsCode) this.srsCode = wktName;
+        break;
+      case 'PROJCS':
+        this.srsCode = wktName;
+        break;
+      case 'GEOCCS':
+        break;
+      case 'PROJECTION':
+        this.projName = Proj4js.wktProjections[wktName]
+        break;
+      case 'DATUM':
+        this.datumName = wktName;
+        break;
+      case 'LOCAL_DATUM':
+        this.datumCode = 'none';
+        break;
+      case 'SPHEROID':
+        this.ellps = wktName;
+        this.a = parseFloat(wktArray.shift());
+        this.rf = parseFloat(wktArray.shift());
+        break;
+      case 'PRIMEM':
+        this.from_greenwich = parseFloat(wktArray.shift()); //to radians?
+        break;
+      case 'UNIT':
+        this.units = wktName;
+        this.unitsPerMeter = parseFloat(wktArray.shift());
+        break;
+      case 'PARAMETER':
+        var name = wktName.toLowerCase();
+        var value = parseFloat(wktArray.shift());
+        //there may be many variations on the wktName values, add in case
+        //statements as required
+        switch (name) {
+          case 'false_easting':
+            this.x0 = value;
+            break;
+          case 'false_northing':
+            this.y0 = value;
+            break;
+          case 'scale_factor':
+            this.k0 = value;
+            break;
+          case 'central_meridian':
+            this.long0 = value*Proj4js.common.D2R;
+            break;
+          case 'latitude_of_origin':
+            this.lat0 = value*Proj4js.common.D2R;
+            break;
+          case 'more_here':
+            break;
+          default:
+            break;
+        }
+        break;
+      case 'TOWGS84':
+        this.datum_params = wktArray;
+        break;
+      //DGR 2010-11-12: AXIS
+      case 'AXIS':
+        var name= wktName.toLowerCase();
+        var value= wktArray.shift();
+        switch (value) {
+          case 'EAST' : value= 'e'; break;
+          case 'WEST' : value= 'w'; break;
+          case 'NORTH': value= 'n'; break;
+          case 'SOUTH': value= 's'; break;
+          case 'UP'   : value= 'u'; break;
+          case 'DOWN' : value= 'd'; break;
+          case 'OTHER':
+          default     : value= ' '; break;//FIXME
+        }
+        if (!this.axis) { this.axis= "enu"; }
+        switch(name) {
+          case 'X': this.axis=                         value + this.axis.substr(1,2); break;
+          case 'Y': this.axis= this.axis.substr(0,1) + value + this.axis.substr(2,1); break;
+          case 'Z': this.axis= this.axis.substr(0,2) + value                        ; break;
+          default : break;
+        }
+      case 'MORE_HERE':
+        break;
+      default:
+        break;
+    }
+    for (var i=0; i<wktArray.length; ++i) {
+      this.parseWKT(wktArray[i]);
+    }
+ },
 
 /**
  * Function: parseDefs
@@ -616,6 +892,9 @@ Proj4js.Proj = Proj4js.Class({
   parseDefs: function() {
       this.defData = Proj4js.defs[this.srsCode];
       var paramName, paramVal;
+      if (!this.defData) {
+        return;
+      }
       var paramArray=this.defData.split("+");
 
       for (var prop=0; prop<paramArray.length; prop++) {
@@ -646,7 +925,7 @@ Proj4js.Proj = Proj4js.Class({
               case "y_0":    this.y0 = parseFloat(paramVal); break;  // false northing
               case "k_0":    this.k0 = parseFloat(paramVal); break;  // projection scale factor
               case "k":      this.k0 = parseFloat(paramVal); break;  // both forms returned
-              case "R_A":    this.R = true; break;   //Spheroid radius 
+              case "r_a":    this.R_A = true; break;                 // sphere--area of ellipsoid
               case "zone":   this.zone = parseInt(paramVal); break;  // UTM Zone
               case "south":   this.utmSouth = true; break;  // UTM north/south
               case "towgs84":this.datum_params = paramVal.split(","); break;
@@ -659,6 +938,16 @@ Proj4js.Proj = Proj4js.Class({
                                 Proj4js.PrimeMeridian[paramVal] : parseFloat(paramVal);
                              this.from_greenwich *= Proj4js.common.D2R; 
                              break;
+              // DGR 2010-11-12: axis
+              case "axis":   paramVal = paramVal.replace(/\s/gi,"");
+                             var legalAxis= "ewnsud";
+                             if (paramVal.length==3 &&
+                                 legalAxis.indexOf(paramVal.substr(0,1))!=-1 &&
+                                 legalAxis.indexOf(paramVal.substr(1,1))!=-1 &&
+                                 legalAxis.indexOf(paramVal.substr(2,1))!=-1) {
+                                this.axis= paramVal;
+                             } //FIXME: be silent ?
+                             break
               case "no_defs": break; 
               default: //alert("Unrecognized parameter: " + paramName);
           } // switch()
@@ -677,7 +966,7 @@ Proj4js.Proj = Proj4js.Class({
       if (this.datumCode && this.datumCode != 'none') {
         var datumDef = Proj4js.Datum[this.datumCode];
         if (datumDef) {
-          this.datum_params = datumDef.towgs84.split(',');
+          this.datum_params = datumDef.towgs84 ? datumDef.towgs84.split(',') : null;
           this.ellps = datumDef.ellipse;
           this.datumName = datumDef.datumName ? datumDef.datumName : this.datumCode;
         }
@@ -696,13 +985,15 @@ Proj4js.Proj = Proj4js.Class({
       this.es = (this.a2-this.b2)/this.a2;  // e ^ 2
       this.e = Math.sqrt(this.es);        // eccentricity
       if (this.R_A) {
-        this.a *= 1. - this.es * (Proj4js.common.SIXTH + this.es * (Proj4js.RA4 + this.es * Proj4js.RA6));
+        this.a *= 1. - this.es * (Proj4js.common.SIXTH + this.es * (Proj4js.common.RA4 + this.es * Proj4js.common.RA6));
         this.a2 = this.a * this.a;
         this.b2 = this.b * this.b;
         this.es = 0.;
       }
       this.ep2=(this.a2-this.b2)/this.b2; // used in geocentric
       if (!this.k0) this.k0 = 1.0;    //default value
+      //DGR 2010-11-12: axis
+      if (!this.axis) { this.axis= "enu"; }
 
       this.datum = new Proj4js.datum(this);
   }
@@ -721,6 +1012,7 @@ Proj4js.Proj.longlat = {
     return pt;
   }
 };
+Proj4js.Proj.identity = Proj4js.Proj.longlat;
 
 /**
   Proj4js.defs is a collection of coordinate system definition objects in the 
@@ -741,9 +1033,13 @@ Proj4js.defs = {
   // without requiring a separate .js file
   'WGS84': "+title=long/lat:WGS84 +proj=longlat +ellps=WGS84 +datum=WGS84 +units=degrees",
   'EPSG:4326': "+title=long/lat:WGS84 +proj=longlat +a=6378137.0 +b=6356752.31424518 +ellps=WGS84 +datum=WGS84 +units=degrees",
-  'EPSG:4269': "+title=long/lat:NAD83 +proj=longlat +a=6378137.0 +b=6356752.31414036 +ellps=GRS80 +datum=NAD83 +units=degrees" 
+  'EPSG:4269': "+title=long/lat:NAD83 +proj=longlat +a=6378137.0 +b=6356752.31414036 +ellps=GRS80 +datum=NAD83 +units=degrees",
+  'EPSG:3785': "+title= Google Mercator +proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs"
 };
-//+a=6378137.0 +b=6356752.31424518 +ellps=WGS84 +datum=WGS84",
+Proj4js.defs['GOOGLE'] = Proj4js.defs['EPSG:3785'];
+Proj4js.defs['EPSG:900913'] = Proj4js.defs['EPSG:3785'];
+Proj4js.defs['EPSG:102113'] = Proj4js.defs['EPSG:3785'];
+
 Proj4js.common = {
   PI : 3.141592653589793238, //Math.PI,
   HALF_PI : 1.570796326794896619, //Math.PI*0.5,
@@ -800,7 +1096,7 @@ Proj4js.common = {
     var eccnth = .5 * eccent;
     var con, dphi;
     var phi = this.HALF_PI - 2 * Math.atan(ts);
-    for (i = 0; i <= 15; i++) {
+    for (var i = 0; i <= 15; i++) {
       con = eccent * Math.sin(phi);
       dphi = this.HALF_PI - 2 * Math.atan(ts *(Math.pow(((1.0 - con)/(1.0 + con)),eccnth))) - phi;
       phi += dphi;
@@ -813,7 +1109,7 @@ Proj4js.common = {
 /* Function to compute constant small q which is the radius of a 
    parallel of latitude, phi, divided by the semimajor axis. 
 ------------------------------------------------------------*/
-  qsfnz : function(eccent,sinphi,cosphi) {
+  qsfnz : function(eccent,sinphi) {
     var con;
     if (eccent > 1.0e-7) {
       con = eccent * sinphi;
@@ -861,8 +1157,7 @@ Proj4js.common = {
   },
 
 // Latitude Isometrique - close to tsfnz ...
-  latiso : function(eccent, phi, sinphi)
-  {
+  latiso : function(eccent, phi, sinphi) {
     if (Math.abs(phi) > this.HALF_PI) return +Number.NaN;
     if (phi==this.HALF_PI) return Number.POSITIVE_INFINITY;
     if (phi==-1.0*this.HALF_PI) return -1.0*Number.POSITIVE_INFINITY;
@@ -888,7 +1183,7 @@ Proj4js.common = {
     return phi;
   },
 
-// Needed for Gauss Laborde
+// Needed for Gauss Schreiber
 // Original:  Denis Makarov (info@binarythings.com)
 // Web Site:  http://www.binarythings.com
   sinh : function(x)
@@ -1116,7 +1411,7 @@ var maxiter = 30;
 
 /* --------------------------------------------------------------
  * Following iterative algorithm was developped by
- * "Institut für Erdmessung", University of Hannover, July 1988.
+ * "Institut fï¿½r Erdmessung", University of Hannover, July 1988.
  * Internet: www.ife.uni-hannover.de
  * Iterative computation of CPHI,SPHI and Height.
  * Iteration of CPHI and SPHI to 10**-12 radian resp.
@@ -1340,7 +1635,7 @@ var maxiter = 30;
 Proj4js.Point = Proj4js.Class({
 
     /**
-     * Constructor! Proj4js.Point
+     * Constructor: Proj4js.Point
      *
      * Parameters:
      * - x {float} or {Array} either the first coordinates component or
@@ -1353,7 +1648,7 @@ Proj4js.Point = Proj4js.Class({
         this.x = x[0];
         this.y = x[1];
         this.z = x[2] || 0.0;
-      } else if (typeof x == 'string') {
+      } else if (typeof x == 'string' && typeof y == 'undefined') {
         var coords = x.split(',');
         this.x = parseFloat(coords[0]);
         this.y = parseFloat(coords[1]);
@@ -1477,3 +1772,17 @@ Proj4js.Datum = {
 
 Proj4js.WGS84 = new Proj4js.Proj('WGS84');
 Proj4js.Datum['OSB36'] = Proj4js.Datum['OSGB36']; //as returned from spatialreference.org
+
+//lookup table to go from the projection name in WKT to the Proj4js projection name
+//build this out as required
+Proj4js.wktProjections = {
+  "Lambert Tangential Conformal Conic Projection": "lcc",
+  "Mercator": "merc",
+  "Popular Visualisation Pseudo Mercator": "merc",
+  "Transverse_Mercator": "tmerc",
+  "Transverse Mercator": "tmerc",
+  "Lambert Azimuthal Equal Area": "laea",
+  "Universal Transverse Mercator System": "utm"
+};
+
+
