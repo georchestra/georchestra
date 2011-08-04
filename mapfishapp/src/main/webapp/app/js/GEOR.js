@@ -83,7 +83,6 @@ Ext.namespace("GEOR");
         /*
          * Initialize the application.
          */
-        GEOR.ajaxglobal.init();
         var layerStore = GEOR.map.create();
         var map = layerStore.map;
         
@@ -102,10 +101,13 @@ Ext.namespace("GEOR");
         }
         GEOR.waiter.init();
 
-        // handle layerstore initialisation 
+        // Handle layerstore initialisation 
         // with wms/services/wmc from "panier"
-        GEOR.mapinit.init(layerStore);
-
+        GEOR.mapinit.init(layerStore, GEOR.ajaxglobal.init);
+        // Note: we're providing GEOR.ajaxglobal.init as a callback, so that 
+        // errors when loading WMC are not catched by GEOR.ajaxglobal
+        // but by the mapinit module, which handles them more appropriately
+        
         /*
          * Create the page's layout.
          */

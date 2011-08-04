@@ -16,6 +16,7 @@
  * @include GEOR_wmc.js
  * @include GEOR_config.js
  * @include GEOR_ows.js
+ * @include GEOR_util.js
  * @include GEOR_waiter.js
  * @include GeoExt/data/LayerRecord.js
  * @include GeoExt/data/WMSCapabilitiesReader.js
@@ -41,32 +42,53 @@ GEOR.mapinit = (function() {
     var initState = null;
     
     /**
+     * Property: cb
+     * {Function} executed after this init function has done its job
+     */
+    var cb = null;
+    
+    /**
      * Method: updateStoreFromWMC
      * Updates the app LayerStore from a given WMC
      *
      * Parameters:
      * wmcUrl - {String} The WMC document URL.
-     * resetMap - {String} Specifies if resetMap must be passed to
-     *            the GEOR.wmc.read function.
-     * callback - {Function} Callback function to be called once the
-                  WMC is read.
+     * options - {Object} an optional object with the following properties:
+     *           resetMap - {String} Specifies if resetMap must be passed to
+     *                      the GEOR.wmc.read function. Defaults to true.
+     *           success - {Function} Callback function to be called once the
+     *                      WMC is read.
+     *           failure - {Function} Callback function to be called when the
+     *                      WMC is not valid.
+     *           scope - {Object} the callbacks' scope - defaults to this
      */
-    var updateStoreFromWMC = function(wmcUrl, resetMap, callback) {
+    var updateStoreFromWMC = function(wmcUrl, options) {
+        options = options || {};
         GEOR.waiter.show();
+        var failure = function() {
+            GEOR.waiter.hide();
+            GEOR.util.infoDialog({
+                msg: "Le contexte fourni n'est pas valide."
+            });
+            options.failure && options.failure.call(this);
+        };
         OpenLayers.Request.GET({
             url: wmcUrl,
             success: function(response) {
+                // we need to manually hide the waiter since 
+                // GEOR.ajaxglobal.init has not run yet:
+                GEOR.waiter.hide();
                 try {
-                    GEOR.wmc.read(response.responseText, resetMap);
-                    if (callback) {
-                        callback();
-                    }
+                    GEOR.wmc.read(response.responseText, options.resetMap || true);
+                    options.success && options.success.call(this);
+                    // and finally we're running our global success callback:
+                    cb.call();
                 } catch(err) {
-                    GEOR.util.errorDialog({
-                        msg: "Le contexte n'est pas valide."
-                    });
+                    failure.call(options.scope || this);
                 }
-            }
+            },
+            failure: failure,
+            scope: options.scope || this
         });
     };
 
@@ -281,6 +303,22 @@ GEOR.mapinit = (function() {
         createStores(wmsServers['WMS'], updateStoreFromWMS);
     };
 
+    /**
+     * Method: loadDefaultWMC
+     * Load the default WMC
+     *
+     */
+    var loadDefaultWMC = function() {
+        GEOR.waiter.hide();
+        if (GEOR.config.DEFAULT_WMC) {
+            updateStoreFromWMC(GEOR.config.DEFAULT_WMC);
+        } else {
+            // this should never happen:
+            alert("Le contexte par défaut n'est pas défini "+
+                  "(et ce n'est pas du tout normal !)");
+        }
+    };
+
     return {
     
         /**
@@ -289,36 +327,50 @@ GEOR.mapinit = (function() {
          *
          * Parameters:
          * ls - {GeoExt.data.LayerStore} The layer store instance.
+         * callback - {Function} exec. after a WMC has been successfully loaded
          */
-        init: function(ls) {
+        init: function(ls, callback) {
             layerStore = ls;
-
+            cb = callback || OpenLayers.Util.Void;
+            
+            // POSTing a content to the app (which results in GEOR.initstate 
+            // being set) has priority over everything else:
             if (!GEOR.initstate || GEOR.initstate === null || 
                 !GEOR.initstate[0]) {
-                // load default WMC
-                updateStoreFromWMC(GEOR.config.DEFAULT_WMC, true);
+                // if a custom WMC is provided as GET parameter, load it:
+                if (GEOR.config.CUSTOM_WMC) {
+                    updateStoreFromWMC(GEOR.config.CUSTOM_WMC, {
+                        failure: loadDefaultWMC
+                    });
+                } else {
+                    loadDefaultWMC();
+                }
                 return;
             }
-            initState = GEOR.initstate;
             
-            // determine whether to load WMC or WMS layers or WMS services
-
+            initState = GEOR.initstate;
+            // Based on GEOR.initstate, determine whether 
+            // to load WMC or WMS layers or WMS services
             if (initState.length == 1 && initState[0].type == "WMC" && 
                 initState[0].url) {
                 // load given WMC
-                updateStoreFromWMC(initState[0].url);
+                updateStoreFromWMC(initState[0].url, {
+                    resetMap: false
+                    // we do not need the failure callback, 
+                    // since resetMap is false:
+                    //,failure: loadDefaultWMC
+                });
             } else {
                 // load default WMC and other layers. We need to make
                 // sure the WMC is loaded prior to loading other layers,
-                // this is so the map object and fake base layer are
+                // this is so that the map object and fake base layer are
                 // properly configured when adding the other layers
                 // to the map
-                updateStoreFromWMC(
-                    GEOR.config.DEFAULT_WMC, true,
-                    function() {
+                updateStoreFromWMC(GEOR.config.DEFAULT_WMC, {
+                    success: function() {
                         loadLayers(initState);
                     }
-                );
+                });
             }
         }
     };

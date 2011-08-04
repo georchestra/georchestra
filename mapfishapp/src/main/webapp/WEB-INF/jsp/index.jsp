@@ -208,6 +208,13 @@ if(sec_roles != null) {
         // mapfishapp initial state: open a WMC, or a mix of WMS layers and servers
         GEOR.initstate = ${c.data};
 
+        // custom WMC loader 
+    <c:choose>
+        <c:when test='<%= request.getParameter("wmc") != null %>'>
+        GEOR.config.CUSTOM_WMC = '<%=request.getParameter("wmc") %>';
+        </c:when>
+    </c:choose>
+    
         // security stuff
     <c:choose>
         <c:when test='<%= anonymous == false %>'>
