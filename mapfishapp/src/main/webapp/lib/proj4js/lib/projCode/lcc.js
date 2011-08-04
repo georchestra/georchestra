@@ -89,7 +89,7 @@ Proj4js.Proj.lcc = {
       }
 
       var con  = Math.abs( Math.abs(lat) - Proj4js.common.HALF_PI);
-      var ts;
+      var ts, rh1;
       if (con > Proj4js.common.EPSLN) {
         ts = Proj4js.common.tsfnz(this.e, lat, Math.sin(lat) );
         rh1 = this.a * this.f0 * Math.pow(ts, this.ns);
@@ -114,8 +114,8 @@ Proj4js.Proj.lcc = {
 
     var rh1, con, ts;
     var lat, lon;
-    x = (p.x - this.x0)/this.k0;
-    y = (this.rh - (p.y - this.y0)/this.k0);
+    var x = (p.x - this.x0)/this.k0;
+    var y = (this.rh - (p.y - this.y0)/this.k0);
     if (this.ns > 0) {
       rh1 = Math.sqrt (x * x + y * y);
       con = 1.0;
