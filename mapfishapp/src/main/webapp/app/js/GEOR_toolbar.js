@@ -167,8 +167,6 @@ GEOR.toolbar = (function() {
             iconCls: "zoomfull"
         }));
 
-        items.push("-");
-
         // default control is a fake, so that Navigation control
         // is used by default to pan.
         ctrl = new OpenLayers.Control();
@@ -193,7 +191,9 @@ GEOR.toolbar = (function() {
             toggleGroup: "map",
             allowDepress: false
         }));
-
+    
+        items.push("-");
+        
         items.push(new GeoExt.Action({
             control: createMeasureControl(OpenLayers.Handler.Path),
             map: map,
@@ -304,7 +304,9 @@ GEOR.toolbar = (function() {
                 }
             }
         });
-
+        
+        items.push("-");
+        
         items.push(GEOR.workspace.create());
 
         // this is a bit unusual to set the buttons in the
