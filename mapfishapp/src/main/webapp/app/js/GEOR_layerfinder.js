@@ -501,7 +501,7 @@ GEOR.layerfinder = (function() {
                 proxy : new Ext.data.HttpProxy({
                     method: 'GET',
                     disableCaching: false,
-                    url: 'app/js/GEOR_wmslist.js'
+                    url: GEOR.config.WMS_LIST_URL
                 }),
                 reader: new Ext.data.JsonReader({
                     root: 'servers',

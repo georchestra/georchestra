@@ -407,6 +407,20 @@ GEOR.config = (function() {
             "http://osm.geobretagne.fr/service/wms": "http://maps.qualitystreetmap.org/geob_wms",
             "http://geobretagne.fr/geoserver/gwc/service/wms": undefined // no trailing comma
         },
+
+
+        /**
+         * Constant: WMS_LIST_URL
+         * URL of a JSON resource containing a list of WMS servers shown in the
+         * WMS selection interface
+         * { servers: [
+         *    {"name":"myserver", "url":"http://..."},
+         *    ...
+         *    ]
+         * }
+         */
+        WMS_LIST_URL: 'app/js/GEOR_wmslist.js',
+
         
         /**
          * Constant: CSW_GETDOMAIN_SORTING
