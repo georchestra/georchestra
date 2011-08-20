@@ -153,6 +153,7 @@ GEOR.ows = (function() {
          */
         defaultLayerOptions: {
             singleTile: GEOR.config.TILE_SINGLE,
+            gutter: 10,
             buffer: 0,
             tileSize: new OpenLayers.Size(GEOR.config.TILE_WIDTH, GEOR.config.TILE_HEIGHT)
         },
