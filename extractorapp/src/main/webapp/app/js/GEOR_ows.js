@@ -267,6 +267,44 @@ GEOR.ows = (function() {
         },
 
         /**
+         * APIMethod: WFSDescribeFeatureType
+         * Create a {GeoExt.data.AttributeStore} store from the
+         * WMSDescribeLayer record, load it if a callback function
+         * is provided, and return it.
+         *
+         * Parameters:
+         * record - {Ext.data.Record|Object} Record with "owsURL" and
+         *     "typeName" fields or object with same keys.
+         * options - {Object} An object with the properties:
+         * - success - {Function} A callback function called when the
+         *   store has been successfully loaded.
+         * - failure - {Function} Callback function called when the
+         *   store could not be loaded.
+         * - scope - {Object} The callback execution scope.
+         * - storeOptions - {Object} Additional store options.
+         */
+        WFSDescribeFeatureType: function(record, options) {
+            options = options || {};
+            record = (record instanceof Ext.data.Record) ? {
+                typeName: record.get("typeName"),
+                owsURL: record.get("owsURL")
+            } : record;
+            var storeOptions = Ext.applyIf({
+                url: record.owsURL,
+                baseParams: Ext.applyIf({
+                    "REQUEST": "DescribeFeatureType",
+                    "TYPENAME": record.typeName
+                }, WFS_BASE_PARAMS)
+            }, options.storeOptions);
+            var store = new GeoExt.data.AttributeStore(storeOptions);
+            if (options.success) {
+                loadStore(store,
+                          options.success, options.failure, options.scope);
+            }
+            return store;
+        },
+
+        /**
          * APIMethod: WMSCapabilities
          * Create a {GeoExt.data.WMSCapabilitiesStore} store, load it
          * if a callback function is provided, and return it.
