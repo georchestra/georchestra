@@ -265,9 +265,17 @@ GEOR.ows = (function() {
             }
             options = options || {};
             var storeOptions = Ext.applyIf({
-                url: layer.url,
+                // For some reason, if layer.url ends up with ?
+                // the generated request URL is not correct 
+                // see http://csm-bretagne.fr/redmine/issues/1979
+                url: layer.url.replace('?',''),
                 baseParams: Ext.applyIf({
                     "REQUEST": "DescribeLayer",
+                    // WIDTH and HEIGHT params seem to be required for
+                    // some versions of MapServer (typ. 5.6.1)
+                    // see http://csm-bretagne.fr/redmine/issues/1979
+                    "WIDTH": 1,  
+                    "HEIGHT": 1,
                     "LAYERS": layer.params.LAYERS
                 }, WMS_BASE_PARAMS)
             }, options.storeOptions);
