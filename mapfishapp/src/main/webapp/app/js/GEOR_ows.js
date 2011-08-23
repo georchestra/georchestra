@@ -268,7 +268,7 @@ GEOR.ows = (function() {
                 // For some reason, if layer.url ends up with ?
                 // the generated request URL is not correct 
                 // see http://csm-bretagne.fr/redmine/issues/1979
-                url: layer.url.replace('?',''),
+                url: layer.url.replace(/\?$/,''),
                 baseParams: Ext.applyIf({
                     "REQUEST": "DescribeLayer",
                     // WIDTH and HEIGHT params seem to be required for
