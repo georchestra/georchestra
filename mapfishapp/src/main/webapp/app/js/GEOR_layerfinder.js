@@ -16,6 +16,7 @@
  * @include GEOR_util.js
  * @include GEOR_cswbrowser.js
  * @include GEOR_wmsbrowser.js
+ * @include GEOR_wfsbrowser.js
  */
 
 Ext.namespace("GEOR");
@@ -36,9 +37,9 @@ GEOR.layerfinder = (function() {
     /**
      * Property: currentTab
      * {String} a local cache of the currently active tab 
-     * (one of "welcome", "csw", "wms")
+     * (one of "csw", "wms", "wfs")
      */
-    var currentTab = "welcome";
+    var currentTab = "csw";
     
     /**
      * Property: panels
@@ -46,7 +47,8 @@ GEOR.layerfinder = (function() {
      */
     var panels = {
         "csw": null,
-        "wms": null
+        "wms": null,
+        "wfs": null
     };
     
     /**
@@ -55,7 +57,8 @@ GEOR.layerfinder = (function() {
      */
     var selectedRecords = {
         "csw": [],
-        "wms": []
+        "wms": [],
+        "wfs": []
     };
     
     /**
@@ -89,17 +92,21 @@ GEOR.layerfinder = (function() {
         GEOR.wmsbrowser.events.on({
             "selectionchanged": selectionChangedListener.call(this, "wms")
         });
+        GEOR.wfsbrowser.events.on({
+            "selectionchanged": selectionChangedListener.call(this, "wfs")
+        });
         
         panels["csw"] = GEOR.cswbrowser.getPanel();
         panels["wms"] = GEOR.wmsbrowser.getPanel({
             srs: layerStore.map.getProjection()
         });
+        panels["wfs"] = GEOR.wfsbrowser.getPanel();
         
         return new Ext.TabPanel({
             border: false,
             activeTab: 0,
-            deferredRender: true, // required for WMS panel to have correct layout
-            items: [panels["csw"], panels["wms"]],
+            deferredRender: true, // required for WMS & WFS panels to have correct layout
+            items: [panels["csw"], panels["wms"], panels["wfs"]],
             listeners: {
                 'tabchange': function (tp, p) {
                     switch (p) {
@@ -108,6 +115,9 @@ GEOR.layerfinder = (function() {
                         break;
                     case panels["wms"]:
                         currentTab = "wms";
+                        break;
+                    case panels["wfs"]:
+                        currentTab = "wfs";
                         break;
                     }
                     if (selectedRecords[currentTab].length>0) {
@@ -178,7 +188,7 @@ GEOR.layerfinder = (function() {
         for(var i=0, len=records.length; i<len; i++) {
             var record = records[i];
             if(record instanceof GeoExt.data.LayerRecord) {
-                // we're coming from the WMS tab
+                // we're coming from the WMS or WFS tab
                 recordsToAdd.push(record.clone());
             } else if(record.get("name")) {
                 // we're coming from the CSW tab
@@ -232,6 +242,9 @@ GEOR.layerfinder = (function() {
                     case "wms":
                         GEOR.wmsbrowser.clearSelection();
                         break;
+                    case "wfs":
+                        GEOR.wfsbrowser.clearSelection();
+                        break;
                     default:
                         break;
                     }
@@ -261,3 +274,76 @@ GEOR.layerfinder = (function() {
         }
     };
 })();
+
+
+/**
+ * A customized TwinTriggerField, currently used in keyword xlink search
+ * Taken from the Extjs examples and adapted (translations)
+ */
+
+Ext.app.OWSUrlField = Ext.extend(Ext.form.TwinTriggerField, {
+    initComponent: function() {
+        Ext.app.OWSUrlField.superclass.initComponent.call(this);
+        this.on('specialkey', function(f, e) {
+            if (e.getKey() == e.ENTER) {
+                this.onTrigger2Click();
+            }
+        }, this);
+    },
+
+    validationEvent: false,
+    validateOnBlur: false,
+    trigger1Class: 'x-form-clear-trigger',
+    trigger2Class: 'x-form-search-trigger',
+    hideTrigger1: true,
+    width: 180,
+    hasSearch: false,
+    paramName: 'query',
+
+    onTrigger1Click: function() {
+        if (this.hasSearch) {
+            this.store.baseParams[this.paramName] = '';
+            this.store.removeAll();
+            this.el.dom.value = '';
+            this.triggers[0].hide();
+            this.hasSearch = false;
+            this.focus();
+            // conf
+            var conf = Ext.get('conf');
+            if (conf) {
+                conf.enableDisplayMode().show();
+            }
+        }
+    },
+
+    onTrigger2Click: function() {
+        // trim raw value:
+        var url = this.getRawValue().replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+        if (url.length < 1) {
+            this.onTrigger1Click();
+            return;
+        }
+        if (!GEOR.util.isUrl(url)) {
+            GEOR.util.errorDialog({
+                msg: "URL non conforme."
+            });
+            return;
+        }
+        // update url for OWS getCapabilities request
+        this.store.proxy.conn.url = url;
+        this.store.load({
+            callback: this.callback,
+            scope: this,
+            add: false
+        });
+
+        this.hasSearch = true;
+        this.triggers[0].show();
+        this.focus();
+        // conf
+        var conf = Ext.get('conf');
+        if (conf) {
+            conf.enableDisplayMode().hide();
+        }
+    }
+});

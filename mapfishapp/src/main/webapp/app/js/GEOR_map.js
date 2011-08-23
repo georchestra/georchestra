@@ -310,6 +310,8 @@ GEOR.map = (function() {
         var ls = new LayerStore({
             map: map,
             sortInfo: {
+                // opaque layers at the bottom
+                // as suggested by the WMS spec
                 field: 'opaque',
                 direction: 'DESC'
             },

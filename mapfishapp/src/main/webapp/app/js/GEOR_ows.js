@@ -271,12 +271,12 @@ GEOR.ows = (function() {
                 url: layer.url.replace(/\?$/,''),
                 baseParams: Ext.applyIf({
                     "REQUEST": "DescribeLayer",
+                    "LAYERS": layer.params.LAYERS,
                     // WIDTH and HEIGHT params seem to be required for
                     // some versions of MapServer (typ. 5.6.1)
                     // see http://csm-bretagne.fr/redmine/issues/1979
                     "WIDTH": 1,  
-                    "HEIGHT": 1,
-                    "LAYERS": layer.params.LAYERS
+                    "HEIGHT": 1
                 }, WMS_BASE_PARAMS)
             }, options.storeOptions);
             var store = new GeoExt.data.WMSDescribeLayerStore(storeOptions);

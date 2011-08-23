@@ -1,5 +1,5 @@
 {
-    servers: [
+    wms_servers: [
         {"name": "GeoBretagne", "url": "http://geobretagne.fr/geoserver/wms"},
         {"name": "Région Bretagne", "url": "http://kartenn.region-bretagne.fr/geoserver/wms"},
         {"name": "Sandre/zonages", "url": "http://services.sandre.eaufrance.fr/geo/zonage"},
@@ -19,5 +19,10 @@
         {"name": "BMO/OpenStreetMap", "url": "http://bmo.openstreetmap.fr/wms"},
         {"name": "IFREMER/littoral", "url": "http://www.ifremer.fr/services/wms1"},
         {"name": "Cartelie/CETE Ouest", "url": "http://mapserveur.application.developpement-durable.gouv.fr/map/mapserv?map%3D%2Fopt%2Fdata%2Fcarto%2Fcartelie%2Fprod%2FCETE_Ouest%2Fxdtyr36laj.www.map"} /* no trailing comma */
+    ],
+    wfs_servers: [
+        {"name": "GeoBretagne", "url": "http://geobretagne.fr/geoserver/wfs"},
+        {"name": "BMO/OpenStreetMap", "url": "http://bmo.openstreetmap.fr/ows"},
+        {"name": "Corine Land Cover", "url": "http://sd1878-2.sivit.org/geoserver/wfs"} /* no trailing comma */
     ]
 }

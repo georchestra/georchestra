@@ -66,10 +66,6 @@ GEOR.wmsbrowser = (function() {
         getPanel: function(options) {
             var store = new GEOR.ows.WMSCapabilities();
 
-            /**
-             * Property: cbxSm
-             * {Ext.grid.CheckboxSelectionModel} The selection model
-             */
             cbxSm =  new Ext.grid.CheckboxSelectionModel({
                 width: 20,
                 // for check all/none behaviour:
@@ -119,10 +115,10 @@ GEOR.wmsbrowser = (function() {
                     proxy : new Ext.data.HttpProxy({
                         method: 'GET',
                         disableCaching: false,
-                        url: GEOR.config.WMS_LIST_URL
+                        url: GEOR.config.OWS_LIST_URL
                     }),
                     reader: new Ext.data.JsonReader({
-                        root: 'servers',
+                        root: 'wms_servers',
                         fields: ['name', 'url']
                     }),
                     sortInfo: {
@@ -141,9 +137,32 @@ GEOR.wmsbrowser = (function() {
                 tpl: '<tpl for="."><div ext:qtip="<b>{name}</b><br/>{url}" class="x-combo-list-item">{name}</div></tpl>'
             });
             
-            var urlField = new Ext.app.WMSUrlField({
+            var srs = options.srs;
+            var urlField = new Ext.app.OWSUrlField({
                 fieldLabel: "... ou saisissez son adresse",
-                srs: options.srs,
+                callback: function(r, options, success) {
+                    if (!success) {
+                        GEOR.util.errorDialog({
+                            msg: "Serveur non joignable"
+                        });
+                        return;
+                    }
+                    var t = store.getCount();
+                    // but we don't want to display layers
+                    // which cannot be served in map's native SRS
+                    store.filterBy(function(record, id) {
+                        return record.get('srs') && 
+                            (record.get('srs')[srs] === true);
+                    });
+                    var notDisplayed = t - store.getCount();
+                    if (notDisplayed > 0) {
+                        var plural = (notDisplayed > 1) ? 's' : '';
+                        GEOR.util.infoDialog({
+                           msg: "Le serveur publie "+notDisplayed+
+                            " couche"+plural+" dont la projection n'est pas compatible"
+                        });
+                    }
+                },
                 store: store,
                 height: 30,
                 width: 400
@@ -156,6 +175,7 @@ GEOR.wmsbrowser = (function() {
                     {
                         region: 'north',
                         layout: 'form',
+                        border: false,
                         labelSeparator: ' : ',
                         labelWidth: 170,
                         bodyStyle: 'padding: 5px;',
@@ -176,95 +196,3 @@ GEOR.wmsbrowser = (function() {
         }
     };
 })();
-
-
-/**
- * A customized TwinTriggerField, currently used in keyword xlink search
- * Taken from the Extjs examples and adapted (translations)
- */
-
-Ext.app.WMSUrlField = Ext.extend(Ext.form.TwinTriggerField, {
-    initComponent: function() {
-        Ext.app.WMSUrlField.superclass.initComponent.call(this);
-        this.on('specialkey', function(f, e) {
-            if (e.getKey() == e.ENTER) {
-                this.onTrigger2Click();
-            }
-        }, this);
-    },
-
-    validationEvent: false,
-    validateOnBlur: false,
-    trigger1Class: 'x-form-clear-trigger',
-    trigger2Class: 'x-form-search-trigger',
-    hideTrigger1: true,
-    width: 180,
-    hasSearch: false,
-    paramName: 'query',
-
-    onTrigger1Click: function() {
-        if (this.hasSearch) {
-            this.store.baseParams[this.paramName] = '';
-            this.store.removeAll();
-            this.el.dom.value = '';
-            this.triggers[0].hide();
-            this.hasSearch = false;
-            this.focus();
-            // conf
-            var conf = Ext.get('conf');
-            if (conf) {
-                conf.enableDisplayMode().show();
-            }
-        }
-    },
-
-    onTrigger2Click: function() {
-        // trim raw value:
-        var url = this.getRawValue().replace(/^\s\s*/, '').replace(/\s\s*$/, '');
-        if (url.length < 1) {
-            this.onTrigger1Click();
-            return;
-        }
-        if (!GEOR.util.isUrl(url)) {
-            GEOR.util.errorDialog({
-                msg: "URL non conforme."
-            });
-            return;
-        }
-        var srs = this.srs; // FIXME : this is probably not the way it should be done.
-        // update url for WMSCap request
-        this.store.proxy.conn.url = url;
-        this.store.load({
-            callback: function(r, options, success) {
-                if (success) {
-                    var store = this.store;
-                    var t = store.getCount();
-                    // but we don't want to display layers
-                    // which cannot be served in map's native SRS
-                    store.filterBy(function(record, id) {
-                        return record.get('srs') && (record.get('srs')[srs] === true);
-                    });
-                    var notDisplayed = t - store.getCount();
-                    if (notDisplayed > 0) {
-                        var plural = (notDisplayed > 1) ? 's' : '';
-                        GEOR.util.infoDialog({
-                           msg: "Le serveur publie "+notDisplayed+
-                            " couche"+plural+" dont la projection n'est pas compatible"
-                        });
-                    }
-                }
-            },
-            scope: this,
-            add: false
-        });
-
-        this.hasSearch = true;
-        this.triggers[0].show();
-        this.focus();
-        // conf
-        var conf = Ext.get('conf');
-        if (conf) {
-            conf.enableDisplayMode().hide();
-        }
-    }
-});

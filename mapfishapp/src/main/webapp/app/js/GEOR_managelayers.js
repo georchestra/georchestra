@@ -330,6 +330,8 @@ GEOR.managelayers = (function() {
      */
     var createMenu = function(layerRecord) {
         var queryable = !!(layerRecord.get("queryable"));
+        var layer = layerRecord.get('layer');
+        var isWMS = (layer.CLASS_NAME == "OpenLayers.Layer.WMS");
         
         var menuItems = [], url;
         if (layerRecord.get("metadataURLs") && 
@@ -346,7 +348,7 @@ GEOR.managelayers = (function() {
                 }
             });
         }
-        if (GEOR.styler && queryable) {
+        if (GEOR.styler && isWMS && queryable) {
             menuItems.push({
                 iconCls: 'geor-btn-style',
                 text: "Editer la symbologie",
@@ -372,19 +374,21 @@ GEOR.managelayers = (function() {
             menuItems.push("-");
         }
         
-        stylesMenu = createStylesMenu(layerRecord);
-        menuItems.push({
-            text: 'Styles prédéfinis',
-            disabled: !queryable,
-            menu: stylesMenu
-        });
-        menuItems.push({
-            text: "Format d'image",
-            menu: createFormatMenu(layerRecord)
-        });
+        if (isWMS) {
+            stylesMenu = createStylesMenu(layerRecord);
+            menuItems.push({
+                text: 'Styles prédéfinis',
+                disabled: !queryable,
+                menu: stylesMenu
+            });
+            menuItems.push({
+                text: "Format d'image",
+                menu: createFormatMenu(layerRecord)
+            });
+        }
         
         return new Ext.menu.Menu({
-            disabled: !queryable,
+            disabled: !queryable, 
             ignoreParentClicks: true,
             items: menuItems
         });

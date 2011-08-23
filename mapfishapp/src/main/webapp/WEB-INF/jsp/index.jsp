@@ -173,6 +173,7 @@ if(sec_roles != null) {
     <script type="text/javascript" src="app/js/GEOR_layerfinder.js"></script>
     <script type="text/javascript" src="app/js/GEOR_cswbrowser.js"></script>
     <script type="text/javascript" src="app/js/GEOR_wmsbrowser.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_wfsbrowser.js"></script>
     <script type="text/javascript" src="app/js/GEOR_print.js"></script>
     <script type="text/javascript" src="app/js/GEOR_map.js"></script>
     <script type="text/javascript" src="app/js/GEOR_ajaxglobal.js"></script>

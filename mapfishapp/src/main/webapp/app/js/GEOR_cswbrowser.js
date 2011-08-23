@@ -424,6 +424,7 @@ GEOR.cswbrowser = (function() {
                 items: [{
                     region: 'north',
                     xtype: 'form',
+                    border: false,
                     height: 35,
                     bodyStyle: 'padding: 5px;',
                     items: [combo]

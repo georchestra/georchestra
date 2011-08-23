@@ -417,16 +417,12 @@ GEOR.config = (function() {
 
 
         /**
-         * Constant: WMS_LIST_URL
-         * URL of a JSON resource containing a list of WMS servers shown in the
-         * WMS selection interface
-         * { servers: [
-         *    {"name":"myserver", "url":"http://..."},
-         *    ...
-         *    ]
-         * }
+         * Constant: OWS_LIST_URL
+         * URL of a JSON resource containing a list of OGC servers shown in the
+         * OGC layers selection interface.
+         * See GEOR_owslist.js file for example syntax
          */
-        WMS_LIST_URL: 'app/js/GEOR_wmslist.js',
+        OWS_LIST_URL: 'app/js/GEOR_owslist.js',
 
         
         /**
