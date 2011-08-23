@@ -156,8 +156,6 @@ GEOR.cswbrowser = (function() {
                     return getRecordsFormat.write({
                         resultType: "results",
                         Query: {
-                            // TODO here : add Sort info
-                            // (see http://trac.osgeo.org/openlayers/ticket/2952 & http://csm-bretagne.fr/redmine/issues/1724)
                             Constraint: {
                                 version: "1.1.0",
                                 Filter: new OpenLayers.Filter.Comparison({
@@ -166,6 +164,12 @@ GEOR.cswbrowser = (function() {
                                     value: treeNode.text
                                 })
                             },
+                            // adding sort info:
+                            // see http://csm-bretagne.fr/redmine/issues/1724
+                            SortBy: [{
+                                "property": 'Title',
+                                "order": "DESC"
+                            }],
                             ElementSetName: {
                                 value: "full"
                             }
