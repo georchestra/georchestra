@@ -303,6 +303,13 @@ GEOR.config = (function() {
         GEONETWORK_URL: getBaseURL() + "geonetwork/srv/fr",
 
         /**
+         * Constant: CATALOG_NAME
+         * The name to display in the catalog tab under "add layer"
+         * (was: GeoCatalogue for GeoBretagne project)
+         */
+        CATALOG_NAME: 'Catalogue geOrchestra',
+
+        /**
          * Constant: MAPFISHAPP_URL
          * The URL to mapfishapp.
          */
