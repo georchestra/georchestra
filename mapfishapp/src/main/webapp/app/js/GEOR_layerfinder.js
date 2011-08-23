@@ -26,6 +26,13 @@ GEOR.layerfinder = (function() {
      * Private
      */
     
+    
+    /**
+     * Property: layerStore
+     * {GeoExt.data.LayerStore} a reference to the application layer store
+     */
+    var layerStore = null;
+    
     /**
      * Property: currentTab
      * {String} a local cache of the currently active tab 
@@ -61,13 +68,10 @@ GEOR.layerfinder = (function() {
      * Method: createTabPanel
      * Return the main tab panel.
      *
-     * Parameters:
-     * layerStore - {GeoExt.data.LayerStore} The application layer store.
-     *
      * Returns:
      * {Ext.TabPanel}
      */
-    var createTabPanel = function(layerStore) {
+    var createTabPanel = function() {
         
         var selectionChangedListener = function(tab) {
             return function(records) {
@@ -117,13 +121,57 @@ GEOR.layerfinder = (function() {
     };
 
     /**
+     * Method: capabilitiesSuccess
+     * Success callback for the WMS capabilities request issued 
+     * when adding layers from the catalog tab
+     *
+     * Parameters:
+     * layerName - {String}
+     */
+    // TODO : factorize & centralize this code on layer added in application layerStore
+    var capabilitiesSuccess = function(layerName) {
+        return function(store, records) {
+            var index = store.find("name", layerName);
+            if(index < 0) {
+                GEOR.util.errorDialog({
+                    msg: "La couche "+layerName+" n'a pas été trouvée "+
+                        "dans le service WMS.<br/><br/>"+
+                        "Peut-être n'avez-vous pas le droit d'y accéder "+
+                        "ou alors cette couche n'est plus disponible."
+                });
+                return;
+            }
+            var r = records[index];
+            var srs = layerStore.map.getProjection();
+            if(!r.get('srs') || (r.get('srs')[srs] !== true)) {
+                GEOR.util.errorDialog({
+                    msg: "La projection de la couche n'est pas compatible."
+                });
+                return;
+            }
+            // set the copyright information to the "attribution" field
+            // TODO: check all this works again after OpenLayers has been upgraded !
+            if (data.rights && !r.get("attribution")) {
+                r.set("attribution", {title: data.rights});
+            }
+            // if we have a metadataURL coming from the catalog,
+            // we use it instead of the one we get from the capabilities
+            // (as asked by Lydie - see http://csm-bretagne.fr/redmine/issues/1599#note-5)
+            if (data.metadataURL) {
+                r.set("metadataURLs", [data.metadataURL]);
+            }
+            layerStore.addSorted(r);
+        };
+    };
+
+    /**
      * Method: addSelectedLayers
      * Adds the selected OGC layers to the given layerStore.
      *
      * Parameters:
      * layerStore - {GeoExt.data.LayerStore} The application layer store.
      */
-    var addSelectedLayers = function(layerStore) {
+    var addSelectedLayers = function() {
         var records = selectedRecords[currentTab];
         var recordsToAdd = [];
         // we need to clone the layers
@@ -140,39 +188,12 @@ GEOR.layerfinder = (function() {
                     storeOptions: {
                         url: data.wmsurl
                     },
-                    success: function(store, records) { // TODO: JSHINT says: "Don't make functions within a loop."
-                        var index = store.find("name", this.layerName);
-                        if(index < 0) {
-                            GEOR.util.errorDialog({
-                                msg: "La couche n'a pas été trouvée dans le service WMS.<br/>" +
-                                     "Peut-être n'avez-vous pas le droit d'accéder à cette couche ou alors la couche n'est plus disponible."
-                            });
-                            return;
-                        }
-                        var r = records[index];
-                        var srs = this.layerStore.map.getProjection();
-                        if(!r.get('srs') || (r.get('srs')[srs] !== true)) {
-                            GEOR.util.errorDialog({
-                                msg: "La projection de la couche n'est pas compatible."
-                            });
-                            return;
-                        }
-                        // set the copyright information to the "attribution" field
-                        // TODO: check all this works again after OpenLayers has been upgraded !
-                        if (data.rights && !r.get("attribution")) {
-                            r.set("attribution", {title: data.rights});
-                        }
-                        // if we have a metadataURL coming from the catalog,
-                        // we use it instead of the one we get from the capabilities
-                        // (as asked by Lydie - see http://csm-bretagne.fr/redmine/issues/1599#note-5)
-                        if (data.metadataURL) {
-                            r.set("metadataURLs", [data.metadataURL]);
-                        }
-                        this.layerStore.addSorted(r);
-                    },
-                    scope: {
-                        layerStore: layerStore,
-                        layerName: record.get("name")
+                    success: capabilitiesSuccess.call(this, record.get("name")),
+                    failure: function() {
+                        GEOR.util.errorDialog({
+                            msg: "La requête WMS getCapabilities vers "+
+                                data.wmsurl+" a malheureusement échoué"
+                        });
                     }
                 });
             }
@@ -192,17 +213,18 @@ GEOR.layerfinder = (function() {
          * Return the window for layers adding management.
          *
          * Parameters:
-         * layerStore - {GeoExt.data.LayerStore} The application layer store.
+         * ls - {GeoExt.data.LayerStore} The application layer store.
          *
          * Returns:
          * {Ext.Window}
          */
-        create: function(layerStore) {
+        create: function(ls) {
+            layerStore = ls;
             addButton = new Ext.Button({
                 text: 'Ajouter',
                 disabled: true,
                 handler: function() {
-                    addSelectedLayers(layerStore);
+                    addSelectedLayers();
                     switch (currentTab) {
                     case "csw":
                         GEOR.cswbrowser.clearSelection();
@@ -224,7 +246,7 @@ GEOR.layerfinder = (function() {
                 height: 450,
                 closeAction: 'hide',
                 modal: false,
-                items: createTabPanel(layerStore),
+                items: createTabPanel(),
                 buttons: [
                     addButton,
                     {
