@@ -250,7 +250,9 @@ GEOR.cswbrowser = (function() {
         var getDomainFormat = new OpenLayers.Format.CSWGetDomain();
         OpenLayers.Request.POST({
             url: GEOR.config.CSW_URL,
-            data: getDomainFormat.write({PropertyName: GEOR.config.CSW_GETDOMAIN_PROPERTY}),
+            data: getDomainFormat.write({
+                PropertyName: GEOR.config.CSW_GETDOMAIN_PROPERTY
+            }),
             success: function(response) {
                 var r = getDomainFormat.read(response.responseText);
                 Ext.each(r.DomainValues[0].ListOfValues, function (item) {

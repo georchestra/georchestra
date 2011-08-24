@@ -159,12 +159,12 @@ GEOR.layerfinder = (function() {
                 });
                 return;
             }
-            // set the copyright information to the "attribution" field
+            // Set the copyright information to the "attribution" field
             // TODO: check all this works again after OpenLayers has been upgraded !
             if (data.rights && !r.get("attribution")) {
                 r.set("attribution", {title: data.rights});
             }
-            // if we have a metadataURL coming from the catalog,
+            // If we have a metadataURL coming from the catalog,
             // we use it instead of the one we get from the capabilities
             // (as asked by Lydie - see http://csm-bretagne.fr/redmine/issues/1599#note-5)
             if (data.metadataURL) {
