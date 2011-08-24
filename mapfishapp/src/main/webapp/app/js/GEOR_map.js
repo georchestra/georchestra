@@ -129,9 +129,8 @@ GEOR.map = (function() {
      * {OpenLayers.Map} The map instance.
      */
     var createMap = function() {
-        // max extent can be overriden in the WMC, see GEOR.initmap
-        // and GEOR.wmc
-
+        // max extent can be overriden in the WMC, 
+        // see GEOR.initmap and startup WMC file
         var options = {
             projection: GEOR.config.MAP_SRS,
             units: 'm',

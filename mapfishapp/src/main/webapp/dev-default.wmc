@@ -1,10 +1,10 @@
 <ViewContext xmlns="http://www.opengis.net/context" version="1.1.0" id="default.wmc" xsi:schemaLocation="http://www.opengis.net/context http://schemas.opengis.net/context/1.1.0/context.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <General>
     <Window width="1031" height="389"/>
-    <BoundingBox minx="-37179.8441128839986" miny="6691080.05881679989" maxx="540179.844112879946" maxy="6908919.94118320011" SRS="EPSG:2154"/>
+    <BoundingBox minx="-357823" miny="6037008" maxx="1313632" maxy="7230727" SRS="EPSG:2154"/>
     <Title/>
     <Extension>
-      <ol:maxExtent xmlns:ol="http://openlayers.org/context" minx="83000.0000000000000" miny="6700000.00000000000" maxx="420000.000000000000" maxy="6900000.00000000000"/>
+      <ol:maxExtent xmlns:ol="http://openlayers.org/context" minx="-357823" miny="6037008" maxx="1313632" maxy="7230727"/>
     </Extension>
   </General>
   <LayerList>
@@ -18,7 +18,7 @@
       <Name>osm:google</Name>
       <Title>OpenStreetMap</Title>
       <MetadataURL>
-        <OnlineResource xlink:type="simple" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://wiki.openstreetmap.org/" />
+        <OnlineResource xlink:type="simple" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://wiki.openstreetmap.org/wiki/FR:OpenStreetMap_License" />
       </MetadataURL>
       <FormatList>
         <Format current="1">image/png</Format>
@@ -30,7 +30,7 @@
         </Style>
       </StyleList>
       <Extension>
-        <ol:maxExtent xmlns:ol="http://openlayers.org/context" minx="-357823.2365" miny="6037008.6939" maxx="2146865.3059" maxy="8541697.2363"/>
+        <ol:maxExtent xmlns:ol="http://openlayers.org/context" minx="-357823" miny="6037008" maxx="1313632" maxy="7230727"/>
         <ol:tileSize width="256" height="256" xmlns:ol="http://openlayers.org/context"/>
         <ol:numZoomLevels xmlns:ol="http://openlayers.org/context">13</ol:numZoomLevels>
         <ol:units xmlns:ol="http://openlayers.org/context">m</ol:units>
@@ -40,6 +40,7 @@
         <ol:singleTile xmlns:ol="http://openlayers.org/context">false</ol:singleTile>
       </Extension>
     </Layer>
+    
     <Layer queryable="0" hidden="1">
       <Server service="OGC:WMS" version="1.1.1">
         <OnlineResource xlink:type="simple" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://geolittoral.application.equipement.gouv.fr/map/mapserv?map=/opt/data/carto/applis/geolittoral/map/metropole.www.map&amp;"/>
@@ -61,7 +62,7 @@
         </Style>
       </StyleList>
       <Extension>
-        <ol:maxExtent xmlns:ol="http://openlayers.org/context" minx="83000.0000000000000" miny="6700000.00000000000" maxx="420000.000000000000" maxy="6900000.00000000000"/>
+        <ol:maxExtent xmlns:ol="http://openlayers.org/context" minx="-357823" miny="6037008" maxx="1313632" maxy="7230727"/>
         <ol:transparent xmlns:ol="http://openlayers.org/context">false</ol:transparent>
         <ol:numZoomLevels xmlns:ol="http://openlayers.org/context">13</ol:numZoomLevels>
         <ol:units xmlns:ol="http://openlayers.org/context">m</ol:units>
@@ -73,44 +74,15 @@
       </Extension>
     </Layer>
     
-    <!--
-        orthophotographie pretuilee native RFG93
-        -->
-    <Layer queryable="0" hidden="1">
-      <Server service="OGC:WMS" version="1.1.1">
-        <OnlineResource xlink:type="simple" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://geobretagne.fr/geoserver/gwc/service/wms"/>
-
-      </Server>
-      <Name>satellite-l93</Name>
-      <Title>Orthophotographie IGN</Title>
-      <sld:MaxScaleDenominator xmlns:sld="http://www.opengis.net/sld">2000000</sld:MaxScaleDenominator>
-      <FormatList>
-        <Format current="1">image/jpeg</Format>
-      </FormatList>
-      <StyleList>
-        <Style>
-          <Name/>
-          <Title/>
-        </Style>
-      </StyleList>
-      <Extension>
-        <ol:maxExtent xmlns:ol="http://openlayers.org/context" minx="83000" miny="6700000" maxx="420000" maxy="6900000"/>
-        <ol:tileSize width="256" height="256" xmlns:ol="http://openlayers.org/context"/>
-        <ol:numZoomLevels xmlns:ol="http://openlayers.org/context">13</ol:numZoomLevels>
-        <ol:units xmlns:ol="http://openlayers.org/context">m</ol:units>
-        <ol:isBaseLayer xmlns:ol="http://openlayers.org/context">false</ol:isBaseLayer>
-        <ol:opacity xmlns:ol="http://openlayers.org/context">1</ol:opacity>
-        <ol:displayInLayerSwitcher xmlns:ol="http://openlayers.org/context">true</ol:displayInLayerSwitcher>
-        <ol:singleTile xmlns:ol="http://openlayers.org/context">false</ol:singleTile>
-      </Extension>
-    </Layer>
-    
     <Layer queryable="1" hidden="0">
       <Server service="OGC:WMS" version="1.1.1">
         <OnlineResource xlink:type="simple" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://c2cpc83.camptocamp.com/geoserver/wms?SERVICE=WMS&amp;"/>
       </Server>
       <Name>geob:communes_geofla</Name>
-      <Title>Communes</Title>
+      <Title>Communes bretonnes</Title>
+      <MetadataURL>
+          <OnlineResource xlink:type="simple" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://geobretagne.fr/geonetwork/srv/fr/metadata.show?uuid=b08e6cb1-236c-49b7-88f9-42b500d274d5" />
+      </MetadataURL>
       <FormatList>
         <Format current="1">image/png</Format>
         <Format>application/atom xml</Format>
@@ -153,7 +125,7 @@
         </Style>
       </StyleList>
       <Extension>
-        <ol:maxExtent xmlns:ol="http://openlayers.org/context" minx="83000.0000000000000" miny="6700000.00000000000" maxx="420000.000000000000" maxy="6900000.00000000000"/>
+        <ol:maxExtent xmlns:ol="http://openlayers.org/context" minx="-357823" miny="6037008" maxx="1313632" maxy="7230727"/>
         <ol:transparent xmlns:ol="http://openlayers.org/context">true</ol:transparent>
         <ol:numZoomLevels xmlns:ol="http://openlayers.org/context">13</ol:numZoomLevels>
         <ol:units xmlns:ol="http://openlayers.org/context">m</ol:units>
@@ -163,6 +135,7 @@
         <ol:singleTile xmlns:ol="http://openlayers.org/context">true</ol:singleTile>
       </Extension>
     </Layer>
+    
     <Layer queryable="1" hidden="0">
       <Server service="OGC:WMS" version="1.1.1">
         <OnlineResource xlink:type="simple" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://geolittoral.application.equipement.gouv.fr/map/mapserv?map=/opt/data/carto/applis/geolittoral/map/metropole.www.map&amp;"/>
@@ -185,7 +158,7 @@
         </Style>
       </StyleList>
       <Extension>
-        <ol:maxExtent xmlns:ol="http://openlayers.org/context" minx="83000.0000000000000" miny="6700000.00000000000" maxx="420000.000000000000" maxy="6900000.00000000000"/>
+        <ol:maxExtent xmlns:ol="http://openlayers.org/context" minx="-357823" miny="6037008" maxx="1313632" maxy="7230727"/>
         <ol:transparent xmlns:ol="http://openlayers.org/context">true</ol:transparent>
         <ol:numZoomLevels xmlns:ol="http://openlayers.org/context">13</ol:numZoomLevels>
         <ol:units xmlns:ol="http://openlayers.org/context">m</ol:units>

@@ -481,13 +481,7 @@ GEOR.config = (function() {
             1091957.546735491,
             2183915.093470982,
             4367830.186941965,
-            8735660.373883929,
-            17471320.747767858,
-            34942641.495535716,
-            69885282.991071432,
-            139770565.982142864,
-            279541131.964285732,
-            559082263.928571464
+            8735660.373883929
         ],
 
         /**
@@ -497,28 +491,28 @@ GEOR.config = (function() {
         MAP_SRS: "EPSG:2154",
 
         /**
-         * Constant: MAP_XMIN
-         * {Float} The max extent xmin coordinate
+         * Constant: MAP_XMIN aka "left"
+         * {Float} The max extent xmin in MAP_SRS coordinates
          */
-        MAP_XMIN: 83000,
+        MAP_XMIN: -357823,
 
         /**
-         * Constant: MAP_YMIN
-         * {Float} The max extent ymin coordinate
+         * Constant: MAP_YMIN aka "bottom"
+         * {Float} The max extent ymin in MAP_SRS coordinates
          */
-        MAP_YMIN: 6700000,
+        MAP_YMIN: 6037008,
 
         /**
-         * Constant: MAP_XMAX
-         * {Float} The max extent xmax coordinate
+         * Constant: MAP_XMAX aka "right"
+         * {Float} The max extent xmax in MAP_SRS coordinates
          */
-        MAP_XMAX: 420000,
+        MAP_XMAX: 1313632,
 
         /**
-         * Constant: MAP_YSMAX
-         * {Float} The max extent ymax coordinate
+         * Constant: MAP_YSMAX aka "top"
+         * {Float} The max extent ymax in MAP_SRS coordinates
          */
-        MAP_YMAX: 6900000,
+        MAP_YMAX: 7230727,
         
         /**
          * Constant: MAP_POS_SRS1
