@@ -201,9 +201,7 @@ GEOR.managelayers = (function() {
             xtype: 'button',
             disabled: !(layerRecord.get("queryable")),
             iconCls: 'geor-btn-info',
-            allowDepress: false, // false is required here because
-                                 // we do not have a default button
-                                 // in toggleGroup
+            allowDepress: true,
             enableToggle: true,
             toggleGroup: 'map',
             tooltip: "Interroger les objets de cette couche",
