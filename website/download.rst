@@ -12,7 +12,7 @@ Une prochaine release sera bientôt disponible.
 Code source
 ============
 
-Le code source est mis à disposition sur le dépôt svn du projet : http://repository.georchestra.org/svn-georchestra/
+Le code source est mis à disposition sur le dépôt svn du projet : http://svn.georchestra.org/georchestra/
 
 Pour télécharger les sources, vous devez installer *subversion* :
 
