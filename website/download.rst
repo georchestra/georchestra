@@ -18,7 +18,7 @@ Pour télécharger les sources, vous devez installer *subversion* :
 
 ::
   
-  svn co http://repository.georchestra.org/svn-georchestra/ georchestra
+  svn co http://svn.georchestra.org/georchestra/ georchestra
 
 
 Packages
