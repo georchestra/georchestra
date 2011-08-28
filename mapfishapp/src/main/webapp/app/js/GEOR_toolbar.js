@@ -279,6 +279,7 @@ GEOR.toolbar = (function() {
         items.push({
             text: "Légende",
             tooltip: "Afficher la légende",
+            enableToggle: true,
             handler: function(btn) {
                 if (!legendWin) {
                     legendWin = new Ext.Window({
@@ -292,6 +293,14 @@ GEOR.toolbar = (function() {
                         autoHeight: false,
                         height: 350,
                         closeAction: 'hide',
+                        listeners: {
+                            "hide": function() {
+                                btn.toggle(false);
+                            },
+                            "show": function() {
+                                btn.toggle(true);
+                            }
+                        },
                         autoScroll: true
                     });
                 }
@@ -301,6 +310,8 @@ GEOR.toolbar = (function() {
                     legendWin.getEl().alignTo(
                         mapPanel.body, "tr-tr", [-10, 10]
                     );
+                } else {
+                    legendWin.hide();
                 }
             }
         });
