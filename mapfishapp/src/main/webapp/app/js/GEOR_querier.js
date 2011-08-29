@@ -221,7 +221,7 @@ GEOR.querier = (function() {
      * describelayer - {Array} Array containing layer description objects, 
      * such as: {layerName: ..., owsType: ..., owsURL: ..., typeName: ...}
      */
-    var buildPanel = function(store, records, options) {
+    var buildPanel = function(store, records) {
 
         var r = GEOR.ows.getWfsInfo(records);
         if (!r) {
@@ -338,7 +338,6 @@ GEOR.querier = (function() {
          * r - {GeoExt.data.LayerRecord}
          */
         create: function(r) {
-            
             // if we're already configured with the same layer,
             // do nothing, just ask the layout to switch panels
             if (r == layerRecord) {
@@ -350,6 +349,12 @@ GEOR.querier = (function() {
                     success: function(store, records, options) {
                         layerRecord = r;
                         buildPanel(store, records, options);
+                    },
+                    failure: function() {
+                        GEOR.util.errorDialog({
+                            msg: "La requête WMS DescribeLayer a malheureusement échoué."+
+                                "<br />Le requêteur ne sera pas disponible."
+                        });
                     },
                     storeOptions: {
                         fields: [

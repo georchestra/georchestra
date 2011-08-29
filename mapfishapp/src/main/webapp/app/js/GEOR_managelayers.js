@@ -357,6 +357,11 @@ GEOR.managelayers = (function() {
                 }
             });
         }
+        
+        // TODO: queryable is not the correct boolean here to decide whether
+        // we can have the querier or not.
+        // The availability of a WFS equivalent URL is.
+        // This depends on http://csm-bretagne.fr/redmine/issues/1984
         if (GEOR.querier && queryable) {
             menuItems.push({
                 iconCls: 'geor-btn-query',

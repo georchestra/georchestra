@@ -284,13 +284,6 @@ GEOR.config = (function() {
         GEOSERVER_WMS_URL: getBaseURL() + "geoserver/wms",
 
         /**
-         * Constant: GEOSERVER_WMS_ABSOLUTE_URL
-         * The absolute URL to GeoServer WMS.
-         */
-        //GEOSERVER_WMS_ABSOLUTE_URL: getAbsoluteBaseURL() + "geoserver/wms",
-        // seems useless now that we have GEOR.config.WMSC2WMS
-
-        /**
          * Constant: GEOWEBCACHE_WMS_URL
          * The URL to GeoWebCache WMS.
          */
