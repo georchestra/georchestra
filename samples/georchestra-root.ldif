@@ -1,0 +1,7 @@
+dn: dc=georchestra,dc=org
+objectClass: top
+objectClass: dcObject
+objectclass: organization
+o: geOrchestra sample ldap
+dc: georchestra
+description: geOrchestra sample ldap
