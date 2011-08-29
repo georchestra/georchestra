@@ -16,11 +16,11 @@ At the end of the process, open http://localhost:8080/mapfishapp/?debug=true or
 http://localhost:8080/mapfishapp/ in your browser
 
 ?debug=true appended at the end of the URL makes you use uncompressed javascript,
-which means you can live-test your modification and observe the wargnins and errors
-in the browser javascript console or in the featured firebug debugger.
+which means you can live-test your modifications and observe the warnings and errors
+in the browser's javascript console or in the featured firebug debugger.
 
-For authentication, you can fool the authentication mechanism by installing the firefox extension
-"modify headers" (https://addons.mozilla.org/en-US/firefox/addon/modify-headers/)
+For authentication, you can fool the authentication mechanism by installing the
+"modify headers" firefox extension (https://addons.mozilla.org/en-US/firefox/addon/modify-headers/)
 
 In the extension config, activate those rules :
  add / sec-roles / ROLE_SV_ADMIN (or any others at your convenience, separated by commas)
