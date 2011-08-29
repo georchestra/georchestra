@@ -6,7 +6,7 @@ Note: this is for dev/evaluation purposes only
 Just type :
  mvn -Ptesttomcat jetty:run
  
-...from the current path (mapfishapp)
+...from the current path (extractorapp)
 
 
 At the end of the process, open http://localhost:8080/extractorapp/?debug=true or
