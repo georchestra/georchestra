@@ -18,8 +18,8 @@
  * @include GeoExt/widgets/LayerOpacitySlider.js
  * @include GeoExt/widgets/tree/LayerContainer.js
  * @include GEOR_layerfinder.js
- * @include GEOR_querier.js
  * @include GEOR_util.js
+ * Note: GEOR_querier.js not included here since it's not required for edit app
  */
 
 Ext.namespace("GEOR");
