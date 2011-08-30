@@ -18,6 +18,7 @@
  * @include GeoExt/widgets/LayerOpacitySlider.js
  * @include GeoExt/widgets/tree/LayerContainer.js
  * @include GEOR_layerfinder.js
+ * @include GEOR_querier.js
  * @include GEOR_util.js
  */
 
@@ -68,6 +69,11 @@ GEOR.managelayers = (function() {
      * Property: stylesMenu
      */
     var stylesMenu;
+    
+    /**
+     * Property: querierRecord
+     */
+    var querierRecord;
 
     /**
      * Method: actionHandler
@@ -360,15 +366,71 @@ GEOR.managelayers = (function() {
         
         // TODO: queryable is not the correct boolean here to decide whether
         // we can have the querier or not.
-        // The availability of a WFS equivalent URL is.
+        // The availability of a WFS equivalent layer is.
         // This depends on http://csm-bretagne.fr/redmine/issues/1984
-        if (GEOR.querier && queryable) {
+        
+        // TODO: have a generic field in layerrecord stating that a record is WFS or WMS.
+        if (GEOR.querier && (queryable || layer.CLASS_NAME == "OpenLayers.Layer.Vector")) {
             menuItems.push({
                 iconCls: 'geor-btn-query',
                 text: "Construire une requête",
                 listeners: {
                     "click": function(btn, pressed) {
-                        GEOR.querier.create(layerRecord);
+                        if (layerRecord == querierRecord) {
+                            // FIXME (later) : this is not how it should be.
+                            // (only the module should fire its own events)
+                            GEOR.querier.events.fireEvent("showrequest");
+                            return;
+                        }
+                        var layer = layerRecord.get('layer');
+                        var name = layerRecord.get('title') || layer.name || '';
+                        if (layer.CLASS_NAME == "OpenLayers.Layer.Vector") { // WFS layer
+                            var recordType = GeoExt.data.LayerRecord.create([
+                                {name: "featureNS", type: "string"},
+                                {name: "owsURL", type: "string"},
+                                {name: "typeName", type: "string"}
+                            ]);
+                            GEOR.querier.create(name, new recordType({
+                                "featureNS": layerRecord.get('namespace'),
+                                "owsURL": layer.protocol.url,
+                                "typeName": layerRecord.get('name')
+                            }, layer.id));
+                        } else { // WMS layer
+                            querierRecord = layerRecord;
+                            // all this code should be moved elsewhere, see http://csm-bretagne.fr/redmine/issues/1984 (later)
+                            GEOR.waiter.show();
+                            GEOR.ows.WMSDescribeLayer(layerRecord, {
+                                success: function(store, records) {
+                                    var r = GEOR.ows.getWfsInfo(records);
+                                    if (!r) {
+                                        GEOR.util.errorDialog({
+                                            msg: "Impossible d'obtenir "+
+                                                " l'adresse de la couche WFS."+
+                                                "<br />Le requêteur ne sera pas disponible."
+                                        });
+                                        return;
+                                    }
+                                    GEOR.querier.create(name, r);
+                                },
+                                failure: function() {
+                                    GEOR.util.errorDialog({
+                                        msg: "La requête WMS DescribeLayer a malheureusement échoué."+
+                                            "<br />Le requêteur ne sera pas disponible."
+                                    });
+                                },
+                                storeOptions: {
+                                    fields: [
+                                        {name: "owsType", type: "string"},
+                                        {name: "owsURL", type: "string"},
+                                        {name: "typeName", type: "string"},
+                                        // and we need to add a special featureNS field
+                                        // which will be filled by WFSDescribeFeatureType:
+                                        {name: "featureNS", type: "string"}
+                                    ]
+                                },
+                                scope: this
+                            });
+                        }
                     }
                 }
             });

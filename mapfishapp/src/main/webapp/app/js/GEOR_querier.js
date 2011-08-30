@@ -87,12 +87,6 @@ GEOR.querier = (function() {
     );
     
     /**
-     * Property: layerRecord
-     * {GeoExt.data.LayerRecord} the WMS layer layerRecord
-     */
-    var layerRecord = null;
-    
-    /**
      * Property: record
      * {Ext.data.Record} The matching record for a WFS layer
      *      Fields: "owsType" (should be "WFS"), "owsURL" & "typeName"
@@ -217,79 +211,37 @@ GEOR.querier = (function() {
     /**
      * Method: buildPanel
      *
-     * Parameters:
-     * describelayer - {Array} Array containing layer description objects, 
-     * such as: {layerName: ..., owsType: ..., owsURL: ..., typeName: ...}
      */
-    var buildPanel = function(store, records) {
-
-        var r = GEOR.ows.getWfsInfo(records);
-        if (!r) {
-            GEOR.util.errorDialog({
-                msg: "Impossible d'obtenir "+
-                    " l'adresse de la couche WFS."
-            });
-            return;
-        }
-        
+    var buildPanel = function(layerName, r) {
         record = r;
-        GEOR.waiter.show();
-        
-        attStore = GEOR.ows.WFSDescribeFeatureType(record, {
-            extractFeatureNS: true,
-            success: function() {
-                // we get the geometry column name, and remove the corresponding record from store
-                var idx = attStore.find('type', GEOR.ows.matchGeomProperty);
-                if (idx > -1) { 
-                    // we have a geometry
-                    var r = attStore.getAt(idx);
-                    geometryName = r.get('name');
-                    attStore.remove(r);
-                } else {
-                    GEOR.util.errorDialog({
-                        msg: "La couche ne possède pas de colonne géométrique."
-                    });
-                    return;
+        observable.fireEvent("ready", {
+            xtype: 'gx_filterbuilder',
+            title: "Requêteur sur "+
+                GEOR.util.shortenLayerName(layerName),
+            defaultBuilderType: Styler.FilterBuilder.ALL_OF,
+            filterPanelOptions: {
+                attributesComboConfig: {
+                    displayField: "name",
+                    listWidth: 165,
+                    tpl: GEOR.util.getAttributesComboTpl()
                 }
-                
-                observable.fireEvent("ready", {
-                    xtype: 'gx_filterbuilder',
-                    title: "Requêteur sur "+
-                        GEOR.util.shortenLayerName(layerRecord),
-                    defaultBuilderType: Styler.FilterBuilder.ALL_OF,
-                    filterPanelOptions: {
-                        attributesComboConfig: {
-                            displayField: "name",
-                            listWidth: 165,
-                            tpl: GEOR.util.getAttributesComboTpl()
-                        }
-                    },
-                    allowGroups: false,
-                    noConditionOnInit: true,
-                    deactivable: true,
-                    cookieProvider: cp,
-                    autoScroll: true,
-                    buttons: [{
-                        text: 'Recherche',
-                        handler: search
-                    }],
-                    map: map,
-                    attributes: attStore,
-                    allowSpatial: true,
-                    vectorLayer: new OpenLayers.Layer.Vector('filter_builder',{
-                        displayInLayerSwitcher: false,
-                        styleMap: styleMap
-                    })
-                });
-                
             },
-            failure: function() {
-                GEOR.util.errorDialog({
-                    msg: "Impossible d'obtenir "+
-                        "les caractéristiques de la couche demandée"
-                });
-            },
-            scope: this
+            allowGroups: false,
+            noConditionOnInit: true,
+            deactivable: true,
+            cookieProvider: cp,
+            autoScroll: true,
+            buttons: [{
+                text: 'Recherche',
+                handler: search
+            }],
+            map: map,
+            attributes: attStore,
+            allowSpatial: true,
+            vectorLayer: new OpenLayers.Layer.Vector('filter_builder',{
+                displayInLayerSwitcher: false,
+                styleMap: styleMap
+            })
         });
     };
 
@@ -332,43 +284,43 @@ GEOR.querier = (function() {
         },
         
         /*
-         * Method: init
+         * Method: create
          *
          * Parameters:
-         * r - {GeoExt.data.LayerRecord}
+         * layerName - {String} the "nice" layer name.
+         * record - {GeoExt.data.LayerRecord} a WMSDescribeLayer record
+         *          with at least three fields "owsURL", "typeName" and "featureNS"
          */
-        create: function(r) {
-            // if we're already configured with the same layer,
-            // do nothing, just ask the layout to switch panels
-            if (r == layerRecord) {
-                this.events.fireEvent("showrequest"); 
-            } else {
-                // build the querier panel
-                GEOR.waiter.show();
-                GEOR.ows.WMSDescribeLayer(r, {
-                    success: function(store, records, options) {
-                        layerRecord = r;
-                        buildPanel(store, records, options);
-                    },
-                    failure: function() {
+        create: function(layerName, record) {
+            GEOR.waiter.show();
+            attStore = GEOR.ows.WFSDescribeFeatureType(record, {
+                extractFeatureNS: true,
+                success: function() {
+                    // we get the geometry column name, and remove the corresponding record from store
+                    var idx = attStore.find('type', GEOR.ows.matchGeomProperty);
+                    if (idx > -1) { 
+                        // we have a geometry
+                        var r = attStore.getAt(idx);
+                        geometryName = r.get('name');
+                        attStore.remove(r);
+                        buildPanel(layerName, record);
+                    } else {
                         GEOR.util.errorDialog({
-                            msg: "La requête WMS DescribeLayer a malheureusement échoué."+
+                            msg: "La couche ne possède pas de colonne géométrique."+
                                 "<br />Le requêteur ne sera pas disponible."
                         });
-                    },
-                    storeOptions: {
-                        fields: [
-                            {name: "owsType", type: "string"},
-                            {name: "owsURL", type: "string"},
-                            {name: "typeName", type: "string"},
-                            // and we need to add a special featureNS field
-                            // which will be filled by WFSDescribeFeatureType:
-                            {name: "featureNS", type: "string"}
-                        ]
-                    },
-                    scope: this
-                });
-            }
+                    }
+                },
+                failure: function() {
+                    GEOR.util.errorDialog({
+                        msg: "Impossible d'obtenir "+
+                            "les caractéristiques de la couche demandée."+
+                            "<br />Le requêteur ne sera pas disponible."
+                    });
+                },
+                scope: this
+            });
+
         }
     };
 })();

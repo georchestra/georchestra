@@ -455,7 +455,7 @@ GEOR.ows = (function() {
          *
          * Parameters:
          * record - {Ext.data.Record} Record with "owsURL" and
-         *     "typeName" fields.
+         *     "typeName" and "featureNS" fields.
          * map - {OpenLayers.Map} Map object.
          * options - {Object} Additional protocol options
          *
