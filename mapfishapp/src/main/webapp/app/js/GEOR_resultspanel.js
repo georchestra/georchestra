@@ -75,6 +75,13 @@ GEOR.resultspanel = (function() {
      * {OpenLayers.Bounds} The cached vector layer bounds
      */
     var layerBounds = null;
+    
+    /**
+     * Property: sfControl
+     * {OpenLayers.Control.SelectFeature} The control used for the feature 
+     *  selection model
+     */
+    var sfControl = null;
         
     /**
      * Method: csvExportBtnHandler
@@ -199,18 +206,20 @@ GEOR.resultspanel = (function() {
             handler: csvExportBtnHandler
         }];
         
-        // we need to create the SelectFeature control by ourselves
-        // because we need to modify its internal properties
-        // and we cannot get a reference to these when the control is created 
-        // inside the GeoExt.grid.FeatureSelectionModel
-        var sfControl = new OpenLayers.Control.SelectFeature(vectorLayer, {
-            toggle: true,
-            multipleKey: Ext.isMac ? "metaKey" : "ctrlKey"
-        });
-        map.addControl(sfControl);
-        // see http://csm-bretagne.fr/redmine/issues/1983
-        sfControl.handlers.feature.stopDown = false;
-        
+        if (!sfControl) {
+            // we need to create the SelectFeature control by ourselves
+            // because we need to modify its internal properties
+            // and we cannot get a reference to these when the control is created 
+            // inside the GeoExt.grid.FeatureSelectionModel
+            sfControl = new OpenLayers.Control.SelectFeature(vectorLayer, {
+                toggle: true,
+                multipleKey: Ext.isMac ? "metaKey" : "ctrlKey"
+            });
+            map.addControl(sfControl);
+            // see http://csm-bretagne.fr/redmine/issues/1983
+            sfControl.handlers.feature.stopDown = false;
+        }
+            
         observable.fireEvent("panel", {
             xtype: "grid",
             viewConfig: {
