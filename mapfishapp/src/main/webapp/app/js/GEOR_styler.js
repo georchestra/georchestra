@@ -583,7 +583,7 @@ GEOR.styler = (function() {
             }
         });
 
-        workAroundExtBug(rulePanel);
+        //workAroundExtBug(rulePanel);
 
         stylerContainer.getLayout().setActiveItem(0);
         stylerContainer.doLayout();
