@@ -5,6 +5,7 @@
 /**
  * @include Styler/widgets/FillSymbolizer.js
  * @include Styler/widgets/StrokeSymbolizer.js
+ * @include GeoExt/widgets/tips/SliderTip.js
  */
 
 Ext.namespace("Styler");

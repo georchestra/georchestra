@@ -3,7 +3,7 @@
  */
 
 /**
- * @include Styler/widgets/tips/SliderTip.js
+ * @include GeoExt/widgets/tips/SliderTip.js
  */
 
 Ext.namespace("Styler");

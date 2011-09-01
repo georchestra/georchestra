@@ -5,6 +5,7 @@
 /**
  * @include Styler/widgets/FilterPanel.js
  * @include Styler/widgets/SpatialFilterPanel.js
+ * @include GeoExt/widgets/Action.js
  */
 
 Ext.namespace("Styler");

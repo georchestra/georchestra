@@ -2,6 +2,7 @@
  * Copyright (c) 2008 The Open Planning Project
  * 
  * @requires Styler.js
+ * @include GeoExt/data/AttributeStore.js
  */
 
 Styler.SchemaManager = OpenLayers.Class({

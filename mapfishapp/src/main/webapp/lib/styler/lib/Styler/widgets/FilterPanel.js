@@ -5,6 +5,7 @@
 /**
  * @requires Styler/widgets/BaseFilterPanel.js
  * @include Styler/widgets/form/ComparisonComboBox.js
+ * @include GeoExt/data/AttributeStore.js
  */
 
 Ext.namespace("Styler");
