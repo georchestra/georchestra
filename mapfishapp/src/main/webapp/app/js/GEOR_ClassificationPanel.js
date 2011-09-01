@@ -227,13 +227,13 @@ GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
             width: 30
         });
         
-        this.cpFirstColor = new Ext.ux.ColorPickerField({
+        this.cpFirstColor = new Ext.ux.form.ColorPickerField({
             value: '#FFFFFF',
             fieldLabel: 'Première couleur',
             width: 100
         });
         
-        this.cpLastColor = new Ext.ux.ColorPickerField({
+        this.cpLastColor = new Ext.ux.form.ColorPickerField({
             value: '#497BD1',
             fieldLabel: 'Dernière couleur',
             width: 100
