@@ -15,6 +15,7 @@
 /*
  * @requires GeoExt/widgets/tree/LayerNode.js
  * @include GeoExt/plugins/TreeNodeActions.js
+ * @include GeoExt/plugins/TreeNodeComponent.js
  * @include GeoExt/widgets/tips/LayerOpacitySliderTip.js
  * @include GeoExt/widgets/LayerOpacitySlider.js
  * @include GeoExt/widgets/tree/LayerContainer.js
@@ -622,6 +623,8 @@ GEOR.managelayers = (function() {
                     listeners: {
                         action: actionHandler
                     }
+                }, {
+                    ptype: "gx_treenodecomponent"
                 }],
                 lines: false,
                 rootVisible: false,
