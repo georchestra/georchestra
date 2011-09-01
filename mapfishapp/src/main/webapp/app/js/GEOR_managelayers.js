@@ -456,7 +456,6 @@ GEOR.managelayers = (function() {
         }
         
         return new Ext.menu.Menu({
-            disabled: !queryable, 
             ignoreParentClicks: true,
             items: menuItems
         });
