@@ -41,7 +41,7 @@ Styler.FillSymbolizer = Ext.extend(Ext.FormPanel, {
                 width: 100 // TODO: move to css
             },
             items: [{
-                xtype: "ext.ux.colorpicker",
+                xtype: "colorpickerfield",
                 fieldLabel: "Couleur",
                 name: "color",
                 value: this.symbolizer["fillColor"],

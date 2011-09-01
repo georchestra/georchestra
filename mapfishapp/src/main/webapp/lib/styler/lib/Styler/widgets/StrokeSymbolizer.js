@@ -74,7 +74,7 @@ Styler.StrokeSymbolizer = Ext.extend(Ext.FormPanel, {
                     scope: this
                 }
             }, {
-                xtype: "ext.ux.colorpicker",
+                xtype: "colorpickerfield",
                 name: "color",
                 fieldLabel: "Couleur",
                 value: this.symbolizer["strokeColor"],
