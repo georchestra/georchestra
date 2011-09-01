@@ -594,7 +594,7 @@ Ext.ux.ColorPicker = Ext.extend( Ext.BoxComponent, {
 			c = c.substring(4, c.length - 1).split(",");
 			c = this.rgbToHex(c[0], c[1], c[2]);
 		} else if (!/^[0-9a-fA-F]{6}$/.test(c)) {
-			c = Ext.ux.ColorPicker.colorNames[c];
+			c = this.colorNames[c];
 			if (!Ext.isDefined(c)) {
 				return;
 			}

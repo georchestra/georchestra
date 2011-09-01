@@ -159,6 +159,7 @@ Ext.ux.form.ColorPickerField = Ext.extend(Ext.form.TwinTriggerField,  {
         this.menus[0].show(this.el, "tl-bl?");
 		if (this.picker==0) {
         	this.menus[0].picker.setColor(this.getValue());
+        	this.menus[0].picker.updateColor();
 		}
     }
 	,onTrigger2Click : function(){
@@ -168,6 +169,7 @@ Ext.ux.form.ColorPickerField = Ext.extend(Ext.form.TwinTriggerField,  {
         this.menus[1].show(this.el, "tl-bl?");
 		if (this.picker==1) {
         	this.menus[1].picker.setColor(this.getValue());
+        	this.menus[1].picker.updateColor();
 		}
     }
 	,hexToRgb: Ext.ux.ColorPicker.prototype.hexToRgb
