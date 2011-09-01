@@ -121,6 +121,7 @@ if(sec_roles != null) {
     <script type="text/javascript" src="lib/styler/lib/Styler/widgets/PointSymbolizer.js"></script>
     <script type="text/javascript" src="lib/styler/lib/Styler/widgets/RulePanel.js"></script>
     <script type="text/javascript" src="lib/styler/lib/Styler/widgets/RuleBuilder.js"></script>
+    <script type="text/javascript" src="lib/styler/lib/Styler/widgets/MultiSlider.js"></script>
     <script type="text/javascript" src="lib/styler/lib/Styler/widgets/BaseFilterPanel.js"></script>
     <script type="text/javascript" src="lib/styler/lib/Styler/widgets/SpatialFilterPanel.js"></script>
     <script type="text/javascript" src="lib/styler/lib/Styler/widgets/FilterPanel.js"></script>

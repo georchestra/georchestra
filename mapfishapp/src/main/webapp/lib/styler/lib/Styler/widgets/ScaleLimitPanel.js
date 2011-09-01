@@ -3,6 +3,7 @@
  */
 
 /**
+ * @include Styler/widgets/MultiSlider.js
  * @include GeoExt/widgets/tips/SliderTip.js
  */
 
@@ -129,7 +130,7 @@ Styler.ScaleLimitPanel = Ext.extend(Ext.Panel, {
             1 / (this.scaleLevels - 1)
         );
         
-        this.scaleSlider = new Ext.slider.MultiSlider({
+        this.scaleSlider = new Styler.MultiSlider({
             vertical: true,
             height: 100,
             minValue: 0,
