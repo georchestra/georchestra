@@ -157,8 +157,9 @@ GEOR.querier = (function() {
      * Gets the Filter Encoding string and sends the getFeature request
      */
     var search = function() {
+        var filterbuilder = this.findParentByType("gx_filterbuilder");
         // we quickly check if nothing lacks in filter
-        var filter = this.ownerCt.getFilter();
+        var filter = filterbuilder.getFilter();
         if (!checkFilter(filter)) {
             return;
         }
@@ -168,7 +169,7 @@ GEOR.querier = (function() {
         });
         
         // we deactivate draw controls before the request is done.
-        this.ownerCt.deactivateControls();
+        filterbuilder.deactivateControls();
         
         // we need to pass the geometry name at protocol creation, 
         // so that the format has the correct geometryName too.
