@@ -64,7 +64,16 @@ GEOR.wmsbrowser = (function() {
          * {Ext.Panel}
          */
         getPanel: function(options) {
-            var store = new GEOR.ows.WMSCapabilities();
+            var store = new GEOR.ows.WMSCapabilities({
+                storeOptions: {
+                    // url should not be empty unless we want the following
+                    // exception to occur:
+                    // uncaught exception: Ext.data.DataProxy: DataProxy attempted
+                    // to execute an API-action but found an undefined url /
+                    // function. Please review your Proxy url/api-configuration.
+                    url: "/dummy"
+                }
+            });
 
             cbxSm =  new Ext.grid.CheckboxSelectionModel({
                 width: 20,

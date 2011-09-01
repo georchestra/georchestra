@@ -64,7 +64,16 @@ GEOR.wfsbrowser = (function() {
          * {Ext.Panel}
          */
         getPanel: function(options) {
-            var store = new GEOR.ows.WFSCapabilities();
+            var store = new GEOR.ows.WFSCapabilities({
+                storeOptions: {
+                    // url should not be empty unless we want the following
+                    // exception to occur:
+                    // uncaught exception: Ext.data.DataProxy: DataProxy attempted
+                    // to execute an API-action but found an undefined url /
+                    // function. Please review your Proxy url/api-configuration.
+                    url: "/dummy"
+                }
+            });
             // when we use geoext r>2697 
             // see http://trac.geoext.org/ticket/412 
             // in order to use a custom strategy for vector layers (rather than fixed)

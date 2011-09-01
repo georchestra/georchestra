@@ -330,7 +330,7 @@ Ext.app.OWSUrlField = Ext.extend(Ext.form.TwinTriggerField, {
             return;
         }
         // update url for OWS getCapabilities request
-        this.store.proxy.conn.url = url;
+        this.store.proxy.setUrl(url);
         this.store.load({
             callback: this.callback,
             scope: this,
