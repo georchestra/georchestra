@@ -185,6 +185,10 @@ Styler.TextSymbolizer = Ext.extend(Ext.Panel, {
                 },
                 expand: function() {
                     Ext.apply(this.symbolizer, this.haloCache);
+                    // in ext3 collapsed fieldset are not rendered
+                    // so we have to call doLayout by hand when
+                    // expanding the fieldset
+                    this.doLayout();
                     this.fireEvent("change", this.symbolizer);
                 },
                 scope: this
