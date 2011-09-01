@@ -344,112 +344,6 @@ GEOR.styler = (function() {
         return legendPanel;
     };
 
-
-    /**
-     * Method: workAroundExtBug
-     * This is to work around an Ext bug where combos
-     * inside a column layout inside a collaspsed fieldset
-     * inside a tabpanel's tab do not show up when the
-     * fieldset is expanded.
-     * https://extjs.com/forum/showthread.php?t=51618
-     *
-     * Parameters:
-     * rulePanel - {Styler.RulePanel}
-     */
-    var workAroundExtBug = function(rulePanel) {
-        // how ugly is that?
-        rulePanel.items.get(1).on({
-            "show": {
-                fn: function(p) {
-                    var labelFieldset = p.getComponent(0);
-                    if (labelFieldset.collapsed) {
-                        labelFieldset.on({
-                            "expand": {
-                                fn: function(f) {
-                                    var c, w;
-                                    var textSymbolizer = f.getComponent(0);
-                                    c = textSymbolizer.getComponent(0);                 // attributes combo
-                                    w = c.el.getWidth() + c.trigger.getWidth();
-                                    c.wrap.setWidth(w);
-                                    var fontToolbar = textSymbolizer.getComponent(1);
-                                    c = fontToolbar.items.first();                      // fonts combo
-                                    w = c.el.getWidth() + c.trigger.getWidth();
-                                    c.wrap.setWidth(w);
-                                    var fillSymbolizer = textSymbolizer.getComponent(2);
-                                    c = fillSymbolizer.getComponent(0).getComponent(0); // fill color picker
-                                    w = c.el.getWidth() + c.trigger.getWidth();
-                                    c.wrap.setWidth(w);
-                                    var opacitySlider = fillSymbolizer.getComponent(0).getComponent(1);
-                                    opacitySlider.syncThumb();
-                                    var haloFielset = textSymbolizer.getComponent(3);
-                                    if (haloFielset.collapsed) {
-                                        haloFielset.on({
-                                            "expand": {
-                                                fn: function(f) {
-                                                    var c, w;
-                                                    var fillSymbolizer = f.getComponent(1);
-                                                    c = fillSymbolizer.getComponent(0).getComponent(0); // fill color picker
-                                                    w = c.el.getWidth() + c.trigger.getWidth();
-                                                    c.wrap.setWidth(w);
-                                                    var opacitySlider = fillSymbolizer.getComponent(0).getComponent(1);
-                                                    opacitySlider.syncThumb();
-                                                }
-                                            },
-                                            single: true
-                                        });
-                                    }
-                                },
-                                single: true
-                            }
-                        });
-                    }
-                },
-                single: true
-            }
-        });
-        rulePanel.items.get(2).on({
-            "show": {
-                fn: function(p) {
-                    var conditionFieldset = p.getComponent(1);
-                    if (conditionFieldset.collapsed) {
-                        conditionFieldset.on({
-                            "expand": {
-                                fn: function(f) {
-                                    var builderPanel = f.getComponent(0), c;
-                                    c = builderPanel                // builder type combo
-                                        .getComponent(0)
-                                        .getComponent(0)
-                                        .getComponent(1)
-                                        .getComponent(0);
-                                    c.wrap.setWidth(c.el.getWidth() + c.trigger.getWidth());
-                                    var filterPanel = builderPanel
-                                            .getComponent(1)
-                                            .getComponent(0)
-                                            .getComponent(1)
-                                            .getComponent(0);
-                                    var attrComboCt = filterPanel   // attributes combo container
-                                            .getComponent(0)
-                                            .getComponent(0);
-                                    c = attrComboCt.getComponent(0);// attributes combo
-                                    var w = c.el.getWidth() + c.trigger.getWidth();
-                                    attrComboCt.setWidth(w);
-                                    c.wrap.setWidth(w);
-                                    c = filterPanel                 // comparison combo
-                                            .getComponent(0)
-                                            .getComponent(1)
-                                            .getComponent(0);
-                                    c.wrap.setWidth(c.el.getWidth() + c.trigger.getWidth());
-                                },
-                                single: true
-                            }
-                        });
-                    }
-                },
-                single: true
-            }
-        });
-    };
-
     /**
      * Method: validateRules
      * Validate a set of rules.
@@ -582,8 +476,6 @@ GEOR.styler = (function() {
                 }
             }
         });
-
-        //workAroundExtBug(rulePanel);
 
         stylerContainer.getLayout().setActiveItem(0);
         stylerContainer.doLayout();
