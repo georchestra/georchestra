@@ -52,7 +52,7 @@ GEOR.workspace = (function() {
      * Handler for the button triggering the WMC loading
      */
     var loadBtnHandler = function() {
-        var formPanel = this.ownerCt;
+        var formPanel = this.findParentByType('form');
         formPanel.getForm().submit({
             url: "ws/wmc/", 
             // Beware: form submission requires a *success* parameter in json response
@@ -88,7 +88,7 @@ GEOR.workspace = (function() {
      * Handler for the cancel button
      */
     var cancelBtnHandler = function() {
-        this.ownerCt.ownerCt.close();
+        this.findParentByType('form').ownerCt.close();
     };
     
     /**
