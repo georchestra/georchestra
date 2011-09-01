@@ -184,6 +184,7 @@ Ext.namespace("GEOR");
             collapsible: true,
             collapsed: true,
             collapseMode: "mini",
+            header: false,
             height: 150,
             defaults: {
                 border: false,
