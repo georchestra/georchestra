@@ -21,8 +21,8 @@
  * @include Styler/widgets/RulePanel.js
  * @include Styler/widgets/LegendPanel.js
  * @include Styler/Util.js
- * @include Ext.ux/widgets/colorpicker/ext.ux.ColorPicker.js
- * @include Ext.ux/widgets/colorpicker/ext.ux.ColorPickerField.js
+ * @include Ext.ux/widgets/colorpicker/ColorPicker.js
+ * @include Ext.ux/widgets/colorpicker/ColorPickerField.js
  * @include GEOR_ClassificationPanel.js
  * @include GEOR_ows.js
  * @include GEOR_config.js

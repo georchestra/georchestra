@@ -76,7 +76,7 @@ if(sec_roles != null) {
     <link rel="stylesheet" type="text/css" href="lib/externals/ext/resources/css/xtheme-gray.css" />
     <link rel="stylesheet" type="text/css" href="lib/styler/theme/css/styler.css" />
     <link rel="stylesheet" type="text/css" href="lib/Ext.ux/lib/Ext.ux/widgets/palettecombobox/palettecombobox.ux.css" />
-    <link rel="stylesheet" type="text/css" href="lib/Ext.ux/lib/Ext.ux/widgets/colorpicker/color-picker.ux.css" />
+    <link rel="stylesheet" type="text/css" href="lib/Ext.ux/lib/Ext.ux/widgets/colorpicker/colorpicker.css" />
     <link rel="stylesheet" type="text/css" href="lib/Ext.ux/lib/Ext.ux/widgets/spinner/Spinner.css" />
     <link rel="stylesheet" type="text/css" href="app/openlayers_gray_theme/style.css" />
     <link rel="stylesheet" type="text/css" href="app/css/main.css" />
