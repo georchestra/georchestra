@@ -252,7 +252,7 @@ Styler.RulePanel = Ext.extend(Ext.TabPanel, {
                             // expanding the fieldset
                             this.scaleLimitPanel.doLayout();
                             if (this.scaleLimitPanel.scaleSlider) {
-                                this.scaleLimitPanel.scaleSlider.syncThumbs();
+                                this.scaleLimitPanel.scaleSlider.syncThumb();
                             }
                             var changed = false;
                             if (this.scaleLimitPanel.limitMinScale) {

@@ -130,27 +130,28 @@ Styler.ScaleLimitPanel = Ext.extend(Ext.Panel, {
             1 / (this.scaleLevels - 1)
         );
         
-        this.scaleSlider = new Styler.MultiSlider({
+        this.scaleSlider = new Ext.slider.MultiSlider({
             vertical: true,
             height: 100,
+            minValue: 0,
+            maxValue: 100,
+            values: [0, 100],
             listeners: {
-                changecomplete: this.updateScaleValues,
+                changecomplete: this.updateScaleValue,
                 render: function(slider) {
-                    slider.thumbs[0].setVisible(this.limitMaxScale);
-                    slider.thumbs[1].setVisible(this.limitMinScale);
-                    slider.setDisabled(!this.limitMinScale && !this.limitMaxScale);
+                    var thumbs = slider.thumbs;
+                    (this.limitMaxScale) ? thumbs[0].enable() : thumbs[0].disable();
+                    (this.limitMinScale) ? thumbs[1].enable() : thumbs[1].disable();
                 },
                 scope: this
             },
-            plugins: [new Styler.MultiSliderTip({
-                getText: (function(slider, index) {
-                    var values = slider.getValues();
-                    var scales = this.sliderValuesToScale(values);
+            plugins: [new GeoExt.SliderTip({
+                getText: (function(thumb) {
                     var data = {
-                        scale: String(scales[index]),
-                        zoom: (values[index] * (this.scaleLevels / 100)).toFixed(1),
-                        type: (index === 0) ? "Max" : "Min",
-                        zoomType: (index === 0) ? "Min" : "Max"
+                        scale: String(this.sliderValueToScale(thumb.value)),
+                        zoom: (thumb.value * (this.scaleLevels / 100)).toFixed(1),
+                        type: (thumb.index === 0) ? "Max" : "Min",
+                        zoomType: (thumb.index === 0) ? "Min" : "Max"
                     };
                     this.modifyScaleTipContext(this, data);
                     return this.scaleSliderTemplate.apply(data);
@@ -174,7 +175,7 @@ Styler.ScaleLimitPanel = Ext.extend(Ext.Panel, {
                         field.setValue(this.minScaleDenominator);
                     } else {
                         this.maxScaleDenominator = value;
-                        this.updateSliderValues();
+                        this.updateSliderValue(0, value);
                     }
                 },
                 scope: this
@@ -197,7 +198,7 @@ Styler.ScaleLimitPanel = Ext.extend(Ext.Panel, {
                         field.setValue(this.maxScaleDenominator);
                     } else {
                         this.minScaleDenominator = value;
-                        this.updateSliderValues();
+                        this.updateSliderValue(1, value);
                     }
                 },
                 scope: this
@@ -220,13 +221,10 @@ Styler.ScaleLimitPanel = Ext.extend(Ext.Panel, {
                         check: function(box, checked) {
                             this.limitMinScale = checked;
                             var slider = this.scaleSlider;
-                            var values = slider.getValues();
-                            values[1] = 100;
-                            slider.setValues(values);
-                            slider.thumbs[1].setVisible(checked);
+                            var thumb = slider.thumbs[1];
+                            (checked) ? thumb.enable() : thumb.disable();
                             this.minScaleInput.setDisabled(!checked);
-                            this.updateScaleValues(slider, values);
-                            slider.setDisabled(!this.limitMinScale && !this.limitMaxScale);
+                            this.updateScaleValue(slider, 100, thumb);
                         },
                         scope: this
                     }
@@ -246,13 +244,10 @@ Styler.ScaleLimitPanel = Ext.extend(Ext.Panel, {
                         check: function(box, checked) {
                             this.limitMaxScale = checked;
                             var slider = this.scaleSlider;
-                            var values = slider.getValues();
-                            values[0] = 0;
-                            slider.setValues(values);
-                            slider.thumbs[0].setVisible(checked);
+                            var thumb = slider.thumbs[0];
+                            (checked) ? thumb.enable() : thumb.disable();
                             this.maxScaleInput.setDisabled(!checked);
-                            this.updateScaleValues(slider, values);
-                            slider.setDisabled(!this.limitMinScale && !this.limitMaxScale);
+                            this.updateScaleValue(slider, 0, thumb);
                         },
                         scope: this
                     }
@@ -281,85 +276,67 @@ Styler.ScaleLimitPanel = Ext.extend(Ext.Panel, {
     },
     
     /**
-     * Method: updateScaleValues
+     * Method: updateScaleValue
      */
-    updateScaleValues: function(slider, values) {
+    updateScaleValue: function(slider, value, thumb) {
         if(!this.changing) {
-            var resetSlider = false;
-            if(!this.limitMaxScale) {
-                if(values[0] > 0) {
-                    values[0] = 0;
-                    resetSlider = true;
-                }
-            }
-            if(!this.limitMinScale) {
-                if(values[1] < 100) {
-                    values[1] = 100;
-                    resetSlider = true;
-                }
-            }
-            if(resetSlider) {
-                slider.setValues(values);
-            } else {
-                var scales = this.sliderValuesToScale(values);
-                var max = scales[0];
-                var min = scales[1];
-                this.changing = true;
-                this.minScaleInput.setValue(min);
-                this.maxScaleInput.setValue(max);
-                this.changing = false;
-                this.fireEvent(
-                    "change", this,
-                    (this.limitMinScale) ? min : undefined,
-                    (this.limitMaxScale) ? max : undefined
-                );
-            }
+            slider.setValue(thumb.index, value);
+
+            var scale = this.sliderValueToScale(value);
+            this.changing = true;
+            var scaleInput = (thumb.index===0) ? this.maxScaleInput : this.minScaleInput;
+            scaleInput.setValue(scale);
+            this.changing = false;
+            this.fireEvent(
+                "change", this,
+                (this.limitMinScale) ? this.maxScaleDenominator : undefined,
+                (this.limitMaxScale) ? this.minScaleDenominator : undefined
+            );
+
+            this.changing = false;
         }
     },
     
     /**
-     * Method: updateSliderValues
+     * Method: updateSliderValue
      */
-    updateSliderValues: function() {
+    updateSliderValue: function(index, value) {
         if(!this.changing) {
-            var min = this.minScaleDenominator;
-            var max = this.maxScaleDenominator;
-            var values = this.scaleToSliderValues([max, min]);
+            var slidervalue = this.scaleToSliderValue(value);
             this.changing = true;
-            this.scaleSlider.setValues(values);
+            this.scaleSlider.setValue(index, slidervalue);
             this.changing = false;
             this.fireEvent(
                 "change", this,
-                (this.limitMinScale) ? min : undefined,
-                (this.limitMaxScale) ? max : undefined
+                (this.limitMinScale) ? this.minScaleDenominator : undefined,
+                (this.limitMaxScale) ? this.maxScaleDenominator : undefined
             );
         }
     },
 
     /**
-     * Method: sliderValuesToScale
-     * Given two values between 0 and 100, generate the min and max scale
-     *     denominators.  Assuming exponential scaling with <scaleFactor>.
+     * Method: sliderValueToScale
+     * Given a value between 0 and 100, generate the corresponding scale
+     *     denominator.  Assuming exponential scaling with <scaleFactor>.
      *
      * Parameters:
-     * values - {Array} Values from the scale slider.
+     * value - Value from the scale slider.
      *
      * Returns:
-     * {Array} A two item array of min and max scale denominators.
+     * The corresponding scale denominator.
      */
-    sliderValuesToScale: function(values) {
+    sliderValueToScale: function(value) {
         var interval = 100 / (this.scaleLevels - 1);
-        return [Math.round(Math.pow(this.scaleFactor, (100 - values[0]) / interval) * this.minScaleLimit),
-                Math.round(Math.pow(this.scaleFactor, (100 - values[1]) / interval) * this.minScaleLimit)];
+        return Math.round(Math.pow(this.scaleFactor, (100 - value) / interval) * this.minScaleLimit);
     },
     
     /**
-     * Method: scaleToSliderValues
+     * Method: scaleToSliderValue
      */
-    scaleToSliderValues: function(scales) {
+    scaleToSliderValue: function(scale) {
         var interval = 100 / (this.scaleLevels - 1);
-        return [100 - (interval * Math.log(scales[0] / this.minScaleLimit) / Math.log(this.scaleFactor)),
-                100 - (interval * Math.log(scales[1] / this.minScaleLimit) / Math.log(this.scaleFactor))];
+        var tmp = interval * Math.log(scale / this.minScaleLimit);
+        return 100 - (tmp / Math.log(this.scaleFactor));
     }
     
 });

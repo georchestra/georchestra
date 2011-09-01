@@ -112,9 +112,9 @@ Styler.StrokeSymbolizer = Ext.extend(Ext.FormPanel, {
                     scope: this
                 },
                 plugins: [
-                    new Styler.SliderTip({
-                        getText: function(slider) {
-                            return slider.getValue() + "%";
+                    new GeoExt.SliderTip({
+                        getText: function(thumb) {
+                            return thumb.value + "%";
                         }
                     })
                 ]
