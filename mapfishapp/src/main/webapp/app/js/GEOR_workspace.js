@@ -31,7 +31,7 @@ GEOR.workspace = (function() {
      * Handler for the button triggering the WMC save dialog
      */
     var saveBtnHandler = function() {
-        var formPanel = this.ownerCt;
+        var formPanel = this.findParentByType('form');
         GEOR.waiter.show();
         OpenLayers.Request.POST({
             url: "ws/wmc/",
