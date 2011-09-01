@@ -456,6 +456,7 @@ GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
         } else if (classificationType === 'unique_values') {
             cmp.layout.setActiveItem(2);
         }
+        cmp.doLayout();
     },
     
     /*
