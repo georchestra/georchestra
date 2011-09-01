@@ -103,7 +103,8 @@ Styler.TextSymbolizer = Ext.extend(Ext.Panel, {
                 }
             }, {
                 enableToggle: true,
-                cls: "x-btn-icon x-edit-bold",
+                cls: "x-btn-icon",
+                iconCls: 'x-edit-bold',
                 pressed: this.symbolizer.fontWeight === "bold",
                 listeners: {
                     toggle: function(button, pressed) {
@@ -114,7 +115,8 @@ Styler.TextSymbolizer = Ext.extend(Ext.Panel, {
                 }
             }, {
                 enableToggle: true,
-                cls: "x-btn-icon x-edit-italic",
+                cls: "x-btn-icon",
+                iconCls: 'x-edit-italic',
                 pressed: this.symbolizer.fontStyle === "italic",
                 listeners: {
                     toggle: function(button, pressed) {
