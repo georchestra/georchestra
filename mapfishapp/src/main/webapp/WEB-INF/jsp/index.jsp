@@ -193,7 +193,7 @@ if(sec_roles != null) {
             </c:choose>
         </c:otherwise>
     </c:choose>
-    <script type="text/javascript" src="lib/externals/ext/source/locale/ext-lang-fr.js"></script>
+    <script type="text/javascript" src="lib/externals/ext/src/locale/ext-lang-fr.js"></script>
 
     <script type="text/javascript">
         // remove the loading element
