@@ -124,6 +124,10 @@ Ext.namespace("GEOR");
                 split: (GEOR.editing !== undefined),
                 collapsible: (GEOR.editing !== undefined),
                 collapsed: (GEOR.editing !== undefined),
+                // we use hideMode: "offsets" here to workaround this bug in
+                // extjs 3.x, see the bug report:
+                // http://www.sencha.com/forum/showthread.php?107119-DEFER-1207-Slider-in-panel-with-collapsed-true-make-slider-weird
+                hideMode: 'offsets',
                 defaults: {
                     border:false
                 },
