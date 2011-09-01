@@ -25,6 +25,7 @@
  * @include GeoExt/widgets/Action.js
  * @include GeoExt/widgets/LegendPanel.js
  * @include GeoExt/widgets/WMSLegend.js
+ * @include GeoExt/widgets/Popup.js
  * @include GEOR_workspace.js
  * @include GEOR_print.js
  * @include GEOR_config.js
@@ -55,7 +56,7 @@ GEOR.toolbar = (function() {
      * Returns:
      * {OpenLayers.Control.Measure} The control.
      */
-    var createMeasureControl = function(handlerType) {
+    var createMeasureControl = function(handlerType, map) {
         var styleMap = new OpenLayers.StyleMap({
             "default": new OpenLayers.Style(null, {
                 rules: [new OpenLayers.Rule({
@@ -93,55 +94,43 @@ GEOR.toolbar = (function() {
             return event.measure.toFixed(2) + " " + metricUnit + dim;
         };
 
-        var measureToolTip;
-        var cleanup = function() {
-            if (measureToolTip) {
-                measureToolTip.destroy();
-            }
-        };
+        var measureToolTip, popup, measureEnd;
         var measureControl = new OpenLayers.Control.Measure(handlerType, {
             persist: true,
             handlerOptions: {
                 layerOptions: {styleMap: styleMap}
             }
         });
+        var showPopup = function(event) {
+            if (!popup) {
+                popup = new GeoExt.Popup({
+                    map: map,
+                    unpinnable: false,
+                    closeAction: 'hide',
+                    location: new OpenLayers.LonLat(0, 0),
+                    tpl: new Ext.Template("{measure} {units}{dim}")
+                });
+            }
+            popup.hide();
+            var points = event.geometry.components;
+            if (points[0] instanceof OpenLayers.Geometry.LinearRing) {
+                points = points[0].components;
+            }
+            if (points.length > 4 || (points.length > 2 && event.order == 1)) {
+                popup.location = points[points.length-1].getBounds().getCenterLonLat();
+                popup.position();
+                popup.show();
+                popup.update({
+                    measure: event.measure.toFixed(2),
+                    units: event.units,
+                    dim: event.order == 2 ? '<sup>2</sup>' : ''
+                });
+            }
+        }
         measureControl.events.on({
-            measurepartial: function(event) {
-                cleanup();
-                measureToolTip = new Ext.ToolTip({
-                    html: makeString(event),
-                    autoHide: false,
-                    closable: true,
-                    draggable: false,
-                    mouseOffset: [0, 0],
-                    showDelay: 1,
-                    listeners: {hide: cleanup}
-                });
-                if (event.measure > 0) {
-                    var px = measureControl.handler.lastUp;
-                    measureToolTip.targetXY = [px.x, px.y];
-                    measureToolTip.show();
-                }
-            },
-            measure: function(event) {
-                cleanup();
-                measureToolTip = new Ext.ToolTip({
-                    target: Ext.getBody(),
-                    html: makeString(event),
-                    autoHide: false,
-                    closable: true,
-                    draggable: false,
-                    mouseOffset: [0, 0],
-                    showDelay: 1,
-                    listeners: {
-                        hide: function() {
-                            measureControl.cancel();
-                            cleanup();
-                        }
-                    }
-                });
-            },
-            deactivate: cleanup
+            measurepartial: showPopup,
+            measure: showPopup,
+            deactivate: function() { popup && popup.hide(); }
         });
         return measureControl;
     };
@@ -195,7 +184,7 @@ GEOR.toolbar = (function() {
         items.push("-");
         
         items.push(new GeoExt.Action({
-            control: createMeasureControl(OpenLayers.Handler.Path),
+            control: createMeasureControl(OpenLayers.Handler.Path, map),
             map: map,
             toggleGroup: "map",
             tooltip: "mesurer une distance",
@@ -204,7 +193,7 @@ GEOR.toolbar = (function() {
         }));
 
         items.push(new GeoExt.Action({
-            control: createMeasureControl(OpenLayers.Handler.Polygon),
+            control: createMeasureControl(OpenLayers.Handler.Polygon, map),
             map: map,
             toggleGroup: "map",
             tooltip: "mesurer une surface",
