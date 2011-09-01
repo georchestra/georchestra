@@ -224,6 +224,7 @@ Styler.ScaleLimitPanel = Ext.extend(Ext.Panel, {
                         check: function(box, checked) {
                             this.limitMinScale = checked;
                             var slider = this.scaleSlider;
+                            slider.setValue(1, 100);
                             var thumb = slider.thumbs[1];
                             (checked) ? thumb.enable() : thumb.disable();
                             this.minScaleInput.setDisabled(!checked);
@@ -247,6 +248,7 @@ Styler.ScaleLimitPanel = Ext.extend(Ext.Panel, {
                         check: function(box, checked) {
                             this.limitMaxScale = checked;
                             var slider = this.scaleSlider;
+                            slider.setValue(0, 0);
                             var thumb = slider.thumbs[0];
                             (checked) ? thumb.enable() : thumb.disable();
                             this.maxScaleInput.setDisabled(!checked);
