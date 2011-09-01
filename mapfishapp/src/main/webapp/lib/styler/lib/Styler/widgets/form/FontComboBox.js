@@ -38,7 +38,7 @@ Styler.form.FontComboBox = Ext.extend(Ext.form.ComboBox, {
             tpl: new Ext.XTemplate(
                 '<tpl for=".">' +
                     '<div class="x-combo-list-item">' +
-                    '<span style="font-family: {text};">{text}</span>' +
+                    '<span style="font-family: {field1};">{field1}</span>' +
                 '</div></tpl>'
             )
         };
