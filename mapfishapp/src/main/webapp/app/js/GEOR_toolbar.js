@@ -320,11 +320,10 @@ GEOR.toolbar = (function() {
         
         items.push(GEOR.workspace.create());
 
-        // this is a bit unusual to set the buttons in the
-        // toolbar afterwards the creation of the toolbar,
-        // but it works, and we need a reference to the
-        // toolbar when creating the legend item
-        tbar.buttons = items;
+        // the toolbar items are added afterwards the creation of the toolbar
+        // because we need a reference to the toolbar when creating the
+        // legend item
+        tbar.add.apply(tbar, items);
         return tbar;
     };
 
