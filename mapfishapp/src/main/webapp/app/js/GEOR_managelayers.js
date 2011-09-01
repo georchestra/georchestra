@@ -14,6 +14,7 @@
 
 /*
  * @requires GeoExt/widgets/tree/LayerNode.js
+ * @include GeoExt/plugins/TreeNodeActions.js
  * @include GeoExt/widgets/tips/LayerOpacitySliderTip.js
  * @include GeoExt/widgets/LayerOpacitySlider.js
  * @include GeoExt/widgets/tree/LayerContainer.js
@@ -554,6 +555,7 @@ GEOR.managelayers = (function() {
                     baseAttrs: {
                         nodeType: "geor_layer",
                         cls: "geor-tree-node",
+                        uiProvider: "ui",
                         actions: [{
                             action: "delete",
                             qtip: "supprimer cette couche"
@@ -561,14 +563,13 @@ GEOR.managelayers = (function() {
                             action: "up",
                             qtip: "monter cette couche",
                             update: function(el) {
-                                var isFirst = this.isFirst();
-                                if (isFirst) {
+                                if (this.isFirst()) {
                                     if (!this._updating &&
                                         this.nextSibling &&
                                         this.nextSibling.hidden === false) {
 
                                         this._updating = true; // avoid recursion
-                                        this.nextSibling.getUI().updateActions();
+                                        this.getOwnerTree().plugins[0].updateActions(this.nextSibling);
                                         delete this._updating;
                                     }
                                     el.setVisibilityMode(Ext.Element.DISPLAY);
@@ -588,7 +589,7 @@ GEOR.managelayers = (function() {
                                         this.previousSibling.hidden === false) {
 
                                         this._updating = true; // avoid recursion
-                                        this.previousSibling.getUI().updateActions();
+                                        this.getOwnerTree().plugins[0].updateActions(this.previousSibling);
                                         delete this._updating;
                                     }
                                     el.setVisibilityMode(Ext.Element.DISPLAY);
@@ -608,8 +609,20 @@ GEOR.managelayers = (function() {
                 xtype: "treepanel",
                 autoScroll: true,
                 loader: {
-                    applyLoader: false
+                    applyLoader: false,
+                    uiProviders: {
+                        "ui": Ext.extend(
+                            GeoExt.tree.LayerNodeUI,
+                            new GeoExt.tree.TreeNodeUIEventMixin())
+                    }
                 },
+                // apply the tree node actions plugin to layer nodes
+                plugins: [{
+                    ptype: "gx_treenodeactions",
+                    listeners: {
+                        action: actionHandler
+                    }
+                }],
                 lines: false,
                 rootVisible: false,
                 root: layerContainer,
@@ -621,10 +634,7 @@ GEOR.managelayers = (function() {
                         }
                         layerFinder.show();
                     }
-                }],
-                listeners: {
-                    action: actionHandler
-                }
+                }]
             };
         },
 
