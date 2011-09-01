@@ -75,9 +75,9 @@ if(sec_roles != null) {
     <link rel="stylesheet" type="text/css" href="lib/externals/ext/resources/css/ext-all.css" />
     <link rel="stylesheet" type="text/css" href="lib/externals/ext/resources/css/xtheme-gray.css" />
     <link rel="stylesheet" type="text/css" href="lib/styler/theme/css/styler.css" />
-    <link rel="stylesheet" type="text/css" href="Ext.ux/lib/Ext.ux/widgets/palettecombobox/palettecombobox.ux.css" />
-    <link rel="stylesheet" type="text/css" href="Ext.ux/lib/Ext.ux/widgets/colorpicker/color-picker.ux.css" />
-    <link rel="stylesheet" type="text/css" href="Ext.ux/lib/Ext.ux/widgets/spinner/Spinner.css" />
+    <link rel="stylesheet" type="text/css" href="lib/Ext.ux/lib/Ext.ux/widgets/palettecombobox/palettecombobox.ux.css" />
+    <link rel="stylesheet" type="text/css" href="lib/Ext.ux/lib/Ext.ux/widgets/colorpicker/color-picker.ux.css" />
+    <link rel="stylesheet" type="text/css" href="lib/Ext.ux/lib/Ext.ux/widgets/spinner/Spinner.css" />
     <link rel="stylesheet" type="text/css" href="app/openlayers_gray_theme/style.css" />
     <link rel="stylesheet" type="text/css" href="app/css/main.css" />
 </head>
@@ -100,7 +100,7 @@ if(sec_roles != null) {
         <c:when test='<%= request.getParameter("debug") != null %>'>
     <script type="text/javascript" src="lib/externals/geoext/lib/overrides/override-ext-ajax.js"></script>
     <script type="text/javascript" src="lib/externals/ext/ext-all-debug.js"></script>
-    <script type="text/javascript" src="Ext.ux/lib/Ext.ux.js"></script>
+    <script type="text/javascript" src="lib/Ext.ux/lib/Ext.ux.js"></script>
     <script type="text/javascript" src="lib/proj4js/lib/proj4js.js"></script>
     <script type="text/javascript" src="lib/proj4js/lib/projCode/lcc.js"></script>
     <script type="text/javascript" src="lib/proj4js/lib/projCode/merc.js"></script>
