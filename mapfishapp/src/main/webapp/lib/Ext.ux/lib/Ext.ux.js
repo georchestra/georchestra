@@ -58,6 +58,7 @@
             "Ext.ux/widgets/spinner/SpinnerStrategy.js",
             "Ext.ux/widgets/spinner/NumberSpinner.js",
             "Ext.ux/widgets/colorpicker/ColorPicker.js",
+            "Ext.ux/widgets/colorpicker/ColorMenu.js",
             "Ext.ux/widgets/colorpicker/ColorPickerField.js",
             "Ext.ux/widgets/palettecombobox/PaletteComboBox.js"
         );

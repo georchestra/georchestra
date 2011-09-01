@@ -17,6 +17,7 @@
  * @include Ext.ux/widgets/spinner/Spinner.js
  * @include Ext.ux/widgets/palettecombobox/PaletteComboBox.js
  * @include Ext.ux/widgets/colorpicker/ColorPicker.js
+ * @include Ext.ux/widgets/colorpicker/ColorMenu.js
  * @include Ext.ux/widgets/colorpicker/ColorPickerField.js
  * @include GEOR_util.js
  * @include GEOR_ows.js
