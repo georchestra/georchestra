@@ -137,6 +137,9 @@ Styler.ScaleLimitPanel = Ext.extend(Ext.Panel, {
             maxValue: 100,
             values: [0, 100],
             listeners: {
+                beforechange: function(slider, newValue, oldValue, thumb) {
+                    return !thumb.disabled;
+                },
                 changecomplete: this.updateScaleValue,
                 render: function(slider) {
                     var thumbs = slider.thumbs;
