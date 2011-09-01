@@ -139,20 +139,6 @@ Styler.FeatureRenderer = Ext.extend(Ext.BoxComponent, {
     },
 
     onRender: function(ct, position) {
-        if(!this.el) {
-            this.el = document.createElement("div");
-            this.el.id = this.getId();
-        }
-        if(!this.renderer || !this.renderer.supported()) {  
-            this.assignRenderer();
-        }
-        // monkey-patch renderer so we always get a resolution
-        this.renderer.map = {
-            getResolution: (function() {
-                return this.resolution;
-            }).createDelegate(this)
-        };
-        
         this.drawFeature();
         Styler.FeatureRenderer.superclass.onRender.call(this, ct, position);
     },
@@ -272,6 +258,19 @@ Styler.FeatureRenderer = Ext.extend(Ext.BoxComponent, {
      * Render the feature with the symbolizer.
      */
     drawFeature: function() {
+        if(!this.el) {
+            this.el = document.createElement("div");
+            this.el.id = this.getId();
+        }
+        if(!this.renderer || !this.renderer.supported()) {
+            this.assignRenderer();
+            // monkey-patch renderer so we always get a resolution
+            this.renderer.map = {
+                getResolution: (function() {
+                    return this.resolution;
+                }).createDelegate(this)
+            };
+        }
         this.renderer.clear();
         this.setRendererDimensions();
         this.renderer.drawFeature(this.feature,
