@@ -213,6 +213,10 @@ Styler.RulePanel = Ext.extend(Ext.TabPanel, {
                         this.fireEvent("change", this, this.rule);
                     },
                     expand: function() {
+                        // in ext3 collapsed fieldset are not rendered
+                        // so we have to call doLayout by hand when
+                        // expanding the fieldset
+                        this.textSymbolizer.doLayout();
                         this.rule.symbolizer["Text"] = this.textSymbolizer.symbolizer;
                         this.fireEvent("change", this, this.rule);
                     },
