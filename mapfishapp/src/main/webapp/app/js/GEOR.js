@@ -230,6 +230,7 @@ Ext.namespace("GEOR");
                     collapsible: true,
                     frame: false,
                     border: false,
+                    header: false,
                     items: eastItems
                 },
                 southPanel
