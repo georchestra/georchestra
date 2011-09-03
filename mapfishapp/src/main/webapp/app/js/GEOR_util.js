@@ -26,6 +26,10 @@ GEOR.util = (function() {
         return type == 'xsd:double' || type == 'double' || 
             type == 'xsd:int' || type == 'int' || 
             type == 'xsd:integer' || type == 'integer' || 
+            // as stated by mapserver doc, real type can exist
+            // see for instance http://mapserver.org/ogc/wfs_server.html#reference-section
+            // and search for gml_[item name]_type
+            type == 'xsd:real' || type == 'real' || 
             type == 'xsd:float' || type == 'float' || 
             type == 'xsd:decimal' || type == 'decimal' || 
             type == 'xsd:long' || type == 'long'; 
@@ -35,6 +39,11 @@ GEOR.util = (function() {
     var isDateType = function(type) {
         return type == 'xsd:date' || type == 'date' || 
             type == 'xsd:dateTime' || type == 'dateTime';
+    };
+    
+    // isBooleanType 
+    var isBooleanType = function(type) {
+        return type == 'xsd:boolean' || type == 'boolean';
     };
     
     // Template that displays name and type for each attribute (with a qtip)
@@ -49,6 +58,9 @@ GEOR.util = (function() {
             '<tpl if="this.isDate(type)">',
                 '<div ext:qtip="{name}" class="x-combo-list-item">{name} <span>Date</span></div>',
             '</tpl>',
+            '<tpl if="this.isBoolean(type)">',
+                '<div ext:qtip="{name}" class="x-combo-list-item">{name} <span>Booléen</span></div>',
+            '</tpl>',
             '<tpl if="this.isAnother(type)">',
                 '<div ext:qtip="{name}" class="x-combo-list-item">{name} <span>autre</span></div>',
             '</tpl>',
@@ -56,8 +68,10 @@ GEOR.util = (function() {
             isString: isStringType,
             isNumeric: isNumericType,
             isDate: isDateType,
+            isBoolean: isBooleanType,
             isAnother: function(type) {
-                return !isStringType(type) && !isNumericType(type) && !isDateType(type);
+                return !isStringType(type) && !isNumericType(type) && 
+                    !isDateType(type) && !isBooleanType(type);
             }
         }
     );

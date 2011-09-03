@@ -212,11 +212,13 @@ Styler.FilterPanel = Ext.extend(Styler.BaseFilterPanel, {
         switch (record.get('type')) {
             case 'boolean':
                 this.setEqualComparison();
-                this.valueContainer.items.items[0].store.on('load', function() {
-                    this.valueContainer.items.items[0].setValue(true);
-                    this.filter.value = true;
-                    this.fireEvent("change", this.filter);
-                }, this);
+                if (this.filterPanelOptions.values) {
+                    this.valueContainer.items.items[0].store.on('load', function() {
+                        this.valueContainer.items.items[0].setValue(true);
+                        this.filter.value = true;
+                        this.fireEvent("change", this.filter);
+                    }, this);
+                }
                 break;
             case 'string':
                 this.comparisonCombo.store.filterBy(function(record){
@@ -229,6 +231,9 @@ Styler.FilterPanel = Ext.extend(Styler.BaseFilterPanel, {
                 break;
             case 'integer':
             case 'int':
+            case 'real': // as stated by mapserver doc, 
+            // see for instance http://mapserver.org/ogc/wfs_server.html#reference-section
+            // and search for gml_[item name]_type
             case 'float':
                 this.comparisonCombo.store.filterBy(function(record){
                     return (record.get('value') != OpenLayers.Filter.Comparison.LIKE);
