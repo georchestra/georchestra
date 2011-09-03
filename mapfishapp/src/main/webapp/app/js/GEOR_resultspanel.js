@@ -19,6 +19,7 @@
  * @include OpenLayers/Format/JSON.js
  * @include OpenLayers/Request/XMLHttpRequest.js
  * @include OpenLayers/Layer/Vector.js
+ * @include OpenLayers/Geometry/Point.js
  * @include OpenLayers/Renderer/SVG.js
  * @include OpenLayers/Renderer/VML.js
  * @include OpenLayers/Control/SelectFeature.js
@@ -277,6 +278,7 @@ GEOR.resultspanel = (function() {
             "default": new OpenLayers.Style(
                 OpenLayers.Util.extend(defStyle, {
                     cursor: "pointer",
+                    fillOpacity: 0.1,
                     strokeWidth: 3
                 })
             ),
@@ -284,6 +286,7 @@ GEOR.resultspanel = (function() {
                 OpenLayers.Util.extend(selStyle, {
                     cursor: "pointer",
                     strokeWidth: 3,
+                    fillOpacity: 0.1,
                     graphicZIndex: 1000
                 })
             )
@@ -341,7 +344,15 @@ GEOR.resultspanel = (function() {
             // In case we just have a bounds object and no geom,
             // display the bounding box
             if (f.bounds && !f.geometry) {
-                features[i].geometry = f.bounds.toGeometry();
+                if (f.bounds.getWidth() + f.bounds.getHeight() == 0) {
+                    // bounds of a single point => create a true point
+                    features[i].geometry = new OpenLayers.Geometry.Point(
+                        f.bounds.left, f.bounds.top
+                    );
+                } else {
+                    // general case where bounds is a true polygon
+                    features[i].geometry = f.bounds.toGeometry();
+                }
             }
         });
         store.loadData(features);
