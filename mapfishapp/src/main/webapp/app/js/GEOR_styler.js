@@ -120,6 +120,12 @@ GEOR.styler = (function() {
     var symbolType = null;
 
     /**
+     * Property: geometryName
+     * {String} The name of the geometry column
+     */
+    var geometryName = null;
+
+    /**
      * Method: getLegendPanel
      * Get a reference to the legend panel.
      */
@@ -496,6 +502,10 @@ GEOR.styler = (function() {
         var protocol = GEOR.ows.WFSProtocol(wfsInfo, map);
         protocol.read({
             maxFeatures: 1,
+            // we need to specifically ask for the geometry here
+            // some mapservers won't give it 
+            // see 
+            propertyNames: [geometryName],
             callback: function(response) {
                 var type;
                 if (response.success() &&
@@ -876,13 +886,15 @@ GEOR.styler = (function() {
                         mask.msg = "Lecture des attributs de la couche";
                         mask.show();
                         var store = GEOR.ows.WFSDescribeFeatureType(wfsInfo, {
-                            storeOptions: {
-                                // ignore geometry columns
-                                ignore: {
-                                    type : GEOR.ows.matchGeomProperty
-                                }
-                            },
                             success: function(st, recs, opts) {
+                                // extract & remove geometry column name                                
+                                var idx = st.find('type', GEOR.ows.matchGeomProperty);
+                                if (idx > -1) { 
+                                    // we have a geometry
+                                    var r = st.getAt(idx);
+                                    geometryName = r.get('name');
+                                    st.remove(r);
+                                }
                                 if (st.getCount() > 0) {
                                     // we have at least one attribute that we can style
                                     getSymbolType(initStyler);

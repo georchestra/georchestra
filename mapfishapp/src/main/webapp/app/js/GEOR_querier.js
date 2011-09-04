@@ -116,12 +116,19 @@ GEOR.querier = (function() {
      * {OpenLayers.StyleMap} StyleMap used for vectors
      */
     var styleMap = null;
-        
+    
     /**
      * Property: cp
      * {Ext.state.CookieProvider} the cookie provider
      */  
     var cp = null;
+    
+    /**
+     * Property: layerFields
+     * {Array} an array of fields for the current layer
+     * It is extracted from the WFS DescribeFeatureType operation
+     */  
+    var layerFields = null;
     
     /**
      * Method: checkFilter
@@ -175,6 +182,10 @@ GEOR.querier = (function() {
         // so that the format has the correct geometryName too.
         GEOR.ows.WFSProtocol(record, map, {geometryName: geometryName}).read({
             maxFeatures: GEOR.config.MAX_FEATURES,
+            // some mapserver versions require that we list all fields to return 
+            // (as seen with 5.6.1):
+            // see 
+            propertyNames: layerFields || [], 
             filter: filter,
             callback: function(response) {
                 // Houston, we've got a pb ...
@@ -297,6 +308,8 @@ GEOR.querier = (function() {
             attStore = GEOR.ows.WFSDescribeFeatureType(record, {
                 extractFeatureNS: true,
                 success: function() {
+                    // we list all fields, including the geometry
+                    layerFields = attStore.collect('name');
                     // we get the geometry column name, and remove the corresponding record from store
                     var idx = attStore.find('type', GEOR.ows.matchGeomProperty);
                     if (idx > -1) { 
@@ -306,9 +319,9 @@ GEOR.querier = (function() {
                         attStore.remove(r);
                         buildPanel(layerName, record);
                     } else {
-                        GEOR.util.errorDialog({
+                        GEOR.util.infoDialog({
                             msg: "La couche ne possède pas de colonne géométrique."+
-                                "<br />Le requêteur ne sera pas disponible."
+                                "<br />Le requêteur géométrique ne sera pas fonctionnel."
                         });
                     }
                 },
