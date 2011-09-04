@@ -184,7 +184,7 @@ GEOR.querier = (function() {
             maxFeatures: GEOR.config.MAX_FEATURES,
             // some mapserver versions require that we list all fields to return 
             // (as seen with 5.6.1):
-            // see 
+            // see http://csm-bretagne.fr/redmine/issues/1996
             propertyNames: layerFields || [], 
             filter: filter,
             callback: function(response) {
