@@ -68,15 +68,53 @@ GEOR.wfsbrowser = (function() {
                 storeOptions: {
                     // url should not be empty unless we want the following
                     // exception to occur:
-                    // uncaught exception: Ext.data.DataProxy: DataProxy attempted
+                    // "uncaught exception: Ext.data.DataProxy: DataProxy attempted
                     // to execute an API-action but found an undefined url /
-                    // function. Please review your Proxy url/api-configuration.
-                    url: "/dummy"
+                    // function. Please review your Proxy url/api-configuration."
+                    url: "/dummy",
+                    layerOptions: function() {
+	                    return {
+                            // by default, we want our WFS vector layers 
+                            // to be off, so that the browser is not overwhelmed
+                            // with too many features.
+                            // this gives a chance for the user to zoom in
+                            // before switching the layer on.
+	                        visibility: false,
+	                        displayInLayerSwitcher: true,
+                            // we don't want to have too many features
+                            // => we load only what is needed for current 
+                            // map extent
+	                        strategies: [
+                                new OpenLayers.Strategy.BBOX({
+                                    ratio: 1.2
+                                })
+                            ]
+	                    };
+	                },
+                    protocolOptions: {
+                        // we need to set the srsName in the WFS query,
+                        // so that features are returned in the correct SRS.
+                        // Please note that, with WFS 1.0.0, the trick should 
+                        // only work with GeoServer:
+                        srsNameInQuery: true,
+                        srsName: options.srs
+                        // TODO: we might also need to set the geometryName 
+                        // (required to query features by BBOX)
+                        
+                        // TODO: MapServer >= 5.6 requires that all propertyNames
+                        // are listed here, if we want to get the geometry.
+                        // This requires that we do a WFS DescribeFeatureType 
+                        // and amend the protocol once we get the response.
+                        // see http://csm-bretagne.fr/redmine/issues/1996
+                        
+                        // I think this will be done as a consequence of
+                        // http://csm-bretagne.fr/redmine/issues/1984 :
+                        // geometryName and propertyNames should be cached 
+                        // in the layerStore for future use, after GetCap &
+                        // DescribeFeatureType responses are parsed.
+                    }
                 }
             });
-            // when we use geoext r>2697 
-            // see http://trac.geoext.org/ticket/412 
-            // in order to use a custom strategy for vector layers (rather than fixed)
 
             cbxSm =  new Ext.grid.CheckboxSelectionModel({
                 width: 20,
