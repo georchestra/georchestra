@@ -97,15 +97,19 @@ GEOR.layerfinder = (function() {
         });
         
         panels["csw"] = GEOR.cswbrowser.getPanel();
+        var mapSRS = layerStore.map.getProjection();
         panels["wms"] = GEOR.wmsbrowser.getPanel({
-            srs: layerStore.map.getProjection()
+            srs: mapSRS
         });
-        panels["wfs"] = GEOR.wfsbrowser.getPanel();
+        panels["wfs"] = GEOR.wfsbrowser.getPanel({
+            srs: mapSRS
+        });
         
         return new Ext.TabPanel({
             border: false,
             activeTab: 0,
-            deferredRender: true, // required for WMS & WFS panels to have correct layout
+            // required for WMS & WFS panels to have correct layout:
+            deferredRender: true,
             items: [panels["csw"], panels["wms"], panels["wfs"]],
             listeners: {
                 'tabchange': function (tp, p) {
@@ -136,10 +140,12 @@ GEOR.layerfinder = (function() {
      * when adding layers from the catalog tab
      *
      * Parameters:
-     * layerName - {String}
+     * record - {GeoExt.data.LayerRecord}
      */
     // TODO : factorize & centralize this code on layer added in application layerStore
-    var capabilitiesSuccess = function(layerName) {
+    var capabilitiesSuccess = function(record) {
+        var data = record.data;
+        var layerName = record.get('name');
         return function(store, records) {
             var index = store.find("name", layerName);
             if(index < 0) {
@@ -160,7 +166,6 @@ GEOR.layerfinder = (function() {
                 return;
             }
             // Set the copyright information to the "attribution" field
-            // TODO: check all this works again after OpenLayers has been upgraded !
             if (data.rights && !r.get("attribution")) {
                 r.set("attribution", {title: data.rights});
             }
@@ -193,12 +198,11 @@ GEOR.layerfinder = (function() {
             } else if(record.get("name")) {
                 // we're coming from the CSW tab
                 // convert records to layer records
-                var data = record.data;
                 var store = new GEOR.ows.WMSCapabilities({
                     storeOptions: {
-                        url: data.wmsurl
+                        url: record.data.wmsurl
                     },
-                    success: capabilitiesSuccess.call(this, record.get("name")),
+                    success: capabilitiesSuccess.call(this, record),
                     failure: function() {
                         GEOR.util.errorDialog({
                             msg: "La requête WMS getCapabilities vers "+
