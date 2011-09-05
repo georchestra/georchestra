@@ -187,7 +187,9 @@ GEOR.wfsbrowser = (function() {
                 callback: function(r, options, success) {
                     if (!success) {
                         GEOR.util.errorDialog({
-                            msg: "Serveur non joignable"
+                            msg: ["Une erreur est survenue.",
+                                "Nous n'avons pas pu identifier "+
+                                "le contenu de ce service"].join('<br />')
                         });
                         return;
                     }
