@@ -16,6 +16,7 @@
  * @include GEOR_ows.js
  * @include GEOR_util.js
  * @include GEOR_config.js
+ * @include OpenLayers/Strategy/BBOX.js
  */
 
 Ext.namespace("GEOR");
