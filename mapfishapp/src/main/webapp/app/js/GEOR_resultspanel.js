@@ -156,6 +156,9 @@ GEOR.resultspanel = (function() {
         } else {
             return;
         }
+        if (!bounds || !bounds.left) {
+            return;
+        }
         if (bounds.getWidth() + bounds.getHeight() !== 0) {
             layerBounds = bounds.scale(1.05);
             map.zoomToExtent(layerBounds);
