@@ -148,7 +148,7 @@ GEOR.cswbrowser = (function() {
     var appendKeyword = function(tree, keyword) {
         if (!xmlTreeLoader) {
             xmlTreeLoader = new Ext.ux.tree.XmlTreeLoader({
-                url: GEOR.config.CSW_URL,
+                url: GEOR.config.GEONETWORK_URL + '/csw',
                 parseInput: function(treeLoader, treeNode) {
                     var getRecordsFormat = new OpenLayers.Format.CSWGetRecords({
                         maxRecords: 100

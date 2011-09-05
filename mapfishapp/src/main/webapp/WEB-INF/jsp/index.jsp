@@ -95,7 +95,12 @@ if(sec_roles != null) {
     </script>
 
     <script type="text/javascript" src="lib/externals/ext/adapter/ext/ext-base.js"></script>
-
+    
+    <!--
+        loading custom parameters (see build profile)
+    -->
+    <script type="text/javascript" src="app/js/GEOR_custom.js"></script>
+    
     <c:choose>
         <c:when test='<%= request.getParameter("debug") != null %>'>
     <script type="text/javascript" src="lib/externals/geoext/lib/overrides/override-ext-ajax.js"></script>

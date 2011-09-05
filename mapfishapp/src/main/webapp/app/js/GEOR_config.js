@@ -37,18 +37,6 @@ GEOR.config = (function() {
     };
 
     /**
-     * Constant: DEFAULT_WMC
-     * {String} The path to the application's default WMC.
-     */
-    var DEFAULT_WMC = "default.wmc";
-
-    /**
-     * Constant: DEV_DEFAULT_WMC
-     * {String} The path to the application's development WMC.
-     */
-    var DEV_DEFAULT_WMC = "dev-default.wmc";
-
-    /**
      * Property: vectorAbility
      * {Number} Integer representing 
      *  browser ability to handle features
@@ -120,17 +108,6 @@ GEOR.config = (function() {
             }
         }
         return hostException;
-    };
-
-    /**
-     * Method: getDefaultWMCPath
-     * Get the path to the application's default WMC.
-     *
-     * Returns:
-     * {String} The path to the default WMC.
-     */
-    var getDefaultWMCPath = function() {
-        return isHostException() ? DEV_DEFAULT_WMC : DEFAULT_WMC;
     };
 
     /**
@@ -220,6 +197,24 @@ GEOR.config = (function() {
         // eg: time to load app (not the files) ...
         return 1;
     };
+    
+    /**
+     * Method: getCustomParameter
+     *  If parameter paramName exists in GEOR.custom, returns its value
+     *  else defaults to the mandatory defaultValue
+     *
+     * Parameters:
+     * paramName - {String} the parameter name
+     * defaultValue - {Mixed} the default value if none is 
+     *                specified in GEOR.custom
+     *
+     * Returns:
+     * {Mixed} The parameter value
+     */
+    var getCustomParameter = function(paramName, defaultValue) {
+        return (GEOR.custom.hasOwnProperty(paramName)) ? 
+            GEOR.custom[paramName] : defaultValue;
+    };
 
     return {
 
@@ -266,41 +261,17 @@ GEOR.config = (function() {
         },
 
         /**
-         * Constant: DEFAULT_WMC.
-         * The path to the application's default WMC.
+         * Constant: ANONYMOUS
+         * Whether a user is logged in or not: can be overriden
+         * dynamically in index.jsp
          */
-        DEFAULT_WMC: getDefaultWMCPath(),
-
+        ANONYMOUS: true,
+        
         /**
-         * Constant: GEOSERVER_WFS_URL
-         * The URL to GeoServer WFS.
+         * Constant: USERNAME
+         * Username can be overriden dynamically in index.jsp
          */
-        GEOSERVER_WFS_URL: getBaseURL() + "geoserver/wfs",
-
-        /**
-         * Constant: GEOSERVER_WMS_URL
-         * The URL to GeoServer WMS.
-         */
-        GEOSERVER_WMS_URL: getBaseURL() + "geoserver/wms",
-
-        /**
-         * Constant: GEOWEBCACHE_WMS_URL
-         * The URL to GeoWebCache WMS.
-         */
-        GEOWEBCACHE_WMS_URL: getBaseURL() + "geoserver/gwc/service/wms",
-
-        /**
-         * Constant: GEONETWORK_URL
-         * The URL to GeoNetwork CSW.
-         */
-        GEONETWORK_URL: getBaseURL() + "geonetwork/srv/fr",
-
-        /**
-         * Constant: CATALOG_NAME
-         * The name to display in the catalog tab under "add layer"
-         * (was: GeoCatalogue for GeoBretagne project)
-         */
-        CATALOG_NAME: 'Catalogue geOrchestra',
+        USERNAME: null,
 
         /**
          * Constant: MAPFISHAPP_URL
@@ -321,51 +292,6 @@ GEOR.config = (function() {
         LOGOUT_URL: "/j_spring_security_logout",
         
         /**
-         * Constant: MAX_FEATURES
-         * The maximum number of vector features displayed.
-         */
-        MAX_FEATURES: 50*getBrowserVectorAbility()*getComputingPower(),
-        
-        /**
-         * Constant: MAX_LENGTH
-         * The maximum number of chars in a XML response 
-         * before triggering an alert.
-         */
-        MAX_LENGTH: 400/7*1024*getBrowserVectorAbility()*getComputingPower(),
-
-        /**
-         * Constant: ANONYMOUS
-         * Whether a user is logged in or not: can be overriden
-         * dynamically in index.jsp
-         */
-        ANONYMOUS: true,
-        
-        /**
-         * Constant: USERNAME
-         * Username can be overriden dynamically in index.jsp
-         */
-        USERNAME: null,
-        
-        /**
-         * Constant: DEFAULT_ATTRIBUTION
-         * Default attribution for layers which don't have one
-         */
-        DEFAULT_ATTRIBUTION: '',
-        
-        /**
-         * Constant: THESAURUS_NAME
-         * Thesaurus name to display for the CSW GetDomain request.
-         */
-        THESAURUS_NAME: 'mots clés',
-        
-        /**
-         * Constant: DEFAULT_THESAURUS_KEY
-         * Key (as the one in the response from /geonetwork/srv/fr/xml.thesaurus.getList) 
-         * of the thesaurus to use as the default (selected) one. 
-         */
-        DEFAULT_THESAURUS_KEY: 'local._none_.geobretagne',
-        
-        /**
          * Constant: ACCEPTED_MIME_TYPES
          * List of acceptable image mime types
          */
@@ -376,20 +302,121 @@ GEOR.config = (function() {
             'image/png8',
             'image/png; mode=24bit'
         ],
+        
+        /***** Beginning of config options which can be overriden by GEOR.custom *****/
 
         /**
-         * Constant: OVMAP_LAYER_NAME
-         * The name of the base layer which will be displayed in the overview map
-         * Note that is must be served by the server at url GEOR.config.GEOSERVER_WMS_URL as image/png
-         * see also GEOR.config.OSM_AS_OVMAP
+         * Constant: DEFAULT_WMC.
+         * The path to the application's default WMC.
+         * Defaults to "default.wmc"
          */
-        OVMAP_LAYER_NAME: "geob_loc:DEPARTEMENT",
+        DEFAULT_WMC: getCustomParameter("DEFAULT_WMC", "default.wmc"),
+        
+        /**
+         * Constant: GEOSERVER_WFS_URL
+         * The URL to GeoServer WFS.
+         * This is required if and only if the edit application is used
+         * or if the "referentials" module is activated.
+         * Defaults to /geoserver/wfs
+         */
+        GEOSERVER_WFS_URL: getCustomParameter("GEOSERVER_WFS_URL", 
+            getBaseURL() + "geoserver/wfs"),
+
+        /**
+         * Constant: GEOSERVER_WMS_URL
+         * The URL to the GeoServer WMS. 
+         * This is required if and only if OSM_AS_OVMAP is set to false.
+         * Defaults to /geoserver/wms
+         */
+        GEOSERVER_WMS_URL: getCustomParameter("GEOSERVER_WMS_URL", 
+            getBaseURL() + "geoserver/wms"),
+
+        /**
+         * Constant: GEONETWORK_URL
+         * The URL to the GeoNetwork server.
+         * Defaults to "/geonetwork/srv/fr"
+         */
+        GEONETWORK_URL: getCustomParameter("GEONETWORK_URL", 
+            getBaseURL() + "geonetwork/srv/fr"),
+
+        /**
+         * Constant: CSW_GETDOMAIN_SORTING
+         * true to case insensitive sort (client side) the keywords 
+         * got from a CSW getDomain request. false to disable 
+         * client side sorting 
+         * (which is preferable in case of too many keywords).
+         * Defaults to false
+         */
+        CSW_GETDOMAIN_SORTING: getCustomParameter("CSW_GETDOMAIN_SORTING", 
+            false),
+        
+        /**
+         * Constant: CATALOG_NAME
+         * The name to display in the catalog tab under "add layer"
+         * (was: GeoCatalogue for the GeoBretagne project).
+         * Defaults to 'Catalogue geOrchestra'
+         */
+        CATALOG_NAME: getCustomParameter("CATALOG_NAME", 
+            'Catalogue geOrchestra'),
+        
+        /**
+         * Constant: THESAURUS_NAME
+         * Thesaurus name to display for the CSW GetDomain request.
+         * Defaults to 'mots clés'
+         */
+        THESAURUS_NAME: getCustomParameter("THESAURUS_NAME", 'mots clés'),
+        
+        /**
+         * Constant: DEFAULT_THESAURUS_KEY
+         * Key (as the one in the response from /geonetwork/srv/fr/xml.thesaurus.getList) 
+         * of the thesaurus to use as the default (selected) one.
+         * Defaults to 'local._none_.geobretagne' FIXME: should be something else
+         */
+        DEFAULT_THESAURUS_KEY: getCustomParameter("DEFAULT_THESAURUS_KEY", 
+            'local._none_.geobretagne'),
+            
+        /**
+         * Constant: MAX_FEATURES
+         * The maximum number of vector features displayed.
+         * Defaults to a value estimated by an empirical formula
+         */
+        MAX_FEATURES: getCustomParameter("MAX_FEATURES", 
+            50*getBrowserVectorAbility()*getComputingPower()),
+        
+        /**
+         * Constant: MAX_LENGTH
+         * The maximum number of chars in a XML response 
+         * before triggering an alert.
+         * Defaults to a value estimated by an empirical formula
+         */
+        MAX_LENGTH: getCustomParameter("MAX_LENGTH", 
+            400/7*1024*getBrowserVectorAbility()*getComputingPower()),
+
+        
+        /**
+         * Constant: DEFAULT_ATTRIBUTION
+         * Default attribution for layers which don't have one.
+         * Defaults to ''
+         */
+        DEFAULT_ATTRIBUTION: getCustomParameter("DEFAULT_ATTRIBUTION", ''),
 
         /**
          * Constant: OSM_AS_OVMAP
-         * Boolean: if true, use OSM mapnik as overview map baselayer instead of GEOR.config.OVMAP_LAYER_NAME
+         * Boolean: if true, use OSM mapnik as overview map baselayer 
+         * instead of GEOR.config.OVMAP_LAYER_NAME.
+         * Defaults to true
          */
-        OSM_AS_OVMAP: true,
+        OSM_AS_OVMAP: getCustomParameter("OSM_AS_OVMAP", true),
+        
+        /**
+         * Constant: OVMAP_LAYER_NAME
+         * The name of the base layer which will be displayed in the overview map.
+         * This is required if and only if OSM_AS_OVMAP is set to false.
+         * This layer must be served by the server GEOSERVER_WMS_URL as image/png
+         * Defaults to "geor_loc:DEPARTEMENTS"
+         */
+        OVMAP_LAYER_NAME: getCustomParameter("OVMAP_LAYER_NAME", 
+            "geor_loc:DEPARTEMENTS"),
         
         /**
          * Constant: WMSC2WMS
@@ -397,68 +424,78 @@ GEOR.config = (function() {
          * This assumes that layers share the same name on both servers
          * Eventually, Administrator can setup a mirror WMS server configured to consume WMS-C and serve them as WMS ...
          */
-        WMSC2WMS: {
-            /*
-            ** Example usage: **
-            "referenced_wmsc_url": undefined, // this wmsc_url has no WMS counterpart. Referencing it here allows the user to be warned upon printing.
-            "wmsc_url": "wms_url"
-            */
-            "http://drebretagne-geobretagne.int.lsn.camptocamp.com/geoserver/gwc/service/wms": "http://drebretagne-geobretagne.int.lsn.camptocamp.com/geoserver/wms",
-            "http://osm.geobretagne.fr/service/wms": "http://maps.qualitystreetmap.org/geob_wms",
-            "http://geobretagne.fr/geoserver/gwc/service/wms": undefined // no trailing comma
-        },
+        WMSC2WMS: getCustomParameter("WMSC2WMS", {
+            /**
+             * Example usage:
+             *
+             * "wmsc_url": "wms_url",
+             *
+             * For a WMSC with no WMS counterpart,
+             * referencing the wmsc_url here allows the user 
+             * to be warned that this layer will not be printed:
+             *
+             * "wmsc_url": undefined, 
+             */
+            "http://osm.geobretagne.fr/service/wms": 
+                "http://maps.qualitystreetmap.org/geob_wms",
+            "http://geobretagne.fr/geoserver/gwc/service/wms": 
+                undefined // no trailing comma
+        }),
 
 
         /**
          * Constant: OWS_LIST_URL
          * URL of a JSON resource containing a list of OGC servers shown in the
          * OGC layers selection interface.
-         * See GEOR_owslist.js file for example syntax
+         * See GEOR_owslist.js file for example syntax.
+         * Defaults to 'app/js/GEOR_owslist.js'
          */
-        OWS_LIST_URL: 'app/js/GEOR_owslist.js',
-
-        
-        /**
-         * Constant: CSW_GETDOMAIN_SORTING
-         * true to case insensitive sort (client side) the keywords got from a CSW getDomain request
-         * false to disable client side sorting (which is preferable in case of too many keywords)
-         */
-        CSW_GETDOMAIN_SORTING: false,
+        OWS_LIST_URL: getCustomParameter("OWS_LIST_URL", 
+            'app/js/GEOR_owslist.js'),
 
 
         /**
          * Constant: MAP_DOTS_PER_INCH
-         * {Float} Sets the resolution used for scale computation
+         * {Float} Sets the resolution used for scale computation.
+         * Defaults to GeoServer defaults, which is 25.4 / 0.28
          */
-        MAP_DOTS_PER_INCH: 25.4 / 0.28,
+        MAP_DOTS_PER_INCH: getCustomParameter("MAP_DOTS_PER_INCH", 
+            25.4 / 0.28),
 
 
         /**
-         * Constant: URL
+         * Constant: ADDRESS_URL
          * {String} The URL to the OpenAddresses web service.
+         * Defaults to "/addrapp/addresses"
          */
-        ADDRESS_URL: "/addrapp/addresses",
+        ADDRESS_URL: getCustomParameter("ADDRESS_URL", 
+            "/addrapp/addresses"),
 
 
         /**
          * Constant: NS_EDIT
          * {String} The editing layers' namespace alias as defined in
          *    the GeoServer configuration.
+         * Defaults to "geor_edit"
          */
-        NS_EDIT: "geob_edit",
+        NS_EDIT: getCustomParameter("NS_EDIT", "geor_edit"),
 
 
-        CSW_URL: getBaseURL() + "geonetwork/srv/fr/csw",
-
-
-        CSW_GETDOMAIN_PROPERTY: "subject",
+        /**
+         * Constant: CSW_GETDOMAIN_PROPERTY
+         * {String} the property used to query the CSW for keywords.
+         * Defaults to "subject"
+         */
+        CSW_GETDOMAIN_PROPERTY: getCustomParameter("CSW_GETDOMAIN_PROPERTY", 
+            "subject"),
 
 
         /**
          * Constant: MAP_SCALES
          * {Array} The map's scales.
+         * Defaults to GeoBretagne GWC compliant scales
          */
-        MAP_SCALES : [
+        MAP_SCALES : getCustomParameter("MAP_SCALES", [
             266.591197934,
             533.182395867,
             1066.364791734,
@@ -475,116 +512,138 @@ GEOR.config = (function() {
             2183915.093470982,
             4367830.186941965,
             8735660.373883929
-        ],
+        ]),
 
         /**
          * Constant: MAP_SRS
-         * {String} The default map SRS code
+         * {String} The default map SRS code.
+         * Defaults to EPSG:2154
          */
-        MAP_SRS: "EPSG:2154",
+        MAP_SRS: getCustomParameter("MAP_SRS", "EPSG:2154"),
 
         /**
          * Constant: MAP_XMIN aka "left"
-         * {Float} The max extent xmin in MAP_SRS coordinates
+         * {Float} The max extent xmin in MAP_SRS coordinates.
+         * Defaults to -357823 (France metropolitaine left)
          */
-        MAP_XMIN: -357823,
+        MAP_XMIN: getCustomParameter("MAP_XMIN", -357823),
 
         /**
          * Constant: MAP_YMIN aka "bottom"
-         * {Float} The max extent ymin in MAP_SRS coordinates
+         * {Float} The max extent ymin in MAP_SRS coordinates.
+         * Defaults to 6037008 (France metropolitaine bottom)
          */
-        MAP_YMIN: 6037008,
+        MAP_YMIN: getCustomParameter("MAP_YMIN", 6037008),
 
         /**
          * Constant: MAP_XMAX aka "right"
-         * {Float} The max extent xmax in MAP_SRS coordinates
+         * {Float} The max extent xmax in MAP_SRS coordinates.
+         * Defaults to 1313632 (France metropolitaine right)
          */
-        MAP_XMAX: 1313632,
+        MAP_XMAX: getCustomParameter("MAP_XMAX", 1313632),
 
         /**
          * Constant: MAP_YSMAX aka "top"
          * {Float} The max extent ymax in MAP_SRS coordinates
+         * Defaults to 7230727 (France metropolitaine top)
          */
-        MAP_YMAX: 7230727,
+        MAP_YMAX: getCustomParameter("MAP_YMAX", 7230727),
         
         /**
          * Constant: MAP_POS_SRS1
-         * {String} The cursor position will be displayed using this SRS
+         * {String} The cursor position will be displayed using this SRS.
+         * Defaults to "EPSG:2154"
          */
-        MAP_POS_SRS1: "EPSG:2154",
+        MAP_POS_SRS1: getCustomParameter("MAP_POS_SRS1", "EPSG:2154"),
         
         /**
          * Constant: MAP_POS_SRS2
-         * {String} The cursor position will be displayed using this SRS
+         * {String} The cursor position will be displayed using this SRS.
+         * Defaults to "EPSG:3948"
          */
-        MAP_POS_SRS2: "EPSG:3948",
+        MAP_POS_SRS2: getCustomParameter("MAP_POS_SRS2", "EPSG:3948"),
         
         /**
          * Constant: TILE_SINGLE
-         * {Boolean} When false, activates WMS tiled requests
+         * {Boolean} When false, activates WMS tiled requests.
+         * Defaults to false
          */
-        TILE_SINGLE: false,
+        TILE_SINGLE: getCustomParameter("TILE_SINGLE", false),
         
         /**
          * Constant: TILE_WIDTH
-         * {Integer} Width of the WMS tiles in pixels
+         * {Integer} Width of the WMS tiles in pixels.
+         * Defaults to 512
          */
-        TILE_WIDTH: 512,
+        TILE_WIDTH: getCustomParameter("TILE_WIDTH", 512),
         
         /**
          * Constant: TILE_HEIGHT
-         * {Integer} Height of the WMS tiles in pixels
+         * {Integer} Height of the WMS tiles in pixels.
+         * Defaults to 512
          */
-        TILE_HEIGHT: 512,
+        TILE_HEIGHT: getCustomParameter("TILE_HEIGHT", 512),
 
         /**
          * Constant: GEONAMES_FILTERS
-         * {Object} Describes the geonames options
+         * {Object} Describes the geonames options.
+         * Defaults to France/Bretagne/populated places
          */
-        GEONAMES_FILTERS: {
+        GEONAMES_FILTERS: getCustomParameter("GEONAMES_FILTERS", {
             country: 'FR',         // France
             adminCode1: 'A2',      // Bretagne
             style: 'short',        // verbosity of results
             lang: 'fr',
             featureClass: 'P',     // class category: populated places
             maxRows: 20            // maximal number of results
-        },
+        }),
 
         /**
          * Constant: GEONAMES_ZOOMLEVEL
          * {Integer} The number of zoom levels from maximum zoom level
          *           to zoom to, when using GeoNames recentering
-         * Should always be >= 1
+         * Should always be >= 1.
+         * Defaults to 5
          */
-        GEONAMES_ZOOMLEVEL: 5,
+        GEONAMES_ZOOMLEVEL: getCustomParameter("GEONAMES_ZOOMLEVEL", 5),
         
         /**
          * Constant: ROLES_FOR_STYLER
          * {Array} roles required for the styler to show up
          * Empty array means the module is available for everyone
+         * ROLE_SV_USER means the user needs to be connected.
+         * Defaults to ['ROLE_SV_USER']
          */
-        ROLES_FOR_STYLER: ['ROLE_SV_USER'],
+        ROLES_FOR_STYLER: getCustomParameter("ROLES_FOR_STYLER", 
+            ['ROLE_SV_USER']),
         
         /**
          * Constant: ROLES_FOR_QUERIER
          * {Array} roles required for the querier to show up
          * Empty array means the module is available for everyone
+         * ROLE_SV_USER means the user needs to be connected.
+         * Defaults to []
          */
-        ROLES_FOR_QUERIER: [],
+        ROLES_FOR_QUERIER: getCustomParameter("ROLES_FOR_QUERIER", 
+            []),
         
         /**
          * Constant: ROLES_FOR_PRINTER
          * {Array} roles required to be able to print
          * Empty array means printing is available for everyone
+         * ROLE_SV_USER means the user needs to be connected.
+         * Defaults to ['ROLE_SV_USER']
          */
-        ROLES_FOR_PRINTER: ['ROLE_SV_USER'], 
+        ROLES_FOR_PRINTER: getCustomParameter("ROLES_FOR_PRINTER", 
+            ['ROLE_SV_USER']),
         
         /**
          * Constant: HELP_URL
-         * {String} URL of the help ressource
+         * {String} URL of the help ressource.
+         * Defaults to "/doc/html/documentation.html#viewer"
          */
-        HELP_URL: "/doc/html/documentation.html#viewer"
-        // No trailing comma
-
+        HELP_URL: getCustomParameter("HELP_URL", 
+            "/doc/html/documentation.html#viewer")
+        // No trailing comma for the last line (or IE will complain)
     };
 })();
