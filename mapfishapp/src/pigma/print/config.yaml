@@ -1,0 +1,414 @@
+---
+#===========================================================================
+# allowed DPIs
+#===========================================================================
+dpis:
+  - 254
+  - 127
+
+#===========================================================================
+# the allowed scales
+#===========================================================================
+scales:
+  - 266
+  - 533
+  - 1066
+  - 2132
+  - 4265
+  - 8530
+  - 17061
+  - 34123
+  - 68247
+  - 136494
+  - 272989
+  - 545978
+  - 1091957
+  - 2183915
+  - 4367830
+  - 8735660
+  - 17471320
+  - 34942641
+  - 69885282
+  - 139770565
+  - 279541131
+  - 559082263
+
+  #~ TODO: Float support instead of Integer
+  #~ - 266.591197934
+  #~ - 533.182395867
+  #~ - 1066.364791734
+  #~ - 2132.729583468
+  #~ - 4265.459166936
+  #~ - 8530.918333871
+  #~ - 17061.836667742
+  #~ - 34123.673335484
+  #~ - 68247.346670968
+  #~ - 136494.693341936
+  #~ - 272989.386683873
+  #~ - 545978.773367746
+  #~ - 1091957.546735491
+  #~ - 2183915.093470982
+  #~ - 4367830.186941965
+  #~ - 8735660.373883929
+  #~ - 17471320.747767858
+  #~ - 34942641.495535716
+  #~ - 69885282.991071432
+  #~ - 139770565.982142864
+  #~ - 279541131.964285732
+  #~ - 559082263.928571464
+
+#===========================================================================
+# the list of allowed hosts
+#===========================================================================
+hosts:
+  - !localMatch
+    dummy: true
+  - !ipMatch
+    host:0.0.0.0
+    mask:0.0.0.0
+
+
+layouts:
+
+# 4 layouts:
+# - A4 portrait
+# - A4 paysage
+# - A3 portrait
+# - A3 paysage
+
+  #===========================================================================
+  A4 portrait:
+  #===========================================================================
+    mainPage:
+      pageSize: A4
+      landscape: false
+      backgroundPdf: 'file://${configDir}/gabarit_impression_portrait_A4.pdf'
+      items:
+        - !columns
+          # columns can have an absolute position. In that case, they need a width.
+          absoluteX: 120
+          absoluteY: 805
+          width: 380
+          items:
+            - !text
+              font: Helvetica
+              fontSize: 21
+              align: center
+              text: '${mapTitle}'
+        - !map
+          absoluteX: 29
+          absoluteY: 728
+          width: 395
+          height: 622
+        - !columns
+          absoluteX: 50
+          absoluteY: 123
+          width: 150
+          items:
+            - !scalebar
+              align: left
+              maxSize: 150
+              type: 'bar sub'
+              intervals: 5
+              condition: showScalebar
+        - !columns
+          absoluteX: 450
+          absoluteY: 102
+          width: 200
+          items:
+            - !text
+              text: |
+                Echelle: 1:${format %,d scale}
+              condition: showScalebar
+        - !columns
+          absoluteX: 400
+          absoluteY: 220
+          width: 30
+          items:
+            - !image
+              maxWidth: 30
+              maxHeight: 30
+              url: 'file://${configDir}/Arrow_North_CFCF.svg'
+              condition: showNorth
+        - !columns
+          absoluteX: 285
+          absoluteY: 186
+          width: 200
+          items:
+            - !map
+              width: 80
+              height: 80
+              overviewMap: 10
+              condition: showOverview
+        - !columns
+          absoluteX: 442
+          absoluteY: 725
+          width: 200
+          items:
+            - !legends
+              maxIconWidth: 0
+              maxIconHeight: 0
+              layerSpace: 3
+              layerFontSize: 12
+              classIndentation: 0
+              classFontSize: 8
+              classSpace: 3
+              condition: showLegend
+      footer: &commonFooter
+        height: 62
+        items:
+          - !columns
+            widths: [65,35]
+            items:
+              - !text
+                align: left
+                text: '${copyright}'
+              - !text
+                align: right
+                text: '${now dd/MM/yyyy}'
+                condition: showDate
+
+  #===========================================================================
+  A4 paysage:
+  #===========================================================================
+    mainPage:
+      pageSize: A4
+      landscape: true
+      backgroundPdf: 'file://${configDir}/gabarit_impression_paysage_A4.pdf'
+      items:
+        - !columns
+          # columns can have an absolute position. In that case, they need a width.
+          absoluteX: 120
+          absoluteY: 560
+          width: 620
+          items:
+            - !text
+              font: Helvetica
+              fontSize: 21
+              align: center
+              text: '${mapTitle}'
+        - !map
+          absoluteX: 29
+          absoluteY: 481
+          width: 636
+          height: 368
+        - !columns
+          absoluteX: 40
+          absoluteY: 139
+          width: 180
+          items:
+            - !scalebar
+              align: left
+              maxSize: 180
+              type: 'bar sub'
+              intervals: 5
+              condition: showScalebar
+        - !columns
+          absoluteX: 560
+          absoluteY: 112
+          width: 200
+          items:
+            - !text
+              text: |
+                Echelle: 1:${format %,d scale}
+              condition: showScalebar
+        - !columns
+          absoluteX: 640
+          absoluteY: 227
+          width: 30
+          items:
+            - !image
+              maxWidth: 30
+              maxHeight: 30
+              url: 'file://${configDir}/Arrow_North_CFCF.svg'
+              condition: showNorth
+        - !columns
+          absoluteX: 525
+          absoluteY: 193
+          width: 200
+          items:
+            - !map
+              width: 80
+              height: 80
+              overviewMap: 10
+              condition: showOverview
+        - !columns
+          absoluteX: 685
+          absoluteY: 480
+          width: 200
+          items:
+            - !legends
+              maxIconWidth: 0
+              maxIconHeight: 0
+              layerSpace: 3
+              layerFontSize: 12
+              classIndentation: 0
+              classFontSize: 8
+              classSpace: 3
+              condition: showLegend
+      footer: *commonFooter
+
+  #===========================================================================
+  A3 portrait:
+  #===========================================================================
+    mainPage:
+      pageSize: A3
+      landscape: false
+      backgroundPdf: 'file://${configDir}/gabarit_impression_portrait_A3.pdf'
+      items:
+        - !columns
+          # columns can have an absolute position. In that case, they need a width.
+          absoluteX: 160
+          absoluteY: 1150
+          width: 530
+          items:
+            - !text
+              font: Helvetica
+              fontSize: 30
+              align: center
+              text: '${mapTitle}'
+        - !map
+          absoluteX: 29
+          absoluteY: 1040
+          width: 576
+          height: 930
+        - !columns
+          absoluteX: 43
+          absoluteY: 135
+          width: 180
+          items:
+            - !scalebar
+              align: left
+              maxSize: 180
+              type: 'bar sub'
+              intervals: 5
+              condition: showScalebar
+        - !columns
+          absoluteX: 626
+          absoluteY: 108
+          width: 200
+          items:
+            - !text
+              text: |
+                Echelle: 1:${format %,d scale}
+              condition: showScalebar
+        - !columns
+          absoluteX: 582
+          absoluteY: 220
+          width: 30
+          items:
+            - !image
+              maxWidth: 30
+              maxHeight: 30
+              url: 'file://${configDir}/Arrow_North_CFCF.svg'
+              condition: showNorth
+        - !columns
+          absoluteX: 465
+          absoluteY: 190
+          width: 200
+          items:
+            - !map
+              width: 80
+              height: 80
+              overviewMap: 10
+              condition: showOverview
+        - !columns
+          absoluteX: 630
+          #875
+          absoluteY: 1030
+          #1440
+          width: 200
+          items:
+            - !legends
+              maxIconWidth: 0
+              maxIconHeight: 0
+              layerSpace: 5
+              layerFontSize: 16
+              classIndentation: 0
+              classFontSize: 8
+              classSpace: 5
+              condition: showLegend
+
+      footer: *commonFooter
+
+
+  #===========================================================================
+  A3 paysage:
+  #===========================================================================
+    mainPage:
+      pageSize: A3
+      landscape: true
+      backgroundPdf: 'file://${configDir}/gabarit_impression_paysage_A3.pdf'
+      items:
+        - !columns
+          # columns can have an absolute position. In that case, they need a width.
+          absoluteX: 180
+          absoluteY: 795
+          width: 855
+          items:
+            - !text
+              font: Helvetica
+              fontSize: 30
+              align: center
+              text: '${mapTitle}'
+        - !map
+          absoluteX: 29
+          absoluteY: 692
+          width: 920
+          height: 558
+        - !columns
+          absoluteX: 46
+          absoluteY: 160
+          width: 180
+          items:
+            - !scalebar
+              align: left
+              maxSize: 180
+              type: 'bar sub'
+              intervals: 5
+              condition: showScalebar
+        - !columns
+          absoluteX: 810
+          absoluteY: 125
+          width: 200
+          items:
+            - !text
+              text: |
+                Echelle: 1:${format %,d scale}
+              condition: showScalebar
+        - !columns
+          absoluteX: 925
+          absoluteY: 250
+          width: 30
+          items:
+            - !image
+              maxWidth: 30
+              maxHeight: 30
+              url: 'file://${configDir}/Arrow_North_CFCF.svg'
+              condition: showNorth
+        - !columns
+          absoluteX: 809
+          absoluteY: 214
+          width: 200
+          items:
+            - !map
+              width: 80
+              height: 80
+              overviewMap: 10
+              condition: showOverview
+        - !columns
+          absoluteX: 980
+          absoluteY: 690
+          width: 200
+          items:
+            - !legends
+              maxIconWidth: 0
+              maxIconHeight: 0
+              layerSpace: 5
+              layerFontSize: 16
+              classIndentation: 0
+              classFontSize: 8
+              classSpace: 5
+              condition: showLegend
+      footer: *commonFooter
+
