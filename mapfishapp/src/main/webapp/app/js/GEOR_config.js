@@ -18,10 +18,11 @@ GEOR.config = (function() {
 
     /**
      * Constant: URL_DEV
-     * {String} The URL to the Camptocamp geOrchestra dev host.
+     * {String} The URL to the OWS dev host.
      */
     var URL_DEV =
-        "http://c2cpc83.camptocamp.com/";
+        "http://http://ns383241.ovh.net/";
+    // FIXME: this should not be here...
 
     /**
      * Constant: HOST_EXCEPTIONS
