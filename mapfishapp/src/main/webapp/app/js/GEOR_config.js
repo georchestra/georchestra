@@ -21,7 +21,7 @@ GEOR.config = (function() {
      * {String} The URL to the OWS dev host.
      */
     var URL_DEV =
-        "http://http://ns383241.ovh.net/";
+        "http://ns383241.ovh.net/";
     // FIXME: this should not be here...
 
     /**
