@@ -100,66 +100,9 @@
         GEOR.data.debug = ${c.debug};
     <c:choose>
         <c:when test='${c.fake}'>
-        GEOR.data.services = [
-            {
-                text: "BRGM Risques",
-                owstype: "WMS",
-                owsurl: "http://geoservices.brgm.fr/risques"
-            }, {
-                text: "Gest'eau",
-                owstype: "WMS",
-                owsurl: "http://gesteau.oieau.fr/service"
-            },{
-                text: "Sivit",
-                owstype: "WMS",
-                owsurl: "http://sd1878-2.sivit.org/geoserver/wms"
-            },{
-                text: "GeoLittoral",
-                owstype: "WMS",
-                owsurl: "http://geolittoral.application.equipement.gouv.fr/wms/metropole"
-            },{
-                text: "BMO/OSM",
-                owstype: "WMS",
-                owsurl: "http://bmo.openstreetmap.fr/ows"
-            },{
-                text: "BMO/OSM",
-                owstype: "WFS",
-                owsurl: "http://bmo.openstreetmap.fr/ows"
-            }, {
-                text: "BMO/OSM fake",
-                owstype: "WMS",
-                owsurl: "http://bmo.openstreetmap.fr/ows2"
-            }
-        ];
-
-        GEOR.data.layers = [
-            {
-                layername: "ortho",
-                owstype: "WMS",
-                owsurl: "http://bmo.openstreetmap.fr/ows"
-            }, {
-                layername: "fake layer",
-                owstype: "WFS",
-                owsurl: "http://bmo.openstreetmap.fr/ows"
-            },{
-                layername: "voies",
-                owstype: "WFS",
-                owsurl: "http://bmo.openstreetmap.fr/ows"
-            },{
-                owstype: "WMS",
-                owsurl: "http://geolittoral.application.equipement.gouv.fr/wms/metropole",
-                layername: "Sentiers_littoraux"
-            }, {
-                owstype: "WMS",
-                owsurl: "http://sd1878-2.sivit.org/geoserver/wms",
-                layername: "topp:RCLC90_L2E"
-            }, {
-                owstype: "WMS",
-                owsurl: "http://geoservices.brgm.fr/risques",
-                layername: "BASIAS_LOCALISE"
-            }
-        ];
-        // we want all layers unchecked by default
+        GEOR.data.services = GEOR.config.STARTUP_SERVICES;
+        GEOR.data.layers = GEOR.config.STARTUP_LAYERS;
+        // we want all layers unchecked by default:
         GEOR.config.LAYERS_CHECKED = false;
         </c:when>
         <c:otherwise>

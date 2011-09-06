@@ -326,6 +326,74 @@ GEOR.config = (function() {
             0),
         
         /**
+         * Constant: STARTUP_LAYERS
+         * {Array} OGC layers loaded at startup if none are sent
+         */
+        STARTUP_LAYERS: getCustomParameter("STARTUP_LAYERS", [
+            {
+                layername: "ortho",
+                owstype: "WMS",
+                owsurl: "http://bmo.openstreetmap.fr/ows"
+            }, {
+                layername: "fake layer",
+                owstype: "WFS",
+                owsurl: "http://bmo.openstreetmap.fr/ows"
+            },{
+                layername: "voies",
+                owstype: "WFS",
+                owsurl: "http://bmo.openstreetmap.fr/ows"
+            },{
+                owstype: "WMS",
+                owsurl: "http://geolittoral.application.equipement.gouv.fr/wms/metropole",
+                layername: "Sentiers_littoraux"
+            }, {
+                owstype: "WMS",
+                owsurl: "http://sd1878-2.sivit.org/geoserver/wms",
+                layername: "topp:RCLC90_L2E"
+            }, {
+                owstype: "WMS",
+                owsurl: "http://geoservices.brgm.fr/risques",
+                layername: "BASIAS_LOCALISE"
+            }
+        ]),
+        
+        /**
+         * Constant: STARTUP_SERVICES
+         * {Array} OGC services loaded at startup if none are sent
+         */
+        STARTUP_SERVICES: getCustomParameter("STARTUP_SERVICES", [
+            {
+                text: "BRGM Risques",
+                owstype: "WMS",
+                owsurl: "http://geoservices.brgm.fr/risques"
+            }, {
+                text: "Gest'eau",
+                owstype: "WMS",
+                owsurl: "http://gesteau.oieau.fr/service"
+            },{
+                text: "Sivit",
+                owstype: "WMS",
+                owsurl: "http://sd1878-2.sivit.org/geoserver/wms"
+            },{
+                text: "GeoLittoral",
+                owstype: "WMS",
+                owsurl: "http://geolittoral.application.equipement.gouv.fr/wms/metropole"
+            },{
+                text: "BMO/OSM",
+                owstype: "WMS",
+                owsurl: "http://bmo.openstreetmap.fr/ows"
+            },{
+                text: "BMO/OSM",
+                owstype: "WFS",
+                owsurl: "http://bmo.openstreetmap.fr/ows"
+            }, {
+                text: "BMO/OSM fake",
+                owstype: "WMS",
+                owsurl: "http://bmo.openstreetmap.fr/ows2"
+            }
+        ]),
+        
+        /**
          * Constant: HELP_URL
          * {String} URL of the help ressource.
          * Defaults to "/doc/html/documentation.html#extractor"

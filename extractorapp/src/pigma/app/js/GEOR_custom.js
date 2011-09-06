@@ -115,6 +115,28 @@ GEOR.custom = {
      * Defaults to 0
      */
     //DEFAULT_BUFFER_VALUE: 0,
+        
+    /**
+     * Constant: STARTUP_LAYERS
+     * {Array} OGC layers loaded at startup if none are sent
+     */
+    STARTUP_LAYERS: [],
+    
+    /**
+     * Constant: STARTUP_SERVICES
+     * {Array} OGC services loaded at startup if none are sent
+     */
+    STARTUP_SERVICES: [
+        {
+            text: "PIGMA",
+            owstype: "WMS",
+            owsurl: "http://ns383241.ovh.net/geoserver/wms"
+        }, {
+            text: "BRGM Risques",
+            owstype: "WMS",
+            owsurl: "http://geoservices.brgm.fr/risques"
+        }
+    ],
     
     /**
      * Constant: HELP_URL
