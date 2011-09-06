@@ -21,7 +21,6 @@
     ],
     wfs_servers: [
         {"name": "PIGMA", "url": "http://ns383241.ovh.net/geoserver/wfs"},
-        {"name": "GeoLittoral", "url": "http://geolittoral.application.equipement.gouv.fr/wfs/metropole"},
         {"name": "Corine Land Cover", "url": "http://sd1878-2.sivit.org/geoserver/wfs"} /* no trailing comma */
     ]
 }

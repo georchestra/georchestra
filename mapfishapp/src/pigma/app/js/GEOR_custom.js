@@ -56,7 +56,7 @@ GEOR.custom = {
      * (was: GeoCatalogue for the GeoBretagne project).
      * Defaults to 'Catalogue geOrchestra'
      */
-    //CATALOG_NAME: 'Catalogue geOrchestra',
+    CATALOG_NAME: 'Catalogue PIGMA',
     
     /**
      * Constant: THESAURUS_NAME
@@ -69,9 +69,8 @@ GEOR.custom = {
      * Constant: DEFAULT_THESAURUS_KEY
      * Key (as the one in the response from /geonetwork/srv/fr/xml.thesaurus.getList) 
      * of the thesaurus to use as the default (selected) one.
-     * Defaults to 'local._none_.geobretagne' FIXME: should be something else
      */
-    //DEFAULT_THESAURUS_KEY: 'local._none_.geobretagne',
+    DEFAULT_THESAURUS_KEY: 'local._none_.pigma',
         
     /**
      * Constant: MAX_FEATURES
@@ -94,7 +93,7 @@ GEOR.custom = {
      * Default attribution for layers which don't have one.
      * Defaults to ''
      */
-    //DEFAULT_ATTRIBUTION: '',
+    DEFAULT_ATTRIBUTION: 'PIGMA',
 
     /**
      * Constant: OSM_AS_OVMAP
@@ -169,7 +168,7 @@ GEOR.custom = {
      *    the GeoServer configuration.
      * Defaults to "geor_edit"
      */
-    //NS_EDIT: "geor_edit",
+    NS_EDIT: "pigma_edit",
 
 
     /**
@@ -278,18 +277,15 @@ GEOR.custom = {
      * Constant: GEONAMES_FILTERS
      * {Object} Describes the geonames options.
      * Defaults to France/Bretagne/populated places
-     * Use
-     * http://ws.geonames.org/postalCodeSearchJSON?postalcode=33000&country=FR
-     * to get adminCode1 for your region (replacing postalCode)
      */
-    /*GEONAMES_FILTERS: {
+    GEONAMES_FILTERS: {
         country: 'FR',         // France
-        adminCode1: 'A2',      // Bretagne
+        adminCode1: '97',      // Aquitaine
         style: 'short',        // verbosity of results
         lang: 'fr',
         featureClass: 'P',     // class category: populated places
         maxRows: 20            // maximal number of results
-    },*/
+    },
 
     /**
      * Constant: GEONAMES_ZOOMLEVEL

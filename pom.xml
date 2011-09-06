@@ -87,6 +87,12 @@
         <server>c2cpc61</server>
       </properties>
     </profile>
+    <profile>
+      <id>pigma</id>
+      <properties>
+        <server>pigma</server>
+      </properties>
+    </profile>
   </profiles>
   <repositories>
     <repository>
