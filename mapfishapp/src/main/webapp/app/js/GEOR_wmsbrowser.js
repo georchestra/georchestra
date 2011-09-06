@@ -119,15 +119,10 @@ GEOR.wmsbrowser = (function() {
                 height: 30,
                 fieldLabel: "Choisissez un serveur WMS",
                 loadingText: 'Chargement...',
-                mode: 'remote',
+                mode: 'local',
                 store: new Ext.data.Store({
-                    proxy : new Ext.data.HttpProxy({
-                        method: 'GET',
-                        disableCaching: false,
-                        url: GEOR.config.OWS_LIST_URL
-                    }),
+                    data: GEOR.config.WMS_SERVERS,
                     reader: new Ext.data.JsonReader({
-                        root: 'wms_servers',
                         fields: ['name', 'url']
                     }),
                     sortInfo: {

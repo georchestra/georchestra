@@ -444,17 +444,6 @@ GEOR.config = (function() {
 
 
         /**
-         * Constant: OWS_LIST_URL
-         * URL of a JSON resource containing a list of OGC servers shown in the
-         * OGC layers selection interface.
-         * See GEOR_owslist.js file for example syntax.
-         * Defaults to 'app/js/GEOR_owslist.js'
-         */
-        OWS_LIST_URL: getCustomParameter("OWS_LIST_URL", 
-            'app/js/GEOR_owslist.js'),
-
-
-        /**
          * Constant: MAP_DOTS_PER_INCH
          * {Float} Sets the resolution used for scale computation.
          * Defaults to GeoServer defaults, which is 25.4 / 0.28
@@ -643,7 +632,44 @@ GEOR.config = (function() {
          * Defaults to "/doc/html/documentation.html#viewer"
          */
         HELP_URL: getCustomParameter("HELP_URL", 
-            "/doc/html/documentation.html#viewer")
-        // No trailing comma for the last line (or IE will complain)
+            "/doc/html/documentation.html#viewer"),
+            
+            
+        /**
+         * Constant: WMS_SERVERS
+         * {Array} List of externals WMS to display in the WMS servers tab.
+         */
+        WMS_SERVERS: getCustomParameter("WMS_SERVERS", [
+            {"name": "GeoBretagne", "url": "http://geobretagne.fr/geoserver/wms"},
+            {"name": "Région Bretagne", "url": "http://kartenn.region-bretagne.fr/geoserver/wms"},
+            {"name": "Sandre/zonages", "url": "http://services.sandre.eaufrance.fr/geo/zonage"},
+            {"name": "Sandre/ouvrages", "url": "http://services.sandre.eaufrance.fr/geo/ouvrage"},
+            {"name": "Sandre/stations", "url": "http://services.sandre.eaufrance.fr/geo/stations"},
+            {"name": "BRGM/géologie", "url": "http://geoservices.brgm.fr/geologie"},
+            {"name": "BRGM/risques", "url": "http://geoservices.brgm.fr/risques"},
+            {"name": "Cartorisque35, risques naturels", "url": "http://cartorisque.prim.net/wms/35"},
+            {"name": "Cartorisque22, risques naturels", "url": "http://cartorisque.prim.net/wms/22"},
+            {"name": "Cartorisque29, risques naturels", "url": "http://cartorisque.prim.net/wms/29"},
+            {"name": "Cartorisque56, risques naturels", "url": "http://cartorisque.prim.net/wms/56"},
+            {"name": "Carmen", "url": "http://ws.carmen.application.developpement-durable.gouv.fr/WFS/10/Nature_Paysage"},
+            {"name": "GeoSignal", "url": "http://www.geosignal.org/cgi-bin/wmsmap"},
+            {"name": "Corine Land Cover", "url": "http://sd1878-2.sivit.org/geoserver/wms"},
+            {"name": "GeoLittoral", "url": "http://geolittoral.application.equipement.gouv.fr/wms/metropole"},
+            {"name": "Gest'Eau", "url": "http://gesteau.oieau.fr/service"},
+            {"name": "BMO/OpenStreetMap", "url": "http://bmo.openstreetmap.fr/wms"},
+            {"name": "IFREMER/littoral", "url": "http://www.ifremer.fr/services/wms1"},
+            {"name": "Cartelie/CETE Ouest", "url": "http://mapserveur.application.developpement-durable.gouv.fr/map/mapserv?map%3D%2Fopt%2Fdata%2Fcarto%2Fcartelie%2Fprod%2FCETE_Ouest%2Fxdtyr36laj.www.map"}
+        ]),
+        
+        /**
+         * Constant: WFS_SERVERS
+         * {Array} List of externals WFS to display in the WFS servers tab.
+         */
+        WFS_SERVERS: getCustomParameter("WFS_SERVERS", [
+            {"name": "GeoBretagne", "url": "http://geobretagne.fr/geoserver/wfs"},
+            {"name": "BMO/OpenStreetMap", "url": "http://bmo.openstreetmap.fr/ows"},
+            {"name": "Corine Land Cover", "url": "http://sd1878-2.sivit.org/geoserver/wfs"}
+        ])
+    // No trailing comma for the last line (or IE will complain)
     };
 })();

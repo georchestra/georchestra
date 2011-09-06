@@ -149,20 +149,13 @@ GEOR.wfsbrowser = (function() {
             var comboField = new Ext.form.ComboBox({
                 editable: false,
                 triggerAction: 'all',
-                // TODO: prevent addition of "?query=" to requested URL
-                //queryParam: null, // does not work 
                 height: 30,
                 fieldLabel: "Choisissez un serveur WFS",
                 loadingText: 'Chargement...',
-                mode: 'remote',
+                mode: 'local',
                 store: new Ext.data.Store({
-                    proxy : new Ext.data.HttpProxy({
-                        method: 'GET',
-                        disableCaching: false,
-                        url: GEOR.config.OWS_LIST_URL
-                    }),
+                    data: GEOR.config.WFS_SERVERS,
                     reader: new Ext.data.JsonReader({
-                        root: 'wfs_servers',
                         fields: ['name', 'url']
                     }),
                     sortInfo: {
