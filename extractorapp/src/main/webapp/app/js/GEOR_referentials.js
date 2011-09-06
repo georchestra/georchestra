@@ -221,16 +221,7 @@ GEOR.referentials = (function() {
     
         var store = new Ext.data.SimpleStore({
             fields: ['value', 'text'],
-            data: [
-                [0,'aucun'],
-                [10,'10 mètres'],
-                [50,'50 mètres'],
-                [100,'100 mètres'],
-                [500,'500 mètres'],
-                [1000,'1 kilomètre'],
-                [5000,'5 kilomètres'],
-                [10000,'10 kilomètres']
-            ]
+            data: GEOR.config.BUFFER_VALUES
         });
     
         return new Ext.form.ComboBox({

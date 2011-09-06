@@ -134,7 +134,7 @@ GEOR.map = (function() {
             return new OpenLayers.Layer.WMS(
                 "Couche de base",
                 GEOR.config.GEOSERVER_WMS_URL,
-                {layers: GEOR.config.BASE_LAYER_NAME}, 
+                {layers: GEOR.config.BASE_LAYER_NAME, format: "image/png"},
                 OpenLayers.Util.applyDefaults(options, {
                     projection: GEOR.config.GLOBAL_EPSG,
                     maxExtent: GEOR.config.GLOBAL_MAX_EXTENT,

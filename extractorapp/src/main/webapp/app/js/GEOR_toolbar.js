@@ -14,6 +14,7 @@
 
 /*
  * @include GEOR_data.js
+ * @include GEOR_config.js
  * @include OpenLayers/Control/ZoomToMaxExtent.js
  * @include OpenLayers/Control/ZoomBox.js
  * @include OpenLayers/Control/NavigationHistory.js
@@ -100,9 +101,9 @@ GEOR.toolbar = (function() {
             tooltip: "Afficher l'aide",
             handler: function() {
                 if(Ext.isIE) {
-                    window.open("/doc/html/documentation.html#extractor");
+                    window.open(GEOR.config.HELP_URL);
                 } else {
-                    window.open("/doc/html/documentation.html#extractor", "Aide de l'extrateur", "menubar=no,status=no,scrollbars=yes");
+                    window.open(GEOR.config.HELP_URL, "Aide de l'extrateur", "menubar=no,status=no,scrollbars=yes");
                 }
             }
         });

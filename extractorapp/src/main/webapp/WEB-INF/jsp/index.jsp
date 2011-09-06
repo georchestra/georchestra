@@ -46,6 +46,11 @@
 
     <script type="text/javascript" src="resources/lib/externals/ext/adapter/ext/ext-base.js"></script>
 
+    <!--
+        loading custom parameters (see build profile)
+    -->	
+    <script type="text/javascript" src="resources/app/js/GEOR_custom.js"></script>
+
     <c:choose>
         <c:when test='${c.debug}'>
     <script type="text/javascript" src="resources/lib/externals/geoext/lib/overrides/override-ext-ajax.js"></script>

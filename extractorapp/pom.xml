@@ -264,9 +264,36 @@
         <configuration>
           <executable>jsbuild/build.sh</executable>
           <arguments>
-                    </arguments>
+          </arguments>
         </configuration>
       </plugin>
+        <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+                <execution>
+                    <id>serverConfigCopy</id>
+                    <phase>generate-sources</phase>
+                    <configuration>
+                        <tasks>
+                            <!--
+                                global configuration from profile
+                            -->
+                            <copy todir="${basedir}/src/main/webapp/" overwrite="true" verbose="true" failonerror="false">
+                                <fileset dir="${basedir}/src/${server}/">
+                                    <or>
+                                        <filename name="**/*.js" />
+                                        <filename name="**/*.jsp" />
+                                    </or>
+                                </fileset>
+                            </copy>
+                        </tasks>
+                    </configuration>
+                    <goals>
+                        <goal>run</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
     </plugins>
   </build>
 </project>
