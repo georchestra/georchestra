@@ -16,7 +16,7 @@
  * @include GEOR_map.js
  * @include GEOR_mappanel.js
  * @include GEOR_managelayers.js
- * @include GEOR_recenter.js
+ * @include GEOR_geonames.js
  * @include GEOR_address.js
  * @include GEOR_referentials.js
  * @include GEOR_ajaxglobal.js
@@ -108,6 +108,20 @@ Ext.namespace("GEOR");
         // errors when loading WMC are not catched by GEOR.ajaxglobal
         // but by the mapinit module, which handles them more appropriately
         
+        var recenteringItems = [
+            Ext.apply({
+                title: "GeoNames"
+            }, GEOR.geonames.create(map)),
+            Ext.apply({
+                title: "Référentiels"
+            }, GEOR.referentials.create(map, GEOR.config.NS_LOC))
+        ];
+        if (GEOR.address && GEOR.config.RECENTER_ON_ADDRESSES) {
+            recenteringItems.push(Ext.apply({
+                title: "Adresses"
+            }, GEOR.address.create(map)));
+        }
+        
         /*
          * Create the page's layout.
          */
@@ -154,17 +168,7 @@ Ext.namespace("GEOR");
                     border: false,
                     bodyStyle: "padding: 5px"
                 },
-                items: [
-                    Ext.apply({
-                        title: "GeoNames"
-                    }, GEOR.recenter.create(map)),
-                    Ext.apply({
-                        title: "Adresses"
-                    }, GEOR.address.create(map)),
-                    Ext.apply({
-                        title: "Référentiels"
-                    }, GEOR.referentials.create(map, "geob_loc"))
-                ]
+                items: recenteringItems
             })
         ];
         if (GEOR.editing) {

@@ -142,8 +142,14 @@ GEOR.custom = {
      * Defaults to GeoServer defaults, which is 25.4 / 0.28
      */
     //MAP_DOTS_PER_INCH: 25.4 / 0.28,
-
-
+    
+    /**
+     * Constant: RECENTER_ON_ADDRESSES
+     * {Boolean} whether to display the recenter on addresses tab.
+     * Defaults to false
+     */
+    //RECENTER_ON_ADDRESSES: false,
+    
     /**
      * Constant: ADDRESS_URL
      * {String} The URL to the OpenAddresses web service.
@@ -151,7 +157,14 @@ GEOR.custom = {
      */
     //ADDRESS_URL: "/addrapp/addresses",
 
-
+    /**
+     * Constant: NS_LOC
+     * {String} The referentials layers' namespace alias as defined in
+     *    the GeoServer configuration.
+     * Defaults to "geor_loc"
+     */
+    NS_LOC: "pigma_loc",
+    
     /**
      * Constant: NS_EDIT
      * {String} The editing layers' namespace alias as defined in

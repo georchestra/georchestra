@@ -18,7 +18,7 @@
 
 Ext.namespace("GEOR");
 
-GEOR.recenter = (function() {
+GEOR.geonames = (function() {
 
     /*
      * Property: map
