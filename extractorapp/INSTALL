@@ -10,5 +10,5 @@ cd cockpit/trunk/
 the alternative is the following (execute in extractorapp/trunk)
 
 mvn clean install -Dmaven.test.skip -Dserver=<server_id>
-scp target/extractorapp-private.war <desination server>
+scp target/extractorapp-private.war <destination server>
 

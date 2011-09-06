@@ -255,6 +255,9 @@ GEOR.ows = (function() {
                 baseParams: Ext.applyIf({
                     "REQUEST": "DescribeLayer",
                     "LAYERS": layername,
+                    // WIDTH and HEIGHT params seem to be required for
+                    // some versions of MapServer (typ. 5.6.1)
+                    // see http://csm-bretagne.fr/redmine/issues/1979
                     "WIDTH": 1,
                     "HEIGHT": 1
                 }, WMS_BASE_PARAMS)
