@@ -163,6 +163,7 @@
 									<fileset dir="${basedir}/src/${server}/">
 										<or>
 											<filename name="**/*.js" />
+											<filename name="**/*.svg" />
 											<filename name="**/*.wmc" />
 											<filename name="**/*.pdf" />
 											<filename name="**/*.yaml" />
