@@ -144,9 +144,7 @@ GEOR.custom = {
      */
     WMSC2WMS: {
         "http://osm.geobretagne.fr/service/wms": 
-            "http://maps.qualitystreetmap.org/geob_wms", 
-        // FIXME: previous line should not be used for prod
-        // because it might overload qualitystreetmap.org
+            "http://geobretagne.fr/osm-google", 
         "http://geobretagne.fr/geoserver/gwc/service/wms": 
             undefined // no trailing comma
     },
