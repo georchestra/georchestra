@@ -270,6 +270,15 @@ GEOR.util = (function() {
          */
         getAttributesComboTpl: function() {
             return tplAttribute;
+        },
+         
+        /**
+         * Method: round
+         * Rounds a float with a given number of decimals.
+         */
+        round: function(input, decimals) {
+            var p = Math.pow(10, decimals);
+            return Math.round(input*p)/p;
         }
     };
 })();

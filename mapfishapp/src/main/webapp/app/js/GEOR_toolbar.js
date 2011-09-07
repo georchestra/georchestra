@@ -307,7 +307,7 @@ GEOR.toolbar = (function() {
         
         items.push("-");
         
-        items.push(GEOR.workspace.create());
+        items.push(GEOR.workspace.create(map));
 
         // the toolbar items are added afterwards the creation of the toolbar
         // because we need a reference to the toolbar when creating the

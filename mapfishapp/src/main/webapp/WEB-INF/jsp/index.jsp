@@ -93,6 +93,9 @@ if(sec_roles != null) {
     <script type="text/javascript">
         document.getElementById('loading-msg').innerHTML = 'Chargement...';
     </script>
+    
+    <!-- invisible iframe for actions such as "load in JOSM" -->
+    <iframe name="hidden-frame" frameborder="0" width="0" height="0" style="visibility:hidden;"></iframe>
 
     <script type="text/javascript" src="lib/externals/ext/adapter/ext/ext-base.js"></script>
     

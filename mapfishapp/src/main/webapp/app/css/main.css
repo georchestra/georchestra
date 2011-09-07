@@ -116,6 +116,9 @@ div.olMapViewport {
 .geor-load-map {
     background-image: url(../img/famfamfam/map_go.gif) !important;
 }
+.geor-edit-osm {
+    background-image: url(../img/osm_logo.png) !important;
+}
 
 /* make sure that menu width is correct in IE8 strict mode (See http://extjs.com/forum/showthread.php?t=70701) */
 .x-layer[style]{

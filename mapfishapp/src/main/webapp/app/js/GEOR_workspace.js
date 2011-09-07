@@ -14,6 +14,7 @@
 
 /*
  * @include OpenLayers/Request/XMLHttpRequest.js
+ * @include OpenLayers/Projection.js
  * @include GEOR_wmc.js
  * @include GEOR_waiter.js
  * @include GEOR_util.js
@@ -25,6 +26,8 @@ GEOR.workspace = (function() {
     /*
      * Private
      */
+    
+    var map = null;
 
     /**
      * Method: saveBtnHandler
@@ -173,6 +176,44 @@ GEOR.workspace = (function() {
         });
         popup.show();
     };
+    
+    /**
+     * Method: editOSM
+     * Creates handlers for OSM edition
+     */
+    var editOSM = function(options) {
+        var round = GEOR.util.round;
+        return function() {
+            var url, bounds = map.getExtent();
+            bounds.transform(
+                map.getProjectionObject(), 
+                new OpenLayers.Projection("EPSG:4326")
+            );
+            if (options.protocol === 'lbrt') {
+                url = options.base + OpenLayers.Util.getParameterString({
+                    left: round(bounds.left, 5),
+                    bottom: round(bounds.bottom, 5),
+                    right: round(bounds.right, 5),
+                    top: round(bounds.top, 5)
+                });
+                frames['hidden-frame'].location.href = url;
+            } else if (options.protocol === 'llz') {
+                var c = bounds.getCenterLonLat();
+                /*
+                Zoom level determined based on the idea that, for OSM:
+                    maxResolution: 156543 -> zoom level 0
+                    numZoomLevels: 19
+                */
+                var zoom = Math.round((Math.log(156543) - Math.log(map.getResolution()))/Math.log(2));
+                url = options.base + OpenLayers.Util.getParameterString({
+                    lon: round(c.lon, 5),
+                    lat: round(c.lat, 5),
+                    zoom: Math.min(19, zoom - 1)
+                });
+                window.open(url);
+            }
+        };
+    };
 
     /*
      * Public
@@ -183,10 +224,14 @@ GEOR.workspace = (function() {
          * APIMethod: create
          * Returns the workspace menu config.
          *
+         * Parameters:
+         * m {OpenLayers.Map} 
+         *
          * Returns:
          * {Object} The toolbar config item corresponding to the "workspace" menu.
          */
-        create: function() {
+        create: function(m) {
+            map = m;
             return {
                 text: "Espace de travail",
                 menu: new Ext.menu.Menu({
@@ -201,7 +246,38 @@ GEOR.workspace = (function() {
                         text: "Charger une carte",
                         iconCls: "geor-load-map",
                         handler: loadWMC
-                    }]
+                    }, '-', {
+                        text: "Editer dans OSM",
+                        iconCls: "geor-edit-osm",
+                        menu: [{
+                            text: "avec JOSM",
+                            handler: editOSM.call(this, {
+                                base: 'http://127.0.0.1:8111/load_and_zoom?',
+                                protocol: 'lbrt'
+                            })
+                        },{
+                            text: "avec Potlatch",
+                            handler: editOSM.call(this, {
+                                base: 'http://www.openstreetmap.org/edit?editor=potlatch&',
+                                protocol: 'llz'
+                            })
+                        },{
+                            text: "avec Potlatch2",
+                            handler: editOSM.call(this, {
+                                base: 'http://www.openstreetmap.org/edit?editor=potlatch2&',
+                                protocol: 'llz'
+                            })
+                        },{
+                            text: "avec Walking Papers",
+                            handler: editOSM.call(this, {
+                                base: 'http://walking-papers.org/?',
+                                protocol: 'llz'
+                            })
+                        }]
+                    }/*, {
+                        text: "Editer dans geOrchestra"
+                        // TODO: we need to be able to open mapfishapp/edit with a bbox parameter
+                    }*/]
                 })
             };
         }

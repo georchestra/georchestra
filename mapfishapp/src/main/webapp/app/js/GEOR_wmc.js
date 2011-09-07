@@ -13,7 +13,7 @@
  */
 
 /*
- * FIXME: wether include either v1_0_0.js or v1_1_0.js or both?
+ * FIXME: whether to include either v1_0_0.js or v1_1_0.js or both?
  * @include OpenLayers/Format/WMC/v1_0_0.js
  * @include OpenLayers/Format/WMC/v1_1_0.js
  * @include GeoExt/data/WMCReader.js
