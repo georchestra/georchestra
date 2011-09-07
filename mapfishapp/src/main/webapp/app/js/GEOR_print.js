@@ -31,12 +31,6 @@ GEOR.print = (function() {
      */
 
     /**
-     * Property: cmpId
-     * {String} The component id.
-     */
-    var cmpId = 'GEOR_print';
-
-    /**
      * Property: mask
      * {Ext.LoadMask} The treePanel loadMask
      */
@@ -197,6 +191,7 @@ GEOR.print = (function() {
                     'Contactez l\'administrateur de la plateforme.'
                 ].join('<br/>')
             });
+            return;
         }
         if (win === null) {
             // The form with fields controlling the print output
@@ -304,18 +299,16 @@ GEOR.print = (function() {
                 }, {
                     text: "Fermer",
                     handler: function() {
-                        Ext.getCmp(cmpId+'_print_window').hide();
+                        win.hide();
                     }
                 }]
             });
 
             win = new Ext.Window({
                 title: 'Impression',
-                id: cmpId+'_print_window',
                 resizable: false,
                 width: 350,
                 autoHeight: true,
-                //modal: true,
                 closeAction: 'hide',
                 items: [formPanel]
             });
