@@ -213,7 +213,7 @@ GEOR.config = (function() {
      * {Mixed} The parameter value
      */
     var getCustomParameter = function(paramName, defaultValue) {
-        return (GEOR.custom.hasOwnProperty(paramName)) ? 
+        return (GEOR.custom && GEOR.custom.hasOwnProperty(paramName)) ? 
             GEOR.custom[paramName] : defaultValue;
     };
 
