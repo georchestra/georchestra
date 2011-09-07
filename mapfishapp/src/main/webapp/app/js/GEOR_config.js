@@ -307,11 +307,27 @@ GEOR.config = (function() {
         /***** Beginning of config options which can be overriden by GEOR.custom *****/
 
         /**
-         * Constant: DEFAULT_WMC.
+         * Constant: DEFAULT_WMC
          * The path to the application's default WMC.
          * Defaults to "default.wmc"
          */
         DEFAULT_WMC: getCustomParameter("DEFAULT_WMC", "default.wmc"),
+
+        /**
+         * Constant: DEFAULT_PRINT_FORMAT
+         * {String} The default (ie selected) print layout format.
+         * Defaults to "A4 paysage"
+         */
+        DEFAULT_PRINT_FORMAT: getCustomParameter("DEFAULT_PRINT_FORMAT", 
+            "A4 paysage"),
+    
+        /**
+         * Constant: DEFAULT_PRINT_FORMAT
+         * {String} The default (ie selected) print resolution.
+         * Defaults to "127"
+         */
+        DEFAULT_PRINT_RESOLUTION: getCustomParameter("DEFAULT_PRINT_RESOLUTION", 
+            "127"),
         
         /**
          * Constant: GEOSERVER_WFS_URL

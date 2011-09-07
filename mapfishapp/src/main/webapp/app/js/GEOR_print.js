@@ -128,6 +128,7 @@ GEOR.print = (function() {
         // The printProvider that connects us to the print service
         printProvider = new GeoExt.data.PrintProvider({
             url: "pdf",
+            autoLoad: true,
             baseParams: {
                 url: GEOR.config.MAPFISHAPP_URL + "pdf"
             },
@@ -161,7 +162,6 @@ GEOR.print = (function() {
                     });
                 },
                 "encodelayer": function(pp, layer, encLayer) {
-                    //console.log(layer.url); // debug
                     if (GEOR.config.WMSC2WMS.hasOwnProperty(layer.url)) {
                         if (GEOR.config.WMSC2WMS[layer.url] !== undefined) {
                             //console.log(layer.name + ' - tuilée avec WMS référencé'); // debug
@@ -194,9 +194,25 @@ GEOR.print = (function() {
             return;
         }
         if (win === null) {
+            // default values from config:
+            var r = printProvider.layouts.find("name", 
+                GEOR.config.DEFAULT_PRINT_FORMAT);
+            if (r >= 0) {
+                printProvider.setLayout(printProvider.layouts.getAt(r));
+            } else {
+                alert("Configuration error: DEFAULT_PRINT_FORMAT "+DEFAULT_PRINT_FORMAT+" not found");
+            }
+            r = printProvider.dpis.find("value", 
+                GEOR.config.DEFAULT_PRINT_RESOLUTION);
+            if (r >= 0) {
+                printProvider.setDpi(printProvider.dpis.getAt(r));
+            } else {
+                alert("Configuration error: DEFAULT_PRINT_RESOLUTION "+DEFAULT_PRINT_RESOLUTION+" not found");
+            }
             // The form with fields controlling the print output
             var formPanel = new Ext.form.FormPanel({
                 bodyStyle: "padding:5px",
+                labelSeparator: ' : ',
                 items: [{
                         xtype: 'textfield',
                         fieldLabel: 'Titre',
@@ -261,8 +277,10 @@ GEOR.print = (function() {
                         xtype: "combo",
                         store: printProvider.layouts,
                         displayField: "name",
+                        valueField: "name",
                         fieldLabel: "Format",
-                        typeAhead: true,
+                        forceSelection: true,
+                        editable: false,
                         mode: "local",
                         triggerAction: "all",
                         plugins: new GeoExt.plugins.PrintProviderField({
@@ -272,21 +290,43 @@ GEOR.print = (function() {
                         xtype: "combo",
                         store: printProvider.dpis,
                         displayField: "name",
+                        valueField: "value",
                         fieldLabel: "Résolution",
+                        forceSelection: true,
+                        editable: false,
                         tpl: '<tpl for="."><div class="x-combo-list-item">{name} dpi</div></tpl>',
-                        typeAhead: true,
                         mode: "local",
                         triggerAction: "all",
                         plugins: new GeoExt.plugins.PrintProviderField({
                             printProvider: printProvider
                         }),
                         // the plugin will work even if we modify a combo value
-                        setValue: function(v) {
-                            v = parseInt(v) + " dpi";
-                            Ext.form.ComboBox.prototype.setValue.apply(this, arguments);
+                        setValue: function(v){
+                            var text = v;
+                            if(this.valueField){
+                                var r = this.findRecord(this.valueField, v);
+                                if(r){
+                                    text = r.data[this.displayField];
+                                }
+                            }
+                            text = parseInt(v) + " dpi";
+                            this.lastSelectionText = text;
+                            Ext.form.ComboBox.superclass.setValue.call(this, text);
+                            this.value = v;
+                            return this;
                         }
                     }
-                ],
+                ]
+            });
+
+            win = new Ext.Window({
+                title: 'Impression',
+                resizable: false,
+                border: false,
+                width: 350,
+                autoHeight: true,
+                closeAction: 'hide',
+                items: [formPanel],
                 buttons: [{
                     text: "Imprimer",
                     handler: function() {
@@ -302,15 +342,6 @@ GEOR.print = (function() {
                         win.hide();
                     }
                 }]
-            });
-
-            win = new Ext.Window({
-                title: 'Impression',
-                resizable: false,
-                width: 350,
-                autoHeight: true,
-                closeAction: 'hide',
-                items: [formPanel]
             });
         }
         

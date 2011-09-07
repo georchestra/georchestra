@@ -17,6 +17,20 @@ GEOR.custom = {
     //DEFAULT_WMC: "default.wmc",
     
     /**
+     * Constant: DEFAULT_PRINT_FORMAT
+     * {String} The default (ie selected) print layout format.
+     * Defaults to "A4 paysage"
+     */
+    //DEFAULT_PRINT_FORMAT: "A4 paysage",
+    
+    /**
+     * Constant: DEFAULT_PRINT_FORMAT
+     * {String} The default (ie selected) print resolution.
+     * Defaults to "127"
+     */
+    //DEFAULT_PRINT_RESOLUTION: "127",
+    
+    /**
      * Constant: GEOSERVER_WFS_URL
      * The URL to GeoServer WFS.
      * This is required if and only if the edit application is used
