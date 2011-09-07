@@ -7,7 +7,7 @@
 <!ENTITY conclusion     SYSTEM "conclusion.xml">
 ]>
 <book xml:lang="fr">
-    <title>Documentation de GeoBretagne</title>
+    <title>Documentation de geOrchestra</title>
 
     &introduction;
 

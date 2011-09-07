@@ -2,7 +2,7 @@
 
   <title>Introduction</title>
 
-  <para>Ici le texte concernant une rapide introduction &#xE0; G&#xE9;oBretagne, Contextualisation, ...</para>
+  <para>Ici le texte concernant une rapide introduction &#xE0; geOrchestra, Contextualisation, ...</para>
 
   <sect1 id="introduction_sect1_1">
 
@@ -11,9 +11,9 @@
     <para>Dans ce document, nous tacherons de présenter les différentes
     facettes offertes par DocBook dans le cadre de la rédaction de la documentation
     du projet Géobretagne. Notez que pour réaliser un lien hypertexte, vous pouvez
-    utiliser une balise ulink ; ainsi, le site officiel de geobretagne sera défini
-    de la façon suivante :  <ulink url="http://www.geobretagne.fr/">Site de
-    GéoBretagne</ulink>
+    utiliser une balise ulink ; ainsi, le site officiel de geOrchestra sera défini
+    de la façon suivante :  <ulink url="http://www.georchestra.org/">Site de
+    geOrchestra</ulink>
     </para>
 
   </sect1>
