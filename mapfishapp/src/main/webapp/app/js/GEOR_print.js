@@ -200,14 +200,16 @@ GEOR.print = (function() {
             if (r >= 0) {
                 printProvider.setLayout(printProvider.layouts.getAt(r));
             } else {
-                alert("Configuration error: DEFAULT_PRINT_FORMAT "+DEFAULT_PRINT_FORMAT+" not found");
+                alert("Configuration error: DEFAULT_PRINT_FORMAT "+
+                    GEOR.config.DEFAULT_PRINT_FORMAT+" not found in print capabilities");
             }
             r = printProvider.dpis.find("value", 
                 GEOR.config.DEFAULT_PRINT_RESOLUTION);
             if (r >= 0) {
                 printProvider.setDpi(printProvider.dpis.getAt(r));
             } else {
-                alert("Configuration error: DEFAULT_PRINT_RESOLUTION "+DEFAULT_PRINT_RESOLUTION+" not found");
+                alert("Configuration error: DEFAULT_PRINT_RESOLUTION "+
+                    GEOR.config.DEFAULT_PRINT_RESOLUTION+" not found in print capabilities");
             }
             // The form with fields controlling the print output
             var formPanel = new Ext.form.FormPanel({
