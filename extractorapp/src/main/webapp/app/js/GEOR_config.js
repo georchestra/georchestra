@@ -256,9 +256,14 @@ GEOR.config = (function() {
         /**
          * Constant: GLOBAL_MAX_EXTENT
          * Max extent of the global layer
+         * Defaults to OpenLayers.Bounds(-180,-90,180,90)
          */
-        GLOBAL_MAX_EXTENT: getCustomParameter("GLOBAL_MAX_EXTENT",
-            new OpenLayers.Bounds(-180,-90,180,90)),
+        GLOBAL_MAX_EXTENT: new OpenLayers.Bounds(
+            getCustomParameter("MAP_XMIN",-180),
+            getCustomParameter("MAP_XMIN",-90),
+            getCustomParameter("MAP_XMIN",180),
+            getCustomParameter("MAP_XMIN",90)
+        ),
         
         /**
          * Constant: BASE_LAYER_NAME
@@ -271,6 +276,9 @@ GEOR.config = (function() {
          * Constant: DEFAULT_WCS_EXTRACTION_WIDTH
          * Default width of the extracted image from WCS. This constant
          * is to be used to calculate the default resolution of WCS.
+         *
+         * FIXME: not sure it is really useful.
+         *
          */
         DEFAULT_WCS_EXTRACTION_WIDTH: getCustomParameter("DEFAULT_WCS_EXTRACTION_WIDTH",
             1024),

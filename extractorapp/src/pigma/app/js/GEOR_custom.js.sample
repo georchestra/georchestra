@@ -47,12 +47,41 @@ GEOR.custom = {
      * SRS of the map used to select the global extraction parameters
      */
     //GLOBAL_EPSG: "EPSG:4326",
+    
+    /**
+     * Constant: MAP_SRS
+     * {String} The default map SRS code.
+     * Defaults to EPSG:2154
+     */
+    //MAP_SRS: "EPSG:2154",
 
     /**
-     * Constant: GLOBAL_MAX_EXTENT
-     * Max extent of the global layer
+     * Constant: MAP_XMIN aka "left"
+     * {Float} The max extent xmin in MAP_SRS coordinates.
+     * Defaults to -180
      */
-    //GLOBAL_MAX_EXTENT: new OpenLayers.Bounds(-180,-90,180,90),
+    //MAP_XMIN: -180,
+
+    /**
+     * Constant: MAP_YMIN aka "bottom"
+     * {Float} The max extent ymin in MAP_SRS coordinates.
+     * Defaults to -90
+     */
+    //MAP_YMIN: -90,
+
+    /**
+     * Constant: MAP_XMAX aka "right"
+     * {Float} The max extent xmax in MAP_SRS coordinates.
+     * Defaults to 180
+     */
+    //MAP_XMAX: 180,
+
+    /**
+     * Constant: MAP_YSMAX aka "top"
+     * {Float} The max extent ymax in MAP_SRS coordinates
+     * Defaults to 90
+     */
+    //MAP_YMAX: 90,
     
     /**
      * Constant: BASE_LAYER_NAME
@@ -66,6 +95,9 @@ GEOR.custom = {
      * Default width of the extracted image from WCS. This constant
      * is to be used to calculate the default resolution of WCS.
      * Defaults to 1024
+     *
+     * FIXME: not sure it is really useful.
+     *
      */
     //DEFAULT_WCS_EXTRACTION_WIDTH: 1024,
 
