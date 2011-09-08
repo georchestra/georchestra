@@ -322,7 +322,7 @@ GEOR.print = (function() {
             });
 
             win = new Ext.Window({
-                title: 'Impression',
+                title: 'Impression de la carte',
                 resizable: false,
                 border: false,
                 width: 350,
