@@ -249,7 +249,7 @@ GEOR.cswbrowser = (function() {
         cleanTree(tree);
         var getDomainFormat = new OpenLayers.Format.CSWGetDomain();
         OpenLayers.Request.POST({
-            url: GEOR.config.CSW_URL,
+            url: GEOR.config.GEONETWORK_URL + '/csw',
             data: getDomainFormat.write({
                 PropertyName: GEOR.config.CSW_GETDOMAIN_PROPERTY
             }),
