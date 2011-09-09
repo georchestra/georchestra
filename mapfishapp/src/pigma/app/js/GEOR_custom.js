@@ -367,7 +367,7 @@ GEOR.custom = {
         {"name": "PIGMA - EPIDROPT", "url": "http://ns383241.ovh.net/geoserver/epidropt/wms"},
         {"name": "PIGMA - Euratlantique", "url": "http://ns383241.ovh.net/geoserver/euratl/wms"},
         {"name": "PIGMA - FD Chasse 33", "url": "http://ns383241.ovh.net/geoserver/fdc33/wms"},
-        {"name": "PIGMA - FD Peche 33", "url": "http://ns383241.ovh.net/geoserver/fdp33/wms"},
+        {"name": "PIGMA - FD Pêche 33", "url": "http://ns383241.ovh.net/geoserver/fdp33/wms"},
         {"name": "PIGMA - GIP Littoral", "url": "http://ns383241.ovh.net/geoserver/giplit/wms"},
         {"name": "PIGMA - Gironde Numérique", "url": "http://ns383241.ovh.net/geoserver/girnum/wms"},
         {"name": "PIGMA - Rectorat", "url": "http://ns383241.ovh.net/geoserver/rect/wms"},
@@ -378,6 +378,7 @@ GEOR.custom = {
         {"name": "PIGMA - IGN rasters", "url": "http://ns383241.ovh.net/geoserver/ign_r/wms"},
         {"name": "PIGMA - INSEE", "url": "http://ns383241.ovh.net/geoserver/insee/wms"},
         {"name": "PIGMA - DREAL", "url": "http://ns383241.ovh.net/geoserver/dreal/wms"},
+        {"name": "PIGMA - SDIS", "url": "http://ns383241.ovh.net/geoserver/sdis/wms"},
         {"name": "Sandre/zonages", "url": "http://services.sandre.eaufrance.fr/geo/zonage"},
         {"name": "Sandre/ouvrages", "url": "http://services.sandre.eaufrance.fr/geo/ouvrage"},
         {"name": "Sandre/stations", "url": "http://services.sandre.eaufrance.fr/geo/stations"},
@@ -427,6 +428,7 @@ GEOR.custom = {
         {"name": "PIGMA - IGN", "url": "http://ns383241.ovh.net/geoserver/ign/wfs"},
         {"name": "PIGMA - INSEE", "url": "http://ns383241.ovh.net/geoserver/insee/wfs"},
         {"name": "PIGMA - DREAL", "url": "http://ns383241.ovh.net/geoserver/dreal/wfs"},
+        {"name": "PIGMA - SDIS", "url": "http://ns383241.ovh.net/geoserver/sdis/wfs"},
         {"name": "Corine Land Cover", "url": "http://sd1878-2.sivit.org/geoserver/wfs"}
     ]
     
