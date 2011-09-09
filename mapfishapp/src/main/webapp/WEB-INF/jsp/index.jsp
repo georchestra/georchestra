@@ -95,7 +95,7 @@ if(sec_roles != null) {
     </script>
     
     <!-- invisible iframe for actions such as "load in JOSM" -->
-    <iframe name="hidden-frame" frameborder="0" width="0" height="0" style="visibility:hidden;"></iframe>
+    <iframe style="position: absolute; width: 0px; height: 0px; top: -1em;visibility:hidden;" tabindex="-1" aria-hidden="true" frameborder="0" width="0" height="0"></iframe>
 
     <script type="text/javascript" src="lib/externals/ext/adapter/ext/ext-base.js"></script>
     

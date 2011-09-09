@@ -196,7 +196,7 @@ GEOR.workspace = (function() {
                     right: round(bounds.right, 5),
                     top: round(bounds.top, 5)
                 });
-                frames['hidden-frame'].location.href = url;
+                frames[0].location.href = url;
             } else if (options.protocol === 'llz') {
                 var c = bounds.getCenterLonLat();
                 /*
@@ -249,26 +249,37 @@ GEOR.workspace = (function() {
                     }, '-', {
                         text: "Editer dans OSM",
                         iconCls: "geor-edit-osm",
+                        plugins: [{
+                            ptype: 'menuqtips'
+                        }],
                         menu: [{
                             text: "avec JOSM",
+                            qtip: ["Il vous faut auparavant lancer JOSM",
+                                "et disposer du plugin RemoteControl"].join("<br />"),
                             handler: editOSM.call(this, {
                                 base: 'http://127.0.0.1:8111/load_and_zoom?',
                                 protocol: 'lbrt'
                             })
                         },{
                             text: "avec Potlatch",
+                            qtip: ["Il est recommandé de travailler",
+                                "à des échelles proches de 1:10.000"].join("<br />"),
                             handler: editOSM.call(this, {
                                 base: 'http://www.openstreetmap.org/edit?editor=potlatch&',
                                 protocol: 'llz'
                             })
                         },{
                             text: "avec Potlatch2",
+                            qtip: ["Il est recommandé de travailler",
+                                "à des échelles proches de 1:10.000"].join("<br />"),
                             handler: editOSM.call(this, {
                                 base: 'http://www.openstreetmap.org/edit?editor=potlatch2&',
                                 protocol: 'llz'
                             })
                         },{
                             text: "avec Walking Papers",
+                            qtip: ["Il est recommandé de travailler",
+                                "à des échelles proches de 1:10.000"].join("<br />"),
                             handler: editOSM.call(this, {
                                 base: 'http://walking-papers.org/?',
                                 protocol: 'llz'
@@ -283,3 +294,27 @@ GEOR.workspace = (function() {
         }
     };
 })();
+
+
+/**
+ * Creates a menu that supports tooltip specs for it's items. Just add "tooltip: {text: 'txt', title: 'ssss'}" to
+ * the menu item config, "title" value is optional.
+ * @class Ext.ux.MenuQuickTips
+ * see http://www.sencha.com/forum/showthread.php?77312-Is-it-possible-to-add-tooltip-to-menu-item
+ */
+Ext.ux.MenuQuickTips = Ext.extend(Object, {
+    init: function (c) {
+        c.menu.items.each(function (item) {
+            if (typeof (item.qtip) != 'undefined') {
+                item.on('afterrender', function (menuItem) {
+                    var qtip = typeof (menuItem.qtip) == 'string'
+                                ? {text: menuItem.qtip} 
+                                : menuItem.qtip;
+                    qtip = Ext.apply(qtip, {target: menuItem.getEl().getAttribute('id')});
+                    Ext.QuickTips.register(qtip);
+                });
+            }
+        });
+    }
+});
+Ext.preg('menuqtips', Ext.ux.MenuQuickTips);  
