@@ -10,7 +10,7 @@ Toutes les formes de contributions sont les bienvenues, que ce soit via la parti
 Listes de diffusion
 ====================
 
-Le projet dispose actuellement de 3 listes :
+Le projet dispose actuellement de 4 listes :
 
 * `georchestra@googlegroups.com <https://groups.google.com/group/georchestra?hl=fr>`_ est la liste 
   généraliste sur geOrchestra. Elle concerne principalement les annonces 
@@ -23,6 +23,9 @@ Le projet dispose actuellement de 3 listes :
   Cette liste est également le lieu de construction et de 
   vote des RFC ("Request For Comments", qui décrivent les façons de procéder 
   pour améliorer le projet geOrchestra). L'inscription est libre.
+  
+* `georchestra-ci@googlegroups.com <https://groups.google.com/group/georchestra-ci?hl=fr>`_ est la liste 
+  consacrée à l'intégration continue des modules geOrchestra. L'inscription est libre.
   
 * `georchestra-psc@googlegroups.com <https://groups.google.com/group/georchestra-psc?hl=fr>`_ est la liste 
   utilisée par le PSC pour ses communications internes. 
