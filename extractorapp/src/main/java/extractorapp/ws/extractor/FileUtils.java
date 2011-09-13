@@ -156,9 +156,12 @@ public final class FileUtils {
 
     public static File storageFile(String filename) {
         String baseStorageDir = System.getProperty("extractor.storage.dir");
+        
         if(baseStorageDir==null){
             baseStorageDir = System.getenv("extractor.storage.dir");
-        } else {
+        } 
+        /* still null ? let's try something else */ 
+        if (baseStorageDir == null){
             baseStorageDir = System.getProperty("java.io.tmpdir")+File.separator+"extractorStorage";
         }
         if(filename==null || filename.length()==0){
