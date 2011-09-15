@@ -126,11 +126,14 @@ GEOR.print = (function() {
         layerStore = ls;
 
         // The printProvider that connects us to the print service
+        var r = GEOR.config.MAPFISHAPP_URL.split('/');
+        r.pop(); // remove "edit" or latest "/" part
+        var serviceUrl = r.join('/')+'/pdf';
         printProvider = new GeoExt.data.PrintProvider({
-            url: "pdf",
+            url: serviceUrl,
             autoLoad: true,
             baseParams: {
-                url: GEOR.config.MAPFISHAPP_URL + "pdf"
+                url: serviceUrl
             },
             listeners: {
                 "loadcapabilities": function() {
