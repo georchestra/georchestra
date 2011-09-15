@@ -88,12 +88,6 @@ GEOR.toolbar = (function() {
             })
         });
 
-        var makeString = function(event) {
-            var metricUnit = event.units;
-            var dim = event.order == 2 ? '<sup>2</sup>' : '';
-            return event.measure.toFixed(2) + " " + metricUnit + dim;
-        };
-
         var measureToolTip, popup, measureEnd;
         var measureControl = new OpenLayers.Control.Measure(handlerType, {
             persist: true,
@@ -108,7 +102,7 @@ GEOR.toolbar = (function() {
                     unpinnable: false,
                     closeAction: 'hide',
                     location: new OpenLayers.LonLat(0, 0),
-                    tpl: new Ext.Template("{measure} {units}{dim}")
+                    tpl: new Ext.Template("{measure} {units}")
                 });
             }
             popup.hide();
@@ -121,9 +115,12 @@ GEOR.toolbar = (function() {
                 popup.position();
                 popup.show();
                 popup.update({
-                    measure: event.measure.toFixed(2),
-                    units: event.units,
-                    dim: event.order == 2 ? '<sup>2</sup>' : ''
+                    measure: event.order == 2 ? 
+                        (event.units == 'm' ? 
+                            (event.measure/10000).toFixed(2) : 
+                            (event.measure*100).toFixed(2)) : 
+                        event.measure.toFixed(2),
+                    units: event.order == 2 ? 'hectares' : event.units
                 });
             }
         }
