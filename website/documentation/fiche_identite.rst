@@ -13,135 +13,188 @@ Portail public (CMS)
 Quel outil a été retenu ? Comment s'interface-t-il avec les autres éléments de l'architecture ?
 --------------------------------------------------
 
+Liferay, mais il n'y a pas de connexion forte entre le CMS et l'infrastructure de données spatiale.
+geOrchestra peut s'intégrer facilement dans tout site web.
+
 
 Date de première version
 --------------------------------------------------
-
+2000
 
 Nombre de versions parues
 --------------------------------------------------
-
+6
 
 Nombre d'utilisateurs / installations
 --------------------------------------------------
-
+Plusieurs millions
 
 Quel pilotage des évolutions ?
 --------------------------------------------------
 
+Classique : plusieurs sociétés contribuent à ce projet OpenSource sur la base de demandes client.
 
 Quel financement des évolutions ?
 --------------------------------------------------
 
+Via société éditrice et partenaires.
 
 Le CMS comprend-il une gestion de groupes de travail ?
 --------------------------------------------------
+
+?
 
 
 Quelle est la liaison avec le catalogue de métadonnées ? (affichage des dernières MD créées, des MD les plus consultées…)
 --------------------------------------------------
 
+Via agrégateur de flux RSS : affichage des dernières MD créées & via recherche personnalisée
 
 Y a-t-il localisation cartographique des contenus du CMS ?
 --------------------------------------------------
 
+?
 
 
 Administration du portail (CMS)
 ====================
 
-Existe-til un module de gestion  des conventions d'échange ?
+Existe-til un module de gestion des conventions d'échange ?
 --------------------------------------------------
-
+?
 
 Quelle est la granularité de gestion des droits ? (par contenus, par fonctionnalité, sur les fichiers...)
 --------------------------------------------------
-
+To Be Done
 
 Comment est organisée la documentation (arborescence de fichiers ? Bases de données documentaire ?) et quelle liaison avec les éléments du CMS ?
 --------------------------------------------------
 
+La documentation du projet geOrchestra est disponible :
+ - dans une webapp "doc" déployée avec l'IDS pour ce qui est de la documentation utilisateur
+ - sur le site web georchestra.org pour ce qui est de la documentation administrateur
 
 Comment se fait la restitution des statistiques de consultation ?
 --------------------------------------------------
+?
 
 
-
-outils de visualisation cartographique : frontOffice
+Outil de visualisation cartographique
 ====================
+
 Quel outil a été retenu ? Comment s'interface-t-il avec les autres éléments de l'architecture ?
 --------------------------------------------------
+Un développement spécifique a été réalisé car aucun visualiseur existant ne remplissait les fonctions demandées.
+Le visualiseur a été développé sur la base des technologies clientes OpenLayers, GeoExt, ExtJS et Spring, MapFish print pour la partie serveur.
 
 
 Date de première version
 --------------------------------------------------
-
+2010
 
 Nombre de versions parues
 --------------------------------------------------
-
+24 au 19 septembre 2011, cf http://csm-bretagne.fr/hudson/job/georchestra/
 
 Nombre d'utilisateurs / installations
 --------------------------------------------------
-
+De l'ordre de la dizaine.
 
 Quel pilotage des évolutions ?
 --------------------------------------------------
-
+Via le PSC, cf `http://www.georchestra.org/documentation/psc.html <http://www.georchestra.org/documentation/psc.html>`_
 
 Quel financement des évolutions ?
 --------------------------------------------------
-
+Dans l'exprit le plus traditionnel du développement logiciel libre, c'est-à-dire, par le biais de projets financés mais également contributions externes bénévoles.
 
 Quelle est la liaison avec les métadonnées du catalogue pour chaque couche ? (par la légende ? Possibilité de rechercher directement les MD dans l'interface ?)
 --------------------------------------------------
-
+Au niveau de la légende de chaque couche, le visualiseur affiche un lien vers la fiche de métadonnées correspondante. Celle-ci s'ouvre dans une nouvelle fenêtre.
+L'utilisateur peut également rechercher dans le catalogue en utilisant les mots clés des métadonnées, tout en restant dans l'interface du visualiseur.
 
 Quels services web OGC peuvent être consultés dans l'interface ? Posent-ils des problèmes de performances ?
 --------------------------------------------------
+Les services WMS, WMS-C & WFS peuvent être nativement consultés et requêtés dans le visualiseur.
+
+Il y a cependant des limitations :
+ - les WMS-C sont consultables uniquement via chargement de fichiers de contexte (OGC WMC)
+ - les WFS sont soumis aux limites intrinsèques des navigateurs en terme de nombre d'objets et de vertex simultanément affichables (et cette limite varie fortement selon le naviateur choisi)
+ 
+Pour passer outre ces limitations, il y a la possibilité de "proxifier" les couches WMS-C et WFS via le moteur cartographique de la plateforme (GeoServer), qui permettra de les afficher sous la forme de couches WMS, tout en conservant une très bonne ergonomie de consultation (notamment grâce au mode tuilé).
 
 
-Est-il possible de sauvegarder et exporter des dessins  ?
+Est-il possible de sauvegarder et exporter des dessins ?
 --------------------------------------------------
+
+Non
 
 
 Existe-til un outil de production collaborative de données ?
 --------------------------------------------------
 
+Oui, il s'agit d'un éditeur collaboratif basé sur le protocole OGC WFS-T.
+Cf http://www.georchestra.org/documentation/utilisateur/edition.html pour une présentation plus complète.
+
 
 Existe-t-il un module de téléversement de données ?  Comment se fait le stockage (fichiers plats, injection en base) ? Qui a accès à ces données ?
 --------------------------------------------------
 
+Non, pas dans le visualiseur.
+Oui, au niveau du catalogue : tout type de données (PDF, CSV, JPG, PNG ...) peut être "attaché" à une fiche de métadonnées. Le stockage est alors effectué dans un espace dédié sur le disque. L'accès à ces données peut être limité pour chaque fiche de métadonnées, sur la base du système de gestion des droits (organismes/rôles).
 
 
+Possibilité de sauvegarder/charger un contexte (créés par l'admin ou par des utilisateurs) ? [contexte cartographique au sens OGC]
+--------------------------------------------------
 
-outils de visualisation cartographique : backOffice
+Dans le visualiseur, toute composition cartographique est OGC WMC :
+ - l'administrateur choisit le contexte par défaut du visualiseur sous la forme d'un fichier WMC,
+ - l'administrateur peut créer un certain nombre de contextes et proposer autant de liens vers des visualiseurs avec des thèmes distincts,
+ - tout utilisateur peut sauvegarder (sur son poste) sa composition cartographique au format WMC,
+ - tout utilisateur peut restaurer un contexte cartographique qu'on lui aura communiqué au format WMC,
+ - tout utilisateur peut créer un permalien vers sa composition cartographique en appelant le visualiseur avec le paramètre ?wmc= suivi d'une URL vers le fichier WMC.
+ 
+
+Outil de visualisation cartographique : backOffice
 ====================
 
 Quel outil a été retenu ? Comment s'interface-t-il avec les autres éléments de l'architecture ?
 --------------------------------------------------
 
+Nous utilisons le moteur cartographique GeoServer 2, dont l'interface d'administration présente une très bonne ergonomie.
+Seuls les utilisateurs munis du rôle "ADMINISTRATOR" ont accès à cette interface.
+L'interface est intégrée à la suite d'applications via un bandeau reprenant les fonctionnalités de l'IDS (catalogue/visualiseur/extracteur/administration)
 
-Est-il possible de créer ou d'activer des webservices (flux interopérables, WMS ou WFS) depuis des contextes (créés par l'admin ou par des utilisateurs) ? [contexte cartographique au sens OGC]
+
+Est-il possible de créer ou d'activer des webservices (flux interopérables, WMS ou WFS) 
 --------------------------------------------------
+
+Tout à fait, et sans avoir besoin de taper une seule ligne de commande : en ligne depuis l'interface de GeoServer.
+Chaque couche est activable/désactivable à volonté.
 
 
 Est-il possible de décliner l'application cartographiques pour créer des visualiseurs thématiques ? 
 --------------------------------------------------
 
+Oui, cf ci-dessus (contextes OGC WMC)
 
-Comment se fait le paramétrage de nouveaux formulaires de requête et leur implémentation ? Est-elle facile ? Peut-on gérer les droits sur ces formulaires ? (par exeple, créer des masques de recherche métier liés à une couche particulière de la base)
+
+Comment se fait le paramétrage de nouveaux formulaires de requête et leur implémentation ? Est-elle facile ? Peut-on gérer les droits sur ces formulaires ? (par exemple, créer des masques de recherche métier liés à une couche particulière de la base)
 --------------------------------------------------
+
+Il n'y a pas de notion de formulaire de requête pré-existant : tout utilisateur est en mesure de créer sa propre requête métier sur toute couche WMS/WFS en utilisant des critères attributaires et géométriques.
 
 
 L'application produit-elle du geoRSS ?
 --------------------------------------------------
 
-
+Oui, en utilisant la syntaxe suivante pour une couche nommée ns:test : 
+http://ids.monserveur.org/geoserver/wms/reflect?layers=ns:test&format=rss
 
 
 demandes d'extraction : FrontOffice	
 ====================
+
 Quel outil a été retenu ? Comment s'interface-t-il avec les autres éléments de l'architecture ?
 --------------------------------------------------
 
