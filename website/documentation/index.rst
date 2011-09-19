@@ -5,7 +5,7 @@ Documentation
 ===============
 
 Cette section rassemble la documentation autour du projet geOrchestra. Vous 
-pouvez télécahrger la documentation en un seul fichier PDF : 
+pouvez télécharger la documentation en un seul fichier PDF : 
 `georchestra.pdf <georchestra.pdf>`_
 
 Gouvernance

@@ -16,7 +16,7 @@ Ses différents modules permettent de gérer ces données : catalogue de donnée
 pour chercher et connaître les données diffusées, serveur cartographique 
 pour diffuser les données sous forme de carte, extracteur pour récupérer les 
 données dans un format "standard" permettant sa réutilisation au sein d'un SIG, 
-éditeur pour modifier la données.
+éditeur pour modifier la donnée.
 
 Ces différentes modules ont la capacité d'échanger des informations entre eux : 
 visualiseur et catalogue pour proposer les couches disponibles ou retrouver les 
@@ -27,8 +27,8 @@ Rejoignez la communauté
 ========================
 
 Le projet geOrchestra est un projet communautaire, sa licence libre est un outil 
-pour mutualiser les développements entre les différentes contributeurs désirant 
+pour mutualiser les développements entre les différents contributeurs désirant 
 s'impliquer dans le projet.
 
-C'est aussi un moyen pour réunir une communauté de client afin de mutualiser les 
+C'est aussi un moyen pour réunir une communauté de clients afin de mutualiser les 
 demandes.

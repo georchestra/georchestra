@@ -53,7 +53,10 @@ Liste des développeurs qui ont le droit de commit sur le SVN (par ordre alphab�
 Qui utilise geOrchestra ?
 ==========================
 
-* `GeoBretagne <http://www.geobretagne.fr>`_ ;
+* Région Bretagne, via `GeoBretagne <http://www.geobretagne.fr>`_ 
+* Région Aquitaine, via le `GIP ATGeRI <http://cartogip.fr/>`_
+* `Brest Métropole Océane <http://www.brest.fr/>`_
 * `Projet VIDAE porté par l'UMR SAS INRA - Agrocampus Ouest à Rennes et l'UMR LISAH INRA - Supagro à Montpellier <http://geowww.agrocampus-ouest.fr/vidae/?jsc=proj2154.js&wmc=naizin.wmc>`_
-* Brest Métropole Océane (en cours)
-* `contactez nous <https://groups.google.com/group/georchestra?hl=fr>`_ pour vous ajouter ici !
+* ...
+
+`Contactez nous <https://groups.google.com/group/georchestra?hl=fr>`_ pour vous faire connaître !
