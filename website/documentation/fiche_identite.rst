@@ -292,50 +292,50 @@ Catalogue
 ====================
 Quel outil a été retenu ? Comment s'interface-t-il avec les autres éléments de l'architecture ?
 --------------------------------------------------
-
+GeoNetwork OpenSource. Interfaçage via flux OGC WMS/WFS/WCS & CSW.
 
 Date de première version
 --------------------------------------------------
-
+2000
 
 Nombre de versions parues
 --------------------------------------------------
-
+> 14 (cf http://sourceforge.net/projects/geonetwork/files/GeoNetwork_opensource/)
 
 Nombre d'utilisateurs / installations
 --------------------------------------------------
-
+Plusieurs milliers.
 
 Quel pilotage des évolutions ?
 --------------------------------------------------
-
+PSC, projet OSGeo, cf http://trac.osgeo.org/geonetwork/wiki/PSC
 
 Quel financement des évolutions ?
 --------------------------------------------------
-
+Nations Unies et financeurs privés.
 
 Quelle est la liaison avec le portail ?
 --------------------------------------------------
-
+Flux RSS pour une intégration fine & intégration via iframe pour consultation complète.
 
 Quelle est la liaison entre une fiche de métadonnées et l'affichage de la donnée elle-même (dans le visualiseur) ?
 --------------------------------------------------
-
+Via une liste déroulante, il est possible d'envoyer une sélection de fiches de métadonnées vers le visualiseur, afin de visualiser complètement les couches OGC référencées dans ces fiches de métadonnées.
 
 Quelle est la liaison entre une fiche de métadonnées et la documentation présente dans le CMS ? (carte, document ressource...)
 --------------------------------------------------
-
+Une fiche de métadonnées peut lier vers toute page du CMS.
 
 Peut-on visualiser les statistiques de consultation et quelle est la liaison avec les statistiques globales du site ou du portail ?
 --------------------------------------------------
-
+?
 
 Quelle est la liaison avec les demandes de téléchargement (ou le panier) ?
 --------------------------------------------------
-
+Il est possible d'envoyer simultanément une ou plusieurs fiches de métadonnées vers l'extracteur, afin de télécharger les données référencées dans ces fiches (via services WMS et/ou WFS)
 
 	
-serveur interopérable	
+Serveur interopérable	
 ====================
 Quel outil a été retenu ? Comment s'interface-t-il avec les autres éléments de l'architecture ?
 --------------------------------------------------
