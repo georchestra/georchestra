@@ -337,112 +337,122 @@ Il est possible d'envoyer simultanément une ou plusieurs fiches de métadonnée
 	
 Serveur interopérable	
 ====================
+
 Quel outil a été retenu ? Comment s'interface-t-il avec les autres éléments de l'architecture ?
 --------------------------------------------------
-
+Il s'agit de GeoServer 2, sur lequel reposent les flux WMS, WFS & WCS de la plateforme.
 
 Date de première version
 --------------------------------------------------
-
+2001
 
 Nombre de versions parues
 --------------------------------------------------
-
+Beaucoup ...
 
 Nombre d'utilisateurs / installations
 --------------------------------------------------
-
+Plusieurs milliers
 
 Quel pilotage des évolutions ?
 --------------------------------------------------
-
+Via le PSC, cf http://docs.geoserver.org/latest/en/developer/policies/psc.html
 
 Quel financement des évolutions ?
 --------------------------------------------------
-
+Comme tout projet OpenSource supporté par plusieurs sociétés commerciales et une communauté bénévole.
 
 L'application produit-elle du WMS (quelles versions) ? 
 --------------------------------------------------
-
+Oui : 1.1.1 & 1.3.0
 
 L'application produit-elle du WFS (quelles versions) ? 
 --------------------------------------------------
-
+Oui : 1.0.0 & 1.1.0
 
 A la création d'un flux, comment se fait la création de la fiche de métadonnée associée ?
 --------------------------------------------------
-
+C'est en fait le processus inverse qui est suivi dans geOrchestra : il y a la possibilité de créer une fiche de métadonnées dans le catalogue et, depuis cette même interface, d'uploader un zip contenant les données. Celles-ci seront alors utilisées par GeoServer pour produire une couche servie en WMS/WFS, automatiquement référencée dans la fiche de métadonnées.
 
 L'application produit-elle du WMS-C ?
 --------------------------------------------------
 
+Oui, via GeoWebCache, intégré.
 
 L'application produit-elle du WMTS ?
 --------------------------------------------------
+Oui, via GeoWebCache, intégré.
 
 
 L'application produit-elle du WCS ?
 --------------------------------------------------
-
+Oui, à partir de toute source raster.
 
 L'application produit-elle du WPS ?
 --------------------------------------------------
-
+Oui, en installant l'extension dédiée. Cf http://docs.geoserver.org/stable/en/user/extensions/wps/index.html
 
 L'application produit-elle du WFS-T ?
 --------------------------------------------------
-
+Oui, nativement, à partir de toute couche vectorielle.
 
 	
 Fonctions transverses	
 ====================
 Comment estimer la robustesse des composants ?
 --------------------------------------------------
-
+La suite d'applications de l'IDS est actuellement utilisée en production avec plusieurs centaines d'utilisateurs.
 
 Quelle est l'homogénéité des environnements de développement / framework / langages ?
 --------------------------------------------------
-
+Côté serveur, le langage majoritaire est JAVA, avec le framework MVC Spring. Il existe un module python permettant de faire de la recherche sur adresses.
+Côté client, le langage utilisé est exclusivement JAVASCRIPT.
 
 Comment estimez-vous, globalement, la facilité d'administration ?
 --------------------------------------------------
-
+L'administration de la solution requiert sans aucun doute des compétences d'administration système.
 
 Comment estimez-vous la force de la communauté (réactivité en cas de demandes liées à des blocages, nombre de contributeurs, hétérogénéité des contributeurs) ?
 --------------------------------------------------
-
+La communauté est rassemblée autour de listes de discussions actives et spécialisées (généraliste, développement, intégration continue). Cf http://www.georchestra.org/community.html pour plus d'informations.
 
 SGBD : quelle puissance en cas de requêtes complexes ?
 --------------------------------------------------
-
+PostGreSQL et PostGIS sont des solutions matures et de niveau professionnel, qui sont en mesure de répondre à des requêtes spatiales complexes de manière performante.
 
 SGBD : quelle est l'intégration des fonctions géographiques de la plate-forme ? (les fonctions géographiques du SGBD sont-elles implémentées nativement ou bien le moteur cartographique utilisé déploie-t-il ses propres fonctions ?)
 --------------------------------------------------
-
+Le moteur cartographique utilise les fonctions spatiales de la la librairie JTS, alors que PostGIS utilise celles de la librairie GEOS.
+GEOS est un port en C++ de JTS.
 
 Quel est le niveau d'intégration des différents modules dans le portail, surtout en administration ?
 --------------------------------------------------
-
+Il y a deux modalités d'accès à la suite d'applications spatiales de geOrchestra : soit directement en saisissant l'URL d'une application, soit à travers le CMS.
+Les différents modules et leurs consoles d'administration seront très prochainement intégrés au sein de l'IDS avec un bandeau permettant de commuter facilement de l'un à l'autre.
 
 Prise en main / courbe d'apprentissage
 --------------------------------------------------
-
+La prise en main requiert lecture de la documentation fournie. En cas de difficulté, la communauté répond rapidement (dans la journée, voire mieux) aux questions posées sur la liste de discussion georchestra-dev.
 
 Sécurité : quelle authentification des utilisateurs ? (CAS, LDAP...)
 --------------------------------------------------
-
+Les utilisateurs et les groupes sont stockés dans un arbre LDAP, servi par OpenLDAP. 
+CAS est utilisé pour gérer l'authentification unique (SSO), tandis qu'un proxy de sécurité filtre l'accès aux applications en fonction de droits de l'utilisateur.
 
 Sécurité : quelle sécurisation des échanges avec l'internaute sur les données sensibles ?
 --------------------------------------------------
-
+La phase de login passe nécessairement en HTTPS. Il n'y a donc aucun risque d'interception des mots de passe dans l'échange client/serveur.
+Possibilité de configurer certaines applications en HTTPS (typiquement, GeoServer) s'il est nécessaire de sécuriser les flux OGC.
 
 Sécurité  : quelle réactivité de l'éditeur en cas de failles de sécurité et mises à jour ?
 --------------------------------------------------
-
+Pour les briques CMS, catalogue et moteur cartographique, nous reposons sur la réactivité de l'éditeur, qui est très bonne.
+Pour les briques développées spécifiquement pour le projet, aucune faille de sécurité n'a été rapportée jusqu'à présent.
 
 Quelle fréquence de mise à jour, quelle facilité de déploiement ?
 --------------------------------------------------
-
+Une version stable tous les 6 mois, avec potentiellement des versions intermédiaires si le besoin est avéré.
+Le déploiement des applications se fait par upload des fichiers WAR des différents modules dans Apache Tomcat.
 
 
 
