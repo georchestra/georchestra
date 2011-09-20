@@ -268,11 +268,15 @@ GEOR.toolbar = (function() {
             enableToggle: true,
             handler: function(btn) {
                 if (!legendWin) {
+                    var mapPanel = tbar.ownerCt;
                     legendWin = new Ext.Window({
                         width: 340,
                         bodyStyle: 'padding: 5px',
+                        constrainHeader: true,
+                        renderTo: mapPanel.body,
                         title: "Légende",
                         border: false,
+                        animateTarget: GEOR.config.ANIMATE_WINDOWS && this.el,
                         layout: 'fit',
                         bodyCssClass: 'white-bg',
                         items: [ legendPanel ],
@@ -291,11 +295,7 @@ GEOR.toolbar = (function() {
                     });
                 }
                 if (!legendWin.isVisible()) {
-                    var mapPanel = tbar.ownerCt;
                     legendWin.show();
-                    legendWin.getEl().alignTo(
-                        mapPanel.body, "tr-tr", [-10, 10]
-                    );
                 } else {
                     legendWin.hide();
                 }

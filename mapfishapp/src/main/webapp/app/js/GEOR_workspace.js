@@ -16,6 +16,7 @@
  * @include OpenLayers/Request/XMLHttpRequest.js
  * @include OpenLayers/Projection.js
  * @include GEOR_wmc.js
+ * @include GEOR_config.js
  * @include GEOR_waiter.js
  * @include GEOR_util.js
  */
@@ -103,6 +104,8 @@ GEOR.workspace = (function() {
             title: 'Sauvegarde du contexte',
             layout: 'fit',
             modal: false,
+            constrainHeader: true,
+            animateTarget: GEOR.config.ANIMATE_WINDOWS && this.el,
             width: 400,
             height: 120,
             closeAction: 'close',
@@ -143,6 +146,8 @@ GEOR.workspace = (function() {
             title: "Restauration d'un contexte",
             layout: 'fit',
             modal: false,
+            constrainHeader: true,
+            animateTarget: GEOR.config.ANIMATE_WINDOWS && this.el,
             width: 400,
             height: 120,
             closeAction: 'close',

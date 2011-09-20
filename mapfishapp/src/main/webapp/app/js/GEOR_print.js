@@ -323,10 +323,12 @@ GEOR.print = (function() {
                     }
                 ]
             });
-
+            
             win = new Ext.Window({
                 title: 'Impression de la carte',
                 resizable: false,
+                constrainHeader: true,
+                animateTarget: GEOR.config.ANIMATE_WINDOWS && this.el,
                 border: false,
                 width: 350,
                 autoHeight: true,

@@ -184,6 +184,7 @@ GEOR.mapinit = (function() {
         var win = new Ext.Window({
             title: 'Ajouter des couches depuis des services WMS',
             layout: 'fit',
+            constrainHeader: true,
             closeAction: 'close',
             modal: true,
             items: [grid],

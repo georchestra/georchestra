@@ -818,8 +818,10 @@ GEOR.styler = (function() {
          * Parameters:
          * layerRecord - {GeoExt.data.LayerRecord} The record representing
          * the WMS layer to style.
+         * animateFrom - {String} Id or element from which the window 
+         *  should animate while opening
          */
-        create: function(layerRecord) {
+        create: function(layerRecord, animateFrom) {
             Ext.QuickTips.init();
             symbolType = null; // clear cache
  
@@ -834,6 +836,8 @@ GEOR.styler = (function() {
                 width: 900,
                 height: 500,
                 closeAction: 'close', // window is destroyed when closed
+                constrainHeader: true,
+                animateTarget: GEOR.config.ANIMATE_WINDOWS && animateFrom,
                 modal: false,
                 disabled: true,
                 //maskDisabled: true,

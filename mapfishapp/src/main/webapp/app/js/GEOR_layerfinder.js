@@ -13,6 +13,7 @@
  */
 
 /*
+ * @include GEOR_config.js
  * @include GEOR_util.js
  * @include GEOR_cswbrowser.js
  * @include GEOR_wmsbrowser.js
@@ -228,11 +229,13 @@ GEOR.layerfinder = (function() {
          *
          * Parameters:
          * ls - {GeoExt.data.LayerStore} The application layer store.
+         * animateFrom - {String} Id or element from which the window 
+         *  should animate while opening
          *
          * Returns:
          * {Ext.Window}
          */
-        create: function(ls) {
+        create: function(ls, animateFrom) {
             layerStore = ls;
             addButton = new Ext.Button({
                 text: 'Ajouter',
@@ -258,7 +261,9 @@ GEOR.layerfinder = (function() {
             });
             var win = new Ext.Window({
                 title: 'Ajouter des couches',
+                constrainHeader: true,
                 layout: 'fit',
+                animateTarget: GEOR.config.ANIMATE_WINDOWS && animateFrom,
                 width: 650,
                 height: 450,
                 closeAction: 'hide',

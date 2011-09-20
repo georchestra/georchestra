@@ -314,6 +314,13 @@ GEOR.custom = {
     //GEONAMES_ZOOMLEVEL: 5,
     
     /**
+     * Constant: ANIMATE_WINDOWS
+     * {Boolean} Display animations on windows opening/closing
+     * Defaults to true
+     */
+    //ANIMATE_WINDOWS: true,
+    
+    /**
      * Constant: ROLES_FOR_STYLER
      * {Array} roles required for the styler to show up
      * Empty array means the module is available for everyone

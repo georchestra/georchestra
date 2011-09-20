@@ -361,7 +361,7 @@ GEOR.managelayers = (function() {
                 text: "Editer la symbologie",
                 listeners: {
                     "click": function(btn, pressed) {
-                        GEOR.styler.create(layerRecord);
+                        GEOR.styler.create(layerRecord, this.el);
                     }
                 }
             });
@@ -633,7 +633,7 @@ GEOR.managelayers = (function() {
                     text: 'Ajouter des couches',
                     handler: function() {
                         if (!layerFinder) {
-                            layerFinder = GEOR.layerfinder.create(layerStore);
+                            layerFinder = GEOR.layerfinder.create(layerStore, this.el);
                         }
                         layerFinder.show();
                     }

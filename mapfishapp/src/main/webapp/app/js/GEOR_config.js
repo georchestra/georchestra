@@ -629,6 +629,13 @@ GEOR.config = (function() {
          * Defaults to 5
          */
         GEONAMES_ZOOMLEVEL: getCustomParameter("GEONAMES_ZOOMLEVEL", 5),
+
+        /**
+         * Constant: ANIMATE_WINDOWS
+         * {Boolean} Display animations on windows opening/closing
+         * Defaults to true
+         */
+        ANIMATE_WINDOWS: getCustomParameter("ANIMATE_WINDOWS", true),
         
         /**
          * Constant: ROLES_FOR_STYLER
