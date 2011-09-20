@@ -267,7 +267,7 @@ GEOR.custom = {
      * {String} The cursor position will be displayed using this SRS.
      * Defaults to "EPSG:3948"
      */
-    //MAP_POS_SRS2: "EPSG:3948",
+    MAP_POS_SRS2: "EPSG:3944",
     
     /**
      * Constant: TILE_SINGLE
