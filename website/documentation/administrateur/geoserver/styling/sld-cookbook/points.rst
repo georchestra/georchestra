@@ -90,20 +90,20 @@ Il y a un ``<Rule>`` dans un ``<FeatureTypeStyle>`` pour ce SLD, ce qui est la s
 
 .. _sld_cookbook_points_simplepointwithstroke:
 
-Simple point with stroke
+Exemple simple avec bord
 ------------------------
 
-This example adds a stroke (or border) around the :ref:`sld_cookbook_points_simplepoint`, with the stroke colored black and given a thickness of 2 pixels.
+Cet exemple ajoute un trait (ou bord) autour du :`sld_cookbook_points_simplepoint`, avec le trait coloré en noir et muni d'une épaisseur de 2 pixels.
 
 .. figure:: images/point_simplepointwithstroke.png
    :align: center
 
-   *Simple point with stroke*
+   *Point simple avec bord*
 
 Code
 ~~~~
 
-:download:`View and download the full "Simple point with stroke" SLD <artifacts/point_simplepointwithstroke.sld>`
+:download:`Consultez et téléchargez le SLD complet "Point simple avec bord" <artifacts/point_simplepointwithstroke.sld>`
 
 .. code-block:: xml 
    :linenos: 
@@ -128,26 +128,26 @@ Code
         </Rule>
       </FeatureTypeStyle>
 
-Details
+Détails
 ~~~~~~~
 
-This example is similar to the :ref:`sld_cookbook_points_simplepoint` example.  **Lines 10-13** specify the stroke, with **line 11** setting the color to black (``#000000``) and **line 12** setting the width to 2 pixels.
+Cet exemple est similaire à l'exemple :ref:`sld_cookbook_points_simplepoint`.  Les **lines 10-13** spécifient le trait, avec la **ligne 11** réglant couleur à noir (``#000000``) et la **ligne 12** réglant l'épaisseur à 2 pixels.
 
 
-Rotated square
---------------
+Carré avec rotation
+-------------------
 
-This example creates a square instead of a circle, colors it green, sizes it to 12 pixels, and rotates it by 45 degrees.
+Cet exemple crée un carré au lieu d'un cercle, le colore en vert, le dimensionne à 12 pixels et le fait tourner de 45 degrés.
 
 .. figure:: images/point_rotatedsquare.png
    :align: center
 
-   *Rotated square*
+   *Carré avec rotation*
 
 Code
 ~~~~
 
-:download:`View and download the full "Rotated square" SLD <artifacts/point_rotatedsquare.sld>`
+:download:`Consultez et téléchargez le SLD complet "Carré avec rotation" <artifacts/point_rotatedsquare.sld>`
 
 .. code-block:: xml 
    :linenos: 
@@ -171,26 +171,26 @@ Code
 
 
 
-Details
+Détails
 ~~~~~~~
 
-In this example, **line 6** sets the shape to be a square, with **line 8** setting the color to a dark green (``#009900``).  **Line 11** sets the size of the square to be 12 pixels, and **line 12** set the rotation is to 45 degrees.
+Dans cet exemple, la **ligne 6** demande pour forme un carré, avec la  **ligne 8** réglant la couleur à vert foncé (``#009900``).  La **ligne 11** règle la taille à  12 pixels et la **ligne 12** règle la rotation à 45 degrés.
 
 
-Transparent triangle
+Triangle transparent
 --------------------
 
-This example draws a triangle, creates a black stroke identical to the :ref:`sld_cookbook_points_simplepointwithstroke` example, and sets the fill of the triangle to 20% opacity (mostly transparent).
+Cet exemple dessine un triangle, crée un trait noir identique à l'exemple :ref:`sld_cookbook_points_simplepointwithstroke` , et règle le remplissage du triangle à 20% d'opacité (presque transparent).
 
 .. figure:: images/point_transparenttriangle.png
    :align: center
 
-   *Transparent triangle*
+   *Triangle transparent*
 
 Code
 ~~~~   
 
-:download:`View and download the full "Transparent triangle" SLD <artifacts/point_transparenttriangle.sld>`
+:download:`Consultez et téléchargez le SLD complet "Triangle transparent" SLD <artifacts/point_transparenttriangle.sld>`
 
 .. code-block:: xml 
    :linenos:
@@ -218,25 +218,25 @@ Code
 
 
 
-Details
+Détails
 ~~~~~~~
 
-In this example, **line 6** once again sets the shape, in this case to a triangle.  **Line 8** sets the fill color to a dark green (``#009900``) and **line 9** sets the opacity to 0.2 (20% opaque).  An opacity value of 1 means that the shape is drawn 100% opaque, while an opacity value of 0 means that the shape is drawn 0% opaque, or completely transparent.  The value of 0.2 (20% opaque) means that the fill of the points partially takes on the color and style of whatever is drawn beneath it.  In this example, since the background is white, the dark green looks lighter.  Were the points imposed on a dark background, the resulting color would be darker.  **Lines 12-13** set the stroke color to black (``#000000``) and width to 2 pixels.  Finally, **line 16** sets the size of the point to be 12 pixels in diameter.
+Dans cet exemple, la **ligne 6** règle la forme, un triangle dans ce cas. La **ligne 8** règle la couleur de remplissage à vert foncé (``#009900``) et la **ligne 9** règle l'opacité à  0.2 (opaque à 20%).  Une valeur d'opacité de 1 signifie que la forme est dessinée avec une opacité de 100%, alors qu'une valeur d'opacité de 0 signifie que la forme est dessinée avec une opacité de 0%, soit complètement transparente. La valeur de 0.2 (20% d'opacité) signifie que le remplissage des points prend partiellement la couleur et le style de ce qui est dessiné en-dessous. Dans cet exemple, comme le fond est blanc, le vert foncé paraît plus clair. Si les points étaient posés sur fond noir, la couleur résultante serait plus foncée. Les **lignes 12-13** règlent la couleur de trait à noir (``#000000``) et la largeur à 2 pixels. Finalement, la **ligne 16** règle la taille du point à un diamètre de 12 pixels.
 
-Point as graphic
-----------------
+Point graphique
+---------------
 
-This example styles each point as a graphic instead of as a simple shape.
+Cet exemple symbolise chaque point avec un graphisme au lieu d'une forme simple.
 
 .. figure:: images/point_pointasgraphic.png
    :align: center
 
-   *Point as graphic*
+   *Point image*
 
 Code
 ~~~~
 
-:download:`View and download the full "Point as graphic" SLD <artifacts/point_pointasgraphic.sld>`
+:download:`Consultez et téléchargez le SLD complet "Point image" <artifacts/point_pointasgraphic.sld>`
 
 .. code-block:: xml 
    :linenos:
@@ -259,32 +259,32 @@ Code
 	  
 
 
-Details
+Détails
 ~~~~~~~
 
-This style uses a graphic instead of a simple shape to render the points.  In SLD, this is known as an ``<ExternalGraphic>``, to distinguish it from the commonly-used shapes such as squares and circles that are "internal" to the renderer.  **Lines 5-10** specify the details of this graphic.  **Line 8** sets the path and file name of the graphic, while **line 9** indicates the format (MIME type) of the graphic (image/png). In this example, the graphic is contained in the same directory as the SLD, so no path information is necessary in **line 8**,  although a full URL could be used if desired.  **Line 11** determines the size of the displayed graphic; this can be set independently of the dimensions of the graphic itself, although in this case they are the same (32 pixels).  Should a graphic be rectangular, the ``<Size>`` value will apply to the *height* of the graphic only, with the width scaled proportionally.
+Ce style utilise une image au lieu d'une forme simple pour représenter les points. Dans le SLD, ceci est connu comme un ``<ExternalGraphic>``, pour le distinguer des formes courantes comme carrés et cercles qui sont "internes" au moteur de rendu. Les **lignes 5-10** spécifient les détails de cette image. La **ligne 8** paramètre le chemin et le nom de fichier de l'image, alors que la  **ligne 9** indique le format (type MIME) de l'image (image/png). Dans cet exemple, l'image est contenue dans le même répertoire que le SLD, aucune information de chemin n'est donc nécessaire en **ligne 8**, mais une URL complète pourrait être utilisée si souhaité. La **ligne 11** détermine la taille d'affichage de l'image; ceci peut être réglé indépendamment de la dimension propre de l'image, même si dans ce cas elles sont identiques (32 pixels). Si l'image était rectangulaire, la valeur ``<Size>`` s'appliquerait à la *hauteur* seule de l'image, avec la largeur réévaluée proportionnellement.
 
 .. figure:: images/smileyface.png
    :align: center
 
-   *Graphic used for points*
+   *Graphisme utilisé pour un point*
 
 .. _sld_cookbook_points_pointwithdefaultlabel:
 
-Point with default label
-------------------------
+Point avec étiquette par défaut
+-------------------------------
 
-This example shows a text label on the :ref:`sld_cookbook_points_simplepoint` that displays the "name" attribute of the point. This is how a label will be displayed in the absence of any other customization.
+Cet exemple présente une étiquette textuelle sur le :ref:`sld_cookbook_points_simplepoint` affichant l'attibut "name" du point. Une étiquette sera représentée de cette façon en l'absence de personnalisation.
 
 .. figure:: images/point_pointwithdefaultlabel.png
    :align: center
 
-   *Point with default label*
+   *Point avec étiquette par défaut*
 
 Code
 ~~~~
 
-:download:`View and download the full "Point with default label" SLD <artifacts/point_pointwithdefaultlabel.sld>`
+:download:`Consultez et téléchargez le SLD complet "Point with default label" <artifacts/point_pointwithdefaultlabel.sld>`
 
 .. code-block:: xml 
    :linenos:
@@ -315,7 +315,7 @@ Code
 
 
 
-Details
+Détails
 ~~~~~~~
 
 **Lines 3-13**, which contain the ``<PointSymbolizer>``, are identical to the :ref:`sld_cookbook_points_simplepoint` example above.  The label is set in the ``<TextSymbolizer>`` on **lines 14-27**.  **Lines 15-17** determine what text to display in the label, which in this case is the value of the "name" attribute.  (Refer to the attribute table in the :ref:`sld_cookbook_points_attributes` section if necessary.)  **Line 19** sets the text color.  All other details about the label are set to the renderer default, which here is Times New Roman font, font color black, and font size of 10 pixels.  The bottom left of the label is aligned with the center of the point.

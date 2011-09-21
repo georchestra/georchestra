@@ -3,10 +3,9 @@
 Lines
 =====
 
-While lines can also seem to be simple shapes, having length but no width, there are many options and tricks for making lines display nicely.
+Bien que les lignes n'ayant qu'une longueur sans épaisseur semblent être des formes simples, il existe beaucoup d'options et de trucs les représenter agréablement.
 
-.. warning:: The code examples shown on this page are **not the full SLD code**, as they omit the SLD header and footer information for the sake of brevity.  Please use the links to download the full SLD for each example.
-
+.. warning:: Pour rester concis, les exemples de code présentés sur cette page ne sont **pas le code SLD complet** car ils ommettent les informations SLD de début et de fin.  Utilisez les liens pour télécharger les SLD complet de chaque exemple.
 
 .. _sld_cookbook_lines_attributes:
 
