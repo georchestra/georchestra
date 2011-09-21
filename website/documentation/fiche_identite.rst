@@ -13,7 +13,7 @@ Portail public (CMS)
 Quel outil a été retenu ? Comment s'interface-t-il avec les autres éléments de l'architecture ?
 --------------------------------------------------
 
-Liferay, mais il n'y a pas de connexion forte entre le CMS et l'infrastructure de données spatiale.
+Liferay, mais il n'y a pas de connexion forte entre le CMS et l'infrastructure de données spatiales.
 geOrchestra peut s'intégrer facilement dans tout site web.
 
 
@@ -285,9 +285,8 @@ Pas au niveau de l'extracteur, mais cela est possible via le module catalogue.
 
 Quel est le format de stockage des projections ? Y a-t-il implémentation des bibliothèques IGNF ? Est-il possible d'ajouter aisément des projections/formats ?
 --------------------------------------------------
-Les projections supportées sont gérées au niveau du code de l'application.
+Les projections supportées par l'extracteur sont gérées au niveau du module epsg-extension de l'IDS. Par défaut, un très grand nombre de projections sont supportées, mais il est toujours possible d'en ajouter (notamment celles de la bibliothèque IGNF).
 
-	
 Catalogue	
 ====================
 Quel outil a été retenu ? Comment s'interface-t-il avec les autres éléments de l'architecture ?
