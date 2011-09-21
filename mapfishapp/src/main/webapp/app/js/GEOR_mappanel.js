@@ -20,7 +20,6 @@
  * @include GEOR_toolbar.js
  * @include GEOR_config.js
  * @include GEOR_scalecombo.js
- * @include GEOR_proj4jsdefs.js
  */
 
 Ext.namespace("GEOR");

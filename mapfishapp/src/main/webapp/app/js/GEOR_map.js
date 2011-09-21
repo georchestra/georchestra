@@ -27,7 +27,6 @@
  * @include GEOR_config.js
  * @include GEOR_ows.js
  * @include GEOR_wmc.js
- * @include GEOR_proj4jsdefs.js
  */
 
 Ext.namespace("GEOR");
