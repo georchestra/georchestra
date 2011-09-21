@@ -73,6 +73,11 @@ Ext.namespace("GEOR");
         });
         
         /*
+         * Setting of proj4js global vars.
+         */
+        Ext.apply(Proj4js.defs, GEOR.config.PROJ4JS_STRINGS);
+        
+        /*
          * Security stuff
          * Deactivate modules if current user roles do not match
          */

@@ -172,7 +172,6 @@ if(sec_roles != null) {
     <script type="text/javascript" src="app/js/GEOR_referentials.js"></script>
     <script type="text/javascript" src="app/js/GEOR_geonames.js"></script>
     <script type="text/javascript" src="app/js/GEOR_address.js"></script>
-    <script type="text/javascript" src="app/js/GEOR_proj4jsdefs.js"></script>
     <script type="text/javascript" src="app/js/GEOR_scalecombo.js"></script>
     <script type="text/javascript" src="app/js/GEOR_toolbar.js"></script>
     <script type="text/javascript" src="app/js/GEOR_workspace.js"></script>

@@ -217,6 +217,7 @@ GEOR.config = (function() {
             GEOR.custom[paramName] : defaultValue;
     };
 
+
     return {
 
         /**
@@ -585,6 +586,17 @@ GEOR.config = (function() {
          * Defaults to "EPSG:3948"
          */
         MAP_POS_SRS2: getCustomParameter("MAP_POS_SRS2", "EPSG:3948"),
+        
+        /**
+         * Constant: PROJ4JS_STRINGS
+         * {Object} The list of supported SRS with their definitions.
+         * Defaults to "EPSG:2154" & "EPSG:900913" being defined
+         * Note that "EPSG:900913" is required if OSM_AS_OVMAP is set to true
+         */
+        PROJ4JS_STRINGS: getCustomParameter("PROJ4JS_STRINGS", {
+            "EPSG:2154": "+title=RGF-93/Lambert 93, +proj=lcc +lat_1=49 +lat_2=44 +lat_0=46.5 +lon_0=3 +x_0=700000 +y_0=6600000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs",
+            "EPSG:900913": "+title=Web Spherical Mercator, +proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs"
+        }),
         
         /**
          * Constant: TILE_SINGLE
