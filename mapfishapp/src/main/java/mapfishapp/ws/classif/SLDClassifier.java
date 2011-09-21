@@ -395,6 +395,7 @@ public class SLDClassifier {
         // add a custom style to the user layer
         Style style = styleFactory.createStyle();
         style.setName(_command.getFeatureTypeName());
+        style.setTitle(_command.getFeatureTypeName()+"_classification");
         style.addFeatureTypeStyle(fts);
         layer.addStyle(style);
         
