@@ -183,6 +183,52 @@ GEOR.styler = (function() {
     };
 
     /**
+     * Method: dlStyle
+     * Download a SLD file from created styling
+     *
+     * Parameters:
+     * callback - {Function}
+     * scope - {Object}
+     */
+    var dlStyle = function() {
+        var callback = function(ok, sldURL) {
+            if (!sldURL) {
+                return;
+            }
+            sldURL = GEOR.config.MAPFISHAPP_URL + sldURL;
+            var win = new Ext.Window({
+                title: "Télécharger le style",
+                layout: "fit",
+                width: 400,
+                closeAction: 'close',
+                constrainHeader: true,
+                modal: false,
+                items: [{
+                    bodyStyle: 'padding:5px',
+                    html: 'Votre SLD est disponible à l\'adresse suivante : '+
+                        '<br /><a href="'+sldURL+'">'+sldURL+'</a>',
+                    border: false
+                }],
+                buttons: [{
+                    text: 'Merci !',
+                    handler: function() {
+                	    win.close();
+                    }
+                }]
+            });
+            win.show();
+        };
+        var scope = this;
+        if (dirty) {
+            // refreshing the layer will not be done
+            // in this case (cf third arg)
+            saveSLD(callback, scope, false);
+        } else {
+            pathToSLD && callback.apply(scope, [true, pathToSLD]);
+        }
+    };
+    
+    /**
      * Method: saveSLD
      * Build a SLD string from the set of rules and send it to
      * the "ws/sld" web service.
@@ -190,9 +236,11 @@ GEOR.styler = (function() {
      * Parameters:
      * callback - {Function}
      * scope - {Object}
+     * applySLD  - {Boolean} should we apply the style when done - defaults to true
      */
-    var saveSLD = function(callback, scope) {
+    var saveSLD = function(callback, scope, applySLD) {
         var ok = true, rules = getLegendPanel().rules;
+        applySLD = (applySLD !== false) ? true : false;
         if (rules && rules.length > 0) {
             var data = createSLD(rules);
             
@@ -202,13 +250,17 @@ GEOR.styler = (function() {
                 // define the callbacks
                 var success = function(response) {
                     pathToSLD = Ext.decode(response.responseText).filepath;
-                    observable.fireEvent(
+                    applySLD && observable.fireEvent(
                         "sldready",
                         wmsLayerRecord,
                         GEOR.config.MAPFISHAPP_URL + pathToSLD
                     );
+                    // indicate that the SLD at pathToSLD matches
+                    // our set of rules
+                    dirty = false;
+                    
                     mask.hide();
-                    callback.apply(scope, [true]);
+                    callback.apply(scope, [true, pathToSLD]);
                 };
                 var failure = function(response) {
                     mask.hide();
@@ -595,9 +647,11 @@ GEOR.styler = (function() {
                 // store the path to SLD , we'll need it when
                 // applying the new style to the layer
                 pathToSLD = path;
+                
                 // indicate that the SLD at pathToSLD matches
                 // our set of rules
                 dirty = false;
+                
             },
             failure: function(response) {
                 mask.hide();
@@ -842,6 +896,9 @@ GEOR.styler = (function() {
                 disabled: true,
                 //maskDisabled: true,
                 buttons: [{
+                    text: "Télécharger le style",
+                    handler: dlStyle 
+                },{
                     text: "Appliquer",
                     handler: function() {
                         // we're done, apply styling
