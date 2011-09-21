@@ -486,6 +486,14 @@ GEOR.managelayers = (function() {
         }, '-',{
             xtype: "gx_opacityslider",
             width: 100,
+            // hack for http://csm-bretagne.fr/redmine/issues/2026 :
+            topThumbZIndex: 1000, 
+            // and this is because GeoExt.LayerOpacitySlider defaults 
+            // are too much for me :
+            delay: 50,
+            changeVisibilityDelay: 50,
+            // we're also monitoring the layer visibility:
+            changeVisibility: true,
             aggressive: true,
             layer: layer,
             plugins: new GeoExt.LayerOpacitySliderTip()
