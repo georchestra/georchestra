@@ -101,7 +101,8 @@ GEOR.toolbar = (function() {
                     map: map,
                     unpinnable: false,
                     closeAction: 'hide',
-                    location: new OpenLayers.LonLat(0, 0),
+                    // loc inside de viewport so that popup won't get confused:
+                    location: map.getCenter(),
                     tpl: new Ext.Template("{measure} {units}")
                 });
             }
