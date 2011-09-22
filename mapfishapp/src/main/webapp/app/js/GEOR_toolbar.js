@@ -111,7 +111,7 @@ GEOR.toolbar = (function() {
             if (points[0] instanceof OpenLayers.Geometry.LinearRing) {
                 points = points[0].components;
             }
-            if (points.length > 4 || (points.length > 2 && event.order == 1)) {
+            if (event.measure > 0) {
                 popup.location = points[points.length-1].getBounds().getCenterLonLat();
                 popup.position();
                 popup.show();
