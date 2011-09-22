@@ -318,25 +318,24 @@ Code
 Détails
 ~~~~~~~
 
-**Lines 3-13**, which contain the ``<PointSymbolizer>``, are identical to the :ref:`sld_cookbook_points_simplepoint` example above.  The label is set in the ``<TextSymbolizer>`` on **lines 14-27**.  **Lines 15-17** determine what text to display in the label, which in this case is the value of the "name" attribute.  (Refer to the attribute table in the :ref:`sld_cookbook_points_attributes` section if necessary.)  **Line 19** sets the text color.  All other details about the label are set to the renderer default, which here is Times New Roman font, font color black, and font size of 10 pixels.  The bottom left of the label is aligned with the center of the point.
-
+Les **lignes 3-13**, qui contiennent le  ``<PointSymbolizer>``, sont identiques à l'exemple :ref:`sld_cookbook_points_simplepoint` ci-dessus. L'étiquette est paramétrée dans le ``<TextSymbolizer>`` aux **lignes 14-27**.  Les **Lignes 15-17** déterminent le texte à afficher dans l'étiquette, dans ce cas la valeur de l'attibut "name". (Consultez la table des attributs dans la section :ref:`sld_cookbook_points_attributes` si nécessaire.) La **ligne 19** règle la couleur. Tous les autres paramètres concernant l'étiquette sont réglés aux valeurs par défaut du moteur de rendu, c'est à dire police Times New Roman, couleur noire, et taille de police 10 pixels. Le coin bas gauche de l'étiquette est aligné avec le centre du point.
 
 .. _sld_cookbook_points_pointwithstyledlabel:
 
-Point with styled label
------------------------
+Point avec étiquette stylisée
+-----------------------------
 
-This example improves the label style from the :ref:`sld_cookbook_points_pointwithdefaultlabel` example by centering the label above the point and providing a different font name and size.
+Cet exemple améliore le style de l'étiquette de l'exemple :ref:`sld_cookbook_points_pointwithdefaultlabel` en centrant l'étiquette au-dessus du point et en indiquant un nom de police et une taille différents.
 
 .. figure:: images/point_pointwithstyledlabel.png
    :align: center
 
-   *Point with styled label*
+   *Point avec étiquette stylisée*
 
 Code
 ~~~~   
 
-:download:`View and download the full "Point with styled label" SLD <artifacts/point_pointwithstyledlabel.sld>`
+:download:`Consultez et téléchargez le SLD complet "Point avec étiquette stylisée" <artifacts/point_pointwithstyledlabel.sld>`
 
 .. code-block:: xml 
    :linenos:
@@ -384,29 +383,29 @@ Code
       </FeatureTypeStyle>
 
 
-Details
+Détails
 ~~~~~~~
 
-In this example, **lines 3-13** are identical to the :ref:`sld_cookbook_points_simplepoint` example above.  The ``<TextSymbolizer>`` on lines 14-39 contains many more details about the label styling than the previous example, :ref:`sld_cookbook_points_pointwithdefaultlabel`.  **Lines 15-17** once again specify the "name" attribute as text to display.  **Lines 18-23** set the font information:  **line 19** sets the font family to be "Arial", **line 20** sets the font size to 12, **line 21** sets the font style to "normal" (as opposed to "italic" or "oblique"), and **line 22** sets the font weight to "bold" (as opposed to "normal").  **Lines 24-35** (``<LabelPlacement>``) determine the placement of the label relative to the point.  The ``<AnchorPoint>`` (**lines 26-29**) sets the point of intersection between the label and point, which here (**line 27-28**) sets the point to be centered (0.5) horizontally axis and bottom aligned (0.0) vertically with the label.  There is also ``<Displacement>`` (**lines 30-33**), which sets the offset of the label relative to the line, which in this case is 0 pixels horizontally (**line 31**) and 5 pixels vertically (**line 32**).  Finally, **line 37** sets the font color of the label to black (``#000000``).
+Dans cet exemple, les **lignes 3-13** sont identiques à l'exemple :ref:`sld_cookbook_points_simplepoint` ci-dessus.  Le ``<TextSymbolizer>`` au lignes 14-39 contient beaucoup d'autres détails concernant le style de l'étiquette que dans l'exemple précédent :ref:`sld_cookbook_points_pointwithdefaultlabel`.  Les **lignes 15-17** indique à nouveau l'emploi de l'attribut "name" pour afficher du texte. Les **lignes 18-23** règlent la police: la **ligne 19** paramètrent la famille de police à "Arial", la **ligne 20** paramètre la taille de font à 12, la **ligne 21** paramètre le style de police à "normal" (par opposition à "italic" ou "oblique"), et la **ligne 22** règle le poids de police à gras ou "bold" (par opposition à "normal"). Les **lignes 24-35** (``<LabelPlacement>``) déterminent le placement de l'étiquette par rapport au point.  ``<AnchorPoint>`` (**lines 26-29**) paramètre le point d'intersection entre l'étiquette et le point, avec ici (**ligne 27-28**) le point centré (0.5) horizontalement et verticalement aligné avec le bas (0.0) de l'étiquette.  Il y a aussi ``<Displacement>`` (**lignes 30-33**), qui règle le décalage de l'étiquette relativement à la ligne, dans ce cas 0 pixels horizontalement (**ligne 31**) et 5 pixels verticalement (**ligne 32**).  Finalement, la **ligne 37** règle la couleur de police de l'étiquette à noir (``#000000``).
 
-The result is a centered bold label placed slightly above each point.
+Le résultat est une étiquette centrée et en gras placée légèrement au-dessus de chaque point.
 
 
 
-Point with rotated label
-------------------------
+Point avec rotation de l'étiquette
+----------------------------------
 
-This example builds on the previous example, :ref:`sld_cookbook_points_pointwithstyledlabel`, by rotating the label by 45 degrees, positioning the labels farther away from the points, and changing the color of the label to purple.
+Cet exemple est construit sur la base de l'exemple précédent :ref:`sld_cookbook_points_pointwithstyledlabel` en faisant tourner l'étiquette de 45 degrés, en positionnant les étiquettes plus loin des points, et en modifiant la couleur de l'étiquette à pourpre.
 
 .. figure:: images/point_pointwithrotatedlabel.png
    :align: center
 
-   *Point with rotated label*
+   *Point avec la rotation de l'étiquette*
 
 Code
 ~~~~
 
-:download:`View and download the full "Point with rotated label" SLD <artifacts/point_pointwithrotatedlabel.sld>`
+:download:`Consultez et téléchargez le SLD complet "Point avec la rotation de l'étiquette" <artifacts/point_pointwithrotatedlabel.sld>`
 
 .. code-block:: xml 
    :linenos:
@@ -456,28 +455,28 @@ Code
 
 
 
-Details
+Détails
 ~~~~~~~
 
-This example is similar to the :ref:`sld_cookbook_points_pointwithstyledlabel`, but there are three important differences.  **Line 32** specifies 25 pixels of vertical displacement.  **Line 34** specifies a rotation of "-45" or 45 degrees counter-clockwise.  (Rotation values increase clockwise, which is why the value is negative.)  Finally, **line 38** sets the font color to be a shade of purple (``#99099``).
+Cet exemple est similaire à :ref:`sld_cookbook_points_pointwithstyledlabel`, mais il y a trois différences importantes. La **ligne 32** spécifie un déplacement vertical de 25 pixels. La **ligne 34** spécifie une rotation de "-45", ou 45 degrés dans le sens inverse des aiguilles d'une montre. (Les valeurs de rotation vont en augmentant dans le sens des aiguilles d'une montre, c'est pourquoi cette valeur est négative.)  Finalement, la **ligne 38** paramètre la couleur de police à une nuance de pourpre (``#99099``).
 
-Note that the displacement takes effect before the rotation during rendering, so in this example, the 25 pixel vertical displacement is itself rotated 45 degrees.
+Notez que, pendant le rendu, le déplacement prend effet avant la rotation, donc dans cet exemple le déplacement de 25 pixels en vertical subit lui-même une rotation de 45 degrés.
 
 
-Attribute-based point
----------------------
+Points basés sur les attributs
+------------------------------
 
-This example alters the size of the symbol based on the value of the population ("pop") attribute.  
+Cet exemple fait varier la taille du symbole selon la valeur de l'attribut population ("pop").
 
 .. figure:: images/point_attributebasedpoint.png
    :align: center
 
-   *Attribute-based point*
+   *Points basés sur les attributs*
    
 Code
 ~~~~
 
-:download:`View and download the full "Attribute-based point" SLD <artifacts/point_attribute.sld>`
+:download:`Consultez et téléchargez le SLD complet "Points basés sur les attributs" <artifacts/point_attribute.sld>`
 
 .. code-block:: xml 
    :linenos:
@@ -556,14 +555,14 @@ Code
 
 
 
-Details
+Détails
 ~~~~~~~
    
-.. note:: Refer to the :ref:`sld_cookbook_points_attributes` to see the attributes for this data.  This example has eschewed labels in order to simplify the style, but you can refer to the example :ref:`sld_cookbook_points_pointwithstyledlabel` to see which attributes correspond to which points.
+.. note:: Se référer à  :ref:`sld_cookbook_points_attributes` pour voir les attributs des données. Cet exemple a mis de côté les étiquettes pour simplifier le style, mais vous pouvez vous référer à l'exemple :ref:`sld_cookbook_points_pointwithstyledlabel` pour voir à quels attributs correspondent quels points.
 
-This style contains three rules.  Each ``<Rule>`` varies the style based on the value of the population ("pop") attribute for each point, with smaller values yielding a smaller circle, and larger values yielding a larger circle.
+Le style contient trois règles. Chaque ``<Rule>`` fait varier le style de chaque point selon la valeur de l'attribut population ("pop"), de plus petites valeurs ayant pour effet des cercles plus petits, et les valeurs plus grandes un cercle plus grand.
 
-The three rules are designed as follows:
+Les trois règles sont conçues comme suit:
 
 .. list-table::
    :widths: 20 30 30 20
@@ -585,21 +584,21 @@ The three rules are designed as follows:
      - Greater than 100,000
      - 16
 
-The order of the rules does not matter in this case, since each shape is only rendered by a single rule.
+L'ordre des règles n'a pas d'importance dans ce cas, car chaque forme est représentée par une seule règle.
 
-The first rule, on **lines 2-22**, specifies the styling of those points whose population attribute is less than 50,000.  **Lines 5-10** set this filter, with **lines 6-9** setting the "less than" filter, **line 7** denoting the attribute ("pop"), and **line 8** the value of 50,000.  The symbol is a circle (**line 14**), the color is dark blue (``#0033CC``, on **line 16**), and the size is 8 pixels in diameter (**line 19**).  
+La première règle, en **lignes 2-22**, spécifie la symbolisation des points dont l'attribut population est inférieur à 50 000. Les **lignes 5-10** règlent ce filtre, avec les **lignes 6-9** déterminant le filtre "inférieur à", la **ligne 7** précisant l'attribut ("pop"), et la **ligne 8** une valeur de 50 000.  Le symbole est un cercle (**ligne 14**), la couleur est bleu foncé (``#0033CC``, en **ligne 16**), et la taille est 8 pixels en diamètre (**ligne 19**).  
 
-The second rule, on **lines 23-49**, specifies a style for points whose population attribute is greater than or equal to 50,000 and less than 100,000.  The population filter is set on **lines 26-37**.  This filter is longer than in the first rule because two criteria need to be specified instead of one: a "greater than or equal to" and a "less than" filter.  Notice the ``And`` on **line 27** and **line 36**.  This mandates that both filters need to be true for the rule to be applicable.  The size of the graphic is set to 12 pixels on **line 46**.  All other styling directives are identical to the first rule.
+La deuxième règle, en **lignes 23-49**, spécifie une symbolisation pour les points dont l'attribut population est supérieur ou égal à 50 000 et inférieur à 100 000. Le filtre sur la population est réglé en **lignes 26-37**. Ce filtre est plus long que la première règle car deux critères au lieu d'un doivent être employés: un filtre "supérieur ou égal à" et un filtre "inférieur à".  Notez le ``And`` en **ligne 27** et **line 36**.  Ceci induit que les deux filtres doivent être vrais pour que la règle s'applique. La taille de la forme est réglée à 12 pixels en **line 46**.  Toutes les autres directives de style sont identiques à la première règle.
 
-The third rule, on **lines 50-70**, specifies a style for points whose population attribute is greater than or equal to 100,000.  The population filter is set on **lines 53-58**, and the only other difference is the size of the circle, which in this rule (**line 67**) is 16 pixels.
+La troisième règle, en **lignes 50-70**, spécifie une symbolisation pour les points dont l'attribut population est supérieur ou égal à 100 000. Le filtre sur la population est réglé en **lignes 53-58**, et la seule autre différence est la taille du cercle, à 16 pixels (**line 67**) dans cette règle.
 
-The result of this style is that cities with larger populations have larger points.
+ce style a pour résultat que les cités avec une population plus grande ont des points plus grands.
 
 
-Zoom-based point
-----------------
+Points basés sur le zoom
+------------------------
 
-This example alters the style of the points at different zoom levels.
+Cet exemple modifie la symbolisation des points à des niveaux de zoom différents
 
 .. figure:: images/point_zoombasedpointlarge.png
    :align: center
@@ -620,7 +619,7 @@ This example alters the style of the points at different zoom levels.
 Code
 ~~~~
 
-:download:`View and download the full "Zoom-based point" SLD <artifacts/point_zoom.sld>`
+:download:`Téléchargez et consultez le SLD "Points basés sur le zoom" <artifacts/point_zoom.sld>`
 
 .. code-block:: xml 
    :linenos:
@@ -677,14 +676,14 @@ Code
 
 
 
-Details
+Détails
 ~~~~~~~
 
-It is often desirable to make shapes larger at higher zoom levels when creating a natural-looking map.  This example styles the points to vary in size based on the zoom level (or more accurately, scale denominator).  Scale denominators refer to the scale of the map.  A scale denominator of 10,000 means the map has a scale of 1:10,000 in the units of the map projection.
+On souhaite souvent rendre les formes plus grandes avec les hauts niveaux de zooms pour créer une carte à l'apparence naturelle. Cet exemple symbolise les points de façon à faire varier leur taille selon le niveau de zoom (ou plus exactement, le dénominateur d'échelle). Les dénominateurs d'échelle correspondent à l'échelle de la carte. Un dénominateur d'échelle de 10 000 signifie que la carte a une échelle de 1/10 000e en unités associées à la projection de la carte.
 
-.. note:: Determining the appropriate scale denominators (zoom levels) to use is beyond the scope of this example.
+.. note:: Déterminer des dénominateurs d'échelle (niveaux de zoom) pertinents va au-delà de cet exemple.
 
-This style contains three rules.  The three rules are designed as follows:
+Le style contient trois règles. Les trois règles sont conçues comme suit:
 
 .. list-table::
    :widths: 25 25 25 25 
@@ -706,15 +705,15 @@ This style contains three rules.  The three rules are designed as follows:
      - Greater than 1:320,000,000
      - 4
 
-The order of these rules does not matter since the scales denominated in each rule do not overlap.
+L'ordre de ces règles n'a pas d'importance car les échelles définies dans chaque règle ne se recoupent pas.
 
-The first rule (**lines 2-16**) is for the smallest scale denominator, corresponding to when the view is "zoomed in".  The scale rule is set on **line 4**, so that the rule will apply to any map with a scale denominator of 160,000,000 or less.  The rule draws a circle (**line 8**), colored red (``#CC3300`` on **line 10**) with a size of 12 pixels (**line 13**).
+La première règle (**lignes 2-16**) correspond au plus petit dénominateur d'échelle, lorsque la vue est "zoomée".  Le seuil d'échelle est réglé en  **ligne 4**, pour que la règle s'applique à toute carte avec un dénominateur d'échelle de 160 000 000 ou moins.  La règle trace un cercle (**ligne 8**), coloré en rouge (``#CC3300`` en **lige 10**) avec une taille de 12 pixels (**ligne 13**).
 
-The second rule (**lines 17-32**) is the intermediate scale denominator, corresponding to when the view is "partially zoomed".  The scale rules are set on **lines 19-20**, so that the rule will apply to any map with a scale denominator between 160,000,000 and 320,000,000.  (The ``<MinScaleDenominator>`` is inclusive and the ``<MaxScaleDenominator>`` is exclusive, so a zoom level of exactly 320,000,000 would *not* apply here.)  Aside from the scale, the only difference between this rule and the first is the size of the symbol, which is set to 8 pixels on **line 29**.
+La seconde règle (**lignes 17-32**) correspond aux échelles intermédiaires, lorsque la vue est "zoomée partiellement". Les seuils d'échelle sont réglés en **lignes 19-20**, pour que la règle s'applique à toute carte avec un dénominateur d'échelle compris entre 160 000 000 and 320 000 000.  (Le ``<MinScaleDenominator>`` est inclusif et le ``<MaxScaleDenominator>`` est exclusif pour qu'un niveau de zoom d'exactement320 000 000 ne s'applique *pas* ici.)  Mis à part l'échelle, la seule différence entre cette règle et la première est la taille du symbole, qui est à 8 pixels en **ligne 29**.
 
-The third rule (**lines 33-47**) is the largest scale denominator, corresponding to when the map is "zoomed out".  The scale rule is set on **line 35**, so that the rule will apply to any map with a scale denominator of 320,000,000 or more.  Again, the only other difference between this rule and the others is the size of the symbol, which is set to 4 pixels on **line 44**.
+La troisièmre règle (**lignes 32-47**) est le dénominateur d'échelle le plus grand, correspondant à une carte avec "zoom arrière". Le seuil d'échelle est réglé en **line 35** pour que la règle s'applique à toute carte avec un dénominateur d'échelle supérieur ou égal à 320 000 000. A nouveau, la seule autre différence entre cette règle et les autres est la taille du symbole, qui est ici à 4 pixels en **ligne 44**.
 
-The result of this style is that points are drawn larger as one zooms in and smaller as one zooms out.
+Ce style a pour résultat des points représentés plus grands lorsque l'on zoome, et plus petits lorsque l'on effectue un zoom arrière.
 
 
 .. fabrice at phung.fr 2011/09/20 r16266
