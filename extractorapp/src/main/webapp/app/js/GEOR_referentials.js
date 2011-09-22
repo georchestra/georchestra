@@ -73,6 +73,12 @@ GEOR.referentials = (function() {
     var cbPanels = [];
     
     /*
+     * Property: geometryName
+     * {String} the selected layer geometry name
+     */
+    var geometryName = null;
+    
+    /*
      * Property: formElementSize
      * {Integer} size in pixels of the form elements
      */
@@ -150,7 +156,7 @@ GEOR.referentials = (function() {
                         items: [
                             createCbSearch(
                                 record, 
-                                filterStringType(attStore))
+                                attStore)
                         ]
                     });
                     // add new panel containing combo to card layout
@@ -356,34 +362,48 @@ GEOR.referentials = (function() {
      *
      * Parameters:
      * record - {Ext.data.Record}
-     * attributes - {Array} the array of string attributes names
+     * attStore - {GeoExt.data.AttributeStore}
      *
      * Returns:
      * {Ext.form.ComboBox} 
      */
-    var createCbSearch = function(record, attributes) {
+    var createCbSearch = function(record, attStore) {
         var store, disabled = false;
         
         if (record && record.get('layer')) {
+            // find geometry name
+            var idx = attStore.find('type', GEOR.ows.matchGeomProperty);
+            if (idx > -1) {
+                // we have a geometry
+                var r = attStore.getAt(idx);
+                geometryName = r.get('name');
+            } else {
+                // this message is destinated to the administrator
+                // no need to display a nice dialog.
+                alert("La couche sélectionnée ne possède pas de colonne géométrique");
+            }
+            // find the string attribute names:
+            var attributes = filterStringType(attStore);
+            // create the feature store:
             store = new GeoExt.data.FeatureStore({
                 proxy: new GeoExt.data.ProtocolProxy({
                     protocol: record.get('layer').protocol
                 }),
                 listeners: {
-                    "beforeload": function(store, options) {
+                    beforeload: function(store, options) {
                         // add a filter to the options passed to proxy.load, 
                         // proxy.load passes these options to protocol.read
-                        var queryString = store.baseParams['query'];
-                        options.filter = buildFilter(queryString, attributes);
+                        var params = store.baseParams;
+                        options.filter = buildFilter(params['query'], attributes);
                         
-                        // We don't need the geometry, 
-                        // just its bounds, and attributes:
-                        options.propertyNames = attributes;
-                        // This means that a spatial index is required !
+                        // with GeoServer2, we need the geometry
+                        // since GS2 does not publish bounds as GS1 did
+                        // see http://csm-bretagne.fr/redmine/issues/2083
+                        options.propertyNames = attributes.concat([geometryName]);
                         
                         // remove the queryParam from the store's base
-                        // params not to pollute the query string:
-                        delete queryString;
+                        // params not to pollute the query string:                        
+                        delete params['query'];
                     },
                     scope: this
                 }

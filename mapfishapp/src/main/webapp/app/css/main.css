@@ -285,3 +285,10 @@ div.olMapViewport {
   width:20px !important;
 }
 
+
+.even {
+	background: #F0F0F0
+}
+.odd {
+	background: #FEFFFF
+}

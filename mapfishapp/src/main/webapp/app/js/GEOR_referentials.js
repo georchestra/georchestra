@@ -53,6 +53,12 @@ GEOR.referentials = (function() {
     var cbPanels = [];
     
     /*
+     * Property: geometryName
+     * {String} the selected layer geometry name
+     */
+    var geometryName = null;
+    
+    /*
      * Method: buildTemplate
      * Returns the template suitable for the currently selected layer
      *
@@ -73,20 +79,20 @@ GEOR.referentials = (function() {
                 "</strong>";
         }
         return new Ext.XTemplate(
-            '<tpl for="."><div class="search-item">'+
-            s.join(' - ')+'</div></tpl>'
-        );
+            '<tpl for=".">'+
+            '<div class="search-item {[xindex % 2 === 0 ? "even" : "odd"]}">'+
+            s.join(' - ')+'</div></tpl>');
     };
     
     /*
      * Method: filterStringType
-     * Extracts the string attributes names from an AttributeStore
+     * Extracts the string attribute names from an AttributeStore
      *
      * Parameters:
      * attStore - {GeoExt.data.AttributeStore}
      *
      * Returns:
-     * {Array} array of string attributes names
+     * {Array} array of string attribute names
      */
     var filterStringType = function(attStore) {
         var items = [];
@@ -125,7 +131,7 @@ GEOR.referentials = (function() {
                         items: [
                             createCbSearch(
                                 record, 
-                                filterStringType(attStore)
+                                attStore
                             )
                         ]
                     });
@@ -151,7 +157,7 @@ GEOR.referentials = (function() {
      * Creates the layer combo from WFSCapabilities
      *
      * Returns:
-     * {Ext.form.ComboBox} the comobobox
+     * {Ext.form.ComboBox} the combobox
      */
     var createLayerCombo = function() {
 
@@ -260,15 +266,29 @@ GEOR.referentials = (function() {
      *
      * Parameters:
      * record - {Ext.data.Record}
-     * attributes - {Array} the array of string attributes names
+     * attStore - {GeoExt.data.AttributeStore}
      *
      * Returns:
      * {Ext.form.ComboBox} 
      */
-    var createCbSearch = function(record, attributes) {
+    var createCbSearch = function(record, attStore) {
         var store, disabled = false;
         
         if (record && record.get('layer')) {
+            // find geometry name
+            var idx = attStore.find('type', GEOR.ows.matchGeomProperty);
+            if (idx > -1) {
+                // we have a geometry
+                var r = attStore.getAt(idx);
+                geometryName = r.get('name');
+            } else {
+                // this message is destinated to the administrator
+                // no need to display a nice dialog.
+                alert("La couche sélectionnée ne possède pas de colonne géométrique");
+            }
+            // find the string attribute names:
+            var attributes = filterStringType(attStore);
+            // create the feature store:
             store = new GeoExt.data.FeatureStore({
                 proxy: new GeoExt.data.ProtocolProxy({
                     protocol: record.get('layer').protocol
@@ -280,10 +300,10 @@ GEOR.referentials = (function() {
                         var params = store.baseParams;
                         options.filter = buildFilter(params['query'], attributes);
                         
-                        // We don't need the geometry, 
-                        // just its bounds, and attributes:
-                        options.propertyNames = attributes;
-                        // This means that a spatial index is required !
+                        // with GeoServer2, we need the geometry
+                        // since GS2 does not publish bounds as GS1 did
+                        // see http://csm-bretagne.fr/redmine/issues/2083
+                        options.propertyNames = attributes.concat([geometryName]);
                         
                         // remove the queryParam from the store's base
                         // params not to pollute the query string:                        
