@@ -31,7 +31,10 @@ intranet et internet. Son code source est disponible sous licence libre.
    :class: around-left
    :target: _static/flyer_georchestra.pdf
 
-Pour une présentation visuelle de la solution geOrchestra et de ses composants, nous vous invitons à consulter cet :ref:`georchestra.documentation.overview`.
+Pour une présentation visuelle de la solution geOrchestra et de ses composants, nous vous 
+invitons à consulter cet :ref:`georchestra.documentation.overview`. Vous pouvez également regarder la 
+:ref:`georchestra.documentation.fiche_identite` pour avoir une connaissance des fonctionnalités 
+présentent dans geOrchestra.
 
 Vous pouvez trouver de l’aide grâce à la liste de diffusion communautaire : voir la section Communauté.
 
@@ -75,6 +78,12 @@ Support Professionnel
 
 Plusieurs sociétés fournissent un support commercial pour vous aider dans 
 l'établissement de votre infrastructure de données spatiales.
+
+* `Camptocamp <http://camptocamp.com>`_ : société de service en logiciel libre, concepteur de la solution dans le cadre 
+  du projet `GeoBretagne <http://geobretagne.fr>`_. camptocamp propose des offres d'intégration de l'IDS au sein de votre infrastructur, de support pour 
+  vous accompagner dans la mise en place de l'IDS, la correction et l'évolution fonctionnelles de la plateforme ainsi que des formations utilisateurs, 
+  administrateur système et de données pour geOrchestra.
+* `DotGee <>`_
 
 .. toctree::
    :maxdepth: 2

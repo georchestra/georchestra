@@ -30,6 +30,7 @@ Présentation
    :maxdepth: 1
    
    overview
+   fiche_identite
    feature
 
 Installation
