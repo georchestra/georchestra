@@ -3,42 +3,42 @@
 Rasters
 =======
 
-Rasters are geographic data displayed in a grid.  They are similar to image files such as PNG files, except that instead of each point containing visual information, each point contains geographic information in numerical form.  Rasters can be thought of as a georeferenced table of numerical values.
+Les rasters sont des données géographiques disposées dans une grille. Elles sont similaires à des images comme les fichiers PNG, mais au lieu que chaque point contienne des informations visuelles, il contient des informations géographiques sous forme numérique. Les rasters peuvent être vus comme une matrice géoréférencée de valeurs numériques.
 
-One example of a raster is a Digital Elevation Model (DEM) layer, which has elevation data encoded numerically at each georeferenced data point.
+Un exemple de raster est une couche modèle numérique d'élévation (DEM), qui possède des données d'élévation codées sous forme d'un à chaque point géoréférencé.
 
-.. warning:: The code examples shown on this page are **not the full SLD code**, as they omit the SLD header and footer information for the sake of brevity.  Please use the links to download the full SLD for each example.
+.. warning:: Pour rester concis, les exemples de code présentés sur cette page ne sont **pas le code SLD complet** car ils ommettent les informations SLD de début et de fin.  Utilisez les liens pour télécharger les SLD complet de chaque exemple.
 
 
-Example raster
---------------
+Exemple de raster
+-----------------
 
-The :download:`raster layer <artifacts/sld_cookbook_raster.zip>` that is used in the examples below contains elevation data for a fictional world.  The data is stored in EPSG:4326 (longitude/latitude) and has a data range from 70 to 256.  If rendered in grayscale, where minimum values are colored black and maximum values are colored white, the raster would look like this:
+La :download:`couche raster <artifacts/sld_cookbook_raster.zip>` utilisée dans les exemples ci-dessous contient les données d'élévation d'un monde fictif. Les données sont stockées en projection EPSG:4326 (longitude/latitude) et des extremums de 70 à 256.  Si elles sont restituées en niveaux de gris, où les valeurs minimum sont colorées en noir et les valeurs maximum en blanc, le raster ressemblerait à ceci:
 
 .. figure:: images/raster.png
    :align: center
 
-   *Raster file as rendered in grayscale*
+   *Fichier raster restitué en niveaux de gris*
 
-:download:`Download the raster shapefile <artifacts/sld_cookbook_raster.zip>`
+:download:`Téléchargez le raster et le shapefile <artifacts/sld_cookbook_raster.zip>`
 
 .. _sld_cookbook_raster_twocolorgradient:
 
 
-Two-color gradient
-------------------
+Gradient bicolore
+-----------------
 
-This example shows a two-color style with green at lower elevations and brown at higher elevations.
+Cet exemple montre un style bicolore avec du vert à basse altitude et du brun à haute altitude.
 
 .. figure:: images/raster_twocolorgradient.png
    :align: center
 
-   *Two-color gradient*
+   *Gradient bicolore*
 
 Code
 ~~~~
 
-:download:`View and download the full "Two-color gradient" SLD <artifacts/raster_twocolorgradient.sld>`
+:download:`Consultez et téléchargez le SLD complet "Gradient bicolore" <artifacts/raster_twocolorgradient.sld>`
 
 .. code-block:: xml 
    :linenos:
@@ -54,27 +54,27 @@ Code
         </Rule>
       </FeatureTypeStyle>
 
-Details
+Détails
 ~~~~~~~
 
-There is one ``<Rule>`` in one ``<FeatureTypeStyle>`` for this example, which is the simplest possible situation.  All subsequent examples will share this characteristic.  Styling of rasters is done via the ``<RasterSymbolizer>`` tag (**lines 3-8**).
+Dans cet exemple, il y a un ``<Rule>`` dans un ``<FeatureTypeStyle>`` ce qui est la situation la plus simple possible.  Tous les exemples suivants partageront cette caractéristique.  La symbolisation des rasters est effectuée avec la balise ``<RasterSymbolizer>`` (**lignes 3-8**).
 
-This example creates a smooth gradient between two colors corresponding to two elevation values.  The gradient is created via the ``<ColorMap>`` on **lines 4-7**.  Each entry in the ``<ColorMap>`` represents one entry or anchor in the gradient.  **Line 5** sets the lower value of 70 via the ``quantity`` parameter, which is styled a dark green (``#008000``).  **Line 6** sets the upper value of 256 via the ``quantity`` parameter again, which is styled a dark brown (``#663333``).  All data values in between these two quantities will be linearly interpolated:  a value of 163 (the midpoint between 70 and 256) will be colored as the midpoint between the two colors (in this case approximately ``#335717``, a muddy green).
+Cet exemple crée un gradient régulier entre deux couleurs correspondant à deux valeurs d'élévation. Le gradient est créé avec ``<ColorMap>`` en **lignes 4-7**. Chaque entrée dans ``<ColorMap>`` représente une entrée, ou "ancre", dans le gradient.  La **ligne 5** règle la valeur basse égale à 70 via le paramètre ``quantity``, valeur représentée en vert foncé (``#008000``). La **ligne 6** règle la valeur haute de 256, à nouveau via le paramètre ``quantity``, et la valeur est représentée en brun foncé (``#663333``).  Toutes les valeurs entre ces deux quantités sont interpolées linéairement: une valeur de 163 (le point médian entre 70 et 256) sera colorée avec une teinte médiane entre les deux couleurs (dans ce cas, environ ``#335717``, un brun-vert).
 
-Transparent gradient
+Gradient transparent
 --------------------
 
-This example creates the same two-color gradient as in the :ref:`sld_cookbook_raster_twocolorgradient` as in the example above but makes the entire layer mostly transparent by setting a 30% opacity.
+Cet exemple crée le même gradient bicolore que :ref:`sld_cookbook_raster_twocolorgradient` de l'exemple précédent, mais rend la couche entière presque transparente en réglant une opacité à 30%.
 
 .. figure:: images/raster_transparentgradient.png
    :align: center
 
-   *Transparent gradient*
+   *Gradient transparent*
 
 Code
 ~~~~
 
-:download:`View and download the full "Transparent gradient" SLD <artifacts/raster_transparentgradient.sld>`
+:download:`Consultez et téléchargez le SLD complet "Transparent gradient" <artifacts/raster_transparentgradient.sld>`
 
 .. code-block:: xml 
    :linenos:
@@ -91,27 +91,26 @@ Code
         </Rule>
       </FeatureTypeStyle>
 
-Details
+Détails
 ~~~~~~~
 
+Cet exemple est similaire à l'exemple :ref:`sld_cookbook_raster_twocolorgradient` mis à part l'ajout de la **ligne 4**, laquelle règle l'opacité de la couche à 0.3 (ou opaque à 30%). Une valeur d'opacité de 1 signifie que la forme est dessinée 100% opaque, alors qu'une valeur de 0 signifie qu'elle est affichée entièrement transparente. Une valeur de 0.3 signifie que le lraster prend partiellement la couleur et le style de ce qui est dessiné en-dessous. Comme le fond est blanc dans cet exemple, les coucleurs générées par ``<ColorMap>`` paraîssent plus claires, mais si le raster est superposé à un fond sombre la couleur résultante sera plus sombre.
 
-This example is similar to the :ref:`sld_cookbook_raster_twocolorgradient` example save for the addition of **line 4**, which sets the opacity of the layer to 0.3 (or 30% opaque).  An opacity value of 1 means that the shape is drawn 100% opaque, while an opacity value of 0 means that the shape is rendered as completely transparent.  The value of 0.3 means that the the raster partially takes on the color and style of whatever is drawn beneath it.  Since the background is white in this example, the colors generated from the ``<ColorMap>`` look lighter, but were the raster imposed on a dark background the resulting colors would be darker.
 
-
-Brightness and contrast
+Luminosité et contraste
 -----------------------
 
-This example normalizes the color output and then increases the brightness by a factor of 2.
+Cet exemple normalise les couleurs de sortie, puis augmentent la luminosité d'un facteur 2.
 
 .. figure:: images/raster_brightnessandcontrast.png
    :align: center
 
-   *Brightness and contrast*
+   *Luminosité et contraste*
  
 Code
 ~~~~
 
-:download:`View and download the full "Brightness and contrast" SLD <artifacts/raster_brightnessandcontrast.sld>`
+:download:`Consultez et téléchargez le SLD complet "Luminosité et contraste" <artifacts/raster_brightnessandcontrast.sld>`
 
 .. code-block:: xml 
    :linenos:
@@ -131,29 +130,29 @@ Code
         </Rule>
       </FeatureTypeStyle>
 
-Details
+Détails
 ~~~~~~~
 
-This example is similar to the :ref:`sld_cookbook_raster_twocolorgradient`, save for the addition of the ``<ContrastEnhancement>`` tag on **lines 4-7**. **Line 5** normalizes the output by increasing the contrast to its maximum extent. **Line 6** then adjusts the brightness by a factor of 0.5. Since values less than 1 make the output brighter, a value of 0.5 makes the output twice as bright.
+Cet exemple est similaire à :ref:`sld_cookbook_raster_twocolorgradient`, mis à part l'ajout de la balise ``<ContrastEnhancement>`` en **lignes 4-7**. La **ligne 5** normalise la sortie en augmentant le contraste à son extension maximum. La **ligne 6** ajuste la luminosité d'un facteur 0.5. Comme les valeurs inférieures à 1 rendent le résultat plus clair, une valeur de 0.5 rend le résultat deux fois plus clair.
 
-As with previous examples, **lines 8-11** determine the ``<ColorMap>``, with **line 9** setting the lower bound (70) to be colored dark green (``#008000``) and **line 10** setting the upper bound (256) to be colored dark brown (``#663333``). 
+Comme dans les exemples précédents, les **linges 8-11** determinent la ``<ColorMap>``, avec la **ligne 9** paramétrant la limite inférieure (70) à une couleur vert foncé (``#008000``) et la **ligne 10** paramétrant la limite supérieure (256) à une couleur marron foncé (``#663333``). 
 
 
 
-Three-color gradient
---------------------
+Gradient à trois couleurs
+-------------------------
 
-This example creates a three-color gradient in primary colors.  In addition, the gradient doesn't span the entire range of data values, leading some data not to be rendered at all.
+Cet exemple crée un gradient à trois couleurs prises dans les couleurs primaires. De plus, le gradient ne prend pas en compte l'étendue complète des valeurs des données, ce qui aboutit à ne pas prendre en compte certaines données.
 
 .. figure:: images/raster_threecolorgradient.png
    :align: center
 
-   *Three-color gradient*
+   *Gradient à trois couleurs*
 
 Code
 ~~~~
 
-:download:`View and download the full "Three-color gradient" SLD <artifacts/raster_threecolorgradient.sld>`
+:download:`Consultez et téléchargez le SLD complet "Three-color gradient" <artifacts/raster_threecolorgradient.sld>`
 
 .. code-block:: xml 
    :linenos:
@@ -170,28 +169,28 @@ Code
         </Rule>
       </FeatureTypeStyle>
 
-Details
+Détails
 ~~~~~~~
 
-This example creates a three-color gradient based on a ``<ColorMap>`` with three entries on **lines 4-8**: **line 5** specifies the lower bound (150) be styled in blue (``#0000FF``), **line 6** specifies an intermediate point (200) be styled in yellow (``#FFFF00``), and **line 7** specifies the upper bound (250) be styled in red (``#FF0000``).
+Cet exemple crée un gradient à trois couleurs basé sur une ``<ColorMap>`` avec trois entrées en **lignes 4-8**: la **ligne 5** paramétrant la limite inférieure (150) à bleu (``#0000FF``), la **ligne 6** paramétrant une valeur intermédiaire (200) à jaune (``#FFFF00``), et la **ligne 7** paramétrant la limite supérieure (250) à rouge (``#FF0000``).
 
-Since our data values run between 70 and 256, some data points are not accounted for in this style.  Those values below the lowest entry in the color map (the range from 70 to 149)  are styled the same color as the lower bound, in this case blue.  On the other hand, values above the upper bound in the color map (the range from 251 to 256) are not rendered at all.
+Comme nos valeurs de données vont de 70 à 256, certains points ne sont pas pris en compte par ce style. Les valeurs inférieures à la limite basse de la carte de couleurs (l'intervalle 70 à 149) sont rendues avec la même couleurs que la limite basse, à savoir bleu. D'autre part, les valeurs supérieures à la limite haute de la carte de couleur (l'intervalle 251 à 256) ne sont pas affichées du tout.
 
 
-Alpha channel
--------------
+Canal alpha
+-----------
 
-This example creates an "alpha channel" effect such that higher values are increasingly transparent.
+Cet exemple crée un effet de "canal alpha" de sorte que les valeurs supérieures sont graduellement transparentes.
 
 .. figure:: images/raster_alphachannel.png
    :align: center
 
-   *Alpha channel*
+   *Canal alpha*
 
 Code
 ~~~~
 
-:download:`View and download the full "Alpha channel" SLD <artifacts/raster_alphachannel.sld>`
+:download:`Consultez et téléchargez le SLD complet "Alpha channel" <artifacts/raster_alphachannel.sld>`
 
 .. code-block:: xml 
    :linenos:
@@ -207,30 +206,30 @@ Code
         </Rule>
       </FeatureTypeStyle>
 
-Details
+Détails
 ~~~~~~~
 
-An alpha channel is another way of referring to variable transparency.  Much like how a gradient maps values to colors, each entry in a ``<ColorMap>`` can have a value for opacity (with the default being 1.0 or completely opaque).
+Un canal alpha est une autre façon d'aboutir à une transparence variable. Tout comme les gradients lient les valeurs aux couleurs, chaque entrée de ``<ColorMap>`` peut avoir des valeurs d'opacité (la valeur par défaut étant 1.0 soit complètement opaque).
 
-In this example, there is a ``<ColorMap>`` with two entries: **line 5** specifies the lower bound of 70 be colored dark green (``#008000``), while **line 6** specifies the upper bound of 256 also be colored dark green but with an opacity value of 0. This means that values of 256 will be rendered at 0% opacity (entirely transparent). Just like the gradient color, the opacity is also linearly interpolated such that a value of 163 (the midpoint between 70 and 256) is rendered at 50% opacity.
+Dans cet exemple, il y a une ``<ColorMap>`` avec deux entrées: la **ligne 5** paramètre la limite inférieure de 70 à vert foncé (``#008000``), et la **ligne 6** spécifie la limite supérieure de 256 à vert foncé également, mais avec une valeur d'opacité de 0. Cela signifie que les valeurs à 256 seront affichées avec une opacité de 0% (entièrement transparent). Tout comme le gradient de couleurs, l'opacité est aussi interpolée linéairement, de sorte q'une valeur de 163 (le point médian entre 70 et 256) sera affichée avec une opacité de 50%.
 
 
-Discrete colors
----------------
+Couleurs discrètes
+------------------
 
-This example shows a gradient that is not linearly interpolated but instead has values mapped precisely to one of three speci?c colors.
+Cet exemple présente un gradient qui n'est pas interpolé linairement, mais qui à la place fait correspondre précisément des valeurs à trois couleurs.
 
-.. note:: This example leverages an SLD extension in GeoServer.  Discrete colors are not part of the standard SLD 1.0 specification.
+.. note:: Cet exemple met en exergue une extension SLD propre à GeoServer. Les couleurs discrètes ne font pas partie de la spécification SLD.
 
 .. figure:: images/raster_discretecolors.png
    :align: center
 
-   *Discrete colors*
+   *Couleurs discrètes*
 
 Code
 ~~~~
 
-:download:`View and download the full "Discrete colors" SLD <artifacts/raster_discretecolors.sld>`
+:download:`Consultez et téléchargez le SLD complet "Couleurs discrètes" <artifacts/raster_discretecolors.sld>`
 
 .. code-block:: xml 
    :linenos:
@@ -246,27 +245,26 @@ Code
         </Rule>
       </FeatureTypeStyle>
 
-Details
+Détails
 ~~~~~~~
 
-Sometimes color bands in discrete steps are more appropriate than a color gradient. The ``type="intervals"`` parameter added to the ``<ColorMap>`` on **line 4** sets the display to output discrete colors instead of a gradient. The values in each entry correspond to the upper bound for the color
-band such that colors are mapped to values less than the value of one entry but greater than or equal to the next lower entry. For example, **line 5** colors all values less than 150 to dark green (``#008000``) and line 6 colors all values less than 256 but greater than or equal to 150 to dark brown (``#663333``).
+Parfois, des bandes de couleur distribuées par paliers discrets sont plus appropriées que les gradients de couleur. Le paramètre ``type="intervals"`` ajouté à ``<ColorMap>`` en **ligne 4** indique l'emploi de couleurs discrètes à la place d'un gradient. Les valeurs dans chaque entrée correspondent à la limite supérieure pour la bande de couleur, de sorte que les couleurs sont reliées aux valeurs inférieures à la valeur d'une entrée, et supérieures ou égales à l'entrée suivante. Par exemple, la **ligne 5** colorie toutes les valeurs inférieures à 150 en vert foncé (``#008000``) et la **ligne 6** colorie toutes les valeurs inférieures à 256 et supérieures ou égales à 150 en brun foncé (``#663333``).
 
 
-Many color gradient
--------------------
+Gradient multicolore
+--------------------
 
-This example shows an eight color gradient.
+Cet exemple présente un gradient à huit couleurs.
 
 .. figure:: images/raster_manycolorgradient.png
    :align: center
 
-   *Many color gradient*
+   *Gradient multicolore*
 
 Code
 ~~~~
 
-:download:`View and download the full "Many color gradient" SLD <artifacts/raster_manycolorgradient.sld>`
+:download:`Consultez et téléchargez le SLD complet "Gradient multicolore" <artifacts/raster_manycolorgradient.sld>`
 
 .. code-block:: xml 
    :linenos:
@@ -288,10 +286,10 @@ Code
         </Rule>
       </FeatureTypeStyle>
 
-Details
+Détails
 ~~~~~~~
 
-There is no limit on the amount of entries that can be contained in a ``<ColorMap>`` (**lines 4-13**).  This example has eight entries:
+Il n'y a pas de limite au nombre d'entrées contenues dans  ``<ColorMap>`` (**lignes 4-13**).  Cet exemple a huit entrées:
 
 .. list-table::
    :widths: 15 25 30 30 
@@ -333,3 +331,4 @@ There is no limit on the amount of entries that can be contained in a ``<ColorMa
      - White
      - ``#FFFFFF``
 
+.. fabrice at phung.fr 2011/09/20 r16266
