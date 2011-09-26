@@ -3,16 +3,16 @@
 Lines
 =====
 
-Bien que les lignes n'ayant qu'une longueur sans épaisseur semblent être des formes simples, il existe beaucoup d'options et de trucs les représenter agréablement.
+Bien que les lignes n'ayant qu'une longueur sans épaisseur semblent être des formes simples, il existe beaucoup d'options et de trucs les représenter de façon satisfaisante.
 
 .. warning:: Pour rester concis, les exemples de code présentés sur cette page ne sont **pas le code SLD complet** car ils ommettent les informations SLD de début et de fin.  Utilisez les liens pour télécharger les SLD complet de chaque exemple.
 
 .. _sld_cookbook_lines_attributes:
 
-Example lines layer
--------------------
+Exemple de couche ligne
+-----------------------
 
-The :download:`lines layer <artifacts/sld_cookbook_line.zip>` used in the examples below contains road information for a fictional country.  For reference, the attribute table for the points in this layer is included below.
+La :download:`couche ligne <artifacts/sld_cookbook_line.zip>` utilisée dans les exemples ci-dessous contient les données routières d'un pays fictif. Pour référence, le tableau des attributs des lignes de cette couche est incluse ci-dessous.
 
 .. list-table::
    :widths: 30 40 30
@@ -96,24 +96,24 @@ The :download:`lines layer <artifacts/sld_cookbook_line.zip>` used in the exampl
      - River Road
      - local-road
 
-:download:`Download the lines shapefile <artifacts/sld_cookbook_line.zip>`
+:download:`Téléchargez le shapefile <artifacts/sld_cookbook_line.zip>`
 
 .. _sld_cookbook_lines_simpleline:
 
-Simple line
------------
+Ligne simple
+------------
 
-This example specifies lines be colored black with a thickness of 3 pixels.
+Cet exemple précise que les lignes sont colorées en noir avec une épaisseur de 3 pixels.
 
 .. figure:: images/line_simpleline.png
    :align: center
 
-   *Simple line*
+   *Ligne simple*
 
 Code
 ~~~~
 
-:download:`View and download the full "Simple line" SLD <artifacts/line_simpleline.sld>`
+:download:`Consultez et télchargez le SLD complet "Ligne simple" <artifacts/line_simpleline.sld>`
 
 .. code-block:: xml 
    :linenos: 
@@ -129,26 +129,26 @@ Code
        	</Rule>
       </FeatureTypeStyle>
 
-Details
+Détails
 ~~~~~~~
 
-There is one ``<Rule>`` in one ``<FeatureTypeStyle>`` for this SLD, which is the simplest possible situation.  (All subsequent examples will contain one ``<Rule>`` and one ``<FeatureTypeStyle>`` unless otherwise specified.)  Styling lines is accomplished via the ``<LineSymbolizer>`` (**lines 3-8**).  **Line 5** specifies the color of the line to be black (``#000000``), while **line 6** specifies the width of the lines to be 3 pixels.
+Dans ce SLD, il y a un ``<Rule>`` dans un ``<FeatureTypeStyle>`` , ce qui est la situation la plus simple possible. (Tous les exemples suivants contiendront un ``<Rule>`` et un ``<FeatureTypeStyle>`` , sauf mention contraire.)  Symboliser les lignes se fait avec ``<LineSymbolizer>`` (**lignes 3-8**).  La **ligne 5** règle la couleur des lignes à noir (``#000000``), et la **ligne 6** règle la largeur des lignes à 3 pixels.
 
 
-Line with border
-----------------
+Ligne avec bord
+---------------
 
-This example draws lines with a blue fill of 3 pixels and a gray stroke of 1 pixel.
+Cet exemple dessine des lignes avec un remplissage de 3 pixels et un trait gris de 1 pixel.
 
 .. figure:: images/line_linewithborder.png
    :align: center
 
-   *Line with border*
+   *Ligne avec bord*
 
 Code
 ~~~~
 
-:download:`View and download the full "Line with border" SLD <artifacts/line_linewithborder.sld>`
+:download:`Consultez et télchargez le SLD complet "Ligne avec bord" <artifacts/line_linewithborder.sld>`
 
 .. code-block:: xml 
    :linenos: 
@@ -176,33 +176,33 @@ Code
          </Rule>
       </FeatureTypeStyle>
 
-Details
+Détails
 ~~~~~~~
 
-Lines in SLD have no notion of a "fill", only "stroke". Thus, unlike points or polygons, it is not possible to style the "edge" of the line geometry. It is, however, possible to achieve this effect by drawing each line twice: once with a certain width and again with a slightly smaller width.  This gives the illusion of fill and stroke by obscuring the larger lines everywhere except along the edges of the smaller lines.
+En SLD, les lignes n'ont pas de notion de "remplissage", mais seulement "trait". A la différence des polygones, il n'est pas possible de symboliser les "bords" d'une géométrie ligne. Il est cependant possible d'obtenir cet effent en traçant chaque ligne deux fois : une fois avec une certaine largeur, une nouvelle fois avec une largeur un peu plus faible. Ceci donne l'illusion d'un remplissage avec bords en recouvrant partout les lignes épaisses, sauf le long des bords des lignes plus fines.
 
-Since every line is drawn twice, the order of the rendering is *very* important.  In this style, all of the gray lines are drawn first via the first ``<FeatureTypeStyle>``, followed by all of the blue lines in a second ``<FeatureTypeStyle>``.  GeoServer will render every ``<FeatureTypeStyle>`` in the order that they are presented in the SLD.  This not only ensures that the blue lines won't be obscured by the gray lines, but also ensures proper rendering at intersections, so that the blue lines "connect".
+Comme chaque ligne est dessinée deux fois, l'ordre de tracé est *très* important. Dans ce style, toutes les lignes grises sont dessinées d'abord avec le premier ``<FeatureTypeStyle>``, et sont suivies par toutes les lignes bleues du second ``<FeatureTypeStyle>``.  GeoServer va tracer tous les ``<FeatureTypeStyle>`` dans l'ordre d'apparition dans le SLD. Ceci permet non seulement de s'assurer que les lignes bleues ne seront pas recouvertes par les lignes grises, mais permet aussi un dessin propre aux intersections, à l'endroit où les lignes bleues se "connectent".
 
-In this example, **lines 1-11** comprise the first ``<FeatureTypeStyle>``, which is the outer line (or "stroke").  **Line 5** specifies the color of the line to be dark gray (``#333333``), **line 6** specifies the width of this line to be 5 pixels, and **line 7** renders the edges of the line to be rounded instead of flat.  (When working with lines that have borders, using the ``stroke-linecap`` parameter ensures that the ends of the lines will have a properly-drawn border.)
+Dans cet exemple, les **lines 1-11** comprennent le premier ``<FeatureTypeStyle>``, qui est la ligne extérieure (le "trait").  La **ligne 5** règle la couleur de la ligne à gris foncé (``#333333``), la **ligne 6** règle la largeur de cette ligne à 5 pixels, et la **ligne 7** arrondit les extrémités de la ligne, plats par défaut.  (Lorsque l'on travaille avec des lignes avec bords, utiliser le paramètre ``stroke-linecap`` permet de s'assurer que les fins de lignes ont des bords correctement dessinés.)
 
-**Lines 12-22** comprise the second ``<FeatureTypeStyle>``, which is the the inner line (or "fill").  **Line 16** specifies the color of the line to be a medium blue (``#6699FF``), **line 17** specifies the width of this line to be 3 pixels, and **line 18** again renders the edges of the line to be rounded instead of flat.
+Les **lignes 12-22** comprennent le second ``<FeatureTypeStyle>`` qui correspond à l'intérieur de la ligne (le "remplissage"). lA **Ligne 16** règle la couleur de la ligne à bleu moyen (``#6699FF``), la **ligne 17** règle la largeur de cette ligne à 3 pixels, et la **ligne 18** arrondit les extrémités des lignes au lieu de les dessiner plates.
 
-The result is a 3 pixel blue line with a 1 pixel gray border, since the 5 pixel gray line will display 1 pixel on each side of the 3 pixel blue line.
+Le résultat est une ligne bleue de 3 pixels avec un bord d'un pixel, puisque la ligne grise de 5 pixels affichera 1 pixel de part et d'autre de la ligne bleue de 3 pixels.
 
-Dashed line
------------
+Ligne pointillée
+----------------
 
-This example alters the :ref:`sld_cookbook_lines_simpleline` to create a dashed line consisting of 5 pixels of drawn line alternating with 2 pixels of blank space.
+Cet exemple modifie :ref:`sld_cookbook_lines_simpleline` pour créer une ligne pointillée constituée de segments de 5 pixels alternés avec des espaces de 2 pixels.
 
 .. figure:: images/line_dashedline.png
    :align: center
 
-   *Dashed line*
+   *Ligne pointillée*
 
 Code
 ~~~~
 
-:download:`View and download the full "Dashed line" SLD <artifacts/line_dashedline.sld>`
+:download:`Consultez et téléchargez le SLD complet "ligne pointillée" <artifacts/line_dashedline.sld>`
 
 .. code-block:: xml 
    :linenos: 
@@ -219,14 +219,14 @@ Code
         </Rule>
       </FeatureTypeStyle>
 
-Details
+Détails
 ~~~~~~~
 
-In this example, **line 5** sets the color of the lines to be blue (``#0000FF``) and **line 6** sets the width of the lines to be 3 pixels.  **Line 7** determines the composition of the line dashes.  The value of ``5 2`` creates a repeating pattern of 5 pixels of drawn line, followed by 2 pixels of omitted line.
+Dans cet exemple, la **ligne 5** règle la couleur des lignes à bleu (``#0000FF``) et la **ligne 6** règle la largeur des lignes à 3 pixels. La **ligne 7** détermine la composition des tirets. la valeur ``5 2`` crée un motif de 5 pixels de ligne dessinée, suivi de 2 pixels sans ligne.
 
 
-Railroad (hatching)
--------------------
+Voie ferrée (hatch)
+----------------------
 
 This example uses hatching to create a railroad style.  Both the line and the hatches are black, with a 2 pixel thickness for the main line and a 1 pixel width for the perpendicular hatches.
 
