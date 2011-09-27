@@ -14,7 +14,7 @@ GEOR.custom = {
      * Constant: GEOSERVER_WMS_URL
      * The URL to GeoServer WMS.
      */
-    //GEOSERVER_WMS_URL: "/geoserver/wms",
+    GEOSERVER_WMS_URL: "/geoserver2/wms",
 
     /**
      * Constant: GEOSERVER_WFS_URL
@@ -81,7 +81,7 @@ GEOR.custom = {
      * The WMS base layer which will be displayed under each extracted layer.
      * Defaults to "geor:countries"
      */
-    //BASE_LAYER_NAME: "geor:countries",
+    BASE_LAYER_NAME: "base_layers",
 
     /**
      * Constant: DEFAULT_WCS_EXTRACTION_WIDTH
