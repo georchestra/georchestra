@@ -411,7 +411,7 @@ GEOR.custom = {
         {"name": "Cartorisque47, risques naturels", "url": "http://cartorisque.prim.net/wms/47"},
         {"name": "Cartorisque40, risques naturels", "url": "http://cartorisque.prim.net/wms/40"},
         {"name": "Cartorisque64, risques naturels", "url": "http://cartorisque.prim.net/wms/64"},
-        {"name": "Carmen", "url": "http://ws.carmen.application.developpement-durable.gouv.fr/WFS/10/Nature_Paysage"},
+        {"name": "Carmen Aquitaine", "url": "http://ws.carmen.developpement-durable.gouv.fr/WMS/6/carte1"},
         {"name": "GeoSignal", "url": "http://www.geosignal.org/cgi-bin/wmsmap"},
         {"name": "Corine Land Cover", "url": "http://sd1878-2.sivit.org/geoserver/wms"},
         {"name": "GeoLittoral", "url": "http://geolittoral.application.equipement.gouv.fr/wms/metropole"},
