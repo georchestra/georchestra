@@ -23,7 +23,7 @@ La première version date de 2000.
 
 Nombre de versions parues
 ---------------------------
-Il y a eut 6 versions.
+Il y a eu 6 versions majeures.
 
 Nombre d'utilisateurs / installations
 ---------------------------------------
@@ -44,7 +44,7 @@ Le CMS comprend-il une gestion de groupes de travail ?
 ------------------------------------------------------
 
 Oui via la gestion des "pôles métier" qui comprennent partage de documents, 
-d'événements, d'actualités et d'annuaires métier dédiés
+d'événements, d'actualités et d'annuaires métier dédiés.
 
 
 Quelle est la liaison avec le catalogue de métadonnées ? (affichage des dernières MD créées, des MD les plus consultées ...)
@@ -55,7 +55,7 @@ Via agrégateur de flux RSS : affichage des dernières MD créées & via recherc
 Y a-t-il localisation cartographique des contenus du CMS ?
 -----------------------------------------------------------
 
-Non
+Non, pas actuellement, mais cela est réalisable.
 
 
 Administration du portail (CMS)
@@ -63,16 +63,16 @@ Administration du portail (CMS)
 
 Existe-til un module de gestion des conventions d'échange ?
 -------------------------------------------------------------
-Non
+Non.
 
 
 Quelle est la granularité de gestion des droits ? (par contenus, par fonctionnalité, sur les fichiers...)
 ---------------------------------------------------------------------------------------------------------
 3 profils existent : 
 
-- administrateur : droits sur la totalité des contenus
-- user : droits de proposer du contenu validé ensuite par l'administrateur et d'accès à du contenu non partagé
-- non loggué : droit de consultation grand public
+- administrateur : droits sur la totalité des contenus,
+- utilisateur : droits de proposer du contenu, validé ensuite par l'administrateur, et droit d'accès à du contenu non partagé,
+- non loggué : droit de consultation grand public.
 
 Comment est organisée la documentation (arborescence de fichiers ? Bases de données documentaire ?) et quelle liaison avec les éléments du CMS ?
 -------------------------------------------------------------------------------------------------------------------------------------------------
@@ -84,7 +84,7 @@ La documentation du projet geOrchestra est disponible :
 
 Comment se fait la restitution des statistiques de consultation ?
 ------------------------------------------------------------------
-Via module externe ?
+Possibilité d'inclure un tracker tel que Google Analytics. Auquel cas, la restitution se fait via l'interface dédiée.
 
 
 Outil de visualisation cartographique
@@ -108,7 +108,7 @@ Date de première version
 Nombre de versions parues
 --------------------------
 
-24 au 19 septembre 2011, cf http://csm-bretagne.fr/hudson/job/georchestra/
+Il y a eu 24 "builds" à la date du 19 septembre 2011, cf http://csm-bretagne.fr/hudson/job/georchestra/
 
 Nombre d'utilisateurs / installations
 --------------------------------------

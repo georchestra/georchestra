@@ -34,7 +34,7 @@ intranet et internet. Son code source est disponible sous licence libre.
 Pour une présentation visuelle de la solution geOrchestra et de ses composants, nous vous 
 invitons à consulter cet :ref:`georchestra.documentation.overview`. Vous pouvez également regarder la 
 :ref:`georchestra.documentation.fiche_identite` pour avoir une connaissance des fonctionnalités 
-présentent dans geOrchestra.
+offertes dans geOrchestra.
 
 Vous pouvez trouver de l’aide grâce à la liste de diffusion communautaire : voir la section Communauté.
 
