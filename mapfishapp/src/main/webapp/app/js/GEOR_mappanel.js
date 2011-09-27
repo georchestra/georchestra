@@ -120,25 +120,29 @@ GEOR.mappanel = (function() {
         items.push("->");
 
         // First mouse position
-        div = Ext.DomHelper.append(Ext.getBody(), {
-            tag: "div", 
-            qtip: "Coordonnées du pointeur en "+GEOR.config.MAP_POS_SRS1,
-            id: cmp_id+"_mp1", 
-            cls: "mouseposition"
-        });
-        items.push(div);
-        map.addControl(buildMousePositionCtrl(GEOR.config.MAP_POS_SRS1, div));
-
+        var srs1 = GEOR.config.MAP_POS_SRS1;
+        if (srs1) {
+            div = Ext.DomHelper.append(Ext.getBody(), {
+                tag: "div", 
+                qtip: "Coordonnées du pointeur en "+srs1,
+                id: cmp_id+"_mp1", 
+                cls: "mouseposition"
+            });
+            items.push(div);
+            map.addControl(buildMousePositionCtrl(srs1, div));
+        }
         // Second mouse position
-        div = Ext.DomHelper.append(Ext.getBody(), {
-            tag: "div", 
-            qtip: "Coordonnées du pointeur en "+GEOR.config.MAP_POS_SRS2,
-            id: cmp_id+"_mp2", 
-            cls: "mouseposition"
-        });
-        items.push(div);
-        map.addControl(buildMousePositionCtrl(GEOR.config.MAP_POS_SRS2, div));
-
+        var srs2 = GEOR.config.MAP_POS_SRS2;
+        if (srs2) {
+            div = Ext.DomHelper.append(Ext.getBody(), {
+                tag: "div", 
+                qtip: "Coordonnées du pointeur en "+srs2,
+                id: cmp_id+"_mp2", 
+                cls: "mouseposition"
+            });
+            items.push(div);
+            map.addControl(buildMousePositionCtrl(srs2, div));
+        }
         // Scale combobox
         items.push(Ext.apply({
             width: 130

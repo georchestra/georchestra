@@ -259,6 +259,7 @@ GEOR.custom = {
     /**
      * Constant: MAP_POS_SRS1
      * {String} The cursor position will be displayed using this SRS.
+     * Set to "" if you do not want to have mouse position displayed.
      * Defaults to "EPSG:2154"
      */
     //MAP_POS_SRS1: "EPSG:2154",
@@ -266,9 +267,10 @@ GEOR.custom = {
     /**
      * Constant: MAP_POS_SRS2
      * {String} The cursor position will be displayed using this SRS.
-     * Defaults to "EPSG:3948"
+     * Set to "" if you do not want to have mouse position displayed.
+     * Defaults to ""
      */
-    //MAP_POS_SRS2: "EPSG:3948",
+    //MAP_POS_SRS2: "",
     
     /**
      * Constant: PROJ4JS_STRINGS

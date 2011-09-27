@@ -17,6 +17,20 @@ GEOR.custom = {
     //DEFAULT_WMC: "default.wmc",
     
     /**
+     * Constant: DEFAULT_PRINT_FORMAT
+     * {String} The default (ie selected) print layout format.
+     * Defaults to "A4 paysage"
+     */
+    //DEFAULT_PRINT_FORMAT: "A4 paysage",
+    
+    /**
+     * Constant: DEFAULT_PRINT_FORMAT
+     * {String} The default (ie selected) print resolution.
+     * Defaults to "127"
+     */
+    //DEFAULT_PRINT_RESOLUTION: "127",
+    
+    /**
      * Constant: GEOSERVER_WFS_URL
      * The URL to GeoServer WFS.
      * This is required if and only if the edit application is used
@@ -56,7 +70,7 @@ GEOR.custom = {
      * (was: GeoCatalogue for the GeoBretagne project).
      * Defaults to 'Catalogue geOrchestra'
      */
-    CATALOG_NAME: 'GéoCatalogue',
+    //CATALOG_NAME: 'Catalogue geOrchestra',
     
     /**
      * Constant: THESAURUS_NAME
@@ -93,7 +107,7 @@ GEOR.custom = {
      * Default attribution for layers which don't have one.
      * Defaults to ''
      */
-    DEFAULT_ATTRIBUTION: 'GeoBretagne',
+    //DEFAULT_ATTRIBUTION: '',
 
     /**
      * Constant: OSM_AS_OVMAP
@@ -110,7 +124,7 @@ GEOR.custom = {
      * This layer must be served by the server GEOSERVER_WMS_URL as image/png
      * Defaults to "geor_loc:DEPARTEMENTS"
      */
-    //OVMAP_LAYER_NAME: "geob_loc:DEPARTEMENTS",
+    //OVMAP_LAYER_NAME: "geor_loc:DEPARTEMENTS",
     
     /**
      * Constant: WMSC2WMS
@@ -128,12 +142,12 @@ GEOR.custom = {
      *
      * "wmsc_url": undefined,
      */
-    /*WMSC2WMS: {
+    WMSC2WMS: {
         "http://osm.geobretagne.fr/service/wms": 
-            "http://maps.qualitystreetmap.org/geob_wms",
+            "http://geobretagne.fr/osm-google", 
         "http://geobretagne.fr/geoserver/gwc/service/wms": 
             undefined // no trailing comma
-    },*/
+    },
 
 
     /**
@@ -163,7 +177,7 @@ GEOR.custom = {
      *    the GeoServer configuration.
      * Defaults to "geor_loc"
      */
-    NS_LOC: "geob_loc",
+    NS_LOC: "geor_loc",
     
     /**
      * Constant: NS_EDIT
@@ -171,7 +185,7 @@ GEOR.custom = {
      *    the GeoServer configuration.
      * Defaults to "geor_edit"
      */
-    NS_EDIT: "geob_edit",
+    NS_EDIT: "geor_edit",
 
 
     /**
@@ -218,44 +232,54 @@ GEOR.custom = {
      * {Float} The max extent xmin in MAP_SRS coordinates.
      * Defaults to -357823 (France metropolitaine left)
      */
-    MAP_XMIN: 83000,
+    //MAP_XMIN: -357823,
 
     /**
      * Constant: MAP_YMIN aka "bottom"
      * {Float} The max extent ymin in MAP_SRS coordinates.
      * Defaults to 6037008 (France metropolitaine bottom)
      */
-    MAP_YMIN: 6200000,
+    //MAP_YMIN: 6037008,
 
     /**
      * Constant: MAP_XMAX aka "right"
      * {Float} The max extent xmax in MAP_SRS coordinates.
      * Defaults to 1313632 (France metropolitaine right)
      */
-    MAP_XMAX: 550000,
+    //MAP_XMAX: 1313632,
 
     /**
      * Constant: MAP_YSMAX aka "top"
      * {Float} The max extent ymax in MAP_SRS coordinates
      * Defaults to 7230727 (France metropolitaine top)
      */
-    MAP_YMAX: 7000000,
+    //MAP_YMAX: 7230727,
     
     /**
      * Constant: MAP_POS_SRS1
      * {String} The cursor position will be displayed using this SRS.
-     * Set to "" if you do not want to have mouse position displayed.
      * Defaults to "EPSG:2154"
      */
-    //MAP_POS_SRS1: "EPSG:2154",
+    MAP_POS_SRS1: "EPSG:2154",
     
     /**
      * Constant: MAP_POS_SRS2
      * {String} The cursor position will be displayed using this SRS.
-     * Set to "" if you do not want to have mouse position displayed.
-     * Defaults to "EPSG:3948"
+     * Defaults to ""
      */
-    //MAP_POS_SRS2: "EPSG:3948",
+    MAP_POS_SRS2: "",
+    
+    /**
+     * Constant: PROJ4JS_STRINGS
+     * {Object} The list of supported SRS with their definitions.
+     * Defaults to "EPSG:2154" & "EPSG:900913" being defined
+     * Note that "EPSG:900913" is required if OSM_AS_OVMAP is set to true
+     * The other required SRSes are the one used by mouse position
+     */
+    PROJ4JS_STRINGS: {
+        "EPSG:2154": "+title=RGF-93/Lambert 93, +proj=lcc +lat_1=49 +lat_2=44 +lat_0=46.5 +lon_0=3 +x_0=700000 +y_0=6600000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs",
+        "EPSG:900913": "+title=Web Spherical Mercator, +proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs"
+    },
     
     /**
      * Constant: TILE_SINGLE
@@ -285,7 +309,7 @@ GEOR.custom = {
      */
     GEONAMES_FILTERS: {
         country: 'FR',         // France
-        adminCode1: 'A2',      // Bretagne
+        //adminCode1: '97',      // Aquitaine
         style: 'short',        // verbosity of results
         lang: 'fr',
         featureClass: 'P',     // class category: populated places
@@ -302,13 +326,20 @@ GEOR.custom = {
     //GEONAMES_ZOOMLEVEL: 5,
     
     /**
+     * Constant: ANIMATE_WINDOWS
+     * {Boolean} Display animations on windows opening/closing
+     * Defaults to true
+     */
+    //ANIMATE_WINDOWS: true,
+    
+    /**
      * Constant: ROLES_FOR_STYLER
      * {Array} roles required for the styler to show up
      * Empty array means the module is available for everyone
      * ROLE_SV_USER means the user needs to be connected.
      * Defaults to ['ROLE_SV_USER']
      */
-    //ROLES_FOR_STYLER: ['ROLE_SV_USER'],
+    ROLES_FOR_STYLER: [],
     
     /**
      * Constant: ROLES_FOR_QUERIER
@@ -326,7 +357,7 @@ GEOR.custom = {
      * ROLE_SV_USER means the user needs to be connected.
      * Defaults to ['ROLE_SV_USER']
      */
-    //ROLES_FOR_PRINTER: ['ROLE_SV_USER'],
+    ROLES_FOR_PRINTER: [],
     
     /**
      * Constant: HELP_URL
@@ -341,22 +372,23 @@ GEOR.custom = {
      */
     WMS_SERVERS: [
         {"name": "GeoBretagne", "url": "http://geobretagne.fr/geoserver/wms"},
-        {"name": "Région Bretagne", "url": "http://kartenn.region-bretagne.fr/geoserver/wms"},
+        {"name": "PIGMA - FD Chasse 33", "url": "http://ns383241.ovh.net/geoserver/fdc33/wms"},
+        {"name": "PIGMA - FD Peche 33", "url": "http://ns383241.ovh.net/geoserver/fdp33/wms"},
         {"name": "Sandre/zonages", "url": "http://services.sandre.eaufrance.fr/geo/zonage"},
         {"name": "Sandre/ouvrages", "url": "http://services.sandre.eaufrance.fr/geo/ouvrage"},
         {"name": "Sandre/stations", "url": "http://services.sandre.eaufrance.fr/geo/stations"},
         {"name": "BRGM/géologie", "url": "http://geoservices.brgm.fr/geologie"},
         {"name": "BRGM/risques", "url": "http://geoservices.brgm.fr/risques"},
-        {"name": "Cartorisque35, risques naturels", "url": "http://cartorisque.prim.net/wms/35"},
-        {"name": "Cartorisque22, risques naturels", "url": "http://cartorisque.prim.net/wms/22"},
-        {"name": "Cartorisque29, risques naturels", "url": "http://cartorisque.prim.net/wms/29"},
-        {"name": "Cartorisque56, risques naturels", "url": "http://cartorisque.prim.net/wms/56"},
+        {"name": "Cartorisque33, risques naturels", "url": "http://cartorisque.prim.net/wms/33"},
+        {"name": "Cartorisque24, risques naturels", "url": "http://cartorisque.prim.net/wms/24"},
+        {"name": "Cartorisque47, risques naturels", "url": "http://cartorisque.prim.net/wms/47"},
+        {"name": "Cartorisque40, risques naturels", "url": "http://cartorisque.prim.net/wms/40"},
+        {"name": "Cartorisque64, risques naturels", "url": "http://cartorisque.prim.net/wms/64"},
         {"name": "Carmen", "url": "http://ws.carmen.application.developpement-durable.gouv.fr/WFS/10/Nature_Paysage"},
         {"name": "GeoSignal", "url": "http://www.geosignal.org/cgi-bin/wmsmap"},
         {"name": "Corine Land Cover", "url": "http://sd1878-2.sivit.org/geoserver/wms"},
         {"name": "GeoLittoral", "url": "http://geolittoral.application.equipement.gouv.fr/wms/metropole"},
         {"name": "Gest'Eau", "url": "http://gesteau.oieau.fr/service"},
-        {"name": "BMO/OpenStreetMap", "url": "http://bmo.openstreetmap.fr/wms"},
         {"name": "IFREMER/littoral", "url": "http://www.ifremer.fr/services/wms1"},
         {"name": "Cartelie/CETE Ouest", "url": "http://mapserveur.application.developpement-durable.gouv.fr/map/mapserv?map%3D%2Fopt%2Fdata%2Fcarto%2Fcartelie%2Fprod%2FCETE_Ouest%2Fxdtyr36laj.www.map"}
     ],
@@ -367,6 +399,8 @@ GEOR.custom = {
      */
     WFS_SERVERS: [
         {"name": "GeoBretagne", "url": "http://geobretagne.fr/geoserver/wfs"},
+        {"name": "PIGMA - FD Chasse 33", "url": "http://ns383241.ovh.net/geoserver/fdc33/wfs"},
+        {"name": "PIGMA - FD Peche 33", "url": "http://ns383241.ovh.net/geoserver/fdp33/wfs"},
         {"name": "Corine Land Cover", "url": "http://sd1878-2.sivit.org/geoserver/wfs"}
     ]
     
