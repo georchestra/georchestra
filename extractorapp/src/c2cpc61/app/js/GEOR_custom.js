@@ -1,9 +1,14 @@
 /**
- * geOrchestra extractor config file
+ * Sample geOrchestra extractor config file
+ *
+ * Instructions: copy this buffer into GEOR_custom.js,	
+ * uncomment lines you wish to modify and 
+ * modify the corresponding values to suit your needs.
  */
-
+	
 Ext.namespace("GEOR");
 
+	
 GEOR.custom = {
     /**
      * Constant: GEOSERVER_WMS_URL
@@ -76,7 +81,7 @@ GEOR.custom = {
      * The WMS base layer which will be displayed under each extracted layer.
      * Defaults to "geor:countries"
      */
-    BASE_LAYER_NAME: "pigma:baselayer",
+    //BASE_LAYER_NAME: "geor:countries",
 
     /**
      * Constant: DEFAULT_WCS_EXTRACTION_WIDTH
@@ -93,16 +98,14 @@ GEOR.custom = {
      * Constant: SUPPORTED_REPROJECTIONS
      * List of projections that extractor supports for reprojection
      */
-    SUPPORTED_REPROJECTIONS: [
-        ["EPSG:27563", "EPSG:27563 - Lambert Sud France"], 
+    /*SUPPORTED_REPROJECTIONS: [
+        ["EPSG:27562", "EPSG:27562 - Lambert II carto"], 
         ["EPSG:27572", "EPSG:27572 - Lambert II étendu"],
         ["EPSG:2154", "EPSG:2154 - Lambert 93"],
-        ["EPSG:3943", "EPSG:3943 - Lambert-93 CC43"],
-        ["EPSG:3944", "EPSG:3944 - Lambert-93 CC44"],
-        ["EPSG:3945", "EPSG:3945 - Lambert-93 CC45"],
+        ["EPSG:3948", "EPSG:3948 - Lambert-93 CC48"],
         ["EPSG:4171", "EPSG:4171 - RGF93"],
         ["EPSG:4326", "EPSG:4326 - WGS84"]
-    ],
+    ],*/
 
     /**
      * Constant: EXTRACT_BTN_DISABLE_TIME
@@ -145,7 +148,25 @@ GEOR.custom = {
      * Constant: STARTUP_LAYERS
      * {Array} OGC layers loaded at startup if none are sent
      */
-    STARTUP_LAYERS: [],
+    STARTUP_LAYERS: [
+        {
+            layername: "voies",
+            owstype: "WFS",
+            owsurl: "http://bmo.openstreetmap.fr/ows"
+        },{
+            owstype: "WMS",
+            owsurl: "http://geolittoral.application.equipement.gouv.fr/wms/metropole",
+            layername: "Sentiers_littoraux"
+        },{
+            owstype: "WMS",
+            owsurl: "http://sd1878-2.sivit.org/geoserver/wms",
+            layername: "topp:RCLC90_L2E"
+        },{
+            owstype: "WMS",
+            owsurl: "http://geoservices.brgm.fr/risques",
+            layername: "BASIAS_LOCALISE"
+        }
+    ],
     
     /**
      * Constant: STARTUP_SERVICES
@@ -153,22 +174,26 @@ GEOR.custom = {
      */
     STARTUP_SERVICES: [
         {
-            text: "PIGMA",
-            owstype: "WMS",
-            owsurl: "http://ns383241.ovh.net/geoserver/wms"
-        }, {
             text: "BRGM Risques",
             owstype: "WMS",
             owsurl: "http://geoservices.brgm.fr/risques"
+        },{
+            text: "Gest'eau",
+            owstype: "WMS",
+            owsurl: "http://gesteau.oieau.fr/service"
+        },{
+            text: "BMO/OSM",
+            owstype: "WFS",
+            owsurl: "http://bmo.openstreetmap.fr/ows"
         }
     ],
-    
+        
     /**
      * Constant: HELP_URL
      * {String} URL of the help ressource.
      * Defaults to "/doc/html/documentation.html#extractor"
      */
-    HELP_URL: "/doc/html/documentation.html#extractor"
+    //HELP_URL: "/doc/html/documentation.html#extractor"
     
     // No trailing comma for the last line (or IE will complain)
 };

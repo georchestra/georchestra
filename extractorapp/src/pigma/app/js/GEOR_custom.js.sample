@@ -47,38 +47,31 @@ GEOR.custom = {
      * SRS of the map used to select the global extraction parameters
      */
     //GLOBAL_EPSG: "EPSG:4326",
-    
-    /**
-     * Constant: MAP_SRS
-     * {String} The default map SRS code.
-     * Defaults to EPSG:2154
-     */
-    //MAP_SRS: "EPSG:2154",
 
     /**
      * Constant: MAP_XMIN aka "left"
-     * {Float} The max extent xmin in MAP_SRS coordinates.
+     * {Float} The max extent xmin in GLOBAL_EPSG coordinates.
      * Defaults to -180
      */
     //MAP_XMIN: -180,
 
     /**
      * Constant: MAP_YMIN aka "bottom"
-     * {Float} The max extent ymin in MAP_SRS coordinates.
+     * {Float} The max extent ymin in GLOBAL_EPSG coordinates.
      * Defaults to -90
      */
     //MAP_YMIN: -90,
 
     /**
      * Constant: MAP_XMAX aka "right"
-     * {Float} The max extent xmax in MAP_SRS coordinates.
+     * {Float} The max extent xmax in GLOBAL_EPSG coordinates.
      * Defaults to 180
      */
     //MAP_XMAX: 180,
 
     /**
      * Constant: MAP_YSMAX aka "top"
-     * {Float} The max extent ymax in MAP_SRS coordinates
+     * {Float} The max extent ymax in GLOBAL_EPSG coordinates
      * Defaults to 90
      */
     //MAP_YMAX: 90,
