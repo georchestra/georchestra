@@ -110,10 +110,12 @@ GEOR.workspace = (function() {
             height: 120,
             closeAction: 'close',
             plain: true,
+            //defaultButton: 'geor-workspace-save',
             items: [{
                 xtype: 'form',
                 bodyStyle: 'padding:5px',
                 labelWidth: 80,
+                labelSeparator: ' : ',
                 monitorValid: true,
                 buttonAlign: 'right',
                 items: [{
@@ -122,13 +124,14 @@ GEOR.workspace = (function() {
                     width: 200,
                     fieldLabel: "Nom",
                     allowBlank: false,
-                    blankText: "Un nom du fichier est nécessaire."
+                    blankText: "Un nom de fichier est nécessaire."
                 }],
                 buttons: [{
                     text: "Annuler",
                     handler: cancelBtnHandler
                 },{
                     text: "Sauvegarder",
+                    //id: 'geor-workspace-save',
                     handler: saveBtnHandler,
                     formBind: true
                 }]
