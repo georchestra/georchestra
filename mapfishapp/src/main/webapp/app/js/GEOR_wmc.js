@@ -72,6 +72,11 @@ GEOR.wmc = (function() {
             if(layer instanceof OpenLayers.Layer.WMS) {
 
                 var layerContext = wmcFormat.layerToContext(layer);
+                // only the first metadataURL can be saved to WMC:
+                // see http://csm-bretagne.fr/redmine/issues/2091
+                if (layerContext.metadataURL && layerContext.metadataURL[0]) {
+                    layerContext.metadataURL = layerContext.metadataURL[0];
+                }
                 var queryable = record.get('queryable');
                 var styles = record.get('styles');
                 var formats = record.get('formats');
@@ -147,7 +152,7 @@ GEOR.wmc = (function() {
          * Write a wmc string given the layer store.
          *
          * Parameters:
-         * options - {Object} Optionnal object to pass to wmc format write method
+         * options - {Object} Optional object to pass to wmc format write method
          *
          * Returns:
          * {String} The WMC string.
