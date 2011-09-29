@@ -118,11 +118,13 @@ if(sec_roles != null) {
             <li><a href="/geoserver/web/">services</a></li>
             <li><a href="/phpldapadmin">utilisateurs</a></li>
         </ul>
+        <!-- this won't work => we just need to include a mapfishapp/?login link if not logged / else display the username
         <form method="post" action="/cas/login?service=%2Fj_spring_cas_security_check">
             <input name="username" placeholder="nom d’utilisateur"/>
-            <input name="password" placeholder="mot de passe"/>
+            <input name="password" type="password" placeholder="mot de passe"/>
             <button name="submit" value="LOGIN" type="submit">connection</button>
         </form>
+        -->
     </div>
     </c:when>
 </c:choose>
