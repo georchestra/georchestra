@@ -254,7 +254,7 @@ GEOR.cswbrowser = (function() {
                 PropertyName: GEOR.config.CSW_GETDOMAIN_PROPERTY
             }),
             success: function(response) {
-                var r = getDomainFormat.read(response.responseText);
+                var r = getDomainFormat.read(response.responseXML || response.responseText);
                 Ext.each(r.DomainValues[0].ListOfValues, function (item) {
                     appendKeyword(tree, item.Value.value);
                 }, this);

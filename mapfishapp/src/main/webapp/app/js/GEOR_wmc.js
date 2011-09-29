@@ -173,7 +173,7 @@ GEOR.wmc = (function() {
          * Restore the layer store from a wmc string.
          *
          * Parameters:
-         * wmcString - {String} The WMC string describing the context to restore.
+         * wmcString - {XML | String} The XML|string describing the context to restore.
          * resetMap - {Boolean} Specifies if the map and the fake base layer must
                       be reset.
          */

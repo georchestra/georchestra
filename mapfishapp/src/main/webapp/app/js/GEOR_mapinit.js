@@ -79,7 +79,7 @@ GEOR.mapinit = (function() {
                 // GEOR.ajaxglobal.init has not run yet:
                 GEOR.waiter.hide();
                 try {
-                    GEOR.wmc.read(response.responseText, options.resetMap || true);
+                    GEOR.wmc.read(response.responseXML || response.responseText, options.resetMap || true);
                     options.success && options.success.call(this);
                     // and finally we're running our global success callback:
                     cb.call();

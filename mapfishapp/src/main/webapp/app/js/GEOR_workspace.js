@@ -71,7 +71,7 @@ GEOR.workspace = (function() {
                     url: o.filepath, 
                     success: function(response) {
                         try {
-                            GEOR.wmc.read(response.responseText);
+                            GEOR.wmc.read(response.responseXML || response.responseText);
                         } catch(err) {
                             GEOR.util.errorDialog({
                                 msg: "Le contexte n'est pas valide."
