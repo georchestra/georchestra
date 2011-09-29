@@ -126,6 +126,26 @@ if(sec_roles != null) {
         </form>
         -->
     </div>
+    <script>
+        (function(){
+            if (!window.addEventListener || !document.querySelectorAll) return;
+            var each = function(els, callback) {
+                for (var i = 0, l=els.length ; i<l ; i++) {
+                    callback(els[i]);
+                }
+            }
+            each(document.querySelectorAll('#go_head li a'), function(li){
+                li.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    each(
+                        document.querySelectorAll('#go_head li'),
+                        function(l){ l.className = '';}
+                    );
+                    li.parentNode.className = 'active';
+                });
+            });
+        })();
+    </script>
     </c:when>
 </c:choose>
 
