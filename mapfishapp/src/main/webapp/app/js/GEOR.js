@@ -227,28 +227,39 @@ Ext.namespace("GEOR");
             }
         });
 
+        // the header
+        var vpItems = GEOR.header ? 
+            [{
+                region: "north", 
+                height: 90, 
+                contentEl: 'go_head'
+            }] : [];
+        
+        
+        vpItems.push(
+            // the map panel
+            Ext.apply({
+                region: "center"
+            }, GEOR.mappanel.create(layerStore)), {
+            // the east side
+            region: "east",
+            layout: "border",
+            width: 300,
+            minWidth: 280,
+            maxWidth: 500,
+            split: true,
+            collapseMode: "mini",
+            collapsible: true,
+            frame: false,
+            border: false,
+            header: false,
+            items: eastItems
+        }, southPanel);
+            
         // the viewport
         var vp = new Ext.Viewport({
             layout: "border",
-            items: [
-                Ext.apply({region: "center"}, 
-                    GEOR.mappanel.create(layerStore)), 
-                { 
-                    region: "east",
-                    layout: "border",
-                    width: 300,
-                    minWidth: 280,
-                    maxWidth: 500,
-                    split: true,
-                    collapseMode: "mini",
-                    collapsible: true,
-                    frame: false,
-                    border: false,
-                    header: false,
-                    items: eastItems
-                },
-                southPanel
-            ]
+            items: vpItems
         });
 
         /*

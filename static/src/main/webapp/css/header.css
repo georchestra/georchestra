@@ -1,0 +1,130 @@
+html, body {
+    padding     : 0;
+    margin      : 0;
+    background  : #fff;
+}
+#go_head {
+    padding     : 0;
+    margin      : 0;
+    font-family : 'Yanone Kaffeesatz', arial,verdana,helvetica;
+    background  : #fff;
+    height      : 90px;
+}
+#go_home {
+    float  : left;
+    margin : 20px 0 0 10px;
+}
+#go_home img {
+    border : none;
+}
+#go_head ul {
+    float      : left;
+    list-style : none;
+    margin     : 20px 0 0 10px;
+    padding    : 0;
+    font-size  : 18px;
+    display    : inline;
+}
+#go_head li {
+    margin  : 0;
+    padding : 0;
+    display : inline-block;
+}
+#go_head li a {
+    color              : #666;
+    display            : inline-block;
+    background         : #fff;
+    padding            : 0 0.3em;
+    margin             : 0 0.3em;
+    border-bottom      : 1px dotted #ddd;
+    height             : 52px;
+    line-height        : 52px;
+    text-decoration    : none;
+    border-radius      : .3em .3em 0 0;
+    -moz-transition    : background .3s ease-in;
+    -webkit-transition : background .3s ease-in;
+    -o-transition      : background .3s ease-in;
+    transition         : background .3s ease-in;
+    -moz-transition-property    : background,color,border-radius;
+    -webkit-transition-property : background,color,border-radius;
+    -o-transition-property      : background,color,border-radius;
+    transition-property         : background,color,border-radius;
+}
+#go_head li a:hover {
+    background-color : #666;
+    color            : #fff;
+    border-radius    : 0.3em;
+    border-bottom    : none;
+}
+#go_head ul li.active a {
+    background-color : rgb(85,0,106);
+    padding          : 0 0.6em;
+    border-radius    : 0.3em;
+    color            : #fff;
+    border           : 0;
+}
+#go_head form {
+    margin        : 20px 15px 0 0;
+    border        : 1px dotted #ddd;
+    border-radius : 0.3em;
+    padding       : 0.6em;
+    width         : auto;
+    float         : right;
+}
+#go_head input, #go_head button {
+    font-family : 'Yanone Kaffeesatz', arial,verdana,helvetica;
+    display     : inline-block;
+    height      : 1.6em;
+    font-size   : 14px;
+}
+#go_head input {
+    border  : 1px inset #bbb;
+    padding : 0.2em;
+}
+#go_head button {
+    padding          : 0.2em;
+    border-radius    : 0.3em;
+    border           : 1px solid rgb(84, 0, 105);
+    color            : #FFF;
+    height           : 32px;
+    background-color : rgb(85,0,106);
+    background-image : -webkit-gradient(
+        linear,
+        left top,
+        left bottom,
+        color-stop(0.26, rgb(138,80,153)),
+        color-stop(0.59, rgb(84,0,105))
+    );
+    background-image : -moz-linear-gradient(
+        top,
+        rgb(138,80,153) 26%,
+        rgb(84,0,105) 59%
+    );
+}
+#go_head .logged input, #go_head .logged button {
+    visibility : hidden;
+}
+#go_head .logged {
+    position : relative;
+}
+#go_head .logged div {
+    position : absolute;
+    top      : 16px;
+    right    : 10px;
+}
+#go_head .logged a {
+    text-decoration : underline;
+    color           : rgb(84, 0, 105);
+}
+
+/*
+ * Web font by Yanone
+ * http://www.google.com/webfonts/specimen/Yanone+Kaffeesatz
+ * License is SIL Open Font License, 1.1
+ */
+@font-face {
+  font-family: 'Yanone Kaffeesatz';
+  font-style: normal;
+  font-weight: 400;
+  src: url('YanoneKaffeesatz-Regular.woff') format('woff');
+}

@@ -21,6 +21,7 @@
     <module>mif-2.5.8</module>
     <module>cas-server-webapp</module>
     <module>doc</module>
+    <module>static</module>
     <module>embedded-ldap</module>
     <module>epsg-extension</module>
     <module>extractorapp</module>
