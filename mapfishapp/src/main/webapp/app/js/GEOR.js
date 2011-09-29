@@ -329,6 +329,9 @@ Ext.namespace("GEOR");
                     if (GEOR.resultspanel) {
                         GEOR.resultspanel.populate(options);
                     }
+                },
+                "shutdown": function() {
+                    southPanel.collapse();
                 }
             });
         }

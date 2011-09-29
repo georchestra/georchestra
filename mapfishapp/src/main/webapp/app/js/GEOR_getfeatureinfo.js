@@ -43,7 +43,13 @@ GEOR.getfeatureinfo = (function() {
          * Listener arguments:
          * panelCfg - {Object} Config object for a panel 
          */
-        "search"
+        "search",
+        /**
+         * Event: shutdown
+         * Fires when GFI tool is deactivated
+         *
+         */
+        "shutdown"
     );
 
     /**
@@ -232,6 +238,8 @@ GEOR.getfeatureinfo = (function() {
                     if (ctrl.events !== null) {
                         ctrl.deactivate();
                     }
+                    // we need to collapse the south panel.
+                    observable.fireEvent("shutdown");
                 } else {
                     // we asked for gfi on another layer
                 }
