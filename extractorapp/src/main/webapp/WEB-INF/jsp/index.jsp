@@ -63,8 +63,8 @@
         </a>
         <ul>
             <li><a href="/geonetwork/srv/fr/main.home">catalogue</a></li>
-            <li class="active"><a href="#">visualiseur</a></li>
-            <li><a href="/extractorapp/">extracteur</a></li>
+            <li><a href="/mapfishapp/">visualiseur</a></li>
+            <li class="active"><a href="#">extracteur</a></li>
             <li><a href="/geoserver/web/">services</a></li>
             <li><a href="/phpldapadmin">utilisateurs</a></li>
         </ul>
