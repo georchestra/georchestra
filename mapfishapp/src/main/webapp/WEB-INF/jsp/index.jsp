@@ -109,7 +109,7 @@ if(sec_roles != null) {
     <c:when test='<%= request.getParameter("noheader") == null %>'>
     <div id="go_head">
         <a href="#" id="go_home" title="retourner à l’accueil">
-            <img src="/static/img/georchestra_logo.png" alt="geOrchestra" height="50"/>
+            <img src="/static/img/logo.png" alt="geOrchestra" height="50"/>
         </a>
         <ul>
             <li><a href="/geonetwork/srv/fr/main.home">catalogue</a></li>
