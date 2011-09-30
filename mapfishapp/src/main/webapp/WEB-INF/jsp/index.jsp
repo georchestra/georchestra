@@ -136,7 +136,6 @@ if(sec_roles != null) {
             }
             each(document.querySelectorAll('#go_head li a'), function(li){
                 li.addEventListener('click', function(e) {
-                    e.preventDefault();
                     each(
                         document.querySelectorAll('#go_head li'),
                         function(l){ l.className = '';}
