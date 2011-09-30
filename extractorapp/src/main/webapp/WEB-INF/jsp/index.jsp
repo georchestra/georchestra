@@ -29,10 +29,75 @@
         }
     </style>
     <link rel="stylesheet" type="text/css" href="resources/app/css/main.css" />
-    <title lang="fr" dir="ltr">geOrchestra - extracteur</title>
+    <title lang="fr" dir="ltr">Extracteur - geOrchestra</title>
+<c:choose>
+    <c:when test='<%= request.getParameter("noheader") != null %>'>
+    <script type="text/javascript">
+        GEOR = {
+            header: false
+        };
+    </script>
+    </c:when>
+    <c:otherwise>
+    <!-- 
+     * The following resource will be loaded only when geOrchestra's "static" module
+     *  is deployed alongside with mapfishapp
+     *-->
+    <link rel="stylesheet" type="text/css" href="/static/css/header.css" />
+    <script type="text/javascript">
+        GEOR = {
+            header: true
+        };
+    </script>
+    </c:otherwise>
+</c:choose>
 </head>
 
 <body>
+
+<c:choose>
+    <c:when test='<%= request.getParameter("noheader") == null %>'>
+    <div id="go_head">
+        <a href="#" id="go_home" title="retourner à l’accueil">
+            <img src="/static/img/logo.png" alt="geOrchestra" height="50"/>
+        </a>
+        <ul>
+            <li><a href="/geonetwork/srv/fr/main.home">catalogue</a></li>
+            <li class="active"><a href="#">visualiseur</a></li>
+            <li><a href="/extractorapp/">extracteur</a></li>
+            <li><a href="/geoserver/web/">services</a></li>
+            <li><a href="/phpldapadmin">utilisateurs</a></li>
+        </ul>
+        <!-- this won't work => we just need to include a mapfishapp/?login link if not logged / else display the username
+        <form method="post" action="/cas/login?service=%2Fj_spring_cas_security_check">
+            <input name="username" placeholder="nom d’utilisateur"/>
+            <input name="password" type="password" placeholder="mot de passe"/>
+            <button name="submit" value="LOGIN" type="submit">connection</button>
+        </form>
+        -->
+    </div>
+    <script>
+        (function(){
+            if (!window.addEventListener || !document.querySelectorAll) return;
+            var each = function(els, callback) {
+                for (var i = 0, l=els.length ; i<l ; i++) {
+                    callback(els[i]);
+                }
+            }
+            each(document.querySelectorAll('#go_head li a'), function(li){
+                li.addEventListener('click', function(e) {
+                    each(
+                        document.querySelectorAll('#go_head li'),
+                        function(l){ l.className = '';}
+                    );
+                    li.parentNode.className = 'active';
+                });
+            });
+        })();
+    </script>
+    </c:when>
+</c:choose>
+
     <div id="waiter">
         <span>Chargement ...</span>
     </div>

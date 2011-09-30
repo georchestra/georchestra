@@ -100,113 +100,124 @@ Ext.namespace("GEOR");
         /*
          * Create the page's layout.
          */
+        
+        // the header
+        var vpItems = GEOR.header ? 
+            [{
+                xtype: "box",
+                region: "north", 
+                height: 90,
+                el: "go_head"
+            }] : [];
 
-        // the viewport
-        new Ext.Viewport({
+        vpItems.push({
+            region: "center",
+            layout: "border",
+            id: 'layerconfig',
+            title: "Paramètres d'extraction appliqués par défaut à toutes les couches du panier",
+            iconCls: 'config-layers',
+            defaults: {
+                defaults: {
+                    border: false
+                },
+                border: false
+            },
+            items: [
+                GEOR.layeroptions.create(map, {
+                    region: "north",
+                    vectorLayer: vectorLayer,
+                    height: 105
+                }),
+                {
+                    region: "center",
+                    xtype: "gx_mappanel",
+                    id: "mappanel",
+                    map: map,
+                    tbar: GEOR.toolbar.create(map)
+                }
+            ]
+        }, {
+            region: "west",
+            border: false,
+            width: 300,
+            minWidth: 300,
+            maxWidth: 500,
+            split: true,
+            collapseMode: 'mini',
             layout: "border",
             items: [{
-                region: "center",
-                layout: "border",
-                id: 'layerconfig',
-                title: "Paramètres d'extraction appliqués par défaut à toutes les couches du panier",
-                iconCls: 'config-layers',
+                region: "north",
+                html: ["Configurez les paramètres généraux de votre extraction en utilisant le panneau ci-contre à droite (affiché en sélectionnant 'Paramètres par défaut').", "Vous pouvez ensuite lancer l'extraction en cliquant sur le bouton 'Extraire les couches cochées'.", "Si vous souhaitez préciser des paramètres d'extraction spécifiques pour une couche donnée, sélectionnez la dans l'arbre ci-dessous."].join('<br/><br/>'),
+                bodyCssClass: 'paneltext',
+                height: 170,
+                autoScroll: true,
+                title: 'Extracteur',
+                iconCls: 'home',
+                collapsible: true,
+                split: true
+            }, {
+                xtype: 'tabpanel',
+                activeTab: 0,
+                region: 'center',
                 defaults: {
                     defaults: {
                         border: false
                     },
                     border: false
-                },
-                items: [
-                    GEOR.layeroptions.create(map, {
-                        region: "north",
-                        vectorLayer: vectorLayer,
-                        height: 105
-                    }),
-                    {
-                        region: "center",
-                        xtype: "gx_mappanel",
-                        id: "mappanel",
-                        map: map,
-                        tbar: GEOR.toolbar.create(map)
-                    }
-                ]
-            }, {
-                region: "west",
-                border: false,
-                width: 300,
-                minWidth: 300,
-                maxWidth: 500,
-                split: true,
-                collapseMode: 'mini',
-                layout: "border",
+                },                    
                 items: [{
-                    region: "north",
-                    html: ["Configurez les paramètres généraux de votre extraction en utilisant le panneau ci-contre à droite (affiché en sélectionnant 'Paramètres par défaut').", "Vous pouvez ensuite lancer l'extraction en cliquant sur le bouton 'Extraire les couches cochées'.", "Si vous souhaitez préciser des paramètres d'extraction spécifiques pour une couche donnée, sélectionnez la dans l'arbre ci-dessous."].join('<br/><br/>'),
-                    bodyCssClass: 'paneltext',
-                    height: 170,
-                    autoScroll: true,
-                    title: 'Extracteur',
-                    iconCls: 'home',
-                    collapsible: true,
-                    split: true
-                }, {
-                    xtype: 'tabpanel',
-                    activeTab: 0,
-                    region: 'center',
-                    defaults: {
-                        defaults: {
-                            border: false
-                        },
-                        border: false
-                    },                    
-                    items: [{
-                        layout: "fit",
-                        title: "Configuration",
-                        items: GEOR.layerstree.create(),
-                        bbar: [ '->',
-                            {
-                                id: "geor-btn-extract-id",
-                                text: "Extraire les couches cochées",
-                                iconCls: "geor-btn-extract",
-                                handler: function() {
-                                    if (GEOR.layerstree.getSelectedLayersCount() > 0) {
-                                        extractHandler(this);
-                                    } else {
-                                        var dialog = Ext.Msg.confirm('Aucune couche dans le panier', 
-                                        "Vous n'avez pas sélectionné de couche pour l'extraction. Tout extraire ?", function(btn, text){
-                                            if (btn == 'yes'){
-                                                GEOR.layerstree.selectAllLayers();
-                                                extractHandler(this);
-                                            } else {
-                                                dialog.hide();
-                                            }
-                                        }, this);
-                                    }
+                    layout: "fit",
+                    title: "Configuration",
+                    items: GEOR.layerstree.create(),
+                    bbar: [ '->',
+                        {
+                            id: "geor-btn-extract-id",
+                            text: "Extraire les couches cochées",
+                            iconCls: "geor-btn-extract",
+                            handler: function() {
+                                if (GEOR.layerstree.getSelectedLayersCount() > 0) {
+                                    extractHandler(this);
+                                } else {
+                                    var dialog = Ext.Msg.confirm('Aucune couche dans le panier', 
+                                    "Vous n'avez pas sélectionné de couche pour l'extraction. Tout extraire ?", function(btn, text){
+                                        if (btn == 'yes'){
+                                            GEOR.layerstree.selectAllLayers();
+                                            extractHandler(this);
+                                        } else {
+                                            dialog.hide();
+                                        }
+                                    }, this);
                                 }
                             }
-                        ]
-                    }, {
-                        layout:"border",
-                        title: "Recentrage",
-                        defaults: {
-                            border: false
-                        },
-                        items: [
-                            Ext.apply({
-                                height: 150,
-                                region: 'north'
-                            }, GEOR.referentials.create(map, "geob_loc")),
-                            {
-                                xtype: 'container',
-                                autoEl: 'div',
-                                cls: 'x-panel-body x-panel-body-noborder',
-                                html: ' ',
-                                region: 'center'
-                            }
-                        ]
-                    }]
+                        }
+                    ]
+                }, {
+                    layout:"border",
+                    title: "Recentrage",
+                    defaults: {
+                        border: false
+                    },
+                    items: [
+                        Ext.apply({
+                            height: 150,
+                            region: 'north'
+                        }, GEOR.referentials.create(map, "geob_loc")),
+                        {
+                            xtype: 'container',
+                            autoEl: 'div',
+                            cls: 'x-panel-body x-panel-body-noborder',
+                            html: ' ',
+                            region: 'center'
+                        }
+                    ]
                 }]
             }]
+        });    
+        
+        // the viewport
+        new Ext.Viewport({
+            layout: "border",
+            items: vpItems
         });
         
         var saveLayerOptions = function() {
