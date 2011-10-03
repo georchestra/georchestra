@@ -107,23 +107,23 @@ GEOR.toolbar = (function() {
                 }
             }
         });
-        items.push("-");
-
-        // insert a login or logout link in the toolbar
-        items.push(
-            Ext.DomHelper.append(Ext.getBody(), 
-                GEOR.data.anonymous ?
-                    '<div class="login"><a href="' + GEOR.config.LOGIN_URL +
-                    '" class="nounderline" onclick="return GEOR.toolbar.confirmLogin()">'+
-                    'Connexion</a></div>' :
-                    '<div class="login">'+GEOR.data.username + 
-                    '&nbsp;<a href="' + GEOR.config.LOGOUT_URL +
-                    '" class="nounderline">déconnexion</a></div>'
-            )
-        );
-
+            
+        if (GEOR.header === false) {
+            items.push("-");
+            // insert a login or logout link in the toolbar
+            items.push(
+                Ext.DomHelper.append(Ext.getBody(), 
+                    GEOR.data.anonymous ?
+                        '<div class="login"><a href="' + GEOR.config.LOGIN_URL +
+                        '" class="nounderline" onclick="return GEOR.toolbar.confirmLogin()">'+
+                        'Connexion</a></div>' :
+                        '<div class="login">'+GEOR.data.username + 
+                        '&nbsp;<a href="' + GEOR.config.LOGOUT_URL +
+                        '" class="nounderline">déconnexion</a></div>'
+                )
+            );
+        }
         
-
         return items;
     };
 

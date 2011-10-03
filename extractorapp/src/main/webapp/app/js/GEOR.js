@@ -105,6 +105,7 @@ Ext.namespace("GEOR");
         var vpItems = GEOR.header ? 
             [{
                 xtype: "box",
+                id: "geor_header",
                 region: "north", 
                 height: 90,
                 el: "go_head"

@@ -63,13 +63,18 @@ html, body {
     color            : #fff;
     border           : 0;
 }
-#go_head form {
+#go_head .logged {
     margin        : 20px 15px 0 0;
     border        : 1px dotted #ddd;
     border-radius : 0.3em;
-    padding       : 0.6em;
+    padding       : 0 0.6em;
     width         : auto;
     float         : right;
+	height        : 52px;
+    line-height   : 52px;
+}
+#go_head .logged span{
+	color: #ddd;
 }
 #go_head input, #go_head button {
     font-family : 'Yanone Kaffeesatz', arial,verdana,helvetica;

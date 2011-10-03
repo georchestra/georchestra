@@ -238,17 +238,18 @@ GEOR.toolbar = (function() {
 
         items.push('->');
 
-        // insert a login or logout link in the toolbar
-        var login_html = '<div style="margin-right:1em;font:11px tahoma,verdana,helvetica;"><a href="' + GEOR.config.LOGIN_URL +
-            '" style="text-decoration:none;" onclick="return GEOR.toolbar.confirmLogin()">Connexion</a></div>';
-        if(!GEOR.config.ANONYMOUS) {
-            login_html = '<div style="margin-right:1em;font:11px tahoma,verdana,helvetica;">'+GEOR.config.USERNAME + '&nbsp;<a href="' + GEOR.config.LOGOUT_URL +
-                '" style="text-decoration:none;">déconnexion</a></div>';
+        if (GEOR.header === false) {
+            // insert a login or logout link in the toolbar
+            var login_html = '<div style="margin-right:1em;font:11px tahoma,verdana,helvetica;"><a href="' + GEOR.config.LOGIN_URL +
+                '" style="text-decoration:none;" onclick="return GEOR.toolbar.confirmLogin()">Connexion</a></div>';
+            if(!GEOR.config.ANONYMOUS) {
+                login_html = '<div style="margin-right:1em;font:11px tahoma,verdana,helvetica;">'+GEOR.config.USERNAME + '&nbsp;<a href="' + GEOR.config.LOGOUT_URL +
+                    '" style="text-decoration:none;">déconnexion</a></div>';
+            }
+            items.push(Ext.DomHelper.append(Ext.getBody(), login_html));
+            items.push('-');
         }
-        items.push(Ext.DomHelper.append(Ext.getBody(), login_html));
-
-        items.push('-');
-
+    
         items.push({
             text: "Aide",
             tooltip: "Afficher l'aide",

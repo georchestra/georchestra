@@ -3,6 +3,7 @@
 <%@ page pageEncoding="UTF-8"%>
 <%@ page isELIgnored="false" %>
 <%
+Boolean anonymous = true;
 Boolean admin = false;
 Boolean editor = false;
 String sec_roles = request.getHeader("sec-roles");
@@ -14,6 +15,10 @@ if(sec_roles != null) {
         }
         if (roles[i].equals("ROLE_SV_EDITOR") || roles[i].equals("ROLE_SV_REVIEWER") || roles[i].equals("ROLE_SV_ADMIN")) {
             editor = true;
+            anonymous = false;
+        }
+        if (roles[i].equals("ROLE_SV_USER")) {
+            anonymous = false;
         }
     }
 }
@@ -54,6 +59,16 @@ if(sec_roles != null) {
             margin: 0;
             padding: 0;
             display: inline-block;
+        }
+        #go_head .logged {
+            margin        : 20px 15px 0 0;
+            border        : 1px dotted #ddd;
+            border-radius : 0.3em;
+            padding       : 0 0.6em;
+            width         : auto;
+            float         : right;
+            height        : 52px;
+            line-height   : 52px;
         }
     </style>
     <link rel="stylesheet" type="text/css" href="resources/app/css/main.css" />
@@ -105,13 +120,18 @@ if(sec_roles != null) {
             </c:when>
         </c:choose>
         </ul>
-        <!-- this won't work => we just need to include a mapfishapp/?login link if not logged / else display the username
-        <form method="post" action="/cas/login?service=%2Fj_spring_cas_security_check">
-            <input name="username" placeholder="nom d’utilisateur"/>
-            <input name="password" type="password" placeholder="mot de passe"/>
-            <button name="submit" value="LOGIN" type="submit">connection</button>
-        </form>
-        -->
+    <c:choose>
+        <c:when test='<%= anonymous == false %>'>
+        <p class="logged">
+            <%=request.getHeader("sec-username") %><span> | </span><a href="/j_spring_security_logout">déconnexion</a>
+        </p>
+        </c:when>
+        <c:otherwise>
+        <p class="logged">
+            <a href="?login">connexion</a>
+        </p>
+        </c:otherwise>
+    </c:choose>
     </div>
     <script>
         (function(){
@@ -225,13 +245,6 @@ if(sec_roles != null) {
     </script>
         </c:when>
     </c:choose>
-    <%
-    String roles = request.getHeader("sec-roles");
-    Boolean anonymous = false;
-    if((roles == null) || roles.equals("ROLE_ANONYMOUS")) {
-        anonymous = true;
-    }
-    %>
     <c:choose>
         <c:when test='<%= anonymous == false %>'>
     <script type="text/javascript">
