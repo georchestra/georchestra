@@ -416,8 +416,7 @@ GEOR.custom = {
         {"name": "Corine Land Cover", "url": "http://sd1878-2.sivit.org/geoserver/wms"},
         {"name": "GeoLittoral", "url": "http://geolittoral.application.equipement.gouv.fr/wms/metropole"},
         {"name": "Gest'Eau", "url": "http://gesteau.oieau.fr/service"},
-        {"name": "IFREMER/littoral", "url": "http://www.ifremer.fr/services/wms1"},
-        {"name": "Cartelie/CETE Ouest", "url": "http://mapserveur.application.developpement-durable.gouv.fr/map/mapserv?map%3D%2Fopt%2Fdata%2Fcarto%2Fcartelie%2Fprod%2FCETE_Ouest%2Fxdtyr36laj.www.map"}
+        {"name": "IFREMER/littoral", "url": "http://www.ifremer.fr/services/wms1"}
     ],
     
     /**
