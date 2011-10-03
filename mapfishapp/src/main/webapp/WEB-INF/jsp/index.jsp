@@ -135,10 +135,24 @@ if(sec_roles != null) {
         </a>
         <ul>
             <li><a href="/geonetwork/srv/fr/main.home">catalogue</a></li>
+        <c:choose>
+            <c:when test='${c.edit != null}'>
+            <li><a href="/mapfishapp">visualiseur</a></li>
+            </c:when>
+            <c:otherwise>
             <li class="active"><a href="#">visualiseur</a></li>
+            </c:otherwise>
+        </c:choose>
         <c:choose>
             <c:when test='<%= editor == true %>'>
+                <c:choose>
+                    <c:when test='${c.edit != null}'>
+            <li class="active"><a href="#">éditeur</a></li>
+                    </c:when>
+                    <c:otherwise>
             <li><a href="/mapfishapp/edit">éditeur</a></li>
+                    </c:otherwise>
+                </c:choose>
             </c:when>
         </c:choose>
             <li><a href="/extractorapp/">extracteur</a></li>
