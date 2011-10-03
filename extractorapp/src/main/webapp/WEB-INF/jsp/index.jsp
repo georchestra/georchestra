@@ -2,7 +2,22 @@
 <%@ page contentType="text/html"%>
 <%@ page pageEncoding="UTF-8"%>
 <%@ page isELIgnored="false" %>
-
+<%
+Boolean admin = false;
+String sec_roles = request.getHeader("sec-roles");
+if(sec_roles != null) {
+    String[] roles = sec_roles.split(",");
+    for (int i = 0; i < roles.length; i++) {
+        if(roles[i].equals("ROLE_ANONYMOUS")) {
+            // default is anonymous already
+            break;
+        }
+        if (roles[i].equals("ROLE_SV_ADMIN")) {
+            admin = true;
+        }
+    }
+}
+%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="fr" xml:lang="fr">
@@ -64,9 +79,14 @@
         <ul>
             <li><a href="/geonetwork/srv/fr/main.home">catalogue</a></li>
             <li><a href="/mapfishapp/">visualiseur</a></li>
+            <!--<li><a href="/mapfishapp/edit">éditeur</a></li>-->
             <li class="active"><a href="#">extracteur</a></li>
             <li><a href="/geoserver/web/">services</a></li>
+        <c:choose>
+            <c:when test='<%= admin == true %>'>
             <li><a href="/phpldapadmin">utilisateurs</a></li>
+            </c:when>
+        </c:choose>
         </ul>
         <!-- this won't work => we just need to include a mapfishapp/?login link if not logged / else display the username
         <form method="post" action="/cas/login?service=%2Fj_spring_cas_security_check">
