@@ -42,6 +42,19 @@ if(sec_roles != null) {
         #loading-msg {
             font: normal 12px arial,tahoma,sans-serif;
         }
+        #go_head ul {
+            float: left;
+            list-style: none;
+            margin: 20px 0 0 10px;
+            padding: 0;
+            font-size: 18px;
+            display: inline;
+        }
+        #go_head li {
+            margin: 0;
+            padding: 0;
+            display: inline-block;
+        }
     </style>
     <link rel="stylesheet" type="text/css" href="resources/app/css/main.css" />
     <title lang="fr" dir="ltr">Extracteur - geOrchestra</title>
