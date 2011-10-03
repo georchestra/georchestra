@@ -77,7 +77,15 @@ GEOR.custom = {
      * Defaults to "geor:countries"
      */
     BASE_LAYER_NAME: "pigma:baselayer",
-
+        
+    /**
+     * Constant: NS_LOC
+     * {String} The referentials layers' namespace alias as defined in
+     *    the GeoServer configuration.
+     * Defaults to "geor_loc"
+     */
+    NS_LOC: "pigma_loc",
+        
     /**
      * Constant: DEFAULT_WCS_EXTRACTION_WIDTH
      * Default width of the extracted image from WCS. This constant
@@ -155,11 +163,7 @@ GEOR.custom = {
         {
             text: "PIGMA",
             owstype: "WMS",
-            owsurl: "http://ns383241.ovh.net/geoserver/wms"
-        }, {
-            text: "BRGM Risques",
-            owstype: "WMS",
-            owsurl: "http://geoservices.brgm.fr/risques"
+            owsurl: "http://ns383241.ovh.net/geoserver/pigma/wms"
         }
     ],
     

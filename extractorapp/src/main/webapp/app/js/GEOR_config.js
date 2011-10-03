@@ -271,6 +271,14 @@ GEOR.config = (function() {
          */
         BASE_LAYER_NAME: getCustomParameter("BASE_LAYER_NAME",
             "geor:countries"),
+        
+        /**
+         * Constant: NS_LOC
+         * {String} The referentials layers' namespace alias as defined in
+         *    the GeoServer configuration.
+         * Defaults to "geor_loc"
+         */
+        NS_LOC: getCustomParameter("NS_LOC", "geor_loc"),
 
         /**
          * Constant: DEFAULT_WCS_EXTRACTION_WIDTH

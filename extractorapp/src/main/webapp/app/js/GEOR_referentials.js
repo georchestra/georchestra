@@ -48,10 +48,10 @@ GEOR.referentials = (function() {
     var map = null;
     
     /*
-     * Property: namespace
-     * {String} the GeoServer namespace with localization layers
+     * Property: nsalias
+     * {String} the GeoServer namespace alias with localization layers
      */
-    var namespace = null;
+    var nsalias = null;
     
     /*
      * Property: buffer
@@ -148,7 +148,7 @@ GEOR.referentials = (function() {
             
             var attStore = GEOR.ows.WFSDescribeFeatureType({
                 owsURL: protocol.url,
-                typeName: namespace + ':' + record.get('name')
+                typeName: nsalias + ':' + record.get('name')
             }, {
                 "success": function() {
                     // create new formPanel with search combo
@@ -195,7 +195,7 @@ GEOR.referentials = (function() {
                 }
             },
             vendorParams: {
-                namespace: namespace
+                namespace: nsalias
             }
         });
     
@@ -481,14 +481,14 @@ GEOR.referentials = (function() {
          *
          * Parameters:
          * m - {Openlayers.Map} The map object
-         * ns - {String} The GeoServer namespace for localisation layers.
          *
          * Returns:
          * {Ext.FormPanel} recenter panel config 
          */
-        create: function(m, ns) {
+        create: function(m) {
         	map = m;
-            namespace = ns;
+            // the GeoServer namespace alias for localisation layers:
+            nsalias = GEOR.config.NS_LOC;
             buffer = GEOR.config.DEFAULT_BUFFER_VALUE;
             var labelWidth = 85;
             

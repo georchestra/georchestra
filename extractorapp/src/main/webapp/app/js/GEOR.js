@@ -201,7 +201,7 @@ Ext.namespace("GEOR");
                         Ext.apply({
                             height: 150,
                             region: 'north'
-                        }, GEOR.referentials.create(map, "geob_loc")),
+                        }, GEOR.referentials.create(map)),
                         {
                             xtype: 'container',
                             autoEl: 'div',
