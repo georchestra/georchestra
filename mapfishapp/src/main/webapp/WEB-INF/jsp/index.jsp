@@ -14,21 +14,16 @@ if(sec_roles != null) {
     String[] roles = sec_roles.split(",");
     String[] js_roles_array = new String[roles.length];
     for (int i = 0; i < roles.length; i++) {
-        if(roles[i].equals("ROLE_ANONYMOUS")) {
-            // default is anonymous already
-            break;
-        }
         if (roles[i].equals("ROLE_SV_ADMIN")) {
             admin = true;
         }
         if (roles[i].equals("ROLE_SV_EDITOR") || roles[i].equals("ROLE_SV_REVIEWER") || roles[i].equals("ROLE_SV_ADMIN")) {
-            anonymous = false;
             editor = true;
-        }
-        else {
             anonymous = false;
         }
-        // this array does not have the ROLE_ANONYMOUS value
+        if (roles[i].equals("ROLE_SV_USER")) {
+            anonymous = false;
+        }
         js_roles_array[i] = "'"+roles[i]+"'";
     }
     js_roles = StringUtils.join(js_roles_array, ", ");
@@ -118,7 +113,11 @@ if(sec_roles != null) {
         <ul>
             <li><a href="/geonetwork/srv/fr/main.home">catalogue</a></li>
             <li class="active"><a href="#">visualiseur</a></li>
-            <!--<li><a href="/mapfishapp/edit">éditeur</a></li>-->
+        <c:choose>
+            <c:when test='<%= editor == true %>'>
+            <li><a href="/mapfishapp/edit">éditeur</a></li>
+            </c:when>
+        </c:choose>
             <li><a href="/extractorapp/">extracteur</a></li>
             <li><a href="/geoserver/web/">services</a></li>
         <c:choose>

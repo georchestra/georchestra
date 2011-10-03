@@ -4,16 +4,16 @@
 <%@ page isELIgnored="false" %>
 <%
 Boolean admin = false;
+Boolean editor = false;
 String sec_roles = request.getHeader("sec-roles");
 if(sec_roles != null) {
     String[] roles = sec_roles.split(",");
     for (int i = 0; i < roles.length; i++) {
-        if(roles[i].equals("ROLE_ANONYMOUS")) {
-            // default is anonymous already
-            break;
-        }
         if (roles[i].equals("ROLE_SV_ADMIN")) {
             admin = true;
+        }
+        if (roles[i].equals("ROLE_SV_EDITOR") || roles[i].equals("ROLE_SV_REVIEWER") || roles[i].equals("ROLE_SV_ADMIN")) {
+            editor = true;
         }
     }
 }
@@ -79,7 +79,11 @@ if(sec_roles != null) {
         <ul>
             <li><a href="/geonetwork/srv/fr/main.home">catalogue</a></li>
             <li><a href="/mapfishapp/">visualiseur</a></li>
-            <!--<li><a href="/mapfishapp/edit">éditeur</a></li>-->
+        <c:choose>
+            <c:when test='<%= editor == true %>'>
+            <li><a href="/mapfishapp/edit">éditeur</a></li>
+            </c:when>
+        </c:choose>
             <li class="active"><a href="#">extracteur</a></li>
             <li><a href="/geoserver/web/">services</a></li>
         <c:choose>
