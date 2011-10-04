@@ -74,7 +74,7 @@ GEOR.ows = (function() {
      * Constant: attributeStoreFields
      * {Array} The fields shared by each attributeStore record in this app.
      */
-    var attributeStoreFields = ["name", "type", "restriction", "nillable"];
+    var attributeStoreFields = ["name", "type", "restriction", {name:"nillable", type: "boolean"}];
     // Note: a NOT NULL clause for a field in postgresql db is translated by GeoServer 1.7.x into 
     //  <xsd:element maxOccurs="1" minOccurs="1" name="nom" nillable="true" type="xsd:string"/>
     // while in GeoServer 2.x, it leads to the correct xsd:
