@@ -3,12 +3,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <wicket:head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-	<title wicket:id="pageTitle">GeoServer</title>
+	<title wicket:id="pageTitle">GeoServer - geOrchestra</title>
     <link href="#" rel="shortcut icon" wicket:id="faviconLink"/>
 	<wicket:link>
       <link rel="stylesheet" href="css/blueprint/screen.css" type="text/css" media="screen, projection" />
       <link rel="stylesheet" href="css/blueprint/print.css" type="text/css" media="print" /> 
 	  <link rel="stylesheet" href="css/geoserver.css" type="text/css" media="screen, projection" />
+      <link rel="stylesheet" href="/static/css/header.css" type="text/css" media="screen, projection" />
       <!--[if IE]>
         <link rel="stylesheet" href="css/blueprint/ie.css" type="text/css" media="screen, projection" />
 	    <link rel="stylesheet" href="css/geoserver-ie.css" type="text/css" media="screen, projection" />
@@ -18,7 +19,8 @@
 	</wicket:link>
 </wicket:head>
 <body>
-  <div id="header">
+<!--
+  <div id="header" >
     <div class="wrap">
       <h2><a wicket:id="home" class="pngfix" href="#"><span wicket:id="label">GeoServer 2.0</span></a></h2>
       <div class="button-group selfclear">
@@ -30,8 +32,49 @@
         <span class="username"><wicket:message key="loggedInAs">Logged in as</wicket:message> <span wicket:id="username">User von Testenheimer</span></span>.
       </div>
       </div>
-    </div><!-- /.wrap -->
-  </div><!-- /#header -->
+    </div>
+  </div>
+-->
+
+    <div id="go_head">
+        <a href="#" id="go_home" title="retourner à l’accueil">
+            <img src="/static/img/logo.png" alt="geOrchestra" height="50"/>
+        </a>
+        <ul>
+            <li><a href="/geonetwork/srv/fr/main.home">catalogue</a></li>
+            <li><a href="/mapfishapp">visualiseur</a></li>
+            <li><a href="/mapfishapp/edit">éditeur</a></li>
+            <li><a href="/extractorapp/">extracteur</a></li>
+            <li class="active"><a href="#">services</a></li>
+            <li><a href="/phpldapadmin">utilisateurs</a></li>
+        </ul>
+        <p class="logged" wicket:id="logoutform">
+            <span wicket:id="username"></span><span> | </span><a href="/j_spring_security_logout">déconnexion</a>
+        </p>
+        <p class="logged" wicket:id="loginform">
+            <a href="?login">connexion</a>
+        </p>
+    </div>
+    <script>
+        (function(){
+            if (!window.addEventListener || !document.querySelectorAll) return;
+            var each = function(els, callback) {
+                for (var i = 0, l=els.length ; i<l ; i++) {
+                    callback(els[i]);
+                }
+            }
+            each(document.querySelectorAll('#go_head li a'), function(li){
+                li.addEventListener('click', function(e) {
+                    each(
+                        document.querySelectorAll('#go_head li'),
+                        function(l){ l.className = '';}
+                    );
+                    li.parentNode.className = 'active';
+                });
+            });
+        })();
+    </script>
+
   <div id="main">
     <div class="wrap selfclear">
     <div id="sidebar">
