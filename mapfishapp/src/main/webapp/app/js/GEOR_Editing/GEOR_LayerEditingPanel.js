@@ -296,7 +296,11 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
         this.formPanel = new Ext.form.FormPanel({
             plugins: [
                 new GeoExt.plugins.AttributeForm({
-                    attributeStore: this.attributeStore
+                    attributeStore: this.attributeStore,
+                    recordToFieldOptions: {
+                        checkboxLabelProperty: 'fieldLabel',
+                        mandatoryFieldLabelStyle: 'font-weight:bold;'
+                    }
                 })
             ],
             defaults: {
