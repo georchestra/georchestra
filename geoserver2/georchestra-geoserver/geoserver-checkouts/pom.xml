@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0  http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.georchestra</groupId>
+	<version>1.0</version>
+	<artifactId>patched-geoserver-root</artifactId>
+	<packaging>pom</packaging>
+	<name>Georchestra Patched Geoserver Root module</name>
+	<properties>
+		<maven.test.skip>true</maven.test.skip>
+		<test.exclude.pattern>*.fakeExcludePattern</test.exclude.pattern>
+	</properties>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.1</version>
+				<executions>
+					<execution>
+						<id>clean</id>
+						<phase>clean</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>svn</executable>
+							<commandlineArgs>revert -R .</commandlineArgs>
+							<workingDirectory>${gs.dir}</workingDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+	<profiles>
+		<profile>
+			<id>geoserver-2.1.x</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<gs.dir>geoserver-2.1.x</gs.dir>
+			</properties>
+			<modules>
+				<module>geoserver-2.1.x/src</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>geoserver-2.1.1</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<properties>
+				<gs.dir>geoserver-stable</gs.dir>
+			</properties>
+			<modules>
+				<module>geoserver-stable/src</module>
+			</modules>
+		</profile>
+	</profiles>
+</project>

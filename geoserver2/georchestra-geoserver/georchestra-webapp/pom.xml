@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.georchestra</groupId>
+		<artifactId>georchestra-geoserver</artifactId>
+		<version>1.0</version>
+	</parent>
+  <artifactId>geoserver-webapp</artifactId>
+  <packaging>war</packaging>
+  <name>Georchesrta GeoServer Web Application</name>
+  <dependencies>
+    <dependency>
+      <groupId>org.geoserver.web</groupId>
+      <artifactId>web-app</artifactId>
+      <version>${gs.version}</version>
+      <type>war</type>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.georchestra</groupId>
+      <artifactId>security-filter</artifactId>
+      <version>${project.version}</version>
+      <type>jar</type>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.1.1</version>
+        <configuration>
+          <classifier>${server}</classifier>
+          <warName>geoserver</warName>
+          <!-- webappDirectory>${project.build.directory}/geoserver</webappDirectory -->
+          <overlays>
+            <overlay>
+              <groupId>org.geoserver.web</groupId>
+              <artifactId>web-app</artifactId>
+              <excludes>
+                <exclude>WEB-INF/classes/images/sampleimage-dependency.jpg</exclude>
+              </excludes>
+            </overlay>
+          </overlays>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>maven-jetty-plugin</artifactId>
+        <version>6.1.26</version>
+        <configuration>
+          <contextPath>geoserver</contextPath>
+          <webApp>${basedir}/target/geoserver.war</webApp>
+          <connectors>
+            <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
+              <port>18080</port>
+              <maxIdleTime>10000</maxIdleTime>
+            </connector>
+          </connectors>
+          <contextPath>geoserver</contextPath>
+          <!-- uncomment following to set a GEOSERVER_DATA_DIR -->
+          <!--
+            <systemProperties> <systemProperty> <name>GEOSERVER_DATA_DIR</name>
+            <value>/home/ak/geoserver_data</value> </systemProperty> </systemProperties>
+          -->
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
