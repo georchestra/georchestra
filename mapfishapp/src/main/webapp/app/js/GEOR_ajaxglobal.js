@@ -14,6 +14,8 @@
 
 /*
  * @requires OpenLayers/Request.js
+ * @include OpenLayers/Format/OGCExceptionReport.js
+ * @include OpenLayers/Format/OWSCommon/v1_0_0.js
  * @include GEOR_waiter.js
  * @include GEOR_util.js
  */
@@ -51,7 +53,7 @@ GEOR.ajaxglobal = (function() {
      *    url - {String} The request URL.
      */
     var handleFailure = function(options) {
-        var text;
+        var text, width = 400;
         switch(options.request.status) {
             case 0:
                 text = "Le serveur n'a pas répondu.";
@@ -71,6 +73,17 @@ GEOR.ajaxglobal = (function() {
                 break;
             case HTTP_STATUS_EXCEPTION_REPORT:
                 text = "Le service OGC a renvoyé une exception.";
+                if (options.request.errorText) {
+                    var t = options.request.errorText;
+                    if (t.length > 1000) {
+                        t = t.substring(0,500).replace(/(\r\n|\n|\r)/gm,"<br />") + 
+                            '<br /><br />... [snip] ...<br /><br />' + 
+                            t.substring(t.length-500).replace(/(\r\n|\n|\r)/gm,"<br />");
+                    }
+                    text += '<br /><br />'+t;
+                    // adjust window width
+                    width = 600;
+                }
                 break;
             default:
                 text = "Pour plus d'information, nous vous invitons à "+
@@ -83,6 +96,7 @@ GEOR.ajaxglobal = (function() {
             GEOR.util.errorDialog({
                 title: "Erreur"+ ((options.request.status < 600) ? 
                     ' HTTP ' + options.request.status : ''),
+                width: width,
                 msg: "Une erreur est survenue.<br />" + text
             });
         }
@@ -135,20 +149,16 @@ GEOR.ajaxglobal = (function() {
                 runCallbacks = false;
             } else {
                 // deal with Service Exception Report
-                var data = request.responseXML;
-                if (!data || !data.documentElement) {
-                    data = request.responseText;
-                }
-                if (typeof data == "string" &&
-                    data.substr(0, 5) == "<?xml") {
-                    data = (new OpenLayers.Format.XML()).read(data);
-                }
-                if (data && data.nodeType == 9 && data.documentElement) {
-                    var node = data.documentElement;
-                    var local = node.localName || node.nodeName.split(":").pop();
-                    if (local == "ServiceExceptionReport" ||
-                        local == "ExceptionReport") {
+                if (request.responseXML) {
+                    var data = (new OpenLayers.Format.OGCExceptionReport()).read(request.responseXML);
+                    if (data.exceptionReport && data.exceptionReport.exceptions) {
+                        var exceptions = data.exceptionReport.exceptions;
+                        var r = [];
+                        for (var i=0, l=exceptions.length; i<l; i++) {
+                            exceptions[i].text && r.push(exceptions[i].text);
+                        }
                         request.status = HTTP_STATUS_EXCEPTION_REPORT;
+                        request.errorText = r.join('<br />');
                     }
                 }
             }
