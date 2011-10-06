@@ -83,7 +83,7 @@ l'établissement de votre infrastructure de données spatiales.
   du projet `GeoBretagne <http://geobretagne.fr>`_. camptocamp propose des offres d'intégration de l'IDS au sein de votre infrastructur, de support pour 
   vous accompagner dans la mise en place de l'IDS, la correction et l'évolution fonctionnelles de la plateforme ainsi que des formations utilisateurs, 
   administrateur système et de données pour geOrchestra.
-* `DotGee <>`_
+* `DotGee <http://www.dotgee.fr/#>`_
 
 .. toctree::
    :maxdepth: 2
