@@ -38,6 +38,7 @@ Vous pouvez trouver de l’aide grâce à la liste de diffusion communautaire : 
 Enfin tenez vous au courant des évolutions du projet via 
 `le blog <http://blog.georchestra.org>`_ et le compte `Twitter <https://twitter.com/#!/georchestra>`_ dédié.
 
+
 Fonctionnalités principales
 =============================
 
@@ -52,6 +53,27 @@ Le projet geOrchestra est bâti autour d'une suite de modules complètement ind�
 Ces différents modules sont faiblement couplés, ce qui signifie que le 
 fonctionnement de chaque module n'affecte pas les autres. La communication 
 entre modules utilise les standards de l'OGC.
+
+
+Une réponse efficace à la directive INSPIRE
+========================
+
+.. image:: _static/logo_inspire.png
+   :width: 150px
+   :class: around-right
+   :alt: INSPIRE
+   
+geOrchestra est une IDS qui est conçue pour répondre aux exigences 
+de la directive INSPIRE <http://http://inspire.jrc.ec.europa.eu/> qui vise à établir
+une infrastructure de données géographiques en Europe afin de répondre 
+aux enjeux du développement durable :
+
+* services de découverte, visualisation et téléchargement des données géographiques,
+* lien permanent pour l'utilisateur entre la donnée géographique et la fiche de métadonnées
+* respect des normes et standards prônés par INSPIRE (cf. section suivante),
+* outil d'administration facilitant la prise en compte d'INSPIRE (thèmes INSPIRE 
+pré-enregistrés, thesaurus gemet, évaluation de la conformité INSPIRE, etc.),
+* une réutilisation facilitée des données via la mise à disposition des flux
 
 
 Implémentation des standards
