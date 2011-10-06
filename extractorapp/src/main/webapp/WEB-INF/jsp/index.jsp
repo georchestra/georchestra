@@ -123,7 +123,7 @@ if(sec_roles != null) {
     <c:choose>
         <c:when test='<%= anonymous == false %>'>
         <p class="logged">
-            <%=request.getHeader("sec-username") %><span> | </span><a href="/j_spring_security_logout">déconnexion</a>
+            <%=request.getHeader("sec-username") %><span class="light"> | </span><a href="/j_spring_security_logout">déconnexion</a>
         </p>
         </c:when>
         <c:otherwise>
