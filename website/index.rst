@@ -40,7 +40,7 @@ Enfin tenez vous au courant des évolutions du projet via
 
 
 Fonctionnalités principales
-=============================
+===========================
 
 Le projet geOrchestra est bâti autour d'une suite de modules complètement indépendants et interopérables :
 
@@ -56,24 +56,23 @@ entre modules utilise les standards de l'OGC.
 
 
 Une réponse efficace à la directive INSPIRE
-========================
+===========================================
 
 .. image:: _static/logo_inspire.png
    :width: 150px
    :class: around-right
    :alt: INSPIRE
    
-geOrchestra est une IDS qui est conçue pour répondre aux exigences 
-de la directive INSPIRE <http://http://inspire.jrc.ec.europa.eu/> qui vise à établir
-une infrastructure de données géographiques en Europe afin de répondre 
+geOrchestra a été conçu pour répondre aux exigences de la `directive INSPIRE <http://http://inspire.jrc.ec.europa.eu/>`_, 
+qui vise à établir une infrastructure de données géographiques à l'échelle Européenne, dans l'objectif de répondre 
 aux enjeux du développement durable :
 
-* services de découverte, visualisation et téléchargement des données géographiques,
-* lien permanent pour l'utilisateur entre la donnée géographique et la fiche de métadonnées
-* respect des normes et standards prônés par INSPIRE (cf. section suivante),
-* outil d'administration facilitant la prise en compte d'INSPIRE (thèmes INSPIRE 
-pré-enregistrés, thesaurus gemet, évaluation de la conformité INSPIRE, etc.),
-* une réutilisation facilitée des données via la mise à disposition des flux
+* services de découverte, de visualisation et de téléchargement des données géographiques,
+* lien permanent entre la donnée géographique et sa métadonnée,
+* respect des normes et standards prônés par INSPIRE (cf. ci-dessous),
+* outils d'administration facilitant la prise en compte d'INSPIRE (thèmes INSPIRE 
+pré-enregistrés, thesaurus gemet, évaluation de la conformité INSPIRE, etc),
+* une réutilisation facilitée des données grâce à la mise à disposition de services web.
 
 
 Implémentation des standards
