@@ -70,8 +70,7 @@ aux enjeux du développement durable :
 * services de découverte, de visualisation et de téléchargement des données géographiques,
 * lien permanent entre la donnée géographique et sa métadonnée,
 * respect des normes et standards prônés par INSPIRE (cf. ci-dessous),
-* outils d'administration facilitant la prise en compte d'INSPIRE (thèmes INSPIRE 
-pré-enregistrés, thesaurus gemet, évaluation de la conformité INSPIRE, etc),
+* outils d'administration facilitant la prise en compte d'INSPIRE (thèmes INSPIRE pré-enregistrés, thesaurus gemet, évaluation de la conformité INSPIRE, etc),
 * une réutilisation facilitée des données grâce à la mise à disposition de services web.
 
 
