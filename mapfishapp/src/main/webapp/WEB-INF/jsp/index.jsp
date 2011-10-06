@@ -266,6 +266,7 @@ if(sec_roles != null) {
     <script type="text/javascript" src="lib/styler/lib/Styler/widgets/TextSymbolizer.js"></script>
 
     <script type="text/javascript" src="app/js/GEOR_config.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_Lang/fr.js"></script>
             <c:choose>
                 <c:when test='${c.edit}'>
     <script type="text/javascript" src="app/js/GEOR_Editing/GEOR_LayerEditingPanel.js"></script>

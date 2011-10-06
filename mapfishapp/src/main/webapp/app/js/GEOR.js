@@ -25,6 +25,8 @@
  * @include GEOR_mapinit.js
  * @include GEOR_print.js
  * @include GEOR_wmc.js
+ * @include OpenLayers/Lang/fr.js
+ * @include GEOR_Lang/fr.js
  * Note that GEOR_getfeatureinfo.js, GEOR_resultspanel.js, GEOR_querier.js, 
  * GEOR_styler.js should be included here, but they are not required by the edit module.
  * In order to make the edit build "light", those files will be added in main.cfg and not here.
