@@ -63,7 +63,7 @@ Une réponse efficace à la directive INSPIRE
    :class: around-right
    :alt: INSPIRE
    
-geOrchestra a été conçu pour répondre aux exigences de la `directive INSPIRE <http://http://inspire.jrc.ec.europa.eu/>`_, 
+geOrchestra a été conçu pour répondre aux exigences de la `directive INSPIRE <http://inspire.jrc.ec.europa.eu/>`_, 
 qui vise à établir une infrastructure de données géographiques à l'échelle Européenne, dans l'objectif de répondre 
 aux enjeux du développement durable :
 
