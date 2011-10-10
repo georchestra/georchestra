@@ -228,7 +228,6 @@ if(sec_roles != null) {
     <script type="text/javascript" src="lib/proj4js/lib/proj4js.js"></script>
     <script type="text/javascript" src="lib/proj4js/lib/projCode/lcc.js"></script>
     <script type="text/javascript" src="lib/proj4js/lib/projCode/merc.js"></script>
-    <script type="text/javascript" src="lib/externals/openlayers/lib/Firebug/firebug.js"></script>
     <script type="text/javascript" src="lib/externals/openlayers/lib/OpenLayers.js"></script>
     <script type="text/javascript" src="lib/externals/openlayers/lib/OpenLayers/Lang/fr.js"></script>
     <script type="text/javascript" src="lib/externals/geoext/lib/GeoExt.js"></script>
