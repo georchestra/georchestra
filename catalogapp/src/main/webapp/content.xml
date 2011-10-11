@@ -1,0 +1,940 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<csw:GetRecordsResponse xmlns:csw="http://www.opengis.net/cat/csw/2.0.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/cat/csw/2.0.2 http://schemas.opengis.net/csw/2.0.2/CSW-discovery.xsd">
+  <csw:SearchStatus timestamp="2011-09-21T19:24:29" />
+  <geonet:Summary xmlns:geonet="http://www.fao.org/geonetwork" count="258" type="local" hitsusedforsummary="258">
+    <spatialRepresentations />
+    <keywords>
+      <keyword count="118" name="bretagne" />
+      <keyword count="46" name="usage des sols" />
+      <keyword count="43" name="urbanisme" />
+      <keyword count="34" name="reseaux de transport" />
+      <keyword count="34" name="zones de gestion, de restriction ou de reglementation et unites de declaration" />
+      <keyword count="33" name="services d'utilite publique et services publics" />
+      <keyword count="30" name="infrastructures de transport" />
+      <keyword count="27" name="sites proteges" />
+      <keyword count="23" name="finistere" />
+      <keyword count="22" name="mer et littoral" />
+    </keywords>
+    <denominators>
+      <denominator count="1" name="1000" />
+      <denominator count="1" name="5000" />
+      <denominator count="6" name="10000" />
+      <denominator count="12" name="25000" />
+      <denominator count="3" name="50000" />
+      <denominator count="1" name="100000" />
+      <denominator count="2" name="1000000" />
+      <denominator count="2" name="5000000" />
+    </denominators>
+    <created>
+      <created count="3" name="2007-07-19T14:45:07" />
+      <created count="2" name="2010-09-30T10:33:23" />
+      <created count="1" name="2011-02-17T10:02:29" />
+      <created count="1" name="2011-06-06T08:23:08" />
+      <created count="1" name="2011-01-20T14:40:20" />
+      <created count="1" name="2010-09-30T10:50:00" />
+      <created count="1" name="2011-02-02T17:21:58" />
+      <created count="1" name="2010-09-30T10:40:58" />
+      <created count="1" name="2010-09-30T11:23:04" />
+      <created count="1" name="2010-09-30T11:37:43" />
+    </created>
+    <organizationNames>
+      <organizationName count="87" name="DREAL Bretagne" />
+      <organizationName count="15" name="Parc Naturel Regional d'Armorique" />
+      <organizationName count="13" name="Conseil Régional de Bretagne" />
+      <organizationName count="11" name="SDIS29" />
+      <organizationName count="10" name="Region Bretagne" />
+      <organizationName count="10" name="Cap L'Orient Agglomeration" />
+      <organizationName count="8" name="DDTM 29" />
+      <organizationName count="7" name="Communaute de Communes Paimpol Goelo" />
+      <organizationName count="6" name="DIRO" />
+      <organizationName count="6" name="RFF" />
+    </organizationNames>
+    <serviceTypes>
+      <serviceType count="12" name="OGC:WMS" />
+    </serviceTypes>
+    <types>
+      <type count="215" name="dataset" />
+      <type count="14" name="service" />
+      <type count="11" name="series" />
+      <type count="2" name="collectionSession" />
+      <type count="2" name="tile" />
+      <type count="1" name="Maps and graphics" />
+    </types>
+    <categories>
+      <category count="3" name="boundaries" />
+      <category count="6" name="climatologyMeteorologyAtmosphere" />
+      <category count="7" name="economy" />
+      <category count="6" name="environment" />
+      <category count="2" name="geoscientificInformation" />
+      <category count="2" name="imageryBaseMapsEarthCover" />
+      <category count="2" name="inlandWaters" />
+      <category count="1" name="oceans" />
+      <category count="6" name="planningCadastre" />
+      <category count="2" name="structure" />
+    </categories>
+  </geonet:Summary>
+  <csw:SearchResults numberOfRecordsMatched="258" numberOfRecordsReturned="20" elementSet="full" nextRecord="21">
+    <csw:Record xmlns:geonet="http://www.fao.org/geonetwork" xmlns:ows="http://www.opengis.net/ows" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dct="http://purl.org/dc/terms/">
+      <dc:identifier>cc796f19-951a-4ae0-94f1-58e2b8a86ddd</dc:identifier>
+      <dc:title>Hydrological basins in Europe</dc:title>
+      <dc:subject>watersheds</dc:subject>
+      <dc:subject>Europe</dc:subject>
+      <dc:subject>geoscientificInformation</dc:subject>
+      <dct:abstract>Major hydrological basins and their sub-basins. This dataset divides the Europe in zones.</dct:abstract>
+      <dc:language>en</dc:language>
+      <dc:source>None.</dc:source>
+      <ows:BoundingBox crs="urn:ogc:def:crs:EPSG:6.6:4326">
+        <ows:LowerCorner>51.1 -34.6</ows:LowerCorner>
+        <ows:UpperCorner>-17.3 38.2</ows:UpperCorner>
+      </ows:BoundingBox>
+      <dc:URI protocol="image/png" name="thumbnail">resources.get?id=&amp;fname=large_s.png&amp;access=public</dc:URI>
+    </csw:Record>
+    <csw:Record xmlns:geonet="http://www.fao.org/geonetwork" xmlns:ows="http://www.opengis.net/ows" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dct="http://purl.org/dc/terms/">
+      <dc:identifier>0d2020d0-8ca7-11de-b5dc-0000c0a8230c</dc:identifier>
+      <dc:title>Demographie des Etablissements</dc:title>
+      <dc:type>dataset</dc:type>
+      <dc:subject>Sources d'énergie</dc:subject>
+      <dc:subject>Ressources minérales</dc:subject>
+      <dc:subject>activites economiques, commerces, industrie, construction, service</dc:subject>
+      <dc:subject>établissement, entreprises, emploi, etablissement, activite</dc:subject>
+      <dc:subject>Répartition de la population - démographie</dc:subject>
+      <dc:subject>Unités statistiques</dc:subject>
+      <dc:subject>economy</dc:subject>
+      <dct:abstract>Démographie des entreprises et des établissements issues de la base Sirène. Données sur les stocks et les créations d'établissements en 2008 et uniquement sur les unités marchandes non agricoles: Industrie, Commerces, Construction, Services</dct:abstract>
+      <dc:language />
+      <dc:source>la couche géographique est un zonage associé à une donnée simple. La donnée source est plus détaillée. Pour plus d'informations se rapprocher du site de l'INSEE.</dc:source>
+      <ows:BoundingBox crs="urn:ogc:def:crs:EPSG:6.6:4326">
+        <ows:LowerCorner>-0.34 47.17</ows:LowerCorner>
+        <ows:UpperCorner>-5.35 49.8</ows:UpperCorner>
+      </ows:BoundingBox>
+      <geonet:info xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:gml="http://www.opengis.net/gml" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gmx="http://www.isotc211.org/2005/gmx" xmlns:gmi="http://www.isotc211.org/2005/gmi" xmlns:gfc="http://www.isotc211.org/2005/gfc" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:fra="http://www.cnig.gouv.fr/2005/fra">
+        <id>272</id>
+        <schema>iso19139.fra</schema>
+        <createDate>2010-09-30T10:33:00</createDate>
+        <changeDate>2011-02-17T11:32:23</changeDate>
+        <isTemplate>n</isTemplate>
+        <title />
+        <source>bbfb1e88-5a98-47ba-9ee0-87d250d5bf6c</source>
+        <uuid>0d2020d0-8ca7-11de-b5dc-0000c0a8230c</uuid>
+        <isHarvested>n</isHarvested>
+        <popularity>38</popularity>
+        <rating>0</rating>
+        <displayOrder />
+        <view>true</view>
+        <notify>false</notify>
+        <download>true</download>
+        <dynamic>true</dynamic>
+        <featured>false</featured>
+        <isPublishedToAll>true</isPublishedToAll>
+        <ownername>loic.ecault</ownername>
+        <baseUrl>http://geobretagne.fr:80/geonetwork</baseUrl>
+      </geonet:info>
+    </csw:Record>
+    <csw:Record xmlns:geonet="http://www.fao.org/geonetwork" xmlns:ows="http://www.opengis.net/ows" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dct="http://purl.org/dc/terms/">
+      <dc:identifier>2b6d80e0-8ccb-11de-b5dc-0000c0a8230c</dc:identifier>
+      <dc:title>Etablissements par classe d'effectif salariés</dc:title>
+      <dc:type>dataset</dc:type>
+      <dc:subject>Sources d'énergie</dc:subject>
+      <dc:subject>Ressources minérales</dc:subject>
+      <dc:subject>activites economiques, commerces, industrie, construction, service</dc:subject>
+      <dc:subject>établissement, entreprises, emploi,</dc:subject>
+      <dc:subject>Répartition de la population - démographie</dc:subject>
+      <dc:subject>Unités statistiques</dc:subject>
+      <dc:subject>economy</dc:subject>
+      <dct:abstract>Données sur les effectifs par tranche des établissements marchands non agricole: Industrie, Commerces, Construction, Services</dct:abstract>
+      <dc:language />
+      <dc:source>la couche géographique est un zonage associé à une donnée simple. La donnée source est plus détaillée. Pour plus d'informations se rapprocher du site de l'INSEE.</dc:source>
+      <ows:BoundingBox crs="urn:ogc:def:crs:EPSG:6.6:4326">
+        <ows:LowerCorner>-0.34 47.17</ows:LowerCorner>
+        <ows:UpperCorner>-5.35 49.8</ows:UpperCorner>
+      </ows:BoundingBox>
+      <geonet:info xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:gml="http://www.opengis.net/gml" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gmx="http://www.isotc211.org/2005/gmx" xmlns:gmi="http://www.isotc211.org/2005/gmi" xmlns:gfc="http://www.isotc211.org/2005/gfc" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:fra="http://www.cnig.gouv.fr/2005/fra">
+        <id>279</id>
+        <schema>iso19139.fra</schema>
+        <createDate>2010-09-30T10:40:58</createDate>
+        <changeDate>2011-02-14T15:24:48</changeDate>
+        <isTemplate>n</isTemplate>
+        <title />
+        <source>bbfb1e88-5a98-47ba-9ee0-87d250d5bf6c</source>
+        <uuid>2b6d80e0-8ccb-11de-b5dc-0000c0a8230c</uuid>
+        <isHarvested>n</isHarvested>
+        <popularity>77</popularity>
+        <rating>0</rating>
+        <displayOrder />
+        <view>true</view>
+        <notify>false</notify>
+        <download>true</download>
+        <dynamic>true</dynamic>
+        <featured>false</featured>
+        <isPublishedToAll>true</isPublishedToAll>
+        <ownername>loic.ecault</ownername>
+        <category>datasets</category>
+        <baseUrl>http://geobretagne.fr:80/geonetwork</baseUrl>
+      </geonet:info>
+    </csw:Record>
+    <csw:Record xmlns:geonet="http://www.fao.org/geonetwork" xmlns:ows="http://www.opengis.net/ows" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dct="http://purl.org/dc/terms/">
+      <dc:identifier>2df49fa0-0c7b-11dd-b03f-001c23142c59</dc:identifier>
+      <dc:title>Superficie Toujours en Herbe (STH)</dc:title>
+      <dc:type>dataset</dc:type>
+      <dc:subject>Agriculture</dc:subject>
+      <dc:subject>imageryBaseMapsEarthCover</dc:subject>
+      <dct:abstract>Recensement agricole 2000 -données comparatives 1979, 1988, 2000</dct:abstract>
+
+      <dc:language>fra</dc:language>
+      <dc:source>Enquête réalisée auprès de l'ensemble des exploitations agricoles à remplir ultérieurement</dc:source>
+      <dc:relation />
+      <ows:BoundingBox crs="urn:ogc:def:crs:EPSG:6.6:4326">
+        <ows:LowerCorner>0 46</ows:LowerCorner>
+        <ows:UpperCorner>-5 49</ows:UpperCorner>
+      </ows:BoundingBox>
+      <dc:URI protocol="" name="Fichier format Excel" description="">http://geobretagne.fr/telechargement/agriculture/ra2000_comm.xls</dc:URI>
+      <geonet:info xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:gml="http://www.opengis.net/gml" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gmx="http://www.isotc211.org/2005/gmx" xmlns:gmi="http://www.isotc211.org/2005/gmi" xmlns:gfc="http://www.isotc211.org/2005/gfc" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:fra="http://www.cnig.gouv.fr/2005/fra">
+        <id>282</id>
+        <schema>iso19139.fra</schema>
+        <createDate>2010-09-30T10:41:41</createDate>
+        <changeDate>2010-09-30T10:41:41</changeDate>
+        <isTemplate>n</isTemplate>
+        <title />
+        <source>bbfb1e88-5a98-47ba-9ee0-87d250d5bf6c</source>
+        <uuid>2df49fa0-0c7b-11dd-b03f-001c23142c59</uuid>
+        <isHarvested>n</isHarvested>
+        <popularity>60</popularity>
+        <rating>0</rating>
+        <displayOrder />
+        <view>true</view>
+        <notify>false</notify>
+        <download>true</download>
+        <dynamic>true</dynamic>
+        <featured>false</featured>
+        <isPublishedToAll>true</isPublishedToAll>
+        <ownername>loic.ecault</ownername>
+        <category>datasets</category>
+        <baseUrl>http://geobretagne.fr:80/geonetwork</baseUrl>
+      </geonet:info>
+    </csw:Record>
+    <csw:Record xmlns:geonet="http://www.fao.org/geonetwork" xmlns:ows="http://www.opengis.net/ows" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dct="http://purl.org/dc/terms/">
+      <dc:identifier>38f636a0-430d-11df-839d-0000c0a8230b</dc:identifier>
+      <dc:title>Zones Humides Potentielles de Bretagne</dc:title>
+      <dc:type>dataset</dc:type>
+      <dc:subject>Bretagne</dc:subject>
+      <dc:subject>Zones Humides</dc:subject>
+      <dc:subject>MntSurf</dc:subject>
+      <dc:subject>Indice de beven</dc:subject>
+      <dc:subject>eau</dc:subject>
+      <dc:subject>environment</dc:subject>
+      <dct:abstract>Zones Humides Potentielles calculées par l'indice de Beven aval.</dct:abstract>
+
+      <dc:language>fra</dc:language>
+      <dc:source>Indique la couche géographique qui est à la source de cette donnée. Dans le cas ou la donnée est issue d'une autre donnée source, elle est précisée. Ex: saisie depuis la base cadastrale.</dc:source>
+      <ows:BoundingBox crs="urn:ogc:def:crs:EPSG:6.6:4326">
+        <ows:LowerCorner>0 46</ows:LowerCorner>
+        <ows:UpperCorner>-5 49</ows:UpperCorner>
+      </ows:BoundingBox>
+      <dc:URI protocol="OGC:WMS-1.1.1-http-get-map">http://geowww.agrocampus-ouest.fr/geoserver/wms</dc:URI>
+      <geonet:info xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:gml="http://www.opengis.net/gml" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gmx="http://www.isotc211.org/2005/gmx" xmlns:gmi="http://www.isotc211.org/2005/gmi" xmlns:gfc="http://www.isotc211.org/2005/gfc" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:fra="http://www.cnig.gouv.fr/2005/fra">
+        <id>315</id>
+        <schema>iso19139.fra</schema>
+        <createDate>2010-09-30T10:49:07</createDate>
+        <changeDate>2010-09-30T10:49:07</changeDate>
+        <isTemplate>n</isTemplate>
+        <title />
+        <source>bbfb1e88-5a98-47ba-9ee0-87d250d5bf6c</source>
+        <uuid>38f636a0-430d-11df-839d-0000c0a8230b</uuid>
+        <isHarvested>n</isHarvested>
+        <popularity>97</popularity>
+        <rating>0</rating>
+        <displayOrder />
+        <view>true</view>
+        <notify>false</notify>
+        <download>true</download>
+        <dynamic>true</dynamic>
+        <featured>false</featured>
+        <isPublishedToAll>true</isPublishedToAll>
+        <ownername>loic.ecault</ownername>
+        <category>datasets</category>
+        <baseUrl>http://geobretagne.fr:80/geonetwork</baseUrl>
+      </geonet:info>
+    </csw:Record>
+    <csw:Record xmlns:geonet="http://www.fao.org/geonetwork" xmlns:ows="http://www.opengis.net/ows" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dct="http://purl.org/dc/terms/">
+      <dc:identifier>59bf15e0-366b-11df-a991-0000c0a8230b</dc:identifier>
+      <dc:title>Nombre de chambres d'hôtel 2009</dc:title>
+      <dc:type>dataset</dc:type>
+      <dc:subject>hôtel</dc:subject>
+      <dc:subject>tourisme</dc:subject>
+      <dc:subject>hébergement</dc:subject>
+      <dc:subject>chambre</dc:subject>
+      <dc:subject>capacités touristiques</dc:subject>
+      <dc:subject>Sources d'énergie</dc:subject>
+      <dc:subject>Ressources minérales</dc:subject>
+      <dc:subject>Unités statistiques</dc:subject>
+      <dc:subject>Répartition de la population - démographie</dc:subject>
+      <dc:subject>Usage des sols</dc:subject>
+      <dc:subject>Tourisme et traditions populaires</dc:subject>
+      <dc:subject>economy</dc:subject>
+      <dct:abstract>Il s'agit du nombre de chambre d'hotel.
+HÔTELS homologués tourisme correspondant à l'état du parc au 1er janvier.
+
+L'hôtel homologué tourisme est un établissement commercial d'hébergement classé, qui offre des chambres ou des appartements meublés en location à une clientèle de passage ou à une clientèle qui effectue un séjour caractérisé par une location à la journée, à la semaine ou au mois, mais qui, sauf exception, n'y élit pas domicile. Il peut comporter un service de restauration. Il est exploité toute l'année en permanence ou seulement pendant une ou plusieurs saisons.
+
+Les hôtels homologués tourisme sont classés en 6 catégories, de 0 étoile à 4 étoiles luxe, en fonction de leur confort, de leur équipement et de leurs services.
+
+Les critères de classement sont stricts et ont été définis par arrêté du 14 février 1986.
+La décision de classement est prise par arrêté du commissaire de la République, après avis de la commission départementale de l'action touristique.</dct:abstract>
+      <dc:language />
+      <dc:source>la couche géographique est un zonage associé à une donnée simple. La donnée source est plus détaillée. Pour plus d'informations se rapprocher du site de l'INSEE.</dc:source>
+      <ows:BoundingBox crs="urn:ogc:def:crs:EPSG:6.6:4326">
+        <ows:LowerCorner>-0.34 47.17</ows:LowerCorner>
+        <ows:UpperCorner>-5.35 49.8</ows:UpperCorner>
+      </ows:BoundingBox>
+      <geonet:info xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:gml="http://www.opengis.net/gml" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gmx="http://www.isotc211.org/2005/gmx" xmlns:gmi="http://www.isotc211.org/2005/gmi" xmlns:gfc="http://www.isotc211.org/2005/gfc" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:fra="http://www.cnig.gouv.fr/2005/fra">
+        <id>319</id>
+        <schema>iso19139.fra</schema>
+        <createDate>2010-09-30T10:50:00</createDate>
+        <changeDate>2011-04-06T14:18:49</changeDate>
+        <isTemplate>n</isTemplate>
+        <title />
+        <source>bbfb1e88-5a98-47ba-9ee0-87d250d5bf6c</source>
+        <uuid>59bf15e0-366b-11df-a991-0000c0a8230b</uuid>
+        <isHarvested>n</isHarvested>
+        <popularity>36</popularity>
+        <rating>0</rating>
+        <displayOrder />
+        <view>true</view>
+        <notify>false</notify>
+        <download>true</download>
+        <dynamic>true</dynamic>
+        <featured>false</featured>
+        <isPublishedToAll>true</isPublishedToAll>
+        <ownername>loic.ecault</ownername>
+        <category>datasets</category>
+        <baseUrl>http://geobretagne.fr:80/geonetwork</baseUrl>
+      </geonet:info>
+    </csw:Record>
+    <csw:Record xmlns:geonet="http://www.fao.org/geonetwork" xmlns:ows="http://www.opengis.net/ows" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dct="http://purl.org/dc/terms/">
+      <dc:identifier>77ca0e70-8d59-11de-b5dc-0000c0a8230c</dc:identifier>
+      <dc:title>Effectifs scolaires 2008</dc:title>
+      <dc:type>dataset</dc:type>
+      <dc:subject>enseignement, éducation, rectorat, académie, élèves, effectif</dc:subject>
+      <dc:subject>établissement scolaire, école, etablissement, ecole, eleve,</dc:subject>
+      <dc:subject>Répartition de la population - démographie</dc:subject>
+      <dc:subject>Services d'utilité publique et services publics</dc:subject>
+      <dc:subject>Unités statistiques</dc:subject>
+      <dc:subject>economy</dc:subject>
+      <dct:abstract>Effectifs d'élèves du premier degré (CP - CM2) pour l'année scolaire 2008-2009.
+
+Effectifs d'élèves du second degré (6ème - Terminale) pour l'année scolaire 2008-2009</dct:abstract>
+      <dc:language>fra</dc:language>
+      <dc:source>la couche géographique est un zonage à la commune associé à une donnée simple. La donnée source est détaillée à l'établissement. Pour plus d'informations se rapprocher du Rectorat fournisseur de la donnée</dc:source>
+      <ows:BoundingBox crs="urn:ogc:def:crs:EPSG:6.6:4326">
+        <ows:LowerCorner>-0.34 47.17</ows:LowerCorner>
+        <ows:UpperCorner>-5.35 49.8</ows:UpperCorner>
+      </ows:BoundingBox>
+      <dc:URI protocol="WWW:DOWNLOAD-1.0-http--download" name="Etablissements fichier mapinfo" description="">http://geobretagne.fr/telechargement/enseignement/effectif_scolaire_0809_tab.ZIP</dc:URI>
+      <dc:URI protocol="WWW:DOWNLOAD-1.0-http--download" name="Etablissement scolaire format shape" description="">http://geobretagne.fr/telechargement/enseignement/effectif_scolaire_0809_shp.ZIP</dc:URI>
+      <geonet:info xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:gml="http://www.opengis.net/gml" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gmx="http://www.isotc211.org/2005/gmx" xmlns:gmi="http://www.isotc211.org/2005/gmi" xmlns:gfc="http://www.isotc211.org/2005/gfc" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:fra="http://www.cnig.gouv.fr/2005/fra">
+        <id>323</id>
+        <schema>iso19139.fra</schema>
+        <createDate>2010-09-30T10:51:09</createDate>
+        <changeDate>2010-09-30T10:51:09</changeDate>
+        <isTemplate>n</isTemplate>
+        <title />
+        <source>bbfb1e88-5a98-47ba-9ee0-87d250d5bf6c</source>
+        <uuid>77ca0e70-8d59-11de-b5dc-0000c0a8230c</uuid>
+        <isHarvested>n</isHarvested>
+        <popularity>60</popularity>
+        <rating>0</rating>
+        <displayOrder />
+        <view>true</view>
+        <notify>false</notify>
+        <download>true</download>
+        <dynamic>true</dynamic>
+        <featured>false</featured>
+        <isPublishedToAll>true</isPublishedToAll>
+        <ownername>loic.ecault</ownername>
+        <category>datasets</category>
+        <baseUrl>http://geobretagne.fr:80/geonetwork</baseUrl>
+      </geonet:info>
+    </csw:Record>
+    <csw:Record xmlns:geonet="http://www.fao.org/geonetwork" xmlns:ows="http://www.opengis.net/ows" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dct="http://purl.org/dc/terms/">
+      <dc:identifier>019186f0-0c7e-11dd-8fa0-0000c0a8230c</dc:identifier>
+      <dc:title>Exploitation agricole entre 1988 et 2000</dc:title>
+      <dc:type>dataset</dc:type>
+      <dc:subject>Agriculture</dc:subject>
+      <dc:subject>Installations agricoles et aquacoles</dc:subject>
+      <dc:subject>Occupation des terres</dc:subject>
+      <dc:subject>farming</dc:subject>
+      <dct:abstract>Recensement agricole 2000 -données comparatives 1979, 1988, 2000</dct:abstract>
+
+      <dc:language />
+      <dc:source>Enquête réalisée auprès de l'ensemble des exploitations agricoles à remplir ultérieurement</dc:source>
+      <dc:relation />
+      <ows:BoundingBox crs="urn:ogc:def:crs:EPSG:6.6:4326">
+        <ows:LowerCorner>-0.34 47.17</ows:LowerCorner>
+        <ows:UpperCorner>-5.35 49.8</ows:UpperCorner>
+      </ows:BoundingBox>
+      <geonet:info xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:gml="http://www.opengis.net/gml" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gmx="http://www.isotc211.org/2005/gmx" xmlns:gmi="http://www.isotc211.org/2005/gmi" xmlns:gfc="http://www.isotc211.org/2005/gfc" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:fra="http://www.cnig.gouv.fr/2005/fra">
+        <id>348</id>
+        <schema>iso19139.fra</schema>
+        <createDate>2010-09-30T11:00:28</createDate>
+        <changeDate>2011-02-14T15:19:39</changeDate>
+        <isTemplate>n</isTemplate>
+        <title />
+        <source>bbfb1e88-5a98-47ba-9ee0-87d250d5bf6c</source>
+        <uuid>019186f0-0c7e-11dd-8fa0-0000c0a8230c</uuid>
+        <isHarvested>n</isHarvested>
+        <popularity>51</popularity>
+        <rating>0</rating>
+        <displayOrder />
+        <view>true</view>
+        <notify>false</notify>
+        <download>true</download>
+        <dynamic>true</dynamic>
+        <featured>false</featured>
+        <isPublishedToAll>true</isPublishedToAll>
+        <ownername>loic.ecault</ownername>
+        <category>datasets</category>
+        <baseUrl>http://geobretagne.fr:80/geonetwork</baseUrl>
+      </geonet:info>
+    </csw:Record>
+    <csw:Record xmlns:geonet="http://www.fao.org/geonetwork" xmlns:ows="http://www.opengis.net/ows" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dct="http://purl.org/dc/terms/">
+      <dc:identifier>13816790-1d3a-11de-afef-0000c0a8230c</dc:identifier>
+      <dc:title>Reseau station de mesure FCB</dc:title>
+      <dc:type>dataset</dc:type>
+      <dc:subject>station de mesure; pluviométrie, météo, météorologie</dc:subject>
+      <dc:subject>Equipements de mesure</dc:subject>
+      <dc:subject>imageryBaseMapsEarthCover</dc:subject>
+      <dct:abstract>Réseau de stations de pluviométrie</dct:abstract>
+      <dc:language />
+      <dc:source>Données fournies par la DIREN</dc:source>
+      <dc:relation />
+      <ows:BoundingBox crs="urn:ogc:def:crs:EPSG:6.6:4326">
+        <ows:LowerCorner>180 -90</ows:LowerCorner>
+        <ows:UpperCorner>-180 90</ows:UpperCorner>
+      </ows:BoundingBox>
+      <dc:URI protocol="" name="Format fichier MIF/MID" description="">http://geobretagne.fr/telechargement/equipements_de_mesure/station_de_mesure/statione_de_mesure_mif.zip</dc:URI>
+      <dc:URI protocol="" name="Format fichier MapInfo" description="">http://geobretagne.fr/telechargement/equipements_de_mesure/station_de_mesure/stations_de_mesure_tab.zip</dc:URI>
+      <dc:URI protocol="" name="Format fichier Shape" description="">http://geobretagne.fr/telechargement/equipements_de_mesure/stations_jaugeage/station_de_jaugeable_shp.ZIP</dc:URI>
+      <geonet:info xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:gml="http://www.opengis.net/gml" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gmx="http://www.isotc211.org/2005/gmx" xmlns:gmi="http://www.isotc211.org/2005/gmi" xmlns:gfc="http://www.isotc211.org/2005/gfc" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:fra="http://www.cnig.gouv.fr/2005/fra">
+        <id>358</id>
+        <schema>iso19139.fra</schema>
+        <createDate>2010-09-30T11:23:53</createDate>
+        <changeDate>2011-06-09T14:55:57</changeDate>
+        <isTemplate>n</isTemplate>
+        <title />
+        <source>bbfb1e88-5a98-47ba-9ee0-87d250d5bf6c</source>
+        <uuid>13816790-1d3a-11de-afef-0000c0a8230c</uuid>
+        <isHarvested>n</isHarvested>
+        <popularity>35</popularity>
+        <rating>0</rating>
+        <displayOrder />
+        <view>true</view>
+        <notify>false</notify>
+        <download>true</download>
+        <dynamic>true</dynamic>
+        <featured>false</featured>
+        <isPublishedToAll>true</isPublishedToAll>
+        <ownername>loic.ecault</ownername>
+        <category>datasets</category>
+        <baseUrl>http://geobretagne.fr:80/geonetwork</baseUrl>
+      </geonet:info>
+    </csw:Record>
+    <csw:Record xmlns:geonet="http://www.fao.org/geonetwork" xmlns:ows="http://www.opengis.net/ows" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dct="http://purl.org/dc/terms/">
+      <dc:identifier>ad1ae520-0c79-11dd-b03f-001c23142c59</dc:identifier>
+      <dc:title>Chefs d'exploit de 55 ans et plus par commune</dc:title>
+      <dc:type>dataset</dc:type>
+      <dc:subject>Installations agricoles et aquacoles</dc:subject>
+      <dc:subject>Unités statistiques</dc:subject>
+      <dc:subject>Usage des sols</dc:subject>
+      <dc:subject />
+      <dc:subject>Agriculture</dc:subject>
+      <dc:subject>imageryBaseMapsEarthCover</dc:subject>
+      <dct:abstract>Recensement agricole 2000 -données comparatives 1979, 1988, 2000</dct:abstract>
+
+      <dc:language>fra</dc:language>
+      <dc:source>Enquête réalisée auprès de l'ensemble des exploitations agricoles à remplir ultérieurement</dc:source>
+      <dc:relation />
+      <ows:BoundingBox crs="urn:ogc:def:crs:EPSG:6.6:4326">
+        <ows:LowerCorner>-0.34 47.17</ows:LowerCorner>
+        <ows:UpperCorner>-5.35 49.80</ows:UpperCorner>
+      </ows:BoundingBox>
+      <dc:URI protocol="" name="Fichiers format Excel" description="">http//:geobretagne.fr/telechargement/agriculture/donnees_recensement_agricole_2000.ZIP</dc:URI>
+      <geonet:info xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:gml="http://www.opengis.net/gml" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gmx="http://www.isotc211.org/2005/gmx" xmlns:gmi="http://www.isotc211.org/2005/gmi" xmlns:gfc="http://www.isotc211.org/2005/gfc" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:fra="http://www.cnig.gouv.fr/2005/fra">
+        <id>367</id>
+        <schema>iso19139.fra</schema>
+        <createDate>2010-09-30T11:31:40</createDate>
+        <changeDate>2010-09-30T11:31:40</changeDate>
+        <isTemplate>n</isTemplate>
+        <title />
+        <source>bbfb1e88-5a98-47ba-9ee0-87d250d5bf6c</source>
+        <uuid>ad1ae520-0c79-11dd-b03f-001c23142c59</uuid>
+        <isHarvested>n</isHarvested>
+        <popularity>37</popularity>
+        <rating>0</rating>
+        <displayOrder />
+        <view>true</view>
+        <notify>false</notify>
+        <download>true</download>
+        <dynamic>true</dynamic>
+        <featured>false</featured>
+        <isPublishedToAll>true</isPublishedToAll>
+        <ownername>loic.ecault</ownername>
+        <category>datasets</category>
+        <baseUrl>http://geobretagne.fr:80/geonetwork</baseUrl>
+      </geonet:info>
+    </csw:Record>
+    <csw:Record xmlns:geonet="http://www.fao.org/geonetwork" xmlns:ows="http://www.opengis.net/ows" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dct="http://purl.org/dc/terms/">
+      <dc:identifier>ae6ae130-365e-11df-a991-0000c0a8230b</dc:identifier>
+      <dc:title>Nombre de campings 2009</dc:title>
+      <dc:type>dataset</dc:type>
+      <dc:subject>camping,</dc:subject>
+      <dc:subject>tourisme</dc:subject>
+      <dc:subject>activités économiques</dc:subject>
+      <dc:subject>capacités touristiques</dc:subject>
+      <dc:subject>hébergement</dc:subject>
+      <dc:subject>Usage des sols</dc:subject>
+      <dc:subject>economy</dc:subject>
+      <dct:abstract>Il s'agit du nombre de CAMPINGS classés correspondant à l'état du parc au 1er janvier.
+Les terrains de camping sont classés en 4 catégories, de 1 étoile à 4 étoiles, selon des normes fixées par l'arrêté du 11 janvier 1993 complété par la circulaire du 12 février 1993.
+Ces normes concernent les équipements communs, les équipements sanitaires et l'accessibilité aux personnes handicapées.</dct:abstract>
+      <dc:language>fra</dc:language>
+      <dc:source>la couche géographique est un zonage associé à une donnée simple. La donnée source est plus détaillée. Pour plus d'informations se rapprocher du site de l'INSEE.</dc:source>
+      <ows:BoundingBox crs="urn:ogc:def:crs:EPSG:6.6:4326">
+        <ows:LowerCorner>-0.34 47.17</ows:LowerCorner>
+        <ows:UpperCorner>-5.35 49.8</ows:UpperCorner>
+      </ows:BoundingBox>
+      <geonet:info xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:gml="http://www.opengis.net/gml" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gmx="http://www.isotc211.org/2005/gmx" xmlns:gmi="http://www.isotc211.org/2005/gmi" xmlns:gfc="http://www.isotc211.org/2005/gfc" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:fra="http://www.cnig.gouv.fr/2005/fra">
+        <id>368</id>
+        <schema>iso19139.fra</schema>
+        <createDate>2010-09-30T11:31:54</createDate>
+        <changeDate>2011-07-21T12:01:29</changeDate>
+        <isTemplate>n</isTemplate>
+        <title />
+        <source>bbfb1e88-5a98-47ba-9ee0-87d250d5bf6c</source>
+        <uuid>ae6ae130-365e-11df-a991-0000c0a8230b</uuid>
+        <isHarvested>n</isHarvested>
+        <popularity>46</popularity>
+        <rating>0</rating>
+        <displayOrder />
+        <view>true</view>
+        <notify>false</notify>
+        <download>true</download>
+        <dynamic>true</dynamic>
+        <featured>false</featured>
+        <isPublishedToAll>true</isPublishedToAll>
+        <ownername>loic.ecault</ownername>
+        <category>datasets</category>
+        <baseUrl>http://geobretagne.fr:80/geonetwork</baseUrl>
+      </geonet:info>
+    </csw:Record>
+    <csw:Record xmlns:geonet="http://www.fao.org/geonetwork" xmlns:ows="http://www.opengis.net/ows" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dct="http://purl.org/dc/terms/">
+      <dc:identifier>b82ed5f0-8c90-11de-b5dc-0000c0a8230c</dc:identifier>
+      <dc:title>Nombre d'hôtels par commune 2009</dc:title>
+      <dc:type>dataset</dc:type>
+      <dc:subject>hotels</dc:subject>
+      <dc:subject>tourisme</dc:subject>
+      <dc:subject>hébergement</dc:subject>
+      <dc:subject>chambre</dc:subject>
+      <dc:subject>capacités touristiques</dc:subject>
+      <dc:subject>Sources d'énergie</dc:subject>
+      <dc:subject>Ressources minérales</dc:subject>
+      <dc:subject>Unités statistiques</dc:subject>
+      <dc:subject>Répartition de la population - démographie</dc:subject>
+      <dc:subject>Usage des sols</dc:subject>
+      <dc:subject>Tourisme et traditions populaires</dc:subject>
+      <dc:subject>economy</dc:subject>
+      <dct:abstract>Il s'agit du nombre d'HÔTELS homologués tourisme correspondant à l'état du parc au 1er janvier.
+
+L'hôtel homologué tourisme est un établissement commercial d'hébergement classé, qui offre des chambres ou des appartements meublés en location à une clientèle de passage ou à une clientèle qui effectue un séjour caractérisé par une location à la journée, à la semaine ou au mois, mais qui, sauf exception, n'y élit pas domicile. Il peut comporter un service de restauration. Il est exploité toute l'année en permanence ou seulement pendant une ou plusieurs saisons.
+
+Les hôtels homologués tourisme sont classés en 6 catégories, de 0 étoile à 4 étoiles luxe, en fonction de leur confort, de leur équipement et de leurs services.
+
+Les critères de classement sont stricts et ont été définis par arrêté du 14 février 1986.
+La décision de classement est prise par arrêté du commissaire de la République, après avis de la commission départementale de l'action touristique.</dct:abstract>
+      <dc:language />
+      <dc:source>la couche géographique est un zonage associé à une donnée simple. La donnée source est plus détaillée. Pour plus d'informations se rapprocher du site de l'INSEE.</dc:source>
+      <ows:BoundingBox crs="urn:ogc:def:crs:EPSG:6.6:4326">
+        <ows:LowerCorner>-0.34 47.17</ows:LowerCorner>
+        <ows:UpperCorner>-5.35 49.8</ows:UpperCorner>
+      </ows:BoundingBox>
+      <geonet:info xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:gml="http://www.opengis.net/gml" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gmx="http://www.isotc211.org/2005/gmx" xmlns:gmi="http://www.isotc211.org/2005/gmi" xmlns:gfc="http://www.isotc211.org/2005/gfc" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:fra="http://www.cnig.gouv.fr/2005/fra">
+        <id>377</id>
+        <schema>iso19139.fra</schema>
+        <createDate>2010-09-30T11:33:57</createDate>
+        <changeDate>2011-05-12T14:46:11</changeDate>
+        <isTemplate>n</isTemplate>
+        <title />
+        <source>bbfb1e88-5a98-47ba-9ee0-87d250d5bf6c</source>
+        <uuid>b82ed5f0-8c90-11de-b5dc-0000c0a8230c</uuid>
+        <isHarvested>n</isHarvested>
+        <popularity>51</popularity>
+        <rating>0</rating>
+        <displayOrder />
+        <view>true</view>
+        <notify>false</notify>
+        <download>true</download>
+        <dynamic>true</dynamic>
+        <featured>false</featured>
+        <isPublishedToAll>true</isPublishedToAll>
+        <ownername>loic.ecault</ownername>
+        <category>datasets</category>
+        <baseUrl>http://geobretagne.fr:80/geonetwork</baseUrl>
+      </geonet:info>
+    </csw:Record>
+    <csw:Record xmlns:geonet="http://www.fao.org/geonetwork" xmlns:ows="http://www.opengis.net/ows" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dct="http://purl.org/dc/terms/">
+      <dc:identifier>ca519890-cab5-11de-bf94-0000c0a8230b</dc:identifier>
+      <dc:title>Natura 2000 en mer (Directive Oiseaux)</dc:title>
+      <dc:type>dataset</dc:type>
+      <dc:subject>Régions maritimes</dc:subject>
+      <dc:subject>Natura 2000, Directive Oiseaux, Zone de protection spéciale, DO, ZPS</dc:subject>
+
+      <dc:subject>France métropolitaine</dc:subject>
+      <dc:subject />
+      <dc:subject>oceans</dc:subject>
+      <dct:modified>2009-09-17</dct:modified>
+      <dct:abstract>État des transmissions par la France à la commission européenne en septembre 2009 de sites marins Natura 2000 (Directive Oiseaux), périmètres basés sur le trait de côte SHOM/IGN histolitt version 1.0.
+
+Attention : ce fichier n'est pas exhaustif et ne tient pas compte des sites Natura 2000 préexistants (antérieurs à 2008) ayant une partie marine et dont les périmètres sont basés sur un ancien trait de côte (travail d'harmonisation à effectuer).</dct:abstract>
+      <dc:language>fre</dc:language>
+      <dc:source>périmètres basés sur
+- le trait de côte SHOM/IGN histolitt version 1.0.
+- les SCAN25 IGN</dc:source>
+      <ows:BoundingBox crs="urn:ogc:def:crs:EPSG:6.6:4326">
+        <ows:LowerCorner>-1.4013671875 46.708984375</ows:LowerCorner>
+        <ows:UpperCorner>-5.6201171875 49.78515625</ows:UpperCorner>
+      </ows:BoundingBox>
+      <dc:URI protocol="WWW:DOWNLOAD-1.0-http--download" name="n2000_do_aamp_2009">http://geobretagne.fr/geoserver/wfs?service=wfs&amp;version=1.00&amp;request=getfeature&amp;typename=n2000_do_aamp_2009&amp;outputformat=shape-zip</dc:URI>
+      <dc:URI protocol="OGC:WMS-1.1.1-http-get-map" name="bzh:n2000_do_aamp_2009">http://geobretagne.fr/geoserver/bzh/wms</dc:URI>
+      <geonet:info xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:gml="http://www.opengis.net/gml" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gmx="http://www.isotc211.org/2005/gmx" xmlns:gmi="http://www.isotc211.org/2005/gmi" xmlns:gfc="http://www.isotc211.org/2005/gfc" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:fra="http://www.cnig.gouv.fr/2005/fra">
+        <id>386</id>
+        <schema>iso19139.fra</schema>
+        <createDate>2010-09-30T11:36:04</createDate>
+        <changeDate>2011-04-28T08:53:53</changeDate>
+        <isTemplate>n</isTemplate>
+        <title />
+        <source>aamp</source>
+        <uuid>ca519890-cab5-11de-bf94-0000c0a8230b</uuid>
+        <isHarvested>n</isHarvested>
+        <popularity>136</popularity>
+        <rating>0</rating>
+        <displayOrder />
+        <view>true</view>
+        <notify>false</notify>
+        <download>true</download>
+        <dynamic>true</dynamic>
+        <featured>false</featured>
+        <isPublishedToAll>true</isPublishedToAll>
+        <ownername>loic.ecault</ownername>
+        <category>datasets</category>
+        <baseUrl>http://geobretagne.fr:80/geonetwork</baseUrl>
+      </geonet:info>
+    </csw:Record>
+    <csw:Record xmlns:geonet="http://www.fao.org/geonetwork" xmlns:ows="http://www.opengis.net/ows" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dct="http://purl.org/dc/terms/">
+      <dc:identifier>Carrières autorisées24/05/2007 14:25:2602/04/2008 09:18:26</dc:identifier>
+      <dc:title>Carrières autorisées</dc:title>
+      <dc:type>dataset</dc:type>
+      <dc:subject>carrière</dc:subject>
+      <dc:subject>activités économiques</dc:subject>
+      <dc:subject>sites autorisés</dc:subject>
+      <dc:subject>carrières autorisées</dc:subject>
+      <dc:subject>carriere</dc:subject>
+      <dc:subject>Activites economiques</dc:subject>
+      <dc:subject>Lieux de production et sites industriels</dc:subject>
+      <dc:subject>Zones de gestion, de restriction ou de réglementation et unités de déclaration</dc:subject>
+      <dc:subject>imageryBaseMapsEarthCover</dc:subject>
+      <dct:abstract>Les exploitations de carrières sont soumises à l'autorisation administrative prévue à l'article L. 512-1, à l'exception des carrières de marne, de craie et de tout matériau destiné au marnage des sols (Code de l'environnement)</dct:abstract>
+      <dc:language>fra</dc:language>
+      <dc:source>à compléter</dc:source>
+      <dc:relation />
+      <ows:BoundingBox crs="urn:ogc:def:crs:EPSG:6.6:4326">
+        <ows:LowerCorner>-0.34 47.17</ows:LowerCorner>
+        <ows:UpperCorner>-5.35 49.8</ows:UpperCorner>
+      </ows:BoundingBox>
+      <dc:URI protocol="" name="Fichier format MapInfo" description="">http://geobretagne.fr/telechargement/activites_economiques/carrieres_autorisees_tab.ZIP</dc:URI>
+      <dc:URI protocol="" name="Fichier format Shape" description="">http://geobretagne.fr/telechargement/activites_economiques/carrieres_autorisees_shp.ZIP</dc:URI>
+      <dc:URI protocol="" name="Fichier format Shape" description="">http://geobretagne.fr/telechargement/activites_economiques/carrieres_autorisees_mif.ZIP</dc:URI>
+      <dc:URI protocol="WWW:LINK-1.0-http--link" name="" description="" />
+      <geonet:info xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:gml="http://www.opengis.net/gml" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gmx="http://www.isotc211.org/2005/gmx" xmlns:gmi="http://www.isotc211.org/2005/gmi" xmlns:gfc="http://www.isotc211.org/2005/gfc" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:fra="http://www.cnig.gouv.fr/2005/fra">
+        <id>388</id>
+        <schema>iso19139.fra</schema>
+        <createDate>2010-09-30T11:36:30</createDate>
+        <changeDate>2010-09-30T11:36:30</changeDate>
+        <isTemplate>n</isTemplate>
+        <title />
+        <source>bbfb1e88-5a98-47ba-9ee0-87d250d5bf6c</source>
+        <uuid>Carrières autorisées24/05/2007 14:25:2602/04/2008 09:18:26</uuid>
+        <isHarvested>n</isHarvested>
+        <popularity>34</popularity>
+        <rating>0</rating>
+        <displayOrder />
+        <view>true</view>
+        <notify>false</notify>
+        <download>true</download>
+        <dynamic>true</dynamic>
+        <featured>false</featured>
+        <isPublishedToAll>true</isPublishedToAll>
+        <ownername>loic.ecault</ownername>
+        <category>datasets</category>
+        <baseUrl>http://geobretagne.fr:80/geonetwork</baseUrl>
+      </geonet:info>
+    </csw:Record>
+    <csw:Record xmlns:geonet="http://www.fao.org/geonetwork" xmlns:ows="http://www.opengis.net/ows" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dct="http://purl.org/dc/terms/">
+      <dc:identifier>ce3e7240-3665-11df-a991-0000c0a8230b</dc:identifier>
+      <dc:title>Nombre d'emplacements de camping 2009</dc:title>
+      <dc:type>dataset</dc:type>
+      <dc:subject>camping,</dc:subject>
+      <dc:subject>tourisme</dc:subject>
+      <dc:subject>activités économiques</dc:subject>
+      <dc:subject>capacités touristiques</dc:subject>
+      <dc:subject>hébergement</dc:subject>
+      <dc:subject>Usage des sols</dc:subject>
+      <dc:subject>economy</dc:subject>
+      <dct:abstract>Il s'agit du nombre de d'emplacements de CAMPINGS classés correspondant à l'état du parc au 1er janvier.
+Les terrains de camping sont classés en 4 catégories, de 1 étoile à 4 étoiles, selon des normes fixées par l'arrêté du 11 janvier 1993 complété par la circulaire du 12 février 1993.
+Ces normes concernent les équipements communs, les équipements sanitaires et l'accessibilité aux personnes handicapées.</dct:abstract>
+      <dc:language>fra</dc:language>
+      <dc:source>la couche géographique est un zonage associé à une donnée simple. La donnée source est plus détaillée. Pour plus d'informations se rapprocher du site de l'INSEE.</dc:source>
+      <ows:BoundingBox crs="urn:ogc:def:crs:EPSG:6.6:4326">
+        <ows:LowerCorner>-0.34 47.17</ows:LowerCorner>
+        <ows:UpperCorner>-5.35 49.8</ows:UpperCorner>
+      </ows:BoundingBox>
+      <geonet:info xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:gml="http://www.opengis.net/gml" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gmx="http://www.isotc211.org/2005/gmx" xmlns:gmi="http://www.isotc211.org/2005/gmi" xmlns:gfc="http://www.isotc211.org/2005/gfc" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:fra="http://www.cnig.gouv.fr/2005/fra">
+        <id>393</id>
+        <schema>iso19139.fra</schema>
+        <createDate>2010-09-30T11:37:43</createDate>
+        <changeDate>2011-02-17T15:21:23</changeDate>
+        <isTemplate>n</isTemplate>
+        <title />
+        <source>bbfb1e88-5a98-47ba-9ee0-87d250d5bf6c</source>
+        <uuid>ce3e7240-3665-11df-a991-0000c0a8230b</uuid>
+        <isHarvested>n</isHarvested>
+        <popularity>28</popularity>
+        <rating>0</rating>
+        <displayOrder />
+        <view>true</view>
+        <notify>false</notify>
+        <download>true</download>
+        <dynamic>true</dynamic>
+        <featured>false</featured>
+        <isPublishedToAll>true</isPublishedToAll>
+        <ownername>loic.ecault</ownername>
+        <category>datasets</category>
+        <baseUrl>http://geobretagne.fr:80/geonetwork</baseUrl>
+      </geonet:info>
+    </csw:Record>
+    <csw:Record xmlns:geonet="http://www.fao.org/geonetwork" xmlns:ows="http://www.opengis.net/ows" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dct="http://purl.org/dc/terms/">
+      <dc:identifier>d15a46b0-0c7e-11dd-b03f-001c23142c59</dc:identifier>
+      <dc:title>Revenu moyen par commune</dc:title>
+      <dc:type>dataset</dc:type>
+      <dc:subject>Demographie</dc:subject>
+      <dc:subject>imageryBaseMapsEarthCover</dc:subject>
+      <dct:abstract>Recensement de la population en 1999 - structure par âge et sexe</dct:abstract>
+
+      <dc:language>fra</dc:language>
+      <dc:source>Données 1999 fournies par l'INSEE La population sans doubles comptes comprend : 
+1 - la population des logements, y compris les élèves internes et les militaires séjournant dans un établissement d'une
+     autre commune et ayant leur résidence personnelle dans la commune ; 
+2 - la population des collectivités de la commune : travailleurs en foyer, étudiants en cité universitaire, personnes âgées en maison 
+     de retraite, hospitalisés de longue durée, religieux, personnes en centre d'hébergement de courte ou longue durée, autres : 
+     handicapés etc. ; 
+3 - les personnes sans abri ou vivant dans des habitations mobiles et les mariniers ; 
+4 - la population des établissements pénitentiaires de la commune ; 
+5 - les militaires et les élèves internes vivant dans un établissement de la commune et n'ayant pas d'autre résidence. 
+Le concept de population sans doubles comptes est utilisé pour calculer la population d'un ensemble de communes, chaque personne étant alors prise en compte une seule fois.
+La date de référence du recensement est le 8 mars 1999.</dc:source>
+      <dc:relation />
+      <ows:BoundingBox crs="urn:ogc:def:crs:EPSG:6.6:4326">
+        <ows:LowerCorner>180 -90</ows:LowerCorner>
+        <ows:UpperCorner>-180 90</ows:UpperCorner>
+      </ows:BoundingBox>
+      <dc:URI protocol="" name="Theme Revenus Salaires  et revenus et niveau de vie" description="">http://www.statistiques-locales.insee.fr/esl/baseTelechTheme.asp</dc:URI>
+      <geonet:info xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:gml="http://www.opengis.net/gml" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gmx="http://www.isotc211.org/2005/gmx" xmlns:gmi="http://www.isotc211.org/2005/gmi" xmlns:gfc="http://www.isotc211.org/2005/gfc" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:fra="http://www.cnig.gouv.fr/2005/fra">
+        <id>399</id>
+        <schema>iso19139.fra</schema>
+        <createDate>2010-09-30T11:39:13</createDate>
+        <changeDate>2010-09-30T11:39:13</changeDate>
+        <isTemplate>n</isTemplate>
+        <title />
+        <source>bbfb1e88-5a98-47ba-9ee0-87d250d5bf6c</source>
+        <uuid>d15a46b0-0c7e-11dd-b03f-001c23142c59</uuid>
+        <isHarvested>n</isHarvested>
+        <popularity>31</popularity>
+        <rating>0</rating>
+        <displayOrder />
+        <view>true</view>
+        <notify>false</notify>
+        <download>true</download>
+        <dynamic>true</dynamic>
+        <featured>false</featured>
+        <isPublishedToAll>true</isPublishedToAll>
+        <ownername>loic.ecault</ownername>
+        <category>datasets</category>
+        <baseUrl>http://geobretagne.fr:80/geonetwork</baseUrl>
+      </geonet:info>
+    </csw:Record>
+    <csw:Record xmlns:geonet="http://www.fao.org/geonetwork" xmlns:ows="http://www.opengis.net/ows" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dct="http://purl.org/dc/terms/">
+      <dc:identifier>e4ca16b0-0c71-11dd-8fa0-0000c0a8230c</dc:identifier>
+      <dc:title>Demandeurs d emploi</dc:title>
+      <dc:type>dataset</dc:type>
+      <dc:subject>emploi, chomage, femmes, jeunes, travail</dc:subject>
+      <dc:subject>Emploi</dc:subject>
+      <dc:subject>Répartition de la population - démographie</dc:subject>
+      <dc:subject>Unités statistiques</dc:subject>
+      <dc:subject>imageryBaseMapsEarthCover</dc:subject>
+      <dct:abstract>Demandeurs d'emploi à temps plein en fin de mois ?.(Définition/exhaustivité)
+Les données concernent la part des femmes, des jeunes des personnes non qualifiées ainsi que les demandeurs d'emploi de longue durée.
+Ces données sont réparties soient par zone d'emploi soit par Pays.</dct:abstract>
+      <dc:language>fra</dc:language>
+      <dc:source>Données annuelles fournies par la DRTEFP à remplir ultérieurement</dc:source>
+      <dc:relation />
+      <ows:BoundingBox crs="urn:ogc:def:crs:EPSG:6.6:4326">
+        <ows:LowerCorner>-0.34 47.17</ows:LowerCorner>
+        <ows:UpperCorner>-5.35 49.8</ows:UpperCorner>
+      </ows:BoundingBox>
+      <geonet:info xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:gml="http://www.opengis.net/gml" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gmx="http://www.isotc211.org/2005/gmx" xmlns:gmi="http://www.isotc211.org/2005/gmi" xmlns:gfc="http://www.isotc211.org/2005/gfc" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:fra="http://www.cnig.gouv.fr/2005/fra">
+        <id>409</id>
+        <schema>iso19139.fra</schema>
+        <createDate>2010-09-30T11:41:35</createDate>
+        <changeDate>2011-07-21T12:02:44</changeDate>
+        <isTemplate>n</isTemplate>
+        <title />
+        <source>bbfb1e88-5a98-47ba-9ee0-87d250d5bf6c</source>
+        <uuid>e4ca16b0-0c71-11dd-8fa0-0000c0a8230c</uuid>
+        <isHarvested>n</isHarvested>
+        <popularity>18</popularity>
+        <rating>0</rating>
+        <displayOrder />
+        <view>true</view>
+        <notify>false</notify>
+        <download>true</download>
+        <dynamic>true</dynamic>
+        <featured>false</featured>
+        <isPublishedToAll>true</isPublishedToAll>
+        <ownername>loic.ecault</ownername>
+        <category>datasets</category>
+        <baseUrl>http://geobretagne.fr:80/geonetwork</baseUrl>
+      </geonet:info>
+    </csw:Record>
+    <csw:Record xmlns:geonet="http://www.fao.org/geonetwork" xmlns:ows="http://www.opengis.net/ows" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dct="http://purl.org/dc/terms/">
+      <dc:identifier>ffabdb70-8d95-11de-b5dc-0000c0a8230c</dc:identifier>
+      <dc:title>Foyers fiscaux en 2007</dc:title>
+      <dc:type>dataset</dc:type>
+      <dc:subject>activites economiques, commerces, industrie, construction, service</dc:subject>
+      <dc:subject>établissement, entreprises, emploi,</dc:subject>
+      <dc:subject />
+      <dc:subject>economy</dc:subject>
+      <dct:abstract>Données sur les effectifs par tranche des établissements marchands non agricole: Industrie, Commerces, Construction, Services</dct:abstract>
+      <dc:language>fra</dc:language>
+      <dc:source>la couche géographique est un zonage associé à une donnée simple. La donnée source est plus détaillée. Pour plus d'informations se rapprocher du site de l'INSEE.</dc:source>
+      <ows:BoundingBox crs="urn:ogc:def:crs:EPSG:6.6:4326">
+        <ows:LowerCorner>0 46</ows:LowerCorner>
+        <ows:UpperCorner>-5 49</ows:UpperCorner>
+      </ows:BoundingBox>
+      <dc:URI protocol="WWW:DOWNLOAD-1.0-http--download" name="Etablissements fichier mapinfo" description="">http://geobretagne.fr/telechargement/entreprise/entreprise_plus_100_salaries.ZIP</dc:URI>
+      <geonet:info xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:gml="http://www.opengis.net/gml" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gmx="http://www.isotc211.org/2005/gmx" xmlns:gmi="http://www.isotc211.org/2005/gmi" xmlns:gfc="http://www.isotc211.org/2005/gfc" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:fra="http://www.cnig.gouv.fr/2005/fra">
+        <id>422</id>
+        <schema>iso19139.fra</schema>
+        <createDate>2010-09-30T11:44:48</createDate>
+        <changeDate>2010-09-30T11:44:48</changeDate>
+        <isTemplate>n</isTemplate>
+        <title />
+        <source>bbfb1e88-5a98-47ba-9ee0-87d250d5bf6c</source>
+        <uuid>ffabdb70-8d95-11de-b5dc-0000c0a8230c</uuid>
+        <isHarvested>n</isHarvested>
+        <popularity>14</popularity>
+        <rating>0</rating>
+        <displayOrder />
+        <view>true</view>
+        <notify>false</notify>
+        <download>true</download>
+        <dynamic>true</dynamic>
+        <featured>false</featured>
+        <isPublishedToAll>true</isPublishedToAll>
+        <ownername>loic.ecault</ownername>
+        <category>datasets</category>
+        <baseUrl>http://geobretagne.fr:80/geonetwork</baseUrl>
+      </geonet:info>
+    </csw:Record>
+    <csw:Record xmlns:geonet="http://www.fao.org/geonetwork" xmlns:ows="http://www.opengis.net/ows" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dct="http://purl.org/dc/terms/">
+      <dc:identifier>Logement social et construction neuve15/06/2006 14:42:2904/07/2007 15:42:54</dc:identifier>
+      <dc:title>Taux logements sociaux publics 2005 par commune</dc:title>
+      <dc:type>dataset</dc:type>
+      <dc:subject>Ortho-imagerie</dc:subject>
+      <dc:subject>Occupation des terres</dc:subject>
+      <dc:subject>Habitat</dc:subject>
+      <dc:subject>imageryBaseMapsEarthCover</dc:subject>
+      <dct:abstract>Nombre de logements commencés et autorisés par type (logements individuels et collectifs)
+Enquête Parc Locatif Social  -nombre total de logements, nombre de logements vacants, nombre de logements individuels et collectifs</dct:abstract>
+      <dc:language />
+      <dc:source>données issues de la saisie des permis de construire et traitées par la DRE L?exhaustivité et la qualité des fichiers servant aux statistiques de la construction neuve sont tributaire de la régularité à laquelle sont transmises (a priori mensuellement) les données à la DRE</dc:source>
+      <dc:relation />
+      <ows:BoundingBox crs="urn:ogc:def:crs:EPSG:6.6:4326">
+        <ows:LowerCorner>180 -90</ows:LowerCorner>
+        <ows:UpperCorner>-180 90</ows:UpperCorner>
+      </ows:BoundingBox>
+      <dc:URI protocol="" name="" description="" />
+      <geonet:info xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:gml="http://www.opengis.net/gml" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gmx="http://www.isotc211.org/2005/gmx" xmlns:gmi="http://www.isotc211.org/2005/gmi" xmlns:gfc="http://www.isotc211.org/2005/gfc" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:fra="http://www.cnig.gouv.fr/2005/fra">
+        <id>426</id>
+        <schema>iso19139.fra</schema>
+        <createDate>2010-09-30T11:45:47</createDate>
+        <changeDate>2011-05-11T16:40:09</changeDate>
+        <isTemplate>n</isTemplate>
+        <title />
+        <source>bbfb1e88-5a98-47ba-9ee0-87d250d5bf6c</source>
+        <uuid>Logement social et construction neuve15/06/2006 14:42:2904/07/2007 15:42:54</uuid>
+        <isHarvested>n</isHarvested>
+        <popularity>46</popularity>
+        <rating>0</rating>
+        <displayOrder />
+        <view>true</view>
+        <notify>false</notify>
+        <download>true</download>
+        <dynamic>true</dynamic>
+        <featured>false</featured>
+        <isPublishedToAll>true</isPublishedToAll>
+        <ownername>loic.ecault</ownername>
+        <category>datasets</category>
+        <baseUrl>http://geobretagne.fr:80/geonetwork</baseUrl>
+      </geonet:info>
+    </csw:Record>
+    <csw:Record xmlns:geonet="http://www.fao.org/geonetwork" xmlns:ows="http://www.opengis.net/ows" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dct="http://purl.org/dc/terms/">
+      <dc:identifier>Natura 2000 - Zones de Protection Spéciale14/06/2006 14:57:2804/07/2007 15:46:06</dc:identifier>
+      <dc:title>Natura 2000 - Zones de Protection Spéciale</dc:title>
+      <dc:type>dataset</dc:type>
+      <dc:subject />
+      <dc:subject>Patrimoine naturel</dc:subject>
+      <dc:subject>imageryBaseMapsEarthCover</dc:subject>
+      <dct:abstract>Zone de protection spéciale</dct:abstract>
+      <dc:language>fra</dc:language>
+      <dc:source>Donnée issue de la digitalisation par le Museum d'Histoire Naturelle à remplir ultérieurement</dc:source>
+      <dc:relation />
+      <ows:BoundingBox crs="urn:ogc:def:crs:EPSG:6.6:4326">
+        <ows:LowerCorner>0 46</ows:LowerCorner>
+        <ows:UpperCorner>-5 49</ows:UpperCorner>
+      </ows:BoundingBox>
+      <dc:URI protocol="WWW:LINK-1.0-http--link" name="" description="">http://carto.ecologie.gouv.fr/HTML_PUBLIC/Site%20de%20consultation/site.php?map=Nature_Paysage.map&amp;service_idx=10W</dc:URI>
+      <geonet:info xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:gml="http://www.opengis.net/gml" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gmx="http://www.isotc211.org/2005/gmx" xmlns:gmi="http://www.isotc211.org/2005/gmi" xmlns:gfc="http://www.isotc211.org/2005/gfc" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:fra="http://www.cnig.gouv.fr/2005/fra">
+        <id>427</id>
+        <schema>iso19139.fra</schema>
+        <createDate>2010-09-30T11:46:05</createDate>
+        <changeDate>2010-09-30T11:46:05</changeDate>
+        <isTemplate>n</isTemplate>
+        <title />
+        <source>bbfb1e88-5a98-47ba-9ee0-87d250d5bf6c</source>
+        <uuid>Natura 2000 - Zones de Protection Spéciale14/06/2006 14:57:2804/07/2007 15:46:06</uuid>
+        <isHarvested>n</isHarvested>
+        <popularity>55</popularity>
+        <rating>0</rating>
+        <displayOrder />
+        <view>true</view>
+        <notify>false</notify>
+        <download>true</download>
+        <dynamic>true</dynamic>
+        <featured>false</featured>
+        <isPublishedToAll>true</isPublishedToAll>
+        <ownername>loic.ecault</ownername>
+        <category>datasets</category>
+        <baseUrl>http://geobretagne.fr:80/geonetwork</baseUrl>
+      </geonet:info>
+    </csw:Record>
+  </csw:SearchResults>
+</csw:GetRecordsResponse>

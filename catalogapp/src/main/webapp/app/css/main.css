@@ -1,0 +1,24 @@
+#waiter {
+	position:absolute;
+	top:0px;
+	left:50%;
+	margin-left: -62px;
+	z-index:100;
+	visibility:hidden;
+}
+#waiter span {
+	background:#EFAE00 none repeat scroll 0 0;
+	padding:2px;
+	-moz-border-radius: 0 0 4px 4px;
+	-webkit-border-radius: 0 0 4px 4px;
+}
+
+.x-list div.x-view-over {
+	background-color: #eee;
+}
+
+.x-list div.x-view-item {
+	border:1px solid grey; 
+	margin: 5px;
+	padding: 5px;
+}

@@ -1,0 +1,8 @@
+CatalogueApp
+
+An interface that queries CSW server (geonetwork from geOrchestra) and which renders client-side the metadatas.
+
+To be continued with François Van-der-Biest
+
+
+-- Pierre Mauduit

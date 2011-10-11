@@ -20,6 +20,7 @@
   <modules>
     <module>mif-2.5.8</module>
     <module>cas-server-webapp</module>
+    <module>catalogapp</module>
     <module>doc</module>
     <module>static</module>
     <module>embedded-ldap</module>
