@@ -59,6 +59,7 @@ GEOR.wmsbrowser = (function() {
          *
          * Parameters:
          * options - {Object} Hash with key: srs (the map srs).
+         * The other options will be applied to panel
          *
          * Returns:
          * {Ext.Panel}
@@ -142,6 +143,7 @@ GEOR.wmsbrowser = (function() {
             });
             
             var srs = options.srs;
+            delete options.srs;
             var urlField = new Ext.app.OWSUrlField({
                 fieldLabel: "... ou saisissez son adresse",
                 callback: function(r, options, success) {
@@ -172,7 +174,7 @@ GEOR.wmsbrowser = (function() {
                 width: 400
             });
 
-            return new Ext.Panel({
+            return new Ext.Panel(Ext.apply({
                 title: 'Serveurs WMS',
                 layout: 'border',
                 items: [
@@ -188,7 +190,7 @@ GEOR.wmsbrowser = (function() {
                     },
                     grid
                 ]
-            });
+            }, options));
         },
         
         /**

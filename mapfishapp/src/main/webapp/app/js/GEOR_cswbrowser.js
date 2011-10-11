@@ -337,10 +337,13 @@ GEOR.cswbrowser = (function() {
          * APIMethod: getPanel
          * Return the panel for the CSW browser tab.
          *
+         * Parameters:
+         * options - {Object} options applied to panel
+         * 
          * Returns:
          * {Ext.Panel}
          */
-        getPanel: function() {
+        getPanel: function(options) {
 
             tree = new Ext.tree.TreePanel({
                 region: 'center',
@@ -424,7 +427,7 @@ GEOR.cswbrowser = (function() {
                 }
             });
 
-            return new Ext.Panel({
+            return new Ext.Panel(Ext.apply({
                 title: GEOR.config.CATALOG_NAME,
                 layout: 'border',
                 items: [{
@@ -444,7 +447,7 @@ GEOR.cswbrowser = (function() {
                         }
                     }
                 }
-            });
+            }, options));
         },
         
         /**

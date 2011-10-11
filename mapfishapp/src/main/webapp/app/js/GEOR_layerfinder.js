@@ -97,13 +97,17 @@ GEOR.layerfinder = (function() {
             "selectionchanged": selectionChangedListener.call(this, "wfs")
         });
         
-        panels["csw"] = GEOR.cswbrowser.getPanel();
+        panels["csw"] = GEOR.cswbrowser.getPanel({
+            tabTip: "Trouvez des couches par mots clés"
+        });
         var mapSRS = layerStore.map.getProjection();
         panels["wms"] = GEOR.wmsbrowser.getPanel({
-            srs: mapSRS
+            srs: mapSRS,
+            tabTip: "Trouvez des couches en interrogeant des serveurs WMS"
         });
         panels["wfs"] = GEOR.wfsbrowser.getPanel({
-            srs: mapSRS
+            srs: mapSRS,
+            tabTip: "Trouvez des couches en interrogeant des serveurs WFS"
         });
         
         return new Ext.TabPanel({

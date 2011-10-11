@@ -60,11 +60,15 @@ GEOR.wfsbrowser = (function() {
          *
          * Parameters:
          * options - {Object} Hash with key: srs (the map srs).
+         * The other options will be applied to panel
          *
          * Returns:
          * {Ext.Panel}
          */
         getPanel: function(options) {
+            var srs = options.srs;
+            delete options.srs;
+            
             var store = new GEOR.ows.WFSCapabilities({
                 storeOptions: {
                     // url should not be empty unless we want the following
@@ -98,7 +102,7 @@ GEOR.wfsbrowser = (function() {
                         // Please note that, with WFS 1.0.0, the trick should 
                         // only work with GeoServer:
                         srsNameInQuery: true,
-                        srsName: options.srs
+                        srsName: srs
                         // TODO: we might also need to set the geometryName 
                         // (required to query features by BBOX)
                         
@@ -193,7 +197,7 @@ GEOR.wfsbrowser = (function() {
                 width: 400
             });
 
-            return new Ext.Panel({
+            return new Ext.Panel(Ext.apply({
                 title: 'Serveurs WFS',
                 layout: 'border',
                 items: [
@@ -209,7 +213,7 @@ GEOR.wfsbrowser = (function() {
                     },
                     grid
                 ]
-            });
+            }, options));
         },
         
         /**
