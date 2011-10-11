@@ -19,7 +19,7 @@ proxy.defaultTarget=http://localhost:8080
 proxy.extractorapp.target=http://localhost:8080/extractorapp-private/
 proxy.mapfishapp.target=http://localhost:8080/mapfishapp-private/
 proxy.geonetwork.target=http://localhost:8080/geonetwork-private/
-proxy.geoserver.target=http://localhost:8180/geoserver-private/
+proxy.geoserver.target=http://localhost:8180/geoserver/
 
 camptocamp.security.loglevel=ALL
 jasig.loglevel=ALL
