@@ -1,26 +1,33 @@
-# applicationContext-security.xml
+public_host=c2cpc61.camptocamp.com
 
-logout-success-url=https://c2cpc61.camptocamp.com/cas/logout
-casLoginUrl=https://c2cpc61.camptocamp.com/cas
-casTicketValidation=https://localhost:8443/cas
-casCallbackUrl=https://localhost:8443/receptor
-proxyCallback=http://c2cpc61.camptocamp.com/j_spring_cas_security_check
-userSearchBaseDN=ou=users,dc=georchestra,dc=org
-userSearchFilter=(uid={0})
-authoritiesBaseDN=ou=groups,dc=georchestra,dc=org
-groupSearchFilter=(memberUid={1})
-groupRoleAttribute=cn
+#LDAP config
 ldapUrl=ldaps://localhost:636/
+baseDN=dc=georchestra,dc=org
+userSearchBaseDN=ou=users
+authoritiesBaseDN=ou=groups
 ldapAdminDn=cn=admin,dc=georchestra,dc=org
 ldap.admin.password=uNg9aiFa
+cas.public.host=c2cpc61.camptocamp.com
+cas.private.host=localhost
 
+defaultTarget.port=8080
+public.ssl=443
+private.ssl=8443
+geoserver.server=http://${public_host}:${defaultTarget.port}
 
-# proxy-servlet.xml
+proxy.defaultTarget=http://localhost:8080
+proxy.extractorapp.target=http://localhost:8080/extractorapp-private/
+proxy.mapfishapp.target=http://localhost:8080/mapfishapp-private/
+proxy.geonetwork.target=http://localhost:8080/geonetwork-private/
+proxy.geoserver.target=http://localhost:8180/geoserver-private/
 
-proxy.extractorapp.target=http://localhost:8080/extractorapp-private
-proxy.geoserver-security.target=http://localhost:8080/geoserver-security
-proxy.mapfishapp.target=http://localhost:8080/mapfishapp-private
-proxy.geonetwork.target=http://localhost:8080/geonetwork-private
-proxy.geoserver.target=http://localhost:8180/geoserver-private
+camptocamp.security.loglevel=ALL
+jasig.loglevel=ALL
+springframework.loglevel=ALL
+log.dir=/srv/tomcat/tomcat1/logs
+log.filename=security-proxy.log
+# options are StandardOut, FileAppender or HTMLAppender (zero or more and comma separated) 
+log.appender=FileAppender
+
+# dev should not need a test url 
 test.url=
-public.host=c2cpc61.camptocamp.com

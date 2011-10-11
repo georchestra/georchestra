@@ -3,7 +3,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
     xmlns:p="http://www.springframework.org/schema/p"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans 
-						http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+						http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
     <bean id="proxy" 
           class="com.camptocamp.security.Proxy">
@@ -12,11 +12,11 @@
           <property name="defaultCharset" value="UTF-8"/>
           <property name="targets">
                <map>
-                <entry key="extractorapp" value="${proxy.defaultTarget}/extractorapp-private/" />
-                <entry key="gssec" value="${proxy.defaultTarget}/geoserver-security/" />
-                <entry key="mapfishapp" value="${proxy.defaultTarget}/mapfishapp-private/" />
-                <entry key="geonetwork" value="${proxy.defaultTarget}/geonetwork-private/" />
-                <entry key="geoserver" value="${geoserver.server}/geoserver-private/" />
+                <entry key="extractorapp" value="${proxy.extractorapp.target}" />
+                <!-- entry key="gssec" value="${proxy.geoserver-security.target}" / -->
+                <entry key="mapfishapp" value="${proxy.mapfishapp.target}" />
+                <entry key="geonetwork" value="${proxy.geonetwork.target}" />
+                <entry key="geoserver" value="${proxy.geoserver.target}" />
                 <entry key="test" value="${test.url}" />
                </map>
           </property>

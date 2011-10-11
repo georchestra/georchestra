@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
+import java.net.ProxySelector;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -30,10 +31,10 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
-import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -47,10 +48,13 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpTrace;
+import org.apache.http.client.params.ClientPNames;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.ProxySelectorRoutePlanner;
 import org.apache.http.message.BasicNameValuePair;
-import org.springframework.security.util.RedirectUtils;
+import org.springframework.security.web.DefaultRedirectStrategy;
+import org.springframework.security.web.RedirectStrategy;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -104,7 +108,9 @@ public class Proxy {
     private HeadersManagementStrategy headerManagement             = new HeadersManagementStrategy();
     private FilterRequestsStrategy    strategyForFilteringRequests = new AcceptAllRequests();
     private List<String>              requireCharsetContentTypes   = Collections.emptyList();
-    private String defaultCharset;
+    private String defaultCharset = "UTF-8";
+    
+    private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
     @RequestMapping(params="login", method={GET,POST} )
     public void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -114,12 +120,12 @@ public class Proxy {
         } else if(uri.startsWith("/sec")) {
             uri=uri.substring(4);
         }
-        RedirectUtils.sendRedirect(request, response, uri, true);
+        redirectStrategy.sendRedirect(request, response, uri);
     }
 
     @RequestMapping(params={"login","url"}, method={GET,POST})
     public void login(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) throws ServletException, IOException {
-        RedirectUtils.sendRedirect(request, response, sURL, false);
+        redirectStrategy.sendRedirect(request, response, sURL);
     }
     
     // ----------------- Method calls where request is encoded in a url parameter of request ----------------- //
@@ -156,7 +162,7 @@ public class Proxy {
     private void handleUrlParamRequest(HttpServletRequest request, HttpServletResponse response, RequestType type, String sURL) {
         if(request.getRequestURI().startsWith("/sec/proxy/")){
             testLegalContentType(request);
-            handleRequest(request, response, type, sURL);
+            handleRequest(request, response, type, sURL, false);
         } else {
             handlePathEncodedRequests(request, response, type);
         }
@@ -179,7 +185,7 @@ public class Proxy {
                 return ;
             }
         }
-        throw new IllegalArgumentException("ContentType "+contentType+" is not permitted to be requested when the request is made through the URL parameter form.");
+        throw new IllegalArgumentException("ContentType " + contentType + " is not permitted to be requested when the request is made through the URL parameter form.");
     }
 
     // ----------------- Method calls where request is encoded in path of request ----------------- //
@@ -214,24 +220,32 @@ public class Proxy {
 
     // ----------------- Implementation methods ----------------- //
 
+    private String buildForwardRequestURL(HttpServletRequest request) {
+    	String forwardRequestURI = request.getRequestURI();
+
+        String contextPath = request.getServletPath() + request.getContextPath();
+        if (forwardRequestURI.length() <= contextPath.length()) {
+            forwardRequestURI = "/";
+        } else {
+            forwardRequestURI = forwardRequestURI.substring(contextPath
+                    .length());
+        }
+
+        forwardRequestURI = forwardRequestURI.replaceAll("//", "/");
+        
+        return forwardRequestURI;
+    }
+    
     /**
      * Main entry point for methods where the request path is encoded in the path of the URL 
      */
     private void handlePathEncodedRequests(HttpServletRequest request, HttpServletResponse response, RequestType requestType) {
         try {
-
-            String forwardRequestURI = request.getRequestURI();
+        	String contextPath = request.getServletPath() + request.getContextPath();
+            String forwardRequestURI = buildForwardRequestURL(request);
+            
             logger.debug("handlePathEncodedRequests: -- Handling Request: "+requestType+":"+forwardRequestURI+" from: "+request.getRemoteAddr());
 
-            String contextPath = request.getServletPath()+request.getContextPath();
-            if (forwardRequestURI.length() <= contextPath.length()) {
-                forwardRequestURI = "/";
-            } else {
-                forwardRequestURI = forwardRequestURI.substring(contextPath
-                        .length());
-            }
-
-            forwardRequestURI = forwardRequestURI.replaceAll("//", "/");
             String sURL = findTarget(forwardRequestURI);
             
             if(sURL == null){
@@ -268,7 +282,7 @@ public class Proxy {
                 sURL += query;
             }
             
-            handleRequest(request, response, requestType, sURL);
+            handleRequest(request, response, requestType, sURL, true);
         } catch (IOException e) {
             logger.error("Error connecting to client", e);
         }
@@ -326,9 +340,45 @@ public class Proxy {
         
     }
 
-    private void handleRequest(HttpServletRequest request, HttpServletResponse finalResponse, RequestType requestType, String sURL) {
+    private String findMatchingTarget(HttpServletRequest request) {
+    	String requestURI = buildForwardRequestURL(request);
+    	return findMatchingTarget(requestURI);
+    }
+    
+    private String findMatchingTarget(String requestURI) {
+    	
+        String[] segments;
+        if(requestURI.charAt(0) == '/') {
+            segments = StringUtils.split(requestURI.substring(1), '/');
+        } else {
+            segments = StringUtils.split(requestURI, '/');
+        }
+        
+        if(segments.length == 0){
+        	return null;
+        }
+        
+        if (targets.containsKey(segments[0])){
+        	return segments[0];
+        } else {
+        	return null;
+        }
+    }
+    
+    private void handleRequest(HttpServletRequest request, HttpServletResponse finalResponse, RequestType requestType, String sURL, boolean localProxy) {
         HttpClient httpclient = new DefaultHttpClient();
         httpclient.getParams().setParameter("http.socket.timeout", new Integer(300000));
+        httpclient.getParams().setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, false);
+
+        //
+        // Handle http proxy for external request.
+        // Proxy must be configured by system variables (e.g.: -Dhttp.proxyHost=proxy -Dhttp.proxyPort=3128)
+        //
+        ProxySelectorRoutePlanner routePlanner = new ProxySelectorRoutePlanner(
+                     httpclient.getConnectionManager().getSchemeRegistry(),
+                     ProxySelector.getDefault());
+
+        ((DefaultHttpClient)httpclient).setRoutePlanner(routePlanner); 
 
         try {
             URL url = null;
@@ -358,6 +408,20 @@ public class Proxy {
             HttpRequestBase proxyingRequest = makeRequest(request, requestType, sURL);
 
             headerManagement.configureRequestHeaders(request, proxyingRequest);
+            
+            if (localProxy) {
+		        //
+		        // Hack for geoserver
+		        // Should not be here. We must use a ProxyTarget class and define
+		        // if Host header should be formwared or not.
+		        //
+		        request.getHeader("Host");
+		        proxyingRequest.setHeader("Host", request.getHeader("Host"));
+		        
+		        if (logger.isDebugEnabled()) {
+		        	logger.debug("Host header set to: " + proxyingRequest.getFirstHeader("Host").getValue() + " for proxy request.");
+		        }
+            }
             HttpResponse proxiedResponse = httpclient.execute(proxyingRequest);
 
             org.apache.http.StatusLine statusLine = proxiedResponse
@@ -365,15 +429,29 @@ public class Proxy {
 
 
             int statusCode = statusLine.getStatusCode();
+            
             String reasonPhrase = statusLine.getReasonPhrase();
+            
             if (reasonPhrase != null && statusCode > 399) {
-                logger.warn("Error occurred. statuscode: "+statusCode+", reason: "+reasonPhrase);
+            	if (statusCode == 401) {
+            		//
+            		// Handle case of basic authentication.
+            		//
+            		Header authHeader = proxiedResponse.getFirstHeader("WWW-Authenticate");
+            		finalResponse.setHeader("WWW-Authenticate", authHeader.getValue());
+            	}
+            	if (logger.isWarnEnabled()) {
+            		logger.warn("Error occurred. statuscode: "+statusCode+", reason: "+reasonPhrase);
+            	}
                 finalResponse.sendError(statusCode, reasonPhrase);
                 return;
             }
             
-            headerManagement.copyResponseHeaders(request, request.getRequestURI(), proxiedResponse, finalResponse);
+            headerManagement.copyResponseHeaders(request, request.getRequestURI(), proxiedResponse, finalResponse, this.targets);
 
+            if (statusCode == 302)
+            	adjustLocation(request, proxiedResponse, finalResponse);
+            
             // get content type
             
             String contentType = null;
@@ -396,6 +474,68 @@ public class Proxy {
         }
     }
 
+    private void copyLocationHeaders(HttpResponse proxiedResponse, HttpServletResponse finalResponse) {
+    	for (Header locationHeader : proxiedResponse.getHeaders("Location")) {
+    		finalResponse.addHeader(locationHeader.getName(), locationHeader.getValue());
+    	}
+    }
+    
+    private void adjustLocation(HttpServletRequest request, HttpResponse proxiedResponse, HttpServletResponse finalResponse) {
+    	if (logger.isDebugEnabled()) {
+    		logger.debug("adjustLocation called for request: " + request.getRequestURI());
+    	}
+    	String target = findMatchingTarget(request);
+    	
+    	if (logger.isDebugEnabled()) {
+    		logger.debug("adjustLocation found target: " + target + " for request: " + request.getRequestURI());
+    	}
+    	
+    	if (target == null) {
+    		copyLocationHeaders(proxiedResponse, finalResponse);
+    		return;
+    	}
+    	
+    	String baseURL = targets.get(target);
+    	URI baseURI = null;
+    	
+    	try {
+	        baseURI = new URI(baseURL);
+        } catch (URISyntaxException e) {
+        	copyLocationHeaders(proxiedResponse, finalResponse);
+	        return;
+        }
+    	
+    	for (Header locationHeader : proxiedResponse.getHeaders("Location")) {
+    		if (logger.isDebugEnabled()) {
+        		logger.debug("adjustLocation process header: " + locationHeader.getValue());
+        	}
+    		try {
+	            URI locationURI = new URI(locationHeader.getValue());
+	            URI resolvedURI = baseURI.resolve(locationURI);
+	            
+	            if (logger.isDebugEnabled()) {
+	            	logger.debug("Test location header: " + resolvedURI.toString() + " against: " + baseURI.toString());
+	            }
+	            if (resolvedURI.toString().startsWith(baseURI.toString())) {
+	            	// proxiedResponse.removeHeader(locationHeader);
+	            	String newLocation = "/" + target + "/" + resolvedURI.toString().substring(baseURI.toString().length());
+	            	finalResponse.addHeader("Location", newLocation);
+	            	// Header newLocationHeader = new BasicHeader("Location", newLocation);
+	            	if (logger.isDebugEnabled()) {
+	            		logger.debug("adjustLocation from: " + locationHeader.getValue() + " to " + newLocation);
+	            	}
+	            	// proxiedResponse.addHeader(newLocationHeader);
+	            }
+	            else {
+	            	finalResponse.addHeader(locationHeader.getName(), locationHeader.getValue());
+	            }
+            } catch (URISyntaxException e) {
+	           finalResponse.addHeader(locationHeader.getName(), locationHeader.getValue());
+            }
+    	}
+    	
+    }
+    
     /**
      * Direct copy of response
      */
@@ -577,7 +717,8 @@ public class Proxy {
              */
             
             boolean isCharsetKnown = proxiedResponse.getEntity().getContentType().getValue().toLowerCase().contains("charset");
-            String contentEncoding = getContentEncoding(proxiedResponse.getAllHeaders());
+            // String contentEncoding = getContentEncoding(proxiedResponse.getAllHeaders());
+            String contentEncoding = getContentEncoding(proxiedResponse.getHeaders("Content-Encoding"));
 
             if(logger.isDebugEnabled()) {
                 
@@ -592,7 +733,7 @@ public class Proxy {
                 streamFromServer = proxiedResponse.getEntity().getContent();  
                 streamToClient = finalResponse.getOutputStream();
             }
-            else if ("gzip".equalsIgnoreCase(contentEncoding) && !isCharsetKnown) {
+            else if (!isCharsetKnown && ("gzip".equalsIgnoreCase(contentEncoding) || "x-gzip".equalsIgnoreCase(contentEncoding))) {
                 // the charset is unknown and the data are compressed in gzip
                 // we add the gzip wrapper to be able to read/write the stream content
                 streamFromServer = new GZIPInputStream(proxiedResponse.getEntity().getContent());
@@ -622,7 +763,7 @@ public class Proxy {
                     if(s.length() > 200) {  
                         
                        if(logger.isTraceEnabled()) {
-                           logger.trace("attempting to read charset from: "+s);
+                           logger.trace("attempting to read charset from: " + s);
                        }
                        String charset = getCharset(s); // extract charset
                         
@@ -735,27 +876,36 @@ public class Proxy {
      * @return null if not exists otherwise name of the encoding (gzip, deflate...)
      */
     private String getContentEncoding(Header[] headers) {
-        for (int i = 0; i < headers.length; i++) {
-            Header header = headers[i];
+    	if (headers == null || headers.length == 0) {
+    		if (logger.isDebugEnabled()) {
+    			logger.debug("No content-encoding header for this request.");
+    		}
+    		return null;
+    	}
+        for (Header header : headers) {
+            // Header header = headers[i];
             String headerName = header.getName(); 
-            if(headerName != null) {
-                if("Content-Encoding".equalsIgnoreCase(headerName)) {
-                    HeaderElement[] valuesList = header.getElements();
-                    StringBuilder sBuilder = new StringBuilder();
-                    for(HeaderElement headerElem : valuesList) {
-                        String headerVal = headerElem.getValue();
-                        if(headerVal != null)
-                            sBuilder.append(headerVal);
-                    }
-                    
-                    if(sBuilder.toString().trim().length() > 0) {
-                        return sBuilder.toString().toLowerCase();
-                    } else {
-                        return null;
-                    }
-                }
+            if (logger.isDebugEnabled()) {
+        		logger.debug("Check content-encoding against header: " + headerName + " : " + header.getValue());
+        	}
+            if(headerName != null && "Content-Encoding".equalsIgnoreCase(headerName)) {
+            	return header.getValue();
+//                HeaderElement[] valuesList = header.getElements();
+//                StringBuilder sBuilder = new StringBuilder();
+//                for(HeaderElement headerElem : valuesList) {
+//                    String headerVal = headerElem.getValue();
+//                    if(headerVal != null)
+//                        sBuilder.append(headerVal);
+//                }
+//                
+//                if(sBuilder.toString().trim().length() > 0) {
+//                    return sBuilder.toString().toLowerCase();
+//                } else {
+//                    return null;
+//                }
             }
         }
+        
         return null;
     }
 
@@ -840,5 +990,13 @@ public class Proxy {
             throw new IllegalArgumentException(defaultCharset+" is not supporte by current JVM");
         }
         this.defaultCharset = defaultCharset;
+    }
+
+    /**
+     * 
+     * @param redirectStrategy
+     */
+	public void setRedirectStrategy(RedirectStrategy redirectStrategy) {
+    	this.redirectStrategy = redirectStrategy;
     }
 }

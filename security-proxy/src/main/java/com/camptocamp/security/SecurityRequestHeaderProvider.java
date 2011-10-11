@@ -6,9 +6,9 @@ import java.util.List;
 
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
-import org.springframework.security.Authentication;
-import org.springframework.security.GrantedAuthority;
-import org.springframework.security.context.SecurityContextHolder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 public class SecurityRequestHeaderProvider extends HeaderProvider {
 
@@ -17,7 +17,7 @@ public class SecurityRequestHeaderProvider extends HeaderProvider {
 
         Authentication authentication = SecurityContextHolder.getContext()
                 .getAuthentication();
-        GrantedAuthority[] authorities = authentication.getAuthorities();
+        Collection<GrantedAuthority> authorities = authentication.getAuthorities();
         List<Header> headers = new ArrayList<Header>();
         headers.add(new BasicHeader("sec-username", authentication.getName()));
         StringBuilder roles = new StringBuilder();

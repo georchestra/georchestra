@@ -6,10 +6,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.security.Authentication;
-import org.springframework.security.ui.cas.CasProcessingFilter;
+import org.springframework.security.cas.web.CasAuthenticationFilter;
+import org.springframework.security.core.Authentication;
 
-public class GatewayEnabledCasProcessingFilter extends CasProcessingFilter {
+public class GatewayEnabledCasProcessingFilter extends CasAuthenticationFilter {
 
     @Override
     protected boolean requiresAuthentication(HttpServletRequest request, HttpServletResponse response) {

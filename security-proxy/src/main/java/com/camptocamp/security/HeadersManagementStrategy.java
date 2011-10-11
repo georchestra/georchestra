@@ -12,6 +12,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.message.BasicHeader;
+import org.springframework.util.StringUtils;
 
 /**
  * A strategy for copying headers from the request to the proxied request and
@@ -75,11 +76,25 @@ public class HeadersManagementStrategy {
         
         for(HeaderProvider provider : headerProviders) {
             for (Header header : provider.getCustomRequestHeaders()) {
-                proxyRequest.addHeader(header);
-                headersLog.append("\t" + header.getName());
-                headersLog.append("=");
-                headersLog.append(header.getValue());
-                headersLog.append("\n");
+            	if (( header.getName().equalsIgnoreCase("sec-username") ||
+            		  header.getName().equalsIgnoreCase("sec-roles") ) &&
+            	     proxyRequest.getHeaders(header.getName()) != null &&
+            	     proxyRequest.getHeaders(header.getName()).length > 0) {
+            		Header [] originalHeaders = proxyRequest.getHeaders(header.getName());
+            		for (Header originalHeader : originalHeaders) {
+	            		headersLog.append("\t" + originalHeader.getName());
+	            		headersLog.append("=");
+	            		headersLog.append(originalHeader.getValue());
+	            		headersLog.append("\n");
+            		}
+            	}
+            	else {
+            		proxyRequest.addHeader(header);
+            		headersLog.append("\t" + header.getName());
+            		headersLog.append("=");
+            		headersLog.append(header.getValue());
+            		headersLog.append("\n");
+            	}
             }
         }
 
@@ -114,7 +129,7 @@ public class HeadersManagementStrategy {
             String currentId = null;
             for (String path : jessionIds.keySet()) {
                 // the cookie we will use is the cookie with the longest matching path
-                if(requestPath.startsWith(path) && currentPath==null) {
+                if(requestPath.startsWith(path)) {
                     if(logger.isDebugEnabled()) {
                         logger.debug("Found possible matching JSessionId: Path = "+path+" id="+jessionIds.get(path)+" for "+requestPath+" of uri "+proxyRequest.getURI());
                     }
@@ -151,7 +166,7 @@ public class HeadersManagementStrategy {
     /**
      * Copy headers from the proxy response to the final response
      */
-    public synchronized void copyResponseHeaders(HttpServletRequest originalRequest, String originalRequestURI, HttpResponse proxyResponse, HttpServletResponse finalResponse) {
+    public synchronized void copyResponseHeaders(HttpServletRequest originalRequest, String originalRequestURI, HttpResponse proxyResponse, HttpServletResponse finalResponse, Map<String,String> proxyTargets) {
         HttpSession session = originalRequest.getSession(true);
         session.setMaxInactiveInterval(Integer.MAX_VALUE);
         
@@ -164,7 +179,15 @@ public class HeadersManagementStrategy {
             headersLog.append("\t");
             if (header.getName().equalsIgnoreCase(SET_COOKIE_ID)) {
                 continue;
-            } else if (defaultIgnores(header)){
+            } else if ("location".equalsIgnoreCase(header.getName())) {
+//            	DO NOTHING
+//            	Handle in Proxy.java
+//            	if (logger.isDebugEnabled()) {
+//            		logger.debug("handle location header: " + header.getValue());
+//            	}
+//            	Header locationHeader = handleLocation(originalRequest, header, proxyTargets);
+//            	finalResponse.addHeader(locationHeader.getName(), locationHeader.getValue());
+			} else if (defaultIgnores(header)){
                 headersLog.append("-- IGNORING -- ");
             } else {
                 finalResponse.addHeader(header.getName(), header.getValue());
@@ -193,9 +216,58 @@ public class HeadersManagementStrategy {
         headersLog
                 .append("==========================================================\n");
 
-        logger.trace(headersLog.toString());
+        if (logger.isTraceEnabled()) {
+        	logger.trace(headersLog.toString());
+        }
     }
 
+    private Header handleLocation(HttpServletRequest request, Header locationHeader, Map<String,String> proxyTargets) {
+    	String locationValue = null;
+    	for (String proxyTargetKey : proxyTargets.keySet()) {
+    		if (logger.isDebugEnabled()) {
+    			logger.debug("Test proxyTarget: " + proxyTargets.get(proxyTargetKey) + " against: " + locationHeader.getValue());
+    		}
+    		if (locationHeader.getValue().startsWith(proxyTargets.get(proxyTargetKey))) {
+    			locationValue = "/" + proxyTargetKey + "/" + locationHeader.getValue().substring(proxyTargets.get(proxyTargetKey).length());
+    			if (logger.isDebugEnabled()) {
+    				logger.debug("Adjust location header on redirection from: " + locationHeader.getValue() + " to: " + locationValue);
+    			}
+    			Header newLocationHeader = new BasicHeader(locationHeader.getName(), locationValue);
+    			return newLocationHeader;
+    		}
+    		else {
+    			String newLocation = sanitizeLocation(request, locationHeader.getValue(), proxyTargets);
+    			if (!locationHeader.getValue().equals(newLocation)) {
+    				if (logger.isDebugEnabled()) {
+        				logger.debug("Adjust location header on redirection from: " + locationHeader.getValue() + " to: " + newLocation);
+        			}
+    				
+    				Header newLocationHeader = new BasicHeader(locationHeader.getName(), newLocation);
+        			return newLocationHeader;
+    			}
+    		}
+    	}
+    	
+    	return locationHeader;
+    }
+    
+    private String sanitizeLocation(HttpServletRequest request, String location, Map<String,String> targets) {
+    	if (location.startsWith("/")) {
+    		String [] requestPath = StringUtils.split(location.substring(1), "/");
+    		if (logger.isDebugEnabled()) {
+    			if (requestPath.length > 0)
+    				logger.debug("Santize location: " + requestPath[0]);
+    		}
+    		if (requestPath.length > 0 && targets.containsKey(requestPath[0])) {
+    			requestPath[0] = targets.get(requestPath[0]);
+    			return StringUtils.arrayToDelimitedString(requestPath, "/");
+    		}
+    	}
+    	
+    	return location;
+    }
+    
+    
     private void handleResponseCookies(String originalRequestURI, HttpServletResponse finalResponse, Header[] headers, HttpSession session, StringBuilder headersLog) {
         String originalPath = originalRequestURI.substring("/sec/".length()).split("/")[0];
         for (Header header : headers) {
