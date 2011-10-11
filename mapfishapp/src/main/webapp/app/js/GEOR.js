@@ -117,15 +117,18 @@ Ext.namespace("GEOR");
         
         var recenteringItems = [
             Ext.apply({
-                title: "GeoNames"
+                title: "Localités",
+                tabTip: "Recentrage sur localités<br />de la base GeoNames"
             }, GEOR.geonames.create(map)),
             Ext.apply({
-                title: "Référentiels"
+                title: "Référentiels",
+                tabTip: "Recentrage sur une sélection<br />de couches \"référentiels\""
             }, GEOR.referentials.create(map, GEOR.config.NS_LOC))
         ];
         if (GEOR.address && GEOR.config.RECENTER_ON_ADDRESSES) {
             recenteringItems.push(Ext.apply({
-                title: "Adresses"
+                title: "Adresses",
+                tabTip: "Recentrage sur point adresse"
             }, GEOR.address.create(map)));
         }
         
@@ -249,7 +252,7 @@ Ext.namespace("GEOR");
             region: "east",
             layout: "border",
             width: 300,
-            minWidth: 280,
+            minWidth: 300,
             maxWidth: 500,
             split: true,
             collapseMode: "mini",

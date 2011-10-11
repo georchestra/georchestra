@@ -59,6 +59,12 @@ GEOR.referentials = (function() {
     var geometryName = null;
     
     /*
+     * Property: labelWidth
+     * {Integer} the label width used for all fields
+     */
+    var labelWidth = 70;
+    
+    /*
      * Method: buildTemplate
      * Returns the template suitable for the currently selected layer
      *
@@ -176,11 +182,11 @@ GEOR.referentials = (function() {
         });
     
         return new Ext.form.ComboBox({
-            fieldLabel: 'Couche',
+            fieldLabel: 'Référentiel',
             store: store,
             displayField: 'title',
             width: 160,
-            listWidth: 160+18,
+            listWidth: 160,
             triggerAction: "all",
             editable: false,
             listeners: {
@@ -284,7 +290,7 @@ GEOR.referentials = (function() {
             } else {
                 // this message is destinated to the administrator
                 // no need to display a nice dialog.
-                alert("La couche sélectionnée ne possède pas de colonne géométrique");
+                alert("Le référentiel sélectionné ne possède pas de colonne géométrique");
             }
             // find the string attribute names:
             var attributes = filterStringType(attStore);
@@ -328,15 +334,15 @@ GEOR.referentials = (function() {
             minChars: 2,
             disabled: disabled,
             forceSelection: true,
-            width: 160+18,
+            width: 160,
             queryDelay: 100,
-            listWidth: 160+18,
+            listWidth: 160,
             hideTrigger: true,
             queryParam: 'query', // do not modify
             tpl: buildTemplate(attributes),
             pageSize: 0,
             itemSelector: 'div.search-item',
-            emptyText: disabled ? 'Choisissez une couche' : '',
+            emptyText: disabled ? "Choisissez un référentiel" : '',
             store: store,
             listeners: {
                 select : function(combo, record, index) {
@@ -395,7 +401,7 @@ GEOR.referentials = (function() {
                 defaults: {
                     labelSeparator: ' :',
                     loadingText: 'Chargement...',
-                    labelWidth: 50,
+                    labelWidth: labelWidth,
                     frame: false,
                     border: false
                 },
@@ -417,7 +423,7 @@ GEOR.referentials = (function() {
                 items: [
                     {
                         xtype: 'form',
-                        labelWidth: 50,
+                        labelWidth: labelWidth,
                         region: 'center',
                         labelSeparator: ' :',
                         items: [
