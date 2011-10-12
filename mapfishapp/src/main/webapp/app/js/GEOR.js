@@ -135,6 +135,9 @@ Ext.namespace("GEOR");
         /*
          * Create the page's layout.
          */
+        var plugins = (GEOR.editing === undefined) ? 
+            [] : [Ext.ux.PanelCollapsedTitle];
+        
         var eastItems = [
             new Ext.Panel({
                 // this panel contains the "manager layer" and
@@ -145,6 +148,7 @@ Ext.namespace("GEOR");
                 layout: "card",
                 activeItem: 0,
                 title: "Couches disponibles",
+                plugins: plugins,
                 split: (GEOR.editing !== undefined),
                 collapsible: (GEOR.editing !== undefined),
                 collapsed: (GEOR.editing !== undefined),

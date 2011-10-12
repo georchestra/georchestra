@@ -268,6 +268,7 @@ if(sec_roles != null) {
     <script type="text/javascript" src="app/js/GEOR_Lang/fr.js"></script>
             <c:choose>
                 <c:when test='${c.edit}'>
+    <script type="text/javascript" src="lib/Ext.ux/lib/Ext.ux/widgets/collapsedtitle/PanelCollapsedTitle.js"></script>
     <script type="text/javascript" src="app/js/GEOR_Editing/GEOR_LayerEditingPanel.js"></script>
     <script type="text/javascript" src="app/js/GEOR_Editing/GEOR_EditingPanel.js"></script>
     <script type="text/javascript" src="app/js/GEOR_editing.js"></script>
