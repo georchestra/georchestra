@@ -30,21 +30,21 @@ GEOR.dataview = (function() {
         var id, dl = [], view = [];
         for (var i=0,l=URI.length;i<l;i++) {
             id = OpenLayers.Util.createUniqueID('OWS_');
-            //console.log(URI[0].protocol);
-            switch (URI[0].protocol) {
+            //console.log(URI[i].protocol);
+            switch (URI[i].protocol) {
             case 'OGC:WMS-1.1.1-http-get-map':
-                if (URI[0].value) {
-                    OWSdb[id] = URI[0];
-                    view.push('<button class="x-list-btn" id="'+id+'">Visualiser la donnée '+URI[0].name+'</button>');
+                if (URI[i].value) {
+                    OWSdb[id] = URI[i];
+                    view.push('<button class="x-list-btn" id="'+id+'">Visualiser la donnée '+URI[i].description+'</button>');
                 }
                 break;
             /*
             case '':
             case 'image/png':
             case 'WWW:DOWNLOAD-1.0-http--download':
-                if (URI[0].value) {
-                    OWSdb[id] = URI[0];
-                    dl.push('<button class="x-list-btn" id="'+id+'">Télécharger la donnée '+URI[0].name+'</button>');
+                if (URI[i].value) {
+                    OWSdb[id] = URI[i];
+                    dl.push('<button class="x-list-btn" id="'+id+'">Télécharger la donnée '+URI[i].name+'</button>');
                 }
                 break;
             */
