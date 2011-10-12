@@ -10,22 +10,36 @@
   <artifactId>geoserver-webapp</artifactId>
   <packaging>war</packaging>
   <name>Georchesrta GeoServer Web Application</name>
-  <dependencies>
-    <dependency>
-      <groupId>org.geoserver.web</groupId>
-      <artifactId>web-app</artifactId>
-      <version>${gs.version}</version>
-      <type>war</type>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.georchestra</groupId>
-      <artifactId>security-filter</artifactId>
-      <version>${project.version}</version>
-      <type>jar</type>
-      <scope>compile</scope>
-    </dependency>
-  </dependencies>
+	<dependencies>
+		<dependency>
+			<groupId>org.geoserver.web</groupId>
+			<artifactId>web-app</artifactId>
+			<version>${gs.version}</version>
+			<type>war</type>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.georchestra</groupId>
+			<artifactId>security-filter</artifactId>
+			<version>${project.version}</version>
+			<type>jar</type>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.security</groupId>
+					<artifactId>spring-security-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-web</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+	</dependencies>
 
   <build>
     <plugins>

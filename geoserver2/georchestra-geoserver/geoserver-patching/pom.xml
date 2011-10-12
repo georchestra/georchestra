@@ -17,6 +17,25 @@
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.1</version>
+				<executions>
+					<execution>
+						<id>clean</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>svn</executable>
+							<commandlineArgs>revert -R .</commandlineArgs>
+							<workingDirectory>${patch.dir}</workingDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-patch-plugin</artifactId>
 				<version>1.1.1</version>
@@ -32,6 +51,7 @@
 					<targetDirectory>${patch.dir}</targetDirectory>
 					<strip>0</strip>
 					<backups>false</backups>
+					<optimize>false</optimize>
 				</configuration>
 				<executions>
 					<execution>
