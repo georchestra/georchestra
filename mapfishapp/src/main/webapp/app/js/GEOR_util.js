@@ -172,12 +172,13 @@ GEOR.util = (function() {
          *      title, msg*, width, yesCallback*, noCallback, scope*
          */
         confirmDialog: function(options) {
-            Ext.Msg.show({
-                title: options.title || "Confirmation",
-                msg: options.msg,
+            Ext.Msg.show(Ext.apply({
+                title: "Confirmation",
+                msg: '',
                 buttons: Ext.Msg.YESNO,
                 closable: false,
-                width: options.width || 400,
+                modal: true,
+                width: 400,
                 fn: function(btnId) {
                     if (btnId == 'yes' && options.yesCallback) {
                         options.yesCallback.call(options.scope);
@@ -186,7 +187,7 @@ GEOR.util = (function() {
                     }
                 },
                 icon: Ext.MessageBox.QUESTION
-            });
+            }, options));
             
         },
 
@@ -199,13 +200,14 @@ GEOR.util = (function() {
          *      title, msg*, width
          */
         infoDialog: function(options) {
-            Ext.Msg.show({
-                title: options.title || "Information",
-                msg: options.msg,
-                width: options.width || 400,
+            Ext.Msg.show(Ext.apply({
+                title: "Information",
+                msg: '',
+                modal: false,
+                width: 400,
                 buttons: Ext.Msg.OK,
                 icon: Ext.MessageBox.INFO
-            });
+            }, options));
         },
         
         /**
@@ -217,13 +219,14 @@ GEOR.util = (function() {
          *      title, msg*, width
          */
         errorDialog: function(options) {
-            Ext.Msg.show({
-                title: options.title || "Erreur",
-                msg: options.msg,
-                width: options.width || 400,
+            Ext.Msg.show(Ext.apply({
+                title: "Erreur",
+                msg: '',
+                modal: false,
+                width: 400,
                 buttons: Ext.Msg.OK,
                 icon: Ext.MessageBox.ERROR
-            });
+            }, options));
         },
         
         /**

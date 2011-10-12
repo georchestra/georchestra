@@ -262,21 +262,15 @@ div.olMapViewport {
 }
 
 .drawpoint {
-  background-image:url(../img/mapfish/draw_point_off.png) !important;
-  height:20px !important;
-  width:20px !important;
+  background-image:url(../img/geosilk/pencil_add.png) !important;
 }
 
 .drawline {
-  background-image:url(../img/mapfish/draw_line_off.png) !important;
-  height:20px !important;
-  width:20px !important;
+  background-image:url(../img/geosilk/line_orange_add.png) !important;
 }
 
 .drawpolygon {
-  background-image:url(../img/mapfish/draw_polygon_off.png) !important;
-  height:20px !important;
-  width:20px !important;
+  background-image:url(../img/geosilk/shape_square_orange_add.png) !important;
 }
 
 .info {
