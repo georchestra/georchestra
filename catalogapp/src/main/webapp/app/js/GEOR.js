@@ -147,7 +147,7 @@ Ext.onReady(function() {
             title: "Quelles données cherchez vous ?",
             collapsible: false,
             collapsed: false,
-            height: 100
+            height: 90
         }), Ext.apply(GEOR.where.getCmp(), {
             title: "Sur quel territoire ?",
             collapsed: false,
@@ -188,5 +188,7 @@ Ext.onReady(function() {
     o.on("storeloaded", function(options) {
         var navText = GEOR.nav.update(options.store);
         textItem.setText(navText);
+        // scroll to top result:
+        GEOR.dataview.scrollToTop();
     });
 });

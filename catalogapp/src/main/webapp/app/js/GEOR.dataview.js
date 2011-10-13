@@ -23,19 +23,28 @@ GEOR.dataview = (function() {
     var OWSdb = {};
     
         
-    var createButtons = function(URI) {
-        if (!URI || !URI[0]) {
+    var createButtons = function(URIs) {
+        if (!URIs || !URIs[0]) {
             return '';
         }
-        var id, dl = [], view = [];
-        for (var i=0,l=URI.length;i<l;i++) {
+        var id, dl = [], view = [], URI;
+        for (var i=0,l=URIs.length;i<l;i++) {
             id = OpenLayers.Util.createUniqueID('OWS_');
-            //console.log(URI[i].protocol);
-            switch (URI[i].protocol) {
+            URI = URIs[i];
+            //console.log(URI.protocol);
+            switch (URI.protocol) {
             case 'OGC:WMS-1.1.1-http-get-map':
-                if (URI[i].value) {
-                    OWSdb[id] = URI[i];
-                    view.push('<button class="x-list-btn" id="'+id+'">Visualiser la donnée '+URI[i].description+'</button>');
+                if (URI.value) {
+                    OWSdb[id] = URI;
+                    var html = "<b>Visualiser</b> ";
+                    if (URI.name) {
+                        // we have a layer
+                        html += "la couche WMS <b>"+(URI.description || URI.name)+"</b>";
+                    } else  {
+                        // we have a service
+                        html += "le service WMS <b>"+(URI.description || URI.value)+"</b>";
+                    }
+                    view.push('<button class="x-list-btn" id="'+id+'">'+html+'</button>');
                 }
                 break;
             /*
@@ -44,7 +53,7 @@ GEOR.dataview = (function() {
             case 'WWW:DOWNLOAD-1.0-http--download':
                 if (URI[i].value) {
                     OWSdb[id] = URI[i];
-                    dl.push('<button class="x-list-btn" id="'+id+'">Télécharger la donnée '+URI[i].name+'</button>');
+                    dl.push('<button class="x-list-btn" id="'+id+'">Télécharger la donnée '+URI.name+'</button>');
                 }
                 break;
             */
@@ -159,6 +168,13 @@ GEOR.dataview = (function() {
                 });
             }
             return dataView;
+        },
+        
+        scrollToTop: function() {
+            var el = dataView.getEl();
+            var f = el && el.first();
+            f && f.scrollIntoView(dataView.container);
+            // there are still 10 or 20 pixels left at the top
         }
 
 

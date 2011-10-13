@@ -63,8 +63,8 @@ GEOR.csw = (function() {
             return format.write({
                 resultType: "results_with_summary",
                 Query: query,
-                startPosition: options && options.nav.startPosition || 1,
-                maxRecords: options && options.nav.maxResults || 999
+                startPosition: options && options.nav && options.nav.startPosition || 1,
+                maxRecords: options && options.nav && options.nav.maxResults || 999
                 /*,
                 outputSchema: options.filter && "http://www.isotc211.org/2005/gmd" // to get ISO19139 XML when a filter is specified (~ getRecordById)
                 */

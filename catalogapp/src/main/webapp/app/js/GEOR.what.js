@@ -26,8 +26,8 @@ GEOR.what = (function() {
             }
             field = new Ext.form.TextField({
                 label: ' ',
-                width: 200,
-                emptyText: 'sujet de votre recherche',
+                width: 210,
+                emptyText: 'saisissez un ou plusieurs mots clés',
                 name: 'what',
                 enableKeyEvents: true,
                 listeners: {
@@ -43,7 +43,7 @@ GEOR.what = (function() {
                 xtype: 'form',
                 labelSeparator: ' ',
                 labelWidth: 1,
-                bodyStyle: 'padding: 25px;',
+                bodyStyle: 'padding: 20px;',
                 items: [field]
             };
         },
