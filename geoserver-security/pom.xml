@@ -78,19 +78,22 @@
 			</resource>
 		</resources>
 		<plugins>
+	        <plugin>
+			  <groupId>org.apache.maven.plugins</groupId>
+			  <artifactId>maven-dependency-plugin</artifactId>
+  	        </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
 				<configuration>
-					<classifier>${server}</classifier>
 					<warName>geoserver-security</warName>
 					<filters>
-						<filter>${basedir}/src/${server}/maven.filter</filter>
+						<filter>${confdir}/${project.artifactId}/maven.filter</filter>
 					</filters>
 					<overwrite>true</overwrite>
 					<webResources>
 						<resource>
-							<directory>src/${server}</directory>
+							<directory>${confdir}/${project.artifactId}</directory>
 							<filtering>false</filtering>
 							<excludes>
 								<exclude>README</exclude>
@@ -98,18 +101,10 @@
 							</excludes>
 						</resource>
 						<resource>
-							<directory>src/main/filtered-resources</directory>
+							<directory>${basedir}/src/main/filtered-resources</directory>
 							<filtering>true</filtering>
 						</resource>
 					</webResources>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
 				</configuration>
 			</plugin>
 		</plugins>

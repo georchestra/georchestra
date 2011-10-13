@@ -23,13 +23,17 @@
 	<build>
     <defaultGoal>generate-resources</defaultGoal>
 		<plugins>
+	        <plugin>
+			  <groupId>org.apache.maven.plugins</groupId>
+			  <artifactId>maven-dependency-plugin</artifactId>
+  	        </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-clean-plugin</artifactId>
 				<version>2.4.1</version>
 				<executions>
 					<execution>
-						<phase>generate-resources</phase>
+						<phase>validate</phase>
 						<goals>
 							<goal>clean</goal>
 						</goals>
@@ -63,9 +67,6 @@
 							<goal>execute</goal>
 						</goals>
 						<configuration>
-							<scriptpath>
-								<element>${pom.basedir}/common</element>
-							</scriptpath>
 							<classpath>
 								<element>
 									<groupId>com.jcraft</groupId>
@@ -73,7 +74,7 @@
 									<version>0.1.44-1</version>
 								</element>
 							</classpath>
-							<source>${basedir}/${server}DeployScript.groovy</source>
+							<source>${confdir}/DeployScript.groovy</source>
 						</configuration>
 					</execution>
 				</executions>
@@ -130,6 +131,13 @@
 					<classifier>${server}</classifier>
 					<type>war</type>
 				</dependency>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>geoserver-webapp</artifactId>
+					<version>${project.version}</version>
+					<classifier>${server}</classifier>
+					<type>war</type>
+				</dependency>
 			</dependencies>
 		</profile>
 				<profile>
@@ -177,6 +185,13 @@
 					<groupId>org.geonetwork-opensource</groupId>
 					<artifactId>geonetwork-main</artifactId>
 					<version>2.6.4-SNAPSHOT</version>
+					<classifier>${server}</classifier>
+					<type>war</type>
+				</dependency>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>geoserver-webapp</artifactId>
+					<version>${project.version}</version>
 					<classifier>${server}</classifier>
 					<type>war</type>
 				</dependency>
@@ -248,6 +263,18 @@
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>mapfishapp</artifactId>
+					<version>${project.version}</version>
+					<classifier>${server}</classifier>
+					<type>war</type>
+				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>geoserver</id>
+			<dependencies>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>geoserver-webapp</artifactId>
 					<version>${project.version}</version>
 					<classifier>${server}</classifier>
 					<type>war</type>

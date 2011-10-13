@@ -1,0 +1,36 @@
+public_host=c2cpc61.camptocamp.com
+
+#LDAP config
+ldapUrl=ldaps://localhost:636/
+baseDN=dc=georchestra,dc=org
+userSearchBaseDN=ou=users
+authoritiesBaseDN=ou=groups
+ldapAdminDn=cn=admin,dc=georchestra,dc=org
+ldap.admin.password=uNg9aiFa
+cas.public.host=c2cpc61.camptocamp.com
+cas.private.host=localhost
+
+defaultTarget.port=8080
+public.ssl=443
+private.ssl=8443
+geoserver.server=http://${public_host}:${defaultTarget.port}
+
+proxy.defaultTarget=http://localhost:8080
+proxy.mapping=\
+    <entry key="extractorapp" value="${proxy.defaultTarget}/extractorapp-private/" />\
+    <entry key="gssec" value="${proxy.defaultTarget}/geoserver-security/" />\
+    <entry key="mapfishapp" value="${proxy.defaultTarget}/mapfishapp-private/" />\
+    <entry key="geonetwork" value="${proxy.defaultTarget}/geonetwork-private/" />\
+    <entry key="catalogapp" value="${proxy.defaultTarget}/catalogapp-private/" />\
+    <entry key="geoserver" value="http://localhost:8180/geoserver/" />
+
+camptocamp.security.loglevel=ALL
+jasig.loglevel=ALL
+springframework.loglevel=ALL
+log.dir=/srv/tomcat/tomcat1/logs
+log.filename=security-proxy.log
+# options are StandardOut, FileAppender or HTMLAppender (zero or more and comma separated) 
+log.appender=FileAppender
+
+# dev should not need a test url 
+test.url=

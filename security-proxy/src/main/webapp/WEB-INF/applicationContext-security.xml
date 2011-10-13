@@ -32,7 +32,7 @@
 
     <!-- This bean points at the embedded directory server created by the ldap-server element above  -->
     <bean id="contextSource" class="org.springframework.security.ldap.DefaultSpringSecurityContextSource">
-        <constructor-arg value="${ldapUrl}${baseDN}"/>
+        <constructor-arg value="${ldapUrl}/${baseDN}"/>
         <property name="userDn" value="${ldapAdminDn}" />
 	    <property name="password" value="${ldap.admin.password}" />
         <property name="baseEnvironmentProperties">

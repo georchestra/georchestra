@@ -160,7 +160,7 @@
 									global configuration from profile (print/viewer/startup layers/...)
 								-->
 								<copy todir="${basedir}/src/main/webapp/" overwrite="true" verbose="true" failonerror="false">
-									<fileset dir="${basedir}/src/${server}/">
+									<fileset dir="${confdir}/${project.artifactId}/">
 										<or>
 											<filename name="**/*.js" />
 											<filename name="**/*.svg" />
@@ -183,25 +183,7 @@
  				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
 				<configuration>
-				  <classifier>${server}</classifier>
 				  <warName>mapfishapp-private</warName>
-<!--				  <filters>
-				    <filter>${basedir}/src/${server}/maven.filter</filter>
-				  </filters>
-				  <webResources>
-				  	<resource>
-				    	<directory>src/${server}</directory>
-				      <filtering>false</filtering>
-				      <excludes>
-				        <exclude>README</exclude>
-				        <exclude>maven.filter</exclude>
-				      </excludes>
-				    </resource>
-				    <resource>
-				      <directory>src/main/filtered-resources</directory>
-				      <filtering>true</filtering>
-				    </resource>
-				  </webResources>-->
 				</configuration>
 		  </plugin>
 			<plugin>

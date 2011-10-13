@@ -1,0 +1,32 @@
+public_host=${shared.server.name}
+
+#LDAP config
+ldapUrl=${shared.ldapUrl}
+baseDN=dc=pigma,dc=org
+userSearchBaseDN=ou=users
+authoritiesBaseDN=ou=groups
+ldapAdminDn=cn=admin,dc=pigma,dc=org
+ldap.admin.password=hw8BFUvTrL
+cas.public.host=${shared.server.name}
+cas.private.host=localhost
+
+defaultTarget.port=8080
+public.ssl=443
+private.ssl=8443
+geoserver.server=http://${shared.server.name}:${defaultTarget.port}
+
+proxy.defaultTarget=http://localhost:8081
+proxy.mapping=\
+    <entry key="extractorapp" value="${proxy.defaultTarget}/extractorapp-private/" />\
+    <entry key="mapfishapp" value="${proxy.defaultTarget}/mapfishapp-private/" />\
+    <entry key="geonetwork" value="${proxy.defaultTarget}/geonetwork-private/" />\
+    <entry key="catalogapp" value="${proxy.defaultTarget}/catalogapp-private/" />\
+    <entry key="geoserver" value="http://localhost:8181/geoserver/" />
+
+camptocamp.security.loglevel=ALL
+jasig.loglevel=ALL
+springframework.loglevel=ALL
+log.dir=/srv/tomcat/tomcat1/logs
+log.filename=security-proxy.log
+# options are StandardOut, FileAppender or HTMLAppender (zero or more and comma separated) 
+log.appender=FileAppender

@@ -114,15 +114,18 @@
 	</dependencies>
 	<build>
 		<plugins>
+	        <plugin>
+			  <groupId>org.apache.maven.plugins</groupId>
+			  <artifactId>maven-dependency-plugin</artifactId>
+  	        </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
 				<configuration>
-					<classifier>${server}</classifier>
 					<warName>cas</warName>
 					<webResources>
 						<resource>
-							<directory>src/${server}</directory>
+							<directory>${confdir}/${project.artifactId}</directory>
 							<excludes>
 								<exclude>README</exclude>
 							</excludes>

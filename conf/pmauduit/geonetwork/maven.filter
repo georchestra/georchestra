@@ -1,0 +1,44 @@
+transformFactory=net.sf.saxon.TransformerFactoryImpl
+baseUrl=geonetwork
+host=localhost:43080
+
+psql.host=localhost
+psql.port=5432
+psql.db=geoorchestra
+
+psql.user=geonetwork
+psql.pass=geonetwork
+psql.url=jdbc:postgresql://${psql.host}:${psql.port}/${psql.db}
+
+xhr.proxy-url=http://localhost:43080/proxy/
+
+LdapHost=c2cpc83.camptocamp.com
+LdapPort=636
+LdapBindDn=cn=admin,dc=geobretagne,dc=fr
+LdapBindPassword=gerlsSnFd6SmM
+
+groupSyncLdapBase=ou=groups,dc=geobretagne,dc=fr
+jpegPhotoLdapBase=ou=users,dc=geobretagne,dc=fr
+
+priveleged_admin_name=extractorapp_priveleged_admin
+priveleged_admin_pass=gerlsSnFd6SmM
+
+dataDir=../../private/data
+uploadDir=${dataDir}/uploads
+luceneDir=${dataDir}/lucene
+htmlCacheDir=${dataDir}/htmlCache
+
+debug=true
+
+
+
+config.xml.typenames=<typename name="EPCI" typename="geob_loc:EPCI_region" nameAtt="EPCI" /> \
+		<typename name="Commune" typename="geob_loc:COMMUNE" nameAtt="NOM_COMM" /> \
+		<typename name="Département" typename="geob_loc:DEPARTEMENT" nameAtt="NOM_DEPT" /> \
+		<typename name="Pays" typename="geob_loc:PAYS_region" nameAtt="NOM" />
+
+
+config-gui.xml.mapSearchLayers=<layer server="http://${host}/geoserver/wms" tocName="EPCI Region"  params="{layers: 'geob_loc:EPCI_region', transparent: 'true', format: 'image/png', styles:'line'}"  options="{}" /> \
+    <layer server="http://${host}/geoserver/wms" tocName="Tuiles" params="{layers: 'geob:SC1000_0050_7130_L93', format: 'image/jpeg'}" options="{isBaseLayer: true}" />
+
+config-gui.xml.mapViewerLayers=${config-gui.xml.mapSearchLayers}
