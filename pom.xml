@@ -21,6 +21,7 @@
 	<georchestra.version>1.0</georchestra.version>
   </properties>
   <modules>
+    <module>conf</module>
     <module>mif-2.5.8</module>
     <module>cas-server-webapp</module>
     <module>catalogapp</module>
