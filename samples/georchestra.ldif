@@ -1,32 +1,34 @@
+# extended LDIF
+#
+# LDAPv3
+# base <dc=georchestra,dc=org> with scope subtree
+# filter: (objectclass=*)
+# requesting: ALL
+#
+
+# georchestra.org
 dn: dc=georchestra,dc=org
 objectClass: top
 objectClass: dcObject
 objectClass: organization
 o: GeOrchestra
 dc: georchestra
-structuralObjectClass: organization
-entryUUID: 8eb91900-fde9-102f-8383-e1dbec386929
-creatorsName: cn=admin,dc=georchestra,dc=org
-createTimestamp: 20110418092534Z
-entryCSN: 20110418092534.410320Z#000000#000#000000
-modifiersName: cn=admin,dc=georchestra,dc=org
-modifyTimestamp: 20110418092534Z
 
+# admin, georchestra.org
 dn: cn=admin,dc=georchestra,dc=org
 objectClass: simpleSecurityObject
 objectClass: organizationalRole
 cn: admin
 description: LDAP administrator
-structuralObjectClass: organizationalRole
-creatorsName: cn=admin,dc=georchestra,dc=org
 userPassword:: e1NIQX02Y005Y3dHKytIdGxnWFFFNy8ycER3MC81S0E9
 
+# groups, georchestra.org
 dn: ou=groups,dc=georchestra,dc=org
-structuralObjectClass: organizationalUnit
 objectClass: organizationalUnit
 objectClass: top
 ou: groups
 
+# SV_ADMIN, groups, georchestra.org
 dn: cn=SV_ADMIN,ou=groups,dc=georchestra,dc=org
 objectClass: top
 objectClass: posixGroup
@@ -34,16 +36,16 @@ gidNumber: 1
 cn: SV_ADMIN
 memberUid: uid=testadmin,ou=users,dc=georchestra,dc=org
 memberUid: uid=gsadmin,ou=users,dc=georchestra,dc=org
-structuralObjectClass: posixGroup
 
+# SV_USER, groups, georchestra.org
 dn: cn=SV_USER,ou=groups,dc=georchestra,dc=org
 objectClass: top
 objectClass: posixGroup
 gidNumber: 2
 cn: SV_USER
 memberUid: uid=testuser,ou=users,dc=georchestra,dc=org
-structuralObjectClass: posixGroup
 
+# EL_admin_GR, groups, georchestra.org
 dn: cn=EL_admin_GR,ou=groups,dc=georchestra,dc=org
 objectClass: top
 objectClass: posixGroup
@@ -51,8 +53,8 @@ cn: EL_admin_GR
 gidNumber: 3
 memberUid: uid=testadmin,ou=users,dc=georchestra,dc=org
 description: Partner A GeOrchestra
-structuralObjectClass: posixGroup
 
+# EL_editor_GR, groups, georchestra.org
 dn: cn=EL_editor_GR,ou=groups,dc=georchestra,dc=org
 objectClass: top
 objectClass: posixGroup
@@ -60,24 +62,24 @@ cn: EL_editor_GR
 gidNumber: 4
 memberUid: uid=testeditor,ou=users,dc=georchestra,dc=org
 memberUid: uid=testreviewer,ou=users,dc=georchestra,dc=org
-structuralObjectClass: posixGroup
 
+# SV_EDITOR, groups, georchestra.org
 dn: cn=SV_EDITOR,ou=groups,dc=georchestra,dc=org
 objectClass: top
 objectClass: posixGroup
 cn: SV_EDITOR
 gidNumber: 5
 memberUid: uid=testeditor,ou=users,dc=georchestra,dc=org
-structuralObjectClass: posixGroup
 
+# SV_REVIEWER, groups, georchestra.org
 dn: cn=SV_REVIEWER,ou=groups,dc=georchestra,dc=org
 objectClass: top
 objectClass: posixGroup
 cn: SV_REVIEWER
 gidNumber: 6
 memberUid: uid=testreviewer,ou=users,dc=georchestra,dc=org
-structuralObjectClass: posixGroup
 
+# EL_reviewer_GR, groups, georchestra.org
 dn: cn=EL_reviewer_GR,ou=groups,dc=georchestra,dc=org
 objectClass: top
 objectClass: posixGroup
@@ -85,8 +87,8 @@ gidNumber: 7
 cn: EL_reviewer_GR
 description: testreviewer is in this group
 memberUid: uid=testreviewer,ou=users,dc=georchestra,dc=org
-structuralObjectClass: posixGroup
 
+# EL_user_admin_GR, groups, georchestra.org
 dn: cn=EL_user_admin_GR,ou=groups,dc=georchestra,dc=org
 objectClass: top
 objectClass: posixGroup
@@ -95,14 +97,14 @@ cn: EL_user_admin_GR
 description: user and admins are in this group
 memberUid: uid=testadmin,ou=users,dc=georchestra,dc=org
 memberUid: uid=testuser,ou=users,dc=georchestra,dc=org
-structuralObjectClass: posixGroup
 
+# users, georchestra.org
 dn: ou=users,dc=georchestra,dc=org
-structuralObjectClass: organizationalUnit
 objectClass: organizationalUnit
 objectClass: top
 ou: users
 
+# ADMINISTRATOR, groups, georchestra.org
 dn: cn=ADMINISTRATOR,ou=groups,dc=georchestra,dc=org
 objectClass: top
 objectClass: posixGroup
@@ -111,8 +113,8 @@ cn: ADMINISTRATOR
 memberUid: uid=extractorapp_priveleged_admin,ou=users,dc=georchestra,dc=org
 memberUid: uid=testadmin,ou=users,dc=georchestra,dc=org
 memberUid: uid=gsadmin,ou=users,dc=georchestra,dc=org
-structuralObjectClass: posixGroup
 
+# GS_ADMIN, groups, georchestra.org
 dn: cn=GS_ADMIN,ou=groups,dc=georchestra,dc=org
 objectClass: top
 objectClass: posixGroup
@@ -122,8 +124,8 @@ description: gsadmin is in this group
 memberUid: uid=gsadmin,ou=users,dc=georchestra,dc=org
 memberUid: uid=extractorapp_priveleged_admin,ou=users,dc=georchestra,dc=org
 memberUid: uid=testadmin,ou=users,dc=georchestra,dc=org
-structuralObjectClass: posixGroup
 
+# testuser, users, georchestra.org
 dn: uid=testuser,ou=users,dc=georchestra,dc=org
 sn: Person
 objectClass: organizationalPerson
@@ -134,9 +136,9 @@ mail: pierre.mauduit@camptocamp.com
 uid: testuser
 description: USER
 userPassword:: e1NIQX1SY1Z4b1ZiZHp2UVRVYWNUdk4zdVc2ZnBWR0E9
-structuralObjectClass: inetOrgPerson
 cn: testuser
 
+# testreviewer, users, georchestra.org
 dn: uid=testreviewer,ou=users,dc=georchestra,dc=org
 sn: Person
 objectClass: inetOrgPerson
@@ -146,10 +148,10 @@ objectClass: top
 uid: testreviewer
 description: Reviewer
 userPassword:: e1NIQX1Nb3IzdXZ5cnpISWpHK0crSEcvblhxZW8reWc9
-structuralObjectClass: inetOrgPerson
 mail: yves.jacolin@camptocamp.com
 cn: testreviewer
 
+# testeditor, users, georchestra.org
 dn: uid=testeditor,ou=users,dc=georchestra,dc=org
 sn: Person
 objectClass: inetOrgPerson
@@ -159,10 +161,10 @@ objectClass: top
 uid: testeditor
 description: editor
 userPassword:: e1NIQX1mVTFvSmdzV0FEZ1ZtTHBHeHBxdFBVa2RiekU9
-structuralObjectClass: inetOrgPerson
 mail: yves.jacolin@camptocamp.com
 cn: testeditor
 
+# testadmin, users, georchestra.org
 dn: uid=testadmin,ou=users,dc=georchestra,dc=org
 sn: Person
 objectClass: organizationalPerson
@@ -173,10 +175,10 @@ uid: testadmin
 description: USER
 description: ADMIN
 userPassword:: e1NIQX1kREU1SkEvMkVpVTRGMFFObUt5eXpuazUrN1E9
-structuralObjectClass: inetOrgPerson
 mail: yves.jacolin@camptocamp.com
 cn: testadmin
 
+# gsadmin, users, georchestra.org
 dn: uid=gsadmin,ou=users,dc=georchestra,dc=org
 sn: Person
 objectClass: organizationalPerson
@@ -188,9 +190,9 @@ cn: gsadmin
 description: USER
 description: ADMIN
 userPassword:: e1NIQX1lTTk5M1F1Ym1NOGI4NERKL1BUSWJUZ1dRUVE9
-structuralObjectClass: inetOrgPerson
 mail: yves.jacolin@camptocamp.com
 
+# extractorapp_priveleged_admin, users, georchestra.org
 dn: uid=extractorapp_priveleged_admin,ou=users,dc=georchestra,dc=org
 sn: Person
 objectClass: organizationalPerson
@@ -203,8 +205,8 @@ cn: extractorapp_priveleged_admin
 description: Do not modify.  This is a required user for extractorapp to funct
  ion
 userPassword:: e1NIQX1XMlY4d2UrOFdNanpma28rMUtZVDFZcWZFVDQ9
-structuralObjectClass: inetOrgPerson
 
+# GS_ADMIN_District1, groups, georchestra.org
 dn: cn=GS_ADMIN_District1,ou=groups,dc=georchestra,dc=org
 memberUid: uid=gsadmin,ou=users,dc=georchestra,dc=org
 memberUid: uid=testadmin,ou=users,dc=georchestra,dc=org
@@ -213,8 +215,8 @@ objectClass: posixGroup
 objectClass: top
 description: gsadmin is in this group
 cn: GS_ADMIN_District1
-structuralObjectClass: posixGroup
 
+# GS_ADMIN_District2, groups, georchestra.org
 dn: cn=GS_ADMIN_District2,ou=groups,dc=georchestra,dc=org
 memberUid: uid=gsadmin,ou=users,dc=georchestra,dc=org
 memberUid: uid=testadmin,ou=users,dc=georchestra,dc=org
@@ -223,5 +225,3 @@ objectClass: posixGroup
 objectClass: top
 description: gsadmin is in this group
 cn: GS_ADMIN_District2
-structuralObjectClass: posixGroup
-
