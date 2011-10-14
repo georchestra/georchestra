@@ -44,7 +44,23 @@ GEOR.config = (function() {
          */
         GEONETWORK_URL: getCustomParameter('GEONETWORK_URL', 
             "/geonetwork/srv/fr"),
-
+        
+        /**
+         * Constant: VIEWER_URL
+         * The URL to Mapfishapp
+         * Defaults to "/mapfishapp/"
+         */
+        VIEWER_URL: getCustomParameter('VIEWER_URL', 
+            "/mapfishapp/"),
+        
+        /**
+         * Constant: EXTRACTOR_URL
+         * The URL to Extractorapp
+         * Defaults to "/extractorapp/"
+         */
+        EXTRACTOR_URL: getCustomParameter('EXTRACTOR_URL', 
+            "/extractorapp/"),
+        
         /**
          * Constant: MAP_DOTS_PER_INCH
          * {Float} Sets the resolution used for scale computation.

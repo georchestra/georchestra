@@ -170,8 +170,6 @@ if(sec_roles != null) {
         document.getElementById('loading-msg').innerHTML = 'Chargement...';
     </script>
     
-    <form id="open-in-viewer" action="/mapfishapp/" method="POST" target="_blank"><input type="hidden" name="data" value=""/></form>
-
     <script type="text/javascript" src="lib/externals/ext/adapter/ext/ext-base.js"></script>
     
     <!--

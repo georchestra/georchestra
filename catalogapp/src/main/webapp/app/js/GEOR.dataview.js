@@ -22,6 +22,7 @@ GEOR.dataview = (function() {
     
     var OWSdb = {};
     
+    var form, jsonFormat;
         
     var createButtons = function(URIs) {
         if (!URIs || !URIs[0]) {
@@ -79,12 +80,28 @@ GEOR.dataview = (function() {
         ].join('');
     };
     
+    var submitData = function(o) {
+        form = form || Ext.DomHelper.append(Ext.getBody(), {
+            tag: "form",
+            action: GEOR.config.VIEWER_URL,
+            target: "_blank",
+            method: "post"
+        });
+        var input = form[0] || Ext.DomHelper.append(form, {
+            tag: "input",
+            type: "hidden",
+            name: "data"
+        });
+        jsonFormat = jsonFormat || new OpenLayers.Format.JSON();
+        input.value = jsonFormat.write(o);
+        form.submit();
+    };
+    
     
     var onButtonClick = function(evt, elt) {
         if (!OWSdb[elt.id]) {
             return;
         }
-        
         var services = [], layers = [];
         if (OWSdb[elt.id].name) {
             layers.push({
@@ -101,12 +118,7 @@ GEOR.dataview = (function() {
                 owsurl: OWSdb[elt.id].value
             });
         }
-        var o = {services: services, layers: layers};
-        
-        var form = Ext.get('open-in-viewer').dom;
-        form.data.value = new OpenLayers.Format.JSON().write(o);
-        form.submit();
-        // {"services":[],"layers":[{"layername":"bzh:Ulves","metadataURL":"http://test.geobretagne.fr:80/geonetwork/srv/fr/metadata.show?id=495","owstype":"WMS","owsurl":"http://geobretagne.fr/geoserver/bzh/wms"}]}
+        submitData({services: services, layers: layers});
     };
     
     var onStoreLoad = function(s) {
@@ -174,7 +186,7 @@ GEOR.dataview = (function() {
             var el = dataView.getEl();
             var f = el && el.first();
             f && f.scrollIntoView(dataView.container);
-            // there are still 10 or 20 pixels left at the top
+            // FIXME: there are still 10 or 20 pixels left at the top
         }
 
 
