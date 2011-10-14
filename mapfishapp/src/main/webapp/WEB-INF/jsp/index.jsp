@@ -211,7 +211,8 @@ if(sec_roles != null) {
     </script>
     
     <!-- invisible iframe for actions such as "load in JOSM" -->
-    <iframe style="position: absolute; width: 0px; height: 0px; top: -1em;visibility:hidden;" tabindex="-1" aria-hidden="true" frameborder="0" width="0" height="0"></iframe>
+    <iframe style="position: absolute; width: 1px; height: 1px; top: -1em;visibility:hidden;" tabindex="-1" aria-hidden="true" frameborder="0" width="0" height="0" marginheight="0" marginwidth="0" scrolling="no"></iframe>
+    
 
     <script type="text/javascript" src="lib/externals/ext/adapter/ext/ext-base.js"></script>
     
@@ -259,7 +260,6 @@ if(sec_roles != null) {
     <script type="text/javascript" src="lib/styler/lib/Styler/widgets/PolygonSymbolizer.js"></script>
     <script type="text/javascript" src="lib/styler/lib/Styler/widgets/ScaleLimitPanel.js"></script>
     <script type="text/javascript" src="lib/styler/lib/Styler/widgets/FilterBuilder.js"></script>
-    <!--<script type="text/javascript" src="lib/styler/lib/Styler/widgets/tips/ScaleSliderTip.js"></script>-->
     <script type="text/javascript" src="lib/styler/lib/Styler/widgets/tips/MultiSliderTip.js"></script>
     <script type="text/javascript" src="lib/styler/lib/Styler/widgets/tips/SliderTip.js"></script>
     <script type="text/javascript" src="lib/styler/lib/Styler/widgets/TextSymbolizer.js"></script>
@@ -326,7 +326,7 @@ if(sec_roles != null) {
         <% 
           String proxyHost = "/proxy/?url=";
           if(request.getContextPath().equals("/mapfishapp")) {
-            proxyHost = "/mapfishapp/ws/ogcproxy/?url=";
+            proxyHost = "ws/ogcproxy/?url=";
           }
         %>
         // set proxy host
