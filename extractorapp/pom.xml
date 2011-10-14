@@ -172,35 +172,7 @@
           <warName>extractorapp-private</warName>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>com.c2c</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>config</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>copy-config</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${basedir}/src/main/webapp/</outputDirectory>
-            </configuration>
-          </execution>
-        </executions>
-        <configuration>
-          <filter>${confdir}/${project.artifactId}/maven.filter</filter>
-          <sourceDirectories>
-            <param>${basedir}/src/main/filtered-resources/</param>
-            <param>${confdir}/${project.artifactId}</param>
-          </sourceDirectories>
-          <excludes>
-            <param>maven.filter</param>
-            <param>.svn</param>
-          </excludes>
-          <outputDirectory>${basedir}/src/main/webapp/</outputDirectory>
-        </configuration>
-      </plugin>
-		<plugin>
+ 		<plugin>
 			<!--
                 Copy du fichier default.wmc.example si il n'existe
                 pas de fichier default.wmc dans le repertoire src/main/webapp.
