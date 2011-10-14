@@ -85,20 +85,28 @@ GEOR.cswbrowser = (function() {
         var filtered = [], name, rights = [], metadataURL;
         Ext.each(records, function (record) {
             if(record.URI) {
-                // multiple wms can be found in one csw:Record
+                // multiple WMS can be found in one csw:Record
                 Ext.each(record.URI, function (item) {
                     if((item.protocol == "OGC:WMS-1.1.1-http-get-map") &&
                         item.name && item.value) {
 
-                        name = (record.title && record.title[0]) ?
-                                record.title[0].value : "undefined";
+                        // see http://csm-bretagne.fr/redmine/issues/2127#note-2
+                        if (item.description) {
+                            name = item.description;
+                        } else if (item.name) {
+                            // should always be the case 
+                            name = "Couche "+item.name;
+                        }
+                        
+                        var mdTitle = (record.title && record.title[0]) ?
+                                record.title[0].value : "métadonnée non nommée";
 
                         metadataURL = null;
                         if (record.identifier && record.identifier[0]) {
                             metadataURL = GEOR.config.GEONETWORK_URL+
                                 '/metadata.show?uuid='+ record.identifier[0].value;
                             name += ' - <a href="'+metadataURL +
-                                '" target="_blank" onclick="window.open(this.href);return false;">métadonnées</a>';
+                                '" target="_blank" onclick="window.open(this.href);return false;">'+mdTitle+'</a>';
                         }
 
                         if (record.rights && record.rights[0]) {
