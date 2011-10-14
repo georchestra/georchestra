@@ -12,7 +12,7 @@
           <property name="defaultCharset" value="UTF-8"/>
           <property name="targets">
                <map>
-@proxy.mapping@
+${proxy.mapping}
                </map>
           </property>
           <property name="requireCharsetContentTypes">

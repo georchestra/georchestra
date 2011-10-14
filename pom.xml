@@ -58,6 +58,8 @@
 								<classifier>${server}</classifier>
 							</artifactItem>
 						</artifactItems>
+						<overWriteSnapshots>true</overWriteSnapshots>
+						<overWriteReleases>true</overWriteReleases>
 						<outputDirectory>${confdir}</outputDirectory>
 					</configuration>
 				</execution>
@@ -101,29 +103,12 @@
   </build>
   <profiles>
     <profile>
-      <id>demo</id>
-      <properties>
-        <server>demo</server>
-      </properties>
-    </profile>
-    <profile>
-      <id>testtomcat</id>
-      <properties>
-        <server>testtomcat</server>
-      </properties>
-    </profile>
-    <profile>
       <id>brest</id>
       <properties>
         <server>brest</server>
       </properties>
     </profile>
     <profile>
-      <id>dev</id>
-      <properties>
-        <server>dev</server>
-      </properties>
-    </profile>
     <profile>
       <id>c2cpc61</id>
       <properties>

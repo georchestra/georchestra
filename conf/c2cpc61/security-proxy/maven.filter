@@ -1,13 +1,13 @@
-public_host=c2cpc61.camptocamp.com
+public_host=${shared.server.name}
 
 #LDAP config
 ldapUrl=ldaps://localhost:636/
-baseDN=dc=georchestra,dc=org
-userSearchBaseDN=ou=users
+baseDN=${shared.ldap.baseDn}
+userSearchBaseDN=${shared.ldap.userSearchBaseDN}
 authoritiesBaseDN=ou=groups
-ldapAdminDn=cn=admin,dc=georchestra,dc=org
+ldapAdminDn=cn=admin,${shared.ldap.baseDn}
 ldap.admin.password=uNg9aiFa
-cas.public.host=c2cpc61.camptocamp.com
+cas.public.host=${public_host}
 cas.private.host=localhost
 
 defaultTarget.port=8080

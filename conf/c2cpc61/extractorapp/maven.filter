@@ -1,12 +1,12 @@
 maxCoverageExtractionSize=99999999
 
-host=c2cpc61.camptocamp.com
+host=${host}
 
 # The base url of the extractorapp as accessible from outside the intranet
-servletUrl=http://c2cpc61.camptocamp.com/extractorapp
+servletUrl=http://${host}/extractorapp
 
 # Hostname of the geoserver that is secured for geOrchestra.
-secureHost=c2cpc61.camptocamp.com
+secureHost=${host}
 
 # Email properties
 smtpHost=psemail.epfl.ch
@@ -14,6 +14,5 @@ smtpPort=25
 replyTo=pierre.mauduit@camptocamp.com
 from=${replyTo}
 
-# necessary ?
 priveleged_admin_name=extractorapp_priveleged_admin
 priveleged_admin_pass=gerlsSnFd6SmM

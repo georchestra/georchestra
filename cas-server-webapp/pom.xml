@@ -123,28 +123,25 @@
 				<artifactId>maven-war-plugin</artifactId>
 				<configuration>
 					<warName>cas</warName>
+					<filters>
+						<filter>${confdir}/${project.artifactId}/maven.filter</filter>
+					</filters>
 					<webResources>
 						<resource>
+							<filtering>true</filtering>
 							<directory>${confdir}/${project.artifactId}</directory>
 							<excludes>
 								<exclude>README</exclude>
+								<exclude>maven.filter</exclude>
 							</excludes>
+						</resource>
+						<resource>
+							<filtering>true</filtering>
+							<directory>${basedir}/src/main/filtered-webapp</directory>
 						</resource>
 					</webResources>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
-<!--	<repositories>
-		<repository>
-			<id>jetty-repository</id>
-			<name>Jetty Maven2 Repository</name>
-			<url>http://oss.sonatype.org/content/groups/jetty/</url>
-		</repository>
-		<repository>
-			<id>jasig-repository</id>
-			<name>JA-SIG Maven2 Repository</name>
-			<url>http://developer.ja-sig.org/maven2</url>
-		</repository>
-	</repositories>-->
 </project>
