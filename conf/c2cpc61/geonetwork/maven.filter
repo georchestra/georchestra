@@ -1,10 +1,10 @@
 transformFactory=de.fzi.dbs.xml.transform.CachingTransformerFactory
 debug=false
 
-dataDir=/srv/tomcat/tomcat1/private/data
+dataDir=data
 uploadDir=${dataDir}/uploads
-luceneDir=${dataDir}/lucene
-htmlCacheDir=${dataDir}/htmlCache
+luceneDir=lucene
+htmlCacheDir=htmlCache
 
 baseUrl=geonetwork
 host=c2cpc61.camptocamp.com
