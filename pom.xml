@@ -65,6 +65,11 @@
 				</execution>
 			</executions>
 		</plugin>
+		<plugin>
+			<groupId>org.mortbay.jetty</groupId>
+			<artifactId>maven-jetty-plugin</artifactId>
+			<version>6.1.26</version>
+		</plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-war-plugin</artifactId>
@@ -109,10 +114,15 @@
       </properties>
     </profile>
     <profile>
-    <profile>
       <id>c2cpc61</id>
       <properties>
         <server>c2cpc61</server>
+      </properties>
+    </profile>
+    <profile>
+      <id>localhost</id>
+      <properties>
+        <server>localhost</server>
       </properties>
     </profile>
     <profile>
