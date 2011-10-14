@@ -108,10 +108,11 @@ GEOR.Editing.EditingPanel = Ext.extend(Ext.Panel, {
                                 /^gml:(Multi)?(Point|LineString|Polygon|Curve|Surface|Geometry)PropertyType$/;
                             // here, we complement the protocol with a valid geometryName
                             // else, "the_geom" is used as default geometryName and this can lead to pbs
-                            attributeStore.each(function(record) {
-                                if (record.get('type').match(matchGeomProperty)) {
-                                    protocol.geometryName = record.get('name');
-                                    protocol.format.geometryName = record.get('name');
+                            attributeStore.each(function(r) {
+                                if (r.get('type').match(matchGeomProperty)) {
+                                    protocol.setGeometryName(r.get('name'));
+                                    // stop looping:
+                                    return false;
                                 }
                             });
                             
