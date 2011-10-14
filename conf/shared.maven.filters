@@ -1,1 +1,3 @@
 # shared values like public url can be put here
+
+allshared.c2c.logdir=/srv/tomcat/tomcat1/
