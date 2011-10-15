@@ -168,19 +168,19 @@ GEOR.config = (function() {
         if (vectorAbility) {
             return vectorAbility;
         } else if (Ext.isChrome) {
-            vectorAbility = 35;
+            vectorAbility = 50;
         } else if (Ext.isGecko) {
-            vectorAbility = 9;
+            vectorAbility = 30;
         } else if (Ext.isIE) {
-            vectorAbility = 2;
+            vectorAbility = 10;
         } else if (Ext.isOpera) {
-            vectorAbility = 5;
+            vectorAbility = 25;
         } else if (Ext.isSafari) {
-            vectorAbility = 20;
+            vectorAbility = 50;
         } else {
             // we don't want to prevent future browsers
             // from displaying a great number of features
-            vectorAbility = 50;
+            vectorAbility = 100;
         }
         return vectorAbility;
     };
