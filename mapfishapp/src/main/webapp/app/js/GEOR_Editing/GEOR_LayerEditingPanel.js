@@ -86,21 +86,22 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
 
     /**
      * Property: nextSelectedFeature
-     * {OpenLayers.Feature.Vector}
+     * {OpenLayers.Feature.Vector} the feature which should have been selected 
+     * on click (but which cannot be selected, since the previous feature has updates)
      */
     nextSelectedFeature: null,
 
     /**
      * Property: lastFeature
-     * {OpenLayers.Feature.Vector} The feature being unselected.
+     * {OpenLayers.Feature.Vector} The feature which has just been unselected.
      */
     lastFeature: null,
 
     /**
-     * Property: initialSelectedGeometry
+     * Property: originalGeometry
      * {OpenLayers.Geometry}
      */
-    initialSelectedGeometry: null,
+    originalGeometry: null,
 
     /**
      * Property: strategy
@@ -150,6 +151,7 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
             alwaysInRange: true
         });
         this.map.addLayer(this.layer);
+        // features are downloaded from BBOX strategy at this point:
         this.layer.refresh();
 
         // add editing controls
@@ -169,7 +171,7 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
                 control: this.selectFeature,
                 enableToggle: true,
                 toggleGroup: 'edit',
-                text: "Sélectionner",
+                text: "Modifier un objet",
                 pressed: true
             })
         ];
@@ -180,6 +182,7 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
                 text: 'Tout annuler',
                 iconCls: 'geor-btn-cancel',
                 handler: function() {
+                    // TODO: confirm dialog is mandatory here
                     this.layer.refresh({ force: true });
                     this.lastFeature = null;
                 },
@@ -199,15 +202,13 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
                             this.lastFeature = null;
                         }
                         this.strategy.save();
-                        // we want to force activation of select feature:
+                        // we want to force activation of select feature control:
                         this.selectFeature.activate();
                     } else {
-                        Ext.MessageBox.alert(
-                            "Attention",
-                            "Veuillez confirmer ou annuler " +
-                            "les modifications en cours avant " +
-                            "de synchroniser avec le serveur"
-                        );
+                        GEOR.util.infoDialog({
+                            msg: "Veuillez confirmer ou annuler " +
+                            "les modifications en cours."
+                        });
                     }
                 },
                 scope: this
@@ -217,14 +218,14 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
 
         this.cancelBtn = new Ext.Button({
             text: 'Annuler',
-            handler: function() { 
+            handler: function() {
                 var feature = this.layer.selectedFeatures[0];
                 if (feature) {
                     this.modifyFeature.unselectFeature(feature);
                     this.silentUnselect();
                     this.layer.removeFeatures([feature]);
-                    feature.geometry = this.initialSelectedGeometry.clone();
-                    feature.state = OpenLayers.State.UNKNOWN;
+                    feature.geometry = this.originalGeometry.clone();
+                    feature.toState(OpenLayers.State.UNKNOWN);
                     this.layer.addFeatures([feature]);
                     this.silentSelect(feature);
                     this.modifyFeature.selectFeature(feature);
@@ -241,20 +242,17 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
                 var feature = this.layer.selectedFeatures[0];
                 if (!feature) {
                     GEOR.util.infoDialog({
-                        msg: 'Veuillez sélectionner un objet en premier lieu'
+                        msg: 'Veuillez sélectionner un objet.'
                     });
                     return;
                 }
                 if (feature.fid === null) {
+                    // feature has been created in the client, but never synchronised
                     this.silentUnselect();
                     this.modifyFeature.unselectFeature(feature);
                     this.layer.destroyFeatures([feature]);
                 } else {
-                    if (feature.state==OpenLayers.State.DELETE) {
-                       feature.state = OpenLayers.State.UPDATE; 
-                    } else {
-                        feature.state = OpenLayers.State.DELETE;
-                    }
+                    feature.toState(OpenLayers.State.DELETE);
                     this.layer.drawFeature(feature, this.selectFeature.renderIntent);
                     this.modifyFeature.unselectFeature(feature);
                     this.silentUnselect();
@@ -297,8 +295,11 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
                         nullCheckboxOptions: {
                             width: 60,
                             // we want to have the null cbx unchecked by default:
-                            checked: false,
-                            boxLabel: 'NULL'
+                            //checked: false, // no original value for checkbox
+                            boxLabel: 'NULL',
+                            // hack, so that the checkbox "dirty status" does not alter the global form dirty status
+                            // (or else, the isFeatureDirty method nearly always returns true):
+                            isDirty: function() {return false;}
                         }
                     }
                 })
@@ -343,14 +344,14 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
         });
         this.strategy.events.register('success', this, function() {
             GEOR.util.infoDialog({
-                msg: 'Les données de cette couche ont été transférées sur le serveur avec succès.'
+                msg: 'Synchronisation réussie.'
             });
             this.lastFeature = null;
             this.layer.redraw();
         });
         this.strategy.events.register('fail', this, function() {
             GEOR.util.errorDialog({
-                msg: 'Il y eu une erreur lors de l\'enregistrement des données sur le serveur.'
+                msg: 'Erreur lors de la synchronisation.'
             });
         });
         
@@ -364,14 +365,14 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
             }
             var feature = this.layer.selectedFeatures[0];
             if (feature) {
-                if (feature.state==OpenLayers.State.DELETE) {
+                if (feature.state == OpenLayers.State.DELETE) {
                     this.deleteBtn.setText('Restaurer');
                 } else {
                     this.deleteBtn.setText('Supprimer');
                }
             }
         }, this);
-
+        
         GEOR.Editing.LayerEditingPanel.superclass.initComponent.apply(this, arguments);
     },
 
@@ -382,13 +383,9 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
      */
     confirmHandler: function(feature) {
         feature = (feature.CLASS_NAME == "OpenLayers.Feature.Vector" ? feature : null) || 
-            // when used as button handler, the feature argument is the button, not the feature => have to get it from the layer.
-            // and it happens that this.layer.selectedFeatures[0] is undefined...
             this.layer.selectedFeatures[0];
         
         if (!feature) {
-            // FIXME: triggered on new feature drawn, then confirm (when form has not been filled)
-            // should not happen
             GEOR.util.errorDialog({
                 msg: 'Aucun objet sélectionné !'
             });
@@ -414,10 +411,9 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
             }
         });
         
-        if (feature.state != OpenLayers.State.INSERT) {
-            feature.state = OpenLayers.State.UPDATE;
-            this.layer.drawFeature(feature);
-        }
+        feature.toState(OpenLayers.State.UPDATE);
+        this.layer.drawFeature(feature);
+        
         this.lastFeature = null; 
         this.modifyFeature.unselectFeature(feature);
         this.silentUnselect();
@@ -458,9 +454,10 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
 
         // this is necessary for the drag control's feature handler
         // not to stop "click" events when a feature is selected
-        this.modifyFeature.dragControl.handlers.feature.stopClick = false;
-        this.modifyFeature.dragControl.handlers.feature.stopDown = false;
-        this.modifyFeature.dragControl.handlers.feature.stopUp = false;
+        var featureHandler = this.modifyFeature.dragControl.handlers.feature;
+        featureHandler.stopClick = false;
+        featureHandler.stopDown = false;
+        featureHandler.stopUp = false;
 
         this.map.addControl(this.modifyFeature);
         this.modifyFeature.activate();
@@ -468,10 +465,11 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
         var type = GEOR.ows.getSymbolTypeFromAttributeStore(this.attributeStore);
         var handlerOptions = {};
         var typeName = type.type;
-        if (type.multi=='Multi') {
+        // handle Multi geometries:
+        if (type.multi == 'Multi') {
             handlerOptions.multi = true;
         }
-        if (type.type=='Line') {
+        if (type.type == 'Line') {
             type.type = 'Path';
         }
 
@@ -493,6 +491,9 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
      * Method: isFeatureDirty
      *
      * Check if the feature's geometry or its attributes has been modified
+     * If no feature is given, uses the selected feature
+     *
+     * FIXME: does not work (eg: select feature without modifying it, click somewhere else => triggers dialog "feature is modified")
      */
     isFeatureDirty: function(feature) {
         if (!feature) {
@@ -500,13 +501,14 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
                           this.layer.selectedFeatures[0] : undefined;
         }
         return this.formPanel.getForm().isDirty() ||
-               (feature &&
-                !this.initialSelectedGeometry.equals(feature.geometry));
+               (feature && this.originalGeometry && 
+                !this.originalGeometry.equals(feature.geometry));
     },
 
     /**
      * Method: checkSelect
-     *   cancel select if the form is in a dirty state
+     * Validates whether e.feature can be selected or not
+     * Cancels select feature operation if the form is in a dirty state
      */
     checkSelect: function(e) {
         this.formPanel.enable();
@@ -526,7 +528,7 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
      */
     loadFeature: function(feature) {
         this.silentSelect(feature);
-        this.initialSelectedGeometry = feature.geometry.clone();
+        this.originalGeometry = feature.geometry.clone();
         var form = this.formPanel.getForm();
         form.setValues(feature.attributes);
         // null cbx set to false for fields which have values
@@ -543,7 +545,7 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
 
     /**
      * Method: silentSelect
-     *  select feature without trigerring any event
+     *  select feature without triggering any event
      */
     silentSelect: function(feature) {
         // temporary unregister callback to avoid recursion
@@ -557,7 +559,7 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
 
     /**
      * Method: silentUnselect
-     *  unselect feature without trigerring any event
+     *  unselect feature without triggering any event
      */
     silentUnselect: function(feature) {
         // temporary unregister callback to avoid recursion
@@ -578,33 +580,33 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
         this.modifyFeature.unselectFeature(feature);
         this.layer.drawFeature(feature, "default");
         // TODO: I would propose to auto-save feature on unselect, 
-        // without bothering the user with stupid questions
+        // without bothering the user.
+        // Or at least, offer him the choice to switch to a "auto-confirm edits" mode.
         if (this.isFeatureDirty(feature)) {
-            Ext.MessageBox.confirm(
-                'Attention : modifications non confirmées', 
-                'Voulez-vous continuer et annuler les modifications ?',
-                function(btn) {
-                    if (btn=='yes') {
-                        // restore unmodified geometry
-                        this.layer.removeFeatures([feature]);
-                        feature.geometry = this.initialSelectedGeometry.clone();
-                        feature.state = OpenLayers.State.UNKNOWN;
-                        this.layer.addFeatures([feature]);
+            GEOR.util.confirmDialog({
+                title: "Modifications en cours",
+                msg: "Souhaitez-vous confirmer les modifications ?",
+                yesCallback: function() {
+                    // we do as it the "confirm" button had been pressed here 
+                    this.confirmHandler(feature);
+                },
+                noCallback: function() {
+                    // restore unmodified geometry
+                    this.layer.removeFeatures([feature]);
+                    feature.geometry = this.originalGeometry.clone();
+                    feature.toState(OpenLayers.State.UNKNOWN);
+                    this.layer.addFeatures([feature]);
 
-                        if (this.nextSelectedFeature) {
-                            this.loadFeature(this.nextSelectedFeature);
-                            this.nextSelectedFeature = null;
-                        } else {
-                            this.cleanForm();
-                            this.formPanel.disable();
-                        }
+                    if (this.nextSelectedFeature) {
+                        this.loadFeature(this.nextSelectedFeature);
+                        this.nextSelectedFeature = null;
                     } else {
-                        // we do as it the "confirm" button had been pressed here 
-                        this.confirmHandler(feature);
+                        this.cleanForm();
+                        this.formPanel.disable();
                     }
                 },
-                this
-            );
+                scope: this
+            });
             return false;
         }
         this.cleanForm();
@@ -645,7 +647,8 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
         var styleMap = new OpenLayers.StyleMap({
             "default": new OpenLayers.Style(
                 OpenLayers.Util.extend(style, {
-                    strokeWidth: 3
+                    strokeWidth: 3,
+                    cursor: "pointer"
                 })
             )
         });
