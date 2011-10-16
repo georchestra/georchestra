@@ -181,10 +181,16 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
             {
                 text: 'Tout annuler',
                 iconCls: 'geor-btn-cancel',
-                handler: function() {
-                    // TODO: confirm dialog is mandatory here
-                    this.layer.refresh({ force: true });
-                    this.lastFeature = null;
+                handler: function() {                    
+                    GEOR.util.confirmDialog({
+                        title: "Tout annuler",
+                        msg: "Souhaitez-vous vraiment annuler toutes les modifications<br />depuis la dernière synchronisation ?",
+                        yesCallback: function() {
+                            this.layer.refresh({force: true});
+                            this.lastFeature = null;
+                        },
+                        scope: this
+                    });
                 },
                 scope: this
             },
