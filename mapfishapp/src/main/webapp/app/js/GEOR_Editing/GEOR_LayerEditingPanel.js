@@ -252,7 +252,13 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
                     this.modifyFeature.unselectFeature(feature);
                     this.layer.destroyFeatures([feature]);
                 } else {
-                    feature.toState(OpenLayers.State.DELETE);
+                    if (feature.state == OpenLayers.State.DELETE) {
+                        // restoring feature
+                        feature.state = OpenLayers.State.UPDATE;
+                    } else {
+                        // always deleting
+                        feature.state = OpenLayers.State.DELETE;
+                    }
                     this.layer.drawFeature(feature, this.selectFeature.renderIntent);
                     this.modifyFeature.unselectFeature(feature);
                     this.silentUnselect();
@@ -493,7 +499,6 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
      * Check if the feature's geometry or its attributes has been modified
      * If no feature is given, uses the selected feature
      *
-     * FIXME: does not work (eg: select feature without modifying it, click somewhere else => triggers dialog "feature is modified")
      */
     isFeatureDirty: function(feature) {
         if (!feature) {
