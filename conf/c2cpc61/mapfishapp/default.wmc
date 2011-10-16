@@ -1,6 +1,6 @@
 <ViewContext xmlns="http://www.opengis.net/context" version="1.1.0" id="default.wmc" xsi:schemaLocation="http://www.opengis.net/context http://schemas.opengis.net/context/1.1.0/context.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <General>
-    <Window width="973" height="778"/>
+    <Window width="973" height="695"/>
     <BoundingBox minx="-357823" miny="6037008" maxx="1313632" maxy="7230727" SRS="EPSG:2154"/>
     <Title/>
     <Extension>
