@@ -84,7 +84,7 @@ GEOR.custom = {
      * Key (as the one in the response from /geonetwork/srv/fr/xml.thesaurus.getList) 
      * of the thesaurus to use as the default (selected) one.
      */
-    DEFAULT_THESAURUS_KEY: 'local._none_.geobretagne',
+    DEFAULT_THESAURUS_KEY: 'external.place.DepartementFR',
         
     /**
      * Constant: MAX_FEATURES
@@ -162,14 +162,14 @@ GEOR.custom = {
      * {Boolean} whether to display the recenter on addresses tab.
      * Defaults to false
      */
-    RECENTER_ON_ADDRESSES: true,
+    RECENTER_ON_ADDRESSES: false,
     
     /**
      * Constant: ADDRESS_URL
      * {String} The URL to the OpenAddresses web service.
      * Defaults to "/addrapp/addresses"
      */
-    ADDRESS_URL: "/addrapp/addresses",
+    //ADDRESS_URL: "/addrapp/addresses",
 
     /**
      * Constant: NS_LOC
