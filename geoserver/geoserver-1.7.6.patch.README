@@ -1,1 +1,0 @@
-The geoserver-1.7.6.patch is a fix for the mixed security issues with geoserver.  You have to checkout the 1.7.6 branch and apply the patch to src/ from the check out
