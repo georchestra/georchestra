@@ -32,7 +32,7 @@
 				<artifactId>maven-war-plugin</artifactId>
 				<configuration>
 					<classifier>${server}</classifier>
-					<warName>doc</warName>
+					<warName>static</warName>
 			</configuration>
 			</plugin>
     </plugins>
