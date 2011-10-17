@@ -36,7 +36,7 @@ public class EditController extends AbstractController {
 
         String str = getPostData(request);
 
-        Map<String, Object> model = createModelFromStringOrSession(request, str);
+        Map<String, Object> model = createModelFromString(request, str);
 
         model.put("edit", isEditor(request));
         
@@ -68,7 +68,7 @@ public class EditController extends AbstractController {
     public ModelAndView handleGETRequest(HttpServletRequest request, HttpServletResponse response) {
         String str = request.getParameter("data");
 
-        Map<String, Object> model = createModelFromStringOrSession(request, str);
+        Map<String, Object> model = createModelFromString(request, str);
         model.put("edit", isEditor(request));
 
         return new ModelAndView("index", "c", model);

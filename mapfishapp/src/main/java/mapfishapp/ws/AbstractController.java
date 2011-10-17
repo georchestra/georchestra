@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,35 +13,20 @@ import org.json.JSONObject;
 
 public class AbstractController {
 
-    static final String SESSION_POST_DATA_STORE = "SESSION_POST_DATA_STORE";
-
     public AbstractController() {
         super();
     }
 
-    protected Map<String, Object> createModelFromStringOrSession(HttpServletRequest request, String str) {
-        HttpSession session = request.getSession();
-        if (str == null) {
-            str = (String) session.getAttribute(SESSION_POST_DATA_STORE);
-        } else {
-            session.setAttribute(SESSION_POST_DATA_STORE, str);
-        }
-    
-        if (str == null || str.trim() == "") {
-            session.setAttribute(SESSION_POST_DATA_STORE, null);
-            str = null;
-        }
-    
+    protected Map<String, Object> createModelFromString(HttpServletRequest request, String str) {
         Map<String, Object> model;
         try {
             if (str != null) {
-                model = createModelFromString(request, str);
+                model = createModel(request, str);
             } else {
                 model = defaultModel(request);
             }
         } catch (Throwable e) {
             model = defaultModel(request);
-    
         }
         return model;
     }
@@ -56,7 +40,7 @@ public class AbstractController {
         return model;
     }
 
-    Map<String, Object> createModelFromString(HttpServletRequest request, String str) {
+    Map<String, Object> createModel(HttpServletRequest request, String str) {
         JSONObject jsonData;
         String data;
         try {

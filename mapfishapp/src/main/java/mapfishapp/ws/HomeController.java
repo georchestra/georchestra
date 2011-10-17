@@ -36,7 +36,7 @@ public class HomeController extends AbstractController {
 
         String str = getPostData(request);
 
-        Map<String, Object> model = createModelFromStringOrSession(request, str);
+        Map<String, Object> model = createModelFromString(request, str);
 
         return new ModelAndView("index", "c", model);
     }
@@ -54,7 +54,7 @@ public class HomeController extends AbstractController {
     public ModelAndView handleGETRequest(HttpServletRequest request, HttpServletResponse response) {
         String str = request.getParameter("data");
 
-        Map<String, Object> model = createModelFromStringOrSession(request, str);
+        Map<String, Object> model = createModelFromString(request, str);
 
         return new ModelAndView("index", "c", model);
     }
