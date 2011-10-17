@@ -170,6 +170,7 @@ GEOR.mappanel = (function() {
             return {
                 xtype: "gx_mappanel",
                 id: "mappanel",
+                stateful: false,
                 map: map,
                 layers: layerStore,
                 tbar: GEOR.toolbar.create(layerStore),

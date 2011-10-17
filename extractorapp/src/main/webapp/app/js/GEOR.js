@@ -132,6 +132,7 @@ Ext.namespace("GEOR");
                 {
                     region: "center",
                     xtype: "gx_mappanel",
+                    stateful: false,
                     id: "mappanel",
                     map: map,
                     tbar: GEOR.toolbar.create(map)
