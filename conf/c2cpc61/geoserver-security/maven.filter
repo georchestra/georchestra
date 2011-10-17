@@ -1,6 +1,6 @@
 public_host=${shared.server.name}
 
-ldapUrl=${ldapUrl}
+ldapUrl=${shared.ldapUrl}
 userSearchBaseDN=${shared.ldap.userSearchBaseDN},${shared.ldap.baseDn}
 authoritiesBaseDN={shared.ldap.baseDn}
 ldapAdminDn=${shared.ldap.admin.dn}
