@@ -925,7 +925,7 @@ GEOR.styler = (function() {
                             mask = new Ext.LoadMask(win.body, {
                                 msg: "chargement en cours"
                             });
-                        }).defer(this.showAnimDuration, this);
+                        }).defer(this.showAnimDuration*1000+10);
                     }
                 }
             });

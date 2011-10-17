@@ -459,7 +459,7 @@ GEOR.cswbrowser = (function() {
                                 mask = new Ext.LoadMask(tree.getEl(), {
                                     msg: "chargement en cours"
                                 });
-                            }).defer(this.showAnimDuration);
+                            }).defer(this.showAnimDuration*1000+10);
                         }
                     }
                 }
