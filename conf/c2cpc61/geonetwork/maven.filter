@@ -7,7 +7,7 @@ luceneDir=lucene
 htmlCacheDir=htmlCache
 
 baseUrl=geonetwork
-host=c2cpc61.camptocamp.com
+host=${shared.server.name}
 
 psql.host=localhost
 psql.port=5432
@@ -23,14 +23,13 @@ groupSyncLdapBase=ou=groups,dc=georchestra,dc=org
 jpegPhotoLdapBase=ou=users,dc=georchestra,dc=org
 
 
-LdapHost=localhost
-LdapPort=636
-LdapBindDn=cn=admin,dc=georchestra,dc=org
-LdapBindPassword=uNg9aiFa
+LdapHost=${shared.ldap.host}
+LdapPort=${shared.ldap.port}
+LdapBindDn=${shared.ldap.admin.dn}
+LdapBindPassword=${shared.ldap.admin.password}
 
-# necessary ?
-priveleged_admin_name=extractorapp_priveleged_admin
-priveleged_admin_pass=gerlsSnFd6SmM
+priveleged_admin_name=${shared.privileged.geoserver.user}
+priveleged_admin_pass=${shared.privileged.geoserver.pass}
 
 config.xml.typenames=<typename name="EPCI" typename="geob_loc:EPCI_region" nameAtt="EPCI" /> \
 		<typename name="Commune Bretagne" typename="geob_loc:COMMUNE" nameAtt="NOM_COMM" /> \
