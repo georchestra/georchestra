@@ -631,7 +631,7 @@ GEOR.styler = (function() {
      * params - {Object} The classification parameters.
      */
     var classify = function(params) {
-        mask.msg = "Classification (cette opération peut prendre du temps)";
+        mask.msg = "Classification ...<br/>(cette opération peut prendre du temps)";
         mask.show();
         OpenLayers.Request.POST({
             url: "ws/sld/",
@@ -840,7 +840,7 @@ GEOR.styler = (function() {
         // if url is defined getURL takes care 
         // of hiding the mask
         if (!url) {
-            mask.hide();
+            mask && mask.hide();
         }
     };
     
@@ -852,7 +852,7 @@ GEOR.styler = (function() {
         });
         win.doLayout();
         win.enable();
-        mask.hide();
+        mask && mask.hide();
     };
 
 	/*
@@ -894,7 +894,6 @@ GEOR.styler = (function() {
                 animateTarget: GEOR.config.ANIMATE_WINDOWS && animateFrom,
                 modal: false,
                 disabled: true,
-                //maskDisabled: true,
                 buttons: [{
                     text: "Télécharger le style",
                     handler: dlStyle 
@@ -918,14 +917,20 @@ GEOR.styler = (function() {
                     handler: function() {
                 	    win.close();
                     }
-                }]
+                }],
+                listeners: {
+                    "afterlayout": function() {
+                        // defer is required to get correct mask position
+                        (function() {
+                            mask = new Ext.LoadMask(win.body, {
+                                msg: "chargement en cours"
+                            });
+                        }).defer(this.showAnimDuration, this);
+                    }
+                }
             });
             win.show();
 
-            mask = new Ext.LoadMask(win.body, {
-                msg: "Recherche d'un WFS associé"
-            });
-            mask.show();
 
             /*
              * trigger in cascade: WMS DescribeLayer, 
@@ -944,8 +949,7 @@ GEOR.styler = (function() {
                             "aucun service WFS associé à cette couche."
                         ].join(" "));
                     } else {
-                        mask.msg = "Lecture des attributs de la couche";
-                        mask.show();
+                        mask && mask.show();
                         var store = GEOR.ows.WFSDescribeFeatureType(wfsInfo, {
                             success: function(st, recs, opts) {
                                 // extract & remove geometry column name                                
@@ -968,6 +972,7 @@ GEOR.styler = (function() {
                                 }
                             },
                             failure: function() {
+                                mask && mask.hide();
                                 win.close();
                             }
                         });
@@ -977,6 +982,7 @@ GEOR.styler = (function() {
                     }
                 },
                 failure: function() {
+                    mask && mask.hide();
                     win.close();
                 }
             });

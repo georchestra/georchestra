@@ -453,10 +453,13 @@ GEOR.cswbrowser = (function() {
                 }, tree],
                 listeners: {
                     "afterlayout": function() {
+                        // defer is required to get correct mask position
                         if (!mask) {
-                            mask = new Ext.LoadMask(tree.getEl(), {
-                                msg: "chargement en cours"
-                            });
+                            (function() {
+                                mask = new Ext.LoadMask(tree.getEl(), {
+                                    msg: "chargement en cours"
+                                });
+                            }).defer(this.showAnimDuration);
                         }
                     }
                 }
