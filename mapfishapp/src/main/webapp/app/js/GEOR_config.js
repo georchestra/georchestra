@@ -380,9 +380,9 @@ GEOR.config = (function() {
         /**
          * Constant: THESAURUS_NAME
          * Thesaurus name to display for the CSW GetDomain request.
-         * Defaults to 'mots clés'
+         * Defaults to 'mots clés du catalogue'
          */
-        THESAURUS_NAME: getCustomParameter("THESAURUS_NAME", 'mots clés'),
+        THESAURUS_NAME: getCustomParameter("THESAURUS_NAME", 'mots clés du catalogue'),
         
         /**
          * Constant: DEFAULT_THESAURUS_KEY

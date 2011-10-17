@@ -103,7 +103,7 @@ GEOR.util = (function() {
         
         /**
          * APIMethod: stringUpperCase
-         * Returns a string with first letter uppercased
+         * Returns a string with first letter uppercased and all others lowercased
          *
          * Parameters:
          * str - {String}  
@@ -112,8 +112,21 @@ GEOR.util = (function() {
          * {String} input string with first letter uppercased
          */
         stringUpperCase: function(str) {
-            return str.substr(0,1).toUpperCase() + 
-                str.substr(1).toLowerCase();
+            return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+        },
+        
+        /**
+         * APIMethod: Capitalize
+         * Returns a string with first letter uppercased
+         *
+         * Parameters:
+         * str - {String}  
+         *
+         * Returns:
+         * {String} input string with first letter uppercased
+         */
+        Capitalize: function(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
         },
         
         /**

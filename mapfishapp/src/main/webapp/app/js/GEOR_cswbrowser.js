@@ -394,15 +394,21 @@ GEOR.cswbrowser = (function() {
                 }, recordType),
                 listeners: {
                     "load": function(store) {
-                        var regexp = new RegExp('.rdf');
-                        store.each(function(r) {
-                            r.set('name', r.get('name').replace(regexp, ''));
-                        });
                         // adding record GEOR.config.THESAURUS_NAME
                         var v = [];
                         v['name'] = GEOR.config.THESAURUS_NAME;
                         v['key'] = GEOR.config.THESAURUS_NAME;
                         store.add([new recordType(v)]);
+                        
+                        var regexp = new RegExp('.rdf');
+                        store.each(function(r) {
+                            r.set('name', 
+                                GEOR.util.Capitalize(
+                                    r.get('name')
+                                ).replace(regexp, '')
+                            );
+                        });
+                        store.sort('name');
 
                         var defKey = GEOR.config.DEFAULT_THESAURUS_KEY;
                         combo.setValue(defKey);
@@ -415,7 +421,6 @@ GEOR.cswbrowser = (function() {
 
             var combo = new Ext.form.ComboBox({
                 xtype: 'combo',
-                id: 'mycombo',
                 fieldLabel: 'Nomenclature',
                 store: thesauriStore,
                 loadingText: 'chargement...',
