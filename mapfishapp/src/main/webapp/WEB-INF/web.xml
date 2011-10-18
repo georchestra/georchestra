@@ -18,8 +18,16 @@
             <param-value>WARN</param-value>
         </init-param>
     </filter>
+   <filter>
+        <filter-name>UTF8Filter</filter-name>
+        <filter-class>com.camptocamp.UTF8Filter</filter-class>
+    </filter>
     <filter-mapping>
         <filter-name>UrlRewriteFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>UTF8Filter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
