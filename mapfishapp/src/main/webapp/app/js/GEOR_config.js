@@ -655,17 +655,15 @@ GEOR.config = (function() {
          * Constant: ROLES_FOR_STYLER
          * {Array} roles required for the styler to show up
          * Empty array means the module is available for everyone
-         * ROLE_SV_USER means the user needs to be connected.
-         * Defaults to ['ROLE_SV_USER']
+         * Defaults to ['ROLE_SV_USER', 'ROLE_SV_REVIEWER', 'ROLE_SV_EDITOR', 'ROLE_SV_ADMIN']
          */
         ROLES_FOR_STYLER: getCustomParameter("ROLES_FOR_STYLER", 
-            ['ROLE_SV_USER']),
+            ['ROLE_SV_USER', 'ROLE_SV_REVIEWER', 'ROLE_SV_EDITOR', 'ROLE_SV_ADMIN']),
         
         /**
          * Constant: ROLES_FOR_QUERIER
          * {Array} roles required for the querier to show up
          * Empty array means the module is available for everyone
-         * ROLE_SV_USER means the user needs to be connected.
          * Defaults to []
          */
         ROLES_FOR_QUERIER: getCustomParameter("ROLES_FOR_QUERIER", 
@@ -675,11 +673,10 @@ GEOR.config = (function() {
          * Constant: ROLES_FOR_PRINTER
          * {Array} roles required to be able to print
          * Empty array means printing is available for everyone
-         * ROLE_SV_USER means the user needs to be connected.
-         * Defaults to ['ROLE_SV_USER']
+         * Defaults to []
          */
         ROLES_FOR_PRINTER: getCustomParameter("ROLES_FOR_PRINTER", 
-            ['ROLE_SV_USER']),
+            []),
         
         /**
          * Constant: HELP_URL

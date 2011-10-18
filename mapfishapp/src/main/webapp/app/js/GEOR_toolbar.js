@@ -216,8 +216,6 @@ GEOR.toolbar = (function() {
             disabled: true
         }));
 
-        items.push("-");
-
         // create a legend panel, it is used both for displaying
         // the legend in the interface and for inclusion if PDFs
         // created by the print module
@@ -232,6 +230,7 @@ GEOR.toolbar = (function() {
         });
         
         if (GEOR.print) {
+            items.push("-");
             GEOR.print.setLegend(legendPanel);
             items.push(GEOR.print.getAction());
         }
