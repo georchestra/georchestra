@@ -65,6 +65,7 @@ class SSHWarDeployer {
 
         flattened = flattened.flatten()
 
+		if(flattened.size == 0) return
         try {
             ssh.exec "mkdir -p $tmpDir", ssh.zeroCode
             flattened.each {artifact ->
