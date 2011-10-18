@@ -312,8 +312,18 @@ Ext.app.OWSUrlField = Ext.extend(Ext.form.TwinTriggerField, {
     width: 180,
     hasSearch: false,
     paramName: 'query',
+    
+    cancelRequest: function() {
+        var proxy = this.store.proxy;
+        var conn = proxy.getConnection();
+        if (conn.isLoading()) {
+            conn.abort();
+        }
+        this.store.fireEvent("exception");
+    },
 
     onTrigger1Click: function() {
+        this.cancelRequest();
         if (this.hasSearch) {
             this.store.baseParams[this.paramName] = '';
             this.store.removeAll();
@@ -330,6 +340,8 @@ Ext.app.OWSUrlField = Ext.extend(Ext.form.TwinTriggerField, {
     },
 
     onTrigger2Click: function() {
+        this.cancelRequest();
+        
         // trim raw value:
         var url = this.getRawValue().replace(/^\s\s*/, '').replace(/\s\s*$/, '');
         if (url.length < 1) {
