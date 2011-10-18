@@ -185,6 +185,33 @@ GEOR.layerfinder = (function() {
     };
 
     /**
+     * Method: describeFeaturetypeSuccess
+     * Success callback for the WFS DescribeFeaturetype request issued 
+     * when adding layers from the "WFS layers" tab
+     *
+     * Parameters:
+     * record - {GeoExt.data.LayerRecord}
+     */
+    var describeFeaturetypeSuccess = function(record) {
+        var layer = record.get('layer');
+        return function(store, records) {
+            // find geometry column name 
+            var idx = store.find('type', GEOR.ows.matchGeomProperty);
+            if (idx > -1) {
+                // we have a geometry
+                var r = store.getAt(idx);
+                //record.set('geometryName', r.get('name')); // later on ?
+                layer.protocol.setGeometryName(r.get('name'));
+                layerStore.addSorted(record.clone());
+            } else {
+                GEOR.util.errorDialog({
+                    msg: "La couche "+p.featureType+" ne possède pas de colonne géométrique valide."
+                });
+            }
+        };
+    };
+    
+    /**
      * Method: addSelectedLayers
      * Adds the selected OGC layers to the given layerStore.
      *
@@ -199,7 +226,32 @@ GEOR.layerfinder = (function() {
             var record = records[i];
             if(record instanceof GeoExt.data.LayerRecord) {
                 // we're coming from the WMS or WFS tab
-                recordsToAdd.push(record.clone());
+                var layer = record.get("layer");
+                if (layer instanceof OpenLayers.Layer.WMS) {
+                    // WMS layer just need cloning 
+                    // (well, for the moment - see http://csm-bretagne.fr/redmine/issues/1996)
+                    recordsToAdd.push(record.clone());
+                } else {
+                    // WFS layers need cloning of protocol (and strategy) too ?
+                    
+                    // For WFS layers, we need to get more information 
+                    // (typically the geometry name)
+                    // from WFS DescribeFeatureType
+                    var p = layer.protocol;
+                    GEOR.ows.WFSDescribeFeatureType({
+                        typeName: p.featureType,
+                        owsURL: p.url
+                    },{
+                        success: describeFeaturetypeSuccess.call(this, record),
+                        failure: function() {
+                            GEOR.util.errorDialog({
+                                msg: "La requête WFS DescribeFeatureType vers "+
+                                    p.url+" pour la couche "+p.featureType+" a malheureusement échoué"
+                            });
+                        },
+                        scope: this
+                    });
+                }
             } else if(record.get("name")) {
                 // we're coming from the CSW tab
                 // convert records to layer records

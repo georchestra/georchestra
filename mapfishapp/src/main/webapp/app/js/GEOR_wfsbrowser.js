@@ -103,8 +103,9 @@ GEOR.wfsbrowser = (function() {
                         // only work with GeoServer:
                         srsNameInQuery: true,
                         srsName: srs
-                        // TODO: we might also need to set the geometryName 
-                        // (required to query features by BBOX)
+                        // Note: the geometry name will be set later on:
+                        // See http://csm-bretagne.fr/redmine/issues/2145 
+                        // and describeFeaturetypeSuccess() in GEOR_layerfinder.js 
                         
                         // TODO: MapServer >= 5.6 requires that all propertyNames
                         // are listed here, if we want to get the geometry.
@@ -190,8 +191,7 @@ GEOR.wfsbrowser = (function() {
                         });
                         return;
                     }
-                    
-                    //console.log(store); // available fields : layer, title, name, namespace, abstract
+                    // available store fields : layer, title, name, namespace, abstract
                 },
                 height: 30,
                 width: 400
