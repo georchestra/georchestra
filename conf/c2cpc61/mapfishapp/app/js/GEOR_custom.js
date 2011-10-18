@@ -336,8 +336,7 @@ GEOR.custom = {
      * Constant: ROLES_FOR_STYLER
      * {Array} roles required for the styler to show up
      * Empty array means the module is available for everyone
-     * ROLE_SV_USER means the user needs to be connected.
-     * Defaults to ['ROLE_SV_USER']
+     * Defaults to ['ROLE_SV_USER', 'ROLE_SV_REVIEWER', 'ROLE_SV_EDITOR', 'ROLE_SV_ADMIN']
      */
     ROLES_FOR_STYLER: [],
     
@@ -345,7 +344,6 @@ GEOR.custom = {
      * Constant: ROLES_FOR_QUERIER
      * {Array} roles required for the querier to show up
      * Empty array means the module is available for everyone
-     * ROLE_SV_USER means the user needs to be connected.
      * Defaults to []
      */
     //ROLES_FOR_QUERIER: [],
@@ -354,8 +352,7 @@ GEOR.custom = {
      * Constant: ROLES_FOR_PRINTER
      * {Array} roles required to be able to print
      * Empty array means printing is available for everyone
-     * ROLE_SV_USER means the user needs to be connected.
-     * Defaults to ['ROLE_SV_USER']
+     * Defaults to ['ROLE_SV_USER', 'ROLE_SV_REVIEWER', 'ROLE_SV_EDITOR', 'ROLE_SV_ADMIN']
      */
     ROLES_FOR_PRINTER: [],
     
@@ -375,8 +372,9 @@ GEOR.custom = {
         {"name": "PIGMA - FD Chasse 33", "url": "http://ns383241.ovh.net/geoserver/fdc33/wms"},
         {"name": "PIGMA - FD Peche 33", "url": "http://ns383241.ovh.net/geoserver/fdp33/wms"},
         {"name": "C2CPC61 - toutes les couches", "url": "http://c2cpc61.camptocamp.com/geoserver/wms"},
-        {"name": "C2CPC61 - serveur virtuel geor_loc", "url": "http://c2cpc61.camptocamp.com/geoserver/geor_loc/wms"},
-        {"name": "C2CPC61 - serveur virtuel geor_edit", "url": "http://c2cpc61.camptocamp.com/geoserver/geor_edit/wms"},
+        {"name": "C2CPC61 - espace geor_loc", "url": "http://c2cpc61.camptocamp.com/geoserver/geor_loc/wms"},
+        {"name": "C2CPC61 - espace geor_edit", "url": "http://c2cpc61.camptocamp.com/geoserver/geor_edit/wms"},
+        {"name": "C2CPC61 - Montpellier OpenData", "url": "http://c2cpc61.camptocamp.com/geoserver/mtp/wms"},
         {"name": "Sandre/zonages", "url": "http://services.sandre.eaufrance.fr/geo/zonage"},
         {"name": "Sandre/ouvrages", "url": "http://services.sandre.eaufrance.fr/geo/ouvrage"},
         {"name": "Sandre/stations", "url": "http://services.sandre.eaufrance.fr/geo/stations"},
@@ -403,8 +401,9 @@ GEOR.custom = {
     WFS_SERVERS: [
         {"name": "GeoBretagne", "url": "http://geobretagne.fr/geoserver/wfs"},
         {"name": "C2CPC61 - toutes les couches", "url": "http://c2cpc61.camptocamp.com/geoserver/wfs"},
-        {"name": "C2CPC61 - serveur virtuel geor_loc", "url": "http://c2cpc61.camptocamp.com/geoserver/geor_loc/wfs"},
-        {"name": "C2CPC61 - serveur virtuel geor_edit", "url": "http://c2cpc61.camptocamp.com/geoserver/geor_edit/wfs"},
+        {"name": "C2CPC61 - espace geor_loc", "url": "http://c2cpc61.camptocamp.com/geoserver/geor_loc/wfs"},
+        {"name": "C2CPC61 - espace geor_edit", "url": "http://c2cpc61.camptocamp.com/geoserver/geor_edit/wfs"},
+        {"name": "C2CPC61 - Montpellier OpenData", "url": "http://c2cpc61.camptocamp.com/geoserver/mtp/wms"},
         {"name": "PIGMA - FD Chasse 33", "url": "http://ns383241.ovh.net/geoserver/fdc33/wfs"},
         {"name": "PIGMA - FD Peche 33", "url": "http://ns383241.ovh.net/geoserver/fdp33/wfs"},
         {"name": "Corine Land Cover", "url": "http://sd1878-2.sivit.org/geoserver/wfs"}
