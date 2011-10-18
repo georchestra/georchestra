@@ -225,22 +225,22 @@ Détails
 Dans cet exemple, la **ligne 5** règle la couleur des lignes à bleu (``#0000FF``) et la **ligne 6** règle la largeur des lignes à 3 pixels. La **ligne 7** détermine la composition des tirets. la valeur ``5 2`` crée un motif de 5 pixels de ligne dessinée, suivi de 2 pixels sans ligne.
 
 
-Voie ferrée (hatch)
+Voie ferrée (hachures)
 ----------------------
 
-This example uses hatching to create a railroad style.  Both the line and the hatches are black, with a 2 pixel thickness for the main line and a 1 pixel width for the perpendicular hatches.
+Cet exemple utilise des hachures pour fabriquer un style voie ferrée. Ligne et hachures sont en noir, avec une épaisseur de 2 pixels pour la ligne principale et de 1 pixel pour les hachures perpendiculaires.
 
-.. note:: This example leverages an SLD extension in GeoServer.  Hatching is not part of the standard SLD 1.0 specification.
+.. note:: Cet exemple utilise une extension SLD de GeoServer. Les hachures ne font pas partie de la spécification SLD 1.0.
 
 .. figure:: images/line_railroad.png
    :align: center
 
-   *Railroad (hatching)*
+   *Voie ferrée (hachures)*
 
 Code
 ~~~~
 
-:download:`View and download the full "Railroad (hatching)" SLD <artifacts/line_railroad.sld>`
+:download:`Consultez et télchargez le SLD complet "Voie ferrée (hachures)" <artifacts/line_railroad.sld>`
 
 .. code-block:: xml 
    :linenos:
@@ -274,31 +274,31 @@ Code
         </Rule>
       </FeatureTypeStyle>
 
-Details
+Détails
 ~~~~~~~
 
-In this example, there are two rules, each containing a ``<LineSymbolizer>``.  (Each ``<LineSymbolizer>`` must exist in its own rule.)  The first rule, on **lines 2-8**, draws a standard line, with **line 5** drawing the lines as dark gray (``#333333``) and **line 6** setting the width of the lines to be 2 pixels.
+Dans cet exemple il y a deux règles, chacune contenant un ``<LineSymbolizer>`` (Chaque ``<LineSymbolizer>`` doit être dans une règle distincte). La première règle, en  **lignes 2-8**, trace une ligne standarde, avec la **ligne 5** dessinant les lignes en gris foncé (``#333333``) et la **ligne 6** paramétrant la largeur des lignes à 2 pixels.
 
-The hatching is invoked in the second rule, on **lines 10-27**. **Line 16** specifies that the rule draw a vertical line hatch (``shape://vertline``) perpendicular to the line geometry. **Lines 18-19** set the hatch color to dark gray (``#333333``) and width to 1 pixel. Finally, ``line 22`` specifies both the length of the hatch and the distance between each hatch to both be 12 pixels.
+Les hachures sont invoquées dans la deuxième règle, en **lignes 10-27**. La **ligne 16** dit que la règle trace des hachures verticales (``shape://vertline``) perpendiculaires à la géométrie de la ligne. Les **lignes 18-19** règlent la couleur des hachures à gris foncé (``#333333``) et la largeur à 1 pixel. Enfin, la ``ligne 22`` dit que la longueur des hachures et la distance entre chaque hachure doivent être de 12 pixels.
 
-Spaced graphic symbols
-----------------------
+Symboles graphiques espacés
+---------------------------
 
-This example uses a graphic stroke along with dash arrays to create a "dot and space" line type.  Without using the dash array the lines would be densely populated with subsequent dots, each one touching the previous one.
+Cet exemple utilise un symbole graphique "trait" et une matrice de hachures pour créer un type de ligne "point espace". En l'absence de matrice de hachures, les lignes seraient remplies de points successifs se touchant.
 
-Adding the dash array specification allows to control the amount of space between one symbol and the next one.
+L'ajout de la matrice de hachures permet de contrôler la taille de l'espace entre un symbole et le suivant.
 
-.. note:: This example is not likely to work with other systems supporting SLD. While the SLD is perfectly compliant we are not aware of other systems allowing to combine the usage of ``dasharray`` and graphics strokes (the SLD specification does not say what this combination is supposed to produce). 
+.. note:: Cet exemple ne fonctionnera probablement pas avec des systèmes tiers supportant SLD. Bien que ce soit parfaitement conforme à SLD, à notre connaissance aucun autre système ne permet de combiner l'utilisation de ``dasharray`` et de symboles graphiques "trait" (la spécification SLD ne dit pas ce que cette combinaison est censée produire). 
 
 .. figure:: images/line_dashspace.png
    :align: center
 
-   *Spaced symbols along a line*
+   *Symboles espacés le long d'une ligne*
 
 Code
 ~~~~
 
-:download:`View and download the full "Spaced symbols" SLD <artifacts/line_dashspace.sld>`
+:download:`Consultez et téléchargez le SLD complet "Symboles espacés" <artifacts/line_dashspace.sld>`
 
 .. code-block:: xml 
    :linenos:
@@ -328,11 +328,11 @@ Code
         </Rule>
       </FeatureTypeStyle>
       
-Details
+Détails
 ~~~~~~~
-This example, like others before, uses a ``GraphicStroke`` to place a graphic symbol along a line.
-The symbol, defined at **lines 7-16** is a 4 pixels gray circle with a dark gray outline.
-The spacing between symbols is controlled with the ``dasharray`` at **line 18**, setting 4 pixels pen down, just enough to draw the circle, and 6 pixels pen up, which results in the spacing.
+Cet exemple, comme les précédents, utilise un ``GraphicStroke`` pour placer un symbole graphique le long d'une ligne.
+Le symbole défini en **lignes 7-16** est un cercle gris de 4 pixels avec un contour gris foncé.
+L'espacement entre les symboles est contrôlé par ``dasharray`` en **ligne 18**, réglant 4 pixels de tracé, juste assez pour dessiner le cercle, puis 6 pixels crayon levé, ce qui produit un espacement.
 
 
 .. _sld_cookbook_lines_defaultlabel:
