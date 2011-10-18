@@ -30,7 +30,7 @@
     <module>embedded-ldap</module>
     <module>epsg-extension</module>
     <module>extractorapp</module>
-    <module>geoserver2</module>
+    <module>geoserver</module>
     <module>geoserver-security</module>
     <module>mapfishapp</module>
     <module>security-proxy</module>
