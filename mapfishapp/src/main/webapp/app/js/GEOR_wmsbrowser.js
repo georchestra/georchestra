@@ -115,8 +115,6 @@ GEOR.wmsbrowser = (function() {
             var comboField = new Ext.form.ComboBox({
                 editable: false,
                 triggerAction: 'all',
-                // TODO: prevent addition of "?query=" to requested URL
-                //queryParam: null, // does not work 
                 height: 30,
                 fieldLabel: "Choisissez un serveur WMS",
                 loadingText: 'Chargement...',
