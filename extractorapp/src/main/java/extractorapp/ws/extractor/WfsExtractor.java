@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFactorySpi;
 import org.geotools.data.DefaultQuery;
@@ -55,6 +57,7 @@ import com.vividsolutions.jts.geom.Polygon;
  * @author jeichar
  */
 public class WfsExtractor {
+    private static final Log       LOG = LogFactory.getLog(WfsExtractor.class.getPackage().getName());
 
     /**
      * Enumerate general types of geometries we accept. Multi/normal is ignored
@@ -135,8 +138,11 @@ public class WfsExtractor {
         if(secureHost.equalsIgnoreCase(request._url.getHost())
                 || "127.0.0.1".equalsIgnoreCase(request._url.getHost())
                 || "localhost".equalsIgnoreCase(request._url.getHost())) {
-                    if(username != null) connection.addRequestProperty("sec-username", username);
-                    if(roles != null) connection.addRequestProperty("sec-roles", roles);
+        	LOG.debug("WfsExtractor.checkPermission - Secured Server: adding username header and role headers to request for checkPermission");
+            if(username != null) connection.addRequestProperty("sec-username", username);
+            if(roles != null) connection.addRequestProperty("sec-roles", roles);
+        } else {
+        	LOG.debug("WfsExtractor.checkPermission - Non Secured Server");
         }
         
         String capabilities = FileUtils.asString(connection.getInputStream());
@@ -219,8 +225,11 @@ public class WfsExtractor {
         if(_secureHost.equalsIgnoreCase(request._url.getHost())
                 || "127.0.0.1".equalsIgnoreCase(request._url.getHost())
                 || "localhost".equalsIgnoreCase(request._url.getHost())) {
+        	LOG.debug("WfsExtractor.extract - Secured Server: Adding extractionUserName to connection params");
             params.put (WFSDataStoreFactory.USERNAME.key, _adminUsername);
             params.put (WFSDataStoreFactory.PASSWORD.key, _adminPassword);
+        } else {
+        	LOG.debug("WfsExtractor.extract - Non Secured Server");        	
         }
         
         DataStore sourceDs = _datastoreFactory.createDataStore (params);

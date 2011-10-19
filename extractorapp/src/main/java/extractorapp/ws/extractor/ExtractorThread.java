@@ -354,7 +354,8 @@ public class ExtractorThread extends Thread {
 
     private void extractWcsLayer(ExtractorLayerRequest request, File requestBaseDir) throws IOException,
             TransformException, FactoryException {
-        WcsExtractor extractor = new WcsExtractor(requestBaseDir, new WcsFormat(maxCoverageExtractionSize));
+        WcsExtractor extractor = new WcsExtractor(requestBaseDir, new WcsFormat(maxCoverageExtractionSize), 
+                _adminCredentials.getUserName(), _adminCredentials.getPassword(), _secureHost);
         extractor.checkPermission(request, _secureHost, _username, _roles);
         extractor.extract(request);
     }

@@ -62,6 +62,8 @@ public class WcsReaderRequest {
     public final String format;
     public final boolean usePost;
     public final CoordinateReferenceSystem responseCRS;
+	protected final String username;
+	protected final String password;
 
     /**
      * Use {@link WcsReaderRequestFactory} to create instances of {@link WcsReaderRequestFactory}
@@ -72,9 +74,11 @@ public class WcsReaderRequest {
      * @param height height of returned image
      * @param format format of the image
      * @param usePost if true post will be used for making requests
+     * @param password 
+     * @param username 
      */
     protected WcsReaderRequest (String version, String coverage, ReferencedEnvelope bbox, CoordinateReferenceSystem responseCRS, double resolution,
-            String format, boolean usePost) {
+            String format, boolean usePost, String username, String password) {
         if(resolution <= 0) {
             throw new IllegalArgumentException("resolution must be greater than 0");
         }
@@ -85,6 +89,8 @@ public class WcsReaderRequest {
         this.format = format.toLowerCase ();
         this.usePost = usePost;
         this.requestBbox = bbox;
+        this.username = username;
+        this.password = password;
         try {
             lookupEpsgCode (this.responseCRS, false);
         } catch (FactoryException e) {
@@ -93,14 +99,14 @@ public class WcsReaderRequest {
     }
     
     protected WcsReaderRequest (WcsReaderRequest request) {
-        this(request.version, request.coverage, request.requestBbox, request.responseCRS, request.groundResolutionX, request.format, request.usePost);
+        this(request.version, request.coverage, request.requestBbox, request.responseCRS, request.groundResolutionX, request.format, request.usePost, request.username, request.password);
     }
 
     /**
      * Create a new request based on the current request but with a new format
      */
     public WcsReaderRequest withFormat (String newFormat) {
-        return new WcsReaderRequest (version, coverage, requestBbox, responseCRS, groundResolutionX, newFormat, usePost);
+        return new WcsReaderRequest (version, coverage, requestBbox, responseCRS, groundResolutionX, newFormat, usePost, username, password);
     }
     
     /**
@@ -110,7 +116,7 @@ public class WcsReaderRequest {
     public WcsReaderRequest withCRS(String code) {
         try {
             CoordinateReferenceSystem newCrs = org.geotools.referencing.CRS.decode(code);
-            return new WcsReaderRequest(version, coverage, requestBbox, newCrs, groundResolutionX, format, usePost);
+            return new WcsReaderRequest(version, coverage, requestBbox, newCrs, groundResolutionX, format, usePost, username, password);
         } catch (FactoryException e) {
             throw new ExtractorException(e);
         }

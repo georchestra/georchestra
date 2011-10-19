@@ -24,6 +24,8 @@ public class WcsParameters {
     public static final DefaultParameterDescriptor<String> CRS = DefaultParameterDescriptor.create ("crs", "Coordinate Reference System in which the request is expressed", String.class, "EPSG:4326", false);
     public static final DefaultParameterDescriptor<String> COVERAGE = DefaultParameterDescriptor.create ("coverage", "Name of an available coverage, as stated in the GetCapabilities", String.class, null, true);
     public static final DefaultParameterDescriptor<String> VERSION = DefaultParameterDescriptor.create ("version", "Request version", String.class, "1.0.0", false);
+    public static final DefaultParameterDescriptor<String> USERNAME = DefaultParameterDescriptor.create ("username", "Request version", String.class, null, false);
+    public static final DefaultParameterDescriptor<String> PASSWORD = DefaultParameterDescriptor.create ("password", "Request version", String.class, null, false);
     
     public static final DefaultParameterDescriptor<Double> RESX = DefaultParameterDescriptor.create ("resx", "When requesting a georectified grid coverage, this requests a subset with a specific spatial resolution. One of WIDTH/HEIGHT or RESX/Y is required.", Double.class, null, false);
     public static final DefaultParameterDescriptor<Double> RESY = DefaultParameterDescriptor.create ("resy", "When requesting a georectified grid coverage, this requests a subset with a specific spatial resolution. One of WIDTH/HEIGHT or RESX/Y is required.", Double.class, null, false);

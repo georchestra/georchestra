@@ -3,11 +3,11 @@ package extractorapp.ws.extractor.wcs;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
+import java.net.ProxySelector;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -15,18 +15,40 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import extractorapp.ws.extractor.OversizedCoverageRequestException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.HeaderElement;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.Credentials;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.auth.params.AuthPNames;
+import org.apache.http.client.AuthCache;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.params.AuthPolicy;
+import org.apache.http.client.params.ClientPNames;
+import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.impl.client.BasicAuthCache;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.ProxySelectorRoutePlanner;
+import org.apache.http.protocol.BasicHttpContext;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.GeodeticCalculator;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import extractorapp.ws.ExtractorException;
 import extractorapp.ws.extractor.FileUtils;
+import extractorapp.ws.extractor.OversizedCoverageRequestException;
 import extractorapp.ws.extractor.XmlUtils;
 
 /**
@@ -71,8 +93,8 @@ public class BoundWcsRequest extends WcsReaderRequest {
     }
 
     private BoundWcsRequest (String version, String coverage, ReferencedEnvelope bbox, CoordinateReferenceSystem responseCRS, double resx, 
-            String format, boolean usePost, URL wcsUrl, String capabilities, String describeCoverage) {
-        super(version, coverage, bbox, responseCRS, resx, format, usePost);
+            String format, boolean usePost, String username, String password, URL wcsUrl, String capabilities, String describeCoverage) {
+        super(version, coverage, bbox, responseCRS, resx, format, usePost, username, password);
         this._wcsUrl = wcsUrl;
         this._describeCoverage = describeCoverage;
         this._capabilities = capabilities;
@@ -132,7 +154,8 @@ public class BoundWcsRequest extends WcsReaderRequest {
             NodeList nodes = select ("//wcs:requestResponseCRSs|//wcs:requestCRSs|//wcs:nativeCRSs", getDescribeCoverage());
             requestCrss = new HashSet<String> ();
             for (int i = 0; i < nodes.getLength (); i++) {
-                requestCrss.add ("" + nodes.item (i).getTextContent ().trim ().toUpperCase ());
+                Node item = nodes.item (i);
+				requestCrss.add ("" + item.getTextContent ().trim ().toUpperCase ());
             }
         }
 
@@ -198,14 +221,14 @@ public class BoundWcsRequest extends WcsReaderRequest {
 
     @Override
     public BoundWcsRequest withFormat (String newFormat) {
-            return new BoundWcsRequest (version, coverage, requestBbox, responseCRS, groundResolutionX, newFormat, usePost, _wcsUrl, this._capabilities, this._describeCoverage);
+            return new BoundWcsRequest (version, coverage, requestBbox, responseCRS, groundResolutionX, newFormat, usePost, username, password, _wcsUrl, this._capabilities, this._describeCoverage);
     }
 
     @Override
 	public BoundWcsRequest withCRS(String code) {
 		try {
 			CoordinateReferenceSystem newCrs = CRS.decode(code);
-			return new BoundWcsRequest(version, coverage, requestBbox, newCrs, groundResolutionX, format, usePost, _wcsUrl, _capabilities, _describeCoverage);
+			return new BoundWcsRequest(version, coverage, requestBbox, newCrs, groundResolutionX, format, usePost, username, password, _wcsUrl, _capabilities, _describeCoverage);
 		} catch (FactoryException e) {
 			throw new ExtractorException(e);
 		}
@@ -252,24 +275,24 @@ public class BoundWcsRequest extends WcsReaderRequest {
 	 */
     private InputStream makeRequest (String request, URL wcsUrl, Boolean resolveFormat, int timeout) throws IOException, ProtocolException,
             MalformedURLException {
-        InputStream in;
-        HttpURLConnection connection;
-        if (usePost && false) {
-            // TODO POST does not work right now
-            connection = (HttpURLConnection) wcsUrl.openConnection ();
-            connection.setDoOutput (true);
-            connection.setDoInput (true);
-            connection.setRequestMethod ("POST");
+    	DefaultHttpClient httpclient = new DefaultHttpClient();
+        httpclient.getParams().setParameter("http.socket.timeout", new Integer(timeout));
+        httpclient.getParams().setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, true);
 
-            OutputStream out = connection.getOutputStream ();
-            try {
-                String params = params (request, "\n", resolveFormat);
-                LOG.debug("making POST request to "+wcsUrl+" with post: \n"+params+"\n\n");
-                out.write (params.getBytes ());
-                in = connection.getInputStream ();
-            } finally {
-                out.close ();
-            }
+        ProxySelectorRoutePlanner routePlanner = new ProxySelectorRoutePlanner(
+                httpclient.getConnectionManager().getSchemeRegistry(),
+                ProxySelector.getDefault());
+
+        ((DefaultHttpClient)httpclient).setRoutePlanner(routePlanner); 
+
+        HttpRequestBase httpRequest;
+		if (usePost && false) {
+        	HttpPost httpPost = new HttpPost(request);
+        	httpRequest = httpPost;
+        	String params = params (request, "\n", resolveFormat);
+            LOG.debug("making POST request to "+wcsUrl+" with post: \n"+params+"\n\n");
+        	HttpEntity bytes = new ByteArrayEntity(params.getBytes());
+			httpPost.setEntity(bytes );
         } else {
             String spec = wcsUrl.toExternalForm ();
             if (spec.contains ("?")) {
@@ -277,29 +300,53 @@ public class BoundWcsRequest extends WcsReaderRequest {
             } else {
                 spec += "?" + params (request, "&", resolveFormat);
             }
-            URL getURL = new URL (spec);
-            LOG.debug("making GET request to "+getURL);
-            connection = (HttpURLConnection) getURL.openConnection();
+            LOG.debug("making GET request to "+spec);
+            httpRequest = new HttpGet(spec);
         }
         
-        connection.setReadTimeout(timeout);
-        
-        // HACK  I want unrestricted access to layers. 
-        // Security check takes place in ExtractorController
-        connection.addRequestProperty("sec-username", "admin");
-        connection.addRequestProperty("sec-roles", "ROLE_SV_ADMIN");
-        
+
+		if(username != null) {
+			AuthScope authScope = new AuthScope(wcsUrl.getHost(), wcsUrl.getPort());
+			Credentials credentials = new UsernamePasswordCredentials(username, password);
+			httpclient.getCredentialsProvider().setCredentials(authScope, credentials );
+
+			// Create AuthCache instance
+			AuthCache authCache = new BasicAuthCache();
+			// Generate BASIC scheme object and add it to the local auth cache
+			BasicScheme basicAuth = new BasicScheme();
+			authCache.put(new HttpHost(wcsUrl.getHost(), wcsUrl.getPort()), basicAuth);
+
+			// Add AuthCache to the execution context
+			BasicHttpContext localcontext = new BasicHttpContext();
+			localcontext.setAttribute(ClientContext.AUTH_CACHE, authCache);        
+
+			ArrayList<String> authpref = new ArrayList<String>();
+			authpref.add(AuthPolicy.BASIC);
+			authpref.add(AuthPolicy.DIGEST);
+			httpclient.getParams().setParameter(AuthPNames.PROXY_AUTH_PREF, authpref);
+		}
+		
+		HttpResponse response = httpclient.execute(httpRequest);
         // check for an error response from the server
-        if(connection.getContentType().contains(XML_ERROR_TYPE)){
-            String error = FileUtils.asString(connection.getInputStream());
+        if(hasContentType(response,XML_ERROR_TYPE)){
+            String error = FileUtils.asString(response.getEntity().getContent());
             throw new ExtractorException("Error from server while fetching coverage:"+error);
         } else {
-            in = connection.getInputStream();
-            return in;            
+            return response.getEntity().getContent();            
         }
     }
 
-    /**
+    private boolean hasContentType(HttpResponse response, String contentType) {
+    	HeaderElement[] types = response.getEntity().getContentType().getElements();
+    	for (HeaderElement headerElement : types) {
+			if(headerElement.getValue().equalsIgnoreCase(contentType)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
      * concatenate all the params into a string separated by the provided string
      * @param resolveFormat
      * @throws IOException
@@ -384,7 +431,7 @@ public class BoundWcsRequest extends WcsReaderRequest {
 
 
     public BoundWcsRequest withRequestBBox(ReferencedEnvelope newBBox) {
-        return new BoundWcsRequest(version, coverage, newBBox, responseCRS, groundResolutionX, format, usePost, _wcsUrl, _capabilities, _describeCoverage);
+        return new BoundWcsRequest(version, coverage, newBBox, responseCRS, groundResolutionX, format, usePost, username, password, _wcsUrl, _capabilities, _describeCoverage);
     }
 
     public void assertLegalSize(long maxSize) throws IOException {

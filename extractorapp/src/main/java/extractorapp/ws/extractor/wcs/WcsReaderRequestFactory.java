@@ -1,6 +1,8 @@
 package extractorapp.ws.extractor.wcs;
 
 import static extractorapp.ws.extractor.wcs.WcsParameters.BBOX;
+import static extractorapp.ws.extractor.wcs.WcsParameters.USERNAME;
+import static extractorapp.ws.extractor.wcs.WcsParameters.PASSWORD;
 import static extractorapp.ws.extractor.wcs.WcsParameters.COVERAGE;
 import static extractorapp.ws.extractor.wcs.WcsParameters.CRS;
 import static extractorapp.ws.extractor.wcs.WcsParameters.EXTENT;
@@ -36,35 +38,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class WcsReaderRequestFactory {
 
     // ---- Factory methods with explicit resolution and height ----- //
-    /**
-     * Create a new instance of WcsReaderRequest which uses POST request
-     * 
-     * @param version
-     *            WCS version to use. Can use {@link #DEFAULT_VERSION}
-     * @param coverage
-     *            the layer/coverage name of the coverage to access
-     * @param minx
-     *            envelope param
-     * @param miny
-     *            envelope param
-     * @param maxx
-     *            envelope param
-     * @param maxy
-     *            envelope param
-     * @param requestCRS
-     *            WCS version to use. Can use {@link #DEFAULT_CRS}
-     * @param resolution
-     *            resolution of the returned image
-     * @param format
-     *            format of the image
-     */
-    public static WcsReaderRequest create(String version, String coverage, double minx, double miny, double maxx,
-            double maxy,
-            CoordinateReferenceSystem requestCRS, CoordinateReferenceSystem responseCRS, double resolution,
-            String format) {
-        return new WcsReaderRequest(version, coverage, new ReferencedEnvelope(minx, maxx, miny, maxy, requestCRS),
-                responseCRS, resolution, format, true);
-    }
+  
 
     /**
      * Create a new instance of WcsReaderRequest
@@ -95,30 +69,9 @@ public class WcsReaderRequestFactory {
     public static WcsReaderRequest create(String version, String coverage, double minx, double miny, double maxx,
             double maxy,
             CoordinateReferenceSystem requestCRS, CoordinateReferenceSystem responseCRS, double resolution,
-            String format, boolean usePost) {
+            String format, boolean usePost, String username, String password) {
         return new WcsReaderRequest(version, coverage, new ReferencedEnvelope(minx, maxx, miny, maxy, requestCRS),
-                responseCRS, resolution, format, usePost);
-    }
-
-    /**
-     * Create a new instance of WcsReaderRequest
-     * 
-     * post is used and the default WCS version is used
-     * 
-     * @param coverage
-     *            the layer/coverage name of the coverage to access
-     * @param bbox
-     *            the bbox of the desired area in the coverage
-     * @param resolution
-     *            resolution of the returned image
-     * @param height
-     *            height of returned image
-     * @param format
-     *            format of the image
-     */
-    public static WcsReaderRequest create(String coverage, ReferencedEnvelope bbox,
-            CoordinateReferenceSystem responseCRS, double resolution, String format) {
-        return new WcsReaderRequest(DEFAULT_VERSION, coverage, bbox, responseCRS, resolution, format, true);
+                responseCRS, resolution, format, usePost, username, password);
     }
 
     /**
@@ -140,8 +93,8 @@ public class WcsReaderRequestFactory {
      */
     public static WcsReaderRequest create(String version, String coverage, ReferencedEnvelope bbox,
             CoordinateReferenceSystem responseCRS, double resolution,
-            String format, boolean usePost) {
-        return new WcsReaderRequest(version, coverage, bbox, responseCRS, resolution, format, usePost);
+            String format, boolean usePost, String username, String password) {
+        return new WcsReaderRequest(version, coverage, bbox, responseCRS, resolution, format, usePost, username, password);
     }
 
     /**
@@ -150,12 +103,14 @@ public class WcsReaderRequestFactory {
      */
     public static WcsReaderRequest create(GeneralParameterValue[] params) throws NoSuchAuthorityCodeException,
             FactoryException {
-        String format, requestEpsg, responseEpsg, coverage, version;
+        String format, requestEpsg, responseEpsg, coverage, version, username, password;
         Boolean usePost = true;
         format = coverage = null;
         responseEpsg = WcsReaderRequest.DEFAULT_CRS;
         requestEpsg = WcsReaderRequest.DEFAULT_CRS;
         version = WcsReaderRequest.DEFAULT_VERSION;
+        username = null;
+        password = null;
 
         List<GeneralParameterValue> extent, imgParams, bbox, resolution;
         extent = imgParams = bbox = resolution = new java.util.ArrayList<GeneralParameterValue>();
@@ -180,6 +135,10 @@ public class WcsReaderRequestFactory {
                 extent = ((ParameterValueGroup) param).values();
             } else if (param.getDescriptor().getName().equals(RESULT_IMAGE_PARAMS.getName())) {
                 imgParams = ((ParameterValueGroup) param).values();
+            } else if (param.getDescriptor().getName().equals(USERNAME.getName())) {
+            	username = WcsReaderRequest.getValue(param, String.class);
+            } else if (param.getDescriptor().getName().equals(PASSWORD.getName())) {
+            	password = WcsReaderRequest.getValue(param, String.class);
             } else {
                 throw new IllegalArgumentException(param + "is not a recognized parameter");
             }
@@ -248,6 +207,6 @@ public class WcsReaderRequestFactory {
         CoordinateReferenceSystem responseCrs = org.geotools.referencing.CRS.decode(responseEpsg);
 
         return WcsReaderRequestFactory.create(version, coverage, minx, miny, maxx, maxy,
-                requestCrs, responseCrs, resx, format, usePost);
+                requestCrs, responseCrs, resx, format, usePost, username, password);
     }
 }
