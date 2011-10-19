@@ -1,4 +1,4 @@
 # shared values like public url can be put here
 
 allshared.c2c.tomcat.dir=/srv/tomcat/tomcat1/
-allshared.c2c.logdir=${allshared.c2c.tomcat.dir}/logs/
+allshared.c2c.logdir=/var/log/tomcat/

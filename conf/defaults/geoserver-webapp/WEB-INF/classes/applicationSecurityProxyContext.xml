@@ -37,8 +37,10 @@
         /j_spring_security_check/**=httpSessionContextIntegrationFilterWithASCTrue,logoutFilter,proxyHeadersContextIntegrationFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeProcessingFilter,anonymousProcessingFilter,consoleExceptionTranslationFilter,filterInvocationInterceptor
         /j_spring_security_logout/**=httpSessionContextIntegrationFilterWithASCTrue,logoutFilter,proxyHeadersContextIntegrationFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeProcessingFilter,anonymousProcessingFilter,consoleExceptionTranslationFilter,filterInvocationInterceptor
         /rest/**=httpSessionContextIntegrationFilterWithASCFalse,proxyHeadersContextIntegrationFilter,basicProcessingFilter,anonymousProcessingFilter,owsExceptionTranslationFilter,restFilterInvocationInterceptor
-        /gwc/rest/web/**=anonymousProcessingFilter,consoleExceptionTranslationFilter,filterInvocationInterceptor
-        /gwc/rest/**=httpSessionContextIntegrationFilterWithASCFalse,proxyHeadersContextIntegrationFilter,basicProcessingFilter,owsExceptionTranslationFilter,restFilterInvocationInterceptor
+
+/gwc/rest/web/**=anonymousProcessingFilter,consoleExceptionTranslationFilter,filterInvocationInterceptor
+
+/gwc/rest/**=httpSessionContextIntegrationFilterWithASCFalse,proxyHeadersContextIntegrationFilter,basicProcessingFilter,owsExceptionTranslationFilter,restFilterInvocationInterceptor
         /**=httpSessionContextIntegrationFilterWithASCFalse,proxyHeadersContextIntegrationFilter,basicProcessingFilter,anonymousProcessingFilter,owsExceptionTranslationFilter,filterInvocationInterceptor
       </value>
     </property>
@@ -155,7 +157,7 @@
     class="org.geoserver.security.GeoserverAuthenticationProcessingFilter">
     <property name="authenticationManager" ref="authenticationManager" />
     <property name="authenticationFailureUrl"
-      value="/web/?wicket:bookmarkablePage=:org.geoserver.web.GeoServerLoginPage&amp;error=true" />
+      value="?login" />
     <property name="defaultTargetUrl" value="/" />
     <property name="filterProcessesUrl" value="/j_spring_security_check" />
     <property name="rememberMeServices" ref="rememberMeServices" />
@@ -303,9 +305,10 @@
     Ah, finally the one that hits the disk and, backed by a property file, returns known
     users, their passwords and roles
   -->
+<!-- replace with one that uses the ldap to look up role -->
   <bean id="userDetailsService" class="org.geoserver.security.impl.GeoserverUserDao" depends-on="extensions">
   </bean>
-  
+-->
   <!-- The dao used to deal with layer level security -->
   <bean id="accessRulesDao" class="org.geoserver.security.impl.DataAccessRuleDAO">
   	<constructor-arg ref="dataDirectory"/>
@@ -345,4 +348,5 @@
        </list>
      </property>
    </bean>
+
 </beans>
