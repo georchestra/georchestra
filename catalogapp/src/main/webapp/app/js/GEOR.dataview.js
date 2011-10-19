@@ -12,6 +12,13 @@
  * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+ * @include GeoExt.data.CSW.js
+ * @include GEOR.config.js
+ * @include GEOR.waiter.js
+ * @include OpenLayers/Format/JSON.js
+ */
+
 Ext.namespace("GEOR");
 
 GEOR.dataview = (function() {
@@ -99,6 +106,7 @@ GEOR.dataview = (function() {
     
     
     var onButtonClick = function(evt, elt) {
+        console.log(elt.id);
         if (!OWSdb[elt.id]) {
             return;
         }
@@ -122,12 +130,9 @@ GEOR.dataview = (function() {
     };
     
     var onStoreLoad = function(s) {
-        Ext.each(Ext.query('.x-list-btn'), function(e) {
-            Ext.get(e).on('click', onButtonClick);
-        });
+        Ext.select('.x-list-btn').on('click', onButtonClick);
         GEOR.waiter.hide();
-        
-        //getTotalCount
+
         GEOR.observable.fireEvent("storeloaded", {store: s});
     };
     

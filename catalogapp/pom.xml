@@ -145,7 +145,27 @@
           <path>/${project.build.finalName}</path>
         </configuration>
       </plugin>
-
+        <plugin>
+            <!-- http://mojo.codehaus.org/exec-maven-plugin/ -->
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>1.1</version>
+            <executions>
+                <execution>
+                    <phase>process-sources</phase>
+                    <goals>
+                        <goal>exec</goal>
+                    </goals>
+                </execution>
+            </executions>
+            <configuration>
+                <executable>jsbuild/${jsbuild.command}</executable>
+                <!--
+                    <arguments>
+                    </arguments>
+                    -->
+            </configuration>
+        </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -158,6 +178,52 @@
 
     </plugins>
   </build>
-
-
+	<profiles>
+		<profile>
+			<id>georchestra</id>
+			<activation>
+				<property>
+					<name>georchestra</name>
+				</property>
+			</activation>
+		</profile>
+		<profile>
+			<id>Windows</id>
+			<activation>
+				<os>
+					<!-- name>Windows plateforme</name -->
+					<family>Windows</family>
+					<arch>x86</arch>
+				</os>
+			</activation>
+			<properties>
+				<jsbuild.command>build.bat</jsbuild.command>
+                <!-- TODO: provide a build.bat script -->
+			</properties>
+		</profile>
+		<profile>
+			<id>Unix</id>
+			<activation>
+				<os>
+					<!-- name>Unix plateforme</name -->
+					<family>unix</family>
+				</os>
+			</activation>
+			<properties>
+				<jsbuild.command>build.sh</jsbuild.command>
+			</properties>
+		</profile>
+		<profile>
+			<id>Macintosh</id>
+			<activation>
+				<os>
+					<!-- name>Macintosh platform</name -->
+					<family>mac</family>
+				</os>
+			</activation>
+			<properties>
+				<jsbuild.command>build.sh</jsbuild.command>
+			</properties>
+		</profile>
+	</profiles>
 </project>

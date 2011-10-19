@@ -12,6 +12,10 @@
  * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+ * @include OpenLayers/Filter/Comparison.js
+ */ 
+ 
 Ext.namespace("GEOR");
 
 GEOR.what = (function() {

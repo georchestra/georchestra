@@ -13,7 +13,13 @@
  */
 
 /*
- * @include GEOR_map.js
+ * @include GEOR.waiter.js
+ * @include GEOR.dataview.js
+ * @include GEOR.csw.js
+ * @include GEOR.nav.js
+ * @include GEOR.what.js
+ * @include GEOR.where.js
+ * @include GEOR.config.js
  */
 
 Ext.namespace("GEOR");

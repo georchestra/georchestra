@@ -12,6 +12,13 @@
  * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+
+/*
+ * @include OpenLayers/Filter/Logical.js
+ * @include OpenLayers/Format/CSWGetRecords.js
+ * @include OpenLayers/Format/CSWGetRecords/v2_0_2.js
+ */
+ 
 Ext.namespace("GEOR");
 
 GEOR.csw = (function() {

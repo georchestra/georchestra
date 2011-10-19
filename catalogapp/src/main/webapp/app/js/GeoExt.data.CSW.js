@@ -1,3 +1,28 @@
+/*
+ * Copyright (C) Camptocamp
+ *
+ * This file is part of geOrchestra
+ *
+ * geOrchestra is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/*
+ * @include OpenLayers/Format/CSWGetRecords/v2_0_2.js
+ * @requires GeoExt/data/LayerRecord.js
+ * @include OpenLayers/Projection.js
+ * @include OpenLayers/Layer/SphericalMercator.js
+ * FIXME:
+ * @include OpenLayers/Request.js
+ * @include OpenLayers/Request/XMLHttpRequest.js
+ */
+ 
+
 /////////////////// GeoExt.data.CSWRecordsReader
 Ext.namespace("GeoExt.data");
 GeoExt.data.CSWRecordsReader = function(meta, recordType) {
