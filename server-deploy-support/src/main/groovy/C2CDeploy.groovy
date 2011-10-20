@@ -18,10 +18,6 @@ class C2CDeploy {
     def remoteKeystoreFile = "/srv/tomcat/tomcat1/conf/server.jks"
 
     /**
-     * The function for mapping maven artifact names to the final war names.  Default is Artifacts.standardGeorchestraAliasFunction
-     */
-    def aliasFunction
-    /**
      * The artifacts to publish.  By default all of the war files in project.properties['warsDir']
      */
     def artifacts
