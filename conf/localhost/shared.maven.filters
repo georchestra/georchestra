@@ -1,0 +1,7 @@
+# shared values like public url can be put here
+shared.server.name=ns383241.ovh.net
+shared.ldapUrl=ldap://ldap-dev.pigma.org:389/
+shared.server.port=80
+
+shared.privileged.geoserver.user=<do not commit this>
+shared.privileged.geoserver.pass=<do not commit this>
