@@ -314,10 +314,12 @@ public class SLDClassifier {
         try {
             // connect to remote WFS
             m.put(WFSDataStoreFactory.URL.key, wfsUrl);
-            m.put(WFSDataStoreFactory.TIMEOUT, 20000); // default: 3000
+            m.put(WFSDataStoreFactory.TIMEOUT.key, 60000); // default: 3000
+            // TODO : .key necessary for those two ?
             m.put(WFSDataStoreFactory.TRY_GZIP, true); // try to optimize communication
             m.put(WFSDataStoreFactory.ENCODING, "UTF-8"); // try to force UTF-8
-            
+            // TODO : configurable ?
+            m.put(WFSDataStoreFactory.MAXFEATURES.key, 2000);
             wfs = (new WFSDataStoreFactory()).createDataStore(m);     
         } 
         catch(SocketTimeoutException e) {

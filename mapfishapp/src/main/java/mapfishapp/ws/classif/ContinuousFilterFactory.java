@@ -106,7 +106,7 @@ public class ContinuousFilterFactory implements I_FilterFactory {
             throw new IllegalArgumentException("values cannot be null");
         }
         if(values.size() == 0) {
-            throw new IllegalArgumentException("values cannot empty");
+            throw new IllegalArgumentException("values cannot be empty");
         }
         
         _propertyName = propertyName;
