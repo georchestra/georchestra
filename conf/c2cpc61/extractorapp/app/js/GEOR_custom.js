@@ -14,7 +14,7 @@ GEOR.custom = {
      * Constant: GEOSERVER_WMS_URL
      * The URL to GeoServer WMS.
      */
-    GEOSERVER_WMS_URL: "/geoserver2/wms",
+    GEOSERVER_WMS_URL: "/geoserver/wms",
 
     /**
      * Constant: GEOSERVER_WFS_URL

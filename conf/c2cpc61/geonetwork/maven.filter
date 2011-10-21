@@ -28,6 +28,12 @@ LdapPort=${shared.ldap.port}
 LdapBindDn=${shared.ldap.admin.dn}
 LdapBindPassword=${shared.ldap.admin.password}
 
+geoserver.node.id=geoserver2
+geoserver.node.name=My preferred GeoServer node
+geoserver.node.namespace.prefix=geob_pub
+geoserver.node.namespace.url=http://geobretagne.fr/geoserver/geob_pub
+
+
 priveleged_admin_name=${shared.privileged.geoserver.user}
 priveleged_admin_pass=${shared.privileged.geoserver.pass}
 

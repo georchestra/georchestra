@@ -6,13 +6,13 @@ host=${host}
 servletUrl=http://${host}/extractorapp
 
 # Hostname of the geoserver that is secured for geOrchestra.
-secureHost=${host}
+secureHost=localhost:8180
 
 # Email properties
 smtpHost=psemail.epfl.ch
 smtpPort=25
-replyTo=pierre.mauduit@camptocamp.com
-from=${replyTo}
+replyTo=arnaud.deshogues@camptocamp.com
+from=noreply@camptocamp.com
 
 priveleged_admin_name=extractorapp_priveleged_admin
 priveleged_admin_pass=gerlsSnFd6SmM
