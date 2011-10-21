@@ -438,7 +438,7 @@ public class Proxy {
             		// Handle case of basic authentication.
             		//
             		Header authHeader = proxiedResponse.getFirstHeader("WWW-Authenticate");
-            		finalResponse.setHeader("WWW-Authenticate", authHeader.getValue());
+            		finalResponse.setHeader("WWW-Authenticate", (authHeader == null) ? "Basic realm=\"Authentication required\"" : authHeader.getValue());
             	}
             	if (logger.isWarnEnabled()) {
             		logger.warn("Error occurred. statuscode: "+statusCode+", reason: "+reasonPhrase);
