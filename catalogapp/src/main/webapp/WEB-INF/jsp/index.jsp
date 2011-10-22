@@ -163,8 +163,8 @@ if(sec_roles != null) {
         <img src="app/img/loading.gif" alt="chargement" width="32" height="32" style="margin-right:8px;float:left;vertical-align:top;"/>
         <span id="loading-msg">Chargement...</span>
     </div>
-    <div id="dataview" class="x-hide-display">
-        <p>Trouvez des données en cherchant par mots clés ou par région.</p>
+    <div id="dataview-contentel" class="x-hidden">
+        <p>Trouvez des données géographiques en cherchant par mots clés ou par région.</p>
     </div>
     <script type="text/javascript">
         document.getElementById('loading-msg').innerHTML = 'Chargement...';

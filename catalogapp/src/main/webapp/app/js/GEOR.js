@@ -92,6 +92,7 @@ Ext.onReady(function() {
         if (options && options.where) {
             whereFilter = options.where;
         }
+        GEOR.dataview.bind(store);
         store.load({
             params: {
                 xmlData: GEOR.csw.getPostData({

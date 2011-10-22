@@ -187,23 +187,27 @@ GEOR.dataview = (function() {
             return store;
         },
         
+        bind: function(store) {
+            if (!dataView.store) {
+                dataView.bindStore(store, true);
+            }
+        },
+        
         
         getCmp: function() {
             if (!dataView) {
                 dataView = new Ext.DataView({
-                    store: store,
+                    //store: store, // do not specify store right now, or contentEL will be overwritten.
                     singleSelect: null,
                     //multiSelect: true,
-                    //emptyText: 'No records to display',
                     selectedClass: 'x-view-selected',
                     //simpleSelect: true,
                     cls: 'x-list',
                     overClass:'x-view-over',
                     itemSelector: 'div.x-view-item',
-                    //loadingText: 'chargement en cours',
                     autoScroll: true,
                     autoWidth: true,
-                    //contentEl: "dataview", // FIXME: I cannot make it appear
+                    contentEl: "dataview-contentel",
                     //trackOver: true,
                     autoHeight: true,
                     tpl: new Ext.XTemplate(getTemplate(), {

@@ -13,6 +13,10 @@
 	-webkit-border-radius: 0 0 4px 4px;
 }
 
+#dataview-contentel {
+	padding: 5px;
+}
+
 .x-list div.x-view-over {
 	background-color: #eee;
 }
