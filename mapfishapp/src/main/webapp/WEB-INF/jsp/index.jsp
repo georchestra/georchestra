@@ -16,7 +16,7 @@ if(sec_roles != null) {
     for (int i = 0; i < roles.length; i++) {
         // ROLE_ANONYMOUS is added by the security proxy:
         if (roles[i].equals("ROLE_ANONYMOUS")) {
-            js_roles_array[0] = "ROLE_ANONYMOUS";
+            js_roles_array[0] = "'ROLE_ANONYMOUS'";
             break;
         }
         if (roles[i].equals("ROLE_SV_ADMIN")) {
