@@ -31,6 +31,8 @@ GEOR.dataview = (function() {
     
     var form, jsonFormat;
         
+    var selectedRecordsId = [];
+        
     var createButtons = function(URIs) {
         if (!URIs || !URIs[0]) {
             return '';
@@ -39,7 +41,6 @@ GEOR.dataview = (function() {
         for (var i=0,l=URIs.length;i<l;i++) {
             id = OpenLayers.Util.createUniqueID('OWS_');
             URI = URIs[i];
-            //console.log(URI.protocol);
             switch (URI.protocol) {
             case 'OGC:WMS-1.1.1-http-get-map':
                 if (URI.value) {
@@ -70,12 +71,18 @@ GEOR.dataview = (function() {
         return dl.join(' ')+view.join(' ');
     };
     
+    var getZoomText = function(values) {
+        var bbox = values.BoundingBox;
+        var uuid = values.identifier;
+        return (bbox instanceof OpenLayers.Bounds ? ' - <a href="#'+uuid+'" class="zoom">zoom</a>' : '');
+    };
+    
     
     var getTemplate = function() {
         return [
             '<tpl for=".">',
                 '<div class="x-view-item">',
-                    '<p><b>{title}</b></p>',
+                    '<p><b>{title}</b>{[this.zoom(values)]}</p>',
                     '<p>{abstract}</p>',
                     '{[this.buttons(values.URI)]}',
                     /*'Mots clés : ',
@@ -106,7 +113,6 @@ GEOR.dataview = (function() {
     
     
     var onButtonClick = function(evt, elt) {
-        console.log(elt.id);
         if (!OWSdb[elt.id]) {
             return;
         }
@@ -129,10 +135,27 @@ GEOR.dataview = (function() {
         submitData({services: services, layers: layers});
     };
     
+    var onZoomClick = function(e, t) {
+        // TODO: change event name to zoom
+        var uuid = t.href.slice(t.href.indexOf('#')+1);
+        var r = store.getById(uuid);
+        if (r) {
+            GEOR.observable.fireEvent("itemzoom", {
+                record: r
+            });
+        }
+    };
+    
     var onStoreLoad = function(s) {
         Ext.select('.x-list-btn').on('click', onButtonClick);
+        Ext.select('.x-view-item a.zoom').on('click', onZoomClick);
         GEOR.waiter.hide();
-
+        // we need to restore selection of items referenced in selectedRecords
+        if (selectedRecordsId.length) {
+            dataView.select(store.queryBy(function(r, id) {
+                return (selectedRecordsId.indexOf(id) > -1);
+            }).getRange(), true, true);
+        }
         GEOR.observable.fireEvent("storeloaded", {store: s});
     };
     
@@ -144,7 +167,6 @@ GEOR.dataview = (function() {
     
     var onStoreException = function() {
         GEOR.waiter.hide();
-        //console.log(arguments);
         alert("Oops, il y a eu un problème.");
     };
     
@@ -170,18 +192,39 @@ GEOR.dataview = (function() {
             if (!dataView) {
                 dataView = new Ext.DataView({
                     store: store,
-                    singleSelect: true,
+                    singleSelect: null,
+                    //multiSelect: true,
                     //emptyText: 'No records to display',
-                    overClass:'x-view-over',
+                    selectedClass: 'x-view-selected',
+                    //simpleSelect: true,
                     cls: 'x-list',
+                    overClass:'x-view-over',
+                    itemSelector: 'div.x-view-item',
+                    //loadingText: 'chargement en cours',
                     autoScroll: true,
                     autoWidth: true,
                     //contentEl: "dataview", // FIXME: I cannot make it appear
                     //trackOver: true,
                     autoHeight: true,
                     tpl: new Ext.XTemplate(getTemplate(), {
-                        buttons: createButtons
-                    })
+                        buttons: createButtons,
+                        zoom: getZoomText
+                    }),
+                    listeners: {
+                        "click": function(dv, idx, node) {
+                            var selectedRecords = dv.getSelectedRecords();
+                            var length = selectedRecords.length;
+                            selectedRecordsId = new Array(length);
+                            for (var i=0,l=length;i<l;i++) {
+                                selectedRecordsId[i] = selectedRecords[i].get('identifier');
+                                // TODO: keep a local cache of selectedRecords not selectedRecordsId
+                            }
+                            GEOR.observable.fireEvent("itemselectionchanged", {
+                                records: selectedRecords,
+                                total: selectedRecordsId.length
+                            });
+                        }
+                    }
                 });
             }
             return dataView;

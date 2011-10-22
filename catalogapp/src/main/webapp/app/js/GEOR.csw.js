@@ -25,11 +25,11 @@ GEOR.csw = (function() {
 
     var format = null;
     
-    var getFilter = function() {
+    var getFilter = function(options) {
         var f, filters = [], criteria = GEOR.criteria;
         
         for (var i=0, l = criteria.length; i<l; i++) {
-            f = GEOR[criteria[i]].getFilter();
+            f = options[criteria[i]] || GEOR[criteria[i]].getFilter();
             if (f !== null) {
                 filters.push(f);
             }
@@ -59,7 +59,7 @@ GEOR.csw = (function() {
                 */
             };
             
-            var filter = getFilter();
+            var filter = getFilter(options);
             if (filter) {
                 query.Constraint = {
                     version: "1.1.0",

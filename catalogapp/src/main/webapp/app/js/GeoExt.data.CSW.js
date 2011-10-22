@@ -15,8 +15,6 @@
 /*
  * @include OpenLayers/Format/CSWGetRecords/v2_0_2.js
  * @requires GeoExt/data/LayerRecord.js
- * @include OpenLayers/Projection.js
- * @include OpenLayers/Layer/SphericalMercator.js
  * FIXME:
  * @include OpenLayers/Request.js
  * @include OpenLayers/Request/XMLHttpRequest.js
@@ -55,7 +53,7 @@ GeoExt.data.CSWRecordsReader = function(meta, recordType) {
                 {name: "abstract"},
                 {name: "modified"},
                 {name: "spatial"},
-                {name: "BoundingBox"}
+                {name: "BoundingBox", mapping: "bounds"}
             ]
         );
     }
@@ -90,13 +88,18 @@ Ext.extend(GeoExt.data.CSWRecordsReader, Ext.data.DataReader, {
         "abstract": function(r) {
             return (r ? r.join(' / ') : "pas d'abstract");
         },
+        "identifier": function(r) {
+            return ((r && r[0] && r[0].value) ? r[0].value : '');
+        },
         "bounds": function(b) {
             if (!b || !(b instanceof OpenLayers.Bounds)) {
                 return;
             }
+            /*
             b.transform(new OpenLayers.Projection("EPSG:4326"),
                 new OpenLayers.Projection("EPSG:900913"));
-            return b.toGeometry();
+            */
+            return b; //.toGeometry();
         }
     },
     
@@ -134,7 +137,6 @@ Ext.extend(GeoExt.data.CSWRecordsReader, Ext.data.DataReader, {
             var fields = this.recordType.prototype.fields; 
             for(var i=0, l=rs.length; i<l; i++){
                 r = rs[i];
-                //console.log(r);
                 if(r.title && r.title instanceof Array && r.title[0]) {
                     values = {};
                     for(var j=0, lj=fields.length; j<lj; j++) {
@@ -145,7 +147,7 @@ Ext.extend(GeoExt.data.CSWRecordsReader, Ext.data.DataReader, {
                         values[field.name] = v;
                     }
 
-                    records.push(new this.recordType(values));
+                    records.push(new this.recordType(values, values.identifier));
                 }
                 
                 

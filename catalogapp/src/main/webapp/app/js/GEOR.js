@@ -24,7 +24,7 @@
 
 Ext.namespace("GEOR");
 
-GEOR.criteria = ['what'];
+GEOR.criteria = ['what', 'where'];
 
 Ext.onReady(function() {
     
@@ -70,16 +70,33 @@ Ext.onReady(function() {
          * Event: storeloaded
          * Fires when the new records are loaded in store
          */
-        "storeloaded"
+        "storeloaded",
+    
+        /**
+         * Event: itemselectionchanged
+         * Fires when list item selection has changed
+         */
+        "itemselectionchanged",
+    
+        /**
+         * Event: itemzoom
+         * Fires when a user clicks on zoom
+         */
+        "itemzoom"
     );
     GEOR.observable = o;
     
-    var search = function() {
+    var whereFilter;
+    var search = function(options) {
         GEOR.waiter.show();
+        if (options && options.where) {
+            whereFilter = options.where;
+        }
         store.load({
             params: {
                 xmlData: GEOR.csw.getPostData({
-                    nav: GEOR.nav.getParameters()
+                    nav: GEOR.nav.getParameters(),
+                    where: whereFilter
                 })
             }
         });
@@ -99,7 +116,10 @@ Ext.onReady(function() {
             el: "go_head"
         }] : [];
         
-    var textItem = new Ext.Toolbar.TextItem({
+    var navTextItem = new Ext.Toolbar.TextItem({
+        text: ''
+    });
+    var selectionTextItem = new Ext.Toolbar.TextItem({
         text: ''
     });
         
@@ -129,7 +149,7 @@ Ext.onReady(function() {
             handler: GEOR.nav.end,
             tooltip: "aller à la fin des résultats",
             width: 30
-        }, textItem]
+        }, navTextItem, '->', selectionTextItem]
     }, 
     {
         region: "west",
@@ -158,9 +178,12 @@ Ext.onReady(function() {
             title: "Sur quel territoire ?",
             collapsed: false,
             height: 280
-        })],
+        })/*, {
+            title: "Quand ?"
+        }*/],
         buttons: [{
             text: 'effacer',
+            iconCls: 'geor-btn-reset',
             handler: function() {
                 GEOR.nav.reset();
                 var c = GEOR.criteria;
@@ -170,9 +193,12 @@ Ext.onReady(function() {
             }
         },{
             text: 'chercher',
+            iconCls: 'geor-btn-search',
             handler: function() {
                 GEOR.nav.reset();
-                search();
+                search({
+                    where: GEOR.where.getFilter()
+                });
             }
         }]
     });
@@ -193,8 +219,21 @@ Ext.onReady(function() {
     o.on("searchrequest", search);
     o.on("storeloaded", function(options) {
         var navText = GEOR.nav.update(options.store);
-        textItem.setText(navText);
+        navTextItem.setText(navText);
         // scroll to top result:
         GEOR.dataview.scrollToTop();
+        // display results' bboxes:
+        GEOR.where.display(options.store.getRange());
+    });
+    o.on("itemselectionchanged", function(options) {
+        var records = options.records;
+        GEOR.where.highlight(records);
+        var l = options.total;
+        var s = (l > 1) ? 's' : '';
+        selectionTextItem.setText(l ? l + ' fiche'+s+' sélectionnée'+s : '');
+        selectionTextItem.getEl().highlight();
+    });
+    o.on("itemzoom", function(options) {
+        GEOR.where.zoomTo(options.record);
     });
 });
