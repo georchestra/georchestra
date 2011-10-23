@@ -130,30 +130,35 @@ Ext.onReady(function() {
         layout: 'fit',
         //contentEl: 'center'
         items: [GEOR.dataview.getCmp()],
-        bbar: [{
-            text: '<<',
-            handler: GEOR.nav.begin,
-            tooltip: "aller au début des résultats",
-            width: 30
-        },{
-            text: '<',
-            handler: GEOR.nav.previousPage,
-            tooltip: "page précédente",
-            width: 30
-        },{
-            text: '>',
-            handler: GEOR.nav.nextPage,
-            tooltip: "page suivante",
-            width: 30
-        },{
-            text: '>>',
-            handler: GEOR.nav.end,
-            tooltip: "aller à la fin des résultats",
-            width: 30
-        }, navTextItem, '->', selectionTextItem]
+        bbar: {
+            cls: "centerbbar",
+            items: [{
+                text: '<<',
+                handler: GEOR.nav.begin,
+                tooltip: "aller au début des résultats",
+                width: 30
+            },{
+                text: '<',
+                handler: GEOR.nav.previousPage,
+                tooltip: "page précédente",
+                width: 30
+            },{
+                text: '>',
+                handler: GEOR.nav.nextPage,
+                tooltip: "page suivante",
+                width: 30
+            },{
+                text: '>>',
+                handler: GEOR.nav.end,
+                tooltip: "aller à la fin des résultats",
+                width: 30
+            }, navTextItem, '->', selectionTextItem
+            ]
+        }
     }, 
     {
         region: "west",
+        cls: "westpanel",
         width: 280,
         minWidth: 280,
         maxWidth: 280,
@@ -184,6 +189,7 @@ Ext.onReady(function() {
         }*/],
         buttons: [{
             text: 'effacer',
+            cls: 'bigbtn',
             iconCls: 'geor-btn-reset',
             handler: function() {
                 GEOR.nav.reset();
@@ -194,6 +200,7 @@ Ext.onReady(function() {
             }
         },{
             text: 'chercher',
+            cls: 'bigbtn',
             iconCls: 'geor-btn-search',
             handler: function() {
                 GEOR.nav.reset();

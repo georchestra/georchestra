@@ -17,6 +17,16 @@
 	padding: 5px;
 }
 
+.westpanel .x-btn button, 
+.centerbbar .x-btn button {
+    color: #333333;
+    font: 16px arial,tahoma,verdana,helvetica;
+}
+.westpanel .bigbtn {
+	width: 100px !important;
+	height: 40px;
+}
+
 .x-list div.x-view-over {
 	background-color: #eee;
 }
