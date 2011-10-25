@@ -217,25 +217,24 @@ public abstract class A_DocService {
             throw new RuntimeException(DIR_PATH + " dir not found");
         } 
         
-        // prepare filter to get old files
-        FileFilter filter = 
-            new FileFilter() {
-                                    public boolean accept(File file) {
-                                        
-                                        // has to be a geodoc file
-                                        if(file.getName().contains(DOC_PREFIX)) {
-                                            long currentTime = System.currentTimeMillis();
-                                            long lastModified = file.lastModified();
-                                            
-                                            // has to have a time life above TIMER_MIN minutes
-                                            if(currentTime - lastModified > PURGE_TIMER_MIN * 60 * 1000) {
-                                                return true;
-                                            }
-                                        }
-                                        return false;                                       
-                                    }
-                                }; 
-                                
+		// prepare filter to get old files
+		FileFilter filter = new FileFilter() {
+			public boolean accept(File file) {
+
+				// has to be a geodoc file
+				if (file.getName().contains(DOC_PREFIX)) {
+					long currentTime = System.currentTimeMillis();
+					long lastModified = file.lastModified();
+
+					// has to have a time life above TIMER_MIN minutes
+					if (currentTime - lastModified > PURGE_TIMER_MIN * 60 * 1000) {
+						return true;
+					}
+				}
+				return false;
+			}
+		};
+
         // get files thanks to the previous filter
         File[] fileList = dir.listFiles(filter);  
         

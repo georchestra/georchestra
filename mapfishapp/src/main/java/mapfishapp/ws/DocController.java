@@ -124,11 +124,15 @@ public class DocController {
     @RequestMapping(value="/sld/", method=RequestMethod.POST)
     public void doSLDPost(HttpServletRequest request, HttpServletResponse response) {   
         
+    	/*
+    	 * We need anonymous users to be able to use service
+    	 * but there is a potential for users to fill up harddrive
+    	 * We should address that at some point
         String roles = request.getHeader("sec-roles");
         if((roles == null) || roles.equals("ROLE_ANONYMOUS")) {
             sendErrorToClient(response, HttpServletResponse.SC_UNAUTHORIZED, "Only non anonymous users are allowed to post SLD");
             return;
-        }
+        }*/
 
         if(request.getContentType().contains("application/vnd.ogc.sld+xml")) {
             // sld to store
