@@ -123,40 +123,18 @@ Ext.onReady(function() {
     var selectionTextItem = new Ext.Toolbar.TextItem({
         text: ''
     });
+    
+    var bbar = new Ext.Toolbar({
+        cls: "centerbbar"
+    });
         
     vpItems.push({
         region: "center", 
         autoScroll: true,
         layout: 'fit',
-        //contentEl: 'center'
         items: [GEOR.dataview.getCmp()],
-        bbar: {
-            cls: "centerbbar",
-            items: [{
-                text: '<<',
-                handler: GEOR.nav.begin,
-                tooltip: "aller au début des résultats",
-                width: 30
-            },{
-                text: '<',
-                handler: GEOR.nav.previousPage,
-                tooltip: "page précédente",
-                width: 30
-            },{
-                text: '>',
-                handler: GEOR.nav.nextPage,
-                tooltip: "page suivante",
-                width: 30
-            },{
-                text: '>>',
-                handler: GEOR.nav.end,
-                tooltip: "aller à la fin des résultats",
-                width: 30
-            }, navTextItem, '->', selectionTextItem
-            ]
-        }
-    }, 
-    {
+        bbar: bbar
+    }, {
         region: "west",
         cls: "westpanel",
         width: 280,
@@ -223,9 +201,32 @@ Ext.onReady(function() {
      * acting as a mediator between the modules with
      * the objective of making them independent.
      */
-
     o.on("searchrequest", search);
     o.on("storeloaded", function(options) {
+        if (bbar.items.length === 0) {
+            bbar.add({
+                text: '<<',
+                handler: GEOR.nav.begin,
+                tooltip: "aller au début des résultats",
+                width: 30
+            },{
+                text: '<',
+                handler: GEOR.nav.previousPage,
+                tooltip: "page précédente",
+                width: 30
+            },{
+                text: '>',
+                handler: GEOR.nav.nextPage,
+                tooltip: "page suivante",
+                width: 30
+            },{
+                text: '>>',
+                handler: GEOR.nav.end,
+                tooltip: "aller à la fin des résultats",
+                width: 30
+            }, navTextItem, '->', selectionTextItem);
+            bbar.ownerCt.doLayout();
+        }
         var navText = GEOR.nav.update(options.store);
         navTextItem.setText(navText);
         // scroll to top result:
