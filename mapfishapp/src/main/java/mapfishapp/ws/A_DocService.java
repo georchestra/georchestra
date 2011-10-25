@@ -3,7 +3,6 @@ package mapfishapp.ws;
 import java.io.ByteArrayInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -19,6 +18,8 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.xml.sax.SAXException;
 
 /**
@@ -29,7 +30,9 @@ import org.xml.sax.SAXException;
  */
 
 public abstract class A_DocService {
-    
+
+	protected static final Log LOG = LogFactory.getLog(A_DocService.class.getPackage().getName());
+	
     /**
      * Document prefix helping to differentiate documents among others OS tmp files
      */
@@ -40,12 +43,7 @@ public abstract class A_DocService {
      */
     static final String DIR_PATH = System.getProperty("java.io.tmpdir"); 
     
-    /**
-     * Time (in minutes) before files are purged automatically from DIR
-     */
-    protected int getPurgeTime() {return 60 * 24;}
-    
-    /**
+	/**
      * File extension. 
      */
     protected String _fileExtension;
@@ -72,15 +70,11 @@ public abstract class A_DocService {
      * Subclasses have to provide their file extension name and MIME type
      * @param fileExtension
      */
-    public A_DocService(final String fileExtension, final String MIMEType) {
+    public A_DocService(int maxDocAgeInMinutes, final String fileExtension, final String MIMEType) {
         _fileExtension = fileExtension;
         _MIMEType = MIMEType;
         
-        Runnable purgeDocsTask = new Runnable() {
-			public void run() {
-				purgeDocDir();
-			}
-		};
+        Runnable purgeDocsTask = new PurgeDocsRunnable(maxDocAgeInMinutes);
 		PurgeDocsTimer.startPurgeDocsTimer(purgeDocsTask);
     }
     
@@ -216,43 +210,6 @@ public abstract class A_DocService {
     }
     
     /*=====================Private Methods - Common to every DocService=========================================*/
-    
-    private void purgeDocDir() {
-
-        File dir = new File(DIR_PATH);      
-        if(!dir.exists()) {
-            throw new RuntimeException(DIR_PATH + " dir not found");
-        } 
-        
-		// prepare filter to get old files
-		FileFilter filter = new FileFilter() {
-			public boolean accept(File file) {
-
-				// has to be a geodoc file
-				if (file.getName().contains(DOC_PREFIX)) {
-					long currentTime = System.currentTimeMillis();
-					long lastModified = file.lastModified();
-
-					// has to have a time life above TIMER_MIN minutes
-					if (currentTime - lastModified > getPurgeTime() * 60 * 1000) {
-						return true;
-					}
-				}
-				return false;
-			}
-		};
-
-        // get files thanks to the previous filter
-        File[] fileList = dir.listFiles(filter);  
-        
-        // delete them
-        for(File file : fileList) {        
-            if(!file.delete()) {
-                throw new RuntimeException("Could not delete file: " + file.getPath());
-            }
-        }
-        
-    }
     
     /**
      * Save the given data under a specific name and location

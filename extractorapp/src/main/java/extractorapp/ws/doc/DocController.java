@@ -40,6 +40,13 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 public class DocController {
 
     /**
+     * Time (in minutes) before files are purged automatically from DIR
+     */
+    private int maxDocAgeInMinutes = 60 * 24;
+	public int getMaxDocAgeInMinutes() {return maxDocAgeInMinutes;}
+	public void setMaxDocAgeInMinutes(int maxDocAgeInMinutes) {this.maxDocAgeInMinutes = maxDocAgeInMinutes;}
+
+    /**
      * variable name that has to be used on client side
      */
     public static final String FILEPATH_VARNAME = "filepath";

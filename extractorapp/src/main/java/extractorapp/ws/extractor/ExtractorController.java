@@ -42,7 +42,7 @@ public class ExtractorController implements ServletContextAware {
 
     private static final String   BASE_MAPPING      = "/extractor/";
     private static final String   EXTRACTOR_MAPPING = BASE_MAPPING + "initiate";
-    private static final String   TEST_EXTRACTOR_MAPPING = BASE_MAPPING + "test-initiate";
+    private static final String   TEST_EXTRACTOR_MAPPING = BASE_MAPPING + "test/initiate";
     private static final String   RESULTS_MAPPING   = BASE_MAPPING + "package";
     private static final String   UUID_PARAM = "uuid";
 

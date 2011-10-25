@@ -154,6 +154,8 @@ public class ExtractorThread extends Thread {
             } catch (Throwable e) {
                 handleException(e);
             }
+        } else if(_testing && !failures.isEmpty()) {
+        	throw new RuntimeException(Arrays.toString(failures.toArray()));
         }
     }
 

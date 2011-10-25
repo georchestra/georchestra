@@ -2,17 +2,18 @@ package extractorapp.ws.extractor;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.geotools.referencing.CRS;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
-import org.w3c.dom.NodeList;
 
 import extractorapp.ws.extractor.wcs.WcsCoverageReader;
 import extractorapp.ws.extractor.wcs.WcsFormat;
@@ -25,7 +26,6 @@ import extractorapp.ws.extractor.wcs.WcsReaderRequestFactory;
  * @author jeichar
  */
 public class WcsExtractor {
-    private static final Log       LOG = LogFactory.getLog(WfsExtractor.class.getPackage().getName());
 
     private final File      _basedir;
     private final WcsFormat _format;
@@ -43,31 +43,32 @@ public class WcsExtractor {
         this._adminUsername = adminUsername;
         this._secureHost = secureHost;
     }
-    public void checkPermission(ExtractorLayerRequest request, String secureHost, String username, String roles)
-    throws MalformedURLException, IOException {
-        URL capabilitiesURL = request.capabilitiesURL("WMS", null);
-        HttpURLConnection connection = (HttpURLConnection) capabilitiesURL.openConnection();
-        if(secureHost.equalsIgnoreCase(request._url.getHost())
-                || "127.0.0.1".equalsIgnoreCase(request._url.getHost())
-                || "localhost".equalsIgnoreCase(request._url.getHost())) {
-        	LOG.debug("WcsExtractor.checkPermission - Secured Server: adding username header and role headers to request for checkPermission");
-                    if(username != null) connection.addRequestProperty("sec-username", username);
-                    if(roles != null) connection.addRequestProperty("sec-roles", roles);
-        } else {
-        	LOG.debug("WcsExtractor.checkPermission - Non Secured Server");
-        }
+    protected static final Log LOG = LogFactory.getLog(WcsExtractor.class.getPackage().getName());
 
-        
-        String capabilities = FileUtils.asString(connection.getInputStream());
-        String xpathExpression = String.format("//Layer[Name='%s']", request._layerName);
-        NodeList select = XmlUtils.select(xpathExpression, capabilities, XmlUtils.WMS_NAMESPACE_CONTEXT);
-        boolean permitted = select.getLength() == 1;
-        
-        if(!permitted) {
-            throw new SecurityException("User does not have sufficient privileges to access the Layer: "+request._layerName);
-        }
-    }
+	public void checkPermission(ExtractorLayerRequest request, String secureHost, String username, String roles)
+		    throws MalformedURLException, IOException {
+		        URL capabilitiesURL = request.capabilitiesURL("WMS", null);
+		        
+		    	DefaultHttpClient httpclient = new DefaultHttpClient();
+		    	HttpGet get = new HttpGet(capabilitiesURL.toExternalForm());
+		        if(secureHost.equalsIgnoreCase(request._url.getHost())
+		                || "127.0.0.1".equalsIgnoreCase(request._url.getHost())
+		                || "localhost".equalsIgnoreCase(request._url.getHost())) {
+		        	LOG.debug(getClass().getSimpleName()+".checkPermission - Secured Server: adding username header and role headers to request for checkPermission");
+		            if(username != null) get.addHeader("sec-username", username);
+		            if(roles != null) get.addHeader("sec-roles", roles);
+		        } else {
+		        	LOG.debug(getClass().getSimpleName()+"checkPermission - Non Secured Server");
+		        }
 
+		        String capabilities = FileUtils.asString(httpclient.execute(get).getEntity().getContent());
+		        Pattern regex = Pattern.compile("(?m)<Layer[^>]*>(\\\\n|\\s)*<Name>\\s*"+Pattern.quote("pigma:protected_layer_for_integration_testing")+"\\s*</Name>");
+		        boolean permitted = regex.matcher(capabilities).find();
+		        
+		        if(!permitted) {
+		            throw new SecurityException("User does not have sufficient privileges to access the Layer: "+request._layerName);
+		        }
+		    }
     public File[] extract (ExtractorLayerRequest request) throws IOException, TransformException, FactoryException {
         if (request._owsType != OWSType.WCS) {
             throw new IllegalArgumentException (request._owsType + "must be WCS for the WcsExtractor");
@@ -86,11 +87,11 @@ public class WcsExtractor {
         if(_secureHost.equalsIgnoreCase(request._url.getHost())
                 || "127.0.0.1".equalsIgnoreCase(request._url.getHost())
                 || "localhost".equalsIgnoreCase(request._url.getHost())) {
-        	LOG.debug("WfsExtractor.extract - Secured Server: Adding extractionUserName to connection params");
+        	LOG.debug("WcsExtractor.extract - Secured Server: Adding extractionUserName to connection params");
             username = _adminUsername;
             password = _adminPassword;
         } else {
-        	LOG.debug("WfsExtractor.extract - Non Secured Server");        	
+        	LOG.debug("WcsExtractor.extract - Non Secured Server");        	
             username = null;
             password = null;
         }

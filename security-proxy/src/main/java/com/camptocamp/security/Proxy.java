@@ -602,7 +602,7 @@ public class Proxy {
                     post.setEntity(entity);
                     
                 } else {
-                    logger.debug("Post is NOT recognized as a form post.");
+                    logger.debug("Post is NOT recognized as a form post. (Not an error just a comment)");
                     int contentLength = request.getContentLength();
                     ServletInputStream inputStream = request.getInputStream();
                     entity = new InputStreamEntity(inputStream, contentLength);

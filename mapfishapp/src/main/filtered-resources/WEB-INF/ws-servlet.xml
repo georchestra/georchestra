@@ -10,7 +10,7 @@
 	<bean class="mapfishapp.ws.OGCProxy">
 	</bean>
 	<bean class="mapfishapp.ws.DocController">
-		<property name="maxDocAgeInMinutes" value="1440"/>
+		<property name="maxDocAgeInMinutes" value="${maxDocAgeInMinutes}"/>
 	</bean>
 	
 	<!-- upload de fichiers -->

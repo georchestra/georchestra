@@ -29,8 +29,8 @@ public class WMCDocService extends A_DocService {
     public static final String FILENAME_NODE = "ViewContext";
     public static final String FILENAME_ATTRIBUTE = "id";
     
-    public WMCDocService() {
-        super(FILE_EXTENSION, MIME_TYPE);
+    public WMCDocService(int maxDocAgeInMinutes) {
+        super(maxDocAgeInMinutes, FILE_EXTENSION, MIME_TYPE);
     }
     
     /*=================================Overridden methods===============================================*/

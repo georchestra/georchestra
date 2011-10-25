@@ -27,6 +27,7 @@ public class PurgeDocsTimer {
 			final Runnable purgeMethod) {
 		if (!initialized)
 			intialize();
-		tasks.add(purgeMethod);
+		if(!tasks.contains(purgeMethod))
+			tasks.add(purgeMethod);
 	}
 }

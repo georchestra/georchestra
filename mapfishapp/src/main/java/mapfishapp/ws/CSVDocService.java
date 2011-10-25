@@ -21,8 +21,8 @@ public class CSVDocService extends A_DocService {
     public static final String COLUMNS_FIELD = "columns";
     public static final String RECORDS_FIELD = "data";
     
-    public CSVDocService() {
-        super(FILE_EXTENSION, MIME_TYPE);
+    public CSVDocService(int maxDocAgeInMinutes) {
+        super(maxDocAgeInMinutes, FILE_EXTENSION, MIME_TYPE);
     }
 
     /**

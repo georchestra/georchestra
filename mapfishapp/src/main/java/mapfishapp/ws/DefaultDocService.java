@@ -15,8 +15,8 @@ public class DefaultDocService extends A_DocService {
      * It forces user to use {@link DefaultDocService#DefaultDocService(String, String)}
      */
     @SuppressWarnings("unused")
-    private DefaultDocService() {
-        super("", "");
+    private DefaultDocService(int maxDocAgeInMinutes) {
+        super(maxDocAgeInMinutes, "", "");
     }
     
     /**
@@ -25,8 +25,8 @@ public class DefaultDocService extends A_DocService {
      * @param fileExtension file extension
      * @param MIMEType mime type
      */
-    public DefaultDocService(String fileExtension, String MIMEType) {
-        super(fileExtension, MIMEType);
+    public DefaultDocService(int maxDocAgeInMinutes, String fileExtension, String MIMEType) {
+        super(maxDocAgeInMinutes, fileExtension, MIMEType);
     }
 
 }

@@ -3,7 +3,6 @@ package extractorapp.ws.extractor;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,6 +11,8 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFactorySpi;
 import org.geotools.data.DefaultQuery;
@@ -57,7 +58,7 @@ import com.vividsolutions.jts.geom.Polygon;
  * @author jeichar
  */
 public class WfsExtractor {
-    private static final Log       LOG = LogFactory.getLog(WfsExtractor.class.getPackage().getName());
+    protected static final Log LOG = LogFactory.getLog(WcsExtractor.class.getPackage().getName());
 
     /**
      * Enumerate general types of geometries we accept. Multi/normal is ignored
@@ -134,18 +135,20 @@ public class WfsExtractor {
 
     public void checkPermission(ExtractorLayerRequest request, String secureHost, String username, String roles) throws IOException {
         URL capabilitiesURL = request.capabilitiesURL("WFS", null);
-        HttpURLConnection connection = (HttpURLConnection) capabilitiesURL.openConnection();
+
+    	DefaultHttpClient httpclient = new DefaultHttpClient();
+    	HttpGet get = new HttpGet(capabilitiesURL.toExternalForm());
         if(secureHost.equalsIgnoreCase(request._url.getHost())
                 || "127.0.0.1".equalsIgnoreCase(request._url.getHost())
                 || "localhost".equalsIgnoreCase(request._url.getHost())) {
         	LOG.debug("WfsExtractor.checkPermission - Secured Server: adding username header and role headers to request for checkPermission");
-            if(username != null) connection.addRequestProperty("sec-username", username);
-            if(roles != null) connection.addRequestProperty("sec-roles", roles);
+            if(username != null) get.addHeader("sec-username", username);
+            if(roles != null) get.addHeader("sec-roles", roles);
         } else {
         	LOG.debug("WfsExtractor.checkPermission - Non Secured Server");
         }
-        
-        String capabilities = FileUtils.asString(connection.getInputStream());
+
+        String capabilities = FileUtils.asString(httpclient.execute(get).getEntity().getContent());
 
         NodeList featureTypes = XmlUtils.select("//wfs:FeatureType", capabilities, 
                 XmlUtils.WFS_NAMESPACE_CONTEXT);

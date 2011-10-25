@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -85,7 +86,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
     // requested format)
     private static final List<String> preferredFormats;
     static {
-        String[] formats = { "png", "geotiff", "gif", "jpeg" };
+        String[] formats = { "png", "geotiff", "gif", "jpeg", "jp2ecw", "ecw" };
         preferredFormats = Collections.unmodifiableList(Arrays.asList(formats));
     }
     private static final Log       LOG = LogFactory.getLog(BoundWcsRequest.class.getPackage().getName());
@@ -336,11 +337,16 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
 
     private BoundWcsRequest negotiateResponseCRS(BoundWcsRequest request) throws IOException {
         Set<String> crss = request.getSupportedResponseCRSs();
+        // Hack mostly for pigma.  It will work so long as backing servers are Geoservers
+        if(crss.isEmpty() && request.getNativeCRSs().isEmpty()) return request;
         if (!crss.contains(request.getResponseEpsgCode())) {
             String newCrs = "EPSG:4326";
             if (request.getNativeCRSs().isEmpty()) {
-                if (!crss.contains(newCrs)) {
-                    newCrs = crss.iterator().next();
+                Iterator<String> crsIter = crss.iterator();
+				if (!crss.contains(newCrs) && crsIter.hasNext()) {
+                    newCrs = crsIter.next();
+                } else {
+                	
                 }
             } else {
                 newCrs = request.getNativeCRSs().iterator().next();
@@ -362,11 +368,9 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
                     // try next crs
                 }
             }
-            if (newBBox == null) {
-                throw new ExtractorException(
-                        "It is not possible to convert the request bbox to a supported request CRS");
+            if (newBBox != null && !crss.isEmpty()) {
+            	return request.withRequestBBox(newBBox);
             }
-            return request.withRequestBBox(newBBox);
         }
         return request;
     }

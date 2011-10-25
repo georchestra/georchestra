@@ -15,6 +15,8 @@ import static extractorapp.ws.extractor.wcs.WcsParameters.RESY;
 import static extractorapp.ws.extractor.wcs.WcsParameters.RES;
 import static extractorapp.ws.extractor.wcs.WcsParameters.USE_POST;
 import static extractorapp.ws.extractor.wcs.WcsParameters.VERSION;
+import static extractorapp.ws.extractor.wcs.WcsParameters.USERNAME;
+import static extractorapp.ws.extractor.wcs.WcsParameters.PASSWORD;
 import static org.geotools.referencing.CRS.lookupEpsgCode;
 
 import java.io.IOException;
@@ -147,6 +149,12 @@ public class WcsReaderRequest {
         ParameterValue<String> format = FORMAT.createValue ();
         format.setValue (this.format);
         
+        ParameterValue<String> username = USERNAME.createValue ();
+        username.setValue (this.username);
+        
+        ParameterValue<String> password = PASSWORD.createValue ();
+        password.setValue (this.password);
+        
         ParameterValue<String> crs = CRS.createValue ();
         Integer epsg = epsg (responseCRS);
         crs.setValue ("EPSG:"+epsg);
@@ -166,7 +174,7 @@ public class WcsReaderRequest {
         ParameterGroup extent = new ParameterGroup (EXTENT, new ParameterValueGroup[]{bbox});
         ParameterGroup resultImageParams = new ParameterGroup (RESULT_IMAGE_PARAMS, new ParameterValueGroup[]{size});
         
-        return new GeneralParameterValue[]{usePost, version, coverage, format, crs, extent, resultImageParams};
+        return new GeneralParameterValue[]{usePost, version, coverage, format, crs, extent, resultImageParams, username, password};
     }
 
     /**

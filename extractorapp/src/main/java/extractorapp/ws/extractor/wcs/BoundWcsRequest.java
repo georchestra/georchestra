@@ -305,6 +305,8 @@ public class BoundWcsRequest extends WcsReaderRequest {
         }
         
 
+		
+		BasicHttpContext localcontext = new BasicHttpContext();
 		if(username != null) {
 			AuthScope authScope = new AuthScope(wcsUrl.getHost(), wcsUrl.getPort());
 			Credentials credentials = new UsernamePasswordCredentials(username, password);
@@ -317,16 +319,15 @@ public class BoundWcsRequest extends WcsReaderRequest {
 			authCache.put(new HttpHost(wcsUrl.getHost(), wcsUrl.getPort()), basicAuth);
 
 			// Add AuthCache to the execution context
-			BasicHttpContext localcontext = new BasicHttpContext();
 			localcontext.setAttribute(ClientContext.AUTH_CACHE, authCache);        
 
 			ArrayList<String> authpref = new ArrayList<String>();
 			authpref.add(AuthPolicy.BASIC);
 			authpref.add(AuthPolicy.DIGEST);
-			httpclient.getParams().setParameter(AuthPNames.PROXY_AUTH_PREF, authpref);
+			httpclient.getParams().setParameter(AuthPNames.TARGET_AUTH_PREF, authpref);
 		}
 		
-		HttpResponse response = httpclient.execute(httpRequest);
+		HttpResponse response = httpclient.execute(httpRequest, localcontext);
         // check for an error response from the server
         if(hasContentType(response,XML_ERROR_TYPE)){
             String error = FileUtils.asString(response.getEntity().getContent());
@@ -339,7 +340,7 @@ public class BoundWcsRequest extends WcsReaderRequest {
     private boolean hasContentType(HttpResponse response, String contentType) {
     	HeaderElement[] types = response.getEntity().getContentType().getElements();
     	for (HeaderElement headerElement : types) {
-			if(headerElement.getValue().equalsIgnoreCase(contentType)) {
+			if(headerElement.getValue() != null && headerElement.getValue().equalsIgnoreCase(contentType)) {
 				return true;
 			}
 		}

@@ -28,7 +28,7 @@ proxy.mapping=\
 camptocamp.security.loglevel=ALL
 jasig.loglevel=ALL
 springframework.loglevel=ALL
-log.dir=/srv/tomcat/tomcat1/logs
+log.dir=${allshared.c2c.logdir}
 log.filename=security-proxy.log
 # options are StandardOut, FileAppender or HTMLAppender (zero or more and comma separated) 
 log.appender=FileAppender

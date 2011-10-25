@@ -41,6 +41,12 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
   
 @Controller
 public class DocController {
+    /**
+     * Time (in minutes) before files are purged automatically from DIR
+     */
+    private int maxDocAgeInMinutes = 60 * 24;
+	public int getMaxDocAgeInMinutes() {return maxDocAgeInMinutes;}
+	public void setMaxDocAgeInMinutes(int maxDocAgeInMinutes) {this.maxDocAgeInMinutes = maxDocAgeInMinutes;}
 
     /**
      * variable name that has to be used on client side
@@ -79,7 +85,7 @@ public class DocController {
      */
     @RequestMapping(value="/wmc/", method=RequestMethod.POST)
     public void storeWMCFile(HttpServletRequest request, HttpServletResponse response) {   
-        storeFile(new WMCDocService(), WMC_URL, request, response);   
+        storeFile(new WMCDocService(maxDocAgeInMinutes), WMC_URL, request, response);   
     }
     
     /**
@@ -89,7 +95,7 @@ public class DocController {
      */
     @RequestMapping(value="/wmc/*", method=RequestMethod.GET)
     public void getWMCFile(HttpServletRequest request, HttpServletResponse response) { 
-        getFile(new WMCDocService(), request, response);
+        getFile(new WMCDocService(maxDocAgeInMinutes), request, response);
     }
 
     /*======================= JSON to CSV =====================================================================*/
@@ -100,7 +106,7 @@ public class DocController {
      */
     @RequestMapping(value="/csv/", method=RequestMethod.POST)
     public void storeCSVFile(HttpServletRequest request, HttpServletResponse response) {   
-        storeFile(new CSVDocService(), CSV_URL, request, response);   
+        storeFile(new CSVDocService(maxDocAgeInMinutes), CSV_URL, request, response);   
     }
     
     /**
@@ -110,7 +116,7 @@ public class DocController {
      */
     @RequestMapping(value="/csv/*", method=RequestMethod.GET)
     public void getCSVFile(HttpServletRequest request, HttpServletResponse response) { 
-        getFile(new CSVDocService(), request, response);
+        getFile(new CSVDocService(maxDocAgeInMinutes), request, response);
     }
     
     /*======================= SLD =====================================================================*/
@@ -136,7 +142,7 @@ public class DocController {
 
         if(request.getContentType().contains("application/vnd.ogc.sld+xml")) {
             // sld to store
-            storeFile(new SLDDocService(), SLD_URL, request, response);   
+            storeFile(new SLDDocService(maxDocAgeInMinutes), SLD_URL, request, response);   
         }
         else if(request.getContentType().contains("application/json") || request.getContentType().contains("text/json")) {
             // classification based on client request
@@ -154,7 +160,7 @@ public class DocController {
      */
     @RequestMapping(value="/sld/*", method=RequestMethod.GET)
     public void getSLDFile(HttpServletRequest request, HttpServletResponse response) { 
-        getFile(new SLDDocService(), request, response);
+        getFile(new SLDDocService(maxDocAgeInMinutes), request, response);
     }
     
     /*=======================Private Methods==========================================================================*/
@@ -168,7 +174,7 @@ public class DocController {
             SLDClassifier c = new SLDClassifier( new ClassifierCommand(getBodyFromRequest(request)));
             
             // save SLD content under a file
-            SLDDocService service = new SLDDocService();
+            SLDDocService service = new SLDDocService(maxDocAgeInMinutes);
             String fileName = service.saveData(c.getSLD());
             
             PrintWriter out = response.getWriter(); 
