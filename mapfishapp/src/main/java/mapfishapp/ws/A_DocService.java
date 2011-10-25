@@ -38,12 +38,12 @@ public abstract class A_DocService {
     /**
      * files are stored in the OS tmp directory
      */
-    private static final String DIR_PATH = System.getProperty("java.io.tmpdir"); 
+    static final String DIR_PATH = System.getProperty("java.io.tmpdir"); 
     
     /**
      * Time (in minutes) before files are purged automatically from DIR
      */
-    private static final int PURGE_TIMER_MIN = 10;
+    protected int getPurgeTime() {return 60 * 24;}
     
     /**
      * File extension. 
@@ -75,6 +75,13 @@ public abstract class A_DocService {
     public A_DocService(final String fileExtension, final String MIMEType) {
         _fileExtension = fileExtension;
         _MIMEType = MIMEType;
+        
+        Runnable purgeDocsTask = new Runnable() {
+			public void run() {
+				purgeDocDir();
+			}
+		};
+		PurgeDocsTimer.startPurgeDocsTimer(purgeDocsTask);
     }
     
     /**
@@ -227,7 +234,7 @@ public abstract class A_DocService {
 					long lastModified = file.lastModified();
 
 					// has to have a time life above TIMER_MIN minutes
-					if (currentTime - lastModified > PURGE_TIMER_MIN * 60 * 1000) {
+					if (currentTime - lastModified > getPurgeTime() * 60 * 1000) {
 						return true;
 					}
 				}
