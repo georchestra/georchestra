@@ -10,6 +10,10 @@ String sec_roles = request.getHeader("sec-roles");
 if(sec_roles != null) {
     String[] roles = sec_roles.split(",");
     for (int i = 0; i < roles.length; i++) {
+        // ROLE_ANONYMOUS is added by the security proxy:
+        if (roles[i].equals("ROLE_ANONYMOUS")) {
+            break;
+        }
         if (roles[i].equals("ROLE_SV_ADMIN")) {
             admin = true;
         }
