@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -84,10 +85,15 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
     // are the order of formats to try next. (Once downloaded
     // in one of these formats then the result will be converted to the
     // requested format)
-    private static final List<String> preferredFormats;
+    private static final Set<String> preferredFormats;
+    private static final Set<String> embeddedCrsFormats; 
     static {
         String[] formats = { "png", "geotiff", "gif", "jpeg", "jp2ecw", "ecw" };
-        preferredFormats = Collections.unmodifiableList(Arrays.asList(formats));
+        preferredFormats = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(formats)));
+        
+        formats = new String[]{ "geotiff","jp2ecw", "ecw" };
+        embeddedCrsFormats = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(formats)));
+        
     }
     private static final Log       LOG = LogFactory.getLog(BoundWcsRequest.class.getPackage().getName());
 
@@ -276,7 +282,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
                 createPrjFile(request.responseCRS, baseFilePath);
             }
         } else {
-            if (request.format.equalsIgnoreCase("geotiff")) {
+            if (embeddedCrsFormats.contains(request.format)) {
                 writeToFile(file, in);
             } else {
                 writeWorldImage(request, file, in);
