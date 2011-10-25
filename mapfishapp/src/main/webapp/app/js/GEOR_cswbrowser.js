@@ -431,6 +431,12 @@ GEOR.cswbrowser = (function() {
                 displayField: 'name',
                 listeners: {
                     "select": function(combo, record) {
+                        if (!record) {
+                            alert("Administrateur : problème de configuration - "+
+                            "la variable DEFAULT_THESAURUS_KEY ne correspond à aucune"+
+                            " valeur exportée par GeoNetwork");
+                            return;
+                        }
                         if (record.get('key') == GEOR.config.THESAURUS_NAME) {
                             buildGeorTree(tree);
                         } else {
