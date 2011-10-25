@@ -88,7 +88,7 @@ GEOR.where = (function() {
             layers: [
                 new OpenLayers.Layer.OSM('OSM', 'http://tile.openstreetmap.org/${z}/${x}/${y}.png', {
                     buffer: 0,
-                    attribution: "Données CC-By-SA de <a href='http://openstreetmap.org/' target='_blank'>OpenStreetMap</a>"
+                    attribution: "Carte CC-By-SA <a href='http://openstreetmap.org/' target='_blank'>OpenStreetMap</a>"
                 })
             ]
         });
