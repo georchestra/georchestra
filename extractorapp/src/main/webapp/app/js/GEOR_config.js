@@ -260,9 +260,9 @@ GEOR.config = (function() {
          */
         GLOBAL_MAX_EXTENT: new OpenLayers.Bounds(
             getCustomParameter("MAP_XMIN",-180),
-            getCustomParameter("MAP_XMIN",-90),
-            getCustomParameter("MAP_XMIN",180),
-            getCustomParameter("MAP_XMIN",90)
+            getCustomParameter("MAP_YMIN",-90),
+            getCustomParameter("MAP_XMAX",180),
+            getCustomParameter("MAP_YMAX",90)
         ),
         
         /**
