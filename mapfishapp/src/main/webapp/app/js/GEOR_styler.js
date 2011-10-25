@@ -877,8 +877,11 @@ GEOR.styler = (function() {
          */
         create: function(layerRecord, animateFrom) {
             Ext.QuickTips.init();
-            symbolType = null; // clear cache
- 
+            
+            // clear cache:
+            symbolType = null; 
+            mask = null;
+            
             wmsLayerRecord = layerRecord;
 
             /*
@@ -919,13 +922,11 @@ GEOR.styler = (function() {
                     }
                 }],
                 listeners: {
-                    "afterlayout": function() {
-                        // defer is required to get correct mask position
-                        (function() {
-                            mask = new Ext.LoadMask(win.body, {
-                                msg: "chargement en cours"
-                            });
-                        }).defer(this.showAnimDuration*1000+10);
+                    "afterrender": function() {
+                        mask = new Ext.LoadMask(win.body, {
+                            msg: "chargement en cours"
+                        });
+                        mask.show();
                     }
                 }
             });
@@ -944,12 +945,12 @@ GEOR.styler = (function() {
                     // attribute of the instance
                     wfsInfo = GEOR.ows.getWfsInfo(recs);
                     if (!wfsInfo) {
+                        mask && mask.hide();
                         giveup([
                             "Opération impossible :",
                             "aucun service WFS associé à cette couche."
                         ].join(" "));
                     } else {
-                        mask && mask.show();
                         var store = GEOR.ows.WFSDescribeFeatureType(wfsInfo, {
                             success: function(st, recs, opts) {
                                 // extract & remove geometry column name                                
