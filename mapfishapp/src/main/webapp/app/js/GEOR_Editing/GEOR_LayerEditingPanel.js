@@ -287,7 +287,7 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
                 new GeoExt.plugins.AttributeForm({
                     attributeStore: this.attributeStore,
                     recordToFieldOptions: {
-                        labelTemplate: new Ext.XTemplate(
+                        labelTpl: new Ext.XTemplate(
                             '<span ext:qtip="{[this.getTip(values)]}">{name}</span>', {
                                 compiled: true,
                                 disableFormats: true,
@@ -302,17 +302,7 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
                             }
                         ),
                         checkboxLabelProperty: 'fieldLabel',
-                        mandatoryFieldLabelStyle: 'font-weight:bold;',
-                        nullCheckbox: true,
-                        nullCheckboxOptions: {
-                            width: 60,
-                            // we want to have the null cbx unchecked by default:
-                            //checked: false, // no original value for checkbox
-                            boxLabel: 'NULL',
-                            // hack, so that the checkbox "dirty status" does not alter the global form dirty status
-                            // (or else, the isFeatureDirty method nearly always returns true):
-                            isDirty: function() {return false;}
-                        }
+                        mandatoryFieldLabelStyle: 'font-weight:bold;'
                     }
                 })
             ],
@@ -360,6 +350,10 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
             });
             this.lastFeature = null;
             this.layer.redraw();
+            // reset features original values:
+            Ext.each(this.layer.features, function(f) {
+                f.modified = null;
+            });
         });
         this.strategy.events.register('fail', this, function() {
             GEOR.util.errorDialog({
@@ -387,7 +381,7 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
         
         GEOR.Editing.LayerEditingPanel.superclass.initComponent.apply(this, arguments);
     },
-
+    
     /**
      * Method: confirmHandler
      *   confirm the modifications on the current selected feature
@@ -404,28 +398,18 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
             return;
         }
         
-        var fieldName, s, cbx;
-        this.formPanel.form.items.each(function(field){
+        var fieldName, value, fa = feature.attributes;
+        this.formPanel.form.items.each(function(field) {
             fieldName = field.getName();
-            s = fieldName.split('__');
-            if (field instanceof Ext.form.CompositeField) {
-                fieldName = field.items.get(0).getName();
-                cbx = field.items.get(1);
-                if (cbx.getValue() === true) {
-                    // setting value to null is *very important* here, 
-                    // so that the field value effectively gets deleted:
-                    feature.attributes[fieldName] = null;
-                } else {
-                    feature.attributes[fieldName] = field.items.get(0).getValue();
-                }
-            } else {
-                feature.attributes[fieldName] = field.getValue();
-            }
+            value = field.getValue();
+            // setting value to null if field is empty is *very important* here
+            // so that the field value effectively gets deleted:
+            fa[fieldName] = (value === '' ? null : value);
         });
-        
-        feature.toState(OpenLayers.State.UPDATE);
-        this.layer.drawFeature(feature);
-        
+        if (feature.state != OpenLayers.State.INSERT) {
+            feature.state = OpenLayers.State.UPDATE;
+            this.layer.drawFeature(feature);
+        }
         this.lastFeature = null; 
         this.modifyFeature.unselectFeature(feature);
         this.silentUnselect();
@@ -511,6 +495,7 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
             var feature = this.layer.selectedFeatures.length > 0 ?
                           this.layer.selectedFeatures[0] : undefined;
         }
+        
         return this.formPanel.getForm().isDirty() ||
                (feature && this.originalGeometry && 
                 !this.originalGeometry.equals(feature.geometry));
@@ -522,14 +507,14 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
      * Cancels select feature operation if the form is in a dirty state
      */
     checkSelect: function(e) {
-        this.formPanel.enable();
-        this.deleteBtn.enable();
         var feature = e.feature;
         if (this.isFeatureDirty(this.lastFeature)) {
             this.nextSelectedFeature = feature;
-            return false;
+        } else {
+            this.formPanel.enable();
+            this.deleteBtn.enable();
+            this.loadFeature(feature);
         }
-        this.loadFeature(feature);
         return false;
     },
 
@@ -539,19 +524,14 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
      */
     loadFeature: function(feature) {
         this.silentSelect(feature);
-        this.originalGeometry = feature.geometry.clone();
-        var form = this.formPanel.getForm();
-        form.setValues(feature.attributes);
-        // null cbx set to false for fields which have values
-        var fieldName, checked;
-        Ext.each(form.items.items, function(field) {
-            if (field instanceof Ext.form.CompositeField) {
-                fieldName = field.items.get(0).getName();
-                // checked status :
-                checked = !feature.attributes.hasOwnProperty(fieldName);
-                field.items.get(1).setValue(checked);
-            }
-        });
+        this.originalGeometry = feature.geometry.clone();        
+        // do this only one time for a "checked-out" feature
+        if (!feature.modified || !feature.modified.attributes) {
+            feature.modified = OpenLayers.Util.extend(feature.modified, {
+                attributes: feature.attributes
+            });
+        }
+        this.formPanel.getForm().setValues(feature.attributes); 
     },
 
     /**
@@ -597,8 +577,8 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
             GEOR.util.confirmDialog({
                 title: "Modifications en cours",
                 msg: "Souhaitez-vous confirmer les modifications ?",
-                yesCallback: function() {
-                    // we do as it the "confirm" button had been pressed here 
+                yesCallback: function() {        
+                    // we do as if the "confirm" button had been pressed here 
                     this.confirmHandler(feature);
                 },
                 noCallback: function() {
@@ -629,19 +609,9 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
      */
     cleanForm: function() {
         var form = this.formPanel.getForm();
-        var f, values = {};
         Ext.each(form.items.items, function(field){
-            if (field instanceof Ext.form.CompositeField) {
-                f = field.items.get(0);
-                // null cbx set to true
-                field.items.get(1).setValue(true);
-            } else {
-                f = field;
-            }
-            values[f.getName()] = '';
+            field.setValue('');
         });
-        form.setValues(values);
-        
     },
 
     /**
