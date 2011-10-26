@@ -126,6 +126,12 @@
       </properties>
     </profile>
     <profile>
+      <id>vmware</id>
+      <properties>
+        <server>vmware</server>
+      </properties>
+    </profile>
+    <profile>
       <id>pigma</id>
       <properties>
         <server>pigma</server>
