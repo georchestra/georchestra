@@ -42,7 +42,7 @@ class SSH {
         if (username == null || (privateKey == null && password == null)) {
             serverSettings = settings.properties['servers'].find {server -> server.id == host}
             if (serverSettings == null) {
-							def sshDir = new File(new File(System.getProperty("user.home"),".ssh")
+							def sshDir = new File(new File(System.getProperty("user.home"),".ssh"))
 							if(new File(sshDir, "id_rsa").exists) {
 								serverSettings.privateKey = new File(sshDir, "id_rsa").path
 							} else if(new File(sshDir, "id_dsa").exists) {
