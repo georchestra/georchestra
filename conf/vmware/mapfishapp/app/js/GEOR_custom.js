@@ -367,6 +367,13 @@ GEOR.custom = {
     //HELP_URL: "/doc/html/documentation.html#viewer",
     
     /**
+     * Constant: CONFIRM_LAYER_REMOVAL
+     * {Boolean} Do we want a popup dialog to appear on layer removal ?
+     * Defaults to false
+     */
+    //CONFIRM_LAYER_REMOVAL: false,
+    
+    /**
      * Constant: WMS_SERVERS
      * {Array} List of externals WMS to display in the WMS servers tab.
      */

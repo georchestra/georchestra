@@ -97,15 +97,19 @@ GEOR.managelayers = (function() {
             layer.map.raiseLayer(layer, +1);
             break;
         case "delete":
-            GEOR.util.confirmDialog({
-                msg: "Voulez-vous réellement supprimer la couche "+
-                    layerRecord.get('title')+" ?",
-                width: 360,
-                yesCallback: function() {
-                    layer.destroy();
-                },
-                scope: this
-            });
+            if (GEOR.config.CONFIRM_LAYER_REMOVAL) {
+                GEOR.util.confirmDialog({
+                    msg: "Voulez-vous réellement supprimer la couche "+
+                        layerRecord.get('title')+" ?",
+                    width: 360,
+                    yesCallback: function() {
+                        layer.destroy();
+                    },
+                    scope: this
+                });
+            } else {
+                layer.destroy();
+            }
             break;
         }
     };
