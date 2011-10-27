@@ -19,13 +19,26 @@
 		<resources>
 			<resource>
 				<directory>${basedir}/defaults</directory>
-				<filtering>true</filtering>
-				<excludes><exclude>**/shared.maven.filters</exclude></excludes>
+				<filtering>false</filtering>
 			</resource>
+			<!--resource>
+				<directory>${basedir}/${server}</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/maven.filters</include>
+					<include>Deploy.groovy</include>
+					<include>**/*.properties</include>
+				</includes>
+			</resource-->
 			<resource>
 				<directory>${basedir}/${server}</directory>
 				<filtering>true</filtering>
-				<excludes><exclude>**/shared.maven.filters</exclude></excludes>
+				<excludes>
+					<exclude>shared.maven.filters</exclude>
+					<!--exclude>**/maven.filters</exclude>
+					<exclude>Deploy.groovy</exclude>
+					<exclude>**/*.properties</exclude-->
+				</excludes>
 			</resource>
 		</resources>
 		<plugins>
@@ -34,6 +47,7 @@
 				<artifactId>maven-resources-plugin</artifactId>
 				<configuration>
 					<overwrite>true</overwrite>
+					<delimiters><delimiter>@</delimiter></delimiters>
 				</configuration>
 			</plugin>
 			<plugin>

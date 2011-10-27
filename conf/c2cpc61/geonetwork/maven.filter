@@ -7,7 +7,7 @@ luceneDir=lucene
 htmlCacheDir=htmlCache
 
 baseUrl=geonetwork
-host=${shared.server.name}
+host=@shared.server.name@
 
 psql.host=localhost
 psql.port=5432
@@ -23,10 +23,10 @@ groupSyncLdapBase=ou=groups,dc=georchestra,dc=org
 jpegPhotoLdapBase=ou=users,dc=georchestra,dc=org
 
 
-LdapHost=${shared.ldap.host}
-LdapPort=${shared.ldap.port}
-LdapBindDn=${shared.ldap.admin.dn}
-LdapBindPassword=${shared.ldap.admin.password}
+LdapHost=@shared.ldap.host@
+LdapPort=@shared.ldap.port@
+LdapBindDn=@shared.ldap.admin.dn@
+LdapBindPassword=@shared.ldap.admin.password@
 
 geoserver.node.id=geoserver2
 geoserver.node.name=My preferred GeoServer node
@@ -34,8 +34,8 @@ geoserver.node.namespace.prefix=geob_pub
 geoserver.node.namespace.url=http://geobretagne.fr/geoserver/geob_pub
 
 
-priveleged_admin_name=${shared.privileged.geoserver.user}
-priveleged_admin_pass=${shared.privileged.geoserver.pass}
+priveleged_admin_name=@shared.privileged.geoserver.user@
+priveleged_admin_pass=@shared.privileged.geoserver.pass@
 
 config.xml.typenames=<typename name="EPCI" typename="geob_loc:EPCI_region" nameAtt="EPCI" /> \
 		<typename name="Commune Bretagne" typename="geob_loc:COMMUNE" nameAtt="NOM_COMM" /> \

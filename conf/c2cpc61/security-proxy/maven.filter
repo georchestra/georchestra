@@ -1,12 +1,12 @@
-public_host=${shared.server.name}
+public_host=@shared.server.name@
 
 #LDAP config
 ldapUrl=ldaps://localhost:636/
-baseDN=${shared.ldap.baseDn}
-userSearchBaseDN=${shared.ldap.userSearchBaseDN}
+baseDN=@shared.ldap.baseDn}
+userSearchBaseDN=@shared.ldap.userSearchBaseDN@
 authoritiesBaseDN=ou=groups
-ldapAdminDn=${shared.ldap.admin.dn}
-ldap.admin.password=${shared.ldap.admin.password}
+ldapAdminDn=@shared.ldap.admin.dn@
+ldap.admin.password=@shared.ldap.admin.password@
 
 cas.public.host=${public_host}
 cas.private.host=localhost
@@ -28,7 +28,7 @@ proxy.mapping=\
 camptocamp.security.loglevel=ALL
 jasig.loglevel=ALL
 springframework.loglevel=ALL
-log.dir=${allshared.c2c.logdir}
+log.dir=@allshared.c2c.logdir@
 log.filename=security-proxy.log
 # options are StandardOut, FileAppender or HTMLAppender (zero or more and comma separated) 
 log.appender=FileAppender
