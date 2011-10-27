@@ -156,9 +156,14 @@ GEOR.managelayers = (function() {
         if (titleForDisplay.length > 16) {
             titleForDisplay = titleForDisplay.substr(0, 13) + '...';
         }
+        
+        // logo displayed in qtip if set 
+        var tip = 'source : '+ (attr.title || '-') + 
+            ((attr.logo && GEOR.util.isUrl(attr.logo.href)) ? '<br /><img src=\''+attr.logo.href+'\' />' : '');
+        
         var attrDisplay = (attr.href) ? 
-            '<a href="'+attr.href+'" target="_blank" ext:qtip="'+attr.title+'">'+titleForDisplay+'</a>' :
-            '<span ext:qtip="source : '+attr.title+'">'+titleForDisplay+'</span>';
+            '<a href="'+attr.href+'" target="_blank" ext:qtip="'+tip+'">'+titleForDisplay+'</a>' :
+            '<span ext:qtip="'+tip+'">'+titleForDisplay+'</span>';
         
         return {
             xtype: 'box',
@@ -181,6 +186,7 @@ GEOR.managelayers = (function() {
      *          for inclusion in layer manager item
      */
     var formatVisibility = function(layerRecord) {
+        // TODO: get min/maxScale from current SLD is not set in layer
         var layer = layerRecord.get('layer');
         var visibilityText = "1:" + OpenLayers.Number.format(layer.maxScale, 0) +
                           " à 1:" + OpenLayers.Number.format(layer.minScale, 0);
@@ -311,8 +317,10 @@ GEOR.managelayers = (function() {
                         checked = true;
                     }
                     stylesMenuItems.push(new Ext.menu.CheckItem({
-                        text: styles[i].title, // title is a human readable string
-                        value: styles[i].name, // name is used in the map request STYLE parameter
+                        text: style.name || style.title, // title is a human readable string
+                        // but it is not often relevant (eg: may store "AtlasStyler v1.8")
+                        // moreover, GeoServer 2 displays style name rather than style title.
+                        value: style.name, // name is used in the map request STYLE parameter
                         checked: checked,
                         group: 'style_' + layer.id,
                         checkHandler: onStyleItemCheck,
