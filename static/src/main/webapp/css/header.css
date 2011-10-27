@@ -74,6 +74,9 @@ html, body {
     line-height   : 52px;
     font-size     : 16px;
 }
+#go_head .logged span{
+	color: #000;
+}
 #go_head .logged span.light{
 	color: #ddd;
 }
