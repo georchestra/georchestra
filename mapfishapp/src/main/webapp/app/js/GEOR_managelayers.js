@@ -355,7 +355,7 @@ GEOR.managelayers = (function() {
             url = (url.href) ? url.href : url;
             menuItems.push({
                 iconCls: 'geor-btn-metadata',
-                text: "Fiche de métadonnées",
+                text: "Afficher les métadonnées",
                 listeners: {
                     "click": function(btn, pressed) {
                         window.open(url);
