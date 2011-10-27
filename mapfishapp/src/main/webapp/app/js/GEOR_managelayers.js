@@ -300,7 +300,7 @@ GEOR.managelayers = (function() {
         };
         // build object config for predefined styles
         var stylesMenuItems = [
-            '<b class="menu-title">Choisissez un style</b>',
+            //'<b class="menu-title">Choisissez un style</b>',
             default_style
         ];
         if (styles && styles.length > 0) {
@@ -457,12 +457,12 @@ GEOR.managelayers = (function() {
         if (isWMS) {
             stylesMenu = createStylesMenu(layerRecord);
             menuItems.push({
-                text: 'Styles prédéfinis',
+                text: 'Choisir un style',
                 disabled: !queryable,
                 menu: stylesMenu
             });
             menuItems.push({
-                text: "Format d'image",
+                text: "Modifier le format",
                 menu: createFormatMenu(layerRecord)
             });
         }
