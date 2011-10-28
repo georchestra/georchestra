@@ -116,13 +116,6 @@ Ext.onReady(function() {
             height: 90,
             el: "go_head"
         }] : [];
-        
-    var navTextItem = new Ext.Toolbar.TextItem({
-        text: ''
-    });
-    var selectionTextItem = new Ext.Toolbar.TextItem({
-        text: ''
-    });
     
     var bbar = new Ext.Toolbar({
         cls: "centerbbar"
@@ -203,32 +196,7 @@ Ext.onReady(function() {
      */
     o.on("searchrequest", search);
     o.on("storeloaded", function(options) {
-        if (bbar.items.length === 0) {
-            bbar.add({
-                text: '<<',
-                handler: GEOR.nav.begin,
-                tooltip: "aller au début des résultats",
-                width: 30
-            },{
-                text: '<',
-                handler: GEOR.nav.previousPage,
-                tooltip: "page précédente",
-                width: 30
-            },{
-                text: '>',
-                handler: GEOR.nav.nextPage,
-                tooltip: "page suivante",
-                width: 30
-            },{
-                text: '>>',
-                handler: GEOR.nav.end,
-                tooltip: "aller à la fin des résultats",
-                width: 30
-            }, navTextItem, '->', selectionTextItem);
-            bbar.ownerCt.doLayout();
-        }
-        var navText = GEOR.nav.update(options.store);
-        navTextItem.setText(navText);
+        GEOR.nav.update(options.store, bbar);
         // scroll to top result:
         GEOR.dataview.scrollToTop();
         // display results' bboxes:
@@ -239,8 +207,8 @@ Ext.onReady(function() {
         GEOR.where.highlight(records);
         var l = options.total;
         var s = (l > 1) ? 's' : '';
-        selectionTextItem.setText(l ? l + ' fiche'+s+' sélectionnée'+s : '');
-        selectionTextItem.getEl().highlight();
+        bbar.selText.setText(l ? l + ' fiche'+s+' sélectionnée'+s : '');
+        bbar.selText.getEl().highlight();
     });
     o.on("itemzoom", function(options) {
         GEOR.where.zoomTo(options.record);

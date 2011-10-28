@@ -28,33 +28,66 @@ GEOR.nav = (function() {
         return (startPosition == Math.floor((numberOfRecordsMatched - 1)/RESULTSPERPAGE) * RESULTSPERPAGE + 1);
     };
     
-    var handleNavigation = function(store) {
+    var handleNavigation = function(store, bar) {
         numberOfRecordsMatched = store.getTotalCount();
         var plural = (numberOfRecordsMatched > 1) ? 's' : '';
-        
         var max = isMax() ? numberOfRecordsMatched : parseInt(startPosition + RESULTSPERPAGE - 1);
         
-        return "Résultat"+plural+" "+startPosition+" à "+max+" sur "+numberOfRecordsMatched;
-        
-        /*
-        if (numberOfRecordsMatched > 0) {
-            $("#catalogForm-header-pdf, #cat-navigation, #catalogForm-header-sort").removeClass("display-none");
-        } else {
-            $("#catalogForm-header-pdf, #cat-navigation, #catalogForm-header-sort").addClass("display-none");
+        if (bar.items.length === 0) {
+            bar.add({
+                text: '<<',
+                ref: 'first',
+                disabled: true,
+                handler: GEOR.nav.begin,
+                tooltip: "aller au début des résultats",
+                width: 30
+            },{
+                text: '<',
+                ref: 'previous',
+                disabled: true,
+                handler: GEOR.nav.previousPage,
+                tooltip: "page précédente",
+                width: 30
+            },{
+                text: '>',
+                ref: 'next',
+                handler: GEOR.nav.nextPage,
+                tooltip: "page suivante",
+                width: 30
+            },{
+                text: '>>',
+                ref: 'end',
+                handler: GEOR.nav.end,
+                tooltip: "aller à la fin des résultats",
+                width: 30
+            }, new Ext.Toolbar.TextItem({
+                text: '',
+                ref: 'navText'
+            }), '->', new Ext.Toolbar.TextItem({
+                text: '',
+                ref: 'selText'
+            }));
+            bar.ownerCt.doLayout();
         }
+        bar.navText.setText("Résultat"+plural+" "+startPosition+" à "+max+" sur "+numberOfRecordsMatched);
         
-        if (isMax()) {
-            $("#catalogForm-header-next").addClass("display-none");
-        } else if($("#catalogForm-header-next").hasClass("display-none")) {
-            $("#catalogForm-header-next").removeClass("display-none");
-        }
-        
+        // handle buttons activation/deactivation:
         if (startPosition == 1) {
-            $("#catalogForm-header-prev").addClass("display-none");
-        } else if($("#catalogForm-header-prev").hasClass("display-none")) {
-            $("#catalogForm-header-prev").removeClass("display-none");
+            bar.first.disable();
+            bar.previous.disable();
+            bar.next.enable();
+            bar.end.enable();
+        } else if (isMax()) {
+            bar.first.enable();
+            bar.previous.enable();
+            bar.next.disable();
+            bar.end.disable();
+        } else {
+            bar.first.enable();
+            bar.previous.enable();
+            bar.next.enable();
+            bar.end.enable();
         }
-        */
     };
     
     /*
@@ -96,7 +129,7 @@ GEOR.nav = (function() {
                 return;
             }
             startPosition = 1;
-            GEOR.observable.fireEvent("searchrequest");
+            GEOR.observable.fireEvent("searchrequest");            
         },
         
         end: function() {
