@@ -98,6 +98,13 @@
 				</dependency>
 				<dependency>
 					<groupId>${project.groupId}</groupId>
+					<artifactId>catalogapp</artifactId>
+					<version>${project.version}</version>
+					<classifier>${server}</classifier>
+					<type>war</type>
+				</dependency>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
 					<artifactId>extractorapp</artifactId>
 					<version>${project.version}</version>
 					<classifier>${server}</classifier>
@@ -149,6 +156,13 @@
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>cas-server-webapp</artifactId>
+					<version>${project.version}</version>
+					<classifier>${server}</classifier>
+					<type>war</type>
+				</dependency>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>catalogapp</artifactId>
 					<version>${project.version}</version>
 					<classifier>${server}</classifier>
 					<type>war</type>
@@ -275,6 +289,18 @@
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>geoserver-webapp</artifactId>
+					<version>${project.version}</version>
+					<classifier>${server}</classifier>
+					<type>war</type>
+				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>catalogapp</id>
+			<dependencies>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>catalogapp</artifactId>
 					<version>${project.version}</version>
 					<classifier>${server}</classifier>
 					<type>war</type>
