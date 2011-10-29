@@ -35,8 +35,9 @@ Ext.namespace("GEOR");
 GEOR.where = (function() {
 
     var map;
-    var drawingLayer, vectorLayer;
+    var extentLayer, vectorLayer;
     var epsg4326, epsg900913;
+    var searchExtent;
     
     
     var createVectorLayer = function() {
@@ -74,6 +75,40 @@ GEOR.where = (function() {
     };
     
     
+    var onMapMoveend = function() {
+        if (!extentLayer) {
+            return;
+        }
+        var b = map.getExtent().clone();
+        if (searchExtent) {
+            // A search extent is currently defined. 
+            // We have to keep it if current searchExtent matches the feature attribute, 
+            // else destroy it and create a new one with current search extent. 
+            var f = extentLayer.features[0];
+            if (f.attributes.bbox !== searchExtent.toString()) {
+                extentLayer.destroyFeatures();
+                extentLayer.addFeatures([
+                    new OpenLayers.Feature.Vector(
+                        searchExtent.toGeometry(), {
+                            "bbox": searchExtent.toString()
+                        }
+                    )
+                ]);
+            }
+        } else {
+            // drop existing feature, create a new one with current map extent
+            extentLayer.destroyFeatures();
+            extentLayer.addFeatures([
+                new OpenLayers.Feature.Vector(
+                    b.toGeometry(), {
+                        "bbox": b.toString()
+                    }
+                )
+            ]);
+        }
+    };
+    
+    
     var createMap = function() {
         if (!epsg900913) {
             epsg900913 = new OpenLayers.Projection("EPSG:900913");
@@ -90,21 +125,26 @@ GEOR.where = (function() {
                     buffer: 0,
                     attribution: "Carte CC-By-SA <a href='http://openstreetmap.org/' target='_blank'>OpenStreetMap</a>"
                 })
-            ]
+            ],
+            eventListeners: {
+                "moveend": onMapMoveend
+            }
         });
         map.zoomToMaxExtent();
-        drawingLayer = new OpenLayers.Layer.Vector('drawing', {
+        // the layer which will display the search extent:
+        extentLayer = new OpenLayers.Layer.Vector('searchextent', {
             styleMap: new OpenLayers.StyleMap({
                 "default": new OpenLayers.Style({
                     fillColor: "#000000",
                     fillOpacity: 0,
                     strokeColor: "#ff0000",
+                    strokeDashstyle: "dash",
                     strokeWidth: 2, 
                     strokeOpacity: 1
                 })
             })
         });
-        map.addLayer(drawingLayer);
+        map.addLayer(extentLayer);
         return map;
     };
 
@@ -130,6 +170,8 @@ GEOR.where = (function() {
                 epsg4326 = new OpenLayers.Projection("EPSG:4326");
             }
             var bounds = map.getExtent();
+            // when getFilter is called, we want to keep a state with the bbox being searched:
+            searchExtent = bounds.clone();
             filter = new OpenLayers.Filter.Spatial({
                 type: OpenLayers.Filter.Spatial.BBOX,
                 property: "ows:BoundingBox",
@@ -192,6 +234,7 @@ GEOR.where = (function() {
         
         reset: function() {
             map && map.zoomToMaxExtent();
+            searchExtent = null;
         }
     };
 })();
