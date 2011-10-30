@@ -233,8 +233,9 @@ GEOR.where = (function() {
         },
         
         reset: function() {
-            map && map.zoomToMaxExtent();
             searchExtent = null;
+            extentLayer.destroyFeatures();
+            map && map.zoomToMaxExtent();
         }
     };
 })();
