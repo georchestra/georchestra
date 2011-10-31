@@ -87,11 +87,11 @@ Lets call the project, project MTS and it has a integration server and a product
 		- MTS
 			- build_support
 				- GenerateConfig.groovy
-				- DeployScript-template.groovy
+				- int.DeployScript.groovy
+				- prod.DeployScript.groovy
 				- resources
 					- <common resources and overrides to defaults>
-				- int.shared.maven.filters
-				- prod.shared.maven.filters
+				- shared.maven.filters
 
 The GenerateConfig.groovy can be as follows:
 {{{
@@ -118,17 +118,22 @@ class GenerateConfig {
 			fileset(dir:resources.canonicalPath)
 		}
 		
-		// copy correct shared.maven.filters for subTarget
-		def filters = new File(buildSupportDir, "${subTarget}.shared.maven.filters").getText("UTF-8")
-		new File(outputDir, "shared.maven.filters").write(filters, "UTF-8")
+		// copy correct deploy script for subTarget
+		def filters = new File(buildSupportDir, "${subTarget}.DeployScript.groovy").getText("UTF-8")
+		new File(outputDir, "DeployScript.groovy").write(filters, "UTF-8")
 
-		// Perhaps each subTarget needs a custom DeployScript (probably not but maybe)
-		def replacement = "Deploying to the integration server"
-		if(subTarget.equals("prod")) {
-			replacement = "Going into production"
+		// copy correct shared.maven.filters for subTarget
+		def host = "shared.server.name="
+		switch (subTarget) {
+			case "int": 
+				host += "georchestra-int.net"
+				break
+			default: 
+				host += "georchestra-prod.net"
+				break
 		}
-		def deployScript = new File(buildSupportDir, "DeployScript-template.groovy").getText("UTF-8").replaceAll("@@name@@@", replacement)
-		new File(outputDir, "DeployScript.groovy").write(deployScript, "UTF-8")
+		
+		new File(outputDir, "shared.maven.filters").write(host, "UTF-8")
 	}
 }
 }}}
