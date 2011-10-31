@@ -13,6 +13,7 @@ class SSH {
     private def username
     final def sessionConfig
     final def mb = 1024*1024
+		private def authorized = false
 
     SSH(config) {
         this(config['log'],
@@ -40,12 +41,13 @@ class SSH {
 
         def serverSettings
         if (username == null || (privateKey == null && password == null)) {
+					  username = System.getProperties().get("user.name")
             serverSettings = settings.properties['servers'].find {server -> server.id == host}
             if (serverSettings == null) {
 							def sshDir = new File(System.getProperty("user.home",".ssh"))
-							if(new File(sshDir, "id_rsa").exists) {
+							if(new File(sshDir, "id_rsa").exists()) {
 								serverSettings.privateKey = new File(sshDir, "id_rsa").path
-							} else if(new File(sshDir, "id_dsa").exists) {
+							} else if(new File(sshDir, "id_dsa").exists()) {
 								serverSettings.privateKey = new File(sshDir, "id_dsa").path
 							}
                 throw new AssertionError("""
@@ -67,11 +69,16 @@ Another option is to provide the username and either path privateKey or a passwo
         if (privateKey != null) {
             usingSSHPrivateKey = true
             if (passphrase == null) {
+							if(System.getProperty("ni") != null || System.getProperty("non-interactive") != null ) {
+								println("non-interactive is enabled so using system property 'passphrase' as the privateKey passphrase")
+								passphrase = System.getProperty("passphrase")
+							} else {
                 char[] passwd;
                 Console cons;
                 if ((cons = System.console()) != null && (passwd = cons.readPassword("Enter passphrase for keystore %s: ", privateKey)) != null) {
                     passphrase = new String(passwd)
                 }
+							}
             }
             if (passphrase == null) {
                 jsch.addIdentity(privateKey)
@@ -81,6 +88,7 @@ Another option is to provide the username and either path privateKey or a passwo
         }
 
     }
+
     /**
      * @param src either a string or file of the file (not directory) to copy
      * @param dest either a string or file of the file (not directory) to copy to
@@ -345,9 +353,14 @@ Another option is to provide the username and either path privateKey or a passwo
             if (this.password == null) {
                 char[] passwd;
                 Console cons;
-                if ((cons = System.console()) != null && (passwd = cons.readPassword("Enter password for user %s: ", username)) != null) {
-                    this.password = new String(passwd)
-                }
+								if(System.getProperty("ni") != null || System.getProperty("non-interactive") != null ) {
+									println("non-interactive is enabled so using system property 'password' as the password")
+									this.password = System.getProperty("password")
+								} else {
+	                if ((cons = System.console()) != null && (passwd = cons.readPassword("Enter password for user %s: ", username)) != null) {
+	                    this.password = new String(passwd)
+	                }
+								}
             }
             session.setPassword(this.password)
         }
