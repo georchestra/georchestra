@@ -105,7 +105,7 @@
                   </filterset>
                 </copy>
                 <copy todir="${basedir}/src/main/webapp/" overwrite="true" verbose="true" failonerror="true">
-                  <fileset dir="${basedir}/../conf/${server}/${project.artifactId}">
+                  <fileset dir="${confdir}/${project.artifactId}">
                     <exclude name="**/maven.filter"/>
                   </fileset>
                 </copy>
