@@ -65,7 +65,7 @@
 										<groupId>org.georchestra</groupId>
 										<artifactId>config</artifactId>
 										<version>${georchestra.version}</version>
-										<sub.target>${server}</sub.target>
+										<classifier>${server}</classifier>
 									</artifactItem>
 								</artifactItems>
 								<overWriteSnapshots>true</overWriteSnapshots>
@@ -85,7 +85,7 @@
 					<artifactId>maven-war-plugin</artifactId>
 					<version>2.1.1</version>
 					<configuration>
-						<sub.target>${server}</sub.target>
+						<classifier>${server}</classifier>
 					</configuration>
 				</plugin>
 				<plugin>
@@ -139,14 +139,14 @@
 			<id>pigma_int</id>
 			<properties>
 				<server>pigma</server>
-				<classifier>int</classifier>
+				<sub.target>int</sub.target>
 			</properties>
 		</profile>
 		<profile>
 			<id>pigma_prod</id>
 			<properties>
 				<server>pigma</server>
-				<classifier>prod</classifier>
+				<sub.target>prod</sub.target>
 			</properties>
 		</profile>
 	</profiles>
