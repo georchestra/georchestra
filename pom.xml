@@ -16,7 +16,7 @@
 		<security.version>2.0.5.RELEASE</security.version>
 		<spring.ldap.version>1.3.0.RELEASE</spring.ldap.version>
 		<server>c2cpc61</server>
-		<classifier>dev</classifier>
+		<sub.target>dev</sub.target>
 		<!-- default when building without a profile specified -->
 		<confdir>${project.build.directory}/conf</confdir>
 		<encoding>UTF-8</encoding>
@@ -65,7 +65,7 @@
 										<groupId>org.georchestra</groupId>
 										<artifactId>config</artifactId>
 										<version>${georchestra.version}</version>
-										<classifier>${server}</classifier>
+										<sub.target>${server}</sub.target>
 									</artifactItem>
 								</artifactItems>
 								<overWriteSnapshots>true</overWriteSnapshots>
@@ -85,7 +85,7 @@
 					<artifactId>maven-war-plugin</artifactId>
 					<version>2.1.1</version>
 					<configuration>
-						<classifier>${server}</classifier>
+						<sub.target>${server}</sub.target>
 					</configuration>
 				</plugin>
 				<plugin>
