@@ -49,13 +49,14 @@ class SSH {
 								serverSettings.privateKey = new File(sshDir, "id_rsa").path
 							} else if(new File(sshDir, "id_dsa").exists()) {
 								serverSettings.privateKey = new File(sshDir, "id_dsa").path
-							}
+							} else {
                 throw new AssertionError("""
 Unable to find server settings for $host in the maven settings.xml (typically in ~/.m2/settings.xml) 
 See: http://maven.apache.org/settings.html for details about settings.
 
 Another option is to provide the username and either path privateKey or a password
 """)
+}
 
             }
             if (serverSettings.privateKey != null) {
