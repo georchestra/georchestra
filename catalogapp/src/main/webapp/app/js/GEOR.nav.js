@@ -30,6 +30,7 @@ GEOR.nav = (function() {
     
     var handleNavigation = function(store, bar) {
         numberOfRecordsMatched = store.getTotalCount();
+        
         var plural = (numberOfRecordsMatched > 1) ? 's' : '';
         var max = isMax() ? numberOfRecordsMatched : parseInt(startPosition + RESULTSPERPAGE - 1);
         
@@ -69,24 +70,32 @@ GEOR.nav = (function() {
             }));
             bar.ownerCt.doLayout();
         }
-        bar.navText.setText("Résultat"+plural+" "+startPosition+" à "+max+" sur "+numberOfRecordsMatched);
-        
-        // handle buttons activation/deactivation:
-        if (startPosition == 1) {
+
+        if (numberOfRecordsMatched == 0) {
             bar.first.disable();
             bar.previous.disable();
-            bar.next.enable();
-            bar.end.enable();
-        } else if (isMax()) {
-            bar.first.enable();
-            bar.previous.enable();
             bar.next.disable();
             bar.end.disable();
+            bar.navText.setText("Aucun résultat");
         } else {
-            bar.first.enable();
-            bar.previous.enable();
-            bar.next.enable();
-            bar.end.enable();
+            bar.navText.setText("Résultat"+plural+" "+startPosition+" à "+max+" sur "+numberOfRecordsMatched);
+            // handle buttons activation/deactivation:
+            if (startPosition == 1) {
+                bar.first.disable();
+                bar.previous.disable();
+                bar.next.enable();
+                bar.end.enable();
+            } else if (isMax()) {
+                bar.first.enable();
+                bar.previous.enable();
+                bar.next.disable();
+                bar.end.disable();
+            } else {
+                bar.first.enable();
+                bar.previous.enable();
+                bar.next.enable();
+                bar.end.enable();
+            }
         }
     };
     

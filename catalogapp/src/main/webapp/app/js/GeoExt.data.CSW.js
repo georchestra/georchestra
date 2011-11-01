@@ -155,7 +155,7 @@ Ext.extend(GeoExt.data.CSWRecordsReader, Ext.data.DataReader, {
         }
         
         return {
-            totalRecords: data.SearchResults.numberOfRecordsMatched,
+            totalRecords: (data && data.SearchResults && data.SearchResults.numberOfRecordsMatched) || 0,
             success: true,
             records: records
         };
