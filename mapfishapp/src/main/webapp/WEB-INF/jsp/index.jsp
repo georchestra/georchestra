@@ -238,6 +238,7 @@ if(sec_roles != null) {
     <script type="text/javascript" src="lib/externals/openlayers/lib/OpenLayers/Lang/fr.js"></script>
     <script type="text/javascript" src="lib/externals/geoext/lib/GeoExt.js"></script>
     <script type="text/javascript" src="lib/externals/sandbox/ux/OpenAddressesSearchCombo/lib/GeoExt.ux/OpenAddressesSearchCombo.js"></script>
+    <script type="text/javascript" src="lib/externals/ext/src/locale/ext-lang-fr.js"></script>
 
     <script type="text/javascript" src="lib/addins/loadingPanel/trunk/lib/OpenLayers/Control/LoadingPanel.js"></script>
 
@@ -314,15 +315,14 @@ if(sec_roles != null) {
     <script type="text/javascript" src="lib/externals/ext/ext-all.js"></script>
             <c:choose>
                 <c:when test='${c.edit}'>
-    <script type="text/javascript" src="build/mapfish/mapfisheditapp.js"></script>
+    <script type="text/javascript" src="build/mapfisheditapp.js"></script>
                 </c:when>
                 <c:otherwise>
-    <script type="text/javascript" src="build/mapfish/mapfishapp.js"></script>
+    <script type="text/javascript" src="build/mapfishapp.js"></script>
                 </c:otherwise>
             </c:choose>
         </c:otherwise>
     </c:choose>
-    <script type="text/javascript" src="lib/externals/ext/src/locale/ext-lang-fr.js"></script>
 
     <script type="text/javascript">
         // remove the loading element

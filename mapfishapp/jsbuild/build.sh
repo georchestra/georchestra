@@ -19,15 +19,13 @@ cp="/bin/cp"
 ${rm} -rf "${releasepath}"
 
 #
-# MapFish.js build
+# build
 #
-mapfishpath="${webapppath}/lib/externals/mapfish"
 if [ -d ${releasepath} ]; then
     ${rm} -rf ${releasepath}
 fi
 
-mapfishreleasepath="${releasepath}/mapfish"
-${mkdir} -p ${mapfishreleasepath}
+${mkdir} -p ${releasepath}
 
 (cd ${buildpath};
  if [ ! -d ${venv} ]; then
@@ -37,9 +35,9 @@ ${mkdir} -p ${mapfishreleasepath}
  fi;
  
  echo "running jsbuild for main app..."
- ${venv}/bin/jsbuild -o "${mapfishreleasepath}" main.cfg
+ ${venv}/bin/jsbuild -o "${releasepath}" main.cfg
  echo "running jsbuild for edit app..."
- ${venv}/bin/jsbuild -o "${mapfishreleasepath}" edit.cfg
+ ${venv}/bin/jsbuild -o "${releasepath}" edit.cfg
  echo "done.")
 
 #
