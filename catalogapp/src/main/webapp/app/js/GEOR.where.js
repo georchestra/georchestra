@@ -201,7 +201,7 @@ GEOR.where = (function() {
             }
             vectorLayer.addFeatures(features);
             var dataExtent = vectorLayer.getDataExtent();
-            if (map && dataExtent.getWidth() && dataExtent.getHeight()) {
+            if (map && dataExtent && dataExtent.getWidth() && dataExtent.getHeight()) {
                 map.zoomToExtent(vectorLayer.getDataExtent());
             }
         },
