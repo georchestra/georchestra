@@ -41,22 +41,37 @@ class SSH {
 
         def serverSettings
         if (username == null || (privateKey == null && password == null)) {
-					  username = System.getProperties().get("user.name")
+            username = System.getProperties().get("user.name")
             serverSettings = settings.properties['servers'].find {server -> server.id == host}
             if (serverSettings == null) {
-							def sshDir = new File(System.getProperty("user.home",".ssh"))
-							if(new File(sshDir, "id_rsa").exists()) {
-								serverSettings.privateKey = new File(sshDir, "id_rsa").path
-							} else if(new File(sshDir, "id_dsa").exists()) {
-								serverSettings.privateKey = new File(sshDir, "id_dsa").path
-							} else {
-                throw new AssertionError("""
-Unable to find server settings for $host in the maven settings.xml (typically in ~/.m2/settings.xml) 
+                serverSettings = [
+                    id: host,
+                    privateKey: null,
+                    passphrase: null,
+                    username: username
+                ] as Object
+                def sshDir = new File(System.getProperty("user.home"),".ssh")
+                def rsaKey = new File(sshDir, "id_rsa")
+                def dsaKey = new File(sshDir, "id_dsa")
+                log.info("Looking user home for private key:"+sshDir)
+                if(rsaKey.exists()) {
+                    log.debug(rsaKey.path + " being used as private key")
+                    serverSettings.privateKey = rsaKey.path
+                } else if(dsaKey.exists()) {
+                    log.debug(dsaKey.path + " being used as private key")
+                    serverSettings.privateKey = dsaKey.path
+                } else {
+                  log.error("")
+                  log.info(dsaKey.path + " exists="+(dsaKey.exists()))
+                    throw new AssertionError("""
+Unable to find server settings for $host in the maven settings.xml (typically in ~/.m2/settings.xml)
 See: http://maven.apache.org/settings.html for details about settings.
 
 Another option is to provide the username and either path privateKey or a password
+
+Note both ${rsaKey.path} and ${dsaKey.path} were checked but neither location contained a key.
 """)
-}
+                }
 
             }
             if (serverSettings.privateKey != null) {
