@@ -17,6 +17,7 @@
  * @include OpenLayers/Control/Navigation.js
  * @include OpenLayers/Control/Attribution.js
  * @include OpenLayers/Filter/Spatial.js
+ * @include OpenLayers/Feature/Vector.js
  * @include OpenLayers/Projection.js
  * @include OpenLayers/Layer/SphericalMercator.js
  * @include OpenLayers/Layer/XYZ.js
