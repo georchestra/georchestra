@@ -98,7 +98,14 @@ if(sec_roles != null) {
             line-height   : 52px;
         }
     </style>
+<c:choose>
+    <c:when test='${c.edit != null}'>
+    <title lang="fr" dir="ltr">Editeur - geOrchestra</title>
+    </c:when>
+    <c:otherwise>
     <title lang="fr" dir="ltr">Visualiseur - geOrchestra</title>
+    </c:otherwise>
+</c:choose>
     <link rel="stylesheet" type="text/css" href="lib/externals/ext/resources/css/ext-all.css" />
     <link rel="stylesheet" type="text/css" href="lib/externals/ext/resources/css/xtheme-gray.css" />
     <link rel="stylesheet" type="text/css" href="lib/styler/theme/css/styler.css" />
