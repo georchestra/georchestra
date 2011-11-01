@@ -25,6 +25,7 @@ class Artifacts {
         if (artifact.name.startsWith("cas-server-webapp")) return "cas.war"
         else if (artifact.name.startsWith("security-proxy")) return "ROOT.war"
         else if (artifact.name.startsWith("geobretagne-doc")) return "doc.war"
+        else if (artifact.name.startsWith("static")) return "static.war"
         else if (artifact.name.startsWith("geonetwork-main")) return "geonetwork-private.war"
         else return null
     }
