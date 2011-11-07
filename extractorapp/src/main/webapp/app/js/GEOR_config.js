@@ -194,7 +194,9 @@ GEOR.config = (function() {
          * List of supported raster formats
          */
         SUPPORTED_RASTER_FORMATS: [
-            ["geotiff", "GeoTiff"]
+            ["geotiff", "GeoTiff"],
+            ["ecw", "ECW"],
+            ["jp2ecw", "JPEG 2000"]
         ],
 
         /**
