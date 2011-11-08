@@ -224,7 +224,10 @@ GEOR.toolbar = (function() {
             border: false,
             defaults: {
                 labelCls: 'bold-text',
-                showTitle: true
+                showTitle: true,
+                baseParams: {
+                    FORMAT: 'image/png'
+                }
             },
             autoScroll: true
         });
@@ -269,7 +272,6 @@ GEOR.toolbar = (function() {
             enableToggle: true,
             handler: function(btn) {
                 if (!legendWin) {
-                    var mapPanel = tbar.ownerCt;
                     legendWin = new Ext.Window({
                         width: 340,
                         bodyStyle: 'padding: 5px',
