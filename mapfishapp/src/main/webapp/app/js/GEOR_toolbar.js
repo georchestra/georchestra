@@ -274,7 +274,6 @@ GEOR.toolbar = (function() {
                         width: 340,
                         bodyStyle: 'padding: 5px',
                         constrainHeader: true,
-                        renderTo: mapPanel.body,
                         title: "Légende",
                         border: false,
                         animateTarget: GEOR.config.ANIMATE_WINDOWS && this.el,
