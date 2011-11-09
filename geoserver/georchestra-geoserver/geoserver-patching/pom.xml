@@ -100,7 +100,7 @@
 		<profile>
 			<id>geoserver-2.1.x</id>
 			<activation>
-				<activeByDefault>false</activeByDefault>
+				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
 				<patch.dir>${gs.dir}/geoserver-2.1.x</patch.dir>
@@ -109,7 +109,7 @@
 		<profile>
 			<id>geoserver-2.1.1</id>
 			<activation>
-				<activeByDefault>true</activeByDefault>
+				<activeByDefault>false</activeByDefault>
 			</activation>
 			<properties>
 				<patch.dir>${gs.dir}/geoserver-stable</patch.dir>
