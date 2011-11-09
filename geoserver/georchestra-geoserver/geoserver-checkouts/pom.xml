@@ -37,7 +37,7 @@
 		<profile>
 			<id>geoserver-2.1.x</id>
 			<activation>
-				<activeByDefault>true</activeByDefault>
+				<activeByDefault>false</activeByDefault>
 			</activation>
 			<properties>
 				<gs.dir>geoserver-2.1.x</gs.dir>
@@ -49,7 +49,7 @@
 		<profile>
 			<id>geoserver-2.1.1</id>
 			<activation>
-				<activeByDefault>false</activeByDefault>
+				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
 				<gs.dir>geoserver-stable</gs.dir>
