@@ -416,7 +416,7 @@ public class Proxy {
             
             try {
             	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            	statsLogger.info(OGCServiceMessageFormatter.format(authentication.getName(), request));
+            	statsLogger.info(OGCServiceMessageFormatter.format(authentication.getName(), sURL));
             } catch (Exception e) {
             	logger.error("Unable to log the request into the statistics logger", e);
             }
