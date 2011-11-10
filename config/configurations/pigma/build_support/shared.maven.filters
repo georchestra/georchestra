@@ -11,4 +11,4 @@ shared.privileged.geoserver.pass=<do not commit>
 shared.ldap.baseDn=dc=pigma,dc=org
 
 replyTo=francois.vanderbiest@camptocamp.com
-shared.smtpHost=
+shared.smtpHost=localhost
