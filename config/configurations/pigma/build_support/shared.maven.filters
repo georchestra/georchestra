@@ -12,3 +12,5 @@ shared.ldap.baseDn=dc=pigma,dc=org
 
 replyTo=francois.vanderbiest@camptocamp.com
 shared.smtpHost=localhost
+
+shared.ogc.statistics.activated=true
