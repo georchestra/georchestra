@@ -15,6 +15,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
@@ -52,13 +53,19 @@ import org.apache.http.client.params.ClientPNames;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.ProxySelectorRoutePlanner;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import com.camptocamp.ogcservstatistics.log4j.OGCServiceMessageFormatter;
 
 
 /**
@@ -92,6 +99,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/*")
 public class Proxy {
     protected static final Log logger = LogFactory.getLog(Proxy.class.getPackage().getName());
+    protected static final Log statsLogger = LogFactory.getLog(Proxy.class.getPackage().getName() + ".statistics");
     
     protected enum RequestType {
         GET, POST, DELETE, PUT, TRACE, OPTIONS, HEAD
@@ -370,6 +378,7 @@ public class Proxy {
         httpclient.getParams().setParameter("http.socket.timeout", new Integer(300000));
         httpclient.getParams().setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, false);
 
+        
         //
         // Handle http proxy for external request.
         // Proxy must be configured by system variables (e.g.: -Dhttp.proxyHost=proxy -Dhttp.proxyPort=3128)
@@ -404,7 +413,16 @@ public class Proxy {
             }
 
             logger.debug("Final request -- " + sURL);
-
+            
+            try {
+            	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            	statsLogger.info(OGCServiceMessageFormatter.format(authentication.getName(), request));
+            } catch (Exception e) {
+            	logger.error("Unable to log the request into the statistics logger", e);
+            }
+            
+            
+            
             HttpRequestBase proxyingRequest = makeRequest(request, requestType, sURL);
 
             headerManagement.configureRequestHeaders(request, proxyingRequest);

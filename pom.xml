@@ -36,6 +36,7 @@
 		<module>geoserver</module>
 		<module>geoserver-security</module>
 		<module>mapfishapp</module>
+		<module>ogc-server-statistics</module>
 		<module>security-proxy</module>
 		<module>geonetwork</module>
 		<module>server-deploy-support</module>

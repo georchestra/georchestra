@@ -76,7 +76,18 @@
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
-		<!-- dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>ogc-server-statistics</artifactId>
+			<version>${project.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+	<!-- dependency>
 			<groupId>org.springframework.ldap</groupId>
 			<artifactId>spring-ldap-core</artifactId>
 			<version>${spring.ldap.version}</version>
