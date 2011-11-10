@@ -16,4 +16,4 @@ shared.privileged.geoserver.user=extractorapp_priveleged_admin
 shared.privileged.geoserver.pass=gerlsSnFd6SmM
 
 shared.tomcat.dir=@allshared.c2c.tomcat.dir@
-shared.log.dir=@allshared.c2c.logdir@
+shared.log.dir=@shared.c2c.logdir@
