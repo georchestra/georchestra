@@ -1,0 +1,156 @@
+<ViewContext xmlns="http://www.opengis.net/context" version="1.1.0" id="contexte_initial_gip" xsi:schemaLocation="http://www.opengis.net/context http://schemas.opengis.net/context/1.1.0/context.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <General>
+        <Window width="973" height="751" />
+        <BoundingBox minx="131291.081643009995" miny="6123200.55866730027" maxx="726276.588416069979" maxy="6582433.97653630003" SRS="EPSG:2154" />
+        <Title />
+        <Extension>
+            <ol:maxExtent xmlns:ol="http://openlayers.org/context" minx="-357823.000000000000" miny="6037008.00000000000" maxx="1313632.00000000000" maxy="7230727.00000000000" />
+        </Extension>
+    </General>
+    <LayerList>
+        <Layer queryable="1" hidden="1">
+            <Server service="OGC:WMS" version="1.1.1">
+                <OnlineResource xlink:type="simple" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ns383241.ovh.net/geoserver/ign_r/wms?SERVICE=WMS&amp;" />
+            </Server>
+            <Name>ign_r:BDOrtho40cm_2009_Aquitaine</Name>
+            <Title>BD Ortho 40cm 2009 Aquitaine</Title>
+            <MetadataURL>
+                <OnlineResource xlink:type="simple" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ns383241.ovh.net/geonetwork/srv/fr/metadata.show?uuid=74b56c94-c442-4999-91a2-298e561f69b6" />
+            </MetadataURL>
+            <FormatList>
+                <Format>image/png</Format>
+                <Format>image/gif</Format>
+                <Format current="1">image/jpeg</Format>
+                <Format>image/png8</Format>
+            </FormatList>
+            <StyleList>
+                <Style>
+                    <Name>raster</Name>
+                    <Title>Raster</Title>
+                    <Abstract>A sample style for rasters, good for displaying imagery</Abstract>
+                    <LegendURL width="20" height="20" format="image/png">
+                        <OnlineResource xlink:type="simple" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ns383241.ovh.net/geoserver/ign_r/wms?request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=BDOrtho40cm_2009_Aquitaine&amp;style=raster" />
+                    </LegendURL>
+                </Style>
+                <Style>
+                    <Name>Ortho</Name>
+                    <Title>Style raster pour visualisation au 50k</Title>
+                    <Abstract>Limitation de la visualisation de l'ortho en dessous du 50k</Abstract>
+                    <LegendURL width="20" height="20" format="image/png">
+                        <OnlineResource xlink:type="simple" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ns383241.ovh.net/geoserver/ign_r/wms?request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=BDOrtho40cm_2009_Aquitaine&amp;style=Ortho" />
+                    </LegendURL>
+                </Style>
+            </StyleList>
+            <Extension>
+                <ol:maxExtent xmlns:ol="http://openlayers.org/context" minx="-357823.000000000000" miny="6037008.00000000000" maxx="1313632.00000000000" maxy="7230727.00000000000" />
+                <ol:tileSize xmlns:ol="http://openlayers.org/context" width="512" height="512" />
+                <ol:transparent xmlns:ol="http://openlayers.org/context">true</ol:transparent>
+                <ol:numZoomLevels xmlns:ol="http://openlayers.org/context">16</ol:numZoomLevels>
+                <ol:units xmlns:ol="http://openlayers.org/context">m</ol:units>
+                <ol:isBaseLayer xmlns:ol="http://openlayers.org/context">false</ol:isBaseLayer>
+                <ol:displayInLayerSwitcher xmlns:ol="http://openlayers.org/context">true</ol:displayInLayerSwitcher>
+                <ol:singleTile xmlns:ol="http://openlayers.org/context">false</ol:singleTile>
+            </Extension>
+        </Layer>
+        <Layer queryable="0" hidden="0">
+            <Server service="OGC:WMS" version="1.1.1">
+                <OnlineResource xlink:type="simple" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ns383241.ovh.net/geoserver/wms?SERVICE=WMS&amp;" />
+            </Server>
+            <Name>fond_gip</Name>
+            <Title>fond_gip</Title>
+            <FormatList>
+                <Format current="1">image/png</Format>
+                <Format>image/gif</Format>
+                <Format>image/jpeg</Format>
+                <Format>image/png8</Format>
+            </FormatList>
+            <StyleList>
+                <Style>
+                    <Name />
+                    <Title>Default</Title>
+                </Style>
+            </StyleList>
+            <Extension>
+                <ol:maxExtent xmlns:ol="http://openlayers.org/context" minx="-357823.000000000000" miny="6037008.00000000000" maxx="1313632.00000000000" maxy="7230727.00000000000" />
+                <ol:tileSize xmlns:ol="http://openlayers.org/context" width="512" height="512" />
+                <ol:transparent xmlns:ol="http://openlayers.org/context">true</ol:transparent>
+                <ol:numZoomLevels xmlns:ol="http://openlayers.org/context">16</ol:numZoomLevels>
+                <ol:units xmlns:ol="http://openlayers.org/context">m</ol:units>
+                <ol:isBaseLayer xmlns:ol="http://openlayers.org/context">false</ol:isBaseLayer>
+                <ol:displayInLayerSwitcher xmlns:ol="http://openlayers.org/context">true</ol:displayInLayerSwitcher>
+                <ol:singleTile xmlns:ol="http://openlayers.org/context">false</ol:singleTile>
+            </Extension>
+        </Layer>
+        <Layer queryable="1" hidden="1">
+            <Server service="OGC:WMS" version="1.1.1">
+                <OnlineResource xlink:type="simple" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ns383241.ovh.net/geoserver/ign/wms?SERVICE=WMS&amp;" />
+            </Server>
+            <Name>ign:commune</Name>
+            <Title>commune</Title>
+            <MetadataURL>
+                <OnlineResource xlink:type="simple" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ns383241.ovh.net/geonetwork/srv/fr/metadata.show?uuid=98224a94-cd56-4f07-8942-1d47ee38d447" />
+            </MetadataURL>
+            <FormatList>
+                <Format current="1">image/png</Format>
+                <Format>image/gif</Format>
+                <Format>image/jpeg</Format>
+                <Format>image/png8</Format>
+            </FormatList>
+            <StyleList>
+                <Style>
+                    <Name>bdtopo_commune</Name>
+                    <Title />
+                    <LegendURL width="20" height="20" format="image/png">
+                        <OnlineResource xlink:type="simple" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ns383241.ovh.net/geoserver/ign/wms?request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=commune" />
+                    </LegendURL>
+                </Style>
+            </StyleList>
+            <Extension>
+                <ol:maxExtent xmlns:ol="http://openlayers.org/context" minx="-357823.000000000000" miny="6037008.00000000000" maxx="1313632.00000000000" maxy="7230727.00000000000" />
+                <ol:tileSize xmlns:ol="http://openlayers.org/context" width="512" height="512" />
+                <ol:transparent xmlns:ol="http://openlayers.org/context">true</ol:transparent>
+                <ol:numZoomLevels xmlns:ol="http://openlayers.org/context">16</ol:numZoomLevels>
+                <ol:units xmlns:ol="http://openlayers.org/context">m</ol:units>
+                <ol:isBaseLayer xmlns:ol="http://openlayers.org/context">false</ol:isBaseLayer>
+                <ol:displayInLayerSwitcher xmlns:ol="http://openlayers.org/context">true</ol:displayInLayerSwitcher>
+                <ol:singleTile xmlns:ol="http://openlayers.org/context">false</ol:singleTile>
+            </Extension>
+        </Layer>
+        <Layer queryable="1" hidden="1">
+            <Server service="OGC:WMS" version="1.1.1">
+                <OnlineResource xlink:type="simple" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ns383241.ovh.net/geoserver/ign/wms?SERVICE=WMS&amp;" />
+            </Server>
+            <Name>ign:departement</Name>
+            <Title>departement</Title>
+            <MetadataURL>
+                <OnlineResource xlink:type="simple" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ns383241.ovh.net/geonetwork/srv/fr/metadata.show?uuid=98224a94-cd56-4f07-8942-1d47ee38d447" />
+            </MetadataURL>
+            <FormatList>
+                <Format current="1">image/png</Format>
+                <Format>image/gif</Format>
+                <Format>image/jpeg</Format>
+                <Format>image/png8</Format>
+            </FormatList>
+            <StyleList>
+                <Style>
+                    <Name>polygon</Name>
+                    <Title>A boring default style</Title>
+                    <Abstract>A sample style that just prints out a green line</Abstract>
+                    <LegendURL width="20" height="20" format="image/png">
+                        <OnlineResource xlink:type="simple" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ns383241.ovh.net/geoserver/ign/wms?request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=departement" />
+                    </LegendURL>
+                </Style>
+            </StyleList>
+            <Extension>
+                <ol:maxExtent xmlns:ol="http://openlayers.org/context" minx="-357823.000000000000" miny="6037008.00000000000" maxx="1313632.00000000000" maxy="7230727.00000000000" />
+                <ol:tileSize xmlns:ol="http://openlayers.org/context" width="512" height="512" />
+                <ol:transparent xmlns:ol="http://openlayers.org/context">true</ol:transparent>
+                <ol:numZoomLevels xmlns:ol="http://openlayers.org/context">16</ol:numZoomLevels>
+                <ol:units xmlns:ol="http://openlayers.org/context">m</ol:units>
+                <ol:isBaseLayer xmlns:ol="http://openlayers.org/context">false</ol:isBaseLayer>
+                <ol:displayInLayerSwitcher xmlns:ol="http://openlayers.org/context">true</ol:displayInLayerSwitcher>
+                <ol:singleTile xmlns:ol="http://openlayers.org/context">false</ol:singleTile>
+            </Extension>
+        </Layer>
+    </LayerList>
+</ViewContext>

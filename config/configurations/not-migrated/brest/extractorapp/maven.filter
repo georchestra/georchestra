@@ -1,0 +1,19 @@
+maxCoverageExtractionSize=99999999
+
+host=hcu169.dit.cb
+
+# The base url of the extractorapp as accessible from outside the intranet
+servletUrl=http://c2cpc61.camptocamp.com/extractorapp
+
+# Hostname of the geoserver that is secured for geOrchestra.
+secureHost=hcu169.dit.cb
+
+# Email properties
+smtpHost=psemail.epfl.ch
+smtpPort=25
+replyTo=pierre.mauduit@camptocamp.com
+from=${replyTo}
+
+# necessary ?
+priveleged_admin_name=extractorapp_priveleged_admin
+priveleged_admin_pass=gerlsSnFd6SmM

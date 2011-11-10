@@ -1,0 +1,7 @@
+shared.server.name=c2cpc61.camptocamp.com
+shared.apache.conf.dir=/var/www/georchestra/conf
+shared.privileged.geoserver.user=extractorapp_priveleged_admin
+shared.privileged.geoserver.pass=uNg9aiFa
+
+shared.ldap.admin.password=uNg9aiFa
+shared.ldap.baseDn=dc=georchestra,dc=org

@@ -1,0 +1,2 @@
+# clean docs when they are 1 day old
+maxDocAgeInMinutes=1440

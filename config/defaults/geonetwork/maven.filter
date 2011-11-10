@@ -1,0 +1,48 @@
+transformFactory=de.fzi.dbs.xml.transform.CachingTransformerFactory
+debug=false
+
+dataDir=@shared.geonetwork.dir@
+uploadDir=@shared.geonetwork.dir@/uploads
+luceneDir=@shared.geonetwork.dir@/lucene
+htmlCacheDir=htmlCache
+
+baseUrl=geonetwork
+host=@shared.server.name@
+
+psql.host=@shared.psql.host@
+psql.port=@shared.psql.port@
+psql.db=@shared.psql.geonetwork.db@
+
+psql.user=@shared.psql.user@
+psql.pass=@shared.psql.pass@
+psql.url=@shared.psql.url@
+
+xhr.proxy-url=http://@shared.server.name@/proxy/
+
+groupSyncLdapBase=@shared.ldap.groupSearchBaseDN@,@shared.ldap.baseDn@
+jpegPhotoLdapBase=@shared.ldap.userSearchBaseDN@,@shared.ldap.baseDn@
+
+
+LdapHost=@shared.ldap.host@
+LdapPort=@shared.ldap.port@
+LdapBindDn=@shared.ldap.admin.dn@
+LdapBindPassword=@shared.ldap.admin.password@
+
+geoserver.node.id=geoserver2
+geoserver.node.name=My preferred GeoServer node
+geoserver.node.namespace.prefix=geob_pub
+geoserver.node.namespace.url=http://georchestra.org/geoserver/geob_pub
+
+
+priveleged_admin_name=@shared.privileged.geoserver.user@
+priveleged_admin_pass=@shared.privileged.geoserver.pass@
+
+config.xml.typenames=<typename name="EPCI" typename="geob_loc:EPCI_region" nameAtt="EPCI" /> \
+		<typename name="Commune Bretagne" typename="geob_loc:COMMUNE" nameAtt="NOM_COMM" /> \
+		<typename name="Département" typename="geob_loc:DEPARTEMENT" nameAtt="NOM" /> \
+		<typename name="Region" typename="geob_loc:region" nameAtt="NOM" />
+
+
+config-gui.xml.mapSearchLayers=<layer server="http://@shared.server.name@/shorelines" tocName="shorelines"  params="{layers: 'land', transparent: 'true', format: 'image/png'}"  options="{isBaseLayer: true}" />
+
+config-gui.xml.mapViewerLayers=${config-gui.xml.mapSearchLayers}

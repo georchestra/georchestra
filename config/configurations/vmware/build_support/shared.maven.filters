@@ -1,0 +1,19 @@
+# shared values like public url can be put here
+shared.server.name=vm-georchestra
+shared.server.port=80
+
+shared.ldap.host=localhost
+shared.ldap.port=389
+shared.ldapUrl=ldap://@shared.ldap.host@:@shared.ldap.port@
+
+shared.ldap.baseDn=dc=georchestra,dc=org
+shared.ldap.userSearchBaseDN=ou=users
+shared.ldap.groupSearchBaseDN=ou=groups
+shared.ldap.admin.dn=cn=admin,@shared.ldap.baseDn@
+shared.ldap.admin.password=secret
+
+shared.privileged.geoserver.user=extractorapp_priveleged_admin
+shared.privileged.geoserver.pass=gerlsSnFd6SmM
+
+shared.tomcat.dir=@allshared.c2c.tomcat.dir@
+shared.log.dir=@allshared.c2c.logdir@

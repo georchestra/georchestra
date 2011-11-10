@@ -24,7 +24,7 @@
 		<!--<gmaven.runtime>1.8</gmaven.runtime>-->
 	</properties>
 	<modules>
-		<module>conf</module>
+		<module>config</module>
 		<module>mif-2.5.8</module>
 		<module>cas-server-webapp</module>
 		<module>catalogapp</module>

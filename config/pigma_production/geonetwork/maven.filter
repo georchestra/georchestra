@@ -1,0 +1,55 @@
+transformFactory=de.fzi.dbs.xml.transform.CachingTransformerFactory
+debug=false
+
+
+# dataDir and luceneDir are relative to appPath (probably set by
+# jeeves as webapp's root)
+dataDir=data
+luceneDir=lucene
+
+uploadDir=${dataDir}/uploads
+# htmlCacheDir is relative to appPath too
+# (by default a ./htmlCache is created, let's use this one)
+htmlCacheDir=htmlCache
+
+baseUrl=geonetwork
+host=ns383241.ovh.net
+
+psql.host=localhost
+psql.port=5432
+psql.db=geonetwork
+
+psql.user=www-data
+psql.pass=www-data
+psql.url=jdbc:postgresql://${psql.host}:${psql.port}/${psql.db}
+
+xhr.proxy-url=http://${host}/proxy/
+
+groupSyncLdapBase=ou=groups,dc=pigma,dc=org
+jpegPhotoLdapBase=ou=users,dc=pigma,dc=org
+
+
+LdapHost=localhost
+LdapPort=389
+LdapBindDn=cn=admin,dc=pigma,dc=org
+LdapBindPassword=hw8BFUvTrL
+
+geoserver.node.id=geoserver2
+geoserver.node.name=Serveur GeoServer PIGMA
+geoserver.node.namespace.prefix=pigma_pub
+geoserver.node.namespace.url=http://www.pigma.org/geoserver/pigma_pub
+
+priveleged_admin_name=snegre
+priveleged_admin_pass=pyrenees
+
+config.xml.wfsUrl=http://ns383241.ovh.net/geoserver/wfs?REQUEST=GetCapabilities&amp;SERVICE=WFS&amp;VERSION=1.0.0
+config.xml.typenames=<typename name="Cantons" typename="pigma_loc:Cantons" nameAtt="nom_canton" /> \
+<typename name="Communes" typename="pigma_loc:communes" nameAtt="nom_commun" /> \
+<typename name="Departements" typename="pigma_loc:departements" nameAtt="nom_depart" /> \
+<typename name="EPCI" typename="pigma_loc:epci" nameAtt="nom_epci" /> \
+<typename name="Lieux-dits" typename="pigma_loc:lieux_dits" nameAtt="nom_lieu_d" />
+
+
+config-gui.xml.mapSearchLayers=<layer server="http://${host}/shorelines" tocName="shorelines"  params="{layers: 'land', transparent: 'true', format: 'image/png'}"  options="{isBaseLayer: true}" />
+
+config-gui.xml.mapViewerLayers=${config-gui.xml.mapSearchLayers}

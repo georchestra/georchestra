@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:ns2="http://www.w3.org/2004/02/skos/core#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <rdf:Description rdf:about="#Urbanisme">
+    <ns2:prefLabel xml:lang="fr">Urbanisme</ns2:prefLabel>
+    <ns2:scopeNote xml:lang="fr">Urbanisme</ns2:scopeNote>
+  </rdf:Description>
+  <rdf:Description rdf:about="#Fonds Raster">
+    <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept" />
+    <ns2:prefLabel xml:lang="fr">Fonds Raster</ns2:prefLabel>
+    <ns2:scopeNote xml:lang="fr">Fonds Raster</ns2:scopeNote>
+  </rdf:Description>
+  <rdf:Description rdf:about="#Risques technologiques">
+    <ns2:scopeNote xml:lang="fr">Risques technologiques</ns2:scopeNote>
+  </rdf:Description>
+  <rdf:Description rdf:about="#Habitat">
+    <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept" />
+    <ns2:prefLabel xml:lang="fr">Habitat</ns2:prefLabel>
+    <ns2:scopeNote xml:lang="fr">Habitat</ns2:scopeNote>
+  </rdf:Description>
+  <rdf:Description rdf:about="#Risques sanitaires">
+    <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept" />
+  </rdf:Description>
+  <rdf:Description rdf:about="#Infrastructures de transport">
+    <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept" />
+    <ns2:prefLabel xml:lang="fr">Infrastructures de transport</ns2:prefLabel>
+    <ns2:scopeNote xml:lang="fr">Infrastructures de transport</ns2:scopeNote>
+  </rdf:Description>
+  <rdf:Description rdf:about="#Risques sanitaires">
+    <ns2:prefLabel xml:lang="fr">Risques sanitaires</ns2:prefLabel>
+  </rdf:Description>
+  <rdf:Description rdf:about="#Limites administratives">
+    <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept" />
+    <ns2:prefLabel xml:lang="fr">Limites administratives</ns2:prefLabel>
+    <ns2:scopeNote xml:lang="fr">Limites administratives</ns2:scopeNote>
+  </rdf:Description>
+  <rdf:Description rdf:about="#Risques sanitaires">
+    <ns2:scopeNote xml:lang="fr">Risques sanitaires</ns2:scopeNote>
+  </rdf:Description>
+  <rdf:Description rdf:about="#Littoral">
+    <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept" />
+    <ns2:prefLabel xml:lang="fr">Littoral</ns2:prefLabel>
+    <ns2:scopeNote xml:lang="fr">Littoral</ns2:scopeNote>
+  </rdf:Description>
+  <rdf:Description rdf:about="#Activites economiques">
+    <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept" />
+    <ns2:prefLabel xml:lang="fr">Activités économiques</ns2:prefLabel>
+    <ns2:scopeNote xml:lang="fr">Activités économiques</ns2:scopeNote>
+  </rdf:Description>
+  <rdf:Description rdf:about="#Urbanisme">
+    <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept" />
+  </rdf:Description>
+  <rdf:Description rdf:about="#Agriculture">
+    <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept" />
+    <ns2:prefLabel xml:lang="fr">Agriculture</ns2:prefLabel>
+    <ns2:scopeNote xml:lang="fr">Agriculture</ns2:scopeNote>
+  </rdf:Description>
+  <rdf:Description rdf:about="#Patrimoine architectural urbain et culturel">
+    <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept" />
+  </rdf:Description>
+  <rdf:Description rdf:about="#Demographie">
+    <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept" />
+    <ns2:prefLabel xml:lang="fr">Démographie</ns2:prefLabel>
+    <ns2:scopeNote xml:lang="fr">Démographie</ns2:scopeNote>
+  </rdf:Description>
+  <rdf:Description rdf:about="#Patrimoine architectural urbain et culturel">
+    <ns2:prefLabel xml:lang="fr">Patrimoine architectural urbain et culturel</ns2:prefLabel>
+  </rdf:Description>
+  <rdf:Description rdf:about="#Eau">
+    <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept" />
+    <ns2:prefLabel xml:lang="fr">Eau</ns2:prefLabel>
+    <ns2:scopeNote xml:lang="fr">Eau</ns2:scopeNote>
+  </rdf:Description>
+  <rdf:Description rdf:about="#Patrimoine architectural urbain et culturel">
+    <ns2:scopeNote xml:lang="fr">Patrimoine architectural urbain et culturel</ns2:scopeNote>
+  </rdf:Description>
+  <rdf:Description rdf:about="#Economie numerique">
+    <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept" />
+    <ns2:prefLabel xml:lang="fr">Économie numérique</ns2:prefLabel>
+    <ns2:scopeNote xml:lang="fr">Économie numérique</ns2:scopeNote>
+  </rdf:Description>
+  <rdf:Description rdf:about="#Risques technologiques">
+    <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept" />
+  </rdf:Description>
+  <rdf:Description rdf:about="#Emploi">
+    <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept" />
+    <ns2:prefLabel xml:lang="fr">Emploi</ns2:prefLabel>
+    <ns2:scopeNote xml:lang="fr">Emploi</ns2:scopeNote>
+  </rdf:Description>
+  <rdf:Description rdf:about="#Patrimoine naturel">
+    <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept" />
+  </rdf:Description>
+  <rdf:Description rdf:about="#Energie">
+    <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept" />
+    <ns2:prefLabel xml:lang="fr">Énergie</ns2:prefLabel>
+    <ns2:scopeNote xml:lang="fr">Énergie</ns2:scopeNote>
+  </rdf:Description>
+  <rdf:Description rdf:about="#Patrimoine naturel">
+    <ns2:prefLabel xml:lang="fr">Patrimoine naturel</ns2:prefLabel>
+  </rdf:Description>
+  <rdf:Description rdf:about="#Enseignement">
+    <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept" />
+    <ns2:prefLabel xml:lang="fr">Enseignement</ns2:prefLabel>
+    <ns2:scopeNote xml:lang="fr">Enseignement</ns2:scopeNote>
+  </rdf:Description>
+  <rdf:Description rdf:about="#Patrimoine naturel">
+    <ns2:scopeNote xml:lang="fr">Patrimoine naturel</ns2:scopeNote>
+  </rdf:Description>
+  <rdf:Description rdf:about="#Entreprises">
+    <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept" />
+    <ns2:prefLabel xml:lang="fr">Entreprises</ns2:prefLabel>
+    <ns2:scopeNote xml:lang="fr">Entreprises</ns2:scopeNote>
+  </rdf:Description>
+  <rdf:Description rdf:about="#Risques technologiques">
+    <ns2:prefLabel xml:lang="fr">Risques technologiques</ns2:prefLabel>
+  </rdf:Description>
+  <rdf:Description rdf:about="#Equipements de mesure">
+    <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept" />
+    <ns2:prefLabel xml:lang="fr">Équipements de mesure</ns2:prefLabel>
+    <ns2:scopeNote xml:lang="fr">Équipements de mesure</ns2:scopeNote>
+  </rdf:Description>
+  <rdf:Description rdf:about="#Risques naturels">
+    <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept" />
+  </rdf:Description>
+  <rdf:Description rdf:about="#Equipements publics">
+    <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept" />
+    <ns2:prefLabel xml:lang="fr">Équipements publics</ns2:prefLabel>
+    <ns2:scopeNote xml:lang="fr">Équipements publics</ns2:scopeNote>
+  </rdf:Description>
+  <rdf:Description rdf:about="#Risques naturels">
+    <ns2:prefLabel xml:lang="fr">Risques naturels</ns2:prefLabel>
+  </rdf:Description>
+  <rdf:Description rdf:about="#Finances locales">
+    <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept" />
+    <ns2:prefLabel xml:lang="fr">Finances locales</ns2:prefLabel>
+    <ns2:scopeNote xml:lang="fr">Finances locales</ns2:scopeNote>
+  </rdf:Description>
+  <rdf:Description rdf:about="#Risques naturels">
+    <ns2:scopeNote xml:lang="fr">Risques naturels</ns2:scopeNote>
+  </rdf:Description>
+</rdf:RDF>
+
