@@ -34,12 +34,7 @@ This module requires a logging table called "ogc_services_log" in a postgres dat
  
 You will find the detail about the data structure in the file:
 
-[project-dir]/prototype/database/ogc-statistics-table.html
-
-In order to populate the ogc_services_log table with some data test execute the script:
-
-acceptance-test/populate-access-ogc-services-table.sql 
-
+[project-dir]/ogc_statistics_table.sql
 
 Configure log4j.properties
 --------------------------
