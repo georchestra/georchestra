@@ -238,6 +238,18 @@
 			</dependencies>
 		</profile>
 		<profile>
+			<id>cas-server-webapp</id>
+			<dependencies>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>cas-server-webapp</artifactId>
+					<version>${project.version}</version>
+					<classifier>${server}</classifier>
+					<type>war</type>
+				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
 			<id>geonetwork</id>
 			<dependencies>
 				<dependency>
@@ -251,6 +263,18 @@
 		</profile>
 		<profile>
 			<id>proxy</id>
+			<dependencies>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>security-proxy</artifactId>
+					<version>${project.version}</version>
+					<classifier>${server}</classifier>
+					<type>war</type>
+				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>security-proxy</id>
 			<dependencies>
 				<dependency>
 					<groupId>${project.groupId}</groupId>
