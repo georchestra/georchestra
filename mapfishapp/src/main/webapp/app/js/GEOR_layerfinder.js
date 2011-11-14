@@ -221,6 +221,10 @@ GEOR.layerfinder = (function() {
     var addSelectedLayers = function() {
         var records = selectedRecords[currentTab];
         var recordsToAdd = [];
+        // TODO here: we miss GEOR.waiter.show()
+        // The pb is that it would be hidden on first XHR success.
+        // => we have to implement this properly with a counter.
+        
         // we need to clone the layers
         for(var i=0, len=records.length; i<len; i++) {
             var record = records[i];
@@ -263,7 +267,7 @@ GEOR.layerfinder = (function() {
                     failure: function() {
                         GEOR.util.errorDialog({
                             msg: "La requête WMS getCapabilities vers "+
-                                data.wmsurl+" a malheureusement échoué"
+                                record.data.wmsurl+" a malheureusement échoué"
                         });
                     }
                 });
