@@ -231,6 +231,93 @@ GEOR.managelayers = (function() {
             }
         };
     };
+                
+    /**
+     * Method: zoomToLayerRecordExtent
+     *
+     * Parameters:
+     * r - {GeoExt.data.LayerRecord}
+     */
+    var zoomToLayerRecordExtent = function(r) {
+        var map = r.get('layer').map,
+            mapSRS = map.getProjection(),
+            zoomed = false,
+            bb = r.get('bbox');
+        for (var key in bb) {
+            if (!bb.hasOwnProperty(key)) {
+                continue;
+            }
+            if (key === mapSRS) {
+                map.zoomToExtent(
+                    OpenLayers.Bounds.fromArray(bb[key].bbox)
+                );
+                zoomed = true;
+                break;
+            }
+        }
+        if (!zoomed) {
+            // use llbbox
+            var llbbox = OpenLayers.Bounds.fromArray(
+                r.get('llbbox')
+            );
+            llbbox.transform(
+                new OpenLayers.Projection('EPSG:4326'), 
+                map.getProjectionObject()
+            );
+            map.zoomToExtent(llbbox);
+        }
+    };
+    
+    /**
+     * Method: createZoomButton
+     *
+     * Parameters:
+     * layerRecord - {GeoExt.data.LayerRecord}
+     *
+     * Returns:
+     * {Object} The configured object (xtype: button) 
+     *          for inclusion in layer manager item toolbar
+     */
+    var createZoomButton = function(layerRecord) {
+        var h = function(btn, pressed) {
+            var layer = layerRecord.get('layer'),
+                map = layer.map;
+            // TODO: layer.getDataExtent() can be null if layer strategy is bbox 
+            // and there's no feature currently in layer.
+            // It seems WFS capabilities has a llbbox field in record => parse it
+            if (layer.CLASS_NAME == "OpenLayers.Layer.Vector") {
+                var b = layer.getDataExtent();
+                if (b && b.getWidth() * b.getHeight()) {
+                    map.zoomToExtent(b);
+                }
+            } else {
+                var bbox = layerRecord.get('bbox');
+                if (!bbox) {
+                    // Get it from the WMS GetCapabilities document
+                    GEOR.ows.hydrateLayerRecord(layerRecord, {
+                        success: function(){
+                            zoomToLayerRecordExtent(layerRecord);
+                        },
+                        failure: function() {
+                            GEOR.util.errorDialog({
+                                msg: "Impossible d'obtenir "+
+                                    "l'étendue de la couche."
+                            });
+                        },
+                        scope: this
+                    });
+                } else {
+                    zoomToLayerRecordExtent(layerRecord);
+                }
+            }
+        };        
+        return {
+            xtype: 'button',
+            iconCls: 'geor-btn-zoom',
+            tooltip: "Recentrer sur cette couche",
+            handler: h
+        };
+    };
     
     /**
      * Method: createFormatMenu
@@ -486,16 +573,17 @@ GEOR.managelayers = (function() {
     var createLayerNodePanel = function(node, ct) {
         var layer = node.layer;
         var layerRecord = node.layerStore.getById(layer.id);
-
         // buttons in the toolbar
         var buttons = [];
         if (GEOR.getfeatureinfo) {
             buttons.push(createGfiButton(layerRecord));
         }
-        buttons = buttons.concat([{
+        buttons = buttons.concat([
+            createZoomButton(layerRecord), 
+        {
             text:'Actions',
             menu: createMenu(layerRecord)
-        }, '-',{
+        }, '-', {
             xtype: "gx_opacityslider",
             width: 100,
             // hack for http://csm-bretagne.fr/redmine/issues/2026 :

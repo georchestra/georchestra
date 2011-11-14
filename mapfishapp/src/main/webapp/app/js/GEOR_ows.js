@@ -26,6 +26,7 @@
  * @include OpenLayers/Strategy/Fixed.js
  * @include OpenLayers/Layer/Vector.js
  * @requires GEOR_config.js
+ * @include GEOR_waiter.js
  */
 
 Ext.namespace("GEOR");
@@ -418,6 +419,72 @@ GEOR.ows = (function() {
                           options.success, options.failure, options.scope);
             }
             return store;
+        },
+
+        /**
+         * APIMethod: hydrateLayerRecord
+         * Adds missing fields in {GeoExt.data.LayerRecord} by issuing a 
+         * WMS capabilities request. In case we have been given a layer 
+         * served by GeoServer, the request is first issued to the 
+         * virtual service corresponding to the layer namespace alias.
+         * If the request fails to find the layer in its namespace, a second 
+         * request is issued to the main service URL.
+         *
+         * Parameters:
+         * record - {GeoExt.data.LayerRecord} the input record.
+         * options - {Object} An object with the properties:
+         * - success - {Function} Callback function 
+         * - failure - {Function} Callback function 
+         * - scope - {Object} The callback function's execution scope.
+         *
+         * Returns: 
+         * {GeoExt.data.LayerRecord} The same record with hydrated fields.
+         */
+        hydrateLayerRecord: function(record, options) {
+            var url = record.get('layer').url,
+                layername = record.get('name');
+            if (!options.useMainService && url.indexOf("geoserver/wms") > 0) {
+                // try to use virtual service instead of main service
+                var nsalias, 
+                    t = layername.split(':');
+                if (t.length > 1) {
+                    nsalias = t.shift();
+                }
+                url = url.replace("geoserver/wms", "geoserver/"+nsalias+"/wms");
+            }
+            GEOR.waiter.show();
+            var store = new GEOR.ows.WMSCapabilities({
+                storeOptions: {
+                    url: url
+                },
+                success: function(store, records) {
+                    var index = store.find("name", layername);
+                    if (index < 0) {
+                        GEOR.util.errorDialog({
+                            msg: "La couche "+layername+" n'a pas été trouvée "+
+                                "dans le service WMS."
+                        });
+                        return;
+                    }
+                    var r = records[index];
+                    // replace all fields except layer
+                    Ext.each(defaultRecordFields, function(rf) {
+                        record.set(rf.name, r.get(rf.name));
+                    });                    
+                    if (options.success) {
+                        options.success.apply(options.scope);
+                    }
+                },
+                failure: function() {
+                    if (!options.useMainService) {
+                        GEOR.ows.hydrateLayerRecord(record, Ext.extend(options, {
+                            useMainService: true
+                        }));
+                    } else if (options.failure) {
+                        options.failure.apply(options.scope);
+                    }
+                }
+            });
         },
 
         /**
