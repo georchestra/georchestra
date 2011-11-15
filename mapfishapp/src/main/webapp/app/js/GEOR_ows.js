@@ -449,8 +449,8 @@ GEOR.ows = (function() {
                     t = layername.split(':');
                 if (t.length > 1) {
                     nsalias = t.shift();
+                    url = url.replace("geoserver/wms", "geoserver/"+nsalias+"/wms");
                 }
-                url = url.replace("geoserver/wms", "geoserver/"+nsalias+"/wms");
             }
             GEOR.waiter.show();
             var store = new GEOR.ows.WMSCapabilities({
