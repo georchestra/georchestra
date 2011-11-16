@@ -11,8 +11,8 @@ secureHost=@shared.server.name@
 # Email properties
 smtpHost=@shared.smtpHost@
 smtpPort=@shared.smtpPort@
-replyTo=arnaud.deshogues@camptocamp.com
-from=noreply@camptocamp.com
+replyTo=@shared.email.replyTo@
+from=@shared.email.from@
 
 priveleged_admin_name=@shared.privileged.geoserver.user@
 priveleged_admin_pass=@shared.privileged.geoserver.pass@

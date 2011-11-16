@@ -29,5 +29,7 @@ other.framework.log.level=WARN
 
 shared.smtpHost=mail.camptocamp.com
 shared.smtpPort=25
+shared.email.replyTo=arnaud.deshogues\@camptocamp.com
+shared.email.from=noreply\@camptocamp.com
 
 shared.geonetwork.dir=@shared.c2c.tomcat.dir@/work/gn_data
