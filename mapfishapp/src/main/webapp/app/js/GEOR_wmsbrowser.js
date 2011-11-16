@@ -147,7 +147,7 @@ GEOR.wmsbrowser = (function() {
                 callback: function(r, options, success) {
                     if (!success) {
                         GEOR.util.errorDialog({
-                            msg: "Serveur non joignable"
+                            msg: "Serveur non joignable ou droits insuffisants"
                         });
                         return;
                     }

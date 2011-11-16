@@ -97,6 +97,8 @@ GEOR.wfsbrowser = (function() {
 	                    };
 	                },
                     protocolOptions: {
+                        //autoDestroy: false, // TEST (seems not to work as expected)
+                        
                         // we need to set the srsName in the WFS query,
                         // so that features are returned in the correct SRS.
                         // Please note that, with WFS 1.0.0, the trick should 
@@ -185,9 +187,7 @@ GEOR.wfsbrowser = (function() {
                 callback: function(r, options, success) {
                     if (!success) {
                         GEOR.util.errorDialog({
-                            msg: ["Une erreur est survenue.",
-                                "Nous n'avons pas pu identifier "+
-                                "le contenu de ce service"].join('<br />')
+                            msg: "Serveur non joignable ou droits insuffisants"
                         });
                         return;
                     }
