@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.naming.NamingEnumeration;
 import javax.naming.directory.Attribute;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -39,37 +40,67 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
         this._headerMapping = headerMapping;
     }
 
-    @Override
-    protected Collection<Header> getCustomRequestHeaders() {
+    @SuppressWarnings("unchecked")
+	@Override
+    protected Collection<Header> getCustomRequestHeaders(HttpSession session) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(authentication instanceof AnonymousAuthenticationToken){
             return Collections.emptyList();
         }
         String username = authentication.getName();
         DirContextOperations userData;
-        try {
-            userData = _userSearch.searchForUser(username);
-        } catch (Exception e) {
-            logger.info("Unable to lookup user:"+username,e);
-            return Collections.emptyList();
-        }
-        ArrayList<Header> headers = new ArrayList<Header>();
-        for (Map.Entry<String, String> entry : _headerMapping.entrySet()) {
-            try {
-                Attribute attributes = userData.getAttributes().get(entry.getValue());
-                NamingEnumeration<?> all = attributes.getAll();
-                StringBuilder value = new StringBuilder();
-                while (all.hasMore()) {
-                    if (value.length() > 0) {
-                        value.append(',');
-                    }
-                    value.append(all.next());
-                }
-                headers.add(new BasicHeader(entry.getKey(), value.toString()));
-            } catch (javax.naming.NamingException e) {
-                logger.error("problem adding headers for request:" + entry.getKey(), e);
-            }
-        }
+
+        Collection<Header> headers = Collections.emptyList();
+
+		synchronized (session) {
+
+			if (session.getAttribute("security-proxy-cached-attrs") != null) {
+				try {
+					headers = (Collection<Header>) session.getAttribute("security-proxy-cached-attrs");
+					String expectedUsername = (String) session.getAttribute("security-proxy-cached-username");
+					
+					if (username.equals(expectedUsername)) {
+						return headers;
+					}
+				} catch (Exception e) {
+					logger.info("Unable to lookup cached user's attributes for user :" + username, e);
+				}
+			} else {
+				try {
+					userData = _userSearch.searchForUser(username);
+				} catch (Exception e) {
+					logger.info("Unable to lookup user:" + username, e);
+					return Collections.emptyList();
+				}
+				headers = new ArrayList<Header>();
+				for (Map.Entry<String, String> entry : _headerMapping
+						.entrySet()) {
+					try {
+						Attribute attributes = userData.getAttributes().get(
+								entry.getValue());
+						if (attributes != null) {
+							NamingEnumeration<?> all = attributes.getAll();
+							StringBuilder value = new StringBuilder();
+							while (all.hasMore()) {
+								if (value.length() > 0) {
+									value.append(',');
+								}
+								value.append(all.next());
+							}
+							headers.add(new BasicHeader(entry.getKey(), value
+									.toString()));
+						}
+					} catch (javax.naming.NamingException e) {
+						logger.error("problem adding headers for request:"
+								+ entry.getKey(), e);
+					}
+				}
+				logger.info("Storing attributes into session for user :" + username);
+				session.setAttribute("security-proxy-cached-username", username);
+				session.setAttribute("security-proxy-cached-attrs", headers);
+			}
+		}
+
         return headers;
     }
 }

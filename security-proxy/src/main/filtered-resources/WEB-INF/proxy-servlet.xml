@@ -47,7 +47,11 @@ ${proxy.mapping}
                     <constructor-arg index="0" ref="ldapUserSearch"/>
                     <constructor-arg index="1">
                         <map>
-                            <entry key="sec-email" value="mail"/>
+                            <entry key="sec-email"     value="mail"/>
+                            <entry key="sec-firstname" value="givenName"/>
+                            <entry key="sec-lastname"  value="sn"/>
+                            <entry key="sec-org"       value="o"/>
+                            <entry key="sec-tel"       value="telephoneNumber"/>
                         </map>
                     </constructor-arg>
                 </bean>

@@ -73,9 +73,10 @@ public class HeadersManagementStrategy {
         }
 
         handleRequestCookies(originalRequest, proxyRequest, headersLog);
-        
+        HttpSession session = originalRequest.getSession();
+
         for(HeaderProvider provider : headerProviders) {
-            for (Header header : provider.getCustomRequestHeaders()) {
+            for (Header header : provider.getCustomRequestHeaders(session)) {
             	if (( header.getName().equalsIgnoreCase("sec-username") ||
             		  header.getName().equalsIgnoreCase("sec-roles") ) &&
             	     proxyRequest.getHeaders(header.getName()) != null &&

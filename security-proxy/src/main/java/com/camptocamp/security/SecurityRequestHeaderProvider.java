@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
 import org.springframework.security.core.Authentication;
@@ -13,7 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class SecurityRequestHeaderProvider extends HeaderProvider {
 
     @Override
-    protected Collection<Header> getCustomRequestHeaders() {
+    protected Collection<Header> getCustomRequestHeaders(HttpSession session) {
 
         Authentication authentication = SecurityContextHolder.getContext()
                 .getAuthentication();
