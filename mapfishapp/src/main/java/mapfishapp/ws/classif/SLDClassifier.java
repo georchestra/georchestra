@@ -347,6 +347,9 @@ public class SLDClassifier {
         
         while(features.hasNext()) {
             SimpleFeature feature = features.next();
+            if (feature.getProperty(_command.getPropertyName()).getValue() == null) {
+            	continue;
+            }
             String val = feature.getProperty(_command.getPropertyName()).getValue().toString();
             if(! val.trim().isEmpty() ) { // don't take into account attributes that are empty, it would corrupt the sld file
                 values.add(Double.parseDouble(val));  
@@ -369,9 +372,14 @@ public class SLDClassifier {
 
         while(features.hasNext()) {
             SimpleFeature feature = features.next();
-            String val = feature.getProperty(_command.getPropertyName()).getValue().toString();
-            if(! val.trim().isEmpty() ) { // don't take into account attributes that are empty, it would corrupt the sld file
-                values.add(feature.getProperty(_command.getPropertyName()).getValue().toString());
+            String val;
+            if (feature.getProperty(_command.getPropertyName()).getValue() == null) {
+            	continue;
+            } else {
+            	val = feature.getProperty(_command.getPropertyName()).getValue().toString();
+            }
+            if (! val.trim().isEmpty() ) { // don't take into account attributes that are empty, it would corrupt the sld file
+            	values.add(val);
             }
         }
         return values;
