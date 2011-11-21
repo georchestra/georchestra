@@ -28,7 +28,7 @@ public class WcsFormat extends AbstractGridFormat {
     }
 
     @Override
-    public boolean accepts (Object input) {
+    public boolean accepts (Object input, Hints hints ) {
         try {
             return toURL (input) != null;
         } catch (MalformedURLException e) {
@@ -82,6 +82,11 @@ public class WcsFormat extends AbstractGridFormat {
     @Override
     public GridCoverageWriter getWriter (Object destination) {
         throw new UnsupportedOperationException ("Read only support");
+    }
+    
+    @Override
+    public GridCoverageWriter getWriter (Object destination, Hints hints) {
+    	throw new UnsupportedOperationException ("Read only support");
     }
 
 }
