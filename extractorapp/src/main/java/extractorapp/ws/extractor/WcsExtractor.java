@@ -62,7 +62,7 @@ public class WcsExtractor {
 		        }
 
 		        String capabilities = FileUtils.asString(httpclient.execute(get).getEntity().getContent());
-		        Pattern regex = Pattern.compile("(?m)<Layer[^>]*>(\\\\n|\\s)*<Name>\\s*"+Pattern.quote("pigma:protected_layer_for_integration_testing")+"\\s*</Name>");
+		        Pattern regex = Pattern.compile("(?m)<Layer[^>]*>(\\\\n|\\s)*<Name>\\s*"+Pattern.quote(request._layerName)+"\\s*</Name>");
 		        boolean permitted = regex.matcher(capabilities).find();
 		        
 		        if(!permitted) {
