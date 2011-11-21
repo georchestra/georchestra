@@ -27,7 +27,6 @@ public class WcsFormat extends AbstractGridFormat {
         this.maxCoverageExtractionSize = maxCoverageExtractionSize;
     }
 
-    @Override
     public boolean accepts (Object input, Hints hints ) {
         try {
             return toURL (input) != null;
@@ -84,7 +83,6 @@ public class WcsFormat extends AbstractGridFormat {
         throw new UnsupportedOperationException ("Read only support");
     }
     
-    @Override
     public GridCoverageWriter getWriter (Object destination, Hints hints) {
     	throw new UnsupportedOperationException ("Read only support");
     }
