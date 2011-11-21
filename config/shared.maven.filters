@@ -18,7 +18,7 @@ shared.ogc.statistics.activated=false
 shared.psql.host=localhost
 shared.psql.port=5432
 shared.psql.geonetwork.db=geonetwork
-shared.psql.ogc.statistics.db= ogcstatistics
+shared.psql.ogc.statistics.db=ogcstatistics
 shared.psql.user=www-data
 shared.psql.pass=www-data
 
@@ -33,3 +33,7 @@ shared.email.replyTo=arnaud.deshogues\@camptocamp.com
 shared.email.from=noreply\@camptocamp.com
 
 shared.geonetwork.dir=@shared.c2c.tomcat.dir@/work/gn_data
+
+shared.ogc.statistics.activated=false
+
+shared.download_form.activated=false
