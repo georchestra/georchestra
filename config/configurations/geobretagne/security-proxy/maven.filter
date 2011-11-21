@@ -1,0 +1,27 @@
+public_host=@shared.server.name@
+
+#LDAP config
+ldapUrl=@shared.ldapUrl@
+baseDN=@shared.ldap.baseDn@
+userSearchBaseDN=@shared.ldap.userSearchBaseDN@
+authoritiesBaseDN=@shared.ldap.groupSearchBaseDN@
+ldapAdminDn=@shared.ldap.admin.dn@
+ldap.admin.password=@shared.ldap.admin.password@
+
+cas.public.host=@shared.server.name@
+cas.private.host=localhost
+
+defaultTarget.port=8080
+public.ssl=443
+private.ssl=8443
+geoserver.server=http://@shared.server.name@:@shared.server.port@
+
+proxy.defaultTarget=http://localhost:8080
+proxy.mapping=\
+    <entry key="extractorapp" value="${proxy.defaultTarget}/extractorapp-private/" />\
+    <entry key="gssec" value="${proxy.defaultTarget}/geoserver-security/" />\
+    <entry key="mapfishapp" value="${proxy.defaultTarget}/mapfishapp-private/" />\
+    <entry key="geonetwork" value="${proxy.defaultTarget}/geonetwork-private/" />\
+    <entry key="catalogapp" value="${proxy.defaultTarget}/catalogapp-private/" />\
+    <entry key="geoserver" value="http://localhost:8180/geoserver/" />
+

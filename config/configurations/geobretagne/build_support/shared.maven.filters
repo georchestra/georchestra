@@ -1,0 +1,8 @@
+# this file is not used. it simply shows the parameters that are required in the actual file for the project
+
+shared.server.name=<need to override>
+shared.apache.conf.dir=<need to override>
+shared.privileged.geoserver.user=<need to override>
+shared.privileged.geoserver.pass=<need to override>
+shared.ldap.admin.password=<need to override>
+shared.ldap.baseDn=<need to override>

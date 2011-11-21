@@ -1,0 +1,18 @@
+public_host=@shared.server.name@
+
+ldapUrl=@shared.ldapUrl@
+userSearchBaseDN=@shared.ldap.userSearchBaseDN@,@shared.ldap.baseDn@
+authoritiesBaseDN=@shared.ldap.baseDn@
+ldapAdminDn=@shared.ldap.admin.dn@
+ldapAdminPassword=@shared.ldap.admin.password@
+
+securityDir=/srv/tomcat/geoserver/webapps/geoserver/data/security/
+capabilitiesURL=http://@shared.server.name@:8180/geoserver/wms?service=wms&request=getcapabilities&version=1.3.0
+
+privelegedAdminUser=@shared.privileged.geoserver.user@
+privelegedAdminPass=@shared.privileged.geoserver.pass@
+
+camptocamp.security.loglevel=@shared.default.log.level@
+logdir=@shared.c2c.logdir@
+# options are StandardOut, FileAppender or HTMLAppender (zero or more and comma separated) 
+log.appender=FileAppender
