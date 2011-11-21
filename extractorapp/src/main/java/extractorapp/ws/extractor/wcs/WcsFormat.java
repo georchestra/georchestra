@@ -28,11 +28,14 @@ public class WcsFormat extends AbstractGridFormat {
     }
 
     public boolean accepts (Object input, Hints hints ) {
-        try {
-            return toURL (input) != null;
-        } catch (MalformedURLException e) {
-            return false;
-        }
+        return accepts(input);
+    }
+    public boolean accepts (Object input) {
+    	try {
+    		return toURL (input) != null;
+    	} catch (MalformedURLException e) {
+    		return false;
+    	}
     }
 
     @Override
