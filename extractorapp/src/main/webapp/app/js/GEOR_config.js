@@ -208,6 +208,16 @@ GEOR.config = (function() {
             ["mif", "Mif/Mid"]
         ],
         
+        /**
+         * Constant: DOWNLOAD_FORM
+         * Boolean: should the app display a form requesting user data and data usage ?
+         * If set to yes, setting up the dlform webapp is mandatory.
+         * Defaults to false
+         */
+        DOWNLOAD_FORM: getCustomParameter("DOWNLOAD_FORM", 
+            false),
+            
+            
         /***** Beginning of config options which can be overriden by GEOR.custom *****/
         
    
@@ -301,7 +311,6 @@ GEOR.config = (function() {
             ["EPSG:27562", "EPSG:27562 - Lambert II carto"], 
             ["EPSG:27572", "EPSG:27572 - Lambert II étendu"],
             ["EPSG:2154", "EPSG:2154 - Lambert 93"],
-            ["EPSG:3948", "EPSG:3948 - Lambert-93 CC48"],
             ["EPSG:4171", "EPSG:4171 - RGF93"],
             ["EPSG:4326", "EPSG:4326 - WGS84"]
         ]),

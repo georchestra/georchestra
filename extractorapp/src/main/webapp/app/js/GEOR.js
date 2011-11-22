@@ -16,6 +16,7 @@
  * @include GEOR_proj4jsdefs.js
  * @include GEOR_data.js
  * @include GEOR_map.js
+ * @include GEOR_dlform.js
  * @include GEOR_config.js
  * @include GEOR_ajaxglobal.js
  * @include GEOR_waiter.js
@@ -29,33 +30,68 @@
 Ext.namespace("GEOR");
 
 (function() {
-
-    var email = null;
-
+  
+    /**
+     * Handler which decides whether to show the DL Form.
+     */
+    var handleDlForm = function(email, b) {
+        if (GEOR.config.DOWNLOAD_FORM) {
+            // show popup with form
+            GEOR.dlform.show({
+                // callback once submitted :
+                callback: function() {
+                    GEOR.layerstree.extract(email, b);
+                }
+            });
+        } else {
+            GEOR.layerstree.extract(email, b);
+        }
+    };
+   
     /**
      * Handler for extract all checked layers button.
      */
     var extractHandler = function(b) {
-        email = email || GEOR.data.email;
         var emailRegexp = /^([\w\-\'\-]+)(\.[\w-\'\-]+)*@([\w\-]+\.){1,5}([A-Za-z]){2,4}$/;
-
+        var email = GEOR.data.email || (localStorage && localStorage.getItem('email'));
         if (emailRegexp.test(email)) {
-            GEOR.layerstree.extract(email, b);
+            handleDlForm(email, b);
         } else {
             // prompt for valid email and process the extraction using a callback
             Ext.Msg.prompt('Email', 'Saisissez une adresse email valide : ', function(btn, text){
-                if (btn == 'ok'){
+                if (btn == 'ok') {
                     if (emailRegexp.test(text)) {
-                        email = text;
-                        GEOR.layerstree.extract(email, b);
-                    }
-                    else {
+                        if (localStorage) {
+                            localStorage.setItem('email', text);
+                        }
+                        GEOR.data.email = text;
+                        handleDlForm(text, b);
+                    } else {
                         GEOR.util.errorDialog({
                             msg: "L'email n'est pas valide. Abandon de l'extraction."
                         });
                     }
                 }
             });
+        }
+    };
+
+    /**
+     * Handler for extract button.
+     */
+    var extractBtnHandler = function() {
+        if (GEOR.layerstree.getSelectedLayersCount() > 0) {
+            extractHandler(this);
+        } else {
+            var dialog = Ext.Msg.confirm('Aucune couche dans le panier', 
+            "Vous n'avez pas sélectionné de couche pour l'extraction. Tout extraire ?", function(btn, text){
+                if (btn == 'yes'){
+                    GEOR.layerstree.selectAllLayers();
+                    extractHandler(this);
+                } else {
+                    dialog.hide();
+                }
+            }, this);
         }
     };
 
@@ -176,21 +212,7 @@ Ext.namespace("GEOR");
                             id: "geor-btn-extract-id",
                             text: "Extraire les couches cochées",
                             iconCls: "geor-btn-extract",
-                            handler: function() {
-                                if (GEOR.layerstree.getSelectedLayersCount() > 0) {
-                                    extractHandler(this);
-                                } else {
-                                    var dialog = Ext.Msg.confirm('Aucune couche dans le panier', 
-                                    "Vous n'avez pas sélectionné de couche pour l'extraction. Tout extraire ?", function(btn, text){
-                                        if (btn == 'yes'){
-                                            GEOR.layerstree.selectAllLayers();
-                                            extractHandler(this);
-                                        } else {
-                                            dialog.hide();
-                                        }
-                                    }, this);
-                                }
-                            }
+                            handler: extractBtnHandler
                         }
                     ]
                 }, {
@@ -214,7 +236,7 @@ Ext.namespace("GEOR");
                     ]
                 }]
             }]
-        });    
+        }); 
         
         // the viewport
         new Ext.Viewport({

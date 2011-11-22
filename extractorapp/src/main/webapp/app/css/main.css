@@ -169,3 +169,8 @@
 	overflow-x: hidden;
 	overflow-y: auto;
 }
+
+/* Correction bug visuel sur champ multiselect "applications" : */
+.x-window .x-fieldset {
+	margin-bottom: 0px;
+}

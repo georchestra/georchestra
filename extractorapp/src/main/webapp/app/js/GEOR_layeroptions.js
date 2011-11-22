@@ -375,7 +375,7 @@ GEOR.layeroptions = (function() {
                                         fieldLabel: 'Projection de sortie'
                                     }),
                                     getNumberField('customResolution', {
-                                        fieldLabel: 'Résolution de sortie raster',
+                                        fieldLabel: 'Résolution raster (m/pixel)',
                                         value: null
                                     })
                                 ]

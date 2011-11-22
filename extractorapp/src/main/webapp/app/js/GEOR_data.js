@@ -45,19 +45,24 @@ GEOR.data = (function() {
          * Property: email
          * Email can be overriden dynamically in index.jsp
          */
-        email: null,
+        email: '',
         
         /**
          * Property: username
          * Username can be overriden dynamically in index.jsp
          */
-        username: null,
+        username: '',
+        
+        first_name: '',
+        last_name: '',
+        company: '',
+        tel: '',
         
         /**
          * Property: debug
          * Debug can be overriden dynamically in index.jsp
          */
-        debug: null
+        debug: false
     };
     
 })();

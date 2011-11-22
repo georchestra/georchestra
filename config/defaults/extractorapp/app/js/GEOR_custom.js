@@ -10,6 +10,23 @@ Ext.namespace("GEOR");
 
 	
 GEOR.custom = {
+    
+    /**
+     * Constant: DOWNLOAD_FORM
+     * Boolean: should the app display a form requesting user data and data usage ?
+     * Defaults to false (see shared.download_form.activated var in shared.maven.filters file)
+     */
+    DOWNLOAD_FORM: @shared.download_form.activated@,
+    
+    /**
+     * Constant: PDF_URL
+     * String: the URL to the downloaded data Terms Of Use
+     * Defaults to /static/cgu.pdf (see shared.download_form.pdf_url var in shared.maven.filters file)
+     */
+    PDF_URL: "@shared.download_form.pdf_url@",
+    
+    /***** Beginning of config options which can be set in this file *****/
+    
     /**
      * Constant: GEOSERVER_WMS_URL
      * The URL to GeoServer WMS.

@@ -966,7 +966,9 @@ GEOR.layerstree = (function() {
                     // info window
                     GEOR.util.infoDialog({
                         msg: "Extraction en cours.\n" +
-                             "Un email vous sera envoyé lorsque l'extraction sera terminée."
+                            "Un email sera envoyé à l'adresse "+
+                            GEOR.data.email
+                            +" lorsque l'extraction sera terminée."
                     });
                 },
                 failure: function(response) {

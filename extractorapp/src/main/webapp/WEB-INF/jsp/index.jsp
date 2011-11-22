@@ -34,6 +34,7 @@ if(sec_roles != null) {
 <head>
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
     <link rel="stylesheet" type="text/css" href="resources/lib/externals/ext/resources/css/ext-all.css" />
+    <link rel="stylesheet" type="text/css" href="resources/lib/externals/ext/examples/ux/css/MultiSelect.css"/>
     <link rel="stylesheet" type="text/css" href="resources/lib/externals/ext/resources/css/xtheme-gray.css" />
     <link rel="stylesheet" type="text/css" href="resources/app/openlayers_gray_theme/style.css" />
     <style type="text/css">
@@ -76,6 +77,7 @@ if(sec_roles != null) {
         }
     </style>
     <link rel="stylesheet" type="text/css" href="resources/app/css/main.css" />
+
     <title lang="fr" dir="ltr">Extracteur - geOrchestra</title>
 <c:choose>
     <c:when test='<%= request.getParameter("noheader") != null %>'>
@@ -196,6 +198,7 @@ if(sec_roles != null) {
     <script type="text/javascript" src="resources/app/js/GEOR_waiter.js"></script>
     <script type="text/javascript" src="resources/app/js/GEOR_data.js"></script>
     <script type="text/javascript" src="resources/app/js/GEOR_config.js"></script>
+    <script type="text/javascript" src="resources/app/js/GEOR_dlform.js"></script>
     <script type="text/javascript" src="resources/app/js/GEOR_proj4jsdefs.js"></script>
     <script type="text/javascript" src="resources/app/js/GEOR_toolbar.js"></script>
     <script type="text/javascript" src="resources/app/js/GEOR_map.js"></script>
@@ -205,12 +208,17 @@ if(sec_roles != null) {
     <script type="text/javascript" src="resources/app/js/GEOR_ajaxglobal.js"></script>
     <script type="text/javascript" src="resources/app/js/GEOR.js"></script>
     <script type="text/javascript" src="https://getfirebug.com/firebug-lite-beta.js"></script>
+    
+    <script type="text/javascript" src="resources/lib/externals/ext/examples/ux/MultiSelect.js"></script>
+    
         </c:when>
         <c:otherwise>
     <script type="text/javascript" src="resources/lib/externals/ext/ext-all.js"></script>
     <script type="text/javascript" src="resources/build/extractorapp.js"></script>
         </c:otherwise>
     </c:choose>
+    <script type="text/javascript" src="resources/lib/externals/ext/src/locale/ext-lang-fr.js"></script>
+    
     <script type="text/javascript">
         // remove the loading element
         Ext.get("loading").remove();
@@ -253,8 +261,12 @@ if(sec_roles != null) {
         <c:when test='<%= anonymous == false %>'>
     <script type="text/javascript">
         GEOR.data.anonymous = false;
-        GEOR.data.username = "<%=request.getHeader("sec-username") %>";
-        GEOR.data.email = "<%=request.getHeader("sec-email") %>";
+        GEOR.data.username = "<%=(request.getHeader("sec-username") == null ? "" : request.getHeader("sec-username"))%>";
+        GEOR.data.email = "<%=(request.getHeader("sec-email") == null ? "" : request.getHeader("sec-email"))%>";
+        GEOR.data.first_name = "<%=(request.getHeader("sec-firstname") == null ? "" : request.getHeader("sec-firstname"))%>";
+        GEOR.data.last_name = "<%=(request.getHeader("sec-lastname") == null ? "" : request.getHeader("sec-lastname"))%>";
+        GEOR.data.company = "<%=(request.getHeader("sec-org") == null ? "" : request.getHeader("sec-org"))%>";
+        GEOR.data.tel = "<%=(request.getHeader("sec-tel") == null ? "" : request.getHeader("sec-tel"))%>";
     </script>
         </c:when>
     </c:choose>
