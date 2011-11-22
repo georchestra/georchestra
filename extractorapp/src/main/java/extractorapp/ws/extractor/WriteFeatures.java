@@ -205,7 +205,7 @@ public class WriteFeatures implements FeatureVisitor {
         attbuilder.setBinding(geomType.binding);
 
         // mif needs geom to be first attribute
-        ftBuilder.add (0, attbuilder.buildDescriptor(newName));
+        ftBuilder.add (0, attbuilder.buildDescriptor(geomAttName));
         
         SimpleFeatureType updatedFeatureType = ftBuilder.buildFeatureType ();
         return updatedFeatureType;
