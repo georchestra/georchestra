@@ -37,3 +37,5 @@ shared.geonetwork.dir=@shared.c2c.tomcat.dir@/work/gn_data
 shared.ogc.statistics.activated=false
 
 shared.download_form.activated=false
+shared.download_form.pdf_url=/static/cgu.pdf
+shared.download_form.jdbcUrl=@shared.psql.url@

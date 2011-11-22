@@ -1,0 +1,2 @@
+dlJdbcUrl=@shared.download_form.jdbcUrl@
+activated=@shared.download_form.activated@
