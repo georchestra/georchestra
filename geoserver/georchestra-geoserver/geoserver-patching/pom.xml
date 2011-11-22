@@ -12,6 +12,7 @@
 	<properties>
 		<maven.test.skip>true</maven.test.skip>
 		<gs.dir>${project.basedir}/../geoserver-checkouts</gs.dir>
+		<maven.executable>${maven.home}/bin/mvn</maven.executable>
 	</properties>
 	
 	<build>
@@ -76,7 +77,7 @@
 							<goal>exec</goal>
 						</goals>
 						<configuration>
-							<executable>mvn</executable>
+							<executable>${maven.executable}</executable>
 							<commandlineArgs>clean</commandlineArgs>
 							<workingDirectory>${gs.dir}</workingDirectory>
 						</configuration>
@@ -88,7 +89,7 @@
 							<goal>exec</goal>
 						</goals>
 						<configuration>
-							<executable>mvn</executable>
+							<executable>${maven.executable}</executable>
 							<commandlineArgs>install -Dserver=${server} -Dmaven.test.skip</commandlineArgs>
 							<workingDirectory>${gs.dir}</workingDirectory>
 						</configuration>
