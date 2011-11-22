@@ -47,6 +47,7 @@
 						<patch>maven-config.patch</patch>
 						<patch>maven3.patch</patch>
 						<patch>web-app-web-xml.patch</patch>
+						<patch>Wcs10DescribeCoverageTransformer.patch</patch>
 					</patches>
 					<targetDirectory>${patch.dir}</targetDirectory>
 					<strip>0</strip>
