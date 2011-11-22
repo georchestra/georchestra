@@ -75,15 +75,15 @@ correspond to the identifier you chose to identify the target deploy platform.):
 
 Once all configuration files have been updated one can build all projects.  
 
-Building
-========
+Building all modules
+====================
 
 From the root directory of the checkout execute maven specifying the server you 
 want to build for and the task (typically install)
 
 ::
     
-  mvn install -P<configurationkey>
+  ./mvn install -P<configurationkey>
 
 
 When executed in the root directory all project will be build. When the command 
@@ -98,6 +98,39 @@ In my case the file is in */home/username/.m2/repository/org/georchestra/cas-ser
 
 Once all of the artifacts are built then they can be deployed with the 
 server-deploy module.
+
+
+Building submodules
+===================
+
+By default, the mvn command uses the "all" profile. This profile builds 
+all submodules for the specified configuration. You may want to build
+only a subset of modules. To do this, deactivate the all modules and
+specify a module profile list 
+
+::
+
+  ./mvn install -P-all,extractorapp,<configurationkey>
+
+Notice the "-all" that desactivates the whole project building,
+and the "extractorapp" profile enabling the extractor application
+build.
+
+You may use the following profiles :
+
+ * all - builds all modules (default option)
+ * -all - deactivates the whole project build
+ * cas-web-server - builds the CAS server
+ * geonetwork - builds the geonetwork application
+ * doc - builds the documentation application
+ * extractorapp - builds the extractor application
+ * mapfishapp - builds the viewer application
+ * catalogapp - builds the catalog light client application
+ * security-proxy - builds the security proxy application
+
+Other submodules are dependencies and cannot be desactivated.
+
+
 
 Deploy
 ======
