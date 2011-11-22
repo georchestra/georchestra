@@ -199,8 +199,14 @@ public class WriteFeatures implements FeatureVisitor {
         GeometryDescriptor geometryDescriptor = _type.getGeometryDescriptor ();
         String geomAttName = geometryDescriptor.getLocalName ();
         ftBuilder.remove (geomAttName);
-        CoordinateReferenceSystem crs = geometryDescriptor.getCoordinateReferenceSystem ();
-        ftBuilder.add (geomAttName, geomType.binding, crs);
+        
+        AttributeTypeBuilder attbuilder = new AttributeTypeBuilder();
+        attbuilder.init(geometryDescriptor);
+        attbuilder.setBinding(geomType.binding);
+
+        // mif needs geom to be first attribute
+        ftBuilder.add (0, attbuilder.buildDescriptor(newName));
+        
         SimpleFeatureType updatedFeatureType = ftBuilder.buildFeatureType ();
         return updatedFeatureType;
     }
