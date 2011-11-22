@@ -69,7 +69,7 @@ public class WriteFeatures implements FeatureVisitor {
         
         // for MEF first attribute must be geometry attribute so lets find that first.
         addGeometryAttribute(type, outputProjection, builder, usedAttNames);
-        addNonGeomAttributes(type, builder, usedAttNames);
+        addNonGeomAttributes(type, builder, usedAttNames, dsFactory);
         
         _type = builder.buildFeatureType ();
         _dsFiles = new HashMap<GeomType, FeatureStore<SimpleFeatureType, SimpleFeature>>();
@@ -77,7 +77,7 @@ public class WriteFeatures implements FeatureVisitor {
     }
 
 	private void addNonGeomAttributes(SimpleFeatureType type,
-			SimpleFeatureTypeBuilder builder, Set<String> usedAttNames) {
+			SimpleFeatureTypeBuilder builder, Set<String> usedAttNames, DatastoreFactory dsFactory) {
 		for (int i = 0; i < type.getAttributeCount (); i++) {
             AttributeDescriptor desc = type.getDescriptor (i);
             
@@ -89,6 +89,9 @@ public class WriteFeatures implements FeatureVisitor {
             String uniqueName = toUniqueName (type, usedAttNames, i, attName);
             AttributeTypeBuilder attBuilder = new AttributeTypeBuilder ();
             attBuilder.init (desc);
+            if(dsFactory instanceof MifDatastoreFactory && desc.getType().getBinding().isAssignableFrom(Short.class)) {
+            	attBuilder.setBinding(Integer.class);
+            }
             builder.add (attBuilder.buildDescriptor (uniqueName));
         }
 	}

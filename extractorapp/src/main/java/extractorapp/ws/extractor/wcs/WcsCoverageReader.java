@@ -327,6 +327,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
 
     private BoundWcsRequest negotiateFormat(BoundWcsRequest request) throws IOException {
         final Set<String> formats = request.getSupportedFormats();
+        if(formats.isEmpty()) return request;
         if (!formats.contains(request.format)) {
             for (String format : preferredFormats) {
                 if (formats.contains(format))
@@ -365,6 +366,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
     private BoundWcsRequest negotiateRequestCRS(BoundWcsRequest request) throws IOException, FactoryException {
         Set<String> crss = request.getSupportedRequestCRSs();
         String requestCrs = "EPSG:"+CRS.lookupEpsgCode(request.requestBbox.getCoordinateReferenceSystem(), true);
+        if(crss.isEmpty()) return request;
         if (!crss.contains(requestCrs)) {
             ReferencedEnvelope newBBox = null;
             for (String crs : crss) {
