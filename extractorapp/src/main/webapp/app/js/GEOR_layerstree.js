@@ -899,18 +899,12 @@ GEOR.layerstree = (function() {
         },
         
         /**
-         * APIMethod: extract
-         * Extract all checked layers.
+         * APIMethod: getSpec
+         * returns the current extraction spec.
          */
-        extract: function(email, button) {
+        getSpec: function(email) {
             var checkedNodes = getChecked(rootNode), node;
             var l = checkedNodes.length;
-            if (l === 0) {
-                return;
-            }
-            
-            observable.fireEvent('beforeextract');
-            GEOR.waiter.show();
             
             var global = globalPropertiesNode.attributes.owsinfo.exportinfo;
             var out = {
@@ -951,6 +945,16 @@ GEOR.layerstree = (function() {
                 };
             }
             
+            return out;
+        },
+        
+        /**
+         * APIMethod: extract
+         * Extract all checked layers.
+         */
+        extract: function(email, button) {
+            observable.fireEvent('beforeextract');
+            GEOR.waiter.show();
             Ext.Ajax.request({
                 url: GEOR.config.EXTRACTOR_BATCH_URL,
                 success: function(response) {
@@ -970,7 +974,7 @@ GEOR.layerstree = (function() {
                         msg: "La requête d'extraction n'a pas abouti."
                     });
                 },
-                jsonData: out,
+                jsonData: GEOR.layerstree.getSpec(email),
                 scope: this
             });
 
@@ -983,7 +987,7 @@ GEOR.layerstree = (function() {
         getSelectedLayersCount: function() {
             var count = 0;
             rootNode.cascade(function(n) {
-                if (n.isLeaf() && n.isSelected() && 
+                if (n.isLeaf() && n.attributes.checked && 
                     n.parentNode !== rootNode && !this.disabled) {
                     count += 1;
                 }
