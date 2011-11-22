@@ -30,7 +30,7 @@ public abstract class AbstractApplication {
 	
 	protected boolean isInvalid() {
 		return ((firstName == null) || (secondName == null)	|| (company == null) || (email == null)
-				|| (tel == null) || (dataUseStr == null) || (comment == null) || (ok == false)
+				|| (dataUseStr == null) || (ok == false)
 				|| (userName == null) || (sessionId == null));
 	}
 
@@ -40,7 +40,7 @@ public abstract class AbstractApplication {
 		// Rely first on the headers given by the Security-proxy
 		// fallback on the form fields (in case of unauthenticated)
 		firstName    = request.getHeader("sec-firstname") != null ? request.getHeader("sec-firstname") : request.getParameter("first_name");
-		secondName   = request.getHeader("sec-lastname")  != null ? request.getHeader("sec-lastname")  : request.getParameter("second_name");
+		secondName   = request.getHeader("sec-lastname")  != null ? request.getHeader("sec-lastname")  : request.getParameter("last_name");
 		company      = request.getHeader("sec-org")       != null ? request.getHeader("sec-org")       : request.getParameter("company");
 		email        = request.getHeader("sec-email")     != null ? request.getHeader("sec-email")     : request.getParameter("email");
 		tel          = request.getHeader("sec-tel")       != null ? request.getHeader("sec-tel")       : request.getParameter("tel");
@@ -48,6 +48,7 @@ public abstract class AbstractApplication {
 		comment      = request.getParameter("comment");
 		ok          = request.getParameter("ok")         != null ? request.getParameter("ok").equalsIgnoreCase("on") : false;
 		userName     = request.getHeader("sec-username")  != null ? request.getHeader("sec-username") : request.getParameter("username");
+		// TODO : ??
 		sessionId    = request.getSession().getId();
 	}
 	
