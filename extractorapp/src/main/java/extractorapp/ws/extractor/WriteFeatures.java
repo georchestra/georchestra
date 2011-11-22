@@ -67,29 +67,54 @@ public class WriteFeatures implements FeatureVisitor {
         builder.setName (type.getName ());
         Set<String> usedAttNames = new HashSet<String> ();
         
-        for (int i = 0; i < type.getAttributeCount (); i++) {
-            AttributeDescriptor desc = type.getDescriptor (i);
-            String attName = desc.getLocalName ();
-            
-            if (desc instanceof GeometryDescriptor && desc != type.getGeometryDescriptor ()) {
-                // shapefiles can only have one geometry so skip any
-                // geometry descriptor that is not the default
-                continue;
-            }
-            String uniqueName = toUniqueName (type, usedAttNames, i, attName);
-            
-            AttributeTypeBuilder attBuilder = new AttributeTypeBuilder ();
-            attBuilder.init (desc);
-            if (desc instanceof GeometryDescriptor) {
-                attBuilder.setCRS (outputProjection);
-            }
-            builder.add (attBuilder.buildDescriptor (uniqueName));
-        }
+        // for MEF first attribute must be geometry attribute so lets find that first.
+        addGeometryAttribute(type, outputProjection, builder, usedAttNames);
+        addNonGeomAttributes(type, builder, usedAttNames);
         
         _type = builder.buildFeatureType ();
         _dsFiles = new HashMap<GeomType, FeatureStore<SimpleFeatureType, SimpleFeature>>();
         _baseDir = baseDir;
     }
+
+	private void addNonGeomAttributes(SimpleFeatureType type,
+			SimpleFeatureTypeBuilder builder, Set<String> usedAttNames) {
+		for (int i = 0; i < type.getAttributeCount (); i++) {
+            AttributeDescriptor desc = type.getDescriptor (i);
+            
+            if (desc instanceof GeometryDescriptor) {
+                continue;
+            }
+
+            String attName = desc.getLocalName ();
+            String uniqueName = toUniqueName (type, usedAttNames, i, attName);
+            AttributeTypeBuilder attBuilder = new AttributeTypeBuilder ();
+            attBuilder.init (desc);
+            builder.add (attBuilder.buildDescriptor (uniqueName));
+        }
+	}
+
+	private void addGeometryAttribute(SimpleFeatureType type,
+			CoordinateReferenceSystem outputProjection,
+			SimpleFeatureTypeBuilder builder, Set<String> usedAttNames) {
+		for (int i = 0; i < type.getAttributeCount (); i++) {
+            AttributeDescriptor desc = type.getDescriptor (i);
+            if (desc instanceof GeometryDescriptor) {
+            	String attName = desc.getLocalName ();
+                String uniqueName = toUniqueName (type, usedAttNames, i, attName);
+                
+                AttributeTypeBuilder attBuilder = new AttributeTypeBuilder ();
+                attBuilder.init (desc);
+                if (desc instanceof GeometryDescriptor) {
+                    attBuilder.setCRS (outputProjection);
+                }
+                builder.add (attBuilder.buildDescriptor (uniqueName));
+                
+                // shapefiles can only have one geometry so skip any
+                // geometry descriptor that is not the default
+                break;
+            }
+        }
+	}
 
     @Override
     public void visit (Feature feature) {
