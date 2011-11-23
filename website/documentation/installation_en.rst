@@ -112,7 +112,7 @@ specify a module profile list
 
   ./mvn install -P-all,extractorapp,<configurationkey>
 
-Notice the "-all" that desactivates the whole project building,
+Notice the "-all" that deactivates the whole project building,
 and the "extractorapp" profile enabling the extractor application
 build.
 
@@ -128,7 +128,7 @@ You may use the following profiles :
  * catalogapp - builds the catalog light client application
  * security-proxy - builds the security proxy application
 
-Other submodules are dependencies and cannot be desactivated.
+Other submodules are dependencies and cannot be deactivated.
 
 
 
