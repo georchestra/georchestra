@@ -157,6 +157,7 @@ GEOR.wfsbrowser = (function() {
                 editable: false,
                 triggerAction: 'all',
                 height: 30,
+                width: 400,
                 fieldLabel: "Choisissez un serveur WFS",
                 loadingText: 'Chargement...',
                 mode: 'local',

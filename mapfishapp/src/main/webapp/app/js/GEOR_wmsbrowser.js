@@ -116,6 +116,7 @@ GEOR.wmsbrowser = (function() {
                 editable: false,
                 triggerAction: 'all',
                 height: 30,
+                width: 400,
                 fieldLabel: "Choisissez un serveur WMS",
                 loadingText: 'Chargement...',
                 mode: 'local',
