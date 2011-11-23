@@ -124,8 +124,7 @@ GEOR.dlform = (function() {
                 // hidden fields:
                 {
                     xtype: 'hidden',
-                    name: 'json_spec',
-                    value: Ext.encode(GEOR.layerstree.getSpec())
+                    name: 'json_spec'
                 }, 
                 {
                     xtype: 'hidden',
@@ -140,12 +139,12 @@ GEOR.dlform = (function() {
                     var fp = this.ownerCt.ownerCt,
                         form = fp.getForm();
                     if (form.isValid()) {
+                        var v = form.getValues();
                         
                         // save form fields in local storage if not connected.
                         if (ls) {
                             var fields = ['first_name', 'last_name', 'company', 'email', 'tel'];
                             if (GEOR.data.anonymous) {
-                                var v = form.getValues();
                                 GEOR.data.email = v['email']; // offer a last chance to change email
                                 for (var i=0,l=fields.length;i<l;i++) {
                                     ls.setItem(fields[i], v[fields[i]]);
@@ -157,6 +156,11 @@ GEOR.dlform = (function() {
                                 }
                             }
                         }
+                        
+                        // set json_spec hidden field with given email
+                        form.findField('json_spec').setRawValue(
+                            Ext.encode(GEOR.layerstree.getSpec(v['email']))
+                        );
                         
                         form.submit({
                             // requires dlform webapp to be deployed:
