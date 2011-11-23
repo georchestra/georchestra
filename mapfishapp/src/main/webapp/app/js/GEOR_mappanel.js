@@ -40,6 +40,9 @@ GEOR.mappanel = (function() {
      * {OpenLayers.Control.MousePosition}
      */
     var buildMousePositionCtrl = function(projCode, div) {
+        var format = (projCode == "EPSG:4326") ? 
+            function(n) {return OpenLayers.Number.format(n, 5)} :
+            function(n) {return OpenLayers.Number.format(n, 0)} ;
         var options = {
             div: div,
             displayProjection: new OpenLayers.Projection(projCode),
@@ -47,8 +50,8 @@ GEOR.mappanel = (function() {
                 // "this" holds a reference to the MousePosition
                 // control
                 return this.displayProjection.toString() +
-                       ": " + OpenLayers.Number.format(lonlat.lon, 0) +
-                       " / " + OpenLayers.Number.format(lonlat.lat, 0);
+                       ": " + format(lonlat.lon) +
+                       " / " + format(lonlat.lat);
             }
         };
         return new OpenLayers.Control.MousePosition(options);
