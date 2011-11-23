@@ -64,12 +64,13 @@ public class CheckFormAcceptance {
 						"WHERE " +
 						"			(sessionid = ? OR (username = ?  AND username != 'anonymousUser')) " +
 						"AND " +
-						"           json_spec = ?";
+						"           json_spec = ?;";
 			
 			checkformentryst  = connection.prepareStatement(sel);
 			checkformentryst.setString(1, session);
 			checkformentryst.setString(2, username);
-			checkformentryst.setString(3, jsonSpec);
+			// Extra \n to be removed with the trim() call
+			checkformentryst.setString(3, jsonSpec.trim());
 			
 			rs = checkformentryst.executeQuery();
 			
