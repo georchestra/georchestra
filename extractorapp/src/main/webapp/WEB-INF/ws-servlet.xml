@@ -22,6 +22,7 @@
       <property name="expiry" value="10"/> <!-- days -->
       <property name="period" value="10"/> <!-- minutes -->
     </bean>
+     
       
     <bean id="extractor-controller" init-method="validateConfig"
           class="extractorapp.ws.extractor.ExtractorController">
@@ -49,6 +50,12 @@
                 <constructor-arg index="1" value="${priveleged_admin_pass}"/>
             </bean>
         </property>
+		<property name="checkFormAcceptance">
+			<bean class="extractorapp.ws.acceptance.CheckFormAcceptance">
+				<constructor-arg index="0" value="${dlformjdbcurl}" />
+				<constructor-arg index="1" value="${dlformactivated}" />
+			</bean>
+		</property>
     </bean>
 
     <!-- Email configuration -->

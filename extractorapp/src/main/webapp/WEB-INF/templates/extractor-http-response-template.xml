@@ -2,4 +2,5 @@
 <response>
 	<link>{link}</link>
     <emails>{emails}</emails>
+    <success>true</success>
 </response>

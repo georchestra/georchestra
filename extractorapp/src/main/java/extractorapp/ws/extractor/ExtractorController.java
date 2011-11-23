@@ -14,6 +14,7 @@ import java.util.UUID;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -28,6 +29,7 @@ import org.springframework.web.context.ServletContextAware;
 import extractorapp.ws.CompleteEmailParams;
 import extractorapp.ws.EmailDefaultParams;
 import extractorapp.ws.SharedConstants;
+import extractorapp.ws.acceptance.CheckFormAcceptance;
 
 /**
  * Controller for the Extractor
@@ -58,6 +60,8 @@ public class ExtractorController implements ServletContextAware {
     private String secureHost;
     private long maxCoverageExtractionSize = Long.MAX_VALUE; 
 
+    private CheckFormAcceptance checkFormAcceptance;
+    
     public void validateConfig() {
         if(SharedConstants.inProduction()){
             File storageFile = FileUtils.storageFile("");
@@ -107,47 +111,70 @@ public class ExtractorController implements ServletContextAware {
 
     // ----------------- implementation of extraction ----------------- //
 
-    private void doExtraction(boolean testing, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        String postData = FileUtils.asString(request.getInputStream());
+	private void doExtraction(boolean testing, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+		String postData = FileUtils.asString(request.getInputStream());
+		String reponseData = "";
+		Cookie[] c = request.getCookies();
+		String sessionId = null;
+		
+		for (int i = 0; i < c.length; i++) {
+			if (c[i].getName().equalsIgnoreCase("JSESSIONID")) {
+				sessionId = c[i].getValue();
+				break;
+			}
+		}
+		if (checkFormAcceptance.isFormAccepted(sessionId,
+				request.getHeader("sec-username"), postData)) {
+			UUID requestUuid = UUID.randomUUID();
 
-        UUID requestUuid = UUID.randomUUID();
-        
-        StringBuilder url = new StringBuilder(servletUrl);
-        url.append(RESULTS_MAPPING);
-        url.append("?");
-        url.append(UUID_PARAM);
-        url.append("=");
-        url.append(requestUuid);
+			StringBuilder url = new StringBuilder(servletUrl);
+			url.append(RESULTS_MAPPING);
+			url.append("?");
+			url.append(UUID_PARAM);
+			url.append("=");
+			url.append(requestUuid);
 
-        List<ExtractorLayerRequest> requests = Collections.unmodifiableList(ExtractorLayerRequest.parseJson(postData));
-        if(requests.size()>0){
-            String[] recipients = requests.get(0)._emails;
-            String message = replace(readFile(emailTemplateFile), url.toString(), recipients);
-            CompleteEmailParams emailParams = new CompleteEmailParams(emailDefaults, recipients, emailSubject, message);
-            String username = request.getHeader("sec-username");
-            String roles = request.getHeader("sec-roles");
-            ExtractorThread extractor = new ExtractorThread(testing, requests, servletContext, requestUuid, 
-                                                            emailParams, username, roles, adminCredentials, secureHost,
-                                                            maxCoverageExtractionSize);
-            if(testing) {
-                extractor.run();
-            } else {
-                extractor.start();
-            }
-        
-            String reponseData = replace(readFile(responseTemplateFile), url.toString(),recipients);
-            
-            response.setCharacterEncoding(responseCharset);
-            response.setContentType(reponseMimeType);
-            PrintWriter out = response.getWriter();
-            try {
-                out.println(reponseData);
-            } finally {
-                out.close();
-            }
-        }
+			List<ExtractorLayerRequest> requests = Collections
+					.unmodifiableList(ExtractorLayerRequest.parseJson(postData));
+			if (requests.size() > 0) {
+				String[] recipients = requests.get(0)._emails;
+				String message = replace(readFile(emailTemplateFile),
+						url.toString(), recipients);
+				CompleteEmailParams emailParams = new CompleteEmailParams(
+						emailDefaults, recipients, emailSubject, message);
+				String username = request.getHeader("sec-username");
+				String roles = request.getHeader("sec-roles");
+				ExtractorThread extractor = new ExtractorThread(testing,
+						requests, servletContext, requestUuid, emailParams,
+						username, roles, adminCredentials, secureHost,
+						maxCoverageExtractionSize);
+				if (testing) {
+					extractor.run();
+				} else {
+					extractor.start();
+				}
 
-    }
+				reponseData = replace(readFile(responseTemplateFile),
+						url.toString(), recipients);
+
+				response.setCharacterEncoding(responseCharset);
+				response.setContentType(reponseMimeType);
+			}
+		} else {
+			reponseData = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+					+ "<response>\n"
+					+ "  <message>form not accepted</message>\n"
+					+ "  <success>false</success>\n" + "</response>";
+		}
+		PrintWriter out = response.getWriter();
+
+		try {
+			out.println(reponseData);
+		} finally {
+			out.close();
+		}
+	}
  
     // ----------------- JavaBean methods ----------------- //
 
@@ -197,6 +224,9 @@ public class ExtractorController implements ServletContextAware {
     
     public void setSecureHost(String secureHost) {
         this.secureHost = secureHost;
+    }
+    public void setCheckFormAcceptance(CheckFormAcceptance a) {
+    	this.checkFormAcceptance = a;
     }
 
     private String replace(String template, String url, String[] emails) {
