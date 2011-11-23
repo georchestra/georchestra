@@ -29,6 +29,37 @@ GEOR.dlform = (function() {
     
     var createForm = function(options) {
         var ls = localStorage;
+        
+        var storeOptions = {
+            autoLoad: true,
+            reader: new Ext.data.JsonReader({
+                root: 'rows',
+                fields: ['id', 'name'],
+                idProperty: 'id'
+            })
+        };
+        if (GEOR.data.jettyrun) {
+            // we are debugging the app with "mvn jetty:run"
+            // we do not want to deploy dlform webapp to get this list
+            storeOptions.data = {
+                "rows": [
+                    {"id": 1, "name": "Administratif et budgétaire"},
+                    {"id": 2, "name": "Aménagement du Territoire et Gestion de l'Espace"},
+                    {"id": 3, "name": "Communication"},
+                    {"id": 4, "name": "Environnement"},
+                    {"id": 5, "name": "Fond de Plan"},
+                    {"id": 6, "name": "Foncier et Urbanisme"},
+                    {"id": 7, "name": "Formation"},
+                    {"id": 8, "name": "Gestion du Domaine Public"},
+                    {"id": 9, "name": "Mise en valeur du Territoire (Tourisme)"},
+                    {"id": 10, "name": "Risques Naturels et Technologiques"}
+                ]
+            };
+        } else {
+            // use the dedicated dlform webservice.
+            storeOptions.url = '/dlform/data_usage';
+        }
+        
         return new Ext.FormPanel({
             labelWidth: 100,
             standardSubmit: false,
@@ -76,31 +107,7 @@ GEOR.dlform = (function() {
                     displayField: 'name',
                     valueField: 'id',
                     minSelections: 1,
-                    store: new Ext.data.Store({
-                        // requires dlform webapp to be deployed:
-                        url: '/dlform/data_usage', 
-                        /* test :
-                        data: {
-                            "rows": [
-                                {"id": 1, "name": "Administratif et budgétaire"},
-                                {"id": 2, "name": "Aménagement du Territoire et Gestion de l'Espace"},
-                                {"id": 3, "name": "Communication"},
-                                {"id": 4, "name": "Environnement"},
-                                {"id": 5, "name": "Fond de Plan"},
-                                {"id": 6, "name": "Foncier et Urbanisme"},
-                                {"id": 7, "name": "Formation"},
-                                {"id": 8, "name": "Gestion du Domaine Public"},
-                                {"id": 9, "name": "Mise en valeur du Territoire (Tourisme)"},
-                                {"id": 10, "name": "Risques Naturels et Technologiques"},
-                            ]
-                        },*/
-                        autoLoad: true,
-                        reader: new Ext.data.JsonReader({
-                            root: 'rows',
-                            fields: ['id', 'name'],
-                            idProperty: 'id'
-                        })
-                    })
+                    store: new Ext.data.Store(storeOptions)
                 },
                 // comment
                 {
@@ -162,34 +169,40 @@ GEOR.dlform = (function() {
                             Ext.encode(GEOR.layerstree.getSpec(v['email']))
                         );
                         
-                        form.submit({
+                        var submitOptions = {
                             // requires dlform webapp to be deployed:
                             url: '/dlform/extractorapp',
                             success: function() {
                                 win.close();
                                 options.callback.call();
-                            },
-                            failure: function(form, action) {
-                                switch (action.failureType) {
-                                    case Ext.form.Action.CLIENT_INVALID:
-                                        // should not happen, since we have formBind
-                                        GEOR.util.errorDialog({
-                                            msg: 'Formulaire invalide'
-                                        });
-                                        break;
-                                    case Ext.form.Action.CONNECT_FAILURE:
-                                        GEOR.util.errorDialog({
-                                            msg: ['Impossible de sauver le formulaire', 
-                                                "Merci de contacter l'administrateur de la plateforme"].join('<br />')
-                                        });
-                                        break;
-                                    case Ext.form.Action.SERVER_INVALID:
-                                        GEOR.util.errorDialog({
-                                            msg: action.result.msg
-                                        });
-                                }
                             }
-                        });
+                        };
+                        // We do not want to block the app when running with jetty
+                        // in this particular case, the success callback always gets executed
+                        // Note: this is no security breach, since the extractorapp "initiate" controler
+                        // always checks that the form has been validated before the job is done.
+                        submitOptions.failure = (GEOR.data.jettyrun) ? 
+                            submitOptions.success : function(form, action) {
+                            switch (action.failureType) {
+                                case Ext.form.Action.CLIENT_INVALID:
+                                    // should not happen, since we have formBind
+                                    GEOR.util.errorDialog({
+                                        msg: 'Formulaire invalide'
+                                    });
+                                    break;
+                                case Ext.form.Action.CONNECT_FAILURE:
+                                    GEOR.util.errorDialog({
+                                        msg: ['Impossible de sauver le formulaire', 
+                                            "Merci de contacter l'administrateur de la plateforme"].join('<br />')
+                                    });
+                                    break;
+                                case Ext.form.Action.SERVER_INVALID:
+                                    GEOR.util.errorDialog({
+                                        msg: action.result.msg
+                                    });
+                            }
+                        };
+                        form.submit(submitOptions);
                     }
                 }
             }]
@@ -220,7 +233,7 @@ GEOR.dlform = (function() {
                     border: false,
                     width: 700,
                     height: 520,
-                    closeAction: 'hide',
+                    closeAction: 'close',
                     modal: true,
                     items: [createForm(options)]
                 });

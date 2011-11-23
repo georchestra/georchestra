@@ -225,13 +225,16 @@ if(sec_roles != null) {
 
         <% 
           String proxyHost = "/proxy/?url=";
+          Boolean jettyrun = false;
           if(request.getContextPath().equals("/extractorapp")) {
             proxyHost = "/extractorapp/ws/ogcproxy/?url=";
+            jettyrun = true;
           }
         %>
         // set proxy host
         OpenLayers.ProxyHost = '<%= proxyHost %>';
         GEOR.data.debug = ${c.debug};
+        GEOR.data.jettyrun = <%= jettyrun %>;
     <c:choose>
         <c:when test='${c.fake}'>
         GEOR.data.services = GEOR.config.STARTUP_SERVICES;

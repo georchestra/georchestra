@@ -62,7 +62,13 @@ GEOR.data = (function() {
          * Property: debug
          * Debug can be overriden dynamically in index.jsp
          */
-        debug: false
+        debug: false,
+        
+        /**
+         * Property: jettyrun
+         * Boolean: are we dev/testing the standalone app with Jetty
+         */
+        jettyrun: false
     };
     
 })();

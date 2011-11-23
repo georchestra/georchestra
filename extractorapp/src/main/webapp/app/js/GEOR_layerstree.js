@@ -957,20 +957,31 @@ GEOR.layerstree = (function() {
             GEOR.waiter.show();
             Ext.Ajax.request({
                 url: GEOR.config.EXTRACTOR_BATCH_URL,
+                // HTTP success:
                 success: function(response) {
-                    // disable button
-                    button.disable();
-                    window.setTimeout(function(){
-                        button.enable();
-                    }, GEOR.config.EXTRACT_BTN_DISABLE_TIME*1000);
-                    // info window
-                    GEOR.util.infoDialog({
-                        msg: "Extraction en cours.\n" +
-                            "Un email sera envoyé à l'adresse "+
-                            GEOR.data.email
-                            +" lorsque l'extraction sera terminée."
-                    });
+                    // since we are not in a REST world, we have to check 
+                    // the value of the success property in the returned XML
+                    if (response.responseText && 
+                        response.responseText.indexOf('<success>true</success>') > 0) {
+                        // disable button
+                        button.disable();
+                        window.setTimeout(function(){
+                            button.enable();
+                        }, GEOR.config.EXTRACT_BTN_DISABLE_TIME*1000);
+                        // info window
+                        GEOR.util.infoDialog({
+                            msg: "Extraction en cours.\n" +
+                                "Un email sera envoyé à l'adresse "+
+                                GEOR.data.email
+                                +" lorsque l'extraction sera terminée."
+                        });
+                    } else {
+                        GEOR.util.errorDialog({
+                            msg: "La requête d'extraction n'a pas abouti."
+                        });
+                    }
                 },
+                // HTTP failure:
                 failure: function(response) {
                     GEOR.util.errorDialog({
                         msg: "La requête d'extraction n'a pas abouti."
