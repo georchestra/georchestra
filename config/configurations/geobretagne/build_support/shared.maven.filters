@@ -1,0 +1,19 @@
+# shared values like public url can be put here
+shared.server.name=geobretagne.fr
+shared.server.port=80
+
+shared.ldap.host=rbr-vbdd01
+shared.ldap.port=389
+shared.ldapUrl=ldap://@shared.ldap.host@:@shared.ldap.port@
+
+shared.ldap.baseDn=dc=geobretagne,dc=fr
+shared.ldap.userSearchBaseDN=ou=users
+shared.ldap.groupSearchBaseDN=ou=groups
+shared.ldap.admin.dn=cn=admin,@shared.ldap.baseDn@
+shared.ldap.admin.password=secret
+
+shared.privileged.geoserver.user=extractorapp_priveleged_admin
+shared.privileged.geoserver.pass=gerlsSnFd6SmM
+
+shared.tomcat.dir=@allshared.c2c.tomcat.dir@
+shared.log.dir=@shared.c2c.logdir@

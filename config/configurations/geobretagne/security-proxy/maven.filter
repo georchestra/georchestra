@@ -1,0 +1,37 @@
+public_host=@shared.server.name@
+
+#LDAP config
+# /!\ avoid the trailing '/' /!\
+ldapUrl=ldap://localhost:389
+baseDN=@shared.ldap.baseDn@
+userSearchBaseDN=@shared.ldap.userSearchBaseDN@
+authoritiesBaseDN=ou=groups
+ldapAdminDn=@shared.ldap.admin.dn@
+ldap.admin.password=@shared.ldap.admin.password@
+
+cas.public.host=${public_host}
+cas.private.host=localhost
+
+defaultTarget.port=8080
+public.ssl=443
+private.ssl=8443
+geoserver.server=http://${public_host}:${defaultTarget.port}
+
+proxy.defaultTarget=http://localhost:8080
+proxy.mapping=<entry key="extractorapp" value="http://localhost:8080/extractorapp-private/" />\
+    <entry key="gssec" value="http://localhost:8080/geoserver-security/" />\
+    <entry key="mapfishapp" value="http://localhost:8080/mapfishapp-private/" />\
+    <entry key="geonetwork" value="http://localhost:8080/geonetwork-private/" />\
+    <entry key="catalogapp" value="http://localhost:8080/catalogapp-private/" />\
+    <entry key="geoserver" value="http://localhost:8081/geoserver/" />
+
+camptocamp.security.loglevel=ALL
+jasig.loglevel=ALL
+springframework.loglevel=ALL
+log.dir=/srv/tomcat/tomcat1/logs
+log.filename=security-proxy.log
+# options are StandardOut, FileAppender or HTMLAppender (zero or more and comma separated) 
+log.appender=FileAppender
+
+# dev should not need a test url 
+test.url=

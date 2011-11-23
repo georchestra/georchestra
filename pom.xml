@@ -151,6 +151,12 @@
 				<sub.target>prod</sub.target>
 			</properties>
 		</profile>
+                <profile>
+                        <id>geobretagne</id>
+                        <properties>
+                                <server>geobretagne</server>
+                        </properties>
+                </profile>
 		<profile>
 			<id>all</id>
 			<activation>
