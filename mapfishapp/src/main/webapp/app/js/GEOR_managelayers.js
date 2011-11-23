@@ -57,22 +57,22 @@ GEOR.managelayers = (function() {
          */
         "selectstyle"
     );
-    
+
     /**
      * Property: layerFinder
      */
     var layerFinder;
-    
+
     /**
      * Property: layerContainer
      */
     var layerContainer;
-    
+
     /**
      * Property: stylesMenu
      */
     var stylesMenu;
-    
+
     /**
      * Property: querierRecord
      */
@@ -143,7 +143,7 @@ GEOR.managelayers = (function() {
             });
         }
     };
-    
+
     /**
      * Method: formatAttribution
      *
@@ -151,7 +151,7 @@ GEOR.managelayers = (function() {
      * layerRecord - {GeoExt.data.LayerRecord}
      *
      * Returns:
-     * {Object} The configured object (xtype: box) 
+     * {Object} The configured object (xtype: box)
      *          for inclusion in layer manager item
      */
     var formatAttribution = function(layerRecord) {
@@ -160,15 +160,15 @@ GEOR.managelayers = (function() {
         if (titleForDisplay.length > 16) {
             titleForDisplay = titleForDisplay.substr(0, 13) + '...';
         }
-        
-        // logo displayed in qtip if set 
-        var tip = 'source : '+ (attr.title || '-') + 
+
+        // logo displayed in qtip if set
+        var tip = 'source : '+ (attr.title || '-') +
             ((attr.logo && GEOR.util.isUrl(attr.logo.href)) ? '<br /><img src=\''+attr.logo.href+'\' />' : '');
-        
-        var attrDisplay = (attr.href) ? 
+
+        var attrDisplay = (attr.href) ?
             '<a href="'+attr.href+'" target="_blank" ext:qtip="'+tip+'">'+titleForDisplay+'</a>' :
             '<span ext:qtip="'+tip+'">'+titleForDisplay+'</span>';
-        
+
         return {
             xtype: 'box',
             cls: "geor-layers-form-text",
@@ -178,7 +178,7 @@ GEOR.managelayers = (function() {
             }
         };
     };
-    
+
     /**
      * Method: formatVisibility
      *
@@ -186,7 +186,7 @@ GEOR.managelayers = (function() {
      * layerRecord - {GeoExt.data.LayerRecord}
      *
      * Returns:
-     * {Object} The configured object (xtype: box) 
+     * {Object} The configured object (xtype: box)
      *          for inclusion in layer manager item
      */
     var formatVisibility = function(layerRecord) {
@@ -204,7 +204,7 @@ GEOR.managelayers = (function() {
             }
         };
     };
-    
+
     /**
      * Method: createGfiButton
      *
@@ -212,7 +212,7 @@ GEOR.managelayers = (function() {
      * layerRecord - {GeoExt.data.LayerRecord}
      *
      * Returns:
-     * {Object} The configured object (xtype: button) 
+     * {Object} The configured object (xtype: button)
      *          for inclusion in layer manager item toolbar
      */
     var createGfiButton = function(layerRecord) {
@@ -231,94 +231,9 @@ GEOR.managelayers = (function() {
             }
         };
     };
-                
-    /**
-     * Method: zoomToLayerRecordExtent
-     *
-     * Parameters:
-     * r - {GeoExt.data.LayerRecord}
-     */
-    var zoomToLayerRecordExtent = function(r) {
-        var map = r.get('layer').map,
-            mapSRS = map.getProjection(),
-            zoomed = false,
-            bb = r.get('bbox');
-        for (var key in bb) {
-            if (!bb.hasOwnProperty(key)) {
-                continue;
-            }
-            if (key === mapSRS) {
-                map.zoomToExtent(
-                    OpenLayers.Bounds.fromArray(bb[key].bbox)
-                );
-                zoomed = true;
-                break;
-            }
-        }
-        if (!zoomed) {
-            // use llbbox
-            var llbbox = OpenLayers.Bounds.fromArray(
-                r.get('llbbox')
-            );
-            llbbox.transform(
-                new OpenLayers.Projection('EPSG:4326'), 
-                map.getProjectionObject()
-            );
-            map.zoomToExtent(llbbox);
-        }
-    };
-    
-    /**
-     * Method: createZoomButton
-     *
-     * Parameters:
-     * layerRecord - {GeoExt.data.LayerRecord}
-     *
-     * Returns:
-     * {Object} The configured object (xtype: button) 
-     *          for inclusion in layer manager item toolbar
-     */
-    var createZoomButton = function(layerRecord) {
-        var h = function(btn, pressed) {
-            var layer = layerRecord.get('layer'),
-                map = layer.map;
-            // TODO: layer.getDataExtent() can be null if layer strategy is bbox 
-            // and there's no feature currently in layer.
-            // It seems WFS capabilities has a llbbox field in record => parse it
-            if (layer.CLASS_NAME == "OpenLayers.Layer.Vector") {
-                var b = layer.getDataExtent();
-                if (b && b.getWidth() * b.getHeight()) {
-                    map.zoomToExtent(b);
-                }
-            } else {
-                var bbox = layerRecord.get('bbox');
-                if (!bbox) {
-                    // Get it from the WMS GetCapabilities document
-                    GEOR.ows.hydrateLayerRecord(layerRecord, {
-                        success: function(){
-                            zoomToLayerRecordExtent(layerRecord);
-                        },
-                        failure: function() {
-                            GEOR.util.errorDialog({
-                                msg: "Impossible d'obtenir "+
-                                    "l'étendue de la couche."
-                            });
-                        },
-                        scope: this
-                    });
-                } else {
-                    zoomToLayerRecordExtent(layerRecord);
-                }
-            }
-        };        
-        return {
-            xtype: 'button',
-            iconCls: 'geor-btn-zoom',
-            tooltip: "Recentrer sur cette couche",
-            handler: h
-        };
-    };
-    
+
+
+
     /**
      * Method: createFormatMenu
      *
@@ -331,7 +246,7 @@ GEOR.managelayers = (function() {
     var createFormatMenu = function(layerRecord) {
         var formats = layerRecord.get("formats");
         var layer = layerRecord.get("layer");
-        
+
         var formatMenuItems = [];
         if (formats && formats.length) {
             for (var i=0, len=formats.length; i<len; i++) {
@@ -340,8 +255,8 @@ GEOR.managelayers = (function() {
                     formatMenuItems.push(new Ext.menu.CheckItem({
                         text: value,
                         value: value,
-                        checked: (formats[i].current && 
-                            formats[i].current === true) || 
+                        checked: (formats[i].current &&
+                            formats[i].current === true) ||
                             (layer.params.FORMAT === formats[i]),
                         group: 'format_' + layer.id,
                         checkHandler: onFormatItemCheck,
@@ -358,12 +273,12 @@ GEOR.managelayers = (function() {
                 group: 'format_' + layer.id
             }));
         }
-        
+
         return new Ext.menu.Menu({
             items: formatMenuItems
         });
     };
-    
+
     /**
      * Method: createStylesMenu
      *
@@ -376,7 +291,7 @@ GEOR.managelayers = (function() {
     var createStylesMenu = function(layerRecord) {
         var styles = layerRecord.get("styles");
         var layer = layerRecord.get("layer");
-        
+
         var default_style = {
             text: 'Style par défaut',
             value: null,
@@ -396,7 +311,7 @@ GEOR.managelayers = (function() {
                 style = styles[i];
                 if (style.href) {
                     if (style.current) {
-                        // if the style has an href and is the current 
+                        // if the style has an href and is the current
                         // style we don't want any named style to be
                         // checked in the list of styles
                         default_style.checked = false;
@@ -424,7 +339,7 @@ GEOR.managelayers = (function() {
             items: stylesMenuItems
         });
     };
-    
+
     /**
      * Method: createMenu
      *
@@ -438,9 +353,103 @@ GEOR.managelayers = (function() {
         var queryable = !!(layerRecord.get("queryable"));
         var layer = layerRecord.get('layer');
         var isWMS = (layer.CLASS_NAME == "OpenLayers.Layer.WMS");
-        
+
         var menuItems = [], url;
-        if (layerRecord.get("metadataURLs") && 
+
+
+        /**
+         * Method: zoomToLayerRecordExtent
+         *
+         * Parameters:
+         * r - {GeoExt.data.LayerRecord}
+         */
+        var zoomToLayerRecordExtent = function(r) {
+            var map = r.get('layer').map,
+                mapSRS = map.getProjection(),
+                zoomed = false,
+                bb = r.get('bbox');
+            for (var key in bb) {
+                if (!bb.hasOwnProperty(key)) {
+                    continue;
+                }
+                if (key === mapSRS) {
+                    map.zoomToExtent(
+                        OpenLayers.Bounds.fromArray(bb[key].bbox)
+                    );
+                    zoomed = true;
+                    break;
+                }
+            }
+            if (!zoomed) {
+                // use llbbox
+                var llbbox = OpenLayers.Bounds.fromArray(
+                    r.get('llbbox')
+                );
+                llbbox.transform(
+                    new OpenLayers.Projection('EPSG:4326'),
+                    map.getProjectionObject()
+                );
+                map.zoomToExtent(llbbox);
+            }
+        };
+
+        // recenter action
+        menuItems.push({
+            iconCls: 'geor-btn-zoom',
+            text: "Recentrer sur la couche",
+            listeners: {
+                "click": function(btn, pressed) {
+                    var layer = layerRecord.get('layer'),
+                    map = layer.map;
+                    // TODO: layer.getDataExtent() can be null if layer strategy is bbox
+                    // and there's no feature currently in layer.
+                    // It seems WFS capabilities has a llbbox field in record => parse it
+                    if (layer.CLASS_NAME == "OpenLayers.Layer.Vector") {
+                        var b = layer.getDataExtent();
+                        if (b && b.getWidth() * b.getHeight()) {
+                            map.zoomToExtent(b);
+                        }
+                    } else {
+                        var bbox = layerRecord.get('bbox');
+                        if (!bbox) {
+                            // Get it from the WMS GetCapabilities document
+                            GEOR.ows.hydrateLayerRecord(layerRecord, {
+                                success: function(){
+                                    zoomToLayerRecordExtent(layerRecord);
+                                },
+                                failure: function() {
+                                    GEOR.util.errorDialog({
+                                        msg: "Impossible d'obtenir "+
+                                            "l'étendue de la couche."
+                                    });
+                                },
+                            scope: this
+                            });
+                        } else {
+                            zoomToLayerRecordExtent(layerRecord);
+                        }
+                    }
+                }
+            }
+        });
+
+        // redraw action (aka "do not used client-cached layer")
+        menuItems.push({
+            iconCls: 'geor-btn-refresh',
+            text: "Recharger la couche",
+            listeners: {
+                "click": function(btn, pressed) {
+                    layerRecord.get('layer').mergeNewParams({
+                        nocache: new Date().valueOf()
+                    });
+                }
+            }
+        });
+
+        menuItems.push("-");
+
+        // metadata action
+        if (layerRecord.get("metadataURLs") &&
             layerRecord.get("metadataURLs")[0]) {
             url = layerRecord.get("metadataURLs")[0];
             url = (url.href) ? url.href : url;
@@ -465,12 +474,12 @@ GEOR.managelayers = (function() {
                 }
             });
         }
-        
+
         // TODO: queryable is not the correct boolean here to decide whether
         // we can have the querier or not.
         // The availability of a WFS equivalent layer is.
         // This depends on http://csm-bretagne.fr/redmine/issues/1984
-        
+
         // TODO: have a generic field in layerrecord stating that a record is WFS or WMS.
         if (GEOR.querier && (queryable || layer.CLASS_NAME == "OpenLayers.Layer.Vector")) {
             menuItems.push({
@@ -537,10 +546,11 @@ GEOR.managelayers = (function() {
                 }
             });
         }
-        if (menuItems.length > 0) {
+        if (menuItems.length > 2) {
             menuItems.push("-");
         }
-        
+
+
         if (isWMS) {
             stylesMenu = createStylesMenu(layerRecord);
             menuItems.push({
@@ -553,13 +563,13 @@ GEOR.managelayers = (function() {
                 menu: createFormatMenu(layerRecord)
             });
         }
-        
+
         return new Ext.menu.Menu({
             ignoreParentClicks: true,
             items: menuItems
         });
     };
-    
+
     /**
      * Method: createLayerNodePanel
      *
@@ -579,7 +589,6 @@ GEOR.managelayers = (function() {
             buttons.push(createGfiButton(layerRecord));
         }
         buttons = buttons.concat([
-            createZoomButton(layerRecord), 
         {
             text:'Actions',
             menu: createMenu(layerRecord)
@@ -587,8 +596,8 @@ GEOR.managelayers = (function() {
             xtype: "gx_opacityslider",
             width: 100,
             // hack for http://csm-bretagne.fr/redmine/issues/2026 :
-            topThumbZIndex: 1000, 
-            // and this is because GeoExt.LayerOpacitySlider defaults 
+            topThumbZIndex: 1000,
+            // and this is because GeoExt.LayerOpacitySlider defaults
             // are too much for me :
             delay: 50,
             changeVisibilityDelay: 50,
@@ -598,7 +607,7 @@ GEOR.managelayers = (function() {
             layer: layer,
             plugins: new GeoExt.LayerOpacitySliderTip()
         }]);
-        
+
         // return the panel
         return {
             xtype: "panel",
@@ -620,8 +629,8 @@ GEOR.managelayers = (function() {
                     xtype: "toolbar",
                     cls: "geor-toolbar",
                     buttons: buttons
-                }, 
-                formatVisibility(layerRecord), 
+                },
+                formatVisibility(layerRecord),
                 formatAttribution(layerRecord)
             ],
             // add a method to unselect all predefined which
@@ -641,12 +650,12 @@ GEOR.managelayers = (function() {
      */
 
     return {
-    
+
         /*
          * Observable object
          */
         events: observable,
-        
+
         /**
          * APIMethod: create
          * Return the layer view config.

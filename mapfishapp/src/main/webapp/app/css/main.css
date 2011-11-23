@@ -102,7 +102,10 @@ div.olMapViewport {
     background-image: url(../img/famfamfam/map_edit.png) !important;
 }
 .geor-btn-zoom {
-    background-image: url(../img/famfamfam/arrow_in.png) !important;
+    background-image: url(../img/famfamfam/arrow_out.png) !important;
+}
+.geor-btn-refresh {
+    background-image: url(../img/famfamfam/arrow_refresh.png) !important;
 }
 .geor-btn-metadata {
     background-image: url(../img/famfamfam/application_view_list.gif) !important;

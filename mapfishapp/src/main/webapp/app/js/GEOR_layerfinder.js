@@ -236,7 +236,11 @@ GEOR.layerfinder = (function() {
                     // (well, for the moment - see http://csm-bretagne.fr/redmine/issues/1996)
                     recordsToAdd.push(record.clone());
                 } else {
-                    // WFS layers need cloning of protocol (and strategy) too ?
+                    // WFS layers need cloning of protocol.format too ?
+                    // "this.format is null" sur :
+                    // this.format.geometryName = geometryName; (protocol.WFS.v1 L231)
+                    // quand on supprime une couche WFS puis quand on l'ajoute à nouveau sans recharger le WFS capabilities store.
+                    
                     
                     // For WFS layers, we need to get more information 
                     // (typically the geometry name)
