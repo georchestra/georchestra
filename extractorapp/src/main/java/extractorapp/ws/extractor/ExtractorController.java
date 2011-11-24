@@ -115,15 +115,8 @@ public class ExtractorController implements ServletContextAware {
 			HttpServletResponse response) throws Exception {
 		String postData = FileUtils.asString(request.getInputStream());
 		String reponseData = "";
-		Cookie[] c = request.getCookies();
-		String sessionId = null;
+		String sessionId = request.getSession() != null ? request.getSession().getId() : "";
 		
-		for (int i = 0; i < c.length; i++) {
-			if (c[i].getName().equalsIgnoreCase("JSESSIONID")) {
-				sessionId = c[i].getValue();
-				break;
-			}
-		}
 		if (checkFormAcceptance.isFormAccepted(sessionId,
 				request.getHeader("sec-username"), postData)) {
 			UUID requestUuid = UUID.randomUUID();

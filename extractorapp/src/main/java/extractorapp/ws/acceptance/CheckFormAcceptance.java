@@ -67,6 +67,9 @@ public class CheckFormAcceptance {
 						"           json_spec = ?;";
 			
 			checkformentryst  = connection.prepareStatement(sel);
+			// TODO : session is useless here, because
+			// it is not a stable identifier between security-proxified webapps
+			// anyway it is not used in case of anonymous extraction requests.
 			checkformentryst.setString(1, session);
 			checkformentryst.setString(2, username);
 			// Extra \n to be removed with the trim() call
