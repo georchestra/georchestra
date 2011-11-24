@@ -1,7 +1,7 @@
-Index: wcs1_0/src/main/java/org/geoserver/wcs/DefaultWebCoverageService100.java
+Index: src/wcs1_0/src/main/java/org/geoserver/wcs/DefaultWebCoverageService100.java
 ===================================================================
---- wcs1_0/src/main/java/org/geoserver/wcs/DefaultWebCoverageService100.java	(revision 16592)
-+++ wcs1_0/src/main/java/org/geoserver/wcs/DefaultWebCoverageService100.java	(working copy)
+--- src/wcs1_0/src/main/java/org/geoserver/wcs/DefaultWebCoverageService100.java	(revision 16592)
++++ src/wcs1_0/src/main/java/org/geoserver/wcs/DefaultWebCoverageService100.java	(working copy)
 @@ -519,7 +519,7 @@
              GeneralEnvelope destinationEnvelope = (GeneralEnvelope) getHorizontalEnvelope(computeIntersectionEnvelope(
                      requestedEnvelope, nativeEnvelope));
