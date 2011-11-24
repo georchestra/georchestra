@@ -21,11 +21,6 @@ public class CheckFormAcceptance {
 	public CheckFormAcceptance(String _activated, String jdbcUrl) {
 
 		activated = "true".equalsIgnoreCase(_activated);
-
-		// LOCAL TEST, to be removed.
-		activated = true;
-		jdbcUrl = "jdbc:postgresql://localhost/aquitaine?user=www-data&password=www-data";
-		
 		
 		if (activated) {
 			basicDataSource = new BasicDataSource();
