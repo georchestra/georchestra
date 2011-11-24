@@ -312,6 +312,19 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
         try {
             ReadableByteChannel channel = Channels.newChannel(in);
             fout.getChannel().transferFrom(channel, 0, Long.MAX_VALUE);
+            
+            if(file.length() < 8000) {
+            	if(file.length() == 0) {
+            		throw new ExtractorException("GetCoverageRequests returned no data, see administrator");
+            	}
+            	String text = null;
+            	try {
+					text = org.apache.commons.io.FileUtils.readFileToString(file, "UTF-8");
+            	} catch (Throwable e) {
+            		// ignore.  I assume an image or something that this can't read
+            	}
+            	if(text != null && text.contains("<ServiceException>")) throw new ExtractorException(text);
+            }
         } finally {
             fout.close();
         }

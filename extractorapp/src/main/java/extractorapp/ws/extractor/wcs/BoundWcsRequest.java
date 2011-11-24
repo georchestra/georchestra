@@ -300,7 +300,7 @@ public class BoundWcsRequest extends WcsReaderRequest {
             } else {
                 spec += "?" + params (request, "&", resolveFormat);
             }
-            LOG.debug("making GET request to "+spec);
+            LOG.info("making GET request to "+spec);
             httpRequest = new HttpGet(spec);
         }
         
