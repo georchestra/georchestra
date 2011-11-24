@@ -151,7 +151,14 @@
 					<version>${project.version}</version>
 					<classifier>${server}</classifier>
 					<type>war</type>
-				</dependency>
+                                </dependency>
+                                <dependency>
+                                        <groupId>${project.groupId}</groupId>
+                                        <artifactId>downloadform</artifactId>
+                                        <version>${project.version}</version>
+                                        <classifier>${server}</classifier>
+                                        <type>war</type>
+                                </dependency>
 			</dependencies>
 		</profile>
 				<profile>
@@ -219,6 +226,13 @@
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>geoserver-webapp</artifactId>
+					<version>${project.version}</version>
+					<classifier>${server}</classifier>
+					<type>war</type>
+				</dependency>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>downloadform</artifactId>
 					<version>${project.version}</version>
 					<classifier>${server}</classifier>
 					<type>war</type>
@@ -357,5 +371,17 @@
 				</dependency>
 			</dependencies>
 		</profile>
-	</profiles>
+                <profile>
+                  <id>downloadform</id>
+                  <dependencies>
+                    <dependency>
+                      <groupId>${project.groupId}</groupId>
+                      <artifactId>downloadform</artifactId>
+                      <version>${project.version}</version>
+                      <classifier>${server}</classifier>
+                      <type>war</type>
+                    </dependency>
+                  </dependencies>
+                </profile>
+              </profiles>
 </project>

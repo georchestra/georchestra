@@ -28,6 +28,7 @@
 		<module>mif-2.5.8</module>
 		<module>static</module>
 		<module>epsg-extension</module>
+		<module>downloadform</module>
 		<module>ogc-server-statistics</module>
 		<module>server-deploy-support</module>
 	</modules>
@@ -125,7 +126,22 @@
 				<server>c2cpc61</server>
 			</properties>
 		</profile>
+
 		<profile>
+			<id>pigma</id>
+			<properties>
+				<server>pigma</server>
+			</properties>
+		</profile>
+	                <profile>
+			<id>pmauduit</id>
+			<properties>
+				<server>pmauduit</server>
+			</properties>
+		</profile>
+
+                
+                <profile>
 			<id>localhost</id>
 			<properties>
 				<server>localhost</server>
@@ -244,7 +260,13 @@
 				<module>geonetwork</module>
 			</modules>
 		</profile>
-	</profiles>
+ 		<profile>
+			<id>downloadform</id>
+			<modules>
+				<module>downloadform</module>
+			</modules>
+		</profile>
+        </profiles>
 	<repositories>
 		<repository>
 			<snapshots>

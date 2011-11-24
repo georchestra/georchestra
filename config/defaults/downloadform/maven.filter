@@ -1,2 +1,3 @@
-dlJdbcUrl=@shared.download_form.jdbcUrl@
+dlJdbcUrl=@shared.download_form.jdbcurl@
 activated=@shared.download_form.activated@
+logdir=@shared.c2c.logdir@

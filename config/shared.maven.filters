@@ -38,4 +38,4 @@ shared.ogc.statistics.activated=false
 
 shared.download_form.activated=false
 shared.download_form.pdf_url=/static/cgu.pdf
-shared.download_form.jdbcUrl=@shared.psql.url@
+shared.download_form.jdbcurl=@shared.psql.url@
