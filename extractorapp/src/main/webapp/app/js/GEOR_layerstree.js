@@ -903,6 +903,7 @@ GEOR.layerstree = (function() {
          * returns the current extraction spec.
          */
         getSpec: function(email) {
+            observable.fireEvent('beforeextract');
             var checkedNodes = getChecked(rootNode), node;
             var l = checkedNodes.length;
             
@@ -953,7 +954,6 @@ GEOR.layerstree = (function() {
          * Extract all checked layers.
          */
         extract: function(email, button) {
-            observable.fireEvent('beforeextract');
             GEOR.waiter.show();
             Ext.Ajax.request({
                 url: GEOR.config.EXTRACTOR_BATCH_URL,
