@@ -8,7 +8,6 @@
   </parent>
   <artifactId>downloadform</artifactId>
   <packaging>war</packaging>
-  <version>1.0-SNAPSHOT</version>
   <name>Download form webapp</name>
   <url>http://www.pigma.org</url>
   <dependencies>
@@ -69,7 +68,6 @@
     </dependency>
   </dependencies>
   <build>
-    <finalName>dlform</finalName>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
