@@ -224,20 +224,18 @@ GEOR.dlform = (function() {
          */
         show: function(options) {
             Ext.QuickTips.init();
-            
-            if (!win) {
-                win = new Ext.Window({
-                    title: "Prenez quelques instants pour nous indiquer l'utilisation des données",
-                    constrainHeader: true,
-                    layout: 'fit',
-                    border: false,
-                    width: 700,
-                    height: 520,
-                    closeAction: 'close',
-                    modal: true,
-                    items: [createForm(options)]
-                });
-            }
+        
+            win = new Ext.Window({
+                title: "Prenez quelques instants pour nous indiquer l'utilisation des données",
+                constrainHeader: true,
+                layout: 'fit',
+                border: false,
+                width: 700,
+                height: 520,
+                closeAction: 'close',
+                modal: true,
+                items: [createForm(options)]
+            });
             win.show();
         }
     };
