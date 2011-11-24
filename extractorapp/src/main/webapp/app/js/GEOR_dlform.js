@@ -57,7 +57,7 @@ GEOR.dlform = (function() {
             };
         } else {
             // use the dedicated dlform webservice.
-            storeOptions.url = '/dlform/data_usage';
+            storeOptions.url = '/downloadform/data_usage';
         }
         
         return new Ext.FormPanel({
@@ -171,7 +171,7 @@ GEOR.dlform = (function() {
                         
                         var submitOptions = {
                             // requires dlform webapp to be deployed:
-                            url: '/dlform/extractorapp',
+                            url: '/downloadform/extractorapp',
                             success: function() {
                                 win.close();
                                 options.callback.call();
