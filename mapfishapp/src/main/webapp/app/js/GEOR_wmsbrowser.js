@@ -124,11 +124,7 @@ GEOR.wmsbrowser = (function() {
                     data: GEOR.config.WMS_SERVERS,
                     reader: new Ext.data.JsonReader({
                         fields: ['name', 'url']
-                    }),
-                    sortInfo: {
-                        field: 'name',
-                        direction: 'ASC'
-                    }
+                    })
                 }),
                 listeners: {
                     "select": function(cmb, rec, idx) {

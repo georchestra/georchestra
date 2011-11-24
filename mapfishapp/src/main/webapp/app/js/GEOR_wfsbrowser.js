@@ -165,11 +165,7 @@ GEOR.wfsbrowser = (function() {
                     data: GEOR.config.WFS_SERVERS,
                     reader: new Ext.data.JsonReader({
                         fields: ['name', 'url']
-                    }),
-                    sortInfo: {
-                        field: 'name',
-                        direction: 'ASC'
-                    }
+                    })
                 }),
                 listeners: {
                     "select": function(cmb, rec, idx) {
