@@ -48,8 +48,8 @@ public abstract class AbstractApplication {
 		comment      = request.getParameter("comment");
 		ok          = request.getParameter("ok")         != null ? request.getParameter("ok").equalsIgnoreCase("on") : false;
 		userName     = request.getHeader("sec-username")  != null ? request.getHeader("sec-username") : request.getParameter("username");
-		// TODO : ??
-		sessionId    = request.getSession().getId();
+
+		sessionId    = request.getParameter("sessionid");
 	}
 	
 	protected void insertDataUse(Connection connection, String insertDataUseQuery, int idInserted) throws Exception {

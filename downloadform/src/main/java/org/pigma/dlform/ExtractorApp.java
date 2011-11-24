@@ -54,7 +54,7 @@ public class ExtractorApp extends AbstractApplication {
 		ResultSet resultSet = null;
 		super.initializeVariables(request);
 		Connection connection = null;
-		jsonSpec = "{ \"just to\": \"try it out ...\"}";
+		jsonSpec =request.getParameter("json_spec");
 		PreparedStatement st = null;
 		
 		try {
