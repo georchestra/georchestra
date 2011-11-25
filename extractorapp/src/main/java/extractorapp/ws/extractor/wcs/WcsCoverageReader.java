@@ -312,7 +312,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
         try {
             ReadableByteChannel channel = Channels.newChannel(in);
             fout.getChannel().transferFrom(channel, 0, Long.MAX_VALUE);
-            
+            fout.flush();
             if(file.length() < 8000) {
             	if(file.length() == 0) {
             		throw new ExtractorException("GetCoverageRequests returned no data, see administrator");
