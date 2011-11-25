@@ -9,6 +9,7 @@ shared.ldapUrl=ldaps://@shared.ldap.host@:@shared.ldap.port@
 shared.ldap.userSearchBaseDN=ou=users
 shared.ldap.userSearchFilter=uid=%u
 shared.ldap.groupSearchBaseDN=ou=groups
+
 shared.ldap.admin.dn=cn=admin,@shared.ldap.baseDn@
 
 shared.c2c.tomcat.dir=/srv/tomcat/tomcat1
@@ -39,3 +40,4 @@ shared.ogc.statistics.activated=false
 shared.download_form.activated=false
 shared.download_form.pdf_url=/static/cgu.pdf
 shared.download_form.jdbcurl=@shared.psql.url@
+
