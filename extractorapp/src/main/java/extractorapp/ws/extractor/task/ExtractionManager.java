@@ -38,27 +38,8 @@ public class ExtractionManager {
                 return thread;
             }
         };
-        final ExtractionManager manager = this;
         executor = new ThreadPoolExecutor(minThreads, maxExtractions, 5,
-                TimeUnit.SECONDS, workQueue, threadFactory) {
-            @Override
-            protected void beforeExecute(Thread t, Runnable r) {
-                synchronized (manager) {
-                    ExtractionTask task = (ExtractionTask) r;
-                    task.executionMetadata.setRunning();
-                }
-                super.beforeExecute(t, r);
-            }
-
-            @Override
-            protected void afterExecute(Runnable r, Throwable t) {
-                synchronized (manager) {
-                    ExtractionTask task = (ExtractionTask) r;
-                    task.executionMetadata.setCompleted();
-                }
-                super.afterExecute(r, t);
-            }
-        };
+                TimeUnit.SECONDS, workQueue, threadFactory);
     }
 
     public void setMaxExtractions(int maxExtractions) {

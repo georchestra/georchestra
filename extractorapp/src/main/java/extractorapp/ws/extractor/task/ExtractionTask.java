@@ -86,92 +86,101 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 
     @Override
     public void run() {
-        long start = System.currentTimeMillis();
-        final File tmpExtractionBundle = mkTmpBundleDir(_requestUuid.toString());
-        LOG.info("Starting extraction into directory: " + tmpExtractionBundle);
+        executionMetadata.setRunning();
+        try {
+            long start = System.currentTimeMillis();
+            final File tmpExtractionBundle = mkTmpBundleDir(_requestUuid
+                    .toString());
+            LOG.info("Starting extraction into directory: "
+                    + tmpExtractionBundle);
 
-        final File failureFile = new File(tmpExtractionBundle, "failures.html");
-        final List<String> successes = new ArrayList<String>();
-        final List<String> failures = new ArrayList<String>();
-        final List<String> oversized = new ArrayList<String>();
-        for (ExtractorLayerRequest request : _requests) {
+            final File failureFile = new File(tmpExtractionBundle,
+                    "failures.html");
+            final List<String> successes = new ArrayList<String>();
+            final List<String> failures = new ArrayList<String>();
+            final List<String> oversized = new ArrayList<String>();
+            for (ExtractorLayerRequest request : _requests) {
 
-            int tries = 0;
-            while (tries < EXTRACTION_ATTEMPTS) {
-                tries++;
-                String name = String.format("%s__%s", request._url.getHost(),
-                        request._layerName);
-                File layerTmpDir = mkTmpBundleDir(name);
-                LOG.info("Attempt " + tries + " for extracting layer: "
-                        + request._url + " -- " + request._layerName);
-
-                try {
-                    switch (request._owsType) {
-                    case WCS:
-                        extractWcsLayer(request, layerTmpDir);
-                        break;
-                    case WFS:
-                        extractWfsLayer(request, layerTmpDir);
-                        break;
-                    default:
-                        throw new IllegalArgumentException(request._owsType
-                                + " not supported");
-                    }
-                    for (File from : layerTmpDir.listFiles()) {
-                        File to = new File(tmpExtractionBundle, from.getName());
-                        FileUtils.moveFile(from, to);
-                    }
-                    LOG.info("Finished extracting layer: " + request._url
-                            + " -- " + request._layerName);
-                    tries = EXTRACTION_ATTEMPTS + 1;
-                    successes.add(name);
-                } catch (OversizedCoverageRequestException e) {
-                    tries = EXTRACTION_ATTEMPTS + 1; // don't re-try
-                    oversized.add(name);
-                    handleExtractionException(request, e, failureFile);
-                } catch (SecurityException e) {
-                    tries = EXTRACTION_ATTEMPTS + 1; // don't re-try
+                int tries = 0;
+                while (tries < EXTRACTION_ATTEMPTS) {
+                    tries++;
+                    String name = String.format("%s__%s",
+                            request._url.getHost(), request._layerName);
+                    File layerTmpDir = mkTmpBundleDir(name);
+                    LOG.info("Attempt " + tries + " for extracting layer: "
+                            + request._url + " -- " + request._layerName);
 
                     try {
-                        FileUtils.delete(layerTmpDir);
-                    } catch (Throwable t) { /* ignore */
-                    }
+                        switch (request._owsType) {
+                        case WCS:
+                            extractWcsLayer(request, layerTmpDir);
+                            break;
+                        case WFS:
+                            extractWfsLayer(request, layerTmpDir);
+                            break;
+                        default:
+                            throw new IllegalArgumentException(request._owsType
+                                    + " not supported");
+                        }
+                        for (File from : layerTmpDir.listFiles()) {
+                            File to = new File(tmpExtractionBundle,
+                                    from.getName());
+                            FileUtils.moveFile(from, to);
+                        }
+                        LOG.info("Finished extracting layer: " + request._url
+                                + " -- " + request._layerName);
+                        tries = EXTRACTION_ATTEMPTS + 1;
+                        successes.add(name);
+                    } catch (OversizedCoverageRequestException e) {
+                        tries = EXTRACTION_ATTEMPTS + 1; // don't re-try
+                        oversized.add(name);
+                        handleExtractionException(request, e, failureFile);
+                    } catch (SecurityException e) {
+                        tries = EXTRACTION_ATTEMPTS + 1; // don't re-try
 
-                    failures.add(name);
-                    handleExtractionException(request, e, failureFile);
-                } catch (Throwable e) {
-                    try {
-                        FileUtils.delete(layerTmpDir);
-                    } catch (Throwable t) { /* ignore */
-                    }
+                        try {
+                            FileUtils.delete(layerTmpDir);
+                        } catch (Throwable t) { /* ignore */
+                        }
 
-                    if (tries >= EXTRACTION_ATTEMPTS) {
                         failures.add(name);
                         handleExtractionException(request, e, failureFile);
+                    } catch (Throwable e) {
+                        try {
+                            FileUtils.delete(layerTmpDir);
+                        } catch (Throwable t) { /* ignore */
+                        }
+
+                        if (tries >= EXTRACTION_ATTEMPTS) {
+                            failures.add(name);
+                            handleExtractionException(request, e, failureFile);
+                        }
                     }
                 }
             }
-        }
 
-        closeFailuresFile(failureFile);
+            closeFailuresFile(failureFile);
 
-        File archive = archiveExtraction(tmpExtractionBundle);
-        long end = System.currentTimeMillis();
+            File archive = archiveExtraction(tmpExtractionBundle);
+            long end = System.currentTimeMillis();
 
-        String msg = String
-                .format("Finished extraction into directory: %s achive is: %s \nExtraction took %s",
-                        tmpExtractionBundle, archive, time(start, end));
-        LOG.info(msg);
+            String msg = String
+                    .format("Finished extraction into directory: %s achive is: %s \nExtraction took %s",
+                            tmpExtractionBundle, archive, time(start, end));
+            LOG.info(msg);
 
-        FileUtils.delete(tmpExtractionBundle);
-        if (!_testing) {
-            try {
-                emailNotice(successes, failures, oversized);
-            } catch (Throwable e) {
-                handleException(e);
+            FileUtils.delete(tmpExtractionBundle);
+            if (!_testing) {
+                try {
+                    emailNotice(successes, failures, oversized);
+                } catch (Throwable e) {
+                    handleException(e);
+                }
+            } else if (_testing && !failures.isEmpty()) {
+                throw new RuntimeException(Arrays.toString(failures.toArray()));
             }
-        } else if (_testing && !failures.isEmpty()) {
-            throw new RuntimeException(Arrays.toString(failures.toArray()));
+        } finally {
+            executionMetadata.setCompleted();
         }
     }
 

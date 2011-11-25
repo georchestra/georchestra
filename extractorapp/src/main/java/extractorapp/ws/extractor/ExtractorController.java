@@ -148,6 +148,9 @@ public class ExtractorController implements ServletContextAware {
 						requests, servletContext, requestUuid, emailParams,
 						username, roles, adminCredentials, secureHost,
 						maxCoverageExtractionSize);
+				
+		        LOG.info("Extraction request submitted, request uuid = "+extractor.executionMetadata.getUuid());
+
 				if (testing) {
 					extractor.run();
 				} else {

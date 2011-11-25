@@ -2,17 +2,14 @@ package extractorapp.ws.extractor.task;
 
 import java.util.Date;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 public class ExecutionMetadata {
 
     private ExecutionState state = ExecutionState.WAITING;
     private Date stateChangeTime = new Date();
     private ExecutionPriority priority = ExecutionPriority.MEDIUM;
-    private Future<?> future = new DumbFuture();
+    private Future<?> future = new PlaceholderFuture();
     private String uuid;
 
     public ExecutionMetadata(UUID requestUuid) {
@@ -57,58 +54,29 @@ public class ExecutionMetadata {
         this.priority = priority;
     }
 
-    void setFuture(Future<?> future) {
+    synchronized void setFuture(Future<?> future) {
         this.future = future;
     }
 
-    public Future<?> getFuture() {
+    public synchronized Future<?> getFuture() {
         return this.future;
     }
 
-    private static final class DumbFuture implements Future<Object> {
-        @Override
-        public boolean cancel(boolean mayInterruptIfRunning) {
-            return false;
-        }
-
-        @Override
-        public Object get() throws InterruptedException, ExecutionException {
-            return null;
-        }
-
-        @Override
-        public Object get(long timeout, TimeUnit unit)
-                throws InterruptedException, ExecutionException,
-                TimeoutException {
-            return null;
-        }
-
-        @Override
-        public boolean isCancelled() {
-            return false;
-        }
-
-        @Override
-        public boolean isDone() {
-            return false;
-        }
-    }
-
-    public boolean isCompleted() {
+    public synchronized boolean isCompleted() {
         return ExecutionState.COMPLETED == state;
     }
 
-    public String getUuid() {
+    public synchronized String getUuid() {
         return uuid;
     }
 
-    public boolean isWaiting() {
+    public synchronized boolean isWaiting() {
         return ExecutionState.WAITING == state;
     }
 
 
 
-    public void cancel() {
+    public synchronized void cancel() {
         state = ExecutionState.CANCELLED;
         
     }
