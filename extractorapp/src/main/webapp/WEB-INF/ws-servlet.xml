@@ -21,6 +21,7 @@
           class="extractorapp.ws.extractor.ExpiredArchiveDaemon">
       <property name="expiry" value="10"/> <!-- days -->
       <property name="period" value="10"/> <!-- minutes -->
+      <property name="extractionManager" ref="extractionManager"/>
     </bean>
      
       
@@ -56,6 +57,13 @@
 				<constructor-arg index="1" value="${dlformactivated}" />
 			</bean>
 		</property>
+        <property name="extractionManager" ref="extractionManager"/>
+    </bean>
+
+    <bean id="extractionManager" class="extractorapp.ws.extractor.task.ExtractionManager" init-method="init">
+        <property name="minThreads" value="0"/>
+        <property name="maxExtractions"
+                  value="${maxExtractions}"/>
     </bean>
 
     <!-- Email configuration -->

@@ -9,14 +9,14 @@ import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import extractorapp.ws.extractor.ExtractorThread;
+import extractorapp.ws.extractor.task.ExtractionTask;
 
 public class CheckFormAcceptance {
 	
 	private BasicDataSource basicDataSource;
 	private boolean activated = false;
 
-	private static final Log LOG = LogFactory.getLog(ExtractorThread.class.getPackage().getName());
+	private static final Log LOG = LogFactory.getLog(ExtractionTask.class.getPackage().getName());
 
 	public CheckFormAcceptance(String _activated, String jdbcUrl) {
 

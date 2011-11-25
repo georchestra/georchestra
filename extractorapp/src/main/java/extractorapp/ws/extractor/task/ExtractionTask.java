@@ -1,4 +1,4 @@
-package extractorapp.ws.extractor;
+package extractorapp.ws.extractor.task;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -32,6 +32,12 @@ import org.opengis.referencing.operation.TransformException;
 import org.springframework.web.util.WebUtils;
 
 import extractorapp.ws.CompleteEmailParams;
+import extractorapp.ws.extractor.ExtractorController;
+import extractorapp.ws.extractor.ExtractorLayerRequest;
+import extractorapp.ws.extractor.FileUtils;
+import extractorapp.ws.extractor.OversizedCoverageRequestException;
+import extractorapp.ws.extractor.WcsExtractor;
+import extractorapp.ws.extractor.WfsExtractor;
 import extractorapp.ws.extractor.wcs.WcsFormat;
 
 /**
@@ -40,27 +46,31 @@ import extractorapp.ws.extractor.wcs.WcsFormat;
  * 
  * @author jeichar
  */
-public class ExtractorThread extends Thread {
-    private static final Log       LOG = LogFactory.getLog(ExtractorThread.class.getPackage().getName());
+public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
+    private static final Log LOG = LogFactory.getLog(ExtractionTask.class
+            .getPackage().getName());
 
-    private static final int                  EXTRACTION_ATTEMPTS = 3;
+    private static final int EXTRACTION_ATTEMPTS = 3;
+    public final ExecutionMetadata executionMetadata;
     private final List<ExtractorLayerRequest> _requests;
-    private final UUID                        _requestUuid;
-    private final CompleteEmailParams         _emailParams;
-    private final ServletContext              _servletContext;
-    private final boolean                     _testing;
+    private final UUID _requestUuid;
+    private final CompleteEmailParams _emailParams;
+    private final ServletContext _servletContext;
+    private final boolean _testing;
     private final String _username;
     private final String _roles;
     private final UsernamePasswordCredentials _adminCredentials;
     private final String _secureHost;
     private final long maxCoverageExtractionSize;
 
-    public ExtractorThread(
-            boolean testing, List<ExtractorLayerRequest> requests, ServletContext servletContext, UUID requestUuid,
-            CompleteEmailParams emailParams, String username, String roles, UsernamePasswordCredentials adminCredentials,
-            String secureHost, long maxCoverageExtractionSize)
-            throws NoSuchAuthorityCodeException, MalformedURLException, JSONException,
-            FactoryException {
+    public ExtractionTask(boolean testing,
+            List<ExtractorLayerRequest> requests,
+            ServletContext servletContext, UUID requestUuid,
+            CompleteEmailParams emailParams, String username, String roles,
+            UsernamePasswordCredentials adminCredentials, String secureHost,
+            long maxCoverageExtractionSize)
+            throws NoSuchAuthorityCodeException, MalformedURLException,
+            JSONException, FactoryException {
         _requests = requests;
         this._servletContext = servletContext;
         this._requestUuid = requestUuid;
@@ -71,18 +81,16 @@ public class ExtractorThread extends Thread {
         this._adminCredentials = adminCredentials;
         this._secureHost = secureHost;
         this.maxCoverageExtractionSize = maxCoverageExtractionSize;
-
-        setName(getClass().getSimpleName()+"--"+requestUuid);
+        this.executionMetadata = new ExecutionMetadata(requestUuid);
     }
-
 
     @Override
     public void run() {
         long start = System.currentTimeMillis();
         final File tmpExtractionBundle = mkTmpBundleDir(_requestUuid.toString());
-        LOG.info("Starting extraction into directory: "+tmpExtractionBundle);
-        
-        final File failureFile = new File(tmpExtractionBundle,"failures.html");
+        LOG.info("Starting extraction into directory: " + tmpExtractionBundle);
+
+        final File failureFile = new File(tmpExtractionBundle, "failures.html");
         final List<String> successes = new ArrayList<String>();
         final List<String> failures = new ArrayList<String>();
         final List<String> oversized = new ArrayList<String>();
@@ -90,10 +98,12 @@ public class ExtractorThread extends Thread {
 
             int tries = 0;
             while (tries < EXTRACTION_ATTEMPTS) {
-                tries ++;
-                String name = String.format("%s__%s", request._url.getHost(), request._layerName);
+                tries++;
+                String name = String.format("%s__%s", request._url.getHost(),
+                        request._layerName);
                 File layerTmpDir = mkTmpBundleDir(name);
-                LOG.info("Attempt "+tries+" for extracting layer: "+request._url+" -- "+request._layerName);
+                LOG.info("Attempt " + tries + " for extracting layer: "
+                        + request._url + " -- " + request._layerName);
 
                 try {
                     switch (request._owsType) {
@@ -104,34 +114,38 @@ public class ExtractorThread extends Thread {
                         extractWfsLayer(request, layerTmpDir);
                         break;
                     default:
-                        throw new IllegalArgumentException(request._owsType + " not supported");
+                        throw new IllegalArgumentException(request._owsType
+                                + " not supported");
                     }
                     for (File from : layerTmpDir.listFiles()) {
-                        File to = new File(tmpExtractionBundle,from.getName());
+                        File to = new File(tmpExtractionBundle, from.getName());
                         FileUtils.moveFile(from, to);
                     }
-                    LOG.info("Finished extracting layer: "+request._url+" -- "+request._layerName);
-                    tries = EXTRACTION_ATTEMPTS+1;
+                    LOG.info("Finished extracting layer: " + request._url
+                            + " -- " + request._layerName);
+                    tries = EXTRACTION_ATTEMPTS + 1;
                     successes.add(name);
                 } catch (OversizedCoverageRequestException e) {
-                    tries = EXTRACTION_ATTEMPTS+1;  // don't re-try
+                    tries = EXTRACTION_ATTEMPTS + 1; // don't re-try
                     oversized.add(name);
                     handleExtractionException(request, e, failureFile);
                 } catch (SecurityException e) {
-                    tries = EXTRACTION_ATTEMPTS+1;  // don't re-try
+                    tries = EXTRACTION_ATTEMPTS + 1; // don't re-try
 
-                    try{
+                    try {
                         FileUtils.delete(layerTmpDir);
-                    } catch (Throwable t) { /* ignore */ }
-                
+                    } catch (Throwable t) { /* ignore */
+                    }
+
                     failures.add(name);
                     handleExtractionException(request, e, failureFile);
                 } catch (Throwable e) {
-                    try{
+                    try {
                         FileUtils.delete(layerTmpDir);
-                    } catch (Throwable t) { /* ignore */ }
-                    
-                    if(tries >= EXTRACTION_ATTEMPTS) {
+                    } catch (Throwable t) { /* ignore */
+                    }
+
+                    if (tries >= EXTRACTION_ATTEMPTS) {
                         failures.add(name);
                         handleExtractionException(request, e, failureFile);
                     }
@@ -140,39 +154,40 @@ public class ExtractorThread extends Thread {
         }
 
         closeFailuresFile(failureFile);
-        
+
         File archive = archiveExtraction(tmpExtractionBundle);
         long end = System.currentTimeMillis();
-        
-        String msg = String.format("Finished extraction into directory: %s achive is: %s \nExtraction took %s", tmpExtractionBundle, archive, time(start,end));
+
+        String msg = String
+                .format("Finished extraction into directory: %s achive is: %s \nExtraction took %s",
+                        tmpExtractionBundle, archive, time(start, end));
         LOG.info(msg);
-        
+
         FileUtils.delete(tmpExtractionBundle);
-        if(!_testing){
+        if (!_testing) {
             try {
-                emailNotice(successes,failures,oversized);
+                emailNotice(successes, failures, oversized);
             } catch (Throwable e) {
                 handleException(e);
             }
-        } else if(_testing && !failures.isEmpty()) {
-        	throw new RuntimeException(Arrays.toString(failures.toArray()));
+        } else if (_testing && !failures.isEmpty()) {
+            throw new RuntimeException(Arrays.toString(failures.toArray()));
         }
     }
 
     private String time(long start, long end) {
         long seconds = (end - start) / 1000;
-        if(seconds > 60) {
+        if (seconds > 60) {
             long minutes = seconds / 60;
-            seconds = seconds - (minutes*60);
-            if(minutes > 24) {
+            seconds = seconds - (minutes * 60);
+            if (minutes > 24) {
                 long hours = minutes / 24;
-                minutes = minutes - (hours*24);
-                return (hours + " hour "+minutes +" min");
+                minutes = minutes - (hours * 24);
+                return (hours + " hour " + minutes + " min");
             }
-            return minutes+" min "+seconds+" sec";
+            return minutes + " min " + seconds + " sec";
         }
-        
-        
+
         return seconds + " seconds";
     }
 
@@ -187,14 +202,17 @@ public class ExtractorThread extends Thread {
         tmpExtractionBundle.mkdirs();
         return tmpExtractionBundle;
     }
+
     /**
      * Protected to allow unit test to override
-     * @return 
+     * 
+     * @return
      */
     protected File archiveExtraction(File tmpExtractionBundle) {
-        String filename = _requestUuid.toString()+ExtractorController.EXTRACTION_ZIP_EXT;
+        String filename = _requestUuid.toString()
+                + ExtractorController.EXTRACTION_ZIP_EXT;
         File storageFile = FileUtils.storageFile(filename);
-        if(!storageFile.getParentFile().exists()) {
+        if (!storageFile.getParentFile().exists()) {
             storageFile.getParentFile().mkdirs();
         }
         try {
@@ -205,44 +223,46 @@ public class ExtractorThread extends Thread {
         return storageFile;
     }
 
-    private void handleExtractionException(ExtractorLayerRequest request, Throwable e, File failureFile) {
+    private void handleExtractionException(ExtractorLayerRequest request,
+            Throwable e, File failureFile) {
         if (!failureFile.getParentFile().exists()) {
-            throw new AssertionError("The temporary extraction bundle directory: " + failureFile.getParentFile()
-                    + " does not exist");
+            throw new AssertionError(
+                    "The temporary extraction bundle directory: "
+                            + failureFile.getParentFile() + " does not exist");
         }
-        
-        
-        String msg = "Exception occurred while extracting data";
-        LOG.error(msg , e);
-        
-	    openFailuresFile(failureFile);
-	    String message = String.format("<li>Erreur d'accès à la couche: %s \n" +
-	    		"  <ul>\n" +
-	    		"    <li>Serveur: %s</li>\n" +
-	            "    <li>Couche: %s</li>\n" +
-	            "    <li>Exception (à destination de l'administrateur): %s</li>\n" +
-	    		"  </ul>\n" +
-	    		"</li>\n",
-	            request._layerName, request._url, request._layerName, e);
-	    writeToFile(failureFile, message, true);
-	}
 
-	private void openFailuresFile(File failureFile) {
-	    if (!failureFile.exists()) {
-	        String msg = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-	        		"<html>\n" +
-	        		"<head>\n" +
-	        		"<title>" +
-	        		"Erreurs lors de l'extraction" +
-	        		"</title>\n" +
-	        		"</head><body>\n" +
-	        		"L'extraction a échoué pour certaines données.  " +
-	        		"Contacter l'administrateur concernant les serveurs/couches suivants\n" +
-	        		"\n\nToutes les couches ont été contactées "+EXTRACTION_ATTEMPTS+" fois afin d'extraire les données.\n\n"+ 
-	        		"<ul>";
-	        writeToFile(failureFile, msg, false);
-	    }
-	}
+        String msg = "Exception occurred while extracting data";
+        LOG.error(msg, e);
+
+        openFailuresFile(failureFile);
+        String message = String
+                .format("<li>Erreur d'accès à la couche: %s \n"
+                        + "  <ul>\n"
+                        + "    <li>Serveur: %s</li>\n"
+                        + "    <li>Couche: %s</li>\n"
+                        + "    <li>Exception (à destination de l'administrateur): %s</li>\n"
+                        + "  </ul>\n" + "</li>\n", request._layerName,
+                        request._url, request._layerName, e);
+        writeToFile(failureFile, message, true);
+    }
+
+    private void openFailuresFile(File failureFile) {
+        if (!failureFile.exists()) {
+            String msg = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                    + "<html>\n"
+                    + "<head>\n"
+                    + "<title>"
+                    + "Erreurs lors de l'extraction"
+                    + "</title>\n"
+                    + "</head><body>\n"
+                    + "L'extraction a échoué pour certaines données.  "
+                    + "Contacter l'administrateur concernant les serveurs/couches suivants\n"
+                    + "\n\nToutes les couches ont été contactées "
+                    + EXTRACTION_ATTEMPTS
+                    + " fois afin d'extraire les données.\n\n" + "<ul>";
+            writeToFile(failureFile, msg, false);
+        }
+    }
 
     private void closeFailuresFile(File failureFile) {
         if (failureFile.exists()) {
@@ -258,7 +278,7 @@ public class ExtractorThread extends Thread {
         } catch (IOException e1) {
             handleException(e1);
         } finally {
-            if(writer!=null){
+            if (writer != null) {
                 try {
                     writer.close();
                 } catch (IOException e2) {
@@ -267,13 +287,14 @@ public class ExtractorThread extends Thread {
             }
         }
     }
-    
+
     private void handleException(Throwable e1) {
         // TODO handle failure. What am I supposed to do about it?
         e1.printStackTrace();
     }
-    
-    private void emailNotice(List<String> successes, List<String> failures, List<String> oversized) throws MessagingException {
+
+    private void emailNotice(List<String> successes, List<String> failures,
+            List<String> oversized) throws MessagingException {
         String[] languages = _emailParams.getLanguages();
         final Properties props = System.getProperties();
         props.put("mail.smtp.host", _emailParams.getSmtpHost());
@@ -286,19 +307,24 @@ public class ExtractorThread extends Thread {
         String[] recipients = _emailParams.getRecipients();
         boolean validRecipients = false;
         for (String recipient : recipients) {
-            if(isValidEmailAddress(recipient)){
+            if (isValidEmailAddress(recipient)) {
                 validRecipients = true;
-                message.addRecipient(Message.RecipientType.TO, new InternetAddress(recipient));
+                message.addRecipient(Message.RecipientType.TO,
+                        new InternetAddress(recipient));
             }
         }
-        
+
         if (!validRecipients) {
-            message.addRecipient(Message.RecipientType.TO, new InternetAddress(_emailParams.getFrom()));
-            message.setSubject("[ERREUR] Message non délivré : " + _emailParams.getSubject(), _emailParams.getSubjectEncoding());
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(
+                    _emailParams.getFrom()));
+            message.setSubject(
+                    "[ERREUR] Message non délivré : "
+                            + _emailParams.getSubject(),
+                    _emailParams.getSubjectEncoding());
         } else {
-            message.setSubject(_emailParams.getSubject(), _emailParams.getSubjectEncoding());
+            message.setSubject(_emailParams.getSubject(),
+                    _emailParams.getSubjectEncoding());
         }
-        
 
         Multipart multipart = new MimeMultipart();
 
@@ -316,12 +342,13 @@ public class ExtractorThread extends Thread {
         message.setContent(multipart);
         LOG.debug("preparing to send extraction email");
         Transport.send(message);
-        LOG.debug("extraction email has been sent to:\n"+Arrays.toString(recipients));
+        LOG.debug("extraction email has been sent to:\n"
+                + Arrays.toString(recipients));
 
     }
 
     private String format(List<String> list) {
-        if(list.isEmpty()){
+        if (list.isEmpty()) {
             return "<p>aucune</p>";
         }
         StringBuilder b = new StringBuilder("<ul>");
@@ -353,24 +380,37 @@ public class ExtractorThread extends Thread {
         return mainPartNotEmpty && hostPartNotEmpty;
     }
 
-
-    private void extractWcsLayer(ExtractorLayerRequest request, File requestBaseDir) throws IOException,
-            TransformException, FactoryException {
-        WcsExtractor extractor = new WcsExtractor(requestBaseDir, new WcsFormat(maxCoverageExtractionSize), 
-                _adminCredentials.getUserName(), _adminCredentials.getPassword(), _secureHost);
+    private void extractWcsLayer(ExtractorLayerRequest request,
+            File requestBaseDir) throws IOException, TransformException,
+            FactoryException {
+        WcsExtractor extractor = new WcsExtractor(requestBaseDir,
+                new WcsFormat(maxCoverageExtractionSize),
+                _adminCredentials.getUserName(),
+                _adminCredentials.getPassword(), _secureHost);
         extractor.checkPermission(request, _secureHost, _username, _roles);
         extractor.extract(request);
     }
 
-    private void extractWfsLayer(ExtractorLayerRequest request, File requestBaseDir) throws IOException,
-            TransformException, FactoryException {
-        WfsExtractor extractor = new WfsExtractor(requestBaseDir, new WFSDataStoreFactory(), 
-                _adminCredentials.getUserName(), _adminCredentials.getPassword(), _secureHost);
-        
+    private void extractWfsLayer(ExtractorLayerRequest request,
+            File requestBaseDir) throws IOException, TransformException,
+            FactoryException {
+        WfsExtractor extractor = new WfsExtractor(requestBaseDir,
+                new WFSDataStoreFactory(), _adminCredentials.getUserName(),
+                _adminCredentials.getPassword(), _secureHost);
+
         extractor.checkPermission(request, _secureHost, _username, _roles);
 
         extractor.extract(request);
     }
-    
+
+    @Override
+    public int compareTo(ExtractionTask other) {
+        return executionMetadata.getPriority().compareTo(
+                other.executionMetadata.getPriority());
+    }
+
+    public boolean equalId(String uuid) {
+        return _requestUuid.toString().equals(uuid);
+    }
+
 }
-

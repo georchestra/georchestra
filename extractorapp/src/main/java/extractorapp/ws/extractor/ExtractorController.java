@@ -30,6 +30,8 @@ import extractorapp.ws.CompleteEmailParams;
 import extractorapp.ws.EmailDefaultParams;
 import extractorapp.ws.SharedConstants;
 import extractorapp.ws.acceptance.CheckFormAcceptance;
+import extractorapp.ws.extractor.task.ExtractionManager;
+import extractorapp.ws.extractor.task.ExtractionTask;
 
 /**
  * Controller for the Extractor
@@ -40,7 +42,7 @@ import extractorapp.ws.acceptance.CheckFormAcceptance;
 public class ExtractorController implements ServletContextAware {
     public static final String EXTRACTION_ZIP_EXT = "-extraction.zip";
 
-    private static final Log      LOG = LogFactory.getLog(ExtractorThread.class.getPackage().getName());
+    private static final Log      LOG = LogFactory.getLog(ExtractionTask.class.getPackage().getName());
 
     private static final String   BASE_MAPPING      = "/extractor/";
     private static final String   EXTRACTOR_MAPPING = BASE_MAPPING + "initiate";
@@ -59,10 +61,14 @@ public class ExtractorController implements ServletContextAware {
     private UsernamePasswordCredentials adminCredentials;
     private String secureHost;
     private long maxCoverageExtractionSize = Long.MAX_VALUE; 
-
+    private ExtractionManager extractionManager;
+    
     private CheckFormAcceptance checkFormAcceptance;
     
     public void validateConfig() {
+    	if(extractionManager==null) {
+            throw new AssertionError("A extractionManager needs to be defined in spring configuration");    		
+    	}
         if(SharedConstants.inProduction()){
             File storageFile = FileUtils.storageFile("");
             if(!storageFile.exists()){
@@ -138,14 +144,14 @@ public class ExtractorController implements ServletContextAware {
 						emailDefaults, recipients, emailSubject, message);
 				String username = request.getHeader("sec-username");
 				String roles = request.getHeader("sec-roles");
-				ExtractorThread extractor = new ExtractorThread(testing,
+				ExtractionTask extractor = new ExtractionTask(testing,
 						requests, servletContext, requestUuid, emailParams,
 						username, roles, adminCredentials, secureHost,
 						maxCoverageExtractionSize);
 				if (testing) {
 					extractor.run();
 				} else {
-					extractor.start();
+					extractionManager.submit(extractor);
 				}
 
 				reponseData = replace(readFile(responseTemplateFile),
@@ -246,7 +252,11 @@ public class ExtractorController implements ServletContextAware {
         this.maxCoverageExtractionSize = maxCoverageExtractionSize;
     }
 
-    // ----------------- Methods for accessing servlet context ----------------- //
+    public void setExtractionManager(ExtractionManager extractionManager) {
+		this.extractionManager = extractionManager;
+	}
+
+	// ----------------- Methods for accessing servlet context ----------------- //
     // ServletContext is required for determining where files are within the 
     // webapp
     @Override
