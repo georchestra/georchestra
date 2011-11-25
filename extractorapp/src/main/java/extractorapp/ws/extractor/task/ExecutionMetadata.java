@@ -105,4 +105,11 @@ public class ExecutionMetadata {
     public boolean isWaiting() {
         return ExecutionState.WAITING == state;
     }
+
+
+
+    public void cancel() {
+        state = ExecutionState.CANCELLED;
+        
+    }
 }

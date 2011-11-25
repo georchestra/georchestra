@@ -20,6 +20,7 @@ public class ExtractionManager {
     // accessed except for debugging so this
     // queue is here so that the non-running tasks can be accessed
     private Collection<ExtractionTask> tasks = new PriorityBlockingQueue<ExtractionTask>();
+    private Collection<ExtractionTask> cancelled = new PriorityBlockingQueue<ExtractionTask>();
 
     public synchronized void init() {
         BlockingQueue<Runnable> workQueue = new PriorityBlockingQueue<Runnable>();
@@ -77,6 +78,7 @@ public class ExtractionManager {
                     if(executor.remove(task)) {
                         tasks.remove(task);
                         task.executionMetadata.setPriority(newPriority);
+                        
                         submit(task);
                     } 
                 }
@@ -89,6 +91,8 @@ public class ExtractionManager {
             if (task.equalId(uuid)) {
                 if(executor.remove(task)) {
                     tasks.remove(task);
+                    task.executionMetadata.cancel();
+                    cancelled.add(task);
                 }
             }
         }
@@ -114,6 +118,9 @@ public class ExtractionManager {
                 tasks.remove(task);
                 if(newOrder.contains(task.executionMetadata.getUuid())) {
                     newWaitingTasks.add(task);
+                } else {
+                    task.executionMetadata.cancel();
+                    cancelled.add(task);
                 }
             }
         }
@@ -132,18 +139,28 @@ public class ExtractionManager {
         for (ExtractionTask task : tasks) {
             queue.add(new ExecutionMetadata(task.executionMetadata));
         }
+        for (ExtractionTask task : cancelled) {
+            queue.add(new ExecutionMetadata(task.executionMetadata));
+        }
         return queue;
     }
     public synchronized void cleanExpiredTasks(long expiry) {
         ArrayList<ExtractionTask> toRemove = new ArrayList<ExtractionTask>();
         for (ExtractionTask task : tasks) {
             ExecutionMetadata metadata = task.executionMetadata;
-            if (metadata.isCompleted()
-                    && (metadata.getStateChangeTime().getTime() + expiry) > System
-                            .currentTimeMillis()) {
+            if (metadata.isCompleted() && (metadata.getStateChangeTime().getTime() + expiry) > System.currentTimeMillis()) {
                 toRemove.add(task);
             }
         }
+        tasks.removeAll(toRemove);
+        toRemove.clear();
+        for (ExtractionTask task : cancelled) {
+            ExecutionMetadata metadata = task.executionMetadata;
+            if ((metadata.getStateChangeTime().getTime() + expiry) > System.currentTimeMillis()) {
+                toRemove.add(task);
+            }
+        }
+        cancelled.removeAll(toRemove);
     }
 
 }
