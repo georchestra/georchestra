@@ -1,4 +1,5 @@
 maxCoverageExtractionSize=99999999
+maxExtractions=5
 
 host=@shared.server.name@
 
