@@ -59,6 +59,10 @@
 		</property>
         <property name="extractionManager" ref="extractionManager"/>
     </bean>
+    
+    <bean id="taskControllers" class="extractorapp.ws.extractor.task.TaskControllers" init-method="init">
+        <property name="extractionManager" ref="extractionManager"/>
+    </bean>
 
     <bean id="extractionManager" class="extractorapp.ws.extractor.task.ExtractionManager" init-method="init">
         <property name="minThreads" value="1"/>
