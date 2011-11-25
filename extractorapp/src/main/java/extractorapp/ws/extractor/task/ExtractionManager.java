@@ -12,7 +12,11 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 public class ExtractionManager {
+    private static final Log      LOG = LogFactory.getLog(ExtractionManager.class.getPackage().getName());
     private ThreadPoolExecutor executor;
     private int maxExtractions;
     private int minThreads;

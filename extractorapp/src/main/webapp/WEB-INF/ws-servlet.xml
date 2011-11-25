@@ -61,7 +61,7 @@
     </bean>
 
     <bean id="extractionManager" class="extractorapp.ws.extractor.task.ExtractionManager" init-method="init">
-        <property name="minThreads" value="0"/>
+        <property name="minThreads" value="1"/>
         <property name="maxExtractions"
                   value="${maxExtractions}"/>
     </bean>

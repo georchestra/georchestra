@@ -42,7 +42,7 @@ import extractorapp.ws.extractor.task.ExtractionTask;
 public class ExtractorController implements ServletContextAware {
     public static final String EXTRACTION_ZIP_EXT = "-extraction.zip";
 
-    private static final Log      LOG = LogFactory.getLog(ExtractionTask.class.getPackage().getName());
+    private static final Log      LOG = LogFactory.getLog(ExtractorController.class.getPackage().getName());
 
     private static final String   BASE_MAPPING      = "/extractor/";
     private static final String   EXTRACTOR_MAPPING = BASE_MAPPING + "initiate";
