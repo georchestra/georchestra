@@ -28,7 +28,6 @@
 		<module>mif-2.5.8</module>
 		<module>static</module>
 		<module>epsg-extension</module>
-		<module>downloadform</module>
 		<module>ogc-server-statistics</module>
 		<module>server-deploy-support</module>
 	</modules>
@@ -192,6 +191,7 @@
 				<module>mapfishapp</module>
 				<module>security-proxy</module>
 				<module>geonetwork</module>
+				<module>downloadform</module>
 			</modules>
 		</profile>
 		<profile>
