@@ -20,6 +20,8 @@
  * @include OpenLayers/Control/ZoomPanel.js
  * @include OpenLayers/Control/PanPanel.js
  * @include OpenLayers/Control/Navigation.js
+ * @include OpenLayers/Control/PinchZoom.js
+ * @include OpenLayers/Kinetic.js
  * @include OpenLayers/Layer/WMS.js
  * @include OpenLayers/Layer/XYZ.js
  * @include GeoExt/data/LayerRecord.js
@@ -145,7 +147,11 @@ GEOR.map = (function() {
         };
         var map = new OpenLayers.Map(Ext.applyIf({
             controls: [
-                new OpenLayers.Control.Navigation(),
+                new OpenLayers.Control.Navigation({
+                    dragPanOptions: {
+                        enableKinetic: true
+                    }
+                }),
                 new OpenLayers.Control.PanPanel(),
                 new OpenLayers.Control.ZoomPanel()
             ]
