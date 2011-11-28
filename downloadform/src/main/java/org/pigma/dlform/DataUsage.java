@@ -76,7 +76,7 @@ public class DataUsage {
 		try {
 			  object.put("rows", getUsage());
 			  out = response.getOutputStream();
-			  out.write(object.toString().getBytes());
+			  out.write(object.toString().getBytes("UTF-8"));
 		} catch (Exception e) {
 			return;
 		} finally {
