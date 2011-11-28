@@ -67,9 +67,7 @@ GEOR.scalecombo = (function() {
                 }
             };
 
-            // register a zoomend listener on the map to update
-            // the combo value
-            map.events.register('zoomend', this, function() {
+            var setComboValue = function() {
                 var recs = store.queryBy(function(r) {
                     return r.data.level == this.map.getZoom();
                 });
@@ -81,7 +79,12 @@ GEOR.scalecombo = (function() {
                         "1 : " + OpenLayers.Number.format(recs.first().get("scale"), 0)
                     );
                 }
-            });
+            };
+            
+            // register a zoomend listener on the map to update
+            // the combo value
+            map.events.register('zoomend', this, setComboValue);
+            map.events.register('changebaselayer', this, setComboValue);
 
             return comboCfg;
         }
