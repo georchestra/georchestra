@@ -103,6 +103,17 @@
 	position:absolute;
 }
 
+/* 
+ * hide the OpenLayer.Control.ScaleLine bottom part
+ */
+.olControlScaleLineBottom {
+  display: none;
+}
+
+.mouseposition {
+  width: 180px;
+}
+
 .paneltext {
 	padding: 4px;
 	font-family: tahoma,arial,helvetica;

@@ -278,6 +278,22 @@ GEOR.config = (function() {
         ),
         
         /**
+         * Constant: MAP_POS_SRS1
+         * {String} The cursor position will be displayed using this SRS.
+         * Set to "" if you do not want to have mouse position displayed.
+         * Defaults to "EPSG:2154"
+         */
+        MAP_POS_SRS1: getCustomParameter("MAP_POS_SRS1", "EPSG:2154"),
+        
+        /**
+         * Constant: MAP_POS_SRS2
+         * {String} The cursor position will be displayed using this SRS.
+         * Set to "" if you do not want to have mouse position displayed.
+         * Defaults to ""
+         */
+        MAP_POS_SRS2: getCustomParameter("MAP_POS_SRS2", ""),
+        
+        /**
          * Constant: BASE_LAYER_NAME
          * The WMS base layer which will be displayed under each extracted layer.
          */

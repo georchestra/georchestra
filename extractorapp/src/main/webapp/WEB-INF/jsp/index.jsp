@@ -201,6 +201,8 @@ if(sec_roles != null) {
     <script type="text/javascript" src="resources/app/js/GEOR_dlform.js"></script>
     <script type="text/javascript" src="resources/app/js/GEOR_proj4jsdefs.js"></script>
     <script type="text/javascript" src="resources/app/js/GEOR_toolbar.js"></script>
+    <script type="text/javascript" src="resources/app/js/GEOR_scalecombo.js"></script>
+    <script type="text/javascript" src="resources/app/js/GEOR_mappanel.js"></script>
     <script type="text/javascript" src="resources/app/js/GEOR_map.js"></script>
     <script type="text/javascript" src="resources/app/js/GEOR_layerstree.js"></script>
     <script type="text/javascript" src="resources/app/js/GEOR_layeroptions.js"></script>

@@ -152,6 +152,20 @@ GEOR.custom = {
         [5000,'5 kilomètres'],
         [10000,'10 kilomètres']
     ],*/
+        
+    /**
+     * Constant: MAP_POS_SRS1
+     * {String} The cursor position will be displayed using this SRS.
+     * Defaults to "EPSG:2154"
+     */
+    //MAP_POS_SRS1: "EPSG:2154",
+    
+    /**
+     * Constant: MAP_POS_SRS2
+     * {String} The cursor position will be displayed using this SRS.
+     * Defaults to "", which means : "not displayed"
+     */
+    //MAP_POS_SRS2: "",
     
     /**
      * Constant: DEFAULT_BUFFER_VALUE

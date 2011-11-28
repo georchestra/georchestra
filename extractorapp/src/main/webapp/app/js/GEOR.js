@@ -20,11 +20,10 @@
  * @include GEOR_config.js
  * @include GEOR_ajaxglobal.js
  * @include GEOR_waiter.js
- * @include GEOR_toolbar.js
  * @include GEOR_layerstree.js
+ * @include GEOR_mappanel.js
  * @include GEOR_layeroptions.js
  * @include GEOR_referentials.js
- * @include GeoExt/widgets/MapPanel.js
  */
 
 Ext.namespace("GEOR");
@@ -165,14 +164,9 @@ Ext.namespace("GEOR");
                     vectorLayer: vectorLayer,
                     height: 105
                 }),
-                {
-                    region: "center",
-                    xtype: "gx_mappanel",
-                    stateful: false,
-                    id: "mappanel",
-                    map: map,
-                    tbar: GEOR.toolbar.create(map)
-                }
+                GEOR.mappanel.create(map, {
+                    region: "center"
+                })
             ]
         }, {
             region: "west",
