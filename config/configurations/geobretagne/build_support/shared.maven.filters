@@ -15,5 +15,5 @@ shared.ldap.admin.password=secret
 shared.privileged.geoserver.user=extractorapp_priveleged_admin
 shared.privileged.geoserver.pass=gerlsSnFd6SmM
 
-shared.tomcat.dir=@allshared.c2c.tomcat.dir@
-shared.log.dir=@shared.c2c.logdir@
+shared.tomcat.dir=/home/geoadm/geobretagne/servers/
+shared.log.dir=/var/log/georchestra/
