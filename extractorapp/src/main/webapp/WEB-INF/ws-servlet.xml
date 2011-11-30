@@ -41,6 +41,8 @@
                   ref="emailDefaults"/>
         <property name="emailTemplateFile" 
                   value="/WEB-INF/templates/extractor-email-template.txt"/>
+        <property name="emailAckTemplateFile" 
+                  value="/WEB-INF/templates/extractor-email-ack-template.txt"/>                  
         <property name="emailSubject"
                   value="Votre demande d'extraction"/>
         <property name="maxCoverageExtractionSize"

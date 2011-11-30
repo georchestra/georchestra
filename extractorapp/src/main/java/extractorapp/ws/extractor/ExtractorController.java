@@ -14,7 +14,6 @@ import java.util.UUID;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -54,6 +53,7 @@ public class ExtractorController implements ServletContextAware {
     private String                      reponseMimeType;
     private String                      responseCharset;
     private EmailDefaultParams          emailDefaults;
+    private String                      emailAckTemplateFile;
     private String                      emailTemplateFile;
     private String                      emailSubject;
     private ServletContext              servletContext;
@@ -137,6 +137,7 @@ public class ExtractorController implements ServletContextAware {
 			List<ExtractorLayerRequest> requests = Collections
 					.unmodifiableList(ExtractorLayerRequest.parseJson(postData));
 			if (requests.size() > 0) {
+	
 				String[] recipients = requests.get(0)._emails;
 				String message = replace(readFile(emailTemplateFile),
 						url.toString(), recipients);
@@ -149,6 +150,12 @@ public class ExtractorController implements ServletContextAware {
 						username, roles, adminCredentials, secureHost,
 						maxCoverageExtractionSize);
 				
+				LOG.info("Sending mail to user");
+				try {
+					extractor.emailNotice(readFile(emailAckTemplateFile));
+				} catch (Throwable e) {
+					LOG.error("Error while sending the notification to the user.", e);
+				}
 		        LOG.info("Extraction request submitted, request uuid = "+extractor.executionMetadata.getUuid());
 
 				if (testing) {
@@ -177,7 +184,7 @@ public class ExtractorController implements ServletContextAware {
 			out.close();
 		}
 	}
- 
+
     // ----------------- JavaBean methods ----------------- //
 
     
@@ -212,6 +219,9 @@ public class ExtractorController implements ServletContextAware {
         this.emailTemplateFile = emailTemplate;
     }
 
+    public void setEmailAckTemplateFile(String emailTemplate) throws IOException {
+        this.emailAckTemplateFile = emailTemplate;
+    }
     public void setEmailSubject(String emailSubject) {
         this.emailSubject = emailSubject;
     }

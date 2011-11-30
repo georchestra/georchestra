@@ -74,8 +74,6 @@ public class ExecutionMetadata {
         return ExecutionState.WAITING == state;
     }
 
-
-
     public synchronized void cancel() {
         state = ExecutionState.CANCELLED;
         

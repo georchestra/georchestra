@@ -302,8 +302,18 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
         e1.printStackTrace();
     }
 
-    private void emailNotice(List<String> successes, List<String> failures,
+    
+    public void emailNotice(String message) throws MessagingException {
+		emailNotice(new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>(), message);
+	}
+    
+	private void emailNotice(List<String> successes, List<String> failures,
             List<String> oversized) throws MessagingException {
+		emailNotice(successes, failures, oversized, null);
+	}
+	
+    private void emailNotice(List<String> successes, List<String> failures,
+            List<String> oversized, String mesg) throws MessagingException {
         String[] languages = _emailParams.getLanguages();
         final Properties props = System.getProperties();
         props.put("mail.smtp.host", _emailParams.getSmtpHost());
@@ -337,9 +347,9 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 
         Multipart multipart = new MimeMultipart();
 
-        if (_emailParams.getMessage() != null) {
+        if ((_emailParams.getMessage() != null) || (mesg != null)) {
             MimeBodyPart bodyPart = new MimeBodyPart();
-            String msg = _emailParams.getMessage();
+            String msg = mesg != null ? mesg : _emailParams.getMessage();
             msg = msg.replace("{successes}", format(successes));
             msg = msg.replace("{failures}", format(failures));
             msg = msg.replace("{oversized}", format(oversized));
