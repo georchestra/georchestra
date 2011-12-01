@@ -174,7 +174,7 @@ GEOR.managelayers = (function() {
             cls: "geor-layers-form-text",
             autoEl: {
                 tag: 'span',
-                html: ' | source : '+attrDisplay
+                html: 'source : '+attrDisplay
             }
         };
     };
@@ -199,7 +199,7 @@ GEOR.managelayers = (function() {
             cls: "geor-layers-form-text",
             autoEl: {
                 tag: 'span',
-                'ext:qtip': "Plage de visibilité (indicative) :<br />de "+visibilityText,
+                'ext:qtip': "Plage de visibilité (indicative) :<br />de "+visibilityText+" | ",
                 html: visibilityText
             }
         };
@@ -583,6 +583,7 @@ GEOR.managelayers = (function() {
     var createLayerNodePanel = function(node, ct) {
         var layer = node.layer;
         var layerRecord = node.layerStore.getById(layer.id);
+        
         // buttons in the toolbar
         var buttons = [];
         if (GEOR.getfeatureinfo) {
@@ -607,7 +608,17 @@ GEOR.managelayers = (function() {
             layer: layer,
             plugins: new GeoExt.LayerOpacitySliderTip()
         }]);
-
+        
+        var panelItems = [{
+            xtype: "toolbar",
+            cls: "geor-toolbar",
+            buttons: buttons
+        }];
+        if (GEOR.config.DISPLAY_VISIBILITY_RANGE) {
+            panelItems.push(formatVisibility(layerRecord));
+        }
+        panelItems.push(formatAttribution(layerRecord));
+        
         // return the panel
         return {
             xtype: "panel",
@@ -624,15 +635,7 @@ GEOR.managelayers = (function() {
                 // background of .x-panel-body
                 cls: "geor-tree-layer-panel-body"
             },
-            items: [
-                {
-                    xtype: "toolbar",
-                    cls: "geor-toolbar",
-                    buttons: buttons
-                },
-                formatVisibility(layerRecord),
-                formatAttribution(layerRecord)
-            ],
+            items: panelItems,
             // add a method to unselect all predefined which
             // keeps a references on the styles menu
             unselectStyles: function() {

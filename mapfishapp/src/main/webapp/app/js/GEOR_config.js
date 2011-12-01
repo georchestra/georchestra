@@ -650,6 +650,13 @@ GEOR.config = (function() {
          * Defaults to true
          */
         ANIMATE_WINDOWS: getCustomParameter("ANIMATE_WINDOWS", true),
+
+        /**
+         * Constant: DISPLAY_VISIBILITY_RANGE
+         * {Boolean} Display the layer visibility range in layer tree
+         * Defaults to true
+         */
+        DISPLAY_VISIBILITY_RANGE: getCustomParameter("DISPLAY_VISIBILITY_RANGE", true),
         
         /**
          * Constant: ROLES_FOR_STYLER
