@@ -155,11 +155,19 @@ GEOR.layerstree = (function() {
                         // suitable SRS
                         var mapCRS = owsinfo.layer.projection;
 
+                        var units = GEOR.util.getUnitsForCRS(mapCRS);
                         var baselayerOptions = {
                             projection: mapCRS, 
                             maxExtent: owsinfo.layer.maxExtent.scale(1.5),
-                            units: GEOR.util.getUnitsForCRS(mapCRS)
+                            units: units
                         };
+                        // force map scales to configurated scales, if applicable:
+                        // see http://csm-bretagne.fr/redmine/issues/2413
+                        if (units == 'm' && GEOR.config.METRIC_MAP_SCALES) {
+                            baselayerOptions.scales = GEOR.config.METRIC_MAP_SCALES;
+                        } else if (units == 'degrees' && GEOR.config.GEOGRAPHIC_MAP_SCALES) {
+                            baselayerOptions.scales = GEOR.config.GEOGRAPHIC_MAP_SCALES;
+                        }
                         owsinfo.baselayer = GEOR.map.getBaseLayer(baselayerOptions);
                     }
                     if(!owsinfo.extent) {

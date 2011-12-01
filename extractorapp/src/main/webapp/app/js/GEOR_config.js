@@ -276,6 +276,20 @@ GEOR.config = (function() {
             getCustomParameter("MAP_XMAX",180),
             getCustomParameter("MAP_YMAX",90)
         ),
+
+        /**
+         * Constant: METRIC_MAP_SCALES
+         * {Array} The map scales for the case where the SRS is metric.
+         * Defaults to null, which means scales will be automatically computed
+         */
+        METRIC_MAP_SCALES: getCustomParameter("METRIC_MAP_SCALES", null),
+
+        /**
+         * Constant: GEOGRAPHIC_MAP_SCALES
+         * {Array} The map scales for the case where the SRS is based on angles.
+         * Defaults to null, which means scales will be automatically computed
+         */
+        GEOGRAPHIC_MAP_SCALES: getCustomParameter("GEOGRAPHIC_MAP_SCALES", null),
         
         /**
          * Constant: MAP_POS_SRS1
