@@ -116,7 +116,17 @@ GEOR.Editing.EditingPanel = Ext.extend(Ext.Panel, {
                                 }
                             });
                             
-                            this.createLayerEditingPanel(record.get('name'), attributeStore, protocol);
+                            var type = GEOR.ows.getSymbolTypeFromAttributeStore(attributeStore);
+                            if (!OpenLayers.Handler[(type.type == 'Line') ? 'Path' : type.type]) {
+                                GEOR.util.infoDialog({
+                                    title: "Couche non éditable",
+                                    msg: "La géométrie de cette couche est de type "+type.type+".<br/>"+
+                                        "Seules les géométries de type point, ligne et polygone"+
+                                        " (et multi-*) sont éditables."
+                                });
+                            } else {
+                                this.createLayerEditingPanel(record.get('name'), attributeStore, protocol);
+                            }
                             this.mask.hide();
                         },
                         scope: this
