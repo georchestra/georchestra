@@ -61,10 +61,10 @@ GEOR.dlform = (function() {
         }
         
         return new Ext.FormPanel({
+            region: 'center',
             labelWidth: 100,
             standardSubmit: false,
             monitorValid: true,
-            frame: true,
             bodyStyle:'padding:5px 5px 0',
             defaults: {
                 width: 550
@@ -73,21 +73,25 @@ GEOR.dlform = (function() {
             labelSeparator: ' : ',
             items: [{
                     fieldLabel: 'Prénom',
+                    labelStyle: 'font-weight:bold;',
                     name: 'first_name',
                     value: GEOR.data.first_name || (ls && ls.getItem('first_name')) || '',
                     allowBlank: false
                 },{
                     fieldLabel: 'Nom',
+                    labelStyle: 'font-weight:bold;',
                     name: 'last_name',
                     value: GEOR.data.last_name || (ls && ls.getItem('last_name')) || '',
                     allowBlank: false
                 },{
                     fieldLabel: 'Organisme',
+                    labelStyle: 'font-weight:bold;',
                     value: GEOR.data.company || (ls && ls.getItem('company')) || '',
                     name: 'company',
                     allowBlank: false
                 }, {
                     fieldLabel: 'Email',
+                    labelStyle: 'font-weight:bold;',
                     name: 'email',
                     vtype: 'email',
                     value: GEOR.data.email || (ls && ls.getItem('email')) || '',
@@ -101,6 +105,7 @@ GEOR.dlform = (function() {
                 {
                     xtype: 'multiselect',
                     fieldLabel: 'Applications',
+                    labelStyle: 'font-weight:bold;',
                     name: 'datause',
                     height: 120,
                     allowBlank: false,
@@ -122,9 +127,9 @@ GEOR.dlform = (function() {
                     allowBlank: false,
                     columns: 1,
                     items: [{
-                        boxLabel: "J'accepte sans réserve les <a href='" +
+                        boxLabel: "<span style='font-weight:bold;'>J'accepte sans réserve les <a href='" +
                             GEOR.config.PDF_URL +
-                            "' target='_blank'>conditions d'utilisation</a> des données.",
+                            "' target='_blank'>conditions d'utilisation</a> des données.</span>",
                         name: 'ok'
                     }]
                 }, 
@@ -231,10 +236,24 @@ GEOR.dlform = (function() {
                 layout: 'fit',
                 border: false,
                 width: 700,
-                height: 520,
+                height: 540,
                 closeAction: 'close',
                 modal: true,
-                items: [createForm(options)]
+                items: [{
+                    frame: true,
+                    layout: 'border',
+                    defaults: {
+                        border: false,
+                        frame: false
+                    },
+                    items: [{
+                        region: "north",
+                        bodyStyle: "padding:5px;",
+                        html: ["<div style='font-size:12px;'>Les champs en",
+                            "<span style='font-weight:bold;'>gras</span>",
+                            "sont obligatoires.</div>"].join(' ')
+                    }, createForm(options)]
+                }]
             });
             win.show();
         }
