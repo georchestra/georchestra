@@ -66,7 +66,11 @@ public class DataUsage {
 		return ret;
 
 	}
-	
+	@RequestMapping(method = RequestMethod.POST)
+	public void handlePOSTRequest(HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+		handleGETRequest(request, response);
+	}
 	@RequestMapping(method = RequestMethod.GET)
 	public void handleGETRequest(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {

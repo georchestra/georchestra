@@ -45,9 +45,14 @@ public class GeoNetwork extends AbstractApplication {
 	protected boolean isInvalid() {
 		return super.isInvalid() || (fileName == null) || (metadataId == -1);
 	}
-
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public void handleGetRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		handlePOSTRequest(request, response);
+	}
+	
 	@RequestMapping(method = RequestMethod.POST)
-	public void handleGETRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public void handlePOSTRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		
 		OutputStream out = null;
 		JSONObject object   = new JSONObject();
