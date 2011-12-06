@@ -548,30 +548,30 @@ GEOR.config = (function() {
         /**
          * Constant: MAP_XMIN aka "left"
          * {Float} The max extent xmin in MAP_SRS coordinates.
-         * Defaults to -357823 (France metropolitaine left)
+         * Defaults to -357823.2365 (EPSG:2154 left)
          */
-        MAP_XMIN: getCustomParameter("MAP_XMIN", -357823),
+        MAP_XMIN: getCustomParameter("MAP_XMIN", -357823.2365),
 
         /**
          * Constant: MAP_YMIN aka "bottom"
          * {Float} The max extent ymin in MAP_SRS coordinates.
-         * Defaults to 6037008 (France metropolitaine bottom)
+         * Defaults to 6037008.6939 (EPSG:2154 bottom)
          */
-        MAP_YMIN: getCustomParameter("MAP_YMIN", 6037008),
+        MAP_YMIN: getCustomParameter("MAP_YMIN", 6037008.6939),
 
         /**
          * Constant: MAP_XMAX aka "right"
          * {Float} The max extent xmax in MAP_SRS coordinates.
-         * Defaults to 1313632 (France metropolitaine right)
+         * Defaults to 1313632.3628 (EPSG:2154 right)
          */
-        MAP_XMAX: getCustomParameter("MAP_XMAX", 1313632),
+        MAP_XMAX: getCustomParameter("MAP_XMAX", 1313632.3628),
 
         /**
          * Constant: MAP_YSMAX aka "top"
          * {Float} The max extent ymax in MAP_SRS coordinates
-         * Defaults to 7230727 (France metropolitaine top)
+         * Defaults to 7230727.3772 (EPSG:2154 top)
          */
-        MAP_YMAX: getCustomParameter("MAP_YMAX", 7230727),
+        MAP_YMAX: getCustomParameter("MAP_YMAX", 7230727.3772),
         
         /**
          * Constant: MAP_POS_SRS1
