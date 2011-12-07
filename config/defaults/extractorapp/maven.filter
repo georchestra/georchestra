@@ -1,5 +1,6 @@
 maxCoverageExtractionSize=99999999
 maxExtractions=5
+remoteReproject=true
 
 host=@shared.server.name@
 
