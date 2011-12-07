@@ -234,7 +234,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
             file = new File(containingDirectory, baseFilename + "." + request.fileExtension());
             LOG.debug("Writing GridCoverage obtained from " + _wcsUrl + " to file " + file);
             
-            File tmpFile = File.createTempFile(baseFilename, "tif");
+            File tmpFile = File.createTempFile(baseFilename, ".tif");
             writeToFile(tmpFile, input);
             
             transformCoverage(tmpFile, file, request, requestNativeFormat);
@@ -259,16 +259,16 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
                 String name = file.getName().substring(0, index);
                 String suffix = file.getName().substring(index);
 
-                sourceFile = File.createTempFile(name, suffix);
+                sourceFile = File.createTempFile(name, "."+suffix);
                 if(!file.renameTo(sourceFile)) {
                     throw new ExtractorException("Cannot move file from "+file+" to "+sourceFile+" for coverageReprojection");
                 }
             }
             
             try {
-                LOG.debug("Need to reproject coverage from " + CRS.lookupIdentifier(actual, false) + " to " + CRS.lookupIdentifier(original, false));
+                LOG.info("Need to reproject coverage from " + CRS.lookupIdentifier(actual, false) + " to " + CRS.lookupIdentifier(original, false));
             } catch (FactoryException e) {
-                LOG.debug("Need to reproject coverage from " + actual.getName() + " to " + original.getName());
+                LOG.info("Need to reproject coverage from " + actual.getName() + " to " + original.getName());
             }
 
             CoverageTransformation<Object> transformation = new CoverageTransformation<Object>() {
