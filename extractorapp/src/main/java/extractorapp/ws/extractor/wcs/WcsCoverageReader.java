@@ -212,7 +212,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
             convertFormat(baseFilename, input, file, request,
                     requestNegotiatedFormatCrs2);
             
-            transformCoverage(file, request, requestNegotiatedFormatCrs2);
+            transformCoverage(file, file, request, requestNegotiatedFormatCrs2);
             
             return file;  
         } finally {
@@ -237,7 +237,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
             File tmpFile = File.createTempFile(baseFilename, "tif");
             writeToFile(tmpFile, input);
             
-            transformCoverage(file, request, requestNativeFormat);
+            transformCoverage(tmpFile, file, request, requestNativeFormat);
             
             return file;  
         } finally {
@@ -247,12 +247,24 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
     }
     
 
-   static void transformCoverage(final File file, WcsReaderRequest request,
+   static void transformCoverage(File sourceFile, final File file, WcsReaderRequest request,
            WcsReaderRequest requestNegotiatedFormatCrs) throws IOException {
         final CoordinateReferenceSystem original = request.responseCRS;
         CoordinateReferenceSystem actual = requestNegotiatedFormatCrs.responseCRS;
 
         if (!CRS.equalsIgnoreMetadata(original, actual)) {
+            
+            if(sourceFile.equals(file)) {
+                int index = file.getName().lastIndexOf(".");
+                String name = file.getName().substring(0, index);
+                String suffix = file.getName().substring(index);
+
+                sourceFile = File.createTempFile(name, suffix);
+                if(!file.renameTo(sourceFile)) {
+                    throw new ExtractorException("Cannot move file from "+file+" to "+sourceFile+" for coverageReprojection");
+                }
+            }
+            
             try {
                 LOG.debug("Need to reproject coverage from " + CRS.lookupIdentifier(actual, false) + " to " + CRS.lookupIdentifier(original, false));
             } catch (FactoryException e) {
@@ -290,7 +302,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
                 }
             };
 
-            CoverageTransformation.perform(file, transformation);
+            CoverageTransformation.perform(sourceFile, transformation);
         }
     }
 
