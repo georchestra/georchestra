@@ -145,7 +145,7 @@ public class WcsReaderRequest {
         usePost.setValue (this.usePost);
 
         ParameterValue<Boolean> remoteReproject = REMOTE_REPROJECT.createValue ();
-        usePost.setValue (this.remoteReproject);
+        remoteReproject.setValue (this.remoteReproject);
 
         ParameterValue<String> version = VERSION.createValue ();
         version.setValue (this.version);
