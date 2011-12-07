@@ -247,23 +247,12 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
     }
     
 
-   static void transformCoverage(File sourceFile, final File file, WcsReaderRequest request,
+   static void transformCoverage(final File sourceFile, final File file, WcsReaderRequest request,
            WcsReaderRequest requestNegotiatedFormatCrs) throws IOException {
         final CoordinateReferenceSystem original = request.responseCRS;
         CoordinateReferenceSystem actual = requestNegotiatedFormatCrs.responseCRS;
 
         if (!CRS.equalsIgnoreMetadata(original, actual)) {
-            
-            if(sourceFile.equals(file)) {
-                int index = file.getName().lastIndexOf(".");
-                String name = file.getName().substring(0, index);
-                String suffix = file.getName().substring(index);
-
-                sourceFile = File.createTempFile(name, "."+suffix);
-                if(!file.renameTo(sourceFile)) {
-                    throw new ExtractorException("Cannot move file from "+file+" to "+sourceFile+" for coverageReprojection");
-                }
-            }
             
             try {
                 LOG.info("Need to reproject coverage from " + CRS.lookupIdentifier(actual, false) + " to " + CRS.lookupIdentifier(original, false));
@@ -275,29 +264,34 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
 
                 @Override
                 public Object transform(GridCoverage coverage) throws IOException, FactoryException {
-                    File tmpDir = createTempDirectory();
-                    File tmpFile = new File(tmpDir, file.getName());
+                    boolean writeToTmp = sourceFile.equals(file);
                     Hints hints = new Hints(GeoTools.getDefaultHints());
                     hints.put(Hints.LENIENT_DATUM_SHIFT, Boolean.TRUE);
                     GeoTools.init(hints);
                     Coverage transformed = Operations.DEFAULT.resample(coverage, original);
 
                     AbstractGridFormat format = CoverageTransformation.lookupFormat(file);
-                    
-                    // write must be to tmpFile because Geotools does not always load coverages into memory but reads off disk
-                    GridCoverageWriter writer = format.getWriter(tmpFile);
+                    if(writeToTmp) {
+                        File tmpDir = createTempDirectory();
+                        File tmpFile = new File(tmpDir, file.getName());
 
-                    file.delete();
-                    writer.write((GridCoverage) transformed, null);
-
-                    // There may be several files created if dest format is world+image
-                    // so move all files in the tmpDir
-                    for (File f : tmpDir.listFiles()) {
-                        File dest = new File(file.getParentFile(), f.getName());
-                        FileUtils.moveFile(f, dest);
+                        // write must be to tmpFile because Geotools does not always load coverages into memory but reads off disk
+                        GridCoverageWriter writer = format.getWriter(tmpFile);
+    
+                        file.delete();
+                        writer.write((GridCoverage) transformed, null);
+                        // There may be several files created if dest format is world+image
+                        // so move all files in the tmpDir
+                        for (File f : tmpDir.listFiles()) {
+                            File dest = new File(file.getParentFile(), f.getName());
+                            FileUtils.moveFile(f, dest);
+                        }
+                    } else {
+                        GridCoverageWriter writer = format.getWriter(file);
+                        writer.write((GridCoverage) transformed, null);
                     }
 
-                    LOG.debug("Finished reprojecting output used writer: " + writer.getClass().getSimpleName());
+                    LOG.debug("Finished reprojecting output");
                     return null;
                 }
             };
