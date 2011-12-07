@@ -25,6 +25,7 @@ import java.util.Set;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.geotools.coverage.grid.GridCoverage2D;
@@ -174,42 +175,77 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
      * @throws IllegalArgumentException
      * @throws IOException
      */
-    public File readToFile(File containingDirector, String baseFilename, GeneralParameterValue[] parameters)
+    public File readToFile(File containingDirectory, String baseFilename, GeneralParameterValue[] parameters)
             throws IllegalArgumentException, IOException {
-        InputStream in = null;
 
         try {
             WcsReaderRequest request = WcsReaderRequestFactory.create(parameters);
-            BoundWcsRequest requestNegotiatedFormat = negotiateFormat(request.bind(_wcsUrl));
-            BoundWcsRequest requestNegotiatedFormatCrs = negotiateRequestCRS(requestNegotiatedFormat);
-            BoundWcsRequest requestNegotiatedFormatCrs2 = negotiateResponseCRS(requestNegotiatedFormatCrs);
-            requestNegotiatedFormatCrs2.assertLegalSize(_maxCoverageExtractionSize);
-
-            in = requestNegotiatedFormatCrs2.getCoverage();
-
-            // file = new File (new File("/tmp/"),
-            // baseFilename+"."+request.fileExtension());
-            File file = null;
-            file = new File(containingDirector, baseFilename + "." + request.fileExtension());
-            LOG.debug("Writing GridCoverage obtained from " + _wcsUrl + " to file " + file);
-
-            convertFormat(baseFilename, in, file, request,
-                    requestNegotiatedFormatCrs2);
-
-            transformCoverage(file, request, requestNegotiatedFormatCrs2);
-
-            return file;
+            if(request.remoteReproject) {
+                return remoteReproject(request, containingDirectory, baseFilename);
+            } else {
+                return localReproject(request, containingDirectory, baseFilename);                
+            }
         } catch (NoSuchAuthorityCodeException e) {
             throw new RuntimeException(e);
         } catch (FactoryException e) {
             throw new RuntimeException(e);
-        } finally {
-            if (in != null)
-                in.close();
         }
     }
 
     /* ------------------- Support methods for readToFile ------------------- */
+    private File remoteReproject(WcsReaderRequest request, File containingDirectory, String baseFilename) throws NoSuchAuthorityCodeException, FactoryException, IOException {
+        InputStream input = null;
+        try {
+            BoundWcsRequest requestNegotiatedFormat = negotiateFormat(request.bind(_wcsUrl));
+            BoundWcsRequest requestNegotiatedFormatCrs = negotiateRequestCRS(requestNegotiatedFormat);
+            BoundWcsRequest requestNegotiatedFormatCrs2 = negotiateResponseCRS(requestNegotiatedFormatCrs);
+            requestNegotiatedFormatCrs2.assertLegalSize(_maxCoverageExtractionSize);
+            
+            input = requestNegotiatedFormatCrs2.getCoverage();
+            
+            // file = new File (new File("/tmp/"),
+            // baseFilename+"."+request.fileExtension());
+            File file = null;
+            file = new File(containingDirectory, baseFilename + "." + request.fileExtension());
+            LOG.debug("Writing GridCoverage obtained from " + _wcsUrl + " to file " + file);
+            
+            convertFormat(baseFilename, input, file, request,
+                    requestNegotiatedFormatCrs2);
+            
+            transformCoverage(file, request, requestNegotiatedFormatCrs2);
+            
+            return file;  
+        } finally {
+            if(input!=null)
+                IOUtils.closeQuietly(input);
+        }
+    }
+    
+    private File localReproject(WcsReaderRequest request, File containingDirectory, String baseFilename) throws NoSuchAuthorityCodeException, FactoryException, IOException {
+        InputStream input = null;
+        try {
+            BoundWcsRequest geotiffRequest = request.bind(_wcsUrl).withFormat("geotiff");
+            BoundWcsRequest requestNativeFormat = negotiateResponseCRS(geotiffRequest);
+            requestNativeFormat.assertLegalSize(_maxCoverageExtractionSize);
+            
+            input = requestNativeFormat.getCoverage();
+            
+            File file = null;
+            file = new File(containingDirectory, baseFilename + "." + request.fileExtension());
+            LOG.debug("Writing GridCoverage obtained from " + _wcsUrl + " to file " + file);
+            
+            File tmpFile = File.createTempFile(baseFilename, "tif");
+            writeToFile(tmpFile, input);
+            
+            transformCoverage(file, request, requestNativeFormat);
+            
+            return file;  
+        } finally {
+            if(input!=null)
+                IOUtils.closeQuietly(input);
+        }
+    }
+    
 
    static void transformCoverage(final File file, WcsReaderRequest request,
            WcsReaderRequest requestNegotiatedFormatCrs) throws IOException {
@@ -375,10 +411,10 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
                 }
                 return request.withCRS(newCrs);
             }
+            return request;
         } else {
-            request.withCRS(request.getNativeCRSs().iterator().next());
+            return request.withCRS(request.getNativeCRSs().iterator().next());
         }
-        return request;
     }
 
     private BoundWcsRequest negotiateRequestCRS(BoundWcsRequest request) throws IOException, FactoryException {
