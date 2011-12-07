@@ -29,19 +29,12 @@ public class WcsExtractor {
 
     private final File      _basedir;
     private final WcsFormat _format;
+    private RequestConfiguration requestConfig;
 
-	private String _adminPassword;
-
-	private String _adminUsername;
-
-	private String _secureHost;
-
-    public WcsExtractor (File basedir, WcsFormat format, String adminUsername, String adminPassword, String secureHost) {
-        this._basedir = basedir;
-        this._format = format;
-        this._adminPassword = adminPassword;
-        this._adminUsername = adminUsername;
-        this._secureHost = secureHost;
+    public WcsExtractor(File requestBaseDir, RequestConfiguration requestConfig) {
+        this._basedir = requestBaseDir;
+        this._format = new WcsFormat(requestConfig.maxCoverageExtractionSize);
+        this.requestConfig = requestConfig;
     }
     protected static final Log LOG = LogFactory.getLog(WcsExtractor.class.getPackage().getName());
 
@@ -84,12 +77,12 @@ public class WcsExtractor {
         String password;
         // HACK  I want unrestricted access to layers. 
         // Security check takes place in ExtractorThread
-        if(_secureHost.equalsIgnoreCase(request._url.getHost())
+        if(requestConfig.secureHost.equalsIgnoreCase(request._url.getHost())
                 || "127.0.0.1".equalsIgnoreCase(request._url.getHost())
                 || "localhost".equalsIgnoreCase(request._url.getHost())) {
         	LOG.debug("WcsExtractor.extract - Secured Server: Adding extractionUserName to connection params");
-            username = _adminUsername;
-            password = _adminPassword;
+            username = requestConfig.adminCredentials.getUserName();
+            password = requestConfig.adminCredentials.getPassword();
         } else {
         	LOG.debug("WcsExtractor.extract - Non Secured Server");        	
             username = null;
@@ -97,7 +90,7 @@ public class WcsExtractor {
         }
 
         WcsReaderRequest readerRequest = WcsReaderRequestFactory.create(WcsReaderRequest.DEFAULT_VERSION, request._layerName,
-                request._bbox, requestCRS, request._resolution, request._format, false, username, password);
+                request._bbox, requestCRS, request._resolution, request._format, false, requestConfig.remoteReproject, username, password);
         
         String safeFileName = FileUtils.toSafeFileName(request._layerName);
         reader.readToFile(basedir, safeFileName, readerRequest.getParameters());

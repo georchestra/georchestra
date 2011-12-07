@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
-import java.util.UUID;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -19,9 +18,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import javax.servlet.ServletContext;
 
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.geotools.data.wfs.WFSDataStoreFactory;
@@ -31,11 +28,11 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.TransformException;
 import org.springframework.web.util.WebUtils;
 
-import extractorapp.ws.CompleteEmailParams;
 import extractorapp.ws.extractor.ExtractorController;
 import extractorapp.ws.extractor.ExtractorLayerRequest;
 import extractorapp.ws.extractor.FileUtils;
 import extractorapp.ws.extractor.OversizedCoverageRequestException;
+import extractorapp.ws.extractor.RequestConfiguration;
 import extractorapp.ws.extractor.WcsExtractor;
 import extractorapp.ws.extractor.WfsExtractor;
 import extractorapp.ws.extractor.wcs.WcsFormat;
@@ -52,44 +49,23 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 
     private static final int EXTRACTION_ATTEMPTS = 3;
     public final ExecutionMetadata executionMetadata;
-    private final List<ExtractorLayerRequest> _requests;
-    private final UUID _requestUuid;
-    private final CompleteEmailParams _emailParams;
-    private final ServletContext _servletContext;
-    private final boolean _testing;
-    private final String _username;
-    private final String _roles;
-    private final UsernamePasswordCredentials _adminCredentials;
-    private final String _secureHost;
-    private final long maxCoverageExtractionSize;
 
-    public ExtractionTask(boolean testing,
-            List<ExtractorLayerRequest> requests,
-            ServletContext servletContext, UUID requestUuid,
-            CompleteEmailParams emailParams, String username, String roles,
-            UsernamePasswordCredentials adminCredentials, String secureHost,
-            long maxCoverageExtractionSize)
+    private RequestConfiguration requestConfig;
+
+    public ExtractionTask(RequestConfiguration requestConfig)
             throws NoSuchAuthorityCodeException, MalformedURLException,
             JSONException, FactoryException {
-        _requests = requests;
-        this._servletContext = servletContext;
-        this._requestUuid = requestUuid;
-        this._emailParams = emailParams;
-        this._testing = testing;
-        this._username = username;
-        this._roles = roles;
-        this._adminCredentials = adminCredentials;
-        this._secureHost = secureHost;
-        this.maxCoverageExtractionSize = maxCoverageExtractionSize;
-        this.executionMetadata = new ExecutionMetadata(requestUuid);
+        this.requestConfig = requestConfig; 
+        this.executionMetadata = new ExecutionMetadata(requestConfig.requestUuid);
     }
 
     @Override
     public void run() {
         executionMetadata.setRunning();
+        requestConfig.setThreadLocal();
         try {
             long start = System.currentTimeMillis();
-            final File tmpExtractionBundle = mkTmpBundleDir(_requestUuid
+            final File tmpExtractionBundle = mkTmpBundleDir(requestConfig.requestUuid
                     .toString());
             LOG.info("Starting extraction into directory: "
                     + tmpExtractionBundle);
@@ -99,7 +75,7 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
             final List<String> successes = new ArrayList<String>();
             final List<String> failures = new ArrayList<String>();
             final List<String> oversized = new ArrayList<String>();
-            for (ExtractorLayerRequest request : _requests) {
+            for (ExtractorLayerRequest request : requestConfig.requests) {
 
                 int tries = 0;
                 while (tries < EXTRACTION_ATTEMPTS) {
@@ -170,13 +146,13 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
             LOG.info(msg);
 
             FileUtils.delete(tmpExtractionBundle);
-            if (!_testing) {
+            if (!requestConfig.testing) {
                 try {
                     emailNotice(successes, failures, oversized);
                 } catch (Throwable e) {
                     handleException(e);
                 }
-            } else if (_testing && !failures.isEmpty()) {
+            } else if (requestConfig.testing && !failures.isEmpty()) {
                 throw new RuntimeException(Arrays.toString(failures.toArray()));
             }
         } finally {
@@ -205,7 +181,7 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
      * Protected to allow unit test to override
      */
     protected File mkTmpBundleDir(String name) {
-        File tmpDir = WebUtils.getTempDir(_servletContext);
+        File tmpDir = WebUtils.getTempDir(requestConfig.servletContext);
 
         File tmpExtractionBundle = new File(tmpDir, name);
         tmpExtractionBundle.mkdirs();
@@ -218,7 +194,7 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
      * @return
      */
     protected File archiveExtraction(File tmpExtractionBundle) {
-        String filename = _requestUuid.toString()
+        String filename = requestConfig.requestUuid.toString()
                 + ExtractorController.EXTRACTION_ZIP_EXT;
         File storageFile = FileUtils.storageFile(filename);
         if (!storageFile.getParentFile().exists()) {
@@ -314,16 +290,16 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 	
     private void emailNotice(List<String> successes, List<String> failures,
             List<String> oversized, String mesg) throws MessagingException {
-        String[] languages = _emailParams.getLanguages();
+        String[] languages = requestConfig.emailParams.getLanguages();
         final Properties props = System.getProperties();
-        props.put("mail.smtp.host", _emailParams.getSmtpHost());
-        props.put("mail.protocol.port", _emailParams.getSmptPort());
+        props.put("mail.smtp.host", requestConfig.emailParams.getSmtpHost());
+        props.put("mail.protocol.port", requestConfig.emailParams.getSmptPort());
         final Session session = Session.getInstance(props, null);
         final MimeMessage message = new MimeMessage(session);
-        if (isValidEmailAddress(_emailParams.getFrom())) {
-            message.setFrom(new InternetAddress(_emailParams.getFrom()));
+        if (isValidEmailAddress(requestConfig.emailParams.getFrom())) {
+            message.setFrom(new InternetAddress(requestConfig.emailParams.getFrom()));
         }
-        String[] recipients = _emailParams.getRecipients();
+        String[] recipients = requestConfig.emailParams.getRecipients();
         boolean validRecipients = false;
         for (String recipient : recipients) {
             if (isValidEmailAddress(recipient)) {
@@ -335,25 +311,25 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 
         if (!validRecipients) {
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(
-                    _emailParams.getFrom()));
+                    requestConfig.emailParams.getFrom()));
             message.setSubject(
                     "[ERREUR] Message non délivré : "
-                            + _emailParams.getSubject(),
-                    _emailParams.getSubjectEncoding());
+                            + requestConfig.emailParams.getSubject(),
+                    requestConfig.emailParams.getSubjectEncoding());
         } else {
-            message.setSubject(_emailParams.getSubject(),
-                    _emailParams.getSubjectEncoding());
+            message.setSubject(requestConfig.emailParams.getSubject(),
+                    requestConfig.emailParams.getSubjectEncoding());
         }
 
         Multipart multipart = new MimeMultipart();
 
-        if ((_emailParams.getMessage() != null) || (mesg != null)) {
+        if ((requestConfig.emailParams.getMessage() != null) || (mesg != null)) {
             MimeBodyPart bodyPart = new MimeBodyPart();
-            String msg = mesg != null ? mesg : _emailParams.getMessage();
+            String msg = mesg != null ? mesg : requestConfig.emailParams.getMessage();
             msg = msg.replace("{successes}", format(successes));
             msg = msg.replace("{failures}", format(failures));
             msg = msg.replace("{oversized}", format(oversized));
-            bodyPart.setText(msg, _emailParams.getBodyEncoding(), "html");
+            bodyPart.setText(msg, requestConfig.emailParams.getBodyEncoding(), "html");
             bodyPart.setContentLanguage(languages);
             multipart.addBodyPart(bodyPart);
         }
@@ -402,11 +378,8 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
     private void extractWcsLayer(ExtractorLayerRequest request,
             File requestBaseDir) throws IOException, TransformException,
             FactoryException {
-        WcsExtractor extractor = new WcsExtractor(requestBaseDir,
-                new WcsFormat(maxCoverageExtractionSize),
-                _adminCredentials.getUserName(),
-                _adminCredentials.getPassword(), _secureHost);
-        extractor.checkPermission(request, _secureHost, _username, _roles);
+        WcsExtractor extractor = new WcsExtractor(requestBaseDir, requestConfig);
+        extractor.checkPermission(request, requestConfig.secureHost, requestConfig.username, requestConfig.roles);
         extractor.extract(request);
     }
 
@@ -414,10 +387,10 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
             File requestBaseDir) throws IOException, TransformException,
             FactoryException {
         WfsExtractor extractor = new WfsExtractor(requestBaseDir,
-                new WFSDataStoreFactory(), _adminCredentials.getUserName(),
-                _adminCredentials.getPassword(), _secureHost);
+                new WFSDataStoreFactory(), requestConfig.adminCredentials.getUserName(),
+                requestConfig.adminCredentials.getPassword(), requestConfig.secureHost);
 
-        extractor.checkPermission(request, _secureHost, _username, _roles);
+        extractor.checkPermission(request, requestConfig.secureHost, requestConfig.username, requestConfig.roles);
 
         extractor.extract(request);
     }
@@ -429,7 +402,7 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
     }
 
     public boolean equalId(String uuid) {
-        return _requestUuid.toString().equals(uuid);
+        return requestConfig.requestUuid.toString().equals(uuid);
     }
 
 }

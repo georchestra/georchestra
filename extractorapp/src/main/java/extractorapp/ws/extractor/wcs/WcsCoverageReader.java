@@ -177,7 +177,6 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
     public File readToFile(File containingDirector, String baseFilename, GeneralParameterValue[] parameters)
             throws IllegalArgumentException, IOException {
         InputStream in = null;
-        File file = null;
 
         try {
             WcsReaderRequest request = WcsReaderRequestFactory.create(parameters);
@@ -190,6 +189,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
 
             // file = new File (new File("/tmp/"),
             // baseFilename+"."+request.fileExtension());
+            File file = null;
             file = new File(containingDirector, baseFilename + "." + request.fileExtension());
             LOG.debug("Writing GridCoverage obtained from " + _wcsUrl + " to file " + file);
 
@@ -356,22 +356,27 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
     }
 
     private BoundWcsRequest negotiateResponseCRS(BoundWcsRequest request) throws IOException {
-        Set<String> crss = request.getSupportedResponseCRSs();
-        // Hack mostly for pigma.  It will work so long as backing servers are Geoservers
-        if(crss.isEmpty() && request.getNativeCRSs().isEmpty()) return request;
-        if (!crss.contains(request.getResponseEpsgCode())) {
-            String newCrs = "EPSG:4326";
-            if (request.getNativeCRSs().isEmpty()) {
-                Iterator<String> crsIter = crss.iterator();
-				if (!crss.contains(newCrs) && crsIter.hasNext()) {
-                    newCrs = crsIter.next();
+        
+        if(request.remoteReproject) {
+            Set<String> crss = request.getSupportedResponseCRSs();
+            // Hack mostly for pigma.  It will work so long as backing servers are Geoservers
+            if(crss.isEmpty() && request.getNativeCRSs().isEmpty()) return request;
+            if (!crss.contains(request.getResponseEpsgCode())) {
+                String newCrs = "EPSG:4326";
+                if (request.getNativeCRSs().isEmpty()) {
+                    Iterator<String> crsIter = crss.iterator();
+    				if (!crss.contains(newCrs) && crsIter.hasNext()) {
+                        newCrs = crsIter.next();
+                    } else {
+                    	
+                    }
                 } else {
-                	
+                    newCrs = request.getNativeCRSs().iterator().next();
                 }
-            } else {
-                newCrs = request.getNativeCRSs().iterator().next();
+                return request.withCRS(newCrs);
             }
-            return request.withCRS(newCrs);
+        } else {
+            request.withCRS(request.getNativeCRSs().iterator().next());
         }
         return request;
     }

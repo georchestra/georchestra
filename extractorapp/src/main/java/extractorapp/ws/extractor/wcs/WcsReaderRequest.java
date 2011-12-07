@@ -14,6 +14,7 @@ import static extractorapp.ws.extractor.wcs.WcsParameters.RESX;
 import static extractorapp.ws.extractor.wcs.WcsParameters.RESY;
 import static extractorapp.ws.extractor.wcs.WcsParameters.RES;
 import static extractorapp.ws.extractor.wcs.WcsParameters.USE_POST;
+import static extractorapp.ws.extractor.wcs.WcsParameters.REMOTE_REPROJECT;
 import static extractorapp.ws.extractor.wcs.WcsParameters.VERSION;
 import static extractorapp.ws.extractor.wcs.WcsParameters.USERNAME;
 import static extractorapp.ws.extractor.wcs.WcsParameters.PASSWORD;
@@ -66,6 +67,7 @@ public class WcsReaderRequest {
     public final CoordinateReferenceSystem responseCRS;
 	protected final String username;
 	protected final String password;
+    public final Boolean remoteReproject;
 
     /**
      * Use {@link WcsReaderRequestFactory} to create instances of {@link WcsReaderRequestFactory}
@@ -76,11 +78,12 @@ public class WcsReaderRequest {
      * @param height height of returned image
      * @param format format of the image
      * @param usePost if true post will be used for making requests
+     * @param remoteReproject 
      * @param password 
      * @param username 
      */
     protected WcsReaderRequest (String version, String coverage, ReferencedEnvelope bbox, CoordinateReferenceSystem responseCRS, double resolution,
-            String format, boolean usePost, String username, String password) {
+            String format, boolean usePost, Boolean remoteReproject, String username, String password) {
         if(resolution <= 0) {
             throw new IllegalArgumentException("resolution must be greater than 0");
         }
@@ -90,6 +93,7 @@ public class WcsReaderRequest {
         this.groundResolutionX = resolution;
         this.format = format.toLowerCase ();
         this.usePost = usePost;
+        this.remoteReproject = remoteReproject;
         this.requestBbox = bbox;
         this.username = username;
         this.password = password;
@@ -101,14 +105,14 @@ public class WcsReaderRequest {
     }
     
     protected WcsReaderRequest (WcsReaderRequest request) {
-        this(request.version, request.coverage, request.requestBbox, request.responseCRS, request.groundResolutionX, request.format, request.usePost, request.username, request.password);
+        this(request.version, request.coverage, request.requestBbox, request.responseCRS, request.groundResolutionX, request.format, request.usePost, request.remoteReproject, request.username, request.password);
     }
 
     /**
      * Create a new request based on the current request but with a new format
      */
     public WcsReaderRequest withFormat (String newFormat) {
-        return new WcsReaderRequest (version, coverage, requestBbox, responseCRS, groundResolutionX, newFormat, usePost, username, password);
+        return new WcsReaderRequest (version, coverage, requestBbox, responseCRS, groundResolutionX, newFormat, usePost, remoteReproject, username, password);
     }
     
     /**
@@ -118,7 +122,7 @@ public class WcsReaderRequest {
     public WcsReaderRequest withCRS(String code) {
         try {
             CoordinateReferenceSystem newCrs = org.geotools.referencing.CRS.decode(code);
-            return new WcsReaderRequest(version, coverage, requestBbox, newCrs, groundResolutionX, format, usePost, username, password);
+            return new WcsReaderRequest(version, coverage, requestBbox, newCrs, groundResolutionX, format, usePost, remoteReproject, username, password);
         } catch (FactoryException e) {
             throw new ExtractorException(e);
         }
@@ -139,6 +143,9 @@ public class WcsReaderRequest {
     public GeneralParameterValue[] getParameters() {
         ParameterValue<Boolean> usePost = USE_POST.createValue ();
         usePost.setValue (this.usePost);
+
+        ParameterValue<Boolean> remoteReproject = REMOTE_REPROJECT.createValue ();
+        usePost.setValue (this.remoteReproject);
 
         ParameterValue<String> version = VERSION.createValue ();
         version.setValue (this.version);
@@ -174,7 +181,7 @@ public class WcsReaderRequest {
         ParameterGroup extent = new ParameterGroup (EXTENT, new ParameterValueGroup[]{bbox});
         ParameterGroup resultImageParams = new ParameterGroup (RESULT_IMAGE_PARAMS, new ParameterValueGroup[]{size});
         
-        return new GeneralParameterValue[]{usePost, version, coverage, format, crs, extent, resultImageParams, username, password};
+        return new GeneralParameterValue[]{usePost, remoteReproject, version, coverage, format, crs, extent, resultImageParams, username, password};
     }
 
     /**

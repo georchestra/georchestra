@@ -42,7 +42,7 @@ public class WcsParameters {
     public static final DefaultParameterDescriptor<Double> MAXY = DefaultParameterDescriptor.create ("maxy", "maxy of the bbox", Double.class, null, false);
     
     public static final DefaultParameterDescriptor<Boolean> USE_POST = DefaultParameterDescriptor.create ("usePost", "Whether Post should be used", Boolean.class, true, false);
-    
+    public static final DefaultParameterDescriptor<Boolean> REMOTE_REPROJECT = DefaultParameterDescriptor.create ("remoteReproject", "Whether the reprojection should be done on the WCS side or in the extractorapp", Boolean.class, true, false);
     
     public static final ParameterDescriptorGroup BBOX = new WcsParameterDescriptorGroup ("bbox", new GeneralParameterDescriptor[]{
             MINX, MINY, MAXX, MAXY, CRS

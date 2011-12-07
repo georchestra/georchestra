@@ -47,6 +47,8 @@
                   value="Votre demande d'extraction"/>
         <property name="maxCoverageExtractionSize"
                   value="${maxCoverageExtractionSize}"/>
+        <property name="remoteReproject"
+                  value="${remoteReproject}"/>
         <property name="adminCredentials">
             <bean class="org.apache.commons.httpclient.UsernamePasswordCredentials">
                 <constructor-arg index="0" value="${priveleged_admin_name}"/>

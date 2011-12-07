@@ -93,8 +93,8 @@ public class BoundWcsRequest extends WcsReaderRequest {
     }
 
     private BoundWcsRequest (String version, String coverage, ReferencedEnvelope bbox, CoordinateReferenceSystem responseCRS, double resx, 
-            String format, boolean usePost, String username, String password, URL wcsUrl, String capabilities, String describeCoverage) {
-        super(version, coverage, bbox, responseCRS, resx, format, usePost, username, password);
+            String format, boolean usePost, boolean remoteReproject, String username, String password, URL wcsUrl, String capabilities, String describeCoverage) {
+        super(version, coverage, bbox, responseCRS, resx, format, usePost, remoteReproject, username, password);
         this._wcsUrl = wcsUrl;
         this._describeCoverage = describeCoverage;
         this._capabilities = capabilities;
@@ -171,8 +171,14 @@ public class BoundWcsRequest extends WcsReaderRequest {
             NodeList nodes = select ("//wcs:nativeCRSs", getDescribeCoverage());
             nativeCRSs = new HashSet<String> ();
             for (int i = 0; i < nodes.getLength (); i++) {
-                nativeCRSs.add ("" + nodes.item (i).getTextContent ().trim ().toUpperCase ());
+                nativeCRSs.add (nodes.item (i).getTextContent ().trim ().toUpperCase ());
             }
+            
+            nodes = select ("//wcs:spatialDomain/*/@srsName", getDescribeCoverage());
+            for (int i = 0; i < nodes.getLength (); i++) {
+                nativeCRSs.add (nodes.item (i).getTextContent ().trim ().toUpperCase ());
+            }
+
         }
 
         return nativeCRSs;
@@ -221,14 +227,14 @@ public class BoundWcsRequest extends WcsReaderRequest {
 
     @Override
     public BoundWcsRequest withFormat (String newFormat) {
-            return new BoundWcsRequest (version, coverage, requestBbox, responseCRS, groundResolutionX, newFormat, usePost, username, password, _wcsUrl, this._capabilities, this._describeCoverage);
+            return new BoundWcsRequest (version, coverage, requestBbox, responseCRS, groundResolutionX, newFormat, usePost, remoteReproject, username, password, _wcsUrl, this._capabilities, this._describeCoverage);
     }
 
     @Override
 	public BoundWcsRequest withCRS(String code) {
 		try {
 			CoordinateReferenceSystem newCrs = CRS.decode(code);
-			return new BoundWcsRequest(version, coverage, requestBbox, newCrs, groundResolutionX, format, usePost, username, password, _wcsUrl, _capabilities, _describeCoverage);
+			return new BoundWcsRequest(version, coverage, requestBbox, newCrs, groundResolutionX, format, usePost, remoteReproject, username, password, _wcsUrl, _capabilities, _describeCoverage);
 		} catch (FactoryException e) {
 			throw new ExtractorException(e);
 		}
@@ -432,7 +438,7 @@ public class BoundWcsRequest extends WcsReaderRequest {
 
 
     public BoundWcsRequest withRequestBBox(ReferencedEnvelope newBBox) {
-        return new BoundWcsRequest(version, coverage, newBBox, responseCRS, groundResolutionX, format, usePost, username, password, _wcsUrl, _capabilities, _describeCoverage);
+        return new BoundWcsRequest(version, coverage, newBBox, responseCRS, groundResolutionX, format, usePost, remoteReproject, username, password, _wcsUrl, _capabilities, _describeCoverage);
     }
 
     public void assertLegalSize(long maxSize) throws IOException {

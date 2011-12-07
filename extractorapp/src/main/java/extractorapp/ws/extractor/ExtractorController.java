@@ -58,12 +58,17 @@ public class ExtractorController implements ServletContextAware {
     private String                      emailSubject;
     private ServletContext              servletContext;
     private String                      servletUrl;
+    private boolean                     remoteReproject = true;
+    public void setRemoteReproject(boolean remoteReproject) {
+        this.remoteReproject = remoteReproject;
+    }
+
     private UsernamePasswordCredentials adminCredentials;
     private String secureHost;
-    private long maxCoverageExtractionSize = Long.MAX_VALUE; 
-    private ExtractionManager extractionManager;
-    
+    private long maxCoverageExtractionSize = Long.MAX_VALUE;     
     private CheckFormAcceptance checkFormAcceptance;
+    
+    private ExtractionManager extractionManager;
     
     public void validateConfig() {
     	if(extractionManager==null) {
@@ -145,10 +150,9 @@ public class ExtractorController implements ServletContextAware {
 						emailDefaults, recipients, emailSubject, message);
 				String username = request.getHeader("sec-username");
 				String roles = request.getHeader("sec-roles");
-				ExtractionTask extractor = new ExtractionTask(testing,
-						requests, servletContext, requestUuid, emailParams,
-						username, roles, adminCredentials, secureHost,
-						maxCoverageExtractionSize);
+				RequestConfiguration requestConfig = new RequestConfiguration(requests, requestUuid, emailParams, 
+		                servletContext, testing, username, roles, adminCredentials, secureHost, maxCoverageExtractionSize, remoteReproject);
+				ExtractionTask extractor = new ExtractionTask(requestConfig);
 				
 				LOG.info("Sending mail to user");
 				try {
