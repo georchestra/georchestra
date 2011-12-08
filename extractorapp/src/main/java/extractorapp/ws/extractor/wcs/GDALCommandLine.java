@@ -28,35 +28,54 @@ public class GDALCommandLine {
             outFile = new File(tmpDir, file.getName());
         }
 
-        transformFormat(sourceFile, executedRequest, targetRequest, outFile);
-
-        if (sourceFile.equals(file)) {
-            for (File f : outFile.getParentFile().listFiles()) {
-                File dest = new File(file.getParentFile(), f.getName());
-                FileUtils.moveFile(f, dest);
-            }
-        }
+        reproject(sourceFile, executedRequest, targetRequest, outFile);
+        transformFormat(outFile, executedRequest, targetRequest, file);
     }
 
-    private static void transformFormat(File sourceFile, WcsReaderRequest executedRequest, WcsReaderRequest targetRequest, File outFile)
+    private static void transformFormat(File sourceFile, WcsReaderRequest executedRequest, WcsReaderRequest targetRequest, File outFile) throws IOException {
+        if(Formats.isGeotiff(executedRequest.format) && Formats.isGeotiff(targetRequest.format)) {
+            for (File f : sourceFile.getParentFile().listFiles()) {
+                File dest = new File(outFile.getParentFile(), f.getName());
+                FileUtils.moveFile(f, dest);
+            }
+        } else {
+            List<String> command = new ArrayList<String>();
+            command.add(findTranslateBinary());
+
+            addOutputFormat(targetRequest, command);
+            addQuietParam(command);
+            
+            command.add(sourceFile.getAbsolutePath());
+            command.add(outFile.getAbsolutePath());
+            
+            executeCommand(command);
+        }
+        
+    }
+
+    private static void reproject(File sourceFile, WcsReaderRequest executedRequest, WcsReaderRequest targetRequest, File outFile)
             throws IOException {
         List<String> command = new ArrayList<String>();
         command.add(findWarpBinary());
 
         addInputProjection(executedRequest, command);
 
-        addOutputFormat(targetRequest, command);
+        addGeotiffOutputFormat(command);
         addOutputProjection(targetRequest, command);
 
         addWarpParameters(command);
 
-        if (!LOG.isDebugEnabled()) {
-            command.add("-q");
-        }
+        addQuietParam(command);
         command.add(sourceFile.getAbsolutePath());
         command.add(outFile.getAbsolutePath());
 
         executeCommand(command);
+    }
+
+    private static void addQuietParam(List<String> command) {
+        if (!LOG.isDebugEnabled()) {
+            command.add("-q");
+        }
     }
 
     private static void addWarpParameters(List<String> command) {
@@ -92,7 +111,7 @@ public class GDALCommandLine {
             }
 
             if (exitCode != 0) {
-                throw new ExtractorException("GDAL commandline tranform failed. Output is as follows:\n" + gdalOutput.toString());
+                throw new ExtractorException(command.toString() + " failed. Output is as follows:\n" + gdalOutput.toString());
             }
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
@@ -125,16 +144,8 @@ public class GDALCommandLine {
     }
 
     private static void addOutputFormat(WcsReaderRequest requiredRequest, List<String> command) {
-
         if (Formats.isGeotiff(requiredRequest.format)) {
-            command.add("-of");
-            command.add("GTiff");
-            command.add("-co");
-            command.add("TILED=YES");
-            command.add("-co");
-            command.add("TFW=YES");
-            command.add("-co");
-            command.add("BIGTIFF=IF_SAFER");
+            addGeotiffOutputFormat(command);
         } else if (Formats.isJPEG2000(requiredRequest.format)) {
             command.add("-of");
             command.add("JPEG2000");
@@ -151,8 +162,22 @@ public class GDALCommandLine {
         }
     }
 
+    private static void addGeotiffOutputFormat(List<String> command) {
+        command.add("-of");
+        command.add("GTiff");
+        command.add("-co");
+        command.add("TILED=YES");
+        command.add("-co");
+        command.add("TFW=YES");
+        command.add("-co");
+        command.add("BIGTIFF=IF_SAFER");
+    }
+
     private static String findWarpBinary() {
         return findGdalBinary("gdalwarp");
+    }
+    private static String findTranslateBinary() {
+        return findGdalBinary("gdal_translate");
     }
 
     private static String findGdalBinary(String command) {
