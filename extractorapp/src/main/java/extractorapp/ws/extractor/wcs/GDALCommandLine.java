@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -16,20 +17,20 @@ import extractorapp.ws.extractor.FileUtils;
 public class GDALCommandLine {
     private static final Log LOG = LogFactory.getLog(GDALCommandLine.class.getPackage().getName());
     private static final String SEP = File.separator;
-    static void gdalTransformation(File sourceFile, File file,
-            WcsReaderRequest executedRequest,
-            WcsReaderRequest targetRequest) throws IOException {
+
+    static void gdalTransformation(File sourceFile, File file, WcsReaderRequest executedRequest, WcsReaderRequest targetRequest)
+            throws IOException {
         LOG.info("using GDAL command line to tranform the coverage");
-        
+
         File outFile = file;
-        if(sourceFile.equals(file)) {
+        if (sourceFile.equals(file)) {
             File tmpDir = FileUtils.createTempDirectory();
             outFile = new File(tmpDir, file.getName());
         }
-        
+
         transformFormat(sourceFile, executedRequest, targetRequest, outFile);
-        
-        if(sourceFile.equals(file)) {
+
+        if (sourceFile.equals(file)) {
             for (File f : outFile.getParentFile().listFiles()) {
                 File dest = new File(file.getParentFile(), f.getName());
                 FileUtils.moveFile(f, dest);
@@ -37,25 +38,27 @@ public class GDALCommandLine {
         }
     }
 
-    private static void transformFormat(File sourceFile, WcsReaderRequest executedRequest, WcsReaderRequest targetRequest, File outFile) throws IOException {
+    private static void transformFormat(File sourceFile, WcsReaderRequest executedRequest, WcsReaderRequest targetRequest, File outFile)
+            throws IOException {
         List<String> command = new ArrayList<String>();
         command.add(findWarpBinary());
-        
+
         addInputProjection(executedRequest, command);
-        
+
         addOutputFormat(targetRequest, command);
         addOutputProjection(targetRequest, command);
-        
+
         addWarpParameters(command);
-        
-        if(!LOG.isDebugEnabled()) {
+
+        if (!LOG.isDebugEnabled()) {
             command.add("-q");
         }
         command.add(sourceFile.getAbsolutePath());
         command.add(outFile.getAbsolutePath());
-        
+
         executeCommand(command);
     }
+
     private static void addWarpParameters(List<String> command) {
         command.add("-r");
         command.add("cubic");
@@ -72,37 +75,58 @@ public class GDALCommandLine {
     }
 
     private static void executeCommand(List<String> command) throws IOException {
-        LOG.info("Executing : "+command.toString());
+        LOG.info("Executing : " + command.toString());
         ProcessBuilder builder = new ProcessBuilder();
         builder.command(command);
         builder.redirectErrorStream(true);
         Process process = builder.start();
-        BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        StringBuilder gdalOutput = new StringBuilder();
+        final StringBuilder gdalOutput = new StringBuilder();
+        readProcessOutput(process, gdalOutput);
+
         try {
-            String line;
-            while((line = in.readLine()) != null) {
-                if(!line.trim().isEmpty()) {
-                    gdalOutput.append("\t");
-                    gdalOutput.append(line);
-                    gdalOutput.append("\n");
-                }
-            }
-            if(LOG.isDebugEnabled()) {
-                LOG.debug("GDAL_OUTPUT:\n"+gdalOutput.toString());
+            int exitCode = process.waitFor();
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("GDAL_OUTPUT:\n" + gdalOutput.toString());
             } else {
-                LOG.error("GDAL_OUTPUT:\n"+gdalOutput.toString());
+                LOG.error("GDAL_OUTPUT:\n" + gdalOutput.toString());
             }
-            if(process.exitValue() != 0) {
-                throw new ExtractorException("GDAL commandline tranform failed. Output is as follows:\n"+gdalOutput.toString());
+
+            if (exitCode != 0) {
+                throw new ExtractorException("GDAL commandline tranform failed. Output is as follows:\n" + gdalOutput.toString());
             }
-        } finally {
-            in.close();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
+
+    private static void readProcessOutput(final Process process, final StringBuilder gdalOutput) throws IOException {
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                try {
+                    String line;
+                    while ((line = in.readLine()) != null) {
+                        if (!line.trim().isEmpty()) {
+                            gdalOutput.append("\t");
+                            gdalOutput.append(line);
+                            gdalOutput.append("\n");
+                        }
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                } finally {
+                    IOUtils.closeQuietly(in);
+                }
+            }
+        };
+        thread.setDaemon(true);
+        thread.start();
+    }
+
     private static void addOutputFormat(WcsReaderRequest requiredRequest, List<String> command) {
-        
-        if(Formats.isGeotiff(requiredRequest.format)) {
+
+        if (Formats.isGeotiff(requiredRequest.format)) {
             command.add("-of");
             command.add("GTiff");
             command.add("-co");
@@ -115,12 +139,12 @@ public class GDALCommandLine {
             command.add("BLOCKXSIZE=1024");
             command.add("-co");
             command.add("BLOCKYSIZE=1024");
-        } else if(Formats.isJPEG2000(requiredRequest.format)) {
+        } else if (Formats.isJPEG2000(requiredRequest.format)) {
             command.add("-of");
             command.add("JPEG2000");
             command.add("-co");
             command.add("WORLDFILE=ON");
-        } else if(requiredRequest.format.equalsIgnoreCase("ecw")) {
+        } else if (requiredRequest.format.equalsIgnoreCase("ecw")) {
             command.add("-of");
             command.add("ECW");
             command.add("-co");
@@ -130,24 +154,24 @@ public class GDALCommandLine {
             command.add(requiredRequest.format);
         }
     }
+
     private static String findWarpBinary() {
         return findGdalBinary("gdalwarp");
     }
 
     private static String findGdalBinary(String command) {
         String gdalHome = System.getProperty("gdal.home");
-        if(gdalHome == null) {
+        if (gdalHome == null) {
             gdalHome = System.getProperty("GDAL_HOME");
         }
-        if(gdalHome == null) {
+        if (gdalHome == null) {
             gdalHome = System.getenv("GDAL_HOME");
         }
-        if(gdalHome == null) {
+        if (gdalHome == null) {
             return command;
-        }  else {
-            return gdalHome + SEP+"bin"+SEP+command;
+        } else {
+            return gdalHome + SEP + "bin" + SEP + command;
         }
     }
-
 
 }
