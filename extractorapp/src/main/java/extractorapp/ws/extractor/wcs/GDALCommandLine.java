@@ -16,21 +16,37 @@ public class GDALCommandLine {
     private static final Log LOG = LogFactory.getLog(GDALCommandLine.class.getPackage().getName());
     private static final String SEP = File.separator;
     static void gdalTransformation(File sourceFile, File file,
-            WcsReaderRequest requiredRequest,
-            WcsReaderRequest inputRequest) throws IOException {
+            WcsReaderRequest executedRequest,
+            WcsReaderRequest targetRequest) throws IOException {
         LOG.info("using GDAL command line to tranform the coverage");
         
-        File outFile = file;
-        if(sourceFile.equals(file)) {
-            File tmpDir = FileUtils.createTempDirectory();
-            outFile = new File(tmpDir, file.getName());
-        }
+        File tmpDir = FileUtils.createTempDirectory();
+        File outFile = new File(tmpDir, file.getName());
         
+        reproject(sourceFile, executedRequest, targetRequest, outFile);
+        transformFormat(outFile, targetRequest, file);
+        LOG.info("Finished GDAL command line transform");
+    }
+    private static void reproject(File sourceFile, WcsReaderRequest executedRequest, WcsReaderRequest targetRequest, File outFile) throws IOException {
         List<String> command = new ArrayList<String>();
-        command.add(findGdalBinary());
+        command.add(findTranformBinary());
+        
+        command.add("-s_srs");
+        command.add(executedRequest.getResponseEpsgCode());
+        
+        command.add("-t_srs");
+        command.add(targetRequest.getResponseEpsgCode());
+        
+        command.add(sourceFile.getAbsolutePath());
+        command.add(outFile.getAbsolutePath());
+        
+        executeCommand(command);
+    }
+    private static void transformFormat(File sourceFile, WcsReaderRequest requiredRequest, File outFile) throws IOException {
+        List<String> command = new ArrayList<String>();
+        command.add(findTranslateBinary());
         
         addOutputFormat(requiredRequest, command);
-        addOutputProjection(requiredRequest, command);
         
         if(!LOG.isDebugEnabled()) {
             command.add("-q");
@@ -38,6 +54,9 @@ public class GDALCommandLine {
         command.add(sourceFile.getAbsolutePath());
         command.add(outFile.getAbsolutePath());
         
+        executeCommand(command);
+    }
+    private static void executeCommand(List<String> command) throws IOException {
         LOG.info("Executing : "+command.toString());
         ProcessBuilder builder = new ProcessBuilder();
         builder.command(command);
@@ -56,17 +75,6 @@ public class GDALCommandLine {
         } finally {
             in.close();
         }
-        if(sourceFile.equals(file)) {
-            for (File f : outFile.getParentFile().listFiles()) {
-                File dest = new File(file.getParentFile(), f.getName());
-                FileUtils.moveFile(f, dest);
-            }
-        }
-    }
-    private static void addOutputProjection(WcsReaderRequest requiredRequest, List<String> command) {
-        command.add("-a_srs");
-        command.add(requiredRequest.getResponseEpsgCode());
-        
     }
     private static void addOutputFormat(WcsReaderRequest requiredRequest, List<String> command) {
         
@@ -98,18 +106,25 @@ public class GDALCommandLine {
             command.add(requiredRequest.format);
         }
     }
-    private static String findGdalBinary() {
-        String gdalBinary = System.getProperty("gdal.binary");
-        if(gdalBinary == null) {
-            gdalBinary = System.getenv("GDAL_HOME");
-            if(gdalBinary!=null) {
-                gdalBinary += SEP+"bin"+SEP+"gdal_translate";
-            }
+    private static String findTranslateBinary() {
+        return findGdalBinary("gdal_translate");
+    }
+    private static String findTranformBinary() {
+        return findGdalBinary("gdaltransform");
+    }
+    private static String findGdalBinary(String command) {
+        String gdalHome = System.getProperty("gdal.home");
+        if(gdalHome == null) {
+            gdalHome = System.getProperty("GDAL_HOME");
         }
-        if(gdalBinary == null) {
-            gdalBinary = "gdal_translate";
+        if(gdalHome == null) {
+            gdalHome = System.getenv("GDAL_HOME");
         }
-        return gdalBinary;
+        if(gdalHome == null) {
+            return command;
+        }  else {
+            return gdalHome + SEP+"bin"+SEP+command;
+        }
     }
 
 

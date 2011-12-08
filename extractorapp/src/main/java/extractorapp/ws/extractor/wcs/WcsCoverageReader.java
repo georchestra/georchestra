@@ -254,10 +254,10 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
     }
 
     static void transformCoverage(final File sourceFile, final File file,
-            final WcsReaderRequest request,
-            WcsReaderRequest requestNegotiatedFormatCrs) throws IOException {
-        final CoordinateReferenceSystem original = request.responseCRS;
-        CoordinateReferenceSystem actual = requestNegotiatedFormatCrs.responseCRS;
+            final WcsReaderRequest targetRequest,
+            WcsReaderRequest executedRequest) throws IOException {
+        final CoordinateReferenceSystem original = targetRequest.responseCRS;
+        CoordinateReferenceSystem actual = executedRequest.responseCRS;
 
         if (!CRS.equalsIgnoreMetadata(original, actual)) {
             try {
@@ -268,11 +268,10 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
                 LOG.info("Need to reproject coverage from " + actual.getName()
                         + " to " + original.getName());
             }
-            if (request.useCommandLineGDAL) {
-                GDALCommandLine.gdalTransformation(sourceFile, file, request,
-                        requestNegotiatedFormatCrs);
+            if (targetRequest.useCommandLineGDAL) {
+                GDALCommandLine.gdalTransformation(sourceFile, file, executedRequest, targetRequest);
             } else {
-                geotoolsTranformation(sourceFile, file, request, original);
+                geotoolsTranformation(sourceFile, file, targetRequest, original);
             }
         }
     }
