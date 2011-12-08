@@ -329,6 +329,14 @@ GEOR.config = (function() {
          */
         DEFAULT_PRINT_RESOLUTION: getCustomParameter("DEFAULT_PRINT_RESOLUTION", 
             "127"),
+    
+        /**
+         * Constant: PRINT_FILENAME_PREFIX
+         * {String} The PDF filename prefix.
+         * Defaults to "georchestra"
+         */ 
+        PRINT_FILENAME_PREFIX: getCustomParameter("PRINT_FILENAME_PREFIX", 
+            "georchestra"),
         
         /**
          * Constant: GEOSERVER_WFS_URL
