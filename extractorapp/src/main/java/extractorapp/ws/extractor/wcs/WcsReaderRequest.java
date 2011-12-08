@@ -206,8 +206,11 @@ public class WcsReaderRequest {
      * determins the type of extension the resulting image file should have.
      */
     String fileExtension () {
-        if(format.equalsIgnoreCase ("geotiff")){
+        if(Formats.isGeotiff(format)){
             return "tif";
+        }
+        if(Formats.isJPEG2000(format)){
+            return "jp2";
         }
         return format;
     }

@@ -38,6 +38,7 @@ public class GDALCommandLine {
         command.add(sourceFile.getAbsolutePath());
         command.add(outFile.getAbsolutePath());
         
+        LOG.info("Executing : "+command.toString());
         ProcessBuilder builder = new ProcessBuilder();
         builder.command(command);
         builder.redirectErrorStream(true);
@@ -69,7 +70,7 @@ public class GDALCommandLine {
     }
     private static void addOutputFormat(WcsReaderRequest requiredRequest, List<String> command) {
         
-        if(requiredRequest.format.equalsIgnoreCase("geotiff")) {
+        if(Formats.isGeotiff(requiredRequest.format)) {
             command.add("-of");
             command.add("GTiff");
             command.add("-co");
@@ -82,8 +83,7 @@ public class GDALCommandLine {
             command.add("BLOCKXSIZE=1024");
             command.add("-co");
             command.add("BLOCKYSIZE=1024");
-        } else if(requiredRequest.format.equalsIgnoreCase("jpeg2000") || requiredRequest.format.equalsIgnoreCase("jp2")
-                || requiredRequest.format.equalsIgnoreCase("jp2ecw") || requiredRequest.format.equalsIgnoreCase("jp2k")) {
+        } else if(Formats.isJPEG2000(requiredRequest.format)) {
             command.add("-of");
             command.add("JPEG2000");
             command.add("-co");

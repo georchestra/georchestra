@@ -21,10 +21,10 @@ public class Formats {
     private static Map<String, AbstractGridFormat> gtFormats = new HashMap<String, AbstractGridFormat>();
     // formats that are best consumed by the extractorapp
     public static final Set<String> preferredFormats;
-    // formats that contain the CRS information and do not need 
-    public static final Set<String> embeddedCrsFormats; 
+    // formats that contain the CRS information and do not need
+    public static final Set<String> embeddedCrsFormats;
     static {
-        
+
         gtFormats.put("png", new WorldImageFormat());
         gtFormats.put("gif", new WorldImageFormat());
         gtFormats.put("jpeg", new WorldImageFormat());
@@ -33,12 +33,23 @@ public class Formats {
         gtFormats.put("ecw", new ECWFormat());
         String[] formats = { "png", "geotiff", "gif", "jpeg", "jp2ecw", "ecw" };
         preferredFormats = Collections.unmodifiableSet(gtFormats.keySet());
-        
-        formats = new String[]{ "geotiff","jp2ecw", "ecw" };
+
+        formats = new String[] { "geotiff", "jp2ecw", "ecw" };
         embeddedCrsFormats = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(formats)));
-        
+
     }
+
     public static AbstractGridFormat getFormat(String format) {
         return gtFormats.get(format.toLowerCase());
+    }
+
+    public static boolean isJPEG2000(String format) {
+        return format.equalsIgnoreCase("jpeg2000") || format.equalsIgnoreCase("jp2") || format.equalsIgnoreCase("jp2ecw")
+                || format.equalsIgnoreCase("jp2k");
+    }
+
+    public static boolean isGeotiff(String format) {
+        return format.equalsIgnoreCase("geotiff") || format.equalsIgnoreCase("gtiff") || format.equalsIgnoreCase("geotif")
+                || format.equalsIgnoreCase("gtif");
     }
 }
