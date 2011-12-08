@@ -46,6 +46,14 @@ Installation
    search_address
    security
 
+Une version anglaise (:ref:`georchestra.documentation.installation_en`) et en 
+espagnol (:ref:`georchestra.documentation.installation_sp`) sont disponibles.
+
+.. toctree::
+   :hidden:
+   
+   installation_sp
+   installation_en
 
 Utilisation
 ============
