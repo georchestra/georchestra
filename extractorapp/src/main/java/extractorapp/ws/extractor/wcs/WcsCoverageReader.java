@@ -275,7 +275,8 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
             }
             
             LOG.info("Coverage reprojection/transformation complete");
-
+        } else if(!sourceFile.equals(file)) {
+            FileUtils.moveFile(sourceFile, file);
         }
     }
 
