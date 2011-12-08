@@ -81,22 +81,26 @@
 
 
 .csw-main {
+	border: 1px solid #2e4a6b;
 	clear: both;
 	/*background: #E6ECF6;*/
- 	padding-top: 1em;
+	background: #eef4f9;
+ 	padding-top: 2em;
 }
 
 .csw-main2 {
 	border: 0px solid #2e4a6b;
 	clear: both;
 	/*background: #E6ECF6;*/
- 	padding-top: 1em;
+ 	padding-top: 2em;
 }
 
 .csw-content {
+    border: 1px solid #eee;
     padding-left: 2em;
     padding-right: 2em;
     padding-bottom: 2em;
+    background: #eee url("images/diagonal.gif");
     height: 1%;
 }
 
@@ -104,6 +108,7 @@
     padding-left: 2em;
     padding-right: 2em;
     padding-bottom: 2em;
+    background: #eee url("images/diagonal.gif");
     height: auto;
 }
 
@@ -137,7 +142,7 @@ li { margin-bottom: 0.3em; }
 /*   ********* captioneddiv************* */
 
 .captioneddiv
-  { margin: 0.5em 0em 0em 0em;
+  { margin: 2em 0em 0em 0em;
     padding: 1em;
     height:100px;
     border: solid #2e4a6b 1px;
@@ -145,7 +150,7 @@ li { margin-bottom: 0.3em; }
   }
 
 html>body .captioneddiv
-  { margin: 0.5em 0em 0em 0em;
+  { margin: 2em 0em 0em 0em;
     padding: 1em;
     height:auto;
     border: solid #2e4a6b 1px;
@@ -203,26 +208,13 @@ html>body .captioneddiv
 	border: solid #2e4a6b 1px
 }
 
-.mdabstract {
-	display: none;
-	position: absolute;
-	margin-top: 1em;
-	margin-left: 4em;
-	padding: 0.5em;
-	width: 50em;
-	font-size: xx-small;
-	color: #333333;
-	background-color: #ffffcc;
-	border: 1px outset #333333;
-}
 
-a:hover .mdabstract {
-	display: block;
-}
+
 
 /**
- * result table style
+ metadata styles
  */
+
 #csw-output table {
 	border-collapse:collapse;
 	width: 100%;
@@ -238,6 +230,7 @@ a:hover .mdabstract {
 
 #csw-output th,td {
 	padding: 2px;
+	overflow: hidden;
 }
 
 #csw-output th {
@@ -252,9 +245,6 @@ a:hover .mdabstract {
 	color: #333333;
 }
 
-/**
- metadata styles
- */
 
 
 .md-uuid {

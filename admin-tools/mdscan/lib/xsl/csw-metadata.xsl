@@ -39,18 +39,18 @@
 
 <!-- Metadata block -->
 <div class="captioneddiv">
-<h3>Metadata</h3>
+<h3>Metadonnée</h3>
 <table class="meta"><tr></tr>
       <xsl:call-template name="tablerow">
-      <xsl:with-param name="cname" select="'File Identifier'"/>
+      <xsl:with-param name="cname" select="'Identifiant'"/>
       <xsl:with-param name="cvalue" select="./gmd:fileIdentifier/gco:CharacterString"/>
       </xsl:call-template>
       <xsl:call-template name="tablerow">
-      <xsl:with-param name="cname" select="'Language'"/>
+      <xsl:with-param name="cname" select="'Langue'"/>
       <xsl:with-param name="cvalue" select="./gmd:language/gco:CharacterString"/>
       </xsl:call-template>
       <xsl:call-template name="tablerow">
-      <xsl:with-param name="cname" select="'Character set'"/>
+      <xsl:with-param name="cname" select="'Encodage'"/>
       <xsl:with-param name="cvalue" select="./gmd:characterSet/gmd:MD_CharacterSetCode/@codeListValue"/>
       </xsl:call-template>
       <xsl:call-template name="tablerow">
@@ -58,11 +58,11 @@
       <xsl:with-param name="cvalue" select="./gmd:dateStamp/gco:Date"/>
       </xsl:call-template>
       <xsl:call-template name="tablerow">
-      <xsl:with-param name="cname" select="'Metadata standard name'"/>
+      <xsl:with-param name="cname" select="'Standard de métadonnée'"/>
       <xsl:with-param name="cvalue" select="./gmd:metadataStandardName/gco:CharacterString"/>
       </xsl:call-template>
       <xsl:call-template name="tablerow">
-      <xsl:with-param name="cname" select="'Metadata standard version'"/>
+      <xsl:with-param name="cname" select="'Version du standard'"/>
       <xsl:with-param name="cvalue" select="./gmd:metadataStandardVersion/gco:CharacterString"/>
       </xsl:call-template>
 </table>
@@ -73,17 +73,17 @@
 <!-- 'Metadata->Metadata author' block -->
 <xsl:template match="gmd:contact">
 <div class="captioneddiv">
-<h3>Metadata author</h3>
+<h3>Auteur de la métadonnée</h3>
 <table class="meta">
 <tr>
 <td class="meta" valign="top">
 <table class="meta"><tr></tr>
       <xsl:call-template name="tablerow">
-      <xsl:with-param name="cname" select="'Individual name'"/>
+      <xsl:with-param name="cname" select="'Nom de la personne'"/>
       <xsl:with-param name="cvalue" select="./gmd:CI_ResponsibleParty/gmd:individualName/gco:CharacterString"/>
       </xsl:call-template>
       <xsl:call-template name="tablerow">
-      <xsl:with-param name="cname" select="'Organisation name'"/>
+      <xsl:with-param name="cname" select="'Organisation'"/>
       <xsl:with-param name="cvalue" select="./gmd:CI_ResponsibleParty/gmd:organisationName/gco:CharacterString"/>
       </xsl:call-template>
       <xsl:call-template name="tablerow">
@@ -91,34 +91,34 @@
       <xsl:with-param name="cvalue" select="./gmd:CI_ResponsibleParty/gmd:positionName/gco:CharacterString"/>
       </xsl:call-template>
       <xsl:call-template name="tablerow">
-      <xsl:with-param name="cname" select="'Role'"/>
+      <xsl:with-param name="cname" select="'Rôle'"/>
       <xsl:with-param name="cvalue" select="./gmd:CI_ResponsibleParty/gmd:role/gmd:CI_RoleCode/@codeListValue"/>
       </xsl:call-template>
 </table></td>
 <td class="meta" valign="top">
 <table class="meta"><tr></tr>
       <xsl:call-template name="tablerow">
-      <xsl:with-param name="cname" select="'Voice'"/>
+      <xsl:with-param name="cname" select="'Téléphone'"/>
       <xsl:with-param name="cvalue" select="./gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:phone/gmd:CI_Telephone/gmd:voice/gco:CharacterString"/>
       </xsl:call-template>
       <xsl:call-template name="tablerow">
-      <xsl:with-param name="cname" select="'Facsimile'"/>
+      <xsl:with-param name="cname" select="'Fax'"/>
       <xsl:with-param name="cvalue" select="./gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:phone/gmd:CI_Telephone/gmd:facsimile/gco:CharacterString"/>
       </xsl:call-template>
       <xsl:call-template name="tablerow">
-      <xsl:with-param name="cname" select="'Delivery Point'"/>
+      <xsl:with-param name="cname" select="'Adresse'"/>
       <xsl:with-param name="cvalue" select="./gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:deliveryPoint/gco:CharacterString"/>
       </xsl:call-template>
       <xsl:call-template name="tablerow">
-      <xsl:with-param name="cname" select="'City'"/>
+      <xsl:with-param name="cname" select="'Commune'"/>
       <xsl:with-param name="cvalue" select="./gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:city/gco:CharacterString"/>
       </xsl:call-template>
       <xsl:call-template name="tablerow">
-      <xsl:with-param name="cname" select="'Postal code'"/>
+      <xsl:with-param name="cname" select="'Code postal'"/>
       <xsl:with-param name="cvalue" select="./gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:postalCode/gco:CharacterString"/>
       </xsl:call-template>
       <xsl:call-template name="tablerow">
-      <xsl:with-param name="cname" select="'Country'"/>
+      <xsl:with-param name="cname" select="'Pays'"/>
       <xsl:with-param name="cvalue" select="./gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:country/gco:CharacterString"/>
       </xsl:call-template>
       <xsl:call-template name="tablerow">
@@ -134,10 +134,10 @@
 <!-- 'Identification' block -->
 <xsl:template match="gmd:MD_DataIdentification">
 <div class="captioneddiv">
-<h3>Identification info</h3>
+<h3>Information de l'identification</h3>
 <table class="meta"><tr></tr>
       <xsl:call-template name="tablerow">
-      <xsl:with-param name="cname" select="'Title'"/>
+      <xsl:with-param name="cname" select="'Titre'"/>
       <xsl:with-param name="cvalue" select="./gmd:citation/gmd:CI_Citation/gmd:title/gco:CharacterString"/>
       </xsl:call-template>
       <xsl:call-template name="tablerow">
@@ -149,17 +149,17 @@
       <xsl:with-param name="cvalue" select="./idCitation/presForm/PresFormCd/@value"/>
       </xsl:call-template-->
       <xsl:call-template name="tablerow">
-      <xsl:with-param name="cname" select="'Individual name'"/>
+      <xsl:with-param name="cname" select="'Nom de la personne'"/>
       <xsl:with-param name="cvalue" select="./gmd:pointOfContact/gmd:CI_ResponsibleParty/gmd:individualName/gco:CharacterString"/>
       </xsl:call-template>
       <xsl:call-template name="tablerow">
-      <xsl:with-param name="cname" select="'Organisation name'"/>
+      <xsl:with-param name="cname" select="'Organisation'"/>
       <xsl:with-param name="cvalue" select="./gmd:pointOfContact/gmd:CI_ResponsibleParty/gmd:organisationName/gco:CharacterString"/>
       </xsl:call-template>
 
       <!--abstract is handled seperately because of text formatting-->
       <tr>
-      <td class="meta-param">Abstract:</td>
+      <td class="meta-param">Résumé:</td>
       <td class="meta-value">
       <xsl:apply-templates select="./gmd:abstract"/>
       </td>
@@ -173,17 +173,17 @@
 <!-- 'Identification->Point of Contact' block -->
 <xsl:template match="gmd:pointOfContact">
 <div class="captioneddiv">
-<h3>Point of Contact</h3>
+<h3>Point de contact</h3>
 <table class="meta">
 <tr>
 <td class="meta" valign="top">
 <table class="meta"><tr></tr>
       <xsl:call-template name="tablerow">
-      <xsl:with-param name="cname" select="'Individual name'"/>
+      <xsl:with-param name="cname" select="'Nom de la personne'"/>
       <xsl:with-param name="cvalue" select="./gmd:CI_ResponsibleParty/gmd:individualName/gco:CharacterString"/>
       </xsl:call-template>
       <xsl:call-template name="tablerow">
-      <xsl:with-param name="cname" select="'Organisation name'"/>
+      <xsl:with-param name="cname" select="'Organisation'"/>
       <xsl:with-param name="cvalue" select="./gmd:CI_ResponsibleParty/gmd:organisationName/gco:CharacterString"/>
       </xsl:call-template>
       <xsl:call-template name="tablerow">
@@ -191,18 +191,18 @@
       <xsl:with-param name="cvalue" select="./gmd:CI_ResponsibleParty/gmd:positionName/gco:CharacterString"/>
       </xsl:call-template>
       <xsl:call-template name="tablerow">
-      <xsl:with-param name="cname" select="'Role'"/>
+      <xsl:with-param name="cname" select="'Rôle'"/>
       <xsl:with-param name="cvalue" select="./gmd:CI_ResponsibleParty/gmd:role/gmd:CI_RoleCode/@codeListValue"/>
       </xsl:call-template>
 </table></td>
 <td class="meta" valign="top">
 <table class="meta"><tr></tr>
       <xsl:call-template name="tablerow">
-      <xsl:with-param name="cname" select="'Voice'"/>
+      <xsl:with-param name="cname" select="'Téléphone'"/>
       <xsl:with-param name="cvalue" select="./gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:phone/gmd:CI_Telephone/gmd:voice/gco:CharacterString"/>
       </xsl:call-template>
       <xsl:call-template name="tablerow">
-      <xsl:with-param name="cname" select="'Facsimile'"/>
+      <xsl:with-param name="cname" select="'Fax'"/>
       <xsl:with-param name="cvalue" select="./gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:phone/gmd:CI_Telephone/gmd:facsimile/gco:CharacterString"/>
       </xsl:call-template>
       <xsl:call-template name="tablerow">
@@ -210,15 +210,15 @@
       <xsl:with-param name="cvalue" select="./gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:deliveryPoint/gco:CharacterString"/>
       </xsl:call-template>
       <xsl:call-template name="tablerow">
-      <xsl:with-param name="cname" select="'City'"/>
+      <xsl:with-param name="cname" select="'Commune'"/>
       <xsl:with-param name="cvalue" select="./gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:city/gco:CharacterString"/>
       </xsl:call-template>
       <xsl:call-template name="tablerow">
-      <xsl:with-param name="cname" select="'Postal code'"/>
+      <xsl:with-param name="cname" select="'Code postal'"/>
       <xsl:with-param name="cvalue" select="./gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:postalCode/gco:CharacterString"/>
       </xsl:call-template>
       <xsl:call-template name="tablerow">
-      <xsl:with-param name="cname" select="'Country'"/>
+      <xsl:with-param name="cname" select="'Pays'"/>
       <xsl:with-param name="cvalue" select="./gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:country/gco:CharacterString"/>
       </xsl:call-template>
       <xsl:call-template name="tablerow">
@@ -235,22 +235,22 @@
 <xsl:template match="gmd:extent">
 <xsl:if test="./gmd:EX_Extent/gmd:geographicElement">
 <div class="captioneddiv">
-<h3>Geographic box</h3>
+<h3>Boîte géographique</h3>
 <br/>
 <table class="meta" width="100%" align="center"><tr></tr>
 <tr>
-<td></td><td class="meta-param" align="center">North bound latitude<br/>
+<td></td><td class="meta-param" align="center">Nord<br/>
 <font color="#000000"><xsl:value-of select="./gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox/gmd:northBoundLatitude/gco:Decimal"/></font></td><td></td>
 </tr>
 <tr>
-<td class="meta-param" align="center">West bound longitude<br/>
+<td class="meta-param" align="center">Ouest<br/>
 <font color="#000000"><xsl:value-of select="./gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox/gmd:westBoundLongitude/gco:Decimal"/></font></td>
 <td></td>
-<td class="meta-param" align="center">East bound longitude<br/>
+<td class="meta-param" align="center">Est<br/>
 <font color="#000000"><xsl:value-of select="./gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox/gmd:eastBoundLongitude/gco:Decimal"/></font></td>
 </tr>
 <tr>
-<td></td><td class="meta-param" align="center">South bound latitude<br/>
+<td></td><td class="meta-param" align="center">Sud<br/>
 <font color="#000000"><xsl:value-of select="./gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox/gmd:southBoundLatitude/gco:Decimal"/></font></td><td></td>
 </tr>
 </table>
@@ -261,13 +261,13 @@
 <!-- 'Distribution Info' block -->
 <xsl:template match="gmd:MD_Distribution">
 <div class="captioneddiv">
-<h3>Distribution info</h3>
+<h3>Informations sur la distribution</h3>
 <table class="meta"><tr></tr>
     <xsl:for-each select="gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine/gmd:CI_OnlineResource">
   	    <xsl:choose>
   		    <xsl:when test="starts-with(./gmd:protocol/gco:CharacterString,'WWW:DOWNLOAD-') and contains(./gmd:protocol/gco:CharacterString,'http--download') and ./gmd:name/gco:CharacterString">
 			    <tr>
-			      <td class="meta-param">Download:</td>
+			      <td class="meta-param">Téléchargement:</td>
 			      <td class="meta-value">
 			        <a><xsl:attribute name="href">
 				     <xsl:value-of select="gmd:linkage/gmd:URL"/>
@@ -339,7 +339,7 @@
 <h3>Identification info</h3>
 <table class="meta"><tr></tr>
       <xsl:call-template name="tablerow">
-      <xsl:with-param name="cname" select="'Title'"/>
+      <xsl:with-param name="cname" select="'Titre'"/>
       <xsl:with-param name="cvalue" select="./dc:title"/>
       </xsl:call-template>
       <xsl:call-template name="tablerow">
@@ -351,7 +351,7 @@
       <xsl:with-param name="cvalue" select="./dc:format"/>
       </xsl:call-template>
       <xsl:call-template name="tablerow">
-      <xsl:with-param name="cname" select="'Individual name'"/>
+      <xsl:with-param name="cname" select="'Nom de la personne'"/>
       <xsl:with-param name="cvalue" select="./dc:publisher"/>
       </xsl:call-template>
       <xsl:call-template name="tablerow">

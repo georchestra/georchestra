@@ -100,22 +100,24 @@ xmlns:dct="http://purl.org/dc/terms/">
         <tbody>
             <!-- boucle metadonnees -->
             <xsl:for-each select="./*[local-name()='SummaryRecord']|./*[local-name()='BriefRecord']|./*[local-name()='Record']">
-              <tr>
-                <xsl:if test="position() mod 2=0">
-                    <xsl:attribute name="class">odd</xsl:attribute>
+                <xsl:if test="dc:type='dataset'">
+                  <tr>
+                    <xsl:if test="position() mod 2=0">
+                        <xsl:attribute name="class">odd</xsl:attribute>
+                    </xsl:if>
+                    <td >
+                        <xsl:call-template name="md-title" />
+                    </td>
+                    <td>
+                      <xsl:call-template name="test-all" />
+                    </td>
+                    <td>
+                        <xsl:call-template name="md-action-geonetwork-edit" />
+                        <xsl:call-template name="md-action-geoserver-edit" />
+                        <xsl:call-template name="md-action-download" />
+                    </td>
+                  </tr>
                 </xsl:if>
-                <td >
-                    <xsl:call-template name="md-title" />
-                </td>
-                <td>
-                  <xsl:call-template name="test-all" />
-                </td>
-                <td>
-                    <xsl:call-template name="md-action-geonetwork-edit" />
-                    <xsl:call-template name="md-action-geoserver-edit" />
-                    <xsl:call-template name="md-action-download" />
-                </td>
-              </tr>
             </xsl:for-each>
         </tbody>
       </table>
