@@ -35,7 +35,6 @@ import extractorapp.ws.extractor.OversizedCoverageRequestException;
 import extractorapp.ws.extractor.RequestConfiguration;
 import extractorapp.ws.extractor.WcsExtractor;
 import extractorapp.ws.extractor.WfsExtractor;
-import extractorapp.ws.extractor.wcs.WcsFormat;
 
 /**
  * Thread responsible for downloading all the data for a single request and
@@ -65,7 +64,7 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
         requestConfig.setThreadLocal();
         try {
             long start = System.currentTimeMillis();
-            final File tmpExtractionBundle = mkTmpBundleDir(requestConfig.requestUuid
+            final File tmpExtractionBundle = mkTmpBundleDir(requestConfig.extractionFolderPrefix+requestConfig.requestUuid
                     .toString());
             LOG.info("Starting extraction into directory: "
                     + tmpExtractionBundle);

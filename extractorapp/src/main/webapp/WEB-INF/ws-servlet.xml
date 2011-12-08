@@ -51,6 +51,8 @@
                   value="${remoteReproject}"/>
         <property name="useCommandLineGDAL"
                   value="${useCommandLineGDAL}"/>
+        <property name="extractionFolderPrefix"
+                  value="${extractionFolderPrefix}"/>
         <property name="adminCredentials">
             <bean class="org.apache.commons.httpclient.UsernamePasswordCredentials">
                 <constructor-arg index="0" value="${priveleged_admin_name}"/>

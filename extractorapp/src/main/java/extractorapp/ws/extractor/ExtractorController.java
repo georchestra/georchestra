@@ -58,6 +58,7 @@ public class ExtractorController implements ServletContextAware {
     private String                      emailSubject;
     private ServletContext              servletContext;
     private String                      servletUrl;
+    private String                      extractionFolderPrefix;
     private boolean                     remoteReproject = true;
     private boolean                     useCommandLineGDAL = false;
 
@@ -93,7 +94,7 @@ public class ExtractorController implements ServletContextAware {
             ServletOutputStream out = response.getOutputStream();
             try {
                 response.setContentType("application/zip");
-                response.setHeader("Content-Disposition","attachment; filename=extraction-"+uuid+".zip");
+                response.setHeader("Content-Disposition","attachment; filename="+extractionFolderPrefix+uuid+".zip");
                 in.getChannel().transferTo(0, file.length(), Channels.newChannel(out));
             }finally{
                 try { 
@@ -149,7 +150,7 @@ public class ExtractorController implements ServletContextAware {
 				String username = request.getHeader("sec-username");
 				String roles = request.getHeader("sec-roles");
 				RequestConfiguration requestConfig = new RequestConfiguration(requests, requestUuid, emailParams, 
-		                servletContext, testing, username, roles, adminCredentials, secureHost, maxCoverageExtractionSize, remoteReproject,
+		                servletContext, testing, username, roles, adminCredentials, secureHost, extractionFolderPrefix, maxCoverageExtractionSize, remoteReproject,
 		                useCommandLineGDAL);
 				ExtractionTask extractor = new ExtractionTask(requestConfig);
 				
@@ -278,6 +279,14 @@ public class ExtractorController implements ServletContextAware {
 
 	public void setUseCommandLineGDAL(boolean useCommandLineGDAL) {
         this.useCommandLineGDAL = useCommandLineGDAL;
+    }
+	
+	public void setExtractionFolderPrefix(String extractionFolderPrefix) {
+	    if(extractionFolderPrefix==null) {
+	        this.extractionFolderPrefix = "extraction-";
+	    } else {
+	        this.extractionFolderPrefix = extractionFolderPrefix;
+	    }
     }
 
     // ----------------- Methods for accessing servlet context ----------------- //
