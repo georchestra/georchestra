@@ -1,0 +1,65 @@
+<div id="cswclient" class="clearfix" style="padding: 0 1em 4px 1em">
+
+     <div id="query-container">
+       <div class="csw-main">
+         <div class="csw-content">
+	       <div class="captioneddiv">
+             <h3>Client CSW simplifié</h3>
+             <form name="theForm" method="POST" action="javascript:void(csw_client.getRecords())">
+               <select name="queryable">
+				 <option value="anytext" selected="selected">Tous champs</option>
+				 <option value="title">Titre</option>
+				 <option value="subject">Sujet</option>
+               </select>
+               <select name="operator">
+				 <option value="contains">contient</option>
+				 <option value="equals">égal à</option>
+               </select>
+               <input type="text" name="query" value="" size="24"/>
+               <p/>
+               <span id="csw-hosts"></span>
+		<select id="schema" name="schema">
+				 <option value="http://www.opengis.net/cat/csw/2.0.2">csw:Record</option>
+				 <option value="http://www.isotc211.org/2005/gmd" selected="selected">ISO19139</option>
+               </select>
+		<select id="dislaymode" name="displaymode">
+				 <option value="html">HTML</option>
+				 <option value="xml">XML</option>
+               </select>
+		<select id="sortby" name="sortby">
+				 <option value="none">Non trié</option>
+				 <option value="title" selected="selected">Trié par Titre</option>
+               </select>
+               <p/>
+               <!--input type="hidden" name="schema" value="http://www.opengis.net/cat/csw/2.0.2"/-->
+               <!--input type="hidden" name="schema" value="http://www.isotc211.org/2005/gmd"/-->
+               <!--input type="hidden" name="displaymode" value="html"/-->
+               <input type="button" value="Effacer" onClick="javascript:void(csw_client.clearPage())"/>
+               <input type="button" value="Rechercher" onClick="javascript:void(csw_client.getRecords())"/>
+			 </form>
+	       </div>
+
+		   <div id="results-container">
+		     <div  class="csw-main2" id="results">
+		       <div class="csw-contents">
+		         <div id="csw-output"></div>
+		       </div>
+			 </div>
+		   </div>
+
+         </div>
+       </div><!-- main -->
+     </div><!-- query-container -->
+     <p/>
+	 <div id="popup">
+	   <div class="close">
+	     <a href="javascript:void(csw_client.hideDiv(document.getElementById('popup')))">[close]</a>
+       </div>
+       <div id="popup2">
+         <div class="csw-content2">
+	       <div id="metadata"></div>
+	     </div>
+       </div>
+     </div><!-- popup -->
+     <div id="overlay" style="visibility:hidden"></div>
+     </div><!-- cswclient -->

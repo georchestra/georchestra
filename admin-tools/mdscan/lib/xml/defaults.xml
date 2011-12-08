@@ -1,0 +1,14 @@
+<defaults>
+<version>2.0.2</version>
+<maxrecords>50</maxrecords>
+<startposition>1</startposition>
+<outputformat>application/xml</outputformat>
+<!--outputschema>http://www.opengis.net/cat/csw/2.0.2</outputschema-->
+<outputschema>http://www.isotc211.org/2005/gmd</outputschema>
+<resulttype>results</resulttype>
+<propertyname>AnyText</propertyname>
+<literal></literal>
+<sortby></sortby>
+<sortorder>ASC</sortorder>
+<id></id>
+</defaults>

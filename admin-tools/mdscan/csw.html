@@ -1,0 +1,29 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<title>Simple CSW CLient</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+<link rel="stylesheet" type="text/css" href="lib/css/cswclient.css"/>
+
+<script type="text/javascript" src="./lib/scripts/sarissa.js"></script>
+<script type="text/javascript" src="./lib/scripts/sarissa_ieemu_xpath.js"></script>
+<script type="text/javascript" src="./lib/scripts/cswclient.js"></script>
+
+</head>
+<body>
+
+   <div class="csw-wrapper" id="csw-wrapper" style="width:100%">
+     <script type="text/javascript">
+       //var cswhost = "http://geomatics.nlr.nl/excat/csw";//default host
+       //var host = "http://myhost.nlr.nl/cswclient/"; // path to proxy directory if different from path to csw.html
+       //var csw_client = new CSWClient(cswhost, host); // if not using default settings
+	   //var csw_client = new CSWClient("http://geonovum.nitg.tno.nl/geonetwork/srv/en/csw");
+	   var csw_client = new CSWClient();
+       csw_client.writeClient("csw-wrapper");
+	   //csw_client.useProxy(false); // default=true
+	 </script>
+   </div><!-- wrapper -->
+
+</body>
+</html>

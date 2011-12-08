@@ -1,0 +1,321 @@
+/*
+* File : cswclient.css
+* Author : Rob van Swol
+* Organisation: National Aerospace Laboratory NLR
+* Country : The Netherlands
+* email : vanswol@nlr.nl
+* Description: CSS Stylesheet for Simple AJAX based CSW client
+* Tested on : FireFox 3, Safari, IE 7
+* Last Change : 2008-10-22
+*/
+
+/*   ********* csw-wrapper ************* */
+.csw-wrapper {
+    margin: 0;
+    padding: 0;
+    font-size: 11px;
+    font-family: Verdana, Arial, Tahoma, Helvetica, sans-serif;
+    color: black;
+    /*min-width: 768px;*/
+}
+
+.csw-wrapper a, .csw-wrapper a:link, .csw-wrapper a:visited, .csw-wrapper a:active {
+	text-decoration: none;
+	padding: 0px;
+	color: #0063D3;
+	/*border-bottom: 1px solid #E5ECF3;*/
+}
+
+.csw-wrapper a:hover {
+    background-color: #E5ECF3;
+}
+
+#csw-wrapper {
+    width: 100%;
+	margin: 0px auto;
+	clear: both;
+}
+
+#csw-wrapper.home {
+    text-align: center;
+}
+
+#csw-wrapper.home h3 {
+    color: #999;
+}
+
+/*   ********* clearfix ************* */
+/*
+	Float fixer: block elements will not encompasss its child nodes
+	if its children are floated. Apply this class to the block element.
+	Not a problem in IE.
+*/
+
+.clearfix:after {
+	content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+	}
+
+* html>body .clearfix {
+	display: inline-block;
+	width: 100%;
+	}
+
+* html .clearfix {
+	/* Hides from IE-mac \*/
+	height: 1%;
+	/* End hide from IE-mac */
+	}
+
+
+
+/*   ********* main csw content************* */
+
+#cswclient {
+    clear: both;
+    margin-top: 1em;
+}
+
+
+.csw-main {
+	clear: both;
+	/*background: #E6ECF6;*/
+ 	padding-top: 1em;
+}
+
+.csw-main2 {
+	border: 0px solid #2e4a6b;
+	clear: both;
+	/*background: #E6ECF6;*/
+ 	padding-top: 1em;
+}
+
+.csw-content {
+    padding-left: 2em;
+    padding-right: 2em;
+    padding-bottom: 2em;
+    height: 1%;
+}
+
+.csw-content2 {
+    padding-left: 2em;
+    padding-right: 2em;
+    padding-bottom: 2em;
+    height: auto;
+}
+
+.meta
+  { vertical-align: top;
+  }
+
+.meta-param
+  { vertical-align: top;
+    color: #004393
+  }
+
+.meta-value
+  { vertical-align: top;
+  }
+
+h3 {
+   font-size: 1.1em;
+   color: #21507B;
+   margin-top: 0.6em;
+}
+
+dl{ margin: 0px; padding: 0px;}
+
+dd{ margin: 0px; padding-left: 2em;}
+
+li { margin-bottom: 0.3em; }
+
+
+
+/*   ********* captioneddiv************* */
+
+.captioneddiv
+  { margin: 0.5em 0em 0em 0em;
+    padding: 1em;
+    height:100px;
+    border: solid #2e4a6b 1px;
+    background: #ffffff;
+  }
+
+html>body .captioneddiv
+  { margin: 0.5em 0em 0em 0em;
+    padding: 1em;
+    height:auto;
+    border: solid #2e4a6b 1px;
+    background: #ffffff;
+  }
+
+.captioneddiv h3
+  { position: relative;
+    margin: 0.5em;
+    top: -2.0em;
+    left: -1.0em;
+    padding: 0em 0.5em;
+    display: inline;
+    font-size: 0.9em;
+    /*background: #cae1ff;*/
+    background: #ffffff;
+  }
+
+#popup
+  { visibility:hidden;
+    z-index:100;
+    width: 600px;
+    height: 500px;
+    left: 200px;
+    position: absolute;
+    background: #eee url("images/diagonal.gif");
+    border: 1px solid #2e4a6b;
+  }
+
+#popup2
+  { height:500px;
+    overflow:auto;
+    position: relative;
+  }
+
+.close
+  { position: relative;
+    top: 0px;
+    left: 0px;
+    padding: 3px;
+	color: #ffffff;
+    background: #2e4a6b;
+	z-index:101;
+  }
+
+.close a, .close a:link, .close a:visited, .close a:active  .close a:hover {
+	text-decoration: none;
+	padding: 0px;
+	color: #ffffff;
+}
+
+.close a:hover {
+	background-color: #E5ECF3;
+	color: #2e4a6b;
+	border: solid #2e4a6b 1px
+}
+
+.mdabstract {
+	display: none;
+	position: absolute;
+	margin-top: 1em;
+	margin-left: 4em;
+	padding: 0.5em;
+	width: 50em;
+	font-size: xx-small;
+	color: #333333;
+	background-color: #ffffcc;
+	border: 1px outset #333333;
+}
+
+a:hover .mdabstract {
+	display: block;
+}
+
+/**
+ * result table style
+ */
+#csw-output table {
+	border-collapse:collapse;
+	width: 100%;
+}
+
+#csw-output tr.odd {
+	background-color: #f0f0f0;
+}
+
+#csw-output tr:hover {
+	background-color: #ffff99;
+}
+
+#csw-output th,td {
+	padding: 2px;
+}
+
+#csw-output th {
+	border-bottom: 1px solid #c0c0c0;
+}
+
+#csw-output th.title {
+	width: 100%;
+}
+
+#csw-output a {
+	color: #333333;
+}
+
+/**
+ metadata styles
+ */
+
+
+.md-uuid {
+	font-size: 0.6em;
+}
+
+.md-info {
+	font-size: 0.8em;
+	font-family: monospace;
+	color: #666666;
+	background-color: #ffffff;
+	padding: 1px;
+	border: 1px solid #666666;
+	margin-right: 2px;
+}
+
+
+a.md-action {
+	font-size: 0.8em;
+	margin-right: 2px;
+	border: 1px solid transparent;
+}
+a.md-action:hover {
+	border: 1px solid #666666;
+}
+
+/**
+ * test styles
+ */
+
+.md-test {
+	font-size: 0.8em;
+	padding-left: 1px;
+	padding-right: 1px;
+	margin-right: 2px;
+	border: 1px outset #666666;
+	background-color: #ffffff;
+}
+.md-test.debug {
+	background-color: #cccccc;
+}
+
+.md-test.info {
+	color: #ffffff;
+	background-color: #0CB20C;
+}
+
+.md-test.warning {
+	background-color: #FFC300;
+}
+
+.md-test.error {
+	color: #ffffff;
+	background-color: #FF0000;
+}
+
+.md-test.critical {
+	color: #ffffff;
+	background-color: #6A0888;
+}
+
+
+
+

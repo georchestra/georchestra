@@ -1,0 +1,3 @@
+<select name="cswhosts">
+        <option value="http://geobretagne.fr/geonetwork/srv/en/csw">GeoBretagne</option>
+</select>
