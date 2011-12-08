@@ -82,7 +82,8 @@ public class GDALCommandLine {
             command.add("BLOCKXSIZE=1024");
             command.add("-co");
             command.add("BLOCKYSIZE=1024");
-        } else if(requiredRequest.format.equalsIgnoreCase("jpeg2000")) {
+        } else if(requiredRequest.format.equalsIgnoreCase("jpeg2000") || requiredRequest.format.equalsIgnoreCase("jp2")
+                || requiredRequest.format.equalsIgnoreCase("jp2ecw") || requiredRequest.format.equalsIgnoreCase("jp2k")) {
             command.add("-of");
             command.add("JPEG2000");
             command.add("-co");

@@ -231,18 +231,15 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
             throws NoSuchAuthorityCodeException, FactoryException, IOException {
         InputStream input = null;
         try {
-            BoundWcsRequest geotiffRequest = request.bind(_wcsUrl).withFormat(
-                    "geotiff");
-            BoundWcsRequest requestNativeFormat = negotiateResponseCRS(geotiffRequest);
+            BoundWcsRequest geotiffRequest = request.bind(_wcsUrl).withFormat("geotiff");
+            BoundWcsRequest requestNativeFormat = geotiffRequest.withCRS(geotiffRequest.getNativeCRSs().iterator().next());
             requestNativeFormat.assertLegalSize(_maxCoverageExtractionSize);
 
             input = requestNativeFormat.getCoverage();
 
             File file = null;
-            file = new File(containingDirectory, baseFilename + "."
-                    + request.fileExtension());
-            LOG.debug("Writing GridCoverage obtained from " + _wcsUrl
-                    + " to file " + file);
+            file = new File(containingDirectory, baseFilename + "." + request.fileExtension());
+            LOG.debug("Writing GridCoverage obtained from " + _wcsUrl + " to file " + file);
 
             File tmpFile = File.createTempFile(baseFilename, ".tif");
             writeToFile(tmpFile, input);
@@ -436,32 +433,28 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
     }
 
     private BoundWcsRequest negotiateResponseCRS(BoundWcsRequest request)
-            throws IOException {
+ throws IOException {
 
-        if (request.remoteReproject) {
-            Set<String> crss = request.getSupportedResponseCRSs();
-            // Hack mostly for pigma. It will work so long as backing servers
-            // are Geoservers
-            if (crss.isEmpty() && request.getNativeCRSs().isEmpty())
-                return request;
-            if (!crss.contains(request.getResponseEpsgCode())) {
-                String newCrs = "EPSG:4326";
-                if (request.getNativeCRSs().isEmpty()) {
-                    Iterator<String> crsIter = crss.iterator();
-                    if (!crss.contains(newCrs) && crsIter.hasNext()) {
-                        newCrs = crsIter.next();
-                    } else {
-
-                    }
-                } else {
-                    newCrs = request.getNativeCRSs().iterator().next();
-                }
-                return request.withCRS(newCrs);
-            }
+        Set<String> crss = request.getSupportedResponseCRSs();
+        // Hack mostly for pigma. It will work so long as backing servers
+        // are Geoservers
+        if (crss.isEmpty() && request.getNativeCRSs().isEmpty())
             return request;
-        } else {
-            return request.withCRS(request.getNativeCRSs().iterator().next());
+        if (!crss.contains(request.getResponseEpsgCode())) {
+            String newCrs = "EPSG:4326";
+            if (request.getNativeCRSs().isEmpty()) {
+                Iterator<String> crsIter = crss.iterator();
+                if (!crss.contains(newCrs) && crsIter.hasNext()) {
+                    newCrs = crsIter.next();
+                } else {
+
+                }
+            } else {
+                newCrs = request.getNativeCRSs().iterator().next();
+            }
+            return request.withCRS(newCrs);
         }
+        return request;
     }
 
     private BoundWcsRequest negotiateRequestCRS(BoundWcsRequest request)

@@ -279,7 +279,7 @@ public class BoundWcsRequest extends WcsReaderRequest {
 	 *            the supported formats was trying to resolve the aliases in
 	 *            order to make the request. 
 	 */
-    private InputStream makeRequest (String request, URL wcsUrl, Boolean resolveFormat, int timeout) throws IOException, ProtocolException,
+    private InputStream makeRequest (String request, URL wcsUrl, boolean resolveFormat, int timeout) throws IOException, ProtocolException,
             MalformedURLException {
     	DefaultHttpClient httpclient = new DefaultHttpClient();
         httpclient.getParams().setParameter("http.socket.timeout", new Integer(timeout));
