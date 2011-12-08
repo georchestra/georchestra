@@ -239,6 +239,7 @@ xmlns:dct="http://purl.org/dc/terms/">
     <xsl:call-template name="test-source" />
     <xsl:call-template name="test-rights" />
     <xsl:call-template name="test-link-wms" />
+    <xsl:call-template name="test-link-wfs" />
     <xsl:call-template name="test-link-download" />
   </xsl:template>
 
@@ -333,13 +334,44 @@ xmlns:dct="http://purl.org/dc/terms/">
 
   <!-- test sur la description des WMS -->
   <xsl:template name="test-link-wms">
-    <xsl:for-each select="dc:URI[@protocol='OGC:WMS-1.1.1-http-get-map']">
+    <xsl:for-each select="dc:URI[@protocol='OGC:WMS-1.1.0-http-get-map'
+    |@protocol='OGC:WMS-1.1.1-http-get-map'
+    |@protocol='OGC:WMS-1.3.0-http-get-map']">
         <span target="_blank" class="md-test info">
           <xsl:attribute name="title">
             <xsl:value-of select="." />
           </xsl:attribute>
           <xsl:choose>
-            <xsl:when test="@name=''">
+            <xsl:when test="@name='' or not(@name)">
+                <xsl:attribute name="class">md-test error</xsl:attribute>
+                <xsl:attribute name="title">le nom de la couche est vide</xsl:attribute>
+            </xsl:when>
+            <xsl:when test="@description=@name">
+                <xsl:attribute name="class">md-test warning</xsl:attribute>
+                <xsl:attribute name="title">
+                    <xsl:text>le titre est mal défini : </xsl:text>
+                    <xsl:value-of select="@name" />
+                </xsl:attribute>
+            </xsl:when>
+            <xsl:when test="@description='' or not(@description)">
+                <xsl:attribute name="class">md-test warning</xsl:attribute>
+                <xsl:attribute name="title">le titre est vide</xsl:attribute>
+            </xsl:when>
+          </xsl:choose>
+        <xsl:text>WMS</xsl:text>
+      </span>
+    </xsl:for-each>
+  </xsl:template>
+
+  <!-- test sur la description des WFS -->
+  <xsl:template name="test-link-wfs">
+    <xsl:for-each select="dc:URI[@protocol='OGC:WFS-1.0.0-http-get-capabilities']">
+        <span target="_blank" class="md-test info">
+          <xsl:attribute name="title">
+            <xsl:value-of select="." />
+          </xsl:attribute>
+          <xsl:choose>
+            <xsl:when test="@name='' or not(@name)">
                 <xsl:attribute name="class">md-test error</xsl:attribute>
                 <xsl:attribute name="title">le nom de la couche est vide</xsl:attribute>
             </xsl:when>
@@ -355,7 +387,7 @@ xmlns:dct="http://purl.org/dc/terms/">
                 <xsl:attribute name="title">le titre est vide</xsl:attribute>
             </xsl:when>
           </xsl:choose>
-        <xsl:text>WMS</xsl:text>
+        <xsl:text>WFS</xsl:text>
       </span>
     </xsl:for-each>
   </xsl:template>
