@@ -22,11 +22,8 @@ public class GDALCommandLine {
             throws IOException {
         LOG.info("using GDAL command line to tranform the coverage");
 
-        File outFile = file;
-        if (sourceFile.equals(file)) {
-            File tmpDir = FileUtils.createTempDirectory();
-            outFile = new File(tmpDir, file.getName());
-        }
+        File tmpDir = FileUtils.createTempDirectory();
+        File outFile = new File(tmpDir, sourceFile.getName());
 
         reproject(sourceFile, executedRequest, targetRequest, outFile);
         transformFormat(outFile, executedRequest, targetRequest, file);

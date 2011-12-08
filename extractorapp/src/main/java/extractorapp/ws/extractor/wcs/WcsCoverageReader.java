@@ -273,6 +273,9 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
             } else {
                 geotoolsTranformation(sourceFile, file, targetRequest, original);
             }
+            
+            LOG.info("Coverage reprojection/transformation complete");
+
         }
     }
 
