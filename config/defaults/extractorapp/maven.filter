@@ -1,6 +1,7 @@
 maxCoverageExtractionSize=99999999
 maxExtractions=5
 remoteReproject=true
+useCommandLineGDAL=false
 
 host=@shared.server.name@
 
