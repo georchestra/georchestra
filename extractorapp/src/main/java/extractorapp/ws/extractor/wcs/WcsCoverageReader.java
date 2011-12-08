@@ -15,10 +15,8 @@ import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -79,26 +77,13 @@ import extractorapp.ws.extractor.FileUtils;
  * 
  * @author jeichar
  */
-@SuppressWarnings( { "deprecation" })
+@SuppressWarnings({ "deprecation" })
 public class WcsCoverageReader extends AbstractGridCoverage2DReader {
 
-    // If the requested format is not available on the server. Then these
-    // are the order of formats to try next. (Once downloaded
-    // in one of these formats then the result will be converted to the
-    // requested format)
-    private static final Set<String> preferredFormats;
-    private static final Set<String> embeddedCrsFormats; 
-    static {
-        String[] formats = { "png", "geotiff", "gif", "jpeg", "jp2ecw", "ecw" };
-        preferredFormats = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(formats)));
-        
-        formats = new String[]{ "geotiff","jp2ecw", "ecw" };
-        embeddedCrsFormats = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(formats)));
-        
-    }
-    private static final Log       LOG = LogFactory.getLog(BoundWcsRequest.class.getPackage().getName());
+    private static final Log LOG = LogFactory.getLog(BoundWcsRequest.class
+            .getPackage().getName());
 
-    private final URL                 _wcsUrl;
+    private final URL _wcsUrl;
     private final long _maxCoverageExtractionSize;
 
     /**
@@ -117,8 +102,9 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
     }
 
     @Override
-    public GridCoverage2D read(GeneralParameterValue[] parameters) throws IllegalArgumentException, IOException {
-        File baseDir = createTempDirectory();
+    public GridCoverage2D read(GeneralParameterValue[] parameters)
+            throws IllegalArgumentException, IOException {
+        File baseDir = FileUtils.createTempDirectory();
 
         try {
             File file = readToFile(baseDir, "WcsCoverageReader", parameters);
@@ -128,7 +114,8 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
             // for reading the coverage from the file
             Format format = GridFormatFinder.findFormat(file);
 
-            if (format instanceof AbstractGridFormat && UnknownFormat.class != format.getClass()) {
+            if (format instanceof AbstractGridFormat
+                    && UnknownFormat.class != format.getClass()) {
                 AbstractGridFormat gridFormat = (AbstractGridFormat) format;
 
                 // Now we need to find the parameters provided by the caller for
@@ -141,19 +128,27 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
                     for (GeneralParameterValue paramValue : group.values()) {
                         list.addAll(find(paramValue, parameters));
                     }
-                    LOG.debug("Reading coverage from file using parameters: " + list);
-                    readParams = list.toArray(new GeneralParameterValue[list.size()]);
+                    LOG.debug("Reading coverage from file using parameters: "
+                            + list);
+                    readParams = list.toArray(new GeneralParameterValue[list
+                            .size()]);
                 } catch (Exception e) {
                     // if can't configure the parameters then try to read with
                     // what we have been able to configure
-                    LOG.warn("Exception occurred while getting request params for reading coverage", e);
+                    LOG.warn(
+                            "Exception occurred while getting request params for reading coverage",
+                            e);
                 }
-                AbstractGridCoverage2DReader reader = gridFormat.getReader(file);
+                AbstractGridCoverage2DReader reader = gridFormat
+                        .getReader(file);
                 GridCoverage2D coverage = reader.read(readParams);
                 return coverage;
             }
-            throw new IllegalArgumentException("Current configuration is unable to read coverage of " + file.getName()
-                    + " format.  " + "Check that you have the correct geotools plugins");
+            throw new IllegalArgumentException(
+                    "Current configuration is unable to read coverage of "
+                            + file.getName()
+                            + " format.  "
+                            + "Check that you have the correct geotools plugins");
 
         } finally {
             FileUtils.delete(baseDir);
@@ -175,15 +170,19 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
      * @throws IllegalArgumentException
      * @throws IOException
      */
-    public File readToFile(File containingDirectory, String baseFilename, GeneralParameterValue[] parameters)
+    public File readToFile(File containingDirectory, String baseFilename,
+            GeneralParameterValue[] parameters)
             throws IllegalArgumentException, IOException {
 
         try {
-            WcsReaderRequest request = WcsReaderRequestFactory.create(parameters);
-            if(request.remoteReproject) {
-                return remoteReproject(request, containingDirectory, baseFilename);
+            WcsReaderRequest request = WcsReaderRequestFactory
+                    .create(parameters);
+            if (request.remoteReproject) {
+                return remoteReproject(request, containingDirectory,
+                        baseFilename);
             } else {
-                return localReproject(request, containingDirectory, baseFilename);                
+                return localReproject(request, containingDirectory,
+                        baseFilename);
             }
         } catch (NoSuchAuthorityCodeException e) {
             throw new RuntimeException(e);
@@ -193,111 +192,139 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
     }
 
     /* ------------------- Support methods for readToFile ------------------- */
-    private File remoteReproject(WcsReaderRequest request, File containingDirectory, String baseFilename) throws NoSuchAuthorityCodeException, FactoryException, IOException {
+    private File remoteReproject(WcsReaderRequest request,
+            File containingDirectory, String baseFilename)
+            throws NoSuchAuthorityCodeException, FactoryException, IOException {
         InputStream input = null;
         try {
-            BoundWcsRequest requestNegotiatedFormat = negotiateFormat(request.bind(_wcsUrl));
+            BoundWcsRequest requestNegotiatedFormat = negotiateFormat(request
+                    .bind(_wcsUrl));
             BoundWcsRequest requestNegotiatedFormatCrs = negotiateRequestCRS(requestNegotiatedFormat);
             BoundWcsRequest requestNegotiatedFormatCrs2 = negotiateResponseCRS(requestNegotiatedFormatCrs);
-            requestNegotiatedFormatCrs2.assertLegalSize(_maxCoverageExtractionSize);
-            
+            requestNegotiatedFormatCrs2
+                    .assertLegalSize(_maxCoverageExtractionSize);
+
             input = requestNegotiatedFormatCrs2.getCoverage();
-            
+
             // file = new File (new File("/tmp/"),
             // baseFilename+"."+request.fileExtension());
             File file = null;
-            file = new File(containingDirectory, baseFilename + "." + request.fileExtension());
-            LOG.debug("Writing GridCoverage obtained from " + _wcsUrl + " to file " + file);
-            
+            file = new File(containingDirectory, baseFilename + "."
+                    + request.fileExtension());
+            LOG.debug("Writing GridCoverage obtained from " + _wcsUrl
+                    + " to file " + file);
+
             convertFormat(baseFilename, input, file, request,
                     requestNegotiatedFormatCrs2);
-            
+
             transformCoverage(file, file, request, requestNegotiatedFormatCrs2);
-            
-            return file;  
+
+            return file;
         } finally {
-            if(input!=null)
+            if (input != null)
                 IOUtils.closeQuietly(input);
         }
     }
-    
-    private File localReproject(WcsReaderRequest request, File containingDirectory, String baseFilename) throws NoSuchAuthorityCodeException, FactoryException, IOException {
+
+    private File localReproject(WcsReaderRequest request,
+            File containingDirectory, String baseFilename)
+            throws NoSuchAuthorityCodeException, FactoryException, IOException {
         InputStream input = null;
         try {
-            BoundWcsRequest geotiffRequest = request.bind(_wcsUrl).withFormat("geotiff");
+            BoundWcsRequest geotiffRequest = request.bind(_wcsUrl).withFormat(
+                    "geotiff");
             BoundWcsRequest requestNativeFormat = negotiateResponseCRS(geotiffRequest);
             requestNativeFormat.assertLegalSize(_maxCoverageExtractionSize);
-            
+
             input = requestNativeFormat.getCoverage();
-            
+
             File file = null;
-            file = new File(containingDirectory, baseFilename + "." + request.fileExtension());
-            LOG.debug("Writing GridCoverage obtained from " + _wcsUrl + " to file " + file);
-            
+            file = new File(containingDirectory, baseFilename + "."
+                    + request.fileExtension());
+            LOG.debug("Writing GridCoverage obtained from " + _wcsUrl
+                    + " to file " + file);
+
             File tmpFile = File.createTempFile(baseFilename, ".tif");
             writeToFile(tmpFile, input);
-            
+
             transformCoverage(tmpFile, file, request, requestNativeFormat);
-            
-            return file;  
+
+            return file;
         } finally {
-            if(input!=null)
+            if (input != null)
                 IOUtils.closeQuietly(input);
         }
     }
-    
 
-   static void transformCoverage(final File sourceFile, final File file, WcsReaderRequest request,
-           WcsReaderRequest requestNegotiatedFormatCrs) throws IOException {
+    static void transformCoverage(final File sourceFile, final File file,
+            final WcsReaderRequest request,
+            WcsReaderRequest requestNegotiatedFormatCrs) throws IOException {
         final CoordinateReferenceSystem original = request.responseCRS;
         CoordinateReferenceSystem actual = requestNegotiatedFormatCrs.responseCRS;
 
         if (!CRS.equalsIgnoreMetadata(original, actual)) {
-            
             try {
-                LOG.info("Need to reproject coverage from " + CRS.lookupIdentifier(actual, false) + " to " + CRS.lookupIdentifier(original, false));
+                LOG.info("Need to reproject coverage from "
+                        + CRS.lookupIdentifier(actual, false) + " to "
+                        + CRS.lookupIdentifier(original, false));
             } catch (FactoryException e) {
-                LOG.info("Need to reproject coverage from " + actual.getName() + " to " + original.getName());
+                LOG.info("Need to reproject coverage from " + actual.getName()
+                        + " to " + original.getName());
             }
-
-            CoverageTransformation<Object> transformation = new CoverageTransformation<Object>() {
-
-                @Override
-                public Object transform(GridCoverage coverage) throws IOException, FactoryException {
-                    boolean writeToTmp = sourceFile.equals(file);
-                    Hints hints = new Hints(GeoTools.getDefaultHints());
-                    hints.put(Hints.LENIENT_DATUM_SHIFT, Boolean.TRUE);
-                    GeoTools.init(hints);
-                    Coverage transformed = Operations.DEFAULT.resample(coverage, original);
-
-                    AbstractGridFormat format = CoverageTransformation.lookupFormat(file);
-                    if(writeToTmp) {
-                        File tmpDir = createTempDirectory();
-                        File tmpFile = new File(tmpDir, file.getName());
-
-                        // write must be to tmpFile because Geotools does not always load coverages into memory but reads off disk
-                        GridCoverageWriter writer = format.getWriter(tmpFile);
-    
-                        file.delete();
-                        writer.write((GridCoverage) transformed, null);
-                        // There may be several files created if dest format is world+image
-                        // so move all files in the tmpDir
-                        for (File f : tmpDir.listFiles()) {
-                            File dest = new File(file.getParentFile(), f.getName());
-                            FileUtils.moveFile(f, dest);
-                        }
-                    } else {
-                        GridCoverageWriter writer = format.getWriter(file);
-                        writer.write((GridCoverage) transformed, null);
-                    }
-
-                    LOG.debug("Finished reprojecting output");
-                    return null;
-                }
-            };
-
-            CoverageTransformation.perform(sourceFile, transformation);
+            if (request.useCommandLineGDAL) {
+                GDALCommandLine.gdalTransformation(sourceFile, file, request,
+                        requestNegotiatedFormatCrs);
+            } else {
+                geotoolsTranformation(sourceFile, file, request, original);
+            }
         }
+    }
+
+    private static void geotoolsTranformation(final File sourceFile,
+            final File file, final WcsReaderRequest request,
+            final CoordinateReferenceSystem original) throws IOException {
+        LOG.info("using Geotools libraries to tranform the coverage");
+        CoverageTransformation<Object> transformation = new CoverageTransformation<Object>() {
+
+            @Override
+            public Object transform(GridCoverage coverage) throws IOException,
+                    FactoryException {
+                boolean writeToTmp = sourceFile.equals(file);
+                Hints hints = new Hints(GeoTools.getDefaultHints());
+                hints.put(Hints.LENIENT_DATUM_SHIFT, Boolean.TRUE);
+                GeoTools.init(hints);
+                Coverage transformed = Operations.DEFAULT.resample(coverage,
+                        original);
+
+                AbstractGridFormat format = Formats.getFormat(request.format);
+                if (writeToTmp) {
+                    File tmpDir = FileUtils.createTempDirectory();
+                    File tmpFile = new File(tmpDir, file.getName());
+
+                    // write must be to tmpFile because Geotools does not always
+                    // load coverages into memory but reads off disk
+                    GridCoverageWriter writer = format.getWriter(tmpFile);
+
+                    file.delete();
+                    writer.write((GridCoverage) transformed, null);
+                    // There may be several files created if dest format is
+                    // world+image
+                    // so move all files in the tmpDir
+                    for (File f : tmpDir.listFiles()) {
+                        File dest = new File(file.getParentFile(), f.getName());
+                        FileUtils.moveFile(f, dest);
+                    }
+                } else {
+                    GridCoverageWriter writer = format.getWriter(file);
+                    writer.write((GridCoverage) transformed, null);
+                }
+
+                LOG.debug("Finished reprojecting output");
+                return null;
+            }
+        };
+
+        CoverageTransformation.perform(sourceFile, transformation);
     }
 
     private void convertFormat(String baseFilename, InputStream in, File file,
@@ -307,8 +334,9 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
             // the server did not support the desired format so we have to
             // reproject
             if (request.format.equalsIgnoreCase("geotiff")) {
-                File tmpDir = createTempDirectory();
-                File tmpFile = new File(tmpDir, baseFilename + "." + request.fileExtension());
+                File tmpDir = FileUtils.createTempDirectory();
+                File tmpFile = new File(tmpDir, baseFilename + "."
+                        + request.fileExtension());
                 try {
                     writeWorldImage(request, tmpFile, in);
                     convertToGeotiff(tmpFile, file);
@@ -319,12 +347,13 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
                 BufferedImage image = ImageIO.read(in);
                 ImageIO.write(image, request.format, file);
 
-                String baseFilePath = file.getPath().substring(0, file.getPath().lastIndexOf('.'));
+                String baseFilePath = file.getPath().substring(0,
+                        file.getPath().lastIndexOf('.'));
                 createWorldFile(request, baseFilePath);
                 createPrjFile(request.responseCRS, baseFilePath);
             }
         } else {
-            if (embeddedCrsFormats.contains(request.format)) {
+            if (Formats.embeddedCrsFormats.contains(request.format)) {
                 writeToFile(file, in);
             } else {
                 writeWorldImage(request, file, in);
@@ -332,7 +361,8 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
         }
     }
 
-    private void convertToGeotiff(File tmpFile, final File file) throws IOException {
+    private void convertToGeotiff(File tmpFile, final File file)
+            throws IOException {
 
         CoverageTransformation<Object> transformation = new CoverageTransformation<Object>() {
 
@@ -355,36 +385,44 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
             ReadableByteChannel channel = Channels.newChannel(in);
             fout.getChannel().transferFrom(channel, 0, Long.MAX_VALUE);
             fout.flush();
-            if(file.length() < 8000) {
-            	if(file.length() == 0) {
-            		throw new ExtractorException("GetCoverageRequests returned no data, see administrator");
-            	}
-            	String text = null;
-            	try {
-					text = org.apache.commons.io.FileUtils.readFileToString(file, "UTF-8");
-            	} catch (Throwable e) {
-            		// ignore.  I assume an image or something that this can't read
-            	}
-            	if(text != null && text.contains("<ServiceException>")) throw new ExtractorException(text);
+            if (file.length() < 8000) {
+                if (file.length() == 0) {
+                    throw new ExtractorException(
+                            "GetCoverageRequests returned no data, see administrator");
+                }
+                String text = null;
+                try {
+                    text = org.apache.commons.io.FileUtils.readFileToString(
+                            file, "UTF-8");
+                } catch (Throwable e) {
+                    // ignore. I assume an image or something that this can't
+                    // read
+                }
+                if (text != null && text.contains("<ServiceException>"))
+                    throw new ExtractorException(text);
             }
         } finally {
             fout.close();
         }
     }
 
-    private void writeWorldImage(WcsReaderRequest request, File file, InputStream in) throws IOException {
+    private void writeWorldImage(WcsReaderRequest request, File file,
+            InputStream in) throws IOException {
         writeToFile(file, in);
 
-        String baseFilePath = file.getPath().substring(0, file.getPath().lastIndexOf('.'));
+        String baseFilePath = file.getPath().substring(0,
+                file.getPath().lastIndexOf('.'));
         createWorldFile(request, baseFilePath);
         createPrjFile(request.responseCRS, baseFilePath);
     }
 
-    private BoundWcsRequest negotiateFormat(BoundWcsRequest request) throws IOException {
+    private BoundWcsRequest negotiateFormat(BoundWcsRequest request)
+            throws IOException {
         final Set<String> formats = request.getSupportedFormats();
-        if(formats.isEmpty()) return request;
+        if (formats.isEmpty())
+            return request;
         if (!formats.contains(request.format)) {
-            for (String format : preferredFormats) {
+            for (String format : Formats.preferredFormats) {
                 if (formats.contains(format))
                     return request.withFormat(format);
             }
@@ -397,20 +435,23 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
         return request;
     }
 
-    private BoundWcsRequest negotiateResponseCRS(BoundWcsRequest request) throws IOException {
-        
-        if(request.remoteReproject) {
+    private BoundWcsRequest negotiateResponseCRS(BoundWcsRequest request)
+            throws IOException {
+
+        if (request.remoteReproject) {
             Set<String> crss = request.getSupportedResponseCRSs();
-            // Hack mostly for pigma.  It will work so long as backing servers are Geoservers
-            if(crss.isEmpty() && request.getNativeCRSs().isEmpty()) return request;
+            // Hack mostly for pigma. It will work so long as backing servers
+            // are Geoservers
+            if (crss.isEmpty() && request.getNativeCRSs().isEmpty())
+                return request;
             if (!crss.contains(request.getResponseEpsgCode())) {
                 String newCrs = "EPSG:4326";
                 if (request.getNativeCRSs().isEmpty()) {
                     Iterator<String> crsIter = crss.iterator();
-    				if (!crss.contains(newCrs) && crsIter.hasNext()) {
+                    if (!crss.contains(newCrs) && crsIter.hasNext()) {
                         newCrs = crsIter.next();
                     } else {
-                    	
+
                     }
                 } else {
                     newCrs = request.getNativeCRSs().iterator().next();
@@ -423,30 +464,38 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
         }
     }
 
-    private BoundWcsRequest negotiateRequestCRS(BoundWcsRequest request) throws IOException, FactoryException {
+    private BoundWcsRequest negotiateRequestCRS(BoundWcsRequest request)
+            throws IOException, FactoryException {
         Set<String> crss = request.getSupportedRequestCRSs();
-        String requestCrs = "EPSG:"+CRS.lookupEpsgCode(request.requestBbox.getCoordinateReferenceSystem(), true);
-        if(crss.isEmpty()) return request;
+        String requestCrs = "EPSG:"
+                + CRS.lookupEpsgCode(
+                        request.requestBbox.getCoordinateReferenceSystem(),
+                        true);
+        if (crss.isEmpty())
+            return request;
         if (!crss.contains(requestCrs)) {
             ReferencedEnvelope newBBox = null;
             for (String crs : crss) {
                 try {
-                    newBBox = request.requestBbox.transform(CRS.decode(crs), true, 10);
+                    newBBox = request.requestBbox.transform(CRS.decode(crs),
+                            true, 10);
                 } catch (Exception e) {
                     // try next crs
                 }
             }
             if (newBBox != null && !crss.isEmpty()) {
-            	return request.withRequestBBox(newBBox);
+                return request.withRequestBBox(newBBox);
             }
         }
         return request;
     }
 
-    private void createPrjFile(CoordinateReferenceSystem crs, String baseFilename) throws FileNotFoundException {
+    private void createPrjFile(CoordinateReferenceSystem crs,
+            String baseFilename) throws FileNotFoundException {
         LOG.debug("Writing PRJ file: " + baseFilename + ".prj");
 
-        PrintWriter out = new PrintWriter(new FileOutputStream(baseFilename + ".prj"));
+        PrintWriter out = new PrintWriter(new FileOutputStream(baseFilename
+                + ".prj"));
         try {
             out.write(crs.toWKT());
             out.flush();
@@ -468,17 +517,20 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
      *             In case we cannot create the world file.
      * @throws TransformException
      */
-    private void createWorldFile(final WcsReaderRequest request, final String baseFile) throws IOException {
-        int width = (int) (request.requestBbox.getWidth()/request.groundResolutionX);
-        int height = (int) (request.requestBbox.getWidth()/request.groundResolutionX);
+    private void createWorldFile(final WcsReaderRequest request,
+            final String baseFile) throws IOException {
+        int width = (int) (request.requestBbox.getWidth() / request.groundResolutionX);
+        int height = (int) (request.requestBbox.getWidth() / request.groundResolutionX);
         ReferencedEnvelope transformedBBox;
         try {
-            transformedBBox = new ReferencedEnvelope(request.requestBbox,WGS84).transform(request.responseCRS, true, 10);
+            transformedBBox = new ReferencedEnvelope(request.requestBbox, WGS84)
+                    .transform(request.responseCRS, true, 10);
         } catch (Exception e) {
             throw new ExtractorException(e);
         }
         Rectangle imageSize = new Rectangle(width, height);
-        AffineTransform transform = RendererUtilities.worldToScreenTransform(transformedBBox , imageSize );
+        AffineTransform transform = RendererUtilities.worldToScreenTransform(
+                transformedBBox, imageSize);
 
         // /////////////////////////////////////////////////////////////////////
         //
@@ -498,10 +550,14 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
         // inside the grid to world transform.
         //
         // ////////////////////////////////////////////////////////////////////
-        final double xPixelSize = (lonFirst) ? transform.getScaleX() : transform.getShearY();
-        final double rotation1 = (lonFirst) ? transform.getShearX() : transform.getScaleX();
-        final double rotation2 = (lonFirst) ? transform.getShearY() : transform.getScaleY();
-        final double yPixelSize = (lonFirst) ? transform.getScaleY() : transform.getShearX();
+        final double xPixelSize = (lonFirst) ? transform.getScaleX()
+                : transform.getShearY();
+        final double rotation1 = (lonFirst) ? transform.getShearX() : transform
+                .getScaleX();
+        final double rotation2 = (lonFirst) ? transform.getShearY() : transform
+                .getScaleY();
+        final double yPixelSize = (lonFirst) ? transform.getScaleY()
+                : transform.getShearX();
         final double xLoc = transform.getTranslateX();
         final double yLoc = transform.getTranslateY();
 
@@ -533,30 +589,23 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
 
     /* ------------------- Shared support methods ------------------- */
 
-    private static File createTempDirectory() throws IOException, AssertionError {
-        File baseDir = File.createTempFile("WcsCoveragereader", null);
-        baseDir.delete();
-        if (!baseDir.mkdir()) {
-            throw new AssertionError("unable to create a temporary directory for downloading coverage to");
-        }
-        return baseDir;
-    }
-
     /**
      * given the template, finds the parameter in the array that has the same
      * name. Or returns empty collection
      */
-    private Collection<? extends GeneralParameterValue> find(GeneralParameterValue template,
-            GeneralParameterValue[] parameters) {
+    private Collection<? extends GeneralParameterValue> find(
+            GeneralParameterValue template, GeneralParameterValue[] parameters) {
         String codeToFind = template.getDescriptor().getName().getCode();
         for (GeneralParameterValue generalParameterValue : parameters) {
-            String currentCode = generalParameterValue.getDescriptor().getName().getCode();
+            String currentCode = generalParameterValue.getDescriptor()
+                    .getName().getCode();
             if (currentCode.equals(codeToFind)) {
                 return Collections.singleton(generalParameterValue);
             }
         }
 
-        if (template.getDescriptor().getMinimumOccurs() < 1 && template instanceof Parameter<?>) {
+        if (template.getDescriptor().getMinimumOccurs() < 1
+                && template instanceof Parameter<?>) {
             Parameter<?> param = (Parameter<?>) template;
             if (param.getValue() != null) {
                 return Collections.singleton(param);
@@ -568,22 +617,26 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
     /*-------------------------  Unsupported methods  --------------------*/
     @Override
     public String[] listSubNames() {
-        throw new UnsupportedOperationException("Does not need to be implemented for geOrchestra");
+        throw new UnsupportedOperationException(
+                "Does not need to be implemented for geOrchestra");
     }
 
     @Override
     public int getGridCoverageCount() {
-        throw new UnsupportedOperationException("Does not need to be implemented for geOrchestra");
+        throw new UnsupportedOperationException(
+                "Does not need to be implemented for geOrchestra");
     }
 
     @Override
     public ServiceInfo getInfo() {
-        throw new UnsupportedOperationException("Does not need to be implemented for geOrchestra");
+        throw new UnsupportedOperationException(
+                "Does not need to be implemented for geOrchestra");
     }
 
     @Override
     public String getCurrentSubname() {
-        throw new UnsupportedOperationException("Does not need to be implemented for geOrchestra");
+        throw new UnsupportedOperationException(
+                "Does not need to be implemented for geOrchestra");
     }
 
 }

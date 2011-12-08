@@ -59,9 +59,7 @@ public class ExtractorController implements ServletContextAware {
     private ServletContext              servletContext;
     private String                      servletUrl;
     private boolean                     remoteReproject = true;
-    public void setRemoteReproject(boolean remoteReproject) {
-        this.remoteReproject = remoteReproject;
-    }
+    private boolean                     useCommandLineGDAL = false;
 
     private UsernamePasswordCredentials adminCredentials;
     private String secureHost;
@@ -151,7 +149,8 @@ public class ExtractorController implements ServletContextAware {
 				String username = request.getHeader("sec-username");
 				String roles = request.getHeader("sec-roles");
 				RequestConfiguration requestConfig = new RequestConfiguration(requests, requestUuid, emailParams, 
-		                servletContext, testing, username, roles, adminCredentials, secureHost, maxCoverageExtractionSize, remoteReproject);
+		                servletContext, testing, username, roles, adminCredentials, secureHost, maxCoverageExtractionSize, remoteReproject,
+		                useCommandLineGDAL);
 				ExtractionTask extractor = new ExtractionTask(requestConfig);
 				
 				LOG.info("Sending mail to user");
@@ -272,8 +271,16 @@ public class ExtractorController implements ServletContextAware {
     public void setExtractionManager(ExtractionManager extractionManager) {
 		this.extractionManager = extractionManager;
 	}
+    
+    public void setRemoteReproject(boolean remoteReproject) {
+        this.remoteReproject = remoteReproject;
+    }    
 
-	// ----------------- Methods for accessing servlet context ----------------- //
+	public void setUseCommandLineGDAL(boolean useCommandLineGDAL) {
+        this.useCommandLineGDAL = useCommandLineGDAL;
+    }
+
+    // ----------------- Methods for accessing servlet context ----------------- //
     // ServletContext is required for determining where files are within the 
     // webapp
     @Override

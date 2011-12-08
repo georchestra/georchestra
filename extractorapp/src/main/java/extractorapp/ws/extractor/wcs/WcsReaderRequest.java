@@ -9,15 +9,16 @@ import static extractorapp.ws.extractor.wcs.WcsParameters.MAXX;
 import static extractorapp.ws.extractor.wcs.WcsParameters.MAXY;
 import static extractorapp.ws.extractor.wcs.WcsParameters.MINX;
 import static extractorapp.ws.extractor.wcs.WcsParameters.MINY;
+import static extractorapp.ws.extractor.wcs.WcsParameters.PASSWORD;
+import static extractorapp.ws.extractor.wcs.WcsParameters.REMOTE_REPROJECT;
+import static extractorapp.ws.extractor.wcs.WcsParameters.USE_COMMANDLINE_GDAL;
+import static extractorapp.ws.extractor.wcs.WcsParameters.RES;
 import static extractorapp.ws.extractor.wcs.WcsParameters.RESULT_IMAGE_PARAMS;
 import static extractorapp.ws.extractor.wcs.WcsParameters.RESX;
 import static extractorapp.ws.extractor.wcs.WcsParameters.RESY;
-import static extractorapp.ws.extractor.wcs.WcsParameters.RES;
-import static extractorapp.ws.extractor.wcs.WcsParameters.USE_POST;
-import static extractorapp.ws.extractor.wcs.WcsParameters.REMOTE_REPROJECT;
-import static extractorapp.ws.extractor.wcs.WcsParameters.VERSION;
 import static extractorapp.ws.extractor.wcs.WcsParameters.USERNAME;
-import static extractorapp.ws.extractor.wcs.WcsParameters.PASSWORD;
+import static extractorapp.ws.extractor.wcs.WcsParameters.USE_POST;
+import static extractorapp.ws.extractor.wcs.WcsParameters.VERSION;
 import static org.geotools.referencing.CRS.lookupEpsgCode;
 
 import java.io.IOException;
@@ -67,7 +68,8 @@ public class WcsReaderRequest {
     public final CoordinateReferenceSystem responseCRS;
 	protected final String username;
 	protected final String password;
-    public final Boolean remoteReproject;
+    public final boolean remoteReproject;
+    public final boolean useCommandLineGDAL;
 
     /**
      * Use {@link WcsReaderRequestFactory} to create instances of {@link WcsReaderRequestFactory}
@@ -83,7 +85,7 @@ public class WcsReaderRequest {
      * @param username 
      */
     protected WcsReaderRequest (String version, String coverage, ReferencedEnvelope bbox, CoordinateReferenceSystem responseCRS, double resolution,
-            String format, boolean usePost, Boolean remoteReproject, String username, String password) {
+            String format, boolean usePost, boolean remoteReproject, boolean useCommandLineGDAL, String username, String password) {
         if(resolution <= 0) {
             throw new IllegalArgumentException("resolution must be greater than 0");
         }
@@ -94,6 +96,7 @@ public class WcsReaderRequest {
         this.format = format.toLowerCase ();
         this.usePost = usePost;
         this.remoteReproject = remoteReproject;
+        this.useCommandLineGDAL = useCommandLineGDAL;
         this.requestBbox = bbox;
         this.username = username;
         this.password = password;
@@ -105,14 +108,14 @@ public class WcsReaderRequest {
     }
     
     protected WcsReaderRequest (WcsReaderRequest request) {
-        this(request.version, request.coverage, request.requestBbox, request.responseCRS, request.groundResolutionX, request.format, request.usePost, request.remoteReproject, request.username, request.password);
+        this(request.version, request.coverage, request.requestBbox, request.responseCRS, request.groundResolutionX, request.format, request.usePost, request.remoteReproject, request.useCommandLineGDAL, request.username, request.password);
     }
 
     /**
      * Create a new request based on the current request but with a new format
      */
     public WcsReaderRequest withFormat (String newFormat) {
-        return new WcsReaderRequest (version, coverage, requestBbox, responseCRS, groundResolutionX, newFormat, usePost, remoteReproject, username, password);
+        return new WcsReaderRequest (version, coverage, requestBbox, responseCRS, groundResolutionX, newFormat, usePost, remoteReproject, useCommandLineGDAL, username, password);
     }
     
     /**
@@ -122,7 +125,7 @@ public class WcsReaderRequest {
     public WcsReaderRequest withCRS(String code) {
         try {
             CoordinateReferenceSystem newCrs = org.geotools.referencing.CRS.decode(code);
-            return new WcsReaderRequest(version, coverage, requestBbox, newCrs, groundResolutionX, format, usePost, remoteReproject, username, password);
+            return new WcsReaderRequest(version, coverage, requestBbox, newCrs, groundResolutionX, format, usePost, remoteReproject, useCommandLineGDAL, username, password);
         } catch (FactoryException e) {
             throw new ExtractorException(e);
         }
@@ -146,6 +149,9 @@ public class WcsReaderRequest {
 
         ParameterValue<Boolean> remoteReproject = REMOTE_REPROJECT.createValue ();
         remoteReproject.setValue (this.remoteReproject);
+        
+        ParameterValue<Boolean> useCommandLineGDAL = USE_COMMANDLINE_GDAL.createValue ();
+        useCommandLineGDAL.setValue (this.useCommandLineGDAL);
 
         ParameterValue<String> version = VERSION.createValue ();
         version.setValue (this.version);
@@ -181,7 +187,7 @@ public class WcsReaderRequest {
         ParameterGroup extent = new ParameterGroup (EXTENT, new ParameterValueGroup[]{bbox});
         ParameterGroup resultImageParams = new ParameterGroup (RESULT_IMAGE_PARAMS, new ParameterValueGroup[]{size});
         
-        return new GeneralParameterValue[]{usePost, remoteReproject, version, coverage, format, crs, extent, resultImageParams, username, password};
+        return new GeneralParameterValue[]{usePost, remoteReproject, useCommandLineGDAL, version, coverage, format, crs, extent, resultImageParams, username, password};
     }
 
     /**

@@ -26,12 +26,13 @@ public class RequestConfiguration {
     public final String secureHost;
     public final long maxCoverageExtractionSize;
     public final boolean remoteReproject;
+    public final boolean useCommandLineGDAL;
     
     public RequestConfiguration(List<ExtractorLayerRequest> requests,
             UUID requestUuid, CompleteEmailParams emailParams,
             ServletContext servletContext, boolean testing, String username,
             String roles, UsernamePasswordCredentials adminCredentials,
-            String secureHost, long maxCoverageExtractionSize, boolean remoteReproject) {
+            String secureHost, long maxCoverageExtractionSize, boolean remoteReproject, boolean useCommandLineGDAL) {
         super();
         this.requests = requests;
         this.requestUuid = requestUuid;
@@ -44,6 +45,7 @@ public class RequestConfiguration {
         this.secureHost = secureHost;
         this.maxCoverageExtractionSize = maxCoverageExtractionSize;
         this.remoteReproject = remoteReproject;
+        this.useCommandLineGDAL = useCommandLineGDAL;
     }
     public void setThreadLocal() {
         instance.set(this);        

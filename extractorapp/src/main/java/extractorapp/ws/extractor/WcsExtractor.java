@@ -90,7 +90,7 @@ public class WcsExtractor {
         }
 
         WcsReaderRequest readerRequest = WcsReaderRequestFactory.create(WcsReaderRequest.DEFAULT_VERSION, request._layerName,
-                request._bbox, requestCRS, request._resolution, request._format, false, requestConfig.remoteReproject, username, password);
+                request._bbox, requestCRS, request._resolution, request._format, false, requestConfig.remoteReproject, requestConfig.useCommandLineGDAL, username, password);
         
         String safeFileName = FileUtils.toSafeFileName(request._layerName);
         reader.readToFile(basedir, safeFileName, readerRequest.getParameters());

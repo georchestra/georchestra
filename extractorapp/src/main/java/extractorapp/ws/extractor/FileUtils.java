@@ -176,4 +176,15 @@ public final class FileUtils {
     public static String toSafeFileName(String filename) {
         return filename.replaceAll("\\\\|/|:|\\||<|>|\\*|\"", "_");
     }
+
+    public static File createTempDirectory() throws IOException,
+            AssertionError {
+        File baseDir = File.createTempFile("WcsCoveragereader", null);
+        baseDir.delete();
+        if (!baseDir.mkdir()) {
+            throw new AssertionError(
+                    "unable to create a temporary directory for downloading coverage to");
+        }
+        return baseDir;
+    }
 }
