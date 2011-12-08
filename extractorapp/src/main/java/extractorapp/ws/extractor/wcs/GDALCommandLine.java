@@ -135,10 +135,6 @@ public class GDALCommandLine {
             command.add("TFW=YES");
             command.add("-co");
             command.add("BIGTIFF=IF_SAFER");
-            command.add("-co");
-            command.add("BLOCKXSIZE=1024");
-            command.add("-co");
-            command.add("BLOCKYSIZE=1024");
         } else if (Formats.isJPEG2000(requiredRequest.format)) {
             command.add("-of");
             command.add("JPEG2000");
