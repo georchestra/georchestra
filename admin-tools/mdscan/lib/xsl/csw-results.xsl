@@ -346,6 +346,10 @@ xmlns:dct="http://purl.org/dc/terms/">
                 <xsl:attribute name="class">md-test error</xsl:attribute>
                 <xsl:attribute name="title">le nom de la couche est vide</xsl:attribute>
             </xsl:when>
+            <xsl:when test="substring(.,string-length(.)-1)!='?'">
+                <xsl:attribute name="class">md-test error</xsl:attribute>
+                <xsl:attribute name="title">l'adresse du service ne finit pas par ? ou &amp;</xsl:attribute>
+            </xsl:when>
             <xsl:when test="@description=@name">
                 <xsl:attribute name="class">md-test warning</xsl:attribute>
                 <xsl:attribute name="title">
@@ -359,13 +363,15 @@ xmlns:dct="http://purl.org/dc/terms/">
             </xsl:when>
           </xsl:choose>
         <xsl:text>WMS</xsl:text>
+        <xsl:text><xsl:value-of select="substring(.,string-length(.)-3)"></xsl:text>
       </span>
     </xsl:for-each>
   </xsl:template>
 
   <!-- test sur la description des WFS -->
   <xsl:template name="test-link-wfs">
-    <xsl:for-each select="dc:URI[@protocol='OGC:WFS-1.0.0-http-get-capabilities']">
+    <xsl:for-each select="dc:URI[@protocol='OGC:WFS-1.0.0-http-get-capabilities'
+    |@protocol='OGC:WFS-1.1.0-http-get-capabilities']">
         <span target="_blank" class="md-test info">
           <xsl:attribute name="title">
             <xsl:value-of select="." />
