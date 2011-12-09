@@ -105,10 +105,10 @@ xmlns:dct="http://purl.org/dc/terms/">
                     <xsl:if test="position() mod 2=0">
                         <xsl:attribute name="class">odd</xsl:attribute>
                     </xsl:if>
-                    <td >
+                    <td class="title">
                         <xsl:call-template name="md-title" />
                     </td>
-                    <td>
+                    <td class="tests">
                       <xsl:call-template name="test-all" />
                     </td>
                     <td>
@@ -160,7 +160,9 @@ xmlns:dct="http://purl.org/dc/terms/">
     </span>
   </xsl:template>
 
-  <!-- boutons d'action -->
+  <!--
+  boutons d'action
+  -->
 
   <!-- action geonetwork -->
   <xsl:template name="md-action-geonetwork-edit">
@@ -175,6 +177,9 @@ xmlns:dct="http://purl.org/dc/terms/">
   <!-- action geoserver -->
   <xsl:template name="md-action-geoserver-edit">
     <xsl:for-each select="dc:URI[@protocol='OGC:WMS-1.1.1-http-get-map']">
+        <xsl:if test="position() mod 4=0">
+            <br />
+        </xsl:if>
         <xsl:if test="contains(.,'/geoserver/') and @name!=''">
             <a class="md-action" target="gs">
                 <xsl:attribute name="href">
@@ -196,6 +201,9 @@ xmlns:dct="http://purl.org/dc/terms/">
   <!-- action telechargement -->
   <xsl:template name="md-action-download">
     <xsl:for-each select="dc:URI[@protocol='WWW:DOWNLOAD-1.0-http--download']">
+        <xsl:if test="position() mod 4=0">
+            <br />
+        </xsl:if>
         <xsl:if test=".!=''">
             <a class="md-action" target="dl">
                 <xsl:attribute name="href">
@@ -212,7 +220,9 @@ xmlns:dct="http://purl.org/dc/terms/">
   </xsl:template>
 
 
-  <!-- template dessinant les vignettes de test -->
+  <!--
+  template dessinant les vignettes de test
+  -->
   <xsl:template name="flag-span">
     <xsl:param name="severity" select="undefined" />
     <xsl:param name="title" select="undefined" />
@@ -336,6 +346,9 @@ xmlns:dct="http://purl.org/dc/terms/">
     <xsl:for-each select="dc:URI[@protocol='OGC:WMS-1.1.0-http-get-map'
     or @protocol='OGC:WMS-1.1.1-http-get-map'
     or @protocol='OGC:WMS-1.3.0-http-get-map']">
+        <xsl:if test="position() mod 4=0">
+            <br />
+        </xsl:if>
         <xsl:choose>
             <xsl:when test="@name='' or not(@name)">
                 <xsl:call-template name="flag-span">
@@ -388,6 +401,9 @@ xmlns:dct="http://purl.org/dc/terms/">
   <xsl:template name="test-link-wfs">
     <xsl:for-each select="dc:URI[@protocol='OGC:WFS-1.0.0-http-get-capabilities'
         or @protocol='OGC:WFS-1.1.0-http-get-capabilities']">
+        <xsl:if test="position() mod 4=0">
+            <br />
+        </xsl:if>
         <xsl:choose>
             <xsl:when test="@name='' or not(@name)">
                 <xsl:call-template name="flag-span">
@@ -429,6 +445,9 @@ xmlns:dct="http://purl.org/dc/terms/">
   <!-- test sur la description des downloads -->
   <xsl:template name="test-link-download">
     <xsl:for-each select="dc:URI[@protocol='WWW:DOWNLOAD-1.0-http--download']">
+        <xsl:if test="position() mod 4=0">
+            <br />
+        </xsl:if>
         <xsl:choose>
             <xsl:when test=".=''">
                 <xsl:call-template name="flag-span">

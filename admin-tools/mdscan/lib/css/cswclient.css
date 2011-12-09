@@ -217,7 +217,6 @@ html>body .captioneddiv
 
 #csw-output table {
 	border-collapse:collapse;
-	width: 100%;
 }
 
 #csw-output tr.odd {
@@ -230,7 +229,6 @@ html>body .captioneddiv
 
 #csw-output th,td {
 	padding: 2px;
-	overflow: hidden;
 }
 
 #csw-output th {
@@ -239,6 +237,9 @@ html>body .captioneddiv
 
 #csw-output th.title {
 	width: 100%;
+}
+
+#csw-output td.tests {
 }
 
 #csw-output a {
