@@ -148,7 +148,6 @@ xmlns:dct="http://purl.org/dc/terms/">
     </span>
   </xsl:template>
 
-
   <!--template dc:type -->
   <xsl:template match="dc:type">
     <span class="md-info type">
@@ -334,9 +333,7 @@ xmlns:dct="http://purl.org/dc/terms/">
 
   <!-- test sur la description des WMS -->
   <xsl:template name="test-link-wms">
-    <xsl:for-each select="dc:URI[@protocol='OGC:WMS-1.1.0-http-get-map'
-    |@protocol='OGC:WMS-1.1.1-http-get-map'
-    |@protocol='OGC:WMS-1.3.0-http-get-map']">
+    <xsl:for-each select="dc:URI[@protocol='OGC:WMS-1.1.1-http-get-map']">
         <span target="_blank" class="md-test info">
           <xsl:attribute name="title">
             <xsl:value-of select="." />
@@ -346,9 +343,12 @@ xmlns:dct="http://purl.org/dc/terms/">
                 <xsl:attribute name="class">md-test error</xsl:attribute>
                 <xsl:attribute name="title">le nom de la couche est vide</xsl:attribute>
             </xsl:when>
-            <xsl:when test="substring(.,string-length(.)-1)!='?'">
+            <xsl:when test="substring(.,string-length(.))!='?'">
                 <xsl:attribute name="class">md-test error</xsl:attribute>
-                <xsl:attribute name="title">l'adresse du service ne finit pas par ? ou &amp;</xsl:attribute>
+                <xsl:attribute name="title">
+                    <xsl:text>l'adresse ne finit pas par ?&amp; : </xsl:text>
+                    <xsl:value-of select="." />
+                </xsl:attribute>
             </xsl:when>
             <xsl:when test="@description=@name">
                 <xsl:attribute name="class">md-test warning</xsl:attribute>
@@ -357,13 +357,12 @@ xmlns:dct="http://purl.org/dc/terms/">
                     <xsl:value-of select="@name" />
                 </xsl:attribute>
             </xsl:when>
-            <xsl:when test="@description='' or not(@description)">
+            <xsl:when test="not(@description) or @description=''">
                 <xsl:attribute name="class">md-test warning</xsl:attribute>
                 <xsl:attribute name="title">le titre est vide</xsl:attribute>
             </xsl:when>
           </xsl:choose>
         <xsl:text>WMS</xsl:text>
-        <xsl:text><xsl:value-of select="substring(.,string-length(.)-3)"></xsl:text>
       </span>
     </xsl:for-each>
   </xsl:template>
@@ -388,7 +387,7 @@ xmlns:dct="http://purl.org/dc/terms/">
                     <xsl:value-of select="@name" />
                 </xsl:attribute>
             </xsl:when>
-            <xsl:when test="not(@description)">
+            <xsl:when test="not(@description) or @description=''">
                 <xsl:attribute name="class">md-test warning</xsl:attribute>
                 <xsl:attribute name="title">le titre est vide</xsl:attribute>
             </xsl:when>
@@ -422,6 +421,10 @@ xmlns:dct="http://purl.org/dc/terms/">
             <xsl:when test="contains(.,'version=1.00')">
                 <xsl:attribute name="class">md-test warning</xsl:attribute>
                 <xsl:attribute name="title">version WFS erronée</xsl:attribute>
+            </xsl:when>
+            <xsl:when test="not(@description) or @description=''">
+                <xsl:attribute name="class">md-test warning</xsl:attribute>
+                <xsl:attribute name="title">le titre est vide</xsl:attribute>
             </xsl:when>
         </xsl:choose>
         <xsl:text>DL</xsl:text>
