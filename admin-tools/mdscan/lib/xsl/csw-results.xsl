@@ -72,18 +72,7 @@ xmlns:dct="http://purl.org/dc/terms/">
       <!--
       liste
       -->
-        <p>
-      <input type="checkbox" checked="checked" disabled="disabled" title="afficher informations niveau DEBUG (non fonctionnel)" />
-      <span class="md-test debug">déboguage</span>
-      <input type="checkbox" checked="checked" disabled="disabled" title="afficher informations niveau INFO (non fonctionnel)" />
-      <span class="md-test info">information</span>
-      <input type="checkbox" checked="checked" disabled="disabled" title="afficher informations niveau WARNING (non fonctionnel)" />
-      <span class="md-test warning">erreur mineure</span>
-      <input type="checkbox" checked="checked" disabled="disabled" title="afficher informations niveau ERROR (non fonctionnel)" />
-      <span class="md-test error">erreur bloquante</span>
-      <input type="checkbox" checked="checked" disabled="disabled" title="afficher informations niveau CRITICAL (non fonctionnel)" />
-      <span class="md-test critical">erreur majeure</span>
-        </p>
+
       <!-- debut table -->
       <table>
         <xsl:attribute name="start">

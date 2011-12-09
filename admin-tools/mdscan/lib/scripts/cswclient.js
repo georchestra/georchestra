@@ -82,6 +82,9 @@ CSWClient.prototype.handleCSWResponse = function(request, xml)
    this.showDiv(document.getElementById('popup'));
    }
  outputDiv.innerHTML = output;
+
+ // mdscan addon
+ updateTestTagsVisibility();
 }
 
 

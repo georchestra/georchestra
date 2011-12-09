@@ -217,6 +217,7 @@ html>body .captioneddiv
 
 #csw-output table {
 	border-collapse:collapse;
+	width: 100%;
 }
 
 #csw-output tr.odd {
@@ -233,6 +234,7 @@ html>body .captioneddiv
 
 #csw-output th {
 	border-bottom: 1px solid #c0c0c0;
+	text-align: left;
 }
 
 #csw-output th.title {

@@ -36,8 +36,34 @@
                <!--input type="hidden" name="displaymode" value="html"/-->
                <input type="button" value="Effacer" onClick="javascript:void(csw_client.clearPage())"/>
                <input type="button" value="Rechercher" onClick="javascript:void(csw_client.getRecords())"/>
+               <br />
 			 </form>
+             <!-- mdscan addon -->
+            <p>
+                <input type="checkbox" id="checkDebug" title="afficher informations de déboguage" />
+                <label for="checkDebug">
+                    <span class="md-test debug nohide">déboguage</span>
+                </label>
+                <input type="checkbox" id="checkInfo" title="afficher informations" />
+                <label for="checkInfo">
+                    <span class="md-test info nohide">information</span>
+                </label>
+                <input type="checkbox" id="checkWarning" checked="checked" title="afficher les avertissements" />
+                <label for="checkWarning">
+                    <span class="md-test warning nohide">avertissement</span>
+                </label>
+                <input type="checkbox" id="checkError" checked="checked" title="afficher les erreurs" />
+                <label for="checkError">
+                    <span class="md-test error nohide">erreur</span>
+                </label>
+                <input type="checkbox" id="checkCritical" checked="checked" title="afficher erreurs critiques" />
+                <label for="checkCritical">
+                    <span class="md-test critical nohide">erreur critique</span>
+                </label>
+            </p>
+
 	       </div>
+
 
 		   <div id="results-container">
 		     <div  class="csw-main2" id="results">
