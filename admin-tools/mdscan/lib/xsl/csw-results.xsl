@@ -359,7 +359,7 @@ xmlns:dct="http://purl.org/dc/terms/">
             </xsl:when>
             <xsl:when test="substring(.,string-length(.))!='?'">
                 <xsl:call-template name="flag-span">
-                    <xsl:with-param name="severity">error</xsl:with-param>
+                    <xsl:with-param name="severity">warning</xsl:with-param>
                     <xsl:with-param name="title">
                         <xsl:text>l'adresse ne finit pas par ?&amp; : </xsl:text>
                         <xsl:value-of select="." />
