@@ -333,102 +333,144 @@ xmlns:dct="http://purl.org/dc/terms/">
 
   <!-- test sur la description des WMS -->
   <xsl:template name="test-link-wms">
-    <xsl:for-each select="dc:URI[@protocol='OGC:WMS-1.1.1-http-get-map']">
-        <span target="_blank" class="md-test info">
-          <xsl:attribute name="title">
-            <xsl:value-of select="." />
-          </xsl:attribute>
-          <xsl:choose>
+    <xsl:for-each select="dc:URI[@protocol='OGC:WMS-1.1.0-http-get-map'
+    or @protocol='OGC:WMS-1.1.1-http-get-map'
+    or @protocol='OGC:WMS-1.3.0-http-get-map']">
+        <xsl:choose>
             <xsl:when test="@name='' or not(@name)">
-                <xsl:attribute name="class">md-test error</xsl:attribute>
-                <xsl:attribute name="title">le nom de la couche est vide</xsl:attribute>
+                <xsl:call-template name="flag-span">
+                    <xsl:with-param name="severity">error</xsl:with-param>
+                    <xsl:with-param name="title">le nom de la couche est vide</xsl:with-param>
+                    <xsl:with-param name="content">WMS</xsl:with-param>
+                </xsl:call-template>
             </xsl:when>
             <xsl:when test="substring(.,string-length(.))!='?'">
-                <xsl:attribute name="class">md-test error</xsl:attribute>
-                <xsl:attribute name="title">
-                    <xsl:text>l'adresse ne finit pas par ?&amp; : </xsl:text>
-                    <xsl:value-of select="." />
-                </xsl:attribute>
+                <xsl:call-template name="flag-span">
+                    <xsl:with-param name="severity">error</xsl:with-param>
+                    <xsl:with-param name="title">
+                        <xsl:text>l'adresse ne finit pas par ?&amp; : </xsl:text>
+                        <xsl:value-of select="." />
+                    </xsl:with-param>
+                    <xsl:with-param name="content">WMS</xsl:with-param>
+                </xsl:call-template>
             </xsl:when>
             <xsl:when test="@description=@name">
-                <xsl:attribute name="class">md-test warning</xsl:attribute>
-                <xsl:attribute name="title">
-                    <xsl:text>le titre est mal défini : </xsl:text>
-                    <xsl:value-of select="@name" />
-                </xsl:attribute>
+                <xsl:call-template name="flag-span">
+                    <xsl:with-param name="severity">warning</xsl:with-param>
+                    <xsl:with-param name="title">
+                        <xsl:text>le titre est mal défini : </xsl:text>
+                        <xsl:value-of select="@name" />
+                    </xsl:with-param>
+                    <xsl:with-param name="content">WMS</xsl:with-param>
+                </xsl:call-template>
             </xsl:when>
             <xsl:when test="not(@description) or @description=''">
-                <xsl:attribute name="class">md-test warning</xsl:attribute>
-                <xsl:attribute name="title">le titre est vide</xsl:attribute>
+                <xsl:call-template name="flag-span">
+                    <xsl:with-param name="severity">warning</xsl:with-param>
+                    <xsl:with-param name="title">le titre est vide</xsl:with-param>
+                    <xsl:with-param name="content">WMS</xsl:with-param>
+                </xsl:call-template>
             </xsl:when>
+            <xsl:otherwise>
+                <xsl:call-template name="flag-span">
+                    <xsl:with-param name="severity">info</xsl:with-param>
+                    <xsl:with-param name="title">
+                        <xsl:value-of select="." />
+                    </xsl:with-param>
+                    <xsl:with-param name="content">WMS</xsl:with-param>
+                </xsl:call-template>
+            </xsl:otherwise>
           </xsl:choose>
-        <xsl:text>WMS</xsl:text>
-      </span>
     </xsl:for-each>
   </xsl:template>
 
   <!-- test sur la description des WFS -->
   <xsl:template name="test-link-wfs">
     <xsl:for-each select="dc:URI[@protocol='OGC:WFS-1.0.0-http-get-capabilities'
-    |@protocol='OGC:WFS-1.1.0-http-get-capabilities']">
-        <span target="_blank" class="md-test info">
-          <xsl:attribute name="title">
-            <xsl:value-of select="." />
-          </xsl:attribute>
-          <xsl:choose>
+        or @protocol='OGC:WFS-1.1.0-http-get-capabilities']">
+        <xsl:choose>
             <xsl:when test="@name='' or not(@name)">
-                <xsl:attribute name="class">md-test error</xsl:attribute>
-                <xsl:attribute name="title">le nom de la couche est vide</xsl:attribute>
+                <xsl:call-template name="flag-span">
+                    <xsl:with-param name="severity">error</xsl:with-param>
+                    <xsl:with-param name="title">le nom de la couche est vide</xsl:with-param>
+                    <xsl:with-param name="content">WFS</xsl:with-param>
+                </xsl:call-template>
             </xsl:when>
             <xsl:when test="@description=@name">
-                <xsl:attribute name="class">md-test warning</xsl:attribute>
-                <xsl:attribute name="title">
-                    <xsl:text>le titre est mal défini : </xsl:text>
-                    <xsl:value-of select="@name" />
-                </xsl:attribute>
+                <xsl:call-template name="flag-span">
+                    <xsl:with-param name="severity">warning</xsl:with-param>
+                    <xsl:with-param name="title">
+                        <xsl:text>le titre est mal défini : </xsl:text>
+                        <xsl:value-of select="@name" />
+                    </xsl:with-param>
+                    <xsl:with-param name="content">WFS</xsl:with-param>
+                </xsl:call-template>
             </xsl:when>
             <xsl:when test="not(@description) or @description=''">
-                <xsl:attribute name="class">md-test warning</xsl:attribute>
-                <xsl:attribute name="title">le titre est vide</xsl:attribute>
+                <xsl:call-template name="flag-span">
+                    <xsl:with-param name="severity">warning</xsl:with-param>
+                    <xsl:with-param name="title">le titre est vide</xsl:with-param>
+                    <xsl:with-param name="content">WFS</xsl:with-param>
+                </xsl:call-template>
             </xsl:when>
-          </xsl:choose>
-        <xsl:text>WFS</xsl:text>
-      </span>
+            <xsl:otherwise>
+                <xsl:call-template name="flag-span">
+                    <xsl:with-param name="severity">info</xsl:with-param>
+                    <xsl:with-param name="title">
+                        <xsl:value-of select="." />
+                    </xsl:with-param>
+                    <xsl:with-param name="content">WFS</xsl:with-param>
+                </xsl:call-template>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:for-each>
   </xsl:template>
 
   <!-- test sur la description des downloads -->
   <xsl:template name="test-link-download">
     <xsl:for-each select="dc:URI[@protocol='WWW:DOWNLOAD-1.0-http--download']">
-        <span class="md-test info">
-          <xsl:attribute name="title">
-            <xsl:value-of select="." />
-          </xsl:attribute>
         <xsl:choose>
             <xsl:when test=".=''">
-                <xsl:attribute name="class">md-test error</xsl:attribute>
-                <xsl:attribute name="title">
-                    <xsl:text>adresse de téléchargement manquante</xsl:text>
-                </xsl:attribute>
+                <xsl:call-template name="flag-span">
+                    <xsl:with-param name="severity">error</xsl:with-param>
+                    <xsl:with-param name="title">adresse de téléchargement manquante</xsl:with-param>
+                    <xsl:with-param name="content">DL</xsl:with-param>
+                </xsl:call-template>
             </xsl:when>
             <xsl:when test="substring(.,1,4)!='http'">
-                <xsl:attribute name="class">md-test error</xsl:attribute>
-                <xsl:attribute name="title">
-                    <xsl:text>adresse de téléchargement erronée : </xsl:text>
-                    <xsl:value-of select="." />
-                </xsl:attribute>
+                <xsl:call-template name="flag-span">
+                    <xsl:with-param name="severity">error</xsl:with-param>
+                    <xsl:with-param name="title">
+                        <xsl:text>adresse de téléchargement erronée : </xsl:text>
+                        <xsl:value-of select="." />
+                    </xsl:with-param>
+                    <xsl:with-param name="content">DL</xsl:with-param>
+                </xsl:call-template>
             </xsl:when>
             <xsl:when test="contains(.,'version=1.00')">
-                <xsl:attribute name="class">md-test warning</xsl:attribute>
-                <xsl:attribute name="title">version WFS erronée</xsl:attribute>
+                <xsl:call-template name="flag-span">
+                    <xsl:with-param name="severity">warning</xsl:with-param>
+                    <xsl:with-param name="title">version WFS getFeature erronée</xsl:with-param>
+                    <xsl:with-param name="content">DL</xsl:with-param>
+                </xsl:call-template>
             </xsl:when>
             <xsl:when test="not(@description) or @description=''">
-                <xsl:attribute name="class">md-test warning</xsl:attribute>
-                <xsl:attribute name="title">le titre est vide</xsl:attribute>
+                <xsl:call-template name="flag-span">
+                    <xsl:with-param name="severity">warning</xsl:with-param>
+                    <xsl:with-param name="title">le titre est vide</xsl:with-param>
+                    <xsl:with-param name="content">DL</xsl:with-param>
+                </xsl:call-template>
             </xsl:when>
+            <xsl:otherwise>
+                <xsl:call-template name="flag-span">
+                    <xsl:with-param name="severity">info</xsl:with-param>
+                    <xsl:with-param name="title">
+                        <xsl:value-of select="." />
+                    </xsl:with-param>
+                    <xsl:with-param name="content">DL</xsl:with-param>
+                </xsl:call-template>
+            </xsl:otherwise>
         </xsl:choose>
-        <xsl:text>DL</xsl:text>
-      </span>
     </xsl:for-each>
   </xsl:template>
 
