@@ -1,28 +1,27 @@
-var TESTLEVELS = [
-    { control:"#checkDebug", cssClass:"md-test debug" },
-    { control:"#checkInfo", cssClass:"md-test info" },
-    { control:"#checkWarning", cssClass:"md-test warning" },
-    { control:"#checkError", cssClass:"md-test error" },
-    { control:"#checkCritical", cssClass:"md-test critical" }
+var VISISWITCHES = [
+    { control:"#checkDebug", selector:"span[class='md-test debug']" },
+    { control:"#checkInfo", selector:"span[class='md-test info']" },
+    { control:"#checkWarning", selector:"span[class='md-test warning']" },
+    { control:"#checkError", selector:"span[class='md-test error']" },
+    { control:"#checkCritical", selector:"span[class='md-test critical']" },
+    { control:"#btAdmin", selector:"*[class='md-admin']" }
 ]
 
 function updateTestTagsVisibility() {
-    for (var i=0; i<TESTLEVELS.length; i++) {
-        if ($(TESTLEVELS[i].control).attr('checked')) {
-            $("span[class='"+TESTLEVELS[i].cssClass+"']").show()
+    for (var i=0; i<VISISWITCHES.length; i++) {
+        if ($(VISISWITCHES[i].control).attr('checked')) {
+            $(VISISWITCHES[i].selector).show()
         }
         else {
-            $("span[class='"+TESTLEVELS[i].cssClass+"']").hide()
+            $(VISISWITCHES[i].selector).hide()
         };
     };
 };
 
 $(document).ready(function() {
-    $("#checkDebug").change(updateTestTagsVisibility);
-    $("#checkInfo").change(updateTestTagsVisibility);
-    $("#checkWarning").change(updateTestTagsVisibility);
-    $("#checkError").change(updateTestTagsVisibility);
-    $("#checkCritical").change(updateTestTagsVisibility);
+    for (var i=0; i<VISISWITCHES.length; i++) {
+        $(VISISWITCHES[i].control).change(updateTestTagsVisibility);
+    }
 });
 
 

@@ -82,8 +82,8 @@ xmlns:dct="http://purl.org/dc/terms/">
         <thead>
             <tr>
                 <th class="title">titre</th>
-                <th>checks</th>
-                <th>actions</th>
+                <th>validation</th>
+                <th class="md-admin">administration</th>
             </tr>
         </thead>
         <tbody>
@@ -100,7 +100,7 @@ xmlns:dct="http://purl.org/dc/terms/">
                     <td class="tests">
                       <xsl:call-template name="test-all" />
                     </td>
-                    <td>
+                    <td class="md-admin">
                         <xsl:call-template name="md-action-geonetwork-edit" />
                         <xsl:call-template name="md-action-geoserver-edit" />
                         <xsl:call-template name="md-action-download" />
