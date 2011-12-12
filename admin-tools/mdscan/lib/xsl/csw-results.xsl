@@ -52,6 +52,7 @@ xmlns:dct="http://purl.org/dc/terms/">
               <xsl:text>&lt;&lt; précédent</xsl:text>
             </a>
           </xsl:if>
+
           <xsl:text>||</xsl:text>
           <xsl:if test="number($next) &gt; 0">
             <a>
@@ -83,7 +84,7 @@ xmlns:dct="http://purl.org/dc/terms/">
             <tr>
                 <th class="title">titre</th>
                 <th>validation</th>
-                <th class="md-admin">administration</th>
+                <th> </th>
             </tr>
         </thead>
         <tbody>
@@ -100,16 +101,18 @@ xmlns:dct="http://purl.org/dc/terms/">
                     <td class="tests">
                       <xsl:call-template name="test-all" />
                     </td>
-                    <td class="md-admin">
-                        <xsl:call-template name="md-action-geonetwork-edit" />
-                        <xsl:call-template name="md-action-geoserver-edit" />
-                        <xsl:call-template name="md-action-download" />
+                    <td>
+                        <xsl:call-template name="md-action-wms-group" />
                     </td>
                   </tr>
                 </xsl:if>
             </xsl:for-each>
         </tbody>
       </table>
+    </div>
+    <!-- overlay external pages -->
+    <div class="apple_overlay" id="overlay">
+        <div class="contentWrap"></div>
     </div>
   </xsl:template>
 
@@ -153,39 +156,87 @@ xmlns:dct="http://purl.org/dc/terms/">
   boutons d'action
   -->
 
-  <!-- action geonetwork -->
-  <xsl:template name="md-action-geonetwork-edit">
-        <a target="gn" class="md-action" title="éditer la métadonnée dans GeoNetwork">
-            <xsl:attribute name="href">
-                <xsl:value-of select="concat($geonetworkUrl,'?uuid=',./dc:identifier)" />
-            </xsl:attribute>
-            <xsl:text>GN</xsl:text>
-        </a>
+
+  <!-- actions -->
+  <xsl:template name="md-action-wms-group">
+    <a class="layersmenu">adm</a>
+
+    <div class="tooltip">
+        <h4><xsl:value-of select="./dc:identifier" />
+            <a target="gn" title="éditer dans GeoNetwork">
+                <xsl:attribute name="href">
+                    <xsl:value-of select="concat($geonetworkUrl,'?uuid=',./dc:identifier)" />
+                </xsl:attribute>
+                <xsl:text> [éditer] </xsl:text>
+            </a>
+        </h4>
+
+        <!-- téléchargement -->
+        <ul>
+            <xsl:for-each select="dc:URI[@protocol='WWW:DOWNLOAD-1.0-http--download']">
+                <xsl:if test=".!=''">
+                    <li>
+                        <a target="dl">
+                            <xsl:attribute name="href">
+                                <xsl:value-of select="." />
+                            </xsl:attribute>
+                            <xsl:attribute name="title">
+                                <xsl:text>télécharger </xsl:text>
+                                <xsl:value-of select="." />
+                            </xsl:attribute>
+                            <xsl:text>télécharger </xsl:text>
+                            <xsl:value-of select="." />
+                        </a>
+                    </li>
+                </xsl:if>
+            </xsl:for-each>
+        </ul>
+
+        <!-- administration WMS -->
+        <span>administration WMS</span>
+        <ul>
+            <xsl:for-each select="dc:URI[@protocol='OGC:WMS-1.1.1-http-get-map'
+            or @protocol='OGC:WMS-1.3.0-http-get-map']">
+                <xsl:if test=".!='' and @name and @name!=''">
+                    <li>
+                        <span>
+                            <xsl:attribute name="title">
+                                <xsl:value-of select="@description" />
+                            </xsl:attribute>
+                            <xsl:value-of select="@name" />
+                        </span>
+                        |
+                        <!-- getLegendGraphic -->
+                        <a target="_blank" title="getLegendGraphic">
+                            <xsl:attribute name="href">
+                                <xsl:value-of select="." />
+                                <xsl:if test="not(contains(.,'?'))">?</xsl:if>
+                                <xsl:value-of select="concat(
+                                '&amp;service=WMS&amp;VERSION=',substring(@protocol,9,5),
+                                '&amp;request=getLegendGraphic&amp;FORMAT=image/png&amp;LAYER=',@name)" />
+                            </xsl:attribute>
+                            <xsl:text>légende</xsl:text>
+                        </a>
+                        <!-- geoserver -->
+                        <xsl:if test="contains(.,'/geoserver/') and @name!=''">
+                            |
+                            <a target="_blank" title="administrer dans GeoServer">
+                                <xsl:attribute name="href">
+                                    <xsl:value-of select="substring-before(.,'/geoserver/')" />
+                                    <xsl:text>/geoserver/web/?wicket:bookmarkablePage=:org.geoserver.web.data.resource.ResourceConfigurationPage&amp;name=</xsl:text>
+                                    <xsl:value-of select="@name" />
+                                </xsl:attribute>
+                                <xsl:text>GeoServer</xsl:text>
+                            </a>
+                        </xsl:if>
+                    </li>
+                </xsl:if>
+            </xsl:for-each>
+        </ul>
+    </div>
   </xsl:template>
 
-  <!-- action geoserver -->
-  <xsl:template name="md-action-geoserver-edit">
-    <xsl:for-each select="dc:URI[@protocol='OGC:WMS-1.1.1-http-get-map']">
-        <xsl:if test="position() mod 4=0">
-            <br />
-        </xsl:if>
-        <xsl:if test="contains(.,'/geoserver/') and @name!=''">
-            <a class="md-action" target="gs">
-                <xsl:attribute name="href">
-                    <xsl:value-of select="substring-before(.,'/geoserver/')" />
-                    <xsl:text>/geoserver/web/?wicket:bookmarkablePage=:org.geoserver.web.data.resource.ResourceConfigurationPage&amp;name=</xsl:text>
-                    <xsl:value-of select="@name" />
-                </xsl:attribute>
-                <xsl:attribute name="title">
-                    <xsl:text>éditer [</xsl:text>
-                    <xsl:value-of select="@name" />
-                    <xsl:text>] dans GeoServer</xsl:text>
-                </xsl:attribute>
-                <xsl:text>GS</xsl:text>
-            </a>
-        </xsl:if>
-    </xsl:for-each>
-  </xsl:template>
+
 
   <!-- action telechargement -->
   <xsl:template name="md-action-download">
@@ -346,7 +397,7 @@ xmlns:dct="http://purl.org/dc/terms/">
                     <xsl:with-param name="content">WMS</xsl:with-param>
                 </xsl:call-template>
             </xsl:when>
-            <xsl:when test="substring(.,string-length(.))!='?'">
+            <xsl:when test="substring(.,string-length(.))!='?' and substring(.,string-length(.))!='&amp;'">
                 <xsl:call-template name="flag-span">
                     <xsl:with-param name="severity">warning</xsl:with-param>
                     <xsl:with-param name="title">

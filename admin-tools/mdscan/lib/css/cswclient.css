@@ -248,7 +248,9 @@ html>body .captioneddiv
 	color: #333333;
 }
 
-
+/**
+ * metadata styles
+ */
 
 .md-uuid {
 	font-size: 0.6em;
@@ -265,14 +267,6 @@ html>body .captioneddiv
 }
 
 
-a.md-action {
-	font-size: 0.8em;
-	margin-right: 2px;
-	border: 1px solid transparent;
-}
-a.md-action:hover {
-	border: 1px solid #666666;
-}
 
 /**
  * test styles
@@ -308,6 +302,33 @@ a.md-action:hover {
 	color: #ffffff;
 	background-color: #6A0888;
 }
+
+/**
+ * tooltip submenus
+ */
+
+/* tooltip styling */
+.tooltip {
+	display:none;
+	width: 40em;
+	text-align: left;
+	padding:0.5em 0.5em 0.5em 0.5em;
+	font-size:0.9em;
+	background-color: #ffffff;
+	border: 1px solid #666666;
+	-moz-box-shadow: 3px 3px 4px #333333;
+	-webkit-box-shadow: 3px 3px 4px #333333;
+	box-shadow: 3px 3px 4px #333333;
+}
+.tooltip h4 {
+	padding: 2px;
+	margin: 0em 0em 0.5em 0em;
+	border-bottom: 1px solid #666666;
+}
+.tooltip ul {
+	padding: 0em 0em 0em 1.5em;
+}
+
 
 
 

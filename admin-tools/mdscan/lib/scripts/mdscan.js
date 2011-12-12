@@ -3,8 +3,7 @@ var VISISWITCHES = [
     { control:"#checkInfo", selector:"span[class='md-test info']" },
     { control:"#checkWarning", selector:"span[class='md-test warning']" },
     { control:"#checkError", selector:"span[class='md-test error']" },
-    { control:"#checkCritical", selector:"span[class='md-test critical']" },
-    { control:"#btAdmin", selector:"*[class='md-admin']" }
+    { control:"#checkCritical", selector:"span[class='md-test critical']" }
 ]
 
 function updateTestTagsVisibility() {
@@ -16,6 +15,11 @@ function updateTestTagsVisibility() {
             $(VISISWITCHES[i].selector).hide()
         };
     };
+    $("*[class='layersmenu']").tooltip({
+        position: 'center left'
+    });
+
+
 };
 
 $(document).ready(function() {
