@@ -10,6 +10,11 @@
   <packaging>war</packaging>
   <name>Extractorapp Webapp</name>
   <url>http://www.georchestra.org</url>
+  
+	<properties>
+		<gt.version>8-SNAPSHOT</gt.version>
+	</properties>
+  
   <dependencies>
     <dependency>
       <groupId>org.tuckey</groupId>
@@ -124,6 +129,11 @@
       <version>${gt.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-ogr</artifactId>
+      <version>${gt.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.geotools.ogc</groupId>
       <artifactId>net.opengis.wfs</artifactId>
       <version>${gt.version}</version>
@@ -193,6 +203,12 @@
       <version>1.2</version>
     </dependency>
     <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.4</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>log4j</groupId>
       <artifactId>apache-log4j-extras</artifactId>
       <version>1.1</version>
@@ -205,6 +221,7 @@
 			<version>1.2.16</version>
 			<type>jar</type>
 		</dependency>
+		
   </dependencies>
   <build>
     <finalName>extractorapp-private</finalName>

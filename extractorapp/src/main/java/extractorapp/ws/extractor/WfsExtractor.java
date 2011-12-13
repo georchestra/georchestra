@@ -15,16 +15,14 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFactorySpi;
-import org.geotools.data.DefaultQuery;
 import org.geotools.data.Query;
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.wfs.WFSDataStoreFactory;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.factory.GeoTools;
-import org.geotools.feature.FeatureCollection;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 import org.geotools.util.NullProgressListener;
-import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
@@ -34,7 +32,6 @@ import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.spatial.Intersects;
 import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.ProgressListener;
 import org.w3c.dom.NamedNodeMap;
@@ -58,7 +55,9 @@ import com.vividsolutions.jts.geom.Polygon;
  * @author jeichar
  */
 public class WfsExtractor {
-    protected static final Log LOG = LogFactory.getLog(WcsExtractor.class.getPackage().getName());
+	
+	
+	protected static final Log LOG = LogFactory.getLog(WcsExtractor.class.getPackage().getName());
 
     /**
      * Enumerate general types of geometries we accept. Multi/normal is ignored
@@ -189,8 +188,9 @@ public class WfsExtractor {
         Node nameNode = type.getFirstChild();
         while(nameNode != null && !nameNode.getNodeName().equals("Name")) {
             nameNode = nameNode.getNextSibling();
-        }
+        }       
         String name = nameNode.getTextContent().trim();
+       
         return name;
     }
 
@@ -221,7 +221,6 @@ public class WfsExtractor {
         params.put (WFSDataStoreFactory.URL.key, request.capabilitiesURL ("WFS","1.0.0"));
         params.put (WFSDataStoreFactory.LENIENT.key, true);
         params.put (WFSDataStoreFactory.PROTOCOL.key, true);
-
         
         // HACK  I want unrestricted access to layers. 
         // Security check takes place in ExtractorThread
@@ -238,42 +237,34 @@ public class WfsExtractor {
         DataStore sourceDs = _datastoreFactory.createDataStore (params);
 
         SimpleFeatureType sourceSchema = sourceDs.getSchema (request.getWFSName());
-        
-        Query query = createQuery (request, sourceSchema);
-        FeatureCollection<SimpleFeatureType, SimpleFeature> features = sourceDs.getFeatureSource (request.getWFSName())
-                .getFeatures (query);
+		Query query = createQuery(request, sourceSchema);
+		SimpleFeatureCollection features = sourceDs.getFeatureSource(request.getWFSName())
+														.getFeatures(query);
 
-        ProgressListener p = new NullProgressListener () {
+        ProgressListener progressListener = new NullProgressListener () {
             @Override
             public void exceptionOccurred (Throwable exception) {
                 throw new RuntimeException (exception);
             }
         };
-        CoordinateReferenceSystem requestProjection = request._projection;
-        
         File basedir = request.createContainingDir(_basedir);
         
         basedir.mkdirs();
 
-        DatastoreFactory dsFactory;
+        FeatureWriterStrategy writer;
         if (request._format.equalsIgnoreCase("shp")) {
-            dsFactory = new ShpDatastoreFactory();
+            writer = new ShpFeatureWriter(progressListener, sourceSchema, basedir, features);
         } else if (request._format.equalsIgnoreCase("mif")) {
-            dsFactory = new MifDatastoreFactory();
+        	writer = new MifFeatureWriter(progressListener, sourceSchema, basedir, features);
+        } else if (request._format.equalsIgnoreCase("tab")) {
+        	writer = new OGRFeatureWriter(progressListener, sourceSchema,  basedir, OGRFeatureWriter.FileFormat.tab, features);
         } else {
             throw new IllegalArgumentException(request._format + " is not a recognized vector format");
         }
-
-        WriteFeatures writeFeatures = new WriteFeatures(sourceSchema, basedir, requestProjection,
-                dsFactory);
-        features.accepts(writeFeatures, p);
-
-        writeFeatures.close();
-        
-        return writeFeatures.getShapeFiles ();
+        return writer.generateFiles();
     }
 
-    /* This method is default for testing purposes */
+	/* This method is default for testing purposes */
     Query createQuery (ExtractorLayerRequest request, FeatureType schema) throws IOException, TransformException,
             FactoryException {
         switch (request._owsType) {
@@ -307,7 +298,7 @@ public class WfsExtractor {
             }
 
             String[] propArray = properties.toArray (new String[properties.size ()]);
-            DefaultQuery query = new DefaultQuery (request.getWFSName(), filter, propArray);
+            Query query = new Query (request.getWFSName(), filter, propArray);
             
             query.setCoordinateSystemReproject (request._projection);
 

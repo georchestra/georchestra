@@ -276,7 +276,6 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
         // TODO handle failure. What am I supposed to do about it?
         e1.printStackTrace();
     }
-
     
     public void emailNotice(String message) throws MessagingException {
 		emailNotice(new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>(), message);
