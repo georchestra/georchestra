@@ -153,7 +153,6 @@ GEOR.print = (function() {
                     // set a custom PDF file name:
                     pp.customParams.outputFilename = [
                         GEOR.config.PRINT_FILENAME_PREFIX,
-                        "${yyyy-MM-dd}",
                         Math.random().toString(16).slice(2,10)
                     ].join('_');
                 },

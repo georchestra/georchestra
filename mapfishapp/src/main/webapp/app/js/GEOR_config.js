@@ -333,10 +333,10 @@ GEOR.config = (function() {
         /**
          * Constant: PRINT_FILENAME_PREFIX
          * {String} The PDF filename prefix.
-         * Defaults to "georchestra"
+         * Defaults to "georchestra_${yyyy-MM-dd}"
          */ 
         PRINT_FILENAME_PREFIX: getCustomParameter("PRINT_FILENAME_PREFIX", 
-            "georchestra"),
+            "georchestra_${yyyy-MM-dd}"),
         
         /**
          * Constant: GEOSERVER_WFS_URL
