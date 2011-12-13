@@ -21,19 +21,13 @@
       var url = getUrlVars().url;
       if (!url) {
         url = "/";
-      } else if (loggedIn) {
-        if (url.indexOf("?") != -1) {
-          url = url+"&login";
-        } else {
-          url = url+"?login";
-        }
-    }
+      } 
 
-    if(url[0] != "/"){
-      url = '/'+url;
-    }
+      if(url[0] != "/"){
+        url = '/'+url;
+      }
     
-    window.location = url;
+      window.location = url;
     }
   </script>
   <body>
