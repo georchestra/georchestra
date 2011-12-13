@@ -13,6 +13,7 @@
         <s:intercept-url pattern=".*\?.*login.*" access="ROLE_SV_USER,ROLE_SV_EDITOR,ROLE_SV_REVIEWER,ROLE_SV_ADMIN" />
         <s:intercept-url pattern="/gssec/.*" access="ROLE_GS_ADMIN" />
         <s:intercept-url pattern="/test/.*" access="ROLE_GS_ADMIN" />
+        <s:intercept-url pattern="/testPage" access="IS_AUTHENTICATED_FULLY" />
 <!--        <sec:intercept-url pattern=".*\?.*login.*" access="IS_AUTHENTICATED_FULLY" />-->
         <s:intercept-url pattern=".*" access="IS_AUTHENTICATED_ANONYMOUSLY,ROLE_SV_USER,ROLE_SV_EDITOR,ROLE_SV_REVIEWER,ROLE_SV_ADMIN" />
         <!-- s:form-login / -->

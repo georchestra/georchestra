@@ -15,7 +15,6 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
@@ -53,10 +52,8 @@ import org.apache.http.client.params.ClientPNames;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.ProxySelectorRoutePlanner;
-import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
@@ -119,7 +116,22 @@ public class Proxy {
     private String defaultCharset = "UTF-8";
     
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+    
+    /*  ----------  start work around for no gateway option  -------------- */
+    private Gateway gateway = new Gateway();
+    
+    @RequestMapping(value="/gateway", method={GET,POST} )
+    public void gateway(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        gateway.loadCredentialsPage(request, response);
+    }
+    
+    @RequestMapping(value="/testPage", method={GET} )
+    public void testPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        gateway.testPage(response);
+    }
+    /*  ----------  end work around for no gateway option  -------------- */
 
+    
     @RequestMapping(params="login", method={GET,POST} )
     public void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String uri = request.getRequestURI();

@@ -1,0 +1,45 @@
+<html>
+  <script type="text/javascript">@jquery@</script>
+  <script type="text/javascript">
+    function getUrlVars() {
+      var vars = {};
+      var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+        vars[key] = value;
+      });
+      return vars;
+    }
+
+    function checkLogin() {
+      var loggedIn;
+      
+      try {
+        loggedIn = $("iframe").contents().find("#userLoggedIn").length > 0;
+      } catch (e) {
+        loggedIn = false;
+      }
+
+      var url = getUrlVars().url;
+      if (!url) {
+        url = "/";
+      } else if (loggedIn) {
+        if (url.contains("?")) {
+          url = url+"&login";
+        } else {
+          url = url+"?login";
+        }
+    }
+
+    if(url[0] != "/"){
+      url = '/'+url;
+    }
+    alert("redirect to "+url);
+    window.location = url;
+    }
+  </script>
+  <body>
+    <div id="login">
+      Loading credentials..
+    </div>
+    <iframe id="iframe" src="/empty?login" onload="checkLogin()" style="display:none" width="0" height="0"/>
+  </body>
+</html>

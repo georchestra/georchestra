@@ -25,8 +25,14 @@
         -1 denotes no reload check, default -1) -->
         <init-param>
             <param-name>confReloadCheckInterval</param-name>
-            <param-value>0</param-value>
+            <param-value>10</param-value>
         </init-param>
+        
+           <init-param>
+            <param-name>logLevel</param-name>
+            <param-value>OFF</param-value>
+        </init-param>
+        
     </filter>
 
 <!--    <filter>-->

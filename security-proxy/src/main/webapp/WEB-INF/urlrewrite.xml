@@ -23,6 +23,14 @@
         <to type="forward">/sec/$1</to>
     </rule>
     <rule>
+        <from>^/gateway$</from>
+        <to type="forward">/sec/gateway?url=/</to>
+    </rule>
+    <rule>
+        <from>^/gateway\?url=(.*)$</from>
+        <to type="forward">/sec/gateway?url=$1</to>
+    </rule>
+    <rule>
         <from>^/sec/ogcproxy/(.*)$</from>
         <to type="forward">/sec/proxy/$1</to>
     </rule>
@@ -31,7 +39,15 @@
         <to type="forward">/sec/proxy/$1</to>
     </rule>
     <rule>
-        <from>^/(cas-logout.jsp|casfailed.jsp|favicon.ico|receptor|j_spring_security_logout|j_spring_cas_security_check)$</from>
+        <from>^/(load|load\.html)\?(.*)$</from>
+        <to type="forward">/$1?$2</to>
+    </rule>
+    <rule>
+        <from>^/(load|load\.html)$</from>
+        <to type="forward">/$1</to>
+    </rule>
+    <rule>
+        <from>^/(jquery-min.js|empty|cas-logout.jsp|casfailed.jsp|favicon.ico|receptor|j_spring_security_logout|j_spring_cas_security_check)$</from>
         <to type="forward">/$1</to>
     </rule>
     <rule>
