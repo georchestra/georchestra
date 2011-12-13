@@ -4,7 +4,7 @@
        <div class="csw-main">
          <div class="csw-content">
 	       <div class="captioneddiv">
-             <h3>Client CSW simplifié</h3>
+             <h3>Recherche de données</h3>
              <form name="theForm" method="POST" action="javascript:void(csw_client.getRecords())">
                <select name="queryable">
 				 <option value="anytext" selected="selected">Tous champs</option>
@@ -71,11 +71,13 @@
 		       </div>
 			 </div>
 		   </div>
-
          </div>
        </div><!-- main -->
      </div><!-- query-container -->
-     <p/>
+     <div class="credits">
+        This tool was based on software developed by the National Aerospace Laboratory (NLR) available at:
+        <a href="http://www.gdsc.nl/gdsc/en/tools/simple_csw_client">http://www.gdsc.nl/gdsc/en/tools/simple_csw_client</a>
+    </div>
 	 <div id="popup">
 	   <div class="close">
 	     <a href="javascript:void(csw_client.hideDiv(document.getElementById('popup')))">[close]</a>
