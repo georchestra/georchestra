@@ -4,7 +4,7 @@
     function getUrlVars() {
       var vars = {};
       var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
-        vars[key] = value;
+        vars[key] = unescape(value);
       });
       return vars;
     }
@@ -32,7 +32,7 @@
     if(url[0] != "/"){
       url = '/'+url;
     }
-    alert("redirect to "+url);
+    
     window.location = url;
     }
   </script>
