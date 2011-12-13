@@ -22,7 +22,7 @@
       if (!url) {
         url = "/";
       } else if (loggedIn) {
-        if (url.contains("?")) {
+        if (url.indexOf("?") != -1) {
           url = url+"&login";
         } else {
           url = url+"?login";
