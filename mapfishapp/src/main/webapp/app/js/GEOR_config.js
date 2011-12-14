@@ -702,6 +702,16 @@ GEOR.config = (function() {
             "/doc/html/documentation.html#viewer"),
         
         /**
+         * Constant: DISPLAY_SELECTED_OWS_URL 
+         * {Boolean} - If set to false, do not display the selected WMS/WFS server URL
+         * in the second field from the "Add layers" popup window.
+         * (pretty much useless, I know...)
+         * Defaults to true.
+         */
+        DISPLAY_SELECTED_OWS_URL: getCustomParameter("DISPLAY_SELECTED_OWS_URL", 
+            true),
+        
+        /**
          * Constant: CONFIRM_LAYER_REMOVAL
          * {Boolean} Do we want a popup dialog to appear on layer removal ?
          * Defaults to false

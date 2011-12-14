@@ -169,8 +169,10 @@ GEOR.wfsbrowser = (function() {
                 }),
                 listeners: {
                     "select": function(cmb, rec, idx) {
-                        urlField.setValue(rec.get('url'));
-                        urlField.onTrigger2Click();
+                        if (GEOR.config.DISPLAY_SELECTED_OWS_URL) {
+                            urlField.setValue(rec.get('url'));
+                        }
+                        urlField.onTrigger2Click(rec.get('url'));
                     }
                 },
                 valueField: 'url',
