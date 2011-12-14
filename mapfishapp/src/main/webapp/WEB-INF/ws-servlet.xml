@@ -12,7 +12,7 @@
 	<bean class="mapfishapp.ws.DocController">
 		<property name="maxDocAgeInMinutes" value="1440"/>
 		<property name="credentials">
-          <map><entry key="dev.pigma.org"><value><bean class="UsernamePasswordCredentials"/><constructor-arg index="0" value="extractorapp_privileged_admin:90aF07R4d8" /></value></entry></map>
+          <map><entry key="c2cpc61.camptocamp.com"><value><bean class="UsernamePasswordCredentials"/><constructor-arg index="0" value="extractorapp_priveleged_admin:uNg9aiFa" /></value></entry></map>
 		</property>
 	</bean>
 	

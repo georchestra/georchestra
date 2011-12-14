@@ -319,8 +319,8 @@ public class SLDClassifier {
         try {
             UsernamePasswordCredentials credentials = findCredentials(wfsUrl);
             if(credentials != null) {
-                m.put(WFSDataStoreFactory.USERNAME, credentials.getUserName());
-                m.put(WFSDataStoreFactory.PASSWORD, credentials.getPassword());
+                m.put(WFSDataStoreFactory.USERNAME.key, credentials.getUserName());
+                m.put(WFSDataStoreFactory.PASSWORD.key, credentials.getPassword());
             }
             // connect to remote WFS
             m.put(WFSDataStoreFactory.URL.key, wfsUrl);
