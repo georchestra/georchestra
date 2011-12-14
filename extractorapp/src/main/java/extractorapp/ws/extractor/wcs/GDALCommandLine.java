@@ -57,7 +57,7 @@ public class GDALCommandLine {
 
         addInputProjection(executedRequest, command);
 
-        addGeotiffOutputFormat(command);
+        addGeotiffOutputFormat(command, true);
         addOutputProjection(targetRequest, command);
 
         addWarpParameters(command);
@@ -142,32 +142,30 @@ public class GDALCommandLine {
 
     private static void addOutputFormat(WcsReaderRequest requiredRequest, List<String> command) {
         if (Formats.isGeotiff(requiredRequest.format)) {
-            addGeotiffOutputFormat(command);
+            addGeotiffOutputFormat(command, false);
         } else if (Formats.isJPEG2000(requiredRequest.format)) {
             command.add("-of");
             command.add("JPEG2000");
-            command.add("-co");
-            command.add("WORLDFILE=ON");
         } else if (requiredRequest.format.equalsIgnoreCase("ecw")) {
             command.add("-of");
             command.add("ECW");
             command.add("-co");
-            command.add("LARGE_OK=YES");
+            command.add("LARGE_OK=NO");
         } else {
             command.add("-of");
             command.add(requiredRequest.format);
         }
     }
 
-    private static void addGeotiffOutputFormat(List<String> command) {
+    private static void addGeotiffOutputFormat(List<String> command, boolean simple) {
         command.add("-of");
         command.add("GTiff");
         command.add("-co");
-        command.add("TILED=YES");
-        command.add("-co");
-        command.add("TFW=YES");
-        command.add("-co");
-        command.add("BIGTIFF=IF_SAFER");
+        command.add("BIGTIFF=NO");
+        if(!simple) {
+            command.add("-co");
+            command.add("TILED=YES");
+        }
     }
 
     private static String findWarpBinary() {
