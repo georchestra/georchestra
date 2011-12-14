@@ -8,7 +8,7 @@ shared.server.port=80
 shared.privileged.geoserver.user=<do not commit this>
 shared.privileged.geoserver.pass=<do not commit this>
 
-shared.ldap.admin.password=uNg9aiFa
+shared.ldap.admin.password=<do not commit>
 shared.ldap.baseDn=dc=georchestra,dc=org
 
 shared.c2c.logdir=/tmp/
