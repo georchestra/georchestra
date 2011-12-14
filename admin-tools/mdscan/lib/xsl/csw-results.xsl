@@ -36,40 +36,10 @@ xmlns:dct="http://purl.org/dc/terms/">
         </xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
-    <div class="captioneddiv">
-      <!--xsl:if test="number(@numberOfRecordsMatched) > number(@numberOfRecordsReturned)"-->
-      <!-- because ESRI GPT returns always numberOfRecordsMatched = 0 -->
-      <xsl:if test="number(@numberOfRecordsReturned) &gt; 0 and ($start &gt; 1 or number($next) &gt; 0)">
 
-        <h3 style="float:right;top: -2.5em;">
-          <xsl:if test="$start &gt; 1">
-            <a>
-              <xsl:attribute name="href">
-                <xsl:value-of select="$pageUrl" />
-                <xsl:value-of select="number($start)-number(../../request/@maxrecords)" />
-                <xsl:text>'))</xsl:text>
-              </xsl:attribute>
-              <xsl:text>&lt;&lt; précédent</xsl:text>
-            </a>
-          </xsl:if>
+    <fieldset class="captioneddiv">
+        <legend>Résultats</legend>
 
-          <xsl:text>||</xsl:text>
-          <xsl:if test="number($next) &gt; 0">
-            <a>
-              <xsl:attribute name="href">
-                <xsl:value-of select="$pageUrl" />
-                <xsl:value-of select="$next" />
-                <xsl:text>'))</xsl:text>
-              </xsl:attribute>
-              <xsl:text>suivant &gt;&gt;</xsl:text>
-            </a>
-          </xsl:if>
-        </h3>
-      </xsl:if>
-      <h3>Enregistrements trouvés:
-      <xsl:value-of select="@numberOfRecordsReturned" />(sur
-      <xsl:value-of select="@numberOfRecordsMatched" />)</h3>
-      <br />
       <!--
       liste
       -->
@@ -79,7 +49,42 @@ xmlns:dct="http://purl.org/dc/terms/">
         <xsl:attribute name="start">
           <xsl:value-of select="$start" />
         </xsl:attribute>
-        <caption>résultats de la recherche</caption>
+        <!-- titre table -->
+        <caption>
+
+            <!--xsl:if test="number(@numberOfRecordsMatched) > number(@numberOfRecordsReturned)"-->
+            <!-- because ESRI GPT returns always numberOfRecordsMatched = 0 -->
+            <xsl:if test="number(@numberOfRecordsReturned) &gt; 0 and ($start &gt; 1 or number($next) &gt; 0)">
+                <span>
+                    <xsl:if test="$start &gt; 1">
+                        <a>
+                            <xsl:attribute name="href">
+                                <xsl:value-of select="$pageUrl" />
+                                <xsl:value-of select="number($start)-number(../../request/@maxrecords)" />
+                                <xsl:text>'))</xsl:text>
+                            </xsl:attribute>
+                            <xsl:text>&lt;&lt; précédent</xsl:text>
+                        </a>
+                        <xsl:text> | </xsl:text>
+                    </xsl:if>
+                    <xsl:text>enregistrements </xsl:text>
+                    <xsl:value-of select="@numberOfRecordsReturned" />
+                    <xsl:text>/</xsl:text>
+                    <xsl:value-of select="@numberOfRecordsMatched" />
+                    <xsl:if test="number($next) &gt; 0">
+                        <xsl:text> | </xsl:text>
+                        <a>
+                            <xsl:attribute name="href">
+                                <xsl:value-of select="$pageUrl" />
+                                <xsl:value-of select="$next" />
+                                <xsl:text>'))</xsl:text>
+                            </xsl:attribute>
+                            <xsl:text>suivant &gt;&gt;</xsl:text>
+                        </a>
+                    </xsl:if>
+                </span>
+            </xsl:if>
+        </caption>
         <thead>
             <tr>
                 <th class="title">titre</th>
@@ -109,7 +114,7 @@ xmlns:dct="http://purl.org/dc/terms/">
             </xsl:for-each>
         </tbody>
       </table>
-    </div>
+    </fieldset>
     <!-- overlay external pages -->
     <div class="apple_overlay" id="overlay">
         <div class="contentWrap"></div>
@@ -159,7 +164,7 @@ xmlns:dct="http://purl.org/dc/terms/">
 
   <!-- actions -->
   <xsl:template name="md-action-wms-group">
-    <a class="layersmenu">adm</a>
+    <a href="#" title="administrer les données">adm</a>
 
     <div class="tooltip">
         <h4><xsl:value-of select="./dc:identifier" />
@@ -532,5 +537,4 @@ xmlns:dct="http://purl.org/dc/terms/">
         </xsl:choose>
     </xsl:for-each>
   </xsl:template>
-
 </xsl:stylesheet>
