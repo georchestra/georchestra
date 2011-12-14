@@ -1,8 +1,10 @@
 package mapfishapp.ws.classif;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,6 +21,7 @@ import javax.xml.transform.TransformerException;
 import mapfishapp.ws.DocServiceException;
 import mapfishapp.ws.classif.ClassifierCommand.E_ClassifType;
 
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.geotools.data.DataSourceException;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.wfs.WFSDataStore;
@@ -50,6 +53,7 @@ public class SLDClassifier {
     
     private ClassifierCommand _command = null;
     private StyledLayerDescriptor _sld = null;
+    private Map<String, UsernamePasswordCredentials> _credentials;
     
     /**
      * This classifier can only be requested by a ClassifierCommand given the wide range of cases and different 
@@ -57,7 +61,8 @@ public class SLDClassifier {
      * @param command ClassifierCommand provides the type of classification and display
      * @throws DocServiceException When client request is not valid
      */
-    public SLDClassifier(final ClassifierCommand command) throws DocServiceException {
+    public SLDClassifier(Map<String, UsernamePasswordCredentials> credentials, final ClassifierCommand command) throws DocServiceException {
+        this._credentials = credentials;
             _command = command;
             
             // turn off logger
@@ -312,6 +317,11 @@ public class SLDClassifier {
         WFSDataStore wfs = null;
         Map m = new HashMap();
         try {
+            UsernamePasswordCredentials credentials = findCredentials(wfsUrl);
+            if(credentials != null) {
+                m.put(WFSDataStoreFactory.USERNAME, credentials.getUserName());
+                m.put(WFSDataStoreFactory.PASSWORD, credentials.getPassword());
+            }
             // connect to remote WFS
             m.put(WFSDataStoreFactory.URL.key, wfsUrl);
             m.put(WFSDataStoreFactory.TIMEOUT.key, 60000); // default: 3000
@@ -335,6 +345,27 @@ public class SLDClassifier {
         return wfs;
     }
     
+    private UsernamePasswordCredentials findCredentials(URL wfsUrl) {
+        String targetHost = wfsUrl.getHost();
+        String ipAddress;
+        try {
+            ipAddress = InetAddress.getByName(targetHost).getHostAddress();
+        } catch (UnknownHostException e) {
+            ipAddress = "";
+        }
+        for(Map.Entry<String, UsernamePasswordCredentials> cred:_credentials.entrySet()) {
+            String host = cred.getKey();
+            try {
+                if(host.equalsIgnoreCase(targetHost) || InetAddress.getByName(host).getHostAddress().equals(ipAddress)) {
+                    return cred.getValue();
+                }
+            } catch (UnknownHostException e) {
+                continue;
+            }
+        }
+        return null;
+    }
+
     /**
      * Extract values as Double from the given features and property name. Executes the same job as
      * {@link SLDClassifier#getStringValues(FeatureIterator, String)} provides comparable values: useful to sort.

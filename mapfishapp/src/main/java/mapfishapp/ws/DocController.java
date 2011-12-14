@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import mapfishapp.ws.classif.ClassifierCommand;
 import mapfishapp.ws.classif.SLDClassifier;
 
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -48,6 +51,13 @@ public class DocController {
 	public int getMaxDocAgeInMinutes() {return maxDocAgeInMinutes;}
 	public void setMaxDocAgeInMinutes(int maxDocAgeInMinutes) {this.maxDocAgeInMinutes = maxDocAgeInMinutes;}
 
+	/**
+	 * mapping from hostname -> credentials
+	 */
+	private Map<String, UsernamePasswordCredentials> credentials = new HashMap<String, UsernamePasswordCredentials>();
+	public Map<String, UsernamePasswordCredentials> getCredentials() {return credentials;}
+	public void setCredentials(Map<String, UsernamePasswordCredentials> credentials) {this.credentials = credentials;}
+	
     /**
      * variable name that has to be used on client side
      */
@@ -171,7 +181,7 @@ public class DocController {
     private void doClassification(HttpServletRequest request, HttpServletResponse response) {
         try {
             // classification based on client request in json
-            SLDClassifier c = new SLDClassifier( new ClassifierCommand(getBodyFromRequest(request)));
+            SLDClassifier c = new SLDClassifier(credentials, new ClassifierCommand(getBodyFromRequest(request)));
             
             // save SLD content under a file
             SLDDocService service = new SLDDocService(maxDocAgeInMinutes);

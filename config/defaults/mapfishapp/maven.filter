@@ -1,2 +1,9 @@
 # clean docs when they are 1 day old
 maxDocAgeInMinutes=1440
+#you can provide multiple entries
+credentials=\
+<entry key="@shared.server.name@">\
+    <value><bean class="UsernamePasswordCredentials"/>\
+        <constructor-arg index="0" value="@shared.privileged.geoserver.user@:@shared.privileged.geoserver.pass@" />\
+    </value>\
+</entry>

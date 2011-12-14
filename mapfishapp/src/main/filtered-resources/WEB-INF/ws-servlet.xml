@@ -11,6 +11,9 @@
 	</bean>
 	<bean class="mapfishapp.ws.DocController">
 		<property name="maxDocAgeInMinutes" value="${maxDocAgeInMinutes}"/>
+		<property name="credentials">
+          <map>${credentials}</map>
+		</property>
 	</bean>
 	
 	<!-- upload de fichiers -->

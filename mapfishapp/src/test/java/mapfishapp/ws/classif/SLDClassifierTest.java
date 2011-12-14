@@ -4,10 +4,13 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.junit.Test;
@@ -21,6 +24,8 @@ import org.w3c.dom.Document;
  */
 
 public class SLDClassifierTest {
+
+    private static final Map<String, UsernamePasswordCredentials> EMPTY_MAP = Collections.<String,UsernamePasswordCredentials>emptyMap();
 
     @Test(timeout=10000)
     public void testChoropleths() throws Exception {
@@ -48,7 +53,7 @@ public class SLDClassifierTest {
         JSONTokener tokener = new JSONTokener(jsonRequest.toString());
         JSONObject jObj = new JSONObject(tokener);
         ClassifierCommand command = new ClassifierCommand(jObj);
-        SLDClassifier classifier = new SLDClassifier(command);
+        SLDClassifier classifier = new SLDClassifier(EMPTY_MAP, command);
 
         Document doc = createDomDocument(classifier.getSLD());
 
@@ -85,7 +90,7 @@ public class SLDClassifierTest {
         JSONTokener tokener = new JSONTokener(jsonRequest.toString());
         JSONObject jObj = new JSONObject(tokener);
         ClassifierCommand command = new ClassifierCommand(jObj);
-        SLDClassifier classifier = new SLDClassifier(command);
+        SLDClassifier classifier = new SLDClassifier(EMPTY_MAP, command);
         
         Document doc = createDomDocument(classifier.getSLD());
 
@@ -117,7 +122,7 @@ public class SLDClassifierTest {
         JSONTokener tokener = new JSONTokener(jsonRequest.toString());
         JSONObject jObj = new JSONObject(tokener);
         ClassifierCommand command = new ClassifierCommand(jObj);
-        SLDClassifier classifier = new SLDClassifier(command);
+        SLDClassifier classifier = new SLDClassifier(EMPTY_MAP, command);
         
         Document doc = createDomDocument(classifier.getSLD());
 

@@ -11,6 +11,9 @@
 	</bean>
 	<bean class="mapfishapp.ws.DocController">
 		<property name="maxDocAgeInMinutes" value="1440"/>
+		<property name="credentials">
+          <map><entry key="dev.pigma.org"><value><bean class="UsernamePasswordCredentials"/><constructor-arg index="0" value="extractorapp_privileged_admin:90aF07R4d8" /></value></entry></map>
+		</property>
 	</bean>
 	
 	<!-- upload de fichiers -->
