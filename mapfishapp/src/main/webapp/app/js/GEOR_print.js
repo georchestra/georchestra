@@ -151,10 +151,7 @@ GEOR.print = (function() {
                 "beforeprint": function(pp) {
                     mask.show();
                     // set a custom PDF file name:
-                    pp.customParams.outputFilename = [
-                        GEOR.config.PRINT_FILENAME_PREFIX,
-                        Math.random().toString(16).slice(2,10)
-                    ].join('_');
+                    pp.customParams.outputFilename = GEOR.config.PDF_FILENAME;
                 },
                 "print": function() {
                     mask.hide();
