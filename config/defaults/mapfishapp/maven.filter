@@ -3,8 +3,7 @@ maxDocAgeInMinutes=1440
 #you can provide multiple entries
 credentials=\
 <entry key="@shared.server.name@">\
-    <bean id="localhost" class="org.apache.commons.httpclient.UsernamePasswordCredentials">\
-        <constructor-arg index="0" value="@shared.privileged.geoserver.user@" />\
-        <constructor-arg index="1" value="@shared.privileged.geoserver.pass@" />\
+    <bean class="org.apache.commons.httpclient.UsernamePasswordCredentials">\
+        <constructor-arg index="0" value="@shared.privileged.geoserver.user@:@shared.privileged.geoserver.pass@" />\
     </bean>\
 </entry>
