@@ -218,7 +218,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
             convertFormat(baseFilename, input, file, request,
                     requestNegotiatedFormatCrs2);
 
-            transformCoverage(file, file, request, requestNegotiatedFormatCrs2);
+            transformCoverage(file, file, request, requestNegotiatedFormatCrs2,false);
 
             return file;
         } finally {
