@@ -96,7 +96,9 @@ public class SLDClassifier {
         } catch (TransformerException e) {
             e.printStackTrace();
         } finally {
-            System.setProperty("javax.xml.transform.TransformerFactory", oldTransformer);
+            if(oldTransformer != null) {
+                System.setProperty("javax.xml.transform.TransformerFactory", oldTransformer);
+            }
         }
         
         return xml;
