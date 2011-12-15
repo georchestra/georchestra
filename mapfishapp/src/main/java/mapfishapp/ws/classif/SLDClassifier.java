@@ -89,10 +89,14 @@ public class SLDClassifier {
         SLDTransformer aTransformer = new SLDTransformer();
         aTransformer.setIndentation(4);
         String xml = "";
+        String oldTransformer = System.getProperty("javax.xml.transform.TransformerFactory");
         try {        
+            System.setProperty("javax.xml.transform.TransformerFactory", org.apache.xalan.processor.TransformerFactoryImpl.class.getName());
             xml = aTransformer.transform(_sld);
         } catch (TransformerException e) {
             e.printStackTrace();
+        } finally {
+            System.setProperty("javax.xml.transform.TransformerFactory", oldTransformer);
         }
         
         return xml;
