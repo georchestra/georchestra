@@ -26,6 +26,7 @@ import javax.imageio.ImageIO;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.tools.ant.taskdefs.Tar;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.io.AbstractGridCoverage2DReader;
 import org.geotools.coverage.grid.io.AbstractGridFormat;
@@ -244,8 +245,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
             File tmpFile = File.createTempFile(baseFilename, ".tif");
             writeToFile(tmpFile, input);
 
-            transformCoverage(tmpFile, file, request, requestNativeFormat);
-
+            transformCoverage(tmpFile, file, request, requestNativeFormat, true);
             return file;
         } finally {
             if (input != null)
@@ -255,7 +255,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
 
     static void transformCoverage(final File sourceFile, final File file,
             final WcsReaderRequest targetRequest,
-            WcsReaderRequest executedRequest) throws IOException {
+            WcsReaderRequest executedRequest, boolean handleFormatTranform) throws IOException {
         final CoordinateReferenceSystem original = targetRequest.responseCRS;
         CoordinateReferenceSystem actual = executedRequest.responseCRS;
 
@@ -275,6 +275,13 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
             }
             
             LOG.info("Coverage reprojection/transformation complete");
+        } else if(handleFormatTranform) {
+            if(targetRequest.useCommandLineGDAL) {
+                GDALCommandLine.gdalTransformation(sourceFile, file, executedRequest, targetRequest);
+            } else {
+                // we need to reimplement convertFormat so it can handle non-world+image outputformats
+                throw new UnsupportedOperationException("We do not convert format from geotiff to another format yet in localReproject mode.  Should be pretty easy to implement though");
+            }
         } else if(!sourceFile.equals(file)) {
             FileUtils.moveFile(sourceFile, file);
         }
