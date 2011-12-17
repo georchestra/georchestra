@@ -7,9 +7,8 @@
         
 .. _`georchestra.index`:
 
-=============
-geOrchestra
-=============
+.. raw:: html
+  :file: slides.html
 
 .. image:: documentation/_static/georchestra_viewer.png
    :width: 300px
