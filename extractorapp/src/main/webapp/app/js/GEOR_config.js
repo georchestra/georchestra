@@ -203,10 +203,11 @@ GEOR.config = (function() {
          * Constant: SUPPORTED_VECTOR_FORMATS
          * List of supported vector formats
          */
-        SUPPORTED_VECTOR_FORMATS:  getCustomParameter("SUPPORTED_VECTOR_FORMATS", [
-              ["shp", "Shapefile"],
-              ["mif", "Mif/Mid"]
-         ]),
+        SUPPORTED_VECTOR_FORMATS: [
+            ["shp", "Shapefile"],
+            ["mif", "Mif/Mid"],
+            ["tab", "TAB"]
+        ],
         
         /**
          * Constant: DOWNLOAD_FORM
