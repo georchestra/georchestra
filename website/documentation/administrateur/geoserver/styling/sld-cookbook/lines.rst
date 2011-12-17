@@ -337,31 +337,31 @@ L'espacement entre les symboles est contrôlé par ``dasharray`` en **ligne 18**
 
 .. _sld_cookbook_lines_defaultlabel:
 
-Alternating symbols with dash offsets
+Alterner les symboles avec dashoffset
 -------------------------------------
 
-This example shows how to create a complex line style which alternates a symbol and a line segment.
-The example builds on the knowledge gathered in previous sections:
+Cet exemple montre comment créer un style de ligne complexe qui alterne un symbole et un segment de ligne.
+L'exemple repose sur les connaissances acquises dans les sections précédentes:
 
-  * `dasharray` allows to control pen down/pen up behavior and generate dashed lines
-  * `GraphicStroke` allows to place symbols along a line
-  * combining the two togheter it's possible to control symbol spacing
-  
-This example adds the usage of `dashoffset`, which controls at which point of the ``dasharray`` sequence the renderer starts drawing the repeating pattern. For example, having a dash array of ``5 10`` and a dash offset of ``7`` the renderer would start the repeating pattern 7 pixels after its beginnig, so it would jump over the "5 pixels pen down" section and 2 more pixels in the pen up section, performing a residual of 8 pixels up, then 5 down, 10 up, and so on.
+  * `dasharray` permet de contrôler le comportement baisser crayon/lever crayon et génère des lignes pointillées
+  * `GraphicStroke` permet de placer des symboles le long d'une ligne
+  * en combinant les deux, il est possible de contrôler l'espacement entre symboles
 
-This can be used to create two synchronized sequences of dash arrays, one drawing line segments, and the other symbols along a line, like in the following example.
+Cet exemple ajoute l'utilisation du décalage `dashoffset` qui contrôle à quel endroit de la séquence ``dasharray`` le moteur commence à dessiner le motif répété. Par exemple, si l'on a une matrice de hachures de ``5 10` et un décalage de ``7`` , le moteur débutera à tracer le motif répété 7 pixels après le début, en sautant la section "5 pixels crayon baissé" et 3 pixels supplémentaires de la section "crayon levé", traçant le reste des 8 pixels crayon levé, puis 5 baissé, 10 levé, et ainsi de suite.
 
-.. note:: This example is not likely to work with other systems supporting SLD. While the SLD is perfectly compliant we are not aware of other systems allowing to combine the usage of ``dasharray`` and graphics strokes (the SLD specification does not say what this combination is supposed to produce). 
+Ceci peut être utilisé pour créer deux séquences de matrices de hachures synchronisées, l'une dessinant le long d'une ligne des segments, l'autre des symboles, comme dans l'exemple suivant.
+
+.. note:: Cet exemple ne fonctionnera probablement pas avec des systèmes tiers supportant SLD. Bien que ce soit parfaitement conforme à SLD, à notre connaissance aucun autre système ne permet de combiner l'utilisation de ``dasharray`` et de symboles graphiques "trait" (la spécification SLD ne dit pas ce que cette combinaison est censée produire). 
 
 .. figure:: images/line_dashdot.png
    :align: center
 
-   *Dash and symbol*
+   *Hachures et symboles*
 
 Code
 ~~~~
 
-:download:`View and download the full "Spaced symbols" SLD <artifacts/line_dashdot.sld>`
+:download:`Consultez et téléchargez le SLD complet "Symboles espacés" <artifacts/line_dashdot.sld>`
 
 .. code-block:: xml 
    :linenos:
@@ -396,13 +396,14 @@ Code
         </Rule>
       </FeatureTypeStyle>
 
-Details
+Détails
 ~~~~~~~
 
-In this example two dash array based line symbolizers are used to generate an alternating sequence.
-The first one, defined at **lines 3-9** is a simple line dash array alternating 10 pixels of pen down with 10 pixels of pen up. 
-The second one, defined at **lines 10-27** alternates a 5 pixels wide empty circle with 15 pixels of white space.
-In order to have the two symbolizers alternate the second one uses a dashoffset of 7.5, making the sequence start with 12.5 pixels of white space, then a circle (which is then centered between the two line segments of the other pattern), then 15 pixels of white space, and so on.
+Dans cet exemple, deux styles de ligne basés sur des matrices de hachure sont utilisés pour générer une séquence alternée.
+Le premier, défini en **lignes 3-9**, est une simple matrice de hachure sur ligne alternant 10 pixels crayon baissé et 10 pixels crayon levé.
+Le second, défini en **lignes 10-27**, alterne des cercles vides de 5 pixels et des espaces de 15 pixels.
+Pour que les deux styles soient alternés, le second utilise un décalage de 7.5, faisant démarrer la séquence avec 12.5 pixels d'espace, suivis d'un cercle (qui est alors centré entre les deux segments de ligne de l'autre motif), puis 15 pixels d'espace, et ainsi de suite.
+
 
 Line with default label
 -----------------------
