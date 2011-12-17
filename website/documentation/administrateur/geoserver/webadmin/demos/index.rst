@@ -1,78 +1,98 @@
 .. _webadmin_demos:
 
-Demos
+Démos
 =====
 
-This page contains helpful links to various information pages regarding GeoServer and its features.  You do not need to be logged into GeoServer to access this page.
+Cette page contient des liens utiles vers différentes page d'information sur 
+GeoServer et ses fonctionnalités. Vous n'avez pas besoin d'être identifié dans 
+GeoServer pour accéder à cette page.
 
 .. figure:: ../images/demos_view.png
    :align: center
    
-   *Demos page*
+   *Page de démos*
 
-Demo Requests
--------------
+Requêtes de démo
+-----------------
 
-This page has example WMS, WCS and WFS requests for GeoServer that you can use, examine, and change.  Select a request from the drop down list.  
+Cette page propose des exemple de requêtes WMS, WFS et WCS pour GeoServer que 
+vous pouvez utiliser, éxaminer et modifier. Sélectionnez une requête à partir de 
+la liste déroulante. 
 
 .. figure:: ../images/demos_requests.png
    :align: center
 
-   *Selecting demo requests*
+   *Selection des requêtes de démo*
 
-Both Web Feature Service (:ref:`wfs`) as well as Web Coverage Service (:ref:`wcs`) requests will display the request URL and the XML body. Web Map Service (:ref:`wms`) requests will only display the request URL.  
+Les requêtes Web Feature Service (:ref:`wfs`) et les Web Coverage Service 
+(:ref:`wcs`) afficheront l'URL de la requête et le corps XML. Les requêtes des 
+Web Map Service (:ref:`wms`) afficheront seulement l'URL de la requête.
 
 
 .. figure:: ../images/demos_requests_WFS.png
    :align: center
    
-   *WFS 1.1 DescribeFeatureType sample request*
+   *Requête DescribeFeatureType d'exemple pour le WFS 1.1*
 
-Click :guilabel:`Submit` to send the request to GeoServer.   For WFS and WCS requests, GeoServer will automatically generate an XML reponse.
+Cliquez sur :guilabel:`Soumettre` pour envoyer la requête à GeoServer. Pour les 
+requêtes WFS et WCS, GeoServer génerera automatiquement une réponse XML.
 
 .. figure:: ../images/demos_requests_schema.png
    :align: center
    
-   *XML reponse from a WFS 1.1 DescribeFeatureType sample request*
-   
-Submitting a WMS GetMap request displays an image based on the provided geographic data.  
+   *Réponse XML à parir d'une requête DescribeFeatureType d'exemple pour du WFS 1.1*
+
+Soumettre un requête GetMap d'un WMS affichera une image basée sur les données 
+géographiques fournies.
 
 .. figure:: ../images/demos_requests_WMS_map.png
    :align: left
    
-   *OpenLayers WMS GetMap request*
-   
-WMS GetFeatureInfo requests retrieve information regarding a particular feature on the map image.
+   *Requête GetMap du service WMS par OpenLayers*
+
+Les requêtes GetFeatureInfo des services WMS récupère des informations d'une 
+entité particulière d'une image cartographique.
 
 .. figure:: ../images/demos_requests_WMS_feature.png
    :align: left
    
-   *WMS GetFeatureInfo request*
+   *Requêtes GetFeatureInfo des services WMS*
 
 .. _srs_list:
 
 SRS
 ---
 
-GeoServer natively supports almost 4,000 Spatial Referencing Systems (SRS), also known as **projections**, and more can be added. A spatial reference system defines an ellipsoid, a datum using that ellipsoid, and either a geocentric, geographic or projection coordinate system.  This page lists all SRS info known to GeoServer.
+GeoServer gère nativement environ 4 à00 Système de Référence Saptiale (SRS), 
+appellé également **projection** et d'autres peuvent être ajoutés. Un système de 
+Référence Spatiale définie un ellipsoïde, un datum en utilisant cet ellipsoïde et 
+un système de coordonnées géocentrique, géographique ou projeté. Cette page liste 
+toutes les informations SRS connu par GeoServer.
 
 .. figure:: ../images/demos_SRS.png
    :align: left
    
-   *Listing of all Spatial Referencing Systems (SRS) known to GeoServer*
-   
-The :guilabel:`Code` column refers to the unique integer identifier defined by the author of that spatial reference system.  Each code is linked to a more detailed description page, accessed by clicking on that code.
+   *Liste de tous les Sytème de Référence Spatiale (SRS) connu de GeoServer*
+
+
+La colonne :guilabel:`Code` fait référence à l'entier unique définir par l'auteur 
+de ce système de référence spatiale. Chaque code est lié à une page de description 
+plus détailée que l'on peut visualiser en cliquant sur ce code.
 
 .. figure:: ../images/demos_SRS_page.png
    :align: left
    
-   *Details for SRS EPSG:2000*
+   *Détails pour le SRS EPSG:2000*
 
+Le titre de chaque SRS est composé du nom de l'auteur et de l'identifiant entier 
+unique (code) définie par l'auteur. Dans l'exemple ci-dessus, l'auteur est le 
+`European Petroleum Survey Group <http://www.epsg.org/>`_ (EPSG) et le code est 
+2000. Les champs sont comme ceci :
 
-The title of each SRS is composed of the author name and the unique integer identifier (code) defined by the Author.  In the above example, the author is the `European Petroleum Survey Group <http://www.epsg.org/>`_ (EPSG) and the Code is 2000.  The fields are as follows:
+:guilabel:`Description` : Une courte description du SRS.
 
-:guilabel:`Description`: A short text description of the SRS.
+:guilabel:`WKT` : Une chaîne de caractères décrivant le SRS. WKT signifie "Well Known Text."
 
-:guilabel:`WKT`: A string describing the SRS.  WKT stands for "Well Known Text."
+:guilabel:`Zone de validité` : L'étendue du SRS.
 
-:guilabel:`Area of Validity`: The bounding box for the SRS.
+.. yjacolin at free.fr 2011/11/18 r13133

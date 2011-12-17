@@ -1,98 +1,113 @@
 .. _webadmin_stores:
 
-Stores
-======
+Entrepôt
+==========
 
-A store connects to a data source that contains raster or vector data. A data source can be a file or group of files such as a table in a database, a single file (such as a shapefile), or a directory (such as Vector Product Format library).  The store construct is used so that connection parameters are defined once, rather than for each piece of data in a source.  As such, it is necessary to register a store before loading any data.
+Un entrepôt connecte une source de données qui contient des données raster ou 
+vecteur. Une source de données peut être un fichier ou un groupe de fichier autant 
+qu'une table dans une base de données, un fichier unique (comme un shapfile) ou 
+un répertoire (telle que la bibliothèque du Format de Produit Vecteur). L'entrepôt 
+construit est utilisé afin que les paramètres de connexion soient définie qu'une 
+seule fois, plutôt que pour chaque données à partir d'une source. Pour cela, il 
+est nécessaire d'enregistrer un entrepôt avant le chargement des données.
 
 .. figure:: ../images/data_stores.png
    :align: center
    
-   *Stores View*
+   *Vues des stores*
 
-While there are many potential formats for data source, there are only four types of stores.  For raster data, a store can be a file.  For vector data, a store can be a file, database, or server.  
+Bien qu'il peut y avoir plusieurs formats potentiels pour une source de données, 
+il y a seulement quatre types d'entrepôts. Pour les données raster, un entrepôt peut 
+être un fichier. Pour les données vecteur, un entrepôt peut être un fichier, une 
+base de données ou un serveur.
 
 .. list-table::
    :widths: 15 85 
 
-   * - **Type Icon**
+   * - **Icône du type**
      - **Description**
    * - .. image:: ../images/data_stores_type1.png
-     - raster data in a file
+     - données raster dans un fichier
    * - .. image:: ../images/data_stores_type3.png
-     - vector data in a file
+     - données vecteur dans un fichier
    * - .. image:: ../images/data_stores_type2.png
-     - vector data in a database 
+     - données vecteur dans une base de données
    * - .. image:: ../images/data_stores_type5.png
-     - vector server (web feature server)
+     - serveur vectoriel (web feature server)
      
 
-Editing a Store
----------------
-
-In order to view and edit a store, click on a store name.  The exact contents of this page will depend on the specific format chosen.  (See the section on :ref:`data` for information about specific data formats.)  In the example below we have the contents of the ``nurc:ArcGridSample`` store.
+Éditer un entrepôt
+------------------
+Afin de voir et d'éditer un entrepôt, cliquez sur le nom de l'entrepôt. Le 
+contenu exact de cette page dépendra du format choisi (voir la section sur 
+:ref:`data` pour des informations sur les formats de données). Dans l'exemple 
+plus bas nous avons le contenu de l'entrepôt ``nurc:ArcGridSample``.
 
 .. figure:: ../images/data_stores_edit.png
    :align: center
    
-   *Editing a raster data store*
+   *Éditer un entrepôt de données raster*
 
-While connection parameters will vary depending on data format, some the basic information is common across formats.  The Workspace drop down menu lists all registered workspaces.  The store is assigned to the selected workspace (``nurc``).  :guilabel:`Data Source Name` is the store name as listed on the view page.  The :guilabel:`Description` is optional and only displays in the administration interface.  :guilabel:`Enabled` allows you to enable or disable access to the store, along with all data defined in it. 
+Bien que les paramètres de connexion vont varier en fonction du format de données, 
+certaines informations basiques sont communes à plusieurs formats. La liste 
+déroulante des Espaces de noms liste tous les espace de noms enregistrés. On 
+assigne l'entrepôt à l'espace de nom sélectionné (``nurc``). :guilabel:`Nom de 
+la source de données` est le nom de l'entrepôt qui sera listé dans la page de 
+visualisation. :guilabel:`Description`est optionnel et s'affiche seulement dans 
+l'interface d'administration. :guilabel:`Activé` permet d'activer ou de désactiver 
+l'entrepôt, avec toutes les données qui y est définie.
 
-Adding a Store
---------------
-
-The buttons for adding and removing a workspace can be found at the top of the Stores page. 
+Ajouter un entrepôt
+--------------------
+Les boutons ajouter et supprimer un espace de nom peuvent être trouvé en haut de 
+la page Entrepôts.
 
 .. figure:: ../images/data_stores_add_remove.png
    :align: center
    
-   *Buttons to add and remove stores*
+   *Boutons pour ajouter et supprimer des entrepôts*
 
-To add a workspace, select the :guilabel:`Add new Store` button.  You will be prompted to choose a data source.  GeoServer natively supports many formats (with more available via extensions).  Click the appropriate data source to continue. 
+Pour ajouter un espace de nom, sélectionnez le bouton :guilabel:`Ajouter un 
+nouvel entrepôt`. Une source de données vous sera demandée. GeoServer gère 
+nativement plusieurs formats (et plus encore via les extensions). Cliquez sur la 
+source de données appropriée pour continuer.
 
 .. figure:: ../images/data_stores_chooser.png
    :align: center
    
-   *Choosing the data source for a new store*
+   *Choisir une source de donnézes pour une nouvel entrepôt*
 
-The next page will configure the store. (The example below shows the ArcGrid raster configuration page.)  However, since connection parameters differ across data sources, the exact contents of this page depend on the store's specific format. Please see the section on :ref:`data` for information on specific data formats.
+La page suivante configurera les entrepôts (l'exemple ci-dessous montre la page 
+de configuration du raster ArcGrid). Cependant puisque les paramètres de connexion 
+diffèrent d'une source de données à l'autre, le contenu exact de cette page 
+dépendra du format spécifique de l'entrepôt. Lisez la section :re:f`data` sur les 
+formats de données spécifiques.
 
 .. figure:: ../images/data_stores_add.png
    :align: center
    
-   *Configuration page for an ArcGrid raster data source*
+   *Page de configuration pour une source de données raster ArcGrid*
 
-Removing a Store
-----------------
-   
-In order to remove a store, click on the store's corresponding check box.  Multiple stores can be checked for batch removal.
+Supprimer un entrepôt
+---------------------
+
+Dans le but de supprimer un entrepôt, cliquez sur lacase à cocher correspondant 
+à l'entrepôt. Plusieurs entretpôts peuvent être sélectionné pour des suppressions 
+multiples.
 
 .. figure:: ../images/data_stores_delete.png
    :align: left
    
-   *Stores checked for deletion*
+   *Entrepôt sélectionné pour suppresion*
 
-Click the :guilabel:`Remove selected Stores` button.  You will be asked to confirm the deletion of the the data within each store. Selecting :guilabel:`OK` removes the store(s), and will redirect to the main Stores page.
+cliquez sur le bouton :guilabel:`Supprimer les entrepôts sélectionnés`. Vous 
+devrez confirmer la suppression des données dans chaque entrepôt. Sélectionner
+:guilabel:`OK` supprimer les entrepôts et vous redirige vers la page des entrepôts 
+principales.
 
 .. figure:: ../images/data_stores_delete_confirm.png
    :align: left
    
-   *Confirm deletion of stores*
+   *Confirmer la suppression des entrepôts*
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+.. yjacolin at free.fr 2011/11/18 r13133

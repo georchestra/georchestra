@@ -1,41 +1,50 @@
 .. _layerpreview:
 
-Layer Preview
-=============
+Prévisualisation de couche
+===========================
 
-This page provides layer views in various output formats.  Note, a layer must be enabled in order to be previewed.  
+Cette page propose des vues de couches dans différents formats de sortie. Notez 
+qu'une couche doit être activée pour être prévisualisée.
 
 .. figure:: ../images/preview_list.png
    :align: center
    
-   *Layer's Preview Page*
-   
-Each layer row consists of a type, name, title, and available formats for viewing.
+   *Page de prévisualisation de couches*
+
+Chaque ligne de couche affiche un type, un nom un titre et les formats disponibles 
+pour visualisation.
 
 .. list-table::
    :widths: 5 95 
 
-   * - **Field**
+   * - **Champ**
      - **Description**
 
    * - .. image:: ../images/data_layers_type1.png
-     - Raster (grid) layer
+     - Couche raster (grille)
    * - .. image:: ../images/data_layers_type2.png
-     - Vector (feature) layer  
+     - Couche vecteur (entité)  
    * - .. image:: ../images/preview_layergroup.png
-     - Layer group 
+     - Groupe de couche 
 
-Name refers to the Workspace and Layer Name of a layer, while Title refers to the brief description configured in the :ref:`edit_layer_data` panel.  In the following example, nurc refers to the Workspace, Arc_Sample refers to the Layer Name and "A sample ArcGrid field" is specified from Edit Later Data panel.
+Le nom fait référence à l'espace de travail et au nom de la couche, alors que le 
+titre fait référence à la courte description définie dans la partie 
+:ref:`edit_layer_data`. Dans l'exemple suivant, nurc fait référence à l'espace de 
+travail, Arc_Sample au nom de la couche et "A sample ArcGrid field" a été définie 
+dans la partie édition des données de la couche.
 
 
 .. figure:: ../images/preview_row.png
    :align: center
    
-   *Single Layer preview row*
+   *Une ligne de prévisualisation de couche unique*
 
-Output Formats
---------------
-
+Formats de sortie
+-------------------
+La page de prévisualisation des couches gère différents formats de sortie pour 
+des utilisations diverses ou du partage de données. Vous pouvez prévisualiser 
+toutes les types de couches dans les formats OpenLayers et KML. 
+ 
 The Layer Preview page supports a variety of output formats for further use or  data sharing. You can preview all three layer types in the common OpenLayers and KML formats.  Similarly, using the "All formats" drop down menu you can preview all layer types in seven additional output formats--AtomPub, GIF, GeoRss, JPEG, KML (compressed), PDF, PNG, SVG, and TIFF.  Only Vector layers offer the WFS output previews, including the common GML as well as the CSV, GML3, GeoJSON and Shapefile formats.   The table below provides a brief description of all supported output formats, organized by output type: image, text or data.  
 
 Image Outputs
@@ -132,4 +141,4 @@ All data outputs are initiated from a WFS GetFeature request on vector data.
 
 
 
-
+.. yjacolin at free.fr 2011/11/18 r13133

@@ -1,34 +1,40 @@
 .. _webadmin_data:
 
-Data
-====
+Données
+=======
 
+Cette section est la section la plus grande et peut être la plus importante de 
+l'interface d'administration web. Chaque sous-section amène directement à une 
+page de type de données avec des possibilités d'ajout, d'édition et de suppression.
 
-
-This section is the largest and perhaps the most important section of the Web Administration Interface.  Each subsection links directly to a data type page with add, edit and delete capabilities.
-
-As seen in the example below, the data view page displays a table of indexed data. 
+Comme vue dans l'exemple ci-dessous, la page de visualisation des données affiche 
+un tableau des données indéxées.
 
 .. figure:: ../images/data_layers.png
    :align: center
    
-   *Layers page*
-   
-To alphabetically sort a data type, click on the column header. 
+   *Page de des couches*
+
+Pour ordonner alphabétiquement un type de données, cliquez sur l'en-tête de la 
+colonne.
 
 .. figure:: ../images/data_sort.png
    :align: center
    
-   *On the left an unsorted column; on the right a sorted column.*
+   *Sur la gauche une colonne non ordonnées ; sur la droite une colonne ordonnée.*
 
-For simple searching of data type contents, enter the search criteria in the search box and hit Enter.  GeoServer will search the data types that are relevant to your query, and return a Search Results page.
+Pour la recherche simple du contenu des types de données,entrez le critère de  
+recherche dans la boîte de recherche puis entrer. GeoServer recherchera les types 
+de données qui sont pertinent et renverra une page de résultats.
+
 
 .. figure:: ../images/data_search_results.png
    :align: center
    
-   *Search results for the query "top".*
+   *Résultats de recherche pour la requete "top".*
 
-Specific details for adding, editing and deleting various data types are discussed in the following sections.  
+Des détails spécifiques pour l'ajout, l'édition et la suppression des différents 
+types de données sont présentés dans les sections suivantes.
 
 
 .. toctree::
@@ -39,3 +45,5 @@ Specific details for adding, editing and deleting various data types are discuss
    layers
    layergroups
    styles
+   
+.. yjacolin at free.fr 2011/07/07 r16069

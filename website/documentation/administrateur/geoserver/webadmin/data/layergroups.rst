@@ -1,85 +1,122 @@
 .. _webadmin_layergroups:
 
-Layer Groups
-============
+Groupes de couches
+===================
 
-A layer group is a group of layers that can be referred to by one name.  This allows for simpler WMS requests, as the request need only refer to one layer as opposed to multiple inidividual layers.  Layer groups act just like standard layers as far as WMS is concerned. 
+Un groupe de couches est un groupe de couches qui peuvent être référencé par un 
+seul nom. Cela permet des requêtes WMS plus simples, puisqu'il n'est nécessaire 
+de référencer une seule couche dans la requête par opposition aux multiples couches 
+individuelles. Les groupes de couches agissent simplement comme des couches 
+standards au sein des sservices WMS.
 
 .. figure:: ../images/data_layergroups.png
    :align: center
    
-   *Layer Groups page*
+   *Page des groupes de couches*
 
-Edit Layer Group
-----------------
+Éditer un groupe de couches
+----------------------------
 
-To bring up the layer group edit page, click on a layer group name.  The initial fields allow for the configuration of the name,  bounds, and projection of the layer group.  To automatically set bounding box, select the :guilabel:`Generate Bounds` button, other put in your own custom numbers.  To select an appropriate projection click the :guilabel:`Find` button.
+Pour afficher la page d'édition d'un groupe de couches, cliquez sur un nom de 
+groupe de couche. Les champs initiaux permettent la configuration du nom, des 
+limites et la projection du groupe de couches. Pour définir automatiquement la 
+bouding box, sélectionnez le bouton :guilabel:`Générez les limites`, sinon mettez 
+y les limites personnalisées. Pour sélectionner une projection appropriée cliquez 
+sur le bouton :guilabel:`Trouver`.
 
-.. note:: A layer group can consist of layers with dissimilar bounds and projections.  GeoServer will automatically reproject all layers to the projection of the layer group.
+.. note:: Un groupe de couche peut consister de couches avec des projections et 
+   des limites différentes. GeoServer va automatiquement reprojeter toutes les 
+   couches du groupe de couches.
 
-At the bottom of the page is a table listing the layers contained within the current layer group.  When a layer group is processed, the layers are rendered in the order provided, so that the layer at the bottom of list will be rendered last, and thus will show on top of the other layers.
+En bas de la page il y a un tableau de couches contenu dans le groupe de couches 
+actuel. Quand un groupe de couches est réalisé, les couches sont rendues dans 
+l'ordre donné, la couche en bas de la liste sera rendu en dernière et donc sera 
+affichée par dessus les autres.
 
 .. figure:: ../images/data_layergroups_edit.png
    :align: center
    
-   *Layer Groups Edit page*
+   *Page d'édition des groupes de couches*
 
-The :guilabel:`Style` column shows the style associated with each layer.  To change the style associated with a layer, click the appropriate style link.  A list of enabled styles will be displayed. Clicking on a style name reassigns the layer's style. 
+La colonne :guilabel:`Style` affiche le style associé avec chaque couches. Pour 
+changer le style associé à la couche, cliquez sur le lien du style. Une liste de 
+styles activés sera affichée. Cliquez sur le nom du style pour l'assigner comme 
+style de la couche.
 
 .. figure:: ../images/data_layergroups_edit_styles.png
    :align: center
    
-   *Style editing for a layer within a layer group*
+   *Édition du style pour une couche dans le groupe de couche*
 
-To remove a layer from the layer group, select the layer's button in the :guilabel:`Remove` column.  You will not be prompted to confirm or cancel this deletion.
+Pour supprimer une couche d'un groupe de couches, sélectionnez le bouton de la 
+couche dans la colonne :guilabel:`Supprimer`. On vous demandera alors de confirmer 
+ou d'annuler la suppression.
 
-
-You can view layers group in the :ref:`layerpreview` section of the web admin.
+Vous pouvezvoir le groupe de couches dans la section :ref:`layerpreview` de la 
+console d'admin web.
 
 .. figure:: ../images/data_layergroups_tasmania.png
    :align: center
    
-   *Openlayers preview of the layer group "tasmania"*
+   *Prévisualisation avec Openlayers du groupe de couches "tasmania"*
 
-A layer can be positioned higher or lower on this list by clicking the green up or down arrows, respectively.  
+Une couche peut être positionnée plus haut ou plus bas dans la liste en cliquant 
+sur les flèches vertes 'haut' et 'basse' respectivement.
 
-A layer can be added to the list by pressing the :guilabel:`Add Layer...` button at the top of the layer table. From the resulting list of layers, select the layer to be added by clicking on the layer name. This latest layer will be appended to the bottom of the layer list.  
+Une couche peut être ajoutée à la liste en pressant le bouton :guilabel:`Ajouter une couche...` 
+en haut du tableau de couches. À partir de la liste de couches résultantes, 
+sélectionnez la couche à ajouter en cliquant sur le nom de la couche. Cette dernière 
+sera ajoutée en bas de la liste des couches.
 
 .. figure:: ../images/data_layergroups_add_layer.png
    :align: center
 
-   *Dialog for adding a layer to a layer group*
+   *Dialogue pour ajouter une couche au groupe de couches*
 
-Add a Layer Group
------------------
+Ajouter un groupe de couches
+-----------------------------
 
-The buttons for adding and removing a layer group can be found at the top of the :guilabel:`Layer Groups` page. 
+Les boutons pour ajouter et supprimer un groupe de couche sont situés en haut de 
+la page :guilabel:`Groupes de couches`. 
 
 .. figure:: ../images/data_layergroups_add.png
    :align: center
 
-   *Buttons to add or remove a layer group*
-   
-To add a new layer group, select the "Add a new layer group" button.  You will be prompted to name the layer group.
-   
+   *Boutons pour ajouter et supprimer un groupe de couches*
+
+Pour ajouter un nouveau groupe de couches, sélectionnez le bouton "Ajouter un 
+groupe de couches". On vous demandera le nom du groupe de couches.
+
 .. figure:: ../images/data_layergroups_name.png
    :align: center
 
-   *New layer group dialog*
+   *Dialogue de nouveau groupe de couches*
 
-When finished, click :guilabel:`Submit`.  You will be redirected to an empty layer group configuration page.  Begin by adding layers by clicking the :guilabel:`Add layer...` button (described in the previous section). Once the layers are positioned accordingly, press :guilabel:`Generate Bounds` to automatically generate the bounding box and projection.  Press :guilabel:`Save` to save the new layer group.
+Lorsque c'est terminé, cliquez sur :guilabel:`Soumettre`. Vous serez alors 
+redirigé vers une page de configuration de groupe de couche vide. Commencez en 
+ajoutant des couches en cliquant sur le bouton :guilabel:`Ajouter une couche...` 
+(décrit dans la section précédente). Un fois que les couches sont positionnées 
+correctement, pressez :guilabel:`Générez les limites` pour générer automatiquement 
+la projection et l'étendue de la couche. Pressez :guilabel:`Sauver` pour sauver 
+le nouveau groupe de couche.
 
 .. figure:: ../images/data_layergroups_add_edit.png
    :align: center
 
-   *New layer group configuration page*
+   *Page de configuration d'un nouveau groupe de couches*
 
-Remove a layer group
---------------------
+Supprimer un groupe de couches
+-------------------------------
 
-In order to remove a layer group, click on the check box next to the layer group.  Multiple layer groups can be selected for match removal.  Click the :guilabel:`remove selected layer group(s)` link.  You will be asked to confirm or cancel the deletion.  Selecting :guilabel:`OK` successfully removes the layer group. 
+Dans le but de supprimer un groupe de couches,cliquez sur la case à cocher près 
+du groupe de couche. Plusieurs groupes de couches peuvent être sélectionnés pour 
+la suppression. CLiquez sur le lien :guilabel:`supprimer le(s) groupe(s) de couches sélectionné(s)`. 
+On vous demandera de confirmer ou d'annuler la suppression. Sélectionner 
+:guilabel:`OK` supprime le groupe de couches.
  
 .. figure:: ../images/data_layergroups_delete.png
    :align: center
    
-   *Removing a layer group*
+   *Supprimer un groupe de couches*
+   
+.. yjacolin at free.fr 2011/07/07 r16069

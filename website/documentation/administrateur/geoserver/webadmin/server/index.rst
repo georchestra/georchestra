@@ -1,9 +1,11 @@
 .. _webadmin_server:
 
-Server
-======
+Serveur
+========
 
-The Server section of the :ref:`web_admin` provides access to GeoServer environment information.  It is a combination of diagnostic and configuration tools, and can be particularly useful for debugging.
+La section serveur de :ref:`web_admin` propose un accès vers les informations 
+d'environnement de GeoServer. C'est une combinaison d'outils de configuration et 
+de diagnostique et peut être particulièrement utile pour le débugage.
 
 .. toctree::
    :maxdepth: 2
@@ -13,3 +15,5 @@ The Server section of the :ref:`web_admin` provides access to GeoServer environm
    globalsettings
    geowebcache
    JAI
+
+.. yjacolin at free.fr 2011/11/18 r13133
