@@ -28,7 +28,7 @@ body {
         min-width: 990px;
         width: 800px;
         background-color: #EEEEEE;
-/*         background: #e8e8e8 url(../images/bg.png) center center scroll repeat-y; */
+/*         background: #e8e8e8 url(../../images/bg.png) center center scroll repeat-y; */
 }
 
 .clearer {
@@ -198,7 +198,7 @@ div#main {
 }
 
 div#menu ul.menu {
-	background-image:url("navigation.png");
+	background-image:url("../navigation.png");
 	height:2em;
 	padding-top: 10px;
 }
@@ -314,7 +314,7 @@ table.adminform input#title {
     margin-top: -15px;
     padding-top: 15px;
     padding-bottom: 5px;
-    background: url(../../system/images/selector-arrow.png) no-repeat;
+    background: url(../../../system/images/selector-arrow.png) no-repeat;
 }
 
 .tool-text {
