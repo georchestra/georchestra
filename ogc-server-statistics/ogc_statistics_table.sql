@@ -4,10 +4,10 @@
 
 CREATE TABLE ogc_services_log
 (
-  user_name character varying(30),
+  user_name character varying(255),
   date date,
   service character(5),
-  layer character varying(30),
+  layer character varying(255),
   id bigserial NOT NULL,
   CONSTRAINT primary_key PRIMARY KEY (id)
 )
