@@ -1,6 +1,6 @@
 .. _layerpreview:
 
-Prévisualisation de couche
+Prévisualisation de couches
 ===========================
 
 Cette page propose des vues de couches dans différents formats de sortie. Notez 
@@ -43,15 +43,21 @@ Formats de sortie
 -------------------
 La page de prévisualisation des couches gère différents formats de sortie pour 
 des utilisations diverses ou du partage de données. Vous pouvez prévisualiser 
-toutes les types de couches dans les formats OpenLayers et KML. 
- 
-The Layer Preview page supports a variety of output formats for further use or  data sharing. You can preview all three layer types in the common OpenLayers and KML formats.  Similarly, using the "All formats" drop down menu you can preview all layer types in seven additional output formats--AtomPub, GIF, GeoRss, JPEG, KML (compressed), PDF, PNG, SVG, and TIFF.  Only Vector layers offer the WFS output previews, including the common GML as well as the CSV, GML3, GeoJSON and Shapefile formats.   The table below provides a brief description of all supported output formats, organized by output type: image, text or data.  
+toutes les types de couches dans les formats OpenLayers et KML. Parallèlement 
+en utilisant la liste déroulante "Tous les formats" vous pouvez voir tous les 
+types de couches dans une demi douzaine de formats supplémentaires -- AtomPub, 
+GIF, GeoRss, JPEG, KML (compressé), PDF, PNG, SVG, et TIFF. Seules les couches 
+vecteurs propose des prévisualisation de sortie WFS, dont le format GML et CSV, 
+GML3, GeoJSON et Shapefile. Le tableau ci-dessous propose une brève description 
+de tous les formats gérés, organisé en type de sortie : image, text ou données.  
 
-Image Outputs
+Sortie image
 `````````````
 
-All image outputs can be initiated from a WMS getMap request on either a raster,
-vector or coverage data.  WMS are methods that allows visual display of spatial data  without necessarily providing access to the features that comprise those data. 
+Toutes les sorties d'images peuvent être réalisées à partir d'une requête GetMap 
+WMS sur une données raster, vecteur ou couverture. Les services WMS sont des 
+méthodes qui permettent l'affichage visuel de données spatiales sans nécessairement 
+fournir un accès aux entités qui composent les données.
 
 .. list-table::
    :widths: 10 90 
@@ -60,28 +66,58 @@ vector or coverage data.  WMS are methods that allows visual display of spatial 
      - **Description**
      
    * - KML
-     - KML (Keyhole Markup Language) is an XML-based language schema for expressing geographic data in an Earth browser, such as Google Earth or Google Maps.  KML uses a tag-based structure with nested elements and attributes.  For GeoServer, KML files are distributed as a KMZ, which is a zipped KML file.
+     - KML (Keyhole Markup Language) est un schéma basé sur le langage XML pour 
+       modéliser des données géographiques afin de naviguer sur la terre comme 
+       Google Earth ou Google Maps. Le format KML utilise une structure basée sur 
+       des balises et des attributs imbriqués. Pour GeoServer, les fichiers KML 
+       sont distribués sous la forme de KMZ, qui sont des fichiers KML compressé.
    * - JPEG
-     - WMS output in raster format.  The JPEG is a compressed graphic file format, with some loss of quality due to compression.  It is best used for photos and not recommended for exact reproduction of data.   
+     - Sortie WMS en format raster. Le format JPEG est un format de fichier 
+       compressé avec perte de qualité dû à la compression. Il est conseillé pour 
+       les photos et pas pour la reproduction de données exactes.
    * - GIF
-     - WMS output in raster format.  The GIF (Graphics Interchange Format) is a bitmap image format best suited for sharp-edged line art with a limited number of colors. This takes advantage of the format's lossless compression, which favors flat areas of uniform color with well defined edges (in contrast to JPEG, which favors smooth gradients and softer images). GIF is limited to an 8-bit palette, or 256 colors.
+     - Sortie WMS en format raster. Le format  GIF (Graphics Interchange Format) 
+       est un format image bitmap utile pour les images en lignes de bordures 
+       nettes avec un nombre limité de couleur. Cela permet d'optimiser la 
+       compression sans perte du format qui favorise lezs zones étendues de même 
+       couleur avec des limites nettes (contrairement au format JPEG, qui favorise 
+       les images avec des gradients de couleurs). Le format GIF est limité à une 
+       palette de 8 bit ou 256 couleurs.
    * - SVG
-     - WMS output in vector format. SVG (Scalable Vector Graphics) is a language for modeling two-dimensional graphics in XML. It differs from the GIF and JPEG in that it uses graphic objects rather than individual points.      
+     - Sortie WMS de format vecteur. SVG (Scalable Vector Graphics) est un langage 
+       pour modéliser les graphiques en deux dimensions en XML. Il diffère des 
+       formats GIG et JPEG dans la mesure où il utilise des objets graphiques 
+       plutôt que des points individuels.   
    * - TIFF
-     - WMS output in raster format.  TIFF (Tagged Image File Format) is a flexible, adaptable format for handling multiple data in a single file.  GeoTIFF containts geographic data embedded as tags within the TIFF file.
+     - Sortie WMS en format raster. Le format TIFF (Tagged Image File Format) est 
+       un format flexible, adaptable pour prendre en charge des données multiples 
+       dans un seul fichier. GeoTIFF contient des données géographiques incluses 
+       sous forme de balises dans le fichier TIFF.
    * - PNG
-     - WMS output in raster format.  The PNG (Portable Network Graphics) file format was created as the free, open-source successor to the GIF. The PNG file format supports truecolor (16 million colors) while the GIF supports only 256 colors. The PNG file excels when the image has large, uniformly coloured areas.        
+     - Sortie WMS en format raster. Le format de fichier  PNG (Portable Network Graphics) a 
+       été créé comme le successeur libre et open source au GIF. Le format de 
+       fichier PNG gère le truecolor (16 million de couleurs) tandis que le GIF 
+       gère seulement 256 couleurs. Le fichier PNG est performant lorsque l'image 
+       a des zones larges et de couleurs uniformes.
    * - OpenLayers
-     - WMS GetMap request outputs a simple OpenLayers preview window.  `OpenLayers <http://openlayers.org/>`_ is an open source JavaScript library for displaying map data in web browsers. The OpenLayers output has some advanced filters that are not available when using a standalone version of OpenLayers. Further, the generated preview contains a header with easy  configuration options for display.
+     - Sortie de la requête GetMap du WMS comme fenêtre de prévisualisation 
+       OpenLayers. `OpenLayers <http://openlayers.org/>`_ est une bibliothèque 
+       JavaScript open source pour afficher des cartes dans des navigateurs web. 
+       La sortie OpenLayers possède des filtres avancés qui ne sont pas disponibles 
+       lors de l'utilisation seule d'OpenLayers. De plus, la prévisualisation 
+       générée contient un en-tête qui facilite les options de configuration pour 
+       l'affichage.
    * - PDF
-     - A PDF (Portable Document Format) encapsulates a complete description of a fixed-layout 2D document,including any text, fonts, raster images, and 2D vector graphics.   
+     - Un fichier PDF (Portable Document Format) encapsule une description 
+       complète d'une mise en page définie d'un document 2D, dont du texte, des 
+       polices des images raster et des graphiques vecteurs 2D.
  
 .. figure:: ../images/preview_openlayers.png
    :align: left
    
-   *Sample Image Output-an OpenLayers preview of nurc:Pk50095*
+   *Exemple de sortie image - une prévisualisation OpenLayers de la couche nurc:Pk50095*
 
-Text Outputs
+Sortie texte
 ````````````
 
 .. list-table::
@@ -91,15 +127,36 @@ Text Outputs
      - **Description**
 
    * - AtomPub
-     - WMS output of spatial data in XML format.  The AtomPub (Atom Publishing Protocol) is an application-level protocol for publishing and editing Web Resources using HTTP and XML.  Developed as a replacement for the RSS family of standards for content syndication, Atom allows subscription of geo data.
+     - Sortie WMS de données spatiales au format XML. Le format AtomPub (Atom 
+       Publishing Protocol) est un protocole d'application pour publier et éditer 
+       des ressources web en utilisant le protocol HTTP et le langage XML. 
+       Développé pour remplacer la famille des standarads RSS pour la syndication 
+       de contenu, Atom permet la subscription de données géographiques.
    * - GeoRss
-     - WMS GetMap request output of vector data in XML format.  RSS (Rich Site Summary) is an XML format for delivering regularly changing web content.  `GeoRss <http://www.georss.org>`_ is a  standard for encoding location as part of a RSS feed.supports  Layers Preview produces a RSS 2.0 documents, with GeoRSS Simple geometries using Atom. 
+     - Sortie de la requête GetMap du WMS de données vecteurs au format XML. Le 
+       format RSS (Rich Site Summary) est un format XML pour délivrer régulièrement 
+       du contenu web modifiée. `GeoRss <http://www.georss.org>`_ est un standard 
+       pour encoder la localisation sous forme de flux RSS. La prévisualisation 
+       de couches produit des documents RSS 2.0 avec des géométries simples 
+       GeoRSS en utilisant Atom.
    * - GeoJSON
-     - `JavaScript Object Notation <http://json.org/>`_ (JSON) is a lightweight data-interchange format based on the JavaScript programming language. This makes it an ideal interchange format for browser based applications since it can be parsed directly and easily in to javascript. GeoJSON is a plain text output format that add geographic types to JSON.  
+     - `JavaScript Object Notation <http://json.org/>`_ (JSON) est un format légé 
+       d'échange de données basé sur le langage de programmation JavaScript. Cela 
+       en fait un format d'échange idéal pour les applications basées sur les 
+       navigateurs puisqu'il peut être lu directement et facilement en JavaScript. 
+       GeoJSON est un format de sortie en texte qui ajoute des types géographiques 
+       au JSON.
    * - CSV
-     - WFS GetFeature output in comma-delimited text.  CSV (Comma Separated Values) files are text files containing rows of data. Data values in each row are separated by commas. CSV files also contain a comma-separated header row explaining each row's value ordering. GeoServer's CSVs are fully streaming, with no limitation on the amount of data that can be outputted. 
-     
-A fragment of a simple GeoRSS for nurc:Pk50095 using Atom::
+     - Sortie du GetFeature du WFS en format textuel séparé par des virgules. Les 
+       fichiers CSV (Comma Separated Values) sont des fichiers textes contenat 
+       des lignes de données. Les valeurs de données dans chaque ligne sont 
+       séparées par des virgules. Les fichiers CSV contiennent aussi un en-tête 
+       séparé par des virgules dénommant chaque valeurs des lignes. Les CSV de 
+       GeoServer sont entièrement en streaming, avec aucune limitation de la 
+       quantité de données qui peuvent être renvoyées.
+
+Un échantillon d'un GeoRSS simple pour la couche nurc:Pk50095 en utilisant Atom :
+::
 
    <?xml version="1.0" encoding="UTF-8"?>
 	<rss xmlns:atom="http://www.w3.org/2005/Atom"
@@ -119,10 +176,11 @@ A fragment of a simple GeoRSS for nurc:Pk50095 using Atom::
 	   </channel>
    </rss>
 
-Data Outputs
-````````````
+Sortie de données
+``````````````````
 
-All data outputs are initiated from a WFS GetFeature request on vector data.
+Toutes les sorties de données sont réalisées par une requête GetFeature du WFS sur 
+des données vecteurs.
 
 .. list-table::
    :widths: 10 90 

@@ -1,7 +1,7 @@
 .. _webadmin_gwc:
 
-GeoWebCache Settings
-====================
+Paramètrage de GeoWebCache
+==========================
 
 The GeoWebCache Settings page in the Server menu in the :ref:`web_admin` shows some configuration options for GeoWebCache, a tile server that comes embedded by default inside GeoServer.  For more information about this embedded version, please see the section on :ref:`geowebcache`.
 
@@ -56,4 +56,5 @@ Links
 -----
 
 This page contains links to the embedded GWC homepage (containing runtime statistics and status updates) and :ref:`gwc_demo` where you can view all layers known to GeoWebCache and reload configuration.
+
 
