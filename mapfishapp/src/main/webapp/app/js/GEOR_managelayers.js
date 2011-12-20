@@ -620,7 +620,8 @@ GEOR.managelayers = (function() {
                 xtype: 'box',
                 autoEl: {
                     tag: 'span',
-                    html: ' | '
+                    style: 'padding: 0 5px;',
+                    html: '|'
                 }
             });
         }
