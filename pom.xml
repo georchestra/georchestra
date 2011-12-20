@@ -25,7 +25,8 @@
 	</properties>
 	<modules>
 		<module>config</module>
-		<module>mif-2.5.8</module>
+		<module>gt-mif</module>
+		<module>gt-ogr</module>
 		<module>static</module>
 		<module>epsg-extension</module>
 		<module>ogc-server-statistics</module>
