@@ -199,7 +199,7 @@ GEOR.managelayers = (function() {
             cls: "geor-layers-form-text",
             autoEl: {
                 tag: 'span',
-                'ext:qtip': "Plage de visibilité (indicative) :<br />de "+visibilityText+" | ",
+                'ext:qtip': "Plage de visibilité (indicative) :<br />de "+visibilityText,
                 html: visibilityText
             }
         };
@@ -293,8 +293,9 @@ GEOR.managelayers = (function() {
         var layer = layerRecord.get("layer");
 
         var default_style = {
+            // TODO: add style name in ()
             text: 'Style par défaut',
-            value: null,
+            value: '',
             checked: true,
             group: 'style_' + layer.id,
             checkHandler: onStyleItemCheck,
@@ -615,7 +616,13 @@ GEOR.managelayers = (function() {
             buttons: buttons
         }];
         if (GEOR.config.DISPLAY_VISIBILITY_RANGE) {
-            panelItems.push(formatVisibility(layerRecord));
+            panelItems.push(formatVisibility(layerRecord), {
+                xtype: 'box',
+                autoEl: {
+                    tag: 'span',
+                    html: ' | '
+                }
+            });
         }
         panelItems.push(formatAttribution(layerRecord));
         
