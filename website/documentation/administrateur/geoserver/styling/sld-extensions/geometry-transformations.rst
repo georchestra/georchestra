@@ -1,22 +1,22 @@
 .. _geometry_transformations:
 
-Geometry transformations in SLD
-===============================
+Transformations de géométries en SLD
+====================================
 
-Each symbolizer in SLD 1.0 contains a `<Geometry>` element allowing the user to specify which geometry is to be used for rendering. In the most common case it is not specified, but it becomes useful in the case a feature has multiple geometries inside.
+En SLD 1.0, chaque symboliseur contient un élément `<Geometry>` qui permet à l'utilisateur de spécifier quelle géométrie employer pour le rendu. Dans la plupart des cas ce n'est pas utilisé, mais cela peut devenir utile lorsqu'un objet comprend plusieurs géométries.
 
-SLD 1.0 forces the `<Geometry>` content to be a `<ogc:PropertyName>`, GeoServer relaxes this constraint and allows a generic `sld:expression` to be used instead. Common expressions cannot manipulate geometries, but GeoServer provides a number of filter functions that can actually manipulate geometries by transforming them into something different: this is what we call *geometry transformations* in SLD.
+SLD 1.0 exige que le contenu de `<Geometry>` soit une propriété `<ogc:PropertyName>`, GeoServer assouplit cette contrainte et permet d'utiliser à la place une expression générique `sld:expression`. Les expressions usuelles ne savent pas opérer sur les géométries, mais GeoServer fournit un lot de fonctions filtres qui peuvent effectivement manipuler les géométries en les transformant en quelque chose de différent: nous appelons cela *transformations de géométries* en SLD.
 
-A full list of transformations is available in the :ref:`filter_function_reference`.
+Une liste complète des transformations disponibles est disponible dans :ref:`filter_function_reference`.
 
-Transformations are pretty flexible, the major limitation of them is that they happen in the geometry own reference system and unit, before any reprojection and rescaling to screen happens.
+Les transformations sont plutôt souples, leur principale limitation est qu'elles interviennet dans le système de référence et les unitées propres à la géométrie, avant toute reprojection et rééchantillonnage pour affichage.
 
-Let's look into some examples.
+Voyons quelques exemples.
 
-Extracting vertices
--------------------
+Extraction des sommets
+----------------------
 
-Here is an example that allows one to extract all the vertices of a geometry, and make them visible in a map, using the `vertices` function:
+Voici un exemple qui permet d'extraire tous les sommets d'une géométrie pour les rendre visibles sur une carte, en utilisant la fonction `vertices`:
 
 .. code-block:: xml 
    :linenos: 
@@ -38,20 +38,20 @@ Here is an example that allows one to extract all the vertices of a geometry, an
         </Graphic>
      </PointSymbolizer>
 
-:download:`View the full "Vertices" SLD <artifacts/vertices.sld>`
+:download:`Consultez et téléchargez le SLD complet "Sommets" <artifacts/vertices.sld>`
 
-Applied to the sample `tasmania_roads` layer this will result in:
+Appliqué à la couche exemple `tasmania_roads`, ceci aboutit à:
 
 .. figure:: images/vertices.png
    :align: center
    
-   *Extracting and showing the vertices out of a geometry*
+   *Extraire et afficher les sommets extraits d'une géométrie*
    
    
-Start and end point
+Points début et fin
 -------------------
 
-The `startPoint` and `endPoint` functions can be used to extract the start and end point of a line. 
+Les fonctions `startPoint` et `endPoint` peuvent être utilisées pour extraire les points début et fin d'une ligne. 
 
 .. code-block:: xml
    :linenos:
@@ -90,20 +90,20 @@ The `startPoint` and `endPoint` functions can be used to extract the start and e
       </Graphic>
     </PointSymbolizer>
 
-:download:`View the full "StartEnd" SLD <artifacts/startend.sld>`
+:download:`Consultez et téléchargez le SLD complet "Début-Fin" <artifacts/startend.sld>`
 
-Applied to the sample `tasmania_roads` layer this will result in:
+Appliqué à la couche exemple `tasmania_roads`, ceci aboutit à:
 
 .. figure:: images/startend.png
    :align: center
    
-   *Extracting start and end point of a line*
+   *Extraire les points début et fin d'une ligne*
 
 
-Drop shadow
------------
+Ombre portée
+------------
 
-The `offset` function can be used to create drop shadow effects below polygons. Notice the odd offset value, set this way because the data used in the example is in geographic coordinates.
+La fonction `offset` peut être utilisée pour créer un effet d'ombre portée derrière les polygones. Notez la valeur bizarre du décalage, choisie ainsi car les données utilisées dans l'exemple sont exprimées en coordonnées géographiques.
 
 .. code-block:: xml 
    :linenos: 
@@ -121,23 +121,23 @@ The `offset` function can be used to create drop shadow effects below polygons. 
        </Fill>
      </PolygonSymbolizer>
 
-:download:`View the full "Shadow" SLD <artifacts/shadow.sld>`
+:download:`Consultez et téléchargez le SLD complet "Ombre" <artifacts/shadow.sld>`
 
-Applied to the sample `tasmania_roads` layer this will result in:
+Appliqué à la couche exemple `tasmania_roads`, ceci aboutit à:
 
 .. figure:: images/shadow.png
    :align: center
    
-   *Dropping building shadows*
+   *Ombre portée*
 
-Other possibilities
+Autres possibilités
 -------------------
 
-GeoServer set of transformations functions also contains a number of set related or constructive transformations, such as buffer, intersection, difference and so on. However, those functions are quite heavy in terms of CPU consumption so it is advise to use them with care, activating them only at the higher zoom levels.
+L'assortiment de fonctions de transformations dans GeoServer contient aussi un lot de transformations relatives ou constructives comme buffer, intersection, différence et ainsi de suite. Toutefois, ces fonctions sont relativement exigeantes en terme de consommation CPU, il est donc conseillé de les utiliser avec précaution et de ne les activer qu'à de hauts niveaux de zoom.
 
-Buffering can often be approximated by adopting very large strokes and round line joins and line caps, without actually have to perform the geometry transformation.
+Les buffer peuvent souvent être approchés en choisissant des traits très larges et des jointures de lignes ronds, sans nécessiter des transformations géométriques.
 
-Adding new transformations
---------------------------
+Ajouter de nouvelles transformations
+------------------------------------
 
-Filter functions are pluggable, meaning it's possible to build new ones in Java and then drop the resulting .jar file in GeoServer as a plugin. A guide is not available at this time, but have a look into the GeoTools main module for examples.
+Les fonctions filtre sont pluggable, ce qui signifie qu'il est possible d'en construire de nouvelles en Java et de déposer le fichier .jar résultat dans GeoServer en tant que plugin. A l'heure actuelle aucun guide n'est disponible, mais vous pouvez jeter un oeil dans le module principal GeoTools pour trouver des exemples.
