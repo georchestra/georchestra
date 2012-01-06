@@ -55,7 +55,6 @@ Qui utilise geOrchestra ?
 
 * Région Bretagne, via `GeoBretagne <http://www.geobretagne.fr>`_ 
 * Région Aquitaine, via le projet `PIGMA <http://www.pigma.org>`_ mis en place par le GIP ATGeRI
-* `Brest Métropole Océane <http://www.brest.fr/>`_
 * `Projet VIDAE porté par l'UMR SAS INRA - Agrocampus Ouest à Rennes et l'UMR LISAH INRA - Supagro à Montpellier <http://geowww.agrocampus-ouest.fr/vidae/?jsc=proj2154.js&wmc=naizin.wmc>`_
 * ...
 
