@@ -372,7 +372,14 @@ GEOR.custom = {
      * Defaults to "/doc/html/documentation.html#viewer"
      */
     HELP_URL: "http://www.geobretagne.fr/web/guest/assistance#viewer",
-    
+   
+    /**
+     * Constant: HEADER_HEIGHT
+     * {Integer} height of the header in pixels
+     * Defaults to 90
+     */
+     HEADER_HEIGHT: 0,
+   
     /**
      * Constant: CONFIRM_LAYER_REMOVAL
      * {Boolean} Do we want a popup dialog to appear on layer removal ?
