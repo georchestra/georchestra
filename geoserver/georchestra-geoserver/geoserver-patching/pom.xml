@@ -42,13 +42,16 @@
 				<version>1.1.1</version>
 				<configuration>
 					<patches>
-						<patch>GEOSERVER.patch</patch>
-						<patch>WFS.patch</patch>
-						<patch>maven-web-app.patch</patch>
-						<patch>maven-config.patch</patch>
-						<patch>maven3.patch</patch>
+						<patch>GEOSERVER-2.1.3.patch</patch>
+						<patch>WFS-2.1.3.patch</patch>
+						<patch>maven-web-app-2.1.3.patch</patch>
+						<patch>maven-config-2.1.3.patch</patch>
+						<patch>maven3-2.1.3.patch</patch>
 						<patch>web-app-web-xml.patch</patch>
 						<patch>Wcs10DescribeCoverageTransformer.patch</patch>
+						<!--<patch>DefaultServiceExceptionHandlerTest-stable.patch</patch>
+						<patch>GetCoverageTest-stable.patch</patch>
+						<patch>ResourceAccessManagerWFSTest-stable.patch</patch>-->
 					</patches>
 					<targetDirectory>${patch.dir}</targetDirectory>
 					<strip>0</strip>
@@ -101,8 +104,9 @@
 	<profiles>
 		<profile>
 			<id>geoserver-2.1.x</id>
+			<!-- change patches to use the 2.1.x patches as well -->
 			<activation>
-				<activeByDefault>true</activeByDefault>
+				<activeByDefault>false</activeByDefault>
 			</activation>
 			<properties>
 				<patch.dir>${gs.dir}/geoserver-2.1.x</patch.dir>
@@ -111,7 +115,7 @@
 		<profile>
 			<id>geoserver-2.1.1</id>
 			<activation>
-				<activeByDefault>false</activeByDefault>
+				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
 				<patch.dir>${gs.dir}/geoserver-stable</patch.dir>
