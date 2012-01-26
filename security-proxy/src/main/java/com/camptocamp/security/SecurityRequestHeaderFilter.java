@@ -3,6 +3,8 @@
  */
 package com.camptocamp.security;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.List;
 
@@ -24,25 +26,35 @@ public class SecurityRequestHeaderFilter implements HeaderFilter {
 
     @Override
     public boolean filter(String headerName, HttpServletRequest originalRequest, HttpRequestBase proxyRequest) {
-        String remoteHost = originalRequest.getRemoteHost();
-        
-        for (String host : trustedHosts) {
-        	if (log.isDebugEnabled()) {
-            	log.debug("filter: headerName: " + headerName + " check remote host: " + remoteHost + " against: " + host);
-            }
-        	if (remoteHost.equalsIgnoreCase(host)) {
-        		if (log.isDebugEnabled()) {
-        			log.debug("Return false for header: " + headerName + " because host: " + remoteHost + " is trusted.");
-        		}
-                return false;
-            }
-        }
-        
-        //
-        // Return false if host is not trusted and header is sensitive
-        //
-        return headerName.equalsIgnoreCase("sec-username") ||
-                headerName.equalsIgnoreCase("sec-roles");
+    	try {
+	        String remoteHost = originalRequest.getRemoteHost();
+	        InetAddress remotsHostAddress =  InetAddress.getByName(remoteHost);
+	        
+	        for (String host : trustedHosts) {
+	
+	        	InetAddress hostAddress = InetAddress.getByName(host);
+	        	
+	        	if (log.isDebugEnabled()) {
+	            	log.debug("filter: headerName: " + headerName + " check remote host: " + remoteHost + " against: " + host);
+	            }
+	        	
+	        	if (remotsHostAddress.equals(hostAddress)) {
+	        		if (log.isDebugEnabled()) {
+	        			log.debug("Return false for header: " + headerName + " because host: " + remoteHost + " is trusted.");
+	        		}
+	                return false;
+	            }
+	        }
+	        //
+	        // Return false if host is not trusted and header is sensitive
+	        //
+	        return headerName.equalsIgnoreCase("sec-username") ||
+	                headerName.equalsIgnoreCase("sec-roles");
+
+    	} catch (UnknownHostException e) {
+			log.error(e);
+			throw new IllegalStateException(e.getMessage() +  ". Checkthe trusted host configuration.");
+		}
     }
 
     public void setTrustedHosts(List<String> trustedHosts) {
