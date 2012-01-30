@@ -35,19 +35,7 @@
 	</build>
 	<profiles>
 		<profile>
-			<id>geoserver-2.1.x</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<properties>
-				<gs.dir>geoserver-2.1.x</gs.dir>
-			</properties>
-			<modules>
-				<module>geoserver-2.1.x/src</module>
-			</modules>
-		</profile>
-		<profile>
-			<id>geoserver-2.1.1</id>
+			<id>geoserver-stable</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>

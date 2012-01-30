@@ -103,17 +103,7 @@
 	</build>
 	<profiles>
 		<profile>
-			<id>geoserver-2.1.x</id>
-			<!-- change patches to use the 2.1.x patches as well -->
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<properties>
-				<patch.dir>${gs.dir}/geoserver-2.1.x</patch.dir>
-			</properties>
-		</profile>
-		<profile>
-			<id>geoserver-2.1.1</id>
+			<id>geoserver-stable</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
