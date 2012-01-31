@@ -81,8 +81,6 @@
       <groupId>org.geotools</groupId>
       <artifactId>gt-wfs</artifactId>
       <version>${gt.version}</version>
-      <scope>provided</scope>
-      <!-- provided because a version based on 2.7 is in webapp/WEB-INF/lib -->
     </dependency>
     <dependency>
       <groupId>org.geotools</groupId>
