@@ -27,6 +27,7 @@ class GenerateConfig {
 		  from: 'defaults'+SEP+'geonetwork'+SEP+'maven.filter', 
 		  to: 'geonetwork'+SEP+'maven.filter').update { properties ->
   		  properties['transformFactory'] = 'net.sf.saxon.TransformerFactoryImpl'
+  		  properties['wfs.host'] = '@wfs_ldap_host@'
   	}
 	}
 }

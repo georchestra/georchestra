@@ -2,14 +2,14 @@
 shared.server.name=localhost
 shared.apache.conf.dir=<doesnot matter for this config>
 
-shared.ldapUrl=ldaps://c2cpc61.camptocamp.com:636
+wfs_ldap_host=c2cpc61.camptocamp.com
+shared.ldapUrl=ldaps://@wfs_ldap_host@:636
 shared.server.port=80
 
-shared.ldap.admin.password=hw8BFUvTrL
+shared.privileged.geoserver.user=extractorapp_priveleged_admin
+shared.privileged.geoserver.pass=uNg9aiFa
 
-shared.privileged.geoserver.user=extractorapp_privileged_admin
-shared.privileged.geoserver.pass=90aF07R4d8
-
+shared.ldap.admin.password=uNg9aiFa
 shared.ldap.baseDn=dc=georchestra,dc=org
 
 shared.c2c.logdir=/tmp/
