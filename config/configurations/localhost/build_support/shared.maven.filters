@@ -5,10 +5,11 @@ shared.apache.conf.dir=<doesnot matter for this config>
 shared.ldapUrl=ldaps://c2cpc61.camptocamp.com:636
 shared.server.port=80
 
-shared.privileged.geoserver.user=<do not commit this>
-shared.privileged.geoserver.pass=<do not commit this>
+shared.ldap.admin.password=hw8BFUvTrL
 
-shared.ldap.admin.password=<do not commit>
+shared.privileged.geoserver.user=extractorapp_privileged_admin
+shared.privileged.geoserver.pass=90aF07R4d8
+
 shared.ldap.baseDn=dc=georchestra,dc=org
 
 shared.c2c.logdir=/tmp/

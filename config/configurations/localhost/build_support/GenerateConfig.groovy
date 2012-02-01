@@ -21,6 +21,12 @@ class GenerateConfig {
 	def generate(def project, def log, def ant, def basedirFile, 
 							def target, def subTarget, def targetDir, 
 							def buildSupportDir, def outputDir) {
-		// nothing needs to be done for this project
+		def SEP = File.separator
+		// make geonetwork use the development xslt transformer
+		new PropertyUpdate(
+		  from: 'defaults'+SEP+'geonetwork'+SEP+'maven.filter', 
+		  to: 'geonetwork'+SEP+'maven.filter').update { properties ->
+  		  properties['transformFactory'] = 'net.sf.saxon.TransformerFactoryImpl'
+  	}
 	}
 }

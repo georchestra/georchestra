@@ -13,6 +13,6 @@ class PropertyUpdate {
 		toFile.parentFile.mkdirs()
 		params.log.debug("writing "+properties+" to "+toFile)
 
-	  toFile.withWriter{ w -> properties.store(w,"updated by pigma's GenerateConfig class")}
+	  toFile.withWriter('UTF-8'){ w -> properties.store(w,"updated by pigma's GenerateConfig class")}
 	}
 }
