@@ -8,7 +8,11 @@ htmlCacheDir=htmlCache
 
 baseUrl=geonetwork
 host=@shared.server.name@
-wfs.host=@shared.server.name@
+wfsRegionsCapabilities=http://@shared.server.name@/geoserver/wfs?REQUEST=GetCapabilities&amp;SERVICE=WFS&amp;VERSION=1.0.0
+
+# example of credentials: 
+#wfsRegionsCredentials=<param name="user" value="@shared.privileged.geoserver.user@" /><param name="pass" value="@shared.privileged.geoserver.pass@" />
+wfsRegionsCredentials=
 
 psql.host=@shared.psql.host@
 psql.port=@shared.psql.port@
@@ -44,6 +48,6 @@ config.xml.typenames=<typename name="EPCI" typename="geor_loc:epci" nameAtt="NOM
 		<typename name="Région" typename="geor_loc:region" nameAtt="NOM" />
 
 
-config-gui.xml.mapSearchLayers=<layer server="http://@shared.server.name@/shorelines" tocName="shorelines"  params="{layers: 'land', transparent: 'true', format: 'image/png'}"  options="{isBaseLayer: true}" />
+config-gui.xml.mapSearchLayers=<layer server="${geoserverURL}/shorelines" tocName="shorelines"  params="{layers: 'land', transparent: 'true', format: 'image/png'}"  options="{isBaseLayer: true}" />
 
 config-gui.xml.mapViewerLayers=${config-gui.xml.mapSearchLayers}
