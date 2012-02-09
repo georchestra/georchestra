@@ -62,7 +62,7 @@ GEOR.custom = {
      * (which is preferable in case of too many keywords).
      * Defaults to false
      */
-    //CSW_GETDOMAIN_SORTING: false,
+    CSW_GETDOMAIN_SORTING: false,
     
     /**
      * Constant: CATALOG_NAME
@@ -70,7 +70,7 @@ GEOR.custom = {
      * (was: GeoCatalogue for the GeoBretagne project).
      * Defaults to 'Catalogue geOrchestra'
      */
-    //CATALOG_NAME: 'Catalogue geOrchestra',
+    CATALOG_NAME: 'Catalogue GéoBretagne',
     
     /**
      * Constant: THESAURUS_NAME
@@ -124,7 +124,7 @@ GEOR.custom = {
      * This layer must be served by the server GEOSERVER_WMS_URL as image/png
      * Defaults to "geor_loc:DEPARTEMENTS"
      */
-    //OVMAP_LAYER_NAME: "geor_loc:DEPARTEMENTS",
+    //OVMAP_LAYER_NAME: "geob_loc:DEPARTEMENTS",
     
     /**
      * Constant: WMSC2WMS
@@ -215,12 +215,12 @@ GEOR.custom = {
         2183915.093470982,
         4367830.186941965,
         8735660.373883929,
-        17471320.747767858,
-        34942641.495535716,
-        69885282.991071432,
-        139770565.982142864,
-        279541131.964285732,
-        559082263.928571464
+        17471320.747767858
+        //34942641.495535716,
+        //69885282.991071432,
+        //139770565.982142864,
+        //279541131.964285732,
+        //559082263.928571464
     ],
 
     /**
@@ -235,28 +235,28 @@ GEOR.custom = {
      * {Float} The max extent xmin in MAP_SRS coordinates.
      * Defaults to -357823 (France metropolitaine left)
      */
-    MAP_XMIN: 83000,
+    MAP_XMIN: -357823,
 
     /**
      * Constant: MAP_YMIN aka "bottom"
      * {Float} The max extent ymin in MAP_SRS coordinates.
      * Defaults to 6037008 (France metropolitaine bottom)
      */
-    MAP_YMIN: 6700000,
+    MAP_YMIN: 6037008,
 
     /**
      * Constant: MAP_XMAX aka "right"
      * {Float} The max extent xmax in MAP_SRS coordinates.
      * Defaults to 1313632 (France metropolitaine right)
      */
-    MAP_XMAX: 420000,
+    MAP_XMAX: 1313632,
 
     /**
      * Constant: MAP_YSMAX aka "top"
      * {Float} The max extent ymax in MAP_SRS coordinates
      * Defaults to 7230727 (France metropolitaine top)
      */
-    MAP_YMAX: 6900000,
+    MAP_YMAX: 7230727,
     
     /**
      * Constant: MAP_POS_SRS1
@@ -300,14 +300,14 @@ GEOR.custom = {
      * {Integer} Width of the WMS tiles in pixels.
      * Defaults to 512
      */
-    //TILE_WIDTH: 512,
+    TILE_WIDTH: 512,
     
     /**
      * Constant: TILE_HEIGHT
      * {Integer} Height of the WMS tiles in pixels.
      * Defaults to 512
      */
-    //TILE_HEIGHT: 512,
+    TILE_HEIGHT: 512,
 
     /**
      * Constant: GEONAMES_FILTERS
@@ -346,7 +346,7 @@ GEOR.custom = {
      * ROLE_SV_USER means the user needs to be connected.
      * Defaults to ['ROLE_SV_USER']
      */
-    ROLES_FOR_STYLER: [],
+    ROLES_FOR_STYLER: ['ROLE_SV_USER'],
     
     /**
      * Constant: ROLES_FOR_QUERIER
@@ -355,7 +355,7 @@ GEOR.custom = {
      * ROLE_SV_USER means the user needs to be connected.
      * Defaults to []
      */
-    //ROLES_FOR_QUERIER: [],
+    ROLES_FOR_QUERIER: ['ROLE_SV_USER'],
     
     /**
      * Constant: ROLES_FOR_PRINTER
