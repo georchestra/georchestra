@@ -44,7 +44,7 @@ Liste des développeurs qui ont le droit de commit sur le SVN (par ordre alphab�
 * Yves Jacolin (Camptocamp)
 * Frédéric Junod (Camptocamp)
 * Eric Lemoine (Camptocamp)
-* Pierre Mauduit (Camptocamp)
+* Pierre Mauduit
 * Fabrice Phung (GeoBretagne)
 * Philippe Huet (dotGee)
 * François Van Der Biest (Camptocamp)
