@@ -37,13 +37,13 @@ de bogues, modifications du code source, recette, ...
 
 Pour accéder à l'ensemble des ressources, trois étapes :
 
-1. rendez-vous sur http://csm-bretagne.fr/redmine/account/register pour 
+1. rendez-vous sur http://applis-bretagne.fr/redmine/account/register pour 
 vous enregistrer sur la plate-forme avec l'identifiant et l'adresse de 
 messagerie de votre choix
 2. contactez les administrateurs du projet geOrchestra sur info@georchestra.org 
 en rappelant votre identifiant, afin qu'il valide votre inscription au projet.
 3. une fois la confirmation reçue par messagerie, rendez-vous sur 
-http://csm-bretagne.fr/redmine/projects/show/geobretagne2 pour avoir accès à 
+http://applis-bretagne.fr/redmine/projects/show/geobretagne2 pour avoir accès à 
 l'ensemble des informations
 
 Technique

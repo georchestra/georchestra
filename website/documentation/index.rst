@@ -19,7 +19,7 @@ Gouvernance
    rfc
 
 Les RFC proposées, discutées et votées sont disponibles dans la section `RFC dans
-le wiki <http://csm-bretagne.fr/redmine/projects/georchestra/wiki/RFC>`_ de la 
+le wiki <http://applis-bretagne.fr/redmine/projects/georchestra/wiki/RFC>`_ de la 
 forge.
 
 Présentation
