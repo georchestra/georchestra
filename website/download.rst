@@ -25,7 +25,7 @@ Pour télécharger les sources, vous devez installer *subversion* (*TortoiseSVN*
 Packages
 =========
 
-Les archives au format WAR sont actuellement `téléchargeables <http://csm-bretagne.fr/hudson/view/georchestra/>`_ pour plusieurs modules : GeoServer, CAS, Doc, LDAP, ExtractorApp, et MapfishApp.
+Les archives au format WAR sont actuellement `téléchargeables <http://applis-bretagne.fr/hudson/job/georchestra//>`_ pour plusieurs modules : GeoServer, CAS, Doc, LDAP, ExtractorApp, et MapfishApp.
 
 
 Démonstration
