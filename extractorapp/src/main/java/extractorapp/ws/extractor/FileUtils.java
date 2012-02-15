@@ -183,7 +183,8 @@ public final class FileUtils {
     }
 
     public static File createTempDirectory() {
-        File tmpDir = new File(getExtractorStorageDir());
+        File tmpDir = new File(getExtractorStorageDir(),"temp");
+        tmpDir.mkdirs();
         int tries = 0;
         final int MAX_TRIES = 30;
         while (tries < MAX_TRIES) {
