@@ -62,10 +62,9 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
     public void run() {
         executionMetadata.setRunning();
         requestConfig.setThreadLocal();
+        final File tmpExtractionBundle = mkTmpBundleDir(requestConfig.extractionFolderPrefix+requestConfig.requestUuid .toString());
         try {
             long start = System.currentTimeMillis();
-            final File tmpExtractionBundle = mkTmpBundleDir(requestConfig.extractionFolderPrefix+requestConfig.requestUuid
-                    .toString());
             LOG.info("Starting extraction into directory: "
                     + tmpExtractionBundle);
 
@@ -144,7 +143,6 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
                             tmpExtractionBundle, archive, time(start, end));
             LOG.info(msg);
 
-            FileUtils.delete(tmpExtractionBundle);
             if (!requestConfig.testing) {
                 try {
                     emailNotice(successes, failures, oversized);
@@ -156,6 +154,7 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
             }
         } finally {
             executionMetadata.setCompleted();
+            FileUtils.delete(tmpExtractionBundle);
         }
     }
 
@@ -178,9 +177,11 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
     // ----------------- support methods ----------------- //
     /**
      * Protected to allow unit test to override
+     * @throws AssertionError 
+     * @throws IOException 
      */
     protected File mkTmpBundleDir(String name) {
-        File tmpDir = WebUtils.getTempDir(requestConfig.servletContext);
+        File tmpDir = FileUtils.createTempDirectory();
 
         File tmpExtractionBundle = new File(tmpDir, name);
         tmpExtractionBundle.mkdirs();

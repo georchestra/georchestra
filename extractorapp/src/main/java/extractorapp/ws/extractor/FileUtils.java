@@ -155,15 +155,7 @@ public final class FileUtils {
     }
 
     public static File storageFile(String filename) {
-        String baseStorageDir = System.getProperty("extractor.storage.dir");
-        
-        if(baseStorageDir==null){
-            baseStorageDir = System.getenv("extractor.storage.dir");
-        } 
-        /* still null ? let's try something else */ 
-        if (baseStorageDir == null){
-            baseStorageDir = System.getProperty("java.io.tmpdir")+File.separator+"extractorStorage";
-        }
+        String baseStorageDir = getExtractorStorageDir();
         if(filename==null || filename.length()==0){
             return new File(baseStorageDir);
         } else {
@@ -173,18 +165,43 @@ public final class FileUtils {
         }
     }
 
+    public static String getExtractorStorageDir() {
+        String baseStorageDir = System.getProperty("extractor.storage.dir");
+        
+        if(baseStorageDir==null){
+            baseStorageDir = System.getenv("extractor.storage.dir");
+        } 
+        /* still null ? let's try something else */ 
+        if (baseStorageDir == null){
+            baseStorageDir = System.getProperty("java.io.tmpdir")+File.separator+"extractorStorage";
+        }
+        return baseStorageDir;
+    }
+
     public static String toSafeFileName(String filename) {
         return filename.replaceAll("\\\\|/|:|\\||<|>|\\*|\"", "_");
     }
 
-    public static File createTempDirectory() throws IOException,
-            AssertionError {
-        File baseDir = File.createTempFile("WcsCoveragereader", null);
-        baseDir.delete();
-        if (!baseDir.mkdir()) {
-            throw new AssertionError(
-                    "unable to create a temporary directory for downloading coverage to");
+    public static File createTempDirectory() {
+        File tmpDir = new File(getExtractorStorageDir());
+        int tries = 0;
+        final int MAX_TRIES = 30;
+        while (tries < MAX_TRIES) {
+            try {
+                File baseDir = File.createTempFile("WcsCoverageReader", null, tmpDir);
+                if (!baseDir.delete() || !baseDir.mkdirs()) {
+                    tries++;
+                    continue;
+                } else {
+                    return baseDir;
+                }
+            } catch (IOException ioe) {
+                tries++;
+                if (tries > MAX_TRIES) {
+                    throw new RuntimeException(ioe);
+                }
+            }
         }
-        return baseDir;
+        throw new AssertionError("Unable to make a temporary director in base: "+tmpDir);
     }
 }

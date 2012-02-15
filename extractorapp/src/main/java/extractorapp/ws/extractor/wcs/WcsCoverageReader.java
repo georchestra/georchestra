@@ -26,7 +26,6 @@ import javax.imageio.ImageIO;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.tools.ant.taskdefs.Tar;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.io.AbstractGridCoverage2DReader;
 import org.geotools.coverage.grid.io.AbstractGridFormat;
@@ -253,7 +252,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
         }
     }
 
-    static void transformCoverage(final File sourceFile, final File file,
+    void transformCoverage(final File sourceFile, final File file,
             final WcsReaderRequest targetRequest,
             WcsReaderRequest executedRequest, boolean handleFormatTranform) throws IOException {
         final CoordinateReferenceSystem original = targetRequest.responseCRS;
@@ -287,7 +286,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
         }
     }
 
-    private static void geotoolsTranformation(final File sourceFile,
+    private void geotoolsTranformation(final File sourceFile,
             final File file, final WcsReaderRequest request,
             final CoordinateReferenceSystem original) throws IOException {
         LOG.info("using Geotools libraries to tranform the coverage");
@@ -306,6 +305,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
                 AbstractGridFormat format = Formats.getFormat(request.format);
                 if (writeToTmp) {
                     File tmpDir = FileUtils.createTempDirectory();
+                    try {
                     File tmpFile = new File(tmpDir, file.getName());
 
                     // write must be to tmpFile because Geotools does not always
@@ -320,6 +320,9 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
                     for (File f : tmpDir.listFiles()) {
                         File dest = new File(file.getParentFile(), f.getName());
                         FileUtils.moveFile(f, dest);
+                    }
+                    } finally {
+                        FileUtils.delete(tmpDir);
                     }
                 } else {
                     GridCoverageWriter writer = format.getWriter(file);
@@ -342,13 +345,12 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
             // reproject
             if (request.format.equalsIgnoreCase("geotiff")) {
                 File tmpDir = FileUtils.createTempDirectory();
-                File tmpFile = new File(tmpDir, baseFilename + "."
-                        + request.fileExtension());
                 try {
+                    File tmpFile = new File(tmpDir, baseFilename + "."+ request.fileExtension());
                     writeWorldImage(request, tmpFile, in);
                     convertToGeotiff(tmpFile, file);
                 } finally {
-                    FileUtils.delete(tmpFile);
+                    FileUtils.delete(tmpDir);
                 }
             } else {
                 BufferedImage image = ImageIO.read(in);

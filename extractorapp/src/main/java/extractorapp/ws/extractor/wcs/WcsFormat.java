@@ -1,5 +1,6 @@
 package extractorapp.ws.extractor.wcs;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -19,7 +20,6 @@ import org.opengis.parameter.ParameterValueGroup;
  * 
  * @author jeichar
  */
-@SuppressWarnings("deprecation")
 public class WcsFormat extends AbstractGridFormat {
     private final long maxCoverageExtractionSize;
 

@@ -23,10 +23,15 @@ public class GDALCommandLine {
         LOG.info("using GDAL command line to tranform the coverage");
 
         File tmpDir = FileUtils.createTempDirectory();
-        File outFile = new File(tmpDir, sourceFile.getName());
+        try {
+            File outFile = new File(tmpDir, sourceFile.getName());
 
-        reproject(sourceFile, executedRequest, targetRequest, outFile);
-        transformFormat(outFile, executedRequest, targetRequest, file);
+            reproject(sourceFile, executedRequest, targetRequest, outFile);
+            transformFormat(outFile, executedRequest, targetRequest, file);
+
+        } finally {
+            FileUtils.delete(tmpDir);
+        }
     }
 
     private static void transformFormat(File sourceFile, WcsReaderRequest executedRequest, WcsReaderRequest targetRequest, File outFile) throws IOException {

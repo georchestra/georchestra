@@ -288,7 +288,7 @@ public class ExtractorController implements ServletContextAware {
 	        this.extractionFolderPrefix = extractionFolderPrefix;
 	    }
     }
-
+	
     // ----------------- Methods for accessing servlet context ----------------- //
     // ServletContext is required for determining where files are within the 
     // webapp

@@ -1,5 +1,6 @@
 package extractorapp.ws.extractor;
 
+import java.io.File;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,7 +34,8 @@ public class RequestConfiguration {
             UUID requestUuid, CompleteEmailParams emailParams,
             ServletContext servletContext, boolean testing, String username,
             String roles, UsernamePasswordCredentials adminCredentials,
-            String secureHost, String extractionFolderPrefix, long maxCoverageExtractionSize, boolean remoteReproject, boolean useCommandLineGDAL) {
+            String secureHost, String extractionFolderPrefix, long maxCoverageExtractionSize, 
+            boolean remoteReproject, boolean useCommandLineGDAL) {
         super();
         this.requests = requests;
         this.requestUuid = requestUuid;
