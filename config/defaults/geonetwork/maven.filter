@@ -21,6 +21,7 @@ psql.db=@shared.psql.geonetwork.db@
 psql.user=@shared.psql.user@
 psql.pass=@shared.psql.pass@
 psql.url=@shared.psql.url@
+downloadform.psql.url=@shared.downloadform.psql.url@
 
 xhr.proxy-url=http://@shared.server.name@/proxy/
 

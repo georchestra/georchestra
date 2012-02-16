@@ -24,6 +24,7 @@ shared.psql.user=www-data
 shared.psql.pass=www-data
 
 shared.psql.url=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.psql.geonetwork.db@
+shared.downloadform.psql.url=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/downloadform
 
 shared.default.log.level=INFO
 other.framework.log.level=WARN
