@@ -59,8 +59,8 @@ public class GeoNetwork extends AbstractApplication {
 			
 		super.initializeVariables(request);
 		
-		fileName     = request.getParameter("filename");
-		metadataId   = request.getParameter("metadataId") != null ? Integer.parseInt(request.getParameter("metadataId")) : -1;
+		fileName     = request.getParameter("fname");
+		metadataId   = request.getParameter("id") != null ? Integer.parseInt(request.getParameter("id")) : -1;
 
 		Connection connection = null;
 		ResultSet resultSet = null;

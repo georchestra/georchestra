@@ -30,8 +30,7 @@ public abstract class AbstractApplication {
 	
 	protected boolean isInvalid() {
 		return ((firstName == null) || (secondName == null)	|| (company == null) || (email == null)
-				|| (dataUseStr == null) || (ok == false)
-				|| (userName == null) || (sessionId == null));
+				|| (dataUseStr == null) || (ok == false) || (sessionId == null));
 	}
 
 
@@ -47,7 +46,7 @@ public abstract class AbstractApplication {
 		dataUseStr = request.getParameter("datause")    != null ? request.getParameter("datause").split(",") : null;
 		comment      = request.getParameter("comment");
 		ok          = request.getParameter("ok")         != null ? request.getParameter("ok").equalsIgnoreCase("on") : false;
-		userName     = request.getHeader("sec-username")  != null ? request.getHeader("sec-username") : request.getParameter("username");
+		userName     = request.getHeader("sec-username");
 
 		sessionId    = request.getParameter("sessionid");
 	}
