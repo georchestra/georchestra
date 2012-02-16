@@ -28,6 +28,19 @@ class GenerateConfig {
 		  to: 'geonetwork'+SEP+'maven.filter').update { properties ->
   		  properties['transformFactory'] = 'net.sf.saxon.TransformerFactoryImpl'
   		  properties['wfs.host'] = '@wfs_ldap_host@'
+        properties['wfsRegionsCapabilities'] = 'http://ids.pigma.org/geoserver/pigma_loc/wfs?REQUEST=GetCapabilities&amp;SERVICE=WFS&amp;VERSION=1.0.0'
+        properties['wfsRegionsCredentials'] = '<param name="user" value="@shared.privileged.geoserver.user@" /><param name="pass" value="@shared.privileged.geoserver.pass@" />'
+        properties['geoserver.node.namespace.prefix'] = 'pigma_pub'
+        properties['geoserver.node.namespace.url'] = 'http://ids.pigma.org/geoserver/pigma_pub'
+        properties['config.xml.typenames'] = 
+'''         <typename name="Canton" typename="pigma_loc:recentrage_cantons" nameAtt="nom_canton" />
+            <typename name="Commune" typename="pigma_loc:recentrage_communes" nameAtt="nom_commun" />
+            <typename name="Departement" typename="pigma_loc:recentrage_departements" nameAtt="nom_depart" />
+            <typename name="EPCI" typename="pigma_loc:recentrage_epci" nameAtt="nom_epci" />
+            <typename name="Lieu-dit" typename="pigma_loc:recentrage_lieudits" nameAtt="nom_lieu_d" />'''
+        properties['config.xml.wfsUrl'] = 'http://@shared.server.name@/geoserver/wfs?REQUEST=GetCapabilities&amp;SERVICE=WFS&amp;VERSION=1.0.0'
+        properties['dlform.pdf_url'] = '/static/'
+        properties['dlform.activated'] = 'true'
   	}
 	}
 }
