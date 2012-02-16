@@ -21,5 +21,5 @@ from=@shared.email.from@
 priveleged_admin_name=@shared.privileged.geoserver.user@
 priveleged_admin_pass=@shared.privileged.geoserver.pass@
 
-dlformjdbcurl=@shared.download_form.jdbcurl@
+dlformjdbcurl=@shared.download_form.jdbcurl@?user=@shared.psql.user@&password=@shared.psql.pass@
 dlformactivated=@shared.download_form.activated@

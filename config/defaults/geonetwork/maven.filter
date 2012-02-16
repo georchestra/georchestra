@@ -21,13 +21,15 @@ psql.db=@shared.psql.geonetwork.db@
 psql.user=@shared.psql.user@
 psql.pass=@shared.psql.pass@
 psql.url=@shared.psql.url@
-downloadform.psql.url=@shared.downloadform.psql.url@
+
+downloadform.psql.url=@shared.download_form.jdbcurl@
+dlform.activated=@shared.ogc.statistics.activated@
+dlform.pdf_url=@shared.download_form.pdf_url@
 
 xhr.proxy-url=http://@shared.server.name@/proxy/
 
 groupSyncLdapBase=@shared.ldap.groupSearchBaseDN@,@shared.ldap.baseDn@
 jpegPhotoLdapBase=@shared.ldap.userSearchBaseDN@,@shared.ldap.baseDn@
-
 
 LdapHost=@shared.ldap.host@
 LdapPort=@shared.ldap.port@
