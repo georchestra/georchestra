@@ -79,7 +79,7 @@ public class GeoNetwork extends AbstractApplication {
 				PreparedStatement st = prepareFirstStatement(connection, insertDlQuery, Statement.RETURN_GENERATED_KEYS);
 
 				st.setInt(9, metadataId);
-				st.setInt(10, metadataId);
+				st.setString(10, fileName);
 
 				st.executeUpdate();
 				resultSet = st.getGeneratedKeys();
