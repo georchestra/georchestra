@@ -82,7 +82,8 @@ public class DataUsage {
 			  out = response.getOutputStream();
 			  out.write(object.toString().getBytes("UTF-8"));
 		} catch (Exception e) {
-			return;
+		    logger.debug("Failure obtaining the datausage", e);
+		    throw e;
 		} finally {
 			if (out != null) {
 				out.close();
