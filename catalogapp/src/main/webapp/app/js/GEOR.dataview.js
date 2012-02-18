@@ -29,7 +29,7 @@ GEOR.dataview = (function() {
     
     var OWSdb = {};
     
-    var form, jsonFormat;
+    var form = {}, jsonFormat;
         
     var selectedRecordsId = [];
         
@@ -42,10 +42,13 @@ GEOR.dataview = (function() {
             id = OpenLayers.Util.createUniqueID('OWS_');
             URI = URIs[i];
             switch (URI.protocol) {
+            case 'OGC:WMS-1.0.0-http-get-map':
+            case 'OGC:WMS-1.1.0-http-get-map':
             case 'OGC:WMS-1.1.1-http-get-map':
+            //case 'OGC:WMS-1.3.0-http-get-map': // not yet taken into account by mapfishapp
                 if (URI.value) {
                     OWSdb[id] = URI;
-                    var html = "<b>Visualiser</b> ";
+                    var html = "";
                     if (URI.name) {
                         // we have a layer
                         html += "la couche WMS <b>"+(URI.description || URI.name)+"</b>";
@@ -53,7 +56,8 @@ GEOR.dataview = (function() {
                         // we have a service
                         html += "le service WMS <b>"+(URI.description || URI.value)+"</b>";
                     }
-                    view.push('<button class="x-list-btn" id="'+id+'">'+html+'</button>');
+                    view.push('<button class="x-list-btn-view" id="'+id+'">'+"<b>Visualiser</b> "+html+'</button>');
+                    dl.push('<button class="x-list-btn-dl" id="'+id+'">'+"<b>Télécharger</b> "+html+'</button>');
                 }
                 break;
             /*
@@ -94,21 +98,21 @@ GEOR.dataview = (function() {
         ].join('');
     };
     
-    var submitData = function(o) {
-        form = form || Ext.DomHelper.append(Ext.getBody(), {
+    var submitData = function(url_key, o) {
+        form[url_key] = form[url_key] || Ext.DomHelper.append(Ext.getBody(), {
             tag: "form",
-            action: GEOR.config.VIEWER_URL,
+            action: GEOR.config[url_key], //url_key can be one of VIEWER_URL or EXTRACTOR_URL
             target: "_blank",
             method: "post"
         });
-        var input = form[0] || Ext.DomHelper.append(form, {
+        var input = form[url_key][0] || Ext.DomHelper.append(form[url_key], {
             tag: "input",
             type: "hidden",
             name: "data"
         });
         jsonFormat = jsonFormat || new OpenLayers.Format.JSON();
         input.value = jsonFormat.write(o);
-        form.submit();
+        form[url_key].submit();
     };
     
     
@@ -120,23 +124,25 @@ GEOR.dataview = (function() {
         if (!OWSdb[elt.id]) {
             return;
         }
+        var url_key = (elt.hasClass('x-list-btn-view')) ? 
+            'VIEWER_URL' : 'EXTRACTOR_URL';
         var services = [], layers = [];
         if (OWSdb[elt.id].name) {
             layers.push({
                 layername: OWSdb[elt.id].name,
-                metadataURL:"",
+                metadataURL:"", // FIXME
                 owstype:"WMS",
                 owsurl: OWSdb[elt.id].value
             });
         } else {
             services.push({
                 text: "test serveur",
-                metadataURL:"",
+                metadataURL:"", // FIXME
                 owstype:"WMS",
                 owsurl: OWSdb[elt.id].value
             });
         }
-        submitData({services: services, layers: layers});
+        submitData(url_key, {services: services, layers: layers});
     };
     
     var onZoomClick = function(e, t) {
@@ -151,7 +157,8 @@ GEOR.dataview = (function() {
     };
     
     var onStoreLoad = function(s) {
-        Ext.select('button.x-list-btn').on('click', onButtonClick);
+        Ext.select('button.x-list-btn-view').on('click', onButtonClick);
+        Ext.select('button.x-list-btn-dl').on('click', onButtonClick);
         Ext.select('.x-view-item a.zoom').on('click', onZoomClick);
         GEOR.waiter.hide();
         // we need to restore selection of items referenced in selectedRecords
