@@ -113,6 +113,10 @@ GEOR.dataview = (function() {
     
     
     var onButtonClick = function(evt, elt) {
+        elt = Ext.get(elt);
+        if (!elt.is('button')) { 
+            elt = elt.parent('button');
+        }
         if (!OWSdb[elt.id]) {
             return;
         }
@@ -147,7 +151,7 @@ GEOR.dataview = (function() {
     };
     
     var onStoreLoad = function(s) {
-        Ext.select('.x-list-btn').on('click', onButtonClick);
+        Ext.select('button.x-list-btn').on('click', onButtonClick);
         Ext.select('.x-view-item a.zoom').on('click', onZoomClick);
         GEOR.waiter.hide();
         // we need to restore selection of items referenced in selectedRecords
@@ -197,7 +201,7 @@ GEOR.dataview = (function() {
         getCmp: function() {
             if (!dataView) {
                 dataView = new Ext.DataView({
-                    //store: store, // do not specify store right now, or contentEL will be overwritten.
+                    //store: store, // do not specify store right now, or contentEl will be overwritten.
                     singleSelect: null,
                     //multiSelect: true,
                     selectedClass: 'x-view-selected',
