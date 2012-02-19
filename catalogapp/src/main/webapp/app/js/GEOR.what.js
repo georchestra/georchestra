@@ -37,7 +37,9 @@ GEOR.what = (function() {
                 listeners: {
                     "specialkey": function(field, e){
                         if (e.getKey() == e.ENTER) {
-                            GEOR.observable.fireEvent("searchrequest");
+                            GEOR.observable.fireEvent("searchrequest", {
+                                reset: true
+                            });
                         }
                     }
                 }

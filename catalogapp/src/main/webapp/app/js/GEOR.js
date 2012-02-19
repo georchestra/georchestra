@@ -89,7 +89,6 @@ Ext.onReady(function() {
     var whereFilter;
     var search = function(options) {
         GEOR.waiter.show();
-        GEOR.nav.reset();
         if (options && options.where) {
             whereFilter = options.where;
         }
@@ -175,6 +174,7 @@ Ext.onReady(function() {
             cls: 'bigbtn',
             iconCls: 'geor-btn-search',
             handler: function() {
+                GEOR.nav.reset();
                 search({
                     where: GEOR.where.getFilter()
                 });
@@ -194,7 +194,12 @@ Ext.onReady(function() {
      * acting as a mediator between the modules with
      * the objective of making them independent.
      */
-    o.on("searchrequest", search);
+    o.on("searchrequest", function(options) {
+        if (options && options.reset) {
+            GEOR.nav.reset();
+        }
+        search();
+    });
     o.on("storeloaded", function(options) {
         GEOR.nav.update(options.store, bbar);
         // scroll to top result:
