@@ -80,22 +80,10 @@ GEOR.nav = (function() {
         } else {
             bar.navText.setText("Résultat"+plural+" "+startPosition+" à "+max+" sur "+numberOfRecordsMatched);
             // handle buttons activation/deactivation:
-            if (startPosition == 1) {
-                bar.first.disable();
-                bar.previous.disable();
-                bar.next.enable();
-                bar.end.enable();
-            } else if (isMax()) {
-                bar.first.enable();
-                bar.previous.enable();
-                bar.next.disable();
-                bar.end.disable();
-            } else {
-                bar.first.enable();
-                bar.previous.enable();
-                bar.next.enable();
-                bar.end.enable();
-            }
+            bar.first.setDisabled(startPosition == 1);
+            bar.previous.setDisabled(startPosition == 1);
+            bar.next.setDisabled(isMax());
+            bar.end.setDisabled(isMax());
         }
     };
     
