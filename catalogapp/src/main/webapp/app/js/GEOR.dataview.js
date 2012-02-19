@@ -86,7 +86,9 @@ GEOR.dataview = (function() {
         return [
             '<tpl for=".">',
                 '<div class="x-view-item">',
-                    '<p><b>{title}</b>{[this.zoom(values)]}</p>',
+                    '<p><b>{title}</b> - <a href="'+GEOR.config.GEONETWORK_URL,
+                        '/metadata.show?uuid={identifier}" class="fullmd" target="_blank">fiche</a>',
+                        '{[this.zoom(values)]}</p>',
                     '<p>{abstract}</p>',
                     '{[this.buttons(values.URI)]}',
                     /*'Mots clés : ',
@@ -145,10 +147,14 @@ GEOR.dataview = (function() {
         submitData(url_key, {services: services, layers: layers});
     };
     
+    var getRecordFromHref = function(href) {
+        var uuid = href.slice(href.indexOf('#')+1);
+        return store.getById(uuid);
+    };
+    
     var onZoomClick = function(e, t) {
         // TODO: change event name to zoom
-        var uuid = t.href.slice(t.href.indexOf('#')+1);
-        var r = store.getById(uuid);
+        var r = getRecordFromHref(t.href);
         if (r) {
             GEOR.observable.fireEvent("itemzoom", {
                 record: r
