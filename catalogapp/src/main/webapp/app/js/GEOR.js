@@ -89,6 +89,7 @@ Ext.onReady(function() {
     var whereFilter;
     var search = function(options) {
         GEOR.waiter.show();
+        GEOR.nav.reset();
         if (options && options.where) {
             whereFilter = options.where;
         }
@@ -174,7 +175,6 @@ Ext.onReady(function() {
             cls: 'bigbtn',
             iconCls: 'geor-btn-search',
             handler: function() {
-                GEOR.nav.reset();
                 search({
                     where: GEOR.where.getFilter()
                 });
