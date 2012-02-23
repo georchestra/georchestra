@@ -86,6 +86,8 @@ public class ExtractionManager {
     /**
      * Will set priorities of all tasks to MEDIUM and re-add all waiting tasks back to the queue in the order of the uuids in newOrder.  
      * If a uuid is not the newOrder it will be deleted from the queue. 
+     * 
+     * @param newOrder a list of the task's uuids
      */
     public synchronized void updateAllPriorities(final List<String> newOrder) {
         executor.purge();

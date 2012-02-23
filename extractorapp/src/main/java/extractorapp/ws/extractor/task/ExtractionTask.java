@@ -62,7 +62,10 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
     public void run() {
         executionMetadata.setRunning();
         requestConfig.setThreadLocal();
-        final File tmpExtractionBundle = mkTmpBundleDir(requestConfig.extractionFolderPrefix+requestConfig.requestUuid .toString());
+
+        final File tmpDir = FileUtils.createTempDirectory(); 
+        final File tmpExtractionBundle = mkDirTmpExtractionBundle(tmpDir, requestConfig.extractionFolderPrefix+requestConfig.requestUuid .toString());
+        
         try {
             long start = System.currentTimeMillis();
             LOG.info("Starting extraction into directory: "
@@ -80,7 +83,7 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
                     tries++;
                     String name = String.format("%s__%s",
                             request._url.getHost(), request._layerName);
-                    File layerTmpDir = mkTmpBundleDir(name);
+                    File layerTmpDir = mkDirTmpExtractionBundle(tmpDir, name);
                     LOG.info("Attempt " + tries + " for extracting layer: "
                             + request._url + " -- " + request._layerName);
 
@@ -101,6 +104,7 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
                                     from.getName());
                             FileUtils.moveFile(from, to);
                         }
+                        FileUtils.delete(layerTmpDir);
                         LOG.info("Finished extracting layer: " + request._url
                                 + " -- " + request._layerName);
                         tries = EXTRACTION_ATTEMPTS + 1;
@@ -155,6 +159,8 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
         } finally {
             executionMetadata.setCompleted();
             FileUtils.delete(tmpExtractionBundle);
+            FileUtils.delete(tmpDir);
+            
         }
     }
 
@@ -180,8 +186,7 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
      * @throws AssertionError 
      * @throws IOException 
      */
-    protected File mkTmpBundleDir(String name) {
-        File tmpDir = FileUtils.createTempDirectory();
+    protected File mkDirTmpExtractionBundle(File tmpDir, String name) {
 
         File tmpExtractionBundle = new File(tmpDir, name);
         tmpExtractionBundle.mkdirs();

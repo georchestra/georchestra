@@ -20,15 +20,24 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONStringer;
+import org.json.JSONWriter;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.ServletContextAware;
 
 import extractorapp.ws.CompleteEmailParams;
 import extractorapp.ws.EmailDefaultParams;
 import extractorapp.ws.SharedConstants;
 import extractorapp.ws.acceptance.CheckFormAcceptance;
+import extractorapp.ws.extractor.task.ExecutionMetadata;
+import extractorapp.ws.extractor.task.ExecutionPriority;
+import extractorapp.ws.extractor.task.ExecutionState;
 import extractorapp.ws.extractor.task.ExtractionManager;
 import extractorapp.ws.extractor.task.ExtractionTask;
 
@@ -49,6 +58,15 @@ public class ExtractorController implements ServletContextAware {
     private static final String   RESULTS_MAPPING   = BASE_MAPPING + "package";
     private static final String   UUID_PARAM = "uuid";
 
+    private static final String   EXTRACTOR_GETTASKQUEUE = BASE_MAPPING + "getTaskQueue";
+    private static final String   EXTRACTOR_UPDATEPRIORITY = BASE_MAPPING + "updatePriority";
+    private static final String   EXTRACTOR_UPDATEALLPRIORITY = BASE_MAPPING + "updateAllPriorities";
+    private static final String   EXTRACTOR_REMOVETASK = BASE_MAPPING +  "removeTask";
+
+
+    private static final String   REQUEST_OPERATION_PARAM = "request";
+    
+    
     private String                      responseTemplateFile;
     private String                      reponseMimeType;
     private String                      responseCharset;
@@ -119,7 +137,82 @@ public class ExtractorController implements ServletContextAware {
         doExtraction(true, request, response);
     }
 
+	/**
+     * Lists the tasks waiting in the extraction queue.
+     * 
+     * @param request
+     * @param response
+     * @throws Exception
+     */
+    @RequestMapping(value = EXTRACTOR_GETTASKQUEUE, method = RequestMethod.GET)
+    public void getTaskQueue(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    	
+    	List<ExecutionMetadata> taskQueue = extractionManager.getTaskQueue();
+    	
+    	ExtractorGetTaskQueueResponse responseData = ExtractorGetTaskQueueResponse.newInstance(taskQueue);
+
+		response.setCharacterEncoding(responseCharset);
+		response.setContentType(reponseMimeType);
+		
+		PrintWriter out = response.getWriter();
+		try {
+			out.println(responseData.asJsonString());
+		} finally {
+			out.close();
+		}
+    }
+
+	/**
+     * Updates the task's priority.  
+     * 
+     * @param request contains task=taskID,  priorityValue
+     * @param response
+     * @throws Exception
+     */
+    @RequestMapping(value = EXTRACTOR_UPDATEPRIORITY, method = RequestMethod.PUT)
+    public void updatePriority(
+    		@RequestParam(ExtractorUpdatePriorityRequest.UUID_KEY) String uuid, 
+    		@RequestParam(ExtractorUpdatePriorityRequest.PRIORITY_KEY) String priority) throws Exception {
+
+    	//FIXME priority must be integer
+		ExtractorUpdatePriorityRequest updatePriorityRequest = ExtractorUpdatePriorityRequest.newInstance(uuid, priority);
+    	
+		extractionManager.updatePriority(updatePriorityRequest._uuid, updatePriorityRequest._priority);
+    }    
+
+    /**
+     * Update the priorities of all task in the queue. 
+     * 
+     * 
+     * @param request uuidList={["uuid1", "uuid2", ...]}
+     * @param response
+     * @throws Exception
+     */
+    @RequestMapping(value = EXTRACTOR_UPDATEALLPRIORITY, method = RequestMethod.PUT)
+    public void updateAllPriorities(
+    		@RequestParam(ExtractorUpdateAllPrioritiesRequest.UUID_LIST_KEY)  String strUuidList) throws Exception {
+
+    	ExtractorUpdateAllPrioritiesRequest updateAllPrioritiesRequest = ExtractorUpdateAllPrioritiesRequest.parseJson(strUuidList);
+    	
+		List<String> uuidList = updateAllPrioritiesRequest.asList();
+		
+		extractionManager.updateAllPriorities(uuidList );
+    }    
+    
+    /**
+     * Removes the task
+     * @param request uuid=uudiValue
+     * @param response
+     * @throws Exception
+     */
+    @RequestMapping(value = EXTRACTOR_REMOVETASK, method = RequestMethod.DELETE)
+    public void removeTask(@RequestParam(UUID_PARAM) String uuid ) throws Exception {
+
+		extractionManager.removeTask(uuid);
+    }    
+
     // ----------------- implementation of extraction ----------------- //
+
 
 	private void doExtraction(boolean testing, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
