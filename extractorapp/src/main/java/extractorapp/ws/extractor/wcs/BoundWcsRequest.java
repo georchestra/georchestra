@@ -58,7 +58,7 @@ import extractorapp.ws.extractor.XmlUtils;
  * 
  * @author jeichar
  */
-public class BoundWcsRequest extends WcsReaderRequest {
+class BoundWcsRequest extends WcsReaderRequest {
     private static final String              GET_CAPABILITIES      = "GetCapabilities";
     private static final String              DESCRIBE_COVERAGE     = "DescribeCoverage";
     private static final String                   GET_COVERAGE          = "GetCoverage";

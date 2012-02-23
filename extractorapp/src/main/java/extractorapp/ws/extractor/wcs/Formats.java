@@ -13,7 +13,7 @@ import org.geotools.coverageio.gdal.jp2ecw.JP2ECWFormat;
 import org.geotools.gce.geotiff.GeoTiffFormat;
 import org.geotools.gce.image.WorldImageFormat;
 
-public class Formats {
+class Formats {
     // If the requested format is not available on the server. Then these
     // are the order of formats to try next. (Once downloaded
     // in one of these formats then the result will be converted to the

@@ -14,7 +14,7 @@ import org.apache.commons.logging.LogFactory;
 import extractorapp.ws.ExtractorException;
 import extractorapp.ws.extractor.FileUtils;
 
-public class GDALCommandLine {
+class GDALCommandLine {
     private static final Log LOG = LogFactory.getLog(GDALCommandLine.class.getPackage().getName());
     private static final String SEP = File.separator;
 

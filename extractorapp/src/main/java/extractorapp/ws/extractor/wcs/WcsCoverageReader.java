@@ -230,6 +230,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
             File containingDirectory, String baseFilename)
             throws NoSuchAuthorityCodeException, FactoryException, IOException {
         InputStream input = null;
+        File tmpFile = null;
         try {
             BoundWcsRequest geotiffRequest = request.bind(_wcsUrl).withFormat("geotiff");
             BoundWcsRequest requestNativeFormat = geotiffRequest.withCRS(geotiffRequest.getNativeCRSs().iterator().next());
@@ -241,12 +242,15 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
             file = new File(containingDirectory, baseFilename + "." + request.fileExtension());
             LOG.debug("Writing GridCoverage obtained from " + _wcsUrl + " to file " + file);
 
-            File tmpFile = File.createTempFile(baseFilename, ".tif");
+            tmpFile = File.createTempFile(baseFilename, ".tif");
             writeToFile(tmpFile, input);
 
             transformCoverage(tmpFile, file, request, requestNativeFormat, true);
             return file;
         } finally {
+        	if(tmpFile != null)
+        		FileUtils.delete(tmpFile);
+        	
             if (input != null)
                 IOUtils.closeQuietly(input);
         }
@@ -284,6 +288,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
         } else if(!sourceFile.equals(file)) {
             FileUtils.moveFile(sourceFile, file);
         }
+        
     }
 
     private void geotoolsTranformation(final File sourceFile,

@@ -13,7 +13,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * 
  * @author jesse
  */
-public final class ScaleUtils {
+final class ScaleUtils {
 
 	static final double ACCURACY = 0.00000001;
 //	private static final int MAX_ITERATIONS = 10;

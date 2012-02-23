@@ -21,7 +21,7 @@ import extractorapp.ws.ExtractorException;
  * @param <T> The resulting object from the transformation
  */
 @SuppressWarnings("deprecation")
-public abstract class CoverageTransformation<T> {
+abstract class CoverageTransformation<T> {
 	/**
 	 * Entry point for performing a transformation
 	 * 
