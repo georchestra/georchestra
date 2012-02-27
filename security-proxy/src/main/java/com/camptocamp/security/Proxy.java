@@ -463,6 +463,10 @@ public class Proxy {
             String reasonPhrase = statusLine.getReasonPhrase();
             
             if (reasonPhrase != null && statusCode > 399) {
+            	if (logger.isWarnEnabled()) {
+            		logger.warn("Error occurred. statuscode: "+statusCode+", reason: "+reasonPhrase);
+            	}
+
             	if (statusCode == 401) {
             		//
             		// Handle case of basic authentication.
@@ -470,11 +474,15 @@ public class Proxy {
             		Header authHeader = proxiedResponse.getFirstHeader("WWW-Authenticate");
             		finalResponse.setHeader("WWW-Authenticate", (authHeader == null) ? "Basic realm=\"Authentication required\"" : authHeader.getValue());
             	}
-            	if (logger.isWarnEnabled()) {
-            		logger.warn("Error occurred. statuscode: "+statusCode+", reason: "+reasonPhrase);
-            	}
-                finalResponse.sendError(statusCode, reasonPhrase);
-                return;
+
+                // handles 403, 404 and 500 specifically
+                // sometimes proxified webapps gives some useful informations,
+                // that have to be retrieved in order to facilitate the
+                // debugging
+                else if ((statusCode != 404) && (statusCode != 403) && (statusCode != 500)) {
+                  finalResponse.sendError(statusCode, reasonPhrase);
+                  return;
+                }
             }
             
             headerManagement.copyResponseHeaders(request, request.getRequestURI(), proxiedResponse, finalResponse, this.targets);
@@ -487,6 +495,7 @@ public class Proxy {
             String contentType = null;
             if (proxiedResponse.getEntity() != null && proxiedResponse.getEntity().getContentType() != null) {
                 contentType = proxiedResponse.getEntity().getContentType().getValue();
+                logger.debug("content-type detected: "+contentType);
             }
             
             // content type has to be valid
