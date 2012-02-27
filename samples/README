@@ -41,3 +41,12 @@ more documented than the new "slapd.d" way.
 
 The last file (georchestra.ldif) contains a LDIF export of a sample LDAP tree.
 
+
+gidNumber uniqueness
+
+Another file is provided but it is optional: gidnumber-uniqueness.ldif
+
+It aims to add a unicity constraint on each objects under the base
+ou=groups,dc=georchestra,dc=org, so that another group is added, it should have
+a unique gidNumber attribute.
+
