@@ -15,7 +15,7 @@ function updateTestTagsVisibility() {
             $(VISISWITCHES[i].selector).hide()
         };
     };
-    $("*[class='layersmenu']").tooltip({
+    $(".layersmenu").tooltip({
         position: 'center left'
     });
 

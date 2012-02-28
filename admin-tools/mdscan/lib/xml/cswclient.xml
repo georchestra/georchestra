@@ -85,6 +85,9 @@
     </div><!-- credits -->
 
     <!-- popups -->
+    <div class="apple-overlay" id="overlay">
+    </div>
+    <!-- popups -->
     <div id="popup">
         <div class="close">
             <a href="javascript:void(csw_client.hideDiv(document.getElementById('popup')))">[close]</a>
@@ -96,6 +99,5 @@
             </div>
         </div>
     </div><!-- popups -->
-
 
 </div><!-- cswclient -->

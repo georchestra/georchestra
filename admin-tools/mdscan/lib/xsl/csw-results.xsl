@@ -164,7 +164,7 @@ xmlns:dct="http://purl.org/dc/terms/">
 
   <!-- actions -->
   <xsl:template name="md-action-wms-group">
-    <a href="#" title="administrer les données">adm</a>
+    <a href="#" class="layersmenu">adm</a>
 
     <div class="tooltip">
         <h4><xsl:value-of select="./dc:identifier" />
@@ -190,15 +190,14 @@ xmlns:dct="http://purl.org/dc/terms/">
                                 <xsl:value-of select="." />
                             </xsl:attribute>
                             <xsl:text>télécharger </xsl:text>
-                            <xsl:value-of select="." />
                         </a>
                     </li>
                 </xsl:if>
             </xsl:for-each>
         </ul>
 
-        <!-- administration WMS -->
-        <span>administration WMS</span>
+        <!-- services -->
+        <span>services OGC</span>
         <ul>
             <xsl:for-each select="dc:URI[@protocol='OGC:WMS-1.1.1-http-get-map'
             or @protocol='OGC:WMS-1.3.0-http-get-map']">

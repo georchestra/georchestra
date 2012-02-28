@@ -74,6 +74,7 @@
     position: absolute;
     background: #ffffff;
     border: 1px solid #2e4a6b;
+    opacity: 1.0;
 }
 
 #popup2
@@ -217,3 +218,8 @@
 }
 
 
+
+
+#overlay {
+      width: 300px; 
+}
