@@ -9,6 +9,35 @@ xmlns:dct="http://purl.org/dc/terms/">
     <xsl:text>javascript:(csw_client.getRecords</xsl:text>
     <xsl:text>('</xsl:text>
   </xsl:variable>
+   
+  <!-- liste keywords INSPIRE -->
+  <xsl:variable name="kwtheme">
+Activités économiques,
+Agriculture,
+Démographie,
+Eau,
+Economie numérique,
+Emploi,
+Energie,
+Enseignement,
+Entreprises,
+Equipements de mesure,
+Equipements publics,
+Finances locales,
+Foncier,
+Habitat,
+Infrastructures de transpport,
+Limites administratives,
+Mer et littoral,
+Patrimoine architectural urbain et culturel,
+Patrimoine naturel,
+Risques naturels,
+Risques sanitaires,
+Risques technologiques,
+Référentiel,
+Urbanisme,
+  </xsl:variable>
+
   <xsl:template match="/results/*[local-name()='GetRecordsResponse']">
 
     <xsl:apply-templates select="./*[local-name()='SearchResults']" />
@@ -88,6 +117,7 @@ xmlns:dct="http://purl.org/dc/terms/">
         <thead>
             <tr>
                 <th class="title">titre</th>
+                <th class="tutke">classement</th>
                 <th>validation</th>
                 <th> </th>
             </tr>
@@ -102,6 +132,9 @@ xmlns:dct="http://purl.org/dc/terms/">
                     </xsl:if>
                     <td class="title">
                         <xsl:call-template name="md-title" />
+                    </td>
+                    <td class="subject">
+                        <xsl:call-template name="md-theme" />
                     </td>
                     <td class="tests">
                       <xsl:call-template name="test-all" />
@@ -197,12 +230,12 @@ xmlns:dct="http://purl.org/dc/terms/">
         </ul>
 
         <!-- services -->
-        <span>services OGC</span>
         <ul>
             <xsl:for-each select="dc:URI[@protocol='OGC:WMS-1.1.1-http-get-map'
             or @protocol='OGC:WMS-1.3.0-http-get-map']">
                 <xsl:if test=".!='' and @name and @name!=''">
                     <li>
+                        OGC:WMS
                         <span>
                             <xsl:attribute name="title">
                                 <xsl:value-of select="@description" />
@@ -230,7 +263,7 @@ xmlns:dct="http://purl.org/dc/terms/">
                                     <xsl:text>/geoserver/web/?wicket:bookmarkablePage=:org.geoserver.web.data.resource.ResourceConfigurationPage&amp;name=</xsl:text>
                                     <xsl:value-of select="@name" />
                                 </xsl:attribute>
-                                <xsl:text>GeoServer</xsl:text>
+                                <xsl:text>GS</xsl:text>
                             </a>
                         </xsl:if>
                     </li>
@@ -323,6 +356,16 @@ xmlns:dct="http://purl.org/dc/terms/">
             </xsl:call-template>
         </xsl:otherwise>
     </xsl:choose>
+  </xsl:template>
+
+  <!-- classification par theme -->
+  <xsl:template name="md-theme">
+           <xsl:for-each select="dc:subject">
+              <xsl:if test="contains($kwtheme,concat(.,','))">
+                  <xsl:value-of select="." />
+                  <xsl:text> </xsl:text>
+              </xsl:if>
+           </xsl:for-each>
   </xsl:template>
 
   <!-- test sur la source decrite dans les metadonnees -->
