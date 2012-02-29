@@ -11,33 +11,68 @@ xmlns:dct="http://purl.org/dc/terms/">
   </xsl:variable>
    
   <!-- liste keywords INSPIRE -->
-  <xsl:variable name="kwtheme">
-Activités économiques,
-Agriculture,
-Démographie,
-Eau,
-Economie numérique,
-Emploi,
-Energie,
-Enseignement,
-Entreprises,
-Equipements de mesure,
-Equipements publics,
-Finances locales,
-Foncier,
-Habitat,
-Infrastructures de transpport,
-Limites administratives,
-Mer et littoral,
-Patrimoine architectural urbain et culturel,
-Patrimoine naturel,
-Risques naturels,
-Risques sanitaires,
-Risques technologiques,
-Référentiel,
-Urbanisme,
+  <xsl:variable name="kwthemes">
+Activités économiques;
+Agriculture;
+Démographie;
+Eau;
+Economie numérique;
+Emploi;
+Energie;
+Enseignement;
+Entreprises;
+Equipements de mesure;
+Equipements publics;
+Finances locales;
+Foncier;
+Habitat;
+Infrastructures de transpport;
+Limites administratives;
+Mer et littoral;
+Patrimoine architectural urbain et culturel;
+Patrimoine naturel;
+Risques naturels;
+Risques sanitaires;
+Risques technologiques;
+Référentiel;
+Urbanisme;
   </xsl:variable>
-
+  <xsl:variable name="inspirethemes">
+Référentiel de coordonnées;
+Système de maillage géographique;
+Dénominations géographiques;
+Unités administratives;
+Adresses;
+Parcelles cadastrales;
+Réseaux de transport;
+Hydrographie;
+Sites protégés;
+Altitude;
+Occupation des terres;
+Ortho-imagerie;
+Géologie;
+Unités statistiques;
+Bâtiments;
+Sols;
+Usage des sols;
+Santé et sécurité des personnes;
+Services d'utilité publique et services publics;
+Installations de suivi environnemental;
+Lieux de production et sites industriels;
+Installations agricoles et aquacole;
+Répartition de la population — Démographie;
+Zones de gestion, de restriction ou de réglementation et unités de déclaration;
+Zones à risque naturel;
+Conditions atmosphériques;
+Caractéristiques géographiques météorologiques;
+Caractéristiques géographiques océanographiques;
+Régions maritimes;
+Régions biogéographiques;
+Habitats et biotopes;
+Répartition des espèces;
+Sources d'énergie;
+Ressources minérales;
+  </xsl:variable>
   <xsl:template match="/results/*[local-name()='GetRecordsResponse']">
 
     <xsl:apply-templates select="./*[local-name()='SearchResults']" />
@@ -117,7 +152,8 @@ Urbanisme,
         <thead>
             <tr>
                 <th class="title">titre</th>
-                <th class="tutke">classement</th>
+                <th ckass="title">INSPIRE</th>
+                <th class="title">classement</th>
                 <th>validation</th>
                 <th> </th>
             </tr>
@@ -132,6 +168,9 @@ Urbanisme,
                     </xsl:if>
                     <td class="title">
                         <xsl:call-template name="md-title" />
+                    </td>
+                    <td class="subject">
+                        <xsl:call-template name="md-inspire" />
                     </td>
                     <td class="subject">
                         <xsl:call-template name="md-theme" />
@@ -177,6 +216,28 @@ Urbanisme,
       </a>
     </span>
   </xsl:template>
+
+
+  <!-- classification par theme -->
+  <xsl:template name="md-theme">
+           <xsl:for-each select="dc:subject">
+              <xsl:if test="contains($kwthemes,concat(.,';'))">
+                  <xsl:value-of select="." />
+                  <xsl:text> </xsl:text>
+              </xsl:if>
+           </xsl:for-each>
+  </xsl:template>
+
+  <!-- classification INSPIRE -->
+  <xsl:template name="md-inspire">
+           <xsl:for-each select="dc:subject">
+              <xsl:if test="contains($inspirethemes,concat(.,';'))">
+                  <span class="inspire"><xsl:value-of select="." /></span>
+                  <xsl:text> </xsl:text>
+              </xsl:if>
+           </xsl:for-each>
+  </xsl:template>
+
 
   <!--template dc:type -->
   <xsl:template match="dc:type">
@@ -358,15 +419,6 @@ Urbanisme,
     </xsl:choose>
   </xsl:template>
 
-  <!-- classification par theme -->
-  <xsl:template name="md-theme">
-           <xsl:for-each select="dc:subject">
-              <xsl:if test="contains($kwtheme,concat(.,','))">
-                  <xsl:value-of select="." />
-                  <xsl:text> </xsl:text>
-              </xsl:if>
-           </xsl:for-each>
-  </xsl:template>
 
   <!-- test sur la source decrite dans les metadonnees -->
   <xsl:template name="test-source">

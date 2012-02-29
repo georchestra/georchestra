@@ -138,6 +138,12 @@
 	width: 100%;
 }
 
+#csw-output td.subject {
+        font-size: smaller;
+        font-style: italic;
+        padding-right: 2em;
+}
+
 #csw-output td.tests {
 }
 
