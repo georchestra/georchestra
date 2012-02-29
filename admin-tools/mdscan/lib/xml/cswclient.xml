@@ -1,9 +1,10 @@
 <div id="cswclient">
     <fieldset>
-        <legend>Recherche de données</legend>
+        <legend>mdscan - vérification des services de découverte</legend>
         <form name="theForm" method="POST" action="javascript:void(csw_client.getRecords())">
             <!-- insertion des services csw -->
             <span id="csw-hosts"></span>
+            <input id="cswhost" name="cswhost" />
             <br />
             <br />
 
@@ -43,11 +44,11 @@
             <br />
             <br />
 
-            <input type="checkbox" id="checkDebug" title="afficher informations de déboguage" />
+            <input type="checkbox" id="checkDebug" title="afficher les informations de déboguage" />
             <label for="checkDebug">
                 <span class="md-test debug nohide">déboguage</span>
             </label>
-            <input type="checkbox" id="checkInfo" title="afficher informations" />
+            <input type="checkbox" id="checkInfo" title="afficher les informations" />
             <label for="checkInfo">
                 <span class="md-test info nohide">information</span>
             </label>
@@ -59,7 +60,7 @@
             <label for="checkError">
                 <span class="md-test error nohide">erreur</span>
             </label>
-            <input type="checkbox" id="checkCritical" checked="checked" title="afficher erreurs critiques" />
+            <input type="checkbox" id="checkCritical" checked="checked" title="afficher les erreurs critiques" />
             <label for="checkCritical">
                 <span class="md-test critical nohide">erreur critique</span>
             </label>
@@ -80,8 +81,9 @@
 
     <!-- credits -->
     <div class="credits">
-            This tool was based on software developed by the National Aerospace Laboratory (NLR) available at:
-            <a href="http://www.gdsc.nl/gdsc/en/tools/simple_csw_client">http://www.gdsc.nl/gdsc/en/tools/simple_csw_client</a>
+        mdscan is based on <a href="http://www.gdsc.nl/gdsc/en/tools/simple_csw_client">software developed by the National Aerospace Laboratory (NLR)</a>.
+        <br />
+        mdscan is part of the <a href="http://www.georchestra.org/">geOrchestra project</a>.
     </div><!-- credits -->
 
     <!-- popups -->

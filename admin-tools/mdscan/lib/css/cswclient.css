@@ -63,7 +63,23 @@
 }
 
 
+/**
+ form content
+ */
+#cswhost {
+	width: 30em;
+}
 
+
+
+/**
+popup styles
+ */
+
+
+#overlay {
+      width: 300px;
+}
 
 #popup
   { visibility:hidden;
@@ -150,12 +166,6 @@
 
 
 /**
- * metadata styles
- */
-
-
-
-/**
  * test styles
  */
 
@@ -196,6 +206,7 @@
  */
 
 /* tooltip styling */
+
 .tooltip {
 	display:none;
 	width: 40em;
@@ -226,6 +237,4 @@
 
 
 
-#overlay {
-      width: 300px; 
-}
+
