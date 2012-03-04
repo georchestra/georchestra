@@ -355,7 +355,7 @@ GEOR.custom = {
      * ROLE_SV_USER means the user needs to be connected.
      * Defaults to []
      */
-    ROLES_FOR_QUERIER: ['ROLE_SV_USER'],
+    ROLES_FOR_QUERIER: [],
     
     /**
      * Constant: ROLES_FOR_PRINTER
