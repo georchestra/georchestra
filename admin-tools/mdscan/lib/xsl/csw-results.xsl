@@ -26,7 +26,7 @@ Equipements publics;
 Finances locales;
 Foncier;
 Habitat;
-Infrastructures de transpport;
+Infrastructures de transport;
 Limites administratives;
 Mer et littoral;
 Patrimoine architectural urbain et culturel;
