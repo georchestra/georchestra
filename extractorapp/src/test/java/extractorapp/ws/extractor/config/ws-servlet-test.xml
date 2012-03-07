@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+						http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean id="messageSource"
+          class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+        <property name="basename" 
+                  value="messages"/>
+    </bean>
+
+    <!--  url mapping is directly handled with the spring annotations written in the following controllers -->
+<!-- 
+    <bean id="homecontroller" 
+          class="extractorapp.ws.doc.HomeController"/>
+        <bean id="ogcproxy" 
+          class="extractorapp.ws.doc.OGCProxy"/>
+    <bean id="doc-controller"
+          class="extractorapp.ws.doc.DocController"/>
+    <bean id="expire-daemon" init-method="startup" 
+          class="extractorapp.ws.extractor.ExpiredArchiveDaemon">
+      <property name="expiry" value="10"/> 
+      <property name="period" value="10"/> 
+      <property name="extractionManager" ref="extractionManager"/>
+    </bean>
+-->
+      
+    <bean id="extractor-controller" init-method="validateConfig"
+          class="extractorapp.ws.extractor.ExtractorController">
+        <!--           
+        <property name="responseTemplateFile" 
+                  value="/WEB-INF/templates/extractor-http-response-template.xml"/>
+        <property name="servletUrl" 
+                  value="${servletUrl}"/>
+                  
+        <property name="secureHost" 
+                  value="${secureHost}"/>
+        <property name="reponseMimeType" 
+                  value="application/xml"/>
+        <property name="responseCharset" 
+                  value="UTF-8"/>
+        <property name="emailDefaults" 
+                  ref="emailDefaults"/>
+        <property name="emailTemplateFile" 
+                  value="/WEB-INF/templates/extractor-email-template.txt"/>
+        <property name="emailAckTemplateFile" 
+                  value="/WEB-INF/templates/extractor-email-ack-template.txt"/>                  
+        <property name="emailSubject"
+                  value="Votre demande d'extraction"/>
+        <property name="maxCoverageExtractionSize"
+                  value="${maxCoverageExtractionSize}"/>
+                  
+        <property name="remoteReproject"
+                  value="${remoteReproject}"/>
+        <property name="useCommandLineGDAL"
+                  value="${useCommandLineGDAL}"/>
+        <property name="extractionFolderPrefix"
+                  value="${extractionFolderPrefix}"/>
+        <property name="adminCredentials">
+            <bean class="org.apache.commons.httpclient.UsernamePasswordCredentials">
+                <constructor-arg index="0" value="${priveleged_admin_name}"/>
+                <constructor-arg index="1" value="${priveleged_admin_pass}"/>
+            </bean>
+        </property>
+		<property name="checkFormAcceptance">
+			<bean class="extractorapp.ws.acceptance.CheckFormAcceptance">
+				<constructor-arg index="0" value="${dlformjdbcurl}" />
+				<constructor-arg index="1" value="${dlformactivated}" />
+			</bean>
+		</property>
+		-->
+        <property name="extractionManager" ref="extractionManager"/>
+        
+    </bean>
+    
+    <bean id="taskControllers" class="extractorapp.ws.extractor.task.TaskControllers" init-method="init">
+        <property name="extractionManager" ref="extractionManager"/>
+    </bean>
+
+    <bean id="extractionManager" class="extractorapp.ws.extractor.task.ExtractionManager" init-method="init">
+        <property name="minThreads" value="1"/>
+        <property name="maxExtractions"
+                  value="100"/>
+    </bean>
+
+    <!-- Email configuration -->
+<!--     
+    <bean id="emailDefaults" 
+          class="extractorapp.ws.EmailDefaultParams">
+        <property name="smtpHost" 
+                  value="${smtpHost}"/>
+        <property name="smtpPort" 
+                  value="${smtpPort}"/>
+        <property name="replyTo" 
+                  value="${replyTo}"/>
+        <property name="from" 
+                  value="${from}"/>
+        <property name="bodyEncoding" 
+                  value="UTF-8"/>
+        <property name="subjectEncoding" 
+                  value="UTF-8"/>
+        <property name="languages"
+                  value="fr,fra"/>
+    </bean>
+-->     
+      <!-- View resolver Required to access jsps in WEB-INF/jsp directory-->
+    <bean id="viewResolver"
+          class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+        <property name="prefix" value="/WEB-INF/jsp/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+    
+    <!-- upload de fichiers -->
+    <bean id="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+      <property name="maxUploadSize" value="1000000"/>
+    </bean>
+    
+<!-- 
+    <bean id="properties-loader"
+        class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
+        p:locations="/WEB-INF/extractorapp.properties" />
+        --> 
+        
+</beans>
+

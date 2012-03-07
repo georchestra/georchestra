@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -26,7 +27,6 @@ import org.json.JSONException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.TransformException;
-import org.springframework.web.util.WebUtils;
 
 import extractorapp.ws.extractor.ExtractorController;
 import extractorapp.ws.extractor.ExtractorLayerRequest;
@@ -52,13 +52,22 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
     private RequestConfiguration requestConfig;
 
     public ExtractionTask(RequestConfiguration requestConfig)
-            throws NoSuchAuthorityCodeException, MalformedURLException,
-            JSONException, FactoryException {
+    			throws NoSuchAuthorityCodeException, MalformedURLException, JSONException, FactoryException {
         this.requestConfig = requestConfig; 
-        this.executionMetadata = new ExecutionMetadata(requestConfig.requestUuid);
+        this.executionMetadata = new ExecutionMetadata(
+        							this.requestConfig.requestUuid,
+        							this.requestConfig.username,
+        							new Date(),
+        							this.requestConfig.strRequest);
+    }
+    public ExtractionTask(ExtractionTask toCopy) {
+
+        this.requestConfig = toCopy.requestConfig; 
+        this.executionMetadata = toCopy.executionMetadata;
     }
 
-    @Override
+
+	@Override
     public void run() {
         executionMetadata.setRunning();
         requestConfig.setThreadLocal();
@@ -80,7 +89,8 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 
                 int tries = 0;
                 while (tries < EXTRACTION_ATTEMPTS) {
-                    tries++;
+                	
+                	tries++;
                     String name = String.format("%s__%s",
                             request._url.getHost(), request._layerName);
                     File layerTmpDir = mkDirTmpExtractionBundle(tmpDir, name);
@@ -156,7 +166,7 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
             } else if (requestConfig.testing && !failures.isEmpty()) {
                 throw new RuntimeException(Arrays.toString(failures.toArray()));
             }
-        } finally {
+		} finally {
             executionMetadata.setCompleted();
             FileUtils.delete(tmpExtractionBundle);
             FileUtils.delete(tmpDir);
@@ -164,7 +174,7 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
         }
     }
 
-    private String time(long start, long end) {
+	private String time(long start, long end) {
         long seconds = (end - start) / 1000;
         if (seconds > 60) {
             long minutes = seconds / 60;
@@ -401,12 +411,15 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 
     @Override
     public int compareTo(ExtractionTask other) {
-        return executionMetadata.getPriority().compareTo(
-                other.executionMetadata.getPriority());
+    	
+      return other.executionMetadata.getPriority().compareTo(
+    		  				this.executionMetadata.getPriority());
+// Replaced because this code order from low to high    	
+//        return executionMetadata.getPriority().compareTo(
+//                other.executionMetadata.getPriority());
     }
 
     public boolean equalId(String uuid) {
         return requestConfig.requestUuid.toString().equals(uuid);
     }
-
 }

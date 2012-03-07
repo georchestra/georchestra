@@ -1,6 +1,5 @@
 package extractorapp.ws.extractor;
 
-import java.io.File;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,14 +28,19 @@ public class RequestConfiguration {
     public final long maxCoverageExtractionSize;
     public final boolean remoteReproject;
     public final boolean useCommandLineGDAL;
+    /** the original request in json syntax */
+	public final String strRequest;
     
     public RequestConfiguration(List<ExtractorLayerRequest> requests,
             UUID requestUuid, CompleteEmailParams emailParams,
             ServletContext servletContext, boolean testing, String username,
             String roles, UsernamePasswordCredentials adminCredentials,
             String secureHost, String extractionFolderPrefix, long maxCoverageExtractionSize, 
-            boolean remoteReproject, boolean useCommandLineGDAL) {
+            boolean remoteReproject, boolean useCommandLineGDAL,
+            String strRequest) {
         super();
+        
+        this.strRequest = strRequest;
         this.requests = requests;
         this.requestUuid = requestUuid;
         this.emailParams = emailParams;

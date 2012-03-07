@@ -1,7 +1,5 @@
 package extractorapp.ws.extractor;
 
-import java.util.List;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -15,9 +13,6 @@ import extractorapp.ws.extractor.task.ExecutionPriority;
  */
 class ExtractorUpdatePriorityRequest {
 
-	public static String operationName = "updatePriority";
-    public static final String	UUID_KEY = "uuid";
-    public static final String PRIORITY_KEY	= "priority";
     
     public final String	_uuid;
     public final ExecutionPriority	_priority;
@@ -42,9 +37,9 @@ class ExtractorUpdatePriorityRequest {
     	
     	JSONObject jsonRequest = JSONUtil.parseStringToJSon(jsonData);
     	
-    	final String uuid = jsonRequest.getString(UUID_KEY);
+    	final String uuid = jsonRequest.getString(TaskDescriptor.UUID_KEY);
 
-    	final String strPriority = jsonRequest.getString(PRIORITY_KEY);
+    	final String strPriority = jsonRequest.getString(TaskDescriptor.PRIORITY_KEY);
 		ExecutionPriority priority = ExecutionPriority.valueOf(strPriority);
 
 		ExtractorUpdatePriorityRequest request = new ExtractorUpdatePriorityRequest(uuid, priority);
@@ -52,16 +47,28 @@ class ExtractorUpdatePriorityRequest {
 		return request ;
     }
 
-	public static ExtractorUpdatePriorityRequest newInstance(String uuid, String strPriority) {
+    /**
+     * New instance of {@link ExtractorUpdatePriorityRequest}
+     * 
+     * @param uuid
+     * @param intPriority it should be one of the enumerated values defined in {@link ExecutionPriority}} 
+     * @return {@link ExtractorUpdatePriorityRequest}
+     */
+	public static ExtractorUpdatePriorityRequest newInstance(final String uuid, final int intPriority) {
 
-		ExecutionPriority priority = ExecutionPriority.valueOf(strPriority);
+		ExecutionPriority priority = null;
+		for (ExecutionPriority p: ExecutionPriority.values()) {
+			if(p.ordinal() == intPriority){
+				priority = p;
+				break;
+			}
+		}
+		if(priority == null){
+			throw new IllegalArgumentException("the priority value: "+ intPriority +" is not valid.");
+		}
 
 		ExtractorUpdatePriorityRequest request = new ExtractorUpdatePriorityRequest(uuid, priority);
     	
 		return request ;
 	}
-    
-    
-    
-	
 }

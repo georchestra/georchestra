@@ -6,37 +6,83 @@ import java.util.concurrent.Future;
 
 public class ExecutionMetadata {
 
+	// mutable attributes
     private ExecutionState state = ExecutionState.WAITING;
     private Date stateChangeTime = new Date();
+	private Date beginTime = null;
+    private Date endTime = null;
     private ExecutionPriority priority = ExecutionPriority.MEDIUM;
-    private Future<?> future = new PlaceholderFuture();
-    private String uuid;
 
-    public ExecutionMetadata(UUID requestUuid) {
+    // this values are immutables
+    private final String requestor;
+	private final Date requestTime;
+	private final String requests;
+    private final String uuid;
+
+    private Future<?> future = new PlaceholderFuture();
+
+
+	public ExecutionMetadata(UUID requestUuid, String userName, Date date,  String requests) {
         this.uuid = requestUuid.toString();
+        this.requestor = userName;
+        this.requestTime = date;
+        this.requests = requests;
     }
-    
-    
 
     public ExecutionMetadata(ExecutionMetadata toCopy) {
         this.state = toCopy.state;
         this.stateChangeTime = toCopy.stateChangeTime;
+        this.beginTime = toCopy.beginTime;
+        this.endTime = toCopy.endTime;
+        this.requestTime = toCopy.requestTime;
+        this.requestor = toCopy.requestor;
         this.priority = toCopy.priority;
         this.future = toCopy.future;
         this.uuid = toCopy.uuid;
+        this.requests = toCopy.requests;
     }
 
+    public String getUuid() {
+        return uuid;
+    }
+
+    public String getSpec() {
+		
+		return this.requests;
+	}
+
+	public String getRequestor() {
+		return requestor;
+	}
 
 
+	public Date getRequestTime() {
+		return requestTime;
+	}
+
+	public synchronized void setWaiting() {
+        state = ExecutionState.WAITING;
+        stateChangeTime = new Date();
+    }
+    
     public synchronized void setRunning() {
         state = ExecutionState.RUNNING;
         stateChangeTime = new Date();
+        if(beginTime == null){ 
+        	beginTime = stateChangeTime;
+        }
     }
+	public synchronized void setPaused() {
+		state = ExecutionState.PAUSED;
+        stateChangeTime = new Date();
+	}
 
     public synchronized void setCompleted() {
         state = ExecutionState.COMPLETED;
         stateChangeTime = new Date();
+        endTime= stateChangeTime;
     }
+
 
     public synchronized ExecutionState getState() {
         return state;
@@ -49,11 +95,18 @@ public class ExecutionMetadata {
     public synchronized ExecutionPriority getPriority() {
         return priority;
     }
+    public Date getBeginTime() {
+		return beginTime;
+	}
+
+	public Date getEndTime() {
+		return endTime;
+	}
 
     public synchronized void setPriority(ExecutionPriority priority) {
         this.priority = priority;
     }
-
+    public
     synchronized void setFuture(Future<?> future) {
         this.future = future;
     }
@@ -66,16 +119,19 @@ public class ExecutionMetadata {
         return ExecutionState.COMPLETED == state;
     }
 
-    public synchronized String getUuid() {
-        return uuid;
-    }
-
     public synchronized boolean isWaiting() {
         return ExecutionState.WAITING == state;
     }
 
     public synchronized void cancel() {
         state = ExecutionState.CANCELLED;
-        
     }
+
+	public synchronized boolean isRunning() {
+		return ExecutionState.RUNNING == state;
+	}
+
+	public synchronized boolean isPaused() {
+		return ExecutionState.PAUSED == state;
+	}
 }

@@ -12,7 +12,6 @@ import org.json.JSONStringer;
 import org.json.JSONWriter;
 
 import extractorapp.ws.extractor.task.ExecutionMetadata;
-import extractorapp.ws.extractor.task.ExecutionPriority;
 import extractorapp.ws.extractor.task.ExecutionState;
 
 /**
@@ -37,12 +36,12 @@ final class ExtractorGetTaskQueueResponse {
 	}
 
 	/**
-     * Returns the queue of tasks as a json object. The tasks are added to a json object where 
+     * Returns the tasks as a json object. The tasks are added to a json object where 
      * each task object is made from a {@link ExecutionMetadata}
      *    
      * <pre>
      * 
-     * <b>JSON format:</b> {"taskQueue":[ {"priority":value,value:value, "uuid":value}, ...]}
+     * <b>JSON format:</b> {"tasks":[ {"uuid":"value", "priority":value,"status":value,...}, ...]}
      * 
      * </pre>
      * 
@@ -56,13 +55,25 @@ final class ExtractorGetTaskQueueResponse {
     	for (ExecutionMetadata metadata : this.taskQueue) {
     		
     		String uuid = metadata.getUuid();
-    		ExecutionPriority priority = metadata.getPriority();
-    		ExecutionState state = metadata.getState();
+    		String requestor= metadata.getRequestor();
+    		Integer priority = metadata.getPriority().ordinal();
+    		ExecutionState status = metadata.getState();
+    		JSONObject spec = new JSONObject( metadata.getSpec() );  
+    		String requestTimeStamp = TaskDescriptor.formatDate(metadata.getRequestTime());
+    		
+    		
+    		String beginTimeStamp = TaskDescriptor.formatDate(metadata.getBeginTime());
+    		String endTimeStamp = TaskDescriptor.formatDate(metadata.getEndTime());
 
     		JSONObject jsonTask = new JSONObject();
-    		jsonTask.put("uuid", uuid);
-    		jsonTask.put("priority", priority.toString());
-    		jsonTask.put("state", state.toString());
+    		jsonTask.put(TaskDescriptor.UUID_KEY, uuid);
+    		jsonTask.put(TaskDescriptor.REQUESTOR_KEY, requestor);
+    		jsonTask.put(TaskDescriptor.PRIORITY_KEY, priority);
+    		jsonTask.put(TaskDescriptor.STATE_KEY, status.toString());
+    		jsonTask.put(TaskDescriptor.SPEC_KEY, spec);
+    		jsonTask.put(TaskDescriptor.REQUEST_TS_KEY, requestTimeStamp);
+    		jsonTask.put(TaskDescriptor.BEGIN_TS_KEY, beginTimeStamp);
+    		jsonTask.put(TaskDescriptor.END_TS_KEY, endTimeStamp);
 
     		jsonTaskArray.put(i, jsonTask);
     		i++;
@@ -70,7 +81,7 @@ final class ExtractorGetTaskQueueResponse {
     	
     	JSONWriter jsonTaskQueue = new JSONStringer()
 							.object()
-								.key("taskQueue")
+								.key("tasks")
 								.value(jsonTaskArray)
 							.endObject();
     	
@@ -78,5 +89,6 @@ final class ExtractorGetTaskQueueResponse {
 		
 		return strTaskQueue;
 	}
+
 
 }

@@ -13,7 +13,7 @@ import org.json.JSONTokener;
  * @author Mauricio Pazos
  *
  */
-public final class JSONUtil {
+final class JSONUtil {
 	
 	
 	private JSONUtil(){
