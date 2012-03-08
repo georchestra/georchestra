@@ -382,7 +382,8 @@ class BoundWcsRequest extends WcsReaderRequest {
         double resx = crsResolution();
         params.append ("RESX=" + resx);
         params.append (separator);
-        double resy = resx * requestBbox.getHeight()/requestBbox.getWidth();
+//        double resy = resx * requestBbox.getHeight()/requestBbox.getWidth();
+        double resy = resx;  // keeping two resolutions the same because the users were getting unexpected results
         params.append ("RESY=" + resy);
         params.append (separator);
 
