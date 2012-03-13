@@ -11,6 +11,10 @@
         <to type="forward">/ws/$1</to>
     </rule>
     <rule>
+        <from>^/admin(.*)$</from>
+        <to type="forward">/admin$1</to>
+    </rule>
+    <rule>
         <from>^/resources/(.*)$</from>
         <to type="forward">/$1</to>
     </rule>
