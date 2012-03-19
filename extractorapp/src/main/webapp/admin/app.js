@@ -43,7 +43,7 @@ Ext.define('Task', {
     }, {
         name: 'status',
         defaultValue: 'WAITING',
-        type: 'string' // WAITING/RUNNING/PAUSED/CANCELLED/DONE
+        type: 'string' // WAITING/RUNNING/PAUSED/CANCELLED/COMPLETED
     }, {
         name: 'spec' // original json spec
     },{
@@ -119,8 +119,22 @@ Ext.onReady(function(){
             header: 'Priorité',
             width: 80,
             sortable: true,
-            dataIndex: 'priority'
-            // TODO: need a renderer
+            dataIndex: 'priority',
+            renderer: function(v) {
+                switch (v) {
+                    case 0:
+                        return '<img src="images/gear--minus.png" alt="priorité basse"></img>';
+                        break;
+                    case 1:
+                        return '<img src="images/gear.png" alt="priorité standard"></img>';
+                        break;
+                    case 2:
+                        return '<img src="images/gear--plus.png" alt="priorité haute"></img>';
+                        break;
+                    default:
+                        return 'should not happen';
+                }
+            }
         }, {
             text: 'Etat',
             width: 80,
@@ -254,7 +268,7 @@ Ext.onReady(function(){
                 b.setDisabled(true);
             } else {
                 var status = selections[0].get('status');
-                b.setDisabled(status === 'RUNNING' || status === 'DONE' || status === 'CANCELLED');
+                b.setDisabled(status === 'RUNNING' || status === 'CANCELLED' || status === 'COMPLETED');
             }
         });
     });
