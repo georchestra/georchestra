@@ -32,7 +32,7 @@ if(sec_roles != null) {
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>geOrchestra Analytics</title>
-    <link rel="stylesheet" type="text/css" href="resources/lib/external/ext/resources/css/ext-all-gray.css" />
+    <link rel="stylesheet" type="text/css" href="resources/site/js/lib/external/ext/resources/css/ext-all-gray.css" />
     <link rel="stylesheet" type="text/css" href="resources/site/css/app.css" />
     <style type="text/css">
         body {
@@ -74,8 +74,8 @@ if(sec_roles != null) {
         }
     </style>
     
-    <script type="text/javascript" src="resources/lib/external/ext/ext-debug.js"></script>
-    <script type="text/javascript" src="resources/lib/external/ext/locale/ext-lang-fr.js"></script>
+    <script type="text/javascript" src="resources/site/js/lib/external/ext/ext-debug.js"></script>
+    <script type="text/javascript" src="resources/site/js/lib/external/ext/locale/ext-lang-fr.js"></script>
     <script type="text/javascript" src="resources/site/js/app/Application.js"></script>
 </head>
 <body>
