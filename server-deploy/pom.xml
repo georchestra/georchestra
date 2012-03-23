@@ -397,7 +397,6 @@
                     </dependency>
                   </dependencies>
                 </profile>
-              </profiles>
               <profile>
                   <id>analytics</id>
                   <dependencies>
