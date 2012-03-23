@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='Ext-ux-CheckColumn'>/**
+</span> * @class Ext.ux.CheckColumn
+ * @extends Ext.grid.column.Column
+ * &lt;p&gt;A Header subclass which renders a checkbox in each column cell which toggles the truthiness of the associated data field on click.&lt;/p&gt;
+ * &lt;p&gt;&lt;b&gt;Note. As of ExtJS 3.3 this no longer has to be configured as a plugin of the GridPanel.&lt;/b&gt;&lt;/p&gt;
+ * &lt;p&gt;Example usage:&lt;/p&gt;
+ * &lt;pre&gt;&lt;code&gt;
+// create the grid
+var grid = Ext.create('Ext.grid.Panel', {
+    ...
+    columns: [{
+           text: 'Foo',
+           ...
+        },{
+           xtype: 'checkcolumn',
+           text: 'Indoor?',
+           dataIndex: 'indoor',
+           width: 55
+        }
+    ]
+    ...
+});
+ * &lt;/code&gt;&lt;/pre&gt;
+ * In addition to toggling a Boolean value within the record data, this
+ * class adds or removes a css class &lt;tt&gt;'x-grid-checked'&lt;/tt&gt; on the td
+ * based on whether or not it is checked to alter the background image used
+ * for a column.
+ */
+Ext.define('Ext.ux.CheckColumn', {
+    extend: 'Ext.grid.column.Column',
+    alias: 'widget.checkcolumn',
+
+    tdCls: Ext.baseCSSPrefix + 'grid-cell-checkcolumn',
+    
+    constructor: function() {
+        this.addEvents(
+<span id='Ext-ux-CheckColumn-event-checkchange'>            /**
+</span>             * @event checkchange
+             * Fires when the checked state of a row changes
+             * @param {Ext.ux.CheckColumn} this
+             * @param {Number} rowIndex The row index
+             * @param {Boolean} checked True if the box is checked
+             */
+            'checkchange'
+        );
+        this.callParent(arguments);
+    },
+
+<span id='Ext-ux-CheckColumn-method-processEvent'>    /**
+</span>     * @private
+     * Process and refire events routed from the GridView's processEvent method.
+     */
+    processEvent: function(type, view, cell, recordIndex, cellIndex, e) {
+        if (type == 'mousedown' || (type == 'keydown' &amp;&amp; (e.getKey() == e.ENTER || e.getKey() == e.SPACE))) {
+            var record = view.panel.store.getAt(recordIndex),
+                dataIndex = this.dataIndex,
+                checked = !record.get(dataIndex);
+                
+            record.set(dataIndex, checked);
+            this.fireEvent('checkchange', this, recordIndex, checked);
+            // cancel selection.
+            return false;
+        } else {
+            return this.callParent(arguments);
+        }
+    },
+
+    // Note: class names are not placed on the prototype bc renderer scope
+    // is not in the header.
+    renderer : function(value){
+        var cssPrefix = Ext.baseCSSPrefix,
+            cls = [cssPrefix + 'grid-checkheader'];
+
+        if (value) {
+            cls.push(cssPrefix + 'grid-checkheader-checked');
+        }
+        return '&lt;div class=&quot;' + cls.join(' ') + '&quot;&gt;&amp;#160;&lt;/div&gt;';
+    }
+});
+</pre>
+</body>
+</html>
