@@ -2,7 +2,7 @@ Ext.Loader.setConfig({
     enabled: true,
     disableCaching: true, // TODO: set to false for PROD
     paths: {
-        'Ext': 'resources/lib/external/ext/src'
+        'Ext': 'resources/site/js/lib/external/ext/src'
     }
 });
 
