@@ -16,7 +16,7 @@ shared.c2c.tomcat.dir=/srv/tomcat/tomcat1
 shared.c2c.logdir=/var/log/tomcat
 
 shared.psql.host=localhost
-shared.psql.port=5432
+shared.psql.port=55432
 shared.psql.geonetwork.db=geonetwork
 shared.psql.ogc.statistics.db=ogcstatistics
 shared.psql.user=www-data
@@ -24,7 +24,7 @@ shared.psql.pass=www-data
 
 shared.psql.url=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.psql.geonetwork.db@
 
-shared.default.log.level=INFO
+shared.default.log.level=DEBUG
 other.framework.log.level=WARN
 
 shared.smtpHost=mail.camptocamp.com
@@ -39,4 +39,4 @@ shared.download_form.activated=false
 shared.download_form.pdf_url=/static/cgu.pdf
 
 shared.download_form.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/downloadform
-
+shared.ogcstatistics.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.psql.ogc.statistics.db@

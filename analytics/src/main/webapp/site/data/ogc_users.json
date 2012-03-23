@@ -1,0 +1,14 @@
+{
+    "success": true,
+    "total": 3,
+    "results": [{
+        "username": "pigma1",
+        "count": 5
+    }, {
+        "username": "pigma2",
+        "count": 10
+    }, {
+        "username": "pigma3",
+        "count": 15
+    }]
+}

@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,6 +39,11 @@ public class ExtractorApp extends AbstractApplication {
 	
 	private final String insertDataUseQuery = "INSERT INTO download.logtable_datause (logtable_id, datause_id) " +
 			"VALUES (?,?);";
+	
+	private final String insertLayersQuery = "INSERT INTO extractorapp_layers(" +
+            "extractorapp_log_id, projection, resolution, format, bbox_srs, " +
+            "\"left\", bottom, \"right\", top, ows_url, ows_type, layer_name)" +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 	
 	private String jsonSpec;
 	
@@ -77,7 +83,7 @@ public class ExtractorApp extends AbstractApplication {
 				int idInserted = resultSet.getInt(1);
 				
 				insertDataUse(connection, insertDataUseQuery, idInserted);
-				
+				insertLayersLogs(connection, idInserted);
 				connection.commit();
 				
 				object.put("success", true);
@@ -109,8 +115,77 @@ public class ExtractorApp extends AbstractApplication {
 			}
 		}
 	}
-
-
-
-
+	
+	protected void insertLayersLogs(Connection connection,  int idInserted) throws Exception {
+		
+		PreparedStatement st = null;
+	    
+		JSONObject obj 	= new JSONObject(jsonSpec);
+		JSONObject jProp = obj.getJSONObject("globalProperties");
+		
+		String projection = jProp.getString("projection");
+		double resolution = jProp.getDouble("resolution");
+		String rasterFormat  = jProp.getString("rasterFormat");
+		String vectorFormat  = jProp.getString("vectorFormat");
+		
+		JSONObject jBbox = jProp.getJSONObject("bbox");
+		String bbox_srs = jBbox.getString("srs");
+		JSONArray jValue = jBbox.getJSONArray("value");
+		double left = jValue.getDouble(0);
+		double bottom = jValue.getDouble(1);
+		double right = jValue.getDouble(2);
+		double top = jValue.getDouble(3);
+		
+		try {
+			
+			JSONArray jLayers = obj.getJSONArray("layers");
+			for (int i =0;  i < jLayers.length() ; ++i) {
+				JSONObject jLayer = jLayers.getJSONObject(i);
+				String lProjection = jLayer.getString("projection").equals("null") ? projection : jLayer.getString("projection");
+				double lResolution = jLayer.getString("resolution").equals("null") ? resolution : jLayer.getDouble("resolution");
+				String lFormat  = jLayer.getString("format");
+				String owsType  = jLayer.getString("owsType");
+				String owsUrl  = jLayer.getString("owsUrl");
+				String layerName  = jLayer.getString("layerName");
+				
+				double lLeft=left, lBottom=bottom, lRight=right, lTop=top;
+				String lSrs=bbox_srs;
+				
+				if(!jLayer.getString("bbox").equals("null")) {
+					JSONObject lBbox = jLayer.getJSONObject("bbox");
+					lSrs = lBbox.getString("srs").equals("null") ? lSrs : lBbox.getString("srs");
+					if(!lBbox.getString("value").equals("null")) {
+						JSONArray lValue = lBbox.getJSONArray("value");
+						lLeft = lValue.getDouble(0);
+						lBottom = lValue.getDouble(1);
+						lRight = lValue.getDouble(2);
+						lTop = lValue.getDouble(3);
+					}
+				}
+				
+				if("WFS".equals(owsType)) {
+					lFormat = lFormat.equals("null") ? vectorFormat : lFormat;
+				} else if ("WCS".equals(owsType)) {
+					lFormat = lFormat.equals("null") ? rasterFormat : lFormat;
+				}
+				
+				st = connection.prepareStatement(insertLayersQuery);
+				st.setInt(1, idInserted);
+				st.setString(2, lProjection);
+				st.setDouble(3, lResolution);
+				st.setString(4, lFormat);
+				st.setString(5, lSrs);
+				st.setDouble(6, lLeft);
+				st.setDouble(7, lBottom);
+				st.setDouble(8, lRight);
+				st.setDouble(9, lTop);
+				st.setString(10, owsUrl);
+				st.setString(11, owsType);
+				st.setString(12, layerName);
+				st.execute();
+			}
+		} catch(Exception e) {
+			if(st != null) st.close();
+		}
+	}
 }

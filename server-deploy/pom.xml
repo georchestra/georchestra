@@ -151,14 +151,21 @@
 					<version>${project.version}</version>
 					<classifier>${server}</classifier>
 					<type>war</type>
-                                </dependency>
-                                <dependency>
-                                        <groupId>${project.groupId}</groupId>
-                                        <artifactId>downloadform</artifactId>
-                                        <version>${project.version}</version>
-                                        <classifier>${server}</classifier>
-                                        <type>war</type>
-                                </dependency>
+                 </dependency>
+                 <dependency>
+                         <groupId>${project.groupId}</groupId>
+                         <artifactId>downloadform</artifactId>
+                         <version>${project.version}</version>
+                         <classifier>${server}</classifier>
+                         <type>war</type>
+                 </dependency>
+                 <dependency>
+                         <groupId>${project.groupId}</groupId>
+                         <artifactId>analytics</artifactId>
+                         <version>${project.version}</version>
+                         <classifier>${server}</classifier>
+                         <type>war</type>
+                 </dependency>
 			</dependencies>
 		</profile>
 				<profile>
@@ -233,6 +240,13 @@
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>downloadform</artifactId>
+					<version>${project.version}</version>
+					<classifier>${server}</classifier>
+					<type>war</type>
+				</dependency>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>analytics</artifactId>
 					<version>${project.version}</version>
 					<classifier>${server}</classifier>
 					<type>war</type>
@@ -377,6 +391,19 @@
                     <dependency>
                       <groupId>${project.groupId}</groupId>
                       <artifactId>downloadform</artifactId>
+                      <version>${project.version}</version>
+                      <classifier>${server}</classifier>
+                      <type>war</type>
+                    </dependency>
+                  </dependencies>
+                </profile>
+              </profiles>
+              <profile>
+                  <id>analytics</id>
+                  <dependencies>
+                    <dependency>
+                      <groupId>${project.groupId}</groupId>
+                      <artifactId>analytics</artifactId>
                       <version>${project.version}</version>
                       <classifier>${server}</classifier>
                       <type>war</type>

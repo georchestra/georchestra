@@ -126,6 +126,13 @@
 				<server>c2cpc61</server>
 			</properties>
 		</profile>
+		 <profile>
+                        <id>flowProject</id>
+                        <properties>
+                                <server>flowProject</server>
+                        </properties>
+                </profile>
+
 
 		<profile>
 			<id>pigma</id>
@@ -193,6 +200,7 @@
 				<module>security-proxy</module>
 				<module>geonetwork</module>
 				<module>downloadform</module>
+				<module>analytics</module>
 			</modules>
 		</profile>
 		<profile>
@@ -265,6 +273,12 @@
 			<id>downloadform</id>
 			<modules>
 				<module>downloadform</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>analytics</id>
+			<modules>
+				<module>analytics</module>
 			</modules>
 		</profile>
         </profiles>

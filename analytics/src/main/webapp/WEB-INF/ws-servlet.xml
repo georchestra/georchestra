@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+    
+    <bean name="ogc_stats" class="org.georchestra.analytics.OGCStats">
+        <constructor-arg ref="ogc_model" /> 
+    </bean>
+      <bean name="ogc_model" class="org.georchestra.analytics.model.OGCStatsModel">
+        <constructor-arg ref="postgresqlconnectionOGC" /> 
+    </bean>
+    
+    <bean name="geonetwork_stats" class="org.georchestra.analytics.GeonetworkStats">
+        <constructor-arg ref="geonetwork_model" /> 
+    </bean>
+      <bean name="geonetwork_model" class="org.georchestra.analytics.model.GeonetworkStatsModel">
+        <constructor-arg ref="postgresqlconnectionDLForm" /> 
+    </bean>
+    
+    <bean name="extractor_stats" class="org.georchestra.analytics.ExtractorStats">
+        <constructor-arg ref="extractor_model" /> 
+    </bean>
+      <bean name="extractor_model" class="org.georchestra.analytics.model.ExtractorStatsModel">
+        <constructor-arg ref="postgresqlconnectionDLForm" /> 
+    </bean>
+    
+    <bean name="postgresqlconnectionOGC" class="org.georchestra.analytics.model.PostGresqlConnection">
+        <constructor-arg value="${dlJdbcUrlOGC}" /> 
+    </bean>
+    <bean name="postgresqlconnectionDLForm" class="org.georchestra.analytics.model.PostGresqlConnection">
+        <constructor-arg value="${dlJdbcUrlDLForm}" /> 
+    </bean>
+    
+    <bean id="viewResolver"
+          class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+        <property name="prefix" value="/site/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+ 
+    <!-- Substitutes any ${...} variables in this (and loaded) spring configuration file
+				with values from the properties file -->
+    <bean id="properties-loader"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
+          p:locations="/WEB-INF/analytics.properties"/>
+
+</beans>
+
