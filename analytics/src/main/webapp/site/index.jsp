@@ -74,7 +74,7 @@ if(sec_roles != null) {
         }
     </style>
     
-    <script type="text/javascript" src="resources/site/js/lib/external/ext/ext-debug.js"></script>
+    <script type="text/javascript" src="resources/site/js/lib/external/ext/ext.js"></script>
     <script type="text/javascript" src="resources/site/js/lib/external/ext/locale/ext-lang-fr.js"></script>
     <script type="text/javascript" src="resources/site/js/app/Application.js"></script>
     
@@ -102,11 +102,16 @@ if(sec_roles != null) {
             <li><a href="/mapfishapp/edit">éditeur</a></li>
             </c:when>
         </c:choose>
-            <li class="active"><a href="#">extracteur</a></li>
+            <li><a href="#">extracteur</a></li>
             <li><a href="/geoserver/web/">services</a></li>
         <c:choose>
             <c:when test='<%= admin == true %>'>
             <li><a href="/phpldapadmin">utilisateurs</a></li>
+            </c:when>
+        </c:choose>
+        <c:choose>
+            <c:when test='<%= admin == true %>'>
+            <li class="active"><a href="/analytics">statistiques</a></li>
             </c:when>
         </c:choose>
         </ul>
@@ -145,27 +150,6 @@ if(sec_roles != null) {
     </c:when>
 </c:choose>
 </div>
-
-    <script>
-        (function(){
-            if (!window.addEventListener || !document.querySelectorAll) return;
-            var each = function(els, callback) {
-                for (var i = 0, l=els.length ; i<l ; i++) {
-                    callback(els[i]);
-                }
-            }
-            each(document.querySelectorAll('#go_head li a'), function(li){
-                li.addEventListener('click', function(e) {
-                    each(
-                        document.querySelectorAll('#go_head li'),
-                        function(l){ l.className = '';}
-                    );
-                    li.parentNode.className = 'active';
-                });
-            });
-        })();
-    </script>
-
     <div id="waiter" style="display:none;">
         <span>Chargement ...</span>
     </div>
