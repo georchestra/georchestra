@@ -77,6 +77,13 @@ if(sec_roles != null) {
     <script type="text/javascript" src="resources/site/js/lib/external/ext/ext-debug.js"></script>
     <script type="text/javascript" src="resources/site/js/lib/external/ext/locale/ext-lang-fr.js"></script>
     <script type="text/javascript" src="resources/site/js/app/Application.js"></script>
+    
+    <title lang="fr" dir="ltr">Analytics - geOrchestra</title>
+    <c:choose>
+	    <c:when test='<%= request.getParameter("noheader") == null %>'>
+	    	<link rel="stylesheet" type="text/css" href="/static/css/header.css" />
+	    </c:when>
+	</c:choose>
 </head>
 <body>
 
