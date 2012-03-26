@@ -16,7 +16,7 @@ shared.c2c.tomcat.dir=/srv/tomcat/tomcat1
 shared.c2c.logdir=/var/log/tomcat
 
 shared.psql.host=localhost
-shared.psql.port=55432
+shared.psql.port=5432
 shared.psql.geonetwork.db=geonetwork
 shared.psql.ogc.statistics.db=ogcstatistics
 shared.psql.user=www-data
