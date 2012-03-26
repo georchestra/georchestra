@@ -9,7 +9,7 @@
   <artifactId>analytics</artifactId>
   <packaging>war</packaging>
   <name>Analytics webapp</name>
-  <url>http://www.pigma.org</url>
+  <url>http://www.georchestra.org</url>
   <dependencies>
     <dependency>
       <groupId>org.jdom</groupId>
@@ -85,10 +85,18 @@
     </dependency>
   </dependencies>
   <build>
+    <finalName>analytics-private</finalName>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+	<configuration>
+		<warName>extractorapp-private</warName>
+	</configuration>
       </plugin>
       <plugin>
         <artifactId>maven-antrun-plugin</artifactId>
