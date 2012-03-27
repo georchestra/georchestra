@@ -18,7 +18,7 @@ Ext.define('Analytics.view.Viewport', {
             id: 'geor_header',
             region: 'north', 
             height: 90,
-            renderTo: 'go_head'
+            contentEl: 'go_head'
         }, {
             region: 'center',
             xtype: 'tabpanel',
