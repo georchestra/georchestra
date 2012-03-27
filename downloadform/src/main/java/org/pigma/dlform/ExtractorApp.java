@@ -186,6 +186,7 @@ public class ExtractorApp extends AbstractApplication {
 			}
 		} catch(Exception e) {
 			if(st != null) st.close();
+			throw e;
 		}
 	}
 }
