@@ -15,7 +15,7 @@
             <li><a href="/mapfishapp/edit">éditeur</a></li>
             </c:when>
         </c:choose>
-            <li><a href="#">extracteur</a></li>
+            <li><a href="/extractorapp">extracteur</a></li>
             <li><a href="/geoserver/web/">services</a></li>
         <c:choose>
             <c:when test='<%= admin == true %>'>
