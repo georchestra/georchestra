@@ -33,7 +33,7 @@ if(sec_roles != null) {
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>geOrchestra Analytics</title>
+    <title lang="fr" dir="ltr">Statistiques - geOrchestra</title>
     <link rel="stylesheet" type="text/css" href="resources/site/js/lib/external/ext/resources/css/ext-all-gray.css" />
     <link rel="stylesheet" type="text/css" href="resources/site/css/app.css" />
     <style type="text/css">
