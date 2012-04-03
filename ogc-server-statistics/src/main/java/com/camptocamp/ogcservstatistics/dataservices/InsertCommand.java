@@ -20,8 +20,9 @@ public final class InsertCommand extends AbstractDataCommand {
 	public final static String USER__COLUMN = "user_name";
 	public final static String SERVICE_COLUMN = "service";
 	public final static String LAYER_COLUMN = "layer";
+	public final static String REQUEST_COLUMN = "request";
 	
-	private static final String SQL_INSERT= "INSERT INTO ogc_services_log("+USER__COLUMN+","+ DATE_COLUMN+ ","+  SERVICE_COLUMN+ "," +LAYER_COLUMN+ ") VALUES (?, ?, ?, ?)";
+	private static final String SQL_INSERT= "INSERT INTO ogc_services_log("+USER__COLUMN+","+ DATE_COLUMN+ ","+  SERVICE_COLUMN+ "," +LAYER_COLUMN+ "," +REQUEST_COLUMN+ ") VALUES (?, ?, ?, ?, ?)";
 	
 	private Map<String, Object> rowValues;
 	
@@ -43,6 +44,7 @@ public final class InsertCommand extends AbstractDataCommand {
         
 		pStmt.setString(3, (String)this.rowValues.get(SERVICE_COLUMN));
         pStmt.setString(4, (String)this.rowValues.get(LAYER_COLUMN));
+        pStmt.setString(5, (String)this.rowValues.get(REQUEST_COLUMN));
 		
 		return pStmt;
 	}
