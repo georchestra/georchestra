@@ -3,6 +3,8 @@
  */
 package com.camptocamp.ogcservstatistics.log4j;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -26,6 +28,8 @@ import org.apache.log4j.spi.LoggingEvent;
 final class OGCServiceParser {
 
 	private static final String SERVICE_KEYWORD = "SERVICE=";
+	private static final String REQUEST_KEYWORD = "REQUEST=";
+			
 	// service types
 	private static final String WFS = "WFS";
 	private static final String WMS = "WMS";
@@ -34,7 +38,30 @@ final class OGCServiceParser {
 		{ 	SERVICE_KEYWORD+WFS,SERVICE_KEYWORD+WCS, SERVICE_KEYWORD+WMS, 
 			SERVICE_KEYWORD+ "WMTS", 
 			SERVICE_KEYWORD+"\"WFS\"", SERVICE_KEYWORD+"\"WCS\"", SERVICE_KEYWORD+"\"WMTS\"" };
-
+	
+	// request type
+	private static final String GETCAPABILITIES = "GETCAPABILITIES";
+	private static final String GETMAP = "GETMAP";
+	private static final String GETLEGENDGRAPHIC = "GETLEGENDGRAPHIC";
+	private static final String GETFEATUREINFO = "GETFEATUREINFO";
+	private static final String DESCRIBELAYER = "GETMAP";
+	private static final String GETFEATURE = "GETFEATURE";
+	private static final String DESCRIBEFEATURETYPE = "DESCRIBEFEATURETYPE";
+	private static final String GETCOVERAGE = "GETCOVERAGE";
+	private static final String DESCRIBECOVERAGE = "DESCRIBECOVERAGE";
+	
+	private static final String[] REQUEST_TYPE = 
+		{ 	REQUEST_KEYWORD+GETCAPABILITIES,
+			REQUEST_KEYWORD+GETMAP,
+			REQUEST_KEYWORD+GETLEGENDGRAPHIC,
+			REQUEST_KEYWORD+GETFEATUREINFO,
+			REQUEST_KEYWORD+DESCRIBELAYER,
+			REQUEST_KEYWORD+GETFEATURE,
+			REQUEST_KEYWORD+DESCRIBEFEATURETYPE,
+			REQUEST_KEYWORD+GETCOVERAGE,
+			REQUEST_KEYWORD+DESCRIBECOVERAGE
+		};
+	
 	private static final String[] LAYER_KEYWORD = {"LAYERS=", "LAYER=","TYPENAME=", "QUERY_LAYERS="};
 
 	private static final String OPERATION_GET_LEGEND_GRAPHIC = "GETLEGENDGRAPHIC";
@@ -82,6 +109,21 @@ final class OGCServiceParser {
 		}
 		return "";
 	}
+	
+	private static String parseRequest(final String message){
+		
+		String msg = new String(message); // defensive copy 
+		msg = msg.toUpperCase();
+		// checks if it is an ogc service
+		for (int i = 0; i < REQUEST_TYPE.length; i++) {
+			if (msg.contains(REQUEST_TYPE[i])) {
+				
+				String request = REQUEST_TYPE[i].substring(REQUEST_KEYWORD.length());
+				return removeQuote(request);
+			}
+		}
+		return "";
+	}
 
 	/**
 	 * Parses the request string in order to extract service, layer, user, date
@@ -90,8 +132,9 @@ final class OGCServiceParser {
 	 * @return list of logs
 	 * 
 	 * @throws ParseException
+	 * @throws UnsupportedEncodingException 
 	 */
-	public static List<Map<String, Object>> parseLog(final String message) throws ParseException {
+	public static List<Map<String, Object>> parseLog(final String message) throws ParseException, UnsupportedEncodingException {
 
 		String work = new String(message);
 		String[] splitedMessage = work.split("["+OGCServiceMessageFormatter.SEPARATOR+"]");
@@ -107,8 +150,9 @@ final class OGCServiceParser {
 		Date date = format.parse(splitedMessage[1] );
 		
 		// parses service and layer from request
-		String request = splitedMessage[2];
+		String request = URLDecoder.decode(splitedMessage[2], "UTF-8");
 		String service = parseService(request);
+		String ogcReq = parseRequest(request);
 		
 		// for each layer adds a log to the list
 		List<Map<String, Object>> logList = new LinkedList<Map<String,Object>>(); 
@@ -121,6 +165,7 @@ final class OGCServiceParser {
 			log.put("date", date);
 			log.put("service", service );
 			log.put("layer", "" );
+			log.put("request", ogcReq );
 			
 			logList.add(log);
 		} else{ // there are one ore more layers
@@ -132,6 +177,7 @@ final class OGCServiceParser {
 				log.put("date", date);
 				log.put("service", service );
 				log.put("layer", layer );
+				log.put("request", ogcReq );
 				
 				logList.add(log);
 			}
