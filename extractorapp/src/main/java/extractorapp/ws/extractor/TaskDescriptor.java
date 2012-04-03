@@ -136,7 +136,7 @@ final class TaskDescriptor {
 	
 	public static Date toDate(final String strDate) {
 		if("".equals(strDate) )return null;
-		SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date date = null;
 		try {
 			date = dateFormatter.parse(strDate);
@@ -163,7 +163,7 @@ final class TaskDescriptor {
 		
 		if(date == null) return "";
 		
-		SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String strDate = dateFormatter.format(date);
 		
 		return strDate;
