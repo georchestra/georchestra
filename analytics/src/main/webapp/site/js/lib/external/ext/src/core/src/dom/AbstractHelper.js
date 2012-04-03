@@ -13,7 +13,7 @@ Ext.define('Ext.dom.AbstractHelper', {
 
     closeTags: {},
 
-    decamelizeName : function () {
+    decamelizeName : (function () {
         var camelCaseRe = /([a-z])([A-Z])/g,
             cache = {};
 
@@ -24,7 +24,7 @@ Ext.define('Ext.dom.AbstractHelper', {
         return function (s) {
             return cache[s] || (cache[s] = s.replace(camelCaseRe, decamel));
         };
-    }(),
+    }()),
 
     generateMarkup: function(spec, buffer) {
         var me = this,

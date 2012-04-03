@@ -72,6 +72,10 @@
                     "name": "Draw.js"
                 },
                 {
+                    "path": "../../../platform/src/util/",
+                    "name": "Sorter.js"
+                },
+                {
                     "path": "../../../platform/src/data/",
                     "name": "Tree.js"
                 },
@@ -116,6 +120,10 @@
                     "name": "SortTypes.js"
                 },
                 {
+                    "path": "../../../platform/src/util/",
+                    "name": "Sortable.js"
+                },
+                {
                     "path": "../../../platform/src/fx/",
                     "name": "CubicBezier.js"
                 },
@@ -130,6 +138,10 @@
                 {
                     "path": "../../src/util/",
                     "name": "KeyNav.js"
+                },
+                {
+                    "path": "../../../platform/src/data/proxy/",
+                    "name": "Proxy.js"
                 },
                 {
                     "path": "../../../platform/src/util/",
@@ -164,32 +176,36 @@
                     "name": "HashMap.js"
                 },
                 {
-                    "path": "../../../platform/src/data/",
-                    "name": "Connection.js"
-                },
-                {
-                    "path": "../../../platform/src/util/",
-                    "name": "Sorter.js"
-                },
-                {
                     "path": "../../../platform/src/fx/",
                     "name": "Queue.js"
                 },
                 {
-                    "path": "../../../platform/src/fx/target/",
-                    "name": "Target.js"
-                },
-                {
-                    "path": "../../../platform/src/state/",
-                    "name": "Provider.js"
+                    "path": "../../../platform/src/data/proxy/",
+                    "name": "Server.js"
                 },
                 {
                     "path": "../../../platform/src/data/writer/",
                     "name": "Writer.js"
                 },
                 {
+                    "path": "../../../platform/src/fx/target/",
+                    "name": "Target.js"
+                },
+                {
+                    "path": "../../../platform/src/data/",
+                    "name": "Connection.js"
+                },
+                {
                     "path": "../../../platform/src/data/",
                     "name": "ResultSet.js"
+                },
+                {
+                    "path": "../../../platform/src/state/",
+                    "name": "Provider.js"
+                },
+                {
+                    "path": "../../src/dd/",
+                    "name": "Registry.js"
                 },
                 {
                     "path": "",
@@ -272,16 +288,8 @@
                     "name": "NodeInterface.js"
                 },
                 {
-                    "path": "../../../platform/src/",
-                    "name": "Ajax.js"
-                },
-                {
                     "path": "../../../platform/src/util/",
                     "name": "AbstractMixedCollection.js"
-                },
-                {
-                    "path": "../../../platform/src/util/",
-                    "name": "Sortable.js"
                 },
                 {
                     "path": "../../../platform/src/util/",
@@ -294,6 +302,10 @@
                 {
                     "path": "../../../platform/src/data/",
                     "name": "Errors.js"
+                },
+                {
+                    "path": "../../../platform/src/data/",
+                    "name": "Model.js"
                 },
                 {
                     "path": "../../../platform/src/data/",
@@ -316,6 +328,10 @@
                     "name": "AbstractStore.js"
                 },
                 {
+                    "path": "../../../platform/src/data/",
+                    "name": "TreeStore.js"
+                },
+                {
                     "path": "../../../platform/src/draw/",
                     "name": "Surface.js"
                 },
@@ -324,8 +340,20 @@
                     "name": "Easing.js"
                 },
                 {
+                    "path": "../../../platform/src/data/writer/",
+                    "name": "Json.js"
+                },
+                {
                     "path": "../../../platform/src/util/",
-                    "name": "Grouper.js"
+                    "name": "LruCache.js"
+                },
+                {
+                    "path": "../../../platform/src/data/proxy/",
+                    "name": "Client.js"
+                },
+                {
+                    "path": "../../../platform/src/data/proxy/",
+                    "name": "Memory.js"
                 },
                 {
                     "path": "../../src/layout/container/",
@@ -436,6 +464,46 @@
                     "name": "Highlight.js"
                 },
                 {
+                    "path": "../../../platform/src/",
+                    "name": "Ajax.js"
+                },
+                {
+                    "path": "../../../platform/src/data/proxy/",
+                    "name": "Ajax.js"
+                },
+                {
+                    "path": "../../../platform/src/data/reader/",
+                    "name": "Reader.js"
+                },
+                {
+                    "path": "../../../platform/src/data/reader/",
+                    "name": "Json.js"
+                },
+                {
+                    "path": "../../../platform/src/data/",
+                    "name": "Store.js"
+                },
+                {
+                    "path": "../../../platform/src/data/",
+                    "name": "JsonStore.js"
+                },
+                {
+                    "path": "../../../platform/src/data/reader/",
+                    "name": "Array.js"
+                },
+                {
+                    "path": "../../../platform/src/data/",
+                    "name": "ArrayStore.js"
+                },
+                {
+                    "path": "../../../platform/src/data/",
+                    "name": "NodeStore.js"
+                },
+                {
+                    "path": "../../src/grid/plugin/",
+                    "name": "HeaderResizer.js"
+                },
+                {
                     "path": "../../src/layout/component/",
                     "name": "Tab.js"
                 },
@@ -544,6 +612,10 @@
                     "name": "Radial.js"
                 },
                 {
+                    "path": "../../../platform/src/chart/axis/",
+                    "name": "Time.js"
+                },
+                {
                     "path": "../../src/picker/",
                     "name": "Color.js"
                 },
@@ -566,10 +638,6 @@
                 {
                     "path": "../../src/panel/",
                     "name": "Header.js"
-                },
-                {
-                    "path": "../../src/grid/header/",
-                    "name": "Container.js"
                 },
                 {
                     "path": "../../src/tab/",
@@ -616,76 +684,8 @@
                     "name": "ColumnLayout.js"
                 },
                 {
-                    "path": "../../src/grid/column/",
-                    "name": "Column.js"
-                },
-                {
-                    "path": "../../src/grid/",
-                    "name": "RowNumberer.js"
-                },
-                {
-                    "path": "../../src/tree/",
-                    "name": "Column.js"
-                },
-                {
                     "path": "../../src/dd/",
                     "name": "StatusProxy.js"
-                },
-                {
-                    "path": "../../../platform/src/data/writer/",
-                    "name": "Json.js"
-                },
-                {
-                    "path": "../../../platform/src/data/reader/",
-                    "name": "Reader.js"
-                },
-                {
-                    "path": "../../../platform/src/data/reader/",
-                    "name": "Json.js"
-                },
-                {
-                    "path": "../../../platform/src/data/proxy/",
-                    "name": "Proxy.js"
-                },
-                {
-                    "path": "../../../platform/src/data/proxy/",
-                    "name": "Server.js"
-                },
-                {
-                    "path": "../../../platform/src/data/proxy/",
-                    "name": "Ajax.js"
-                },
-                {
-                    "path": "../../../platform/src/data/",
-                    "name": "Model.js"
-                },
-                {
-                    "path": "js/",
-                    "name": "ShortcutModel.js"
-                },
-                {
-                    "path": "../../../platform/src/data/",
-                    "name": "Store.js"
-                },
-                {
-                    "path": "../../../platform/src/data/",
-                    "name": "ArrayStore.js"
-                },
-                {
-                    "path": "../../../platform/src/data/",
-                    "name": "JsonStore.js"
-                },
-                {
-                    "path": "../../../platform/src/chart/axis/",
-                    "name": "Time.js"
-                },
-                {
-                    "path": "../../../platform/src/data/",
-                    "name": "NodeStore.js"
-                },
-                {
-                    "path": "../../../platform/src/data/",
-                    "name": "TreeStore.js"
                 },
                 {
                     "path": "../../src/",
@@ -776,18 +776,6 @@
                     "name": "Panel.js"
                 },
                 {
-                    "path": "",
-                    "name": "GridWindow.js"
-                },
-                {
-                    "path": "../../src/tree/",
-                    "name": "Panel.js"
-                },
-                {
-                    "path": "",
-                    "name": "AccordionWindow.js"
-                },
-                {
                     "path": "../../src/tip/",
                     "name": "Tip.js"
                 },
@@ -860,6 +848,70 @@
                     "name": "Notepad.js"
                 },
                 {
+                    "path": "../../src/dd/",
+                    "name": "DragZone.js"
+                },
+                {
+                    "path": "../../src/grid/header/",
+                    "name": "DragZone.js"
+                },
+                {
+                    "path": "../../src/dd/",
+                    "name": "DDTarget.js"
+                },
+                {
+                    "path": "../../src/dd/",
+                    "name": "ScrollManager.js"
+                },
+                {
+                    "path": "../../src/dd/",
+                    "name": "DropTarget.js"
+                },
+                {
+                    "path": "../../src/dd/",
+                    "name": "DropZone.js"
+                },
+                {
+                    "path": "../../src/grid/header/",
+                    "name": "DropZone.js"
+                },
+                {
+                    "path": "../../src/grid/plugin/",
+                    "name": "HeaderReorderer.js"
+                },
+                {
+                    "path": "../../src/grid/header/",
+                    "name": "Container.js"
+                },
+                {
+                    "path": "../../src/grid/column/",
+                    "name": "Column.js"
+                },
+                {
+                    "path": "../../src/grid/",
+                    "name": "RowNumberer.js"
+                },
+                {
+                    "path": "",
+                    "name": "GridWindow.js"
+                },
+                {
+                    "path": "../../src/tree/",
+                    "name": "Column.js"
+                },
+                {
+                    "path": "../../src/tree/",
+                    "name": "Panel.js"
+                },
+                {
+                    "path": "",
+                    "name": "AccordionWindow.js"
+                },
+                {
+                    "path": "js/",
+                    "name": "ShortcutModel.js"
+                },
+                {
                     "path": "",
                     "name": "App.js"
                 },
@@ -870,6 +922,14 @@
                 {
                     "path": "../../src/",
                     "name": "Layer.js"
+                },
+                {
+                    "path": "../../../platform/src/data/",
+                    "name": "Batch.js"
+                },
+                {
+                    "path": "../../../platform/src/data/",
+                    "name": "Request.js"
                 },
                 {
                     "path": "js/",
@@ -886,6 +946,10 @@
                 {
                     "path": "../../src/util/",
                     "name": "CSS.js"
+                },
+                {
+                    "path": "../../../platform/src/util/",
+                    "name": "Grouper.js"
                 },
                 {
                     "path": "../../../platform/src/",
@@ -906,22 +970,6 @@
                 {
                     "path": "../../src/",
                     "name": "Img.js"
-                },
-                {
-                    "path": "../../src/grid/plugin/",
-                    "name": "HeaderResizer.js"
-                },
-                {
-                    "path": "../../../platform/src/data/",
-                    "name": "Batch.js"
-                },
-                {
-                    "path": "../../../platform/src/data/",
-                    "name": "Request.js"
-                },
-                {
-                    "path": "../../../platform/src/data/reader/",
-                    "name": "Array.js"
                 },
                 {
                     "path": "../../src/view/",
@@ -956,10 +1004,6 @@
                     "name": "ElementLoader.js"
                 },
                 {
-                    "path": "../../../platform/src/data/proxy/",
-                    "name": "Client.js"
-                },
-                {
                     "path": "../../src/resizer/",
                     "name": "Splitter.js"
                 },
@@ -992,36 +1036,8 @@
                     "name": "SpriteDD.js"
                 },
                 {
-                    "path": "../../src/dd/",
-                    "name": "DragZone.js"
-                },
-                {
-                    "path": "../../src/dd/",
-                    "name": "Registry.js"
-                },
-                {
-                    "path": "../../src/dd/",
-                    "name": "DDTarget.js"
-                },
-                {
-                    "path": "../../src/dd/",
-                    "name": "ScrollManager.js"
-                },
-                {
                     "path": "../../../platform/src/",
                     "name": "ComponentLoader.js"
-                },
-                {
-                    "path": "../../src/menu/",
-                    "name": "CheckItem.js"
-                },
-                {
-                    "path": "../../src/menu/",
-                    "name": "Separator.js"
-                },
-                {
-                    "path": "../../../platform/src/data/proxy/",
-                    "name": "Memory.js"
                 },
                 {
                     "path": "../../src/form/field/",
@@ -1034,6 +1050,14 @@
                 {
                     "path": "../../src/grid/",
                     "name": "Lockable.js"
+                },
+                {
+                    "path": "../../src/menu/",
+                    "name": "CheckItem.js"
+                },
+                {
+                    "path": "../../src/menu/",
+                    "name": "Separator.js"
                 },
                 {
                     "path": "../../../platform/src/layout/",
@@ -1064,32 +1088,12 @@
                     "name": "Vml.js"
                 },
                 {
-                    "path": "../../src/grid/header/",
-                    "name": "DragZone.js"
-                },
-                {
                     "path": "js/",
                     "name": "StartMenu.js"
                 },
                 {
                     "path": "js/",
                     "name": "TaskBar.js"
-                },
-                {
-                    "path": "../../src/dd/",
-                    "name": "DropTarget.js"
-                },
-                {
-                    "path": "../../src/dd/",
-                    "name": "DropZone.js"
-                },
-                {
-                    "path": "../../src/grid/header/",
-                    "name": "DropZone.js"
-                },
-                {
-                    "path": "../../src/grid/plugin/",
-                    "name": "HeaderReorderer.js"
                 },
                 {
                     "path": "../../src/resizer/",

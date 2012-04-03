@@ -187,7 +187,7 @@ Ext.define('Ext.draw.Sprite', {
 
     /**
      * @property {Boolean} isSprite
-     * `true` in this class to identify an objact as an instantiated Sprite, or subclass thereof.
+     * `true` in this class to identify an object as an instantiated Sprite, or subclass thereof.
      */
     isSprite: true,
     zIndex: 0,
@@ -247,14 +247,53 @@ Ext.define('Ext.draw.Sprite', {
         delete config.draggable;
         me.setAttributes(config);
         me.addEvents(
+            /**
+             * @event
+             * Fires before the sprite is destroyed. Return false from an event handler to stop the destroy.
+             * @param {Ext.draw.Sprite} this
+             */
             'beforedestroy',
+            /**
+             * @event
+             * Fires after the sprite is destroyed.
+             * @param {Ext.draw.Sprite} this
+             */
             'destroy',
+            /**
+             * @event
+             * Fires after the sprite markup is rendered.
+             * @param {Ext.draw.Sprite} this
+             */
             'render',
+            /**
+             * @event
+             * @inheritdoc Ext.dom.Element#mousedown
+             */
             'mousedown',
+            /**
+             * @event
+             * @inheritdoc Ext.dom.Element#mouseup
+             */
             'mouseup',
+            /**
+             * @event
+             * @inheritdoc Ext.dom.Element#mouseover
+             */
             'mouseover',
+            /**
+             * @event
+             * @inheritdoc Ext.dom.Element#mouseout
+             */
             'mouseout',
+            /**
+             * @event
+             * @inheritdoc Ext.dom.Element#mousemove
+             */
             'mousemove',
+            /**
+             * @event
+             * @inheritdoc Ext.dom.Element#click
+             */
             'click'
         );
         me.mixins.observable.constructor.apply(this, arguments);

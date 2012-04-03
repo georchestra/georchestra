@@ -6,7 +6,7 @@ Ext.define('Ext.view.TableChunker', {
     singleton: true,
     requires: ['Ext.XTemplate'],
     metaTableTpl: [
-        '{[this.openTableWrap()]}',
+        '{%if (this.openTableWrap)out.push(this.openTableWrap())%}',
         '<table class="' + Ext.baseCSSPrefix + 'grid-table ' + Ext.baseCSSPrefix + 'grid-table-resizer" border="0" cellspacing="0" cellpadding="0" {[this.embedFullWidth(values)]}>',
             '<tbody>',
             '<tr class="' + Ext.baseCSSPrefix + 'grid-header-row">',
@@ -22,7 +22,7 @@ Ext.define('Ext.view.TableChunker', {
             '{[this.closeRows()]}',
             '</tbody>',
         '</table>',
-        '{[this.closeTableWrap()]}'
+        '{%if (this.closeTableWrap)out.push(this.closeTableWrap())%}',
     ],
 
     constructor: function() {
@@ -62,20 +62,18 @@ Ext.define('Ext.view.TableChunker', {
         '<tr class="' + Ext.baseCSSPrefix + 'grid-row {[this.embedRowCls()]}" {[this.embedRowAttr()]}>',
             '<tpl for="columns">',
                 '<td class="{cls} ' + Ext.baseCSSPrefix + 'grid-cell ' + Ext.baseCSSPrefix + 'grid-cell-{columnId} {{id}-modified} {{id}-tdCls} {[this.firstOrLastCls(xindex, xcount)]}" {{id}-tdAttr}>',
-                    '<div{[parent.enableTextSelection ? "" : " unselectable=\'on\'"]} class="' + Ext.baseCSSPrefix + 'grid-cell-inner{[parent.enableTextSelection ? "" : " ' + Ext.baseCSSPrefix + 'unselectable"]}" style="text-align: {align}; {{id}-style};">{{id}}</div>',
+                    '<div {unselectableAttr} class="' + Ext.baseCSSPrefix + 'grid-cell-inner {unselectableCls}" style="text-align: {align}; {{id}-style};">{{id}}</div>',
                 '</td>',
             '</tpl>',
         '</tr>'
     ],
-    
+
     firstOrLastCls: function(xindex, xcount) {
-        var cssCls = '';
         if (xindex === 1) {
-            cssCls = Ext.baseCSSPrefix + 'grid-cell-first';
+            return Ext.baseCSSPrefix + 'grid-cell-first';
         } else if (xindex === xcount) {
-            cssCls = Ext.baseCSSPrefix + 'grid-cell-last';
+            return Ext.baseCSSPrefix + 'grid-cell-last';
         }
-        return cssCls;
     },
     
     embedRowCls: function() {
@@ -86,13 +84,9 @@ Ext.define('Ext.view.TableChunker', {
         return '{rowAttr}';
     },
     
-    openTableWrap: function() {
-        return '';
-    },
+    openTableWrap: undefined,
     
-    closeTableWrap: function() {
-        return '';
-    },
+    closeTableWrap: undefined,
 
     getTableTpl: function(cfg, textOnly) {
         var tpl,
@@ -111,7 +105,9 @@ Ext.define('Ext.view.TableChunker', {
             memberFns = {
                 embedRowCls: this.embedRowCls,
                 embedRowAttr: this.embedRowAttr,
-                firstOrLastCls: this.firstOrLastCls
+                firstOrLastCls: this.firstOrLastCls,
+                unselectableAttr: cfg.enableTextSelection ? '' : 'unselectable="on"',
+                unselectableCls: cfg.enableTextSelection ? '' : Ext.baseCSSPrefix + 'unselectable'
             },
             // copy the default
             metaRowTpl = Array.prototype.slice.call(this.metaRowTpl, 0),

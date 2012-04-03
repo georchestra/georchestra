@@ -15,7 +15,8 @@ Ext.apply(Ext.core.Element, {
             data      = '',
             e,
             eLen      = fElements.length,
-            el, name, type, options, hasValue;
+            el, name, type, options, hasValue,
+            o, oLen, opt;
 
         for (e = 0; e < eLen; e++) {
             el      = fElements[e];
@@ -25,9 +26,7 @@ Ext.apply(Ext.core.Element, {
 
             if (!el.disabled && name) {
                 if (/select-(one|multiple)/i.test(type)) {
-                    var o,
-                        oLen = options.length,
-                        opt;
+                    oLen = options.length;
 
                     for (o = 0; o < oLen; o++) {
                         opt = options[o];

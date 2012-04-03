@@ -39,7 +39,11 @@
 Ext.define('Ext.data.TreeStore', {
     extend: 'Ext.data.AbstractStore',
     alias: 'store.tree',
-    requires: ['Ext.data.Tree', 'Ext.data.NodeInterface', 'Ext.data.NodeStore'],
+    requires: [
+        'Ext.util.Sorter',
+        'Ext.data.Tree',
+        'Ext.data.NodeInterface'
+    ],
 
 <span id='Ext-data-TreeStore-cfg-root'>    /**
 </span>     * @cfg {Ext.data.Model/Ext.data.NodeInterface/Object} root
@@ -60,8 +64,8 @@ Ext.define('Ext.data.TreeStore', {
      */
 
 <span id='Ext-data-TreeStore-cfg-clearOnLoad'>    /**
-</span>     * @cfg {Boolean} clearOnLoad
-     * Remove previously existing child nodes before loading. Default to true.
+</span>     * @cfg {Boolean} [clearOnLoad=true]
+     * Remove previously existing child nodes before loading. 
      */
     clearOnLoad : true,
 
@@ -73,27 +77,26 @@ Ext.define('Ext.data.TreeStore', {
     clearRemovedOnLoad: true,
 
 <span id='Ext-data-TreeStore-cfg-nodeParam'>    /**
-</span>     * @cfg {String} nodeParam
+</span>     * @cfg {String} [nodeParam=&quot;node&quot;]
      * The name of the parameter sent to the server which contains the identifier of the node.
-     * Defaults to 'node'.
      */
     nodeParam: 'node',
 
 <span id='Ext-data-TreeStore-cfg-defaultRootId'>    /**
-</span>     * @cfg {String} defaultRootId
-     * The default root id. Defaults to 'root'
+</span>     * @cfg {String} [defaultRootId=&quot;root&quot;]
+     * The default root id.
      */
     defaultRootId: 'root',
 
 <span id='Ext-data-TreeStore-cfg-defaultRootProperty'>    /**
-</span>     * @cfg {String} defaultRootProperty
+</span>     * @cfg {String} [defaultRootProperty=&quot;children&quot;]
      * The root property to specify on the reader if one is not explicitly defined.
      */
     defaultRootProperty: 'children',
 
 <span id='Ext-data-TreeStore-cfg-folderSort'>    /**
-</span>     * @cfg {Boolean} folderSort
-     * Set to true to automatically prepend a leaf sorter. Defaults to `undefined`.
+</span>     * @cfg {Boolean} [folderSort=false]
+     * Set to true to automatically prepend a leaf sorter.
      */
     folderSort: false,
 
@@ -538,7 +541,8 @@ Ext.define('Ext.data.TreeStore', {
         for (i = 1; i &lt; ln; i++) {
             node1 = newNodes[i];
             node2 = newNodes[i - 1];
-            if (needsIndexSort = (node1[node1.persistenceProperty].index != node2[node2.persistenceProperty].index)) {
+            needsIndexSort = node1[node1.persistenceProperty].index != node2[node2.persistenceProperty].index;
+            if (needsIndexSort) {
                 break;
             }
         }
@@ -584,11 +588,18 @@ Ext.define('Ext.data.TreeStore', {
         var me = this,
             successful = operation.wasSuccessful(),
             records = operation.getRecords(),
-            node = operation.node;
+            node = operation.node,
+            filtered,
+            childNodes,
+            len,
+            i;
 
         me.loading = false;
         node.set('loading', false);
         if (successful) {
+            if (!me.clearOnLoad) {
+                records = me.cleanRecords(node, records);
+            }
             records = me.fillNode(node, records);
         }
         // The load event has an extra node parameter
@@ -606,6 +617,29 @@ Ext.define('Ext.data.TreeStore', {
         me.fireEvent('load', me, operation.node, records, successful);
         //this is a callback that would have been passed to the 'read' function and is optional
         Ext.callback(operation.callback, operation.scope || me, [records, operation, successful]);
+    },
+    
+    cleanRecords: function(node, records){
+        var nodeHash = {},
+            childNodes = node.childNodes,
+            i = 0,
+            len  = childNodes.length,
+            out = [],
+            rec;
+            
+        // build a hash of all the childNodes under the current node for performance
+        for (; i &lt; len; ++i) {
+            nodeHash[childNodes[i].getId()] = true;
+        }
+        
+        for (i = 0, len = records.length; i &lt; len; ++i) {
+            rec = records[i];
+            if (!nodeHash[rec.getId()]) {
+                out.push(rec);    
+            }
+        }
+        
+        return out;
     },
 
     // inherit docs

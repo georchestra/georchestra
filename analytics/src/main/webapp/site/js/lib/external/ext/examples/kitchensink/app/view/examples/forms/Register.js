@@ -1,5 +1,14 @@
 Ext.define('KitchenSink.view.examples.forms.Register', {
     extend: 'KitchenSink.view.examples.Example',
+    requires: [
+        'Ext.form.FieldSet',
+        'Ext.form.Panel',
+        'Ext.form.field.ComboBox',
+        'Ext.form.field.Date',
+        'Ext.form.field.Text',
+        'KitchenSink.store.States'
+    ],
+
     items: [{
         xtype: 'form',
 

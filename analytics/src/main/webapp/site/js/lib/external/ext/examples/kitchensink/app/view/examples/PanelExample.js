@@ -1,6 +1,10 @@
 Ext.define('KitchenSink.view.examples.PanelExample', {
     extend: 'KitchenSink.view.examples.Example',
-    
+    requires: [
+        'Ext.layout.container.VBox',
+        'Ext.panel.Panel'
+    ],
+
     layout: {
         type: 'vbox',
         align: 'center',

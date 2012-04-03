@@ -164,7 +164,8 @@ Ext.define('Ext.chart.axis.Numeric', {
             range = me.getRange(),
             min = range.min, max = range.max, i, l, excludes = [],
             useAcum = false,
-            value, data = [];
+            value, data = [],
+            addRecord;
 
         for (i = 0, l = series.length; i < l; i++) {
             excludes[i] = series[i].__excludes;
@@ -173,7 +174,7 @@ Ext.define('Ext.chart.axis.Numeric', {
             useAcum = useAcum || series[i].type === 'area';
         }
         for (d = 0, dLen = items.length; d < dLen; d++) {
-            var addRecord = true;
+            addRecord = true;
             record = items[d];
             for (i = 0; i < ln; i++) {
                 addRecord = true;

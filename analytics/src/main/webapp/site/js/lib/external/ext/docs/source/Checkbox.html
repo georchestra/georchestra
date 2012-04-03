@@ -203,7 +203,7 @@ Ext.define('Ext.form.field.Checkbox', {
 
     /*
      * @property {Boolean} isCheckbox
-     * `true` in this class to identify an objact as an instantiated Checkbox, or subclass thereof.
+     * `true` in this class to identify an object as an instantiated Checkbox, or subclass thereof.
      */
     isCheckbox: true,
 
@@ -413,14 +413,14 @@ Ext.define('Ext.form.field.Checkbox', {
      */
     setValue: function(checked) {
         var me = this,
-        	boxes, b, bLen, box;
+            boxes, b, bLen, box;
 
         // If an array of strings is passed, find all checkboxes in the group with the same name as this
         // one and check all those whose inputValue is in the array, unchecking all the others. This is to
         // facilitate setting values from Ext.form.Basic#setValues, but is not publicly documented as we
         // don't want users depending on this behavior.
         if (Ext.isArray(checked)) {
-            boxes = me.getManager().getByName(me.name).items,
+            boxes = me.getManager().getByName(me.name).items;
             bLen  = boxes.length;
 
             for (b = 0; b &lt; bLen; b++) {

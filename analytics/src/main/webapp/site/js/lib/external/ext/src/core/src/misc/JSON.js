@@ -5,7 +5,7 @@
  * http://www.json.org/js.html
  * @singleton
  */
-Ext.JSON = new(function() {
+Ext.JSON = (new(function() {
     var me = this,
     encodingFunction,
     decodingFunction,
@@ -31,6 +31,11 @@ Ext.JSON = new(function() {
             return Ext.JSON.encodeDate(o);
         } else if (Ext.isString(o)) {
             return encodeString(o);
+        } else if (typeof o == "number") {
+            //don't use isNumber here, since finite checks happen inside isNumber
+            return isFinite(o) ? String(o) : "null";
+        } else if (Ext.isBoolean(o)) {
+            return String(o);
         }
         // Allow custom zerialization by adding a toJSON method to any object type.
         // Date/String have a toJSON in some environments, so check these first.
@@ -38,11 +43,6 @@ Ext.JSON = new(function() {
             return o.toJSON();
         } else if (Ext.isArray(o)) {
             return encodeArray(o, newline);
-        } else if (typeof o == "number") {
-            //don't use isNumber here, since finite checks happen inside isNumber
-            return isFinite(o) ? String(o) : "null";
-        } else if (Ext.isBoolean(o)) {
-            return String(o);
         } else if (Ext.isObject(o)) {
             return encodeObject(o, newline);
         } else if (typeof o === "function") {
@@ -219,7 +219,7 @@ Ext.JSON = new(function() {
             });
         }
     };
-})();
+})());
 /**
  * Shorthand for {@link Ext.JSON#encode}
  * @member Ext

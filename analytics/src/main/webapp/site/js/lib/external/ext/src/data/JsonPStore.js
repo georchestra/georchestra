@@ -1,7 +1,6 @@
 /**
  * @class Ext.data.JsonPStore
  * @extends Ext.data.Store
- * @private
  * <p>Small helper class to make creating {@link Ext.data.Store}s from different domain JSON data easier.
  * A JsonPStore will be automatically configured with a {@link Ext.data.reader.Json} and a {@link Ext.data.proxy.JsonP JsonPProxy}.</p>
  * <p>A store configuration would be something like:<pre><code>
@@ -30,18 +29,23 @@ stcCallback({
  * <p>Where stcCallback is the callback name passed in the request to the remote domain. See {@link Ext.data.proxy.JsonP JsonPProxy}
  * for details of how this works.</p>
  * An object literal of this form could also be used as the {@link #cfg-data} config option.</p>
- * <p><b>*Note:</b> Although not listed here, this class accepts all of the configuration options of
- * <b>{@link Ext.data.reader.Json JsonReader}</b> and <b>{@link Ext.data.proxy.JsonP JsonPProxy}</b>.</p>
  * @xtype jsonpstore
  */
 Ext.define('Ext.data.JsonPStore', {
     extend: 'Ext.data.Store',
     alias : 'store.jsonp',
+    requires: [
+        'Ext.data.proxy.JsonP',
+        'Ext.data.reader.Json'
+    ],
 
     constructor: function(config) {
-        this.callParent(Ext.apply(config, {
-            reader: new Ext.data.reader.Json(config),
-            proxy : new Ext.data.proxy.JsonP(config)
-        }));
+        config = Ext.apply({
+            proxy: {
+                type: 'jsonp',
+                reader: 'json'
+            }
+        }, config);
+        this.callParent([config]);
     }
 });

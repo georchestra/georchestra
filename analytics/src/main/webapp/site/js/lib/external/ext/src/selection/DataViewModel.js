@@ -1,6 +1,5 @@
 /**
- * @class Ext.selection.DataViewModel
- * @ignore
+ * @private
  */
 Ext.define('Ext.selection.DataViewModel', {
     extend: 'Ext.selection.Model',

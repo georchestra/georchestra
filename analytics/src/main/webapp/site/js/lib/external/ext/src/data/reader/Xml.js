@@ -163,18 +163,29 @@ Ext.define('Ext.data.reader.Xml', {
 
     //inherit docs
     getResponseData: function(response) {
-        var xml = response.responseXML;
+        var xml = response.responseXML,
+            error,
+            msg;
 
-        //<debug>
         if (!xml) {
-            Ext.Error.raise({
-                response: response,
-                msg: 'XML data not found in the response'
-            });
-        }
-        //</debug>
+            msg = 'XML data not found in the response';               
 
-        return xml;
+            error = new Ext.data.ResultSet({
+                total  : 0,
+                count  : 0,
+                records: [],
+                success: false,
+                message: msg
+            });
+
+            this.fireEvent('exception', this, response, error);
+
+            Ext.Logger.warn(msg);
+
+            return error;
+        }
+
+        return this.readRecords(xml);
     },
 
     /**

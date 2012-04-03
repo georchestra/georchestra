@@ -54,6 +54,13 @@ Ext.define('Ext.form.field.TextArea', {
         'Ext.util.DelayedTask'
     ],
 
+    // This template includes a \n after &lt;textarea&gt; opening tag so that an initial value starting 
+    // with \n does not lose its first character when the markup is parsed.
+    // Both textareas below have the same value:
+    // &lt;textarea&gt;initial value&lt;/textarea&gt;
+    // &lt;textarea&gt;
+    // initial value
+    // &lt;/textarea&gt;
     fieldSubTpl: [
         '&lt;textarea id=&quot;{id}&quot; {inputAttrTpl}',
             '&lt;tpl if=&quot;name&quot;&gt; name=&quot;{name}&quot;&lt;/tpl&gt;',
@@ -67,11 +74,10 @@ Ext.define('Ext.form.field.TextArea', {
             '&lt;tpl if=&quot;tabIdx&quot;&gt; tabIndex=&quot;{tabIdx}&quot;&lt;/tpl&gt;',
             ' class=&quot;{fieldCls} {typeCls}&quot; ',
             '&lt;tpl if=&quot;fieldStyle&quot;&gt; style=&quot;{fieldStyle}&quot;&lt;/tpl&gt;',
-            ' autocomplete=&quot;off&quot;&gt;',
+            ' autocomplete=&quot;off&quot;&gt;\n',
             '&lt;tpl if=&quot;value&quot;&gt;{[Ext.util.Format.htmlEncode(values.value)]}&lt;/tpl&gt;',
         '&lt;/textarea&gt;',
         {
-            compiled: true,
             disableFormats: true
         }
     ],

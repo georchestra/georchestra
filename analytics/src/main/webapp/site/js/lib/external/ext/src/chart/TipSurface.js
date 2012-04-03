@@ -1,6 +1,5 @@
 /**
- * @class Ext.chart.TipSurface
- * @ignore
+ * @private
  */
 Ext.define('Ext.chart.TipSurface', {
 

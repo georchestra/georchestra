@@ -50,7 +50,8 @@ Ext.define('Ext.chart.Mask', {
      * @param {Object} [config] Config object.
      */
     constructor: function(config) {
-        var me = this;
+        var me = this,
+            resizeHandler;
 
         me.addEvents('select');
 
@@ -73,7 +74,7 @@ Ext.define('Ext.chart.Mask', {
                     }
                 });
                 //create a resize handler for the component
-                var resizeHandler = new Ext.resizer.Resizer({
+                resizeHandler = new Ext.resizer.Resizer({
                     el: comp.el,
                     handles: 'all',
                     pinned: true

@@ -43,18 +43,19 @@ Ext.define('Ext.chart.Navigation', {
                 y : zoomConfig.y * yScale,
                 width : zoomConfig.width * xScale,
                 height : zoomConfig.height * yScale
-            };
+            },
+            ends, from, to;
         for (i = 0, ln = axesItems.length; i < ln; i++) {
             axis = axesItems[i];
-            var ends = axis.calcEnds();
+            ends = axis.calcEnds();
             if (axis.position == 'bottom' || axis.position == 'top') {
-                var from = (ends.to - ends.from) * zoomer.x + ends.from,
-                    to = (ends.to - ends.from) * zoomer.width + from;
+                from = (ends.to - ends.from) * zoomer.x + ends.from;
+                to = (ends.to - ends.from) * zoomer.width + from;
                 axis.minimum = from;
                 axis.maximum = to;
             } else {
-                var to = (ends.to - ends.from) * (1 - zoomer.y) + ends.from,
-                    from = to - (ends.to - ends.from) * zoomer.height;
+                to = (ends.to - ends.from) * (1 - zoomer.y) + ends.from;
+                from = to - (ends.to - ends.from) * zoomer.height;
                 axis.minimum = from;
                 axis.maximum = to;
             }

@@ -100,11 +100,13 @@ Ext.define('Ext.dd.ScrollManager', {
         var xy = e.getXY(),
             pt = e.getPoint(),
             proc = this.proc,
-            els = this.els;
+            els = this.els,
+            id, el, r, c;
 
-        for (var id in els) {
-            var el = els[id], r = el._region;
-            var c = el.ddScrollConfig ? el.ddScrollConfig : this;
+        for (id in els) {
+            el = els[id];
+            r = el._region;
+            c = el.ddScrollConfig ? el.ddScrollConfig : this;
             if (r && r.contains(pt) && el.isScrollable()) {
                 if (r.bottom - pt.y <= c.vthresh) {
                     if(proc.el != el){

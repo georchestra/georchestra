@@ -9,7 +9,7 @@ In [the last tutorial](http://) we created a grid that pulled information from a
 
 By the end of this tutorial, we should have something that looks like this.
 
-![The final product](grid-full.png "The final product")
+{@img grid-full.png The final product}
 
 II. Getting Started
 -------------------
@@ -76,7 +76,7 @@ api.php
 
 Beneath this, we're going to add a plugin for grids called the Row Editor. This will give an overlay that makes it really simple for users to change a field's content and looks just like this:
 
-![Row Editor in action](row-editor.png "Row Editor in action")
+{@img row-editor.png Row Editor in action}
 
 grid.js
 
@@ -253,7 +253,7 @@ QueryDatabase.php
 
 Our function name corresponds to the name we set when declaring our API in grid.js, i.e. createRecord, we then say that 'data that comes from the class stdClass (from router.php) will be assigned to a variable called params, this is for added security so attacks can't be spoofed from another file. The data in question looks like this:
 
-![Firebug showing the JSON that contains the data to create a record](creating-record.png "Firebug showing the JSON that contains the data to create a record")
+{@img creating-record.png Firebug showing the JSON that contains the data to create a record}
 
 This clearly shows us which class and method is being invoked and includes a JSON data object that we access to get the individual fields for our database. The `tid` is the number of POST requests in this session, so this is the second (the first being when it loaded the data).
 

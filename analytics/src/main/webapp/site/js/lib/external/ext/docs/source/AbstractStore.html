@@ -41,7 +41,12 @@
  * {@link Ext.data.Store#filter filter} methods.
  */
 Ext.define('Ext.data.AbstractStore', {
-    requires: ['Ext.util.MixedCollection', 'Ext.data.Operation', 'Ext.util.Filter'],
+	requires: [
+        'Ext.util.MixedCollection',
+        'Ext.data.proxy.Proxy',
+        'Ext.data.Operation',
+        'Ext.util.Filter'
+    ],
 
     mixins: {
         observable: 'Ext.util.Observable',
@@ -130,14 +135,16 @@ Ext.define('Ext.data.AbstractStore', {
 
 <span id='Ext-data-AbstractStore-property-isStore'>    /**
 </span>     * @property {Boolean} isStore
-     * `true` in this class to identify an objact as an instantiated Store, or subclass thereof.
+     * `true` in this class to identify an object as an instantiated Store, or subclass thereof.
      */
     isStore: true,
 
 <span id='Ext-data-AbstractStore-cfg-storeId'>    /**
 </span>     * @cfg {String} storeId
      * Unique identifier for this store. If present, this Store will be registered with the {@link Ext.data.StoreManager},
-     * making it easy to reuse elsewhere. Defaults to undefined.
+     * making it easy to reuse elsewhere.
+     *
+     * Note that when store is instatiated by Controller, the storeId will be overridden by the name of the store.
      */
 
 <span id='Ext-data-AbstractStore-cfg-fields'>    /**
@@ -824,18 +831,18 @@ Ext.define('Ext.data.AbstractStore', {
                 Ext.data.StoreManager.unregister(me);
             }
             me.clearData();
-            me.data = null;
-            me.tree = null;
-            // Ext.destroy(this.proxy);
+            me.data = me.tree = me.sorters = me.filters = me.groupers = null;
             if (me.reader) {
                 me.reader.destroyReader();
             }
-            me.reader = me.writer = null;
+            me.proxy = me.reader = me.writer = null;
             me.clearListeners();
             me.isDestroyed = true;
 
             if (me.implicitModel) {
                 Ext.destroy(me.model);
+            } else {
+                me.model = null;
             }
         }
     },

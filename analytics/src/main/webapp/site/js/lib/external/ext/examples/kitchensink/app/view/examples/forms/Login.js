@@ -1,8 +1,12 @@
 Ext.define('KitchenSink.view.examples.forms.Login', {
     extend: 'KitchenSink.view.examples.Example',
+    requires: [
+        'Ext.form.Panel',
+        'Ext.form.field.Checkbox',
+        'Ext.form.field.Text'
+    ],
+
     items: [
-        
-        
         {
             xtype: 'form',
             
@@ -24,9 +28,6 @@ Ext.define('KitchenSink.view.examples.forms.Login', {
                 {text:'Register'},
                 {text:'Login'}
             ]
-            
         }
-        
-        
     ]
 });

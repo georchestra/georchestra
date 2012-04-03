@@ -74,10 +74,11 @@ Ext.define('Ext.util.History', {
     updateIFrame: function(token) {
         var html = '<html><body><div id="state">' +
                     Ext.util.Format.htmlEncode(token) +
-                    '</div></body></html>';
+                    '</div></body></html>',
+            doc;
 
         try {
-            var doc = this.iframe.contentWindow.document;
+            doc = this.iframe.contentWindow.document;
             doc.open();
             doc.write(html);
             doc.close();
@@ -89,17 +90,18 @@ Ext.define('Ext.util.History', {
 
     checkIFrame: function () {
         var me = this,
-            contentWindow = me.iframe.contentWindow;
+            contentWindow = me.iframe.contentWindow,
+            doc, elem, oldToken, oldHash;
 
         if (!contentWindow || !contentWindow.document) {
             Ext.Function.defer(this.checkIFrame, 10, this);
             return;
         }
 
-        var doc = contentWindow.document,
-            elem = doc.getElementById("state"),
-            oldToken = elem ? elem.innerText : null,
-            oldHash = me.getHash();
+        doc = contentWindow.document;
+        elem = doc.getElementById("state");
+        oldToken = elem ? elem.innerText : null;
+        oldHash = me.getHash();
 
         Ext.TaskManager.start({
             run: function () {
@@ -127,14 +129,15 @@ Ext.define('Ext.util.History', {
     },
 
     startUp: function () {
-        var me = this;
+        var me = this,
+            hash;
 
         me.currentToken = me.hiddenField.value || this.getHash();
 
         if (me.oldIEMode) {
             me.checkIFrame();
         } else {
-            var hash = me.getHash();
+            hash = me.getHash();
             Ext.TaskManager.start({
                 run: function () {
                     var newHash = me.getHash();
@@ -213,7 +216,7 @@ Ext.define('Ext.util.History', {
                 me.iframe = DomHelper.append(me.hiddenField.parentNode, {
                     tag: 'iframe',
                     id: me.iframeId
-                })
+                });
             }
         }
 

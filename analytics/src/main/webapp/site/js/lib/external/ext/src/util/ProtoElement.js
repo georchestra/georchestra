@@ -12,7 +12,7 @@
  * the component is not yet rendered to the DOM. As such, we want it to perform as quickly as possible
  * so it's not as fully featured as you may expect.
  */
-Ext.define('Ext.util.ProtoElement', function () {
+Ext.define('Ext.util.ProtoElement', (function () {
     var splitWords = Ext.String.splitWords,
         toMap = Ext.Array.toMap;
 
@@ -202,4 +202,4 @@ Ext.define('Ext.util.ProtoElement', function () {
             return to;
         }
     };
-}());
+}()));

@@ -251,7 +251,7 @@ Ext.define('Ext.EventObjectImpl', {
         }
 
         return scale;
-    })(),
+    }()),
 
     /**
      * Simple click regex
@@ -663,9 +663,10 @@ Ext.getBody().on('click', function(e,t){
      * is likely to be used when relaying a DOM event. If not specified, {@link #getTarget}
      * is used to determine the target.
      */
-    injectEvent: function () {
+    injectEvent: (function () {
         var API,
-            dispatchers = {}; // keyed by event type (e.g., 'mousedown')
+            dispatchers = {}, // keyed by event type (e.g., 'mousedown')
+            crazyIEButtons;
 
         // Good reference: http://developer.yahoo.com/yui/docs/UserAction.js.html
 
@@ -733,7 +734,7 @@ Ext.getBody().on('click', function(e,t){
                 }
             };
         } else if (document.createEventObject) { // else if (IE)
-            var crazyIEButtons = { 0: 1, 1: 4, 2: 2 };
+            crazyIEButtons = { 0: 1, 1: 4, 2: 2 };
 
             API = {
                 createHtmlEvent: function (doc, type, bubbles, cancelable) {
@@ -872,7 +873,7 @@ Ext.getBody().on('click', function(e,t){
             t = API.fixTarget(t);
             dispatcher(t, me);
         };
-    }() // call to produce method
+    }()) // call to produce method
 
 }, function() {
 

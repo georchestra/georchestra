@@ -1,8 +1,11 @@
 Ext.define('KitchenSink.view.examples.toolbars.BasicToolbar', {
     extend: 'KitchenSink.view.examples.Example',
+    requires: [
+        'Ext.button.Split',
+        'Ext.toolbar.Toolbar'
+    ],
+
     items: [
-
-
         {
             xtype:'toolbar',
             width:null, height:null,
@@ -22,7 +25,5 @@ Ext.define('KitchenSink.view.examples.toolbars.BasicToolbar', {
                 {text:'Format', iconCls:'edit2'}
             ]
         }
-
-
     ]
 });

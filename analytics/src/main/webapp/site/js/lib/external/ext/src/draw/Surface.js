@@ -544,13 +544,17 @@ Ext.define('Ext.draw.Surface', {
     add: function() {
         var args = Array.prototype.slice.call(arguments),
             sprite,
-            index;
-
-        var hasMultipleArgs = args.length > 1;
+            index,
+            hasMultipleArgs = args.length > 1,
+            items,
+            results,
+            i,
+            ln,
+            item;
+            
         if (hasMultipleArgs || Ext.isArray(args[0])) {
-            var items = hasMultipleArgs ? args : args[0],
-                results = [],
-                i, ln, item;
+            items = hasMultipleArgs ? args : args[0];
+            results = [];
 
             for (i = 0, ln = items.length; i < ln; i++) {
                 item = items[i];
@@ -913,8 +917,9 @@ Ext.define('Ext.draw.Surface', {
      * @return {Object} The {@link Ext.draw.CompositeSprite}.
      */
     getGroup: function(id) {
+        var group;
         if (typeof id == "string") {
-            var group = this.groups.get(id);
+            group = this.groups.get(id);
             if (!group) {
                 group = this.createGroup(id);
             }

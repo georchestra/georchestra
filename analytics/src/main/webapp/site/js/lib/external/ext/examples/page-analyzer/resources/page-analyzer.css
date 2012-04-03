@@ -39,7 +39,14 @@
     background-image: url(images/green-led.gif) !important;
 }
 
-.pgan-layout .pgan-delete-row,
+.pgan-delete-row, .pgan-show-row-data {
+    visibility: hidden;
+}
+
+.pgan-layoutrun .pgan-delete-row, .pgan-layoutrun .pgan-show-row-data {
+    visibility: visible;
+}
+
 .pgan-layout .pgan-get-row-info {
     display: none !important;
 }

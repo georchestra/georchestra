@@ -179,7 +179,7 @@ Ext.define('Ext.form.field.Radio', {
 
     /**
      * @property {Boolean} isRadio
-     * `true` in this class to identify an objact as an instantiated Radio, or subclass thereof.
+     * `true` in this class to identify an object as an instantiated Radio, or subclass thereof.
      */
     isRadio: true,
 

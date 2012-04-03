@@ -89,7 +89,7 @@ Ext.onReady(function(){
                             data: [{
                                 text: 'User Details'
                             },{
-                                text: 'Developer Detail'
+                                text: 'Developer Details'
                             },{
                                 text: 'Manager Details'
                             }]

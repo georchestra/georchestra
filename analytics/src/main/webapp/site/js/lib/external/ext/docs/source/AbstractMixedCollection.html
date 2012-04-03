@@ -26,6 +26,12 @@ Ext.define('Ext.util.AbstractMixedCollection', {
         observable: 'Ext.util.Observable'
     },
 
+<span id='Ext-util-AbstractMixedCollection-property-isMixedCollection'>    /**
+</span>     * @property {Boolean} isMixedCollection
+     * `true` in this class to identify an objact as an instantiated MixedCollection, or subclass thereof.
+     */
+    isMixedCollection: true,
+
 <span id='Ext-util-AbstractMixedCollection-property-generation'>    /**
 </span>     * @private Mutation counter which is incremented upon add and remove.
      */
@@ -76,9 +82,9 @@ Ext.define('Ext.util.AbstractMixedCollection', {
     },
 
 <span id='Ext-util-AbstractMixedCollection-cfg-allowFunctions'>    /**
-</span>     * @cfg {Boolean} allowFunctions Specify &lt;tt&gt;true&lt;/tt&gt; if the {@link #addAll}
+</span>     * @cfg {Boolean} allowFunctions Specify &lt;code&gt;true&lt;/code&gt; if the {@link #addAll}
      * function should add function references to the collection. Defaults to
-     * &lt;tt&gt;false&lt;/tt&gt;.
+     * &lt;code&gt;false&lt;/code&gt;.
      */
     allowFunctions : false,
 
@@ -86,7 +92,7 @@ Ext.define('Ext.util.AbstractMixedCollection', {
 </span>     * Adds an item to the collection. Fires the {@link #event-add} event when complete.
      * @param {String} key &lt;p&gt;The key to associate with the item, or the new item.&lt;/p&gt;
      * &lt;p&gt;If a {@link #getKey} implementation was specified for this MixedCollection,
-     * or if the key of the stored items is in a property called &lt;tt&gt;&lt;b&gt;id&lt;/b&gt;&lt;/tt&gt;,
+     * or if the key of the stored items is in a property called &lt;code&gt;&lt;b&gt;id&lt;/b&gt;&lt;/code&gt;,
      * the MixedCollection will be able to &lt;i&gt;derive&lt;/i&gt; the key for the new item.
      * In this case just pass the new item in this parameter.&lt;/p&gt;
      * @param {Object} o The item to add.
@@ -155,7 +161,7 @@ mc.add(otherEl);
 </span>     * Replaces an item in the collection. Fires the {@link #event-replace} event when complete.
      * @param {String} key &lt;p&gt;The key associated with the item to replace, or the replacement item.&lt;/p&gt;
      * &lt;p&gt;If you supplied a {@link #getKey} implementation for this MixedCollection, or if the key
-     * of your stored items is in a property called &lt;tt&gt;&lt;b&gt;id&lt;/b&gt;&lt;/tt&gt;, then the MixedCollection
+     * of your stored items is in a property called &lt;code&gt;&lt;b&gt;id&lt;/b&gt;&lt;/code&gt;, then the MixedCollection
      * will be able to &lt;i&gt;derive&lt;/i&gt; the key of the replacement item. If you want to replace an item
      * with one having the same key value, then just pass the replacement item in this parameter.&lt;/p&gt;
      * @param o {Object} o (optional) If the first parameter passed was a key, the item to associate
@@ -190,7 +196,7 @@ mc.add(otherEl);
      * @param {Object/Array} objs An Object containing properties which will be added
      * to the collection, or an Array of values, each of which are added to the collection.
      * Functions references will be added to the collection if &lt;code&gt;{@link #allowFunctions}&lt;/code&gt;
-     * has been set to &lt;tt&gt;true&lt;/tt&gt;.
+     * has been set to &lt;code&gt;true&lt;/code&gt;.
      */
     addAll : function(objs){
         var me = this,
@@ -417,8 +423,8 @@ mc.add(otherEl);
      * Key has priority over index.  This is the equivalent
      * of calling {@link #getByKey} first, then if nothing matched calling {@link #getAt}.
      * @param {String/Number} key The key or index of the item.
-     * @return {Object} If the item is found, returns the item.  If the item was not found, returns &lt;tt&gt;undefined&lt;/tt&gt;.
-     * If an item was found, but is a Class, returns &lt;tt&gt;null&lt;/tt&gt;.
+     * @return {Object} If the item is found, returns the item.  If the item was not found, returns &lt;code&gt;undefined&lt;/code&gt;.
+     * If an item was found, but is a Class, returns &lt;code&gt;null&lt;/code&gt;.
      */
     get : function(key) {
         var me = this,
@@ -645,12 +651,16 @@ var middleAged = people.filter('age', 24);
         filterFn = function(record) {
             var isMatch = true,
                 length = filters.length,
-                i;
+                i,
+                filter,
+                fn,
+                scope;
+                
 
             for (i = 0; i &lt; length; i++) {
-                var filter = filters[i],
-                    fn     = filter.filterFn,
-                    scope  = filter.scope;
+                filter = filters[i];
+                fn     = filter.filterFn;
+                scope  = filter.scope;
 
                 isMatch = isMatch &amp;&amp; fn.call(scope, record);
             }

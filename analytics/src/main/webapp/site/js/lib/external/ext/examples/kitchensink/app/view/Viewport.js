@@ -1,13 +1,17 @@
 Ext.define('KitchenSink.view.Viewport', {
     extend: 'Ext.container.Viewport',
-    requires: ['KitchenSink.view.List'],
+    requires: [
+        'Ext.layout.container.Border',
+        'Ext.layout.container.HBox',
+        'KitchenSink.view.List'
+    ],
     
     layout: 'border',
     
     items: [
         {
             region: 'north',
-            xtype : 'header'
+            xtype : 'pageHeader'
         },
         
         {
@@ -36,7 +40,7 @@ Ext.define('KitchenSink.view.Viewport', {
             ]
         },
         {
-            xtype: 'header',
+            xtype: 'pageHeader',
             region: 'south',
             height: 13
         }

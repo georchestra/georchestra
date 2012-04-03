@@ -10,7 +10,7 @@
 Ext.define("Ext.util.Sortable", {
     /**
      * @property {Boolean} isSortable
-     * `true` in this class to identify an objact as an instantiated Sortable, or subclass thereof.
+     * `true` in this class to identify an object as an instantiated Sortable, or subclass thereof.
      */
     isSortable: true,
 
@@ -170,7 +170,7 @@ Ext.define("Ext.util.Sortable", {
                 }
                 return result;
             };
-        })(this.sorters.items) : function() {
+        }(this.sorters.items)) : function() {
             return 0;
         };
     },

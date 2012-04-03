@@ -48,7 +48,7 @@
     function makeCtor (className) {
         function constructor () {
             return this.constructor.apply(this, arguments);
-        };
+        }
         //&lt;debug&gt;
         if (className) {
             constructor.displayName = className;
@@ -362,7 +362,7 @@
                     'get': 'get' + capitalizedName,
                     doSet : 'doSet' + capitalizedName,
                     changeEvent: name.toLowerCase() + 'change'
-                }
+                };
             }
 
             return map;
@@ -532,7 +532,7 @@
                     }
 
                     return this;
-                }
+                };
             }
 
             if (!(getName in prototype) || data.hasOwnProperty(getName)) {
@@ -627,9 +627,9 @@
                 }
             }
             else {
-                for (name in mixins) {
-                    if (mixins.hasOwnProperty(name)) {
-                        Class.mixin(name, mixins[name]);
+                for (var mixinName in mixins) {
+                    if (mixins.hasOwnProperty(mixinName)) {
+                        Class.mixin(mixinName, mixins[mixinName]);
                     }
                 }
             }
@@ -688,7 +688,7 @@
     };
     //&lt;/feature&gt;
 
-})();
+}());
 </pre>
 </body>
 </html>

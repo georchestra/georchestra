@@ -190,9 +190,9 @@ Ext.EventManager = new function() {
                         event.self.prototype.fire.apply(event, arguments);
                         Ext._afterReadytime = new Date().getTime();
                     }
-                }
+                };
                 return event;
-            })(),
+            }()),
 
         /**
          * Fires when a DOM event handler finishes its run, just before returning to browser control.
@@ -926,20 +926,22 @@ Ext.EventManager = new function() {
             try {
                 // relinquish references.
                 doc = win = undefined;
+                
+                var gridviews, i, ln,
+                    el, cache;
 
                 EventManager.unloadEvent.fire();
                 // Work around FF3 remembering the last scroll position when refreshing the grid and then losing grid view
                 if (Ext.isGecko3) {
-                    var gridviews = Ext.ComponentQuery.query('gridview'),
-                        i = 0,
-                        ln = gridviews.length;
+                    gridviews = Ext.ComponentQuery.query('gridview');
+                    i = 0;
+                    ln = gridviews.length;
                     for (; i < ln; i++) {
                         gridviews[i].scrollToTop();
                     }
                 }
                 // Purge all elements in the cache
-                var el,
-                    cache = Ext.cache;
+                cache = Ext.cache;
 
                 for (el in cache) {
                     if (cache.hasOwnProperty(el)) {

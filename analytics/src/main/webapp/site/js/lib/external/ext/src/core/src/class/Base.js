@@ -90,7 +90,7 @@ var noArgs = [],
             }
 
             //<feature classSystem.config>
-            prototype.config = new prototype.configClass;
+            prototype.config = new prototype.configClass();
             prototype.initConfigList = prototype.initConfigList.slice();
             prototype.initConfigMap = Ext.clone(prototype.initConfigMap);
             prototype.configMap = Ext.Object.chain(prototype.configMap);
@@ -193,16 +193,13 @@ var noArgs = [],
          */
         addStatics: function(members) {
             var member, name;
-            //<debug>
-            var className = Ext.getClassName(this);
-            //</debug>
 
             for (name in members) {
                 if (members.hasOwnProperty(name)) {
                     member = members[name];
                     //<debug>
                     if (typeof member == 'function') {
-                        member.displayName = className + '.' + name;
+                        member.displayName = Ext.getClassName(this) + '.' + name;
                     }
                     //</debug>
                     this[name] = member;
@@ -230,16 +227,12 @@ var noArgs = [],
                 hasInheritableStatics = prototype.$hasInheritableStatics = {};
             }
 
-            //<debug>
-            var className = Ext.getClassName(this);
-            //</debug>
-
             for (name in members) {
                 if (members.hasOwnProperty(name)) {
                     member = members[name];
                     //<debug>
                     if (typeof member == 'function') {
-                        member.displayName = className + '.' + name;
+                        member.displayName = Ext.getClassName(this) + '.' + name;
                     }
                     //</debug>
                     this[name] = member;
@@ -282,10 +275,6 @@ var noArgs = [],
                 names = [],
                 i, ln, name, member;
 
-            //<debug>
-            var className = this.$className || '';
-            //</debug>
-
             for (name in members) {
                 names.push(name);
             }
@@ -304,7 +293,7 @@ var noArgs = [],
                         member.$owner = this;
                         member.$name = name;
                         //<debug>
-                        member.displayName = className + '#' + name;
+                        member.displayName = (this.$className || '') + '#' + name;
                         //</debug>
                     }
 
@@ -385,9 +374,7 @@ var noArgs = [],
                 toBorrow = fromPrototype[name];
 
                 if (typeof toBorrow == 'function') {
-                    fn = function() {
-                        return toBorrow.apply(this, arguments);
-                    };
+                    fn = Ext.Function.clone(toBorrow);
 
                     //<debug>
                     if (className) {
@@ -422,11 +409,9 @@ var noArgs = [],
          *         constructor: function() {
          *             alert("I'm going to be a cat!");
          *
-         *             var instance = this.callParent(arguments);
+         *             this.callParent(arguments);
          *
          *             alert("Meeeeoooowwww");
-         *
-         *             return instance;
          *         }
          *     });
          *
@@ -442,11 +427,9 @@ var noArgs = [],
          *         constructor: function() {
          *             alert("I'm going to be a cat!");
          *
-         *             var instance = this.callParent(arguments);
+         *             this.callParent(arguments);
          *
          *             alert("Meeeeoooowwww");
-         *
-         *             return instance;
          *         }
          *     });
          *
@@ -505,9 +488,8 @@ var noArgs = [],
                             }
 
                             //<debug>
-                            var className = me.$className;
-                            if (className) {
-                                member.displayName = className + '#' + name;
+                            if (me.$className) {
+                                member.displayName = me.$className + '#' + name;
                             }
                             //</debug>
 
@@ -870,7 +852,7 @@ var noArgs = [],
          *         },
          *
          *         constructor: function() {
-         *             alert(this.self.speciesName); / dependentOL on 'this'
+         *             alert(this.self.speciesName); // dependent on 'this'
          *         },
          *
          *         clone: function() {
@@ -906,9 +888,8 @@ var noArgs = [],
                 owner = me.self;
 
             //<debug>
-            var className = owner.$className;
-            if (className) {
-                hookFn.displayName = className + '#' + name;
+            if (owner.$className) {
+                hookFn.displayName = owner.$className + '#' + name;
             }
             //</debug>
 
@@ -957,7 +938,7 @@ var noArgs = [],
         initConfig: function(config) {
             var instanceConfig = config,
                 configNameCache = Ext.Class.configNameCache,
-                defaultConfig = new this.configClass,
+                defaultConfig = new this.configClass(),
                 defaultConfigList = this.initConfigList,
                 hasConfig = this.configMap,
                 nameMap, i, ln, name, initializedName;
@@ -1115,11 +1096,9 @@ var noArgs = [],
      *         constructor: function() {
      *             alert("I'm going to be a cat!");
      *
-     *             var instance = this.callOverridden();
+     *             this.callOverridden();
      *
      *             alert("Meeeeoooowwww");
-     *
-     *             return instance;
      *         }
      *     });
      *
@@ -1137,4 +1116,4 @@ var noArgs = [],
 
     Ext.Base = Base;
 
-})(Ext.Function.flexSetter);
+}(Ext.Function.flexSetter));

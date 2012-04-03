@@ -77,11 +77,6 @@ Ext.define('Ext.container.DockingContainer', {
             item = items[i];
             item.dock = item.dock || 'top';
 
-            // Allow older browsers to target docked items to style without borders
-            if (me.border === false) {
-                // item.cls = item.cls || '' + ' ' + me.baseCls + '-noborder-docked-' + item.dock;
-            }
-
             if (pos !== undefined) {
                 me.dockedItems.insert(pos + i, item);
             } else {
@@ -122,11 +117,13 @@ Ext.define('Ext.container.DockingContainer', {
         // sets "$skipDockedItems" on the renderTpl's renderData.
         //
         var me = renderData.$comp,
-            layout = me.componentLayout;
+            layout = me.componentLayout,
+            items,
+            tree;
 
         if (layout.getDockedItems && !renderData.$skipDockedItems) {
-            var items = layout.getDockedItems('render', !after),
-                tree = items && layout.getItemsRenderTree(items);
+            items = layout.getDockedItems('render', !after);
+            tree = items && layout.getItemsRenderTree(items);
 
             if (tree) {
                 Ext.DomHelper.generateMarkup(tree, out);

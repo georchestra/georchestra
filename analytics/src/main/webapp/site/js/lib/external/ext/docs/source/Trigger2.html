@@ -160,7 +160,7 @@ Ext.define('Ext.form.field.Trigger', {
             field = me.callParent(arguments);
 
         return '&lt;table id=&quot;' + me.id + '-triggerWrap&quot; class=&quot;' + Ext.baseCSSPrefix + 'form-trigger-wrap&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;&lt;tbody&gt;&lt;tr&gt;' +
-            '&lt;td id=&quot;' + me.id + '-inputCell&quot;&gt;' + field + '&lt;/td&gt;' +
+            '&lt;td id=&quot;' + me.id + '-inputCell&quot; class=&quot;' + Ext.baseCSSPrefix + 'form-trigger-input-cell&quot;&gt;' + field + '&lt;/td&gt;' +
             me.getTriggerMarkup() +
             '&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;';
     },
@@ -220,6 +220,10 @@ Ext.define('Ext.form.field.Trigger', {
         triggerConfigs[i - 1].cn.cls += ' ' + triggerBaseCls + '-last';
 
         return Ext.DomHelper.markup(triggerConfigs);
+    },
+    
+    disableCheck: function() {
+        return !this.disabled;    
     },
 
     // private
@@ -302,7 +306,9 @@ Ext.define('Ext.form.field.Trigger', {
     initTrigger: function() {
         var me = this,
             triggerWrap = me.triggerWrap,
-            triggerEl = me.triggerEl;
+            triggerEl = me.triggerEl,
+            disableCheck = me.disableCheck,
+            els, eLen, el, e, idx;
 
         if (me.repeatTriggerClick) {
             me.triggerRepeater = new Ext.util.ClickRepeater(triggerWrap, {
@@ -323,20 +329,19 @@ Ext.define('Ext.form.field.Trigger', {
         }
 
         triggerEl.setVisibilityMode(Ext.Element.DISPLAY);
-        triggerEl.addClsOnOver(me.triggerBaseCls + '-over');
+        triggerEl.addClsOnOver(me.triggerBaseCls + '-over', disableCheck, me);
 
-        var els  = triggerEl.elements,
-            eLen = els.length,
-            el, e, idx;
+        els  = triggerEl.elements;
+        eLen = els.length;
 
         for (e = 0; e &lt; eLen; e++) {
             el = els[e];
             idx = e+1;
-            el.addClsOnOver(me['trigger' + (idx) + 'Cls'] + '-over');
-            el.addClsOnClick(me['trigger' + (idx) + 'Cls'] + '-click');
+            el.addClsOnOver(me['trigger' + (idx) + 'Cls'] + '-over', disableCheck, me);
+            el.addClsOnClick(me['trigger' + (idx) + 'Cls'] + '-click', disableCheck, me);
         }
 
-        triggerEl.addClsOnClick(me.triggerBaseCls + '-click');
+        triggerEl.addClsOnClick(me.triggerBaseCls + '-click', disableCheck, me);
 
     },
 

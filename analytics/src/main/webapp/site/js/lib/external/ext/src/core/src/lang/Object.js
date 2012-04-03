@@ -11,9 +11,8 @@
 (function() {
 
 // The "constructor" for chain:
-var TemplateClass = function(){};
-
-var ExtObject = Ext.Object = {
+var TemplateClass = function(){},
+    ExtObject = Ext.Object = {
 
     /**
      * Returns a new object with the given object as the prototype chain.
@@ -535,7 +534,7 @@ var ExtObject = Ext.Object = {
 
                 for (; i < ln; i++) {
                     property = objectProperties[i];
-                    this[property] = new propertyClassesMap[property];
+                    this[property] = new propertyClassesMap[property]();
                 }
             },
             key, value;
@@ -603,4 +602,4 @@ Ext.urlDecode = function() {
     return ExtObject.fromQueryString.apply(ExtObject, arguments);
 };
 
-})();
+}());

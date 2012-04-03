@@ -147,11 +147,13 @@ Ext.define('Ext.draw.Matrix', {
         return &quot;matrix(&quot; + [me.get(0, 0), me.get(1, 0), me.get(0, 1), me.get(1, 1), me.get(0, 2), me.get(1, 2)].join() + &quot;)&quot;;
     },
 
-    toFilter: function() {
+    toFilter: function(dx, dy) {
         var me = this;
-        return &quot;progid:DXImageTransform.Microsoft.Matrix(M11=&quot; + me.get(0, 0) +
+        dx = dx || 0;
+        dy = dy || 0;
+        return &quot;progid:DXImageTransform.Microsoft.Matrix(sizingMethod='auto expand', filterType='bilinear', M11=&quot; + me.get(0, 0) +
             &quot;, M12=&quot; + me.get(0, 1) + &quot;, M21=&quot; + me.get(1, 0) + &quot;, M22=&quot; + me.get(1, 1) +
-            &quot;, Dx=&quot; + me.get(0, 2) + &quot;, Dy=&quot; + me.get(1, 2) + &quot;)&quot;;
+            &quot;, Dx=&quot; + (me.get(0, 2) + dx) + &quot;, Dy=&quot; + (me.get(1, 2) + dy) + &quot;)&quot;;
     },
 
     offset: function() {

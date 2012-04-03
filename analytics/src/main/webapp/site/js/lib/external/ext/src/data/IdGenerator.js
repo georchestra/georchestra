@@ -117,7 +117,7 @@ Ext.define('Ext.data.IdGenerator', {
 
     /**
      * @property {Boolean} isGenerator
-     * `true` in this class to identify an objact as an instantiated IdGenerator, or subclass thereof.
+     * `true` in this class to identify an object as an instantiated IdGenerator, or subclass thereof.
      */
     isGenerator: true,
 

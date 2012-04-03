@@ -44,11 +44,13 @@ Ext.define('Ext.chart.series.Cartesian', {
         var me = this,
             labels = [],
             fields, i, ln,
-            combinations = me.combinations;
+            combinations = me.combinations,
+            title,
+            combo, label0, label1;
 
         fields = [].concat(me.yField);
         for (i = 0, ln = fields.length; i < ln; i++) {
-            var title = me.title;
+            title = me.title;
             // Use the 'title' config if present, otherwise use the raw yField name
             labels.push((Ext.isArray(title) ? title[i] : title) || fields[i]);
         }
@@ -58,9 +60,9 @@ Ext.define('Ext.chart.series.Cartesian', {
         if (combinations) {
             combinations = Ext.Array.from(combinations);
             for (i = 0, ln = combinations.length; i < ln; i++) {
-                var combo = combinations[i],
-                    label0 = labels[combo[0]],
-                    label1 = labels[combo[1]];
+                combo = combinations[i];
+                label0 = labels[combo[0]];
+                label1 = labels[combo[1]];
                 labels[combo[1]] = label0 + ' & ' + label1;
                 labels.splice(combo[0], 1);
             }
@@ -154,7 +156,8 @@ Ext.define('Ext.chart.series.Cartesian', {
             data = store.data.items,
             i, ln, record,
             min, max,
-            xField = me.xField;
+            xField = me.xField,
+            xValue;
 
         if (me.getRecordCount() > 0) {
             min = Infinity;
@@ -162,7 +165,7 @@ Ext.define('Ext.chart.series.Cartesian', {
                 
             for (i = 0, ln = data.length; i < ln; i++) {
                 record = data[i];
-                var xValue = record.get(xField);
+                xValue = record.get(xField);
                 if (xValue > max) {
                     max = xValue;
                 }

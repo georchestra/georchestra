@@ -77,7 +77,9 @@ Ext.define('Ext.container.ButtonGroup', {
 
     internalDefaults: {removeMode: 'container', hideParent: true},
 
-    initComponent : function(){
+    titleAlign: 'center',
+
+    initComponent : function() {
         // Copy the component's columns config to the layout if specified
         var me = this,
             cols = me.columns;
@@ -93,34 +95,9 @@ Ext.define('Ext.container.ButtonGroup', {
         me.callParent(arguments);
     },
 
-    beforeRender: function() {
-        var me = this;
-
-        me.callParent();
-
-        //we need to add an addition item in here so the ButtonGroup title is centered
-        if (me.header) {
-            // Header text cannot flex, but must be natural size if it's being centered
-            delete me.header.items.items[0].flex;
-
-            // For Centering, surround the text with two flex:1 spacers.
-            me.header.insert(1, {
-                xtype: 'component',
-                ui   : me.ui,
-                flex : 1
-            });
-            me.header.insert(0, {
-                xtype: 'component',
-                ui   : me.ui,
-                flex : 1
-            });
-        }
-        me.callParent(arguments);
-    },
-
     // private
     onBeforeAdd: function(component) {
-        if (component.is('button')) {
+        if (component.isButton) {
             component.ui = component.ui + '-toolbar';
         }
         this.callParent(arguments);

@@ -156,4 +156,4 @@
             ELEMENT.setXY(el, [false, y]);
         }
     });
-})();
+}());

@@ -1,6 +1,5 @@
 /**
- * @class Ext.fx.CubicBezier
- * @ignore
+ * @private
  */
 Ext.define('Ext.fx.CubicBezier', {
 

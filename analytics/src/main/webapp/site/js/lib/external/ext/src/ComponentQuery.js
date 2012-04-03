@@ -257,6 +257,10 @@ Ext.define('Ext.ComponentQuery', {
             else if (Ext.isArray(root)) {
                 workingItems = root;
             }
+            // Root is a MixedCollection
+            else if (root.isMixedCollection) {
+                workingItems = root.items;
+            }
 
             // We are going to loop over our operations and take care of them
             // one by one.

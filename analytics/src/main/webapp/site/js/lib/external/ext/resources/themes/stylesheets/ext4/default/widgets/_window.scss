@@ -78,14 +78,6 @@
             padding-top: 5px !important;
             margin-top: 0;
         }
-
-        // hide all docked items except for header when window is collapsed
-        .#{$prefix}docked {
-            visibility: hidden;
-        }
-        .#{$prefix}window-header {
-            visibility: visible;
-        }
     }
     
     .#{$prefix}window-header-left,

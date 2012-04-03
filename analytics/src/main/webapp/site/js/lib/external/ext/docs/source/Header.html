@@ -23,8 +23,8 @@ Ext.define('Ext.panel.Header', {
     uses: ['Ext.panel.Tool', 'Ext.draw.Component', 'Ext.util.CSS', 'Ext.layout.component.Body', 'Ext.Img'],
     alias: 'widget.header',
 
-<span id='Ext-panel-Header-property-isAction'>    /**
-</span>     * @property {Boolean} isAction
+<span id='Ext-panel-Header-property-isHeader'>    /**
+</span>     * @property {Boolean} isHeader
      * `true` in this class to identify an objact as an instantiated Header, or subclass thereof.
      */
     isHeader       : true,
@@ -33,15 +33,21 @@ Ext.define('Ext.panel.Header', {
     weight         : -1,
     componentLayout: 'body',
 
+<span id='Ext-panel-Header-cfg-titleAlign'>    /**
+</span>     * @cfg {String} [titleAlign='left']
+     * May be `&quot;left&quot;`, `&quot;right&quot;` or `&quot;center&quot;`.
+     *
+     * The alignment of the title text within the available space between the icon and the tools.
+     */
+    titleAlign: 'left',
+
     childEls: [
         'body'
     ],
 
     renderTpl: [
-        '&lt;div id=&quot;{id}-body&quot; class=&quot;{baseCls}-body&lt;tpl if=&quot;bodyCls&quot;&gt; {bodyCls}&lt;/tpl&gt;',
-        '&lt;tpl if=&quot;uiCls&quot;&gt;',
-            '&lt;tpl for=&quot;uiCls&quot;&gt; {parent.baseCls}-body-{parent.ui}-{.}&lt;/tpl&gt;',
-        '&lt;/tpl&gt;&quot;',
+        '&lt;div id=&quot;{id}-body&quot; class=&quot;{baseCls}-body {bodyCls}',
+        '&lt;tpl for=&quot;uiCls&quot;&gt; {parent.baseCls}-body-{parent.ui}-{.}&quot;&lt;/tpl&gt;',
         '&lt;tpl if=&quot;bodyStyle&quot;&gt; style=&quot;{bodyStyle}&quot;&lt;/tpl&gt;&gt;',
             '{%this.renderContainer(out,values)%}',
         '&lt;/div&gt;'
@@ -167,6 +173,7 @@ Ext.define('Ext.panel.Header', {
                 noWrap    : true,
                 flex      : 1,
                 id        : me.id + '_hd',
+                style     : 'text-align:' + me.titleAlign,
                 cls       : me.baseCls + '-text-container',
                 renderTpl : me.getTpl('headingTpl'),
                 renderData: {
@@ -362,6 +369,7 @@ Ext.define('Ext.panel.Header', {
                     me.title = title;
                     me.titleCmp.textEl.update(me.title || '&amp;#160;');
                 }
+                me.titleCmp.updateLayout();
             } else {
                 me.titleCmp.on({
                     render: function() {
@@ -470,7 +478,7 @@ Ext.define('Ext.panel.Header', {
     },
 
 <span id='Ext-panel-Header-method-onAdd'>    /**
-</span>     * @private
+</span>     * @protected
      * Set up the `tools.&lt;tool type&gt;` link in the owning Panel.
      * Bind the tool to its owning Panel.
      * @param component

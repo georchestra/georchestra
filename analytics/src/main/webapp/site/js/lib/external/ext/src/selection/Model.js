@@ -252,8 +252,8 @@ Ext.define('Ext.selection.Model', {
     /**
      * Selects a record instance by record instance or index.
      * @param {Ext.data.Model[]/Number} records An array of records or an index
-     * @param {Boolean} keepExisting (optional)
-     * @param {Boolean} suppressEvent (optional) Set to false to not fire a select event
+     * @param {Boolean} [keepExisting=false] True to retain existing selections
+     * @param {Boolean} [suppressEvent=false] True to not fire a select event
      */
     select: function(records, keepExisting, suppressEvent) {
         // Automatically selecting eg store.first() or store.last() will pass undefined, so that must just return;
@@ -265,7 +265,7 @@ Ext.define('Ext.selection.Model', {
     /**
      * Deselects a record instance by record instance or index.
      * @param {Ext.data.Model[]/Number} records An array of records or an index
-     * @param {Boolean} suppressEvent (optional) Set to false to not fire a deselect event
+     * @param {Boolean} [suppressEvent=false] Trye to not fire a deselect event
      */
     deselect: function(records, suppressEvent) {
         this.doDeselect(records, suppressEvent);

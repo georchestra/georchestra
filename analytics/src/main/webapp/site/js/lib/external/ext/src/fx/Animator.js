@@ -69,7 +69,7 @@ Ext.define('Ext.fx.Animator', {
 
     /**
      * @property {Boolean} isAnimator
-     * `true` in this class to identify an objact as an instantiated Animator, or subclass thereof.
+     * `true` in this class to identify an object as an instantiated Animator, or subclass thereof.
      */
     isAnimator: true,
 

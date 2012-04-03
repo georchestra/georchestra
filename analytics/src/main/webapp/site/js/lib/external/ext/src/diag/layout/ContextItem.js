@@ -50,10 +50,11 @@ Ext.define('Ext.diag.layout.ContextItem', {
                     item: this,
                     name: propName
                 };
-        } else {
-            //console.log(me.target.el.dom, (' ' + this.getLayoutName(layout) + 
-            //' is asking for the ' + propName + ' which it is supposed to provide'));
         }
+        // else {
+        //     console.log(me.target.el.dom, (' ' + this.getLayoutName(layout) + 
+        //     ' is asking for the ' + propName + ' which it is supposed to provide'));
+        // }
 
         return result;
     },
@@ -62,7 +63,8 @@ Ext.define('Ext.diag.layout.ContextItem', {
         var me = this,
             model = me[prop + 'Model'], // not me.sizeModel[prop] since it is immutable
             layout = me.context.currentLayout,
-            ok;
+            ok,
+            setBy;
 
         if (layout == me.target.ownerLayout) {
             // the ownerLayout is only allowed to set calculated dimensions
@@ -77,11 +79,9 @@ Ext.define('Ext.diag.layout.ContextItem', {
         }
 
         if (!ok) {
-            var setBy = me.getLayoutName(layout);
+            setBy = me.getLayoutName(layout);
 
-            Ext.Error.raise({
-                msg: setBy + ' cannot set ' + prop
-            });
+            Ext.log(setBy + ' cannot set ' + prop);
         }
     },
 

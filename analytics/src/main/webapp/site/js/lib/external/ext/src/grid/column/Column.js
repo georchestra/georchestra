@@ -268,13 +268,6 @@ Ext.define('Ext.grid.column.Column', {
         if (me.flex) {
             me.minWidth = me.minWidth || Ext.grid.plugin.HeaderResizer.prototype.minColWidth;
         }
-        // Non-flexed Headers may never be squeezed in the event of a shortfall so
-        // always set their minWidth to their current width.
-        else {
-            //me.minWidth = me.width;
-            // we cannot set minWidth as that is a user controlled value... we need to not
-            // apply shortfall squeeze instead
-        }
 
         if (!me.triStateSort) {
             me.possibleSortStates.length = 2;
@@ -552,29 +545,36 @@ Ext.define('Ext.grid.column.Column', {
     setPadding: function(headerHeight) {
         var me = this,
             lineHeight = parseInt(me.textEl.getStyle('line-height'), 10),
-            textHeight = parseInt(me.textEl.dom.offsetHeight, 10);
+            textHeight = me.textEl.dom.offsetHeight,
+            titleEl = me.titleEl,
+            availableHeight = headerHeight - me.el.getBorderWidth('tb'),
+            titleElHeight;
 
         // Top title containing element must stretch to match height of sibling group headers
         if (!me.isGroupHeader) {
-            if (me.titleEl.getHeight() < headerHeight) {
-                me.titleEl.dom.style.height = headerHeight + 'px';
+            if (titleEl.getHeight() < availableHeight) {
+                titleEl.setHeight(availableHeight);
+                // the column el's parent element (the 'innerCt') may have an incorrect height
+                // at this point because it may have been shrink wrapped prior to the titleEl's
+                // height being set, so we need to sync it up here
+                me.el.parent().setHeight(headerHeight);
             }
         }
-        headerHeight = me.titleEl.getViewSize().height;
+        titleElHeight = titleEl.getViewSize().height;
 
         // Vertically center the header text in potentially vertically stretched header
         if (textHeight) {
             if(lineHeight) {
                 textHeight = Math.ceil(textHeight / lineHeight) * lineHeight;
             }
-            me.titleEl.setStyle({
-                paddingTop: Math.max(((headerHeight - textHeight) / 2), 0) + 'px'
+            titleEl.setStyle({
+                paddingTop: Math.floor(Math.max(((titleElHeight - textHeight) / 2), 0)) + 'px'
             });
         }
 
         // Only IE needs this
         if (Ext.isIE && me.triggerEl) {
-            me.triggerEl.setHeight(headerHeight);
+            me.triggerEl.setHeight(titleElHeight);
         }
     },
 

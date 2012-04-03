@@ -1,6 +1,5 @@
 /**
- * @class Ext.chart.Shape
- * @ignore
+ * @private
  */
 Ext.define('Ext.chart.Shape', {
 

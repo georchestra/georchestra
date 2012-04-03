@@ -226,9 +226,6 @@ Ext.define('Ext.data.proxy.Ajax', {
      * Any headers to add to the Ajax request. Defaults to undefined.
      */
     
-    /**
-     * @ignore
-     */
     doRequest: function(operation, callback, scope) {
         var writer  = this.getWriter(),
             request = this.buildRequest(operation, callback, scope);

@@ -218,15 +218,12 @@ Ext.define('Ext.grid.plugin.RowEditing', {
     // private
     initEditTriggers: function() {
         var me = this,
-            grid = me.grid,
-            view = me.view,
-            headerCt = grid.headerCt,
             moveEditorEvent = me.clicksToMoveEditor === 1 ? 'click' : 'dblclick';
 
         me.callParent(arguments);
 
         if (me.clicksToMoveEditor !== me.clicksToEdit) {
-            me.mon(view, 'cell' + moveEditorEvent, me.moveEditorByClick, me);
+            me.mon(me.view, 'cell' + moveEditorEvent, me.moveEditorByClick, me);
         }
     },
     
@@ -253,7 +250,7 @@ Ext.define('Ext.grid.plugin.RowEditing', {
     moveEditorByClick: function() {
         var me = this;
         if (me.editing) {
-            me.superclass.startEditByClick.apply(me, arguments);
+            me.superclass.onCellClick.apply(me, arguments);
         }
     },
     

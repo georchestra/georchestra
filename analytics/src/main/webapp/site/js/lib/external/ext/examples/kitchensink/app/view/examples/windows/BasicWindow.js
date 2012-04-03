@@ -1,5 +1,8 @@
 Ext.define('KitchenSink.view.examples.windows.BasicWindow', {
     extend: 'KitchenSink.view.examples.Example',
+    requires: [
+        'Ext.window.Window'
+    ],
     
     items: [
         {

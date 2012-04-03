@@ -126,6 +126,9 @@ Ext.define('Ext.util.TaskRunner', {
      * 
      * If a particular scope (`this` reference) is required, be sure to specify it using
      * the `scope` argument.
+     * 
+     * @param {Function} task.onError The function to execute in case of unhandled
+     * error on task.run.
      *
      * @param {Boolean} task.run.return `false` from this function to terminate the task.
      *
@@ -155,11 +158,16 @@ Ext.define('Ext.util.TaskRunner', {
         }
 
         task.stopped = false; // might have been previously stopped...
-        task.taskRunTime = task.taskStartTime = now;
+        task.taskStartTime = now;
+        task.taskRunTime = task.fireOnStart !== false ? 0 : task.taskStartTime;
         task.taskRunCount = 0;
 
         if (!me.firing) {
-            me.startTimer(task.interval, now);
+            if (task.fireOnStart !== false) {
+                me.startTimer(0, now);
+            } else {
+                me.startTimer(task.interval, now);
+            }
         }
 
         return task;
@@ -178,7 +186,7 @@ Ext.define('Ext.util.TaskRunner', {
             task.stopped = true;
 
             if (task.onStop) {
-                task.onStop.call(task.scope || task);
+                task.onStop.call(task.scope || task, task);
             }
         }
 
@@ -222,7 +230,16 @@ Ext.define('Ext.util.TaskRunner', {
                 expires = task.taskRunTime + task.interval;
 
                 if (expires <= now) {
-                    rt = task.run.apply(task.scope || task, task.args || [++task.taskRunCount]);
+                    rt = 1; // otherwise we have a stale "rt"
+                    try {
+                        rt = task.run.apply(task.scope || task, task.args || [++task.taskRunCount]);
+                    } catch (taskError) {
+                        try {
+                            if (task.onError) {
+                                rt = task.onError.call(task.scope || task, task, taskError);
+                            }
+                        } catch (ignore) { }
+                    }
                     task.taskRunTime = now;
                     if (rt === false || task.taskRunCount === task.repeat) {
                         me.stop(task);
@@ -350,6 +367,11 @@ function () {
          * @private
          */
         stopped: true, // this avoids the odd combination of !stopped && !pending
+
+        /**
+         * Override default behavior
+         */
+        fireOnStart: false,
 
         constructor: function (config) {
             Ext.apply(this, config);

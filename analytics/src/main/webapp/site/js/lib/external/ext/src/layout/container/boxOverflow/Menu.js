@@ -231,11 +231,10 @@ Ext.define('Ext.layout.container.boxOverflow.Menu', {
             i = 0,
             len   = items.length,
             item,
-            prev;
-
-        var needsSep = function(group, prev){
-            return group.isXType('buttongroup') && !(prev instanceof Ext.toolbar.Separator);
-        };
+            prev,
+            needsSep = function(group, prev){
+                return group.isXType('buttongroup') && !(prev instanceof Ext.toolbar.Separator);
+            };
 
         menu.suspendLayouts();
         me.clearMenu();

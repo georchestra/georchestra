@@ -1,7 +1,9 @@
 Ext.define('Ext.app.GridPortlet', {
-
     extend: 'Ext.grid.Panel',
     alias: 'widget.gridportlet',
+    uses: [
+        'Ext.data.ArrayStore'
+    ],
     height: 300,
     myData: [
         ['3m Co',                               71.72, 0.02,  0.03,  '9/1 12:00am'],

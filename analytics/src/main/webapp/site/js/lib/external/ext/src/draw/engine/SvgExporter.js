@@ -57,10 +57,10 @@ Ext.define('Ext.draw.engine.SvgExporter', {
                     family = (match && match[3]) || 'Arial',
                     text = attr.text,
                     factor = (Ext.isFF3_0 || Ext.isFF3_5) ? 2 : 4,
-                    bbox = sprite.getBBox(),
                     tspanString = '',
                     props;
 
+                sprite.getBBox();
                 tspanString += '<tspan x="' + (attr.x || '') + '" dy="';
                 tspanString += (size/factor)+'">';
                 tspanString += Ext.htmlEncode(text) + '</tspan>';
@@ -143,7 +143,8 @@ Ext.define('Ext.draw.engine.SvgExporter', {
         svgContent = function(){
             var svg = '<svg width="'+width+'px" height="'+height+'px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">',
                 defs = '', item, itemsLen, items, gradient,
-                groups, groupsLen, group, getSvgString, colorstops, stop;
+                getSvgString, colorstops, stop,
+                coll, keys, colls, k, kLen, key, collI, i, o, stopsLen;
 
             items = surface.items.items;
             itemsLen = items.length;
@@ -187,13 +188,12 @@ Ext.define('Ext.draw.engine.SvgExporter', {
                 defs = getSvgString(surface.getDefs());
             }else{
                 // IE
-                var coll = surface.gradientsColl;
+                coll = surface.gradientsColl;
                 if (coll) {
-                    var keys  = coll.keys,
-                        colls = coll.items,
-                        k     = 0,
-                        kLen  = keys.length,
-                        key, collI;
+                    keys  = coll.keys;
+                    colls = coll.items;
+                    k     = 0;
+                    kLen  = keys.length;
                 }
 
                 for (; k < kLen; k++) {
@@ -204,7 +204,7 @@ Ext.define('Ext.draw.engine.SvgExporter', {
                     defs += '<linearGradient id="' + key + '" x1="0" y1="0" x2="1" y2="1">';
 
                     colorstops = gradient.colors.split(',');
-                    for(var i=0, stopsLen = colorstops.length; i < stopsLen; i++){
+                    for(i=0, stopsLen = colorstops.length; i < stopsLen; i++){
                         stop = colorstops[i].split(' ');
                         defs += '<stop offset="'+stop[0]+'" stop-color="'+stop[1]+'" stop-opacity="1"></stop>';
                     }
@@ -225,7 +225,7 @@ Ext.define('Ext.draw.engine.SvgExporter', {
                 }
             });
                 
-            for(var o = 0; o < itemsLen; o++){
+            for(o = 0; o < itemsLen; o++){
                 item = items[o];
                 
                 if(!item.attr.hidden){
@@ -238,9 +238,10 @@ Ext.define('Ext.draw.engine.SvgExporter', {
             return svg;
         },                
         toPropertyString = function(obj){
-            var propString = '';
+            var propString = '',
+                key;
 
-            for(var key in obj){
+            for(key in obj){
 
                 if(obj.hasOwnProperty(key) && obj[key] != null){
                     propString += key +'="'+ obj[key]+'" ';
@@ -254,9 +255,9 @@ Ext.define('Ext.draw.engine.SvgExporter', {
         return {
             generate: function(config, surface){
                 init(surface);
-                return svgHeader() + svgContent()
+                return svgHeader() + svgContent();
             }
-        }
-    })()
+        };
+    }())
 
 });

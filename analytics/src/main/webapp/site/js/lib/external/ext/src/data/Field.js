@@ -170,11 +170,11 @@ Ext.define('Ext.data.Field', {
      * Example of convert functions:
      *
      *     function fullName(v, record){
-     *         return record.name.last + ', ' + record.name.first;
+     *         return record.data.last + ', ' + record.data.first;
      *     }
      *
      *     function location(v, record){
-     *         return !record.city ? '' : (record.city + ', ' + record.state);
+     *         return !record.data.city ? '' : (record.data.city + ', ' + record.data.state);
      *     }
      *
      *     Ext.define('Dude', {

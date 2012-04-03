@@ -94,6 +94,10 @@ Ext.define('Ext.util.Floating', {
             me.constrainTo = floatParent ? floatParent.getTargetEl() : me.container;
         }
     },
+    
+    onAfterFloatLayout: function(){
+        this.syncShadow();   
+    },
 
     onFloatParentHide: function() {
         var me = this;

@@ -131,7 +131,7 @@ Ext.define('Ext.ElementLoader', {
 
     /**
      * @property {Boolean} isLoader
-     * `true` in this class to identify an objact as an instantiated ElementLoader, or subclass thereof.
+     * `true` in this class to identify an object as an instantiated ElementLoader, or subclass thereof.
      */
     isLoader: true,
 

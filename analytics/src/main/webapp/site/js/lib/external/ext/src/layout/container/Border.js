@@ -8,7 +8,7 @@
  *     @example
  *     Ext.create('Ext.panel.Panel', {
  *         width: 500,
- *         height: 400,
+ *         height: 300,
  *         title: 'Border Layout',
  *         layout: 'border',
  *         items: [{
@@ -777,9 +777,8 @@ Ext.define('Ext.layout.container.Border', {
         addUnflexed: function (px) {
             this.flexSpace = Math.max(this.flexSpace - px, 0);
         }
-    };
-
-    var props = this.prototype.axisProps;
+    },
+    props = this.prototype.axisProps;
 
     Ext.apply(props.horz, methods);
     Ext.apply(props.vert, methods);

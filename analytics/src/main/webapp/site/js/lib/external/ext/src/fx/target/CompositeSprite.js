@@ -21,10 +21,11 @@ Ext.define('Ext.fx.target.CompositeSprite', {
         var out     = [],
             sprites = [].concat(this.target.items),
             length  = sprites.length,
-            i;
+            i,
+            sprite;
 
         for (i = 0; i < length; i++) {
-            var sprite = sprites[i];
+            sprite = sprites[i];
             out.push([sprite, val != undefined ? val : this.getFromPrim(sprite, attr)]);
         }
 

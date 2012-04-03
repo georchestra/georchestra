@@ -165,9 +165,7 @@ Ext.define('Ext.draw.Component', {
                 y = bbox.y;
                 if (me.viewBox) {
                     me.surface.setViewBox(x, y, width, height);
-                }
-                else {
-                    // AutoSized
+                } else {
                     me.autoSizeSurface();
                 }
             }
@@ -176,13 +174,8 @@ Ext.define('Ext.draw.Component', {
 
     // @private
     autoSizeSurface: function() {
-        var me = this,
-            items = me.surface.items,
-            bbox = items.getBBox(),
-            width = bbox.width,
-            height = bbox.height;
-        me.setSurfaceSize(width, height);
-        me.updateLayout();
+        var bbox = this.surface.items.getBBox();
+        this.setSurfaceSize(bbox.width, bbox.height);
     },
 
     setSurfaceSize: function (width, height) {

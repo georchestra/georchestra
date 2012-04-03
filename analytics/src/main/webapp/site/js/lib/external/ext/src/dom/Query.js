@@ -73,7 +73,7 @@
  */
 Ext.ns('Ext.core');
 
-Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
+Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = (function(){
     var cache = {},
         simpleCache = {},
         valueCache = {},
@@ -81,15 +81,52 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
         trimRe = /^\s+|\s+$/g,
         tplRe = /\{(\d+)\}/g,
         modeRe = /^(\s?[\/>+~]\s?|\s|$)/,
-        tagTokenRe = /^(#)?([\w\-\*]+)/,
+        tagTokenRe = /^(#)?([\w\-\*\\]+)/,
         nthRe = /(\d*)n\+?(\d*)/,
         nthRe2 = /\D/,
         startIdRe = /^\s*\#/,
         // This is for IE MSXML which does not support expandos.
-    // IE runs the same speed using setAttribute, however FF slows way down
-    // and Safari completely fails so they need to continue to use expandos.
-    isIE = window.ActiveXObject ? true : false,
-    key = 30803;
+        // IE runs the same speed using setAttribute, however FF slows way down
+        // and Safari completely fails so they need to continue to use expandos.
+        isIE = window.ActiveXObject ? true : false,
+        key = 30803,
+        longHex = /\\([0-9a-fA-F]{6})/g,
+        shortHex = /\\([0-9a-fA-F]{1,6})\s{0,1}/g,
+        nonHex = /\\([^0-9a-fA-F]{1})/g,
+        escapes = /\\/g,
+        num, hasEscapes,
+
+        // replaces a long hex regex match group with the appropriate ascii value
+        // $args indicate regex match pos
+        longHexToChar = function($0, $1) {
+            return String.fromCharCode(parseInt($1, 16));
+        },
+
+        // converts a shortHex regex match to the long form
+        shortToLongHex = function($0, $1) {
+            while ($1.length < 6) {
+                $1 = '0' + $1;
+            }
+            return '\\' + $1;
+        },
+
+        // converts a single char escape to long escape form
+        charToLongHex = function($0, $1) {
+            num = $1.charCodeAt(0).toString(16);
+            if (num.length === 1) {
+                num = '0' + num;
+            }
+            return '\\0000' + num;
+        },
+
+        // Un-escapes an input selector string.  Assumes all escape sequences have been
+        // normalized to the css '\\0000##' 6-hex-digit style escape sequence :
+        // will not handle any other escape formats
+        unescapeCssSelector = function (selector) {
+            return (hasEscapes)
+                ? selector.replace(longHex, longHexToChar)
+                : selector;
+        };
 
     // this eval is stop the compressor from
     // renaming the variable to something shorter
@@ -133,31 +170,32 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
             nextNode = n.nextSibling;
             // clean worthless empty nodes.
             if(n.nodeType == 3 && !nonSpace.test(n.nodeValue)){
-            parent.removeChild(n);
+                parent.removeChild(n);
             }else{
-            // add an expando nodeIndex
-            n.nodeIndex = ++nodeIndex;
+                // add an expando nodeIndex
+                n.nodeIndex = ++nodeIndex;
             }
             n = nextNode;
         }
         return this;
     }
 
-
     // nodeSet - array of nodes
     // cls - CSS Class
     function byClassName(nodeSet, cls){
+        cls = unescapeCssSelector(cls);
         if(!cls){
             return nodeSet;
         }
-        var result = [], ri = -1;
-        for(var i = 0, ci; ci = nodeSet[i]; i++){
+        var result = [], ri = -1,
+            i, ci;
+        for(i = 0, ci; ci = nodeSet[i]; i++){
             if((' '+ci.className+' ').indexOf(cls) != -1){
                 result[++ri] = ci;
             }
         }
         return result;
-    };
+    }
 
     function attrValue(n, attr){
         // if its an array, use the first node.
@@ -176,14 +214,15 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
         }
         return n.getAttribute(attr) || n[attr];
 
-    };
+    }
 
 
     // ns - nodes
     // mode - false, /, >, +, ~
     // tagName - defaults to "*"
     function getNodes(ns, mode, tagName){
-        var result = [], ri = -1, cs;
+        var result = [], ri = -1, cs,
+            i, ni, j, ci, cn, utag, n, cj;
         if(!ns){
             return result;
         }
@@ -196,19 +235,19 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
         // no mode specified, grab all elements by tagName
         // at any depth
         if(!mode){
-            for(var i = 0, ni; ni = ns[i]; i++){
+            for(i = 0, ni; ni = ns[i]; i++){
                 cs = ni.getElementsByTagName(tagName);
-                for(var j = 0, ci; ci = cs[j]; j++){
+                for(j = 0, ci; ci = cs[j]; j++){
                     result[++ri] = ci;
                 }
             }
         // Direct Child mode (/ or >)
         // E > F or E/F all direct children elements of E that have the tag
         } else if(mode == "/" || mode == ">"){
-            var utag = tagName.toUpperCase();
-            for(var i = 0, ni, cn; ni = ns[i]; i++){
+            utag = tagName.toUpperCase();
+            for(i = 0, ni, cn; ni = ns[i]; i++){
                 cn = ni.childNodes;
-                for(var j = 0, cj; cj = cn[j]; j++){
+                for(j = 0, cj; cj = cn[j]; j++){
                     if(cj.nodeName == utag || cj.nodeName == tagName  || tagName == '*'){
                         result[++ri] = cj;
                     }
@@ -217,8 +256,8 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
         // Immediately Preceding mode (+)
         // E + F all elements with the tag F that are immediately preceded by an element with the tag E
         }else if(mode == "+"){
-            var utag = tagName.toUpperCase();
-            for(var i = 0, n; n = ns[i]; i++){
+            utag = tagName.toUpperCase();
+            for(i = 0, n; n = ns[i]; i++){
                 while((n = n.nextSibling) && n.nodeType != 1);
                 if(n && (n.nodeName == utag || n.nodeName == tagName || tagName == '*')){
                     result[++ri] = n;
@@ -227,8 +266,8 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
         // Sibling mode (~)
         // E ~ F all elements with the tag F that are preceded by a sibling element with the tag E
         }else if(mode == "~"){
-            var utag = tagName.toUpperCase();
-            for(var i = 0, n; n = ns[i]; i++){
+            utag = tagName.toUpperCase();
+            for(i = 0, n; n = ns[i]; i++){
                 while((n = n.nextSibling)){
                     if (n.nodeName == utag || n.nodeName == tagName || tagName == '*'){
                         result[++ri] = n;
@@ -256,9 +295,10 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
         if(!tagName){
             return cs;
         }
-        var result = [], ri = -1;
+        var result = [], ri = -1,
+            i, ci;
         tagName = tagName.toLowerCase();
-        for(var i = 0, ci; ci = cs[i]; i++){
+        for(i = 0, ci; ci = cs[i]; i++){
             if(ci.nodeType == 1 && ci.tagName.toLowerCase() == tagName){
                 result[++ri] = ci;
             }
@@ -267,14 +307,16 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
     }
 
     function byId(cs, id){
+        id = unescapeCssSelector(id);
         if(cs.tagName || cs == document){
             cs = [cs];
         }
         if(!id){
             return cs;
         }
-        var result = [], ri = -1;
-        for(var i = 0, ci; ci = cs[i]; i++){
+        var result = [], ri = -1,
+            i, ci;
+        for(i = 0, ci; ci = cs[i]; i++){
             if(ci && ci.id == id){
                 result[++ri] = ci;
                 return result;
@@ -292,9 +334,12 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
             fn = Ext.DomQuery.operators[op],
             a,
             xml,
-            hasXml;
+            hasXml,
+            i, ci;
 
-        for(var i = 0, ci; ci = cs[i]; i++){
+        value = unescapeCssSelector(value);
+
+        for(i = 0, ci; ci = cs[i]; i++){
             // skip non-element nodes.
             if(ci.nodeType != 1){
                 continue;
@@ -331,22 +376,24 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
     }
 
     function byPseudo(cs, name, value){
+        value = unescapeCssSelector(value);
         return Ext.DomQuery.pseudos[name](cs, value);
     }
 
     function nodupIEXml(cs){
         var d = ++key,
-            r;
+            r,
+            i, len, c;
         cs[0].setAttribute("_nodup", d);
         r = [cs[0]];
-        for(var i = 1, len = cs.length; i < len; i++){
-            var c = cs[i];
+        for(i = 1, len = cs.length; i < len; i++){
+            c = cs[i];
             if(!c.getAttribute("_nodup") != d){
                 c.setAttribute("_nodup", d);
                 r[r.length] = c;
             }
         }
-        for(var i = 0, len = cs.length; i < len; i++){
+        for(i = 0, len = cs.length; i < len; i++){
             cs[i].removeAttribute("_nodup");
         }
         return r;
@@ -356,21 +403,21 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
         if(!cs){
             return [];
         }
-        var len = cs.length, c, i, r = cs, cj, ri = -1;
+        var len = cs.length, c, i, r = cs, cj, ri = -1, d, j;
         if(!len || typeof cs.nodeType != "undefined" || len == 1){
             return cs;
         }
         if(isIE && typeof cs[0].selectSingleNode != "undefined"){
             return nodupIEXml(cs);
         }
-        var d = ++key;
+        d = ++key;
         cs[0]._nodup = d;
         for(i = 1; c = cs[i]; i++){
             if(c._nodup != d){
                 c._nodup = d;
             }else{
                 r = [];
-                for(var j = 0; j < i; j++){
+                for(j = 0; j < i; j++){
                     r[++ri] = cs[j];
                 }
                 for(j = i+1; cj = cs[j]; j++){
@@ -387,16 +434,17 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
 
     function quickDiffIEXml(c1, c2){
         var d = ++key,
-            r = [];
-        for(var i = 0, len = c1.length; i < len; i++){
+            r = [],
+            i, len;
+        for(i = 0, len = c1.length; i < len; i++){
             c1[i].setAttribute("_qdiff", d);
         }
-        for(var i = 0, len = c2.length; i < len; i++){
+        for(i = 0, len = c2.length; i < len; i++){
             if(c2[i].getAttribute("_qdiff") != d){
                 r[r.length] = c2[i];
             }
         }
-        for(var i = 0, len = c1.length; i < len; i++){
+        for(i = 0, len = c1.length; i < len; i++){
            c1[i].removeAttribute("_qdiff");
         }
         return r;
@@ -405,17 +453,18 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
     function quickDiff(c1, c2){
         var len1 = c1.length,
             d = ++key,
-            r = [];
+            r = [],
+            i, len;
         if(!len1){
             return c2;
         }
         if(isIE && typeof c1[0].selectSingleNode != "undefined"){
             return quickDiffIEXml(c1, c2);
         }
-        for(var i = 0; i < len1; i++){
+        for(i = 0; i < len1; i++){
             c1[i]._qdiff = d;
         }
-        for(var i = 0, len = c2.length; i < len; i++){
+        for(i = 0, len = c2.length; i < len; i++){
             if(c2[i]._qdiff != d){
                 r[r.length] = c2[i];
             }
@@ -425,8 +474,9 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
 
     function quickId(ns, mode, root, id){
         if(ns == root){
-           var d = root.ownerDocument || root;
-           return d.getElementById(id);
+            id = unescapeCssSelector(id);
+            var d = root.ownerDocument || root;
+            return d.getElementById(id);
         }
         ns = getNodes(ns, mode, "*");
         return byId(ns, id);
@@ -454,7 +504,8 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
                 matchersLn = matchers.length,
                 modeMatch,
                 // accept leading mode switch
-                lmode = path.match(modeRe);
+                lmode = path.match(modeRe),
+                tokenMatch, matched, j, t, m;
 
             if(lmode && lmode[1]){
                 fn[fn.length] = 'mode="'+lmode[1].replace(trimRe, "")+'";';
@@ -468,7 +519,7 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
 
             while(path && lastPath != path){
                 lastPath = path;
-                var tokenMatch = path.match(tagTokenRe);
+                tokenMatch = path.match(tagTokenRe);
                 if(type == "select"){
                     if(tokenMatch){
                         // ID Selector
@@ -493,10 +544,10 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
                     }
                 }
                 while(!(modeMatch = path.match(modeRe))){
-                    var matched = false;
-                    for(var j = 0; j < matchersLn; j++){
-                        var t = matchers[j];
-                        var m = path.match(t.re);
+                    matched = false;
+                    for(j = 0; j < matchersLn; j++){
+                        t = matchers[j];
+                        m = path.match(t.re);
                         if(m){
                             fn[fn.length] = t.select.replace(tplRe, function(x, i){
                                 return m[i];
@@ -508,13 +559,11 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
                     }
                     // prevent infinite loop on bad selector
                     if(!matched){
-                        //<debug>
                         Ext.Error.raise({
                             sourceClass: 'Ext.DomQuery',
                             sourceMethod: 'compile',
                             msg: 'Error parsing selector. Parsing failed at "' + path + '"'
                         });
-                        //</debug>
                     }
                 }
                 if(modeMatch[1]){
@@ -543,29 +592,35 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
             // set root to doc if not specified.
             root = root || document;
 
+            if (hasEscapes = (path.indexOf('\\') > -1)) {
+                path = path
+                    .replace(shortHex, shortToLongHex)
+                    .replace(nonHex, charToLongHex)
+                    .replace(escapes, '\\\\');  // double the '\' for js compilation
+            }
+
             if(typeof root == "string"){
                 root = document.getElementById(root);
             }
             var paths = path.split(","),
-                results = [];
+                results = [],
+                i, len, subPath, result;
 
             // loop over each selector
-            for(var i = 0, len = paths.length; i < len; i++){
-                var subPath = paths[i].replace(trimRe, "");
+            for(i = 0, len = paths.length; i < len; i++){
+                subPath = paths[i].replace(trimRe, "");
                 // compile and place in cache
                 if(!cache[subPath]){
                     cache[subPath] = Ext.DomQuery.compile(subPath, type);
                     if(!cache[subPath]){
-                        //<debug>
                         Ext.Error.raise({
                             sourceClass: 'Ext.DomQuery',
                             sourceMethod: 'jsSelect',
                             msg: subPath + ' is not a valid selector'
                         });
-                        //</debug>
                     }
                 }
-                var result = cache[subPath](root);
+                result = cache[subPath](root);
                 if(result && result != document){
                     results = results.concat(result);
                 }
@@ -660,7 +715,9 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
             // Rumored to potentially crash IE6 but has not been confirmed.
             // http://reference.sitepoint.com/javascript/Node/normalize
             // https://developer.mozilla.org/En/DOM/Node.normalize
-            if (typeof n.normalize == 'function') n.normalize();
+            if (typeof n.normalize == 'function') {
+                n.normalize();
+            }
 
             v = (n && n.firstChild ? n.firstChild.nodeValue : null);
             return ((v === null||v === undefined||v==='') ? defaultValue : v);
@@ -720,19 +777,19 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
          * statement as specified by their index.
          */
         matchers : [{
-                re: /^\.([\w-]+)/,
+                re: /^\.([\w\-\\]+)/,
                 select: 'n = byClassName(n, " {1} ");'
             }, {
-                re: /^\:([\w-]+)(?:\(((?:[^\s>\/]*|.*?))\))?/,
+                re: /^\:([\w\-]+)(?:\(((?:[^\s>\/]*|.*?))\))?/,
                 select: 'n = byPseudo(n, "{1}", "{2}");'
             },{
-                re: /^(?:([\[\{])(?:@)?([\w-]+)\s?(?:(=|.=)\s?['"]?(.*?)["']?)?[\]\}])/,
+                re: /^(?:([\[\{])(?:@)?([\w\-]+)\s?(?:(=|.=)\s?['"]?(.*?)["']?)?[\]\}])/,
                 select: 'n = byAttribute(n, "{2}", "{4}", "{3}", "{1}");'
             }, {
-                re: /^#([\w-]+)/,
+                re: /^#([\w\-\\]+)/,
                 select: 'n = byId(n, "{1}");'
             },{
-                re: /^@([\w-]+)/,
+                re: /^@([\w\-]+)/,
                 select: 'return {firstChild:{nodeValue:attrValue(n, "{1}")}};'
             }
         ],
@@ -803,8 +860,9 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
          */
         pseudos : {
             "first-child" : function(c){
-                var r = [], ri = -1, n;
-                for(var i = 0, ci; ci = n = c[i]; i++){
+                var r = [], ri = -1, n,
+                    i, ci;
+                for(i = 0; (ci = n = c[i]); i++){
                     while((n = n.previousSibling) && n.nodeType != 1);
                     if(!n){
                         r[++ri] = ci;
@@ -814,8 +872,9 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
             },
 
             "last-child" : function(c){
-                var r = [], ri = -1, n;
-                for(var i = 0, ci; ci = n = c[i]; i++){
+                var r = [], ri = -1, n,
+                    i, ci;
+                for(i = 0; (ci = n = c[i]); i++){
                     while((n = n.nextSibling) && n.nodeType != 1);
                     if(!n){
                         r[++ri] = ci;
@@ -827,12 +886,13 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
             "nth-child" : function(c, a) {
                 var r = [], ri = -1,
                     m = nthRe.exec(a == "even" && "2n" || a == "odd" && "2n+1" || !nthRe2.test(a) && "n+" + a || a),
-                    f = (m[1] || 1) - 0, l = m[2] - 0;
-                for(var i = 0, n; n = c[i]; i++){
-                    var pn = n.parentNode;
+                    f = (m[1] || 1) - 0, l = m[2] - 0,
+                    i, n, j, cn, pn;
+                for(i = 0; n = c[i]; i++){
+                    pn = n.parentNode;
                     if (batch != pn._batch) {
-                        var j = 0;
-                        for(var cn = pn.firstChild; cn; cn = cn.nextSibling){
+                        j = 0;
+                        for(cn = pn.firstChild; cn; cn = cn.nextSibling){
                             if(cn.nodeType == 1){
                                cn.nodeIndex = ++j;
                             }
@@ -852,8 +912,9 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
             },
 
             "only-child" : function(c){
-                var r = [], ri = -1;;
-                for(var i = 0, ci; ci = c[i]; i++){
+                var r = [], ri = -1,
+                    i, ci;
+                for(i = 0; ci = c[i]; i++){
                     if(!prev(ci) && !next(ci)){
                         r[++ri] = ci;
                     }
@@ -862,9 +923,12 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
             },
 
             "empty" : function(c){
-                var r = [], ri = -1;
-                for(var i = 0, ci; ci = c[i]; i++){
-                    var cns = ci.childNodes, j = 0, cn, empty = true;
+                var r = [], ri = -1,
+                    i, ci, cns, j, cn, empty;
+                for(i = 0, ci; ci = c[i]; i++){
+                    cns = ci.childNodes;
+                    j = 0;
+                    empty = true;
                     while(cn = cns[j]){
                         ++j;
                         if(cn.nodeType == 1 || cn.nodeType == 3){
@@ -880,9 +944,10 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
             },
 
             "contains" : function(c, v){
-                var r = [], ri = -1;
-                for(var i = 0, ci; ci = c[i]; i++){
-                    if((ci.textContent||ci.innerText||'').indexOf(v) != -1){
+                var r = [], ri = -1,
+                    i, ci;
+                for(i = 0; ci = c[i]; i++){
+                    if((ci.textContent||ci.innerText||ci.text||'').indexOf(v) != -1){
                         r[++ri] = ci;
                     }
                 }
@@ -890,8 +955,9 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
             },
 
             "nodeValue" : function(c, v){
-                var r = [], ri = -1;
-                for(var i = 0, ci; ci = c[i]; i++){
+                var r = [], ri = -1,
+                    i, ci;
+                for(i = 0; ci = c[i]; i++){
                     if(ci.firstChild && ci.firstChild.nodeValue == v){
                         r[++ri] = ci;
                     }
@@ -900,8 +966,9 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
             },
 
             "checked" : function(c){
-                var r = [], ri = -1;
-                for(var i = 0, ci; ci = c[i]; i++){
+                var r = [], ri = -1,
+                    i, ci;
+                for(i = 0; ci = c[i]; i++){
                     if(ci.checked == true){
                         r[++ri] = ci;
                     }
@@ -915,9 +982,10 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
 
             "any" : function(c, selectors){
                 var ss = selectors.split('|'),
-                    r = [], ri = -1, s;
-                for(var i = 0, ci; ci = c[i]; i++){
-                    for(var j = 0; s = ss[j]; j++){
+                    r = [], ri = -1, s,
+                    i, ci, j;
+                for(i = 0; ci = c[i]; i++){
+                    for(j = 0; s = ss[j]; j++){
                         if(Ext.DomQuery.is(ci, s)){
                             r[++ri] = ci;
                             break;
@@ -949,8 +1017,9 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
 
             "has" : function(c, ss){
                 var s = Ext.DomQuery.select,
-                    r = [], ri = -1;
-                for(var i = 0, ci; ci = c[i]; i++){
+                    r = [], ri = -1,
+                    i, ci;
+                for(i = 0; ci = c[i]; i++){
                     if(s(ss, ci).length > 0){
                         r[++ri] = ci;
                     }
@@ -960,9 +1029,10 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
 
             "next" : function(c, ss){
                 var is = Ext.DomQuery.is,
-                    r = [], ri = -1;
-                for(var i = 0, ci; ci = c[i]; i++){
-                    var n = next(ci);
+                    r = [], ri = -1,
+                    i, ci, n;
+                for(i = 0; ci = c[i]; i++){
+                    n = next(ci);
                     if(n && is(n, ss)){
                         r[++ri] = ci;
                     }
@@ -972,9 +1042,10 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
 
             "prev" : function(c, ss){
                 var is = Ext.DomQuery.is,
-                    r = [], ri = -1;
-                for(var i = 0, ci; ci = c[i]; i++){
-                    var n = prev(ci);
+                    r = [], ri = -1,
+                    i, ci, n;
+                for(i = 0; ci = c[i]; i++){
+                    n = prev(ci);
                     if(n && is(n, ss)){
                         r[++ri] = ci;
                     }
@@ -983,7 +1054,7 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
             }
         }
     };
-}();
+}());
 
 /**
  * Shorthand of {@link Ext.dom.Query#select}

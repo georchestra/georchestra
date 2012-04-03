@@ -66,20 +66,22 @@ Ext.define('Ext.dd.DDProxy', {
      * Creates the proxy element if it does not yet exist
      */
     createFrame: function() {
-        var self = this;
-        var body = document.body;
+        var self = this,
+            body = document.body,
+            div,
+            s;
 
         if (!body || !body.firstChild) {
             setTimeout( function() { self.createFrame(); }, 50 );
             return;
         }
 
-        var div = this.getDragEl();
+        div = this.getDragEl();
 
         if (!div) {
             div    = document.createElement("div");
             div.id = this.dragElId;
-            var s  = div.style;
+            s  = div.style;
 
             s.position   = "absolute";
             s.visibility = "hidden";
@@ -118,9 +120,9 @@ Ext.define('Ext.dd.DDProxy', {
      * @private
      */
     showFrame: function(iPageX, iPageY) {
-        var el = this.getEl();
-        var dragEl = this.getDragEl();
-        var s = dragEl.style;
+        var el = this.getEl(),
+            dragEl = this.getDragEl(),
+            s = dragEl.style;
 
         this._resizeProxy();
 
@@ -148,8 +150,8 @@ Ext.define('Ext.dd.DDProxy', {
 
     // overrides Ext.dd.DragDrop
     b4MouseDown: function(e) {
-        var x = e.getPageX();
-        var y = e.getPageY();
+        var x = e.getPageX(),
+            y = e.getPageY();
         this.autoOffset(x, y);
         this.setDragElPos(x, y);
     },
@@ -170,8 +172,8 @@ Ext.define('Ext.dd.DDProxy', {
     // This is so that the default behavior mirrors that of Ext.dd.DD.
     endDrag: function(e) {
 
-        var lel = this.getEl();
-        var del = this.getDragEl();
+        var lel = this.getEl(),
+            del = this.getDragEl();
 
         // Show the drag frame briefly so we can get its position
         del.style.visibility = "";

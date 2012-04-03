@@ -130,11 +130,13 @@ Ext.define('Ext.draw.Matrix', {
         return "matrix(" + [me.get(0, 0), me.get(1, 0), me.get(0, 1), me.get(1, 1), me.get(0, 2), me.get(1, 2)].join() + ")";
     },
 
-    toFilter: function() {
+    toFilter: function(dx, dy) {
         var me = this;
-        return "progid:DXImageTransform.Microsoft.Matrix(M11=" + me.get(0, 0) +
+        dx = dx || 0;
+        dy = dy || 0;
+        return "progid:DXImageTransform.Microsoft.Matrix(sizingMethod='auto expand', filterType='bilinear', M11=" + me.get(0, 0) +
             ", M12=" + me.get(0, 1) + ", M21=" + me.get(1, 0) + ", M22=" + me.get(1, 1) +
-            ", Dx=" + me.get(0, 2) + ", Dy=" + me.get(1, 2) + ")";
+            ", Dx=" + (me.get(0, 2) + dx) + ", Dy=" + (me.get(1, 2) + dy) + ")";
     },
 
     offset: function() {

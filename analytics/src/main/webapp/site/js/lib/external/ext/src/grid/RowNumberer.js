@@ -31,8 +31,7 @@ Ext.define('Ext.grid.RowNumberer', {
     width: 23,
 
     /**
-     * @cfg {Boolean} [sortable=false]
-     * True if the row number column is sortable.
+     * @cfg {Boolean} sortable
      * @hide
      */
     sortable: false,

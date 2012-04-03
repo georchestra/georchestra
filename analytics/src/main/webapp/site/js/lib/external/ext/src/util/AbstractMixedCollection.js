@@ -10,6 +10,12 @@ Ext.define('Ext.util.AbstractMixedCollection', {
     },
 
     /**
+     * @property {Boolean} isMixedCollection
+     * `true` in this class to identify an objact as an instantiated MixedCollection, or subclass thereof.
+     */
+    isMixedCollection: true,
+
+    /**
      * @private Mutation counter which is incremented upon add and remove.
      */
     generation: 0,
@@ -59,9 +65,9 @@ Ext.define('Ext.util.AbstractMixedCollection', {
     },
 
     /**
-     * @cfg {Boolean} allowFunctions Specify <tt>true</tt> if the {@link #addAll}
+     * @cfg {Boolean} allowFunctions Specify <code>true</code> if the {@link #addAll}
      * function should add function references to the collection. Defaults to
-     * <tt>false</tt>.
+     * <code>false</code>.
      */
     allowFunctions : false,
 
@@ -69,7 +75,7 @@ Ext.define('Ext.util.AbstractMixedCollection', {
      * Adds an item to the collection. Fires the {@link #event-add} event when complete.
      * @param {String} key <p>The key to associate with the item, or the new item.</p>
      * <p>If a {@link #getKey} implementation was specified for this MixedCollection,
-     * or if the key of the stored items is in a property called <tt><b>id</b></tt>,
+     * or if the key of the stored items is in a property called <code><b>id</b></code>,
      * the MixedCollection will be able to <i>derive</i> the key for the new item.
      * In this case just pass the new item in this parameter.</p>
      * @param {Object} o The item to add.
@@ -138,7 +144,7 @@ mc.add(otherEl);
      * Replaces an item in the collection. Fires the {@link #event-replace} event when complete.
      * @param {String} key <p>The key associated with the item to replace, or the replacement item.</p>
      * <p>If you supplied a {@link #getKey} implementation for this MixedCollection, or if the key
-     * of your stored items is in a property called <tt><b>id</b></tt>, then the MixedCollection
+     * of your stored items is in a property called <code><b>id</b></code>, then the MixedCollection
      * will be able to <i>derive</i> the key of the replacement item. If you want to replace an item
      * with one having the same key value, then just pass the replacement item in this parameter.</p>
      * @param o {Object} o (optional) If the first parameter passed was a key, the item to associate
@@ -173,7 +179,7 @@ mc.add(otherEl);
      * @param {Object/Array} objs An Object containing properties which will be added
      * to the collection, or an Array of values, each of which are added to the collection.
      * Functions references will be added to the collection if <code>{@link #allowFunctions}</code>
-     * has been set to <tt>true</tt>.
+     * has been set to <code>true</code>.
      */
     addAll : function(objs){
         var me = this,
@@ -400,8 +406,8 @@ mc.add(otherEl);
      * Key has priority over index.  This is the equivalent
      * of calling {@link #getByKey} first, then if nothing matched calling {@link #getAt}.
      * @param {String/Number} key The key or index of the item.
-     * @return {Object} If the item is found, returns the item.  If the item was not found, returns <tt>undefined</tt>.
-     * If an item was found, but is a Class, returns <tt>null</tt>.
+     * @return {Object} If the item is found, returns the item.  If the item was not found, returns <code>undefined</code>.
+     * If an item was found, but is a Class, returns <code>null</code>.
      */
     get : function(key) {
         var me = this,
@@ -628,12 +634,16 @@ var middleAged = people.filter('age', 24);
         filterFn = function(record) {
             var isMatch = true,
                 length = filters.length,
-                i;
+                i,
+                filter,
+                fn,
+                scope;
+                
 
             for (i = 0; i < length; i++) {
-                var filter = filters[i],
-                    fn     = filter.filterFn,
-                    scope  = filter.scope;
+                filter = filters[i];
+                fn     = filter.filterFn;
+                scope  = filter.scope;
 
                 isMatch = isMatch && fn.call(scope, record);
             }

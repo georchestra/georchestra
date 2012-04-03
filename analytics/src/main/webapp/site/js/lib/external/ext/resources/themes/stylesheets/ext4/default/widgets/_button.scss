@@ -31,6 +31,11 @@
                 text-decoration: none;
                 display: inline-block;
                 color: inherit;
+
+                // This is needed for IE7 in strict mode to ensure that the icon element has the correct opacity on a
+                // disabled link button. It seems only to be needed for buttons that are narrower than their icon
+                // element
+                zoom: 1;
             }
         }
 

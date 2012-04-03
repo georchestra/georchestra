@@ -40,10 +40,6 @@
                     "name": "Floating.js"
                 },
                 {
-                    "path": "../../../../platform/src/data/",
-                    "name": "Connection.js"
-                },
-                {
                     "path": "../../../../platform/src/util/",
                     "name": "Filter.js"
                 },
@@ -72,10 +68,6 @@
                     "name": "ProtoElement.js"
                 },
                 {
-                    "path": "../../../../platform/src/data/writer/",
-                    "name": "Writer.js"
-                },
-                {
                     "path": "../../../src/util/",
                     "name": "KeyMap.js"
                 },
@@ -86,10 +78,6 @@
                 {
                     "path": "../../../../platform/src/state/",
                     "name": "Provider.js"
-                },
-                {
-                    "path": "../../../../platform/src/data/",
-                    "name": "ResultSet.js"
                 },
                 {
                     "path": "../../../../platform/src/fx/",
@@ -164,10 +152,6 @@
                     "name": "Field.js"
                 },
                 {
-                    "path": "../../../../platform/src/",
-                    "name": "Ajax.js"
-                },
-                {
                     "path": "../../../../platform/src/util/",
                     "name": "AbstractMixedCollection.js"
                 },
@@ -188,8 +172,8 @@
                     "name": "Errors.js"
                 },
                 {
-                    "path": "../../../../platform/src/data/writer/",
-                    "name": "Json.js"
+                    "path": "../../../../platform/src/data/",
+                    "name": "Model.js"
                 },
                 {
                     "path": "../../../../platform/src/state/",
@@ -210,30 +194,6 @@
                 {
                     "path": "../../../../platform/src/app/",
                     "name": "EventBus.js"
-                },
-                {
-                    "path": "../../../../platform/src/data/reader/",
-                    "name": "Reader.js"
-                },
-                {
-                    "path": "../../../../platform/src/data/reader/",
-                    "name": "Json.js"
-                },
-                {
-                    "path": "../../../../platform/src/data/proxy/",
-                    "name": "Proxy.js"
-                },
-                {
-                    "path": "../../../../platform/src/data/proxy/",
-                    "name": "Server.js"
-                },
-                {
-                    "path": "../../../../platform/src/data/proxy/",
-                    "name": "Ajax.js"
-                },
-                {
-                    "path": "../../../../platform/src/data/",
-                    "name": "Model.js"
                 },
                 {
                     "path": "../../../../platform/src/container/",
@@ -460,14 +420,6 @@
                     "name": "Resizer.js"
                 },
                 {
-                    "path": "../../../../platform/src/data/",
-                    "name": "Batch.js"
-                },
-                {
-                    "path": "../../../../platform/src/data/",
-                    "name": "Request.js"
-                },
-                {
                     "path": "../../../src/panel/",
                     "name": "Tool.js"
                 },
@@ -516,12 +468,8 @@
                     "name": "Separator.js"
                 },
                 {
-                    "path": "../../../../platform/src/data/",
-                    "name": "AbstractStore.js"
-                },
-                {
                     "path": "../../../../platform/src/util/",
-                    "name": "Grouper.js"
+                    "name": "LruCache.js"
                 },
                 {
                     "path": "../../../../platform/src/layout/",
@@ -540,6 +488,26 @@
                     "name": "FocusManager.js"
                 },
                 {
+                    "path": "../../../../platform/src/data/proxy/",
+                    "name": "Proxy.js"
+                },
+                {
+                    "path": "../../../../platform/src/data/proxy/",
+                    "name": "Server.js"
+                },
+                {
+                    "path": "../../../../platform/src/data/writer/",
+                    "name": "Writer.js"
+                },
+                {
+                    "path": "../../../../platform/src/data/",
+                    "name": "Connection.js"
+                },
+                {
+                    "path": "../../../../platform/src/data/",
+                    "name": "ResultSet.js"
+                },
+                {
                     "path": "../../../../platform/src/",
                     "name": "ComponentLoader.js"
                 },
@@ -554,14 +522,6 @@
                 {
                     "path": "../../../src/window/",
                     "name": "Window.js"
-                },
-                {
-                    "path": "../../../../platform/src/data/",
-                    "name": "Store.js"
-                },
-                {
-                    "path": "../../../../platform/src/data/",
-                    "name": "ArrayStore.js"
                 },
                 {
                     "path": "../../../../platform/src/layout/",
@@ -592,12 +552,60 @@
                     "name": "Menu.js"
                 },
                 {
-                    "path": "../../../src/resizer/",
-                    "name": "ResizeTracker.js"
+                    "path": "../../../../platform/src/data/",
+                    "name": "AbstractStore.js"
+                },
+                {
+                    "path": "../../../../platform/src/data/writer/",
+                    "name": "Json.js"
+                },
+                {
+                    "path": "../../../../platform/src/data/proxy/",
+                    "name": "Client.js"
+                },
+                {
+                    "path": "../../../../platform/src/data/proxy/",
+                    "name": "Memory.js"
+                },
+                {
+                    "path": "../../../../platform/src/",
+                    "name": "Ajax.js"
+                },
+                {
+                    "path": "../../../../platform/src/data/proxy/",
+                    "name": "Ajax.js"
+                },
+                {
+                    "path": "../../../../platform/src/data/reader/",
+                    "name": "Reader.js"
+                },
+                {
+                    "path": "../../../../platform/src/data/reader/",
+                    "name": "Json.js"
+                },
+                {
+                    "path": "../../../../platform/src/data/",
+                    "name": "Store.js"
                 },
                 {
                     "path": "../../../../platform/src/data/reader/",
                     "name": "Array.js"
+                },
+                {
+                    "path": "../../../../platform/src/data/",
+                    "name": "ArrayStore.js"
+                },
+                {
+                    "path": "../../../src/resizer/",
+                    "name": "ResizeTracker.js"
+                },
+                {
+                    "path": "../../../../platform/src/data/",
+                    "name": "Batch.js"
+                },
+                {
+                    "path": "../../../../platform/src/data/",
+                    "name": "Request.js"
                 },
                 {
                     "path": "../../../../platform/src/draw/engine/",
@@ -608,12 +616,12 @@
                     "name": "ImageExporter.js"
                 },
                 {
-                    "path": "../../../src/",
-                    "name": "ShadowPool.js"
+                    "path": "../../../../platform/src/util/",
+                    "name": "Grouper.js"
                 },
                 {
-                    "path": "../../../../platform/src/data/proxy/",
-                    "name": "Client.js"
+                    "path": "../../../src/",
+                    "name": "ShadowPool.js"
                 },
                 {
                     "path": "../../../../platform/src/draw/",
@@ -626,10 +634,6 @@
                 {
                     "path": "../../../src/",
                     "name": "Shadow.js"
-                },
-                {
-                    "path": "../../../../platform/src/data/proxy/",
-                    "name": "Memory.js"
                 },
                 {
                     "path": "../../../../platform/src/draw/",

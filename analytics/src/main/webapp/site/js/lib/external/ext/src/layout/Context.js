@@ -561,13 +561,18 @@ Ext.define('Ext.layout.Context', {
         // This method should never be called, but is need when layouts fail (hence the
         // "should never"). We just disconnect any of the layouts from the run and return
         // them to the state they would be in had the layout completed properly.
-        var obj = this.layouts,
+        var layouts = this.layouts,
             layout, key;
 
-        for (key in obj) {
-            layout = obj[key];
+        Ext.failedLayouts = (Ext.failedLayouts || 0) + 1;
+        //<debug>
+        Ext.log('Layout run failed');
+        //</debug>
 
-            if (obj.hasOwnProperty(key)) {
+        for (key in layouts) {
+            layout = layouts[key];
+
+            if (layouts.hasOwnProperty(key)) {
                 layout.running      = false;
                 layout.ownerContext = null;
             }
@@ -801,13 +806,12 @@ Ext.define('Ext.layout.Context', {
         var me = this,
             newQueue = [],
             oldQueue = me.invalidQueue,
-            opt = options || {},
             index = oldQueue.length,
-            callback = opt.callback,
-            scope = opt.scope,
+            callback,
+            scope,
             Func = Ext.Function,
             comp, old, oldCallback, oldComp, oldOptions, oldState,
-            newState = opt.state;
+            newState;
 
         if (item.isComponent) {
             item = me.getCmp(comp = item);
@@ -815,8 +819,11 @@ Ext.define('Ext.layout.Context', {
             comp = item.target;
         }
 
-        if (callback && scope) {
-            opt.callback = callback = Func.bind(callback, scope);
+        if (options) {
+            newState = options.state;
+            if ((callback = options.callback) && (scope = options.scope)) {
+                callback = Func.bind(callback, scope);
+            }
         }
 
         // See if comp is contained by any component already in the queue (ignore comp if
@@ -832,23 +839,28 @@ Ext.define('Ext.layout.Context', {
 
             if (oldComp == comp) {
                 // if already in the queue, update the options...
-
                 // merge any new state w/state from earlier call(s):
-                oldState = (oldOptions = old.options).state;
-                if (oldState) {
-                    Ext.apply(oldState, newState);
-                } else {
-                    oldOptions.state = newState;
-                }
-
-                // if the new options have a callback, call old one first so newer ones get
-                // the last say...
-                if (callback) {
-                    if (!(oldCallback = oldOptions.callback)) {
-                        oldOptions.callback = callback;
-                    } else {
-                        oldOptions.callback = Func.createSequence(oldCallback, callback);
+                if ((oldOptions = old.options) && options) {
+                    if (newState) {
+                        oldState = oldOptions.state;
+                        if (oldState) {
+                            Ext.apply(oldState, newState);
+                        } else {
+                            oldOptions.state = newState;
+                        }
                     }
+
+                    // if the new options have a callback, call old one first so newer ones get
+                    // the last say...
+                    if (callback) {
+                        if (!(oldCallback = oldOptions.callback)) {
+                            oldOptions.callback = callback;
+                        } else {
+                            oldOptions.callback = Func.createSequence(oldCallback, callback);
+                        }
+                    }
+                } else {
+                    old.options = old.options || options;
                 }
 
                 // leave the old queue alone now that we've update this comp's entry...
@@ -864,7 +876,10 @@ Ext.define('Ext.layout.Context', {
 
         // to get here, comp must not be a child of anything already in the queue, so it
         // needs to be added along with its "options":
-        newQueue.push({ item: item, options: opt });
+        if (callback) {
+            (options = options || {}).callback = callback;
+        }
+        newQueue.push({ item: item, options: options });
 
         me.invalidQueue = newQueue;
     },

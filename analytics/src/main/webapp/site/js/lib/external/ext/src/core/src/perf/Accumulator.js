@@ -2,7 +2,7 @@
  * @class Ext.perf.Accumulator
  * @private
  */
-Ext.define('Ext.perf.Accumulator', function () {
+Ext.define('Ext.perf.Accumulator', (function () {
     var currentFrame = null,
         khrome = Ext.global['chrome'],
         formatTpl,
@@ -12,20 +12,22 @@ Ext.define('Ext.perf.Accumulator', function () {
 
             getTimestamp = function () {
                 return new Date().getTime();
-            }
+            };
+            
+            var interval, toolbox;
 
             // If Chrome is started with the --enable-benchmarking switch
             if (Ext.isChrome && khrome && khrome.Interval) {
-                var interval = new khrome.Interval();
+                interval = new khrome.Interval();
                 interval.start();
                 getTimestamp = function () {
                     return interval.microseconds() / 1000;
-                }
-            }
-            else if (window.ActiveXObject) {
+                };
+            } else if (window.ActiveXObject) {
                 try {
                     // the above technique is not very accurate for small intervals...
-                    var toolbox = new ActiveXObject('SenchaToolbox.Toolbox');
+                    toolbox = new ActiveXObject('SenchaToolbox.Toolbox');
+                    Ext.senchaToolbox = toolbox; // export for other uses
                     getTimestamp = function () {
                         return toolbox.milliseconds;
                     };
@@ -69,7 +71,7 @@ Ext.define('Ext.perf.Accumulator', function () {
             min: Number.MAX_VALUE,
             max: 0,
             sum: 0
-        }
+        };
     }
 
     function makeTap (me, fn) {
@@ -201,9 +203,10 @@ Ext.define('Ext.perf.Accumulator', function () {
         tap: function (className, methodName) {
             var me = this,
                 methods = typeof methodName == 'string' ? [methodName] : methodName,
-                klass, statik, i, parts, length, name, src;
+                klass, statik, i, parts, length, name, src,
+                tapFunc;
 
-            var tapFunc = function(){
+            tapFunc = function(){
                 if (typeof className == 'string') {
                     klass = Ext.global;
                     parts = className.split('.');
@@ -234,7 +237,7 @@ Ext.define('Ext.perf.Accumulator', function () {
             return me;
         }
     };
-}(),
+}()),
 
 function () {
     Ext.perf.getTimestamp = this.getTimestamp;

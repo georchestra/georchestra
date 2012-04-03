@@ -269,6 +269,12 @@ Ext.define('Ext.XTemplate', {
      * first call to {@link #apply} or {@link #applyOut}.
      */
 
+    /**
+     * @cfg {String/Array} definitions
+     * Optional. A statement, or array of statements which set up `var`s which may then
+     * be accessed within the scope of the generated function.
+     */
+
     apply: function(values) {
         return this.applyOut(values, []).join('');
     },
@@ -279,7 +285,8 @@ Ext.define('Ext.XTemplate', {
 
         if (!me.fn) {
             compiler = new Ext.XTemplateCompiler({
-                useFormat: me.disableFormats !== true
+                useFormat: me.disableFormats !== true,
+                definitions: me.definitions
             });
 
             me.fn = compiler.compile(me.html);

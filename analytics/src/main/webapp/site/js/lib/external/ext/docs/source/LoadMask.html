@@ -117,24 +117,21 @@ Ext.define('Ext.LoadMask', {
     constructor : function(comp, config) {
         var me = this;
 
-        //&lt;debug&gt;
+        // Element support to be deprecated
         if (!comp.isComponent) {
+            //&lt;debug&gt;
             if (Ext.isDefined(Ext.global.console)) {
                 Ext.global.console.warn('Ext.LoadMask: LoadMask for elements has been deprecated, use Ext.dom.Element.mask &amp; Ext.dom.Element.unmask');
             }
+            //&lt;/debug&gt;
             comp = Ext.get(comp);
             this.isElement = true;
         }
-        //&lt;/debug&gt;
 
         me.ownerCt = comp;
-        //&lt;debug&gt;
         if (!this.isElement) {
-        //&lt;/debug&gt;
-        me.bindComponent(comp);
-        //&lt;debug&gt;
+            me.bindComponent(comp);
         }
-        //&lt;/debug&gt;
         me.callParent([config]);
 
         if (me.store) {
@@ -351,13 +348,12 @@ Ext.define('Ext.LoadMask', {
     },
 
     hide: function(){
-        //&lt;debug&gt;
+        // Element support to be deprecated
         if (this.isElement) {
             this.ownerCt.unmask();
             this.fireEvent('hide', this);
             return;
         }
-        //&lt;/debug&gt;
         delete this.showNext;  
         return this.callParent(arguments);
     },
@@ -368,13 +364,12 @@ Ext.define('Ext.LoadMask', {
     },
 
     show: function(){
-        //&lt;debug&gt;
+        // Element support to be deprecated
         if (this.isElement) {
             this.ownerCt.mask(this.useMsg ? this.msg : '', this.msgCls);
             this.fireEvent('show', this);
             return;
-        }
-        //&lt;/debug&gt;  
+        } 
         return this.callParent(arguments);  
     },
 
@@ -385,6 +380,11 @@ Ext.define('Ext.LoadMask', {
 
     setZIndex: function(index) {
         var me = this;
+            
+        // If we're not on a float, don't set a z-index that will interfere with floaters
+        if (!me.activeOwner) {
+            index = 1;
+        }
         me.getMaskEl().setStyle('zIndex', index - 1);
         return me.mixins.floating.setZIndex.apply(me, arguments);
     },

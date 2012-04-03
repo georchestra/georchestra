@@ -37,14 +37,17 @@ Ext.define('Ext.chart.Callout', {
             i,
             count,
             j,
-            p;
+            p,
+            item,
+            label,
+            storeItem,
+            display;
             
         for (i = 0, count = 0; i < len; i++) {
             for (j = 0; j < ratio; j++) {
-                var item = items[count],
-                    label = group[count],
-                    storeItem = store.getAt(i),
-                    display;
+                item = items[count];
+                label = group[count];
+                storeItem = store.getAt(i);
                 
                 display = config.filter(storeItem);
                 

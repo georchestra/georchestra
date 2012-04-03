@@ -74,11 +74,12 @@ Ext.define('Ext.dd.DragSource', {
 
     // private
     onDragEnter : function(e, id){
-        var target = Ext.dd.DragDropManager.getDDById(id);
+        var target = Ext.dd.DragDropManager.getDDById(id),
+            status;
         this.cachedTarget = target;
         if (this.beforeDragEnter(target, e, id) !== false) {
             if (target.isNotifyTarget) {
-                var status = target.notifyEnter(this, e, this.dragData);
+                status = target.notifyEnter(this, e, this.dragData);
                 this.proxy.setStatus(status);
             } else {
                 this.proxy.setStatus(this.dropAllowed);
@@ -112,10 +113,11 @@ Ext.define('Ext.dd.DragSource', {
 
     // private
     onDragOver: function(e, id) {
-        var target = this.cachedTarget || Ext.dd.DragDropManager.getDDById(id);
+        var target = this.cachedTarget || Ext.dd.DragDropManager.getDDById(id),
+            status;
         if (this.beforeDragOver(target, e, id) !== false) {
             if(target.isNotifyTarget){
-                var status = target.notifyOver(this, e, this.dragData);
+                status = target.notifyOver(this, e, this.dragData);
                 this.proxy.setStatus(status);
             }
 

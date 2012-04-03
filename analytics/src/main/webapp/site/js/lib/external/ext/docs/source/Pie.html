@@ -855,7 +855,24 @@ Ext.define('Ext.chart.series.Pie', {
      */
     highlightItem: function(item) {
         var me = this,
-            rad = me.rad;
+            rad = me.rad,
+            highlightSegment,
+            animate,
+            attrs,
+            i,
+            shadows,
+            shadow,
+            ln,
+            to,
+            itemHighlightSegment,
+            prop,
+            group,
+            display,
+            label,
+            middle,
+            r,
+            x,
+            y;
         item = item || this.items[this._index];
 
         //TODO(nico): sometimes in IE itemmouseover is triggered
@@ -872,18 +889,17 @@ Ext.define('Ext.chart.series.Pie', {
             return;
         }
         if ('segment' in me.highlightCfg) {
-            var highlightSegment = me.highlightCfg.segment,
-                animate = me.chart.animate,
-                attrs, i, shadows, shadow, ln, to, itemHighlightSegment, prop;
+            highlightSegment = me.highlightCfg.segment;
+            animate = me.chart.animate;
             //animate labels
             if (me.labelsGroup) {
-                var group = me.labelsGroup,
-                    display = me.label.display,
-                    label = group.getAt(item.index),
-                    middle = (item.startAngle + item.endAngle) / 2 * rad,
-                    r = highlightSegment.margin || 0,
-                    x = r * Math.cos(middle),
-                    y = r * Math.sin(middle);
+                group = me.labelsGroup;
+                display = me.label.display;
+                label = group.getAt(item.index);
+                middle = (item.startAngle + item.endAngle) / 2 * rad;
+                r = highlightSegment.margin || 0;
+                x = r * Math.cos(middle);
+                y = r * Math.sin(middle);
 
                 //TODO(nico): rounding to 1e-10
                 //gives the right translation. Translation
@@ -955,21 +971,39 @@ Ext.define('Ext.chart.series.Pie', {
      * @param item {Object} Info about the item; same format as returned by #getItemForPoint
      */
     unHighlightItem: function() {
-        var me = this;
+        var me = this,
+            items,
+            animate,
+            shadowsEnabled,
+            group,
+            len,
+            i,
+            j,
+            display,
+            shadowLen,
+            p,
+            to,
+            ihs,
+            hs,
+            sprite,
+            shadows,
+            shadow,
+            item,
+            label,
+            attrs;
         if (!me.highlight) {
             return;
         }
 
         if (('segment' in me.highlightCfg) &amp;&amp; me.items) {
-            var items = me.items,
-                animate = me.chart.animate,
-                shadowsEnabled = !!me.chart.shadow,
-                group = me.labelsGroup,
-                len = items.length,
-                i = 0,
-                j = 0,
-                display = me.label.display,
-                shadowLen, p, to, ihs, hs, sprite, shadows, shadow, item, label, attrs;
+            items = me.items;
+            animate = me.chart.animate;
+            shadowsEnabled = !!me.chart.shadow;
+            group = me.labelsGroup;
+            len = items.length;
+            i = 0;
+            j = 0;
+            display = me.label.display;
 
             for (; i &lt; len; i++) {
                 item = items[i];

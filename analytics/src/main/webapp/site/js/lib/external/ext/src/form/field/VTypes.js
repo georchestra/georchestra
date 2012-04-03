@@ -170,4 +170,4 @@ Ext.define('Ext.form.field.VTypes', (function(){
          */
         'alphanumMask' : /[a-z0-9_]/i
     };
-})());
+}()));

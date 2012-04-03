@@ -10,7 +10,7 @@
 
     var arrayPrototype = Array.prototype,
         slice = arrayPrototype.slice,
-        supportsSplice = function () {
+        supportsSplice = (function () {
             var array = [],
                 lengthBefore,
                 j = 20;
@@ -37,19 +37,22 @@
             // end IE8 bug
 
             return true;
-        }(),
+        }()),
         supportsForEach = 'forEach' in arrayPrototype,
         supportsMap = 'map' in arrayPrototype,
         supportsIndexOf = 'indexOf' in arrayPrototype,
         supportsEvery = 'every' in arrayPrototype,
         supportsSome = 'some' in arrayPrototype,
         supportsFilter = 'filter' in arrayPrototype,
-        supportsSort = function() {
+        supportsSort = (function() {
             var a = [1,2,3,4,5].sort(function(){ return 0; });
             return a[0] === 1 && a[1] === 2 && a[2] === 3 && a[3] === 4 && a[4] === 5;
-        }(),
+        }()),
         supportsSliceOnNodeList = true,
-        ExtArray;
+        ExtArray,
+        erase,
+        replace,
+        splice;
 
     try {
         // IE 6 - 8 will throw an error when using Array.prototype.slice on NodeList
@@ -98,7 +101,13 @@
     function replaceSim (array, index, removeCount, insert) {
         var add = insert ? insert.length : 0,
             length = array.length,
-            pos = fixArrayIndex(array, index);
+            pos = fixArrayIndex(array, index),
+            remove,
+            tailOldPos,
+            tailNewPos,
+            tailCount,
+            lengthAfterRemove,
+            i;
 
         // we try to use Array.push when we can for efficiency...
         if (pos === length) {
@@ -106,12 +115,11 @@
                 array.push.apply(array, insert);
             }
         } else {
-            var remove = Math.min(removeCount, length - pos),
-                tailOldPos = pos + remove,
-                tailNewPos = tailOldPos + add - remove,
-                tailCount = length - tailOldPos,
-                lengthAfterRemove = length - remove,
-                i;
+            remove = Math.min(removeCount, length - pos);
+            tailOldPos = pos + remove;
+            tailNewPos = tailOldPos + add - remove;
+            tailCount = length - tailOldPos;
+            lengthAfterRemove = length - remove;
 
             if (tailNewPos < tailOldPos) { // case A
                 for (i = 0; i < tailCount; ++i) {
@@ -176,9 +184,9 @@
         return array.splice.apply(array, slice.call(arguments, 1));
     }
 
-    var erase = supportsSplice ? eraseNative : eraseSim,
-        replace = supportsSplice ? replaceNative : replaceSim,
-        splice = supportsSplice ? spliceNative : spliceSim;
+    erase = supportsSplice ? eraseNative : eraseSim;
+    replace = supportsSplice ? replaceNative : replaceSim;
+    splice = supportsSplice ? spliceNative : spliceSim;
 
     // NOTE: from here on, use erase, replace or splice (not native methods)...
 
@@ -678,46 +686,64 @@
          * @return {Array} intersect
          */
         intersect: function() {
-            var intersect = [],
+            var intersection = [],
                 arrays = slice.call(arguments),
-                i, j, k, minArray, array, x, y, ln, arraysLn, arrayLn;
+                arraysLength,
+                array,
+                arrayLength,
+                minArray,
+                minArrayIndex,
+                minArrayCandidate,
+                minArrayLength,
+                element,
+                elementCandidate,
+                elementCount,
+                i, j, k;
 
             if (!arrays.length) {
-                return intersect;
+                return intersection;
             }
 
             // Find the smallest array
-            for (i = x = 0,ln = arrays.length; i < ln,array = arrays[i]; i++) {
-                if (!minArray || array.length < minArray.length) {
-                    minArray = array;
-                    x = i;
+            arraysLength = arrays.length;
+            for (i = minArrayIndex = 0; i < arraysLength; i++) {
+                minArrayCandidate = arrays[i];
+                if (!minArray || minArrayCandidate.length < minArray.length) {
+                    minArray = minArrayCandidate;
+                    minArrayIndex = i;
                 }
             }
 
             minArray = ExtArray.unique(minArray);
-            erase(arrays, x, 1);
+            erase(arrays, minArrayIndex, 1);
 
             // Use the smallest unique'd array as the anchor loop. If the other array(s) do contain
             // an item in the small array, we're likely to find it before reaching the end
             // of the inner loop and can terminate the search early.
-            for (i = 0,ln = minArray.length; i < ln,x = minArray[i]; i++) {
-                var count = 0;
+            minArrayLength = minArray.length;
+            arraysLength = arrays.length;
+            for (i = 0; i < minArrayLength; i++) {
+                element = minArray[i];
+                elementCount = 0;
 
-                for (j = 0,arraysLn = arrays.length; j < arraysLn,array = arrays[j]; j++) {
-                    for (k = 0,arrayLn = array.length; k < arrayLn,y = array[k]; k++) {
-                        if (x === y) {
-                            count++;
+                for (j = 0; j < arraysLength; j++) {
+                    array = arrays[j];
+                    arrayLength = array.length;
+                    for (k = 0; k < arrayLength; k++) {
+                        elementCandidate = array[k];
+                        if (element === elementCandidate) {
+                            elementCount++;
                             break;
                         }
                     }
                 }
 
-                if (count === arraysLn) {
-                    intersect.push(x);
+                if (elementCount === arraysLength) {
+                    intersection.push(element);
                 }
             }
 
-            return intersect;
+            return intersection;
         },
 
         /**
@@ -1173,4 +1199,4 @@
     Ext.toArray = function() {
         return ExtArray.toArray.apply(ExtArray, arguments);
     };
-})();
+}());

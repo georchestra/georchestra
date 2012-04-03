@@ -487,26 +487,28 @@ Ext.define('Ext.dd.DragDrop', {
             ce = Ext.get(constrainTo),
             s = ce.getScroll(),
             c,
-            cd = ce.dom;
+            cd = ce.dom,
+            xy,
+            topSpace,
+            leftSpace;
         if(cd == document.body){
             c = { x: s.left, y: s.top, width: Ext.Element.getViewWidth(), height: Ext.Element.getViewHeight()};
         }else{
-            var xy = ce.getXY();
+            xy = ce.getXY();
             c = {x : xy[0], y: xy[1], width: cd.clientWidth, height: cd.clientHeight};
         }
 
-
-        var topSpace = b.y - c.y,
-            leftSpace = b.x - c.x;
+        topSpace = b.y - c.y;
+        leftSpace = b.x - c.x;
 
         this.resetConstraints();
         this.setXConstraint(leftSpace - (pad.left||0), // left
                 c.width - leftSpace - b.width - (pad.right||0), //right
-				this.xTickSize
+        this.xTickSize
         );
         this.setYConstraint(topSpace - (pad.top||0), //top
                 c.height - topSpace - b.height - (pad.bottom||0), //bottom
-				this.yTickSize
+        this.yTickSize
         );
     },
 
@@ -646,16 +648,17 @@ Ext.define('Ext.dd.DragDrop', {
      * @param {Number} diffY   the Y offset, default 0
      */
     setInitPosition: function(diffX, diffY) {
-        var el = this.getEl();
+        var el = this.getEl(),
+            dx, dy, p;
 
         if (!this.DDMInstance.verifyEl(el)) {
             return;
         }
 
-        var dx = diffX || 0;
-        var dy = diffY || 0;
+        dx = diffX || 0;
+        dy = diffY || 0;
 
-        var p = Ext.Element.getXY( el );
+        p = Ext.Element.getXY( el );
 
         this.initPageX = p[0] - dx;
         this.initPageY = p[1] - dy;
@@ -785,9 +788,7 @@ Ext.define('Ext.dd.DragDrop', {
 
         this.DDMInstance.refreshCache(this.groups);
 
-        var pt = e.getPoint();
-        if (!this.hasOuterHandles && !this.DDMInstance.isOverTarget(pt, this) )  {
-        } else {
+        if (this.hasOuterHandles || this.DDMInstance.isOverTarget(e.getPoint(), this) )  {
             if (this.clickValidator(e)) {
                 // set the initial element position
                 this.setStartPosition();
@@ -797,9 +798,6 @@ Ext.define('Ext.dd.DragDrop', {
                 this.DDMInstance.handleMouseDown(e, this);
 
                 this.DDMInstance.stopEvent(e);
-            } else {
-
-
             }
         }
     },
@@ -885,9 +883,10 @@ Ext.define('Ext.dd.DragDrop', {
      */
     isValidHandleChild: function(node) {
 
-        var valid = true;
+        var valid = true,
+            nodeName,
+            i, len;
         // var n = (node.nodeName == "#text") ? node.parentNode : node;
-        var nodeName;
         try {
             nodeName = node.nodeName.toUpperCase();
         } catch(e) {
@@ -896,7 +895,7 @@ Ext.define('Ext.dd.DragDrop', {
         valid = valid && !this.invalidHandleTypes[nodeName];
         valid = valid && !this.invalidHandleIds[node.id];
 
-        for (var i=0, len=this.invalidHandleClasses.length; valid && i<len; ++i) {
+        for (i=0, len=this.invalidHandleClasses.length; valid && i<len; ++i) {
             valid = !Ext.fly(node).hasCls(this.invalidHandleClasses[i]);
         }
 
@@ -914,9 +913,10 @@ Ext.define('Ext.dd.DragDrop', {
         this.xTicks = [];
         this.xTickSize = iTickSize;
 
-        var tickMap = {};
+        var tickMap = {},
+            i;
 
-        for (var i = this.initPageX; i >= this.minX; i = i - iTickSize) {
+        for (i = this.initPageX; i >= this.minX; i = i - iTickSize) {
             if (!tickMap[i]) {
                 this.xTicks[this.xTicks.length] = i;
                 tickMap[i] = true;
@@ -942,9 +942,10 @@ Ext.define('Ext.dd.DragDrop', {
         this.yTicks = [];
         this.yTickSize = iTickSize;
 
-        var tickMap = {};
+        var tickMap = {},
+            i;
 
-        for (var i = this.initPageY; i >= this.minY; i = i - iTickSize) {
+        for (i = this.initPageY; i >= this.minY; i = i - iTickSize) {
             if (!tickMap[i]) {
                 this.yTicks[this.yTicks.length] = i;
                 tickMap[i] = true;
@@ -1031,8 +1032,8 @@ Ext.define('Ext.dd.DragDrop', {
         // Maintain offsets if necessary
         if (this.initPageX || this.initPageX === 0) {
             // figure out how much this thing has moved
-            var dx = (this.maintainOffset) ? this.lastPageX - this.initPageX : 0;
-            var dy = (this.maintainOffset) ? this.lastPageY - this.initPageY : 0;
+            var dx = (this.maintainOffset) ? this.lastPageX - this.initPageX : 0,
+                dy = (this.maintainOffset) ? this.lastPageY - this.initPageY : 0;
 
             this.setInitPosition(dx, dy);
 
@@ -1073,11 +1074,12 @@ Ext.define('Ext.dd.DragDrop', {
             // tick.
             return tickArray[0];
         } else {
-            for (var i=0, len=tickArray.length; i<len; ++i) {
-                var next = i + 1;
+            var i, len, next, diff1, diff2;
+            for (i=0, len=tickArray.length; i<len; ++i) {
+                next = i + 1;
                 if (tickArray[next] && tickArray[next] >= val) {
-                    var diff1 = val - tickArray[i];
-                    var diff2 = tickArray[next] - val;
+                    diff1 = val - tickArray[i];
+                    diff2 = tickArray[next] - val;
                     return (diff2 > diff1) ? tickArray[i] : tickArray[next];
                 }
             }

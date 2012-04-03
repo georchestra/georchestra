@@ -37,7 +37,7 @@
  *     });
  */
 Ext.define('Ext.form.field.Time', {
-    extend:'Ext.form.field.Picker',
+    extend:'Ext.form.field.ComboBox',
     alias: 'widget.timefield',
     requires: ['Ext.form.field.Date', 'Ext.picker.Time', 'Ext.view.BoundListKeyNav', 'Ext.Date'],
     alternateClassName: ['Ext.form.TimeField', 'Ext.form.Time'],
@@ -145,6 +145,11 @@ Ext.define('Ext.form.field.Time', {
     
     ignoreSelection: 0,
 
+    queryMode: 'local',
+
+    displayField: 'disp',
+
+    valueField: 'date',
 
     initComponent: function() {
         var me = this,
@@ -157,18 +162,6 @@ Ext.define('Ext.form.field.Time', {
             me.setMaxValue(max);
         }
         this.callParent();
-    },
-
-    initValue: function() {
-        var me = this,
-            value = me.value;
-
-        // If a String value was supplied, try to convert it to a proper Date object
-        if (Ext.isString(value)) {
-            me.value = me.rawToValue(value);
-        }
-
-        me.callParent();
     },
 
     /**
@@ -330,40 +323,28 @@ Ext.define('Ext.form.field.Time', {
      */
     createPicker: function() {
         var me = this,
-            picker = new Ext.picker.Time({
-                pickerField: me,
-                selModel: {
-                    mode: 'SINGLE'
-                },
-                floating: true,
-                hidden: true,
-                minValue: me.minValue,
-                maxValue: me.maxValue,
-                increment: me.increment,
-                format: me.format,
-                ownerCt: this.ownerCt,
-                renderTo: document.body,
-                maxHeight: me.pickerMaxHeight,
-                focusOnToFront: false
-            });
+            picker;
 
-        me.mon(picker.getSelectionModel(), {
-            selectionchange: me.onListSelect,
-            scope: me
-        });
-        
-        me.mon(picker, {
-            scope: me,
-            itemclick: me.onItemClick
-        });
-
-        return picker;
+        me.listConfig = Ext.apply({
+            xtype: 'timepicker',
+            selModel: {
+                mode: 'SINGLE'
+            },
+            cls: undefined,
+            minValue: me.minValue,
+            maxValue: me.maxValue,
+            increment: me.increment,
+            format: me.format,
+            maxHeight: me.pickerMaxHeight
+        }, me.listConfig);
+        picker = me.callParent();
+        me.store = picker.store;
+        return picker
     },
     
     onItemClick: function(picker, record){
         // The selection change events won't fire when clicking on the selected element. Detect it here.
         var me = this,
-            valueField = me.valueField,
             selected = picker.getSelectionModel().getSelection();
 
         if (selected.length > 0) {
@@ -371,68 +352,6 @@ Ext.define('Ext.form.field.Time', {
             if (selected && Ext.Date.isEqual(record.get('date'), selected.get('date'))) {
                 me.collapse();
             }
-        }
-    },
-
-    /**
-     * @private
-     * Enables the key nav for the Time picker when it is expanded.
-     * TODO this is largely the same logic as ComboBox, should factor out.
-     */
-    onExpand: function() {
-        var me = this,
-            keyNav = me.pickerKeyNav,
-            selectOnTab = me.selectOnTab,
-            picker = me.getPicker(),
-            itemNode,
-            selected;
-
-        if (!keyNav) {
-            keyNav = me.pickerKeyNav = new Ext.view.BoundListKeyNav(this.inputEl, {
-                boundList: picker,
-                forceKeyDown: true,
-                tab: function(e) {
-                    if (selectOnTab) {
-                        if(me.picker.highlightedItem) {
-                            this.selectHighlighted(e);
-                        } else {
-                            me.collapse();
-                        }
-                        me.triggerBlur();
-                    }
-                    // Tab key event is allowed to propagate to field
-                    return true;
-                }
-            });
-            // stop tab monitoring from Ext.form.field.Trigger so it doesn't short-circuit selectOnTab
-            if (selectOnTab) {
-                me.ignoreMonitorTab = true;
-            }
-        }
-        Ext.defer(keyNav.enable, 1, keyNav); //wait a bit so it doesn't react to the down arrow opening the picker
-
-        // syncronize the selection in case "setValue" was called before the picker was expanded for the first time
-        me.syncSelection();
-
-        // Highlight the last selected item and scroll it into view
-        selected = picker.getSelectionModel().getSelection()[0];
-        if (selected) {
-            itemNode = picker.getNode(selected);
-            picker.highlightItem(itemNode);
-            picker.listEl.scrollChildIntoView(itemNode, false);
-        }
-    },
-
-    /**
-     * @private
-     * Disables the key nav for the Time picker when it is collapsed.
-     */
-    onCollapse: function() {
-        var me = this,
-            keyNav = me.pickerKeyNav;
-        if (keyNav) {
-            keyNav.disable();
-            me.ignoreMonitorTab = false;
         }
     },
 
@@ -455,7 +374,7 @@ Ext.define('Ext.form.field.Time', {
      * @private
      * Handles a time being selected from the Time picker.
      */
-    onListSelect: function(list, recordArray) {
+    onListSelectionChange: function(list, recordArray) {
         var me = this,
             record = recordArray[0],
             val = record ? record.get('date') : null;
@@ -469,11 +388,6 @@ Ext.define('Ext.form.field.Time', {
             me.collapse();
             me.inputEl.focus();
         }
-    },
-    
-    setValue: function(){
-        this.callParent(arguments);
-        this.syncSelection();
     },
     
     /**
@@ -521,5 +435,10 @@ Ext.define('Ext.form.field.Time', {
 
         me.callParent(arguments);
         me.setRawValue(me.formatDate(me.getValue()));
+    },
+
+    getValue: function() {
+        var val = this.callParent(arguments);
+        return this.parseDate(val);
     }
 });

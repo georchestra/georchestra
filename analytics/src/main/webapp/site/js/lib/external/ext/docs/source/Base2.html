@@ -16,9 +16,8 @@
 </head>
 <body onload="prettyPrint(); highlight();">
   <pre class="prettyprint lang-js"><span id='Ext-chart-theme-Base'>/**
-</span> * @class Ext.chart.theme.Base
- * Provides default colors for non-specified things. Should be sub-classed when creating new themes.
- * @ignore
+</span> * Provides default colors for non-specified things. Should be sub-classed when creating new themes.
+ * @private
  */
 Ext.define('Ext.chart.theme.Base', {
 
@@ -175,7 +174,7 @@ Ext.define('Ext.chart.theme.Base', {
                     }, config));
                 }
             });
-        })(palette[i]);
+        }(palette[i]));
     }
     
     //Create theme from color array
@@ -188,7 +187,7 @@ Ext.define('Ext.chart.theme.Base', {
                     }, config));
                 }
             });
-        })(categories[i]);
+        }(categories[i]));
     }
 });
 </pre>

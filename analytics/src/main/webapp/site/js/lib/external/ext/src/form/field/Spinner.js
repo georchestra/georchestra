@@ -16,10 +16,7 @@
  *         onSpinUp: function() {
  *             var me = this;
  *             if (!me.readOnly) {
- *                 var val = me.step; // set the default value to the step value
- *                 if(me.getValue() !== '') {
- *                     val = parseInt(me.getValue().slice(0, -5)); // gets rid of " Pack"
- *                 }
+ *                 var val = parseInt(me.getValue().split(' '))||0; // gets rid of " Pack", defaults to zero on parse failure
  *                 me.setValue((val + me.step) + ' Pack');
  *             }
  *         },
@@ -28,10 +25,12 @@
  *         onSpinDown: function() {
  *             var val, me = this;
  *             if (!me.readOnly) {
- *                 if(me.getValue() !== '') {
- *                     val = parseInt(me.getValue().slice(0, -5)); // gets rid of " Pack"
- *                 }
- *                 me.setValue((val - me.step) + ' Pack');
+ *                var val = parseInt(me.getValue().split(' '))||0; // gets rid of " Pack", defaults to zero on parse failure
+ *                if (val <= me.step) {
+ *                    me.setValue('Dry!');
+ *                } else {
+ *                    me.setValue((val - me.step) + ' Pack');
+ *                }
  *             }
  *         }
  *     });
@@ -110,12 +109,8 @@ Ext.define('Ext.form.field.Spinner', {
      */
     onSpinDown: Ext.emptyFn,
 
-    triggerTpl: '<td style="{triggerStyle}" valign="top">' +
+    triggerTpl: '<td style="{triggerStyle}">' +
                     '<div class="' + Ext.baseCSSPrefix + 'trigger-index-0 ' + Ext.baseCSSPrefix + 'form-trigger ' + Ext.baseCSSPrefix + 'form-spinner-up role="button"></div>' +
-                '</td>' +
-            '</tr>' +
-            '<tr>' +
-                '<td style="{triggerStyle}" valign="top">' +
                     '<div class="' + Ext.baseCSSPrefix + 'trigger-index-1 ' + Ext.baseCSSPrefix + 'form-trigger ' + Ext.baseCSSPrefix + 'form-spinner-down" role="button"></div>' +
                 '</td>' +
             '</tr>',
@@ -195,7 +190,7 @@ Ext.define('Ext.form.field.Spinner', {
 
         return '<table id="' + me.id + '-triggerWrap" class="' + Ext.baseCSSPrefix + 'form-trigger-wrap" cellpadding="0" cellspacing="0">' +
             '<tbody>' +
-                '<tr><td id="' + me.id + '-inputCell" rowspan="2">' + field + '</td>' +
+                '<tr><td id="' + me.id + '-inputCell" class="' + Ext.baseCSSPrefix + 'form-trigger-input-cell">' + field + '</td>' +
                 me.getTriggerMarkup() +
             '</tbody></table>';
     },

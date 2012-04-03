@@ -347,4 +347,10 @@ Ext.define('Ext.grid.Panel', {
      */
     rowLines: true
 
+    // Columns config is required in Grid
+    /**
+     * @cfg {Ext.grid.column.Column[]/Object} columns (required)
+     * @inheritdoc
+     */
+
 });

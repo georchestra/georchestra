@@ -138,14 +138,6 @@
         .#{$prefix}panel-header-collapsed-border-left {
             border-right-width: $panel-header-border-width !important;
         }
-
-        // hide all docked items except for header when panel is collapsed
-        .#{$prefix}docked {
-            visibility: hidden;
-        }
-        .#{$prefix}panel-header {
-            visibility: visible;
-        }
     }
 
     @if not $supports-gradients or $compile-all {
@@ -304,6 +296,16 @@
 
             .#{$prefix}nlg .#{$prefix}panel-header-#{$ui-label}-bottom {
                 background-position: bottom left;
+            }
+
+            @if $ui-border-radius != null {
+                .#{$prefix}nbr {
+                    // If framing elements are used to achieve rounded corners remove the background image from the header element since the framing elements
+                    // already have the background image, and a background image on the main header element bleeds through the corner framing elements.
+                    .#{$prefix}panel-header-#{$ui-label} {
+                        background-image: none;
+                    }
+                }
             }
  
 

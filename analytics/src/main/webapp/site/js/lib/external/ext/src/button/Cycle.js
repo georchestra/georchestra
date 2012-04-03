@@ -132,7 +132,8 @@ Ext.define('Ext.button.Cycle', {
     initComponent: function() {
         var me      = this,
             checked = 0,
-            items;
+            items,
+            i, iLen, item;
 
         me.addEvents(
             /**
@@ -159,9 +160,7 @@ Ext.define('Ext.button.Cycle', {
             items: []
         }, me.menu);
 
-        var i,
-            iLen = items.length,
-            item;
+        iLen = items.length;
 
         // Convert all items to CheckItems
         for (i = 0; i < iLen; i++) {

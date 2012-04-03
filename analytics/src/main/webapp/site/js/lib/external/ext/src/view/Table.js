@@ -379,20 +379,18 @@ Ext.define('Ext.view.Table', {
     },
 
     /**
-     * In FF10, shifts the width in by 1px, then back in order to trigger a reflow
-     * to deal with properly settings widths on flex columns transitioning from hidden
-     * to visible
+     * In FF10, flex columns transitioning from hidden to visible may not always be
+     * displayed properly initially.  Simply re-measuring the width after the styling
+     * changes take place seems to be enough to poke the browser into doing it's thing
      * @private
      */
     forceReflow: Ext.isGecko10
         ? function() {
             var el = this.el.down('table'),
+                width;
+            if (el) {
                 width = el.getWidth();
-            el.setWidth(width + 1);
-
-            Ext.defer(function(){
-                el.setWidth(width);
-            }, 1);
+            }
         }
         : Ext.emptyFn,
 
@@ -419,11 +417,7 @@ Ext.define('Ext.view.Table', {
             if (!suppressFocus) {
                 me.el.focus();
             }
-
-            if (me.forceReflow != Ext.emptyFn) {
-                me.forceReflow();
-            }
-
+            me.forceReflow();
         }
     },
 
@@ -464,16 +458,16 @@ Ext.define('Ext.view.Table', {
     refreshHeight: function() {
         var cmp = this.up('tablepanel');
 
-        // Suspend layouts in case the superclass requests a layout. We might too, so they must be coalescsed.
+        // Suspend layouts in case the superclass requests a layout. We might too, so they
+        // must be coalescsed.
         Ext.suspendLayouts();
-        this.callParent(arguments);
 
-        // Do not perform layouts on refresh if the grid is monitoring scroll using a verticalScroller in order
-        // to buffer refreshes of the view from the Store's prefetch buffer. In the case of infinite scrolling,
-        // if there's no scrolling, there will be no refreshes, if there are refreshes, there will definitely be a scrollbar.
-        if (!cmp.verticalScroller && cmp && (cmp = cmp.child('headercontainer')) && Ext.getScrollbarSize().width && cmp.child('[flex]')) {
+        this.callParent();
+
+        if (cmp && Ext.getScrollbarSize().width) {
             cmp.updateLayout();
         }
+
         Ext.resumeLayouts(true);
     },
 
@@ -556,14 +550,12 @@ Ext.define('Ext.view.Table', {
     },
 
     onCellFocus: function(position) {
-        //var cell = this.getCellByPosition(position);
         this.focusCell(position);
     },
 
     getCellByPosition: function(position) {
         var row    = position.row,
             column = position.column,
-            store  = this.store,
             node   = this.getNode(row),
             header = this.headerCt.getHeaderAtIndex(column),
             cellSelector,
@@ -579,8 +571,7 @@ Ext.define('Ext.view.Table', {
     // GridSelectionModel invokes onRowFocus to 'highlight'
     // the last row focused
     onRowFocus: function(rowIdx, highlight, supressFocus) {
-        var me = this,
-            row = me.getNode(rowIdx);
+        var me = this;
 
         if (highlight) {
             me.addRowCls(rowIdx, me.focusedItemCls);

@@ -33,23 +33,22 @@
  *
  * An object literal of this form could also be used as the {@link #cfg-data} config option.
  *
- * **Note:** This class accepts all of the configuration options of {@link Ext.data.reader.Array ArrayReader}.
  */
 Ext.define('Ext.data.ArrayStore', {
     extend: 'Ext.data.Store',
     alias: 'store.array',
-    uses: ['Ext.data.reader.Array'],
+    requires: [
+        'Ext.data.proxy.Memory',
+        'Ext.data.reader.Array'
+    ],
 
     constructor: function(config) {
-        config = config || {};
-
-        Ext.applyIf(config, {
+        config = Ext.apply({
             proxy: {
                 type: 'memory',
                 reader: 'array'
             }
-        });
-
+        }, config);
         this.callParent([config]);
     },
 

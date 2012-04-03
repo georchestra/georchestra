@@ -1,6 +1,5 @@
 /**
- * @class Ext.util.Offset
- * @ignore
+ * @private
  */
 Ext.define('Ext.util.Offset', {
 

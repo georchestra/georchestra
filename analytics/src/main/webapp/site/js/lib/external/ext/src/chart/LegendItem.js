@@ -52,10 +52,13 @@ Ext.define('Ext.chart.LegendItem', {
             type: 'text',
             x: 20,
             y: 0,
-            zIndex: z || 0,
+            zIndex: (z || 0) + 2,
             fill: legend.labelColor,
             font: legend.labelFont,
-            text: getSeriesProp('title') || getSeriesProp('yField')
+            text: getSeriesProp('title') || getSeriesProp('yField'),
+            style: {
+                'cursor': 'pointer'
+            }
         }));
 
         // Line series - display as short line with optional marker in the middle
@@ -64,7 +67,7 @@ Ext.define('Ext.chart.LegendItem', {
                 me.add('line', surface.add({
                     type: 'path',
                     path: 'M0.5,0.5L16.5,0.5',
-                    zIndex: z,
+                    zIndex: (z || 0) + 2,
                     "stroke-width": series.lineWidth,
                     "stroke-linejoin": "round",
                     "stroke-dasharray": series.dash,
@@ -82,7 +85,7 @@ Ext.define('Ext.chart.LegendItem', {
                     fill: markerConfig.fill,
                     x: 8.5,
                     y: 0.5,
-                    zIndex: z,
+                    zIndex: (z || 0) + 2,
                     radius: markerConfig.radius || markerConfig.size,
                     style: {
                         cursor: 'pointer'
@@ -94,7 +97,7 @@ Ext.define('Ext.chart.LegendItem', {
         else {
             me.add('box', surface.add({
                 type: 'rect',
-                zIndex: z,
+                zIndex: (z || 0) + 2,
                 x: 0,
                 y: 0,
                 width: 12,
@@ -118,9 +121,8 @@ Ext.define('Ext.chart.LegendItem', {
             y: bbox.y,
             width: bbox.width || 20,
             height: bbox.height || 20,
-            zIndex: (z || 0) + 1000,
-            fill: '#f00',
-            opacity: 0,
+            zIndex: (z || 0) + 1,
+            fill: me.legend.boxFill,
             style: {
                 'cursor': 'pointer'
             }

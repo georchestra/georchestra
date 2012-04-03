@@ -84,7 +84,8 @@ Ext.define('Ext.util.KeyNav', {
             keymapCfg = {
                 target: config.target,
                 eventName: me.getKeyEvent('forceKeyDown' in config ? config.forceKeyDown : me.forceKeyDown, config.eventName)
-            };
+            },
+            map, keyCodes, defaultScope, keyName, binding;
 
         if (me.map) {
             me.map.destroy();
@@ -92,13 +93,11 @@ Ext.define('Ext.util.KeyNav', {
 
         if (config.processEvent) {
             keymapCfg.processEvent = config.processEvent;
-            keymapCfg.processEventScope = config.processEventScope||me
+            keymapCfg.processEventScope = config.processEventScope||me;
         }
-        var map = me.map = new Ext.util.KeyMap(keymapCfg),
-            keyCodes = Ext.util.KeyNav.keyOptions,
-            defaultScope = config.scope || me,
-            keyName,
-            binding;
+        map = me.map = new Ext.util.KeyMap(keymapCfg);
+        keyCodes = Ext.util.KeyNav.keyOptions;
+        defaultScope = config.scope || me;
         
         for (keyName in keyCodes) {
             if (keyCodes.hasOwnProperty(keyName)) {

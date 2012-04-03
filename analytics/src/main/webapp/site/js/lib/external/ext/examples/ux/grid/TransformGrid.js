@@ -1,19 +1,17 @@
 /**
- * @class Ext.ux.grid.TransformGrid
- * @extends Ext.grid.Panel
  * A Grid which creates itself from an existing HTML table element.
- * @history
- * 2007-03-01 Original version by Nige "Animal" White
- * 2007-03-10 jvs Slightly refactored to reuse existing classes * @constructor
- * @param {String/HTMLElement/Ext.Element} table The table element from which this grid will be created -
- * The table MUST have some type of size defined for the grid to fill. The container will be
- * automatically set to position relative if it isn't already.
- * @param {Object} config A config object that sets properties on this grid and has two additional (optional)
- * properties: fields and columns which allow for customizing data fields and columns for this grid.
  */
 Ext.define('Ext.ux.grid.TransformGrid', {
     extend: 'Ext.grid.Panel',
 
+    /**
+     * Creates the grid from HTML table element.
+     * @param {String/HTMLElement/Ext.Element} table The table element from which this grid will be created -
+     * The table MUST have some type of size defined for the grid to fill. The container will be
+     * automatically set to position relative if it isn't already.
+     * @param {Object} [config] A config object that sets properties on this grid and has two additional (optional)
+     * properties: fields and columns which allow for customizing data fields and columns for this grid.
+     */
     constructor: function(table, config) {
         config = Ext.apply({}, config);
         table = this.table = Ext.get(table);

@@ -3,6 +3,7 @@ Ext.define('KitchenSink.view.List', {
     xtype: 'exampleList',
     
     requires: [
+        'KitchenSink.store.Examples',
         'KitchenSink.view.examples.Example',
         'KitchenSink.view.examples.PanelExample',
         'KitchenSink.view.examples.forms.Contact',
@@ -16,6 +17,7 @@ Ext.define('KitchenSink.view.List', {
         'KitchenSink.view.examples.panels.FramedPanel',
         'KitchenSink.view.examples.tabs.BasicTabs',
         'KitchenSink.view.examples.tabs.FramedTabs',
+        'KitchenSink.view.examples.tabs.IconTabs',
         'KitchenSink.view.examples.tabs.TitledTabPanels',
         'KitchenSink.view.examples.toolbars.BasicToolbar',
         'KitchenSink.view.examples.toolbars.DockedToolbar',

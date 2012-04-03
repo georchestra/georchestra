@@ -3,7 +3,7 @@
  * This class manages a set of captured properties from an object. These captured properties
  * can later be restored to an object.
  */
-Ext.define('Ext.util.Memento', function () {
+Ext.define('Ext.util.Memento', (function () {
 
     function captureOne (src, target, prop, prefix) {
         src[prefix ? prefix + prop : prop] = target[prop];
@@ -128,4 +128,4 @@ Ext.define('Ext.util.Memento', function () {
             }
         }
     };
-}());
+}()));

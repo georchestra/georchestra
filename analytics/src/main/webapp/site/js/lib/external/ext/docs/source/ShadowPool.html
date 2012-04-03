@@ -23,31 +23,13 @@ Ext.define('Ext.ShadowPool', {
     singleton: true,
     requires: ['Ext.DomHelper'],
 
-    markup: function() {
-        if (Ext.supports.CSS3BoxShadow) {
-            return '&lt;div class=&quot;' + Ext.baseCSSPrefix + 'css-shadow&quot; role=&quot;presentation&quot;&gt;&lt;/div&gt;';
-        } else if (Ext.isIE) {
-            return '&lt;div class=&quot;' + Ext.baseCSSPrefix + 'ie-shadow&quot; role=&quot;presentation&quot;&gt;&lt;/div&gt;';
-        } else {
-            return '&lt;div class=&quot;' + Ext.baseCSSPrefix + 'frame-shadow&quot; role=&quot;presentation&quot;&gt;' +
-                '&lt;div class=&quot;xst&quot; role=&quot;presentation&quot;&gt;' +
-                    '&lt;div class=&quot;xstl&quot; role=&quot;presentation&quot;&gt;&lt;/div&gt;' +
-                    '&lt;div class=&quot;xstc&quot; role=&quot;presentation&quot;&gt;&lt;/div&gt;' +
-                    '&lt;div class=&quot;xstr&quot; role=&quot;presentation&quot;&gt;&lt;/div&gt;' +
-                '&lt;/div&gt;' +
-                '&lt;div class=&quot;xsc&quot; role=&quot;presentation&quot;&gt;' +
-                    '&lt;div class=&quot;xsml&quot; role=&quot;presentation&quot;&gt;&lt;/div&gt;' +
-                    '&lt;div class=&quot;xsmc&quot; role=&quot;presentation&quot;&gt;&lt;/div&gt;' +
-                    '&lt;div class=&quot;xsmr&quot; role=&quot;presentation&quot;&gt;&lt;/div&gt;' +
-                '&lt;/div&gt;' +
-                '&lt;div class=&quot;xsb&quot; role=&quot;presentation&quot;&gt;' +
-                    '&lt;div class=&quot;xsbl&quot; role=&quot;presentation&quot;&gt;&lt;/div&gt;' +
-                    '&lt;div class=&quot;xsbc&quot; role=&quot;presentation&quot;&gt;&lt;/div&gt;' +
-                    '&lt;div class=&quot;xsbr&quot; role=&quot;presentation&quot;&gt;&lt;/div&gt;' +
-                '&lt;/div&gt;' +
-            '&lt;/div&gt;';
-        }
-    }(),
+    markup: (function() {
+        return Ext.String.format(
+            '&lt;div class=&quot;{0}{1}-shadow&quot; role=&quot;presentation&quot;&gt;&lt;/div&gt;',
+            Ext.baseCSSPrefix,
+            Ext.isIE &amp;&amp; !Ext.supports.CSS3BoxShadow ? 'ie' : 'css'
+        );
+    }()),
 
     shadows: [],
 

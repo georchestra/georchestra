@@ -717,7 +717,7 @@ Ext.define('Ext.form.field.ComboBox', {
         // If store initial load or triggerAction: 'all' trigger click.
         else {
             // Set the value on load
-            if (me.value) {
+            if (me.value || me.value === 0) {
                 me.setValue(me.value);
             } else {
                 // There's no value.
@@ -725,7 +725,8 @@ Ext.define('Ext.form.field.ComboBox', {
                 if (me.store.getCount()) {
                     me.doAutoSelect();
                 } else {
-                    me.setValue('');
+                    // assign whatever empty value we have to prevent change from firing
+                    me.setValue(me.value);
                 }
             }
         }
@@ -990,7 +991,8 @@ Ext.define('Ext.form.field.ComboBox', {
         var me = this,
             picker,
             menuCls = Ext.baseCSSPrefix + 'menu',
-            opts = Ext.apply({
+            pickerCfg = Ext.apply({
+                xtype: 'boundlist',
                 pickerField: me,
                 selModel: {
                     mode: me.multiSelect ? 'SIMPLE' : 'SINGLE'
@@ -1001,7 +1003,7 @@ Ext.define('Ext.form.field.ComboBox', {
                 // The picker (the dropdown) must have its zIndex managed by the same ZIndexManager which is
                 // providing the zIndex of our Container.
                 ownerCt: me.up('[floating]'),
-                cls: me.el.up('.' + menuCls) ? menuCls : '',
+                cls: me.el && me.el.up('.' + menuCls) ? menuCls : '',
                 store: me.store,
                 displayField: me.displayField,
                 focusOnToFront: false,
@@ -1009,7 +1011,7 @@ Ext.define('Ext.form.field.ComboBox', {
                 tpl: me.tpl
             }, me.listConfig, me.defaultListConfig);
 
-        picker = me.picker = new Ext.view.BoundList(opts);
+        picker = me.picker = Ext.widget(pickerCfg);
         if (me.pageSize) {
             picker.pagingToolbar.on('beforechange', me.onPageChange, me);
         }
@@ -1021,9 +1023,9 @@ Ext.define('Ext.form.field.ComboBox', {
         });
 
         me.mon(picker.getSelectionModel(), {
-            'beforeselect': me.onBeforeSelect,
-            'beforedeselect': me.onBeforeDeselect,
-            'selectionchange': me.onListSelectionChange,
+            beforeselect: me.onBeforeSelect,
+            beforedeselect: me.onBeforeDeselect,
+            selectionchange: me.onListSelectionChange,
             scope: me
         });
 
@@ -1282,17 +1284,18 @@ Ext.define('Ext.form.field.ComboBox', {
     setHiddenValue: function(values){
         var me = this,
             name = me.hiddenName, 
-            i;
+            i,
+            dom, childNodes, input, valueCount, childrenCount;
             
         if (!me.hiddenDataEl || !name) {
             return;
         }
         values = Ext.Array.from(values);
-        var dom = me.hiddenDataEl.dom,
-            childNodes = dom.childNodes,
-            input = childNodes[0],
-            valueCount = values.length,
-            childrenCount = childNodes.length;
+        dom = me.hiddenDataEl.dom;
+        childNodes = dom.childNodes;
+        input = childNodes[0];
+        valueCount = values.length;
+        childrenCount = childNodes.length;
         
         if (!input && valueCount > 0) {
             me.hiddenDataEl.update(Ext.DomHelper.markup({
@@ -1406,6 +1409,14 @@ Ext.define('Ext.form.field.ComboBox', {
                 selModel.select(selection);
             }
             me.ignoreSelection--;
+        }
+    },
+    
+    onEditorTab: function(e){
+        var keyNav = this.listKeyNav;
+        
+        if (this.selectOnTab && keyNav) {
+            keyNav.selectHighlighted(e);
         }
     }
 });

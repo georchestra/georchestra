@@ -2,12 +2,11 @@
  * Utility class for manipulating CSS rules
  * @singleton
  */
-Ext.define('Ext.util.CSS', function() {
-    var rules = null;
-    var doc = document;
-
-    var camelRe = /(-[a-z])/gi;
-    var camelFn = function(m, a){ return a.charAt(1).toUpperCase(); };
+Ext.define('Ext.util.CSS', (function() {
+    var rules = null,
+        doc = document,
+        camelRe = /(-[a-z])/gi,
+        camelFn = function(m, a){ return a.charAt(1).toUpperCase(); };
 
     return {
 
@@ -69,9 +68,10 @@ Ext.define('Ext.util.CSS', function() {
          * @param {String} url The href of the new stylesheet to include
          */
         swapStyleSheet : function(id, url) {
-            var doc = document;
+            var doc = document,
+                ss;
             this.removeStyleSheet(id);
-            var ss = doc.createElement("link");
+            ss = doc.createElement("link");
             ss.setAttribute("rel", "stylesheet");
             ss.setAttribute("type", "text/css");
             ss.setAttribute("id", id);
@@ -144,11 +144,12 @@ Ext.define('Ext.util.CSS', function() {
          * @return {CSSStyleRule} The CSS rule or null if one is not found
          */
         getRule: function(selector, refreshCache) {
-            var rs = this.getRules(refreshCache);
+            var rs = this.getRules(refreshCache),
+                i;
             if (!Ext.isArray(selector)) {
                 return rs[selector.toLowerCase()];
             }
-            for (var i = 0; i < selector.length; i++) {
+            for (i = 0; i < selector.length; i++) {
                 if (rs[selector[i]]) {
                     return rs[selector[i].toLowerCase()];
                 }
@@ -164,14 +165,15 @@ Ext.define('Ext.util.CSS', function() {
          * @return {Boolean} true If a rule was found and updated
          */
         updateRule : function(selector, property, value){
+            var rule, i;
             if (!Ext.isArray(selector)) {
-                var rule = this.getRule(selector);
+                rule = this.getRule(selector);
                 if (rule) {
                     rule.style[property.replace(camelRe, camelFn)] = value;
                     return true;
                 }
             } else {
-                for (var i = 0; i < selector.length; i++) {
+                for (i = 0; i < selector.length; i++) {
                     if (this.updateRule(selector[i], property, value)) {
                         return true;
                     }
@@ -180,4 +182,4 @@ Ext.define('Ext.util.CSS', function() {
             return false;
         }
     };
-}());
+}()));

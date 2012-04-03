@@ -1,68 +1,75 @@
-var toolbarItems = [
-    {iconCls:'list'},
-    '-',
-    {iconCls:'close'},
-    {iconCls:'paste'},
-    '-',
-    {iconCls:'edit2'}
-];
+(function() {
+    var toolbarItems = [
+        {iconCls:'list'},
+        '-',
+        {iconCls:'close'},
+        {iconCls:'paste'},
+        '-',
+        {iconCls:'edit2'}
+    ];
 
-Ext.define('KitchenSink.view.examples.toolbars.DockedToolbar', {
-    extend: 'KitchenSink.view.examples.PanelExample',
-    items: [
-        {
-            xtype: 'panel',
+    Ext.define('KitchenSink.view.examples.toolbars.DockedToolbar', {
+        extend: 'KitchenSink.view.examples.PanelExample',
+        requires: [
+            'Ext.layout.container.HBox',
+            'Ext.toolbar.Toolbar'
+        ],
 
-            style: 'background:transparent',
-            bodyStyle: 'background:transparent',
+        items: [
+            {
+                xtype: 'panel',
 
-            layout: {
-                type: 'hbox',
-                align: 'center',
-                pack: 'center'
-            },
+                style: 'background:transparent',
+                bodyStyle: 'background:transparent',
 
-            items: [
-                {
-                    title: 'Top',
-                    xtype: 'panel',
-                    dockedItems: [{dock:'top', xtype:'toolbar', items: toolbarItems}],
-                    html: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+                layout: {
+                    type: 'hbox',
+                    align: 'center',
+                    pack: 'center'
                 },
-                {
-                    title: 'Right',
-                    xtype: 'panel',
-                    dockedItems: [{dock:'right', xtype:'toolbar', items: toolbarItems}],
-                    html: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
-                }
-            ]
-        },
-        {
-            xtype: 'panel',
 
-            style: 'background:transparent',
-            bodyStyle: 'background:transparent',
-
-            layout: {
-                type: 'hbox',
-                align: 'center',
-                pack: 'center'
+                items: [
+                    {
+                        title: 'Top',
+                        xtype: 'panel',
+                        dockedItems: [{dock:'top', xtype:'toolbar', items: toolbarItems}],
+                        html: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+                    },
+                    {
+                        title: 'Right',
+                        xtype: 'panel',
+                        dockedItems: [{dock:'right', xtype:'toolbar', items: toolbarItems}],
+                        html: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+                    }
+                ]
             },
+            {
+                xtype: 'panel',
 
-            items: [
-                {
-                    title: 'Left',
-                    xtype: 'panel',
-                    dockedItems: [{dock:'left', xtype:'toolbar', items: toolbarItems}],
-                    html: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+                style: 'background:transparent',
+                bodyStyle: 'background:transparent',
+
+                layout: {
+                    type: 'hbox',
+                    align: 'center',
+                    pack: 'center'
                 },
-                {
-                    title: 'Bottom',
-                    xtype: 'panel',
-                    dockedItems: [{dock:'bottom', xtype:'toolbar', items: toolbarItems}],
-                    html: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
-                }
-            ]
-        }
-    ]
-});
+
+                items: [
+                    {
+                        title: 'Left',
+                        xtype: 'panel',
+                        dockedItems: [{dock:'left', xtype:'toolbar', items: toolbarItems}],
+                        html: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+                    },
+                    {
+                        title: 'Bottom',
+                        xtype: 'panel',
+                        dockedItems: [{dock:'bottom', xtype:'toolbar', items: toolbarItems}],
+                        html: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+                    }
+                ]
+            }
+        ]
+    });
+})();

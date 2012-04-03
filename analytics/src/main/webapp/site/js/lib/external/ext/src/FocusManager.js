@@ -363,7 +363,7 @@ Ext.define('Ext.FocusManager', {
 
         // Make the document body the global focus element
         if (!me.focusEl) {
-            me.focusEl = Ext.getBody()
+            me.focusEl = Ext.getBody();
             me.focusEl.dom.tabIndex = -1;
         }
 
@@ -396,10 +396,15 @@ Ext.define('Ext.FocusManager', {
             focusedCmp = me.focusedCmp,
             defaultRoot,
             firstChild;
+            
+        if (me.isWhitelisted(focusedCmp)) {
+            return true;
+        }
 
         if (!focusedCmp) {
             // No focus yet, so focus the first root cmp on the page
-            if (defaultRoot = me.getRootComponents()[0]) {
+            defaultRoot = me.getRootComponents()[0];
+            if (defaultRoot) {
                 // If the default root is based upon the body, then it will already be focused, and will not fire a focus event to
                 // trigger its own onFocus processing, so we have to programatically blur it first.
                 if (defaultRoot.getFocusEl() === me.focusEl) {
@@ -466,11 +471,12 @@ Ext.define('Ext.FocusManager', {
         // If no focused Component, or a root level one was focused, then siblings are root components.
         if (!focusedCmp || focusedCmp.is(':root')) {
             siblings = me.getRootComponents();
-        }
-
-        // Else if the focused component has a parent, get siblings from there
-        else if (parent = parent || focusedCmp.up()) {
-            siblings =  parent.getRefItems();
+        } else {
+            // Else if the focused component has a parent, get siblings from there
+            parent = parent || focusedCmp.up();
+            if (parent) {
+                siblings =  parent.getRefItems();
+            }
         }
 
 
@@ -500,7 +506,8 @@ Ext.define('Ext.FocusManager', {
 
     onComponentFocus: function(cmp, e) {
         var me = this,
-            chain = me.focusChain;
+            chain = me.focusChain,
+            parent;
 
         if (!cmp.isFocusable()) {
             me.clearComponent(cmp);
@@ -514,7 +521,7 @@ Ext.define('Ext.FocusManager', {
             }
 
             // Try to focus the parent instead
-            var parent = cmp.up();
+            parent = cmp.up();
             if (parent) {
                 // Add component to our focus chain to detect infinite focus loop
                 // before we fire off an attempt to focus our parent.
@@ -535,7 +542,19 @@ Ext.define('Ext.FocusManager', {
     },
 
     handleComponentFocus: function(cmp, focusEl) {
-        var me = this;
+        var me = this,
+            cls,
+            ff,
+            fw,
+            box,
+            bt,
+            bl,
+            bw,
+            bh,
+            ft,
+            fb,
+            fl,
+            fr;
 
         if (me.fireEvent('beforecomponentfocus', me, cmp, me.previousFocusedCmp) === false) {
             me.clearComponent(cmp);
@@ -546,22 +565,22 @@ Ext.define('Ext.FocusManager', {
 
         // If we have a focus frame, show it around the focused component
         if (me.shouldShowFocusFrame(cmp)) {
-            var cls = '.' + me.focusFrameCls + '-',
-                ff = me.focusFrame,
-                fw = me.focusFrameWidth,
-                box = focusEl.getPageBox(),
+            cls = '.' + me.focusFrameCls + '-';
+            ff = me.focusFrame;
+            fw = me.focusFrameWidth;
+            box = focusEl.getPageBox();
 
             // Size the focus frame's t/b/l/r according to the box
             // This leaves a hole in the middle of the frame so user
             // interaction w/ the mouse can continue
-                bt = box.top,
-                bl = box.left,
-                bw = box.width,
-                bh = box.height,
-                ft = ff.child(cls + 'top'),
-                fb = ff.child(cls + 'bottom'),
-                fl = ff.child(cls + 'left'),
-                fr = ff.child(cls + 'right');
+            bt = box.top;
+            bl = box.left;
+            bw = box.width;
+            bh = box.height;
+            ft = ff.child(cls + 'top');
+            fb = ff.child(cls + 'bottom');
+            fl = ff.child(cls + 'left');
+            fr = ff.child(cls + 'right');
 
             ft.setWidth(bw - 2).setLeftTop(bl + 1, bt);
             fb.setWidth(bw - 2).setLeftTop(bl + 1, bt + bh - fw);

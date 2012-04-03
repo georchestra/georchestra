@@ -41,7 +41,10 @@ Ext.onReady(function() {
             fieldLabel: 'Send To',
             queryMode: 'local',
             selectOnTab: false,
-            name: 'to'
+            name: 'to',
+            onReplicate: function(){
+                this.getStore().clearFilter();
+            }
         }, {
             xtype: 'textfield',
             fieldLabel: 'Subject',

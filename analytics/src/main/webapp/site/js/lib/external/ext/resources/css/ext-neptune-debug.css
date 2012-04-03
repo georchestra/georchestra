@@ -13,7 +13,7 @@ Ext license terms. Public redistribution is prohibited.
 
 For early licensing, please contact us at licensing@sencha.com
 
-Build date: 2012-02-21 23:18:31 (3a639ae9dd5443bffbde7bec9922e6fb07a923a8)
+Build date: 2012-03-13 14:31:45 (92d45716fd5f49811568ad9d756992f1cced424d)
 */
 /**
  * @var {string} $prefix
@@ -11106,23 +11106,23 @@ textarea.x-form-invalid-field {
   background-repeat: repeat-x;
   background-image: url('../../resources/themes/images/neptune/tab/tab-default-bottom-disabled-bg.gif'); }
 
-/* line 5, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+/* line 25, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
 .x-autowidth-table table.x-grid-table {
   table-layout: auto;
   width: auto !important; }
 
-/* line 13, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+/* line 33, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
 .x-tree-elbow-plus,
 .x-tree-elbow-minus,
 .x-tree-elbow-end-plus,
 .x-tree-elbow-end-minus {
   cursor: pointer; }
 
-/* line 17, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+/* line 37, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
 .x-tree-icon {
   margin-right: 4px; }
 
-/* line 32, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+/* line 52, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
 .x-tree-elbow,
 .x-tree-elbow-line,
 .x-tree-elbow-end,
@@ -11138,7 +11138,7 @@ textarea.x-form-invalid-field {
   height: 24px;
   width: 20px; }
 
-/* line 47, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+/* line 67, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
 .x-tree-lines .x-tree-elbow,
 .x-tree-lines .x-tree-elbow-line,
 .x-tree-lines .x-tree-elbow-end,
@@ -11150,92 +11150,91 @@ textarea.x-form-invalid-field {
 .x-tree-icon-end-plus,
 .x-tree-icon-leaf,
 .x-tree-icon-parent {
-  background-image: url('../../resources/themes/images/neptune/icons.png'); }
+  background-image: url('../../resources/themes/images/neptune/tree/elbows.png'); }
 
-/* line 53, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+/* line 73, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
 .x-tree-elbow-plus,
 .x-tree-elbow-end-plus {
-  background-position-x: -20px;
-  background-position-y: -24px; }
+  background-image: url('../../resources/themes/images/neptune/tree/icons-gray.png');
+  background-position: 0px 0; }
 
-/* line 59, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+/* line 79, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
 .x-grid-tree-node-expanded .x-tree-elbow-plus,
 .x-grid-tree-node-expanded .x-tree-elbow-end-plus {
-  background-image: url('../../resources/themes/images/neptune/icons.png');
-  background-position-x: -40px;
-  background-position-y: -24px; }
+  background-image: url('../../resources/themes/images/neptune/tree/icons-gray.png');
+  background-position: -20px 0; }
 
-/* line 67, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+/* line 86, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
 .x-tree-lines .x-tree-elbow-plus {
-  background-position-x: -100px;
-  background-position-y: -24px; }
-/* line 72, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
-.x-tree-lines .x-tree-elbow-end-plus {
-  background-position-x: -120px;
-  background-position-y: -24px; }
-/* line 77, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
-.x-tree-lines .x-grid-tree-node-expanded .x-tree-elbow-plus {
-  background-position-x: -140px;
-  background-position-y: -24px; }
-/* line 82, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
-.x-tree-lines .x-grid-tree-node-expanded .x-tree-elbow-end-plus {
-  background-position-x: -160px;
-  background-position-y: -24px; }
-
+  background-image: url('../../resources/themes/images/neptune/tree/icons-gray.png');
+  background-position: -80px 0; }
 /* line 91, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+.x-tree-lines .x-tree-elbow-end-plus {
+  background-image: url('../../resources/themes/images/neptune/tree/icons-gray.png');
+  background-position: -100px 0; }
+/* line 96, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+.x-tree-lines .x-grid-tree-node-expanded .x-tree-elbow-plus {
+  background-image: url('../../resources/themes/images/neptune/tree/icons-gray.png');
+  background-position: -120px 0; }
+/* line 101, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+.x-tree-lines .x-grid-tree-node-expanded .x-tree-elbow-end-plus {
+  background-image: url('../../resources/themes/images/neptune/tree/icons-gray.png');
+  background-position: -140px 0; }
+
+/* line 110, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
 .x-tree-arrows .x-tree-elbow-plus,
 .x-tree-arrows .x-tree-elbow-end-plus {
-  background-position-x: -60px; }
-/* line 96, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+  background-position: -40px 0; }
+/* line 115, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
 .x-tree-arrows .x-grid-tree-node-expanded .x-tree-elbow-plus,
 .x-tree-arrows .x-grid-tree-node-expanded .x-tree-elbow-end-plus {
-  background-position-x: -80px; }
-
-/* line 103, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
-.x-tree-arrows.x-tree-lines .x-tree-elbow-plus {
-  background-position-x: -180px; }
-/* line 107, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
-.x-tree-arrows.x-tree-lines .x-tree-elbow-end-plus {
-  background-position-x: -200px; }
-/* line 111, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
-.x-tree-arrows.x-tree-lines .x-grid-tree-node-expanded .x-tree-elbow-plus {
-  background-position-x: -220px; }
-/* line 115, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
-.x-tree-arrows.x-tree-lines .x-grid-tree-node-expanded .x-tree-elbow-end-plus {
-  background-position-x: -240px; }
+  background-position: -60px 0; }
 
 /* line 122, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+.x-tree-arrows.x-tree-lines .x-tree-elbow-plus {
+  background-position: -160px 0; }
+/* line 126, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+.x-tree-arrows.x-tree-lines .x-tree-elbow-end-plus {
+  background-position: -180px 0; }
+/* line 130, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+.x-tree-arrows.x-tree-lines .x-grid-tree-node-expanded .x-tree-elbow-plus {
+  background-position: -200px 0; }
+/* line 134, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+.x-tree-arrows.x-tree-lines .x-grid-tree-node-expanded .x-tree-elbow-end-plus {
+  background-position: -220px 0; }
+
+/* line 141, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
 .x-tree-icon-parent {
-  background-position-x: -260px !important;
-  background-position-y: -120px !important; }
+  background-position: -240px 0 !important;
+  background-image: url('../../resources/themes/images/neptune/tree/icons-orange.png'); }
 
-/* line 127, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+/* line 146, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
 .x-grid-tree-node-expanded .x-tree-icon-parent {
-  background-position-x: -320px !important; }
+  background-position: -300px 0 !important; }
 
-/* line 131, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+/* line 150, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
 .x-tree-icon-leaf {
-  background-position-x: -380px !important; }
+  background-position: -360px 0 !important; }
 
-/* line 137, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+/* line 156, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
 .x-tree-lines .x-tree-icon-parent {
   width: 20px;
-  background-position-x: -280px !important; }
-/* line 142, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+  background-position: -260px 0 !important; }
+/* line 161, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
 .x-tree-lines .x-grid-tree-node-expanded .x-tree-icon-parent {
-  background-position-x: -340px !important; }
+  background-position: -320px 0 !important; }
 
-/* line 148, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+/* line 167, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
 .x-tree-icon-leaf {
   width: 20px;
-  background-position-x: -380px !important;
-  background-position-y: -120px !important; }
+  background-position: -360px 0 !important;
+  background-image: url('../../resources/themes/images/neptune/tree/icons-orange.png'); }
 
-/* line 155, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+/* line 174, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
 .x-tree-lines .x-tree-icon-leaf {
-  background-position-x: -400px !important; }
+  background-position: -380px 0 !important; }
 
-/* line 169, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+/* line 188, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
 .x-grid-row-selected .x-tree-elbow-plus,
 .x-grid-row-selected .x-tree-elbow-minus,
 .x-grid-row-selected .x-tree-elbow-end-plus,
@@ -11244,36 +11243,39 @@ textarea.x-form-invalid-field {
 .x-grid-row-selected .x-tree-icon-end-plus,
 .x-grid-row-selected .x-tree-icon-leaf,
 .x-grid-row-selected .x-tree-icon-parent {
-  background-position-y: -96px !important; }
+  background-image: url('../../resources/themes/images/neptune/tree/icons-white.png') !important; }
 
-/* line 176, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+/* line 195, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
 .x-tree-lines .x-tree-elbow-line {
-  background-position-y: -24px; }
-/* line 180, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+  background-image: url('../../resources/themes/images/neptune/tree/elbows.png');
+  background-position: 0 48px; }
+/* line 200, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
 .x-tree-lines .x-tree-elbow {
-  background-position: 0px 0; }
-/* line 184, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+  background-image: url('../../resources/themes/images/neptune/tree/elbows.png');
+  background-position: 0 0px; }
+/* line 205, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
 .x-tree-lines .x-tree-elbow-end {
-  background-position-y: -48px; }
+  background-image: url('../../resources/themes/images/neptune/tree/elbows.png');
+  background-position: 0 24px; }
 
-/* line 201, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+/* line 223, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
 .x-grid-cell-treecolumn .x-grid-cell-inner {
   padding: 0;
   line-height: 23px; }
 
-/* line 206, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+/* line 228, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
 .x-grid-with-row-lines .x-grid-cell-treecolumn .x-grid-cell-inner {
   line-height: 21px; }
 
-/* line 210, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+/* line 232, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
 .x-tree-panel .x-grid-cell-inner {
   cursor: pointer; }
-  /* line 212, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+  /* line 234, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
   .x-tree-panel .x-grid-cell-inner img {
     display: inline-block;
     vertical-align: top; }
 
-/* line 252, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+/* line 274, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
 .x-tree-checkbox {
   margin: 4px 3px 0 0;
   display: inline-block;
@@ -11285,52 +11287,52 @@ textarea.x-form-invalid-field {
   overflow: hidden;
   padding: 0;
   border: 0; }
-  /* line 265, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+  /* line 287, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
   .x-tree-checkbox::-moz-focus-inner {
     padding: 0;
     border: 0; }
 
-/* line 271, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+/* line 293, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
 .x-grid-with-row-lines .x-tree-checkbox {
   margin-top: 3px; }
 
-/* line 275, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+/* line 297, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
 .x-tree-checkbox-checked {
   background-position: 0 -17px; }
 
-/* line 279, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+/* line 301, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
 .x-tree-drop-ok-append .x-dd-drop-icon {
   background-image: url('../../resources/themes/images/neptune/tree/drop-append.gif'); }
 
-/* line 283, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+/* line 305, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
 .x-tree-drop-ok-above .x-dd-drop-icon {
   background-image: url('../../resources/themes/images/neptune/tree/drop-above.gif'); }
 
-/* line 287, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+/* line 309, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
 .x-tree-drop-ok-below .x-dd-drop-icon {
   background-image: url('../../resources/themes/images/neptune/tree/drop-below.gif'); }
 
-/* line 291, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+/* line 313, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
 .x-tree-drop-ok-between .x-dd-drop-icon {
   background-image: url('../../resources/themes/images/neptune/tree/drop-between.gif'); }
 
-/* line 295, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+/* line 317, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
 .x-grid-tree-loading .x-tree-icon {
   background-image: url('../../resources/themes/images/neptune/tree/loading.gif'); }
 
-/* line 299, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+/* line 321, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
 .x-tree-ddindicator {
   height: 1px;
   border-width: 1px 0px 0px;
   border-style: dotted;
   border-color: green; }
 
-/* line 306, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+/* line 328, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
 .x-grid-tree-loading span {
   font-style: italic;
   color: #444444; }
 
-/* line 311, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
+/* line 333, ../themes/stylesheets/neptune/default/widgets/_tree.scss */
 .x-tree-animator-wrap {
   overflow: hidden; }
 
@@ -11340,16 +11342,17 @@ textarea.x-form-invalid-field {
   -moz-box-orient: vertical;
   display: inline-block;
   vertical-align: middle;
-  *vertical-align: auto; }
+  *vertical-align: auto;
+  overflow: hidden; }
   /* line 7, ../../../../../.gem/ruby/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
   .x-surface {
     *display: inline; }
 
-/* line 6, ../themes/stylesheets/neptune/default/widgets/_drawcomponent.scss */
+/* line 7, ../themes/stylesheets/neptune/default/widgets/_drawcomponent.scss */
 .rvml {
   behavior: url(#default#VML); }
 
-/* line 14, ../themes/stylesheets/neptune/default/widgets/_drawcomponent.scss */
+/* line 15, ../themes/stylesheets/neptune/default/widgets/_drawcomponent.scss */
 .x-vml-sprite {
   position: absolute;
   left: 0;
@@ -11357,7 +11360,7 @@ textarea.x-form-invalid-field {
   width: 1px;
   height: 1px; }
 
-/* line 22, ../themes/stylesheets/neptune/default/widgets/_drawcomponent.scss */
+/* line 23, ../themes/stylesheets/neptune/default/widgets/_drawcomponent.scss */
 .x-vml-group {
   position: absolute;
   left: 0;
@@ -11365,7 +11368,7 @@ textarea.x-form-invalid-field {
   width: 1000px;
   height: 1000px; }
 
-/* line 30, ../themes/stylesheets/neptune/default/widgets/_drawcomponent.scss */
+/* line 31, ../themes/stylesheets/neptune/default/widgets/_drawcomponent.scss */
 .x-vml-measure-span {
   position: absolute;
   left: -9999em;
@@ -11374,7 +11377,7 @@ textarea.x-form-invalid-field {
   margin: 0;
   display: inline; }
 
-/* line 39, ../themes/stylesheets/neptune/default/widgets/_drawcomponent.scss */
+/* line 40, ../themes/stylesheets/neptune/default/widgets/_drawcomponent.scss */
 .x-vml-base {
   position: relative;
   top: 0;
@@ -11382,7 +11385,7 @@ textarea.x-form-invalid-field {
   overflow: hidden;
   display: inline-block; }
 
-/* line 47, ../themes/stylesheets/neptune/default/widgets/_drawcomponent.scss */
+/* line 48, ../themes/stylesheets/neptune/default/widgets/_drawcomponent.scss */
 .x-vml-base {
   position: relative;
   top: 0;

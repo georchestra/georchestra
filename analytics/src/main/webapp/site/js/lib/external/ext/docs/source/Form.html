@@ -71,6 +71,8 @@ Ext.define('Ext.layout.container.Form', {
     alternateClassName: 'Ext.layout.FormLayout',
 
     /* End Definitions */
+   
+    tableCls: Ext.baseCSSPrefix + 'form-layout-table',
 
     type: 'form',
 
@@ -79,11 +81,17 @@ Ext.define('Ext.layout.container.Form', {
     childEls: ['formTable'],
 
     renderTpl: [
-        '&lt;table id=&quot;{ownerId}-formTable&quot; style=&quot;width:100%&quot; cellspacing=&quot;0&quot; cellpadding=&quot;0&quot;&gt;',
+        '&lt;table id=&quot;{ownerId}-formTable&quot; class=&quot;{tableCls}&quot; style=&quot;width:100%&quot; cellspacing=&quot;0&quot; cellpadding=&quot;0&quot;&gt;',
             '{%this.renderBody(out,values)%}',
         '&lt;/table&gt;',
         '{%this.renderPadder(out,values)%}'
     ],
+    
+    getRenderData: function(){
+        var data = this.callParent();
+        data.tableCls = this.tableCls;
+        return data;    
+    },
 
     calculate : function (ownerContext) {
         var me = this,
@@ -115,21 +123,18 @@ Ext.define('Ext.layout.container.Form', {
             i = 0, len = result.length,
             prefix = Ext.baseCSSPrefix,
             children = '&lt;tr&gt;&lt;td class=&quot;' + prefix + 'form-item-pad&quot; colspan=&quot;3&quot;&gt;&lt;/td&gt;&lt;/tr&gt;',
-            bodyCls = prefix + 'form-layout-tbody',
             item;
 
         for (; i &lt; len; i++) {
             item = result[i];
             if (item.tag &amp;&amp; item.tag == 'table') {
                 item.tag = 'tbody';
-                item.cls += ' ' + bodyCls;
                 delete item.cellspacing;
                 delete item.cellpadding;
                 item.cn = children;
             } else {
                 result[i] = {
                     tag: 'tbody',
-                    cls: bodyCls,
                     cn: {
                         tag: 'tr',
                         cn: {
@@ -157,7 +162,7 @@ Ext.define('Ext.layout.container.Form', {
         return {
             setsWidth: 1,
             setsHeight: 0
-        }
+        };
     }
 });
 </pre>

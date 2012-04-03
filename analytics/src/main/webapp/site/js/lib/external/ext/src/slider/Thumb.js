@@ -229,7 +229,7 @@ Ext.define('Ext.slider.Thumb', {
 
         // If dragged out of range, value will be undefined
         if (trackPoint !== undefined) {
-            return Ext.util.Format.round(slider.reversePixelValue(trackPoint), slider.decimalPrecision);
+            return slider.reversePixelValue(trackPoint);
         }
     },
 

@@ -333,7 +333,7 @@ Ext.define('Ext.form.CheckboxGroup', {
         me.batchChanges(function() {
             for (b = 0; b < bLen; b++) {
                 box = boxes[b];
-                name = box.getName(),
+                name = box.getName();
                 cbValue = false;
 
                 if (value && value.hasOwnProperty(name)) {

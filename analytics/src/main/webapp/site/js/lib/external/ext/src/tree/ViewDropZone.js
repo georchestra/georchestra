@@ -246,7 +246,8 @@ Ext.define('Ext.tree.ViewDropZone', {
 
         // A function to transfer the data into the destination tree
         transferData = function() {
-            var node;
+            var node,
+                r, rLen, color, n;
             for (i = 0, len = data.records.length; i < len; i++) {
                 argList[0] = data.records[i];
                 node = insertionMethod.apply(targetNode, argList);
@@ -261,10 +262,8 @@ Ext.define('Ext.tree.ViewDropZone', {
             if (Ext.enableFx && me.dropHighlight) {
                 //FIXME: the check for n.firstChild is not a great solution here. Ideally the line should simply read 
                 //Ext.fly(n.firstChild) but this yields errors in IE6 and 7. See ticket EXTJSIV-1705 for more details
-                var r,
-                    rLen  = recordDomNodes.length,
-                    color = me.dropHighlightColor,
-                    n;
+                rLen  = recordDomNodes.length;
+                color = me.dropHighlightColor;
 
                 for (r = 0; r < rLen; r++) {
                     n = recordDomNodes[r];

@@ -130,10 +130,9 @@ Ext.define('Ext.util.HashMap', {
      * @return {Object} The item added.
      */
     add: function(key, value) {
-        var me = this,
-            data;
+        var me = this;
 
-        if (arguments.length === 1) {
+        if (value === undefined) {
             value = key;
             key = me.getKey(value);
         }
@@ -142,9 +141,6 @@ Ext.define('Ext.util.HashMap', {
             return me.replace(key, value);
         }
 
-        data = me.getData(key, value);
-        key = data[0];
-        value = data[1];
         me.map[key] = value;
         ++me.length;
         if (me.hasListeners.add) {
@@ -164,6 +160,11 @@ Ext.define('Ext.util.HashMap', {
         var me = this,
             map = me.map,
             old;
+
+        if (value === undefined) {
+            value = key;
+            key = me.getKey(value);
+        }
 
         if (!me.containsKey(key)) {
             me.add(key, value);

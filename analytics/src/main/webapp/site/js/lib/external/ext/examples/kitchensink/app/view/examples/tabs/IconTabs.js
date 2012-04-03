@@ -1,6 +1,9 @@
 Ext.define('KitchenSink.view.examples.tabs.IconTabs', {
     extend: 'KitchenSink.view.examples.Example',
-    
+    requires: [
+        'Ext.tab.Panel'
+    ],
+
     items: [
         {
             xtype: 'tabpanel',

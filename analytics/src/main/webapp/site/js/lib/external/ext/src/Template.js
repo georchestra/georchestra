@@ -113,7 +113,7 @@ Ext.define('Ext.Template', {
 
     /**
      * @property {Boolean} isTemplate
-     * `true` in this class to identify an objact as an instantiated Template, or subclass thereof.
+     * `true` in this class to identify an object as an instantiated Template, or subclass thereof.
      */
     isTemplate: true,
 
@@ -308,10 +308,9 @@ Ext.define('Ext.Template', {
         return this.doInsert('beforeEnd', el, values, returnElement);
     },
 
-    doInsert: function(where, el, values, returnEl) {
-        el = Ext.getDom(el);
-        var newNode = Ext.DomHelper.insertHtml(where, el, this.apply(values));
-        return returnEl ? Ext.get(newNode, true) : newNode;
+    doInsert: function(where, el, values, returnElement) {
+        var newNode = Ext.DomHelper.insertHtml(where, Ext.getDom(el), this.apply(values));
+        return returnElement ? Ext.get(newNode) : newNode;
     },
 
     /**
@@ -323,8 +322,7 @@ Ext.define('Ext.Template', {
      * @return {HTMLElement/Ext.Element} The new node or Element
      */
     overwrite: function(el, values, returnElement) {
-        el = Ext.getDom(el);
-        el.innerHTML = this.apply(values);
-        return returnElement ? Ext.get(el.firstChild, true) : el.firstChild;
+        var newNode = Ext.DomHelper.overwrite(Ext.getDom(el), this.apply(values));
+        return returnElement ? Ext.get(newNode) : newNode;
     }
 });

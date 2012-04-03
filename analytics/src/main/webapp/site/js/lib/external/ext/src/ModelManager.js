@@ -155,9 +155,9 @@ Ext.define('Ext.ModelManager', {
      * @param {Number} id (Optional) unique id of the Model instance (see {@link Ext.data.Model})
      */
     create: function(config, name, id) {
-        var con = typeof name == 'function' ? name : this.types[name || config.name];
+        var Con = typeof name == 'function' ? name : this.types[name || config.name];
 
-        return new con(config, id);
+        return new Con(config, id);
     }
 }, function() {
 

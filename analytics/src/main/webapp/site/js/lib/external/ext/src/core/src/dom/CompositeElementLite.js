@@ -84,7 +84,7 @@ Ext.define('Ext.dom.CompositeElementLite', {
 
     /**
      * @property {Boolean} isComposite
-     * `true` in this class to identify an objact as an instantiated CompositeElement, or subclass thereof.
+     * `true` in this class to identify an object as an instantiated CompositeElement, or subclass thereof.
      */
     isComposite: true,
 
@@ -251,7 +251,7 @@ Ext.define('Ext.dom.CompositeElementLite', {
                     if (selector.call(e, e, me, i) === false) {
                         break;
                     }
-                } else if (el.is(selector) === false) {
+                } else if (e.is(selector) === false) {
                     break;
                 }
             }

@@ -190,7 +190,8 @@ Ext.define('Ext.selection.CheckboxModel', {
     onRowMouseDown: function(view, record, item, index, e) {
         view.el.focus();
         var me = this,
-            checker = e.getTarget('.' + Ext.baseCSSPrefix + 'grid-row-checker');
+            checker = e.getTarget('.' + Ext.baseCSSPrefix + 'grid-row-checker'),
+            mode;
             
         if (!me.allowRightMouseSelection(e)) {
             return;
@@ -202,7 +203,7 @@ Ext.define('Ext.selection.CheckboxModel', {
         }
 
         if (checker) {
-            var mode = me.getSelectionMode();
+            mode = me.getSelectionMode();
             // dont change the mode if its single otherwise
             // we would get multiple selection
             if (mode !== 'SINGLE') {

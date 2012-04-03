@@ -27,8 +27,6 @@
  *              if (name) {
  *                  this.name = name;
  *              }
- *
- *              return this;
  *          },
  *
  *          eat: function(foodType) {
@@ -54,9 +52,6 @@
  *
  *              // Apply a method from the parent class' prototype
  *              this.callParent([name]);
- *
- *              return this;
- *
  *          },
  *
  *          code: function(language) {
@@ -141,8 +136,6 @@
  *
  *          constructor: function(config) {
  *              this.initConfig(config);
- *
- *              return this;
  *          },
  *
  *          applyPrice: function(price) {
@@ -361,7 +354,12 @@
             }
             //</debug>
 
-            var cache = this.namespaceParseCache;
+            var cache = this.namespaceParseCache,
+                parts,
+                rewrites,
+                root,
+                name,
+                rewrite, from, to, i, ln;
 
             if (this.enableNamespaceParseCache) {
                 if (cache.hasOwnProperty(namespace)) {
@@ -369,11 +367,10 @@
                 }
             }
 
-            var parts = [],
-                rewrites = this.namespaceRewrites,
-                root = global,
-                name = namespace,
-                rewrite, from, to, i, ln;
+            parts = [];
+            rewrites = this.namespaceRewrites;
+            root = global;
+            name = namespace;
 
             for (i = 0, ln = rewrites.length; i < ln; i++) {
                 rewrite = rewrites[i];
@@ -501,15 +498,17 @@
          * @return {Ext.Class} class
          */
         get: function(name) {
-            var classes = this.classes;
+            var classes = this.classes,
+                root,
+                parts,
+                part, i, ln;
 
             if (classes[name]) {
                 return classes[name];
             }
 
-            var root = global,
-                parts = this.parseNamespace(name),
-                part, i, ln;
+            root = global;
+            parts = this.parseNamespace(name);
 
             for (i = 0, ln = parts.length; i < ln; i++) {
                 part = parts[i];
@@ -930,13 +929,15 @@
          */
         getInstantiator: function(length) {
             var instantiators = this.instantiators,
-                instantiator;
+                instantiator,
+                i,
+                args;
 
             instantiator = instantiators[length];
 
             if (!instantiator) {
-                var i = length,
-                    args = [];
+                i = length;
+                args = [];
 
                 for (i = 0; i < length; i++) {
                     args.push('a[' + i + ']');
@@ -1296,10 +1297,13 @@
             if (typeof xtype != 'string') { // if (form 3 or 5)
                 // first arg is config or component
                 config = name; // arguments[0]
-                if (config.isComponent) {
-                    return config;
-                }
                 xtype = config.xtype;
+            } else {
+                config = config || {};
+            }
+            
+            if (config.isComponent) {
+                return config;
             }
 
             alias = 'widget.' + xtype;
@@ -1611,4 +1615,4 @@
 
     }, ['xtype', 'alias']);
 
-})(Ext.Class, Ext.Function.alias, Array.prototype.slice, Ext.Array.from, Ext.global);
+}(Ext.Class, Ext.Function.alias, Array.prototype.slice, Ext.Array.from, Ext.global));

@@ -5,6 +5,10 @@ Ext.define('Ext.tree.View', {
     extend: 'Ext.view.Table',
     alias: 'widget.treeview',
 
+    requires: [
+        'Ext.data.NodeStore'
+    ],
+
     loadingCls: Ext.baseCSSPrefix + 'grid-tree-loading',
     expandedCls: Ext.baseCSSPrefix + 'grid-tree-node-expanded',
     leafCls: Ext.baseCSSPrefix + 'grid-tree-node-leaf',
@@ -56,7 +60,6 @@ Ext.define('Ext.tree.View', {
         }
         
         me.store = new Ext.data.NodeStore({
-            autoLoad: treeStore.autoLoad,
             treeStore: treeStore,
             recursive: true,
             rootVisible: me.rootVisible,

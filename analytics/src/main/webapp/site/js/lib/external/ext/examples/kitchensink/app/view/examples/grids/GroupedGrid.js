@@ -1,6 +1,10 @@
 Ext.define('KitchenSink.view.examples.grids.GroupedGrid', {
     extend: 'KitchenSink.view.examples.Example',
-    requires: ['KitchenSink.store.Restaurants', 'Ext.grid.feature.Grouping'],
+    requires: [
+        'Ext.grid.Panel',
+        'Ext.grid.feature.Grouping',
+        'KitchenSink.store.Restaurants'
+    ],
     
     items: [
         {

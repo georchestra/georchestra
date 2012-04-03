@@ -38,9 +38,9 @@ Ext.define('Ext.layout.component.Dock', {
 
     initializedBorders: -1,
 
-    horizontalCollapsePolicy: { width: true },
+    horizontalCollapsePolicy: { width: true, x: true },
 
-    verticalCollapsePolicy: { height: true },
+    verticalCollapsePolicy: { height: true, y: true },
 
     finishRender: function () {
         var me = this,
@@ -237,7 +237,7 @@ Ext.define('Ext.layout.component.Dock', {
         if (ownerContext.collapsedVert) {
             ownerContext.heightModel = me.sizeModels.shrinkWrap;
         } else if (ownerContext.collapsedHorz) {
-            ownerContext.widthModel = me.sizeModels.shrinkWrap
+            ownerContext.widthModel = me.sizeModels.shrinkWrap;
         }
 
         if (ownerContext.widthModel.auto) {

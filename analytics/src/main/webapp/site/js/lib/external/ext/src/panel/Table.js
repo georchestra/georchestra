@@ -89,13 +89,30 @@ Ext.define('Ext.panel.Table', {
     scroll: true,
 
     /**
-     * @cfg {Ext.grid.column.Column[]} columns
+     * @cfg {Ext.grid.column.Column[]/Object} columns
      * An array of {@link Ext.grid.column.Column column} definition objects which define all columns that appear in this
      * grid. Each column definition provides the header text for the column, and a definition of where the data for that
      * column comes from.
      *
      * This can also be a configuration object for a {Ext.grid.header.Container HeaderContainer} which may override
-     * certain default configurations if necessary. For example, the special layout may be overridden to use a simpler layout.
+     * certain default configurations if necessary. For example, the special layout may be overridden to use a simpler
+     * layout, or one can set default values shared by all columns:
+     * 
+     *     columns: {
+     *         items: [
+     *             {
+     *                 text: "Column A"
+     *                 dataIndex: "field_A"
+     *             },{
+     *                 text: "Column B",
+     *                 dataIndex: "field_B"
+     *             }, 
+     *             ...
+     *         ],
+     *         defaults: {
+     *             flex: 1
+     *         }
+     *     }
      */
 
     /**
@@ -197,7 +214,8 @@ Ext.define('Ext.panel.Table', {
             horizontal  = false,
             headerCtCfg = me.columns || me.colModel,
             view,
-            border = me.border;
+            border = me.border,
+            i, len;
 
         if (me.hideHeaders) {
             border = false;
@@ -295,7 +313,7 @@ Ext.define('Ext.panel.Table', {
 
             // If the Store is paging blocks of the dataset in, then it can only be sorted remotely.
             if (me.store.buffered && !me.store.remoteSort) {
-                for (var i = 0, len = me.columns.length; i < len; i++) {
+                for (i = 0, len = me.columns.length; i < len; i++) {
                     me.columns[i].sortable = false;
                 }
             }
@@ -767,6 +785,10 @@ Ext.define('Ext.panel.Table', {
     saveScrollPos: Ext.emptyFn,
 
     restoreScrollPos: Ext.emptyFn,
+    
+    onHeaderResize: function(){
+        this.delayScroll();
+    },
 
     // refresh the view when a header moves
     onHeaderMove: function(headerCt, header, colsToMove, fromIdx, toIdx) {
@@ -790,7 +812,7 @@ Ext.define('Ext.panel.Table', {
         }
     },
 
-/**
+    /**
      * @private
      * Fires the TablePanel's viewready event when the view declares that its internal DOM is ready
      */
@@ -800,22 +822,12 @@ Ext.define('Ext.panel.Table', {
 
     /**
      * @private
-     * Tracks when the first data arrives in the grid, and if it needs to be initially refitted to fit within the Panel's scrollWidth, updates
-     * the header container's layhout.
+     * Tracks when data arrives in the grid and preserves the horizontal scroll position.
      */
     onViewRefresh: function() {
-        var me = this,
-            headerCt = me.headerCt,
-            left = me.scrollLeftPos;
-            
-        // First "real", (that is with data) refresh of View should relay the header container if there is any flexing, or grouping.
-        if (me.store.getCount() && !me.firstDataArrived && headerCt.down('gridcolumn[flex]') || headerCt.down('gridcolumn[isGroupHeader]')) {
-            me.firstDataArrived = true;
-            me.headerCt.updateLayout();
-        }
-        
+        var left = this.scrollLeftPos;
         if (left) {
-            me.syncHorizontalScroll(left);
+            this.syncHorizontalScroll(left);
         }
     },
 
@@ -916,12 +928,14 @@ Ext.define('Ext.panel.Table', {
     
     syncHorizontalScroll: function(left) {
         var me = this,
+            scrollTarget;
+            
+        if (me.rendered) {   
             scrollTarget = me.getScrollTarget();
-        
-        
-        scrollTarget.el.dom.scrollLeft = left;
-        me.headerCt.el.dom.scrollLeft = left;
-        me.scrollLeftPos = left;
+            scrollTarget.el.dom.scrollLeft = left;
+            me.headerCt.el.dom.scrollLeft = left;
+            me.scrollLeftPos = left;
+        }
     },
 
     // template method meant to be overriden

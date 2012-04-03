@@ -1,6 +1,6 @@
 Ext.define('KitchenSink.view.Header', {
     extend: 'Ext.Toolbar',
-    xtype : 'header',
+    xtype : 'pageHeader',
     
     ui   : 'sencha',
     height: 53,

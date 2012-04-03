@@ -138,6 +138,8 @@ Ext.define('Ext.data.association.Association', {
     defaultReaderType: 'json',
 
     statics: {
+        AUTO_ID: 1000,
+        
         create: function(association){
             if (!association.isAssociation) {
                 if (Ext.isString(association)) {
@@ -207,6 +209,8 @@ Ext.define('Ext.data.association.Association', {
             ownerName : ownerName,
             associatedName: associatedName
         });
+        
+        this.associationId = 'association' + (++this.statics().AUTO_ID);
     },
 
     /**

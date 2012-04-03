@@ -137,7 +137,14 @@ XTemplates can also directly use Ext.util.Format functions:
          * @param {Number} length The length of the substring
          * @return {String} The substring
          */
-        substr : function(value, start, length) {
+        substr : 'ab'.substr(-1) != 'b'
+        ? function (value, start, length) {
+            var str = String(value);
+            return (start < 0)
+                ? str.substr(Math.max(str.length + start, 0), length)
+                : str.substr(start, length);
+        }
+        : function(value, start, length) {
             return String(value).substr(start, length);
         },
 
@@ -266,7 +273,7 @@ XTemplates can also directly use Ext.util.Format functions:
          * @return {Function} A function that operates on the passed value.
          * @method
          */
-        math : function(){
+        math : (function(){
             var fns = {};
 
             return function(v, a){
@@ -275,7 +282,7 @@ XTemplates can also directly use Ext.util.Format functions:
                 }
                 return fns[a](v);
             };
-        }(),
+        }()),
 
         /**
          * Rounds the passed number to the required decimal precision.
@@ -334,7 +341,14 @@ XTemplates can also directly use Ext.util.Format functions:
                 i18n  = false,
                 neg   = v < 0,
                 hasComma,
-                psplit;
+                psplit,
+                fnum,
+                cnum,
+                parr,
+                j,
+                m,
+                n,
+                i;
 
             v = Math.abs(v);
 
@@ -371,17 +385,16 @@ XTemplates can also directly use Ext.util.Format functions:
                 v = Ext.Number.toFixed(v, 0);
             }
 
-            var fnum = v.toString();
+            fnum = v.toString();
 
             psplit = fnum.split('.');
 
             if (hasComma) {
-                var cnum = psplit[0],
-                    parr = [],
-                    j    = cnum.length,
-                    m    = Math.floor(j / 3),
-                    n    = cnum.length % 3 || 3,
-                    i;
+                cnum = psplit[0];
+                parr = [];
+                j = cnum.length;
+                m = Math.floor(j / 3);
+                n = cnum.length % 3 || 3;
 
                 for (i = 0; i < j; i += n) {
                     if (i !== 0) {
@@ -501,7 +514,7 @@ XTemplates can also directly use Ext.util.Format functions:
          * @return {Object} An object with margin sizes for top, right, bottom and left
          */
         parseBox : function(box) {
-        	box = Ext.isEmpty(box) ? '' : box;
+          box = Ext.isEmpty(box) ? '' : box;
             if (Ext.isNumber(box)) {
                 box = box.toString();
             }
@@ -536,4 +549,4 @@ XTemplates can also directly use Ext.util.Format functions:
             return s.replace(/([\-.*+?\^${}()|\[\]\/\\])/g, "\\$1");
         }
     });
-})();
+}());

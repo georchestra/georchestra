@@ -204,7 +204,7 @@ Ext.define('Ext.draw.Sprite', {
 
 <span id='Ext-draw-Sprite-property-isSprite'>    /**
 </span>     * @property {Boolean} isSprite
-     * `true` in this class to identify an objact as an instantiated Sprite, or subclass thereof.
+     * `true` in this class to identify an object as an instantiated Sprite, or subclass thereof.
      */
     isSprite: true,
     zIndex: 0,
@@ -264,14 +264,53 @@ Ext.define('Ext.draw.Sprite', {
         delete config.draggable;
         me.setAttributes(config);
         me.addEvents(
+<span id='Ext-draw-Sprite-event-beforedestroy'>            /**
+</span>             * @event
+             * Fires before the sprite is destroyed. Return false from an event handler to stop the destroy.
+             * @param {Ext.draw.Sprite} this
+             */
             'beforedestroy',
+<span id='Ext-draw-Sprite-event-destroy'>            /**
+</span>             * @event
+             * Fires after the sprite is destroyed.
+             * @param {Ext.draw.Sprite} this
+             */
             'destroy',
+<span id='Ext-draw-Sprite-event-render'>            /**
+</span>             * @event
+             * Fires after the sprite markup is rendered.
+             * @param {Ext.draw.Sprite} this
+             */
             'render',
+<span id='Ext-draw-Sprite-event-mousedown'>            /**
+</span>             * @event
+             * @inheritdoc Ext.dom.Element#mousedown
+             */
             'mousedown',
+<span id='Ext-draw-Sprite-event-mouseup'>            /**
+</span>             * @event
+             * @inheritdoc Ext.dom.Element#mouseup
+             */
             'mouseup',
+<span id='Ext-draw-Sprite-event-mouseover'>            /**
+</span>             * @event
+             * @inheritdoc Ext.dom.Element#mouseover
+             */
             'mouseover',
+<span id='Ext-draw-Sprite-event-mouseout'>            /**
+</span>             * @event
+             * @inheritdoc Ext.dom.Element#mouseout
+             */
             'mouseout',
+<span id='Ext-draw-Sprite-event-mousemove'>            /**
+</span>             * @event
+             * @inheritdoc Ext.dom.Element#mousemove
+             */
             'mousemove',
+<span id='Ext-draw-Sprite-event-click'>            /**
+</span>             * @event
+             * @inheritdoc Ext.dom.Element#click
+             */
             'click'
         );
         me.mixins.observable.constructor.apply(this, arguments);

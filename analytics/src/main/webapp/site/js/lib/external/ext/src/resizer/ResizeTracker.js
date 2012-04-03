@@ -13,7 +13,9 @@ Ext.define('Ext.resizer.ResizeTracker', {
     proxyCls:  Ext.baseCSSPrefix + 'resizable-proxy',
 
     constructor: function(config) {
-        var me = this;
+        var me = this,
+            widthRatio, heightRatio,
+            throttledResizeFn;
 
         if (!config.el) {
             if (config.target.isComponent) {
@@ -26,8 +28,8 @@ Ext.define('Ext.resizer.ResizeTracker', {
 
         // Ensure that if we are preserving aspect ratio, the largest minimum is honoured
         if (me.preserveRatio && me.minWidth && me.minHeight) {
-            var widthRatio = me.minWidth / me.el.getWidth(),
-                heightRatio = me.minHeight / me.el.getHeight();
+            widthRatio = me.minWidth / me.el.getWidth();
+            heightRatio = me.minHeight / me.el.getHeight();
 
             // largest ratio of minimum:size must be preserved.
             // So if a 400x200 pixel image has
@@ -42,7 +44,7 @@ Ext.define('Ext.resizer.ResizeTracker', {
         // If configured as throttled, create an instance version of resize which calls
         // a throttled function to perform the resize operation.
         if (me.throttle) {
-            var throttledResizeFn = Ext.Function.createThrottled(function() {
+            throttledResizeFn = Ext.Function.createThrottled(function() {
                     Ext.resizer.ResizeTracker.prototype.resize.apply(me, arguments);
                 }, me.throttle);
 
@@ -144,7 +146,9 @@ Ext.define('Ext.resizer.ResizeTracker', {
             horizDir = offset[0] < 0 ? 'right' : 'left',
             vertDir = offset[1] < 0 ? 'down' : 'up',
             oppositeCorner,
-            axis; // 1 = x, 2 = y, 3 = x and y.
+            axis, // 1 = x, 2 = y, 3 = x and y.
+            newBox,
+            newHeight, newWidth;
 
         switch (region) {
             case 'south':
@@ -195,7 +199,7 @@ Ext.define('Ext.resizer.ResizeTracker', {
                 break;
         }
 
-        var newBox = {
+        newBox = {
             width: box.width + widthAdjust,
             height: box.height + heightAdjust,
             x: box.x + adjustX,
@@ -251,9 +255,6 @@ Ext.define('Ext.resizer.ResizeTracker', {
 
         // If this is configured to preserve the aspect ratio, or they are dragging using the shift key
         if (me.preserveRatio || e.shiftKey) {
-            var newHeight,
-                newWidth;
-
             ratio = me.startBox.width / me.startBox.height;
 
             // Calculate aspect ratio constrained values.

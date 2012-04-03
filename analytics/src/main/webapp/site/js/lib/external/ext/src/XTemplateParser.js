@@ -129,7 +129,8 @@ Ext.define('Ext.XTemplateParser', {
             aliases = { elseif: 'elif' },
             topRe = me.topRe,
             actionsRe = me.actionsRe,
-            index, stack, s, m, t, prev, frame, subMatch, begin, end, actions;
+            index, stack, s, m, t, prev, frame, subMatch, begin, end, actions,
+            prop;
 
         me.level = 0;
         me.stack = stack = [];
@@ -160,7 +161,7 @@ Ext.define('Ext.XTemplateParser', {
                 end += 2;
             } else if (m[3]) { // if ('{' token)
                 me.doTag(m[3]);
-            } else if (m[4]) { // content of a <tpl xxxxxx> tag
+            } else if (m[4]) { // content of a <tpl xxxxxx xxx> tag
                 actions = null;
                 while ((subMatch = actionsRe.exec(m[4])) !== null) {
                     s = subMatch[2] || subMatch[3];
@@ -192,11 +193,11 @@ Ext.define('Ext.XTemplateParser', {
                     }
                 }
                 else if (actions['if']) {
-                    me.doIf(actions['if'], actions)
+                    me.doIf(actions['if'], actions);
                     stack.push({ type: 'if' });
                 }
                 else if (actions['switch']) {
-                    me.doSwitch(actions['switch'], actions)
+                    me.doSwitch(actions['switch'], actions);
                     stack.push({ type: 'switch' });
                 }
                 else if (actions['case']) {
@@ -207,6 +208,11 @@ Ext.define('Ext.XTemplateParser', {
                 }
                 else if (actions['for']) {
                     ++me.level;
+
+                    // Extract property name to use from indexed item
+                    if (prop = me.propRe.exec(m[4])) {
+                        actions.propName = prop[1] || prop[2];
+                    }
                     me.doFor(actions['for'], actions);
                     stack.push({ type: 'for', actions: actions });
                 }
@@ -218,7 +224,7 @@ Ext.define('Ext.XTemplateParser', {
                 else {
                     // todo - error
                 }
-                /**/
+                */
             } else {
                 frame = stack.pop();
                 me.doEnd(frame.type, frame.actions);
@@ -232,7 +238,8 @@ Ext.define('Ext.XTemplateParser', {
     // Internal regexes
     
     topRe:     /(?:(\{\%)|(\{\[)|\{([^{}]*)\})|(?:<tpl([^>]*)\>)|(?:<\/tpl>)/g,
-    actionsRe: /\s*(elif|elseif|if|for|exec|switch|case|eval)\s*\=\s*(?:(?:["]([^"]*)["])|(?:[']([^']*)[']))\s*/g,
+    actionsRe: /\s*(elif|elseif|if|for|exec|switch|case|eval)\s*\=\s*(?:(?:"([^"]*)")|(?:'([^']*)'))\s*/g,
+    propRe:    /prop=(?:(?:"([^"]*)")|(?:'([^']*)'))/,
     defaultRe: /^\s*default\s*$/,
     elseRe:    /^\s*else\s*$/
 });

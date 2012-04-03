@@ -128,6 +128,8 @@ Ext.define('Ext.draw.engine.Svg', {
             plain: 0,
             transform: 0
         };
+        this.applyAttrs(sprite);
+        this.applyTransformations(sprite);
         sprite.fireEvent("render", sprite);
         return el;
     },
@@ -258,42 +260,47 @@ Ext.define('Ext.draw.engine.Svg', {
     },
 
     render: function (container) {
-        var me = this;
+        var me = this,
+            width,
+            height,
+            el,
+            defs,
+            bgRect,
+            webkitRect;
         if (!me.el) {
-            var width = me.width || 0,
-                height = me.height || 0,
-                el = me.createSvgElement('svg', {
-                    xmlns: "http:/" + "/www.w3.org/2000/svg",
-                    version: 1.1,
-                    width: width,
-                    height: height
-                }),
-                defs = me.getDefs(),
+            width = me.width || 0;
+            height = me.height || 0;
+            el = me.createSvgElement('svg', {
+                xmlns: "http:/" + "/www.w3.org/2000/svg",
+                version: 1.1,
+                width: width,
+                height: height
+            });
+            defs = me.getDefs();
 
-                // Create a rect that is always the same size as the svg root; this serves 2 purposes:
-                // (1) It allows mouse events to be fired over empty areas in Webkit, and (2) we can
-                // use it rather than the svg element for retrieving the correct client rect of the
-                // surface in Mozilla (see https://bugzilla.mozilla.org/show_bug.cgi?id=530985)
-                bgRect = me.createSvgElement("rect", {
-                    width: "100%",
-                    height: "100%",
-                    fill: "#000",
-                    stroke: "none",
-                    opacity: 0
-                }),
-                webkitRect;
+            // Create a rect that is always the same size as the svg root; this serves 2 purposes:
+            // (1) It allows mouse events to be fired over empty areas in Webkit, and (2) we can
+            // use it rather than the svg element for retrieving the correct client rect of the
+            // surface in Mozilla (see https://bugzilla.mozilla.org/show_bug.cgi?id=530985)
+            bgRect = me.createSvgElement("rect", {
+                width: "100%",
+                height: "100%",
+                fill: "#000",
+                stroke: "none",
+                opacity: 0
+            });
             
-                if (Ext.isSafari3) {
-                    // Rect that we will show/hide to fix old WebKit bug with rendering issues.
-                    webkitRect = me.createSvgElement("rect", {
-                        x: -10,
-                        y: -10,
-                        width: "110%",
-                        height: "110%",
-                        fill: "none",
-                        stroke: "#000"
-                    });
-                }
+            if (Ext.isSafari3) {
+                // Rect that we will show/hide to fix old WebKit bug with rendering issues.
+                webkitRect = me.createSvgElement("rect", {
+                    x: -10,
+                    y: -10,
+                    width: "110%",
+                    height: "110%",
+                    fill: "none",
+                    stroke: "#000"
+                });
+            }
             el.appendChild(defs);
             if (Ext.isSafari3) {
                 el.appendChild(webkitRect);

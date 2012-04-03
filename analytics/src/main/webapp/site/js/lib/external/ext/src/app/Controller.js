@@ -215,14 +215,18 @@ Ext.define('Ext.app.Controller', {
 
     onClassExtended: function(cls, data, hooks) {
         var className = Ext.getClassName(cls),
-            match = className.match(/^(.*)\.controller\./);
+            match = className.match(/^(.*)\.controller\./),
+            namespace,
+            onBeforeClassCreated,
+            requires,
+            modules,
+            prefix;
 
         if (match !== null) {
-            var namespace = Ext.Loader.getPrefix(className) || match[1],
-                onBeforeClassCreated = hooks.onBeforeCreated,
-                requires = [],
-                modules = ['model', 'view', 'store'],
-                prefix;
+            namespace = Ext.Loader.getPrefix(className) || match[1];
+            onBeforeClassCreated = hooks.onBeforeCreated;
+            requires = [];
+            modules = ['model', 'view', 'store'];
 
             hooks.onBeforeCreated = function(cls, data) {
                 var i, ln, module,
@@ -235,6 +239,11 @@ Ext.define('Ext.app.Controller', {
 
                     for (j = 0,subLn = items.length; j < subLn; j++) {
                         item = items[j];
+
+                        // we check the ClassManager here because the following logic assumes a specific organization of folders
+                        if (Ext.ClassManager.isCreated(item)) {
+                            continue;
+                        }
 
                         prefix = Ext.Loader.getPrefix(item);
 
@@ -293,7 +302,7 @@ Ext.define('Ext.app.Controller', {
 
         var i      = 0,
             length = (refs) ? refs.length : 0,
-            fn, ref, parts, x, numparts;
+            fn, ref, parts, x, numParts;
 
         for (; i < length; i++) {
             fn    = 'get';

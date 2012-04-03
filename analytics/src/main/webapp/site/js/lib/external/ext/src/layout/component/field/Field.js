@@ -208,7 +208,7 @@ Ext.define('Ext.layout.component.field.Field', {
              */
             right: base
         };
-    })(),
+    }()),
 
     /**
      * Collection of named strategies for laying out and adjusting insets to accommodate error messages.
@@ -283,6 +283,10 @@ Ext.define('Ext.layout.component.field.Field', {
 
                     errorEl.addCls(cls);
                     errorEl.setDisplayed(owner.hasActiveError());
+                    if (owner.labelAlign == 'left') {
+                        // hide the under label placeholder td
+                        errorEl.prev().setDisplayed(owner.hasVisibleLabel() ? 'block' : 'none');
+                    }
                 },
                 getHeight: function (ownerContext) {
                     var height = 0,
@@ -335,7 +339,7 @@ Ext.define('Ext.layout.component.field.Field', {
                 }
             }, base)
         };
-    })(),
+    }()),
 
     statics: {
         /**

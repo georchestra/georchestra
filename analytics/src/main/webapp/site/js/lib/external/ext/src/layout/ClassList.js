@@ -2,7 +2,7 @@
  * This class provides a DOM ClassList API to buffer access to an element's class.
  * Instances of this class are created by {@link Ext.layout.ContextItem#getClassList}.
  */
-Ext.define('Ext.layout.ClassList', function () {
+Ext.define('Ext.layout.ClassList', (function () {
 
     var splitWords = Ext.String.splitWords,
         toMap = Ext.Array.toMap;
@@ -87,4 +87,4 @@ Ext.define('Ext.layout.ClassList', function () {
             });
         }
     };
-}());
+}()));

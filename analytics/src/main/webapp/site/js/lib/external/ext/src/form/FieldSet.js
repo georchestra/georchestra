@@ -290,7 +290,7 @@ Ext.define('Ext.form.FieldSet', {
                     click : me.toggle
                 }
             };
-            cfg.cls += ' ' + me.baseCls + '-header-text-collapsible'
+            cfg.cls += ' ' + me.baseCls + '-header-text-collapsible';
         }
 
         return (me.titleCmp = Ext.widget(cfg));

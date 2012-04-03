@@ -80,6 +80,24 @@ Ext.define('Ext.data.Connection', {
      * Any parameters to be appended to the request.
      */
 
+    /**
+     * @cfg {Boolean} [autoAbort=false]
+     * Whether this request should abort any pending requests.
+     */
+
+    /**
+     * @cfg {String} method
+     * The default HTTP method to be used for requests.
+     *
+     * If not set, but {@link #request} params are present, POST will be used;
+     * otherwise, GET will be used.
+     */
+
+    /**
+     * @cfg {Object} defaultHeaders
+     * An object containing request headers which are added to each request made by this object.
+     */
+
     useDefaultHeader : true,
     defaultPostHeader : 'application/x-www-form-urlencoded; charset=UTF-8',
     useDefaultXhrHeader : true,
@@ -354,9 +372,8 @@ Ext.define('Ext.data.Connection', {
             obj = Ext.Object.fromQueryString(params) || {};
 
             for (name in obj) {
-                value = obj[name];
-
-                if (obj.hasOwnProperty(value)) {
+                if (obj.hasOwnProperty(name)) {
+                    value = obj[name];  
                     if (Ext.isArray(value)) {
                         vLen = value.length;
                         for (v = 0; v < vLen; v++) {
@@ -697,7 +714,7 @@ Ext.define('Ext.data.Connection', {
             }
         }
         return xhr;
-    })(),
+    }()),
 
     /**
      * Determines whether this object has a request outstanding.

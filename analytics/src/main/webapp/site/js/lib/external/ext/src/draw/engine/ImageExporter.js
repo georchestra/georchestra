@@ -100,7 +100,7 @@ Ext.define('Ext.draw.engine.ImageExporter', {
                     return false;
                 }
             }
-        }
-    })()
+        };
+    }())
 
 });

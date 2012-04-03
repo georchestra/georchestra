@@ -150,9 +150,15 @@
  * @singleton
  */
 
-(function(Manager, Class, flexSetter, alias, pass, arrayFrom, arrayErase, arrayInclude) {
-
-    var
+Ext.Loader = new function() {
+    var Loader = this,
+        Manager = Ext.ClassManager,
+        Class = Ext.Class,
+        flexSetter = Ext.Function.flexSetter,
+        alias = Ext.Function.alias,
+        pass = Ext.Function.pass,
+        defer = Ext.Function.defer,
+        arrayErase = Ext.Array.erase,
         //&lt;if nonBrowser&gt;
         isNonBrowser = typeof window == 'undefined',
         isNodeJS = isNonBrowser &amp;&amp; (typeof require == 'function'),
@@ -160,14 +166,17 @@
         isPhantomJS = (typeof phantom != 'undefined' &amp;&amp; phantom.fs),
         //&lt;/if&gt;
         dependencyProperties = ['extend', 'mixins', 'requires'],
-        Loader;
+        isInHistory = {},
+        history = [],
+        slashDotSlashRe = /\/\.\//g,
+        dotRe = /\./g;
 
-    Loader = Ext.Loader = {
+    Ext.apply(Loader, {
 
 <span id='Ext-Loader-property-isInHistory'>        /**
 </span>         * @private
          */
-        isInHistory: {},
+        isInHistory: isInHistory,
 
 <span id='Ext-Loader-property-history'>        /**
 </span>         * An array of class names to keep track of the dependency loading order.
@@ -176,7 +185,7 @@
          *
          * @property {Array} history
          */
-        history: [],
+        history: history,
 
 <span id='Ext-Loader-property-config'>        /**
 </span>         * Configuration
@@ -189,6 +198,13 @@
              */
             enabled: false,
 
+<span id='Ext-Loader-cfg-scriptChainDelay'>            /**
+</span>             * @cfg {Boolean} scriptChainDelay
+             * millisecond delay between asynchronous script injection (prevents stack overflow on some user agents)
+             * 'false' disables delay but potentially increases stack load.
+             */
+            scriptChainDelay : false,
+
 <span id='Ext-Loader-cfg-disableCaching'>            /**
 </span>             * @cfg {Boolean} disableCaching
              * Appends current timestamp to script files to prevent caching.
@@ -200,6 +216,13 @@
              * The get parameter name for the cache buster's timestamp.
              */
             disableCachingParam: '_dc',
+
+<span id='Ext-Loader-cfg-garbageCollect'>            /**
+</span>             * @cfg {Boolean} garbageCollect
+             * True to prepare an asynchronous script tag for garbage collection (effective only
+             * if {@link #preserveScripts preserveScripts} is false)
+             */
+            garbageCollect : false,
 
 <span id='Ext-Loader-cfg-paths'>            /**
 </span>             * @cfg {Object} paths
@@ -219,7 +242,20 @@
              */
             paths: {
                 'Ext': '.'
-            }
+            },
+
+<span id='Ext-Loader-cfg-preserveScripts'>            /**
+</span>             * @cfg {Boolean} preserveScripts
+             * False to remove and optionally {@link #garbageCollect garbage-collect} asynchronously loaded scripts,
+             * True to retain script element for browser debugger compatibility and improved load performance.
+             */
+            preserveScripts : true,
+
+<span id='Ext-Loader-cfg-scriptCharset'>            /**
+</span>             * @cfg {String} scriptCharset
+             * Optional charset to specify encoding of dynamic script content.
+             */
+            scriptCharset : undefined
         },
 
 <span id='Ext-Loader-method-setConfig'>        /**
@@ -250,13 +286,13 @@
          */
         setConfig: function(name, value) {
             if (Ext.isObject(name) &amp;&amp; arguments.length === 1) {
-                Ext.merge(this.config, name);
+                Ext.merge(Loader.config, name);
             }
             else {
-                this.config[name] = (Ext.isObject(value)) ? Ext.merge(this.config[name], value) : value;
+                Loader.config[name] = (Ext.isObject(value)) ? Ext.merge(Loader.config[name], value) : value;
             }
 
-            return this;
+            return Loader;
         },
 
 <span id='Ext-Loader-method-getConfig'>        /**
@@ -266,10 +302,10 @@
          */
         getConfig: function(name) {
             if (name) {
-                return this.config[name];
+                return Loader.config[name];
             }
 
-            return this.config;
+            return Loader.config;
         },
 
 <span id='Ext-Loader-method-setPath'>        /**
@@ -284,9 +320,9 @@
          * @method
          */
         setPath: flexSetter(function(name, path) {
-            this.config.paths[name] = path;
+            Loader.config.paths[name] = path;
 
-            return this;
+            return Loader;
         }),
 
 <span id='Ext-Loader-method-getPath'>        /**
@@ -318,8 +354,8 @@
          */
         getPath: function(className) {
             var path = '',
-                paths = this.config.paths,
-                prefix = this.getPrefix(className);
+                paths = Loader.config.paths,
+                prefix = Loader.getPrefix(className);
 
             if (prefix.length &gt; 0) {
                 if (prefix === className) {
@@ -334,7 +370,7 @@
                 path += '/';
             }
 
-            return path.replace(/\/\.\//g, '/') + className.replace(/\./g, &quot;/&quot;) + '.js';
+            return path.replace(slashDotSlashRe, '/') + className.replace(dotRe, &quot;/&quot;) + '.js';
         },
 
 <span id='Ext-Loader-method-getPrefix'>        /**
@@ -342,7 +378,7 @@
          * @param {String} className
          */
         getPrefix: function(className) {
-            var paths = this.config.paths,
+            var paths = Loader.config.paths,
                 prefix, deepestPrefix = '';
 
             if (paths.hasOwnProperty(className)) {
@@ -395,15 +431,13 @@
          * @return {Object} object contains `require` method for chaining
          */
         exclude: function(excludes) {
-            var me = this;
-
             return {
                 require: function(expressions, fn, scope) {
-                    return me.require(expressions, fn, scope, excludes);
+                    return Loader.require(expressions, fn, scope, excludes);
                 },
 
                 syncRequire: function(expressions, fn, scope) {
-                    return me.syncRequire(expressions, fn, scope, excludes);
+                    return Loader.syncRequire(expressions, fn, scope, excludes);
                 }
             };
         },
@@ -428,9 +462,18 @@
 
             fn.call(scope);
         }
-    };
+    });
 
     //&lt;feature classSystem.loader&gt;
+    var queue = [],
+        isClassFileLoaded = {},
+        isFileLoaded = {},
+        classNameToFilePathMap = {},
+        scriptElements = {},
+        readyListeners = [],
+        usedClasses = [],
+        requiresMap = {}
+
     Ext.apply(Loader, {
 <span id='Ext-Loader-property-documentHead'>        /**
 </span>         * @private
@@ -453,36 +496,36 @@
          *
          * @private
          */
-        queue: [],
+        queue: queue,
 
 <span id='Ext-Loader-property-isClassFileLoaded'>        /**
 </span>         * Maintain the list of files that have already been handled so that they never get double-loaded
          * @private
          */
-        isClassFileLoaded: {},
+        isClassFileLoaded: isClassFileLoaded,
 
 <span id='Ext-Loader-property-isFileLoaded'>        /**
 </span>         * @private
          */
-        isFileLoaded: {},
+        isFileLoaded: isFileLoaded,
 
 <span id='Ext-Loader-property-readyListeners'>        /**
 </span>         * Maintain the list of listeners to execute when all required scripts are fully loaded
          * @private
          */
-        readyListeners: [],
+        readyListeners: readyListeners,
 
 <span id='Ext-Loader-property-optionalRequires'>        /**
-</span>         * Contains optional dependencies to be loaded last
+</span>         * Contains classes referenced in `uses` properties.
          * @private
          */
-        optionalRequires: [],
+        optionalRequires: usedClasses,
 
 <span id='Ext-Loader-property-requiresMap'>        /**
 </span>         * Map of fully qualified class names to an array of dependent classes.
          * @private
          */
-        requiresMap: {},
+        requiresMap: requiresMap,
 
 <span id='Ext-Loader-property-numPendingFiles'>        /**
 </span>         * @private
@@ -500,14 +543,14 @@
 <span id='Ext-Loader-property-classNameToFilePathMap'>        /**
 </span>         * @private
          */
-        classNameToFilePathMap: {},
+        classNameToFilePathMap: classNameToFilePathMap,
 
 <span id='Ext-Loader-property-syncModeEnabled'>        /**
 </span>         * @private
          */
         syncModeEnabled: false,
 
-        scriptElements: {},
+        scriptElements: scriptElements,
 
 <span id='Ext-Loader-method-refreshQueue'>        /**
 </span>         * Refresh all items in the queue. If all dependencies for an item exist during looping,
@@ -516,13 +559,13 @@
          * @private
          */
         refreshQueue: function() {
-            var queue = this.queue,
-                ln = queue.length,
-                i, item, j, requires, references;
+            var ln = queue.length,
+                i, item, j, requires;
+
+            // When the queue of loading classes reaches zero, trigger readiness
 
             if (ln === 0) {
-                this.triggerReady();
-                return;
+                return Loader.triggerReady();
             }
 
             for (i = 0; i &lt; ln; i++) {
@@ -530,17 +573,15 @@
 
                 if (item) {
                     requires = item.requires;
-                    references = item.references;
 
                     // Don't bother checking when the number of files loaded
                     // is still less than the array length
-                    if (requires.length &gt; this.numLoadedFiles) {
+                    if (requires.length &gt; Loader.numLoadedFiles) {
                         continue;
                     }
 
-                    j = 0;
-
-                    do {
+                    // Remove any required classes that are loaded
+                    for (j = 0; j &lt; requires.length; ) {
                         if (Manager.isCreated(requires[j])) {
                             // Take out from the queue
                             arrayErase(requires, j, 1);
@@ -548,18 +589,19 @@
                         else {
                             j++;
                         }
-                    } while (j &lt; requires.length);
+                    }
 
+                    // If we've ended up with no required classes, call the callback
                     if (item.requires.length === 0) {
                         arrayErase(queue, i, 1);
                         item.callback.call(item.scope);
-                        this.refreshQueue();
+                        Loader.refreshQueue();
                         break;
                     }
                 }
             }
 
-            return this;
+            return Loader;
         },
 
 <span id='Ext-Loader-method-injectScriptElement'>        /**
@@ -568,55 +610,89 @@
          */
         injectScriptElement: function(url, onLoad, onError, scope) {
             var script = document.createElement('script'),
-                me = this,
+                dispatched = false,
+                config = Loader.config,
                 onLoadFn = function() {
-                    me.cleanupScriptElement(script);
-                    onLoad.call(scope);
+
+                    if(!dispatched) {
+                        dispatched = true;
+                        script.onload = script.onreadystatechange = script.onerror = null;
+                        if (typeof config.scriptChainDelay == 'number') {
+                            //free the stack (and defer the next script)
+                            defer(onLoad, config.scriptChainDelay, scope);
+                        } else {
+                            onLoad.call(scope);
+                        }
+                        Loader.cleanupScriptElement(script, config.preserveScripts === false, config.garbageCollect);
+                    }
+
                 },
-                onErrorFn = function() {
-                    me.cleanupScriptElement(script);
-                    onError.call(scope);
+                onErrorFn = function(arg) {
+                    defer(onError, 1, scope);   //free the stack
+                    Loader.cleanupScriptElement(script, config.preserveScripts === false, config.garbageCollect);
                 };
 
-            script.type = 'text/javascript';
-            script.src = url;
-            script.onload = onLoadFn;
+            script.type    = 'text/javascript';
             script.onerror = onErrorFn;
-            script.onreadystatechange = function() {
-                if (this.readyState === 'loaded' || this.readyState === 'complete') {
-                    onLoadFn();
-                }
-            };
+            if (config.scriptCharset) {
+                script.charset = config.scriptCharset;
+            }
 
-            this.documentHead.appendChild(script);
+            /*
+             * IE9 Standards mode (and others) SHOULD follow the load event only
+             * (Note: IE9 supports both onload AND readystatechange events)
+             */
+            if ('addEventListener' in script ) {
+                script.onload = onLoadFn;
+            } else if ('readyState' in script) {   // for &lt;IE9 Compatability
+                script.onreadystatechange = function() {
+                    if ( this.readyState == 'loaded' || this.readyState == 'complete' ) {
+                        onLoadFn();
+                    }
+                };
+            } else {
+                 script.onload = onLoadFn;
+            }
+
+            script.src = url;
+            (Loader.documentHead || document.getElementsByTagName('head')[0]).appendChild(script);
 
             return script;
         },
 
+<span id='Ext-Loader-method-removeScriptElement'>        /**
+</span>         * @private
+         */
         removeScriptElement: function(url) {
-            var scriptElements = this.scriptElements;
-
             if (scriptElements[url]) {
-                this.cleanupScriptElement(scriptElements[url], true);
+                Loader.cleanupScriptElement(scriptElements[url], true, !!Loader.getConfig('garbageCollect'));
                 delete scriptElements[url];
             }
 
-            return this;
+            return Loader;
         },
 
 <span id='Ext-Loader-method-cleanupScriptElement'>        /**
 </span>         * @private
          */
-        cleanupScriptElement: function(script, remove) {
-            script.onload = null;
-            script.onreadystatechange = null;
-            script.onerror = null;
-
+        cleanupScriptElement: function(script, remove, collect) {
+            var prop;
+            script.onload = script.onreadystatechange = script.onerror = null;
             if (remove) {
-                this.documentHead.removeChild(script);
+                Ext.removeNode(script);       // Remove, since its useless now
+                if (collect) {
+                    for (prop in script) {
+                        try {
+                            script[prop] = null;
+                            delete script[prop];      // and prepare for GC
+                        } catch (cleanEx) {
+                            //ignore
+                        }
+                    }
+                }
             }
 
-            return this;
+            return Loader;
         },
 
 <span id='Ext-Loader-method-loadScriptFile'>        /**
@@ -624,20 +700,18 @@
          * @private
          */
         loadScriptFile: function(url, onLoad, onError, scope, synchronous) {
-            var me = this,
-                isFileLoaded = this.isFileLoaded,
-                scriptElements = this.scriptElements,
-                noCacheUrl = url + (this.getConfig('disableCaching') ? ('?' + this.getConfig('disableCachingParam') + '=' + Ext.Date.now()) : ''),
+            if (isFileLoaded[url]) {
+                return Loader;
+            }
+
+            var config = Loader.getConfig(),
+                noCacheUrl = url + (config.disableCaching ? ('?' + config.disableCachingParam + '=' + Ext.Date.now()) : ''),
                 isCrossOriginRestricted = false,
                 xhr, status, onScriptError;
 
-            if (isFileLoaded[url]) {
-                return this;
-            }
+            scope = scope || Loader;
 
-            scope = scope || this;
-
-            this.isLoading = true;
+            Loader.isLoading = true;
 
             if (!synchronous) {
                 onScriptError = function() {
@@ -646,18 +720,8 @@
                     //&lt;/debug&gt;
                 };
 
-                if (!Ext.isReady &amp;&amp; Ext.onDocumentReady) {
-                    Ext.onDocumentReady(function() {
-                        if (!isFileLoaded[url]) {
-                            scriptElements[url] = me.injectScriptElement(noCacheUrl, onLoad, onScriptError, scope);
-                        }
-                    });
-                }
-                else {
-                    scriptElements[url] = this.injectScriptElement(noCacheUrl, onLoad, onScriptError, scope);
-                }
-            }
-            else {
+                scriptElements[url] = Loader.injectScriptElement(noCacheUrl, onLoad, onScriptError, scope);
+            } else {
                 if (typeof XMLHttpRequest != 'undefined') {
                     xhr = new XMLHttpRequest();
                 } else {
@@ -671,28 +735,27 @@
                     isCrossOriginRestricted = true;
                 }
 
-                status = (xhr.status === 1223) ? 204 : xhr.status;
+                status = (xhr.status === 1223) ? 204 :
+                    (xhr.status === 0 &amp;&amp; (self.location || {}).protocol == 'file:') ? 200 : xhr.status;
 
-                if (!isCrossOriginRestricted) {
-                    isCrossOriginRestricted = (status === 0);
-                }
+                isCrossOriginRestricted = isCrossOriginRestricted || (status === 0);
 
                 if (isCrossOriginRestricted
-                //&lt;if isNonBrowser&gt;
-                &amp;&amp; !isPhantomJS
-                //&lt;/if&gt;
+                    //&lt;if isNonBrowser&gt;
+                    &amp;&amp; !isPhantomJS
+                    //&lt;/if&gt;
                 ) {
                     //&lt;debug error&gt;
-                    onError.call(this, &quot;Failed loading synchronously via XHR: '&quot; + url + &quot;'; It's likely that the file is either &quot; +
+                    onError.call(Loader, &quot;Failed loading synchronously via XHR: '&quot; + url + &quot;'; It's likely that the file is either &quot; +
                                        &quot;being loaded from a different domain or from the local file system whereby cross origin &quot; +
                                        &quot;requests are not allowed due to security reasons. Use asynchronous loading with &quot; +
                                        &quot;Ext.require instead.&quot;, synchronous);
                     //&lt;/debug&gt;
                 }
-                else if (status &gt;= 200 &amp;&amp; status &lt; 300
-                //&lt;if isNonBrowser&gt;
-                || isPhantomJS
-                //&lt;/if&gt;
+                else if ((status &gt;= 200 &amp;&amp; status &lt; 300) || (status === 304)
+                    //&lt;if isNonBrowser&gt;
+                    || isPhantomJS
+                    //&lt;/if&gt;
                 ) {
                     // Debugger friendly, file names are still shown even though they're eval'ed code
                     // Breakpoints work on both Firebug and Chrome's Web Inspector
@@ -702,7 +765,7 @@
                 }
                 else {
                     //&lt;debug&gt;
-                    onError.call(this, &quot;Failed loading synchronously via XHR: '&quot; + url + &quot;'; please &quot; +
+                    onError.call(Loader, &quot;Failed loading synchronously via XHR: '&quot; + url + &quot;'; please &quot; +
                                        &quot;verify that the file exists. &quot; +
                                        &quot;XHR status code: &quot; + status, synchronous);
                     //&lt;/debug&gt;
@@ -715,28 +778,25 @@
 
         // documented above
         syncRequire: function() {
-            var syncModeEnabled = this.syncModeEnabled;
+            var syncModeEnabled = Loader.syncModeEnabled;
 
             if (!syncModeEnabled) {
-                this.syncModeEnabled = true;
+                Loader.syncModeEnabled = true;
             }
 
-            this.require.apply(this, arguments);
+            Loader.require.apply(Loader, arguments);
 
             if (!syncModeEnabled) {
-                this.syncModeEnabled = false;
+                Loader.syncModeEnabled = false;
             }
 
-            this.refreshQueue();
+            Loader.refreshQueue();
         },
 
         // documented above
         require: function(expressions, fn, scope, excludes) {
             var excluded = {},
                 included = {},
-                queue = this.queue,
-                classNameToFilePathMap = this.classNameToFilePathMap,
-                isClassFileLoaded = this.isClassFileLoaded,
                 excludedClassNames = [],
                 possibleClassNames = [],
                 classNames = [],
@@ -747,7 +807,8 @@
                 possibleClassName, i, j, ln, subLn;
 
             if (excludes) {
-                excludes = arrayFrom(excludes);
+                // Convert possible single string to an array.
+                excludes = (typeof excludes === 'string') ? [ excludes ] : excludes;
 
                 for (i = 0,ln = excludes.length; i &lt; ln; i++) {
                     exclude = excludes[i];
@@ -762,20 +823,20 @@
                 }
             }
 
-            expressions = arrayFrom(expressions);
+            // Convert possible single string to an array.
+            expressions = (typeof expressions === 'string') ? [ expressions ] : (expressions ? expressions : []);
 
             if (fn) {
                 if (fn.length &gt; 0) {
                     callback = function() {
                         var classes = [],
-                            i, ln, name;
+                            i, ln;
 
                         for (i = 0,ln = references.length; i &lt; ln; i++) {
-                            name = references[i];
-                            classes.push(Manager.get(name));
+                            classes.push(Manager.get(references[i]));
                         }
 
-                        return fn.apply(this, classes);
+                        return fn.apply(Loader, classes);
                     };
                 }
                 else {
@@ -813,17 +874,17 @@
             // If the dynamic dependency feature is not being used, throw an error
             // if the dependencies are not defined
             if (classNames.length &gt; 0) {
-                if (!this.config.enabled) {
+                if (!Loader.config.enabled) {
                     throw new Error(&quot;Ext.Loader is not enabled, so dependencies cannot be resolved dynamically. &quot; +
                              &quot;Missing required class&quot; + ((classNames.length &gt; 1) ? &quot;es&quot; : &quot;&quot;) + &quot;: &quot; + classNames.join(', '));
                 }
             }
             else {
                 callback.call(scope);
-                return this;
+                return Loader;
             }
 
-            syncModeEnabled = this.syncModeEnabled;
+            syncModeEnabled = Loader.syncModeEnabled;
 
             if (!syncModeEnabled) {
                 queue.push({
@@ -839,14 +900,14 @@
             for (i = 0; i &lt; ln; i++) {
                 className = classNames[i];
 
-                filePath = this.getPath(className);
+                filePath = Loader.getPath(className);
 
                 // If we are synchronously loading a file that has already been asychronously loaded before
                 // we need to destroy the script tag and revert the count
                 // This file will then be forced loaded in synchronous
                 if (syncModeEnabled &amp;&amp; isClassFileLoaded.hasOwnProperty(className)) {
-                    this.numPendingFiles--;
-                    this.removeScriptElement(filePath);
+                    Loader.numPendingFiles--;
+                    Loader.removeScriptElement(filePath);
                     delete isClassFileLoaded[className];
                 }
 
@@ -855,13 +916,12 @@
 
                     classNameToFilePathMap[className] = filePath;
 
-                    this.numPendingFiles++;
-
-                    this.loadScriptFile(
+                    Loader.numPendingFiles++;
+                    Loader.loadScriptFile(
                         filePath,
-                        pass(this.onFileLoaded, [className, filePath], this),
-                        pass(this.onFileLoadError, [className, filePath], this),
-                        this,
+                        pass(Loader.onFileLoaded, [className, filePath], Loader),
+                        pass(Loader.onFileLoadError, [className, filePath], Loader),
+                        Loader,
                         syncModeEnabled
                     );
                 }
@@ -875,7 +935,7 @@
                 }
             }
 
-            return this;
+            return Loader;
         },
 
 <span id='Ext-Loader-method-onFileLoaded'>        /**
@@ -884,21 +944,20 @@
          * @param {String} filePath
          */
         onFileLoaded: function(className, filePath) {
-            this.numLoadedFiles++;
+            Loader.numLoadedFiles++;
 
-            this.isClassFileLoaded[className] = true;
-            this.isFileLoaded[filePath] = true;
+            isClassFileLoaded[className] = true;
+            isFileLoaded[filePath] = true;
 
-            this.numPendingFiles--;
+            Loader.numPendingFiles--;
 
-            if (this.numPendingFiles === 0) {
-                this.refreshQueue();
+            if (Loader.numPendingFiles === 0) {
+                Loader.refreshQueue();
             }
 
             //&lt;debug&gt;
-            if (!this.syncModeEnabled &amp;&amp; this.numPendingFiles === 0 &amp;&amp; this.isLoading &amp;&amp; !this.hasFileLoadError) {
-                var queue = this.queue,
-                    missingClasses = [],
+            if (!Loader.syncModeEnabled &amp;&amp; Loader.numPendingFiles === 0 &amp;&amp; Loader.isLoading &amp;&amp; !Loader.hasFileLoadError) {
+                var missingClasses = [],
                     missingPaths = [],
                     requires,
                     i, ln, j, subLn;
@@ -907,7 +966,7 @@
                     requires = queue[i].requires;
 
                     for (j = 0,subLn = requires.length; j &lt; subLn; j++) {
-                        if (this.isClassFileLoaded[requires[j]]) {
+                        if (isClassFileLoaded[requires[j]]) {
                             missingClasses.push(requires[j]);
                         }
                     }
@@ -918,16 +977,16 @@
                 }
 
                 missingClasses = Ext.Array.filter(Ext.Array.unique(missingClasses), function(item) {
-                    return !this.requiresMap.hasOwnProperty(item);
-                }, this);
+                    return !requiresMap.hasOwnProperty(item);
+                }, Loader);
 
                 for (i = 0,ln = missingClasses.length; i &lt; ln; i++) {
-                    missingPaths.push(this.classNameToFilePathMap[missingClasses[i]]);
+                    missingPaths.push(classNameToFilePathMap[missingClasses[i]]);
                 }
 
                 throw new Error(&quot;The following classes are not declared even if their files have been &quot; +
-                            &quot;loaded: '&quot; + missingClasses.join(&quot;', '&quot;) + &quot;'. Please check the source code of their &quot; +
-                            &quot;corresponding files for possible typos: '&quot; + missingPaths.join(&quot;', '&quot;));
+                    &quot;loaded: '&quot; + missingClasses.join(&quot;', '&quot;) + &quot;'. Please check the source code of their &quot; +
+                    &quot;corresponding files for possible typos: '&quot; + missingPaths.join(&quot;', '&quot;));
             }
             //&lt;/debug&gt;
         },
@@ -936,65 +995,65 @@
 </span>         * @private
          */
         onFileLoadError: function(className, filePath, errorMessage, isSynchronous) {
-            this.numPendingFiles--;
-            this.hasFileLoadError = true;
+            Loader.numPendingFiles--;
+            Loader.hasFileLoadError = true;
 
             //&lt;debug error&gt;
             throw new Error(&quot;[Ext.Loader] &quot; + errorMessage);
             //&lt;/debug&gt;
         },
 
-<span id='Ext-Loader-method-addOptionalRequires'>        /**
+<span id='Ext-Loader-method-addUsedClass'>        /**
 </span>         * @private
+         * Ensure that any classes referenced in the `uses` property are loaded.
          */
-        addOptionalRequires: function(requires) {
-            var optionalRequires = this.optionalRequires,
-                i, ln, require;
+        addUsedClass: function(references) {
+            var i, ln;
 
-            requires = arrayFrom(requires);
-
-            for (i = 0, ln = requires.length; i &lt; ln; i++) {
-                require = requires[i];
-
-                arrayInclude(optionalRequires, require);
+            if (references) {
+                references = (typeof references == 'string') ? [references] : references;
+                for (i = 0, ln = references.length; i &lt; ln; i++) {
+                    if (!Ext.Array.contains(usedClasses, references[i])) {
+                    	usedClasses.push(references[i]);
+                    }
+                }
             }
 
-            return this;
+            return Loader;
         },
 
 <span id='Ext-Loader-method-triggerReady'>        /**
 </span>         * @private
          */
-        triggerReady: function(force) {
-            var readyListeners = this.readyListeners,
-                optionalRequires = this.optionalRequires,
-                listener;
+        triggerReady: function() {
+            var listener,
+                i, refClasses = usedClasses;
 
-            if (this.isLoading || force) {
-                this.isLoading = false;
+            if (Loader.isLoading) {
+                Loader.isLoading = false;
 
-                if (optionalRequires.length !== 0) {
+                if (refClasses.length !== 0) {
                     // Clone then empty the array to eliminate potential recursive loop issue
-                    optionalRequires = optionalRequires.slice();
-
-                    // Empty the original array
-                    this.optionalRequires.length = 0;
-
-                    this.require(optionalRequires, pass(this.triggerReady, [true], this), this);
-                    return this;
-                }
-
-                while (readyListeners.length) {
-                    listener = readyListeners.shift();
-                    listener.fn.call(listener.scope);
-
-                    if (this.isLoading) {
-                        return this;
-                    }
+                    refClasses = refClasses.slice();
+                    usedClasses.length = 0;
+                    // this may immediately call us back if all 'uses' classes
+                    // have been loaded
+                    Loader.require(refClasses, Loader.triggerReady, Loader);
+                    return Loader;
                 }
             }
 
-            return this;
+            // this method can be called with Loader.isLoading either true or false
+            // (can be called with false when all 'uses' classes are already loaded)
+            // this may bypass the above if condition
+            while (readyListeners.length &amp;&amp; !Loader.isLoading) {
+                // calls to refreshQueue may re-enter triggerReady
+                // so we cannot necessarily iterate the readyListeners array
+                listener = readyListeners.shift();
+                listener.fn.call(listener.scope);
+            }
+
+            return Loader;
         },
 
         // Documented above already
@@ -1009,11 +1068,11 @@
                 };
             }
 
-            if (!this.isLoading) {
+            if (!Loader.isLoading) {
                 fn.call(scope);
             }
             else {
-                this.readyListeners.push({
+                readyListeners.push({
                     fn: fn,
                     scope: scope
                 });
@@ -1025,14 +1084,11 @@
          * @param {String} className
          */
         historyPush: function(className) {
-            var isInHistory = this.isInHistory;
-
-            if (className &amp;&amp; this.isClassFileLoaded.hasOwnProperty(className) &amp;&amp; !isInHistory[className]) {
+            if (className &amp;&amp; isClassFileLoaded.hasOwnProperty(className) &amp;&amp; !isInHistory[className]) {
                 isInHistory[className] = true;
-                this.history.push(className);
+                history.push(className);
             }
-
-            return this;
+            return Loader;
         }
     });
 
@@ -1059,9 +1115,9 @@
                 syncModeEnabled: true,
                 setPath: flexSetter(function(name, path) {
                     path = require('fs').realpathSync(path);
-                    this.config.paths[name] = path;
+                    Loader.config.paths[name] = path;
 
-                    return this;
+                    return Loader;
                 }),
 
                 loadScriptFile: function(filePath, onLoad, onError, scope, synchronous) {
@@ -1131,8 +1187,10 @@
     Class.registerPreprocessor('loader', function(cls, data, hooks, continueFn) {
         var me = this,
             dependencies = [],
+            dependency,
             className = Manager.getName(cls),
-            i, j, ln, subLn, value, propertyName, propertyValue;
+            i, j, ln, subLn, value, propertyName, propertyValue,
+            requiredMap, requiredDep;
 
         /*
         Loop through the dependencyProperties, look for string class names and push
@@ -1193,7 +1251,6 @@
         //&lt;feature classSystem.loader&gt;
         //&lt;debug error&gt;
         var deadlockPath = [],
-            requiresMap = Loader.requiresMap,
             detectDeadlock;
 
         /*
@@ -1210,11 +1267,12 @@
         if (className) {
             requiresMap[className] = dependencies;
             //&lt;debug&gt;
-            if (!Loader.requiredByMap) Loader.requiredByMap = {};
-            Ext.Array.each(dependencies, function(dependency){
-                if (!Loader.requiredByMap[dependency]) Loader.requiredByMap[dependency] = [];
-                Loader.requiredByMap[dependency].push(className);
-            });
+            requiredMap = Loader.requiredByMap || (Loader.requiredByMap = {});
+
+            for (i = 0,ln = dependencies.length; i &lt; ln; i++) {
+                dependency = dependencies[i];
+                (requiredMap[dependency] || (requiredMap[dependency] = [])).push(className);
+            }
             //&lt;/debug&gt;
             detectDeadlock = function(cls) {
                 deadlockPath.push(cls);
@@ -1297,28 +1355,26 @@
      *     });
      */
     Manager.registerPostprocessor('uses', function(name, cls, data) {
-        var uses = arrayFrom(data.uses),
+        var uses = data.uses,
             items = [],
             i, ln, item;
 
-        for (i = 0,ln = uses.length; i &lt; ln; i++) {
-            item = uses[i];
+        if (uses) {
+            uses = (typeof uses === 'string') ? [ uses ] : uses;
+            for (i = 0,ln = uses.length; i &lt; ln; i++) {
+                item = uses[i];
 
-            if (typeof item == 'string') {
-                items.push(item);
+                if (typeof item == 'string') {
+                    items.push(item);
+                }
             }
         }
 
-        Loader.addOptionalRequires(items);
+        Loader.addUsedClass(items);
     });
 
-    Manager.onCreated(function(className) {
-        this.historyPush(className);
-    }, Loader);
+    Manager.onCreated(Loader.historyPush);
     //&lt;/feature&gt;
-
-})(Ext.ClassManager, Ext.Class, Ext.Function.flexSetter, Ext.Function.alias,
-   Ext.Function.pass, Ext.Array.from, Ext.Array.erase, Ext.Array.include);
-</pre>
+};</pre>
 </body>
 </html>

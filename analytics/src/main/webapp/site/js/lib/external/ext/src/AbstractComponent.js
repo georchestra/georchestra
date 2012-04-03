@@ -110,7 +110,7 @@ Ext.define('Ext.AbstractComponent', {
 
     /**
      * @property {Boolean} isComponent
-     * `true` in this class to identify an objact as an instantiated Component, or subclass thereof.
+     * `true` in this class to identify an object as an instantiated Component, or subclass thereof.
      */
     isComponent: true,
 
@@ -929,6 +929,14 @@ Ext.define('Ext.AbstractComponent', {
              */
             'afterrender',
             /**
+             * @event boxready
+             * Fires *one time* - after the component has been layed out for the first time at its initial size.
+             * @param {Ext.Component} this
+             * @param {Number} width The initial width
+             * @param {Number} height The initial height
+             */
+            'boxready',
+            /**
              * @event beforedestroy
              * Fires before the component is {@link #method-destroy}ed. Return false from an event handler to stop the
              * {@link #method-destroy}.
@@ -943,7 +951,8 @@ Ext.define('Ext.AbstractComponent', {
             'destroy',
             /**
              * @event resize
-             * Fires after the component is resized.
+             * Fires after the component is resized. Note that this does *not* fire when the component is first layed out at its initial
+             * size. To hook that point in the lifecycle, use the {@link #boxready} event.
              * @param {Ext.Component} this
              * @param {Number} width The new width that was set
              * @param {Number} height The new height that was set
@@ -1003,7 +1012,7 @@ Ext.define('Ext.AbstractComponent', {
         // For repeated events in time-critical code, the firing code should use
         // if (!me.hasListeners.beforerender || me.fireEvent('beforerender', me) !== false) { //code... }
         // Bubbling the events counts as one listener. initComponent may add listeners, so needs setting up now.
-        me.hasListeners = {};
+        me.hasListeners = me.hasListeners || new me.HasListeners();
 
         me.initComponent();
 
@@ -1130,7 +1139,8 @@ Ext.define('Ext.AbstractComponent', {
             toWidth,
             to,
             clearWidth,
-            clearHeight;
+            clearHeight,
+            curWidth, w, curHeight, h, needsResize;
 
         animObj = animObj || {};
         to = animObj.to || {};
@@ -1151,11 +1161,11 @@ Ext.define('Ext.AbstractComponent', {
 
         // Special processing for animating Component dimensions.
         if (!animObj.dynamic && (hasToWidth || hasToHeight)) {
-            var curWidth = (animObj.from ? animObj.from.width : undefined) || me.getWidth(),
-                w = curWidth,
-                curHeight = (animObj.from ? animObj.from.height : undefined) || me.getHeight(),
-                h = curHeight,
-                needsResize = false;
+            curWidth = (animObj.from ? animObj.from.width : undefined) || me.getWidth();
+            w = curWidth;
+            curHeight = (animObj.from ? animObj.from.height : undefined) || me.getHeight();
+            h = curHeight;
+            needsResize = false;
 
             if (hasToHeight && toHeight > curHeight) {
                 h = toHeight;
@@ -1454,14 +1464,14 @@ Ext.define('Ext.AbstractComponent', {
         var me = this,
             baseClsUi = me.baseCls + '-' + me.ui + '-' + cls,
             result = [Ext.baseCSSPrefix + cls, me.baseCls + '-' + cls, baseClsUi],
-            frameElementCls = me.frameElementCls;
+            frameElementCls = me.frameElementCls,
+            frameElementsArray, frameElementsLength, i, el, frameElement, c;
 
         if (me.frame && !Ext.supports.CSS3BorderRadius) {
             // define each element of the frame
-            var frameElementsArray = me.frameElementsArray,
-                frameElementsLength = frameElementsArray.length,
-                i = 0,
-                el, frameElement, c;
+            frameElementsArray = me.frameElementsArray;
+            frameElementsLength = frameElementsArray.length;
+            i = 0;
 
             // loop through each of them, and if they are defined add the ui
             for (; i < frameElementsLength; i++) {
@@ -1490,14 +1500,14 @@ Ext.define('Ext.AbstractComponent', {
         var me = this,
             baseClsUi = me.baseCls + '-' + me.ui + '-' + cls,
             result = [Ext.baseCSSPrefix + cls, me.baseCls + '-' + cls, baseClsUi],
-            frameElementCls = me.frameElementCls;
+            frameElementCls = me.frameElementCls,
+            frameElementsArray, frameElementsLength, i, el, frameElement, c;
 
         if (me.frame && !Ext.supports.CSS3BorderRadius) {
             // define each element of the frame
-            var frameElementsArray = me.frameElementsArray,
-                frameElementsLength = frameElementsArray.length,
-                i = 0,
-                el, frameElement, c;
+            frameElementsArray = me.frameElementsArray;
+            frameElementsLength = frameElementsArray.length;
+            i = 0;
 
             // loop through each of them, and if they are defined add the ui
             for (; i < frameElementsLength; i++) {
@@ -1524,16 +1534,16 @@ Ext.define('Ext.AbstractComponent', {
     addUIToElement: function() {
         var me = this,
             baseClsUI = me.baseCls + '-' + me.ui,
-            frameElementCls = me.frameElementCls;
+            frameElementCls = me.frameElementCls,
+            frameElementsArray, frameElementsLength, i, el, frameElement, c;
 
         me.addCls(baseClsUI);
 
         if (me.frame && !Ext.supports.CSS3BorderRadius) {
             // define each element of the frame
-            var frameElementsArray = me.frameElementsArray,
-                frameElementsLength = frameElementsArray.length,
-                i = 0,
-                el, frameElement, c;
+            frameElementsArray = me.frameElementsArray;
+            frameElementsLength = frameElementsArray.length;
+            i = 0;
 
             // loop through each of them, and if they are defined add the ui
             for (; i < frameElementsLength; i++) {
@@ -1558,16 +1568,16 @@ Ext.define('Ext.AbstractComponent', {
     removeUIFromElement: function() {
         var me = this,
             baseClsUI = me.baseCls + '-' + me.ui,
-            frameElementCls = me.frameElementCls;
+            frameElementCls = me.frameElementCls,
+            frameElementsArray, frameElementsLength, i, el, frameElement, c;
 
         me.removeCls(baseClsUI);
 
         if (me.frame && !Ext.supports.CSS3BorderRadius) {
             // define each element of the frame
-            var frameElementsArray = me.frameElementsArray,
-                frameElementsLength = frameElementsArray.length,
-                i = 0,
-                el, frameElement, c;
+            frameElementsArray = me.frameElementsArray;
+            frameElementsLength = frameElementsArray.length;
+            i = 0;
 
             for (; i < frameElementsLength; i++) {
                 frameElement = frameElementsArray[i];
@@ -2296,7 +2306,7 @@ Ext.define('Ext.AbstractComponent', {
     },
 
     getMaskTarget: function(){
-        return this.el
+        return this.el;
     },
 
     /**
@@ -2728,13 +2738,19 @@ Ext.define('Ext.AbstractComponent', {
         var me = this,
             Layout = Ext.layout.Layout.prototype,
             models = Layout.sizeModels,
-            heightModel, ownerLayout, policy, shrinkWrap, widthModel;
+            heightModel, ownerLayout, policy, shrinkWrap, widthModel,
+            ownerCtx = me.componentLayout.ownerContext;
 
-        if (typeof me.width == 'number') {
-            widthModel = models.configured;
-        }
-        if (typeof me.height == 'number') {
-            heightModel = models.configured;
+        if (ownerCtx) {
+            widthModel = ownerCtx.widthModel;
+            heightModel = ownerCtx.heightModel;
+        } else {
+            if (typeof me.width == 'number') {
+                widthModel = models.configured;
+            }
+            if (typeof me.height == 'number') {
+                heightModel = models.configured;
+            }
         }
 
         if (!widthModel || !heightModel) {
@@ -2853,7 +2869,7 @@ Ext.define('Ext.AbstractComponent', {
     afterComponentLayout: function(width, height, oldWidth, oldHeight) {
         var me = this;
         if (++me.componentLayoutCounter === 1) {
-            me.afterFirstLayout();
+            me.afterFirstLayout(width, height);
         }
         if (me.hasListeners.resize && (width !== oldWidth || height !== oldHeight)) {
             me.fireEvent('resize', me, width, height, oldWidth, oldHeight);

@@ -4,9 +4,7 @@ Ext.toolbar.Toolbar.SplitButton = Ext.extend(Ext.button.Split, {});
 Ext.reg('tbbutton', Ext.toolbar.Toolbar.Button);
 Ext.reg('tbsplit', Ext.toolbar.Toolbar.SplitButton);
 
-/*
- * @ignore
- */
+// Exclude from documentation
 Ext.toolbar.Toolbar.override({
     /*
      * Adds text to the toolbar
@@ -49,8 +47,9 @@ Ext.toolbar.Toolbar.override({
      */
     insertButton : function(index, item){
         if(Ext.isArray(item)){
-            var buttons = [];
-            for(var i = 0, len = item.length; i < len; i++) {
+            var buttons = [],
+                i, len;
+            for(i = 0, len = item.length; i < len; i++) {
                buttons.push(this.insertButton(index + i, item[i]));
             }
             return buttons;
@@ -112,8 +111,9 @@ Ext.toolbar.Toolbar.override({
      */
     addButton : function(config){
         if(Ext.isArray(config)){
-            var buttons = [];
-            for(var i = 0, len = config.length; i < len; i++) {
+            var buttons = [],
+                i, len;
+            for(i = 0, len = config.length; i < len; i++) {
                 buttons.push(this.addButton(config[i]));
             }
             return buttons;

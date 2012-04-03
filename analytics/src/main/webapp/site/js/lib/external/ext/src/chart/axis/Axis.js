@@ -139,6 +139,12 @@ Ext.define('Ext.chart.axis.Axis', {
      */
     width: 0,
 
+    /**
+     * @cfg {Boolean} adjustEnd
+     * Whether to adjust the label at the end of the axis.
+     */
+    adjustEnd: true,
+
     majorTickSteps: false,
 
     // @private
@@ -195,7 +201,7 @@ Ext.define('Ext.chart.axis.Axis', {
                         continue;
                     }
                     value = record.get(fields[i]);
-                    if (value !== undefined) { 
+                    if (value !== undefined) {
                         // undefined values means certain data point is not given.
                         // Simply omit them
                         max = mmax(max, +value);
@@ -218,7 +224,7 @@ Ext.define('Ext.chart.axis.Axis', {
         if (!isNaN(me.minimum)) {
             min = me.minimum;
         }
-        
+
         if (!isNaN(me.maximum)) {
             max = me.maximum;
         }
@@ -227,7 +233,7 @@ Ext.define('Ext.chart.axis.Axis', {
     },
 
     // @private creates a structure with start, end and step points.
-    calcEnds: function() {
+    calcEnds: function () {
         var me = this,
             fields = me.fields,
             range = me.getRange(),
@@ -235,7 +241,7 @@ Ext.define('Ext.chart.axis.Axis', {
             max = range.max,
             outfrom, outto, out;
 
-        out = Ext.draw.Draw.snapEnds(min, max, me.majorTickSteps !== false ?  (me.majorTickSteps+1) : me.steps, (me.majorTickSteps === false));
+        out = Ext.draw.Draw.snapEnds(min, max, me.majorTickSteps !== false ? (me.majorTickSteps + 1) : me.steps, (me.majorTickSteps === false));
         outfrom = out.from;
         outto = out.to;
 
@@ -268,7 +274,7 @@ Ext.define('Ext.chart.axis.Axis', {
             out.from -= out.step;
         }
 
-        me.prevMin = min == max? 0 : min;
+        me.prevMin = min == max ? 0 : min;
         me.prevMax = max;
         return out;
     },
@@ -310,7 +316,7 @@ Ext.define('Ext.chart.axis.Axis', {
         if (me.hidden || isNaN(step) || (from == to)) {
             return;
         }
-        
+
         me.from = stepCalcs.from;
         me.to = stepCalcs.to;
 
@@ -326,8 +332,8 @@ Ext.define('Ext.chart.axis.Axis', {
         }
 
         delta = trueLength / (steps || 1);
-        dashesX = Math.max(subDashesX +1, 0);
-        dashesY = Math.max(subDashesY +1, 0);
+        dashesX = Math.max(subDashesX + 1, 0);
+        dashesY = Math.max(subDashesY + 1, 0);
         if (me.type == 'Numeric' || me.type == 'Time') {
             calcLabels = true;
             me.labels = [stepCalcs.from];
@@ -345,11 +351,11 @@ Ext.define('Ext.chart.axis.Axis', {
                 }
                 inflections.push([ Math.floor(x), Math.floor(currentY) ]);
                 currentY -= delta;
-                
+
                 if (calcLabels) {
-                    me.labels.push(me.labels[me.labels.length -1] + step);
+                    me.labels.push(me.labels[me.labels.length - 1] + step);
                 }
-                
+
                 if (delta === 0) {
                     break;
                 }
@@ -361,7 +367,7 @@ Ext.define('Ext.chart.axis.Axis', {
                 }
                 inflections.push([ Math.floor(x), Math.floor(currentY) ]);
                 if (calcLabels) {
-                    me.labels.push(me.labels[me.labels.length -1] + step);
+                    me.labels.push(me.labels[me.labels.length - 1] + step);
                 }
             }
         } else {
@@ -377,7 +383,7 @@ Ext.define('Ext.chart.axis.Axis', {
                 inflections.push([ Math.floor(currentX), Math.floor(y) ]);
                 currentX += delta;
                 if (calcLabels) {
-                    me.labels.push(me.labels[me.labels.length -1] + step);
+                    me.labels.push(me.labels[me.labels.length - 1] + step);
                 }
                 if (delta === 0) {
                     break;
@@ -390,16 +396,16 @@ Ext.define('Ext.chart.axis.Axis', {
                 }
                 inflections.push([ Math.floor(currentX), Math.floor(y) ]);
                 if (calcLabels) {
-                    me.labels.push(me.labels[me.labels.length -1] + step);
+                    me.labels.push(me.labels[me.labels.length - 1] + step);
                 }
             }
         }
 
         // the label on index "inflections.length-1" is the last label that gets rendered
-        if(calcLabels){
-            me.labels[inflections.length-1] = +(me.labels[inflections.length-1]).toFixed(10);
+        if (calcLabels) {
+            me.labels[inflections.length - 1] = +(me.labels[inflections.length - 1]).toFixed(10);
         }
-        
+
         if (!me.axis) {
             me.axis = me.chart.surface.add(Ext.apply({
                 type: 'path',
@@ -420,14 +426,14 @@ Ext.define('Ext.chart.axis.Axis', {
     /**
      * Renders an horizontal and/or vertical grid into the Surface.
      */
-    drawGrid: function() {
+    drawGrid: function () {
         var me = this,
             surface = me.chart.surface,
             grid = me.grid,
             odd = grid.odd,
             even = grid.even,
             inflections = me.inflections,
-            ln = inflections.length - ((odd || even)? 0 : 1),
+            ln = inflections.length - ((odd || even) ? 0 : 1),
             position = me.position,
             gutter = me.chart.maxGutter,
             width = me.width - 2,
@@ -446,33 +452,33 @@ Ext.define('Ext.chart.axis.Axis', {
             point = inflections[i];
             prevPoint = inflections[i - 1];
             if (odd || even) {
-                path = (i % 2)? oddPath : evenPath;
-                styles = ((i % 2)? odd : even) || {};
+                path = (i % 2) ? oddPath : evenPath;
+                styles = ((i % 2) ? odd : even) || {};
                 lineWidth = (styles.lineWidth || styles['stroke-width'] || 0) / 2;
                 dlineWidth = 2 * lineWidth;
                 if (position == 'left') {
                     path.push("M", prevPoint[0] + 1 + lineWidth, prevPoint[1] + 0.5 - lineWidth,
-                              "L", prevPoint[0] + 1 + width - lineWidth, prevPoint[1] + 0.5 - lineWidth,
-                              "L", point[0] + 1 + width - lineWidth, point[1] + 0.5 + lineWidth,
-                              "L", point[0] + 1 + lineWidth, point[1] + 0.5 + lineWidth, "Z");
+                        "L", prevPoint[0] + 1 + width - lineWidth, prevPoint[1] + 0.5 - lineWidth,
+                        "L", point[0] + 1 + width - lineWidth, point[1] + 0.5 + lineWidth,
+                        "L", point[0] + 1 + lineWidth, point[1] + 0.5 + lineWidth, "Z");
                 }
                 else if (position == 'right') {
                     path.push("M", prevPoint[0] - lineWidth, prevPoint[1] + 0.5 - lineWidth,
-                              "L", prevPoint[0] - width + lineWidth, prevPoint[1] + 0.5 - lineWidth,
-                              "L", point[0] - width + lineWidth, point[1] + 0.5 + lineWidth,
-                              "L", point[0] - lineWidth, point[1] + 0.5 + lineWidth, "Z");
+                        "L", prevPoint[0] - width + lineWidth, prevPoint[1] + 0.5 - lineWidth,
+                        "L", point[0] - width + lineWidth, point[1] + 0.5 + lineWidth,
+                        "L", point[0] - lineWidth, point[1] + 0.5 + lineWidth, "Z");
                 }
                 else if (position == 'top') {
                     path.push("M", prevPoint[0] + 0.5 + lineWidth, prevPoint[1] + 1 + lineWidth,
-                              "L", prevPoint[0] + 0.5 + lineWidth, prevPoint[1] + 1 + width - lineWidth,
-                              "L", point[0] + 0.5 - lineWidth, point[1] + 1 + width - lineWidth,
-                              "L", point[0] + 0.5 - lineWidth, point[1] + 1 + lineWidth, "Z");
+                        "L", prevPoint[0] + 0.5 + lineWidth, prevPoint[1] + 1 + width - lineWidth,
+                        "L", point[0] + 0.5 - lineWidth, point[1] + 1 + width - lineWidth,
+                        "L", point[0] + 0.5 - lineWidth, point[1] + 1 + lineWidth, "Z");
                 }
                 else {
                     path.push("M", prevPoint[0] + 0.5 + lineWidth, prevPoint[1] - lineWidth,
-                            "L", prevPoint[0] + 0.5 + lineWidth, prevPoint[1] - width + lineWidth,
-                            "L", point[0] + 0.5 - lineWidth, point[1] - width + lineWidth,
-                            "L", point[0] + 0.5 - lineWidth, point[1] - lineWidth, "Z");
+                        "L", prevPoint[0] + 0.5 + lineWidth, prevPoint[1] - width + lineWidth,
+                        "L", point[0] + 0.5 - lineWidth, point[1] - width + lineWidth,
+                        "L", point[0] + 0.5 - lineWidth, point[1] - lineWidth, "Z");
                 }
             } else {
                 if (position == 'left') {
@@ -537,7 +543,7 @@ Ext.define('Ext.chart.axis.Axis', {
     },
 
     // @private
-    getOrCreateLabel: function(i, text) {
+    getOrCreateLabel: function (i, text) {
         var me = this,
             labelGroup = me.labelGroup,
             textLabel = labelGroup.getAt(i),
@@ -576,7 +582,7 @@ Ext.define('Ext.chart.axis.Axis', {
         return textLabel;
     },
 
-    rect2pointArray: function(sprite) {
+    rect2pointArray: function (sprite) {
         var surface = this.chart.surface,
             rect = surface.getBBox(sprite, true),
             p1 = [rect.x, rect.y],
@@ -603,14 +609,14 @@ Ext.define('Ext.chart.axis.Axis', {
         return [p1, p2, p3, p4];
     },
 
-    intersect: function(l1, l2) {
+    intersect: function (l1, l2) {
         var r1 = this.rect2pointArray(l1),
             r2 = this.rect2pointArray(l2);
         return !!Ext.draw.Draw.intersect(r1, r2).length;
     },
 
-    drawHorizontalLabels: function() {
-       var  me = this,
+    drawHorizontalLabels: function () {
+        var me = this,
             labelConf = me.label,
             floor = Math.floor,
             max = Math.max,
@@ -625,6 +631,9 @@ Ext.define('Ext.chart.axis.Axis', {
             gutterY = me.chart.maxGutter[1],
             ubbox, bbox, point, prevX, prevLabel,
             projectedWidth = 0,
+            adjustEnd = me.adjustEnd,
+            hasLeft = axes.findIndex('position', 'left') != -1,
+            hasRight = axes.findIndex('position', 'right') != -1,
             textLabel, attr, textRight, text,
             label, last, x, y, i, firstLabel;
 
@@ -640,12 +649,12 @@ Ext.define('Ext.chart.axis.Axis', {
             textLabel = me.getOrCreateLabel(i, text);
             bbox = textLabel._bbox;
             maxHeight = max(maxHeight, bbox.height + me.dashSize + me.label.padding);
-            x = floor(point[0] - (ratio? bbox.height : bbox.width) / 2);
+            x = floor(point[0] - (ratio ? bbox.height : bbox.width) / 2);
             if (me.chart.maxGutter[0] == 0) {
-                if (i == 0 && axes.findIndex('position', 'left') == -1) {
+                if (i == 0 && !hasLeft) {
                     x = point[0];
                 }
-                else if (i == last && axes.findIndex('position', 'right') == -1) {
+                else if (adjustEnd && i == last && !hasRight) {
                     x = point[0] - bbox.width;
                 }
             }
@@ -675,7 +684,7 @@ Ext.define('Ext.chart.axis.Axis', {
         return maxHeight;
     },
 
-    drawVerticalLabels: function() {
+    drawVerticalLabels: function () {
         var me = this,
             inflections = me.inflections,
             position = me.position,
@@ -689,6 +698,9 @@ Ext.define('Ext.chart.axis.Axis', {
             gutterY = me.chart.maxGutter[1],
             ubbox, bbox, point, prevLabel,
             projectedWidth = 0,
+            hasTop = axes.findIndex('position', 'top') != -1,
+            hasBottom = axes.findIndex('position', 'bottom') != -1,
+            adjustEnd = me.adjustEnd,
             textLabel, attr, textRight, text,
             label, last, x, y, i;
 
@@ -702,10 +714,10 @@ Ext.define('Ext.chart.axis.Axis', {
             maxWidth = max(maxWidth, bbox.width + me.dashSize + me.label.padding);
             y = point[1];
             if (gutterY < bbox.height / 2) {
-                if (i == last - 1 && axes.findIndex('position', 'top') == -1) {
+                if (adjustEnd && i == last - 1 && !hasTop) {
                     y = me.y - me.length + ceil(bbox.height / 2);
                 }
-                else if (i == 0 && axes.findIndex('position', 'bottom') == -1) {
+                else if (i == 0 && !hasBottom) {
                     y = me.y - floor(bbox.height / 2);
                 }
             }
@@ -734,7 +746,7 @@ Ext.define('Ext.chart.axis.Axis', {
     /**
      * Renders the labels in the axes.
      */
-    drawLabel: function() {
+    drawLabel: function () {
         var me = this,
             position = me.position,
             labelGroup = me.labelGroup,
@@ -766,7 +778,7 @@ Ext.define('Ext.chart.axis.Axis', {
     },
 
     // @private creates the elipsis for the text.
-    elipsis: function(sprite, text, desiredWidth, minWidth, center) {
+    elipsis: function (sprite, text, desiredWidth, minWidth, center) {
         var bbox,
             x;
 
@@ -796,13 +808,13 @@ Ext.define('Ext.chart.axis.Axis', {
      * Updates the {@link #title} of this axis.
      * @param {String} title
      */
-    setTitle: function(title) {
+    setTitle: function (title) {
         this.title = title;
         this.drawLabel();
     },
 
     // @private draws the title for the axis.
-    drawTitle: function(maxWidth, maxHeight) {
+    drawTitle: function (maxWidth, maxHeight) {
         var me = this,
             position = me.position,
             surface = me.chart.surface,

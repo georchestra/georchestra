@@ -171,9 +171,11 @@ Ext.define("Ext.form.field.File", {
                 cls: Ext.baseCSSPrefix + 'form-file-input',
                 tag: 'input',
                 type: 'file',
-                size: 1,
-                disabled: me.disabled
+                size: 1
             };
+        if (me.disabled) {
+            inputElCfg.disabled = true;
+        }
         btnCfg.cn = inputElCfg;
         result = '<td id="' + me.id + '-browseButtonWrap">' + Ext.DomHelper.markup(btnCfg) + '</td>';
         btn.destroy();

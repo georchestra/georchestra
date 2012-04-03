@@ -223,9 +223,11 @@ Ext.define('Ext.window.Window', {
 
     ignoreHeaderBorderManagement: true,
 
+    //frame: true,
+
     /**
      * @property {Boolean} isWindow
-     * `true` in this class to identify an objact as an instantiated Window, or subclass thereof.
+     * `true` in this class to identify an object as an instantiated Window, or subclass thereof.
      */
     isWindow: true,
 
@@ -294,13 +296,21 @@ Ext.define('Ext.window.Window', {
             });
         }
 
+        // Only set frame to true after the protoEl has been set up with the UI classes attached.
+        // Generated CSS classes for elements within Window's structure
+        // do not expect to use the "framed" UI.
+        me.frame = true;
+
         me.addStateEvents(['maximize', 'restore', 'resize', 'dragend']);
     },
 
     getElConfig: function () {
-        var config = this.callParent();
-        config.tabIndex = -1;
-        return config;
+        var me = this,
+            elConfig;
+
+        elConfig = me.callParent();
+        elConfig.tabIndex = -1;
+        return elConfig;
     },
 
     // State Management
@@ -407,7 +417,7 @@ Ext.define('Ext.window.Window', {
 
         /*
          * Check the header here again. If for whatever reason it wasn't created in
-         * updateHeader (preventHeader) then we'll just ignore the rest since the
+         * updateHeader (we were configured with header: false) then we'll just ignore the rest since the
          * header acts as the drag handle.
          */
         if (me.header) {

@@ -1,6 +1,5 @@
 /**
- * @class Ext.chart.axis.Radial
- * @ignore
+ * @private
  */
 Ext.define('Ext.chart.axis.Radial', {
 

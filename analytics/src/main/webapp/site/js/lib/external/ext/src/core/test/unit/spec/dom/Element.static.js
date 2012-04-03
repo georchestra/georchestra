@@ -121,6 +121,24 @@ describe("Ext.Element.static", function() {
         });
     });
     
+    describe("getXY", function(){
+        it("should return the x/y position", function(){
+            var myEl = Ext.getBody().createChild({
+                style: {
+                    width: '5px',
+                    height: '5px',
+                    left: '6px',
+                    top: '7px',
+                    position: 'absolute'
+                }
+            }), xy = myEl.getXY();
+            
+            expect(xy[0]).toBe(6);
+            expect(xy[1]).toBe(7);
+            myEl.remove();
+        });  
+    });
+    
     describe("getDocumentHeight", function() {
         it("should return the document height", function() {
             var result = proto.getDocumentHeight();

@@ -44,8 +44,9 @@ Ext.define('Ext.dd.Registry', {
             this.handles[data.ddel.id] = data;
         }
         if (data.handles) {
-            var hs = data.handles;
-            for (var i = 0, len = hs.length; i < len; i++) {
+            var hs = data.handles,
+                i, len;
+            for (i = 0, len = hs.length; i < len; i++) {
                 this.handles[this.getId(hs[i])] = data;
             }
         }
@@ -56,13 +57,14 @@ Ext.define('Ext.dd.Registry', {
      * @param {String/HTMLElement} element The id or DOM node to unregister
      */
     unregister : function(el){
-        var id = this.getId(el, false);
-        var data = this.elements[id];
+        var id = this.getId(el, false),
+            data = this.elements[id],
+            hs, i, len;
         if(data){
             delete this.elements[id];
             if(data.handles){
-                var hs = data.handles;
-                for (var i = 0, len = hs.length; i < len; i++) {
+                hs = data.handles;
+                for (i = 0, len = hs.length; i < len; i++) {
                     delete this.handles[this.getId(hs[i], false)];
                 }
             }

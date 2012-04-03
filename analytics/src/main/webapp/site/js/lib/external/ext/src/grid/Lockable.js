@@ -79,15 +79,16 @@ Ext.define('Ext.grid.Lockable', {
 
     determineXTypeToCreate: function() {
         var me = this,
-            typeToCreate;
+            typeToCreate,
+            xtypes, xtypesLn, xtype, superxtype;
 
         if (me.subGridXType) {
             typeToCreate = me.subGridXType;
         } else {
-            var xtypes     = this.getXTypes().split('/'),
-                xtypesLn   = xtypes.length,
-                xtype      = xtypes[xtypesLn - 1],
-                superxtype = xtypes[xtypesLn - 2];
+            xtypes     = this.getXTypes().split('/');
+            xtypesLn   = xtypes.length;
+            xtype      = xtypes[xtypesLn - 1];
+            superxtype = xtypes[xtypesLn - 2];
 
             if (superxtype !== 'tablepanel') {
                 typeToCreate = superxtype;
@@ -109,6 +110,8 @@ Ext.define('Ext.grid.Lockable', {
         this.hasView = true;
 
         var me = this,
+            // If the OS does not show a space-taking scrollbar, the locked view can be overflow:auto
+            scrollLocked = Ext.getScrollbarSize().width == 0,
             store = me.store = Ext.StoreManager.lookup(me.store),
             // xtype of this class, 'treepanel' or 'gridpanel'
             // (Note: this makes it a requirement that any subclass that wants to use lockable functionality needs to register an
@@ -122,7 +125,7 @@ Ext.define('Ext.grid.Lockable', {
                 scrollerOwner: false,
                 // Lockable does NOT support animations for Tree
                 enableAnimations: false,
-                scroll: false,
+                scroll: scrollLocked ? 'vertical' : false,
                 selModel: selModel,
                 border: false,
                 cls: Ext.baseCSSPrefix + 'grid-inner-locked',
@@ -147,7 +150,7 @@ Ext.define('Ext.grid.Lockable', {
             normalHeaderCt,
             lockedView,
             normalView;
-        
+
         me.addCls(Ext.baseCSSPrefix + 'grid-locked');
 
         // copy appropriate configurations to the respective
@@ -192,7 +195,7 @@ Ext.define('Ext.grid.Lockable', {
         lockedGrid.width = columns.lockedWidth + Ext.num(selModel.headerWidth, 0);
         lockedGrid.columns = columns.locked;
         normalGrid.columns = columns.normal;
-        
+
         // normal grid should flex the rest of the width
         normalGrid.flex = 1;
         lockedGrid.viewConfig = me.lockedViewConfig || {};
@@ -204,7 +207,7 @@ Ext.define('Ext.grid.Lockable', {
 
         me.normalGrid = Ext.ComponentManager.create(normalGrid);
         me.lockedGrid = Ext.ComponentManager.create(lockedGrid);
-        
+
         me.view = new Ext.grid.LockingView({
             locked: me.lockedGrid,
             normal: me.normalGrid,
@@ -214,20 +217,37 @@ Ext.define('Ext.grid.Lockable', {
         lockedView = me.lockedGrid.getView();
         normalView = me.normalGrid.getView();
 
-        // Synchronize the scrollTops of the two views
-        lockedView.on({
-            scroll: {
-                fn: me.onLockedViewScroll,
-                element: 'el',
-                scope: me
-            },
-            mousewheel: {
-                fn: me.onLockedViewMouseWheel,
-                element: 'el',
-                scope: me
-            }
-        });
-        normalView.on({
+        // Set up listeners for the locked view
+        // If the OS does not show a space-taking scrollbar, the locked view can be overflow:auto
+        // And therefore we can listen for the DOM scroll event on its element
+        if (scrollLocked) {
+            listeners = {
+                scroll: {
+                    fn: me.onLockedViewScroll,
+                    element: 'el',
+                    scope: me
+                }
+            };
+        }
+        // If there are scrollbars, we have to monitor the mousewheel and fake a scroll
+        else {
+            listeners = {
+                mousewheel: {
+                    fn: me.onLockedViewMouseWheel,
+                    element: 'el',
+                    scope: me
+                }
+            };
+        }
+        if (me.syncRowHeight) {
+            listeners.refresh = me.onLockedViewRefresh;
+            listeners.itemupdate = me.onLockedViewItemUpdate;
+            listeners.scope = me;
+        }
+        lockedView.on(listeners);
+
+        // Set up listeners for the normal view
+        listeners = {
             scroll: {
                 fn: me.onNormalViewScroll,
                 element: 'el',
@@ -236,21 +256,12 @@ Ext.define('Ext.grid.Lockable', {
             refresh: me.createSpacer,
             beforerefresh: me.destroySpacer,
             scope: me
-        });
-
+        };
         if (me.syncRowHeight) {
-            lockedView.on({
-                refresh: me.onLockedViewRefresh,
-                itemupdate: me.onLockedViewItemUpdate,
-                scope: me
-            });
-            
-            normalView.on({
-                refresh: me.onNormalViewRefresh,
-                itemupdate: me.onNormalViewItemUpdate,
-                scope: me
-            });
+            listeners.refresh = me.onNormalViewRefresh;
+            listeners.itemupdate = me.onNormalViewItemUpdate;
         }
+        normalView.on(listeners);
 
         lockedHeaderCt = me.lockedGrid.headerCt;
         normalHeaderCt = me.normalGrid.headerCt;
@@ -273,7 +284,7 @@ Ext.define('Ext.grid.Lockable', {
             sortchange: me.onNormalHeaderSortChange,
             scope: me
         });
-        
+
         me.modifyHeaderCt();
         me.items = [me.lockedGrid, me.normalGrid];
 
@@ -351,7 +362,17 @@ Ext.define('Ext.grid.Lockable', {
 
         if ((deltaY < 0 && verticalCanScrollUp) || (deltaY > 0 && verticalCanScrollDown)) {
             e.stopEvent();
+
+            // Inhibit processing of any scroll events we *may* cause here.
+            // Some OSs do not fire a scroll event when we set the scrollTop of an overflow:hidden element,
+            // so we invoke the scroll handler programatically below.
+            me.scrolling = true;
             vertScrollerEl.scrollTop += deltaY;
+            me.normalGrid.getView().el.dom.scrollTop = vertScrollerEl.scrollTop;
+            me.scrolling = false;
+
+            // Invoke the scroll event handler programatically to sync everything.
+            me.onNormalViewScroll();
         }
     },
 
@@ -362,13 +383,18 @@ Ext.define('Ext.grid.Lockable', {
             normalTable,
             lockedTable;
 
-        normalView.el.dom.scrollTop = lockedView.el.dom.scrollTop;
-
-        // For buffered views, the absolute position is important as well as scrollTop
-        if (me.store.buffered) {
-            lockedTable = lockedView.child('table', true);
-            normalTable = normalView.child('table', true);
-            normalTable.dom.style.top = lockedTable.dom.style.top;
+        // Set a flag so that the scroll even doesn't bounce back when we set the normal view's scroll position
+        if (!me.scrolling) {
+            me.scrolling = true;
+            normalView.el.dom.scrollTop = lockedView.el.dom.scrollTop;
+    
+            // For buffered views, the absolute position is important as well as scrollTop
+            if (me.store.buffered) {
+                lockedTable = lockedView.el.child('table', true);
+                normalTable = normalView.el.child('table', true);
+                lockedTable.style.position = 'absolute';
+            }
+            me.scrolling = false;
         }
     },
     
@@ -379,13 +405,19 @@ Ext.define('Ext.grid.Lockable', {
             normalTable,
             lockedTable;
 
-        lockedView.el.dom.scrollTop = normalView.el.dom.scrollTop;
-
-        // For buffered views, the absolute position is important as well as scrollTop
-        if (me.store.buffered) {
-            lockedTable = lockedView.child('table', true);
-            normalTable = normalView.child('table', true);
-            lockedTable.dom.style.top = normalTable.dom.style.top;
+        // Set a flag so that the scroll even doesn't bounce back when we set the locked view's scroll position
+        if (!me.scrolling) {
+            me.scrolling = true;
+            lockedView.el.dom.scrollTop = normalView.el.dom.scrollTop;
+    
+            // For buffered views, the absolute position is important as well as scrollTop
+            if (me.store.buffered) {
+                lockedTable = lockedView.el.child('table', true);
+                normalTable = normalView.el.child('table', true);
+                lockedTable.style.position = 'absolute';
+                lockedTable.style.top = normalTable.style.top;
+            }
+            me.scrolling = false;
         }
     },
 

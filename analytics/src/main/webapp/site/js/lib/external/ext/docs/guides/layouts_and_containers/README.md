@@ -55,13 +55,13 @@ In the above example we did not specify a layout for the Container {@link Ext.pa
                 xtype: 'panel',
                 title: 'Child Panel 1',
                 height: 100,
-                width: '50%'
+                columnWidth: 0.5
             },
             {
                 xtype: 'panel',
                 title: 'Child Panel 2',
                 height: 100,
-                width: '50%'
+                columnWidth: 0.5
             }
         ]
     });
@@ -89,13 +89,13 @@ A re-layout is triggered when the Container is {@link Ext.container.Container#se
         xtype: 'panel',
         title: 'Child Panel 1',
         height: 100,
-        width: '50%'
+        columnWidth: 0.5
     });
     containerPanel.add({
         xtype: 'panel',
         title: 'Child Panel 2',
         height: 100,
-        width: '50%'
+        columnWidth: 0.5
     });
     // Turn the suspendLayout flag off.
     containerPanel.suspendLayout = false;

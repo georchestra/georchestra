@@ -151,7 +151,7 @@ Ext.define('Ext.grid.plugin.CellEditing', {
         });
         this.editTask = new Ext.util.DelayedTask();
     },
-    
+
     onReconfigure: function(){
         this.editors.clear();
         this.callParent();    
@@ -206,6 +206,13 @@ Ext.define('Ext.grid.plugin.CellEditing', {
         // Also allows any post-edit events to take effect before continuing
         me.completeEdit();
 
+        // Focus the row if we disabled the View's row focusing at initialization time
+        if (me.doFocusing) {
+            Ext.view.Table.prototype.onCellFocus.call(me.view, {row: context.rowIdx, column: context.colIdx});
+        }
+        // cancel any delayed focus tasks on the view
+        me.grid.view.cancelFocus();
+
         record = context.record;
         columnHeader = context.column;
         value = record.get(columnHeader.dataIndex);
@@ -230,12 +237,6 @@ Ext.define('Ext.grid.plugin.CellEditing', {
             // Defer, so we have some time between view scroll to sync up the editor
             me.editTask.delay(15, ed.startEdit, ed, [me.getCell(record, columnHeader), value]);
             me.editing = true;
-        } else {
-            // BrowserBug: WebKit & IE refuse to focus the element, rather
-            // it will focus it and then immediately focus the body. This
-            // temporary hack works for Webkit and IE6. IE7 and 8 are still
-            // broken
-            me.grid.getView().getEl(columnHeader).focus((Ext.isWebKit || Ext.isIE) ? 10 : false);
         }
     },
 
@@ -326,13 +327,22 @@ Ext.define('Ext.grid.plugin.CellEditing', {
     },
 
     onSpecialKey: function(ed, field, e) {
-        var grid = this.grid,
+        var me = this,
+            grid = me.grid,
             sm;
+            
         if (e.getKey() === e.TAB) {
             e.stopEvent();
+            
+            if (ed) {
+                // Allow the field to act on tabs before onEditorTab, which ends
+                // up calling completeEdit. This is useful for picker type fields.
+                ed.onEditorTab(e);
+            }
+            
             sm = grid.getSelectionModel();
             if (sm.onEditorTab) {
-                sm.onEditorTab(this, e);
+                sm.onEditorTab(me, e);
             }
         }
     },

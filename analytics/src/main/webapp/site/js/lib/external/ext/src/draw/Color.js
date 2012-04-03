@@ -160,13 +160,17 @@ Ext.define('Ext.draw.Color', {
         if (color.substr(0, 1) === '#') {
             return color;
         }
-        var digits = this.colorToHexRe.exec(color);
+        var digits = this.colorToHexRe.exec(color),
+            red,
+            green,
+            blue,
+            rgb;
 
         if (Ext.isArray(digits)) {
-            var red = parseInt(digits[2], 10),
-                green = parseInt(digits[3], 10),
-                blue = parseInt(digits[4], 10),
-                rgb = blue | (green << 8) | (red << 16);
+            red = parseInt(digits[2], 10);
+            green = parseInt(digits[3], 10);
+            blue = parseInt(digits[4], 10);
+            rgb = blue | (green << 8) | (red << 16);
             return digits[1] + '#' + ("000000" + rgb.toString(16)).slice(-6);
         }
         else {

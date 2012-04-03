@@ -53,6 +53,7 @@ Ext.onReady(function(){
     // create the Data Store
     var store = Ext.create('Ext.data.Store', {
         id: 'store',
+        pageSize: 50000,
         // allow the grid to interact with the paging scroller by buffering
         buffered: true,
         // never purge any data, we prefetch all up front
@@ -62,8 +63,6 @@ Ext.onReady(function(){
             type: 'memory'
         }
     });
-
-
 
     var grid = Ext.create('Ext.grid.Panel', {
         width: 700,
@@ -120,9 +119,8 @@ Ext.onReady(function(){
     for (; i < ln; i++) {
         records.push(Ext.create('Employee', data[i]));
     }
-    store.cacheRecords(records);
 
+    // Load data as a single, 50000 record page, only render 50 rows.
+    store.cachePage(records, 1);
     store.guaranteeRange(0, 49);
 });
-
-

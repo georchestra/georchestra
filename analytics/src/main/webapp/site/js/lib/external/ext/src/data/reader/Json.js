@@ -252,25 +252,26 @@ Ext.define('Ext.data.reader.Json', {
 
     //inherit docs
     getResponseData: function(response) {
-        var data;
+        var data, error;
+ 
         try {
             data = Ext.decode(response.responseText);
-        }
-        catch (ex) {
-            Ext.Error.raise({
-                response: response,
-                json: response.responseText,
-                parseError: ex,
-                msg: 'Unable to parse the JSON returned by the server: ' + ex.toString()
+            return this.readRecords(data);
+        } catch (ex) {
+            error = new Ext.data.ResultSet({
+                total  : 0,
+                count  : 0,
+                records: [],
+                success: false,
+                message: ex.message
             });
-        }
-        //<debug>
-        if (!data) {
-            Ext.Error.raise('JSON object not found');
-        }
-        //</debug>
 
-        return data;
+            this.fireEvent('exception', this, response, error);
+
+            Ext.Logger.warn('Unable to parse the JSON returned by the server');
+
+            return error;
+        }
     },
 
     //inherit docs
@@ -325,7 +326,7 @@ Ext.define('Ext.data.reader.Json', {
      * 'some["property"]'
      * This is used by buildExtractors to create optimized extractor functions when casting raw data into model instances.
      */
-    createAccessor: function() {
+    createAccessor: (function() {
         var re = /[\[\.]/;
 
         return function(expr) {
@@ -345,7 +346,7 @@ Ext.define('Ext.data.reader.Json', {
                 return obj[expr];
             };
         };
-    }(),
+    }()),
 
     /**
      * @private
@@ -355,7 +356,7 @@ Ext.define('Ext.data.reader.Json', {
      * 'some["property"]'
      * This is used by buildExtractors to create optimized on extractor function which converts raw data into model instances.
      */
-    createFieldAccessExpression: function() {
+    createFieldAccessExpression: (function() {
         var re = /[\[\.]/;
 
         return function(field, fieldVarName, dataName) {
@@ -384,5 +385,5 @@ Ext.define('Ext.data.reader.Json', {
             }
             return result;
         };
-    }()
+    }())
 });

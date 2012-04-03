@@ -1,5 +1,8 @@
 Ext.define('KitchenSink.view.examples.Example', {
     extend: 'Ext.Container',
+    requires: [
+        'Ext.layout.container.VBox'
+    ],
     
     layout: {
         type: 'vbox',

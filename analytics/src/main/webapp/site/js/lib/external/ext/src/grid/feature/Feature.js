@@ -27,7 +27,7 @@ Ext.define('Ext.grid.feature.Feature', {
     
     /*
      * @property {Boolean} isFeature
-     * `true` in this class to identify an objact as an instantiated Feature, or subclass thereof.
+     * `true` in this class to identify an object as an instantiated Feature, or subclass thereof.
      */
     isFeature: true,
     

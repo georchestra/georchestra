@@ -35,8 +35,6 @@ Ext.define('Ext.layout.ContextItem', {
 
     boxParent: null,
 
-    cacheKey: null,
-
     children: [],
 
     dirty: null,
@@ -117,7 +115,6 @@ Ext.define('Ext.layout.ContextItem', {
 
         if (target.isComponent) {
             me.wrapsComponent = true;
-            me.cacheKey = target.$className + '|' + target.el.dom.className;
 
             me.sizeModel = sizeModel = target.getSizeModel(me.ownerCtContext && me.ownerCtContext.sizeModel);
             me.widthModel = sizeModel.width;
@@ -1218,7 +1215,7 @@ Ext.define('Ext.layout.ContextItem', {
         } else {
             height = Ext.Number.constrain(height, comp.minHeight || 0, comp.maxHeight);
             if (!me.setProp('height', height, dirty)) {
-                return NaN
+                return NaN;
             }
 
             frameBody = me.frameBodyContext;

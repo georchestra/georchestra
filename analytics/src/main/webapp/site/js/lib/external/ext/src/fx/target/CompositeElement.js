@@ -16,7 +16,7 @@ Ext.define('Ext.fx.target.CompositeElement', {
 
     /**
      * @property {Boolean} isComposite
-     * `true` in this class to identify an objact as an instantiated CompositeElement, or subclass thereof.
+     * `true` in this class to identify an object as an instantiated CompositeElement, or subclass thereof.
      */
     isComposite: true,
     
@@ -29,10 +29,11 @@ Ext.define('Ext.fx.target.CompositeElement', {
         var out      = [],
             elements = this.target.elements,
             length   = elements.length,
-            i;
+            i,
+            el;
 
         for (i = 0; i < length; i++) {
-            var el = elements[i];
+            el = elements[i];
 
             if (el) {
                 el = this.target.getElement(el);

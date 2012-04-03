@@ -4,9 +4,8 @@
 (function() {
 
 var Element = Ext.dom.Element,
-    view = document.defaultView;
-
-var adjustDirect2DTableRe = /table-row|table-.*-group/,
+    view = document.defaultView,
+    adjustDirect2DTableRe = /table-row|table-.*-group/,
     INTERNAL = '_internal',
     HIDDEN = 'hidden',
     HEIGHT = 'height',
@@ -16,7 +15,11 @@ var adjustDirect2DTableRe = /table-row|table-.*-group/,
     OVERFLOWX = 'overflow-x',
     OVERFLOWY = 'overflow-y',
     ORIGINALCLIP = 'originalClip',
-    DOCORBODYRE = /#document|body/i;
+    DOCORBODYRE = /#document|body/i,
+    // This reduces the lookup of 'me.styleHooks' by one hop in the prototype chain. It is
+    // the same object.
+    styleHooks,
+    edges, k, edge, borderWidth;
 
 if (!view || !view.getComputedStyle) {
     Element.prototype.getStyle = function (property, inline) {
@@ -350,7 +353,7 @@ Element.override({
             me.setStyle('opacity', opacity);
         }
         else {
-            if (!typeof (animate) == 'object') {
+            if (typeof animate != 'object') {
                 animate = {
                     duration: 350,
                     easing: 'ease-in'
@@ -386,6 +389,7 @@ Element.override({
             inlineDisplay = dom.style.display,
             inlinePosition = dom.style.position,
             originIndex = dimension === WIDTH ? 0 : 1,
+            currentStyle = dom.currentStyle,
             floating;
 
         if (display === 'inline') {
@@ -396,7 +400,10 @@ Element.override({
 
         // floating will contain digits that appears after the decimal point
         // if height or width are set to auto we fallback to msTransformOrigin calculation
-        floating = (parseFloat(me.getStyle(dimension)) || parseFloat(dom.currentStyle.msTransformOrigin.split(' ')[originIndex]) * 2) % 1;
+        
+        // Use currentStyle here instead of getStyle. In some difficult to reproduce 
+        // instances it resets the scrollWidth of the element
+        floating = (parseFloat(currentStyle[dimension]) || parseFloat(currentStyle.msTransformOrigin.split(' ')[originIndex]) * 2) % 1;
 
         dom.style.position = inlinePosition;
 
@@ -540,31 +547,48 @@ Element.override({
 
     /**
      * Sets up event handlers to add and remove a css class when the mouse is over this element
-     * @param {String} className
+     * @param {String} className The class to add
+     * @param {Function} [testFn] A test function to execute before adding the class. The passed parameter
+     * will be the Element instance. If this functions returns false, the class will not be added.
+     * @param {Object} [scope] The scope to execute the testFn in.
      * @return {Ext.dom.Element} this
      */
-    addClsOnOver : function(className) {
-        var dom = this.dom;
-        this.hover(
-                function() {
-                    Ext.fly(dom, INTERNAL).addCls(className);
-                },
-                function() {
-                    Ext.fly(dom, INTERNAL).removeCls(className);
+    addClsOnOver : function(className, testFn, scope) {
+        var me = this,
+            dom = me.dom,
+            hasTest = Ext.isFunction(testFn);
+            
+        me.hover(
+            function() {
+                if (hasTest && testFn.call(scope || me, me) === false) {
+                    return;
                 }
-                );
-        return this;
+                Ext.fly(dom, INTERNAL).addCls(className);
+            },
+            function() {
+                Ext.fly(dom, INTERNAL).removeCls(className);
+            }
+        );
+        return me;
     },
 
     /**
      * Sets up event handlers to add and remove a css class when this element has the focus
-     * @param {String} className
+     * @param {String} className The class to add
+     * @param {Function} [testFn] A test function to execute before adding the class. The passed parameter
+     * will be the Element instance. If this functions returns false, the class will not be added.
+     * @param {Object} [scope] The scope to execute the testFn in.
      * @return {Ext.dom.Element} this
      */
-    addClsOnFocus : function(className) {
+    addClsOnFocus : function(className, testFn, scope) {
         var me = this,
-                dom = me.dom;
+            dom = me.dom,
+            hasTest = Ext.isFunction(testFn);
+            
         me.on("focus", function() {
+            if (hasTest && testFn.call(scope || me, me) === false) {
+                return false;
+            }
             Ext.fly(dom, INTERNAL).addCls(className);
         });
         me.on("blur", function() {
@@ -575,12 +599,21 @@ Element.override({
 
     /**
      * Sets up event handlers to add and remove a css class when the mouse is down and then up on this element (a click effect)
-     * @param {String} className
+     * @param {String} className The class to add
+     * @param {Function} [testFn] A test function to execute before adding the class. The passed parameter
+     * will be the Element instance. If this functions returns false, the class will not be added.
+     * @param {Object} [scope] The scope to execute the testFn in.
      * @return {Ext.dom.Element} this
      */
-    addClsOnClick : function(className) {
-        var dom = this.dom;
-        this.on("mousedown", function() {
+    addClsOnClick : function(className, testFn, scope) {
+        var me = this,
+            dom = me.dom,
+            hasTest = Ext.isFunction(testFn);
+            
+        me.on("mousedown", function() {
+            if (hasTest && testFn.call(scope || me, me) === false) {
+                return false;
+            }
             Ext.fly(dom, INTERNAL).addCls(className);
             var d = Ext.getDoc(),
                 fn = function() {
@@ -589,7 +622,7 @@ Element.override({
                 };
             d.on("mouseup", fn);
         });
-        return this;
+        return me;
     },
 
     /**
@@ -671,17 +704,13 @@ Element.override({
     }
 });
 
-// This reduces the lookup of 'me.styleHooks' by one hop in the prototype chain. It is
-// the same object.
-var styleHooks;
-
 Element.prototype.styleHooks = styleHooks = Ext.dom.AbstractElement.prototype.styleHooks;
 
 if (Ext.isIE6) {
     styleHooks.fontSize = styleHooks['font-size'] = {
         name: 'fontSize',
         canThrow: true
-    }
+    };
 }
 
 // override getStyle for border-*-width
@@ -693,9 +722,8 @@ if (Ext.isIEQuirks || Ext.isIE && Ext.ieVersion <= 8) {
         return style[this.name];
     }
 
-    var edges = ['Top','Right','Bottom','Left'],
-        k = edges.length,
-        edge, borderWidth;
+    edges = ['Top','Right','Bottom','Left'];
+    k = edges.length;
 
     while (k--) {
         edge = edges[k];
@@ -709,7 +737,7 @@ if (Ext.isIEQuirks || Ext.isIE && Ext.ieVersion <= 8) {
     }
 }
 
-})();
+}());
 
 Ext.onReady(function () {
     var opacityRe = /alpha\(opacity=(.*)\)/i,

@@ -1,6 +1,9 @@
 Ext.define('KitchenSink.view.examples.grids.BasicGrid', {
     extend: 'KitchenSink.view.examples.Example',
-    requires: ['KitchenSink.store.Restaurants'],
+    requires: [
+        'Ext.grid.Panel',
+        'KitchenSink.store.Restaurants'
+    ],
     
     items: [
         {

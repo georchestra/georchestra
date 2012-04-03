@@ -1,6 +1,9 @@
 Ext.define('KitchenSink.view.examples.grids.LockedGrid', {
     extend: 'KitchenSink.view.examples.Example',
-    
+    requires: [
+        'Ext.grid.Panel'
+    ],
+
     items: [
         {
             xtype: 'grid',

@@ -78,13 +78,15 @@ Ext.define('Ext.PluginManager', {
      */
     findByType: function(type, defaultsOnly) {
         var matches = [],
-            types   = this.types;
+            types   = this.types,
+            name,
+            item;
 
-        for (var name in types) {
+        for (name in types) {
             if (!types.hasOwnProperty(name)) {
                 continue;
             }
-            var item = types[name];
+            item = types[name];
 
             if (item.type == type && (!defaultsOnly || (defaultsOnly === true && item.isDefault))) {
                 matches.push(item);

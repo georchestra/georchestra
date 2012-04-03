@@ -315,7 +315,7 @@
             display: inline; /*prevent IE6 double-margin bug*/
         }
         
-        .#{$prefix}quirks .#{$prefix}ie .#{$prefix}form-layout-tbody, #{$prefix}quirks .#{$prefix}ie .#{$prefix}form-layout-tbody tr.#{$prefix}form-item {
+        .#{$prefix}quirks .#{$prefix}ie .#{$prefix}form-layout-table, .#{$prefix}quirks .#{$prefix}ie .#{$prefix}form-layout-table tbody tr.#{$prefix}form-item {
             position: relative;
         }
     }

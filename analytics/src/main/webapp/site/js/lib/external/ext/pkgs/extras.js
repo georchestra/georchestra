@@ -5,7 +5,7 @@
  * http://www.json.org/js.html
  * @singleton
  */
-Ext.JSON = new(function() {
+Ext.JSON = (new(function() {
     var me = this,
     encodingFunction,
     decodingFunction,
@@ -31,6 +31,11 @@ Ext.JSON = new(function() {
             return Ext.JSON.encodeDate(o);
         } else if (Ext.isString(o)) {
             return encodeString(o);
+        } else if (typeof o == "number") {
+            //don't use isNumber here, since finite checks happen inside isNumber
+            return isFinite(o) ? String(o) : "null";
+        } else if (Ext.isBoolean(o)) {
+            return String(o);
         }
         // Allow custom zerialization by adding a toJSON method to any object type.
         // Date/String have a toJSON in some environments, so check these first.
@@ -38,11 +43,6 @@ Ext.JSON = new(function() {
             return o.toJSON();
         } else if (Ext.isArray(o)) {
             return encodeArray(o, newline);
-        } else if (typeof o == "number") {
-            //don't use isNumber here, since finite checks happen inside isNumber
-            return isFinite(o) ? String(o) : "null";
-        } else if (Ext.isBoolean(o)) {
-            return String(o);
         } else if (Ext.isObject(o)) {
             return encodeObject(o, newline);
         } else if (typeof o === "function") {
@@ -219,7 +219,7 @@ Ext.JSON = new(function() {
             });
         }
     };
-})();
+})());
 /**
  * Shorthand for {@link Ext.JSON#encode}
  * @member Ext
@@ -317,35 +317,35 @@ Ext.apply(Ext, {
      * Returns the current document body as an {@link Ext.Element}.
      * @return Ext.Element The document body
      */
-    getBody: function() {
+    getBody: (function() {
         var body;
         return function() {
             return body || (body = Ext.get(document.body));
         };
-    }(),
+    }()),
 
     /**
      * Returns the current document head as an {@link Ext.Element}.
      * @return Ext.Element The document head
      * @method
      */
-    getHead: function() {
+    getHead: (function() {
         var head;
         return function() {
             return head || (head = Ext.get(document.getElementsByTagName("head")[0]));
         };
-    }(),
+    }()),
 
     /**
      * Returns the current HTML document object as an {@link Ext.Element}.
      * @return Ext.Element The document
      */
-    getDoc: function() {
+    getDoc: (function() {
         var doc;
         return function() {
             return doc || (doc = Ext.get(document));
         };
-    }(),
+    }()),
 
     /**
      * This is shorthand reference to {@link Ext.ComponentManager#get}.
@@ -514,7 +514,8 @@ Opera 11.11 - Opera/9.80 (Windows NT 6.1; U; en) Presto/2.8.131 Version/11.11
         operaVersion = version(isOpera, /version\/(\d+\.\d+)/),
         safariVersion = version(isSafari, /version\/(\d+\.\d+)/),
         webKitVersion = version(isWebKit, /webkit\/(\d+\.\d+)/),
-        isSecure = /^https/i.test(window.location.protocol);
+        isSecure = /^https/i.test(window.location.protocol),
+        nullLog;
 
     // remove css image flicker
     try {
@@ -565,7 +566,9 @@ Opera 11.11 - Opera/9.80 (Windows NT 6.1; U; en) Presto/2.8.131 Version/11.11
             con = Ext.global.console,
             level = 'log',
             indent = log.indent || 0,
-            stack;
+            stack,
+            out,
+            max;
 
         log.indent = indent;
 
@@ -622,8 +625,8 @@ Opera 11.11 - Opera/9.80 (Windows NT 6.1; U; en) Presto/2.8.131 Version/11.11
             if (Ext.isOpera) {
                 opera.postError(message);
             } else {
-                var out = log.out,
-                    max = log.max;
+                out = log.out;
+                max = log.max;
 
                 if (out.length >= max) {
                     // this formula allows out.max to change (via debugger), where the
@@ -650,13 +653,13 @@ Opera 11.11 - Opera/9.80 (Windows NT 6.1; U; en) Presto/2.8.131 Version/11.11
 
     log.error = function () {
         logx('error', Array.prototype.slice.call(arguments));
-    }
+    };
     log.info = function () {
         logx('info', Array.prototype.slice.call(arguments));
-    }
+    };
     log.warn = function () {
         logx('warn', Array.prototype.slice.call(arguments));
-    }
+    };
 
     log.count = 0;
     log.counters = { error: 0, warn: 0, info: 0, log: 0 };
@@ -682,7 +685,7 @@ Opera 11.11 - Opera/9.80 (Windows NT 6.1; U; en) Presto/2.8.131 Version/11.11
     };
     //</debug>
 
-    var nullLog = function () {};
+    nullLog = function () {};
     nullLog.info = nullLog.warn = nullLog.error = Ext.emptyFn;
 
     Ext.setVersion('extjs', '4.1.0');
@@ -795,18 +798,21 @@ Opera 11.11 - Opera/9.80 (Windows NT 6.1; U; en) Presto/2.8.131 Version/11.11
          * @param {HTMLElement} node The node to remove
          * @method
          */
-        removeNode : isIE6 || isIE7 ? function() {
+        removeNode : isIE6 || isIE7 || isIE8 ? (function() {
             var d;
             return function(n){
                 if(n && n.tagName != 'BODY'){
                     (Ext.enableNestedListenerRemoval) ? Ext.EventManager.purgeElement(n) : Ext.EventManager.removeAll(n);
+                    if (isIE8 && n.parentNode) {
+                        n.parentNode.removeChild(n);
+                    }
                     d = d || document.createElement('div');
                     d.appendChild(n);
                     d.innerHTML = '';
                     delete Ext.cache[n.id];
                 }
             };
-        }() : function(n) {
+        }()) : function(n) {
             if (n && n.parentNode && n.tagName != 'BODY') {
                 (Ext.enableNestedListenerRemoval) ? Ext.EventManager.purgeElement(n) : Ext.EventManager.removeAll(n);
                 n.parentNode.removeChild(n);
@@ -1069,7 +1075,7 @@ Opera 11.11 - Opera/9.80 (Windows NT 6.1; U; en) Presto/2.8.131 Version/11.11
          * @deprecated 4.0.0 Use {@link Ext.String#escapeRegex} instead
          */
         escapeRe : function(s) {
-            return s.replace(/([-.*+?^${}()|[\]\/\\])/g, "\\$1");
+            return s.replace(/([-.*+?\^${}()|\[\]\/\\])/g, "\\$1");
         },
 
         /**
@@ -1081,7 +1087,7 @@ Opera 11.11 - Opera/9.80 (Windows NT 6.1; U; en) Presto/2.8.131 Version/11.11
          *         '#foo a@click' : function(e, t){
          *             // do something
          *         },
-         *      
+         *
          *         // add the same listener to multiple selectors (separated by comma BEFORE the @)
          *         '#foo a, #bar span.some-class@mouseover' : function(){
          *             // do something
@@ -1287,7 +1293,7 @@ Opera 11.11 - Opera/9.80 (Windows NT 6.1; U; en) Presto/2.8.131 Version/11.11
          */
         partition : function(arr, truth){
             var ret = [[],[]],
-            	a, v,
+                a, v,
                 aLen = arr.length;
 
             for (a = 0; a < aLen; a++) {
@@ -1361,14 +1367,17 @@ Opera 11.11 - Opera/9.80 (Windows NT 6.1; U; en) Presto/2.8.131 Version/11.11
                 arrs = parts[0],
                 fn = parts[1][0],
                 len = Ext.max(Ext.pluck(arrs, "length")),
-                ret = [];
+                ret = [],
+                i,
+                j,
+                aLen;
 
-            for (var i = 0; i < len; i++) {
+            for (i = 0; i < len; i++) {
                 ret[i] = [];
                 if(fn){
                     ret[i] = fn.apply(fn, Ext.pluck(arrs, i));
                 }else{
-                    for (var j = 0, aLen = arrs.length; j < aLen; j++){
+                    for (j = 0, aLen = arrs.length; j < aLen; j++){
                         ret[i].push( arrs[j][i] );
                     }
                 }
@@ -1378,10 +1387,10 @@ Opera 11.11 - Opera/9.80 (Windows NT 6.1; U; en) Presto/2.8.131 Version/11.11
 
         /**
          * Turns an array into a sentence, joined by a specified connector - e.g.:
-         * 
+         *
          *     Ext.toSentence(['Adama', 'Tigh', 'Roslin']); //'Adama, Tigh and Roslin'
          *     Ext.toSentence(['Adama', 'Tigh', 'Roslin'], 'or'); //'Adama, Tigh or Roslin'
-         * 
+         *
          * @param {String[]} items The array to create a sentence from
          * @param {String} connector The string to use to connect the last two words.
          * Usually 'and' or 'or' - defaults to 'and'.
@@ -1389,13 +1398,15 @@ Opera 11.11 - Opera/9.80 (Windows NT 6.1; U; en) Presto/2.8.131 Version/11.11
          * @deprecated 4.0.0 Will be removed in the next major version
          */
         toSentence: function(items, connector) {
-            var length = items.length;
+            var length = items.length,
+                head,
+                tail;
 
             if (length <= 1) {
                 return items[0];
             } else {
-                var head = items.slice(0, length - 1),
-                    tail = items[length - 1];
+                head = items.slice(0, length - 1);
+                tail = items[length - 1];
 
                 return Ext.util.Format.format("{0} {1} {2}", head.join(", "), connector || 'and', tail);
             }
@@ -1408,7 +1419,7 @@ Opera 11.11 - Opera/9.80 (Windows NT 6.1; U; en) Presto/2.8.131 Version/11.11
          */
         useShims: isIE6
     });
-})();
+}());
 
 /**
  * Loads Ext.app.Application class and starts it up with given configuration after the page is ready.
@@ -1564,7 +1575,14 @@ XTemplates can also directly use Ext.util.Format functions:
          * @param {Number} length The length of the substring
          * @return {String} The substring
          */
-        substr : function(value, start, length) {
+        substr : 'ab'.substr(-1) != 'b'
+        ? function (value, start, length) {
+            var str = String(value);
+            return (start < 0)
+                ? str.substr(Math.max(str.length + start, 0), length)
+                : str.substr(start, length);
+        }
+        : function(value, start, length) {
             return String(value).substr(start, length);
         },
 
@@ -1693,7 +1711,7 @@ XTemplates can also directly use Ext.util.Format functions:
          * @return {Function} A function that operates on the passed value.
          * @method
          */
-        math : function(){
+        math : (function(){
             var fns = {};
 
             return function(v, a){
@@ -1702,7 +1720,7 @@ XTemplates can also directly use Ext.util.Format functions:
                 }
                 return fns[a](v);
             };
-        }(),
+        }()),
 
         /**
          * Rounds the passed number to the required decimal precision.
@@ -1761,7 +1779,14 @@ XTemplates can also directly use Ext.util.Format functions:
                 i18n  = false,
                 neg   = v < 0,
                 hasComma,
-                psplit;
+                psplit,
+                fnum,
+                cnum,
+                parr,
+                j,
+                m,
+                n,
+                i;
 
             v = Math.abs(v);
 
@@ -1798,17 +1823,16 @@ XTemplates can also directly use Ext.util.Format functions:
                 v = Ext.Number.toFixed(v, 0);
             }
 
-            var fnum = v.toString();
+            fnum = v.toString();
 
             psplit = fnum.split('.');
 
             if (hasComma) {
-                var cnum = psplit[0],
-                    parr = [],
-                    j    = cnum.length,
-                    m    = Math.floor(j / 3),
-                    n    = cnum.length % 3 || 3,
-                    i;
+                cnum = psplit[0];
+                parr = [];
+                j = cnum.length;
+                m = Math.floor(j / 3);
+                n = cnum.length % 3 || 3;
 
                 for (i = 0; i < j; i += n) {
                     if (i !== 0) {
@@ -1928,7 +1952,7 @@ XTemplates can also directly use Ext.util.Format functions:
          * @return {Object} An object with margin sizes for top, right, bottom and left
          */
         parseBox : function(box) {
-        	box = Ext.isEmpty(box) ? '' : box;
+          box = Ext.isEmpty(box) ? '' : box;
             if (Ext.isNumber(box)) {
                 box = box.toString();
             }
@@ -1963,7 +1987,7 @@ XTemplates can also directly use Ext.util.Format functions:
             return s.replace(/([\-.*+?\^${}()|\[\]\/\\])/g, "\\$1");
         }
     });
-})();
+}());
 
 /**
  * Provides the ability to execute one or more arbitrary tasks in a asynchronous manner.
@@ -2093,6 +2117,9 @@ Ext.define('Ext.util.TaskRunner', {
      * 
      * If a particular scope (`this` reference) is required, be sure to specify it using
      * the `scope` argument.
+     * 
+     * @param {Function} task.onError The function to execute in case of unhandled
+     * error on task.run.
      *
      * @param {Boolean} task.run.return `false` from this function to terminate the task.
      *
@@ -2122,11 +2149,16 @@ Ext.define('Ext.util.TaskRunner', {
         }
 
         task.stopped = false; // might have been previously stopped...
-        task.taskRunTime = task.taskStartTime = now;
+        task.taskStartTime = now;
+        task.taskRunTime = task.fireOnStart !== false ? 0 : task.taskStartTime;
         task.taskRunCount = 0;
 
         if (!me.firing) {
-            me.startTimer(task.interval, now);
+            if (task.fireOnStart !== false) {
+                me.startTimer(0, now);
+            } else {
+                me.startTimer(task.interval, now);
+            }
         }
 
         return task;
@@ -2145,7 +2177,7 @@ Ext.define('Ext.util.TaskRunner', {
             task.stopped = true;
 
             if (task.onStop) {
-                task.onStop.call(task.scope || task);
+                task.onStop.call(task.scope || task, task);
             }
         }
 
@@ -2189,7 +2221,16 @@ Ext.define('Ext.util.TaskRunner', {
                 expires = task.taskRunTime + task.interval;
 
                 if (expires <= now) {
-                    rt = task.run.apply(task.scope || task, task.args || [++task.taskRunCount]);
+                    rt = 1; // otherwise we have a stale "rt"
+                    try {
+                        rt = task.run.apply(task.scope || task, task.args || [++task.taskRunCount]);
+                    } catch (taskError) {
+                        try {
+                            if (task.onError) {
+                                rt = task.onError.call(task.scope || task, task, taskError);
+                            }
+                        } catch (ignore) { }
+                    }
                     task.taskRunTime = now;
                     if (rt === false || task.taskRunCount === task.repeat) {
                         me.stop(task);
@@ -2318,6 +2359,11 @@ function () {
          */
         stopped: true, // this avoids the odd combination of !stopped && !pending
 
+        /**
+         * Override default behavior
+         */
+        fireOnStart: false,
+
         constructor: function (config) {
             Ext.apply(this, config);
         },
@@ -2365,7 +2411,7 @@ function () {
  * @class Ext.perf.Accumulator
  * @private
  */
-Ext.define('Ext.perf.Accumulator', function () {
+Ext.define('Ext.perf.Accumulator', (function () {
     var currentFrame = null,
         khrome = Ext.global['chrome'],
         formatTpl,
@@ -2375,20 +2421,22 @@ Ext.define('Ext.perf.Accumulator', function () {
 
             getTimestamp = function () {
                 return new Date().getTime();
-            }
+            };
+            
+            var interval, toolbox;
 
             // If Chrome is started with the --enable-benchmarking switch
             if (Ext.isChrome && khrome && khrome.Interval) {
-                var interval = new khrome.Interval();
+                interval = new khrome.Interval();
                 interval.start();
                 getTimestamp = function () {
                     return interval.microseconds() / 1000;
-                }
-            }
-            else if (window.ActiveXObject) {
+                };
+            } else if (window.ActiveXObject) {
                 try {
                     // the above technique is not very accurate for small intervals...
-                    var toolbox = new ActiveXObject('SenchaToolbox.Toolbox');
+                    toolbox = new ActiveXObject('SenchaToolbox.Toolbox');
+                    Ext.senchaToolbox = toolbox; // export for other uses
                     getTimestamp = function () {
                         return toolbox.milliseconds;
                     };
@@ -2432,7 +2480,7 @@ Ext.define('Ext.perf.Accumulator', function () {
             min: Number.MAX_VALUE,
             max: 0,
             sum: 0
-        }
+        };
     }
 
     function makeTap (me, fn) {
@@ -2564,9 +2612,10 @@ Ext.define('Ext.perf.Accumulator', function () {
         tap: function (className, methodName) {
             var me = this,
                 methods = typeof methodName == 'string' ? [methodName] : methodName,
-                klass, statik, i, parts, length, name, src;
+                klass, statik, i, parts, length, name, src,
+                tapFunc;
 
-            var tapFunc = function(){
+            tapFunc = function(){
                 if (typeof className == 'string') {
                     klass = Ext.global;
                     parts = className.split('.');
@@ -2597,7 +2646,7 @@ Ext.define('Ext.perf.Accumulator', function () {
             return me;
         }
     };
-}(),
+}()),
 
 function () {
     Ext.perf.getTimestamp = this.getTimestamp;
@@ -2666,17 +2715,18 @@ Ext.define('Ext.perf.Monitor', {
     report: function () {
         var me = this,
             accumulators = me.accumulators,
-            calibration = me.calibrate(),
-            report = ['Calibration: ' + Math.round(calibration * 100) / 100 + ' msec/sample'];
+            calibration = me.calibrate();
 
         accumulators.sort(function (a, b) {
             return (a.name < b.name) ? -1 : ((b.name < a.name) ? 1 : 0);
         });
 
+        me.updateGC();
+
+        Ext.log('Calibration: ' + Math.round(calibration * 100) / 100 + ' msec/sample');
         Ext.each(accumulators, function (accum) {
-            report.push(accum.format(calibration));
+            Ext.log(accum.format(calibration));
         });
-        Ext.log(report.join('\n'));
     },
 
     getData: function (all) {
@@ -2690,6 +2740,35 @@ Ext.define('Ext.perf.Monitor', {
         });
 
         return ret;
+    },
+
+    updateGC: function () {
+        var accumGC = this.accumulatorsByName.GC,
+            toolbox = Ext.senchaToolbox,
+            bucket;
+
+        if (accumGC) {
+            accumGC.count = toolbox.garbageCollectionCounter || 0;
+
+            if (accumGC.count) {
+                bucket = accumGC.pure;
+                accumGC.total.sum = bucket.sum = toolbox.garbageCollectionMilliseconds;
+                bucket.min = bucket.max = bucket.sum / accumGC.count;
+                bucket = accumGC.total;
+                bucket.min = bucket.max = bucket.sum / accumGC.count;
+            }
+        }
+    },
+
+    watchGC: function () {
+        Ext.perf.getTimestamp(); // initializes SenchaToolbox (if available)
+
+        var toolbox = Ext.senchaToolbox;
+
+        if (toolbox) {
+            this.get("GC");
+            toolbox.watchGarbageCollector(false); // no logging, just totals
+        }
     },
 
     setup: function (config) {
@@ -2751,12 +2830,12 @@ Ext.define('Ext.perf.Monitor', {
 
         this.currentConfig = config;
 
-        var key, prop;
+        var key, prop,
+            accum, className, methods;
         for (key in config) {
             if (config.hasOwnProperty(key)) {
                 prop = config[key];
-                var accum = Ext.Perf.get(key),
-                    className, methods;
+                accum = Ext.Perf.get(key);
 
                 for (className in prop) {
                     if (prop.hasOwnProperty(className)) {
@@ -2766,6 +2845,8 @@ Ext.define('Ext.perf.Monitor', {
                 }
             }
         }
+
+        this.watchGC();
     }
 });
 
@@ -2967,7 +3048,7 @@ Ext.supports = {
      * @property CSS3BoxShadow True if document environment supports the CSS3 box-shadow style.
      * @type {Boolean}
      */
-    CSS3BoxShadow: 'boxShadow' in document.documentElement.style,
+    CSS3BoxShadow: 'boxShadow' in document.documentElement.style || 'WebkitBoxShadow' in document.documentElement.style || 'MozBoxShadow' in document.documentElement.style,
 
     /**
      * @property ClassList True if document environment supports the HTML5 classList API.
@@ -2994,6 +3075,17 @@ Ext.supports = {
     // is.Desktop is needed due to the bug in Chrome 5.0.375, Safari 3.1.2
     // and Safari 4.0 (they all have 'ontouchstart' in the window object).
     Touch: ('ontouchstart' in window) && (!Ext.is.Desktop),
+    
+    /**
+     * @property TimeoutActualLateness True if the browser passes the "actualLateness" parameter to
+     * setTimeout. See: https://developer.mozilla.org/en/DOM/window.setTimeout
+     * @type {Boolean}
+     */
+    TimeoutActualLateness: (function(){
+        setTimeout(function(){
+            Ext.supports.TimeoutActualLateness = arguments.length !== 0;
+        }, 0);
+    })(), 
 
     tests: [
         /**

@@ -7,7 +7,7 @@ Ext.define('Ext.panel.Header', {
     alias: 'widget.header',
 
     /**
-     * @property {Boolean} isAction
+     * @property {Boolean} isHeader
      * `true` in this class to identify an objact as an instantiated Header, or subclass thereof.
      */
     isHeader       : true,
@@ -16,15 +16,21 @@ Ext.define('Ext.panel.Header', {
     weight         : -1,
     componentLayout: 'body',
 
+    /**
+     * @cfg {String} [titleAlign='left']
+     * May be `"left"`, `"right"` or `"center"`.
+     *
+     * The alignment of the title text within the available space between the icon and the tools.
+     */
+    titleAlign: 'left',
+
     childEls: [
         'body'
     ],
 
     renderTpl: [
-        '<div id="{id}-body" class="{baseCls}-body<tpl if="bodyCls"> {bodyCls}</tpl>',
-        '<tpl if="uiCls">',
-            '<tpl for="uiCls"> {parent.baseCls}-body-{parent.ui}-{.}</tpl>',
-        '</tpl>"',
+        '<div id="{id}-body" class="{baseCls}-body {bodyCls}',
+        '<tpl for="uiCls"> {parent.baseCls}-body-{parent.ui}-{.}"</tpl>',
         '<tpl if="bodyStyle"> style="{bodyStyle}"</tpl>>',
             '{%this.renderContainer(out,values)%}',
         '</div>'
@@ -150,6 +156,7 @@ Ext.define('Ext.panel.Header', {
                 noWrap    : true,
                 flex      : 1,
                 id        : me.id + '_hd',
+                style     : 'text-align:' + me.titleAlign,
                 cls       : me.baseCls + '-text-container',
                 renderTpl : me.getTpl('headingTpl'),
                 renderData: {
@@ -345,6 +352,7 @@ Ext.define('Ext.panel.Header', {
                     me.title = title;
                     me.titleCmp.textEl.update(me.title || '&#160;');
                 }
+                me.titleCmp.updateLayout();
             } else {
                 me.titleCmp.on({
                     render: function() {
@@ -453,7 +461,7 @@ Ext.define('Ext.panel.Header', {
     },
 
     /**
-     * @private
+     * @protected
      * Set up the `tools.<tool type>` link in the owning Panel.
      * Bind the tool to its owning Panel.
      * @param component

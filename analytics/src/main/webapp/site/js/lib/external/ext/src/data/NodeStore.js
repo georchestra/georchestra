@@ -1,7 +1,6 @@
 /**
- * @class Ext.data.NodeStore
  * Node Store
- * @ignore
+ * @private
  */
 Ext.define('Ext.data.NodeStore', {
     extend: 'Ext.data.Store',
@@ -84,7 +83,7 @@ Ext.define('Ext.data.NodeStore', {
             me.removeAll();
             if (me.rootVisible) {
                 me.add(node);
-            } else if (!node.isExpanded() && me.autoLoad !== false) {
+            } else if (!node.isExpanded() && me.treeStore.autoLoad !== false) {
                 node.expand();
             }
 

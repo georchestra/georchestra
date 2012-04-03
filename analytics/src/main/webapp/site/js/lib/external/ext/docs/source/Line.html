@@ -769,7 +769,9 @@ Ext.define('Ext.chart.series.Line', {
                         if (item) {
                             rendererAttributes = me.renderer(item, store.getAt(i), item._to, i, store);
                             item.setAttributes(Ext.apply(endMarkerStyle || {}, rendererAttributes || {}), true);
-                            item.show(true);
+                            if (!item.attr.hidden) {
+                                item.show(true);
+                            }
                         }
                     }
                 }

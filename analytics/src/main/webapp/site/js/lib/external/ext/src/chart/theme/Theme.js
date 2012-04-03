@@ -217,7 +217,7 @@ function() {
                     ans.push(seriesThemes[i].fill || seriesThemes[i].stroke);
                 }
                 return ans;
-            })();
+            }());
             for (i = 0, l = colors.length; i < l; i++) {
                 midColor = Ext.draw.Color.fromString(colors[i]);
                 if (midColor) {
@@ -249,5 +249,5 @@ function() {
         */
         Ext.apply(this, base);
     };
-})();
+}());
 });

@@ -208,7 +208,7 @@ Ext.define('Ext.ZIndexManager', {
                 viewSize = {
                     height: Math.max(document.body.scrollHeight, Ext.dom.Element.getDocumentHeight()),
                     width: Math.max(document.body.scrollWidth, document.documentElement.clientWidth)
-                }
+                };
             } else {
                 viewSize = maskTarget.getViewSize(true);
             }
@@ -473,9 +473,10 @@ Ext.define('Ext.ZIndexManager', {
     destroy: function() {
         var me   = this,
             list = me.list,
-            comp;
+            comp,
+            id;
 
-        for (var id in list) {
+        for (id in list) {
             if (list.hasOwnProperty(id)) {
                 comp = list[id];
 

@@ -361,24 +361,26 @@ Ext.define('Ext.tab.Panel', {
     initComponent: function() {
         var me = this,
             dockedItems = [].concat(me.dockedItems || []),
-            activeTab = me.activeTab || 0;
+            activeTab = me.activeTab || (me.activeTab = 0);
 
+        // Configure the layout with our deferredRender, and with our activeTeb
         me.layout = new Ext.layout.container.Card(Ext.apply({
             owner: me,
             deferredRender: me.deferredRender,
-            itemCls: me.itemCls
+            itemCls: me.itemCls,
+            activeItem: me.activeTab
         }, me.layout));
 
         /**
          * @property {Ext.tab.Bar} tabBar Internal reference to the docked TabBar
          */
-        me.tabBar = new Ext.tab.Bar(Ext.apply({}, me.tabBar, {
+        me.tabBar = new Ext.tab.Bar(Ext.apply({
             dock: me.tabPosition,
             plain: me.plain,
             border: me.border,
             cardLayout: me.layout,
             tabPanel: me
-        }));
+        }, me.tabBar));
 
         dockedItems.push(me.tabBar);
         me.dockedItems = dockedItems;
@@ -403,32 +405,13 @@ Ext.define('Ext.tab.Panel', {
              */
             'tabchange'
         );
+
         me.callParent(arguments);
 
-        //set the active tab
-        me.setActiveTab(activeTab);
-        // prevent initial tabchange
-        me.initialTabSet = true;
-        //set the active tab after initial layout
-        me.on('afterlayout', me.afterInitialLayout, me, {single: true});
+        // lastly we have to convert the numeric config into its component reference:
+        me.activeTab = me.getComponent(activeTab);
     },
-
-    /**
-     * @private
-     * We have to wait until after the initial layout to visually activate the activeTab (if set).
-     * The active tab has different margins than normal tabs, so if the initial layout happens with
-     * a tab active, its layout will be offset improperly due to the active margin style. Waiting
-     * until after the initial layout avoids this issue.
-     */
-    afterInitialLayout: function() {
-        var me = this,
-            card = me.getComponent(me.activeTab);
-
-        if (card) {
-            me.layout.setActiveItem(card);
-        }
-    },
-
+   
     /**
      * Makes the given card active. Makes it the visible card in the TabPanel's CardLayout and highlights the Tab.
      * @param {String/Number/Ext.Component} card The card to make active. Either an ID, index or the component itself.
@@ -451,8 +434,8 @@ Ext.define('Ext.tab.Panel', {
                 me.layout.setActiveItem(card);
             }
 
-            //previous will be undefined or this.activeTab at instantiation
-            if (me.initialTabSet && previous !== card) {
+            // previous will be undefined or this.activeTab at instantiation
+            if (previous !== card) {
                 me.fireEvent('tabchange', me, card, previous);
             }
         }
@@ -476,7 +459,7 @@ Ext.define('Ext.tab.Panel', {
     },
 
     /**
-     * @ignore
+     * @protected
      * Makes sure we have a Tab for each item added to the TabPanel
      */
     onAdd: function(item, index) {
@@ -494,7 +477,17 @@ Ext.define('Ext.tab.Panel', {
             };
 
         cfg = Ext.applyIf(cfg, defaultConfig);
+
         item.tab = me.tabBar.insert(index, cfg);
+
+        // Initial adding of the child items during construction.
+        // Ensure that the tab for the configured active tab is rendered active
+        if (!me.rendered && item === me.getComponent(me.activeTab)) {
+            item.tab.activate(true);
+
+            // So that it knows what to deactivate in subsequent tab changes 
+            me.tabBar.activeTab = item.tab;
+        }
 
         item.on({
             scope : me,
@@ -508,9 +501,12 @@ Ext.define('Ext.tab.Panel', {
 
         if (item.isPanel) {
             if (me.removePanelHeader) {
-                item.preventHeader = true;
                 if (item.rendered) {
-                    item.updateHeader();
+                    if (item.header) {
+                        item.header.hide();
+                    }
+                } else {
+                    item.header = false;
                 }
             }
             if (item.isPanel && me.border) {
@@ -552,7 +548,6 @@ Ext.define('Ext.tab.Panel', {
      */
     onItemIconChange: function(item, newIcon) {
         item.tab.setIcon(newIcon);
-        this.getTabBar().updateLayout();
     },
     
     /**
@@ -561,7 +556,6 @@ Ext.define('Ext.tab.Panel', {
      */
     onItemIconClsChange: function(item, newIconCls) {
         item.tab.setIconCls(newIconCls);
-        this.getTabBar().updateLayout();
     },
 
     /**
@@ -570,29 +564,30 @@ Ext.define('Ext.tab.Panel', {
      */
     onItemTitleChange: function(item, newTitle) {
         item.tab.setText(newTitle);
-        this.getTabBar().updateLayout();
     },
 
-
     /**
-     * @ignore
+     * @private
+     * Unlink the removed child item from its (@link Ext.tab.Tab Tab}.
+     * 
      * If we're removing the currently active tab, activate the nearest one. The item is removed when we call super,
      * so we can do preprocessing before then to find the card's index
      */
     doRemove: function(item, autoDestroy) {
         var me = this,
-            items = me.items,
-            // At this point the item hasn't been removed from the items collection.
-            // As such, if we want to check if there are no more tabs left, we have to
-            // check for one, as opposed to 0.
-            hasItemsLeft = items.getCount() > 1;
+            toActivate;
 
-        if (me.destroying || !hasItemsLeft) {
+        // Destroying, or removing the last item, nothing to activate
+        if (me.destroying || me.items.getCount() == 1) {
             me.activeTab = null;
-        } else if (item === me.activeTab) {
-             me.setActiveTab(item.next() || items.getAt(0));
         }
-        me.callParent(arguments);
+
+        // Ask the TabBar which tab to activate next.
+        // Set the active child panel using the index of that tab
+        else if ((toActivate = me.tabBar.items.indexOf(me.tabBar.findNextActivatable(item.tab))) !== -1) {
+             me.setActiveTab(toActivate);
+        }
+        this.callParent(arguments);
 
         // Remove the two references
         delete item.tab.card;
@@ -600,7 +595,7 @@ Ext.define('Ext.tab.Panel', {
     },
 
     /**
-     * @ignore
+     * @private
      * Makes sure we remove the corresponding Tab when an item is removed
      */
     onRemove: function(item, destroying) {
@@ -612,7 +607,7 @@ Ext.define('Ext.tab.Panel', {
             disable: me.onItemDisable,
             beforeshow: me.onItemBeforeShow
         });
-        if (!me.destroying && item.tab.ownerCt == me.tabBar) {
+        if (!me.destroying && item.tab.ownerCt === me.tabBar) {
             me.tabBar.remove(item.tab);
         }
     }

@@ -99,23 +99,23 @@ Ext.define('Ext.util.Renderable', {
     frameTpl: [
         '{%this.renderDockedItems(out,values,0);%}',
         '&lt;tpl if=&quot;top&quot;&gt;',
-            '&lt;tpl if=&quot;left&quot;&gt;&lt;div id=&quot;{fgid}TL&quot; class=&quot;{frameCls}-tl {baseCls}-tl {baseCls}-{ui}-tl&lt;tpl if=&quot;uiCls&quot;&gt;&lt;tpl for=&quot;uiCls&quot;&gt; {parent.baseCls}-{parent.ui}-{.}-tl&lt;/tpl&gt;&lt;/tpl&gt;&quot; style=&quot;background-position: {tl}; padding-left: {frameWidth}px&quot; role=&quot;presentation&quot;&gt;&lt;/tpl&gt;',
-                '&lt;tpl if=&quot;right&quot;&gt;&lt;div id=&quot;{fgid}TR&quot; class=&quot;{frameCls}-tr {baseCls}-tr {baseCls}-{ui}-tr&lt;tpl if=&quot;uiCls&quot;&gt;&lt;tpl for=&quot;uiCls&quot;&gt; {parent.baseCls}-{parent.ui}-{.}-tr&lt;/tpl&gt;&lt;/tpl&gt;&quot; style=&quot;background-position: {tr}; padding-right: {frameWidth}px&quot; role=&quot;presentation&quot;&gt;&lt;/tpl&gt;',
-                    '&lt;div id=&quot;{fgid}TC&quot; class=&quot;{frameCls}-tc {baseCls}-tc {baseCls}-{ui}-tc&lt;tpl if=&quot;uiCls&quot;&gt;&lt;tpl for=&quot;uiCls&quot;&gt; {parent.baseCls}-{parent.ui}-{.}-tc&lt;/tpl&gt;&lt;/tpl&gt;&quot; style=&quot;background-position: {tc}; height: {frameWidth}px&quot; role=&quot;presentation&quot;&gt;&lt;/div&gt;',
+            '&lt;tpl if=&quot;left&quot;&gt;&lt;div id=&quot;{fgid}TL&quot; class=&quot;{frameCls}-tl {baseCls}-tl {baseCls}-{ui}-tl&lt;tpl for=&quot;uiCls&quot;&gt; {parent.baseCls}-{parent.ui}-{.}-tl&lt;/tpl&gt;&quot; style=&quot;background-position: {tl}; padding-left: {frameWidth}px&quot; role=&quot;presentation&quot;&gt;&lt;/tpl&gt;',
+                '&lt;tpl if=&quot;right&quot;&gt;&lt;div id=&quot;{fgid}TR&quot; class=&quot;{frameCls}-tr {baseCls}-tr {baseCls}-{ui}-tr&lt;tpl for=&quot;uiCls&quot;&gt; {parent.baseCls}-{parent.ui}-{.}-tr&lt;/tpl&gt;&quot; style=&quot;background-position: {tr}; padding-right: {frameWidth}px&quot; role=&quot;presentation&quot;&gt;&lt;/tpl&gt;',
+                    '&lt;div id=&quot;{fgid}TC&quot; class=&quot;{frameCls}-tc {baseCls}-tc {baseCls}-{ui}-tc&lt;tpl for=&quot;uiCls&quot;&gt; {parent.baseCls}-{parent.ui}-{.}-tc&lt;/tpl&gt;&quot; style=&quot;background-position: {tc}; height: {frameWidth}px&quot; role=&quot;presentation&quot;&gt;&lt;/div&gt;',
                 '&lt;tpl if=&quot;right&quot;&gt;&lt;/div&gt;&lt;/tpl&gt;',
             '&lt;tpl if=&quot;left&quot;&gt;&lt;/div&gt;&lt;/tpl&gt;',
         '&lt;/tpl&gt;',
-        '&lt;tpl if=&quot;left&quot;&gt;&lt;div id=&quot;{fgid}ML&quot; class=&quot;{frameCls}-ml {baseCls}-ml {baseCls}-{ui}-ml&lt;tpl if=&quot;uiCls&quot;&gt;&lt;tpl for=&quot;uiCls&quot;&gt; {parent.baseCls}-{parent.ui}-{.}-ml&lt;/tpl&gt;&lt;/tpl&gt;&quot; style=&quot;background-position: {ml}; padding-left: {frameWidth}px&quot; role=&quot;presentation&quot;&gt;&lt;/tpl&gt;',
-            '&lt;tpl if=&quot;right&quot;&gt;&lt;div id=&quot;{fgid}MR&quot; class=&quot;{frameCls}-mr {baseCls}-mr {baseCls}-{ui}-mr&lt;tpl if=&quot;uiCls&quot;&gt;&lt;tpl for=&quot;uiCls&quot;&gt; {parent.baseCls}-{parent.ui}-{.}-mr&lt;/tpl&gt;&lt;/tpl&gt;&quot; style=&quot;background-position: {mr}; padding-right: {frameWidth}px&quot; role=&quot;presentation&quot;&gt;&lt;/tpl&gt;',
-                '&lt;div id=&quot;{fgid}MC&quot; class=&quot;{frameCls}-mc {baseCls}-mc {baseCls}-{ui}-mc&lt;tpl if=&quot;uiCls&quot;&gt;&lt;tpl for=&quot;uiCls&quot;&gt; {parent.baseCls}-{parent.ui}-{.}-mc&lt;/tpl&gt;&lt;/tpl&gt;&quot; role=&quot;presentation&quot;&gt;',
+        '&lt;tpl if=&quot;left&quot;&gt;&lt;div id=&quot;{fgid}ML&quot; class=&quot;{frameCls}-ml {baseCls}-ml {baseCls}-{ui}-ml&lt;tpl for=&quot;uiCls&quot;&gt; {parent.baseCls}-{parent.ui}-{.}-ml&lt;/tpl&gt;&quot; style=&quot;background-position: {ml}; padding-left: {frameWidth}px&quot; role=&quot;presentation&quot;&gt;&lt;/tpl&gt;',
+            '&lt;tpl if=&quot;right&quot;&gt;&lt;div id=&quot;{fgid}MR&quot; class=&quot;{frameCls}-mr {baseCls}-mr {baseCls}-{ui}-mr&lt;tpl for=&quot;uiCls&quot;&gt; {parent.baseCls}-{parent.ui}-{.}-mr&lt;/tpl&gt;&quot; style=&quot;background-position: {mr}; padding-right: {frameWidth}px&quot; role=&quot;presentation&quot;&gt;&lt;/tpl&gt;',
+                '&lt;div id=&quot;{fgid}MC&quot; class=&quot;{frameCls}-mc {baseCls}-mc {baseCls}-{ui}-mc&lt;tpl for=&quot;uiCls&quot;&gt; {parent.baseCls}-{parent.ui}-{.}-mc&lt;/tpl&gt;&quot; role=&quot;presentation&quot;&gt;',
                     '{%this.applyRenderTpl(out, values)%}',
                 '&lt;/div&gt;',
             '&lt;tpl if=&quot;right&quot;&gt;&lt;/div&gt;&lt;/tpl&gt;',
         '&lt;tpl if=&quot;left&quot;&gt;&lt;/div&gt;&lt;/tpl&gt;',
         '&lt;tpl if=&quot;bottom&quot;&gt;',
-            '&lt;tpl if=&quot;left&quot;&gt;&lt;div id=&quot;{fgid}BL&quot; class=&quot;{frameCls}-bl {baseCls}-bl {baseCls}-{ui}-bl&lt;tpl if=&quot;uiCls&quot;&gt;&lt;tpl for=&quot;uiCls&quot;&gt; {parent.baseCls}-{parent.ui}-{.}-bl&lt;/tpl&gt;&lt;/tpl&gt;&quot; style=&quot;background-position: {bl}; padding-left: {frameWidth}px&quot; role=&quot;presentation&quot;&gt;&lt;/tpl&gt;',
-                '&lt;tpl if=&quot;right&quot;&gt;&lt;div id=&quot;{fgid}BR&quot; class=&quot;{frameCls}-br {baseCls}-br {baseCls}-{ui}-br&lt;tpl if=&quot;uiCls&quot;&gt;&lt;tpl for=&quot;uiCls&quot;&gt; {parent.baseCls}-{parent.ui}-{.}-br&lt;/tpl&gt;&lt;/tpl&gt;&quot; style=&quot;background-position: {br}; padding-right: {frameWidth}px&quot; role=&quot;presentation&quot;&gt;&lt;/tpl&gt;',
-                    '&lt;div id=&quot;{fgid}BC&quot; class=&quot;{frameCls}-bc {baseCls}-bc {baseCls}-{ui}-bc&lt;tpl if=&quot;uiCls&quot;&gt;&lt;tpl for=&quot;uiCls&quot;&gt; {parent.baseCls}-{parent.ui}-{.}-bc&lt;/tpl&gt;&lt;/tpl&gt;&quot; style=&quot;background-position: {bc}; height: {frameWidth}px&quot; role=&quot;presentation&quot;&gt;&lt;/div&gt;',
+            '&lt;tpl if=&quot;left&quot;&gt;&lt;div id=&quot;{fgid}BL&quot; class=&quot;{frameCls}-bl {baseCls}-bl {baseCls}-{ui}-bl&lt;tpl for=&quot;uiCls&quot;&gt; {parent.baseCls}-{parent.ui}-{.}-bl&lt;/tpl&gt;&quot; style=&quot;background-position: {bl}; padding-left: {frameWidth}px&quot; role=&quot;presentation&quot;&gt;&lt;/tpl&gt;',
+                '&lt;tpl if=&quot;right&quot;&gt;&lt;div id=&quot;{fgid}BR&quot; class=&quot;{frameCls}-br {baseCls}-br {baseCls}-{ui}-br&lt;tpl for=&quot;uiCls&quot;&gt; {parent.baseCls}-{parent.ui}-{.}-br&lt;/tpl&gt;&quot; style=&quot;background-position: {br}; padding-right: {frameWidth}px&quot; role=&quot;presentation&quot;&gt;&lt;/tpl&gt;',
+                    '&lt;div id=&quot;{fgid}BC&quot; class=&quot;{frameCls}-bc {baseCls}-bc {baseCls}-{ui}-bc&lt;tpl for=&quot;uiCls&quot;&gt; {parent.baseCls}-{parent.ui}-{.}-bc&lt;/tpl&gt;&quot; style=&quot;background-position: {bc}; height: {frameWidth}px&quot; role=&quot;presentation&quot;&gt;&lt;/div&gt;',
                 '&lt;tpl if=&quot;right&quot;&gt;&lt;/div&gt;&lt;/tpl&gt;',
             '&lt;tpl if=&quot;left&quot;&gt;&lt;/div&gt;&lt;/tpl&gt;',
         '&lt;/tpl&gt;',
@@ -127,23 +127,23 @@ Ext.define('Ext.util.Renderable', {
         '&lt;table&gt;&lt;tbody&gt;',
             '&lt;tpl if=&quot;top&quot;&gt;',
                 '&lt;tr&gt;',
-                    '&lt;tpl if=&quot;left&quot;&gt;&lt;td id=&quot;{fgid}TL&quot; class=&quot;{frameCls}-tl {baseCls}-tl {baseCls}-{ui}-tl&lt;tpl if=&quot;uiCls&quot;&gt;&lt;tpl for=&quot;uiCls&quot;&gt; {parent.baseCls}-{parent.ui}-{.}-tl&lt;/tpl&gt;&lt;/tpl&gt;&quot; style=&quot;background-position: {tl}; padding-left:{frameWidth}px&quot; role=&quot;presentation&quot;&gt;&lt;/td&gt;&lt;/tpl&gt;',
-                    '&lt;td id=&quot;{fgid}TC&quot; class=&quot;{frameCls}-tc {baseCls}-tc {baseCls}-{ui}-tc&lt;tpl if=&quot;uiCls&quot;&gt;&lt;tpl for=&quot;uiCls&quot;&gt; {parent.baseCls}-{parent.ui}-{.}-tc&lt;/tpl&gt;&lt;/tpl&gt;&quot; style=&quot;background-position: {tc}; height: {frameWidth}px&quot; role=&quot;presentation&quot;&gt;&lt;/td&gt;',
-                    '&lt;tpl if=&quot;right&quot;&gt;&lt;td id=&quot;{fgid}TR&quot; class=&quot;{frameCls}-tr {baseCls}-tr {baseCls}-{ui}-tr&lt;tpl if=&quot;uiCls&quot;&gt;&lt;tpl for=&quot;uiCls&quot;&gt; {parent.baseCls}-{parent.ui}-{.}-tr&lt;/tpl&gt;&lt;/tpl&gt;&quot; style=&quot;background-position: {tr}; padding-left: {frameWidth}px&quot; role=&quot;presentation&quot;&gt;&lt;/td&gt;&lt;/tpl&gt;',
+                    '&lt;tpl if=&quot;left&quot;&gt;&lt;td id=&quot;{fgid}TL&quot; class=&quot;{frameCls}-tl {baseCls}-tl {baseCls}-{ui}-tl&lt;tpl for=&quot;uiCls&quot;&gt; {parent.baseCls}-{parent.ui}-{.}-tl&lt;/tpl&gt;&quot; style=&quot;background-position: {tl}; padding-left:{frameWidth}px&quot; role=&quot;presentation&quot;&gt;&lt;/td&gt;&lt;/tpl&gt;',
+                    '&lt;td id=&quot;{fgid}TC&quot; class=&quot;{frameCls}-tc {baseCls}-tc {baseCls}-{ui}-tc&lt;tpl for=&quot;uiCls&quot;&gt; {parent.baseCls}-{parent.ui}-{.}-tc&lt;/tpl&gt;&quot; style=&quot;background-position: {tc}; height: {frameWidth}px&quot; role=&quot;presentation&quot;&gt;&lt;/td&gt;',
+                    '&lt;tpl if=&quot;right&quot;&gt;&lt;td id=&quot;{fgid}TR&quot; class=&quot;{frameCls}-tr {baseCls}-tr {baseCls}-{ui}-tr&lt;tpl for=&quot;uiCls&quot;&gt; {parent.baseCls}-{parent.ui}-{.}-tr&lt;/tpl&gt;&quot; style=&quot;background-position: {tr}; padding-left: {frameWidth}px&quot; role=&quot;presentation&quot;&gt;&lt;/td&gt;&lt;/tpl&gt;',
                 '&lt;/tr&gt;',
             '&lt;/tpl&gt;',
             '&lt;tr&gt;',
-                '&lt;tpl if=&quot;left&quot;&gt;&lt;td id=&quot;{fgid}ML&quot; class=&quot;{frameCls}-ml {baseCls}-ml {baseCls}-{ui}-ml&lt;tpl if=&quot;uiCls&quot;&gt;&lt;tpl for=&quot;uiCls&quot;&gt; {parent.baseCls}-{parent.ui}-{.}-ml&lt;/tpl&gt;&lt;/tpl&gt;&quot; style=&quot;background-position: {ml}; padding-left: {frameWidth}px&quot; role=&quot;presentation&quot;&gt;&lt;/td&gt;&lt;/tpl&gt;',
-                '&lt;td id=&quot;{fgid}MC&quot; class=&quot;{frameCls}-mc {baseCls}-mc {baseCls}-{ui}-mc&lt;tpl if=&quot;uiCls&quot;&gt;&lt;tpl for=&quot;uiCls&quot;&gt; {parent.baseCls}-{parent.ui}-{.}-mc&lt;/tpl&gt;&lt;/tpl&gt;&quot; style=&quot;background-position: 0 0;&quot; role=&quot;presentation&quot;&gt;',
+                '&lt;tpl if=&quot;left&quot;&gt;&lt;td id=&quot;{fgid}ML&quot; class=&quot;{frameCls}-ml {baseCls}-ml {baseCls}-{ui}-ml&lt;tpl for=&quot;uiCls&quot;&gt; {parent.baseCls}-{parent.ui}-{.}-ml&lt;/tpl&gt;&quot; style=&quot;background-position: {ml}; padding-left: {frameWidth}px&quot; role=&quot;presentation&quot;&gt;&lt;/td&gt;&lt;/tpl&gt;',
+                '&lt;td id=&quot;{fgid}MC&quot; class=&quot;{frameCls}-mc {baseCls}-mc {baseCls}-{ui}-mc&lt;tpl for=&quot;uiCls&quot;&gt; {parent.baseCls}-{parent.ui}-{.}-mc&lt;/tpl&gt;&quot; style=&quot;background-position: 0 0;&quot; role=&quot;presentation&quot;&gt;',
                     '{%this.applyRenderTpl(out, values)%}',
                 '&lt;/td&gt;',
-                '&lt;tpl if=&quot;right&quot;&gt;&lt;td id=&quot;{fgid}MR&quot; class=&quot;{frameCls}-mr {baseCls}-mr {baseCls}-{ui}-mr&lt;tpl if=&quot;uiCls&quot;&gt;&lt;tpl for=&quot;uiCls&quot;&gt; {parent.baseCls}-{parent.ui}-{.}-mr&lt;/tpl&gt;&lt;/tpl&gt;&quot; style=&quot;background-position: {mr}; padding-left: {frameWidth}px&quot; role=&quot;presentation&quot;&gt;&lt;/td&gt;&lt;/tpl&gt;',
+                '&lt;tpl if=&quot;right&quot;&gt;&lt;td id=&quot;{fgid}MR&quot; class=&quot;{frameCls}-mr {baseCls}-mr {baseCls}-{ui}-mr&lt;tpl for=&quot;uiCls&quot;&gt; {parent.baseCls}-{parent.ui}-{.}-mr&lt;/tpl&gt;&quot; style=&quot;background-position: {mr}; padding-left: {frameWidth}px&quot; role=&quot;presentation&quot;&gt;&lt;/td&gt;&lt;/tpl&gt;',
             '&lt;/tr&gt;',
             '&lt;tpl if=&quot;bottom&quot;&gt;',
                 '&lt;tr&gt;',
-                    '&lt;tpl if=&quot;left&quot;&gt;&lt;td id=&quot;{fgid}BL&quot; class=&quot;{frameCls}-bl {baseCls}-bl {baseCls}-{ui}-bl&lt;tpl if=&quot;uiCls&quot;&gt;&lt;tpl for=&quot;uiCls&quot;&gt; {parent.baseCls}-{parent.ui}-{.}-bl&lt;/tpl&gt;&lt;/tpl&gt;&quot; style=&quot;background-position: {bl}; padding-left: {frameWidth}px&quot; role=&quot;presentation&quot;&gt;&lt;/td&gt;&lt;/tpl&gt;',
-                    '&lt;td id=&quot;{fgid}BC&quot; class=&quot;{frameCls}-bc {baseCls}-bc {baseCls}-{ui}-bc&lt;tpl if=&quot;uiCls&quot;&gt;&lt;tpl for=&quot;uiCls&quot;&gt; {parent.baseCls}-{parent.ui}-{.}-bc&lt;/tpl&gt;&lt;/tpl&gt;&quot; style=&quot;background-position: {bc}; height: {frameWidth}px&quot; role=&quot;presentation&quot;&gt;&lt;/td&gt;',
-                    '&lt;tpl if=&quot;right&quot;&gt;&lt;td id=&quot;{fgid}BR&quot; class=&quot;{frameCls}-br {baseCls}-br {baseCls}-{ui}-br&lt;tpl if=&quot;uiCls&quot;&gt;&lt;tpl for=&quot;uiCls&quot;&gt; {parent.baseCls}-{parent.ui}-{.}-br&lt;/tpl&gt;&lt;/tpl&gt;&quot; style=&quot;background-position: {br}; padding-left: {frameWidth}px&quot; role=&quot;presentation&quot;&gt;&lt;/td&gt;&lt;/tpl&gt;',
+                    '&lt;tpl if=&quot;left&quot;&gt;&lt;td id=&quot;{fgid}BL&quot; class=&quot;{frameCls}-bl {baseCls}-bl {baseCls}-{ui}-bl&lt;tpl for=&quot;uiCls&quot;&gt; {parent.baseCls}-{parent.ui}-{.}-bl&lt;/tpl&gt;&quot; style=&quot;background-position: {bl}; padding-left: {frameWidth}px&quot; role=&quot;presentation&quot;&gt;&lt;/td&gt;&lt;/tpl&gt;',
+                    '&lt;td id=&quot;{fgid}BC&quot; class=&quot;{frameCls}-bc {baseCls}-bc {baseCls}-{ui}-bc&lt;tpl for=&quot;uiCls&quot;&gt; {parent.baseCls}-{parent.ui}-{.}-bc&lt;/tpl&gt;&quot; style=&quot;background-position: {bc}; height: {frameWidth}px&quot; role=&quot;presentation&quot;&gt;&lt;/td&gt;',
+                    '&lt;tpl if=&quot;right&quot;&gt;&lt;td id=&quot;{fgid}BR&quot; class=&quot;{frameCls}-br {baseCls}-br {baseCls}-{ui}-br&lt;tpl for=&quot;uiCls&quot;&gt; {parent.baseCls}-{parent.ui}-{.}-br&lt;/tpl&gt;&quot; style=&quot;background-position: {br}; padding-left: {frameWidth}px&quot; role=&quot;presentation&quot;&gt;&lt;/td&gt;&lt;/tpl&gt;',
                 '&lt;/tr&gt;',
             '&lt;/tpl&gt;',
         '&lt;/tbody&gt;&lt;/table&gt;',
@@ -199,7 +199,7 @@ Ext.define('Ext.util.Renderable', {
         }
     },
 
-    afterFirstLayout : function() {
+    afterFirstLayout : function(width, height) {
         var me = this,
             hasX = Ext.isDefined(me.x),
             hasY = Ext.isDefined(me.y),
@@ -223,12 +223,12 @@ Ext.define('Ext.util.Renderable', {
         if (hasX || hasY) {
             me.setPosition(me.x, me.y);
         }
-        me.onBoxReady();
+        me.onBoxReady(width, height);
         if (me.hasListeners.boxready) {
-            me.fireEvent('boxready', me);
+            me.fireEvent('boxready', me, width, height);
         }
     },
-    
+
     onBoxReady: Ext.emptyFn,
 
 <span id='Ext-util-Renderable-method-applyRenderSelectors'>    /**
@@ -473,7 +473,8 @@ Ext.define('Ext.util.Renderable', {
                 tag: 'div',
                 id: me.id,
                 tpl: frameInfo ? me.initFramingTpl(frameInfo.table) : me.initRenderTpl()
-            };
+            },
+            i, frameElNames, len, suffix, frameGenId;
 
         me.initStyles(me.protoEl);
         me.protoEl.writeTo(config);
@@ -488,11 +489,9 @@ Ext.define('Ext.util.Renderable', {
         if (config.tpl) {
             // Use the framingTpl as the main content creating template. It will call out to this.applyRenderTpl(out, values)
             if (frameInfo) {
-                var i,
-                    frameElNames = me.frameElNames,
-                    len = frameElNames.length,
-                    suffix,
-                    frameGenId = me.id + '-frame1';
+                frameElNames = me.frameElNames;
+                len = frameElNames.length;
+                frameGenId = me.id + '-frame1';
 
                 me.frameGenId = 1;
                 config.tplData = Ext.apply({}, {
@@ -798,7 +797,7 @@ Ext.define('Ext.util.Renderable', {
 </span>     * @private
      */
     initFrame : function() {
-        if (Ext.supports.CSS3BorderRadius) {
+        if (Ext.supports.CSS3BorderRadius || !this.frame) {
             return;
         }
 
@@ -851,7 +850,7 @@ Ext.define('Ext.util.Renderable', {
     },
 
     updateFrame: function() {
-        if (Ext.supports.CSS3BorderRadius) {
+        if (Ext.supports.CSS3BorderRadius || !this.frame) {
             return;
         }
 
@@ -898,10 +897,6 @@ Ext.define('Ext.util.Renderable', {
                     }
                 }
             }
-            else {
-                // We were framed but not anymore. Move all content from the old frame to the body
-
-            }
         }
         else if (me.frame) {
             this.applyRenderSelectors();
@@ -918,7 +913,7 @@ Ext.define('Ext.util.Renderable', {
     getFrameInfo: function() {
         // If native framing can be used, or this Component is not configured (or written) to be framed,
         // then do not attempt to read CSS framing info.
-        if (Ext.supports.CSS3BorderRadius) {
+        if (Ext.supports.CSS3BorderRadius || !this.frame) {
             return false;
         }
 

@@ -79,7 +79,6 @@ Ext.define('Ext.grid.RowEditor', {
             me.setField(me.fields);
             delete me.fields;
         }
-        me.hasFields = true;
 
         form = me.getForm();
         form.trackResetOnLoad = true;
@@ -205,8 +204,8 @@ Ext.define('Ext.grid.RowEditor', {
 
     onColumnShow: function(column) {
         var field = column.getEditor();
+        field.setWidth(column.getWidth() - 2).show();
         if (this.isVisible()) {
-            field.setWidth(column.getWidth() - 2).show();
             this.reposition();
         }
     },
@@ -346,7 +345,9 @@ Ext.define('Ext.grid.RowEditor', {
                 if (animateConfig && animateConfig.callback) {
                     animateConfig.callback.call(animateConfig.scope || me);
                 }
-            };
+            },
+            
+            animObj;
 
         // need to set both top/left
         if (row && Ext.isElement(row.dom)) {
@@ -368,7 +369,7 @@ Ext.define('Ext.grid.RowEditor', {
             }
 
             if (animateConfig) {
-                var animObj = {
+                animObj = {
                     to: {
                         y: y
                     },
@@ -461,7 +462,7 @@ Ext.define('Ext.grid.RowEditor', {
         me.columns.add(field.id, column);
         if (column.hidden) {
             me.onColumnHide(column);
-        } else if (me.hasFields) {
+        } else if (column.rendered) {
             // Setting after initial render
             me.onColumnShow(column);
         }

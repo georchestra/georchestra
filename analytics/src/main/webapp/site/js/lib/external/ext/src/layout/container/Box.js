@@ -80,9 +80,9 @@ Ext.define('Ext.layout.container.Box', {
     /**
      * @cfg {Number} flex
      * This configuration option is to be applied to **child items** of the container managed by this layout. Each child
-     * item with a flex property will be flexed **horizontally** according to each item's **relative** flex value
-     * compared to the sum of all items with a flex value specified. Any child items that have either a flex = 0 or flex
-     * = undefined will not be 'flexed' (the initial size will not be changed).
+     * item with a flex property will be flexed (horizontally in `hbox`, vertically in `vbox`) according to each item's
+     * **relative** flex value compared to the sum of all items with a flex value specified. Any child items that have
+     * either a `flex = 0` or `flex = undefined` will not be 'flexed' (the initial size will not be changed).
      */
     flex: undefined,
     
@@ -116,30 +116,19 @@ Ext.define('Ext.layout.container.Box', {
     ],
 
     renderTpl: [
-        '{%this.renderOverflowPrefix(out, values)%}',
-        '<div id="{ownerId}-innerCt" class="{[values.$layout.innerCls]} {[values.$layout.overflowHandler.getOverflowCls()]}" role="presentation">',
+        '{%var oc,l=values.$comp.layout,oh=l.overflowHandler;',
+        'if (oh.getPrefixConfig!==Ext.emptyFn) {',
+            'if(oc=oh.getPrefixConfig())dh.generateMarkup(oc, out)',
+        '}%}',
+        '<div id="{ownerId}-innerCt" class="{[l.innerCls]} {[oh.getOverflowCls()]}" role="presentation">',
             '{%this.renderBody(out, values)%}',
         '</div>',
-        '{%this.renderOverflowSuffix(out, values)%}',
+        '{%if (oh.getSuffixConfig!==Ext.emptyFn) {',
+            'if(oc=oh.getSuffixConfig())dh.generateMarkup(oc, out)',
+        '}%}',
         {
-            // Output the "before" scroller's markup into the output stream
-            renderOverflowPrefix: function(out, values) {
-                var overflowPrefixConfig = values.$comp.layout.overflowHandler.getPrefixConfig();
-
-                if (overflowPrefixConfig) {
-                    Ext.DomHelper.generateMarkup(overflowPrefixConfig, out);
-                }
-            },
-
-            // Output the "after" scroller's markup into the output stream
-            renderOverflowSuffix: function(out, values) {
-                var overflowSuffixConfig = values.$comp.layout.overflowHandler.getSuffixConfig();
-
-                if (overflowSuffixConfig) {
-                    Ext.DomHelper.generateMarkup(overflowSuffixConfig, out);
-                }
-            },
-            disableFormats: true
+            disableFormats: true,
+            definitions: 'var dh=Ext.DomHelper;'
         }
     ],
 
@@ -264,14 +253,18 @@ Ext.define('Ext.layout.container.Box', {
         // Capture whether the owning Container is scrolling in the parallel direction
         plan.scrollParallel = (me.owner.autoScroll || me.owner['overflow' + names.x.toUpperCase()]);
 
-        // If we *are* scrolling parallel, capture the scroll position
+        // If we *are* scrolling parallel, capture the scroll position of the encapsulating element
         if (plan.scrollParallel) {
             state.scrollPos = me.owner.getTargetEl().dom['scroll' + names.leftCap];
         }
 
-        // don't allow sizes burned on to the innerCt to influence measurements:
-        style.width = '';
-        style.height = '';
+        // If we need to preserve the parallel scroll pos of the innerCt, capture it here.
+        if (me.preserveParallel) {
+            state.innerCtScrollPos = me.innerCt.dom['scroll' + names.leftCap];
+        }
+
+        // Don't allow sizes burned on to the innerCt to influence measurements.
+        style.width = style.height = '';
 
         me.cacheFlexes(ownerContext);
     },
@@ -711,6 +704,17 @@ Ext.define('Ext.layout.container.Box', {
             me.owner.getTargetEl().dom['scroll' + me.getNames().leftCap] = state.scrollPos;
         }
 
+    },
+
+    finishedLayout: function(ownerContext) {
+        var me = this,
+            startScrollPos = ownerContext.state.innerCtScrollPos;
+
+        // If we need to preserve the parallel scroll pos of the innerCt, and it was non-zero, restore it here.
+        if (me.preserveParallel && startScrollPos) {
+            me.innerCt.dom['scroll' + me.getNames().leftCap] = startScrollPos;
+        }
+        me.callParent(arguments);
     },
 
     onInvalidateChild: function (options, childContext) {

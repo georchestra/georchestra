@@ -445,7 +445,7 @@ Ext.define('Ext.selection.RowModel', {
 
         do {
             position  = view.walkCells(position, direction, e, me.preventWrap);
-        } while(position && !view.headerCt.getHeaderAtIndex(position.column).getEditor())
+        } while(position && !view.headerCt.getHeaderAtIndex(position.column).getEditor());
 
         if (position) {
             editingPlugin.startEditByPosition(position);
@@ -498,7 +498,7 @@ Ext.define('Ext.selection.RowModel', {
             success = false;
         } else {
             me.doSelect(index, keepExisting, suppressEvent);
-            success = true
+            success = true;
         }
         return success;
     }

@@ -1,5 +1,11 @@
 Ext.define('KitchenSink.view.examples.trees.BasicTree', {
     extend: 'KitchenSink.view.examples.Example',
+    requires: [
+        'Ext.tree.Panel',
+        'Ext.layout.container.HBox',
+        'Ext.layout.container.VBox',
+        'KitchenSink.store.TreeStore'
+    ],
 
     layout: {
         type: 'vbox',

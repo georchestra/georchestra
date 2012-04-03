@@ -34,15 +34,13 @@
 Ext.define('Ext.data.proxy.Proxy', {
     alias: 'proxy.proxy',
     alternateClassName: ['Ext.data.DataProxy', 'Ext.data.Proxy'],
-    requires: [
-        'Ext.data.reader.Json',
-        'Ext.data.writer.Json'
-    ],
+
     uses: [
         'Ext.data.Batch',
         'Ext.data.Operation',
         'Ext.data.Model'
     ],
+
     mixins: {
         observable: 'Ext.util.Observable'
     },
@@ -94,7 +92,7 @@ Ext.define('Ext.data.proxy.Proxy', {
 
     /**
      * @property {Boolean} isProxy
-     * `true` in this class to identify an objact as an instantiated Proxy, or subclass thereof.
+     * `true` in this class to identify an object as an instantiated Proxy, or subclass thereof.
      */
     isProxy: true,
 
@@ -346,7 +344,8 @@ Ext.define('Ext.data.proxy.Proxy', {
         var me = this,
             useBatch = me.batchActions,
             batch,
-            records;
+            records,
+            actions, aLen, action, a, r, rLen, record;
 
         if (options.operations === undefined) {
             // the old-style (operations, listeners) signature was called
@@ -354,7 +353,7 @@ Ext.define('Ext.data.proxy.Proxy', {
             options = {
                 operations: options,
                 listeners: listeners
-            }
+            };
         }
 
         if (options.batch) {
@@ -377,9 +376,8 @@ Ext.define('Ext.data.proxy.Proxy', {
 
         batch.on('complete', Ext.bind(me.onBatchComplete, me, [options], 0));
 
-        var actions = me.batchOrder.split(','),
-            aLen    = actions.length,
-            action, a, r, rLen, record;
+        actions = me.batchOrder.split(',');
+        aLen    = actions.length;
 
         for (a = 0; a < aLen; a++) {
             action  = actions[a];

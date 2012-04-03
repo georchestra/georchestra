@@ -102,23 +102,23 @@ Ext.define('Ext.form.RadioGroup', {
      */
     setValue: function(value) {
         var cbValue, first, formId, radios,
-            r, rLen, name;
+            i, len, name;
 
         if (Ext.isObject(value)) {
             for (name in value) {
                 if (value.hasOwnProperty(name)) {
                     cbValue = value[name];
-                    first  = this.items.first();
+                    first = this.items.first();
                     formId = first ? first.getFormId() : null;
-                    radios = Ext.form.RadioManager.getWithValue(name, cbValue, formId);
-                    rLen   = radios.length;
+                    radios = Ext.form.RadioManager.getWithValue(name, cbValue, formId).items;
+                    len = radios.length;
 
-                    for (r = 0; r < rLen; r++) {
-                        radios[r].setValue(true);
+                    for (i = 0; i < len; ++i) {
+                        radios[i].setValue(true);
                     }
                 }
             }
         }
-        return me;
+        return this;
     }
 });

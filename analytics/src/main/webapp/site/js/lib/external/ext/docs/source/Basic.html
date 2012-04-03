@@ -39,6 +39,7 @@
  *
  * ## Example usage:
  *
+ *     @example
  *     Ext.create('Ext.form.Panel', {
  *         title: 'Basic Form',
  *         renderTo: Ext.getBody(),
@@ -52,6 +53,7 @@
  *         url: 'save-form.php',
  *
  *         items: [{
+ *             xtype: 'textfield',
  *             fieldLabel: 'Field',
  *             name: 'theField'
  *         }],
@@ -68,7 +70,7 @@
  *                            Ext.Msg.alert('Success', action.result.msg);
  *                         },
  *                         failure: function(form, action) {
- *                             Ext.Msg.alert('Failed', action.result.msg);
+ *                             Ext.Msg.alert('Failed', action.result ? action.result.msg : 'No response');
  *                         }
  *                     });
  *                 }
@@ -442,13 +444,12 @@ Ext.define('Ext.form.Basic', {
      * @param {Boolean} valid
      */
     onValidityChange: function(valid) {
-        var boundItems = this.getBoundItems();
+        var boundItems = this.getBoundItems(),
+            items, i, iLen, cmp;
 
         if (boundItems) {
-            var items = boundItems.items,
-                i,
-                iLen  = items.length,
-                cmp;
+            items = boundItems.items;
+            iLen  = items.length;
 
             for (i = 0; i &lt; iLen; i++) {
                 cmp = items[i];
@@ -655,19 +656,26 @@ Ext.define('Ext.form.Basic', {
 
 <span id='Ext-form-Basic-method-updateRecord'>    /**
 </span>     * Persists the values in this form into the passed {@link Ext.data.Model} object in a beginEdit/endEdit block.
-     * @param {Ext.data.Model} record The record to edit
+     * If the record is not specified, it will attempt to update (if it exists) the record provided to loadRecord.
+     * @param {Ext.data.Model} [record] The record to edit
      * @return {Ext.form.Basic} this
      */
     updateRecord: function(record) {
+        record = record || this._record;
+        //&lt;debug&gt;
+        if (!record) {
+            Ext.Error.raise(&quot;A record is required.&quot;);
+        }
+        //&lt;/debug&gt;
         var fields = record.fields.items,
             values = this.getFieldValues(),
-            obj    = {},
-            f,
-            fLen   = fields.length,
+            obj = {},
+            i = 0,
+            len = fields.length,
             name;
 
-        for (f = 0; f &lt; fLen; f++) {
-            name  = fields[f].name;
+        for (; i &lt; len; ++i) {
+            name  = fields[i].name;
 
             if (values.hasOwnProperty(name)) {
                 obj[name] = values[name];
@@ -790,7 +798,8 @@ Ext.define('Ext.form.Basic', {
      */
     markInvalid: function(errors) {
         var me = this,
-            e, eLen, error, value;
+            e, eLen, error, value,
+            key;
 
         function mark(fieldId, msg) {
             var field = me.findField(fieldId);
@@ -809,12 +818,12 @@ Ext.define('Ext.form.Basic', {
         } else if (errors instanceof Ext.data.Errors) {
             eLen  = errors.items.length;
             for (e = 0; e &lt; eLen; e++) {
-                error = items[e];
+                error = errors.items[e];
 
                 mark(error.field, error.message);
             }
         } else {
-            for (var key in errors) {
+            for (key in errors) {
                 if (errors.hasOwnProperty(key)) {
                     value = errors[key];
                     mark(key, value, errors);

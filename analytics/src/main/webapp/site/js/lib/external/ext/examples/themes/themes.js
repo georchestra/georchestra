@@ -1041,11 +1041,11 @@ Ext.onReady(function() {
     } else {
         setTimeout(function () {
             var a = document.createElement('a');
-            a.innerHTML = 'Perf Console';
+            a.innerHTML = 'Page Analyzer';
             a.style.position = "absolute";
             a.style.left = "5px";
             a.style.top = "5px";
-            a.href = 'javascript:void(window.open("../perf/perf-console.html","perfcon"))';
+            a.href = 'javascript:void(window.open("../page-analyzer/page-analyzer.html","pageAn"))';
             document.body.appendChild(a);
 
             useDeferRender = hasOption('defer');

@@ -136,7 +136,7 @@ Ext.define('Ext.util.Observable', {
 
     /**
      * @property {Boolean} isObservable
-     * `true` in this class to identify an objact as an instantiated Observable, or subclass thereof.
+     * `true` in this class to identify an object as an instantiated Observable, or subclass thereof.
      */
     isObservable: true,
 
@@ -150,7 +150,7 @@ Ext.define('Ext.util.Observable', {
         // if (!me.hasListeners.beforerender || me.fireEvent('beforerender', me) !== false) { //code... }
         // Bubbling the events counts as one listener.
         // The subclass may have already initialized it.
-        me.hasListeners = me.hasListeners || {};
+        me.hasListeners = me.hasListeners || new me.HasListeners();
 
         me.events = me.events || {};
         if (me.listeners) {
@@ -161,7 +161,6 @@ Ext.define('Ext.util.Observable', {
         if (me.bubbleEvents) {
             me.enableBubble(me.bubbleEvents);
         }
-
     },
 
     // @private
@@ -259,13 +258,15 @@ Ext.define('Ext.util.Observable', {
         eventName = eventName.toLowerCase();
         var me = this,
             events = me.events,
-            event = events && events[eventName];
+            event = events && events[eventName],
+            ret = true;
 
         // Only continue firing the event if there are listeners to be informed.
         // Bubbled events will always have a listener count, so will be fired.
         if (event && me.hasListeners[eventName]) {
-            return me.continueFireEvent(eventName, Ext.Array.slice(arguments, 1), event.bubble);
+            ret = me.continueFireEvent(eventName, Ext.Array.slice(arguments, 1), event.bubble);
         }
+        return ret;
     },
 
     /**
@@ -748,7 +749,17 @@ Ext.define('Ext.util.Observable', {
     }
 }, function() {
 
-    this.createAlias({
+    var Observable = this,
+        proto = Observable.prototype,
+        HasListeners = function () {};
+
+    HasListeners.prototype = {
+        //$$: 42  // to make sure we have a proper prototype
+    };
+
+    proto.HasListeners = Observable.HasListeners = HasListeners;
+
+    Observable.createAlias({
         /**
          * @method
          * Shorthand for {@link #addListener}.
@@ -776,9 +787,9 @@ Ext.define('Ext.util.Observable', {
     });
 
     //deprecated, will be removed in 5.0
-    this.observeClass = this.observe;
+    Observable.observeClass = Observable.observe;
 
-    Ext.apply(Ext.util.Observable.prototype, function(){
+    Ext.apply(proto, (function(){
         // this is considered experimental (along with beforeMethod, afterMethod, removeMethodListener?)
         // allows for easier interceptor and sequences, including cancelling and overwriting the return value of the call
         // private
@@ -787,7 +798,8 @@ Ext.define('Ext.util.Observable', {
                 returnValue,
                 v,
                 cancel,
-                obj = this;
+                obj = this,
+                makeCall;
 
             if (!e) {
                 this.methodEvents[method] = e = {};
@@ -796,7 +808,7 @@ Ext.define('Ext.util.Observable', {
                 e.before = [];
                 e.after = [];
 
-                var makeCall = function(fn, scope, args){
+                makeCall = function(fn, scope, args){
                     if((v = fn.apply(scope || obj, args)) !== undefined){
                         if (typeof v == 'object') {
                             if(v.returnValue !== undefined){
@@ -891,5 +903,5 @@ Ext.define('Ext.util.Observable', {
                 });
             }
         };
-    }());
+    }()));
 });

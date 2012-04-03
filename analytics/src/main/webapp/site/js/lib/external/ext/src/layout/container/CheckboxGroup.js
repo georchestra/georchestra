@@ -96,6 +96,9 @@ Ext.define('Ext.layout.container.CheckboxGroup', {
                 me.innerCt.dom.style.tableLayout = 'auto';
                 me.innerCt.dom.style.width = 'auto';
             }
+        } else {
+            me.innerCt.dom.style.tableLayout = 'auto';
+            me.innerCt.dom.style.width = '';
         }
     },
 
@@ -117,19 +120,20 @@ Ext.define('Ext.layout.container.CheckboxGroup', {
      * to make available to them. Then we can measure our height.
      */
     calculate: function(ownerContext) {
-        var me = this;
+        var me = this,
+            targetContext, widthShrinkWrap, heightShrinkWrap, shrinkWrap, table, targetPadding;
 
         // The columnEls are widthed using their own width attributes, we just need to wait
         // for all children to have arranged themselves in that width, and then collect our height.
         if (!ownerContext.getDomProp('containerChildrenDone')) {
             me.done = false;
         } else {
-            var targetContext = ownerContext.innerCtContext,
-                widthShrinkWrap = ownerContext.widthModel.shrinkWrap,
-                heightShrinkWrap = ownerContext.heightModel.shrinkWrap,
-                shrinkWrap = heightShrinkWrap || widthShrinkWrap,
-                table = targetContext.el.dom,
-                targetPadding = shrinkWrap && targetContext.getPaddingInfo();
+            targetContext = ownerContext.innerCtContext;
+            widthShrinkWrap = ownerContext.widthModel.shrinkWrap;
+            heightShrinkWrap = ownerContext.heightModel.shrinkWrap;
+            shrinkWrap = heightShrinkWrap || widthShrinkWrap;
+            table = targetContext.el.dom;
+            targetPadding = shrinkWrap && targetContext.getPaddingInfo();
 
             if (widthShrinkWrap) {
                 ownerContext.setContentWidth(table.offsetWidth + targetPadding.width, true);

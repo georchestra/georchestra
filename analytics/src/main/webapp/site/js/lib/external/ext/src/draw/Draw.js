@@ -64,7 +64,7 @@ Ext.define('Ext.draw.Draw', {
             return Ext.String.format("M{0},{1}l{2},0a{3},{3},0,0,1,{3},{3}l0,{5}a{3},{3},0,0,1,{4},{3}l{6},0a{3},{3},0,0,1,{4},{4}l0,{7}a{3},{3},0,0,1,{3},{4}z", attr.x + attr.radius, attr.y, attr.width - attr.radius * 2, attr.radius, -attr.radius, attr.height - attr.radius * 2, attr.radius * 2 - attr.width, attr.radius * 2 - attr.height);
         }
         else {
-            return Ext.String.format("M{0},{1}l{2},0,0,{3},{4},0z", attr.x, attr.y, attr.width, attr.height, -attr.width);
+            return Ext.String.format("M{0},{1}L{2},{1},{2},{3},{0},{3}z", attr.x, attr.y, attr.width + attr.x, attr.height + attr.y);
         }
     },
 
@@ -251,7 +251,17 @@ Ext.define('Ext.draw.Draw', {
             y = 0,
             mx = 0,
             my = 0,
-            start = 0;
+            start = 0,
+            r,
+            pa,
+            i,
+            j,
+            k,
+            len,
+            ii,
+            jj,
+            kk;
+        
         if (pathArray[0][0] == "M") {
             x = pathArray[0][1];
             y = pathArray[0][2];
@@ -260,9 +270,9 @@ Ext.define('Ext.draw.Draw', {
             start++;
             res.push(["M", x, y]);
         }
-        for (var i = start, ii = pathArray.length; i < ii; i++) {
-            var r = res[i] = [],
-                pa = pathArray[i];
+        for (i = start, ii = pathArray.length; i < ii; i++) {
+            r = res[i] = [];
+            pa = pathArray[i];
             if (pa[0] != pa[0].toLowerCase()) {
                 r[0] = pa[0].toLowerCase();
                 switch (r[0]) {
@@ -282,7 +292,7 @@ Ext.define('Ext.draw.Draw', {
                         mx = pa[1];
                         my = pa[2];
                     default:
-                        for (var j = 1, jj = pa.length; j < jj; j++) {
+                        for (j = 1, jj = pa.length; j < jj; j++) {
                             r[j] = +(pa[j] - ((j % 2) ? x : y)).toFixed(3);
                         }
                 }
@@ -292,11 +302,11 @@ Ext.define('Ext.draw.Draw', {
                     mx = pa[1] + x;
                     my = pa[2] + y;
                 }
-                for (var k = 0, kk = pa.length; k < kk; k++) {
+                for (k = 0, kk = pa.length; k < kk; k++) {
                     res[i][k] = pa[k];
                 }
             }
-            var len = res[i].length;
+            len = res[i].length;
             switch (res[i][0]) {
                 case "z":
                     x = mx;
@@ -729,7 +739,9 @@ Ext.define('Ext.draw.Draw', {
     },
     
     bezierDim : function (a, b, c, d) {
-        var points = [], r;
+        var points = [], r,
+            A, top, C, delta, bottom, s,
+            min, max, i;
         // The min and max happens on boundary or b' == 0
         if (a + 3 * c == d + 3 * b) {   
             r = a - b;
@@ -740,12 +752,11 @@ Ext.define('Ext.draw.Draw', {
         } else {
             // b'(x) / -3 = (a-3b+3c-d)x^2+ (-2a+4b-2c)x + (a-b)
             // delta = -4 (-b^2+a c+b c-c^2-a d+b d)
-            var A = a - 3 * b + 3 * c - d,
-                top = 2 * (a - b - b + c),
-                C = a - b,
-                delta = top * top - 4 * A * C,
-                bottom = A + A,
-                s;
+            A = a - 3 * b + 3 * c - d;
+            top = 2 * (a - b - b + c);
+            C = a - b;
+            delta = top * top - 4 * A * C;
+            bottom = A + A;
             if (delta === 0) {
                 r = top / bottom;
                 if (r < 1 && r > 0) {
@@ -766,8 +777,9 @@ Ext.define('Ext.draw.Draw', {
                 }
             }
         }
-        var min = Math.min(a, d), max = Math.max(a, d);
-        for (var i = 0; i < points.length; i++) {
+        min = Math.min(a, d);
+        max = Math.max(a, d);
+        for (i = 0; i < points.length; i++) {
             min = Math.min(min, this.bezier(a, b, c, d, points[i]));
             max = Math.max(max, this.bezier(a, b, c, d, points[i]));
         }
@@ -896,14 +908,22 @@ Ext.define('Ext.draw.Draw', {
             mx = x,
             my = y,
             cx = 0,
-            cy = 0;
+            cy = 0,
+            pathi,
+            pathil,
+            pathim,
+            pathiml,
+            pathip,
+            pathipl,
+            begl;
+        
         for (; i < ii; i++) {
-            var pathi = path[i],
-                pathil = pathi.length,
-                pathim = path[i - 1],
-                pathiml = pathim.length,
-                pathip = path[i + 1],
-                pathipl = pathip && pathip.length;
+            pathi = path[i];
+            pathil = pathi.length;
+            pathim = path[i - 1];
+            pathiml = pathim.length;
+            pathip = path[i + 1];
+            pathipl = pathip && pathip.length;
             if (pathi[0] == "M") {
                 mx = pathi[1];
                 my = pathi[2];
@@ -920,7 +940,7 @@ Ext.define('Ext.draw.Draw', {
                 continue;
             }
             if (pathi[pathil - 2] == mx && pathi[pathil - 1] == my && (!pathip || pathip[0] == "M")) {
-                var begl = newp[beg].length;
+                begl = newp[beg].length;
                 points = this.getAnchors(pathim[pathiml - 2], pathim[pathiml - 1], mx, my, newp[beg][begl - 2], newp[beg][begl - 1], value);
                 newp[beg][1] = points.x2;
                 newp[beg][2] = points.y2;

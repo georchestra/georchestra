@@ -32,7 +32,7 @@ It is important during this process to focus on scaffolding your views and not o
 
 Leveraging the work we already did in the previous article, we are able to define many of the views at once.
 
-![Balanced](balanced.png)
+{@img balanced.png Balanced}
 
 ### `app/view/NewStation.js`
 
@@ -83,7 +83,7 @@ We have left out some of the configuration here since component configurations a
 
 In the above configurations, you’ll notice that we have three stores configured. These map to the store names prepared in the previous article. At this point we’ll go ahead and create our stores.
 
-![Stores](stores.png)
+{@img stores.png Stores}
 
 ## The models and stores
 
@@ -403,7 +403,7 @@ The control method is passed an object where the keys are component queries. In 
 
 Each query is bound to a listener configuration. Inside each listener configuration, we want to listen for the key which is the event name. The events available are the ones provided by the component that is targeted by your query. In this case, we use the selectionchange event provided by Grid (from which our StationsList view extends) and the select event provided by ComboBox (from which our NewStation view extends). To find out which events are available for a particular component, you can look in the events section available for each component in the API docs.
 
-![API Docs Events](apidocs-events.png)
+{@img apidocs-events.png API Docs Events}
 
 The value in the listener configuration is the function that gets executed whenever that event fires. The scope of this function is always the controller itself.
 

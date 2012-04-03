@@ -116,7 +116,7 @@ Ext.define('Ext.fx.Manager', {
      */
     addAnim: function(anim) {
         var items = this.items,
-            task = this.task
+            task = this.task;
 
         // Make sure we use the anim's id, not the anim target's id here. The anim id will be unique on
         // each call to addAnim. `anim.target` is the DOM element being targeted, and since multiple animations
@@ -290,7 +290,7 @@ Ext.define('Ext.fx.Manager', {
                 id: targetId,
                 el: anim.target,
                 anims: {}
-            }
+            };
         }
 
         // This is a wrapper for the animation so that we can also save state along with it,
@@ -331,7 +331,7 @@ Ext.define('Ext.fx.Manager', {
                 // Each target could have multiple associated animations, so iterate those
                 for (animId in target.anims) {
                     if (target.anims.hasOwnProperty(animId)) {
-                        animWrap = target.anims[animId],
+                        animWrap = target.anims[animId];
                         anim = animWrap.anim;
                         
                         // If the animation has valid attributes, set them on the target

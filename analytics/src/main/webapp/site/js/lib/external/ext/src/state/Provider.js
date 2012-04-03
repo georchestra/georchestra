@@ -89,7 +89,6 @@ Ext.define('Ext.state.Provider', {
             matches = re.exec(unescape(value)),
             all,
             type,
-            value,
             keyValue,
             values,
             vLen,

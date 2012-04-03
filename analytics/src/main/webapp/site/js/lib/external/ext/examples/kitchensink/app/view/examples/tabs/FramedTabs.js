@@ -1,5 +1,8 @@
 Ext.define('KitchenSink.view.examples.tabs.FramedTabs', {
     extend: 'KitchenSink.view.examples.Example',
+    requires: [
+        'Ext.tab.Panel'
+    ],
 
     // defaults: {
     //     margin: '0 0 10 0'

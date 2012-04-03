@@ -45,7 +45,7 @@
  *
  * See http://www.ietf.org/rfc/rfc4122.txt for details.
  */
-Ext.define('Ext.data.UuidGenerator', function () {
+Ext.define('Ext.data.UuidGenerator', (function () {
     var twoPow14 = Math.pow(2, 14),
         twoPow16 = Math.pow(2, 16),
         twoPow28 = Math.pow(2, 28),
@@ -212,4 +212,4 @@ Ext.define('Ext.data.UuidGenerator', function () {
             this.init();
         }
     };
-}());
+}()));

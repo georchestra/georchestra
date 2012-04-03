@@ -28,7 +28,8 @@ Ext.define('FeedViewer.FeedWindow', {
     ],
     
     initComponent: function(){
-        this.addEvents(
+        var me = this;
+        me.addEvents(
             /**
              * @event feedvalid
              * @param {FeedViewer.FeedWindow} this
@@ -39,7 +40,7 @@ Ext.define('FeedViewer.FeedWindow', {
             'feedvalid'
         );
         
-        this.form = Ext.create('widget.form', {
+        me.form = Ext.create('widget.form', {
             bodyPadding: '12 10 10',
             border: false,
             unstyled: true,
@@ -56,25 +57,25 @@ Ext.define('FeedViewer.FeedWindow', {
                 }
             }]
         });
-        Ext.apply(this, {
+        Ext.apply(me, {
             width: 500,
             title: 'Add Feed',
             iconCls: 'feed',
             layout: 'fit',
-            items: this.form,
+            items: me.form,
             buttons: [{
                 xtype: 'button',
                 text: 'Add Feed',
-                scope: this,
-                handler: this.onAddClick
+                scope: me,
+                handler: me.onAddClick
             }, {
                 xtype: 'button',
                 text: 'Cancel',
-                scope: this,
-                handler: this.destroy
+                scope: me,
+                handler: me.hide
             }]
         });
-        this.callParent(arguments);
+        me.callParent(arguments);
     },
     
     /**

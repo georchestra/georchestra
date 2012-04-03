@@ -1,3 +1,4 @@
+//{"duration":8,"time":"2012-02-25T10:55:01","success":false,"cycleCount":6,"flushCount":5,"calcCount":7,"orphans":0,"layouts":[{"allDone":true,"done":true,"id":"autocomponent-1193","type":"autocomponent","name":"headercontainer-1115<autocomponent>","blocks":[],"boxParent":null,"isBoxParent":null,"triggers":[],"orphan":false,"heightModel":"configured","widthModel":"calculated","children":[],"duration":0,"totalTime":0,"count":1},{"allDone":false,"done":false,"id":"gridcolumn-1194","type":"gridcolumn","name":"headercontainer-1115<gridcolumn>","blocks":[],"boxParent":null,"isBoxParent":null,"triggers":[{"name":"gridview-1118.height","prop":"height","value":null,"dirty":false,"missing":true,"setBy":"??"},{"name":"gridcolumn-1116.height","prop":"height","value":22,"dirty":false,"missing":false,"setBy":"gridcolumn-1116<columncomponent>"},{"name":"headercontainer-1115.contentWidth","prop":"contentWidth","value":335,"dirty":false,"missing":false,"setBy":"headercontainer-1115<gridcolumn>"},{"name":"headercontainer-1115.height","prop":"height","value":0,"dirty":false,"missing":false,"setBy":"headercontainer-1115<autocomponent>"},{"name":"headercontainer-1115.width","prop":"width","value":335,"dirty":false,"missing":false,"setBy":"headercontainer-1115<autocomponent>"},{"name":"numbercolumn-1117.height","prop":"height","value":22,"dirty":false,"missing":false,"setBy":"numbercolumn-1117<columncomponent>"}],"orphan":false,"heightModel":"configured","widthModel":"calculated","children":[{"allDone":true,"done":true,"id":"columncomponent-1195","type":"columncomponent","name":"gridcolumn-1116<columncomponent>","blocks":[],"boxParent":null,"isBoxParent":true,"triggers":[{"name":"gridcolumn-1116.containerChildrenDone:dom","prop":"containerChildrenDone","value":true,"dirty":false,"missing":false,"setBy":"??"},{"name":"gridcolumn-1116.width:dom","prop":"width","value":168,"dirty":false,"missing":false,"setBy":"headercontainer-1115<gridcolumn>"}],"orphan":false,"heightModel":"shrinkWrap (calculatedFromShrinkWrap)","widthModel":"calculated","children":[],"duration":0,"totalTime":0,"count":2},{"allDone":true,"done":true,"id":"columncomponent-1197","type":"columncomponent","name":"numbercolumn-1117<columncomponent>","blocks":[],"boxParent":null,"isBoxParent":true,"triggers":[{"name":"numbercolumn-1117.containerChildrenDone:dom","prop":"containerChildrenDone","value":true,"dirty":false,"missing":false,"setBy":"??"},{"name":"numbercolumn-1117.width:dom","prop":"width","value":167,"dirty":false,"missing":false,"setBy":"headercontainer-1115<gridcolumn>"}],"orphan":false,"heightModel":"shrinkWrap (calculatedFromShrinkWrap)","widthModel":"calculated","children":[],"duration":2,"totalTime":2,"count":2}],"duration":4,"totalTime":6,"count":2}],"statsById":{"columncomponent-1195":{"duration":0,"count":2},"columncomponent-1197":{"duration":2,"count":2},"autocomponent-1193":{"duration":0,"count":1},"gridcolumn-1194":{"duration":4,"count":2}},"statsByType":{"columncomponent":{"duration":2,"layoutCount":2,"count":4},"autocomponent":{"duration":0,"layoutCount":1,"count":1},"gridcolumn":{"duration":4,"layoutCount":1,"count":2}},"flushTime":1,"flushInvalidateTime":1,"flushInvalidateCount":1,"flushLayoutStats":{"completeLayout":{"count":2,"time":0}},"totalTime":8,"num":5}
 Ext.Loader.setConfig({
     enabled: true
 });
@@ -75,7 +76,6 @@ Ext.define('PageAnalyzer.MainForm', {
         me.viewport = Ext.widget(me.createViewport());
         me.target = me.targetFrame.getWin();
 
-        me.rawDataTextArea = me.viewport.down('#rawDataTextArea');
         me.reloadBtn = me.viewport.down('#reloadBtn');
         me.stateText = me.viewport.down('#stateText');
 
@@ -87,29 +87,6 @@ Ext.define('PageAnalyzer.MainForm', {
             me.reloadBtn.setDisabled(true);
         }
 
-    },
-
-    createDetails: function() {
-        return {
-            title: 'Details',
-            xtype: 'tabpanel',
-            tabPosition: 'bottom',
-            height: '20%',
-            split: true,
-            collapsible: true,
-            collapsed: true,
-            region: 'east',
-            items: [{
-                title: 'Raw Data',
-                xtype: 'textarea',
-                selectOnFocus: true,
-                itemId: 'rawDataTextArea',
-                style: 'margin:0'
-            }, {
-                title: 'Log',
-                html: 'Under construction'
-            }]
-        };
     },
 
     roundTimestamp: function(num) {
@@ -205,12 +182,18 @@ Ext.define('PageAnalyzer.MainForm', {
                         sortable: false,
                         xtype: 'actioncolumn',
                         hideable: false,
-                        width: 20,
+                        width: 40,
                         items: [{
                             icon: 'resources/images/delete.gif',
                             iconCls: 'pgan-delete-row',
                             tooltip: 'Delete this run',
                             handler: this.onDeleteLayoutRun,
+                            scope: this
+                        }, {
+                            icon: 'resources/images/info.gif',
+                            iconCls: 'pgan-show-row-data',
+                            tooltip: 'Show raw data for this run',
+                            handler: this.onShowLayoutRunRawData,
                             scope: this
                         }]
                     }
@@ -396,7 +379,6 @@ Ext.define('PageAnalyzer.MainForm', {
             ],
             items: [
                 me.createLayoutTree(),
-                me.createDetails(),
                 this.typeSummary = new PageAnalyzer.Summary({
                     title: 'Summaries',
                     region: 'south',
@@ -654,7 +636,7 @@ Ext.define('PageAnalyzer.MainForm', {
     },
 
     onLayoutSelectionChange: function(selModel, records) {
-        var run, text;
+        var run;
 
         if (records.length) {
             run = records[0];
@@ -662,10 +644,31 @@ Ext.define('PageAnalyzer.MainForm', {
                 run = run.parentNode;
             }
 
-            text = Ext.JSON.encodeValue(run.rawData, '\n');
-            this.rawDataTextArea.setValue(text);
             this.typeSummary.loadTypeSummary(run.rawData.statsByType);
         }
+    },
+
+    onShowLayoutRunRawData: function(view, recordIndex, cellIndex, item, e, record) {
+        var text = Ext.JSON.encodeValue(record.rawData, '\n');
+        Ext.widget({
+            xtype: 'window',
+            modal: true,
+            title: 'Raw data for ' + record.data.text,
+            //closeAction: 'close',
+            autoShow: true,
+            layout: 'fit',
+            width: 500,
+            height: 400,
+            defaultFocus: 'rawData',
+            items: [{
+                xtype: 'textarea',
+                value: text,
+                itemId: 'rawData',
+                readOnly: true,
+                selectOnFocus: true
+            }]
+        }).show();
+        //this.rawDataTextArea.setValue(text);
     },
 
     onLoadRun: function() {
@@ -886,15 +889,16 @@ Ext.define('PageAnalyzer.MainForm', {
 
         // Only gather page startup stats at each reload, not on each gather
         if (!me.statsGatherCount) {
-            var a1 = perf.get("Initialize").enter().leave(target.Ext._afterReadytime - target.Ext._beforeReadyTime);
+            perf.get("Initialize").enter().leave(target.Ext._afterReadytime - target.Ext._beforeReadyTime);
             if (target.Ext._endTime) {
-                var a2 = perf.get("Load").enter().leave(target.Ext._endTime - target.Ext._startTime),
-                    a3 = perf.get("WaitForReady").enter().leave(target.Ext._readyTime - target.Ext._endTime);
-
+                perf.get("Load").enter().leave(target.Ext._endTime - target.Ext._startTime);
+                perf.get("WaitForReady").enter().leave(target.Ext._readyTime - target.Ext._endTime);
             } else {
-                var a4 = perf.get("BeforeReady").enter().leave(target.Ext._readyTime - target.Ext._startTime);
+                perf.get("BeforeReady").enter().leave(target.Ext._readyTime - target.Ext._startTime);
             }
         }
+
+        perf.updateGC();
 
         me.statsGatherCount++;
         var data = perf.getData(),

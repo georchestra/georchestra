@@ -221,7 +221,7 @@ Ext.define('Ext.data.NodeInterface', {
             return {
                 /**
                  * @property {Boolean} isNode
-                 * `true` in this class to identify an objact as an instantiated Node, or subclass thereof.
+                 * `true` in this class to identify an object as an instantiated Node, or subclass thereof.
                  */
                 isNode: true,
                 
@@ -863,6 +863,24 @@ Ext.define('Ext.data.NodeInterface', {
                  */
                 indexOf : function(child) {
                     return Ext.Array.indexOf(this.childNodes, child);
+                },
+                
+                /**
+                 * Returns the index of a child node that matches the id
+                 * @param {String} id The id of the node to find
+                 * @return {Number} The index of the node or -1 if it was not found
+                 */
+                indexOfId: function(id) {
+                    var childNodes = this.childNodes,
+                        len = childNodes.length,
+                        i = 0;
+                        
+                    for (; i < len; ++i) {
+                        if (childNodes[i].getId() === id) {
+                            return i;
+                        }    
+                    }
+                    return -1;
                 },
 
                 /**

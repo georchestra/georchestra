@@ -201,5 +201,17 @@
                 padding: $padding-top $padding-right $padding-bottom $padding-left;
             }    
         }   
+
+        @if $include-ie {
+            // framed components in ie7 strict mode suffer from an obscure bug that causes the tl and bl framing elements to
+            // be shrink-wrapped to the width of their contents.  This hack forces the elements' widths to fit to their parent
+            .#{$prefix}strict .#{$prefix}ie7 {
+                .#{$prefix}#{$cls-ui}-tl,
+                .#{$prefix}#{$cls-ui}-bl {
+                    position: relative;
+                    right: 0;
+                }
+            }
+        }
     }
 }

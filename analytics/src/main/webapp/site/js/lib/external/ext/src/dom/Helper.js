@@ -145,12 +145,23 @@ var afterbegin = 'afterbegin',
     tbs = ts+'<tbody>',
     tbe = '</tbody>'+te,
     trs = tbs + '<tr>',
-    tre = '</tr>'+tbe;
+    tre = '</tr>'+tbe,
+    detachedDiv = document.createElement('div'),
+    bbValues = ['BeforeBegin', 'previousSibling'],
+    aeValues = ['AfterEnd', 'nextSibling'],
+    bb_ae_PositionHash = {
+        beforebegin: bbValues,
+        afterend: aeValues
+    },
+    fullPositionHash = {
+        beforebegin: bbValues,
+        afterend: aeValues,
+        afterbegin: ['AfterBegin', 'firstChild'],
+        beforeend: ['BeforeEnd', 'lastChild']
+    };
 
 Ext.define('Ext.dom.Helper', {
     extend: 'Ext.dom.AbstractHelper',
-
-    tempTableEl: null,
 
     tableRe: /^table|tbody|tr|td$/i,
 
@@ -173,11 +184,12 @@ Ext.define('Ext.dom.Helper', {
             useSet,
             attr,
             val,
-            cn;
+            cn,
+            i, l;
 
         if (Ext.isArray(o)) {                       // Allow Arrays of siblings to be inserted
             el = doc.createDocumentFragment(); // in one shot using a DocumentFragment
-            for (var i = 0, l = o.length; i < l; i++) {
+            for (i = 0, l = o.length; i < l; i++) {
                 this.createDom(o[i], el);
             }
         } else if (typeof o == 'string') {         // Allow a string as a child spec.
@@ -213,11 +225,11 @@ Ext.define('Ext.dom.Helper', {
         return el;
     },
 
-    ieTable: function(depth, s, h, e){
-        this.tempTableEl.innerHTML = [s, h, e].join('');
+    ieTable: function(depth, openingTags, htmlContent, closingTags){
+        detachedDiv.innerHTML = [openingTags, htmlContent, closingTags].join('');
 
         var i = -1,
-            el = this.tempTableEl,
+            el = detachedDiv,
             ns;
 
         while (++i < depth) {
@@ -227,71 +239,66 @@ Ext.define('Ext.dom.Helper', {
         ns = el.nextSibling;
 
         if (ns) {
-            var df = document.createDocumentFragment();
-            while (el) {
-                ns = el.nextSibling;
-                df.appendChild(el);
-                el = ns;
+            el = document.createDocumentFragment();
+            while (ns) {
+                el.appendChild(ns);
+                ns = ns.nextSibling;
             }
-            el = df;
         }
-
         return el;
     },
 
-
     /**
-     * @ignore
+     * @private
      * Nasty code for IE's broken table implementation
      */
-    insertIntoTable: function(tag, where, el, html) {
+    insertIntoTable: function(tag, where, destinationEl, html) {
         var node,
-            before;
+            before,
+            bb = where == beforebegin,
+            ab = where == afterbegin,
+            be = where == beforeend,
+            ae = where == afterend;
 
-        this.tempTableEl = this.tempTableEl || document.createElement('div');
-
-        if (tag == 'td' && (where == afterbegin || where == beforeend) ||
-                !this.tableElRe.test(tag) && (where == beforebegin || where == afterend)) {
+        if (tag == 'td' && (ab || be) || !this.tableElRe.test(tag) && (bb || ae)) {
             return null;
         }
-        before = where == beforebegin ? el :
-                where == afterend ? el.nextSibling :
-                        where == afterbegin ? el.firstChild : null;
+        before = bb ? destinationEl :
+                 ae ? destinationEl.nextSibling :
+                 ab ? destinationEl.firstChild : null;
 
-        if (where == beforebegin || where == afterend) {
-            el = el.parentNode;
+        if (bb || ae) {
+            destinationEl = destinationEl.parentNode;
         }
 
-        if (tag == 'td' || (tag == 'tr' && (where == beforeend || where == afterbegin))) {
+        if (tag == 'td' || (tag == 'tr' && (be || ab))) {
             node = this.ieTable(4, trs, html, tre);
-        } else if ((tag == 'tbody' && (where == beforeend || where == afterbegin)) ||
-                (tag == 'tr' && (where == beforebegin || where == afterend))) {
+        } else if ((tag == 'tbody' && (be || ab)) ||
+                (tag == 'tr' && (bb || ae))) {
             node = this.ieTable(3, tbs, html, tbe);
         } else {
             node = this.ieTable(2, ts, html, te);
         }
-        el.insertBefore(node, before);
+        destinationEl.insertBefore(node, before);
         return node;
     },
 
     /**
-     * @ignore
+     * @private
      * Fix for IE9 createContextualFragment missing method
      */
-    createContextualFragment: function(html){
-        var div = document.createElement("div"),
-            fragment = document.createDocumentFragment(),
-            i = 0,
+    createContextualFragment: function(html) {
+        var fragment = document.createDocumentFragment(),
             length, childNodes;
 
-        div.innerHTML = html;
-        childNodes = div.childNodes;
+        detachedDiv.innerHTML = html;
+        childNodes = detachedDiv.childNodes;
         length = childNodes.length;
 
-        for (; i < length; i++) {
-            fragment.appendChild(childNodes[i].cloneNode(true));
+        // Move nodes into fragment, don't clone: http://jsperf.com/create-fragment
+        while (length--) {
+            fragment.appendChild(childNodes[0]);
         }
-
         return fragment;
     },
 
@@ -340,43 +347,65 @@ Ext.define('Ext.dom.Helper', {
         return returnElement ? Ext.get(newNode, true) : newNode;
     },
 
+    /**
+     * Creates new DOM element(s) and overwrites the contents of el with them.
+     * @param {String/HTMLElement/Ext.Element} el The context element
+     * @param {Object/String} o The DOM object spec (and children) or raw HTML blob
+     * @param {Boolean} [returnElement] true to return an Ext.Element
+     * @return {HTMLElement/Ext.Element} The new node
+     */
+    overwrite: function(el, html, returnElement) {
+        var newNode;
+
+        html = this.markup(html);
+
+        // IE Inserting HTML into a table/tbody/tr requires extra processing: http://www.ericvasilik.com/2006/07/code-karma.html
+        if (Ext.isIE && this.tableRe.test(el.tagName)) {
+            // Clearing table elements requires removal of all elements.
+            while (el.firstChild) {
+                el.removeChild(el.firstChild);
+            }
+            if (html) {
+                newNode = this.insertHtml('afterbegin', el, html);
+                return returnElement ? Ext.get(newNode) : newNode;
+            }
+            return null;
+        }
+        el.innerHTML = html;
+        return returnElement ? Ext.get(el.firstChild) : el.firstChild;
+    },
+
     insertHtml: function(where, el, html) {
-        var hash = {},
-            hashVal,
+        var hashVal,
             range,
             rangeEl,
             setStart,
-            frag,
-            rs;
+            frag;
 
         where = where.toLowerCase();
-        // add these here because they are used in both branches of the condition.
-        hash[beforebegin] = ['BeforeBegin', 'previousSibling'];
-        hash[afterend] = ['AfterEnd', 'nextSibling'];
 
-        // if IE and context element is an HTMLElement
+        // Has fast HTML insertion into existing DOM: http://www.w3.org/TR/html5/apis-in-html-documents.html#insertadjacenthtml
         if (el.insertAdjacentHTML) {
-            if (this.tableRe.test(el.tagName) && (rs = this.insertIntoTable(el.tagName.toLowerCase(), where, el, html))) {
-                return rs;
+
+            // IE's incomplete table implementation: http://www.ericvasilik.com/2006/07/code-karma.html
+            if (Ext.isIE && this.tableRe.test(el.tagName) && (frag = this.insertIntoTable(el.tagName.toLowerCase(), where, el, html))) {
+                return frag;
             }
 
-            // add these two to the hash.
-            hash[afterbegin] = ['AfterBegin', 'firstChild'];
-            hash[beforeend] = ['BeforeEnd', 'lastChild'];
-            if ((hashVal = hash[where])) {
+            if ((hashVal = fullPositionHash[where])) {
                 el.insertAdjacentHTML(hashVal[0], html);
                 return el[hashVal[1]];
             }
             // if (not IE and context element is an HTMLElement) or TextNode
         } else {
             // we cannot insert anything inside a textnode so...
-            if (Ext.isTextNode(el)) {
+            if (el.nodeType === 3) {
                 where = where === 'afterbegin' ? 'beforebegin' : where;
                 where = where === 'beforeend' ? 'afterend' : where;
             }
             range = Ext.supports.CreateContextualFragment ? el.ownerDocument.createRange() : undefined;
             setStart = 'setStart' + (this.endRe.test(where) ? 'After' : 'Before');
-            if (hash[where]) {
+            if (bb_ae_PositionHash[where]) {
                 if (range) {
                     range[setStart](el);
                     frag = range.createContextualFragment(html);
@@ -433,4 +462,4 @@ Ext.define('Ext.dom.Helper', {
 });
 
 
-})();
+}());

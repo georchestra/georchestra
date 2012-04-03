@@ -188,14 +188,15 @@
          */
         radioCls: function(className) {
             var cn = this.dom.parentNode.childNodes,
-                v;
+                v,
+                i, len;
             className = Ext.isArray(className) ? className: [className];
-            for (var i = 0, len = cn.length; i < len; i++) {
+            for (i = 0, len = cn.length; i < len; i++) {
                 v = cn[i];
                 if (v && v.nodeType == 1) {
                     Ext.fly(v, '_internal').removeCls(className);
                 }
-            };
+            }
             return this.addCls(className);
         },
 
@@ -769,7 +770,9 @@
     };
 
     Ext.onReady(function () {
-        var supports = Ext.supports;
+        var supports = Ext.supports,
+            styleHooks,
+            colorStyles, i, name, camel;
 
         function fixTransparent (dom, el, inline, style) {
             var value = style[this.name] || '';
@@ -810,7 +813,7 @@
             return result;
         }
 
-        var styleHooks = Element.prototype.styleHooks;
+        styleHooks = Element.prototype.styleHooks;
 
         // Populate the LTR flavors of margin-before et.al. (see Ext.rtl.AbstractElement):
         Element.populateStyleMap(styleHooks, ['left', 'right']);
@@ -833,10 +836,10 @@
         }
 
         if (!supports.TransparentColor) {
-            var colorStyles = ['background-color', 'border-color', 'color', 'outline-color'];
-            for (var i = colorStyles.length; i--; ) {
-                var name = colorStyles[i],
-                    camel = Element.normalize(name);
+            colorStyles = ['background-color', 'border-color', 'color', 'outline-color'];
+            for (i = colorStyles.length; i--; ) {
+                name = colorStyles[i];
+                camel = Element.normalize(name);
 
                 styleHooks[name] = styleHooks[camel] = {
                     name: camel,
@@ -845,4 +848,4 @@
             }
         }
     });
-})();
+}());

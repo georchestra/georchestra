@@ -840,6 +840,9 @@ describe("Ext.Array", function() {
         it("should only use strict typing to match", function(){
             expect(Ext.Array.intersect([1], ['1'])).toEqual([]);
         });
+        it("should handle arrays containing falsy values", function() {
+            expect(Ext.Array.intersect([undefined, null, false, 0, ''], [undefined, null, false, 0, ''])).toEqual([undefined, null, false, 0, '']); 
+        });
     });
 
     describe("difference", function(){

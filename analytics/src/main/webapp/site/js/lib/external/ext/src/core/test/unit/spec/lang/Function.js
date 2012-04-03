@@ -466,8 +466,10 @@ describe("Ext.Function", function() {
             
             expect(fn.calls.length).toBe(1);
             runAfterInvocation(fn, function() {
-                throttledFn();
-                expect(fn.calls.length).toBe(2);
+                expect(fn.calls.length).toEqual(2);
+                throttledFn(); // elapsed may have been exceeded here, so this call may execute immediately
+                expect(fn.calls.length).not.toBeLessThan(2);
+                expect(fn.calls.length).not.toBeGreaterThan(3);
             }, 2);
             unmockTimeout();
         });

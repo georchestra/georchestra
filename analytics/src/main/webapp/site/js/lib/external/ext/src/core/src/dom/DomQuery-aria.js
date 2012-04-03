@@ -66,7 +66,7 @@ All selectors, attribute filters and pseudos below can be combined infinitely in
  */
 Ext.ns('Ext.core');
 
-Ext.core.DomQuery = Ext.DomQuery = function(){
+Ext.core.DomQuery = Ext.DomQuery = (function(){
     var cache = {},
         simpleCache = {},
         valueCache = {},
@@ -143,14 +143,17 @@ Ext.core.DomQuery = Ext.DomQuery = function(){
         if(!cls){
             return nodeSet;
         }
-        var result = [], ri = -1;
-        for(var i = 0, ci; ci = nodeSet[i]; i++){
+        var result = [],
+            ri = -1,
+            i,
+            ci;
+        for(i = 0; ci = nodeSet[i]; i++){
             if((' '+ci.className+' ').indexOf(cls) != -1){
                 result[++ri] = ci;
             }
         }
         return result;
-    };
+    }
 
     function attrValue(n, attr){
         // if its an array, use the first node.
@@ -169,14 +172,24 @@ Ext.core.DomQuery = Ext.DomQuery = function(){
         }
         return n.getAttribute(attr) || n[attr];
 
-    };
+    }
 
 
     // ns - nodes
     // mode - false, /, >, +, ~
     // tagName - defaults to "*"
     function getNodes(ns, mode, tagName){
-        var result = [], ri = -1, cs;
+        var result = [],
+            ri = -1,
+            cs,
+            i,
+            j,
+            n,
+            ni,
+            ci,
+            cj,
+            cn,
+            utag;
         if(!ns){
             return result;
         }
@@ -189,19 +202,19 @@ Ext.core.DomQuery = Ext.DomQuery = function(){
         // no mode specified, grab all elements by tagName
         // at any depth
         if(!mode){
-            for(var i = 0, ni; ni = ns[i]; i++){
+            for(i = 0; ni = ns[i]; i++){
                 cs = ni.getElementsByTagName(tagName);
-                for(var j = 0, ci; ci = cs[j]; j++){
+                for(j = 0; ci = cs[j]; j++){
                     result[++ri] = ci;
                 }
             }
         // Direct Child mode (/ or >)
         // E > F or E/F all direct children elements of E that have the tag
         } else if(mode == "/" || mode == ">"){
-            var utag = tagName.toUpperCase();
-            for(var i = 0, ni, cn; ni = ns[i]; i++){
+            utag = tagName.toUpperCase();
+            for(i = 0; ni = ns[i]; i++){
                 cn = ni.childNodes;
-                for(var j = 0, cj; cj = cn[j]; j++){
+                for(j = 0; cj = cn[j]; j++){
                     if(cj.nodeName == utag || cj.nodeName == tagName  || tagName == '*'){
                         result[++ri] = cj;
                     }
@@ -210,8 +223,8 @@ Ext.core.DomQuery = Ext.DomQuery = function(){
         // Immediately Preceding mode (+)
         // E + F all elements with the tag F that are immediately preceded by an element with the tag E
         }else if(mode == "+"){
-            var utag = tagName.toUpperCase();
-            for(var i = 0, n; n = ns[i]; i++){
+            utag = tagName.toUpperCase();
+            for(i = 0; n = ns[i]; i++){
                 while((n = n.nextSibling) && n.nodeType != 1);
                 if(n && (n.nodeName == utag || n.nodeName == tagName || tagName == '*')){
                     result[++ri] = n;
@@ -220,8 +233,8 @@ Ext.core.DomQuery = Ext.DomQuery = function(){
         // Sibling mode (~)
         // E ~ F all elements with the tag F that are preceded by a sibling element with the tag E
         }else if(mode == "~"){
-            var utag = tagName.toUpperCase();
-            for(var i = 0, n; n = ns[i]; i++){
+            utag = tagName.toUpperCase();
+            for(i = 0; n = ns[i]; i++){
                 while((n = n.nextSibling)){
                     if (n.nodeName == utag || n.nodeName == tagName || tagName == '*'){
                         result[++ri] = n;
@@ -249,9 +262,12 @@ Ext.core.DomQuery = Ext.DomQuery = function(){
         if(!tagName){
             return cs;
         }
-        var result = [], ri = -1;
+        var result = [],
+            ri = -1,
+            i,
+            ci;
         tagName = tagName.toLowerCase();
-        for(var i = 0, ci; ci = cs[i]; i++){
+        for(i = 0; ci = cs[i]; i++){
             if(ci.nodeType == 1 && ci.tagName.toLowerCase() == tagName){
                 result[++ri] = ci;
             }
@@ -266,8 +282,11 @@ Ext.core.DomQuery = Ext.DomQuery = function(){
         if(!id){
             return cs;
         }
-        var result = [], ri = -1;
-        for(var i = 0, ci; ci = cs[i]; i++){
+        var result = [],
+            ri = -1,
+            i,
+            ci;
+        for(i = 0; ci = cs[i]; i++){
             if(ci && ci.id == id){
                 result[++ri] = ci;
                 return result;
@@ -285,9 +304,11 @@ Ext.core.DomQuery = Ext.DomQuery = function(){
             fn = Ext.DomQuery.operators[op],
             a,
             xml,
-            hasXml;
+            hasXml,
+            i,
+            ci;
 
-        for(var i = 0, ci; ci = cs[i]; i++){
+        for(i = 0; ci = cs[i]; i++){
             // skip non-element nodes.
             if(ci.nodeType != 1){
                 continue;
@@ -329,17 +350,20 @@ Ext.core.DomQuery = Ext.DomQuery = function(){
 
     function nodupIEXml(cs){
         var d = ++key,
-            r;
+            r,
+            i,
+            len,
+            c;
         cs[0].setAttribute("_nodup", d);
         r = [cs[0]];
-        for(var i = 1, len = cs.length; i < len; i++){
-            var c = cs[i];
+        for(i = 1, len = cs.length; i < len; i++){
+            c = cs[i];
             if(!c.getAttribute("_nodup") != d){
                 c.setAttribute("_nodup", d);
                 r[r.length] = c;
             }
         }
-        for(var i = 0, len = cs.length; i < len; i++){
+        for(i = 0, len = cs.length; i < len; i++){
             cs[i].removeAttribute("_nodup");
         }
         return r;
@@ -349,21 +373,21 @@ Ext.core.DomQuery = Ext.DomQuery = function(){
         if(!cs){
             return [];
         }
-        var len = cs.length, c, i, r = cs, cj, ri = -1;
+        var len = cs.length, c, i, r = cs, cj, ri = -1, d, j;
         if(!len || typeof cs.nodeType != "undefined" || len == 1){
             return cs;
         }
         if(isIE && typeof cs[0].selectSingleNode != "undefined"){
             return nodupIEXml(cs);
         }
-        var d = ++key;
+        d = ++key;
         cs[0]._nodup = d;
         for(i = 1; c = cs[i]; i++){
             if(c._nodup != d){
                 c._nodup = d;
             }else{
                 r = [];
-                for(var j = 0; j < i; j++){
+                for(j = 0; j < i; j++){
                     r[++ri] = cs[j];
                 }
                 for(j = i+1; cj = cs[j]; j++){
@@ -380,16 +404,18 @@ Ext.core.DomQuery = Ext.DomQuery = function(){
 
     function quickDiffIEXml(c1, c2){
         var d = ++key,
-            r = [];
-        for(var i = 0, len = c1.length; i < len; i++){
+            r = [],
+            i,
+            len;
+        for(i = 0, len = c1.length; i < len; i++){
             c1[i].setAttribute("_qdiff", d);
         }
-        for(var i = 0, len = c2.length; i < len; i++){
+        for(i = 0, len = c2.length; i < len; i++){
             if(c2[i].getAttribute("_qdiff") != d){
                 r[r.length] = c2[i];
             }
         }
-        for(var i = 0, len = c1.length; i < len; i++){
+        for(i = 0, len = c1.length; i < len; i++){
            c1[i].removeAttribute("_qdiff");
         }
         return r;
@@ -398,17 +424,19 @@ Ext.core.DomQuery = Ext.DomQuery = function(){
     function quickDiff(c1, c2){
         var len1 = c1.length,
             d = ++key,
-            r = [];
+            r = [],
+            i,
+            len;
         if(!len1){
             return c2;
         }
         if(isIE && typeof c1[0].selectSingleNode != "undefined"){
             return quickDiffIEXml(c1, c2);
         }
-        for(var i = 0; i < len1; i++){
+        for(i = 0; i < len1; i++){
             c1[i]._qdiff = d;
         }
-        for(var i = 0, len = c2.length; i < len; i++){
+        for(i = 0, len = c2.length; i < len; i++){
             if(c2[i]._qdiff != d){
                 r[r.length] = c2[i];
             }
@@ -417,10 +445,12 @@ Ext.core.DomQuery = Ext.DomQuery = function(){
     }
 
     function quickId(ns, mode, root, id){
+        var result,
+            d;
         if(ns === root) {
             // We're doing a rooted query by Id, so if the "all" collection is available, use it
             if (root.all) {
-                var result = root.all[id];
+                result = root.all[id];
 
                 // If not immediate child
                 if (result && (mode == "/" || mode == ">")) {
@@ -432,7 +462,7 @@ Ext.core.DomQuery = Ext.DomQuery = function(){
             }
             // Otherwise, just do a global lookup by ID
             else {
-                var d = root.ownerDocument || root;
+                d = root.ownerDocument || root;
                 return d.getElementById(id);
             }
         }
@@ -462,7 +492,12 @@ Ext.core.DomQuery = Ext.DomQuery = function(){
                 matchersLn = matchers.length,
                 modeMatch,
                 // accept leading mode switch
-                lmode = path.match(modeRe);
+                lmode = path.match(modeRe),
+                tokenMatch,
+                matched,
+                j,
+                t,
+                m;
 
             if(lmode && lmode[1]){
                 fn[fn.length] = 'mode="'+lmode[1].replace(trimRe, "")+'";';
@@ -476,7 +511,7 @@ Ext.core.DomQuery = Ext.DomQuery = function(){
 
             while(path && lastPath != path){
                 lastPath = path;
-                var tokenMatch = path.match(tagTokenRe);
+                tokenMatch = path.match(tagTokenRe);
                 if(type == "select"){
                     if(tokenMatch){
                         // ID Selector
@@ -501,10 +536,10 @@ Ext.core.DomQuery = Ext.DomQuery = function(){
                     }
                 }
                 while(!(modeMatch = path.match(modeRe))){
-                    var matched = false;
-                    for(var j = 0; j < matchersLn; j++){
-                        var t = matchers[j];
-                        var m = path.match(t.re);
+                    matched = false;
+                    for(j = 0; j < matchersLn; j++){
+                        t = matchers[j];
+                        m = path.match(t.re);
                         if(m){
                             fn[fn.length] = t.select.replace(tplRe, function(x, i){
                                 return m[i];
@@ -556,11 +591,15 @@ Ext.core.DomQuery = Ext.DomQuery = function(){
                 root = document.getElementById(root);
             }
             var paths = path.split(","),
-                results = [];
+                results = [],
+                i,
+                len,
+                subPath,
+                result;
 
             // loop over each selector
-            for(var i = 0, len = paths.length; i < len; i++){
-                var subPath = paths[i].replace(trimRe, "");
+            for(i = 0, len = paths.length; i < len; i++){
+                subPath = paths[i].replace(trimRe, "");
                 // compile and place in cache
                 if(!cache[subPath]){
                     cache[subPath] = Ext.DomQuery.compile(subPath);
@@ -574,7 +613,7 @@ Ext.core.DomQuery = Ext.DomQuery = function(){
                         //</debug>
                     }
                 }
-                var result = cache[subPath](root);
+                result = cache[subPath](root);
                 if(result && result != document){
                     results = results.concat(result);
                 }
@@ -669,7 +708,9 @@ Ext.core.DomQuery = Ext.DomQuery = function(){
             // Rumored to potentially crash IE6 but has not been confirmed.
             // http://reference.sitepoint.com/javascript/Node/normalize
             // https://developer.mozilla.org/En/DOM/Node.normalize
-            if (typeof n.normalize == 'function') n.normalize();
+            if (typeof n.normalize == 'function') {
+                n.normalize();
+            }
 
             v = (n && n.firstChild ? n.firstChild.nodeValue : null);
             return ((v === null||v === undefined||v==='') ? defaultValue : v);
@@ -726,19 +767,19 @@ Ext.core.DomQuery = Ext.DomQuery = function(){
          * statement as specified by their index.
          */
         matchers : [{
-                re: /^\.([\w-]+)/,
+                re: /^\.([\w\-]+)/,
                 select: 'n = byClassName(n, " {1} ");'
             }, {
-                re: /^\:([\w-]+)(?:\(((?:[^\s>\/]*|.*?))\))?/,
+                re: /^\:([\w\-]+)(?:\(((?:[^\s>\/]*|.*?))\))?/,
                 select: 'n = byPseudo(n, "{1}", "{2}");'
             },{
-                re: /^(?:([\[\{])(?:@)?([\w-]+)\s?(?:(=|.=)\s?['"]?(.*?)["']?)?[\]\}])/,
+                re: /^(?:([\[\{])(?:@)?([\w\-]+)\s?(?:(=|.=)\s?['"]?(.*?)["']?)?[\]\}])/,
                 select: 'n = byAttribute(n, "{2}", "{4}", "{3}", "{1}");'
             }, {
-                re: /^#([\w-]+)/,
+                re: /^#([\w\-]+)/,
                 select: 'n = byId(n, "{1}");'
             },{
-                re: /^@([\w-]+)/,
+                re: /^@([\w\-]+)/,
                 select: 'return {firstChild:{nodeValue:attrValue(n, "{1}")}};'
             }
         ],
@@ -809,8 +850,8 @@ Then external links could be gathered with the following statement:
         */
         pseudos : {
             "first-child" : function(c){
-                var r = [], ri = -1, n;
-                for(var i = 0, ci; ci = n = c[i]; i++){
+                var r = [], ri = -1, n, i, ci;
+                for(i = 0, ci; (ci = n = c[i]); i++) {
                     while((n = n.previousSibling) && n.nodeType != 1);
                     if(!n){
                         r[++ri] = ci;
@@ -820,8 +861,8 @@ Then external links could be gathered with the following statement:
             },
 
             "last-child" : function(c){
-                var r = [], ri = -1, n;
-                for(var i = 0, ci; ci = n = c[i]; i++){
+                var r = [], ri = -1, n, i, ci;
+                for(i = 0, ci; (ci = n = c[i]); i++){
                     while((n = n.nextSibling) && n.nodeType != 1);
                     if(!n){
                         r[++ri] = ci;
@@ -833,12 +874,13 @@ Then external links could be gathered with the following statement:
             "nth-child" : function(c, a) {
                 var r = [], ri = -1,
                     m = nthRe.exec(a == "even" && "2n" || a == "odd" && "2n+1" || !nthRe2.test(a) && "n+" + a || a),
-                    f = (m[1] || 1) - 0, l = m[2] - 0;
-                for(var i = 0, n; n = c[i]; i++){
-                    var pn = n.parentNode;
+                    f = (m[1] || 1) - 0, l = m[2] - 0,
+                    i, n, pn, j, cn;
+                for(i = 0; n = c[i]; i++){
+                    pn = n.parentNode;
                     if (batch != pn._batch) {
-                        var j = 0;
-                        for(var cn = pn.firstChild; cn; cn = cn.nextSibling){
+                        j = 0;
+                        for(cn = pn.firstChild; cn; cn = cn.nextSibling){
                             if(cn.nodeType == 1){
                                cn.nodeIndex = ++j;
                             }
@@ -858,8 +900,8 @@ Then external links could be gathered with the following statement:
             },
 
             "only-child" : function(c){
-                var r = [], ri = -1;;
-                for(var i = 0, ci; ci = c[i]; i++){
+                var r = [], ri = -1, i, ci;
+                for(i = 0; ci = c[i]; i++){
                     if(!prev(ci) && !next(ci)){
                         r[++ri] = ci;
                     }
@@ -868,9 +910,11 @@ Then external links could be gathered with the following statement:
             },
 
             "empty" : function(c){
-                var r = [], ri = -1;
-                for(var i = 0, ci; ci = c[i]; i++){
-                    var cns = ci.childNodes, j = 0, cn, empty = true;
+                var r = [], ri = -1, i, ci, cns, j, cn, empty;
+                for(i = 0; ci = c[i]; i++){
+                    cns = ci.childNodes;
+                    j = 0;
+                    empty = true;
                     while(cn = cns[j]){
                         ++j;
                         if(cn.nodeType == 1 || cn.nodeType == 3){
@@ -886,8 +930,8 @@ Then external links could be gathered with the following statement:
             },
 
             "contains" : function(c, v){
-                var r = [], ri = -1;
-                for(var i = 0, ci; ci = c[i]; i++){
+                var r = [], ri = -1, i, ci;
+                for(i = 0; ci = c[i]; i++){
                     if((ci.textContent||ci.innerText||'').indexOf(v) != -1){
                         r[++ri] = ci;
                     }
@@ -896,8 +940,8 @@ Then external links could be gathered with the following statement:
             },
 
             "nodeValue" : function(c, v){
-                var r = [], ri = -1;
-                for(var i = 0, ci; ci = c[i]; i++){
+                var r = [], ri = -1, i, ci;
+                for(i = 0; ci = c[i]; i++){
                     if(ci.firstChild && ci.firstChild.nodeValue == v){
                         r[++ri] = ci;
                     }
@@ -906,8 +950,8 @@ Then external links could be gathered with the following statement:
             },
 
             "checked" : function(c){
-                var r = [], ri = -1;
-                for(var i = 0, ci; ci = c[i]; i++){
+                var r = [], ri = -1, i, ci;
+                for(i = 0; ci = c[i]; i++){
                     if(ci.checked == true){
                         r[++ri] = ci;
                     }
@@ -921,9 +965,9 @@ Then external links could be gathered with the following statement:
 
             "any" : function(c, selectors){
                 var ss = selectors.split('|'),
-                    r = [], ri = -1, s;
-                for(var i = 0, ci; ci = c[i]; i++){
-                    for(var j = 0; s = ss[j]; j++){
+                    r = [], ri = -1, s, i, ci, j;
+                for(i = 0; ci = c[i]; i++){
+                    for(j = 0; s = ss[j]; j++){
                         if(Ext.DomQuery.is(ci, s)){
                             r[++ri] = ci;
                             break;
@@ -955,8 +999,9 @@ Then external links could be gathered with the following statement:
 
             "has" : function(c, ss){
                 var s = Ext.DomQuery.select,
-                    r = [], ri = -1;
-                for(var i = 0, ci; ci = c[i]; i++){
+                    r = [], ri = -1,
+                    i, ci;
+                for(i = 0; ci = c[i]; i++){
                     if(s(ss, ci).length > 0){
                         r[++ri] = ci;
                     }
@@ -966,9 +1011,10 @@ Then external links could be gathered with the following statement:
 
             "next" : function(c, ss){
                 var is = Ext.DomQuery.is,
-                    r = [], ri = -1;
-                for(var i = 0, ci; ci = c[i]; i++){
-                    var n = next(ci);
+                    r = [], ri = -1,
+                    i, ci, n;
+                for(i = 0; ci = c[i]; i++){
+                    n = next(ci);
                     if(n && is(n, ss)){
                         r[++ri] = ci;
                     }
@@ -978,9 +1024,10 @@ Then external links could be gathered with the following statement:
 
             "prev" : function(c, ss){
                 var is = Ext.DomQuery.is,
-                    r = [], ri = -1;
-                for(var i = 0, ci; ci = c[i]; i++){
-                    var n = prev(ci);
+                    r = [], ri = -1,
+                    i, ci, n;
+                for(i = 0; ci = c[i]; i++){
+                    n = prev(ci);
                     if(n && is(n, ss)){
                         r[++ri] = ci;
                     }
@@ -989,7 +1036,7 @@ Then external links could be gathered with the following statement:
             }
         }
     };
-}();
+}());
 
 /**
  * Selects an array of DOM nodes by CSS/XPath selector. Shorthand of {@link Ext.DomQuery#select}

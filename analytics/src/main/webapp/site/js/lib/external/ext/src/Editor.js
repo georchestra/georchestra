@@ -308,7 +308,7 @@ Ext.define('Ext.Editor', {
 
         me.completeEdit();
         me.boundEl = Ext.get(el);
-        value = Ext.isDefined(value) ? value : me.boundEl.dom.innerHTML;
+        value = Ext.isDefined(value) ? value : (me.boundEl.dom.innerText || me.boundEl.dom.innerHTML).trim();
 
         if (!me.rendered) {
             me.render(me.parentEl || document.body);

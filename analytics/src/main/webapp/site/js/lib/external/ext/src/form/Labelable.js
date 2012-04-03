@@ -207,7 +207,7 @@ Ext.define("Ext.form.Labelable", {
 
     /**
      * @cfg {String} fieldBodyCls
-     * An extra CSS class to be applied to the body content element in addition to {@link #fieldBodyCls}.
+     * An extra CSS class to be applied to the body content element in addition to {@link #baseBodyCls}.
      */
     fieldBodyCls: '',
 
@@ -446,38 +446,20 @@ Ext.define("Ext.form.Labelable", {
         me.fieldLabel = label;
         if (me.rendered) {
             if (Ext.isEmpty(label) && me.hideEmptyLabel) {
-                Ext.destroy(me.labelEl);
-                me.labelEl = null;
+                labelEl.parent().setDisplayed('none');
             } else {
-                labelEl = me.createLabelEl();
-                last = label.substr(label.length - 1);
-                // append separator if necessary
-                if (last != separator) {
-                    label += separator;
+                if (separator) {
+                    last = label.substr(label.length - 1);
+                    // append separator if necessary
+                    if (last != separator) {
+                        label += separator;
+                    }
                 }
                 labelEl.update(label);
+                labelEl.parent().setDisplayed('block');
             }
             me.updateLayout();
         }
-    },
-    
-    /**
-     * Create the labelEl if it doesn't exist.
-     * @private
-     * @return {Ext.dom.Element} The labelEl
-     */
-    createLabelEl: function(){
-        var me = this;
-        
-        if (!me.labelEl) {
-            me.labelEl = me.el.insertFirst({
-                tag: 'label',
-                htmlFor: me.getInputId(),
-                cls: me.getLabelCls(),
-                style: me.getLabelStyle()
-            });
-        }
-        return me.labelEl;
     },
 
     getInsertionRenderData: function (data, names) {
@@ -549,10 +531,23 @@ Ext.define("Ext.form.Labelable", {
         if (me.extraMargins) {
             margins = me.el.getMargin();
             for (side in margins) {
-                style['margin-' + side] = (margins[side] + me.extraMargins[side]) + 'px';
+                if (margins.hasOwnProperty(side)) {
+                    style['margin-' + side] = (margins[side] + me.extraMargins[side]) + 'px';
+                }
             }
             me.el.setStyle(style);
         }
+    },
+    
+    /**
+     * Checks if the field has a visible label
+     * @return {Boolean} True if the field has a visible label
+     */
+    hasVisibleLabel: function(){
+        if (this.hideLabel) {
+            return false;
+        }
+        return !(this.hideEmptyLabel && !this.getFieldLabel());
     },
 
     /**
@@ -563,7 +558,7 @@ Ext.define("Ext.form.Labelable", {
      */
     getBodyColspan: function() {
         var me = this,
-            hideLabelCell = me.hideLabel || (!me.getFieldLabel() && me.hideEmptyLabel),
+            hideLabelCell = !me.hasVisibleLabel(),
             result;
 
             // In the base case, the body cell spans itself, the triggerWrap cell, and the sideErrorEl by default, so 3

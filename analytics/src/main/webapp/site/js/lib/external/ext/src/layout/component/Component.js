@@ -73,17 +73,27 @@ Ext.define('Ext.layout.component.Component', {
             dirty = !body && firstCycle && owner.width !== lastSize.width;
             
             ownerContext.setWidth(owner.width, dirty);
-        } else if (ownerContext.isTopLevel && widthModel.calculated) {
-            v = lastBox.width;
-            ownerContext.setWidth(v, /*dirty=*/v != lastSize.width);
+        } else if (ownerContext.isTopLevel) {
+            if (widthModel.calculated) {
+                v = lastBox.width;
+                ownerContext.setWidth(v, /*dirty=*/v != lastSize.width);
+            }
+
+            v = lastBox.x;
+            ownerContext.setProp('x', v, /*dirty=*/v != lastSize.x);
         }
 
         if (heightModel.configured) {
             dirty = !body && firstCycle && owner.height !== lastSize.height;
             ownerContext.setHeight(owner.height, dirty);
-        } else if (ownerContext.isTopLevel && heightModel.calculated) {
-            v = lastBox.height;
-            ownerContext.setHeight(v, v != lastSize.height);
+        } else if (ownerContext.isTopLevel) {
+            if (heightModel.calculated) {
+                v = lastBox.height;
+                ownerContext.setHeight(v, v != lastSize.height);
+            }
+
+            v = lastBox.y;
+            ownerContext.setProp('y', v, /*dirty=*/v != lastSize.y);
         }
     },
 

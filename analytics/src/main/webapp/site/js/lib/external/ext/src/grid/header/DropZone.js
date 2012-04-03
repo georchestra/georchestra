@@ -64,7 +64,8 @@ Ext.define('Ext.grid.header.DropZone', {
             nextHd = draggedHeader.nextSibling('gridcolumn:not([hidden])'),
             prevHd = draggedHeader.previousSibling('gridcolumn:not([hidden])'),
             region, topIndicator, bottomIndicator, topAnchor, bottomAnchor,
-            topXY, bottomXY, headerCtEl, minX, maxX;
+            topXY, bottomXY, headerCtEl, minX, maxX,
+            allDropZones, ln, i, dropZone;
 
         // Cannot drag beyond non-draggable start column
         if (!header.draggable && header.getIndex() === 0) {
@@ -81,10 +82,9 @@ Ext.define('Ext.grid.header.DropZone', {
             // As we move in between different DropZones that are in the same
             // group (such as the case when in a locked grid), invalidateDrop
             // on the other dropZones.
-            var allDropZones = Ext.dd.DragDropManager.getRelated(this),
-                ln = allDropZones.length,
-                i  = 0,
-                dropZone;
+            allDropZones = Ext.dd.DragDropManager.getRelated(this);
+            ln = allDropZones.length;
+            i  = 0;
 
             for (; i < ln; i++) {
                 dropZone = allDropZones[i];

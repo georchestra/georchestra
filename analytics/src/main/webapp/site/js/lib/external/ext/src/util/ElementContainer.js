@@ -133,7 +133,7 @@ Ext.define('Ext.util.ElementContainer', {
      */
     addChildEls: function () {
         var me = this,
-            args = arguments;;
+            args = arguments;
 
         if (me.hasOwnProperty('childEls')) {
             me.childEls.push.apply(me.childEls, args);

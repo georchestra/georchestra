@@ -217,7 +217,7 @@ Ext.define('Ext.container.AbstractContainer', {
 
     /*
      * @property {Boolean} isContainer
-     * `true` in this class to identify an objact as an instantiated Container, or subclass thereof.
+     * `true` in this class to identify an object as an instantiated Container, or subclass thereof.
      */
     isContainer : true,
 
@@ -526,7 +526,7 @@ Ext.define('Ext.container.AbstractContainer', {
         length = items.length;
 
         if (me.rendered) {
-            me.suspendLayouts(); // suspend layouts while adding items...
+            Ext.suspendLayouts(); // suspend layouts while adding items...
         }
 
         if (!addingArray && length == 1) { // an array of 1 should still return an array...
@@ -561,8 +561,10 @@ Ext.define('Ext.container.AbstractContainer', {
             }
         }
 
+        // We need to update our layout after adding all passed items
+        me.updateLayout();
         if (me.rendered) {
-            me.resumeLayouts(true);
+            Ext.resumeLayouts(true);
         }
 
         return ret;

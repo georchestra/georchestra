@@ -45,16 +45,25 @@ Ext.define('Ext.chart.Tip', {
     },
 
     showTip: function(item) {
-        var me = this;
+        var me = this,
+            tooltip,
+            spriteTip,
+            tipConfig,
+            trackMouse,
+            sprite,
+            surface,
+            surfaceExt,
+            pos,
+            x,
+            y;
         if (!me.tooltip) {
             return;
         }
         clearTimeout(me.tipTimeout);
-        var tooltip = me.tooltip,
-            spriteTip = me.spriteTip,
-            tipConfig = me.tipConfig,
-            trackMouse = tooltip.trackMouse,
-            sprite, surface, surfaceExt, pos, x, y;
+        tooltip = me.tooltip;
+        spriteTip = me.spriteTip;
+        tipConfig = me.tipConfig;
+        trackMouse = tooltip.trackMouse;
         if (!trackMouse) {
             tooltip.trackMouse = true;
             sprite = item.sprite;

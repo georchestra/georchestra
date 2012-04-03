@@ -4,15 +4,6 @@
  * Represents a one to one association with another model. The owner model is expected to have
  * a foreign key which references the primary key of the associated model:
  *
- *     Ext.define('Person', {
- *         extend: 'Ext.data.Model',
- *         fields: [
- *             { name: 'id',   type: 'int' },
- *             { name: 'name', type: 'string' },
- *             { name: 'address_id', type: 'int'}
- *         ]
- *     });
- *
  *     Ext.define('Address', {
  *         extend: 'Ext.data.Model',
  *         fields: [
@@ -21,6 +12,15 @@
  *             { name: 'street', type: 'string' },
  *             { name: 'city', type: 'string' },
  *             { name: 'zip', type: 'string' },
+ *         ]
+ *     });
+ *
+ *     Ext.define('Person', {
+ *         extend: 'Ext.data.Model',
+ *         fields: [
+ *             { name: 'id',   type: 'int' },
+ *             { name: 'name', type: 'string' },
+ *             { name: 'address_id', type: 'int'}
  *         ],
  *         // we can use the hasOne shortcut on the model to create a hasOne association
  *         associations: { type: 'hasOne', model: 'Address' }

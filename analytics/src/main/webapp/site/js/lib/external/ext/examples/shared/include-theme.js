@@ -3,9 +3,14 @@
         thisDir = getDir(url),
         params = getMergedQueryParams(url),
         theme = getTheme(params),
-        css = getCss(theme);
+        css = getCss(theme),
+        js = getJs(theme);
 
     document.write(Ext.String.format('<link rel="stylesheet" type="text/css" href="{0}/../../resources/css/ext-{1}.css" />', thisDir, css));
+
+    if (js) {
+        document.write(Ext.String.format('<script type="text/javascript" src="{0}/../../ext-{1}.js"></script>', thisDir, js));
+    }
 
     if (params.themes_combo != null) {
         Ext.require('Ext.panel.Panel');
@@ -34,7 +39,8 @@
                     store: [
                         ['classic', 'Classic'],
                         ['gray', 'Gray'],
-                        ['access', 'Accessibility']
+                        ['access', 'Accessibility'],
+                        ['neptune', 'Neptune']
                     ],
                     style: {
                         margin: '2px'
@@ -49,7 +55,7 @@
         });
     }
 
-    // The URL used to load this script file
+    // Extract the URL used to load this script file
     function getUrl() {
         var scripts = document.getElementsByTagName('script'),
             thisScript = scripts[scripts.length - 1];
@@ -76,7 +82,8 @@
             access: 'access',
             accessibility: 'access',
             gray: 'gray',
-            grey: 'gray'
+            grey: 'gray',
+            neptune: 'neptune'
         }[params.theme || params.css] || 'classic';
     }
 
@@ -85,7 +92,15 @@
         return {
             access: 'all-access',
             classic: 'all',
-            gray: 'all-gray'
+            gray: 'all-gray',
+            neptune: 'neptune'
+        }[theme];
+    }
+
+    // Get the JS file name from the theme name
+    function getJs(theme) {
+        return {
+            neptune: 'neptune'
         }[theme];
     }
 })();

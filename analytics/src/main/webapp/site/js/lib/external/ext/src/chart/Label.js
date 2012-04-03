@@ -131,8 +131,9 @@ Ext.define('Ext.chart.Label', {
         }
         // no items displayed, hide all labels
         if(itemLength == 0){
-            while(groupLength--)
+            while(groupLength--) {
                 hides.push(groupLength);
+            }
         }else{
             for (i = 0, count = 0, groupIndex = 0; i < len; i++) {
                 index = 0;

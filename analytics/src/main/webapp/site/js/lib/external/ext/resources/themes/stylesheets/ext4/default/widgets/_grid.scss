@@ -100,7 +100,7 @@
         zoom: 1;
         position: relative;
         white-space: nowrap;
-        line-height: 22px;
+        line-height: $grid-header-line-height;
         padding: $grid-header-padding;
 
         .#{$prefix}column-header-text {
@@ -356,12 +356,7 @@
         border-right: 1px solid $grid-cell-with-col-lines-border-color;
     }
 
-    .#{$prefix}property-grid {
-      
-        .#{$prefix}grid-row .#{$prefix}grid-cell-inner {
-            padding: 3px 6px 5px;
-        }
-      
+    .#{$prefix}property-grid {      
         .#{$prefix}grid-row .#{$prefix}grid-property-name .#{$prefix}grid-cell-inner,
         .#{$prefix}grid-row-over .#{$prefix}grid-property-name .#{$prefix}grid-cell-inner {
             padding-left: 12px;
@@ -715,7 +710,10 @@
             padding: 0 $grid-row-editor-field-padding-horizontal;
         }
         .#{$prefix}form-cb-wrap {
-            padding-top: $grid-row-editor-checkbox-padding-top;
+            padding-top: $grid-row-editor-cb-wrap-padding-top;
+        }
+        .#{$prefix}form-checkbox {
+            margin-left: $grid-row-editor-checkbox-margin-left;
         }
         .#{$prefix}form-display-field {
             font: $grid-editor-font;

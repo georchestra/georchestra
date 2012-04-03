@@ -13,7 +13,7 @@ Ext.define('Task', {
         {name: 'project', type: 'string'},
         {name: 'taskId', type: 'int'},
         {name: 'description', type: 'string'},
-        {name: 'estimate', type: 'float'},
+        {name: 'estimate', mapping: 'estHours', type: 'float'},
         {name: 'rate', type: 'float'},
         {name: 'cost', type: 'float'},
         {name: 'due', type: 'date', dateFormat:'m/d/Y'}

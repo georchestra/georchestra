@@ -1,8 +1,5 @@
 /**
  * @author Ed Spencer
- * @class Ext.data.XmlStore
- * @private
- * @ignore
  * <p>Small helper class to make creating {@link Ext.data.Store}s from XML data easier.
  * A XmlStore will be automatically configured with a {@link Ext.data.reader.Xml}.</p>
  * <p>A store configuration would be something like:<pre><code>
@@ -54,23 +51,25 @@ var store = new Ext.data.XmlStore({
  * An object literal of this form could also be used as the {@link #cfg-data} config option.</p>
  * <p><b>Note:</b> This class accepts all of the configuration options of
  * <b>{@link Ext.data.reader.Xml XmlReader}</b>.</p>
- * @xtype xmlstore
  */
 Ext.define('Ext.data.XmlStore', {
     extend: 'Ext.data.Store',
     alias: 'store.xml',
 
+    requires: [
+        'Ext.data.proxy.Ajax',
+        'Ext.data.reader.Xml',
+        'Ext.data.writer.Xml'
+    ],
+    
     constructor: function(config){
-        config = config || {};
-        config = config || {};
-
-        Ext.applyIf(config, {
+        conifig = Ext.apply({
             proxy: {
                 type: 'ajax',
                 reader: 'xml',
                 writer: 'xml'
             }
-        });
+        }, config);
 
         this.callParent([config]);
     }

@@ -1,7 +1,6 @@
 /**
- * @class Ext.chart.theme.Base
  * Provides default colors for non-specified things. Should be sub-classed when creating new themes.
- * @ignore
+ * @private
  */
 Ext.define('Ext.chart.theme.Base', {
 
@@ -158,7 +157,7 @@ Ext.define('Ext.chart.theme.Base', {
                     }, config));
                 }
             });
-        })(palette[i]);
+        }(palette[i]));
     }
     
     //Create theme from color array
@@ -171,6 +170,6 @@ Ext.define('Ext.chart.theme.Base', {
                     }, config));
                 }
             });
-        })(categories[i]);
+        }(categories[i]));
     }
 });

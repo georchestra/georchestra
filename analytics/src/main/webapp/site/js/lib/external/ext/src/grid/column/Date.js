@@ -58,6 +58,6 @@ Ext.define('Ext.grid.column.Date', {
     },
     
     defaultRenderer: function(value){
-        return Ext.util.Format.date(value, this.format)
+        return Ext.util.Format.date(value, this.format);
     }
 });

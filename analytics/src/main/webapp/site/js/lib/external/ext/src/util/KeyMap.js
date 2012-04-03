@@ -251,12 +251,13 @@ Ext.define('Ext.util.KeyMap', {
      * @param {Ext.EventObject} event
      */
     handleKeyDown: function(event) {
-        var me = this;
+        var me = this,
+            bindings, i, len;
 
         if (this.enabled) { //just in case
-            var bindings = this.bindings,
-                i = 0,
-                len = bindings.length;
+            bindings = this.bindings;
+            i = 0;
+            len = bindings.length;
 
             // Process the event
             event = me.processEvent.apply(me||me.processEventScope, arguments);

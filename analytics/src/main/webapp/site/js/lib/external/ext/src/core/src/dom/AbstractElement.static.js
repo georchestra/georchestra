@@ -4,7 +4,7 @@
 Ext.dom.AbstractElement.addInheritableStatics({
     unitRe: /\d+(px|em|%|en|ex|pt|in|cm|mm|pc)$/i,
     camelRe: /(-[a-z])/gi,
-    cssRe: /([a-z0-9-]+)\s*:\s*([^;\s]+(?:\s*[^;\s]+)*);?/gi,
+    cssRe: /([a-z0-9\-]+)\s*:\s*([^;\s]+(?:\s*[^;\s]+)*);?/gi,
     opacityRe: /alpha\(opacity=(.*)\)/i,
     propertyCache: {},
     defaultUnit : "px",
@@ -107,13 +107,13 @@ Ext.dom.AbstractElement.addInheritableStatics({
      * @return {String} An string with unitized (px if units is not specified) metrics for top, right, bottom and left
      */
     unitizeBox: function(box, units) {
-        var A = this.addUnits,
-            B = this.parseBox(box);
+        var a = this.addUnits,
+            b = this.parseBox(box);
 
-        return A(B.top, units) + ' ' +
-               A(B.right, units) + ' ' +
-               A(B.bottom, units) + ' ' +
-               A(B.left, units);
+        return a(b.top, units) + ' ' +
+               a(b.right, units) + ' ' +
+               a(b.bottom, units) + ' ' +
+               a(b.left, units);
 
     },
 
@@ -309,13 +309,15 @@ Ext.dom.AbstractElement.addInheritableStatics({
         getRightMarginFixCleaner: function (target) {
             var supports = Ext.supports,
                 hasInputBug = supports.DisplayChangeInputSelectionBug,
-                hasTextAreaBug = supports.DisplayChangeTextAreaSelectionBug;
+                hasTextAreaBug = supports.DisplayChangeTextAreaSelectionBug,
+                activeEl,
+                tag,
+                start,
+                end;
 
             if (hasInputBug || hasTextAreaBug) {
-                var activeEl = doc.activeElement || activeElement, // save a call
-                    tag = activeEl && activeEl.tagName,
-                    start,
-                    end;
+                activeEl = doc.activeElement || activeElement; // save a call
+                tag = activeEl && activeEl.tagName;
 
                 if ((hasTextAreaBug && tag == 'TEXTAREA') ||
                     (hasInputBug && tag == 'INPUT' && activeEl.type == 'text')) {
@@ -373,29 +375,25 @@ Ext.dom.AbstractElement.addInheritableStatics({
         },
 
         getXY: function(el) {
-            var p,
-                pe,
+            var bd = (doc.body || doc.documentElement),
+                leftBorder = 0,
+                topBorder = 0,
+                ret = [0,0],
+                round = Math.round,
                 b,
-                bt,
-                bl,
-                dbd,
-                x = 0,
-                y = 0,
-                scroll,
-                hasAbsolute,
-                bd = (doc.body || doc.documentElement),
-                ret = [0,0];
+                scroll;
 
             el = Ext.getDom(el);
 
             if(el != doc && el != bd){
-                hasAbsolute = fly(el).isStyle("position", "absolute");
-
                 // IE has the potential to throw when getBoundingClientRect called
                 // on element not attached to dom
                 if (Ext.isIE) {
                     try {
                         b = el.getBoundingClientRect();
+                        // In some versions of IE, the html element will have a 1px border that gets included, so subtract it off
+                        topBorder = bd.clientTop;
+                        leftBorder = bd.clientLeft;
                     } catch (ex) {
                         b = { left: 0, top: 0 }
                     }
@@ -404,7 +402,7 @@ Ext.dom.AbstractElement.addInheritableStatics({
                 }
 
                 scroll = fly(document).getScroll();
-                ret = [Math.round(b.left + scroll.left), Math.round(b.top + scroll.top)];
+                ret = [round(b.left + scroll.left - leftBorder), round(b.top + scroll.top - topBorder)];
             }
             return ret;
         },
@@ -472,4 +470,4 @@ Ext.dom.AbstractElement.addInheritableStatics({
             return data.substr(0, data.length - 1);
         }
     });
-})();
+}());

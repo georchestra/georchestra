@@ -21,7 +21,7 @@ Ext.define('Ext.toolbar.Fill', {
     alternateClassName: 'Ext.Toolbar.Fill',
     /**
      * @property {Boolean} isFill
-     * `true` in this class to identify an objact as an instantiated Fill, or subclass thereof.
+     * `true` in this class to identify an object as an instantiated Fill, or subclass thereof.
      */
     isFill : true,
     flex: 1

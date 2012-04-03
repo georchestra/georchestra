@@ -120,21 +120,26 @@ Element.override({
      * @return {Ext.dom.AbstractElement} this
      */
     setXY: function(pos) {
-        var me = this;
+        var me = this,
+            pts,
+            style,
+            pt;
 
         if (arguments.length > 1) {
             pos = [pos, arguments[1]];
         }
 
         // me.position();
-        var pts = me.translatePoints(pos),
-                style = me.dom.style;
+        pts = me.translatePoints(pos);
+        style = me.dom.style;
 
-        for (pos in pts) {
-            if (!pts.hasOwnProperty(pos)) {
+        for (pt in pts) {
+            if (!pts.hasOwnProperty(pt)) {
                 continue;
             }
-            if (!isNaN(pts[pos])) style[pos] = pts[pos] + "px";
+            if (!isNaN(pts[pt])) {
+                style[pt] = pts[pt] + "px";
+            }
         }
         return me;
     },
@@ -348,4 +353,4 @@ Element.override({
     }
 });
 
-})();
+}());

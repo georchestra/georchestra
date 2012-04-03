@@ -715,11 +715,12 @@ Ext.define('Ext.view.AbstractView', {
         // Bind the store to our selection model
         me.getSelectionModel().bindStore(me.store);
 
-        // 4.1.0: Always refresh regardless of record count.
+        // 4.1.0: If the Store is *NOT* already loading (a refresh is on the way), then
+        // on render, refresh regardless of record count.
         // Template may contain boilerplate HTML outside of record iteration loop.
         // Also, emptyText is appended by the refresh method.
         // We call refresh on a defer if this is the initial call, and we are configured to defer the initial refresh.
-        if (store) {
+        if (store && !store.loading) {
             if (initial && me.deferInitialRefresh) {
                 Ext.Function.defer(function () {
                     if (!me.isDestroyed) {

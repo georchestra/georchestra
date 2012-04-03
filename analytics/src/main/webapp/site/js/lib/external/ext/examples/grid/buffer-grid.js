@@ -48,34 +48,30 @@ Ext.onReady(function(){
         }
         return data;
     }
-    // create the Data Store
+
+    // Create the Data Store.
+    // Because it is buffered, the automatic load will be directed
+    // through the prefetch mechanism, and be read through the page cache
     var store = Ext.create('Ext.data.Store', {
         id: 'store',
-        pageSize: 50,
         // allow the grid to interact with the paging scroller by buffering
         buffered: true,
-        // never purge any data, we prefetch all up front
-        purgePageCount: 0,
+        // Configure the store with a single page of records which will be cached
+        pageSize: 5000,
+        data: createFakeData(5000),
         model: 'Employee',
         proxy: {
             type: 'memory'
         }
     });
 
-
-
     var grid = Ext.create('Ext.grid.Panel', {
         width: 700,
         height: 500,
         title: 'Bufffered Grid of 5,000 random records',
         store: store,
-        verticalScroller: {
-            xtype: 'paginggridscroller',
-            activePrefetch: false
-        },
         loadMask: true,
         disableSelection: true,
-        invalidateScrollerOnRefresh: false,
         viewConfig: {
             trackOver: false
         },
@@ -104,17 +100,4 @@ Ext.onReady(function(){
         }],
         renderTo: Ext.getBody()
     });
-
-    var data = createFakeData(5000),
-        ln = data.length,
-        records = [],
-        i = 0;
-    for (; i < ln; i++) {
-        records.push(Ext.create('Employee', data[i]));
-    }
-    store.cacheRecords(records);
-
-    store.guaranteeRange(0, 49);
 });
-
-

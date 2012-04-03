@@ -16,9 +16,8 @@
 </head>
 <body onload="prettyPrint(); highlight();">
   <pre class="prettyprint lang-js"><span id='Ext-data-NodeStore'>/**
-</span> * @class Ext.data.NodeStore
- * Node Store
- * @ignore
+</span> * Node Store
+ * @private
  */
 Ext.define('Ext.data.NodeStore', {
     extend: 'Ext.data.Store',
@@ -101,7 +100,7 @@ Ext.define('Ext.data.NodeStore', {
             me.removeAll();
             if (me.rootVisible) {
                 me.add(node);
-            } else if (!node.isExpanded() &amp;&amp; me.autoLoad !== false) {
+            } else if (!node.isExpanded() &amp;&amp; me.treeStore.autoLoad !== false) {
                 node.expand();
             }
 

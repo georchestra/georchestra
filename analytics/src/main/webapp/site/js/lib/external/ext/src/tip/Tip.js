@@ -51,8 +51,6 @@ Ext.define('Ext.tip.Tip', {
      */
     constrainPosition : true,
 
-    frame: false,
-
     // private panel overrides
     autoRender: true,
     hidden: true,
@@ -88,6 +86,11 @@ Ext.define('Ext.tip.Tip', {
 
         me.floating = Ext.apply({}, {shadow: me.shadow}, me.self.prototype.floating);
         me.callParent(arguments);
+        
+        // Only set frame to true after the protoEl has been set up with the UI classes attached.
+        // Generated CSS classes for elements within Window's structure
+        // do not expect to use the "framed" UI.
+        me.frame = true;
 
         // Or in the deprecated config. Floating.doConstrain only constrains if the constrain property is truthy.
         me.constrain = me.constrain || me.constrainPosition;

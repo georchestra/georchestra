@@ -1,5 +1,14 @@
 Ext.define('KitchenSink.view.examples.forms.Contact', {
     extend: 'KitchenSink.view.examples.Example',
+    requires: [
+        'Ext.form.FieldContainer',
+        'Ext.form.Panel',
+        'Ext.form.field.Text',
+        'Ext.form.field.TextArea',
+        'Ext.layout.container.Anchor',
+        'Ext.layout.container.HBox'
+    ],
+
     items: [{
         xtype: 'form',
         

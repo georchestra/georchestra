@@ -68,7 +68,7 @@ Ext.define('Ext.form.field.HtmlEditor', {
     ],
 
     fieldSubTpl: [
-        '{%this.renderToolbar(out, values)%}',
+        '{%Ext.DomHelper.generateMarkup(values.$comp.toolbar.getRenderTree(), out)%}',
         '{beforeTextAreaTpl}',
         '<textarea id="{cmpId}-textareaEl" name="{name}" tabIndex="-1" {inputAttrTpl}',
                  ' class="{textareaCls}" style="{size}" autocomplete="off">',
@@ -80,12 +80,7 @@ Ext.define('Ext.form.field.HtmlEditor', {
                ' style="overflow:auto;{size}" src="{iframeSrc}"></iframe>',
         '{afterIFrameTpl}',
         {
-            disableFormats: true,
-
-            // Insert the markup for the toolbar's render tree into the output buffer
-            renderToolbar: function(out, values) {
-                Ext.DomHelper.generateMarkup(values.$comp.toolbar.getRenderTree(), out);
-            }
+            disableFormats: true
         }
     ],
 
@@ -1202,7 +1197,7 @@ Ext.define('Ext.form.field.HtmlEditor', {
     },
 
     // private
-    fixKeys: function() { // load time branching for fastest keydown performance
+    fixKeys: (function() { // load time branching for fastest keydown performance
         if (Ext.isIE) {
             return function(e){
                 var me = this,
@@ -1263,7 +1258,7 @@ Ext.define('Ext.form.field.HtmlEditor', {
         }
 
         return null; // not needed, so null
-    }(),
+    }()),
 
     /**
      * Returns the editor's toolbar. **This is only available after the editor has been rendered.**

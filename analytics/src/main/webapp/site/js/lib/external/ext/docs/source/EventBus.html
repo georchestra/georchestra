@@ -77,6 +77,7 @@ Ext.define('Ext.app.EventBus', {
 
     control: function(selectors, listeners, controller) {
         var bus = this.bus,
+            hasListeners, tree, list,
             selector, options, listener, scope, event, listenerList, ev;
 
         if (Ext.isString(selectors)) {
@@ -87,11 +88,11 @@ Ext.define('Ext.app.EventBus', {
             return;
         }
 
+        hasListeners = Ext.util.Observable.HasListeners.prototype;
         for (selector in selectors) {
             if (selectors.hasOwnProperty(selector)) {
                 listenerList = selectors[selector] || {};
 
-                //inner loop
                 for (ev in listenerList) {
                     if (listenerList.hasOwnProperty(ev)) {
                         options  = {};
@@ -111,13 +112,15 @@ Ext.define('Ext.app.EventBus', {
 
                         event.addListener(listener, scope, options);
 
+                        hasListeners[ev] = 1;
+
                         // Create the bus tree if it is not there yet
-                        bus[ev] = bus[ev] || {};
-                        bus[ev][selector] = bus[ev][selector] || {};
-                        bus[ev][selector][controller.id] = bus[ev][selector][controller.id] || [];
+                        tree = bus[ev] || (bus[ev] = {});
+                        tree = tree[selector] || (tree[selector] = {});
+                        list = tree[controller.id] || (tree[controller.id] = []);
 
                         // Push our listener in our bus
-                        bus[ev][selector][controller.id].push(event);
+                        list.push(event);
                     }
                 } //end inner loop
             }

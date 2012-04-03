@@ -125,15 +125,16 @@ Ext.define('Ext.app.Application', {
         config = config || {};
         Ext.apply(this, config);
 
-        var requires = config.requires || [];
+        var requires = config.requires || [],
+            controllers, ln, i, controller,
+            paths, path, ns;
 
         Ext.Loader.setPath(this.name, this.appFolder);
 
         if (this.paths) {
-            var paths = this.paths,
-                path;
+            paths = this.paths;
 
-            for (var ns in paths) {
+            for (ns in paths) {
                 if (paths.hasOwnProperty(ns)) {
                     path = paths[ns];
 
@@ -146,9 +147,8 @@ Ext.define('Ext.app.Application', {
 
         this.eventbus = new Ext.app.EventBus;
 
-        var controllers = Ext.Array.from(this.controllers),
-            ln = controllers && controllers.length,
-            i, controller;
+        controllers = Ext.Array.from(this.controllers);
+        ln = controllers && controllers.length;
 
         this.controllers = new Ext.util.MixedCollection();
 
@@ -191,7 +191,8 @@ Ext.define('Ext.app.Application', {
      * @private
      */
     onBeforeLaunch: function() {
-        var me = this;
+        var me = this,
+            controllers, c, cLen, controller;
 
         if (me.enableQuickTips) {
             Ext.tip.QuickTipManager.init();
@@ -205,10 +206,8 @@ Ext.define('Ext.app.Application', {
         me.launched = true;
         me.fireEvent('launch', this);
 
-        var controllers = me.controllers.items,
-            c,
-            cLen        = controllers.length,
-            controller;
+        controllers = me.controllers.items;
+        cLen        = controllers.length;
 
         for (c = 0; c < cLen; c++) {
             controller = controllers[c];

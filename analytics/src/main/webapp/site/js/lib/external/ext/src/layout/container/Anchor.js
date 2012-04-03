@@ -55,20 +55,7 @@ Ext.define('Ext.layout.container.Anchor', {
     manageOverflow: 2,
 
     renderTpl: [
-        '{%this.renderBody(out,values)%}',
-
-        // This layout uses natural HTML flow to arrange the child items. To ensure that
-        // all browsers (I'm looking at you IE!) add the bottom margin of the last child
-        // to the containing element height, we create a zero-sized element to force a
-        // "new line". If we add "clear:both" this causes IE6 to get extra margins and
-        // IE9 to eat the bottom margin.
-        // 
-        // Since we aren't floating our child elements, we don't really need (or want)
-        // the "clear:both" style. This causes strange results in IE at least now that
-        // we have the padder as well.
-        '<div role="presentation" style="clear:none;" class="',Ext.baseCSSPrefix,'clear"></div>',
-
-        '{%this.renderPadder(out,values)%}'
+        '{%this.renderBody(out,values);this.renderPadder(out,values)%}'
     ],
 
     /**
@@ -252,9 +239,10 @@ Ext.define('Ext.layout.container.Anchor', {
         var shrinkWrapWidth = ownerContext.widthModel.shrinkWrap,
             shrinkWrapHeight = ownerContext.heightModel.shrinkWrap,
             children = ownerContext.childItems,
-            anchorSpec, comp, childContext;
+            anchorSpec, comp, childContext,
+            i, length;
 
-        for (var i = 0, length = children.length; i < length; ++i) {
+        for (i = 0, length = children.length; i < length; ++i) {
             childContext = children[i];
             comp = childContext.target;
             anchorSpec = comp.anchorSpec;
@@ -397,13 +385,15 @@ Ext.define('Ext.layout.container.Anchor', {
     getItemSizePolicy: function (item) {
         var anchorSpec = item.anchorSpec,
             key = '',
-            policy = this.sizePolicy;
+            policy = this.sizePolicy,
+            sizeModel;
 
         if (anchorSpec) {
-            if (anchorSpec.right) {
+            sizeModel = this.owner.getSizeModel();
+            if (anchorSpec.right && !sizeModel.width.shrinkWrap) {
                 policy = policy.r;
             }
-            if (anchorSpec.bottom) {
+            if (anchorSpec.bottom && !sizeModel.height.shrinkWrap) {
                 key = 'b';
             }
         }

@@ -132,12 +132,16 @@ Ext.dom.Element.override({
      *
      * @param {String} anchor (optional) One of the valid Fx anchor positions (defaults to top: 't')
      * @param {Object} options (optional) Object literal with any of the Fx config options
+     * @param {Boolean} options.preserveScroll Set to true if preservation of any descendant elements'
+     * `scrollTop` values is required. By default the DOM wrapping operation performed by `slideIn` and
+     * `slideOut` causes the browser to lose all scroll positions.
      * @return {Ext.dom.Element} The Element
      */
     slideIn: function(anchor, obj, slideOut) {
         var me = this,
             elStyle = me.dom.style,
-            beforeAnim, wrapAnim;
+            beforeAnim, wrapAnim,
+            restoreScroll;
 
         anchor = anchor || "t";
         obj = obj || {};
@@ -162,6 +166,11 @@ Ext.dom.Element.override({
             originalStyles = me.getStyles('width', 'height', 'left', 'right', 'top', 'bottom', 'position', 'z-index', true);
             me.setSize(box.width, box.height);
 
+            // Cache all descendants' scrollTop & scrollLeft values if configured to preserve scroll.
+            if (obj.preserveScroll) {
+                restoreScroll = me.cacheScrollValues();
+            }
+
             wrap = me.wrap({
                 id: Ext.id() + '-anim-wrap-for-' + me.id,
                 style: {
@@ -174,6 +183,11 @@ Ext.dom.Element.override({
             }
             me.clearPositioning('auto');
             wrap.clip();
+
+            // The wrap will have reset all descendant scrollTops. Restore them if we cached them.
+            if (restoreScroll) {
+                restoreScroll();
+            }
 
             // This element is temporarily positioned absolute within its wrapper.
             // Restore to its default, CSS-inherited visibility setting.
@@ -329,6 +343,10 @@ Ext.dom.Element.override({
                 if (wrap.dom) {
                     wrap.dom.parentNode.insertBefore(me.dom, wrap.dom);
                     wrap.remove();
+                }
+                // The unwrap will have reset all descendant scrollTops. Restore them if we cached them.
+                if (restoreScroll) {
+                    restoreScroll();
                 }
                 // kill the no-op element animation created below
                 animScope.end();

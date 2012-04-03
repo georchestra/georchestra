@@ -13,7 +13,7 @@ Ext license terms. Public redistribution is prohibited.
 
 For early licensing, please contact us at licensing@sencha.com
 
-Build date: 2012-02-21 23:18:31 (3a639ae9dd5443bffbde7bec9922e6fb07a923a8)
+Build date: 2012-03-13 14:31:45 (92d45716fd5f49811568ad9d756992f1cced424d)
 */
 /**
  * @class Ext
@@ -170,7 +170,7 @@ Ext._startTime = new Date().getTime();
          * @return {Function} The subclass constructor from the <tt>overrides</tt> parameter, or a generated one if not provided.
          * @deprecated 4.0.0 Use {@link Ext#define Ext.define} instead
          */
-        extend: function() {
+        extend: (function() {
             // inline overrides
             var objectConstructor = objectPrototype.constructor,
                 inlineOverrides = function(o) {
@@ -220,7 +220,7 @@ Ext._startTime = new Date().getTime();
 
                 return subclass;
             };
-        }(),
+        }()),
 
         /**
          * Proxy to {@link Ext.Base#override}. Please refer {@link Ext.Base#override} for further details.
@@ -280,17 +280,20 @@ Ext._startTime = new Date().getTime();
          * @markdown
          */
         typeOf: function(value) {
+            var type,
+                typeToString;
+            
             if (value === null) {
                 return 'null';
             }
 
-            var type = typeof value;
+            type = typeof value;
 
             if (type === 'undefined' || type === 'string' || type === 'number' || type === 'boolean') {
                 return type;
             }
 
-            var typeToString = toString.call(value);
+            typeToString = toString.call(value);
 
             switch(typeToString) {
                 case '[object Array]':
@@ -499,11 +502,21 @@ Ext._startTime = new Date().getTime();
     Ext.apply(Ext, {
 
         /**
-         * Clone almost any type of variable including array, object, DOM nodes and Date without keeping the old reference
+         * Clone simple variables including array, {}-like objects, DOM nodes and Date without keeping the old reference.
+         * A reference for the object itself is returned if it's not a direct decendant of Object. For model cloning,
+         * see {@link Model#copy Model.copy}.
+         * 
          * @param {Object} item The variable to clone
          * @return {Object} clone
          */
         clone: function(item) {
+            var type,
+                i,
+                j,
+                k,
+                clone,
+                key;
+            
             if (item === null || item === undefined) {
                 return item;
             }
@@ -515,14 +528,13 @@ Ext._startTime = new Date().getTime();
                 return item.cloneNode(true);
             }
 
-            var type = toString.call(item);
+            type = toString.call(item);
 
             // Date
             if (type === '[object Date]') {
                 return new Date(item.getTime());
             }
 
-            var i, j, k, clone, key;
 
             // Array
             if (type === '[object Array]') {
@@ -558,10 +570,11 @@ Ext._startTime = new Date().getTime();
          * Generate a unique reference of Ext in the global scope, useful for sandboxing
          */
         getUniqueGlobalNamespace: function() {
-            var uniqueGlobalNamespace = this.uniqueGlobalNamespace;
+            var uniqueGlobalNamespace = this.uniqueGlobalNamespace,
+                i;
 
             if (uniqueGlobalNamespace === undefined) {
-                var i = 0;
+                i = 0;
 
                 do {
                     uniqueGlobalNamespace = 'ExtBox' + (++i);
@@ -623,11 +636,11 @@ Ext._startTime = new Date().getTime();
          * @private
          */
         globalEval: ('execScript' in global) ? function(code) {
-            global.execScript(code)
+            global.execScript(code);
         } : function(code) {
             (function(){
                 eval(code);
-            })();
+            }());
         },
 
         /**
@@ -654,7 +667,7 @@ Ext._startTime = new Date().getTime();
      */
     Ext.type = Ext.typeOf;
 
-})();
+}());
 
 /**
  * @author Jacky Nguyen <jacky@sencha.com>
@@ -1019,7 +1032,7 @@ var version = '4.1.0beta', Version;
 
     Ext.setVersion('core', version);
 
-})();
+}());
 
 /**
  * @class Ext.String
@@ -1032,7 +1045,7 @@ Ext.String = (function() {
     var trimRegex     = /^[\x09\x0a\x0b\x0c\x0d\x20\xa0\u1680\u180e\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u2028\u2029\u202f\u205f\u3000]+|[\x09\x0a\x0b\x0c\x0d\x20\xa0\u1680\u180e\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u2028\u2029\u202f\u205f\u3000]+$/g,
         escapeRe      = /('|\\)/g,
         formatRe      = /\{(\d+)\}/g,
-        escapeRegexRe = /([-.*+?^${}()|[\]\/\\])/g,
+        escapeRegexRe = /([-.*+?\^${}()|\[\]\/\\])/g,
         basicTrimRe   = /^\s+|\s+$/g,
         whitespaceRe  = /\s+/,
         varReplace    = /(^[^a-z]*|[^\w])/gi,
@@ -1286,7 +1299,7 @@ Ext.String = (function() {
             return words || [];
         }
     };
-})();
+}());
 
 /**
  * Old alias to {@link Ext.String#htmlEncode}
@@ -1500,7 +1513,7 @@ Ext.Number = new function() {
 
     var arrayPrototype = Array.prototype,
         slice = arrayPrototype.slice,
-        supportsSplice = function () {
+        supportsSplice = (function () {
             var array = [],
                 lengthBefore,
                 j = 20;
@@ -1527,19 +1540,22 @@ Ext.Number = new function() {
             // end IE8 bug
 
             return true;
-        }(),
+        }()),
         supportsForEach = 'forEach' in arrayPrototype,
         supportsMap = 'map' in arrayPrototype,
         supportsIndexOf = 'indexOf' in arrayPrototype,
         supportsEvery = 'every' in arrayPrototype,
         supportsSome = 'some' in arrayPrototype,
         supportsFilter = 'filter' in arrayPrototype,
-        supportsSort = function() {
+        supportsSort = (function() {
             var a = [1,2,3,4,5].sort(function(){ return 0; });
             return a[0] === 1 && a[1] === 2 && a[2] === 3 && a[3] === 4 && a[4] === 5;
-        }(),
+        }()),
         supportsSliceOnNodeList = true,
-        ExtArray;
+        ExtArray,
+        erase,
+        replace,
+        splice;
 
     try {
         // IE 6 - 8 will throw an error when using Array.prototype.slice on NodeList
@@ -1588,7 +1604,13 @@ Ext.Number = new function() {
     function replaceSim (array, index, removeCount, insert) {
         var add = insert ? insert.length : 0,
             length = array.length,
-            pos = fixArrayIndex(array, index);
+            pos = fixArrayIndex(array, index),
+            remove,
+            tailOldPos,
+            tailNewPos,
+            tailCount,
+            lengthAfterRemove,
+            i;
 
         // we try to use Array.push when we can for efficiency...
         if (pos === length) {
@@ -1596,12 +1618,11 @@ Ext.Number = new function() {
                 array.push.apply(array, insert);
             }
         } else {
-            var remove = Math.min(removeCount, length - pos),
-                tailOldPos = pos + remove,
-                tailNewPos = tailOldPos + add - remove,
-                tailCount = length - tailOldPos,
-                lengthAfterRemove = length - remove,
-                i;
+            remove = Math.min(removeCount, length - pos);
+            tailOldPos = pos + remove;
+            tailNewPos = tailOldPos + add - remove;
+            tailCount = length - tailOldPos;
+            lengthAfterRemove = length - remove;
 
             if (tailNewPos < tailOldPos) { // case A
                 for (i = 0; i < tailCount; ++i) {
@@ -1666,9 +1687,9 @@ Ext.Number = new function() {
         return array.splice.apply(array, slice.call(arguments, 1));
     }
 
-    var erase = supportsSplice ? eraseNative : eraseSim,
-        replace = supportsSplice ? replaceNative : replaceSim,
-        splice = supportsSplice ? spliceNative : spliceSim;
+    erase = supportsSplice ? eraseNative : eraseSim;
+    replace = supportsSplice ? replaceNative : replaceSim;
+    splice = supportsSplice ? spliceNative : spliceSim;
 
     // NOTE: from here on, use erase, replace or splice (not native methods)...
 
@@ -2128,46 +2149,64 @@ Ext.Number = new function() {
          * @return {Array} intersect
          */
         intersect: function() {
-            var intersect = [],
+            var intersection = [],
                 arrays = slice.call(arguments),
-                i, j, k, minArray, array, x, y, ln, arraysLn, arrayLn;
+                arraysLength,
+                array,
+                arrayLength,
+                minArray,
+                minArrayIndex,
+                minArrayCandidate,
+                minArrayLength,
+                element,
+                elementCandidate,
+                elementCount,
+                i, j, k;
 
             if (!arrays.length) {
-                return intersect;
+                return intersection;
             }
 
             // Find the smallest array
-            for (i = x = 0,ln = arrays.length; i < ln,array = arrays[i]; i++) {
-                if (!minArray || array.length < minArray.length) {
-                    minArray = array;
-                    x = i;
+            arraysLength = arrays.length;
+            for (i = minArrayIndex = 0; i < arraysLength; i++) {
+                minArrayCandidate = arrays[i];
+                if (!minArray || minArrayCandidate.length < minArray.length) {
+                    minArray = minArrayCandidate;
+                    minArrayIndex = i;
                 }
             }
 
             minArray = ExtArray.unique(minArray);
-            erase(arrays, x, 1);
+            erase(arrays, minArrayIndex, 1);
 
             // Use the smallest unique'd array as the anchor loop. If the other array(s) do contain
             // an item in the small array, we're likely to find it before reaching the end
             // of the inner loop and can terminate the search early.
-            for (i = 0,ln = minArray.length; i < ln,x = minArray[i]; i++) {
-                var count = 0;
+            minArrayLength = minArray.length;
+            arraysLength = arrays.length;
+            for (i = 0; i < minArrayLength; i++) {
+                element = minArray[i];
+                elementCount = 0;
 
-                for (j = 0,arraysLn = arrays.length; j < arraysLn,array = arrays[j]; j++) {
-                    for (k = 0,arrayLn = array.length; k < arrayLn,y = array[k]; k++) {
-                        if (x === y) {
-                            count++;
+                for (j = 0; j < arraysLength; j++) {
+                    array = arrays[j];
+                    arrayLength = array.length;
+                    for (k = 0; k < arrayLength; k++) {
+                        elementCandidate = array[k];
+                        if (element === elementCandidate) {
+                            elementCount++;
                             break;
                         }
                     }
                 }
 
-                if (count === arraysLn) {
-                    intersect.push(x);
+                if (elementCount === arraysLength) {
+                    intersection.push(element);
                 }
             }
 
-            return intersect;
+            return intersection;
         },
 
         /**
@@ -2619,7 +2658,7 @@ Ext.Number = new function() {
     Ext.toArray = function() {
         return ExtArray.toArray.apply(ExtArray, arguments);
     };
-})();
+}());
 
 /**
  * @class Ext.Function
@@ -2759,7 +2798,7 @@ Ext.Function = {
             } else {
                 args = args !== undefined ? [args] : [];
             }
-        };
+        }
 
         return function() {
             var fnArgs = [].concat(args);
@@ -2899,7 +2938,9 @@ Ext.Function = {
     defer: function(fn, millis, scope, args, appendArgs) {
         fn = Ext.Function.bind(fn, scope, args, appendArgs);
         if (millis > 0) {
-            return setTimeout(fn, millis);
+            return setTimeout(Ext.supports.TimeoutActualLateness ? function () {
+                fn();
+            } : fn, millis);
         }
         fn();
         return 0;
@@ -3005,6 +3046,7 @@ Ext.Function = {
             }
         };
     },
+
 
     /**
      * Adds behavior to an existing method that is executed before the
@@ -3117,9 +3159,8 @@ Ext.bind = Ext.Function.alias(Ext.Function, 'bind');
 (function() {
 
 // The "constructor" for chain:
-var TemplateClass = function(){};
-
-var ExtObject = Ext.Object = {
+var TemplateClass = function(){},
+    ExtObject = Ext.Object = {
 
     /**
      * Returns a new object with the given object as the prototype chain.
@@ -3636,7 +3677,7 @@ var ExtObject = Ext.Object = {
 
                 for (; i < ln; i++) {
                     property = objectProperties[i];
-                    this[property] = new propertyClassesMap[property];
+                    this[property] = new propertyClassesMap[property]();
                 }
             },
             key, value;
@@ -3704,7 +3745,7 @@ Ext.urlDecode = function() {
     return ExtObject.fromQueryString.apply(ExtObject, arguments);
 };
 
-})();
+}());
 
 //<localeInfo useApply="true" />
 /**
@@ -3925,8 +3966,8 @@ Ext.Date.parseFunctions['x-date-format'] = myDateParser;
         "MS": function(input, strict) {
             // note: the timezone offset is ignored since the MS Ajax server sends
             // a UTC milliseconds-since-Unix-epoch value (negative values are allowed)
-            var re = new RegExp('\\/Date\\(([-+])?(\\d+)(?:[+-]\\d{4})?\\)\\/');
-            var r = (input || '').match(re);
+            var re = new RegExp('\\/Date\\(([-+])?(\\d+)(?:[+-]\\d{4})?\\)\\/'),
+                r = (input || '').match(re);
             return r? new Date(((r[1] || '') + r[2]) * 1) : null;
         }
     },
@@ -4172,7 +4213,7 @@ Ext.Date.monthNumbers = {
         return function(format){
             return hourInfoRe.test(format.replace(stripEscapeRe, ''));
         };
-    })(),
+    }()),
 
     /**
      * Checks if the specified format contains information about
@@ -4189,7 +4230,7 @@ Ext.Date.monthNumbers = {
         return function(format){
             return dateInfoRe.test(format.replace(stripEscapeRe, ''));
         };
-    })(),
+    }()),
 
     /**
      * The base format-code to formatting-function hashmap used by the {@link #format} method.
@@ -4239,8 +4280,9 @@ console.log(Ext.Date.format(new Date(), 'X'); // returns the current day of the 
         Z: "(this.getTimezoneOffset() * -60)",
 
         c: function() { // ISO-8601 -- GMT format
-            for (var c = "Y-m-dTH:i:sP", code = [], i = 0, l = c.length; i < l; ++i) {
-                var e = c.charAt(i);
+            var c, code, i, l, e;
+            for (c = "Y-m-dTH:i:sP", code = [], i = 0, l = c.length; i < l; ++i) {
+                e = c.charAt(i);
                 code.push(e == "T" ? "'T'" : utilDate.getFormatCode(e)); // treat T as a character literal
             }
             return code.join(" + ");
@@ -4354,9 +4396,10 @@ dt = Ext.Date.parse("2006-02-29 03:20:01", "Y-m-d H:i:s", true); // returns null
     createFormat : function(format) {
         var code = [],
             special = false,
-            ch = '';
+            ch = '',
+            i;
 
-        for (var i = 0; i < format.length; ++i) {
+        for (i = 0; i < format.length; ++i) {
             ch = format.charAt(i);
             if (!special && ch == "\\") {
                 special = true;
@@ -4471,7 +4514,7 @@ dt = Ext.Date.parse("2006-02-29 03:20:01", "Y-m-d H:i:s", true); // returns null
             utilDate.parseRegexes[regexNum] = new RegExp("^" + regex.join('') + "$", 'i');
             utilDate.parseFunctions[format] = Ext.functionFactory("input", "strict", xf(code, regexNum, calc.join('')));
         };
-    })(),
+    }()),
 
     // private
     parseCodes : {
@@ -4645,7 +4688,7 @@ dt = Ext.Date.parse("2006-02-29 03:20:01", "Y-m-d H:i:s", true); // returns null
                     "mn = o.substring(3,5) % 60;", // get minutes
                 "o = ((-12 <= (hr*60 + mn)/60) && ((hr*60 + mn)/60 <= 14))? (sn + Ext.String.leftPad(hr, 2, '0') + Ext.String.leftPad(mn, 2, '0')) : null;\n" // -12hrs <= GMT offset <= 14hrs
             ].join("\n"),
-            s: "([+\-]\\d{4})" // GMT offset in hrs and mins
+            s: "([+-]\\d{4})" // GMT offset in hrs and mins
         },
         P: {
             g:1,
@@ -4656,7 +4699,7 @@ dt = Ext.Date.parse("2006-02-29 03:20:01", "Y-m-d H:i:s", true); // returns null
                     "mn = o.substring(4,6) % 60;", // get minutes
                 "o = ((-12 <= (hr*60 + mn)/60) && ((hr*60 + mn)/60 <= 14))? (sn + Ext.String.leftPad(hr, 2, '0') + Ext.String.leftPad(mn, 2, '0')) : null;\n" // -12hrs <= GMT offset <= 14hrs
             ].join("\n"),
-            s: "([+\-]\\d{2}:\\d{2})" // GMT offset in hrs and mins (with colon separator)
+            s: "([+-]\\d{2}:\\d{2})" // GMT offset in hrs and mins (with colon separator)
         },
         T: {
             g:0,
@@ -4667,7 +4710,7 @@ dt = Ext.Date.parse("2006-02-29 03:20:01", "Y-m-d H:i:s", true); // returns null
             g:1,
             c:"zz = results[{0}] * 1;\n" // -43200 <= UTC offset <= 50400
                   + "zz = (-43200 <= zz && zz <= 50400)? zz : null;\n",
-            s:"([+\-]?\\d{1,5})" // leading '+' sign is optional for UTC offset
+            s:"([+-]?\\d{1,5})" // leading '+' sign is optional for UTC offset
         },
         c: function() {
             var calc = [],
@@ -4690,9 +4733,11 @@ dt = Ext.Date.parse("2006-02-29 03:20:01", "Y-m-d H:i:s", true); // returns null
                             "}",
                         "}"
                     ].join('\n')}
-                ];
+                ],
+                i,
+                l;
 
-            for (var i = 0, l = arr.length; i < l; ++i) {
+            for (i = 0, l = arr.length; i < l; ++i) {
                 calc.push(arr[i].c);
             }
 
@@ -4835,7 +4880,7 @@ dt = Ext.Date.parse("2006-02-29 03:20:01", "Y-m-d H:i:s", true); // returns null
 
             return AWN - Math.floor(Date.UTC(Wyr, 0, 7) / ms7d) + 1;
         };
-    })(),
+    }()),
 
     /**
      * Checks if the current date falls within a leap year.
@@ -4915,7 +4960,7 @@ console.log(Ext.Date.dayNames[lastDay]); //output: 'Wednesday'
 
             return m == 1 && utilDate.isLeapYear(date) ? 29 : daysInMonth[m];
         };
-    })(),
+    }()),
 
     /**
      * Get the English ordinal suffix of the current day (equivalent to the format specifier 'S').
@@ -4993,7 +5038,9 @@ console.log(orig);  //returns 'Thu Oct 01 2006'
         }
 
         // get current date before clearing time
-        var d = date.getDate();
+        var d = date.getDate(),
+            hr,
+            c;
 
         // clear time
         date.setHours(0);
@@ -5006,11 +5053,11 @@ console.log(orig);  //returns 'Thu Oct 01 2006'
             // refer to http://www.timeanddate.com/time/aboutdst.html for the (rare) exceptions to this rule
 
             // increment hour until cloned date == current date
-            for (var hr = 1, c = utilDate.add(date, Ext.Date.HOUR, hr); c.getDate() != d; hr++, c = utilDate.add(date, Ext.Date.HOUR, hr));
+            for (hr = 1, c = utilDate.add(date, Ext.Date.HOUR, hr); c.getDate() != d; hr++, c = utilDate.add(date, Ext.Date.HOUR, hr));
 
             date.setDate(d);
             date.setHours(c.getHours());
-        };
+        }
 
         return date;
     },
@@ -5039,8 +5086,11 @@ console.log(dt2); //returns 'Tue Sep 26 2006 00:00:00'
      */
     add : function(date, interval, value) {
         var d = Ext.Date.clone(date),
-            Date = Ext.Date;
-        if (!interval || value === 0) return d;
+            Date = Ext.Date,
+            day;
+        if (!interval || value === 0) {
+            return d;
+        }
 
         switch(interval.toLowerCase()) {
             case Ext.Date.MILLI:
@@ -5059,7 +5109,7 @@ console.log(dt2); //returns 'Tue Sep 26 2006 00:00:00'
                 d.setDate(d.getDate() + value);
                 break;
             case Ext.Date.MONTH:
-                var day = date.getDate();
+                day = date.getDate();
                 if (day > 28) {
                     day = Math.min(day, Ext.Date.getLastDateOfMonth(Ext.Date.add(Ext.Date.getFirstDateOfMonth(date), Ext.Date.MONTH, value)).getDate());
                 }
@@ -5067,7 +5117,7 @@ console.log(dt2); //returns 'Tue Sep 26 2006 00:00:00'
                 d.setMonth(date.getMonth() + value);
                 break;
             case Ext.Date.YEAR:
-                var day = date.getDate();
+                day = date.getDate();
                 if (day > 28) {
                     day = Math.min(day, Ext.Date.getLastDateOfMonth(Ext.Date.add(Ext.Date.getFirstDateOfMonth(date), Ext.Date.YEAR, value)).getDate());
                 }
@@ -5095,7 +5145,7 @@ console.log(dt2); //returns 'Tue Sep 26 2006 00:00:00'
         var nativeDate = window.Date,
             p, u,
             statics = ['useStrict', 'formatCodeToRegex', 'parseFunctions', 'parseRegexes', 'formatFunctions', 'y2kYear', 'MILLI', 'SECOND', 'MINUTE', 'HOUR', 'DAY', 'MONTH', 'YEAR', 'defaults', 'dayNames', 'monthNames', 'monthNumbers', 'getShortMonthName', 'getShortDayName', 'getMonthNumber', 'formatCodes', 'isValid', 'parseDate', 'getFormatCode', 'createFormat', 'createParser', 'parseCodes'],
-            proto = ['dateFormat', 'format', 'getTimezone', 'getGMTOffset', 'getDayOfYear', 'getWeekOfYear', 'isLeapYear', 'getFirstDayOfMonth', 'getLastDayOfMonth', 'getDaysInMonth', 'getSuffix', 'clone', 'isDST', 'clearTime', 'add', 'between'];
+            proto = ['dateFormat', 'format', 'getTimezone', 'getGMTOffset', 'getDayOfYear', 'getWeekOfYear', 'isLeapYear', 'getFirstDayOfMonth', 'getLastDayOfMonth', 'getDaysInMonth', 'getSuffix', 'clone', 'isDST', 'clearTime', 'add', 'between'],
             sLen    = statics.length,
             pLen    = proto.length,
             stat, prot, s;
@@ -5120,7 +5170,7 @@ console.log(dt2); //returns 'Tue Sep 26 2006 00:00:00'
 
 var utilDate = Ext.Date;
 
-})();
+}());
 
 /**
  * @author Jacky Nguyen <jacky@sencha.com>
@@ -5211,7 +5261,7 @@ var noArgs = [],
                 this.$onExtended = parent.$onExtended.slice();
             }
 
-            prototype.config = new prototype.configClass;
+            prototype.config = new prototype.configClass();
             prototype.initConfigList = prototype.initConfigList.slice();
             prototype.initConfigMap = Ext.clone(prototype.initConfigMap);
             prototype.configMap = Ext.Object.chain(prototype.configMap);
@@ -5342,7 +5392,6 @@ var noArgs = [],
                 hasInheritableStatics = prototype.$hasInheritableStatics = {};
             }
 
-
             for (name in members) {
                 if (members.hasOwnProperty(name)) {
                     member = members[name];
@@ -5385,7 +5434,6 @@ var noArgs = [],
                 enumerables = Ext.enumerables,
                 names = [],
                 i, ln, name, member;
-
 
             for (name in members) {
                 names.push(name);
@@ -5477,9 +5525,7 @@ var noArgs = [],
                 toBorrow = fromPrototype[name];
 
                 if (typeof toBorrow == 'function') {
-                    fn = function() {
-                        return toBorrow.apply(this, arguments);
-                    };
+                    fn = Ext.Function.clone(toBorrow);
 
 
                     fn.$owner = this;
@@ -5509,11 +5555,9 @@ var noArgs = [],
          *         constructor: function() {
          *             alert("I'm going to be a cat!");
          *
-         *             var instance = this.callParent(arguments);
+         *             this.callParent(arguments);
          *
          *             alert("Meeeeoooowwww");
-         *
-         *             return instance;
          *         }
          *     });
          *
@@ -5529,11 +5573,9 @@ var noArgs = [],
          *         constructor: function() {
          *             alert("I'm going to be a cat!");
          *
-         *             var instance = this.callParent(arguments);
+         *             this.callParent(arguments);
          *
          *             alert("Meeeeoooowwww");
-         *
-         *             return instance;
          *         }
          *     });
          *
@@ -5925,7 +5967,7 @@ var noArgs = [],
          *         },
          *
          *         constructor: function() {
-         *             alert(this.self.speciesName); / dependentOL on 'this'
+         *             alert(this.self.speciesName); // dependent on 'this'
          *         },
          *
          *         clone: function() {
@@ -6005,7 +6047,7 @@ var noArgs = [],
         initConfig: function(config) {
             var instanceConfig = config,
                 configNameCache = Ext.Class.configNameCache,
-                defaultConfig = new this.configClass,
+                defaultConfig = new this.configClass(),
                 defaultConfigList = this.initConfigList,
                 hasConfig = this.configMap,
                 nameMap, i, ln, name, initializedName;
@@ -6156,11 +6198,9 @@ var noArgs = [],
      *         constructor: function() {
      *             alert("I'm going to be a cat!");
      *
-     *             var instance = this.callOverridden();
+     *             this.callOverridden();
      *
      *             alert("Meeeeoooowwww");
-     *
-     *             return instance;
      *         }
      *     });
      *
@@ -6178,7 +6218,7 @@ var noArgs = [],
 
     Ext.Base = Base;
 
-})(Ext.Function.flexSetter);
+}(Ext.Function.flexSetter));
 
 /**
  * @author Jacky Nguyen <jacky@sencha.com>
@@ -6213,7 +6253,7 @@ var noArgs = [],
     function makeCtor (className) {
         function constructor () {
             return this.constructor.apply(this, arguments);
-        };
+        }
         return constructor;
     }
 
@@ -6519,7 +6559,7 @@ var noArgs = [],
                     'get': 'get' + capitalizedName,
                     doSet : 'doSet' + capitalizedName,
                     changeEvent: name.toLowerCase() + 'change'
-                }
+                };
             }
 
             return map;
@@ -6684,7 +6724,7 @@ var noArgs = [],
                     }
 
                     return this;
-                }
+                };
             }
 
             if (!(getName in prototype) || data.hasOwnProperty(getName)) {
@@ -6777,9 +6817,9 @@ var noArgs = [],
                 }
             }
             else {
-                for (name in mixins) {
-                    if (mixins.hasOwnProperty(name)) {
-                        Class.mixin(name, mixins[name]);
+                for (var mixinName in mixins) {
+                    if (mixins.hasOwnProperty(mixinName)) {
+                        Class.mixin(mixinName, mixins[mixinName]);
                     }
                 }
             }
@@ -6827,7 +6867,7 @@ var noArgs = [],
         return cls;
     };
 
-})();
+}());
 
 /**
  * @author Jacky Nguyen <jacky@sencha.com>
@@ -6858,8 +6898,6 @@ var noArgs = [],
  *              if (name) {
  *                  this.name = name;
  *              }
- *
- *              return this;
  *          },
  *
  *          eat: function(foodType) {
@@ -6885,9 +6923,6 @@ var noArgs = [],
  *
  *              // Apply a method from the parent class' prototype
  *              this.callParent([name]);
- *
- *              return this;
- *
  *          },
  *
  *          code: function(language) {
@@ -6972,8 +7007,6 @@ var noArgs = [],
  *
  *          constructor: function(config) {
  *              this.initConfig(config);
- *
- *              return this;
  *          },
  *
  *          applyPrice: function(price) {
@@ -7182,7 +7215,12 @@ var noArgs = [],
          */
         parseNamespace: function(namespace) {
 
-            var cache = this.namespaceParseCache;
+            var cache = this.namespaceParseCache,
+                parts,
+                rewrites,
+                root,
+                name,
+                rewrite, from, to, i, ln;
 
             if (this.enableNamespaceParseCache) {
                 if (cache.hasOwnProperty(namespace)) {
@@ -7190,11 +7228,10 @@ var noArgs = [],
                 }
             }
 
-            var parts = [],
-                rewrites = this.namespaceRewrites,
-                root = global,
-                name = namespace,
-                rewrite, from, to, i, ln;
+            parts = [];
+            rewrites = this.namespaceRewrites;
+            root = global;
+            name = namespace;
 
             for (i = 0, ln = rewrites.length; i < ln; i++) {
                 rewrite = rewrites[i];
@@ -7322,15 +7359,17 @@ var noArgs = [],
          * @return {Ext.Class} class
          */
         get: function(name) {
-            var classes = this.classes;
+            var classes = this.classes,
+                root,
+                parts,
+                part, i, ln;
 
             if (classes[name]) {
                 return classes[name];
             }
 
-            var root = global,
-                parts = this.parseNamespace(name),
-                part, i, ln;
+            root = global;
+            parts = this.parseNamespace(name);
 
             for (i = 0, ln = parts.length; i < ln; i++) {
                 part = parts[i];
@@ -7704,13 +7743,15 @@ var noArgs = [],
          */
         getInstantiator: function(length) {
             var instantiators = this.instantiators,
-                instantiator;
+                instantiator,
+                i,
+                args;
 
             instantiator = instantiators[length];
 
             if (!instantiator) {
-                var i = length,
-                    args = [];
+                i = length;
+                args = [];
 
                 for (i = 0; i < length; i++) {
                     args.push('a[' + i + ']');
@@ -8051,10 +8092,13 @@ var noArgs = [],
             if (typeof xtype != 'string') { // if (form 3 or 5)
                 // first arg is config or component
                 config = name; // arguments[0]
-                if (config.isComponent) {
-                    return config;
-                }
                 xtype = config.xtype;
+            } else {
+                config = config || {};
+            }
+            
+            if (config.isComponent) {
+                return config;
             }
 
             alias = 'widget.' + xtype;
@@ -8353,7 +8397,7 @@ var noArgs = [],
 
     }, ['xtype', 'alias']);
 
-})(Ext.Class, Ext.Function.alias, Array.prototype.slice, Ext.Array.from, Ext.global);
+}(Ext.Class, Ext.Function.alias, Array.prototype.slice, Ext.Array.from, Ext.global));
 
 /**
  * @author Jacky Nguyen <jacky@sencha.com>
@@ -8490,18 +8534,27 @@ var noArgs = [],
  * @singleton
  */
 
-(function(Manager, Class, flexSetter, alias, pass, arrayFrom, arrayErase, arrayInclude) {
-
-    var
+Ext.Loader = new function() {
+    var Loader = this,
+        Manager = Ext.ClassManager,
+        Class = Ext.Class,
+        flexSetter = Ext.Function.flexSetter,
+        alias = Ext.Function.alias,
+        pass = Ext.Function.pass,
+        defer = Ext.Function.defer,
+        arrayErase = Ext.Array.erase,
         dependencyProperties = ['extend', 'mixins', 'requires'],
-        Loader;
+        isInHistory = {},
+        history = [],
+        slashDotSlashRe = /\/\.\//g,
+        dotRe = /\./g;
 
-    Loader = Ext.Loader = {
+    Ext.apply(Loader, {
 
         /**
          * @private
          */
-        isInHistory: {},
+        isInHistory: isInHistory,
 
         /**
          * An array of class names to keep track of the dependency loading order.
@@ -8510,7 +8563,7 @@ var noArgs = [],
          *
          * @property {Array} history
          */
-        history: [],
+        history: history,
 
         /**
          * Configuration
@@ -8524,6 +8577,13 @@ var noArgs = [],
             enabled: false,
 
             /**
+             * @cfg {Boolean} scriptChainDelay
+             * millisecond delay between asynchronous script injection (prevents stack overflow on some user agents)
+             * 'false' disables delay but potentially increases stack load.
+             */
+            scriptChainDelay : false,
+
+            /**
              * @cfg {Boolean} disableCaching
              * Appends current timestamp to script files to prevent caching.
              */
@@ -8534,6 +8594,13 @@ var noArgs = [],
              * The get parameter name for the cache buster's timestamp.
              */
             disableCachingParam: '_dc',
+
+            /**
+             * @cfg {Boolean} garbageCollect
+             * True to prepare an asynchronous script tag for garbage collection (effective only
+             * if {@link #preserveScripts preserveScripts} is false)
+             */
+            garbageCollect : false,
 
             /**
              * @cfg {Object} paths
@@ -8553,7 +8620,20 @@ var noArgs = [],
              */
             paths: {
                 'Ext': '.'
-            }
+            },
+
+            /**
+             * @cfg {Boolean} preserveScripts
+             * False to remove and optionally {@link #garbageCollect garbage-collect} asynchronously loaded scripts,
+             * True to retain script element for browser debugger compatibility and improved load performance.
+             */
+            preserveScripts : true,
+
+            /**
+             * @cfg {String} scriptCharset
+             * Optional charset to specify encoding of dynamic script content.
+             */
+            scriptCharset : undefined
         },
 
         /**
@@ -8584,13 +8664,13 @@ var noArgs = [],
          */
         setConfig: function(name, value) {
             if (Ext.isObject(name) && arguments.length === 1) {
-                Ext.merge(this.config, name);
+                Ext.merge(Loader.config, name);
             }
             else {
-                this.config[name] = (Ext.isObject(value)) ? Ext.merge(this.config[name], value) : value;
+                Loader.config[name] = (Ext.isObject(value)) ? Ext.merge(Loader.config[name], value) : value;
             }
 
-            return this;
+            return Loader;
         },
 
         /**
@@ -8600,10 +8680,10 @@ var noArgs = [],
          */
         getConfig: function(name) {
             if (name) {
-                return this.config[name];
+                return Loader.config[name];
             }
 
-            return this.config;
+            return Loader.config;
         },
 
         /**
@@ -8618,9 +8698,9 @@ var noArgs = [],
          * @method
          */
         setPath: flexSetter(function(name, path) {
-            this.config.paths[name] = path;
+            Loader.config.paths[name] = path;
 
-            return this;
+            return Loader;
         }),
 
         /**
@@ -8652,8 +8732,8 @@ var noArgs = [],
          */
         getPath: function(className) {
             var path = '',
-                paths = this.config.paths,
-                prefix = this.getPrefix(className);
+                paths = Loader.config.paths,
+                prefix = Loader.getPrefix(className);
 
             if (prefix.length > 0) {
                 if (prefix === className) {
@@ -8668,7 +8748,7 @@ var noArgs = [],
                 path += '/';
             }
 
-            return path.replace(/\/\.\//g, '/') + className.replace(/\./g, "/") + '.js';
+            return path.replace(slashDotSlashRe, '/') + className.replace(dotRe, "/") + '.js';
         },
 
         /**
@@ -8676,7 +8756,7 @@ var noArgs = [],
          * @param {String} className
          */
         getPrefix: function(className) {
-            var paths = this.config.paths,
+            var paths = Loader.config.paths,
                 prefix, deepestPrefix = '';
 
             if (paths.hasOwnProperty(className)) {
@@ -8729,15 +8809,13 @@ var noArgs = [],
          * @return {Object} object contains `require` method for chaining
          */
         exclude: function(excludes) {
-            var me = this;
-
             return {
                 require: function(expressions, fn, scope) {
-                    return me.require(expressions, fn, scope, excludes);
+                    return Loader.require(expressions, fn, scope, excludes);
                 },
 
                 syncRequire: function(expressions, fn, scope) {
-                    return me.syncRequire(expressions, fn, scope, excludes);
+                    return Loader.syncRequire(expressions, fn, scope, excludes);
                 }
             };
         },
@@ -8762,7 +8840,16 @@ var noArgs = [],
 
             fn.call(scope);
         }
-    };
+    });
+
+    var queue = [],
+        isClassFileLoaded = {},
+        isFileLoaded = {},
+        classNameToFilePathMap = {},
+        scriptElements = {},
+        readyListeners = [],
+        usedClasses = [],
+        requiresMap = {}
 
     Ext.apply(Loader, {
         /**
@@ -8786,36 +8873,36 @@ var noArgs = [],
          *
          * @private
          */
-        queue: [],
+        queue: queue,
 
         /**
          * Maintain the list of files that have already been handled so that they never get double-loaded
          * @private
          */
-        isClassFileLoaded: {},
+        isClassFileLoaded: isClassFileLoaded,
 
         /**
          * @private
          */
-        isFileLoaded: {},
+        isFileLoaded: isFileLoaded,
 
         /**
          * Maintain the list of listeners to execute when all required scripts are fully loaded
          * @private
          */
-        readyListeners: [],
+        readyListeners: readyListeners,
 
         /**
-         * Contains optional dependencies to be loaded last
+         * Contains classes referenced in `uses` properties.
          * @private
          */
-        optionalRequires: [],
+        optionalRequires: usedClasses,
 
         /**
          * Map of fully qualified class names to an array of dependent classes.
          * @private
          */
-        requiresMap: {},
+        requiresMap: requiresMap,
 
         /**
          * @private
@@ -8833,14 +8920,14 @@ var noArgs = [],
         /**
          * @private
          */
-        classNameToFilePathMap: {},
+        classNameToFilePathMap: classNameToFilePathMap,
 
         /**
          * @private
          */
         syncModeEnabled: false,
 
-        scriptElements: {},
+        scriptElements: scriptElements,
 
         /**
          * Refresh all items in the queue. If all dependencies for an item exist during looping,
@@ -8849,13 +8936,13 @@ var noArgs = [],
          * @private
          */
         refreshQueue: function() {
-            var queue = this.queue,
-                ln = queue.length,
-                i, item, j, requires, references;
+            var ln = queue.length,
+                i, item, j, requires;
+
+            // When the queue of loading classes reaches zero, trigger readiness
 
             if (ln === 0) {
-                this.triggerReady();
-                return;
+                return Loader.triggerReady();
             }
 
             for (i = 0; i < ln; i++) {
@@ -8863,17 +8950,15 @@ var noArgs = [],
 
                 if (item) {
                     requires = item.requires;
-                    references = item.references;
 
                     // Don't bother checking when the number of files loaded
                     // is still less than the array length
-                    if (requires.length > this.numLoadedFiles) {
+                    if (requires.length > Loader.numLoadedFiles) {
                         continue;
                     }
 
-                    j = 0;
-
-                    do {
+                    // Remove any required classes that are loaded
+                    for (j = 0; j < requires.length; ) {
                         if (Manager.isCreated(requires[j])) {
                             // Take out from the queue
                             arrayErase(requires, j, 1);
@@ -8881,18 +8966,19 @@ var noArgs = [],
                         else {
                             j++;
                         }
-                    } while (j < requires.length);
+                    }
 
+                    // If we've ended up with no required classes, call the callback
                     if (item.requires.length === 0) {
                         arrayErase(queue, i, 1);
                         item.callback.call(item.scope);
-                        this.refreshQueue();
+                        Loader.refreshQueue();
                         break;
                     }
                 }
             }
 
-            return this;
+            return Loader;
         },
 
         /**
@@ -8901,55 +8987,89 @@ var noArgs = [],
          */
         injectScriptElement: function(url, onLoad, onError, scope) {
             var script = document.createElement('script'),
-                me = this,
+                dispatched = false,
+                config = Loader.config,
                 onLoadFn = function() {
-                    me.cleanupScriptElement(script);
-                    onLoad.call(scope);
+
+                    if(!dispatched) {
+                        dispatched = true;
+                        script.onload = script.onreadystatechange = script.onerror = null;
+                        if (typeof config.scriptChainDelay == 'number') {
+                            //free the stack (and defer the next script)
+                            defer(onLoad, config.scriptChainDelay, scope);
+                        } else {
+                            onLoad.call(scope);
+                        }
+                        Loader.cleanupScriptElement(script, config.preserveScripts === false, config.garbageCollect);
+                    }
+
                 },
-                onErrorFn = function() {
-                    me.cleanupScriptElement(script);
-                    onError.call(scope);
+                onErrorFn = function(arg) {
+                    defer(onError, 1, scope);   //free the stack
+                    Loader.cleanupScriptElement(script, config.preserveScripts === false, config.garbageCollect);
                 };
 
-            script.type = 'text/javascript';
-            script.src = url;
-            script.onload = onLoadFn;
+            script.type    = 'text/javascript';
             script.onerror = onErrorFn;
-            script.onreadystatechange = function() {
-                if (this.readyState === 'loaded' || this.readyState === 'complete') {
-                    onLoadFn();
-                }
-            };
-
-            this.documentHead.appendChild(script);
-
-            return script;
-        },
-
-        removeScriptElement: function(url) {
-            var scriptElements = this.scriptElements;
-
-            if (scriptElements[url]) {
-                this.cleanupScriptElement(scriptElements[url], true);
-                delete scriptElements[url];
+            if (config.scriptCharset) {
+                script.charset = config.scriptCharset;
             }
 
-            return this;
+            /*
+             * IE9 Standards mode (and others) SHOULD follow the load event only
+             * (Note: IE9 supports both onload AND readystatechange events)
+             */
+            if ('addEventListener' in script ) {
+                script.onload = onLoadFn;
+            } else if ('readyState' in script) {   // for <IE9 Compatability
+                script.onreadystatechange = function() {
+                    if ( this.readyState == 'loaded' || this.readyState == 'complete' ) {
+                        onLoadFn();
+                    }
+                };
+            } else {
+                 script.onload = onLoadFn;
+            }
+
+            script.src = url;
+            (Loader.documentHead || document.getElementsByTagName('head')[0]).appendChild(script);
+
+            return script;
         },
 
         /**
          * @private
          */
-        cleanupScriptElement: function(script, remove) {
-            script.onload = null;
-            script.onreadystatechange = null;
-            script.onerror = null;
-
-            if (remove) {
-                this.documentHead.removeChild(script);
+        removeScriptElement: function(url) {
+            if (scriptElements[url]) {
+                Loader.cleanupScriptElement(scriptElements[url], true, !!Loader.getConfig('garbageCollect'));
+                delete scriptElements[url];
             }
 
-            return this;
+            return Loader;
+        },
+
+        /**
+         * @private
+         */
+        cleanupScriptElement: function(script, remove, collect) {
+            var prop;
+            script.onload = script.onreadystatechange = script.onerror = null;
+            if (remove) {
+                Ext.removeNode(script);       // Remove, since its useless now
+                if (collect) {
+                    for (prop in script) {
+                        try {
+                            script[prop] = null;
+                            delete script[prop];      // and prepare for GC
+                        } catch (cleanEx) {
+                            //ignore
+                        }
+                    }
+                }
+            }
+
+            return Loader;
         },
 
         /**
@@ -8957,37 +9077,25 @@ var noArgs = [],
          * @private
          */
         loadScriptFile: function(url, onLoad, onError, scope, synchronous) {
-            var me = this,
-                isFileLoaded = this.isFileLoaded,
-                scriptElements = this.scriptElements,
-                noCacheUrl = url + (this.getConfig('disableCaching') ? ('?' + this.getConfig('disableCachingParam') + '=' + Ext.Date.now()) : ''),
+            if (isFileLoaded[url]) {
+                return Loader;
+            }
+
+            var config = Loader.getConfig(),
+                noCacheUrl = url + (config.disableCaching ? ('?' + config.disableCachingParam + '=' + Ext.Date.now()) : ''),
                 isCrossOriginRestricted = false,
                 xhr, status, onScriptError;
 
-            if (isFileLoaded[url]) {
-                return this;
-            }
+            scope = scope || Loader;
 
-            scope = scope || this;
-
-            this.isLoading = true;
+            Loader.isLoading = true;
 
             if (!synchronous) {
                 onScriptError = function() {
                 };
 
-                if (!Ext.isReady && Ext.onDocumentReady) {
-                    Ext.onDocumentReady(function() {
-                        if (!isFileLoaded[url]) {
-                            scriptElements[url] = me.injectScriptElement(noCacheUrl, onLoad, onScriptError, scope);
-                        }
-                    });
-                }
-                else {
-                    scriptElements[url] = this.injectScriptElement(noCacheUrl, onLoad, onScriptError, scope);
-                }
-            }
-            else {
+                scriptElements[url] = Loader.injectScriptElement(noCacheUrl, onLoad, onScriptError, scope);
+            } else {
                 if (typeof XMLHttpRequest != 'undefined') {
                     xhr = new XMLHttpRequest();
                 } else {
@@ -9001,16 +9109,15 @@ var noArgs = [],
                     isCrossOriginRestricted = true;
                 }
 
-                status = (xhr.status === 1223) ? 204 : xhr.status;
+                status = (xhr.status === 1223) ? 204 :
+                    (xhr.status === 0 && (self.location || {}).protocol == 'file:') ? 200 : xhr.status;
 
-                if (!isCrossOriginRestricted) {
-                    isCrossOriginRestricted = (status === 0);
-                }
+                isCrossOriginRestricted = isCrossOriginRestricted || (status === 0);
 
                 if (isCrossOriginRestricted
                 ) {
                 }
-                else if (status >= 200 && status < 300
+                else if ((status >= 200 && status < 300) || (status === 304)
                 ) {
                     // Debugger friendly, file names are still shown even though they're eval'ed code
                     // Breakpoints work on both Firebug and Chrome's Web Inspector
@@ -9028,28 +9135,25 @@ var noArgs = [],
 
         // documented above
         syncRequire: function() {
-            var syncModeEnabled = this.syncModeEnabled;
+            var syncModeEnabled = Loader.syncModeEnabled;
 
             if (!syncModeEnabled) {
-                this.syncModeEnabled = true;
+                Loader.syncModeEnabled = true;
             }
 
-            this.require.apply(this, arguments);
+            Loader.require.apply(Loader, arguments);
 
             if (!syncModeEnabled) {
-                this.syncModeEnabled = false;
+                Loader.syncModeEnabled = false;
             }
 
-            this.refreshQueue();
+            Loader.refreshQueue();
         },
 
         // documented above
         require: function(expressions, fn, scope, excludes) {
             var excluded = {},
                 included = {},
-                queue = this.queue,
-                classNameToFilePathMap = this.classNameToFilePathMap,
-                isClassFileLoaded = this.isClassFileLoaded,
                 excludedClassNames = [],
                 possibleClassNames = [],
                 classNames = [],
@@ -9060,7 +9164,8 @@ var noArgs = [],
                 possibleClassName, i, j, ln, subLn;
 
             if (excludes) {
-                excludes = arrayFrom(excludes);
+                // Convert possible single string to an array.
+                excludes = (typeof excludes === 'string') ? [ excludes ] : excludes;
 
                 for (i = 0,ln = excludes.length; i < ln; i++) {
                     exclude = excludes[i];
@@ -9075,20 +9180,20 @@ var noArgs = [],
                 }
             }
 
-            expressions = arrayFrom(expressions);
+            // Convert possible single string to an array.
+            expressions = (typeof expressions === 'string') ? [ expressions ] : (expressions ? expressions : []);
 
             if (fn) {
                 if (fn.length > 0) {
                     callback = function() {
                         var classes = [],
-                            i, ln, name;
+                            i, ln;
 
                         for (i = 0,ln = references.length; i < ln; i++) {
-                            name = references[i];
-                            classes.push(Manager.get(name));
+                            classes.push(Manager.get(references[i]));
                         }
 
-                        return fn.apply(this, classes);
+                        return fn.apply(Loader, classes);
                     };
                 }
                 else {
@@ -9126,17 +9231,17 @@ var noArgs = [],
             // If the dynamic dependency feature is not being used, throw an error
             // if the dependencies are not defined
             if (classNames.length > 0) {
-                if (!this.config.enabled) {
+                if (!Loader.config.enabled) {
                     throw new Error("Ext.Loader is not enabled, so dependencies cannot be resolved dynamically. " +
                              "Missing required class" + ((classNames.length > 1) ? "es" : "") + ": " + classNames.join(', '));
                 }
             }
             else {
                 callback.call(scope);
-                return this;
+                return Loader;
             }
 
-            syncModeEnabled = this.syncModeEnabled;
+            syncModeEnabled = Loader.syncModeEnabled;
 
             if (!syncModeEnabled) {
                 queue.push({
@@ -9152,14 +9257,14 @@ var noArgs = [],
             for (i = 0; i < ln; i++) {
                 className = classNames[i];
 
-                filePath = this.getPath(className);
+                filePath = Loader.getPath(className);
 
                 // If we are synchronously loading a file that has already been asychronously loaded before
                 // we need to destroy the script tag and revert the count
                 // This file will then be forced loaded in synchronous
                 if (syncModeEnabled && isClassFileLoaded.hasOwnProperty(className)) {
-                    this.numPendingFiles--;
-                    this.removeScriptElement(filePath);
+                    Loader.numPendingFiles--;
+                    Loader.removeScriptElement(filePath);
                     delete isClassFileLoaded[className];
                 }
 
@@ -9168,13 +9273,12 @@ var noArgs = [],
 
                     classNameToFilePathMap[className] = filePath;
 
-                    this.numPendingFiles++;
-
-                    this.loadScriptFile(
+                    Loader.numPendingFiles++;
+                    Loader.loadScriptFile(
                         filePath,
-                        pass(this.onFileLoaded, [className, filePath], this),
-                        pass(this.onFileLoadError, [className, filePath], this),
-                        this,
+                        pass(Loader.onFileLoaded, [className, filePath], Loader),
+                        pass(Loader.onFileLoadError, [className, filePath], Loader),
+                        Loader,
                         syncModeEnabled
                     );
                 }
@@ -9188,7 +9292,7 @@ var noArgs = [],
                 }
             }
 
-            return this;
+            return Loader;
         },
 
         /**
@@ -9197,15 +9301,15 @@ var noArgs = [],
          * @param {String} filePath
          */
         onFileLoaded: function(className, filePath) {
-            this.numLoadedFiles++;
+            Loader.numLoadedFiles++;
 
-            this.isClassFileLoaded[className] = true;
-            this.isFileLoaded[filePath] = true;
+            isClassFileLoaded[className] = true;
+            isFileLoaded[filePath] = true;
 
-            this.numPendingFiles--;
+            Loader.numPendingFiles--;
 
-            if (this.numPendingFiles === 0) {
-                this.refreshQueue();
+            if (Loader.numPendingFiles === 0) {
+                Loader.refreshQueue();
             }
 
         },
@@ -9214,62 +9318,62 @@ var noArgs = [],
          * @private
          */
         onFileLoadError: function(className, filePath, errorMessage, isSynchronous) {
-            this.numPendingFiles--;
-            this.hasFileLoadError = true;
+            Loader.numPendingFiles--;
+            Loader.hasFileLoadError = true;
 
         },
 
         /**
          * @private
+         * Ensure that any classes referenced in the `uses` property are loaded.
          */
-        addOptionalRequires: function(requires) {
-            var optionalRequires = this.optionalRequires,
-                i, ln, require;
+        addUsedClass: function(references) {
+            var i, ln;
 
-            requires = arrayFrom(requires);
-
-            for (i = 0, ln = requires.length; i < ln; i++) {
-                require = requires[i];
-
-                arrayInclude(optionalRequires, require);
-            }
-
-            return this;
-        },
-
-        /**
-         * @private
-         */
-        triggerReady: function(force) {
-            var readyListeners = this.readyListeners,
-                optionalRequires = this.optionalRequires,
-                listener;
-
-            if (this.isLoading || force) {
-                this.isLoading = false;
-
-                if (optionalRequires.length !== 0) {
-                    // Clone then empty the array to eliminate potential recursive loop issue
-                    optionalRequires = optionalRequires.slice();
-
-                    // Empty the original array
-                    this.optionalRequires.length = 0;
-
-                    this.require(optionalRequires, pass(this.triggerReady, [true], this), this);
-                    return this;
-                }
-
-                while (readyListeners.length) {
-                    listener = readyListeners.shift();
-                    listener.fn.call(listener.scope);
-
-                    if (this.isLoading) {
-                        return this;
+            if (references) {
+                references = (typeof references == 'string') ? [references] : references;
+                for (i = 0, ln = references.length; i < ln; i++) {
+                    if (!Ext.Array.contains(usedClasses, references[i])) {
+                    	usedClasses.push(references[i]);
                     }
                 }
             }
 
-            return this;
+            return Loader;
+        },
+
+        /**
+         * @private
+         */
+        triggerReady: function() {
+            var listener,
+                i, refClasses = usedClasses;
+
+            if (Loader.isLoading) {
+                Loader.isLoading = false;
+
+                if (refClasses.length !== 0) {
+                    // Clone then empty the array to eliminate potential recursive loop issue
+                    refClasses = refClasses.slice();
+                    usedClasses.length = 0;
+                    // this may immediately call us back if all 'uses' classes
+                    // have been loaded
+                    Loader.require(refClasses, Loader.triggerReady, Loader);
+                    return Loader;
+                }
+            }
+
+            // this method can be called with Loader.isLoading either true or false
+            // (can be called with false when all 'uses' classes are already loaded)
+            // this may bypass the above if condition
+            while (readyListeners.length && !Loader.isLoading) {
+                // calls to refreshQueue may re-enter triggerReady
+                // so we cannot necessarily iterate the readyListeners array
+                listener = readyListeners.shift();
+                listener.fn.call(listener.scope);
+            }
+
+            return Loader;
         },
 
         // Documented above already
@@ -9284,11 +9388,11 @@ var noArgs = [],
                 };
             }
 
-            if (!this.isLoading) {
+            if (!Loader.isLoading) {
                 fn.call(scope);
             }
             else {
-                this.readyListeners.push({
+                readyListeners.push({
                     fn: fn,
                     scope: scope
                 });
@@ -9300,14 +9404,11 @@ var noArgs = [],
          * @param {String} className
          */
         historyPush: function(className) {
-            var isInHistory = this.isInHistory;
-
-            if (className && this.isClassFileLoaded.hasOwnProperty(className) && !isInHistory[className]) {
+            if (className && isClassFileLoaded.hasOwnProperty(className) && !isInHistory[className]) {
                 isInHistory[className] = true;
-                this.history.push(className);
+                history.push(className);
             }
-
-            return this;
+            return Loader;
         }
     });
 
@@ -9376,8 +9477,10 @@ var noArgs = [],
     Class.registerPreprocessor('loader', function(cls, data, hooks, continueFn) {
         var me = this,
             dependencies = [],
+            dependency,
             className = Manager.getName(cls),
-            i, j, ln, subLn, value, propertyName, propertyValue;
+            i, j, ln, subLn, value, propertyName, propertyValue,
+            requiredMap, requiredDep;
 
         /*
         Loop through the dependencyProperties, look for string class names and push
@@ -9494,28 +9597,26 @@ var noArgs = [],
      *     });
      */
     Manager.registerPostprocessor('uses', function(name, cls, data) {
-        var uses = arrayFrom(data.uses),
+        var uses = data.uses,
             items = [],
             i, ln, item;
 
-        for (i = 0,ln = uses.length; i < ln; i++) {
-            item = uses[i];
+        if (uses) {
+            uses = (typeof uses === 'string') ? [ uses ] : uses;
+            for (i = 0,ln = uses.length; i < ln; i++) {
+                item = uses[i];
 
-            if (typeof item == 'string') {
-                items.push(item);
+                if (typeof item == 'string') {
+                    items.push(item);
+                }
             }
         }
 
-        Loader.addOptionalRequires(items);
+        Loader.addUsedClass(items);
     });
 
-    Manager.onCreated(function(className) {
-        this.historyPush(className);
-    }, Loader);
-
-})(Ext.ClassManager, Ext.Class, Ext.Function.flexSetter, Ext.Function.alias,
-   Ext.Function.pass, Ext.Array.from, Ext.Array.erase, Ext.Array.include);
-
+    Manager.onCreated(Loader.historyPush);
+};
 /**
  * @author Brian Moeskau <brian@sencha.com>
  * @docauthor Brian Moeskau <brian@sencha.com>
@@ -9662,7 +9763,8 @@ Ext.Error = Ext.extend(Error, {
                 err = { msg: err };
             }
 
-            var method = this.raise.caller;
+            var method = this.raise.caller,
+                msg;
 
             if (method) {
                 if (method.$name) {
@@ -9674,7 +9776,7 @@ Ext.Error = Ext.extend(Error, {
             }
 
             if (Ext.Error.handle(err) !== true) {
-                var msg = Ext.Error.prototype.toString.call(err);
+                msg = Ext.Error.prototype.toString.call(err);
 
                 Ext.log({
                     msg: msg,

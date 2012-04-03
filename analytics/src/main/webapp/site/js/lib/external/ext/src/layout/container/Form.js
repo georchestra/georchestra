@@ -54,6 +54,8 @@ Ext.define('Ext.layout.container.Form', {
     alternateClassName: 'Ext.layout.FormLayout',
 
     /* End Definitions */
+   
+    tableCls: Ext.baseCSSPrefix + 'form-layout-table',
 
     type: 'form',
 
@@ -62,11 +64,17 @@ Ext.define('Ext.layout.container.Form', {
     childEls: ['formTable'],
 
     renderTpl: [
-        '<table id="{ownerId}-formTable" style="width:100%" cellspacing="0" cellpadding="0">',
+        '<table id="{ownerId}-formTable" class="{tableCls}" style="width:100%" cellspacing="0" cellpadding="0">',
             '{%this.renderBody(out,values)%}',
         '</table>',
         '{%this.renderPadder(out,values)%}'
     ],
+    
+    getRenderData: function(){
+        var data = this.callParent();
+        data.tableCls = this.tableCls;
+        return data;    
+    },
 
     calculate : function (ownerContext) {
         var me = this,
@@ -98,21 +106,18 @@ Ext.define('Ext.layout.container.Form', {
             i = 0, len = result.length,
             prefix = Ext.baseCSSPrefix,
             children = '<tr><td class="' + prefix + 'form-item-pad" colspan="3"></td></tr>',
-            bodyCls = prefix + 'form-layout-tbody',
             item;
 
         for (; i < len; i++) {
             item = result[i];
             if (item.tag && item.tag == 'table') {
                 item.tag = 'tbody';
-                item.cls += ' ' + bodyCls;
                 delete item.cellspacing;
                 delete item.cellpadding;
                 item.cn = children;
             } else {
                 result[i] = {
                     tag: 'tbody',
-                    cls: bodyCls,
                     cn: {
                         tag: 'tr',
                         cn: {
@@ -140,6 +145,6 @@ Ext.define('Ext.layout.container.Form', {
         return {
             setsWidth: 1,
             setsHeight: 0
-        }
+        };
     }
 });

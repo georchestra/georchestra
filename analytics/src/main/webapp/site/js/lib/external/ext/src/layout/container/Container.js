@@ -231,7 +231,7 @@ Ext.define('Ext.layout.container.Container', {
         // Create a default lastOverflowAdjust based upon scrolling configuration.
         // If the Container is to overflow, or we *always* reserve space for a scrollbar
         // then reserve space for a vertical scrollbar
-        if (scrollbarWidth && !me.hasOwnProperty('lastOverflowAdjust')) {
+        if (scrollbarWidth && me.manageOverflow && !me.hasOwnProperty('lastOverflowAdjust')) {
             if (me.owner.autoScroll || me.reserveScrollbar) {
                 me.lastOverflowAdjust = {
                     width: scrollbarWidth,
@@ -610,7 +610,7 @@ Ext.define('Ext.layout.container.Container', {
                     out.push('position: relative; top: -1px;');
                 }/**/
 
-                out.push('"></div>')
+                out.push('"></div>');
 
                 me.scrollRangeFlags = scrollRangeFlags; // remember for calculateOverflow
             }
@@ -808,6 +808,10 @@ Ext.define('Ext.layout.container.Container', {
             needHorz = 0,
             needVert = 0;
 
+        // No space-consuming scrollbars.
+        if (!scrollbarSize.width) {
+            return 0;
+        }
         if (hasHeight && height < contentHeight) {
             needVert = 2;
             width -= scrollbarSize.width;
@@ -853,7 +857,7 @@ Ext.define('Ext.layout.container.Container', {
      * equal to padding-bottom. To preserve the right padding, the sizing element needs to
      * have a width that includes the right padding.
      */
-    getScrollRangeFlags: function () {
+    getScrollRangeFlags: (function () {
         var flags = -1;
 
         return function () {
@@ -903,7 +907,7 @@ Ext.define('Ext.layout.container.Container', {
 
             return flags;
         };
-    }(),
+    }()),
 
     /**
      * Returns the owner component's resize element.

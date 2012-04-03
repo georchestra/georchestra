@@ -1,11 +1,9 @@
 Ext.application({
     name: 'KitchenSink',
 
+    autoCreateViewport: true,
+
     controllers: [
         'Main'
-    ],
-
-    launch: function() {
-        Ext.create('KitchenSink.view.Viewport');
-    }
+    ]
 });

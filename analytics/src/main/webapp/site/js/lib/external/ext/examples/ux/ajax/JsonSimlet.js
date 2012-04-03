@@ -62,7 +62,9 @@ Ext.define('Ext.ux.ajax.JsonSimlet', function () {
             sortFn = makeSortFns(ctx.groupSpec, sortFn);
 
             data = data.slice(0); // preserve 'physical' order of raw data...
-            data.sort(sortFn);
+            if (sortFn) {
+                Ext.Array.sort(data, sortFn);
+            }
 
             me.sortedData = data;
             me.currentOrder = order;

@@ -43,7 +43,7 @@ Ext.require('Ext.util.DelayedTask', function() {
         return {
             /**
              * @property {Boolean} isEvent
-             * `true` in this class to identify an objact as an instantiated Event, or subclass thereof.
+             * `true` in this class to identify an object as an instantiated Event, or subclass thereof.
              */
             isEvent: true,
 
@@ -200,5 +200,5 @@ Ext.require('Ext.util.DelayedTask', function() {
                 return true;
             }
         };
-    })());
+    }()));
 });

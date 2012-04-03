@@ -11,7 +11,7 @@ Ext.define('Ext.layout.Layout', {
 
     /**
      * @property {Boolean} isLayout
-     * `true` in this class to identify an objact as an instantiated Layout, or subclass thereof.
+     * `true` in this class to identify an object as an instantiated Layout, or subclass thereof.
      */
     isLayout: true,
     initialized: false,
@@ -556,10 +556,11 @@ Ext.define('Ext.layout.Layout', {
      * @protected
      */
     destroy : function() {
-        var me = this;
+        var me = this,
+            target;
 
         if (me.targetCls) {
-            var target = me.getTarget();
+            target = me.getTarget();
             if (target) {
                 target.removeCls(me.targetCls);
             }

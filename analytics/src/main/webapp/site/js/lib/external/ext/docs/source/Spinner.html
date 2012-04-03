@@ -33,10 +33,7 @@
  *         onSpinUp: function() {
  *             var me = this;
  *             if (!me.readOnly) {
- *                 var val = me.step; // set the default value to the step value
- *                 if(me.getValue() !== '') {
- *                     val = parseInt(me.getValue().slice(0, -5)); // gets rid of &quot; Pack&quot;
- *                 }
+ *                 var val = parseInt(me.getValue().split(' '))||0; // gets rid of &quot; Pack&quot;, defaults to zero on parse failure
  *                 me.setValue((val + me.step) + ' Pack');
  *             }
  *         },
@@ -45,10 +42,12 @@
  *         onSpinDown: function() {
  *             var val, me = this;
  *             if (!me.readOnly) {
- *                 if(me.getValue() !== '') {
- *                     val = parseInt(me.getValue().slice(0, -5)); // gets rid of &quot; Pack&quot;
- *                 }
- *                 me.setValue((val - me.step) + ' Pack');
+ *                var val = parseInt(me.getValue().split(' '))||0; // gets rid of &quot; Pack&quot;, defaults to zero on parse failure
+ *                if (val &lt;= me.step) {
+ *                    me.setValue('Dry!');
+ *                } else {
+ *                    me.setValue((val - me.step) + ' Pack');
+ *                }
  *             }
  *         }
  *     });
@@ -127,12 +126,8 @@ Ext.define('Ext.form.field.Spinner', {
      */
     onSpinDown: Ext.emptyFn,
 
-    triggerTpl: '&lt;td style=&quot;{triggerStyle}&quot; valign=&quot;top&quot;&gt;' +
+    triggerTpl: '&lt;td style=&quot;{triggerStyle}&quot;&gt;' +
                     '&lt;div class=&quot;' + Ext.baseCSSPrefix + 'trigger-index-0 ' + Ext.baseCSSPrefix + 'form-trigger ' + Ext.baseCSSPrefix + 'form-spinner-up role=&quot;button&quot;&gt;&lt;/div&gt;' +
-                '&lt;/td&gt;' +
-            '&lt;/tr&gt;' +
-            '&lt;tr&gt;' +
-                '&lt;td style=&quot;{triggerStyle}&quot; valign=&quot;top&quot;&gt;' +
                     '&lt;div class=&quot;' + Ext.baseCSSPrefix + 'trigger-index-1 ' + Ext.baseCSSPrefix + 'form-trigger ' + Ext.baseCSSPrefix + 'form-spinner-down&quot; role=&quot;button&quot;&gt;&lt;/div&gt;' +
                 '&lt;/td&gt;' +
             '&lt;/tr&gt;',
@@ -212,7 +207,7 @@ Ext.define('Ext.form.field.Spinner', {
 
         return '&lt;table id=&quot;' + me.id + '-triggerWrap&quot; class=&quot;' + Ext.baseCSSPrefix + 'form-trigger-wrap&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;' +
             '&lt;tbody&gt;' +
-                '&lt;tr&gt;&lt;td id=&quot;' + me.id + '-inputCell&quot; rowspan=&quot;2&quot;&gt;' + field + '&lt;/td&gt;' +
+                '&lt;tr&gt;&lt;td id=&quot;' + me.id + '-inputCell&quot; class=&quot;' + Ext.baseCSSPrefix + 'form-trigger-input-cell&quot;&gt;' + field + '&lt;/td&gt;' +
                 me.getTriggerMarkup() +
             '&lt;/tbody&gt;&lt;/table&gt;';
     },

@@ -1,5 +1,9 @@
 Ext.define('KitchenSink.view.examples.tabs.TitledTabPanels', {
     extend: 'KitchenSink.view.examples.PanelExample',
+    requires: [
+        'Ext.tab.Panel',
+        'Ext.layout.container.HBox'
+    ],
 
     items: [
         {
@@ -51,7 +55,7 @@ Ext.define('KitchenSink.view.examples.tabs.TitledTabPanels', {
                             lacinia tortor. Mauris accumsan, nisl et sodales tristique, massa dui placerat erat, at venenatis tortor libero nec \
                             tortor. Pellentesque quis elit ac dolor commodo tincidunt. Curabitur lorem eros, tincidunt quis viverra id, lacinia \
                             sed nisl. Quisque viverra ante eu nisl consectetur hendrerit.'
-                        },
+                        }
                     ]
                 },
                 {
@@ -84,7 +88,7 @@ Ext.define('KitchenSink.view.examples.tabs.TitledTabPanels', {
                             lacinia tortor. Mauris accumsan, nisl et sodales tristique, massa dui placerat erat, at venenatis tortor libero nec \
                             tortor. Pellentesque quis elit ac dolor commodo tincidunt. Curabitur lorem eros, tincidunt quis viverra id, lacinia \
                             sed nisl. Quisque viverra ante eu nisl consectetur hendrerit.'
-                        },
+                        }
                     ]
                 }
             ]
@@ -140,7 +144,7 @@ Ext.define('KitchenSink.view.examples.tabs.TitledTabPanels', {
                             lacinia tortor. Mauris accumsan, nisl et sodales tristique, massa dui placerat erat, at venenatis tortor libero nec \
                             tortor. Pellentesque quis elit ac dolor commodo tincidunt. Curabitur lorem eros, tincidunt quis viverra id, lacinia \
                             sed nisl. Quisque viverra ante eu nisl consectetur hendrerit.'
-                        },
+                        }
                     ]
                 },
                 {
@@ -173,7 +177,7 @@ Ext.define('KitchenSink.view.examples.tabs.TitledTabPanels', {
                             lacinia tortor. Mauris accumsan, nisl et sodales tristique, massa dui placerat erat, at venenatis tortor libero nec \
                             tortor. Pellentesque quis elit ac dolor commodo tincidunt. Curabitur lorem eros, tincidunt quis viverra id, lacinia \
                             sed nisl. Quisque viverra ante eu nisl consectetur hendrerit.'
-                        },
+                        }
                     ]
                 }
             ]

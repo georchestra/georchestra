@@ -144,7 +144,8 @@ Ext.Error = Ext.extend(Error, {
                 err = { msg: err };
             }
 
-            var method = this.raise.caller;
+            var method = this.raise.caller,
+                msg;
 
             if (method) {
                 if (method.$name) {
@@ -156,7 +157,7 @@ Ext.Error = Ext.extend(Error, {
             }
 
             if (Ext.Error.handle(err) !== true) {
-                var msg = Ext.Error.prototype.toString.call(err);
+                msg = Ext.Error.prototype.toString.call(err);
 
                 Ext.log({
                     msg: msg,
@@ -269,7 +270,8 @@ Ext.deprecated = function (suggestion) {
 //<debug>
 (function () {
     var timer, errors = 0,
-        win = Ext.global;
+        win = Ext.global,
+        msg;
 
     if (typeof window === 'undefined') {
         return; // build system or some such environment...
@@ -283,7 +285,7 @@ Ext.deprecated = function (suggestion) {
 
         // Put log counters to the status bar (for most browsers):
         if (counters && (counters.error + counters.warn + counters.info + counters.log)) {
-            var msg = [ 'Logged Errors:',counters.error, 'Warnings:',counters.warn,
+            msg = [ 'Logged Errors:',counters.error, 'Warnings:',counters.warn,
                         'Info:',counters.info, 'Log:',counters.log].join(' ');
             if (errors) {
                 msg = '*** Errors: ' + errors + ' - ' + msg;
@@ -320,5 +322,5 @@ Ext.deprecated = function (suggestion) {
     // window.onerror sounds ideal but it prevents the built-in error dialog from doing
     // its (better) thing.
     poll();
-})();
+}());
 //</debug>

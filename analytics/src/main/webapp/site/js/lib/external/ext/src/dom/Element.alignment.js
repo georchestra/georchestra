@@ -375,4 +375,4 @@ Ext.dom.Element.override((function() {
             return this.alignTo(centerIn || doc, 'c-c');
         }
     };
-})());
+}()));

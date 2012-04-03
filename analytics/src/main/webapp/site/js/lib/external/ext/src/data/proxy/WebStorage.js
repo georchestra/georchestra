@@ -301,7 +301,7 @@ Ext.define('Ext.data.proxy.WebStorage', {
         delete me.cache[id];
 
         if(record.childNodes) {
-            childNodes = record.childNodes
+            childNodes = record.childNodes;
             for(i = childNodes.length; i--;) {
                 Ext.apply(records, me.removeRecord(childNodes[i]));
             }
@@ -361,7 +361,7 @@ Ext.define('Ext.data.proxy.WebStorage', {
             ids = [];
         } else {
             for (i = 0; i < length; i++) {
-                ids[i] = isString ? ids[i] : parseInt(ids[i], 10);
+                ids[i] = isString ? ids[i] : +ids[i];
             }
         }
 
@@ -403,7 +403,7 @@ Ext.define('Ext.data.proxy.WebStorage', {
         obj.setItem(key, id);
 
         if(!isString) {
-            id = parseInt(id);
+            id = +id;
         }
 
         return id;
@@ -495,7 +495,7 @@ Ext.define('Ext.data.proxy.WebStorage', {
     initialize: function() {
         var me = this,
             storageObject = me.getStorageObject(),
-            lastId = parseInt(storageObject.getItem(me.getRecordCounterKey()));
+            lastId = +storageObject.getItem(me.getRecordCounterKey());
 
         storageObject.setItem(me.id, storageObject.getItem(me.id) || "");
         if(storageObject.getItem(me.getTreeKey())) {

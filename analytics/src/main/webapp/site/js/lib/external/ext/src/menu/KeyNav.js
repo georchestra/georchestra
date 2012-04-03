@@ -53,7 +53,8 @@ Ext.define('Ext.menu.KeyNav', {
             items = menu.items,
             focusedItem = menu.focusedItem,
             startIdx = focusedItem ? items.indexOf(focusedItem) : -1,
-            idx = startIdx + step;
+            idx = startIdx + step,
+            item;
 
         while (idx != startIdx) {
             if (idx < 0) {
@@ -62,7 +63,7 @@ Ext.define('Ext.menu.KeyNav', {
                 idx = 0;
             }
 
-            var item = items.getAt(idx);
+            item = items.getAt(idx);
             if (menu.canActivateItem(item)) {
                 menu.setActiveItem(item);
                 break;

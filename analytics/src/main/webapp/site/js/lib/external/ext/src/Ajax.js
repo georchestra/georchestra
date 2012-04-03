@@ -48,17 +48,16 @@ Ext.define('Ext.Ajax', {
      * @cfg {Object} defaultHeaders @hide
      */
     /**
-     * @cfg {String} method (Optional) @hide
+     * @cfg {String} method @hide
      */
     /**
-     * @cfg {Number} timeout (Optional) @hide
+     * @cfg {Number} timeout @hide
      */
     /**
-     * @cfg {Boolean} autoAbort (Optional) @hide
+     * @cfg {Boolean} autoAbort @hide
      */
-
     /**
-     * @cfg {Boolean} disableCaching (Optional) @hide
+     * @cfg {Boolean} disableCaching @hide
      */
 
     /**

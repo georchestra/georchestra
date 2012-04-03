@@ -361,4 +361,4 @@ var version = '4.1.0beta', Version;
 
     Ext.setVersion('core', version);
 
-})();
+}());

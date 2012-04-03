@@ -15,6 +15,7 @@ Ext.define('FeedViewer.FeedWindow', {
     alias: 'widget.feedwindow',
 
     plain: true,
+    resizable: false,
     modal: true,
     closeAction: 'hide',
     defaultFocus: '#feed',
@@ -27,7 +28,8 @@ Ext.define('FeedViewer.FeedWindow', {
     ],
     
     initComponent: function(){
-        this.addEvents(
+        var me = this;
+        me.addEvents(
             /**
              * @event feedvalid
              * @param {FeedViewer.FeedWindow} this
@@ -38,7 +40,7 @@ Ext.define('FeedViewer.FeedWindow', {
             'feedvalid'
         );
         
-        this.form = Ext.create('widget.form', {
+        me.form = Ext.create('widget.form', {
             bodyPadding: '12 10 10',
             border: false,
             unstyled: true,
@@ -55,25 +57,25 @@ Ext.define('FeedViewer.FeedWindow', {
                 }
             }]
         });
-        Ext.apply(this, {
-            width: 600,
+        Ext.apply(me, {
+            width: 500,
             title: 'Add Feed',
             iconCls: 'feed',
             layout: 'fit',
-            items: this.form,
+            items: me.form,
             buttons: [{
                 xtype: 'button',
                 text: 'Add Feed',
-                scope: this,
-                handler: this.onAddClick
+                scope: me,
+                handler: me.onAddClick
             }, {
                 xtype: 'button',
                 text: 'Cancel',
-                scope: this,
-                handler: this.destroy
+                scope: me,
+                handler: me.hide
             }]
         });
-        this.callParent(arguments);
+        me.callParent(arguments);
     },
     
     /**
@@ -102,7 +104,7 @@ Ext.define('FeedViewer.FeedWindow', {
      * @private
      * @param {Object} response The response object
      */
-    validateFeed: function(response){
+    validateFeed: function(response) {
         this.form.setLoading(false);
         this.down('button[text=Add Feed]').enable();
         
@@ -131,7 +133,7 @@ Ext.define('FeedViewer.FeedWindow', {
      * React to the feed validation failing
      * @private
      */
-    markInvalid: function() {
+    markInvalid: function(){
         this.down('button[text=Add Feed]').enable();
         this.form.setLoading(false);
         this.form.getComponent('feed').markInvalid('The URL specified is not a valid RSS2 feed.');

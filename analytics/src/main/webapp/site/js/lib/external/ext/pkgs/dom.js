@@ -114,7 +114,7 @@ Ext.require('Ext.util.DelayedTask', function() {
         return {
             /**
              * @property {Boolean} isEvent
-             * `true` in this class to identify an objact as an instantiated Event, or subclass thereof.
+             * `true` in this class to identify an object as an instantiated Event, or subclass thereof.
              */
             isEvent: true,
 
@@ -271,7 +271,7 @@ Ext.require('Ext.util.DelayedTask', function() {
                 return true;
             }
         };
-    })());
+    }()));
 });
 
 /**
@@ -466,9 +466,9 @@ Ext.EventManager = new function() {
                         event.self.prototype.fire.apply(event, arguments);
                         Ext._afterReadytime = new Date().getTime();
                     }
-                }
+                };
                 return event;
-            })(),
+            }()),
 
         /**
          * Fires when a DOM event handler finishes its run, just before returning to browser control.
@@ -1202,20 +1202,22 @@ Ext.EventManager = new function() {
             try {
                 // relinquish references.
                 doc = win = undefined;
+                
+                var gridviews, i, ln,
+                    el, cache;
 
                 EventManager.unloadEvent.fire();
                 // Work around FF3 remembering the last scroll position when refreshing the grid and then losing grid view
                 if (Ext.isGecko3) {
-                    var gridviews = Ext.ComponentQuery.query('gridview'),
-                        i = 0,
-                        ln = gridviews.length;
+                    gridviews = Ext.ComponentQuery.query('gridview');
+                    i = 0;
+                    ln = gridviews.length;
                     for (; i < ln; i++) {
                         gridviews[i].scrollToTop();
                     }
                 }
                 // Purge all elements in the cache
-                var el,
-                    cache = Ext.cache;
+                cache = Ext.cache;
 
                 for (el in cache) {
                     if (cache.hasOwnProperty(el)) {
@@ -1663,7 +1665,7 @@ Ext.define('Ext.EventObjectImpl', {
         }
 
         return scale;
-    })(),
+    }()),
 
     /**
      * Simple click regex
@@ -2075,9 +2077,10 @@ Ext.getBody().on('click', function(e,t){
      * is likely to be used when relaying a DOM event. If not specified, {@link #getTarget}
      * is used to determine the target.
      */
-    injectEvent: function () {
+    injectEvent: (function () {
         var API,
-            dispatchers = {}; // keyed by event type (e.g., 'mousedown')
+            dispatchers = {}, // keyed by event type (e.g., 'mousedown')
+            crazyIEButtons;
 
         // Good reference: http://developer.yahoo.com/yui/docs/UserAction.js.html
 
@@ -2145,7 +2148,7 @@ Ext.getBody().on('click', function(e,t){
                 }
             };
         } else if (document.createEventObject) { // else if (IE)
-            var crazyIEButtons = { 0: 1, 1: 4, 2: 2 };
+            crazyIEButtons = { 0: 1, 1: 4, 2: 2 };
 
             API = {
                 createHtmlEvent: function (doc, type, bubbles, cancelable) {
@@ -2284,7 +2287,7 @@ Ext.getBody().on('click', function(e,t){
             t = API.fixTarget(t);
             dispatcher(t, me);
         };
-    }() // call to produce method
+    }()) // call to produce method
 
 }, function() {
 
@@ -2381,7 +2384,7 @@ Ext.define('Ext.dom.AbstractHelper', {
 
     closeTags: {},
 
-    decamelizeName : function () {
+    decamelizeName : (function () {
         var camelCaseRe = /([a-z])([A-Z])/g,
             cache = {};
 
@@ -2392,7 +2395,7 @@ Ext.define('Ext.dom.AbstractHelper', {
         return function (s) {
             return cache[s] || (cache[s] = s.replace(camelCaseRe, decamel));
         };
-    }(),
+    }()),
 
     generateMarkup: function(spec, buffer) {
         var me = this,
@@ -3331,17 +3334,18 @@ myElement.dom.className = Ext.core.Element.removeCls(this.initialClasses, 'x-inv
                 return asDom ? dom : (dom ? Ext.get(dom) : null);
             };
         }
-    })(this.prototype);
+    }(this.prototype));
 });
 
-})();
+}());
+
 /**
  * @class Ext.dom.AbstractElement
  */
 Ext.dom.AbstractElement.addInheritableStatics({
     unitRe: /\d+(px|em|%|en|ex|pt|in|cm|mm|pc)$/i,
     camelRe: /(-[a-z])/gi,
-    cssRe: /([a-z0-9-]+)\s*:\s*([^;\s]+(?:\s*[^;\s]+)*);?/gi,
+    cssRe: /([a-z0-9\-]+)\s*:\s*([^;\s]+(?:\s*[^;\s]+)*);?/gi,
     opacityRe: /alpha\(opacity=(.*)\)/i,
     propertyCache: {},
     defaultUnit : "px",
@@ -3444,13 +3448,13 @@ Ext.dom.AbstractElement.addInheritableStatics({
      * @return {String} An string with unitized (px if units is not specified) metrics for top, right, bottom and left
      */
     unitizeBox: function(box, units) {
-        var A = this.addUnits,
-            B = this.parseBox(box);
+        var a = this.addUnits,
+            b = this.parseBox(box);
 
-        return A(B.top, units) + ' ' +
-               A(B.right, units) + ' ' +
-               A(B.bottom, units) + ' ' +
-               A(B.left, units);
+        return a(b.top, units) + ' ' +
+               a(b.right, units) + ' ' +
+               a(b.bottom, units) + ' ' +
+               a(b.left, units);
 
     },
 
@@ -3646,13 +3650,15 @@ Ext.dom.AbstractElement.addInheritableStatics({
         getRightMarginFixCleaner: function (target) {
             var supports = Ext.supports,
                 hasInputBug = supports.DisplayChangeInputSelectionBug,
-                hasTextAreaBug = supports.DisplayChangeTextAreaSelectionBug;
+                hasTextAreaBug = supports.DisplayChangeTextAreaSelectionBug,
+                activeEl,
+                tag,
+                start,
+                end;
 
             if (hasInputBug || hasTextAreaBug) {
-                var activeEl = doc.activeElement || activeElement, // save a call
-                    tag = activeEl && activeEl.tagName,
-                    start,
-                    end;
+                activeEl = doc.activeElement || activeElement; // save a call
+                tag = activeEl && activeEl.tagName;
 
                 if ((hasTextAreaBug && tag == 'TEXTAREA') ||
                     (hasInputBug && tag == 'INPUT' && activeEl.type == 'text')) {
@@ -3710,29 +3716,25 @@ Ext.dom.AbstractElement.addInheritableStatics({
         },
 
         getXY: function(el) {
-            var p,
-                pe,
+            var bd = (doc.body || doc.documentElement),
+                leftBorder = 0,
+                topBorder = 0,
+                ret = [0,0],
+                round = Math.round,
                 b,
-                bt,
-                bl,
-                dbd,
-                x = 0,
-                y = 0,
-                scroll,
-                hasAbsolute,
-                bd = (doc.body || doc.documentElement),
-                ret = [0,0];
+                scroll;
 
             el = Ext.getDom(el);
 
             if(el != doc && el != bd){
-                hasAbsolute = fly(el).isStyle("position", "absolute");
-
                 // IE has the potential to throw when getBoundingClientRect called
                 // on element not attached to dom
                 if (Ext.isIE) {
                     try {
                         b = el.getBoundingClientRect();
+                        // In some versions of IE, the html element will have a 1px border that gets included, so subtract it off
+                        topBorder = bd.clientTop;
+                        leftBorder = bd.clientLeft;
                     } catch (ex) {
                         b = { left: 0, top: 0 }
                     }
@@ -3741,7 +3743,7 @@ Ext.dom.AbstractElement.addInheritableStatics({
                 }
 
                 scroll = fly(document).getScroll();
-                ret = [Math.round(b.left + scroll.left), Math.round(b.top + scroll.top)];
+                ret = [round(b.left + scroll.left - leftBorder), round(b.top + scroll.top - topBorder)];
             }
             return ret;
         },
@@ -3809,7 +3811,7 @@ Ext.dom.AbstractElement.addInheritableStatics({
             return data.substr(0, data.length - 1);
         }
     });
-})();
+}());
 
 /**
  * @class Ext.dom.AbstractElement
@@ -4301,21 +4303,26 @@ Element.override({
      * @return {Ext.dom.AbstractElement} this
      */
     setXY: function(pos) {
-        var me = this;
+        var me = this,
+            pts,
+            style,
+            pt;
 
         if (arguments.length > 1) {
             pos = [pos, arguments[1]];
         }
 
         // me.position();
-        var pts = me.translatePoints(pos),
-                style = me.dom.style;
+        pts = me.translatePoints(pos);
+        style = me.dom.style;
 
-        for (pos in pts) {
-            if (!pts.hasOwnProperty(pos)) {
+        for (pt in pts) {
+            if (!pts.hasOwnProperty(pt)) {
                 continue;
             }
-            if (!isNaN(pts[pos])) style[pos] = pts[pos] + "px";
+            if (!isNaN(pts[pt])) {
+                style[pt] = pts[pt] + "px";
+            }
         }
         return me;
     },
@@ -4529,7 +4536,7 @@ Element.override({
     }
 });
 
-})();
+}());
 
 /**
  * @class Ext.dom.AbstractElement
@@ -4721,14 +4728,15 @@ Element.override({
          */
         radioCls: function(className) {
             var cn = this.dom.parentNode.childNodes,
-                v;
+                v,
+                i, len;
             className = Ext.isArray(className) ? className: [className];
-            for (var i = 0, len = cn.length; i < len; i++) {
+            for (i = 0, len = cn.length; i < len; i++) {
                 v = cn[i];
                 if (v && v.nodeType == 1) {
                     Ext.fly(v, '_internal').removeCls(className);
                 }
-            };
+            }
             return this.addCls(className);
         },
 
@@ -5302,7 +5310,9 @@ Element.override({
     };
 
     Ext.onReady(function () {
-        var supports = Ext.supports;
+        var supports = Ext.supports,
+            styleHooks,
+            colorStyles, i, name, camel;
 
         function fixTransparent (dom, el, inline, style) {
             var value = style[this.name] || '';
@@ -5343,7 +5353,7 @@ Element.override({
             return result;
         }
 
-        var styleHooks = Element.prototype.styleHooks;
+        styleHooks = Element.prototype.styleHooks;
 
         // Populate the LTR flavors of margin-before et.al. (see Ext.rtl.AbstractElement):
         Element.populateStyleMap(styleHooks, ['left', 'right']);
@@ -5366,10 +5376,10 @@ Element.override({
         }
 
         if (!supports.TransparentColor) {
-            var colorStyles = ['background-color', 'border-color', 'color', 'outline-color'];
-            for (var i = colorStyles.length; i--; ) {
-                var name = colorStyles[i],
-                    camel = Element.normalize(name);
+            colorStyles = ['background-color', 'border-color', 'color', 'outline-color'];
+            for (i = colorStyles.length; i--; ) {
+                name = colorStyles[i];
+                camel = Element.normalize(name);
 
                 styleHooks[name] = styleHooks[camel] = {
                     name: camel,
@@ -5378,7 +5388,7 @@ Element.override({
             }
         }
     });
-})();
+}());
 
 /**
  * @class Ext.dom.AbstractElement
@@ -5705,12 +5715,23 @@ var afterbegin = 'afterbegin',
     tbs = ts+'<tbody>',
     tbe = '</tbody>'+te,
     trs = tbs + '<tr>',
-    tre = '</tr>'+tbe;
+    tre = '</tr>'+tbe,
+    detachedDiv = document.createElement('div'),
+    bbValues = ['BeforeBegin', 'previousSibling'],
+    aeValues = ['AfterEnd', 'nextSibling'],
+    bb_ae_PositionHash = {
+        beforebegin: bbValues,
+        afterend: aeValues
+    },
+    fullPositionHash = {
+        beforebegin: bbValues,
+        afterend: aeValues,
+        afterbegin: ['AfterBegin', 'firstChild'],
+        beforeend: ['BeforeEnd', 'lastChild']
+    };
 
 Ext.define('Ext.dom.Helper', {
     extend: 'Ext.dom.AbstractHelper',
-
-    tempTableEl: null,
 
     tableRe: /^table|tbody|tr|td$/i,
 
@@ -5733,11 +5754,12 @@ Ext.define('Ext.dom.Helper', {
             useSet,
             attr,
             val,
-            cn;
+            cn,
+            i, l;
 
         if (Ext.isArray(o)) {                       // Allow Arrays of siblings to be inserted
             el = doc.createDocumentFragment(); // in one shot using a DocumentFragment
-            for (var i = 0, l = o.length; i < l; i++) {
+            for (i = 0, l = o.length; i < l; i++) {
                 this.createDom(o[i], el);
             }
         } else if (typeof o == 'string') {         // Allow a string as a child spec.
@@ -5773,11 +5795,11 @@ Ext.define('Ext.dom.Helper', {
         return el;
     },
 
-    ieTable: function(depth, s, h, e){
-        this.tempTableEl.innerHTML = [s, h, e].join('');
+    ieTable: function(depth, openingTags, htmlContent, closingTags){
+        detachedDiv.innerHTML = [openingTags, htmlContent, closingTags].join('');
 
         var i = -1,
-            el = this.tempTableEl,
+            el = detachedDiv,
             ns;
 
         while (++i < depth) {
@@ -5787,71 +5809,66 @@ Ext.define('Ext.dom.Helper', {
         ns = el.nextSibling;
 
         if (ns) {
-            var df = document.createDocumentFragment();
-            while (el) {
-                ns = el.nextSibling;
-                df.appendChild(el);
-                el = ns;
+            el = document.createDocumentFragment();
+            while (ns) {
+                el.appendChild(ns);
+                ns = ns.nextSibling;
             }
-            el = df;
         }
-
         return el;
     },
 
-
     /**
-     * @ignore
+     * @private
      * Nasty code for IE's broken table implementation
      */
-    insertIntoTable: function(tag, where, el, html) {
+    insertIntoTable: function(tag, where, destinationEl, html) {
         var node,
-            before;
+            before,
+            bb = where == beforebegin,
+            ab = where == afterbegin,
+            be = where == beforeend,
+            ae = where == afterend;
 
-        this.tempTableEl = this.tempTableEl || document.createElement('div');
-
-        if (tag == 'td' && (where == afterbegin || where == beforeend) ||
-                !this.tableElRe.test(tag) && (where == beforebegin || where == afterend)) {
+        if (tag == 'td' && (ab || be) || !this.tableElRe.test(tag) && (bb || ae)) {
             return null;
         }
-        before = where == beforebegin ? el :
-                where == afterend ? el.nextSibling :
-                        where == afterbegin ? el.firstChild : null;
+        before = bb ? destinationEl :
+                 ae ? destinationEl.nextSibling :
+                 ab ? destinationEl.firstChild : null;
 
-        if (where == beforebegin || where == afterend) {
-            el = el.parentNode;
+        if (bb || ae) {
+            destinationEl = destinationEl.parentNode;
         }
 
-        if (tag == 'td' || (tag == 'tr' && (where == beforeend || where == afterbegin))) {
+        if (tag == 'td' || (tag == 'tr' && (be || ab))) {
             node = this.ieTable(4, trs, html, tre);
-        } else if ((tag == 'tbody' && (where == beforeend || where == afterbegin)) ||
-                (tag == 'tr' && (where == beforebegin || where == afterend))) {
+        } else if ((tag == 'tbody' && (be || ab)) ||
+                (tag == 'tr' && (bb || ae))) {
             node = this.ieTable(3, tbs, html, tbe);
         } else {
             node = this.ieTable(2, ts, html, te);
         }
-        el.insertBefore(node, before);
+        destinationEl.insertBefore(node, before);
         return node;
     },
 
     /**
-     * @ignore
+     * @private
      * Fix for IE9 createContextualFragment missing method
      */
-    createContextualFragment: function(html){
-        var div = document.createElement("div"),
-            fragment = document.createDocumentFragment(),
-            i = 0,
+    createContextualFragment: function(html) {
+        var fragment = document.createDocumentFragment(),
             length, childNodes;
 
-        div.innerHTML = html;
-        childNodes = div.childNodes;
+        detachedDiv.innerHTML = html;
+        childNodes = detachedDiv.childNodes;
         length = childNodes.length;
 
-        for (; i < length; i++) {
-            fragment.appendChild(childNodes[i].cloneNode(true));
+        // Move nodes into fragment, don't clone: http://jsperf.com/create-fragment
+        while (length--) {
+            fragment.appendChild(childNodes[0]);
         }
-
         return fragment;
     },
 
@@ -5900,43 +5917,65 @@ Ext.define('Ext.dom.Helper', {
         return returnElement ? Ext.get(newNode, true) : newNode;
     },
 
+    /**
+     * Creates new DOM element(s) and overwrites the contents of el with them.
+     * @param {String/HTMLElement/Ext.Element} el The context element
+     * @param {Object/String} o The DOM object spec (and children) or raw HTML blob
+     * @param {Boolean} [returnElement] true to return an Ext.Element
+     * @return {HTMLElement/Ext.Element} The new node
+     */
+    overwrite: function(el, html, returnElement) {
+        var newNode;
+
+        html = this.markup(html);
+
+        // IE Inserting HTML into a table/tbody/tr requires extra processing: http://www.ericvasilik.com/2006/07/code-karma.html
+        if (Ext.isIE && this.tableRe.test(el.tagName)) {
+            // Clearing table elements requires removal of all elements.
+            while (el.firstChild) {
+                el.removeChild(el.firstChild);
+            }
+            if (html) {
+                newNode = this.insertHtml('afterbegin', el, html);
+                return returnElement ? Ext.get(newNode) : newNode;
+            }
+            return null;
+        }
+        el.innerHTML = html;
+        return returnElement ? Ext.get(el.firstChild) : el.firstChild;
+    },
+
     insertHtml: function(where, el, html) {
-        var hash = {},
-            hashVal,
+        var hashVal,
             range,
             rangeEl,
             setStart,
-            frag,
-            rs;
+            frag;
 
         where = where.toLowerCase();
-        // add these here because they are used in both branches of the condition.
-        hash[beforebegin] = ['BeforeBegin', 'previousSibling'];
-        hash[afterend] = ['AfterEnd', 'nextSibling'];
 
-        // if IE and context element is an HTMLElement
+        // Has fast HTML insertion into existing DOM: http://www.w3.org/TR/html5/apis-in-html-documents.html#insertadjacenthtml
         if (el.insertAdjacentHTML) {
-            if (this.tableRe.test(el.tagName) && (rs = this.insertIntoTable(el.tagName.toLowerCase(), where, el, html))) {
-                return rs;
+
+            // IE's incomplete table implementation: http://www.ericvasilik.com/2006/07/code-karma.html
+            if (Ext.isIE && this.tableRe.test(el.tagName) && (frag = this.insertIntoTable(el.tagName.toLowerCase(), where, el, html))) {
+                return frag;
             }
 
-            // add these two to the hash.
-            hash[afterbegin] = ['AfterBegin', 'firstChild'];
-            hash[beforeend] = ['BeforeEnd', 'lastChild'];
-            if ((hashVal = hash[where])) {
+            if ((hashVal = fullPositionHash[where])) {
                 el.insertAdjacentHTML(hashVal[0], html);
                 return el[hashVal[1]];
             }
             // if (not IE and context element is an HTMLElement) or TextNode
         } else {
             // we cannot insert anything inside a textnode so...
-            if (Ext.isTextNode(el)) {
+            if (el.nodeType === 3) {
                 where = where === 'afterbegin' ? 'beforebegin' : where;
                 where = where === 'beforeend' ? 'afterend' : where;
             }
             range = Ext.supports.CreateContextualFragment ? el.ownerDocument.createRange() : undefined;
             setStart = 'setStart' + (this.endRe.test(where) ? 'After' : 'Before');
-            if (hash[where]) {
+            if (bb_ae_PositionHash[where]) {
                 if (range) {
                     range[setStart](el);
                     frag = range.createContextualFragment(html);
@@ -5993,7 +6032,7 @@ Ext.define('Ext.dom.Helper', {
 });
 
 
-})();
+}());
 
 /*
  * This is code is also distributed under MIT license for use
@@ -6070,7 +6109,7 @@ Ext.define('Ext.dom.Helper', {
  */
 Ext.ns('Ext.core');
 
-Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
+Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = (function(){
     var cache = {},
         simpleCache = {},
         valueCache = {},
@@ -6078,15 +6117,52 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
         trimRe = /^\s+|\s+$/g,
         tplRe = /\{(\d+)\}/g,
         modeRe = /^(\s?[\/>+~]\s?|\s|$)/,
-        tagTokenRe = /^(#)?([\w\-\*]+)/,
+        tagTokenRe = /^(#)?([\w\-\*\\]+)/,
         nthRe = /(\d*)n\+?(\d*)/,
         nthRe2 = /\D/,
         startIdRe = /^\s*\#/,
         // This is for IE MSXML which does not support expandos.
-    // IE runs the same speed using setAttribute, however FF slows way down
-    // and Safari completely fails so they need to continue to use expandos.
-    isIE = window.ActiveXObject ? true : false,
-    key = 30803;
+        // IE runs the same speed using setAttribute, however FF slows way down
+        // and Safari completely fails so they need to continue to use expandos.
+        isIE = window.ActiveXObject ? true : false,
+        key = 30803,
+        longHex = /\\([0-9a-fA-F]{6})/g,
+        shortHex = /\\([0-9a-fA-F]{1,6})\s{0,1}/g,
+        nonHex = /\\([^0-9a-fA-F]{1})/g,
+        escapes = /\\/g,
+        num, hasEscapes,
+
+        // replaces a long hex regex match group with the appropriate ascii value
+        // $args indicate regex match pos
+        longHexToChar = function($0, $1) {
+            return String.fromCharCode(parseInt($1, 16));
+        },
+
+        // converts a shortHex regex match to the long form
+        shortToLongHex = function($0, $1) {
+            while ($1.length < 6) {
+                $1 = '0' + $1;
+            }
+            return '\\' + $1;
+        },
+
+        // converts a single char escape to long escape form
+        charToLongHex = function($0, $1) {
+            num = $1.charCodeAt(0).toString(16);
+            if (num.length === 1) {
+                num = '0' + num;
+            }
+            return '\\0000' + num;
+        },
+
+        // Un-escapes an input selector string.  Assumes all escape sequences have been
+        // normalized to the css '\\0000##' 6-hex-digit style escape sequence :
+        // will not handle any other escape formats
+        unescapeCssSelector = function (selector) {
+            return (hasEscapes)
+                ? selector.replace(longHex, longHexToChar)
+                : selector;
+        };
 
     // this eval is stop the compressor from
     // renaming the variable to something shorter
@@ -6130,31 +6206,32 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
             nextNode = n.nextSibling;
             // clean worthless empty nodes.
             if(n.nodeType == 3 && !nonSpace.test(n.nodeValue)){
-            parent.removeChild(n);
+                parent.removeChild(n);
             }else{
-            // add an expando nodeIndex
-            n.nodeIndex = ++nodeIndex;
+                // add an expando nodeIndex
+                n.nodeIndex = ++nodeIndex;
             }
             n = nextNode;
         }
         return this;
     }
 
-
     // nodeSet - array of nodes
     // cls - CSS Class
     function byClassName(nodeSet, cls){
+        cls = unescapeCssSelector(cls);
         if(!cls){
             return nodeSet;
         }
-        var result = [], ri = -1;
-        for(var i = 0, ci; ci = nodeSet[i]; i++){
+        var result = [], ri = -1,
+            i, ci;
+        for(i = 0, ci; ci = nodeSet[i]; i++){
             if((' '+ci.className+' ').indexOf(cls) != -1){
                 result[++ri] = ci;
             }
         }
         return result;
-    };
+    }
 
     function attrValue(n, attr){
         // if its an array, use the first node.
@@ -6173,14 +6250,15 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
         }
         return n.getAttribute(attr) || n[attr];
 
-    };
+    }
 
 
     // ns - nodes
     // mode - false, /, >, +, ~
     // tagName - defaults to "*"
     function getNodes(ns, mode, tagName){
-        var result = [], ri = -1, cs;
+        var result = [], ri = -1, cs,
+            i, ni, j, ci, cn, utag, n, cj;
         if(!ns){
             return result;
         }
@@ -6193,19 +6271,19 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
         // no mode specified, grab all elements by tagName
         // at any depth
         if(!mode){
-            for(var i = 0, ni; ni = ns[i]; i++){
+            for(i = 0, ni; ni = ns[i]; i++){
                 cs = ni.getElementsByTagName(tagName);
-                for(var j = 0, ci; ci = cs[j]; j++){
+                for(j = 0, ci; ci = cs[j]; j++){
                     result[++ri] = ci;
                 }
             }
         // Direct Child mode (/ or >)
         // E > F or E/F all direct children elements of E that have the tag
         } else if(mode == "/" || mode == ">"){
-            var utag = tagName.toUpperCase();
-            for(var i = 0, ni, cn; ni = ns[i]; i++){
+            utag = tagName.toUpperCase();
+            for(i = 0, ni, cn; ni = ns[i]; i++){
                 cn = ni.childNodes;
-                for(var j = 0, cj; cj = cn[j]; j++){
+                for(j = 0, cj; cj = cn[j]; j++){
                     if(cj.nodeName == utag || cj.nodeName == tagName  || tagName == '*'){
                         result[++ri] = cj;
                     }
@@ -6214,8 +6292,8 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
         // Immediately Preceding mode (+)
         // E + F all elements with the tag F that are immediately preceded by an element with the tag E
         }else if(mode == "+"){
-            var utag = tagName.toUpperCase();
-            for(var i = 0, n; n = ns[i]; i++){
+            utag = tagName.toUpperCase();
+            for(i = 0, n; n = ns[i]; i++){
                 while((n = n.nextSibling) && n.nodeType != 1);
                 if(n && (n.nodeName == utag || n.nodeName == tagName || tagName == '*')){
                     result[++ri] = n;
@@ -6224,8 +6302,8 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
         // Sibling mode (~)
         // E ~ F all elements with the tag F that are preceded by a sibling element with the tag E
         }else if(mode == "~"){
-            var utag = tagName.toUpperCase();
-            for(var i = 0, n; n = ns[i]; i++){
+            utag = tagName.toUpperCase();
+            for(i = 0, n; n = ns[i]; i++){
                 while((n = n.nextSibling)){
                     if (n.nodeName == utag || n.nodeName == tagName || tagName == '*'){
                         result[++ri] = n;
@@ -6253,9 +6331,10 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
         if(!tagName){
             return cs;
         }
-        var result = [], ri = -1;
+        var result = [], ri = -1,
+            i, ci;
         tagName = tagName.toLowerCase();
-        for(var i = 0, ci; ci = cs[i]; i++){
+        for(i = 0, ci; ci = cs[i]; i++){
             if(ci.nodeType == 1 && ci.tagName.toLowerCase() == tagName){
                 result[++ri] = ci;
             }
@@ -6264,14 +6343,16 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
     }
 
     function byId(cs, id){
+        id = unescapeCssSelector(id);
         if(cs.tagName || cs == document){
             cs = [cs];
         }
         if(!id){
             return cs;
         }
-        var result = [], ri = -1;
-        for(var i = 0, ci; ci = cs[i]; i++){
+        var result = [], ri = -1,
+            i, ci;
+        for(i = 0, ci; ci = cs[i]; i++){
             if(ci && ci.id == id){
                 result[++ri] = ci;
                 return result;
@@ -6289,9 +6370,12 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
             fn = Ext.DomQuery.operators[op],
             a,
             xml,
-            hasXml;
+            hasXml,
+            i, ci;
 
-        for(var i = 0, ci; ci = cs[i]; i++){
+        value = unescapeCssSelector(value);
+
+        for(i = 0, ci; ci = cs[i]; i++){
             // skip non-element nodes.
             if(ci.nodeType != 1){
                 continue;
@@ -6328,22 +6412,24 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
     }
 
     function byPseudo(cs, name, value){
+        value = unescapeCssSelector(value);
         return Ext.DomQuery.pseudos[name](cs, value);
     }
 
     function nodupIEXml(cs){
         var d = ++key,
-            r;
+            r,
+            i, len, c;
         cs[0].setAttribute("_nodup", d);
         r = [cs[0]];
-        for(var i = 1, len = cs.length; i < len; i++){
-            var c = cs[i];
+        for(i = 1, len = cs.length; i < len; i++){
+            c = cs[i];
             if(!c.getAttribute("_nodup") != d){
                 c.setAttribute("_nodup", d);
                 r[r.length] = c;
             }
         }
-        for(var i = 0, len = cs.length; i < len; i++){
+        for(i = 0, len = cs.length; i < len; i++){
             cs[i].removeAttribute("_nodup");
         }
         return r;
@@ -6353,21 +6439,21 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
         if(!cs){
             return [];
         }
-        var len = cs.length, c, i, r = cs, cj, ri = -1;
+        var len = cs.length, c, i, r = cs, cj, ri = -1, d, j;
         if(!len || typeof cs.nodeType != "undefined" || len == 1){
             return cs;
         }
         if(isIE && typeof cs[0].selectSingleNode != "undefined"){
             return nodupIEXml(cs);
         }
-        var d = ++key;
+        d = ++key;
         cs[0]._nodup = d;
         for(i = 1; c = cs[i]; i++){
             if(c._nodup != d){
                 c._nodup = d;
             }else{
                 r = [];
-                for(var j = 0; j < i; j++){
+                for(j = 0; j < i; j++){
                     r[++ri] = cs[j];
                 }
                 for(j = i+1; cj = cs[j]; j++){
@@ -6384,16 +6470,17 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
 
     function quickDiffIEXml(c1, c2){
         var d = ++key,
-            r = [];
-        for(var i = 0, len = c1.length; i < len; i++){
+            r = [],
+            i, len;
+        for(i = 0, len = c1.length; i < len; i++){
             c1[i].setAttribute("_qdiff", d);
         }
-        for(var i = 0, len = c2.length; i < len; i++){
+        for(i = 0, len = c2.length; i < len; i++){
             if(c2[i].getAttribute("_qdiff") != d){
                 r[r.length] = c2[i];
             }
         }
-        for(var i = 0, len = c1.length; i < len; i++){
+        for(i = 0, len = c1.length; i < len; i++){
            c1[i].removeAttribute("_qdiff");
         }
         return r;
@@ -6402,17 +6489,18 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
     function quickDiff(c1, c2){
         var len1 = c1.length,
             d = ++key,
-            r = [];
+            r = [],
+            i, len;
         if(!len1){
             return c2;
         }
         if(isIE && typeof c1[0].selectSingleNode != "undefined"){
             return quickDiffIEXml(c1, c2);
         }
-        for(var i = 0; i < len1; i++){
+        for(i = 0; i < len1; i++){
             c1[i]._qdiff = d;
         }
-        for(var i = 0, len = c2.length; i < len; i++){
+        for(i = 0, len = c2.length; i < len; i++){
             if(c2[i]._qdiff != d){
                 r[r.length] = c2[i];
             }
@@ -6422,8 +6510,9 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
 
     function quickId(ns, mode, root, id){
         if(ns == root){
-           var d = root.ownerDocument || root;
-           return d.getElementById(id);
+            id = unescapeCssSelector(id);
+            var d = root.ownerDocument || root;
+            return d.getElementById(id);
         }
         ns = getNodes(ns, mode, "*");
         return byId(ns, id);
@@ -6451,7 +6540,8 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
                 matchersLn = matchers.length,
                 modeMatch,
                 // accept leading mode switch
-                lmode = path.match(modeRe);
+                lmode = path.match(modeRe),
+                tokenMatch, matched, j, t, m;
 
             if(lmode && lmode[1]){
                 fn[fn.length] = 'mode="'+lmode[1].replace(trimRe, "")+'";';
@@ -6465,7 +6555,7 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
 
             while(path && lastPath != path){
                 lastPath = path;
-                var tokenMatch = path.match(tagTokenRe);
+                tokenMatch = path.match(tagTokenRe);
                 if(type == "select"){
                     if(tokenMatch){
                         // ID Selector
@@ -6490,10 +6580,10 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
                     }
                 }
                 while(!(modeMatch = path.match(modeRe))){
-                    var matched = false;
-                    for(var j = 0; j < matchersLn; j++){
-                        var t = matchers[j];
-                        var m = path.match(t.re);
+                    matched = false;
+                    for(j = 0; j < matchersLn; j++){
+                        t = matchers[j];
+                        m = path.match(t.re);
                         if(m){
                             fn[fn.length] = t.select.replace(tplRe, function(x, i){
                                 return m[i];
@@ -6505,13 +6595,11 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
                     }
                     // prevent infinite loop on bad selector
                     if(!matched){
-                        //<debug>
                         Ext.Error.raise({
                             sourceClass: 'Ext.DomQuery',
                             sourceMethod: 'compile',
                             msg: 'Error parsing selector. Parsing failed at "' + path + '"'
                         });
-                        //</debug>
                     }
                 }
                 if(modeMatch[1]){
@@ -6540,29 +6628,35 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
             // set root to doc if not specified.
             root = root || document;
 
+            if (hasEscapes = (path.indexOf('\\') > -1)) {
+                path = path
+                    .replace(shortHex, shortToLongHex)
+                    .replace(nonHex, charToLongHex)
+                    .replace(escapes, '\\\\');  // double the '\' for js compilation
+            }
+
             if(typeof root == "string"){
                 root = document.getElementById(root);
             }
             var paths = path.split(","),
-                results = [];
+                results = [],
+                i, len, subPath, result;
 
             // loop over each selector
-            for(var i = 0, len = paths.length; i < len; i++){
-                var subPath = paths[i].replace(trimRe, "");
+            for(i = 0, len = paths.length; i < len; i++){
+                subPath = paths[i].replace(trimRe, "");
                 // compile and place in cache
                 if(!cache[subPath]){
                     cache[subPath] = Ext.DomQuery.compile(subPath, type);
                     if(!cache[subPath]){
-                        //<debug>
                         Ext.Error.raise({
                             sourceClass: 'Ext.DomQuery',
                             sourceMethod: 'jsSelect',
                             msg: subPath + ' is not a valid selector'
                         });
-                        //</debug>
                     }
                 }
-                var result = cache[subPath](root);
+                result = cache[subPath](root);
                 if(result && result != document){
                     results = results.concat(result);
                 }
@@ -6657,7 +6751,9 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
             // Rumored to potentially crash IE6 but has not been confirmed.
             // http://reference.sitepoint.com/javascript/Node/normalize
             // https://developer.mozilla.org/En/DOM/Node.normalize
-            if (typeof n.normalize == 'function') n.normalize();
+            if (typeof n.normalize == 'function') {
+                n.normalize();
+            }
 
             v = (n && n.firstChild ? n.firstChild.nodeValue : null);
             return ((v === null||v === undefined||v==='') ? defaultValue : v);
@@ -6717,19 +6813,19 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
          * statement as specified by their index.
          */
         matchers : [{
-                re: /^\.([\w-]+)/,
+                re: /^\.([\w\-\\]+)/,
                 select: 'n = byClassName(n, " {1} ");'
             }, {
-                re: /^\:([\w-]+)(?:\(((?:[^\s>\/]*|.*?))\))?/,
+                re: /^\:([\w\-]+)(?:\(((?:[^\s>\/]*|.*?))\))?/,
                 select: 'n = byPseudo(n, "{1}", "{2}");'
             },{
-                re: /^(?:([\[\{])(?:@)?([\w-]+)\s?(?:(=|.=)\s?['"]?(.*?)["']?)?[\]\}])/,
+                re: /^(?:([\[\{])(?:@)?([\w\-]+)\s?(?:(=|.=)\s?['"]?(.*?)["']?)?[\]\}])/,
                 select: 'n = byAttribute(n, "{2}", "{4}", "{3}", "{1}");'
             }, {
-                re: /^#([\w-]+)/,
+                re: /^#([\w\-\\]+)/,
                 select: 'n = byId(n, "{1}");'
             },{
-                re: /^@([\w-]+)/,
+                re: /^@([\w\-]+)/,
                 select: 'return {firstChild:{nodeValue:attrValue(n, "{1}")}};'
             }
         ],
@@ -6800,8 +6896,9 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
          */
         pseudos : {
             "first-child" : function(c){
-                var r = [], ri = -1, n;
-                for(var i = 0, ci; ci = n = c[i]; i++){
+                var r = [], ri = -1, n,
+                    i, ci;
+                for(i = 0; (ci = n = c[i]); i++){
                     while((n = n.previousSibling) && n.nodeType != 1);
                     if(!n){
                         r[++ri] = ci;
@@ -6811,8 +6908,9 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
             },
 
             "last-child" : function(c){
-                var r = [], ri = -1, n;
-                for(var i = 0, ci; ci = n = c[i]; i++){
+                var r = [], ri = -1, n,
+                    i, ci;
+                for(i = 0; (ci = n = c[i]); i++){
                     while((n = n.nextSibling) && n.nodeType != 1);
                     if(!n){
                         r[++ri] = ci;
@@ -6824,12 +6922,13 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
             "nth-child" : function(c, a) {
                 var r = [], ri = -1,
                     m = nthRe.exec(a == "even" && "2n" || a == "odd" && "2n+1" || !nthRe2.test(a) && "n+" + a || a),
-                    f = (m[1] || 1) - 0, l = m[2] - 0;
-                for(var i = 0, n; n = c[i]; i++){
-                    var pn = n.parentNode;
+                    f = (m[1] || 1) - 0, l = m[2] - 0,
+                    i, n, j, cn, pn;
+                for(i = 0; n = c[i]; i++){
+                    pn = n.parentNode;
                     if (batch != pn._batch) {
-                        var j = 0;
-                        for(var cn = pn.firstChild; cn; cn = cn.nextSibling){
+                        j = 0;
+                        for(cn = pn.firstChild; cn; cn = cn.nextSibling){
                             if(cn.nodeType == 1){
                                cn.nodeIndex = ++j;
                             }
@@ -6849,8 +6948,9 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
             },
 
             "only-child" : function(c){
-                var r = [], ri = -1;;
-                for(var i = 0, ci; ci = c[i]; i++){
+                var r = [], ri = -1,
+                    i, ci;
+                for(i = 0; ci = c[i]; i++){
                     if(!prev(ci) && !next(ci)){
                         r[++ri] = ci;
                     }
@@ -6859,9 +6959,12 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
             },
 
             "empty" : function(c){
-                var r = [], ri = -1;
-                for(var i = 0, ci; ci = c[i]; i++){
-                    var cns = ci.childNodes, j = 0, cn, empty = true;
+                var r = [], ri = -1,
+                    i, ci, cns, j, cn, empty;
+                for(i = 0, ci; ci = c[i]; i++){
+                    cns = ci.childNodes;
+                    j = 0;
+                    empty = true;
                     while(cn = cns[j]){
                         ++j;
                         if(cn.nodeType == 1 || cn.nodeType == 3){
@@ -6877,9 +6980,10 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
             },
 
             "contains" : function(c, v){
-                var r = [], ri = -1;
-                for(var i = 0, ci; ci = c[i]; i++){
-                    if((ci.textContent||ci.innerText||'').indexOf(v) != -1){
+                var r = [], ri = -1,
+                    i, ci;
+                for(i = 0; ci = c[i]; i++){
+                    if((ci.textContent||ci.innerText||ci.text||'').indexOf(v) != -1){
                         r[++ri] = ci;
                     }
                 }
@@ -6887,8 +6991,9 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
             },
 
             "nodeValue" : function(c, v){
-                var r = [], ri = -1;
-                for(var i = 0, ci; ci = c[i]; i++){
+                var r = [], ri = -1,
+                    i, ci;
+                for(i = 0; ci = c[i]; i++){
                     if(ci.firstChild && ci.firstChild.nodeValue == v){
                         r[++ri] = ci;
                     }
@@ -6897,8 +7002,9 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
             },
 
             "checked" : function(c){
-                var r = [], ri = -1;
-                for(var i = 0, ci; ci = c[i]; i++){
+                var r = [], ri = -1,
+                    i, ci;
+                for(i = 0; ci = c[i]; i++){
                     if(ci.checked == true){
                         r[++ri] = ci;
                     }
@@ -6912,9 +7018,10 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
 
             "any" : function(c, selectors){
                 var ss = selectors.split('|'),
-                    r = [], ri = -1, s;
-                for(var i = 0, ci; ci = c[i]; i++){
-                    for(var j = 0; s = ss[j]; j++){
+                    r = [], ri = -1, s,
+                    i, ci, j;
+                for(i = 0; ci = c[i]; i++){
+                    for(j = 0; s = ss[j]; j++){
                         if(Ext.DomQuery.is(ci, s)){
                             r[++ri] = ci;
                             break;
@@ -6946,8 +7053,9 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
 
             "has" : function(c, ss){
                 var s = Ext.DomQuery.select,
-                    r = [], ri = -1;
-                for(var i = 0, ci; ci = c[i]; i++){
+                    r = [], ri = -1,
+                    i, ci;
+                for(i = 0; ci = c[i]; i++){
                     if(s(ss, ci).length > 0){
                         r[++ri] = ci;
                     }
@@ -6957,9 +7065,10 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
 
             "next" : function(c, ss){
                 var is = Ext.DomQuery.is,
-                    r = [], ri = -1;
-                for(var i = 0, ci; ci = c[i]; i++){
-                    var n = next(ci);
+                    r = [], ri = -1,
+                    i, ci, n;
+                for(i = 0; ci = c[i]; i++){
+                    n = next(ci);
                     if(n && is(n, ss)){
                         r[++ri] = ci;
                     }
@@ -6969,9 +7078,10 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
 
             "prev" : function(c, ss){
                 var is = Ext.DomQuery.is,
-                    r = [], ri = -1;
-                for(var i = 0, ci; ci = c[i]; i++){
-                    var n = prev(ci);
+                    r = [], ri = -1,
+                    i, ci, n;
+                for(i = 0; ci = c[i]; i++){
+                    n = prev(ci);
                     if(n && is(n, ss)){
                         r[++ri] = ci;
                     }
@@ -6980,7 +7090,7 @@ Ext.dom.Query = Ext.core.DomQuery = Ext.DomQuery = function(){
             }
         }
     };
-}();
+}());
 
 /**
  * Shorthand of {@link Ext.dom.Query#select}
@@ -7084,13 +7194,25 @@ var HIDDEN = 'hidden',
     EXTELMASKMSG    = Ext.baseCSSPrefix + "mask-msg",
     bodyRe          = /^body/i,
 
-//  speedy lookup for elements never to box adjust
+    // speedy lookup for elements never to box adjust
     noBoxAdjust = Ext.isStrict ? {
         select: 1
     }: {
         input: 1,
         select: 1,
         textarea: 1
+    },
+
+    // Pseudo for use by cacheScrollValues
+    isScrolled = function(c) {
+        var r = [], ri = -1,
+            i, ci;
+        for (i = 0; ci = c[i]; i++) {
+            if (ci.scrollTop > 0 || ci.scrollLeft > 0) {
+                r[++ri] = ci;
+            }
+        }
+        return r;
     },
 
     Element = Ext.define('Ext.dom.Element', {
@@ -7207,6 +7329,46 @@ var HIDDEN = 'hidden',
             }
             return  d.getAttribute(name) || d[name] || null;
         },
+
+    /**
+     * When an element is moved around in the DOM, or is hidden using `display:none`, it loses layout, and therefore
+     * all scroll positions of all descendant elements are lost.
+     * 
+     * This function caches them, and returns a function, which when run will restore the cached positions.
+     * In the following example, the Panel is moved from one Container to another which will cause it to lose all scroll positions:
+     * 
+     *     var restoreScroll = myPanel.el.cacheScrollValues();
+     *     myOtherContainer.add(myPanel);
+     *     restoreScroll();
+     * 
+     * @return {Function} A function which will restore all descentant elements of this Element to their scroll
+     * positions recorded when this function was executed. Be aware that the returned function is a closure which has
+     * captured the scope of `cacheScrollValues`, so take care to derefence it as soon as not needed - if is it is a `var`
+     * it will drop out of scope, and the reference will be freed.
+     */
+    cacheScrollValues: function() {
+        var me = this,
+            scrolledDescendants,
+            el, i,
+            scrollValues = [],
+            result = function() {
+                for (i = 0; i < scrolledDescendants.length; i++) {
+                    el = scrolledDescendants[i];
+                    el.scrollLeft = scrollValues[i][0];
+                    el.scrollTop  = scrollValues[i][1];
+                }
+            };
+
+        if (!Ext.DomQuery.pseudos.isScrolled) {
+            Ext.DomQuery.pseudos.isScrolled = isScrolled;
+        }
+        scrolledDescendants = me.query(':isScrolled');
+        for (i = 0; i < scrolledDescendants.length; i++) {
+            el = scrolledDescendants[i];
+            scrollValues[i] = [el.scrollLeft, el.scrollTop];
+        }
+        return result;
+    },
 
     /**
      * @property {Boolean} autoBoxAdjust
@@ -7896,7 +8058,8 @@ var HIDDEN = 'hidden',
             var eid,
                 el,
                 d,
-                o;
+                o,
+                t;
 
             for (eid in EC) {
                 if (!EC.hasOwnProperty(eid)) {
@@ -7937,7 +8100,7 @@ var HIDDEN = 'hidden',
             }
             // Cleanup IE Object leaks
             if (Ext.isIE) {
-                var t = {};
+                t = {};
                 for (eid in EC) {
                     if (!EC.hasOwnProperty(eid)) {
                         continue;
@@ -7995,7 +8158,8 @@ var HIDDEN = 'hidden',
          * @return {Ext.dom.Element} this
          */
         swallowEvent : function(eventName, preventDefault) {
-            var me = this;
+            var me = this,
+                e, eLen;
             function fn(e) {
                 e.stopPropagation();
                 if (preventDefault) {
@@ -8004,8 +8168,7 @@ var HIDDEN = 'hidden',
             }
 
             if (Ext.isArray(eventName)) {
-                var e,
-                    eLen = eventName.length;
+                eLen = eventName.length;
 
                 for (e = 0; e < eLen; e++) {
                     me.on(eventName[e], fn);
@@ -8129,18 +8292,19 @@ var HIDDEN = 'hidden',
             html += '<span id="' + id + '"></span>';
 
             interval = setInterval(function() {
-                if (!(el = DOC.getElementById(id))) {
-                    return false;
-                }
-                clearInterval(interval);
-                Ext.removeNode(el);
-                var hd     = Ext.getHead().dom,
+                var hd,
                     match,
                     attrs,
                     srcMatch,
                     typeMatch,
                     el,
                     s;
+                if (!(el = DOC.getElementById(id))) {
+                    return false;
+                }
+                clearInterval(interval);
+                Ext.removeNode(el);
+                hd = Ext.getHead().dom;
 
                 while ((match = scriptTagRe.exec(html))) {
                     attrs = match[1];
@@ -8323,7 +8487,7 @@ var HIDDEN = 'hidden',
     }
 });
 
-})();
+}());
 
 /**
  * @class Ext.dom.Element
@@ -8702,7 +8866,7 @@ Ext.dom.Element.override((function() {
             return this.alignTo(centerIn || doc, 'c-c');
         }
     };
-})());
+}()));
 /**
  * @class Ext.dom.Element
  */
@@ -8837,12 +9001,16 @@ Ext.dom.Element.override({
      *
      * @param {String} anchor (optional) One of the valid Fx anchor positions (defaults to top: 't')
      * @param {Object} options (optional) Object literal with any of the Fx config options
+     * @param {Boolean} options.preserveScroll Set to true if preservation of any descendant elements'
+     * `scrollTop` values is required. By default the DOM wrapping operation performed by `slideIn` and
+     * `slideOut` causes the browser to lose all scroll positions.
      * @return {Ext.dom.Element} The Element
      */
     slideIn: function(anchor, obj, slideOut) {
         var me = this,
             elStyle = me.dom.style,
-            beforeAnim, wrapAnim;
+            beforeAnim, wrapAnim,
+            restoreScroll;
 
         anchor = anchor || "t";
         obj = obj || {};
@@ -8867,6 +9035,11 @@ Ext.dom.Element.override({
             originalStyles = me.getStyles('width', 'height', 'left', 'right', 'top', 'bottom', 'position', 'z-index', true);
             me.setSize(box.width, box.height);
 
+            // Cache all descendants' scrollTop & scrollLeft values if configured to preserve scroll.
+            if (obj.preserveScroll) {
+                restoreScroll = me.cacheScrollValues();
+            }
+
             wrap = me.wrap({
                 id: Ext.id() + '-anim-wrap-for-' + me.id,
                 style: {
@@ -8879,6 +9052,11 @@ Ext.dom.Element.override({
             }
             me.clearPositioning('auto');
             wrap.clip();
+
+            // The wrap will have reset all descendant scrollTops. Restore them if we cached them.
+            if (restoreScroll) {
+                restoreScroll();
+            }
 
             // This element is temporarily positioned absolute within its wrapper.
             // Restore to its default, CSS-inherited visibility setting.
@@ -9034,6 +9212,10 @@ Ext.dom.Element.override({
                 if (wrap.dom) {
                     wrap.dom.parentNode.insertBefore(me.dom, wrap.dom);
                     wrap.remove();
+                }
+                // The unwrap will have reset all descendant scrollTops. Restore them if we cached them.
+                if (restoreScroll) {
+                    restoreScroll();
                 }
                 // kill the no-op element animation created below
                 animScope.end();
@@ -9893,7 +10075,7 @@ Element.override({
     }
 });
 
-})();
+}());
 
 
 /**
@@ -10395,7 +10577,7 @@ Element.override({
     }
 });
 
-})();
+}());
 
 
 /**
@@ -10619,9 +10801,8 @@ Ext.dom.Element.override({
 (function() {
 
 var Element = Ext.dom.Element,
-    view = document.defaultView;
-
-var adjustDirect2DTableRe = /table-row|table-.*-group/,
+    view = document.defaultView,
+    adjustDirect2DTableRe = /table-row|table-.*-group/,
     INTERNAL = '_internal',
     HIDDEN = 'hidden',
     HEIGHT = 'height',
@@ -10631,7 +10812,11 @@ var adjustDirect2DTableRe = /table-row|table-.*-group/,
     OVERFLOWX = 'overflow-x',
     OVERFLOWY = 'overflow-y',
     ORIGINALCLIP = 'originalClip',
-    DOCORBODYRE = /#document|body/i;
+    DOCORBODYRE = /#document|body/i,
+    // This reduces the lookup of 'me.styleHooks' by one hop in the prototype chain. It is
+    // the same object.
+    styleHooks,
+    edges, k, edge, borderWidth;
 
 if (!view || !view.getComputedStyle) {
     Element.prototype.getStyle = function (property, inline) {
@@ -10965,7 +11150,7 @@ Element.override({
             me.setStyle('opacity', opacity);
         }
         else {
-            if (!typeof (animate) == 'object') {
+            if (typeof animate != 'object') {
                 animate = {
                     duration: 350,
                     easing: 'ease-in'
@@ -11001,6 +11186,7 @@ Element.override({
             inlineDisplay = dom.style.display,
             inlinePosition = dom.style.position,
             originIndex = dimension === WIDTH ? 0 : 1,
+            currentStyle = dom.currentStyle,
             floating;
 
         if (display === 'inline') {
@@ -11011,7 +11197,10 @@ Element.override({
 
         // floating will contain digits that appears after the decimal point
         // if height or width are set to auto we fallback to msTransformOrigin calculation
-        floating = (parseFloat(me.getStyle(dimension)) || parseFloat(dom.currentStyle.msTransformOrigin.split(' ')[originIndex]) * 2) % 1;
+        
+        // Use currentStyle here instead of getStyle. In some difficult to reproduce 
+        // instances it resets the scrollWidth of the element
+        floating = (parseFloat(currentStyle[dimension]) || parseFloat(currentStyle.msTransformOrigin.split(' ')[originIndex]) * 2) % 1;
 
         dom.style.position = inlinePosition;
 
@@ -11155,31 +11344,48 @@ Element.override({
 
     /**
      * Sets up event handlers to add and remove a css class when the mouse is over this element
-     * @param {String} className
+     * @param {String} className The class to add
+     * @param {Function} [testFn] A test function to execute before adding the class. The passed parameter
+     * will be the Element instance. If this functions returns false, the class will not be added.
+     * @param {Object} [scope] The scope to execute the testFn in.
      * @return {Ext.dom.Element} this
      */
-    addClsOnOver : function(className) {
-        var dom = this.dom;
-        this.hover(
-                function() {
-                    Ext.fly(dom, INTERNAL).addCls(className);
-                },
-                function() {
-                    Ext.fly(dom, INTERNAL).removeCls(className);
+    addClsOnOver : function(className, testFn, scope) {
+        var me = this,
+            dom = me.dom,
+            hasTest = Ext.isFunction(testFn);
+            
+        me.hover(
+            function() {
+                if (hasTest && testFn.call(scope || me, me) === false) {
+                    return;
                 }
-                );
-        return this;
+                Ext.fly(dom, INTERNAL).addCls(className);
+            },
+            function() {
+                Ext.fly(dom, INTERNAL).removeCls(className);
+            }
+        );
+        return me;
     },
 
     /**
      * Sets up event handlers to add and remove a css class when this element has the focus
-     * @param {String} className
+     * @param {String} className The class to add
+     * @param {Function} [testFn] A test function to execute before adding the class. The passed parameter
+     * will be the Element instance. If this functions returns false, the class will not be added.
+     * @param {Object} [scope] The scope to execute the testFn in.
      * @return {Ext.dom.Element} this
      */
-    addClsOnFocus : function(className) {
+    addClsOnFocus : function(className, testFn, scope) {
         var me = this,
-                dom = me.dom;
+            dom = me.dom,
+            hasTest = Ext.isFunction(testFn);
+            
         me.on("focus", function() {
+            if (hasTest && testFn.call(scope || me, me) === false) {
+                return false;
+            }
             Ext.fly(dom, INTERNAL).addCls(className);
         });
         me.on("blur", function() {
@@ -11190,12 +11396,21 @@ Element.override({
 
     /**
      * Sets up event handlers to add and remove a css class when the mouse is down and then up on this element (a click effect)
-     * @param {String} className
+     * @param {String} className The class to add
+     * @param {Function} [testFn] A test function to execute before adding the class. The passed parameter
+     * will be the Element instance. If this functions returns false, the class will not be added.
+     * @param {Object} [scope] The scope to execute the testFn in.
      * @return {Ext.dom.Element} this
      */
-    addClsOnClick : function(className) {
-        var dom = this.dom;
-        this.on("mousedown", function() {
+    addClsOnClick : function(className, testFn, scope) {
+        var me = this,
+            dom = me.dom,
+            hasTest = Ext.isFunction(testFn);
+            
+        me.on("mousedown", function() {
+            if (hasTest && testFn.call(scope || me, me) === false) {
+                return false;
+            }
             Ext.fly(dom, INTERNAL).addCls(className);
             var d = Ext.getDoc(),
                 fn = function() {
@@ -11204,7 +11419,7 @@ Element.override({
                 };
             d.on("mouseup", fn);
         });
-        return this;
+        return me;
     },
 
     /**
@@ -11286,17 +11501,13 @@ Element.override({
     }
 });
 
-// This reduces the lookup of 'me.styleHooks' by one hop in the prototype chain. It is
-// the same object.
-var styleHooks;
-
 Element.prototype.styleHooks = styleHooks = Ext.dom.AbstractElement.prototype.styleHooks;
 
 if (Ext.isIE6) {
     styleHooks.fontSize = styleHooks['font-size'] = {
         name: 'fontSize',
         canThrow: true
-    }
+    };
 }
 
 // override getStyle for border-*-width
@@ -11308,9 +11519,8 @@ if (Ext.isIEQuirks || Ext.isIE && Ext.ieVersion <= 8) {
         return style[this.name];
     }
 
-    var edges = ['Top','Right','Bottom','Left'],
-        k = edges.length,
-        edge, borderWidth;
+    edges = ['Top','Right','Bottom','Left'];
+    k = edges.length;
 
     while (k--) {
         edge = edges[k];
@@ -11324,7 +11534,7 @@ if (Ext.isIEQuirks || Ext.isIE && Ext.ieVersion <= 8) {
     }
 }
 
-})();
+}());
 
 Ext.onReady(function () {
     var opacityRe = /alpha\(opacity=(.*)\)/i,
@@ -11471,7 +11681,7 @@ Ext.define('Ext.dom.CompositeElementLite', {
 
     /**
      * @property {Boolean} isComposite
-     * `true` in this class to identify an objact as an instantiated CompositeElement, or subclass thereof.
+     * `true` in this class to identify an object as an instantiated CompositeElement, or subclass thereof.
      */
     isComposite: true,
 
@@ -11638,7 +11848,7 @@ Ext.define('Ext.dom.CompositeElementLite', {
                     if (selector.call(e, e, me, i) === false) {
                         break;
                     }
-                } else if (el.is(selector) === false) {
+                } else if (e.is(selector) === false) {
                     break;
                 }
             }

@@ -136,7 +136,7 @@ Ext.Function = {
             } else {
                 args = args !== undefined ? [args] : [];
             }
-        };
+        }
 
         return function() {
             var fnArgs = [].concat(args);
@@ -276,7 +276,9 @@ Ext.Function = {
     defer: function(fn, millis, scope, args, appendArgs) {
         fn = Ext.Function.bind(fn, scope, args, appendArgs);
         if (millis > 0) {
-            return setTimeout(fn, millis);
+            return setTimeout(Ext.supports.TimeoutActualLateness ? function () {
+                fn();
+            } : fn, millis);
         }
         fn();
         return 0;
@@ -382,6 +384,7 @@ Ext.Function = {
             }
         };
     },
+
 
     /**
      * Adds behavior to an existing method that is executed before the

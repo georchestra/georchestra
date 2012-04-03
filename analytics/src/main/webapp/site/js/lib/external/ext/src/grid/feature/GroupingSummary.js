@@ -180,10 +180,10 @@ Ext.define('Ext.grid.feature.GroupingSummary', {
             root,
             key,
             comp,
-            summaries,
+            summaryRows,
             s,
             sLen,
-            value;
+            convertedSummaryRow;
 
         for (i = 0, length = groups.length; i < length; ++i) {
             data[groups[i].name] = {};
@@ -199,12 +199,20 @@ Ext.define('Ext.grid.feature.GroupingSummary', {
             root = reader.root;
             reader.root = me.remoteRoot;
             reader.buildExtractors(true);
-            summaries = [].concat(reader.getRoot(reader.rawData));
-            sLen      = summaries.length;
-            
+            summaryRows = reader.getRoot(reader.rawData);
+            sLen      = summaryRows.length;
+
+            // Ensure the Reader has a data conversion function to convert a raw data row into a Record data hash
+            if (!reader.convertRecordData) {
+                reader.buildExtractors();
+            }
+
             for (s = 0; s < sLen; s++) {
-                value = summaries[s];
-                remoteData[value[groupField]] = value;
+                convertedSummaryRow = {};
+
+                // Convert a raw data row into a Record's hash object using the Reader
+                reader.convertRecordData(convertedSummaryRow, summaryRows[s]);
+                remoteData[convertedSummaryRow[groupField]] = convertedSummaryRow;
             }
 
             // restore initial reader configuration

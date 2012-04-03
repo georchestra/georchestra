@@ -297,16 +297,15 @@ Ext.define('Ext.picker.Month', {
             value = me.getYear(null),
             month = me.value[0],
             monthOffset = me.monthOffset,
-            year;
+            year,
+            yearItems, y, yLen, el;
 
         if (me.rendered) {
             years.removeCls(cls);
             months.removeCls(cls);
 
-            var yearItems = years.elements,
-                y,
-                yLen      = yearItems.length,
-                el;
+            yearItems = years.elements;
+            yLen      = yearItems.length;
 
             for (y = 0; y < yLen; y++) {
                 el = Ext.fly(yearItems[y]);

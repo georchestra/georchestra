@@ -13,7 +13,8 @@ $grid-header-over-border-color: adjust-color(#C0D4ED, $hue: -0.175deg, $saturati
 $grid-header-over-background-color: $grid-header-over-border-color !default;
 $grid-header-over-background-gradient: 'grid-header-over' !default;
 $grid-header-background-color: $grid-base-color !default;
-$grid-header-padding: 0px 6px !default;
+$grid-header-line-height: 15px !default;
+$grid-header-padding: 3px 6px 4px !default;
 $grid-header-trigger-height: 22px !default;
 $grid-header-trigger-width: 14px !default;
 $grid-header-color: null !default;
@@ -99,7 +100,8 @@ $grid-row-editor-border-color: $panel-border-color !default;
 $grid-row-editor-border-width: 1px !default;
 $grid-row-editor-border: $grid-row-editor-border-width solid $grid-row-editor-border-color !important;
 $grid-row-editor-field-padding-horizontal: 2px !default;
-$grid-row-editor-checkbox-padding-top: 2px !default;
+$grid-row-editor-cb-wrap-padding-top: 0 !default;
+$grid-row-editor-checkbox-margin-left: -4px !default;
 
 // ===============================
 // ========= CELL EDITOR =========

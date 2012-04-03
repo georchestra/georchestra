@@ -201,7 +201,7 @@ Ext.define('Ext.toolbar.Toolbar', {
 
     /**
      * @property {Boolean} isToolbar
-     * `true` in this class to identify an objact as an instantiated Toolbar, or subclass thereof.
+     * `true` in this class to identify an object as an instantiated Toolbar, or subclass thereof.
      */
     isToolbar: true,
     baseCls  : Ext.baseCSSPrefix + 'toolbar',

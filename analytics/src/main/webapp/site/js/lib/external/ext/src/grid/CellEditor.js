@@ -156,6 +156,13 @@ Ext.define('Ext.grid.CellEditor', {
 
         me.alignTo(boundEl, me.alignment, offsets);
     },
+    
+    onEditorTab: function(e){
+        var field = this.field;
+        if (field.onEditorTab) {
+            field.onEditorTab(e);
+        }
+    },
 
     alignment: "tl-tl",
     hideEl : false,

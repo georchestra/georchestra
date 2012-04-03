@@ -22,7 +22,11 @@
 Ext.define('Ext.data.TreeStore', {
     extend: 'Ext.data.AbstractStore',
     alias: 'store.tree',
-    requires: ['Ext.data.Tree', 'Ext.data.NodeInterface', 'Ext.data.NodeStore'],
+    requires: [
+        'Ext.util.Sorter',
+        'Ext.data.Tree',
+        'Ext.data.NodeInterface'
+    ],
 
     /**
      * @cfg {Ext.data.Model/Ext.data.NodeInterface/Object} root
@@ -43,8 +47,8 @@ Ext.define('Ext.data.TreeStore', {
      */
 
     /**
-     * @cfg {Boolean} clearOnLoad
-     * Remove previously existing child nodes before loading. Default to true.
+     * @cfg {Boolean} [clearOnLoad=true]
+     * Remove previously existing child nodes before loading. 
      */
     clearOnLoad : true,
 
@@ -56,27 +60,26 @@ Ext.define('Ext.data.TreeStore', {
     clearRemovedOnLoad: true,
 
     /**
-     * @cfg {String} nodeParam
+     * @cfg {String} [nodeParam="node"]
      * The name of the parameter sent to the server which contains the identifier of the node.
-     * Defaults to 'node'.
      */
     nodeParam: 'node',
 
     /**
-     * @cfg {String} defaultRootId
-     * The default root id. Defaults to 'root'
+     * @cfg {String} [defaultRootId="root"]
+     * The default root id.
      */
     defaultRootId: 'root',
 
     /**
-     * @cfg {String} defaultRootProperty
+     * @cfg {String} [defaultRootProperty="children"]
      * The root property to specify on the reader if one is not explicitly defined.
      */
     defaultRootProperty: 'children',
 
     /**
-     * @cfg {Boolean} folderSort
-     * Set to true to automatically prepend a leaf sorter. Defaults to `undefined`.
+     * @cfg {Boolean} [folderSort=false]
+     * Set to true to automatically prepend a leaf sorter.
      */
     folderSort: false,
 
@@ -521,7 +524,8 @@ Ext.define('Ext.data.TreeStore', {
         for (i = 1; i < ln; i++) {
             node1 = newNodes[i];
             node2 = newNodes[i - 1];
-            if (needsIndexSort = (node1[node1.persistenceProperty].index != node2[node2.persistenceProperty].index)) {
+            needsIndexSort = node1[node1.persistenceProperty].index != node2[node2.persistenceProperty].index;
+            if (needsIndexSort) {
                 break;
             }
         }
@@ -567,11 +571,18 @@ Ext.define('Ext.data.TreeStore', {
         var me = this,
             successful = operation.wasSuccessful(),
             records = operation.getRecords(),
-            node = operation.node;
+            node = operation.node,
+            filtered,
+            childNodes,
+            len,
+            i;
 
         me.loading = false;
         node.set('loading', false);
         if (successful) {
+            if (!me.clearOnLoad) {
+                records = me.cleanRecords(node, records);
+            }
             records = me.fillNode(node, records);
         }
         // The load event has an extra node parameter
@@ -589,6 +600,29 @@ Ext.define('Ext.data.TreeStore', {
         me.fireEvent('load', me, operation.node, records, successful);
         //this is a callback that would have been passed to the 'read' function and is optional
         Ext.callback(operation.callback, operation.scope || me, [records, operation, successful]);
+    },
+    
+    cleanRecords: function(node, records){
+        var nodeHash = {},
+            childNodes = node.childNodes,
+            i = 0,
+            len  = childNodes.length,
+            out = [],
+            rec;
+            
+        // build a hash of all the childNodes under the current node for performance
+        for (; i < len; ++i) {
+            nodeHash[childNodes[i].getId()] = true;
+        }
+        
+        for (i = 0, len = records.length; i < len; ++i) {
+            rec = records[i];
+            if (!nodeHash[rec.getId()]) {
+                out.push(rec);    
+            }
+        }
+        
+        return out;
     },
 
     // inherit docs

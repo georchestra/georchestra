@@ -42,8 +42,8 @@ Ext.define('Ext.dd.DD', {
      * @param {Number} iPageY the Y coordinate of the click
      */
     autoOffset: function(iPageX, iPageY) {
-        var x = iPageX - this.startPageX;
-        var y = iPageY - this.startPageY;
+        var x = iPageX - this.startPageX,
+            y = iPageY - this.startPageY;
         this.setDelta(x, y);
     },
 
@@ -89,17 +89,20 @@ Ext.define('Ext.dd.DD', {
             fly = el.dom ? el : Ext.fly(el, '_dd'),
             elSize = fly.getSize(),
             EL = Ext.Element,
-            vpSize;
+            vpSize,
+            aCoord,
+            newLeft,
+            newTop;
 
         if (!this.deltaSetXY) {
             vpSize = this.cachedViewportSize = { width: EL.getDocumentWidth(), height: EL.getDocumentHeight() };
-            var aCoord = [
+            aCoord = [
                 Math.max(0, Math.min(oCoord.x, vpSize.width - elSize.width)),
                 Math.max(0, Math.min(oCoord.y, vpSize.height - elSize.height))
             ];
             fly.setXY(aCoord);
-            var newLeft = fly.getLeft(true);
-            var newTop  = fly.getTop(true);
+            newLeft = fly.getLeft(true);
+            newTop  = fly.getTop(true);
             this.deltaSetXY = [newLeft - oCoord.x, newTop - oCoord.y];
         } else {
             vpSize = this.cachedViewportSize;
@@ -148,40 +151,30 @@ Ext.define('Ext.dd.DD', {
 
         if (this.scroll) {
             // The client height
-            var clientH = Ext.Element.getViewHeight();
-
-            // The client width
-            var clientW = Ext.Element.getViewWidth();
-
-            // The amt scrolled down
-            var st = this.DDMInstance.getScrollTop();
-
-            // The amt scrolled right
-            var sl = this.DDMInstance.getScrollLeft();
-
-            // Location of the bottom of the element
-            var bot = h + y;
-
-            // Location of the right of the element
-            var right = w + x;
-
-            // The distance from the cursor to the bottom of the visible area,
-            // adjusted so that we don't scroll if the cursor is beyond the
-            // element drag constraints
-            var toBot = (clientH + st - y - this.deltaY);
-
-            // The distance from the cursor to the right of the visible area
-            var toRight = (clientW + sl - x - this.deltaX);
-
-
-            // How close to the edge the cursor must be before we scroll
-            // var thresh = (document.all) ? 100 : 40;
-            var thresh = 40;
-
-            // How many pixels to scroll per autoscroll op.  This helps to reduce
-            // clunky scrolling. IE is more sensitive about this ... it needs this
-            // value to be higher.
-            var scrAmt = (document.all) ? 80 : 30;
+            var clientH = Ext.Element.getViewHeight(),
+                // The client width
+                clientW = Ext.Element.getViewWidth(),
+                // The amt scrolled down
+                st = this.DDMInstance.getScrollTop(),
+                // The amt scrolled right
+                sl = this.DDMInstance.getScrollLeft(),
+                // Location of the bottom of the element
+                bot = h + y,
+                // Location of the right of the element
+                right = w + x,
+                // The distance from the cursor to the bottom of the visible area,
+                // adjusted so that we don't scroll if the cursor is beyond the
+                // element drag constraints
+                toBot = (clientH + st - y - this.deltaY),
+                // The distance from the cursor to the right of the visible area
+                toRight = (clientW + sl - x - this.deltaX),
+                // How close to the edge the cursor must be before we scroll
+                // var thresh = (document.all) ? 100 : 40;
+                thresh = 40,
+                // How many pixels to scroll per autoscroll op.  This helps to reduce
+                // clunky scrolling. IE is more sensitive about this ... it needs this
+                // value to be higher.
+                scrAmt = (document.all) ? 80 : 30;
 
             // Scroll down if we are near the bottom of the visible page and the
             // obj extends below the crease
@@ -218,8 +211,8 @@ Ext.define('Ext.dd.DD', {
      * @private
      */
     getTargetCoord: function(iPageX, iPageY) {
-        var x = iPageX - this.deltaX;
-        var y = iPageY - this.deltaY;
+        var x = iPageX - this.deltaX,
+            y = iPageY - this.deltaY;
 
         if (this.constrainX) {
             if (x < this.minX) {

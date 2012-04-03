@@ -134,7 +134,7 @@ Ext.define('Ext.menu.Menu', {
 
 <span id='Ext-menu-Menu-property-isAction'>    /**
 </span>     * @property {Boolean} isAction
-     * `true` in this class to identify an objact as an instantiated Menu, or subclass thereof.
+     * `true` in this class to identify an object as an instantiated Menu, or subclass thereof.
      */
     isMenu: true,
 
@@ -150,10 +150,12 @@ Ext.define('Ext.menu.Menu', {
     showSeparator : true,
 
 <span id='Ext-menu-Menu-cfg-minWidth'>    /**
-</span>     * @cfg {Number} minWidth
-     * The minimum width of the Menu.
+</span>     * @cfg {Number} [minWidth=120]
+     * The minimum width of the Menu. Only applies when the {@link #floating} config is true.
      */
-    minWidth: 120,
+    minWidth: undefined,
+    
+    defaultMinWidth: 120,
 
 <span id='Ext-menu-Menu-cfg-plain'>    /**
 </span>     * @cfg {Boolean} [plain=false]
@@ -164,7 +166,8 @@ Ext.define('Ext.menu.Menu', {
         var me = this,
             prefix = Ext.baseCSSPrefix,
             cls = [prefix + 'menu'],
-            bodyCls = me.bodyCls ? [me.bodyCls] : [];
+            bodyCls = me.bodyCls ? [me.bodyCls] : [],
+            isFloating = me.floating !== false;
 
         me.addEvents(
 <span id='Ext-menu-Menu-event-click'>            /**
@@ -225,9 +228,14 @@ Ext.define('Ext.menu.Menu', {
                 overflowHandler: 'Scroller'
             };
         }
+        
+        // only apply the minWidth when we're floating &amp; one hasn't already been set
+        if (isFloating &amp;&amp; me.minWidth === undefined) {
+            me.minWidth = me.defaultMinWidth;
+        }
 
         // hidden defaults to false if floating is configured as false
-        if (me.floating === false &amp;&amp; me.initialConfig.hidden !== true) {
+        if (!isFloating &amp;&amp; me.initialConfig.hidden !== true) {
             me.hidden = false;
         }
 
@@ -285,7 +293,8 @@ Ext.define('Ext.menu.Menu', {
     },
 
     afterLayout: function() {
-        var me = this;
+        var me = this,
+            innerCt, innerCtWidth, dockedItems, len, i, dockedItem, newWidth;
         me.callParent(arguments);
 
         // For IE6 &amp; IE quirks, we have to resize the el and body since position: absolute
@@ -293,12 +302,11 @@ Ext.define('Ext.menu.Menu', {
         // document.body instead of the width of their contents.
         // This includes left/right dock items.
         if ((!Ext.isStrict &amp;&amp; Ext.isIE) || Ext.isIE6) {
-            var innerCt = me.layout.getRenderTarget(),
-                innerCtWidth = 0,
-                dockedItems = me.dockedItems,
-                len = dockedItems.length,
-                i = 0,
-                dockedItem, newWidth;
+            innerCt = me.layout.getRenderTarget();
+            innerCtWidth = 0;
+            dockedItems = me.dockedItems;
+            len = dockedItems.length;
+            i = 0;
 
             innerCtWidth = innerCt.getWidth();
 

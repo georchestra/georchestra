@@ -389,8 +389,8 @@ Ext.define('Ext.slider.Multi', {
 
     /**
      * @private
-     * Given an `[x, y]` position within the slider's track, calculate how many pixels **from the slider origin**
-     * (left for horizontal Sliders and bottom for vertical Sliders) that point is.
+     * Given an `[x, y]` position within the slider's track (Points outside the slider's track are coerced to either the minimum or maximum value),
+     * calculate how many pixels **from the slider origin** (left for horizontal Sliders and bottom for vertical Sliders) that point is.
      *
      * If the point is outside the range of the Slider's track, the return value is `undefined`
      * @param {Number[]} xy The point to calculate the track point for
@@ -409,10 +409,8 @@ Ext.define('Ext.slider.Multi', {
             positionProperty = 'left';
             trackLength = sliderTrack.getWidth();
         }
-        result = sliderTrack.translatePoints(xy)[positionProperty];
-        if (result >= 0 && result <= trackLength) {
-            return me.vertical ? trackLength - result : result;
-        }
+        result = Ext.Number.constrain(sliderTrack.translatePoints(xy)[positionProperty], 0, trackLength);
+        return me.vertical ? trackLength - result : result;
     },
 
     /**
@@ -631,6 +629,7 @@ Ext.define('Ext.slider.Multi', {
                 thumb.move(me.calculateThumbPosition(value), Ext.isDefined(animate) ? animate !== false : me.animate);
 
                 me.fireEvent('change', me, value, thumb);
+                me.checkDirty();
                 if (changeComplete) {
                     me.fireEvent('changecomplete', me, value, thumb);
                 }
@@ -668,13 +667,12 @@ Ext.define('Ext.slider.Multi', {
      * @return {Number} The mapped value for the given position
      */
     reversePixelValue : function(pos) {
-        var ratio = this.getRatio();
-        return (pos + (this.minValue * ratio)) / ratio;
+        return this.minValue + (pos / this.getRatio());
     },
 
     /**
      * @private
-     * Given a Thumb's percentage posoition along the slider, returns the mapped slider value for that pixel.
+     * Given a Thumb's percentage position along the slider, returns the mapped slider value for that pixel.
      * E.g. if we have a slider 200px wide with minValue = 100 and maxValue = 500, reversePercentageValue(25)
      * returns 200
      * @param {Number} pos The percentage along the slider track to return a mapped value for

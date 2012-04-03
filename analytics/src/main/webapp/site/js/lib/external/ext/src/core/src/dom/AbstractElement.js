@@ -671,7 +671,7 @@ myElement.dom.className = Ext.core.Element.removeCls(this.initialClasses, 'x-inv
                 return asDom ? dom : (dom ? Ext.get(dom) : null);
             };
         }
-    })(this.prototype);
+    }(this.prototype));
 });
 
-})();
+}());

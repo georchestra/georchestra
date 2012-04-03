@@ -107,7 +107,7 @@ var noArgs = [],
             }
 
             //&lt;feature classSystem.config&gt;
-            prototype.config = new prototype.configClass;
+            prototype.config = new prototype.configClass();
             prototype.initConfigList = prototype.initConfigList.slice();
             prototype.initConfigMap = Ext.clone(prototype.initConfigMap);
             prototype.configMap = Ext.Object.chain(prototype.configMap);
@@ -210,16 +210,13 @@ var noArgs = [],
          */
         addStatics: function(members) {
             var member, name;
-            //&lt;debug&gt;
-            var className = Ext.getClassName(this);
-            //&lt;/debug&gt;
 
             for (name in members) {
                 if (members.hasOwnProperty(name)) {
                     member = members[name];
                     //&lt;debug&gt;
                     if (typeof member == 'function') {
-                        member.displayName = className + '.' + name;
+                        member.displayName = Ext.getClassName(this) + '.' + name;
                     }
                     //&lt;/debug&gt;
                     this[name] = member;
@@ -247,16 +244,12 @@ var noArgs = [],
                 hasInheritableStatics = prototype.$hasInheritableStatics = {};
             }
 
-            //&lt;debug&gt;
-            var className = Ext.getClassName(this);
-            //&lt;/debug&gt;
-
             for (name in members) {
                 if (members.hasOwnProperty(name)) {
                     member = members[name];
                     //&lt;debug&gt;
                     if (typeof member == 'function') {
-                        member.displayName = className + '.' + name;
+                        member.displayName = Ext.getClassName(this) + '.' + name;
                     }
                     //&lt;/debug&gt;
                     this[name] = member;
@@ -299,10 +292,6 @@ var noArgs = [],
                 names = [],
                 i, ln, name, member;
 
-            //&lt;debug&gt;
-            var className = this.$className || '';
-            //&lt;/debug&gt;
-
             for (name in members) {
                 names.push(name);
             }
@@ -321,7 +310,7 @@ var noArgs = [],
                         member.$owner = this;
                         member.$name = name;
                         //&lt;debug&gt;
-                        member.displayName = className + '#' + name;
+                        member.displayName = (this.$className || '') + '#' + name;
                         //&lt;/debug&gt;
                     }
 
@@ -402,9 +391,7 @@ var noArgs = [],
                 toBorrow = fromPrototype[name];
 
                 if (typeof toBorrow == 'function') {
-                    fn = function() {
-                        return toBorrow.apply(this, arguments);
-                    };
+                    fn = Ext.Function.clone(toBorrow);
 
                     //&lt;debug&gt;
                     if (className) {
@@ -439,11 +426,9 @@ var noArgs = [],
          *         constructor: function() {
          *             alert(&quot;I'm going to be a cat!&quot;);
          *
-         *             var instance = this.callParent(arguments);
+         *             this.callParent(arguments);
          *
          *             alert(&quot;Meeeeoooowwww&quot;);
-         *
-         *             return instance;
          *         }
          *     });
          *
@@ -459,11 +444,9 @@ var noArgs = [],
          *         constructor: function() {
          *             alert(&quot;I'm going to be a cat!&quot;);
          *
-         *             var instance = this.callParent(arguments);
+         *             this.callParent(arguments);
          *
          *             alert(&quot;Meeeeoooowwww&quot;);
-         *
-         *             return instance;
          *         }
          *     });
          *
@@ -522,9 +505,8 @@ var noArgs = [],
                             }
 
                             //&lt;debug&gt;
-                            var className = me.$className;
-                            if (className) {
-                                member.displayName = className + '#' + name;
+                            if (me.$className) {
+                                member.displayName = me.$className + '#' + name;
                             }
                             //&lt;/debug&gt;
 
@@ -887,7 +869,7 @@ var noArgs = [],
          *         },
          *
          *         constructor: function() {
-         *             alert(this.self.speciesName); / dependentOL on 'this'
+         *             alert(this.self.speciesName); // dependent on 'this'
          *         },
          *
          *         clone: function() {
@@ -923,9 +905,8 @@ var noArgs = [],
                 owner = me.self;
 
             //&lt;debug&gt;
-            var className = owner.$className;
-            if (className) {
-                hookFn.displayName = className + '#' + name;
+            if (owner.$className) {
+                hookFn.displayName = owner.$className + '#' + name;
             }
             //&lt;/debug&gt;
 
@@ -974,7 +955,7 @@ var noArgs = [],
         initConfig: function(config) {
             var instanceConfig = config,
                 configNameCache = Ext.Class.configNameCache,
-                defaultConfig = new this.configClass,
+                defaultConfig = new this.configClass(),
                 defaultConfigList = this.initConfigList,
                 hasConfig = this.configMap,
                 nameMap, i, ln, name, initializedName;
@@ -1132,11 +1113,9 @@ var noArgs = [],
      *         constructor: function() {
      *             alert(&quot;I'm going to be a cat!&quot;);
      *
-     *             var instance = this.callOverridden();
+     *             this.callOverridden();
      *
      *             alert(&quot;Meeeeoooowwww&quot;);
-     *
-     *             return instance;
      *         }
      *     });
      *
@@ -1154,7 +1133,7 @@ var noArgs = [],
 
     Ext.Base = Base;
 
-})(Ext.Function.flexSetter);
+}(Ext.Function.flexSetter));
 </pre>
 </body>
 </html>

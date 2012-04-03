@@ -807,7 +807,8 @@ Ext.define('Ext.chart.Chart', {
                 right: insetPadding,
                 bottom: insetPadding,
                 left: insetPadding
-            };
+            },
+            isVertical, bbox, pos;
 
         function getAxis(edge) {
             var i = axes.findIndex('position', edge);
@@ -817,9 +818,8 @@ Ext.define('Ext.chart.Chart', {
         // Find the space needed by axes and legend as a positive inset from each edge
         for (i = 0, ln = edges.length; i &lt; ln; i++) {
             edge = edges[i];
-            var isVertical = (edge === 'left' || edge === 'right'),
-                axis = getAxis(edge),
-                bbox;
+            isVertical = (edge === 'left' || edge === 'right');
+            axis = getAxis(edge);
 
             // Add legend size if it's on this edge
             if (legend !== false) {
@@ -849,8 +849,8 @@ Ext.define('Ext.chart.Chart', {
         // corresponding edge of the chartBBox
         for (i = 0, ln = axesItems.length; i &lt; ln; i++) {
             axis = axesItems[i];
-            var pos = axis.position,
-                isVertical = (pos === 'left' || pos === 'right');
+            pos = axis.position;
+            isVertical = (pos === 'left' || pos === 'right');
 
             axis.x = (pos === 'right' ? chartBBox.x + chartBBox.width : chartBBox.x);
             axis.y = (pos === 'top' ? chartBBox.y : chartBBox.y + chartBBox.height);
@@ -910,10 +910,11 @@ Ext.define('Ext.chart.Chart', {
         var me = this,
             seriesItems = me.series.items,
             i, ln, series,
-            maxGutter = [0, 0];
+            maxGutter = [0, 0],
+            gutter;
         for (i = 0, ln = seriesItems.length; i &lt; ln; i++) {
             series = seriesItems[i];
-            var gutter = series.getGutters &amp;&amp; series.getGutters() || [0, 0];
+            gutter = series.getGutters &amp;&amp; series.getGutters() || [0, 0];
             maxGutter[0] = Math.max(maxGutter[0], gutter[0]);
             maxGutter[1] = Math.max(maxGutter[1], gutter[1]);
         }

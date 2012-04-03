@@ -1,6 +1,5 @@
 /**
- * @class Ext.fx.PropertyHandler
- * @ignore
+ * @private
  */
 Ext.define('Ext.fx.PropertyHandler', {
 

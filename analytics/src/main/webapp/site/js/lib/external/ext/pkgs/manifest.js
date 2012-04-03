@@ -220,6 +220,7 @@ this.ExtBootstrapData = {
         "Ext.util.Grouper":[],
         "Ext.util.HashMap":[],
         "Ext.util.Inflector":[],
+        "Ext.util.LruCache":[],
         "Ext.util.Memento":[],
         "Ext.util.MixedCollection":[],
         "Ext.util.Observable":[],
@@ -362,6 +363,7 @@ this.ExtBootstrapData = {
         "Ext.grid.RowEditor":[],
         "Ext.grid.RowNumberer":["widget.rownumberer"
         ],
+        "Ext.grid.Scroller":[],
         "Ext.grid.View":["widget.gridview"
         ],
         "Ext.grid.ViewDropZone":[],
@@ -427,6 +429,8 @@ this.ExtBootstrapData = {
         "Ext.layout.component.ProgressBar":["layout.progressbar"
         ],
         "Ext.layout.component.Tab":["layout.tab"
+        ],
+        "Ext.layout.component.field.ComboBox":["layout.combobox"
         ],
         "Ext.layout.component.field.Field":["layout.field"
         ],
@@ -537,7 +541,8 @@ this.ExtBootstrapData = {
         ],
         "Ext.tab.Tab":["widget.tab"
         ],
-        "Ext.tip.QuickTip":[],
+        "Ext.tip.QuickTip":["widget.quicktip"
+        ],
         "Ext.tip.QuickTipManager":[],
         "Ext.tip.Tip":[],
         "Ext.tip.ToolTip":["widget.tooltip"

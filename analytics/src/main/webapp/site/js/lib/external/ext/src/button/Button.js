@@ -147,7 +147,7 @@ Ext.define('Ext.button.Button', {
 
     /*
      * @property {Boolean} isAction
-     * `true` in this class to identify an objact as an instantiated Button, or subclass thereof.
+     * `true` in this class to identify an object as an instantiated Button, or subclass thereof.
      */
     isButton: true,
     componentLayout: 'button',
@@ -478,13 +478,6 @@ Ext.define('Ext.button.Button', {
      * option.
      */
 
-    /**
-     * @cfg {Boolean} autoWidth
-     * By default, if a width is not specified the button will attempt to stretch horizontally to fit its content. If
-     * the button is being managed by a width sizing layout (hbox, fit, anchor), set this to false to prevent the button
-     * from doing this automatic sizing.
-     */
-
     maskOnDisable: false,
     
     /**
@@ -496,6 +489,8 @@ Ext.define('Ext.button.Button', {
     persistentPadding: undefined,
 
     shrinkWrap: 3,
+
+    frame: true,
 
     // inherit docs
     initComponent: function() {

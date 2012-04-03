@@ -211,7 +211,8 @@ Ext.define('Ext.diag.layout.Context', {
             ownerContext = me.getCmp(owner),
             blockedBy    = [],
             triggeredBy  = [],
-            key, value, i, length, childLayout;
+            key, value, i, length, childLayout,
+            item, setBy;
 
         reported[layout.id] = 1;
 
@@ -256,8 +257,8 @@ Ext.define('Ext.diag.layout.Context', {
 
                 length = triggeredBy.length;
                 for (i = 0; i < length; i++) {
-                    var item  = value.info.item,
-                        setBy = (item.setBy && item.setBy[value.info.name]) || '?';
+                    item  = value.info.item;
+                    setBy = (item.setBy && item.setBy[value.info.name]) || '?';
 
                     value = triggeredBy[i];
 
@@ -303,7 +304,8 @@ Ext.define('Ext.diag.layout.Context', {
         var me = this,
             type = layout.type,
             name = me.getLayoutName(layout),
-            accum = me.accumByType[type];
+            accum = me.accumByType[type],
+            frame;
 
         if (me.logOn.resetLayout) {
             Ext.log('resetLayout: ', name, ' ( ', me.remainingLayouts, ' running)');
@@ -316,7 +318,7 @@ Ext.define('Ext.diag.layout.Context', {
             me.numByType[type] = (me.numByType[type] || 0) + 1;
         }
 
-        var frame = accum && accum.enter();
+        frame = accum && accum.enter();
         me.callParent(arguments);
         if (accum) {
             frame.leave();
@@ -331,7 +333,11 @@ Ext.define('Ext.diag.layout.Context', {
 
     run: function () {
         var me = this,
-            ret, time, key, value, i, layout;
+            ret, time, key, value, i, layout,
+            boxParent, children, n,
+            reported, unreported,
+            calcs, total,
+            calcsLength, calc;
 
         me.accumByType = {};
         me.calcsByType = {};
@@ -349,9 +355,9 @@ Ext.define('Ext.diag.layout.Context', {
         if (me.logOn.boxParent && me.boxParents) {
             for (key in me.boxParents) {
                 if (me.boxParents.hasOwnProperty(key)) {
-                    var boxParent = me.boxParents[key],
-                        children  = boxParent.boxChildren,
-                        n         = children.length;
+                    boxParent = me.boxParents[key];
+                    children  = boxParent.boxChildren;
+                    n         = children.length;
 
                     Ext.log('boxParent: ', boxParent.id);
                     for (i = 0; i < n; ++i) {
@@ -384,8 +390,8 @@ Ext.define('Ext.diag.layout.Context', {
         }
 
         if (!ret || me.reportOnSuccess) {
-            var reported = {},
-                unreported = 0;
+            reported = {};
+            unreported = 0;
 
             for (key in me.layouts) {
                 if (me.layouts.hasOwnProperty(key)) {
@@ -425,10 +431,10 @@ Ext.define('Ext.diag.layout.Context', {
                 me.round(me.timesByType[type]), ' msec (avg ',
                 me.round(me.timesByType[type] / me.calcsByType[type]), ' msec)');
         });*/
-        var calcs = [];
+        calcs = [];
         for (key in me.numByType) {
             if (me.numByType.hasOwnProperty(key)) {
-                var total = me.numByType[key];
+                total = me.numByType[key];
 
                 calcs.push({
                         type       : key,
@@ -446,9 +452,9 @@ Ext.define('Ext.diag.layout.Context', {
             return b.calcTime - a.calcTime;
         });
 
-        var calcsLength = calcs.length;
+        calcsLength = calcs.length;
         for (i=0; i<calcsLength; i++) {
-            var calc = calcs[i];
+            calc = calcs[i];
 
             Ext.log(
                 calc.type,

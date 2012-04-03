@@ -238,7 +238,7 @@ describe("Ext-more", function() {
                 Ext.removeNode(el.dom);
                 expect(Ext.cache[id]).toBeUndefined();
             });
-            if (!Ext.isIE6 && !Ext.isIE7) {
+            if (!Ext.isIE6 && !Ext.isIE7 && !Ext.isIE8) {
                 it("should remove all listeners from the dom element", function() {
                         var listener = jasmine.createSpy();
                         el.on('mouseup', listener);
@@ -266,7 +266,7 @@ describe("Ext-more", function() {
             });
         });
 
-        if (!Ext.isIE6 && !Ext.isIE7) {
+        if (!Ext.isIE6 && !Ext.isIE7 && !Ext.isIE8) {
             describe("if enableNestedListenerRemoval is true", function() {
                 var el, child;
 
@@ -288,8 +288,7 @@ describe("Ext-more", function() {
                     expect(listener).not.toHaveBeenCalled();
                 });
             });
-        }
-        if (!Ext.isIE6 && !Ext.isIE7) {
+
             describe("if enableNestedListenerRemoval is false (default)", function() {
                 var el, child;
 

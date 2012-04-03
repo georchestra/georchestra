@@ -75,120 +75,19 @@
     }
 }
 
-// Styles for the three schemes for showing shadows under an element: CSS3, IE blur transform, or 9 point framing with images.
+// Element shadows for browsers that support CSS3 box-shadow
 .#{$prefix}css-shadow {
     position: absolute;
     @include border-radius($window-border-radius);
 }
 
+// Element shadows for IE 8 and below
 .#{$prefix}ie-shadow {
     background-color:#777;
     display: none;
     position: absolute;
     overflow: hidden;
     zoom: 1;
-}
-
-.#{$prefix}frame-shadow {
-    display: none;
-    position: absolute;
-    overflow: hidden;
-}
-
-.#{$prefix}frame-shadow * {
-    overflow: hidden;
-}
-
-.#{$prefix}frame-shadow * {
-    padding: 0;
-    border: 0;
-    margin: 0;
-    clear: none;
-    zoom: 1;
-}
-
-/* top  bottom */
-.#{$prefix}frame-shadow .xstc,
-.#{$prefix}frame-shadow .xsbc {
-    height: 6px;
-    float: left;
-}
-
-.#{$prefix}frame-shadow .xsc {
-    width: 100%;
-}
-
-.#{$prefix}frame-shadow .xsml {
-    background: transparent repeat-y 0 0;
-}
-
-.#{$prefix}frame-shadow .xsmr {
-    background: transparent repeat-y -6px 0;
-}
-
-.#{$prefix}frame-shadow .xstl {
-    background: transparent no-repeat 0 0;
-}
-
-.#{$prefix}frame-shadow .xstc {
-    background: transparent repeat-x 0 -30px;
-}
-
-.#{$prefix}frame-shadow .xstr {
-    background: transparent repeat-x 0 -18px;
-}
-
-.#{$prefix}frame-shadow .xsbl {
-    background: transparent no-repeat 0 -12px;
-}
-
-.#{$prefix}frame-shadow .xsbc {
-    background: transparent repeat-x 0 -36px;
-}
-
-.#{$prefix}frame-shadow .xsbr {
-    background: transparent repeat-x 0 -6px;
-}
-.#{$prefix}frame-shadow .xstl,
-.#{$prefix}frame-shadow .xstc,
-.#{$prefix}frame-shadow .xstr,
-.#{$prefix}frame-shadow .xsbl,
-.#{$prefix}frame-shadow .xsbc,
-.#{$prefix}frame-shadow .xsbr {
-    width: 6px;
-    height: 6px;
-    float: left;
-
-    @if $include-shadow-images {
-        background-image: theme-background-image($theme-name, 'shared/shadow.png');
-    }
-}
-
-.#{$prefix}frame-shadow .xsml,
-.#{$prefix}frame-shadow .xsmr {
-    width: 6px;
-    float: left;
-    height: 100%;
-
-    @if $include-shadow-images {
-        background-image: theme-background-image($theme-name, 'shared/shadow-lr.png');
-    }
-}
-
-.#{$prefix}frame-shadow .xsmc {
-    float: left;
-    height: 100%;
-
-    @if $include-shadow-images {
-        background-image: theme-background-image($theme-name, 'shared/shadow-c.png');
-    }
-}
-
-.#{$prefix}frame-shadow .xst,
-.#{$prefix}frame-shadow .xsb {
-    height: 6px;
-    overflow: hidden;
-    width: 100%;
 }
 
 //box wrap - Ext.get("foo").boxWrap();

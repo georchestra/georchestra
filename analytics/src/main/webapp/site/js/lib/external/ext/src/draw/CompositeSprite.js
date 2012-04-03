@@ -289,7 +289,7 @@ Ext.define('Ext.draw.CompositeSprite', {
             while (me.getCount() > 0) {
                 item = me.first();
                 me.remove(item);
-                surface.remove(item);
+                surface.remove(item, true);
             }
         }
         me.clearListeners();

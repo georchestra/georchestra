@@ -52,9 +52,8 @@ Ext.define('Ext.layout.container.Accordion', {
     /**
      * @cfg {Boolean} autoWidth
      * Child Panels have their width actively managed to fit within the accordion's width.
-     * @deprecated This config is ignored in ExtJS 4
+     * @removed This config is ignored in ExtJS 4
      */
-    autoWidth : true,
 
     /**
      * @cfg {Boolean} titleCollapse

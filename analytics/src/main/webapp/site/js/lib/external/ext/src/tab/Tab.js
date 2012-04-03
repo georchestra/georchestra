@@ -18,7 +18,7 @@ Ext.define('Ext.tab.Tab', {
 
     /**
      * @property {Boolean} isTab
-     * `true` in this class to identify an objact as an instantiated Tab, or subclass thereof.
+     * `true` in this class to identify an object as an instantiated Tab, or subclass thereof.
      */
     isTab: true,
 
@@ -159,22 +159,11 @@ Ext.define('Ext.tab.Tab', {
         }
     },
 
-    /**
-     * @ignore
-     */
     onRender: function() {
         var me = this;
 
         me.callParent(arguments);
 
-        if (me.active) {
-            me.activate(true);
-        }
-
-        if (me.closeEl) {
-            me.closeEl.on('click', Ext.EventManager.preventDefault);
-        }
-        
         me.keyNav = new Ext.util.KeyNav(me.el, {
             enter: me.onEnterKey,
             del: me.onDeleteKey,
@@ -204,16 +193,8 @@ Ext.define('Ext.tab.Tab', {
         return me;
     },
 
-    /**
-     * @ignore
-     */
     onDestroy: function() {
         var me = this;
-
-        if (me.closeEl) {
-            me.closeEl.un('click', Ext.EventManager.preventDefault);
-            me.closeEl = null;
-        }
 
         Ext.destroy(me.keyNav);
         delete me.keyNav;
@@ -266,14 +247,11 @@ Ext.define('Ext.tab.Tab', {
                     cls: me.baseCls + '-close-btn',
                     href: '#',
                     title: me.closeText
-                }).on('click', Ext.EventManager.preventDefault);  // mon ???
+                });
             }
-        } else {
-            if (closeEl) {
-                closeEl.un('click', Ext.EventManager.preventDefault);
-                closeEl.remove();
-                delete me.closeEl;
-            }
+        } else if (closeEl) {
+            closeEl.remove();
+            delete me.closeEl;
         }
     },
 
@@ -282,7 +260,8 @@ Ext.define('Ext.tab.Tab', {
      * @private
      */
     syncClosableUI: function () {
-        var me = this, classes = [me.closableCls, me.closableCls + '-' + me.position];
+        var me = this,
+            classes = [me.closableCls, me.closableCls + '-' + me.position];
 
         if (me.closable) {
             me.addClsWithUI(classes);
@@ -348,10 +327,8 @@ Ext.define('Ext.tab.Tab', {
      * @private
      */
     onDeleteKey: function(e) {
-        var me = this;
-
-        if (me.closable) {
-            me.onCloseClick();
+        if (this.closable) {
+            this.onCloseClick();
         }
     },
 
