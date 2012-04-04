@@ -167,7 +167,7 @@ public abstract class AbstractApplication {
 	 * @param strategy contain the method to call the model an retrieve results
 	 * @throws Exception
 	 */
-	protected void exportCSV(HttpServletRequest request, HttpServletResponse response, final String csvFileName, StrategyController strategy) throws Exception {
+	protected void exportCSV(HttpServletRequest request, HttpServletResponse response, String csvFileName, StrategyController strategy) throws Exception {
 
 		if(!this.getDateParameters(request)) {
 			OutputStream out  = response.getOutputStream();
@@ -178,7 +178,8 @@ public abstract class AbstractApplication {
 			try {
 				JSONObject object  = strategy.process();
 				csv = CSVUtil.JSONToCSV(object);
-				
+				csvFileName = String.valueOf(year) + "-" + String.format("%02d", month) + "-" + csvFileName;
+		
 			} catch (Exception e) {
 				OutputStream out  = response.getOutputStream();
 				reportError(out, response, e);

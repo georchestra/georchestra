@@ -27,8 +27,8 @@ public class OGCStats extends AbstractApplication {
 
 	private OGCStatsModel model;
 	
-	private final String csvLayers= "ogclayers";
-	private final String csvUsers= "ogcusers";
+	private final String csvLayers= "OgcLayers";
+	private final String csvUsers= "OgcUsers";
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/ogc/layers")
 	public void getOGCLayersStats(HttpServletRequest request, HttpServletResponse response) throws Exception {

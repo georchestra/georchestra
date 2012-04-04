@@ -27,8 +27,8 @@ public class GeonetworkStats extends AbstractApplication {
 	
 	private GeonetworkStatsModel model;
 	
-	private final String csvFiles= "geonetworkfiles";
-	private final String csvUsers= "geonetworkusers";
+	private final String csvFiles= "GeonetworkFiles";
+	private final String csvUsers= "GeonetworkUsers";
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/geonetwork/files")
 	public void getOGCLayersStats(HttpServletRequest request, HttpServletResponse response) throws Exception {

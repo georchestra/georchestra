@@ -26,8 +26,8 @@ public class ExtractorStats extends AbstractApplication {
 	}
 	private ExtractorStatsModel model;
 	
-	private final String csvLayers= "extractorlayers";
-	private final String csvUsers= "extractorusers";
+	private final String csvLayers= "ExtractorLayers";
+	private final String csvUsers= "ExtractorUsers";
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/extractor/layers")
 	public void getLayersStats(HttpServletRequest request, HttpServletResponse response) throws Exception {
