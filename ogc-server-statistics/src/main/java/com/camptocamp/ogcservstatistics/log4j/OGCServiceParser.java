@@ -152,7 +152,7 @@ final class OGCServiceParser {
 		// parses service and layer from request
 		String request = URLDecoder.decode(splitedMessage[2], "UTF-8");
 		String service = parseService(request);
-		String ogcReq = parseRequest(request);
+		String ogcReq = parseRequest(request).toLowerCase();
 		
 		// for each layer adds a log to the list
 		List<Map<String, Object>> logList = new LinkedList<Map<String,Object>>(); 
@@ -176,7 +176,7 @@ final class OGCServiceParser {
 				log.put("user_name", user );
 				log.put("date", date);
 				log.put("service", service );
-				log.put("layer", layer );
+				log.put("layer", layer.toLowerCase() );
 				log.put("request", ogcReq );
 				
 				logList.add(log);
