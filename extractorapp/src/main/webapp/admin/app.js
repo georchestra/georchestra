@@ -161,7 +161,7 @@ Ext.onReady(function(){
                                     'Le job '+selectedRecord.get('uuid')+
                                     ' est passé en priorité '+parseInt(p+1));
                             } else {
-                                alert('Oops, problème serveur');
+                                //alert('Oops, problème serveur');
                             }
                             store.load();
                         }
@@ -184,7 +184,7 @@ Ext.onReady(function(){
                                     'Le job '+selectedRecord.get('uuid')+
                                     ' est passé en priorité '+parseInt(p-1));
                             } else {
-                                alert('Oops, problème serveur');
+                                //alert('Oops, problème serveur');
                             }
                             store.load();
                         }
@@ -212,7 +212,7 @@ Ext.onReady(function(){
                                         ' a été remis dans la queue');
                                 }
                             } else {
-                                alert('Oops, problème serveur');
+                                //alert('Oops, problème serveur');
                             }
                             store.load();
                         }
@@ -233,7 +233,7 @@ Ext.onReady(function(){
                                     'Le job '+selectedRecord.get('uuid')+
                                     ' a été annulé');
                             } else {
-                                alert('Oops, problème serveur');
+                                //alert('Oops, problème serveur');
                             }
                             store.load();
                         }
