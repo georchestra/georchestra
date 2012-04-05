@@ -1,7 +1,7 @@
 Readme
 ------
 
-This read me file povide detail to configure and build this module.
+This read me file povides detail to configure and build this module.
 
 
 Development environment
@@ -74,7 +74,7 @@ You can find the result in
 
 Debugging
 ---------
-The following Java VM paramenters could be useful.
+The following Java VM parameters could be useful.
 
 * Enable assertions: -ea 
 * Print the loaded values: -Dlog4j.debug
