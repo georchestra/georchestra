@@ -33,4 +33,4 @@ Démonstration
 
 Plusieurs instances publiques de geOrchestra permettent de répondre aux besoins de démonstrations. 
 
-Nous vous invitons à consulter l'`infrastructure de données spatiales de la région Bretagne <http://geobretagne.fr/accueil/>`_ ou encore le `site de démonstration geOrchestra <https://c2cpc61.camptocamp.com/>`_ de la société `Camptocamp <http://www.camptocamp.com/fr/geospatial-solutions>`_.
+Nous vous invitons à consulter l'`infrastructure de données spatiales de la région Bretagne <http://geobretagne.fr/accueil/>`_ ou encore celle de la `région Aquitaine <http://www.pigma.org/>`_.
