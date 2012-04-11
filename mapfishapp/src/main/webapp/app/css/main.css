@@ -110,6 +110,15 @@ div.olMapViewport {
 .geor-btn-metadata {
     background-image: url(../img/famfamfam/application_view_list.gif) !important;
 }
+.geor-btn-download {
+    background-image: url(../img/famfamfam/disk.png) !important;
+}
+.geor-service {
+    background-image: url(../img/geosilk/server_map.png) !important;
+}
+.geor-layer {
+    background-image: url(../img/famfamfam/map.png) !important;
+}
 .geor-btn-query {
     background-image: url(../img/famfamfam/cog.gif) !important;
 }

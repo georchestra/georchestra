@@ -20,6 +20,7 @@
  * @include GeoExt/widgets/LayerOpacitySlider.js
  * @include GeoExt/widgets/tree/LayerContainer.js
  * @include GeoExt/widgets/tree/TreeNodeUIEventMixin.js
+ * @include OpenLayers/Format/JSON.js
  * @include GEOR_layerfinder.js
  * @include GEOR_util.js
  * Note: GEOR_querier.js not included here since it's not required for edit app
@@ -77,6 +78,16 @@ GEOR.managelayers = (function() {
      * Property: querierRecord
      */
     var querierRecord;
+    
+    /**
+     * Property: form
+     */
+    var form;
+    
+    /**
+     * Property: jsonFormat
+     */
+    var jsonFormat;
 
     /**
      * Method: actionHandler
@@ -342,6 +353,31 @@ GEOR.managelayers = (function() {
     };
 
     /**
+     * Method: submitData
+     * If required, this method creates the form and uses it to
+     * submit the objet passed as a parameter
+     *
+     * Parameters:
+     * o - {Object} JS object which should be serialized + submitted
+     */
+    var submitData = function(o) {
+        form = form || Ext.DomHelper.append(Ext.getBody(), {
+            tag: "form",
+            action: "/extractorapp/",
+            target: "_blank",
+            method: "post"
+        });
+        var input = form[0] || Ext.DomHelper.append(form, {
+            tag: "input",
+            type: "hidden",
+            name: "data"
+        });
+        jsonFormat = jsonFormat || new OpenLayers.Format.JSON();
+        input.value = jsonFormat.write(o);
+        form.submit();
+    };
+
+    /**
      * Method: createMenu
      *
      * Parameters:
@@ -547,6 +583,42 @@ GEOR.managelayers = (function() {
                 }
             });
         }
+
+        menuItems.push({
+            iconCls: 'geor-btn-download',
+            text: "Télécharger les données",
+            menu: new Ext.menu.Menu({
+                items: [{
+                    text: "de cette couche",
+                    iconCls: "geor-layer",
+                    handler: function() {
+                        submitData({
+                            layers: [{
+                                layername: layerRecord.get('name'),
+                                metadataURL: url || "",
+                                owstype: isWMS ? "WMS" : "WFS",
+                                owsurl: isWMS ? layer.url : layer.protocol.url
+                            }]
+                        })
+                    }
+                }, {
+                    text: "du service OGC",
+                    iconCls: "geor-service",
+                    handler: function() {
+                        var serviceUrl = isWMS ? layer.url : layer.protocol.url;
+                        submitData({
+                            services: [{
+                                text: serviceUrl,
+                                metadataURL: url || "",
+                                owstype: isWMS ? "WMS" : "WFS",
+                                owsurl: serviceUrl
+                            }]
+                        })
+                    }
+                }]
+            })
+        });
+        
         if (menuItems.length > 2) {
             menuItems.push("-");
         }
