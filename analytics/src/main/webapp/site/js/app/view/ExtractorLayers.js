@@ -10,13 +10,13 @@ Ext.define('Analytics.view.ExtractorLayers', {
     onItemDoubleClick: function(view, rec) {
         Ext.getStore('FilteredExtractorUsers').load({
             filters: [{
-                property: 'layer',
-                value: rec.get('layer')
+                property: 'layer_name',
+                value: rec.get('layer_name')
             }]
         });
         new Ext.Window({
             title: 'Utilisateurs ayant téléchargé la couche '+
-                rec.get('layer'),
+                rec.get('layer_name'),
             width: 800,
             height: 400,
             layout: 'fit',

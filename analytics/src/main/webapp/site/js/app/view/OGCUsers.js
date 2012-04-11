@@ -10,13 +10,13 @@ Ext.define('Analytics.view.OGCUsers', {
     onItemDoubleClick: function(view, rec) {
         Ext.getStore('FilteredOGCLayers').load({
             filters: [{
-                property: 'username',
-                value: rec.get('username')
+                property: 'user_name',
+                value: rec.get('user_name')
             }]
         });
         new Ext.Window({
             title: "Couches ayant été téléchargées par l'utilisateur "+
-                rec.get('username'),
+                rec.get('user_name'),
             width: 800,
             height: 400,
             layout: 'fit',

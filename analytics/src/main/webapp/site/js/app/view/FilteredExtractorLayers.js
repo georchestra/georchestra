@@ -5,13 +5,13 @@ Ext.define('Analytics.view.FilteredExtractorLayers', {
 
     initComponent: function() {
         this.columns = [{
-            dataIndex: 'service',
+            dataIndex: 'ows_type',
             text: 'Service OGC'
         }, {
-            dataIndex: 'url',
+            dataIndex: 'ows_url',
             text: 'URL du service'
         }, {
-            dataIndex: 'layer',
+            dataIndex: 'layer_name',
             text: 'Couche'
         }, {
             dataIndex: 'count',

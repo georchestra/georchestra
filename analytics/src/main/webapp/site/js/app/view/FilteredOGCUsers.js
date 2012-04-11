@@ -5,7 +5,7 @@ Ext.define('Analytics.view.FilteredOGCUsers', {
     
     initComponent: function() {
         this.columns = [{
-            dataIndex: 'username',
+            dataIndex: 'user_name',
             text: 'Nom'
         }, {
             dataIndex: 'count',
