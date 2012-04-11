@@ -23,16 +23,6 @@ Ext.define('Analytics.view.BaseGridPanel', {
                 displayMsg: 'Enregistrements {0} à {1} sur {2}',
                 emptyMsg: "Aucun enregistrement"
             }),
-            // in order to have the tooltip over each row:
-            columns: {
-                items: this.columns,
-                defaults: {
-                    renderer: function(value, md){ 
-                        md.tdAttr = 'data-qtip="double-cliquez pour afficher le détail"';
-                        return value;
-                    }
-                }
-            },
             listeners: {
                 "itemdblclick": this.onItemDoubleClick,
                 scope: this

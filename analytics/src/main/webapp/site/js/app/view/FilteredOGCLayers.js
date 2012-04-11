@@ -4,16 +4,18 @@ Ext.define('Analytics.view.FilteredOGCLayers', {
     store: 'FilteredOGCLayers',
 
     initComponent: function() {
-        this.columns = [{
-            dataIndex: 'service',
-            text: 'Service OGC'
-        }, {
-            dataIndex: 'layer',
-            text: 'Couche'
-        }, {
-            dataIndex: 'count',
-            text: 'Nombre de requêtes'
-        }];
+        this.columns = Ext.apply(this.columns || {}, {
+            items: [{
+                dataIndex: 'service',
+                text: 'Service OGC'
+            }, {
+                dataIndex: 'layer',
+                text: 'Couche'
+            }, {
+                dataIndex: 'count',
+                text: 'Nombre de requêtes'
+            }]
+        });
         
         this.callParent();
     }

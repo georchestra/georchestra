@@ -4,13 +4,15 @@ Ext.define('Analytics.view.FilteredOGCUsers', {
     store: 'FilteredOGCUsers',
     
     initComponent: function() {
-        this.columns = [{
-            dataIndex: 'user_name',
-            text: 'Nom'
-        }, {
-            dataIndex: 'count',
-            text: 'Nombre de requêtes'
-        }];
+        this.columns = Ext.apply(this.columns || {}, {
+            items: [{
+                dataIndex: 'user_name',
+                text: 'Nom'
+            }, {
+                dataIndex: 'count',
+                text: 'Nombre de requêtes'
+            }]
+        });
         
         this.callParent();
     }
