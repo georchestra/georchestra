@@ -7,6 +7,8 @@ Ext.define('Analytics.view.FilteredGeonetworkFiles', {
         this.columns = Ext.apply(this.columns || {}, {
             items: [{
                 dataIndex: 'metadata_id',
+                flex: 0, // will not be resized
+                width: 100,
                 text: 'Métadonnée',
                 renderer: function(v) {
                     if (!v) return;
@@ -15,9 +17,13 @@ Ext.define('Analytics.view.FilteredGeonetworkFiles', {
                 }
             }, {
                 dataIndex: 'filename',
+                flex: 1, // will be resized
+                width: 570,
                 text: 'Fichier'
             }, {
                 dataIndex: 'count',
+                flex: 0, // will not be resized
+                width: 130,
                 text: 'Nombre de requêtes'
             }]
         });
