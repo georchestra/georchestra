@@ -8,8 +8,7 @@ Ext.define('Analytics.view.BaseGridPanel', {
         Ext.apply(this, {
             tools: [{
                 type: 'save',
-                tooltip: "Export CSV",
-                handler: this.handleExport
+                tooltip: "Export CSV"
             }],
             selModel: {
                 mode: 'single'
