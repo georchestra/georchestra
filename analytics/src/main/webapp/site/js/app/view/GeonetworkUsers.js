@@ -1,17 +1,30 @@
 Ext.define('Analytics.view.GeonetworkUsers', {
-    extend: 'Analytics.view.BaseGridPanel',
+    extend: 'Analytics.view.FilteredGeonetworkUsers',
     alias: 'widget.geonetworkuserslist',
     store: 'GeonetworkUsers',
 
-    initComponent: function() {
-        this.columns = [{
-            dataIndex: 'username',
-            text: 'Nom'
-        }, {
-            dataIndex: 'count',
-            text: 'Nombre de requêtes'
-        }];
-        
+    initComponent: function() {        
         this.callParent();
+    },
+
+    onItemDoubleClick: function(view, rec) {
+        Ext.getStore('FilteredGeonetworkFiles').load({
+            filters: [{
+                property: 'username',
+                value: rec.get('username')
+            }]
+        });
+        
+        new Ext.Window({
+            title: "Fichiers téléchargés par l'utilisateur " +
+                rec.get('username'),
+            width: 800,
+            height: 400,
+            layout: 'fit',
+            items: [Ext.create('Analytics.view.FilteredGeonetworkFiles', {
+                border: false
+            })]
+        }).show();
     }
 });
+

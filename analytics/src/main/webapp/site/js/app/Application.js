@@ -26,7 +26,14 @@ Ext.application({
     appFolder:'resources/site/js/app', // strange that it needs to be here // kind of redundant with the above Ext.Loader paths
     autoCreateViewport: true, // By setting autoCreateViewport to true, the framework will, by convention, include the app/view/Viewport.js file
     models: ['OGCLayer','OGCUser','GeonetworkFile','GeonetworkUser','ExtractorLayer','ExtractorUser'],
-    stores: ['OGCLayers','OGCUsers','GeonetworkFiles','GeonetworkUsers','ExtractorLayers','ExtractorUsers'],
+    stores: [
+        'OGCLayers','OGCUsers',
+        'GeonetworkFiles','GeonetworkUsers',
+        'ExtractorLayers','ExtractorUsers', 
+        'FilteredOGCLayers','FilteredOGCUsers',
+        'FilteredGeonetworkFiles','FilteredGeonetworkUsers',
+        'FilteredExtractorLayers','FilteredExtractorUsers'
+    ],
     controllers: ['Geonetwork', 'Extractor', 'OGC', 'Month'],
     launch: function() {
         // TODO

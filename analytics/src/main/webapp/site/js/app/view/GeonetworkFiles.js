@@ -1,25 +1,35 @@
 Ext.define('Analytics.view.GeonetworkFiles', {
-    extend: 'Analytics.view.BaseGridPanel',
+    extend: 'Analytics.view.FilteredGeonetworkFiles',
     alias: 'widget.geonetworkfileslist',
     store: 'GeonetworkFiles',
- 
+
     initComponent: function() {
-        this.columns = [{
-            dataIndex: 'metadata_id',
-            text: 'Métadonnée',
-            renderer: function(v) {
-                if (!v) return;
-                var url = 'http://ids.pigma.org/geonetwork/srv/fr/metadata.show?id='+v; // TODO: config for base URL
-                return '<a href="'+url+'" target="_blank">'+v+'</a>'
-            }
-        }, {
-            dataIndex: 'filename',
-            text: 'Fichier'
-        }, {
-            dataIndex: 'count',
-            text: 'Nombre de requêtes'
-        }];
-        
         this.callParent();
+    },
+
+    onItemDoubleClick: function(view, rec) {
+        Ext.getStore('FilteredGeonetworkUsers').load({
+            filters: [{
+                property: 'filename',
+                value: rec.get('filename')
+            }, {
+                property: 'metadata_id',
+                value: rec.get('metadata_id')
+            }]
+        });
+        new Ext.Window({
+            title: [
+                'Utilisateurs ayant téléchargé le fichier ',
+                rec.get('filename'),
+                ' de la métadonnée ',
+                rec.get('metadata_id')
+            ].join(''),
+            width: 800,
+            height: 400,
+            layout: 'fit',
+            items: [Ext.create('Analytics.view.FilteredGeonetworkUsers', {
+                border: false
+            })]
+        }).show();
     }
 });
