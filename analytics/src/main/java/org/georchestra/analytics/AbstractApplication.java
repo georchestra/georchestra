@@ -27,6 +27,7 @@ public abstract class AbstractApplication {
 	int start = 0;
 	int limit = 25;
 	String sort = "count DESC";
+	String filter = "";
 	
 	/**
 	 * check all the parameters from the request and fill class attributes.
@@ -45,6 +46,7 @@ public abstract class AbstractApplication {
 			limit = Integer.valueOf(request.getParameter("limit"));
 			JSONObject obj = new JSONArray(request.getParameter("sort")).getJSONObject(0);
 			sort = obj.getString("property") + " " + obj.getString("direction");
+			filter = request.getParameter("filter");
 			
 		} catch (JSONException e) {
 			msg.append("Error in sort JSON format");

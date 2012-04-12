@@ -40,6 +40,40 @@ public class AbstractModel {
 	}
 	
 	/**
+	 * Parse given client filter and add them into SQL select query. The WHERE key word
+	 * must be in lower case in the request to be replaced by the new WHERE added by filters
+	 * @param query base query
+	 * @param filter JSON filter as String coming from client
+	 * @return
+	 * @throws JSONException
+	 */
+	protected String addFilters(final String query, final String filter) throws JSONException {
+		if(filter == null || "".equals(filter)) return query;
+		
+		JSONArray arr = new JSONArray(filter);
+		if(arr.length() <= 0 ) {
+			return query;
+		}
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("WHERE");
+		for (int i=0;  i < arr.length() ; ++i) {
+			JSONObject f = arr.getJSONObject(i);
+			sb.append(" ");
+			sb.append(f.getString("property"));
+			sb.append(" = ");
+			sb.append("'");
+			sb.append(f.getString("value"));
+			sb.append("'");
+			sb.append(" AND");
+		}
+		sb.append(" ");
+		
+		// replace is case sensitive
+		return query.replace("where", sb.toString());
+	}
+	
+	/**
 	 * Count all the results of the given query.
 	 * Build the count query from the filter query, removed by LIMIT and OFFSET keywords,
 	 * and included in an count query "countQ"
@@ -80,13 +114,14 @@ public class AbstractModel {
 	 * Generic statistics data access. Get all statistics of a type, filter by date, order and
 	 * samples (offset, limit). The ResultSet is parsed and all data are insert in a JSON object
 	 * to return
+	 * @param filter TODO
 	 * 
 	 * @return JSON object containing all results
 	 * @throws SQLException
 	 * @throws JSONException
 	 */
 	public JSONObject getStats(final int month, final int year, final int start, final int limit, 
-			final String sort, final String query, StrategyModel strategy) throws SQLException, JSONException {
+			final String sort, String filter, final String query, StrategyModel strategy) throws SQLException, JSONException {
 		
 		JSONObject object = new JSONObject();
 		ResultSet rs = null;
@@ -94,9 +129,10 @@ public class AbstractModel {
 		PreparedStatement st = null;
 		
 		try {
+			String q = addFilters(query, filter);
 			con = postgresqlConnection.getConnection();
-			int count = getCount(con, query, month, year, start, limit, sort);
-			st = prepareStatement(con, query, month, year, start, limit, sort);
+			int count = getCount(con, q, month, year, start, limit, sort);
+			st = prepareStatement(con, q, month, year, start, limit, sort);
 			rs = st.executeQuery();
 			
 			JSONArray jsarr = strategy.process(rs);

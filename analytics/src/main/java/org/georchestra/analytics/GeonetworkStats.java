@@ -35,7 +35,7 @@ public class GeonetworkStats extends AbstractApplication {
 		
 		getStats(request, response, new StrategyController(){
 			protected JSONObject process() throws SQLException, JSONException {
-				return model.getFilesStats(month, year, start, limit, sort);
+				return model.getFilesStats(month, year, start, limit, sort, filter);
 			}
 		});
 	}
@@ -45,7 +45,7 @@ public class GeonetworkStats extends AbstractApplication {
 		
 		getStats(request, response, new StrategyController(){
 			protected JSONObject process() throws SQLException, JSONException {
-				return model.getUsersStats(month, year, start, limit, sort);
+				return model.getUsersStats(month, year, start, limit, sort, filter);
 			}
 		});	
 	}
@@ -55,7 +55,7 @@ public class GeonetworkStats extends AbstractApplication {
 
 		exportCSV(request, response, csvFiles, new StrategyController(){
 			protected JSONObject process() throws SQLException, JSONException {
-				return model.getFilesStats(month, year, 0, Integer.MAX_VALUE, sort);
+				return model.getFilesStats(month, year, 0, Integer.MAX_VALUE, sort, filter);
 			}
 		});	
 	}
@@ -65,7 +65,7 @@ public class GeonetworkStats extends AbstractApplication {
 		
 		exportCSV(request, response, csvUsers, new StrategyController(){
 			protected JSONObject process() throws SQLException, JSONException {
-				return model.getUsersStats(month, year, 0, Integer.MAX_VALUE, sort);
+				return model.getUsersStats(month, year, 0, Integer.MAX_VALUE, sort, filter);
 			}
 		});	
 	}

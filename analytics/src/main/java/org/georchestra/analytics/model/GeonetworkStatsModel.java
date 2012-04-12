@@ -22,9 +22,9 @@ public class GeonetworkStatsModel extends AbstractModel  {
 			"where extract(month from requested_at) = ? AND extract(year from requested_at) = ? " +
 			"group by username order by @sort@ LIMIT ? OFFSET ?;";
 
-	public JSONObject getFilesStats(final int month, final int year, final int start, final int limit, final String sort) throws SQLException, JSONException {
+	public JSONObject getFilesStats(final int month, final int year, final int start, final int limit, final String sort, final String filter) throws SQLException, JSONException {
 		
-		return getStats(month, year, start, limit, sort, selectFilesQ, new StrategyModel() {
+		return getStats(month, year, start, limit, sort, filter, selectFilesQ, new StrategyModel() {
 
 			protected JSONArray process(ResultSet rs) throws SQLException, JSONException {	
 				JSONArray jsarr = new JSONArray();
@@ -40,9 +40,9 @@ public class GeonetworkStatsModel extends AbstractModel  {
 		});
 	}
 	
-	public JSONObject getUsersStats(final int month, final int year, final int start, final int limit, final String sort) throws SQLException, JSONException {
+	public JSONObject getUsersStats(final int month, final int year, final int start, final int limit, final String sort, final String filter) throws SQLException, JSONException {
 		
-		return getStats(month, year, start, limit, sort, selectUsersQ, new StrategyModel() {
+		return getStats(month, year, start, limit, sort, filter, selectUsersQ, new StrategyModel() {
 
 			protected JSONArray process(ResultSet rs) throws SQLException, JSONException {	
 				JSONArray jsarr = new JSONArray();

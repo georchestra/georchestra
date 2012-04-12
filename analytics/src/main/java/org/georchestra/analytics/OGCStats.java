@@ -35,7 +35,7 @@ public class OGCStats extends AbstractApplication {
 		
 		getStats(request, response, new StrategyController(){
 			protected JSONObject process() throws SQLException, JSONException {
-				return model.getLayersStats(month, year, start, limit, sort);
+				return model.getLayersStats(month, year, start, limit, sort, filter);
 			}
 		});	
 	}
@@ -45,7 +45,7 @@ public class OGCStats extends AbstractApplication {
 		
 		getStats(request, response, new StrategyController(){
 			protected JSONObject process() throws SQLException, JSONException {
-				return model.getUsersStats(month, year, start, limit, sort);
+				return model.getUsersStats(month, year, start, limit, sort, filter);
 			}
 		});	
 	}
@@ -55,7 +55,7 @@ public class OGCStats extends AbstractApplication {
 		
 		exportCSV(request, response, csvLayers, new StrategyController(){
 			protected JSONObject process() throws SQLException, JSONException {
-				return model.getLayersStats(month, year, 0, Integer.MAX_VALUE, sort);
+				return model.getLayersStats(month, year, 0, Integer.MAX_VALUE, sort, filter);
 			}
 		});	
 	}
@@ -65,7 +65,7 @@ public class OGCStats extends AbstractApplication {
 		
 		exportCSV(request, response, csvUsers, new StrategyController(){
 			protected JSONObject process() throws SQLException, JSONException {
-				return model.getUsersStats(month, year, 0, Integer.MAX_VALUE, sort);
+				return model.getUsersStats(month, year, 0, Integer.MAX_VALUE, sort, filter);
 			}
 		});	
 	}
