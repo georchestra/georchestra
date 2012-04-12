@@ -253,8 +253,7 @@ GEOR.layerfinder = (function() {
                         success: describeFeaturetypeSuccess.call(this, record),
                         failure: function() {
                             GEOR.util.errorDialog({
-                                msg: "La requête WFS DescribeFeatureType vers "+
-                                    p.url+" pour la couche "+p.featureType+" a malheureusement échoué"
+                                msg: "Serveur non joignable ou droits insuffisants"
                             });
                         },
                         scope: this
@@ -270,8 +269,7 @@ GEOR.layerfinder = (function() {
                     success: capabilitiesSuccess.call(this, record),
                     failure: function() {
                         GEOR.util.errorDialog({
-                            msg: "La requête WMS getCapabilities vers "+
-                                record.data.wmsurl+" a malheureusement échoué"
+                            msg: "Serveur non joignable ou droits insuffisants"
                         });
                     }
                 });
