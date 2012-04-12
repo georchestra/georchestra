@@ -42,9 +42,9 @@ public final class InsertCommand extends AbstractDataCommand {
         java.sql.Date sqlDate = new java.sql.Date(((java.util.Date) this.rowValues.get(DATE_COLUMN)).getTime());
 		pStmt.setDate(2, sqlDate);
         
-		pStmt.setString(3, (String)this.rowValues.get(SERVICE_COLUMN));
-        pStmt.setString(4, (String)this.rowValues.get(LAYER_COLUMN));
-        pStmt.setString(5, (String)this.rowValues.get(REQUEST_COLUMN));
+		pStmt.setString(3, ((String)this.rowValues.get(SERVICE_COLUMN)).trim());
+        pStmt.setString(4, ((String)this.rowValues.get(LAYER_COLUMN)).trim());
+        pStmt.setString(5, ((String)this.rowValues.get(REQUEST_COLUMN)).trim());
 		
 		return pStmt;
 	}

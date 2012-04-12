@@ -159,7 +159,7 @@ final class OGCServiceParser {
 		List<String> layerList = parseLayer(request);
 		if(layerList.isEmpty() ){
 			// create a log without layer
-			Map<String, Object>  log = new HashMap<String, Object>(4);
+			Map<String, Object>  log = new HashMap<String, Object>(5);
 			
 			log.put("user_name", user );
 			log.put("date", date);
@@ -171,7 +171,7 @@ final class OGCServiceParser {
 		} else{ // there are one ore more layers
 			
 			for(String layer : layerList){
-				Map<String, Object>  log = new HashMap<String, Object>(4);
+				Map<String, Object>  log = new HashMap<String, Object>(5);
 				
 				log.put("user_name", user );
 				log.put("date", date);
