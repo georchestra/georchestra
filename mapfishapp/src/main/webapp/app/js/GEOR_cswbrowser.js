@@ -45,8 +45,6 @@ GEOR.cswbrowser = (function() {
         "selectionchanged"
     );
     
-    var addButton = null;
-
     /**
      * Property: mask
      * {Ext.LoadMask} the catalogue's keywords panel mask
@@ -420,7 +418,6 @@ GEOR.cswbrowser = (function() {
             });
 
             var combo = new Ext.form.ComboBox({
-                xtype: 'combo',
                 fieldLabel: 'Nomenclature',
                 store: thesauriStore,
                 loadingText: 'chargement...',
