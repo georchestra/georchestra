@@ -197,7 +197,7 @@ GEOR.map = (function() {
             var error = checkLayer(r);
             if (error) {
                 // these are just warnings in fact, not errors 
-                // see http://csm-bretagne.fr/redmine/issues/1749
+                // see http://applis-bretagne.fr/redmine/issues/1749
                 errors.push(error);
             } 
             
@@ -239,7 +239,7 @@ GEOR.map = (function() {
                 layer.metadataURL = [r.get('metadataURLs')[0]];
             }
             
-            // Errors should be non-blocking since http://csm-bretagne.fr/redmine/issues/1749
+            // Errors should be non-blocking since http://applis-bretagne.fr/redmine/issues/1749
             // so we "keep" every layer, and only display a warning message
             keep.push(r);
         });

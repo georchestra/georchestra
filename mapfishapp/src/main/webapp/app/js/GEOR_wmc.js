@@ -75,7 +75,7 @@ GEOR.wmc = (function() {
 
                 var layerContext = wmcFormat.layerToContext(layer);
                 // only the first metadataURL can be saved to WMC:
-                // see http://csm-bretagne.fr/redmine/issues/2091
+                // see http://applis-bretagne.fr/redmine/issues/2091
                 if (layerContext.metadataURL && layerContext.metadataURL[0]) {
                     if (typeof layerContext.metadataURL[0] == 'string') {
                         layerContext.metadataURL = layerContext.metadataURL[0];

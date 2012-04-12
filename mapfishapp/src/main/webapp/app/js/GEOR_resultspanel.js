@@ -220,7 +220,7 @@ GEOR.resultspanel = (function() {
                 multipleKey: Ext.isMac ? "metaKey" : "ctrlKey"
             });
             map.addControl(sfControl);
-            // see http://csm-bretagne.fr/redmine/issues/1983
+            // see http://applis-bretagne.fr/redmine/issues/1983
             sfControl.handlers.feature.stopDown = false;
         }
             
@@ -247,7 +247,7 @@ GEOR.resultspanel = (function() {
                 },
                 "beforedestroy": function() {
                     this.selModel.unbind(); // required to handle issue 256
-                    // http://csm-bretagne.fr/redmine/issues/show/256
+                    // http://applis-bretagne.fr/redmine/issues/show/256
                     // this deactivates Feature handler, 
                     // and moves search_results layer back to normal z-index
                     return true;

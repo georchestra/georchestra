@@ -106,17 +106,17 @@ GEOR.wfsbrowser = (function() {
                         srsNameInQuery: true,
                         srsName: srs
                         // Note: the geometry name will be set later on:
-                        // See http://csm-bretagne.fr/redmine/issues/2145 
+                        // See http://applis-bretagne.fr/redmine/issues/2145 
                         // and describeFeaturetypeSuccess() in GEOR_layerfinder.js 
                         
                         // TODO: MapServer >= 5.6 requires that all propertyNames
                         // are listed here, if we want to get the geometry.
                         // This requires that we do a WFS DescribeFeatureType 
                         // and amend the protocol once we get the response.
-                        // see http://csm-bretagne.fr/redmine/issues/1996
+                        // see http://applis-bretagne.fr/redmine/issues/1996
                         
                         // I think this will be done as a consequence of
-                        // http://csm-bretagne.fr/redmine/issues/1984 :
+                        // http://applis-bretagne.fr/redmine/issues/1984 :
                         // geometryName and propertyNames should be cached 
                         // in the layerStore for future use, after GetCap &
                         // DescribeFeatureType responses are parsed.

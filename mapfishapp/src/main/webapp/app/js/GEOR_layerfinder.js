@@ -176,7 +176,7 @@ GEOR.layerfinder = (function() {
             }
             // If we have a metadataURL coming from the catalog,
             // we use it instead of the one we get from the capabilities
-            // (as asked by Lydie - see http://csm-bretagne.fr/redmine/issues/1599#note-5)
+            // (as asked by Lydie - see http://applis-bretagne.fr/redmine/issues/1599#note-5)
             if (data.metadataURL) {
                 r.set("metadataURLs", [data.metadataURL]);
             }
@@ -233,7 +233,7 @@ GEOR.layerfinder = (function() {
                 var layer = record.get("layer");
                 if (layer instanceof OpenLayers.Layer.WMS) {
                     // WMS layer just need cloning 
-                    // (well, for the moment - see http://csm-bretagne.fr/redmine/issues/1996)
+                    // (well, for the moment - see http://applis-bretagne.fr/redmine/issues/1996)
                     recordsToAdd.push(record.clone());
                 } else {
                     // WFS layers need cloning of protocol.format too ?

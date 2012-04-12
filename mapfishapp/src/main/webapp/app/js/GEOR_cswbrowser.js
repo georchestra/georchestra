@@ -90,7 +90,7 @@ GEOR.cswbrowser = (function() {
                     if((item.protocol == "OGC:WMS-1.1.1-http-get-map") &&
                         item.name && item.value) {
 
-                        // see http://csm-bretagne.fr/redmine/issues/2127#note-2
+                        // see http://applis-bretagne.fr/redmine/issues/2127#note-2
                         if (item.description) {
                             name = item.description;
                         } else if (item.name) {
@@ -173,7 +173,7 @@ GEOR.cswbrowser = (function() {
                                 })
                             },
                             // adding sort info:
-                            // see http://csm-bretagne.fr/redmine/issues/1724
+                            // see http://applis-bretagne.fr/redmine/issues/1724
                             SortBy: [{
                                 "property": 'Title',
                                 "order": "DESC"

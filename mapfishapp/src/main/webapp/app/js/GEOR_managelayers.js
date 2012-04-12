@@ -515,7 +515,7 @@ GEOR.managelayers = (function() {
         // TODO: queryable is not the correct boolean here to decide whether
         // we can have the querier or not.
         // The availability of a WFS equivalent layer is.
-        // This depends on http://csm-bretagne.fr/redmine/issues/1984
+        // This depends on http://applis-bretagne.fr/redmine/issues/1984
 
         // TODO: have a generic field in layerrecord stating that a record is WFS or WMS.
         if (GEOR.querier && (queryable || layer.CLASS_NAME == "OpenLayers.Layer.Vector")) {
@@ -545,7 +545,7 @@ GEOR.managelayers = (function() {
                             }, layer.id));
                         } else { // WMS layer
                             querierRecord = layerRecord;
-                            // all this code should be moved elsewhere, see http://csm-bretagne.fr/redmine/issues/1984 (later)
+                            // all this code should be moved elsewhere, see http://applis-bretagne.fr/redmine/issues/1984 (later)
                             GEOR.waiter.show();
                             GEOR.ows.WMSDescribeLayer(layerRecord, {
                                 success: function(store, records) {
@@ -669,7 +669,7 @@ GEOR.managelayers = (function() {
         }, '-', {
             xtype: "gx_opacityslider",
             width: 100,
-            // hack for http://csm-bretagne.fr/redmine/issues/2026 :
+            // hack for http://applis-bretagne.fr/redmine/issues/2026 :
             topThumbZIndex: 1000,
             // and this is because GeoExt.LayerOpacitySlider defaults
             // are too much for me :

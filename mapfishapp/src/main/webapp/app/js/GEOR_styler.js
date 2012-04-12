@@ -556,7 +556,7 @@ GEOR.styler = (function() {
             maxFeatures: 1,
             // we need to specifically ask for the geometry here
             // some mapservers won't give it 
-            // see http://csm-bretagne.fr/redmine/issues/1996
+            // see http://applis-bretagne.fr/redmine/issues/1996
             propertyNames: [geometryName],
             callback: function(response) {
                 var type;

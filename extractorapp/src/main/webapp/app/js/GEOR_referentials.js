@@ -398,7 +398,7 @@ GEOR.referentials = (function() {
                         
                         // with GeoServer2, we need the geometry
                         // since GS2 does not publish bounds as GS1 did
-                        // see http://csm-bretagne.fr/redmine/issues/2083
+                        // see http://applis-bretagne.fr/redmine/issues/2083
                         options.propertyNames = attributes.concat([geometryName]);
                         
                         // remove the queryParam from the store's base

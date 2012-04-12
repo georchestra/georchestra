@@ -268,14 +268,14 @@ GEOR.ows = (function() {
             var storeOptions = Ext.applyIf({
                 // For some reason, if layer.url ends up with ?
                 // the generated request URL is not correct 
-                // see http://csm-bretagne.fr/redmine/issues/1979
+                // see http://applis-bretagne.fr/redmine/issues/1979
                 url: layer.url.replace(/\?$/,''),
                 baseParams: Ext.applyIf({
                     "REQUEST": "DescribeLayer",
                     "LAYERS": layer.params.LAYERS,
                     // WIDTH and HEIGHT params seem to be required for
                     // some versions of MapServer (typ. 5.6.1)
-                    // see http://csm-bretagne.fr/redmine/issues/1979
+                    // see http://applis-bretagne.fr/redmine/issues/1979
                     "WIDTH": 1,  
                     "HEIGHT": 1
                 }, WMS_BASE_PARAMS)

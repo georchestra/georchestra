@@ -162,7 +162,7 @@ GEOR.layerstree = (function() {
                             units: units
                         };
                         // force map scales to configurated scales, if applicable:
-                        // see http://csm-bretagne.fr/redmine/issues/2413
+                        // see http://applis-bretagne.fr/redmine/issues/2413
                         if (units == 'm' && GEOR.config.METRIC_MAP_SCALES) {
                             baselayerOptions.scales = GEOR.config.METRIC_MAP_SCALES;
                         } else if (units == 'degrees' && GEOR.config.GEOGRAPHIC_MAP_SCALES) {
@@ -443,7 +443,7 @@ GEOR.layerstree = (function() {
                     var maxExtent, srs;
                     var bbox = record.get("bbox");
                     
-                    for(var p in bbox) { // TODO: try to find a better SRS. see http://csm-bretagne.fr/redmine/issues/1949
+                    for(var p in bbox) { // TODO: try to find a better SRS. see http://applis-bretagne.fr/redmine/issues/1949
                         srs = bbox[p].srs;
                         maxExtent = OpenLayers.Bounds.fromArray(bbox[p].bbox);
                         break;
@@ -457,7 +457,7 @@ GEOR.layerstree = (function() {
                             if (!srslist.hasOwnProperty(key)) {
                                 continue;
                             }
-                            // TODO: try to find a better SRS. see http://csm-bretagne.fr/redmine/issues/1949
+                            // TODO: try to find a better SRS. see http://applis-bretagne.fr/redmine/issues/1949
                             if (key != "EPSG:WGS84(DD)" && srslist[key] === true) {
                                 // bug "EPSG:WGS84(DD)" is not a valid srs
                                 // http://jira.codehaus.org/browse/GEOS-3223
@@ -572,7 +572,7 @@ GEOR.layerstree = (function() {
             
             // NOTE for the future: do not query N times the same server with the same request
             // keep a local db of responses :-)
-            // see http://csm-bretagne.fr/redmine/issues/1928
+            // see http://applis-bretagne.fr/redmine/issues/1928
             GEOR.ows.WMSDescribeLayer(
                 owsinfo.layer.params.LAYERS,
                 {
@@ -933,7 +933,7 @@ GEOR.layerstree = (function() {
             // send the JSESSIONID to the server as a validation token
             // only if user is not connected and if dlform is set to true:
             if (GEOR.config.DOWNLOAD_FORM && GEOR.data.anonymous) {
-                // see proposition 2 of http://csm-bretagne.fr/redmine/issues/2194#note-15
+                // see proposition 2 of http://applis-bretagne.fr/redmine/issues/2194#note-15
                 out.sessionid = GEOR.util.getCookie('JSESSIONID');
             };
             
