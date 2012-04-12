@@ -120,46 +120,56 @@
 		</pluginManagement>
 	</build>
 	<profiles>
+	
 		<profile>
 			<id>c2cpc61</id>
 			<properties>
 				<server>c2cpc61</server>
 			</properties>
 		</profile>
-		 <profile>
-                        <id>flowProject</id>
-                        <properties>
-                                <server>flowProject</server>
-                        </properties>
-                </profile>
-
-
+		
+		<profile>
+			<id>flowProject</id>
+			<properties>
+				<server>flowProject</server>
+			</properties>
+		</profile>
+		
+		<profile>
+			<id>geobretagne</id>
+			<properties>
+				<server>geobretagne</server>
+			</properties>
+		</profile>
+		
 		<profile>
 			<id>pigma</id>
 			<properties>
 				<server>pigma</server>
 			</properties>
 		</profile>
-	                <profile>
+		
+		<profile>
 			<id>pmauduit</id>
 			<properties>
 				<server>pmauduit</server>
 			</properties>
 		</profile>
-
-                
-                <profile>
+		
+		<profile>
 			<id>localhost</id>
 			<properties>
 				<server>localhost</server>
 			</properties>
 		</profile>
+		
 		<profile>
-			<id>vmware</id>
+			<id>pigma</id>
 			<properties>
-				<server>vmware</server>
+				<server>pigma</server>
 			</properties>
 		</profile>
+		
 		<profile>
 			<id>pigma_int</id>
 			<properties>
@@ -167,6 +177,7 @@
 				<sub.target>int</sub.target>
 			</properties>
 		</profile>
+		
 		<profile>
 			<id>pigma_prod</id>
 			<properties>
@@ -174,18 +185,34 @@
 				<sub.target>prod</sub.target>
 			</properties>
 		</profile>
-                <profile>
-                        <id>geobretagne</id>
-                        <properties>
-                                <server>geobretagne</server>
-                        </properties>
-                </profile>
+		
+		<profile>
+			<id>pmauduit</id>
+			<properties>
+				<server>pmauduit</server>
+			</properties>
+		</profile>
+		
+		<profile>
+			<id>qsm</id>
+			<properties>
+				<server>qsm</server>
+			</properties>
+		</profile>
+		
+		<profile>
+			<id>vmware</id>
+			<properties>
+				<server>vmware</server>
+			</properties>
+		</profile>
+		
 		<profile>
 			<id>all</id>
 			<activation>
 				<file>
 					<!-- this is added so that all will be the default profile
-					     on can build only a specific project by doing -P-all,extractorapp -->
+						 one can build only a specific project by doing -P-all,extractorapp -->
 					<missing>hack_to_make_all_enabled_by_default</missing>
 				</file>
 			</activation>
@@ -203,85 +230,99 @@
 				<module>analytics</module>
 			</modules>
 		</profile>
+		
 		<profile>
 			<id>cas-server-webapp</id>
 			<modules>
 				<module>cas-server-webapp</module>
 			</modules>
 		</profile>
+		
 		<profile>
 			<id>cas</id>
 			<modules>
 				<module>cas-server-webapp</module>
 			</modules>
 		</profile>
+		
 		<profile>
 			<id>catalogapp</id>
 			<modules>
 				<module>catalogapp</module>
 			</modules>
 		</profile>
+		
 		<profile>
 			<id>doc</id>
 			<modules>
 				<module>doc</module>
 			</modules>
 		</profile>
+		
 		<profile>
 			<id>extractorapp</id>
 			<modules>
 				<module>extractorapp</module>
 			</modules>
 		</profile>
+		
 		<profile>
 			<id>geoserver</id>
 			<modules>
 				<module>geoserver</module>
 			</modules>
 		</profile>
+		
 		<profile>
 			<id>geoserver-security</id>
 			<modules>
 				<module>geoserver-security</module>
 			</modules>
 		</profile>
+		
 		<profile>
 			<id>mapfishapp</id>
 			<modules>
 				<module>mapfishapp</module>
 			</modules>
 		</profile>
+		
 		<profile>
 			<id>security-proxy</id>
 			<modules>
 				<module>security-proxy</module>
 			</modules>
 		</profile>
+		
 		<profile>
 			<id>proxy</id>
 			<modules>
 				<module>security-proxy</module>
 			</modules>
 		</profile>
+		
 		<profile>
 			<id>geonetwork</id>
 			<modules>
 				<module>geonetwork</module>
 			</modules>
 		</profile>
- 		<profile>
+		
+		<profile>
 			<id>downloadform</id>
 			<modules>
 				<module>downloadform</module>
 			</modules>
 		</profile>
+		
 		<profile>
 			<id>analytics</id>
 			<modules>
 				<module>analytics</module>
 			</modules>
 		</profile>
-        </profiles>
+		
+	</profiles>
 	<repositories>
 		<repository>
 			<snapshots>
