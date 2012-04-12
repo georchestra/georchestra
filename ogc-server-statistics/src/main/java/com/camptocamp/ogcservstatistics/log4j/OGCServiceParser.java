@@ -44,7 +44,7 @@ final class OGCServiceParser {
 	private static final String GETMAP = "GETMAP";
 	private static final String GETLEGENDGRAPHIC = "GETLEGENDGRAPHIC";
 	private static final String GETFEATUREINFO = "GETFEATUREINFO";
-	private static final String DESCRIBELAYER = "GETMAP";
+	private static final String DESCRIBELAYER = "DESCRIBELAYER";
 	private static final String GETFEATURE = "GETFEATURE";
 	private static final String DESCRIBEFEATURETYPE = "DESCRIBEFEATURETYPE";
 	private static final String GETCOVERAGE = "GETCOVERAGE";
