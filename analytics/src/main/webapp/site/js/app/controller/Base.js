@@ -8,6 +8,14 @@ Ext.define('Analytics.controller.Base', {
 
     },
     
+    loadStoreWithDate : function (store, cfg) {
+    	store.getProxy().extraParams = {
+    	    month: cfg.params.month,
+    	    year: cfg.params.year
+    	};
+    	store.load();
+    },
+    
     onLaunch: function() {
         this.application.on({
             'monthchanged': function(opCfg) {

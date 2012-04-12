@@ -13,9 +13,10 @@ Ext.define('Analytics.controller.Geonetwork', {
         
         this.application.on({
             "monthchanged": function(opCfg) {
-                usersStore.load(opCfg);
-                filesStore.load(opCfg);
-            }
+            	this.loadStoreWithDate(usersStore, opCfg);
+            	this.loadStoreWithDate(filesStore, opCfg);
+            },
+            scope: this
         });
         
         this.control({

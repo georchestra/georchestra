@@ -5,7 +5,7 @@ Ext.define('Analytics.controller.Extractor', {
     init: function() {
 
     },
-    
+
     onLaunch: function() {
         // Use the automatically generated getter to get the stores
         var usersStore = this.getExtractorUsersStore();
@@ -13,9 +13,10 @@ Ext.define('Analytics.controller.Extractor', {
         
         this.application.on({
             "monthchanged": function(opCfg) {
-                usersStore.load(opCfg);
-                layersStore.load(opCfg);
-            }
+            	this.loadStoreWithDate(usersStore, opCfg);
+            	this.loadStoreWithDate(layersStore, opCfg);
+            },
+            scope: this
         });
         
         this.control({

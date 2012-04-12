@@ -13,9 +13,10 @@ Ext.define('Analytics.controller.OGC', {
         
         this.application.on({
             "monthchanged": function(opCfg) {
-                usersStore.load(opCfg);
-                layersStore.load(opCfg);
-            }
+            	this.loadStoreWithDate(usersStore, opCfg);
+            	this.loadStoreWithDate(layersStore, opCfg);
+            },
+            scope: this
         });
         
         this.control({
