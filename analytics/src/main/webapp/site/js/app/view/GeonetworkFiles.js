@@ -28,11 +28,11 @@ Ext.define('Analytics.view.GeonetworkFiles', {
         });
         new Ext.Window({
             title: [
-                'Utilisateurs ayant téléchargé le fichier ',
+                'Utilisateurs ayant téléchargé le fichier',
                 rec.get('filename'),
-                ' de la métadonnée ',
+                'de la métadonnée',
                 rec.get('metadata_id')
-            ].join(''),
+            ].join(' '),
             width: 800,
             height: 400,
             layout: 'fit',

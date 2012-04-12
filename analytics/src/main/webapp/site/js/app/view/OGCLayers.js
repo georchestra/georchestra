@@ -21,11 +21,18 @@ Ext.define('Analytics.view.OGCLayers', {
             filters: [{
                 property: 'layer',
                 value: rec.get('layer')
+            }, {
+                property: 'service',
+                value: rec.get('service')
             }]
         });
         new Ext.Window({
-            title: 'Utilisateurs ayant téléchargé la couche '+
+            title: [
+                'Utilisateurs ayant téléchargé la couche',
                 rec.get('layer'),
+                'du service',
+                rec.get('service')
+            ].join(' '),
             width: 800,
             height: 400,
             layout: 'fit',
