@@ -68,6 +68,9 @@ GEOR.ajaxglobal = (function() {
                 "de ces situations. Ce serait probablement une bonne idée que "+
                 "d'essayer avec un autre navigateur !";
                 break;
+            case 503:
+                text = "Le service est temporairement indisponible: veuillez réessayer ultérieurement.";
+                break;
             case HTTP_STATUS_TOO_BIG:
                 text = "Données trop volumineuses.";
                 break;
