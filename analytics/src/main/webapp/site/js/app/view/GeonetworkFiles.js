@@ -17,15 +17,16 @@ Ext.define('Analytics.view.GeonetworkFiles', {
     },
 
     onItemDoubleClick: function(view, rec) {
-        Ext.getStore('FilteredGeonetworkUsers').load({
-            filters: [{
-                property: 'filename',
-                value: rec.get('filename')
-            }, {
-                property: 'metadata_id',
-                value: rec.get('metadata_id')
-            }]
-        });
+        var st = Ext.getStore('FilteredGeonetworkUsers');
+        st.filters.clear();       
+        st.filter([{
+            property: 'filename',
+            value: rec.get('filename')
+        }, {
+            property: 'metadata_id',
+            value: rec.get('metadata_id')
+        }]);
+
         new Ext.Window({
             title: [
                 'Utilisateurs ayant téléchargé le fichier',

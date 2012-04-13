@@ -17,12 +17,13 @@ Ext.define('Analytics.view.ExtractorUsers', {
     },
     
     onItemDoubleClick: function(view, rec) {
-        Ext.getStore('FilteredExtractorLayers').load({
-            filters: [{
-                property: 'username',
-                value: rec.get('username')
-            }]
-        });
+        var st = Ext.getStore('FilteredExtractorLayers');
+        st.filters.clear();
+        st.filter([{
+            property: 'username',
+            value: rec.get('username')
+        }]);
+        
         new Ext.Window({
             title: "Couches ayant été téléchargées par l'utilisateur "+
                 rec.get('username'),

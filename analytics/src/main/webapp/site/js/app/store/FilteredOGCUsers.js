@@ -3,5 +3,6 @@ Ext.define('Analytics.store.FilteredOGCUsers', {
     requires: 'Analytics.model.OGCUser',
     model: 'Analytics.model.OGCUser',
     remoteSort: true,
+    remoteFilter: true,
     sorters: [{property: 'count', direction: 'DESC'}]
 });

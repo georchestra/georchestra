@@ -3,5 +3,6 @@ Ext.define('Analytics.store.FilteredExtractorUsers', {
     requires: 'Analytics.model.ExtractorUser',
     model: 'Analytics.model.ExtractorUser',
     remoteSort: true,
+    remoteFilter: true,
     sorters: [{property: 'count', direction: 'DESC'}]
 });

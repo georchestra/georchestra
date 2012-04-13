@@ -3,5 +3,6 @@ Ext.define('Analytics.store.FilteredGeonetworkUsers', {
     requires: 'Analytics.model.GeonetworkUser',
     model: 'Analytics.model.GeonetworkUser',
     remoteSort: true,
+    remoteFilter: true,
     sorters: [{property: 'count', direction: 'DESC'}]
 });

@@ -3,5 +3,6 @@ Ext.define('Analytics.store.FilteredGeonetworkFiles', {
     requires: 'Analytics.model.GeonetworkFile',
     model: 'Analytics.model.GeonetworkFile',
     remoteSort: true,
+    remoteFilter: true,
     sorters: [{property: 'count', direction: 'DESC'}]
 });

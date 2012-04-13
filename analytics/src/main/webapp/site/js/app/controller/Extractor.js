@@ -13,6 +13,8 @@ Ext.define('Analytics.controller.Extractor', {
         
         this.application.on({
             "monthchanged": function(opCfg) {
+            	this.month = opCfg.params.month;
+                this.year = opCfg.params.year;
             	this.loadStoreWithDate(usersStore, opCfg);
             	this.loadStoreWithDate(layersStore, opCfg);
             },
@@ -26,6 +28,13 @@ Ext.define('Analytics.controller.Extractor', {
             'extractorlayerslist tool': {
                 click: this.handleExport
             },
+            'filterextractoruserslist tool': {
+                click: this.handleExport
+            },
+            'filteredextractorlayerslist tool': {
+                click: this.handleExport
+            },
+            
             scope: this
         });
         

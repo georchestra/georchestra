@@ -26,6 +26,12 @@ Ext.define('Analytics.controller.Geonetwork', {
             'geonetworkfileslist tool': {
                 click: this.handleExport
             },
+            'filteredgeonetworkuserslist tool': {
+                click: this.handleExport
+            },
+            'filteredgeonetworkfileslist tool': {
+                click: this.handleExport
+            },
             scope: this
         });
         

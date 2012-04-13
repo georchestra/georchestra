@@ -32,8 +32,16 @@ Ext.define('Analytics.controller.Base', {
         var year = parseInt(this.year || Ext.Date.format(new Date(), 'Y'));
         tool.bubble(function(p) {
             if (p && p.store) {
-                var storeId = p.store.storeId.toLowerCase();
-                window.location.href = "/analytics/ws/export/"+storeId+"?month="+month+"&year="+year
+            	var a = new Array();
+            	p.store.filters.each(function(it, idx, l) {
+            		a.push({
+            			property : it.property,
+            			value : it.value
+            		});
+            	});
+            	var f = p.store.filters.length >0 ? '&filter=' + Ext.JSON.encode(a) : '';
+                var storeId = p.store.storeId.toLowerCase().replace('filtered','');
+                window.location.href = "/analytics/ws/export/"+storeId+"?month="+month+"&year="+year+f
                 return false;
             }
         }, this);

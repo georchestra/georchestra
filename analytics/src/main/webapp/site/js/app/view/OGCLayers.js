@@ -17,15 +17,16 @@ Ext.define('Analytics.view.OGCLayers', {
     },
     
     onItemDoubleClick: function(view, rec) {
-        Ext.getStore('FilteredOGCUsers').load({
-            filters: [{
-                property: 'layer',
-                value: rec.get('layer')
-            }, {
-                property: 'service',
-                value: rec.get('service')
-            }]
-        });
+    	var st = Ext.getStore('FilteredOGCUsers');
+    	st.filters.clear();
+        st.filter([{
+            property: 'layer',
+            value: rec.get('layer')
+        }, {
+            property: 'service',
+            value: rec.get('service')
+        }]);
+        
         new Ext.Window({
             title: [
                 'Utilisateurs ayant téléchargé la couche',

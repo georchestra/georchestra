@@ -17,18 +17,19 @@ Ext.define('Analytics.view.ExtractorLayers', {
     },
     
     onItemDoubleClick: function(view, rec) {
-        Ext.getStore('FilteredExtractorUsers').load({
-            filters: [{
-                property: 'ows_type',
-                value: rec.get('ows_type')
-            },{
-                property: 'layer_name',
-                value: rec.get('layer_name')
-            },{
-                property: 'ows_url',
-                value: rec.get('ows_url')
-            }]
-        });
+        var st = Ext.getStore('FilteredExtractorUsers');
+        st.filters.clear();
+        st.filter([{
+            property: 'ows_type',
+            value: rec.get('ows_type')
+        },{
+            property: 'layer_name',
+            value: rec.get('layer_name')
+        },{
+            property: 'ows_url',
+            value: rec.get('ows_url')
+        }]);
+        
         new Ext.Window({
             title: [
                 'Utilisateurs ayant téléchargé la couche',
