@@ -164,13 +164,6 @@
 		</profile>
 		
 		<profile>
-			<id>pigma</id>
-			<properties>
-				<server>pigma</server>
-			</properties>
-		</profile>
-		
-		<profile>
 			<id>pigma_int</id>
 			<properties>
 				<server>pigma</server>
@@ -183,13 +176,6 @@
 			<properties>
 				<server>pigma</server>
 				<sub.target>prod</sub.target>
-			</properties>
-		</profile>
-		
-		<profile>
-			<id>pmauduit</id>
-			<properties>
-				<server>pmauduit</server>
 			</properties>
 		</profile>
 		
