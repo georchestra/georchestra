@@ -7,6 +7,9 @@ Ext.define('Analytics.model.OGCLayer', {
         name: 'layer',
         type: 'string'
     }, {
+        name: 'request',
+        type: 'string'
+    }, {
         name: 'count',
         type: 'int'
     }],
