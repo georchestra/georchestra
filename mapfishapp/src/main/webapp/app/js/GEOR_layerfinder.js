@@ -332,7 +332,6 @@ GEOR.layerfinder = (function() {
                     default:
                         break;
                     }
-                    win.hide();
                 },
                 scope: this
             });
@@ -349,7 +348,7 @@ GEOR.layerfinder = (function() {
                 buttons: [
                     addButton,
                     {
-                        text: 'Annuler',
+                        text: 'Fermer',
                         handler: function() {
                             win.hide();
                         }
