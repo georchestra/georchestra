@@ -389,32 +389,7 @@ GEOR.cswbrowser = (function() {
                 reader: new Ext.data.XmlReader({
                     record: 'thesaurus',
                     id: 'key'
-                }, recordType),
-                listeners: {
-                    "load": function(store) {
-                        // adding record GEOR.config.THESAURUS_NAME
-                        var v = [];
-                        v['name'] = GEOR.config.THESAURUS_NAME;
-                        v['key'] = GEOR.config.THESAURUS_NAME;
-                        store.add([new recordType(v)]);
-                        
-                        var regexp = new RegExp('.rdf');
-                        store.each(function(r) {
-                            r.set('name', 
-                                GEOR.util.Capitalize(
-                                    r.get('name')
-                                ).replace(regexp, '')
-                            );
-                        });
-                        store.sort('name');
-
-                        var defKey = GEOR.config.DEFAULT_THESAURUS_KEY;
-                        combo.setValue(defKey);
-                        var r = store.query('key', defKey).first();
-                        combo.fireEvent('select', combo, r);
-                    },
-                    scope: this
-                }
+                }, recordType)
             });
 
             var combo = new Ext.form.ComboBox({
@@ -439,6 +414,29 @@ GEOR.cswbrowser = (function() {
                         } else {
                             buildInspireTree(tree, record.get('key'));
                         }
+                    },
+                    "afterrender": function(combo) {
+                        var store = combo.getStore();
+                        // adding record GEOR.config.THESAURUS_NAME
+                        var v = [];
+                        v['name'] = GEOR.config.THESAURUS_NAME;
+                        v['key'] = GEOR.config.THESAURUS_NAME;
+                        store.add([new recordType(v)]);
+                        
+                        var regexp = new RegExp('.rdf');
+                        store.each(function(r) {
+                            r.set('name', 
+                                GEOR.util.Capitalize(
+                                    r.get('name')
+                                ).replace(regexp, '')
+                            );
+                        });
+                        store.sort('name');
+
+                        var defKey = GEOR.config.DEFAULT_THESAURUS_KEY;
+                        combo.setValue(defKey);
+                        var r = store.query('key', defKey).first();
+                        combo.fireEvent('select', combo, r);
                     }
                 }
             });
