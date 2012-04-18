@@ -152,7 +152,13 @@ GEOR.cswquerier = (function() {
      * Property: mask
      * {Ext.LoadMask} the dataview mask
      */
-    var mask = null;
+    var mask;
+    
+    /**
+     * Property: textField
+     * {Ext.app.FreetextField} the freetext field
+     */
+    var textField;
 
     /**
      * Method: onCSWRecordsStoreLoad
@@ -225,8 +231,6 @@ GEOR.cswquerier = (function() {
         return new Ext.XTemplate(tpl, context);
     };
     
-    // TODO: modify behavior: do not close window on layers added.
-
     /*
      * Public
      */
@@ -293,6 +297,17 @@ GEOR.cswquerier = (function() {
                     }
                 });
                 
+                textField = new Ext.app.FreetextField({
+                    store: CSWRecordsStore,
+                    callback: function(r, options, success) {
+                        if (!success) {
+                            GEOR.util.errorDialog({
+                                msg: "Serveur non disponible"
+                            });
+                            return;
+                        }
+                    }
+                });
             }
 
             return new Ext.Panel(Ext.apply({
@@ -313,17 +328,7 @@ GEOR.cswquerier = (function() {
                     items: [{
                         html: 'Chercher',
                         bodyStyle: 'padding: 0 10px 0 0;font: 12px tahoma,arial,helvetica,sans-serif;'
-                    }, new Ext.app.FreetextField({
-                        store: CSWRecordsStore,
-                        callback: function(r, options, success) {
-                            if (!success) {
-                                GEOR.util.errorDialog({
-                                    msg: "Serveur non disponible"
-                                });
-                                return;
-                            }
-                        }
-                    }), {
+                    }, textField, {
                         html: 'dans',
                         bodyStyle: 'padding: 0 10px;font: 12px tahoma,arial,helvetica,sans-serif;'
                     }, {
@@ -347,6 +352,10 @@ GEOR.cswquerier = (function() {
                         listeners: {
                             "select": function(cb, rec) {
                                 CSWRecordsStore.proxy.setUrl(rec.get('url'), true);
+                                // then trigger search, if first field has search.
+                                if (textField.hasSearch) {
+                                    textField.onTrigger2Click.call(textField);
+                                }
                             }
                         }
                     }]
