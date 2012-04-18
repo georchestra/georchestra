@@ -197,7 +197,7 @@ GEOR.wfsbrowser = (function() {
             });
 
             return new Ext.Panel(Ext.apply({
-                title: 'Serveurs WFS',
+                title: 'Serveur WFS',
                 layout: 'border',
                 items: [
                     {

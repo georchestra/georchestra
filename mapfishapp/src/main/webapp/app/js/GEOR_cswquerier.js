@@ -311,7 +311,7 @@ GEOR.cswquerier = (function() {
             }
 
             return new Ext.Panel(Ext.apply({
-                title: "Depuis un catalogue",
+                title: "Catalogue",
                 layout: 'border',
                 items: [{
                     region: 'north',

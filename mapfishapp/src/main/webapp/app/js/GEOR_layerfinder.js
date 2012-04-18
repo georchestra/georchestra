@@ -336,7 +336,7 @@ GEOR.layerfinder = (function() {
                 scope: this
             });
             var win = new Ext.Window({
-                title: 'Ajouter des couches',
+                title: 'Ajouter des couches depuis un ...',
                 constrainHeader: true,
                 layout: 'fit',
                 animateTarget: GEOR.config.ANIMATE_WINDOWS && animateFrom,

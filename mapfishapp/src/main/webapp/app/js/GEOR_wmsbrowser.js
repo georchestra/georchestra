@@ -172,7 +172,7 @@ GEOR.wmsbrowser = (function() {
             });
 
             return new Ext.Panel(Ext.apply({
-                title: 'Serveurs WMS',
+                title: 'Serveur WMS',
                 layout: 'border',
                 items: [
                     {

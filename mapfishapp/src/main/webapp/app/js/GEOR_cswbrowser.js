@@ -443,7 +443,7 @@ GEOR.cswbrowser = (function() {
             });
 
             return new Ext.Panel(Ext.apply({
-                title: GEOR.config.CATALOG_NAME,
+                title: 'Thésaurus',
                 layout: 'border',
                 items: [{
                     region: 'north',

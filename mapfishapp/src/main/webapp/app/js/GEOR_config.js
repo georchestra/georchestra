@@ -377,15 +377,6 @@ GEOR.config = (function() {
             false),
         
         /**
-         * Constant: CATALOG_NAME
-         * The name to display in the catalog tab under "add layer"
-         * (was: GeoCatalogue for the GeoBretagne project).
-         * Defaults to 'Catalogue geOrchestra'
-         */
-        CATALOG_NAME: getCustomParameter("CATALOG_NAME", 
-            'Catalogue geOrchestra'),
-        
-        /**
          * Constant: THESAURUS_NAME
          * Thesaurus name to display for the CSW GetDomain request.
          * Defaults to 'mots clés du catalogue'
