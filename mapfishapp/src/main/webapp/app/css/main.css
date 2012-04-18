@@ -301,3 +301,21 @@ div.olMapViewport {
 .odd {
 	background: #FEFFFF
 }
+
+/* styles for ext.dataview in layer finder */
+.x-list div.x-view-over {
+	background-color: #ddd !important;
+}
+.x-list div.x-view-selected {
+	background-color: #9ab3c5 !important;
+}
+.x-list div.x-view-item {
+	background-color: #eee;
+	margin: 5px;
+	padding: 5px;
+	cursor: pointer;
+}
+.x-list div.x-view-item img.thumb {
+	padding: 5px;
+	border: 1px solid #bbb;
+}

@@ -311,6 +311,8 @@ if(sec_roles != null) {
     <script type="text/javascript" src="app/js/GEOR_managelayers.js"></script>
     <script type="text/javascript" src="app/js/GEOR_layerfinder.js"></script>
     <script type="text/javascript" src="app/js/GEOR_cswbrowser.js"></script>
+    <script type="text/javascript" src="app/js/GeoExt.data.CSW.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_cswquerier.js"></script>
     <script type="text/javascript" src="app/js/GEOR_wmsbrowser.js"></script>
     <script type="text/javascript" src="app/js/GEOR_wfsbrowser.js"></script>
     <script type="text/javascript" src="app/js/GEOR_print.js"></script>

@@ -393,6 +393,42 @@ GEOR.config = (function() {
         THESAURUS_NAME: getCustomParameter("THESAURUS_NAME", 'mots clés du catalogue'),
         
         /**
+         * Constant: CATALOGS
+         * List of catalogs for freetext search
+         */
+        CATALOGS: getCustomParameter("CATALOGS", [
+            ['http://geobretagne.fr/geonetwork/srv/fr/csw', 'le catalogue GeoBretagne'],
+            ['http://ids.pigma.org/geonetwork/srv/fr/csw', 'le catalogue PIGMA'],
+            ['http://sandre.eaufrance.fr/geonetwork_CSW/srv/fr/csw', 'le catalogue du Sandre']
+        ]),
+        
+        /**
+         * Constant: DEFAULT_CSW_URL
+         * CSW URL which should be used by default for freetext search
+         * Note: must be one of the URLs in the above CATALOGS config option
+         */
+        DEFAULT_CSW_URL: getCustomParameter("DEFAULT_CSW_URL", 
+            'http://geobretagne.fr/geonetwork/srv/fr/csw'),
+        
+        /**
+         * Constant: MAX_CSW_RECORDS
+         * The maximum number of CSW records queried for catalog search
+         * Note: if you set this to a low value, you run the risk of not having 
+         * enough results (even 0). On the contrary, setting a very high value 
+         * might result in browser hanging (too much XML data to parse).
+         * Defaults to 20.
+         */
+        MAX_CSW_RECORDS: getCustomParameter("MAX_CSW_RECORDS", 20),
+
+        /**
+         * Constant: NO_THUMBNAIL_IMAGE_URL
+         * URL to a thumbnail image shown when none is provided by the CSW service
+         * Defaults to the provided one ('app/img/nopreview.gif')
+         */
+        NO_THUMBNAIL_IMAGE_URL: getCustomParameter("NO_THUMBNAIL_IMAGE_URL", 
+            'app/img/nopreview.gif'),
+            
+        /**
          * Constant: DEFAULT_THESAURUS_KEY
          * Key (as the one in the response from /geonetwork/srv/fr/xml.thesaurus.getList) 
          * of the thesaurus to use as the default (selected) one.

@@ -15,6 +15,7 @@
 /*
  * @include GEOR_config.js
  * @include GEOR_util.js
+ * @include GEOR_cswquerier.js
  * @include GEOR_cswbrowser.js
  * @include GEOR_wmsbrowser.js
  * @include GEOR_wfsbrowser.js
@@ -38,16 +39,17 @@ GEOR.layerfinder = (function() {
     /**
      * Property: currentTab
      * {String} a local cache of the currently active tab 
-     * (one of "csw", "wms", "wfs")
+     * (one of "cswquerier", "cswbrowser", "wms", "wfs")
      */
-    var currentTab = "csw";
+    var currentTab = "cswquerier";
     
     /**
      * Property: panels
      * {Object} referencing the panels in the tabPanel.
      */
     var panels = {
-        "csw": null,
+        "cswquerier": null,
+        "cswbrowser": null,
         "wms": null,
         "wfs": null
     };
@@ -57,7 +59,8 @@ GEOR.layerfinder = (function() {
      * {Object} referencing the records selected in each panel
      */
     var selectedRecords = {
-        "csw": [],
+        "cswquerier": [],
+        "cswbrowser": [],
         "wms": [],
         "wfs": []
     };
@@ -88,7 +91,10 @@ GEOR.layerfinder = (function() {
             };
         };
         GEOR.cswbrowser.events.on({
-            "selectionchanged": selectionChangedListener.call(this, "csw")
+            "selectionchanged": selectionChangedListener.call(this, "cswbrowser")
+        });
+        GEOR.cswquerier.events.on({
+            "selectionchanged": selectionChangedListener.call(this, "cswquerier")
         });
         GEOR.wmsbrowser.events.on({
             "selectionchanged": selectionChangedListener.call(this, "wms")
@@ -97,7 +103,10 @@ GEOR.layerfinder = (function() {
             "selectionchanged": selectionChangedListener.call(this, "wfs")
         });
         
-        panels["csw"] = GEOR.cswbrowser.getPanel({
+        panels["cswquerier"] = GEOR.cswquerier.getPanel({
+            tabTip: "Trouvez des couches en cherchant dans les métadonnées"
+        });
+        panels["cswbrowser"] = GEOR.cswbrowser.getPanel({
             tabTip: "Trouvez des couches par mots clés"
         });
         var mapSRS = layerStore.map.getProjection();
@@ -115,12 +124,15 @@ GEOR.layerfinder = (function() {
             activeTab: 0,
             // required for WMS & WFS panels to have correct layout:
             deferredRender: true,
-            items: [panels["csw"], panels["wms"], panels["wfs"]],
+            items: [panels["cswquerier"], panels["cswbrowser"], panels["wms"], panels["wfs"]],
             listeners: {
                 'tabchange': function (tp, p) {
                     switch (p) {
-                    case panels["csw"]:
-                        currentTab = "csw";
+                    case panels["cswquerier"]:
+                        currentTab = "cswquerier";
+                        break;
+                    case panels["cswbrowser"]:
+                        currentTab = "cswbrowser";
                         break;
                     case panels["wms"]:
                         currentTab = "wms";
@@ -150,7 +162,7 @@ GEOR.layerfinder = (function() {
     // TODO : factorize & centralize this code on layer added in application layerStore
     var capabilitiesSuccess = function(record) {
         var data = record.data;
-        var layerName = record.get('name');
+        var layerName = record.get('layer_name');
         return function(store, records) {
             var index = store.find("name", layerName);
             if(index < 0) {
@@ -219,7 +231,7 @@ GEOR.layerfinder = (function() {
      * layerStore - {GeoExt.data.LayerStore} The application layer store.
      */
     var addSelectedLayers = function() {
-        var records = selectedRecords[currentTab];
+        var records = selectedRecords[currentTab], record;
         var recordsToAdd = [];
         // TODO here: we miss GEOR.waiter.show()
         // The pb is that it would be hidden on first XHR success.
@@ -227,7 +239,7 @@ GEOR.layerfinder = (function() {
         
         // we need to clone the layers
         for(var i=0, len=records.length; i<len; i++) {
-            var record = records[i];
+            record = records[i];
             if(record instanceof GeoExt.data.LayerRecord) {
                 // we're coming from the WMS or WFS tab
                 var layer = record.get("layer");
@@ -259,12 +271,12 @@ GEOR.layerfinder = (function() {
                         scope: this
                     });
                 }
-            } else if(record.get("name")) {
+            } else if(record.get("layer_name")) {
                 // we're coming from the CSW tab
                 // convert records to layer records
                 var store = new GEOR.ows.WMSCapabilities({
                     storeOptions: {
-                        url: record.data.wmsurl
+                        url: record.get('service_url')
                     },
                     success: capabilitiesSuccess.call(this, record),
                     failure: function() {
@@ -305,8 +317,11 @@ GEOR.layerfinder = (function() {
                 handler: function() {
                     addSelectedLayers();
                     switch (currentTab) {
-                    case "csw":
+                    case "cswbrowser":
                         GEOR.cswbrowser.clearSelection();
+                        break;
+                    case "cswquerier":
+                        GEOR.cswquerier.clearSelection();
                         break;
                     case "wms":
                         GEOR.wmsbrowser.clearSelection();
@@ -389,11 +404,6 @@ Ext.app.OWSUrlField = Ext.extend(Ext.form.TwinTriggerField, {
             this.triggers[0].hide();
             this.hasSearch = false;
             this.focus();
-            // conf
-            var conf = Ext.get('conf');
-            if (conf) {
-                conf.enableDisplayMode().show();
-            }
         }
     },
 
@@ -424,10 +434,5 @@ Ext.app.OWSUrlField = Ext.extend(Ext.form.TwinTriggerField, {
         this.hasSearch = true;
         this.triggers[0].show();
         this.focus();
-        // conf
-        var conf = Ext.get('conf');
-        if (conf) {
-            conf.enableDisplayMode().hide();
-        }
     }
 });

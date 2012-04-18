@@ -114,8 +114,8 @@ GEOR.cswbrowser = (function() {
                         }
                         this.push({
                             name: name,
-                            layername: item.name,
-                            wmsurl: item.value,
+                            layer_name: item.name,
+                            service_url: item.value,
                             metadataURL: metadataURL,
                             rights: rights.join(' - ') || "",
                             abstract: record.abstract ?
@@ -196,9 +196,9 @@ GEOR.cswbrowser = (function() {
             store: new Ext.data.JsonStore({
                 fields: [
                     {name: 'text', mapping: 'name'},
-                    {name: 'name', mapping: 'layername'},
+                    {name: 'layer_name'},
                     {name: 'description', mapping: 'abstract'},
-                    {name: 'wmsurl'},
+                    {name: 'service_url'},
                     {name: 'metadataURL'},
                     {name: 'rights'},
                     {name: 'qtip', mapping: 'abstract'},
