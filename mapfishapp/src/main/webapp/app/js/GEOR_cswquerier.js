@@ -337,6 +337,7 @@ GEOR.cswquerier = (function() {
                         triggerAction: 'all',
                         editable: false,
                         valueField: 'url',
+                        displayField: 'name',
                         width: 200,
                         tpl: new Ext.XTemplate(
                             '<tpl for=".">',
