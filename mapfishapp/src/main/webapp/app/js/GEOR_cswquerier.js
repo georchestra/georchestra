@@ -453,7 +453,11 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
                                 property: "AnyText",
                                 value: '*'+this.getValue()+'*'
                             })
-                        }
+                        },
+                        SortBy: [{
+                            property: "Relevance",
+                            order: "DESC"
+                        }]
                     },
                     startPosition: 1,
                     maxRecords: GEOR.config.MAX_CSW_RECORDS
