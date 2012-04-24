@@ -448,6 +448,7 @@ GEOR.cswbrowser = (function() {
                 items: [{
                     region: 'north',
                     xtype: 'form',
+                    labelWidth: 70,
                     border: false,
                     height: 35,
                     bodyStyle: 'padding: 5px;',
