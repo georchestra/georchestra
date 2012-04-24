@@ -23,7 +23,7 @@
 Ext.namespace("GEOR");
 
 /** api: constructor
- *  .. class:: CustomCSWRecordsReader(meta, recordType)
+ *  .. class:: GEOR.CustomCSWRecordsReader(meta, recordType)
  *  
  *      :arg meta: ``Object`` Reader configuration.
  *      :arg recordType: ``Array or Ext.data.Record`` An array of field
