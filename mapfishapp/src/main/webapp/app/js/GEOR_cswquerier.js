@@ -195,9 +195,11 @@ GEOR.cswquerier = (function() {
                         '<p>{md_title} - {[this.abstract(values.md_abstract)]}&nbsp;',
                         '<a href="{[this.metadataURL(values)]}" ext:qtip="Afficher la fiche de métadonnées dans une nouvelle fenêtre" ',
                         'target="_blank" onclick="window.open(this.href);return false;">plus</a></p>',
-                    '</td><td width="190" style="text-align:center;">',
-                        '<img src="{[this.thumbnailURL(values)]}" width="180" alt="lien imagette non valide" ',
-                        'class="thumb" ext:qtip="Cliquez pour sélectionner ou désélectionner la couche"></img>',
+                    '</td><td width="190" style="text-align:center;" ext:qtip="Cliquez pour sélectionner ou désélectionner la couche">',
+                        // tried with the "html only" solution provided on 
+                        // http://stackoverflow.com/questions/980855/inputting-a-default-image-in-case-the-src-arribute-of-an-html-img-is-not-valid
+                        // but the headers sent by GN are incorrect for the image to display as an HTML object tag
+                        '<img src="{[this.thumbnailURL(values)]}" class="thumb" onerror="this.src=\'app/img/broken.png\';"/>',
                     '</td></tr></table>',
                 '</div>',
             '</tpl>'
@@ -218,8 +220,13 @@ GEOR.cswquerier = (function() {
                 return GEOR.config.NO_THUMBNAIL_IMAGE_URL;
             },
             "abstract": function(text) {
-                // replace url links with <a href="XXX">lien</a>
-                // (long links can break the dataview layout)
+                // two things here:
+                // 1) shorten text
+                // 2) replace url links with <a href="XXX">lien</a>
+                //    (long links can break the dataview layout)
+                if (text.length >= 300) {
+                    text = text.slice(0, 299) + ' ... ';
+                }
                 var regexp = /(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/gi;
                 return text.replace(regexp,
                     '[<a href="$&" ext:qtip="Ouvrir l\'url $& dans une nouvelle fenêtre"' +

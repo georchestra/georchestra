@@ -414,10 +414,10 @@ GEOR.config = (function() {
         /**
          * Constant: NO_THUMBNAIL_IMAGE_URL
          * URL to a thumbnail image shown when none is provided by the CSW service
-         * Defaults to the provided one ('app/img/nopreview.gif')
+         * Defaults to the provided one ('app/img/nopreview.png')
          */
         NO_THUMBNAIL_IMAGE_URL: getCustomParameter("NO_THUMBNAIL_IMAGE_URL", 
-            'app/img/nopreview.gif'),
+            'app/img/nopreview.png'),
             
         /**
          * Constant: DEFAULT_THESAURUS_KEY
