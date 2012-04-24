@@ -233,9 +233,6 @@ GEOR.layerfinder = (function() {
     var addSelectedLayers = function() {
         var records = selectedRecords[currentTab], record;
         var recordsToAdd = [];
-        // TODO here: we miss GEOR.waiter.show()
-        // The pb is that it would be hidden on first XHR success.
-        // => we have to implement this properly with a counter.
         
         // we need to clone the layers
         for(var i=0, len=records.length; i<len; i++) {
@@ -258,6 +255,7 @@ GEOR.layerfinder = (function() {
                     // (typically the geometry name)
                     // from WFS DescribeFeatureType
                     var p = layer.protocol;
+                    GEOR.waiter.show(); // increments a counter
                     GEOR.ows.WFSDescribeFeatureType({
                         typeName: p.featureType,
                         owsURL: p.url
@@ -272,8 +270,9 @@ GEOR.layerfinder = (function() {
                     });
                 }
             } else if(record.get("layer_name")) {
-                // we're coming from the CSW tab
+                // we're coming from the CSW tabs
                 // convert records to layer records
+                GEOR.waiter.show(); // increments a counter
                 var store = new GEOR.ows.WMSCapabilities({
                     storeOptions: {
                         url: record.get('service_url')
