@@ -587,36 +587,16 @@ GEOR.managelayers = (function() {
         menuItems.push({
             iconCls: 'geor-btn-download',
             text: "Télécharger les données",
-            menu: new Ext.menu.Menu({
-                items: [{
-                    text: "de cette couche",
-                    iconCls: "geor-layer",
-                    handler: function() {
-                        submitData({
-                            layers: [{
-                                layername: layerRecord.get('name'),
-                                metadataURL: url || "",
-                                owstype: isWMS ? "WMS" : "WFS",
-                                owsurl: isWMS ? layer.url : layer.protocol.url
-                            }]
-                        })
-                    }
-                }, {
-                    text: "du service OGC",
-                    iconCls: "geor-service",
-                    handler: function() {
-                        var serviceUrl = isWMS ? layer.url : layer.protocol.url;
-                        submitData({
-                            services: [{
-                                text: serviceUrl,
-                                metadataURL: url || "",
-                                owstype: isWMS ? "WMS" : "WFS",
-                                owsurl: serviceUrl
-                            }]
-                        })
-                    }
-                }]
-            })
+            handler: function() {
+                submitData({
+                    layers: [{
+                        layername: layerRecord.get('name'),
+                        metadataURL: url || "",
+                        owstype: isWMS ? "WMS" : "WFS",
+                        owsurl: isWMS ? layer.url : layer.protocol.url
+                    }]
+                })
+            }
         });
         
         if (menuItems.length > 2) {
