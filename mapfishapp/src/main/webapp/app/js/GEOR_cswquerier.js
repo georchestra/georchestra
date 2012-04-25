@@ -446,7 +446,12 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
         // see http://osgeo-org.1560.n6.nabble.com/CSW-GetRecords-problem-with-spaces-tp3862749p3862750.html
         var v = this.getValue(),
             words = v.replace(new RegExp("[,;:/%()*!.\\[\\]~&=]","g"), ' ').split(' '),
-            filters = [];
+            // adding wms in the filters list helps getting records where a WMS layer is referenced:
+            filters = [new OpenLayers.Filter.Comparison({
+                type: "~",
+                property: "AnyText",
+                value: '*wms*'
+            })];
         Ext.each(words, function(word) {
             if (word) {
                 filters.push(
@@ -458,15 +463,11 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
                 );
             }
         });
-        if (filters.length <= 1) {
-            return filters[0] || new OpenLayers.Filter.Comparison({
-                type: "~", 
-                property: "AnyText",
-                value: '*'
-            });
+        if (filters.length == 1) {
+            return filters[0];
         } else {
             return new OpenLayers.Filter.Logical({
-                type: "&&", // "||" or "&&" ?
+                type: "&&",
                 filters: filters
             });
         }
