@@ -160,6 +160,12 @@ GEOR.cswquerier = (function() {
      * {Ext.app.FreetextField} the freetext field
      */
     var textField;
+    
+    /**
+     * Property: southPanel
+     * {Ext.Panel} the panel where the results count is displayed
+     */
+    var southPanel;
 
     /**
      * Method: onCSWRecordsStoreLoad
@@ -238,6 +244,35 @@ GEOR.cswquerier = (function() {
         
         return new Ext.XTemplate(tpl, context);
     };
+
+    /**
+     * Method: onCustomStoreLoad
+     * Callback on CustomStore load event
+     *
+     * Parameters:
+     * s - {Ext.data.Store} the store
+     */
+    var onCustomStoreLoad = function(s) {
+        var text,
+            mdCount = CSWRecordsStore.getCount(),
+            wmsCount = s.getCount();
+        
+        if (mdCount) {
+            text = (wmsCount) ? 
+                wmsCount+" couches" : 
+                "Aucune couche";
+            text += " dans "+mdCount+" métadonnées";
+            // a better indicator would be numberOfRecordsMatched > numberOfRecordsReturned
+            // but it is more difficult to obtain than mdCount.
+            // For the moment, we'll use this criteria:
+            if (mdCount == GEOR.config.MAX_CSW_RECORDS) {
+                text += " : précisez votre requête";
+            }
+        } else {
+            text = "Aucune métadonnée ne correspond aux termes saisis";
+        }
+        southPanel.body.dom.innerHTML = "<p>"+text+"</p>";
+    };
     
     /*
      * Public
@@ -281,7 +316,10 @@ GEOR.cswquerier = (function() {
                 customStore = new Ext.data.Store({
                     // all the job -- converting + filtering records -- 
                     // is done in this custom reader:
-                    reader: new GEOR.CustomCSWRecordsReader()
+                    reader: new GEOR.CustomCSWRecordsReader(),
+                    listeners: {
+                        "load": onCustomStoreLoad
+                    }
                 });
                 
                 dataview = new Ext.DataView({
@@ -315,6 +353,14 @@ GEOR.cswquerier = (function() {
                             return;
                         }
                     }
+                });
+                
+                southPanel = new Ext.Panel({ 
+                    region: 'south',
+                    border: false,
+                    height: 25,
+                    bodyStyle: 'padding: 5px;font: 11px tahoma,arial,helvetica,sans-serif;',
+                    html: "<p></p>"
                 });
             }
 
@@ -385,7 +431,7 @@ GEOR.cswquerier = (function() {
                             }
                         }
                     }
-                }]
+                }, southPanel]
             }, options));
         },
         
