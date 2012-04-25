@@ -8,18 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
-
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.geotools.data.wfs.WFSDataStoreFactory;
@@ -150,16 +138,17 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
             closeFailuresFile(failureFile);
 
             File archive = archiveExtraction(tmpExtractionBundle);
+            long fileSize = archive.length();
             long end = System.currentTimeMillis();
 
             String msg = String
-                    .format("Finished extraction into directory: %s achive is: %s \nExtraction took %s",
-                            tmpExtractionBundle, archive, time(start, end));
+                    .format("Finished extraction into directory: %s achive is: %s (size : %s bytes) \nExtraction took %s",
+                            tmpExtractionBundle, archive, fileSize, time(start, end));
             LOG.info(msg);
 
             if (!requestConfig.testing) {
                 try {
-                    emailNotice(successes, failures, oversized);
+                    requestConfig.email.sendDone(successes, failures, oversized, fileSize);
                 } catch (Throwable e) {
                     handleException(e);
                 }
@@ -293,101 +282,6 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
         e1.printStackTrace();
     }
     
-    public void emailNotice(String message) throws MessagingException {
-		emailNotice(new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>(), message);
-	}
-    
-	private void emailNotice(List<String> successes, List<String> failures,
-            List<String> oversized) throws MessagingException {
-		emailNotice(successes, failures, oversized, null);
-	}
-	
-    private void emailNotice(List<String> successes, List<String> failures,
-            List<String> oversized, String mesg) throws MessagingException {
-        String[] languages = requestConfig.emailParams.getLanguages();
-        final Properties props = System.getProperties();
-        props.put("mail.smtp.host", requestConfig.emailParams.getSmtpHost());
-        props.put("mail.protocol.port", requestConfig.emailParams.getSmptPort());
-        final Session session = Session.getInstance(props, null);
-        final MimeMessage message = new MimeMessage(session);
-        if (isValidEmailAddress(requestConfig.emailParams.getFrom())) {
-            message.setFrom(new InternetAddress(requestConfig.emailParams.getFrom()));
-        }
-        String[] recipients = requestConfig.emailParams.getRecipients();
-        boolean validRecipients = false;
-        for (String recipient : recipients) {
-            if (isValidEmailAddress(recipient)) {
-                validRecipients = true;
-                message.addRecipient(Message.RecipientType.TO,
-                        new InternetAddress(recipient));
-            }
-        }
-
-        if (!validRecipients) {
-            message.addRecipient(Message.RecipientType.TO, new InternetAddress(
-                    requestConfig.emailParams.getFrom()));
-            message.setSubject(
-                    "[ERREUR] Message non délivré : "
-                            + requestConfig.emailParams.getSubject(),
-                    requestConfig.emailParams.getSubjectEncoding());
-        } else {
-            message.setSubject(requestConfig.emailParams.getSubject(),
-                    requestConfig.emailParams.getSubjectEncoding());
-        }
-
-        Multipart multipart = new MimeMultipart();
-
-        if ((requestConfig.emailParams.getMessage() != null) || (mesg != null)) {
-            MimeBodyPart bodyPart = new MimeBodyPart();
-            String msg = mesg != null ? mesg : requestConfig.emailParams.getMessage();
-            msg = msg.replace("{successes}", format(successes));
-            msg = msg.replace("{failures}", format(failures));
-            msg = msg.replace("{oversized}", format(oversized));
-            bodyPart.setText(msg, requestConfig.emailParams.getBodyEncoding(), "html");
-            bodyPart.setContentLanguage(languages);
-            multipart.addBodyPart(bodyPart);
-        }
-
-        message.setContent(multipart);
-        LOG.debug("preparing to send extraction email");
-        Transport.send(message);
-        LOG.debug("extraction email has been sent to:\n"
-                + Arrays.toString(recipients));
-
-    }
-
-    private String format(List<String> list) {
-        if (list.isEmpty()) {
-            return "<p>aucune</p>";
-        }
-        StringBuilder b = new StringBuilder("<ul>");
-        for (String string : list) {
-            b.append("<li>");
-            b.append(string);
-            b.append("</li>");
-        }
-        b.append("</ul>");
-
-        return b.toString();
-    }
-
-    private static boolean isValidEmailAddress(String address) {
-        if (address == null) {
-            return false;
-        }
-
-        boolean hasCharacters = address.trim().length() > 0;
-        boolean hasAt = address.contains("@");
-
-        if (!hasCharacters || !hasAt)
-            return false;
-
-        String[] parts = address.trim().split("@", 2);
-
-        boolean mainPartNotEmpty = parts[0].trim().length() > 0;
-        boolean hostPartNotEmpty = parts[1].trim().length() > 0;
-        return mainPartNotEmpty && hostPartNotEmpty;
-    }
 
     private void extractWcsLayer(ExtractorLayerRequest request,
             File requestBaseDir) throws IOException, TransformException,

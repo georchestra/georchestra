@@ -65,6 +65,10 @@ public class ExpiredArchiveDaemon extends TimerTask implements FilenameFilter {
     public void setExpiry(long expiry) {
         this.expiry = expiry * DAYS;
     }
+    
+    public long getExpiry() {
+    	return this.expiry / DAYS;
+    }
 
     /**
      * The number of minutes between sweeps checking the expiration of the files

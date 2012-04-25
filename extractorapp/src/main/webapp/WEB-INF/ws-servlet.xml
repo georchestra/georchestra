@@ -37,14 +37,8 @@
                   value="application/xml"/>
         <property name="responseCharset" 
                   value="UTF-8"/>
-        <property name="emailDefaults" 
-                  ref="emailDefaults"/>
-        <property name="emailTemplateFile" 
-                  value="/WEB-INF/templates/extractor-email-template.txt"/>
-        <property name="emailAckTemplateFile" 
-                  value="/WEB-INF/templates/extractor-email-ack-template.txt"/>                  
-        <property name="emailSubject"
-                  value="Votre demande d'extraction"/>
+        <property name="emailFactory" 
+                  ref="emailFactory"/>
         <property name="maxCoverageExtractionSize"
                   value="${maxCoverageExtractionSize}"/>
         <property name="remoteReproject"
@@ -79,8 +73,8 @@
     </bean>
 
     <!-- Email configuration -->
-    <bean id="emailDefaults" 
-          class="extractorapp.ws.EmailDefaultParams">
+    <bean id="emailFactory" 
+          class="${emailfactory}">
         <property name="smtpHost" 
                   value="${smtpHost}"/>
         <property name="smtpPort" 
@@ -95,6 +89,14 @@
                   value="UTF-8"/>
         <property name="languages"
                   value="fr,fra"/>
+        <property name="expireDeamon"
+                  ref="expire-daemon"/>
+        <property name="emailTemplateFile" 
+                  value="/WEB-INF/templates/extractor-email-template.txt"/>
+        <property name="emailAckTemplateFile" 
+                  value="/WEB-INF/templates/extractor-email-ack-template.txt"/>
+        <property name="emailSubject"
+                  value="${emailsubject}"/>       
     </bean>
     
       <!-- View resolver Required to access jsps in WEB-INF/jsp directory-->

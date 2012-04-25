@@ -25,8 +25,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.ServletContextAware;
 
-import extractorapp.ws.CompleteEmailParams;
-import extractorapp.ws.EmailDefaultParams;
+import extractorapp.ws.AbstractEmailFactory;
+import extractorapp.ws.Email;
 import extractorapp.ws.SharedConstants;
 import extractorapp.ws.acceptance.CheckFormAcceptance;
 import extractorapp.ws.extractor.task.ExecutionMetadata;
@@ -56,10 +56,7 @@ public class ExtractorController implements ServletContextAware {
     private String                      responseTemplateFile;
     private String                      reponseMimeType;
     private String                      responseCharset;
-    private EmailDefaultParams          emailDefaults;
-    private String                      emailAckTemplateFile;
-    private String                      emailTemplateFile;
-    private String                      emailSubject;
+    private AbstractEmailFactory		 emailFactory;
     private ServletContext              servletContext;
     private String                      servletUrl;
     private String                      extractionFolderPrefix;
@@ -268,21 +265,20 @@ public class ExtractorController implements ServletContextAware {
 			if (requests.size() > 0) {
 				
 				String[] recipients = requests.get(0)._emails;
-				String message = replace(readFile(emailTemplateFile),
-						url.toString(), recipients);
-				CompleteEmailParams emailParams = new CompleteEmailParams(
-						emailDefaults, recipients, emailSubject, message);
+				Email email = emailFactory.createEmail(request, recipients,
+						url.toString());
+				
 				String username = request.getHeader("sec-username");
 				String roles = request.getHeader("sec-roles");
 				RequestConfiguration requestConfig = new RequestConfiguration(
-						requests, requestUuid, emailParams, 
+						requests, requestUuid, email, 
 		                servletContext, testing, username, roles, adminCredentials, secureHost, extractionFolderPrefix, 
 		                maxCoverageExtractionSize, remoteReproject, useCommandLineGDAL, postData);
 				ExtractionTask extractor = new ExtractionTask(requestConfig);
 				
 				LOG.info("Sending mail to user");
 				try {
-					extractor.emailNotice(readFile(emailAckTemplateFile));
+					email.sendAck();
 				} catch (Throwable e) {
 					LOG.error("Error while sending the notification to the user.", e);
 				}
@@ -334,27 +330,12 @@ public class ExtractorController implements ServletContextAware {
         this.responseCharset = charset;
     }
 
-    public void setEmailDefaults(EmailDefaultParams emailDefaults) {
-        this.emailDefaults = emailDefaults;
-        emailDefaults.freeze();
-    }
-
     /**
      * Sets the template used to will be emailed to the user when extraction is
      * complete.
      * 
      * Each instance of {link} will be replaced with the extraction bundle URL
      */
-    public void setEmailTemplateFile(String emailTemplate) throws IOException {
-        this.emailTemplateFile = emailTemplate;
-    }
-
-    public void setEmailAckTemplateFile(String emailTemplate) throws IOException {
-        this.emailAckTemplateFile = emailTemplate;
-    }
-    public void setEmailSubject(String emailSubject) {
-        this.emailSubject = emailSubject;
-    }
     
     public void setServletUrl(String servletUrl) {
         this.servletUrl = servletUrl;
@@ -422,5 +403,13 @@ public class ExtractorController implements ServletContextAware {
     public void setServletContext(ServletContext servletContext) {
         this.servletContext = servletContext;
     }
+
+	public AbstractEmailFactory getEmailFactory() {
+		return emailFactory;
+	}
+
+	public void setEmailFactory(AbstractEmailFactory emailFactory) {
+		this.emailFactory = emailFactory;
+	}
 }
 

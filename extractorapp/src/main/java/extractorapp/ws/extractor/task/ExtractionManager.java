@@ -81,6 +81,7 @@ public class ExtractionManager {
      * Submits the task taking into account the task priorities.
      * 
      * @param newTask
+     * @throws Exception 
      */
 	public synchronized void submit(ExtractionTask extractor) {
 
@@ -242,7 +243,8 @@ public class ExtractionManager {
     	
         List<ExtractionTask> queue = new LinkedList<ExtractionTask>();
         for (ExtractionTask task : this.readyTaskQueue) {
-        	if(task.executionMetadata.getState().equals(ExecutionState.WAITING)){
+        	ExecutionState st = task.executionMetadata.getState();
+        	if(st.equals(ExecutionState.WAITING)){
                 queue.add(task);
         	}
         }

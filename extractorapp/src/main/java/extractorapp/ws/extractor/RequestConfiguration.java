@@ -8,6 +8,7 @@ import javax.servlet.ServletContext;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 
 import extractorapp.ws.CompleteEmailParams;
+import extractorapp.ws.Email;
 
 public class RequestConfiguration {
     
@@ -17,7 +18,7 @@ public class RequestConfiguration {
     
     public final List<ExtractorLayerRequest> requests;
     public final UUID requestUuid;
-    public final CompleteEmailParams emailParams;
+    public final Email email;
     public final ServletContext servletContext;
     public final boolean testing;
     public final String username;
@@ -32,7 +33,7 @@ public class RequestConfiguration {
 	public final String strRequest;
     
     public RequestConfiguration(List<ExtractorLayerRequest> requests,
-            UUID requestUuid, CompleteEmailParams emailParams,
+            UUID requestUuid, Email email,
             ServletContext servletContext, boolean testing, String username,
             String roles, UsernamePasswordCredentials adminCredentials,
             String secureHost, String extractionFolderPrefix, long maxCoverageExtractionSize, 
@@ -43,7 +44,7 @@ public class RequestConfiguration {
         this.strRequest = strRequest;
         this.requests = requests;
         this.requestUuid = requestUuid;
-        this.emailParams = emailParams;
+        this.email = email;
         this.servletContext = servletContext;
         this.testing = testing;
         this.username = username;
