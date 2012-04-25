@@ -25,3 +25,10 @@ proxy.mapping=\
     <entry key="catalogapp" value="${proxy.defaultTarget}/catalogapp-private/" />\
     <entry key="geoserver" value="http://localhost:8180/geoserver/" />
 
+header.mapping=\
+    <entry key="sec-email"     value="mail"/>\
+    <entry key="sec-firstname" value="givenName"/>\
+    <entry key="sec-lastname"  value="sn"/>\
+    <entry key="sec-org"       value="o"/>\
+    <entry key="sec-tel"       value="telephoneNumber"/>\
+

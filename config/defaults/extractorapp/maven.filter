@@ -24,4 +24,5 @@ priveleged_admin_pass=@shared.privileged.geoserver.pass@
 dlformjdbcurl=@shared.download_form.jdbcurl@?user=@shared.psql.user@&password=@shared.psql.pass@
 dlformactivated=@shared.download_form.activated@
 
-maxExtractions=5
+emailfactory=extractorapp.ws.EmailFactoryDefault
+email_subject="Votre demande d'extraction"
