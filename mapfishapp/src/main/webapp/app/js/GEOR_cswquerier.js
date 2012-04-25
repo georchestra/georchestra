@@ -16,6 +16,7 @@
  * @include GeoExt.data.CSW.js
  * @include OpenLayers/Format/CSWGetRecords/v2_0_2.js
  * @include OpenLayers/Filter/Comparison.js
+ * @include OpenLayers/Filter/Logical.js
  * @include GEOR_util.js
  * @include GEOR_config.js
  */
@@ -440,6 +441,36 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
             this.focus();
         }
     },
+    
+    createFilter: function() {
+        // see http://osgeo-org.1560.n6.nabble.com/CSW-GetRecords-problem-with-spaces-tp3862749p3862750.html
+        var v = this.getValue(),
+            words = v.replace(new RegExp("[,;:/%()*!.\\[\\]~&=]","g"), ' ').split(' '),
+            filters = [];
+        Ext.each(words, function(word) {
+            if (word) {
+                filters.push(
+                    new OpenLayers.Filter.Comparison({
+                        type: "~", 
+                        property: "AnyText",
+                        value: '*'+word+'*'
+                    })
+                );
+            }
+        });
+        if (filters.length <= 1) {
+            return filters[0] || new OpenLayers.Filter.Comparison({
+                type: "~", 
+                property: "AnyText",
+                value: '*'
+            });
+        } else {
+            return new OpenLayers.Filter.Logical({
+                type: "&&", // "||" or "&&" ?
+                filters: filters
+            });
+        }
+    },
 
     // search
     onTrigger2Click: function() {
@@ -455,11 +486,7 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
                         },
                         Constraint: {
                             version: "1.1.0",
-                            Filter: new OpenLayers.Filter.Comparison({
-                                type: "~", 
-                                property: "AnyText",
-                                value: '*'+this.getValue()+'*'
-                            })
+                            Filter: this.createFilter()
                         },
                         SortBy: [{
                             property: "Relevance",
