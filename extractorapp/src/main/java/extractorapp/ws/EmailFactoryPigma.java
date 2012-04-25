@@ -8,7 +8,13 @@ import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 public class EmailFactoryPigma extends AbstractEmailFactory {
+	
+	protected static final Log LOG = LogFactory.getLog(EmailFactoryPigma.class
+            .getPackage().getName());
 	
 	@Override
 	public Email createEmail(HttpServletRequest request, final String[] recipients,
@@ -18,6 +24,7 @@ public class EmailFactoryPigma extends AbstractEmailFactory {
 		final String msgAck = readFile(request, emailAckTemplateFile);
 		final String msgDone = readFile(request, emailTemplateFile);
 		final String conv = request.getHeader("sec-convention");
+		
 		return new Email(request, recipients, emailSubject,
 				this.smtpHost,
 				this.smtpPort,
@@ -31,6 +38,7 @@ public class EmailFactoryPigma extends AbstractEmailFactory {
 		            List<String> oversized, long fileSize) throws MessagingException {
 				
 		        LOG.debug("preparing to send extraction done email");
+		        LOG.debug("pigma convention : " + conv);
 		        String msg = new String(msgDone);
 		        if (msg != null) {
 		            msg = msg.replace("{link}", url);
@@ -39,7 +47,7 @@ public class EmailFactoryPigma extends AbstractEmailFactory {
 		            msg = msg.replace("{successes}", format(successes));
 		            msg = msg.replace("{failures}", format(failures));
 		            msg = msg.replace("{oversized}", format(oversized));
-		            msg = msg.replace("{convention}", conv);
+		            msg = msg.replace("{convention}", conv == null ? "" : conv);
 		            msg = formatTimeEstimation(msg, fileSize);
 		        }
 		        sendMsg(msg);
