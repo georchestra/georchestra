@@ -85,7 +85,10 @@ GEOR.layerfinder = (function() {
                 selectedRecords[tab] = records;
                 if (records.length) {
                     addButton.enable();
+                    //addButton.getEl().parent().highlight();
+                    addButton.setText('Ajouter ('+records.length+')');
                 } else {
+                    addButton.setText('Ajouter');
                     addButton.disable();
                 }
             };
@@ -143,7 +146,10 @@ GEOR.layerfinder = (function() {
                     }
                     if (selectedRecords[currentTab].length>0) {
                         addButton.enable();
+                        addButton.setText('Ajouter ('+selectedRecords[currentTab].length+')');
+                        //addButton.getEl().parent().highlight();
                     } else {
+                        addButton.setText('Ajouter');
                         addButton.disable();
                     }
                 }
