@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
-import javax.mail.internet.MimeBodyPart;
 import javax.servlet.http.HttpServletRequest;
 
 public class EmailFactoryPigma extends AbstractEmailFactory {
@@ -34,7 +33,6 @@ public class EmailFactoryPigma extends AbstractEmailFactory {
 		        LOG.debug("preparing to send extraction done email");
 		        String msg = new String(msgDone);
 		        if (msg != null) {
-		            MimeBodyPart bodyPart = new MimeBodyPart();
 		            msg = msg.replace("{link}", url);
 		            msg = msg.replace("{emails}", Arrays.toString(recipients));
 		            msg = msg.replace("{expiry}", String.valueOf(expiry));
@@ -43,8 +41,6 @@ public class EmailFactoryPigma extends AbstractEmailFactory {
 		            msg = msg.replace("{oversized}", format(oversized));
 		            msg = msg.replace("{convention}", conv);
 		            msg = formatTimeEstimation(msg, fileSize);
-		            bodyPart.setText(msg, bodyEncoding, "html");
-		            bodyPart.setContentLanguage(languages);
 		        }
 		        sendMsg(msg);
 		    }

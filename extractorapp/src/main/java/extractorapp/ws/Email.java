@@ -95,6 +95,8 @@ public abstract class Email {
             MimeBodyPart bodyPart = new MimeBodyPart();
             bodyPart.setText(msg, bodyEncoding, "html");
             bodyPart.setContentLanguage(languages);
+            multipart.addBodyPart(bodyPart);
+            LOG.debug(msg);
         }
 
         message.setContent(multipart);

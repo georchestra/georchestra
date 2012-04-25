@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
-import javax.mail.internet.MimeBodyPart;
 import javax.servlet.http.HttpServletRequest;
 
 public class EmailFactoryDefault extends AbstractEmailFactory {
@@ -33,15 +32,12 @@ public class EmailFactoryDefault extends AbstractEmailFactory {
 		        LOG.debug("preparing to send extraction done email");
 		        String msg = new String(msgDone);
 		        if (msg != null) {
-		            MimeBodyPart bodyPart = new MimeBodyPart();
 		            msg = msg.replace("{link}", url);
 		            msg = msg.replace("{emails}", Arrays.toString(recipients));
 		            msg = msg.replace("{expiry}", String.valueOf(expiry));
 		            msg = msg.replace("{successes}", format(successes));
 		            msg = msg.replace("{failures}", format(failures));
 		            msg = msg.replace("{oversized}", format(oversized));
-		            bodyPart.setText(msg, bodyEncoding, "html");
-		            bodyPart.setContentLanguage(languages);
 		        }
 		        sendMsg(msg);
 		    }
