@@ -1,6 +1,16 @@
 Le job d'extraction que vous avez soumis à la plateforme geOrchestra est maintenant terminé.
 <br/>
-Cliquez sur le lien suivant pour télécharger votre archive :
+Cliquez sur le lien suivant pour télécharger votre archive (disponible pendant {expiry} jours) :
 <p> 
 <a href="{link}">{link}</a>
 </p>
+Les couches suivantes ont été extraites avec succès:
+{successes}
+<br/>
+L'extraction des couches suivantes a échoué. Le fichier 
+failures.html contient plus d'informations:
+{failures}
+<br/>
+L'extraction des couches suivantes a été annulée. La zone demandée a été trop grande:
+{oversized}
+<br/>

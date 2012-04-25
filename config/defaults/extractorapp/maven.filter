@@ -25,4 +25,4 @@ dlformjdbcurl=@shared.download_form.jdbcurl@?user=@shared.psql.user@&password=@s
 dlformactivated=@shared.download_form.activated@
 
 emailfactory=extractorapp.ws.EmailFactoryDefault
-email_subject="Votre demande d'extraction"
+email_subject=Votre demande d'extraction
