@@ -258,10 +258,15 @@ GEOR.cswquerier = (function() {
             wmsCount = s.getCount();
         
         if (mdCount) {
-            text = (wmsCount) ? 
-                wmsCount+" couches" : 
-                "Aucune couche";
-            text += " dans "+mdCount+" métadonnées";
+            if (wmsCount == 0) {
+                text = "Aucune couche";
+            } else if (wmsCount == 1) {
+                text = "1 couche";
+            } else {
+                text = wmsCount+" couches";
+            }
+            text += " dans "+mdCount+" ";
+            text += (mdCount > 1) ? "métadonnées" : "métadonnée";
             // a better indicator would be numberOfRecordsMatched > numberOfRecordsReturned
             // but it is more difficult to obtain than mdCount.
             // For the moment, we'll use this criteria:
