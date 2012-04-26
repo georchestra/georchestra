@@ -14,7 +14,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Future;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
@@ -25,7 +24,7 @@ public class ExtractionManager {
 	
     private static final Log LOG = LogFactory.getLog(ExtractionManager.class.getPackage().getName());
     
-    private ThreadPoolExecutor executor;
+    private PriorityThreadPoolExecutor executor;
     private int maxExtractions;
     private int minThreads;
 
@@ -35,23 +34,14 @@ public class ExtractionManager {
     
     /** maintains the tasks ready to execute */
     /** comparison by priorities */
-    private Comparator<ExtractionTask> taskComparator = new Comparator<ExtractionTask>(){
 
-        @Override
-        public int compare(ExtractionTask task1, ExtractionTask task2) {
-        	
-        	return task2.executionMetadata.getPriority().compareTo(task1.executionMetadata.getPriority());
-        }
-        
-    };
     private final static int INITIAL_CAPACITY = 20;
-    private Queue<ExtractionTask> readyTaskQueue = new PriorityBlockingQueue<ExtractionTask>(INITIAL_CAPACITY, taskComparator); 
+    private Queue<ExtractionTask> readyTaskQueue = new PriorityBlockingQueue<ExtractionTask>(INITIAL_CAPACITY); 
     
     private Collection<ExtractionTask> cancelledTaskQueue = new PriorityBlockingQueue<ExtractionTask>();
     
     /** maintains the paused tasks. They can be selected by the user in random way */
     private Map<String, ExtractionTask> pausedTasks = Collections.synchronizedMap(new HashMap<String, ExtractionTask>());
-    
     
     public synchronized void init() {
         BlockingQueue<Runnable> workQueue = new PriorityBlockingQueue<Runnable>();
@@ -65,7 +55,7 @@ public class ExtractionManager {
                 return thread;
             }
         };
-        executor = new ThreadPoolExecutor(minThreads, maxExtractions, 5,
+        executor = new PriorityThreadPoolExecutor(minThreads, maxExtractions, 5,
                 TimeUnit.SECONDS, workQueue, threadFactory);
     }
 
