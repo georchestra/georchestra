@@ -76,7 +76,18 @@ Ext.onReady(function(){
     var store = Ext.create('Ext.data.Store', {
         autoLoad: true,
         model: 'Task',
-        sorters: { property: 'priority', direction : 'DESC' }
+        sorters: { property: 'priority', direction : 'DESC' },
+        listeners: {
+        	load : {
+        		fn : function(s) {
+        			var i = s.find("status","RUNNING");
+                    if(i >= 0) {
+                    	s.getAt(i).set("priority", 3);
+                    	s.sort();
+                    }
+        		}
+        	}
+        }
     });
     
     var grid = Ext.create('Ext.grid.Panel', {
@@ -130,6 +141,9 @@ Ext.onReady(function(){
                         return '<img src="images/gear.png" alt="priorité standard"></img>';
                         break;
                     case 2:
+                        return '<img src="images/gear--plus.png" alt="priorité haute"></img>';
+                        break;
+                    case 3:
                         return '<img src="images/gear--plus.png" alt="priorité haute"></img>';
                         break;
                     default:
