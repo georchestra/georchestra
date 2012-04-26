@@ -75,7 +75,8 @@ Ext.onReady(function(){
 
     var store = Ext.create('Ext.data.Store', {
         autoLoad: true,
-        model: 'Task'
+        model: 'Task',
+        sorters: { property: 'priority', direction : 'DESC' }
     });
     
     var grid = Ext.create('Ext.grid.Panel', {
