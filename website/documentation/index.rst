@@ -6,7 +6,7 @@ Documentation
 
 Cette section rassemble la documentation autour du projet geOrchestra. Vous 
 pouvez télécharger la documentation en un seul fichier PDF : 
-`georchestra.pdf <_static/georchestra_26042012.pdf>`_
+`georchestra.pdf <http://svn.georchestra.org/georchestra/trunk/website/documentation/_static/georchestra_26042012.pdf>`_
 
 Gouvernance
 ==============
