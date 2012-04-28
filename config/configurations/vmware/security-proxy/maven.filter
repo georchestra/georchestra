@@ -2,7 +2,7 @@ public_host=@shared.server.name@
 
 #LDAP config
 # /!\ avoid the trailing '/' /!\
-ldapUrl=ldap://localhost:389
+ldapUrl=@shared.ldapUrl@
 baseDN=@shared.ldap.baseDn@
 userSearchBaseDN=@shared.ldap.userSearchBaseDN@
 authoritiesBaseDN=ou=groups
@@ -28,7 +28,7 @@ proxy.mapping=<entry key="extractorapp" value="http://localhost:8080/extractorap
 camptocamp.security.loglevel=ALL
 jasig.loglevel=ALL
 springframework.loglevel=ALL
-log.dir=/srv/tomcat/tomcat1/logs
+log.dir=@shared.log.dir@
 log.filename=security-proxy.log
 # options are StandardOut, FileAppender or HTMLAppender (zero or more and comma separated) 
 log.appender=FileAppender

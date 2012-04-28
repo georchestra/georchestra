@@ -85,6 +85,36 @@ GEOR.custom = {
      * of the thesaurus to use as the default (selected) one.
      */
     DEFAULT_THESAURUS_KEY: 'external.place.DepartementFR',
+
+    /**
+     * Constant: CATALOGS
+     * List of catalogs for freetext search
+     */
+    CATALOGS: [
+        ['http://localhost/geonetwork/srv/fr/csw', 'geOrchestra/localhost'],
+        ['http://geobretagne.fr/geonetwork/srv/fr/csw', 'geOrchestra/GéoBretagne'],
+        ['http://georchestra.bretagne-environnement.org/geonetwork/srv/fr/csw', 'geOrchestra/GIP BE'],
+        ['http://geowww.agrocampus-ouest.fr/geonetwork/srv/fr/csw','geOrchestra/Agrocampus Ouest'], 
+        ['http://ids.pigma.org/geonetwork/srv/fr/csw','geOrchestra/PIGMA']
+    ], 
+
+    
+    /**
+     * Constant: DEFAULT_CSW_URL
+     * CSW URL which should be used by default for freetext search
+     * Note: must be one of the URLs in the above CATALOGS config option
+     */
+    DEFAULT_CSW_URL: 'http://localhost/geonetwork/srv/fr/csw',
+
+    /**
+     * Constant: MAX_CSW_RECORDS
+     * The maximum number of CSW records queried for catalog search
+     * Note: if you set this to a low value, you run the risk of not having 
+     * enough results (even 0). On the contrary, setting a very high value 
+     * might result in browser hanging (too much XML data to parse).
+     * Defaults to 20.
+     */
+    MAX_CSW_RECORDS: 20,
         
     /**
      * Constant: MAX_FEATURES
@@ -143,9 +173,6 @@ GEOR.custom = {
      * "wmsc_url": undefined,
      */
     WMSC2WMS: {
-        "http://osm.geobretagne.fr/service/wms": 
-            "http://geobretagne.fr/osm-google", 
-        "http://geobretagne.fr/geoserver/gwc/service/wms": 
             undefined // no trailing comma
     },
 
@@ -365,6 +392,13 @@ GEOR.custom = {
      * Defaults to "/doc/html/documentation.html#viewer"
      */
     //HELP_URL: "/doc/html/documentation.html#viewer",
+
+    /**
+     * Constant: HEADER_HEIGHT
+     * {Integer} height of the header in pixels
+     * Defaults to 90
+     */
+     HEADER_HEIGHT: 0,
     
     /**
      * Constant: CONFIRM_LAYER_REMOVAL
@@ -378,15 +412,16 @@ GEOR.custom = {
      * {Array} List of externals WMS to display in the WMS servers tab.
      */
     WMS_SERVERS: [
+        {"name": "GeoServer local", "url":"http://@shared.server.name@/geoserver/wms"},
+        {"name": "GeoServer local couches edit", "url":"http://@shared.server.name@/geoserver/geor_edit/wms"},
+        {"name": "GeoServer local couches referentiels", "url":"http://@shared.server.name@/geoserver/geor_loc/wms"},
         {"name": "GeoBretagne", "url": "http://geobretagne.fr/geoserver/wms"},
-        {"name": "PIGMA - FD Chasse 33", "url": "http://@shared.server.name@/geoserver/fdc33/wms"},
-        {"name": "PIGMA - FD Peche 33", "url": "http://@shared.server.name@/geoserver/fdp33/wms"},
+        {"name": "GeoBretagne OpenStreetMap", "url": "http://osm.geobretagne.fr/gwc01/service/wms"},
+        {"name": "PIGMA - FD Chasse 33", "url": "http://ids.pigma.org/geoserver/fdc33/wms"},
+        {"name": "PIGMA - FD Peche 33", "url": "http://ids.pigma.org/geoserver/fdp33/wms"},
         {"name": "C2CPC61 - toutes les couches", "url": "http://c2cpc61.camptocamp.com/geoserver/wms"},
         {"name": "C2CPC61 - serveur virtuel geor_loc", "url": "http://c2cpc61.camptocamp.com/geoserver/geor_loc/wms"},
         {"name": "C2CPC61 - serveur virtuel geor_edit", "url": "http://c2cpc61.camptocamp.com/geoserver/geor_edit/wms"},
-        {"name": "Sandre/zonages", "url": "http://services.sandre.eaufrance.fr/geo/zonage"},
-        {"name": "Sandre/ouvrages", "url": "http://services.sandre.eaufrance.fr/geo/ouvrage"},
-        {"name": "Sandre/stations", "url": "http://services.sandre.eaufrance.fr/geo/stations"},
         {"name": "BRGM/géologie", "url": "http://geoservices.brgm.fr/geologie"},
         {"name": "BRGM/risques", "url": "http://geoservices.brgm.fr/risques"},
         {"name": "Cartorisque33, risques naturels", "url": "http://cartorisque.prim.net/wms/33"},
@@ -394,13 +429,9 @@ GEOR.custom = {
         {"name": "Cartorisque47, risques naturels", "url": "http://cartorisque.prim.net/wms/47"},
         {"name": "Cartorisque40, risques naturels", "url": "http://cartorisque.prim.net/wms/40"},
         {"name": "Cartorisque64, risques naturels", "url": "http://cartorisque.prim.net/wms/64"},
-        {"name": "Carmen", "url": "http://ws.carmen.application.developpement-durable.gouv.fr/WFS/10/Nature_Paysage"},
         {"name": "GeoSignal", "url": "http://www.geosignal.org/cgi-bin/wmsmap"},
-        {"name": "Corine Land Cover", "url": "http://sd1878-2.sivit.org/geoserver/wms"},
         {"name": "GeoLittoral", "url": "http://geolittoral.application.equipement.gouv.fr/wms/metropole"},
-        {"name": "Gest'Eau", "url": "http://gesteau.oieau.fr/service"},
-        {"name": "IFREMER/littoral", "url": "http://www.ifremer.fr/services/wms1"},
-        {"name": "Cartelie/CETE Ouest", "url": "http://mapserveur.application.developpement-durable.gouv.fr/map/mapserv?map%3D%2Fopt%2Fdata%2Fcarto%2Fcartelie%2Fprod%2FCETE_Ouest%2Fxdtyr36laj.www.map"}
+        {"name": "IFREMER/littoral", "url": "http://www.ifremer.fr/services/wms1"}
     ],
     
     /**
@@ -408,13 +439,9 @@ GEOR.custom = {
      * {Array} List of externals WFS to display in the WFS servers tab.
      */
     WFS_SERVERS: [
-        {"name": "GeoBretagne", "url": "http://geobretagne.fr/geoserver/wfs"},
-        {"name": "C2CPC61 - toutes les couches", "url": "http://c2cpc61.camptocamp.com/geoserver/wfs"},
-        {"name": "C2CPC61 - serveur virtuel geor_loc", "url": "http://c2cpc61.camptocamp.com/geoserver/geor_loc/wfs"},
-        {"name": "C2CPC61 - serveur virtuel geor_edit", "url": "http://c2cpc61.camptocamp.com/geoserver/geor_edit/wfs"},
-        {"name": "PIGMA - FD Chasse 33", "url": "http://@shared.server.name@/geoserver/fdc33/wfs"},
-        {"name": "PIGMA - FD Peche 33", "url": "http://@shared.server.name@/geoserver/fdp33/wfs"},
-        {"name": "Corine Land Cover", "url": "http://sd1878-2.sivit.org/geoserver/wfs"}
+        {"name": "GeoServer local", "url":"http://@shared.server.name@/geoserver/wms"},
+        {"name": "GeoServer local couches edit", "url":"http://@shared.server.name@/geoserver/geor_edit/wms"},
+        {"name": "GeoServer local couches referentiels", "url":"http://@shared.server.name@/geoserver/geor_loc/wms"}
     ]
     
     // No trailing comma for the last line (or IE will complain)
