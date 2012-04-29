@@ -173,7 +173,6 @@ GEOR.custom = {
      * "wmsc_url": undefined,
      */
     WMSC2WMS: {
-            undefined // no trailing comma
     },
 
 
