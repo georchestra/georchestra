@@ -255,7 +255,8 @@ public class WfsExtractor {
         if (request._format.equalsIgnoreCase("shp")) {
             writer = new ShpFeatureWriter(progressListener, sourceSchema, basedir, features);
         } else if (request._format.equalsIgnoreCase("mif")) {
-        	writer = new MifFeatureWriter(progressListener, sourceSchema, basedir, features);
+        	// writer = new MifFeatureWriter(progressListener, sourceSchema, basedir, features);
+        	writer = new OGRFeatureWriter(progressListener, sourceSchema,  basedir, OGRFeatureWriter.FileFormat.mif, features);
         } else if (request._format.equalsIgnoreCase("tab")) {
         	writer = new OGRFeatureWriter(progressListener, sourceSchema,  basedir, OGRFeatureWriter.FileFormat.tab, features);
         } else {

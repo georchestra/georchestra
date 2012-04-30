@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import org.bridj.Pointer;
 import org.bridj.ValuedEnum;
@@ -247,19 +248,23 @@ public class OGRDataStore extends ContentDataStore {
             // either open datasource, or try creating one
             Pointer<Pointer<Byte>> optionsPointer = null;
             if (options != null && options.length > 0) {
-                optionsPointer = pointerToCStrings(options);
+            	
+                optionsPointer = Pointer.pointerToCStrings(options);
             }
-            dataSource = openOrCreateDataSource(options, dataSource, optionsPointer);
+// 				this method fail if optionsPointer is not a null array             
+//            dataSource = openOrCreateDataSource(options, dataSource, optionsPointer);
+            Pointer<Pointer<Byte>>opt = Pointer.pointerToCStrings(new String[]{});
+            dataSource = openOrCreateDataSource(options, dataSource, opt); 
 
             FeatureTypeMapper mapper = new FeatureTypeMapper();
 
             layer = createNewLayer(schema, dataSource, optionsPointer, mapper);
 
             // check the ability to create fields
-            if (OGR_L_TestCapability(layer, pointerToCString(OLCCreateField)) == 0) {
-                throw new DataSourceException(
-                        "OGR reports it's not possible to create fields on this layer");
-            }
+//            if (OGR_L_TestCapability(layer, pointerToCString(OLCCreateField)) == 0) {
+//                throw new DataSourceException(
+//                        "OGR reports it's not possible to create fields on this layer");
+//            }
 
             // create fields
             Map<String, String> nameMap = new HashMap<String, String>();
@@ -343,8 +348,8 @@ public class OGRDataStore extends ContentDataStore {
                 .getCoordinateReferenceSystem());
 
         // create the layer
-        layer = OGR_DS_CreateLayer(dataSource, pointerToCString(schema.getTypeName()),
-                spatialReference, ogrGeomType, optionsPointer);
+        Pointer<Byte> typeName = pointerToCString(schema.getTypeName());
+		layer = OGR_DS_CreateLayer(dataSource, typeName, spatialReference, ogrGeomType, optionsPointer);
         if (layer == null) {
             throw new DataSourceException("Could not create the OGR layer: "
                     + OGRUtils.getCString(CPLGetLastErrorMsg()));
@@ -359,8 +364,7 @@ public class OGRDataStore extends ContentDataStore {
         } catch (IOException e) {
             if (ogrDriver != null) {
                 Pointer driver = OGRGetDriverByName(pointerToCString(ogrDriver));
-                dataSource = OGR_Dr_CreateDataSource(driver, pointerToCString(ogrSourceName),
-                        optionsPointer);
+                dataSource = OGR_Dr_CreateDataSource(driver, pointerToCString(ogrSourceName), optionsPointer);
                 driver.release();
 
                 if (dataSource == null)

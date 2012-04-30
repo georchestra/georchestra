@@ -6,6 +6,8 @@ package extractorapp.ws.extractor;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.feature.FeatureCollection;
 import org.opengis.feature.simple.SimpleFeature;
@@ -20,6 +22,8 @@ import org.opengis.util.ProgressListener;
  *
  */
 abstract class FileFeatureWriter implements FeatureWriterStrategy {
+
+	protected static final Log LOG = LogFactory.getLog(FileFeatureWriter.class.getPackage().getName());
 
 	protected ProgressListener progresListener;
 	protected SimpleFeatureType schema;
@@ -56,17 +60,40 @@ abstract class FileFeatureWriter implements FeatureWriterStrategy {
 	@Override
 	public File[] generateFiles() throws IOException {
 		
-        DatastoreFactory ds = getDatastoreFactory();
-    
-        // the sources features are projected in the requested output projections
-        CoordinateReferenceSystem outCRS = this.features.getSchema().getCoordinateReferenceSystem();
-        WriteFeatures writeFeatures = new WriteFeatures(this.schema, this.basedir, outCRS, ds);
+		File[] files = null;
+		WriteFeatures writeFeatures = null;
+		
+		try{
+	        DatastoreFactory ds = getDatastoreFactory();
+	        
+	        // the sources features are projected in the requested output projections
+	        CoordinateReferenceSystem outCRS = this.features.getSchema().getCoordinateReferenceSystem();
+	        writeFeatures = new WriteFeatures(this.schema, this.basedir, outCRS, ds);
 
-        this.features.accepts(writeFeatures, this.progresListener);
-        
-        writeFeatures.close();
+	        this.features.accepts(writeFeatures, this.progresListener);
 
-        return writeFeatures.getShapeFiles ();
+	        files = writeFeatures.getShapeFiles ();
+	        
+	        if(LOG.isDebugEnabled()){
+
+	        	for (int i = 0; i < files.length; i++) {
+		        	LOG.debug("Generated file: " + files[i].getAbsolutePath() );
+				}
+	        }
+	        
+			return files;
+			
+		} catch (IOException e ){
+			
+        	final String message = "Failed generation: " + this.schema.getName() + " - "  +  e.getMessage();
+			LOG.error(message);        	
+			
+			throw e;
+			
+		} finally {
+			if(writeFeatures != null) writeFeatures.close();
+			
+		}
 	}
 
 	/**

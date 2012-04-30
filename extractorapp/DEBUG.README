@@ -12,7 +12,10 @@ Then run jetty normally:
 
 mvn jetty:run
 
-Then in eclipse (or other IDE) create a run configuration that attaches to port 8000.  In the above configuration the server will run with or without a debugger attached. If you want to debug startup then change 'suspend=n' to 'suspend=y'.  With this configuration the server will wait for a debugger to attache before starting.
+Then in eclipse (or other IDE) create a run configuration that attaches to port 8000.  
+In the above configuration the server will run with or without a debugger attached. 
+If you want to debug startup then change 'suspend=n' to 'suspend=y'.  
+With this configuration the server will wait for a debugger to attache before starting.
 
 To disable the debugging simply reset MAVEN_OPTS
 
@@ -21,7 +24,10 @@ export MAVEN_OPTS=
 
 Unit tests:
 
-The client server unit tests have a time out of 30 seconds.  It means that if they fail then the tests will take a very long time.  Change the time down to 3s instead to debug the tests.  Individually they should normally pass with a 3 second timeout.  A few will fail somewhat randomly with that time out but once the obvious errors are fixed then increase timeout again to see if they pass.  The Time out is set in ParallelTest.scala
+The client server unit tests have a time out of 30 seconds.  It means that if they fail then the tests will take a very long time.  
+Change the time down to 3s instead to debug the tests.  Individually they should normally pass with a 3 second timeout.  
+A few will fail somewhat randomly with that time out but once the obvious errors are fixed then increase timeout again to see if they pass.  
+The Time out is set in ParallelTest.scala
 
 If you want to debug unit tests you need to do the following:
 

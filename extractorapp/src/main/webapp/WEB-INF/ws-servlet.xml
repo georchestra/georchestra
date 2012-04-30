@@ -69,7 +69,7 @@
     <bean id="extractionManager" class="extractorapp.ws.extractor.task.ExtractionManager" init-method="init">
         <property name="minThreads" value="1"/>
         <property name="maxExtractions"
-                  value="${maxExtractions}"/>
+                  value="100"/>
     </bean>
 
     <!-- Email configuration -->

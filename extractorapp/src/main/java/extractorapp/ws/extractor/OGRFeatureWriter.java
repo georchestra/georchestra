@@ -12,7 +12,6 @@ import org.geotools.data.ogr.OGRDataStoreFactory;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.ProgressListener;
 
 import extractorapp.ws.extractor.WfsExtractor.GeomType;
@@ -35,11 +34,12 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
 	 * 
 	 */
 	public  enum FileFormat{
-		tab;
+		tab, mif;
 		
 		public String getDriver(FileFormat ext) throws IOException{
 			switch (ext) {
 			case tab:
+			case mif:
 				return "MapInfo File";
 
 			default:
@@ -49,10 +49,11 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
 	}
 	
 	private ProgressListener progresListener;
-	private SimpleFeatureType schema;
-	private File basedir;
-	private SimpleFeatureCollection features;
-	private FileFormat fileFormat; 
+	private final SimpleFeatureType schema;
+	private final File basedir;
+	private final SimpleFeatureCollection features;
+	private final FileFormat fileFormat;
+	private final String[] options; 
 	
 	/**
 	 * New instance of {@link OGRFeatureWriter}
@@ -70,12 +71,45 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
 			FileFormat fileFormat,
 			SimpleFeatureCollection features) {
 
+		assert schema != null && basedir != null && features != null;
+		
 		this.progresListener = progresListener;
 		this.schema = schema;
 		this.basedir = basedir;
 		this.fileFormat = fileFormat;
+		
+		this.options = getFormatOptions(fileFormat);
+		
 		this.features = features;
 	}
+	
+
+		
+
+	/** 
+	 * Returns the options related with the indicated file format.
+	 * @param fileFormat
+	 * @return
+	 */
+	private static String[] getFormatOptions(FileFormat fileFormat) {
+
+		
+		String[] driverOptions = null;
+		switch (fileFormat) {
+		case tab:
+			driverOptions =  new String[]{};
+			break;
+		case mif:
+			driverOptions =   new String[]{"FORMAT=MIF"};
+			break;
+		default:
+			assert false; // impossible case
+		}
+		return driverOptions;
+	}
+
+
+
 
 	/**
 	 * Generate the file's vector specified
@@ -85,7 +119,7 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
         
 		Map<String, Serializable> map = new java.util.HashMap<String, Serializable>();
 		
-        final String pathName = this.basedir.getAbsolutePath() + "/"+ createFileName(this.basedir.getAbsolutePath(), this.schema, this.fileFormat.tab);
+        final String pathName = this.basedir.getAbsolutePath() + "/"+ createFileName(this.basedir.getAbsolutePath(), this.schema, this.fileFormat);
 		map.put(OGRDataStoreFactory.OGR_NAME.key, pathName);
 		map.put(OGRDataStoreFactory.OGR_DRIVER_NAME.key, this.fileFormat.getDriver(this.fileFormat));
 		
@@ -94,7 +128,7 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
         try {
             ds = (OGRDataStore) DataStoreFinder.getDataStore(map);
             
-	        ds.createSchema(this.features, true, new String[]{}); //TODO OGR require the following improvements:  use the output crs required (progress Listener should be a parameter)
+	        ds.createSchema(this.features, true, this.options); //TODO OGR require the following improvements:  use the output crs required (progress Listener should be a parameter)
 	        
 	        files =  new File[]{new File( pathName)};
 	        
