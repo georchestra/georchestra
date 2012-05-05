@@ -23,7 +23,7 @@ psql.pass=@shared.psql.pass@
 psql.url=@shared.psql.url@
 
 downloadform.psql.url=@shared.download_form.jdbcurl@
-dlform.activated=@shared.ogc.statistics.activated@
+dlform.activated=@shared.download_form.activated@
 dlform.pdf_url=@shared.download_form.pdf_url@
 
 xhr.proxy-url=http://@shared.server.name@/proxy/
