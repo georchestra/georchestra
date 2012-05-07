@@ -28,6 +28,7 @@ public class ExtractorStats extends AbstractApplication {
 	
 	private final String csvLayers= "ExtractorLayers";
 	private final String csvUsers= "ExtractorUsers";
+	private final String csvGroups= "ExtractorGroups";
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/extractor/layers")
 	public void getLayersStats(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -49,6 +50,16 @@ public class ExtractorStats extends AbstractApplication {
 		});
 	}
 	
+	@RequestMapping(method = RequestMethod.GET, value = "/extractor/groups")
+	public void getGroupsStats(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		getStats(request, response, new StrategyController(){
+			protected JSONObject process() throws SQLException, JSONException {
+				return model.getGroupsStats(month, year, start, limit, sort, filter);
+			}
+		});
+	}
+	
 	@RequestMapping(method = RequestMethod.GET, value = "/export/extractorlayers")
 	public void exportLayers(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -65,6 +76,16 @@ public class ExtractorStats extends AbstractApplication {
 		exportCSV(request, response, csvUsers, new StrategyController(){
 			protected JSONObject process() throws SQLException, JSONException {
 				return model.getUsersStats(month, year, 0, Integer.MAX_VALUE, sort, filter);
+			}
+		});	
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/export/extractorgroups")
+	public void exportGroups(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		exportCSV(request, response, csvGroups, new StrategyController(){
+			protected JSONObject process() throws SQLException, JSONException {
+				return model.getGroupsStats(month, year, 0, Integer.MAX_VALUE, sort, filter);
 			}
 		});	
 	}

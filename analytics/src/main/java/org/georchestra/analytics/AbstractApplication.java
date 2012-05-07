@@ -74,7 +74,7 @@ public abstract class AbstractApplication {
 			return false;
 		}
 
-		if (month<1 || month > 12 || year < 2000) {
+		if (month<0 || month > 12) {
 			return false;
 		}
 		return true;

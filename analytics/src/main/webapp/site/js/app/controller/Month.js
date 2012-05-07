@@ -8,14 +8,40 @@ Ext.define('Analytics.controller.Month', {
     }],
     
     date: null,
+    mode: 'monthly', // global,monthly
     
     init: function() {
         this.date = new Date();
         this.control({
-            '.timenavigator button': {
+            '.timenavigator > container > button': {
                 click: this.onMonthChanged
-            }
+            },
+	        '.timenavigator button[id="switchMode"]': {
+	            click: this.onModeChanged
+	        }
         });
+    },
+    
+    onModeChanged: function(btn) {
+    	this.mode = (this.mode == 'global') ? 'monthly' : 'global';
+    	
+    	if(this.mode == 'global') {
+    		this.getTimeNavigator().toGlobalMode(btn);
+    		this.application.fireEvent('modechanged', {
+	            params: {
+	                month: 0,
+	                year: 0
+	            }
+	        });
+    	} else {
+    		this.getTimeNavigator().toMonthlyMode(this.date, btn);
+    		this.application.fireEvent('monthchanged', {
+                params: {
+                    month: Ext.Date.format(this.date, 'n'),
+                    year: Ext.Date.format(this.date, 'Y')
+                }
+            });
+    	}
     },
     
     onMonthChanged: function(btn) {

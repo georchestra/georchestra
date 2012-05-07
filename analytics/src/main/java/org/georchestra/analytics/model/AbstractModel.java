@@ -73,6 +73,16 @@ public class AbstractModel {
 		return query.replace("where", sb.toString());
 	}
 	
+	protected String checkDate(String query, final int month, final int year) {
+		if(month == 0 && year == 0) {
+			query = query.replace("requested_at) = ?",
+					"requested_at) > ?");
+			query = query.replace("date) = ?",
+					"date) > ?");
+		}
+		return query;
+	}
+	
 	/**
 	 * Count all the results of the given query.
 	 * Build the count query from the filter query, removed by LIMIT and OFFSET keywords,
@@ -82,7 +92,7 @@ public class AbstractModel {
 	 * @throws SQLException
 	 */
 	protected int getCount(Connection con, final String query,
-			final int month, final int year, final int start, final int limit, final String sort) throws SQLException {
+			final int month, final int year, final String sort) throws SQLException {
 		
 		ResultSet rs = null;
 		PreparedStatement st = null;
@@ -130,8 +140,9 @@ public class AbstractModel {
 		
 		try {
 			String q = addFilters(query, filter);
+			q = checkDate(q, month, year);
 			con = postgresqlConnection.getConnection();
-			int count = getCount(con, q, month, year, start, limit, sort);
+			int count = getCount(con, q, month, year, sort);
 			st = prepareStatement(con, q, month, year, start, limit, sort);
 			rs = st.executeQuery();
 			

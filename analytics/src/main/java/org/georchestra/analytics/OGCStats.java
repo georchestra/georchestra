@@ -29,6 +29,7 @@ public class OGCStats extends AbstractApplication {
 	
 	private final String csvLayers= "OgcLayers";
 	private final String csvUsers= "OgcUsers";
+	private final String csvGroups= "OgcGroups";
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/ogc/layers")
 	public void getOGCLayersStats(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -50,6 +51,16 @@ public class OGCStats extends AbstractApplication {
 		});	
 	}
 	
+	@RequestMapping(method = RequestMethod.GET, value = "/ogc/groups")
+	public void getOGCGroupsStats(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		getStats(request, response, new StrategyController(){
+			protected JSONObject process() throws SQLException, JSONException {
+				return model.getGroupsStats(month, year, start, limit, sort, filter);
+			}
+		});	
+	}
+	
 	@RequestMapping(method = RequestMethod.GET, value = "/export/ogclayers")
 	public void exportLayers(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		
@@ -66,6 +77,16 @@ public class OGCStats extends AbstractApplication {
 		exportCSV(request, response, csvUsers, new StrategyController(){
 			protected JSONObject process() throws SQLException, JSONException {
 				return model.getUsersStats(month, year, 0, Integer.MAX_VALUE, sort, filter);
+			}
+		});	
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/export/ogcgroups")
+	public void exportGroups(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		exportCSV(request, response, csvGroups, new StrategyController(){
+			protected JSONObject process() throws SQLException, JSONException {
+				return model.getGroupsStats(month, year, 0, Integer.MAX_VALUE, sort, filter);
 			}
 		});	
 	}

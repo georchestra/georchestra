@@ -27,8 +27,26 @@ Ext.define('Analytics.view.TimeNavigator', {
             }]
         }, {
             xtype: 'container',
-            cls: 'centered',
-            html: this.formatDate(new Date())
+            layout: {
+                type: 'vbox',
+                align: 'stretch',
+                pack  : 'start'
+            },
+            items:[{
+            	cls: 'dateCenter',
+            	xtype: 'container',
+            	html: this.formatDate(new Date())
+            },{
+            	xtype: 'container',
+            	cls: 'dateCenterBut',
+            	items: [{
+                    xtype: 'button',
+                    scale: 'medium',
+                    id: 'switchMode',
+                    text: 'statistiques globales',
+                    width: 180
+                }]
+            }]
         }, {
             xtype: 'container',
             items: [{
@@ -42,19 +60,32 @@ Ext.define('Analytics.view.TimeNavigator', {
                 width: 180
             }]
         }];
-        
         this.callParent();
     },
     
     replaceDate: function(date) {
-        this.remove(this.getComponent(1));
-        this.insert(1, new Ext.container.Container({
-            cls: 'centered',
-            html: this.formatDate(date)
-        }));
+    	this.changeText(this.formatDate(date));
+    },
+    
+    changeText: function(txt) {
+    	this.getComponent(1).getComponent(0).update(txt);
     },
     
     formatDate: function(date) {
         return Ext.Date.format(date, 'F Y');
-    }
+    },
+    
+	toGlobalMode: function(btn) {
+		this.getChildByElement('previous').setVisible(false);
+		this.getChildByElement('next').setVisible(false);
+		this.changeText('Statistiques globales');
+		btn.setText('statistiques mensuelles');
+    },
+    
+    toMonthlyMode: function(date,btn) {
+		this.getChildByElement('previous').setVisible(true);
+		this.getChildByElement('next').setVisible(true);
+		this.changeText(this.formatDate(date));
+		btn.setText('statistiques globales');
+    },
 });

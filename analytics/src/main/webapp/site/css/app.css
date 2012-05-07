@@ -2,7 +2,16 @@
   margin: 35px;
   font: 20px arial,tahoma,verdana,helvetica !important;
 }
-
 .centered .x-btn-inner {
   font-size: 20px;
+}
+
+.dateCenter { 
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font: 20px arial,tahoma,verdana,helvetica !important;
+}
+
+.dateCenterBut .x-btn-inner {
+  font-size: 14px;
 }

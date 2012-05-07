@@ -3,10 +3,13 @@ Ext.define('Analytics.view.Viewport', {
     requires: [
         'Analytics.view.ExtractorLayers',
         'Analytics.view.ExtractorUsers',
+        'Analytics.view.ExtractorGroups',
         'Analytics.view.GeonetworkFiles',
         'Analytics.view.GeonetworkUsers',
+        'Analytics.view.GeonetworkGroups',
         'Analytics.view.OGCLayers',
         'Analytics.view.OGCUsers',
+        'Analytics.view.OGCGroups',
         'Analytics.view.TimeNavigator'
     ],
     
@@ -41,6 +44,12 @@ Ext.define('Analytics.view.Viewport', {
                     title: 'Utilisateurs',
                     region: 'center',
                     xtype: 'geonetworkuserslist'
+                }, {
+                    title: 'Organismes',
+                    split: true,
+                    region: 'east',
+                    width: '25%',
+                    xtype: 'geonetworkgroupslist'
                 }]
             }, {
                 tabConfig: {
@@ -59,6 +68,12 @@ Ext.define('Analytics.view.Viewport', {
                     title: 'Utilisateurs',
                     region: 'center',
                     xtype: 'extractoruserslist'
+                },{
+                    title: 'Organismes',
+                    split: true,
+                    region: 'east',
+                    width: '25%',
+                    xtype: 'extractorgroupslist'
                 }]
             }, {
                 tabConfig: {
@@ -77,6 +92,12 @@ Ext.define('Analytics.view.Viewport', {
                     title: 'Utilisateurs',
                     region: 'center',
                     xtype: 'ogcuserslist'
+                },{
+                    title: 'Organismes',
+                    split: true,
+                    region: 'east',
+                    width: '25%',
+                    xtype: 'ogcgroupslist'
                 }]
             }]
         }, {

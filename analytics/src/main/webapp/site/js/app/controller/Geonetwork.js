@@ -1,6 +1,6 @@
 Ext.define('Analytics.controller.Geonetwork', {
     extend: 'Analytics.controller.Base',
-    stores: ['GeonetworkUsers', 'GeonetworkFiles'],
+    stores: ['GeonetworkUsers', 'GeonetworkFiles', 'GeonetworkGroups'],
     
     init: function() {
 
@@ -10,11 +10,18 @@ Ext.define('Analytics.controller.Geonetwork', {
         // Use the automatically generated getter to get the stores
         var usersStore = this.getGeonetworkUsersStore();
         var filesStore = this.getGeonetworkFilesStore();
+        var groupsStore = this.getGeonetworkGroupsStore();
         
         this.application.on({
             "monthchanged": function(opCfg) {
             	this.loadStoreWithDate(usersStore, opCfg);
             	this.loadStoreWithDate(filesStore, opCfg);
+            	this.loadStoreWithDate(groupsStore, opCfg);
+            },
+            "modechanged": function(opCfg) {
+            	this.loadStoreWithDate(usersStore, opCfg);
+            	this.loadStoreWithDate(filesStore, opCfg);
+            	this.loadStoreWithDate(groupsStore, opCfg);
             },
             scope: this
         });
@@ -24,6 +31,9 @@ Ext.define('Analytics.controller.Geonetwork', {
                 click: this.handleExport
             },
             'geonetworkfileslist tool': {
+                click: this.handleExport
+            },
+            'geonetworkgroupslist tool': {
                 click: this.handleExport
             },
             'filteredgeonetworkuserslist tool': {

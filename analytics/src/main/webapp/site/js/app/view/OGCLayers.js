@@ -25,6 +25,9 @@ Ext.define('Analytics.view.OGCLayers', {
         }, {
             property: 'service',
             value: rec.get('service')
+        }, {
+            property: 'request',
+            value: rec.get('request')
         }]);
         
         new Ext.Window({
