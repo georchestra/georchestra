@@ -30,5 +30,4 @@ header.mapping=\
     <entry key="sec-firstname" value="givenName"/>\
     <entry key="sec-lastname"  value="sn"/>\
     <entry key="sec-org"       value="o"/>\
-    <entry key="sec-tel"       value="telephoneNumber"/>\
-
+    <entry key="sec-tel"       value="telephoneNumber"/>
