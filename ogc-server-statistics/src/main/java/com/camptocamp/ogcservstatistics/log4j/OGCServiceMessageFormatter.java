@@ -10,7 +10,6 @@ import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.Logger;
 
 
 /**
@@ -40,8 +39,8 @@ public class OGCServiceMessageFormatter {
 		// utility class
 	}
 
-	public static String format(final String user, final String request){
-			return format(user, new Date(), request);
+	public static String format(final String user, final String request, final String org){
+			return format(user, new Date(), request, org);
 	}
 	/**
 	 * Builds a formated string that can be recognized by the OGCServicesAppender.
@@ -57,7 +56,7 @@ public class OGCServiceMessageFormatter {
 	 * 
 	 * @return The ogcservice message
 	 */
-	public static String format(final String user, final Date date, final String request){
+	public static String format(final String user, final Date date, final String request, final String org){
 		
 		if((user == null)|| "".equals(user) ){
 			throw new IllegalArgumentException("user cannot be null");
@@ -68,6 +67,7 @@ public class OGCServiceMessageFormatter {
 		if((request == null)|| "".equals(request) ){
 			throw new IllegalArgumentException("request cannot be null");
 		}
+		// org can be null
 		
 		// appends user
 		StringBuilder ogcLogBuilder = new StringBuilder(user);
@@ -80,6 +80,10 @@ public class OGCServiceMessageFormatter {
 		 
 		// appends ogc service request
 		ogcLogBuilder.append(request);
+		ogcLogBuilder.append(SEPARATOR);
+		
+		// appends ogc service org
+		ogcLogBuilder.append(org);
 		
 	    final String ogcStatisticLog = ogcLogBuilder.toString();
 		

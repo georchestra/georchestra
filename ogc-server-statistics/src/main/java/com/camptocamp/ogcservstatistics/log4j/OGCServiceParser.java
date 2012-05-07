@@ -154,30 +154,35 @@ final class OGCServiceParser {
 		String service = parseService(request);
 		String ogcReq = parseRequest(request).toLowerCase();
 		
+		// parses org
+		String org = splitedMessage[3];
+		
 		// for each layer adds a log to the list
 		List<Map<String, Object>> logList = new LinkedList<Map<String,Object>>(); 
 		List<String> layerList = parseLayer(request);
 		if(layerList.isEmpty() ){
 			// create a log without layer
-			Map<String, Object>  log = new HashMap<String, Object>(5);
+			Map<String, Object>  log = new HashMap<String, Object>(6);
 			
 			log.put("user_name", user );
 			log.put("date", date);
 			log.put("service", service );
 			log.put("layer", "" );
 			log.put("request", ogcReq );
+			log.put("org", org);
 			
 			logList.add(log);
 		} else{ // there are one ore more layers
 			
 			for(String layer : layerList){
-				Map<String, Object>  log = new HashMap<String, Object>(5);
+				Map<String, Object>  log = new HashMap<String, Object>(6);
 				
 				log.put("user_name", user );
 				log.put("date", date);
 				log.put("service", service );
 				log.put("layer", layer.toLowerCase() );
 				log.put("request", ogcReq );
+				log.put("org", org);
 				
 				logList.add(log);
 			}

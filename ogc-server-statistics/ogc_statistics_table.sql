@@ -6,13 +6,15 @@ CREATE TABLE ogc_services_log
 (
   user_name character varying(255),
   date date,
-  service character(5),
+  service character varying(5),
   layer character varying(255),
   id bigserial NOT NULL,
-  CONSTRAINT primary_key PRIMARY KEY (id)
+  request character varying(20),
+  org character varying(255),
+  CONSTRAINT primary_key PRIMARY KEY (id )
 )
 WITH (
   OIDS=FALSE
 );
-ALTER TABLE ogc_services_log OWNER TO postgres;
-
+ALTER TABLE ogc_services_log
+  OWNER TO "www-data";

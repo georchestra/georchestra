@@ -518,7 +518,7 @@ public class OGCServicesAppenderTest {
 
 		final Date time = Calendar.getInstance().getTime();
 
-		String ogcServiceMessage = OGCServiceMessageFormatter.format(user, time, request);
+		String ogcServiceMessage = OGCServiceMessageFormatter.format(user, time, request,"");
 
 		LOGGER.info(ogcServiceMessage);
 
