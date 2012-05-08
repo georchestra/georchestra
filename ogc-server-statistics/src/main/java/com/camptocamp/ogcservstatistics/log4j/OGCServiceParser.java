@@ -154,8 +154,13 @@ final class OGCServiceParser {
 		String service = parseService(request);
 		String ogcReq = parseRequest(request).toLowerCase();
 		
-		// parses org
-		String org = splitedMessage[3];
+		// parses org (it is optional)
+		String org;
+		if(splitedMessage.length == 4){
+			org = splitedMessage[3];
+		} else {
+			org = "";
+		}
 		
 		// for each layer adds a log to the list
 		List<Map<String, Object>> logList = new LinkedList<Map<String,Object>>(); 

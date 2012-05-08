@@ -76,6 +76,7 @@ public final class InsertCommand extends AbstractDataCommand {
 					e1.printStackTrace();
 		            throw new DataCommandException(e.getMessage());
 				}
+	            throw new DataCommandException(e.getMessage());
         	}
         } finally{
             try {
