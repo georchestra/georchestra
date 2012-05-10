@@ -22,45 +22,14 @@ final class CheckPostgresConnections {
 
     private static final Log LOGGER = LogFactory.getLog(CheckPostgresConnections.class.getPackage().getName());
     
-	public static Integer countConnection() throws IOException{
-		
-		Integer count = 0;
-		Connection  connection = null;
-		try {
-			
-			DBConnectionProvider connProvider = PostgresConnectionProvider.getInstance();
-			connection = connProvider.getConnection();
-		
-			CountConnectionsCommand cmd = new CountConnectionsCommand();
-			cmd.setConnection(connection);
-			cmd.execute();
-			count = cmd.getCountConnections();
 
-		} catch (Exception e) {
-			LOGGER.fatal(e.getMessage());
-			throw new IOException(e);
-			
-		} finally{
-			
-			try {
-				if(connection != null) connection.close();
-				
-			} catch (SQLException e) {
-				LOGGER.fatal(e.getMessage());
-				throw new IOException(e);
-			}
-			
-		}
-		return count;
-	}
-
-	public static List<Map<String, Object>> findConnections() throws IOException {
+	public static List<Map<String, Object>> findConnections(String user, String password, String clientName) throws IOException {
 
 		List<Map<String, Object>> connectionList; 
 		Connection  connection = null;
 		try {
 			
-			DBConnectionProvider connProvider = PostgresConnectionProvider.getInstance();
+			DBConnectionProvider connProvider = PostgresConnectionProvider.getInstance(user, password, clientName);
 			connection = connProvider.getConnection();
 		
 			ConnectionStatsCommand cmd = new ConnectionStatsCommand();

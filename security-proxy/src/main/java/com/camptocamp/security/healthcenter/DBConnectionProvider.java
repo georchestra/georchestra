@@ -5,6 +5,7 @@ import java.sql.Connection;
 
 interface DBConnectionProvider {
 
+
 	/**
 	 * <pre>
 	 * 

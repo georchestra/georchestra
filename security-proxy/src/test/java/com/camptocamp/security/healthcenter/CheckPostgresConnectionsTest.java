@@ -59,19 +59,19 @@ public final class CheckPostgresConnectionsTest {
 	/**
 	 * Test method for {@link com.camptocamp.security.healthcenter.CheckPostgresConnections#countConnection()}.
 	 */
-	@Test
-	public void testCountConnection() throws Exception{
-		Integer connections = CheckPostgresConnections.countConnection();
-		
-		LOGGER.info(connections);
-
-		Assert.assertTrue(connections > 0);
-		
-	}
+//	@Test
+//	public void testCountConnection() throws Exception{
+//		Integer connections = CheckPostgresConnections.countConnection();
+//		
+//		LOGGER.info(connections);
+//
+//		Assert.assertTrue(connections > 0);
+//		
+//	}
 	
 	@Test
 	public void testConnectionsData() throws Exception{
-		List<Map<String, Object>> findConnections = CheckPostgresConnections.findConnections();
+		List<Map<String, Object>> findConnections = CheckPostgresConnections.findConnections("postgres", "admin", "testCase");
 		for (Map<String, Object> conn : findConnections) {
 			LOGGER.info(conn);
 		}

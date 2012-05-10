@@ -18,7 +18,24 @@ public class DatabaseHealthCenter {
 	
     protected static final Log LOGGER = LogFactory.getLog(CheckPostgresConnections.class.getPackage().getName());
 
-	public void HealthCenter(){
+    private static DatabaseHealthCenter THIS = new DatabaseHealthCenter();
+
+	private String user;
+
+	private String password;
+
+	private String clientName;
+    
+	private DatabaseHealthCenter(){
+		// singleton
+	}
+	public static synchronized DatabaseHealthCenter getInstance(String user, String password, String clientName){
+
+		THIS.user = user;
+		THIS.password = password;
+		THIS.clientName = clientName;
+		
+		return THIS;
 		
 	}
 	/** 
@@ -48,7 +65,7 @@ public class DatabaseHealthCenter {
 		try {
 			long healthLimit = Math.round( maxConnections * 0.8 );
 			
-			List<Map<String,Object>> listConnections = CheckPostgresConnections.findConnections();
+			List<Map<String,Object>> listConnections = CheckPostgresConnections.findConnections(this.user, this.password, this.clientName);
 			final int liveConnections = listConnections.size();
 			if( (liveConnections >= healthLimit) && (liveConnections < maxConnections) ){
 				// the configuration is near to the limit, then log the connections status 

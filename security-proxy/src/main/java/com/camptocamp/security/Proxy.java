@@ -119,8 +119,9 @@ public class Proxy {
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
     
-    /*  ----------  start work around for no gateway option  -------------- */
-    private DatabaseHealthCenter dataBaseHealthCenter = new DatabaseHealthCenter();
+    /*  ----------  Required for  DatabaseHealthCenter -------------------- */
+    private String user = "www-data";
+    private String password = "www-data";
 	private Integer maxDatabaseConnections = 170;
     
     /*  ----------  start work around for no gateway option  -------------- */
@@ -396,7 +397,8 @@ public class Proxy {
         httpclient.getParams().setParameter("http.socket.timeout", new Integer(300000));
         httpclient.getParams().setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, false);
 
-		dataBaseHealthCenter.checkConnections(maxDatabaseConnections); 
+        DatabaseHealthCenter.getInstance(this.user, this.password, Proxy.class.getSimpleName())
+        						.checkConnections(this.maxDatabaseConnections); 
 
         //
         // Handle http proxy for external request.
@@ -1023,6 +1025,15 @@ public class Proxy {
     }
     public void setHeaderManagement(HeadersManagementStrategy headerManagement) {
         this.headerManagement = headerManagement;
+    }
+    
+    
+    public void setUser(String user){
+        this.user = user;
+    }
+    
+    public void setPassword(String password){
+        this.password = password;
     }
     
     public void setMaxDatabaseConnections(Integer maxDatabaseConnections){

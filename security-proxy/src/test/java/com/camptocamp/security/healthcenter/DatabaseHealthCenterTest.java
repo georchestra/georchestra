@@ -21,7 +21,7 @@ import com.camptocamp.security.healthcenter.DatabaseHealthCenter;
  * @author Mauricio Pazos
  *
  */
-public class DatabaseHealthCenterTest extends DatabaseHealthCenter {
+public class DatabaseHealthCenterTest {
 
 	private final static Log LOGGER = LogFactory.getLog(DatabaseHealthCenterTest.class.getPackage().getName());
 
@@ -37,7 +37,7 @@ public class DatabaseHealthCenterTest extends DatabaseHealthCenter {
 	@Test
 	public void testCheckConnectionsUnstable() {
 		
-		DatabaseHealthCenter hc = new DatabaseHealthCenter();
+		DatabaseHealthCenter hc = DatabaseHealthCenter.getInstance("postgres", "admin", "testCase");
 		boolean healthy = hc.checkConnections(2);
 		
 		// TODO assertFalse(healty);
@@ -45,7 +45,7 @@ public class DatabaseHealthCenterTest extends DatabaseHealthCenter {
 	@Test
 	public void testCheckConnectionsOnLimits() {
 		
-		DatabaseHealthCenter hc = new DatabaseHealthCenter();
+		DatabaseHealthCenter hc = DatabaseHealthCenter.getInstance("postgres", "admin", "testCase");
 		boolean healthy = hc.checkConnections(6);
 
 		// TODO assertTrue(healthy);
@@ -54,7 +54,7 @@ public class DatabaseHealthCenterTest extends DatabaseHealthCenter {
 	@Test
 	public void testCheckConnectionsOK() {
 		
-		DatabaseHealthCenter hc = new DatabaseHealthCenter();
+		DatabaseHealthCenter hc = DatabaseHealthCenter.getInstance("postgres", "admin", "testCase");
 		boolean healthy = hc.checkConnections(10);
 
 		// TODO assertTrue(healthy);

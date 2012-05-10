@@ -10,7 +10,11 @@
 <!--          <property name="defaultTarget" value="${proxy.defaultTarget}/sec/"/>-->
           <property name="headerManagement" ref="headerManagementBean"/>
           <property name="defaultCharset" value="UTF-8"/>
-          <property name="maxDatabaseConnections" value="170"/>
+          
+          <property name="maxDatabaseConnections" value="170"/>          
+          <property name="user" value="www-data"/>
+          <property name="password" value="www-data"/>
+          
           <property name="targets">
                <map>
 ${proxy.mapping}
