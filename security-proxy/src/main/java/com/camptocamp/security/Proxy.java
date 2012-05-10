@@ -63,6 +63,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.camptocamp.ogcservstatistics.log4j.OGCServiceMessageFormatter;
+import com.camptocamp.security.healthcenter.DatabaseHealthCenter;
 
 
 /**
@@ -116,6 +117,11 @@ public class Proxy {
     private String defaultCharset = "UTF-8";
     
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+
+    
+    /*  ----------  start work around for no gateway option  -------------- */
+    private DatabaseHealthCenter dataBaseHealthCenter = new DatabaseHealthCenter();
+	private Integer maxDatabaseConnections = 170;
     
     /*  ----------  start work around for no gateway option  -------------- */
     private Gateway gateway = new Gateway();
@@ -390,7 +396,8 @@ public class Proxy {
         httpclient.getParams().setParameter("http.socket.timeout", new Integer(300000));
         httpclient.getParams().setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, false);
 
-        
+		dataBaseHealthCenter.checkConnections(maxDatabaseConnections); 
+
         //
         // Handle http proxy for external request.
         // Proxy must be configured by system variables (e.g.: -Dhttp.proxyHost=proxy -Dhttp.proxyPort=3128)
@@ -1017,6 +1024,11 @@ public class Proxy {
     public void setHeaderManagement(HeadersManagementStrategy headerManagement) {
         this.headerManagement = headerManagement;
     }
+    
+    public void setMaxDatabaseConnections(Integer maxDatabaseConnections){
+    	this.maxDatabaseConnections = maxDatabaseConnections;
+    }
+    
     public void setRequireCharsetContentTypes(List<String> requireCharsetContentTypes) {
         this.requireCharsetContentTypes = requireCharsetContentTypes;
     }
