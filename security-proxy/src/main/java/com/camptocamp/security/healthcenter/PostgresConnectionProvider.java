@@ -25,8 +25,8 @@ final class PostgresConnectionProvider implements DBConnectionProvider {
 	private static final PostgresConnectionProvider THIS = new PostgresConnectionProvider();
 	
 	private Connection connection= null;
-	//private String jdbcURL = "jdbc:postgresql://localhost:5432/postgres"; //FIXME despite the service access to the postgres metadata it is necessary a database. We could use the default database "postgres". Right now pigma is used. 
-	private String jdbcURL = "jdbc:postgresql://localhost:5432/pigma";
+	private String jdbcURL = "jdbc:postgresql://localhost:5432/postgres"; //FIXME despite the service access to the postgres metadata it is necessary a database. We could use the default database "postgres". Right now pigma is used. 
+	//private String jdbcURL = "jdbc:postgresql://localhost:5432/pigma"; // FIXME use this for deploy.
 	private String user;
 	private String password;
 	private String clientApp;
@@ -51,10 +51,10 @@ final class PostgresConnectionProvider implements DBConnectionProvider {
 	public Connection getConnection() throws ConnectException {
 		
 		try{
-			if(connection != null){
-				synchronized (connection) {
-					if(connection.isClosed()){
-						connection = null;
+			if(this.connection != null){
+				synchronized (this.connection) {
+					if(this.connection.isClosed()){
+						this.connection = null;
 					}
 				}
 			}
@@ -62,7 +62,7 @@ final class PostgresConnectionProvider implements DBConnectionProvider {
 			e.printStackTrace();
 			throw new ConnectException(e.getMessage());
 		}
-		if(connection == null){
+		if(this.connection == null){
 			synchronized (this) {
 				try {
 					Properties connProp = getConnectionProperties();
@@ -79,7 +79,7 @@ final class PostgresConnectionProvider implements DBConnectionProvider {
 				}
 			}
 		}
-		return connection;
+		return this.connection;
 	}
 
 	private Properties getConnectionProperties() {
