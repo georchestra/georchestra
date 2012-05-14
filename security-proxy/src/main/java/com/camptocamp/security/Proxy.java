@@ -435,20 +435,21 @@ public class Proxy {
 
             logger.debug("Final request -- " + sURL);
             
+            HttpRequestBase proxyingRequest = makeRequest(request, requestType, sURL);
+            headerManagement.configureRequestHeaders(request, proxyingRequest);
+            
             try {
             	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            	String org = request.getHeader("sec-org");
+            	Header [] originalHeaders = proxyingRequest.getHeaders("sec-org");
+            	String org = "";
+        		for (Header originalHeader : originalHeaders) {
+        			org = originalHeader.getValue();
+        		}
             	statsLogger.info(OGCServiceMessageFormatter.format(authentication.getName(), sURL, org));
             } catch (Exception e) {
             	logger.error("Unable to log the request into the statistics logger", e);
             }
-            
-            
-            
-            HttpRequestBase proxyingRequest = makeRequest(request, requestType, sURL);
 
-            headerManagement.configureRequestHeaders(request, proxyingRequest);
-            
             if (localProxy) {
 		        //
 		        // Hack for geoserver
@@ -496,7 +497,7 @@ public class Proxy {
             }
             
             headerManagement.copyResponseHeaders(request, request.getRequestURI(), proxiedResponse, finalResponse, this.targets);
-
+            
             if (statusCode == 302)
             	adjustLocation(request, proxiedResponse, finalResponse);
             
