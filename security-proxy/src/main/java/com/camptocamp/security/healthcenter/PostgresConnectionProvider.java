@@ -25,18 +25,20 @@ final class PostgresConnectionProvider implements DBConnectionProvider {
 	private static final PostgresConnectionProvider THIS = new PostgresConnectionProvider();
 	
 	private Connection connection= null;
-	//private String jdbcURL = "jdbc:postgresql://localhost:5432/postgres"; //FIXME despite the service access to the postgres metadata it is necessary a database. We could use the default database "postgres". Right now pigma is used. 
-	private String jdbcURL = "jdbc:postgresql://localhost:5432/pigma"; // FIXME use this for deploy.
+	private String jdbcURL = "jdbc:postgresql://localhost:5432/";//FIXME host:port should be configured (this implementation should be replaced by jndi)
+	private String database;
 	private String user;
 	private String password;
 	private String clientApp;
+
 
 	private PostgresConnectionProvider(){
 		//singleton
 	}
 	
-	public static synchronized DBConnectionProvider getInstance(final String user, final String password, final String clientApp) {
+	public static synchronized DBConnectionProvider getInstance(final String database, final String user, final String password, final String clientApp) {
 		
+		THIS.database = database;
 		THIS.user = user;
 		THIS.password = password;
 		THIS.clientApp = clientApp;
@@ -67,7 +69,9 @@ final class PostgresConnectionProvider implements DBConnectionProvider {
 				try {
 					Properties connProp = getConnectionProperties();
 
-					this.connection = DriverManager.getConnection(this.jdbcURL, connProp);
+					StringBuilder url = new StringBuilder(40);
+					url.append(this.jdbcURL).append(this.database);
+					this.connection = DriverManager.getConnection(url.toString(), connProp);
  
 					//this.connection.setClientInfo("application_name", this.clientApp); is abstract method in jdbc3 the following is a workaround
 					PreparedStatement stmt = this.connection.prepareStatement("SET application_name TO '" + this.clientApp + "'");

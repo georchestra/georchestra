@@ -8,18 +8,13 @@ import java.util.Map;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.naming.NamingException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.BasicConfigurator;
-import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.postgresql.ds.PGSimpleDataSource;
-
-import com.camptocamp.security.healthcenter.CheckPostgresConnections;
 
 /**
  * @author Mauricio Pazos
@@ -71,7 +66,7 @@ public final class CheckPostgresConnectionsTest {
 	
 	@Test
 	public void testConnectionsData() throws Exception{
-		List<Map<String, Object>> findConnections = CheckPostgresConnections.findConnections("postgres", "admin", "testCase");
+		List<Map<String, Object>> findConnections = CheckPostgresConnections.findConnections("postgres","postgres", "admin", "testCase");
 		for (Map<String, Object> conn : findConnections) {
 			LOGGER.info(conn);
 		}
