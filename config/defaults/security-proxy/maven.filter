@@ -11,6 +11,15 @@ ldap.admin.password=@shared.ldap.admin.password@
 cas.public.host=@shared.server.name@
 cas.private.host=localhost
 
+psql.host=@shared.psql.host@
+psql.port=@shared.psql.port@
+psql.db=@shared.psql.geonetwork.db@
+
+psql.user=@shared.psql.user@
+psql.pass=@shared.psql.pass@
+psql.url=@shared.psql.url@
+max.database.connections=170
+
 defaultTarget.port=8080
 public.ssl=443
 private.ssl=8443
