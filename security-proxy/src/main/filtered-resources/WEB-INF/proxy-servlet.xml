@@ -13,7 +13,7 @@
           
           <property name="maxDatabaseConnections" value="170"/>    
                 
-          <property name="database" value="pigma"/>
+          <property name="database" value="geonetwork"/>
           <property name="user" value="www-data"/>
           <property name="password" value="www-data"/>
           
