@@ -11,11 +11,15 @@
           <property name="headerManagement" ref="headerManagementBean"/>
           <property name="defaultCharset" value="UTF-8"/>
           
-          <property name="maxDatabaseConnections" value="170"/>    
+          <property name="maxDatabaseConnections" value="${max.database.connections}"/>    
                 
-          <property name="database" value="geonetwork"/>
-          <property name="user" value="www-data"/>
-          <property name="password" value="www-data"/>
+          <property name="database" value="${psql.db}"/>
+
+<!--  Need to make host and port configurable
+          <property name="host" value="${psql.host}"/>
+          <property name="port" value="${psql.port}"/> -->
+          <property name="user" value="${psql.user}"/>
+          <property name="password" value="${psql.pass}"/>
           
           <property name="targets">
                <map>
