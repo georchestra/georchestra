@@ -73,7 +73,7 @@ Geoserver will show the form presented in the following figure. Fill the fields 
 .. figure:: images/gs-store-wizard-jndi-02.png
    :align: center
 
-**Save** the form. If all was OK, the New Layer form will be presented with the list of layer available to publish.
+**Save** the form. If all was OK, the **New Layer** form will be presented with the list of the available layers to publish.
 
 .. figure:: images/gs-store-wizard-jndi-03.png
    :align: center
