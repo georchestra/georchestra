@@ -335,6 +335,10 @@ class BoundWcsRequest extends WcsReaderRequest {
 		
 		HttpResponse response = httpclient.execute(httpRequest, localcontext);
         // check for an error response from the server
+		int statusCode = response.getStatusLine().getStatusCode();
+		if( statusCode != 200) {
+            throw new ExtractorException("Error from server while fetching coverage: Response Satus Code not valide -> "+statusCode);
+		}
         if(hasContentType(response,XML_ERROR_TYPE)){
             String error = FileUtils.asString(response.getEntity().getContent());
             throw new ExtractorException("Error from server while fetching coverage:"+error);

@@ -7,7 +7,6 @@ import javax.servlet.ServletContext;
 
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 
-import extractorapp.ws.CompleteEmailParams;
 import extractorapp.ws.Email;
 
 public class RequestConfiguration {
