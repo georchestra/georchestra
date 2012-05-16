@@ -5,7 +5,7 @@ Configuring JNDI Connection Pool
 
 This document describes the steps required to setup Geoserver to use PostgresSQL through `JNDI Datasource <http://tomcat.apache.org/tomcat-6.0-doc/jndi-datasource-examples-howto.html>`_.
 
-.. note:: The example described in this document was tested with Tomcat 9, Goeserver 2.1 and PostgresSQL 9.0.
+.. note:: The example described in this document was tested with Tomcat 6, Goeserver 2.1 and PostgresSQL 9.0.
 
 .. _adv_cookbook_datastore_jndi_connection_pool_tomcat:
 
