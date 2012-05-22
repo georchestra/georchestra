@@ -1,0 +1,20 @@
+<dataStore>
+  <id>DataStoreInfoImpl-7bc72c1b:13755fc1fc6:-8000</id>
+  <name>geoserverdb-jndi</name>
+  <type>PostGIS (JNDI)</type>
+  <enabled>true</enabled>
+  <workspace>
+    <id>WorkspaceInfoImpl-7bc72c1b:13755fc1fc6:-7ffd</id>
+  </workspace>
+  <connectionParameters>
+    <entry key="schema">public</entry>
+    <entry key="dbtype">postgis</entry>
+    <entry key="Loose bbox">true</entry>
+    <entry key="Expose primary keys">false</entry>
+    <entry key="Max open prepared statements">50</entry>
+    <entry key="preparedStatements">false</entry>
+    <entry key="jndiReferenceName">java:comp/env/jdbc/postgres/geoserverdb</entry>
+    <entry key="namespace">localhost</entry>
+  </connectionParameters>
+  <__default>false</__default>
+</dataStore>

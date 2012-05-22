@@ -1,0 +1,58 @@
+<featureType>
+  <id>FeatureTypeInfoImpl-7bc72c1b:13755fc1fc6:-7fff</id>
+  <name>nyc_buildings</name>
+  <nativeName>nyc_buildings</nativeName>
+  <namespace>
+    <id>NamespaceInfoImpl-7bc72c1b:13755fc1fc6:-7ffc</id>
+  </namespace>
+  <title>nyc_buildings</title>
+  <keywords>
+    <string>features</string>
+    <string>nyc_buildings</string>
+  </keywords>
+  <nativeCRS class="projected">PROJCS[&quot;NAD83(HARN) / New York Long Island (ftUS)&quot;, 
+  GEOGCS[&quot;NAD83(HARN)&quot;, 
+    DATUM[&quot;NAD83 (High Accuracy Reference Network)&quot;, 
+      SPHEROID[&quot;GRS 1980&quot;, 6378137.0, 298.257222101, AUTHORITY[&quot;EPSG&quot;,&quot;7019&quot;]], 
+      TOWGS84[-0.991, 1.9072, 0.5129, 0.0257899075194932, -0.009650098960270402, -0.011659943232342112, 0.0], 
+      AUTHORITY[&quot;EPSG&quot;,&quot;6152&quot;]], 
+    PRIMEM[&quot;Greenwich&quot;, 0.0, AUTHORITY[&quot;EPSG&quot;,&quot;8901&quot;]], 
+    UNIT[&quot;degree&quot;, 0.017453292519943295], 
+    AXIS[&quot;Geodetic longitude&quot;, EAST], 
+    AXIS[&quot;Geodetic latitude&quot;, NORTH], 
+    AUTHORITY[&quot;EPSG&quot;,&quot;4152&quot;]], 
+  PROJECTION[&quot;Lambert_Conformal_Conic_2SP&quot;], 
+  PARAMETER[&quot;central_meridian&quot;, -74.0], 
+  PARAMETER[&quot;latitude_of_origin&quot;, 40.166666666666664], 
+  PARAMETER[&quot;standard_parallel_1&quot;, 41.03333333333333], 
+  PARAMETER[&quot;false_easting&quot;, 984250.0], 
+  PARAMETER[&quot;false_northing&quot;, 0.0], 
+  PARAMETER[&quot;scale_factor&quot;, 1.0], 
+  PARAMETER[&quot;standard_parallel_2&quot;, 40.666666666666664], 
+  UNIT[&quot;foot_survey_us&quot;, 0.30480060960121924], 
+  AXIS[&quot;Easting&quot;, EAST], 
+  AXIS[&quot;Northing&quot;, NORTH], 
+  AUTHORITY[&quot;EPSG&quot;,&quot;2908&quot;]]</nativeCRS>
+  <srs>EPSG:2908</srs>
+  <nativeBoundingBox>
+    <minx>983837.681</minx>
+    <maxx>991858.879</maxx>
+    <miny>207499.47</miny>
+    <maxy>218794.349</maxy>
+    <crs class="projected">EPSG:2908</crs>
+  </nativeBoundingBox>
+  <latLonBoundingBox>
+    <minx>-74.00150070307154</minx>
+    <maxx>-73.97254343266975</maxx>
+    <miny>40.736221214773884</miny>
+    <maxy>40.76722606555764</maxy>
+    <crs>EPSG:4326</crs>
+  </latLonBoundingBox>
+  <projectionPolicy>FORCE_DECLARED</projectionPolicy>
+  <enabled>true</enabled>
+  <store class="dataStore">
+    <id>DataStoreInfoImpl-7bc72c1b:13755fc1fc6:-8000</id>
+  </store>
+  <maxFeatures>0</maxFeatures>
+  <numDecimals>0</numDecimals>
+</featureType>

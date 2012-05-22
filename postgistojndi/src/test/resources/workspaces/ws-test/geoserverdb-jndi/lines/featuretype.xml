@@ -1,0 +1,34 @@
+<featureType>
+  <id>FeatureTypeInfoImpl-7bc72c1b:13755fc1fc6:-7ffb</id>
+  <name>lines</name>
+  <nativeName>lines</nativeName>
+  <namespace>
+    <id>NamespaceInfoImpl-7bc72c1b:13755fc1fc6:-7ffc</id>
+  </namespace>
+  <title>lines</title>
+  <keywords>
+    <string>features</string>
+    <string>lines</string>
+  </keywords>
+  <srs>EPSG:4326</srs>
+  <nativeBoundingBox>
+    <minx>7.0</minx>
+    <maxx>10.0</maxx>
+    <miny>8.0</miny>
+    <maxy>9.0</maxy>
+  </nativeBoundingBox>
+  <latLonBoundingBox>
+    <minx>7.0</minx>
+    <maxx>10.0</maxx>
+    <miny>8.0</miny>
+    <maxy>9.0</maxy>
+    <crs>EPSG:4326</crs>
+  </latLonBoundingBox>
+  <projectionPolicy>FORCE_DECLARED</projectionPolicy>
+  <enabled>true</enabled>
+  <store class="dataStore">
+    <id>DataStoreInfoImpl-7bc72c1b:13755fc1fc6:-8000</id>
+  </store>
+  <maxFeatures>0</maxFeatures>
+  <numDecimals>0</numDecimals>
+</featureType>
