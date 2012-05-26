@@ -9,15 +9,15 @@ htmlCacheDir=htmlCache
 baseUrl=geonetwork
 host=@shared.server.name@
 
-psql.host=localhost
-psql.port=5432
+psql.host=@shared.psql.host@
+psql.port=@shared.psql.port@
 psql.db=geonetwork
 
-psql.user=www-data
-psql.pass=www-data
-psql.url=jdbc:postgresql://localhost:5432/geonetwork
+psql.user=@shared.psql.user@
+psql.pass=@shared.psql.pass@
+psql.url=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/geonetwork
 
-xhr.proxy-url=http://${host}/proxy/
+xhr.proxy-url=http://@shared.server.name@/proxy/
 
 groupSyncLdapBase=ou=groups,dc=georchestra,dc=org
 jpegPhotoLdapBase=ou=users,dc=georchestra,dc=org
@@ -48,7 +48,6 @@ config-gui.xml.mapSearchLayers=<layer server="http://${host}/shorelines" tocName
 
 config-gui.xml.mapViewerLayers=${config-gui.xml.mapSearchLayers}
 
-dlform.activated=true
-dlform.pdf_url=/static/usage.pdf
-downloadform.psql.url=jdbc:postgresql://localhost:5432/downloadform
-
+dlform.activated=@shared.download_form.activated@
+downloadform.psql.url=@shared.download_form.jdbcurl@
+dlform.pdf_url=@shared.download_form.pdfurl@

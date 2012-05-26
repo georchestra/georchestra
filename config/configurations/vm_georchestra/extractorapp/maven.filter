@@ -14,13 +14,13 @@ servletUrl=http://${host}/extractorapp
 secureHost=${host}
 
 # Email properties
-smtpHost=localhost
-smtpPort=25
-replyTo=pmauduit@qualitystreetmap.org
-from=${replyTo}
+smtpHost=@shared.smtp.host@
+smtpPort=@shared.smtp.port@
+replyTo=@shared.smtp.replyTo@
+from=@shared.smtp.from@
 
-priveleged_admin_name=extractorapp_priveleged_admin
-priveleged_admin_pass=gerlsSnFd6SmM
+priveleged_admin_name=@shared.privileged.geoserver.user@
+priveleged_admin_pass=@shared.privileged.geoserver.pass@
 
 dlformjdbcurl=@shared.download_form.jdbcurl@?user=@shared.psql.user@&password=@shared.psql.pass@
 dlformactivated=@shared.download_form.activated@

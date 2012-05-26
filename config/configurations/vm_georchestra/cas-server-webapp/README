@@ -1,5 +1,4 @@
-This directory will be copied into the webapp if the war 
-is created with a -Dserver=demo parameter.
+This directory contains the cas-server-webapp parameters.
+It is automatically configured by shared.maven.filters.
 
-This is used by the cockpit/trunk/deploy-servers.sh script when
-deploying to the demo server
+

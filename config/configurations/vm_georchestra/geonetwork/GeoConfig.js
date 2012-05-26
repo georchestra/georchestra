@@ -21,7 +21,7 @@
 /*
  * This file aims to export some configuration variables from the main
  *  GeoNetwork JS application.
- *  
+ *
  * @author pmauduit
  *
  */
@@ -30,9 +30,9 @@
  * Note : this file is included after the Env object definition, but before
  * JS libraries inclusion. It is then possible to use the Env object (as
  * shown further with the wmsUrl definition).
- * 
+ *
  * FYI, the Env object defines the current variables (see header.xsl) :
- * 
+ *
  *          Env.host = "http://<xsl:value-of select="/root/gui/env/server/host"/>:<xsl:value-of select="/root/gui/env/server/port"/>";
  *          Env.locService= "<xsl:value-of select="/root/gui/locService"/>";
  *          Env.locUrl    = "<xsl:value-of select="/root/gui/locUrl"/>";
@@ -106,7 +106,7 @@ Geonetwork.CONFIG.MainMap = {
         ['NASA JPL OneEarth Web Mapping Server (WMS)', 'http://wms.jpl.nasa.gov/wms.cgi?'],
         ['NASA Earth Observations (NEO) WMS', 'http://neowms.sci.gsfc.nasa.gov/wms/wms?'],
         ['DEMIS World Map Server', 'http://www2.demis.nl/mapserver/wms.asp?'],
-        ['Geoserver', 'http://localhost:43080/geoserver/wms?']
+        ['Geoserver', 'http://@shared.server.name@/geoserver/wms?']
     ]
 };
 
