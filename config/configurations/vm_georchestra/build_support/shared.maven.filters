@@ -17,8 +17,7 @@ shared.privileged.geoserver.pass=gerlsSnFd6SmM
 
 shared.tomcat.dir=/var/lib/tomcat6
 shared.log.dir=/var/log/tomcat6
-shared.c2c.logdir=/var/log/tomcat6
-
+shared.apache.conf.dir=/dev/null
 
 shared.download_form.jdbcurl=jdbc:postgresql://localhost:5432/downloadform
 shared.psql.user=www-data
