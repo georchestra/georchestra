@@ -214,6 +214,8 @@
         <module>catalogapp</module>
         <module>doc</module>
         <module>extractorapp</module>
+		<module>gt-metadata</module>
+		<module>gt-referencing</module>
         <module>geoserver</module>
         <module>geoserver-security</module>
         <module>mapfishapp</module>
@@ -262,6 +264,8 @@
     <profile>
       <id>geoserver</id>
       <modules>
+		<module>gt-metadata</module>
+		<module>gt-referencing</module>
         <module>geoserver</module>
       </modules>
     </profile>
@@ -387,4 +391,5 @@
       <url>http://dev.mapfish.org/maven/repository</url>
     </pluginRepository>
   </pluginRepositories>
+>>>>>>> .r2496
 </project>
