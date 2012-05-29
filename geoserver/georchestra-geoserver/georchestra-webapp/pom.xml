@@ -95,7 +95,7 @@
 							<directory>${basedir}/src/main/filtered-resources/</directory>
 						</resource>
 						<resource>
-							<filtering>true</filtering>
+							<filtering>false</filtering>
 							<directory>${basedir}/src/main/webapp/</directory>
 						</resource>
 						<resource>
