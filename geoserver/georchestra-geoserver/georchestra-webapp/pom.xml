@@ -95,6 +95,10 @@
 							<directory>${basedir}/src/main/filtered-resources/</directory>
 						</resource>
 						<resource>
+							<filtering>true</filtering>
+							<directory>${basedir}/src/main/webapp/</directory>
+						</resource>
+						<resource>
 							<filtering>false</filtering>
 							<directory>${confdir}/${project.artifactId}</directory>
 							<excludes>
