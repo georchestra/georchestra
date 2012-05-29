@@ -35,8 +35,14 @@ log.filename=security-proxy.log
 # (zero or more and comma separated)
 log.appender=FileAppender
 
-# header mapping ?
-header.mapping=
+# header mapping
+header.mapping=\
+        <entry key="sec-email"     value="mail"/>\
+        <entry key="sec-firstname" value="givenName"/>\
+        <entry key="sec-lastname"  value="sn"/>\
+        <entry key="sec-org"       value="o"/>\
+        <entry key="sec-tel"       value="telephoneNumber"/>
+
 
 # dev should not need a test url
 test.url=
