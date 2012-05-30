@@ -396,14 +396,6 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
     private void writeToFile(File file, InputStream in) throws IOException {
         FileOutputStream fout = new FileOutputStream(file);
         try {
-        	// test if the input stream is not null
-        	int b = in.read();
-        	if(b < 0) {
-        		throw new ExtractorException(
-                        "GetCoverageRequests returned an empty stream, see administrator");
-        	} else {
-        		fout.write(b);
-        	}
             ReadableByteChannel channel = Channels.newChannel(in);
             fout.getChannel().transferFrom(channel, 0, Long.MAX_VALUE);
             fout.flush();

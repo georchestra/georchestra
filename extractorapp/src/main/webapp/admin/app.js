@@ -79,6 +79,7 @@ Ext.onReady(function(){
         sorters: { property: 'priority', direction : 'DESC' },
         listeners: {
         	load : {
+        		// put top priority (temporary) to running task
         		fn : function(s) {
         			var i = s.find("status","RUNNING");
                     if(i >= 0) {

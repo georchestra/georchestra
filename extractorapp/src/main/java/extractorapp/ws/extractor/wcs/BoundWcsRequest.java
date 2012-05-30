@@ -336,6 +336,7 @@ class BoundWcsRequest extends WcsReaderRequest {
 		HttpResponse response = httpclient.execute(httpRequest, localcontext);
         // check for an error response from the server
 		int statusCode = response.getStatusLine().getStatusCode();
+		LOG.debug("WCS response status : " + statusCode);
 		if( statusCode != 200) {
             throw new ExtractorException("Error from server while fetching coverage: Response Satus Code not valide -> "+statusCode);
 		}
@@ -453,6 +454,9 @@ class BoundWcsRequest extends WcsReaderRequest {
         double ymax = requestBbox.getMaxY();
         double size = ((xmax - xmin) / groundResolutionX) * ((ymax - ymin) / groundResolutionX) * (double)numBands();
 
+        LOG.debug("Raster to extract => xSize : " + (xmax - xmin) / groundResolutionX +
+        	" - ySize : " + (ymax - ymin) / groundResolutionX + " - nbBands : " + (double)numBands() +
+        	" - SIZE : " + size + " (size max set to " + maxSize + ")");
         if(size>maxSize) {
             throw new OversizedCoverageRequestException(coverage);
         }
