@@ -3,6 +3,8 @@
 
 shared.server.port=80
 
+shared.language=fr
+
 shared.ldap.host=localhost
 shared.ldap.port=636
 shared.ldapUrl=ldaps://@shared.ldap.host@:@shared.ldap.port@

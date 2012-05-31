@@ -1,3 +1,5 @@
+language=@shared.language@
+
 transformFactory=de.fzi.dbs.xml.transform.CachingTransformerFactory
 debug=false
 
