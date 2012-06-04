@@ -11,6 +11,7 @@
           <property name="headerManagement" ref="headerManagementBean"/>
           <property name="defaultCharset" value="UTF-8"/>
           
+          <property name="checkHealth" value="${checkHealth}"/>
           <property name="maxDatabaseConnections" value="${max.database.connections}"/>    
                 
           <property name="database" value="${psql.db}"/>

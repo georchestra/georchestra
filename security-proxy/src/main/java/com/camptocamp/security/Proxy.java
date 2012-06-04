@@ -121,7 +121,8 @@ public class Proxy {
     
     /*  ----------  Required for  DatabaseHealthCenter -------------------- */
     
-    private String database;
+    private Boolean checkHealth;
+	private String database;
     private String user;
     private String password;
 	private Integer maxDatabaseConnections;
@@ -399,8 +400,10 @@ public class Proxy {
         httpclient.getParams().setParameter("http.socket.timeout", new Integer(300000));
         httpclient.getParams().setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, false);
 
-        DatabaseHealthCenter.getInstance(this.database, this.user, this.password, Proxy.class.getSimpleName())
-        						.checkConnections(this.maxDatabaseConnections); 
+        if( isCheckHealth() ){
+            DatabaseHealthCenter.getInstance(this.database, this.user, this.password, Proxy.class.getSimpleName())
+				.checkConnections(this.maxDatabaseConnections); 
+        }
 
         //
         // Handle http proxy for external request.
@@ -1046,6 +1049,20 @@ public class Proxy {
     public void setMaxDatabaseConnections(Integer maxDatabaseConnections){
     	this.maxDatabaseConnections = maxDatabaseConnections;
     }
+    
+    public Boolean getCheckHealth() {
+		return this.checkHealth;
+	}
+
+	public void setCheckHealth(Boolean checkHealth) {
+		this.checkHealth = checkHealth;
+	}
+	
+    public boolean isCheckHealth() {
+		return this.checkHealth.booleanValue();
+	}
+
+
     
     public void setRequireCharsetContentTypes(List<String> requireCharsetContentTypes) {
         this.requireCharsetContentTypes = requireCharsetContentTypes;
