@@ -1,1 +1,0 @@
-gt-metadata and gt-referencing jars have a reprojection patch for 2.7.4.  When geotools is updated then these files should be removed from georchestra/geoserver/georchestra-geoserver/georchestra-webapp/src/main/webapp/WEB-INF/lib
