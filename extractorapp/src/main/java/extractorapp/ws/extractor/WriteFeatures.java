@@ -44,7 +44,7 @@ import extractorapp.ws.extractor.WfsExtractor.GeomType;
  */
 public class WriteFeatures implements FeatureVisitor {
 
-    private static final int                                                    MAX_TRANSACTION_FEATURES = 50000;
+    private static final int                                                    MAX_TRANSACTION_FEATURES = 200000;
     private final SimpleFeatureType                                             _type;
     private final Map<GeomType, FeatureStore<SimpleFeatureType, SimpleFeature>> _dsFiles;
     private final File                                                          _baseDir;

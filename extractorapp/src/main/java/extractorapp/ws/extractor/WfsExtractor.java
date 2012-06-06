@@ -222,6 +222,7 @@ public class WfsExtractor {
         params.put (WFSDataStoreFactory.LENIENT.key, true);
         params.put (WFSDataStoreFactory.PROTOCOL.key, true);
         params.put (WFSDataStoreFactory.TIMEOUT.key, Integer.valueOf(60000));
+        params.put (WFSDataStoreFactory.MAXFEATURES.key, Integer.valueOf(0));
         
         // HACK  I want unrestricted access to layers. 
         // Security check takes place in ExtractorThread
@@ -253,6 +254,7 @@ public class WfsExtractor {
         basedir.mkdirs();
 
         FeatureWriterStrategy writer;
+        LOG.debug("Number of features returned : " + features.size());
         if (request._format.equalsIgnoreCase("shp")) {
             writer = new ShpFeatureWriter(progressListener, sourceSchema, basedir, features);
         } else if (request._format.equalsIgnoreCase("mif")) {
