@@ -134,6 +134,7 @@ shared.psql.host=localhost
 shared.psql.port=5432
 shared.psql.user=www-data
 shared.psql.pass=www-data
+shared.psql.url=psql://www-data:www-data@localhost/geonetwork
 
 
 # --------------------------------------------------
@@ -154,7 +155,11 @@ shared.download_form.activated=true
 shared.download_form.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/downloadform
 shared.download_form.pdfurl=/static/usage.pdf
 
+# --------------------------------------------------
+# health check properties
+# --------------------------------------------------
 
+shared.psql.geonetwork.db=geonetwork
 
 # --------------------------------------------------
 # TO BE DOCUMENTED
