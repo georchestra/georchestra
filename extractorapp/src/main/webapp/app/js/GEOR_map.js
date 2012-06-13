@@ -115,8 +115,34 @@ GEOR.map = (function() {
          * {OpenLayers.Layer.Vector} The vector layer.
          */
         createVectorLayer: function() {
+            var style = OpenLayers.Util.extend({}, 
+                OpenLayers.Feature.Vector.style['default']);
+            OpenLayers.Util.extend(style, {
+                label: "${getArea}",
+                fontColor: "blue",
+                fontSize: "12px",
+                fontFamily: "Courier New, monospace",
+                fontWeight: "bold",
+                labelAlign: "cm",
+                labelXOffset: 0,
+                labelYOffset: 0,
+                labelOutlineColor: "white",
+                labelOutlineWidth: 3
+            })
             return new OpenLayers.Layer.Vector("Bbox layer", {
-                geometryType: OpenLayers.Geometry.Polygon
+                geometryType: OpenLayers.Geometry.Polygon,
+                styleMap: new OpenLayers.StyleMap(
+                    new OpenLayers.Style(style, {
+                        context: {
+                            getArea: function(f) {
+                                if (f && f.attributes && f.attributes.area) {
+                                    return f.attributes.area;
+                                }
+                                return "";
+                            }
+                        }
+                    })
+                )
             });
         },
 

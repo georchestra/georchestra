@@ -285,6 +285,22 @@ GEOR.layeroptions = (function() {
             if (options.vectorLayer) {
                 vectorLayer = options.vectorLayer;
                 delete options.vectorLayer;
+                vectorLayer.events.on({
+                    "beforefeatureadded": function(o) {
+                        var feature = o.feature;
+                        if (!feature) {
+                            return;
+                        }
+                        var area = feature.geometry.getGeodesicArea(map.getProjectionObject())/1E6;
+                        var str = (area > 10) ? 
+                            Math.round(area) + ' km²':
+                            (area < 0.1) ?
+                                Math.round(area*1E6) + ' m²' :
+                                Math.round(area*10)/10  + ' km²';
+                        o.feature.attributes['area'] = str;
+                    },
+                    scope: this
+                });
             }
             map = m;
             layerOptionsPanel = new Ext.Panel(
