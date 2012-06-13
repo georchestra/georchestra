@@ -12,7 +12,7 @@ Ext.define('Analytics.view.FilteredGeonetworkFiles', {
                 text: 'Métadonnée',
                 renderer: function(v) {
                     if (!v) return;
-                    var url = 'http://ids.pigma.org/geonetwork/srv/fr/metadata.show?id='+v; // TODO: config for base URL
+                    var url = '/geonetwork/srv/fr/metadata.show?id='+v;
                     return '<a href="'+url+'" target="_blank">'+v+'</a>'
                 }
             }, {
