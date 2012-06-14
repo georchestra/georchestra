@@ -235,7 +235,17 @@ Ext.namespace("GEOR");
         // the viewport
         new Ext.Viewport({
             layout: "border",
-            items: vpItems
+            items: vpItems,
+            listeners: {
+                "afterrender": function() {
+                    if (!GEOR.config.SPLASH_SCREEN) {
+                        return;
+                    }
+                    GEOR.util.infoDialog({
+                        msg: GEOR.config.SPLASH_SCREEN
+                    });
+                }
+            }
         });
         
         var saveLayerOptions = function() {

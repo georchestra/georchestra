@@ -450,7 +450,15 @@ GEOR.config = (function() {
                 owsurl: "http://bmo.openstreetmap.fr/ows2"
             }
         ]),
-        
+
+        /**
+         * Constant: SPLASH_SCREEN
+         * {String} The message to display on extractorapp startup
+         * Defaults to null, which means no message will be displayed
+         */
+        SPLASH_SCREEN: getCustomParameter("SPLASH_SCREEN", 
+            null),
+
         /**
          * Constant: HELP_URL
          * {String} URL of the help ressource.
