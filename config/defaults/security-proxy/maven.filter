@@ -34,6 +34,7 @@ header.mapping=\
     
 # database health check parameters
 
+checkHealth=false
 psql.host=@shared.psql.host@
 psql.port=@shared.psql.port@
 psql.db=@shared.psql.geonetwork.db@
