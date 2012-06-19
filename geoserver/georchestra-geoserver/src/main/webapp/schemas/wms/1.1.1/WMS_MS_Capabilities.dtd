@@ -271,4 +271,5 @@ display this layer. -->
           max CDATA #REQUIRED>
 
 
+<!ELEMENT VendorSpecificCapabilities EMPTY>
 
