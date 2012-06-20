@@ -121,7 +121,7 @@ public class Proxy {
     
     /*  ----------  Required for  DatabaseHealthCenter -------------------- */
     
-    private Boolean checkHealth;
+    private static Boolean checkHealth;
 	private String database;
     private String user;
     private String password;
@@ -1054,7 +1054,7 @@ public class Proxy {
 		return this.checkHealth;
 	}
 
-	public void setCheckHealth(Boolean checkHealth) {
+	public void setCheckHealth(boolean checkHealth) {
 		this.checkHealth = checkHealth;
 	}
 	
