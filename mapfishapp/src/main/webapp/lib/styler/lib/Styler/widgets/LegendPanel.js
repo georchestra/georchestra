@@ -350,21 +350,27 @@ Styler.LegendPanel = Ext.extend(Ext.Panel, {
         var panel = this;
         var dropZone = new Ext.dd.DropTarget(component.getEl(), {
             notifyDrop: function(ddSource) {
-                var source = Ext.getCmp(ddSource.getEl().id);
-                var target = Ext.getCmp(this.getEl().id);
-                // sometimes, for whatever reason, Ext forgets who the source
-                // was, so we make sure that we have one before moving on
-                if(source && target && source != target) {
-                    var sourceCt = source.ownerCt;
-                    var targetCt = target.ownerCt;
-                    // only move rules around inside the same container
-                    if(sourceCt == targetCt) {
-                        panel.moveRule(
-                            sourceCt.items.indexOf(source),
-                            targetCt.items.indexOf(target)
-                        );
-                    }
-                }
+            	
+            	var task = new Ext.util.DelayedTask(function(){
+            		 var source = Ext.getCmp(ddSource.getEl().id);
+                     var target = Ext.getCmp(this.getEl().id);
+                     // sometimes, for whatever reason, Ext forgets who the source
+                     // was, so we make sure that we have one before moving on
+                     if(source && target && source != target) {
+                         var sourceCt = source.ownerCt;
+                         var targetCt = target.ownerCt;
+                         // only move rules around inside the same container
+                         if(sourceCt == targetCt) {
+                             panel.moveRule(
+                                 sourceCt.items.indexOf(source),
+                                 targetCt.items.indexOf(target)
+                             );
+                         }
+                     }
+            	}, this);
+            	task.delay(200);
+               
+                return true;
             }
         });
     },
