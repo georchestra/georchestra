@@ -546,7 +546,7 @@ GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
             });
         } else if(type === 'unique_values') {
             Ext.apply(request, {
-                palette: this.cbPalette.getValue()
+                palette: this.cbPalette.selectedIndex
             });
         }
 
