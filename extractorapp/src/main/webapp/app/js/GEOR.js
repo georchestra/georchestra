@@ -242,6 +242,7 @@ Ext.namespace("GEOR");
                         return;
                     }
                     GEOR.util.infoDialog({
+                        title: "Limites d'utilisation",
                         msg: GEOR.config.SPLASH_SCREEN
                     });
                 }
