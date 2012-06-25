@@ -257,7 +257,8 @@ GEOR.resultspanel = (function() {
                     var record = grid.getStore().getAt(rowIndex);  // Get the Record
                     var fieldName = grid.getColumnModel().getDataIndex(columnIndex); // Get field name
                     var data = record.get(fieldName);
-                    if (data && GEOR.util.isUrl(data)) {
+                    // weak URL detection, as asked by http://applis-bretagne.fr/redmine/issues/3860 :
+                    if (data && GEOR.util.isUrl(data, false)) {
                         window.open(data);
                     }
                 }

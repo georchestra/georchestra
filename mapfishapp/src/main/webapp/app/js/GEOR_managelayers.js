@@ -174,7 +174,7 @@ GEOR.managelayers = (function() {
 
         // logo displayed in qtip if set
         var tip = 'source : '+ (attr.title || '-') +
-            ((attr.logo && GEOR.util.isUrl(attr.logo.href)) ? '<br /><img src=\''+attr.logo.href+'\' />' : '');
+            ((attr.logo && GEOR.util.isUrl(attr.logo.href, true)) ? '<br /><img src=\''+attr.logo.href+'\' />' : '');
 
         var attrDisplay = (attr.href) ?
             '<a href="'+attr.href+'" target="_blank" ext:qtip="'+tip+'">'+titleForDisplay+'</a>' :

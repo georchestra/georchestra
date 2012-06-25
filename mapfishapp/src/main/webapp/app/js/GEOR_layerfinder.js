@@ -421,7 +421,7 @@ Ext.app.OWSUrlField = Ext.extend(Ext.form.TwinTriggerField, {
             this.onTrigger1Click();
             return;
         }
-        if (!GEOR.util.isUrl(url)) {
+        if (!GEOR.util.isUrl(url, true)) {
             GEOR.util.errorDialog({
                 msg: "URL non conforme."
             });
