@@ -89,14 +89,19 @@ GEOR.map = (function() {
                 },
                 title: 'carte de situation',
                 minRectSize: 10,
-                minRatio: 128,
-                maxRatio: 128,
+                // with these settings, a unique OSM zoom level is displayed:
+                minRatio: 1,
+                maxRatio: 100000,
                 layers: [
                     new OpenLayers.Layer.OSM("_OSM", [
                         'http://a'+u, 'http://b'+u, 'http://c'+u
                     ], {
                         transitionEffect: 'resize',
                         buffer: 0,
+                        // do not fetch useless low zoom level tiles:
+                        maxResolution: 9783.939619141,
+                        numZoomLevels: 15,
+                        zoomOffset: 4,
                         attribution: [
                             "(c) <a href='http://openstreetmap.org/'>OSM</a>",
                             "<a href='http://creativecommons.org/licenses/by-sa/2.0/'>by-sa</a>"
