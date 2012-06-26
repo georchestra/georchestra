@@ -1,0 +1,12 @@
+Index: src/wms/src/main/resources/schemas/wms/1.1.1/WMS_MS_Capabilities.dtd
+===================================================================
+--- src/wms/src/main/resources/schemas/wms/1.1.1/WMS_MS_Capabilities.dtd	(révision 17176)
++++ src/wms/src/main/resources/schemas/wms/1.1.1/WMS_MS_Capabilities.dtd	(copie de travail)
+@@ -270,5 +270,5 @@
+           min CDATA #REQUIRED
+           max CDATA #REQUIRED>
+ 
+-
+-
++<!-- undefined optional element, see http://applis-bretagne.fr/redmine/issues/3852 -->
++<!ELEMENT VendorSpecificCapabilities EMPTY>
