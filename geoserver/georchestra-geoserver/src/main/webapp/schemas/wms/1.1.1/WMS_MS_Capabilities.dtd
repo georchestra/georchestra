@@ -269,7 +269,3 @@ display this layer. -->
 <!ATTLIST ScaleHint
           min CDATA #REQUIRED
           max CDATA #REQUIRED>
-
-
-<!ELEMENT VendorSpecificCapabilities EMPTY>
-
