@@ -168,6 +168,7 @@
       <properties>
         <server>pigma</server>
         <sub.target>int</sub.target>
+        <geoserver.war.excludes>WEB-INF/lib/*gwc*.jar</geoserver.war.excludes>
       </properties>
     </profile>
 
@@ -176,6 +177,7 @@
       <properties>
         <server>pigma</server>
         <sub.target>prod</sub.target>
+        <geoserver.war.excludes>WEB-INF/lib/*gwc*.jar</geoserver.war.excludes>
       </properties>
     </profile>
 
