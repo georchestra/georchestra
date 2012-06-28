@@ -65,6 +65,7 @@
 						</goals>
 						<phase>generate-sources</phase>
 						<configuration>
+						  <excludes>${geoserver.war.excludes}</excludes>
 							<artifactItems>
 								<artifactItem>
 									<groupId>org.geoserver.web</groupId>
@@ -83,7 +84,6 @@
 				<artifactId>maven-war-plugin</artifactId>
 				<version>2.2</version>
 				<configuration>
-				  <packagingExcludes>${gs.war.excludes}</packagingExcludes>
 					<warSourceDirectory>${gs.unpack.dir}</warSourceDirectory>
 					<webXml>${gs.unpack.dir}/WEB-INF/web.xml</webXml>
 					<warName>geoserver</warName>
