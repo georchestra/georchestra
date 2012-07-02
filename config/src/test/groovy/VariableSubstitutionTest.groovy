@@ -3,7 +3,7 @@
  * verifies that all variables have been correctly substituted
  */
 public class VariableSubstitutionTest {
-	def ignorables = [".png", ".gif", ".ico", ".bmp", ".jpg", ".odg", ".pdf", ".swf", ".odg"]
+	def ignorables = [".png", ".gif", ".ico", ".bmp", ".jpg", ".odg", ".pdf", ".swf", ".doc", ".jar", ".class"]
 	/**
 	 * @param project The maven project.  you can get all information about the project from this object
 	 * @param log a logger for logging info
