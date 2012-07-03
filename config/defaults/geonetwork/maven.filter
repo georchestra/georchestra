@@ -22,7 +22,7 @@ psql.db=@shared.psql.geonetwork.db@
 
 psql.user=@shared.psql.user@
 psql.pass=@shared.psql.pass@
-psql.url=@shared.psql.url@
+psql.url=jdbc:postgresql://localhost:55432/geonetwork
 
 downloadform.psql.url=@shared.download_form.jdbcurl@
 dlform.activated=@shared.download_form.activated@
@@ -37,6 +37,8 @@ LdapHost=@shared.ldap.host@
 LdapPort=@shared.ldap.port@
 LdapBindDn=@shared.ldap.admin.dn@
 LdapBindPassword=@shared.ldap.admin.password@
+
+LdapGroupPrefix=ROLE_EL_
 
 geoserver.node.id=geoserver2
 geoserver.node.name=My preferred GeoServer node
