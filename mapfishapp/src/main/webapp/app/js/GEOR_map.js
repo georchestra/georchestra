@@ -206,6 +206,10 @@ GEOR.map = (function() {
                 errors.push(error);
             } 
             
+            /*
+            Lesson learned with http://applis-bretagne.fr/redmine/issues/2886 :
+            Do not try to be more intelligent than the WMS server
+            
             // Note: queryable is required in addition to opaque, 
             // because opaque is not a standard WMC feature
             // This enables us to remove rasters from legend panel
@@ -219,8 +223,10 @@ GEOR.map = (function() {
                 // layers are considered as baselayers
                 r.set("opaque", true);
             }
+            */
             // Note that the ultimate solution would be to do a getCapabilities 
             // request for each OGC server advertised in the WMC
+            
             
             // Format attribution if required:
             var attr = r.get('attribution');
