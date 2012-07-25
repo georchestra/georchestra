@@ -114,6 +114,11 @@ Ext.ux.PaletteComboBox = Ext.extend(Ext.form.ComboBox, {
             t.overwrite(this.icon, palette);
         }
     },
+    
+    assertValue: function() {
+        // does nothing in override
+        // this is to prevent a call to clearValue() - because there's no displayField
+    },
 
     setValue: function(value) {
         Ext.ux.PaletteComboBox.superclass.setValue.call(this, value);
