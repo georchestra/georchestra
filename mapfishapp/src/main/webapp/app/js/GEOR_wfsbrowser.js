@@ -45,6 +45,12 @@ GEOR.wfsbrowser = (function() {
      */
     var cbxSm = null;
 
+    /**
+     * Property: tr
+     * {Function} an alias to OpenLayers.i18n
+     */
+    var tr = null;
+
     /*
      * Public
      */
@@ -68,6 +74,7 @@ GEOR.wfsbrowser = (function() {
         getPanel: function(options) {
             var srs = options.srs;
             delete options.srs;
+            tr = OpenLayers.i18n;
             
             var store = new GEOR.ows.WFSCapabilities({
                 storeOptions: {
@@ -141,12 +148,12 @@ GEOR.wfsbrowser = (function() {
                 border: false,
                 store: store,
                 loadMask: {
-                    msg: "Chargement ..."
+                    msg: tr("Loading...")
                 },
                 columns: [
                     cbxSm,
-                    {header: "Couche", dataIndex: "title", sortable: true, width: 200},
-                    {id: "description", header: "Description", dataIndex: "abstract"}
+                    {header: tr("Layer"), dataIndex: "title", sortable: true, width: 200},
+                    {id: "description", header: tr("Description"), dataIndex: "abstract"}
                 ],
                 sm: cbxSm,
                 enableHdMenu: false,
@@ -158,8 +165,8 @@ GEOR.wfsbrowser = (function() {
                 triggerAction: 'all',
                 height: 30,
                 width: 400,
-                fieldLabel: "Choisissez un serveur WFS",
-                loadingText: 'Chargement...',
+                fieldLabel: tr("Choose a WFS server: "),
+                loadingText: tr('Loading...'),
                 mode: 'local',
                 store: new Ext.data.Store({
                     data: GEOR.config.WFS_SERVERS,
@@ -181,12 +188,12 @@ GEOR.wfsbrowser = (function() {
             });
             
             var urlField = new Ext.app.OWSUrlField({
-                fieldLabel: "... ou saisissez son adresse",
+                fieldLabel: tr("... or enter its address: "),
                 store: store,
                 callback: function(r, options, success) {
                     if (!success) {
                         GEOR.util.errorDialog({
-                            msg: "Serveur non joignable ou droits insuffisants"
+                            msg: "Unreachable server or insufficient rights"
                         });
                         return;
                     }
@@ -197,14 +204,14 @@ GEOR.wfsbrowser = (function() {
             });
 
             return new Ext.Panel(Ext.apply({
-                title: 'Serveur WFS',
+                title: tr("WFS server"),
                 layout: 'border',
                 items: [
                     {
                         region: 'north',
                         layout: 'form',
                         border: false,
-                        labelSeparator: ' : ',
+                        labelSeparator: '',
                         labelWidth: 170,
                         bodyStyle: 'padding: 5px;',
                         height: 65,

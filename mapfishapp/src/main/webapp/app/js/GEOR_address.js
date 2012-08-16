@@ -41,20 +41,21 @@ GEOR.address = (function() {
      * {GeoExt.ux.openaddresses.OpenAddressesSearchCombo} The combo.
      */ 
     var createOACombo = function() {
+        var tr = OpenLayers.i18n;
         var a = new GeoExt.ux.OpenAddressesSearchCombo({
             map: map, 
             url: URL,
             zoom: map.baseLayer.numZoomLevels-1,
             tpl: '<tpl for="."><div class="x-combo-list-item" qtip="{housenumber}, {street} - {city}">{housenumber}, {street} - {city}</div></tpl>',
-            fieldLabel: "Aller à",
+            fieldLabel: tr("Go to: "),
             lang: 'fr',
             minChars: 3,
-            labelSeparator: " :",
+            labelSeparator: "",
             width: 180,
             listWidth: 180
         });
-        a.loadingText = "recherche en cours...";
-        a.emptyText = "ex: 4, Hugo, Brest";
+        a.loadingText = tr("searching...");
+        a.emptyText = tr("adressSearchExemple");
         return a;
     };
 

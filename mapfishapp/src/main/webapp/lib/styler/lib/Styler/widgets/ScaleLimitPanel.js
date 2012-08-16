@@ -79,7 +79,7 @@ Styler.ScaleLimitPanel = Ext.extend(Ext.Panel, {
      *
      * Default is "{type} Scale 1:{scale}".
      */
-    scaleSliderTemplate: "Echelle {type} 1:{scale}",
+    scaleSliderTemplate: OpenLayers.i18n("Echelle {type} 1:{scale}"),
     
     /**
      * Method: modifyScaleTipContext
@@ -219,7 +219,7 @@ Styler.ScaleLimitPanel = Ext.extend(Ext.Panel, {
                 items: [{
                     xtype: "checkbox",
                     checked: !!this.limitMinScale,
-                    fieldLabel: "Échelle min",
+                    fieldLabel: OpenLayers.i18n("Min scale"),
                     listeners: {
                         check: function(box, checked) {
                             this.limitMinScale = checked;
@@ -243,7 +243,7 @@ Styler.ScaleLimitPanel = Ext.extend(Ext.Panel, {
                 items: [{
                     xtype: "checkbox",
                     checked: !!this.limitMaxScale,
-                    fieldLabel: "Échelle max",
+                    fieldLabel: OpenLayers.i18n("Max scale"),
                     listeners: {
                         check: function(box, checked) {
                             this.limitMaxScale = checked;

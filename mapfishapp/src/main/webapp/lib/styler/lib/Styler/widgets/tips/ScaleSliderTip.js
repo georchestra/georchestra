@@ -22,9 +22,9 @@ Styler.ScaleSliderTip = Ext.extend(Styler.SliderTip, {
      * - *resolution* the resolution
      * - *scale* the scale denominator
      */
-    template: '<div>Zoom Level: {zoom}</div>' +
-        '<div>Resolution: {resolution}</div>' +
-        '<div>Scale: 1 : {scale}</div>',
+    template: '<div>' + OpenLayers.i18n("Zoom Level: {zoom}") + '</div>' +
+        '<div>' + OpenLayers.i18n("Resolution: {resolution}") + '</div>' +
+        '<div>' + OpenLayers.i18n("Scale: 1 : {scale}") + '</div>',
     
     /**
      * Property: compiledTemplate

@@ -461,8 +461,8 @@ GEOR.ows = (function() {
                     var index = store.find("name", layername);
                     if (index < 0) {
                         GEOR.util.errorDialog({
-                            msg: "La couche "+layername+" n'a pas été trouvée "+
-                                "dans le service WMS."
+                            msg: OpenLayers.i18n("The NAME layer was not found in WMS service.",
+                                {'name': layername})
                         });
                         return;
                     }

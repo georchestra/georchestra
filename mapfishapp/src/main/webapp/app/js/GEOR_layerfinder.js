@@ -72,6 +72,12 @@ GEOR.layerfinder = (function() {
     var addButton = null;
 
     /**
+     * Property: tr
+     * {Function} an alias to OpenLayers.i18n
+     */
+    var tr = null;
+    
+    /**
      * Method: createTabPanel
      * Return the main tab panel.
      *
@@ -86,9 +92,9 @@ GEOR.layerfinder = (function() {
                 if (records.length) {
                     addButton.enable();
                     //addButton.getEl().parent().highlight();
-                    addButton.setText('Ajouter ('+records.length+')');
+                    addButton.setText(tr("Add")+ ' ('+records.length+')');
                 } else {
-                    addButton.setText('Ajouter');
+                    addButton.setText(tr("Add"));
                     addButton.disable();
                 }
             };
@@ -107,19 +113,19 @@ GEOR.layerfinder = (function() {
         });
         
         panels["cswquerier"] = GEOR.cswquerier.getPanel({
-            tabTip: "Trouvez des couches en cherchant dans les métadonnées"
+            tabTip: tr("Find layers searching in metadata")
         });
         panels["cswbrowser"] = GEOR.cswbrowser.getPanel({
-            tabTip: "Trouvez des couches par mots clés"
+            tabTip: tr("Find layers from keywords")
         });
         var mapSRS = layerStore.map.getProjection();
         panels["wms"] = GEOR.wmsbrowser.getPanel({
             srs: mapSRS,
-            tabTip: "Trouvez des couches en interrogeant des serveurs WMS"
+            tabTip: tr("Find layers querying WMS servers")
         });
         panels["wfs"] = GEOR.wfsbrowser.getPanel({
             srs: mapSRS,
-            tabTip: "Trouvez des couches en interrogeant des serveurs WFS"
+            tabTip: tr("Find layers querying WFS servers")
         });
         
         return new Ext.TabPanel({
@@ -146,10 +152,10 @@ GEOR.layerfinder = (function() {
                     }
                     if (selectedRecords[currentTab].length>0) {
                         addButton.enable();
-                        addButton.setText('Ajouter ('+selectedRecords[currentTab].length+')');
+                        addButton.setText(tr("Add")+' ('+selectedRecords[currentTab].length+')');
                         //addButton.getEl().parent().highlight();
                     } else {
-                        addButton.setText('Ajouter');
+                        addButton.setText(tr("Add"));
                         addButton.disable();
                     }
                 }
@@ -173,10 +179,9 @@ GEOR.layerfinder = (function() {
             var index = store.find("name", layerName);
             if(index < 0) {
                 GEOR.util.errorDialog({
-                    msg: "La couche "+layerName+" n'a pas été trouvée "+
-                        "dans le service WMS.<br/><br/>"+
-                        "Peut-être n'avez-vous pas le droit d'y accéder "+
-                        "ou alors cette couche n'est plus disponible."
+                    msg: tr("layerfinder.layer.unavailable",
+                        {'name': layerName}
+                    )
                 });
                 return;
             }
@@ -184,7 +189,7 @@ GEOR.layerfinder = (function() {
             var srs = layerStore.map.getProjection();
             if(!r.get('srs') || (r.get('srs')[srs] !== true)) {
                 GEOR.util.errorDialog({
-                    msg: "La projection de la couche n'est pas compatible."
+                    msg: tr("Layer projection is not compatible")
                 });
                 return;
             }
@@ -223,7 +228,9 @@ GEOR.layerfinder = (function() {
                 layerStore.addSorted(record.clone());
             } else {
                 GEOR.util.errorDialog({
-                    msg: "La couche "+p.featureType+" ne possède pas de colonne géométrique valide."
+                    msg: tr("The NAME layer does not contain a valid geometry column", {
+                        'name': p.featureType
+                    })
                 });
             }
         };
@@ -269,7 +276,7 @@ GEOR.layerfinder = (function() {
                         success: describeFeaturetypeSuccess.call(this, record),
                         failure: function() {
                             GEOR.util.errorDialog({
-                                msg: "Serveur non joignable ou droits insuffisants"
+                                msg: tr("Unreachable server or unsufficient rights")
                             });
                         },
                         scope: this
@@ -286,7 +293,7 @@ GEOR.layerfinder = (function() {
                     success: capabilitiesSuccess.call(this, record),
                     failure: function() {
                         GEOR.util.errorDialog({
-                            msg: "Serveur non joignable ou droits insuffisants"
+                            msg: tr("Unreachable server or unsufficient rights")
                         });
                     }
                 });
@@ -316,8 +323,9 @@ GEOR.layerfinder = (function() {
          */
         create: function(ls, animateFrom) {
             layerStore = ls;
+            tr = OpenLayers.i18n;
             addButton = new Ext.Button({
-                text: 'Ajouter',
+                text: tr("Add"),
                 disabled: true,
                 handler: function() {
                     addSelectedLayers();
@@ -341,7 +349,7 @@ GEOR.layerfinder = (function() {
                 scope: this
             });
             var win = new Ext.Window({
-                title: 'Ajouter des couches depuis un ...',
+                title: tr("Add layers from a ..."),
                 constrainHeader: true,
                 layout: 'fit',
                 animateTarget: GEOR.config.ANIMATE_WINDOWS && animateFrom,
@@ -353,7 +361,7 @@ GEOR.layerfinder = (function() {
                 buttons: [
                     addButton,
                     {
-                        text: 'Fermer',
+                        text: tr("Close"),
                         handler: function() {
                             win.hide();
                         }
@@ -423,7 +431,7 @@ Ext.app.OWSUrlField = Ext.extend(Ext.form.TwinTriggerField, {
         }
         if (!GEOR.util.isUrl(url, true)) {
             GEOR.util.errorDialog({
-                msg: "URL non conforme."
+                msg: tr("Malformed URL")
             });
             return;
         }

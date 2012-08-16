@@ -45,6 +45,12 @@ GEOR.toolbar = (function() {
     var legendWin = null;
 
     /**
+     * Property: tr
+     * {Function} an alias to OpenLayers.i18n
+     */
+    var tr = null;
+
+    /**
      * Method: createMeasureControl.
      * Create a measure control.
      *
@@ -117,11 +123,11 @@ GEOR.toolbar = (function() {
                 popup.show();
                 popup.update({
                     measure: event.order == 2 ? 
-                        (event.units == 'm' ? 
+                        (event.units == tr("m") ? 
                             (event.measure/10000).toFixed(2) : 
                             (event.measure*100).toFixed(2)) : 
                         event.measure.toFixed(2),
-                    units: event.order == 2 ? 'hectares' : event.units
+                    units: event.order == 2 ? tr("hectares") : event.units
                 });
             }
         }
@@ -150,7 +156,7 @@ GEOR.toolbar = (function() {
         items.push(new GeoExt.Action({
             control: ctrl,
             map: map,
-            tooltip: "zoom sur l'étendue globale de la carte",
+            tooltip: tr("zoom to global extent of the map"),
             iconCls: "zoomfull"
         }));
 
@@ -161,7 +167,7 @@ GEOR.toolbar = (function() {
             control: ctrl,
             map: map,
             iconCls: "pan",
-            tooltip: "glisser - déplacer la carte",
+            tooltip: tr("pan"),
             toggleGroup: "map",
             allowDepress: false,
             pressed: true
@@ -174,7 +180,7 @@ GEOR.toolbar = (function() {
             control: ctrl,
             map: map,
             iconCls: "zoomin",
-            tooltip: "zoom en avant",
+            tooltip: tr("zoom in"),
             toggleGroup: "map",
             allowDepress: false
         }));
@@ -185,7 +191,7 @@ GEOR.toolbar = (function() {
             control: createMeasureControl(OpenLayers.Handler.Path, map),
             map: map,
             toggleGroup: "map",
-            tooltip: "mesurer une distance",
+            tooltip: tr("distance measure"),
             iconCls: "measure_path",
             allowDepress: false
         }));
@@ -194,7 +200,7 @@ GEOR.toolbar = (function() {
             control: createMeasureControl(OpenLayers.Handler.Polygon, map),
             map: map,
             toggleGroup: "map",
-            tooltip: "mesurer une surface",
+            tooltip: tr("area measure"),
             iconCls: "measure_area",
             allowDepress: false
         }));
@@ -206,13 +212,13 @@ GEOR.toolbar = (function() {
         items.push(new GeoExt.Action({
             control: ctrl.previous,
             iconCls: "back",
-            tooltip: "revenir à la précédente emprise",
+            tooltip: tr("back to previous zoom"),
             disabled: true
         }));
         items.push(new GeoExt.Action({
             control: ctrl.next,
             iconCls: "next",
-            tooltip: "aller à l'emprise suivante",
+            tooltip: tr("go to next zoom"),
             disabled: true
         }));
 
@@ -243,23 +249,23 @@ GEOR.toolbar = (function() {
         if (GEOR.header === false) {
             // insert a login or logout link in the toolbar
             var login_html = '<div style="margin-right:1em;font:11px tahoma,verdana,helvetica;"><a href="' + GEOR.config.LOGIN_URL +
-                '" style="text-decoration:none;" onclick="return GEOR.toolbar.confirmLogin()">Connexion</a></div>';
+                '" style="text-decoration:none;" onclick="return GEOR.toolbar.confirmLogin()">'+tr("Login")+'</a></div>';
             if(!GEOR.config.ANONYMOUS) {
                 login_html = '<div style="margin-right:1em;font:11px tahoma,verdana,helvetica;">'+GEOR.config.USERNAME + '&nbsp;<a href="' + GEOR.config.LOGOUT_URL +
-                    '" style="text-decoration:none;">déconnexion</a></div>';
+                    '" style="text-decoration:none;">'+tr("Logout")+'</a></div>';
             }
             items.push(Ext.DomHelper.append(Ext.getBody(), login_html));
             items.push('-');
         }
     
         items.push({
-            text: "Aide",
-            tooltip: "Afficher l'aide",
+            text: tr("Help"),
+            tooltip: tr("Show help"),
             handler: function() {
                 if(Ext.isIE) {
                     window.open(GEOR.config.HELP_URL);
                 } else {
-                    window.open(GEOR.config.HELP_URL, "Aide de l'extracteur", "menubar=no,status=no,scrollbars=yes");
+                    window.open(GEOR.config.HELP_URL, tr("Extractor help"), "menubar=no,status=no,scrollbars=yes");
                 }
             }
         });
@@ -267,8 +273,8 @@ GEOR.toolbar = (function() {
         items.push('-');
 
         items.push({
-            text: "Légende",
-            tooltip: "Afficher la légende",
+            text: tr("Legend"),
+            tooltip: tr("Show legend"),
             enableToggle: true,
             handler: function(btn) {
                 if (!legendWin) {
@@ -276,7 +282,7 @@ GEOR.toolbar = (function() {
                         width: 340,
                         bodyStyle: 'padding: 5px',
                         constrainHeader: true,
-                        title: "Légende",
+                        title: tr("Legend"),
                         border: false,
                         animateTarget: GEOR.config.ANIMATE_WINDOWS && this.el,
                         layout: 'fit',
@@ -334,6 +340,8 @@ GEOR.toolbar = (function() {
          */
         create: function(layerStore) {
             Ext.QuickTips.init();
+            tr = OpenLayers.i18n;
+            
             return createTbar(layerStore);
         },
         
@@ -342,7 +350,7 @@ GEOR.toolbar = (function() {
          * Displays a confirm dialog before leaving the app for CAS login
          */
         confirmLogin: function() {
-            return confirm("Vous allez quitter cette page et perdre le contexte cartographique courant");
+            return confirm(tr("Leave this page ? You will lose the current cartographic context."));
             // ou : "Pour vous connecter, nous vous redirigeons vers une autre page web. Vous risquez de perdre le contexte cartographique courant. Vous pouvez le sauvegarder en annulant cette opération, et en cliquant sur Espace de travail > Sauvegarder la carte" ?
         }
     };

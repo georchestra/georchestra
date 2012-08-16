@@ -35,32 +35,32 @@ Styler.FillSymbolizer = Ext.extend(Ext.FormPanel, {
         
         this.items = [{
             xtype: "fieldset",
-            title: "Remplissage",
+            title: OpenLayers.i18n("Fill"),
             autoHeight: true,
             defaults: {
                 width: 100 // TODO: move to css
             },
             items: [{
                 xtype: "colorpickerfield",
-                fieldLabel: "Couleur",
+                fieldLabel: OpenLayers.i18n("Color"),
                 name: "color",
-                value: this.symbolizer["fillColor"],
+                value: this.symbolizer.fillColor,
                 listeners: {
                     valid: function(field) {
-                        this.symbolizer["fillColor"] = field.getValue();
+                        this.symbolizer.fillColor = field.getValue();
                         this.fireEvent("change", this.symbolizer);
                     },
                     scope: this
                 }
             }, {
                 xtype: "slider",
-                fieldLabel: "Opacité",
+                fieldLabel: OpenLayers.i18n("Opacity"),
                 name: "opacity",
-                value: (this.symbolizer["fillOpacity"] == null) ? 100 : this.symbolizer["fillOpacity"] * 100,
+                value: (this.symbolizer.fillOpacity === null) ? 100 : this.symbolizer.fillOpacity * 100,
                 isFormField: true,
                 listeners: {
                     changecomplete: function(slider, value) {
-                        this.symbolizer["fillOpacity"] = value / 100;
+                        this.symbolizer.fillOpacity = value / 100;
                         this.fireEvent("change", this.symbolizer);
                     },
                     scope: this
@@ -75,11 +75,11 @@ Styler.FillSymbolizer = Ext.extend(Ext.FormPanel, {
             }],
             listeners: {
                 "collapse": function() {
-                    this.symbolizer["fill"] = false;
+                    this.symbolizer.fill = false;
                     this.fireEvent("change", this.symbolizer);
                 },
                 "expand": function() {
-                    this.symbolizer["fill"] = true;
+                    this.symbolizer.fill = true;
                     this.fireEvent("change", this.symbolizer);
                 },
                 scope: this

@@ -10,17 +10,17 @@
 
 Ext.namespace("Styler");
 Styler.FilterPanel = Ext.extend(Styler.BaseFilterPanel, {
-    
+
     /**
      * Property: attributes
      * {GeoExt.data.AttributeStore} A configured attributes store for use in
      *     the filter property combo.
      */
     attributes: null,
-    
+
     /**
      * Property: valueContainer
-     * 
+     *
      */
     valueContainer: null,
 
@@ -37,7 +37,7 @@ Styler.FilterPanel = Ext.extend(Styler.BaseFilterPanel, {
     filterPanelOptions: null,
 
     initComponent: function() {
-    
+
         if(!this.attributes) {
             this.attributes = new GeoExt.data.AttributeStore();
         }
@@ -50,7 +50,7 @@ Styler.FilterPanel = Ext.extend(Styler.BaseFilterPanel, {
             triggerAction: "all",
             hideLabel: true,
             allowBlank: false,
-            blankText: "Ce champ est nécessaire",
+            blankText: OpenLayers.i18n("This field is mandatory"),
             displayField: "name",
             valueField: "name",
             value: this.filter.property,
@@ -74,7 +74,7 @@ Styler.FilterPanel = Ext.extend(Styler.BaseFilterPanel, {
                 Ext.apply(this.attributesComboConfig, this.filterPanelOptions.attributesComboConfig);
             }
         }
-        
+
         this.addEvents(
             /**
              * Event: loading
@@ -87,10 +87,10 @@ Styler.FilterPanel = Ext.extend(Styler.BaseFilterPanel, {
              */
             "loaded"
         );
-        
+
         Styler.FilterPanel.superclass.initComponent.call(this);
     },
-   
+
     /**
      * Method: setEqualComparison
      * set comparison to equal and fires change event
@@ -99,8 +99,8 @@ Styler.FilterPanel = Ext.extend(Styler.BaseFilterPanel, {
     setEqualComparison: function() {
         this.comparisonCombo.store.filterBy(function(record){
             return (
-                (record.get('value') == OpenLayers.Filter.Comparison.EQUAL_TO) ||
-                (record.get('value') == OpenLayers.Filter.Comparison.NOT_EQUAL_TO) 
+                (record.get('value') === OpenLayers.Filter.Comparison.EQUAL_TO) ||
+                (record.get('value') === OpenLayers.Filter.Comparison.NOT_EQUAL_TO)
             );
         });
         this.comparisonCombo.setValue(OpenLayers.Filter.Comparison.EQUAL_TO);
@@ -110,20 +110,20 @@ Styler.FilterPanel = Ext.extend(Styler.BaseFilterPanel, {
 
     /**
      * Method: adaptValueField
-     * 
+     *
      *
      * Parameters:
      * record - {Ext.data.Record}
      */
     adaptValueField: function(record) {
         var previousCmp = this.valueContainer.items.items[0];
-        var newCmpWidth = (previousCmp instanceof(Ext.form.ComboBox)) ? 
+        var newCmpWidth = (previousCmp instanceof(Ext.form.ComboBox)) ?
             previousCmp.getSize().width+17 : // 17 = trigger size
             previousCmp.getSize().width;
-        
-        var recordIsDate = (record.get('type')=='dateTime' || 
-            record.get('type')=='date');
-        
+        var field;
+        var recordIsDate = (record.get('type')==='dateTime' ||
+            record.get('type')==='date');
+
         var onChange = function(el, value) {
             if (value instanceof Ext.data.Record) {
                 value = value.get('value');
@@ -135,7 +135,7 @@ Styler.FilterPanel = Ext.extend(Styler.BaseFilterPanel, {
             this.filter.value = value;
             this.fireEvent("change", this.filter);
         };
-        
+
         if (this.storeUriProperty && record.get(this.storeUriProperty)) {
             this.setEqualComparison();
             var store = new Ext.data.JsonStore(Ext.apply({
@@ -151,10 +151,10 @@ Styler.FilterPanel = Ext.extend(Styler.BaseFilterPanel, {
                 }
             }, this.storeOptions));
 
-            var field = new Ext.form.ComboBox(Ext.apply({
+            field = new Ext.form.ComboBox(Ext.apply({
                 store: store,
                 mode: 'local',
-                width: newCmpWidth, 
+                width: newCmpWidth,
                 triggerAction: 'all',
                 listeners: {
                     'select': onChange,
@@ -162,35 +162,35 @@ Styler.FilterPanel = Ext.extend(Styler.BaseFilterPanel, {
                     scope: this
                 }
             }, this.comboOptions));
-            
+
             store.on('load', function(store, records){
                 field.setValue(records[0].get(this.comboOptions.valueField));
                 this.fireEvent("loaded");
                 field.fireEvent('change', field, field.getValue());
             }, this);
-            
+
             store.load();
-            
+
         } else if (recordIsDate) {
-            var field = new Ext.form.DateField({
+            field = new Ext.form.DateField({
                 width: newCmpWidth,
                 value: '',
                 format: 'd/m/Y',
                 allowBlank: false,
-                blankText: "Ce champ est nécessaire",
+                blankText: OpenLayers.i18n("This field is mandatory"),
                 listeners: {
                     'select': onChange,
                     'change': onChange,
                     scope: this
                 }
             });
-            
+
         } else {
-            var field = new Ext.form.TextField({
+            field = new Ext.form.TextField({
                 width: newCmpWidth,
                 value: '',
                 allowBlank: false,
-                blankText: "Ce champ est nécessaire"
+                blankText: OpenLayers.i18n("This field is mandatory")
             });
             field.on('change', onChange, this);
         }
@@ -198,11 +198,11 @@ Styler.FilterPanel = Ext.extend(Styler.BaseFilterPanel, {
         this.valueContainer.remove(previousCmp);
         this.valueContainer.add(field);
         this.valueContainer.doLayout();
-    }, 
+    },
 
     /**
      * Method: filterComparisonBox
-     * filter comparison box according to attribute's type 
+     * filter comparison box according to attribute's type
      *
      * Parameters:
      * record - {Ext.data.Record}
@@ -223,27 +223,27 @@ Styler.FilterPanel = Ext.extend(Styler.BaseFilterPanel, {
             case 'string':
                 this.comparisonCombo.store.filterBy(function(record){
                     return (
-                        (record.get('value') == OpenLayers.Filter.Comparison.EQUAL_TO) ||
-                        (record.get('value') == OpenLayers.Filter.Comparison.NOT_EQUAL_TO) ||
-                        (record.get('value') == OpenLayers.Filter.Comparison.LIKE)
+                        (record.get('value') === OpenLayers.Filter.Comparison.EQUAL_TO) ||
+                        (record.get('value') === OpenLayers.Filter.Comparison.NOT_EQUAL_TO) ||
+                        (record.get('value') === OpenLayers.Filter.Comparison.LIKE)
                     );
                 });
                 break;
             case 'integer':
             case 'int':
-            case 'real': // as stated by mapserver doc, 
+            case 'real': // as stated by mapserver doc,
             // see for instance http://mapserver.org/ogc/wfs_server.html#reference-section
             // and search for gml_[item name]_type
             case 'float':
                 this.comparisonCombo.store.filterBy(function(record){
-                    return (record.get('value') != OpenLayers.Filter.Comparison.LIKE);
+                    return (record.get('value') !== OpenLayers.Filter.Comparison.LIKE);
                 });
                 break;
             case 'dateTime':
                 this.comparisonCombo.store.filterBy(function(record){
                     return (
-                        (record.get('value') != OpenLayers.Filter.Comparison.LIKE) &&
-                        (record.get('value') != OpenLayers.Filter.Comparison.NOT_EQUAL_TO)
+                        (record.get('value') !== OpenLayers.Filter.Comparison.LIKE) &&
+                        (record.get('value') !== OpenLayers.Filter.Comparison.NOT_EQUAL_TO)
                     );
                 });
                 break;
@@ -262,7 +262,7 @@ Styler.FilterPanel = Ext.extend(Styler.BaseFilterPanel, {
     createDefaultFilter: function() {
         return new OpenLayers.Filter.Comparison();
     },
-    
+
     /**
      * Method: createFilterItems
      * Creates a panel config containing filter parts.
@@ -274,7 +274,7 @@ Styler.FilterPanel = Ext.extend(Styler.BaseFilterPanel, {
                 xtype: "textfield",
                 value: this.filter.value,
                 allowBlank: false,
-                blankText: "Ce champ est nécessaire",
+                blankText: OpenLayers.i18n("This field is mandatory"),
                 listeners: {
                     change: function(el, value) {
                         this.filter.value = value;
@@ -293,7 +293,7 @@ Styler.FilterPanel = Ext.extend(Styler.BaseFilterPanel, {
         this.comparisonCombo = new Styler.form.ComparisonComboBox({
             value: this.filter.type,
             width: 50,
-            blankText: "Ce champ est nécessaire",
+            blankText: OpenLayers.i18n("This field is mandatory"),
             listeners: {
                 select: function(combo, record) {
                     this.filter.type = record.get("value");
@@ -325,4 +325,4 @@ Styler.FilterPanel = Ext.extend(Styler.BaseFilterPanel, {
     }
 });
 
-Ext.reg('gx_filterpanel', Styler.FilterPanel); 
+Ext.reg('gx_filterpanel', Styler.FilterPanel);

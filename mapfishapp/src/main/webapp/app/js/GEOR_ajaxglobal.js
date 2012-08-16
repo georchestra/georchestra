@@ -41,6 +41,12 @@ GEOR.ajaxglobal = (function() {
     var httpSuccess = function(request) {
         return (request.status >= 200 && request.status < 300);
     };
+
+    /**
+     * Property: tr
+     * {Function} an alias to OpenLayers.i18n
+     */
+    var tr = null;
     
     /**
      * Method: handleFailure
@@ -56,26 +62,22 @@ GEOR.ajaxglobal = (function() {
         var text, width = 400;
         switch(options.request.status) {
             case 0:
-                text = "Le serveur n'a pas répondu.";
+                text = tr("Server did not respond.");
                 break;
             case 403:
-                text = "Le serveur a refusé de répondre.";
+                text = tr("Server access denied.");
                 break;
             case 406:
-                text = "Le serveur distant a répondu, mais le contenu de la "+
-                "réponse n'est pas conforme à ce que nous attendons. "+
-                "FireFox s'en sort mieux que Internet Explorer dans certaines "+
-                "de ces situations. Ce serait probablement une bonne idée que "+
-                "d'essayer avec un autre navigateur !";
+                text = tr("ajax.badresponse");
                 break;
             case 503:
-                text = "Le service est temporairement indisponible: veuillez réessayer ultérieurement.";
+                text = tr("Server unavailable.");
                 break;
             case HTTP_STATUS_TOO_BIG:
-                text = "Données trop volumineuses.";
+                text = tr("Too much data.");
                 break;
             case HTTP_STATUS_EXCEPTION_REPORT:
-                text = "Le service OGC a renvoyé une exception.";
+                text = tr("Server exception.");
                 if (options.request.errorText) {
                     var t = options.request.errorText;
                     if (t.length > 1000) {
@@ -89,18 +91,15 @@ GEOR.ajaxglobal = (function() {
                 }
                 break;
             default:
-                text = "Pour plus d'information, nous vous invitons à "+
-                "chercher le code de retour sur <a href=\"http://"+
-                "en.wikipedia.org/wiki/List_of_HTTP_status_codes\" target=\"_blank\">"+
-                "cette page</a>.";
+                text = tr("ajax.defaultexception");
                 break;
         }
         if (text) {
             GEOR.util.errorDialog({
-                title: "Erreur"+ ((options.request.status < 600) ? 
+                title: tr("Error")+ ((options.request.status < 600) ? 
                     ' HTTP ' + options.request.status : ''),
                 width: width,
-                msg: "Une erreur est survenue.<br />" + text
+                msg: tr("An error occured.<br />") + text
             });
         }
     };
@@ -127,15 +126,11 @@ GEOR.ajaxglobal = (function() {
             // deal with too big responses
             if (request.responseText.length > GEOR.config.MAX_LENGTH) {
                 GEOR.util.confirmDialog({
-                    title: 'Attention : risque de blocage du navigateur',
-                    msg: [
-                        "Les données provenant du serveur sont trop",
-                        "volumineuses.<br />Le serveur a envoyé",
-                        "" + Math.round(request.responseText.length/1024) + "KO",
-                        "(la limite est à",
-                        "" + Math.round(GEOR.config.MAX_LENGTH/1024) + "KO).",
-                        "<br />Voulez-vous tout de même continuer ?"
-                    ].join(" "),
+                    title: tr('Warning : browser may freeze'),
+                    msg: tr("ajaxglobal.data.too.big", {
+                        'SENT': Math.round(request.responseText.length/1024),
+                        'LIMIT': Math.round(GEOR.config.MAX_LENGTH/1024)
+                        }),
                     width: 420,
                     yesCallback: function() {
                         OpenLayers.Request.runCallbacks.call(
@@ -182,6 +177,7 @@ GEOR.ajaxglobal = (function() {
          * Initialize GEOR.ajaxglobal
          */
         init: function() {
+            tr = OpenLayers.i18n;
             OpenLayers.Request.events.on({
                 "failure": handleFailure,
                 "complete": handleComplete,

@@ -37,7 +37,8 @@ Styler.SchemaManager = OpenLayers.Class({
         this.map = map;
         this.attributeStores = {};
         var layer;
-        for(var i=0; i<this.map.layers.length; ++i) {
+        var i = 0;
+        for(i=0; i<this.map.layers.length; ++i) {
             layer = this.map.layers[i];
             if(layer instanceof OpenLayers.Layer.WMS) {
                 this.attributeStores[layer.id] = new GeoExt.data.AttributeStore({
@@ -45,7 +46,7 @@ Styler.SchemaManager = OpenLayers.Class({
                     baseParams: {
                         version: "1.1.1",
                         request: "DescribeFeatureType",
-                        typename: layer.params["LAYERS"]
+                        typename: layer.params.LAYERS
                     }
                 });
             }
@@ -61,7 +62,8 @@ Styler.SchemaManager = OpenLayers.Class({
      */
     loadAll: function(callback) {
         var loaders = [];
-        for(var id in this.attributeStores) {
+        var id;
+        for(id in this.attributeStores) {
             loaders.push(this.createLoader(this.attributeStores[id]));
         }
         Styler.dispatch(loaders, callback);

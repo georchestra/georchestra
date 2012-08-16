@@ -25,7 +25,7 @@ GEOR.wmsbrowser = (function() {
     /*
      * Private
      */
-    
+
     var observable = new Ext.util.Observable();
     observable.addEvents(
         /**
@@ -44,6 +44,12 @@ GEOR.wmsbrowser = (function() {
      */
     var cbxSm = null;
 
+    /**
+     * Property: tr
+     * {Function} an alias to OpenLayers.i18n
+     */
+    var tr = null;
+
     /*
      * Public
      */
@@ -52,7 +58,7 @@ GEOR.wmsbrowser = (function() {
          * Observable object
          */
         events: observable,
-        
+
         /**
          * APIMethod: getPanel
          * Return the panel for the WMS browser
@@ -65,6 +71,8 @@ GEOR.wmsbrowser = (function() {
          * {Ext.Panel}
          */
         getPanel: function(options) {
+            tr = OpenLayers.i18n;
+
             var store = new GEOR.ows.WMSCapabilities({
                 storeOptions: {
                     // url should not be empty unless we want the following
@@ -88,8 +96,8 @@ GEOR.wmsbrowser = (function() {
             });
 
             var r = function(val) {
-                return (val ? '<img src="app/img/famfamfam/tick.gif" alt="oui">' :
-                    '<img src="app/img/famfamfam/cross.gif" alt="non">');
+                return (val ? '<img src="app/img/famfamfam/tick.gif" alt="' + tr("Yes") + '">' :
+                    '<img src="app/img/famfamfam/cross.gif" alt="' + tr("No") + '">');
             };
 
             // create a grid to display records from the store
@@ -98,14 +106,14 @@ GEOR.wmsbrowser = (function() {
                 border: false,
                 store: store,
                 loadMask: {
-                    msg: "Chargement ..."
+                    msg: tr("Loading...")
                 },
                 columns: [
                     cbxSm,
-                    {header: "Couche", dataIndex: "title", sortable: true, width: 200},
-                    {id: "queryable", header: "Interrogeable", dataIndex: "queryable", sortable: true, width: 75, renderer: r},
-                    {id: "opaque", header: "Opaque", dataIndex: "opaque", sortable: true, width: 50, renderer: r},
-                    {id: "description", header: "Description", dataIndex: "abstract"}
+                    {header: tr("Layer"), dataIndex: "title", sortable: true, width: 200},
+                    {id: "queryable", header: tr("Queryable"), dataIndex: "queryable", sortable: true, width: 75, renderer: r},
+                    {id: "opaque", header: tr("Opaque"), dataIndex: "opaque", sortable: true, width: 50, renderer: r},
+                    {id: "description", header: tr("Description"), dataIndex: "abstract"}
                 ],
                 sm: cbxSm,
                 enableHdMenu: false,
@@ -117,8 +125,8 @@ GEOR.wmsbrowser = (function() {
                 triggerAction: 'all',
                 height: 30,
                 width: 400,
-                fieldLabel: "Choisissez un serveur WMS",
-                loadingText: 'Chargement...',
+                fieldLabel: tr("Choose a WMS server: "),
+                loadingText: tr("Loading..."),
                 mode: 'local',
                 store: new Ext.data.Store({
                     data: GEOR.config.WMS_SERVERS,
@@ -138,15 +146,15 @@ GEOR.wmsbrowser = (function() {
                 displayField: 'name',
                 tpl: '<tpl for="."><div ext:qtip="<b>{name}</b><br/>{url}" class="x-combo-list-item">{name}</div></tpl>'
             });
-            
+
             var srs = options.srs;
             delete options.srs;
             var urlField = new Ext.app.OWSUrlField({
-                fieldLabel: "... ou saisissez son adresse",
+                fieldLabel: tr("... or enter its address: "),
                 callback: function(r, options, success) {
                     if (!success) {
                         GEOR.util.errorDialog({
-                            msg: "Serveur non joignable ou droits insuffisants"
+                            msg: tr("Unreachable server or insufficient rights")
                         });
                         return;
                     }
@@ -154,15 +162,16 @@ GEOR.wmsbrowser = (function() {
                     // but we don't want to display layers
                     // which cannot be served in map's native SRS
                     store.filterBy(function(record, id) {
-                        return record.get('srs') && 
+                        return record.get('srs') &&
                             (record.get('srs')[srs] === true);
                     });
                     var notDisplayed = t - store.getCount();
                     if (notDisplayed > 0) {
-                        var plural = (notDisplayed > 1) ? 's' : '';
+                        var msg = (notDisplayed > 1) ?
+                            tr("The server is publishing NB layers with an incompatible projection", {'nb': notDisplayed})
+                            : tr("The server is publishing one layer with an incompatible projection");
                         GEOR.util.infoDialog({
-                           msg: "Le serveur publie "+notDisplayed+
-                            " couche"+plural+" dont la projection n'est pas compatible"
+                           msg: msg
                         });
                     }
                 },
@@ -172,14 +181,14 @@ GEOR.wmsbrowser = (function() {
             });
 
             return new Ext.Panel(Ext.apply({
-                title: 'Serveur WMS',
+                title: tr("WMS server"),
                 layout: 'border',
                 items: [
                     {
                         region: 'north',
                         layout: 'form',
                         border: false,
-                        labelSeparator: ' : ',
+                        labelSeparator: '',
                         labelWidth: 170,
                         bodyStyle: 'padding: 5px;',
                         height: 65,
@@ -189,7 +198,7 @@ GEOR.wmsbrowser = (function() {
                 ]
             }, options));
         },
-        
+
         /**
          * APIMethod: clearSelection
          * Clears the current selection

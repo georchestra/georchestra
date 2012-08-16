@@ -114,7 +114,7 @@ Styler.ScaleSlider = Ext.extend(Ext.Slider, {
         this.render(this.map.viewPortDiv);
         var stopEvent = function(e) {
             e.stopEvent();
-        }
+        };
         this.getEl().on({
             "mousedown": {fn: stopEvent},
             "click": {fn: stopEvent}

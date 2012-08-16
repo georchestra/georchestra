@@ -39,13 +39,13 @@ Styler.PointSymbolizer = Ext.extend(Ext.Panel, {
      *     the value will be assumed to be a url for an external graphic.
      */
     pointGraphics: [
-        {display: "cercle", value: "circle", mark: true},
-        {display: "carré", value: "square", mark: true},
-        {display: "triangle", value: "triangle", mark: true},
-        {display: "étoile", value: "star", mark: true},
-        {display: "croix", value: "cross", mark: true},
-        {display: "x", value: "x", mark: true},
-        {display: "external"}
+        {display: OpenLayers.i18n("Circle"), value: "circle", mark: true},
+        {display: OpenLayers.i18n("Square"), value: "square", mark: true},
+        {display: OpenLayers.i18n("Triangle"), value: "triangle", mark: true},
+        {display: OpenLayers.i18n("Star"), value: "star", mark: true},
+        {display: OpenLayers.i18n("Cross"), value: "cross", mark: true},
+        {display: OpenLayers.i18n("X"), value: "x", mark: true},
+        {display: OpenLayers.i18n("External")}
     ],
     
     /**
@@ -83,7 +83,7 @@ Styler.PointSymbolizer = Ext.extend(Ext.Panel, {
         }        
         Ext.applyIf(this.symbolizer, this.defaultSymbolizer);
         
-        this.external = !!this.symbolizer["externalGraphic"];
+        this.external = !!this.symbolizer.externalGraphic;
 
         this.markPanel = new Ext.Panel({
             border: false,
@@ -116,12 +116,12 @@ Styler.PointSymbolizer = Ext.extend(Ext.Panel, {
         
         this.urlField = new Ext.form.TextField({
             name: "url",
-            fieldLabel: "URL",
-            value: this.symbolizer["externalGraphic"],
+            fieldLabel: OpenLayers.i18n("URL"),
+            value: this.symbolizer.externalGraphic,
             hidden: true,
             listeners: {
                 change: function(field, value) {
-                    this.symbolizer["externalGraphic"] = value;
+                    this.symbolizer.externalGraphic = value;
                     this.fireEvent("change", this.symbolizer);
                 },
                 scope: this
@@ -136,13 +136,12 @@ Styler.PointSymbolizer = Ext.extend(Ext.Panel, {
             items: [this.urlField, {
                 xtype: "slider",
                 name: "opacity",
-                fieldLabel: "Opacité",
-                width: 100,
-                value: (this.symbolizer["graphicOpacity"] == null) ? 100 : this.symbolizer["graphicOpacity"] * 100,
+                fieldLabel: OpenLayers.i18n("Opacity"),
+                value: (this.symbolizer.graphicOpacity === null) ? 100 : this.symbolizer.graphicOpacity * 100,
                 isFormField: true,
                 listeners: {
                     changecomplete: function(slider, value) {
-                        this.symbolizer["graphicOpacity"] = value / 100;
+                        this.symbolizer.graphicOpacity = value / 100;
                         this.fireEvent("change", this.symbolizer);
                     },
                     scope: this
@@ -161,13 +160,13 @@ Styler.PointSymbolizer = Ext.extend(Ext.Panel, {
         this.items = [{
             xtype: "combo",
             name: "mark",
-            fieldLabel: "Symbole",
+            fieldLabel: OpenLayers.i18n("Symbol"),
             store: new Ext.data.JsonStore({
                 data: {root: this.pointGraphics},
                 root: "root",
                 fields: ["value", "display", "preview", {name: "mark", type: "boolean"}]
             }),
-            value: this.external ? 0 : this.symbolizer["graphicName"],
+            value: this.external ? 0 : this.symbolizer.graphicName,
             displayField: "display",
             valueField: "value",
             tpl: new Ext.XTemplate(
@@ -192,7 +191,7 @@ Styler.PointSymbolizer = Ext.extend(Ext.Panel, {
                             this.urlField.hide();
                             // this to hide the container - otherwise the label remains
                             this.urlField.getEl().up('.x-form-item').setDisplayed(false);
-                            this.symbolizer["externalGraphic"] = value;
+                            this.symbolizer.externalGraphic = value;
                         } else {
                             this.urlField.show();
                             this.urlField.getEl().up('.x-form-item').setDisplayed(true);
@@ -204,10 +203,10 @@ Styler.PointSymbolizer = Ext.extend(Ext.Panel, {
                     } else {
                         if(this.external) {
                             this.external = false;
-                            delete this.symbolizer["externalGraphic"];
+                            delete this.symbolizer.externalGraphic;
                             this.updateGraphicDisplay();
                         }
-                        this.symbolizer["graphicName"] = value;
+                        this.symbolizer.graphicName = value;
                     }
                     this.fireEvent("change", this.symbolizer);
                 },
@@ -217,11 +216,11 @@ Styler.PointSymbolizer = Ext.extend(Ext.Panel, {
         }, {
             xtype: "textfield",
             name: "size",
-            fieldLabel: "Taille",
-            value: this.symbolizer["pointRadius"],
+            fieldLabel: OpenLayers.i18n("Radius"),
+            value: this.symbolizer.pointRadius,
             listeners: {
                 change: function(field, value) {
-                    this.symbolizer["pointRadius"] = value;
+                    this.symbolizer.pointRadius = value;
                     this.fireEvent("change", this.symbolizer);
                 },
                 scope: this
@@ -230,11 +229,11 @@ Styler.PointSymbolizer = Ext.extend(Ext.Panel, {
         }, {
             xtype: "textfield",
             name: "rotation",
-            fieldLabel: "Rotation",
-            value: this.symbolizer["rotation"],
+            fieldLabel: OpenLayers.i18n("Rotation"),
+            value: this.symbolizer.rotation,
             listeners: {
                 change: function(field, value) {
-                    this.symbolizer["rotation"] = value;
+                    this.symbolizer.rotation = value;
                     this.fireEvent("change", this.symbolizer);
                 },
                 scope: this

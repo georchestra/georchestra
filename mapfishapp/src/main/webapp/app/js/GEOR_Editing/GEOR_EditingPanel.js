@@ -30,7 +30,7 @@ GEOR.Editing.EditingPanel = Ext.extend(Ext.Panel, {
     map: null,
 
     /**
-     * Property: layerCb 
+     * Property: layerCb
      * {Ext.form.ComboBox}
      */
     layerCb: null,
@@ -46,7 +46,7 @@ GEOR.Editing.EditingPanel = Ext.extend(Ext.Panel, {
      * {String} The editing layers' namespace alias.
      */
     nsAlias: null,
-    
+
     /**
      * Property: mask
      * {Ext.LoadMask}
@@ -62,7 +62,7 @@ GEOR.Editing.EditingPanel = Ext.extend(Ext.Panel, {
         this.layerCb = this.createLayerCb();
         this.autoScroll = true;
         this.layout = 'border';
-        
+
 
         this.items = [{
             xtype: 'form',
@@ -82,11 +82,11 @@ GEOR.Editing.EditingPanel = Ext.extend(Ext.Panel, {
                 html: '<p> </p>'
             }]
         }];
-        
+
         this.on('afterlayout', function(){
-            this.mask = new Ext.LoadMask(this.items.get(1).getEl(), { 
-                msg: 'Chargement...'
-            }); 
+            this.mask = new Ext.LoadMask(this.items.get(1).getEl(), {
+                msg: OpenLayers.i18n('Loading...')
+            });
         });
 
         // manage events
@@ -104,7 +104,7 @@ GEOR.Editing.EditingPanel = Ext.extend(Ext.Panel, {
                     {
                         success: function(attributeStore, rec, opts) {
                             var protocol = record.get('layer').protocol;
-                            var matchGeomProperty = 
+                            var matchGeomProperty =
                                 /^gml:(Multi)?(Point|LineString|Polygon|Curve|Surface|Geometry)PropertyType$/;
                             // here, we complement the protocol with a valid geometryName
                             // else, "the_geom" is used as default geometryName and this can lead to pbs
@@ -115,14 +115,14 @@ GEOR.Editing.EditingPanel = Ext.extend(Ext.Panel, {
                                     return false;
                                 }
                             });
-                            
+
                             var type = GEOR.ows.getSymbolTypeFromAttributeStore(attributeStore);
                             if (!OpenLayers.Handler[(type.type == 'Line') ? 'Path' : type.type]) {
                                 GEOR.util.infoDialog({
-                                    title: "Couche non éditable",
-                                    msg: "La géométrie de cette couche est de type "+type.type+".<br/>"+
-                                        "Seules les géométries de type point, ligne et polygone"+
-                                        " (et multi-*) sont éditables."
+                                    title: OpenLayers.i18n("Read-only layer"),
+                                    msg: OpenLayers.i18n("editingpanel.geom.error", {
+                                        'type': type.type
+                                    })
                                 });
                             } else {
                                 this.createLayerEditingPanel(record.get('name'), attributeStore, protocol);
@@ -133,7 +133,7 @@ GEOR.Editing.EditingPanel = Ext.extend(Ext.Panel, {
                     }
                 );
             } else {
-                
+
                 this.items.get(1).layout.setActiveItem(record.get('name'));
                 this.items.get(1).findById(record.get('name')).setUp();
                 this.mask.hide();
@@ -141,7 +141,7 @@ GEOR.Editing.EditingPanel = Ext.extend(Ext.Panel, {
         }, this);
 
         // call parent initComponent
-        GEOR.Editing.EditingPanel.superclass.initComponent.call(this);  
+        GEOR.Editing.EditingPanel.superclass.initComponent.call(this);
 
     },
 
@@ -171,13 +171,13 @@ GEOR.Editing.EditingPanel = Ext.extend(Ext.Panel, {
      * Method: createLayerCb
      *
      * Returns: {Ext.form.ComboBox}
-     */ 
+     */
     createLayerCb: function() {
         return new Ext.form.ComboBox({
-            emptyText: 'choisissez une couche',
+            emptyText: OpenLayers.i18n("choose a layer"),
             store: this.store,
             valueField: 'name',
-            fieldLabel: 'Couche ',
+            fieldLabel: OpenLayers.i18n('Layer'),
             displayField: 'title',
             editable: false,
             triggerAction: 'all'

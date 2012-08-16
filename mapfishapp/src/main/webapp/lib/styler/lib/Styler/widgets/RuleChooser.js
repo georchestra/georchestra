@@ -5,11 +5,21 @@
 Ext.namespace("Styler");
 Styler.RuleChooser = Ext.extend(Ext.Panel, {
 
-    featureRulesTpl: '<h2>Styling rules that apply for this feature</h2>' +
-        '<ul class="x-matching-rules"><tpl for="matchingRules"><li>{[values.title || "Default"]}</li></tpl></ul>',
-    otherRulesTpl: '<h2>{type} for the "{layer}" layer</h2>' +
-        '<ul class="x-other-rules"><tpl for="otherRules"><li>{[values.title || "Default"]}</li></tpl></ul>',
-    newRuleTpl: '<h2 class="x-new-rule">Create a new styling rule</h2>',
+    featureRulesTpl:
+        '<h2>' +
+        OpenLayers.i18n("Styling rules that apply for this feature") +
+        '</h2>' +
+        '<ul class="x-matching-rules"><tpl for="matchingRules"><li>' +
+        '{[values.title || OpenLayers.i18n("Default")]}'+
+        '</li></tpl></ul>',
+    otherRulesTpl:
+        '<h2>' + OpenLayers.i18n('{type} for the "{layer}" layer') +
+        '</h2>' +
+        '<ul class="x-other-rules"><tpl for="otherRules"><li>' +
+        '{[values.title || OpenLayers.i18n("Default")]}'+
+        '</li></tpl></ul>',
+    newRuleTpl: '<h2 class="x-new-rule">' +
+                OpenLayers.i18n('Create a new styling rule') + '</h2>',
     
     otherRules: null,
     matchingRules: null,
@@ -39,6 +49,7 @@ Styler.RuleChooser = Ext.extend(Ext.Panel, {
     },
 
     updateRules: function() {
+		var i = 0;
         //TODO change this when RulesStore is also capable of handling vector
         // layers
         var rules = this.rulesStore ?
@@ -46,7 +57,7 @@ Styler.RuleChooser = Ext.extend(Ext.Panel, {
             this.layer.styleMap.styles["default"].rules;
         this.matchingRules = [];
         this.otherRules = [];
-        for(var i=0; i<rules.length; ++i) {
+        for(i=0; i<rules.length; ++i) {
             rule = rules[i];
             if(this.feature && rule.evaluate(this.feature)) {
                 this.matchingRules.push(rule);
@@ -55,15 +66,17 @@ Styler.RuleChooser = Ext.extend(Ext.Panel, {
             }
         }
         var template;
-        var template = new Ext.XTemplate((this.feature ?
+        template = new Ext.XTemplate((this.feature ?
                 this.featureRulesTpl : "") + this.otherRulesTpl + this.newRuleTpl);
                 
         var data = {
             matchingRules: this.matchingRules,
             otherRules: this.otherRules,
-            type: this.feature ? "Other styling rules" : "Styling rules",
+            type: this.feature ?
+                OpenLayers.i18n("Other styling rules") :
+                OpenLayers.i18n("Styling rules"),
             layer: this.layer.title || this.layer.name
-        }
+        };
 
         if(this.rendered) {
             template.overwrite(this.body, data);
@@ -74,19 +87,20 @@ Styler.RuleChooser = Ext.extend(Ext.Panel, {
     
     onClick: function(e) {
         var clicked = e.getTarget('li');
+        var i = 0;
         if(clicked) {
             var matching = e.getTarget('ul.x-matching-rules');
             if(matching) {
-                for(var i=0; i<matching.childNodes.length; ++i) {
-                    if(matching.childNodes[i] == clicked) {
+                for(i=0; i<matching.childNodes.length; ++i) {
+                    if(matching.childNodes[i] === clicked) {
                         break;
                     }
                 }
                 this.fireEvent("ruleselected", this.layer, this.matchingRules[i]);
             } else {
                 var other = e.getTarget('ul.x-other-rules') || {childNodes: []};
-                for(var i=0; i<other.childNodes.length; ++i) {
-                    if(other.childNodes[i] == clicked) {
+                for(i=0; i<other.childNodes.length; ++i) {
+                    if(other.childNodes[i] === clicked) {
                         break;
                     }
                 }

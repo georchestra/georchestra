@@ -4,7 +4,7 @@
 
 Ext.namespace("Styler");
 Styler.BaseFilterPanel = Ext.extend(Ext.Panel, {
-    
+
     /**
      * Property: filter
      * {OpenLayers.Filter} Optional non-logical filter provided in the initial

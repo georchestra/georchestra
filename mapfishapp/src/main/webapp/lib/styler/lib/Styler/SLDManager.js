@@ -38,9 +38,10 @@ Styler.SLDManager = OpenLayers.Class({
     initialize: function(map) {
         this.map = map;
         var layer;
+        var i = 0;
         this.layers = [];
         this.layerData = {};
-        for(var i=0; i<this.map.layers.length; ++i) {
+        for(i=0; i<this.map.layers.length; ++i) {
             layer = this.map.layers[i];
             if(layer instanceof OpenLayers.Layer.WMS) {
                 this.layers.push(layer);
@@ -58,7 +59,8 @@ Styler.SLDManager = OpenLayers.Class({
     loadAll: function(callback) {
         var num = this.layers.length;
         var loaders = new Array(num);
-        for(var i=0; i<num; ++i) {
+        var i = 0;
+        for(i=0; i<num; ++i) {
             loaders[i] = this.createLoader(this.layers[i]);
         }
         Styler.dispatch(loaders, callback);
@@ -69,7 +71,7 @@ Styler.SLDManager = OpenLayers.Class({
      */
     createLoader: function(layer) {
         return (function(done) {
-            this.loadSld(layer, layer.params["STYLES"], done);
+            this.loadSld(layer, layer.params.STYLES, done);
         }).createDelegate(this);
     },
     
@@ -88,13 +90,14 @@ Styler.SLDManager = OpenLayers.Class({
             url: this.getUrl(layer, styleName),
             method: "GET",
             success: function(request) {
+				var namedLayer;
                 var sld = new OpenLayers.Format.SLD().read(
                     request.responseXML.documentElement ?
                     request.responseXML : request.responseText);
                 //TODO: for now, we just handle the 1st user style of the
                 // 1st named layer. Should make that more flexible in the
                 // future.
-                for(var namedLayer in sld.namedLayers) {
+                for(namedLayer in sld.namedLayers) {
                     break;
                 }
                 this.layerData[layer.id] = {

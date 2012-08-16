@@ -129,7 +129,13 @@ GEOR.querier = (function() {
      * It is extracted from the WFS DescribeFeatureType operation
      */  
     var layerFields = null;
-    
+
+    /**
+     * Property: tr
+     * {Function} an alias to OpenLayers.i18n
+     */
+    var tr = null;
+
     /**
      * Method: checkFilter
      * Checks that a filter is not missing items.
@@ -151,7 +157,7 @@ GEOR.querier = (function() {
             } else if (!(f.value && f.type && 
                 (f.property || f.CLASS_NAME == "OpenLayers.Filter.Spatial"))) {
                 GEOR.util.infoDialog({
-                    msg: "Vous devez remplir les champs des filtres marqués en rouge."
+                    msg: tr("Fields of filters with a red mark are mandatory")
                 });
                 return false;
             }
@@ -172,7 +178,7 @@ GEOR.querier = (function() {
         }
     
         observable.fireEvent("search", {
-            html: '<div>Recherche en cours...</div>'
+            html: tr("<div>Searching...</div>")
         });
         
         // we deactivate draw controls before the request is done.
@@ -228,8 +234,9 @@ GEOR.querier = (function() {
         record = r;
         observable.fireEvent("ready", {
             xtype: 'gx_filterbuilder',
-            title: "Requêteur sur "+
-                GEOR.util.shortenLayerName(layerName),
+            title: tr("Request on NAME", {
+                'name': GEOR.util.shortenLayerName(layerName)
+            }),
             defaultBuilderType: Styler.FilterBuilder.ALL_OF,
             filterPanelOptions: {
                 attributesComboConfig: {
@@ -244,7 +251,7 @@ GEOR.querier = (function() {
             cookieProvider: cp,
             autoScroll: true,
             buttons: [{
-                text: 'Recherche',
+                text: tr("Search"),
                 handler: search
             }],
             map: map,
@@ -273,6 +280,7 @@ GEOR.querier = (function() {
          */
         init: function(m) { 
             map = m;
+            tr = OpenLayers.i18n;
             
             // Cookie storage !
             cp = new Ext.state.CookieProvider({
@@ -320,16 +328,13 @@ GEOR.querier = (function() {
                         buildPanel(layerName, record);
                     } else {
                         GEOR.util.infoDialog({
-                            msg: "La couche ne possède pas de colonne géométrique."+
-                                "<br />Le requêteur géométrique ne sera pas fonctionnel."
+                            msg: tr("querier.layer.no.geom")
                         });
                     }
                 },
                 failure: function() {
                     GEOR.util.errorDialog({
-                        msg: "Impossible d'obtenir "+
-                            "les caractéristiques de la couche demandée."+
-                            "<br />Le requêteur ne sera pas disponible."
+                        msg: tr("querier.layer.error")
                     });
                 },
                 scope: this

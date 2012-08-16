@@ -168,7 +168,7 @@ GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
             triggerAction: 'all',
             selectOnFocus:true,
             tpl: GEOR.util.getAttributesComboTpl(),
-            fieldLabel: 'Attribut',
+            fieldLabel: OpenLayers.i18n('Attribute'),
             value: this.attributes.getAt(0).get("name")
         });
             
@@ -184,7 +184,7 @@ GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
             forceSelection: true,
             triggerAction: 'all',
             selectOnFocus: true,
-            fieldLabel: 'Type'
+            fieldLabel: OpenLayers.i18n('Type')
         });
 
         this.sbClassCountPropSymbol = new Ext.ux.NumberSpinner({
@@ -193,7 +193,7 @@ GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
             value: 5,
             minValue: 2,
             maxValue: 20,
-            fieldLabel: 'Nombre de classes',
+            fieldLabel: OpenLayers.i18n('Number of classes'),
             width: 30
         });
         
@@ -204,7 +204,7 @@ GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
             value: 5,
             minValue: 2,
             maxValue: 20,
-            fieldLabel: 'Nombre de classes',
+            fieldLabel: OpenLayers.i18n('Number of classes'),
             width: 30
         });
         
@@ -214,7 +214,7 @@ GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
             value: 2,
             minValue: 1,
             maxValue: 30,
-            fieldLabel: 'Taille minimum',
+            fieldLabel: OpenLayers.i18n('Minimum size'),
             width: 30
         });
         
@@ -224,19 +224,19 @@ GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
             value: 10,
             minValue: 1,
             maxValue: 30,
-            fieldLabel: 'Taille maximum',
+            fieldLabel: OpenLayers.i18n('Maximum size'),
             width: 30
         });
         
         this.cpFirstColor = new Ext.ux.form.ColorPickerField({
             value: '#FFFFFF',
-            fieldLabel: 'Première couleur',
+            fieldLabel: OpenLayers.i18n('First color'),
             width: 100
         });
         
         this.cpLastColor = new Ext.ux.form.ColorPickerField({
             value: '#497BD1',
-            fieldLabel: 'Dernière couleur',
+            fieldLabel: OpenLayers.i18n('Last color'),
             width: 100
         });
         
@@ -254,7 +254,7 @@ GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
             triggerAction: 'all',
             value: 0,
             selectOnFocus:true,
-            fieldLabel: 'Palette',
+            fieldLabel: OpenLayers.i18n('Palette'),
             anchor: '90%'  // make the combo resize itself
                            // when its container changes
                            // size
@@ -315,7 +315,7 @@ GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
             frame: false,
             border: false,
             bodyStyle: 'padding: 5px;',
-            title: 'Classification automatique',
+            title: OpenLayers.i18n('Auto classification'),
             items: [{
                 layout:'column',
                 border: false,
@@ -354,7 +354,7 @@ GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
             }],
             buttons: [
                 Ext.apply(this.btClassify, {
-                    text: 'Classifier'
+                    text: OpenLayers.i18n('Classify')
                 })     
             ]
         });
@@ -381,11 +381,11 @@ GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
      * dataType - {String} feature data type
      */
     filldsClassifType: function(dataType) {
-        var data = [['Valeurs uniques', 'unique_values']];
+        var data = [[OpenLayers.i18n('Unique values'), 'unique_values']];
         if(GEOR.util.isNumericType(dataType)) {
-            data.push(['Plages de couleurs', 'choropleths']);
+            data.push([OpenLayers.i18n('Color range'), 'choropleths']);
             if ((this.symbolType == 'Point') || (this.symbolType == 'Line')) {
-                data.push(['Symboles proportionnels', 'prop_symbols']);
+                data.push([OpenLayers.i18n('Proportional symbols'), 'prop_symbols']);
             }
         }
         this.dsClassifType.loadData(data);  

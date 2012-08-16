@@ -70,6 +70,12 @@ GEOR.cswbrowser = (function() {
     var tree;
 
     /**
+     * Property: tr
+     * {Function} an alias to OpenLayers.i18n
+     */
+    var tr = null;
+    
+    /**
      * Method: filterCswRecord
      * Keep only WMS-1.1.1 records with a correct layer name and server URL
      *
@@ -93,11 +99,11 @@ GEOR.cswbrowser = (function() {
                             name = item.description;
                         } else if (item.name) {
                             // should always be the case 
-                            name = "Couche "+item.name;
+                            name = tr("NAME layer", {'name': item.name});
                         }
                         
                         var mdTitle = (record.title && record.title[0]) ?
-                                record.title[0].value : "métadonnée non nommée";
+                                record.title[0].value : tr("Metadata without a name");
 
                         metadataURL = null;
                         if (record.identifier && record.identifier[0]) {
@@ -269,7 +275,7 @@ GEOR.cswbrowser = (function() {
             failure: function() {
                 mask && mask.hide();
                 GEOR.util.errorDialog({
-                    msg: "La requête CSW getDomain a échoué"
+                    msg: tr("The getDomain CSW query failed")
                 });
             }
         });
@@ -287,8 +293,8 @@ GEOR.cswbrowser = (function() {
         cleanTree(tree);
         if (!key) {
             GEOR.util.errorDialog({
-                title: "Erreur sur le thésaurus",
-                msg: "Absence de clé pour accéder à ce thésaurus"
+                title: tr("Error for the thesaurus"),
+                msg: tr("Missing key to access the thesaurus")
             });
         }
         OpenLayers.Request.GET({
@@ -324,7 +330,7 @@ GEOR.cswbrowser = (function() {
             failure: function() {
                 mask && mask.hide();
                 GEOR.util.errorDialog({
-                    msg: "La requête des mots clés a échoué"
+                    msg: tr("Keywords query failed")
                 });
             }
         });
@@ -350,7 +356,7 @@ GEOR.cswbrowser = (function() {
          * {Ext.Panel}
          */
         getPanel: function(options) {
-
+            tr = OpenLayers.i18n;
             tree = new Ext.tree.TreePanel({
                 region: 'center',
                 useArrows:true,
@@ -393,10 +399,10 @@ GEOR.cswbrowser = (function() {
             });
 
             var combo = new Ext.form.ComboBox({
-                fieldLabel: 'Thésaurus',
+                fieldLabel: tr("Thesaurus"),
                 labelSeparator: ' :',
                 store: thesauriStore,
-                loadingText: 'chargement...',
+                loadingText: tr("Loading..."),
                 mode: 'local',
                 triggerAction: 'all',
                 editable: false,
@@ -405,9 +411,7 @@ GEOR.cswbrowser = (function() {
                 listeners: {
                     "select": function(combo, record) {
                         if (!record) {
-                            alert("Administrateur : problème de configuration - "+
-                            "la variable DEFAULT_THESAURUS_KEY ne correspond à aucune"+
-                            " valeur exportée par GeoNetwork");
+                            alert(tr("cswbrowser.default.thesaurus.mismatch"));
                             return;
                         }
                         if (record.get('key') == GEOR.config.THESAURUS_NAME) {
@@ -443,7 +447,7 @@ GEOR.cswbrowser = (function() {
             });
 
             return new Ext.Panel(Ext.apply({
-                title: 'Thésaurus',
+                title: tr("Thesaurus"),
                 layout: 'border',
                 items: [{
                     region: 'north',
@@ -460,7 +464,7 @@ GEOR.cswbrowser = (function() {
                         if (!mask) {
                             (function() {
                                 mask = new Ext.LoadMask(tree.getEl(), {
-                                    msg: "chargement en cours"
+                                    msg: tr("Loading...")
                                 });
                             }).defer(this.showAnimDuration*1000+10);
                         }

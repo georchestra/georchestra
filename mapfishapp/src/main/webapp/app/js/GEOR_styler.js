@@ -126,6 +126,12 @@ GEOR.styler = (function() {
     var geometryName = null;
 
     /**
+     * Property: tr
+     * {Function} an alias to OpenLayers.i18n
+     */
+    var tr = null;
+
+    /**
      * Method: getLegendPanel
      * Get a reference to the legend panel.
      */
@@ -197,7 +203,7 @@ GEOR.styler = (function() {
             }
             sldURL = GEOR.config.MAPFISHAPP_URL + sldURL;
             var win = new Ext.Window({
-                title: "Télécharger le style",
+                title: tr("Download style"),
                 layout: "fit",
                 width: 400,
                 closeAction: 'close',
@@ -205,12 +211,12 @@ GEOR.styler = (function() {
                 modal: false,
                 items: [{
                     bodyStyle: 'padding:5px',
-                    html: 'Votre SLD est disponible à l\'adresse suivante : '+
+                    html: tr("You can download your SLD style at ") + 
                         '<br /><a href="'+sldURL+'">'+sldURL+'</a>',
                     border: false
                 }],
                 buttons: [{
-                    text: 'Merci !',
+                    text: tr("Thanks!"),
                     handler: function() {
                 	    win.close();
                     }
@@ -266,7 +272,7 @@ GEOR.styler = (function() {
                     mask.hide();
                     callback.apply(scope, [false]);
                 };
-                mask.msg = "Sauvegarde du SLD";
+                mask.msg = tr("Saving SLD");
                 mask.show();
                 Ext.Ajax.request({
                     url: "ws/sld/",
@@ -296,8 +302,8 @@ GEOR.styler = (function() {
     var createSLD = function(rules) {
         if (!validateRules(rules)) {
             GEOR.util.errorDialog({
-                msg: "Des classes ne sont pas valides, " +
-                     "vérifier que les champs sont corrects"
+                msg: tr("Some classes are invalid, verify that all fields " +
+                    "are correct")
             });
             return null;
         }
@@ -322,7 +328,7 @@ GEOR.styler = (function() {
      */
     var getSLD = function(path) {
         if (path) {
-            mask.msg = "Récupération du SLD";
+            mask.msg = tr("Get SLD");
             mask.show();
             // define the callbacks
             var success = function(request) {
@@ -350,8 +356,8 @@ GEOR.styler = (function() {
                 } else {
                     mask.hide();
                     Ext.Msg.alert(
-                        "Erreur",
-                        "Le SLD n'est pas conforme."
+                        tr("Error"),
+                        tr("Malformed SLD")
                     );
                 }
             };
@@ -511,19 +517,19 @@ GEOR.styler = (function() {
                 layer.map.units
             ),
             pointGraphics: [
-                {display: "cercle", value: "circle", mark: true,
+                {display: tr("circle"), value: "circle", mark: true,
                  preview: "lib/styler/theme/img/circle.gif"},
-                {display: "carré", value: "square", mark: true,
+                {display: tr("square"), value: "square", mark: true,
                  preview: "lib/styler/theme/img/square.gif"},
-                {display: "triangle", value: "triangle", mark: true,
+                {display: tr("triangle"), value: "triangle", mark: true,
                  preview: "lib/styler/theme/img/triangle.gif"},
-                {display: "étoile", value: "star", mark: true,
+                {display: tr("star"), value: "star", mark: true,
                  preview: "lib/styler/theme/img/star.gif"},
-                {display: "croix", value: "cross", mark: true,
+                {display: tr("cross"), value: "cross", mark: true,
                  preview: "lib/styler/theme/img/cross.gif"},
-                {display: "x", value: "x", mark: true,
+                {display: tr("x"), value: "x", mark: true,
                  preview: "lib/styler/theme/img/x.gif"},
-                {display: "personnalisé..."}
+                {display: tr("customized...")}
             ],
             symbolType: Styler.Util.getSymbolTypeFromRule(rule),
             listeners: {
@@ -631,7 +637,8 @@ GEOR.styler = (function() {
      * params - {Object} The classification parameters.
      */
     var classify = function(params) {
-        mask.msg = "Classification ...<br/>(cette opération peut prendre du temps)";
+        mask.msg = tr("Classification ...<br/>(this operation can take " +
+            "some time)");
         mask.show();
         OpenLayers.Request.POST({
             url: "ws/sld/",
@@ -676,8 +683,8 @@ GEOR.styler = (function() {
         );
         var id = OpenLayers.Util.createUniqueID("");
         var rule = new OpenLayers.Rule({
-            name: "Classe_" + id,
-            title: "Sans titre " + id,
+            name: tr("Class") + "_" + id,
+            title: tr("Untitled") + " " + id,
             symbolizer: symbolizer
         });
         // we're about to add a rule entry in the legend panel,
@@ -785,27 +792,24 @@ GEOR.styler = (function() {
                 autoEl: {
                     tag: "blockquote",
                     style: "padding:5px;",
-                    html: ["Utiliser le bouton \"+\" pour créer une classe,",
-                           "et le bouton \"Analyse\" pour créer un",
-                           "ensemble de classes définies par une analyse",
-                           "thématique.</p>"].join(" ")
+                    html: tr("styler.guidelines")
                 }
             }],
             bbar: [{
-                text: "Analyse",
+                text: tr("Analyze"),
                 handler: function(btn, evt) {
                     stylerContainer.getLayout().setActiveItem(1);
                     stylerContainer.doLayout();
                 }
             }, '->', {
                 iconCls: "add",
-                tooltip: "Ajouter une classe",
+                tooltip: tr("Add a class"),
                 handler: function(btn, evt) {
                     addRule(sType);
                 }
             }, {
                 iconCls: "delete",
-                tooltip: "Supprimer la classe sélectionnée",
+                tooltip: tr("Delete the selected class"),
                 disabled: true, 
                 handler: function(btn, evt) {
                     removeRule();
@@ -877,6 +881,7 @@ GEOR.styler = (function() {
          */
         create: function(layerRecord, animateFrom) {
             Ext.QuickTips.init();
+            tr = OpenLayers.i18n;
             
             // clear cache:
             symbolType = null; 
@@ -888,7 +893,7 @@ GEOR.styler = (function() {
              * win is the styler window, create it and display it.
              */
             win = new Ext.Window({
-                title: "Styleur",
+                title: tr("Styler"),
                 layout: "fit",
                 width: 900,
                 height: 500,
@@ -898,10 +903,10 @@ GEOR.styler = (function() {
                 modal: false,
                 disabled: true,
                 buttons: [{
-                    text: "Télécharger le style",
+                    text: tr("Download style"),
                     handler: dlStyle 
                 },{
-                    text: "Appliquer",
+                    text: tr("Apply"),
                     handler: function() {
                         // we're done, apply styling
                         // to layer
@@ -916,7 +921,7 @@ GEOR.styler = (function() {
                         });
                     }
                 }, {
-                    text: 'Annuler',
+                    text: tr("Cancel"),
                     handler: function() {
                 	    win.close();
                     }
@@ -924,7 +929,7 @@ GEOR.styler = (function() {
                 listeners: {
                     "afterrender": function() {
                         mask = new Ext.LoadMask(win.body, {
-                            msg: "chargement en cours"
+                            msg: tr("Loading...")
                         });
                         mask.show();
                     }
@@ -946,9 +951,9 @@ GEOR.styler = (function() {
                     wfsInfo = GEOR.ows.getWfsInfo(recs);
                     if (!wfsInfo) {
                         mask && mask.hide();
-                        giveup([
-                            "Opération impossible :",
-                            "aucun service WFS associé à cette couche."
+                        giveup([ // FIXME: one key translation
+                            tr("Impossible to complete the operation:"),
+                            tr("not any WFS service associated to that layer")
                         ].join(" "));
                     } else {
                         var store = GEOR.ows.WFSDescribeFeatureType(wfsInfo, {
@@ -966,9 +971,10 @@ GEOR.styler = (function() {
                                     getSymbolType(initStyler);
                                 } else {
                                     // give up
-                                    giveup([
-                                        "Opération impossible :",
-                                        "aucun attribut disponible."
+                                    giveup([ // FIXME: one key translation
+                                        tr("Impossible to complete the " + 
+                                            "operation:"),
+                                        tr("not any available attribute")
                                     ].join(" "));
                                 }
                             },

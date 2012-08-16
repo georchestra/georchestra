@@ -113,7 +113,8 @@ Styler.RuleBuilder = Ext.extend(Ext.TabPanel, {
         var numRules = this.rules.length;
         this.rulePanels = new Array(numRules);
         var rule;
-        for(var i=0; i<numRules; ++i) {
+        var i = 0;
+        for(i=0; i<numRules; ++i) {
             rule = this.rules[i];
             // apply default symbolizer properties
             // TODO: decide if we really want to extend the symbolizers this way
@@ -137,7 +138,7 @@ Styler.RuleBuilder = Ext.extend(Ext.TabPanel, {
         
         if(!this.bbar) {
             this.bbar = [{
-                text: "add rule",
+                text: OpenLayers.i18n("Add rule"),
                 iconCls: "add",
                 handler: function() {
                     this.addRule();
@@ -239,7 +240,8 @@ Styler.RuleBuilder = Ext.extend(Ext.TabPanel, {
         var nameNum = 0;
         var titleNum = 0;
         var rule, name, title, match;
-        for(var i=0; i<this.rules.length; ++i) {
+        var i = 0;
+        for(i=0; i<this.rules.length; ++i) {
             rule = this.rules[i];
             name = rule.name;
             if(name) {
@@ -256,7 +258,8 @@ Styler.RuleBuilder = Ext.extend(Ext.TabPanel, {
                 }
             }
         }
-        return ["rule" + (nameNum + 1), "Untitled " + (titleNum + 1)];
+        return ["rule" + (nameNum + 1),
+                OpenLayers.i18n("Untitled ") + (titleNum + 1)];
     },
     
     /**

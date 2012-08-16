@@ -85,6 +85,7 @@ Styler.FeatureRenderer = Ext.extend(Ext.BoxComponent, {
     renderer: null,
 
     initComponent: function() {
+		var i = 0;
         Styler.FeatureRenderer.superclass.initComponent.call(this);
         Ext.applyIf(this, {
             pointFeature: new OpenLayers.Feature.Vector(
@@ -189,7 +190,7 @@ Styler.FeatureRenderer = Ext.extend(Ext.BoxComponent, {
      *     and assigns the first one whose "supported()" function returns true.
      */    
     assignRenderer: function()  {
-        for(var i=0, len=this.renderers.length; i<len; ++i) {
+        for(i=0, len=this.renderers.length; i<len; ++i) {
             var rendererClass = OpenLayers.Renderer[this.renderers[i]];
             if(rendererClass && rendererClass.prototype.supported()) {
                 this.renderer = new rendererClass(

@@ -25,7 +25,13 @@ GEOR.geonames = (function() {
      * {OpenLayers.Map} The map object
      */
     var map = null;
-      
+
+    /**
+     * Property: tr
+     * {Function} an alias to OpenLayers.i18n
+     */
+    var tr = null;
+    
     /*
      * Method: createCbSearch
      * Returns: {Ext.form.ComboBox}
@@ -60,10 +66,10 @@ GEOR.geonames = (function() {
 
         // Autocomplete ComboBox to populate and display dataStore
         var cbSearch = new Ext.form.ComboBox({
-            fieldLabel: 'Aller à',
-            labelSeparator: ' :',
+            fieldLabel: tr('Go to: '),
+            labelSeparator: '',
             store: dsGeonames,
-            loadingText: 'Chargement...',
+            loadingText: tr('Loading...'),
             width: 180,
             listWidth: 180,
             queryDelay: 100,
@@ -113,6 +119,7 @@ GEOR.geonames = (function() {
          */
         create: function(m) {
         	map = m;
+            tr = OpenLayers.i18n;
             return {
                 xtype: 'form',
                 labelWidth: 50,

@@ -29,7 +29,7 @@ Styler.LegendPanel = Ext.extend(Ext.Panel, {
      *     name.  Default is "Untitled ".  Prefix will be appended with a
      *     number.
      */
-    untitledPrefix: "Untitled ",
+    untitledPrefix: OpenLayers.i18n("Untitled "),
     
     /**
      * Property: clickableSymbol
@@ -214,7 +214,7 @@ Styler.LegendPanel = Ext.extend(Ext.Panel, {
      * Method: selectRuleEntry
      */
     selectRuleEntry: function(rule) {
-        var newSelection = rule != this.selectedRule;
+        var newSelection = rule !== this.selectedRule;
         if(this.selectedRule) {
             this.unselect();
         }
@@ -231,7 +231,7 @@ Styler.LegendPanel = Ext.extend(Ext.Panel, {
      */
     unselect: function() {
         this.rulesContainer.items.each(function(item, i) {
-            if(this.rules[i] == this.selectedRule) {
+            if(this.rules[i] === this.selectedRule) {
                 item.body.removeClass("x-grid3-row-selected");
                 this.selectedRule = null;
                 this.fireEvent("ruleunselected", this, this.rules[i]);
@@ -263,13 +263,13 @@ Styler.LegendPanel = Ext.extend(Ext.Panel, {
                         },
                         scope: this
                     });
-                    if(this.enableDD == true) {
+                    if(this.enableDD === true) {
                         this.addDD(comp);
                     }
                 },
                 scope: this
             }
-        }
+        };
     },
 
     /**
@@ -356,11 +356,11 @@ Styler.LegendPanel = Ext.extend(Ext.Panel, {
                      var target = Ext.getCmp(this.getEl().id);
                      // sometimes, for whatever reason, Ext forgets who the source
                      // was, so we make sure that we have one before moving on
-                     if(source && target && source != target) {
+                     if(source && target && source !== target) {
                          var sourceCt = source.ownerCt;
                          var targetCt = target.ownerCt;
                          // only move rules around inside the same container
-                         if(sourceCt == targetCt) {
+                         if(sourceCt === targetCt) {
                              panel.moveRule(
                                  sourceCt.items.indexOf(source),
                                  targetCt.items.indexOf(target)
@@ -382,15 +382,15 @@ Styler.LegendPanel = Ext.extend(Ext.Panel, {
      */
     update: function() {
         if(this.rulesContainer.items) {
-            var comp;
-            for(var i=this.rulesContainer.items.length-1; i>=0; --i) {
+            var comp, i;
+            for(i=this.rulesContainer.items.length-1; i>=0; --i) {
                 comp = this.rulesContainer.getComponent(i);
                 this.rulesContainer.remove(comp, true);
             }
         }
         var len = this.rules.length;
         var entry;
-        for(var i=0; i<len; ++i) {
+        for(i=0; i<len; ++i) {
             this.addRuleEntry(this.rules[i], true);
         }
         this.doLayout();

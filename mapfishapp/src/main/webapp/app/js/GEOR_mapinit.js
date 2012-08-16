@@ -46,7 +46,13 @@ GEOR.mapinit = (function() {
      * {Function} executed after this init function has done its job
      */
     var cb = null;
-    
+
+    /**
+     * Property: tr
+     * {Function} an alias to OpenLayers.i18n
+     */
+    var tr = null;
+
     /**
      * Method: updateStoreFromWMC
      * Updates the app LayerStore from a given WMC
@@ -68,7 +74,7 @@ GEOR.mapinit = (function() {
         var failure = function() {
             GEOR.waiter.hide();
             GEOR.util.infoDialog({
-                msg: "Le contexte fourni n'est pas valide."
+                msg: tr("The provided context is not valid.")
             });
             options.failure && options.failure.call(this);
         };
@@ -167,9 +173,9 @@ GEOR.mapinit = (function() {
             store: gls,
             columns: [
                 sm,
-                {header: "Serveur", sortable: true, dataIndex: '_serverURL'},
-                {header: "Couche", width: 50, sortable: true, dataIndex: 'name'},
-                {header: "Description", sortable: true, dataIndex: 'title'}
+                {header: tr("Server"), sortable: true, dataIndex: '_serverURL'},
+                {header: tr("Layer"), width: 50, sortable: true, dataIndex: 'name'},
+                {header: tr("Description"), sortable: true, dataIndex: 'title'}
             ],
             view: new Ext.grid.GroupingView({
                 forceFit:true,
@@ -182,19 +188,19 @@ GEOR.mapinit = (function() {
             height: 450
         });
         var win = new Ext.Window({
-            title: 'Ajouter des couches depuis des services WMS',
+            title: tr("Add layers from WMS services"),
             layout: 'fit',
             constrainHeader: true,
             closeAction: 'close',
             modal: true,
             items: [grid],
             buttons: [{
-                text: 'Fermer',
+                text: tr("Close"),
                 handler: function() {
                     win.close();
                 }
             },{
-                text: 'OK',
+                text: tr("OK"),
                 handler: function() {
                     Ext.each(sm.getSelections(), function(r) {
                         layerStore.addSorted(r);
@@ -245,16 +251,20 @@ GEOR.mapinit = (function() {
             layerStore.addSorted(record);
         });
         if (errors.length) {
-            var plural = (errors.length>1) ? "s" : "";
             GEOR.util.errorDialog({
-                title: errors.length + " couche" + plural + " non importée" + plural,
-                msg: "Les couches nommées " + errors.join(', ') + 
-                    " n'ont pas pu être chargées : SRS incompatible ou couche non existante"
+                title: (errors.length>1) ? 
+                    tr("NB layers not imported", {'nb': errors.length}) :
+                    tr("One layer not imported"),
+                msg: tr("mapinit.layers.load.error",
+                    {'list': errors.join(', ')})                
             });
         } else {
             var plural = (count>1) ? "s" : "";
             GEOR.util.infoDialog({
-                msg: count + " couche" + plural + " importée" + plural
+                msg: (count>1) ? 
+                    tr("NB layers imported", {'nb': count}):
+                    (count>1) ? tr("One layer imported"):
+                    tr("Not any layer imported")                
             });
         }
     };
@@ -315,8 +325,7 @@ GEOR.mapinit = (function() {
             updateStoreFromWMC(GEOR.config.DEFAULT_WMC);
         } else {
             // this should never happen:
-            alert("Le contexte par défaut n'est pas défini "+
-                  "(et ce n'est pas du tout normal !)");
+            alert(tr("The default context is not defined (and it is a BIG problem!)"));
         }
     };
 
@@ -332,6 +341,7 @@ GEOR.mapinit = (function() {
          */
         init: function(ls, callback) {
             layerStore = ls;
+            tr = OpenLayers.i18n;
             cb = callback || OpenLayers.Util.Void;
             
             // POSTing a content to the app (which results in GEOR.initstate 

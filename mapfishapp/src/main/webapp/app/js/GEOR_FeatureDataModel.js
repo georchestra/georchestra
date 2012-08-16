@@ -35,7 +35,7 @@ GEOR.FeatureDataModel.prototype = {
      * Property: dummyAttributeName
      * {String} Fake attribute name, used to reference objects in the grid panel
      */
-    dummyAttributeName: 'objets',
+    dummyAttributeName: OpenLayers.i18n('objects'),
     
     /**
      * Method: fromFeatures

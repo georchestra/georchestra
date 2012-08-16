@@ -123,7 +123,7 @@ Ext.extend(GeoExt.data.CSWRecordsReader, Ext.data.DataReader, {
             return o.join(' / ');
         },
         "abstract": function(r) {
-            return (r ? r.join(' / ') : "pas d'abstract");
+            return (r ? r.join(' / ') : OpenLayers.i18n("no abstract"));
         },
         "identifier": function(r) {
             return ((r && r[0] && r[0].value) ? r[0].value : '');

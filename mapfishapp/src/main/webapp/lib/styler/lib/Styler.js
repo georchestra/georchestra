@@ -128,7 +128,7 @@ Ext.extend(Styler, Ext.util.Observable, {
             disableCaching: false,
             success: this.parseWMSCapabilities,
             failure: function() {
-                throw("Unable to read capabilities from WMS");
+                throw(OpenLayers.i18n("Unable to read capabilities from WMS"));
             },
             params: {
                 VERSION: "1.1.1",
@@ -149,7 +149,7 @@ Ext.extend(Styler, Ext.util.Observable, {
             disableCaching: false,
             success: this.parseWFSCapabilities,
             failure: function() {
-                throw("Unable to read capabilities from WFS");
+                throw(OpenLayers.i18n("Unable to read capabilities from WFS"));
             },
             params: {
                 VERSION: "1.1.0",
@@ -190,10 +190,12 @@ Ext.extend(Styler, Ext.util.Observable, {
     mergeCapabilities: function() {
         this.layerList = [];
         var layer, name;
-        for(var i=0; i<this.wmsLayerList.length; ++i) {
+        var i = 0;
+        var j = 0;
+        for(i=0; i<this.wmsLayerList.length; ++i) {
             layer = this.wmsLayerList[i];
             name = layer.name;
-            for(var j=0; j<this.wfsLayerList.length; ++j) {
+            for(j=0; j<this.wfsLayerList.length; ++j) {
                 if(this.wfsLayerList[j].name === name) {
                     this.layerList.push(layer);
                     break;
@@ -240,7 +242,7 @@ Ext.extend(Styler, Ext.util.Observable, {
             autoScroll: true,
             items: [{html: ""}],
             bbar: [{
-                text: "Add new",
+                text: OpenLayers.i18n("Add new"),
                 iconCls: "add",
                 disabled: true,
                 handler: function() {
@@ -262,16 +264,21 @@ Ext.extend(Styler, Ext.util.Observable, {
                 },
                 scope: this
             }, {
-                text: "Delete selected",
+                text: OpenLayers.i18n("Delete selected"),
                 iconCls: "delete",
                 disabled: true,
                 handler: function() {
                     var panel = this.getLegend();
                     var rule = panel.selectedRule;
-                    var message = "Are you sure you want to delete the " +
-                        panel.getRuleTitle(rule) + " rule?";
-                    Ext.Msg.confirm("Delete rule", message, function(yesno) {
-                        if(yesno == "yes") {
+                    var message = OpenLayers.i18n(
+                        "styler.delete.rule",
+                        {'NAME': panel.getRuleTitle(rule)}
+                    );
+                    Ext.Msg.confirm(
+                            OpenLayers.i18n("Delete rule"),
+                            message,
+                            function(yesno) {
+                        if(yesno === "yes") {
                             panel.rules.remove(rule);
                             this.fireEvent("ruleremoved", rule);
                             sldMgr = this.sldManager;
@@ -288,7 +295,7 @@ Ext.extend(Styler, Ext.util.Observable, {
         
         this.layersContainer = new Ext.Panel({
             autoScroll: true,
-            title: "Layers",
+            title: OpenLayers.i18n("Layers"),
             anchor: "100%, -200"
         });
 
@@ -325,11 +332,12 @@ Ext.extend(Styler, Ext.util.Observable, {
         var layerList = this.layerList;
         var num = layerList.length;
         var layers = new Array(num+1);
+        var i = 0;
         layers[0] = new OpenLayers.Layer.Google(
             "Google Physical",
             {type: G_PHYSICAL_MAP, sphericalMercator: true}
         );
-        for(var i=0; i<num; ++i) {
+        for(i=0; i<num; ++i) {
             var maxExtent = OpenLayers.Bounds.fromArray(
                 layerList[i].llbbox).transform(
                     new OpenLayers.Projection("EPSG:4326"),
@@ -364,7 +372,7 @@ Ext.extend(Styler, Ext.util.Observable, {
                 nodeType: "async",
                 children: [{
                     nodeType: "olOverlayLayerContainer",
-                    text: "Layers",
+                    text: OpenLayers.i18n("Layers"),
                     expanded: true
                 }]
             },
@@ -445,13 +453,13 @@ Ext.extend(Styler, Ext.util.Observable, {
     },
     
     changeLayer: function(node, checked) {
-        if(checked === true && this.currentLayer != node.layer) {
+        if(checked === true && this.currentLayer !== node.layer) {
             this.setCurrentLayer(node.layer);
         }
     },
     
     setCurrentLayer: function(layer) {
-        if(layer != this.currentLayer) {
+        if(layer !== this.currentLayer) {
             if(this.currentLayer) {
                 this.currentLayer.setVisibility(false);
             }
@@ -492,7 +500,7 @@ Ext.extend(Styler, Ext.util.Observable, {
         } else {
             this.sldManager.loadSld(
                 layer,
-                layer.params["STYLES"],
+                layer.params.STYLES,
                 function(result) {
                     callback.call(this, result.style.rules);
                 }.createDelegate(this)
@@ -661,7 +669,8 @@ Ext.extend(Styler, Ext.util.Observable, {
         feature.layer = layer;        
         var matchingRules = [];
         var rule;
-        for(var i=0; i<rules.length; ++i) {
+        var i = 0;
+        for(i=0; i<rules.length; ++i) {
             rule = rules[i];
             if(rule.evaluate(feature)) {
                 matchingRules.push(rule);
@@ -669,7 +678,8 @@ Ext.extend(Styler, Ext.util.Observable, {
         }
         
         this.featureDlg = new Ext.Window({
-            title: "Feature: " + feature.fid || feature.id,
+            title: OpenLayers.i18n("styler.feature", 
+                                   {'FEATURE': + feature.fid || feature.id}),
             layout: "fit",
             resizable: false,
             width: 220,
@@ -681,7 +691,8 @@ Ext.extend(Styler, Ext.util.Observable, {
                 autoHeight: true,
                 items: [{
                     xtype: "gx_legendpanel",
-                    title: "Rules used to render this feature:",
+                    title:
+                        OpenLayers.i18n("Rules used to render this feature:"),
                     bodyStyle: {paddingLeft: "5px"},
                     symbolType: this.getSymbolTypeFromFeature(feature),
                     rules: matchingRules,
@@ -695,7 +706,7 @@ Ext.extend(Styler, Ext.util.Observable, {
                     }
                 }, {
                     xtype: "propertygrid",
-                    title: "Attributes of this feature:",
+                    title: OpenLayers.i18n("Attributes of this feature:"),
                     height: 120,
                     source: feature.attributes,
                     autoScroll: true,
@@ -708,11 +719,11 @@ Ext.extend(Styler, Ext.util.Observable, {
             }],
             listeners: {
                 "move": function(cp, x, y) {
-                    this.windowPositions["featureDlg"] = {x: x, y: y};
+                    this.windowPositions.featureDlg = {x: x, y: y};
                 },
                 scope: this
             },
-            getFeature: function() { return feature }
+            getFeature: function() { return feature; }
         });
         
         this.featureDlg.show();
@@ -728,7 +739,11 @@ Ext.extend(Styler, Ext.util.Observable, {
             this.ruleDlg.destroy();
         }
         this.ruleDlg = new Ext.Window({
-            title: "Style: " + (rule.title || rule.name || "Untitled"),
+            title: OpenLayers.i18n(
+                "styler.style",
+                {'STYLE':
+                    (rule.title || rule.name || OpenLayers.i18n("Untitled"))
+                }),
             layout: "fit",
             x: this.windowPositions.ruleDlg.x,
             y: this.windowPositions.ruleDlg.y,
@@ -750,8 +765,9 @@ Ext.extend(Styler, Ext.util.Observable, {
                     this.map.baseLayer.resolutions[0],
                     this.map.units
                 ),
-                scaleSliderTemplate: "<div>{zoomType} Zoom Level: {zoom}</div>" + 
-                    "<div>Current Map Zoom: {mapZoom}</div>",
+                scaleSliderTemplate:
+                    OpenLayers.i18n("styler.div.zoomlevel") +
+                    OpenLayers.i18n("styler.div.mapzoom"),
                 modifyScaleTipContext: (function(panel, data) {
                     data.mapZoom = this.map.getZoom();
                 }).createDelegate(this),
@@ -760,29 +776,29 @@ Ext.extend(Styler, Ext.util.Observable, {
                     baseParams: {
                         version: "1.1.1",
                         request: "DescribeFeatureType",
-                        typename: layer.params["LAYERS"]
+                        typename: layer.params.LAYERS
                     },
                     ignore: {name: this.schemaManager.getGeometryName(layer)}
                 }),
                 pointGraphics: [
-                    {display: "cercle", value: "circle", mark: true, preview: "theme/img/circle.gif"},
-                    {display: "carré", value: "square", mark: true, preview: "theme/img/square.gif"},
-                    {display: "triangle", value: "triangle", mark: true, preview: "theme/img/triangle.gif"},
-                    {display: "étoile", value: "star", mark: true, preview: "theme/img/star.gif"},
-                    {display: "croix", value: "cross", mark: true, preview: "theme/img/cross.gif"},
-                    {display: "x", value: "x", mark: true, preview: "theme/img/x.gif"},
-                    {display: "personnalisé..."}
+                    {display: OpenLayers.i18n("Circle"), value: "circle", mark: true, preview: "theme/img/circle.gif"},
+                    {display: OpenLayers.i18n("Square"), value: "square", mark: true, preview: "theme/img/square.gif"},
+                    {display: OpenLayers.i18n("Triangle"), value: "triangle", mark: true, preview: "theme/img/triangle.gif"},
+                    {display: OpenLayers.i18n("Star"), value: "star", mark: true, preview: "theme/img/star.gif"},
+                    {display: OpenLayers.i18n("Cross"), value: "cross", mark: true, preview: "theme/img/cross.gif"},
+                    {display: OpenLayers.i18n("X"), value: "x", mark: true, preview: "theme/img/x.gif"},
+                    {display: OpenLayers.i18n("Custom...")}
                 ]
             }],
             bbar: ["->", {
-                text: "cancel",
+                text: OpenLayers.i18n("Cancel"),
                 iconCls: "cancel",
                 handler: function() {
                     this.ruleDlg.close();
                 },
                 scope: this
             }, {
-                text: "save",
+                text: OpenLayers.i18n("Save"),
                 iconCls: "save",
                 handler: function() {
                     this.saving = true;
@@ -804,7 +820,7 @@ Ext.extend(Styler, Ext.util.Observable, {
                     }
                 },
                 move: function(cp, x, y) {
-                    this.windowPositions["ruleDlg"] = {x: x, y: y};
+                    this.windowPositions.ruleDlg = {x: x, y: y};
                 },
                 scope: this
             }
@@ -838,7 +854,7 @@ Ext.extend(Styler, Ext.util.Observable, {
             params: {
                 version: "1.0.0",
                 request: "GetFeature",
-                typeName: layer.params["LAYERS"],
+                typeName: layer.params.LAYERS,
                 maxFeatures: "1"
             },
             success: function(response) {
@@ -847,11 +863,13 @@ Ext.extend(Styler, Ext.util.Observable, {
                 if(features.length) {
                     callback.call(this, features);
                 } else {
-                    throw("Could not load features from the WFS");
+                    throw(
+                        OpenLayers.i18n("Could not load features from the WFS")
+                    );
                 }
             },
             failure: function(response) {
-                throw("Could not load features from the WFS");
+                throw(OpenLayers.i18n("Could not load features from the WFS"));
             },
             scope: this
         });

@@ -49,6 +49,12 @@ GEOR.wmc = (function() {
     var wmcReader = null;
 
     /**
+     * Property: tr
+     * {Function} an alias to OpenLayers.i18n
+     */
+    var tr = null;
+
+    /**
      * Method: writeWmcContext
      * Writes a wmc context object given a layer store.
      *
@@ -145,6 +151,8 @@ GEOR.wmc = (function() {
          */
         init: function(ls) {
             layerStore = ls;
+            tr = OpenLayers.i18n;
+            
             wmcFormat = new OpenLayers.Format.WMC({
                 //layerOptions: GEOR.ows.defaultLayerOptions
                 // why should we apply default layer options and not use those provided by the WMC ?
@@ -188,8 +196,9 @@ GEOR.wmc = (function() {
                 // bounding box from wmc does not have the same projection system
                 // as the current map
                 GEOR.util.errorDialog({
-                    msg: "Le fichier .wmc ne peut pas être restauré. Son système de " +
-                        "référence spatiale est différent de celui de la carte en cours."
+                    msg: tr("The .wmc file cannot be restored. Its spatial " +
+                        "reference system is different from the system of " + 
+                        "the current map")
                 });
                 return;
             }

@@ -33,7 +33,8 @@ Styler.MultiSliderTip = Ext.extend(Ext.Tip, {
     },
     
     registerThumbListeners: function() {
-        for(var i=0, len=this.slider.thumbs.length; i<len; ++i) {
+		var i = 0;
+        for(i=0, len=this.slider.thumbs.length; i<len; ++i) {
             this.slider.thumbs[i].on({
                 "mouseover": this.createHoverListener(i),
                 "mouseout": function() {

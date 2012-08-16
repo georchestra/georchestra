@@ -83,7 +83,13 @@ GEOR.resultspanel = (function() {
      *  selection model
      */
     var sfControl = null;
-        
+
+    /**
+     * Property: tr
+     * {Function} an alias to OpenLayers.i18n
+     */
+    var tr = null;
+ 
     /**
      * Method: csvExportBtnHandler
      * Triggers the download dialog for CSV export of the store's content
@@ -185,28 +191,28 @@ GEOR.resultspanel = (function() {
         var plural = (c>1) ? "s" : "";
         
         var tbtext = new Ext.Toolbar.TextItem({
-            text: (c == GEOR.config.MAX_FEATURES) ? 
-                ' <span ext:qtip="Utilisez un navigateur plus performant '+
-                'pour augmenter le nombre d\'objets affichables">'+
-                'Nombre maximum d\'objets atteint ('+GEOR.config.MAX_FEATURES+')</span>': 
-                c+" résultat"+plural
+            text: (c == GEOR.config.MAX_FEATURES) ?
+                tr("resultspanel.maxfeature.reached", {'nb': GEOR.config.MAX_FEATURES}): 
+                (c>1) ? tr("NB results", {'nb': c}) :
+                (c>0) ? tr("One result") :
+                tr("Not any result")
         });
         
         var bbar = [{
-            text: 'Effacer',
-            tooltip: "Supprimer les résultats affichés sur la carte et dans le tableau",
+            text: tr("Clean"),
+            tooltip: tr("Clean all results on the map and in the table"),
             handler: function() {
                 vectorLayer.destroyFeatures();
                 layerBounds = null;
                 tbtext.hide();
             }
         }, tbtext, '->', {
-            text: 'Zoom',
-            tooltip: "Cadrer l'étendue de la carte sur celle des résultats",
+            text: tr("Zoom"),
+            tooltip: tr("Zoom to results extent"),
             handler: zoomToLayerExtent
         },{
-            text: 'Export CSV',
-            tooltip: "Exporter l'ensemble des résultats en CSV",
+            text: tr("CSV Export"),
+            tooltip: tr("Export results as CSV"),
             handler: csvExportBtnHandler
         }];
         
@@ -320,7 +326,7 @@ GEOR.resultspanel = (function() {
             GEOR.waiter.hide();
             observable.fireEvent("panel", {
                 bodyStyle: 'padding:1em;',
-                html: '<p>Aucun objet ne correspond à votre requête.</p>'
+                html: tr("<p>Not any result for that request.</p>")
             });
             return;
         }
@@ -382,6 +388,7 @@ GEOR.resultspanel = (function() {
          */
         init: function(m) {
             map = m;
+            tr = OpenLayers.i18n;
         },
 
         /**

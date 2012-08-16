@@ -29,6 +29,12 @@ GEOR.scalecombo = (function() {
      */
     var cmp_id = "GEOR_scalecombo";
 
+    /**
+     * Property: tr
+     * {Function} an alias to OpenLayers.i18n
+     */
+    var tr = null;
+
      /*
       * Public
       */
@@ -41,6 +47,8 @@ GEOR.scalecombo = (function() {
          * map - {OpenLayers.Map} 
          */
         create: function(map) {
+            tr = OpenLayers.i18n;
+            
             var store = new GeoExt.data.ScaleStore({
                 map: map    
             });

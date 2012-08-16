@@ -4,11 +4,11 @@
 
 Ext.namespace("Styler.form");
 Styler.form.SpatialComboBox = Ext.extend(Ext.form.ComboBox, {
-    
-    allowedTypes: [ // TODO: i18n
-        [OpenLayers.Filter.Spatial.INTERSECTS, "intersection avec"],
-        [OpenLayers.Filter.Spatial.WITHIN, "à l'intérieur de"],
-        [OpenLayers.Filter.Spatial.CONTAINS, "contient l'objet"]
+
+    allowedTypes: [
+        [OpenLayers.Filter.Spatial.INTERSECTS, OpenLayers.i18n("intersection")],
+        [OpenLayers.Filter.Spatial.WITHIN, OpenLayers.i18n("inside")],
+        [OpenLayers.Filter.Spatial.CONTAINS, OpenLayers.i18n("contains")]
     ],
 
     allowBlank: false,
@@ -20,7 +20,7 @@ Styler.form.SpatialComboBox = Ext.extend(Ext.form.ComboBox, {
     width: 100,
 
     editable: false,
-  
+
     initComponent: function() {
         var defConfig = {
             displayField: "name",
@@ -32,7 +32,7 @@ Styler.form.SpatialComboBox = Ext.extend(Ext.form.ComboBox, {
             value: (this.value === undefined) ? this.allowedTypes[0][0] : this.value
         };
         Ext.applyIf(this, defConfig);
-        
+
         Styler.form.SpatialComboBox.superclass.initComponent.call(this);
     }
 });

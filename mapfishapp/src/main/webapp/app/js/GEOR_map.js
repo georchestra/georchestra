@@ -50,7 +50,13 @@ GEOR.map = (function() {
      * {Array} The map's scales.
      */
     var SCALES = null;
-    
+
+    /**
+     * Property: tr
+     * {Function} an alias to OpenLayers.i18n
+     */
+    var tr = null;
+
     /**
      * Method: createMainBaseLayer
      * Create and return the main layer, this layer will not be
@@ -87,7 +93,7 @@ GEOR.map = (function() {
                     allOverlays: false,
                     controls: [new OpenLayers.Control.Attribution()]
                 },
-                title: 'carte de situation',
+                title: tr("Location map"),
                 minRectSize: 10,
                 // with these settings, a unique OSM zoom level is displayed:
                 minRatio: 1,
@@ -115,7 +121,7 @@ GEOR.map = (function() {
                     scales: [4 * SCALES[SCALES.length - 1]],
                     controls: []
                 }, mapOptions),
-                title: 'carte de situation',
+                title: tr("Location map"),
                 minRectSize: 10,
                 layers: [new OpenLayers.Layer.WMS(
                     "__geor_overview__",
@@ -139,7 +145,7 @@ GEOR.map = (function() {
         // see GEOR.initmap and startup WMC file
         var options = {
             projection: GEOR.config.MAP_SRS,
-            units: 'm',
+            units: tr("m"),
             allOverlays: true,
             scales: SCALES,
             maxExtent: new OpenLayers.Bounds(
@@ -257,7 +263,7 @@ GEOR.map = (function() {
         
         if (errors.length > 0) {
             GEOR.util.infoDialog({
-                title: 'Avertissement suite au chargement de couche',
+                title: tr("Warning after loading layer"),
                 msg: errors.join('<br />')
             });
         }
@@ -274,22 +280,21 @@ GEOR.map = (function() {
      * {String} An error message.
      */
     var checkLayer = function(r) {
-        var prefix = 'La couche <b>"' + r.get('title') + '"</b>' +
-                     ' pourrait ne pas apparaître pour la raison suivante : ';
-
+        var prefix = tr("The <b>NAME</b> layer could not appear for that reason: ",
+            {'name': r.get('title')}); 
         var minScale = r.get('minScale');
         var maxScale = r.get('maxScale');
         
         // check if min and max scales are valid (i.e. positive)
         if ((minScale && minScale < 0) || (maxScale && maxScale < 0)) {
-            return  prefix + 'Les échelles min/max de visibilité sont invalides.';
+            return  prefix + tr("Min/max visibility scales are invalid");
         }
 
         // check if scales are in a valid range (compared to the map scales)
         if (map.baseLayer && (
             (minScale && minScale < map.baseLayer.maxScale) ||
             (maxScale && maxScale > map.baseLayer.minScale))) {
-            return prefix + 'La plage de visibilité ne correspond pas aux échelles de la carte.';
+            return prefix + tr("Visibility range does not match map scales");
         }
 
         // check if layer extent and map extent match
@@ -304,7 +309,7 @@ GEOR.map = (function() {
             );
             
             if (!llbbox.intersectsBounds(mapbbox)) {
-                return prefix + "L'étendue géographique ne correspond pas à celle de la carte.";
+                return prefix + tr("Geografic extent does not match map extent");
             }
         }
     };
@@ -357,6 +362,7 @@ GEOR.map = (function() {
          * {GeoExt.data.LayerStore} The application's global layer store.
          */
         create: function() {
+            tr = OpenLayers.i18n;
             SCALES = GEOR.config.MAP_SCALES;
             return createLayerStore();
         }

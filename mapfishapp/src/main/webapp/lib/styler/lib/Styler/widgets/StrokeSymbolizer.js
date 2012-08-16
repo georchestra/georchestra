@@ -31,7 +31,9 @@ Styler.StrokeSymbolizer = Ext.extend(Ext.FormPanel, {
      *     display name.  Default is [["solid", "solid"], ["dash", "dash"],
      *     ["dot", "dot"]].
      */
-    dashStyles: [["plein", "plein"], ["4 4", "tiret"], ["2 4", "point"]],
+    dashStyles: [["solid", OpenLayers.i18n("Solid")],
+                 ["4 4", OpenLayers.i18n("Dash")],
+                 ["2 4", OpenLayers.i18n("Dot")]],
     
     border: false,
     
@@ -44,7 +46,7 @@ Styler.StrokeSymbolizer = Ext.extend(Ext.FormPanel, {
 
         this.items = [{
             xtype: "fieldset",
-            title: "Contour",
+            title: OpenLayers.i18n("Border"),
             autoHeight: true,
             defaults: {
                 width: 100 // TODO: move to css
@@ -52,23 +54,25 @@ Styler.StrokeSymbolizer = Ext.extend(Ext.FormPanel, {
             items: [{
                 xtype: "combo",
                 name: "style",
-                fieldLabel: "Style",
+                fieldLabel: OpenLayers.i18n("Style"),
                 store: new Ext.data.SimpleStore({
-                    data: this.dashStyles,
+                    data: [["solid", OpenLayers.i18n("Solid")],
+                           ["4 4", OpenLayers.i18n("Dash")],
+                           ["2 4", OpenLayers.i18n("Dot")]],
                     fields: ["value", "display"]
                 }),
                 displayField: "display",
                 valueField: "value",
-                value: this.symbolizer["strokeDashstyle"] ? 
-                    this.symbolizer["strokeDashstyle"] : "plein",
+                value: this.symbolizer.strokeDashstyle ? 
+                    this.symbolizer.strokeDashstyle : "solid",
                 mode: "local",
                 allowBlank: true,
                 triggerAction: "all",
                 editable: false,
                 listeners: {
                     select: function(combo, record) {
-                        var v = (record.get("value") == "plein") ? undefined : record.get("value");
-                        this.symbolizer["strokeDashstyle"] = v;
+                        var v = (record.get("value") === "solid") ? undefined : record.get("value");
+                        this.symbolizer.strokeDashstyle = v;
                         this.fireEvent("change", this.symbolizer);
                     },
                     scope: this
@@ -76,11 +80,11 @@ Styler.StrokeSymbolizer = Ext.extend(Ext.FormPanel, {
             }, {
                 xtype: "colorpickerfield",
                 name: "color",
-                fieldLabel: "Couleur",
-                value: this.symbolizer["strokeColor"],
+                fieldLabel: OpenLayers.i18n("Color"),
+                value: this.symbolizer.strokeColor,
                 listeners: {
                     valid: function(field) {
-                        this.symbolizer["strokeColor"] = field.getValue();
+                        this.symbolizer.strokeColor = field.getValue();
                         this.fireEvent("change", this.symbolizer);
                     },
                     scope: this
@@ -88,12 +92,12 @@ Styler.StrokeSymbolizer = Ext.extend(Ext.FormPanel, {
             }, {
                 xtype: "textfield",
                 name: "width",
-                fieldLabel: "Épaisseur",
-                value: this.symbolizer["strokeWidth"],
+                fieldLabel: OpenLayers.i18n("Width"),
+                value: this.symbolizer.strokeWidth,
                 listeners: {
                     change: function(field, value) {
-                        this.symbolizer["strokeWidth"] = value;
-                        this.symbolizer["stroke"] = (value > 0 ? true : false);
+                        this.symbolizer.strokeWidth = value;
+                        this.symbolizer.stroke = (value > 0 ? true : false);
                         this.fireEvent("change", this.symbolizer);
                     },
                     scope: this
@@ -101,12 +105,12 @@ Styler.StrokeSymbolizer = Ext.extend(Ext.FormPanel, {
             }, {
                 xtype: "slider",
                 name: "opacity",
-                fieldLabel: "Opacité",
-                value: (this.symbolizer["strokeOpacity"] == null) ? 100 : this.symbolizer["strokeOpacity"] * 100,
+                fieldLabel: OpenLayers.i18n("Opacity"),
+                value: (this.symbolizer.strokeOpacity === null) ? 100 : this.symbolizer.strokeOpacity * 100,
                 isFormField: true,
                 listeners: {
                     changecomplete: function(slider, value) {
-                        this.symbolizer["strokeOpacity"] = value / 100;
+                        this.symbolizer.strokeOpacity = value / 100;
                         this.fireEvent("change", this.symbolizer);
                     },
                     scope: this
@@ -121,11 +125,11 @@ Styler.StrokeSymbolizer = Ext.extend(Ext.FormPanel, {
             }],
             listeners: {
                 "collapse": function() {
-                    this.symbolizer["stroke"] = false;
+                    this.symbolizer.stroke = false;
                     this.fireEvent("change", this.symbolizer);
                 },
                 "expand": function() {
-                    this.symbolizer["stroke"] = true;
+                    this.symbolizer.stroke = true;
                     this.fireEvent("change", this.symbolizer);
                 },
                 scope: this

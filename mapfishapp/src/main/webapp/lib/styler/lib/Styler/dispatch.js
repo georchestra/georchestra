@@ -24,6 +24,7 @@ Styler.dispatch = function(functions, complete, scope) {
     var requests = functions.length;
     var responses = 0;
     var storage = {};
+    var i = 0;
     function respond() {
         ++responses;
         if(responses === requests) {
@@ -35,7 +36,7 @@ Styler.dispatch = function(functions, complete, scope) {
             functions[index].apply(scope, [respond, storage]);
         });
     }
-    for(var i=0; i<requests; ++i) {
+    for(i=0; i<requests; ++i) {
         trigger(i);
     }
 };

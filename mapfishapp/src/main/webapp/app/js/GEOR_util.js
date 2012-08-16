@@ -50,19 +50,19 @@ GEOR.util = (function() {
     var tplAttribute = new Ext.XTemplate(
         '<tpl for=".">',
             '<tpl if="this.isString(type)">',
-                '<div ext:qtip="{name}" class="x-combo-list-item">{name} <span>Caractères</span></div>',
+                '<div ext:qtip="{name}" class="x-combo-list-item">{name} <span>'+OpenLayers.i18n("Characters")+'</span></div>',
             '</tpl>',
             '<tpl if="this.isNumeric(type)">',
-                '<div ext:qtip="{name}" class="x-combo-list-item">{name} <span>Numérique</span></div>',
+                '<div ext:qtip="{name}" class="x-combo-list-item">{name} <span>'+OpenLayers.i18n("Digital")+'</span></div>',
             '</tpl>',
             '<tpl if="this.isDate(type)">',
-                '<div ext:qtip="{name}" class="x-combo-list-item">{name} <span>Date</span></div>',
+                '<div ext:qtip="{name}" class="x-combo-list-item">{name} <span>'+OpenLayers.i18n("Date")+'</span></div>',
             '</tpl>',
             '<tpl if="this.isBoolean(type)">',
-                '<div ext:qtip="{name}" class="x-combo-list-item">{name} <span>Booléen</span></div>',
+                '<div ext:qtip="{name}" class="x-combo-list-item">{name} <span>'+OpenLayers.i18n("Boolean")+'</span></div>',
             '</tpl>',
             '<tpl if="this.isAnother(type)">',
-                '<div ext:qtip="{name}" class="x-combo-list-item">{name} <span>autre</span></div>',
+                '<div ext:qtip="{name}" class="x-combo-list-item">{name} <span>'+OpenLayers.i18n("Other")+'</span></div>',
             '</tpl>',
         '</tpl>', {
             isString: isStringType,
@@ -186,7 +186,7 @@ GEOR.util = (function() {
          */
         confirmDialog: function(options) {
             Ext.Msg.show(Ext.apply({
-                title: "Confirmation",
+                title: OpenLayers.i18n("Confirmation"),
                 msg: '',
                 buttons: Ext.Msg.YESNO,
                 closable: false,
@@ -214,7 +214,7 @@ GEOR.util = (function() {
          */
         infoDialog: function(options) {
             Ext.Msg.show(Ext.apply({
-                title: "Information",
+                title: OpenLayers.i18n("Information"),
                 msg: '',
                 modal: false,
                 width: 400,
@@ -233,7 +233,7 @@ GEOR.util = (function() {
          */
         errorDialog: function(options) {
             Ext.Msg.show(Ext.apply({
-                title: "Erreur",
+                title: OpenLayers.i18n("Error"),
                 msg: '',
                 modal: false,
                 width: 400,

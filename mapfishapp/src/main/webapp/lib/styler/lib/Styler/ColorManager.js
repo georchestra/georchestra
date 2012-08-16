@@ -77,7 +77,7 @@ Ext.apply(Styler.ColorManager.prototype, {
     unregister: function(field) {
         field.un("focus", this.fieldFocus, this);
         field.un("destroy", this.destroy, this);
-        if(Styler.ColorManager.picker && field == this.field) {
+        if(Styler.ColorManager.picker && field === this.field) {
             Styler.ColorManager.picker.un("pickcolor", this.setFieldValue, this);
         }
         this.field = null;
@@ -97,7 +97,7 @@ Ext.apply(Styler.ColorManager.prototype, {
                 autoHeight: false
             });
             Styler.ColorManager.pickerWin = new Ext.Window({
-                title: "Color Picker",
+                title: OpenLayers.i18n("Color Picker"),
                 layout: "fit",
                 closeAction: "hide",
                 width: 405,

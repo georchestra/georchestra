@@ -90,6 +90,12 @@ GEOR.managelayers = (function() {
     var jsonFormat;
 
     /**
+     * Property: tr
+     * {Function} an alias to OpenLayers.i18n
+     */
+    var tr = null;
+
+    /**
      * Method: actionHandler
      * The action listener.
      */
@@ -110,8 +116,10 @@ GEOR.managelayers = (function() {
         case "delete":
             if (GEOR.config.CONFIRM_LAYER_REMOVAL) {
                 GEOR.util.confirmDialog({
-                    msg: "Voulez-vous réellement supprimer la couche "+
-                        layerRecord.get('title')+" ?",
+                    msg: tr(
+                        "Confirm NAME layer deletion ?", 
+                        {'name': layerRecord.get('title')}
+                    ),
                     width: 360,
                     yesCallback: function() {
                         layer.destroy();
@@ -173,7 +181,7 @@ GEOR.managelayers = (function() {
         }
 
         // logo displayed in qtip if set
-        var tip = 'source : '+ (attr.title || '-') +
+        var tip = tr('source: ')+ (attr.title || '-') +
             ((attr.logo && GEOR.util.isUrl(attr.logo.href, true)) ? '<br /><img src=\''+attr.logo.href+'\' />' : '');
 
         var attrDisplay = (attr.href) ?
@@ -185,7 +193,7 @@ GEOR.managelayers = (function() {
             cls: "geor-layers-form-text",
             autoEl: {
                 tag: 'span',
-                html: 'source : '+attrDisplay
+                html: tr('source: ')+attrDisplay
             }
         };
     };
@@ -203,14 +211,18 @@ GEOR.managelayers = (function() {
     var formatVisibility = function(layerRecord) {
         // TODO: get min/maxScale from current SLD is not set in layer
         var layer = layerRecord.get('layer');
-        var visibilityText = "1:" + OpenLayers.Number.format(layer.maxScale, 0) +
-                          " à 1:" + OpenLayers.Number.format(layer.minScale, 0);
+        var visibilityText = tr("1:MAXSCALE to 1:MINSCALE", {
+            'maxscale': OpenLayers.Number.format(layer.maxScale, 0),
+            'minscale': OpenLayers.Number.format(layer.minScale, 0)
+        });
         return {
             xtype: 'box',
             cls: "geor-layers-form-text",
             autoEl: {
                 tag: 'span',
-                'ext:qtip': "Plage de visibilité (indicative) :<br />de "+visibilityText,
+                'ext:qtip': tr("Visibility range (indicative):<br />from TEXT", {
+                    'text': visibilityText
+                }),
                 html: visibilityText
             }
         };
@@ -234,7 +246,7 @@ GEOR.managelayers = (function() {
             allowDepress: true,
             enableToggle: true,
             toggleGroup: 'map',
-            tooltip: "Interroger les objets de cette couche",
+            tooltip: tr("Information on objects of this layer"),
             listeners: {
                 "toggle": function(btn, pressed) {
                     GEOR.getfeatureinfo.toggle(layerRecord, pressed);
@@ -305,7 +317,7 @@ GEOR.managelayers = (function() {
 
         var default_style = {
             // TODO: add style name in ()
-            text: 'Style par défaut',
+            text: tr("Default style"),
             value: '',
             checked: true,
             group: 'style_' + layer.id,
@@ -433,7 +445,7 @@ GEOR.managelayers = (function() {
         // recenter action
         menuItems.push({
             iconCls: 'geor-btn-zoom',
-            text: "Recentrer sur la couche",
+            text: tr("Recenter on the layer"),
             listeners: {
                 "click": function(btn, pressed) {
                     var layer = layerRecord.get('layer'),
@@ -456,8 +468,7 @@ GEOR.managelayers = (function() {
                                 },
                                 failure: function() {
                                     GEOR.util.errorDialog({
-                                        msg: "Impossible d'obtenir "+
-                                            "l'étendue de la couche."
+                                        msg: tr("Impossible to get layer extent")
                                     });
                                 },
                             scope: this
@@ -473,7 +484,7 @@ GEOR.managelayers = (function() {
         // redraw action (aka "do not used client-cached layer")
         menuItems.push({
             iconCls: 'geor-btn-refresh',
-            text: "Recharger la couche",
+            text: tr("Refresh layer"),
             listeners: {
                 "click": function(btn, pressed) {
                     layerRecord.get('layer').mergeNewParams({
@@ -492,7 +503,7 @@ GEOR.managelayers = (function() {
             url = (url.href) ? url.href : url;
             menuItems.push({
                 iconCls: 'geor-btn-metadata',
-                text: "Afficher les métadonnées",
+                text: tr("Show metadata"),
                 listeners: {
                     "click": function(btn, pressed) {
                         window.open(url);
@@ -503,7 +514,7 @@ GEOR.managelayers = (function() {
         if (GEOR.styler && isWMS && queryable) {
             menuItems.push({
                 iconCls: 'geor-btn-style',
-                text: "Editer la symbologie",
+                text: tr("Edit symbology"),
                 listeners: {
                     "click": function(btn, pressed) {
                         GEOR.styler.create(layerRecord, this.el);
@@ -521,7 +532,7 @@ GEOR.managelayers = (function() {
         if (GEOR.querier && (queryable || layer.CLASS_NAME == "OpenLayers.Layer.Vector")) {
             menuItems.push({
                 iconCls: 'geor-btn-query',
-                text: "Construire une requête",
+                text: tr("Build a query"),
                 listeners: {
                     "click": function(btn, pressed) {
                         if (layerRecord == querierRecord) {
@@ -552,9 +563,8 @@ GEOR.managelayers = (function() {
                                     var r = GEOR.ows.getWfsInfo(records);
                                     if (!r) {
                                         GEOR.util.errorDialog({
-                                            msg: "Impossible d'obtenir "+
-                                                " l'adresse de la couche WFS."+
-                                                "<br />Le requêteur ne sera pas disponible."
+                                            msg: tr("Failed to get WFS layer address." +
+                                                 "<br />The query module will be disabled")
                                         });
                                         return;
                                     }
@@ -562,8 +572,8 @@ GEOR.managelayers = (function() {
                                 },
                                 failure: function() {
                                     GEOR.util.errorDialog({
-                                        msg: "La requête WMS DescribeLayer a malheureusement échoué."+
-                                            "<br />Le requêteur ne sera pas disponible."
+                                        msg: tr("DescribeLayer WMS query failed." +
+                                                 "<br />The query module will be disabled")
                                     });
                                 },
                                 storeOptions: {
@@ -586,7 +596,7 @@ GEOR.managelayers = (function() {
 
         menuItems.push({
             iconCls: 'geor-btn-download',
-            text: "Télécharger les données",
+            text: tr("Download data"),
             handler: function() {
                 submitData({
                     layers: [{
@@ -607,12 +617,12 @@ GEOR.managelayers = (function() {
         if (isWMS) {
             stylesMenu = createStylesMenu(layerRecord);
             menuItems.push({
-                text: 'Choisir un style',
+                text: tr("Choose a style"),
                 disabled: !queryable,
                 menu: stylesMenu
             });
             menuItems.push({
-                text: "Modifier le format",
+                text: tr("Modify format"),
                 menu: createFormatMenu(layerRecord)
             });
         }
@@ -644,7 +654,7 @@ GEOR.managelayers = (function() {
         }
         buttons = buttons.concat([
         {
-            text:'Actions',
+            text: tr("Actions"),
             menu: createMenu(layerRecord)
         }, '-', {
             xtype: "gx_opacityslider",
@@ -728,6 +738,7 @@ GEOR.managelayers = (function() {
          *     store.
          */
         create: function(layerStore) {
+            tr = OpenLayers.i18n;
             Ext.QuickTips.init();
             // create the layer container
             layerContainer = new GeoExt.tree.LayerContainer({
@@ -739,10 +750,10 @@ GEOR.managelayers = (function() {
                         uiProvider: "ui",
                         actions: [{
                             action: "delete",
-                            qtip: "supprimer cette couche"
+                            qtip: tr("Delete this layer")
                         }, {
                             action: "up",
-                            qtip: "monter cette couche",
+                            qtip: tr("Push up this layer"),
                             update: function(el) {
                                 if (this.isFirst()) {
                                     if (!this._updating &&
@@ -761,7 +772,7 @@ GEOR.managelayers = (function() {
                             }
                         }, {
                             action: "down",
-                            qtip: "descendre cette couche",
+                            qtip: tr("Push down this layer"),
                             update: function(el) {
                                 var isLast = this.isLast();
                                 if (isLast) {
@@ -810,7 +821,7 @@ GEOR.managelayers = (function() {
                 rootVisible: false,
                 root: layerContainer,
                 buttons: [{
-                    text: 'Ajouter des couches',
+                    text: tr("Add layers"),
                     handler: function() {
                         if (!layerFinder) {
                             layerFinder = GEOR.layerfinder.create(layerStore, this.el);

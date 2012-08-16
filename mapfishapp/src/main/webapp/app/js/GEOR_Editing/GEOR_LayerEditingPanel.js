@@ -35,7 +35,7 @@
  * @include GeoExt/plugins/AttributeForm.js
  * @include GEOR_util.js
  */
- 
+
 Ext.namespace('GEOR.Editing');
 
 /**
@@ -86,7 +86,7 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
 
     /**
      * Property: nextSelectedFeature
-     * {OpenLayers.Feature.Vector} the feature which should have been selected 
+     * {OpenLayers.Feature.Vector} the feature which should have been selected
      * on click (but which cannot be selected, since the previous feature has updates)
      */
     nextSelectedFeature: null,
@@ -142,7 +142,7 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
         this.layer = new OpenLayers.Layer.Vector(
             "GEOR.Editing.LayerEditingPanel", {
             strategies: [
-                new OpenLayers.Strategy.BBOX(), 
+                new OpenLayers.Strategy.BBOX(),
                 this.strategy
             ],
             protocol: this.protocol,
@@ -160,18 +160,18 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
         this.tbar = [
             new GeoExt.Action({
                 map: this.map,
-                control: this.drawFeature, 
+                control: this.drawFeature,
                 enableToggle: true,
                 toggleGroup: 'edit',
-                text: "Saisir " + type.text,
+                text: OpenLayers.i18n("Enter ") + type.text,
                 iconCls: type.iconCls
-            }), 
+            }),
             new GeoExt.Action({
                 map: this.map,
                 control: this.selectFeature,
                 enableToggle: true,
                 toggleGroup: 'edit',
-                text: "Modifier un objet",
+                text: OpenLayers.i18n("Modify object"),
                 pressed: true
             })
         ];
@@ -179,12 +179,12 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
         this.bbar = [
             '->',
             {
-                text: 'Tout annuler',
+                text: OpenLayers.i18n('Cancel all'),
                 iconCls: 'geor-btn-cancel',
-                handler: function() {                    
+                handler: function() {
                     GEOR.util.confirmDialog({
-                        title: "Tout annuler",
-                        msg: "Souhaitez-vous vraiment annuler toutes les modifications<br />depuis la dernière synchronisation ?",
+                        title: OpenLayers.i18n('Cancel all'),
+                        msg: OpenLayers.i18n('layereditingpanel.cancel.confirm'),
                         yesCallback: function() {
                             this.layer.refresh({force: true});
                             this.lastFeature = null;
@@ -195,7 +195,7 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
                 scope: this
             },
             {
-                text: 'Synchroniser',
+                text: OpenLayers.i18n("Synchronize"),
                 iconCls: 'geor-btn-sync',
                 handler: function() {
                     if (!this.isFeatureDirty()) {
@@ -212,8 +212,7 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
                         this.selectFeature.activate();
                     } else {
                         GEOR.util.infoDialog({
-                            msg: "Veuillez confirmer ou annuler " +
-                            "les modifications en cours."
+                            msg: OpenLayers.i18n("layereditingpanel.changes.confirm")
                         });
                     }
                 },
@@ -223,7 +222,7 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
 
 
         this.cancelBtn = new Ext.Button({
-            text: 'Annuler',
+            text: OpenLayers.i18n('Cancel'),
             handler: function() {
                 var feature = this.layer.selectedFeatures[0];
                 if (feature) {
@@ -242,13 +241,13 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
         });
 
         this.deleteBtn = new Ext.Button({
-            text: 'Supprimer',
+            text: OpenLayers.i18n('Delete'),
             disabled: true,
             handler: function() {
                 var feature = this.layer.selectedFeatures[0];
                 if (!feature) {
                     GEOR.util.infoDialog({
-                        msg: 'Veuillez sélectionner un objet.'
+                        msg: OpenLayers.i18n('Please select one feature.')
                     });
                     return;
                 }
@@ -276,12 +275,12 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
         });
 
         this.saveBtn = new Ext.Button({
-            text: 'Confirmer',
+            text: OpenLayers.i18n('Confirm'),
             formBind: true,
             handler: this.confirmHandler,
             scope: this
         });
-         
+
         this.formPanel = new Ext.form.FormPanel({
             plugins: [
                 new GeoExt.plugins.AttributeForm({
@@ -296,8 +295,8 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
                                         return '';
                                     }
                                     var type = v.type.split(":").pop(); // remove ns prefix
-                                    return OpenLayers.i18n(type) + 
-                                        (v.nillable ? '' : ' (requis)');
+                                    return OpenLayers.i18n(type) +
+                                        (v.nillable ? '' : OpenLayers.i18n(' (required)'));
                                 }
                             }
                         ),
@@ -308,11 +307,11 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
             ],
             defaults: {
                 width: 160,
-                maxLengthText: "Texte trop long",
-                minLengthText: "Texte trop court",
-                maxText: "Valeur maximale dépassée",
-                minText: "Valeur minimale non atteinte",
-                nanText: "Nombre non valide"
+                maxLengthText: OpenLayers.i18n("Text too long"),
+                minLengthText: OpenLayers.i18n("Text too short"),
+                maxText: OpenLayers.i18n("Maximum value exceeded"),
+                minText: OpenLayers.i18n("Minimum value not reached"),
+                nanText: OpenLayers.i18n("Invalid number")
             },
             trackResetOnLoad: true,
             monitorValid: true,
@@ -337,7 +336,7 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
         // manage events
         this.layer.events.register('beforefeatureselected', this, this.checkSelect);
         this.layer.events.register('featureunselected', this, this.unSelect);
-        
+
         this.drawFeature.events.register('featureadded', this, function(e) {
             this.selectFeature.unselectAll();
             this.selectFeature.select(e.feature);
@@ -346,7 +345,7 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
         });
         this.strategy.events.register('success', this, function() {
             GEOR.util.infoDialog({
-                msg: 'Synchronisation réussie.'
+                msg: OpenLayers.i18n('Synchronization successful.')
             });
             this.lastFeature = null;
             this.layer.redraw();
@@ -357,10 +356,10 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
         });
         this.strategy.events.register('fail', this, function() {
             GEOR.util.errorDialog({
-                msg: 'Erreur lors de la synchronisation.'
+                msg: OpenLayers.i18n('Synchronization failed.')
             });
         });
-        
+
         this.formPanel.on('clientvalidation', function(formPanel, valid){
             if (this.isFeatureDirty()) {
                 this.saveBtn.enable();
@@ -372,32 +371,32 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
             var feature = this.layer.selectedFeatures[0];
             if (feature) {
                 if (feature.state == OpenLayers.State.DELETE) {
-                    this.deleteBtn.setText('Restaurer');
+                    this.deleteBtn.setText(OpenLayers.i18n('Recover'));
                 } else {
-                    this.deleteBtn.setText('Supprimer');
+                    this.deleteBtn.setText(OpenLayers.i18n('Delete'));
                }
             }
         }, this);
-        
+
         GEOR.Editing.LayerEditingPanel.superclass.initComponent.apply(this, arguments);
     },
-    
+
     /**
      * Method: confirmHandler
      *   confirm the modifications on the current selected feature
      *
      */
     confirmHandler: function(feature) {
-        feature = (feature.CLASS_NAME == "OpenLayers.Feature.Vector" ? feature : null) || 
+        feature = (feature.CLASS_NAME == "OpenLayers.Feature.Vector" ? feature : null) ||
             this.layer.selectedFeatures[0];
-        
+
         if (!feature) {
             GEOR.util.errorDialog({
-                msg: 'Aucun objet sélectionné !'
+                msg: OpenLayers.i18n('No feature selected !')
             });
             return;
         }
-        
+
         var fieldName, value, fa = feature.attributes;
         this.formPanel.form.items.each(function(field) {
             fieldName = field.getName();
@@ -410,7 +409,7 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
             feature.state = OpenLayers.State.UPDATE;
             this.layer.drawFeature(feature);
         }
-        this.lastFeature = null; 
+        this.lastFeature = null;
         this.modifyFeature.unselectFeature(feature);
         this.silentUnselect();
         this.cleanForm();
@@ -425,15 +424,15 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
 
         var labels = {
             Point: {
-                text: 'un point',
+                text: OpenLayers.i18n('a point'),
                 iconCls: 'drawpoint'
             },
             Line: {
-                text: 'une ligne',
+                text: OpenLayers.i18n('a line'),
                 iconCls: 'drawline'
             },
             Polygon: {
-                text: 'un polygone',
+                text: OpenLayers.i18n('a polygon'),
                 iconCls: 'drawpolygon'
             }
         };
@@ -479,7 +478,7 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
 
         this.snap = new OpenLayers.Control.Snapping({layer: this.layer});
         this.map.addControl(this.snap);
-        
+
         return labels[typeName];
     },
 
@@ -495,9 +494,9 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
             var feature = this.layer.selectedFeatures.length > 0 ?
                           this.layer.selectedFeatures[0] : undefined;
         }
-        
+
         return this.formPanel.getForm().isDirty() ||
-               (feature && this.originalGeometry && 
+               (feature && this.originalGeometry &&
                 !this.originalGeometry.equals(feature.geometry));
     },
 
@@ -524,14 +523,14 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
      */
     loadFeature: function(feature) {
         this.silentSelect(feature);
-        this.originalGeometry = feature.geometry.clone();        
+        this.originalGeometry = feature.geometry.clone();
         // do this only one time for a "checked-out" feature
         if (!feature.modified || !feature.modified.attributes) {
             feature.modified = OpenLayers.Util.extend(feature.modified, {
                 attributes: feature.attributes
             });
         }
-        this.formPanel.getForm().setValues(feature.attributes); 
+        this.formPanel.getForm().setValues(feature.attributes);
     },
 
     /**
@@ -542,7 +541,7 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
         // temporary unregister callback to avoid recursion
         this.selectFeature.unselectAll();
         this.layer.events.unregister('beforefeatureselected', this, this.checkSelect);
-        this.selectFeature.select(feature); 
+        this.selectFeature.select(feature);
         this.modifyFeature.selectFeature(feature);
         this.layer.events.register('beforefeatureselected', this, this.checkSelect);
         this.formPanel.enable();
@@ -555,7 +554,7 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
     silentUnselect: function(feature) {
         // temporary unregister callback to avoid recursion
         this.layer.events.unregister('featureunselected', this, this.unSelect);
-        this.selectFeature.unselectAll(); 
+        this.selectFeature.unselectAll();
         this.formPanel.disable();
         this.layer.events.register('featureunselected', this, this.unSelect);
     },
@@ -570,15 +569,15 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
         this.lastFeature = feature;
         this.modifyFeature.unselectFeature(feature);
         this.layer.drawFeature(feature, "default");
-        // TODO: I would propose to auto-save feature on unselect, 
+        // TODO: I would propose to auto-save feature on unselect,
         // without bothering the user.
         // Or at least, offer him the choice to switch to a "auto-confirm edits" mode.
         if (this.isFeatureDirty(feature)) {
             GEOR.util.confirmDialog({
-                title: "Modifications en cours",
-                msg: "Souhaitez-vous confirmer les modifications ?",
-                yesCallback: function() {        
-                    // we do as if the "confirm" button had been pressed here 
+                title: OpenLayers.i18n("Pending changes"),
+                msg: OpenLayers.i18n("Do you want to confirm changes ?"),
+                yesCallback: function() {
+                    // we do as if the "confirm" button had been pressed here
                     this.confirmHandler(feature);
                 },
                 noCallback: function() {
@@ -605,7 +604,7 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
 
     /**
      * Method: cleanForm
-     * Set empty values in form in a non-dirty state 
+     * Set empty values in form in a non-dirty state
      */
     cleanForm: function() {
         var form = this.formPanel.getForm();
@@ -622,8 +621,8 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
      * {<OpenLayer.StyleMap>} The style map.
      */
     createStyleMap: function() {
-        
-        var style = OpenLayers.Util.extend({}, 
+
+        var style = OpenLayers.Util.extend({},
                         OpenLayers.Feature.Vector.style['default']);
         var styleMap = new OpenLayers.StyleMap({
             "default": new OpenLayers.Style(
@@ -633,7 +632,7 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
                 })
             )
         });
-            
+
         // create a styleMap for the vector layer so that features
         // have different styles depending on their states, also
         // use the "select" render intent for styling vertices
@@ -666,7 +665,7 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
         styleMap.addUniqueValueRules("default", "state", lookup, context);
         return styleMap;
     },
-    
+
     /**
      * Method: tearDown
      * Hide vector layer
@@ -679,7 +678,7 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
         // remove & destroy vector layer
         this.layer.setVisibility(false);
     },
-    
+
     /**
      * Method: setUp
      * Show vector layer
@@ -692,7 +691,7 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
         // remove & destroy vector layer
         this.layer.setVisibility(true);
     },
-    
+
     /**
      * Method: destroy
      * Remove vector layer on panel destroy

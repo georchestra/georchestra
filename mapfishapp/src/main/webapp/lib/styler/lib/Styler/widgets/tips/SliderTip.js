@@ -21,7 +21,6 @@ Styler.SliderTip = Ext.extend(Ext.Tip, {
     dragging: false,
 
     minWidth: 10,
-    minWidth: 10,
     offsets : [0, -10],
     init : function(slider){
         slider.on('dragstart', this.onSlide, this);

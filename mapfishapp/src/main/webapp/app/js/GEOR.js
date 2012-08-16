@@ -25,8 +25,6 @@
  * @include GEOR_mapinit.js
  * @include GEOR_print.js
  * @include GEOR_wmc.js
- * @include OpenLayers/Lang/fr.js
- * @include GEOR_Lang/fr.js
  * Note that GEOR_getfeatureinfo.js, GEOR_resultspanel.js, GEOR_querier.js, 
  * GEOR_styler.js should be included here, but they are not required by the edit module.
  * In order to make the edit build "light", those files will be added in main.cfg and not here.
@@ -53,11 +51,12 @@ Ext.namespace("GEOR");
     };
     
     Ext.onReady(function() {
+        var tr = OpenLayers.i18n;
         
         /*
          * Setting of OpenLayers global vars.
          */
-        OpenLayers.Lang.setCode('fr');
+        OpenLayers.Lang.setCode(GEOR.config.LANG);
         OpenLayers.Number.thousandsSeparator = " ";
         OpenLayers.ImgPath = 'app/img/openlayers/';
         OpenLayers.DOTS_PER_INCH = GEOR.config.MAP_DOTS_PER_INCH;
@@ -68,10 +67,10 @@ Ext.namespace("GEOR");
          */
         Ext.BLANK_IMAGE_URL = "lib/externals/ext/resources/images/default/s.gif";
         Ext.apply(Ext.MessageBox.buttonText, {
-            yes: "Oui",
-            no: "Non",
-            ok: "OK",
-            cancel: "Annuler"
+            yes: tr("Yes"),
+            no: tr("No"),
+            ok: tr("OK"),
+            cancel: tr("Cancel")
         });
         
         /*
@@ -117,18 +116,18 @@ Ext.namespace("GEOR");
         
         var recenteringItems = [
             Ext.apply({
-                title: "Localités",
-                tabTip: "Recentrage sur localités<br />de la base GeoNames"
+                title: tr("Cities"),
+                tabTip: tr("Recentering on GeoNames cities")
             }, GEOR.geonames.create(map)),
             Ext.apply({
-                title: "Référentiels",
-                tabTip: "Recentrage sur une sélection<br />de couches \"référentiels\""
+                title: tr("Referentials"),
+                tabTip: tr("Recentering on a selection of referential layers")
             }, GEOR.referentials.create(map, GEOR.config.NS_LOC))
         ];
         if (GEOR.address && GEOR.config.RECENTER_ON_ADDRESSES) {
             recenteringItems.push(Ext.apply({
-                title: "Adresses",
-                tabTip: "Recentrage sur point adresse"
+                title: tr("Addresses"),
+                tabTip: tr("Recentering on a given address")
             }, GEOR.address.create(map)));
         }
         
@@ -147,7 +146,7 @@ Ext.namespace("GEOR");
                              // "center"
                 layout: "card",
                 activeItem: 0,
-                title: "Couches disponibles",
+                title: tr("Available layers"),
                 plugins: plugins,
                 split: (GEOR.editing !== undefined),
                 collapsible: (GEOR.editing !== undefined),
@@ -189,7 +188,7 @@ Ext.namespace("GEOR");
             eastItems.push(
                 Ext.apply({
                     region: "center", 
-                    title: "Edition"
+                    title: tr("Editing")
                 }, GEOR.editing.create(map))
             );
         }
@@ -214,9 +213,7 @@ Ext.namespace("GEOR");
             },
             items: [{
                 bodyStyle: 'padding: 5px',
-                html: "<p>Sélectionnez l'outil d'interrogation "+
-                "ou construisez une requête sur une couche.<br />"+
-                "Les attributs des objets s'afficheront dans ce cadre.</p>"
+                html: tr("resultspanel.emptytext")
             }],
             listeners: {
                 "collapse": function() {
@@ -288,11 +285,11 @@ Ext.namespace("GEOR");
                         eastItems[0].remove(eastItems[0].getComponent(1));
                     }
                     panelCfg.buttons.push({
-                        text: 'Fermer',
+                        text: tr('Close'),
                         handler: function() {
                             // we also need to hide querier vector layer:
                             eastItems[0].getComponent(1).tearDown();
-                            eastItems[0].setTitle("Couches disponibles");
+                            eastItems[0].setTitle(tr("Available layers"));
                             eastItems[0].getLayout().setActiveItem(0);
                         }
                     });

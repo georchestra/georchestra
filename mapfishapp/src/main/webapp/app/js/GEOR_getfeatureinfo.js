@@ -69,6 +69,12 @@ GEOR.getfeatureinfo = (function() {
      * {GEOR.FeatureDataModel} data model
      */
     var model = null;
+
+    /**
+     * Property: tr
+     * {Function} an alias to OpenLayers.i18n
+     */
+    var tr = null;
     
     /**
      * Method: onGetfeatureinfo
@@ -106,7 +112,7 @@ GEOR.getfeatureinfo = (function() {
         OpenLayers.Element.removeClass(map.viewPortDiv, "olDrawBox");
         
         observable.fireEvent("search", {
-            html: '<div>Recherche en cours...</div>'
+            html: tr("<div>Searching...</div>")
         }); 
     };
     
@@ -165,7 +171,8 @@ GEOR.getfeatureinfo = (function() {
          * Parameters:
          * m - {OpenLayers.Map} The map instance.
          */
-        init: function(m) { 
+        init: function(m) {
+            tr = OpenLayers.i18n;
             map = m;
         },
 
@@ -187,8 +194,9 @@ GEOR.getfeatureinfo = (function() {
             }
             if (state) {
                 observable.fireEvent("search", {
-                    html: '<div>Recherche d\'objets activée sur la couche '+
-                        title+'. Cliquez sur la carte.</div>'
+                    html: tr("<div>Search on objects active for NAME layer. " +
+                             "Clic on the map.</div>",
+                             {'name': title})                             
                 });
                 
                 var ctrlEventsConfig = {

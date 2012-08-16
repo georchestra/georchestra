@@ -1,44 +1,44 @@
 /**
  * Copyright (c) 2009 Camptocamp
  */
- 
+
 /**
  * @requires Styler/widgets/BaseFilterPanel.js
  * @include Styler/widgets/form/SpatialComboBox.js
  * @include OpenLayers/Control/ModifyFeature.js
  */
- 
+
 Ext.namespace("Styler");
 Styler.SpatialFilterPanel = Ext.extend(Styler.BaseFilterPanel, {
-    
+
     /**
      * Property: comboConfig
      * {Object}
      */
     comboConfig: null,
-    
+
     /**
      * Property: feature
      * {OpenLayers.Feature.Vector} feature whose geom is used by this filter
      */
     feature: null,
-    
+
     /**
      * Property: map
      * {OpenLayers.Map} the map object
      */
     map: null,
-    
+
     // workaround an OpenLayers bug when 2 vector layers are involved
     zindex: null,
-    
+
     /**
      * Property: cookieProvider
      * {Ext.state.CookieProvider} The cookie provider
      * Used for storing a geometry (if available) ...
-     */  
+     */
     cookieProvider: null,
-    
+
     /**
      * Property: toggleGroup
      * {String} the toggleGroup for the modify feature button
@@ -46,25 +46,26 @@ Styler.SpatialFilterPanel = Ext.extend(Styler.BaseFilterPanel, {
     toggleGroup: null,
 
     initComponent: function() {
-    
-        //TODO: i18n
-        var allowedTypes = [[OpenLayers.Filter.Spatial.INTERSECTS, 
-            "intersection avec"]];
-            
+
+        var allowedTypes = [[OpenLayers.Filter.Spatial.INTERSECTS,
+            OpenLayers.i18n("intersection")]];
+
         switch (this.feature.geometry.CLASS_NAME) {
             case "OpenLayers.Geometry.Polygon":
-                allowedTypes.push([OpenLayers.Filter.Spatial.WITHIN, 
-                    "à l'intérieur de"]);
+                allowedTypes.push([OpenLayers.Filter.Spatial.WITHIN,
+                    OpenLayers.i18n("inside")]);
+                break;
             case "OpenLayers.Geometry.LineString":
-                allowedTypes.push([OpenLayers.Filter.Spatial.CONTAINS, 
-                    "contient l'objet"]);
+                allowedTypes.push([OpenLayers.Filter.Spatial.CONTAINS,
+                    OpenLayers.i18n("contains")]);
+                break;
         }
-        
+
         var defComboConfig = {
             xtype: "gx_spatialcombo",
             value: this.filter.type,
             allowedTypes: allowedTypes,
-            blankText: "Ce champ est nécessaire",
+            blankText: OpenLayers.i18n("This field is mandatory"),
             listeners: {
                 select: function(combo, record) {
                     this.filter.type = record.get("value");
@@ -74,9 +75,9 @@ Styler.SpatialFilterPanel = Ext.extend(Styler.BaseFilterPanel, {
             },
             width: 120
         };
-        this.comboConfig = this.comboConfig || {}; 
+        this.comboConfig = this.comboConfig || {};
         Ext.applyIf(this.comboConfig, defComboConfig);
-        
+
         var ModifyFeature = OpenLayers.Control.ModifyFeature;
         this.mfControl = new ModifyFeature(
             this.feature.layer, {
@@ -85,10 +86,10 @@ Styler.SpatialFilterPanel = Ext.extend(Styler.BaseFilterPanel, {
             }
         );
         this.map.addControl(this.mfControl);
-        
+
         Styler.SpatialFilterPanel.superclass.initComponent.call(this);
     },
-    
+
     /**
      * Method: createDefaultFilter
      * May be overridden to change the default filter.
@@ -102,7 +103,7 @@ Styler.SpatialFilterPanel = Ext.extend(Styler.BaseFilterPanel, {
             projection: this.map.getProjection()
         });
     },
-    
+
     /**
      * Method: tearDown
      * To be run before panel is removed from parent.
@@ -115,7 +116,7 @@ Styler.SpatialFilterPanel = Ext.extend(Styler.BaseFilterPanel, {
         this.feature.layer.destroyFeatures([this.feature]);
         return true;
     },
-    
+
     /**
      * Method: createFilterItems
      * Creates a panel config containing filter parts.
@@ -132,7 +133,7 @@ Styler.SpatialFilterPanel = Ext.extend(Styler.BaseFilterPanel, {
             items: [{
                 xtype: "button",
                 iconCls: cls,
-                tooltip: "Modifier la géométrie",
+                tooltip: OpenLayers.i18n("Modify geometry"),
                 enableToggle: true,
                 toggleGroup: this.toggleGroup,
                 listeners: {
@@ -140,7 +141,7 @@ Styler.SpatialFilterPanel = Ext.extend(Styler.BaseFilterPanel, {
                         var feature = this.feature;
                         if (pressed) {
                             var geometry = feature.geometry;
-                            if (geometry.CLASS_NAME == "OpenLayers.Geometry.Point") {
+                            if (geometry.CLASS_NAME === "OpenLayers.Geometry.Point") {
                                 this.map.setCenter(
                                     geometry.getBounds().getCenterLonLat()
                                 );
@@ -154,7 +155,7 @@ Styler.SpatialFilterPanel = Ext.extend(Styler.BaseFilterPanel, {
                             zindex = feature.layer.getZIndex();
                             this.mfControl.activate();
                             this.mfControl.selectFeature(feature);
-                            feature.layer.setZIndex(this.map.Z_INDEX_BASE['Feature']+1);
+                            feature.layer.setZIndex(this.map.Z_INDEX_BASE.Feature+1);
                         } else {
                             this.mfControl.unselectFeature(feature);
                             this.mfControl.deactivate();
@@ -165,19 +166,19 @@ Styler.SpatialFilterPanel = Ext.extend(Styler.BaseFilterPanel, {
                 }
             }]
         }];
-        
+
         if (this.cookieProvider) {
             buttonPanels.push({
                 items: [{
                     xtype: "button",
                     iconCls: "savegeometry",
-                    tooltip: "Enregistrer cette géométrie",
+                    tooltip: OpenLayers.i18n("Save this geometry"),
                     handler: function() {
                         if (this.feature && this.feature.geometry) {
-                            this.cookieProvider.set('geometry', 
+                            this.cookieProvider.set('geometry',
                                 this.cookieProvider.encodeValue(this.feature.geometry.toString())
                             );
-                            alert('Géométrie enregistrée pour 30 jours sur ce navigateur.');
+                            alert(OpenLayers.i18n('spatialfilterpanel.geometry.saved'));
                         }
                     },
                     scope: this
@@ -195,7 +196,7 @@ Styler.SpatialFilterPanel = Ext.extend(Styler.BaseFilterPanel, {
                 width: this.comboConfig.width,
                 layout: 'column',
                 items: [{
-                    width: this.comboConfig.width, 
+                    width: this.comboConfig.width,
                     border: false,
                     items: [this.comboConfig]
                 }]
@@ -213,4 +214,4 @@ Styler.SpatialFilterPanel = Ext.extend(Styler.BaseFilterPanel, {
 
 });
 
-Ext.reg('gx_spatialfilterpanel', Styler.SpatialFilterPanel); 
+Ext.reg('gx_spatialfilterpanel', Styler.SpatialFilterPanel);

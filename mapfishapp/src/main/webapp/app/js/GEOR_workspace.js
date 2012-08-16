@@ -27,8 +27,19 @@ GEOR.workspace = (function() {
     /*
      * Private
      */
-    
+
+
+    /**
+     * Property: map
+     * {OpenLayers.Map} The map object
+     */
     var map = null;
+
+    /**
+     * Property: tr
+     * {Function} an alias to OpenLayers.i18n
+     */
+    var tr = null;
 
     /**
      * Method: saveBtnHandler
@@ -74,7 +85,7 @@ GEOR.workspace = (function() {
                             GEOR.wmc.read(response.responseXML || response.responseText);
                         } catch(err) {
                             GEOR.util.errorDialog({
-                                msg: "Le contexte n'est pas valide."
+                                msg: tr("The provided context is not valid.")
                             });
                         }
                     }
@@ -101,7 +112,7 @@ GEOR.workspace = (function() {
      */
     var saveWMC = function() {
         var popup = new Ext.Window({
-            title: 'Sauvegarde du contexte',
+            title: tr("Context saving"),
             layout: 'fit',
             modal: false,
             constrainHeader: true,
@@ -124,13 +135,13 @@ GEOR.workspace = (function() {
                     width: 200,
                     fieldLabel: "Nom",
                     allowBlank: false,
-                    blankText: "Un nom de fichier est nécessaire."
+                    blankText: tr("The file is required.")
                 }],
                 buttons: [{
-                    text: "Annuler",
+                    text: tr("Cancel"),
                     handler: cancelBtnHandler
                 },{
-                    text: "Sauvegarder",
+                    text: tr("Save"),
                     //id: 'geor-workspace-save',
                     handler: saveBtnHandler,
                     formBind: true
@@ -146,7 +157,7 @@ GEOR.workspace = (function() {
      */
     var loadWMC = function() {
         var popup = new Ext.Window({
-            title: "Restauration d'un contexte",
+            title: tr("Context restoring"),
             layout: 'fit',
             modal: false,
             constrainHeader: true,
@@ -162,21 +173,20 @@ GEOR.workspace = (function() {
                 labelWidth: 80,
                 monitorValid: true,
                 buttonAlign: 'right',
-                html: ["<p>Notez que le fichier de contexte",
-                        " doit être encodé en UTF-8.</p>"].join(""),
+                html: tr("<p>Please note that the WMC must be UTF-8 encoded</p>"),
                 items: [{
                     xtype: 'textfield',
                     inputType: 'file',
                     name: 'wmc',
-                    fieldLabel: "Fichier",
+                    fieldLabel: tr("File"),
                     allowBlank: false,
-                    blankText: "Un fichier est nécessaire."
+                    blankText: tr("The file is required.")
                 }],
                 buttons: [{
-                    text: "Annuler",
+                    text: tr("Cancel"),
                     handler: cancelBtnHandler
                 },{
-                    text: "Charger",
+                    text: tr("Load"),
                     handler: loadBtnHandler,
                     formBind: true
                 }]
@@ -240,54 +250,51 @@ GEOR.workspace = (function() {
          */
         create: function(m) {
             map = m;
+            tr = OpenLayers.i18n;
             return {
-                text: "Espace de travail",
+                text: tr("Workspace"),
                 menu: new Ext.menu.Menu({
                     defaultAlign: "tr-br",
                     // does not work as expected, at least with FF3 ... (ExtJS bug ?)
                     // top right corner of menu should be aligned with bottom right corner of its parent
                     items: [{
-                        text: "Sauvegarder la carte",
+                        text: tr("Save the map context"),
                         iconCls: "geor-save-map",
                         handler: saveWMC
                     },{
-                        text: "Charger une carte",
+                        text: tr("Load a map context"),
                         iconCls: "geor-load-map",
                         handler: loadWMC
                     }, '-', {
-                        text: "Editer dans OSM",
+                        text: tr("Edit in OSM"),
                         iconCls: "geor-edit-osm",
                         plugins: [{
                             ptype: 'menuqtips'
                         }],
                         menu: [{
-                            text: "avec JOSM",
-                            qtip: ["Il vous faut auparavant lancer JOSM",
-                                "et disposer du plugin RemoteControl"].join("<br />"),
+                            text: tr("with JOSM"),
+                            qtip: tr("JOSM must be started with the remote control option"),
                             handler: editOSM.call(this, {
                                 base: 'http://127.0.0.1:8111/load_and_zoom?',
                                 protocol: 'lbrt'
                             })
                         },{
-                            text: "avec Potlatch",
-                            qtip: ["Il est recommandé de travailler",
-                                "à des échelles proches de 1:10.000"].join("<br />"),
+                            text: tr("with Potlatch"),
+                            qtip: tr("Recommended scale is 1:10.000"),
                             handler: editOSM.call(this, {
                                 base: 'http://www.openstreetmap.org/edit?editor=potlatch&',
                                 protocol: 'llz'
                             })
                         },{
-                            text: "avec Potlatch2",
-                            qtip: ["Il est recommandé de travailler",
-                                "à des échelles proches de 1:10.000"].join("<br />"),
+                            text: tr("with Potlatch2"),
+                            qtip: tr("Recommended scale is 1:10.000"),
                             handler: editOSM.call(this, {
                                 base: 'http://www.openstreetmap.org/edit?editor=potlatch2&',
                                 protocol: 'llz'
                             })
                         },{
-                            text: "avec Walking Papers",
-                            qtip: ["Il est recommandé de travailler",
-                                "à des échelles proches de 1:10.000"].join("<br />"),
+                            text: tr("with Walking Papers"),
+                            qtip: tr("Recommended scale is 1:10.000"),
                             handler: editOSM.call(this, {
                                 base: 'http://walking-papers.org/?',
                                 protocol: 'llz'

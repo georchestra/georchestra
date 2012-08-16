@@ -103,7 +103,7 @@ Styler.RulePanel = Ext.extend(Ext.TabPanel, {
      *
      * Default is "{type} Scale 1:{scale}".
      */
-    scaleSliderTemplate: "Echelle {type} 1:{scale}",
+    scaleSliderTemplate: OpenLayers.i18n("Echelle {type} 1:{scale}"),
     
     /**
      * Method: modifyScaleTipContext
@@ -132,7 +132,7 @@ Styler.RulePanel = Ext.extend(Ext.TabPanel, {
         this.activeTab = 0;
         
         this.textSymbolizer = new Styler.TextSymbolizer({
-            symbolizer: this.rule.symbolizer["Text"],
+            symbolizer: this.rule.symbolizer.Text,
             attributes: this.attributes,
             listeners: {
                 change: function(symbolizer) {
@@ -145,16 +145,16 @@ Styler.RulePanel = Ext.extend(Ext.TabPanel, {
         var maxScaleDenominator, maxScaleLimit;
         var minScaleDenominator, minScaleLimit;
         maxScaleDenominator =
-            this.rule.maxScaleDenominator != null ?
+            this.rule.maxScaleDenominator !== null ?
                 this.rule.maxScaleDenominator : undefined;
         maxScaleLimit =
-            this.maxScaleLimit != null ?
+            this.maxScaleLimit !== null ?
                 this.maxScaleLimit : undefined;
         minScaleDenominator =
-            this.rule.minScaleDenominator != null ?
+            this.rule.minScaleDenominator !== null ?
                 this.rule.minScaleDenominator : undefined;
         minScaleLimit =
-            this.minScaleLimit != null ?
+            this.minScaleLimit !== null ?
                 this.minScaleLimit : undefined;
 
         this.scaleLimitPanel = new Styler.ScaleLimitPanel({
@@ -188,28 +188,28 @@ Styler.RulePanel = Ext.extend(Ext.TabPanel, {
                 change: function(builder) {
                     var filter = builder.getFilter(); 
                     this.rule.filter = filter;
-                    this.fireEvent("change", this, this.rule)
+                    this.fireEvent("change", this, this.rule);
                 },
                 scope: this
             }
         });
         
         this.items = [{
-            title: "Libellés",
+            title: OpenLayers.i18n("Labels"),
             autoScroll: true,
             bodyStyle: {"padding": "10px"},
             items: [{
                 xtype: "fieldset",
-                title: "Libellés",
+                title: OpenLayers.i18n("Labels"),
                 autoHeight: true,
                 checkboxToggle: true,
-                collapsed: !this.rule.symbolizer["Text"],
+                collapsed: !this.rule.symbolizer.Text,
                 items: [
                     this.textSymbolizer
                 ],
                 listeners: {
                     collapse: function() {
-                        delete this.rule.symbolizer["Text"];
+                        delete this.rule.symbolizer.Text;
                         this.fireEvent("change", this, this.rule);
                     },
                     expand: function() {
@@ -217,7 +217,7 @@ Styler.RulePanel = Ext.extend(Ext.TabPanel, {
                         // so we have to call doLayout by hand when
                         // expanding the fieldset
                         this.textSymbolizer.doLayout();
-                        this.rule.symbolizer["Text"] = this.textSymbolizer.symbolizer;
+                        this.rule.symbolizer.Text = this.textSymbolizer.symbolizer;
                         this.fireEvent("change", this, this.rule);
                     },
                     scope: this
@@ -226,11 +226,11 @@ Styler.RulePanel = Ext.extend(Ext.TabPanel, {
         }];
         if (Styler.Util.getSymbolTypeFromRule(this.rule) || this.symbolType) {
             this.items = [{
-                title: "Simple",
+                title: OpenLayers.i18n("Simple"),
                 autoScroll: true,
                 items: [this.createHeaderPanel(), this.createSymbolizerPanel()]
             }, this.items[0], {
-                title: "Avancé",
+                title: OpenLayers.i18n("Advanced"),
                 defaults: {
                     style: {
                         margin: "7px"
@@ -239,7 +239,7 @@ Styler.RulePanel = Ext.extend(Ext.TabPanel, {
                 autoScroll: true,
                 items: [{
                     xtype: "fieldset",
-                    title: "Limite par échelle",
+                    title: OpenLayers.i18n("Limit by scale"),
                     checkboxToggle: true,
                     collapsed: !(this.rule && (this.rule.minScaleDenominator || this.rule.maxScaleDenominator)),
                     autoHeight: true,
@@ -248,7 +248,7 @@ Styler.RulePanel = Ext.extend(Ext.TabPanel, {
                         collapse: function(){
                             delete this.rule.minScaleDenominator;
                             delete this.rule.maxScaleDenominator;
-                            this.fireEvent("change", this, this.rule)
+                            this.fireEvent("change", this, this.rule);
                         },
                         expand: function(){
                             // in ext3 collapsed fieldset are not rendered
@@ -268,14 +268,14 @@ Styler.RulePanel = Ext.extend(Ext.TabPanel, {
                                 changed = true;
                             }
                             if (changed) {
-                                this.fireEvent("change", this, this.rule)
+                                this.fireEvent("change", this, this.rule);
                             }
                         },
                         scope: this
                     }
                 }, {
                     xtype: "fieldset",
-                    title: "Limite par condition",
+                    title: OpenLayers.i18n("Limit by condition"),
                     checkboxToggle: true,
                     collapsed: !(this.rule && this.rule.filter),
                     autoHeight: true,
@@ -283,18 +283,18 @@ Styler.RulePanel = Ext.extend(Ext.TabPanel, {
                     listeners: {
                         collapse: function(){
                             delete this.rule.filter;
-                            this.fireEvent("change", this, this.rule)
+                            this.fireEvent("change", this, this.rule);
                         },
                         expand: function(){
                             var changed = false;
                             this.rule.filter = this.filterBuilder.getFilter();
-                            this.fireEvent("change", this, this.rule)
+                            this.fireEvent("change", this, this.rule);
                         },
                         scope: this
                     }
                 }]
-            }]
-        };
+            }];
+        }
         this.items[0].autoHeight = true;
 
         this.addEvents(
@@ -339,7 +339,7 @@ Styler.RulePanel = Ext.extend(Ext.TabPanel, {
             symbolType: this.symbolType,
             symbolizer: this.rule.symbolizer[this.symbolType],
             isFormField: true,
-            fieldLabel: "Symbole"
+            fieldLabel: OpenLayers.i18n("Symbol")
         });
         return {
             xtype: "form",
@@ -358,7 +358,7 @@ Styler.RulePanel = Ext.extend(Ext.TabPanel, {
                     width: 150,
                     items: [{
                         xtype: "textfield",
-                        fieldLabel: "Nom",
+                        fieldLabel: OpenLayers.i18n("Name"),
                         anchor: "95%",
                         value: this.rule && (this.rule.title || this.rule.name || ""),
                         listeners: {

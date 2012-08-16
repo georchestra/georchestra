@@ -74,6 +74,12 @@ GEOR.print = (function() {
     var legendPanel = null;
 
     /**
+     * Property: tr
+     * {Function} an alias to OpenLayers.i18n
+     */
+    var tr = null;
+
+    /**
      * property: defaultCustomParams
      * {Object} Default custom params for printPage.
      */
@@ -110,7 +116,7 @@ GEOR.print = (function() {
                 defaultAttr = true;
             }
         });
-        return 'Source'+ ((attr.length > 1)?'s':'') +' : '+attr.join(', ');
+        return ((attr.length > 1)?tr("Sources: "):tr("Source: ")) +attr.join(', ');
     };
 
     /**
@@ -124,7 +130,8 @@ GEOR.print = (function() {
     var initialize = function(ls) {
 
         layerStore = ls;
-
+        tr = OpenLayers.i18n;
+        
         // The printProvider that connects us to the print service
         var r = GEOR.config.MAPFISHAPP_URL.split('/');
         r.pop(); // remove "edit" or latest "/" part
@@ -159,10 +166,10 @@ GEOR.print = (function() {
                 "printexception": function() {
                     mask.hide();
                     GEOR.util.errorDialog({
-                        title: 'Impression impossible',
+                        title: tr("Print error"),
                         msg: [
-                            'Le service d\'impression a signalé une erreur.',
-                            'Contactez l\'administrateur de la plateforme.'
+                            tr("Print server returned an error"),
+                            tr("Contact platform administrator")
                         ].join('<br/>')
                     });
                 },
@@ -174,10 +181,10 @@ GEOR.print = (function() {
                         } else {
                             //console.log(layer.name + ' - tuilée sans WMS référencé'); // debug
                             GEOR.util.infoDialog({
-                                title: 'Couche non disponible pour impression',
+                                title: tr("Layer unavailable for printing"),
                                 msg: [
-                                    'La couche ' + layer.name + ' ne peut pas encore être imprimée.',
-                                    'Contactez l\'administrateur de la plateforme.'
+                                    tr("The NAME layer cannot be printed.", {'name': layer.name}),
+                                    tr("Contact platorm administrator")
                                 ].join('<br/>')
                             });
                         }
@@ -190,10 +197,10 @@ GEOR.print = (function() {
     var showWindow = function() {
         if (!printPage) {
             GEOR.util.errorDialog({
-                title: 'Impression non disponible',
+                title: tr("Unable to print"),
                 msg: [
-                    'Le service d\'impression est actuellement inaccessible.',
-                    'Contactez l\'administrateur de la plateforme.'
+                    tr("The print server is currently unreachable"),
+                    tr("Contact platorm administrator")
                 ].join('<br/>')
             });
             return;
@@ -205,16 +212,16 @@ GEOR.print = (function() {
             if (r >= 0) {
                 printProvider.setLayout(printProvider.layouts.getAt(r));
             } else {
-                alert("Configuration error: DEFAULT_PRINT_FORMAT "+
-                    GEOR.config.DEFAULT_PRINT_FORMAT+" not found in print capabilities");
+                alert(tr("print.unknown.format",
+                    {'format': GEOR.config.DEFAULT_PRINT_FORMAT}));                
             }
             r = printProvider.dpis.find("value", 
                 GEOR.config.DEFAULT_PRINT_RESOLUTION);
             if (r >= 0) {
                 printProvider.setDpi(printProvider.dpis.getAt(r));
             } else {
-                alert("Configuration error: DEFAULT_PRINT_RESOLUTION "+
-                    GEOR.config.DEFAULT_PRINT_RESOLUTION+" not found in print capabilities");
+                alert(tr("print.unknown.resolution",
+                    {'resolution': GEOR.config.DEFAULT_PRINT_RESOLUTION}));
             }
             // The form with fields controlling the print output
             var formPanel = new Ext.form.FormPanel({
@@ -222,7 +229,7 @@ GEOR.print = (function() {
                 labelSeparator: ' : ',
                 items: [{
                         xtype: 'textfield',
-                        fieldLabel: 'Titre',
+                        fieldLabel: tr("Title"),
                         width: 200,
                         name: 'mapTitle',
                         plugins: new GeoExt.plugins.PrintPageField({
@@ -230,14 +237,14 @@ GEOR.print = (function() {
                         })
                     }, {
                         xtype: 'hidden',
-                        name: 'copyright',
+                        name: tr("Copyright"),
                         plugins: new GeoExt.plugins.PrintPageField({
                             printPage: printPage
                         })
 
                     }, {
                         xtype: 'checkbox',
-                        fieldLabel: 'Mini-carte',
+                        fieldLabel: tr("Minimap"),
                         name: 'showOverview',
                         checked: defaultCustomParams.showOverview,
                         plugins: new GeoExt.plugins.PrintPageField({
@@ -246,7 +253,7 @@ GEOR.print = (function() {
 
                     }, {
                         xtype: 'checkbox',
-                        fieldLabel: 'Nord',
+                        fieldLabel: tr("North"),
                         name: 'showNorth',
                         checked: defaultCustomParams.showNorth,
                         plugins: new GeoExt.plugins.PrintPageField({
@@ -255,7 +262,7 @@ GEOR.print = (function() {
 
                     }, {
                         xtype: 'checkbox',
-                        fieldLabel: 'Echelle',
+                        fieldLabel: tr("Scale"),
                         name: 'showScalebar',
                         checked: defaultCustomParams.showScalebar,
                         plugins: new GeoExt.plugins.PrintPageField({
@@ -264,7 +271,7 @@ GEOR.print = (function() {
 
                     },{
                         xtype: 'checkbox',
-                        fieldLabel: 'Date',
+                        fieldLabel: tr("Date"),
                         name: 'showDate',
                         checked: defaultCustomParams.showDate,
                         plugins: new GeoExt.plugins.PrintPageField({
@@ -273,7 +280,7 @@ GEOR.print = (function() {
 
                     }, {
                         xtype: 'checkbox',
-                        fieldLabel: 'Légende',
+                        fieldLabel: tr("Legend"),
                         name: 'showLegend',
                         checked: defaultCustomParams.showLegend,
                         plugins: new GeoExt.plugins.PrintPageField({
@@ -285,7 +292,7 @@ GEOR.print = (function() {
                         store: printProvider.layouts,
                         displayField: "name",
                         valueField: "name",
-                        fieldLabel: "Format",
+                        fieldLabel: tr("Format"),
                         forceSelection: true,
                         editable: false,
                         mode: "local",
@@ -298,7 +305,7 @@ GEOR.print = (function() {
                         store: printProvider.dpis,
                         displayField: "name",
                         valueField: "value",
-                        fieldLabel: "Résolution",
+                        fieldLabel: tr("Resolution"),
                         forceSelection: true,
                         editable: false,
                         tpl: '<tpl for="."><div class="x-combo-list-item">{name} dpi</div></tpl>',
@@ -327,7 +334,7 @@ GEOR.print = (function() {
             });
             
             win = new Ext.Window({
-                title: 'Impression de la carte',
+                title: tr("Print the map"),
                 resizable: false,
                 constrainHeader: true,
                 animateTarget: GEOR.config.ANIMATE_WINDOWS && this.el,
@@ -337,7 +344,7 @@ GEOR.print = (function() {
                 closeAction: 'hide',
                 items: [formPanel],
                 buttons: [{
-                    text: "Imprimer",
+                    text: tr("Print"),
                     handler: function() {
                         printPage.customParams.copyright = getLayerSources();
                         printPage.fit(layerStore.map, false);
@@ -346,7 +353,7 @@ GEOR.print = (function() {
                         });
                     }
                 }, {
-                    text: "Fermer",
+                    text: tr("Close"),
                     handler: function() {
                         win.hide();
                     }
@@ -358,7 +365,7 @@ GEOR.print = (function() {
         
         if (!mask) {
             mask = new Ext.LoadMask(win.bwrap.dom, {
-                msg:"impression en cours..."
+                msg:tr("Printing...")
             });
         }
     };
@@ -391,7 +398,7 @@ GEOR.print = (function() {
                 action = new Ext.Action({
                     iconCls: 'mf-print-action',
                     text: '',
-                    tooltip: "imprimer la carte courante",
+                    tooltip: tr("Print current map"),
                     handler: showWindow
                 });
             }

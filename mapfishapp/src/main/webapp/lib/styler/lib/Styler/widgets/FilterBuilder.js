@@ -18,32 +18,38 @@ Styler.FilterBuilder = Ext.extend(Ext.Panel, {
      *     These will be the option names available in the builder type combo.
      *     Default is ["any", "all", "none", "not all"].
      */
-    builderTypeNames: ["une de", "toutes", "aucune de", "pas toutes"],
-    
+
     /**
      * Property: allowedBuilderTypes
      * {Array} List of builder type constants.  Default is
      *     [ANY_OF, ALL_OF, NONE_OF].
      */
     allowedBuilderTypes: null,
-    
+
     /**
      * Property: filterPanelOptions
      * {Object} Allows customization of attributes comboBox
      */
     filterPanelOptions: null,
-    
+
     rowHeight: 25,
 
     builderType: null,
 
     childFiltersPanel: null,
-    
+
     customizeFilterOnInit: true,
-    
-    preComboText: "Correspondre à",
-    postComboText: "ces conditions :",
-    
+
+    /**
+     * Property: preComboText
+     * {String} text displayed before combo.
+     */
+
+    /**
+     * Property: postComboText
+     * {String} text displayed after combo.
+     */
+
     /**
      * Property: allowGroups
      * {Boolean} Allow groups of conditions to be added.  Default is true.
@@ -51,38 +57,38 @@ Styler.FilterBuilder = Ext.extend(Ext.Panel, {
      *     be added.
      */
     allowGroups: true,
-    
+
     /**
      * Property: geometryTypes
      * {Array} List all possible geometry types to search  with.
      */
     geometryTypes: [ 'polygon', 'line', 'point' ],
-    
+
     /**
      * Property: allowSpatial
      * {Boolean} Allow spatial conditions to be added.  Default is false.
      */
     allowSpatial: false,
-    
+
     /**
      * Property: vectorLayer
      * {OpenLayers.Layer.Vector} The vector layer used to draw features
      *      If none is provided, it will be created.
      */
     vectorLayer: null,
-    
+
     /**
      * Property: map
      * {OpenLayers.Map} The map object to which we add our vectorLayer
      *      required if allowSpatial is true.
      */
     map: null,
-    
+
     /**
      * Property: cookieProvider
      * {Ext.state.CookieProvider} The cookie provider
      * Used for storing filters or geometries (if available) ...
-     */  
+     */
     cookieProvider: null,
 
     /**
@@ -99,6 +105,14 @@ Styler.FilterBuilder = Ext.extend(Ext.Panel, {
 
     initComponent: function() {
         var defConfig = {
+            builderTypeNames: [
+                OpenLayers.i18n("any"), 
+                OpenLayers.i18n("all"), 
+                OpenLayers.i18n("none"), 
+                OpenLayers.i18n("not all")
+            ],
+            preComboText: OpenLayers.i18n("Matching"),
+            postComboText: OpenLayers.i18n("these conditions"),
             plain: true,
             layout: 'column',
             defaults: {
@@ -107,7 +121,7 @@ Styler.FilterBuilder = Ext.extend(Ext.Panel, {
             defaultBuilderType: Styler.FilterBuilder.ANY_OF
         };
         Ext.applyIf(this, defConfig);
-        
+
         if(this.customizeFilterOnInit) {
             this.filter = this.customizeFilter(this.filter);
             if (this.noConditionOnInit) {
@@ -115,9 +129,9 @@ Styler.FilterBuilder = Ext.extend(Ext.Panel, {
                 filters.remove(filters[0]);
             }
         }
-        
+
         this.builderType = this.getBuilderType();
-        
+
         this.items = [
             {
                 xtype: "panel",
@@ -148,7 +162,7 @@ Styler.FilterBuilder = Ext.extend(Ext.Panel, {
                 }]
             }, this.createChildFiltersPanel()
         ];
-        
+
         this.bbar = this.createToolBar();
         this.addEvents(
             /**
@@ -170,39 +184,39 @@ Styler.FilterBuilder = Ext.extend(Ext.Panel, {
              * Fires when finished loading data from server
              */
             "loaded"
-        ); 
+        );
 
         Styler.FilterBuilder.superclass.initComponent.call(this);
     },
-    
+
     deactivateControls: function() {
-        var controls = this.controls;
+        var controls = this.controls, i;
         if (controls) {
-            for (var i=0,l=controls.length; i<l; i++) {
+            for (i=0,l=controls.length; i<l; i++) {
                 controls[i].deactivate();
             }
         }
     },
-    
+
     setUp: function() {
         if (this.vectorLayer) {
             this.vectorLayer.setVisibility(true);
         }
     },
-    
+
     tearDown: function() {
         this.deactivateControls();
         if (this.vectorLayer) {
             this.vectorLayer.setVisibility(false);
         }
     },
-    
+
     /**
      * Method: createToolBar
      */
     createToolBar: function() {
         var bar = [{
-            text: "condition",
+            text: OpenLayers.i18n("condition"),
             iconCls: "add",
             handler: function() {
                 this.addCondition();
@@ -213,14 +227,14 @@ Styler.FilterBuilder = Ext.extend(Ext.Panel, {
             this.controls = [];
             var layer = this.createVectorLayer();
             bar.push({
-                text: "condition spatiale",
+                text: OpenLayers.i18n("spatial condition"),
                 iconCls: "add",
                 menu: this.createEditingMenu(layer),
                 scope: this
             });
             this.vectorLayer = layer;
-            
-            // register to events modifying panel's visibility 
+
+            // register to events modifying panel's visibility
             // so that we hide our vectorLayer when not visible
             // accordion
             this.on('expand', this.setUp, this);
@@ -235,7 +249,7 @@ Styler.FilterBuilder = Ext.extend(Ext.Panel, {
         }
         if(this.allowGroups) {
             bar.push({
-                text: "groupe",
+                text: OpenLayers.i18n("group"),
                 iconCls: "add",
                 handler: function() {
                     this.addCondition('group');
@@ -245,7 +259,7 @@ Styler.FilterBuilder = Ext.extend(Ext.Panel, {
         }
         return bar;
     },
-    
+
     /**
      * Method: createEditingMenu
      */
@@ -270,7 +284,7 @@ Styler.FilterBuilder = Ext.extend(Ext.Panel, {
                 control: createDrawControl.call(this, OpenLayers.Handler.Point, this.controls),
                 map: this.map,
                 group: "querier",
-                text: "sur la base d'un point",
+                text: OpenLayers.i18n("based on a point"),
                 iconCls: "point"
             })));
         }
@@ -279,7 +293,7 @@ Styler.FilterBuilder = Ext.extend(Ext.Panel, {
                 control: createDrawControl.call(this, OpenLayers.Handler.Path, this.controls),
                 map: this.map,
                 group: "querier",
-                text: "sur la base d'une ligne",
+                text: OpenLayers.i18n("based on a line"),
                 iconCls: "linestring"
             })));
         }
@@ -288,13 +302,13 @@ Styler.FilterBuilder = Ext.extend(Ext.Panel, {
                 control: createDrawControl.call(this, OpenLayers.Handler.Polygon, this.controls),
                 map: this.map,
                 group: "querier",
-                text: "sur la base d'un polygone",
+                text: OpenLayers.i18n("based on a polygon"),
                 iconCls: "polygon"
             })));
         }
         if (this.cookieProvider) {
             var item = new Ext.menu.CheckItem({
-                text: "sur la base d'une géométrie stockée",
+                text: OpenLayers.i18n("based on a stored geometry"),
                 disabled: !this.cookieProvider.get('geometry', false),
                 handler: function() {
                     var wkt = this.cookieProvider.decodeValue(
@@ -308,7 +322,7 @@ Styler.FilterBuilder = Ext.extend(Ext.Panel, {
                 iconCls: "database"
             });
             this.cookieProvider.on('statechange', function(cp, key, value){
-                if (key == 'geometry') {
+                if (key === 'geometry') {
                     if (value.length) {
                         item.enable();
                     } else {
@@ -320,7 +334,7 @@ Styler.FilterBuilder = Ext.extend(Ext.Panel, {
         }
         return new Ext.menu.Menu({items: items});
     },
-    
+
     /**
      * APIMethod: getFilter
      * Returns a filter that fits the model in the Filter Encoding
@@ -345,7 +359,7 @@ Styler.FilterBuilder = Ext.extend(Ext.Panel, {
     /**
      * Method: cloneFilter
      * A special cloning method which takes care of the "removed" property
-     *     
+     *
      * Parameters:
      * f - {OpenLayers.Filter} A filter.
      *
@@ -355,8 +369,8 @@ Styler.FilterBuilder = Ext.extend(Ext.Panel, {
     cloneFilter: function(f) {
         var filter;
         if(f instanceof OpenLayers.Filter.Logical) {
-            var filters = [];
-            for(var i=0, len=f.filters.length; i<len; ++i) {
+            var filters = [], i;
+            for(i=0, len=f.filters.length; i<len; ++i) {
                 filters.push(this.cloneFilter(f.filters[i]));
             }
             filter = new OpenLayers.Filter.Logical({
@@ -386,20 +400,22 @@ Styler.FilterBuilder = Ext.extend(Ext.Panel, {
         if(filter instanceof OpenLayers.Filter.Logical) {
             var toDelete = [];
             var filters = filter.filters;
-            for (var i = 0, l = filters.length; i<l; i++) {
+            var i = 0;
+            var j = 0;
+            for (i = 0, l = filters.length; i<l; i++) {
                 if (filters[i].removed === true) {
-                    toDelete.push(filters[i]); 
+                    toDelete.push(filters[i]);
                 } else {
                     filters[i] = this.removeUnchecked(filters[i]);
                 }
             }
-            for (var j = 0, ll = toDelete.length; j<ll; j++) {
+            for (j = 0, ll = toDelete.length; j<ll; j++) {
                 OpenLayers.Util.removeItem(filters, toDelete[j]);
             }
         }
         return filter;
     },
-    
+
     /**
      * Method: cleanFilter
      * Ensures that binary logical filters have more than one child.
@@ -412,13 +428,14 @@ Styler.FilterBuilder = Ext.extend(Ext.Panel, {
      *     binary logical filters have more than one child filter.
      */
     cleanFilter: function(filter) {
+		var i = 0;
         if(filter instanceof OpenLayers.Filter.Logical) {
             if(filter.type !== OpenLayers.Filter.Logical.NOT &&
                filter.filters.length === 1) {
                 filter = this.cleanFilter(filter.filters[0]);
             } else {
                 var child;
-                for(var i=0, len=filter.filters.length; i<len; ++i) {
+                for(i=0, len=filter.filters.length; i<len; ++i) {
                     child = filter.filters[i];
                     if(child instanceof OpenLayers.Filter.Logical) {
                         filter.filters[i] = this.cleanFilter(child);
@@ -428,7 +445,7 @@ Styler.FilterBuilder = Ext.extend(Ext.Panel, {
         }
         return filter;
     },
-    
+
     /**
      * Method: customizeFilter
      * Create a filter that fits the model for this filter builder.  This filter
@@ -446,6 +463,8 @@ Styler.FilterBuilder = Ext.extend(Ext.Panel, {
      * {OpenLayers.Filter} A filter that fits the model used by this builder.
      */
     customizeFilter: function(filter) {
+		var i = 0
+		var child;
         if(!filter) {
             filter = this.wrapFilter(this.createDefaultFilter());
         } else {  // TODO: spatial case ...
@@ -457,8 +476,7 @@ Styler.FilterBuilder = Ext.extend(Ext.Panel, {
                         // give the filter children if it has none
                         filter.filters = [this.createDefaultFilter()];
                     } else {
-                        var child;
-                        for(var i=0, len=filter.filters.length; i<len; ++i) {
+                        for(i=0, len=filter.filters.length; i<len; ++i) {
                             child = filter.filters[i];
                             if(child instanceof OpenLayers.Filter.Logical) {
                                 filter.filters[i] = this.customizeFilter(child);
@@ -481,12 +499,12 @@ Styler.FilterBuilder = Ext.extend(Ext.Panel, {
                         ];
                     } else {
                         // NOT filters should have one child only
-                        var child = filter.filters[0];
+                        child = filter.filters[0];
                         if(child instanceof OpenLayers.Filter.Logical) {
                             if(child.type !== OpenLayers.Filter.Logical.NOT) {
                                 // check children of AND and OR
                                 var grandchild;
-                                for(var i=0, len=child.filters.length; i<len; ++i) {
+                                for(i=0, len=child.filters.length; i<len; ++i) {
                                     grandchild = child.filters[i];
                                     if(grandchild instanceof OpenLayers.Filter.Logical) {
                                         child.filters[i] = this.customizeFilter(grandchild);
@@ -542,7 +560,7 @@ Styler.FilterBuilder = Ext.extend(Ext.Panel, {
         }
         return filter;
     },
-    
+
     createDefaultFilter: function(feature) {
         if(feature instanceof OpenLayers.Feature.Vector) {
             return new OpenLayers.Filter.Spatial({
@@ -554,7 +572,7 @@ Styler.FilterBuilder = Ext.extend(Ext.Panel, {
             return new OpenLayers.Filter.Comparison();
         }
     },
-    
+
     /**
      * Method: createVectorLayer
      *
@@ -562,7 +580,7 @@ Styler.FilterBuilder = Ext.extend(Ext.Panel, {
      * {OpenLayers.Layer.Vector}
      */
     createVectorLayer: function() {
-        var layer = (this.vectorLayer) ? 
+        var layer = (this.vectorLayer) ?
             this.vectorLayer : new OpenLayers.Layer.Vector('filter_builder', {
                 displayInLayerSwitcher: false
             });
@@ -579,7 +597,7 @@ Styler.FilterBuilder = Ext.extend(Ext.Panel, {
         });
         return layer;
     },
-    
+
     /**
      * Method: wrapFilter
      * Given a non-logical filter, this creates parent filters depending on
@@ -607,7 +625,7 @@ Styler.FilterBuilder = Ext.extend(Ext.Panel, {
             ]
         });
     },
-    
+
     /**
      * Method: addCondition
      * Add a new condition or group of conditions to the builder.  This
@@ -616,9 +634,9 @@ Styler.FilterBuilder = Ext.extend(Ext.Panel, {
      */
     addCondition: function(conditionType, feature) {
         var filter, type;
-        
+
         var cfg = {
-            customizeFilterOnInit: (conditionType == "group") && false,
+            customizeFilterOnInit: (conditionType === "group") && false,
             listeners: {
                 "change": function() {
                     this.fireEvent("change", this);
@@ -632,9 +650,9 @@ Styler.FilterBuilder = Ext.extend(Ext.Panel, {
                 scope: this
             }
         };
-        
+
         switch (conditionType) {
-        case "group":  
+        case "group":
             filter = this.wrapFilter(this.createDefaultFilter());
             Ext.apply(cfg, {
                 xtype: "gx_filterbuilder",
@@ -669,7 +687,7 @@ Styler.FilterBuilder = Ext.extend(Ext.Panel, {
         this.filter.filters[0].filters.push(filter);
         this.childFiltersPanel.doLayout();
     },
-    
+
     /**
      * Method: removeCondition
      * Remove a condition or group of conditions from the builder.  This
@@ -685,7 +703,7 @@ Styler.FilterBuilder = Ext.extend(Ext.Panel, {
         }
         this.fireEvent("change", this);
     },
-    
+
     createBuilderTypeCombo: function() {
         var types = this.allowedBuilderTypes || [
             Styler.FilterBuilder.ANY_OF, Styler.FilterBuilder.ALL_OF,
@@ -694,7 +712,8 @@ Styler.FilterBuilder = Ext.extend(Ext.Panel, {
         var numTypes = types.length;
         var data = new Array(numTypes);
         var type;
-        for(var i=0; i<numTypes; ++i) {
+        var i = 0;
+        for(i=0; i<numTypes; ++i) {
             type = types[i];
             data[i] = [type, this.builderTypeNames[type]];
         }
@@ -716,10 +735,10 @@ Styler.FilterBuilder = Ext.extend(Ext.Panel, {
                 },
                 scope: this
             },
-            width: 65 
+            width: 65
         };
     },
-    
+
     /**
      * Method: changeBuilderType
      * Alter the filter types when the filter type combo changes.
@@ -751,7 +770,7 @@ Styler.FilterBuilder = Ext.extend(Ext.Panel, {
             }
         }
     },
-    
+
     /**
      * Method: createChildFiltersPanel
      * Create the panel that holds all conditions and condition groups.  Since
@@ -774,7 +793,8 @@ Styler.FilterBuilder = Ext.extend(Ext.Panel, {
         });
         var grandchildren = this.filter.filters[0].filters;
         var grandchild;
-        for(var i=0, len=grandchildren.length; i<len; ++i) {
+        var i = 0;
+        for(i=0, len=grandchildren.length; i<len; ++i) {
             grandchild = grandchildren[i];
             this.childFiltersPanel.add(this.newRow({
                 xtype: (grandchild instanceof OpenLayers.Filter.Logical) ?
@@ -816,7 +836,7 @@ Styler.FilterBuilder = Ext.extend(Ext.Panel, {
             bodyStyle: "padding-left: 0.25em;",
             items: [{
                 xtype: "button",
-                tooltip: "Supprimer cette condition",
+                tooltip: OpenLayers.i18n("Delete this condition"),
                 cls: 'x-btn-icon',
                 iconCls: "delete",
                 handler: function() {
@@ -825,7 +845,7 @@ Styler.FilterBuilder = Ext.extend(Ext.Panel, {
                 scope: this
             }]
         }];
-        
+
         if (this.deactivable) {
             var checkbox = new Ext.form.Checkbox({
                 checked: true
@@ -835,12 +855,12 @@ Styler.FilterBuilder = Ext.extend(Ext.Panel, {
                 this.fireEvent("change", filterPanel.filter);
             }, this);
             firstItems.push({
-                bodyStyle: "padding: 0 5px;", 
+                bodyStyle: "padding: 0 5px;",
                 border: false,
                 items: [ checkbox ]
             });
         }
-    
+
         panel = new Ext.Panel({
             layout: "column",
             defaults: {border: false},
@@ -862,10 +882,10 @@ Styler.FilterBuilder = Ext.extend(Ext.Panel, {
             }, {
                 items: [filterPanel],
                 border: false,
-                columnWidth: 1 
+                columnWidth: 1
             }]
         });
-        
+
         return panel;
     },
 
@@ -913,4 +933,4 @@ Styler.FilterBuilder.ALL_OF = 1;
 Styler.FilterBuilder.NONE_OF = 2;
 Styler.FilterBuilder.NOT_ALL_OF = 3;
 
-Ext.reg('gx_filterbuilder', Styler.FilterBuilder); 
+Ext.reg('gx_filterbuilder', Styler.FilterBuilder);

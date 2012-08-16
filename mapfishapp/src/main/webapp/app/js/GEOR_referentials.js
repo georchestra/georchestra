@@ -63,7 +63,13 @@ GEOR.referentials = (function() {
      * {Integer} the label width used for all fields
      */
     var labelWidth = 70;
-    
+
+    /**
+     * Property: tr
+     * {Function} an alias to OpenLayers.i18n
+     */
+    var tr = null;
+
     /*
      * Method: buildTemplate
      * Returns the template suitable for the currently selected layer
@@ -182,7 +188,7 @@ GEOR.referentials = (function() {
         });
     
         return new Ext.form.ComboBox({
-            fieldLabel: 'Référentiel',
+            fieldLabel: tr("Referential"),
             store: store,
             displayField: 'title',
             width: 160,
@@ -290,7 +296,7 @@ GEOR.referentials = (function() {
             } else {
                 // this message is destinated to the administrator
                 // no need to display a nice dialog.
-                alert("Le référentiel sélectionné ne possède pas de colonne géométrique");
+                alert(tr("There is no geometry column in the selected referential"));
             }
             // find the string attribute names:
             var attributes = filterStringType(attStore);
@@ -327,8 +333,9 @@ GEOR.referentials = (function() {
         }
 
         var cb = new Ext.form.ComboBox({
-            fieldLabel: 'Aller à',
-            loadingText: 'Chargement...',
+            fieldLabel: tr("Go to: "),
+            labelSeparator: "",
+            loadingText: tr("Loading..."),
             name: 'nothing',
             mode: 'remote',
             minChars: 2,
@@ -342,7 +349,7 @@ GEOR.referentials = (function() {
             tpl: buildTemplate(attributes),
             pageSize: 0,
             itemSelector: 'div.search-item',
-            emptyText: disabled ? "Choisissez un référentiel" : '',
+            emptyText: disabled ? tr("Choose a referential") : '',
             store: store,
             listeners: {
                 select : function(combo, record, index) {
@@ -393,6 +400,7 @@ GEOR.referentials = (function() {
         create: function(m, ns) {
         	map = m;
             nsAlias = ns;
+            tr = OpenLayers.i18n;
             
             comboPanel = new Ext.Panel({
                 layout: 'card',
@@ -400,7 +408,7 @@ GEOR.referentials = (function() {
                 region: 'south',
                 defaults: {
                     labelSeparator: ' :',
-                    loadingText: 'Chargement...',
+                    loadingText: tr("Loading..."),
                     labelWidth: labelWidth,
                     frame: false,
                     border: false

@@ -168,6 +168,12 @@ GEOR.cswquerier = (function() {
     var southPanel;
 
     /**
+     * Property: tr
+     * {Function} an alias to OpenLayers.i18n
+     */
+    var tr = null;
+    
+    /**
      * Method: onCSWRecordsStoreLoad
      * Callback on CSWRecordsStore load event
      *
@@ -200,9 +206,12 @@ GEOR.cswquerier = (function() {
                     '<table><tr><td style="vertical-align:text-top;">',
                         '<p><b>{layer_description}</b></p>',
                         '<p>{md_title} - {[this.abstract(values.md_abstract)]}&nbsp;',
-                        '<a href="{[this.metadataURL(values)]}" ext:qtip="Afficher la fiche de métadonnées dans une nouvelle fenêtre" ',
-                        'target="_blank" onclick="window.open(this.href);return false;">plus</a></p>',
-                    '</td><td width="190" style="text-align:center;" ext:qtip="Cliquez pour sélectionner ou désélectionner la couche">',
+                        '<a href="{[this.metadataURL(values)]}" ext:qtip="' +
+                            tr("Show metadata sheet in a new window") + '" ',
+                        'target="_blank" onclick="window.open(this.href);return false;">' +
+                            tr('more') + '</a></p>',
+
+                    '</td><td width="190" style="text-align:center;" ext:qtip="'+tr("Clic to select or deselect the layer")+'">',
                         // tried with the "html only" solution provided on 
                         // http://stackoverflow.com/questions/980855/inputting-a-default-image-in-case-the-src-arribute-of-an-html-img-is-not-valid
                         // but the headers sent by GN are incorrect for the image to display as an HTML object tag
@@ -236,7 +245,9 @@ GEOR.cswquerier = (function() {
                 }
                 var regexp = /(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/gi;
                 return text.replace(regexp,
-                    '[<a href="$&" ext:qtip="Ouvrir l\'url $& dans une nouvelle fenêtre"' +
+                    '[<a href="$&" ext:qtip="'+
+                        tr("Open the URL url in a new window", {'url': '$&'})
+                        +'"' +
                     ' target="_blank" onclick="window.open(this.href);return false;">lien</a>]'
                 );
             }
@@ -259,22 +270,25 @@ GEOR.cswquerier = (function() {
         
         if (mdCount) {
             if (wmsCount == 0) {
-                text = "Aucune couche";
+                text = tr("Not any layer");
             } else if (wmsCount == 1) {
-                text = "1 couche";
+                text = tr("1 layer");
             } else {
-                text = wmsCount+" couches";
+                text = tr("NB layers", {'NB': wmsCount});
             }
-            text += " dans "+mdCount+" ";
-            text += (mdCount > 1) ? "métadonnées" : "métadonnée";
+			if (mdCount > 1) {
+				text += tr(" in NB metadata", {'NB': mdCount});
+			} else {
+				text += tr(" in 1 metadata");
+			}
             // a better indicator would be numberOfRecordsMatched > numberOfRecordsReturned
             // but it is more difficult to obtain than mdCount.
             // For the moment, we'll use this criteria:
             if (mdCount == GEOR.config.MAX_CSW_RECORDS) {
-                text += " : précisez votre requête";
+                text += tr(": precise your request");
             }
         } else {
-            text = "Aucune métadonnée ne correspond aux termes saisis";
+            text = tr("Not any metadata correspond to the words specified");
         }
         southPanel.body.dom.innerHTML = "<p>"+text+"</p>";
     };
@@ -301,6 +315,8 @@ GEOR.cswquerier = (function() {
         getPanel: function(options) {
             
             if (!CSWRecordsStore) {
+                tr = OpenLayers.i18n;
+                
                 CSWRecordsStore = new GeoExt.data.CSWRecordsStore({
                     url: GEOR.config.DEFAULT_CSW_URL,
                     listeners: {
@@ -353,7 +369,7 @@ GEOR.cswquerier = (function() {
                     callback: function(r, options, success) {
                         if (!success) {
                             GEOR.util.errorDialog({
-                                msg: "Serveur non disponible"
+                                msg: tr("Unreachable server")
                             });
                             return;
                         }
@@ -370,7 +386,7 @@ GEOR.cswquerier = (function() {
             }
 
             return new Ext.Panel(Ext.apply({
-                title: "Catalogue",
+                title: tr("Catalogue"),
                 layout: 'border',
                 items: [{
                     region: 'north',
@@ -385,10 +401,10 @@ GEOR.cswquerier = (function() {
                         border: false
                     },
                     items: [{
-                        html: 'Chercher',
+                        html: tr("Find"),
                         bodyStyle: 'padding: 0 10px 0 0;font: 12px tahoma,arial,helvetica,sans-serif;'
                     }, textField, {
-                        html: 'dans',
+                        html: tr("in"),
                         bodyStyle: 'padding: 0 10px;font: 12px tahoma,arial,helvetica,sans-serif;'
                     }, {
                         xtype: 'combo',
@@ -430,7 +446,7 @@ GEOR.cswquerier = (function() {
                             if (!mask) {
                                 (function() {
                                     mask = new Ext.LoadMask(this.getEl(), {
-                                        msg: "chargement en cours"
+                                        msg: tr("Loading...")
                                     });
                                 }).defer(1000, this);
                             }

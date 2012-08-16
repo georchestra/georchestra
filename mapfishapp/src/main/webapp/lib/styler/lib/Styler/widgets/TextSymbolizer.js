@@ -49,7 +49,7 @@ Styler.TextSymbolizer = Ext.extend(Ext.Panel, {
 
         var defAttributesComboConfig = {
             xtype: "combo",
-            fieldLabel: "Attribut",
+            fieldLabel: OpenLayers.i18n("Attribute"),
             store: this.attributes,
             editable: false,
             triggerAction: "all",
@@ -89,7 +89,7 @@ Styler.TextSymbolizer = Ext.extend(Ext.Panel, {
                 }
             }, {
                 xtype: "tbtext",
-                text: "Size: "
+                text: OpenLayers.i18n("Size: ")
             }, {
                 xtype: "textfield",
                 value: this.symbolizer.fontSize,
@@ -139,14 +139,14 @@ Styler.TextSymbolizer = Ext.extend(Ext.Panel, {
             }
         }, {
             xtype: "fieldset",
-            title: "Halo",
+            title: OpenLayers.i18n("Halo"),
             checkboxToggle: true,
             collapsed: !(this.symbolizer.haloRadius || this.symbolizer.haloColor || this.symbolizer.haloOpacity),
             autoHeight: true,
             labelWidth: 50,
             items: [{
                 xtype: "textfield",
-                fieldLabel: "Taille",
+                fieldLabel: OpenLayers.i18n("Size"),
                 anchor: "89%",
                 value: this.symbolizer.haloRadius,
                 listeners: {
@@ -183,7 +183,7 @@ Styler.TextSymbolizer = Ext.extend(Ext.Panel, {
                     delete this.symbolizer.haloRadius;
                     delete this.symbolizer.haloColor;
                     delete this.symbolizer.haloOpacity;
-                    this.fireEvent("change", this.symbolizer)
+                    this.fireEvent("change", this.symbolizer);
                 },
                 expand: function() {
                     Ext.apply(this.symbolizer, this.haloCache);
