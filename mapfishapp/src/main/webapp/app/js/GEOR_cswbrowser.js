@@ -399,8 +399,8 @@ GEOR.cswbrowser = (function() {
             });
 
             var combo = new Ext.form.ComboBox({
-                fieldLabel: tr("Thesaurus"),
-                labelSeparator: ' :',
+                fieldLabel: tr("Thesaurus:"),
+                labelSeparator: '',
                 store: thesauriStore,
                 loadingText: tr("Loading..."),
                 mode: 'local',

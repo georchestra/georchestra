@@ -91,7 +91,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Missing key to access the thesaurus":
         "Absence de clé pour accéder à ce thésaurus",
     "Keywords query failed": "La requête des mots clés a échoué",
-    "Thesaurus": "Thésaurus",
+    "Thesaurus:": "Thésaurus :",
     "cswbrowser.default.thesaurus.mismatch":
         "Administrateur : problème de configuration - " +
         "la variable DEFAULT_THESAURUS_KEY ne correspond à aucune" +
