@@ -17,6 +17,7 @@
   </properties>
   <build>
     <plugins>
+
       <plugin>
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>maven-jetty-plugin</artifactId>
@@ -27,14 +28,43 @@
           <stopPort>9999</stopPort>
         </configuration>
       </plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<configuration>
-					<classifier>${server}</classifier>
-					<warName>static</warName>
-			</configuration>
-			</plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <classifier>${server}</classifier>
+          <warName>static</warName>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>serverConfigCopy</id>
+            <phase>generate-sources</phase>
+            <configuration>
+              <tasks>
+                <copy todir="${basedir}/src/main/webapp/" overwrite="true" verbose="true" failonerror="false">
+                  <fileset dir="${confdir}/${project.artifactId}">
+                    <exclude name="**/maven.filter"/>
+                  </fileset>
+                </copy>
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
     </plugins>
   </build>
 </project>
