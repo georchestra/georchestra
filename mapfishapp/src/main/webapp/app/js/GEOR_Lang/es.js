@@ -129,9 +129,9 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
         "Encontrar capas buscando en los metadatos",
     "Find layers from keywords": "Encontrar capas desde palabras clave",
     "Find layers querying WMS servers":
-        "Encontrar capas interrogando servidores WMS",
+        "Encontrar capas interrogando servicios WMS",
     "Find layers querying WFS servers":
-        "Encontrar capas interrogando servidores WFS",
+        "Encontrar capas interrogando servicios WFS",
     "layerfinder.layer.unavailable":
         "La capa ${name} no pudo ser encontrada en el servicio WMS.<br/<br/>" +
         "Tiene el derecho de acceder a esta capa ? " +
@@ -336,10 +336,10 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Information": "Información",
     /* GEOR_waiter.js strings */
     /* GEOR_wfsbrowser.js strings */
-    "Choose a WFS server: ": "Elija un servidor WFS: ",
+    "Choose a WFS server: ": "Elija un servicio WFS: ",
     "Unreachable server or insufficient rights": "Servidor inalcanzable o " +
         "derechos insuficientes",
-    "WFS server": "Servidor WFS",
+    "WFS server": "Servicio WFS",
     /* GEOR_wmc.js strings */
     "wmc.bad.srs": "El archivo .wmc no " +
         "puede ser restaurado. Su sistema de referencia espacial es " +
@@ -347,14 +347,14 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     /* GEOR_wmsbrowser.js strings */
     "Queryable": "Interrogable",
     "Opaque": "Opaco",
-    "Choose a WMS server: ": "Elija un servidor WMS: ",
+    "Choose a WMS server: ": "Elija un servicio WMS: ",
     "... or enter its address: ": "... o llene su dirección: ",
     "The server is publishing one layer with an incompatible projection":
-        "El servidor está publicando una capa cuya proyección no es compatible",
+        "El servicio está publicando una capa cuya proyección no es compatible",
     "The server is publishing NB layers with an incompatible projection":
-        "El servidor esta publicando ${nb} capas cuya proyección no es " +
+        "El servicio esta publicando ${nb} capas cuya proyección no es " +
         "compatible",
-    "WMS server": "Servidor WMS",
+    "WMS server": "Servicio WMS",
     /* GEOR_workspace.js strings */
     "Context saving": "Guardando el contexto",
     "The file is required.": "Se requiere el nombre de archivo.",
