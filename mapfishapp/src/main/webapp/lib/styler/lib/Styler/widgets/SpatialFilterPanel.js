@@ -54,6 +54,8 @@ Styler.SpatialFilterPanel = Ext.extend(Styler.BaseFilterPanel, {
             case "OpenLayers.Geometry.Polygon":
                 allowedTypes.push([OpenLayers.Filter.Spatial.WITHIN,
                     OpenLayers.i18n("inside")]);
+                allowedTypes.push([OpenLayers.Filter.Spatial.CONTAINS,
+                    OpenLayers.i18n("contains")]);
                 break;
             case "OpenLayers.Geometry.LineString":
                 allowedTypes.push([OpenLayers.Filter.Spatial.CONTAINS,
