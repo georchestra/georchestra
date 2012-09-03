@@ -217,7 +217,14 @@ GEOR.config = (function() {
          */
         DOWNLOAD_FORM: getCustomParameter("DOWNLOAD_FORM", 
             false),
-            
+
+        /**
+         * Constant: PDF_URL
+         * String: the URL to the downloaded data Terms Of Use
+         * 
+         */
+        PDF_URL: getCustomParameter("PDF_URL", 
+            "/static/cgu.pdf"),
             
         /***** Beginning of config options which can be overriden by GEOR.custom *****/
         
