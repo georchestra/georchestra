@@ -60,6 +60,82 @@ GEOR.dlform = (function() {
             storeOptions.url = '/downloadform/data_usage';
         }
         
+        var formPanelItems = [
+        // hidden fields:
+        {
+            xtype: 'hidden',
+            name: 'json_spec'
+        },{
+            xtype: 'hidden',
+            name: 'sessionid',
+            value: GEOR.util.getCookie('JSESSIONID')
+        // regular fields:
+        },{
+            fieldLabel: 'Prénom',
+            labelStyle: 'font-weight:bold;',
+            name: 'first_name',
+            value: GEOR.data.first_name || (ls && ls.getItem('first_name')) || '',
+            allowBlank: false
+        },{
+            fieldLabel: 'Nom',
+            labelStyle: 'font-weight:bold;',
+            name: 'last_name',
+            value: GEOR.data.last_name || (ls && ls.getItem('last_name')) || '',
+            allowBlank: false
+        },{
+            fieldLabel: 'Organisme',
+            labelStyle: 'font-weight:bold;',
+            value: GEOR.data.company || (ls && ls.getItem('company')) || '',
+            name: 'company',
+            allowBlank: false
+        }, {
+            fieldLabel: 'Email',
+            labelStyle: 'font-weight:bold;',
+            name: 'email',
+            vtype: 'email',
+            value: GEOR.data.email || (ls && ls.getItem('email')) || '',
+            allowBlank: false
+        }, {
+            fieldLabel: 'Téléphone',
+            value: GEOR.data.tel || (ls && ls.getItem('tel')) || '',
+            name: 'tel'
+        },
+        // data use
+        {
+            xtype: 'multiselect',
+            fieldLabel: 'Applications',
+            labelStyle: 'font-weight:bold;',
+            name: 'datause',
+            height: 120,
+            allowBlank: false,
+            displayField: 'name',
+            valueField: 'id',
+            minSelections: 1,
+            store: new Ext.data.Store(storeOptions)
+        },
+        // comment
+        {
+            xtype:'htmleditor',
+            fieldLabel:'Commentaires',
+            name: 'comment',
+            height: 150
+        }];
+        
+        if (GEOR.config.PDF_URL) {
+            formPanelItems.push({
+                xtype:'checkboxgroup',
+                allowBlank: false,
+                blankText: "Cochez la case pour accepter les conditions d'utilisation",
+                columns: 1,
+                items: [{
+                    boxLabel: "<span style='font-weight:bold;'>J'accepte sans réserve les <a href='" +
+                        GEOR.config.PDF_URL +
+                        "' target='_blank'>conditions d'utilisation</a> des données.</span>",
+                    name: 'ok'
+                }]
+            });
+        }
+        
         return new Ext.FormPanel({
             region: 'center',
             labelWidth: 100,
@@ -71,79 +147,7 @@ GEOR.dlform = (function() {
             },
             defaultType: 'textfield',
             labelSeparator: ' : ',
-            items: [{
-                    fieldLabel: 'Prénom',
-                    labelStyle: 'font-weight:bold;',
-                    name: 'first_name',
-                    value: GEOR.data.first_name || (ls && ls.getItem('first_name')) || '',
-                    allowBlank: false
-                },{
-                    fieldLabel: 'Nom',
-                    labelStyle: 'font-weight:bold;',
-                    name: 'last_name',
-                    value: GEOR.data.last_name || (ls && ls.getItem('last_name')) || '',
-                    allowBlank: false
-                },{
-                    fieldLabel: 'Organisme',
-                    labelStyle: 'font-weight:bold;',
-                    value: GEOR.data.company || (ls && ls.getItem('company')) || '',
-                    name: 'company',
-                    allowBlank: false
-                }, {
-                    fieldLabel: 'Email',
-                    labelStyle: 'font-weight:bold;',
-                    name: 'email',
-                    vtype: 'email',
-                    value: GEOR.data.email || (ls && ls.getItem('email')) || '',
-                    allowBlank: false
-                }, {
-                    fieldLabel: 'Téléphone',
-                    value: GEOR.data.tel || (ls && ls.getItem('tel')) || '',
-                    name: 'tel'
-                },
-                // data use
-                {
-                    xtype: 'multiselect',
-                    fieldLabel: 'Applications',
-                    labelStyle: 'font-weight:bold;',
-                    name: 'datause',
-                    height: 120,
-                    allowBlank: false,
-                    displayField: 'name',
-                    valueField: 'id',
-                    minSelections: 1,
-                    store: new Ext.data.Store(storeOptions)
-                },
-                // comment
-                {
-                    xtype:'htmleditor',
-                    fieldLabel:'Commentaires',
-                    name: 'comment',
-                    height: 150
-                },
-                // checkbox
-                {
-                    xtype:'checkboxgroup',
-                    allowBlank: false,
-                    columns: 1,
-                    items: [{
-                        boxLabel: "<span style='font-weight:bold;'>J'accepte sans réserve les <a href='" +
-                            GEOR.config.PDF_URL +
-                            "' target='_blank'>conditions d'utilisation</a> des données.</span>",
-                        name: 'ok'
-                    }]
-                }, 
-                // hidden fields:
-                {
-                    xtype: 'hidden',
-                    name: 'json_spec'
-                }, 
-                {
-                    xtype: 'hidden',
-                    name: 'sessionid',
-                    value: GEOR.util.getCookie('JSESSIONID')
-                }
-            ],
+            items: formPanelItems,
             buttons: [{
                 text: 'OK',
                 formBind: true,
