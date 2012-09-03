@@ -223,6 +223,7 @@
         <module>geonetwork</module>
         <module>downloadform</module>
         <module>analytics</module>
+        <module>static</module>
       </modules>
     </profile>
 
@@ -251,6 +252,13 @@
       <id>doc</id>
       <modules>
         <module>doc</module>
+      </modules>
+    </profile>    
+    
+    <profile>
+      <id>static</id>
+      <modules>
+        <module>static</module>
       </modules>
     </profile>
 
