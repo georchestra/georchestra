@@ -168,7 +168,7 @@ GEOR.wmsbrowser = (function() {
                     var notDisplayed = t - store.getCount();
                     if (notDisplayed > 0) {
                         var msg = (notDisplayed > 1) ?
-                            tr("The server is publishing NB layers with an incompatible projection", {'nb': notDisplayed})
+                            tr("The server is publishing NB layers with an incompatible projection", {'NB': notDisplayed})
                             : tr("The server is publishing one layer with an incompatible projection");
                         GEOR.util.infoDialog({
                            msg: msg
