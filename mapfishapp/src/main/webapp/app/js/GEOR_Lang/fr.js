@@ -140,8 +140,6 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
         "La projection de la couche n'est pas compatible.",
     "The NAME layer does not contain a valid geometry column":
         "La couche ${name} ne possède pas de colonne géométrique valide.",
-    "Unreachable server or unsufficient rights":
-        "Serveur non joignable ou droits insuffisants",
     "Add": "Ajouter",
     "Add layers from a ...": "Ajouter des couches depuis un ...",
     "Malformed URL": "URL non conforme.",
@@ -341,8 +339,9 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     /* GEOR_wfsbrowser.js strings */
     "Choose a WFS server: ": "Choisissez un serveur WFS : ",
     "... or enter its address: ": "... ou saisissez son adresse : ",
-    "Unreachable server or insufficient rights": "Serveur non joignable ou " +
-        "droits insuffisants",
+    "Unreachable server or insufficient rights": "Réponse invalide du " +
+        "serveur. Raisons possibles : trop de données, droits insuffisants, " +
+        "serveur injoignables, etc.",
     "WFS server": "Serveur WFS",
     /* GEOR_wmc.js strings */
     "wmc.bad.srs": "Le fichier .wmc ne " +

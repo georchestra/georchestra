@@ -141,8 +141,6 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
         "La proyección de la capa no es compatible.",
     "The NAME layer does not contain a valid geometry column":
         "La capa ${name} no contiene una columna de geometría válida.",
-    "Unreachable server or unsufficient rights":
-        "Servidor inalcanzable o derechos insuficientes",
     "Add": "Añadir",
     "Add layers from a ...": "Añadir capas desde un ...",
     "Malformed URL": "URL mal formada.",
@@ -338,8 +336,9 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     /* GEOR_waiter.js strings */
     /* GEOR_wfsbrowser.js strings */
     "Choose a WFS server: ": "Elija un servicio WFS: ",
-    "Unreachable server or insufficient rights": "Servidor inalcanzable o " +
-        "derechos insuficientes",
+    "Unreachable server or insufficient rights": "Respuesta del servidor " +
+        "invalida. Razones posibles: datos demasiado pesados, derechos insuficientes, " +
+        "servidor inalcanzable, etc.",
     "WFS server": "Servicio WFS",
     /* GEOR_wmc.js strings */
     "wmc.bad.srs": "El archivo .wmc no " +

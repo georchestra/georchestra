@@ -276,7 +276,7 @@ GEOR.layerfinder = (function() {
                         success: describeFeaturetypeSuccess.call(this, record),
                         failure: function() {
                             GEOR.util.errorDialog({
-                                msg: tr("Unreachable server or unsufficient rights")
+                                msg: tr("Unreachable server or insufficient rights")
                             });
                         },
                         scope: this
@@ -293,7 +293,7 @@ GEOR.layerfinder = (function() {
                     success: capabilitiesSuccess.call(this, record),
                     failure: function() {
                         GEOR.util.errorDialog({
-                            msg: tr("Unreachable server or unsufficient rights")
+                            msg: tr("Unreachable server or insufficient rights")
                         });
                     }
                 });

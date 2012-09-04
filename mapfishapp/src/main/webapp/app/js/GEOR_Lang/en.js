@@ -108,6 +108,9 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
     /* GEOR_wmsbrowser.js strings */
     "The server is publishing NB layers with an incompatible projection":
         "The server is publishing ${nb} layers with an incompatible projection",
+    /* GEOR_wfsbrowser.js strings */
+    "Unreachable server or insufficient rights": "Could not get a valid response from " +
+        "the server. Possible reasons: too much data, insufficient rights, server is down",
     /* GEOR_EditingPanel.js */
     "editingpanel.geom.error": "This layer's geometry type is ${type}.<br/>" +
         "Only point, line and polygons" +
