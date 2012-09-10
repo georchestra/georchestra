@@ -253,7 +253,7 @@ GEOR.mapinit = (function() {
         if (errors.length) {
             GEOR.util.errorDialog({
                 title: (errors.length>1) ? 
-                    tr("NB layers not imported", {'nb': errors.length}) :
+                    tr("NB layers not imported", {'NB': errors.length}) :
                     tr("One layer not imported"),
                 msg: tr("mapinit.layers.load.error",
                     {'list': errors.join(', ')})                
@@ -262,7 +262,7 @@ GEOR.mapinit = (function() {
             var plural = (count>1) ? "s" : "";
             GEOR.util.infoDialog({
                 msg: (count>1) ? 
-                    tr("NB layers imported", {'nb': count}):
+                    tr("NB layers imported", {'NB': count}):
                     (count>1) ? tr("One layer imported"):
                     tr("Not any layer imported")                
             });
