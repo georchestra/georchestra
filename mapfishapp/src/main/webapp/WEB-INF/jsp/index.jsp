@@ -1,8 +1,12 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page contentType="text/html"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ page language="java" %>
+<%@ page import="java.util.*" %>
+<%@ page import="mapfishapp.ws.Utf8ResourceBundle" %>
+<%@ page import="org.apache.commons.lang.StringUtils"%>
+<%@ page contentType="text/html; charset=UTF-8"%>
 <%@ page pageEncoding="UTF-8"%>
 <%@ page isELIgnored="false" %>
-<%@ page import="org.apache.commons.lang.StringUtils"%>
 <%
 Boolean anonymous = true;
 Boolean editor = false;
@@ -12,6 +16,13 @@ String lang = request.getParameter("lang");
 if (lang == null || (!lang.equals("en") && !lang.equals("es"))) {
     lang = "fr";
 }
+Locale l = new Locale(lang);
+ResourceBundle resource = Utf8ResourceBundle.getBundle("mapfishapp.i18n.index",l);
+javax.servlet.jsp.jstl.core.Config.set(
+    request,
+    javax.servlet.jsp.jstl.core.Config.FMT_LOCALIZATION_CONTEXT,
+    new javax.servlet.jsp.jstl.fmt.LocalizationContext(resource)
+);
 
 String sec_roles = request.getHeader("sec-roles");
 String js_roles = "";
@@ -83,10 +94,10 @@ if(sec_roles != null) {
     </style>
 <c:choose>
     <c:when test='${c.edit != null}'>
-    <title lang="<%= lang %>" dir="ltr">Editeur - geOrchestra</title>
+    <title lang="<%= lang %>" dir="ltr"><fmt:message key="title.editor"/></title>
     </c:when>
     <c:otherwise>
-    <title lang="<%= lang %>" dir="ltr">Visualiseur - geOrchestra</title>
+    <title lang="<%= lang %>" dir="ltr"><fmt:message key="title.visual"/></title>
     </c:otherwise>
 </c:choose>
     <link rel="stylesheet" type="text/css" href="lib/externals/ext/resources/css/ext-all.css" />
@@ -107,14 +118,13 @@ if(sec_roles != null) {
 <body>
 
     <%@ include file="header.jsp" %>
-
     
     <div id="waiter">
-        <span>Chargement...</span>
+        <span><fmt:message key="loading"/></span>
     </div>
     <div id="loading">
-        <img src="app/img/loading.gif" alt="chargement" width="32" height="32" style="margin-right:8px;float:left;vertical-align:top;"/>
-        <span id="loading-msg">Chargement...</span>
+        <img src="app/img/loading.gif" alt='<fmt:message key="loading"/>' width="32" height="32" style="margin-right:8px;float:left;vertical-align:top;"/>
+        <span id="loading-msg"><fmt:message key="loading"/></span>
     </div>
     
     <!-- invisible iframe for actions such as "load in JOSM" -->
@@ -181,7 +191,7 @@ if(sec_roles != null) {
     </c:choose>
         GEOR.config.ROLES = [<%= js_roles %>];
     </script>
-    <noscript><p>Cette application nécessite le support de JavaScript par votre navigateur. Merci de l'activer.</p></noscript>
+    <noscript><p><fmt:message key="need.javascript"/></p></noscript>
 </body>
     </c:otherwise>
 </c:choose>

@@ -1,4 +1,6 @@
 <%@ page pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <!-- 
  * The following css is used to get the bare minimum header style when running with jetty
@@ -36,14 +38,56 @@
      *  is deployed alongside with mapfishapp
      *-->
     <link rel="stylesheet" type="text/css" href="/static/css/header.css" />
-    
-    <c:set var="lang" value='<%= lang %>' />
-    <c:set var="anonymous" value='<%= anonymous %>' />
-    <jsp:include page="header-${lang}.jsp">
-        <jsp:param name="anonymous" value="${anonymous}" />
-        <jsp:param name="edit" value="${c.edit}" />
-    </jsp:include>
-    
+
+    <div id="go_head">
+        <a href="#" id="go_home" title='<fmt:message key="go.home"/>'>
+            <img src="/static/img/logo.png" alt='<fmt:message key="logo"/>' height="50"/>
+        </a>
+        <ul>
+            <li><a href="/geonetwork/srv/<%= lang %>/main.home"><fmt:message key="catalogue"/></a></li>
+        <c:choose>
+            <c:when test='${c.edit != null}'>
+            <li><a href="/mapfishapp"><fmt:message key="viewer"/></a></li>
+            </c:when>
+            <c:otherwise>
+            <li class="active"><a href="#"><fmt:message key="viewer"/></a></li>
+            </c:otherwise>
+        </c:choose>
+        <c:choose>
+            <c:when test='<%= editor == true %>'>
+                <c:choose>
+                    <c:when test='${c.edit != null}'>
+            <li class="active"><a href="#"><fmt:message key="editor"/></a></li>
+                    </c:when>
+                    <c:otherwise>
+            <li><a href="/mapfishapp/edit"><fmt:message key="editor"/></a></li>
+                    </c:otherwise>
+                </c:choose>
+            </c:when>
+        </c:choose>
+            <li><a href="/extractorapp/"><fmt:message key="extractor"/></a></li>
+            <li><a href="/geoserver/web/"><fmt:message key="services"/></a></li>
+        <c:choose>
+            <c:when test='<%= admin == true %>'>
+            <li><a href="/analytics/"><fmt:message key="statistics"/></a></li>
+            <li><a href="/phpldapadmin"><fmt:message key="users"/></a></li>
+            </c:when>
+        </c:choose>
+        </ul>
+    <c:choose>
+        <c:when test='<%= anonymous == false %>'>
+        <p class="logged">
+            <%=request.getHeader("sec-username") %><span class="light"> | </span><a href="/j_spring_security_logout"><fmt:message key="logout"/></a>
+        </p>
+        </c:when>
+        <c:otherwise>
+        <p class="logged">
+            <a href="?login"><fmt:message key="login"/></a>
+        </p>
+        </c:otherwise>
+    </c:choose>
+    </div>
+
     <script>
         (function(){
             if (!window.addEventListener || !document.querySelectorAll) return;
