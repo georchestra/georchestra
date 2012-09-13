@@ -7,3 +7,5 @@ credentials=\
         <constructor-arg index="0" value="@shared.privileged.geoserver.user@:@shared.privileged.geoserver.pass@" />\
     </bean>\
 </entry>
+
+language=@shared.language@

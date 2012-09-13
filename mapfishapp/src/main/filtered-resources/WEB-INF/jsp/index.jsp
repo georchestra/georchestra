@@ -13,8 +13,8 @@ Boolean editor = false;
 Boolean admin = false;
 
 String lang = request.getParameter("lang");
-if (lang == null || (!lang.equals("en") && !lang.equals("es"))) {
-    lang = "fr";
+if (lang == null || (!lang.equals("en") && !lang.equals("es")  && !lang.equals("fr"))) {
+    lang = "${language}";
 }
 Locale l = new Locale(lang);
 ResourceBundle resource = Utf8ResourceBundle.getBundle("mapfishapp.i18n.index",l);
