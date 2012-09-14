@@ -28,6 +28,11 @@ GEOR.mappanel = (function() {
     var cmp_id = 'GEOR_mappanel';
 
     /**
+     * Internationalization
+     */
+    var tr = OpenLayers.i18n;
+
+    /**
      * Method: buildMousePositionCtrl
      * Build a mouse position control.
      *
@@ -87,7 +92,7 @@ GEOR.mappanel = (function() {
         if (srs1) {
             div = Ext.DomHelper.append(Ext.getBody(), {
                 tag: "div", 
-                qtip: "Coordonnées du pointeur en "+srs1,
+                qtip: tr("mappanel.qtip.coordinates", {'SRS': srs1}),
                 id: cmp_id+"_mp1", 
                 cls: "mouseposition"
             });
@@ -99,7 +104,7 @@ GEOR.mappanel = (function() {
         if (srs2) {
             div = Ext.DomHelper.append(Ext.getBody(), {
                 tag: "div", 
-                qtip: "Coordonnées du pointeur en "+srs2,
+                qtip: tr("mappanel.qtip.coordinates", {'SRS': srs2}),
                 id: cmp_id+"_mp2", 
                 cls: "mouseposition"
             });

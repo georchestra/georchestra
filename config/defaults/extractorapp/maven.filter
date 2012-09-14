@@ -26,3 +26,5 @@ dlformactivated=@shared.download_form.activated@
 
 emailfactory=extractorapp.ws.EmailFactoryDefault
 email_subject=Votre demande d'extraction
+
+language=@shared.language@

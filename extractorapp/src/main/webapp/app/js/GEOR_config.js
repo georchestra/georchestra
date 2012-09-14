@@ -17,6 +17,11 @@ Ext.namespace("GEOR");
 GEOR.config = (function() {
 
     /**
+     * Internationalization
+     */
+    var tr = OpenLayers.i18n;
+
+    /**
      * Constant: URL_DEV
      * {String} The URL to the dev host.
      */
@@ -346,8 +351,8 @@ GEOR.config = (function() {
          * List of projections that extractor supports for reprojection
          */
         SUPPORTED_REPROJECTIONS: getCustomParameter("SUPPORTED_REPROJECTIONS", [
-            ["EPSG:27562", "EPSG:27562 - Lambert II carto"], 
-            ["EPSG:27572", "EPSG:27572 - Lambert II étendu"],
+            ["EPSG:27562", "EPSG:27562 - NTF (Paris) / Lambert Centre France"],
+            ["EPSG:27572", "EPSG:27572 - NTF (Paris) / Lambert zone II"], 
             ["EPSG:2154", "EPSG:2154 - Lambert 93"],
             ["EPSG:4171", "EPSG:4171 - RGF93"],
             ["EPSG:4326", "EPSG:4326 - WGS84"]
@@ -372,14 +377,14 @@ GEOR.config = (function() {
          * {Array} Array of buffer values with their display name
          */
         BUFFER_VALUES: getCustomParameter("BUFFER_VALUES", [
-            [0,'aucun'],
-            [10,'10 mètres'],
-            [50,'50 mètres'],
-            [100,'100 mètres'],
-            [500,'500 mètres'],
-            [1000,'1 kilomètre'],
-            [5000,'5 kilomètres'],
-            [10000,'10 kilomètres']
+            [0,tr("None")],
+            [10,tr("BUFFER meters", {"BUFFER": 10})],
+            [50,tr("BUFFER meters", {"BUFFER": 50})],
+            [100,tr("BUFFER meters", {"BUFFER": 100})],
+            [500,tr("BUFFER meters", {"BUFFER": 500})],
+            [1000,tr("1 kilometer")],
+            [5000,tr("BUFFER kilometers", {"BUFFER": 5})],
+            [10000,tr("BUFFER kilometers", {"BUFFER": 10})]
         ]),
         
         /**

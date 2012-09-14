@@ -23,7 +23,7 @@ OpenLayers.Control.OutOfRangeLayers =
      * APIProperty: prefix
      * {String} String used to prefix layers list.
      */
-    prefix: "List of layers out of range: ",
+    prefix: OpenLayers.i18n("List of layers out of range: "),
     
     /**
      * APIProperty: suffix

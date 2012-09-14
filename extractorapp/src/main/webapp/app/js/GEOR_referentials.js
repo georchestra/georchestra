@@ -29,6 +29,11 @@ Ext.namespace("GEOR");
 GEOR.referentials = (function() {
 
     /**
+     * Internationalization
+     */
+    var tr = OpenLayers.i18n;
+
+    /**
      * Property: observable
      * {Ext.util.Obervable}
      */
@@ -200,8 +205,8 @@ GEOR.referentials = (function() {
         });
     
         return new Ext.form.ComboBox({
-            fieldLabel: 'Référentiel',
-            emptyText: 'sélectionnez',
+            fieldLabel: tr('Referential'),
+            emptyText: tr('Select'),
             forceSelection: true,
             store: store,
             displayField: 'title',
@@ -380,7 +385,9 @@ GEOR.referentials = (function() {
             } else {
                 // this message is destinated to the administrator
                 // no need to display a nice dialog.
-                alert("La couche sélectionnée ne possède pas de colonne géométrique");
+                alert(
+                    tr('The selected layer does not have a geometric column')
+                );
             }
             // find the string attribute names:
             var attributes = filterStringType(attStore);
@@ -417,8 +424,8 @@ GEOR.referentials = (function() {
         }
 
         var cb = new Ext.form.ComboBox({
-            fieldLabel: 'Recentrer sur',
-            loadingText: 'Chargement...',
+            fieldLabel: tr('Recenter on'),
+            loadingText: tr('Loading...'),
             name: 'nothing',
             mode: 'remote',
             minChars: 2,
@@ -433,7 +440,7 @@ GEOR.referentials = (function() {
             tpl: buildTemplate(attributes),
             pageSize: 0,
             itemSelector: 'div.search-item',
-            emptyText: disabled ? '' : 'localité ?',
+            emptyText: disabled ? '' : tr('location ?'),
             store: store,
             listeners: {
                 "select": function(combo, record, index) {
@@ -499,7 +506,7 @@ GEOR.referentials = (function() {
                 region: 'south',
                 defaults: {
                     labelSeparator: ' :',
-                    loadingText: 'Chargement...',
+                    loadingText: tr('Loading...'),
                     labelWidth: labelWidth,
                     frame: false,
                     border: false
@@ -520,7 +527,7 @@ GEOR.referentials = (function() {
                     border: false
                 },
                 items: [{
-                    html: "<span>Cet outil permet de calquer l'emprise d'extraction courante sur celle d'une entité de référence.</span>",
+                    html: tr('referentials.help'),
                     region: 'north',
                     bodyCssClass: 'paneltext',
                     height: 50

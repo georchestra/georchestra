@@ -153,8 +153,10 @@ GeoExt.ux.form.BoundingBoxPanel = Ext.extend(Ext.Panel, {
             this.action = new GeoExt.Action({
                 control: this.control,
                 map: this.map,
-                text: "Modifier cette emprise",
-                tooltip: "Modifier l'emprise en en dessinant une nouvelle sur la carte",
+                text: OpenLayers.i18n("Modify the bounding box"),
+                tooltip: OpenLayers.i18n(
+                    "Modify the bounding box drawing a new one on the map"
+                ),
                 enableToggle: true,
                 allowDepress: true
             });

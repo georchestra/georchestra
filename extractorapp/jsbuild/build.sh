@@ -23,7 +23,7 @@ ${rm} -rf "${releasepath}"
 if [ -d ${releasepath} ]; then
     ${rm} -rf ${releasepath}
 fi
-${mkdir} -p ${releasepath}
+${mkdir} -p ${releasepath} ${releasepath}/lang
 
 (cd ${buildpath};
  if [ ! -d ${venv} ]; then

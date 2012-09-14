@@ -29,6 +29,11 @@ GEOR.layeroptions = (function() {
      */
 
     /**
+     * Internationalization
+     */
+    var tr = OpenLayers.i18n;
+
+    /**
      * Property: map
      * {OpenLayers.Map} The map
      */
@@ -156,10 +161,10 @@ GEOR.layeroptions = (function() {
      */
     var getFieldsetTitle = function() {
         var crs = map.getProjection();
-        return "Emprise (en "+
-            GEOR.util.unitsTranslations[GEOR.util.getUnitsForCRS(crs)]+
-            ', SRS = <a href="http://spatialreference.org/ref/epsg/'+crs.split(':')[1]+
-            '/" target="_blank" style="text-decoration:none">'+crs+'</a>)';
+        return tr("layeroptions.boundingbox",{
+            "UNIT": tr(GEOR.util.unitsTranslations[GEOR.util.getUnitsForCRS(crs)]),
+            "NUMBER": crs.split(':')[1],
+            "CRS": crs});
     };
 
     /*
@@ -293,10 +298,10 @@ GEOR.layeroptions = (function() {
                         }
                         var area = feature.geometry.getGeodesicArea(map.getProjectionObject())/1E6;
                         var str = (area > 10) ? 
-                            Math.round(area) + ' km²':
+                            Math.round(area) + tr(' km²'):
                             (area < 0.1) ?
-                                Math.round(area*1E6) + ' m²' :
-                                Math.round(area*10)/10  + ' km²';
+                                Math.round(area*1E6) + tr(' m²') :
+                                Math.round(area*10)/10  + tr(' km²');
                         o.feature.attributes['area'] = str;
                     },
                     scope: this
@@ -323,12 +328,12 @@ GEOR.layeroptions = (function() {
                                 labelAlign: 'top',
                                 items: [
                                     getCombo('globalProjections', {
-                                        fieldLabel: 'Projection de sortie',
+                                        fieldLabel: tr("Output projection"),
                                         store_data: GEOR.config.SUPPORTED_REPROJECTIONS,
                                         value: GEOR.config.GLOBAL_EPSG
                                     }),
                                     getNumberField('globalResolution', {
-                                        fieldLabel: 'Résolution raster (m/pixel)',
+                                        fieldLabel: tr('Raster resolution (m/pixel)'),
                                         //value: GEOR.config.GLOBAL_MAX_EXTENT.getWidth() / GEOR.config.DEFAULT_WCS_EXTRACTION_WIDTH
                                         value: 0.5,
                                         allowBlank: false,
@@ -352,12 +357,12 @@ GEOR.layeroptions = (function() {
                                 labelAlign: 'top',
                                 items: [
                                     getCombo('globalRasterFormats', {
-                                        fieldLabel: 'Format de sortie raster',
+                                        fieldLabel: tr('Raster output format'),
                                         store_data: GEOR.config.SUPPORTED_RASTER_FORMATS,
                                         value: GEOR.config.SUPPORTED_RASTER_FORMATS[0][0]
                                     }),
                                     getCombo('globalVectorFormats', {
-                                        fieldLabel: 'Format de sortie vecteur',
+                                        fieldLabel: tr('Vector output format'),
                                         store_data: GEOR.config.SUPPORTED_VECTOR_FORMATS,
                                         value: GEOR.config.SUPPORTED_VECTOR_FORMATS[0][0]
                                     })
@@ -388,10 +393,10 @@ GEOR.layeroptions = (function() {
                                 items: [
                                     getCombo('customProjections', {
                                         twin: true,
-                                        fieldLabel: 'Projection de sortie'
+                                        fieldLabel: tr('Output projection')
                                     }),
                                     getNumberField('customResolution', {
-                                        fieldLabel: 'Résolution raster (m/pixel)',
+                                        fieldLabel: tr('Raster resolution (m/pixel)'),
                                         value: null
                                     })
                                 ]
@@ -402,7 +407,7 @@ GEOR.layeroptions = (function() {
                                 items: [
                                     getCombo('customFormats', {
                                         twin: true,
-                                        fieldLabel: 'Format de sortie'
+                                        fieldLabel: tr('Output format')
                                     })
                                 ]
                             }, {
@@ -410,7 +415,7 @@ GEOR.layeroptions = (function() {
                                 layout: 'form',
                                 items: [
                                     getFieldSet('customBbox', {
-                                        title: "Emprise",
+                                        title: tr('Bounding box'),
                                         checkboxToggle: true,
                                         listeners: {
                                             'collapse': function() {

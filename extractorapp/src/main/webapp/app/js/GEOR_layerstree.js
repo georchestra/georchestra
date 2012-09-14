@@ -29,6 +29,11 @@ GEOR.layerstree = (function() {
      */
 
     /**
+     * Internationalization
+     */
+    var tr = OpenLayers.i18n;
+
+    /**
      * Property: map
      * {OpenLayers.Map} The map
      */
@@ -145,7 +150,7 @@ GEOR.layerstree = (function() {
                 if(node.isLeaf()) {
                     var owsinfo = node.attributes.owsinfo;
                     if(owsinfo.layer == undefined) {
-                        alert("ERREUR: owsinfo.layer devrait être toujours défini");
+                        alert(tr("ERROR: owsinfo.layer should always be defined"));
                         return;
                     }
                     if(owsinfo.baselayer == undefined) {
@@ -319,7 +324,9 @@ GEOR.layerstree = (function() {
                 if (!(node instanceof Ext.tree.TreeNode)) {
                     var serviceNode = new Ext.tree.AsyncTreeNode(Ext.apply({
                         text: wfsinfo.text,
-                        qtip: "Service WFS <b>"+wfsinfo.text+"</b><br/>"+wfsinfo.owsurl,
+                        qtip: tr('layerstree.qtip.wfs', {
+                            'TEXT': wfsinfo.text,
+                            'URL': wfsinfo.owsurl}),
                         iconCls: 'wfs-server',
                     }, node));
                     new Ext.tree.TreeSorter(serviceNode, {
@@ -356,12 +363,12 @@ GEOR.layerstree = (function() {
                     owsinfo.layer.events.register("featuresadded", {}, function(evt) {
                         if(evt.features.length == GEOR.config.MAX_FEATURES) {
                             GEOR.util.infoDialog({
-                                msg: "Le nombre maximal d'objets a été atteint : seulement " +
-                                GEOR.config.MAX_FEATURES + " objets sont affichés."
+                                msg: tr('layerstree.maxfeatures',
+                                        {NB: GEOR.config.MAX_FEATURES})
                             });
                         }
                     });
-                    
+
                     if (node instanceof Ext.tree.TreeNode) {
                         appendLayerChild(owsinfo, node);
                     } else {
@@ -385,7 +392,9 @@ GEOR.layerstree = (function() {
                             disabled: true,
                             iconCls: 'error-layer',
                             checked: false,
-                            qtip: "La couche WFS <b>"+wfsinfo.layername+"</b> n'existe pas sur le service spécifié ("+wfsinfo.owsurl+")",
+                            qtip: tr('layerstree.qtip.missingwfs', {
+                                'NAME': wfsinfo.layername,
+                                'URL': wfsinfo.owsurl}),
                             leaf: true
                         }));
                     }
@@ -402,7 +411,9 @@ GEOR.layerstree = (function() {
                     iconCls: 'server-error',
                     checked: false,
                     disabled: true,
-                    qtip: "Service WFS <b>"+wfsinfo.text+"</b> : non disponible<br/>"+wfsinfo.owsurl,
+                    qtip: tr('layerstree.qtip.unavailablewfs', {
+                        'NAME': wfsinfo.text,
+                        'URL': wfsinfo.owsurl})
                 }, node));
                 servicesNode.appendChild(serviceNode);
                 checkNullCounter(); // OK
@@ -424,7 +435,9 @@ GEOR.layerstree = (function() {
                     // create service node and append it to services node
                     var serviceNode = new Ext.tree.AsyncTreeNode(Ext.apply({
                         text: wmsinfo.text,
-                        qtip: "Service WMS <b>"+wmsinfo.text+"</b><br/>"+wmsinfo.owsurl,
+                        qtip: tr('layerstree.qtip.wms', {
+                            'NAME': wmsinfo.text,
+                            'URL': wmsinfo.owsurl}),
                         iconCls: 'wms-server',
                     }, node));
                     new Ext.tree.TreeSorter(serviceNode, {
@@ -480,8 +493,8 @@ GEOR.layerstree = (function() {
                             disabled: true,
                             iconCls: 'error-layer',
                             checked: false,
-                            qtip: "Impossible de trouver une projection supportée " +
-                                 "pour la couche WMS <b>"+wmsinfo.layername+"</b>",
+                            qtip: tr('layerstree.qtip.badprojection',
+                                     {'NAME': wmsinfo.layername}),
                             leaf: true
                         }));
                         return;
@@ -526,7 +539,9 @@ GEOR.layerstree = (function() {
                             disabled: true,
                             iconCls: 'error-layer',
                             checked: false,
-                            qtip: "La couche WMS <b>"+wmsinfo.layername+"</b> n'existe pas sur le service spécifié ("+wmsinfo.owsurl+")",
+                            qtip: tr('layerstree.qtip.missingwms', {
+                                'NAME': wmsinfo.layername,
+                                'URL': wmsinfo.owsurl}),
                             leaf: true
                         }));
                     }
@@ -543,7 +558,9 @@ GEOR.layerstree = (function() {
                     disabled: true,
                     checked: false,
                     iconCls: 'server-error',
-                    qtip: "Service WMS <b>"+wmsinfo.text+"</b> : non disponible<br/>"+wmsinfo.owsurl,
+                    qtip: tr('layerstree.qtip.unavailablewms', {
+                        'NAME': wmsinfo.text,
+                        'URL': wmsinfo.owsurl})
                 }, node));
                 servicesNode.appendChild(serviceNode);
                 
@@ -562,10 +579,7 @@ GEOR.layerstree = (function() {
      * parentNode - {Ext.tree.AsyncTreeNode} The node to append child to.
      */
     var appendLayerChild = function(owsinfo, parentNode) {
-        var tip = "Sélectionnez la couche pour la visualiser "+
-            "et configurer ses paramètres d'extraction spécifiques.<br/>"+
-            "Cochez la case pour ajouter la couche au panier d'extraction. "+
-            "Décochez la case pour retirer la couche du panier.";
+        var tip = tr('layerstree.layer.tip');
         if(owsinfo.owstype == "WMS") {
             counter += 1; // une requete XHR (a) en plus est necessaire (WMSDescribeLayer)
             //console.log('compteur incrémenté de 1 (a) -> '+counter);
@@ -590,7 +604,8 @@ GEOR.layerstree = (function() {
                                 disabled: true,
                                 iconCls: 'error-layer',
                                 checked: false,
-                                qtip: "La couche <b>"+owsinfo.text+"</b> n'est pas disponible : aucun service d'extraction",
+                                qtip: tr('layerstree.qtip.noextraction',
+                                         {'NAME': owsinfo.text}),
                                 leaf: true
                             }));
                             
@@ -611,7 +626,8 @@ GEOR.layerstree = (function() {
                                 disabled: true,
                                 iconCls: 'error-layer',
                                 checked: false,
-                                qtip: "La couche <b>"+owsinfo.text+"</b> n'est pas disponible : aucun service d'extraction convenable",
+                                qtip: tr('layerstree.qtip.noextraction',
+                                         {'NAME': owsinfo.text}),
                                 leaf: true
                             }));
                             
@@ -691,7 +707,9 @@ GEOR.layerstree = (function() {
                                                 disabled: true,
                                                 iconCls: 'error-layer',
                                                 checked: false,
-                                                qtip: "La couche <b>"+owsinfo.text+"</b> n'est pas disponible : lLe service WCS " + wcs_fullurl + " n'est pas valide",
+                                                qtip: tr('layerstree.qtip.invalidwcs',
+                                                         {'NAME': owsinfo.text,
+                                                         'URL': wcs_fullurl}),
                                                 leaf: true
                                             }));
 
@@ -708,7 +726,9 @@ GEOR.layerstree = (function() {
                     failure: function() {
                         checkNullCounter(); // XHR (a)
                         
-                        var msg = "La couche <b>"+owsinfo.text+"</b> n'est pas disponible : la requête WMS DescribeLayer sur "+owsinfo.owsurl+" n'a pas abouti.";
+                        var msg = tr('layerstree.describelayer', {
+                                'NAME': owsinfo.text,
+                                'URL': owsinfo.owsurl});
                         
                         parentNode.appendChild(new Ext.tree.TreeNode({
                             text: GEOR.util.shortenLayerName(owsinfo.text, maxLayerNameLength),
@@ -767,7 +787,7 @@ GEOR.layerstree = (function() {
          */
         create: function() {
             rootNode = new Ext.tree.TreeNode({
-                text: "Votre panier d'extraction",
+                text: tr('Your extraction cart'),
                 expanded: true,
                 iconCls: 'basket',
                 children: []
@@ -787,7 +807,7 @@ GEOR.layerstree = (function() {
                     "render": function(p) {
                         (function() {
                             mask = new Ext.LoadMask(p.body.dom, {
-                                msg:"chargement..."
+                                msg: tr("Loading...")
                             });
                             mask.show();
                         }).defer(20);
@@ -813,11 +833,9 @@ GEOR.layerstree = (function() {
             callback = c;
 
             globalPropertiesNode = new Ext.tree.TreeNode({
-                text: "Paramètres par défaut",
+                text: tr('Default parameters'),
                 iconCls: 'config-layers',
-                qtip: "<b>Paramètres par défaut</b><br/>"+
-                    "Ces paramètres sont appliqués à l'extraction de toute couche "+
-                    "ne faisant pas l'objet de paramètres spécifiques.",
+                qtip: tr('layerstree.qtip.defaultparameters'),
                 leaf: true,
                 owsinfo: {
                     layer: new OpenLayers.Layer("fake_layer", { 
@@ -837,10 +855,10 @@ GEOR.layerstree = (function() {
             
             if (GEOR.data.layers && GEOR.data.layers.length) {
                 layersNode = new Ext.tree.AsyncTreeNode({
-                    text: "Couches OGC",
+                    text: tr('OGC Layers'),
                     checked: GEOR.config.LAYERS_CHECKED,
                     expanded: true, // mandatory
-                    qtip: "Couches OGC disponibles pour extraction",
+                    qtip: tr('OGC layers available for extraction'),
                     children: [],
                     listeners: {
                         "checkchange": checker
@@ -859,10 +877,10 @@ GEOR.layerstree = (function() {
             
             if (GEOR.data.services && GEOR.data.services.length) {
                 servicesNode = new Ext.tree.AsyncTreeNode({
-                    text: "Services OGC",
+                    text: tr("OGC services"),
                     checked: GEOR.config.LAYERS_CHECKED,
                     expanded: true, // mandatory
-                    qtip: "Services OGC dont les couches peuvent être extraites",
+                    qtip: tr('The layers of these OGC services can be extracted'),
                     children: [],
                     listeners: {
                         "checkchange": checker
@@ -984,21 +1002,19 @@ GEOR.layerstree = (function() {
                         }, GEOR.config.EXTRACT_BTN_DISABLE_TIME*1000);
                         // info window
                         GEOR.util.infoDialog({
-                            msg: "Extraction en cours.\n" +
-                                "Un email sera envoyé à l'adresse "+
-                                GEOR.data.email
-                                +" lorsque l'extraction sera terminée."
+                            msg: tr('layerstree.email',
+                                    {'EMAIL': GEOR.data.email})
                         });
                     } else {
                         GEOR.util.errorDialog({
-                            msg: "La requête d'extraction n'a pas abouti."
+                            msg: tr('The extraction request failed.')
                         });
                     }
                 },
                 // HTTP failure:
                 failure: function(response) {
                     GEOR.util.errorDialog({
-                        msg: "La requête d'extraction n'a pas abouti."
+                        msg: tr('The extraction request failed.')
                     });
                 },
                 jsonData: GEOR.layerstree.getSpec(email),

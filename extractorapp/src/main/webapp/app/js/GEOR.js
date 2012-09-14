@@ -31,6 +31,12 @@ Ext.namespace("GEOR");
 (function() {
   
     /**
+     * Property: tr
+     * {Function} an alias to OpenLayers.i18n
+     */
+    var tr = OpenLayers.i18n;
+
+    /**
      * Handler which decides whether to show the DL Form.
      */
     var handleDlForm = function(email, b) {
@@ -57,7 +63,7 @@ Ext.namespace("GEOR");
             handleDlForm(email, b);
         } else {
             // prompt for valid email and process the extraction using a callback
-            Ext.Msg.prompt('Email', 'Saisissez une adresse email valide : ', function(btn, text){
+            Ext.Msg.prompt(tr('Email'), tr('Enter a valid email address: '), function(btn, text){
                 if (btn == 'ok') {
                     if (emailRegexp.test(text)) {
                         if (localStorage) {
@@ -67,7 +73,8 @@ Ext.namespace("GEOR");
                         handleDlForm(text, b);
                     } else {
                         GEOR.util.errorDialog({
-                            msg: "L'email n'est pas valide. Abandon de l'extraction."
+                            msg: tr("The email address is not valid. " +
+                                    "Stopping extraction.")
                         });
                     }
                 }
@@ -82,8 +89,8 @@ Ext.namespace("GEOR");
         if (GEOR.layerstree.getSelectedLayersCount() > 0) {
             extractHandler(this);
         } else {
-            var dialog = Ext.Msg.confirm('Aucune couche dans le panier', 
-            "Vous n'avez pas sélectionné de couche pour l'extraction. Tout extraire ?", function(btn, text){
+            var dialog = Ext.Msg.confirm(tr("Not any layer in the cart"),
+            tr("You did not select any layer for extracting. Extract all ?"), function(btn, text){
                 if (btn == 'yes'){
                     GEOR.layerstree.selectAllLayers();
                     extractHandler(this);
@@ -100,7 +107,7 @@ Ext.namespace("GEOR");
          * Setting of OpenLayers global vars.
          */
 
-        OpenLayers.Lang.setCode('fr');
+        OpenLayers.Lang.setCode(GEOR.config.LANG);
         OpenLayers.Number.thousandsSeparator = " ";
         OpenLayers.ImgPath = 'resources/app/img/openlayers/';
         OpenLayers.DOTS_PER_INCH = GEOR.config.MAP_DOTS_PER_INCH;
@@ -118,10 +125,10 @@ Ext.namespace("GEOR");
 
         Ext.BLANK_IMAGE_URL = "resources/lib/externals/ext/resources/images/default/s.gif";
         Ext.apply(Ext.MessageBox.buttonText, {
-            yes: "Oui",
-            no: "Non",
-            ok: "OK",
-            cancel: "Annuler"
+            yes: tr("Yes"),
+            no: tr("No"),
+            ok: tr("OK"),
+            cancel: tr("Cancel")
         });
         
         /*
@@ -150,7 +157,8 @@ Ext.namespace("GEOR");
             region: "center",
             layout: "border",
             id: 'layerconfig',
-            title: "Paramètres d'extraction appliqués par défaut à toutes les couches du panier",
+            title: tr("Extraction parameters applied by default to all " +
+                      "cart layers"),
             iconCls: 'config-layers',
             defaults: {
                 defaults: {
@@ -179,11 +187,15 @@ Ext.namespace("GEOR");
             layout: "border",
             items: [{
                 region: "north",
-                html: ["Configurez les paramètres généraux de votre extraction en utilisant le panneau ci-contre à droite (affiché en sélectionnant 'Paramètres par défaut').", "Vous pouvez ensuite lancer l'extraction en cliquant sur le bouton 'Extraire les couches cochées'.", "Si vous souhaitez préciser des paramètres d'extraction spécifiques pour une couche donnée, sélectionnez la dans l'arbre ci-dessous."].join('<br/><br/>'),
+                html: [
+                    tr("paneltext1"),
+                    tr("paneltext2"),
+                    tr("paneltext3")
+                    ].join('<br/><br/>'),
                 bodyCssClass: 'paneltext',
                 height: 170,
                 autoScroll: true,
-                title: 'Extracteur',
+                title: tr("Extractor"),
                 iconCls: 'home',
                 collapsible: true,
                 split: true
@@ -199,19 +211,19 @@ Ext.namespace("GEOR");
                 },                    
                 items: [{
                     layout: "fit",
-                    title: "Configuration",
+                    title: tr("Configuration"),
                     items: GEOR.layerstree.create(),
                     bbar: [ '->',
                         {
                             id: "geor-btn-extract-id",
-                            text: "Extraire les couches cochées",
+                            text: tr("Extract the selected layers"),
                             iconCls: "geor-btn-extract",
                             handler: extractBtnHandler
                         }
                     ]
                 }, {
                     layout:"border",
-                    title: "Recentrage",
+                    title: tr("Recenter"),
                     defaults: {
                         border: false
                     },
@@ -242,7 +254,7 @@ Ext.namespace("GEOR");
                         return;
                     }
                     GEOR.util.infoDialog({
-                        title: "Limites d'utilisation",
+                        title: tr("Use limits"),
                         msg: GEOR.config.SPLASH_SCREEN
                     });
                 }
@@ -260,13 +272,25 @@ Ext.namespace("GEOR");
                 GEOR.layeroptions.setOptions(options, global);
                 var layerOptionsPanel = Ext.getCmp('layerconfig');
                 if (global) {
-                    layerOptionsPanel.setTitle("Paramètres d'extraction appliqués par défaut à toutes les couches du panier", 'config-layers');
+                    layerOptionsPanel.setTitle(
+                        tr("Extraction parameters applied by default to all " +
+                           "cart layers"),
+                        'config-layers'
+                    );
                 } else {
                     var isRaster = (options.owsType == 'WCS');
-                    layerOptionsPanel.setTitle("Paramètres d'extraction spécifiques à la couche "+options.layerName+
-                        (isRaster ? 
-                        ' (raster)' : ' (vecteur)'), 
-                        isRaster ? 
+                    layerOptionsPanel.setTitle(
+                        (isRaster ?
+                            tr("Extraction parameters only for the " +
+                               "NAME layer (raster)",
+                               {'NAME': options.layerName}
+                            ) :
+                            tr("Extraction parameters only for the " +
+                               "NAME layer (vector)",
+                               {'NAME': options.layerName}
+                            )
+                        ),
+                        isRaster ?
                         'raster-layer' : 'vector-layer'
                     );
                 }

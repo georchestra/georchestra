@@ -19,6 +19,12 @@
 Ext.namespace("GEOR");
 
 GEOR.util = (function() {
+
+    /**
+     * Internationalization
+     */
+    var tr = OpenLayers.i18n;
+
     return {
         
         /**
@@ -100,7 +106,7 @@ GEOR.util = (function() {
          */
         confirmDialog: function(options) {
             Ext.Msg.show({
-                title: options.title || "Confirmation",
+                title: options.title || tr('Confirm'),
                 msg: options.msg,
                 buttons: Ext.Msg.YESNO,
                 closable: false,
@@ -127,7 +133,7 @@ GEOR.util = (function() {
          */
         infoDialog: function(options) {
             Ext.Msg.show({
-                title: options.title || "Information",
+                title: options.title || tr('Information'),
                 msg: options.msg,
                 width: options.width || 400,
                 buttons: Ext.Msg.OK,
@@ -146,7 +152,7 @@ GEOR.util = (function() {
          */
         errorDialog: function(options) {
             Ext.Msg.show({
-                title: options.title || "Erreur",
+                title: options.title || tr('Error'),
                 msg: options.msg,
                 width: options.width || 400,
                 buttons: Ext.Msg.OK,
@@ -184,8 +190,8 @@ GEOR.util = (function() {
         },
         
         unitsTranslations: {
-            'degrees': 'degrés',
-            'm': 'mètres'
+            'degrees': tr('degrees'),
+            'm': tr('meters')
         },
         
         // see http://www.w3schools.com/js/js_cookies.asp

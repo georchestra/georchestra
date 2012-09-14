@@ -24,6 +24,11 @@ GEOR.dlform = (function() {
      * Private
      */
 
+    /**
+     * Internationalization
+     */
+    var tr = OpenLayers.i18n;
+
     // Ext.Window
     var win;
     
@@ -41,6 +46,8 @@ GEOR.dlform = (function() {
         if (GEOR.data.jettyrun) {
             // we are debugging the app with "mvn jetty:run"
             // we do not want to deploy dlform webapp to get this list
+            // i18n: we let that strings hardcoded, as they are for debugging
+            // purposes
             storeOptions.data = {
                 "rows": [
                     {"id": 1, "name": "Administratif et budgétaire"},
@@ -71,39 +78,39 @@ GEOR.dlform = (function() {
             value: GEOR.util.getCookie('JSESSIONID')
         // regular fields:
         },{
-            fieldLabel: 'Prénom',
+            fieldLabel: tr("Firstname"),
             labelStyle: 'font-weight:bold;',
             name: 'first_name',
             value: GEOR.data.first_name || (ls && ls.getItem('first_name')) || '',
             allowBlank: false
         },{
-            fieldLabel: 'Nom',
+            fieldLabel: tr("Lastname"),
             labelStyle: 'font-weight:bold;',
             name: 'last_name',
             value: GEOR.data.last_name || (ls && ls.getItem('last_name')) || '',
             allowBlank: false
         },{
-            fieldLabel: 'Organisme',
+            fieldLabel: tr("Company"),
             labelStyle: 'font-weight:bold;',
             value: GEOR.data.company || (ls && ls.getItem('company')) || '',
             name: 'company',
             allowBlank: false
         }, {
-            fieldLabel: 'Email',
+            fieldLabel: tr("Email"),
             labelStyle: 'font-weight:bold;',
             name: 'email',
             vtype: 'email',
             value: GEOR.data.email || (ls && ls.getItem('email')) || '',
             allowBlank: false
         }, {
-            fieldLabel: 'Téléphone',
+            fieldLabel: tr("Phone"),
             value: GEOR.data.tel || (ls && ls.getItem('tel')) || '',
             name: 'tel'
         },
         // data use
         {
             xtype: 'multiselect',
-            fieldLabel: 'Applications',
+            fieldLabel: tr("Applications"),
             labelStyle: 'font-weight:bold;',
             name: 'datause',
             height: 120,
@@ -116,7 +123,7 @@ GEOR.dlform = (function() {
         // comment
         {
             xtype:'htmleditor',
-            fieldLabel:'Commentaires',
+            fieldLabel: tr("Comments"),
             name: 'comment',
             height: 150
         }];
@@ -125,12 +132,11 @@ GEOR.dlform = (function() {
             formPanelItems.push({
                 xtype:'checkboxgroup',
                 allowBlank: false,
-                blankText: "Cochez la case pour accepter les conditions d'utilisation",
+                blankText: tr("dlform.blanktext"),
                 columns: 1,
                 items: [{
-                    boxLabel: "<span style='font-weight:bold;'>J'accepte sans réserve les <a href='" +
-                        GEOR.config.PDF_URL +
-                        "' target='_blank'>conditions d'utilisation</a> des données.</span>",
+                    boxLabel: tr("dlform.checkbox",
+                                 {"URL": GEOR.config.PDF_URL}),
                     name: 'ok'
                 }]
             });
@@ -149,7 +155,7 @@ GEOR.dlform = (function() {
             labelSeparator: ' : ',
             items: formPanelItems,
             buttons: [{
-                text: 'OK',
+                text: tr("OK"),
                 formBind: true,
                 handler: function() {
                     var fp = this.ownerCt.ownerCt,
@@ -196,13 +202,12 @@ GEOR.dlform = (function() {
                                 case Ext.form.Action.CLIENT_INVALID:
                                     // should not happen, since we have formBind
                                     GEOR.util.errorDialog({
-                                        msg: 'Formulaire invalide'
+                                        msg: tr("Invalid form")
                                     });
                                     break;
                                 case Ext.form.Action.CONNECT_FAILURE:
                                     GEOR.util.errorDialog({
-                                        msg: ['Impossible de sauver le formulaire', 
-                                            "Merci de contacter l'administrateur de la plateforme"].join('<br />')
+                                        msg: tr("dlform.save.error").join('<br />')
                                     });
                                     break;
                                 case Ext.form.Action.SERVER_INVALID:
@@ -235,7 +240,7 @@ GEOR.dlform = (function() {
             Ext.QuickTips.init();
         
             win = new Ext.Window({
-                title: "Prenez quelques instants pour nous indiquer l'utilisation des données",
+                title: tr("Take one minute to indicate how you use the data"),
                 constrainHeader: true,
                 layout: 'fit',
                 border: false,
@@ -253,9 +258,7 @@ GEOR.dlform = (function() {
                     items: [{
                         region: "north",
                         bodyStyle: "padding:5px;",
-                        html: ["<div style='font-size:12px;'>Les champs en",
-                            "<span style='font-weight:bold;'>gras</span>",
-                            "sont obligatoires.</div>"].join(' ')
+                        html: tr("dlform.mandatory.fields").join(' ')
                     }, createForm(options)]
                 }]
             });

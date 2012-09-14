@@ -37,6 +37,11 @@ GEOR.map = (function() {
      */
 
     /**
+     * Internationalization
+     */
+    var tr = OpenLayers.i18n;
+
+    /**
      * Method: buildLoadingPanelCtrl
      * Build a loading panel control.
      *
@@ -96,7 +101,7 @@ GEOR.map = (function() {
                     new OpenLayers.Control.ZoomPanel(),
                     new OpenLayers.Control.Attribution(),
                     new OpenLayers.Control.OutOfRangeLayers({
-                        prefix: "Couche probablement non visible à cette échelle : ",
+                        prefix: tr("Layer probably invisible at this scale: "),
                         autoActivate: true
                     })
                 ],
@@ -158,7 +163,7 @@ GEOR.map = (function() {
          */
         getBaseLayer: function(options) {
             return new OpenLayers.Layer.WMS(
-                "Couche de base",
+                tr("Base Layer"),
                 GEOR.config.GEOSERVER_WMS_URL,
                 {layers: GEOR.config.BASE_LAYER_NAME, format: "image/png"},
                 OpenLayers.Util.applyDefaults(options, {

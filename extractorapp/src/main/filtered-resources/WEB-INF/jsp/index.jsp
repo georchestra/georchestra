@@ -1,11 +1,28 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page contentType="text/html"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ page language="java" %>
+<%@ page import="java.util.*" %>
+<%@ page import="extractorapp.ws.Utf8ResourceBundle" %>
+<%@ page contentType="text/html; charset=UTF-8"%>
 <%@ page pageEncoding="UTF-8"%>
 <%@ page isELIgnored="false" %>
 <%
 Boolean anonymous = true;
 Boolean admin = false;
 Boolean editor = false;
+
+String lang = request.getParameter("lang");
+if (lang == null || (!lang.equals("en") && !lang.equals("es"))) {
+    lang = "${language}";
+}
+Locale l = new Locale(lang);
+ResourceBundle resource = Utf8ResourceBundle.getBundle("extractorapp.i18n.index",l);
+javax.servlet.jsp.jstl.core.Config.set(
+    request,
+    javax.servlet.jsp.jstl.core.Config.FMT_LOCALIZATION_CONTEXT,
+    new javax.servlet.jsp.jstl.fmt.LocalizationContext(resource)
+);
+
 String sec_roles = request.getHeader("sec-roles");
 if(sec_roles != null) {
     String[] roles = sec_roles.split(",");
@@ -29,7 +46,7 @@ if(sec_roles != null) {
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="fr" xml:lang="fr">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="<%= lang %>" xml:lang="<%= lang %>">
 
 <c:choose>
     <c:when test='<%= anonymous == true %>'>
@@ -87,7 +104,7 @@ window.location = "?login";
     </style>
     <link rel="stylesheet" type="text/css" href="resources/app/css/main.css" />
 
-    <title lang="fr" dir="ltr">Extracteur - geOrchestra</title>
+    <title lang="<%= lang %>" dir="ltr"><fmt:message key="title"/></title>
 <c:choose>
     <c:when test='<%= request.getParameter("noheader") != null %>'>
     <script type="text/javascript">
@@ -113,72 +130,17 @@ window.location = "?login";
 
 <body>
 
-<c:choose>
-    <c:when test='<%= request.getParameter("noheader") == null %>'>
-    <div id="go_head">
-        <a href="#" id="go_home" title="retourner à l’accueil">
-            <img src="/static/img/logo.png" alt="geOrchestra" height="50"/>
-        </a>
-        <ul>
-            <li><a href="/geonetwork/srv/fr/main.home">catalogue</a></li>
-            <li><a href="/mapfishapp/">visualiseur</a></li>
-        <c:choose>
-            <c:when test='<%= editor == true %>'>
-            <li><a href="/mapfishapp/edit">éditeur</a></li>
-            </c:when>
-        </c:choose>
-            <li class="active"><a href="#">extracteur</a></li>
-            <li><a href="/geoserver/web/">services</a></li>
-        <c:choose>
-            <c:when test='<%= admin == true %>'>
-            <li><a href="/phpldapadmin">utilisateurs</a></li>
-            </c:when>
-        </c:choose>
-        </ul>
-    <c:choose>
-        <c:when test='<%= anonymous == false %>'>
-        <p class="logged">
-            <%=request.getHeader("sec-username") %><span class="light"> | </span><a href="/j_spring_security_logout">déconnexion</a>
-        </p>
-        </c:when>
-        <c:otherwise>
-        <p class="logged">
-            <a href="?login">connexion</a>
-        </p>
-        </c:otherwise>
-    </c:choose>
-    </div>
-    <script>
-        (function(){
-            if (!window.addEventListener || !document.querySelectorAll) return;
-            var each = function(els, callback) {
-                for (var i = 0, l=els.length ; i<l ; i++) {
-                    callback(els[i]);
-                }
-            }
-            each(document.querySelectorAll('#go_head li a'), function(li){
-                li.addEventListener('click', function(e) {
-                    each(
-                        document.querySelectorAll('#go_head li'),
-                        function(l){ l.className = '';}
-                    );
-                    li.parentNode.className = 'active';
-                });
-            });
-        })();
-    </script>
-    </c:when>
-</c:choose>
+    <%@ include file="header.jsp" %>
 
     <div id="waiter">
-        <span>Chargement ...</span>
+        <span><fmt:message key="loading"/></span>
     </div>
     <div id="loading">
-        <img src="resources/app/img/loading.gif" alt="chargement" width="32" height="32" style="margin-right:8px;float:left;vertical-align:top;"/> 
-        <span id="loading-msg">Chargement...</span>
+        <img src="resources/app/img/loading.gif" alt='<fmt:message key="loading"/>' width="32" height="32" style="margin-right:8px;float:left;vertical-align:top;"/> 
+        <span id="loading-msg"><fmt:message key="loading"/></span>
     </div>
     <script type="text/javascript">
-        document.getElementById('loading-msg').innerHTML = 'Chargement...';
+        document.getElementById('loading-msg').innerHTML = '<fmt:message key="loading"/>';
     </script>
 
     <script type="text/javascript" src="resources/lib/externals/ext/adapter/ext/ext-base.js"></script>
@@ -190,49 +152,22 @@ window.location = "?login";
 
     <c:choose>
         <c:when test='${c.debug}'>
-    <script type="text/javascript" src="resources/lib/externals/geoext/lib/overrides/override-ext-ajax.js"></script>
-    <script type="text/javascript" src="resources/lib/externals/ext/ext-all-debug.js"></script>
-    <script type="text/javascript" src="resources/lib/Ext.ux/lib/Ext.ux.js"></script>
-    <script type="text/javascript" src="resources/lib/proj4js/lib/proj4js-compressed.js"></script>
-    <script type="text/javascript" src="resources/lib/externals/openlayers/lib/OpenLayers.js"></script>
-    <script type="text/javascript" src="resources/lib/externals/openlayers/lib/OpenLayers/Lang/fr.js"></script>
-    <script type="text/javascript" src="resources/lib/externals/geoext/lib/GeoExt.js"></script>
-    <script type="text/javascript" src="resources/lib/GeoExt.ux/lib/GeoExt.ux.js"></script>
-    
-    <script type="text/javascript" src="resources/lib/addins/loadingPanel/trunk/lib/OpenLayers/Control/LoadingPanel.js"></script>
-    <script type="text/javascript" src="resources/app/js/OpenLayers.Control.OutOfRangeLayers.js"></script>
-    
-    <script type="text/javascript" src="resources/app/js/GEOR_util.js"></script>
-    <script type="text/javascript" src="resources/app/js/GEOR_ows.js"></script>
-    <script type="text/javascript" src="resources/app/js/GEOR_waiter.js"></script>
-    <script type="text/javascript" src="resources/app/js/GEOR_data.js"></script>
-    <script type="text/javascript" src="resources/app/js/GEOR_config.js"></script>
-    <script type="text/javascript" src="resources/app/js/GEOR_dlform.js"></script>
-    <script type="text/javascript" src="resources/app/js/GEOR_proj4jsdefs.js"></script>
-    <script type="text/javascript" src="resources/app/js/GEOR_toolbar.js"></script>
-    <script type="text/javascript" src="resources/app/js/GEOR_scalecombo.js"></script>
-    <script type="text/javascript" src="resources/app/js/GEOR_mappanel.js"></script>
-    <script type="text/javascript" src="resources/app/js/GEOR_map.js"></script>
-    <script type="text/javascript" src="resources/app/js/GEOR_layerstree.js"></script>
-    <script type="text/javascript" src="resources/app/js/GEOR_layeroptions.js"></script>
-    <script type="text/javascript" src="resources/app/js/GEOR_referentials.js"></script>
-    <script type="text/javascript" src="resources/app/js/GEOR_ajaxglobal.js"></script>
-    <script type="text/javascript" src="resources/app/js/GEOR.js"></script>
-    <script type="text/javascript" src="https://getfirebug.com/firebug-lite-beta.js"></script>
-    
-    <script type="text/javascript" src="resources/lib/externals/ext/examples/ux/MultiSelect.js"></script>
-    
+    <%@ include file="debug-includes.jsp" %>
         </c:when>
         <c:otherwise>
     <script type="text/javascript" src="resources/lib/externals/ext/ext-all.js"></script>
     <script type="text/javascript" src="resources/build/extractorapp.js"></script>
+    <script type="text/javascript" src="resources/build/lang/<%= lang %>.js"></script>
         </c:otherwise>
     </c:choose>
-    <script type="text/javascript" src="resources/lib/externals/ext/src/locale/ext-lang-fr.js"></script>
+    <script type="text/javascript" src="resources/lib/externals/ext/src/locale/ext-lang-<%= lang %>.js"></script>
     
     <script type="text/javascript">
         // remove the loading element
         Ext.get("loading").remove();
+
+        // Lang
+        GEOR.config.LANG = '<%= lang %>';
 
         <% 
           String proxyHost = "/proxy/?url=";
@@ -284,6 +219,6 @@ window.location = "?login";
     </script>
         </c:when>
     </c:choose>
-    <noscript><p>Cette application nécessite le support de JavaScript par votre navigateur. Merci de l'activer.</p></noscript>
+    <noscript><p><fmt:message key="need.javascript"/></p></noscript>
 </body>
 </html>

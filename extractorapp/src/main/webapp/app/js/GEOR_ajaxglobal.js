@@ -25,6 +25,11 @@ Ext.namespace("GEOR");
 GEOR.ajaxglobal = (function() {
 
     /**
+     * Internationalization
+     */
+    var tr = OpenLayers.i18n;
+
+    /**
      * FIXME
      */
     var HTTP_STATUS_TOO_BIG = 600;
@@ -56,17 +61,13 @@ GEOR.ajaxglobal = (function() {
         var text;
         switch(options.request.status) {
             case 0:
-                text = "Le serveur n'a pas répondu.";
+                text = tr("The server did not return nothing.");
                 break;
             case 403:
-                text = "Le serveur a refusé de répondre.";
+                text = tr("The server did not allow access.");
                 break;
             case 406:
-                text = "Le serveur distant a répondu, mais le contenu de la "+
-                "réponse n'est pas conforme à ce que nous attendons. "+
-                "FireFox s'en sort mieux que Internet Explorer dans certaines "+
-                "de ces situations. Ce serait probablement une bonne idée que "+
-                "d'essayer avec un autre navigateur !";
+                text = tr("ajaxglobal.error.406");
                 break;
             case HTTP_STATUS_TOO_BIG:
                 break;
@@ -74,16 +75,14 @@ GEOR.ajaxglobal = (function() {
                 //text = "Le service OGC a renvoyé une exception.";
                 break;
             default:
-                text = "Pour plus d'information, nous vous invitons à "+
-                "chercher le code de retour sur <a href=\"http://"+
-                "en.wikipedia.org/wiki/List_of_HTTP_status_codes\">"+
-                "cette page</a>.";
+                text = tr("ajaxglobal.error.default");
                 break;
         }
         if (text) {
             GEOR.util.errorDialog({
-                title: "Erreur HTTP "+options.request.status,
-                msg: "Une erreur est survenue.<br />" + text
+                title: tr("ajaxglobal.error.title",
+                          {ERROR: options.request.status}),
+                msg: tr("ajaxglobal.error.body", {"TEXT": text})
             });
         }
     };
@@ -110,15 +109,10 @@ GEOR.ajaxglobal = (function() {
             // deal with too big responses
             if (request.responseText.length > GEOR.config.MAX_LENGTH) {
                 GEOR.util.confirmDialog({
-                    title: 'Attention : risque de blocage du navigateur',
-                    msg: [
-                        "Les données provenant du serveur sont trop",
-                        "volumineuses.<br />Le serveur a envoyé",
-                        "" + Math.round(request.responseText.length/1024) + "KO",
-                        "(la limite est à",
-                        "" + Math.round(GEOR.config.MAX_LENGTH/1024) + "KO).",
-                        "<br />Voulez-vous tout de même continuer ?"
-                    ].join(" "),
+                    title: tr("Warning: the browser may freeze"),
+                    msg: tr("ajaxglobal.toobig", {
+                        "WEIGHT": Math.round(request.responseText.length/1024),
+                        "LIMIT": Math.round(GEOR.config.MAX_LENGTH/1024)}),
                     width: 420,
                     yesCallback: function() {
                         OpenLayers.Request.runCallbacks.call(

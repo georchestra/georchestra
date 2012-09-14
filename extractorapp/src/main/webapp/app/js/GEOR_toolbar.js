@@ -29,6 +29,11 @@ GEOR.toolbar = (function() {
      */
 
     /**
+     * Internationalization
+     */
+    var tr = OpenLayers.i18n;
+
+    /**
      * Method: createTbar
      * Create the toolbar.
      *
@@ -46,7 +51,7 @@ GEOR.toolbar = (function() {
         items.push(new GeoExt.Action({
             control: ctrl,
             map: map,
-            tooltip: "zoom sur l'étendue globale de la carte",
+            tooltip: tr("Zoom on the global extent of the map"),
             iconCls: "zoomfull"
         }));
 
@@ -59,7 +64,7 @@ GEOR.toolbar = (function() {
             control: ctrl,
             map: map,
             iconCls: "pan",
-            tooltip: "glisser - déplacer la carte",
+            tooltip: tr("Pan"),
             toggleGroup: "map",
             allowDepress: false,
             pressed: true
@@ -72,7 +77,7 @@ GEOR.toolbar = (function() {
             control: ctrl,
             map: map,
             iconCls: "zoomin",
-            tooltip: "zoom en avant",
+            tooltip: tr("Zoom in"),
             toggleGroup: "map",
             allowDepress: false
         }));
@@ -84,26 +89,28 @@ GEOR.toolbar = (function() {
         items.push(new GeoExt.Action({
             control: ctrl.previous,
             iconCls: "back",
-            tooltip: "revenir à la précédente emprise",
+            tooltip: tr("Back to the previous extent"),
             disabled: true
         }));
         items.push(new GeoExt.Action({
             control: ctrl.next,
             iconCls: "next",
-            tooltip: "aller à l'emprise suivante",
+            tooltip: tr("Go to the next extent"),
             disabled: true
         }));
 
         items.push('->');
         
         items.push({
-            text: "Aide",
-            tooltip: "Afficher l'aide",
+            text: tr("Help"),
+            tooltip: tr("Show help"),
             handler: function() {
                 if(Ext.isIE) {
                     window.open(GEOR.config.HELP_URL);
                 } else {
-                    window.open(GEOR.config.HELP_URL, "Aide de l'extrateur", "menubar=no,status=no,scrollbars=yes");
+                    window.open(GEOR.config.HELP_URL,
+                                tr("Extractor help"),
+                                "menubar=no,status=no,scrollbars=yes");
                 }
             }
         });
@@ -115,11 +122,14 @@ GEOR.toolbar = (function() {
                 Ext.DomHelper.append(Ext.getBody(), 
                     GEOR.data.anonymous ?
                         '<div class="login"><a href="' + GEOR.config.LOGIN_URL +
-                        '" class="nounderline" onclick="return GEOR.toolbar.confirmLogin()">'+
-                        'Connexion</a></div>' :
+                        '" class="nounderline" onclick="return GEOR.toolbar.confirmLogin()">' +
+                        tr('Login') +
+                        '</a></div>' :
                         '<div class="login">'+GEOR.data.username + 
                         '&nbsp;<a href="' + GEOR.config.LOGOUT_URL +
-                        '" class="nounderline">déconnexion</a></div>'
+                        '" class="nounderline">' +
+                        tr('Logout') +
+                        '</a></div>'
                 )
             );
         }
@@ -154,8 +164,7 @@ GEOR.toolbar = (function() {
          * Displays a confirm dialog before leaving the app for CAS login
          */
         confirmLogin: function() {
-            return confirm("Vous allez quitter cette page et perdre le contexte cartographique courant");
-            // ou : "Pour vous connecter, nous vous redirigeons vers une autre page web. Vous risquez de perdre le contexte cartographique courant. Vous pouvez le sauvegarder en annulant cette opération, et en cliquant sur Espace de travail > Sauvegarder la carte" ?
+            return confirm(tr('toolbar.confirm.login'));
         }
     };
 
