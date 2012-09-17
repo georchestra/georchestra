@@ -207,7 +207,7 @@ GEOR.dlform = (function() {
                                     break;
                                 case Ext.form.Action.CONNECT_FAILURE:
                                     GEOR.util.errorDialog({
-                                        msg: tr("dlform.save.error").join('<br />')
+                                        msg: tr("dlform.save.error")
                                     });
                                     break;
                                 case Ext.form.Action.SERVER_INVALID:
@@ -258,7 +258,7 @@ GEOR.dlform = (function() {
                     items: [{
                         region: "north",
                         bodyStyle: "padding:5px;",
-                        html: tr("dlform.mandatory.fields").join(' ')
+                        html: tr("dlform.mandatory.fields")
                     }, createForm(options)]
                 }]
             });
