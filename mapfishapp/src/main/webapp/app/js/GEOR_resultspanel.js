@@ -100,15 +100,13 @@ GEOR.resultspanel = (function() {
             return;
         }
         GEOR.waiter.show();
-        var data = new Array(t), att;
+        var data = new Array(t), att, fields = model.getFields();
         for (var i=0; i<t; i++) {
             data[i] = [];
             att = store.getAt(i).get('feature').attributes;
-            for (var key in att) {
-                if (!att.hasOwnProperty(key)) {
-                    continue;
-                }
-                data[i].push(att[key]);
+            // see http://applis-bretagne.fr/redmine/issues/4084 
+            for (var j=0, ll=fields.length; j<ll; j++) {
+                data[i].push(att[fields[j]] || '');
             }
         }
         var format = new OpenLayers.Format.JSON();
