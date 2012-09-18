@@ -100,9 +100,9 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Take one minute to indicate how you use the data":
         "Prenez quelques instants pour nous indiquer l'utilisation des données",
     "dlform.mandatory.fields":
-        "<div style='font-size:12px;'>Les champs en" +
+        "<div style='font-size:12px;'>Les champs en " +
         "<span style='font-weight:bold;'>gras</span>" +
-        "sont obligatoires.</div>",
+        " sont obligatoires.</div>",
     /* GEOR_layeroptions.js */
     "layeroptions.boundingbox":
         "Emprise (en ${UNIT}, " +

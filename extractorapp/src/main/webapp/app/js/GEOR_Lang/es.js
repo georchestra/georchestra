@@ -98,8 +98,8 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
         "Tomese un tiempo para indicarnos como utilizará los datos",
     "dlform.mandatory.fields":
         "<div style='font-size:12px;'>Los campos en " +
-        "<span style='font-weight:bold;'>negrita</span> " +
-        "son obligatorios.</div>",
+        "<span style='font-weight:bold;'>negrita</span>" +
+        " son obligatorios.</div>",
     /* GEOR_layeroptions.js */
     "layeroptions.boundingbox":
         "Extensión (en ${UNIT}, " +
