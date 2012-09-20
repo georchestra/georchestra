@@ -115,11 +115,6 @@ if(sec_roles != null) {
         </c:choose>
             <li><a href="/extractorapp/">extracteur</a></li>
             <li><a href="/geoserver/web/">services</a></li>
-        <c:choose>
-            <c:when test='<%= admin == true %>'>
-            <li><a href="/phpldapadmin">utilisateurs</a></li>
-            </c:when>
-        </c:choose>
         </ul>
     <c:choose>
         <c:when test='<%= anonymous == false %>'>
