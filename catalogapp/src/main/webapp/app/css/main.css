@@ -61,3 +61,8 @@
     font-size: 1px;
     filter: alpha(opacity=50);
 }
+
+/* hide disabled buttons in toolbar */
+.x-toolbar .x-item-disabled {
+	display:none;
+}
