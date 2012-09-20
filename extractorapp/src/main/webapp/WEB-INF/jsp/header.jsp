@@ -18,11 +18,6 @@
         </c:choose>
             <li class="active"><a href="#"><fmt:message key="extractor"/></a></li>
             <li><a href="/geoserver/web/"><fmt:message key="services"/></a></li>
-        <c:choose>
-            <c:when test='<%= admin == true %>'>
-            <li><a href="/phpldapadmin"><fmt:message key="users"/></a></li>
-            </c:when>
-        </c:choose>
         </ul>
     <c:choose>
         <c:when test='<%= anonymous == false %>'>
