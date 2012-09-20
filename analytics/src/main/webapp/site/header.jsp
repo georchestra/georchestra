@@ -19,11 +19,6 @@
             <li><a href="/geoserver/web/">services</a></li>
         <c:choose>
             <c:when test='<%= admin == true %>'>
-            <li><a href="/phpldapadmin">utilisateurs</a></li>
-            </c:when>
-        </c:choose>
-        <c:choose>
-            <c:when test='<%= admin == true %>'>
             <li class="active"><a href="/analytics">statistiques</a></li>
             </c:when>
         </c:choose>
