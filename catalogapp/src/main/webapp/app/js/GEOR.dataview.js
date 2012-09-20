@@ -133,12 +133,12 @@ GEOR.dataview = (function() {
             layers.push({
                 layername: OWSdb[elt.id].name,
                 metadataURL:"", // FIXME
-                owstype:"WMS",
+                owstype:"WMS", // What about WFS ?
                 owsurl: OWSdb[elt.id].value
             });
         } else {
             services.push({
-                text: "test serveur",
+                text: "Serveur "+OWSdb[elt.id].value,
                 metadataURL:"", // FIXME
                 owstype:"WMS",
                 owsurl: OWSdb[elt.id].value
