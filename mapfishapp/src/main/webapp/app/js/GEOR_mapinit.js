@@ -193,7 +193,7 @@ GEOR.mapinit = (function() {
             layout: 'fit',
             constrainHeader: true,
             closeAction: 'close',
-            modal: true,
+            modal: false,
             items: [grid],
             buttons: [{
                 text: tr("Close"),
@@ -210,6 +210,7 @@ GEOR.mapinit = (function() {
                 }
             }]
         });
+        GEOR.waiter.hide();
         win.show();
     };
 
@@ -251,6 +252,7 @@ GEOR.mapinit = (function() {
             count += 1;
             layerStore.addSorted(record);
         });
+        GEOR.waiter.hide();
         if (errors.length) {
             GEOR.util.errorDialog({
                 title: (errors.length>1) ? 
@@ -283,7 +285,6 @@ GEOR.mapinit = (function() {
     var createStores = function(wmsServers, callback, scope) {
         var count = wmsServers.length;
         var stores = {};
-        GEOR.waiter.show();
         
         var capabilitiesCallback = function() {
             count -= 1;
@@ -292,6 +293,7 @@ GEOR.mapinit = (function() {
             }
         };
         Ext.each(wmsServers, function(wmsServerUrl) {
+            GEOR.waiter.show();
             stores[wmsServerUrl] = new GEOR.ows.WMSCapabilities({
                 storeOptions: {
                     url: wmsServerUrl
