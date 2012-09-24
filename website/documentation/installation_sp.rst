@@ -81,7 +81,7 @@ Desde la raíz de las fuentes, ejecuta maven especificando la plataforma de desp
 
 ::
     
-  mvn install -P<configurationkey>
+  mvn install -P<configurationkey> -Dmaven.test.skip=true
 
 Cuando este comando esta ejecutado en la carpeta raíz, todos los proyectos serán construidos. Cuando esta ejecutado
 en un módulo (extractorapp por ejemplo), solo este módulo será construido.

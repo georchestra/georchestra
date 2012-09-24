@@ -89,7 +89,7 @@ et la tâche (typiquement install)
 
 ::
     
-  mvn install -P<configurationkey>
+  mvn install -P<configurationkey> -Dmaven.test.skip=true
 
 Lorsqu'exécuté dans le répertoire racine, tous les projets seront construits. Lorsqu'exécuté
 dans un module (comme extractorapp), seul ce module sera construit.

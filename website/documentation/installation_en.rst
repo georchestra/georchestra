@@ -83,7 +83,7 @@ want to build for and the task (typically install)
 
 ::
     
-  ./mvn install -P<configurationkey>
+  ./mvn install -P<configurationkey> -Dmaven.test.skip=true
 
 
 When executed in the root directory all project will be build. When the command 
