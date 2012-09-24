@@ -138,7 +138,7 @@ GEOR.mapinit = (function() {
         
         var GroupingLayerStore = Ext.extend(
             Ext.data.GroupingStore,
-            GeoExt.data.LayerStoreMixin
+            new GeoExt.data.LayerStoreMixin
         );
         var gls = new GroupingLayerStore({
             fields: recordType,
