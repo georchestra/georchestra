@@ -150,6 +150,13 @@
     </profile>
 
     <profile>
+      <id>cg62</id>
+      <properties>
+        <server>cg62</server>
+      </properties>
+    </profile>
+    
+    <profile>
       <id>pmauduit</id>
       <properties>
         <server>pmauduit</server>
@@ -160,6 +167,22 @@
       <id>localhost</id>
       <properties>
         <server>localhost</server>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>cg62_int</id>
+      <properties>
+        <server>cg62</server>
+        <sub.target>int</sub.target>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>cg62_prod</id>
+      <properties>
+        <server>cg62</server>
+        <sub.target>prod</sub.target>
       </properties>
     </profile>
 
