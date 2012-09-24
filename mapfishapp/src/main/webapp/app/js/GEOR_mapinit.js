@@ -19,6 +19,7 @@
  * @include GEOR_util.js
  * @include GEOR_waiter.js
  * @include GeoExt/data/LayerRecord.js
+ * @include GeoExt/data/LayerStore.js
  * @include GeoExt/data/WMSCapabilitiesReader.js
  */
 
