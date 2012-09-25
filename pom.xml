@@ -237,7 +237,6 @@
       <modules>
         <module>cas-server-webapp</module>
         <module>catalogapp</module>
-        <module>doc</module>
         <module>extractorapp</module>
         <module>geoserver</module>
         <module>geoserver-security</module>
@@ -269,14 +268,7 @@
       <modules>
         <module>catalogapp</module>
       </modules>
-    </profile>
-
-    <profile>
-      <id>doc</id>
-      <modules>
-        <module>doc</module>
-      </modules>
-    </profile>    
+    </profile>  
     
     <profile>
       <id>static</id>
