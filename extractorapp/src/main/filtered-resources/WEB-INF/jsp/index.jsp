@@ -136,11 +136,11 @@ window.location = "?login";
         <span><fmt:message key="loading"/></span>
     </div>
     <div id="loading">
-        <img src="resources/app/img/loading.gif" alt='<fmt:message key="loading"/>' width="32" height="32" style="margin-right:8px;float:left;vertical-align:top;"/> 
+        <img src="resources/app/img/loading.gif" alt="<fmt:message key='loading'/>" width="32" height="32" style="margin-right:8px;float:left;vertical-align:top;"/> 
         <span id="loading-msg"><fmt:message key="loading"/></span>
     </div>
     <script type="text/javascript">
-        document.getElementById('loading-msg').innerHTML = '<fmt:message key="loading"/>';
+        document.getElementById('loading-msg').innerHTML = "<fmt:message key='loading'/>";
     </script>
 
     <script type="text/javascript" src="resources/lib/externals/ext/adapter/ext/ext-base.js"></script>

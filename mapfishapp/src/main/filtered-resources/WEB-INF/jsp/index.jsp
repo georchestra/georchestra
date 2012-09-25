@@ -123,7 +123,7 @@ if(sec_roles != null) {
         <span><fmt:message key="loading"/></span>
     </div>
     <div id="loading">
-        <img src="app/img/loading.gif" alt='<fmt:message key="loading"/>' width="32" height="32" style="margin-right:8px;float:left;vertical-align:top;"/>
+        <img src="app/img/loading.gif" alt="<fmt:message key='loading'/>" width="32" height="32" style="margin-right:8px;float:left;vertical-align:top;"/>
         <span id="loading-msg"><fmt:message key="loading"/></span>
     </div>
     

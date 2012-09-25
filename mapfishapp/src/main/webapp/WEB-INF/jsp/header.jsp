@@ -40,8 +40,8 @@
     <link rel="stylesheet" type="text/css" href="/static/css/header.css" />
 
     <div id="go_head">
-        <a href="#" id="go_home" title='<fmt:message key="go.home"/>'>
-            <img src="/static/img/logo.png" alt='<fmt:message key="logo"/>' height="50"/>
+        <a href="#" id="go_home" title="<fmt:message key='go.home'/>">
+            <img src="/static/img/logo.png" alt="<fmt:message key='logo'/>" height="50"/>
         </a>
         <ul>
             <li><a href="/geonetwork/srv/<%= lang %>/main.home"><fmt:message key="catalogue"/></a></li>
