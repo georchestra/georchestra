@@ -723,10 +723,10 @@ GEOR.config = (function() {
         /**
          * Constant: HELP_URL
          * {String} URL of the help ressource.
-         * Defaults to "/doc/html/documentation.html#viewer"
+         * Defaults to "http://www.geobretagne.fr/web/guest/assistance"
          */
         HELP_URL: getCustomParameter("HELP_URL", 
-            "/doc/html/documentation.html#viewer"),
+            "http://www.geobretagne.fr/web/guest/assistance"),
         
         /**
          * Constant: DISPLAY_SELECTED_OWS_URL 
