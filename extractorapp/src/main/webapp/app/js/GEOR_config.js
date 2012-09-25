@@ -474,10 +474,10 @@ GEOR.config = (function() {
         /**
          * Constant: HELP_URL
          * {String} URL of the help ressource.
-         * Defaults to "/doc/html/documentation.html#extractor"
+         * Defaults to "http://www.geobretagne.fr/web/guest/assistance"
          */
         HELP_URL: getCustomParameter("HELP_URL",
-            "/doc/html/documentation.html#extractor")
+            "http://www.geobretagne.fr/web/guest/assistance")
         // No trailing comma for the last line (or IE will complain)
     };
 })();
