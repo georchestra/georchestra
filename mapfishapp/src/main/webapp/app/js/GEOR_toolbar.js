@@ -265,7 +265,7 @@ GEOR.toolbar = (function() {
                 if(Ext.isIE) {
                     window.open(GEOR.config.HELP_URL);
                 } else {
-                    window.open(GEOR.config.HELP_URL, tr("Extractor help"), "menubar=no,status=no,scrollbars=yes");
+                    window.open(GEOR.config.HELP_URL, tr("Help"), "menubar=no,status=no,scrollbars=yes");
                 }
             }
         });

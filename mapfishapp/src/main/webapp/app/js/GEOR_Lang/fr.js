@@ -323,7 +323,6 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Logout": "Déconnexion",
     "Help": "Aide",
     "Show help": "Afficher l'aide",
-    "Extractor help": "Aide de l'extracteur",
     "Show legend": "Afficher la légende",
     "Leave this page ? You will lose the current cartographic context.":
         "Vous allez quitter cette page et perdre le contexte cartographique " +
