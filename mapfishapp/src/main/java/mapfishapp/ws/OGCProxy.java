@@ -66,6 +66,7 @@ public class OGCProxy {
                                         "application/vnd.ogc.gml",              // GML
                                         "application/vnd.ogc.sld+xml",          // SLD
                                         "application/vnd.google-earth.kml+xml", // KML
+                                        "application/json"                      // JSON
                                     };
 
     /**
