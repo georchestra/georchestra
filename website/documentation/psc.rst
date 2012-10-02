@@ -147,5 +147,6 @@ Les membres fondateurs sont :
 Les membres suivants ont été ajoutés à la PSC, après discussion et consensus :
 * François Van Der Biest
 * Pierre Mauduit
+* Sylvain Lesage
 
-Mise à jour : 06/06/2011 
+Mise à jour : 02/10/2012 
