@@ -25,3 +25,6 @@
 [submodule "geonetwork"]
 	path = geonetwork
 	url = http://github.com/georchestra/geonetwork.git
+[submodule "geoserver/georchestra-geoserver/geoserver-checkouts/geoserver-stable"]
+	path = geoserver/georchestra-geoserver/geoserver-checkouts/geoserver-stable
+	url = http://github.com/geoserver/geoserver.git
