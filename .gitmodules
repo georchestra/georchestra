@@ -19,3 +19,6 @@
 [submodule "extractorapp/src/main/webapp/admin/extjs"]
 	path = extractorapp/src/main/webapp/admin/extjs
 	url = http://github.com/probonogeek/extjs.git
+[submodule "analytics/src/main/webapp/site/js/lib/external/ext"]
+	path = analytics/src/main/webapp/site/js/lib/external/ext
+	url = http://github.com/probonogeek/extjs.git
