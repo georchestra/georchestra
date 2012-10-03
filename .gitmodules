@@ -1,0 +1,9 @@
+[submodule "mapfishapp/src/main/webapp/lib/externals/ext"]
+	path = mapfishapp/src/main/webapp/lib/externals/ext
+	url = http://github.com/probonogeek/extjs.git
+[submodule "mapfishapp/src/main/webapp/lib/externals/geoext"]
+	path = mapfishapp/src/main/webapp/lib/externals/geoext
+	url = http://github.com/geoext/geoext.git
+[submodule "mapfishapp/src/main/webapp/lib/externals/openlayers"]
+	path = mapfishapp/src/main/webapp/lib/externals/openlayers
+	url = http://github.com/openlayers/openlayers.git
