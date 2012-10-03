@@ -22,3 +22,6 @@
 [submodule "analytics/src/main/webapp/site/js/lib/external/ext"]
 	path = analytics/src/main/webapp/site/js/lib/external/ext
 	url = http://github.com/probonogeek/extjs.git
+[submodule "geonetwork"]
+	path = geonetwork
+	url = http://github.com/georchestra/geonetwork.git
