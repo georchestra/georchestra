@@ -7,3 +7,12 @@
 [submodule "mapfishapp/src/main/webapp/lib/externals/openlayers"]
 	path = mapfishapp/src/main/webapp/lib/externals/openlayers
 	url = http://github.com/openlayers/openlayers.git
+[submodule "extractorapp/src/main/webapp/lib/externals/geoext"]
+	path = extractorapp/src/main/webapp/lib/externals/geoext
+	url = http://github.com/geoext/geoext.git
+[submodule "extractorapp/src/main/webapp/lib/externals/openlayers"]
+	path = extractorapp/src/main/webapp/lib/externals/openlayers
+	url = http://github.com/openlayers/openlayers.git
+[submodule "extractorapp/src/main/webapp/lib/externals/ext"]
+	path = extractorapp/src/main/webapp/lib/externals/ext
+	url = http://github.com/probonogeek/extjs.git
