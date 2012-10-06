@@ -52,9 +52,6 @@
 						<patch>Wcs10DescribeCoverageTransformer.patch</patch>
                         <!-- Quick fix for http://applis-bretagne.fr/redmine/issues/3852 : -->
                         <patch>WMS_MS_Capabilities-dtd.patch</patch>
-						<!--<patch>DefaultServiceExceptionHandlerTest-stable.patch</patch>
-						<patch>GetCoverageTest-stable.patch</patch>
-						<patch>ResourceAccessManagerWFSTest-stable.patch</patch>-->
 					</patches>
 					<targetDirectory>${patch.dir}</targetDirectory>
 					<strip>0</strip>
