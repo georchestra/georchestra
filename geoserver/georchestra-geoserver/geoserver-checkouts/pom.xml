@@ -24,8 +24,8 @@
 							<goal>exec</goal>
 						</goals>
 						<configuration>
-							<executable>svn</executable>
-							<commandlineArgs>revert -R .</commandlineArgs>
+							<executable>git</executable>
+							<commandlineArgs>reset --hard HEAD</commandlineArgs>
 							<workingDirectory>${gs.dir}</workingDirectory>
 						</configuration>
 					</execution>
