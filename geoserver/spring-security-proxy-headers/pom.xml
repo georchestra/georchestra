@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.georchestra</groupId>
-		<artifactId>gs2-root</artifactId>
+		<artifactId>geoserver-root</artifactId>
 		<version>1.0</version>
 	</parent>
 	<artifactId>security-filter</artifactId>
