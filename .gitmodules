@@ -39,4 +39,4 @@
 	url = http://github.com/geoext/geoext.git
 [submodule "geoserver/geoserver-submodule"]
 	path = geoserver/geoserver-submodule
-	url = git@github.com:georchestra/geoserver.git
+	url = http://github.com/georchestra/geoserver.git
