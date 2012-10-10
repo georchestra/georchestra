@@ -1,3 +1,0 @@
-MAP
-    NAME "${vars:package}"
-END

@@ -1,8 +1,0 @@
-<select name="cswhosts">
-        <option value="http://geobretagne.fr/geonetwork/srv/fr/csw">GeoBretagne</option>
-        <option value="http://test.geobretagne.fr/geonetwork/srv/fr/csw">GeoBretagne test</option>
-        <option value="http://www.geocatalogue.fr/api-public/servicesRest?">GeoCatalogue</option>
-        <option value="http://georchestra.bretagne-environnement.org/geonetwork/srv/fr/csw">GIP BE</option>
-        <option value="http://ids.pigma.org/geonetwork/srv/fr/csw">PIGMA</option>
-        <option value="http://www.geopal.org/geonetwork/srv/fr/csw">GeoPAL</option>
-</select>

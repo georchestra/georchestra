@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<TalendMetadata:GenericSchemaConnection xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:TalendMetadata="http://www.talend.org" mappingTypeUsed="true" mappingTypeId="postgres_id">
-  <tables id="_k7z6MAUSEd-3zekN7QZqDQ" label="metadata">
-    <columns label="ORI_id" sourceType="FLOAT8" talendType="id_Double"/>
-    <columns label="TEX_id" sourceType="VARCHAR" talendType="id_String"/>
-    <columns label="SYM_id" sourceType="VARCHAR" talendType="id_String"/>
-    <columns label="the_geom" sourceType="GEOMETRY" talendType="id_Geometry"/>
-  </tables>
-</TalendMetadata:GenericSchemaConnection>

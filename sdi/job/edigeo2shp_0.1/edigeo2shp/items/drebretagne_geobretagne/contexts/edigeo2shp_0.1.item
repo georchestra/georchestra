@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<talendfile:ContextType xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:talendfile="platform:/resource/org.talend.model/model/TalendFile.xsd" confirmationNeeded="false" name="Default">
-  <contextParameter comment="Directory where EDIGeo files are." name="edigeoDir" prompt="Choisissez le répertoire des fichiers EDIGeo svp :" promptNeeded="true" type="id_Directory" value=""/>
-  <contextParameter comment="Directory where to export files." name="exportDir" prompt="Choisissez le répertoire où exporter les fichiers :" promptNeeded="true" type="id_Directory" value=""/>
-  <contextParameter comment="" name="tmpDir" prompt="tmpDir?" promptNeeded="false" type="id_Directory" value="&quot;/tmp/&quot;"/>
-  <contextParameter comment="" name="force" prompt="force?" promptNeeded="false" type="id_Boolean" value="true"/>
-</talendfile:ContextType>

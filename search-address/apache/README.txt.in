@@ -1,3 +1,0 @@
-add the following to your Apache config:
-
-Include ${buildout:directory}/apache/*.conf
