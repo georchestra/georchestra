@@ -37,3 +37,6 @@
 [submodule "catalogapp/src/main/webapp/lib/externals/geoext"]
 	path = catalogapp/src/main/webapp/lib/externals/geoext
 	url = http://github.com/geoext/geoext.git
+[submodule "geoserver/geoserver-submodule"]
+	path = geoserver/geoserver-submodule
+	url = http://github.com/georchestra/geoserver.git
