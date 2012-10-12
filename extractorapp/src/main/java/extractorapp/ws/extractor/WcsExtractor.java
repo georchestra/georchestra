@@ -59,7 +59,7 @@ public class WcsExtractor {
 		        boolean permitted = regex.matcher(capabilities).find();
 		        
 		        if(!permitted) {
-		            throw new SecurityException("User does not have sufficient privileges to access the Layer: "+request._layerName);
+		            throw new SecurityException("User does not have sufficient privileges to access the Layer: "+request._layerName+". \n\nCapabilties:  "+capabilities);
 		        }
 		    }
     public File[] extract (ExtractorLayerRequest request) throws IOException, TransformException, FactoryException {

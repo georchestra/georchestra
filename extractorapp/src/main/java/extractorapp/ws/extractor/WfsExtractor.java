@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -133,7 +134,7 @@ public class WfsExtractor {
     }
 
     public void checkPermission(ExtractorLayerRequest request, String secureHost, String username, String roles) throws IOException {
-        URL capabilitiesURL = request.capabilitiesURL("WFS", null);
+        URL capabilitiesURL = request.capabilitiesURL("WMS", null);
 
     	DefaultHttpClient httpclient = new DefaultHttpClient();
     	HttpGet get = new HttpGet(capabilitiesURL.toExternalForm());
@@ -148,64 +149,14 @@ public class WfsExtractor {
         }
 
         String capabilities = FileUtils.asString(httpclient.execute(get).getEntity().getContent());
-
-        NodeList featureTypes = XmlUtils.select("//wfs:FeatureType", capabilities, 
-                XmlUtils.WFS_NAMESPACE_CONTEXT);
-
-        for( int i=0; i < featureTypes.getLength(); i++) {
-            Node type = featureTypes.item(i);
-            
-            if(request._namespace == null) {
-                if(name(type).equals(request._layerName)) {
-                    request.setWFSName(request._layerName);
-                    return;
-                }
-            } else {
-                if(correctNS(type, request)) {
-                    if(namePart(type, request).equals(request._layerName)) {
-                        request.setWFSName(name(type));
-                        return;
-                    }
-                }
-            }
-        }
+        Pattern regex = Pattern.compile("(?m)<Layer[^>]*>(\\\\n|\\s)*<Name>\\s*"+Pattern.quote(request._layerName)+"\\s*</Name>");
+        boolean permitted = regex.matcher(capabilities).find();
         
-        throw new SecurityException("User does not have sufficient privileges to access the Layer: "+request._layerName);
-    }
-
-    private Object namePart(Node type, ExtractorLayerRequest request) {
-        String name = name(type);
-        final String[] parts = name.split(":",2);
-
-        if(parts.length == 1){
-            return parts[0];
-        } else {
-            return parts[1];
+        if(!permitted) {
+            throw new SecurityException("User does not have sufficient privileges to access the Layer: "+request._layerName+". \n\nCapabilties:  "+capabilities);
         }
     }
 
-    private String name(Node type) {
-        Node nameNode = type.getFirstChild();
-        while(nameNode != null && !nameNode.getNodeName().equals("Name")) {
-            nameNode = nameNode.getNextSibling();
-        }       
-        String name = nameNode.getTextContent().trim();
-       
-        return name;
-    }
-
-    private boolean correctNS(Node type, ExtractorLayerRequest request) {
-        NamedNodeMap atts = type.getAttributes();
-
-        for( int j=0; j < atts.getLength(); j++) {
-            Node item = atts.item(j);
-            
-            if(request._namespace.equals(item.getNodeValue())){
-                return true;
-            }
-        }        
-        return false;
-    }
 
     /**
      * Extract the data as defined in the request object. Currently only supports export to shapefile

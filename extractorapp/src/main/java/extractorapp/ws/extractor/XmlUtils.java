@@ -38,6 +38,21 @@ public final class XmlUtils {
             throw new RuntimeException(xpathExpression + " is not a legal xpath", e);
         }
     }
+    public static NodeList selectWFSCabalitilies(String xpathExpression, String data) throws ProtocolException, MalformedURLException,
+    IOException,
+    AssertionError {
+    	return select(xpathExpression, data, WFS_NAMESPACE_CONTEXT);
+    }
+    public static NodeList selectWCSCabalitilies(String xpathExpression, String data) throws ProtocolException, MalformedURLException,
+    IOException,
+    AssertionError {
+    	return select(xpathExpression, data, WCS_NAMESPACE_CONTEXT);
+    }
+    public static NodeList selectWMSCabalitilies(String xpathExpression, String data) throws ProtocolException, MalformedURLException,
+    IOException,
+    AssertionError {
+    	return select(xpathExpression, data, WMS_NAMESPACE_CONTEXT);
+    }
 
     static enum NameSpaces {
         gml("http://www.opengis.net/gml"),
