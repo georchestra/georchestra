@@ -12,33 +12,33 @@
 
     <script type="text/javascript" src="lib/addins/loadingPanel/trunk/lib/OpenLayers/Control/LoadingPanel.js"></script>
 
-    <script type="text/javascript" src="lib/styler/lib/Styler/Util.js"></script>
-    <script type="text/javascript" src="lib/styler/lib/Styler/SchemaManager.js"></script>
-    <script type="text/javascript" src="lib/styler/lib/Styler/SLDManager.js"></script>
-    <script type="text/javascript" src="lib/styler/lib/Styler/dispatch.js"></script>
-    <script type="text/javascript" src="lib/styler/lib/Styler/widgets/StrokeSymbolizer.js"></script>
-    <script type="text/javascript" src="lib/styler/lib/Styler/widgets/FillSymbolizer.js"></script>
-    <script type="text/javascript" src="lib/styler/lib/Styler/widgets/PointSymbolizer.js"></script>
-    <script type="text/javascript" src="lib/styler/lib/Styler/widgets/RulePanel.js"></script>
-    <script type="text/javascript" src="lib/styler/lib/Styler/widgets/RuleBuilder.js"></script>
-    <script type="text/javascript" src="lib/styler/lib/Styler/widgets/MultiSlider.js"></script>
-    <script type="text/javascript" src="lib/styler/lib/Styler/widgets/BaseFilterPanel.js"></script>
-    <script type="text/javascript" src="lib/styler/lib/Styler/widgets/SpatialFilterPanel.js"></script>
-    <script type="text/javascript" src="lib/styler/lib/Styler/widgets/FilterPanel.js"></script>
-    <script type="text/javascript" src="lib/styler/lib/Styler/widgets/LineSymbolizer.js"></script>
-    <script type="text/javascript" src="lib/styler/lib/Styler/widgets/RuleChooser.js"></script>
-    <script type="text/javascript" src="lib/styler/lib/Styler/widgets/form/SpatialComboBox.js"></script>
-    <script type="text/javascript" src="lib/styler/lib/Styler/widgets/form/ComparisonComboBox.js"></script>
-    <script type="text/javascript" src="lib/styler/lib/Styler/widgets/form/FontComboBox.js"></script>
-    <script type="text/javascript" src="lib/styler/lib/Styler/widgets/ScaleSlider.js"></script>
-    <script type="text/javascript" src="lib/styler/lib/Styler/widgets/LegendPanel.js"></script>
-    <script type="text/javascript" src="lib/styler/lib/Styler/widgets/FeatureRenderer.js"></script>
-    <script type="text/javascript" src="lib/styler/lib/Styler/widgets/PolygonSymbolizer.js"></script>
-    <script type="text/javascript" src="lib/styler/lib/Styler/widgets/ScaleLimitPanel.js"></script>
-    <script type="text/javascript" src="lib/styler/lib/Styler/widgets/FilterBuilder.js"></script>
-    <script type="text/javascript" src="lib/styler/lib/Styler/widgets/tips/MultiSliderTip.js"></script>
-    <script type="text/javascript" src="lib/styler/lib/Styler/widgets/tips/SliderTip.js"></script>
-    <script type="text/javascript" src="lib/styler/lib/Styler/widgets/TextSymbolizer.js"></script>
+    <script type="text/javascript" src="lib/externals/styler/lib/Styler/Util.js"></script>
+    <script type="text/javascript" src="lib/externals/styler/lib/Styler/SchemaManager.js"></script>
+    <script type="text/javascript" src="lib/externals/styler/lib/Styler/SLDManager.js"></script>
+    <script type="text/javascript" src="lib/externals/styler/lib/Styler/dispatch.js"></script>
+    <script type="text/javascript" src="lib/externals/styler/lib/Styler/widgets/StrokeSymbolizer.js"></script>
+    <script type="text/javascript" src="lib/externals/styler/lib/Styler/widgets/FillSymbolizer.js"></script>
+    <script type="text/javascript" src="lib/externals/styler/lib/Styler/widgets/PointSymbolizer.js"></script>
+    <script type="text/javascript" src="lib/externals/styler/lib/Styler/widgets/RulePanel.js"></script>
+    <script type="text/javascript" src="lib/externals/styler/lib/Styler/widgets/RuleBuilder.js"></script>
+    <script type="text/javascript" src="lib/externals/styler/lib/Styler/widgets/MultiSlider.js"></script>
+    <script type="text/javascript" src="lib/externals/styler/lib/Styler/widgets/BaseFilterPanel.js"></script>
+    <script type="text/javascript" src="lib/externals/styler/lib/Styler/widgets/SpatialFilterPanel.js"></script>
+    <script type="text/javascript" src="lib/externals/styler/lib/Styler/widgets/FilterPanel.js"></script>
+    <script type="text/javascript" src="lib/externals/styler/lib/Styler/widgets/LineSymbolizer.js"></script>
+    <script type="text/javascript" src="lib/externals/styler/lib/Styler/widgets/RuleChooser.js"></script>
+    <script type="text/javascript" src="lib/externals/styler/lib/Styler/widgets/form/SpatialComboBox.js"></script>
+    <script type="text/javascript" src="lib/externals/styler/lib/Styler/widgets/form/ComparisonComboBox.js"></script>
+    <script type="text/javascript" src="lib/externals/styler/lib/Styler/widgets/form/FontComboBox.js"></script>
+    <script type="text/javascript" src="lib/externals/styler/lib/Styler/widgets/ScaleSlider.js"></script>
+    <script type="text/javascript" src="lib/externals/styler/lib/Styler/widgets/LegendPanel.js"></script>
+    <script type="text/javascript" src="lib/externals/styler/lib/Styler/widgets/FeatureRenderer.js"></script>
+    <script type="text/javascript" src="lib/externals/styler/lib/Styler/widgets/PolygonSymbolizer.js"></script>
+    <script type="text/javascript" src="lib/externals/styler/lib/Styler/widgets/ScaleLimitPanel.js"></script>
+    <script type="text/javascript" src="lib/externals/styler/lib/Styler/widgets/FilterBuilder.js"></script>
+    <script type="text/javascript" src="lib/externals/styler/lib/Styler/widgets/tips/MultiSliderTip.js"></script>
+    <script type="text/javascript" src="lib/externals/styler/lib/Styler/widgets/tips/SliderTip.js"></script>
+    <script type="text/javascript" src="lib/externals/styler/lib/Styler/widgets/TextSymbolizer.js"></script>
 
     <script type="text/javascript" src="app/js/GEOR_config.js"></script>
     <script type="text/javascript" src="app/js/GEOR_Lang/<%= lang %>.js"></script>
