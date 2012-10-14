@@ -42,4 +42,4 @@
 	url = http://github.com/georchestra/geoserver.git
 [submodule "mapfishapp/src/main/webapp/lib/externals/styler"]
 	path = mapfishapp/src/main/webapp/lib/externals/styler
-	url = git@github.com:georchestra/styler.git
+	url = http://github.com/georchestra/styler.git
