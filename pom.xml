@@ -218,16 +218,9 @@
       </properties>
     </profile>
     
-    <profile>
-      <id>vm_georchestra</id>
-      <properties>
-        <server>vm_georchestra</server>
-      </properties>
-    </profile>
-    
     <!-- template profile -->
     <profile>
-      <id>template/id>
+      <id>template</id>
       <properties>
         <server>template</server>
       </properties>
