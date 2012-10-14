@@ -1,0 +1,30 @@
+maxCoverageExtractionSize=99999999
+maxExtractions=5
+remoteReproject=true
+useCommandLineGDAL=false
+extractionFolderPrefix=extraction-
+
+
+host=@shared.server.name@
+
+# The base url of the extractorapp as accessible from outside the intranet
+servletUrl=http://${host}/extractorapp
+
+# Hostname of the geoserver that is secured for geOrchestra.
+secureHost=${host}
+
+# Email properties
+smtpHost=@shared.smtp.host@
+smtpPort=@shared.smtp.port@
+replyTo=@shared.smtp.replyTo@
+from=@shared.smtp.from@
+
+priveleged_admin_name=@shared.privileged.geoserver.user@
+priveleged_admin_pass=@shared.privileged.geoserver.pass@
+
+dlformjdbcurl=@shared.download_form.jdbcurl@?user=@shared.psql.user@&password=@shared.psql.pass@
+dlformactivated=@shared.download_form.activated@
+
+emailfactory=extractorapp.ws.EmailFactoryDefault
+emailsubject="Your extraction request on vm-georchestra"
+

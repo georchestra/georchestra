@@ -1,0 +1,56 @@
+public_host=@shared.server.name@
+
+#LDAP config
+ldapUrl=@shared.ldapUrl@
+baseDN=@shared.ldap.baseDn@
+userSearchBaseDN=@shared.ldap.userSearchBaseDN@
+authoritiesBaseDN=@shared.ldap.groupSearchBaseDN@
+ldapAdminDn=@shared.ldap.admin.dn@
+ldap.admin.password=@shared.ldap.admin.password@
+
+cas.public.host=${public_host}
+cas.private.host=localhost
+
+defaultTarget.port=8080
+public.ssl=443
+private.ssl=8443
+geoserver.server=http://${public_host}:${defaultTarget.port}
+
+proxy.defaultTarget=http://localhost:${defaultTarget.port}
+proxy.mapping=<entry key="extractorapp" value="${proxy.defaultTarget}/extractorapp-private/" />\
+    <entry key="gssec" value="${proxy.defaultTarget}/geoserver-security/" />\
+    <entry key="mapfishapp" value="${proxy.defaultTarget}/mapfishapp-private/" />\
+    <entry key="geonetwork" value="${proxy.defaultTarget}/geonetwork-private/" />\
+    <entry key="catalogapp" value="${proxy.defaultTarget}/catalogapp-private/" />\
+    <entry key="geoserver" value="${proxy.defaultTarget}/geoserver-private/" />\
+    <entry key="static" value="${proxy.defaultTarget}/static-private/" />\
+    <entry key="admintools" value="${proxy.defaultTarget}/admintools-private/" />
+
+camptocamp.security.loglevel=ALL
+jasig.loglevel=ALL
+springframework.loglevel=ALL
+log.dir=@shared.log.dir@
+log.filename=security-proxy.log
+# options are StandardOut, FileAppender or HTMLAppender
+# (zero or more and comma separated)
+log.appender=FileAppender
+
+# header mapping
+header.mapping=\
+        <entry key="sec-email"     value="mail"/>\
+        <entry key="sec-firstname" value="givenName"/>\
+        <entry key="sec-lastname"  value="sn"/>\
+        <entry key="sec-org"       value="o"/>\
+        <entry key="sec-tel"       value="telephoneNumber"/>
+
+# database health check parameters
+
+shared.psql.host=@shared.psql.host@
+shared.psql.port=@shared.psql.port@
+shared.psql.geonetwork.db=@shared.psql.geonetwork.db@
+shared.psql.user=@shared.psql.user@
+shared.psql.pass=@shared.psql.pass@
+shared.psql.url=@shared.psql.url@
+
+# dev should not need a test url
+test.url=

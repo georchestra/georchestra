@@ -1,0 +1,4 @@
+host=@shared.server.name@
+port=@shared.server.port@
+ldapUrl=@shared.ldapUrl@
+userFilter=uid=%u,@shared.ldap.userSearchBaseDN@,@shared.ldap.baseDn@
