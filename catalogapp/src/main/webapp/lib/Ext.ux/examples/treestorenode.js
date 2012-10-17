@@ -46,7 +46,7 @@ Ext.onReady(function() {
             ]
         })
     });
-        
+
     // the node's check button with its checkchange event can be used
     // to call a custom handler.
     var registerCheckbox = function(node){
