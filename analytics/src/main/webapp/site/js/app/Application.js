@@ -32,7 +32,7 @@ Ext.application({
     stores: [
         'OGCLayers','OGCUsers','OGCGroups',
         'GeonetworkFiles','GeonetworkUsers','GeonetworkGroups',
-        'ExtractorLayers','ExtractorUsers', 'ExtractorGroups', 
+        'ExtractorLayers','ExtractorUsers', 'ExtractorGroups',
         'FilteredOGCLayers','FilteredOGCUsers',
         'FilteredGeonetworkFiles','FilteredGeonetworkUsers',
         'FilteredExtractorLayers','FilteredExtractorUsers'
