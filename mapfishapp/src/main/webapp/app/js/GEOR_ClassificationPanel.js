@@ -27,16 +27,16 @@ Ext.namespace('GEOR');
 
 /*
    Class: GEOR.ClassificationPanel
-   Inherits from: 
+   Inherits from:
    - Ext.Panel
 */
 GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
 
     /**
      * Property: attributes
-     * {GeoExt.data.AttributeStore} DataStore used to fill the ComboBox 
-     * comboAttribute. 
-     * Fields: attribute name and type of the attribute. They corresponds to 
+     * {GeoExt.data.AttributeStore} DataStore used to fill the ComboBox
+     * comboAttribute.
+     * Fields: attribute name and type of the attribute. They corresponds to
      * the namespace of the DescribeFeatureType request on a WFS server.
      * The WFS url is taken from a given layer.	
      */
@@ -59,72 +59,72 @@ GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
      * {Ext.form.ComboBox} Displays attributes of a specific feature type.
     */
     cbAttribute: null,
-    
+
     /*
      * Property: dsClassifType
-     * {Ext.data.SimpleStore} DataStore used to fill the ComboBox dsClassifType. 
-     * Fields (type of classification): 
+     * {Ext.data.SimpleStore} DataStore used to fill the ComboBox dsClassifType.
+     * Fields (type of classification):
        - choropleths
        - proportional symbols
        - unique values
      */
     dsClassifType: null,
-    
+
     /*
     * Property: cbClassifType
-    * {Ext.form.ComboBox} Displays type of classification according to the 
-    * selected Attribute. Depending on the type of the feature attribute some 
-    * classification type won't be avalaible. Only numeric values enable 
+    * {Ext.form.ComboBox} Displays type of classification according to the
+    * selected Attribute. Depending on the type of the feature attribute some
+    * classification type won't be avalaible. Only numeric values enable
     * choropleths and proportional symbols classifications
     */
     cbClassifType: null,
-    
+
     /*
      * Property: sbClassCountChoropleth
      * {Ext.ux.NumberSpinner} Number of classes (choropleths classification only)
      */
     sbClassCountChoropleth: null,	
-    
+
     /*
     * Property: sbClassCountPropSymbol
-    * {Ext.ux.NumberSpinner} Number of classes (proportional symbols 
+    * {Ext.ux.NumberSpinner} Number of classes (proportional symbols
     * classification only)
     */
     sbClassCountPropSymbol: null,	
-    
+
     /*
      * Property: sbMinSize
-     * {Ext.ux.NumberSpinner} Minimum symbol size (proportional symbols 
+     * {Ext.ux.NumberSpinner} Minimum symbol size (proportional symbols
      * classification only)
      */
     sbMinSize: null,
-    
+
     /*
      * Property: sbMaxSize
-     * {Ext.ux.NumberSpinner} Maximum symbol size (proportional symbols 
+     * {Ext.ux.NumberSpinner} Maximum symbol size (proportional symbols
      * classification only)
      */
     sbMaxSize: null,
-    
+
     /*
      * Property: cpFirstColor
      * {Ext.ux.ColorPicker} First color (choropleths classification only)
      */
     cpFirstColor: null,
-    
+
     /*
      * Property: cpLastColor
      * {Ext.ux.ColorPicker} Last color (choropleths classification only)
      */
     cpLastColor: null,
-    
+
     /*
      * Property: dsPalette
-     * {Ext.data.SimpleStore} DataStore used to fill the ComboBox paletteCombo. 
+     * {Ext.data.SimpleStore} DataStore used to fill the ComboBox paletteCombo.
      * Fields: value (palette id) and colors (array of colors)
     */
     dsPalette: null,
-    
+
     /*
      * Property: cbPalette
      * {Ext.ux.PaletteComboBox} Palette (unique values classification only)
@@ -136,29 +136,29 @@ GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
      * {Ext.Button} Launches automatic classification
      */
     btClassify: null,
-    
+
     /*
      * Property: pnChoropleths
      */
      pnChoropleth: null,
-     
+
     /*
      * Property: pnPropSymbol
      */
      pnPropSymbol: null,
-      
+
     /*
      * Property: pnUniqueValue
      */
      pnUniqueValue: null,
-    
+
     /*
      * Method: initComponent.
      * Overridden constructor. Set up widgets and lay them out
      */
     initComponent: function() {
 
-        this.cbAttribute = new Ext.form.ComboBox({ 
+        this.cbAttribute = new Ext.form.ComboBox({
             store: this.attributes,
             displayField: 'name',
             valueField: 'name',
@@ -171,11 +171,11 @@ GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
             fieldLabel: OpenLayers.i18n('Attribute'),
             value: this.attributes.getAt(0).get("name")
         });
-            
+
         this.dsClassifType = new Ext.data.SimpleStore({
             fields: ['text', 'value']
         });
-        this.cbClassifType = new Ext.form.ComboBox({ 
+        this.cbClassifType = new Ext.form.ComboBox({
             store: this.dsClassifType,
             displayField: 'text',
             valueField: 'value',
@@ -196,7 +196,7 @@ GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
             fieldLabel: OpenLayers.i18n('Number of classes'),
             width: 30
         });
-        
+
         // FIXME copy config from sbClassCountPropSymbol
         this.sbClassCountChoropleth = new Ext.ux.NumberSpinner({
             allowNegative: false,
@@ -207,7 +207,7 @@ GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
             fieldLabel: OpenLayers.i18n('Number of classes'),
             width: 30
         });
-        
+
         this.sbMinSize = new Ext.ux.NumberSpinner({
             allowNegative: false,
             allowDecimals: false,
@@ -217,7 +217,7 @@ GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
             fieldLabel: OpenLayers.i18n('Minimum size'),
             width: 30
         });
-        
+
         this.sbMaxSize = new Ext.ux.NumberSpinner({
             allowNegative: false,
             allowDecimals: false,
@@ -227,24 +227,24 @@ GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
             fieldLabel: OpenLayers.i18n('Maximum size'),
             width: 30
         });
-        
+
         this.cpFirstColor = new Ext.ux.form.ColorPickerField({
             value: '#FFFFFF',
             fieldLabel: OpenLayers.i18n('First color'),
             width: 100
         });
-        
+
         this.cpLastColor = new Ext.ux.form.ColorPickerField({
             value: '#497BD1',
             fieldLabel: OpenLayers.i18n('Last color'),
             width: 100
         });
-        
+
         this.dsPalette = new Ext.data.SimpleStore({
             fields: ['value', 'colors'],
             width: 150
         });
-        
+
         this.cbPalette = new Ext.ux.PaletteComboBox({
             store: this.dsPalette,
             valueField: 'value',
@@ -259,12 +259,12 @@ GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
                            // when its container changes
                            // size
         });
-        
+
         this.btClassify = new Ext.Button({
-        }); 
-        
+        });
+
         // wrap classification specific widgets in 3 different panels
-        
+
         this.pnChoropleth = new Ext.FormPanel({
             items: [
                 this.sbClassCountChoropleth,
@@ -272,7 +272,7 @@ GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
                 this.cpLastColor
             ]
         });
-        
+
         this.pnPropSymbol = new Ext.FormPanel({
             items: [
                 this.sbClassCountPropSymbol,
@@ -280,7 +280,7 @@ GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
                 this.sbMaxSize
             ]
         });
-        
+
         this.pnUniqueValue = new Ext.FormPanel({
             labelWidth: 75,
             items: [
@@ -298,7 +298,7 @@ GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
                 }
             }
         });
-        
+
         // connect events to widgets
         this.cbAttribute.on('select', this.on_cbAttribute_selected, this);
         this.cbClassifType.on('select', this.on_cbClassifType_selected, this);
@@ -307,7 +307,7 @@ GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
         this.btClassify.on('click', this.on_btClassify_clicked, this);
 
         this.filldsPalette(); // fill this combo with predefined palettes	
-        this.filldsClassifType(this.attributes.getAt(0).get("type")); 
+        this.filldsClassifType(this.attributes.getAt(0).get("type"));
 
         // build layout
         Ext.apply(this, {
@@ -355,7 +355,7 @@ GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
             buttons: [
                 Ext.apply(this.btClassify, {
                     text: OpenLayers.i18n('Classify')
-                })     
+                })
             ]
         });
 
@@ -366,16 +366,16 @@ GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
              */
             "change"
         );
-    
+
         // call parent initComponent
-        GEOR.ClassificationPanel.superclass.initComponent.call(this);  
+        GEOR.ClassificationPanel.superclass.initComponent.call(this);
     },
-    
+
     /*
      * Method: filldsClassifType
-     * Fills the cbClassifType with classification types given the feature's 
+     * Fills the cbClassifType with classification types given the feature's
      * data type. Depending on the selected attribute not all classification
-     * type will be available. choropleths and proportional symbols are only 
+     * type will be available. choropleths and proportional symbols are only
      * available when attribute type is numeric. unique values is always available
      * Parameters:
      * dataType - {String} feature data type
@@ -388,11 +388,11 @@ GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
                 data.push([OpenLayers.i18n('Proportional symbols'), 'prop_symbols']);
             }
         }
-        this.dsClassifType.loadData(data);  
+        this.dsClassifType.loadData(data);
         this.cbClassifType.setValue(data[0][1]); // select first value
         this.displayTypeContext(data[0][1]); // show the right widgets given the classification
     },
-    
+
     /*
      *  Method: filldsPalette
      *  Fills the dsPalette with predefined palettes
@@ -437,7 +437,7 @@ GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
          });
          this.dsPalette.loadData(palettes);
     },
-    
+
     /*
      * Method: displayTypeContext
      * Displays or hides widgets depending on the selected classification type
@@ -458,12 +458,12 @@ GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
         }
         cmp.doLayout();
     },
-    
+
     /*
      * Method: on_sbMinSize_changed
-     * Valid rule between the 2 SpinBoxes: minimum size mustn't be ever 
+     * Valid rule between the 2 SpinBoxes: minimum size mustn't be ever
      * greater or equal than the maximum size
-     * Parameters: 
+     * Parameters:
      * spinBox - {Ext.ux.NumberSpinner}
      * newVal - (undefined because {Ext.form.NumberField} lost them when override)
      * oldVal - (undefined because {Ext.form.NumberField} lost them when override)
@@ -473,12 +473,12 @@ GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
             spinBox.setValue(spinBox.getValue() - 1);
         }
     },
-    
+
     /*
      * Method: on_sbMaxSize_changed
-     * Valid rule between the 2 SpinBoxes: minimum size mustn't be ever 
+     * Valid rule between the 2 SpinBoxes: minimum size mustn't be ever
      * greater or equal than the maximum size
-     * Parameters: 
+     * Parameters:
      * spinBox - {Ext.ux.NumberSpinner}
      * newVal - (undefined because {Ext.form.NumberField} lost them when override)
      * oldVal - (undefined because {Ext.form.NumberField} lost them when override)
@@ -488,7 +488,7 @@ GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
             spinBox.setValue(spinBox.getValue() + 1);
         }
     },
-    
+
     /*
      * Method: on_cbAttribute_selected
      * Triggered when cbAttribute is selected
@@ -500,11 +500,11 @@ GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
      on_cbAttribute_selected: function(combo, record, index) {
         this.filldsClassifType(record.get("type"));
      },
-    
+
     /*
      * Method: on_cbClassifType_selected
      * Triggered when cbClassifType is selected
-     * Parameters: 
+     * Parameters:
      * combo - {Ext.form.ComboBox}
      * record - {Ext.data.Record}
      * index - {integer}
@@ -515,12 +515,12 @@ GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
 
     /*
      * Method: getParams
-     * Generate JSON request for the SLD Service. 
+     * Generate JSON request for the SLD Service.
      * Helped with the parametrizable parameters from the form and the selected layer
      * Returns: {Object} json request
      */
     getParams: function() {
-        
+
         // common parameters
         var request = {
             wfs_url: GEOR.ows.getWFSCapURL(this.wfsInfo),
@@ -529,7 +529,7 @@ GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
             type: this.cbClassifType.getValue(),
             symbol_type: this.symbolType
         };
-        
+
         // classification specific parameters
         var type = this.cbClassifType.getValue();
         if(type === 'choropleths') {
@@ -552,7 +552,7 @@ GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
 
         return request;
     },
-    
+
    /*
     * Method: on_btClassify_clicked
     * Launches the classification process. When done it triggers the callback function

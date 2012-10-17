@@ -12,10 +12,10 @@
 Ext.ns('Ext.ux');
 Ext.ux.PanelCollapsedTitle = (function() {
   var rotatedCls = 'x-panel-header-rotated';
-  var supportsSVG = 
+  var supportsSVG =
     !!document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1");
   var patchCollapsedElem = function() {
-    var verticalText = ((this.region == 'east') || (this.region == 'west'));    
+    var verticalText = ((this.region == 'east') || (this.region == 'west'));
     var containerStyle = 'overflow: visible; padding: 0; border: none; background: none;';
     // For vertical text, and for browsers that support SVG
     // (Firefox, Chrome, Safari 3+, Opera 8+)
@@ -41,13 +41,13 @@ Ext.ux.PanelCollapsedTitle = (function() {
       // set the style to override the unwanted aspects of the x-panel-header class
       // also copy the x-panel-header "color" to "fill", to color the SVG text node
       var color = Ext.fly(textContainer).getStyle('color');
-      textContainer.setAttribute('style', containerStyle + ';fill: ' + color + ';');            
+      textContainer.setAttribute('style', containerStyle + ';fill: ' + color + ';');
     // For horizontal text or IE
     } else {
       var titleElemStyle = 'position: relative;';
       if (verticalText) {
         // use writing-mode for vertical text
-        titleElemStyle += 
+        titleElemStyle +=
           'white-space: nowrap; writing-mode: tb-rl; top: 1px; left: 3px;';
       } else {
         titleElemStyle += 'top: 2px;';
@@ -98,10 +98,10 @@ Ext.ux.PanelCollapsedTitle = (function() {
           // otherwise create the img for the icon
           } else if (this.collapsedIconCls) {
             Ext.DomHelper.insertBefore(hd.dom.firstChild, {
-              tag:'img', src: Ext.BLANK_IMAGE_URL, 
+              tag:'img', src: Ext.BLANK_IMAGE_URL,
               cls:'x-panel-inline-icon '+this.collapsedIconCls,
-              style: verticalText 
-                ? 'display: block; margin: 1px 2px;' 
+              style: verticalText
+                ? 'display: block; margin: 1px 2px;'
                 : 'margin-top: 2px; margin-right: 4px'
             });
           };

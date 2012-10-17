@@ -14,7 +14,7 @@
 
 /*
  * Should we include either v1_0_0.js or v1_1_0.js or both?
- * This app produces v1.1 compliant WMCs, but one might want 
+ * This app produces v1.1 compliant WMCs, but one might want
  * to restore v1.0 compliant WMCs too => both formats are useful
  * @include OpenLayers/Format/WMC/v1_0_0.js
  * @include OpenLayers/Format/WMC/v1_1_0.js
@@ -152,7 +152,7 @@ GEOR.wmc = (function() {
         init: function(ls) {
             layerStore = ls;
             tr = OpenLayers.i18n;
-            
+
             wmcFormat = new OpenLayers.Format.WMC({
                 //layerOptions: GEOR.ows.defaultLayerOptions
                 // why should we apply default layer options and not use those provided by the WMC ?
@@ -197,7 +197,7 @@ GEOR.wmc = (function() {
                 // as the current map
                 GEOR.util.errorDialog({
                     msg: tr("The .wmc file cannot be restored. Its spatial " +
-                        "reference system is different from the system of " + 
+                        "reference system is different from the system of " +
                         "the current map")
                 });
                 return;
@@ -215,12 +215,12 @@ GEOR.wmc = (function() {
                 var fakeBaseLayer = map.layers[0];
                 fakeBaseLayer.addOptions({maxExtent: maxExtent});
             }
-            
+
             Ext.each(wmcReader.readRecords(newContext).records, function(r) {
                 // restore metadataURLs in record
                 var context = null;
                 for (var i=0, l = newContext.layersContext.length; i<l; i++) {
-                    if (newContext.layersContext[i]['name'] === r.get('name') && 
+                    if (newContext.layersContext[i]['name'] === r.get('name') &&
                         newContext.layersContext[i]['url'] === r.get('layer').url) {
                         context = newContext.layersContext[i];
                         break;

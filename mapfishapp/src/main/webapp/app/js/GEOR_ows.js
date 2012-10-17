@@ -39,7 +39,7 @@ GEOR.ows = (function() {
     /*
      * Private
      */
-    
+
     /**
      * Constant: defaultRecordFields
      * {Array} The fields shared by each layer record in this app.
@@ -70,18 +70,18 @@ GEOR.ows = (function() {
         {name: "metadataURLs"}, // array
         {name: "hideInLegend", type: "boolean", defaultValue: false}
     ];
-    
+
     /**
      * Constant: attributeStoreFields
      * {Array} The fields shared by each attributeStore record in this app.
      */
     var attributeStoreFields = ["name", "type", "restriction", {name:"nillable", type: "boolean"}];
-    // Note: a NOT NULL clause for a field in postgresql db is translated by GeoServer 1.7.x into 
+    // Note: a NOT NULL clause for a field in postgresql db is translated by GeoServer 1.7.x into
     //  <xsd:element maxOccurs="1" minOccurs="1" name="nom" nillable="true" type="xsd:string"/>
     // while in GeoServer 2.x, it leads to the correct xsd:
     //  <xsd:element maxOccurs="1" minOccurs="1" name="nom" nillable="false" type="xsd:string"/>
     // thus, mapfishapp/edit form will not display required fields as such with GeoServer 1.7.x
-    
+
     /**
      * Constant: WMS_BASE_PARAMS
      * {Object} The base params for WMS requests.
@@ -147,7 +147,7 @@ GEOR.ows = (function() {
          * DescribeFeatureType responses.
          */
         matchGeomProperty: /^gml:(Multi)?(Point|LineString|Polygon|Curve|Surface|Geometry)PropertyType$/,
-        
+
         /**
          * Property: defaultLayerOptions
          * {Object} Default OpenLayers WMS layer options
@@ -201,7 +201,7 @@ GEOR.ows = (function() {
          * the first record whose owsType is "WFS".
          *
          * Parameters:
-         * records - {Array({Ext.data.Record})} Array of 
+         * records - {Array({Ext.data.Record})} Array of
          *     records.
          *
          * Returns
@@ -218,14 +218,14 @@ GEOR.ows = (function() {
                 }
             }
         },
-        
+
         /**
          * Method: getWFSCapURL
-         * Creates a WFS capabilities URL given a record 
+         * Creates a WFS capabilities URL given a record
          * from a WMSDescribeLayerStore
          *
          * Parameters:
-         * record - {Object} 
+         * record - {Object}
          *
          * Returns:
          * {String} The full URL string.
@@ -238,7 +238,7 @@ GEOR.ows = (function() {
                 OpenLayers.Util.getParameters(url)
             );
             return OpenLayers.Util.urlAppend(
-                OpenLayers.Util.removeTail(url), 
+                OpenLayers.Util.removeTail(url),
                 OpenLayers.Util.getParameterString(p)
             );
         },
@@ -267,7 +267,7 @@ GEOR.ows = (function() {
             options = options || {};
             var storeOptions = Ext.applyIf({
                 // For some reason, if layer.url ends up with ?
-                // the generated request URL is not correct 
+                // the generated request URL is not correct
                 // see http://applis-bretagne.fr/redmine/issues/1979
                 url: layer.url.replace(/\?$/,''),
                 baseParams: Ext.applyIf({
@@ -276,7 +276,7 @@ GEOR.ows = (function() {
                     // WIDTH and HEIGHT params seem to be required for
                     // some versions of MapServer (typ. 5.6.1)
                     // see http://applis-bretagne.fr/redmine/issues/1979
-                    "WIDTH": 1,  
+                    "WIDTH": 1,
                     "HEIGHT": 1
                 }, WMS_BASE_PARAMS)
             }, options.storeOptions);
@@ -296,7 +296,7 @@ GEOR.ows = (function() {
          *
          * Parameters:
          * record - {Ext.data.Record|Object} Record with "owsURL" and
-         *     "typeName" fields or object with same keys. 
+         *     "typeName" fields or object with same keys.
          *     Can get modified by addition of a featureNS property
          *     if options.extractFeatureNS is true
          * options - {Object} An object with the properties:
@@ -306,29 +306,29 @@ GEOR.ows = (function() {
          *   store could not be loaded.
          * - scope - {Object} The callback execution scope.
          * - storeOptions - {Object} Additional store options.
-         * - extractFeatureNS - {Boolean} Optional boolean specifying 
-         *             whether the featureNS should be extracted from 
+         * - extractFeatureNS - {Boolean} Optional boolean specifying
+         *             whether the featureNS should be extracted from
          *             WFSDescribeFeatureType response
          */
         WFSDescribeFeatureType: function(record, options) {
             options = options || {};
-            
+
             r = (record instanceof Ext.data.Record) ? {
                 typeName: record.get("typeName"),
                 owsURL: record.get("owsURL")
             } : record;
-            
+
             var store;
-        
-            if (options.extractFeatureNS) { 
+
+            if (options.extractFeatureNS) {
                 // we extract featureNS from WFSDescribeFeatureType response
-                // and set it in the original record, so that it can be used 
+                // and set it in the original record, so that it can be used
                 // later for protocol creation
-                
+
                 store = new Ext.data.Store({
                     reader: new GeoExt.data.AttributeReader({}, attributeStoreFields)
                 });
-                
+
                 Ext.Ajax.request({
                     url: r.owsURL,
                     method: 'GET',
@@ -341,16 +341,16 @@ GEOR.ows = (function() {
                         "TYPENAME": r.typeName
                     }, WFS_BASE_PARAMS),
                     success: function(resp) {
-                
+
                         var data = resp.responseXML;
                         if(!data || !data.documentElement) {
                             data = resp.responseText;
                         }
                         var format = new OpenLayers.Format.WFSDescribeFeatureType();
                         var jsObj = format.read(data);
-                        
+
                         record.set("featureNS", jsObj.targetNamespace);
-                        
+
                         store.on({
                             load: function() {
                                 store.purgeListeners();
@@ -364,9 +364,9 @@ GEOR.ows = (function() {
                     failure: options.failure || function(){},
                     scope: options.scope || this
                 });
-                
+
             } else {
-            
+
                 var storeOptions = Ext.applyIf({
                     url: r.owsURL,
                     fields: attributeStoreFields,
@@ -400,15 +400,15 @@ GEOR.ows = (function() {
          */
         WMSCapabilities: function(options) {
             options = options || {};
-            var layerOptions = (options.storeOptions && 
-                options.storeOptions.layerOptions) ? 
+            var layerOptions = (options.storeOptions &&
+                options.storeOptions.layerOptions) ?
                     options.storeOptions.layerOptions : {};
             var storeOptions = Ext.applyIf({
                 baseParams: Ext.applyIf({
                     "REQUEST": "GetCapabilities"
                 }, WMS_BASE_PARAMS),
-                layerOptions: Ext.apply({}, 
-                    layerOptions, 
+                layerOptions: Ext.apply({},
+                    layerOptions,
                     GEOR.ows.defaultLayerOptions
                 ),
                 fields: defaultRecordFields
@@ -423,21 +423,21 @@ GEOR.ows = (function() {
 
         /**
          * APIMethod: hydrateLayerRecord
-         * Adds missing fields in {GeoExt.data.LayerRecord} by issuing a 
-         * WMS capabilities request. In case we have been given a layer 
-         * served by GeoServer, the request is first issued to the 
+         * Adds missing fields in {GeoExt.data.LayerRecord} by issuing a
+         * WMS capabilities request. In case we have been given a layer
+         * served by GeoServer, the request is first issued to the
          * virtual service corresponding to the layer namespace alias.
-         * If the request fails to find the layer in its namespace, a second 
+         * If the request fails to find the layer in its namespace, a second
          * request is issued to the main service URL.
          *
          * Parameters:
          * record - {GeoExt.data.LayerRecord} the input record.
          * options - {Object} An object with the properties:
-         * - success - {Function} Callback function 
-         * - failure - {Function} Callback function 
+         * - success - {Function} Callback function
+         * - failure - {Function} Callback function
          * - scope - {Object} The callback function's execution scope.
          *
-         * Returns: 
+         * Returns:
          * {GeoExt.data.LayerRecord} The same record with hydrated fields.
          */
         hydrateLayerRecord: function(record, options) {
@@ -445,7 +445,7 @@ GEOR.ows = (function() {
                 layername = record.get('name');
             if (!options.useMainService && url.indexOf("geoserver/wms") > 0) {
                 // try to use virtual service instead of main service
-                var nsalias, 
+                var nsalias,
                     t = layername.split(':');
                 if (t.length > 1) {
                     nsalias = t.shift();
@@ -470,7 +470,7 @@ GEOR.ows = (function() {
                     // replace all fields except layer
                     Ext.each(defaultRecordFields, function(rf) {
                         record.set(rf.name, r.get(rf.name));
-                    });                    
+                    });
                     if (options.success) {
                         options.success.apply(options.scope);
                     }
@@ -515,7 +515,7 @@ GEOR.ows = (function() {
             }
             return store;
         },
-        
+
         /**
          * APIMethod: WFSProtocol
          * Create an {OpenLayers.Protocol.WFS} instance.
@@ -526,7 +526,7 @@ GEOR.ows = (function() {
          * map - {OpenLayers.Map} Map object.
          * options - {Object} Additional protocol options
          *
-         * Returns: 
+         * Returns:
          * {OpenLayers.Protocol.WFS} The protocol.
          */
         WFSProtocol: function(record, map, options) {

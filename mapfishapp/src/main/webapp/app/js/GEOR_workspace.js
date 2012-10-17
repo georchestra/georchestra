@@ -69,7 +69,7 @@ GEOR.workspace = (function() {
     var loadBtnHandler = function() {
         var formPanel = this.findParentByType('form');
         formPanel.getForm().submit({
-            url: "ws/wmc/", 
+            url: "ws/wmc/",
             // Beware: form submission requires a *success* parameter in json response
             // As said in http://extjs.com/learn/Manual:RESTful_Web_Services
             // "Ext.form.BasicForm hopefully becomes HTTP Status Code aware!"
@@ -79,7 +79,7 @@ GEOR.workspace = (function() {
                 // GET WMC content
                 GEOR.waiter.show();
                 OpenLayers.Request.GET({
-                    url: o.filepath, 
+                    url: o.filepath,
                     success: function(response) {
                         try {
                             GEOR.wmc.read(response.responseXML || response.responseText);
@@ -97,7 +97,7 @@ GEOR.workspace = (function() {
             scope: this
         });
     };
-    
+
     /**
      * Method: cancelBtnHandler
      * Handler for the cancel button
@@ -105,7 +105,7 @@ GEOR.workspace = (function() {
     var cancelBtnHandler = function() {
         this.findParentByType('form').ownerCt.close();
     };
-    
+
     /**
      * Method: saveWMC
      * Triggers the save dialog.
@@ -150,7 +150,7 @@ GEOR.workspace = (function() {
         });
         popup.show();
     };
-    
+
     /**
      * Method: loadWMC
      * Triggers the upload dialog and restores the context.
@@ -194,7 +194,7 @@ GEOR.workspace = (function() {
         });
         popup.show();
     };
-    
+
     /**
      * Method: editOSM
      * Creates handlers for OSM edition
@@ -204,7 +204,7 @@ GEOR.workspace = (function() {
         return function() {
             var url, bounds = map.getExtent();
             bounds.transform(
-                map.getProjectionObject(), 
+                map.getProjectionObject(),
                 new OpenLayers.Projection("EPSG:4326")
             );
             if (options.protocol === 'lbrt') {
@@ -243,7 +243,7 @@ GEOR.workspace = (function() {
          * Returns the workspace menu config.
          *
          * Parameters:
-         * m {OpenLayers.Map} 
+         * m {OpenLayers.Map}
          *
          * Returns:
          * {Object} The toolbar config item corresponding to the "workspace" menu.
@@ -323,7 +323,7 @@ Ext.ux.MenuQuickTips = Ext.extend(Object, {
             if (typeof (item.qtip) != 'undefined') {
                 item.on('afterrender', function (menuItem) {
                     var qtip = typeof (menuItem.qtip) == 'string'
-                                ? {text: menuItem.qtip} 
+                                ? {text: menuItem.qtip}
                                 : menuItem.qtip;
                     qtip = Ext.apply(qtip, {target: menuItem.getEl().getAttribute('id')});
                     Ext.QuickTips.register(qtip);
@@ -332,4 +332,4 @@ Ext.ux.MenuQuickTips = Ext.extend(Object, {
         });
     }
 });
-Ext.preg('menuqtips', Ext.ux.MenuQuickTips);  
+Ext.preg('menuqtips', Ext.ux.MenuQuickTips);

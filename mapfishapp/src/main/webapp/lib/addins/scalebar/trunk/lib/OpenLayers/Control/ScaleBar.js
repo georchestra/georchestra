@@ -9,7 +9,7 @@
 /**
  * Class: OpenLayers.Control.ScaleBar
  * A scale bar styled with CSS.
- * 
+ *
  * Inherits from:
  *  - <OpenLayers.Control>
  */
@@ -20,11 +20,11 @@ OpenLayers.Control.ScaleBar = OpenLayers.Class(OpenLayers.Control, {
      * {Element}
      */
     element: null,
-    
+
     /**
      * Property: scale
      * {Float} Scale denominator (1 / X) - set on update
-     */    
+     */
     scale: 1,
 
     /**
@@ -83,21 +83,21 @@ OpenLayers.Control.ScaleBar = OpenLayers.Class(OpenLayers.Control, {
      * left, center, or right supported
      */
     align: 'left',
-    
+
     /**
      * APIProperty: div
      * {Element} Optional DOM element to become the container for the scale
      *     bar.  If not provided, one will be created.
      */
     div: null,
-    
+
     /**
      * Property: scaleText
      * Text to prefix the scale denominator used as a title for the scale bar
      *     element.  Default is "scale 1:".
      */
     scaleText: "scale 1:",
-    
+
     /**
      * Property: thousandsSeparator
      * Thousands separator for formatted scale bar measures.  The title
@@ -134,7 +134,7 @@ OpenLayers.Control.ScaleBar = OpenLayers.Class(OpenLayers.Control, {
      *     will be determined based on the <defaultStyles> object.
      */
     limitedStyle: false,
-    
+
     /**
      * Property: customStyle
      * {Object} For cases where <limitedStyle> is true, a customStyle property
@@ -181,7 +181,7 @@ OpenLayers.Control.ScaleBar = OpenLayers.Class(OpenLayers.Control, {
             height: 15, width: 35, top: 5, left: 10
         }
     },
-    
+
     /**
      * Property: appliedStyles
      * For cases where <limitedStyle> is true, scale bar element offsets will
@@ -194,7 +194,7 @@ OpenLayers.Control.ScaleBar = OpenLayers.Class(OpenLayers.Control, {
      * Constructor: OpenLayers.Control.ScaleBar
      * Create a new scale bar instance.
      *
-     * Parameters: 
+     * Parameters:
      * options - {Object} Optional object whose properties will be set on this
      *     object.
      */
@@ -224,7 +224,7 @@ OpenLayers.Control.ScaleBar = OpenLayers.Class(OpenLayers.Control, {
         this.element.appendChild(this.labelContainer);
         this.element.appendChild(this.numbersContainer);
     },
-    
+
     /**
      * APIMethod: destroy
      * Destroy the control.
@@ -237,7 +237,7 @@ OpenLayers.Control.ScaleBar = OpenLayers.Class(OpenLayers.Control, {
 
     /**
      * Method: draw
-     */    
+     */
     draw: function() {
         OpenLayers.Control.prototype.draw.apply(this, arguments);
         // determine offsets for graphic elements
@@ -278,13 +278,13 @@ OpenLayers.Control.ScaleBar = OpenLayers.Class(OpenLayers.Control, {
         this.element.style.height = vertDisp + 'px';
         this.xOffsetSingleLine = this.styleValue('LabelBoxSingleLine', 'width') +
                                  this.styleValue('LabelBoxSingleLine', 'left');
-        
+
         this.div.appendChild(this.element);
         this.map.events.register('moveend', this, this.onMoveend);
         this.update();
         return this.div;
     },
-    
+
     /**
      * Method: onMoveend
      * Registered as a listener for "moveend".
@@ -292,7 +292,7 @@ OpenLayers.Control.ScaleBar = OpenLayers.Class(OpenLayers.Control, {
     onMoveend: function() {
         this.update();
     },
-   
+
     /**
      * APIMethod: update
      * Update the scale bar after modifying properties.
@@ -421,7 +421,7 @@ OpenLayers.Control.ScaleBar = OpenLayers.Class(OpenLayers.Control, {
         labelBox.appendChild(document.createTextNode(labelText));
         this.labelContainer.appendChild(labelBox);
     },
-    
+
     /**
      * Method: createElement
      * Create a scale bar element.  These are absolutely positioned with
@@ -432,7 +432,7 @@ OpenLayers.Control.ScaleBar = OpenLayers.Class(OpenLayers.Control, {
      * text - {String} Text for child node.
      * left - {Float} Left offset.
      * width - {Float} Optional width.
-     * 
+     *
      * Returns:
      * {Element} A scale bar element.
      */
@@ -451,7 +451,7 @@ OpenLayers.Control.ScaleBar = OpenLayers.Class(OpenLayers.Control, {
         }
         return element;
     },
-    
+
     /**
      * Method: getComp
      * Get comparison matrix.
@@ -504,7 +504,7 @@ OpenLayers.Control.ScaleBar = OpenLayers.Class(OpenLayers.Control, {
         }
         return comp;
     },
-    
+
     /**
      * Method: setSubProps
      * Set subdivision properties based on comparison matrix.
@@ -525,7 +525,7 @@ OpenLayers.Control.ScaleBar = OpenLayers.Class(OpenLayers.Control, {
                         pixels: ppdu * compNum.value,
                         units: system.units[unitIndex],
                         abbr: system.abbr[unitIndex],
-                        dec: compNum.dec 
+                        dec: compNum.dec
                     };
                     score = compNum.score;
                     tie = compNum.tie;
@@ -533,7 +533,7 @@ OpenLayers.Control.ScaleBar = OpenLayers.Class(OpenLayers.Control, {
             }
         }
     },
-    
+
     /**
      * Method: styleValue
      * Get an integer value associated with a particular selector and key.
@@ -549,7 +549,7 @@ OpenLayers.Control.ScaleBar = OpenLayers.Class(OpenLayers.Control, {
             value = this.appliedStyles[selector][key];
         } else {
             selector = "." + this.displayClass + selector;
-            rules: 
+            rules:
             for(var i = document.styleSheets.length - 1; i >= 0; --i) {
                 var sheet = document.styleSheets[i];
                 if(!sheet.disabled) {
@@ -641,7 +641,7 @@ OpenLayers.Control.ScaleBar = OpenLayers.Class(OpenLayers.Control, {
         }
         return num;
     },
-    
+
     CLASS_NAME: "OpenLayers.Control.ScaleBar"
-    
+
 });

@@ -47,7 +47,7 @@ GEOR.ajaxglobal = (function() {
      * {Function} an alias to OpenLayers.i18n
      */
     var tr = null;
-    
+
     /**
      * Method: handleFailure
      * Handles Ajax errors.
@@ -81,8 +81,8 @@ GEOR.ajaxglobal = (function() {
                 if (options.request.errorText) {
                     var t = options.request.errorText;
                     if (t.length > 1000) {
-                        t = t.substring(0,500).replace(/(\r\n|\n|\r)/gm,"<br />") + 
-                            '<br /><br />... [snip] ...<br /><br />' + 
+                        t = t.substring(0,500).replace(/(\r\n|\n|\r)/gm,"<br />") +
+                            '<br /><br />... [snip] ...<br /><br />' +
                             t.substring(t.length-500).replace(/(\r\n|\n|\r)/gm,"<br />");
                     }
                     text += '<br /><br />'+t;
@@ -96,7 +96,7 @@ GEOR.ajaxglobal = (function() {
         }
         if (text) {
             GEOR.util.errorDialog({
-                title: tr("Error")+ ((options.request.status < 600) ? 
+                title: tr("Error")+ ((options.request.status < 600) ?
                     ' HTTP ' + options.request.status : ''),
                 width: width,
                 msg: tr("An error occured.<br />") + text
@@ -108,7 +108,7 @@ GEOR.ajaxglobal = (function() {
      * Method: handleComplete
      * Handles completion of Ajax requests
      *
-     * Parameters: 
+     * Parameters:
      * options - {object} hash with options:
      *    request - {XMLHttpRequest} The XHR object.
      *    config - {Object} The request config.
@@ -118,7 +118,7 @@ GEOR.ajaxglobal = (function() {
      * {Boolean} false : we never automatically run other callbacks (success/failure)
      */
     var handleComplete = function(options) {
-    
+
         GEOR.waiter.hide();
         var request = options.request, runCallbacks = true;
 

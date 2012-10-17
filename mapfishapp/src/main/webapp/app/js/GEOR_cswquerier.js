@@ -25,14 +25,14 @@ Ext.namespace("GEOR");
 
 /** api: constructor
  *  .. class:: GEOR.CustomCSWRecordsReader(meta, recordType)
- *  
+ *
  *      :arg meta: ``Object`` Reader configuration.
  *      :arg recordType: ``Array or Ext.data.Record`` An array of field
  *          configuration objects or a record object.
  *
- *      Create a new custom reader object, which helps converting CSWRecords 
+ *      Create a new custom reader object, which helps converting CSWRecords
  *      to custom Ext.data.Records suitable for our custom Ext.Dataview
- *      
+ *
  */
 GEOR.CustomCSWRecordsReader = function(meta, recordType) {
     meta = meta || {};
@@ -58,7 +58,7 @@ Ext.extend(GEOR.CustomCSWRecordsReader, Ext.data.DataReader, {
      *      records.
      *  :return: ``Object``  An object with ``records`` and ``totalRecords``
      *      properties.
-     *  
+     *
      *  From an array of ``GeoExt.data.CSWRecords`` objects create a data block
      *  containing :class:`Ext.data.Record` objects.
      */
@@ -67,7 +67,7 @@ Ext.extend(GEOR.CustomCSWRecordsReader, Ext.data.DataReader, {
         if(rs) {
             var recordType = this.recordType;
             var i, r, values, thumbnailURL;
-            
+
             for(i = 0, lenI = rs.length; i < lenI; i++) {
                 r = rs[i];
                 thumbnailURL = null;
@@ -79,17 +79,17 @@ Ext.extend(GEOR.CustomCSWRecordsReader, Ext.data.DataReader, {
                             thumbnailURL = item.value;
                         }
                     });
-                    
+
                     // multiple WMS can be found in one csw:record
                     Ext.each(r.get('URI'), function (item) {
                         if((item.protocol == "OGC:WMS-1.1.1-http-get-map") &&
                             item.name && item.value) {
 
                             var tip = 'Couche '+item.name+' sur '+item.value;
-                            var description = (item.description) ? 
-                                '<span ext:qtip="'+tip+'">'+item.description+'</span>' : 
+                            var description = (item.description) ?
+                                '<span ext:qtip="'+tip+'">'+item.description+'</span>' :
                                 tip;
-                                
+
                             values = {
                                 "layer_name": item.name,
                                 "layer_description": description,
@@ -120,7 +120,7 @@ GEOR.cswquerier = (function() {
     /*
      * Private
      */
-    
+
     /*
      * Ext.util.Observable for firing events
      */
@@ -135,7 +135,7 @@ GEOR.cswquerier = (function() {
          */
         "selectionchanged"
     );
-    
+
     /**
      * Property: GeoExt.data.CSWRecordsStore
      * {GeoExt.data.CSWRecordsStore} store reading its records from the CSW service
@@ -148,19 +148,19 @@ GEOR.cswquerier = (function() {
      * This is the one that is bound to the Ext.Dataview
      */
     var customStore;
-    
+
     /**
      * Property: mask
      * {Ext.LoadMask} the dataview mask
      */
     var mask;
-    
+
     /**
      * Property: textField
      * {Ext.app.FreetextField} the freetext field
      */
     var textField;
-    
+
     /**
      * Property: southPanel
      * {Ext.Panel} the panel where the results count is displayed
@@ -172,7 +172,7 @@ GEOR.cswquerier = (function() {
      * {Function} an alias to OpenLayers.i18n
      */
     var tr = null;
-    
+
     /**
      * Method: onCSWRecordsStoreLoad
      * Callback on CSWRecordsStore load event
@@ -181,7 +181,7 @@ GEOR.cswquerier = (function() {
      * s - {GeoExt.data.CSWRecordsStore} the store
      * cswRecords - {Array(GeoExt.data.CSWRecord)} loaded records
      */
-    var onCSWRecordsStoreLoad = function(s, cswRecords) { 
+    var onCSWRecordsStoreLoad = function(s, cswRecords) {
         // transfer results to customStore:
         customStore.loadData(cswRecords);
         // scroll dataview to top:
@@ -212,7 +212,7 @@ GEOR.cswquerier = (function() {
                             tr('more') + '</a></p>',
 
                     '</td><td width="190" style="text-align:center;" ext:qtip="'+tr("Clic to select or deselect the layer")+'">',
-                        // tried with the "html only" solution provided on 
+                        // tried with the "html only" solution provided on
                         // http://stackoverflow.com/questions/980855/inputting-a-default-image-in-case-the-src-arribute-of-an-html-img-is-not-valid
                         // but the headers sent by GN are incorrect for the image to display as an HTML object tag
                         '<img src="{[this.thumbnailURL(values)]}" class="thumb" onerror="this.src=\'app/img/broken.png\';"/>',
@@ -220,7 +220,7 @@ GEOR.cswquerier = (function() {
                 '</div>',
             '</tpl>'
         ].join('');
-        
+
         var context = {
             "metadataURL": function(values) {
                 // this part is 100% geonetwork specific:
@@ -252,7 +252,7 @@ GEOR.cswquerier = (function() {
                 );
             }
         };
-        
+
         return new Ext.XTemplate(tpl, context);
     };
 
@@ -267,7 +267,7 @@ GEOR.cswquerier = (function() {
         var text,
             mdCount = CSWRecordsStore.getCount(),
             wmsCount = s.getCount();
-        
+
         if (mdCount) {
             if (wmsCount == 0) {
                 text = tr("Not any layer");
@@ -292,7 +292,7 @@ GEOR.cswquerier = (function() {
         }
         southPanel.body.dom.innerHTML = "<p>"+text+"</p>";
     };
-    
+
     /*
      * Public
      */
@@ -301,22 +301,22 @@ GEOR.cswquerier = (function() {
          * Observable object
          */
         events: observable,
-        
+
         /**
          * APIMethod: getPanel
          * Return the panel for the CSW browser tab.
          *
          * Parameters:
          * options - {Object} options applied to panel
-         * 
+         *
          * Returns:
          * {Ext.Panel}
          */
         getPanel: function(options) {
-            
+
             if (!CSWRecordsStore) {
                 tr = OpenLayers.i18n;
-                
+
                 CSWRecordsStore = new GeoExt.data.CSWRecordsStore({
                     url: GEOR.config.DEFAULT_CSW_URL,
                     listeners: {
@@ -327,22 +327,22 @@ GEOR.cswquerier = (function() {
                             dataview.clearSelections();
                             // show mask:
                             mask && mask.show();
-                        }, 
+                        },
                         "exception": function() {
                             mask && mask.hide();
                         }
                     }
                 });
-                
+
                 customStore = new Ext.data.Store({
-                    // all the job -- converting + filtering records -- 
+                    // all the job -- converting + filtering records --
                     // is done in this custom reader:
                     reader: new GEOR.CustomCSWRecordsReader(),
                     listeners: {
                         "load": onCustomStoreLoad
                     }
                 });
-                
+
                 dataview = new Ext.DataView({
                     store: customStore,
                     multiSelect: true,
@@ -363,7 +363,7 @@ GEOR.cswquerier = (function() {
                         }
                     }
                 });
-                
+
                 textField = new Ext.app.FreetextField({
                     store: CSWRecordsStore,
                     callback: function(r, options, success) {
@@ -375,8 +375,8 @@ GEOR.cswquerier = (function() {
                         }
                     }
                 });
-                
-                southPanel = new Ext.Panel({ 
+
+                southPanel = new Ext.Panel({
                     region: 'south',
                     border: false,
                     height: 25,
@@ -455,7 +455,7 @@ GEOR.cswquerier = (function() {
                 }, southPanel]
             }, options));
         },
-        
+
         /**
          * APIMethod: clearSelection
          * Clears the current record selection
@@ -486,7 +486,7 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
     width: 300,
     hasSearch: false,
     paramName: 'query',
-    
+
     cancelRequest: function() {
         var proxy = this.store.proxy;
         var conn = proxy.getConnection();
@@ -508,7 +508,7 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
             this.focus();
         }
     },
-    
+
     createFilter: function() {
         // see http://osgeo-org.1560.n6.nabble.com/CSW-GetRecords-problem-with-spaces-tp3862749p3862750.html
         var v = this.getValue(),
@@ -523,7 +523,7 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
             if (word) {
                 filters.push(
                     new OpenLayers.Filter.Comparison({
-                        type: "~", 
+                        type: "~",
                         property: "AnyText",
                         value: '*'+word+'*'
                     })
@@ -543,7 +543,7 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
     // search
     onTrigger2Click: function() {
         this.cancelRequest();
-        
+
         this.store.load({
             params: {
                 xmlData: new OpenLayers.Format.CSWGetRecords().write({
