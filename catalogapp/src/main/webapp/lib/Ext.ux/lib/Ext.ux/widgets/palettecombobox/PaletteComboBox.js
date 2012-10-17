@@ -117,7 +117,7 @@ Ext.ux.PaletteComboBox = Ext.extend(Ext.form.ComboBox, {
 
     setValue: function(value) {
         Ext.ux.PaletteComboBox.superclass.setValue.call(this, value);
-        
+
         this.setIconCls();
 
         // don't show the color value in the input

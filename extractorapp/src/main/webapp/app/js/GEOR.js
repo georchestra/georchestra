@@ -29,7 +29,7 @@
 Ext.namespace("GEOR");
 
 (function() {
-  
+
     /**
      * Property: tr
      * {Function} an alias to OpenLayers.i18n
@@ -52,7 +52,7 @@ Ext.namespace("GEOR");
             GEOR.layerstree.extract(email, b);
         }
     };
-   
+
     /**
      * Handler for extract all checked layers button.
      */
@@ -130,7 +130,7 @@ Ext.namespace("GEOR");
             ok: tr("OK"),
             cancel: tr("Cancel")
         });
-        
+
         /*
          * Initialize the application.
          */
@@ -142,13 +142,13 @@ Ext.namespace("GEOR");
         /*
          * Create the page's layout.
          */
-        
+
         // the header
-        var vpItems = GEOR.header ? 
+        var vpItems = GEOR.header ?
             [{
                 xtype: "box",
                 id: "geor_header",
-                region: "north", 
+                region: "north",
                 height: 90,
                 el: "go_head"
             }] : [];
@@ -208,7 +208,7 @@ Ext.namespace("GEOR");
                         border: false
                     },
                     border: false
-                },                    
+                },
                 items: [{
                     layout: "fit",
                     title: tr("Configuration"),
@@ -242,8 +242,8 @@ Ext.namespace("GEOR");
                     ]
                 }]
             }]
-        }); 
-        
+        });
+
         // the viewport
         new Ext.Viewport({
             layout: "border",
@@ -260,11 +260,11 @@ Ext.namespace("GEOR");
                 }
             }
         });
-        
+
         var saveLayerOptions = function() {
             GEOR.layerstree.saveExportOptions(GEOR.layeroptions.getOptions());
         };
-        
+
         GEOR.layerstree.events.on({
             "beforelayerchange": saveLayerOptions,
             "beforeextract": saveLayerOptions,

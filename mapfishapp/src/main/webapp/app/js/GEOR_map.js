@@ -141,7 +141,7 @@ GEOR.map = (function() {
      * {OpenLayers.Map} The map instance.
      */
     var createMap = function() {
-        // max extent can be overriden in the WMC, 
+        // max extent can be overriden in the WMC,
         // see GEOR.initmap and startup WMC file
         var options = {
             projection: GEOR.config.MAP_SRS,
@@ -191,7 +191,7 @@ GEOR.map = (function() {
      * when necessary (so the corresponding layers don't appear
      * in the legend panel).
      * Also modifies attribution field if necessary.
-     * Generally speaking, handles every operation needed before 
+     * Generally speaking, handles every operation needed before
      * the records are added to the layerStore.
      *
      * Parameters:
@@ -203,37 +203,37 @@ GEOR.map = (function() {
      */
     var filter = function(records) {
         var errors = [], keep = [];
-        
+
         Ext.each(records, function(r) {
             var error = checkLayer(r);
             if (error) {
-                // these are just warnings in fact, not errors 
+                // these are just warnings in fact, not errors
                 // see http://applis-bretagne.fr/redmine/issues/1749
                 errors.push(error);
-            } 
-            
+            }
+
             /*
             Lesson learned with http://applis-bretagne.fr/redmine/issues/2886 :
             Do not try to be more intelligent than the WMS server
-            
-            // Note: queryable is required in addition to opaque, 
+
+            // Note: queryable is required in addition to opaque,
             // because opaque is not a standard WMC feature
             // This enables us to remove rasters from legend panel
-            if (r.get("opaque") === true || r.get("queryable") === false) { 
+            if (r.get("opaque") === true || r.get("queryable") === false) {
                 // this record is valid, set its "hideInLegend"
                 // data field to true if the corresponding layer
                 // is a raster layer, i.e. its "opaque" data
                 // field is true
                 r.set("hideInLegend", true);
-                // we set opaque to true so that non queryable 
+                // we set opaque to true so that non queryable
                 // layers are considered as baselayers
                 r.set("opaque", true);
             }
             */
-            // Note that the ultimate solution would be to do a getCapabilities 
+            // Note that the ultimate solution would be to do a getCapabilities
             // request for each OGC server advertised in the WMC
-            
-            
+
+
             // Format attribution if required:
             var attr = r.get('attribution');
             var layer = r.get('layer');
@@ -249,18 +249,18 @@ GEOR.map = (function() {
                     title: a || GEOR.config.DEFAULT_ATTRIBUTION
                 });
             }
-            
+
             // set layer.metadataURL if record has metadataURLs
             // so that this can be saved in a WMC context
             if (r.get('metadataURLs') && r.get('metadataURLs')[0]) {
                 layer.metadataURL = [r.get('metadataURLs')[0]];
             }
-            
+
             // Errors should be non-blocking since http://applis-bretagne.fr/redmine/issues/1749
             // so we "keep" every layer, and only display a warning message
             keep.push(r);
         });
-        
+
         if (errors.length > 0) {
             GEOR.util.infoDialog({
                 title: tr("Warning after loading layer"),
@@ -274,17 +274,17 @@ GEOR.map = (function() {
      * Method: checkLayer
      * Checks if the layer is valid (i.e. can be added to the LayerStore).
      * Doesn't return anything if the layer is valid, returns an error message
-     *    if not. 
+     *    if not.
      *
      * Returns:
      * {String} An error message.
      */
     var checkLayer = function(r) {
         var prefix = tr("The <b>NAME</b> layer could not appear for that reason: ",
-            {'name': r.get('title')}); 
+            {'name': r.get('title')});
         var minScale = r.get('minScale');
         var maxScale = r.get('maxScale');
-        
+
         // check if min and max scales are valid (i.e. positive)
         if ((minScale && minScale < 0) || (maxScale && maxScale < 0)) {
             return  prefix + tr("Min/max visibility scales are invalid");
@@ -299,15 +299,15 @@ GEOR.map = (function() {
 
         // check if layer extent and map extent match
         if (r.get('llbbox')) {
-            var llbbox = r.get('llbbox'); 
+            var llbbox = r.get('llbbox');
             llbbox = new OpenLayers.Bounds(llbbox[0], llbbox[1], llbbox[2], llbbox[3]);
-            
+
             var mapbbox = map.getMaxExtent().clone();
             mapbbox.transform(
                 map.getProjectionObject(),
                 new OpenLayers.Projection("EPSG:4326")
             );
-            
+
             if (!llbbox.intersectsBounds(mapbbox)) {
                 return prefix + tr("Geografic extent does not match map extent");
             }

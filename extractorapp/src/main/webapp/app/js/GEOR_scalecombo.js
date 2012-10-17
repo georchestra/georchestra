@@ -38,11 +38,11 @@ GEOR.scalecombo = (function() {
          * Get the scale combo config.
          *
          * Parameters:
-         * map - {OpenLayers.Map} 
+         * map - {OpenLayers.Map}
          */
         create: function(map) {
             var store = new GeoExt.data.ScaleStore({
-                map: map    
+                map: map
             });
 
             // the combo config that we'll return
@@ -80,7 +80,7 @@ GEOR.scalecombo = (function() {
                     );
                 }
             };
-            
+
             // register a zoomend listener on the map to update
             // the combo value
             map.events.register('zoomend', this, setComboValue);

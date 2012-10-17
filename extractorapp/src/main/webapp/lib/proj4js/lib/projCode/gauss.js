@@ -3,7 +3,7 @@ Proj4js.Proj.gauss = {
 
   init : function() {
     sphi = Math.sin(this.lat0);
-    cphi = Math.cos(this.lat0);  
+    cphi = Math.cos(this.lat0);
     cphi *= cphi;
     this.rc = Math.sqrt(1.0 - this.es) / (1.0 - this.es * sphi * sphi);
     this.C = Math.sqrt(1.0 + this.es * cphi * cphi / (1.0 - this.es));

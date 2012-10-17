@@ -5,12 +5,12 @@
  */
 
 (function() {
-    
+
     /**
      * Function assertEqual
      * Test two objects for equivalence (based on ==).  Throw an exception
      *     if not equivalent.
-     * 
+     *
      * Parameters:
      * got - {Object}
      * expected - {Object}
@@ -33,29 +33,29 @@
             throw msg + ": got '" + got + "' but expected '" + expected + "'";
         }
     }
-    
+
     /**
      * Function assertGeometryEqual
      * Test two geometries for equivalence.  Geometries are considered
      *     equivalent if they are of the same class, and given component
      *     geometries, if all components are equivalent. Throws a message as
      *     exception if not equivalent.
-     * 
+     *
      * Parameters:
      * got - {OpenLayers.Geometry}
      * expected - {OpenLayers.Geometry}
      * options - {Object} Optional object for configuring test options.
      */
     function assertGeometryEqual(got, expected, options) {
-        
+
         var OpenLayers = Test.AnotherWay._g_test_iframe.OpenLayers;
 
         // compare types
         assertEqual(typeof got, typeof expected, "Object types mismatch");
-        
+
         // compare classes
         assertEqual(got.CLASS_NAME, expected.CLASS_NAME, "Object class mismatch");
-        
+
         if(got instanceof OpenLayers.Geometry.Point) {
             // compare points
             assertEqual(got.x, expected.x, "x mismatch");
@@ -79,7 +79,7 @@
         }
         return true;
     }
-    
+
     /**
      * Function: Test.AnotherWay._test_object_t.geom_eq
      * Test if two geometry objects are equivalent.  Tests for same geometry
@@ -89,7 +89,7 @@
      * (code)
      * t.geom_eq(got, expected, message);
      * (end)
-     * 
+     *
      * Parameters:
      * got - {OpenLayers.Geometry} Any geometry instance.
      * expected - {OpenLayers.Geometry} The expected geometry.
@@ -97,7 +97,7 @@
      * options - {Object} Optional object for configuring test options.
      */
     var proto = Test.AnotherWay._test_object_t.prototype;
-    proto.geom_eq = function(got, expected, msg, options) {        
+    proto.geom_eq = function(got, expected, msg, options) {
         // test geometries for equivalence
         try {
             assertGeometryEqual(got, expected, options);
@@ -106,5 +106,5 @@
             this.fail(msg + ": " + err);
         }
     }
-    
+
 })();

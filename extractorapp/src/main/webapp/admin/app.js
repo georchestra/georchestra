@@ -1,5 +1,5 @@
 
-/* 
+/*
 TODO:
  - disable buttons on cancel pressed
  - FIX Uncaught TypeError: Cannot call method 'getId' of undefined
@@ -48,10 +48,10 @@ Ext.define('Task', {
         name: 'spec' // original json spec
     },{
         name: 'request_ts', // original request timestamp
-        type: 'string' 
+        type: 'string'
     },{
         name: 'begin_ts', // task starts being processed timestamp
-        type: 'string' 
+        type: 'string'
     },{
         name: 'end_ts', // task ends up timestamp
         type: 'string'
@@ -70,7 +70,7 @@ Ext.define('Task', {
 });
 
 Ext.onReady(function(){
-    
+
     var selectedRecord;
 
     var store = Ext.create('Ext.data.Store', {
@@ -90,7 +90,7 @@ Ext.onReady(function(){
         	}
         }
     });
-    
+
     var grid = Ext.create('Ext.grid.Panel', {
         renderTo: document.body,
         plugins: [{
@@ -99,7 +99,7 @@ Ext.onReady(function(){
                 '<p><b>Couches :</b> {[this.formatSpec(values.spec)]}</p>',
                 '<p><b>Requête :</b> {request_ts}</p>',
                 '<p><b>Début de traitement :</b> {begin_ts}</p>',
-                '<p><b>Fin de traitement :</b> {end_ts}</p>', 
+                '<p><b>Fin de traitement :</b> {end_ts}</p>',
             {
                 formatSpec: function(spec) {
                     var out = [];
@@ -173,7 +173,7 @@ Ext.onReady(function(){
                         scope: this,
                         callback: function() {
                             if (arguments[2] === true) {
-                                Ext.example.msg('Priorité du job modifiée', 
+                                Ext.example.msg('Priorité du job modifiée',
                                     'Le job '+selectedRecord.get('uuid')+
                                     ' est passé en priorité '+parseInt(p+1));
                             } else {
@@ -196,7 +196,7 @@ Ext.onReady(function(){
                         scope: this,
                         callback: function() {
                             if (arguments[2] === true) {
-                                Ext.example.msg('Priorité du job modifiée', 
+                                Ext.example.msg('Priorité du job modifiée',
                                     'Le job '+selectedRecord.get('uuid')+
                                     ' est passé en priorité '+parseInt(p-1));
                             } else {
@@ -212,18 +212,18 @@ Ext.onReady(function(){
                 disabled: true,
                 iconCls: 'icon-pause',
                 handler: function() {
-                    selectedRecord.set('status', 
+                    selectedRecord.set('status',
                         (selectedRecord.get('status') == 'PAUSED') ? 'WAITING' : 'PAUSED');
                     selectedRecord.save({
                         scope: this,
                         callback: function() {
                             if (arguments[2] === true) {
                                 if (selectedRecord.get('status') == 'PAUSED') {
-                                    Ext.example.msg('Job mis en pause', 
+                                    Ext.example.msg('Job mis en pause',
                                         'Le job '+selectedRecord.get('uuid')+
                                         ' a été mis en pause');
                                 } else {
-                                    Ext.example.msg('Job ajouté à la queue', 
+                                    Ext.example.msg('Job ajouté à la queue',
                                         'Le job '+selectedRecord.get('uuid')+
                                         ' a été remis dans la queue');
                                 }
@@ -245,7 +245,7 @@ Ext.onReady(function(){
                         scope: this,
                         callback: function() {
                             if (arguments[2] === true) {
-                                Ext.example.msg('Job annulé', 
+                                Ext.example.msg('Job annulé',
                                     'Le job '+selectedRecord.get('uuid')+
                                     ' a été annulé');
                             } else {
@@ -261,7 +261,7 @@ Ext.onReady(function(){
 
     // CODE which polls the server every X seconds
     var sm = grid.getSelectionModel();
-    
+
     window.setInterval(function() {
         // get selection (one item)
         // refresh store:
@@ -275,7 +275,7 @@ Ext.onReady(function(){
             }
         });
     }, 10000);
-    
+
     // handle button activation:
     sm.on('selectionchange', function(sm, selections){
         selectedRecord = (selections.length) ? selections[0] : null;
@@ -288,5 +288,5 @@ Ext.onReady(function(){
             }
         });
     });
-    
+
 });

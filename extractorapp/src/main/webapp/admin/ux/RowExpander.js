@@ -83,7 +83,7 @@ Ext.define('Ext.ux.RowExpander', {
         // </debug>
         // TODO: if XTemplate/Template receives a template as an arg, should
         // just return it back!
-        var rowBodyTpl = (this.rowBodyTpl instanceof Ext.Template) ? 
+        var rowBodyTpl = (this.rowBodyTpl instanceof Ext.Template) ?
             this.rowBodyTpl : Ext.create('Ext.XTemplate', this.rowBodyTpl),
             features = [{
                 ftype: 'rowbody',

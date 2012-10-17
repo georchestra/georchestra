@@ -32,7 +32,7 @@ GEOR.cswbrowser = (function() {
     /*
      * Private
      */
-    
+
     var observable = new Ext.util.Observable();
     observable.addEvents(
         /**
@@ -44,7 +44,7 @@ GEOR.cswbrowser = (function() {
          */
         "selectionchanged"
     );
-    
+
     /**
      * Property: mask
      * {Ext.LoadMask} the catalogue's keywords panel mask
@@ -62,7 +62,7 @@ GEOR.cswbrowser = (function() {
      * {Ext.tree.TreeSorter} the tree sorter
      */
     var treeSorter = null;
-    
+
     /**
      * Property: tree
      * {Ext.tree.TreePanel} the tree panel
@@ -74,7 +74,7 @@ GEOR.cswbrowser = (function() {
      * {Function} an alias to OpenLayers.i18n
      */
     var tr = null;
-    
+
     /**
      * Method: filterCswRecord
      * Keep only WMS-1.1.1 records with a correct layer name and server URL
@@ -98,10 +98,10 @@ GEOR.cswbrowser = (function() {
                         if (item.description) {
                             name = item.description;
                         } else if (item.name) {
-                            // should always be the case 
+                            // should always be the case
                             name = tr("NAME layer", {'name': item.name});
                         }
-                        
+
                         var mdTitle = (record.title && record.title[0]) ?
                                 record.title[0].value : tr("Metadata without a name");
 
@@ -344,14 +344,14 @@ GEOR.cswbrowser = (function() {
          * Observable object
          */
         events: observable,
-        
+
         /**
          * APIMethod: getPanel
          * Return the panel for the CSW browser tab.
          *
          * Parameters:
          * options - {Object} options applied to panel
-         * 
+         *
          * Returns:
          * {Ext.Panel}
          */
@@ -371,7 +371,7 @@ GEOR.cswbrowser = (function() {
             var registerCheckbox = function(node){
                 if(!node.hasListener("checkchange")) {
                     node.on("checkchange", function(node, checked) {
-                        observable.fireEvent("selectionchanged", 
+                        observable.fireEvent("selectionchanged",
                             tree.getChecked('record'));
                     });
                 }
@@ -427,10 +427,10 @@ GEOR.cswbrowser = (function() {
                         v['name'] = GEOR.config.THESAURUS_NAME;
                         v['key'] = GEOR.config.THESAURUS_NAME;
                         store.add([new recordType(v)]);
-                        
+
                         var regexp = new RegExp('.rdf');
                         store.each(function(r) {
-                            r.set('name', 
+                            r.set('name',
                                 GEOR.util.Capitalize(
                                     r.get('name')
                                 ).replace(regexp, '')
@@ -472,7 +472,7 @@ GEOR.cswbrowser = (function() {
                 }
             }, options));
         },
-        
+
         /**
          * APIMethod: clearSelection
          * Clears the tree panel selection

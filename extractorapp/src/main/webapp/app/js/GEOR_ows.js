@@ -39,7 +39,7 @@ GEOR.ows = (function() {
     /*
      * Private
      */
-    
+
     /**
      * Constant: defaultRecordFields
      * {Array} The fields shared by each layer record in this app.
@@ -70,7 +70,7 @@ GEOR.ows = (function() {
         {name: "metadataURLs"}, // array
         {name: "hideInLegend", type: "boolean", defaultValue: false}
     ];
-    
+
     /**
      * Constant: WMS_BASE_PARAMS
      * {Object} The base params for WMS requests.
@@ -166,7 +166,7 @@ GEOR.ows = (function() {
          * DescribeFeatureType responses.
          */
         matchGeomProperty: /^gml:(Multi)?(Point|LineString|Polygon|Curve|Surface|Geometry)PropertyType$/,
-        
+
         /**
          * Property: defaultLayerOptions
          * {Object} Default WMS layer options
@@ -215,7 +215,7 @@ GEOR.ows = (function() {
          * the first record whose owsType is "WFS".
          *
          * Parameters:
-         * records - {Array({Ext.data.Record})} Array of 
+         * records - {Array({Ext.data.Record})} Array of
          *     records.
          *
          * Returns
@@ -323,15 +323,15 @@ GEOR.ows = (function() {
          */
         WMSCapabilities: function(options) {
             options = options || {};
-            var layerOptions = (options.storeOptions && 
-                options.storeOptions.layerOptions) ? 
+            var layerOptions = (options.storeOptions &&
+                options.storeOptions.layerOptions) ?
                     options.storeOptions.layerOptions : {};
             var storeOptions = Ext.applyIf({
                 baseParams: Ext.applyIf({
                     "REQUEST": "GetCapabilities"
                 }, WMS_BASE_PARAMS),
-                layerOptions: Ext.apply({}, 
-                    layerOptions, 
+                layerOptions: Ext.apply({},
+                    layerOptions,
                     GEOR.ows.defaultLayerOptions
                 ),
                 fields: defaultRecordFields

@@ -8,17 +8,17 @@ Ext.namespace("Ext.ux.tree");
 
 /** api: constructor
  *  .. class:: TreeRecordNode(config)
- * 
+ *
  *      A subclass of ``Ext.tree.TreeNode`` that is connected to an
  *      ``Ext.data.Record`` by setting the node's record property.
- * 
+ *
  *      The node's text property defaults to the record 'text' attribute.
- * 
+ *
  *      To use this node type in a ``TreePanel`` config, set ``nodeType`` to
  *      "ux_treerecordnode".
  */
 Ext.ux.tree.TreeRecordNode = Ext.extend(Ext.tree.TreeNode, {
-    
+
     /** api: config[store]
      *  :class:`Ext.data.Store`
      *  The store containing the record that this node represents.
@@ -30,7 +30,7 @@ Ext.ux.tree.TreeRecordNode = Ext.extend(Ext.tree.TreeNode, {
      *  The record this node is bound to.
      */
     record: null,
-    
+
     /** api: config[childNodeType]
      *  ``Ext.tree.Node or String``
      *  Node class or nodeType of childnodes for this node. A node type provided
@@ -38,7 +38,7 @@ Ext.ux.tree.TreeRecordNode = Ext.extend(Ext.tree.TreeNode, {
      *  will be run by this node in the context of this node, to create child nodes.
      */
     childNodeType: null,
-    
+
     /** private: method[constructor]
      *  Private constructor override.
      */
@@ -59,7 +59,7 @@ Ext.ux.tree.TreeRecordNode = Ext.extend(Ext.tree.TreeNode, {
     render: function(bulkRender) {
         if (!this.rendered) {
             var ui = this.getUI();
-            
+
             if(this.record) {
                 if(!this.text) {
                     this.text = this.record.get('text'); // which member to display?
@@ -71,14 +71,14 @@ Ext.ux.tree.TreeRecordNode = Ext.extend(Ext.tree.TreeNode, {
             } else {
                 ui.hide();
             }
-            
+
             if(this.store instanceof Ext.data.Store) {
                 this.addStoreEventHandlers();
-            }            
+            }
         }
         Ext.ux.tree.TreeRecordNode.superclass.render.call(this, bulkRender);
     },
-    
+
     /** private: method[addStoreEventHandlers]
      *  Adds handlers that make sure the node disappeares when the record is
      *  removed from the store, and appears when it is re-added.
@@ -95,7 +95,7 @@ Ext.ux.tree.TreeRecordNode = Ext.extend(Ext.tree.TreeNode, {
      *  :param store: ``Ext.data.Store``
      *  :param records: ``Array(Ext.data.Record)``
      *  :param index: ``Nmber``
-     *  handler for add events on the store 
+     *  handler for add events on the store
      */
     onStoreAdd: function(store, records, index) {
         for(var i=0; i<records.length; ++i) {
@@ -109,14 +109,14 @@ Ext.ux.tree.TreeRecordNode = Ext.extend(Ext.tree.TreeNode, {
      *  :param store: ``Ext.data.Store``
      *  :param record: ``Ext.data.Record``
      *  :param index: ``Nmber``
-     *  handler for remove events on the store 
+     *  handler for remove events on the store
      */
     onStoreRemove: function(store, record, index) {
         if(this.record === record) {
             this.getUI().hide();
         }
     },
-    
+
     /** private: method[addChildNodes]
      *  Calls the add method of a node type configured as ``childNodeType``
      *  to add children.
@@ -128,7 +128,7 @@ Ext.ux.tree.TreeRecordNode = Ext.extend(Ext.tree.TreeNode, {
             this.childNodeType.add(this);
         }
     },
-    
+
     /** private: method[destroy]
      */
     destroy: function() {
