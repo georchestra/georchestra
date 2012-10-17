@@ -6,7 +6,7 @@
  * @include OpenLayers/Request.js
  * @include OpenLayers/Format/OWSCommon/v1_1_0.js
  * @include OpenLayers/Ajax.js
- * 
+ *
  */
 Ext.namespace("GEOR");
 
@@ -134,7 +134,7 @@ GEOR.wpsprofile = (function () {
      * Method: createParametersForm
      * Return a Form with tool parameters
      *
-     *Parameter optional jobid integer, link with a Graphic Window 
+     *Parameter optional jobid integer, link with a Graphic Window
      */
     var createParametersForm = function (jobid) {
             var referentielStore = new Ext.data.SimpleStore({
@@ -209,7 +209,7 @@ GEOR.wpsprofile = (function () {
         };
     /**
      * Method: showLayers
-     * Affiche les layers Profil et markers    sur la carte     
+     * Affiche les layers Profil et markers    sur la carte
      */
     var showLayers = function () {
             if (map.getLayersByName("Profil").length == 0) {
@@ -226,8 +226,8 @@ GEOR.wpsprofile = (function () {
         };
     /**
      * Method: getColor
-     * Retourne le code couleur à associer au profil         
-     *         
+     * Retourne le code couleur à associer au profil
+     *
      */
     var getColor = function (nprofile) {
 
@@ -246,7 +246,7 @@ GEOR.wpsprofile = (function () {
         };
     /**
      * Method: onNewLine
-     * Callback executed when the a new Line is drawned        
+     * Callback executed when the a new Line is drawned
      *
      * Parameters:
      * e - {OpenLayers.Layer.events}
@@ -327,7 +327,7 @@ GEOR.wpsprofile = (function () {
         };
     /**
      * Method: removedrawfeatures
-     * Supprime le tracé profil correspondant au Graphique    
+     * Supprime le tracé profil correspondant au Graphique
      *
      * Parameters:
      * graphicHandler - integer Identifiant de la fenêtre Graphique
@@ -363,7 +363,7 @@ GEOR.wpsprofile = (function () {
         };
     /**
      * Method: convertToGML
-     * Convertit un feature au format GML    
+     * Convertit un feature au format GML
      *
      * Parameters:
      * feature - {OpenLayers.Feature.Vector}
@@ -375,7 +375,7 @@ GEOR.wpsprofile = (function () {
         };
     /**
      * Method: LoadGML
-     * Charge une chaine GML dans un layer    
+     * Charge une chaine GML dans un layer
      *
      * Parameters:
      * gmlText - String GML.
@@ -469,7 +469,7 @@ GEOR.wpsprofile = (function () {
     /**
      * Method: updateupdateGlobalConfig
      * Modifie les valeurs Référentiel et pas
-     * 
+     *
      */
     var updateGlobalConfig = function () {
             config.pas.value = Ext.getCmp('configform').getForm().findField('pas').getValue();
@@ -510,7 +510,7 @@ GEOR.wpsprofile = (function () {
      * Parameters:
      * process - {WPS.Process}.
      */
-    //removemarksfeatures                                    
+    //removemarksfeatures
     var onUpdated = function (process) {
             var inputfeature = new OpenLayers.Format.GML().read(process.getInput("data").value)[0];
             var jobid = inputfeature.attributes['profile'];
@@ -592,7 +592,7 @@ GEOR.wpsprofile = (function () {
         };
     /**
      * Method: enableSelectionTool
-     * 
+     *
      * Retourne true si une sélection est effectuée dans le Panel Results
      * Parameters:
      * m - {OpenLayers.Map} The map instance.
@@ -610,9 +610,9 @@ GEOR.wpsprofile = (function () {
         };
     /**
          * Method: getProfileParameters
-         * 
+         *
          * Retourne les valeurs des paramètres de l'outil
-         
+
          */
     var getProfileParameters = function () {
             var form = createParametersForm();
@@ -663,7 +663,7 @@ GEOR.wpsprofile = (function () {
     /**
      * Method: selectGMLFile
      * Sélectionne un fichier GML en local
-     * 
+     *
      */
     var selectGMLFile = function () {
             // Check for the various File API support.
@@ -791,7 +791,7 @@ GEOR.wpsprofile = (function () {
                     store: store,
                     title: tr("addonprofile.chart"),
                     xField: 'd',
-                    //height:200,                
+                    //height:200,
                     yAxis: new Ext.chart.NumericAxis({
                         /*majorUnit: 25,
                             minimum: 0,
@@ -848,9 +848,9 @@ GEOR.wpsprofile = (function () {
                             color: profileColor,
                             // couleur de  la ligne
                             lineSize: 1,
-                            //taille de la ligne    
+                            //taille de la ligne
                             fillColor: profileColor,
-                            // couleurs des points                                                        
+                            // couleurs des points
                             fillAlpha: 0.8,
                             // Opacité des points
                             size: 4 // taille des points
@@ -1015,7 +1015,7 @@ GEOR.wpsprofile = (function () {
                 id: 'wpsprofiletools',
                 iconCls: "wps-linechart",
 				qtip: abstract,
-				listeners:{afterrender: function( thisMenuItem ) { 
+				listeners:{afterrender: function( thisMenuItem ) {
 							Ext.QuickTips.register({
 								target: thisMenuItem.getEl().getAttribute("id"),
 								title: thisMenuItem.initialConfig.text,

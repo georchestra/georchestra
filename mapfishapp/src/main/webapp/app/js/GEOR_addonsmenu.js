@@ -31,7 +31,7 @@ GEOR.addonsmenu = (function () {
      * {Function} an alias to OpenLayers.i18n
      */
     var tr = null;
-    
+
     /**
      * Property: addons
      * Array of addon config objects
@@ -76,9 +76,9 @@ GEOR.addonsmenu = (function () {
             fileref.setAttribute("rel", "stylesheet");
             fileref.setAttribute("type", "text/css");
             fileref.setAttribute("href", filenames[i]);
-            document.getElementsByTagName("head")[0].appendChild(fileref);        
+            document.getElementsByTagName("head")[0].appendChild(fileref);
         }
-        
+
     };
 
     /**
@@ -126,7 +126,7 @@ GEOR.addonsmenu = (function () {
                 var i = 0;
                 var menuaddons = Ext.getCmp('menuaddons'); // éviter le getCmp : lent ! (utiliser une référence interne au présent module)
                 for (i = 0; i < addons.length; i += 1) {
-                    var addon = addons[i].addon;                    
+                    var addon = addons[i].addon;
                     var addonObject = GEOR[addon];
                     if (addonObject && checkRoles(addons[i].options.roles ? addons[i].options.roles : [])) {
                         if (addons[i].options.group) {
@@ -166,11 +166,11 @@ GEOR.addonsmenu = (function () {
             if (GEOR.config.ADDONS.length == 0) {
                 return null;
             }
-            
+
             map = m;
             tr = OpenLayers.i18n;
             addons = GEOR.config.ADDONS;
-            
+
             var groups = {};
             Ext.each(addons, function(addon) {
                 if (addon.options && addon.options.group) {
@@ -188,7 +188,7 @@ GEOR.addonsmenu = (function () {
                     }]
                 })
             });
-            
+
             Ext.iterate(groups, function(group) {
                 menuitems.initialConfig.menu.addItem({
                     text: group,
@@ -198,7 +198,7 @@ GEOR.addonsmenu = (function () {
                     })
                 });
             }
-            
+
             return menuitems;
         }
 

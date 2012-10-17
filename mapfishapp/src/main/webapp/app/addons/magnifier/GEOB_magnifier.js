@@ -63,7 +63,7 @@ GEOR.magnifier = (function () {
 
         /**
          * APIMethod: create
-         * 
+         *
          * APIMethod: create
          * Return a  {Ext.menu.Item} for GEOR_addonsmenu.js and initialize this module.
          * Parameters:

@@ -28,7 +28,7 @@ GEOR.cadastre = (function () {
     var mask_loader = null;
 
     var communes = null;
-    
+
     var communesRequestType = null;
 
     var sections = null;
@@ -65,8 +65,8 @@ GEOR.cadastre = (function () {
                 });
             }
         };
-        
-    
+
+
 
     var getSections = function () {
             mask_loader.show();
@@ -365,7 +365,7 @@ GEOR.cadastre = (function () {
 
         /**
          * APIMethod: create
-         * 
+         *
          * APIMethod: create
          * Return a  {Ext.menu.Item} for GEOR_addonsmenu.js and initialize this module.
          * Parameters:
@@ -434,7 +434,7 @@ GEOR.cadastre = (function () {
                 text: title,				
                 iconCls: 'cadastre-icon',
 				qtip: abstract,
-				listeners:{afterrender: function( thisMenuItem ) { 
+				listeners:{afterrender: function( thisMenuItem ) {
 							Ext.QuickTips.register({
 								target: thisMenuItem.getEl().getAttribute("id"),
 								title: thisMenuItem.initialConfig.text,

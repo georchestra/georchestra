@@ -4,8 +4,8 @@
  * @include OpenLayers/Marker.js
  * @include OpenLayers/Icon.js
  * @include OpenLayers/Request.js
- * @include OpenLayers/Format/OWSCommon/v1_1_0.js 
- * 
+ * @include OpenLayers/Format/OWSCommon/v1_1_0.js
+ *
  */
 Ext.namespace("GEOR");
 
@@ -130,7 +130,7 @@ GEOR.wpsagrocampus = (function () {
 
         /**
          * APIMethod: create
-         * 
+         *
          * APIMethod: create
          * Return a  {Ext.menu.Item} for GEOR_addonsmenu.js and initialize this module.
          * Parameters:
@@ -148,7 +148,7 @@ GEOR.wpsagrocampus = (function () {
 			if (config.abstract){
 				abstract = config.abstract;
 			}
-            
+
             defControl();
             click = new OpenLayers.Control.Click();
             map.addControl(click);
@@ -157,7 +157,7 @@ GEOR.wpsagrocampus = (function () {
             var menuitems = new Ext.menu.Item({
                 text: title,
 				qtip: abstract,
-				listeners:{afterrender: function( thisMenuItem ) { 
+				listeners:{afterrender: function( thisMenuItem ) {
 							Ext.QuickTips.register({
 								target: thisMenuItem.getEl().getAttribute("id"),
 								title: thisMenuItem.initialConfig.text,

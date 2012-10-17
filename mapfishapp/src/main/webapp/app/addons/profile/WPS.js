@@ -6,21 +6,21 @@
  * Supported WPS Versions: 1.0.0
  *
  * The Library is designed to work with OpenLayers [http://openlayers.org]
- * 
- * Licence:     
+ *
+ * Licence:
  *  Web Processing Service Client implementation
  *  Copyright (C) 2009 Jachym Cepicky
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- * 
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *
@@ -44,7 +44,7 @@ OpenLayers.WPS = OpenLayers.Class({
      * {String}
      */
     version: "1.0.0",
-    
+
     defaultVersion: "1.0.0",
     /**
      * Property: getCapabilitiesUrlGet
@@ -143,7 +143,7 @@ OpenLayers.WPS = OpenLayers.Class({
      * Default: this
      */
     scope: this,
-    
+
     /**
      * Property:  abstr
      * {String}
@@ -185,19 +185,19 @@ OpenLayers.WPS = OpenLayers.Class({
 
     /**
      * Property: statusMessage
-     * {String} 
+     * {String}
      */
     statusMessage: null,
 
     /**
      * Property: statusTime
-     * {String} 
+     * {String}
      */
     statusTime: null,
 
     /**
      * Property: percentCompleted
-     * {String} 
+     * {String}
      */
     percentCompleted: null,
 
@@ -302,7 +302,7 @@ OpenLayers.WPS = OpenLayers.Class({
      * Call DescribeProcess request via HTTP GET
      *
      * Parameter:
-     * identifier - {String} 
+     * identifier - {String}
      */
     describeProcessGet : function(identifier) {
         var uri = OpenLayers.WPS.Utils.extendUrl(this.describeProcessUrlGet,{service:this.service,version:this.version,
@@ -335,7 +335,7 @@ OpenLayers.WPS = OpenLayers.Class({
         for (var i = 0; i < operationsMetadata.length; i++) {
             var operationName = operationsMetadata[i].getAttribute("name");
             var getNode = OpenLayers.Format.XML.prototype.getElementsByTagNameNS(operationsMetadata[i],this.owsNS, "Get")[0];
-           
+
             var get = OpenLayers.Format.XML.prototype.getAttributeNS(getNode,this.xlinkNS, "href");
             var postNode = OpenLayers.Format.XML.prototype.getElementsByTagNameNS(operationsMetadata[i],this.owsNS, "Post")[0];
             var post = OpenLayers.Format.XML.prototype.getAttributeNS(postNode,this.xlinkNS, "href");
@@ -384,7 +384,7 @@ OpenLayers.WPS = OpenLayers.Class({
             var newProcesses = [];
             for (var i = 0; i < this.processes.length; i++) {
                 if (this.processes[i] != oldOne) {
-                   newProcesses.push(this.process[i]); 
+                   newProcesses.push(this.process[i]);
                 }
                 else {
                    this.processes[i] = null;
@@ -433,7 +433,7 @@ OpenLayers.WPS = OpenLayers.Class({
 
             this.onDescribedProcess(process);
         }
-        
+
         }catch(e){console.log(e)}
     },
 
@@ -600,7 +600,7 @@ OpenLayers.WPS = OpenLayers.Class({
         var type = "string";
         var defaultValue = null;
         var inputs = [];
-        
+
         // dataType
         var dataType = OpenLayers.Format.XML.prototype.getElementsByTagNameNS(dom,this.owsNS,  "DataType")[0];
         if (dataType) {
@@ -612,7 +612,7 @@ OpenLayers.WPS = OpenLayers.Class({
         }
         // allowedValues
         else if (OpenLayers.Format.XML.prototype.getElementsByTagNameNS(dom,this.owsNS,  "AllowedValues").length > 0) {
-            var nodes = OpenLayers.Format.XML.prototype.getElementsByTagNameNS(dom,this.owsNS,  
+            var nodes = OpenLayers.Format.XML.prototype.getElementsByTagNameNS(dom,this.owsNS,
                                     "AllowedValues")[0].childNodes;
             // allowedValues
             for (var i = 0; i < nodes.length; i++) {
@@ -639,7 +639,7 @@ OpenLayers.WPS = OpenLayers.Class({
                 allowedValues : allowedValues,
                 type : type,
                 defaultValue : defaultValue
-        }); 
+        });
     },
 
     /**
@@ -660,7 +660,7 @@ OpenLayers.WPS = OpenLayers.Class({
      * Call Execute Request via HTTP POST
      *
      * Parameter:
-     * identifier - {String} 
+     * identifier - {String}
      */
     executePost : function(identifier) {
         var uri = this.executeUrlPost
@@ -695,7 +695,7 @@ OpenLayers.WPS = OpenLayers.Class({
                     }
                 }
                 tmpl = tmpl.replace("$FORMAT$",formatStr);
-            }       
+            }
             else if (input.CLASS_NAME.search("Literal") > -1) {
                 tmpl = OpenLayers.WPS.literalInputTemplate.replace("$DATA$",input.getValue());
             }
@@ -740,7 +740,7 @@ OpenLayers.WPS = OpenLayers.Class({
             else if (output.CLASS_NAME.search("BoundingBox") > -1) {
                 tmpl = OpenLayers.WPS.boundingBoxOutputTemplate;
             }
-            tmpl = tmpl.replace("$IDENTIFIER$",output.identifier); 
+            tmpl = tmpl.replace("$IDENTIFIER$",output.identifier);
             outputs += tmpl;
         }
         data = data.replace("$DATA_INPUTS$",inputs);
@@ -782,7 +782,7 @@ OpenLayers.WPS = OpenLayers.Class({
             var procOutputsDom = OpenLayers.Format.XML.prototype.getElementsByTagNameNS(dom,this.wpsNS,  "ProcessOutputs");
             var outputs = null;
             if (procOutputsDom.length) {
-                outputs = OpenLayers.Format.XML.prototype.getElementsByTagNameNS(procOutputsDom[0],this.wpsNS,  "Output"); 
+                outputs = OpenLayers.Format.XML.prototype.getElementsByTagNameNS(procOutputsDom[0],this.wpsNS,  "Output");
             }
             for (var i = 0; i < outputs.length; i++) {
                 this.parseExecuteOutput(process,outputs[i]);
@@ -794,10 +794,10 @@ OpenLayers.WPS = OpenLayers.Class({
 
         this.statusEvents[this.status].apply(this.scope,[process]);
         this.onStatusChanged(this.status,process);
-        
+
         if (this.status != "ProcessFailed" && this.status != "ProcessSucceeded") {
             if (this.statusLocation) {
-                
+
                 window.setTimeout("OpenLayers.Request.GET({url:OpenLayers.WPS.instances["+this.id+"].statusLocation,"+
                                 "params:{salt:"+Math.random()+"},success: OpenLayers.WPS.instances["+this.id+"].parseExecute,"+
                                 "failure: OpenLayers.WPS.instances["+this.id+"].onException, "+
@@ -828,7 +828,7 @@ OpenLayers.WPS = OpenLayers.Class({
         var complexData = OpenLayers.Format.XML.prototype.getElementsByTagNameNS(dom,this.wpsNS,  "ComplexData");
         var boundingBoxData = OpenLayers.Format.XML.prototype.getElementsByTagNameNS(dom,this.wpsNS,  "BoundingBox");
     var reference = OpenLayers.Format.XML.prototype.getElementsByTagNameNS(dom,this.wpsNS,  "Reference");
-    
+
 
     if (reference.length > 0) {
             output.setValue(OpenLayers.Format.XML.prototype.getAttributeNS(reference[0],"", "href"));
@@ -837,7 +837,7 @@ OpenLayers.WPS = OpenLayers.Class({
             //output.setValue(literalData[0].firstChild.nodeValue);
             //Modification S. Pelhate bugg Firefox 4096 limit nodeValue
             output.setValue(OpenLayers.Format.XML.prototype.concatChildValues(literalData[0]));
-            
+
         }
         else if (complexData.length > 0) {
             // set output do DOM
@@ -845,14 +845,14 @@ OpenLayers.WPS = OpenLayers.Class({
             for (var i = 0; i < complexData[0].childNodes.length; i++) {
                 var node = complexData[0].childNodes[i];
                 if (node.nodeType == 1) {
-                    nodes.push(node); 
-                }               
+                    nodes.push(node);
+                }
                 if (node.nodeType == 3) {
                     nodes.push(complexData[0].textContent);
                 }
             }
             output.setValue(nodes);
-            // if output is still empty, try to fetch the text content 
+            // if output is still empty, try to fetch the text content
             if (!output.getValue()) {
                 output.setValue(complexData[0].textContent);
             }
@@ -929,7 +929,7 @@ OpenLayers.WPS = OpenLayers.Class({
 
     /**
      * Method: parseProcessFailed
-     * 
+     *
      */
     parseProcessFailed: function(process,dom) {
         var Exception = OpenLayers.Format.XML.prototype.getElementsByTagNameNS(dom,this.owsNS,"Exception");
@@ -975,7 +975,7 @@ OpenLayers.WPS = OpenLayers.Class({
      * {Process}
      */
     getProcess: function(identifier) {
-        
+
         for (var i = 0; i < this.processes.length; i++) {
             if (this.processes[i].identifier == identifier) {
                 return this.processes[i];
@@ -1016,11 +1016,11 @@ OpenLayers.WPS = OpenLayers.Class({
      * To be redefined by the user
      *
      * Parameters:
-     * status 
+     * status
      * process
      */
     onStatusChanged: function(status,process) {
- 
+
     },
 
     CLASS_NAME : "OpenLayers.WPS"
@@ -1072,7 +1072,7 @@ OpenLayers.WPS.Utils = {
      *
      * Parameters:
      * list - {Array}
-     * elem - {Object} 
+     * elem - {Object}
      *
      * Returns:
      * {Boolean} whether the element is in the list or not
@@ -1097,7 +1097,7 @@ OpenLayers.WPS.Process = OpenLayers.Class({
      * {String}
      */
     identifier:  null,
-    
+
     /**
      * Property: title
      * {String}
@@ -1322,7 +1322,7 @@ OpenLayers.WPS.BoundingBoxPut = OpenLayers.Class(OpenLayers.WPS.Put,{
 
 /**
  * Property:    executeRequestTemplate
- * {String} Temple for Execute Request XML 
+ * {String} Temple for Execute Request XML
  */
 OpenLayers.WPS.executeRequestTemplate = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
                                  '<wps:Execute service="WPS" version="1.0.0" '+
@@ -1346,7 +1346,7 @@ OpenLayers.WPS.executeRequestTemplate = '<?xml version="1.0" encoding="UTF-8" st
 
 /**
  * Property:    literalInputTemplate
- * {String} Temple for Execute Request XML 
+ * {String} Temple for Execute Request XML
  */
 OpenLayers.WPS.literalInputTemplate  = "<wps:Input>"+
                                 "<ows:Identifier>$IDENTIFIER$</ows:Identifier>"+
@@ -1357,7 +1357,7 @@ OpenLayers.WPS.literalInputTemplate  = "<wps:Input>"+
 
 /**
  * Property:    complexInputReferenceTemplate
- * {String} Temple for Execute Request XML 
+ * {String} Temple for Execute Request XML
  */
 OpenLayers.WPS.complexInputReferenceTemplate = "<wps:Input>"+
                                 "<ows:Identifier>$IDENTIFIER$</ows:Identifier>"+
@@ -1368,7 +1368,7 @@ OpenLayers.WPS.complexInputReferenceTemplate = "<wps:Input>"+
 
 /**
  * Property:    complexInputDataTemplate
- * {String} Temple for Execute Request XML 
+ * {String} Temple for Execute Request XML
  */
 OpenLayers.WPS.complexInputDataTemplate = "<wps:Input>"+
                                 "<ows:Identifier>$IDENTIFIER$</ows:Identifier>"+
@@ -1380,7 +1380,7 @@ OpenLayers.WPS.complexInputDataTemplate = "<wps:Input>"+
                                 "</wps:Input>";
 /**
  * Property:    boundingBoxInputTemplate
- * {String} Temple for Execute Request XML 
+ * {String} Temple for Execute Request XML
  */
 OpenLayers.WPS.boundingBoxInputTemplate = "<wps:Input>"+
                                 "<ows:Identifier>$IDENTIFIER$</ows:Identifier>"+
@@ -1394,7 +1394,7 @@ OpenLayers.WPS.boundingBoxInputTemplate = "<wps:Input>"+
 
 /**
  * Property:    complexOutputTemplate
- * {String} Temple for Execute Request XML 
+ * {String} Temple for Execute Request XML
  */
 OpenLayers.WPS.complexOutputTemplate = '<wps:Output asReference="$AS_REFERENCE$" $FORMAT$>'+
                                 '<ows:Identifier>$IDENTIFIER$</ows:Identifier>'+
@@ -1402,7 +1402,7 @@ OpenLayers.WPS.complexOutputTemplate = '<wps:Output asReference="$AS_REFERENCE$"
 
 /**
  * Property:    literalOutputTemplate
- * {String} Temple for Execute Request XML 
+ * {String} Temple for Execute Request XML
  */
 OpenLayers.WPS.literalOutputTemplate = '<wps:Output asReference="false">'+
                                 '<ows:Identifier>$IDENTIFIER$</ows:Identifier>'+
@@ -1410,7 +1410,7 @@ OpenLayers.WPS.literalOutputTemplate = '<wps:Output asReference="false">'+
 
 /**
  * Property:    boundingBoxOutputTemplate
- * {String} Temple for Execute Request XML 
+ * {String} Temple for Execute Request XML
  */
 OpenLayers.WPS.boundingBoxOutputTemplate = OpenLayers.WPS.literalOutputTemplate;
 

@@ -4,8 +4,8 @@
  * @include OpenLayers/Marker.js
  * @include OpenLayers/Icon.js
  * @include OpenLayers/Request.js
- * @include OpenLayers/Format/OWSCommon/v1_1_0.js 
- * 
+ * @include OpenLayers/Format/OWSCommon/v1_1_0.js
+ *
  */
 Ext.namespace("GEOR");
 
@@ -63,7 +63,7 @@ GEOR.addonmodel = (function () {
 
         /**
          * APIMethod: create
-         * 
+         *
          * APIMethod: create
          * Return a  {Ext.menu.Item} for GEOR_addonsmenu.js and initialize this module.
          * Parameters:
@@ -83,7 +83,7 @@ GEOR.addonmodel = (function () {
                 text: title,				
                 iconCls: 'model-icon',
 				qtip: abstract,
-				listeners:{afterrender: function( thisMenuItem ) { 
+				listeners:{afterrender: function( thisMenuItem ) {
 							Ext.QuickTips.register({
 								target: thisMenuItem.getEl().getAttribute("id"),
 								title: thisMenuItem.initialConfig.text,
@@ -94,7 +94,7 @@ GEOR.addonmodel = (function () {
                 menu: new Ext.menu.Menu({
                     items: [{
                         text: tr("addonmodel.extent"),
-                        //'Etendue de la carte',                            
+                        //'Etendue de la carte',
                         handler: function () {
                             getextent();
                         }
