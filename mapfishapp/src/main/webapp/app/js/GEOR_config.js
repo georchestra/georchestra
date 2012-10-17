@@ -339,6 +339,14 @@ GEOR.config = (function() {
             "georchestra_${yyyy-MM-dd_hhmmss}"),
         
         /**
+         * Constant: ADDONS
+         * An array of addons config objects.
+         * Defaults to []
+         */
+        ADDONS: getCustomParameter("ADDONS", 
+            []),
+        
+        /**
          * Constant: GEOSERVER_WFS_URL
          * The URL to GeoServer WFS.
          * This is required if and only if the edit application is used

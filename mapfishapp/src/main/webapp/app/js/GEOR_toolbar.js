@@ -27,6 +27,7 @@
  * @include GeoExt/widgets/WMSLegend.js
  * @include GeoExt/widgets/Popup.js
  * @include GEOR_workspace.js
+ * @include GEOR_addonsmenu.js
  * @include GEOR_print.js
  * @include GEOR_config.js
  */
@@ -311,6 +312,15 @@ GEOR.toolbar = (function() {
         });
         
         items.push("-");
+        
+        //  ADDONS menu
+        if (GEOR.addonsmenu) {
+            var addonsMenu = GEOR.addonsmenu.create(map);
+            if (addonsMenu !== null) {
+                items.push(addonsMenu);
+                items.push("-");
+            }
+        }
         
         items.push(GEOR.workspace.create(map));
 
