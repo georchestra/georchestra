@@ -15,7 +15,7 @@
 /*
  * @include OpenLayers/Projection.js
  */
- 
+
 Ext.namespace("GEOR");
 
 GEOR.util = (function() {
@@ -26,13 +26,13 @@ GEOR.util = (function() {
     var tr = OpenLayers.i18n;
 
     return {
-        
+
         /**
          * APIMethod: shortenLayerName
          * Returns a shorter string for a layer name (if required).
          *
          * Parameters:
-         * layer - {String | GeoExt.data.LayerRecord | OpenLayers.Layer.WMS}  
+         * layer - {String | GeoExt.data.LayerRecord | OpenLayers.Layer.WMS}
          *         The layer name or the layer or the layer record.
          * limit - {Integer} The number of chars before cutting
          *         Defaults to 25.
@@ -52,26 +52,26 @@ GEOR.util = (function() {
             l = (limit) ? limit : 25;
             return ((t.length > l) ? t.substr(0,l-3) + '...' : t);
         },
-        
+
         /**
          * APIMethod: stringUpperCase
          * Returns a string with first letter uppercased
          *
          * Parameters:
-         * str - {String}  
+         * str - {String}
          *
          * Returns:
          * {String} input string with first letter uppercased
          */
         stringUpperCase: function(str) {
-            return str.substr(0,1).toUpperCase() + 
+            return str.substr(0,1).toUpperCase() +
                 str.substr(1).toLowerCase();
         },
 
         /**
          * APIMethod: getAppRelativePath
          * Given a URL get its path relative to "extractorapp". For
-         * example 
+         * example
          * getAppRelativePath("http://foo.org/extractorapp/bar/foo")
          * returns "bar/foo".
          *
@@ -120,7 +120,7 @@ GEOR.util = (function() {
                 },
                 icon: Ext.MessageBox.QUESTION
             });
-            
+
         },
 
         /**
@@ -141,7 +141,7 @@ GEOR.util = (function() {
                 modal: false
             });
         },
-        
+
         /**
          * APIMethod: errorDialog
          * Shows an error dialog box
@@ -159,7 +159,7 @@ GEOR.util = (function() {
                 icon: Ext.MessageBox.ERROR
             });
         },
-        
+
         /**
          * APIMethod: isUrl
          *
@@ -173,7 +173,7 @@ GEOR.util = (function() {
             var regexp = /(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
             return regexp.test(s);
         },
-        
+
         /**
          * APIMethod: getUnitsForCRS
          *
@@ -184,16 +184,16 @@ GEOR.util = (function() {
          * {String} either 'm' for meters or 'degrees'
          */
         getUnitsForCRS: function(crs) {
-            return (typeof crs == "string") ? 
-                new OpenLayers.Projection(crs).getUnits() : 
+            return (typeof crs == "string") ?
+                new OpenLayers.Projection(crs).getUnits() :
                 crs.getUnits();
         },
-        
+
         unitsTranslations: {
             'degrees': tr('degrees'),
             'm': tr('meters')
         },
-        
+
         // see http://www.w3schools.com/js/js_cookies.asp
         getCookie: function(name) {
             var i, x, y, ARRcookies = document.cookie.split(";");

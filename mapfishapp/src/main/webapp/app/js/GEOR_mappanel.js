@@ -46,7 +46,7 @@ GEOR.mappanel = (function() {
      * {OpenLayers.Control.MousePosition}
      */
     var buildMousePositionCtrl = function(projCode, div) {
-        var format = (projCode == "EPSG:4326") ? 
+        var format = (projCode == "EPSG:4326") ?
             function(n) {return OpenLayers.Number.format(n, 5)} :
             function(n) {return OpenLayers.Number.format(n, 0)} ;
         var options = {
@@ -109,16 +109,16 @@ GEOR.mappanel = (function() {
 
         // Scale Line
         div = Ext.DomHelper.append(Ext.getBody(), {
-            tag: "div", 
+            tag: "div",
             id: cmp_id+"_scaleline",
             cls: "olControlScaleLine"
         });
         items.push(div);
         map.addControl(new OpenLayers.Control.ScaleLine({div: div}));
-        
+
         // Loading panel
         div = Ext.DomHelper.append(Ext.getBody(), {
-            tag: "div", 
+            tag: "div",
             id: cmp_id+"_loading_panel",
             cls: "olControlLoadingPanel"
         });
@@ -132,9 +132,9 @@ GEOR.mappanel = (function() {
         var srs1 = GEOR.config.MAP_POS_SRS1;
         if (srs1) {
             div = Ext.DomHelper.append(Ext.getBody(), {
-                tag: "div", 
+                tag: "div",
                 qtip: tr("Mouse coordinates in SRS", {'srs': srs1}),
-                id: cmp_id+"_mp1", 
+                id: cmp_id+"_mp1",
                 cls: "mouseposition"
             });
             items.push(div);
@@ -144,9 +144,9 @@ GEOR.mappanel = (function() {
         var srs2 = GEOR.config.MAP_POS_SRS2;
         if (srs2) {
             div = Ext.DomHelper.append(Ext.getBody(), {
-                tag: "div", 
+                tag: "div",
                 qtip: tr("Mouse coordinates in SRS", {'srs': srs2}),
-                id: cmp_id+"_mp2", 
+                id: cmp_id+"_mp2",
                 cls: "mouseposition"
             });
             items.push(div);

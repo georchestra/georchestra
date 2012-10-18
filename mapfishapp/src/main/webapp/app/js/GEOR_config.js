@@ -39,7 +39,7 @@ GEOR.config = (function() {
 
     /**
      * Property: vectorAbility
-     * {Number} Integer representing 
+     * {Number} Integer representing
      *  browser ability to handle features
      */
     var vectorAbility = null;
@@ -184,7 +184,7 @@ GEOR.config = (function() {
         }
         return vectorAbility;
     };
-    
+
     /**
      * Method: getComputingPower
      * Get an empirical floating parameter
@@ -198,7 +198,7 @@ GEOR.config = (function() {
         // eg: time to load app (not the files) ...
         return 1;
     };
-    
+
     /**
      * Method: getCustomParameter
      *  If parameter paramName exists in GEOR.custom, returns its value
@@ -206,14 +206,14 @@ GEOR.config = (function() {
      *
      * Parameters:
      * paramName - {String} the parameter name
-     * defaultValue - {Mixed} the default value if none is 
+     * defaultValue - {Mixed} the default value if none is
      *                specified in GEOR.custom
      *
      * Returns:
      * {Mixed} The parameter value
      */
     var getCustomParameter = function(paramName, defaultValue) {
-        return (GEOR.custom && GEOR.custom.hasOwnProperty(paramName)) ? 
+        return (GEOR.custom && GEOR.custom.hasOwnProperty(paramName)) ?
             GEOR.custom[paramName] : defaultValue;
     };
 
@@ -268,7 +268,7 @@ GEOR.config = (function() {
          * dynamically in index.jsp
          */
         ANONYMOUS: true,
-        
+
         /**
          * Constant: USERNAME
          * Username can be overriden dynamically in index.jsp
@@ -292,7 +292,7 @@ GEOR.config = (function() {
          * The login url.
          */
         LOGOUT_URL: "/j_spring_security_logout",
-        
+
         /**
          * Constant: ACCEPTED_MIME_TYPES
          * List of acceptable image mime types
@@ -304,7 +304,7 @@ GEOR.config = (function() {
             'image/png8',
             'image/png; mode=24bit'
         ],
-        
+
         /***** Beginning of config options which can be overriden by GEOR.custom *****/
 
         /**
@@ -319,25 +319,25 @@ GEOR.config = (function() {
          * {String} The default (ie selected) print layout format.
          * Defaults to "A4 paysage"
          */
-        DEFAULT_PRINT_FORMAT: getCustomParameter("DEFAULT_PRINT_FORMAT", 
+        DEFAULT_PRINT_FORMAT: getCustomParameter("DEFAULT_PRINT_FORMAT",
             "A4 paysage"),
-    
+
         /**
          * Constant: DEFAULT_PRINT_FORMAT
          * {String} The default (ie selected) print resolution.
          * Defaults to "127"
          */
-        DEFAULT_PRINT_RESOLUTION: getCustomParameter("DEFAULT_PRINT_RESOLUTION", 
+        DEFAULT_PRINT_RESOLUTION: getCustomParameter("DEFAULT_PRINT_RESOLUTION",
             "127"),
-    
+
         /**
          * Constant: PDF_FILENAME
          * {String} The PDF filename prefix.
          * Defaults to "georchestra_${yyyy-MM-dd_hhmmss}"
-         */ 
-        PDF_FILENAME: getCustomParameter("PDF_FILENAME", 
+         */
+        PDF_FILENAME: getCustomParameter("PDF_FILENAME",
             "georchestra_${yyyy-MM-dd_hhmmss}"),
-        
+
         /**
          * Constant: GEOSERVER_WFS_URL
          * The URL to GeoServer WFS.
@@ -345,16 +345,16 @@ GEOR.config = (function() {
          * or if the "referentials" module is activated.
          * Defaults to /geoserver/wfs
          */
-        GEOSERVER_WFS_URL: getCustomParameter("GEOSERVER_WFS_URL", 
+        GEOSERVER_WFS_URL: getCustomParameter("GEOSERVER_WFS_URL",
             getBaseURL() + "geoserver/wfs"),
 
         /**
          * Constant: GEOSERVER_WMS_URL
-         * The URL to the GeoServer WMS. 
+         * The URL to the GeoServer WMS.
          * This is required if and only if OSM_AS_OVMAP is set to false.
          * Defaults to /geoserver/wms
          */
-        GEOSERVER_WMS_URL: getCustomParameter("GEOSERVER_WMS_URL", 
+        GEOSERVER_WMS_URL: getCustomParameter("GEOSERVER_WMS_URL",
             getBaseURL() + "geoserver/wms"),
 
         /**
@@ -362,27 +362,27 @@ GEOR.config = (function() {
          * The URL to the GeoNetwork server.
          * Defaults to "/geonetwork/srv/fr"
          */
-        GEONETWORK_URL: getCustomParameter("GEONETWORK_URL", 
+        GEONETWORK_URL: getCustomParameter("GEONETWORK_URL",
             getBaseURL() + "geonetwork/srv/fr"),
 
         /**
          * Constant: CSW_GETDOMAIN_SORTING
-         * true to case insensitive sort (client side) the keywords 
-         * got from a CSW getDomain request. false to disable 
-         * client side sorting 
+         * true to case insensitive sort (client side) the keywords
+         * got from a CSW getDomain request. false to disable
+         * client side sorting
          * (which is preferable in case of too many keywords).
          * Defaults to false
          */
-        CSW_GETDOMAIN_SORTING: getCustomParameter("CSW_GETDOMAIN_SORTING", 
+        CSW_GETDOMAIN_SORTING: getCustomParameter("CSW_GETDOMAIN_SORTING",
             false),
-        
+
         /**
          * Constant: THESAURUS_NAME
          * Thesaurus name to display for the CSW GetDomain request.
          * Defaults to 'mots clés du catalogue'
          */
         THESAURUS_NAME: getCustomParameter("THESAURUS_NAME", 'mots clés du catalogue'),
-        
+
         /**
          * Constant: CATALOGS
          * List of catalogs for freetext search
@@ -392,20 +392,20 @@ GEOR.config = (function() {
             ['http://ids.pigma.org/geonetwork/srv/fr/csw', 'le catalogue PIGMA'],
             ['http://sandre.eaufrance.fr/geonetwork_CSW/srv/fr/csw', 'le catalogue du Sandre']
         ]),
-        
+
         /**
          * Constant: DEFAULT_CSW_URL
          * CSW URL which should be used by default for freetext search
          * Note: must be one of the URLs in the above CATALOGS config option
          */
-        DEFAULT_CSW_URL: getCustomParameter("DEFAULT_CSW_URL", 
+        DEFAULT_CSW_URL: getCustomParameter("DEFAULT_CSW_URL",
             'http://geobretagne.fr/geonetwork/srv/fr/csw'),
-        
+
         /**
          * Constant: MAX_CSW_RECORDS
          * The maximum number of CSW records queried for catalog search
-         * Note: if you set this to a low value, you run the risk of not having 
-         * enough results (even 0). On the contrary, setting a very high value 
+         * Note: if you set this to a low value, you run the risk of not having
+         * enough results (even 0). On the contrary, setting a very high value
          * might result in browser hanging (too much XML data to parse).
          * Defaults to 20.
          */
@@ -416,36 +416,36 @@ GEOR.config = (function() {
          * URL to a thumbnail image shown when none is provided by the CSW service
          * Defaults to the provided one ('app/img/nopreview.png')
          */
-        NO_THUMBNAIL_IMAGE_URL: getCustomParameter("NO_THUMBNAIL_IMAGE_URL", 
+        NO_THUMBNAIL_IMAGE_URL: getCustomParameter("NO_THUMBNAIL_IMAGE_URL",
             'app/img/nopreview.png'),
-            
+
         /**
          * Constant: DEFAULT_THESAURUS_KEY
-         * Key (as the one in the response from /geonetwork/srv/fr/xml.thesaurus.getList) 
+         * Key (as the one in the response from /geonetwork/srv/fr/xml.thesaurus.getList)
          * of the thesaurus to use as the default (selected) one.
          * Defaults to 'local._none_.geobretagne' FIXME: should be something else
          */
-        DEFAULT_THESAURUS_KEY: getCustomParameter("DEFAULT_THESAURUS_KEY", 
+        DEFAULT_THESAURUS_KEY: getCustomParameter("DEFAULT_THESAURUS_KEY",
             'local._none_.geobretagne'),
-            
+
         /**
          * Constant: MAX_FEATURES
          * The maximum number of vector features displayed.
          * Defaults to a value estimated by an empirical formula
          */
-        MAX_FEATURES: getCustomParameter("MAX_FEATURES", 
+        MAX_FEATURES: getCustomParameter("MAX_FEATURES",
             50*getBrowserVectorAbility()*getComputingPower()),
-        
+
         /**
          * Constant: MAX_LENGTH
-         * The maximum number of chars in a XML response 
+         * The maximum number of chars in a XML response
          * before triggering an alert.
          * Defaults to a value estimated by an empirical formula
          */
-        MAX_LENGTH: getCustomParameter("MAX_LENGTH", 
+        MAX_LENGTH: getCustomParameter("MAX_LENGTH",
             400/7*1024*getBrowserVectorAbility()*getComputingPower()),
 
-        
+
         /**
          * Constant: DEFAULT_ATTRIBUTION
          * Default attribution for layers which don't have one.
@@ -455,12 +455,12 @@ GEOR.config = (function() {
 
         /**
          * Constant: OSM_AS_OVMAP
-         * Boolean: if true, use OSM mapnik as overview map baselayer 
+         * Boolean: if true, use OSM mapnik as overview map baselayer
          * instead of GEOR.config.OVMAP_LAYER_NAME.
          * Defaults to true
          */
         OSM_AS_OVMAP: getCustomParameter("OSM_AS_OVMAP", true),
-        
+
         /**
          * Constant: OVMAP_LAYER_NAME
          * The name of the base layer which will be displayed in the overview map.
@@ -468,9 +468,9 @@ GEOR.config = (function() {
          * This layer must be served by the server GEOSERVER_WMS_URL as image/png
          * Defaults to "geor_loc:DEPARTEMENTS"
          */
-        OVMAP_LAYER_NAME: getCustomParameter("OVMAP_LAYER_NAME", 
+        OVMAP_LAYER_NAME: getCustomParameter("OVMAP_LAYER_NAME",
             "geor_loc:DEPARTEMENTS"),
-        
+
         /**
          * Constant: WMSC2WMS
          * Hash allowing correspondance between WMS-C server URLs and WMS server URLs for print
@@ -484,14 +484,14 @@ GEOR.config = (function() {
              * "wmsc_url": "wms_url",
              *
              * For a WMSC with no WMS counterpart,
-             * referencing the wmsc_url here allows the user 
+             * referencing the wmsc_url here allows the user
              * to be warned that this layer will not be printed:
              *
-             * "wmsc_url": undefined, 
+             * "wmsc_url": undefined,
              */
-            "http://osm.geobretagne.fr/service/wms": 
+            "http://osm.geobretagne.fr/service/wms":
                 "http://maps.qualitystreetmap.org/geob_wms",
-            "http://geobretagne.fr/geoserver/gwc/service/wms": 
+            "http://geobretagne.fr/geoserver/gwc/service/wms":
                 undefined // no trailing comma
         }),
 
@@ -501,10 +501,10 @@ GEOR.config = (function() {
          * {Float} Sets the resolution used for scale computation.
          * Defaults to GeoServer defaults, which is 25.4 / 0.28
          */
-        MAP_DOTS_PER_INCH: getCustomParameter("MAP_DOTS_PER_INCH", 
+        MAP_DOTS_PER_INCH: getCustomParameter("MAP_DOTS_PER_INCH",
             25.4 / 0.28),
 
-        
+
         /**
          * Constant: RECENTER_ON_ADDRESSES
          * {Boolean} whether to display the recenter on addresses tab.
@@ -512,14 +512,14 @@ GEOR.config = (function() {
          */
         RECENTER_ON_ADDRESSES: getCustomParameter("RECENTER_ON_ADDRESSES",
             false),
-        
+
         /**
          * Constant: ADDRESS_URL
          * {String} The URL to the OpenAddresses web service.
          * Required if and only if RECENTER_ON_ADDRESSES is set to true.
          * Defaults to "/addrapp/addresses"
          */
-        ADDRESS_URL: getCustomParameter("ADDRESS_URL", 
+        ADDRESS_URL: getCustomParameter("ADDRESS_URL",
             "/addrapp/addresses"),
 
         /**
@@ -529,7 +529,7 @@ GEOR.config = (function() {
          * Defaults to "geor_loc"
          */
         NS_LOC: getCustomParameter("NS_LOC", "geor_loc"),
-        
+
 
         /**
          * Constant: NS_EDIT
@@ -545,7 +545,7 @@ GEOR.config = (function() {
          * {String} the property used to query the CSW for keywords.
          * Defaults to "subject"
          */
-        CSW_GETDOMAIN_PROPERTY: getCustomParameter("CSW_GETDOMAIN_PROPERTY", 
+        CSW_GETDOMAIN_PROPERTY: getCustomParameter("CSW_GETDOMAIN_PROPERTY",
             "subject"),
 
 
@@ -607,7 +607,7 @@ GEOR.config = (function() {
          * Defaults to 7230727.3772 (EPSG:2154 top)
          */
         MAP_YMAX: getCustomParameter("MAP_YMAX", 7230727.3772),
-        
+
         /**
          * Constant: MAP_POS_SRS1
          * {String} The cursor position will be displayed using this SRS.
@@ -615,7 +615,7 @@ GEOR.config = (function() {
          * Defaults to "EPSG:2154"
          */
         MAP_POS_SRS1: getCustomParameter("MAP_POS_SRS1", "EPSG:2154"),
-        
+
         /**
          * Constant: MAP_POS_SRS2
          * {String} The cursor position will be displayed using this SRS.
@@ -623,7 +623,7 @@ GEOR.config = (function() {
          * Defaults to ""
          */
         MAP_POS_SRS2: getCustomParameter("MAP_POS_SRS2", ""),
-        
+
         /**
          * Constant: PROJ4JS_STRINGS
          * {Object} The list of supported SRS with their definitions.
@@ -634,21 +634,21 @@ GEOR.config = (function() {
             "EPSG:2154": "+title=RGF-93/Lambert 93, +proj=lcc +lat_1=49 +lat_2=44 +lat_0=46.5 +lon_0=3 +x_0=700000 +y_0=6600000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs",
             "EPSG:900913": "+title=Web Spherical Mercator, +proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs"
         }),
-        
+
         /**
          * Constant: TILE_SINGLE
          * {Boolean} When false, activates WMS tiled requests.
          * Defaults to false
          */
         TILE_SINGLE: getCustomParameter("TILE_SINGLE", false),
-        
+
         /**
          * Constant: TILE_WIDTH
          * {Integer} Width of the WMS tiles in pixels.
          * Defaults to 512
          */
         TILE_WIDTH: getCustomParameter("TILE_WIDTH", 512),
-        
+
         /**
          * Constant: TILE_HEIGHT
          * {Integer} Height of the WMS tiles in pixels.
@@ -692,60 +692,60 @@ GEOR.config = (function() {
          * Defaults to true
          */
         DISPLAY_VISIBILITY_RANGE: getCustomParameter("DISPLAY_VISIBILITY_RANGE", true),
-        
+
         /**
          * Constant: ROLES_FOR_STYLER
          * {Array} roles required for the styler to show up
          * Empty array means the module is available for everyone
          * Defaults to ['ROLE_SV_USER', 'ROLE_SV_REVIEWER', 'ROLE_SV_EDITOR', 'ROLE_SV_ADMIN']
          */
-        ROLES_FOR_STYLER: getCustomParameter("ROLES_FOR_STYLER", 
+        ROLES_FOR_STYLER: getCustomParameter("ROLES_FOR_STYLER",
             ['ROLE_SV_USER', 'ROLE_SV_REVIEWER', 'ROLE_SV_EDITOR', 'ROLE_SV_ADMIN']),
-        
+
         /**
          * Constant: ROLES_FOR_QUERIER
          * {Array} roles required for the querier to show up
          * Empty array means the module is available for everyone
          * Defaults to []
          */
-        ROLES_FOR_QUERIER: getCustomParameter("ROLES_FOR_QUERIER", 
+        ROLES_FOR_QUERIER: getCustomParameter("ROLES_FOR_QUERIER",
             []),
-        
+
         /**
          * Constant: ROLES_FOR_PRINTER
          * {Array} roles required to be able to print
          * Empty array means printing is available for everyone
          * Defaults to []
          */
-        ROLES_FOR_PRINTER: getCustomParameter("ROLES_FOR_PRINTER", 
+        ROLES_FOR_PRINTER: getCustomParameter("ROLES_FOR_PRINTER",
             []),
-        
+
         /**
          * Constant: HELP_URL
          * {String} URL of the help ressource.
          * Defaults to "http://www.geobretagne.fr/web/guest/assistance"
          */
-        HELP_URL: getCustomParameter("HELP_URL", 
+        HELP_URL: getCustomParameter("HELP_URL",
             "http://www.geobretagne.fr/web/guest/assistance"),
-        
+
         /**
-         * Constant: DISPLAY_SELECTED_OWS_URL 
+         * Constant: DISPLAY_SELECTED_OWS_URL
          * {Boolean} - If set to false, do not display the selected WMS/WFS server URL
          * in the second field from the "Add layers" popup window.
          * (pretty much useless, I know...)
          * Defaults to true.
          */
-        DISPLAY_SELECTED_OWS_URL: getCustomParameter("DISPLAY_SELECTED_OWS_URL", 
+        DISPLAY_SELECTED_OWS_URL: getCustomParameter("DISPLAY_SELECTED_OWS_URL",
             true),
-        
+
         /**
          * Constant: CONFIRM_LAYER_REMOVAL
          * {Boolean} Do we want a popup dialog to appear on layer removal ?
          * Defaults to false
          */
-        CONFIRM_LAYER_REMOVAL: getCustomParameter("CONFIRM_LAYER_REMOVAL", 
+        CONFIRM_LAYER_REMOVAL: getCustomParameter("CONFIRM_LAYER_REMOVAL",
             false),
-        
+
         /**
          * Constant: WMS_SERVERS
          * {Array} List of externals WMS to display in the WMS servers tab.
@@ -771,7 +771,7 @@ GEOR.config = (function() {
             {"name": "IFREMER/littoral", "url": "http://www.ifremer.fr/services/wms1"},
             {"name": "Cartelie/CETE Ouest", "url": "http://mapserveur.application.developpement-durable.gouv.fr/map/mapserv?map%3D%2Fopt%2Fdata%2Fcarto%2Fcartelie%2Fprod%2FCETE_Ouest%2Fxdtyr36laj.www.map"}
         ]),
-        
+
         /**
          * Constant: WFS_SERVERS
          * {Array} List of externals WFS to display in the WFS servers tab.

@@ -18,23 +18,23 @@
  * @include OpenLayers/Format/CSWGetRecords.js
  * @include OpenLayers/Format/CSWGetRecords/v2_0_2.js
  */
- 
+
 Ext.namespace("GEOR");
 
 GEOR.csw = (function() {
 
     var format = null;
-    
+
     var getFilter = function(options) {
         var f, filters = [], criteria = GEOR.criteria;
-        
+
         for (var i=0, l = criteria.length; i<l; i++) {
             f = options[criteria[i]] || GEOR[criteria[i]].getFilter();
             if (f !== null) {
                 filters.push(f);
             }
         }
-        
+
         if (filters.length == 1) {
             return filters[0];
         } else if (filters.length >= 1) {
@@ -50,7 +50,7 @@ GEOR.csw = (function() {
 
         getPostData: function(options) {
             format = format || new OpenLayers.Format.CSWGetRecords();
-            
+
             var query = {
                 ElementSetName: {
                     value: "full"
@@ -58,7 +58,7 @@ GEOR.csw = (function() {
                 SortBy: // TODO.
                 */
             };
-            
+
             var filter = getFilter(options);
             if (filter) {
                 query.Constraint = {
@@ -66,7 +66,7 @@ GEOR.csw = (function() {
                     Filter: filter
                 };
             }
-            
+
             return format.write({
                 resultType: "results_with_summary",
                 Query: query,

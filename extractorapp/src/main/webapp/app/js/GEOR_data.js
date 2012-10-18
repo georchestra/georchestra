@@ -40,35 +40,35 @@ GEOR.data = (function() {
          * dynamically set in index.jsp
          */
         anonymous: true,
-        
+
         /**
          * Property: email
          * Email can be overriden dynamically in index.jsp
          */
         email: '',
-        
+
         /**
          * Property: username
          * Username can be overriden dynamically in index.jsp
          */
         username: '',
-        
+
         first_name: '',
         last_name: '',
         company: '',
         tel: '',
-        
+
         /**
          * Property: debug
          * Debug can be overriden dynamically in index.jsp
          */
         debug: false,
-        
+
         /**
          * Property: jettyrun
          * Boolean: are we dev/testing the standalone app with Jetty
          */
         jettyrun: false
     };
-    
+
 })();

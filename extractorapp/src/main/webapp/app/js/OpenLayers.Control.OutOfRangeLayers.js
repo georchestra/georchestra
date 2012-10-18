@@ -10,35 +10,35 @@
  * Inherits from:
  *  - <OpenLayers.Control>
  */
-OpenLayers.Control.OutOfRangeLayers = 
+OpenLayers.Control.OutOfRangeLayers =
   OpenLayers.Class(OpenLayers.Control, {
-    
+
     /**
      * APIProperty: seperator
      * {String} String used to seperate layers.
      */
     separator: ", ",
-    
+
     /**
      * APIProperty: prefix
      * {String} String used to prefix layers list.
      */
     prefix: OpenLayers.i18n("List of layers out of range: "),
-    
+
     /**
      * APIProperty: suffix
      * {String} String used to suffix layers list.
      */
     suffix: "",
-    
+
     /**
-     * Constructor: OpenLayers.Control.Attribution 
-     * 
+     * Constructor: OpenLayers.Control.Attribution
+     *
      * Parameters:
      * options - {Object} Options for control.
      */
 
-    /** 
+    /**
      * Method: destroy
      * Destroy control.
      */
@@ -49,20 +49,20 @@ OpenLayers.Control.OutOfRangeLayers =
             "zoomend": this.updateText,
             scope: this
         });
-        
+
         OpenLayers.Control.prototype.destroy.apply(this, arguments);
-    },    
-    
+    },
+
     /**
      * Method: draw
      * Initialize control.
-     * 
-     * Returns: 
+     *
+     * Returns:
      * {DOMElement} A reference to the DIV DOMElement containing the control
-     */    
+     */
     draw: function() {
         OpenLayers.Control.prototype.draw.apply(this, arguments);
-        
+
         this.map.events.on({
             'addlayer': this.updateText,
             'removelayer': this.updateText,
@@ -70,8 +70,8 @@ OpenLayers.Control.OutOfRangeLayers =
             scope: this
         });
         this.updateText();
-        
-        return this.div;    
+
+        return this.div;
     },
 
     /**

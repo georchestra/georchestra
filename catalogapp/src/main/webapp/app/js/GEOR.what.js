@@ -14,8 +14,8 @@
 
 /*
  * @include OpenLayers/Filter/Comparison.js
- */ 
- 
+ */
+
 Ext.namespace("GEOR");
 
 GEOR.what = (function() {
@@ -44,7 +44,7 @@ GEOR.what = (function() {
                     }
                 }
             });
-            
+
             return {
                 xtype: 'form',
                 labelSeparator: ' ',
@@ -53,12 +53,12 @@ GEOR.what = (function() {
                 items: [field]
             };
         },
-        
+
         getFilter: function() {
             var v = field && field.getValue();
             if (v) {
                 return new OpenLayers.Filter.Comparison({
-                    type: "~", 
+                    type: "~",
                     // OL (format/filter/1.1.0) has wildCard: "*", singleChar: ".", escapeChar: "!" hardcoded
                     property: "AnyText",
                     value: '*'+v+'*'
@@ -66,7 +66,7 @@ GEOR.what = (function() {
             }
             return null;
         },
-        
+
         reset: function() {
             field && field.reset();
         }

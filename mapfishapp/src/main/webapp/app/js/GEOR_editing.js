@@ -43,7 +43,7 @@ GEOR.editing = (function() {
      * Public
      */
     return {
-    
+
         /**
          * APIMethod: create
          * Create the editing panel.

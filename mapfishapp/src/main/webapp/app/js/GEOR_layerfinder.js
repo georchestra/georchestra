@@ -28,21 +28,21 @@ GEOR.layerfinder = (function() {
     /*
      * Private
      */
-    
-    
+
+
     /**
      * Property: layerStore
      * {GeoExt.data.LayerStore} a reference to the application layer store
      */
     var layerStore = null;
-    
+
     /**
      * Property: currentTab
-     * {String} a local cache of the currently active tab 
+     * {String} a local cache of the currently active tab
      * (one of "cswquerier", "cswbrowser", "wms", "wfs")
      */
     var currentTab = "cswquerier";
-    
+
     /**
      * Property: panels
      * {Object} referencing the panels in the tabPanel.
@@ -53,7 +53,7 @@ GEOR.layerfinder = (function() {
         "wms": null,
         "wfs": null
     };
-    
+
     /**
      * Property: selectedRecords
      * {Object} referencing the records selected in each panel
@@ -64,7 +64,7 @@ GEOR.layerfinder = (function() {
         "wms": [],
         "wfs": []
     };
-    
+
     /**
      * Property: addButton
      * {Ext.Button} a reference to the "add" button
@@ -76,7 +76,7 @@ GEOR.layerfinder = (function() {
      * {Function} an alias to OpenLayers.i18n
      */
     var tr = null;
-    
+
     /**
      * Method: createTabPanel
      * Return the main tab panel.
@@ -85,7 +85,7 @@ GEOR.layerfinder = (function() {
      * {Ext.TabPanel}
      */
     var createTabPanel = function() {
-        
+
         var selectionChangedListener = function(tab) {
             return function(records) {
                 selectedRecords[tab] = records;
@@ -111,7 +111,7 @@ GEOR.layerfinder = (function() {
         GEOR.wfsbrowser.events.on({
             "selectionchanged": selectionChangedListener.call(this, "wfs")
         });
-        
+
         panels["cswquerier"] = GEOR.cswquerier.getPanel({
             tabTip: tr("Find layers searching in metadata")
         });
@@ -127,7 +127,7 @@ GEOR.layerfinder = (function() {
             srs: mapSRS,
             tabTip: tr("Find layers querying WFS servers")
         });
-        
+
         return new Ext.TabPanel({
             border: false,
             activeTab: 0,
@@ -165,7 +165,7 @@ GEOR.layerfinder = (function() {
 
     /**
      * Method: capabilitiesSuccess
-     * Success callback for the WMS capabilities request issued 
+     * Success callback for the WMS capabilities request issued
      * when adding layers from the catalog tab
      *
      * Parameters:
@@ -209,7 +209,7 @@ GEOR.layerfinder = (function() {
 
     /**
      * Method: describeFeaturetypeSuccess
-     * Success callback for the WFS DescribeFeaturetype request issued 
+     * Success callback for the WFS DescribeFeaturetype request issued
      * when adding layers from the "WFS layers" tab
      *
      * Parameters:
@@ -218,7 +218,7 @@ GEOR.layerfinder = (function() {
     var describeFeaturetypeSuccess = function(record) {
         var layer = record.get('layer');
         return function(store, records) {
-            // find geometry column name 
+            // find geometry column name
             var idx = store.find('type', GEOR.ows.matchGeomProperty);
             if (idx > -1) {
                 // we have a geometry
@@ -235,7 +235,7 @@ GEOR.layerfinder = (function() {
             }
         };
     };
-    
+
     /**
      * Method: addSelectedLayers
      * Adds the selected OGC layers to the given layerStore.
@@ -246,7 +246,7 @@ GEOR.layerfinder = (function() {
     var addSelectedLayers = function() {
         var records = selectedRecords[currentTab], record;
         var recordsToAdd = [];
-        
+
         // we need to clone the layers
         for(var i=0, len=records.length; i<len; i++) {
             record = records[i];
@@ -254,7 +254,7 @@ GEOR.layerfinder = (function() {
                 // we're coming from the WMS or WFS tab
                 var layer = record.get("layer");
                 if (layer instanceof OpenLayers.Layer.WMS) {
-                    // WMS layer just need cloning 
+                    // WMS layer just need cloning
                     // (well, for the moment - see http://applis-bretagne.fr/redmine/issues/1996)
                     recordsToAdd.push(record.clone());
                 } else {
@@ -262,9 +262,9 @@ GEOR.layerfinder = (function() {
                     // "this.format is null" sur :
                     // this.format.geometryName = geometryName; (protocol.WFS.v1 L231)
                     // quand on supprime une couche WFS puis quand on l'ajoute à nouveau sans recharger le WFS capabilities store.
-                    
-                    
-                    // For WFS layers, we need to get more information 
+
+
+                    // For WFS layers, we need to get more information
                     // (typically the geometry name)
                     // from WFS DescribeFeatureType
                     var p = layer.protocol;
@@ -308,14 +308,14 @@ GEOR.layerfinder = (function() {
      * Public
      */
     return {
-        
+
         /**
          * APIMethod: create
          * Return the window for layers adding management.
          *
          * Parameters:
          * ls - {GeoExt.data.LayerStore} The application layer store.
-         * animateFrom - {String} Id or element from which the window 
+         * animateFrom - {String} Id or element from which the window
          *  should animate while opening
          *
          * Returns:
@@ -397,7 +397,7 @@ Ext.app.OWSUrlField = Ext.extend(Ext.form.TwinTriggerField, {
     width: 180,
     hasSearch: false,
     paramName: 'query',
-    
+
     cancelRequest: function() {
         var proxy = this.store.proxy;
         var conn = proxy.getConnection();
@@ -421,7 +421,7 @@ Ext.app.OWSUrlField = Ext.extend(Ext.form.TwinTriggerField, {
 
     onTrigger2Click: function(url) {
         this.cancelRequest();
-        
+
         // trim raw value:
         url = url || this.getRawValue();
         url = url.replace(/^\s\s*/, '').replace(/\s\s*$/, '');

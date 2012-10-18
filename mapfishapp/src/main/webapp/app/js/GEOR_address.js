@@ -32,18 +32,18 @@ GEOR.address = (function() {
      * {OpenLayers.Map} The map object
      */
     var map = null;
-      
+
     /**
      * Method: createOACombo
      * Create the OpenAddresses search combo.
      *
      * Returns:
      * {GeoExt.ux.openaddresses.OpenAddressesSearchCombo} The combo.
-     */ 
+     */
     var createOACombo = function() {
         var tr = OpenLayers.i18n;
         var a = new GeoExt.ux.OpenAddressesSearchCombo({
-            map: map, 
+            map: map,
             url: URL,
             zoom: map.baseLayer.numZoomLevels-1,
             tpl: '<tpl for="."><div class="x-combo-list-item" qtip="{housenumber}, {street} - {city}">{housenumber}, {street} - {city}</div></tpl>',
@@ -72,7 +72,7 @@ GEOR.address = (function() {
          * m - {Openlayers.Map} The map object
          *
          * Returns:
-         * {Ext.FormPanel} recenter panel config 
+         * {Ext.FormPanel} recenter panel config
          */
         create: function(m) {
             URL = GEOR.config.ADDRESS_URL;

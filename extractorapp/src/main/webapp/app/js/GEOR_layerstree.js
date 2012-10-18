@@ -56,7 +56,7 @@ GEOR.layerstree = (function() {
      * {Ext.LoadMask} The treePanel loadMask
      */
     var mask;
-    
+
     /**
      * Property: counter
      * {Integer} An internal ajax request counter
@@ -68,13 +68,13 @@ GEOR.layerstree = (function() {
      * {Ext.tree.AsyncTreeNode} The root tree node.
      */
     var rootNode;
-    
+
     /**
      * Property: servicesNode
      * {Ext.tree.AsyncTreeNode} The "OGC services" tree node.
      */
     var servicesNode;
-    
+
     /**
      * Property: layersNode
      * {Ext.tree.AsyncTreeNode} The "Single layers" tree node.
@@ -86,19 +86,19 @@ GEOR.layerstree = (function() {
      * {Ext.tree.TreeNode} The global properties tree node.
      */
     var globalPropertiesNode;
-    
+
     /**
      * Property: maxLayerNameLength
      * {Integer} maximum number of chars for layer name
      */
     var maxLayerNameLength = 100; //30;
-    
+
     /**
      * Property: callback
      * {Function} to be executed when all layers have finished loading
      */
     var callback;
-    
+
     /**
      * Property: observable
      * {Ext.util.Obervable}
@@ -162,7 +162,7 @@ GEOR.layerstree = (function() {
 
                         var units = GEOR.util.getUnitsForCRS(mapCRS);
                         var baselayerOptions = {
-                            projection: mapCRS, 
+                            projection: mapCRS,
                             maxExtent: owsinfo.layer.maxExtent.scale(1.5),
                             units: units
                         };
@@ -179,15 +179,15 @@ GEOR.layerstree = (function() {
                         owsinfo.extent = owsinfo.layer.maxExtent;
                     }
                     map.addLayer(owsinfo.baselayer);
-                    
+
                     // HACK: we need to reset the state of the map
                     map.layerContainerOrigin = null;
 
                     if (owsinfo.layer.CLASS_NAME != "OpenLayers.Layer") {
                         map.addLayer(owsinfo.layer);
                     }
-                    
-                    // TODO: find a way to override strategy (a box strategy might be better than a fixed one, 
+
+                    // TODO: find a way to override strategy (a box strategy might be better than a fixed one,
                     // since the max number of retrievable features is set)
 
                     // if layer has a strategy then activate it
@@ -201,12 +201,12 @@ GEOR.layerstree = (function() {
                         strategy.activate();
                     }
                     map.addLayer(vectorLayer);
-                    
+
                     // This is in order to set the vector layer to the SRS of the map:
-                    vectorLayer.addOptions({projection: owsinfo.baselayer.projection}); 
+                    vectorLayer.addOptions({projection: owsinfo.baselayer.projection});
 
                     map.zoomToExtent(owsinfo.extent.scale(1.1));
-                    
+
                     // Hovering features :
                     if (owsinfo.layer.CLASS_NAME == "OpenLayers.Layer.Vector") {
                         sf = new OpenLayers.Control.SelectFeature(owsinfo.layer, {
@@ -233,7 +233,7 @@ GEOR.layerstree = (function() {
             }
         }
     };
-    
+
     /**
      * Method: getChecked
      * Retrieve an array of checked nodes, or an array of a specific
@@ -246,7 +246,7 @@ GEOR.layerstree = (function() {
     var getChecked = function(startNode, a){
         var r = [];
         var f = function(){
-            if(this.attributes.checked && this.isLeaf() && 
+            if(this.attributes.checked && this.isLeaf() &&
                 this.attributes.owsinfo && !this.disabled) {
                 r.push(!a ? this : (a == 'id' ? this.id : this.attributes[a]));
             }
@@ -262,7 +262,7 @@ GEOR.layerstree = (function() {
      *
      * Parameters:
      * layersInfo - {Array} List of layers information.
-     * parentNode - {Ext.tree.AsyncTreeNode} The node from which to 
+     * parentNode - {Ext.tree.AsyncTreeNode} The node from which to
      *      append children nodes.
      */
     var appendNodesFromLayerList = function(layersInfo, parentNode) {
@@ -274,7 +274,7 @@ GEOR.layerstree = (function() {
             }
         });
     };
-    
+
     var checkNullCounter = function() {
         counter -= 1;
         //console.log('compteur décrémenté de 1 -> '+counter);
@@ -291,7 +291,7 @@ GEOR.layerstree = (function() {
      *
      * Parameters:
      * servicesInfo - {Array} List of services information.
-     * parentNode - {Ext.tree.AsyncTreeNode} The node from which to 
+     * parentNode - {Ext.tree.AsyncTreeNode} The node from which to
      *      append children nodes.
      */
     var appendNodesFromServiceList = function(servicesInfo, parentNode) {
@@ -309,7 +309,7 @@ GEOR.layerstree = (function() {
             }
         });
     };
- 
+
     var appendNodesFromWFSCap = function(wfsinfo, node) {
         GEOR.ows.WFSCapabilities({
             storeOptions: {
@@ -405,7 +405,7 @@ GEOR.layerstree = (function() {
                 checkNullCounter(); // OK
             },
             failure: function() {
-                
+
                 var serviceNode = new Ext.tree.AsyncTreeNode(Ext.applyIf({
                     text: wfsinfo.text,
                     iconCls: 'server-error',
@@ -420,7 +420,7 @@ GEOR.layerstree = (function() {
             }
         });
     };
-    
+
     /**
      * Method: appendNodesFromWMSCap
      */
@@ -451,11 +451,11 @@ GEOR.layerstree = (function() {
                 } else {
                     parentNode = layersNode;
                 }
-                
+
                 var appendRecord = function(record) {
                     var maxExtent, srs;
                     var bbox = record.get("bbox");
-                    
+
                     for(var p in bbox) { // TODO: try to find a better SRS. see http://applis-bretagne.fr/redmine/issues/1949
                         srs = bbox[p].srs;
                         maxExtent = OpenLayers.Bounds.fromArray(bbox[p].bbox);
@@ -465,7 +465,7 @@ GEOR.layerstree = (function() {
                         // no bbox found!
                         // we need to build one here...
                         var srslist = record.get("srs");
-                        
+
                         for (var key in srslist) {
                             if (!srslist.hasOwnProperty(key)) {
                                 continue;
@@ -484,9 +484,9 @@ GEOR.layerstree = (function() {
                             new OpenLayers.Projection("EPSG:4326"),
                             new OpenLayers.Projection(srs));
                     }
-                    
+
                     if(!(srs && maxExtent)) {
-                        
+
                         // append error node here
                         parentNode.appendChild(new Ext.tree.TreeNode({
                             text: GEOR.util.shortenLayerName(wmsinfo.layername, maxLayerNameLength),
@@ -533,7 +533,7 @@ GEOR.layerstree = (function() {
                     if(index >= 0) {
                         appendRecord(records[index]);
                     } else {
-                        
+
                         layersNode.appendChild(new Ext.tree.TreeNode({
                             text: GEOR.util.shortenLayerName(wmsinfo.layername, maxLayerNameLength),
                             disabled: true,
@@ -552,7 +552,7 @@ GEOR.layerstree = (function() {
                 checkNullCounter(); // OK
             },
             failure: function() {
-                
+
                 var serviceNode = new Ext.tree.AsyncTreeNode(Ext.applyIf({
                     text: wmsinfo.text,
                     disabled: true,
@@ -563,12 +563,12 @@ GEOR.layerstree = (function() {
                         'URL': wmsinfo.owsurl})
                 }, node));
                 servicesNode.appendChild(serviceNode);
-                
+
                 checkNullCounter(); // OK
             }
         });
     };
-    
+
     /**
      * Method: appendLayerChild
      * Create and append layer node to the given param node
@@ -583,7 +583,7 @@ GEOR.layerstree = (function() {
         if(owsinfo.owstype == "WMS") {
             counter += 1; // une requete XHR (a) en plus est necessaire (WMSDescribeLayer)
             //console.log('compteur incrémenté de 1 (a) -> '+counter);
-            
+
             // NOTE for the future: do not query N times the same server with the same request
             // keep a local db of responses :-)
             // see http://applis-bretagne.fr/redmine/issues/1928
@@ -598,7 +598,7 @@ GEOR.layerstree = (function() {
                             owsinfo.exportinfo = {};
                         }
                         if(records.length == 0) {
-                            
+
                             parentNode.appendChild(new Ext.tree.TreeNode({
                                 text: GEOR.util.shortenLayerName(owsinfo.text, maxLayerNameLength),
                                 disabled: true,
@@ -608,7 +608,7 @@ GEOR.layerstree = (function() {
                                          {'NAME': owsinfo.text}),
                                 leaf: true
                             }));
-                            
+
                             checkNullCounter(); // XHR (a)
                             return;
                         }
@@ -630,11 +630,11 @@ GEOR.layerstree = (function() {
                                          {'NAME': owsinfo.text}),
                                 leaf: true
                             }));
-                            
+
                             checkNullCounter(); // XHR (a)
                             return;
                         }
-                        
+
                         if (owsinfo.exportinfo.owsType == 'WCS') {
                             parentNode.appendChild(
                                 new Ext.tree.TreeNode({
@@ -701,7 +701,7 @@ GEOR.layerstree = (function() {
                                         },
                                         failure: function(response) {
                                             checkNullCounter();  // XHR (c)
-                                            
+
                                             parentNode.appendChild(new Ext.tree.TreeNode({
                                                 text: GEOR.util.shortenLayerName(owsinfo.text, maxLayerNameLength),
                                                 disabled: true,
@@ -725,11 +725,11 @@ GEOR.layerstree = (function() {
                     },
                     failure: function() {
                         checkNullCounter(); // XHR (a)
-                        
+
                         var msg = tr('layerstree.describelayer', {
                                 'NAME': owsinfo.text,
                                 'URL': owsinfo.owsurl});
-                        
+
                         parentNode.appendChild(new Ext.tree.TreeNode({
                             text: GEOR.util.shortenLayerName(owsinfo.text, maxLayerNameLength),
                             disabled: true,
@@ -752,7 +752,7 @@ GEOR.layerstree = (function() {
             }));
         }
     };
-    
+
     /**
      * Method: checker
      * Check/uncheck child nodes
@@ -780,7 +780,7 @@ GEOR.layerstree = (function() {
          * Observable object
          */
         events: observable,
-        
+
         /**
          * APIMethod: create
          * Return the layers tree config.
@@ -838,7 +838,7 @@ GEOR.layerstree = (function() {
                 qtip: tr('layerstree.qtip.defaultparameters'),
                 leaf: true,
                 owsinfo: {
-                    layer: new OpenLayers.Layer("fake_layer", { 
+                    layer: new OpenLayers.Layer("fake_layer", {
                         projection: GEOR.config.GLOBAL_EPSG, // this one is also used as default export SRS
                         maxExtent: GEOR.config.GLOBAL_MAX_EXTENT,
                         maxResolution: "auto",
@@ -850,9 +850,9 @@ GEOR.layerstree = (function() {
                     }
                 }
             });
-            
+
             rootNode.appendChild([globalPropertiesNode]);
-            
+
             if (GEOR.data.layers && GEOR.data.layers.length) {
                 layersNode = new Ext.tree.AsyncTreeNode({
                     text: tr('OGC Layers'),
@@ -864,17 +864,17 @@ GEOR.layerstree = (function() {
                         "checkchange": checker
                     }
                 });
-                
+
                 new Ext.tree.TreeSorter(layersNode, {
                     dir: "asc",
                     leafAttr: 'leaf',
                     property: "text",
                     caseSensitive: false
                 });
-                
+
                 rootNode.appendChild([layersNode]);
             }
-            
+
             if (GEOR.data.services && GEOR.data.services.length) {
                 servicesNode = new Ext.tree.AsyncTreeNode({
                     text: tr("OGC services"),
@@ -889,18 +889,18 @@ GEOR.layerstree = (function() {
 
                 rootNode.appendChild([servicesNode]);
             }
-            
-            
-            // we create a counter which will be decreased each time 
+
+
+            // we create a counter which will be decreased each time
             // an XHR request is over / increased when one more is required
             // when it's back to 0, we shall hide the load mask.
             counter = GEOR.data.layers.length + GEOR.data.services.length;
             // at the beginning, we only know that one capabilities request is
             // required for each layer and each service.
-            
+
             //console.log('compteur initial -> '+counter+' ('+
             //  GEOR.data.layers.length+' couches et '+GEOR.data.services.length+' services)');
-            
+
             // create and append layers nodes to layersNode node
             appendNodesFromLayerList(GEOR.data.layers, layersNode);
 
@@ -910,7 +910,7 @@ GEOR.layerstree = (function() {
             // default selection is global properties node
             selectionModel.select(globalPropertiesNode);
         },
-        
+
         /**
          * APIMethod: saveExportOptions
          * Save extractOptions in the current node.
@@ -923,7 +923,7 @@ GEOR.layerstree = (function() {
             }
             Ext.apply(owsinfo.exportinfo, options);
         },
-        
+
         /**
          * APIMethod: getSpec
          * returns the current extraction spec.
@@ -932,7 +932,7 @@ GEOR.layerstree = (function() {
             observable.fireEvent('beforeextract');
             var checkedNodes = getChecked(rootNode), node;
             var l = checkedNodes.length;
-            
+
             var global = globalPropertiesNode.attributes.owsinfo.exportinfo;
             var out = {
                 emails: [email],
@@ -954,18 +954,18 @@ GEOR.layerstree = (function() {
                 // see proposition 2 of http://applis-bretagne.fr/redmine/issues/2194#note-15
                 out.sessionid = GEOR.util.getCookie('JSESSIONID');
             };
-            
+
             var local;
             for (var i=0; i<l; i++) {
                 local = checkedNodes[i].attributes.owsinfo.exportinfo;
                 out.layers[i] = {
-                    projection: (local.projection && 
-                        local.projection.length) ? 
+                    projection: (local.projection &&
+                        local.projection.length) ?
                             local.projection : null,
                     resolution: (typeof(local.resolution) == "number") ?
                         local.resolution : null,
-                    format: (local.format && 
-                        local.format.length) ? 
+                    format: (local.format &&
+                        local.format.length) ?
                             local.format : null,
                     bbox: (local.bboxFromGlobal !== false) ? null : {
                         srs: local.srs,
@@ -977,10 +977,10 @@ GEOR.layerstree = (function() {
                     namespace: local.namespace
                 };
             }
-            
+
             return out;
         },
-        
+
         /**
          * APIMethod: extract
          * Extract all checked layers.
@@ -991,9 +991,9 @@ GEOR.layerstree = (function() {
                 url: GEOR.config.EXTRACTOR_BATCH_URL,
                 // HTTP success:
                 success: function(response) {
-                    // since we are not in a REST world, we have to check 
+                    // since we are not in a REST world, we have to check
                     // the value of the success property in the returned XML
-                    if (response.responseText && 
+                    if (response.responseText &&
                         response.responseText.indexOf('<success>true</success>') > 0) {
                         // disable button
                         button.disable();
@@ -1022,7 +1022,7 @@ GEOR.layerstree = (function() {
             });
 
         },
-        
+
         /**
          * APIMethod: getSelectedLayersCount
          * returns the number of selected layers
@@ -1030,14 +1030,14 @@ GEOR.layerstree = (function() {
         getSelectedLayersCount: function() {
             var count = 0;
             rootNode.cascade(function(n) {
-                if (n.isLeaf() && n.attributes.checked && 
+                if (n.isLeaf() && n.attributes.checked &&
                     n.parentNode !== rootNode && !this.disabled) {
                     count += 1;
                 }
             });
             return count;
         },
-        
+
         /**
          * APIMethod: selectAllLayers
          * check all leaf layers in tree
@@ -1047,7 +1047,7 @@ GEOR.layerstree = (function() {
         selectAllLayers: function() {
             var count = 0;
             rootNode.cascade(function(n) {
-                if (n.isLeaf() && !n.isSelected() && 
+                if (n.isLeaf() && !n.isSelected() &&
                     n.parentNode !== rootNode && !this.disabled) {
                     count += 1;
                     n.getUI().toggleCheck(true);

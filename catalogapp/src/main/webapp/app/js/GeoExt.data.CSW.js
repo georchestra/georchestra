@@ -19,7 +19,7 @@
  * @include OpenLayers/Request.js
  * @include OpenLayers/Request/XMLHttpRequest.js
  */
- 
+
 
 /////////////////// GeoExt.data.CSWRecordsReader
 Ext.namespace("GeoExt.data");
@@ -76,7 +76,7 @@ Ext.extend(GeoExt.data.CSWRecordsReader, Ext.data.DataReader, {
         }
         return this.readRecords(data);
     },
-    
+
     readers: {
         "title": function(r) {
             var o = [];
@@ -102,7 +102,7 @@ Ext.extend(GeoExt.data.CSWRecordsReader, Ext.data.DataReader, {
             return b; //.toGeometry();
         }
     },
-    
+
     parseField: function(fieldname, value) {
         if (this.readers[fieldname]) {
             return this.readers[fieldname](value);
@@ -119,7 +119,7 @@ Ext.extend(GeoExt.data.CSWRecordsReader, Ext.data.DataReader, {
      *      capabilities parser.
      *  :return: ``Object`` A data block which is used by an ``Ext.data.Store``
      *      as a cache of ``Ext.data.Record`` objects.
-     *  
+     *
      *  Create a data block containing Ext.data.Records from an XML document.
      */
     readRecords: function(data) {
@@ -129,12 +129,12 @@ Ext.extend(GeoExt.data.CSWRecordsReader, Ext.data.DataReader, {
         if (!!data.error) {
             throw new Ext.data.DataReader.Error("invalid-response", data.error);
         }
-        
+
         var records = [], rs, r;
-        
+
         if (data.records) {
             rs = data.records;
-            var fields = this.recordType.prototype.fields; 
+            var fields = this.recordType.prototype.fields;
             for(var i=0, l=rs.length; i<l; i++){
                 r = rs[i];
                 if(r.title && r.title instanceof Array && r.title[0]) {
@@ -149,11 +149,11 @@ Ext.extend(GeoExt.data.CSWRecordsReader, Ext.data.DataReader, {
 
                     records.push(new this.recordType(values, values.identifier));
                 }
-                
-                
+
+
             }
         }
-        
+
         return {
             totalRecords: (data && data.SearchResults && data.SearchResults.numberOfRecordsMatched) || 0,
             success: true,
@@ -171,7 +171,7 @@ GeoExt.data.CSWRecordsStore = function(c) {
         this,
         Ext.apply(c, {
             proxy: c.proxy || (!c.data ?
-                new Ext.data.HttpProxy({url: c.url, method: "POST"}) : 
+                new Ext.data.HttpProxy({url: c.url, method: "POST"}) :
                 undefined
             ),
             reader: new GeoExt.data.CSWRecordsReader(

@@ -42,11 +42,11 @@ GEOR.resultspanel = (function() {
     observable.addEvents(
         /**
          * Event: panel
-         * Fires when we have a panel to display south 
+         * Fires when we have a panel to display south
          */
         "panel"
     );
-    
+
     /**
      * Property: map
      * {OpenLayers.Map} The map instance.
@@ -55,31 +55,31 @@ GEOR.resultspanel = (function() {
 
     /**
      * Property: store
-     * {GeoExt.data.FeatureStore} 
+     * {GeoExt.data.FeatureStore}
      */
     var store = null;
-    
+
     /**
      * Property: vectorLayer
      * {OpenLayers.Layer.Vector} The vector layer on which we display results
      */
     var vectorLayer = null;
-    
+
     /**
      * Property: model
      * {GEOR.FeatureDataModel} data model
      */
     var model = null;
-    
+
     /**
      * Property: layerBounds
      * {OpenLayers.Bounds} The cached vector layer bounds
      */
     var layerBounds = null;
-    
+
     /**
      * Property: sfControl
-     * {OpenLayers.Control.SelectFeature} The control used for the feature 
+     * {OpenLayers.Control.SelectFeature} The control used for the feature
      *  selection model
      */
     var sfControl = null;
@@ -89,7 +89,7 @@ GEOR.resultspanel = (function() {
      * {Function} an alias to OpenLayers.i18n
      */
     var tr = null;
- 
+
     /**
      * Method: csvExportBtnHandler
      * Triggers the download dialog for CSV export of the store's content
@@ -104,7 +104,7 @@ GEOR.resultspanel = (function() {
         for (var i=0; i<t; i++) {
             data[i] = [];
             att = store.getAt(i).get('feature').attributes;
-            // see http://applis-bretagne.fr/redmine/issues/4084 
+            // see http://applis-bretagne.fr/redmine/issues/4084
             for (var j=0, ll=fields.length; j<ll; j++) {
                 data[i].push(att[fields[j]] || '');
             }
@@ -119,7 +119,7 @@ GEOR.resultspanel = (function() {
             }
         });
     };
-    
+
     /**
      * Method: zoomToLayerExtent
      * Sets the map extent in order to see all results
@@ -132,7 +132,7 @@ GEOR.resultspanel = (function() {
             map.zoomToExtent(layerBounds);
         }
     };
-    
+
     /**
      * Method: zoomToFeatures
      * Sets the map extent in order to see all results
@@ -171,7 +171,7 @@ GEOR.resultspanel = (function() {
         }
         return layerBounds;
     };
-    
+
     /**
      * Method: createGridPanel
      * Empties the container panel, creates and loads the gridPanel into it
@@ -180,22 +180,22 @@ GEOR.resultspanel = (function() {
      * store - {GeoExt.data.FeatureStore} our feature store
      */
     var createGridPanel = function(store) {
-        
+
         var columnModel = model.toColumnModel({
             sortable: true
         });
-        
+
         var c = store.getCount();
         var plural = (c>1) ? "s" : "";
-        
+
         var tbtext = new Ext.Toolbar.TextItem({
             text: (c == GEOR.config.MAX_FEATURES) ?
-                tr("resultspanel.maxfeature.reached", {'nb': GEOR.config.MAX_FEATURES}): 
+                tr("resultspanel.maxfeature.reached", {'nb': GEOR.config.MAX_FEATURES}):
                 (c>1) ? tr("NB results", {'nb': c}) :
                 (c>0) ? tr("One result") :
                 tr("Not any result")
         });
-        
+
         var bbar = [{
             text: tr("Clean"),
             tooltip: tr("Clean all results on the map and in the table"),
@@ -213,11 +213,11 @@ GEOR.resultspanel = (function() {
             tooltip: tr("Export results as CSV"),
             handler: csvExportBtnHandler
         }];
-        
+
         if (!sfControl) {
             // we need to create the SelectFeature control by ourselves
             // because we need to modify its internal properties
-            // and we cannot get a reference to these when the control is created 
+            // and we cannot get a reference to these when the control is created
             // inside the GeoExt.grid.FeatureSelectionModel
             sfControl = new OpenLayers.Control.SelectFeature(vectorLayer, {
                 toggle: true,
@@ -227,11 +227,11 @@ GEOR.resultspanel = (function() {
             // see http://applis-bretagne.fr/redmine/issues/1983
             sfControl.handlers.feature.stopDown = false;
         }
-            
+
         observable.fireEvent("panel", {
             xtype: "grid",
             viewConfig: {
-                // we add an horizontal scroll bar in case 
+                // we add an horizontal scroll bar in case
                 // there are too many attributes to display:
                 forceFit: (columnModel.length < 10)
             },
@@ -252,7 +252,7 @@ GEOR.resultspanel = (function() {
                 "beforedestroy": function() {
                     this.selModel.unbind(); // required to handle issue 256
                     // http://applis-bretagne.fr/redmine/issues/show/256
-                    // this deactivates Feature handler, 
+                    // this deactivates Feature handler,
                     // and moves search_results layer back to normal z-index
                     return true;
                 },
@@ -278,9 +278,9 @@ GEOR.resultspanel = (function() {
      * {OpenLayers.Layer.Vector}
      */
     var createVectorLayer = function() {
-        var defStyle = OpenLayers.Util.extend({}, 
+        var defStyle = OpenLayers.Util.extend({},
             OpenLayers.Feature.Vector.style['default']);
-        var selStyle = OpenLayers.Util.extend({}, 
+        var selStyle = OpenLayers.Util.extend({},
             OpenLayers.Feature.Vector.style['select']);
         var styleMap = new OpenLayers.StyleMap({
             "default": new OpenLayers.Style(
@@ -307,7 +307,7 @@ GEOR.resultspanel = (function() {
             }
         });
     };
-    
+
     /**
      * Method: populate
      * Callback executed when we receive the XML data.
@@ -318,7 +318,7 @@ GEOR.resultspanel = (function() {
     var populate = function(options) {
         // we clear the bounds cache:
         layerBounds = null;
-        
+
         var features = options.features;
         if (!features || features.length === 0) {
             GEOR.waiter.hide();
@@ -328,12 +328,12 @@ GEOR.resultspanel = (function() {
             });
             return;
         }
-        
+
         if (!vectorLayer) {
             vectorLayer = createVectorLayer();
             map.addLayer(vectorLayer);
         }
-        
+
         if (options.model) {
             model = options.model;
         } else {
@@ -342,7 +342,7 @@ GEOR.resultspanel = (function() {
                 features: features
             });
         }
-        
+
         store = new GeoExt.data.FeatureStore({
             layer: vectorLayer,
             fields: model.toStoreFields()
@@ -371,15 +371,15 @@ GEOR.resultspanel = (function() {
      * Public
      */
     return {
-    
+
         /*
          * Observable object
          */
         events: observable,
-        
+
         /**
          * APIMethod: init
-         * Initialize this module 
+         * Initialize this module
          *
          * Parameters:
          * m - {OpenLayers.Map} The map instance.
