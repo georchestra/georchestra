@@ -190,12 +190,12 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     /* GEOR_mapinit.js strings */
     "Add layers from WMS services":
         "Ajouter des couches depuis des services WMS",
-    "NB layers not imported": "${nb} couches non importées",
+    "NB layers not imported": "${NB} couches non importées",
     "One layer not imported": "Une couche non importée",
     "mapinit.layers.load.error":
         "Les couches nommées ${list} n'ont pas pu être chargées : " +
         "SRS incompatible ou couche non existante",
-    "NB layers imported": "${nb} couches importées",
+    "NB layers imported": "${NB} couches importées",
     "One layer imported": "Une couche importée",
     "Not any layer imported": "Aucune couche importée",
     "The default context is not defined (and it is a BIG problem!)":
