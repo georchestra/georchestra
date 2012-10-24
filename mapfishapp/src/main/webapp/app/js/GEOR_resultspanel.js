@@ -190,8 +190,8 @@ GEOR.resultspanel = (function() {
 
         var tbtext = new Ext.Toolbar.TextItem({
             text: (c == GEOR.config.MAX_FEATURES) ?
-                tr("resultspanel.maxfeature.reached", {'nb': GEOR.config.MAX_FEATURES}):
-                (c>1) ? tr("NB results", {'nb': c}) :
+                tr("resultspanel.maxfeature.reached", {'NB': GEOR.config.MAX_FEATURES}):
+                (c>1) ? tr("NB results", {'NB': c}) :
                 (c>0) ? tr("One result") :
                 tr("Not any result")
         });

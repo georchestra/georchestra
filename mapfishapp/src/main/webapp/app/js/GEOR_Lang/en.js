@@ -61,11 +61,11 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
     "The <b>NAME</b> layer could not appear for that reason: ":
         "The <b>${name}</b> layer could not appear for that reason: ",
     /* GEOR_mapinit.js strings */
-    "NB layers not imported": "${nb} layers not imported",
+    "NB layers not imported": "${NB} layers not imported",
     "mapinit.layers.load.error":
         "The layers named ${list} could not be loaded: " +
         "SRS incompatible or the layer does not exists",
-    "NB layers imported": "${nb} layers imported",
+    "NB layers imported": "${NB} layers imported",
     /* GEOR_mappanel.js strings */
     "Mouse coordinates in SRS": "Coordinates of mouse in ${srs}",
     /* GEOR_ows.js strings */
@@ -92,8 +92,8 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
     "resultspanel.maxfeature.reached":
         " <span ext:qtip=\"Use a more powerful browser " +
         "to increase the number of visible objects\">" +
-        "Max number of objects reached (${nb})</span>",
-    "NB results": "${nb} results",
+        "Max number of objects reached (${NB})</span>",
+    "NB results": "${NB} results",
     /* GEOR_scalecombo.js strings */
     /* GEOR_styler.js strings */
     "styler.guidelines":
@@ -107,7 +107,7 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
         "the current map",
     /* GEOR_wmsbrowser.js strings */
     "The server is publishing NB layers with an incompatible projection":
-        "The server is publishing ${nb} layers with an incompatible projection",
+        "The server is publishing ${NB} layers with an incompatible projection",
     /* GEOR_wfsbrowser.js strings */
     "Unreachable server or insufficient rights": "Could not get a valid response from " +
         "the server. Possible reasons: too much data, insufficient rights, server is down",

@@ -189,12 +189,12 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
         "La extensión geográfica no corresponde a la extensión del mapa",
     /* GEOR_mapinit.js strings */
     "Add layers from WMS services": "Añadir capas desde servicios WMS",
-    "NB layers not imported": "${nb} capas no importadas",
+    "NB layers not imported": "${NB} capas no importadas",
     "One layer not imported": "Una capa no importada",
     "mapinit.layers.load.error":
         "Las capas siguientes: ${list}, no se lograron cargar: " +
         "SRS incompatible o la capa no existe",
-    "NB layers imported": "${nb} capas importadas",
+    "NB layers imported": "${NB} capas importadas",
     "One layer imported": "Una capa importada",
     "Not any layer imported": "Ninguna capa importada",
     "The default context is not defined (and it is a BIG problem!)":
@@ -258,8 +258,8 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "resultspanel.maxfeature.reached":
         " <span ext:qtip=\"Utilice un navegador más potente " +
         "para aumentar el número de objetos visibles\">" +
-        "Número de objetos máximo alcanzado (${nb})</span>",
-    "NB results": "${nb} resultados",
+        "Número de objetos máximo alcanzado (${NB})</span>",
+    "NB results": "${NB} resultados",
     "One result": "1 resultado",
     "Not any result": "Ningún resultado",
     "Clean": "Quitar",
@@ -352,7 +352,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "The server is publishing one layer with an incompatible projection":
         "El servicio está publicando una capa cuya proyección no es compatible",
     "The server is publishing NB layers with an incompatible projection":
-        "El servicio esta publicando ${nb} capas cuya proyección no es " +
+        "El servicio esta publicando ${NB} capas cuya proyección no es " +
         "compatible",
     "WMS server": "Servicio WMS",
     /* GEOR_workspace.js strings */

@@ -259,8 +259,8 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "resultspanel.maxfeature.reached":
         " <span ext:qtip=\"Utilisez un navigateur plus performant " +
         "pour augmenter le nombre d'objets affichables\">" +
-        "Nombre maximum d'objets atteint (${nb})</span>",
-    "NB results": "${nb} résultats",
+        "Nombre maximum d'objets atteint (${NB})</span>",
+    "NB results": "${NB} résultats",
     "One result": "1 résultat",
     "Not any result": "Aucun résultat",
     "Clean": "Effacer",
@@ -353,7 +353,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "The server is publishing one layer with an incompatible projection":
         "Le serveur publie une couche dont la projection n'est pas compatible",
     "The server is publishing NB layers with an incompatible projection":
-        "Le serveur publie ${nb} couches dont la projection n'est pas " +
+        "Le serveur publie ${NB} couches dont la projection n'est pas " +
         "compatible",
     "WMS server": "Serveur WMS",
     /* GEOR_workspace.js strings */
