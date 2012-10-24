@@ -16,7 +16,7 @@ Ext.namespace("GEOR");
 
 GEOR.config = (function() {
 
-    
+
     /**
      * Method: getCustomParameter
      *  If parameter paramName exists in GEOR.custom, returns its value
@@ -24,14 +24,14 @@ GEOR.config = (function() {
      *
      * Parameters:
      * paramName - {String} the parameter name
-     * defaultValue - {Mixed} the default value if none is 
+     * defaultValue - {Mixed} the default value if none is
      *                specified in GEOR.custom
      *
      * Returns:
      * {Mixed} The parameter value
      */
     var getCustomParameter = function(paramName, defaultValue) {
-        return (GEOR.custom && GEOR.custom.hasOwnProperty(paramName)) ? 
+        return (GEOR.custom && GEOR.custom.hasOwnProperty(paramName)) ?
             GEOR.custom[paramName] : defaultValue;
     };
 
@@ -42,34 +42,34 @@ GEOR.config = (function() {
          * The URL to the GeoNetwork server.
          * Defaults to "/geonetwork/srv/fr"
          */
-        GEONETWORK_URL: getCustomParameter('GEONETWORK_URL', 
+        GEONETWORK_URL: getCustomParameter('GEONETWORK_URL',
             "/geonetwork/srv/fr"),
-        
+
         /**
          * Constant: VIEWER_URL
          * The URL to Mapfishapp
          * Defaults to "/mapfishapp/"
          */
-        VIEWER_URL: getCustomParameter('VIEWER_URL', 
+        VIEWER_URL: getCustomParameter('VIEWER_URL',
             "/mapfishapp/"),
-        
+
         /**
          * Constant: EXTRACTOR_URL
          * The URL to Extractorapp
          * Defaults to "/extractorapp/"
          */
-        EXTRACTOR_URL: getCustomParameter('EXTRACTOR_URL', 
+        EXTRACTOR_URL: getCustomParameter('EXTRACTOR_URL',
             "/extractorapp/"),
-        
+
         /**
          * Constant: MAP_DOTS_PER_INCH
          * {Float} Sets the resolution used for scale computation.
          * Defaults to GeoServer defaults, which is 25.4 / 0.28
          */
-        MAP_DOTS_PER_INCH: getCustomParameter('MAP_DOTS_PER_INCH', 
+        MAP_DOTS_PER_INCH: getCustomParameter('MAP_DOTS_PER_INCH',
             25.4 / 0.28),
-        
-        RESULTS_PER_PAGE: getCustomParameter('RESULTS_PER_PAGE', 
+
+        RESULTS_PER_PAGE: getCustomParameter('RESULTS_PER_PAGE',
             20)
     };
 })();

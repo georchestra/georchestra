@@ -31,13 +31,13 @@ GEOR.geonames = (function() {
      * {Function} an alias to OpenLayers.i18n
      */
     var tr = null;
-    
+
     /*
      * Method: createCbSearch
      * Returns: {Ext.form.ComboBox}
-     */ 
+     */
     var createCbSearch = function() {
-    
+
         //Handles data coming from geonames WS
         var dsGeonames = new Ext.data.Store({
             // uses geonames WS (ScriptTagProxy because remote server)
@@ -77,23 +77,23 @@ GEOR.geonames = (function() {
             tpl: tplResult,                      // template to display results
             itemSelector: 'div.search-item',     // needed by the template
             queryParam: 'name_startsWith',       // geonames filter
-            minChars: 2,                         // min characters number to 
+            minChars: 2,                         // min characters number to
                                                   // trigger the search
             pageSize: 0,                         // removes paging toolbar
             listeners: {
                 select: function(combo, record, index) {
                     // geonames lon/lat are in EPSG:4326
                     var lonlat = new OpenLayers.LonLat(
-                        record.data.lng, 
+                        record.data.lng,
                         record.data.lat
                     );
-                    
+
                     // convert to the map's projection
                     lonlat.transform(
-                        new OpenLayers.Projection("EPSG:4326"), 
+                        new OpenLayers.Projection("EPSG:4326"),
                         map.getProjectionObject()
                     );
-             
+
                     // center map to POI
                     map.setCenter(lonlat, map.baseLayer.numZoomLevels - GEOR.config.GEONAMES_ZOOMLEVEL);
                 }
@@ -115,7 +115,7 @@ GEOR.geonames = (function() {
          * m - {Openlayers.Map} The map object
          *
          * Returns:
-         * {Ext.FormPanel} recenter panel config 
+         * {Ext.FormPanel} recenter panel config
          */
         create: function(m) {
         	map = m;

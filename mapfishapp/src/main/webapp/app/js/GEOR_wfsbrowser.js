@@ -26,7 +26,7 @@ GEOR.wfsbrowser = (function() {
     /*
      * Private
      */
-    
+
     var observable = new Ext.util.Observable();
     observable.addEvents(
         /**
@@ -59,7 +59,7 @@ GEOR.wfsbrowser = (function() {
          * Observable object
          */
         events: observable,
-        
+
         /**
          * APIMethod: getPanel
          * Return the panel for the WMS browser
@@ -75,7 +75,7 @@ GEOR.wfsbrowser = (function() {
             var srs = options.srs;
             delete options.srs;
             tr = OpenLayers.i18n;
-            
+
             var store = new GEOR.ows.WFSCapabilities({
                 storeOptions: {
                     // url should not be empty unless we want the following
@@ -86,7 +86,7 @@ GEOR.wfsbrowser = (function() {
                     url: "/dummy",
                     layerOptions: function() {
 	                    return {
-                            // by default, we want our WFS vector layers 
+                            // by default, we want our WFS vector layers
                             // to be off, so that the browser is not overwhelmed
                             // with too many features.
                             // this gives a chance for the user to zoom in
@@ -94,7 +94,7 @@ GEOR.wfsbrowser = (function() {
 	                        visibility: false,
 	                        displayInLayerSwitcher: true,
                             // we don't want to have too many features
-                            // => we load only what is needed for current 
+                            // => we load only what is needed for current
                             // map extent
 	                        strategies: [
                                 new OpenLayers.Strategy.BBOX({
@@ -105,26 +105,26 @@ GEOR.wfsbrowser = (function() {
 	                },
                     protocolOptions: {
                         //autoDestroy: false, // TEST (seems not to work as expected)
-                        
+
                         // we need to set the srsName in the WFS query,
                         // so that features are returned in the correct SRS.
-                        // Please note that, with WFS 1.0.0, the trick should 
+                        // Please note that, with WFS 1.0.0, the trick should
                         // only work with GeoServer:
                         srsNameInQuery: true,
                         srsName: srs
                         // Note: the geometry name will be set later on:
-                        // See http://applis-bretagne.fr/redmine/issues/2145 
-                        // and describeFeaturetypeSuccess() in GEOR_layerfinder.js 
-                        
+                        // See http://applis-bretagne.fr/redmine/issues/2145
+                        // and describeFeaturetypeSuccess() in GEOR_layerfinder.js
+
                         // TODO: MapServer >= 5.6 requires that all propertyNames
                         // are listed here, if we want to get the geometry.
-                        // This requires that we do a WFS DescribeFeatureType 
+                        // This requires that we do a WFS DescribeFeatureType
                         // and amend the protocol once we get the response.
                         // see http://applis-bretagne.fr/redmine/issues/1996
-                        
+
                         // I think this will be done as a consequence of
                         // http://applis-bretagne.fr/redmine/issues/1984 :
-                        // geometryName and propertyNames should be cached 
+                        // geometryName and propertyNames should be cached
                         // in the layerStore for future use, after GetCap &
                         // DescribeFeatureType responses are parsed.
                     }
@@ -186,7 +186,7 @@ GEOR.wfsbrowser = (function() {
                 displayField: 'name',
                 tpl: '<tpl for="."><div ext:qtip="<b>{name}</b><br/>{url}" class="x-combo-list-item">{name}</div></tpl>'
             });
-            
+
             var urlField = new Ext.app.OWSUrlField({
                 fieldLabel: tr("... or enter its address: "),
                 store: store,
@@ -221,7 +221,7 @@ GEOR.wfsbrowser = (function() {
                 ]
             }, options));
         },
-        
+
         /**
          * APIMethod: clearSelection
          * Clears the current selection

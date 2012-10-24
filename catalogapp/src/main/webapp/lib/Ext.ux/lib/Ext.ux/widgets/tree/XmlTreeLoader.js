@@ -1,7 +1,7 @@
 Ext.namespace('Ext.ux.tree');
- 
+
 Ext.ux.tree.XmlTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
- 
+
     requestData : function(node, callback){
         if(this.fireEvent("beforeload", this, node, callback) !== false){
             this.transId = Ext.Ajax.request({
@@ -25,7 +25,7 @@ Ext.ux.tree.XmlTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
     processResponse : function(response, node, callback){
         var xml = response.responseText;
         try {
-            var o = this.parseOutput(this, xml);                                                    
+            var o = this.parseOutput(this, xml);
             node.beginUpdate();
             if(node.store && node.store.loadData) {
                 node.store.loadData(o);
@@ -47,5 +47,5 @@ Ext.ux.tree.XmlTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
         }
     }
 
-}); 
+});
 

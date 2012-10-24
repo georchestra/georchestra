@@ -46,7 +46,7 @@ GEOR.ajaxglobal = (function() {
     var httpSuccess = function(request) {
         return (request.status >= 200 && request.status < 300);
     };
-    
+
     /**
      * Method: handleFailure
      * Handles Ajax errors.
@@ -91,7 +91,7 @@ GEOR.ajaxglobal = (function() {
      * Method: handleComplete
      * Handles completion of Ajax requests
      *
-     * Parameters: 
+     * Parameters:
      * options - {object} hash with options:
      *    request - {XMLHttpRequest} The XHR object.
      *    config - {Object} The request config.
@@ -101,7 +101,7 @@ GEOR.ajaxglobal = (function() {
      * {Boolean} false : we never automatically run other callbacks (success/failure)
      */
     var handleComplete = function(options) {
-    
+
         GEOR.waiter.hide();
         var request = options.request, runCallbacks = true;
 
@@ -166,6 +166,6 @@ GEOR.ajaxglobal = (function() {
                 scope: this
             });
         }
-        
+
     };
 })();

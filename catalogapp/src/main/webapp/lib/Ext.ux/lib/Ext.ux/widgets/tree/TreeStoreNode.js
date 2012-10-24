@@ -11,22 +11,22 @@ Ext.namespace("Ext.ux.tree");
 
 /** api: constructor
  *  .. class:: TreeStoreNode
- * 
+ *
  *      A subclass of ``Ext.tree.TreeNode`` that will collect all records
  *      from a store. Only records that have displayInTree set to true
  *      will be included.
- * 
+ *
  *      To use this node type in ``TreePanel`` config, set nodeType to
  *      "ux_treestorenode".
  */
 Ext.ux.tree.TreeStoreNode = Ext.extend(Ext.tree.AsyncTreeNode, {
-    
+
     /** api: config[store]
      *  :class:`Ext.data.Store`
      *  The store containing record nodes to be displayed in the container.
      */
     store: null,
-    
+
     /** api: config[defaults]
      *  ``Object``
      *  A configuration object passed to all nodes that this container creates.
@@ -59,12 +59,12 @@ Ext.ux.tree.TreeStoreNode = Ext.extend(Ext.tree.AsyncTreeNode, {
         }
         Ext.ux.tree.TreeStoreNode.superclass.render.call(this, bulkRender);
     },
-    
+
     /** private: method[onStoreLoad]
      *  :param store: ``Ext.data.Store``
      *  :param records: ``Array(Ext.data.Record)``
      *  :param options: ``Object``
-     *  
+     *
      *  Listener for the store's load event.
      */
     onStoreLoad: function(store, records, options) {
@@ -80,12 +80,12 @@ Ext.ux.tree.TreeStoreNode = Ext.extend(Ext.tree.AsyncTreeNode, {
             }
         }
     },
-    
+
     /** private: method[onStoreAdd]
      *  :param store: ``Ext.data.Store``
      *  :param records: ``Array(Ext.data.Record)``
      *  :param index: ``Number``
-     *  
+     *
      *  Listener for the store's add event.
      */
     onStoreAdd: function(store, records, index) {
@@ -96,12 +96,12 @@ Ext.ux.tree.TreeStoreNode = Ext.extend(Ext.tree.AsyncTreeNode, {
             }
         }
     },
-    
+
     /** private: method[onStoreRemove]
      *  :param store: ``Ext.data.Store``
      *  :param record: ``Ext.data.Record``
      *  :param index: ``Number``
-     *  
+     *
      *  Listener for the store's remove event.
      */
     onStoreRemove: function(store, record, index) {
@@ -120,7 +120,7 @@ Ext.ux.tree.TreeStoreNode = Ext.extend(Ext.tree.AsyncTreeNode, {
         }
         Ext.ux.tree.TreeStoreNode.superclass.destroy.apply(this, arguments);
     },
-    
+
     /** private: method[recordIndexToNodeIndex]
      *  :param index: ``Number`` The record index in the store.
      *  :return: ``Number`` The appropriate child node index for the record.
@@ -140,11 +140,11 @@ Ext.ux.tree.TreeStoreNode = Ext.extend(Ext.tree.AsyncTreeNode, {
         };
         return nodeIndex;
     },
-    
+
     /** private: method[nodeIndexToRecordIndex]
      *  :param index: ``Number`` The child node index.
      *  :return: ``Number`` The appropriate record index for the node.
-     *  
+     *
      *  Convert a child node index to a record index.
      */
     nodeIndexToRecordIndex: function(index) {
@@ -161,11 +161,11 @@ Ext.ux.tree.TreeStoreNode = Ext.extend(Ext.tree.AsyncTreeNode, {
         }
         return i;
     },
-    
+
     /** private: method[addRecordNode]
      *  :param record: ``Ext.data.Record`` The record to be added.
      *  :param index: ``Number`` Optional index for the new record. Default is 0.
-     *  
+     *
      *  Adds a child node representing a record
      */
     addRecordNode: function(record, index) {
@@ -184,10 +184,10 @@ Ext.ux.tree.TreeStoreNode = Ext.extend(Ext.tree.AsyncTreeNode, {
             node.on("move", this.onChildMove, this);
         }
     },
-    
+
     /** private: method[removeRecordNode]
      *  :param record: ``Ext.data.Record`` The record to be removed.
-     * 
+     *
      *  Removes a child node representing a record
      */
     removeRecordNode: function(record) {
@@ -201,14 +201,14 @@ Ext.ux.tree.TreeStoreNode = Ext.extend(Ext.tree.AsyncTreeNode, {
             }
     	}
     },
-    
+
     /** private: method[onChildMove]
      *  :param tree: ``Ext.data.Tree``
      *  :param node: ``Ext.tree.TreeNode``
      *  :param oldParent: ``Ext.tree.TreeNode``
      *  :param newParent: ``Ext.tree.TreeNode``
      *  :param index: ``Number``
-     *  
+     *
      *  Listener for child node "move" events.  This updates the order of
      *  records in the store based on new node order if the node has not
      *  changed parents.
@@ -227,7 +227,7 @@ Ext.ux.tree.TreeStoreNode = Ext.extend(Ext.tree.AsyncTreeNode, {
             delete this._reordering;
         }
     }
-    
+
 });
 
 /**

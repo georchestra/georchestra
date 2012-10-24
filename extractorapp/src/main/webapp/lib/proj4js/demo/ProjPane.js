@@ -22,7 +22,7 @@ ProjPane.prototype = {
   },
 
   setProj: function(code) {
-    document.getElementById(this.id+'_proj').value = code; 
+    document.getElementById(this.id+'_proj').value = code;
 
     this.proj = new Proj4js.Proj(code);
     var mapDef = Proj4js.maps[this.proj.srsCode];
@@ -40,21 +40,21 @@ ProjPane.prototype = {
       this.map.addLayer(new OpenLayers.Layer.Boxes());
       this.map.layers[2].addMarker(new OpenLayers.Marker.Box(bounds));
       this.map.setCenter(bounds.getCenterLonLat());
-    } else {    
+    } else {
       this.map.zoomToMaxExtent();
-    }    
+    }
     this.map.events.register('click', this.map, this.mapClicked.bind(this));
 
-    document.getElementById(this.id+'_units').innerHTML = this.proj.units; 
-    document.getElementById(this.id+'_title').innerHTML = this.proj.title; 
-    document.getElementById(this.id+'_class').innerHTML = this.proj.projName; 
+    document.getElementById(this.id+'_units').innerHTML = this.proj.units;
+    document.getElementById(this.id+'_title').innerHTML = this.proj.title;
+    document.getElementById(this.id+'_class').innerHTML = this.proj.projName;
   },
 
-  mapClicked: function(ev) { 
+  mapClicked: function(ev) {
     var olc = this.map.getLonLatFromViewPortPx(ev.xy);
     c = new Proj4js.Point(olc.lon, olc.lat);
     this.updateCoords(c);
-  
+
     if (this.opposite && this.opposite.proj) {
       var newCoords = this.proj.transform(c, this.opposite.proj);
       this.opposite.updateCoords(newCoords);

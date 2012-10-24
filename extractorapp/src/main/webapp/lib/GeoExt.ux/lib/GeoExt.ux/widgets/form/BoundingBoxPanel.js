@@ -138,7 +138,7 @@ GeoExt.ux.form.BoundingBoxPanel = Ext.extend(Ext.Panel, {
         this.bottom.on('specialkey', this.specialKeyPressed, this);
         this.right.on('specialkey', this.specialKeyPressed, this);
         this.left.on('specialkey', this.specialKeyPressed, this);
-        
+
         if (this.handleAction) {
             this.control = new OpenLayers.Control.DrawFeature(
                 this.vectorLayer,
@@ -171,7 +171,7 @@ GeoExt.ux.form.BoundingBoxPanel = Ext.extend(Ext.Panel, {
 
         GeoExt.ux.form.BoundingBoxPanel.superclass.initComponent.apply(this, arguments);
     },
-    
+
     /**
      * APIMethod: getBbox
      * Get the bbox values
@@ -179,7 +179,7 @@ GeoExt.ux.form.BoundingBoxPanel = Ext.extend(Ext.Panel, {
     getBbox: function() {
         return this.bbox;
     },
-    
+
     /**
      * APIMethod: setBbox
      * Set the bbox values
@@ -264,7 +264,7 @@ GeoExt.ux.form.BoundingBoxPanel = Ext.extend(Ext.Panel, {
             this.onChange();
         }
     },
-    
+
     /**
      * Private method
      * Handler of change event.

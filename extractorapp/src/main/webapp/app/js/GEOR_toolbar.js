@@ -100,7 +100,7 @@ GEOR.toolbar = (function() {
         }));
 
         items.push('->');
-        
+
         items.push({
             text: tr("Help"),
             tooltip: tr("Show help"),
@@ -114,18 +114,18 @@ GEOR.toolbar = (function() {
                 }
             }
         });
-            
+
         if (GEOR.header === false) {
             items.push("-");
             // insert a login or logout link in the toolbar
             items.push(
-                Ext.DomHelper.append(Ext.getBody(), 
+                Ext.DomHelper.append(Ext.getBody(),
                     GEOR.data.anonymous ?
                         '<div class="login"><a href="' + GEOR.config.LOGIN_URL +
                         '" class="nounderline" onclick="return GEOR.toolbar.confirmLogin()">' +
                         tr('Login') +
                         '</a></div>' :
-                        '<div class="login">'+GEOR.data.username + 
+                        '<div class="login">'+GEOR.data.username +
                         '&nbsp;<a href="' + GEOR.config.LOGOUT_URL +
                         '" class="nounderline">' +
                         tr('Logout') +
@@ -133,7 +133,7 @@ GEOR.toolbar = (function() {
                 )
             );
         }
-        
+
         return items;
     };
 
@@ -158,7 +158,7 @@ GEOR.toolbar = (function() {
             Ext.QuickTips.init();
             return createTbar(map);
         },
-        
+
         /**
          * Method: confirmLogin
          * Displays a confirm dialog before leaving the app for CAS login

@@ -20,7 +20,7 @@ Ext.onReady(function() {
     map.addLayer(layer);
 
     var openAddressesSearchCombo = new GeoExt.ux.OpenAddressesSearchCombo({
-        map: map, 
+        map: map,
         zoom: 15
     });
 

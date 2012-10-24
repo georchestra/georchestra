@@ -123,10 +123,10 @@ GEOR.toolbar = (function() {
                 popup.position();
                 popup.show();
                 popup.update({
-                    measure: event.order == 2 ? 
-                        (event.units == tr("m") ? 
-                            (event.measure/10000).toFixed(2) : 
-                            (event.measure*100).toFixed(2)) : 
+                    measure: event.order == 2 ?
+                        (event.units == tr("m") ?
+                            (event.measure/10000).toFixed(2) :
+                            (event.measure*100).toFixed(2)) :
                         event.measure.toFixed(2),
                     units: event.order == 2 ? tr("hectares") : event.units
                 });
@@ -139,7 +139,7 @@ GEOR.toolbar = (function() {
         });
         return measureControl;
     };
-    
+
     /**
      * Method: createTbar
      * Create the toolbar.
@@ -185,9 +185,9 @@ GEOR.toolbar = (function() {
             toggleGroup: "map",
             allowDepress: false
         }));
-    
+
         items.push("-");
-        
+
         items.push(new GeoExt.Action({
             control: createMeasureControl(OpenLayers.Handler.Path, map),
             map: map,
@@ -238,7 +238,7 @@ GEOR.toolbar = (function() {
             },
             autoScroll: true
         });
-        
+
         if (GEOR.print) {
             items.push("-");
             GEOR.print.setLegend(legendPanel);
@@ -258,7 +258,7 @@ GEOR.toolbar = (function() {
             items.push(Ext.DomHelper.append(Ext.getBody(), login_html));
             items.push('-');
         }
-    
+
         items.push({
             text: tr("Help"),
             tooltip: tr("Show help"),
@@ -310,9 +310,9 @@ GEOR.toolbar = (function() {
                 }
             }
         });
-        
+
         items.push("-");
-        
+
         //  ADDONS menu
         if (GEOR.addonsmenu) {
             var addonsMenu = GEOR.addonsmenu.create(map);
@@ -321,7 +321,7 @@ GEOR.toolbar = (function() {
                 items.push("-");
             }
         }
-        
+
         items.push(GEOR.workspace.create(map));
 
         // the toolbar items are added afterwards the creation of the toolbar
@@ -351,10 +351,10 @@ GEOR.toolbar = (function() {
         create: function(layerStore) {
             Ext.QuickTips.init();
             tr = OpenLayers.i18n;
-            
+
             return createTbar(layerStore);
         },
-        
+
         /**
          * Method: confirmLogin
          * Displays a confirm dialog before leaving the app for CAS login
