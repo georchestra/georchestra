@@ -193,8 +193,8 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "NB layers not imported": "${NB} couches non importées",
     "One layer not imported": "Une couche non importée",
     "mapinit.layers.load.error":
-        "Les couches nommées ${list} n'ont pas pu être chargées : " +
-        "SRS incompatible ou couche non existante",
+        "Les couches nommées ${list} n'ont pas pu être chargées. " +
+        "Raisons possibles : droits insuffisants, SRS incompatible ou couche non existante",
     "NB layers imported": "${NB} couches importées",
     "One layer imported": "Une couche importée",
     "Not any layer imported": "Aucune couche importée",
@@ -339,8 +339,8 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Choose a WFS server: ": "Choisissez un serveur WFS : ",
     "... or enter its address: ": "... ou saisissez son adresse : ",
     "Unreachable server or insufficient rights": "Réponse invalide du " +
-        "serveur. Raisons possibles : trop de données, droits insuffisants, " +
-        "serveur injoignables, etc.",
+        "serveur. Raisons possibles : droits insuffisants, " +
+        "serveur injoignable, trop de données, etc.",
     "WFS server": "Serveur WFS",
     /* GEOR_wmc.js strings */
     "wmc.bad.srs": "Le fichier .wmc ne " +

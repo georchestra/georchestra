@@ -63,8 +63,8 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
     /* GEOR_mapinit.js strings */
     "NB layers not imported": "${NB} layers not imported",
     "mapinit.layers.load.error":
-        "The layers named ${list} could not be loaded: " +
-        "SRS incompatible or the layer does not exists",
+        "The layers named ${list} could not be loaded. Possible reasons: " +
+        "insufficient rights, incompatible CRS or layer does not exist",
     "NB layers imported": "${NB} layers imported",
     /* GEOR_mappanel.js strings */
     "Mouse coordinates in SRS": "Coordinates of mouse in ${srs}",
@@ -110,7 +110,7 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
         "The server is publishing ${NB} layers with an incompatible projection",
     /* GEOR_wfsbrowser.js strings */
     "Unreachable server or insufficient rights": "Could not get a valid response from " +
-        "the server. Possible reasons: too much data, insufficient rights, server is down",
+        "the server. Possible reasons: insufficient rights, server is down, too much data.",
     /* GEOR_EditingPanel.js */
     "editingpanel.geom.error": "This layer's geometry type is ${type}.<br/>" +
         "Only point, line and polygons" +
