@@ -15,9 +15,19 @@ How to build ?
 How to customize ?
 ==================
  
-Copy the "template" config directory and edit to match your needs:
+Copy the "template" config directory and edit "yourown" to match your needs:
 
-    $ cp -r config/configuration/template config/configuration/myown
-    (edit config/configuration/myown)
-    (declare "myown" profile in the root pom.xml)
-    $ ./mvn -Dmaven.test.skip=true -Pmyown install
+    $ cp -r config/configuration/template config/configuration/yourown
+    (edit config/configuration/yourown)
+    (declare "yourown" profile in the root pom.xml)
+    $ ./mvn -Dmaven.test.skip=true -Pyourown install
+
+Want to run the advanced viewer locally ?
+=========================================
+
+This mode is useful for demo or dev purposes.
+
+    $ cd mapfishapp
+    $ ../mvn -Ptemplate jetty:run
+
+Point your browser to http://localhost:8080/mapfishapp/
