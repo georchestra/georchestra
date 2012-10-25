@@ -30,7 +30,7 @@ This mode is useful for demo or dev purposes.
     $ cd mapfishapp
     $ ../mvn -Ptemplate jetty:run
 
-Point your browser to [http://localhost:8080/mapfishapp/](http://localhost:8080/mapfishapp/) 
+Point your browser to [http://localhost:8080/mapfishapp/?noheader=true](http://localhost:8080/mapfishapp/?noheader=true) 
 
 Want to trick the viewer into thinking you're logged in ?
 ---------------------------------------------------------
