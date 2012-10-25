@@ -51,3 +51,4 @@ config-gui.xml.mapViewerLayers=${config-gui.xml.mapSearchLayers}
 dlform.activated=@shared.download_form.activated@
 downloadform.psql.url=@shared.download_form.jdbcurl@
 dlform.pdf_url=@shared.download_form.pdfurl@
+language=@shared.language@
