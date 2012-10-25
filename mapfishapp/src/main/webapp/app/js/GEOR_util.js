@@ -47,34 +47,7 @@ GEOR.util = (function() {
     };
 
     // Template that displays name and type for each attribute (with a qtip)
-    var tplAttribute = new Ext.XTemplate(
-        '<tpl for=".">',
-            '<tpl if="this.isString(type)">',
-                '<div ext:qtip="{name}" class="x-combo-list-item">{name} <span>'+OpenLayers.i18n("Characters")+'</span></div>',
-            '</tpl>',
-            '<tpl if="this.isNumeric(type)">',
-                '<div ext:qtip="{name}" class="x-combo-list-item">{name} <span>'+OpenLayers.i18n("Digital")+'</span></div>',
-            '</tpl>',
-            '<tpl if="this.isDate(type)">',
-                '<div ext:qtip="{name}" class="x-combo-list-item">{name} <span>'+OpenLayers.i18n("Date")+'</span></div>',
-            '</tpl>',
-            '<tpl if="this.isBoolean(type)">',
-                '<div ext:qtip="{name}" class="x-combo-list-item">{name} <span>'+OpenLayers.i18n("Boolean")+'</span></div>',
-            '</tpl>',
-            '<tpl if="this.isAnother(type)">',
-                '<div ext:qtip="{name}" class="x-combo-list-item">{name} <span>'+OpenLayers.i18n("Other")+'</span></div>',
-            '</tpl>',
-        '</tpl>', {
-            isString: isStringType,
-            isNumeric: isNumericType,
-            isDate: isDateType,
-            isBoolean: isBooleanType,
-            isAnother: function(type) {
-                return !isStringType(type) && !isNumericType(type) &&
-                    !isDateType(type) && !isBooleanType(type);
-            }
-        }
-    );
+    var tplAttribute = null;
 
     return {
 
@@ -289,6 +262,36 @@ GEOR.util = (function() {
          * {Ext.XTemplate} a template for configuring Ext.form.ComboBox
          */
         getAttributesComboTpl: function() {
+            if (!tplAttribute) {
+                tplAttribute = new Ext.XTemplate(
+                    '<tpl for=".">',
+                        '<tpl if="this.isString(type)">',
+                            '<div ext:qtip="{name}" class="x-combo-list-item">{name} <span>'+OpenLayers.i18n("Characters")+'</span></div>',
+                        '</tpl>',
+                        '<tpl if="this.isNumeric(type)">',
+                            '<div ext:qtip="{name}" class="x-combo-list-item">{name} <span>'+OpenLayers.i18n("Digital")+'</span></div>',
+                        '</tpl>',
+                        '<tpl if="this.isDate(type)">',
+                            '<div ext:qtip="{name}" class="x-combo-list-item">{name} <span>'+OpenLayers.i18n("Date")+'</span></div>',
+                        '</tpl>',
+                        '<tpl if="this.isBoolean(type)">',
+                            '<div ext:qtip="{name}" class="x-combo-list-item">{name} <span>'+OpenLayers.i18n("Boolean")+'</span></div>',
+                        '</tpl>',
+                        '<tpl if="this.isAnother(type)">',
+                            '<div ext:qtip="{name}" class="x-combo-list-item">{name} <span>'+OpenLayers.i18n("Other")+'</span></div>',
+                        '</tpl>',
+                    '</tpl>', {
+                        isString: isStringType,
+                        isNumeric: isNumericType,
+                        isDate: isDateType,
+                        isBoolean: isBooleanType,
+                        isAnother: function(type) {
+                            return !isStringType(type) && !isNumericType(type) &&
+                                !isDateType(type) && !isBooleanType(type);
+                        }
+                    }
+                );
+            }
             return tplAttribute;
         },
 
