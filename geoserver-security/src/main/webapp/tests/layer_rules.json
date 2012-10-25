@@ -1,1 +1,0 @@
-{"genId":1,"rules":[{"name":"geob.layer1","permission":"read","role":"viewer"},{name:"geob_edit.layer2",permission:"write",role:"editor"}]}
