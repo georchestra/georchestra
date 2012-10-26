@@ -102,7 +102,7 @@ if(sec_roles != null) {
 </c:choose>
     <link rel="stylesheet" type="text/css" href="lib/externals/ext/resources/css/ext-all.css" />
     <link rel="stylesheet" type="text/css" href="lib/externals/ext/resources/css/xtheme-gray.css" />
-    <link rel="stylesheet" type="text/css" href="lib/styler/theme/css/styler.css" />
+    <link rel="stylesheet" type="text/css" href="lib/externals/styler/theme/css/styler.css" />
     <link rel="stylesheet" type="text/css" href="lib/Ext.ux/lib/Ext.ux/widgets/palettecombobox/palettecombobox.ux.css" />
     <link rel="stylesheet" type="text/css" href="lib/Ext.ux/lib/Ext.ux/widgets/colorpicker/colorpicker.css" />
     <link rel="stylesheet" type="text/css" href="lib/Ext.ux/lib/Ext.ux/widgets/spinner/Spinner.css" />

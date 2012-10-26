@@ -18,7 +18,15 @@
 shared.server.name=vm-georchestra
 shared.server.port=80
 
+# --------------------------------------------------
+# LANGUAGE
+# --------------------------------------------------
 
+# sets the language for all modules
+# May be one of the following: fr, es, en
+# Default value: fr
+#
+shared.language=fr
 
 # --------------------------------------------------
 # LDAP
