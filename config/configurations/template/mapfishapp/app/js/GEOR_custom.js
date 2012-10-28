@@ -379,11 +379,6 @@ GEOR.custom = {
      */
     WMS_SERVERS: [
         {"name": "GeoBretagne", "url": "http://geobretagne.fr/geoserver/wms"},
-        {"name": "PIGMA - FD Chasse 33", "url": "http://@shared.server.name@/geoserver/fdc33/wms"},
-        {"name": "PIGMA - FD Peche 33", "url": "http://@shared.server.name@/geoserver/fdp33/wms"},
-        {"name": "C2CPC61 - toutes les couches", "url": "http://c2cpc61.camptocamp.com/geoserver/wms"},
-        {"name": "C2CPC61 - serveur virtuel geor_loc", "url": "http://c2cpc61.camptocamp.com/geoserver/geor_loc/wms"},
-        {"name": "C2CPC61 - serveur virtuel geor_edit", "url": "http://c2cpc61.camptocamp.com/geoserver/geor_edit/wms"},
         {"name": "Sandre/zonages", "url": "http://services.sandre.eaufrance.fr/geo/zonage"},
         {"name": "Sandre/ouvrages", "url": "http://services.sandre.eaufrance.fr/geo/ouvrage"},
         {"name": "Sandre/stations", "url": "http://services.sandre.eaufrance.fr/geo/stations"},
@@ -409,11 +404,6 @@ GEOR.custom = {
      */
     WFS_SERVERS: [
         {"name": "GeoBretagne", "url": "http://geobretagne.fr/geoserver/wfs"},
-        {"name": "C2CPC61 - toutes les couches", "url": "http://c2cpc61.camptocamp.com/geoserver/wfs"},
-        {"name": "C2CPC61 - serveur virtuel geor_loc", "url": "http://c2cpc61.camptocamp.com/geoserver/geor_loc/wfs"},
-        {"name": "C2CPC61 - serveur virtuel geor_edit", "url": "http://c2cpc61.camptocamp.com/geoserver/geor_edit/wfs"},
-        {"name": "PIGMA - FD Chasse 33", "url": "http://@shared.server.name@/geoserver/fdc33/wfs"},
-        {"name": "PIGMA - FD Peche 33", "url": "http://@shared.server.name@/geoserver/fdp33/wfs"},
         {"name": "Corine Land Cover", "url": "http://sd1878-2.sivit.org/geoserver/wfs"}
     ]
     
