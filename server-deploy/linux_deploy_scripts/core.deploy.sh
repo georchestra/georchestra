@@ -28,18 +28,20 @@ function USAGE {
     echo "  -m <deploy_mode> either upgrade or full.  All indicates setup databases, geoserver, etc..."
     echo "  -D <property=value> the java system property to set"
     echo "  -X maven debug mode"
+    echo "  -o maven offline mode (do not check remote dependencies)"
 }
 
 MODE="upgrade"
 PROFILES=""
 SYSTEM_PROPS=""
 
-while getopts ":D:P:m:Xh?" opt; do
+while getopts ":D:P:m:Xoh?" opt; do
     case $opt in
         P ) PROFILES="$PROFILES -P$OPTARG" ;;
         m ) MODE=$OPTARG ;;
         D ) SYSTEM_PROPS="$SYSTEM_PROPS -D$OPTARG" ;;
         X ) SYSTEM_PROPS="$SYSTEM_PROPS -X" ;;
+        o ) SYSTEM_PROPS="$SYSTEM_PROPS -o" ;;
         \?) USAGE; exit 1 ;;
     esac
 done
