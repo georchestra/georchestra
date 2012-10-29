@@ -51,7 +51,7 @@ Copy WAR files in Tomcat webapps dir:
 Want to run the advanced viewer without Tomcat ?
 ================================================
 
-This mode is useful for demo or development purposes.
+This mode is useful for **demo** or **development** purposes.
 
     $ cd mapfishapp
     $ ../mvn -Ptemplate jetty:run
