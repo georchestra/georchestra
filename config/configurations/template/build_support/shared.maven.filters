@@ -120,7 +120,10 @@ shared.smtp.from=psc\@georchestra.org
 # + example +
 # shared.log.dir=/var/log/tomcat6
 #
-shared.log.dir=/var/log/tomcat6
+# Here we use /tmp because we want to prevent this kind of error 
+# http://applis-bretagne.fr/redmine/issues/4311 when Tomcat is not installed
+#
+shared.log.dir=/tmp
 
 
 # --------------------------------------------------
