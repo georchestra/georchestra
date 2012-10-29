@@ -527,6 +527,8 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     /* ScaleSliderTip.js */
     "Zoom Level: {zoom}": "Nivel de zoom: {zoom}",
     "Resolution: {resolution}": "Resolución: {resolution}",
-    "Scale: 1 : {scale}": "Escala: 1 : {scale}"
+    "Scale: 1 : {scale}": "Escala: 1 : {scale}",
+    /*GEOR_addonsmenu.js */
+    "Tools": "Herramientas"
     // no trailing comma
 });
