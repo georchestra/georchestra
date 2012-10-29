@@ -101,13 +101,13 @@ shared.mapfishapp.maxDocAgeInMinutes=1440
 # + example +
 # shared.smtp.host=localhost
 # shared.smtp.port=25
-# shared.smtp.replyTo=pmauduit@qualitystreetmap.org
-# shared.smtp.from=sdi@georchestra.org
+# shared.smtp.replyTo=psc\@georchestra.org
+# shared.smtp.from=psc\@georchestra.org
 #
 shared.smtp.host=localhost
 shared.smtp.port=25
-shared.smtp.replyTo=pmauduit@qualitystreetmap.org
-shared.smtp.from=sdi@georchestra.org
+shared.smtp.replyTo=psc\@georchestra.org
+shared.smtp.from=psc\@georchestra.org
 
 
 
@@ -162,6 +162,12 @@ shared.psql.url=psql://www-data:www-data@localhost/geonetwork
 shared.download_form.activated=true
 shared.download_form.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/downloadform
 shared.download_form.pdfurl=/static/usage.pdf
+
+# --------------------------------------------------
+# OGC statistics
+# --------------------------------------------------
+
+shared.ogc.statistics.activated=true
 
 # --------------------------------------------------
 # health check properties
