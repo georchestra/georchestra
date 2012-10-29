@@ -1,0 +1,4 @@
+*/target/
+*/jsbuild/venv/
+*/src/main/webapp/app/js/GEOR_custom.js
+*/jsbuild/distribute-*.tar.gz

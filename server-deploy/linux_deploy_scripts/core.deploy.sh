@@ -28,18 +28,20 @@ function USAGE {
     echo "  -m <deploy_mode> either upgrade or full.  All indicates setup databases, geoserver, etc..."
     echo "  -D <property=value> the java system property to set"
     echo "  -X maven debug mode"
+    echo "  -o maven offline mode (do not check remote dependencies)"
 }
 
 MODE="upgrade"
 PROFILES=""
 SYSTEM_PROPS=""
 
-while getopts ":D:P:m:Xh?" opt; do
+while getopts ":D:P:m:Xoh?" opt; do
     case $opt in
         P ) PROFILES="$PROFILES -P$OPTARG" ;;
         m ) MODE=$OPTARG ;;
         D ) SYSTEM_PROPS="$SYSTEM_PROPS -D$OPTARG" ;;
         X ) SYSTEM_PROPS="$SYSTEM_PROPS -X" ;;
+        o ) SYSTEM_PROPS="$SYSTEM_PROPS -o" ;;
         \?) USAGE; exit 1 ;;
     esac
 done
@@ -77,16 +79,26 @@ DEPLOY_CACHE=/var/cache/deploy
 CHECKOUT_DIR=$DEPLOY_CACHE/checkout
 if [ ! -d $CHECKOUT_DIR ] ; then
     mkdir -p $CHECKOUT_DIR
-    svn checkout http://svn.georchestra.org/georchestra/trunk $CHECKOUT_DIR
-    svn checkout https://project.camptocamp.com/svn/aquitaine_pigma/trunk/config-configuration-pigma/ $CHECKOUT_DIR/config/configurations/pigma
+    sudo -u deploy git clone --recursive git://github.com/georchestra/georchestra.git $CHECKOUT_DIR
 fi
 
+if [ ! -d $CHECKOUT_DIR/config/configurations/pigma ] ; then
+    sudo -u deploy svn checkout https://project.camptocamp.com/svn/aquitaine_pigma/trunk/config-configuration-pigma/ $CHECKOUT_DIR/config/configurations/pigma
+fi
 cd $CHECKOUT_DIR
-#svn revert -R .
-#svn status | grep ^? | awk '{print $2}' | while read line; do rm -rf $line; done
 
-svn up $CHECKOUT_DIR/config/configurations/pigma
-svn up $CHECKOUT_DIR
+
+sudo -u deploy svn revert -R $CHECKOUT_DIR/config/configurations/pigma
+sudo -u deploy svn up $CHECKOUT_DIR/config/configurations/pigma
+
+sudo -u deploy git clean -xf
+sudo -u deploy git reset --hard
+sudo -u deploy git pull
+sudo -u deploy git submodule update
+
+# copy htdocs error page from PIGMA config to htdocs/error:
+cp -r $CHECKOUT_DIR/config/configurations/pigma/htdocs/* /var/www/aquitaine_pigma/htdocs/
+cp -r $CHECKOUT_DIR/config/configurations/pigma/htdocs/* /var/www/cms/htdocs/
 
 
 ARCHIVE=$DEPLOY_CACHE/archive
