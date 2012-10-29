@@ -19,8 +19,7 @@ Copy the "template" config directory and edit "yourown" to match your needs:
 
     $ cp -r config/configuration/template config/configuration/yourown
     (edit files in config/configuration/yourown)
-    (declare "yourown" profile in the root pom.xml)
-    $ ./mvn -Dmaven.test.skip=true -Pyourown install
+    $ ./mvn -Dmaven.test.skip=true -Dserver=yourown -Pyourown install
 
 How to deploy ?
 ===============
