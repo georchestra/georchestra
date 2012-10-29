@@ -1,4 +1,4 @@
-ï»¿/*
+/*
  * Copyright (C) Geobretagne
  *
  * This file is NOT part of geOrchestra (well, not yet)
@@ -124,7 +124,7 @@ GEOR.addonsmenu = (function () {
             }
             Ext.Loader.load(libs, function (test) {
                 var i = 0;
-                var menuaddons = Ext.getCmp('menuaddons'); // Ã©viter le getCmp : lent ! (utiliser une rÃ©fÃ©rence interne au prÃ©sent module)
+                var menuaddons = Ext.getCmp('menuaddons'); // éviter le getCmp : lent ! (utiliser une référence interne au présent module)
                 for (i = 0; i < addons.length; i += 1) {
                     var addon = addons[i].addon;
                     var addonObject = GEOR[addon];
@@ -197,7 +197,7 @@ GEOR.addonsmenu = (function () {
                         items: []
                     })
                 });
-            }
+            });
 
             return menuitems;
         }
