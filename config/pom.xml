@@ -168,8 +168,8 @@
 								<element>${basedir}/src/main/scripts</element>
 							</scriptpath>
 							<source>
-								
-								log.info("Running groovy configuration generation scripts")
+							  // note: the params have to be initialized for the required files to be created
+							  // doesn't matter if GenerateConfig is ran or not
 								def params = new Parameters(
 									targetDir: new File("${project.build.directory}"),
 									outputDir: new File("${generated.output}"),
@@ -184,13 +184,19 @@
 								params.init()
 
 								try {
-									new GenerateConfig().generate(
-										this, log, ant, params.basedirFile, 
-										params.target, params.subTarget, params.projectDir, 
-										params.buildSupportDir, params.outputDir)
+									log.info("Checking for a GenerateConfig class")
+								  def genClass = Class.forName("GenerateConfig").newInstance()
 								} catch (ClassNotFoundException e) {
-									log.info("No GenerateConfig class found so skipping generation step")
+									log.warn("No GenerateConfig class found so skipping generation step")
+									return;
 								}
+
+								log.info("GenerateConfig class found.  Running groovy configuration generation scripts")
+
+							  genClass.generate(
+									this, log, ant, params.basedirFile, 
+									params.target, params.subTarget, params.projectDir, 
+									params.buildSupportDir, params.outputDir)
 								log.info("Finished running groovy configuration generation scripts")
 							</source>
 						</configuration>
