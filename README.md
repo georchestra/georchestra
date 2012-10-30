@@ -9,9 +9,11 @@ How to build ?
 ==============
 
 First, install the required packages : 
+
     $ sudo apt-get install ant openjdk-6-jdk
 
 Then :
+
     $ git clone --recursive https://github.com/georchestra/georchestra.git
     $ cd georchestra
     $ ./mvn -Dmaven.test.skip=true -Ptemplate install
