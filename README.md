@@ -12,6 +12,8 @@ First, install the required packages :
 
     $ sudo apt-get install ant openjdk-6-jdk
 
+(Note: GeoServer is known to perform better with Oracle JDK)
+
 Then :
 
     $ git clone --recursive https://github.com/georchestra/georchestra.git
