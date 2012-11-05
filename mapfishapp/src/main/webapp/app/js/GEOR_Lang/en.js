@@ -118,26 +118,6 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
     /* GEOR_LayerEditingPanel.js */
     "layereditingpanel.cancel.confirm": "Do you really want to cancel all modifications<br />since last synchronisation ?",
     "layereditingpanel.changes.confirm": "Please confirm or cancel current modifications",
-    "Please select one feature.": "Veuillez sélectionner un objet.",
-    /* SpatialFilterPanel.js */
-    "spatialfilterpanel.geometry.saved": "Geometry stored for 30 days on this browser.",
-    /* Styler.js */
-    "styler.delete.rule":
-        "Are you sure you want to delete the ${NAME} rule?",
-    "styler.feature": "Feature: ${FEATURE}",
-    "styler.style": "Style: ${STYLE}",
-    "styler.div.zoomlevel": "<div>{zoomType} Zoom Level: {zoom}</div>",
-    "styler.div.mapzoom": "<div>Current Map Zoom: {mapZoom}</div>"
-    /* ColorManager.js */
-    /* FillSymbolizer.js */
-    /* LegendPanel.js */
-    /* PointSymbolizer.js */
-    /* RuleBuilder.js */
-    /* RuleChooser.js */
-    /* RulePanel.js */
-    /* ScaleLimitPanel.js */
-    /* StrokeSymbolizer.js */
-    /* TextSymbolizer */
-    /* ScaleSliderTip.js */
+    "Please select one feature.": "Veuillez sélectionner un objet."
     // no trailing comma
 });
