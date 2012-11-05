@@ -423,7 +423,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "none": "aucune de",
     "not all": "pas toutes",
     "Matching": "Correspondre à",
-    "these conditions": "ces conditions",
+    "these conditions:": "ces conditions :",
     "spatial condition": "condition spatiale",
     "group": "groupe",
     "based on a point": "basée sur un point",

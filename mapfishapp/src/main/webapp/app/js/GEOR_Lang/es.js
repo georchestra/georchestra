@@ -424,7 +424,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "none": "ninguna de",
     "not all": "no todas",
     "Matching": "Corresponder a",
-    "these conditions": "estas condiciones",
+    "these conditions:": "estas condiciones :",
     "condition": "Condición",
     "spatial condition": "Condición espacial",
     "group": "Grupo",
