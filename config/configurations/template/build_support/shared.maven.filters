@@ -75,10 +75,10 @@ shared.ldap.admin.password=secret
 # with full admin privileges.This user MUST exist in the ldap
 # directory and MUST belong to the ADMINISTRATOR group.
 # + example +
-# shared.privileged.geoserver.user=extractorapp_priveleged_admin
+# shared.privileged.geoserver.user=extractorapp_privileged_admin
 # shared.privileged.geoserver.pass=gerlsSnFd6SmM
 #
-shared.privileged.geoserver.user=extractorapp_priveleged_admin
+shared.privileged.geoserver.user=extractorapp_privileged_admin
 shared.privileged.geoserver.pass=gerlsSnFd6SmM
 
 # --------------------------------------------------
@@ -101,13 +101,13 @@ shared.mapfishapp.maxDocAgeInMinutes=1440
 # + example +
 # shared.smtp.host=localhost
 # shared.smtp.port=25
-# shared.smtp.replyTo=pmauduit@qualitystreetmap.org
-# shared.smtp.from=sdi@georchestra.org
+# shared.smtp.replyTo=psc\@georchestra.org
+# shared.smtp.from=psc\@georchestra.org
 #
 shared.smtp.host=localhost
 shared.smtp.port=25
-shared.smtp.replyTo=pmauduit@qualitystreetmap.org
-shared.smtp.from=sdi@georchestra.org
+shared.smtp.replyTo=psc\@georchestra.org
+shared.smtp.from=psc\@georchestra.org
 
 
 
@@ -120,7 +120,10 @@ shared.smtp.from=sdi@georchestra.org
 # + example +
 # shared.log.dir=/var/log/tomcat6
 #
-shared.log.dir=/var/log/tomcat6
+# Here we use /tmp because we want to prevent this kind of error 
+# http://applis-bretagne.fr/redmine/issues/4311 when Tomcat is not installed
+#
+shared.log.dir=/tmp
 
 
 # --------------------------------------------------
@@ -162,6 +165,12 @@ shared.psql.url=psql://www-data:www-data@localhost/geonetwork
 shared.download_form.activated=true
 shared.download_form.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/downloadform
 shared.download_form.pdfurl=/static/usage.pdf
+
+# --------------------------------------------------
+# OGC statistics
+# --------------------------------------------------
+
+shared.ogc.statistics.activated=true
 
 # --------------------------------------------------
 # health check properties
