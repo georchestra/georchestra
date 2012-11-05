@@ -408,7 +408,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Pending changes": "Modifications en cours",
     "Do you want to confirm changes ?": "Souhaitez-vous confirmer les modifications ?",
     /* SpatialComboBox.js */
-    "intersection": "intersection avec",
+    "intersects": "intersection avec",
     "inside": "à l'intérieur de",
     "contains": "contient l'objet",
     /* FilterPanel.js */
