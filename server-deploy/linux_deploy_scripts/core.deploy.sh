@@ -87,14 +87,19 @@ if [ ! -d $CHECKOUT_DIR/config/configurations/pigma ] ; then
 fi
 cd $CHECKOUT_DIR
 
-
 sudo -u deploy svn revert -R $CHECKOUT_DIR/config/configurations/pigma
 sudo -u deploy svn up $CHECKOUT_DIR/config/configurations/pigma
 
 sudo -u deploy git clean -xf
 sudo -u deploy git reset --hard
-sudo -u deploy git pull
-sudo -u deploy git submodule update
+
+cd $CHECKOUT_DIR/geonetwork
+sudo -u deploy git clean -xdf
+sudo -u deploy git reset --hard
+cd $CHECKOUT_DIR
+
+sudo -u deploy git pull origin master
+sudo -u deploy git submodule update --init
 
 # copy htdocs error page from PIGMA config to htdocs/error:
 cp -r $CHECKOUT_DIR/config/configurations/pigma/htdocs/* /var/www/aquitaine_pigma/htdocs/
