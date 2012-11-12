@@ -108,6 +108,7 @@ public class Proxy {
      */
     private String                    defaultTarget;
     private Map<String, String>       targets = Collections.emptyMap();
+    private String referer;
     /**
      * must be defined
      */
@@ -624,6 +625,7 @@ public class Proxy {
                 logger.debug("New request is: " + sURL + "\nRequest is GET");
 
                 HttpGet get = new HttpGet(uri);
+                get.setHeader("Referer", this.referer);
                 targetRequest = get;
                 break;
             }
@@ -631,6 +633,7 @@ public class Proxy {
                 logger.debug("New request is: " + sURL + "\nRequest is POST");
 
                 HttpPost post = new HttpPost(uri);
+                post.setHeader("Referer", this.referer);
                 HttpEntity entity;
                 request.setCharacterEncoding("UTF8");
                 if (isFormContentType(request)) {
@@ -1025,6 +1028,9 @@ public class Proxy {
     }
     public void setTargets(Map<String,String> targets) {
         this.targets = targets;
+    }
+    public void setReferer(String referer){
+            this.referer = referer;
     }
     public void setContextpath(String contextpath) {
 //        this.contextpath = contextpath;
