@@ -18,13 +18,11 @@ geoserver.server=http://${public_host}:${defaultTarget.port}
 
 proxy.defaultTarget=http://localhost:${defaultTarget.port}
 proxy.mapping=<entry key="extractorapp" value="${proxy.defaultTarget}/extractorapp-private/" />\
-    <entry key="gssec" value="${proxy.defaultTarget}/geoserver-security/" />\
     <entry key="mapfishapp" value="${proxy.defaultTarget}/mapfishapp-private/" />\
     <entry key="geonetwork" value="${proxy.defaultTarget}/geonetwork-private/" />\
     <entry key="catalogapp" value="${proxy.defaultTarget}/catalogapp-private/" />\
     <entry key="geoserver" value="${proxy.defaultTarget}/geoserver-private/" />\
-    <entry key="static" value="${proxy.defaultTarget}/static-private/" />\
-    <entry key="admintools" value="${proxy.defaultTarget}/admintools-private/" />
+    <entry key="static" value="${proxy.defaultTarget}/static-private/" />
 
 camptocamp.security.loglevel=ALL
 jasig.loglevel=ALL
