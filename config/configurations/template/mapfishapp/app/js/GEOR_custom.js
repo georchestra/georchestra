@@ -362,9 +362,9 @@ GEOR.custom = {
     /**
      * Constant: HELP_URL
      * {String} URL of the help ressource.
-     * Defaults to "/doc/html/documentation.html#viewer"
+     * Defaults to "http://www.geobretagne.fr/web/guest/assistance"
      */
-    //HELP_URL: "/doc/html/documentation.html#viewer",
+    //HELP_URL: "http://www.geobretagne.fr/web/guest/assistance",
     
     /**
      * Constant: CONFIRM_LAYER_REMOVAL
