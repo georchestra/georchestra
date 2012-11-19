@@ -18,3 +18,8 @@ WITH (
 );
 ALTER TABLE ogc_services_log
   OWNER TO "www-data";
+
+CREATE INDEX CONCURRENTLY user_name_index ON ogc_services_log (user_name);
+CREATE INDEX CONCURRENTLY date_index ON ogc_services_log (date);
+CREATE INDEX CONCURRENTLY service_index ON ogc_services_log (service);
+CREATE INDEX CONCURRENTLY layer_index ON ogc_services_log (layer);
