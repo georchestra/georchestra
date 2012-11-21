@@ -530,7 +530,17 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
                 attributes: feature.attributes
             });
         }
-        this.formPanel.getForm().setValues(feature.attributes);
+        
+        // Pass all fields to the setValues, otherwise only fields that are in feature.attributes are
+        // considered as not dirty
+        var attributes={};
+        this.formPanel.getForm().items.each(function(field){
+        	attributes[field.getName()] = '';
+        });
+        Ext.apply(attributes, feature.attributes)
+        
+        this.cleanForm();
+        this.formPanel.getForm().setValues(attributes);
     },
 
     /**
@@ -599,7 +609,6 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
             });
             return false;
         }
-        this.cleanForm();
     },
 
     /**
