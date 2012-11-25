@@ -99,6 +99,35 @@ GEOR.workspace = (function() {
     };
 
     /**
+     * Method: permalink
+     * Handler to display a permalink based on on-the-fly WMC generation
+     */
+    var permalink = function() {
+        GEOR.waiter.show();
+        OpenLayers.Request.POST({
+            url: "ws/wmc/",
+            data: GEOR.wmc.write({
+                id: Math.random().toString(16).substr(2)
+            }),
+            success: function(response) {
+                var o = Ext.decode(response.responseText),
+                    params = OpenLayers.Util.getParameters();
+                params.wmc = o.filepath;
+                var url = OpenLayers.Util.urlAppend(
+                    window.location.href.split('?')[0], 
+                    OpenLayers.Util.getParameterString(params)
+                );
+                GEOR.util.urlDialog({
+                    title: tr("Permalink"),
+                    msg: tr("Share your map with this URL: ") +
+                            '<br /><a href="'+url+'">'+url+'</a>'
+                });
+            },
+            scope: this
+        });
+    };
+
+    /**
      * Method: cancelBtnHandler
      * Handler for the cancel button
      */
@@ -265,6 +294,10 @@ GEOR.workspace = (function() {
                         text: tr("Load a map context"),
                         iconCls: "geor-load-map",
                         handler: loadWMC
+                    }, '-', {
+                        text: tr("Get a permalink"),
+                        iconCls: "geor-permalink",
+                        handler: permalink
                     }, '-', {
                         text: tr("Edit in OSM"),
                         iconCls: "geor-edit-osm",

@@ -214,6 +214,37 @@ GEOR.util = (function() {
                 icon: Ext.MessageBox.ERROR
             }, options));
         },
+        
+        /**
+         * APIMethod: urlDialog
+         * Shows a dialog box suitable for a message with an URL
+         *
+         * Parameters:
+         * options - {Object} Hash with keys:
+         *      title, msg
+         */
+        urlDialog: function(options) {
+            var win = new Ext.Window({
+                title: options.title,
+                layout: "fit",
+                width: 400,
+                closeAction: 'close',
+                constrainHeader: true,
+                modal: false,
+                items: [{
+                    bodyStyle: 'padding:5px',
+                    html: options.msg,
+                    border: false
+                }],
+                buttons: [{
+                    text: OpenLayers.i18n("Thanks!"),
+                    handler: function() {
+                        win.close();
+                    }
+                }]
+            });
+            win.show();
+        },
 
         /**
          * APIMethod: isUrl

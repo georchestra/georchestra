@@ -367,6 +367,8 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Workspace": "Espace de travail",
     "Save the map context": "Sauvegarder la carte",
     "Load a map context": "Charger une carte",
+    "Get a permalink": "Obtenir un permalien",
+    "Share your map with this URL: ": "Partagez la carte avec l'adresse suivante : ",
     "Edit in OSM": "Editer dans OSM",
     "with JOSM": "avec JOSM",
     "JOSM must be started with the remote control option": "Il vous faut " +
