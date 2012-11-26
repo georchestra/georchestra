@@ -6,7 +6,7 @@
 	url = http://github.com/geoext/geoext.git
 [submodule "mapfishapp/src/main/webapp/lib/externals/openlayers"]
 	path = mapfishapp/src/main/webapp/lib/externals/openlayers
-	url = http://github.com/openlayers/openlayers.git
+	url = http://github.com/georchestra/openlayers.git
 [submodule "extractorapp/src/main/webapp/lib/externals/geoext"]
 	path = extractorapp/src/main/webapp/lib/externals/geoext
 	url = http://github.com/geoext/geoext.git
