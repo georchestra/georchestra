@@ -205,6 +205,15 @@
     </profile>
 
     <profile>
+      <id>pigma_c2cpc61</id>
+      <properties>
+        <server>pigma</server>
+        <sub.target>c2cpc61</sub.target>
+        <geoserver.war.excludes>WEB-INF/lib/*gwc*.jar</geoserver.war.excludes>
+      </properties>
+    </profile>
+
+    <profile>
       <id>qsm</id>
       <properties>
         <server>qsm</server>
