@@ -40,11 +40,13 @@
     <link rel="stylesheet" type="text/css" href="/static/css/header.css" />
 
     <div id="go_head">
-        <a href="#" id="go_home" title="<fmt:message key='go.home'/>">
-            <img src="/static/img/logo.png" alt="<fmt:message key='logo'/>" height="50"/>
+        <a href="/" id="go_home" title='<fmt:message key="go.home"/>'>
+            <img src="/static/img/logo.png" alt='<fmt:message key="logo"/>' height="50"/>
         </a>
         <ul>
-            <li><a href="/geonetwork/srv/<%= lang %>/main.home"><fmt:message key="catalogue"/></a></li>
+            <li><a href="/"><fmt:message key="home"/></a></li>
+            <li><a href="/?-Institucional-"><fmt:message key="institution"/></a></li>
+            <li><a href="/geonetwork"><fmt:message key="catalogue"/></a></li>
         <c:choose>
             <c:when test='${c.edit != null}'>
             <li><a href="/mapfishapp"><fmt:message key="viewer"/></a></li>
@@ -65,8 +67,15 @@
                 </c:choose>
             </c:when>
         </c:choose>
-            <li><a href="/extractorapp/"><fmt:message key="extractor"/></a></li>
-            <li><a href="/geoserver/web/"><fmt:message key="services"/></a></li>
+            <li><a href="/extractorapp"><fmt:message key="extractor"/></a></li>
+            <li><a href="/geoserver"><fmt:message key="services"/></a></li>
+        <c:choose>
+            <c:when test='<%= admin == true %>'>
+            <li><a href="/analytics"><fmt:message key="statistics"/></a></li>
+            </c:when>
+        </c:choose>
+            <li><a href="/?-Contacto-14-"><fmt:message key="contact"/></a></li>
+            <li><a href="/?-Visualizador-"><fmt:message key="help"/></a></li>
         </ul>
     <c:choose>
         <c:when test='<%= anonymous == false %>'>

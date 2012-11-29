@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 <beans>
-
+    <bean id="config" 
+          class="mapfishapp.ws.ConfigController"/>
+  
     <bean id="homecontroller" 
           class="mapfishapp.ws.HomeController"/>
     <bean id="editcontroller" 
@@ -10,9 +12,10 @@
 	<bean class="mapfishapp.ws.OGCProxy">
 	</bean>
 	<bean class="mapfishapp.ws.DocController">
-		<property name="maxDocAgeInMinutes" value="1440"/>
+            <constructor-arg ref="config"/>
+		<!--property name="maxDocAgeInMinutes" value="1440"/-->
 		<property name="credentials">
-          <map><entry key="c2cpc61.camptocamp.com"><value><bean class="UsernamePasswordCredentials"/><constructor-arg index="0" value="extractorapp_priveleged_admin:uNg9aiFa" /></value></entry></map>
+          <map><entry key="vm-georchestra"><bean class="org.apache.commons.httpclient.UsernamePasswordCredentials"><constructor-arg index="0" value="extractorapp_priveleged_admin:gerlsSnFd6SmM" /></bean></entry></map>
 		</property>
 	</bean>
 	

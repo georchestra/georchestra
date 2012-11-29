@@ -8,11 +8,11 @@ html, body {
     margin      : 0;
     font-family : 'Yanone Kaffeesatz', arial,verdana,helvetica;
     background  : #fff;
-    height      : 90px;
+    height      : 62px !important;
 }
 #go_home {
     float  : left;
-    margin : 20px 0 0 10px;
+    margin : 10px 0 0 10px;
 }
 #go_home img {
     border : none;
@@ -20,7 +20,7 @@ html, body {
 #go_head ul {
     float      : left;
     list-style : none;
-    margin     : 20px 0 0 10px;
+    margin     : 10px 0 0 10px;
     padding    : 0;
     font-size  : 18px;
     display    : inline;
@@ -30,13 +30,15 @@ html, body {
     padding : 0;
     display : inline-block;
 }
+#go_head ul li.active, #go_head ul li.on {
+    font-weight : bold;
+}
 #go_head li a {
     color              : #666;
     display            : inline-block;
     background         : #fff;
     padding            : 0 0.3em;
     margin             : 0 0.3em;
-    border-bottom      : 1px dotted #ddd;
     height             : 52px;
     line-height        : 52px;
     text-decoration    : none;
@@ -56,29 +58,24 @@ html, body {
     border-radius    : 0.3em;
     border-bottom    : none;
 }
-#go_head ul li.active a {
-    background-color : rgb(85,0,106);
-    padding          : 0 0.6em;
-    border-radius    : 0.3em;
-    color            : #fff;
-    border           : 0;
+#go_head li a:active, #go_head li a:focus {
+    outline          : 0;
 }
 #go_head .logged {
     margin        : 20px 15px 0 0;
-    border        : 1px dotted #ddd;
-    border-radius : 0.3em;
+    border-width  : 0px;
     padding       : 0 0.6em;
     width         : auto;
     float         : right;
-	height        : 52px;
+    height        : 52px;
     line-height   : 52px;
     font-size     : 16px;
 }
 #go_head .logged span{
-	color: #000;
+    color: #000;
 }
 #go_head .logged span.light{
-	color: #ddd;
+    color: #ddd;
 }
 #go_head .logged {
     position : relative;
@@ -89,7 +86,7 @@ html, body {
     right    : 10px;
 }
 #go_head .logged a {
-    text-decoration : underline;
+    text-decoration : none;
     color           : rgb(84, 0, 105);
 }
 
