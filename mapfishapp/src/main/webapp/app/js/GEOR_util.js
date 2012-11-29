@@ -333,6 +333,29 @@ GEOR.util = (function() {
         round: function(input, decimals) {
             var p = Math.pow(10, decimals);
             return Math.round(input*p)/p;
+        },
+
+        /**
+         * Method: isSuitableDCProtocol
+         *
+         * Returns:
+         * {Boolean} true if the WMS protocol matches and the value is a valid
+         *  URL and the layer name is set
+         */
+        isSuitableDCProtocol: function(item) {
+            if (!item.protocol) {
+                return false;
+            }
+            switch (item.protocol) {
+                case 'OGC:WMS':
+                case 'OGC:WMS-1.0.0-http-get-map':
+                case 'OGC:WMS-1.1.0-http-get-map':
+                case 'OGC:WMS-1.1.1-http-get-map':
+                case 'OGC:WMS-1.3.0-http-get-map':
+                    return item.name && GEOR.util.isUrl(item.value);
+                default:
+                    return false;
+            }
         }
     };
 })();

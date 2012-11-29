@@ -91,8 +91,7 @@ GEOR.cswbrowser = (function() {
             if(record.URI) {
                 // multiple WMS can be found in one csw:Record
                 Ext.each(record.URI, function (item) {
-                    if((item.protocol == "OGC:WMS-1.1.1-http-get-map") &&
-                        item.name && item.value) {
+                    if (GEOR.util.isSuitableDCProtocol(item)) {
 
                         // see http://applis-bretagne.fr/redmine/issues/2127#note-2
                         if (item.description) {
