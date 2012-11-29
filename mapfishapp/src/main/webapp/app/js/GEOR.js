@@ -25,7 +25,7 @@
  * @include GEOR_mapinit.js
  * @include GEOR_print.js
  * @include GEOR_wmc.js
- * Note that GEOR_getfeatureinfo.js, GEOR_resultspanel.js, GEOR_querier.js, 
+ * Note that GEOR_getfeatureinfo.js, GEOR_resultspanel.js, GEOR_querier.js,
  * GEOR_styler.js should be included here, but they are not required by the edit module.
  * In order to make the edit build "light", those files will be added in main.cfg and not here.
  */
@@ -49,10 +49,10 @@ Ext.namespace("GEOR");
             GEOR[module] = null;
         }
     };
-    
+
     Ext.onReady(function() {
         var tr = OpenLayers.i18n;
-        
+
         /*
          * Setting of OpenLayers global vars.
          */
@@ -72,12 +72,12 @@ Ext.namespace("GEOR");
             ok: tr("OK"),
             cancel: tr("Cancel")
         });
-        
+
         /*
          * Setting of proj4js global vars.
          */
         Ext.apply(Proj4js.defs, GEOR.config.PROJ4JS_STRINGS);
-        
+
         /*
          * Security stuff
          * Deactivate modules if current user roles do not match
@@ -85,13 +85,13 @@ Ext.namespace("GEOR");
         checkRoles('styler', GEOR.config.ROLES_FOR_STYLER);
         checkRoles('querier', GEOR.config.ROLES_FOR_QUERIER);
         checkRoles('print', GEOR.config.ROLES_FOR_PRINTER);
-            
+
         /*
          * Initialize the application.
          */
         var layerStore = GEOR.map.create();
         var map = layerStore.map;
-        
+
         GEOR.wmc.init(layerStore);
         if (GEOR.print) {
             GEOR.print.init(layerStore);
@@ -107,13 +107,13 @@ Ext.namespace("GEOR");
         }
         GEOR.waiter.init();
 
-        // Handle layerstore initialisation 
+        // Handle layerstore initialisation
         // with wms/services/wmc from "panier"
         GEOR.mapinit.init(layerStore, GEOR.ajaxglobal.init);
-        // Note: we're providing GEOR.ajaxglobal.init as a callback, so that 
+        // Note: we're providing GEOR.ajaxglobal.init as a callback, so that
         // errors when loading WMC are not catched by GEOR.ajaxglobal
         // but by the mapinit module, which handles them more appropriately
-        
+
         var recenteringItems = [
             Ext.apply({
                 title: tr("Cities"),
@@ -130,13 +130,13 @@ Ext.namespace("GEOR");
                 tabTip: tr("Recentering on a given address")
             }, GEOR.address.create(map)));
         }
-        
+
         /*
          * Create the page's layout.
          */
-        var plugins = (GEOR.editing === undefined) ? 
+        var plugins = (GEOR.editing === undefined) ?
             [] : [Ext.ux.PanelCollapsedTitle];
-        
+
         var eastItems = [
             new Ext.Panel({
                 // this panel contains the "manager layer" and
@@ -187,7 +187,7 @@ Ext.namespace("GEOR");
         if (GEOR.editing) {
             eastItems.push(
                 Ext.apply({
-                    region: "center", 
+                    region: "center",
                     title: tr("Editing")
                 }, GEOR.editing.create(map))
             );
@@ -234,16 +234,16 @@ Ext.namespace("GEOR");
         });
 
         // the header
-        var vpItems = GEOR.header ? 
+        var vpItems = GEOR.header ?
             [{
                 xtype: "box",
                 id: "geor_header",
-                region: "north", 
+                region: "north",
                 height: 90,
                 el: "go_head"
             }] : [];
-        
-        
+
+
         vpItems.push(
             // the map panel
             Ext.apply({
@@ -263,7 +263,7 @@ Ext.namespace("GEOR");
             header: false,
             items: eastItems
         }, southPanel);
-            
+
         // the viewport
         var vp = new Ext.Viewport({
             layout: "border",
@@ -305,7 +305,7 @@ Ext.namespace("GEOR");
                     eastItems[0].doLayout(); // required
                 },
                 "showrequest": function() {
-                    eastItems[0].setTitle(querierTitle); 
+                    eastItems[0].setTitle(querierTitle);
                     eastItems[0].getLayout().setActiveItem(1);
                     eastItems[0].getComponent(1).setUp();
                     eastItems[0].doLayout(); // required
@@ -320,7 +320,7 @@ Ext.namespace("GEOR");
                     }, panelCfg);
                     southPanel.add(panel);
                     southPanel.doLayout();
-                    southPanel.expand();  
+                    southPanel.expand();
                 },
                 "searchresults": function(options) {
                     if (GEOR.resultspanel) {
@@ -342,7 +342,7 @@ Ext.namespace("GEOR");
                     }, panelCfg);
                     southPanel.add(panel);
                     southPanel.doLayout();
-                    southPanel.expand();  
+                    southPanel.expand();
                 },
                 "searchresults": function(options) {
                     if (GEOR.resultspanel) {
@@ -354,7 +354,7 @@ Ext.namespace("GEOR");
                 }
             });
         }
-        
+
         if (GEOR.resultspanel) {
             GEOR.resultspanel.events.on({
                 "panel": function(panelCfg) {

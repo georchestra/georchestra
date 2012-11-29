@@ -38,7 +38,7 @@ GEOR.layeroptions = (function() {
      * {OpenLayers.Map} The map
      */
     var map;
-    
+
     /**
      * Property: vectorLayer
      * {OpenLayers.Layer.Vector} layer vector used to display
@@ -72,7 +72,7 @@ GEOR.layeroptions = (function() {
 
     /**
      * Method: getCombo
-     * Return the combo corresponding to ref 
+     * Return the combo corresponding to ref
      * {Ext.form.ComboBox}
      */
     var getCombo = function(ref, options) {
@@ -209,7 +209,7 @@ GEOR.layeroptions = (function() {
          */
         setBbox: function(bounds) {
             if (bounds && (bounds.getWidth() + bounds.getHeight() > 0)) {
-                var fieldset = (layerOptionsPanel.getLayout().activeItem.id == "globalLayerOptions") ? 
+                var fieldset = (layerOptionsPanel.getLayout().activeItem.id == "globalLayerOptions") ?
                     getFieldSet('globalBbox') : getFieldSet('customBbox');
                 !fieldset.collapsed && fieldset.items.itemAt(0).setBbox(bounds);
             }
@@ -231,10 +231,10 @@ GEOR.layeroptions = (function() {
             }
             if(global) {
                 // global properties
-                
+
                 // restore BBox in form fields & map
                 options.bbox && getFieldSet('globalBbox').items.itemAt(0).setBbox(options.bbox);
-                
+
                 // restore combo values
                 options.projection && getCombo('globalProjections').setValue(options.projection);
                 options.resolution && getNumberField('globalResolution').setValue(options.resolution);
@@ -274,7 +274,7 @@ GEOR.layeroptions = (function() {
                 getFieldSet('customBbox').setTitle(getFieldsetTitle());
             }
         },
-        
+
         /**
          * APIMethod: create
          * Returns the layer options panel.
@@ -297,7 +297,7 @@ GEOR.layeroptions = (function() {
                             return;
                         }
                         var area = feature.geometry.getGeodesicArea(map.getProjectionObject())/1E6;
-                        var str = (area > 10) ? 
+                        var str = (area > 10) ?
                             Math.round(area) + tr(' km²'):
                             (area < 0.1) ?
                                 Math.round(area*1E6) + tr(' m²') :
@@ -338,7 +338,7 @@ GEOR.layeroptions = (function() {
                                         value: 0.5,
                                         allowBlank: false,
                                         listeners: {
-                                            // TODO: remove following direct validation, and create a 
+                                            // TODO: remove following direct validation, and create a
                                             // global validation for extractor params to check if
                                             // extraction is allowed.
                                             "valid": function() {

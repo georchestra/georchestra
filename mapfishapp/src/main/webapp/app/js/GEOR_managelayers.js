@@ -78,12 +78,12 @@ GEOR.managelayers = (function() {
      * Property: querierRecord
      */
     var querierRecord;
-    
+
     /**
      * Property: form
      */
     var form;
-    
+
     /**
      * Property: jsonFormat
      */
@@ -117,7 +117,7 @@ GEOR.managelayers = (function() {
             if (GEOR.config.CONFIRM_LAYER_REMOVAL) {
                 GEOR.util.confirmDialog({
                     msg: tr(
-                        "Confirm NAME layer deletion ?", 
+                        "Confirm NAME layer deletion ?",
                         {'name': layerRecord.get('title')}
                     ),
                     width: 360,
@@ -608,7 +608,7 @@ GEOR.managelayers = (function() {
                 })
             }
         });
-        
+
         if (menuItems.length > 2) {
             menuItems.push("-");
         }
@@ -646,7 +646,7 @@ GEOR.managelayers = (function() {
     var createLayerNodePanel = function(node, ct) {
         var layer = node.layer;
         var layerRecord = node.layerStore.getById(layer.id);
-        
+
         // buttons in the toolbar
         var buttons = [];
         if (GEOR.getfeatureinfo) {
@@ -671,7 +671,7 @@ GEOR.managelayers = (function() {
             layer: layer,
             plugins: new GeoExt.LayerOpacitySliderTip()
         }]);
-        
+
         var panelItems = [{
             xtype: "toolbar",
             cls: "geor-toolbar",
@@ -688,7 +688,7 @@ GEOR.managelayers = (function() {
             });
         }
         panelItems.push(formatAttribution(layerRecord));
-        
+
         // return the panel
         return {
             xtype: "panel",

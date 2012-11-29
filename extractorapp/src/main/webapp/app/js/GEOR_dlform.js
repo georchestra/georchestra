@@ -31,10 +31,10 @@ GEOR.dlform = (function() {
 
     // Ext.Window
     var win;
-    
+
     var createForm = function(options) {
         var ls = localStorage;
-        
+
         var storeOptions = {
             autoLoad: true,
             reader: new Ext.data.JsonReader({
@@ -66,7 +66,7 @@ GEOR.dlform = (function() {
             // use the dedicated dlform webservice.
             storeOptions.url = '/downloadform/data_usage';
         }
-        
+
         var formPanelItems = [
         // hidden fields:
         {
@@ -127,7 +127,7 @@ GEOR.dlform = (function() {
             name: 'comment',
             height: 150
         }];
-        
+
         if (GEOR.config.PDF_URL) {
             formPanelItems.push({
                 xtype:'checkboxgroup',
@@ -141,7 +141,7 @@ GEOR.dlform = (function() {
                 }]
             });
         }
-        
+
         return new Ext.FormPanel({
             region: 'center',
             labelWidth: 100,
@@ -162,7 +162,7 @@ GEOR.dlform = (function() {
                         form = fp.getForm();
                     if (form.isValid()) {
                         var v = form.getValues();
-                        
+
                         // save form fields in local storage if not connected.
                         if (ls) {
                             var fields = ['first_name', 'last_name', 'company', 'email', 'tel'];
@@ -178,12 +178,12 @@ GEOR.dlform = (function() {
                                 }
                             }
                         }
-                        
+
                         // set json_spec hidden field with given email
                         form.findField('json_spec').setRawValue(
                             Ext.encode(GEOR.layerstree.getSpec(v['email']))
                         );
-                        
+
                         var submitOptions = {
                             // requires dlform webapp to be deployed:
                             url: '/downloadform/extractorapp',
@@ -196,7 +196,7 @@ GEOR.dlform = (function() {
                         // in this particular case, the success callback always gets executed
                         // Note: this is no security breach, since the extractorapp "initiate" controler
                         // always checks that the form has been validated before the job is done.
-                        submitOptions.failure = (GEOR.data.jettyrun) ? 
+                        submitOptions.failure = (GEOR.data.jettyrun) ?
                             submitOptions.success : function(form, action) {
                             switch (action.failureType) {
                                 case Ext.form.Action.CLIENT_INVALID:
@@ -238,7 +238,7 @@ GEOR.dlform = (function() {
          */
         show: function(options) {
             Ext.QuickTips.init();
-        
+
             win = new Ext.Window({
                 title: tr("Take one minute to indicate how you use the data"),
                 constrainHeader: true,

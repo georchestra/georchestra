@@ -5,7 +5,7 @@
  * license.  See http://svn.openlayers.org/trunk/openlayers/license.txt for the
  * full text of the license.
  */
- 
+
 (function() {
 
     /**
@@ -29,7 +29,7 @@
         for(var i=0, len=scripts.length; i<len; i++) {
             var src = scripts[i].getAttribute('src');
             if(src) {
-                var index = src.lastIndexOf(scriptName); 
+                var index = src.lastIndexOf(scriptName);
                 // set path length for src up to a query string
                 var pathLength = src.lastIndexOf('?');
                 if(pathLength < 0) {
@@ -65,7 +65,7 @@
 
         var agent = navigator.userAgent;
         var allScriptTags = new Array(jsfiles.length);
-        var host = getScriptLocation() + "lib/";    
+        var host = getScriptLocation() + "lib/";
         for (var i=0, len=jsfiles.length; i<len; i++) {
             allScriptTags[i] = "<script src='" + host + jsfiles[i] +
                 "'></script>";

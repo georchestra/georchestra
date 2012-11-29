@@ -44,7 +44,7 @@ GEOR.styler = (function() {
          */
         "sldready"
     );
-    
+
 	/**
      * Property: win
      * {Ext.Window} The styler window.
@@ -202,27 +202,11 @@ GEOR.styler = (function() {
                 return;
             }
             sldURL = GEOR.config.MAPFISHAPP_URL + sldURL;
-            var win = new Ext.Window({
+            GEOR.util.urlDialog({
                 title: tr("Download style"),
-                layout: "fit",
-                width: 400,
-                closeAction: 'close',
-                constrainHeader: true,
-                modal: false,
-                items: [{
-                    bodyStyle: 'padding:5px',
-                    html: tr("You can download your SLD style at ") + 
-                        '<br /><a href="'+sldURL+'">'+sldURL+'</a>',
-                    border: false
-                }],
-                buttons: [{
-                    text: tr("Thanks!"),
-                    handler: function() {
-                	    win.close();
-                    }
-                }]
+                msg: tr("You can download your SLD style at ") +
+                        '<br /><a href="'+sldURL+'">'+sldURL+'</a>'
             });
-            win.show();
         };
         var scope = this;
         if (dirty) {
@@ -233,7 +217,7 @@ GEOR.styler = (function() {
             pathToSLD && callback.apply(scope, [true, pathToSLD]);
         }
     };
-    
+
     /**
      * Method: saveSLD
      * Build a SLD string from the set of rules and send it to
@@ -249,7 +233,7 @@ GEOR.styler = (function() {
         applySLD = (applySLD !== false) ? true : false;
         if (rules && rules.length > 0) {
             var data = createSLD(rules);
-            
+
             if (data === null) {
                 ok = false;
             } else {
@@ -264,7 +248,7 @@ GEOR.styler = (function() {
                     // indicate that the SLD at pathToSLD matches
                     // our set of rules
                     dirty = false;
-                    
+
                     mask.hide();
                     callback.apply(scope, [true, pathToSLD]);
                 };
@@ -339,7 +323,7 @@ GEOR.styler = (function() {
                 var sld = new OpenLayers.Format.SLD().read(doc, {
                     namedLayersAsArray: true
                 });
-                var rules = 
+                var rules =
                     sld &&
                     sld.namedLayers &&
                     sld.namedLayers.length > 0 &&
@@ -561,7 +545,7 @@ GEOR.styler = (function() {
         protocol.read({
             maxFeatures: 1,
             // we need to specifically ask for the geometry here
-            // some mapservers won't give it 
+            // some mapservers won't give it
             // see http://applis-bretagne.fr/redmine/issues/1996
             propertyNames: [geometryName],
             callback: function(response) {
@@ -647,18 +631,18 @@ GEOR.styler = (function() {
                 "Content-Type": "application/json"
             },
             success: function(response) {
-                // response contains the URL to the 
+                // response contains the URL to the
                 // SLD stored on the server
                 var path = Ext.decode(response.responseText).filepath;
                 getSLD(path);
                 // store the path to SLD , we'll need it when
                 // applying the new style to the layer
                 pathToSLD = path;
-                
+
                 // indicate that the SLD at pathToSLD matches
                 // our set of rules
                 dirty = false;
-                
+
             },
             failure: function(response) {
                 mask.hide();
@@ -810,7 +794,7 @@ GEOR.styler = (function() {
             }, {
                 iconCls: "delete",
                 tooltip: tr("Delete the selected class"),
-                disabled: true, 
+                disabled: true,
                 handler: function(btn, evt) {
                     removeRule();
                 }
@@ -841,13 +825,13 @@ GEOR.styler = (function() {
         });
         win.doLayout();
         win.enable();
-        // if url is defined getURL takes care 
+        // if url is defined getURL takes care
         // of hiding the mask
         if (!url) {
             mask && mask.hide();
         }
     };
-    
+
     var giveup = function(msg) {
         win.add({
             html: "<p>"+msg+"</p>",
@@ -863,12 +847,12 @@ GEOR.styler = (function() {
      * Public
      */
     return {
-    
+
         /*
          * Observable object
          */
         events: observable,
-        
+
         /**
          * APIMethod: create
          * Create and open the styler window.
@@ -876,17 +860,17 @@ GEOR.styler = (function() {
          * Parameters:
          * layerRecord - {GeoExt.data.LayerRecord} The record representing
          * the WMS layer to style.
-         * animateFrom - {String} Id or element from which the window 
+         * animateFrom - {String} Id or element from which the window
          *  should animate while opening
          */
         create: function(layerRecord, animateFrom) {
             Ext.QuickTips.init();
             tr = OpenLayers.i18n;
-            
+
             // clear cache:
-            symbolType = null; 
+            symbolType = null;
             mask = null;
-            
+
             wmsLayerRecord = layerRecord;
 
             /*
@@ -904,7 +888,7 @@ GEOR.styler = (function() {
                 disabled: true,
                 buttons: [{
                     text: tr("Download style"),
-                    handler: dlStyle 
+                    handler: dlStyle
                 },{
                     text: tr("Apply"),
                     handler: function() {
@@ -939,7 +923,7 @@ GEOR.styler = (function() {
 
 
             /*
-             * trigger in cascade: WMS DescribeLayer, 
+             * trigger in cascade: WMS DescribeLayer,
              * WFS DescribeFeatureType, and the
              * initialization of the styler window.
              */
@@ -958,9 +942,9 @@ GEOR.styler = (function() {
                     } else {
                         var store = GEOR.ows.WFSDescribeFeatureType(wfsInfo, {
                             success: function(st, recs, opts) {
-                                // extract & remove geometry column name                                
+                                // extract & remove geometry column name
                                 var idx = st.find('type', GEOR.ows.matchGeomProperty);
-                                if (idx > -1) { 
+                                if (idx > -1) {
                                     // we have a geometry
                                     var r = st.getAt(idx);
                                     geometryName = r.get('name');
@@ -972,7 +956,7 @@ GEOR.styler = (function() {
                                 } else {
                                     // give up
                                     giveup([ // FIXME: one key translation
-                                        tr("Impossible to complete the " + 
+                                        tr("Impossible to complete the " +
                                             "operation:"),
                                         tr("not any available attribute")
                                     ].join(" "));

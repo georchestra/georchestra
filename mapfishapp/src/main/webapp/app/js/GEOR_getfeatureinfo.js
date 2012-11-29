@@ -30,7 +30,7 @@ GEOR.getfeatureinfo = (function() {
     observable.addEvents(
         /**
          * Event: searchresults
-         * Fires when we've received a response from server 
+         * Fires when we've received a response from server
          *
          * Listener arguments:
          * options - {Object} A hash containing response, model and format
@@ -41,7 +41,7 @@ GEOR.getfeatureinfo = (function() {
          * Fires when the user presses the search button
          *
          * Listener arguments:
-         * panelCfg - {Object} Config object for a panel 
+         * panelCfg - {Object} Config object for a panel
          */
         "search",
         /**
@@ -63,7 +63,7 @@ GEOR.getfeatureinfo = (function() {
      * {OpenLayers.Map} The map instance.
      */
     var map = null;
-    
+
     /**
      * Property: model
      * {GEOR.FeatureDataModel} data model
@@ -75,7 +75,7 @@ GEOR.getfeatureinfo = (function() {
      * {Function} an alias to OpenLayers.i18n
      */
     var tr = null;
-    
+
     /**
      * Method: onGetfeatureinfo
      * Callback executed when the GetFeatureInfo response
@@ -86,23 +86,23 @@ GEOR.getfeatureinfo = (function() {
      */
     var onGetfeatureinfo = function(info) {
         OpenLayers.Element.addClass(map.viewPortDiv, "olDrawBox");
-        
+
         var features = info.features;
-        
+
         if (!model || model.isEmpty()) {
             model = new GEOR.FeatureDataModel({
                 features: features
             });
         }
-        
+
         observable.fireEvent("searchresults", {
             features: features,
-            model: model 
+            model: model
             // we do not know the model with GFI at first time.
             // but at second time, we can use cached model
         });
     };
-    
+
     /**
      * Method: onBeforegetfeatureinfo
      * Callback executed just before getFeatureInfo request is triggered
@@ -110,12 +110,12 @@ GEOR.getfeatureinfo = (function() {
     var onBeforegetfeatureinfo = function() {
         // to let OL use its own cursor class:
         OpenLayers.Element.removeClass(map.viewPortDiv, "olDrawBox");
-        
+
         observable.fireEvent("search", {
             html: tr("<div>Searching...</div>")
-        }); 
+        });
     };
-    
+
     /**
      * Method: onLayerVisibilitychanged
      * Callback executed on WMS layer visibility changed
@@ -126,9 +126,9 @@ GEOR.getfeatureinfo = (function() {
             this.toggle(ctrl.layers[0], false);
         }
     };
-    
+
     /**
-     * Method: onLayerRemoved 
+     * Method: onLayerRemoved
      * Callback executed on WMS layer removed from map
      * We need to deactivate ouselves
      */
@@ -137,17 +137,17 @@ GEOR.getfeatureinfo = (function() {
             this.toggle(options.layer, false);
         }
     };
-    
+
     /**
-     * Method: onCtrlactivate 
+     * Method: onCtrlactivate
      * Callback executed on control activation
      */
     var onCtrlactivate = function() {
         OpenLayers.Element.addClass(map.viewPortDiv, "olDrawBox");
     };
-    
+
     /**
-     * Method: onCtrldeactivate 
+     * Method: onCtrldeactivate
      * Callback executed on control deactivation
      */
     var onCtrldeactivate = function() {
@@ -166,7 +166,7 @@ GEOR.getfeatureinfo = (function() {
 
         /**
          * APIMethod: init
-         * Initialize this module 
+         * Initialize this module
          *
          * Parameters:
          * m - {OpenLayers.Map} The map instance.
@@ -196,9 +196,9 @@ GEOR.getfeatureinfo = (function() {
                 observable.fireEvent("search", {
                     html: tr("<div>Search on objects active for NAME layer. " +
                              "Clic on the map.</div>",
-                             {'name': title})                             
+                             {'name': title})
                 });
-                
+
                 var ctrlEventsConfig = {
                     "beforegetfeatureinfo": onBeforegetfeatureinfo,
                     "getfeatureinfo": onGetfeatureinfo,
@@ -206,7 +206,7 @@ GEOR.getfeatureinfo = (function() {
                     "deactivate": onCtrldeactivate,
                     scope: this
                 };
-            
+
                 // we'd like to activate gfi request on layer
                 if (ctrl) {
                     ctrl.events.un(ctrlEventsConfig);
@@ -220,7 +220,7 @@ GEOR.getfeatureinfo = (function() {
                 ctrl.events.on(ctrlEventsConfig);
                 map.addControl(ctrl);
                 ctrl.activate();
-                
+
                 layer.events.on({
                     "visibilitychanged": onLayerVisibilitychanged,
                     scope: this
@@ -229,7 +229,7 @@ GEOR.getfeatureinfo = (function() {
                     "removelayer": onLayerRemoved,
                     scope: this
                 });
-                
+
             } else {
                 // clear model cache:
                 model = null;

@@ -22,7 +22,7 @@ psql.db=@shared.psql.geonetwork.db@
 
 psql.user=@shared.psql.user@
 psql.pass=@shared.psql.pass@
-psql.url=@shared.psql.url@
+psql.url=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.psql.geonetwork.db@
 
 downloadform.psql.url=@shared.download_form.jdbcurl@
 dlform.activated=@shared.download_form.activated@

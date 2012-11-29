@@ -49,7 +49,7 @@ Proj4js.Proj.cass = {
     var lam=p.x;
     var phi=p.y;
     lam = Proj4js.common.adjust_lon(lam - this.long0);
-    
+
     if (this.sphere) {
       x = Math.asin(Math.cos(phi) * Math.sin(lam));
       y = Math.atan2(Math.tan(phi) , Math.cos(lam)) - this.phi0;
@@ -59,7 +59,7 @@ Proj4js.Proj.cass = {
       this.c = Math.cos(phi);
       y = this.pj_mlfn(phi, this.n, this.c, this.en);
       this.n = 1./Math.sqrt(1. - this.es * this.n * this.n);
-      this.tn = Math.tan(phi); 
+      this.tn = Math.tan(phi);
       this.t = this.tn * this.tn;
       this.a1 = lam * this.c;
       this.c *= this.es * this.c / (1 - this.es);
@@ -67,7 +67,7 @@ Proj4js.Proj.cass = {
       x = this.n * this.a1 * (1. - this.a2 * this.t * (this.C1 - (8. - this.t + 8. * this.c) * this.a2 * this.C2));
       y -= this.m0 - this.n * this.tn * this.a2 * (.5 + (5. - this.t + 6. * this.c) * this.a2 * this.C3);
     }
-    
+
     p.x = this.a*x + this.x0;
     p.y = this.a*y + this.y0;
     return p;
@@ -80,7 +80,7 @@ Proj4js.Proj.cass = {
     p.y -= this.y0;
     var x = p.x/this.a;
     var y = p.y/this.a;
-    
+
     if (this.sphere) {
       this.dd = y + this.lat0;
       phi = Math.asin(Math.sin(this.dd) * Math.cos(x));
@@ -88,7 +88,7 @@ Proj4js.Proj.cass = {
     } else {
       /* ellipsoid */
       ph1 = this.pj_inv_mlfn(this.m0 + y, this.es, this.en);
-      this.tn = Math.tan(ph1); 
+      this.tn = Math.tan(ph1);
       this.t = this.tn * this.tn;
       this.n = Math.sin(ph1);
       this.r = 1. / (1. - this.es * this.n * this.n);
@@ -117,13 +117,13 @@ Proj4js.Proj.cass = {
     en[4] = t * es * this.C88;
     return en;
   },
-  
+
   pj_mlfn: function(phi, sphi, cphi, en) {
     cphi *= sphi;
     sphi *= sphi;
     return(en[0] * phi - cphi * (en[1] + sphi*(en[2]+ sphi*(en[3] + sphi*en[4]))));
   },
-  
+
   pj_inv_mlfn: function(arg, es, en) {
     k = 1./(1.-es);
     phi = arg;

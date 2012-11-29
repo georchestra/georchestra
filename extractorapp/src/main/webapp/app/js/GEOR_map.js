@@ -52,14 +52,14 @@ GEOR.map = (function() {
      * {OpenLayers.Control.LoadingPanel}
      */
     var buildLoadingPanelCtrl = function(map) {
-        
+
         Ext.DomHelper.append(map.div, {
-            tag: "div", 
+            tag: "div",
             id: "extractor_loading_panel",
             cls: "olControlLoadingPanel"
         });
         var div = OpenLayers.Util.getElement("extractor_loading_panel");
-        
+
         return new OpenLayers.Control.LoadingPanel({
             div: div,
             minimizeControl: function(evt) {
@@ -93,7 +93,7 @@ GEOR.map = (function() {
          * {OpenLayers.Map} The application's global map instance.
          */
         create: function() {
-            
+
             var map = new OpenLayers.Map({
                 controls: [
                     new OpenLayers.Control.Navigation(),
@@ -108,19 +108,19 @@ GEOR.map = (function() {
                 theme: null
             });
             map.addControl(buildLoadingPanelCtrl(map));
-            
+
             return map;
         },
 
         /**
          * APIMethod: createVectorLayer
          * Create the vector layer.
-         * 
+         *
          * Returns:
          * {OpenLayers.Layer.Vector} The vector layer.
          */
         createVectorLayer: function() {
-            var style = OpenLayers.Util.extend({}, 
+            var style = OpenLayers.Util.extend({},
                 OpenLayers.Feature.Vector.style['default']);
             OpenLayers.Util.extend(style, {
                 label: "${getArea}",
@@ -157,7 +157,7 @@ GEOR.map = (function() {
          *
          * Parameters:
          * options - {Object} Options to be passed to layer creation.
-         * 
+         *
          * Returns:
          * {OpenLayers.Layer} The base layer.
          */

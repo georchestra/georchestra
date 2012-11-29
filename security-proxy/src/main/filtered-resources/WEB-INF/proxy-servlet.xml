@@ -10,6 +10,7 @@
 <!--          <property name="defaultTarget" value="${proxy.defaultTarget}/sec/"/>-->
           <property name="headerManagement" ref="headerManagementBean"/>
           <property name="defaultCharset" value="UTF-8"/>
+          <property name="referer" value="${public.host}"/>
           
           <property name="checkHealth" value="${checkHealth}"/>
           <property name="maxDatabaseConnections" value="${max.database.connections}"/>    

@@ -35,7 +35,7 @@ GEOR.print = (function() {
      * {Ext.LoadMask} The treePanel loadMask
      */
     var mask = null;
-    
+
     /**
      * Property: win
      * {Ext.Window} The Ext window opened when the print
@@ -92,7 +92,7 @@ GEOR.print = (function() {
         showDate: true,
         showLegend: true
     };
-    
+
     /**
      * Method: getLayerSources
      * Creates an attribution string from map layers
@@ -131,7 +131,7 @@ GEOR.print = (function() {
 
         layerStore = ls;
         tr = OpenLayers.i18n;
-        
+
         // The printProvider that connects us to the print service
         var r = GEOR.config.MAPFISHAPP_URL.split('/');
         r.pop(); // remove "edit" or latest "/" part
@@ -207,15 +207,15 @@ GEOR.print = (function() {
         }
         if (win === null) {
             // default values from config:
-            var r = printProvider.layouts.find("name", 
+            var r = printProvider.layouts.find("name",
                 GEOR.config.DEFAULT_PRINT_FORMAT);
             if (r >= 0) {
                 printProvider.setLayout(printProvider.layouts.getAt(r));
             } else {
                 alert(tr("print.unknown.format",
-                    {'format': GEOR.config.DEFAULT_PRINT_FORMAT}));                
+                    {'format': GEOR.config.DEFAULT_PRINT_FORMAT}));
             }
-            r = printProvider.dpis.find("value", 
+            r = printProvider.dpis.find("value",
                 GEOR.config.DEFAULT_PRINT_RESOLUTION);
             if (r >= 0) {
                 printProvider.setDpi(printProvider.dpis.getAt(r));
@@ -332,7 +332,7 @@ GEOR.print = (function() {
                     }
                 ]
             });
-            
+
             win = new Ext.Window({
                 title: tr("Print the map"),
                 resizable: false,
@@ -360,9 +360,9 @@ GEOR.print = (function() {
                 }]
             });
         }
-        
+
         win.show();
-        
+
         if (!mask) {
             mask = new Ext.LoadMask(win.bwrap.dom, {
                 msg:tr("Printing...")

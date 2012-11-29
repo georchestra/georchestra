@@ -27,7 +27,7 @@ Ext.namespace("GEOR");
 GEOR.criteria = ['what', 'where'];
 
 Ext.onReady(function() {
-    
+
     /*
      * Setting of OpenLayers global vars.
      */
@@ -48,16 +48,16 @@ Ext.onReady(function() {
         cancel: "Annuler"
     });
     Ext.QuickTips.init();
-    
+
     /*
      * Initialize the application.
      */
 
     GEOR.waiter.init();
-    
+
     var store = GEOR.dataview.init();
-    
-    
+
+
     var o = new Ext.util.Observable();
     o.addEvents(
         /**
@@ -65,19 +65,19 @@ Ext.onReady(function() {
          * Fires when the server needs to be queried for new results
          */
         "searchrequest",
-    
+
         /**
          * Event: storeloaded
          * Fires when the new records are loaded in store
          */
         "storeloaded",
-    
+
         /**
          * Event: itemselectionchanged
          * Fires when list item selection has changed
          */
         "itemselectionchanged",
-    
+
         /**
          * Event: itemzoom
          * Fires when a user clicks on zoom
@@ -85,7 +85,7 @@ Ext.onReady(function() {
         "itemzoom"
     );
     GEOR.observable = o;
-    
+
     var whereFilter;
     var search = function(options) {
         GEOR.waiter.show();
@@ -102,27 +102,27 @@ Ext.onReady(function() {
             }
         });
     };
-    
+
     /*
      * Create the page's layout.
      */
-    
+
     // the header
-    var vpItems = GEOR.header ? 
+    var vpItems = GEOR.header ?
         [{
             xtype: "box",
             id: "geor_header",
-            region: "north", 
+            region: "north",
             height: 90,
             el: "go_head"
         }] : [];
-    
+
     var bbar = new Ext.Toolbar({
         cls: "centerbbar"
     });
-        
+
     vpItems.push({
-        region: "center", 
+        region: "center",
         autoScroll: true,
         layout: 'fit',
         items: [GEOR.dataview.getCmp()],
@@ -181,7 +181,7 @@ Ext.onReady(function() {
             }
         }]
     });
-    
+
     // the viewport
     var vp = new Ext.Viewport({
         layout: "border",

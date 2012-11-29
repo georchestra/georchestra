@@ -19,11 +19,13 @@ geoserver.server=http://@shared.server.name@:@shared.server.port@
 proxy.defaultTarget=http://localhost:8080
 proxy.mapping=\
     <entry key="extractorapp" value="${proxy.defaultTarget}/extractorapp-private/" />\
-    <entry key="gssec" value="${proxy.defaultTarget}/geoserver-security/" />\
     <entry key="mapfishapp" value="${proxy.defaultTarget}/mapfishapp-private/" />\
     <entry key="geonetwork" value="${proxy.defaultTarget}/geonetwork-private/" />\
     <entry key="catalogapp" value="${proxy.defaultTarget}/catalogapp-private/" />\
-    <entry key="geoserver" value="http://localhost:8180/geoserver/" />
+    <entry key="geoserver" value="${proxy.defaultTarget}/geoserver-private/" />\
+    <entry key="downloadform" value="${proxy.defaultTarget}/downloadform-private/" />\
+    <entry key="analytics" value="${proxy.defaultTarget}/analytics-private/" />\
+    <entry key="static" value="${proxy.defaultTarget}/static-private/" />
 
 header.mapping=\
     <entry key="sec-email"     value="mail"/>\

@@ -24,15 +24,15 @@ Ext.namespace("GEOR");
 GEOR.dataview = (function() {
 
     var store = null;
-    
+
     var dataView = null;
-    
+
     var OWSdb = {};
-    
+
     var form = {}, jsonFormat;
-        
+
     var selectedRecordsId = [];
-        
+
     var createButtons = function(URIs) {
         if (!URIs || !URIs[0]) {
             return '';
@@ -74,14 +74,14 @@ GEOR.dataview = (function() {
         }
         return dl.join(' ')+view.join(' ');
     };
-    
+
     var getZoomText = function(values) {
         var bbox = values.BoundingBox;
         var uuid = values.identifier;
         return (bbox instanceof OpenLayers.Bounds ? ' - <a href="#'+uuid+'" class="zoom">zoom</a>' : '');
     };
-    
-    
+
+
     var getTemplate = function() {
         return [
             '<tpl for=".">',
@@ -99,7 +99,7 @@ GEOR.dataview = (function() {
             '</tpl>'
         ].join('');
     };
-    
+
     var submitData = function(url_key, o) {
         form[url_key] = form[url_key] || Ext.DomHelper.append(Ext.getBody(), {
             tag: "form",
@@ -116,17 +116,17 @@ GEOR.dataview = (function() {
         input.value = jsonFormat.write(o);
         form[url_key].submit();
     };
-    
-    
+
+
     var onButtonClick = function(evt, elt) {
         elt = Ext.get(elt);
-        if (!elt.is('button')) { 
+        if (!elt.is('button')) {
             elt = elt.parent('button');
         }
         if (!OWSdb[elt.id]) {
             return;
         }
-        var url_key = (elt.hasClass('x-list-btn-view')) ? 
+        var url_key = (elt.hasClass('x-list-btn-view')) ?
             'VIEWER_URL' : 'EXTRACTOR_URL';
         var services = [], layers = [];
         if (OWSdb[elt.id].name) {
@@ -146,12 +146,12 @@ GEOR.dataview = (function() {
         }
         submitData(url_key, {services: services, layers: layers});
     };
-    
+
     var getRecordFromHref = function(href) {
         var uuid = href.slice(href.indexOf('#')+1);
         return store.getById(uuid);
     };
-    
+
     var onZoomClick = function(e, t) {
         // TODO: change event name to zoom
         var r = getRecordFromHref(t.href);
@@ -161,7 +161,7 @@ GEOR.dataview = (function() {
             });
         }
     };
-    
+
     var onStoreLoad = function(s) {
         Ext.select('button.x-list-btn-view').on('click', onButtonClick);
         Ext.select('button.x-list-btn-dl').on('click', onButtonClick);
@@ -175,19 +175,19 @@ GEOR.dataview = (function() {
         }
         GEOR.observable.fireEvent("storeloaded", {store: s});
     };
-    
-    
+
+
     var onStoreBeforeload = function() {
         // local db reset
         OWSdb = {};
     };
-    
+
     var onStoreException = function() {
         GEOR.waiter.hide();
         alert("Oops, il y a eu un problème.");
     };
-    
-    
+
+
     return {
 
         init: function(s) {
@@ -203,14 +203,14 @@ GEOR.dataview = (function() {
             }
             return store;
         },
-        
+
         bind: function(store) {
             if (!dataView.store) {
                 dataView.bindStore(store, true);
             }
         },
-        
-        
+
+
         getCmp: function() {
             if (!dataView) {
                 dataView = new Ext.DataView({
@@ -250,7 +250,7 @@ GEOR.dataview = (function() {
             }
             return dataView;
         },
-        
+
         scrollToTop: function() {
             var el = dataView.getEl();
             var f = el && el.first();

@@ -35,13 +35,13 @@ GEOR.mapinit = (function() {
      * {GeoExt.data.LayerStore} The application's layer store.
      */
     var layerStore = null;
-    
+
     /**
      * Property: initState
      * {Array} shorthand for GEOR.initstate
      */
     var initState = null;
-    
+
     /**
      * Property: cb
      * {Function} executed after this init function has done its job
@@ -82,7 +82,7 @@ GEOR.mapinit = (function() {
         OpenLayers.Request.GET({
             url: wmcUrl,
             success: function(response) {
-                // we need to manually hide the waiter since 
+                // we need to manually hide the waiter since
                 // GEOR.ajaxglobal.init has not run yet:
                 GEOR.waiter.hide();
                 try {
@@ -101,13 +101,13 @@ GEOR.mapinit = (function() {
 
     /**
      * Method: getUniqueWmsServers
-     * Convenience method for getting unique WMS server URLs 
+     * Convenience method for getting unique WMS server URLs
      *
      * Parameters:
      * initState - {Array} GEOR.initstate array
      *
      * Returns:
-     * {Object} a hash with keys "WMSLayer" and "WMS" indexing arrays of 
+     * {Object} a hash with keys "WMSLayer" and "WMS" indexing arrays of
      *          unique WMS server URLs
      */
     var getUniqueWmsServers = function(initState) {
@@ -135,7 +135,7 @@ GEOR.mapinit = (function() {
         recordType.prototype.fields.add(new Ext.data.Field({
             name: "_serverURL", type: "string"
         }));
-        
+
         var GroupingLayerStore = Ext.extend(
             Ext.data.GroupingStore,
             new GeoExt.data.LayerStoreMixin
@@ -154,7 +154,7 @@ GEOR.mapinit = (function() {
                 }
             }
         });
-        
+
         var srs = layerStore.map.getProjection();
         for (var key in stores) {
             if (stores.hasOwnProperty(key)) {
@@ -241,7 +241,7 @@ GEOR.mapinit = (function() {
                 }
             }
         });
-        
+
         // check their srs against map's srs
         var srs = layerStore.map.getProjection();
         Ext.each(records, function(record) {
@@ -255,19 +255,19 @@ GEOR.mapinit = (function() {
         GEOR.waiter.hide();
         if (errors.length) {
             GEOR.util.errorDialog({
-                title: (errors.length>1) ? 
+                title: (errors.length>1) ?
                     tr("NB layers not imported", {'NB': errors.length}) :
                     tr("One layer not imported"),
                 msg: tr("mapinit.layers.load.error",
-                    {'list': errors.join(', ')})                
+                    {'list': errors.join(', ')})
             });
         } else {
             var plural = (count>1) ? "s" : "";
             GEOR.util.infoDialog({
-                msg: (count>1) ? 
+                msg: (count>1) ?
                     tr("NB layers imported", {'NB': count}):
                     (count==1) ? tr("One layer imported"):
-                    tr("Not any layer imported")                
+                    tr("Not any layer imported")
             });
         }
     };
@@ -279,13 +279,13 @@ GEOR.mapinit = (function() {
      *
      * Parameters:
      * wmsServers - {Array} Array of WMS server urls
-     * callback - {Function} The callback 
+     * callback - {Function} The callback
      *            (which takes a *stores* object as argument)
      */
     var createStores = function(wmsServers, callback, scope) {
         var count = wmsServers.length;
         var stores = {};
-        
+
         var capabilitiesCallback = function() {
             count -= 1;
             if (count === 0) {
@@ -333,10 +333,10 @@ GEOR.mapinit = (function() {
     };
 
     return {
-    
+
         /**
          * APIMethod: init
-         * Initialize this module 
+         * Initialize this module
          *
          * Parameters:
          * ls - {GeoExt.data.LayerStore} The layer store instance.
@@ -346,10 +346,10 @@ GEOR.mapinit = (function() {
             layerStore = ls;
             tr = OpenLayers.i18n;
             cb = callback || OpenLayers.Util.Void;
-            
-            // POSTing a content to the app (which results in GEOR.initstate 
+
+            // POSTing a content to the app (which results in GEOR.initstate
             // being set) has priority over everything else:
-            if (!GEOR.initstate || GEOR.initstate === null || 
+            if (!GEOR.initstate || GEOR.initstate === null ||
                 !GEOR.initstate[0]) {
                 // if a custom WMC is provided as GET parameter, load it:
                 if (GEOR.config.CUSTOM_WMC) {
@@ -361,16 +361,16 @@ GEOR.mapinit = (function() {
                 }
                 return;
             }
-            
+
             initState = GEOR.initstate;
-            // Based on GEOR.initstate, determine whether 
+            // Based on GEOR.initstate, determine whether
             // to load WMC or WMS layers or WMS services
-            if (initState.length == 1 && initState[0].type == "WMC" && 
+            if (initState.length == 1 && initState[0].type == "WMC" &&
                 initState[0].url) {
                 // load given WMC
                 updateStoreFromWMC(initState[0].url, {
                     resetMap: false
-                    // we do not need the failure callback, 
+                    // we do not need the failure callback,
                     // since resetMap is false:
                     //,failure: loadDefaultWMC
                 });

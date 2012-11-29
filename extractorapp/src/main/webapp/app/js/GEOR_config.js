@@ -43,7 +43,7 @@ GEOR.config = (function() {
 
     /**
      * Property: vectorAbility
-     * {Number} Integer representing 
+     * {Number} Integer representing
      *  browser ability to handle features
      */
     var vectorAbility = null;
@@ -105,7 +105,7 @@ GEOR.config = (function() {
         }
         return vectorAbility;
     };
-    
+
     /**
      * Method: getComputingPower
      * Get an empirical floating parameter
@@ -152,7 +152,7 @@ GEOR.config = (function() {
         }
         return "../";
     };
-    
+
     /**
      * Method: getCustomParameter
      *  If parameter paramName exists in GEOR.custom, returns its value
@@ -160,28 +160,28 @@ GEOR.config = (function() {
      *
      * Parameters:
      * paramName - {String} the parameter name
-     * defaultValue - {Mixed} the default value if none is 
+     * defaultValue - {Mixed} the default value if none is
      *                specified in GEOR.custom
      *
      * Returns:
      * {Mixed} The parameter value
      */
     var getCustomParameter = function(paramName, defaultValue) {
-        return (GEOR.custom && GEOR.custom.hasOwnProperty(paramName)) ? 
+        return (GEOR.custom && GEOR.custom.hasOwnProperty(paramName)) ?
             GEOR.custom[paramName] : defaultValue;
     };
-    
+
     /*
      * Public
      */
     return {
-   
+
         /**
          * Constant: EXTRACTOR_BATCH_URL
          * The URL to the extractor batch.
          */
         EXTRACTOR_BATCH_URL: "extractor/initiate",
-   
+
         /**
          * Constant: LOGIN_URL
          * The login url.
@@ -193,7 +193,7 @@ GEOR.config = (function() {
          * The logout url.
          */
         LOGOUT_URL: "/j_spring_security_logout",
-        
+
         /**
          * Constant: SUPPORTED_RASTER_FORMATS
          * List of supported raster formats
@@ -213,34 +213,34 @@ GEOR.config = (function() {
             ["mif", "Mif/Mid"],
             ["tab", "TAB"]
         ],
-        
+
         /**
          * Constant: DOWNLOAD_FORM
          * Boolean: should the app display a form requesting user data and data usage ?
          * If set to yes, setting up the dlform webapp is mandatory.
          * Defaults to false
          */
-        DOWNLOAD_FORM: getCustomParameter("DOWNLOAD_FORM", 
+        DOWNLOAD_FORM: getCustomParameter("DOWNLOAD_FORM",
             false),
 
         /**
          * Constant: PDF_URL
          * String: the URL to the downloaded data Terms Of Use
-         * 
+         *
          */
-        PDF_URL: getCustomParameter("PDF_URL", 
+        PDF_URL: getCustomParameter("PDF_URL",
             "/static/cgu.pdf"),
-            
+
         /***** Beginning of config options which can be overriden by GEOR.custom *****/
-        
-   
+
+
         /**
          * Constant: GEOSERVER_WMS_URL
          * The URL to GeoServer WMS.
          */
-        GEOSERVER_WMS_URL: getCustomParameter("GEOSERVER_WMS_URL", 
+        GEOSERVER_WMS_URL: getCustomParameter("GEOSERVER_WMS_URL",
             getBaseURL() + "geoserver/wms"),
-   
+
         /**
          * Constant: GEOSERVER_WFS_URL
          * The URL to GeoServer WFS.
@@ -254,10 +254,10 @@ GEOR.config = (function() {
          */
         MAX_FEATURES: getCustomParameter("MAX_FEATURES",
             50*getBrowserVectorAbility()*getComputingPower()),
-        
+
         /**
          * Constant: MAX_LENGTH
-         * The maximum number of chars in a XML response 
+         * The maximum number of chars in a XML response
          * before triggering an alert.
          */
         MAX_LENGTH: getCustomParameter("MAX_LENGTH",
@@ -303,7 +303,7 @@ GEOR.config = (function() {
          * Defaults to null, which means scales will be automatically computed
          */
         GEOGRAPHIC_MAP_SCALES: getCustomParameter("GEOGRAPHIC_MAP_SCALES", null),
-        
+
         /**
          * Constant: MAP_POS_SRS1
          * {String} The cursor position will be displayed using this SRS.
@@ -311,7 +311,7 @@ GEOR.config = (function() {
          * Defaults to "EPSG:2154"
          */
         MAP_POS_SRS1: getCustomParameter("MAP_POS_SRS1", "EPSG:2154"),
-        
+
         /**
          * Constant: MAP_POS_SRS2
          * {String} The cursor position will be displayed using this SRS.
@@ -319,14 +319,14 @@ GEOR.config = (function() {
          * Defaults to ""
          */
         MAP_POS_SRS2: getCustomParameter("MAP_POS_SRS2", ""),
-        
+
         /**
          * Constant: BASE_LAYER_NAME
          * The WMS base layer which will be displayed under each extracted layer.
          */
         BASE_LAYER_NAME: getCustomParameter("BASE_LAYER_NAME",
             "geor:countries"),
-        
+
         /**
          * Constant: NS_LOC
          * {String} The referentials layers' namespace alias as defined in
@@ -352,7 +352,7 @@ GEOR.config = (function() {
          */
         SUPPORTED_REPROJECTIONS: getCustomParameter("SUPPORTED_REPROJECTIONS", [
             ["EPSG:27562", "EPSG:27562 - NTF (Paris) / Lambert Centre France"],
-            ["EPSG:27572", "EPSG:27572 - NTF (Paris) / Lambert zone II"], 
+            ["EPSG:27572", "EPSG:27572 - NTF (Paris) / Lambert zone II"],
             ["EPSG:2154", "EPSG:2154 - Lambert 93"],
             ["EPSG:4171", "EPSG:4171 - RGF93"],
             ["EPSG:4326", "EPSG:4326 - WGS84"]
@@ -371,7 +371,7 @@ GEOR.config = (function() {
          */
         LAYERS_CHECKED: getCustomParameter("LAYERS_CHECKED",
             true),
-        
+
         /**
          * Constant: BUFFER_VALUES
          * {Array} Array of buffer values with their display name
@@ -386,7 +386,7 @@ GEOR.config = (function() {
             [5000,tr("BUFFER kilometers", {"BUFFER": 5})],
             [10000,tr("BUFFER kilometers", {"BUFFER": 10})]
         ]),
-        
+
         /**
          * Constant: DEFAULT_BUFFER_VALUE
          * Default buffer value in meters.
@@ -394,7 +394,7 @@ GEOR.config = (function() {
          */
         DEFAULT_BUFFER_VALUE: getCustomParameter("DEFAULT_BUFFER_VALUE",
             0),
-        
+
         /**
          * Constant: STARTUP_LAYERS
          * {Array} OGC layers loaded at startup if none are sent
@@ -426,7 +426,7 @@ GEOR.config = (function() {
                 layername: "BASIAS_LOCALISE"
             }
         ]),
-        
+
         /**
          * Constant: STARTUP_SERVICES
          * {Array} OGC services loaded at startup if none are sent
@@ -468,7 +468,7 @@ GEOR.config = (function() {
          * {String} The message to display on extractorapp startup
          * Defaults to null, which means no message will be displayed
          */
-        SPLASH_SCREEN: getCustomParameter("SPLASH_SCREEN", 
+        SPLASH_SCREEN: getCustomParameter("SPLASH_SCREEN",
             null),
 
         /**

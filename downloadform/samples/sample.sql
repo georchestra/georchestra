@@ -65,6 +65,31 @@ create table download.logtable_datause (
   primary key (logtable_id, datause_id)
 );
 grant all on download.logtable_datause to "www-data";
-alter table download.logtable_datause add constraint fk_logtable_id foreign key (logtable_id) REFERENCES download.log_table (id) ;
+-- commented out because it generates an error:
+--alter table download.logtable_datause add constraint fk_logtable_id foreign key (logtable_id) REFERENCES download.log_table (id) ;
+--org.postgresql.util.PSQLException: ERROR: insert or update on table "logtable_datause" violates foreign key constraint "fk_logtable_id"
+--Detail: Key (logtable_id)=(2) is not present in table "log_table".
+--  at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2102)
 alter table download.logtable_datause add constraint fk_datause_id foreign key (datause_id) REFERENCES download.data_use (id) ;
+
+create table download.extractorapp_layers (
+  id serial primary key,
+  extractorapp_log_id integer NOT NULL,
+  projection character varying(12),
+  resolution double precision,
+  format character varying(10),
+  bbox_srs character varying(12),
+  "left" double precision,
+  bottom double precision,
+  "right" double precision,
+  top double precision,
+  ows_url character varying(1024),
+  ows_type character varying(3),
+  layer_name text
+);
+grant all on download.extractorapp_layers to "www-data";
+grant all on download.extractorapp_layers_id_seq to "www-data";
+
+create index extractorapp_layers_layer_name on download.extractorapp_layers using btree (layer_name);
+
 commit;

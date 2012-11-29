@@ -20,70 +20,43 @@ GEOR.util = (function() {
     var isStringType = function(type) {
         return type == 'xsd:string' || type == 'string'; // geoserver,mapserver
     };
-    
-    // isNumericType 
+
+    // isNumericType
     var isNumericType = function(type) {
-        return type == 'xsd:double' || type == 'double' || 
-            type == 'xsd:int' || type == 'int' || 
-            type == 'xsd:integer' || type == 'integer' || 
+        return type == 'xsd:double' || type == 'double' ||
+            type == 'xsd:int' || type == 'int' ||
+            type == 'xsd:integer' || type == 'integer' ||
             // as stated by mapserver doc, real type can exist
             // see for instance http://mapserver.org/ogc/wfs_server.html#reference-section
             // and search for gml_[item name]_type
-            type == 'xsd:real' || type == 'real' || 
-            type == 'xsd:float' || type == 'float' || 
-            type == 'xsd:decimal' || type == 'decimal' || 
-            type == 'xsd:long' || type == 'long'; 
+            type == 'xsd:real' || type == 'real' ||
+            type == 'xsd:float' || type == 'float' ||
+            type == 'xsd:decimal' || type == 'decimal' ||
+            type == 'xsd:long' || type == 'long';
     };
-    
-    // isDateType 
+
+    // isDateType
     var isDateType = function(type) {
-        return type == 'xsd:date' || type == 'date' || 
+        return type == 'xsd:date' || type == 'date' ||
             type == 'xsd:dateTime' || type == 'dateTime';
     };
-    
-    // isBooleanType 
+
+    // isBooleanType
     var isBooleanType = function(type) {
         return type == 'xsd:boolean' || type == 'boolean';
     };
-    
+
     // Template that displays name and type for each attribute (with a qtip)
-    var tplAttribute = new Ext.XTemplate(
-        '<tpl for=".">',
-            '<tpl if="this.isString(type)">',
-                '<div ext:qtip="{name}" class="x-combo-list-item">{name} <span>'+OpenLayers.i18n("Characters")+'</span></div>',
-            '</tpl>',
-            '<tpl if="this.isNumeric(type)">',
-                '<div ext:qtip="{name}" class="x-combo-list-item">{name} <span>'+OpenLayers.i18n("Digital")+'</span></div>',
-            '</tpl>',
-            '<tpl if="this.isDate(type)">',
-                '<div ext:qtip="{name}" class="x-combo-list-item">{name} <span>'+OpenLayers.i18n("Date")+'</span></div>',
-            '</tpl>',
-            '<tpl if="this.isBoolean(type)">',
-                '<div ext:qtip="{name}" class="x-combo-list-item">{name} <span>'+OpenLayers.i18n("Boolean")+'</span></div>',
-            '</tpl>',
-            '<tpl if="this.isAnother(type)">',
-                '<div ext:qtip="{name}" class="x-combo-list-item">{name} <span>'+OpenLayers.i18n("Other")+'</span></div>',
-            '</tpl>',
-        '</tpl>', {
-            isString: isStringType,
-            isNumeric: isNumericType,
-            isDate: isDateType,
-            isBoolean: isBooleanType,
-            isAnother: function(type) {
-                return !isStringType(type) && !isNumericType(type) && 
-                    !isDateType(type) && !isBooleanType(type);
-            }
-        }
-    );
+    var tplAttribute = null;
 
     return {
-        
+
         /**
          * APIMethod: shortenLayerName
          * Returns a shorter string for a layer name (if required).
          *
          * Parameters:
-         * layer - {String | GeoExt.data.LayerRecord | OpenLayers.Layer.WMS}  
+         * layer - {String | GeoExt.data.LayerRecord | OpenLayers.Layer.WMS}
          *         The layer name or the layer or the layer record.
          */
         shortenLayerName: function(layer) {
@@ -100,13 +73,13 @@ GEOR.util = (function() {
             }
             return ((t.length > 40) ? t.substr(0,37) + '...' : t);
         },
-        
+
         /**
          * APIMethod: stringUpperCase
          * Returns a string with first letter uppercased and all others lowercased
          *
          * Parameters:
-         * str - {String}  
+         * str - {String}
          *
          * Returns:
          * {String} input string with first letter uppercased
@@ -114,13 +87,13 @@ GEOR.util = (function() {
         stringUpperCase: function(str) {
             return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
         },
-        
+
         /**
          * APIMethod: Capitalize
          * Returns a string with first letter uppercased
          *
          * Parameters:
-         * str - {String}  
+         * str - {String}
          *
          * Returns:
          * {String} input string with first letter uppercased
@@ -128,7 +101,7 @@ GEOR.util = (function() {
         Capitalize: function(str) {
             return str.charAt(0).toUpperCase() + str.slice(1);
         },
-        
+
         /**
          * APIMethod: stringDeaccentuate
          * Returns a string without accents
@@ -151,7 +124,7 @@ GEOR.util = (function() {
         /**
          * APIMethod: getAppRelativePath
          * Given a URL get its path relative to "mapfishapp". For
-         * example 
+         * example
          * getAppRelativePath("http://foo.org/mapfishapp/bar/foo")
          * returns "bar/foo".
          *
@@ -201,7 +174,7 @@ GEOR.util = (function() {
                 },
                 icon: Ext.MessageBox.QUESTION
             }, options));
-            
+
         },
 
         /**
@@ -222,7 +195,7 @@ GEOR.util = (function() {
                 icon: Ext.MessageBox.INFO
             }, options));
         },
-        
+
         /**
          * APIMethod: errorDialog
          * Shows an error dialog box
@@ -243,11 +216,42 @@ GEOR.util = (function() {
         },
         
         /**
+         * APIMethod: urlDialog
+         * Shows a dialog box suitable for a message with an URL
+         *
+         * Parameters:
+         * options - {Object} Hash with keys:
+         *      title, msg
+         */
+        urlDialog: function(options) {
+            var win = new Ext.Window({
+                title: options.title,
+                layout: "fit",
+                width: 400,
+                closeAction: 'close',
+                constrainHeader: true,
+                modal: false,
+                items: [{
+                    bodyStyle: 'padding:5px',
+                    html: options.msg,
+                    border: false
+                }],
+                buttons: [{
+                    text: OpenLayers.i18n("Thanks!"),
+                    handler: function() {
+                        win.close();
+                    }
+                }]
+            });
+            win.show();
+        },
+
+        /**
          * APIMethod: isUrl
          *
          * Parameters:
          * s - {String} test string
-         * strict - {Boolean} If true, strict URL matching. 
+         * strict - {Boolean} If true, strict URL matching.
          *  Else, check the string begins with an URL
          *
          * Returns:
@@ -259,7 +263,7 @@ GEOR.util = (function() {
             }
             return new RegExp(/^(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/i).test(s);
         },
-        
+
         /**
          * APIMethod: isNumericType
          *
@@ -289,9 +293,39 @@ GEOR.util = (function() {
          * {Ext.XTemplate} a template for configuring Ext.form.ComboBox
          */
         getAttributesComboTpl: function() {
+            if (!tplAttribute) {
+                tplAttribute = new Ext.XTemplate(
+                    '<tpl for=".">',
+                        '<tpl if="this.isString(type)">',
+                            '<div ext:qtip="{name}" class="x-combo-list-item">{name} <span>'+OpenLayers.i18n("Characters")+'</span></div>',
+                        '</tpl>',
+                        '<tpl if="this.isNumeric(type)">',
+                            '<div ext:qtip="{name}" class="x-combo-list-item">{name} <span>'+OpenLayers.i18n("Digital")+'</span></div>',
+                        '</tpl>',
+                        '<tpl if="this.isDate(type)">',
+                            '<div ext:qtip="{name}" class="x-combo-list-item">{name} <span>'+OpenLayers.i18n("Date")+'</span></div>',
+                        '</tpl>',
+                        '<tpl if="this.isBoolean(type)">',
+                            '<div ext:qtip="{name}" class="x-combo-list-item">{name} <span>'+OpenLayers.i18n("Boolean")+'</span></div>',
+                        '</tpl>',
+                        '<tpl if="this.isAnother(type)">',
+                            '<div ext:qtip="{name}" class="x-combo-list-item">{name} <span>'+OpenLayers.i18n("Other")+'</span></div>',
+                        '</tpl>',
+                    '</tpl>', {
+                        isString: isStringType,
+                        isNumeric: isNumericType,
+                        isDate: isDateType,
+                        isBoolean: isBooleanType,
+                        isAnother: function(type) {
+                            return !isStringType(type) && !isNumericType(type) &&
+                                !isDateType(type) && !isBooleanType(type);
+                        }
+                    }
+                );
+            }
             return tplAttribute;
         },
-         
+
         /**
          * Method: round
          * Rounds a float with a given number of decimals.

@@ -189,12 +189,12 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
         "La extensión geográfica no corresponde a la extensión del mapa",
     /* GEOR_mapinit.js strings */
     "Add layers from WMS services": "Añadir capas desde servicios WMS",
-    "NB layers not imported": "${nb} capas no importadas",
+    "NB layers not imported": "${NB} capas no importadas",
     "One layer not imported": "Una capa no importada",
     "mapinit.layers.load.error":
         "Las capas siguientes: ${list}, no se lograron cargar: " +
         "SRS incompatible o la capa no existe",
-    "NB layers imported": "${nb} capas importadas",
+    "NB layers imported": "${NB} capas importadas",
     "One layer imported": "Una capa importada",
     "Not any layer imported": "Ninguna capa importada",
     "The default context is not defined (and it is a BIG problem!)":
@@ -258,8 +258,8 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "resultspanel.maxfeature.reached":
         " <span ext:qtip=\"Utilice un navegador más potente " +
         "para aumentar el número de objetos visibles\">" +
-        "Número de objetos máximo alcanzado (${nb})</span>",
-    "NB results": "${nb} resultados",
+        "Número de objetos máximo alcanzado (${NB})</span>",
+    "NB results": "${NB} resultados",
     "One result": "1 resultado",
     "Not any result": "Ningún resultado",
     "Clean": "Quitar",
@@ -352,7 +352,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "The server is publishing one layer with an incompatible projection":
         "El servicio está publicando una capa cuya proyección no es compatible",
     "The server is publishing NB layers with an incompatible projection":
-        "El servicio esta publicando ${nb} capas cuya proyección no es " +
+        "El servicio esta publicando ${NB} capas cuya proyección no es " +
         "compatible",
     "WMS server": "Servicio WMS",
     /* GEOR_workspace.js strings */
@@ -366,6 +366,8 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Workspace": "Espacio de trabajo",
     "Save the map context": "Guardar el mapa",
     "Load a map context": "Cargar un mapa",
+    //"Get a permalink": "", // TODO
+    //"Share your map with this URL: ": "", // TODO
     "Edit in OSM": "Editar en OSM",
     "with JOSM": "con JOSM",
     "JOSM must be started with the remote control option": "Usted tiene " +
@@ -407,126 +409,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "a polygon": "un polígono",
     "Pending changes": "Modificaciones en curso",
     "Do you want to confirm changes ?": "¿Desea confirmar las modificaciones ?",
-    /* SpatialComboBox.js */
-    "intersection": "intersección con",
-    "inside": "adentro de",
-    "contains": "alrededor de",
-    /* FilterPanel.js */
-    "This field is mandatory": "Este campo es requerido",
-    /* SpatialFilterPanel.js */
-    "Modify geometry": "Modificar la geometría",
-    "Save this geometry": "Grabar la geometría",
-    "spatialfilterpanel.geometry.saved": "Geometría grabada para 30 días " +
-        "en este navegador.",
-    /* FilterBuilder.js */
-    "any": "una de",
-    "all": "todas",
-    "none": "ninguna de",
-    "not all": "no todas",
-    "Matching": "Corresponder a",
-    "these conditions": "estas condiciones",
-    "condition": "Condición",
-    "spatial condition": "Condición espacial",
-    "group": "Grupo",
-    "based on a point": "Basada en un punto",
-    "based on a line": "Basada en una línea",
-    "based on a polygon": "Basada en un polígono",
-    "based on a stored geometry": "Basada en una geometría archivada",
-    "Delete this condition": "Quitar esta condición",
     /* GeoExt.data.CSW.js */
-    "no abstract": "ningún abstracto",
-    /* Styler.js */
-    "Unable to read capabilities from WMS":
-        "No se pudó leer las 'capabilities' desde el WMS",
-    "Unable to read capabilities from WFS":
-        "No se pudó leer las 'capabilities' desde el WFS",
-    "Add new": "Crear una nueva regla",
-    "Delete selected": "Borrar la selección",
-    "styler.delete.rule":
-        "¿Confirma la supresión de la regla ${NAME}?",
-    "Delete rule": "Borrar la regla",
-    "Layers": "Capas",
-    "styler.feature": "Objeto: ${FEATURE}",
-    "Rules used to render this feature:":
-        "Reglas utilizadas para este objeto:",
-    "Attributes of this feature:": "Atributos de este objeto:",
-    "styler.style": "Estilo: ${STYLE}",
-    "Untitled": "Sin título",
-    "styler.div.zoomlevel": "<div>{zoomType} Nivel de zoom: {zoom}</div>",
-    "styler.div.mapzoom": "<div>Zoom actual en el mapa: {mapZoom}</div>",
-    "Circle": "Círculo",
-    "Square": "Cuadrado",
-    "Triangle": "Triángulo",
-    "Star": "Asterisco",
-    "Cross": "Cruz",
-    "X": "X",
-    "Custom...": "Personalizado...",
-    "Cancel": "Cancelar",
-    "Save": "Guardar",
-    "Could not load features from the WFS":
-        "Imposible cargar los objetos desde WFS",
-    /* ColorManager.js */
-    "Color Picker": "Selector de color",
-    /* FillSymbolizer.js */
-    "Fill": "Relleno",
-    "Color": "Color",
-    "Opacity": "Opacidad",
-    /* LegendPanel.js */
-    "Untitled ": "Sin título ",
-    /* PointSymbolizer.js */
-    "Circle": "Círculo",
-    "Square": "Cuadrado",
-    "Triangle": "Triángulo",
-    "Star": "Asterisco",
-    "Cross": "Cruz",
-    "X": "X",
-    "External": "Externo",
-    "URL": "URL",
-    "Opacity": "Opacidad",
-    "Symbol": "Símbolo",
-    "Radius": "Tamaño",
-    "Rotation": "Rotación",
-    /* RuleBuilder.js */
-    "Add rule": "Crear una regla",
-    "Untitled ": "Sin título ",
-    /* RuleChooser.js */
-    "Styling rules that apply for this feature":
-        "Reglas de estilo que se pueden aplicar a este objeto",
-    "Default": "Por omisión",
-    '{type} for the "{layer}" layer':
-        '{type} para la capa "{layer}"',
-    'Create a new styling rule': "Crear una nueva regla de estilo",
-    "Other styling rules": "Otras reglas de estilo",
-    "Styling rules": "Reglas de estilo",
-    /* RulePanel.js */
-    "{type} scale 1:{scale}": "Escala {type} 1:{scale}",
-    "Labels": "Etiquetados",
-    "Simple": "Simple",
-    "Advanced": "Avanzado",
-    "Limit by scale": "Límite por escala",
-    "Limit by condition": "Límite por condición",
-    "Symbol": "Símbolo",
-    "Name": "Nombre",
-    /* ScaleLimitPanel.js */
-    "Min scale": "Escala mínima",
-    "Max scale": "Escala máxima",
-    /* StrokeSymbolizer.js */
-    "Solid": "Línea continua",
-    "Dash": "Línea segmentada",
-    "Dot": "Línea de puntos",
-    "Border": "Borde",
-    "Style": "Estilo",
-    "Color": "Color",
-    "Width": "Grosor",
-    "Opacity": "Opacidad",
-    /* TextSymbolizer */
-    "Attribute": "Atributo",
-    "Size: ": "Tamaño: ",
-    "Halo": "Sombra",
-    "Size": "Tamaño",
-    /* ScaleSliderTip.js */
-    "Zoom Level: {zoom}": "Nivel de zoom: {zoom}",
-    "Resolution: {resolution}": "Resolución: {resolution}",
-    "Scale: 1 : {scale}": "Escala: 1 : {scale}"
+    "no abstract": "ningún abstracto"
     // no trailing comma
 });

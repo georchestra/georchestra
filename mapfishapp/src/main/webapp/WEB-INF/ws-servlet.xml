@@ -15,7 +15,7 @@
             <constructor-arg ref="config"/>
 		<!--property name="maxDocAgeInMinutes" value="1440"/-->
 		<property name="credentials">
-          <map><entry key="vm-georchestra"><bean class="org.apache.commons.httpclient.UsernamePasswordCredentials"><constructor-arg index="0" value="extractorapp_priveleged_admin:gerlsSnFd6SmM" /></bean></entry></map>
+          <map>${credentials}</map>
 		</property>
 	</bean>
 	

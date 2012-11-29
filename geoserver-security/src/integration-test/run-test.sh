@@ -1,1 +1,0 @@
-../../../../integration-testing/trunk/run-test.sh

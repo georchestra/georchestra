@@ -20,7 +20,7 @@ Ext.namespace('GEOR');
  * (mainly export it to different formats)
  */
 
-GEOR.FeatureDataModel = function(options) {    
+GEOR.FeatureDataModel = function(options) {
     this.dataModel = {};
     if (options.features) {
         this.fromFeatures(options.features);
@@ -30,13 +30,13 @@ GEOR.FeatureDataModel = function(options) {
 };
 
 GEOR.FeatureDataModel.prototype = {
-    
+
     /**
      * Property: dummyAttributeName
      * {String} Fake attribute name, used to reference objects in the grid panel
      */
     dummyAttributeName: OpenLayers.i18n('objects'),
-    
+
     /**
      * Method: fromFeatures
      *
@@ -57,8 +57,8 @@ GEOR.FeatureDataModel.prototype = {
                 type = this.guessType(attributes[key]);
                 if (!this.dataModel[key]) {
                     this.dataModel[key] = {
-                        name: key, 
-                        type: type, 
+                        name: key,
+                        type: type,
                         header: key, // sanitize column name (replace _ by space, etc.)?
                         width: 150   // guess it from longer attributes received?
                     };
@@ -69,13 +69,13 @@ GEOR.FeatureDataModel.prototype = {
         }
         if (this.isEmpty()) {
             this.dataModel[this.dummyAttributeName] = {
-                name: this.dummyAttributeName, 
-                type: 'string', 
+                name: this.dummyAttributeName,
+                type: 'string',
                 header: this.dummyAttributeName
             };
         }
     },
-    
+
     /**
      * Method: fromAttributeStore
      *
@@ -86,7 +86,7 @@ GEOR.FeatureDataModel.prototype = {
         var name, type;
         store.each(function(record) {
             name = record.get('name');
-            switch (record.get('type').replace(/xsd:/,'')) { 
+            switch (record.get('type').replace(/xsd:/,'')) {
                 case 'int':
                 case 'short':
                 case 'byte':
@@ -107,14 +107,14 @@ GEOR.FeatureDataModel.prototype = {
                     type = 'string';
             }
             this.dataModel[name] = {
-                name: name, 
+                name: name,
                 type: type,
                 header: name, // sanitize column name (replace _ by space, etc.) ?
-                width: 150 
+                width: 150
             };
         }, this);
     },
-    
+
     /**
      * Method: guessType
      *
@@ -122,7 +122,7 @@ GEOR.FeatureDataModel.prototype = {
      * model - {Mixed} input data to test for type
      *
      * Returns:
-     * {String} the data type: one of 'float', 'int', 'string', 'date'. 
+     * {String} the data type: one of 'float', 'int', 'string', 'date'.
      *          Defaults to 'string' if no match.
      */
     guessType: function(input) {
@@ -141,7 +141,7 @@ GEOR.FeatureDataModel.prototype = {
         }
         return 'string';
     },
-    
+
     /**
      * Method: getFields
      *
@@ -158,7 +158,7 @@ GEOR.FeatureDataModel.prototype = {
         }
         return cols;
     },
-    
+
     /**
      * Method: toStoreFields
      *
@@ -173,13 +173,13 @@ GEOR.FeatureDataModel.prototype = {
             }
             field = dataModel[key];
             storeFields.push({
-                name: field.name, 
+                name: field.name,
                 type: field.type
             });
         }
         return storeFields;
     },
-    
+
     /**
      * Method: toColumnModel
      *
@@ -196,15 +196,15 @@ GEOR.FeatureDataModel.prototype = {
             field = dataModel[key];
             columnModel.push(
                 Ext.apply({}, {
-                    header: field.header, 
-                    dataIndex: field.name, 
+                    header: field.header,
+                    dataIndex: field.name,
                     width: field.width
                 }, options)
             );
         }
         return columnModel;
     },
-    
+
     /**
      * Method: isEmpty
      *

@@ -18,21 +18,21 @@ GEOR.waiter = (function() {
     /*
      * Private
      */
-    
+
     var waiter = null;
-        
+
     return {
-    
+
         init: function() {
             waiter = Ext.get('waiter');
         },
-        
+
         hide: function() {
             if (waiter && waiter.isVisible()) {
                 waiter.hide();
             }
         },
-        
+
         show: function(c) {
             if (waiter && !waiter.isVisible()) {
                 waiter.show();
