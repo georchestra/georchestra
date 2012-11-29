@@ -352,7 +352,7 @@ GEOR.util = (function() {
                 case 'OGC:WMS-1.1.0-http-get-map':
                 case 'OGC:WMS-1.1.1-http-get-map':
                 case 'OGC:WMS-1.3.0-http-get-map':
-                    return item.name && GEOR.util.isUrl(item.value);
+                    return !!item.name && GEOR.util.isUrl(item.value);
                 default:
                     return false;
             }
