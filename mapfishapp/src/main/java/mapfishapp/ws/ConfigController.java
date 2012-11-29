@@ -37,7 +37,10 @@ public class ConfigController {
         fileProperties = dirConfigMapfishapp +"/"+ fileProperties;
         
         File fProperties = new File(fileProperties);
-       
+        /*if(fProperties.exists()){
+            throw new DocServiceException("File not exist. " + fileProperties, HttpServletResponse.SC_NOT_FOUND);
+        }*/
+        
         InputStream stream;
         try {
             stream = new FileInputStream(fProperties);
@@ -46,8 +49,13 @@ public class ConfigController {
                 if (stream != null) {
                     properties.load(stream);
                 }
+                //System.out.println("create ConfigController");
+                //System.out.print("*** properties value (maxDocAgeInMinutes): [["+getPropertyValue("maxDocAgeInMinutes")+"]] " );
+                
+                //LOG.info("1. File exist "+fProperties);
+                //LOG.warn("3. File exist "+fProperties);
             } catch (IOException ex) {
-                ex.printStackTrace();
+                System.out.println(ex.getMessage());
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
