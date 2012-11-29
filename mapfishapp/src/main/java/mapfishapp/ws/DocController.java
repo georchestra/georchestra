@@ -61,9 +61,7 @@ public class DocController {
      */
     private int maxDocAgeInMinutes = 60 * 24;
 	public int getMaxDocAgeInMinutes() {return maxDocAgeInMinutes;}
-	public void setMaxDocAgeInMinutes(int maxDocAgeInMinutes) {
-            System.out.println("JAVAAAAAAAAAAAAAAAAAAA "+maxDocAgeInMinutes);
-            this.maxDocAgeInMinutes = maxDocAgeInMinutes;}
+	public void setMaxDocAgeInMinutes(int maxDocAgeInMinutes) { this.maxDocAgeInMinutes = maxDocAgeInMinutes;}
 
 	/**
 	 * mapping from hostname -> credentials

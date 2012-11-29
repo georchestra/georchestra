@@ -1,4 +1,5 @@
 # clean docs when they are 1 day old
+<<<<<<< OURS
 maxDocAgeInMinutes=1440
 #you can provide multiple entries
 credentials=\
@@ -9,3 +10,6 @@ credentials=\
 </entry>
 
 language=@shared.language@
+=======
+maxDocAgeInMinutes=1440
+>>>>>>> THEIRS
