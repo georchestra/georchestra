@@ -10,4 +10,7 @@ mapfishapp/src/main/webapp/WEB-INF/jsp/index.jsp
 */target/
 */jsbuild/venv/
 */src/main/webapp/app/js/GEOR_custom.js
+*/src/main/webapp/build/
 */jsbuild/distribute-*.tar.gz
+*/jsbuild/setuptools-*.egg
+
