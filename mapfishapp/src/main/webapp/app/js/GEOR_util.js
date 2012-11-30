@@ -346,16 +346,14 @@ GEOR.util = (function() {
             if (!item.protocol) {
                 return false;
             }
-            switch (item.protocol) {
-                case 'OGC:WMS':
-                case 'OGC:WMS-1.0.0-http-get-map':
-                case 'OGC:WMS-1.1.0-http-get-map':
-                case 'OGC:WMS-1.1.1-http-get-map':
-                case 'OGC:WMS-1.3.0-http-get-map':
-                    return !!item.name && GEOR.util.isUrl(item.value);
-                default:
-                    return false;
-            }
+            var c = {
+                'OGC:WMS': true,
+                'OGC:WMS-1.0.0-http-get-map': true,
+                'OGC:WMS-1.1.0-http-get-map': true,
+                'OGC:WMS-1.1.1-http-get-map': true,
+                'OGC:WMS-1.3.0-http-get-map': true
+            };
+            return !!c[item.protocol] && !!item.name && GEOR.util.isUrl(item.value);
         }
     };
 })();
