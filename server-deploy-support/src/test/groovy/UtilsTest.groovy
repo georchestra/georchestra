@@ -1,4 +1,5 @@
 import org.junit.Test
+import org.junit.Ignore
 import static org.junit.Assert.*
 import java.security.KeyStore
 
@@ -24,7 +25,7 @@ class UtilsTest {
         assertEquals(0,keystore.size())
     }
 
-    @Test
+    @Test @Ignore
     void createKeystoreWithCertificate() {
         def tmp = File.createTempFile("xxxx", ".jks")
         tmp.delete()
