@@ -54,22 +54,3 @@ Copy WAR files in Tomcat webapps dir:
     $ cp -f /tmp/georchestra_deploy_tmp/* /srv/tomcat/webapps
     $ sudo /etc/init.d/tomcat start
 
-
-Want to run the advanced viewer without Tomcat ?
-================================================
-
-This mode is useful for **demo** or **development** purposes.
-
-    $ cd mapfishapp
-    $ ../mvn -Ptemplate jetty:run
-
-Point your browser to [http://localhost:8080/mapfishapp/?noheader=true](http://localhost:8080/mapfishapp/?noheader=true) 
-
-
-**Want to trick the viewer into thinking you're logged in ?**
-
-Install the [Modify Headers](https://addons.mozilla.org/en-US/firefox/addon/modify-headers/) Firefox extension, and set the headers to:
- * sec-username = your_desired_login
- * sec-roles = ROLE_SV_USER or ROLE_SV_EDITOR or ROLE_SV_ADMIN
- 
-Note: this works only because the security proxy is not runnning.
