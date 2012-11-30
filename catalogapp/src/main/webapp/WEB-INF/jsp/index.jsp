@@ -170,7 +170,7 @@ if(sec_roles != null) {
     <!--
         loading custom parameters (see build profile)
     -->
-    <script type="text/javascript" src="app/js/GEOR.custom.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_custom.js"></script>
     <c:choose>
         <c:when test='<%= request.getParameter("debug") != null %>'>
     <script type="text/javascript" src="lib/externals/geoext/lib/overrides/override-ext-ajax.js"></script>
@@ -184,13 +184,13 @@ if(sec_roles != null) {
     
     <script type="text/javascript" src="app/js/GeoExt.data.CSW.js"></script>
 
-    <script type="text/javascript" src="app/js/GEOR.config.js"></script>
-    <script type="text/javascript" src="app/js/GEOR.waiter.js"></script>
-    <script type="text/javascript" src="app/js/GEOR.nav.js"></script>
-    <script type="text/javascript" src="app/js/GEOR.dataview.js"></script>
-    <script type="text/javascript" src="app/js/GEOR.what.js"></script>
-    <script type="text/javascript" src="app/js/GEOR.where.js"></script>
-    <script type="text/javascript" src="app/js/GEOR.csw.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_config.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_waiter.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_nav.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_dataview.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_what.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_where.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_csw.js"></script>
     <script type="text/javascript" src="app/js/GEOR.js"></script>
     
     <script type="text/javascript" src="https://getfirebug.com/firebug-lite-beta.js"></script>
