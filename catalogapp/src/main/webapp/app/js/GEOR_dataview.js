@@ -14,8 +14,8 @@
 
 /*
  * @include GeoExt.data.CSW.js
- * @include GEOR.config.js
- * @include GEOR.waiter.js
+ * @include GEOR_config.js
+ * @include GEOR_waiter.js
  * @include OpenLayers/Format/JSON.js
  */
 
