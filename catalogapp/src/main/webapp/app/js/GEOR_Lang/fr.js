@@ -39,6 +39,14 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     'record': 'fiche',
     'Keywords: ': 'Mots clés : ',
     "Server NAME": "Serveur ${NAME}",
-    "Oops, a problem occured.": "Oops, il y a eu un problème."
+    "Oops, a problem occured.": "Oops, il y a eu un problème.",
+    /* GEOR_nav.js strings */
+    "go to first results": "aller au début des résultats",
+    "previous page": "page précédente",
+    "next page": "page suivante",
+    "go to last results": "aller à la fin des résultats",
+    "No result": "Aucun résultat",
+    "Results N1 to N2 of N": "Résultats ${N1} à ${N2} sur ${N}",
+    "Result N1 to N2 of N": "Résultat ${N1} à ${N2} sur ${N}"
     // no trailing comma
 });
