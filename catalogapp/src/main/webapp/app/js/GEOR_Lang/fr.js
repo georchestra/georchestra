@@ -29,20 +29,16 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     'search': 'chercher',
     "various.results": "${RESULTS} fiches sélectionnées",
     "one.result": "1 fiche sélectionnée",
-
-    "Save": "Sauvegarder",
-    "Loading...": "Chargement...",
-    "Layer": "Couche",
-    "Description": "Description",
-    "Error": "Erreur",
-    "The provided context is not valid.": "Le contexte fourni n'est pas " +
-        "valide.",
-    "Server": "Serveur",
-    "Close": "Fermer",
-
-    /* GEOR_ajaxglobal.js strings strings */
-    "ajaxglobal.data.too.big": "Les données provenant du serveur sont trop " +
-        "volumineuses.<br />Le serveur a envoyé ${SENT}KO " +
-        "(la limite est à ${LIMIT}KO)<br />Voulez-vous tout de même continuer ?",
+    /* GEOR_dataview.js strings */
+    'View WMS layer': "<b>Visualiser</b> la couche WMS <b>${NAME}</b>",
+    'Download WMS layer': "<b>Télécharger</b> la couche WMS <b>${NAME}</b>",
+    'View WMS service': "<b>Visualiser</b> le service WMS <b>${NAME}</b>",
+    'Download WMS service': "<b>Télécharger</b> le service WMS <b>${NAME}</b>",
+    'Download data': "Télécharger la donnée ${NAME}",
+    'zoom': 'zoom',
+    'record': 'fiche',
+    'Keywords: ': 'Mots clés : ',
+    "Server NAME": "Serveur ${NAME}",
+    "Oops, a problem occured.": "Oops, il y a eu un problème."
     // no trailing comma
 });

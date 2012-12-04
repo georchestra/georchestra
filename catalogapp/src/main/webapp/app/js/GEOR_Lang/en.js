@@ -18,11 +18,12 @@
 OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
     /* GEOR.js */
     "various.results": "${RESULTS} results selected",
-
-    /* GEOR_ajaxglobal.js strings strings */
-    "ajaxglobal.data.too.big": "Datas sent by the server are too " +
-        "big.<br />Server sent ${SENT}KBytes " +
-        "(the limit is ${LIMIT}KBytes)<br />Do you want to continue ?",
-
+    /* GEOR_dataview.js strings */
+    'View WMS layer': "<b>View</b> the <b>${NAME}</b> WMS layer",
+    'Download WMS layer': "<b>Download</b> the <b>${NAME}</b> WMS layer",
+    'View WMS service': "<b>View</b> the <b>${NAME}</b> WMS service",
+    'Download WMS service': "<b>Download</b> the <b>${NAME}</b> WMS service",
+    'Download data': "Download the ${NAME} data",
+    "Server NAME": "Server ${NAME}"
     // no trailing comma
 });

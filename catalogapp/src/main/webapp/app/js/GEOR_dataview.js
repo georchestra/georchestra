@@ -23,6 +23,8 @@ Ext.namespace("GEOR");
 
 GEOR.dataview = (function() {
 
+    var tr = null;
+
     var store = null;
 
     var dataView = null;
@@ -48,16 +50,23 @@ GEOR.dataview = (function() {
             //case 'OGC:WMS-1.3.0-http-get-map': // not yet taken into account by mapfishapp
                 if (URI.value) {
                     OWSdb[id] = URI;
-                    var html = "";
                     if (URI.name) {
                         // we have a layer
-                        html += "la couche WMS <b>"+(URI.description || URI.name)+"</b>";
+                        view.push('<button class="x-list-btn-view" id="'+id+'">'
+                                  +tr('View WMS layer', {NAME: (URI.description || URI.name)})
+                                  +'</button>');
+                        dl.push('<button class="x-list-btn-dl" id="'+id+'">'
+                                +tr('Download WMS layer', {NAME: (URI.description || URI.name)})
+                                +'</button>');
                     } else  {
                         // we have a service
-                        html += "le service WMS <b>"+(URI.description || URI.value)+"</b>";
+                        view.push('<button class="x-list-btn-view" id="'+id+'">'
+                                  +tr('View WMS service', {NAME: (URI.description || URI.value)})
+                                  +'</button>');
+                        dl.push('<button class="x-list-btn-dl" id="'+id+'">'
+                                +tr('Download WMS service', {NAME: (URI.description || URI.value)})
+                                +'</button>');
                     }
-                    view.push('<button class="x-list-btn-view" id="'+id+'">'+"<b>Visualiser</b> "+html+'</button>');
-                    dl.push('<button class="x-list-btn-dl" id="'+id+'">'+"<b>Télécharger</b> "+html+'</button>');
                 }
                 break;
             /*
@@ -66,7 +75,9 @@ GEOR.dataview = (function() {
             case 'WWW:DOWNLOAD-1.0-http--download':
                 if (URI[i].value) {
                     OWSdb[id] = URI[i];
-                    dl.push('<button class="x-list-btn" id="'+id+'">Télécharger la donnée '+URI.name+'</button>');
+                    dl.push('<button class="x-list-btn" id="'+id+'">'
+                            +tr('Download data', {NAME: URI.name})
+                            +'</button>');
                 }
                 break;
             */
@@ -78,7 +89,7 @@ GEOR.dataview = (function() {
     var getZoomText = function(values) {
         var bbox = values.BoundingBox;
         var uuid = values.identifier;
-        return (bbox instanceof OpenLayers.Bounds ? ' - <a href="#'+uuid+'" class="zoom">zoom</a>' : '');
+        return (bbox instanceof OpenLayers.Bounds ? ' - <a href="#'+uuid+'" class="zoom">' + tr('zoom') + '</a>' : '');
     };
 
 
@@ -87,11 +98,11 @@ GEOR.dataview = (function() {
             '<tpl for=".">',
                 '<div class="x-view-item">',
                     '<p><b>{title}</b> - <a href="'+GEOR.config.GEONETWORK_URL,
-                        '/metadata.show?uuid={identifier}" class="fullmd" target="_blank">fiche</a>',
+                        '/metadata.show?uuid={identifier}" class="fullmd" target="_blank">' + tr('record') + '</a>',
                         '{[this.zoom(values)]}</p>',
                     '<p>{abstract}</p>',
                     '{[this.buttons(values.URI)]}',
-                    /*'Mots clés : ',
+                    /*tr('Keywords: '),
                     '<tpl for="subject">',
                         '&nbsp;{value} ',
                     '</tpl>',*/
@@ -138,7 +149,7 @@ GEOR.dataview = (function() {
             });
         } else {
             services.push({
-                text: "Serveur "+OWSdb[elt.id].value,
+                text: tr("Server NAME", {'NAME': OWSdb[elt.id].value}),
                 metadataURL:"", // FIXME
                 owstype:"WMS",
                 owsurl: OWSdb[elt.id].value
@@ -184,13 +195,14 @@ GEOR.dataview = (function() {
 
     var onStoreException = function() {
         GEOR.waiter.hide();
-        alert("Oops, il y a eu un problème.");
+        alert(tr("Oops, a problem occured."));
     };
 
 
     return {
 
         init: function(s) {
+            tr = OpenLayers.i18n;
             if (!store) {
                 store = new GeoExt.data.CSWRecordsStore({
                     url: GEOR.config.GEONETWORK_URL + '/csw', //'content.xml', //
