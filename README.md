@@ -5,6 +5,12 @@ geOrchestra is a complete **Spatial Data Infrastructure** solution.
 
 It features a **metadata catalog** (GeoNetwork), an **OGC server** (GeoServer), an **advanced viewer** (aka "mapfishapp"), an **extractor** (aka "extractorapp") and **many more** (security and auth system based on proxy/CAS/LDAP, analytics, admin UIs, ...)
 
+More information in the modules README :
+    * <a href="georchestra/mapfishapp/README.md">viewer</a> (aka mapfishapp)
+    * <a href="georchestra/extractorapp/README.md">extractor</a> (aka extractorapp)
+    * <a href="georchestra/catalogapp/README.md">simple catalog</a> (aka catalogapp)
+
+
 How to build ?
 ==============
 
