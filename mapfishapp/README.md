@@ -44,8 +44,21 @@ It is also possible to POST a JSON string to the home controller, for instance :
 In response, the viewer will add the above two layers to the map, and display a dialog window showing the layers from the http://ids.pigma.org/geoserver/ign_r/wms WMS server.
 
 
+Recenter on referentials
+========================
+
+The application features a "recenter on referentials" widget, which enables users to search for any object they are familiar with (eg: states, cities, forests, ...).
+
+This widget auto-configures itself with a GeoServer namespace (see **NS_LOC** config option in your config's GEOR_custom.js). By default, NS_LOC is set to "geor_loc", which means that any layer belonging to the geor_loc namespace will be available in the widget.
+
+Each "referential" layer should obey these simple rules:
+ * it has exactly one geometry column and one string column,
+ * the string column can have any name, but it's content should be uppercased (this is to overcome a WFS limitation),
+ * the geometry column can be of any type (point, line, polygon) but if it's a polygon, it should be as simple as possible (a bounding box is the best option).
+
+
 How to run the viewer without Tomcat ?
-================================================
+======================================
 
 This mode is useful for **demo** or **development** purposes.
 
