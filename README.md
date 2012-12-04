@@ -3,7 +3,17 @@ geOrchestra
 
 geOrchestra is a complete **Spatial Data Infrastructure** solution.
 
-It features a **metadata catalog** (GeoNetwork), an **OGC server** (GeoServer), an **advanced viewer** (aka "mapfishapp"), an **extractor** (aka "extractorapp") and **many more** (security and auth system based on proxy/CAS/LDAP, analytics, admin UIs, ...)
+It features a **metadata catalog** (GeoNetwork), an **OGC server** (GeoServer), an **advanced viewer**, an **extractor** and **many more** (security and auth system based on proxy/CAS/LDAP, analytics, admin UIs, ...)
+
+More information in the modules README :
+ * [viewer](mapfishapp/README.md) (aka mapfishapp)
+ * [extractor](extractorapp/README.md) (aka extractorapp)
+ * [simple catalog](catalogapp/README.md) (aka catalogapp)
+ * [analytics](analytics/README.md)
+ * [downloadform](downloadform/README.md)
+ * [ogc-server-statistics](ogc-server-statistics/README.md)
+ * [static](static/README.md)
+
 
 How to build ?
 ==============
@@ -54,22 +64,3 @@ Copy WAR files in Tomcat webapps dir:
     $ cp -f /tmp/georchestra_deploy_tmp/* /srv/tomcat/webapps
     $ sudo /etc/init.d/tomcat start
 
-
-Want to run the advanced viewer without Tomcat ?
-================================================
-
-This mode is useful for **demo** or **development** purposes.
-
-    $ cd mapfishapp
-    $ ../mvn -Ptemplate jetty:run
-
-Point your browser to [http://localhost:8080/mapfishapp/?noheader=true](http://localhost:8080/mapfishapp/?noheader=true) 
-
-
-**Want to trick the viewer into thinking you're logged in ?**
-
-Install the [Modify Headers](https://addons.mozilla.org/en-US/firefox/addon/modify-headers/) Firefox extension, and set the headers to:
- * sec-username = your_desired_login
- * sec-roles = ROLE_SV_USER or ROLE_SV_EDITOR or ROLE_SV_ADMIN
- 
-Note: this works only because the security proxy is not runnning.
