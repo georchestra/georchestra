@@ -23,7 +23,7 @@ Ext.namespace("GEOR");
 
 GEOR.dataview = (function() {
 
-    var tr = null;
+    var tr = OpenLayers.i18n;
 
     var store = null;
 
@@ -202,7 +202,6 @@ GEOR.dataview = (function() {
     return {
 
         init: function(s) {
-            tr = OpenLayers.i18n;
             if (!store) {
                 store = new GeoExt.data.CSWRecordsStore({
                     url: GEOR.config.GEONETWORK_URL + '/csw', //'content.xml', //
