@@ -19,6 +19,7 @@ GEOR.nav = (function() {
     /*
      * Private
      */
+    var tr = OpenLayers.i18n;
     var ok;
     var startPosition = 1;
     var numberOfRecordsMatched;
@@ -31,7 +32,6 @@ GEOR.nav = (function() {
     var handleNavigation = function(store, bar) {
         numberOfRecordsMatched = store.getTotalCount();
 
-        var plural = (numberOfRecordsMatched > 1) ? 's' : '';
         var max = isMax() ? numberOfRecordsMatched : parseInt(startPosition + RESULTSPERPAGE - 1);
 
         if (bar.items.length === 0) {
@@ -40,26 +40,26 @@ GEOR.nav = (function() {
                 ref: 'first',
                 disabled: true,
                 handler: GEOR.nav.begin,
-                tooltip: "aller au début des résultats",
+                tooltip: tr("go to first results"),
                 width: 30
             },{
                 text: '<',
                 ref: 'previous',
                 disabled: true,
                 handler: GEOR.nav.previousPage,
-                tooltip: "page précédente",
+                tooltip: tr("previous page"),
                 width: 30
             },{
                 text: '>',
                 ref: 'next',
                 handler: GEOR.nav.nextPage,
-                tooltip: "page suivante",
+                tooltip: tr("next page"),
                 width: 30
             },{
                 text: '>>',
                 ref: 'end',
                 handler: GEOR.nav.end,
-                tooltip: "aller à la fin des résultats",
+                tooltip: tr("go to last results"),
                 width: 30
             }, new Ext.Toolbar.TextItem({
                 text: '',
@@ -76,9 +76,21 @@ GEOR.nav = (function() {
             bar.previous.disable();
             bar.next.disable();
             bar.end.disable();
-            bar.navText.setText("Aucun résultat");
+            bar.navText.setText(tr("No result"));
         } else {
-            bar.navText.setText("Résultat"+plural+" "+startPosition+" à "+max+" sur "+numberOfRecordsMatched);
+            if (numberOfRecordsMatched > 1) {
+                bar.navText.setText(tr("Results N1 to N2 of N", {
+                    'N1': startPosition,
+                    'N2': max,
+                    'N': numberOfRecordsMatched
+                }));
+            } else {
+                bar.navText.setText(tr("Result N1 to N2 of N", {
+                    'N1': startPosition,
+                    'N2': max,
+                    'N': numberOfRecordsMatched
+                }));
+            }
             // handle buttons activation/deactivation:
             bar.first.setDisabled(startPosition == 1);
             bar.previous.setDisabled(startPosition == 1);

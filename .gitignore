@@ -1,3 +1,13 @@
+catalogapp/src/main/webapp/build/
+catalogapp/src/main/webapp/WEB-INF/jsp/index.jsp
+downloadform/src/main/webapp/WEB-INF/downloadform.properties
+extractorapp/src/main/webapp/WEB-INF/classes/
+extractorapp/src/main/webapp/WEB-INF/extractorapp.properties
+extractorapp/src/main/webapp/WEB-INF/jsp/index.jsp
+extractorapp/src/main/webapp/WEB-INF/templates/extractor-email-template.txt
+mapfishapp/src/main/webapp/.ignore
+mapfishapp/src/main/webapp/WEB-INF/classes/
+mapfishapp/src/main/webapp/WEB-INF/jsp/index.jsp
 */target/
 */jsbuild/venv/
 */src/main/webapp/app/js/GEOR_custom.js
