@@ -1,4 +1,5 @@
 catalogapp/src/main/webapp/build/
+catalogapp/src/main/webapp/WEB-INF/jsp/index.jsp
 downloadform/src/main/webapp/WEB-INF/downloadform.properties
 extractorapp/src/main/webapp/WEB-INF/classes/
 extractorapp/src/main/webapp/WEB-INF/extractorapp.properties
