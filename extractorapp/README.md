@@ -47,6 +47,14 @@ By default, the application is not available to unauthenticated users. They are 
 To grant access to all users, copy index.jsp in your profile and remove the above code. 
 
 
+Admin UI
+========
+
+Admin users have the ability to manage the job queue at this URL : /extractorapp/admin/
+
+Jobs (except the running one) can be manually paused, cancelled, set to a higher or a lower priority.
+
+
 How to run the extractor without Tomcat ?
 =========================================
 

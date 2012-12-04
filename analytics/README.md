@@ -9,17 +9,17 @@ It relies on two other modules to collect figures in a database:
  * [ogc-server-statistics](ogc-server-statistics/README.md) for OGC web services consumption
 
 
-With regards to *GeoNetwork downloads*, you get a nice view of:
+With regards to **GeoNetwork downloads**, you get a nice view of:
  * metadata id, filename, number of hits
  * username, number of downloads
  * organisation, number of downloads
 
-For *custom data extractions*:
+For **custom data extractions**:
  * service type, service URL, layer name, hits
  * username, number of requests
  * organisation, number of requests
  
-For *OGC web services consumption*:
+For **OGC web services consumption**:
  * service type, layer name, request type (getmap/getfeature/getcapabilities/...), hits
  * username, number of requests
  * organisation, number of requests
