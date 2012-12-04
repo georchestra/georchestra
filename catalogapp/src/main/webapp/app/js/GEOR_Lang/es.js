@@ -47,6 +47,8 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "go to last results": "ir a los últimos resultados",
     "No result": "Ningún resultado",
     "Results N1 to N2 of N": "Resultados ${N1} a ${N2} de ${N}",
-    "Result N1 to N2 of N": "Resultado ${N1} a ${N2} de ${N}"
+    "Result N1 to N2 of N": "Resultado ${N1} a ${N2} de ${N}",
+    /* GEOR_what.js strings */
+    'enter one or more keywords': 'ingresar una o varias palabras clave'
     // no trailing comma
 });
