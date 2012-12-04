@@ -43,10 +43,10 @@ Ext.onReady(function() {
      */
     Ext.BLANK_IMAGE_URL = "lib/externals/ext/resources/images/default/s.gif";
     Ext.apply(Ext.MessageBox.buttonText, {
-        yes: "Oui",
-        no: "Non",
-        ok: "OK",
-        cancel: "Annuler"
+        yes: tr("Yes"),
+        no: tr("No"),
+        ok: tr("OK"),
+        cancel: tr("Cancel")
     });
     Ext.QuickTips.init();
 
@@ -148,19 +148,19 @@ Ext.onReady(function() {
             border: false
         },
         items: [Ext.apply(GEOR.what.getCmp(), {
-            title: "Quelles données cherchez vous ?",
+          title: tr("Which data are you searching for ?"),
             collapsible: false,
             collapsed: false,
             height: 90
         }), Ext.apply(GEOR.where.getCmp(), {
-            title: "Sur quel territoire ?",
+            title: tr("On which area ?"),
             collapsed: false,
             height: 280
         })/*, {
-            title: "Quand ?"
+            title: tr("When ?")
         }*/],
         buttons: [{
-            text: 'effacer',
+          text: tr('clean'),
             cls: 'bigbtn',
             iconCls: 'geor-btn-reset',
             handler: function() {
@@ -171,7 +171,7 @@ Ext.onReady(function() {
                 }
             }
         },{
-            text: 'chercher',
+          text: tr('search'),
             cls: 'bigbtn',
             iconCls: 'geor-btn-search',
             handler: function() {
@@ -212,8 +212,13 @@ Ext.onReady(function() {
         var records = options.records;
         GEOR.where.highlight(records);
         var l = options.total;
-        var s = (l > 1) ? 's' : '';
-        bbar.selText.setText(l ? l + ' fiche'+s+' sélectionnée'+s : '');
+        var t = ''
+        if (l > 1) {
+          t = tr('various.results', {'RESULTS': l})
+        } else if (l) {
+          t = tr('one.result')
+        }
+        bbar.selText.setText(t);
         bbar.selText.getEl().highlight();
     });
     o.on("itemzoom", function(options) {

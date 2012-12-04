@@ -16,8 +16,8 @@
  * English translation file
  */
 OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
-
-
+    /* GEOR.js */
+    "various.results": "${RESULTS} results selected",
 
     /* GEOR_ajaxglobal.js strings strings */
     "ajaxglobal.data.too.big": "Datas sent by the server are too " +

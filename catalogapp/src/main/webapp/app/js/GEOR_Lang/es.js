@@ -21,6 +21,15 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "No": "No",
     "OK": "OK",
     "Cancel": "Cancelar",
+    /* GEOR.js */
+    "Which data are you searching for ?": "¿Que datos esta buscando?",
+    "On which area ?": "¿Sobre que territorio?",
+    "When ?": "¿Cuando?",
+    'clean': 'borrar',
+    'search': 'buscar',
+    "various.results": "${RESULTS} fichas seleccionadas",
+    "one.result": "1 ficha seleccionada",
+
     "Save": "Guardar",
     "Loading...": "Cargando...",
     "Layer": "Capa",

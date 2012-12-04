@@ -21,6 +21,15 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "No": "Non",
     "OK": "OK",
     "Cancel": "Annuler",
+    /* GEOR.js */
+    "Which data are you searching for ?": "Quelles données cherchez vous ?",
+    "On which area ?": "Sur quel territoire ?",
+    "When ?": "Quand ?",
+    'clean': 'effacer',
+    'search': 'chercher',
+    "various.results": "${RESULTS} fiches sélectionnées",
+    "one.result": "1 fiche sélectionnée",
+
     "Save": "Sauvegarder",
     "Loading...": "Chargement...",
     "Layer": "Couche",
@@ -30,6 +39,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
         "valide.",
     "Server": "Serveur",
     "Close": "Fermer",
+
     /* GEOR_ajaxglobal.js strings strings */
     "ajaxglobal.data.too.big": "Les données provenant du serveur sont trop " +
         "volumineuses.<br />Le serveur a envoyé ${SENT}KO " +
