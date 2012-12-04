@@ -4,29 +4,29 @@
 <c:choose>
     <c:when test='<%= request.getParameter("noheader") == null %>'>
     <div id="go_head">
-        <a href="#" id="go_home" title="retourner à l’accueil">
-            <img src="/static/img/logo.png" alt="geOrchestra" height="50"/>
+        <a href="/" id="go_home" title='<fmt:message key="go.home"/>'>
+            <img src="/static/img/logo.png" alt='<fmt:message key="logo"/>' height="50"/>
         </a>
         <ul>
-            <li class="active"><a href="#">catalogue</a></li>
-            <li><a href="/mapfishapp/">visualiseur</a></li>
+            <li class="active"><a href="#"><fmt:message key="catalogue"/></a></li>
+            <li><a href="/mapfishapp/"><fmt:message key="viewer"/></a></li>
         <c:choose>
             <c:when test='<%= editor == true %>'>
-            <li><a href="/mapfishapp/edit">éditeur</a></li>
+            <li><a href="/mapfishapp/edit"><fmt:message key="editor"/></a></li>
             </c:when>
         </c:choose>
-            <li><a href="/extractorapp/">extracteur</a></li>
-            <li><a href="/geoserver/web/">services</a></li>
+            <li><a href="/extractorapp/"><fmt:message key="extractor"/></a></li>
+            <li><a href="/geoserver/web/"><fmt:message key="services"/></a></li>
         </ul>
     <c:choose>
         <c:when test='<%= anonymous == false %>'>
         <p class="logged">
-            <%=request.getHeader("sec-username") %><span class="light"> | </span><a href="/j_spring_security_logout">déconnexion</a>
+            <%=request.getHeader("sec-username") %><span class="light"> | </span><a href="/j_spring_security_logout"><fmt:message key="logout"/></a>
         </p>
         </c:when>
         <c:otherwise>
         <p class="logged">
-            <a href="?login">connexion</a>
+            <a href="?login"><fmt:message key="login"/></a>
         </p>
         </c:otherwise>
     </c:choose>
