@@ -33,6 +33,7 @@ if(sec_roles != null) {
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title lang="fr" dir="ltr">Statistiques - geOrchestra</title>
     <link rel="stylesheet" type="text/css" href="resources/site/js/lib/external/ext/resources/css/ext-all-gray.css" />
     <link rel="stylesheet" type="text/css" href="resources/site/css/app.css" />
     <style type="text/css">
@@ -83,7 +84,7 @@ if(sec_roles != null) {
  
     </style>
 
-    <title lang="es" dir="ltr">Estadisticas - GeoBolivia localhost - Compartir para crecer</title>
+    <title lang="fr" dir="ltr">Analytics - geOrchestra</title>
 </head>
 <body>
 
@@ -94,11 +95,11 @@ if(sec_roles != null) {
     <c:choose>
     	<c:when test='<%= admin == true %>'>
 			<div id="waiter" style="display:none;">
-		        <span>Cargando...</span>
+		        <span>Chargement ...</span>
 		    </div>
 		    <div id="loading">
-		        <img src="resources/site/images/loading.gif" alt="cargando" width="32" height="32" style="margin-right:8px;float:left;vertical-align:top;"/>
-		        <span id="loading-msg">Cargando...</span>
+		        <img src="resources/site/images/loading.gif" alt="chargement" width="32" height="32" style="margin-right:8px;float:left;vertical-align:top;"/>
+		        <span id="loading-msg">Chargement...</span>
 		    </div>
 		    
 			<script type="text/javascript" src="resources/site/js/lib/external/ext/ext.js"></script>
@@ -112,11 +113,11 @@ if(sec_roles != null) {
 		    </script>
     	</c:when>
     	<c:otherwise>
-    		<div class="admin_only"><b>Módulo accesible solamente a los administradores</b></div>
+    		<div class="admin_only"><b>Module uniquement accessible aux administrateurs</b></div>
     	</c:otherwise>
 	</c:choose>
     
     
-    <noscript><p>Esta aplicación necesita que su navegador soporte Javascript. Gracias por activarlo.</p></noscript>
+    <noscript><p>Cette application nécessite le support de JavaScript par votre navigateur. Merci de l'activer.</p></noscript>
 </body>
 </html>

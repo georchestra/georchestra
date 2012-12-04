@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 <beans>
-    <bean id="config" 
-          class="mapfishapp.ws.ConfigController"/>
-  
+
     <bean id="homecontroller" 
           class="mapfishapp.ws.HomeController"/>
     <bean id="editcontroller" 
@@ -12,8 +10,7 @@
 	<bean class="mapfishapp.ws.OGCProxy">
 	</bean>
 	<bean class="mapfishapp.ws.DocController">
-            <constructor-arg ref="config"/>
-		<!--property name="maxDocAgeInMinutes" value="${maxDocAgeInMinutes}"/-->
+		<property name="maxDocAgeInMinutes" value="${maxDocAgeInMinutes}"/>
 		<property name="credentials">
           <map>${credentials}</map>
 		</property>

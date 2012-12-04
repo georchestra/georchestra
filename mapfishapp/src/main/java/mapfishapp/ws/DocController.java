@@ -16,7 +16,6 @@ import mapfishapp.ws.classif.ClassifierCommand;
 import mapfishapp.ws.classif.SLDClassifier;
 
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -45,25 +44,12 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
   
 @Controller
 public class DocController {
-    
-    private ConfigController config;
-    public DocController(){
-        setMaxDocAgeInMinutes(1440);
-    }
-    
-    public DocController(ConfigController config){
-        this.config = config ;
-        String strMaxDocAgeInMinutes = config.getPropertyValue("maxDocAgeInMinutes");
-        setMaxDocAgeInMinutes(Integer.parseInt(strMaxDocAgeInMinutes));
-    }
     /**
      * Time (in minutes) before files are purged automatically from DIR
      */
     private int maxDocAgeInMinutes = 60 * 24;
 	public int getMaxDocAgeInMinutes() {return maxDocAgeInMinutes;}
-	public void setMaxDocAgeInMinutes(int maxDocAgeInMinutes) {
-            System.out.println("JAVAAAAAAAAAAAAAAAAAAA "+maxDocAgeInMinutes);
-            this.maxDocAgeInMinutes = maxDocAgeInMinutes;}
+	public void setMaxDocAgeInMinutes(int maxDocAgeInMinutes) {this.maxDocAgeInMinutes = maxDocAgeInMinutes;}
 
 	/**
 	 * mapping from hostname -> credentials
