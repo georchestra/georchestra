@@ -145,6 +145,7 @@ if(sec_roles != null) {
         <c:otherwise>
     <script type="text/javascript" src="lib/externals/ext/ext-all.js"></script>
     <script type="text/javascript" src="build/catalogapp.js"></script>
+    <script type="text/javascript" src="build/lang/<%= lang %>.js"></script>
         </c:otherwise>
     </c:choose>
 
@@ -161,6 +162,8 @@ if(sec_roles != null) {
         // set proxy host
         OpenLayers.ProxyHost = '<%= proxyHost %>';
         
+        // lang
+        GEOR.config.LANG = '<%= lang %>';
     </script>
     <noscript><p><fmt:message key="need.javascript"/></p></noscript>
 </body>

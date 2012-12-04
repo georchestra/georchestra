@@ -27,11 +27,12 @@ Ext.namespace("GEOR");
 GEOR.criteria = ['what', 'where'];
 
 Ext.onReady(function() {
+    var tr = OpenLayers.i18n;
 
     /*
      * Setting of OpenLayers global vars.
      */
-    OpenLayers.Lang.setCode('fr');
+    OpenLayers.Lang.setCode(GEOR.config.LANG);
     OpenLayers.Number.thousandsSeparator = " ";
     OpenLayers.ImgPath = 'app/img/openlayers/';
     OpenLayers.DOTS_PER_INCH = GEOR.config.MAP_DOTS_PER_INCH;

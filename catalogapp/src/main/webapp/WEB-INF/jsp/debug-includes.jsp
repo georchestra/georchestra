@@ -17,5 +17,6 @@
     <script type="text/javascript" src="app/js/GEOR_where.js"></script>
     <script type="text/javascript" src="app/js/GEOR_csw.js"></script>
     <script type="text/javascript" src="app/js/GEOR.js"></script>
-    
+    <script type="text/javascript" src="app/js/GEOR_Lang/<%= lang %>.js"></script>
+
     <script type="text/javascript" src="https://getfirebug.com/firebug-lite-beta.js"></script>
