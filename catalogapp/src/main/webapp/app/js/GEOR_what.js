@@ -20,6 +20,8 @@ Ext.namespace("GEOR");
 
 GEOR.what = (function() {
 
+    var tr = OpenLayers.i18n;
+
     var field;
 
     return {
@@ -31,7 +33,7 @@ GEOR.what = (function() {
             field = new Ext.form.TextField({
                 label: ' ',
                 width: 210,
-                emptyText: 'saisissez un ou plusieurs mots clés',
+                emptyText: tr('enter one or more keywords'),
                 name: 'what',
                 enableKeyEvents: true,
                 listeners: {
