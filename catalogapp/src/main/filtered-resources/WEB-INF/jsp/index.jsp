@@ -1,11 +1,28 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page contentType="text/html"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ page language="java" %>
+<%@ page import="java.util.*" %>
+<%@ page import="org.georchestra.catalogapp.Utf8ResourceBundle" %>
+<%@ page contentType="text/html; charset=UTF-8"%>
 <%@ page pageEncoding="UTF-8"%>
 <%@ page isELIgnored="false" %>
 <%
 Boolean anonymous = true;
 Boolean admin = false;
 Boolean editor = false;
+
+String lang = request.getParameter("lang");
+if (lang == null || (!lang.equals("en") && !lang.equals("es")  && !lang.equals("fr"))) {
+    lang = "${language}";
+}
+Locale l = new Locale(lang);
+ResourceBundle resource = Utf8ResourceBundle.getBundle("catalogapp.i18n.index",l);
+javax.servlet.jsp.jstl.core.Config.set(
+    request,
+    javax.servlet.jsp.jstl.core.Config.FMT_LOCALIZATION_CONTEXT,
+    new javax.servlet.jsp.jstl.fmt.LocalizationContext(resource)
+);
+
 String sec_roles = request.getHeader("sec-roles");
 if(sec_roles != null) {
     String[] roles = sec_roles.split(",");
@@ -25,11 +42,11 @@ if(sec_roles != null) {
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="fr" xml:lang="fr">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="<%= lang %>" xml:lang="<%= lang %>">
 
 <head>
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
-    <title lang="fr" dir="ltr">Catalogue - geOrchestra</title>
+    <title lang="<%= lang %>" dir="ltr"><fmt:message key="title.catalogue"/></title>
     <link rel="stylesheet" type="text/css" href="lib/externals/ext/resources/css/ext-all.css" />
     <link rel="stylesheet" type="text/css" href="lib/externals/ext/resources/css/xtheme-gray.css" />
     <!--
@@ -85,7 +102,7 @@ if(sec_roles != null) {
     <c:otherwise>
     <!-- 
      * The following resource will be loaded only when geOrchestra's "static" module
-     *  is deployed alongside with mapfishapp
+     *  is deployed alongside with catalogapp
      *-->
     <link rel="stylesheet" type="text/css" href="/static/css/header.css" />
     <script type="text/javascript">
@@ -99,70 +116,20 @@ if(sec_roles != null) {
 
 <body>
 
-<c:choose>
-    <c:when test='<%= request.getParameter("noheader") == null %>'>
-    <div id="go_head">
-        <a href="#" id="go_home" title="retourner à l’accueil">
-            <img src="/static/img/logo.png" alt="geOrchestra" height="50"/>
-        </a>
-        <ul>
-            <li class="active"><a href="#">catalogue</a></li>
-            <li><a href="/mapfishapp/">visualiseur</a></li>
-        <c:choose>
-            <c:when test='<%= editor == true %>'>
-            <li><a href="/mapfishapp/edit">éditeur</a></li>
-            </c:when>
-        </c:choose>
-            <li><a href="/extractorapp/">extracteur</a></li>
-            <li><a href="/geoserver/web/">services</a></li>
-        </ul>
-    <c:choose>
-        <c:when test='<%= anonymous == false %>'>
-        <p class="logged">
-            <%=request.getHeader("sec-username") %><span class="light"> | </span><a href="/j_spring_security_logout">déconnexion</a>
-        </p>
-        </c:when>
-        <c:otherwise>
-        <p class="logged">
-            <a href="?login">connexion</a>
-        </p>
-        </c:otherwise>
-    </c:choose>
-    </div>
-    <script>
-        (function(){
-            if (!window.addEventListener || !document.querySelectorAll) return;
-            var each = function(els, callback) {
-                for (var i = 0, l=els.length ; i<l ; i++) {
-                    callback(els[i]);
-                }
-            }
-            each(document.querySelectorAll('#go_head li a'), function(li){
-                li.addEventListener('click', function(e) {
-                    each(
-                        document.querySelectorAll('#go_head li'),
-                        function(l){ l.className = '';}
-                    );
-                    li.parentNode.className = 'active';
-                });
-            });
-        })();
-    </script>
-    </c:when>
-</c:choose>
+    <%@ include file="header.jsp" %>
 
     <div id="waiter" style="display:none;">
-        <span>Chargement ...</span>
+        <span><fmt:message key="loading"/></span>
     </div>
     <div id="loading">
-        <img src="app/img/loading.gif" alt="chargement" width="32" height="32" style="margin-right:8px;float:left;vertical-align:top;"/>
-        <span id="loading-msg">Chargement...</span>
+        <img src="app/img/loading.gif" alt="<fmt:message key='loading'/>" width="32" height="32" style="margin-right:8px;float:left;vertical-align:top;"/>
+        <span id="loading-msg"><fmt:message key="loading"/></span>
     </div>
     <div id="dataview-contentel" class="x-hidden">
-        <p>Trouvez des données géographiques en cherchant par mots clés ou par région.</p>
+        <p><fmt:message key="default.help"/></p>
     </div>
     <script type="text/javascript">
-        document.getElementById('loading-msg').innerHTML = 'Chargement...';
+        document.getElementById('loading-msg').innerHTML = '<fmt:message key="loading"/>';
     </script>
     
     <script type="text/javascript" src="lib/externals/ext/adapter/ext/ext-base.js"></script>
@@ -173,31 +140,12 @@ if(sec_roles != null) {
     <script type="text/javascript" src="app/js/GEOR_custom.js"></script>
     <c:choose>
         <c:when test='<%= request.getParameter("debug") != null %>'>
-    <script type="text/javascript" src="lib/externals/geoext/lib/overrides/override-ext-ajax.js"></script>
-    <script type="text/javascript" src="lib/externals/ext/ext-all-debug.js"></script>
-    <script type="text/javascript" src="lib/Ext.ux/lib/Ext.ux.js"></script>
-    <script type="text/javascript" src="lib/externals/ext/src/locale/ext-lang-fr.js"></script>
-
-    <script type="text/javascript" src="lib/externals/openlayers/lib/OpenLayers.js"></script>
-    <script type="text/javascript" src="lib/externals/openlayers/lib/OpenLayers/Lang/fr.js"></script>
-    <script type="text/javascript" src="lib/externals/geoext/lib/GeoExt.js"></script>
-    
-    <script type="text/javascript" src="app/js/GeoExt.data.CSW.js"></script>
-
-    <script type="text/javascript" src="app/js/GEOR_config.js"></script>
-    <script type="text/javascript" src="app/js/GEOR_waiter.js"></script>
-    <script type="text/javascript" src="app/js/GEOR_nav.js"></script>
-    <script type="text/javascript" src="app/js/GEOR_dataview.js"></script>
-    <script type="text/javascript" src="app/js/GEOR_what.js"></script>
-    <script type="text/javascript" src="app/js/GEOR_where.js"></script>
-    <script type="text/javascript" src="app/js/GEOR_csw.js"></script>
-    <script type="text/javascript" src="app/js/GEOR.js"></script>
-    
-    <script type="text/javascript" src="https://getfirebug.com/firebug-lite-beta.js"></script>
+    <%@ include file="debug-includes.jsp" %>
             </c:when>
         <c:otherwise>
     <script type="text/javascript" src="lib/externals/ext/ext-all.js"></script>
     <script type="text/javascript" src="build/catalogapp.js"></script>
+    <script type="text/javascript" src="build/lang/<%= lang %>.js"></script>
         </c:otherwise>
     </c:choose>
 
@@ -214,7 +162,9 @@ if(sec_roles != null) {
         // set proxy host
         OpenLayers.ProxyHost = '<%= proxyHost %>';
         
+        // lang
+        GEOR.config.LANG = '<%= lang %>';
     </script>
-    <noscript><p>Cette application nécessite le support de JavaScript par votre navigateur. Merci de l'activer.</p></noscript>
+    <noscript><p><fmt:message key="need.javascript"/></p></noscript>
 </body>
 </html>
