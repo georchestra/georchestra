@@ -45,13 +45,14 @@ header.mapping=\
         <entry key="sec-tel"       value="telephoneNumber"/>
 
 # database health check parameters
-
-shared.psql.host=@shared.psql.host@
-shared.psql.port=@shared.psql.port@
-shared.psql.geonetwork.db=@shared.psql.geonetwork.db@
-shared.psql.user=@shared.psql.user@
-shared.psql.pass=@shared.psql.pass@
-shared.psql.url=@shared.psql.url@
+checkHealth=false
+psql.host=@shared.psql.host@
+psql.port=@shared.psql.port@
+psql.db=@shared.psql.geonetwork.db@
+psql.user=@shared.psql.user@
+psql.pass=@shared.psql.pass@
+psql.url=@shared.psql.url@
+max.database.connections=170
 
 # dev should not need a test url
 test.url=
