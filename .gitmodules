@@ -43,3 +43,6 @@
 [submodule "mapfishapp/src/main/webapp/lib/externals/styler"]
 	path = mapfishapp/src/main/webapp/lib/externals/styler
 	url = http://github.com/georchestra/styler.git
+[submodule "config/configurations/template"]
+	path = config/configurations/template
+	url = http://github.com/georchestra/template.git
