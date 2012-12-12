@@ -233,8 +233,10 @@ GEOR.wmc = (function() {
                 layerStore.addSorted(r);
             });
 
-            // zoom to extent specified in the WMC doc
-            map.zoomToExtent(newContext.bounds);
+            // zoom to closest extent specified in the WMC doc
+            // (hence second argument is true,
+            // see http://applis-bretagne.fr/redmine/issues/2398)
+            map.zoomToExtent(newContext.bounds, true);
         }
     };
 })();
