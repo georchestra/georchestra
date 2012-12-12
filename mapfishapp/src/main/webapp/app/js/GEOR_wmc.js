@@ -75,65 +75,72 @@ GEOR.wmc = (function() {
         };
 
         ls.each(function (record) {
-
             var layer = record.get('layer');
-            if(layer instanceof OpenLayers.Layer.WMS) {
-
-                var layerContext = wmcFormat.layerToContext(layer);
-                // only the first metadataURL can be saved to WMC:
-                // see http://applis-bretagne.fr/redmine/issues/2091
-                if (layerContext.metadataURL && layerContext.metadataURL[0]) {
-                    if (typeof layerContext.metadataURL[0] == 'string') {
-                        layerContext.metadataURL = layerContext.metadataURL[0];
-                    } else if (layerContext.metadataURL[0].href) {
-                        layerContext.metadataURL = layerContext.metadataURL[0].href;
-                    } else {
-                        delete layerContext.metadataURL;
-                    }
-                }
-                var queryable = record.get('queryable');
-                var styles = record.get('styles');
-                var formats = record.get('formats');
-
-                if (queryable !== undefined) {
-                    layerContext.queryable = queryable;
-                }
-
-                if (styles !== undefined && styles.length > 0) {
-                    // if the context style has its href property
-                    // set, which means the layer has an SLD
-                    // parameters, we don't empty the styles
-                    // array because we don't want to loose
-                    // that style
-                    var layerContextStyles = layerContext.styles;
-                    if (!layerContextStyles[0].href) {
-                        layerContext.styles = [];
-                    }
-                    Ext.each(styles, function (item, index, all) {
-                        var style = {};
-                        Ext.apply(style, {current: false}, item);
-                        if(layer.params.STYLES === style.name) {
-                            style.current = true;
-                        }
-                        layerContext.styles.push(style);
-                    });
-                }
-
-                if (formats !== undefined && formats.length > 0) {
-                    layerContext.formats = [];
-                    Ext.each(formats, function (item, index, all) {
-                        var format = {};
-                        var f = (item instanceof Object) ? item.value : item;
-                        Ext.apply(format, {current: false}, {value: f});
-                        if(layer.params.FORMAT == f) {
-                            format.current = true;
-                        }
-                        layerContext.formats.push(format);
-                    });
-                }
-
-                context.layersContext.push(layerContext);
+            if (!(layer instanceof OpenLayers.Layer.WMS)) {
+                return;
             }
+            
+            // having styles referenced in the layer's metadata object 
+            // prevents the WMC format to obtain them from layer.params.
+            // In geOrchestra we're not using layer.metadata since we have much better
+            // (layer records) => we're better off removing layer.metadata.styles here:
+            layer.metadata.styles = null;
+            // Note: this fixes http://applis-bretagne.fr/redmine/issues/4510
+            var layerContext = wmcFormat.layerToContext(layer); 
+            
+            // only the first metadataURL can be saved to WMC:
+            // see http://applis-bretagne.fr/redmine/issues/2091
+            if (layerContext.metadataURL && layerContext.metadataURL[0]) {
+                if (typeof layerContext.metadataURL[0] == 'string') {
+                    layerContext.metadataURL = layerContext.metadataURL[0];
+                } else if (layerContext.metadataURL[0].href) {
+                    layerContext.metadataURL = layerContext.metadataURL[0].href;
+                } else {
+                    delete layerContext.metadataURL;
+                }
+            }
+            var queryable = record.get('queryable');
+            var styles = record.get('styles');
+            var formats = record.get('formats');
+
+            if (queryable !== undefined) {
+                layerContext.queryable = queryable;
+            }
+
+            if (styles !== undefined && styles.length > 0) {
+                // if the context style has its href property
+                // set, which means the layer has an SLD
+                // parameters, we don't empty the styles
+                // array because we don't want to loose
+                // those styles
+                var layerContextStyles = layerContext.styles;
+                if (!layerContextStyles[0].href) {
+                    layerContext.styles = [];
+                }
+                Ext.each(styles, function (item) {
+                    var style = {};
+                    Ext.apply(style, {current: false}, item);
+                    if(layer.params.STYLES === style.name) {
+                        style.current = true;
+                    }
+                    layerContext.styles.push(style);
+                });
+            }
+
+            if (formats !== undefined && formats.length > 0) {
+                layerContext.formats = [];
+                Ext.each(formats, function (item, index, all) {
+                    var format = {};
+                    var f = (item instanceof Object) ? item.value : item;
+                    Ext.apply(format, {current: false}, {value: f});
+                    if(layer.params.FORMAT == f) {
+                        format.current = true;
+                    }
+                    layerContext.formats.push(format);
+                });
+            }
+
+            context.layersContext.push(layerContext);
         });
 
         return context;
