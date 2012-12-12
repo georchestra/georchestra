@@ -12,14 +12,14 @@
             <li><a href="/mapfishapp/">visualiseur</a></li>
         <c:choose>
             <c:when test='<%= editor == true %>'>
-            <li><a href="/mapfishapp/edit">éditeur</a></li>
+            <li><a href="/mapfishapp/edit/">éditeur</a></li>
             </c:when>
         </c:choose>
-            <li><a href="/extractorapp">extracteur</a></li>
+            <li><a href="/extractorapp/">extracteur</a></li>
             <li><a href="/geoserver/web/">services</a></li>
         <c:choose>
             <c:when test='<%= admin == true %>'>
-            <li class="active"><a href="/analytics">statistiques</a></li>
+            <li class="active"><a>statistiques</a></li>
             </c:when>
         </c:choose>
         </ul>
