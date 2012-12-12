@@ -53,7 +53,7 @@ This widget auto-configures itself with a GeoServer namespace (see **NS_LOC** co
 
 Each "referential" layer should obey these simple rules:
  * it has exactly one geometry column and one string column,
- * the string column can have any name, but it's content should be uppercased (this is to overcome a WFS limitation),
+ * the string column can have any name, but its content should be uppercased (this is to overcome a WFS limitation),
  * the geometry column can be of any type (point, line, polygon) but if it's a polygon, it should be as simple as possible (a bounding box is the best option).
 
 
