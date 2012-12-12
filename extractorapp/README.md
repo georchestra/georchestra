@@ -2,6 +2,8 @@ Extractorapp
 ============
 
 Extractorapp allows SDI users to download data bundles from existing OGC web services (WFS for vector and WCS for rasters).
+Extraction jobs are queued and can be managed by any admin user. 
+The application notifies by email the requesting user that the job has been take into account, and when it is finished.
 
 By default, the application allows extraction of layers and services which have been configured through the STARTUP_LAYERS and STARTUP_SERVICES configuration variables in the profile's GEOR_custom.js
 
@@ -31,6 +33,14 @@ The application also accepts several GET parameters :
  * **lang** can be set to any of the following : fr, en, es
 
 
+Admin UI
+========
+
+Admin users have the ability to manage the job queue at this URL : /extractorapp/admin/
+
+Jobs (except the running one) can be manually paused, cancelled, set to a higher or a lower priority.
+
+
 How to allow unprotected access ?
 =================================
 
@@ -38,21 +48,19 @@ By default, the application is not available to unauthenticated users. They are 
 
     <c:choose>
         <c:when test='<%= anonymous == true %>'>
-    <script type="text/javascript">
-    window.location = "?login";
-    </script>
+            <script type="text/javascript">
+            window.location = "?login";
+            </script>
         </c:when>
     </c:choose>
     
 To grant access to all users, copy index.jsp in your profile and remove the above code. 
 
 
-Admin UI
-========
+How to customize the default emails ?
+=====================================
 
-Admin users have the ability to manage the job queue at this URL : /extractorapp/admin/
-
-Jobs (except the running one) can be manually paused, cancelled, set to a higher or a lower priority.
+TODO
 
 
 How to run the extractor without Tomcat ?
