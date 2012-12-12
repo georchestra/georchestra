@@ -1,2 +1,0 @@
-This directory will be copied into the webapp if the war
-is created with a -Dserver=template parameter.

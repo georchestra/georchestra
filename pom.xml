@@ -196,6 +196,15 @@
     </profile>
 
     <profile>
+      <id>pigma_c2cpc62</id>
+      <properties>
+        <server>pigma</server>
+        <sub.target>int</sub.target>
+        <geoserver.war.excludes>WEB-INF/lib/*gwc*.jar</geoserver.war.excludes>
+      </properties>
+    </profile>
+
+    <profile>
       <id>pigma_prod</id>
       <properties>
         <server>pigma</server>

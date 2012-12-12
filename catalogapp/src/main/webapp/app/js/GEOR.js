@@ -13,13 +13,13 @@
  */
 
 /*
- * @include GEOR.waiter.js
- * @include GEOR.dataview.js
- * @include GEOR.csw.js
- * @include GEOR.nav.js
- * @include GEOR.what.js
- * @include GEOR.where.js
- * @include GEOR.config.js
+ * @include GEOR_waiter.js
+ * @include GEOR_dataview.js
+ * @include GEOR_csw.js
+ * @include GEOR_nav.js
+ * @include GEOR_what.js
+ * @include GEOR_where.js
+ * @include GEOR_config.js
  */
 
 Ext.namespace("GEOR");
@@ -27,11 +27,12 @@ Ext.namespace("GEOR");
 GEOR.criteria = ['what', 'where'];
 
 Ext.onReady(function() {
+    var tr = OpenLayers.i18n;
 
     /*
      * Setting of OpenLayers global vars.
      */
-    OpenLayers.Lang.setCode('fr');
+    OpenLayers.Lang.setCode(GEOR.config.LANG);
     OpenLayers.Number.thousandsSeparator = " ";
     OpenLayers.ImgPath = 'app/img/openlayers/';
     OpenLayers.DOTS_PER_INCH = GEOR.config.MAP_DOTS_PER_INCH;
@@ -42,10 +43,10 @@ Ext.onReady(function() {
      */
     Ext.BLANK_IMAGE_URL = "lib/externals/ext/resources/images/default/s.gif";
     Ext.apply(Ext.MessageBox.buttonText, {
-        yes: "Oui",
-        no: "Non",
-        ok: "OK",
-        cancel: "Annuler"
+        yes: tr("Yes"),
+        no: tr("No"),
+        ok: tr("OK"),
+        cancel: tr("Cancel")
     });
     Ext.QuickTips.init();
 
@@ -147,19 +148,19 @@ Ext.onReady(function() {
             border: false
         },
         items: [Ext.apply(GEOR.what.getCmp(), {
-            title: "Quelles données cherchez vous ?",
+          title: tr("Which data are you searching for ?"),
             collapsible: false,
             collapsed: false,
             height: 90
         }), Ext.apply(GEOR.where.getCmp(), {
-            title: "Sur quel territoire ?",
+            title: tr("On which area ?"),
             collapsed: false,
             height: 280
         })/*, {
-            title: "Quand ?"
+            title: tr("When ?")
         }*/],
         buttons: [{
-            text: 'effacer',
+          text: tr('clean'),
             cls: 'bigbtn',
             iconCls: 'geor-btn-reset',
             handler: function() {
@@ -170,7 +171,7 @@ Ext.onReady(function() {
                 }
             }
         },{
-            text: 'chercher',
+          text: tr('search'),
             cls: 'bigbtn',
             iconCls: 'geor-btn-search',
             handler: function() {
@@ -211,8 +212,13 @@ Ext.onReady(function() {
         var records = options.records;
         GEOR.where.highlight(records);
         var l = options.total;
-        var s = (l > 1) ? 's' : '';
-        bbar.selText.setText(l ? l + ' fiche'+s+' sélectionnée'+s : '');
+        var t = ''
+        if (l > 1) {
+          t = tr('various.results', {'RESULTS': l})
+        } else if (l) {
+          t = tr('one.result')
+        }
+        bbar.selText.setText(t);
         bbar.selText.getEl().highlight();
     });
     o.on("itemzoom", function(options) {
