@@ -14,8 +14,8 @@ shared.ldap.groupSearchBaseDN=ou=groups
 
 shared.ldap.admin.dn=cn=admin,@shared.ldap.baseDn@
 
-shared.c2c.tomcat.dir=/srv/tomcat/tomcat1
-shared.c2c.logdir=/var/log/tomcat
+shared.tomcat.dir=/srv/tomcat/tomcat1
+shared.log.dir=/var/log/tomcat
 
 shared.psql.host=localhost
 shared.psql.port=5432
@@ -34,7 +34,7 @@ shared.smtpPort=25
 shared.email.replyTo=arnaud.deshogues\@camptocamp.com
 shared.email.from=noreply\@camptocamp.com
 
-shared.geonetwork.dir=@shared.c2c.tomcat.dir@/work/gn_data
+shared.geonetwork.dir=@shared.tomcat.dir@/work/gn_data
 
 shared.ogc.statistics.activated=false
 shared.download_form.activated=false
