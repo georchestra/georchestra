@@ -122,67 +122,9 @@
   <profiles>
 
     <profile>
-      <id>c2cpc61</id>
-      <properties>
-        <server>c2cpc61</server>
-      </properties>
-    </profile>
-
-    <profile>
-      <id>flowProject</id>
-      <properties>
-        <server>flowProject</server>
-      </properties>
-    </profile>
-
-    <profile>
-      <id>geobretagne</id>
-      <properties>
-        <server>geobretagne</server>
-      </properties>
-    </profile>
-
-    <profile>
       <id>pigma</id>
       <properties>
         <server>pigma</server>
-      </properties>
-    </profile>
-
-    <profile>
-      <id>cg62</id>
-      <properties>
-        <server>cg62</server>
-      </properties>
-    </profile>
-    
-    <profile>
-      <id>pmauduit</id>
-      <properties>
-        <server>pmauduit</server>
-      </properties>
-    </profile>
-
-    <profile>
-      <id>localhost</id>
-      <properties>
-        <server>localhost</server>
-      </properties>
-    </profile>
-
-    <profile>
-      <id>cg62_int</id>
-      <properties>
-        <server>cg62</server>
-        <sub.target>int</sub.target>
-      </properties>
-    </profile>
-
-    <profile>
-      <id>cg62_prod</id>
-      <properties>
-        <server>cg62</server>
-        <sub.target>prod</sub.target>
       </properties>
     </profile>
 
@@ -212,20 +154,6 @@
         <geoserver.war.excludes>WEB-INF/lib/*gwc*.jar</geoserver.war.excludes>
       </properties>
     </profile>
-
-    <profile>
-      <id>qsm</id>
-      <properties>
-        <server>qsm</server>
-      </properties>
-    </profile>
-
-    <profile>
-      <id>vmware</id>
-      <properties>
-        <server>vmware</server>
-      </properties>
-    </profile>
     
     <!-- template profile -->
     <profile>
@@ -234,7 +162,6 @@
         <server>template</server>
       </properties>
     </profile>
-
 
     <profile>
       <id>all</id>
