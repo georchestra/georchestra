@@ -1,3 +1,3 @@
 dlJdbcUrl=@shared.download_form.jdbcurl@?user=@shared.psql.user@&password=@shared.psql.pass@
 activated=@shared.download_form.activated@
-logdir=@shared.c2c.logdir@
+logdir=@shared.log.dir@
