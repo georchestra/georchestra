@@ -86,7 +86,7 @@
 				<configuration>
 					<warSourceDirectory>${gs.unpack.dir}</warSourceDirectory>
 					<webXml>${gs.unpack.dir}/WEB-INF/web.xml</webXml>
-					<warName>geoserver</warName>
+					<warName>geoserver-private</warName>
 					<filter>${confdir}/${project.artifactId}/maven.filter</filter>
 					<webResources>
 						<resource>
