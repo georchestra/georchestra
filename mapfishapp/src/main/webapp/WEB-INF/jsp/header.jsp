@@ -47,20 +47,20 @@
             <li><a href="/geonetwork/srv/<%= lang %>/main.home"><fmt:message key="catalogue"/></a></li>
         <c:choose>
             <c:when test='${c.edit != null}'>
-            <li><a href="/mapfishapp"><fmt:message key="viewer"/></a></li>
+            <li><a href="/mapfishapp/"><fmt:message key="viewer"/></a></li>
             </c:when>
             <c:otherwise>
-            <li class="active"><a href="#"><fmt:message key="viewer"/></a></li>
+            <li class="active"><a><fmt:message key="viewer"/></a></li>
             </c:otherwise>
         </c:choose>
         <c:choose>
             <c:when test='<%= editor == true %>'>
                 <c:choose>
                     <c:when test='${c.edit != null}'>
-            <li class="active"><a href="#"><fmt:message key="editor"/></a></li>
+            <li class="active"><a><fmt:message key="editor"/></a></li>
                     </c:when>
                     <c:otherwise>
-            <li><a href="/mapfishapp/edit"><fmt:message key="editor"/></a></li>
+            <li><a href="/mapfishapp/edit/"><fmt:message key="editor"/></a></li>
                     </c:otherwise>
                 </c:choose>
             </c:when>

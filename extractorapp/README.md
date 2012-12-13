@@ -2,6 +2,8 @@ Extractorapp
 ============
 
 Extractorapp allows SDI users to download data bundles from existing OGC web services (WFS for vector and WCS for rasters).
+Extraction jobs are queued and can be managed by any admin user. 
+The application notifies by email the requesting user that the job has been take into account, and when it is finished.
 
 By default, the application allows extraction of layers and services which have been configured through the STARTUP_LAYERS and STARTUP_SERVICES configuration variables in the profile's GEOR_custom.js
 
@@ -31,6 +33,14 @@ The application also accepts several GET parameters :
  * **lang** can be set to any of the following : fr, en, es
 
 
+Admin UI
+========
+
+Admin users have the ability to manage the job queue at this URL : /extractorapp/admin/
+
+Jobs (except the running one) can be manually paused, cancelled, set to a higher or a lower priority.
+
+
 How to allow unprotected access ?
 =================================
 
@@ -38,21 +48,38 @@ By default, the application is not available to unauthenticated users. They are 
 
     <c:choose>
         <c:when test='<%= anonymous == true %>'>
-    <script type="text/javascript">
-    window.location = "?login";
-    </script>
+            <script type="text/javascript">
+            window.location = "?login";
+            </script>
         </c:when>
     </c:choose>
     
 To grant access to all users, copy index.jsp in your profile and remove the above code. 
 
 
-Admin UI
-========
+How to customize the default emails ?
+=====================================
 
-Admin users have the ability to manage the job queue at this URL : /extractorapp/admin/
+For each extraction job, two emails are sent :
+ * the first one is an acknowledgment from the platform that the job has been taken into account,
+ * the second one is sent when the job is finished. It contains the link to download an archive.
 
-Jobs (except the running one) can be manually paused, cancelled, set to a higher or a lower priority.
+Templates for these emails can be found in config/defaults/extractorapp/WEB-INF/templates/
+This gives you the opportunity to override them by copying to your own profile.
+
+By default, the ack mail template does not support string substitution, but the second email template does.
+These variables are :
+ * **link** the HTTP link to download the data,
+ * **emails** the recipient emails,
+ * **expiry** the expiry date in days,
+ * **successes** the layers for which the extraction succeeded,
+ * **failures** the layers for which the extraction failed,
+ * **oversized** the layers for which the extraction failed due to an oversized bounding box.
+
+These template variables are defined in extractorapp/src/main/java/extractorapp/ws/EmailFactoryDefault.java
+
+Note that you are free to define your own variables by using a custom EmailFactory, such as extractorapp/src/main/java/extractorapp/ws/EmailFactoryPigma.java. 
+In that case, be sure to specify emailfactory=extractorapp.ws.EmailFactoryPigma in your_config/extractorapp/maven.filter 
 
 
 How to run the extractor without Tomcat ?
