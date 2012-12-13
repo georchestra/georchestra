@@ -23,7 +23,7 @@ import com.camptocamp.ogcservstatistics.dataservices.InsertCommand;
  * The example shows how to configure the appender to work with postgres database: 
  * <pre>
  * 
- * log4j.rootCategory= INFO, OGCSERVICES
+ * log4j.rootLogger= INFO, OGCSERVICES
  * log4j.appender.OGCSERVICES=com.camptocamp.ogcservstatistics.log4j.OGCServicesAppender
  * log4j.appender.OGCSERVICES.activated=true
  * log4j.appender.OGCSERVICES.jdbcURL=jdbc:postgresql://localhost:5432/testdb
