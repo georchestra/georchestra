@@ -255,16 +255,6 @@ GEOR.resultspanel = (function() {
                     // this deactivates Feature handler,
                     // and moves search_results layer back to normal z-index
                     return true;
-                },
-                // we detect cells which contain URLs and open their content in a new tab
-                "cellclick": function(grid, rowIndex, columnIndex) {
-                    var record = grid.getStore().getAt(rowIndex);  // Get the Record
-                    var fieldName = grid.getColumnModel().getDataIndex(columnIndex); // Get field name
-                    var data = record.get(fieldName);
-                    // weak URL detection, as asked by http://applis-bretagne.fr/redmine/issues/3860 :
-                    if (data && GEOR.util.isUrl(data, false)) {
-                        window.open(data);
-                    }
                 }
             }
         });
@@ -362,6 +352,14 @@ GEOR.resultspanel = (function() {
                     features[i].geometry = f.bounds.toGeometry();
                 }
             }
+            // transform URLs into true links
+            // see http://applis-bretagne.fr/redmine/issues/4505
+            Ext.iterate(f.attributes, function(k, v, o) {
+                if (GEOR.util.isUrl(v, false)) {
+                    o[k] = '<a href="'+v+'" target="_blank">'+v+'</a>';
+                }
+            });
+
         });
         store.loadData(features);
         createGridPanel(store);
