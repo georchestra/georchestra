@@ -203,6 +203,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
         "(et ce n'est pas du tout normal !)",
     /* GEOR_mappanel.js strings */
     "Mouse coordinates in SRS": "Coordonnées du pointeur en ${srs}",
+    "scale picker": "échelle",
     /* GEOR_ows.js strings */
     "The NAME layer was not found in WMS service.":
         "La couche ${name} n'a pas été trouvée dans le service WMS.",

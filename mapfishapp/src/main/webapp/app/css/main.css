@@ -28,8 +28,8 @@ div.olMapViewport {
  */
 .olControlScaleLine{
   position: absolute;
-  left: 5px;
-  bottom: 5px;
+  left: 120px;
+  bottom: 3px;
 }
 
 .mouseposition {
@@ -164,8 +164,8 @@ div.olMapViewport {
 	background-repeat:no-repeat;
 	width:100px;
 	height:11px;
-	bottom:6px;
-	left:100px;
+	bottom:5px;
+	left:5px;
 	position:absolute;
 }
 

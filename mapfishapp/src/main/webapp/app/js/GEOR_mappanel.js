@@ -15,7 +15,6 @@
 /*
  * @include OpenLayers/Control/MousePosition.js
  * @include OpenLayers/Control/ScaleLine.js
- * @include OpenLayers/Control/LoadingPanel.js
  * @include GeoExt/widgets/MapPanel.js
  * @include GEOR_toolbar.js
  * @include GEOR_config.js
@@ -107,6 +106,12 @@ GEOR.mappanel = (function() {
     var buildBbarCfg = function(map) {
         var div, items = [];
 
+        // Scale combobox
+        items.push(Ext.apply({
+            width: 110,
+            value: tr('scale picker')
+        }, GEOR.scalecombo.create(map)));
+
         // Scale Line
         div = Ext.DomHelper.append(Ext.getBody(), {
             tag: "div",
@@ -115,15 +120,6 @@ GEOR.mappanel = (function() {
         });
         items.push(div);
         map.addControl(new OpenLayers.Control.ScaleLine({div: div}));
-
-        // Loading panel
-        div = Ext.DomHelper.append(Ext.getBody(), {
-            tag: "div",
-            id: cmp_id+"_loading_panel",
-            cls: "olControlLoadingPanel"
-        });
-        items.push(div);
-        map.addControl(buildLoadingPanelCtrl(div));
 
         // greedy spacer
         items.push("->");
@@ -152,10 +148,6 @@ GEOR.mappanel = (function() {
             items.push(div);
             map.addControl(buildMousePositionCtrl(srs2, div));
         }
-        // Scale combobox
-        items.push(Ext.apply({
-            width: 130
-        }, GEOR.scalecombo.create(map)));
 
         return {
             items: items
