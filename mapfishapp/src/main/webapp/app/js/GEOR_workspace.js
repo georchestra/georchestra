@@ -113,6 +113,10 @@ GEOR.workspace = (function() {
                 var o = Ext.decode(response.responseText),
                     params = OpenLayers.Util.getParameters();
                 params.wmc = o.filepath;
+                // we have to unset these params since the have precedence 
+                // over the WMC:
+                delete params.bbox;
+                delete params.lon; delete params.lat; delete params.radius;
                 var url = OpenLayers.Util.urlAppend(
                     window.location.href.split('?')[0], 
                     OpenLayers.Util.getParameterString(params)
