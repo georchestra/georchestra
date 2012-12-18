@@ -314,6 +314,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
         "del mapa",
     "pan": "Agarrar - desplazar el mapa",
     "zoom in": "Acercamiento",
+    //"zoom out": "", // TODO
     "distance measure": "Medir una distancia",
     "area measure": "Medir un área",
     "back to previous zoom": "Volver al zoom anterior",
