@@ -18,6 +18,7 @@
  * @include GEOR_ows.js
  * @include GEOR_util.js
  * @include GEOR_waiter.js
+ * @include OpenLayers/Projection.js
  * @include GeoExt/data/LayerRecord.js
  * @include GeoExt/data/LayerStore.js
  * @include GeoExt/data/WMSCapabilitiesReader.js
@@ -86,8 +87,18 @@ GEOR.mapinit = (function() {
                 // GEOR.ajaxglobal.init has not run yet:
                 GEOR.waiter.hide();
                 try {
-                    GEOR.wmc.read(response.responseXML || response.responseText, options.resetMap || true);
+                    GEOR.wmc.read(response.responseXML || response.responseText, 
+                        options.resetMap || true, GEOR.config.CUSTOM_BBOX == '');
+
                     options.success && options.success.call(this);
+
+                    // Zoom to custom bbox: (see http://applis-bretagne.fr/redmine/issues/4502)
+                    if (GEOR.config.CUSTOM_BBOX != '') {
+                        var forcedBounds = OpenLayers.Bounds.fromString(GEOR.config.CUSTOM_BBOX);
+                        forcedBounds.transform(new OpenLayers.Projection("EPSG:4326"), layerStore.map.getProjectionObject());
+                        layerStore.map.zoomToExtent(forcedBounds, true);
+                    }
+
                     // and finally we're running our global success callback:
                     cb.call();
                 } catch(err) {

@@ -168,7 +168,7 @@ if(sec_roles != null) {
         %>
         // set proxy host
         OpenLayers.ProxyHost = '<%= proxyHost %>';
-        
+
         // mapfishapp initial state: open a WMC, or a mix of WMS layers and servers
         GEOR.initstate = ${c.data};
 
@@ -178,6 +178,9 @@ if(sec_roles != null) {
         GEOR.config.CUSTOM_WMC = '<%=request.getParameter("wmc") %>';
         </c:when>
     </c:choose>
+
+        // custom startup bbox (overrides the WMC bbox):
+        GEOR.config.CUSTOM_BBOX = "${c.bbox}";
 
         // lang
         GEOR.config.LANG = '<%= lang %>';
