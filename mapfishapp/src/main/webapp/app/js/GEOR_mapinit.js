@@ -54,7 +54,19 @@ GEOR.mapinit = (function() {
      * {Function} an alias to OpenLayers.i18n
      */
     var tr = null;
-    
+
+    /**
+     * Method: customRecenter
+     * Convenient method telling whether to use the WMC bbox 
+     * or the incoming GET parameters
+     *
+     * Returns:
+     * {Boolean} If true, use incoming GET params
+     */
+    var customRecenter = function() {
+        return GEOR.config.CUSTOM_BBOX !== '' || GEOR.config.CUSTOM_CENTER !== ',';
+    };
+
     /**
      * Method: zoomToCustomExtent
      * Updates the map extent to the one given in parameters
@@ -138,7 +150,7 @@ GEOR.mapinit = (function() {
                 GEOR.waiter.hide();
                 try {
                     GEOR.wmc.read(response.responseXML || response.responseText, 
-                        options.resetMap || true, GEOR.config.CUSTOM_BBOX == '');
+                        options.resetMap || true, !customRecenter());
 
                     options.success && options.success.call(this);
 
