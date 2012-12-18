@@ -54,6 +54,56 @@ GEOR.mapinit = (function() {
      * {Function} an alias to OpenLayers.i18n
      */
     var tr = null;
+    
+    /**
+     * Method: zoomToCustomExtent
+     * Updates the map extent to the one given in parameters
+     */
+    var zoomToCustomExtent = function() {
+        // Zoom to custom bbox: (see http://applis-bretagne.fr/redmine/issues/4502)
+        var map = layerStore.map,
+            mapProjObj = map.getProjectionObject();
+
+        if (GEOR.config.CUSTOM_BBOX !== '') {
+            var forcedBounds = OpenLayers.Bounds.fromString(GEOR.config.CUSTOM_BBOX);
+            forcedBounds.transform(new OpenLayers.Projection("EPSG:4326"), mapProjObj);
+            map.zoomToExtent(forcedBounds, true);
+        } else if (GEOR.config.CUSTOM_CENTER !== ',') {
+            var forcedCenter = OpenLayers.LonLat.fromString(GEOR.config.CUSTOM_CENTER);
+            forcedCenter.transform(new OpenLayers.Projection("EPSG:4326"), mapProjObj);
+            var z;
+            if (GEOR.config.CUSTOM_RADIUS !== '') {
+                var radius = parseInt(GEOR.config.CUSTOM_RADIUS),
+                    bounds = new OpenLayers.Bounds(forcedCenter.lon, forcedCenter.lat, 
+                        forcedCenter.lon, forcedCenter.lat),
+                    units = mapProjObj.getUnits();
+
+                if (units == 'm' || units == 'meters') {
+                    bounds.left -= radius;
+                    bounds.bottom -= radius;
+                    bounds.right += radius;
+                    bounds.top += radius;
+                } else {
+                    // We assume units == 'degrees' here.
+                    // temporarily transform to a SRS with metric coords
+                    bounds.transform(
+                        mapProjObj,
+                        new OpenLayers.Projection("EPSG:900913")
+                    );
+                    bounds.left -= radius;
+                    bounds.bottom -= radius;
+                    bounds.right += radius;
+                    bounds.top += radius;
+                    bounds.transform(
+                        new OpenLayers.Projection("EPSG:900913"),
+                        mapProjObj
+                    );
+                }
+                z = map.getZoomForExtent(bounds, true);
+            }
+            map.setCenter(forcedCenter, z);
+        }
+    };
 
     /**
      * Method: updateStoreFromWMC
@@ -92,13 +142,7 @@ GEOR.mapinit = (function() {
 
                     options.success && options.success.call(this);
 
-                    // Zoom to custom bbox: (see http://applis-bretagne.fr/redmine/issues/4502)
-                    if (GEOR.config.CUSTOM_BBOX != '') {
-                        var forcedBounds = OpenLayers.Bounds.fromString(GEOR.config.CUSTOM_BBOX);
-                        forcedBounds.transform(new OpenLayers.Projection("EPSG:4326"), layerStore.map.getProjectionObject());
-                        layerStore.map.zoomToExtent(forcedBounds, true);
-                    }
-
+                    zoomToCustomExtent();
                     // and finally we're running our global success callback:
                     cb.call();
                 } catch(err) {

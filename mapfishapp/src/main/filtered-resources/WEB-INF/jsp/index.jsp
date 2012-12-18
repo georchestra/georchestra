@@ -179,8 +179,10 @@ if(sec_roles != null) {
         </c:when>
     </c:choose>
 
-        // custom startup bbox (overrides the WMC bbox):
+        // custom startup zoom parameters (override the WMC bbox):
         GEOR.config.CUSTOM_BBOX = "${c.bbox}";
+        GEOR.config.CUSTOM_CENTER = "${c.lon},${c.lat}";
+        GEOR.config.CUSTOM_RADIUS = "${c.radius}";
 
         // lang
         GEOR.config.LANG = '<%= lang %>';

@@ -36,6 +36,15 @@ public class AbstractController {
         model = new HashMap<String, Object>();
         model.put("data", "null");
         model.put("bbox", request.getParameter("bbox"));
+        model.put("lat", Float.parseFloat(request.getParameter("lat")));
+        model.put("lon", Float.parseFloat(request.getParameter("lon")));
+        Integer radius;
+        if (request.getParameter("radius") != null) {
+            radius = Integer.parseInt(request.getParameter("radius"));
+        } else {
+            radius = null;
+        }
+        model.put("radius", radius);
         model.put("debug", Boolean.parseBoolean(request.getParameter("debug")));
     
         return model;
@@ -60,8 +69,6 @@ public class AbstractController {
         } else {
             debug = Boolean.parseBoolean(request.getParameter("debug"));
         }
-
-        String bbox = request.getParameter("bbox");
 
         try {
             JSONArray jsonLayers, jsonServices;
@@ -92,7 +99,16 @@ public class AbstractController {
     
         Map<String, Object> model = new HashMap<String, Object>();
         model.put("debug", debug);
-        model.put("bbox", bbox);
+        model.put("bbox", request.getParameter("bbox"));
+        model.put("lat", Float.parseFloat(request.getParameter("lat")));
+        model.put("lon", Float.parseFloat(request.getParameter("lon")));
+        Integer radius;
+        if (request.getParameter("radius") != null) {
+            radius = Integer.parseInt(request.getParameter("radius"));
+        } else {
+            radius = null;
+        }
+        model.put("radius", radius);
         model.put("data", data);
     
         return model;
