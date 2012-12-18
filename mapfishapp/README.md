@@ -7,7 +7,7 @@ With it, you can :
  * browse through CSW, WMS & WFS services and add any layer to the current map,
  * create custom SLDs and style WMS layers, 
  * query layers either with a simple tool or an advanced one supporting conditions on attributes and geometries,
- * save your map as a WMC file and restore it later,
+ * share your map with a permalink, or save it as a WMC file and restore it later,
  * export feature attributes,
  * print your map,
  * and many more ...
