@@ -26,8 +26,6 @@ Ext.namespace("GEOR");
 
 GEOR.mappanel = (function() {
 
-    var cmp_id = 'GEOR_mappanel';
-
     /**
      * Property: tr
      * {Function} an alias to OpenLayers.i18n
@@ -109,7 +107,6 @@ GEOR.mappanel = (function() {
         // Scale Line
         div = Ext.DomHelper.append(Ext.getBody(), {
             tag: "div",
-            id: cmp_id+"_scaleline",
             cls: "olControlScaleLine"
         });
         items.push(div);
