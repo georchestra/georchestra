@@ -51,12 +51,19 @@ GEOR.mappanel = (function() {
      * {Function}
      */
     var formatMousePositionOutput = function(projCode) {
-        var format = (projCode == "EPSG:4326") ?
-            function(n) {return OpenLayers.Number.format(n, 5)} :
-            function(n) {return OpenLayers.Number.format(n, 0)} ;
-            
+        var format, firstPrefix, secondPrefix;
+        if (projCode == "EPSG:4326") {
+            format = function(n) {return OpenLayers.Number.format(n, 5)};
+            firstPrefix = "Lon = ";
+            secondPrefix = ", Lat = ";
+        } else {
+            format = function(n) {return OpenLayers.Number.format(n, 0)};
+            firstPrefix = "X = ";
+            secondPrefix = ", Y = ";
+        }
         return function(lonlat) {
-            return format(lonlat.lon) + " / " + format(lonlat.lat);
+            return [firstPrefix, format(lonlat.lon), 
+                secondPrefix, format(lonlat.lat)].join('');
         }
     };
 
@@ -115,8 +122,7 @@ GEOR.mappanel = (function() {
         var srsList = GEOR.config.POINTER_POSITION_SRS_LIST,
             srs = srsList[0][0];
         
-        // TODO: translate
-        items.push("Coordonnées du pointeur en ");
+        items.push(tr("Coordonnées en "));
         items.push({
             xtype: 'combo',
             width: 90,
@@ -134,21 +140,21 @@ GEOR.mappanel = (function() {
             mode: 'local',
             listeners: {
                 select: function(combo, record, index) {
-                    mpControl.displayProjection = new OpenLayers.Projection(record.data['field1']);
-                    mpControl.formatOutput = formatMousePositionOutput(record.data['field1']);
+                    mpControl.displayProjection = 
+                        new OpenLayers.Projection(record.data['field1']);
+                    mpControl.formatOutput = 
+                        formatMousePositionOutput(record.data['field1']);
                 }
             }
         });
 
         div = Ext.DomHelper.append(Ext.getBody(), {
             tag: "div",
-            //qtip: tr("Mouse coordinates in SRS", {'srs': srs}),
             cls: "mouseposition"
         });
         items.push(div);
         mpControl = buildMousePositionCtrl(srs, div);
         map.addControl(mpControl);
-        
 
         return {
             items: items

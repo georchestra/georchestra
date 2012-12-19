@@ -67,7 +67,6 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
         "insufficient rights, incompatible CRS or layer does not exist",
     "NB layers imported": "${NB} layers imported",
     /* GEOR_mappanel.js strings */
-    //"Mouse coordinates in SRS": "Coordinates of mouse in ${srs}",
     /* GEOR_ows.js strings */
     "The NAME layer was not found in WMS service.":
         "The ${name} layer was not found in WMS service.",
