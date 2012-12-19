@@ -200,7 +200,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "The default context is not defined (and it is a BIG problem!)":
         "El contexto por omisión no está definido ",
     /* GEOR_mappanel.js strings */
-    "Mouse coordinates in SRS": "Coordenadas del ratón en ${srs}",
+    //"Mouse coordinates in SRS": "Coordenadas del ratón en ${srs}",
     //"scale picker": "", // TODO
     /* GEOR_ows.js strings */
     "The NAME layer was not found in WMS service.":

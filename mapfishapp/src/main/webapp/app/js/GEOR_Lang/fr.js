@@ -202,7 +202,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
         "Le contexte par défaut n'est pas défini " +
         "(et ce n'est pas du tout normal !)",
     /* GEOR_mappanel.js strings */
-    "Mouse coordinates in SRS": "Coordonnées du pointeur en ${srs}",
+    //"Mouse coordinates in SRS": "Coordonnées du pointeur en ${srs}",
     "scale picker": "échelle",
     /* GEOR_ows.js strings */
     "The NAME layer was not found in WMS service.":

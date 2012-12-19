@@ -614,15 +614,12 @@ GEOR.config = (function() {
          * Set to "" if you do not want to have mouse position displayed.
          * Defaults to "EPSG:2154"
          */
-        MAP_POS_SRS1: getCustomParameter("MAP_POS_SRS1", "EPSG:2154"),
-
-        /**
-         * Constant: MAP_POS_SRS2
-         * {String} The cursor position will be displayed using this SRS.
-         * Set to "" if you do not want to have mouse position displayed.
-         * Defaults to ""
-         */
-        MAP_POS_SRS2: getCustomParameter("MAP_POS_SRS2", ""),
+        //MAP_POS_SRS1: getCustomParameter("MAP_POS_SRS1", "EPSG:2154"),
+        
+        POINTER_POSITION_SRS_LIST: [
+            ["EPSG:2154", "Lambert 93"],
+            ["EPSG:4326", "WGS 84"]
+        ],
 
         /**
          * Constant: PROJ4JS_STRINGS
