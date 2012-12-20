@@ -17,10 +17,10 @@
  * @include OpenLayers/Util.js
  * @include OpenLayers/Control/OverviewMap.js
  * @include OpenLayers/Control/Attribution.js
- * @include OpenLayers/Control/ZoomPanel.js
  * @include OpenLayers/Control/PanPanel.js
  * @include OpenLayers/Control/Navigation.js
  * @include OpenLayers/Control/PinchZoom.js
+ * @include OpenLayers/Control/LoadingPanel.js
  * @include OpenLayers/Kinetic.js
  * @include OpenLayers/Layer/WMS.js
  * @include OpenLayers/Layer/XYZ.js
@@ -163,7 +163,8 @@ GEOR.map = (function() {
                         enableKinetic: true
                     }
                 }),
-                new OpenLayers.Control.PanPanel()
+                new OpenLayers.Control.PanPanel(),
+                new OpenLayers.Control.LoadingPanel()
             ]
         }, options));
         map.addControl(createOverviewMap(options));
