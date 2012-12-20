@@ -94,23 +94,24 @@ GEOR.cswbrowser = (function() {
                     if((item.protocol == "OGC:WMS-1.1.1-http-get-map") &&
                         item.name && item.value) {
 
-                        // see http://applis-bretagne.fr/redmine/issues/2127#note-2
-                        if (item.description) {
-                            name = item.description;
-                        } else if (item.name) {
-                            // should always be the case
-                            name = tr("NAME layer", {'name': item.name});
-                        }
-
-                        var mdTitle = (record.title && record.title[0]) ?
+                        var name = '', 
+                            mdTitle = (record.title && record.title[0]) ?
                                 record.title[0].value : tr("Metadata without a name");
 
                         metadataURL = null;
                         if (record.identifier && record.identifier[0]) {
                             metadataURL = GEOR.config.GEONETWORK_URL+
                                 '/metadata.show?uuid='+ record.identifier[0].value;
-                            name += ' - <a href="'+metadataURL +
+                            name += '<a href="'+metadataURL +
                                 '" target="_blank" onclick="window.open(this.href);return false;">'+mdTitle+'</a>';
+                        }
+                        name += ' - ';
+                        // see http://applis-bretagne.fr/redmine/issues/2127#note-2
+                        if (item.description) {
+                            name += item.description;
+                        } else if (item.name) {
+                            // should always be the case
+                            name += tr("NAME layer", {'name': item.name});
                         }
 
                         if (record.rights && record.rights[0]) {
