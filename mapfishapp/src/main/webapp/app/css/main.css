@@ -322,3 +322,9 @@ div.olMapViewport {
 	padding: 5px;
 	border: 1px solid #bbb;
 }
+
+/* Bold layer names in layer manager http://applis-bretagne.fr/redmine/issues/4532 */
+.geor-tree-node a.x-tree-node-anchor span {
+	font-weight: bold;
+	color: #333;
+}
