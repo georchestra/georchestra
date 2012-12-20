@@ -163,8 +163,7 @@ GEOR.map = (function() {
                         enableKinetic: true
                     }
                 }),
-                new OpenLayers.Control.PanPanel(),
-                new OpenLayers.Control.ZoomPanel()
+                new OpenLayers.Control.PanPanel()
             ]
         }, options));
         map.addControl(createOverviewMap(options));
