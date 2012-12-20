@@ -201,7 +201,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
         "El contexto por omisión no está definido ",
     /* GEOR_mappanel.js strings */
     "Coordinates in ": "Coordenadas en ",
-    //"scale picker": "", // TODO
+    "scale picker": "Escala",
     /* GEOR_ows.js strings */
     "The NAME layer was not found in WMS service.":
         "La capa ${name} no se encuentra en el servicio WMS",
