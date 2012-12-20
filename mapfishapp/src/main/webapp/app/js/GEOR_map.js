@@ -17,7 +17,6 @@
  * @include OpenLayers/Util.js
  * @include OpenLayers/Control/OverviewMap.js
  * @include OpenLayers/Control/Attribution.js
- * @include OpenLayers/Control/ZoomPanel.js
  * @include OpenLayers/Control/PanPanel.js
  * @include OpenLayers/Control/Navigation.js
  * @include OpenLayers/Control/PinchZoom.js
@@ -165,7 +164,6 @@ GEOR.map = (function() {
                     }
                 }),
                 new OpenLayers.Control.PanPanel(),
-                new OpenLayers.Control.ZoomPanel(),
                 new OpenLayers.Control.LoadingPanel()
             ]
         }, options));

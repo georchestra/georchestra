@@ -193,8 +193,9 @@ GEOR.wmc = (function() {
          * wmcString - {XML | String} The XML|string describing the context to restore.
          * resetMap - {Boolean} Specifies if the map and the fake base layer must
                       be reset.
+         * zoomToWMC - {Boolean} Whether to zoom to WMC bbox or not, defaults to true
          */
-        read: function(wmcString, resetMap) {
+        read: function(wmcString, resetMap, zoomToWMC) {
             var map = layerStore.map;
             var newContext = wmcFormat.read(wmcString, {}); // get context from wmc
                                                          // using non-API feature
@@ -240,10 +241,12 @@ GEOR.wmc = (function() {
                 layerStore.addSorted(r);
             });
 
-            // zoom to closest extent specified in the WMC doc
-            // (hence second argument is true,
-            // see http://applis-bretagne.fr/redmine/issues/2398)
-            map.zoomToExtent(newContext.bounds, true);
+            if (zoomToWMC === true || zoomToWMC === undefined) {
+                // zoom to closest extent specified in the WMC doc
+                // (hence second argument is true,
+                // see http://applis-bretagne.fr/redmine/issues/2398)
+                map.zoomToExtent(newContext.bounds, true);
+            }
         }
     };
 })();

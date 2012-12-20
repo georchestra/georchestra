@@ -185,6 +185,18 @@ GEOR.toolbar = (function() {
             allowDepress: false
         }));
 
+        ctrl = new OpenLayers.Control.ZoomBox({
+          out: true
+        });
+        items.push(new GeoExt.Action({
+            control: ctrl,
+            map: map,
+            iconCls: "zoomout",
+            tooltip: tr("zoom out"),
+            toggleGroup: "map",
+            allowDepress: false
+        }));
+
         items.push("-");
 
         items.push(new GeoExt.Action({

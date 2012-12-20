@@ -18,6 +18,7 @@
  * @include GEOR_ows.js
  * @include GEOR_util.js
  * @include GEOR_waiter.js
+ * @include OpenLayers/Projection.js
  * @include GeoExt/data/LayerRecord.js
  * @include GeoExt/data/LayerStore.js
  * @include GeoExt/data/WMSCapabilitiesReader.js
@@ -55,6 +56,68 @@ GEOR.mapinit = (function() {
     var tr = null;
 
     /**
+     * Method: customRecenter
+     * Convenient method telling whether to use the WMC bbox 
+     * or the incoming GET parameters
+     *
+     * Returns:
+     * {Boolean} If true, use incoming GET params
+     */
+    var customRecenter = function() {
+        return GEOR.config.CUSTOM_BBOX !== '' || GEOR.config.CUSTOM_CENTER !== ',';
+    };
+
+    /**
+     * Method: zoomToCustomExtent
+     * Updates the map extent to the one given in parameters
+     */
+    var zoomToCustomExtent = function() {
+        // Zoom to custom bbox: (see http://applis-bretagne.fr/redmine/issues/4502)
+        var map = layerStore.map,
+            mapProjObj = map.getProjectionObject();
+
+        if (GEOR.config.CUSTOM_BBOX !== '') {
+            var forcedBounds = OpenLayers.Bounds.fromString(GEOR.config.CUSTOM_BBOX);
+            forcedBounds.transform(new OpenLayers.Projection("EPSG:4326"), mapProjObj);
+            map.zoomToExtent(forcedBounds, true);
+        } else if (GEOR.config.CUSTOM_CENTER !== ',') {
+            var forcedCenter = OpenLayers.LonLat.fromString(GEOR.config.CUSTOM_CENTER);
+            forcedCenter.transform(new OpenLayers.Projection("EPSG:4326"), mapProjObj);
+            var z;
+            if (GEOR.config.CUSTOM_RADIUS !== '') {
+                var radius = parseInt(GEOR.config.CUSTOM_RADIUS),
+                    bounds = new OpenLayers.Bounds(forcedCenter.lon, forcedCenter.lat, 
+                        forcedCenter.lon, forcedCenter.lat),
+                    units = mapProjObj.getUnits();
+
+                if (units == 'm' || units == 'meters') {
+                    bounds.left -= radius;
+                    bounds.bottom -= radius;
+                    bounds.right += radius;
+                    bounds.top += radius;
+                } else {
+                    // We assume units == 'degrees' here.
+                    // temporarily transform to a SRS with metric coords
+                    bounds.transform(
+                        mapProjObj,
+                        new OpenLayers.Projection("EPSG:900913")
+                    );
+                    bounds.left -= radius;
+                    bounds.bottom -= radius;
+                    bounds.right += radius;
+                    bounds.top += radius;
+                    bounds.transform(
+                        new OpenLayers.Projection("EPSG:900913"),
+                        mapProjObj
+                    );
+                }
+                z = map.getZoomForExtent(bounds, true);
+            }
+            map.setCenter(forcedCenter, z);
+        }
+    };
+
+    /**
      * Method: updateStoreFromWMC
      * Updates the app LayerStore from a given WMC
      *
@@ -86,8 +149,12 @@ GEOR.mapinit = (function() {
                 // GEOR.ajaxglobal.init has not run yet:
                 GEOR.waiter.hide();
                 try {
-                    GEOR.wmc.read(response.responseXML || response.responseText, options.resetMap || true);
+                    GEOR.wmc.read(response.responseXML || response.responseText, 
+                        options.resetMap || true, !customRecenter());
+
                     options.success && options.success.call(this);
+
+                    zoomToCustomExtent();
                     // and finally we're running our global success callback:
                     cb.call();
                 } catch(err) {

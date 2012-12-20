@@ -316,6 +316,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
         "carte",
     "pan": "glisser - déplacer la carte",
     "zoom in": "zoom en avant",
+    "zoom out": "zoom en arrière",
     "distance measure": "mesurer une distance",
     "area measure": "mesurer une surface",
     "back to previous zoom": "revenir à la précédente emprise",
