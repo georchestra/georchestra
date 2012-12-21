@@ -800,6 +800,7 @@ GEOR.managelayers = (function() {
             return {
                 xtype: "treepanel",
                 autoScroll: true,
+                enableDD: true,
                 loader: {
                     applyLoader: false,
                     uiProviders: {
