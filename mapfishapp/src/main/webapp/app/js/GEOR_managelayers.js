@@ -22,6 +22,7 @@
  * @include GeoExt/widgets/tree/TreeNodeUIEventMixin.js
  * @include OpenLayers/Format/JSON.js
  * @include GEOR_layerfinder.js
+ * @include GEOR_themeselector.js
  * @include GEOR_util.js
  * Note: GEOR_querier.js not included here since it's not required for edit app
  */
@@ -797,8 +798,9 @@ GEOR.managelayers = (function() {
                 }
             });
 
-            return {
+            var treepanel = {
                 xtype: "treepanel",
+                flex: 1,
                 autoScroll: true,
                 enableDD: true,
                 loader: {
@@ -831,6 +833,25 @@ GEOR.managelayers = (function() {
                     }
                 }]
             };
+
+            if (GEOR.config.THEME_SELECTOR) {
+                return {
+                    border: false,
+                    defaults: {
+                        border: false
+                    },
+                    layout: 'vbox',
+                    layoutConfig: {
+                        align: 'stretch'
+                    },
+                    items: [{
+                        layout: 'fit',
+                        bodyStyle: 'padding: 5px;',
+                        items: GEOR.themeselector.create()
+                    }, treepanel]
+                };
+            }
+            return treepanel;
         },
 
         /**

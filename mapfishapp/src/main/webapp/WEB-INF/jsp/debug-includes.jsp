@@ -81,5 +81,6 @@
     <script type="text/javascript" src="app/js/GEOR_map.js"></script>
     <script type="text/javascript" src="app/js/GEOR_ajaxglobal.js"></script>
     <script type="text/javascript" src="app/js/GEOR_mapinit.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_themeselector.js"></script>
     <script type="text/javascript" src="app/js/GEOR.js"></script>
     <script type="text/javascript" src="https://getfirebug.com/firebug-lite-beta.js"></script>

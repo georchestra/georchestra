@@ -312,7 +312,60 @@ GEOR.config = (function() {
          * The path to the application's default WMC.
          * Defaults to "default.wmc"
          */
-        DEFAULT_WMC: getCustomParameter("DEFAULT_WMC", "default.wmc"),
+        DEFAULT_WMC: getCustomParameter("DEFAULT_WMC", 
+            "default.wmc"),
+
+        /**
+         * Constant: THEME_SELECTOR
+         * {Boolean} whether to display the theme selector
+         * Defaults to true
+         */
+        THEME_SELECTOR: getCustomParameter("THEME_SELECTOR", 
+            true),
+
+        /**
+         * Constant: THEME_SELECTOR_THEMES
+         * {Array} the array of arrays describing the available themes
+         * Each "theme array" consists of 4 mandatory fields:
+         *   * the first field is a string identifier used internally
+         *   * the second field is the label which appears in the UI
+         *   * the third one is the path to the thumbnail
+         *   * the last one is the path to the context (WMC) file
+         *
+         * Example config : 
+         *   [
+         *      ["geor-theme-ortho", "orthophoto", "app/img/themes/ortho.png", "context/ortho.wmc"], 
+         *      ["geor-theme-forets", "forêts", "app/img/themes/forets.png", "context/forets.wmc"]
+         *   ]
+         *
+         * Defaults to []. Required if THEME_SELECTOR is true.
+         */
+        THEME_SELECTOR_THEMES: getCustomParameter("THEME_SELECTOR_THEMES", 
+            []),
+
+        /**
+         * Constant: THEME_SELECTOR_COLUMNS
+         * {Integer} the number of columns in the theme selector
+         * Defaults to 3. Required if THEME_SELECTOR is true.
+         */
+        THEME_SELECTOR_COLUMNS: getCustomParameter("THEME_SELECTOR_COLUMNS", 
+            3),
+
+        /**
+         * Constant: DEFAULT_THEME_THUMBNAIL
+         * {String} the path to a 110x60px image for the default theme (= DEFAULT_WMC)
+         * Defaults to "app/img/themes/osm.png". Required if THEME_SELECTOR is true.
+         */
+        DEFAULT_THEME_THUMBNAIL: getCustomParameter("DEFAULT_THEME_THUMBNAIL", 
+            "app/img/themes/osm.png"),  
+
+        /**
+         * Constant: DEFAULT_THEME_LABEL
+         * {String} the label for the default theme (= DEFAULT_WMC)
+         * Defaults to "initial". Required if THEME_SELECTOR is true.
+         */
+        DEFAULT_THEME_LABEL: getCustomParameter("DEFAULT_THEME_LABEL", 
+            "initial"),
 
         /**
          * Constant: DEFAULT_PRINT_FORMAT

@@ -309,6 +309,10 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "not any WFS service associated to that layer": "aucun service WFS " +
         "associé à cette couche.",
     "not any available attribute": "aucun attribut disponible.",
+    /* GEOR_themeselector.js strings */
+    "Theme: ": "Thème : ",
+    "Impossible to restore selected context": "Impossible de restaurer le thème choisi",
+    "Could not find WMC file": "Le thème spécifié n'existe pas",
     /* GEOR_toolbar.js strings */
     "m": "m",
     "hectares": "hectares",

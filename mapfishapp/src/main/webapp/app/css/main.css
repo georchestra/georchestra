@@ -328,3 +328,50 @@ div.olMapViewport {
 	font-weight: bold;
 	color: #333;
 }
+
+/* theme selector */
+.themes .x-btn-mc em {
+    text-align: left;
+}
+.themes .x-btn-mc em button {
+    font-weight: bold;
+}
+.themes .x-btn-text {
+    background: url(../img/map.png);
+}
+.theme-selector {
+    background: white;
+    font-size: 11px;
+    font-family: tahoma,arial,verdana,sans-serif;
+}
+.theme-selector .thumb {
+    background: #dddddd;
+    padding: 3px;
+}
+.theme-selector .thumb img {
+    height: 60px;
+    width: 110px;
+}
+.theme-selector .thumb-wrap {
+    float: left;
+    margin: 4px;
+    margin-right: 0;
+    padding: 5px;
+}
+.theme-selector .thumb-wrap span {
+    display: block;
+    overflow: hidden;
+    text-align: center;
+}
+
+.theme-selector .x-view-over {
+    border:1px solid #dddddd;
+    background-color: #efefef;
+    padding: 4px;
+}
+
+.theme-selector .x-view-selected {
+    background-color: #eff5fb;
+    border: 1px solid #99bbe8;
+    padding: 4px;
+}
