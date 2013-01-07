@@ -72,6 +72,29 @@ GEOR.wmcbrowser = (function() {
     };
 
     /**
+     * Method: fetchAndRestoreWMC
+     * Fetch the WMC content and restore it.
+     *
+     * Parameters:
+     * wmc - {String} the WMC URL
+     */
+    var fetchAndRestoreWMC = function(wmc) {
+        GEOR.waiter.show();
+        OpenLayers.Request.GET({
+            url: wmc,
+            success: function(response) {
+                var status = observable.fireEvent("contextselected", {
+                    wmcString: response.responseXML || response.responseText
+                });
+                if (!status) {
+                    onFailure("The provided file is not a valid OGC context");
+                }
+            },
+            failure: onFailure.createCallback("Could not find WMC file")
+        });
+    };
+
+    /**
      * Method: onDblclick
      * Called when a context is to be loaded
      *
@@ -82,21 +105,7 @@ GEOR.wmcbrowser = (function() {
     var onDblclick = function(view, nodes) {
         var record = view.getRecords(nodes)[0];
         if (record) {
-            GEOR.waiter.show();
-            // fetch WMC file:
-            OpenLayers.Request.GET({
-                url: record.get('wmc'),
-                success: function(response) {
-                    var status = observable.fireEvent("contextselected", {
-                        record: record,
-                        wmcString: response.responseXML || response.responseText
-                    });
-                    if (!status) {
-                        onFailure("The provided context is not valid.");
-                    }
-                },
-                failure: onFailure.createCallback("Could not find WMC file")
-            });
+            fetchAndRestoreWMC(record.get('wmc'));
         }
     };
 
@@ -118,26 +127,10 @@ GEOR.wmcbrowser = (function() {
                     // As said in http://extjs.com/learn/Manual:RESTful_Web_Services
                     // "Ext.form.BasicForm hopefully becomes HTTP Status Code aware!"
                     success: function(form, action) {
-                        popup.hide();
                         var o = Ext.decode(action.response.responseText);
-                        // GET WMC content
-                        GEOR.waiter.show();
-                        OpenLayers.Request.GET({
-                            url: o.filepath,
-                            success: function(response) {
-                                try {
-                                    GEOR.wmc.read(response.responseXML || response.responseText);
-                                } catch(err) {
-                                    GEOR.util.errorDialog({
-                                        msg: tr("The provided context is not valid.")
-                                    });
-                                }
-                            }
-                        });
+                        fetchAndRestoreWMC(o.filepath);
                     },
-                    failure: function(form,action) {
-                        popup.hide();
-                    },
+                    failure: onFailure.createCallback("File submission failed or invalid file"),
                     scope: this
                 });
             }
@@ -233,7 +226,7 @@ GEOR.wmcbrowser = (function() {
             closeAction: 'hide',
             plain: true,
             buttons: [{
-                text: tr("Cancel"),
+                text: tr("Close"),
                 handler: function() {
                     popup.hide();
                 }
