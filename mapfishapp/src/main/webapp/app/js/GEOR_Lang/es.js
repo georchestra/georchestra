@@ -352,6 +352,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     /* GEOR_wmcbrowser.js strings */
     //"Could not find WMC file": "Le contexte spécifié n'existe pas",
     //"... or a custom context": "... ou un contexte personnalisé",
+    //"Replace current map composition with one of these contexts:": "Remplacer la composition actuelle de la carte par l'un de ces contextes :",
     /* GEOR_wmsbrowser.js strings */
     "Queryable": "Interrogable",
     "Opaque": "Opaco",

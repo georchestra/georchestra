@@ -236,7 +236,15 @@ GEOR.wmcbrowser = (function() {
                 itemId: 'load',
                 handler: loadBtnHandler
             }],
-            items: [view, formPanel]
+            items: [{
+                xtype: 'box',
+                height: 30,
+                autoEl: {
+                    tag: 'div',
+                    cls: 'box-as-panel',
+                    html: tr("Replace current map composition with one of these contexts:"),
+                }
+            }, view, formPanel]
         });
     };
 

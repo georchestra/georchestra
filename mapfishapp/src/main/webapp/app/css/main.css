@@ -305,6 +305,12 @@ div.olMapViewport {
 	background: #FEFFFF
 }
 
+.box-as-panel {
+    font: normal 12px tahoma, arial, helvetica, sans-serif;
+    padding: 10px;
+    background: #FFFFFF;
+}
+
 /* styles for ext.dataview in layer finder */
 .x-list div.x-view-over {
 	background-color: #ddd !important;
