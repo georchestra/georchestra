@@ -614,8 +614,8 @@ GEOR.config = (function() {
          * Defaults to [["EPSG:2154", "Lambert 93"],["EPSG:4326", "WGS 84"]]
          */
         POINTER_POSITION_SRS_LIST: getCustomParameter("POINTER_POSITION_SRS_LIST",  [
-            ["EPSG:2154", "Lambert 93"],
-            ["EPSG:4326", "WGS 84"]
+            ["EPSG:4326", "WGS 84"],
+            ["EPSG:2154", "Lambert 93"]
         ]),
 
         /**
