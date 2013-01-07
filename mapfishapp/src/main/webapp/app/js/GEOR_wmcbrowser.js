@@ -146,25 +146,28 @@ GEOR.wmcbrowser = (function() {
 
     /**
      * Method: createPopup
-     * 
+     *
+     * Parameters:
+     * animateFrom - {String} Id or element from which the window
+     *  should animate while opening
+     *
      * Returns:
      * {Ext.Window} 
      */
-    var createPopup = function() {
+    var createPopup = function(animateFrom) {
         var storeData = [
-            ["geor-context-default", GEOR.config.DEFAULT_CONTEXT_LABEL, 
+            [GEOR.config.DEFAULT_CONTEXT_LABEL, 
             GEOR.config.DEFAULT_CONTEXT_THUMBNAIL, GEOR.config.DEFAULT_WMC]
         ];
         var store = new Ext.data.ArrayStore({
-            fields: ['id', 'label', 'thumbnail', 'wmc'], // TODO: check id is required
-            idIndex: 0,
+            fields: ['label', 'thumbnail', 'wmc'],
             data: storeData.concat(GEOR.config.CONTEXT_SELECTOR_CONTEXTS)
         });
         view = new Ext.DataView({
             store: store,
             tpl: new Ext.XTemplate(
                 '<tpl for=".">',
-                    '<div class="thumb-wrap" id="{id}">',
+                    '<div class="thumb-wrap">',
                     '<div class="thumb"><img src="{thumbnail}"></div>',
                     '<span>{label}</span></div>',
                 '</tpl>',
@@ -178,7 +181,8 @@ GEOR.wmcbrowser = (function() {
             cls: 'context-selector',
             listeners: {
                 "selectionchange": function() {
-                    popup.getFooterToolbar().getComponent('load').setDisabled(view.getSelectionCount() === 0);
+                    var btn = popup.getFooterToolbar().getComponent('load');
+                    btn.setDisabled(view.getSelectionCount() === 0);
                     formPanel.getForm().reset();
                 },
                 "dblclick": function(view, index, node) {
@@ -223,7 +227,7 @@ GEOR.wmcbrowser = (function() {
             },
             modal: false,
             constrainHeader: true,
-            animateTarget: GEOR.config.ANIMATE_WINDOWS && this.el,
+            animateTarget: animateFrom,
             width: 4 * 130 + 2 * 10 + 15, // 15 for scrollbar
             height: 450,
             closeAction: 'hide',
@@ -258,11 +262,13 @@ GEOR.wmcbrowser = (function() {
          * Shows the context selector window.
          */
         show: function() {
+            var target = (GEOR.config.ANIMATE_WINDOWS) ? 
+                this.el : undefined;
             if (!popup) {
                 tr = OpenLayers.i18n;
-                popup = createPopup();
+                popup = createPopup(target);
             }
-            popup.show();
+            popup.show(target);
         }
     };
 })();

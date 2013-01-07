@@ -316,40 +316,39 @@ GEOR.config = (function() {
             "default.wmc"),
 
         /**
-         * Constant: CONTEXT_SELECTOR_CONTEXTS
-         * {Array} the array of arrays describing the available CONTEXTs
-         * Each "CONTEXT array" consists of 4 mandatory fields:
-         *   * the first field is a string identifier used internally
-         *   * the second field is the label which appears in the UI
-         *   * the third one is the path to the thumbnail
-         *   * the last one is the path to the context (WMC) file
-         *
-         * Example config : 
-         *   [
-         *      ["geor-CONTEXT-ortho", "orthophoto", "app/img/CONTEXTs/ortho.png", "context/ortho.wmc"], 
-         *      ["geor-CONTEXT-forets", "forêts", "app/img/CONTEXTs/forets.png", "context/forets.wmc"]
-         *   ]
-         *
-         * Defaults to []. Required if CONTEXT_SELECTOR is true.
-         */
-        CONTEXT_SELECTOR_CONTEXTS: getCustomParameter("CONTEXT_SELECTOR_CONTEXTS", 
-            []),
-
-        /**
          * Constant: DEFAULT_CONTEXT_THUMBNAIL
-         * {String} the path to a 110x60px image for the default CONTEXT (= DEFAULT_WMC)
-         * Defaults to "app/img/CONTEXTs/osm.png". Required if CONTEXT_SELECTOR is true.
+         * {String} the path to a 110x60px image for the default context (= DEFAULT_WMC)
+         * Defaults to "app/img/contexts/osm.png".
          */
         DEFAULT_CONTEXT_THUMBNAIL: getCustomParameter("DEFAULT_CONTEXT_THUMBNAIL", 
             "app/img/contexts/osm.png"),
 
         /**
          * Constant: DEFAULT_CONTEXT_LABEL
-         * {String} the label for the default CONTEXT (= DEFAULT_WMC)
-         * Defaults to "initial". Required if CONTEXT_SELECTOR is true.
+         * {String} the label for the default context (= DEFAULT_WMC)
+         * Defaults to "initial".
          */
         DEFAULT_CONTEXT_LABEL: getCustomParameter("DEFAULT_CONTEXT_LABEL", 
             "OpenStreetMap"),
+
+        /**
+         * Constant: CONTEXT_SELECTOR_CONTEXTS
+         * {Array} the array of arrays describing the available contexts
+         * Each "context array" consists of 4 mandatory fields:
+         *   * the first field is the label which appears in the UI
+         *   * the second one is the path to the thumbnail
+         *   * the third one is the path to the context (WMC) file
+         *
+         * Example config : 
+         *   [
+         *      ["orthophoto", "app/img/CONTEXTs/ortho.png", "context/ortho.wmc"], 
+         *      ["forêts", "app/img/CONTEXTs/forets.png", "context/forets.wmc"]
+         *   ]
+         *
+         * Defaults to [].
+         */
+        CONTEXT_SELECTOR_CONTEXTS: getCustomParameter("CONTEXT_SELECTOR_CONTEXTS", 
+            []),
 
         /**
          * Constant: DEFAULT_PRINT_FORMAT

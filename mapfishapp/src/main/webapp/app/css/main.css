@@ -348,6 +348,7 @@ div.olMapViewport {
     margin: 4px;
     margin-right: 0;
     padding: 5px;
+    cursor: pointer;
 }
 .context-selector .thumb-wrap span {
     display: block;
