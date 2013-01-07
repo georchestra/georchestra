@@ -16,6 +16,7 @@
  * @include OpenLayers/Request/XMLHttpRequest.js
  * @include OpenLayers/Projection.js
  * @include GEOR_wmc.js
+ * @include GEOR_wmcbrowser.js
  * @include GEOR_config.js
  * @include GEOR_waiter.js
  * @include GEOR_util.js
@@ -57,42 +58,6 @@ GEOR.workspace = (function() {
                 formPanel.ownerCt.close();
                 var o = Ext.decode(response.responseText);
                 window.location.href = o.filepath;
-            },
-            scope: this
-        });
-    };
-
-    /**
-     * Method: loadBtnHandler
-     * Handler for the button triggering the WMC loading
-     */
-    var loadBtnHandler = function() {
-        var formPanel = this.findParentByType('form');
-        formPanel.getForm().submit({
-            url: "ws/wmc/",
-            // Beware: form submission requires a *success* parameter in json response
-            // As said in http://extjs.com/learn/Manual:RESTful_Web_Services
-            // "Ext.form.BasicForm hopefully becomes HTTP Status Code aware!"
-            success: function(form, action) {
-                formPanel.ownerCt.close();
-                var o = Ext.decode(action.response.responseText);
-                // GET WMC content
-                GEOR.waiter.show();
-                OpenLayers.Request.GET({
-                    url: o.filepath,
-                    success: function(response) {
-                        try {
-                            GEOR.wmc.read(response.responseXML || response.responseText);
-                        } catch(err) {
-                            GEOR.util.errorDialog({
-                                msg: tr("The provided context is not valid.")
-                            });
-                        }
-                    }
-                });
-            },
-            failure: function(form,action) {
-                formPanel.ownerCt.close();
             },
             scope: this
         });
@@ -159,7 +124,7 @@ GEOR.workspace = (function() {
                 xtype: 'form',
                 bodyStyle: 'padding:5px',
                 labelWidth: 80,
-                labelSeparator: ' : ',
+                labelSeparator: tr("labelSeparator"),
                 monitorValid: true,
                 buttonAlign: 'right',
                 items: [{
@@ -177,50 +142,6 @@ GEOR.workspace = (function() {
                     text: tr("Save"),
                     //id: 'geor-workspace-save',
                     handler: saveBtnHandler,
-                    formBind: true
-                }]
-            }]
-        });
-        popup.show();
-    };
-
-    /**
-     * Method: loadWMC
-     * Triggers the upload dialog and restores the context.
-     */
-    var loadWMC = function() {
-        var popup = new Ext.Window({
-            title: tr("Context restoring"),
-            layout: 'fit',
-            modal: false,
-            constrainHeader: true,
-            animateTarget: GEOR.config.ANIMATE_WINDOWS && this.el,
-            width: 400,
-            height: 120,
-            closeAction: 'close',
-            plain: true,
-            items: [{
-                xtype: 'form',
-                fileUpload: true,
-                bodyStyle: 'padding:5px',
-                labelWidth: 80,
-                monitorValid: true,
-                buttonAlign: 'right',
-                html: tr("<p>Please note that the WMC must be UTF-8 encoded</p>"),
-                items: [{
-                    xtype: 'textfield',
-                    inputType: 'file',
-                    name: 'wmc',
-                    fieldLabel: tr("File"),
-                    allowBlank: false,
-                    blankText: tr("The file is required.")
-                }],
-                buttons: [{
-                    text: tr("Cancel"),
-                    handler: cancelBtnHandler
-                },{
-                    text: tr("Load"),
-                    handler: loadBtnHandler,
                     formBind: true
                 }]
             }]
@@ -297,7 +218,8 @@ GEOR.workspace = (function() {
                     },{
                         text: tr("Load a map context"),
                         iconCls: "geor-load-map",
-                        handler: loadWMC
+                        handler: GEOR.wmcbrowser.show,
+                        scope: GEOR.wmcbrowser
                     }, '-', {
                         text: tr("Get a permalink"),
                         iconCls: "geor-permalink",

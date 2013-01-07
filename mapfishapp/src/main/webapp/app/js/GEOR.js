@@ -25,7 +25,7 @@
  * @include GEOR_mapinit.js
  * @include GEOR_print.js
  * @include GEOR_wmc.js
- * @include GEOR_themeselector.js
+ * @include GEOR_wmcbrowser.js
  * Note that GEOR_getfeatureinfo.js, GEOR_resultspanel.js, GEOR_querier.js,
  * GEOR_styler.js should be included here, but they are not required by the edit module.
  * In order to make the edit build "light", those files will be added in main.cfg and not here.
@@ -391,8 +391,8 @@ Ext.namespace("GEOR");
             });
         }
 
-        GEOR.themeselector.events.on({
-            "themeselected": function(o) {
+        GEOR.wmcbrowser.events.on({
+            "contextselected": function(o) {
                 try {
                     GEOR.wmc.read(o.wmcString, true, true);
                 } catch (err) {
@@ -400,6 +400,5 @@ Ext.namespace("GEOR");
                 }
             }
         });
-
     });
 })();

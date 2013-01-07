@@ -16,6 +16,8 @@
  * English translation file
  */
 OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
+    /* General purpose strings */
+    "labelSeparator": ": ",
     /* GEOR.js strings */
     "resultspanel.emptytext":
         "<p>Select the Info tool or build a query on a layer.<br />" +

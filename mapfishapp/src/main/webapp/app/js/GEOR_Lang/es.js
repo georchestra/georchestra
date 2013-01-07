@@ -29,6 +29,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "The provided context is not valid.": "El contexto proveído no es valido.",
     "Server": "Servidor",
     "Close": "Cerrar",
+    "labelSeparator": " : ",
     /* GEOR.js strings */
     "Cities": "Ciudades",
     "Recentering on GeoNames cities":
@@ -308,10 +309,6 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "not any WFS service associated to that layer": "ningún servicio WFS " +
         "asociado a esta capa.",
     "not any available attribute": "ningún atributo disponible.",
-    /* GEOR_themeselector.js strings */
-    //"Theme: ": "Thème : ",
-    //"Impossible to restore selected context": "Impossible de restaurer le thème choisi",
-    //"Could not find WMC file": "Le thème spécifié n'existe pas",
     /* GEOR_toolbar.js strings */
     "m": "m",
     "hectares": "hectáreas",
@@ -350,6 +347,9 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "wmc.bad.srs": "El archivo .wmc no " +
         "puede ser restaurado. Su sistema de referencia espacial es " +
         "diferente del sistema del mapa actual.",
+    /* GEOR_wmcbrowser.js strings */
+    //"Could not find WMC file": "Le thème spécifié n'existe pas",
+    //"... or a custom context": "... ou un contexte personnalisé",
     /* GEOR_wmsbrowser.js strings */
     "Queryable": "Interrogable",
     "Opaque": "Opaco",

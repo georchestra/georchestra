@@ -30,6 +30,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
         "valide.",
     "Server": "Serveur",
     "Close": "Fermer",
+    "labelSeparator": " : ",
     /* GEOR.js strings */
     "Cities": "Localités",
     "Recentering on GeoNames cities": "Recentrage sur localités<br />de la base GeoNames",
@@ -309,10 +310,6 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "not any WFS service associated to that layer": "aucun service WFS " +
         "associé à cette couche.",
     "not any available attribute": "aucun attribut disponible.",
-    /* GEOR_themeselector.js strings */
-    "Theme: ": "Thème : ",
-    "Impossible to restore selected context": "Impossible de restaurer le thème choisi",
-    "Could not find WMC file": "Le thème spécifié n'existe pas",
     /* GEOR_toolbar.js strings */
     "m": "m",
     "hectares": "hectares",
@@ -352,6 +349,9 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "wmc.bad.srs": "Le fichier .wmc ne " +
         "peut pas être restauré. Son système de référence spatiale est " +
         "différent de celui de la carte en cours.",
+    /* GEOR_wmcbrowser.js strings */
+    "Could not find WMC file": "Le thème spécifié n'existe pas",
+    "... or a custom context": "... ou un contexte personnalisé",
     /* GEOR_wmsbrowser.js strings */
     "Queryable": "Interrogeable",
     "Opaque": "Opaque",
