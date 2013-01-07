@@ -341,8 +341,8 @@ GEOR.config = (function() {
          *
          * Example config : 
          *   [
-         *      ["orthophoto", "app/img/CONTEXTs/ortho.png", "context/ortho.wmc"], 
-         *      ["forêts", "app/img/CONTEXTs/forets.png", "context/forets.wmc"]
+         *      ["orthophoto", "app/img/contexts/ortho.png", "context/ortho.wmc"],
+         *      ["forêts", "app/img/contexts/forets.png", "context/forets.wmc"]
          *   ]
          *
          * Defaults to [].
