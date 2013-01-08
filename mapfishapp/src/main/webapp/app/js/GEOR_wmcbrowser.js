@@ -149,23 +149,29 @@ GEOR.wmcbrowser = (function() {
      */
     var createPopup = function(animateFrom) {
         var storeData = [
-            [GEOR.config.DEFAULT_CONTEXT_LABEL, 
-            GEOR.config.DEFAULT_CONTEXT_THUMBNAIL, GEOR.config.DEFAULT_WMC]
+            [GEOR.config.DEFAULT_CONTEXT_LABEL, GEOR.config.DEFAULT_CONTEXT_THUMBNAIL,
+            GEOR.config.DEFAULT_WMC, GEOR.config.DEFAULT_CONTEXT_TOOLTIP]
         ];
         var store = new Ext.data.ArrayStore({
-            fields: ['label', 'thumbnail', 'wmc'],
+            fields: ['label', 'thumbnail', 'wmc', 'tooltip'],
             data: storeData.concat(GEOR.config.CONTEXT_SELECTOR_CONTEXTS)
         });
         view = new Ext.DataView({
             store: store,
             tpl: new Ext.XTemplate(
                 '<tpl for=".">',
-                    '<div class="thumb-wrap">',
-                    '<div class="thumb"><img src="{thumbnail}"></div>',
+                    '<div class="thumb-wrap" ext:qtip="{[this.tr(values)]}">',
+                    '<div class="thumb"><img src="{thumbnail}" ext:qtip="{[this.tr(values)]}"></div>',
                     '<span>{label}</span></div>',
                 '</tpl>',
-                '<div class="x-clear"></div>'
-            ),
+                '<div class="x-clear"></div>', 
+            {
+                compiled: true,
+                disableFormats: true,
+                tr: function(v){
+                    return tr(v.tooltip);
+                },
+            }),
             flex: 1,
             autoScroll: true,
             overClass: 'x-view-over',

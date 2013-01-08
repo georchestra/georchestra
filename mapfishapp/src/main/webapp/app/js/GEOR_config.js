@@ -332,17 +332,26 @@ GEOR.config = (function() {
             "OpenStreetMap"),
 
         /**
+         * Constant: DEFAULT_CONTEXT_TOOLTIP
+         * {String} the tooltip for the default context (= DEFAULT_WMC)
+         * Defaults to "A unique OSM layer", which is an I18n key in lang dictionaries.
+         */
+        DEFAULT_CONTEXT_TOOLTIP: getCustomParameter("DEFAULT_CONTEXT_TOOLTIP", 
+            "A unique OSM layer"),
+
+        /**
          * Constant: CONTEXT_SELECTOR_CONTEXTS
          * {Array} the array of arrays describing the available contexts
          * Each "context array" consists of 4 mandatory fields:
          *   * the first field is the label which appears in the UI
          *   * the second one is the path to the thumbnail
          *   * the third one is the path to the context (WMC) file
+         *   * the last one is a comment which will be shown on thumb hovering
          *
          * Example config : 
          *   [
-         *      ["orthophoto", "app/img/contexts/ortho.png", "context/ortho.wmc"],
-         *      ["forêts", "app/img/contexts/forets.png", "context/forets.wmc"]
+         *      ["orthophoto", "app/img/contexts/ortho.png", "context/ortho.wmc", "Orthophoto 2009"],
+         *      ["forêts", "app/img/contexts/forets.png", "context/forets.wmc", "Les 3 couches forêts sur fond OSM"]
          *   ]
          *
          * Defaults to [].
