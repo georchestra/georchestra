@@ -649,7 +649,7 @@ GEOR.config = (function() {
         /**
          * Constant: POINTER_POSITION_SRS_LIST
          * {Array} The cursor position will be displayed using these SRS.
-         * Defaults to [["EPSG:2154", "Lambert 93"],["EPSG:4326", "WGS 84"]]
+         * Defaults to [["EPSG:4326", "WGS 84"],["EPSG:2154", "Lambert 93"]]
          */
         POINTER_POSITION_SRS_LIST: getCustomParameter("POINTER_POSITION_SRS_LIST",  [
             ["EPSG:4326", "WGS 84"],
