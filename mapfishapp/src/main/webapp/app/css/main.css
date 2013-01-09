@@ -305,6 +305,12 @@ div.olMapViewport {
 	background: #FEFFFF
 }
 
+.box-as-panel {
+    font: normal 12px tahoma, arial, helvetica, sans-serif;
+    padding: 10px;
+    background: #FFFFFF;
+}
+
 /* styles for ext.dataview in layer finder */
 .x-list div.x-view-over {
 	background-color: #ddd !important;
@@ -327,4 +333,48 @@ div.olMapViewport {
 .geor-tree-node a.x-tree-node-anchor span {
 	font-weight: bold;
 	color: #333;
+}
+
+/* context selector */
+.context-selector {
+    background: white;
+    font-size: 11px;
+    font-family: tahoma,arial,verdana,sans-serif;
+}
+.context-selector .thumb {
+    background: #dddddd;
+    padding: 3px;
+}
+.context-selector .thumb img {
+    height: 60px;
+    width: 110px;
+}
+.context-selector .thumb-wrap {
+    float: left;
+    margin: 4px;
+    margin-right: 0;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.context-selector .thumb-wrap span {
+    display: block;
+    overflow: hidden;
+    text-align: center;
+}
+
+.context-selector .x-view-over {
+    border:1px solid #dddddd;
+    background-color: #efefef;
+    padding: 4px;
+}
+
+.context-selector .x-view-selected {
+    background-color: #eff5fb;
+    border: 1px solid #99bbe8;
+    padding: 4px;
+}
+
+.context-selector .default {
+    font-weight: bold;
 }

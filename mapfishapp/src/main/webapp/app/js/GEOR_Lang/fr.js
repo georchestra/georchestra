@@ -26,10 +26,10 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Layer": "Couche",
     "Description": "Description",
     "Error": "Erreur",
-    "The provided context is not valid.": "Le contexte fourni n'est pas " +
-        "valide.",
     "Server": "Serveur",
     "Close": "Fermer",
+    "labelSeparator": " : ",
+    "File submission failed or invalid file": "L'envoi du fichier a échoué - le fichier est peut-être non valide",
     /* GEOR.js strings */
     "Cities": "Localités",
     "Recentering on GeoNames cities": "Recentrage sur localités<br />de la base GeoNames",
@@ -198,6 +198,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "NB layers imported": "${NB} couches importées",
     "One layer imported": "Une couche importée",
     "Not any layer imported": "Aucune couche importée",
+    "The provided context is not valid": "Le contexte fourni n'est pas valide",
     "The default context is not defined (and it is a BIG problem!)":
         "Le contexte par défaut n'est pas défini " +
         "(et ce n'est pas du tout normal !)",
@@ -345,9 +346,17 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
         "serveur injoignable, trop de données, etc.",
     "WFS server": "Serveur WFS",
     /* GEOR_wmc.js strings */
+    "The provided file is not a valid OGC context": "Le fichier fourni n'est pas un contexte OGC valide",
     "wmc.bad.srs": "Le fichier .wmc ne " +
         "peut pas être restauré. Son système de référence spatiale est " +
         "différent de celui de la carte en cours.",
+    /* GEOR_wmcbrowser.js strings */
+    "Could not find WMC file": "Le contexte spécifié n'existe pas",
+    "... or a custom context": "... ou un contexte personnalisé",
+    "Replace current map composition with one of these contexts:": "Remplacer la composition actuelle de la carte par l'un de ces contextes :",
+    "A unique OSM layer": "Une unique couche OpenStreetMap",
+    "default viewer context": "contexte par défaut",
+    "(default)": "<br/>(contexte par défaut actuel)",
     /* GEOR_wmsbrowser.js strings */
     "Queryable": "Interrogeable",
     "Opaque": "Opaque",

@@ -26,9 +26,10 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Layer": "Capa",
     "Description": "Descripción",
     "Error": "Error",
-    "The provided context is not valid.": "El contexto proveído no es valido.",
     "Server": "Servidor",
     "Close": "Cerrar",
+    "labelSeparator": " : ",
+    //"File submission failed or invalid file": "L'envoi du fichier a échoué - le fichier est peut-être non valide",
     /* GEOR.js strings */
     "Cities": "Ciudades",
     "Recentering on GeoNames cities":
@@ -197,6 +198,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "NB layers imported": "${NB} capas importadas",
     "One layer imported": "Una capa importada",
     "Not any layer imported": "Ninguna capa importada",
+    "The provided context is not valid": "El contexto proveído no es valido",
     "The default context is not defined (and it is a BIG problem!)":
         "El contexto por omisión no está definido ",
     /* GEOR_mappanel.js strings */
@@ -343,9 +345,17 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
         "servidor inalcanzable, etc.",
     "WFS server": "Servicio WFS",
     /* GEOR_wmc.js strings */
+    //"The provided file is not a valid OGC context": "Le fichier fourni n'est pas un contexte OGC valide",
     "wmc.bad.srs": "El archivo .wmc no " +
         "puede ser restaurado. Su sistema de referencia espacial es " +
         "diferente del sistema del mapa actual.",
+    /* GEOR_wmcbrowser.js strings */
+    //"Could not find WMC file": "Le contexte spécifié n'existe pas",
+    //"... or a custom context": "... ou un contexte personnalisé",
+    //"Replace current map composition with one of these contexts:": "Remplacer la composition actuelle de la carte par l'un de ces contextes :",
+    //"A unique OSM layer": "Une unique couche OpenStreetMap",
+    //"default viewer context": "contexte par défaut",
+    //"(default)": "<br/>(contexte par défaut actuel)",
     /* GEOR_wmsbrowser.js strings */
     "Queryable": "Interrogable",
     "Opaque": "Opaco",

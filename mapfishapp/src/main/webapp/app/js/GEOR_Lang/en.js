@@ -16,6 +16,8 @@
  * English translation file
  */
 OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
+    /* General purpose strings */
+    "labelSeparator": ": ",
     /* GEOR.js strings */
     "resultspanel.emptytext":
         "<p>Select the Info tool or build a query on a layer.<br />" +
@@ -104,6 +106,8 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
         "The .wmc file cannot be restored. Its spatial " +
         "reference system is different from the system of " +
         "the current map",
+    /* GEOR_wmcbrowser.js strings */
+    "(default)": "<br/>(current default context)",
     /* GEOR_wmsbrowser.js strings */
     "The server is publishing NB layers with an incompatible projection":
         "The server is publishing ${NB} layers with an incompatible projection",

@@ -217,8 +217,28 @@ GEOR.config = (function() {
             GEOR.custom[paramName] : defaultValue;
     };
 
-
     return {
+
+        /**
+         * Method: DEFAULT_WMC
+         * runtime method to get the current default WMC
+         */
+        DEFAULT_WMC: function() {
+            if (localStorage && 
+                localStorage.getItem("default_context") !== null) {
+                return localStorage.getItem("default_context");
+            }
+            if (GEOR.config.CONTEXTS && 
+                GEOR.config.CONTEXTS[0] && 
+                GEOR.config.CONTEXTS[0][2]) {
+                return GEOR.config.CONTEXTS[0][2];
+            } else {
+                alert("Administrator: "+
+                    "GEOR.config.CONTEXTS is not configured as expected !");
+            }
+            // should not happen:
+            return "default.wmc";
+        },
 
         /**
          * Method: _getBaseURL
@@ -307,12 +327,30 @@ GEOR.config = (function() {
 
         /***** Beginning of config options which can be overriden by GEOR.custom *****/
 
+
         /**
-         * Constant: DEFAULT_WMC
-         * The path to the application's default WMC.
-         * Defaults to "default.wmc"
+         * Constant: CONTEXTS
+         * {Array} the array of arrays describing the available contexts
+         *
+         * Each "context array" consists of 4 mandatory fields:
+         *   * the first field is the label which appears in the UI
+         *   * the second one is the path to the thumbnail
+         *   * the third one is the path to the context (WMC) file
+         *   * the last one is a comment which will be shown on thumbnail hovering
+         *
+         * Example config : 
+         *   [
+         *      ["OpenStreetMap", "app/img/contexts/osm.png", "default.wmc", "A unique OSM layer"],
+         *      ["Orthophoto", "app/img/contexts/ortho.png", "context/ortho.wmc", "Orthophoto 2009"],
+         *      ["Forêts", "app/img/contexts/forets.png", "context/forets.wmc", "Les 3 couches forêts sur fond OSM"]
+         *   ]
+         *
+         * Defaults to ["OpenStreetMap", "app/img/contexts/osm.png", "default.wmc", "A unique OSM layer"]
+         * Should *not* be empty !
          */
-        DEFAULT_WMC: getCustomParameter("DEFAULT_WMC", "default.wmc"),
+        CONTEXTS: getCustomParameter("CONTEXTS", [
+            ["OpenStreetMap", "app/img/contexts/osm.png", "default.wmc", "A unique OSM layer"]
+        ]),
 
         /**
          * Constant: DEFAULT_PRINT_FORMAT
