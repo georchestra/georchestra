@@ -184,7 +184,7 @@ GEOR.print = (function() {
                                 title: tr("Layer unavailable for printing"),
                                 msg: [
                                     tr("The NAME layer cannot be printed.", {'name': layer.name}),
-                                    tr("Contact platorm administrator")
+                                    tr("Contact platform administrator")
                                 ].join('<br/>')
                             });
                         }
@@ -200,7 +200,7 @@ GEOR.print = (function() {
                 title: tr("Unable to print"),
                 msg: [
                     tr("The print server is currently unreachable"),
-                    tr("Contact platorm administrator")
+                    tr("Contact platform administrator")
                 ].join('<br/>')
             });
             return;
@@ -365,7 +365,7 @@ GEOR.print = (function() {
 
         if (!mask) {
             mask = new Ext.LoadMask(win.bwrap.dom, {
-                msg:tr("Printing...")
+                msg: tr("Printing...")
             });
         }
     };
