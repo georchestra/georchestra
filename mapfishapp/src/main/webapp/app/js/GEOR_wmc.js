@@ -200,6 +200,13 @@ GEOR.wmc = (function() {
             var newContext = wmcFormat.read(wmcString, {}); // get context from wmc
                                                          // using non-API feature
 
+            if (newContext.layersContext === undefined) {
+                GEOR.util.errorDialog({
+                    msg: tr("The provided file is not a valid OGC context")
+                });
+                return;
+            }
+
             if(map.getProjection() && (newContext.projection !== map.getProjection())) {
                 // bounding box from wmc does not have the same projection system
                 // as the current map

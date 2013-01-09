@@ -226,7 +226,7 @@ GEOR.print = (function() {
             // The form with fields controlling the print output
             var formPanel = new Ext.form.FormPanel({
                 bodyStyle: "padding:5px",
-                labelSeparator: ' : ',
+                labelSeparator: tr("labelSeparator"),
                 items: [{
                         xtype: 'textfield',
                         fieldLabel: tr("Title"),
