@@ -354,6 +354,8 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     //"... or a custom context": "... ou un contexte personnalisé",
     //"Replace current map composition with one of these contexts:": "Remplacer la composition actuelle de la carte par l'un de ces contextes :",
     //"A unique OSM layer": "Une unique couche OpenStreetMap",
+    //"default viewer context": "contexte par défaut",
+    //"(default)": "<br/>(contexte par défaut actuel)",
     /* GEOR_wmsbrowser.js strings */
     "Queryable": "Interrogable",
     "Opaque": "Opaco",

@@ -94,6 +94,7 @@ Ext.namespace("GEOR");
         var map = layerStore.map;
 
         GEOR.wmc.init(layerStore);
+        GEOR.wmcbrowser.init();
         if (GEOR.print) {
             GEOR.print.init(layerStore);
         }

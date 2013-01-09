@@ -356,6 +356,7 @@ div.olMapViewport {
     padding: 5px;
     cursor: pointer;
 }
+
 .context-selector .thumb-wrap span {
     display: block;
     overflow: hidden;
@@ -372,4 +373,8 @@ div.olMapViewport {
     background-color: #eff5fb;
     border: 1px solid #99bbe8;
     padding: 4px;
+}
+
+.context-selector .default {
+    font-weight: bold;
 }

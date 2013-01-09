@@ -386,17 +386,12 @@ GEOR.mapinit = (function() {
 
     /**
      * Method: loadDefaultWMC
-     * Load the default WMC
+     * Loads the default WMC
      *
      */
     var loadDefaultWMC = function() {
         GEOR.waiter.hide();
-        if (GEOR.config.DEFAULT_WMC) {
-            updateStoreFromWMC(GEOR.config.DEFAULT_WMC);
-        } else {
-            // this should never happen:
-            alert(tr("The default context is not defined (and it is a BIG problem!)"));
-        }
+        updateStoreFromWMC(GEOR.config.DEFAULT_WMC());
     };
 
     return {
@@ -447,7 +442,7 @@ GEOR.mapinit = (function() {
                 // this is so that the map object and fake base layer are
                 // properly configured when adding the other layers
                 // to the map
-                updateStoreFromWMC(GEOR.config.DEFAULT_WMC, {
+                updateStoreFromWMC(GEOR.config.DEFAULT_WMC(), {
                     success: function() {
                         loadLayers(initState);
                     }

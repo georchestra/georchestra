@@ -148,19 +148,16 @@ GEOR.wmcbrowser = (function() {
      * {Ext.Window} 
      */
     var createPopup = function(animateFrom) {
-        var storeData = [
-            [GEOR.config.DEFAULT_CONTEXT_LABEL, GEOR.config.DEFAULT_CONTEXT_THUMBNAIL,
-            GEOR.config.DEFAULT_WMC, GEOR.config.DEFAULT_CONTEXT_TOOLTIP]
-        ];
+        var storeData = GEOR.config.CONTEXTS.slice(0); // array cloning
         var store = new Ext.data.ArrayStore({
             fields: ['label', 'thumbnail', 'wmc', 'tooltip'],
-            data: storeData.concat(GEOR.config.CONTEXT_SELECTOR_CONTEXTS)
+            data: storeData
         });
         view = new Ext.DataView({
             store: store,
             tpl: new Ext.XTemplate(
                 '<tpl for=".">',
-                    '<div class="thumb-wrap" ext:qtip="{[this.tr(values)]}">',
+                    '<div class="thumb-wrap {[this.isDefault(values)]}" ext:qtip="{[this.tr(values)]}">',
                     '<div class="thumb"><img src="{thumbnail}" ext:qtip="{[this.tr(values)]}"></div>',
                     '<span>{label}</span></div>',
                 '</tpl>',
@@ -168,9 +165,18 @@ GEOR.wmcbrowser = (function() {
             {
                 compiled: true,
                 disableFormats: true,
-                tr: function(v){
-                    return tr(v.tooltip);
+                tr: function(v) {
+                    var d = this.isDefault(v),
+                        out = tr(v.tooltip);
+                    if (d !== "") {
+                        out += " " + tr("(" + d + ")");
+                    }
+                    return out;
                 },
+                isDefault: function(v) {
+                    return (v.wmc === GEOR.config.DEFAULT_WMC()) ? 
+                        "default" : "";
+                }
             }),
             flex: 1,
             autoScroll: true,
@@ -180,8 +186,24 @@ GEOR.wmcbrowser = (function() {
             cls: 'context-selector',
             listeners: {
                 "selectionchange": function() {
-                    var btn = popup.getFooterToolbar().getComponent('load');
-                    btn.setDisabled(view.getSelectionCount() === 0);
+                    var fbar = popup.getFooterToolbar(),
+                        btn = fbar.getComponent('load'),
+                        cbx = fbar.getComponent('cbx'),
+                        viewHasSelection = view.getSelectionCount() === 1,
+                        cbxChecked;
+
+                    btn.setDisabled(!viewHasSelection);
+                    if (viewHasSelection) {
+                        cbxChecked = view.getSelectedRecords()[0].get('wmc') === 
+                            localStorage.getItem("default_context");
+                        cbx.setValue(cbxChecked);
+                        cbx.setDisabled(!localStorage || 
+                            (localStorage && !viewHasSelection) || 
+                            (localStorage && viewHasSelection && cbxChecked)
+                        );
+                    } else {
+                        cbx.setDisabled(true);
+                    }
                     formPanel.getForm().reset();
                 },
                 "dblclick": function(view, index, node) {
@@ -208,7 +230,12 @@ GEOR.wmcbrowser = (function() {
             listeners: {
                 "clientvalidation": function(form, valid) {
                     if (valid) {
-                        popup.getFooterToolbar().getComponent('load').enable();
+                        var fbar = popup.getFooterToolbar(),
+                            btn = fbar.getComponent('load'),
+                            cbx = fbar.getComponent('cbx');
+
+                        btn.enable();
+                        cbx.disable();
                         // we suppress event to prevent retroaction on this field
                         view.clearSelections(true);
                     }
@@ -231,7 +258,31 @@ GEOR.wmcbrowser = (function() {
             height: 450,
             closeAction: 'hide',
             plain: true,
-            buttons: [{
+            buttonAlign: 'left',
+            fbar: [{
+                xtype: 'checkbox',
+                itemId: 'cbx',
+                disabled: true,
+                boxLabel: tr("default viewer context"),
+                listeners: {
+                    "check": function(cbx, checked) {
+                        // disable on check
+                        cbx.setDisabled(checked);
+                    }
+                },
+                handler: function(cbx, checked) {
+                    if (checked) {
+                        // set the currently selected context as default one
+                        var record = view.getSelectedRecords()[0];
+                        localStorage &&
+                            localStorage.setItem("default_context", record.get("wmc"));
+                        // to apply the "default" CSS class to the correct node:
+                        view.refresh();
+                        // keep selection after refresh:
+                        view.select(record);
+                    }
+                }
+            },'->', {
                 text: tr("Close"),
                 handler: function() {
                     popup.hide();
@@ -263,6 +314,16 @@ GEOR.wmcbrowser = (function() {
          * Observable object
          */
         events: observable,
+
+        /**
+         * APIMethod: init
+         * Initialize this module
+         */
+        init: function() {
+            if (localStorage && localStorage.getItem("default_context") === null) {
+                localStorage.setItem("default_context", GEOR.config.DEFAULT_WMC());
+            }
+        },
 
         /**
          * APIMethod: show

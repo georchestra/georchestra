@@ -106,6 +106,8 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
         "The .wmc file cannot be restored. Its spatial " +
         "reference system is different from the system of " +
         "the current map",
+    /* GEOR_wmcbrowser.js strings */
+    "(default)": "<br/>(current default context)",
     /* GEOR_wmsbrowser.js strings */
     "The server is publishing NB layers with an incompatible projection":
         "The server is publishing ${NB} layers with an incompatible projection",
