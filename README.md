@@ -5,7 +5,7 @@ geOrchestra is a complete **Spatial Data Infrastructure** solution.
 
 It features a **metadata catalog** (GeoNetwork), an **OGC server** (GeoServer), an **advanced viewer**, an **extractor** and **many more** (security and auth system based on proxy/CAS/LDAP, analytics, admin UIs, ...)
 
-More information in the modules README :
+More information in the modules README:
  * [viewer](https://github.com/georchestra/georchestra/blob/master/mapfishapp/README.md) (aka mapfishapp)
  * [extractor](https://github.com/georchestra/georchestra/blob/master/extractorapp/README.md) (aka extractorapp)
  * [simple catalog](https://github.com/georchestra/georchestra/blob/master/catalogapp/README.md) (aka catalogapp)
@@ -18,13 +18,13 @@ More information in the modules README :
 How to build ?
 ==============
 
-First, install the required packages : 
+First, install the required packages: 
 
     sudo apt-get install ant openjdk-6-jdk
 
 (Note: GeoServer is known to perform better with Oracle JDK)
 
-Then :
+Then:
 
     git clone --recursive https://github.com/georchestra/georchestra.git
     cd georchestra
