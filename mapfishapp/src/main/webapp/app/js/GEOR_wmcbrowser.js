@@ -96,14 +96,15 @@ GEOR.wmcbrowser = (function() {
 
     /**
      * Method: onDblclick
-     * Called when a context is to be loaded
+     * Callback on view node double clicked
      *
      * Parameters:
      * view - {Ext.DataView}
+     * index - {Integer} not used internally
      * nodes - {Array}
      */
-    var onDblclick = function(view, nodes) {
-        var record = view.getRecords(nodes)[0];
+    var onDblclick = function(view, index, node) {
+        var record = view.getRecord(node);
         if (record) {
             fetchAndRestoreWMC(record.get('wmc'));
         }
@@ -117,7 +118,7 @@ GEOR.wmcbrowser = (function() {
         var form;
         // we need to check whether to load from view or from form
         if (view.getSelectionCount() === 1) {
-            onDblclick(view, view.getSelectedNodes());
+            onDblclick(view, null, view.getSelectedNodes()[0]);
         } else {
             form = formPanel.getForm();
             if (form.isValid()) {
@@ -134,6 +135,80 @@ GEOR.wmcbrowser = (function() {
                     scope: this
                 });
             }
+        }
+    };
+
+    /**
+     * Method: onViewSelectionChange
+     * Callback on DataView selectionchange event
+     *
+     * Parameters:
+     * view - {Ext.DataView}
+     * selections - {Array} array of selected nodes
+     */
+    var onViewSelectionChange = function(view, selections) {
+        var fbar = popup.getFooterToolbar(),
+            btn = fbar.getComponent('load'),
+            cbx = fbar.getComponent('cbx'),
+            viewHasSelection = selections.length === 1,
+            cbxChecked;
+
+        btn.setDisabled(!viewHasSelection);
+        if (viewHasSelection) {
+            cbxChecked = view.getSelectedRecords()[0].get('wmc') === 
+                localStorage.getItem("default_context");
+            cbx.setValue(cbxChecked);
+            cbx.setDisabled(!localStorage || 
+                (localStorage && !viewHasSelection) || 
+                (localStorage && viewHasSelection && cbxChecked)
+            );
+        } else {
+            cbx.setDisabled(true);
+        }
+        formPanel.getForm().reset();
+    };
+
+    /**
+     * Method: onUploadFormValidation
+     * Callback on upload form validation event
+     *
+     * Parameters:
+     * form - {Ext.form.FormPanel}
+     * valid - {Boolean} validity of form
+     */
+    var onUploadFormValidation = function(form, valid) {
+        if (valid) {
+            var fbar = popup.getFooterToolbar(),
+                btn = fbar.getComponent('load'),
+                cbx = fbar.getComponent('cbx');
+
+            btn.enable();
+            cbx.disable();
+            // we suppress event to prevent retroaction on this field
+            view.clearSelections(true);
+        }
+    };
+
+    /**
+     * Method: onCbxCheckChange
+     * Callback on remember checkbox check event
+     *
+     * Parameters:
+     * cbx - {Ext.form.Checkbox}
+     * checked - {Boolean}
+     */
+    var onCbxCheckChange = function(cbx, checked) {
+        // disable on check
+        cbx.setDisabled(checked);
+        if (checked) {
+            // set the currently selected context as default one
+            var record = view.getSelectedRecords()[0];
+            localStorage &&
+                localStorage.setItem("default_context", record.get("wmc"));
+            // to apply the "default" CSS class to the correct node:
+            view.refresh();
+            // keep selection after refresh:
+            view.select(record);
         }
     };
 
@@ -185,30 +260,8 @@ GEOR.wmcbrowser = (function() {
             singleSelect: true,
             cls: 'context-selector',
             listeners: {
-                "selectionchange": function() {
-                    var fbar = popup.getFooterToolbar(),
-                        btn = fbar.getComponent('load'),
-                        cbx = fbar.getComponent('cbx'),
-                        viewHasSelection = view.getSelectionCount() === 1,
-                        cbxChecked;
-
-                    btn.setDisabled(!viewHasSelection);
-                    if (viewHasSelection) {
-                        cbxChecked = view.getSelectedRecords()[0].get('wmc') === 
-                            localStorage.getItem("default_context");
-                        cbx.setValue(cbxChecked);
-                        cbx.setDisabled(!localStorage || 
-                            (localStorage && !viewHasSelection) || 
-                            (localStorage && viewHasSelection && cbxChecked)
-                        );
-                    } else {
-                        cbx.setDisabled(true);
-                    }
-                    formPanel.getForm().reset();
-                },
-                "dblclick": function(view, index, node) {
-                    onDblclick(view, [node]);
-                }
+                "selectionchange": onViewSelectionChange,
+                "dblclick": onDblclick
             }
         });
         formPanel = new Ext.form.FormPanel({
@@ -228,18 +281,7 @@ GEOR.wmcbrowser = (function() {
                 blankText: tr("The file is required.")
             }],
             listeners: {
-                "clientvalidation": function(form, valid) {
-                    if (valid) {
-                        var fbar = popup.getFooterToolbar(),
-                            btn = fbar.getComponent('load'),
-                            cbx = fbar.getComponent('cbx');
-
-                        btn.enable();
-                        cbx.disable();
-                        // we suppress event to prevent retroaction on this field
-                        view.clearSelections(true);
-                    }
-                }
+                "clientvalidation": onUploadFormValidation
             }
         });
         return new Ext.Window({
@@ -265,22 +307,7 @@ GEOR.wmcbrowser = (function() {
                 disabled: true,
                 boxLabel: tr("default viewer context"),
                 listeners: {
-                    "check": function(cbx, checked) {
-                        // disable on check
-                        cbx.setDisabled(checked);
-                    }
-                },
-                handler: function(cbx, checked) {
-                    if (checked) {
-                        // set the currently selected context as default one
-                        var record = view.getSelectedRecords()[0];
-                        localStorage &&
-                            localStorage.setItem("default_context", record.get("wmc"));
-                        // to apply the "default" CSS class to the correct node:
-                        view.refresh();
-                        // keep selection after refresh:
-                        view.select(record);
-                    }
+                    "check": onCbxCheckChange
                 }
             },'->', {
                 text: tr("Close"),
