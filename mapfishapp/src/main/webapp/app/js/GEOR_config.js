@@ -528,7 +528,7 @@ GEOR.config = (function() {
              * "wmsc_url": undefined,
              */
             "http://osm.geobretagne.fr/service/wms":
-                "http://maps.qualitystreetmap.org/geob_wms",
+                "http://geobretagne.fr/osm-google",
             "http://geobretagne.fr/geoserver/gwc/service/wms":
                 undefined // no trailing comma
         }),
@@ -659,10 +659,11 @@ GEOR.config = (function() {
         /**
          * Constant: PROJ4JS_STRINGS
          * {Object} The list of supported SRS with their definitions.
-         * Defaults to "EPSG:2154" & "EPSG:900913" being defined
+         * Defaults to "EPSG:4326", "EPSG:2154" & "EPSG:900913" being defined
          * Note that "EPSG:900913" is required if OSM_AS_OVMAP is set to true
          */
         PROJ4JS_STRINGS: getCustomParameter("PROJ4JS_STRINGS", {
+            "EPSG:4326": "+title=WGS 84, +proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs",
             "EPSG:2154": "+title=RGF-93/Lambert 93, +proj=lcc +lat_1=49 +lat_2=44 +lat_0=46.5 +lon_0=3 +x_0=700000 +y_0=6600000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs",
             "EPSG:900913": "+title=Web Spherical Mercator, +proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs"
         }),
@@ -690,12 +691,19 @@ GEOR.config = (function() {
 
         /**
          * Constant: GEONAMES_FILTERS
-         * {Object} Describes the geonames options.
-         * Defaults to France/Bretagne/populated places
+         * {Object} Describes the geonames search options for the searchJSON web service.
+         * (documentation here: http://www.geonames.org/export/geonames-search.html)
+         *
+         * Defaults to France/populated places
+         *
+         * Note that it is possible to restrict search to an admin area
+         * by specifying either an adminCode1 or adminCode2 or adminCode3
+         * See http://download.geonames.org/export/dump/admin1CodesASCII.txt for adminCode1
+         * Aquitaine matches '97' while Bretagne (Brittany) matches 'A2'
          */
         GEONAMES_FILTERS: getCustomParameter("GEONAMES_FILTERS", {
             country: 'FR',         // France
-            adminCode1: 'A2',      // Bretagne
+            //adminCode1: '97',
             style: 'short',        // verbosity of results
             lang: 'fr',
             featureClass: 'P',     // class category: populated places
