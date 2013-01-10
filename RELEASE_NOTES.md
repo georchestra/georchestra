@@ -8,6 +8,7 @@ New features:
  * mapfishapp: switchable pointer coordinates SRS, see https://github.com/georchestra/georchestra/pull/25
  * mapfishapp: layers drag'n drop in layer manager, see http://applis-bretagne.fr/redmine/issues/1959
  * mapfishapp: OGC context switcher, see https://github.com/georchestra/georchestra/pull/26
+ * mapfishapp: print layouts ACL, see https://github.com/georchestra/georchestra/pull/30
 
 Enhancements:
  * mapfishapp: more visible layer names, see https://github.com/georchestra/georchestra/pull/22
@@ -19,5 +20,7 @@ Bug fixes:
 
 
 UPGRADING:
- * MAP_POS_SRS1 and MAP_POS_SRS2 options have been removed from GEOR.config / GEOR.custom, and replaced with POINTER_POSITION_SRS_LIST - see GEOR_config.js for more information
- * DEFAULT_WMC option has been removed from GEOR.config / GEOR.custom, and replaced with CONTEXTS - see GEOR_config.js for more information
+ * mapfishapp GEOR.config / GEOR.custom - see GEOR_config.js for more information:
+    * MAP_POS_SRS1 and MAP_POS_SRS2 options have been replaced with POINTER_POSITION_SRS_LIST
+    * DEFAULT_WMC option has been replaced with CONTEXTS
+    * PRINT_LAYOUTS_ACL allows to fine-tune available printing layouts based on user roles
