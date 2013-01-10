@@ -82,8 +82,7 @@ Ext.extend(GEOR.CustomCSWRecordsReader, Ext.data.DataReader, {
 
                     // multiple WMS can be found in one csw:record
                     Ext.each(r.get('URI'), function (item) {
-                        if((item.protocol == "OGC:WMS-1.1.1-http-get-map") &&
-                            item.name && item.value) {
+                        if (GEOR.util.isSuitableDCProtocol(item)) {
 
                             var tip = 'Couche '+item.name+' sur '+item.value;
                             var description = (item.description) ?
