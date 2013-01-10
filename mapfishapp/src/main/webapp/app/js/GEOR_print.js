@@ -143,7 +143,26 @@ GEOR.print = (function() {
                 url: serviceUrl
             },
             listeners: {
-                "loadcapabilities": function() {
+                "loadcapabilities": function(provider, caps) {
+                    // Filter out layouts from the provider.layouts store
+                    // that the current user does not have the right to use:
+                    // see http://applis-bretagne.fr/redmine/issues/4497
+                    provider.layouts.filterBy(function(record) {
+                        var layout = record.get('name'),
+                            acl = GEOR.config.PRINT_LAYOUTS_ACL[layout];
+                        // empty or not specified means "layout allowed for everyone"
+                        if (!acl || acl.length === 0) {
+                            return true;
+                        }
+                        for (var i=0, l=GEOR.config.ROLES.length; i<l; i++) {
+                            // check current role is allowed to use current layout:
+                            if (acl.indexOf(GEOR.config.ROLES[i]) >= 0) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    });
+                    // create printPage:
                     printPage = new GeoExt.data.PrintPage({
                         printProvider: printProvider,
                         customParams: defaultCustomParams
@@ -290,6 +309,7 @@ GEOR.print = (function() {
                     }, {
                         xtype: "combo",
                         store: printProvider.layouts,
+                        lastQuery: '', // required to apply rights filter
                         displayField: "name",
                         valueField: "name",
                         fieldLabel: tr("Format"),

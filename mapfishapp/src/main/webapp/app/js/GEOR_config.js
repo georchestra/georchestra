@@ -353,30 +353,6 @@ GEOR.config = (function() {
         ]),
 
         /**
-         * Constant: DEFAULT_PRINT_FORMAT
-         * {String} The default (ie selected) print layout format.
-         * Defaults to "A4 paysage"
-         */
-        DEFAULT_PRINT_FORMAT: getCustomParameter("DEFAULT_PRINT_FORMAT",
-            "A4 paysage"),
-
-        /**
-         * Constant: DEFAULT_PRINT_FORMAT
-         * {String} The default (ie selected) print resolution.
-         * Defaults to "127"
-         */
-        DEFAULT_PRINT_RESOLUTION: getCustomParameter("DEFAULT_PRINT_RESOLUTION",
-            "127"),
-
-        /**
-         * Constant: PDF_FILENAME
-         * {String} The PDF filename prefix.
-         * Defaults to "georchestra_${yyyy-MM-dd_hhmmss}"
-         */
-        PDF_FILENAME: getCustomParameter("PDF_FILENAME",
-            "georchestra_${yyyy-MM-dd_hhmmss}"),
-
-        /**
          * Constant: GEOSERVER_WFS_URL
          * The URL to GeoServer WFS.
          * This is required if and only if the edit application is used
@@ -759,6 +735,46 @@ GEOR.config = (function() {
          */
         ROLES_FOR_PRINTER: getCustomParameter("ROLES_FOR_PRINTER",
             []),
+
+        /**
+         * Constant: PRINT_LAYOUTS_ACL
+         * {Object} roles required for each print layout
+         * Empty array means "layout is available for everyone"
+         */
+        PRINT_LAYOUTS_ACL: getCustomParameter("PRINT_LAYOUTS_ACL", {
+            // A4 allowed for everyone:
+            'A4 paysage': [],
+            'A4 portrait': [],
+            // A3 not allowed for unconnected users (guests):
+            'A3 paysage': ['ROLE_SV_USER', 'ROLE_SV_REVIEWER', 'ROLE_SV_EDITOR', 'ROLE_SV_ADMIN'],
+            'A3 portrait': ['ROLE_SV_USER', 'ROLE_SV_REVIEWER', 'ROLE_SV_EDITOR', 'ROLE_SV_ADMIN']
+        }),
+
+        // FIXME: DEFAULT_PRINT_FORMAT should be replaced with DEFAULT_PRINT_LAYOUT
+        /**
+         * Constant: DEFAULT_PRINT_FORMAT
+         * {String} The default (ie selected) print layout format.
+         * Defaults to "A4 paysage".
+         * Note: be sure to choose a layout available for everyone
+         */
+        DEFAULT_PRINT_FORMAT: getCustomParameter("DEFAULT_PRINT_FORMAT",
+            "A4 paysage"),
+
+        /**
+         * Constant: DEFAULT_PRINT_FORMAT
+         * {String} The default (ie selected) print resolution.
+         * Defaults to "127"
+         */
+        DEFAULT_PRINT_RESOLUTION: getCustomParameter("DEFAULT_PRINT_RESOLUTION",
+            "127"),
+
+        /**
+         * Constant: PDF_FILENAME
+         * {String} The PDF filename prefix.
+         * Defaults to "georchestra_${yyyy-MM-dd_hhmmss}"
+         */
+        PDF_FILENAME: getCustomParameter("PDF_FILENAME",
+            "georchestra_${yyyy-MM-dd_hhmmss}"),
 
         /**
          * Constant: HELP_URL
