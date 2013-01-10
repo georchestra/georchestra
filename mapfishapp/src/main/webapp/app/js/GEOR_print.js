@@ -241,7 +241,6 @@ GEOR.print = (function() {
                         plugins: new GeoExt.plugins.PrintPageField({
                             printPage: printPage
                         })
-
                     }, {
                         xtype: 'checkbox',
                         fieldLabel: tr("Minimap"),
@@ -250,7 +249,6 @@ GEOR.print = (function() {
                         plugins: new GeoExt.plugins.PrintPageField({
                             printPage: printPage
                         })
-
                     }, {
                         xtype: 'checkbox',
                         fieldLabel: tr("North"),
@@ -259,7 +257,6 @@ GEOR.print = (function() {
                         plugins: new GeoExt.plugins.PrintPageField({
                             printPage: printPage
                         })
-
                     }, {
                         xtype: 'checkbox',
                         fieldLabel: tr("Scale"),
@@ -277,7 +274,6 @@ GEOR.print = (function() {
                         plugins: new GeoExt.plugins.PrintPageField({
                             printPage: printPage
                         })
-
                     }, {
                         xtype: 'checkbox',
                         fieldLabel: tr("Legend"),
@@ -286,7 +282,6 @@ GEOR.print = (function() {
                         plugins: new GeoExt.plugins.PrintPageField({
                             printPage: printPage
                         })
-
                     }, {
                         xtype: "combo",
                         store: printProvider.layouts,
