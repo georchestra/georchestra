@@ -29,7 +29,8 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Server": "Servidor",
     "Close": "Cerrar",
     "labelSeparator": " : ",
-    //"File submission failed or invalid file": "L'envoi du fichier a échoué - le fichier est peut-être non valide",
+    "File submission failed or invalid file": "El envío del archivo falló - " +
+        "verificar si el archivo es valido",
     /* GEOR.js strings */
     "Cities": "Ciudades",
     "Recentering on GeoNames cities":
@@ -345,17 +346,19 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
         "servidor inalcanzable, etc.",
     "WFS server": "Servicio WFS",
     /* GEOR_wmc.js strings */
-    //"The provided file is not a valid OGC context": "Le fichier fourni n'est pas un contexte OGC valide",
+    "The provided file is not a valid OGC context":
+		"El archivo proveido no es un contexto OGC valido",
     "wmc.bad.srs": "El archivo .wmc no " +
         "puede ser restaurado. Su sistema de referencia espacial es " +
         "diferente del sistema del mapa actual.",
     /* GEOR_wmcbrowser.js strings */
-    //"Could not find WMC file": "Le contexte spécifié n'existe pas",
-    //"... or a custom context": "... ou un contexte personnalisé",
-    //"Replace current map composition with one of these contexts:": "Remplacer la composition actuelle de la carte par l'un de ces contextes :",
-    //"A unique OSM layer": "Une unique couche OpenStreetMap",
-    //"default viewer context": "contexte par défaut",
-    //"(default)": "<br/>(contexte par défaut actuel)",
+    "Could not find WMC file": "El contexto WMC especificado no existe",
+    "... or a custom context": "... o un contexto personalizado",
+    "Replace current map composition with one of these contexts:":
+		"Remplazar la composición actual del mapa por uno de estos contextos:",
+    "A unique OSM layer": "Una capa OpenStreetMap única",
+    "default viewer context": "contexto por omisión",
+    "(default)": "<br/>(contexto por omisión actual)",
     /* GEOR_wmsbrowser.js strings */
     "Queryable": "Interrogable",
     "Opaque": "Opaco",
