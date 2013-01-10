@@ -237,7 +237,7 @@ GEOR.print = (function() {
                         })
                     }, {
                         xtype: 'hidden',
-                        name: tr("Copyright"),
+                        name: 'copyright',
                         plugins: new GeoExt.plugins.PrintPageField({
                             printPage: printPage
                         })
