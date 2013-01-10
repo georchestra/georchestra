@@ -104,16 +104,13 @@ GEOR.print = (function() {
      * {String} The attribution string
      */
     var getLayerSources = function() {
-        var attr = [], defaultAttr = false;
+        var attr = [];
         layerStore.each(function(r) {
             if (!r.get('attribution')) {
                 return;
             }
             if (r.get('attribution').title && attr.indexOf(r.get('attribution').title) < 0) {
                 attr.push(r.get('attribution').title);
-            } else if (!r.get('attribution').title && !defaultAttr) {
-                attr.push(GEOR.config.DEFAULT_ATTRIBUTION);
-                defaultAttr = true;
             }
         });
         return ((attr.length > 1)?tr("Sources: "):tr("Source: ")) +attr.join(', ');
