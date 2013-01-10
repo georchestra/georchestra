@@ -527,10 +527,6 @@ GEOR.config = (function() {
              *
              * "wmsc_url": undefined,
              */
-            "http://osm.geobretagne.fr/service/wms":
-                "http://geobretagne.fr/osm-google",
-            "http://geobretagne.fr/geoserver/gwc/service/wms":
-                undefined // no trailing comma
         }),
 
 
