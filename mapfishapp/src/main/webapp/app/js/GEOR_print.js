@@ -104,16 +104,13 @@ GEOR.print = (function() {
      * {String} The attribution string
      */
     var getLayerSources = function() {
-        var attr = [], defaultAttr = false;
+        var attr = [];
         layerStore.each(function(r) {
             if (!r.get('attribution')) {
                 return;
             }
             if (r.get('attribution').title && attr.indexOf(r.get('attribution').title) < 0) {
                 attr.push(r.get('attribution').title);
-            } else if (!r.get('attribution').title && !defaultAttr) {
-                attr.push(GEOR.config.DEFAULT_ATTRIBUTION);
-                defaultAttr = true;
             }
         });
         return ((attr.length > 1)?tr("Sources: "):tr("Source: ")) +attr.join(', ');
@@ -256,11 +253,10 @@ GEOR.print = (function() {
                         })
                     }, {
                         xtype: 'hidden',
-                        name: tr("Copyright"),
+                        name: 'copyright',
                         plugins: new GeoExt.plugins.PrintPageField({
                             printPage: printPage
                         })
-
                     }, {
                         xtype: 'checkbox',
                         fieldLabel: tr("Minimap"),
@@ -269,7 +265,6 @@ GEOR.print = (function() {
                         plugins: new GeoExt.plugins.PrintPageField({
                             printPage: printPage
                         })
-
                     }, {
                         xtype: 'checkbox',
                         fieldLabel: tr("North"),
@@ -278,7 +273,6 @@ GEOR.print = (function() {
                         plugins: new GeoExt.plugins.PrintPageField({
                             printPage: printPage
                         })
-
                     }, {
                         xtype: 'checkbox',
                         fieldLabel: tr("Scale"),
@@ -296,7 +290,6 @@ GEOR.print = (function() {
                         plugins: new GeoExt.plugins.PrintPageField({
                             printPage: printPage
                         })
-
                     }, {
                         xtype: 'checkbox',
                         fieldLabel: tr("Legend"),
@@ -305,7 +298,6 @@ GEOR.print = (function() {
                         plugins: new GeoExt.plugins.PrintPageField({
                             printPage: printPage
                         })
-
                     }, {
                         xtype: "combo",
                         store: printProvider.layouts,

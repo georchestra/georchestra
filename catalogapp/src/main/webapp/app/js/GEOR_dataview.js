@@ -44,10 +44,11 @@ GEOR.dataview = (function() {
             id = OpenLayers.Util.createUniqueID('OWS_');
             URI = URIs[i];
             switch (URI.protocol) {
+            case 'OGC:WMS':
             case 'OGC:WMS-1.0.0-http-get-map':
             case 'OGC:WMS-1.1.0-http-get-map':
             case 'OGC:WMS-1.1.1-http-get-map':
-            //case 'OGC:WMS-1.3.0-http-get-map': // not yet taken into account by mapfishapp
+            case 'OGC:WMS-1.3.0-http-get-map':
                 if (URI.value) {
                     OWSdb[id] = URI;
                     if (URI.name) {

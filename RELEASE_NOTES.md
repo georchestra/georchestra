@@ -13,14 +13,17 @@ New features:
 Enhancements:
  * mapfishapp: more visible layer names, see https://github.com/georchestra/georchestra/pull/22
  * mapfishapp: add zoomout button in the toolbar, see https://github.com/georchestra/georchestra/pull/24
+ * mapfishapp: added ability to print protected geoserver layers, see https://github.com/georchestra/template/commit/bb424bd74f7504af93b5e5c708f807ce0b6fdca4
+ * mapfishapp: more robust detection of WMS layers in CSW getRecords responses, see https://github.com/georchestra/georchestra/pull/4
  * mapfishapp: missing translations
 
 Bug fixes:
- * -
+ * mapfishapp: fixed erroneous WMSC2WMS mapping, which prevented printing of the GeoBretagne OSM baselayer, see https://github.com/georchestra/georchestra/commit/159bd4f24ecb21b9c76f76d27c1736ec1040f0ab
 
 
 UPGRADING:
- * mapfishapp GEOR.config / GEOR.custom - see GEOR_config.js for more information:
+ * mapfishapp config changes (see GEOR_config.js or GEOR_custom.js for more information):
     * MAP_POS_SRS1 and MAP_POS_SRS2 options have been replaced with POINTER_POSITION_SRS_LIST
     * DEFAULT_WMC option has been replaced with CONTEXTS
     * PRINT_LAYOUTS_ACL allows to fine-tune available printing layouts based on user roles
+ * In GeoNetwork, it is now recommended to use OGC:WMS protocol rather than OGC:WMS-1.1.1-http-get-map (or any other WMS tagged with a version) to declare WMS layers, see https://github.com/georchestra/georchestra/pull/4
