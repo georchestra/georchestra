@@ -75,9 +75,9 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
     /* GEOR_print.js strings */
     "The NAME layer cannot be printed.":
         "The ${name} layer cannot be printed.",
-    "print.unknown.format":
-         "Configuration error: DEFAULT_PRINT_FORMAT " +
-         "${format} not found in print capabilities",
+    "print.unknown.layout":
+         "Configuration error: DEFAULT_PRINT_LAYOUT " +
+         "${layout} not found in print capabilities",
     "print.unknown.resolution":
          "Configuration error: DEFAULT_PRINT_RESOLUTION " +
          "${resolution} not found in print capabilities",
