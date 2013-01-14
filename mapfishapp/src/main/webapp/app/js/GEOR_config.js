@@ -746,18 +746,17 @@ GEOR.config = (function() {
             'A3 portrait': ['ROLE_SV_USER', 'ROLE_SV_REVIEWER', 'ROLE_SV_EDITOR', 'ROLE_SV_ADMIN']
         }),
 
-        // FIXME: DEFAULT_PRINT_FORMAT should be replaced with DEFAULT_PRINT_LAYOUT
         /**
-         * Constant: DEFAULT_PRINT_FORMAT
-         * {String} The default (ie selected) print layout format.
+         * Constant: DEFAULT_PRINT_LAYOUT
+         * {String} The default (ie selected) print layout.
          * Defaults to "A4 paysage".
          * Note: be sure to choose a layout available for everyone
          */
-        DEFAULT_PRINT_FORMAT: getCustomParameter("DEFAULT_PRINT_FORMAT",
+        DEFAULT_PRINT_LAYOUT: getCustomParameter("DEFAULT_PRINT_LAYOUT",
             "A4 paysage"),
 
         /**
-         * Constant: DEFAULT_PRINT_FORMAT
+         * Constant: DEFAULT_PRINT_RESOLUTION
          * {String} The default (ie selected) print resolution.
          * Defaults to "127"
          */

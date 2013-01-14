@@ -224,12 +224,12 @@ GEOR.print = (function() {
         if (win === null) {
             // default values from config:
             var r = printProvider.layouts.find("name",
-                GEOR.config.DEFAULT_PRINT_FORMAT);
+                GEOR.config.DEFAULT_PRINT_LAYOUT);
             if (r >= 0) {
                 printProvider.setLayout(printProvider.layouts.getAt(r));
             } else {
-                alert(tr("print.unknown.format",
-                    {'format': GEOR.config.DEFAULT_PRINT_FORMAT}));
+                alert(tr("print.unknown.layout",
+                    {'layout': GEOR.config.DEFAULT_PRINT_LAYOUT}));
             }
             r = printProvider.dpis.find("value",
                 GEOR.config.DEFAULT_PRINT_RESOLUTION);
