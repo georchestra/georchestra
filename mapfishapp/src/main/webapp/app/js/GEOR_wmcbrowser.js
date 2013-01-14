@@ -44,6 +44,13 @@ GEOR.wmcbrowser = (function() {
     var formPanel;
 
     /**
+     * Property: _refreshing
+     * {Boolean} true while the view is refreshing 
+     * and we don't want to call onViewSelectionChange
+     */
+    var _refreshing;
+
+    /**
      * Property: observable
      * {Ext.util.Obervable}
      */
@@ -138,6 +145,17 @@ GEOR.wmcbrowser = (function() {
     };
 
     /**
+     * Method: silentDisableUncheck
+     * uncheck & disable checkbox silently
+     */
+    var silentDisableUncheck = function() {
+        cbx.suspendEvents();
+        cbx.setValue(false);
+        cbx.resumeEvents();
+        cbx.disable();
+    };
+
+    /**
      * Method: onViewSelectionChange
      * Callback on DataView selectionchange event
      *
@@ -146,6 +164,9 @@ GEOR.wmcbrowser = (function() {
      * selections - {Array} array of selected nodes
      */
     var onViewSelectionChange = function(view, selections) {
+        if (_refreshing) {
+            return;
+        };
         var fbar = popup.getFooterToolbar(),
             btn = fbar.getComponent('load'),
             cbx = fbar.getComponent('cbx'),
@@ -162,7 +183,7 @@ GEOR.wmcbrowser = (function() {
                 (localStorage && viewHasSelection && cbxChecked)
             );
         } else {
-            cbx.setDisabled(true);
+            silentDisableUncheck();
         }
         formPanel.getForm().reset();
     };
@@ -182,7 +203,7 @@ GEOR.wmcbrowser = (function() {
                 cbx = fbar.getComponent('cbx');
 
             btn.enable();
-            cbx.disable();
+            silentDisableUncheck();
             // we suppress event to prevent retroaction on this field
             view.clearSelections(true);
         }
@@ -204,10 +225,12 @@ GEOR.wmcbrowser = (function() {
             var record = view.getSelectedRecords()[0];
             localStorage &&
                 localStorage.setItem("default_context", record.get("wmc"));
+            _refreshing = true;
             // to apply the "default" CSS class to the correct node:
             view.refresh();
             // keep selection after refresh:
             view.select(record);
+            _refreshing = false;
         }
     };
 
