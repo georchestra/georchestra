@@ -356,6 +356,11 @@ GEOR.print = (function() {
                 closeAction: 'hide',
                 items: [formPanel],
                 buttons: [{
+                    text: tr("Close"),
+                    handler: function() {
+                        win.hide();
+                    }
+                }, {
                     text: tr("Print"),
                     handler: function() {
                         printPage.customParams.copyright = getLayerSources();
@@ -363,11 +368,6 @@ GEOR.print = (function() {
                         printProvider.print(layerStore.map, printPage, {
                             legend: legendPanel
                         });
-                    }
-                }, {
-                    text: tr("Close"),
-                    handler: function() {
-                        win.hide();
                     }
                 }]
             });

@@ -359,13 +359,12 @@ GEOR.layerfinder = (function() {
                 modal: false,
                 items: createTabPanel(),
                 buttons: [
-                    addButton,
                     {
                         text: tr("Close"),
                         handler: function() {
                             win.hide();
                         }
-                    }
+                    }, addButton
                 ]
             });
             return win;
