@@ -222,9 +222,9 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Unable to print": "Impression non disponible",
     "The print server is currently unreachable":
         "Le service d'impression est actuellement inaccessible.",
-    "print.unknown.format":
-        "Erreur de configuration: DEFAULT_PRINT_FORMAT " +
-        "${format} n'est pas dans la liste des formats d'impression",
+    "print.unknown.layout":
+        "Erreur de configuration: DEFAULT_PRINT_LAYOUT " +
+        "${layout} n'est pas dans la liste des formats d'impression",
     "print.unknown.resolution":
         "Erreur de configuration: DEFAULT_PRINT_RESOLUTION " +
         "${resolution} n'est pas dans la liste des résolutions d'impression",
