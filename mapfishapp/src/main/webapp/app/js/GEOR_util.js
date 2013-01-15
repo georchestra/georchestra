@@ -231,6 +231,7 @@ GEOR.util = (function() {
                 closeAction: 'close',
                 constrainHeader: true,
                 modal: false,
+                defaultButton: 0,
                 items: [{
                     bodyStyle: 'padding:5px',
                     html: options.msg,

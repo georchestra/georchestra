@@ -823,7 +823,7 @@ GEOR.managelayers = (function() {
                 root: layerContainer,
                 buttons: [{
                     text: tr("Add layers"),
-                    iconCls: 'layers-add',
+                    iconCls: 'btn-add',
                     handler: function() {
                         if (!layerFinder) {
                             layerFinder = GEOR.layerfinder.create(layerStore, this.el);
