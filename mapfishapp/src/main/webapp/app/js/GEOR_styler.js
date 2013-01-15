@@ -887,6 +887,11 @@ GEOR.styler = (function() {
                 modal: false,
                 disabled: true,
                 buttons: [{
+                    text: tr("Cancel"),
+                    handler: function() {
+                        win.close();
+                    }
+                }, {
                     text: tr("Download style"),
                     handler: dlStyle
                 },{
@@ -903,11 +908,6 @@ GEOR.styler = (function() {
                                 win.close();
                             }
                         });
-                    }
-                }, {
-                    text: tr("Cancel"),
-                    handler: function() {
-                	    win.close();
                     }
                 }],
                 listeners: {

@@ -125,9 +125,10 @@ div.olMapViewport {
 .x-btn-icon .geor-btn-info {
     background: transparent url(../img/famfamfam/information.png);
 }
-.x-btn .layers-add {
+.x-btn .btn-add {
     background-image: url(../img/famfamfam/add.png);
 }
+
 .geor-save-map {
     background-image: url(../img/famfamfam/folder_page.gif) !important;
 }

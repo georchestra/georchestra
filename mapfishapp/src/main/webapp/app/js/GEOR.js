@@ -296,6 +296,7 @@ Ext.namespace("GEOR");
                             eastItems[0].getLayout().setActiveItem(0);
                         }
                     });
+                    panelCfg.buttons.reverse();
                     querierTitle = panelCfg.title;
                     eastItems[0].setTitle(querierTitle);
                     var panel = Ext.apply(panelCfg, {
