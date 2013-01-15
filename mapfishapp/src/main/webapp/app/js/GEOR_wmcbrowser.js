@@ -340,6 +340,8 @@ GEOR.wmcbrowser = (function() {
                 text: tr("Load"),
                 disabled: true,
                 itemId: 'load',
+                minWidth: 90,
+                iconCls: 'geor-load-map',
                 handler: loadBtnHandler
             }],
             items: [{

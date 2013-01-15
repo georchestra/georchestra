@@ -362,6 +362,8 @@ GEOR.print = (function() {
                     }
                 }, {
                     text: tr("Print"),
+                    minWidth: 90,
+                    iconCls: 'mf-print-action',
                     handler: function() {
                         printPage.customParams.copyright = getLayerSources();
                         printPage.fit(layerStore.map, false);

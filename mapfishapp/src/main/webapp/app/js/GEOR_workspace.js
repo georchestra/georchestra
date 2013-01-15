@@ -140,6 +140,8 @@ GEOR.workspace = (function() {
                     handler: cancelBtnHandler
                 },{
                     text: tr("Save"),
+                    minWidth: 100,
+                    iconCls: 'geor-btn-download',
                     //id: 'geor-workspace-save',
                     handler: saveBtnHandler,
                     formBind: true

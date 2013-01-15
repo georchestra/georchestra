@@ -326,6 +326,8 @@ GEOR.layerfinder = (function() {
             tr = OpenLayers.i18n;
             addButton = new Ext.Button({
                 text: tr("Add"),
+                minWidth: 90,
+                iconCls: 'btn-add',
                 disabled: true,
                 handler: function() {
                     addSelectedLayers();
