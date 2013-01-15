@@ -365,7 +365,6 @@ GEOR.print = (function() {
                 autoHeight: true,
                 closeAction: 'hide',
                 items: [formPanel],
-                defaultButton: 'print',
                 listeners: {
                     "show": function() {
                         // focus first field on show
