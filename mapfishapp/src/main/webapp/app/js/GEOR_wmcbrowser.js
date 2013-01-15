@@ -147,8 +147,11 @@ GEOR.wmcbrowser = (function() {
     /**
      * Method: silentDisableUncheck
      * uncheck & disable checkbox silently
+     *
+     * Parameters:
+     * cbx - {Ext.form.Checkbox}
      */
-    var silentDisableUncheck = function() {
+    var silentDisableUncheck = function(cbx) {
         cbx.suspendEvents();
         cbx.setValue(false);
         cbx.resumeEvents();
@@ -183,7 +186,7 @@ GEOR.wmcbrowser = (function() {
                 (localStorage && viewHasSelection && cbxChecked)
             );
         } else {
-            silentDisableUncheck();
+            silentDisableUncheck(cbx);
         }
         formPanel.getForm().reset();
     };
@@ -203,7 +206,7 @@ GEOR.wmcbrowser = (function() {
                 cbx = fbar.getComponent('cbx');
 
             btn.enable();
-            silentDisableUncheck();
+            silentDisableUncheck(cbx);
             // we suppress event to prevent retroaction on this field
             view.clearSelections(true);
         }
