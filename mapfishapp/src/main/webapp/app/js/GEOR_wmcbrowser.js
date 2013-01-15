@@ -342,7 +342,12 @@ GEOR.wmcbrowser = (function() {
                 itemId: 'load',
                 minWidth: 90,
                 iconCls: 'geor-load-map',
-                handler: loadBtnHandler
+                handler: loadBtnHandler,
+                listeners: {
+                    "enable": function(btn) {
+                        btn.focus();
+                    }
+                }
             }],
             items: [{
                 xtype: 'box',

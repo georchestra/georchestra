@@ -248,9 +248,19 @@ GEOR.print = (function() {
                         fieldLabel: tr("Title"),
                         width: 200,
                         name: 'mapTitle',
+                        enableKeyEvents: true,
+                        selectOnFocus: true,
                         plugins: new GeoExt.plugins.PrintPageField({
                             printPage: printPage
-                        })
+                        }),
+                        listeners: {
+                            "keypress": function(f, e) {
+                                // transfer focus on Print button on ENTER
+                                if (e.getKey() === e.ENTER) {
+                                    win.getFooterToolbar().getComponent('print').focus();
+                                }
+                            }
+                        }
                     }, {
                         xtype: 'hidden',
                         name: 'copyright',
@@ -355,6 +365,14 @@ GEOR.print = (function() {
                 autoHeight: true,
                 closeAction: 'hide',
                 items: [formPanel],
+                defaultButton: 'print',
+                listeners: {
+                    "show": function() {
+                        // focus first field on show
+                        var field = formPanel.getForm().findField('mapTitle');
+                        field.focus('', 50);
+                    }
+                },
                 buttons: [{
                     text: tr("Close"),
                     handler: function() {
@@ -363,6 +381,7 @@ GEOR.print = (function() {
                 }, {
                     text: tr("Print"),
                     minWidth: 90,
+                    itemId: 'print',
                     iconCls: 'mf-print-action',
                     handler: function() {
                         printPage.customParams.copyright = getLayerSources();

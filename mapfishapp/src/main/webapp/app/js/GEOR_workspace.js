@@ -119,7 +119,13 @@ GEOR.workspace = (function() {
             height: 120,
             closeAction: 'close',
             plain: true,
-            //defaultButton: 'geor-workspace-save',
+            listeners: {
+                "show": function() {
+                    // focus first field on show
+                    var field = this.items.get(0).getForm().findField('filename');
+                    field.focus('', 50);
+                }
+            },
             items: [{
                 xtype: 'form',
                 bodyStyle: 'padding:5px',
@@ -133,7 +139,17 @@ GEOR.workspace = (function() {
                     width: 200,
                     fieldLabel: "Nom",
                     allowBlank: false,
-                    blankText: tr("The file is required.")
+                    blankText: tr("The file is required."),
+                    enableKeyEvents: true,
+                    selectOnFocus: true,
+                    listeners: {
+                        "keypress": function(f, e) {
+                            // transfer focus on Print button on ENTER
+                            if (e.getKey() === e.ENTER) {
+                                popup.items.get(0).getFooterToolbar().getComponent('save').focus();
+                            }
+                        }
+                    }
                 }],
                 buttons: [{
                     text: tr("Cancel"),
@@ -142,7 +158,7 @@ GEOR.workspace = (function() {
                     text: tr("Save"),
                     minWidth: 100,
                     iconCls: 'geor-btn-download',
-                    //id: 'geor-workspace-save',
+                    itemId: 'save',
                     handler: saveBtnHandler,
                     formBind: true
                 }]
