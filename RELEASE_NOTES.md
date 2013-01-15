@@ -15,6 +15,7 @@ Enhancements:
  * mapfishapp: add zoomout button in the toolbar, see https://github.com/georchestra/georchestra/pull/24
  * mapfishapp: added ability to print protected geoserver layers, see https://github.com/georchestra/template/commit/bb424bd74f7504af93b5e5c708f807ce0b6fdca4
  * mapfishapp: more robust detection of WMS layers in CSW getRecords responses, see https://github.com/georchestra/georchestra/pull/4
+ * mapfishapp: window buttons consistency and default actions, see https://github.com/georchestra/georchestra/pull/33
  * mapfishapp: missing translations
 
 Bug fixes:
