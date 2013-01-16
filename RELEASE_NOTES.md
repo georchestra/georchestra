@@ -9,6 +9,7 @@ New features:
  * mapfishapp: layers drag'n drop in layer manager, see http://applis-bretagne.fr/redmine/issues/1959
  * mapfishapp: OGC context switcher, see https://github.com/georchestra/georchestra/pull/26
  * mapfishapp: print layouts ACL, see https://github.com/georchestra/georchestra/pull/30
+ * mapfishapp: spatial query based on a circle, see http://applis-bretagne.fr/redmine/issues/1957
 
 Enhancements:
  * mapfishapp: more visible layer names, see https://github.com/georchestra/georchestra/pull/22
