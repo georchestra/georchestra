@@ -8,6 +8,7 @@ New features:
  * mapfishapp: OGC context switcher, see https://github.com/georchestra/georchestra/pull/26
  * mapfishapp: print layouts ACL, see https://github.com/georchestra/georchestra/pull/30
  * mapfishapp: spatial query based on a circle, see http://applis-bretagne.fr/redmine/issues/1957
+ * geoserver: useful extensions added in template profile, see http://applis-bretagne.fr/redmine/issues/4217
 
 Enhancements:
  * mapfishapp: results panel displays URLs as html links, see https://github.com/georchestra/georchestra/pull/21
