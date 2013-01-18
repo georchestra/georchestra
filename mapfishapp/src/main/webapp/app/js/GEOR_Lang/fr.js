@@ -26,10 +26,10 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Layer": "Couche",
     "Description": "Description",
     "Error": "Erreur",
-    "The provided context is not valid.": "Le contexte fourni n'est pas " +
-        "valide.",
     "Server": "Serveur",
     "Close": "Fermer",
+    "labelSeparator": " : ",
+    "File submission failed or invalid file": "L'envoi du fichier a échoué - le fichier est peut-être non valide",
     /* GEOR.js strings */
     "Cities": "Localités",
     "Recentering on GeoNames cities": "Recentrage sur localités<br />de la base GeoNames",
@@ -198,11 +198,13 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "NB layers imported": "${NB} couches importées",
     "One layer imported": "Une couche importée",
     "Not any layer imported": "Aucune couche importée",
+    "The provided context is not valid": "Le contexte fourni n'est pas valide",
     "The default context is not defined (and it is a BIG problem!)":
         "Le contexte par défaut n'est pas défini " +
         "(et ce n'est pas du tout normal !)",
     /* GEOR_mappanel.js strings */
-    "Mouse coordinates in SRS": "Coordonnées du pointeur en ${srs}",
+    "Coordinates in ": "Coordonnées en ",
+    "scale picker": "échelle",
     /* GEOR_ows.js strings */
     "The NAME layer was not found in WMS service.":
         "La couche ${name} n'a pas été trouvée dans le service WMS.",
@@ -220,14 +222,13 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Unable to print": "Impression non disponible",
     "The print server is currently unreachable":
         "Le service d'impression est actuellement inaccessible.",
-    "print.unknown.format":
-        "Erreur de configuration: DEFAULT_PRINT_FORMAT " +
-        "${format} n'est pas dans la liste des formats d'impression",
+    "print.unknown.layout":
+        "Erreur de configuration: DEFAULT_PRINT_LAYOUT " +
+        "${layout} n'est pas dans la liste des formats d'impression",
     "print.unknown.resolution":
         "Erreur de configuration: DEFAULT_PRINT_RESOLUTION " +
         "${resolution} n'est pas dans la liste des résolutions d'impression",
     "Title": "Titre",
-    "Copyright": "Copyright",
     "Minimap": "Mini-carte",
     "North": "Nord",
     "Scale": "Echelle",
@@ -315,6 +316,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
         "carte",
     "pan": "glisser - déplacer la carte",
     "zoom in": "zoom en avant",
+    "zoom out": "zoom en arrière",
     "distance measure": "mesurer une distance",
     "area measure": "mesurer une surface",
     "back to previous zoom": "revenir à la précédente emprise",
@@ -343,9 +345,17 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
         "serveur injoignable, trop de données, etc.",
     "WFS server": "Serveur WFS",
     /* GEOR_wmc.js strings */
+    "The provided file is not a valid OGC context": "Le fichier fourni n'est pas un contexte OGC valide",
     "wmc.bad.srs": "Le fichier .wmc ne " +
         "peut pas être restauré. Son système de référence spatiale est " +
         "différent de celui de la carte en cours.",
+    /* GEOR_wmcbrowser.js strings */
+    "Could not find WMC file": "Le contexte spécifié n'existe pas",
+    "... or a custom context": "... ou un contexte personnalisé",
+    "Replace current map composition with one of these contexts:": "Remplacer la composition actuelle de la carte par l'un de ces contextes :",
+    "A unique OSM layer": "Une unique couche OpenStreetMap",
+    "default viewer context": "contexte par défaut",
+    "(default)": "<br/>(contexte par défaut actuel)",
     /* GEOR_wmsbrowser.js strings */
     "Queryable": "Interrogeable",
     "Opaque": "Opaque",
@@ -367,6 +377,8 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Workspace": "Espace de travail",
     "Save the map context": "Sauvegarder la carte",
     "Load a map context": "Charger une carte",
+    "Get a permalink": "Obtenir un permalien",
+    "Share your map with this URL: ": "Partagez la carte avec l'adresse suivante : ",
     "Edit in OSM": "Editer dans OSM",
     "with JOSM": "avec JOSM",
     "JOSM must be started with the remote control option": "Il vous faut " +

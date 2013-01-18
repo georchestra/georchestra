@@ -15,7 +15,7 @@
 /*
  * @include OpenLayers/Control/MousePosition.js
  * @include OpenLayers/Control/ScaleLine.js
- * @include OpenLayers/Control/LoadingPanel.js
+ * @include OpenLayers/Projection.js
  * @include GeoExt/widgets/MapPanel.js
  * @include GEOR_toolbar.js
  * @include GEOR_config.js
@@ -26,13 +26,44 @@ Ext.namespace("GEOR");
 
 GEOR.mappanel = (function() {
 
-    var cmp_id = 'GEOR_mappanel';
-
     /**
      * Property: tr
      * {Function} an alias to OpenLayers.i18n
      */
     var tr = null;
+
+    /**
+     * Property: mpControl
+     * {OpenLayers.Control.MousePosition}
+     */
+    var mpControl = null;
+
+    /**
+     * Method: formatMousePositionOutput
+     * creates a mouse position formatter 
+     *
+     * Parameters:
+     * {String} projCode The EPSG code.
+     *
+     * Returns:
+     * {Function}
+     */
+    var formatMousePositionOutput = function(projCode) {
+        var format, firstPrefix, secondPrefix;
+        if (projCode == "EPSG:4326") {
+            format = function(n) {return OpenLayers.Number.format(n, 5)};
+            firstPrefix = "Lon = ";
+            secondPrefix = ", Lat = ";
+        } else {
+            format = function(n) {return OpenLayers.Number.format(n, 0)};
+            firstPrefix = "X = ";
+            secondPrefix = ", Y = ";
+        }
+        return function(lonlat) {
+            return [firstPrefix, format(lonlat.lon), 
+                secondPrefix, format(lonlat.lat)].join('');
+        }
+    };
 
     /**
      * Method: buildMousePositionCtrl
@@ -46,50 +77,10 @@ GEOR.mappanel = (function() {
      * {OpenLayers.Control.MousePosition}
      */
     var buildMousePositionCtrl = function(projCode, div) {
-        var format = (projCode == "EPSG:4326") ?
-            function(n) {return OpenLayers.Number.format(n, 5)} :
-            function(n) {return OpenLayers.Number.format(n, 0)} ;
-        var options = {
+        return new OpenLayers.Control.MousePosition({
             div: div,
             displayProjection: new OpenLayers.Projection(projCode),
-            formatOutput: function(lonlat) {
-                // "this" holds a reference to the MousePosition
-                // control
-                return this.displayProjection.toString() +
-                       ": " + format(lonlat.lon) +
-                       " / " + format(lonlat.lat);
-            }
-        };
-        return new OpenLayers.Control.MousePosition(options);
-    };
-
-    /**
-     * Method: buildLoadingPanelCtrl
-     * Build a loading panel control.
-     *
-     * Parameters:
-     * {DOMElement} The DOM element the control must be drawn in.
-     *
-     * Returns:
-     * {OpenLayers.Control.LoadingPanel}
-     */
-    var buildLoadingPanelCtrl = function(div) {
-        return new OpenLayers.Control.LoadingPanel({
-            div: div,
-            minimizeControl: function(evt) {
-                this.div.style.display = "none";
-                this.maximized = false;
-                if (evt) {
-                    OpenLayers.Event.stop(evt);
-                }
-            },
-            maximizeControl: function(evt) {
-                this.div.style.display = "block";
-                this.maximized = true;
-                if (evt) {
-                    OpenLayers.Event.stop(evt);
-                }
-            }
+            formatOutput: formatMousePositionOutput(projCode)
         });
     };
 
@@ -107,55 +98,60 @@ GEOR.mappanel = (function() {
     var buildBbarCfg = function(map) {
         var div, items = [];
 
+        // Scale combobox
+        items.push(Ext.apply({
+            width: 110,
+            value: tr('scale picker')
+        }, GEOR.scalecombo.create(map)));
+
         // Scale Line
         div = Ext.DomHelper.append(Ext.getBody(), {
             tag: "div",
-            id: cmp_id+"_scaleline",
             cls: "olControlScaleLine"
         });
         items.push(div);
         map.addControl(new OpenLayers.Control.ScaleLine({div: div}));
 
-        // Loading panel
-        div = Ext.DomHelper.append(Ext.getBody(), {
-            tag: "div",
-            id: cmp_id+"_loading_panel",
-            cls: "olControlLoadingPanel"
-        });
-        items.push(div);
-        map.addControl(buildLoadingPanelCtrl(div));
-
         // greedy spacer
         items.push("->");
 
-        // First mouse position
-        var srs1 = GEOR.config.MAP_POS_SRS1;
-        if (srs1) {
-            div = Ext.DomHelper.append(Ext.getBody(), {
-                tag: "div",
-                qtip: tr("Mouse coordinates in SRS", {'srs': srs1}),
-                id: cmp_id+"_mp1",
-                cls: "mouseposition"
-            });
-            items.push(div);
-            map.addControl(buildMousePositionCtrl(srs1, div));
-        }
-        // Second mouse position
-        var srs2 = GEOR.config.MAP_POS_SRS2;
-        if (srs2) {
-            div = Ext.DomHelper.append(Ext.getBody(), {
-                tag: "div",
-                qtip: tr("Mouse coordinates in SRS", {'srs': srs2}),
-                id: cmp_id+"_mp2",
-                cls: "mouseposition"
-            });
-            items.push(div);
-            map.addControl(buildMousePositionCtrl(srs2, div));
-        }
-        // Scale combobox
-        items.push(Ext.apply({
-            width: 130
-        }, GEOR.scalecombo.create(map)));
+        // Pointer coordinates
+        var srsList = GEOR.config.POINTER_POSITION_SRS_LIST,
+            srs = srsList[0][0];
+        
+        items.push(tr("Coordonnées en "));
+        items.push({
+            xtype: 'combo',
+            width: 90,
+            store: srsList,
+            value: srsList[0][1],
+            editable: false,
+            tpl: [
+                '<tpl for=".">',
+                '<div class="x-combo-list-item" ext:qtip="{field2} - {field1}" >',
+                '{field2}',
+                '</div>',
+                '</tpl>'
+            ].join(''),
+            triggerAction: 'all',
+            mode: 'local',
+            listeners: {
+                select: function(combo, record, index) {
+                    mpControl.displayProjection = 
+                        new OpenLayers.Projection(record.data['field1']);
+                    mpControl.formatOutput = 
+                        formatMousePositionOutput(record.data['field1']);
+                }
+            }
+        });
+
+        div = Ext.DomHelper.append(Ext.getBody(), {
+            tag: "div",
+            cls: "mouseposition"
+        });
+        items.push(div);
+        mpControl = buildMousePositionCtrl(srs, div);
+        map.addControl(mpControl);
 
         return {
             items: items

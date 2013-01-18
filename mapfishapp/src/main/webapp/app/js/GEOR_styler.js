@@ -202,27 +202,11 @@ GEOR.styler = (function() {
                 return;
             }
             sldURL = GEOR.config.MAPFISHAPP_URL + sldURL;
-            var win = new Ext.Window({
+            GEOR.util.urlDialog({
                 title: tr("Download style"),
-                layout: "fit",
-                width: 400,
-                closeAction: 'close',
-                constrainHeader: true,
-                modal: false,
-                items: [{
-                    bodyStyle: 'padding:5px',
-                    html: tr("You can download your SLD style at ") +
-                        '<br /><a href="'+sldURL+'">'+sldURL+'</a>',
-                    border: false
-                }],
-                buttons: [{
-                    text: tr("Thanks!"),
-                    handler: function() {
-                	    win.close();
-                    }
-                }]
+                msg: tr("You can download your SLD style at ") +
+                        '<br /><a href="'+sldURL+'">'+sldURL+'</a>'
             });
-            win.show();
         };
         var scope = this;
         if (dirty) {
@@ -903,6 +887,11 @@ GEOR.styler = (function() {
                 modal: false,
                 disabled: true,
                 buttons: [{
+                    text: tr("Cancel"),
+                    handler: function() {
+                        win.close();
+                    }
+                }, {
                     text: tr("Download style"),
                     handler: dlStyle
                 },{
@@ -919,11 +908,6 @@ GEOR.styler = (function() {
                                 win.close();
                             }
                         });
-                    }
-                }, {
-                    text: tr("Cancel"),
-                    handler: function() {
-                	    win.close();
                     }
                 }],
                 listeners: {

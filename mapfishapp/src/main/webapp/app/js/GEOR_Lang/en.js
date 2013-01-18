@@ -16,6 +16,8 @@
  * English translation file
  */
 OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
+    /* General purpose strings */
+    "labelSeparator": ": ",
     /* GEOR.js strings */
     "resultspanel.emptytext":
         "<p>Select the Info tool or build a query on a layer.<br />" +
@@ -67,16 +69,15 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
         "insufficient rights, incompatible CRS or layer does not exist",
     "NB layers imported": "${NB} layers imported",
     /* GEOR_mappanel.js strings */
-    "Mouse coordinates in SRS": "Coordinates of mouse in ${srs}",
     /* GEOR_ows.js strings */
     "The NAME layer was not found in WMS service.":
         "The ${name} layer was not found in WMS service.",
     /* GEOR_print.js strings */
     "The NAME layer cannot be printed.":
         "The ${name} layer cannot be printed.",
-    "print.unknown.format":
-         "Configuration error: DEFAULT_PRINT_FORMAT " +
-         "${format} not found in print capabilities",
+    "print.unknown.layout":
+         "Configuration error: DEFAULT_PRINT_LAYOUT " +
+         "${layout} not found in print capabilities",
     "print.unknown.resolution":
          "Configuration error: DEFAULT_PRINT_RESOLUTION " +
          "${resolution} not found in print capabilities",
@@ -105,6 +106,8 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
         "The .wmc file cannot be restored. Its spatial " +
         "reference system is different from the system of " +
         "the current map",
+    /* GEOR_wmcbrowser.js strings */
+    "(default)": "<br/>(current default context)",
     /* GEOR_wmsbrowser.js strings */
     "The server is publishing NB layers with an incompatible projection":
         "The server is publishing ${NB} layers with an incompatible projection",

@@ -214,6 +214,38 @@ GEOR.util = (function() {
                 icon: Ext.MessageBox.ERROR
             }, options));
         },
+        
+        /**
+         * APIMethod: urlDialog
+         * Shows a dialog box suitable for a message with an URL
+         *
+         * Parameters:
+         * options - {Object} Hash with keys:
+         *      title, msg
+         */
+        urlDialog: function(options) {
+            var win = new Ext.Window({
+                title: options.title,
+                layout: "fit",
+                width: 400,
+                closeAction: 'close',
+                constrainHeader: true,
+                modal: false,
+                defaultButton: 0,
+                items: [{
+                    bodyStyle: 'padding:5px',
+                    html: options.msg,
+                    border: false
+                }],
+                buttons: [{
+                    text: OpenLayers.i18n("Thanks!"),
+                    handler: function() {
+                        win.close();
+                    }
+                }]
+            });
+            win.show();
+        },
 
         /**
          * APIMethod: isUrl
@@ -302,6 +334,27 @@ GEOR.util = (function() {
         round: function(input, decimals) {
             var p = Math.pow(10, decimals);
             return Math.round(input*p)/p;
+        },
+
+        /**
+         * Method: isSuitableDCProtocol
+         *
+         * Returns:
+         * {Boolean} true if the WMS protocol matches and the value is a valid
+         *  URL and the layer name is set
+         */
+        isSuitableDCProtocol: function(item) {
+            if (!item.protocol) {
+                return false;
+            }
+            var c = {
+                'OGC:WMS': true,
+                'OGC:WMS-1.0.0-http-get-map': true,
+                'OGC:WMS-1.1.0-http-get-map': true,
+                'OGC:WMS-1.1.1-http-get-map': true,
+                'OGC:WMS-1.3.0-http-get-map': true
+            };
+            return !!c[item.protocol] && !!item.name && GEOR.util.isUrl(item.value);
         }
     };
 })();

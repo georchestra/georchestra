@@ -217,8 +217,28 @@ GEOR.config = (function() {
             GEOR.custom[paramName] : defaultValue;
     };
 
-
     return {
+
+        /**
+         * Method: DEFAULT_WMC
+         * runtime method to get the current default WMC
+         */
+        DEFAULT_WMC: function() {
+            if (localStorage && 
+                localStorage.getItem("default_context") !== null) {
+                return localStorage.getItem("default_context");
+            }
+            if (GEOR.config.CONTEXTS && 
+                GEOR.config.CONTEXTS[0] && 
+                GEOR.config.CONTEXTS[0][2]) {
+                return GEOR.config.CONTEXTS[0][2];
+            } else {
+                alert("Administrator: "+
+                    "GEOR.config.CONTEXTS is not configured as expected !");
+            }
+            // should not happen:
+            return "default.wmc";
+        },
 
         /**
          * Method: _getBaseURL
@@ -307,36 +327,30 @@ GEOR.config = (function() {
 
         /***** Beginning of config options which can be overriden by GEOR.custom *****/
 
-        /**
-         * Constant: DEFAULT_WMC
-         * The path to the application's default WMC.
-         * Defaults to "default.wmc"
-         */
-        DEFAULT_WMC: getCustomParameter("DEFAULT_WMC", "default.wmc"),
 
         /**
-         * Constant: DEFAULT_PRINT_FORMAT
-         * {String} The default (ie selected) print layout format.
-         * Defaults to "A4 paysage"
+         * Constant: CONTEXTS
+         * {Array} the array of arrays describing the available contexts
+         *
+         * Each "context array" consists of 4 mandatory fields:
+         *   * the first field is the label which appears in the UI
+         *   * the second one is the path to the thumbnail
+         *   * the third one is the path to the context (WMC) file
+         *   * the last one is a comment which will be shown on thumbnail hovering
+         *
+         * Example config : 
+         *   [
+         *      ["OpenStreetMap", "app/img/contexts/osm.png", "default.wmc", "A unique OSM layer"],
+         *      ["Orthophoto", "app/img/contexts/ortho.png", "context/ortho.wmc", "Orthophoto 2009"],
+         *      ["Forêts", "app/img/contexts/forets.png", "context/forets.wmc", "Les 3 couches forêts sur fond OSM"]
+         *   ]
+         *
+         * Defaults to ["OpenStreetMap", "app/img/contexts/osm.png", "default.wmc", "A unique OSM layer"]
+         * Should *not* be empty !
          */
-        DEFAULT_PRINT_FORMAT: getCustomParameter("DEFAULT_PRINT_FORMAT",
-            "A4 paysage"),
-
-        /**
-         * Constant: DEFAULT_PRINT_FORMAT
-         * {String} The default (ie selected) print resolution.
-         * Defaults to "127"
-         */
-        DEFAULT_PRINT_RESOLUTION: getCustomParameter("DEFAULT_PRINT_RESOLUTION",
-            "127"),
-
-        /**
-         * Constant: PDF_FILENAME
-         * {String} The PDF filename prefix.
-         * Defaults to "georchestra_${yyyy-MM-dd_hhmmss}"
-         */
-        PDF_FILENAME: getCustomParameter("PDF_FILENAME",
-            "georchestra_${yyyy-MM-dd_hhmmss}"),
+        CONTEXTS: getCustomParameter("CONTEXTS", [
+            ["OpenStreetMap", "app/img/contexts/osm.png", "default.wmc", "A unique OSM layer"]
+        ]),
 
         /**
          * Constant: GEOSERVER_WFS_URL
@@ -489,10 +503,6 @@ GEOR.config = (function() {
              *
              * "wmsc_url": undefined,
              */
-            "http://osm.geobretagne.fr/service/wms":
-                "http://maps.qualitystreetmap.org/geob_wms",
-            "http://geobretagne.fr/geoserver/gwc/service/wms":
-                undefined // no trailing comma
         }),
 
 
@@ -609,28 +619,23 @@ GEOR.config = (function() {
         MAP_YMAX: getCustomParameter("MAP_YMAX", 7230727.3772),
 
         /**
-         * Constant: MAP_POS_SRS1
-         * {String} The cursor position will be displayed using this SRS.
-         * Set to "" if you do not want to have mouse position displayed.
-         * Defaults to "EPSG:2154"
+         * Constant: POINTER_POSITION_SRS_LIST
+         * {Array} The cursor position will be displayed using these SRS.
+         * Defaults to [["EPSG:4326", "WGS 84"],["EPSG:2154", "Lambert 93"]]
          */
-        MAP_POS_SRS1: getCustomParameter("MAP_POS_SRS1", "EPSG:2154"),
-
-        /**
-         * Constant: MAP_POS_SRS2
-         * {String} The cursor position will be displayed using this SRS.
-         * Set to "" if you do not want to have mouse position displayed.
-         * Defaults to ""
-         */
-        MAP_POS_SRS2: getCustomParameter("MAP_POS_SRS2", ""),
+        POINTER_POSITION_SRS_LIST: getCustomParameter("POINTER_POSITION_SRS_LIST",  [
+            ["EPSG:4326", "WGS 84"],
+            ["EPSG:2154", "Lambert 93"]
+        ]),
 
         /**
          * Constant: PROJ4JS_STRINGS
          * {Object} The list of supported SRS with their definitions.
-         * Defaults to "EPSG:2154" & "EPSG:900913" being defined
+         * Defaults to "EPSG:4326", "EPSG:2154" & "EPSG:900913" being defined
          * Note that "EPSG:900913" is required if OSM_AS_OVMAP is set to true
          */
         PROJ4JS_STRINGS: getCustomParameter("PROJ4JS_STRINGS", {
+            "EPSG:4326": "+title=WGS 84, +proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs",
             "EPSG:2154": "+title=RGF-93/Lambert 93, +proj=lcc +lat_1=49 +lat_2=44 +lat_0=46.5 +lon_0=3 +x_0=700000 +y_0=6600000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs",
             "EPSG:900913": "+title=Web Spherical Mercator, +proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs"
         }),
@@ -658,12 +663,19 @@ GEOR.config = (function() {
 
         /**
          * Constant: GEONAMES_FILTERS
-         * {Object} Describes the geonames options.
-         * Defaults to France/Bretagne/populated places
+         * {Object} Describes the geonames search options for the searchJSON web service.
+         * (documentation here: http://www.geonames.org/export/geonames-search.html)
+         *
+         * Defaults to France/populated places
+         *
+         * Note that it is possible to restrict search to an admin area
+         * by specifying either an adminCode1 or adminCode2 or adminCode3
+         * See http://download.geonames.org/export/dump/admin1CodesASCII.txt for adminCode1
+         * Aquitaine matches '97' while Bretagne (Brittany) matches 'A2'
          */
         GEONAMES_FILTERS: getCustomParameter("GEONAMES_FILTERS", {
             country: 'FR',         // France
-            adminCode1: 'A2',      // Bretagne
+            //adminCode1: '97',
             style: 'short',        // verbosity of results
             lang: 'fr',
             featureClass: 'P',     // class category: populated places
@@ -719,6 +731,45 @@ GEOR.config = (function() {
          */
         ROLES_FOR_PRINTER: getCustomParameter("ROLES_FOR_PRINTER",
             []),
+
+        /**
+         * Constant: PRINT_LAYOUTS_ACL
+         * {Object} roles required for each print layout
+         * Empty array means "layout is available for everyone"
+         */
+        PRINT_LAYOUTS_ACL: getCustomParameter("PRINT_LAYOUTS_ACL", {
+            // A4 allowed for everyone:
+            'A4 paysage': [],
+            'A4 portrait': [],
+            // A3 not allowed for unconnected users (guests):
+            'A3 paysage': ['ROLE_SV_USER', 'ROLE_SV_REVIEWER', 'ROLE_SV_EDITOR', 'ROLE_SV_ADMIN'],
+            'A3 portrait': ['ROLE_SV_USER', 'ROLE_SV_REVIEWER', 'ROLE_SV_EDITOR', 'ROLE_SV_ADMIN']
+        }),
+
+        /**
+         * Constant: DEFAULT_PRINT_LAYOUT
+         * {String} The default (ie selected) print layout.
+         * Defaults to "A4 paysage".
+         * Note: be sure to choose a layout available for everyone
+         */
+        DEFAULT_PRINT_LAYOUT: getCustomParameter("DEFAULT_PRINT_LAYOUT",
+            "A4 paysage"),
+
+        /**
+         * Constant: DEFAULT_PRINT_RESOLUTION
+         * {String} The default (ie selected) print resolution.
+         * Defaults to "127"
+         */
+        DEFAULT_PRINT_RESOLUTION: getCustomParameter("DEFAULT_PRINT_RESOLUTION",
+            "127"),
+
+        /**
+         * Constant: PDF_FILENAME
+         * {String} The PDF filename prefix.
+         * Defaults to "georchestra_${yyyy-MM-dd_hhmmss}"
+         */
+        PDF_FILENAME: getCustomParameter("PDF_FILENAME",
+            "georchestra_${yyyy-MM-dd_hhmmss}"),
 
         /**
          * Constant: HELP_URL

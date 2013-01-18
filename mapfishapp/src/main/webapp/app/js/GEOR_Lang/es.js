@@ -26,9 +26,11 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Layer": "Capa",
     "Description": "Descripción",
     "Error": "Error",
-    "The provided context is not valid.": "El contexto proveído no es valido.",
     "Server": "Servidor",
     "Close": "Cerrar",
+    "labelSeparator": " : ",
+    "File submission failed or invalid file": "El envío del archivo falló - " +
+        "verificar si el archivo es valido",
     /* GEOR.js strings */
     "Cities": "Ciudades",
     "Recentering on GeoNames cities":
@@ -197,10 +199,12 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "NB layers imported": "${NB} capas importadas",
     "One layer imported": "Una capa importada",
     "Not any layer imported": "Ninguna capa importada",
+    "The provided context is not valid": "El contexto proveído no es valido",
     "The default context is not defined (and it is a BIG problem!)":
         "El contexto por omisión no está definido ",
     /* GEOR_mappanel.js strings */
-    "Mouse coordinates in SRS": "Coordenadas del ratón en ${srs}",
+    "Coordinates in ": "Coordenadas en ",
+    "scale picker": "Escala",
     /* GEOR_ows.js strings */
     "The NAME layer was not found in WMS service.":
         "La capa ${name} no se encuentra en el servicio WMS",
@@ -218,14 +222,13 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Unable to print": "La impresión no está disponible",
     "The print server is currently unreachable":
         "El servicio de impresión está actualmente inaccesible.",
-    "print.unknown.format":
-         "Error de configuración: DEFAULT_PRINT_FORMAT " +
-         "${format} no se encuentra en los formatos de impresión",
+    "print.unknown.layout":
+         "Error de configuración: DEFAULT_PRINT_LAYOUT " +
+         "${layout} no se encuentra en los formatos de impresión",
     "print.unknown.resolution":
          "Error de configuración: DEFAULT_PRINT_RESOLUTION " +
          "${resolution} no se encuentra en las resoluciones de impresión",
     "Title": "Título",
-    "Copyright": "Copyright",
     "Minimap": "Mini-mapa",
     "North": "Norte",
     "Scale": "Escala",
@@ -314,6 +317,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
         "del mapa",
     "pan": "Agarrar - desplazar el mapa",
     "zoom in": "Acercamiento",
+    "zoom out": "Alejamiento",
     "distance measure": "Medir una distancia",
     "area measure": "Medir un área",
     "back to previous zoom": "Volver al zoom anterior",
@@ -341,9 +345,19 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
         "servidor inalcanzable, etc.",
     "WFS server": "Servicio WFS",
     /* GEOR_wmc.js strings */
+    "The provided file is not a valid OGC context":
+		"El archivo proveido no es un contexto OGC valido",
     "wmc.bad.srs": "El archivo .wmc no " +
         "puede ser restaurado. Su sistema de referencia espacial es " +
         "diferente del sistema del mapa actual.",
+    /* GEOR_wmcbrowser.js strings */
+    "Could not find WMC file": "El contexto WMC especificado no existe",
+    "... or a custom context": "... o un contexto personalizado",
+    "Replace current map composition with one of these contexts:":
+		"Remplazar la composición actual del mapa por uno de estos contextos:",
+    "A unique OSM layer": "Una capa OpenStreetMap única",
+    "default viewer context": "contexto por omisión",
+    "(default)": "<br/>(contexto por omisión actual)",
     /* GEOR_wmsbrowser.js strings */
     "Queryable": "Interrogable",
     "Opaque": "Opaco",
@@ -366,6 +380,8 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Workspace": "Espacio de trabajo",
     "Save the map context": "Guardar el mapa",
     "Load a map context": "Cargar un mapa",
+    "Get a permalink": "Crear un permalink",
+    "Share your map with this URL: ": "Compartir su mapa con esta URL",
     "Edit in OSM": "Editar en OSM",
     "with JOSM": "con JOSM",
     "JOSM must be started with the remote control option": "Usted tiene " +

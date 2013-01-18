@@ -800,6 +800,7 @@ GEOR.managelayers = (function() {
             return {
                 xtype: "treepanel",
                 autoScroll: true,
+                enableDD: true,
                 loader: {
                     applyLoader: false,
                     uiProviders: {
@@ -822,6 +823,7 @@ GEOR.managelayers = (function() {
                 root: layerContainer,
                 buttons: [{
                     text: tr("Add layers"),
+                    iconCls: 'btn-add',
                     handler: function() {
                         if (!layerFinder) {
                             layerFinder = GEOR.layerfinder.create(layerStore, this.el);

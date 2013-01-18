@@ -25,6 +25,7 @@
  * @include GEOR_mapinit.js
  * @include GEOR_print.js
  * @include GEOR_wmc.js
+ * @include GEOR_wmcbrowser.js
  * Note that GEOR_getfeatureinfo.js, GEOR_resultspanel.js, GEOR_querier.js,
  * GEOR_styler.js should be included here, but they are not required by the edit module.
  * In order to make the edit build "light", those files will be added in main.cfg and not here.
@@ -36,7 +37,7 @@ Ext.namespace("GEOR");
 
     var checkRoles = function(module, okRoles) {
         // module is available for everyone if okRoles is empty:
-        var ok = (okRoles.length == 0);
+        var ok = (okRoles.length === 0);
         // else, check existence of required role to activate module:
         for (var i=0, l=okRoles.length; i<l; i++) {
             if (GEOR.config.ROLES.indexOf(okRoles[i]) >= 0) {
@@ -93,6 +94,7 @@ Ext.namespace("GEOR");
         var map = layerStore.map;
 
         GEOR.wmc.init(layerStore);
+        GEOR.wmcbrowser.init();
         if (GEOR.print) {
             GEOR.print.init(layerStore);
         }
@@ -160,6 +162,7 @@ Ext.namespace("GEOR");
                 },
                 items: [
                     Ext.apply({
+                        // nothing
                     }, GEOR.managelayers.create(layerStore))
                 ]
             }),
@@ -293,6 +296,7 @@ Ext.namespace("GEOR");
                             eastItems[0].getLayout().setActiveItem(0);
                         }
                     });
+                    panelCfg.buttons.reverse();
                     querierTitle = panelCfg.title;
                     eastItems[0].setTitle(querierTitle);
                     var panel = Ext.apply(panelCfg, {
@@ -388,5 +392,15 @@ Ext.namespace("GEOR");
                 }
             });
         }
+
+        GEOR.wmcbrowser.events.on({
+            "contextselected": function(o) {
+                try {
+                    GEOR.wmc.read(o.wmcString, true, true);
+                } catch (err) {
+                    return false;
+                }
+            }
+        });
     });
 })();

@@ -1,6 +1,2 @@
-jsbuild/venv/
-jsbuild/setuptools-0.6c11-py2.6.egg
-src/main/webapp/build/
 src/main/webapp/default.wmc
-target/
 src/main/webapp/print/

@@ -78,54 +78,15 @@ window.location = "?login";
         #loading-msg {
             font: normal 12px arial,tahoma,sans-serif;
         }
-        #go_head ul {
-            float: left;
-            list-style: none;
-            margin: 20px 0 0 10px;
-            padding: 0;
-            font-size: 18px;
-            display: inline;
-        }
-        #go_head li {
-            margin: 0;
-            padding: 0;
-            display: inline-block;
-        }
-        #go_head .logged {
-            margin        : 20px 15px 0 0;
-            border        : 1px dotted #ddd;
-            border-radius : 0.3em;
-            padding       : 0 0.6em;
-            width         : auto;
-            float         : right;
-            height        : 52px;
-            line-height   : 52px;
-        }
     </style>
     <link rel="stylesheet" type="text/css" href="resources/app/css/main.css" />
 
     <title lang="<%= lang %>" dir="ltr"><fmt:message key="title"/></title>
-<c:choose>
-    <c:when test='<%= request.getParameter("noheader") != null %>'>
     <script type="text/javascript">
         GEOR = {
-            header: false
+            header: <%= request.getParameter("noheader") == null %>
         };
     </script>
-    </c:when>
-    <c:otherwise>
-    <!-- 
-     * The following resource will be loaded only when geOrchestra's "static" module
-     *  is deployed alongside with mapfishapp
-     *-->
-    <link rel="stylesheet" type="text/css" href="/static/css/header.css" />
-    <script type="text/javascript">
-        GEOR = {
-            header: true
-        };
-    </script>
-    </c:otherwise>
-</c:choose>
 </head>
 
 <body>

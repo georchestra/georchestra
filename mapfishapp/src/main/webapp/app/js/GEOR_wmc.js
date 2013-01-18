@@ -75,65 +75,72 @@ GEOR.wmc = (function() {
         };
 
         ls.each(function (record) {
-
             var layer = record.get('layer');
-            if(layer instanceof OpenLayers.Layer.WMS) {
-
-                var layerContext = wmcFormat.layerToContext(layer);
-                // only the first metadataURL can be saved to WMC:
-                // see http://applis-bretagne.fr/redmine/issues/2091
-                if (layerContext.metadataURL && layerContext.metadataURL[0]) {
-                    if (typeof layerContext.metadataURL[0] == 'string') {
-                        layerContext.metadataURL = layerContext.metadataURL[0];
-                    } else if (layerContext.metadataURL[0].href) {
-                        layerContext.metadataURL = layerContext.metadataURL[0].href;
-                    } else {
-                        delete layerContext.metadataURL;
-                    }
-                }
-                var queryable = record.get('queryable');
-                var styles = record.get('styles');
-                var formats = record.get('formats');
-
-                if (queryable !== undefined) {
-                    layerContext.queryable = queryable;
-                }
-
-                if (styles !== undefined && styles.length > 0) {
-                    // if the context style has its href property
-                    // set, which means the layer has an SLD
-                    // parameters, we don't empty the styles
-                    // array because we don't want to loose
-                    // that style
-                    var layerContextStyles = layerContext.styles;
-                    if (!layerContextStyles[0].href) {
-                        layerContext.styles = [];
-                    }
-                    Ext.each(styles, function (item, index, all) {
-                        var style = {};
-                        Ext.apply(style, {current: false}, item);
-                        if(layer.params.STYLES === style.name) {
-                            style.current = true;
-                        }
-                        layerContext.styles.push(style);
-                    });
-                }
-
-                if (formats !== undefined && formats.length > 0) {
-                    layerContext.formats = [];
-                    Ext.each(formats, function (item, index, all) {
-                        var format = {};
-                        var f = (item instanceof Object) ? item.value : item;
-                        Ext.apply(format, {current: false}, {value: f});
-                        if(layer.params.FORMAT == f) {
-                            format.current = true;
-                        }
-                        layerContext.formats.push(format);
-                    });
-                }
-
-                context.layersContext.push(layerContext);
+            if (!(layer instanceof OpenLayers.Layer.WMS)) {
+                return;
             }
+            
+            // having styles referenced in the layer's metadata object 
+            // prevents the WMC format to obtain them from layer.params.
+            // In geOrchestra we're not using layer.metadata since we have much better
+            // (layer records) => we're better off removing layer.metadata.styles here:
+            layer.metadata.styles = null;
+            // Note: this fixes http://applis-bretagne.fr/redmine/issues/4510
+            var layerContext = wmcFormat.layerToContext(layer); 
+            
+            // only the first metadataURL can be saved to WMC:
+            // see http://applis-bretagne.fr/redmine/issues/2091
+            if (layerContext.metadataURL && layerContext.metadataURL[0]) {
+                if (typeof layerContext.metadataURL[0] == 'string') {
+                    layerContext.metadataURL = layerContext.metadataURL[0];
+                } else if (layerContext.metadataURL[0].href) {
+                    layerContext.metadataURL = layerContext.metadataURL[0].href;
+                } else {
+                    delete layerContext.metadataURL;
+                }
+            }
+            var queryable = record.get('queryable');
+            var styles = record.get('styles');
+            var formats = record.get('formats');
+
+            if (queryable !== undefined) {
+                layerContext.queryable = queryable;
+            }
+
+            if (styles !== undefined && styles.length > 0) {
+                // if the context style has its href property
+                // set, which means the layer has an SLD
+                // parameters, we don't empty the styles
+                // array because we don't want to loose
+                // those styles
+                var layerContextStyles = layerContext.styles;
+                if (!layerContextStyles[0].href) {
+                    layerContext.styles = [];
+                }
+                Ext.each(styles, function (item) {
+                    var style = {};
+                    Ext.apply(style, {current: false}, item);
+                    if(layer.params.STYLES === style.name) {
+                        style.current = true;
+                    }
+                    layerContext.styles.push(style);
+                });
+            }
+
+            if (formats !== undefined && formats.length > 0) {
+                layerContext.formats = [];
+                Ext.each(formats, function (item, index, all) {
+                    var format = {};
+                    var f = (item instanceof Object) ? item.value : item;
+                    Ext.apply(format, {current: false}, {value: f});
+                    if(layer.params.FORMAT == f) {
+                        format.current = true;
+                    }
+                    layerContext.formats.push(format);
+                });
+            }
+
+            context.layersContext.push(layerContext);
         });
 
         return context;
@@ -186,19 +193,25 @@ GEOR.wmc = (function() {
          * wmcString - {XML | String} The XML|string describing the context to restore.
          * resetMap - {Boolean} Specifies if the map and the fake base layer must
                       be reset.
+         * zoomToWMC - {Boolean} Whether to zoom to WMC bbox or not, defaults to true
          */
-        read: function(wmcString, resetMap) {
+        read: function(wmcString, resetMap, zoomToWMC) {
             var map = layerStore.map;
             var newContext = wmcFormat.read(wmcString, {}); // get context from wmc
                                                          // using non-API feature
+
+            if (newContext.layersContext === undefined) {
+                GEOR.util.errorDialog({
+                    msg: tr("The provided file is not a valid OGC context")
+                });
+                return;
+            }
 
             if(map.getProjection() && (newContext.projection !== map.getProjection())) {
                 // bounding box from wmc does not have the same projection system
                 // as the current map
                 GEOR.util.errorDialog({
-                    msg: tr("The .wmc file cannot be restored. Its spatial " +
-                        "reference system is different from the system of " +
-                        "the current map")
+                    msg: tr("wmc.bad.srs")
                 });
                 return;
             }
@@ -233,8 +246,12 @@ GEOR.wmc = (function() {
                 layerStore.addSorted(r);
             });
 
-            // zoom to extent specified in the WMC doc
-            map.zoomToExtent(newContext.bounds);
+            if (zoomToWMC === true || zoomToWMC === undefined) {
+                // zoom to closest extent specified in the WMC doc
+                // (hence second argument is true,
+                // see http://applis-bretagne.fr/redmine/issues/2398)
+                map.zoomToExtent(newContext.bounds, true);
+            }
         }
     };
 })();

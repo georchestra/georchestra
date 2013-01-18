@@ -104,16 +104,13 @@ GEOR.print = (function() {
      * {String} The attribution string
      */
     var getLayerSources = function() {
-        var attr = [], defaultAttr = false;
+        var attr = [];
         layerStore.each(function(r) {
             if (!r.get('attribution')) {
                 return;
             }
             if (r.get('attribution').title && attr.indexOf(r.get('attribution').title) < 0) {
                 attr.push(r.get('attribution').title);
-            } else if (!r.get('attribution').title && !defaultAttr) {
-                attr.push(GEOR.config.DEFAULT_ATTRIBUTION);
-                defaultAttr = true;
             }
         });
         return ((attr.length > 1)?tr("Sources: "):tr("Source: ")) +attr.join(', ');
@@ -143,7 +140,26 @@ GEOR.print = (function() {
                 url: serviceUrl
             },
             listeners: {
-                "loadcapabilities": function() {
+                "loadcapabilities": function(provider, caps) {
+                    // Filter out layouts from the provider.layouts store
+                    // that the current user does not have the right to use:
+                    // see http://applis-bretagne.fr/redmine/issues/4497
+                    provider.layouts.filterBy(function(record) {
+                        var layout = record.get('name'),
+                            acl = GEOR.config.PRINT_LAYOUTS_ACL[layout];
+                        // empty or not specified means "layout allowed for everyone"
+                        if (!acl || acl.length === 0) {
+                            return true;
+                        }
+                        for (var i=0, l=GEOR.config.ROLES.length; i<l; i++) {
+                            // check current role is allowed to use current layout:
+                            if (acl.indexOf(GEOR.config.ROLES[i]) >= 0) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    });
+                    // create printPage:
                     printPage = new GeoExt.data.PrintPage({
                         printProvider: printProvider,
                         customParams: defaultCustomParams
@@ -184,7 +200,7 @@ GEOR.print = (function() {
                                 title: tr("Layer unavailable for printing"),
                                 msg: [
                                     tr("The NAME layer cannot be printed.", {'name': layer.name}),
-                                    tr("Contact platorm administrator")
+                                    tr("Contact platform administrator")
                                 ].join('<br/>')
                             });
                         }
@@ -200,7 +216,7 @@ GEOR.print = (function() {
                 title: tr("Unable to print"),
                 msg: [
                     tr("The print server is currently unreachable"),
-                    tr("Contact platorm administrator")
+                    tr("Contact platform administrator")
                 ].join('<br/>')
             });
             return;
@@ -208,12 +224,12 @@ GEOR.print = (function() {
         if (win === null) {
             // default values from config:
             var r = printProvider.layouts.find("name",
-                GEOR.config.DEFAULT_PRINT_FORMAT);
+                GEOR.config.DEFAULT_PRINT_LAYOUT);
             if (r >= 0) {
                 printProvider.setLayout(printProvider.layouts.getAt(r));
             } else {
-                alert(tr("print.unknown.format",
-                    {'format': GEOR.config.DEFAULT_PRINT_FORMAT}));
+                alert(tr("print.unknown.layout",
+                    {'layout': GEOR.config.DEFAULT_PRINT_LAYOUT}));
             }
             r = printProvider.dpis.find("value",
                 GEOR.config.DEFAULT_PRINT_RESOLUTION);
@@ -226,22 +242,31 @@ GEOR.print = (function() {
             // The form with fields controlling the print output
             var formPanel = new Ext.form.FormPanel({
                 bodyStyle: "padding:5px",
-                labelSeparator: ' : ',
+                labelSeparator: tr("labelSeparator"),
                 items: [{
                         xtype: 'textfield',
                         fieldLabel: tr("Title"),
                         width: 200,
                         name: 'mapTitle',
+                        enableKeyEvents: true,
+                        selectOnFocus: true,
                         plugins: new GeoExt.plugins.PrintPageField({
                             printPage: printPage
-                        })
+                        }),
+                        listeners: {
+                            "keypress": function(f, e) {
+                                // transfer focus on Print button on ENTER
+                                if (e.getKey() === e.ENTER) {
+                                    win.getFooterToolbar().getComponent('print').focus();
+                                }
+                            }
+                        }
                     }, {
                         xtype: 'hidden',
-                        name: tr("Copyright"),
+                        name: 'copyright',
                         plugins: new GeoExt.plugins.PrintPageField({
                             printPage: printPage
                         })
-
                     }, {
                         xtype: 'checkbox',
                         fieldLabel: tr("Minimap"),
@@ -250,7 +275,6 @@ GEOR.print = (function() {
                         plugins: new GeoExt.plugins.PrintPageField({
                             printPage: printPage
                         })
-
                     }, {
                         xtype: 'checkbox',
                         fieldLabel: tr("North"),
@@ -259,7 +283,6 @@ GEOR.print = (function() {
                         plugins: new GeoExt.plugins.PrintPageField({
                             printPage: printPage
                         })
-
                     }, {
                         xtype: 'checkbox',
                         fieldLabel: tr("Scale"),
@@ -277,7 +300,6 @@ GEOR.print = (function() {
                         plugins: new GeoExt.plugins.PrintPageField({
                             printPage: printPage
                         })
-
                     }, {
                         xtype: 'checkbox',
                         fieldLabel: tr("Legend"),
@@ -286,10 +308,10 @@ GEOR.print = (function() {
                         plugins: new GeoExt.plugins.PrintPageField({
                             printPage: printPage
                         })
-
                     }, {
                         xtype: "combo",
                         store: printProvider.layouts,
+                        lastQuery: '', // required to apply rights filter
                         displayField: "name",
                         valueField: "name",
                         fieldLabel: tr("Format"),
@@ -343,19 +365,29 @@ GEOR.print = (function() {
                 autoHeight: true,
                 closeAction: 'hide',
                 items: [formPanel],
+                listeners: {
+                    "show": function() {
+                        // focus first field on show
+                        var field = formPanel.getForm().findField('mapTitle');
+                        field.focus('', 50);
+                    }
+                },
                 buttons: [{
+                    text: tr("Close"),
+                    handler: function() {
+                        win.hide();
+                    }
+                }, {
                     text: tr("Print"),
+                    minWidth: 90,
+                    itemId: 'print',
+                    iconCls: 'mf-print-action',
                     handler: function() {
                         printPage.customParams.copyright = getLayerSources();
                         printPage.fit(layerStore.map, false);
                         printProvider.print(layerStore.map, printPage, {
                             legend: legendPanel
                         });
-                    }
-                }, {
-                    text: tr("Close"),
-                    handler: function() {
-                        win.hide();
                     }
                 }]
             });
@@ -365,7 +397,7 @@ GEOR.print = (function() {
 
         if (!mask) {
             mask = new Ext.LoadMask(win.bwrap.dom, {
-                msg:tr("Printing...")
+                msg: tr("Printing...")
             });
         }
     };

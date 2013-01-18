@@ -1,6 +1,3 @@
-src/main/webapp/build/
-jsbuild/venv/
-jsbuild/setuptools-0.6c11-py2.6.egg
 src/integration-test/results/
 src/integration-test/scala/
 src/integration-test/lib/
