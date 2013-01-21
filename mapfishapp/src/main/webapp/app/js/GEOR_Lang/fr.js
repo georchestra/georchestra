@@ -329,6 +329,10 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Leave this page ? You will lose the current cartographic context.":
         "Vous allez quitter cette page et perdre le contexte cartographique " +
         "courant",
+    /* GEOR_tools.js strings */
+    "Measure": "Mesure",
+    "Tools": "Outils",
+    "Add more tools": "Ajouter plus d'outils",
     /* GEOR_util.js strings */
     "Characters": "Caractères",
     "Digital": "Numérique",

@@ -25,10 +25,10 @@
  * @include GeoExt/widgets/Action.js
  * @include GeoExt/widgets/LegendPanel.js
  * @include GeoExt/widgets/WMSLegend.js
- * @include GeoExt/widgets/Popup.js
  * @include GEOR_workspace.js
  * @include GEOR_print.js
  * @include GEOR_config.js
+ * @include GEOR_tools.js
  */
 
 Ext.namespace("GEOR");
@@ -49,95 +49,6 @@ GEOR.toolbar = (function() {
      * {Function} an alias to OpenLayers.i18n
      */
     var tr = null;
-
-    /**
-     * Method: createMeasureControl.
-     * Create a measure control.
-     *
-     * Parameters:
-     * handlerType - {OpenLayers.Handler.Path} or {OpenLayers.Handler.Polygon}
-     *     The handler the measure control will use, depending whether
-     *     measuring distances or areas.
-     *
-     * Returns:
-     * {OpenLayers.Control.Measure} The control.
-     */
-    var createMeasureControl = function(handlerType, map) {
-        var styleMap = new OpenLayers.StyleMap({
-            "default": new OpenLayers.Style(null, {
-                rules: [new OpenLayers.Rule({
-                    symbolizer: {
-                        "Point": {
-                            pointRadius: 4,
-                            graphicName: "square",
-                            fillColor: "white",
-                            fillOpacity: 1,
-                            strokeWidth: 1,
-                            strokeOpacity: 1,
-                            strokeColor: "#333333"
-                        },
-                        "Line": {
-                            strokeWidth: 3,
-                            strokeOpacity: 1,
-                            strokeColor: "#666666",
-                            strokeDashstyle: "dash"
-                        },
-                        "Polygon": {
-                            strokeWidth: 2,
-                            strokeOpacity: 1,
-                            strokeColor: "#666666",
-                            fillColor: "white",
-                            fillOpacity: 0.3
-                        }
-                    }
-                })]
-            })
-        });
-
-        var measureToolTip, popup, measureEnd;
-        var measureControl = new OpenLayers.Control.Measure(handlerType, {
-            persist: true,
-            handlerOptions: {
-                layerOptions: {styleMap: styleMap}
-            }
-        });
-        var showPopup = function(event) {
-            if (!popup) {
-                popup = new GeoExt.Popup({
-                    map: map,
-                    unpinnable: false,
-                    closeAction: 'hide',
-                    // loc inside de viewport so that popup won't get confused:
-                    location: map.getCenter(),
-                    tpl: new Ext.Template("{measure} {units}")
-                });
-            }
-            popup.hide();
-            var points = event.geometry.components;
-            if (points[0] instanceof OpenLayers.Geometry.LinearRing) {
-                points = points[0].components;
-            }
-            if (event.measure > 0) {
-                popup.location = points[points.length-1].getBounds().getCenterLonLat();
-                popup.position();
-                popup.show();
-                popup.update({
-                    measure: event.order == 2 ?
-                        (event.units == tr("m") ?
-                            (event.measure/10000).toFixed(2) :
-                            (event.measure*100).toFixed(2)) :
-                        event.measure.toFixed(2),
-                    units: event.order == 2 ? tr("hectares") : event.units
-                });
-            }
-        }
-        measureControl.events.on({
-            measurepartial: showPopup,
-            measure: showPopup,
-            deactivate: function() { popup && popup.hide(); }
-        });
-        return measureControl;
-    };
 
     /**
      * Method: createTbar
@@ -194,26 +105,6 @@ GEOR.toolbar = (function() {
             iconCls: "zoomout",
             tooltip: tr("zoom out"),
             toggleGroup: "map",
-            allowDepress: false
-        }));
-
-        items.push("-");
-
-        items.push(new GeoExt.Action({
-            control: createMeasureControl(OpenLayers.Handler.Path, map),
-            map: map,
-            toggleGroup: "map",
-            tooltip: tr("distance measure"),
-            iconCls: "measure_path",
-            allowDepress: false
-        }));
-
-        items.push(new GeoExt.Action({
-            control: createMeasureControl(OpenLayers.Handler.Polygon, map),
-            map: map,
-            toggleGroup: "map",
-            tooltip: tr("area measure"),
-            iconCls: "measure_area",
             allowDepress: false
         }));
 
@@ -282,8 +173,10 @@ GEOR.toolbar = (function() {
             }
         });
 
-        items.push('-');
+        items.push("-");
+        items.push(GEOR.tools.create(layerStore));
 
+        items.push('-');
         items.push({
             text: tr("Legend"),
             tooltip: tr("Show legend"),
@@ -323,7 +216,6 @@ GEOR.toolbar = (function() {
         });
 
         items.push("-");
-
         items.push(GEOR.workspace.create(map));
 
         // the toolbar items are added afterwards the creation of the toolbar

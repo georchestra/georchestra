@@ -48,6 +48,10 @@ div.olMapViewport {
   height: 20px !important;
 }
 
+.x-menu-item .add {
+	background-image: url(../img/famfamfam/add.png);
+}
+
 /*
  * layer tree
  */
@@ -419,4 +423,9 @@ div.olMapViewport {
 
 .x-btn-focus .x-btn-bc{
     background-position: 0 -18px;
+}
+
+/* checked menu item */
+.x-menu-list .x-menu-item-checked {
+	font-weight: bold;
 }

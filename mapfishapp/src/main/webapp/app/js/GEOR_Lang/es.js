@@ -330,6 +330,10 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Show legend": "Mostrar la leyenda",
     "Leave this page ? You will lose the current cartographic context.":
         "Usted desea salir de esta página ? Se perderá el contexto cartográfico actual.",
+    /* GEOR_tools.js strings */
+    //"Measure": "Mesure",
+    //"Tools": "Outils", // TODO
+    //"Add more tools": "Ajouter plus d'outils",
     /* GEOR_util.js strings */
     "Characters": "Caracteres",
     "Digital": "Digital",
