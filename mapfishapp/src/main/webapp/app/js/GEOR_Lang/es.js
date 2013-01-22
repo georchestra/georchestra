@@ -331,9 +331,12 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Leave this page ? You will lose the current cartographic context.":
         "Usted desea salir de esta página ? Se perderá el contexto cartográfico actual.",
     /* GEOR_tools.js strings */
-    //"Measure": "Mesure",
-    //"Tools": "Outils", // TODO
+    //"Measure": "Mesure", // TODO
+    //"Tools": "Outils",
     //"Add more tools": "Ajouter plus d'outils",
+    //"remember the selection": "se souvenir de la sélection",
+    //"Available tools:": "Outils disponibles :",
+    //"Clic to select or deselect the tool": "Cliquez pour (dé)sélectionner l'outil",
     /* GEOR_util.js strings */
     "Characters": "Caracteres",
     "Digital": "Digital",

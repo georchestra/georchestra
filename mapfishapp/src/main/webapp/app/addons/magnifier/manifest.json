@@ -1,0 +1,27 @@
+{
+    "js": [
+        "js/OpenLayers.Control.Magnifier.js",
+        "js/magnifier.js"
+    ],
+    "css": [
+        "css/magnifier.css"
+    ],
+    "default_options": {
+        "mode": "static",
+        "baseLayerConfig": {
+            "wmsurl": "http://tile.geobretagne.fr/gwc02/service/wms",
+            "layer": "satellite",
+            "format": "image/jpeg",
+            "buffer": 8
+        }
+    },
+    "i18n": {
+        "en": {},
+        "es": {
+            "magnifier": "lupa ortofoto"
+        },
+        "fr": {
+            "magnifier": "loupe orthophoto"
+        }
+    }
+}

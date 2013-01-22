@@ -68,6 +68,18 @@ GEOR.tools = (function() {
     var win;
 
     /**
+     * Property: dataview
+     * {Ext.DataView}
+     */
+    var dataview;
+
+    /**
+     * Property: button
+     * {Ext.Button} the button to which the menu is attached
+     */
+    var button;
+
+    /**
      * Method: createMeasureControl.
      * Create a measure control.
      *
@@ -163,6 +175,111 @@ GEOR.tools = (function() {
 
 
     /**
+     * Method: loadCssFiles
+     * This method loads dynamically the css files passed in parameter
+     *
+     * Parameters:
+     * files - {Array} the css files
+     */
+    var loadCssFiles = function(prefix, files) {
+        Ext.each(files, function(file) {
+            var css = document.createElement("link");
+            css.setAttribute("rel", "stylesheet");
+            css.setAttribute("type", "text/css");
+            css.setAttribute("href", prefix + file);
+            document.getElementsByTagName("head")[0].appendChild(css);
+        });
+    }
+
+
+    /**
+     * Method: fetchAndLoadTools
+     * Fetch the tools and load them in the menu.
+     *
+     * Parameters:
+     * records - {Array} an array of tool records
+     */
+    var fetchAndLoadTools = function(records) {
+        win.hide();
+        GEOR.waiter.show(records.length);
+        Ext.each(records, function(r) {
+            var addonName = r.get("name"),
+                addonPath = "app/addons/" + addonName.toLowerCase() + "/";
+            // get corresponding manifest.json 
+            OpenLayers.Request.GET({
+                url: addonPath + "manifest.json",
+                success: function(response) {
+                    // TODO: handle repeated files (eg: same addon with different parameters)
+                    var js = [], 
+                        o = (new OpenLayers.Format.JSON()).read(
+                            response.responseText
+                        );
+                    // handle i18n
+                    if (o.i18n) {
+                        Ext.iterate(o.i18n, function(k, v) {
+                            OpenLayers.Lang[k] = 
+                                OpenLayers.Util.extend(OpenLayers.Lang[k], v);
+                        });
+                    }
+                    // load CSS
+                    if (o.css && o.css.length) {
+                        loadCssFiles(addonPath, o.css);
+                    }
+                    // load JS
+                    if (o.js && o.js.length) {
+                        Ext.each(o.js, function(f) {
+                            js.push(addonPath + f);
+                        });
+                        Ext.Loader.load(js, function() {
+                            // init addon
+                            if (GEOR.Addons[addonName]) {
+                                var tool = GEOR.Addons[addonName].init(map, Ext.apply({}, 
+                                        r.get("options") || {}, 
+                                        o.default_options || {}
+                                    )
+                                );
+                                menu.addItem(tool); // TODO: add menu ? addMenuItem( config )
+                            } else {
+                                alert("GEOR.Addons."+addonName+" namespace should be defined !");
+                            }
+                        }, this, true);
+                    }
+                },
+                failure: function() {
+                    // TODO
+                }
+            });
+        });
+    };
+
+
+    /**
+     * Method: onDblclick
+     * Callback on view node double clicked
+     *
+     * Parameters:
+     * view - {Ext.DataView}
+     * index - {Integer} not used internally
+     * node - {HTMLElement}
+     */
+    var onDblclick = function(view, index, node) {
+        var record = view.getRecord(node);
+        if (record) {
+            fetchAndLoadTools([record]);
+        }
+    };
+
+
+    /**
+     * Method: loadBtnHandler
+     * Handler for the button triggering the tools loading
+     */
+    var loadBtnHandler = function() {
+        fetchAndLoadTools(dataview.getSelectedRecords());
+    };
+
+
+    /**
      * Method: addTools
      * Creates/shows the tools selection window
      */
@@ -176,11 +293,11 @@ GEOR.tools = (function() {
         }
 
         var store = new Ext.data.JsonStore({
-            fields: ["name","title","thumbnail","description", "options"],
+            fields: ["name", "title", "thumbnail", "description", "options"],
             data: GEOR.config.ADDONS.slice(0)
         });
 
-        var dataview = new Ext.DataView({
+        dataview = new Ext.DataView({
             store: store,
             multiSelect: true,
             selectedClass: 'x-view-selected',
@@ -195,21 +312,31 @@ GEOR.tools = (function() {
             tpl: new Ext.XTemplate(
                 '<tpl for=".">',
                     '<div class="x-view-item">',
-                        '<table><tr><td style="vertical-align:text-top;">',
-                            '<p><b>{title}</b></p>',
-                            '<p>{description}</p>',
-                        '</td><td width="190" style="text-align:center;" ext:qtip="'+tr("Clic to select or deselect the tool")+'">',
-                            '<img src="app/addons/{name}/{thumbnail}" class="thumb" onerror="this.src=\'app/img/broken.png\';"/>',
+                        '<table><tr><td width="100%" style="vertical-align:text-top;">',
+                            '<p><b>{[this.tr(values, "title")]}</b></p>',
+                            '<p>{[this.tr(values, "description")]}</p>',
+                        '</td><td width="50" style="text-align:center;" ext:qtip="'+tr("Clic to select or deselect the tool")+'">',
+                            '<img src="app/addons/{[values.name.toLowerCase()]}/{thumbnail}" class="thumb" ',
+                            'onerror="this.src=\'app/addons/{[values.name.toLowerCase()]}/img/thumbnail.png\';"/>',
                         '</td></tr></table>',
                     '</div>',
-                '</tpl>'
-            ),
+                '</tpl>', 
+            {
+                compiled: true,
+                disableFormats: true,
+                tr: function(v, key) {
+                    return v[key][OpenLayers.Lang.getCode()];
+                }
+            }),
             listeners: {
-                "click": function(dv) {
+                "selectionchange": function(dv) {
                     var selectedRecords = dv.getSelectedRecords();
                     observable.fireEvent("selectionchanged", selectedRecords);
-                    win.getFooterToolbar().getComponent('load').setDisabled(selectedRecords.length === 0);
-                }
+                    win.getFooterToolbar().getComponent('load').setDisabled(
+                        selectedRecords.length === 0
+                    );
+                },
+                "dblclick": onDblclick
             }
         });
 
@@ -230,14 +357,14 @@ GEOR.tools = (function() {
             closeAction: 'hide',
             plain: true,
             buttonAlign: 'left',
-            fbar: [{
+            fbar: [/*{
                 xtype: 'checkbox',
                 itemId: 'cbx',
                 boxLabel: tr("remember the selection"),
                 listeners: {
                     //"check": onCbxCheckChange
                 }
-            },'->', {
+            },*/'->', {
                 text: tr("Close"),
                 handler: function() {
                     win.hide();
@@ -248,7 +375,7 @@ GEOR.tools = (function() {
                 itemId: 'load',
                 minWidth: 90,
                 iconCls: 'geor-load-tools',
-                //handler: loadBtnHandler,
+                handler: loadBtnHandler,
                 listeners: {
                     "enable": function(btn) {
                         btn.focus();
@@ -279,47 +406,48 @@ GEOR.tools = (function() {
 
         /**
          * APIMethod: create
-         * Return the menu config
          *
          * Parameters:
          * layerStore - {GeoExt.data.LayerStore} The application's layer store.
          *
          * Returns:
-         * {Object}
+         * {Ext.Button} the toolbar button holding the menu
          */
         create: function(layerStore) {
             tr = OpenLayers.i18n;
             map = layerStore.map;
             menu = new Ext.menu.Menu({
                 defaultAlign: "tr-br",
-                items: [
-                    new Ext.menu.CheckItem(
-                        new GeoExt.Action({
-                            text: tr("distance measure"),
-                            control: createMeasureControl(OpenLayers.Handler.Path, map),
-                            map: map,
-                            group: "measure",
-                            iconCls: "measure_path"
-                        })
-                    ), new Ext.menu.CheckItem(
-                        new GeoExt.Action({
-                            text: tr("area measure"),
-                            control: createMeasureControl(OpenLayers.Handler.Polygon, map),
-                            map: map,
-                            group: "measure",
-                            iconCls: "measure_area"
-                        })
-                    ), '-', {
-                        text: tr("Add more tools"),
-                        iconCls: "add",
-                        handler: addTools
-                }]
+                items: [{ // TODO: put this at the bottom of the list (but how to insert items at a given position ?)
+                    text: tr("Add more tools"),
+                    hideOnClick: false,
+                    iconCls: "add",
+                    handler: addTools
+                }, '-',
+                new Ext.menu.CheckItem(
+                    new GeoExt.Action({
+                        text: tr("distance measure"),
+                        control: createMeasureControl(OpenLayers.Handler.Path, map),
+                        map: map,
+                        group: "measure",
+                        iconCls: "measure_path"
+                    })
+                ), new Ext.menu.CheckItem(
+                    new GeoExt.Action({
+                        text: tr("area measure"),
+                        control: createMeasureControl(OpenLayers.Handler.Polygon, map),
+                        map: map,
+                        group: "measure",
+                        iconCls: "measure_area"
+                    })
+                ), '-']
             });
 
-            return {
+            button = new Ext.Button({
                 text: tr("Tools"),
                 menu: menu
-            };
+            });
+            return button;
         }
         
     };

@@ -333,18 +333,40 @@ GEOR.config = (function() {
          * Defaults to []
          */
         ADDONS: getCustomParameter("ADDONS", [{
-            "name": "magnifier", // nom du dossier addon et du namespace (GEOR.Addons.magnifier)
-            "title": "Loupe dynamique", // titre court
-            "thumbnail": "img/osm.png", // imagette pour identification rapide - automatiquement préfixé de app/addons/magnifier/ 
+            "name": "Magnifier", // nom du namespace (GEOR.Addons.Magnifier) et, une fois passé en minuscule, du dossier de l'addon
+            "title": {
+                "en": "Aerial imagery magnifier",
+                "es": "Lupa ortofoto",
+                "fr": "Loupe orthophoto"
+            },
+            
+            //"thumbnail": "img/icon.png", // imagette pour identification rapide - automatiquement préfixé de app/addons/magnifier/ 
+            // et thumbnail automatiquement chargée depuis app/addons/{name.toLowerCase()}/img/icon.png
+            // overrideable si thumbnail est présent ici.
             // on pourrait aussi dire qu'il existe une image default.png dans app/addons/magnifier/img/
-            "description": "Un super outil qui permet de grossir une zone du fond carto courant", // description complète
-            "options": {
-                mode: "static",
-                layer: "satellite",
-                format: "image/jpeg",
-                buffer: 8,
-                wmsurl: "http://tile.geobretagne.fr/gwc02/service/wms"
-            }
+            
+            "description": {
+                "en": "A tool which allows to zoom in an aerial image on a map portion",
+                "es": "Un outil qui permet de zoomer dans une ortophoto sur une portion de la carte", // TODO
+                "fr": "Un outil qui permet de zoomer dans une ortophoto sur une portion de la carte"
+            }, // , // description complète  // TODO: i18n
+            // options are optional: if not specified, they are taken from the package defaults:
+            //"options": {}
+        }, {
+            "name": "Magnifier",  // nom du namespace (GEOR.Addons.Magnifier) et, une fois passé en minuscule, du dossier de l'addon
+            "title": {
+                "en": "Aerial imagery magnifier",
+                "es": "Lupa ortofoto",
+                "fr": "Loupe orthophoto"
+            },            //"thumbnail": "img/osm.png", // imagette pour identification rapide - automatiquement préfixé de app/addons/magnifier/ 
+            // on pourrait aussi dire qu'il existe une image default.png dans app/addons/magnifier/img/
+            "description": {
+                "en": "A tool which allows to zoom in an aerial image on a map portion",
+                "es": "Un outil qui permet de zoomer dans une ortophoto sur une portion de la carte", // TODO
+                "fr": "Un outil qui permet de zoomer dans une ortophoto sur une portion de la carte"
+            }, // , // description complète  // TODO: i18n
+            // options are optional: if not specified, they are taken from the package defaults:
+            "options": {}
         }]),
 
         /**

@@ -332,9 +332,10 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     /* GEOR_tools.js strings */
     "Measure": "Mesure",
     "Tools": "Outils",
-    "Add more tools": "Ajouter plus d'outils",
+    "Add more tools": "Ajouter des outils",
     "remember the selection": "se souvenir de la sélection",
     "Available tools:": "Outils disponibles :",
+    "Clic to select or deselect the tool": "Cliquez pour (dé)sélectionner l'outil",
     /* GEOR_util.js strings */
     "Characters": "Caractères",
     "Digital": "Numérique",

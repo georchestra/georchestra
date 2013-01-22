@@ -38,14 +38,10 @@ div.olMapViewport {
 
 .measure_path {
   background-image: url(../img/ruler.png) !important;
-  width: 20px !important;
-  height: 20px !important;
 }
 
 .measure_area {
   background-image: url(../img/ruler_square.png) !important;
-  width: 20px !important;
-  height: 20px !important;
 }
 
 .x-menu-item .add {
