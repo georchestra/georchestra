@@ -9,7 +9,7 @@
  * give the map a white background (useful for ovmap)
  */
 div.olMapViewport {
-  background-color:white;
+  background-color:#fff;
   text-align:left;
 }
 
@@ -139,6 +139,9 @@ div.olMapViewport {
 .geor-load-map {
     background-image: url(../img/famfamfam/map_go.gif) !important;
 }
+.geor-load-tools {
+    background-image: url(../img/fugue/wrench--plus.png) !important;
+}
 .geor-permalink {
     background-image: url(../img/famfamfam/link.png) !important;
 }
@@ -178,7 +181,7 @@ div.olMapViewport {
 }
 
 .x-combo-list-item {
-    border:1px solid #FFFFFF;
+    border:1px solid #fff;
     font:12px tahoma,arial,helvetica,sans-serif;
     padding:2px;
     white-space:nowrap;
@@ -203,7 +206,7 @@ div.olMapViewport {
 }
 
 .white-bg {
-	background:#ffffff;
+	background:#fff;
 }
 
 .bold-text {
@@ -316,10 +319,15 @@ div.olMapViewport {
 .box-as-panel {
     font: normal 12px tahoma, arial, helvetica, sans-serif;
     padding: 10px;
-    background: #FFFFFF;
+    background: #fff;
 }
 
 /* styles for ext.dataview in layer finder */
+
+.x-list {
+	background-color: #fff;
+	height: 100% !important;
+}
 .x-list div.x-view-over {
 	background-color: #ddd !important;
 }
@@ -345,7 +353,7 @@ div.olMapViewport {
 
 /* context selector */
 .context-selector {
-    background: white;
+    background: #fff;
     font-size: 11px;
     font-family: tahoma,arial,verdana,sans-serif;
 }

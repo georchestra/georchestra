@@ -327,6 +327,25 @@ GEOR.config = (function() {
 
         /***** Beginning of config options which can be overriden by GEOR.custom *****/
 
+        /**
+         * Constant: ADDONS
+         * An array of addons config objects.
+         * Defaults to []
+         */
+        ADDONS: getCustomParameter("ADDONS", [{
+            "name": "magnifier", // nom du dossier addon et du namespace (GEOR.Addons.magnifier)
+            "title": "Loupe dynamique", // titre court
+            "thumbnail": "img/osm.png", // imagette pour identification rapide - automatiquement préfixé de app/addons/magnifier/ 
+            // on pourrait aussi dire qu'il existe une image default.png dans app/addons/magnifier/img/
+            "description": "Un super outil qui permet de grossir une zone du fond carto courant", // description complète
+            "options": {
+                mode: "static",
+                layer: "satellite",
+                format: "image/jpeg",
+                buffer: 8,
+                wmsurl: "http://tile.geobretagne.fr/gwc02/service/wms"
+            }
+        }]),
 
         /**
          * Constant: CONTEXTS

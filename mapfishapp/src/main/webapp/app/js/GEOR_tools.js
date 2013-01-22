@@ -25,6 +25,19 @@ GEOR.tools = (function() {
      */
 
     /**
+     * Property: observable
+     * {Ext.util.Obervable}
+     */
+    var observable = new Ext.util.Observable();
+    observable.addEvents(
+        /**
+         * Event: contextselected
+         * Fires when a new tools selection is available
+         */
+        "selectionchanged"
+    );
+
+    /**
      * Property: tr
      * {Function} an alias to OpenLayers.i18n
      */
@@ -36,12 +49,23 @@ GEOR.tools = (function() {
      */
     var map;
 
-
     /**
      * Property: popup
      * {GeoExt.Popup}
      */
     var popup;
+
+    /**
+     * Property: menu
+     * {Ext.menu.Menu}
+     */
+    var menu;
+
+    /**
+     * Property: win
+     * {Ext.Window}
+     */
+    var win;
 
     /**
      * Method: createMeasureControl.
@@ -138,10 +162,120 @@ GEOR.tools = (function() {
     };
 
 
+    /**
+     * Method: addTools
+     * Creates/shows the tools selection window
+     */
+    var addTools = function() {
+        var target = (GEOR.config.ANIMATE_WINDOWS) ? 
+            this.el : undefined;
+
+        if (win) {
+            win.show();
+            return;
+        }
+
+        var store = new Ext.data.JsonStore({
+            fields: ["name","title","thumbnail","description", "options"],
+            data: GEOR.config.ADDONS.slice(0)
+        });
+
+        var dataview = new Ext.DataView({
+            store: store,
+            multiSelect: true,
+            selectedClass: 'x-view-selected',
+            simpleSelect: true,
+            cls: 'x-list',
+            overClass:'x-view-over',
+            itemSelector: 'div.x-view-item',
+            autoScroll: true,
+            autoWidth: true,
+            trackOver: true,
+            autoHeight: true,
+            tpl: new Ext.XTemplate(
+                '<tpl for=".">',
+                    '<div class="x-view-item">',
+                        '<table><tr><td style="vertical-align:text-top;">',
+                            '<p><b>{title}</b></p>',
+                            '<p>{description}</p>',
+                        '</td><td width="190" style="text-align:center;" ext:qtip="'+tr("Clic to select or deselect the tool")+'">',
+                            '<img src="app/addons/{name}/{thumbnail}" class="thumb" onerror="this.src=\'app/img/broken.png\';"/>',
+                        '</td></tr></table>',
+                    '</div>',
+                '</tpl>'
+            ),
+            listeners: {
+                "click": function(dv) {
+                    var selectedRecords = dv.getSelectedRecords();
+                    observable.fireEvent("selectionchanged", selectedRecords);
+                    win.getFooterToolbar().getComponent('load').setDisabled(selectedRecords.length === 0);
+                }
+            }
+        });
+
+        win = new Ext.Window({
+            title: tr("Tools"),
+            layout: 'vbox',
+            layoutConfig: {
+                align: 'stretch'
+            },
+            defaults: {
+                border: false
+            },
+            modal: false,
+            constrainHeader: true,
+            animateTarget: target,
+            width: 4 * 130 + 2 * 10 + 15, // 15 for scrollbar
+            height: 450,
+            closeAction: 'hide',
+            plain: true,
+            buttonAlign: 'left',
+            fbar: [{
+                xtype: 'checkbox',
+                itemId: 'cbx',
+                boxLabel: tr("remember the selection"),
+                listeners: {
+                    //"check": onCbxCheckChange
+                }
+            },'->', {
+                text: tr("Close"),
+                handler: function() {
+                    win.hide();
+                }
+            }, {
+                text: tr("Load"),
+                disabled: true,
+                itemId: 'load',
+                minWidth: 90,
+                iconCls: 'geor-load-tools',
+                //handler: loadBtnHandler,
+                listeners: {
+                    "enable": function(btn) {
+                        btn.focus();
+                    }
+                }
+            }],
+            items: [{
+                xtype: 'box',
+                height: 30,
+                autoEl: {
+                    tag: 'div',
+                    cls: 'box-as-panel',
+                    html: tr("Available tools:"),
+                }
+            }, dataview]
+        });
+        win.show(target);
+    };
+
     /*
      * Public
      */
     return {
+        /*
+         * Observable object
+         */
+        events: observable,
 
         /**
          * APIMethod: create
@@ -154,39 +288,38 @@ GEOR.tools = (function() {
          * {Object}
          */
         create: function(layerStore) {
-            Ext.QuickTips.init();
             tr = OpenLayers.i18n;
             map = layerStore.map;
-            
+            menu = new Ext.menu.Menu({
+                defaultAlign: "tr-br",
+                items: [
+                    new Ext.menu.CheckItem(
+                        new GeoExt.Action({
+                            text: tr("distance measure"),
+                            control: createMeasureControl(OpenLayers.Handler.Path, map),
+                            map: map,
+                            group: "measure",
+                            iconCls: "measure_path"
+                        })
+                    ), new Ext.menu.CheckItem(
+                        new GeoExt.Action({
+                            text: tr("area measure"),
+                            control: createMeasureControl(OpenLayers.Handler.Polygon, map),
+                            map: map,
+                            group: "measure",
+                            iconCls: "measure_area"
+                        })
+                    ), '-', {
+                        text: tr("Add more tools"),
+                        iconCls: "add",
+                        handler: addTools
+                }]
+            });
+
             return {
                 text: tr("Tools"),
-                menu: new Ext.menu.Menu({
-                    defaultAlign: "tr-br",
-                    items: [
-                        new Ext.menu.CheckItem(
-                            new GeoExt.Action({
-                                text: tr("distance measure"),
-                                control: createMeasureControl(OpenLayers.Handler.Path, map),
-                                map: map,
-                                group: "measure",
-                                iconCls: "measure_path"
-                            })
-                        ), new Ext.menu.CheckItem(
-                            new GeoExt.Action({
-                                text: tr("area measure"),
-                                control: createMeasureControl(OpenLayers.Handler.Polygon, map),
-                                map: map,
-                                group: "measure",
-                                iconCls: "measure_area"
-                            })
-                        ), '-', {
-                            text: tr("Add more tools"),
-                            iconCls: "add"
-                            //,handler: 
-                    }]
-                })
+                menu: menu
             };
-
         }
         
     };
