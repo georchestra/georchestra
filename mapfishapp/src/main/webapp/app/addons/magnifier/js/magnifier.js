@@ -1,37 +1,40 @@
 Ext.namespace("GEOR.Addons");
 
+GEOR.Addons.Magnifier = function(map, options) {
+    this.map = map;
+    this.options = options;
+    this.control = null;
+};
 
-// TODO: change "module pattern" -> "class"
+// possibly extend Ext.util.Observable:
+//Ext.extend(GEOR.Addons.Magnifier, Ext.util.Observable, { 
 
-GEOR.Addons.Magnifier = (function () {
+Ext.extend(GEOR.Addons.Magnifier, Ext.util.Observable, {
 
-    var map, options, control;
+    // TODO: doc (record)
+    init: function(record) {
+        var lang = OpenLayers.Lang.getCode();
+        return new Ext.menu.CheckItem({
+            text: record.get("title")[lang],
+            qtip: record.get("description")[lang],
+            group: "measure",
+            iconCls: "addon-magnifier",
+            listeners: {
+                "checkchange": this.onCheckchange,
+                scope: this
+            }
+        });
+    },
 
-    var onCheckchange = function(item, checked) {
+    onCheckchange: function(item, checked) {
         if (checked) {
-            control = new OpenLayers.Control.Magnifier(options);
-            map.addControl(control);
+            var control = new OpenLayers.Control.Magnifier(this.options);
+            this.map.addControl(control);
             control.update();
+            this.control = control;
         } else {
-            control.destroy();
-        }
-    };
-    
-    return {
-
-        init: function(m, o) {
-            map = m;
-            options = o;
-
-            return new Ext.menu.CheckItem({
-                text: OpenLayers.i18n("magnifier"),
-                group: "measure",
-                iconCls: "addon-magnifier",
-                listeners: {
-                    "checkchange": onCheckchange
-                }
-            });
-            
+            this.control.destroy();
         }
     }
-})();
+
+});

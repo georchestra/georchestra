@@ -332,6 +332,9 @@ GEOR.config = (function() {
          * An array of addons config objects.
          * Defaults to []
          */
+         
+        // TODO: au survol de l'item dans le menu tools, reprendre la description fournie ici ! (et dans la bonne langue)
+        
         ADDONS: getCustomParameter("ADDONS", [{
             "name": "Magnifier", // nom du namespace (GEOR.Addons.Magnifier) et, une fois passé en minuscule, du dossier de l'addon
             "title": {
@@ -357,13 +360,13 @@ GEOR.config = (function() {
             "title": {
                 "en": "Aerial imagery magnifier",
                 "es": "Lupa ortofoto",
-                "fr": "Loupe orthophoto"
+                "fr": "Loupe orthophoto 2"
             },            //"thumbnail": "img/osm.png", // imagette pour identification rapide - automatiquement préfixé de app/addons/magnifier/ 
             // on pourrait aussi dire qu'il existe une image default.png dans app/addons/magnifier/img/
             "description": {
                 "en": "A tool which allows to zoom in an aerial image on a map portion",
                 "es": "Un outil qui permet de zoomer dans une ortophoto sur une portion de la carte", // TODO
-                "fr": "Un outil qui permet de zoomer dans une ortophoto sur une portion de la carte"
+                "fr": "Un outil qui permet de zoomer dans une ortophoto sur une portion de la carte 2"
             }, // , // description complète  // TODO: i18n
             // options are optional: if not specified, they are taken from the package defaults:
             "options": {}

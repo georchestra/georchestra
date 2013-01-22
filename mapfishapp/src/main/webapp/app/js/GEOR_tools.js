@@ -233,11 +233,13 @@ GEOR.tools = (function() {
                         Ext.Loader.load(js, function() {
                             // init addon
                             if (GEOR.Addons[addonName]) {
-                                var tool = GEOR.Addons[addonName].init(map, Ext.apply({}, 
+                                var addon = new GEOR.Addons[addonName](map, Ext.apply({}, 
                                         r.get("options") || {}, 
                                         o.default_options || {}
-                                    )
-                                );
+                                    )),
+                                    // we're passing the record to the init method
+                                    // so that the addon has access to the administrator's strings
+                                    tool = addon.init(r);
                                 menu.addItem(tool); // TODO: add menu ? addMenuItem( config )
                             } else {
                                 alert("GEOR.Addons."+addonName+" namespace should be defined !");
@@ -445,6 +447,9 @@ GEOR.tools = (function() {
 
             button = new Ext.Button({
                 text: tr("Tools"),
+                plugins: [{
+                    ptype: 'menuqtips' // TODO: plugin in its own file as a dependency
+                }],
                 menu: menu
             });
             return button;

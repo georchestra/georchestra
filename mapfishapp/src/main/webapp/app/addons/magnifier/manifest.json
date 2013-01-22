@@ -17,11 +17,7 @@
     },
     "i18n": {
         "en": {},
-        "es": {
-            "magnifier": "lupa ortofoto"
-        },
-        "fr": {
-            "magnifier": "loupe orthophoto"
-        }
+        "es": {},
+        "fr": {}
     }
 }
