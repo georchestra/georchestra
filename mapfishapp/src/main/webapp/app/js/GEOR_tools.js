@@ -240,7 +240,10 @@ GEOR.tools = (function() {
                                     // we're passing the record to the init method
                                     // so that the addon has access to the administrator's strings
                                     tool = addon.init(r);
-                                menu.addItem(tool); // TODO: add menu ? addMenuItem( config )
+                                if (menu.items.length===4) {
+                                    menu.insert(2, '-');
+                                }
+                                menu.insert(3,tool); // TODO: add menu ? addMenuItem( config )
                             } else {
                                 alert("GEOR.Addons."+addonName+" namespace should be defined !");
                             }
@@ -420,29 +423,30 @@ GEOR.tools = (function() {
             map = layerStore.map;
             menu = new Ext.menu.Menu({
                 defaultAlign: "tr-br",
-                items: [{ // TODO: put this at the bottom of the list (but how to insert items at a given position ?)
-                    text: tr("Add more tools"),
-                    hideOnClick: false,
-                    iconCls: "add",
-                    handler: addTools
-                }, '-',
-                new Ext.menu.CheckItem(
-                    new GeoExt.Action({
-                        text: tr("distance measure"),
-                        control: createMeasureControl(OpenLayers.Handler.Path, map),
-                        map: map,
-                        group: "measure",
-                        iconCls: "measure_path"
-                    })
-                ), new Ext.menu.CheckItem(
-                    new GeoExt.Action({
-                        text: tr("area measure"),
-                        control: createMeasureControl(OpenLayers.Handler.Polygon, map),
-                        map: map,
-                        group: "measure",
-                        iconCls: "measure_area"
-                    })
-                ), '-']
+                items: [
+                    new Ext.menu.CheckItem(
+                        new GeoExt.Action({
+                            text: tr("distance measure"),
+                            control: createMeasureControl(OpenLayers.Handler.Path, map),
+                            map: map,
+                            group: "measure",
+                            iconCls: "measure_path"
+                        })
+                    ), new Ext.menu.CheckItem(
+                        new GeoExt.Action({
+                            text: tr("area measure"),
+                            control: createMeasureControl(OpenLayers.Handler.Polygon, map),
+                            map: map,
+                            group: "measure",
+                            iconCls: "measure_area"
+                        })
+                    ), '-', {
+                        text: tr("Add more tools"),
+                        hideOnClick: false,
+                        iconCls: "add",
+                        handler: addTools
+                    }
+                ]
             });
 
             button = new Ext.Button({
