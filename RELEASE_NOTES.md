@@ -1,6 +1,8 @@
 Version 13.02
 =============
 
+This new release was made possible thanks to support from the French GIP ATGeRi (http://cartogip.fr/) and contributors.
+
 New features:
  * mapfishapp: lon, lat and radius GET parameters for startup recentering, see https://github.com/georchestra/georchestra/pull/20
  * mapfishapp: switchable pointer coordinates SRS, see https://github.com/georchestra/georchestra/pull/25
