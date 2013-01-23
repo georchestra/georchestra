@@ -4,28 +4,40 @@ GEOR.Addons.Magnifier = function(map, options) {
     this.map = map;
     this.options = options;
     this.control = null;
+    this.item = null;
 };
 
-// possibly extend Ext.util.Observable:
+// If required, may extend or compose with Ext.util.Observable
 //Ext.extend(GEOR.Addons.Magnifier, Ext.util.Observable, { 
-
-Ext.extend(GEOR.Addons.Magnifier, Ext.util.Observable, {
-
-    // TODO: doc (record)
+GEOR.Addons.Magnifier.prototype = {
+    /**
+     * Method: init
+     *
+     * Parameters:
+     * record - {Ext.data.record} a record with the addon parameters
+     */
     init: function(record) {
-        var lang = OpenLayers.Lang.getCode();
-        return new Ext.menu.CheckItem({
-            text: record.get("title")[lang],
-            qtip: record.get("description")[lang],
-            group: "measure",
-            iconCls: "addon-magnifier",
-            listeners: {
-                "checkchange": this.onCheckchange,
-                scope: this
-            }
-        });
+        var lang = OpenLayers.Lang.getCode(),
+            item = new Ext.menu.CheckItem({
+                text: record.get("title")[lang],
+                // FIXME: qtip does not work
+                qtip: record.get("description")[lang],
+                //iconCls: "addon-magnifier",
+                checked: false,
+                listeners: {
+                    "checkchange": this.onCheckchange,
+                    scope: this
+                }
+            });
+        this.item = item;
+        return item;
     },
 
+    /**
+     * Method: onCheckchange
+     * Callback on checkbox state changed
+     *
+     */
     onCheckchange: function(item, checked) {
         if (checked) {
             var control = new OpenLayers.Control.Magnifier(this.options);
@@ -33,8 +45,17 @@ Ext.extend(GEOR.Addons.Magnifier, Ext.util.Observable, {
             control.update();
             this.control = control;
         } else {
-            this.control.destroy();
+            this.control && this.control.destroy();
         }
-    }
+    },
 
-});
+    /**
+     * Method: destroy
+     * Called by GEOR_tools when deselecting this addon
+     */
+    destroy: function() {
+        this.control && this.control.destroy();
+        this.control = null;
+        this.map = null;
+    }
+};

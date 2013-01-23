@@ -38,7 +38,7 @@ GEOR.waiter = (function() {
         },
         
         show: function(c) {
-            count += 1;
+            count += c;
             if (waiter && count > 0) {
                 waiter.show();
             }

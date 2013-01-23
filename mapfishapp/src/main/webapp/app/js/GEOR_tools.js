@@ -80,6 +80,18 @@ GEOR.tools = (function() {
     var button;
 
     /**
+     * Property: addonsCache
+     * {Object}
+     */
+    var addonsCache = {};
+
+    /**
+     * Property: previousState
+     * {Object}
+     */
+    var previousState;
+
+    /**
      * Method: createMeasureControl.
      * Create a measure control.
      *
@@ -87,6 +99,7 @@ GEOR.tools = (function() {
      * handlerType - {OpenLayers.Handler.Path} or {OpenLayers.Handler.Polygon}
      *     The handler the measure control will use, depending whether
      *     measuring distances or areas.
+     * map - {OpenLayers.Map}
      *
      * Returns:
      * {OpenLayers.Control.Measure} The control.
@@ -189,7 +202,7 @@ GEOR.tools = (function() {
             css.setAttribute("href", prefix + file);
             document.getElementsByTagName("head")[0].appendChild(css);
         });
-    }
+    };
 
 
     /**
@@ -201,8 +214,40 @@ GEOR.tools = (function() {
      */
     var fetchAndLoadTools = function(records) {
         win.hide();
-        GEOR.waiter.show(records.length);
-        Ext.each(records, function(r) {
+
+        if (!previousState) {
+            previousState = {};
+            Ext.each(dataview.getStore().getRange(), function(r){
+                // TODO: will change once we get the "remember selection" function
+                previousState[r.id] = false;
+            });
+        }
+        var newState = {};
+        Ext.each(dataview.getStore().getRange(), function(r){
+            newState[r.id] = (records.indexOf(r) > -1);
+        });
+        // compute diff with previous selection state:
+        var incoming = [], outgoing = [];
+        Ext.iterate(newState, function(k, v) {
+            if (newState[k] === true && previousState[k] === false) {
+                incoming.push(dataview.getStore().getById(k));
+            }
+            if (newState[k] === false && previousState[k] === true) {
+                outgoing.push(dataview.getStore().getById(k));
+            }
+        });
+        previousState = newState; // TODO: this is not completely true, for instance if an addon fails to load properly
+
+        Ext.each(outgoing, function(r) {
+            var addon = addonsCache[r.id],
+                item = addon.item;
+            menu.remove(item, true);
+            addon.destroy();
+            delete addonsCache[r.id];
+        });
+        // FIXME: waiter does not work as expected:
+        GEOR.waiter.show(incoming.length);
+        Ext.each(incoming, function(r) {
             var addonName = r.get("name"),
                 addonPath = "app/addons/" + addonName.toLowerCase() + "/";
             // get corresponding manifest.json 
@@ -231,22 +276,29 @@ GEOR.tools = (function() {
                             js.push(addonPath + f);
                         });
                         Ext.Loader.load(js, function() {
-                            // init addon
-                            if (GEOR.Addons[addonName]) {
-                                var addon = new GEOR.Addons[addonName](map, Ext.apply({}, 
-                                        r.get("options") || {}, 
-                                        o.default_options || {}
-                                    )),
-                                    // we're passing the record to the init method
-                                    // so that the addon has access to the administrator's strings
-                                    tool = addon.init(r);
-                                if (menu.items.length===4) {
-                                    menu.insert(2, '-');
-                                }
-                                menu.insert(3,tool); // TODO: add menu ? addMenuItem( config )
-                            } else {
+                            if (!GEOR.Addons[addonName]) {
                                 alert("GEOR.Addons."+addonName+" namespace should be defined !");
+                                return;
                             }
+                            // init addon
+                            var addon = new GEOR.Addons[addonName](map, Ext.apply({}, 
+                                r.get("options") || {}, 
+                                o.default_options || {}
+                            ));
+                            addonsCache[r.id] = addon;
+                            // we're passing the record to the init method
+                            // so that the addon has access to the administrator's strings
+                            addon.init(r);
+
+                            if (menu.items.length === 4) {
+                                menu.insert(2, '-');
+                            }
+                            var menuItem = addon.item;
+                            //menuItem.on("click", function() {console.log(arguments);});
+                            // TODO: insert tools in the same order as they are defined in the original list (from the admin)
+                            menu.insert(3, menuItem); // TODO: add menu ? addMenuItem( config )
+                            //Ext.QuickTips.init();
+
                         }, this, true);
                     }
                 },
@@ -255,23 +307,6 @@ GEOR.tools = (function() {
                 }
             });
         });
-    };
-
-
-    /**
-     * Method: onDblclick
-     * Callback on view node double clicked
-     *
-     * Parameters:
-     * view - {Ext.DataView}
-     * index - {Integer} not used internally
-     * node - {HTMLElement}
-     */
-    var onDblclick = function(view, index, node) {
-        var record = view.getRecord(node);
-        if (record) {
-            fetchAndLoadTools([record]);
-        }
     };
 
 
@@ -298,7 +333,7 @@ GEOR.tools = (function() {
         }
 
         var store = new Ext.data.JsonStore({
-            fields: ["name", "title", "thumbnail", "description", "options"],
+            fields: ["name", "title", "thumbnail", "description", "group", "options"],
             data: GEOR.config.ADDONS.slice(0)
         });
 
@@ -335,13 +370,16 @@ GEOR.tools = (function() {
             }),
             listeners: {
                 "selectionchange": function(dv) {
-                    var selectedRecords = dv.getSelectedRecords();
+                    var selectedRecords = dv.getSelectedRecords(),
+                        btn = win.getFooterToolbar().getComponent('load'),
+                        nb = selectedRecords.length;
                     observable.fireEvent("selectionchanged", selectedRecords);
-                    win.getFooterToolbar().getComponent('load').setDisabled(
-                        selectedRecords.length === 0
+                    btn.setText(
+                        ((nb == 0) ? tr("No tool") : '') +
+                        ((nb == 1) ? selectedRecords.length + " " + tr("tool") : '') +
+                        ((nb > 1) ? selectedRecords.length + " " + tr("tools") : '')
                     );
-                },
-                "dblclick": onDblclick
+                }
             }
         });
 
@@ -369,17 +407,13 @@ GEOR.tools = (function() {
                 listeners: {
                     //"check": onCbxCheckChange
                 }
-            },*/'->', {
-                text: tr("Close"),
-                handler: function() {
-                    win.hide();
-                }
-            }, {
-                text: tr("Load"),
-                disabled: true,
+            },*/'->', 
+            // TODO: add a "cancel" button restoring previous tool selection state.
+            {
+                text: tr("OK"),
                 itemId: 'load',
                 minWidth: 90,
-                iconCls: 'geor-load-tools',
+                //iconCls: 'geor-load-tools', // TODO: change icon
                 handler: loadBtnHandler,
                 listeners: {
                     "enable": function(btn) {
@@ -429,7 +463,7 @@ GEOR.tools = (function() {
                             text: tr("distance measure"),
                             control: createMeasureControl(OpenLayers.Handler.Path, map),
                             map: map,
-                            group: "measure",
+                            group: "_measure",
                             iconCls: "measure_path"
                         })
                     ), new Ext.menu.CheckItem(
@@ -437,11 +471,11 @@ GEOR.tools = (function() {
                             text: tr("area measure"),
                             control: createMeasureControl(OpenLayers.Handler.Polygon, map),
                             map: map,
-                            group: "measure",
+                            group: "_measure",
                             iconCls: "measure_area"
                         })
                     ), '-', {
-                        text: tr("Add more tools"),
+                        text: tr("Manage tools"),
                         hideOnClick: false,
                         iconCls: "add",
                         handler: addTools

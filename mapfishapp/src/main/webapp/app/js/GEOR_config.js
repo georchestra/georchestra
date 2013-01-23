@@ -331,45 +331,51 @@ GEOR.config = (function() {
          * Constant: ADDONS
          * An array of addons config objects.
          * Defaults to []
+         * 
+         * Note that all paths mentioned below are relative to the addon path, 
+         * which is app/addons/{name.toLowerCase()}
          */
-         
-        // TODO: au survol de l'item dans le menu tools, reprendre la description fournie ici ! (et dans la bonne langue)
-        
         ADDONS: getCustomParameter("ADDONS", [{
-            "name": "Magnifier", // nom du namespace (GEOR.Addons.Magnifier) et, une fois passé en minuscule, du dossier de l'addon
+            "name": "Magnifier", // addon name, which, once lowercased, gives the addon folder name 
+            // should also be consistent with addon class name (here: GEOR.Addons.Magnifier)
             "title": {
                 "en": "Aerial imagery magnifier",
                 "es": "Lupa ortofoto",
                 "fr": "Loupe orthophoto"
             },
-            
-            //"thumbnail": "img/icon.png", // imagette pour identification rapide - automatiquement préfixé de app/addons/magnifier/ 
-            // et thumbnail automatiquement chargée depuis app/addons/{name.toLowerCase()}/img/icon.png
-            // overrideable si thumbnail est présent ici.
-            // on pourrait aussi dire qu'il existe une image default.png dans app/addons/magnifier/img/
-            
             "description": {
                 "en": "A tool which allows to zoom in an aerial image on a map portion",
-                "es": "Un outil qui permet de zoomer dans une ortophoto sur une portion de la carte", // TODO
-                "fr": "Un outil qui permet de zoomer dans une ortophoto sur une portion de la carte"
-            }, // , // description complète  // TODO: i18n
-            // options are optional: if not specified, they are taken from the package defaults:
-            //"options": {}
+                "es": "Un outil qui permet de zoomer dans une orthophoto sur une portion de la carte", // TODO
+                "fr": "Un outil qui permet de zoomer dans une orthophoto sur une portion de la carte"
+            },
+            // group is optional:
+            //"group": "test",
+            // defaults to "tools"
+            //
+            // options are optional: if not specified, they are taken from the package defaults (manifest.json):
+            //"options": {},
+            //
+            // thumbnail is automatically loaded from img/icon.png
+            // but can be overriden with:
+            "thumbnail": "img/custom_thumbnail.png" 
         }, {
-            "name": "Magnifier",  // nom du namespace (GEOR.Addons.Magnifier) et, une fois passé en minuscule, du dossier de l'addon
+            "name": "Magnifier",
             "title": {
-                "en": "Aerial imagery magnifier",
-                "es": "Lupa ortofoto",
-                "fr": "Loupe orthophoto 2"
-            },            //"thumbnail": "img/osm.png", // imagette pour identification rapide - automatiquement préfixé de app/addons/magnifier/ 
-            // on pourrait aussi dire qu'il existe une image default.png dans app/addons/magnifier/img/
+                "en": "Aerial imagery lens",
+                "es": "Lens ortofoto",
+                "fr": "Lentille orthophoto"
+            },
             "description": {
-                "en": "A tool which allows to zoom in an aerial image on a map portion",
-                "es": "Un outil qui permet de zoomer dans une ortophoto sur une portion de la carte", // TODO
-                "fr": "Un outil qui permet de zoomer dans une ortophoto sur une portion de la carte 2"
-            }, // , // description complète  // TODO: i18n
-            // options are optional: if not specified, they are taken from the package defaults:
-            "options": {}
+                "en": "A tool which shows aerial imagery in a square map portion",
+                "es": "Un outil qui montre une orthophoto sur une portion carrée de la carte", // TODO
+                "fr": "Un outil qui montre une orthophoto sur une portion carrée de la carte"
+            },
+            // custom options for this tool:
+            "options": {
+                "zoomable": false
+            }
+            // we're using the package-provided default image here:
+            //,"thumbnail": "",
         }]),
 
         /**

@@ -190,18 +190,21 @@ OpenLayers.Control.Magnifier = OpenLayers.Class(OpenLayers.Control, {
     },
 
     destroy: function () {
-        this.map.events.un({
-            move: this.update,
-            changebaselayer: this.changelayer,
-            scope: this
-        });
-
-        if (this.followCursor) {
+        // if (this.map) is monkey patching by fvanderbiest
+        if (this.map) {
             this.map.events.un({
-                zoomend: this.update,
-                mousemove: this.updateFromCursor,
+                move: this.update,
+                changebaselayer: this.changelayer,
                 scope: this
             });
+
+            if (this.followCursor) {
+                this.map.events.un({
+                    zoomend: this.update,
+                    mousemove: this.updateFromCursor,
+                    scope: this
+                });
+            }
         }
         OpenLayers.Control.prototype.destroy.apply(this, arguments);
         // monkey patching (fvanderbiest)
