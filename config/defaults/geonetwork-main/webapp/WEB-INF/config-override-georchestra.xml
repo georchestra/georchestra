@@ -6,17 +6,17 @@
     <import file="/WEB-INF/config-overrides-dev.xml"/>
     
     <properties>
-        <postgis.user>www-data</postgis.user>
-        <postgis.pass>www-data</postgis.pass>
-        <postgis.host>localhost</postgis.host>
-        <postgis.port>5432</postgis.port>
-        <postgis.db>geonetwork</postgis.db>
+        <postgis.user>@shared.psql.user@</postgis.user>
+        <postgis.pass>@shared.psql.pass@</postgis.pass>
+        <postgis.host>@shared.psql.host@</postgis.host>
+        <postgis.port>@shared.psql.port@</postgis.port>
+        <postgis.db>@shared.psql.geonetwork.db@</postgis.db>
         <postgis.max.active>50</postgis.max.active>
         <postgis.max.idle>20</postgis.max.idle>
         <postgis.min.idle>0</postgis.min.idle>
-        <wfs.host>c2cpc61.camptocamp.com</wfs.host>
+        <wfs.host>@shared.server.name@</wfs.host>
         <wfs.port>80</wfs.port>
-        <host>c2cpc61.camptocamp.com</host>
+        <host>@shared.server.name@</host>
         <port>80</port>
     </properties>
     <file name=".*/WEB-INF/config.xml">
@@ -59,7 +59,7 @@
             <layer server="http://${wfs.host}:${wfs.port}/geoserver/wms" tocName="Fond GIP"  params="{layers: 'Fond_GIP', transparent: 'true', format: 'image/png'}"  options="{isBaseLayer: true}" />
         </replaceXML>
         <replaceXML xpath="mapViewer/layers">
-           <layer server="http://${wfs.host}:${wfs.port}/geoserver/wms" tocName="Fond_GIP"  params="{layers: 'Fond_GIP', transparent: 'true', format: 'image/png'}"  options="{isBaseLayer: true}" />
+           <layer server="http://${wfs.host}:${wfs.port}/geoserver/wms" tocName="Fond GIP"  params="{layers: 'Fond_GIP', transparent: 'true', format: 'image/png'}"  options="{isBaseLayer: true}" />
         </replaceXML>
     </file>
     <textFile name=".*/WEB-INF/classes/setup/sql/.+/data-db-default.sql">

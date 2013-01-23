@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.georchestra</groupId>
         <artifactId>root</artifactId>
-        <version>1.0</version>
+        <version>1.1</version>
     </parent>
     <artifactId>server-deploy</artifactId>
     <packaging>pom</packaging>
@@ -132,9 +132,9 @@
                     <type>war</type>
                 </dependency>
                 <dependency>
-                    <groupId>org.geonetwork-opensource</groupId>
+                    <groupId>${project.groupId}</groupId>
                     <artifactId>geonetwork-main</artifactId>
-                    <version>2.6.4-SNAPSHOT</version>
+                    <version>${project.version}</version>
                     <classifier>${server}</classifier>
                     <type>war</type>
                 </dependency>
