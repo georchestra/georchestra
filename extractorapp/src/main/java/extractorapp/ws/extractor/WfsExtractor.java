@@ -197,7 +197,7 @@ public class WfsExtractor {
         params.put (WFSDataStoreFactory.LENIENT.key, true);
         params.put (WFSDataStoreFactory.PROTOCOL.key, true);
         params.put (WFSDataStoreFactory.TIMEOUT.key, Integer.valueOf(60000));
-        //params.put (WFSDataStoreFactory.MAXFEATURES.key, Integer.valueOf(0)); FIXME HACK
+        params.put (WFSDataStoreFactory.MAXFEATURES.key, Integer.valueOf(0));
         
         // HACK  I want unrestricted access to layers. 
         // Security check takes place in ExtractorThread
@@ -205,8 +205,8 @@ public class WfsExtractor {
                 || "127.0.0.1".equalsIgnoreCase(request._url.getHost())
                 || "localhost".equalsIgnoreCase(request._url.getHost())) {
         	LOG.debug("WfsExtractor.extract - Secured Server: Adding extractionUserName to connection params");
-            params.put (WFSDataStoreFactory.USERNAME.key, _adminUsername);
-            params.put (WFSDataStoreFactory.PASSWORD.key, _adminPassword);
+//            params.put (WFSDataStoreFactory.USERNAME.key, _adminUsername); HACK mauro: udig retrieves the features without log
+//            params.put (WFSDataStoreFactory.PASSWORD.key, _adminPassword); HACK mauro: udig retrieves the features without log
         } else {
         	LOG.debug("WfsExtractor.extract - Non Secured Server");        	
         }
