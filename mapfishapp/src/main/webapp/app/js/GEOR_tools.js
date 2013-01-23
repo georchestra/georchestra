@@ -289,7 +289,7 @@ GEOR.tools = (function() {
                             // we're passing the record to the init method
                             // so that the addon has access to the administrator's strings
                             addon.init(r);
-
+                            // FIXME: this horizontal bar stays even when all tools are removed:
                             if (menu.items.length === 4) {
                                 menu.insert(2, '-');
                             }
