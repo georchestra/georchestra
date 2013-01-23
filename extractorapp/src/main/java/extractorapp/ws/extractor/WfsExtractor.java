@@ -206,8 +206,8 @@ public class WfsExtractor {
                 || "127.0.0.1".equalsIgnoreCase(request._url.getHost())
                 || "localhost".equalsIgnoreCase(request._url.getHost())) {
         	LOG.debug("WfsExtractor.extract - Secured Server: Adding extractionUserName to connection params");
-//            params.put (WFSDataStoreFactory.USERNAME.key, _adminUsername); HACK mauro: udig retrieves the features without log
-//            params.put (WFSDataStoreFactory.PASSWORD.key, _adminPassword); HACK mauro: udig retrieves the features without log
+            params.put (WFSDataStoreFactory.USERNAME.key, _adminUsername); //FIXME HACK mauro: udig retrieves the features without log
+            params.put (WFSDataStoreFactory.PASSWORD.key, _adminPassword); //FIXME HACK mauro: udig retrieves the features without log
         } else {
         	LOG.debug("WfsExtractor.extract - Non Secured Server");        	
         }
@@ -229,24 +229,24 @@ public class WfsExtractor {
         
         basedir.mkdirs();
 
-        FeatureWriterStrategy writer;
+        FeatureWriterStrategy featuresWriter;
         BBoxWriter bboxWriter;
         LOG.debug("Number of features returned : " + features.size());
         if (request._format.equalsIgnoreCase("shp")) {
-            writer = new ShpFeatureWriter(progressListener, sourceSchema, basedir, features);
+            featuresWriter = new ShpFeatureWriter(progressListener, sourceSchema, basedir, features);
         	bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.shp, progressListener );
         } else if (request._format.equalsIgnoreCase("mif")) {
         	// writer = new MifFeatureWriter(progressListener, sourceSchema, basedir, features);
-        	writer = new OGRFeatureWriter(progressListener, sourceSchema,  basedir, OGRFeatureWriter.FileFormat.mif, features);
+        	featuresWriter = new OGRFeatureWriter(progressListener, sourceSchema,  basedir, OGRFeatureWriter.FileFormat.mif, features);
         	bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.mif, progressListener );
         } else if (request._format.equalsIgnoreCase("tab")) {
-        	writer = new OGRFeatureWriter(progressListener, sourceSchema,  basedir, OGRFeatureWriter.FileFormat.tab, features);
+        	featuresWriter = new OGRFeatureWriter(progressListener, sourceSchema,  basedir, OGRFeatureWriter.FileFormat.tab, features);
         	bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.tab, progressListener );
         } else {
             throw new IllegalArgumentException(request._format + " is not a recognized vector format");
         }
         
-        File[] featureFiles = writer.generateFiles();
+        File[] featureFiles = featuresWriter.generateFiles();
         List<File> fileList = Arrays.asList(featureFiles);
         
         File[] bboxFiles = bboxWriter.generateFiles();

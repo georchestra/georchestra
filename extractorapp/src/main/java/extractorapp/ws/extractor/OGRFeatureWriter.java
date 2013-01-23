@@ -36,17 +36,41 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
 	public  enum FileFormat{
 		tab, mif, shp;
 		
-		public String getDriver(FileFormat ext) throws IOException{
+		public static String getDriver(FileFormat ext) throws IOException{
 			switch (ext) {
 			case tab:
 			case mif:
 				return "MapInfo File";
 			case shp:
-				return ""; // FIXME shearch the driver code for shp
+				return "ESRI shapefile"; 
 
 			default:
 				throw new IOException("there is not a driver for the extension file: " + ext);
 			}
+		}
+		/** 
+		 * Returns the options related with the indicated file format.
+		 * @param fileFormat
+		 * @return the options for the file format
+		 */
+		public static String[] getFormatOptions(FileFormat fileFormat) {
+
+			
+			String[] driverOptions = null;
+			switch (fileFormat) {
+			case tab:
+				driverOptions =  new String[]{};
+				break;
+			case mif:
+				driverOptions =   new String[]{"FORMAT=MIF"};
+				break;
+			case shp:
+				driverOptions =   null;
+				break;
+			default:
+				assert false; // impossible case
+			}
+			return driverOptions;
 		}
 	}
 	
@@ -80,37 +104,10 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
 		this.basedir = basedir;
 		this.fileFormat = fileFormat;
 		
-		this.options = getFormatOptions(fileFormat);
+		this.options = FileFormat.getFormatOptions(fileFormat);
 		
 		this.features = features;
 	}
-	
-
-		
-
-	/** 
-	 * Returns the options related with the indicated file format.
-	 * @param fileFormat
-	 * @return
-	 */
-	private static String[] getFormatOptions(FileFormat fileFormat) {
-
-		
-		String[] driverOptions = null;
-		switch (fileFormat) {
-		case tab:
-			driverOptions =  new String[]{};
-			break;
-		case mif:
-			driverOptions =   new String[]{"FORMAT=MIF"};
-			break;
-		default:
-			assert false; // impossible case
-		}
-		return driverOptions;
-	}
-
-
 
 
 	/**
@@ -123,7 +120,7 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
 		
         final String pathName = this.basedir.getAbsolutePath() + "/"+ FileUtils.createFileName(this.basedir.getAbsolutePath(), this.schema, this.fileFormat);
 		map.put(OGRDataStoreFactory.OGR_NAME.key, pathName);
-		map.put(OGRDataStoreFactory.OGR_DRIVER_NAME.key, this.fileFormat.getDriver(this.fileFormat));
+		map.put(OGRDataStoreFactory.OGR_DRIVER_NAME.key, FileFormat.getDriver(this.fileFormat));
 		
 		File[] files = new File[]{};
         OGRDataStore ds = null;
