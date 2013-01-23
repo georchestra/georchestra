@@ -34,13 +34,15 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
 	 * 
 	 */
 	public  enum FileFormat{
-		tab, mif;
+		tab, mif, shp;
 		
 		public String getDriver(FileFormat ext) throws IOException{
 			switch (ext) {
 			case tab:
 			case mif:
 				return "MapInfo File";
+			case shp:
+				return ""; // FIXME shearch the driver code for shp
 
 			default:
 				throw new IOException("there is not a driver for the extension file: " + ext);

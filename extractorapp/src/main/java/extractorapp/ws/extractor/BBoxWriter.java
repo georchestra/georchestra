@@ -50,10 +50,11 @@ public class BBoxWriter {
 	
 	/**
 	 * Write the bbox files in the required format
+	 * @return 
 	 * 
 	 * @throws IOException
 	 */
-	public void write() throws IOException{
+	public File[] generateFiles() throws IOException{
 		
 		// create the feature type for the bbox geometry
 		SimpleFeatureType type = createFeatureType();
@@ -66,7 +67,7 @@ public class BBoxWriter {
         SimpleFeatureCollection features = DataUtilities.collection(new SimpleFeature[]{bboxFeature});
         
         FeatureWriterStrategy writer = new OGRFeatureWriter(this.progress, type,  this.baseDir, this.fileFormat, features);
-        writer.generateFiles();
+        return writer.generateFiles();
 	}
 
 	private SimpleFeatureType createFeatureType() throws IOException {
