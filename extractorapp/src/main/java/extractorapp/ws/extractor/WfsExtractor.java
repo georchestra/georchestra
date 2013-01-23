@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -229,18 +230,30 @@ public class WfsExtractor {
         basedir.mkdirs();
 
         FeatureWriterStrategy writer;
+        BBoxWriter bboxWriter;
         LOG.debug("Number of features returned : " + features.size());
         if (request._format.equalsIgnoreCase("shp")) {
             writer = new ShpFeatureWriter(progressListener, sourceSchema, basedir, features);
+        	bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.shp, progressListener );
         } else if (request._format.equalsIgnoreCase("mif")) {
         	// writer = new MifFeatureWriter(progressListener, sourceSchema, basedir, features);
         	writer = new OGRFeatureWriter(progressListener, sourceSchema,  basedir, OGRFeatureWriter.FileFormat.mif, features);
+        	bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.mif, progressListener );
         } else if (request._format.equalsIgnoreCase("tab")) {
         	writer = new OGRFeatureWriter(progressListener, sourceSchema,  basedir, OGRFeatureWriter.FileFormat.tab, features);
+        	bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.tab, progressListener );
         } else {
             throw new IllegalArgumentException(request._format + " is not a recognized vector format");
         }
-        return writer.generateFiles();
+        
+        File[] featureFiles = writer.generateFiles();
+        List<File> fileList = Arrays.asList(featureFiles);
+        
+        File[] bboxFiles = bboxWriter.generateFiles();
+        fileList.addAll(Arrays.asList(bboxFiles));
+        
+        File[] files = fileList.toArray(new File[fileList.size()]);
+        return files;
     }
 
 	/* This method is default for testing purposes */
