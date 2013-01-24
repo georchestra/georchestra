@@ -246,17 +246,16 @@ public class WfsExtractor {
         } else {
             throw new IllegalArgumentException(request._format + " is not a recognized vector format");
         }
-        
+        //generates the feature files and bbox file 
         File[] featureFiles = featuresWriter.generateFiles();
-        List<File> fileList = Arrays.asList(featureFiles);
-        
         File[] bboxFiles = bboxWriter.generateFiles();
-        List<File> bboxFileList= Arrays.asList(bboxFiles);
-        
-        fileList.addAll(bboxFileList);
-        File[] files = fileList.toArray(new File[fileList.size()]);
 
-        return files;
+        File[] fileList = new File[featureFiles.length +bboxFiles.length ];
+        
+        System.arraycopy(featureFiles, 0, fileList, 0, featureFiles.length);
+        System.arraycopy(bboxFiles, 0, fileList, featureFiles.length, bboxFiles.length);
+
+        return fileList;
     }
 
 	/* This method is default for testing purposes */
