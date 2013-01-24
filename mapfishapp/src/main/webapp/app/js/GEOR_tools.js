@@ -76,12 +76,6 @@ GEOR.tools = (function() {
     var dataview;
 
     /**
-     * Property: button
-     * {Ext.Button} the button to which the menu is attached
-     */
-    var button;
-
-    /**
      * Property: addonsCache
      * {Object} Hash storing references to loaded addons
      */
@@ -521,14 +515,10 @@ GEOR.tools = (function() {
                 ]
             });
 
-            button = new Ext.Button({
+            return new Ext.Button({
                 text: tr("Tools"),
-                plugins: [{
-                    ptype: 'menuqtips' // TODO: plugin in its own file as a dependency
-                }],
                 menu: menu
             });
-            return button;
         }
         
     };
