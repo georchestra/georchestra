@@ -77,7 +77,10 @@ public final class ExtractorLayerRequest {
      * @param version the version of the ows
      */
     public URL capabilitiesURL(String service, String version) throws MalformedURLException {
-        String externalForm = _url.toExternalForm();
+        //FIXME HACK mauro changing the original url
+        //String externalForm = _url.toExternalForm();
+        String externalForm = "http://dev.pigma.org/geoserver/wfs"; // TODO try https
+        //FIXME end HACK
         String versionParam = version == null ? "" : "&VERSION=" + version;
         
         String query = "REQUEST=GETCAPABILITIES&SERVICE=" + service + versionParam ;

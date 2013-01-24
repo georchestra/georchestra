@@ -157,7 +157,7 @@ public class WfsExtractor {
             throw new SecurityException("User does not have sufficient privileges to access the Layer: "+request._layerName+". \n\nCapabilties:  "+capabilities);
         }
     }
-//FIXME remove it if the new version works OK
+//FIXME remove it if the new version works OK (REMEMBER to change WcsExtractor)
 //    public void checkPermission(ExtractorLayerRequest request, String secureHost, String username, String roles) throws IOException {
 //        URL capabilitiesURL = request.capabilitiesURL("WMS", null);
 //
@@ -206,8 +206,9 @@ public class WfsExtractor {
                 || "127.0.0.1".equalsIgnoreCase(request._url.getHost())
                 || "localhost".equalsIgnoreCase(request._url.getHost())) {
         	LOG.debug("WfsExtractor.extract - Secured Server: Adding extractionUserName to connection params");
-            params.put (WFSDataStoreFactory.USERNAME.key, _adminUsername); //FIXME HACK mauro: udig retrieves the features without log
-            params.put (WFSDataStoreFactory.PASSWORD.key, _adminPassword); //FIXME HACK mauro: udig retrieves the features without log
+//FIXME MAURO: UDIG RETRIEVES THE FEATURES WITHOUT LOG        	
+//            PARAMS.PUT (WFSDATASTOREFACTORY.USERNAME.KEY, _ADMINUSERNAME);  
+//            PARAMS.PUT (WFSDATASTOREFACTORY.PASSWORD.KEY, _ADMINPASSWORD); 
         } else {
         	LOG.debug("WfsExtractor.extract - Non Secured Server");        	
         }
@@ -250,9 +251,11 @@ public class WfsExtractor {
         List<File> fileList = Arrays.asList(featureFiles);
         
         File[] bboxFiles = bboxWriter.generateFiles();
-        fileList.addAll(Arrays.asList(bboxFiles));
+        List<File> bboxFileList= Arrays.asList(bboxFiles);
         
+        fileList.addAll(bboxFileList);
         File[] files = fileList.toArray(new File[fileList.size()]);
+
         return files;
     }
 
