@@ -340,6 +340,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     //"remember the selection": "se souvenir de la sélection",
     //"Available tools:": "Outils disponibles :",
     //"Clic to select or deselect the tool": "Cliquez pour (dé)sélectionner l'outil",
+    //"Could not load addon ADDONNAME": "Impossible de charger l'addon ${ADDONNAME}",
     /* GEOR_util.js strings */
     "Characters": "Caracteres",
     "Digital": "Digital",

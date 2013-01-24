@@ -81,15 +81,21 @@ GEOR.tools = (function() {
 
     /**
      * Property: addonsCache
-     * {Object}
+     * {Object} Hash storing references to loaded addons
      */
     var addonsCache = {};
 
     /**
      * Property: previousState
-     * {Object}
+     * {Object} Hash storing the previous state of each addons (loaded or not)
      */
     var previousState;
+
+    /**
+     * Property: addonsOrder
+     * {Array} Array to store an ordered collection of loaded addons id
+     */
+    var addonsOrder = [];
 
     /**
      * Method: createMeasureControl.
@@ -214,7 +220,7 @@ GEOR.tools = (function() {
      */
     var fetchAndLoadTools = function(records) {
         win.hide();
-
+        // handle addon selection state with 2 hashes:
         if (!previousState) {
             previousState = {};
             Ext.each(dataview.getStore().getRange(), function(r){
@@ -236,24 +242,49 @@ GEOR.tools = (function() {
                 outgoing.push(dataview.getStore().getById(k));
             }
         });
-        previousState = newState; // TODO: this is not completely true, for instance if an addon fails to load properly
-
+        previousState = newState;
+        // remove unwanted addons:
         Ext.each(outgoing, function(r) {
             var addon = addonsCache[r.id],
                 item = addon.item;
             menu.remove(item, true);
             addon.destroy();
             delete addonsCache[r.id];
+            // remove item from addonsOrder:
+            var recordIntegerId = r.id.substring(11);
+            for (var i=0,l=addonsOrder.length; i<l;i++) {
+                if (addonsOrder[i] == recordIntegerId) {
+                    // remove addonsOrder[i]
+                    addonsOrder.splice(i, 1);
+                    break;
+                }
+            }
         });
-        // FIXME: waiter does not work as expected:
+        // load new addons:
         GEOR.waiter.show(incoming.length);
         Ext.each(incoming, function(r) {
             var addonName = r.get("name"),
-                addonPath = "app/addons/" + addonName.toLowerCase() + "/";
+                addonPath = "app/addons/" + addonName.toLowerCase() + "/",
+                failure = function() {
+                    // if an addon fails to load properly, update previousState accordingly
+                    previousState[r.id] = false;
+                    // unselect node corresponding to record in dataview:
+                    dataview.deselect(r);
+                    // warn user:
+                    GEOR.util.errorDialog({
+                        msg: tr("Could not load addon ADDONNAME",
+                            {'ADDONNAME': addonName}
+                        )
+                    });
+                };
             // get corresponding manifest.json 
             OpenLayers.Request.GET({
                 url: addonPath + "manifest.json",
                 success: function(response) {
+                    if (!response || !response.responseText) {
+                        failure.call(this);
+                        return;
+                    }
                     // TODO: handle repeated files (eg: same addon with different parameters)
                     var js = [], 
                         o = (new OpenLayers.Format.JSON()).read(
@@ -289,22 +320,26 @@ GEOR.tools = (function() {
                             // we're passing the record to the init method
                             // so that the addon has access to the administrator's strings
                             addon.init(r);
-                            // FIXME: this horizontal bar stays even when all tools are removed:
-                            if (menu.items.length === 4) {
-                                menu.insert(2, '-');
+                            // keep the original order (the one defined by the admin)
+                            var recordIntegerId = r.id.substring(11);
+                            // the record id is based on the pattern "ext-record-"+XXX
+                            // we thus remove the 11 first chars to get an integer
+                            addonsOrder.push(recordIntegerId);
+                            addonsOrder.sort();
+                            // find where the addon has been inserted in array:
+                            for (var i=0,l=addonsOrder.length; i<l;i++) {
+                                if (addonsOrder[i] > recordIntegerId) {
+                                    break;
+                                }
                             }
-                            var menuItem = addon.item;
-                            //menuItem.on("click", function() {console.log(arguments);});
-                            // TODO: insert tools in the same order as they are defined in the original list (from the admin)
-                            menu.insert(3, menuItem); // TODO: add menu ? addMenuItem( config )
+                            // here we know it should be inserted at position i - 1 from the beginning
+                            menu.insert(i - 1 + 2, addon.item);
+                            // TODO: add menu ?
                             //Ext.QuickTips.init();
-
                         }, this, true);
                     }
                 },
-                failure: function() {
-                    // TODO
-                }
+                failure: failure
             });
         });
     };
@@ -431,7 +466,7 @@ GEOR.tools = (function() {
                 }
             }, dataview]
         });
-        win.show(target);
+        win.show();
     };
 
     /*

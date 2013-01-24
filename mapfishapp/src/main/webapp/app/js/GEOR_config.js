@@ -376,6 +376,30 @@ GEOR.config = (function() {
             }
             // we're using the package-provided default image here:
             //,"thumbnail": "",
+        }, {
+            "name": "Magnifier",
+            "title": {
+                "fr": "P"
+            },
+            "description": {
+                "fr": "P"
+            }
+        }, {
+            "name": "Magnifier",
+            "title": {
+                "fr": "R"
+            },
+            "description": {
+                "fr": "R"
+            }
+        }, {
+            "name": "Magnifier",
+            "title": {
+                "fr": "T"
+            },
+            "description": {
+                "fr": "T"
+            }
         }]),
 
         /**
