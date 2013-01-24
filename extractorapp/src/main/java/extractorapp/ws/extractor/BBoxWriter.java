@@ -12,6 +12,7 @@ import org.geotools.factory.GeoTools;
 import org.geotools.feature.SchemaException;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.referencing.CRS;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -32,6 +33,7 @@ import extractorapp.ws.extractor.OGRFeatureWriter.FileFormat;
  */
 public class BBoxWriter {
 	
+	private static final String GEOMETRY_PROPERTY = "geom";
 	private ReferencedEnvelope bbox;
 	private File baseDir;
 	private FileFormat fileFormat;
@@ -74,14 +76,13 @@ public class BBoxWriter {
 
 		try {
 			CoordinateReferenceSystem crs= this.bbox.getCoordinateReferenceSystem();
-			//String strCRS = crs.toWKT();
-			String strCrs = crs.getName().getCode();
+			Integer epsgCode= CRS.lookupEpsgCode(crs, false) ;
 			
-			SimpleFeatureType type = DataUtilities.createType("bounding", "geom:Polygon:srid="+strCrs);
+			SimpleFeatureType type = DataUtilities.createType("bounding", GEOMETRY_PROPERTY+":Polygon:srid="+epsgCode);
 			
 			return type;
 
-		} catch (SchemaException e) {
+		} catch (Exception e) {
 			throw new IOException (e.getMessage());
 		}
 		
@@ -97,7 +98,7 @@ public class BBoxWriter {
 
 		SimpleFeature feature = DataUtilities.template(type);
 		
-		feature.setAttribute("geom", geom);
+		feature.setAttribute(GEOMETRY_PROPERTY, geom);
 		
 		return feature;
 	}
@@ -119,7 +120,8 @@ public class BBoxWriter {
 					new Coordinate(bbox.getMinX(), bbox.getMaxY()),
 					new Coordinate(bbox.getMaxX(), bbox.getMaxY()),
 					new Coordinate(bbox.getMaxX(), bbox.getMinY()),
-					new Coordinate(bbox.getMinX(), bbox.getMinY())
+					new Coordinate(bbox.getMinX(), bbox.getMinY()),
+					new Coordinate(bbox.getMinX(), bbox.getMaxY())
 				};
 		LinearRing shell = geomFactory.createLinearRing(coordinates);
 		Polygon polygon = new Polygon(shell, new LinearRing[]{} , geomFactory); 
