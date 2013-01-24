@@ -459,7 +459,7 @@ GEOR.tools = (function() {
                 autoEl: {
                     tag: 'div',
                     cls: 'box-as-panel',
-                    html: tr("Available tools:"),
+                    html: tr("Available tools:")
                 }
             }, dataview]
         });

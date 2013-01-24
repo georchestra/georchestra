@@ -358,7 +358,7 @@ GEOR.wmcbrowser = (function() {
                 autoEl: {
                     tag: 'div',
                     cls: 'box-as-panel',
-                    html: tr("Replace current map composition with one of these contexts:"),
+                    html: tr("Replace current map composition with one of these contexts:")
                 }
             }, view, formPanel]
         });
