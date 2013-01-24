@@ -355,6 +355,41 @@ GEOR.util = (function() {
                 'OGC:WMS-1.3.0-http-get-map': true
             };
             return !!c[item.protocol] && !!item.name && GEOR.util.isUrl(item.value);
+        },
+
+        /**
+         * APIMethod: registerTip
+         * Registers quick tip on menuitem
+         *
+         * Parameters:
+         * menuItem - {Ext.menu.BaseItem}
+         */
+        registerTip: function (menuItem) {
+            var qtip = typeof (menuItem.qtip) == 'string'
+                        ? {text: menuItem.qtip}
+                        : menuItem.qtip;
+            qtip = Ext.apply(qtip, {
+                target: menuItem.getEl().getAttribute('id')
+            });
+            Ext.QuickTips.register(qtip);
         }
     };
 })();
+
+
+/**
+ * Creates a menu that supports tooltip specs for it's items. Just add "tooltip: {text: 'txt', title: 'ssss'}" to
+ * the menu item config, "title" value is optional.
+ * @class Ext.ux.MenuQuickTips
+ * see http://www.sencha.com/forum/showthread.php?77312-Is-it-possible-to-add-tooltip-to-menu-item
+ */
+Ext.ux.MenuQuickTips = Ext.extend(Object, {
+    init: function (c) {
+        c.menu.items.each(function (item) {
+            if (typeof (item.qtip) != 'undefined') {
+                item.on('afterrender', GEOR.util.registerTip);
+            }
+        });
+    }
+});
+Ext.preg('menuqtips', Ext.ux.MenuQuickTips);

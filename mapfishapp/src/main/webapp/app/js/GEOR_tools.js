@@ -14,7 +14,9 @@
 
 /*
  * @include GeoExt/widgets/Popup.js
+ * @include GEOR_waiter.js
  * @include GEOR_config.js
+ * @include GEOR_util.js
  */
 
 Ext.namespace("GEOR");
@@ -332,10 +334,11 @@ GEOR.tools = (function() {
                                     break;
                                 }
                             }
+                            // handle menuitem qtip:
+                            addon.item.on('afterrender', GEOR.util.registerTip);
                             // here we know it should be inserted at position i - 1 from the beginning
                             menu.insert(i - 1 + 2, addon.item);
                             // TODO: add menu ?
-                            //Ext.QuickTips.init();
                         }, this, true);
                     }
                 },

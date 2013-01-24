@@ -20,7 +20,6 @@ GEOR.Addons.Magnifier.prototype = {
         var lang = OpenLayers.Lang.getCode(),
             item = new Ext.menu.CheckItem({
                 text: record.get("title")[lang],
-                // FIXME: qtip does not work
                 qtip: record.get("description")[lang],
                 //iconCls: "addon-magnifier",
                 checked: false,
@@ -36,7 +35,6 @@ GEOR.Addons.Magnifier.prototype = {
     /**
      * Method: onCheckchange
      * Callback on checkbox state changed
-     *
      */
     onCheckchange: function(item, checked) {
         if (checked) {
