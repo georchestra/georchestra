@@ -76,6 +76,12 @@ GEOR.tools = (function() {
     var dataview;
 
     /**
+     * Property: store
+     * {Ext.data.JsonStore}
+     */
+    var store;
+
+    /**
      * Property: addonsCache
      * {Object} Hash storing references to loaded addons
      */
@@ -86,12 +92,6 @@ GEOR.tools = (function() {
      * {Object} Hash storing the previous state of each addons (loaded or not)
      */
     var previousState;
-
-    /**
-     * Property: addonsOrder
-     * {Array} Array to store an ordered collection of loaded addons id
-     */
-    var addonsOrder = [];
 
     /**
      * Method: createMeasureControl.
@@ -219,23 +219,23 @@ GEOR.tools = (function() {
         // handle addon selection state with 2 hashes:
         if (!previousState) {
             previousState = {};
-            Ext.each(dataview.getStore().getRange(), function(r){
+            Ext.each(store.getRange(), function(r){
                 // TODO: will change once we get the "remember selection" function
                 previousState[r.id] = false;
             });
         }
         var newState = {};
-        Ext.each(dataview.getStore().getRange(), function(r){
+        Ext.each(store.getRange(), function(r){
             newState[r.id] = (records.indexOf(r) > -1);
         });
         // compute diff with previous selection state:
         var incoming = [], outgoing = [];
         Ext.iterate(newState, function(k, v) {
             if (newState[k] === true && previousState[k] === false) {
-                incoming.push(dataview.getStore().getById(k));
+                incoming.push(store.getById(k));
             }
             if (newState[k] === false && previousState[k] === true) {
-                outgoing.push(dataview.getStore().getById(k));
+                outgoing.push(store.getById(k));
             }
         });
         previousState = newState;
@@ -246,15 +246,7 @@ GEOR.tools = (function() {
             menu.remove(item, true);
             addon.destroy();
             delete addonsCache[r.id];
-            // remove item from addonsOrder:
-            var recordIntegerId = r.id.substring(11);
-            for (var i=0,l=addonsOrder.length; i<l;i++) {
-                if (addonsOrder[i] == recordIntegerId) {
-                    // remove addonsOrder[i]
-                    addonsOrder.splice(i, 1);
-                    break;
-                }
-            }
+            r.set("loaded", false);
         });
         // load new addons:
         GEOR.waiter.show(incoming.length);
@@ -266,6 +258,7 @@ GEOR.tools = (function() {
                     previousState[r.id] = false;
                     // unselect node corresponding to record in dataview:
                     dataview.deselect(r);
+                    r.set("loaded", false);
                     // warn user:
                     GEOR.util.errorDialog({
                         msg: tr("Could not load addon ADDONNAME",
@@ -316,22 +309,18 @@ GEOR.tools = (function() {
                             // we're passing the record to the init method
                             // so that the addon has access to the administrator's strings
                             addon.init(r);
+                            r.set("loaded", true);
                             // keep the original order (the one defined by the admin)
-                            var recordIntegerId = r.id.substring(11);
-                            // the record id is based on the pattern "ext-record-"+XXX
-                            // we thus remove the 11 first chars to get an integer
-                            addonsOrder.push(recordIntegerId);
-                            addonsOrder.sort();
-                            // find where the addon has been inserted in array:
-                            for (var i=0,l=addonsOrder.length; i<l;i++) {
-                                if (addonsOrder[i] > recordIntegerId) {
+                            var records = store.query("loaded", true);
+                            for (var i=0,l=records.getCount(); i<l;i++) {
+                                if (records.get(i) === r) {
                                     break;
                                 }
                             }
                             // handle menuitem qtip:
                             addon.item.on('afterrender', GEOR.util.registerTip);
-                            // here we know it should be inserted at position i - 1 from the beginning
-                            menu.insert(i - 1 + 2, addon.item);
+                            // here we know it should be inserted at position i from the beginning
+                            menu.insert(i + 2, addon.item);
                             // TODO: add menu ?
                         }, this, true);
                     }
@@ -364,8 +353,10 @@ GEOR.tools = (function() {
             return;
         }
 
-        var store = new Ext.data.JsonStore({
-            fields: ["name", "title", "thumbnail", "description", "group", "options"],
+        store = new Ext.data.JsonStore({
+            fields: ["name", "title", "thumbnail", "description", "group", "options", {
+                name: "loaded", defaultValue: false, type: "boolean"
+            }],
             data: GEOR.config.ADDONS.slice(0)
         });
 
