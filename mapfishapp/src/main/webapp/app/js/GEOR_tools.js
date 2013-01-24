@@ -461,7 +461,11 @@ GEOR.tools = (function() {
                     cls: 'box-as-panel',
                     html: tr("Available tools:")
                 }
-            }, dataview]
+            }, {
+                flex: 1,
+                layout: 'fit',
+                items: [dataview]
+            }]
         });
         win.show();
     };
