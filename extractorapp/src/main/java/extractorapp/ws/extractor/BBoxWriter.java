@@ -9,16 +9,21 @@ import java.io.IOException;
 import org.geotools.data.DataUtilities;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.factory.GeoTools;
-import org.geotools.feature.SchemaException;
+import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.ProgressListener;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
@@ -38,15 +43,18 @@ public class BBoxWriter {
 	private File baseDir;
 	private FileFormat fileFormat;
 	private ProgressListener progress;
+	private CoordinateReferenceSystem requestedCRS;
 
-	public BBoxWriter(ReferencedEnvelope bbox, File baseDir, FileFormat format, ProgressListener progress ){
+	public BBoxWriter(ReferencedEnvelope bbox, File baseDir, FileFormat format, CoordinateReferenceSystem requestedCRS, ProgressListener progress ){
 		assert bbox != null;
 		assert baseDir != null;
 		assert format != null;
+		assert requestedCRS !=null;
 		
 		this.bbox = bbox;
 		this.baseDir = baseDir;
 		this.fileFormat = format;
+		this.requestedCRS = requestedCRS;
 		this.progress = progress;
 	}
 	
@@ -62,7 +70,7 @@ public class BBoxWriter {
 		SimpleFeatureType type = createFeatureType();
 		
 		// sets bbox feature the the attributes
-		Polygon geom = createBBoxGeometry(this.bbox);
+		Polygon geom = createBBoxGeometry(this.bbox, this.requestedCRS);
 		SimpleFeature bboxFeature = createFeature(geom, type);
 
 		// writes the file
@@ -72,11 +80,11 @@ public class BBoxWriter {
         return writer.generateFiles();
 	}
 
+	
 	private SimpleFeatureType createFeatureType() throws IOException {
 
 		try {
-			CoordinateReferenceSystem crs= this.bbox.getCoordinateReferenceSystem();
-			Integer epsgCode= CRS.lookupEpsgCode(crs, false) ;
+			Integer epsgCode= CRS.lookupEpsgCode(this.requestedCRS, false) ;
 			
 			SimpleFeatureType type = DataUtilities.createType("bounding", GEOMETRY_PROPERTY+":Polygon:srid="+epsgCode);
 			
@@ -103,29 +111,47 @@ public class BBoxWriter {
 		return feature;
 	}
 
-	
-
 
 	/**
-	 * Creates a polygon geometry using the bbox as reference
+	 * Creates a polygon geometry using the bbox as reference. The new polygon will be
+	 * in the target crs 
 	 * 
 	 * @param bbox 
-	 * @return a polygon
+	 * @param epsgCode 
+	 * @return a polygon 
+	 * @throws IOException 
 	 */
-	private Polygon createBBoxGeometry( ReferencedEnvelope bbox){
+	private Polygon createBBoxGeometry( ReferencedEnvelope bbox, CoordinateReferenceSystem targetCrs) throws IOException{
 		
-		GeometryFactory geomFactory = JTSFactoryFinder.getGeometryFactory(GeoTools.getDefaultHints());
+		try {
+			// creates the polygon from the bbox
+			GeometryFactory geomFactory = JTSFactoryFinder.getGeometryFactory(GeoTools.getDefaultHints());
 
-		Coordinate[] coordinates = new Coordinate[]{ 
-					new Coordinate(bbox.getMinX(), bbox.getMaxY()),
-					new Coordinate(bbox.getMaxX(), bbox.getMaxY()),
-					new Coordinate(bbox.getMaxX(), bbox.getMinY()),
-					new Coordinate(bbox.getMinX(), bbox.getMinY()),
-					new Coordinate(bbox.getMinX(), bbox.getMaxY())
-				};
-		LinearRing shell = geomFactory.createLinearRing(coordinates);
-		Polygon polygon = new Polygon(shell, new LinearRing[]{} , geomFactory); 
-		
-		return polygon;
+			Coordinate[] coordinates = new Coordinate[]{ 
+						new Coordinate(bbox.getMinX(), bbox.getMaxY()),
+						new Coordinate(bbox.getMaxX(), bbox.getMaxY()),
+						new Coordinate(bbox.getMaxX(), bbox.getMinY()),
+						new Coordinate(bbox.getMinX(), bbox.getMinY()),
+						new Coordinate(bbox.getMinX(), bbox.getMaxY())
+					};
+			LinearRing shell = geomFactory.createLinearRing(coordinates);
+			Polygon polygon = new Polygon(shell, new LinearRing[]{} , geomFactory);
+			
+			CoordinateReferenceSystem bboxCRS = this.bbox.getCoordinateReferenceSystem();
+			Integer epcgCRS = CRS.lookupEpsgCode(bboxCRS, false);
+			polygon.setSRID(epcgCRS);
+			
+			// transforms the polygon to the required crs
+			MathTransform transform = CRS.findMathTransform(bboxCRS, targetCrs);
+			Polygon newPolygon = (Polygon) JTS.transform( polygon, transform);
+			
+			Integer targetEpcgCRS = CRS.lookupEpsgCode(targetCrs, false);
+			newPolygon.setSRID(targetEpcgCRS);
+			
+			return newPolygon;
+			
+		} catch (Exception e) {
+			throw new IOException(e);
+		} 
 	}
 }
