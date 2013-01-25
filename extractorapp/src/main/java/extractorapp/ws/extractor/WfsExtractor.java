@@ -157,31 +157,6 @@ public class WfsExtractor {
             throw new SecurityException("User does not have sufficient privileges to access the Layer: "+request._layerName+". \n\nCapabilties:  "+capabilities);
         }
     }
-//FIXME remove it if the new version works OK (REMEMBER to change WcsExtractor)
-//    public void checkPermission(ExtractorLayerRequest request, String secureHost, String username, String roles) throws IOException {
-//        URL capabilitiesURL = request.capabilitiesURL("WMS", null);
-//
-//    	DefaultHttpClient httpclient = new DefaultHttpClient();
-//    	HttpGet get = new HttpGet(capabilitiesURL.toExternalForm());
-//        if(secureHost.equalsIgnoreCase(request._url.getHost())
-//                || "127.0.0.1".equalsIgnoreCase(request._url.getHost())
-//                || "localhost".equalsIgnoreCase(request._url.getHost())) {
-//        	LOG.debug("WfsExtractor.checkPermission - Secured Server: adding username header and role headers to request for checkPermission");
-//            if(username != null) get.addHeader("sec-username", username);
-//            if(roles != null) get.addHeader("sec-roles", roles);
-//        } else {
-//        	LOG.debug("WfsExtractor.checkPermission - Non Secured Server");
-//        }
-//
-//        String capabilities = FileUtils.asString(httpclient.execute(get).getEntity().getContent());
-//        Pattern regex = Pattern.compile("(?m)<Layer[^>]*>(\\\\n|\\s)*<Name>\\s*"+Pattern.quote(request._layerName)+"\\s*</Name>");
-//        boolean permitted = regex.matcher(capabilities).find();
-//        
-//        if(!permitted) {
-//            throw new SecurityException("User does not have sufficient privileges to access the Layer: "+request._layerName+". \n\nCapabilties:  "+capabilities);
-//        }
-//    }
-
 
     /**
      * Extract the data as defined in the request object. Currently only supports export to shapefile
@@ -235,14 +210,14 @@ public class WfsExtractor {
         LOG.debug("Number of features returned : " + features.size());
         if (request._format.equalsIgnoreCase("shp")) {
             featuresWriter = new ShpFeatureWriter(progressListener, sourceSchema, basedir, features);
-        	bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.shp, progressListener );
+        	bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.shp, request._projection, progressListener );
         } else if (request._format.equalsIgnoreCase("mif")) {
         	// writer = new MifFeatureWriter(progressListener, sourceSchema, basedir, features);
         	featuresWriter = new OGRFeatureWriter(progressListener, sourceSchema,  basedir, OGRFeatureWriter.FileFormat.mif, features);
-        	bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.mif, progressListener );
+        	bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.mif, request._projection, progressListener );
         } else if (request._format.equalsIgnoreCase("tab")) {
         	featuresWriter = new OGRFeatureWriter(progressListener, sourceSchema,  basedir, OGRFeatureWriter.FileFormat.tab, features);
-        	bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.tab, progressListener );
+        	bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.tab, request._projection, progressListener );
         } else {
             throw new IllegalArgumentException(request._format + " is not a recognized vector format");
         }
