@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,9 +35,6 @@ import org.opengis.filter.spatial.Intersects;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.ProgressListener;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
@@ -208,14 +204,14 @@ public class WfsExtractor {
         FeatureWriterStrategy featuresWriter;
         BBoxWriter bboxWriter;
         LOG.debug("Number of features returned : " + features.size());
-        if (request._format.equalsIgnoreCase("shp")) {
+        if ("shp".equalsIgnoreCase(request._format)) {
             featuresWriter = new ShpFeatureWriter(progressListener, sourceSchema, basedir, features);
         	bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.shp, request._projection, progressListener );
-        } else if (request._format.equalsIgnoreCase("mif")) {
+        } else if ("mif".equalsIgnoreCase(request._format)) {
         	// writer = new MifFeatureWriter(progressListener, sourceSchema, basedir, features);
         	featuresWriter = new OGRFeatureWriter(progressListener, sourceSchema,  basedir, OGRFeatureWriter.FileFormat.mif, features);
         	bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.mif, request._projection, progressListener );
-        } else if (request._format.equalsIgnoreCase("tab")) {
+        } else if ("tab".equalsIgnoreCase(request._format)) {
         	featuresWriter = new OGRFeatureWriter(progressListener, sourceSchema,  basedir, OGRFeatureWriter.FileFormat.tab, features);
         	bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.tab, request._projection, progressListener );
         } else {
