@@ -23,7 +23,6 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 
 import extractorapp.ws.extractor.OGRFeatureWriter.FileFormat;
@@ -35,9 +34,11 @@ import extractorapp.ws.extractor.OGRFeatureWriter.FileFormat;
  *
  */
 public class BBoxWriter {
-	
+
+	// Properties of the bbox FeatureType 
 	private static final String GEOMETRY_PROPERTY = "bounding_geom";
 	private static final String ID_PROPERTY = "bounding_id";
+	
 	
 	private ReferencedEnvelope bbox;
 	private File baseDir;
@@ -45,6 +46,15 @@ public class BBoxWriter {
 	private ProgressListener progress;
 	private CoordinateReferenceSystem requestedCRS;
 
+	/**
+	 * New instance of BBoxWriter
+	 * 
+	 * @param bbox the bbox used to create the polygon
+	 * @param baseDir where the file is created
+	 * @param format 
+	 * @param requestedCRS CRS used to project the polygon associated to the bbox
+	 * @param progress 
+	 */
 	public BBoxWriter(ReferencedEnvelope bbox, File baseDir, FileFormat format, CoordinateReferenceSystem requestedCRS, ProgressListener progress ){
 		assert bbox != null;
 		assert baseDir != null;
@@ -59,8 +69,9 @@ public class BBoxWriter {
 	}
 	
 	/**
-	 * Write the bbox files in the required format
-	 * @return 
+	 * Writes the bbox files in the required format
+	 * 
+	 * @return the set of {@link File} created  
 	 * 
 	 * @throws IOException
 	 */
@@ -80,7 +91,11 @@ public class BBoxWriter {
         return writer.generateFiles();
 	}
 
-	
+	/**
+	 * Creates the feature type for the bbox feature
+	 * @return
+	 * @throws IOException
+	 */
 	private SimpleFeatureType createFeatureType() throws IOException {
 
 		try {
@@ -99,7 +114,7 @@ public class BBoxWriter {
 	}
 	
 	/**
-	 * Create a feature with the polygon 
+	 * Creates a feature with the polygon 
 	 * @param geom
 	 * @param type
 	 * @return {@link SimpleFeature}
@@ -108,7 +123,7 @@ public class BBoxWriter {
 
 		SimpleFeature feature = DataUtilities.template(type);
 		
-		feature.setAttribute(ID_PROPERTY, 1);
+		feature.setAttribute(ID_PROPERTY, 1); // this field is required by mif/mid format
 		feature.setAttribute(GEOMETRY_PROPERTY, geom);
 		
 		return feature;
