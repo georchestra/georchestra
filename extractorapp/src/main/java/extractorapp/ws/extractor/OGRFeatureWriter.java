@@ -14,8 +14,6 @@ import org.geotools.data.simple.SimpleFeatureCollection;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.util.ProgressListener;
 
-import extractorapp.ws.extractor.WfsExtractor.GeomType;
-
 /**
  * This writer sets the OGRDataStore that is responsible of generating the vector file in the format required. 
  * 

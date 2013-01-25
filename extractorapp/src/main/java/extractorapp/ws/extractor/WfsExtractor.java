@@ -177,9 +177,8 @@ public class WfsExtractor {
                 || "127.0.0.1".equalsIgnoreCase(request._url.getHost())
                 || "localhost".equalsIgnoreCase(request._url.getHost())) {
         	LOG.debug("WfsExtractor.extract - Secured Server: Adding extractionUserName to connection params");
-//FIXME MAURO: UDIG RETRIEVES THE FEATURES WITHOUT LOG        	
-//            PARAMS.PUT (WFSDATASTOREFACTORY.USERNAME.KEY, _ADMINUSERNAME);  
-//            PARAMS.PUT (WFSDATASTOREFACTORY.PASSWORD.KEY, _ADMINPASSWORD); 
+            params.put(WFSDataStoreFactory.USERNAME.key, _adminUsername);  
+            params.put(WFSDataStoreFactory.PASSWORD.key, _adminPassword); 
         } else {
         	LOG.debug("WfsExtractor.extract - Non Secured Server");        	
         }
