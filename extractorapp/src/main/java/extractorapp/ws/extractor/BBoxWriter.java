@@ -15,17 +15,15 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.ProgressListener;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 
 import extractorapp.ws.extractor.OGRFeatureWriter.FileFormat;
@@ -38,7 +36,9 @@ import extractorapp.ws.extractor.OGRFeatureWriter.FileFormat;
  */
 public class BBoxWriter {
 	
-	private static final String GEOMETRY_PROPERTY = "geom";
+	private static final String GEOMETRY_PROPERTY = "bounding_geom";
+	private static final String ID_PROPERTY = "bounding_id";
+	
 	private ReferencedEnvelope bbox;
 	private File baseDir;
 	private FileFormat fileFormat;
@@ -70,7 +70,7 @@ public class BBoxWriter {
 		SimpleFeatureType type = createFeatureType();
 		
 		// sets bbox feature the the attributes
-		Polygon geom = createBBoxGeometry(this.bbox, this.requestedCRS);
+		Geometry geom = createBBoxGeometry(this.bbox, this.requestedCRS);
 		SimpleFeature bboxFeature = createFeature(geom, type);
 
 		// writes the file
@@ -86,8 +86,10 @@ public class BBoxWriter {
 		try {
 			Integer epsgCode= CRS.lookupEpsgCode(this.requestedCRS, false) ;
 			
-			SimpleFeatureType type = DataUtilities.createType("bounding", GEOMETRY_PROPERTY+":Polygon:srid="+epsgCode);
-			
+			SimpleFeatureType type = DataUtilities.createType(
+										"bounding", 
+										GEOMETRY_PROPERTY +":Polygon:srid="+epsgCode +"," +
+										ID_PROPERTY + ":Integer");
 			return type;
 
 		} catch (Exception e) {
@@ -102,10 +104,11 @@ public class BBoxWriter {
 	 * @param type
 	 * @return {@link SimpleFeature}
 	 */
-	private SimpleFeature createFeature(Polygon geom, SimpleFeatureType type) {
+	private SimpleFeature createFeature(Geometry geom, SimpleFeatureType type) {
 
 		SimpleFeature feature = DataUtilities.template(type);
 		
+		feature.setAttribute(ID_PROPERTY, 1);
 		feature.setAttribute(GEOMETRY_PROPERTY, geom);
 		
 		return feature;
@@ -113,12 +116,13 @@ public class BBoxWriter {
 
 
 	/**
-	 * Creates a polygon geometry using the bbox as reference. The new polygon will be
-	 * in the target crs 
+	 * Creates a polygon or multipolygon geometry using the bbox as reference. The new polygon will be
+	 * in the target crs.
 	 * 
 	 * @param bbox 
+	 * @param geomClass required geometry 
 	 * @param epsgCode 
-	 * @return a polygon 
+	 * @return a Polygon or MultiPolygon geometry 
 	 * @throws IOException 
 	 */
 	private Polygon createBBoxGeometry( ReferencedEnvelope bbox, CoordinateReferenceSystem targetCrs) throws IOException{
@@ -135,15 +139,16 @@ public class BBoxWriter {
 						new Coordinate(bbox.getMinX(), bbox.getMaxY())
 					};
 			LinearRing shell = geomFactory.createLinearRing(coordinates);
-			Polygon polygon = new Polygon(shell, new LinearRing[]{} , geomFactory);
+			
+			Polygon geometry = new Polygon(shell, new LinearRing[]{} , geomFactory);
 			
 			CoordinateReferenceSystem bboxCRS = this.bbox.getCoordinateReferenceSystem();
 			Integer epcgCRS = CRS.lookupEpsgCode(bboxCRS, false);
-			polygon.setSRID(epcgCRS);
+			geometry.setSRID(epcgCRS);
 			
 			// transforms the polygon to the required crs
 			MathTransform transform = CRS.findMathTransform(bboxCRS, targetCrs);
-			Polygon newPolygon = (Polygon) JTS.transform( polygon, transform);
+			Polygon newPolygon = (Polygon) JTS.transform( geometry, transform);
 			
 			Integer targetEpcgCRS = CRS.lookupEpsgCode(targetCrs, false);
 			newPolygon.setSRID(targetEpcgCRS);
