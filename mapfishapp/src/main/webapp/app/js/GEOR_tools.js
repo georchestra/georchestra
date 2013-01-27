@@ -14,6 +14,7 @@
 
 /*
  * @include GeoExt/widgets/Popup.js
+ * @include OpenLayers/Format/JSON.js
  * @include GEOR_waiter.js
  * @include GEOR_config.js
  * @include GEOR_util.js
@@ -341,6 +342,37 @@ GEOR.tools = (function() {
 
 
     /**
+     * Method: storeToolsSelection
+     * Utility method to make the selection persist in localStorage
+     */
+    var storeToolsSelection = function() {
+        if (!localStorage) {
+            return;
+        }
+        var ids = Ext.pluck(dataview.getSelectedRecords(), "id");
+        localStorage.setItem("default_tools", ids.join(','));
+    };
+
+
+    /**
+     * Method: onCbxCheckChange
+     * Callback on remember checkbox check event
+     *
+     * Parameters:
+     * cbx - {Ext.form.Checkbox}
+     * checked - {Boolean}
+     */
+    var onCbxCheckChange = function(cbx, checked) {
+        if (checked) {
+            storeToolsSelection();
+        } else {
+            // clear localstorage item
+            localStorage && localStorage.removeItem("default_tools");
+        }
+    };
+
+
+    /**
      * Method: addTools
      * Creates/shows the tools selection window
      */
@@ -354,7 +386,7 @@ GEOR.tools = (function() {
         }
 
         store = new Ext.data.JsonStore({
-            fields: ["name", "title", "thumbnail", "description", "group", "options", {
+            fields: ["id", "name", "title", "thumbnail", "description", "group", "options", {
                 name: "loaded", defaultValue: false, type: "boolean"
             }],
             data: GEOR.config.ADDONS.slice(0)
@@ -394,9 +426,14 @@ GEOR.tools = (function() {
             listeners: {
                 "selectionchange": function(dv) {
                     var selectedRecords = dv.getSelectedRecords(),
-                        btn = win.getFooterToolbar().getComponent('load'),
+                        fbar = win.getFooterToolbar(),
+                        btn = fbar.getComponent('load'),
+                        cbx = fbar.getComponent('cbx'),
                         nb = selectedRecords.length;
                     observable.fireEvent("selectionchanged", selectedRecords);
+                    if (cbx.getValue() === true) {
+                        storeToolsSelection();
+                    }
                     btn.setText(
                         ((nb == 0) ? tr("No tool") : '') +
                         ((nb == 1) ? selectedRecords.length + " " + tr("tool") : '') +
@@ -423,15 +460,17 @@ GEOR.tools = (function() {
             closeAction: 'hide',
             plain: true,
             buttonAlign: 'left',
-            fbar: [/*{
+            fbar: [{
                 xtype: 'checkbox',
                 itemId: 'cbx',
                 boxLabel: tr("remember the selection"),
+                disabled: !localStorage,
                 listeners: {
-                    //"check": onCbxCheckChange
+                    "check": onCbxCheckChange
                 }
-            },*/'->', 
+            },'->',
             // TODO: add a "cancel" button restoring previous tool selection state.
+            // + close button (top right corner) has same effect
             {
                 text: tr("OK"),
                 itemId: 'load',

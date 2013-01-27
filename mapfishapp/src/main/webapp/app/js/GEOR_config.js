@@ -336,6 +336,7 @@ GEOR.config = (function() {
          * which is app/addons/{name.toLowerCase()}
          */
         ADDONS: getCustomParameter("ADDONS", [{
+            "id": "magnifier_zoom", // unique id, which must be stable in order to let your users recover their tools !
             "name": "Magnifier", // addon name, which, once lowercased, gives the addon folder name 
             // should also be consistent with addon class name (here: GEOR.Addons.Magnifier)
             "title": {
@@ -359,6 +360,7 @@ GEOR.config = (function() {
             // but can be overriden with:
             "thumbnail": "img/custom_thumbnail.png" 
         }, {
+            "id": "magnifier_1x",
             "name": "Magnifier",
             "title": {
                 "en": "Aerial imagery lens",
@@ -377,6 +379,7 @@ GEOR.config = (function() {
             // we're using the package-provided default image here:
             //,"thumbnail": "",
         }, {
+            "id": "P",
             "name": "Magnifier",
             "title": {
                 "fr": "P"
@@ -385,6 +388,7 @@ GEOR.config = (function() {
                 "fr": "P"
             }
         }, {
+            "id": "R",
             "name": "Magnifier",
             "title": {
                 "fr": "R"
@@ -393,6 +397,7 @@ GEOR.config = (function() {
                 "fr": "R"
             }
         }, {
+            "id": "T",
             "name": "Magnifier",
             "title": {
                 "fr": "T"
