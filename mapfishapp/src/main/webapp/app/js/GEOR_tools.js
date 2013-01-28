@@ -216,17 +216,8 @@ GEOR.tools = (function() {
      * records - {Array} an array of tool records
      */
     var fetchAndLoadTools = function(records) {
-        win.hide();
-        // handle addon selection state with 2 hashes:
-        if (!previousState) {
-            previousState = {};
-            Ext.each(store.getRange(), function(r){
-                // TODO: will change once we get the "remember selection" function
-                previousState[r.id] = false;
-            });
-        }
         var newState = {};
-        Ext.each(store.getRange(), function(r){
+        store.each(function(r){
             newState[r.id] = (records.indexOf(r) > -1);
         });
         // compute diff with previous selection state:
@@ -322,7 +313,6 @@ GEOR.tools = (function() {
                             addon.item.on('afterrender', GEOR.util.registerTip);
                             // here we know it should be inserted at position i from the beginning
                             menu.insert(i + 2, addon.item);
-                            // TODO: add menu ?
                         }, this, true);
                     }
                 },
@@ -337,6 +327,7 @@ GEOR.tools = (function() {
      * Handler for the button triggering the tools loading
      */
     var loadBtnHandler = function() {
+        win && win.hide();
         fetchAndLoadTools(dataview.getSelectedRecords());
     };
 
@@ -367,16 +358,17 @@ GEOR.tools = (function() {
             storeToolsSelection();
         } else {
             // clear localstorage item
-            localStorage && localStorage.removeItem("default_tools");
+            localStorage && 
+                localStorage.removeItem("default_tools");
         }
     };
 
 
     /**
-     * Method: addTools
+     * Method: showToolSelection
      * Creates/shows the tools selection window
      */
-    var addTools = function() {
+    var showToolSelection = function() {
         var target = (GEOR.config.ANIMATE_WINDOWS) ? 
             this.el : undefined;
 
@@ -384,13 +376,6 @@ GEOR.tools = (function() {
             win.show();
             return;
         }
-
-        store = new Ext.data.JsonStore({
-            fields: ["id", "name", "title", "thumbnail", "description", "group", "options", {
-                name: "loaded", defaultValue: false, type: "boolean"
-            }],
-            data: GEOR.config.ADDONS.slice(0)
-        });
 
         dataview = new Ext.DataView({
             store: store,
@@ -424,6 +409,17 @@ GEOR.tools = (function() {
                 }
             }),
             listeners: {
+                "afterrender": {
+                    // restore tools selection
+                    fn: function(dv) {
+                        store.each(function(r) {
+                            if (r.get("loaded") === true) {
+                                dv.select(r, true, true);
+                            }
+                        });
+                    },
+                    single: true
+                },
                 "selectionchange": function(dv) {
                     var selectedRecords = dv.getSelectedRecords(),
                         fbar = win.getFooterToolbar(),
@@ -464,6 +460,8 @@ GEOR.tools = (function() {
                 xtype: 'checkbox',
                 itemId: 'cbx',
                 boxLabel: tr("remember the selection"),
+                checked: localStorage && 
+                    localStorage.getItem("default_tools") !== null,
                 disabled: !localStorage,
                 listeners: {
                     "check": onCbxCheckChange
@@ -510,17 +508,35 @@ GEOR.tools = (function() {
         events: observable,
 
         /**
-         * APIMethod: create
+         * APIMethod: init
+         * Initialize this module
          *
          * Parameters:
          * layerStore - {GeoExt.data.LayerStore} The application's layer store.
+         *
+         */
+        init: function(layerStore) {
+            tr = OpenLayers.i18n;
+            map = layerStore.map;
+            store = new Ext.data.JsonStore({
+                fields: ["id", "name", "title", "thumbnail", "description", "group", "options", {
+                    name: "loaded", defaultValue: false, type: "boolean"
+                }],
+                data: GEOR.config.ADDONS.slice(0)
+            });
+            previousState = {};
+            store.each(function(r) {
+                previousState[r.id] = false;
+            });
+        },
+
+        /**
+         * APIMethod: create
          *
          * Returns:
          * {Ext.Button} the toolbar button holding the menu
          */
         create: function(layerStore) {
-            tr = OpenLayers.i18n;
-            map = layerStore.map;
             menu = new Ext.menu.Menu({
                 defaultAlign: "tr-br",
                 items: [
@@ -544,16 +560,29 @@ GEOR.tools = (function() {
                         text: tr("Manage tools"),
                         hideOnClick: false,
                         iconCls: "add",
-                        handler: addTools
+                        handler: showToolSelection
                     }
                 ]
             });
-
             return new Ext.Button({
                 text: tr("Tools"),
                 menu: menu
             });
+        },
+
+        /**
+         * APIMethod: restore
+         * Restores the tool selection stored in localStorage
+         *
+         */
+        restore: function() {
+            if (!localStorage) {
+                return;
+            }
+            var ids = localStorage.getItem("default_tools").split(',');
+            fetchAndLoadTools(store.queryBy(function(r) {
+                return (ids.indexOf(r.id) > -1);
+            }));
         }
-        
     };
 })();

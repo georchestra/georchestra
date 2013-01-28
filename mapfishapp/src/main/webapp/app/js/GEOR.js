@@ -25,6 +25,7 @@
  * @include GEOR_mapinit.js
  * @include GEOR_print.js
  * @include GEOR_wmc.js
+ * @include GEOR_tools.js
  * @include GEOR_wmcbrowser.js
  * Note that GEOR_getfeatureinfo.js, GEOR_resultspanel.js, GEOR_querier.js,
  * GEOR_styler.js should be included here, but they are not required by the edit module.
@@ -94,6 +95,7 @@ Ext.namespace("GEOR");
         var map = layerStore.map;
 
         GEOR.wmc.init(layerStore);
+        GEOR.tools.init(layerStore);
         GEOR.wmcbrowser.init();
         if (GEOR.print) {
             GEOR.print.init(layerStore);
@@ -111,7 +113,10 @@ Ext.namespace("GEOR");
 
         // Handle layerstore initialisation
         // with wms/services/wmc from "panier"
-        GEOR.mapinit.init(layerStore, GEOR.ajaxglobal.init);
+        GEOR.mapinit.init(layerStore, function() {
+            GEOR.ajaxglobal.init();
+            GEOR.tools.restore();
+        });
         // Note: we're providing GEOR.ajaxglobal.init as a callback, so that
         // errors when loading WMC are not catched by GEOR.ajaxglobal
         // but by the mapinit module, which handles them more appropriately
