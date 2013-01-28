@@ -317,8 +317,6 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "pan": "glisser - déplacer la carte",
     "zoom in": "zoom en avant",
     "zoom out": "zoom en arrière",
-    "distance measure": "mesurer une distance",
-    "area measure": "mesurer une surface",
     "back to previous zoom": "revenir à la précédente emprise",
     "go to next zoom": "aller à l'emprise suivante",
     "Login": "Connexion",
@@ -329,6 +327,19 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Leave this page ? You will lose the current cartographic context.":
         "Vous allez quitter cette page et perdre le contexte cartographique " +
         "courant",
+    /* GEOR_tools.js strings */
+    "distance measure": "Mesurer une distance",
+    "area measure": "Mesurer une surface",
+    "Measure": "Mesure",
+    "Tools": "Outils",
+    "tools": "outils",
+    "tool": "outil",
+    "No tool": "aucun outil",
+    "Manage tools": "Gérer les outils",
+    "remember the selection": "se souvenir de la sélection",
+    "Available tools:": "Outils disponibles :",
+    "Clic to select or deselect the tool": "Cliquez pour (dé)sélectionner l'outil",
+    "Could not load addon ADDONNAME": "Impossible de charger l'addon ${ADDONNAME}",
     /* GEOR_util.js strings */
     "Characters": "Caractères",
     "Digital": "Numérique",

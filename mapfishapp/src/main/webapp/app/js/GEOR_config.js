@@ -327,6 +327,25 @@ GEOR.config = (function() {
 
         /***** Beginning of config options which can be overriden by GEOR.custom *****/
 
+        /**
+         * Constant: ADDONS
+         * An array of addons config objects.
+         * Defaults to []
+         * 
+         * An "addon config object" is an object with the following properties:
+         *  id - {String} required identifier, which *MUST* :
+         *        * be stable across deployments in order to let your users recover their tools
+         *        * be unique in the ADDONS array
+         *  name - {String} required addon name, which, once lowercased, gives the addon folder name
+         *  title - {Object} a required hash storing addon titles by lang key
+         *  description - {Object} a required hash storing addon descriptions by lang key
+         *  group - {String} an optional group for mutual exclusion between activated tools - default group is "tools"
+         *  options - {Object} an optional config object which overrides the package default_options (in manifest.json)
+         *  thumbnail - {String} an optional thumbnail path, relative to app/addons/{addon_name.toLowerCase()}/ (defaults to img/icon.png)
+         *  
+         */
+        ADDONS: getCustomParameter("ADDONS", 
+            []),
 
         /**
          * Constant: CONTEXTS

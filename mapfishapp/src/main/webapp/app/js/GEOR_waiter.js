@@ -19,7 +19,7 @@ GEOR.waiter = (function() {
      * Private
      */
     
-    var waiter = null
+    var waiter = null,
         count = 0;
         
     return {
@@ -38,7 +38,10 @@ GEOR.waiter = (function() {
         },
         
         show: function(c) {
-            count += 1;
+            if (c === 0) {
+                return;
+            }
+            count += (c || 1);
             if (waiter && count > 0) {
                 waiter.show();
             }
