@@ -101,6 +101,8 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
         "Use the \"+\" button to create a class," +
         "and the \"Analyze\" button to create a set " +
         "of classes defined by a thematic analyze.</p>",
+    /* GEOR_tools.js strings */
+    "Could not load addon ADDONNAME": "Could not load addon ${ADDONNAME}",
     /* GEOR_wmc.js strings */
     "wmc.bad.srs":
         "The .wmc file cannot be restored. Its spatial " +

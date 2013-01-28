@@ -318,8 +318,6 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "pan": "Agarrar - desplazar el mapa",
     "zoom in": "Acercamiento",
     "zoom out": "Alejamiento",
-    "distance measure": "Medir una distancia",
-    "area measure": "Medir un área",
     "back to previous zoom": "Volver al zoom anterior",
     "go to next zoom": "Ir al zoom siguiente",
     "Login": "Conexión",
@@ -330,6 +328,19 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Show legend": "Mostrar la leyenda",
     "Leave this page ? You will lose the current cartographic context.":
         "Usted desea salir de esta página ? Se perderá el contexto cartográfico actual.",
+    /* GEOR_tools.js strings */
+    "distance measure": "Medir una distancia",
+    "area measure": "Medir un área",
+    //"Measure": "Mesure", // TODO
+    //"Tools": "Outils",
+    //"tools": "outils",
+    //"tool": "outil",
+    //"No tool": "aucun outil",
+    //"Manage tools": "Gérer les outils",
+    //"remember the selection": "se souvenir de la sélection",
+    //"Available tools:": "Outils disponibles :",
+    //"Clic to select or deselect the tool": "Cliquez pour (dé)sélectionner l'outil",
+    //"Could not load addon ADDONNAME": "Impossible de charger l'addon ${ADDONNAME}",
     /* GEOR_util.js strings */
     "Characters": "Caracteres",
     "Digital": "Digital",
