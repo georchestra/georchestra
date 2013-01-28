@@ -51,11 +51,11 @@ OpenLayers.Control.Magnifier = OpenLayers.Class(OpenLayers.Control, {
      * {Object}
      */
     baseLayerConfig: null,
+
     /**
      * APIProperty: mode
      * {String} - "static" || "dynamic"
      */
-
     mode: null,
 
     changelayer: function (evt) {
