@@ -1,4 +1,5 @@
 ADDON originally created by Sebastien Pelhate.
+
 The OpenLayers magnifier control comes from https://github.com/fredj/openlayers-magnifier
 
 
@@ -14,7 +15,7 @@ Default options for this addon are specified in the manifest.json file:
         }
     }
 
-This means that the magnifier tool will display the layer "satellite" from the "http://tile.geobretagne.fr/gwc02/service/wms" WMS server.
+This means that the magnifier tool will display the layer "satellite" from the http://tile.geobretagne.fr/gwc02/service/wms WMS server.
 
 For a static magnifier, you may want to configure your addon with a custom baselayer.
 In this case, be sure to include such options in your ADDON config object:
