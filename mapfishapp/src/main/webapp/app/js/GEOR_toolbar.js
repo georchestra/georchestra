@@ -174,7 +174,7 @@ GEOR.toolbar = (function() {
         });
 
         items.push("-");
-        items.push(GEOR.tools.create(layerStore));
+        items.push(GEOR.tools.create());
 
         items.push('-');
         items.push({
