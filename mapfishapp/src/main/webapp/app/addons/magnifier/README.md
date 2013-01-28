@@ -1,4 +1,4 @@
-ADDON originally created by Sebastien Pelhate.
+ADDON originally created by @spelhate.
 
 The OpenLayers magnifier control comes from https://github.com/fredj/openlayers-magnifier
 
