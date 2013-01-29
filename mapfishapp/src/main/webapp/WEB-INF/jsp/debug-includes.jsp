@@ -79,6 +79,7 @@
     <script type="text/javascript" src="app/js/GEOR_wmcbrowser.js"></script>
     <script type="text/javascript" src="app/js/GEOR_wmsbrowser.js"></script>
     <script type="text/javascript" src="app/js/GEOR_wfsbrowser.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_fileupload.js"></script>
     <script type="text/javascript" src="app/js/GEOR_print.js"></script>
     <script type="text/javascript" src="app/js/GEOR_map.js"></script>
     <script type="text/javascript" src="app/js/GEOR_ajaxglobal.js"></script>
