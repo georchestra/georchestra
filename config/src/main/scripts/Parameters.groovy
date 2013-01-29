@@ -18,4 +18,8 @@ class Parameters {
 		outputDir.mkdirs()
 		new File(outputDir, "shared.maven.filters").write("#place holder")
 	}
+	
+	String toString() {
+	  return "Params[targetDir=${targetDir}, outputDir=${outputDir}, basedirFile=${basedirFile}, target=${target}, \n\tsubTarget=${subTarget}, projectDir=${projectDir}, buildSupportDir=${buildSupportDir}]"
+	}
 }

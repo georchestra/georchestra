@@ -212,7 +212,8 @@ class GenerateConfig {
 									
 								params.init()
 
-								log.info("Running groovy configuration generation scripts")
+								log.info("Running groovy configuration generation scripts with parameters: "+params)
+                log.info("")
 
 							  new GenerateConfig().generate(
 									this, log, ant, params.basedirFile, 
