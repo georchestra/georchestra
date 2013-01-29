@@ -92,6 +92,10 @@ GEOR.fileupload = (function() {
                         fieldLabel: tr("File"),
                         allowBlank: false,
                         blankText: tr("The file is required.")
+                    }, {
+                        xtype: 'hidden',
+                        name: 'srs',
+                        value: srs
                     }],
                     buttons: [{
                         text: tr("upload"),
