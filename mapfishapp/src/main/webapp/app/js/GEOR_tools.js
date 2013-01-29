@@ -383,8 +383,7 @@ GEOR.tools = (function() {
                             '<p><b>{[this.tr(values, "title")]}</b></p>',
                             '<p>{[this.tr(values, "description")]}</p>',
                         '</td><td width="50" style="text-align:center;" ext:qtip="'+tr("Clic to select or deselect the tool")+'">',
-                            '<img src="app/addons/{[values.name.toLowerCase()]}/{thumbnail}" class="thumb" ',
-                            'onerror="this.src=\'app/addons/{[values.name.toLowerCase()]}/img/thumbnail.png\';"/>',
+                            '<img src="{[this.thumb(values)]}" class="thumb" />',
                         '</td></tr></table>',
                     '</div>',
                 '</tpl>', 
@@ -393,6 +392,10 @@ GEOR.tools = (function() {
                 disableFormats: true,
                 tr: function(v, key) {
                     return v[key][OpenLayers.Lang.getCode()];
+                },
+                thumb: function(v) {
+                    var base = "app/addons/"+v.name.toLowerCase()+"/";
+                    return base + ((v.thumbnail) ? v.thumbnail : "img/thumbnail.png");
                 }
             }),
             listeners: {
