@@ -28,19 +28,6 @@ GEOR.tools = (function() {
      */
 
     /**
-     * Property: observable
-     * {Ext.util.Obervable}
-     */
-    var observable = new Ext.util.Observable();
-    observable.addEvents(
-        /**
-         * Event: contextselected
-         * Fires when a new tools selection is available
-         */
-        "selectionchanged"
-    );
-
-    /**
      * Property: tr
      * {Function} an alias to OpenLayers.i18n
      */
@@ -426,7 +413,6 @@ GEOR.tools = (function() {
                         btn = fbar.getComponent('load'),
                         cbx = fbar.getComponent('cbx'),
                         nb = selectedRecords.length;
-                    observable.fireEvent("selectionchanged", selectedRecords);
                     if (cbx.getValue() === true) {
                         storeToolsSelection();
                     }
@@ -503,10 +489,6 @@ GEOR.tools = (function() {
      * Public
      */
     return {
-        /*
-         * Observable object
-         */
-        events: observable,
 
         /**
          * APIMethod: init
