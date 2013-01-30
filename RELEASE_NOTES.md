@@ -12,6 +12,7 @@ New features:
  * mapfishapp: spatial query based on a circle, see http://applis-bretagne.fr/redmine/issues/1957
  * geoserver: useful extensions added in template profile, see http://applis-bretagne.fr/redmine/issues/4217
  * mapfishapp: support for addons, see https://github.com/georchestra/georchestra/pull/36
+ * mapfishapp: support transitionEffect resize (aka "back buffers") on layers coming from a WMC, see https://github.com/georchestra/georchestra/pull/42
 
 Enhancements:
  * mapfishapp: results panel displays URLs as html links, see https://github.com/georchestra/georchestra/pull/21
@@ -33,4 +34,5 @@ UPGRADING:
     * DEFAULT_WMC option has been replaced with CONTEXTS
     * PRINT_LAYOUTS_ACL allows to fine-tune available printing layouts based on user roles
     * DEFAULT_PRINT_FORMAT is now replaced by DEFAULT_PRINT_LAYOUT
+ * mapfishapp: don't forget to edit your WMCs to activate back buffers on base layers, see https://github.com/georchestra/georchestra/pull/42
  * In GeoNetwork, it is now recommended to use OGC:WMS protocol rather than OGC:WMS-1.1.1-http-get-map (or any other WMS tagged with a version) to declare WMS layers, see https://github.com/georchestra/georchestra/pull/4
