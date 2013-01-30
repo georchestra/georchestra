@@ -1,12 +1,12 @@
 {
     "js": [
-        "../../../lib/externals/ext/examples/ux/statusbar/StatusBar.js",        
         "js/cadastre.js"
     ],
     "css": [
         "css/cadastre.css"
     ],
     "default_options": {
+        "editableCombos": false,
         "tab1": {
             "field1": {
                 "file": "cities.json",

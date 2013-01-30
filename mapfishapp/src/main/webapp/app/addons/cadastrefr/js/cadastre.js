@@ -170,7 +170,7 @@ GEOR.Addons.CadastreFR.prototype = {
                     store: this.stores[field],
                     valueField: c.valuefield,
                     displayField: c.displayfield,
-                    editable: true,
+                    editable: this.options.editableCombos,
                     disabled: field != "field1",
                     mode: 'local',
                     triggerAction: 'all',
