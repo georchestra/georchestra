@@ -5,7 +5,7 @@
   <parent>
   	<groupId>org.georchestra</groupId>
   	<artifactId>root</artifactId>
-  	<version>1.1</version>
+  	<version>13.02</version>
   </parent>
 
   <artifactId>ogc-server-statistics</artifactId>
