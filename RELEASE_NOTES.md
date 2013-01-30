@@ -1,6 +1,8 @@
 Version 13.02
 =============
 
+This new release was made possible thanks to support from the French GIP ATGeRi (http://cartogip.fr/) and contributors.
+
 New features:
  * mapfishapp: lon, lat and radius GET parameters for startup recentering, see https://github.com/georchestra/georchestra/pull/20
  * mapfishapp: switchable pointer coordinates SRS, see https://github.com/georchestra/georchestra/pull/25
@@ -9,6 +11,7 @@ New features:
  * mapfishapp: print layouts ACL, see https://github.com/georchestra/georchestra/pull/30
  * mapfishapp: spatial query based on a circle, see http://applis-bretagne.fr/redmine/issues/1957
  * geoserver: useful extensions added in template profile, see http://applis-bretagne.fr/redmine/issues/4217
+ * mapfishapp: support for addons, see https://github.com/georchestra/georchestra/pull/36
 
 Enhancements:
  * mapfishapp: results panel displays URLs as html links, see https://github.com/georchestra/georchestra/pull/21

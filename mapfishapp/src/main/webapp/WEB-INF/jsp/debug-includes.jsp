@@ -67,6 +67,7 @@
     <script type="text/javascript" src="app/js/GEOR_geonames.js"></script>
     <script type="text/javascript" src="app/js/GEOR_address.js"></script>
     <script type="text/javascript" src="app/js/GEOR_scalecombo.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_tools.js"></script>
     <script type="text/javascript" src="app/js/GEOR_toolbar.js"></script>
     <script type="text/javascript" src="app/js/GEOR_workspace.js"></script>
     <script type="text/javascript" src="app/js/GEOR_mappanel.js"></script>

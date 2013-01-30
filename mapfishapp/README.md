@@ -8,6 +8,7 @@ With it, you can :
  * create custom SLDs and style WMS layers, 
  * query layers either with a simple tool or an advanced one supporting conditions on attributes and geometries,
  * share your map with a permalink, or save it as a WMC file and restore it later,
+ * load and create custom tools for specific needs,
  * export feature attributes,
  * print your map,
  * and many more ...
