@@ -6,9 +6,17 @@
           class="mapfishapp.ws.HomeController"/>
     <bean id="editcontroller" 
           class="mapfishapp.ws.EditController"/>
+
+          
 	<!--  url mapping is directly handled with the spring annotations written in the following controllers -->
 	<bean class="mapfishapp.ws.OGCProxy">
 	</bean>
+	<bean class="mapfishapp.ws.UpLoadGeoFileController">
+		<property name="responseCharset" value="UTF-8"/>
+		<property name="downloadDirectory" value="/home/mauro/Download"/>
+		<property name="tempDirectory" value="/home/mauro/Download/tmp"/>
+	</bean>
+
 	<bean class="mapfishapp.ws.DocController">
 		<property name="maxDocAgeInMinutes" value="${maxDocAgeInMinutes}"/>
 		<property name="credentials">
@@ -20,9 +28,10 @@
 	<bean id="multipartResolver"
 	  class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
 	  <property name="maxUploadSize">
-	    <value>1000000</value>
+	    <value>10000000</value>
 	  </property>
 	</bean>
+
 
     <!-- View resolver Required to access jsps in WEB-INF/jsp directory-->
     <bean id="viewResolver"
