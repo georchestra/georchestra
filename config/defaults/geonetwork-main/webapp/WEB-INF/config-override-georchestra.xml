@@ -1,6 +1,5 @@
 <overrides>
     <import file="/WEB-INF/server-props-overrides.xml"/>
-    <import file="/WEB-INF/config-overrides-widget.xml"/>
     <import file="/WEB-INF/config-overrides.xml"/>
     <import file="/WEB-INF/config-overrides-inspire.xml"/>
     <import file="/WEB-INF/config-overrides-dev.xml"/>
@@ -61,6 +60,10 @@
         <replaceXML xpath="mapViewer/layers">
            <layer server="http://${wfs.host}:${wfs.port}/geoserver/wms" tocName="Fond GIP"  params="{layers: 'Fond_GIP', transparent: 'true', format: 'image/png'}"  options="{isBaseLayer: true}" />
         </replaceXML>
+        <replaceAtt xpath="client" attName="widget" value="true"/>
+        <replaceAtt xpath="client" attName="url" value="../../apps/georchestra/"/>
+        <replaceAtt xpath="client" attName="createParameter" value="#create"/>
+        <replaceAtt xpath="client" attName="stateId" value="s"/>
     </file>
     <textFile name=".*/WEB-INF/classes/setup/sql/.+/data-db-default.sql">
         <!-- enable set host in settings -->
