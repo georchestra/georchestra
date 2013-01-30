@@ -1,0 +1,75 @@
+{
+    "js": [
+        "../../../lib/externals/ext/examples/ux/statusbar/StatusBar.js",        
+        "js/cadastre.js"
+    ],
+    "css": [
+        "css/cadastre.css"
+    ],
+    "default_options": {
+        "tab1": {
+            "field1": {
+                "file": "cities.json",
+                "valuefield": "nom_com",
+                "displayfield": "nom_com"
+            },
+            "field2": {
+                "wfs": "http://ids.pigma.org/geoserver/ign/wfs",
+                "typename": "ign:ign_bdparcellaire_sections",
+                "matchingproperties": {
+                    "field1": "nom_com"
+                },
+                "valuefield": "section",
+                "displayfield": "section"
+            },
+            "field3": {
+                "wfs": "http://ids.pigma.org/geoserver/ign/wfs",
+                "typename": "ign:ign_bdparcellaire_parcelles",
+                "matchingproperties": {
+                    "field1": "nom_com",
+                    "field2": "section"
+                },
+                "valuefield": "numero",
+                "displayfield": "numero"
+            }
+        },
+        "tab2": {
+            "field1": {
+                "wfs": "http://ids.pigma.org/geoserver/ign/wfs",
+                "typename": "ign:ign_bdparcellaire_communes",
+                "valuefield": "nom_com",
+                "displayfield": "nom_com"
+            },
+            "field2": {
+                "wfs": "http://ids.pigma.org/geoserver/ign/wfs",
+                "typename": "ign:ign_bdparcellaire_proprietaires",
+                "matchingfield1": "nom_com",
+                "valuefield": "proprietaire",
+                "displayfield": "proprietaire"
+            }
+        }
+    },
+    "i18n": {
+        "en": {
+            "tab1field1label": "City",
+            "tab2field1label": "City",
+            "tab1field2label": "Section",
+            "tab2field2label": "Owner",
+            "tab1field3label": "Parcel"
+        },
+        "es": {
+            "tab1field1label": "Ciudad",
+            "tab2field1label": "Ciudad",
+            "tab1field2label": "Sección",
+            "tab2field2label": "Propietario",
+            "tab1field3label": "Parcela"
+        },
+        "fr": {
+            "tab1field1label": "Commune",
+            "tab2field1label": "Commune",
+            "tab1field2label": "Section",
+            "tab2field2label": "Propriétaire",
+            "tab1field3label": "Parcelle"
+        }
+    }
+}
