@@ -3,19 +3,25 @@
  */
 package mapfishapp.ws;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
-import java.net.URL;
 import java.security.InvalidParameterException;
+import java.util.Enumeration;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.geotools.graph.util.ZipUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -93,6 +99,7 @@ public final class UpLoadGeoFileController {
 
 		public String originalFileName;
 		public String ext;
+		public File savedFile;
 		
 		public FileDescriptor(final String fileName) {
 
@@ -131,10 +138,18 @@ public final class UpLoadGeoFileController {
 		
 	}
 
-	private FileDescriptor currentFile = null;
+	// controller properties 
+	private FileDescriptor currentFile;
+	
+	// constants configured in the ws-servlet.xml file
 	private String responseCharset;
 	private String downloadDirectory; 
-	private String tempDirectory; 
+	private String tempDirectory;
+
+	private long zipSizeLimit;
+	private long kmlSizeLimit;
+	private long gpxSizeLimit;
+	private long gmlSizeLimit;
 
 	
 	/**
@@ -159,6 +174,22 @@ public final class UpLoadGeoFileController {
 	public void setResponseCharset(String responseCharset) {
 		this.responseCharset = responseCharset;
 	}
+	
+	public void setZipSizeLimit(long zipSizeLimit) {
+		this.zipSizeLimit = zipSizeLimit;
+	}
+
+	public void setKmlSizeLimit(long kmlSizeLimit) {
+		this.kmlSizeLimit = kmlSizeLimit;
+	}
+
+	public void setGpxSizeLimit(long gpxSizeLimit) {
+		this.gpxSizeLimit = gpxSizeLimit;
+	}
+
+	public void setGmlSizeLimit(long gmlSizeLimit) {
+		this.gmlSizeLimit = gmlSizeLimit;
+	}
 
 	@RequestMapping(method = RequestMethod.POST)
 	public void handlePOSTRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -169,78 +200,214 @@ public final class UpLoadGeoFileController {
 			throw new IOException(msg);
 		}
 
-		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-		
-		Map<String, Object> fileDescriptor = multipartRequest.getFileMap();
-		
-		Iterator fileNames = multipartRequest.getFileNames();
-		if(! fileNames.hasNext() ){
-			final String msg = "a file is expected";
-			LOG.error(msg);
-			throw new IOException(msg);
-		}
-		String fileName = (String) fileNames.next();
-		MultipartFile upLoadFile =multipartRequest.getFile(fileName);
-		FileDescriptor currentFile = createFileDescriptor(upLoadFile.getOriginalFilename());
-
-		Status st = Status.ready;
-
-		String workDirectory = makeDirectoryForSession(this.tempDirectory);
-		
-		if( ! currentFile.isValidFormat()	 ) {
-			writeResponse(response, Status.unsupportedFormat);
-			return;
-		}
-
-		save(upLoadFile, workDirectory);
-
-		if(currentFile.isZipFile()){
-			unzip(upLoadFile, workDirectory );
-		}
-
-		st  = checkGeoFiles(workDirectory );
-		if( st != Status.ok ){
-			writeResponse(response, st);
-		}
-		
-		move(workDirectory, downloadDirectory );
-		
+		String workDirectory = null;
 		try{
-			writeResponse(response, st.ok);
+			MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+			
+			// create the file descriptor using the original file name which is in the multipartRequest object
+			Iterator<?> fileNames = multipartRequest.getFileNames();
+			if(! fileNames.hasNext() ){
+				final String msg = "a file is expected";
+				LOG.error(msg);
+				throw new IOException(msg);
+			}
+			String fileName = (String) fileNames.next();
+			MultipartFile upLoadFile =multipartRequest.getFile(fileName);
+			FileDescriptor currentFile = createFileDescriptor(upLoadFile.getOriginalFilename());
+			// process the uploaded file
+			Status st = Status.ready;
+
+			workDirectory = makeDirectoryForSession(this.tempDirectory);
+			
+			if( ! currentFile.isValidFormat()	 ) {
+				writeResponse(response, Status.unsupportedFormat, workDirectory);
+				return;
+			}
+			long limit = getSizeLimit(currentFile.ext);
+			if(  upLoadFile.getSize()  > limit ){
+				
+				long size = limit / 1048576; // converts to Mb
+				final String msg = Status.getMessage(Status.sizeError, size + "MB");
+				
+				writeResponse(response, Status.sizeError, msg, workDirectory);
+				return;
+			}
+			currentFile.savedFile = save(upLoadFile, workDirectory);
+				
+			if(currentFile.isZipFile()){
+				
+	        	unzip( currentFile.savedFile.getAbsolutePath() , downloadDirectory);
+
+				st  = checkGeoFiles(workDirectory );
+				if( st != Status.ok ){
+					writeResponse(response, st, workDirectory);
+					return;
+				}
+			}
+			
+			move(workDirectory, downloadDirectory );
+
+			writeResponse(response, st.ok, workDirectory);
+		
 		} finally{
-			cleanTemporalDirectory(tempDirectory);
+			if(workDirectory!= null) cleanTemporalDirectory(workDirectory);
+
 		}
+		
+	}
+
+	private void unzip(String absolutePath, String workDirectory) throws IOException {
+
+		ZipFile zipFile = new ZipFile(absolutePath);
+
+		// creates the directories
+		Enumeration<? extends ZipEntry> entries = zipFile.entries();
+		while (entries.hasMoreElements()) {
+			ZipEntry entry = (ZipEntry) entries.nextElement();
+
+			File entryFile = new File(entry.getName());
+			
+			String path = workDirectory+ "/"+  entryFile.getParent();
+			
+			File newParent = new File(path);
+			if(!newParent.exists()){
+				
+				newParent.mkdir();
+			}
+		}
+		// creates the files
+		entries = zipFile.entries();
+		while (entries.hasMoreElements()) {
+			ZipEntry entry = (ZipEntry) entries.nextElement();
+
+			if (!entry.isDirectory()) {
+				extractFile(zipFile, entry, workDirectory);
+			}
+		}
+		
+
+		zipFile.close();
+	}
+	
+
+	
+	private void extractFile(final ZipFile zipFile, final ZipEntry entry, final String workDirectory) throws IOException {
+
+		InputStream in = zipFile.getInputStream(entry);
+		String outName = workDirectory + File.pathSeparatorChar + entry.getName();
+		BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(outName));
+		
+		byte[] buffer = new byte[1024];
+	    int len;
+
+	    while((len = in.read(buffer)) >= 0)
+	      out.write(buffer, 0, len);
+
+	    in.close();
+	    out.close();
+		
 	}
 
 	/**
+	 * Returns the size limit (bytes) taking into account the file format.
+	 * 
+	 * @param fileExtension
+	 * 
+	 * @return the limit
+	 */
+	private long getSizeLimit(final String fileExtension) {
+
+		if( this.zipSizeLimit <=  0 ) throw new IllegalStateException("zipSizeLimit was not set");
+		if( this.kmlSizeLimit <=  0 ) throw new IllegalStateException("kmlSizeLimit was not set");
+		if( this.gpxSizeLimit <=  0 ) throw new IllegalStateException("gpxSizeLimit was not set");
+		if( this.gmlSizeLimit <=  0 ) throw new IllegalStateException("gmlSizeLimit was not set");
+		
+		if("zip".equalsIgnoreCase(fileExtension)){
+			
+			return this.zipSizeLimit;
+			
+		} else if("kml".equalsIgnoreCase(fileExtension) ){
+			
+			return this.kmlSizeLimit;
+			
+		} else if("gpx".equalsIgnoreCase(fileExtension) ){
+			
+			return this.gpxSizeLimit;
+			
+		} else if("gml".equalsIgnoreCase(fileExtension) ){
+			
+			return this.gmlSizeLimit;
+			
+		} else {
+			throw new IllegalArgumentException("Unsupported format");
+		}
+	}
+
+
+	/**
 	 * Writes in the response object the message taking into account the process {@link Status}.
+	 * Additionally the working directory is removed.
 	 * 
 	 * @param response
-	 * @param st 
+	 * @param st
+	 * @param errorDetail 
+	 * @param workDirectory 
+	 * 
 	 * @throws IOException
 	 */
-	private void writeResponse( HttpServletResponse response, final Status st) throws IOException {
+	private void writeResponse( HttpServletResponse response, final Status st, final String errorDetail, final String workDirectory) throws IOException {
 		PrintWriter out = null;
 		try {
 			out = response.getWriter();
 			response.setCharacterEncoding(responseCharset);
 			response.setContentType("application/json");
-			
-			String statusMsg = Status.getMessage(st);
+
+			String statusMsg;
+			if("".equals(errorDetail)){
+				statusMsg = Status.getMessage(st );
+			} else {
+				statusMsg = Status.getMessage(st , errorDetail);
+			}
 			out.println(statusMsg);
+			
 		} finally {
+
+			cleanTemporalDirectory(workDirectory);
+
 			if(out != null) out.close();
 		}
 	}
 
+	/**
+	 * writes the response using the information provided as parameter
+	 * 
+	 *  
+	 * @param response
+	 * @param st
+	 * @param workDirectory
+	 * @throws IOException
+	 */
+	private void writeResponse( HttpServletResponse response, final Status st, final String workDirectory) throws IOException {
+		
+		writeResponse(response, st, "", workDirectory);
+	}
+
 	private String makeDirectoryForSession(String tempDirectory) throws IOException{
-		// TODO Auto-generated method stub
-		return tempDirectory;
+
+		// create a temporal root directory if it doesn't exist
+		File f = new File(tempDirectory);
+		if(!f.exists()){
+			f.mkdirs();
+		}
+		// TODO add a user directory
+		
+		String workDirectory = f.getAbsolutePath();
+		
+		return workDirectory;
 	}
 
 	private void cleanTemporalDirectory(String tempDirectory) throws IOException{
-		// TODO Auto-generated method stub
-		
+		FileUtils.cleanDirectory(new File(tempDirectory));
 	}
 
 	private void move(String tempDirecory, String downloadDirectory) throws IOException{
@@ -270,15 +437,19 @@ public final class UpLoadGeoFileController {
 	 * 
 	 * @param uploadFile
 	 * @param downloadDirectory
-	 * @return {@link Status}
+	 * @return {@link File} the saved file
+	 * 
 	 * @throws IOException
+	 * 
 	 */
-	private void save(MultipartFile uploadFile, String downloadDirectory) throws IOException{
+	private File save(MultipartFile uploadFile, String downloadDirectory) throws IOException{
 
 		try {
 			final String originalFileName = uploadFile.getOriginalFilename();
 			File outFile = new File(downloadDirectory+"/"+originalFileName);
 			uploadFile.transferTo(outFile);
+			
+			return outFile;
 			
 		} catch (IOException e) {
 			LOG.fatal(e.getMessage());
@@ -320,8 +491,16 @@ public final class UpLoadGeoFileController {
 		return Status.ok;
 	}
 
-	private void unzip(MultipartFile zipFile, String downloadDirectory) {
-		// TODO Auto-generated method stub
+	private void unzip(FileDescriptor zipFile, String downloadDirectory) throws IOException {
+		
+        try {
+        	
+        	ZipUtil.unzip( zipFile.savedFile.getAbsolutePath() , downloadDirectory);
+        	
+		} finally {
+			
+			
+        }
 		
 	}
 	
