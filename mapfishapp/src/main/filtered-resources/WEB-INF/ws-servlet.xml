@@ -15,6 +15,11 @@
 		<property name="responseCharset" value="UTF-8"/>
 		<property name="downloadDirectory" value="/home/mauro/Download"/>
 		<property name="tempDirectory" value="/home/mauro/Download/tmp"/>
+
+		<property name="zipSizeLimit" value="8589934592"/>
+		<property name="kmlSizeLimit" value="8589934592"/>
+		<property name="gpxSizeLimit" value="8589934592"/>
+		<property name="gmlSizeLimit" value="8589934592"/>
 	</bean>
 
 	<bean class="mapfishapp.ws.DocController">
