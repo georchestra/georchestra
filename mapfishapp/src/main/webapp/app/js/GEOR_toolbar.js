@@ -150,7 +150,7 @@ GEOR.toolbar = (function() {
 
         items.push('->');
 
-        if (GEOR.header === false) {
+        if (GEOR.config.LOGIN_IN_TOOLBAR) {
             // insert a login or logout link in the toolbar
             var login_html = '<div style="margin-right:1em;font:11px tahoma,verdana,helvetica;"><a href="' + GEOR.config.LOGIN_URL +
                 '" style="text-decoration:none;" onclick="return GEOR.toolbar.confirmLogin()">'+tr("Login")+'</a></div>';
