@@ -201,9 +201,13 @@ GEOR.Addons.CadastreFR.prototype = {
         // reset value && enable field N+1
         nextField.reset();
         nextField.enable();
-        nextField.focus('', 0);
+        nextField.focus('', 50);
         // load store for field N+1
-        this.loadStore(nextFieldName);
+        nextField.on('focus', function() {
+            // we have to wait that the combo has focus 
+            // so that its innerList is created
+            this.loadStore(nextFieldName);
+        }, this, {single: true});
         // reset & disable all other fields
         for (var i = nextFieldIdx + 1, l = this.fields.length; i < l; i++) {
             field = this.fields[i];
