@@ -61,7 +61,7 @@ GEOR.Addons.CadastreFR.prototype = {
                     });
                 }
             }
-            // todo: use geoext's protocolproxy
+            // TODO: use geoext's protocolproxy
             this.stores[field] = new Ext.data.JsonStore({
                 fields: fields
             });
@@ -119,7 +119,6 @@ GEOR.Addons.CadastreFR.prototype = {
         this.win.show();
     },
 
-
     loadStore: function(fieldName) {
         var n = this.options.tab1[fieldName],
             fieldNameIdx = this.fieldNames.indexOf(fieldName),
@@ -149,7 +148,6 @@ GEOR.Addons.CadastreFR.prototype = {
         if (n.hasOwnProperty("file")) {
             OpenLayers.Request.GET({
                 url: "app/addons/cadastrefr/"+n.file,
-                //failure: , // TODO
                 success: function(resp) {
                     if (resp && resp.responseText) {
                         var o = this.jsonFormat.read(resp.responseText);
@@ -180,7 +178,6 @@ GEOR.Addons.CadastreFR.prototype = {
                         '</wfs:Query>',
                     '</wfs:GetFeature>'
                 ].join(''),
-                //failure: , // TODO
                 success: function(resp) {
                     if (resp && resp.responseText) {
                         var o = this.jsonFormat.read(resp.responseText);
