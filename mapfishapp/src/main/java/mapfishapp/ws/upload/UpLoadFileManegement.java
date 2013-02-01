@@ -12,20 +12,19 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import mapfishapp.ws.UpLoadGeoFileController;
-import mapfishapp.ws.UpLoadGeoFileController.FileDescriptor;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
+ * This class is responsible to maintain the uploaded file. It include the method to save, unzip, and check the geofiles.
+ * 
  * @author Mauricio Pazos
  *
  */
 public class UpLoadFileManegement {
 	
-	private static final Log LOG = LogFactory.getLog(UpLoadGeoFileController.class.getPackage().getName());
+	private static final Log LOG = LogFactory.getLog(UpLoadFileManegement.class.getPackage().getName());
 	
 	private FileDescriptor fileDescriptor;
 	private String workDirectory;
@@ -49,32 +48,51 @@ public class UpLoadFileManegement {
 
 			String path = workDirectory+ File.separator+  entry.getName();
 
-			File entryFile = new File(path);
-			
-			(new File(entryFile.getParent())).mkdir();
+			File outFile = new File(path);
+			makeDirectory(outFile.getParent());
 
-			extractFile(zipFile, entry, entryFile);
+			extractFile(zipFile, entry, outFile);
 		}
 
 		zipFile.close();
 	}
+
+	/**
+	 * Create the directory structura taking into account the directory path
+	 * @param path
+	 * @throws IOException
+	 */
+	void makeDirectory(String path) throws IOException{
+
+		File newDirectory = new File(path);
+		if(!newDirectory.exists() ){
+			makeDirectory(newDirectory.getParent());
+			newDirectory.mkdir();
+		}		
+	}
 	
 
-	
-	private void extractFile(final ZipFile zipFile, final ZipEntry entry, final File newFile) throws IOException {
+	/**
+	 * Extract the file entry from the zip file. 
+	 * @param zipFile
+	 * @param entry
+	 * @param outFile
+	 * @throws IOException
+	 */
+	private void extractFile(final ZipFile zipFile, final ZipEntry entry, final File outFile) throws IOException {
 
-		InputStream in = zipFile.getInputStream(entry);
-		BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(newFile));
+		InputStream is = zipFile.getInputStream(entry);
+		BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(outFile));
 		
 		byte[] buffer = new byte[1024];
 	    int len;
 
-	    while((len = in.read(buffer)) >= 0){
-	      out.write(buffer, 0, len);
+	    while((len = is.read(buffer)) >= 0){
+	      os.write(buffer, 0, len);
 	    }
 
-	    in.close();
-	    out.close();
+	    is.close();
+	    os.close();
 	}
 
 
