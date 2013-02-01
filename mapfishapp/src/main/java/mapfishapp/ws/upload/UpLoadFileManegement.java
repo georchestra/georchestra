@@ -12,12 +12,13 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * This class is responsible to maintain the uploaded file. It include the method to save, unzip, and check the geofiles.
+ * This class is responsible to maintain the uploaded file. It includes the method to save, unzip, and check the geofiles.
  * 
  * @author Mauricio Pazos
  *
@@ -62,7 +63,7 @@ public class UpLoadFileManegement {
 	 * @param path
 	 * @throws IOException
 	 */
-	void makeDirectory(String path) throws IOException{
+	private void makeDirectory(String path) throws IOException{
 
 		File newDirectory = new File(path);
 		if(!newDirectory.exists() ){
@@ -126,6 +127,33 @@ public class UpLoadFileManegement {
 
 	public boolean containsZipFile() {
 		return this.fileDescriptor.isZipFile();		
+	}
+
+
+	/**
+	 * Moves the upload file from the work directory (temporal) to download directory
+	 * 
+	 * @param downloadDirectory
+	 * @throws IOException 
+	 */
+	public void moveTo(String downloadDirectory) throws IOException {
+		
+		File source = new File(this.workDirectory);
+		File target = new File(downloadDirectory);
+		if( !target.exists()) {
+			boolean succeed = target.mkdir();
+			if(! succeed ) {
+				String message = "cannot create the download directory";
+				LOG.fatal(message);
+				throw new IOException(message);
+			}
+		}
+		try{
+			FileUtils.copyDirectory(source, target);
+		} catch (IOException e){
+			LOG.fatal(e.getMessage());
+			throw e;
+		}
 	}
 	
 
