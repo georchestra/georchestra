@@ -3,25 +3,22 @@
  */
 package mapfishapp.ws;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.security.InvalidParameterException;
-import java.util.Enumeration;
 import java.util.Iterator;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+
+import mapfishapp.ws.upload.FileDescriptor;
+import mapfishapp.ws.upload.UpLoadFileManegement;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.geotools.graph.util.ZipUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -90,53 +87,6 @@ public final class UpLoadGeoFileController {
 		}
 	}
 	
-	/**
-	 * Maintain useful file information available in the 
-	 * @author Mauricio Pazos
-	 *
-	 */
-	private class FileDescriptor{
-
-		public String originalFileName;
-		public String ext;
-		public File savedFile;
-		
-		public FileDescriptor(final String fileName) {
-
-			assert fileName != null;
-			
-			int dot= fileName.lastIndexOf(".");
-			if(dot == -1 ){
-				throw new InvalidParameterException("a file name extesion is expected");
-			}
-			
-			ext = fileName.substring(dot + 1);
-			originalFileName = fileName;
-			
-		}
-
-		public String getOriginalFileName() {
-			return originalFileName;
-		}
-
-		public String getExt() {
-			return ext;
-		}
-
-		public boolean isValidFormat() {
-			assert ext != null;
-			return 
-			    "zip".equalsIgnoreCase(ext) ||
-				"kml".equalsIgnoreCase(ext) ||
-				"gpx".equalsIgnoreCase(ext) ||
-				"gml".equalsIgnoreCase(ext);			
-		}
-
-		public boolean isZipFile() {
-			return "zip".equalsIgnoreCase(ext);
-		}
-		
-	}
 
 	// controller properties 
 	private FileDescriptor currentFile;
@@ -232,13 +182,16 @@ public final class UpLoadGeoFileController {
 				writeResponse(response, Status.sizeError, msg, workDirectory);
 				return;
 			}
-			currentFile.savedFile = save(upLoadFile, workDirectory);
-				
-			if(currentFile.isZipFile()){
-				
-	        	unzip( currentFile.savedFile.getAbsolutePath() , downloadDirectory);
+			
+			UpLoadFileManegement fileManagement = new UpLoadFileManegement(currentFile, workDirectory);
 
-				st  = checkGeoFiles(workDirectory );
+			fileManagement.save(upLoadFile);
+				
+			if(fileManagement.containsZipFile()){
+				
+				fileManagement.unzip();
+
+				st  = checkGeoFiles(fileManagement);
 				if( st != Status.ok ){
 					writeResponse(response, st, workDirectory);
 					return;
@@ -256,57 +209,6 @@ public final class UpLoadGeoFileController {
 		
 	}
 
-	private void unzip(String absolutePath, String workDirectory) throws IOException {
-
-		ZipFile zipFile = new ZipFile(absolutePath);
-
-		// creates the directories
-		Enumeration<? extends ZipEntry> entries = zipFile.entries();
-		while (entries.hasMoreElements()) {
-			ZipEntry entry = (ZipEntry) entries.nextElement();
-
-			File entryFile = new File(entry.getName());
-			
-			String path = workDirectory+ "/"+  entryFile.getParent();
-			
-			File newParent = new File(path);
-			if(!newParent.exists()){
-				
-				newParent.mkdir();
-			}
-		}
-		// creates the files
-		entries = zipFile.entries();
-		while (entries.hasMoreElements()) {
-			ZipEntry entry = (ZipEntry) entries.nextElement();
-
-			if (!entry.isDirectory()) {
-				extractFile(zipFile, entry, workDirectory);
-			}
-		}
-		
-
-		zipFile.close();
-	}
-	
-
-	
-	private void extractFile(final ZipFile zipFile, final ZipEntry entry, final String workDirectory) throws IOException {
-
-		InputStream in = zipFile.getInputStream(entry);
-		String outName = workDirectory + File.pathSeparatorChar + entry.getName();
-		BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(outName));
-		
-		byte[] buffer = new byte[1024];
-	    int len;
-
-	    while((len = in.read(buffer)) >= 0)
-	      out.write(buffer, 0, len);
-
-	    in.close();
-	    out.close();
-		
-	}
 
 	/**
 	 * Returns the size limit (bytes) taking into account the file format.
@@ -415,49 +317,7 @@ public final class UpLoadGeoFileController {
 		
 	}
 
-	/**
-	 * Only zip, kml, gpx and gml file are accepted.
-	 *  
-	 * @return {@link Status}
-	 * 
-	 */
-	private Status checkFileFormat(FileDescriptor currentFile){
-		
-		if( currentFile.isValidFormat()	 ) {
-			return Status.unsupportedFormat;
-		}
-
-		return Status.ok;
-		
-		
-	}
-	/**
-	 * Saves the upload file in the temporal directory.
-	 * 
-	 * 
-	 * @param uploadFile
-	 * @param downloadDirectory
-	 * @return {@link File} the saved file
-	 * 
-	 * @throws IOException
-	 * 
-	 */
-	private File save(MultipartFile uploadFile, String downloadDirectory) throws IOException{
-
-		try {
-			final String originalFileName = uploadFile.getOriginalFilename();
-			File outFile = new File(downloadDirectory+"/"+originalFileName);
-			uploadFile.transferTo(outFile);
-			
-			return outFile;
-			
-		} catch (IOException e) {
-			LOG.fatal(e.getMessage());
-			throw e;
-		}
-	}
-	
-	private Status checkGeoFiles(String downloadDirectory) {
+	private Status checkGeoFiles(UpLoadFileManegement fileManagement) {
 		// TODO Auto-generated method stub
 		
 		
@@ -490,18 +350,4 @@ public final class UpLoadGeoFileController {
 		
 		return Status.ok;
 	}
-
-	private void unzip(FileDescriptor zipFile, String downloadDirectory) throws IOException {
-		
-        try {
-        	
-        	ZipUtil.unzip( zipFile.savedFile.getAbsolutePath() , downloadDirectory);
-        	
-		} finally {
-			
-			
-        }
-		
-	}
-	
 }
