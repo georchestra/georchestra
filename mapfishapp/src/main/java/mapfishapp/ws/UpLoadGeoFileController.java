@@ -198,7 +198,7 @@ public final class UpLoadGeoFileController {
 				}
 			}
 			
-			move(workDirectory, downloadDirectory );
+			fileManagement.moveTo( downloadDirectory );
 
 			writeResponse(response, st.ok, workDirectory);
 		
@@ -206,7 +206,6 @@ public final class UpLoadGeoFileController {
 			if(workDirectory!= null) cleanTemporalDirectory(workDirectory);
 
 		}
-		
 	}
 
 
@@ -310,11 +309,6 @@ public final class UpLoadGeoFileController {
 
 	private void cleanTemporalDirectory(String tempDirectory) throws IOException{
 		FileUtils.cleanDirectory(new File(tempDirectory));
-	}
-
-	private void move(String tempDirecory, String downloadDirectory) throws IOException{
-		// TODO Auto-generated method stub
-		
 	}
 
 	private Status checkGeoFiles(UpLoadFileManegement fileManagement) {
