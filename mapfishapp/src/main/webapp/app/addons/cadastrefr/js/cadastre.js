@@ -6,9 +6,9 @@ GEOR.Addons.CadastreFR = function(map, options) {
 };
 
 GEOR.Addons.CadastreFR.prototype = {
-    
     item: null,
     stores: {},
+    layer: null,
     win: null,
     jsonFormat: null,
     fields: null,
@@ -36,20 +36,34 @@ GEOR.Addons.CadastreFR.prototype = {
                 }
             })
         });
-        var o = this.options.tab1;
+        var o = this.options.tab1,
+            fields;
         Ext.each(this.fieldNames, function(field) {
             var c = o[field];
+            fields = [{
+                name: c.valuefield,
+                mapping: 'properties.' + c.valuefield
+            }, {
+                name: c.displayfield,
+                mapping: 'properties.' + c.displayfield
+            }, {
+                name: 'bbox',
+                mapping: 'properties.bbox'
+            }];
+            // compute which additional properties should be fetched & stored
+            // if a custom template is provided:
+            if (c.template) {
+                var re = /{(.+?)}/g, r;
+                while ((r = re.exec(c.template)) !== null) {
+                    fields.push({
+                        name: r[1],
+                        mapping: 'properties.' + r[1]
+                    });
+                }
+            }
+            // todo: use geoext's protocolproxy
             this.stores[field] = new Ext.data.JsonStore({
-                fields: [{
-                    name: c.valuefield,
-                    mapping: 'properties.' + c.valuefield
-                }, {
-                    name: c.displayfield,
-                    mapping: 'properties.' + c.displayfield
-                }, {
-                    name: 'bbox',
-                    mapping: 'properties.bbox'
-                }]
+                fields: fields
             });
         }, this);
         this.loadStore(this.fieldNames[0]);
@@ -145,13 +159,17 @@ GEOR.Addons.CadastreFR.prototype = {
                 scope: this
             });
         } else {
+            var properties = '';
+            this.stores[fieldName].fields.each(function(field){
+                if (field.name === 'bbox') return;
+                properties += '<ogc:PropertyName>' + field.name + '</ogc:PropertyName>';
+            });
             OpenLayers.Request.POST({
                 url: n.wfs,
                 data: [
                     '<wfs:GetFeature xmlns:wfs="http://www.opengis.net/wfs" xmlns:ogc="http://www.opengis.net/ogc" version="1.1.0" service="WFS" outputFormat="json">',
                         '<wfs:Query typeName="', n.typename, '" srsName="', this.map.getProjection(), '">',
-                            '<ogc:PropertyName>', n.valuefield, '</ogc:PropertyName>',
-                            '<ogc:PropertyName>', n.displayfield, '</ogc:PropertyName>',
+                            properties,
                             '<ogc:SortBy>',
                                 '<ogc:SortProperty>',
                                     '<ogc:PropertyName>', n.displayfield, '</ogc:PropertyName>',
@@ -227,7 +245,13 @@ GEOR.Addons.CadastreFR.prototype = {
                     fieldLabel: OpenLayers.i18n("tab1"+field+"label"),
                     store: this.stores[field],
                     valueField: c.valuefield,
+                    itemSelector: '.x-combo-list-item',
                     displayField: c.displayfield,
+                    tpl: new Ext.XTemplate(
+                        '<tpl for=".">',
+                            '<div class="x-combo-list-item">' + (c.template || '{'+c.displayfield+'}') + '</div>',
+                        '</tpl>'
+                    ),
                     editable: this.options.editableCombos,
                     disabled: field != this.fieldNames[0],
                     mode: 'local',
