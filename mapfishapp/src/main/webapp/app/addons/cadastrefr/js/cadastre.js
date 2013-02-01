@@ -197,14 +197,17 @@ GEOR.Addons.CadastreFR.prototype = {
             nextFieldIdx = this.fieldNames.indexOf(currentField) + 1,
             nextFieldName = this.fieldNames[nextFieldIdx],
             nextField = this.fields[nextFieldIdx],
-            field,
-            bbox = OpenLayers.Bounds.fromArray(record.get('bbox')),
-            geom = (nextFieldName === undefined) ? 
-                new OpenLayers.Geometry.Point(
-                    (bbox.left + bbox.right) / 2, 
-                    (bbox.bottom + bbox.top) / 2
-                ) :  
-                bbox.toGeometry();
+            field, geom,
+            bbox = OpenLayers.Bounds.fromArray(record.get('bbox'));
+
+        if (bbox.left == bbox.right && bbox.bottom == bbox.top) {
+            geom = new OpenLayers.Geometry.Point(
+                (bbox.left + bbox.right) / 2, 
+                (bbox.bottom + bbox.top) / 2
+            );
+        } else {
+            geom = bbox.toGeometry();
+        }
         // zoom:
         if (this.cbx.getValue() === true || !nextFieldName) {
             this.map.zoomToExtent(bbox);
