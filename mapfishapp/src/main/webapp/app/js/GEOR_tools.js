@@ -565,7 +565,11 @@ GEOR.tools = (function() {
             if (!localStorage) {
                 return;
             }
-            var ids = localStorage.getItem("default_tools").split(',');
+            var str = localStorage.getItem("default_tools");
+            if (!str) {
+                return;
+            }
+            var ids = str.split(',');
             fetchAndLoadTools(store.queryBy(function(r) {
                 return (ids.indexOf(r.id) > -1);
             }));
