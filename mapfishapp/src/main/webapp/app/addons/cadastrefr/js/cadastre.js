@@ -173,27 +173,22 @@ GEOR.Addons.CadastreFR.prototype = {
             nextFieldIdx = this.fieldNames.indexOf(currentField) + 1,
             nextFieldName = this.fieldNames[nextFieldIdx],
             nextField = this.fields[nextFieldIdx],
-            field;
+            field,
+            bbox = OpenLayers.Bounds.fromArray(record.get('bbox')),
+            geom = (nextFieldName === undefined) ? 
+                new OpenLayers.Geometry.Point(
+                    (bbox.left + bbox.right) / 2, 
+                    (bbox.bottom + bbox.top) / 2
+                ) :  
+                bbox.toGeometry();
         // zoom:
         if (this.cbx.getValue() === true || !nextFieldName) {
-            var bbox = OpenLayers.Bounds.fromArray(record.get('bbox'));
-            this.map.zoomToExtent(bbox, true);
+            this.map.zoomToExtent(bbox);
         }
-        if (!nextFieldName) {
-            // show marker
-            this.layer.addFeatures([
-                new OpenLayers.Feature.Vector(
-                    new OpenLayers.Geometry.Point(
-                        (bbox.left + bbox.right) / 2, 
-                        (bbox.bottom + bbox.top) / 2
-                    ), {}
-                )
-            ]);
-            return;
-        } else {
-            // remove cross (if exists)
-            this.layer.destroyFeatures();
-        }
+        this.layer.destroyFeatures();
+        this.layer.addFeatures([
+            new OpenLayers.Feature.Vector(geom)
+        ]);
         // load store for field N+1
         this.loadStore(nextFieldName);
         // reset value && enable field N+1
