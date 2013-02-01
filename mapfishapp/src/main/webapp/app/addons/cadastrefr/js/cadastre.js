@@ -152,19 +152,28 @@ GEOR.Addons.CadastreFR.prototype = {
     filterNextField: function(combo, record) {
         var currentField = combo.name,
             nextFieldIdx = this.fieldNames.indexOf(currentField) + 1,
-            nextField = this.fieldNames[nextFieldIdx];
+            nextFieldName = this.fieldNames[nextFieldIdx],
+            nextField = this.fields[nextFieldIdx],
+            field;
         // zoom:
-        if (this.cbx.getValue() === true || !nextField) {
+        if (this.cbx.getValue() === true || !nextFieldName) {
             var bbox = record.get('bbox');
             this.map.zoomToExtent(OpenLayers.Bounds.fromArray(bbox), true);
         }
-        if (!nextField) {
+        if (!nextFieldName) {
             return;
         }
         // load store for field N+1
-        this.loadStore(nextField);
-        // enable field N+1
-        this.fields[nextFieldIdx].enable();
+        this.loadStore(nextFieldName);
+        // reset value && enable field N+1
+        nextField.reset();
+        nextField.enable();
+        // reset & disable all other fields
+        for (var i = nextFieldIdx + 1, l = this.fields.length; i < l; i++) {
+            field = this.fields[i];
+            field.reset();
+            field.disable();
+        }
     },
     
     createTab1Form: function() {
