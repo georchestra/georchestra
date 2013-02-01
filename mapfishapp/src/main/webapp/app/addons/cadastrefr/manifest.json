@@ -6,27 +6,27 @@
         "css/cadastre.css"
     ],
     "default_options": {
-        "editableCombos": false,
+        "editableCombos": true,
         "tab1": {
             "field1": {
                 "file": "cities.json",
-                "valuefield": "nom_com",
+                "valuefield": "code_insee",
                 "displayfield": "nom_com"
             },
             "field2": {
                 "wfs": "http://ids.pigma.org/geoserver/ign/wfs",
                 "typename": "ign:ign_bdparcellaire_sections",
                 "matchingproperties": {
-                    "field1": "nom_com"
+                    "field1": "code_insee"
                 },
                 "valuefield": "section",
                 "displayfield": "section"
             },
             "field3": {
                 "wfs": "http://ids.pigma.org/geoserver/ign/wfs",
-                "typename": "ign:ign_bdparcellaire_parcelles",
+                "typename": "ign:ign_bdparcellaire_localisants",
                 "matchingproperties": {
-                    "field1": "nom_com",
+                    "field1": "code_insee",
                     "field2": "section"
                 },
                 "valuefield": "numero",
@@ -37,15 +37,17 @@
             "field1": {
                 "wfs": "http://ids.pigma.org/geoserver/ign/wfs",
                 "typename": "ign:ign_bdparcellaire_communes",
-                "valuefield": "nom_com",
+                "valuefield": "code_insee",
                 "displayfield": "nom_com"
             },
             "field2": {
                 "wfs": "http://ids.pigma.org/geoserver/ign/wfs",
-                "typename": "ign:ign_bdparcellaire_proprietaires",
-                "matchingfield1": "nom_com",
-                "valuefield": "proprietaire",
-                "displayfield": "proprietaire"
+                "typename": "cadastre:localisants_bdparc_majic2012",
+                "matchingproperties": {
+                    "field1": "code_insee"
+                },
+                "valuefield": "majic_ddenom",
+                "displayfield": "majic_ddenom"
             }
         }
     },

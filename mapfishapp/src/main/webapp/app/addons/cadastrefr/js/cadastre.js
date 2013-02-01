@@ -12,6 +12,7 @@ GEOR.Addons.CadastreFR.prototype = {
     win: null,
     jsonFormat: null,
     fields: null,
+    cbx: null,
     fieldNames: ["field1", "field2", "field3"],
 
     /**
@@ -53,12 +54,17 @@ GEOR.Addons.CadastreFR.prototype = {
 
     showWindow: function() {
         if (!this.win) {
+            this.cbx = new Ext.form.Checkbox({
+                checked: true,
+                boxLabel: OpenLayers.i18n("sync map extent")
+            });
             this.win = new Ext.Window({
                 closable: true,
                 closeAction: 'hide',
                 width: 320,                    
                 title: OpenLayers.i18n("Parcel lookup"), // FIXME
                 border: false,
+                buttonAlign: 'left',
                 items: [{
                     xtype: 'tabpanel',
                     activeTab: 0,
@@ -66,6 +72,13 @@ GEOR.Addons.CadastreFR.prototype = {
                         title: OpenLayers.i18n("by owner"),
                         html: "toti"
                     }]
+                }],
+                fbar: [this.cbx, '->', {
+                    text: OpenLayers.i18n("Close"),
+                    handler: function() {
+                        this.win.hide();
+                    },
+                    scope: this
                 }]
             });
         }
@@ -109,14 +122,8 @@ GEOR.Addons.CadastreFR.prototype = {
             OpenLayers.Request.POST({
                 url: n.wfs,
                 data: [
-                    '<wfs:GetFeature service="WFS" version="1.0.0" outputFormat="json"',
-                    ' xmlns:wfs="http://www.opengis.net/wfs"',
-                    ' xmlns:ogc="http://www.opengis.net/ogc"',
-                    ' xmlns:gml="http://www.opengis.net/gml"',
-                    ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"',
-                    ' xsi:schemaLocation="http://www.opengis.net/wfs',
-                    ' http://schemas.opengis.net/wfs/1.0.0/WFS-basic.xsd">',
-                        '<wfs:Query typeName="', n.typename, '">',
+                    '<wfs:GetFeature xmlns:wfs="http://www.opengis.net/wfs" xmlns:ogc="http://www.opengis.net/ogc" version="1.1.0" service="WFS" outputFormat="json">',
+                        '<wfs:Query typeName="', n.typename, '" srsName="', this.map.getProjection(), '">',
                             '<ogc:PropertyName>', n.valuefield, '</ogc:PropertyName>',
                             '<ogc:PropertyName>', n.displayfield, '</ogc:PropertyName>',
                             '<ogc:SortBy>',
@@ -142,17 +149,18 @@ GEOR.Addons.CadastreFR.prototype = {
     },
 
     filterNextField: function(combo, record) {
-        // TODO (option): zoom to selected record bbox, depending on checkbox status
         var currentField = combo.name,
             nextFieldIdx = this.fieldNames.indexOf(currentField) + 1,
             nextField = this.fieldNames[nextFieldIdx];
         // zoom:
-        var bbox = record.get('bbox');
-        this.map.zoomToExtent(OpenLayers.Bounds.fromArray(bbox));
+        if (this.cbx.getValue() === true || !nextField) {
+            var bbox = record.get('bbox');
+            this.map.zoomToExtent(OpenLayers.Bounds.fromArray(bbox), true);
+        }
         if (!nextField) {
             return;
         }
-        // filter field N+1 with matchingfield1 = record.get(valuefield)
+        // load store for field N+1
         this.loadStore(currentField, nextField, record);
         // enable field N+1
         this.fields[nextFieldIdx].enable();
@@ -185,7 +193,6 @@ GEOR.Addons.CadastreFR.prototype = {
         var form = new Ext.FormPanel({
             title: OpenLayers.i18n("by number"),
             labelWidth: 100,
-            layout: 'form',
             labelSeparator: OpenLayers.i18n("labelSeparator"),
             bodyStyle: 'padding: 10px',
             height: 200,
