@@ -53,6 +53,10 @@
     },
     "i18n": {
         "en": {
+            "addon_cadastre_popup_title": "Parcel lookup",
+            "sync map extent": "sync map extent",
+            "tab1title": "by number",
+            "tab2title": "by owner",
             "tab1field1label": "City",
             "tab2field1label": "City",
             "tab1field2label": "Section",
@@ -60,6 +64,10 @@
             "tab1field3label": "Parcel"
         },
         "es": {
+            "addon_cadastre_popup_title": "Parcel lookup",
+            "sync map extent": "sync map extent",
+            "tab1title": "by number",
+            "tab2title": "by owner",
             "tab1field1label": "Ciudad",
             "tab2field1label": "Ciudad",
             "tab1field2label": "Sección",
@@ -67,6 +75,10 @@
             "tab1field3label": "Parcela"
         },
         "fr": {
+            "addon_cadastre_popup_title": "Recherche de parcelle",
+            "sync map extent": "synchroniser l'étendue de la carte",
+            "tab1title": "par numéro",
+            "tab2title": "par propriétaire",
             "tab1field1label": "Commune",
             "tab2field1label": "Commune",
             "tab1field2label": "Section",

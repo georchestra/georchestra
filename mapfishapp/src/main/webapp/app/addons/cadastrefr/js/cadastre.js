@@ -62,15 +62,16 @@ GEOR.Addons.CadastreFR.prototype = {
                 closable: true,
                 closeAction: 'hide',
                 width: 320,                    
-                title: OpenLayers.i18n("Parcel lookup"), // FIXME
+                title: OpenLayers.i18n("addon_cadastre_popup_title"),
                 border: false,
                 buttonAlign: 'left',
                 items: [{
                     xtype: 'tabpanel',
                     activeTab: 0,
                     items: [this.createTab1Form(), {
-                        title: OpenLayers.i18n("by owner"),
-                        html: "toti"
+                        title: OpenLayers.i18n("tab2title"),
+                        height: 100,
+                        html: "TODO"
                     }]
                 }],
                 fbar: [this.cbx, '->', {
@@ -191,11 +192,11 @@ GEOR.Addons.CadastreFR.prototype = {
         }, this);
         this.fields = fields;
         var form = new Ext.FormPanel({
-            title: OpenLayers.i18n("by number"),
+            title: OpenLayers.i18n("tab1title"),
             labelWidth: 100,
             labelSeparator: OpenLayers.i18n("labelSeparator"),
             bodyStyle: 'padding: 10px',
-            height: 200,
+            height: 100,
             items: fields
         });
         return form;
