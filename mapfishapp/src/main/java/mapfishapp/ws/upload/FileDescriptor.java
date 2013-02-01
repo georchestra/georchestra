@@ -1,7 +1,11 @@
 package mapfishapp.ws.upload;
 
 import java.io.File;
-import java.security.InvalidParameterException;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.apache.commons.io.FilenameUtils;
 
 /**
  * Maintain useful file information about the uploaded file
@@ -9,22 +13,27 @@ import java.security.InvalidParameterException;
  * @author Mauricio Pazos
  */
 public class FileDescriptor {
+
+	/** file name of upload file */
 	public String originalFileName;
+	
 	public String ext;
+	
+	/** upload file */
 	public File savedFile;
+	
+	/** list of the file extensions contained in the zip file */
+	public List<String> listOfExtensions = new ArrayList<String>();
+
+	/** list of files contained in the zip file*/
+	public List<String> listOfFiles = new LinkedList<String>();
 	
 	public FileDescriptor(final String fileName) {
 
 		assert fileName != null;
 		
-		int dot= fileName.lastIndexOf(".");
-		if(dot == -1 ){
-			throw new InvalidParameterException("a file name extesion is expected");
-		}
-		
-		ext = fileName.substring(dot + 1);
 		originalFileName = fileName;
-		
+		ext = FilenameUtils.getExtension(fileName);
 	}
 
 	public String getOriginalFileName() {
