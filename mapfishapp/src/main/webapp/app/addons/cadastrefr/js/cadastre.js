@@ -40,7 +40,7 @@ GEOR.Addons.CadastreFR.prototype = {
                 }]
             });
         }, this);
-        this.loadStore(null, this.fieldNames[0]);
+        this.loadStore(this.fieldNames[0]);
         // return menu item:
         this.item = new Ext.menu.Item({
             text: record.get("title")[lang],
@@ -86,12 +86,12 @@ GEOR.Addons.CadastreFR.prototype = {
         this.win.show();
     },
 
-    // record is optional (used only to filter)
-    loadStore: function(currentFieldName, nextFieldName, record) { // see if we can reorder args
-        var n = this.options.tab1[nextFieldName];
-        var filter = '';
-        if (currentFieldName && record) { // we might not need currentFieldName in fact
-            var filter = '', filters = [];
+
+    loadStore: function(fieldName) {
+        var n = this.options.tab1[fieldName],
+            filter = '';
+        if (n.hasOwnProperty("matchingproperties")) {
+            var filters = [];
             Ext.iterate(n.matchingproperties, function(fieldName, matchingproperty) {
                 filters.push([
                     '<ogc:PropertyIsEqualTo>',
@@ -114,7 +114,7 @@ GEOR.Addons.CadastreFR.prototype = {
                 success: function(resp) {
                     if (resp && resp.responseText) {
                         var o = this.jsonFormat.read(resp.responseText);
-                        this.stores[nextFieldName].loadData(o.features);
+                        this.stores[fieldName].loadData(o.features);
                     }
                 },
                 scope: this
@@ -141,7 +141,7 @@ GEOR.Addons.CadastreFR.prototype = {
                 success: function(resp) {
                     if (resp && resp.responseText) {
                         var o = this.jsonFormat.read(resp.responseText);
-                        this.stores[nextFieldName].loadData(o.features);
+                        this.stores[fieldName].loadData(o.features);
                     }
                 },
                 scope: this
@@ -162,7 +162,7 @@ GEOR.Addons.CadastreFR.prototype = {
             return;
         }
         // load store for field N+1
-        this.loadStore(currentField, nextField, record);
+        this.loadStore(nextField);
         // enable field N+1
         this.fields[nextFieldIdx].enable();
     },
