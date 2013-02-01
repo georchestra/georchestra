@@ -13,7 +13,7 @@ GEOR.Addons.CadastreFR.prototype = {
     jsonFormat: null,
     fields: null,
     cbx: null,
-    fieldNames: ["field1", "field2", "field3"],
+    fieldNames: [],
 
     /**
      * Method: init
@@ -23,6 +23,9 @@ GEOR.Addons.CadastreFR.prototype = {
      */
     init: function(record) {
         var lang = OpenLayers.Lang.getCode();
+        Ext.iterate(this.options.tab1, function(k, v) {
+            this.fieldNames.push(k);
+        }, this);
         this.jsonFormat = new OpenLayers.Format.JSON();
         this.layer = new OpenLayers.Layer.Vector("addon_cadastre_vectors", {
             displayInLayerSwitcher: false,
