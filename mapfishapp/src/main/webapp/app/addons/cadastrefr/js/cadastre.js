@@ -24,6 +24,18 @@ GEOR.Addons.CadastreFR.prototype = {
     init: function(record) {
         var lang = OpenLayers.Lang.getCode();
         this.jsonFormat = new OpenLayers.Format.JSON();
+        this.layer = new OpenLayers.Layer.Vector("addon_cadastre_vectors", {
+            displayInLayerSwitcher: false,
+            styleMap: new OpenLayers.StyleMap({
+                "default": {
+                    graphicName: "cross",
+                    pointRadius: 16,
+                    strokeColor: "fuchsia",
+                    strokeWidth: 2,
+                    fillOpacity: 0
+                }
+            })
+        });
         var o = this.options.tab1;
         Ext.each(this.fieldNames, function(field) {
             var c = o[field];
@@ -80,9 +92,16 @@ GEOR.Addons.CadastreFR.prototype = {
                         this.win.hide();
                     },
                     scope: this
-                }]
+                }],
+                listeners: {
+                    "hide": function() {
+                        this.map.removeLayer(this.layer);
+                    },
+                    scope: this
+                }
             });
         }
+        this.map.addLayer(this.layer);
         this.win.show();
     },
 
@@ -157,17 +176,30 @@ GEOR.Addons.CadastreFR.prototype = {
             field;
         // zoom:
         if (this.cbx.getValue() === true || !nextFieldName) {
-            var bbox = record.get('bbox');
-            this.map.zoomToExtent(OpenLayers.Bounds.fromArray(bbox), true);
+            var bbox = OpenLayers.Bounds.fromArray(record.get('bbox'));
+            this.map.zoomToExtent(bbox, true);
         }
         if (!nextFieldName) {
+            // show marker
+            this.layer.addFeatures([
+                new OpenLayers.Feature.Vector(
+                    new OpenLayers.Geometry.Point(
+                        (bbox.left + bbox.right) / 2, 
+                        (bbox.bottom + bbox.top) / 2
+                    ), {}
+                )
+            ]);
             return;
+        } else {
+            // remove cross (if exists)
+            this.layer.destroyFeatures();
         }
         // load store for field N+1
         this.loadStore(nextFieldName);
         // reset value && enable field N+1
         nextField.reset();
         nextField.enable();
+        nextField.focus('', 50);
         // reset & disable all other fields
         for (var i = nextFieldIdx + 1, l = this.fields.length; i < l; i++) {
             field = this.fields[i];
@@ -188,6 +220,7 @@ GEOR.Addons.CadastreFR.prototype = {
                     store: this.stores[field],
                     valueField: c.valuefield,
                     displayField: c.displayfield,
+                    loadingText: OpenLayers.i18n('Loading...'),
                     editable: this.options.editableCombos,
                     disabled: field != this.fieldNames[0],
                     mode: 'local',
@@ -206,7 +239,13 @@ GEOR.Addons.CadastreFR.prototype = {
             labelSeparator: OpenLayers.i18n("labelSeparator"),
             bodyStyle: 'padding: 10px',
             height: 100,
-            items: fields
+            items: fields,
+            listeners: {
+                "afterrender": function(form) {
+                    this.fields[0].focus('', 50);
+                },
+                scope: this
+            }
         });
         return form;
     },
