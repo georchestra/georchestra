@@ -108,14 +108,15 @@ GEOR.Addons.CadastreFR.prototype = {
 
     loadStore: function(fieldName) {
         var n = this.options.tab1[fieldName],
+            fieldNameIdx = this.fieldNames.indexOf(fieldName),
             filter = '';
         if (n.hasOwnProperty("matchingproperties")) {
             var filters = [];
-            Ext.iterate(n.matchingproperties, function(fieldName, matchingproperty) {
+            Ext.iterate(n.matchingproperties, function(name, matchingproperty) {
                 filters.push([
                     '<ogc:PropertyIsEqualTo>',
                         '<ogc:PropertyName>', matchingproperty, '</ogc:PropertyName>',
-                        '<ogc:Literal>', this.fields[this.fieldNames.indexOf(fieldName)].getValue(), '</ogc:Literal>',
+                        '<ogc:Literal>', this.fields[this.fieldNames.indexOf(name)].getValue(), '</ogc:Literal>',
                     '</ogc:PropertyIsEqualTo>',
                 ].join(''));
             }, this);
@@ -125,6 +126,11 @@ GEOR.Addons.CadastreFR.prototype = {
                 filter = '<ogc:And>'+filters.join('')+'</ogc:And>';
             }
             filter = '<ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">' + filter + '</ogc:Filter>';
+        }
+        if (this.fields) {
+            // hack to mimic a "remote" mode combobox loading:
+            this.fields[fieldNameIdx].expand();
+            this.fields[fieldNameIdx].onBeforeLoad();
         }
         if (n.hasOwnProperty("file")) {
             OpenLayers.Request.GET({
@@ -189,12 +195,15 @@ GEOR.Addons.CadastreFR.prototype = {
         this.layer.addFeatures([
             new OpenLayers.Feature.Vector(geom)
         ]);
-        // load store for field N+1
-        this.loadStore(nextFieldName);
+        if (!nextFieldName) {
+            return;
+        }
         // reset value && enable field N+1
         nextField.reset();
         nextField.enable();
-        nextField.focus('', 50);
+        nextField.focus('', 0);
+        // load store for field N+1
+        this.loadStore(nextFieldName);
         // reset & disable all other fields
         for (var i = nextFieldIdx + 1, l = this.fields.length; i < l; i++) {
             field = this.fields[i];
@@ -215,7 +224,6 @@ GEOR.Addons.CadastreFR.prototype = {
                     store: this.stores[field],
                     valueField: c.valuefield,
                     displayField: c.displayfield,
-                    loadingText: OpenLayers.i18n('Loading...'),
                     editable: this.options.editableCombos,
                     disabled: field != this.fieldNames[0],
                     mode: 'local',
