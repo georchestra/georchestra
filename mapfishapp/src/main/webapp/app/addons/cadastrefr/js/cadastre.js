@@ -26,6 +26,8 @@ GEOR.Addons.CadastreFR.prototype = {
         Ext.iterate(this.options.tab1, function(k, v) {
             this.fieldNames.push(k);
         }, this);
+        // to garantee that fields will always be in the same order:
+        this.fieldNames.sort();
         this.jsonFormat = new OpenLayers.Format.JSON();
         this.layer = new OpenLayers.Layer.Vector("addon_cadastre_vectors", {
             displayInLayerSwitcher: false,

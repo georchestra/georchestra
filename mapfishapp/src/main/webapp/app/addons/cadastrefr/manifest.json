@@ -41,17 +41,8 @@
                 "file": "cities.json",
                 "valuefield": "code_insee",
                 "displayfield": "nom_com"
-            },
+            }, 
             "field2": {
-                "wfs": "http://ids.pigma.org/geoserver/ign/wfs",
-                "typename": "ign:ign_bdparcellaire_sections",
-                "matchingproperties": {
-                    "field1": "code_insee"
-                },
-                "valuefield": "section",
-                "displayfield": "section"
-            },
-            "field3": {
                 "wfs": "http://ids.pigma.org/geoserver/ign/wfs",
                 "typename": "cadastre:localisants_bdparc_majic2012",
                 "matchingproperties": {
