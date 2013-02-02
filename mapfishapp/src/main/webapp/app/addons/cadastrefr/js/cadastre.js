@@ -90,10 +90,11 @@ GEOR.Addons.CadastreFR.prototype = {
             this.win = new Ext.Window({
                 closable: true,
                 closeAction: 'hide',
-                width: 320,                    
+                width: 330,
                 title: OpenLayers.i18n("addon_cadastre_popup_title"),
                 border: false,
                 buttonAlign: 'left',
+                layout: 'fit',
                 items: [{
                     xtype: 'tabpanel',
                     activeTab: 0,
@@ -245,6 +246,7 @@ GEOR.Addons.CadastreFR.prototype = {
             fields.push(
                 new Ext.form.ComboBox({
                     name: field,
+                    width: 180,
                     fieldLabel: OpenLayers.i18n("tab1"+field+"label"),
                     store: this.stores[field],
                     valueField: c.valuefield,
@@ -269,10 +271,10 @@ GEOR.Addons.CadastreFR.prototype = {
         this.fields = fields;
         var form = new Ext.FormPanel({
             title: OpenLayers.i18n("tab1title"),
-            labelWidth: 100,
+            labelWidth: 80,
             labelSeparator: OpenLayers.i18n("labelSeparator"),
             bodyStyle: 'padding: 10px',
-            height: 100,
+            height: 110,
             items: fields,
             listeners: {
                 "afterrender": function(form) {
