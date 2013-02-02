@@ -71,7 +71,6 @@ GEOR.Addons.CadastreFR.prototype = {
                 fields: fields
             });
         }, this);
-        this.loadStore(this.fieldNames[0]);
         // return menu item:
         this.item = new Ext.menu.Item({
             text: record.get("title")[lang],
@@ -120,6 +119,7 @@ GEOR.Addons.CadastreFR.prototype = {
                     scope: this
                 }
             });
+            this.loadStore(this.fieldNames[0]);
         }
         this.map.addLayer(this.layer);
         this.win.show();
