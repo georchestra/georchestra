@@ -1,0 +1,4 @@
+In order to create an equivalent cities.json file, you can use the Poster FireFox extension.
+You'll typically want to send a POST content to /geoserver/wms such as:
+
+    <wfs:GetFeature xmlns:wfs="http://www.opengis.net/wfs" xmlns:ogc="http://www.opengis.net/ogc" version="1.1.0" service="WFS" outputFormat="json"><wfs:Query typeName="ign:ign_bdparcellaire_communes" srsName="EPSG:2154"><ogc:PropertyName>code_insee</ogc:PropertyName><ogc:PropertyName>nom_com</ogc:PropertyName><ogc:PropertyName>code_dep</ogc:PropertyName><ogc:SortBy><ogc:SortProperty><ogc:PropertyName>nom_com</ogc:PropertyName><ogc:SortOrder>ASC</ogc:SortOrder></ogc:SortProperty></ogc:SortBy></wfs:Query></wfs:GetFeature>
