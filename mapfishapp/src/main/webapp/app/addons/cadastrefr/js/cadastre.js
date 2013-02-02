@@ -288,7 +288,9 @@ GEOR.Addons.CadastreFR.prototype = {
         return form;
     },
 
-    destroy: function() {        
+    destroy: function() {
+        this.win.hide();
+        this.layer = null;
         this.map = null;
     }
 };
