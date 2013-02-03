@@ -1,8 +1,22 @@
 Ext.namespace("GEOR.Addons");
 
+// TODO: config option in manifest to get one or both tabs
+
 GEOR.Addons.CadastreFR = function(map, options) {
     this.map = map;
     this.options = options;
+};
+
+GEOR.Addons.CadastreFR.BaseComboConfig = {
+    forceSelection: false,
+    width: 190,
+    itemSelector: '.x-combo-list-item'
+};
+GEOR.Addons.CadastreFR.BaseFormConfig = {
+    labelWidth: 80,
+    labelSeparator: OpenLayers.i18n("labelSeparator"),
+    bodyStyle: 'padding: 10px',
+    height: 110
 };
 
 GEOR.Addons.CadastreFR.prototype = {
@@ -66,7 +80,7 @@ GEOR.Addons.CadastreFR.prototype = {
                     });
                 }
             }
-            // TODO: use geoext's protocolproxy
+            // TODO: use geoext's protocolproxy for tab1 stores
             this.stores[field] = new Ext.data.JsonStore({
                 fields: fields
             });
@@ -99,11 +113,10 @@ GEOR.Addons.CadastreFR.prototype = {
                 items: [{
                     xtype: 'tabpanel',
                     activeTab: 0,
-                    items: [this.createTab1Form(), {
-                        title: OpenLayers.i18n("tab2title"),
-                        height: 100,
-                        html: "TODO"
-                    }]
+                    items: [
+                        this.createTab1Form(), 
+                        this.createTab2Form()
+                    ]
                 }],
                 fbar: [this.cbx, '->', {
                     text: OpenLayers.i18n("Close"),
@@ -124,6 +137,7 @@ GEOR.Addons.CadastreFR.prototype = {
         this.map.addLayer(this.layer);
         this.win.show();
     },
+
 
     loadStore: function(fieldName) {
         var n = this.options.tab1[fieldName],
@@ -170,6 +184,10 @@ GEOR.Addons.CadastreFR.prototype = {
             });
             OpenLayers.Request.POST({
                 url: n.wfs,
+                headers: {
+                    // for dev purposes:
+                    //"Authorization": "Basic XXX_token_XXX"
+                },
                 data: [
                     '<wfs:GetFeature xmlns:wfs="http://www.opengis.net/wfs" xmlns:ogc="http://www.opengis.net/ogc" version="1.1.0" service="WFS" outputFormat="json">',
                         '<wfs:Query typeName="', n.typename, '" srsName="', this.map.getProjection(), '">',
@@ -195,30 +213,42 @@ GEOR.Addons.CadastreFR.prototype = {
         }
     },
 
-    filterNextField: function(combo, record) {
-        var currentField = combo.name,
-            nextFieldIdx = this.fieldNames.indexOf(currentField) + 1,
-            nextFieldName = this.fieldNames[nextFieldIdx],
-            nextField = this.fields[nextFieldIdx],
-            field, geom,
-            bbox = OpenLayers.Bounds.fromArray(record.get('bbox'));
 
-        if (bbox.left == bbox.right && bbox.bottom == bbox.top) {
+    zoomToRecord: function(record, forceZoom) {
+        forceZoom = forceZoom || false;
+        var geom, box;
+        if (record.get('feature')) {
+            box = record.get('feature').bounds;
+        } else {
+            box = OpenLayers.Bounds.fromArray(record.get('bbox'));
+        }
+        if (box.left == box.right && box.bottom == box.top) {
             geom = new OpenLayers.Geometry.Point(
-                (bbox.left + bbox.right) / 2, 
-                (bbox.bottom + bbox.top) / 2
+                (box.left + box.right) / 2, 
+                (box.bottom + box.top) / 2
             );
         } else {
-            geom = bbox.toGeometry();
+            geom = box.toGeometry();
         }
         // zoom:
-        if (this.cbx.getValue() === true || !nextFieldName) {
-            this.map.zoomToExtent(bbox);
+        if (this.cbx.getValue() === true || forceZoom) {
+            this.map.zoomToExtent(box);
         }
         this.layer.destroyFeatures();
         this.layer.addFeatures([
             new OpenLayers.Feature.Vector(geom)
         ]);
+    },
+
+
+    filterNextField: function(combo, record) {
+        var currentField = combo.name,
+            nextFieldIdx = this.fieldNames.indexOf(currentField) + 1,
+            nextFieldName = this.fieldNames[nextFieldIdx],
+            nextField = this.fields[nextFieldIdx],
+            field;
+
+        this.zoomToRecord(record, !nextFieldName);
         if (!nextFieldName) {
             return;
         }
@@ -239,20 +269,19 @@ GEOR.Addons.CadastreFR.prototype = {
             field.disable();
         }
     },
-    
+
+
     createTab1Form: function() {
         var fields = [],
             o = this.options.tab1;
         Ext.each(this.fieldNames, function(field) {
             var c = o[field];
             fields.push(
-                new Ext.form.ComboBox({
+                new Ext.form.ComboBox(Ext.apply({
                     name: field,
-                    width: 180,
                     fieldLabel: OpenLayers.i18n("tab1"+field+"label"),
                     store: this.stores[field],
                     valueField: c.valuefield,
-                    itemSelector: '.x-combo-list-item',
                     displayField: c.displayfield,
                     tpl: new Ext.XTemplate(
                         '<tpl for=".">',
@@ -262,21 +291,16 @@ GEOR.Addons.CadastreFR.prototype = {
                     editable: this.options.editableCombos,
                     disabled: field != this.fieldNames[0],
                     mode: 'local',
-                    triggerAction: 'all',
                     listeners: {
                         "select": this.filterNextField,
                         scope: this
                     }
-                })
+                }, GEOR.Addons.CadastreFR.BaseComboConfig))
             );
         }, this);
         this.fields = fields;
-        var form = new Ext.FormPanel({
+        return new Ext.FormPanel(Ext.apply({
             title: OpenLayers.i18n("tab1title"),
-            labelWidth: 80,
-            labelSeparator: OpenLayers.i18n("labelSeparator"),
-            bodyStyle: 'padding: 10px',
-            height: 110,
             items: fields,
             listeners: {
                 "afterrender": function(form) {
@@ -284,9 +308,135 @@ GEOR.Addons.CadastreFR.prototype = {
                 },
                 scope: this
             }
-        });
-        return form;
+        }, GEOR.Addons.CadastreFR.BaseFormConfig));
     },
+
+
+    createTab2Form: function() {
+        var fields = [], protocol, store,
+            // field1 from tab1 here is not a bug, it's a feature:
+            c = this.options.tab1.field1;
+
+        fields.push(new Ext.form.ComboBox(Ext.apply({
+            name: "tab2field1",
+            fieldLabel: OpenLayers.i18n("tab2field1label"),
+            store: this.stores[this.fieldNames[0]],
+            valueField: c.valuefield,
+            displayField: c.displayfield,
+            tpl: new Ext.XTemplate(
+                '<tpl for=".">',
+                    '<div class="x-combo-list-item">' + (c.template || '{'+c.displayfield+'}') + '</div>',
+                '</tpl>'
+            ),
+            editable: this.options.editableCombos,
+            disabled: false,
+            mode: 'local',
+            listeners: {
+                "select": function(cb, r) {
+                    var f = fields[1];
+                    f.enable(); 
+                    f.reset();
+                    f.focus('', 50);
+                    this.zoomToRecord(r);
+                },
+                scope: this
+            }
+        }, GEOR.Addons.CadastreFR.BaseComboConfig)));
+
+        c = this.options.tab2.field2;
+
+        protocol = GEOR.ows.WFSProtocol({
+            typeName: c.typename,
+            owsURL: c.wfs
+        }, this.map);
+
+        store = new GeoExt.data.FeatureStore({
+            // template is not supported for tab2 field2, contrary to tab1 fields:
+            fields: [c.displayfield, c.valuefield, "bbox"], 
+            // it's OK to client-side sort, since the store count is not high
+            sortInfo: {
+                field: c.displayfield,
+                direction: 'ASC'
+            },
+            proxy: new GeoExt.data.ProtocolProxy({
+                protocol: protocol
+            }),
+            listeners: {
+                "beforeload": function(store, options) {
+                    // add a filter to the options passed to proxy.load, 
+                    // proxy.load passes these options to protocol.read
+                    var params = store.baseParams;
+                    options.filter = new OpenLayers.Filter.Logical({
+                        type: "&&",
+                        filters: [
+                            new OpenLayers.Filter.Comparison({
+                                type: OpenLayers.Filter.Comparison.LIKE,
+                                property: c.valuefield,
+                                // we need to replace accentuated chars by their unaccentuated version
+                                // and toUpperCase is required, since all the DBF data is UPPERCASED
+                                value: GEOR.util.stringDeaccentuate(params['query']).toUpperCase() + '*'
+                            }),
+                            new OpenLayers.Filter.Comparison({
+                                type: "==",
+                                // only one matching property is supported in here:
+                                property: c.matchingproperties.field1,
+                                value: fields[0].getValue()
+                            })
+                        ]
+                    });
+                    options.propertyNames = [c.valuefield, c.displayfield]; 
+                    options.headers = {
+                        // for dev purposes:
+                        //"Authorization": "Basic XXX_token_XXX"
+                    };
+                    // remove the queryParam from the store's base
+                    // params not to pollute the query string:                        
+                    delete params['query'];
+                },
+                scope: this
+            }
+        });
+
+        fields.push(new Ext.form.ComboBox(Ext.apply({
+            name: "tab2field2",
+            loadingText: OpenLayers.i18n("Loading..."),
+            minChars: 3,
+            queryDelay: 100,
+            hideTrigger: true,
+            queryParam: 'query', // do not modify
+            pageSize: 0,
+            fieldLabel: OpenLayers.i18n("tab2field2label"),
+            store: store,
+            valueField: c.valuefield,
+            displayField: c.displayfield,
+            tpl: new Ext.XTemplate(
+                '<tpl for=".">',
+                    '<div class="x-combo-list-item" ext:qtip="{'+c.displayfield+'}">' + (c.template || '{'+c.displayfield+'}') + '</div>',
+                '</tpl>'
+            ),
+            editable: true,
+            disabled: true,
+            mode: 'remote',
+            listeners: {
+                "select": function(cb, r) {
+                    this.zoomToRecord(r, true);
+                },
+                scope: this
+            }
+        }, GEOR.Addons.CadastreFR.BaseComboConfig)));
+
+        return new Ext.FormPanel(Ext.apply({
+            title: OpenLayers.i18n("tab2title"),
+            items: fields,
+            listeners: {
+                "afterrender": function(form) {
+                    fields[0].focus('', 50);
+                },
+                scope: this
+            }
+        }, GEOR.Addons.CadastreFR.BaseFormConfig));
+    },
+
 
     destroy: function() {
         this.win.hide();

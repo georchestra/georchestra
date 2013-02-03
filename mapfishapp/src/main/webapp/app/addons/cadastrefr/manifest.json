@@ -38,12 +38,11 @@
         },
         "tab2": {
             "field1": {
-                "file": "cities.json",
-                "valuefield": "code_insee",
-                "displayfield": "nom_com"
+                "this field": "is currently the same as field1 from tab1",
+                "no config option here": "is taken into account"
             }, 
             "field2": {
-                "wfs": "http://ids.pigma.org/geoserver/ign/wfs",
+                "wfs": "http://ids.pigma.org/geoserver/cadastre/wfs",
                 "typename": "cadastre:localisants_bdparc_majic2012",
                 "matchingproperties": {
                     "field1": "code_insee"
