@@ -75,7 +75,9 @@ A field object MUST have the following properties:
  
 A field object MUST have either:
  * a **file** property which points to a GeoJSON file (for instance, one provided by your build profile). In order to create such a file, we assume that you have a WFS layer serving your cities data. You'll typically want to send a POST content (with the Poster FireFox extension, or cURL) to /geoserver/wms such as:
+ 
     <wfs:GetFeature xmlns:wfs="http://www.opengis.net/wfs" xmlns:ogc="http://www.opengis.net/ogc" version="1.1.0" service="WFS" outputFormat="json"><wfs:Query typeName="ign:ign_bdparcellaire_communes" srsName="EPSG:2154"><ogc:PropertyName>code_insee</ogc:PropertyName><ogc:PropertyName>nom_com</ogc:PropertyName><ogc:PropertyName>code_dep</ogc:PropertyName><ogc:SortBy><ogc:SortProperty><ogc:PropertyName>nom_com</ogc:PropertyName><ogc:SortOrder>ASC</ogc:SortOrder></ogc:SortProperty></ogc:SortBy></wfs:Query></wfs:GetFeature>
+
  * or a **wfs** and a **typename** property, which resp. point to an OGC WFS server URL and a layer name.
 
 A field object MAY have the following properties:
