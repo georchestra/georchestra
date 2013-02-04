@@ -14,8 +14,6 @@ import org.geotools.data.simple.SimpleFeatureCollection;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.util.ProgressListener;
 
-import extractorapp.ws.extractor.WfsExtractor.GeomType;
-
 /**
  * This writer sets the OGRDataStore that is responsible of generating the vector file in the format required. 
  * 
@@ -34,17 +32,43 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
 	 * 
 	 */
 	public  enum FileFormat{
-		tab, mif;
+		tab, mif, shp;
 		
-		public String getDriver(FileFormat ext) throws IOException{
+		public static String getDriver(FileFormat ext) throws IOException{
 			switch (ext) {
 			case tab:
 			case mif:
 				return "MapInfo File";
+			case shp:
+				return "ESRI shapefile"; 
 
 			default:
 				throw new IOException("there is not a driver for the extension file: " + ext);
 			}
+		}
+		/** 
+		 * Returns the options related with the indicated file format.
+		 * @param fileFormat
+		 * @return the options for the file format
+		 */
+		public static String[] getFormatOptions(FileFormat fileFormat) {
+
+			
+			String[] driverOptions = null;
+			switch (fileFormat) {
+			case tab:
+				driverOptions =  new String[]{};
+				break;
+			case mif:
+				driverOptions =   new String[]{"FORMAT=MIF"};
+				break;
+			case shp:
+				driverOptions =   null;
+				break;
+			default:
+				assert false; // impossible case
+			}
+			return driverOptions;
 		}
 	}
 	
@@ -78,37 +102,10 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
 		this.basedir = basedir;
 		this.fileFormat = fileFormat;
 		
-		this.options = getFormatOptions(fileFormat);
+		this.options = FileFormat.getFormatOptions(fileFormat);
 		
 		this.features = features;
 	}
-	
-
-		
-
-	/** 
-	 * Returns the options related with the indicated file format.
-	 * @param fileFormat
-	 * @return
-	 */
-	private static String[] getFormatOptions(FileFormat fileFormat) {
-
-		
-		String[] driverOptions = null;
-		switch (fileFormat) {
-		case tab:
-			driverOptions =  new String[]{};
-			break;
-		case mif:
-			driverOptions =   new String[]{"FORMAT=MIF"};
-			break;
-		default:
-			assert false; // impossible case
-		}
-		return driverOptions;
-	}
-
-
 
 
 	/**
@@ -119,9 +116,9 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
         
 		Map<String, Serializable> map = new java.util.HashMap<String, Serializable>();
 		
-        final String pathName = this.basedir.getAbsolutePath() + "/"+ createFileName(this.basedir.getAbsolutePath(), this.schema, this.fileFormat);
+        final String pathName = this.basedir.getAbsolutePath() + "/"+ FileUtils.createFileName(this.basedir.getAbsolutePath(), this.schema, this.fileFormat);
 		map.put(OGRDataStoreFactory.OGR_NAME.key, pathName);
-		map.put(OGRDataStoreFactory.OGR_DRIVER_NAME.key, this.fileFormat.getDriver(this.fileFormat));
+		map.put(OGRDataStoreFactory.OGR_DRIVER_NAME.key, FileFormat.getDriver(this.fileFormat));
 		
 		File[] files = new File[]{};
         OGRDataStore ds = null;
@@ -138,36 +135,6 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
             }
         }		
         return files;
-	}
-	
-	/**
-	 * Creates a new the file's name. 
-	 * 
-	 * TODO refactoring this code is similar to WriteFeature.getDatastore.  
-	 * 
-	 * @param baseDir
-	 * @param type
-	 * @param ext
-	 * @return a file name
-	 */
-	private static String createFileName(final String baseDir, final SimpleFeatureType type, final FileFormat ext){
-		
-		String layerName = type.getTypeName();
-		Class<?> geomClass = type.getGeometryDescriptor().getType().getBinding();
-				
-        GeomType geomType = WfsExtractor.GeomType.lookup (geomClass);
-				
-        String newName = FileUtils.toSafeFileName(layerName + "_" + geomType+"."+ext);
-        
-        File file = new File(newName);
-        for (int i = 1; file.exists(); i++) {
-            newName = layerName + "_" + geomType + i;
-            newName = FileUtils.toSafeFileName(newName+"."+ext);
-            file = new File(baseDir, newName + "." + ext);
-        }        
-        
-        return newName;
-		
 	}
 
 	protected DataStore getDataStore() throws  IOException{
