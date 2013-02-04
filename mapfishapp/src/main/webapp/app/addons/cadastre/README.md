@@ -11,9 +11,9 @@ Typical configuration to include in your GEOR_custom.js file:
         "id": "cadastre",
         "name": "Cadastre",
         "title": {
-            "fr": "cadastre",
-            "en": "cadastre",
-            "es": "catastro"
+            "fr": "Cadastre",
+            "en": "Cadastre",
+            "es": "Catastro"
         },
         "description": {
             "fr": "Cet outil permet de chercher des parcelles soit par référence, soit par le nom du propriétaire",
