@@ -236,7 +236,7 @@ GEOR.tools = (function() {
                     // if an addon fails to load properly, update previousState accordingly
                     previousState[r.id] = false;
                     // unselect node corresponding to record in dataview:
-                    dataview.deselect(r);
+                    dataview && dataview.deselect(r);
                     r.set("loaded", false);
                     // warn user:
                     GEOR.util.errorDialog({
