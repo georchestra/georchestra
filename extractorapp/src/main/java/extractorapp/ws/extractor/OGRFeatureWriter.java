@@ -29,49 +29,47 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
     
 	/**
 	 * Maintains the set of valid formats with theirs driver descriptors associated
-	 * 
 	 */
+	
 	public  enum FileFormat{
-		tab, mif, shp;
 		
-		public static String getDriver(FileFormat ext) throws IOException{
-			switch (ext) {
-			case tab:
-			case mif:
-				return "MapInfo File";
-			case shp:
-				return "ESRI shapefile"; 
+		tab {
+			@Override
+			public String getDriver(){return "MapInfo File";}
+			
+			@Override
+			public String[] getFormatOptions(){return new String[]{};}
+		}, 
+		mif {
 
-			default:
-				throw new IOException("there is not a driver for the extension file: " + ext);
-			}
-		}
+			@Override
+			public String getDriver() {	return "MapInfo File";}
+
+			@Override
+			public String[] getFormatOptions() { return new String[]{"FORMAT=MIF"};	}
+			
+		}, 
+		shp {
+			@Override
+			public String getDriver(){return "ESRI shapefile";}
+			
+			@Override
+			public String[] getFormatOptions(){return null;}
+		};
+		
+		/**
+		 * Returns the OGR driver for this format
+		 * @return the driver
+		 */
+		public abstract String getDriver();
+		
 		/** 
 		 * Returns the options related with the indicated file format.
-		 * @param fileFormat
 		 * @return the options for the file format
 		 */
-		public static String[] getFormatOptions(FileFormat fileFormat) {
-
-			
-			String[] driverOptions = null;
-			switch (fileFormat) {
-			case tab:
-				driverOptions =  new String[]{};
-				break;
-			case mif:
-				driverOptions =   new String[]{"FORMAT=MIF"};
-				break;
-			case shp:
-				driverOptions =   null;
-				break;
-			default:
-				assert false; // impossible case
-			}
-			return driverOptions;
-		}
+		public abstract String[] getFormatOptions();
 	}
-	
+
 	private ProgressListener progresListener;
 	private final SimpleFeatureType schema;
 	private final File basedir;
@@ -102,7 +100,7 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
 		this.basedir = basedir;
 		this.fileFormat = fileFormat;
 		
-		this.options = FileFormat.getFormatOptions(fileFormat);
+		this.options = fileFormat.getFormatOptions();
 		
 		this.features = features;
 	}
@@ -118,7 +116,7 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
 		
         final String pathName = this.basedir.getAbsolutePath() + "/"+ FileUtils.createFileName(this.basedir.getAbsolutePath(), this.schema, this.fileFormat);
 		map.put(OGRDataStoreFactory.OGR_NAME.key, pathName);
-		map.put(OGRDataStoreFactory.OGR_DRIVER_NAME.key, FileFormat.getDriver(this.fileFormat));
+		map.put(OGRDataStoreFactory.OGR_DRIVER_NAME.key, this.fileFormat.getDriver());
 		
 		File[] files = new File[]{};
         OGRDataStore ds = null;

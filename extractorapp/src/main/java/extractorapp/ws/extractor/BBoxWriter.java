@@ -8,21 +8,15 @@ import java.io.IOException;
 
 import org.geotools.data.DataUtilities;
 import org.geotools.data.simple.SimpleFeatureCollection;
-import org.geotools.factory.GeoTools;
 import org.geotools.geometry.jts.JTS;
-import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.util.ProgressListener;
 
-import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
 
 import extractorapp.ws.extractor.OGRFeatureWriter.FileFormat;
@@ -134,41 +128,21 @@ public class BBoxWriter {
 	 * Creates a polygon or multipolygon geometry using the bbox as reference. The new polygon will be
 	 * in the target crs.
 	 * 
-	 * @param bbox 
+	 * @param envelope 
 	 * @param geomClass required geometry 
 	 * @param epsgCode 
 	 * @return a Polygon or MultiPolygon geometry 
 	 * @throws IOException 
 	 */
-	private Polygon createBBoxGeometry( ReferencedEnvelope bbox, CoordinateReferenceSystem targetCrs) throws IOException{
+	private Polygon createBBoxGeometry( ReferencedEnvelope envelope, CoordinateReferenceSystem targetCrs) throws IOException{
 		
 		try {
-			// creates the polygon from the bbox
-			GeometryFactory geomFactory = JTSFactoryFinder.getGeometryFactory(GeoTools.getDefaultHints());
-
-			Coordinate[] coordinates = new Coordinate[]{ 
-						new Coordinate(bbox.getMinX(), bbox.getMaxY()),
-						new Coordinate(bbox.getMaxX(), bbox.getMaxY()),
-						new Coordinate(bbox.getMaxX(), bbox.getMinY()),
-						new Coordinate(bbox.getMinX(), bbox.getMinY()),
-						new Coordinate(bbox.getMinX(), bbox.getMaxY())
-					};
-			LinearRing shell = geomFactory.createLinearRing(coordinates);
 			
-			Polygon geometry = new Polygon(shell, new LinearRing[]{} , geomFactory);
+			Polygon polygon = JTS.toGeometry(envelope.toBounds(targetCrs));
 			
-			CoordinateReferenceSystem bboxCRS = this.bbox.getCoordinateReferenceSystem();
-			Integer epcgCRS = CRS.lookupEpsgCode(bboxCRS, false);
-			geometry.setSRID(epcgCRS);
+			polygon.setSRID(CRS.lookupEpsgCode(targetCrs, false));
 			
-			// transforms the polygon to the required crs
-			MathTransform transform = CRS.findMathTransform(bboxCRS, targetCrs);
-			Polygon newPolygon = (Polygon) JTS.transform( geometry, transform);
-			
-			Integer targetEpcgCRS = CRS.lookupEpsgCode(targetCrs, false);
-			newPolygon.setSRID(targetEpcgCRS);
-			
-			return newPolygon;
+			return polygon;
 			
 		} catch (Exception e) {
 			throw new IOException(e);
