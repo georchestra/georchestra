@@ -301,13 +301,15 @@ GEOR.Addons.CadastreFR.prototype = {
         this.fields = fields;
         return new Ext.FormPanel(Ext.apply({
             title: OpenLayers.i18n("tab1title"),
-            items: fields,
-            listeners: {
+            items: fields
+            /*
+            ,listeners: {
                 "afterrender": function(form) {
                     this.fields[0].focus('', 50);
                 },
                 scope: this
             }
+            */
         }, GEOR.Addons.CadastreFR.BaseFormConfig));
     },
 
