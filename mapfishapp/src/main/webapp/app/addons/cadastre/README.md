@@ -4,6 +4,8 @@ Cadastre ADDON
 This addon allows users to locate land parcels, either by reference (tab 1), or by owner name (tab 2).
 author: @fvanderbiest, with ideas from @spelhate.
 
+Tab availability can be restricted to specific roles (= LDAP groups prefixed with "ROLE_").
+By default, tab2 is only available to admin users, while tab1 is allowed for everyone.
 
 Typical configuration to include in your GEOR_custom.js file:
 
@@ -21,6 +23,10 @@ Typical configuration to include in your GEOR_custom.js file:
             "es": "Esta herramienta permite buscar parcelas ya sea por referencia o por el nombre del propietario"
         },
         "options": {
+            "roles": {
+                "tab1": [],
+                "tab2": ["ROLE_SV_ADMIN"]
+            },
             "tab1": {
                 "field1": {
                     "file": "cities.json",

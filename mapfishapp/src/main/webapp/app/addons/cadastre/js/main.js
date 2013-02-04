@@ -1,7 +1,5 @@
 Ext.namespace("GEOR.Addons");
 
-// TODO: config option in manifest to get one or both tabs
-
 GEOR.Addons.Cadastre = function(map, options) {
     this.map = map;
     this.options = options;
@@ -96,6 +94,53 @@ GEOR.Addons.Cadastre.prototype = {
         return this.item;
     },
 
+
+    getTabs: function() {
+        var tab1, tab2, 
+            roles = this.options.roles;
+
+        if (roles) {
+            if (!roles.tab1 || roles.tab1.length === 0) {
+                tab1 = true;
+            } else {
+                for (var i = 0; i < roles.tab1.length; i++) {
+                    if (GEOR.config.ROLES.indexOf(roles.tab1[i]) >= 0) {
+                        tab1 = true;
+                        break;
+                    }
+                }
+            }
+            if (!roles.tab2 || roles.tab2.length === 0) {
+                tab2 = true;
+            } else {
+                for (var i = 0; i < roles.tab2.length; i++) {
+                    if (GEOR.config.ROLES.indexOf(roles.tab2[i]) >= 0) {
+                        tab2 = true;
+                        break;
+                    }
+                }
+            }
+        } else {
+            tab1 = true;
+            tab2 = true;
+        }
+
+        var out = [];
+        if (tab1 == true) {
+            out.push(this.createTab1Form());
+        }
+        if (tab2 == true) {
+            out.push(this.createTab2Form());
+        }
+        if (out.length == 0) {
+            alert("Cadastre addon config error: no tab is allowed for current user with roles "+
+                GEOR.config.ROLES.join(' - ')
+            );
+        }
+        return out;
+    },
+
+
     showWindow: function() {
         if (!this.win) {
             this.cbx = new Ext.form.Checkbox({
@@ -113,10 +158,7 @@ GEOR.Addons.Cadastre.prototype = {
                 items: [{
                     xtype: 'tabpanel',
                     activeTab: 0,
-                    items: [
-                        this.createTab1Form(), 
-                        this.createTab2Form()
-                    ]
+                    items: this.getTabs()
                 }],
                 fbar: [this.cbx, '->', {
                     text: OpenLayers.i18n("Close"),

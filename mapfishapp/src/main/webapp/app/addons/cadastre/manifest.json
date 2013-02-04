@@ -7,6 +7,10 @@
     ],
     "default_options": {
         "editableCombos": true,
+        "roles": {
+            "tab1": [],
+            "tab2": ["ROLE_SV_ADMIN"]
+        },
         "tab1": {
             "field1": {
                 "file": "cities.json",
