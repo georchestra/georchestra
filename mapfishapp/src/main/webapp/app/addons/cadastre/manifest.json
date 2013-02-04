@@ -1,9 +1,9 @@
 {
     "js": [
-        "js/cadastre.js"
+        "js/main.js"
     ],
     "css": [
-        "css/cadastre.css"
+        "css/main.css"
     ],
     "default_options": {
         "editableCombos": true,

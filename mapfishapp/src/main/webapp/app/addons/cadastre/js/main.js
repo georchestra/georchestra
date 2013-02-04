@@ -2,24 +2,24 @@ Ext.namespace("GEOR.Addons");
 
 // TODO: config option in manifest to get one or both tabs
 
-GEOR.Addons.CadastreFR = function(map, options) {
+GEOR.Addons.Cadastre = function(map, options) {
     this.map = map;
     this.options = options;
 };
 
-GEOR.Addons.CadastreFR.BaseComboConfig = {
+GEOR.Addons.Cadastre.BaseComboConfig = {
     forceSelection: false,
     width: 190,
     itemSelector: '.x-combo-list-item'
 };
-GEOR.Addons.CadastreFR.BaseFormConfig = {
+GEOR.Addons.Cadastre.BaseFormConfig = {
     labelWidth: 80,
     labelSeparator: OpenLayers.i18n("labelSeparator"),
     bodyStyle: 'padding: 10px',
     height: 110
 };
 
-GEOR.Addons.CadastreFR.prototype = {
+GEOR.Addons.Cadastre.prototype = {
     item: null,
     stores: {},
     layer: null,
@@ -167,7 +167,7 @@ GEOR.Addons.CadastreFR.prototype = {
         }
         if (n.hasOwnProperty("file")) {
             OpenLayers.Request.GET({
-                url: "app/addons/cadastrefr/"+n.file,
+                url: "app/addons/cadastre/"+n.file,
                 success: function(resp) {
                     if (resp && resp.responseText) {
                         var o = this.jsonFormat.read(resp.responseText);
@@ -295,7 +295,7 @@ GEOR.Addons.CadastreFR.prototype = {
                         "select": this.filterNextField,
                         scope: this
                     }
-                }, GEOR.Addons.CadastreFR.BaseComboConfig))
+                }, GEOR.Addons.Cadastre.BaseComboConfig))
             );
         }, this);
         this.fields = fields;
@@ -310,7 +310,7 @@ GEOR.Addons.CadastreFR.prototype = {
                 scope: this
             }
             */
-        }, GEOR.Addons.CadastreFR.BaseFormConfig));
+        }, GEOR.Addons.Cadastre.BaseFormConfig));
     },
 
 
@@ -343,7 +343,7 @@ GEOR.Addons.CadastreFR.prototype = {
                 },
                 scope: this
             }
-        }, GEOR.Addons.CadastreFR.BaseComboConfig)));
+        }, GEOR.Addons.Cadastre.BaseComboConfig)));
 
         c = this.options.tab2.field2;
 
@@ -425,7 +425,7 @@ GEOR.Addons.CadastreFR.prototype = {
                 },
                 scope: this
             }
-        }, GEOR.Addons.CadastreFR.BaseComboConfig)));
+        }, GEOR.Addons.Cadastre.BaseComboConfig)));
 
         return new Ext.FormPanel(Ext.apply({
             title: OpenLayers.i18n("tab2title"),
@@ -436,7 +436,7 @@ GEOR.Addons.CadastreFR.prototype = {
                 },
                 scope: this
             }
-        }, GEOR.Addons.CadastreFR.BaseFormConfig));
+        }, GEOR.Addons.Cadastre.BaseFormConfig));
     },
 
 
