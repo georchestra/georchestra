@@ -37,8 +37,12 @@ Ext.namespace("GEOR");
 (function() {
 
     var checkRoles = function(module, okRoles) {
-        // module is available for everyone if okRoles is empty:
-        var ok = (okRoles.length === 0);
+        // module is available for everyone 
+        // if okRoles is empty or undefined:
+        if (okRoles === undefined || okRoles.length === 0) {
+            return;
+        }
+        var ok = false;
         // else, check existence of required role to activate module:
         for (var i=0, l=okRoles.length; i<l; i++) {
             if (GEOR.config.ROLES.indexOf(okRoles[i]) >= 0) {
