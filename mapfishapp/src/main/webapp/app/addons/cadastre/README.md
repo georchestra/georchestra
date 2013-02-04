@@ -20,47 +20,52 @@ Typical configuration to include in your GEOR_custom.js file:
             "en": "This tool allows one to search for land parcels, either by reference, or by owner name",
             "es": "Esta herramienta permite buscar parcelas ya sea por referencia o por el nombre del propietario"
         },
-        "tab1": {
-            "field1": {
-                "file": "cities.json",
-                "valuefield": "code_insee",
-                "displayfield": "nom_com",
-                "template": "<b>{nom_com}</b> ({code_dep})"
+        "options": {
+            "tab1": {
+                "field1": {
+                    "file": "cities.json",
+                    "valuefield": "code_insee",
+                    "displayfield": "nom_com",
+                    "template": "<b>{nom_com}</b> ({code_dep})"
+                },
+                "field2": {
+                    "wfs": "http://ids.pigma.org/geoserver/ign/wfs",
+                    "typename": "ign:ign_bdparcellaire_sections",
+                    "matchingproperties": {
+                        "field1": "code_insee"
+                    },
+                    "valuefield": "section",
+                    "displayfield": "section",
+                    "template": "<b>{section}</b>"
+                },
+                "field3": {
+                    "wfs": "http://ids.pigma.org/geoserver/ign/wfs",
+                    "typename": "ign:ign_bdparcellaire_localisants",
+                    "matchingproperties": {
+                        "field1": "code_insee",
+                        "field2": "section"
+                    },
+                    "valuefield": "numero",
+                    "displayfield": "numero",
+                    "template": "<b>{numero}</b> {section}"
+                }
             },
-            "field2": {
-                "wfs": "http://ids.pigma.org/geoserver/ign/wfs",
-                "typename": "ign:ign_bdparcellaire_sections",
-                "matchingproperties": {
-                    "field1": "code_insee"
-                },
-                "valuefield": "section",
-                "displayfield": "section",
-                "template": "<b>{section}</b>"
-            },
-            "field3": {
-                "wfs": "http://ids.pigma.org/geoserver/ign/wfs",
-                "typename": "ign:ign_bdparcellaire_localisants",
-                "matchingproperties": {
-                    "field1": "code_insee",
-                    "field2": "section"
-                },
-                "valuefield": "numero",
-                "displayfield": "numero",
-                "template": "<b>{numero}</b> {section}"
-            }
-        },
-        "tab2": {
-            "field2": {
-                "wfs": "http://ids.pigma.org/geoserver/cadastre/wfs",
-                "typename": "cadastre:localisants_bdparc_majic2012",
-                "matchingproperties": {
-                    "field1": "code_insee"
-                },
-                "valuefield": "majic_ddenom",
-                "displayfield": "majic_ddenom"
+            "tab2": {
+                "field2": {
+                    "wfs": "http://ids.pigma.org/geoserver/cadastre/wfs",
+                    "typename": "cadastre:localisants_bdparc_majic2012",
+                    "matchingproperties": {
+                        "field1": "code_insee"
+                    },
+                    "valuefield": "majic_ddenom",
+                    "displayfield": "majic_ddenom"
+                }
             }
         }
     }
+
+By default, comboboxes are editable (which means that you can type ahead to filter the combo values). 
+This behavior can be turned off by setting "editableCombos" to false in your addon options.
 
 
 Tab 1
