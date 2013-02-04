@@ -504,11 +504,28 @@ GEOR.tools = (function() {
         init: function(layerStore) {
             tr = OpenLayers.i18n;
             map = layerStore.map;
+            // filter out restricted addons:
+            var allowedAddons = [];
+            Ext.each(GEOR.config.ADDONS, function(addon) {
+                var okRoles = addon.roles;
+                if (okRoles === undefined || okRoles.length === 0) {
+                    // no restriction specified
+                    allowedAddons.push(addon);
+                } else {
+                    // check user has at least one of the required roles
+                    for (var i = 0; i < okRoles.length; i++) {
+                        if (GEOR.config.ROLES.indexOf(okRoles[i]) >= 0) {
+                            allowedAddons.push(addon);
+                            break;
+                        }
+                    }
+                }
+            });
             store = new Ext.data.JsonStore({
                 fields: ["id", "name", "title", "thumbnail", "description", "group", "options", {
                     name: "loaded", defaultValue: false, type: "boolean"
                 }],
-                data: GEOR.config.ADDONS.slice(0)
+                data: allowedAddons
             });
             previousState = {};
             store.each(function(r) {

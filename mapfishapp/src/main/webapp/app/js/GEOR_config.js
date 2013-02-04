@@ -339,6 +339,8 @@ GEOR.config = (function() {
          *  name - {String} required addon name, which, once lowercased, gives the addon folder name
          *  title - {Object} a required hash storing addon titles by lang key
          *  description - {Object} a required hash storing addon descriptions by lang key
+         *  roles - {Array} optional array of roles allowed to use this addon - defaults to [], which means everyone is allowed to.
+         *          eg: ["ROLE_SV_ADMIN"] will allow the current addon for admin users only
          *  group - {String} an optional group for mutual exclusion between activated tools - default group is "tools"
          *  options - {Object} an optional config object which overrides the package default_options (in manifest.json)
          *  thumbnail - {String} an optional thumbnail path, relative to app/addons/{addon_name.toLowerCase()}/ (defaults to img/icon.png)
