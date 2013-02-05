@@ -312,7 +312,9 @@ public class UpLoadFileManegement {
 	        String fileName = searchGeoFile();
 	        assert fileName != null; 
 	        
-			OGRDataStore store = new OGRDataStore(fileName, null, null);
+			String driver;
+			OGRDataStore store = new OGRDataStore(fileName, driver, null);
+			
 			SimpleFeatureIterator featuresIterator = null;
 			
 	        try {
