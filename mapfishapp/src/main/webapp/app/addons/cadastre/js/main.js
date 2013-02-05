@@ -265,10 +265,7 @@ GEOR.Addons.Cadastre.prototype = {
             box = OpenLayers.Bounds.fromArray(record.get('bbox'));
         }
         if (box.left == box.right && box.bottom == box.top) {
-            geom = new OpenLayers.Geometry.Point(
-                (box.left + box.right) / 2, 
-                (box.bottom + box.top) / 2
-            );
+            geom = new OpenLayers.Geometry.Point(box.left, box.bottom);
         } else {
             geom = box.toGeometry();
         }
