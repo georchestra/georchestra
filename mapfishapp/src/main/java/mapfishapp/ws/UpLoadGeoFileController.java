@@ -28,6 +28,13 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 /**
  * This controller is responsible to upload a Zip file which contains a set of geofiles (shp, mid, mif). 
  * 
+ * <pre>
+ * In case of success, responses 
+ * 		{"success":true,"geojson":"{"type":"FeatureCollection","features":[...]}"} 
+ * with 
+ * 		Content-Type:application/json; charset=utf-8
+ * </pre> 
+ * 
  * @author Mauricio Pazos
  *
  */
@@ -46,7 +53,10 @@ public final class UpLoadGeoFileController {
 	public enum Status{
 		ok{
 			@Override
-			public String getMessage( final String detail){return "{\"success\":true, " + detail+"}"; }
+			public String getMessage( final String jsonFeatures){
+				return "{\"success\":true, \"geojson\":{\"type\":\"FeatureCollection\",\"features\":" + jsonFeatures+"}}"; 
+			}
+			
 		},
 		unsupportedFormat{
 			@Override
@@ -91,12 +101,8 @@ public final class UpLoadGeoFileController {
 		
 	}	
 
-	// controller properties 
-	private FileDescriptor currentFile;
-	
 	// constants configured in the ws-servlet.xml file
 	private String responseCharset;
-	private String downloadDirectory; 
 	private String tempDirectory;
 
 	private long zipSizeLimit;
@@ -113,10 +119,6 @@ public final class UpLoadGeoFileController {
 	private FileDescriptor createFileDescriptor(final String fileName){
 			
 		return new FileDescriptor(fileName);
-	}
-	
-	public void setDownloadDirectory(String downloadDirectory) {
-		this.downloadDirectory = downloadDirectory;
 	}
 
 	public void setTempDirectory(String tempDirectory) {
@@ -209,9 +211,9 @@ public final class UpLoadGeoFileController {
 				}
 			}
 			
-			String jsonFeatureCollection = fileManagement.createFeatureCollection( workDirectory );
+			String jsonFeatureCollection = fileManagement.featureCollectionToJSON( workDirectory );
 
-			writeResponse(response, st.ok, jsonFeatureCollection);
+			writeResponse(response, Status.ok, jsonFeatureCollection);
 		
 		} finally{
 			if(workDirectory!= null) cleanTemporalDirectory(workDirectory);
@@ -325,8 +327,12 @@ public final class UpLoadGeoFileController {
 		return workDirectory;
 	}
 
-	private void cleanTemporalDirectory(String tempDirectory) throws IOException{
-		FileUtils.cleanDirectory(new File(tempDirectory));
+	
+	private void cleanTemporalDirectory(String workDirectory) throws IOException{
+		File file = new File(workDirectory);
+		FileUtils.cleanDirectory(file);
+		boolean removed = file.delete();
+		if(!removed ) throw new IOException("cannot remove the directory: " + file.getAbsolutePath());
 	}
 
 	/**
