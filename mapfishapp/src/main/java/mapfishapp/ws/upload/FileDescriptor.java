@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import mapfishapp.ws.upload.OGRFeatureReader.FileFormat;
+
 import org.apache.commons.collections.iterators.ArrayListIterator;
 import org.apache.commons.io.FilenameUtils;
 
@@ -18,10 +20,14 @@ public class FileDescriptor {
 	/** file name of upload file */
 	public String originalFileName;
 	
+	/** upload file's extension */
 	public String ext;
 	
 	/** upload file */
-	public File savedFile;
+	public File savedFile; 
+	
+	/** the geo file file format */
+	public FileFormat geoFileType;
 	
 	/** list of the file extensions contained in the zip file */
 	public List<String> listOfExtensions = new ArrayList<String>();

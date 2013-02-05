@@ -15,11 +15,14 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import mapfishapp.ws.upload.OGRFeatureReader.FileFormat;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.geotools.data.ogr.OGRDataStore;
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.json.JSONArray;
@@ -61,7 +64,10 @@ public class UpLoadFileManegement {
 
 	
 	private FileDescriptor fileDescriptor;
+	
 	private String workDirectory;
+	
+	
 
 	public UpLoadFileManegement(FileDescriptor currentFile, String workDirectory) {
 
@@ -312,14 +318,15 @@ public class UpLoadFileManegement {
 	        String fileName = searchGeoFile();
 	        assert fileName != null; 
 	        
-			String driver;
-			OGRDataStore store = new OGRDataStore(fileName, driver, null);
+			OGRFeatureReader reader = new OGRFeatureReader(new File(fileName), this.fileDescriptor.geoFileType);
 			
 			SimpleFeatureIterator featuresIterator = null;
 			
 	        try {
-		        SimpleFeatureSource source = store.getFeatureSource(store.getTypeNames()[0]);
-				featuresIterator = source.getFeatures().features();
+	        	
+	        	SimpleFeatureCollection featureCollection = reader.getFeatureCollection();
+	        	
+				featuresIterator = featureCollection.features();
 
 				JSONArray jsonFeatureArray= new JSONArray();  
 				while(featuresIterator.hasNext()){
@@ -337,7 +344,7 @@ public class UpLoadFileManegement {
 				throw new IOException(msg);
 			}
 	        finally{
-	        	if(featuresIterator != null)featuresIterator.close();
+	        	if(featuresIterator != null) featuresIterator.close();
 	        }
 	        return jsonResult;
 	}
@@ -356,19 +363,20 @@ public class UpLoadFileManegement {
 	 *  
 	 * Returns the name of geofile. 
 	 * 
-	 * @return
+	 * @return the geofile
 	 */
 	private String searchGeoFile() {
 
-		final String[] sortedExtension = new String[]{"GML", "GPX", "KML", "MIF", "SHP", "TAB"};
         for( String fileName:  this.fileDescriptor.listOfFiles){
         	
-        	String ext = FilenameUtils.getExtension(fileName).toUpperCase();
-        	if(Arrays.binarySearch(sortedExtension,ext) >= 0 ){
+        	String ext = FilenameUtils.getExtension(fileName);
+        	
+        	FileFormat fileType = OGRFeatureReader.FileFormat.getFileType(ext);
+        	if(fileType != null){
+        		this.fileDescriptor.geoFileType = fileType;
         		return fileName;
         	}
         }
-
 		return null;
 	}
 	
