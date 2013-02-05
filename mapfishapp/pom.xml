@@ -108,6 +108,12 @@
 			<artifactId>gt-wfs</artifactId>
 			<version>${gt.version}</version>
 		</dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-ogr</artifactId>
+            <version>${gt.version}</version>
+        </dependency>
+		
 		<!-- geotools - handles ESPG -->
 		<dependency>
 			<groupId>org.geotools</groupId>

@@ -5,10 +5,11 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.collections.iterators.ArrayListIterator;
 import org.apache.commons.io.FilenameUtils;
 
 /**
- * Maintain useful file information about the uploaded file
+ * Maintains useful file information about the uploaded file
  *  
  * @author Mauricio Pazos
  */
@@ -52,7 +53,7 @@ public class FileDescriptor {
 			"gpx".equalsIgnoreCase(ext) ||
 			"gml".equalsIgnoreCase(ext);			
 	}
-
+	
 	public boolean isZipFile() {
 		return "zip".equalsIgnoreCase(ext);
 	}

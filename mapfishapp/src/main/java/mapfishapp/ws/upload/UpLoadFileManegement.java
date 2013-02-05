@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -18,6 +19,12 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.geotools.data.ogr.OGRDataStore;
+import org.geotools.data.simple.SimpleFeatureIterator;
+import org.geotools.data.simple.SimpleFeatureSource;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.opengis.feature.simple.SimpleFeature;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -67,20 +74,21 @@ public class UpLoadFileManegement {
 
 		ZipFile zipFile = new ZipFile(fileDescriptor.savedFile.getAbsolutePath());
 
-		// creates the directories
+		// creates the directories and extracts the geofiles
 		Enumeration<? extends ZipEntry> entries = zipFile.entries();
 		while (entries.hasMoreElements()) {
 			
 			ZipEntry entry = (ZipEntry) entries.nextElement();
-
 			String path = workDirectory+ File.separator+  entry.getName();
-
-			File outFile = new File(path);
-			makeDirectory(outFile.getParent());
-
-			extractFile(zipFile, entry, outFile);
+			
+			String  extension = FilenameUtils.getExtension( path ).toUpperCase();
+			if(VALID_EXTENSIONS.contains(extension)){
+				File outFile = new File(path);
+				extractFile(zipFile, entry, outFile);
+			} else {
+				makeDirectory(path);
+			}
 		}
-
 		zipFile.close();
 	}
 
@@ -271,6 +279,110 @@ public class UpLoadFileManegement {
 				&&	this.fileDescriptor.listOfExtensions.contains("ID")
 				&&	this.fileDescriptor.listOfExtensions.contains("MAP") 
 				&&	this.fileDescriptor.listOfExtensions.contains("DAT"); 
+	}
+
+
+	/**
+	 * Create a feature collection with based on the json syntax. The features are readed from the work directory. 
+	 * The could have one of the accepted format: 
+	 * 
+	 * <ul>
+	 * <li>zip: shp, mif, tab</li>
+	 * <li>kml</li>
+	 * <li>gpx</li>
+	 * <li>gml</li>
+	 * </ul>
+	 * 
+	 * @param downloadDirectory
+	 * @return 
+	 * @throws IOException 
+	 */
+	public String createFeatureCollection(String downloadDirectory) throws IOException {
+		
+		
+			// TODO Auto-generated method stub
+			
+			//the file SRS is obtained :
+			//		from the prj file for shapefiles
+			//		directly from the mif/mid files
+			//		directly from the GML features
+			//		assumed EPSG:4326 for all kml files
+			//		assumed EPSG:4326 for all gpx files
+			
+			
+			// In case of success, the web service sends {"success":true,"geojson":"{\"type\":\"FeatureCollection\",\"features\":[...]}"} with Content-Type:application/json; charset=utf-8
+			
+			// the geojson SRS is set by the "srs" form field (example value: "EPSG:2154")
+			// encoding warning:
+			//			dbf files may have specific encodings - if possible, autodetect & convert to UTF-8
+			//			GML : check for encoding in XML prologue
+			//			<?xml version="1.0" encoding="ISO-8859-1"?>
+		
+		
+			// retrieves the feature from file system
+			String jsonFeatureCollection;
+			String jsonResult = "";
+		
+	        String fileName = searchFeatureFile();
+			OGRDataStore store = new OGRDataStore(fileName, null, null);
+			SimpleFeatureIterator featuresIterator = null;
+			
+	        try {
+		        SimpleFeatureSource source = store.getFeatureSource(store.getTypeNames()[0]);
+				featuresIterator = source.getFeatures().features();
+
+				JSONArray jsonFeatureArray= new JSONArray();  
+				while(featuresIterator.hasNext()){
+					
+					SimpleFeature feature = featuresIterator.next();
+					JSONObject jsonFeature = JSONUtil.asJSONObject(feature);
+					
+					jsonFeatureArray.put(jsonFeature);
+				}
+				
+				jsonResult = jsonFeatureArray.toString();
+				
+			} catch (IOException e) {
+				final String msg = e.getMessage();
+				LOG.error(msg);
+				throw e;
+			}
+	        finally{
+	        	if(featuresIterator != null)featuresIterator.close();
+				jsonFeatureCollection = "{\"success\":true,\"geojson\":\"{\"type\":\"FeatureCollection\",\"features\":"+jsonResult+"}}"; 
+	        }
+        
+			return jsonFeatureCollection;
+	}
+
+
+	/**
+	 * Searches, in the set of file uploaded, a file with a geofile extension.
+	 * <ul>
+	 * <li>shp</li>
+	 * <li>mif</li>
+	 * <li>tab</li>
+	 * <li>kml</li>
+	 * <li>gpx</li>
+	 * <li>gml</li>
+	 * </ul>
+	 *  
+	 * Returns the name of geofile. 
+	 * 
+	 * @return
+	 */
+	private String searchFeatureFile() {
+
+		final String[] geoFilesSortedExtension = new String[]{"GML", "GPX", "KML", "MIF", "SHP", "TAB"};
+        for( String fileName:  this.fileDescriptor.listOfFiles){
+        	
+        	String ext = FilenameUtils.getExtension(fileName).toUpperCase();
+        	if(Arrays.binarySearch(geoFilesSortedExtension,ext) >= 0 ){
+        		return fileName;
+        	}
+        }
+
+		return null;
 	}
 	
 

@@ -43,66 +43,53 @@ public final class UpLoadGeoFileController {
 	 * @author Mauricio Pazos
 	 *
 	 */
-	private enum Status{
-		ok,
-		unsupportedFormat, 
-		sizeError, 
-		ready, 
-		multiplefiles, 
-		incompleteMIF, 
-		incompleteSHP, 
-		incompleteTAB;
+	public enum Status{
+		ok{
+			@Override
+			public String getMessage( final String detail){return "{\"success\":true, " + detail+"}"; }
+		},
+		unsupportedFormat{
+			@Override
+			public String getMessage( final String detail){return "{\"success\":false, \"msg\": \"unsupported file type\"}"; }
+		}, 
+		sizeError{
+			@Override
+			public String getMessage(String detail) {
+				return "{ \"success\": false, \"msg\": \"file exceeds the limit\" "	+ detail + "}";
+			}
+		},
+		multiplefiles{
+			@Override
+			public String getMessage( final String detail){return "{ \"success\": false, \"msg\": \"multiple files\" }"; }
+		}, 
+		incompleteMIF{
+			@Override
+			public String getMessage( final String detail){return "{ \"success\": false, \"msg\": \"incomplete MIF/MID\" }"; }
+		}, 
+		incompleteSHP{
+			@Override
+			public String getMessage( final String detail){return "{ \"success\": false, \"msg\": \"incomplete shapefile\" }"; }
+		}, 
+		incompleteTAB{
+			@Override
+			public String getMessage( final String detail){return "{ \"success\": false, \"msg\": \"incomplete TAB file\" }"; }
+		},
+		ready{
+			@Override
+			public String getMessage( final String detail){throw new UnsupportedOperationException("no message is associated to this status");}
+		};
+		
 		
 		/**
-		 * convenient method
-		 * @see getMessage
-		 * @param st
-		 * @return JSON string
-		 */
-		public static String getMessage(Status st){
-			return getMessage(st, "");
-		}
-		/**
-		 * Returns the message associated to the status using JSON syntax.
-		 * 
-		 * @param st process status descriptor
-		 * @param detail detail to be added in the standard message
+		 * Returns the message associated to this status.
 		 * 
 		 * @return JSON string
 		 */
-		public static String getMessage(final Status st, final String detail){
-			
-			String msg = "";
-			switch (st) {
-			case ok:
-				msg = "{\"success\":true}";
-				break;
-			case unsupportedFormat:
-				msg = "{\"success\":false}";
-				break;
-			case sizeError:
-				msg = "{ \"success\": false, \"msg\": \"file exceeds the limit\" "
-						+ detail + "}";
-				break;
-			case multiplefiles:
-				msg = "{ \"success\": false, \"msg\": \"multiple files\" }";
-				break;
-			case incompleteMIF:
-				msg = "{ \"success\": false, \"msg\": \"incomplete MIF/MID\" }";
-				break;
-			case incompleteSHP:
-				msg = "{ \"success\": false, \"msg\": \"incomplete shapefile\" }";
-				break;
-			case incompleteTAB:
-				msg = "{ \"success\": false, \"msg\": \"incomplete TAB file\" }";
-				break;
-				
-			}
-			
-			return msg;
-		}
-	}
-	
+		public abstract String getMessage( final String detail);
+		
+		public  String getMessage(){ return getMessage("");};
+		
+	}	
 
 	// controller properties 
 	private FileDescriptor currentFile;
@@ -200,7 +187,7 @@ public final class UpLoadGeoFileController {
 			if(  upLoadFile.getSize()  > limit ){
 				
 				long size = limit / 1048576; // converts to Mb
-				final String msg = Status.getMessage(Status.sizeError, size + "MB");
+				final String msg = Status.sizeError.getMessage( size + "MB");
 				
 				writeResponse(response, Status.sizeError, msg);
 				return;
@@ -210,7 +197,7 @@ public final class UpLoadGeoFileController {
 
 			fileManagement.save(upLoadFile);
 				
-			// it the uploaded file is a zip file then checks its content
+			// if the uploaded file is a zip file then checks its content
 			if(fileManagement.containsZipFile()){
 				
 				fileManagement.unzip();
@@ -221,40 +208,14 @@ public final class UpLoadGeoFileController {
 					return;
 				}
 			}
-			// the uploaded file is OK, it is moved from the temporal directory to the download directory
-			fileManagement.moveTo( downloadDirectory );
 			
-			String jsonFeatureCollection = createFeatureCollection( downloadDirectory );
+			String jsonFeatureCollection = fileManagement.createFeatureCollection( workDirectory );
 
-			// TODO add th feature collection the ok message
-			writeResponse(response, st.ok);
+			writeResponse(response, st.ok, jsonFeatureCollection);
 		
 		} finally{
 			if(workDirectory!= null) cleanTemporalDirectory(workDirectory);
-
 		}
-	}
-
-	private String createFeatureCollection(String downloadDirectory2) {
-		// TODO Auto-generated method stub
-		
-		//the file SRS is obtained :
-		//		from the prj file for shapefiles
-		//		directly from the mif/mid files
-		//		directly from the GML features
-		//		assumed EPSG:4326 for all kml files
-		//		assumed EPSG:4326 for all gpx files
-		
-		
-		// In case of success, the web service sends {"success":true,"geojson":"{\"type\":\"FeatureCollection\",\"features\":[...]}"} with Content-Type:application/json; charset=utf-8
-		
-		// the geojson SRS is set by the "srs" form field (example value: "EPSG:2154")
-		// encoding warning:
-		//			dbf files may have specific encodings - if possible, autodetect & convert to UTF-8
-		//			GML : check for encoding in XML prologue
-		//			<?xml version="1.0" encoding="ISO-8859-1"?>
-	
-		return "";
 	}
 
 
@@ -313,9 +274,9 @@ public final class UpLoadGeoFileController {
 
 			String statusMsg;
 			if("".equals(errorDetail)){
-				statusMsg = Status.getMessage(st );
+				statusMsg = st.getMessage();
 			} else {
-				statusMsg = Status.getMessage(st , errorDetail);
+				statusMsg = st.getMessage(errorDetail);
 			}
 			out.println(statusMsg);
 			
