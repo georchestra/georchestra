@@ -292,38 +292,26 @@ public class UpLoadFileManegement {
 	 * <li>gpx</li>
 	 * <li>gml</li>
 	 * </ul>
-	 * 
+	 * <pre>
+	 * the file SRS is obtained :
+	 *		from the prj file for shapefiles
+	 *		directly from the mif/mid files
+	 *		directly from the GML features
+	 *		assumed EPSG:4326 for all kml files
+	 *		assumed EPSG:4326 for all gpx files
+	 *</pre>
 	 * @param downloadDirectory
-	 * @return 
+	 * @return feature array with the following syntax: "[f1,f2,...fN]"
 	 * @throws IOException 
 	 */
-	public String createFeatureCollection(String downloadDirectory) throws IOException {
-		
-		
-			// TODO Auto-generated method stub
-			
-			//the file SRS is obtained :
-			//		from the prj file for shapefiles
-			//		directly from the mif/mid files
-			//		directly from the GML features
-			//		assumed EPSG:4326 for all kml files
-			//		assumed EPSG:4326 for all gpx files
-			
-			
-			// In case of success, the web service sends {"success":true,"geojson":"{\"type\":\"FeatureCollection\",\"features\":[...]}"} with Content-Type:application/json; charset=utf-8
-			
-			// the geojson SRS is set by the "srs" form field (example value: "EPSG:2154")
-			// encoding warning:
-			//			dbf files may have specific encodings - if possible, autodetect & convert to UTF-8
-			//			GML : check for encoding in XML prologue
-			//			<?xml version="1.0" encoding="ISO-8859-1"?>
-		
+	public String featureCollectionToJSON(String downloadDirectory) throws IOException {
 		
 			// retrieves the feature from file system
-			String jsonFeatureCollection;
 			String jsonResult = "";
 		
-	        String fileName = searchFeatureFile();
+	        String fileName = searchGeoFile();
+	        assert fileName != null; 
+	        
 			OGRDataStore store = new OGRDataStore(fileName, null, null);
 			SimpleFeatureIterator featuresIterator = null;
 			
@@ -335,24 +323,21 @@ public class UpLoadFileManegement {
 				while(featuresIterator.hasNext()){
 					
 					SimpleFeature feature = featuresIterator.next();
-					JSONObject jsonFeature = JSONUtil.asJSONObject(feature);
+					JSONObject jsonFeature = GeotoolsJSONUtil.asJSONObject(feature);
 					
 					jsonFeatureArray.put(jsonFeature);
 				}
-				
 				jsonResult = jsonFeatureArray.toString();
 				
-			} catch (IOException e) {
+			} catch (Exception e) {
 				final String msg = e.getMessage();
 				LOG.error(msg);
-				throw e;
+				throw new IOException(msg);
 			}
 	        finally{
 	        	if(featuresIterator != null)featuresIterator.close();
-				jsonFeatureCollection = "{\"success\":true,\"geojson\":\"{\"type\":\"FeatureCollection\",\"features\":"+jsonResult+"}}"; 
 	        }
-        
-			return jsonFeatureCollection;
+	        return jsonResult;
 	}
 
 
@@ -371,13 +356,13 @@ public class UpLoadFileManegement {
 	 * 
 	 * @return
 	 */
-	private String searchFeatureFile() {
+	private String searchGeoFile() {
 
-		final String[] geoFilesSortedExtension = new String[]{"GML", "GPX", "KML", "MIF", "SHP", "TAB"};
+		final String[] sortedExtension = new String[]{"GML", "GPX", "KML", "MIF", "SHP", "TAB"};
         for( String fileName:  this.fileDescriptor.listOfFiles){
         	
         	String ext = FilenameUtils.getExtension(fileName).toUpperCase();
-        	if(Arrays.binarySearch(geoFilesSortedExtension,ext) >= 0 ){
+        	if(Arrays.binarySearch(sortedExtension,ext) >= 0 ){
         		return fileName;
         	}
         }
