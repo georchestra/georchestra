@@ -7,11 +7,10 @@ import java.util.List;
 
 import mapfishapp.ws.upload.OGRFeatureReader.FileFormat;
 
-import org.apache.commons.collections.iterators.ArrayListIterator;
 import org.apache.commons.io.FilenameUtils;
 
 /**
- * Maintains useful file information about the uploaded file
+ * Maintains useful file information about the uploaded file.
  *  
  * @author Mauricio Pazos
  */
@@ -26,10 +25,10 @@ public class FileDescriptor {
 	/** upload file */
 	public File savedFile; 
 	
-	/** the geo file file format */
+	/** the geofile format */
 	public FileFormat geoFileType;
 	
-	/** list of the file extensions contained in the zip file */
+	/** list of the geo file extensions */
 	public List<String> listOfExtensions = new ArrayList<String>();
 
 	/** list of files contained in the zip file*/

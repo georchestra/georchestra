@@ -11,11 +11,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Utility class. 
  * <p>
- * Contains useful method to transform features to json object.
+ * Contains useful methods to transform features to json object.
  * </p>
  * 
  * @author Mauricio Pazos
@@ -40,7 +41,9 @@ final class GeotoolsJSONUtil {
 		try {
 			FeatureJSON fjson = new FeatureJSON();
 			StringWriter writer = new StringWriter();
+			
 			// fjson.setEncodeNullValues(true);
+			fjson.setFeatureType(feature.getFeatureType());
 			fjson.writeFeature(feature, writer);
 
 			JSONTokener jsonTokener = new JSONTokener(writer.toString());
