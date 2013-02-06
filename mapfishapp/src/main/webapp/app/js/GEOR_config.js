@@ -458,10 +458,10 @@ GEOR.config = (function() {
          * Constant: DEFAULT_THESAURUS_KEY
          * Key (as the one in the response from /geonetwork/srv/fr/xml.thesaurus.getList)
          * of the thesaurus to use as the default (selected) one.
-         * Defaults to 'local._none_.geobretagne' FIXME: should be something else
+         * Defaults to 'external.theme.inspire-theme'
          */
         DEFAULT_THESAURUS_KEY: getCustomParameter("DEFAULT_THESAURUS_KEY",
-            'local._none_.geobretagne'),
+            'external.theme.inspire-theme'),
 
         /**
          * Constant: MAX_FEATURES
