@@ -37,7 +37,9 @@ There's also a captcha (for instance based on http://www.google.com/recaptcha) t
 
 Once submitted, the form disappears and a (configurable) message says something like "Your request has been submitted to an administrator, and should be taken into account in the next hours. Watch your email."
 
-What happens here ? New users will be recorded in the LDAP and affected to a PENDING_USERS groups. An admin will then be able to move them to SV_USERS group.
+What happens here ? 
+ * New users will be recorded in the LDAP and affected to a PENDING_USERS groups. An admin will then be able to move them to SV_USERS group.
+ * An email will be sent to one email address (configurable), saying that new users need an account.
 
 ### Edit user details
 
