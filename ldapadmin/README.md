@@ -8,7 +8,9 @@ All strings and templates should take into account i18n (3 langs by default: en/
 Public UI
 ---------
 
-The public UIs will be accessed from the CAS login page, by the way of text links: "lost password ?" and "create account".
+The public UIs will be accessed:
+ * from the CAS login page, by the way of text links: "lost password ?" and "create account".
+ * from every SDI page, by clicking on the username: "Edit user details"
 
 These pages should by light (no need to ship ExtJS).
 
@@ -31,13 +33,53 @@ If the given email does not match one from the LDAP, nothing happens (and no spe
 
 The page shows a form with typical fields: name, org, role, geographic area, email, phone nb, details.
 
-Once submitted, the form disappears and a (configurable) message says something like "Your request has been submitted to an administrator, and should be taken into account in the next hours"
+There's also a captcha (for instance based on http://www.google.com/recaptcha) to prevent batch form submissions.
+
+Once submitted, the form disappears and a (configurable) message says something like "Your request has been submitted to an administrator, and should be taken into account in the next hours. Watch your email."
+
+What happens here ? New users will be recorded in the LDAP and affected to a PENDING_USERS groups. An admin will then be able to move them to SV_USERS group.
+
+### Edit user details
+
+Two pages: 
+ * First one (default one): users should be able to edit a subset of LDAP fields, namely: sn, givenName, mail, o, title, postalAddress, postalCode, registeredAddress, postOfficeBox, physicalDeliveryOfficeName. On this page, there will be a link to the userPassword change page.
+ * userPassword change UI: will display 3 fields. The first one is the current user password, the two other ones are for the new one. If the two latest fields do not match (client-side check), the user won't be able to submit the form and the "new password mismatch" message will be displayed. If the current password is wrong (server side check), the form will be redisplayed with clean fields, and a message will display "invalid password".
+
 
 Private UI
 ----------
 
-The private UI will be available at /ldapadmin for members of SV_ADMIN and SV_ADMIN_USERS only.
+The private UI will be available at /ldapadmin for members of the SV_ADMIN and SV_ADMIN_USERS groups.
 
+See the wireframe in the current folder.
+
+### Center pane 
+
+Dedicated to users:
+ * a toolbar with a "new user" button, and a "selected users" menu item (disabled when no user is selected)
+ * a scrollable grid, with a checkbox selection model, showing a subset of user attributes
+ * on grid item double click, a window pops up (same as "new user" window), which allows user details editing (password change not allowed)
+
+### New User/Edit User window
+
+Featuring:
+ * a form for user details,
+ * a tree view of groups the user belongs to, with a checkbox selection model to edit. 
+
+When creating a new user (and only in this case), a **strong** password will be generated and sent to the new user by email.
+
+
+#### Left pane 
+
+Dedicated to groups:
+ * tree view of groups, with intermediate nodes for group types (SV_*, EL_*, ...) - group types should be configurable
+ * ability to filter users list by one group (on group name click)
+ * button to add a new group 
+ * button to remove a group (users will **not** be deleted)
+
+
+Members of the SV_ADMIN_USERS group will have the same UI, but some buttons will not be shown (or disabled) : group add/remove, "selected users" > "add/remove from group"
+They will have the right to create/read/update/delete users only from the same EL_* groups they belong to.
 
 Notes
 -----
