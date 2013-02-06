@@ -246,7 +246,7 @@ GEOR.map = (function() {
                     }
                 }
                 r.set('attribution', {
-                    title: a || GEOR.config.DEFAULT_ATTRIBUTION
+                    title: a
                 });
             }
 

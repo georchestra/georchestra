@@ -480,14 +480,6 @@ GEOR.config = (function() {
         MAX_LENGTH: getCustomParameter("MAX_LENGTH",
             400/7*1024*getBrowserVectorAbility()*getComputingPower()),
 
-
-        /**
-         * Constant: DEFAULT_ATTRIBUTION
-         * Default attribution for layers which don't have one.
-         * Defaults to ''
-         */
-        DEFAULT_ATTRIBUTION: getCustomParameter("DEFAULT_ATTRIBUTION", ''),
-
         /**
          * Constant: OSM_AS_OVMAP
          * Boolean: if true, use OSM mapnik as overview map baselayer
