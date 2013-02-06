@@ -31,7 +31,9 @@ If the given email does not match one from the LDAP, nothing happens (and no spe
 
 ### Create account
 
-The page shows a form with typical fields: name, org, role, geographic area, email, phone nb, details.
+The page shows a form with typical fields: name, org, role, geographic area, email, phone nb, details. 
+The user will be able to pick a **strong** password (must have at least one of: special char, letters and numbers). 
+Password field will be repeated 2 times (client-side check for equality).
 
 There's also a captcha (for instance based on http://www.google.com/recaptcha) to prevent batch form submissions.
 
