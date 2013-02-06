@@ -186,31 +186,6 @@ public class UpLoadFileManegement {
 	}
 
 
-	/**
-	 * Moves the upload file from the work directory (temporal) to download directory
-	 * 
-	 * @param downloadDirectory
-	 * @throws IOException 
-	 */
-	public void moveTo(String downloadDirectory) throws IOException {
-		
-		File source = new File(this.workDirectory);
-		File target = new File(downloadDirectory);
-		if( !target.exists()) {
-			boolean succeed = target.mkdir();
-			if(! succeed ) {
-				String message = "cannot create the download directory";
-				LOG.fatal(message);
-				throw new IOException(message);
-			}
-		}
-		try{
-			FileUtils.copyDirectory(source, target);
-		} catch (IOException e){
-			LOG.fatal(e.getMessage());
-			throw e;
-		}
-	}
 
 	/**
 	 * Checks if the work directory contains files with valid extensions.
@@ -347,9 +322,9 @@ public class UpLoadFileManegement {
 				jsonResult = jsonFeatureArray.toString();
 				
 			} catch (Exception e) {
-				final String msg = e.getMessage();
-				LOG.error(msg);
-				throw new IOException(msg);
+				final String message = "Failed reading " + fileName;
+				LOG.error(message);
+				throw new IOException(message, e);
 			}
 	        finally{
 	        	if(featuresIterator != null) featuresIterator.close();

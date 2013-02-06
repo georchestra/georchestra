@@ -11,7 +11,14 @@ import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureSource;
 
 /**
+ * OGR Feature Reader.
  * 
+ * <p>
+ * This class is responsible of retrieving the features stored in different file format.
+ * </p>
+ * <p>
+ * The available file format are enumerated in the {@link FileFormat}.
+ * </p>
  * 
  * 
  * @author Mauricio Pazos
@@ -19,6 +26,11 @@ import org.geotools.data.simple.SimpleFeatureSource;
  */
 final class OGRFeatureReader {
 
+	/**
+	 * 
+	 * File format available.
+	 *
+	 */
 	public enum FileFormat {
 		tab {
 			@Override
@@ -106,7 +118,6 @@ final class OGRFeatureReader {
 
 	private File basedir;
 	private FileFormat fileFormat;
-	private String[] options;
 	private SimpleFeatureCollection features;
 
 	public OGRFeatureReader(File basedir, FileFormat fileFormat) {
@@ -115,11 +126,15 @@ final class OGRFeatureReader {
 
 		this.basedir = basedir;
 		this.fileFormat = fileFormat;
-		
-		this.options = fileFormat.getFormatOptions();
 
 	}
 
+	/**
+	 * Returns the set of features maintained in the geofile.
+	 * 
+	 * @return {@link SimpleFeatureCollection}
+	 * @throws IOException
+	 */
 	public SimpleFeatureCollection getFeatureCollection() throws IOException {
 
 		String ogrName = this.basedir.getAbsolutePath();

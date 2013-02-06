@@ -16,7 +16,6 @@ import mapfishapp.ws.upload.FileDescriptor;
 import mapfishapp.ws.upload.UpLoadFileManegement;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
@@ -149,7 +148,6 @@ public final class UpLoadGeoFileController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	public void upload(HttpServletRequest request, HttpServletResponse response) throws IOException {
-//	public void handlePOSTRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
     	LOG.info("Request: " + request.getRequestURL() ); 
 
@@ -286,7 +284,6 @@ public final class UpLoadGeoFileController {
 			if(LOG.isDebugEnabled()){
 				LOG.debug("RESPONSE:" + statusMsg);
 			} 
-			LOG.info("RESPONSE:" + statusMsg); // FIXME
 		} finally {
 
 			if(out != null) out.close();
