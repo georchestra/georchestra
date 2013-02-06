@@ -47,41 +47,57 @@ final class OGRFeatureReader {
 			public String getDriver() {
 				return "ESRI shapefile";
 			}
-
-			@Override
-			public String[] getFormatOptions() {
-				return null;
-			}
 		},
 		gml {
 			@Override
 			public String getDriver() {
 				return "GML";
 			}
-
+		},
+		kml {
 			@Override
-			public String[] getFormatOptions() {
-				return null;
+			public String getDriver() {
+				return "KML";
 			}
+
+		},
+		gpx {
+			@Override
+			public String getDriver() {
+				return "GPX";
+			}
+
 		};
-		// FIXME more format are required (kml, gpx)
 		
 
 		/**
-		 * Returns the OGR driver for this format
+		 * Returns the OGR driver for this format.
 		 * 
 		 * @return the driver
 		 */
 		public abstract String getDriver();
 
-		public abstract String[] getFormatOptions();
+		/**
+		 * @return Options for this format
+		 */
+		public String[] getFormatOptions() {
+			return null; //default implementation
+		}
 
-		public static FileFormat getFileType(String ext) {
+		/**
+		 * Returns the enumerated value associated to the extension file name
+		 *  
+		 * @param ext
+		 * @return FileFormat enumerated value or null if it doesn't exist.
+		 */
+		public static FileFormat getFileFormat(String ext) {
 			
 			if("tab".equalsIgnoreCase(ext))	return tab;
 			if("mif".equalsIgnoreCase(ext))	return mif;
 			if("shp".equalsIgnoreCase(ext))	return shp;
 			if("gml".equalsIgnoreCase(ext))	return gml;
+			if("gpx".equalsIgnoreCase(ext))	return gpx;
+			if("kml".equalsIgnoreCase(ext))	return kml;
 			
 			return null;
 			

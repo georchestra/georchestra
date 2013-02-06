@@ -9,7 +9,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -21,10 +20,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.geotools.data.ogr.OGRDataStore;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
-import org.geotools.data.simple.SimpleFeatureSource;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.opengis.feature.simple.SimpleFeature;
@@ -60,6 +57,12 @@ public class UpLoadFileManegement {
 		// MIF
 		VALID_EXTENSIONS.add("MIF");
 		VALID_EXTENSIONS.add("MID");
+
+		VALID_EXTENSIONS.add("GML");
+		
+		VALID_EXTENSIONS.add("KML");
+		
+		VALID_EXTENSIONS.add("GPX");
 	}
 
 	
@@ -157,12 +160,19 @@ public class UpLoadFileManegement {
 	public File save(MultipartFile uploadFile) throws IOException{
 
 		try {
+			// transfers the up load file to the work directory
 			final String originalFileName = uploadFile.getOriginalFilename();
 			File outFile = new File(this.workDirectory+"/"+originalFileName);
 			uploadFile.transferTo(outFile);
 
 			this.fileDescriptor.savedFile = outFile;
-
+			
+			// if it is a geofile then the descriptor is updated (zip file will be processed later)
+			String extension = FilenameUtils.getExtension(originalFileName).toUpperCase();
+			if( VALID_EXTENSIONS.contains(extension) ){
+				this.fileDescriptor.listOfExtensions.add(extension);
+				this.fileDescriptor.listOfFiles.add(outFile.getAbsolutePath());
+			}
 			return outFile;
 			
 		} catch (IOException e) {
@@ -243,7 +253,6 @@ public class UpLoadFileManegement {
 		}
 		return true;
 	}
-
 	public boolean isMIF() {
 		return this.fileDescriptor.listOfExtensions.contains("MIF");
 	}
@@ -267,7 +276,6 @@ public class UpLoadFileManegement {
 		return		this.fileDescriptor.listOfExtensions.contains("MIF") 
 				&& 	this.fileDescriptor.listOfExtensions.contains("MID"); 
 	}
-
 
 	/**
 	 * if filename.shp is found, it is assumed that filename.shx and filename.prj are also present (the DBF is not mandatory).
@@ -371,7 +379,7 @@ public class UpLoadFileManegement {
         	
         	String ext = FilenameUtils.getExtension(fileName);
         	
-        	FileFormat fileType = OGRFeatureReader.FileFormat.getFileType(ext);
+        	FileFormat fileType = OGRFeatureReader.FileFormat.getFileFormat(ext);
         	if(fileType != null){
         		this.fileDescriptor.geoFileType = fileType;
         		return fileName;
