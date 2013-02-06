@@ -66,7 +66,9 @@ How to run the viewer without Tomcat ?
 
 This mode is useful for **demo** or **development** purposes.
 
-    $ cd mapfishapp
+    $ cd config
+    $ ../mvn -Ptemplate install
+    $ cd ../mapfishapp
     $ ../mvn -Ptemplate jetty:run
 
 Point your browser to [http://localhost:8080/mapfishapp/?noheader=true](http://localhost:8080/mapfishapp/?noheader=true) 
