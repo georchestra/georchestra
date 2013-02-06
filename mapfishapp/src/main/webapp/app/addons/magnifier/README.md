@@ -1,7 +1,7 @@
 Magnifier ADDON
 ===============
 
-This addon allows users to zoom on a specific area of the map, either using the current map layers ("dynamic" mode), or a static layer ("static" mode).
+This addon allows users to zoom in a specific area of the map, either using the current map layers ("dynamic" mode), or a static layer ("static" mode).
 authors: @fvanderbiest, @spelhate
 
 
