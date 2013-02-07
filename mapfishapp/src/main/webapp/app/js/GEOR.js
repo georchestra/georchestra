@@ -122,17 +122,6 @@ Ext.namespace("GEOR");
         }
         GEOR.waiter.init();
 
-        // Handle layerstore initialisation
-        // with wms/services/wmc from "panier"
-        GEOR.mapinit.init(layerStore, function() {
-            // TODO: GEOR.events fires a "loadend" event that modules may listen to
-            GEOR.ajaxglobal.init();
-            GEOR.tools.restore();
-        });
-        // Note: we're providing GEOR.ajaxglobal.init as a callback, so that
-        // errors when loading WMC are not catched by GEOR.ajaxglobal
-        // but by the mapinit module, which handles them more appropriately
-
         var recenteringItems = [
             Ext.apply({
                 title: tr("Cities"),
@@ -289,6 +278,16 @@ Ext.namespace("GEOR");
             layout: "border",
             items: vpItems
         });
+
+        // Handle layerstore initialisation
+        // with wms/services/wmc from "panier"
+        GEOR.mapinit.init(layerStore, function() {
+            GEOR.ajaxglobal.init();
+            GEOR.tools.restore();
+        });
+        // Note: we're providing GEOR.ajaxglobal.init as a callback, so that
+        // errors when loading WMC are not catched by GEOR.ajaxglobal
+        // but by the mapinit module, which handles them more appropriately
 
         /*
          * Register to events on various modules to deal with

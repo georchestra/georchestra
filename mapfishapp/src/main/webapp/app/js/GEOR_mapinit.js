@@ -390,8 +390,17 @@ GEOR.mapinit = (function() {
      *
      */
     var loadDefaultWMC = function() {
-        GEOR.waiter.hide();
-        updateStoreFromWMC(GEOR.config.DEFAULT_WMC());
+        var context = localStorage && 
+            localStorage.getItem("context");
+        if (context !== null && context.length) {
+            GEOR.wmc.read(context, true, !customRecenter());
+            zoomToCustomExtent();
+            // and finally we're running our global success callback:
+            cb.call();
+        } else {
+            GEOR.waiter.hide();
+            updateStoreFromWMC(GEOR.config.DEFAULT_WMC());
+        }
     };
 
     return {
@@ -411,8 +420,7 @@ GEOR.mapinit = (function() {
 
             // POSTing a content to the app (which results in GEOR.initstate
             // being set) has priority over everything else:
-            if (!GEOR.initstate || GEOR.initstate === null ||
-                !GEOR.initstate[0]) {
+            if (!GEOR.initstate || !GEOR.initstate[0]) {
                 // if a custom WMC is provided as GET parameter, load it:
                 if (GEOR.config.CUSTOM_WMC) {
                     updateStoreFromWMC(GEOR.config.CUSTOM_WMC, {
