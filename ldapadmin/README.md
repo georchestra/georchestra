@@ -37,10 +37,12 @@ Password field will be repeated 2 times (client-side check for equality).
 
 There's also a captcha (for instance based on http://www.google.com/recaptcha) to prevent batch form submissions.
 
-Once submitted, the form disappears and a (configurable) message says something like "Your request has been submitted to an administrator, and should be taken into account in the next hours. Watch your email."
+Once submitted, the form disappears and a (configurable) message says something like "Your request has been submitted and should be processed in the next hours. Watch your email."
 
 What happens here ? 
- * New users will be recorded in the LDAP and affected to a PENDING_USERS groups. An admin will then be able to move them to SV_USERS group.
+ * Depending on a "MODERATED_SIGNUP" config option, new users will be recorded in the LDAP and affected to :
+   * the PENDING_USERS group if MODERATED_SIGNUP = true. An admin will then be able to move them to SV_USERS group.
+   * the SV_USERS group if MODERATED_SIGNUP = false.
  * An email will be sent to one email address (configurable), saying that new users need an account.
 
 ### Edit user details
