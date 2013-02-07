@@ -6,6 +6,7 @@
 		<artifactId>root</artifactId>
 		<version>1.0</version>
 	</parent>
+	
 	<artifactId>mapfishapp</artifactId>
 	<packaging>war</packaging>
 	<name>mapfishapp Maven Webapp</name>
@@ -119,16 +120,16 @@
             <version>${gt.version}</version>
         </dependency>		
 		<!-- geotools - handles ESPG -->
-		<dependency>
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-epsg-hsql</artifactId>
-			<version>${gt.version}</version>
-		</dependency>
-        <dependency>
-            <groupId>org.geotools</groupId>
-            <artifactId>gt-epsg-wkt</artifactId>
-            <version>${gt.version}</version>
-        </dependency>
+	    <dependency>
+	      <groupId>org.geotools</groupId>
+	      <artifactId>gt-epsg-hsql</artifactId>
+	      <version>${gt.version}</version>
+	    </dependency>
+	    <dependency>
+	      <groupId>${project.groupId}</groupId>
+	      <artifactId>epsg-extension</artifactId>
+	      <version>${project.version}</version>
+	    </dependency>
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>

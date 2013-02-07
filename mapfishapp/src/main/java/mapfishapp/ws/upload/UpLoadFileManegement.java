@@ -27,6 +27,7 @@ import org.geotools.geojson.feature.FeatureJSON;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -312,7 +313,9 @@ public class UpLoadFileManegement {
 	        	SimpleFeatureCollection featureCollection = reader.getFeatureCollection();
 	        	
 	        	FeatureJSON fjson = new FeatureJSON();
-	        	//fjson.setEncodeFeatureCRS(true);
+	        	CoordinateReferenceSystem crs = featureCollection.getSchema().getCoordinateReferenceSystem();
+	        	
+	        	//fjson.setEncodeFeatureCRS(true); FIXME throw epsg.CartesianAuthorityFactory cannot be instantiated
 	        	
 	        	StringWriter writer = new StringWriter();
 	        	fjson.writeFeatureCollection(featureCollection, writer);
@@ -329,44 +332,6 @@ public class UpLoadFileManegement {
 	        }
 	        return jsonResult;
 	}
-//	public String featureCollectionToJSON(String downloadDirectory) throws IOException {
-//		
-//		// retrieves the feature from file system
-//		String jsonResult = "";
-//	
-//        String fileName = searchGeoFile();
-//        assert fileName != null; 
-//        
-//		OGRFeatureReader reader = new OGRFeatureReader(new File(fileName), this.fileDescriptor.geoFileType);
-//		
-//		SimpleFeatureIterator featuresIterator = null;
-//		
-//        try {
-//        	
-//        	SimpleFeatureCollection featureCollection = reader.getFeatureCollection();
-//        	
-//			featuresIterator = featureCollection.features();
-//
-//			JSONArray jsonFeatureArray= new JSONArray();  
-//			while(featuresIterator.hasNext()){
-//				
-//				SimpleFeature feature = featuresIterator.next();
-//				JSONObject jsonFeature = GeotoolsJSONUtil.asJSONObject(feature);
-//				
-//				jsonFeatureArray.put(jsonFeature);
-//			}
-//			jsonResult = jsonFeatureArray.toString();
-//			
-//		} catch (Exception e) {
-//			final String message = "Failed reading " + fileName;
-//			LOG.error(message);
-//			throw new IOException(message, e);
-//		}
-//        finally{
-//        	if(featuresIterator != null) featuresIterator.close();
-//        }
-//        return jsonResult;
-//}
 
 
 	/**
