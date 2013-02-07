@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -22,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
+import org.geotools.geojson.feature.FeatureJSON;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.opengis.feature.simple.SimpleFeature;
@@ -309,17 +311,13 @@ public class UpLoadFileManegement {
 	        	
 	        	SimpleFeatureCollection featureCollection = reader.getFeatureCollection();
 	        	
-				featuresIterator = featureCollection.features();
-
-				JSONArray jsonFeatureArray= new JSONArray();  
-				while(featuresIterator.hasNext()){
-					
-					SimpleFeature feature = featuresIterator.next();
-					JSONObject jsonFeature = GeotoolsJSONUtil.asJSONObject(feature);
-					
-					jsonFeatureArray.put(jsonFeature);
-				}
-				jsonResult = jsonFeatureArray.toString();
+	        	FeatureJSON fjson = new FeatureJSON();
+	        	//fjson.setEncodeFeatureCRS(true);
+	        	
+	        	StringWriter writer = new StringWriter();
+	        	fjson.writeFeatureCollection(featureCollection, writer);
+	        	
+				jsonResult = writer.toString();
 				
 			} catch (Exception e) {
 				final String message = "Failed reading " + fileName;
@@ -331,6 +329,44 @@ public class UpLoadFileManegement {
 	        }
 	        return jsonResult;
 	}
+//	public String featureCollectionToJSON(String downloadDirectory) throws IOException {
+//		
+//		// retrieves the feature from file system
+//		String jsonResult = "";
+//	
+//        String fileName = searchGeoFile();
+//        assert fileName != null; 
+//        
+//		OGRFeatureReader reader = new OGRFeatureReader(new File(fileName), this.fileDescriptor.geoFileType);
+//		
+//		SimpleFeatureIterator featuresIterator = null;
+//		
+//        try {
+//        	
+//        	SimpleFeatureCollection featureCollection = reader.getFeatureCollection();
+//        	
+//			featuresIterator = featureCollection.features();
+//
+//			JSONArray jsonFeatureArray= new JSONArray();  
+//			while(featuresIterator.hasNext()){
+//				
+//				SimpleFeature feature = featuresIterator.next();
+//				JSONObject jsonFeature = GeotoolsJSONUtil.asJSONObject(feature);
+//				
+//				jsonFeatureArray.put(jsonFeature);
+//			}
+//			jsonResult = jsonFeatureArray.toString();
+//			
+//		} catch (Exception e) {
+//			final String message = "Failed reading " + fileName;
+//			LOG.error(message);
+//			throw new IOException(message, e);
+//		}
+//        finally{
+//        	if(featuresIterator != null) featuresIterator.close();
+//        }
+//        return jsonResult;
+//}
 
 
 	/**
