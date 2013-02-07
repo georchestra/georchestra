@@ -254,8 +254,9 @@ GEOR.toolbar = (function() {
          * Displays a confirm dialog before leaving the app for CAS login
          */
         confirmLogin: function() {
-            return confirm(tr("Leave this page ? You will lose the current cartographic context."));
-            // ou : "Pour vous connecter, nous vous redirigeons vers une autre page web. Vous risquez de perdre le contexte cartographique courant. Vous pouvez le sauvegarder en annulant cette opération, et en cliquant sur Espace de travail > Sauvegarder la carte" ?
+            return window.localStorage === undefined ? 
+                confirm(tr("Leave this page ? You will lose the current cartographic context.")) : 
+                true;
         }
     };
 
