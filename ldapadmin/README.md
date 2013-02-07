@@ -48,7 +48,7 @@ What happens here ?
 ### Edit user details
 
 Two pages: 
- * First one (default one): users should be able to edit a subset of LDAP fields, namely: sn, givenName, mail, o, title, postalAddress, postalCode, registeredAddress, postOfficeBox, physicalDeliveryOfficeName. On this page, there will be a link to the userPassword change page.
+ * First one (default one): users should be able to edit a subset of LDAP fields, namely: sn, givenName, o, title, postalAddress, postalCode, registeredAddress, postOfficeBox, physicalDeliveryOfficeName (**not mail**). On this page, there will be a link to the userPassword change page.
  * userPassword change UI: will display 3 fields. The first one is the current user password, the two other ones are for the new one. If the two latest fields do not match (client-side check), the user won't be able to submit the form and the "new password mismatch" message will be displayed. If the current password is wrong (server side check), the form will be redisplayed with clean fields, and a message will display "invalid password".
 
 
