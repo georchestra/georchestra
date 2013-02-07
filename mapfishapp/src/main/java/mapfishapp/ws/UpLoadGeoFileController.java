@@ -54,7 +54,7 @@ public final class UpLoadGeoFileController {
 		ok{
 			@Override
 			public String getMessage( final String jsonFeatures){
-				return "{\"success\":true, \"geojson\":{\"type\":\"FeatureCollection\",\"features\":" + jsonFeatures+"}}"; 
+				return "{\"success\":true, \"geojson\":" + jsonFeatures+"}}"; 
 			}
 			
 		},
@@ -284,6 +284,7 @@ public final class UpLoadGeoFileController {
 			if(LOG.isDebugEnabled()){
 				LOG.debug("RESPONSE:" + statusMsg);
 			} 
+			System.out.println("RESPONSE:" + statusMsg); // FIXME
 		} finally {
 
 			if(out != null) out.close();

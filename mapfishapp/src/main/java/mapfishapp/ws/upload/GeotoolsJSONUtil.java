@@ -43,7 +43,9 @@ final class GeotoolsJSONUtil {
 			StringWriter writer = new StringWriter();
 			
 			// fjson.setEncodeNullValues(true);
+			
 			fjson.setFeatureType(feature.getFeatureType());
+			fjson.setEncodeFeatureCRS(true);
 			fjson.writeFeature(feature, writer);
 
 			JSONTokener jsonTokener = new JSONTokener(writer.toString());

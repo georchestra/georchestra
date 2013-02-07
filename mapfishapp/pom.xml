@@ -124,6 +124,11 @@
 			<artifactId>gt-epsg-hsql</artifactId>
 			<version>${gt.version}</version>
 		</dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-epsg-wkt</artifactId>
+            <version>${gt.version}</version>
+        </dependency>
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
