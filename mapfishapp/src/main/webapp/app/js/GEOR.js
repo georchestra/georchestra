@@ -56,6 +56,13 @@ Ext.namespace("GEOR");
         }
     };
 
+    // save context string before unloading page
+    window.onbeforeunload = function() {
+        localStorage &&
+            localStorage.setItem("context", GEOR.wmc.write());
+        return null;
+    };
+
     Ext.onReady(function() {
         var tr = OpenLayers.i18n;
 
