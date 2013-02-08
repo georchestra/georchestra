@@ -11,10 +11,6 @@
  * You should have received a copy of the GNU General Public License
  * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/*
- * @include GEOR_localStorage.js
- */
  
 Ext.namespace("GEOR");
 
@@ -228,18 +224,13 @@ GEOR.config = (function() {
          * runtime method to get the current default WMC
          */
         DEFAULT_WMC: function() {
-            if (GEOR.ls.available && 
-                GEOR.ls.get("default_context") !== null) {
-                return GEOR.ls.get("default_context");
-            }
             if (GEOR.config.CONTEXTS && 
                 GEOR.config.CONTEXTS[0] && 
                 GEOR.config.CONTEXTS[0][2]) {
                 return GEOR.config.CONTEXTS[0][2];
-            } else {
-                alert("Administrator: "+
-                    "GEOR.config.CONTEXTS is not configured as expected !");
             }
+            alert("Administrator: "+
+                "GEOR.config.CONTEXTS is not configured as expected !");
             // should not happen:
             return "default.wmc";
         },

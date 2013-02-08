@@ -22,6 +22,7 @@ Enhancements:
  * mapfishapp: added ability to print protected geoserver layers, see https://github.com/georchestra/template/commit/bb424bd74f7504af93b5e5c708f807ce0b6fdca4
  * mapfishapp: more robust detection of WMS layers in CSW getRecords responses, see https://github.com/georchestra/georchestra/pull/4
  * mapfishapp: window buttons consistency and default actions, see https://github.com/georchestra/georchestra/pull/33
+ * mapfishapp: by default, the map is now restored with its latest known state (context), see https://github.com/georchestra/georchestra/pull/50
  * mapfishapp: missing translations
 
 Bug fixes:
