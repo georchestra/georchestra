@@ -29,6 +29,7 @@
  * @include GEOR_print.js
  * @include GEOR_config.js
  * @include GEOR_tools.js
+ * @include GEOR_localStorage.js
  */
 
 Ext.namespace("GEOR");
@@ -254,9 +255,8 @@ GEOR.toolbar = (function() {
          * Displays a confirm dialog before leaving the app for CAS login
          */
         confirmLogin: function() {
-            return window.localStorage === undefined ? 
-                confirm(tr("Leave this page ? You will lose the current cartographic context.")) : 
-                true;
+            return GEOR.ls.available ? true :
+                confirm(tr("Leave this page ? You will lose the current cartographic context."));
         }
     };
 

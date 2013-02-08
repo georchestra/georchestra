@@ -20,6 +20,7 @@
  * @include GEOR_address.js
  * @include GEOR_referentials.js
  * @include GEOR_ajaxglobal.js
+ * @include GEOR_localStorage.js
  * @include GEOR_waiter.js
  * @include GEOR_config.js
  * @include GEOR_mapinit.js
@@ -58,8 +59,7 @@ Ext.namespace("GEOR");
 
     // save context string before unloading page
     window.onbeforeunload = function() {
-        localStorage &&
-            localStorage.setItem("context", GEOR.wmc.write());
+        GEOR.ls.set("context", GEOR.wmc.write());
         return null;
     };
 

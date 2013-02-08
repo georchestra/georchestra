@@ -18,6 +18,7 @@
  * @include GEOR_ows.js
  * @include GEOR_util.js
  * @include GEOR_waiter.js
+ * @include GEOR_localStorage.js
  * @include OpenLayers/Projection.js
  * @include GeoExt/data/LayerRecord.js
  * @include GeoExt/data/LayerStore.js
@@ -390,8 +391,7 @@ GEOR.mapinit = (function() {
      *
      */
     var loadDefaultWMC = function() {
-        var context = localStorage && 
-            localStorage.getItem("context");
+        var context = GEOR.ls.get("context");
         if (context !== null && context.length) {
             GEOR.wmc.read(context, true, !customRecenter());
             zoomToCustomExtent();
