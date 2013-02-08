@@ -37,16 +37,18 @@ Password field will be repeated 2 times (client-side check for equality).
 
 There's also a captcha (for instance based on http://www.google.com/recaptcha) to prevent batch form submissions.
 
-Once submitted, the form disappears and a (configurable) message says something like "Your request has been submitted to an administrator, and should be taken into account in the next hours. Watch your email."
+Once submitted, the form disappears and a (configurable) message says something like "Your request has been submitted and should be processed in the next hours. Watch your email."
 
 What happens here ? 
- * New users will be recorded in the LDAP and affected to a PENDING_USERS groups. An admin will then be able to move them to SV_USERS group.
+ * Depending on a "MODERATED_SIGNUP" config option, new users will be recorded in the LDAP and affected to :
+   * the PENDING_USERS group if MODERATED_SIGNUP = true. An admin will then be able to move them to SV_USERS group.
+   * the SV_USERS group if MODERATED_SIGNUP = false.
  * An email will be sent to one email address (configurable), saying that new users need an account.
 
 ### Edit user details
 
 Two pages: 
- * First one (default one): users should be able to edit a subset of LDAP fields, namely: sn, givenName, mail, o, title, postalAddress, postalCode, registeredAddress, postOfficeBox, physicalDeliveryOfficeName. On this page, there will be a link to the userPassword change page.
+ * First one (default one): users should be able to edit a subset of LDAP fields, namely: sn, givenName, o, title, postalAddress, postalCode, registeredAddress, postOfficeBox, physicalDeliveryOfficeName (**not mail**). On this page, there will be a link to the userPassword change page.
  * userPassword change UI: will display 3 fields. The first one is the current user password, the two other ones are for the new one. If the two latest fields do not match (client-side check), the user won't be able to submit the form and the "new password mismatch" message will be displayed. If the current password is wrong (server side check), the form will be redisplayed with clean fields, and a message will display "invalid password".
 
 

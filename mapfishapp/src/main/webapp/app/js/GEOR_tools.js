@@ -17,6 +17,7 @@
  * @include OpenLayers/Format/JSON.js
  * @include GEOR_waiter.js
  * @include GEOR_config.js
+ * @include GEOR_localStorage.js
  * @include GEOR_util.js
  */
 
@@ -324,11 +325,8 @@ GEOR.tools = (function() {
      * Utility method to make the selection persist in localStorage
      */
     var storeToolsSelection = function() {
-        if (!localStorage) {
-            return;
-        }
         var ids = Ext.pluck(dataview.getSelectedRecords(), "id");
-        localStorage.setItem("default_tools", ids.join(','));
+        GEOR.ls.set("default_tools", ids.join(','));
     };
 
 
@@ -345,8 +343,7 @@ GEOR.tools = (function() {
             storeToolsSelection();
         } else {
             // clear localstorage item
-            localStorage && 
-                localStorage.removeItem("default_tools");
+            GEOR.ls.remove("default_tools");
         }
     };
 
@@ -450,9 +447,8 @@ GEOR.tools = (function() {
                 xtype: 'checkbox',
                 itemId: 'cbx',
                 boxLabel: tr("remember the selection"),
-                checked: localStorage && 
-                    localStorage.getItem("default_tools") !== null,
-                disabled: !localStorage,
+                checked: GEOR.ls.get("default_tools") !== null,
+                disabled: !GEOR.ls.available,
                 listeners: {
                     "check": onCbxCheckChange
                 }
@@ -579,10 +575,10 @@ GEOR.tools = (function() {
          *
          */
         restore: function() {
-            if (!localStorage) {
+            if (!GEOR.ls.available) {
                 return;
             }
-            var str = localStorage.getItem("default_tools");
+            var str = GEOR.ls.get("default_tools");
             if (!str) {
                 return;
             }
