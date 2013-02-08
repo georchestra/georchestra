@@ -391,14 +391,16 @@ GEOR.mapinit = (function() {
      *
      */
     var loadDefaultWMC = function() {
-        var context = GEOR.ls.get("context");
-        if (context !== null && context.length) {
-            GEOR.wmc.read(context, true, !customRecenter());
+        if (GEOR.ls.get("default_context")) {
+            // restore default context
+            updateStoreFromWMC(GEOR.ls.get("default_context"));
+        } else if (GEOR.ls.get("latest_context")) {
+            // restore latest context
+            GEOR.wmc.read(GEOR.ls.get("latest_context"), true, !customRecenter());
             zoomToCustomExtent();
             // and finally we're running our global success callback:
             cb.call();
         } else {
-            GEOR.waiter.hide();
             updateStoreFromWMC(GEOR.config.DEFAULT_WMC());
         }
     };

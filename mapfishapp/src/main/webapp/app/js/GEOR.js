@@ -59,7 +59,7 @@ Ext.namespace("GEOR");
 
     // save context string before unloading page
     window.onbeforeunload = function() {
-        GEOR.ls.set("context", GEOR.wmc.write());
+        GEOR.ls.set("latest_context", GEOR.wmc.write());
         return null;
     };
 
@@ -107,7 +107,6 @@ Ext.namespace("GEOR");
 
         GEOR.wmc.init(layerStore);
         GEOR.tools.init(layerStore);
-        GEOR.wmcbrowser.init();
         if (GEOR.print) {
             GEOR.print.init(layerStore);
         }

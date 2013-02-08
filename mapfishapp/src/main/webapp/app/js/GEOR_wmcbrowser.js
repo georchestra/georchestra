@@ -183,10 +183,7 @@ GEOR.wmcbrowser = (function() {
             cbxChecked = view.getSelectedRecords()[0].get('wmc') === 
                 GEOR.ls.get("default_context");
             cbx.setValue(cbxChecked);
-            cbx.setDisabled(!lsAvailable || 
-                (lsAvailable && !viewHasSelection) || 
-                (lsAvailable && viewHasSelection && cbxChecked)
-            );
+            cbx.setDisabled(!lsAvailable);
         } else {
             silentDisableUncheck(cbx);
         }
@@ -223,19 +220,19 @@ GEOR.wmcbrowser = (function() {
      * checked - {Boolean}
      */
     var onCbxCheckChange = function(cbx, checked) {
-        // disable on check
-        cbx.setDisabled(checked);
+        var record = view.getSelectedRecords()[0];
         if (checked) {
             // set the currently selected context as default one
-            var record = view.getSelectedRecords()[0];
             GEOR.ls.set("default_context", record.get("wmc"));
-            _refreshing = true;
-            // to apply the "default" CSS class to the correct node:
-            view.refresh();
-            // keep selection after refresh:
-            view.select(record);
-            _refreshing = false;
+        } else {
+            GEOR.ls.remove("default_context");
         }
+        _refreshing = true;
+        // to apply the "default" CSS class to the correct node:
+        view.refresh();
+        // keep selection after refresh:
+        view.select(record);
+        _refreshing = false;
     };
 
     /**
@@ -275,7 +272,7 @@ GEOR.wmcbrowser = (function() {
                     return out;
                 },
                 isDefault: function(v) {
-                    return (v.wmc === GEOR.config.DEFAULT_WMC()) ? 
+                    return (v.wmc === GEOR.ls.get("default_context")) ? 
                         "default" : "";
                 }
             }),
@@ -330,7 +327,7 @@ GEOR.wmcbrowser = (function() {
             fbar: [{
                 xtype: 'checkbox',
                 itemId: 'cbx',
-                disabled: true,
+                disabled: !GEOR.ls.available,
                 boxLabel: tr("default viewer context"),
                 listeners: {
                     "check": onCbxCheckChange
@@ -374,16 +371,6 @@ GEOR.wmcbrowser = (function() {
          * Observable object
          */
         events: observable,
-
-        /**
-         * APIMethod: init
-         * Initialize this module
-         */
-        init: function() {
-            if (GEOR.ls.available && GEOR.ls.get("default_context") === null) {
-                GEOR.ls.set("default_context", GEOR.config.DEFAULT_WMC());
-            }
-        },
 
         /**
          * APIMethod: show
