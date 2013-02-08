@@ -17,6 +17,7 @@
  * @include OpenLayers/Format/JSON.js
  * @include GEOR_waiter.js
  * @include GEOR_config.js
+ * @include GEOR_localStorage.js
  * @include GEOR_util.js
  */
 
@@ -236,7 +237,7 @@ GEOR.tools = (function() {
                     // if an addon fails to load properly, update previousState accordingly
                     previousState[r.id] = false;
                     // unselect node corresponding to record in dataview:
-                    dataview.deselect(r);
+                    dataview && dataview.deselect(r);
                     r.set("loaded", false);
                     // warn user:
                     GEOR.util.errorDialog({
@@ -324,11 +325,8 @@ GEOR.tools = (function() {
      * Utility method to make the selection persist in localStorage
      */
     var storeToolsSelection = function() {
-        if (!localStorage) {
-            return;
-        }
         var ids = Ext.pluck(dataview.getSelectedRecords(), "id");
-        localStorage.setItem("default_tools", ids.join(','));
+        GEOR.ls.set("default_tools", ids.join(','));
     };
 
 
@@ -345,8 +343,7 @@ GEOR.tools = (function() {
             storeToolsSelection();
         } else {
             // clear localstorage item
-            localStorage && 
-                localStorage.removeItem("default_tools");
+            GEOR.ls.remove("default_tools");
         }
     };
 
@@ -450,9 +447,8 @@ GEOR.tools = (function() {
                 xtype: 'checkbox',
                 itemId: 'cbx',
                 boxLabel: tr("remember the selection"),
-                checked: localStorage && 
-                    localStorage.getItem("default_tools") !== null,
-                disabled: !localStorage,
+                checked: GEOR.ls.get("default_tools") !== null,
+                disabled: !GEOR.ls.available,
                 listeners: {
                     "check": onCbxCheckChange
                 }
@@ -504,11 +500,28 @@ GEOR.tools = (function() {
         init: function(layerStore) {
             tr = OpenLayers.i18n;
             map = layerStore.map;
+            // filter out restricted addons:
+            var allowedAddons = [];
+            Ext.each(GEOR.config.ADDONS, function(addon) {
+                var okRoles = addon.roles;
+                if (okRoles === undefined || okRoles.length === 0) {
+                    // no restriction specified
+                    allowedAddons.push(addon);
+                } else {
+                    // check user has at least one of the required roles
+                    for (var i = 0; i < okRoles.length; i++) {
+                        if (GEOR.config.ROLES.indexOf(okRoles[i]) >= 0) {
+                            allowedAddons.push(addon);
+                            break;
+                        }
+                    }
+                }
+            });
             store = new Ext.data.JsonStore({
                 fields: ["id", "name", "title", "thumbnail", "description", "group", "options", {
                     name: "loaded", defaultValue: false, type: "boolean"
                 }],
-                data: GEOR.config.ADDONS.slice(0)
+                data: allowedAddons
             });
             previousState = {};
             store.each(function(r) {
@@ -562,10 +575,14 @@ GEOR.tools = (function() {
          *
          */
         restore: function() {
-            if (!localStorage) {
+            if (!GEOR.ls.available) {
                 return;
             }
-            var ids = localStorage.getItem("default_tools").split(',');
+            var str = GEOR.ls.get("default_tools");
+            if (!str) {
+                return;
+            }
+            var ids = str.split(',');
             fetchAndLoadTools(store.queryBy(function(r) {
                 return (ids.indexOf(r.id) > -1);
             }));

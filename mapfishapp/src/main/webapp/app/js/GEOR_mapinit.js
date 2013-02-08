@@ -18,6 +18,7 @@
  * @include GEOR_ows.js
  * @include GEOR_util.js
  * @include GEOR_waiter.js
+ * @include GEOR_localStorage.js
  * @include OpenLayers/Projection.js
  * @include GeoExt/data/LayerRecord.js
  * @include GeoExt/data/LayerStore.js
@@ -390,8 +391,18 @@ GEOR.mapinit = (function() {
      *
      */
     var loadDefaultWMC = function() {
-        GEOR.waiter.hide();
-        updateStoreFromWMC(GEOR.config.DEFAULT_WMC());
+        if (GEOR.ls.get("default_context")) {
+            // restore default context
+            updateStoreFromWMC(GEOR.ls.get("default_context"));
+        } else if (GEOR.ls.get("latest_context")) {
+            // restore latest context
+            GEOR.wmc.read(GEOR.ls.get("latest_context"), true, !customRecenter());
+            zoomToCustomExtent();
+            // and finally we're running our global success callback:
+            cb.call();
+        } else {
+            updateStoreFromWMC(GEOR.config.DEFAULT_WMC());
+        }
     };
 
     return {
@@ -411,8 +422,7 @@ GEOR.mapinit = (function() {
 
             // POSTing a content to the app (which results in GEOR.initstate
             // being set) has priority over everything else:
-            if (!GEOR.initstate || GEOR.initstate === null ||
-                !GEOR.initstate[0]) {
+            if (!GEOR.initstate || !GEOR.initstate[0]) {
                 // if a custom WMC is provided as GET parameter, load it:
                 if (GEOR.config.CUSTOM_WMC) {
                     updateStoreFromWMC(GEOR.config.CUSTOM_WMC, {

@@ -77,8 +77,10 @@ public final class ExtractorLayerRequest {
      * @param version the version of the ows
      */
     public URL capabilitiesURL(String service, String version) throws MalformedURLException {
-        String externalForm = _url.toExternalForm();
-        String versionParam = version == null ? "" : "&VERSION=" + version;
+
+    	String externalForm = _url.toExternalForm();
+  
+    	String versionParam = version == null ? "" : "&VERSION=" + version;
         
         String query = "REQUEST=GETCAPABILITIES&SERVICE=" + service + versionParam ;
         

@@ -17,7 +17,11 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import org.opengis.feature.simple.SimpleFeatureType;
+
 import extractorapp.ws.ExtractorException;
+import extractorapp.ws.extractor.OGRFeatureWriter.FileFormat;
+import extractorapp.ws.extractor.WfsExtractor.GeomType;
 
 /**
  * Common file operations
@@ -205,4 +209,23 @@ public final class FileUtils {
         }
         throw new AssertionError("Unable to make a temporary director in base: "+tmpDir);
     }
+    
+	public static String createFileName(final String baseDir, final SimpleFeatureType type, final FileFormat ext){
+		
+		String layerName = type.getTypeName();
+		Class<?> geomClass = type.getGeometryDescriptor().getType().getBinding();
+				
+        GeomType geomType = WfsExtractor.GeomType.lookup (geomClass);
+				
+        String newName = FileUtils.toSafeFileName(layerName + "_" + geomType+"."+ext);
+        
+        File file = new File(newName);
+        for (int i = 1; file.exists(); i++) {
+            newName = layerName + "_" + geomType + i;
+            newName = FileUtils.toSafeFileName(newName+"."+ext);
+            file = new File(baseDir, newName + "." + ext);
+        }        
+        
+        return newName;
+	}    
 }
