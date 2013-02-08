@@ -16,6 +16,7 @@
  * @include GEOR_util.js
  * @include GEOR_config.js
  * @include GEOR_waiter.js
+ * @include GEOR_localStorage.js
  */
 
 Ext.namespace("GEOR");
@@ -174,16 +175,17 @@ GEOR.wmcbrowser = (function() {
             btn = fbar.getComponent('load'),
             cbx = fbar.getComponent('cbx'),
             viewHasSelection = selections.length === 1,
+            lsAvailable = GEOR.ls.available,
             cbxChecked;
 
         btn.setDisabled(!viewHasSelection);
         if (viewHasSelection) {
             cbxChecked = view.getSelectedRecords()[0].get('wmc') === 
-                localStorage.getItem("default_context");
+                GEOR.ls.get("default_context");
             cbx.setValue(cbxChecked);
-            cbx.setDisabled(!localStorage || 
-                (localStorage && !viewHasSelection) || 
-                (localStorage && viewHasSelection && cbxChecked)
+            cbx.setDisabled(!lsAvailable || 
+                (lsAvailable && !viewHasSelection) || 
+                (lsAvailable && viewHasSelection && cbxChecked)
             );
         } else {
             silentDisableUncheck(cbx);
@@ -226,8 +228,7 @@ GEOR.wmcbrowser = (function() {
         if (checked) {
             // set the currently selected context as default one
             var record = view.getSelectedRecords()[0];
-            localStorage &&
-                localStorage.setItem("default_context", record.get("wmc"));
+            GEOR.ls.set("default_context", record.get("wmc"));
             _refreshing = true;
             // to apply the "default" CSS class to the correct node:
             view.refresh();
@@ -379,8 +380,8 @@ GEOR.wmcbrowser = (function() {
          * Initialize this module
          */
         init: function() {
-            if (localStorage && localStorage.getItem("default_context") === null) {
-                localStorage.setItem("default_context", GEOR.config.DEFAULT_WMC());
+            if (GEOR.ls.available && GEOR.ls.get("default_context") === null) {
+                GEOR.ls.set("default_context", GEOR.config.DEFAULT_WMC());
             }
         },
 

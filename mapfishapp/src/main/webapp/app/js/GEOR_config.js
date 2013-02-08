@@ -12,6 +12,10 @@
  * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+ * @include GEOR_localStorage.js
+ */
+ 
 Ext.namespace("GEOR");
 
 GEOR.config = (function() {
@@ -224,9 +228,9 @@ GEOR.config = (function() {
          * runtime method to get the current default WMC
          */
         DEFAULT_WMC: function() {
-            if (localStorage && 
-                localStorage.getItem("default_context") !== null) {
-                return localStorage.getItem("default_context");
+            if (GEOR.ls.available && 
+                GEOR.ls.get("default_context") !== null) {
+                return GEOR.ls.get("default_context");
             }
             if (GEOR.config.CONTEXTS && 
                 GEOR.config.CONTEXTS[0] && 
