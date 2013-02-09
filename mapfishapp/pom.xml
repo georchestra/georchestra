@@ -96,7 +96,7 @@
 		<dependency>
 			<groupId>org.mapfish.print</groupId>
 			<artifactId>print-lib</artifactId>
-			<version>1.2-GEORCHESTRA</version>
+			<version>1.2.1-GEORCHESTRA</version>
 		</dependency>
 		<!--  geotools -->
 		<dependency>
@@ -125,11 +125,11 @@
 	      <artifactId>gt-epsg-hsql</artifactId>
 	      <version>${gt.version}</version>
 	    </dependency>
-	    <dependency>
-	      <groupId>${project.groupId}</groupId>
-	      <artifactId>epsg-extension</artifactId>
-	      <version>${project.version}</version>
-	    </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>epsg-extension</artifactId>
+            <version>${project.version}</version>
+        </dependency>	     
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>

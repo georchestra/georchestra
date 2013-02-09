@@ -17,17 +17,12 @@ import java.util.zip.ZipFile;
 
 import mapfishapp.ws.upload.OGRFeatureReader.FileFormat;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.geojson.feature.FeatureJSON;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -292,11 +287,10 @@ public class UpLoadFileManegement {
 	 *		assumed EPSG:4326 for all kml files
 	 *		assumed EPSG:4326 for all gpx files
 	 *</pre>
-	 * @param downloadDirectory
 	 * @return feature array with the following syntax: "[f1,f2,...fN]"
 	 * @throws IOException 
 	 */
-	public String featureCollectionToJSON(String downloadDirectory) throws IOException {
+	public String getFeatureCollectionAsJSON() throws IOException {
 		
 			// retrieves the feature from file system
 			String jsonResult = "";
@@ -313,9 +307,9 @@ public class UpLoadFileManegement {
 	        	SimpleFeatureCollection featureCollection = reader.getFeatureCollection();
 	        	
 	        	FeatureJSON fjson = new FeatureJSON();
-	        	CoordinateReferenceSystem crs = featureCollection.getSchema().getCoordinateReferenceSystem();
-	        	
-	        	//fjson.setEncodeFeatureCRS(true); FIXME throw epsg.CartesianAuthorityFactory cannot be instantiated
+	        	fjson.setFeatureType(featureCollection.getSchema());
+//	        	fjson.setEncodeFeatureCollectionBounds(true); FIXME FAIL!!!
+//	        	fjson.setEncodeFeatureCollectionCRS(true);
 	        	
 	        	StringWriter writer = new StringWriter();
 	        	fjson.writeFeatureCollection(featureCollection, writer);
@@ -323,7 +317,7 @@ public class UpLoadFileManegement {
 				jsonResult = writer.toString();
 				
 			} catch (Exception e) {
-				final String message = "Failed reading " + fileName;
+				final String message = "Failed reading " + fileName + ".  " + e.getMessage();
 				LOG.error(message);
 				throw new IOException(message, e);
 			}
