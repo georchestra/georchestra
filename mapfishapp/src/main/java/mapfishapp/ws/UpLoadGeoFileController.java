@@ -211,7 +211,7 @@ public final class UpLoadGeoFileController {
 				}
 			} 
 			
-			String jsonFeatureCollection = fileManagement.featureCollectionToJSON( workDirectory );
+			String jsonFeatureCollection = fileManagement.getFeatureCollectionAsJSON();
 
 			writeResponse(response, Status.ok, jsonFeatureCollection);
 		
