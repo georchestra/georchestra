@@ -104,9 +104,6 @@ GEOR.fileupload = (function() {
                             if (form.isValid()) {
                                 form.submit({
                                     url: "ws/togeojson/",
-                                    headers: {
-                                        "Accept": "application/json"
-                                    },
                                     // Beware: form submission requires a *success* parameter in json response
                                     // As said in http://extjs.com/learn/Manual:RESTful_Web_Services
                                     // "Ext.form.BasicForm hopefully becomes HTTP Status Code aware!"
