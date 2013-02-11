@@ -104,12 +104,19 @@ GEOR.fileupload = (function() {
                             if (form.isValid()) {
                                 form.submit({
                                     url: "ws/togeojson/",
+                                    headers: {
+                                        "Accept": "application/json"
+                                    },
                                     // Beware: form submission requires a *success* parameter in json response
                                     // As said in http://extjs.com/learn/Manual:RESTful_Web_Services
                                     // "Ext.form.BasicForm hopefully becomes HTTP Status Code aware!"
                                     success: function(form, action) {
-                                        var fc = (new OpenLayers.Format.GeoJSON()).read(action.response.responseText);
-                                        alert(fc.features.length + " features in file");
+                                        var features,
+                                            fc = (new OpenLayers.Format.JSON()).read(action.response.responseText);
+                                        if (fc) {
+                                            features = (new OpenLayers.Format.GeoJSON()).read(fc.geojson);
+                                            alert(features.length + " features in file");
+                                        }
                                     },
                                     failure: function(form, action){
                                         alert("Error : " + action.result.msg);
