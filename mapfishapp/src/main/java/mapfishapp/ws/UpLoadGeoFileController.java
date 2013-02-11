@@ -26,13 +26,14 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 
 /**
- * This controller is responsible to upload a Zip file which contains a set of geofiles (shp, mid, mif). 
+ * This controller is responsible for uploading a Zip file which contains a set of geofiles (shp, mid, mif). 
  * 
  * <pre>
- * In case of success, responses 
- * 		{"success":true,"geojson":"{"type":"FeatureCollection","features":[...]}"} 
+ * In case of success, returns
+ * 		{"success":"true","geojson":"{"type":"FeatureCollection","features":[...]}"} 
  * with 
- * 		Content-Type:application/json; charset=utf-8
+ * 		Content-Type: text/html (cf introductory paragraph regarding file uploads 
+ *      in http://docs.sencha.com/ext-js/3-4/?print=/api/Ext.form.BasicForm)
  * </pre> 
  * 
  * @author Mauricio Pazos
