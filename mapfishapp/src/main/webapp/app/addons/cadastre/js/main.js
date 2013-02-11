@@ -276,14 +276,14 @@ GEOR.Addons.Cadastre.prototype = {
             box = f.bounds;
         } else if (record.get('bbox')) {
             box = OpenLayers.Bounds.fromArray(record.get('bbox'));
-        } else if (fieldConfig.fetchGeometry) {
+        } else if (fieldConfig.geometry) {
             // additional XHR to fetch only the geometry
             this.issuePOST({
                 url: fieldConfig.wfs,
                 data: [
                     '<wfs:GetFeature xmlns:wfs="http://www.opengis.net/wfs" xmlns:ogc="http://www.opengis.net/ogc" version="1.1.0" service="WFS" outputFormat="json">',
                         '<wfs:Query typeName="', fieldConfig.typename, '" srsName="', this.map.getProjection(), '">',
-                            '<ogc:PropertyName>' + fieldConfig.fetchGeometry + '</ogc:PropertyName>',
+                            '<ogc:PropertyName>' + fieldConfig.geometry + '</ogc:PropertyName>',
                             '<ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">',
                                 '<ogc:FeatureId fid="', record.get('id'), '"/>',
                             '</ogc:Filter>',

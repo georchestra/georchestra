@@ -14,7 +14,7 @@
         "tab1": {
             "field1": {
                 "file": "cities.json",
-                "fetchGeometry": "the_geom",
+                "geometry": "the_geom",
                 "wfs": "http://geobretagne.fr/geoserver/geob_loc/wfs",
                 "typename": "geob_loc:COMMUNE",
                 "valuefield": "INSE",
@@ -24,7 +24,7 @@
             "field2": {
                 "wfs": "http://geobretagne.fr/geoserver/ref/wfs",
                 "typename": "ref:cadastre_section",
-                "fetchGeometry": "the_geom",
+                "geometry": "the_geom",
                 "matchingproperties": {
                     "field1": "insee"
                 },
@@ -35,7 +35,7 @@
             "field3": {
                 "wfs": "http://geobretagne.fr/geoserver/ref/wfs",
                 "typename": "ref:cadastre_parcelle",
-                "fetchGeometry": "the_geom",
+                "geometry": "the_geom",
                 "matchingproperties": {
                     "field1": "insee",
                     "field2": "section"

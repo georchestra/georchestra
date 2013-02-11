@@ -74,7 +74,7 @@ This configuration is perfect for quick operations, when the WFS server is confi
 
 Few servers do not send the bbox. 
 For those, it is required to trigger an additional XHR to fetch the geometry once a combo item is selected. 
-Thus, we need an additional "fetchGeometry" property in the config for the geometry name. 
+Thus, we need an additional "geometry" property in the config for the geometry name. 
 The config might then look like this:
 
     {
@@ -90,7 +90,7 @@ The config might then look like this:
             "tab1": {
                 "field1": {
                     "file": "cities.json",
-                    "fetchGeometry": "the_geom",
+                    "geometry": "the_geom",
                     "wfs": "http://geobretagne.fr/geoserver/geob_loc/wfs",
                     "typename": "geob_loc:COMMUNE",
                     "valuefield": "INSE",
@@ -100,7 +100,7 @@ The config might then look like this:
                 "field2": {
                     "wfs": "http://geobretagne.fr/geoserver/ref/wfs",
                     "typename": "ref:cadastre_section",
-                    "fetchGeometry": "the_geom",
+                    "geometry": "the_geom",
                     "matchingproperties": {
                         "field1": "insee"
                     },
@@ -129,12 +129,12 @@ A field object MUST have the following properties:
  * **valuefield** is the field value, which is used as the value of the filters for the next fields,
  * **displayfield** is the field to display once an item has been selected in the combobox.
 
-If **fetchGeometry** is set (see below), the field object MUST have the additional two properties:
+If **geometry** is set (see below), the field object MUST have the additional two properties:
  * **wfs**, which points to an OGC WFS server URL,
  * **typename** is the layer name.
 
 A field object MAY have the following properties:
- * **fetchGeometry** is the geometry column name. If specified, the real geometry (rather than the bbox) is fetched and displayed.
+ * **geometry** is the geometry column name. If specified, the real geometry (rather than the bbox) is fetched and displayed.
  * **template** is a template string for combos, in which store property names in curly brackets are replaced by their values,
  * **matchingproperties** is an object which specifies how the current field will be filtered with the values from the previous fields. There can be as many matchingproperties as previous fields. Eg: "field1": "code_insee" will instruct to filter the current field with values matching "code_insee = field1.valuefield"
  * a **file** property which points to a GeoJSON file (for instance, one provided by your build profile). This is to speedup operations, and also to prevent heavy requests. In order to create such a file, we assume that you have a WFS layer serving your cities data. You'll typically want to send a POST content (with the Poster FireFox extension, or cURL) to /geoserver/wms such as:
