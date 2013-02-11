@@ -16,6 +16,7 @@
  * @include GEOR_util.js
  * @include GEOR_config.js
  * @include GEOR_waiter.js
+ * @include GEOR_localStorage.js
  */
 
 Ext.namespace("GEOR");
@@ -174,17 +175,15 @@ GEOR.wmcbrowser = (function() {
             btn = fbar.getComponent('load'),
             cbx = fbar.getComponent('cbx'),
             viewHasSelection = selections.length === 1,
+            lsAvailable = GEOR.ls.available,
             cbxChecked;
 
         btn.setDisabled(!viewHasSelection);
         if (viewHasSelection) {
             cbxChecked = view.getSelectedRecords()[0].get('wmc') === 
-                localStorage.getItem("default_context");
+                GEOR.ls.get("default_context");
             cbx.setValue(cbxChecked);
-            cbx.setDisabled(!localStorage || 
-                (localStorage && !viewHasSelection) || 
-                (localStorage && viewHasSelection && cbxChecked)
-            );
+            cbx.setDisabled(!lsAvailable);
         } else {
             silentDisableUncheck(cbx);
         }
@@ -221,20 +220,19 @@ GEOR.wmcbrowser = (function() {
      * checked - {Boolean}
      */
     var onCbxCheckChange = function(cbx, checked) {
-        // disable on check
-        cbx.setDisabled(checked);
+        var record = view.getSelectedRecords()[0];
         if (checked) {
             // set the currently selected context as default one
-            var record = view.getSelectedRecords()[0];
-            localStorage &&
-                localStorage.setItem("default_context", record.get("wmc"));
-            _refreshing = true;
-            // to apply the "default" CSS class to the correct node:
-            view.refresh();
-            // keep selection after refresh:
-            view.select(record);
-            _refreshing = false;
+            GEOR.ls.set("default_context", record.get("wmc"));
+        } else {
+            GEOR.ls.remove("default_context");
         }
+        _refreshing = true;
+        // to apply the "default" CSS class to the correct node:
+        view.refresh();
+        // keep selection after refresh:
+        view.select(record);
+        _refreshing = false;
     };
 
     /**
@@ -274,7 +272,7 @@ GEOR.wmcbrowser = (function() {
                     return out;
                 },
                 isDefault: function(v) {
-                    return (v.wmc === GEOR.config.DEFAULT_WMC()) ? 
+                    return (v.wmc === GEOR.ls.get("default_context")) ? 
                         "default" : "";
                 }
             }),
@@ -329,7 +327,7 @@ GEOR.wmcbrowser = (function() {
             fbar: [{
                 xtype: 'checkbox',
                 itemId: 'cbx',
-                disabled: true,
+                disabled: !GEOR.ls.available,
                 boxLabel: tr("default viewer context"),
                 listeners: {
                     "check": onCbxCheckChange
@@ -373,16 +371,6 @@ GEOR.wmcbrowser = (function() {
          * Observable object
          */
         events: observable,
-
-        /**
-         * APIMethod: init
-         * Initialize this module
-         */
-        init: function() {
-            if (localStorage && localStorage.getItem("default_context") === null) {
-                localStorage.setItem("default_context", GEOR.config.DEFAULT_WMC());
-            }
-        },
 
         /**
          * APIMethod: show
