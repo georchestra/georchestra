@@ -43,6 +43,12 @@ GEOR.fileupload = (function() {
      */
     var tr = null;
 
+    /**
+     * Property: newFile
+     * {Boolean}
+     */
+    var newFile = true;
+
     /*
      * Public
      */
@@ -97,11 +103,11 @@ GEOR.fileupload = (function() {
                         name: 'srs',
                         value: srs
                     }],
-                    buttons: [{
-                        text: tr("upload"),
-                        handler: function(btn) {
-                            form = btn.ownerCt.ownerCt.getForm();
-                            if (form.isValid()) {
+                    listeners: {
+                        "clientvalidation": function(fp, isValid) {
+                            var form = fp.getForm();
+                            if (isValid && newFile) {
+                                newFile = false;
                                 form.submit({
                                     url: "ws/togeojson/",
                                     // Beware: form submission requires a *success* parameter in json response
@@ -114,16 +120,19 @@ GEOR.fileupload = (function() {
                                             features = (new OpenLayers.Format.GeoJSON()).read(fc.geojson);
                                             alert(features.length + " features in file");
                                         }
+                                        form.reset();
+                                        newFile = true;
                                     },
-                                    failure: function(form, action){
+                                    failure: function(form, action) {
                                         alert("Error : " + action.result.msg);
+                                        form.reset();
+                                        newFile = true;
                                     },
                                     scope: this
                                 });
                             }
-                            
                         }
-                    }]
+                    }
                 }, {
                     html: 'feature grid in here',
                     flex: 1
