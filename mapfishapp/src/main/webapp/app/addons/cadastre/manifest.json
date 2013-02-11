@@ -14,30 +14,35 @@
         "tab1": {
             "field1": {
                 "file": "cities.json",
-                "valuefield": "code_insee",
-                "displayfield": "nom_com",
-                "template": "<b>{nom_com}</b> ({code_dep})"
+                "fetchGeometry": "the_geom",
+                "wfs": "http://geobretagne.fr/geoserver/geob_loc/wfs",
+                "typename": "geob_loc:COMMUNE",
+                "valuefield": "INSE",
+                "displayfield": "COMMUNE",
+                "template": "<b>{COMMUNE}</b> ({INSE})"
             },
             "field2": {
-                "wfs": "http://ids.pigma.org/geoserver/ign/wfs",
-                "typename": "ign:ign_bdparcellaire_sections",
+                "wfs": "http://geobretagne.fr/geoserver/ref/wfs",
+                "typename": "ref:cadastre_section",
+                "fetchGeometry": "the_geom",
                 "matchingproperties": {
-                    "field1": "code_insee"
+                    "field1": "insee"
                 },
-                "valuefield": "section",
-                "displayfield": "section",
-                "template": "<b>{section}</b>"
+                "valuefield": "texnumsect",
+                "displayfield": "texnumsect",
+                "template": "<b>{texnumsect}</b>"
             },
             "field3": {
-                "wfs": "http://ids.pigma.org/geoserver/ign/wfs",
-                "typename": "ign:ign_bdparcellaire_localisants",
+                "wfs": "http://geobretagne.fr/geoserver/ref/wfs",
+                "typename": "ref:cadastre_parcelle",
+                "fetchGeometry": "the_geom",
                 "matchingproperties": {
-                    "field1": "code_insee",
+                    "field1": "insee",
                     "field2": "section"
                 },
-                "valuefield": "numero",
-                "displayfield": "numero",
-                "template": "<b>{numero}</b> {section}"
+                "valuefield": "texnumparc",
+                "displayfield": "texnumparc",
+                "template": "<b>{texnumparc}</b> {section}"
             }
         },
         "tab2": {
@@ -60,7 +65,7 @@
         "en": {
             "addon_cadastre_popup_title": "Parcel lookup",
             "sync map extent": "sync map extent",
-            "tab1title": "by number",
+            "tab1title": "by reference",
             "tab2title": "by owner",
             "tab1field1label": "City",
             "tab2field1label": "City",
@@ -71,7 +76,7 @@
         "es": {
             "addon_cadastre_popup_title": "Parcel lookup",
             "sync map extent": "sync map extent",
-            "tab1title": "by number",
+            "tab1title": "by reference",
             "tab2title": "by owner",
             "tab1field1label": "Ciudad",
             "tab2field1label": "Ciudad",
@@ -82,7 +87,7 @@
         "fr": {
             "addon_cadastre_popup_title": "Recherche de parcelle",
             "sync map extent": "synchroniser l'étendue de la carte",
-            "tab1title": "par numéro",
+            "tab1title": "par référence",
             "tab2title": "par propriétaire",
             "tab1field1label": "Commune",
             "tab2field1label": "Commune",

@@ -23,6 +23,7 @@ GEOR.Addons.Cadastre.prototype = {
     layer: null,
     win: null,
     jsonFormat: null,
+    geojsonFormat: null,
     fields: null,
     cbx: null,
     fieldNames: [],
@@ -41,6 +42,7 @@ GEOR.Addons.Cadastre.prototype = {
         // to garantee that fields will always be in the same order:
         this.fieldNames.sort();
         this.jsonFormat = new OpenLayers.Format.JSON();
+        this.geojsonFormat = new OpenLayers.Format.GeoJSON();
         this.layer = new OpenLayers.Layer.Vector("addon_cadastre_vectors", {
             displayInLayerSwitcher: false,
             styleMap: new OpenLayers.StyleMap({
@@ -58,6 +60,8 @@ GEOR.Addons.Cadastre.prototype = {
         Ext.each(this.fieldNames, function(field) {
             var c = o[field];
             fields = [{
+                name: 'id'
+            }, {
                 name: c.valuefield,
                 mapping: 'properties.' + c.valuefield
             }, {
@@ -181,6 +185,17 @@ GEOR.Addons.Cadastre.prototype = {
     },
 
 
+    issuePOST: function(options) {
+        GEOR.waiter.show();
+        OpenLayers.Request.POST(Ext.apply({
+            headers: {
+                // for dev purposes:
+                //"Authorization": "Basic XXX_token_XXX"
+            }
+        }, options));
+    },
+
+
     loadStore: function(fieldName) {
         var n = this.options.tab1[fieldName],
             fieldNameIdx = this.fieldNames.indexOf(fieldName),
@@ -221,15 +236,11 @@ GEOR.Addons.Cadastre.prototype = {
         } else {
             var properties = '';
             this.stores[fieldName].fields.each(function(field){
-                if (field.name === 'bbox') return;
+                if (field.name === 'bbox' || field.name === 'id') return;
                 properties += '<ogc:PropertyName>' + field.name + '</ogc:PropertyName>';
             });
-            OpenLayers.Request.POST({
+            this.issuePOST({
                 url: n.wfs,
-                headers: {
-                    // for dev purposes:
-                    //"Authorization": "Basic XXX_token_XXX"
-                },
                 data: [
                     '<wfs:GetFeature xmlns:wfs="http://www.opengis.net/wfs" xmlns:ogc="http://www.opengis.net/ogc" version="1.1.0" service="WFS" outputFormat="json">',
                         '<wfs:Query typeName="', n.typename, '" srsName="', this.map.getProjection(), '">',
@@ -256,26 +267,65 @@ GEOR.Addons.Cadastre.prototype = {
     },
 
 
-    zoomToRecord: function(record, forceZoom) {
-        forceZoom = forceZoom || false;
-        var geom, box;
-        if (record.get('feature')) {
-            box = record.get('feature').bounds;
-        } else {
+    getGeometry: function(record, fieldConfig, cb, scope) {
+        scope = scope || this;
+        var geom, box, f = record.get('feature');
+        if (f && f.geometry) {
+            geom = f.geometry;
+        } else if (f && f.bounds) {
+            box = f.bounds;
+        } else if (record.get('bbox')) {
             box = OpenLayers.Bounds.fromArray(record.get('bbox'));
-        }
-        if (box.left == box.right && box.bottom == box.top) {
-            geom = new OpenLayers.Geometry.Point(box.left, box.bottom);
+        } else if (fieldConfig.fetchGeometry) {
+            // additional XHR to fetch only the geometry
+            this.issuePOST({
+                url: fieldConfig.wfs,
+                data: [
+                    '<wfs:GetFeature xmlns:wfs="http://www.opengis.net/wfs" xmlns:ogc="http://www.opengis.net/ogc" version="1.1.0" service="WFS" outputFormat="json">',
+                        '<wfs:Query typeName="', fieldConfig.typename, '" srsName="', this.map.getProjection(), '">',
+                            '<ogc:PropertyName>' + fieldConfig.fetchGeometry + '</ogc:PropertyName>',
+                            '<ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">',
+                                '<ogc:FeatureId fid="', record.get('id'), '"/>',
+                            '</ogc:Filter>',
+                        '</wfs:Query>',
+                    '</wfs:GetFeature>'
+                ].join(''),
+                success: function(resp) {
+                    if (resp && resp.responseText) {
+                        var features = this.geojsonFormat.read(resp.responseText),
+                            f = features[0];
+                        if (f) {
+                            cb.call(scope, f.geometry, f.bounds);
+                        }
+                    }
+                },
+                scope: this
+            });
         } else {
-            geom = box.toGeometry();
+            // no zoom
+            return;
         }
-        // zoom:
+
+        if (!geom && box) {
+            if (box.left == box.right && box.bottom == box.top) {
+                geom = new OpenLayers.Geometry.Point(box.left, box.bottom);
+            } else {
+                geom = box.toGeometry();
+            }
+            cb.call(scope, geom, box);
+        }
+    },
+
+
+    zoomToGeometry: function(geometry, box, forceZoom) {
+        forceZoom = forceZoom || false;
+        box = box || geometry.getBounds();
         if (this.cbx.getValue() === true || forceZoom) {
             this.map.zoomToExtent(box);
         }
         this.layer.destroyFeatures();
         this.layer.addFeatures([
-            new OpenLayers.Feature.Vector(geom)
+            new OpenLayers.Feature.Vector(geometry)
         ]);
     },
 
@@ -287,7 +337,10 @@ GEOR.Addons.Cadastre.prototype = {
             nextField = this.fields[nextFieldIdx],
             field;
 
-        this.zoomToRecord(record, !nextFieldName);
+        this.getGeometry(record, this.options.tab1[currentField], function(geom, box) {
+            this.zoomToGeometry(geom, box, !nextFieldName);
+        });
+
         if (!nextFieldName) {
             return;
         }
@@ -340,15 +393,13 @@ GEOR.Addons.Cadastre.prototype = {
         this.fields = fields;
         return new Ext.FormPanel(Ext.apply({
             title: OpenLayers.i18n("tab1title"),
-            items: fields
-            /*
-            ,listeners: {
+            items: fields,
+            listeners: {
                 "afterrender": function(form) {
                     this.fields[0].focus('', 50);
                 },
                 scope: this
             }
-            */
         }, GEOR.Addons.Cadastre.BaseFormConfig));
     },
 
@@ -378,7 +429,9 @@ GEOR.Addons.Cadastre.prototype = {
                     f.enable(); 
                     f.reset();
                     f.focus('', 50);
-                    this.zoomToRecord(r);
+                    this.getGeometry(r, c, function(geom, box) {
+                        this.zoomToGeometry(geom, box);
+                    });
                 },
                 scope: this
             }
@@ -460,7 +513,9 @@ GEOR.Addons.Cadastre.prototype = {
             mode: 'remote',
             listeners: {
                 "select": function(cb, r) {
-                    this.zoomToRecord(r, true);
+                    this.getGeometry(r, c, function(geom, box) {
+                        this.zoomToGeometry(geom, box, true);
+                    });
                 },
                 scope: this
             }
