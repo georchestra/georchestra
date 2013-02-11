@@ -49,6 +49,69 @@ GEOR.fileupload = (function() {
      */
     var newFile = true;
 
+    /**
+     * Property: store
+     * {Boolean}
+     */
+    var store;
+
+    /**
+     * Property: centerPanel
+     * {Ext.Panel}
+     */
+    var centerPanel;
+
+    var formSuccess = function(form, action) {
+        var features,
+            fc = (new OpenLayers.Format.JSON()).read(action.response.responseText);
+        if (!fc) {
+            alert("Incorrect server response");
+            return;
+        }
+        features = (new OpenLayers.Format.GeoJSON()).read(fc.geojson);
+        model = new GEOR.FeatureDataModel({
+            features: features
+        });
+        if (!features || features.length == 0) {
+            alert("No features found");
+            return;
+        }
+        store = new GeoExt.data.FeatureStore({
+            features: features,
+            fields: model.toStoreFields()
+        });
+
+        // create grid
+        var columnModel = model.toColumnModel({
+            sortable: true
+        });
+
+        var gridPanel = new Ext.grid.GridPanel({
+            viewConfig: {
+                // we add an horizontal scroll bar in case
+                // there are too many attributes to display:
+                forceFit: (columnModel.length < 10)
+            },
+            store: store,
+            columns: columnModel,
+            /*
+            sm: new GeoExt.grid.FeatureSelectionModel({
+                singleSelect: false,
+                selectControl: sfControl
+            }),
+            */
+            frame: false,
+            border: false
+        });
+        // insert grid in centerPanel
+
+        centerPanel.removeAll();
+        centerPanel.add(gridPanel);
+        centerPanel.doLayout();
+        form.reset();
+        newFile = true;
+    };
+
     /*
      * Public
      */
@@ -73,6 +136,17 @@ GEOR.fileupload = (function() {
             tr = OpenLayers.i18n;
             var srs = options.srs;
             delete options.srs;
+
+            if (!store) {
+                store = new GeoExt.data.FeatureStore();
+                centerPanel = new Ext.Panel({
+                    flex: 1,
+                    layout: 'fit',
+                    items: [{
+                        html: 'feature grid in here'
+                    }]
+                });
+            }
 
             return new Ext.Panel(Ext.apply({
                 title: tr("Local file"),
@@ -113,16 +187,7 @@ GEOR.fileupload = (function() {
                                     // Beware: form submission requires a *success* parameter in json response
                                     // As said in http://extjs.com/learn/Manual:RESTful_Web_Services
                                     // "Ext.form.BasicForm hopefully becomes HTTP Status Code aware!"
-                                    success: function(form, action) {
-                                        var features,
-                                            fc = (new OpenLayers.Format.JSON()).read(action.response.responseText);
-                                        if (fc) {
-                                            features = (new OpenLayers.Format.GeoJSON()).read(fc.geojson);
-                                            alert(features.length + " features in file");
-                                        }
-                                        form.reset();
-                                        newFile = true;
-                                    },
+                                    success: formSuccess,
                                     failure: function(form, action) {
                                         alert("Error : " + action.result.msg);
                                         form.reset();
@@ -133,10 +198,7 @@ GEOR.fileupload = (function() {
                             }
                         }
                     }
-                }, {
-                    html: 'feature grid in here',
-                    flex: 1
-                }]
+                }, centerPanel]
             }, options));
         },
 
