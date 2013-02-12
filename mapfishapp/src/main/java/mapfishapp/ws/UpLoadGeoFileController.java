@@ -284,6 +284,8 @@ public final class UpLoadGeoFileController {
 			if(LOG.isDebugEnabled()){
 				LOG.debug("RESPONSE:" + statusMsg);
 			} 
+			System.out.println("RESPONSE:" + statusMsg); // FIXME
+
 		} finally {
 
 			if(out != null) out.close();
