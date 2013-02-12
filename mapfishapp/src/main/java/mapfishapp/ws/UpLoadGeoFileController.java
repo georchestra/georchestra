@@ -148,7 +148,7 @@ public final class UpLoadGeoFileController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public void togeojson(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public void toGeoJson(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
     	LOG.info("Request: " + request.getRequestURL() ); 
 
@@ -285,7 +285,6 @@ public final class UpLoadGeoFileController {
 			if(LOG.isDebugEnabled()){
 				LOG.debug("RESPONSE:" + statusMsg);
 			} 
-			System.out.println("RESPONSE:" + statusMsg); // FIXME
 
 		} finally {
 

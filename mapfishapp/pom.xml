@@ -112,7 +112,7 @@
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-ogr</artifactId>
-            <version>${gt.version}</version>
+            <version>2.7.4</version>
         </dependency>
         <dependency>
             <groupId>org.geotools</groupId>
@@ -125,11 +125,6 @@
 	      <artifactId>gt-epsg-hsql</artifactId>
 	      <version>${gt.version}</version>
 	    </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>epsg-extension</artifactId>
-            <version>${project.version}</version>
-        </dependency>	     
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
