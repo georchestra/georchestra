@@ -309,7 +309,7 @@ public class UpLoadFileManegement {
 	        	FeatureJSON fjson = new FeatureJSON();
 	        	fjson.setFeatureType(featureCollection.getSchema());
 	        	fjson.setEncodeFeatureCollectionBounds(true);
-	        	//fjson.setEncodeFeatureCollectionCRS(true); FIXME
+	        	fjson.setEncodeFeatureCollectionCRS(true);
 	        	
 	        	StringWriter writer = new StringWriter();
 	        	fjson.writeFeatureCollection(featureCollection, writer);

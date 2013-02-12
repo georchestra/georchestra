@@ -12,7 +12,6 @@ import org.geotools.data.ogr.OGRDataStore;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.geojson.feature.FeatureJSON;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -25,7 +24,7 @@ public class UpLoadFileManegementTest {
 	 * Test method for {@link mapfishapp.ws.upload.UpLoadFileManegement#featureCollectionToJSON(java.lang.String)}.
 	 * @throws IOException 
 	 */
-	@Ignore // java.util.MissingResourceException: Can't find resource for bundle org.geotools.resources.i18n.Vocabulary, key 252
+	@Test 
 	public void testFeatureCollectionToJSON() throws IOException {
 		
 		String directory = getWorkingDirectory();
