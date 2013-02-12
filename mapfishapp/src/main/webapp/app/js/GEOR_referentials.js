@@ -306,7 +306,7 @@ GEOR.referentials = (function() {
                     protocol: record.get('layer').protocol
                 }),
                 listeners: {
-                    beforeload: function(store, options) {
+                    "beforeload": function(store, options) {
                         // add a filter to the options passed to proxy.load, 
                         // proxy.load passes these options to protocol.read
                         var params = store.baseParams;
@@ -352,10 +352,10 @@ GEOR.referentials = (function() {
             emptyText: disabled ? tr("Choose a referential") : '',
             store: store,
             listeners: {
-                select : function(combo, record, index) {
+                "select": function(combo, record, index) {
                     onComboSelect(record);
                 },
-                specialkey: function(combo, event) {
+                "specialkey": function(combo, event) {
                     if (event.getKey() == event.ENTER) {
                         onComboSelect(record);
                     }

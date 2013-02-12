@@ -11,7 +11,7 @@
  * You should have received a copy of the GNU General Public License
  * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+ 
 Ext.namespace("GEOR");
 
 GEOR.config = (function() {
@@ -224,18 +224,13 @@ GEOR.config = (function() {
          * runtime method to get the current default WMC
          */
         DEFAULT_WMC: function() {
-            if (localStorage && 
-                localStorage.getItem("default_context") !== null) {
-                return localStorage.getItem("default_context");
-            }
             if (GEOR.config.CONTEXTS && 
                 GEOR.config.CONTEXTS[0] && 
                 GEOR.config.CONTEXTS[0][2]) {
                 return GEOR.config.CONTEXTS[0][2];
-            } else {
-                alert("Administrator: "+
-                    "GEOR.config.CONTEXTS is not configured as expected !");
             }
+            alert("Administrator: "+
+                "GEOR.config.CONTEXTS is not configured as expected !");
             // should not happen:
             return "default.wmc";
         },
@@ -339,6 +334,8 @@ GEOR.config = (function() {
          *  name - {String} required addon name, which, once lowercased, gives the addon folder name
          *  title - {Object} a required hash storing addon titles by lang key
          *  description - {Object} a required hash storing addon descriptions by lang key
+         *  roles - {Array} optional array of roles allowed to use this addon - defaults to [], which means everyone is allowed to.
+         *          eg: ["ROLE_SV_ADMIN"] will allow the current addon for admin users only
          *  group - {String} an optional group for mutual exclusion between activated tools - default group is "tools"
          *  options - {Object} an optional config object which overrides the package default_options (in manifest.json)
          *  thumbnail - {String} an optional thumbnail path, relative to app/addons/{addon_name.toLowerCase()}/ (defaults to img/icon.png)
@@ -423,7 +420,8 @@ GEOR.config = (function() {
         CATALOGS: getCustomParameter("CATALOGS", [
             ['http://geobretagne.fr/geonetwork/srv/fr/csw', 'le catalogue GeoBretagne'],
             ['http://ids.pigma.org/geonetwork/srv/fr/csw', 'le catalogue PIGMA'],
-            ['http://sandre.eaufrance.fr/geonetwork_CSW/srv/fr/csw', 'le catalogue du Sandre']
+            ['http://sandre.eaufrance.fr/geonetwork_CSW/srv/fr/csw', 'le catalogue du Sandre'],
+            ['http://geocatalog.webservice-energy.org/geonetwork/srv/fre/csw', 'le catalogue de webservice-energy']
         ]),
 
         /**
@@ -456,10 +454,10 @@ GEOR.config = (function() {
          * Constant: DEFAULT_THESAURUS_KEY
          * Key (as the one in the response from /geonetwork/srv/fr/xml.thesaurus.getList)
          * of the thesaurus to use as the default (selected) one.
-         * Defaults to 'local._none_.geobretagne' FIXME: should be something else
+         * Defaults to 'external.theme.inspire-theme'
          */
         DEFAULT_THESAURUS_KEY: getCustomParameter("DEFAULT_THESAURUS_KEY",
-            'local._none_.geobretagne'),
+            'external.theme.inspire-theme'),
 
         /**
          * Constant: MAX_FEATURES
@@ -477,14 +475,6 @@ GEOR.config = (function() {
          */
         MAX_LENGTH: getCustomParameter("MAX_LENGTH",
             400/7*1024*getBrowserVectorAbility()*getComputingPower()),
-
-
-        /**
-         * Constant: DEFAULT_ATTRIBUTION
-         * Default attribution for layers which don't have one.
-         * Defaults to ''
-         */
-        DEFAULT_ATTRIBUTION: getCustomParameter("DEFAULT_ATTRIBUTION", ''),
 
         /**
          * Constant: OSM_AS_OVMAP

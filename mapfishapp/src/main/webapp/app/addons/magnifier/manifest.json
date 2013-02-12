@@ -1,10 +1,10 @@
 {
     "js": [
         "js/OpenLayers.Control.Magnifier.js",
-        "js/magnifier.js"
+        "js/main.js"
     ],
     "css": [
-        "css/magnifier.css"
+        "css/main.css"
     ],
     "default_options": {
         "mode": "static",

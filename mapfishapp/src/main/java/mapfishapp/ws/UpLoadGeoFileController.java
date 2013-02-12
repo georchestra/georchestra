@@ -54,7 +54,7 @@ public final class UpLoadGeoFileController {
 		ok{
 			@Override
 			public String getMessage( final String jsonFeatures){
-				return "{\"success\":true, \"geojson\":" + jsonFeatures+"}}"; 
+				return "{\"success\": \"true\", \"geojson\":" + jsonFeatures+"}"; 
 			}
 			
 		},
@@ -65,24 +65,24 @@ public final class UpLoadGeoFileController {
 		sizeError{
 			@Override
 			public String getMessage(String detail) {
-				return "{ \"success\": false, \"msg\": \"file exceeds the limit\" "	+ detail + "}";
+				return "{\"success\": \"false\", \"msg\": \"file exceeds the limit\" "	+ detail + "}";
 			}
 		},
 		multiplefiles{
 			@Override
-			public String getMessage( final String detail){return "{ \"success\": false, \"msg\": \"multiple files\" }"; }
+			public String getMessage( final String detail){return "{\"success\": \"false\", \"msg\": \"multiple files\"}"; }
 		}, 
 		incompleteMIF{
 			@Override
-			public String getMessage( final String detail){return "{ \"success\": false, \"msg\": \"incomplete MIF/MID\" }"; }
+			public String getMessage( final String detail){return "{\"success\": \"false\", \"msg\": \"incomplete MIF/MID\"}"; }
 		}, 
 		incompleteSHP{
 			@Override
-			public String getMessage( final String detail){return "{ \"success\": false, \"msg\": \"incomplete shapefile\" }"; }
+			public String getMessage( final String detail){return "{\"success\": \"false\", \"msg\": \"incomplete shapefile\"}"; }
 		}, 
 		incompleteTAB{
 			@Override
-			public String getMessage( final String detail){return "{ \"success\": false, \"msg\": \"incomplete TAB file\" }"; }
+			public String getMessage( final String detail){return "{\"success\": \"false\", \"msg\": \"incomplete TAB file\"}"; }
 		},
 		ready{
 			@Override
@@ -272,7 +272,7 @@ public final class UpLoadGeoFileController {
 		try {
 			out = response.getWriter();
 			response.setCharacterEncoding(responseCharset);
-			response.setContentType("application/json");
+			response.setContentType("text/html");
 
 			String statusMsg;
 			if("".equals(errorDetail)){

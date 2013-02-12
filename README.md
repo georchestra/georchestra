@@ -38,7 +38,7 @@ Copy the "template" config directory and edit "yourown" to match your needs:
     PROFILE=yourown
     cp -r config/configurations/template config/configurations/${PROFILE}
        (edit files in config/configuration/yourown)
-    ./mvn -Dmaven.test.skip=true -Dserver=${PROFILE} -P${PROFILE} install
+    ./mvn -Dmaven.test.skip=true -Dserver=${PROFILE} install
 
 How to deploy ?
 ===============

@@ -11,7 +11,9 @@ New features:
  * mapfishapp: print layouts ACL, see https://github.com/georchestra/georchestra/pull/30
  * mapfishapp: spatial query based on a circle, see http://applis-bretagne.fr/redmine/issues/1957
  * geoserver: useful extensions added in template profile, see http://applis-bretagne.fr/redmine/issues/4217
- * mapfishapp: support for addons, see https://github.com/georchestra/georchestra/pull/36
+ * extractorapp: extraction bbox is now part of the data bundle, see https://github.com/georchestra/georchestra/pull/35
+ * mapfishapp: support for addons & magnifier addon, see https://github.com/georchestra/georchestra/pull/36
+ * mapfishapp: cadastre addon, see https://github.com/georchestra/georchestra/pull/48
 
 Enhancements:
  * mapfishapp: results panel displays URLs as html links, see https://github.com/georchestra/georchestra/pull/21
@@ -21,11 +23,12 @@ Enhancements:
  * mapfishapp: added ability to print protected geoserver layers, see https://github.com/georchestra/template/commit/bb424bd74f7504af93b5e5c708f807ce0b6fdca4
  * mapfishapp: more robust detection of WMS layers in CSW getRecords responses, see https://github.com/georchestra/georchestra/pull/4
  * mapfishapp: window buttons consistency and default actions, see https://github.com/georchestra/georchestra/pull/33
+ * mapfishapp: by default, the map is now restored with its latest known state (context), see https://github.com/georchestra/georchestra/pull/50
  * mapfishapp: missing translations
 
 Bug fixes:
  * mapfishapp: fixed erroneous WMSC2WMS mapping, which prevented printing of the GeoBretagne OSM baselayer, see https://github.com/georchestra/georchestra/commit/159bd4f24ecb21b9c76f76d27c1736ec1040f0ab
-
+ * mapfishapp: use toponymName instead of name in GeoNames results, see https://github.com/georchestra/georchestra/issues/45
 
 UPGRADING:
  * mapfishapp config changes (see GEOR_config.js or GEOR_custom.js for more information):

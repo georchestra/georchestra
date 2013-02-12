@@ -35,9 +35,6 @@ import org.opengis.filter.spatial.Intersects;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.ProgressListener;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
@@ -134,7 +131,7 @@ public class WfsExtractor {
     }
 
     public void checkPermission(ExtractorLayerRequest request, String secureHost, String username, String roles) throws IOException {
-        URL capabilitiesURL = request.capabilitiesURL("WMS", null);
+        URL capabilitiesURL = request.capabilitiesURL("WFS", "1.0.0");
 
     	DefaultHttpClient httpclient = new DefaultHttpClient();
     	HttpGet get = new HttpGet(capabilitiesURL.toExternalForm());
@@ -149,14 +146,13 @@ public class WfsExtractor {
         }
 
         String capabilities = FileUtils.asString(httpclient.execute(get).getEntity().getContent());
-        Pattern regex = Pattern.compile("(?m)<Layer[^>]*>(\\\\n|\\s)*<Name>\\s*"+Pattern.quote(request._layerName)+"\\s*</Name>");
+        Pattern regex = Pattern.compile("(?m)<FeatureType[^>]*>(\\\\n|\\s)*<Name>\\s*"+Pattern.quote(request._layerName)+"\\s*</Name>");
         boolean permitted = regex.matcher(capabilities).find();
         
         if(!permitted) {
             throw new SecurityException("User does not have sufficient privileges to access the Layer: "+request._layerName+". \n\nCapabilties:  "+capabilities);
         }
     }
-
 
     /**
      * Extract the data as defined in the request object. Currently only supports export to shapefile
@@ -181,8 +177,8 @@ public class WfsExtractor {
                 || "127.0.0.1".equalsIgnoreCase(request._url.getHost())
                 || "localhost".equalsIgnoreCase(request._url.getHost())) {
         	LOG.debug("WfsExtractor.extract - Secured Server: Adding extractionUserName to connection params");
-            params.put (WFSDataStoreFactory.USERNAME.key, _adminUsername);
-            params.put (WFSDataStoreFactory.PASSWORD.key, _adminPassword);
+            params.put(WFSDataStoreFactory.USERNAME.key, _adminUsername);  
+            params.put(WFSDataStoreFactory.PASSWORD.key, _adminPassword); 
         } else {
         	LOG.debug("WfsExtractor.extract - Non Secured Server");        	
         }
@@ -204,19 +200,32 @@ public class WfsExtractor {
         
         basedir.mkdirs();
 
-        FeatureWriterStrategy writer;
+        FeatureWriterStrategy featuresWriter;
+        BBoxWriter bboxWriter;
         LOG.debug("Number of features returned : " + features.size());
-        if (request._format.equalsIgnoreCase("shp")) {
-            writer = new ShpFeatureWriter(progressListener, sourceSchema, basedir, features);
-        } else if (request._format.equalsIgnoreCase("mif")) {
+        if ("shp".equalsIgnoreCase(request._format)) {
+            featuresWriter = new ShpFeatureWriter(progressListener, sourceSchema, basedir, features);
+        	bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.shp, request._projection, progressListener );
+        } else if ("mif".equalsIgnoreCase(request._format)) {
         	// writer = new MifFeatureWriter(progressListener, sourceSchema, basedir, features);
-        	writer = new OGRFeatureWriter(progressListener, sourceSchema,  basedir, OGRFeatureWriter.FileFormat.mif, features);
-        } else if (request._format.equalsIgnoreCase("tab")) {
-        	writer = new OGRFeatureWriter(progressListener, sourceSchema,  basedir, OGRFeatureWriter.FileFormat.tab, features);
+        	featuresWriter = new OGRFeatureWriter(progressListener, sourceSchema,  basedir, OGRFeatureWriter.FileFormat.mif, features);
+        	bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.mif, request._projection, progressListener );
+        } else if ("tab".equalsIgnoreCase(request._format)) {
+        	featuresWriter = new OGRFeatureWriter(progressListener, sourceSchema,  basedir, OGRFeatureWriter.FileFormat.tab, features);
+        	bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.tab, request._projection, progressListener );
         } else {
             throw new IllegalArgumentException(request._format + " is not a recognized vector format");
         }
-        return writer.generateFiles();
+        //generates the feature files and bbox file 
+        File[] featureFiles = featuresWriter.generateFiles();
+        File[] bboxFiles = bboxWriter.generateFiles();
+
+        File[] fileList = new File[featureFiles.length +bboxFiles.length ];
+        
+        System.arraycopy(featureFiles, 0, fileList, 0, featureFiles.length);
+        System.arraycopy(bboxFiles, 0, fileList, featureFiles.length, bboxFiles.length);
+
+        return fileList;
     }
 
 	/* This method is default for testing purposes */
