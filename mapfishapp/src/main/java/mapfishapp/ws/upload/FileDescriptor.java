@@ -20,7 +20,7 @@ public class FileDescriptor {
 	public String originalFileName;
 	
 	/** upload file's extension */
-	public String ext;
+	public String originalFileExt;
 	
 	/** upload file */
 	public File savedFile; 
@@ -39,28 +39,20 @@ public class FileDescriptor {
 		assert fileName != null;
 		
 		originalFileName = fileName;
-		ext = FilenameUtils.getExtension(fileName);
-	}
-
-	public String getOriginalFileName() {
-		return originalFileName;
-	}
-
-	public String getExt() {
-		return ext;
+		originalFileExt = FilenameUtils.getExtension(fileName);
 	}
 
 	public boolean isValidFormat() {
-		assert ext != null;
+		assert originalFileExt != null;
 		return 
-		    "zip".equalsIgnoreCase(ext) ||
-			"kml".equalsIgnoreCase(ext) ||
-			"gpx".equalsIgnoreCase(ext) ||
-			"gml".equalsIgnoreCase(ext);			
+		    "zip".equalsIgnoreCase(originalFileExt) ||
+			"kml".equalsIgnoreCase(originalFileExt) ||
+			"gpx".equalsIgnoreCase(originalFileExt) ||
+			"gml".equalsIgnoreCase(originalFileExt);			
 	}
 	
 	public boolean isZipFile() {
-		return "zip".equalsIgnoreCase(ext);
+		return "zip".equalsIgnoreCase(originalFileExt);
 	}
 	
 

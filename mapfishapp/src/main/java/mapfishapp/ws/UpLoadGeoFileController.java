@@ -147,7 +147,7 @@ public final class UpLoadGeoFileController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public void upload(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public void togeojson(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
     	LOG.info("Request: " + request.getRequestURL() ); 
 
@@ -185,7 +185,7 @@ public final class UpLoadGeoFileController {
 				return;
 			}
 			// validate the size
-			long limit = getSizeLimit(currentFile.ext);
+			long limit = getSizeLimit(currentFile.originalFileExt);
 			if(  upLoadFile.getSize()  > limit ){
 				
 				long size = limit / 1048576; // converts to Mb
@@ -284,7 +284,6 @@ public final class UpLoadGeoFileController {
 			if(LOG.isDebugEnabled()){
 				LOG.debug("RESPONSE:" + statusMsg);
 			} 
-			System.out.println("RESPONSE:" + statusMsg); // FIXME
 		} finally {
 
 			if(out != null) out.close();
