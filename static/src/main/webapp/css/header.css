@@ -57,7 +57,7 @@ html, body {
     border-bottom    : none;
 }
 #go_head ul li.active a {
-    background-color : rgb(85,0,106);
+    background-color : rgb(128,0,128);
     padding          : 0 0.6em;
     border-radius    : 0.3em;
     color            : #fff;
