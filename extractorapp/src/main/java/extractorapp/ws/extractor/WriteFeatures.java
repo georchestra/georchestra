@@ -14,8 +14,7 @@ import org.geotools.data.DefaultTransaction;
 import org.geotools.data.FeatureStore;
 import org.geotools.data.Transaction;
 import org.geotools.feature.AttributeTypeBuilder;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureCollections;
+import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.opengis.feature.Feature;
@@ -131,8 +130,10 @@ public class WriteFeatures implements FeatureVisitor {
 
             SimpleFeature copy = copyFeature (simpleFeature, dsFile.getSchema ());
 
-            FeatureCollection<SimpleFeatureType, SimpleFeature> collection = FeatureCollections.newCollection ();
-            collection.add (copy);
+            DefaultFeatureCollection collection = new DefaultFeatureCollection(null, null);
+
+            collection.add(copy);
+            
             dsFile.addFeatures (collection);
         } catch (IOException e) {
             throw new RuntimeException (e);
