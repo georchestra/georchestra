@@ -13,7 +13,7 @@
 	</bean>
 	<bean class="mapfishapp.ws.UpLoadGeoFileController">
 		<property name="responseCharset" value="UTF-8"/>
-		<property name="tempDirectory" value="/tmp"/>
+		<property name="tempDirectory" value="/home/mauro/Download/mapfish/tmp"/>
 
 		<property name="zipSizeLimit" value="8589934592"/>
 		<property name="kmlSizeLimit" value="8589934592"/>
