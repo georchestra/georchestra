@@ -42,7 +42,7 @@ public class UpLoadFileManegementTest {
 	
 	private String getWorkingDirectory() throws IOException{
 		String current = new File( "." ).getCanonicalPath();
-		String directory = current + "/src/main/resources/mapfishapp/ws/upload/";
+		String directory = current + "/src/test/resources/upload/";
 
 		return directory;
 	}

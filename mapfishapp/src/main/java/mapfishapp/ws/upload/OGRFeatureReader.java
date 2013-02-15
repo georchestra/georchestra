@@ -145,8 +145,7 @@ final class OGRFeatureReader {
 		try{
 			String ogrName = this.basedir.getAbsolutePath();
 			String ogrDriver = this.fileFormat.getDriver();
-			OGRDataStore store = new OGRDataStore(ogrName, ogrDriver, null);
-			
+			OGRDataStore store = new OGRDataStore(ogrName, ogrDriver, null, null);
 	        SimpleFeatureSource source = store.getFeatureSource(store.getTypeNames()[0]);
 
 	        return source.getFeatures();
