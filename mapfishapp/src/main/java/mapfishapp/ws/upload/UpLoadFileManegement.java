@@ -320,8 +320,7 @@ public class UpLoadFileManegement {
 				final String message = "Failed reading " + fileName + ".  " + e.getMessage();
 				LOG.error(message);
 				throw new IOException(message, e);
-			}
-	        finally{
+			}finally{
 	        	if(featuresIterator != null) featuresIterator.close();
 	        }
 	        return jsonResult;

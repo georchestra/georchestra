@@ -9,6 +9,8 @@ import java.io.IOException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.geotools.data.ogr.OGRDataStore;
+import org.geotools.data.ogr.jni.JniOGR;
+import org.geotools.data.ogr.jni.JniOGRDataStoreFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureSource;
 
@@ -117,7 +119,6 @@ final class OGRFeatureReader {
 			if("kml".equalsIgnoreCase(ext))	return kml;
 			
 			return null;
-			
 		}
 	}
 
@@ -145,7 +146,9 @@ final class OGRFeatureReader {
 		try{
 			String ogrName = this.basedir.getAbsolutePath();
 			String ogrDriver = this.fileFormat.getDriver();
-			OGRDataStore store = new OGRDataStore(ogrName, ogrDriver, null, null);
+			
+			JniOGRDataStoreFactory jniFactory = JniOGRDataStoreFactory.class.newInstance();
+			OGRDataStore store = new OGRDataStore(ogrName, ogrDriver, null,  new JniOGR() );
 	        SimpleFeatureSource source = store.getFeatureSource(store.getTypeNames()[0]);
 
 	        return source.getFeatures();
