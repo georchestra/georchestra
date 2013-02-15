@@ -109,6 +109,7 @@
 			<artifactId>gt-wfs</artifactId>
 			<version>${gt.version}</version>
 		</dependency>
+		
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-ogr-core</artifactId>
@@ -116,9 +117,10 @@
         </dependency>
         <dependency>
             <groupId>org.geotools</groupId>
-            <artifactId>gt-ogr-bridj</artifactId>
+            <artifactId>gt-ogr-jni</artifactId>
             <version>${gt.version}</version>
         </dependency>
+        
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-geojson</artifactId>

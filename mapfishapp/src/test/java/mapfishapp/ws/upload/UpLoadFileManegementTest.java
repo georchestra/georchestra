@@ -36,7 +36,7 @@ public class UpLoadFileManegementTest {
 		
 		String jsonFeatures = fm.getFeatureCollectionAsJSON( );
 		
-		Assert.assertNotNull(jsonFeatures);
+		Assert.assertNotNull(jsonFeatures); 
 	}
 	
 	
