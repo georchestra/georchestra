@@ -5,9 +5,8 @@
   <parent>
     <groupId>org.georchestra</groupId>
     <artifactId>root</artifactId>
-    <version>1.0</version>
+    <version>12.11</version>
   </parent>
-  <version>1.0</version>
   <name>catalogapp</name>
   <artifactId>catalogapp</artifactId>
   <packaging>war</packaging>
