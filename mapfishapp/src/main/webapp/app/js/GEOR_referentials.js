@@ -251,7 +251,6 @@ GEOR.referentials = (function() {
         }
         // and toUpperCase is required, since all the DBF data is UPPERCASED
         var filterValue = '*' + queryString.toUpperCase() + '*';
-            
         if (l == 1) {
             return new OpenLayers.Filter.Comparison({
                 type: OpenLayers.Filter.Comparison.LIKE,
@@ -446,3 +445,4 @@ GEOR.referentials = (function() {
         }
     };
 })();
+>>>>>>> 79e5e55... dos2unix run on js files
