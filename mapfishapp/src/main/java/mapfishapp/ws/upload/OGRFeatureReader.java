@@ -6,7 +6,11 @@ package mapfishapp.ws.upload;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.geotools.data.ogr.OGRDataStore;
+import org.geotools.data.ogr.jni.JniOGR;
+import org.geotools.data.ogr.jni.JniOGRDataStoreFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureSource;
 
@@ -25,6 +29,9 @@ import org.geotools.data.simple.SimpleFeatureSource;
  * 
  */
 final class OGRFeatureReader {
+	
+	private static final Log LOG = LogFactory.getLog(OGRFeatureReader.class.getPackage().getName());
+
 
 	/**
 	 * 
@@ -112,7 +119,6 @@ final class OGRFeatureReader {
 			if("kml".equalsIgnoreCase(ext))	return kml;
 			
 			return null;
-			
 		}
 	}
 
@@ -137,13 +143,20 @@ final class OGRFeatureReader {
 	 */
 	public SimpleFeatureCollection getFeatureCollection() throws IOException {
 
-		String ogrName = this.basedir.getAbsolutePath();
-		String ogrDriver = this.fileFormat.getDriver();
-		OGRDataStore store = new OGRDataStore(ogrName, ogrDriver, null);
-		
-        SimpleFeatureSource source = store.getFeatureSource(store.getTypeNames()[0]);
+		try{
+			String ogrName = this.basedir.getAbsolutePath();
+			String ogrDriver = this.fileFormat.getDriver();
+			
+			JniOGRDataStoreFactory jniFactory = JniOGRDataStoreFactory.class.newInstance();
+			OGRDataStore store = new OGRDataStore(ogrName, ogrDriver, null,  new JniOGR() );
+	        SimpleFeatureSource source = store.getFeatureSource(store.getTypeNames()[0]);
 
-        return source.getFeatures();
+	        return source.getFeatures();
+			
+		} catch(Exception e ){
+			LOG.error(e.getMessage());
+			throw new IOException(e);
+		}
 	}
 
 }
