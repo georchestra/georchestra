@@ -20,7 +20,7 @@
     <!-- default when building without a profile specified -->
     <confdir>${project.build.directory}/conf</confdir>
     <encoding>UTF-8</encoding>
-    <georchestra.version>1.0</georchestra.version>
+    <georchestra.version>${project.version}</georchestra.version>
     <!--<gmaven.runtime>1.8</gmaven.runtime>-->
   </properties>
   <modules>
