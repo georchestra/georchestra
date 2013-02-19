@@ -6,6 +6,7 @@
 		<artifactId>root</artifactId>
 		<version>1.0</version>
 	</parent>
+	
 	<artifactId>mapfishapp</artifactId>
 	<packaging>war</packaging>
 	<name>mapfishapp Maven Webapp</name>
@@ -95,7 +96,7 @@
 		<dependency>
 			<groupId>org.mapfish.print</groupId>
 			<artifactId>print-lib</artifactId>
-			<version>1.2-GEORCHESTRA</version>
+			<version>1.2.1-GEORCHESTRA</version>
 		</dependency>
 		<!--  geotools -->
 		<dependency>
@@ -108,12 +109,29 @@
 			<artifactId>gt-wfs</artifactId>
 			<version>${gt.version}</version>
 		</dependency>
+		
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-ogr-core</artifactId>
+            <version>${gt.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-ogr-jni</artifactId>
+            <version>${gt.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-geojson</artifactId>
+            <version>${gt.version}</version>
+        </dependency>		
 		<!-- geotools - handles ESPG -->
-		<dependency>
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-epsg-hsql</artifactId>
-			<version>${gt.version}</version>
-		</dependency>
+	    <dependency>
+	      <groupId>org.geotools</groupId>
+	      <artifactId>gt-epsg-hsql</artifactId>
+	      <version>${gt.version}</version>
+	    </dependency>
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
