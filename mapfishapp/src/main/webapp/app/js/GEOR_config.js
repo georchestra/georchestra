@@ -17,27 +17,6 @@ Ext.namespace("GEOR");
 GEOR.config = (function() {
 
     /**
-     * Constant: URL_DEV
-     * {String} The URL to the OWS dev host.
-     */
-    var URL_DEV =
-        "http://ns383241.ovh.net/";
-    // FIXME: this should not be here...
-
-    /**
-     * Constant: HOST_EXCEPTIONS
-     * {Object}
-     */
-    var HOST_EXCEPTIONS = {
-        "localhost": URL_DEV,           // localhost
-        "\\.wrk\\.cby": URL_DEV,        // c2c chambéry
-        "\\.wrk\\.lsn": URL_DEV,        // c2c lausanne
-        "10\\.26\\.10\\..*$": URL_DEV,  // c2c internal
-        "192\\.168\\..*$": URL_DEV,     // private net
-        "10\\.25\\.40\\..*$": URL_DEV   // c2c VPN
-    };
-
-    /**
      * Property: vectorAbility
      * {Number} Integer representing
      *  browser ability to handle features
@@ -50,13 +29,6 @@ GEOR.config = (function() {
      * OpenLayers.Util.createUrlObject().
      */
     var urlObj = null;
-
-    /**
-     * Property: hostException
-     * {Boolean} To cache whether the host is an exception
-     * or not.
-     */
-    var hostException = null;
 
     /**
      * Method: getUrlObj
@@ -77,66 +49,6 @@ GEOR.config = (function() {
             });
         }
         return urlObj;
-    };
-
-    /**
-     * Method: getHostname
-     * Get the application's host name.
-     *
-     * Returns:
-     * {String} The application's host name.
-     */
-    var getHostname = function() {
-        return getUrlObj().host;
-    };
-
-    /**
-     * Method: isHostException
-     * Return true if the client application is running on a host
-     * that satisfies the "host exception" criteria, false otherwise.
-     */
-    var isHostException = function() {
-        if (hostException === null) {
-            hostException = false;
-            for (var h in HOST_EXCEPTIONS) {
-                if (HOST_EXCEPTIONS.hasOwnProperty(h)) {
-                    var re = new RegExp(h);
-                    if (getHostname().match(re)) {
-                        hostException = true;
-                        break;
-                    }
-                }
-            }
-        }
-        return hostException;
-    };
-
-    /**
-     * Method: getBaseURL
-     * Get the base URL of the "mapfishapp", "geonetwork" and "geoserver"
-     * webapps.
-     *
-     * Returns:
-     * {String} The base URL.
-     */
-    var getBaseURL = function() {
-        return isHostException() ? URL_DEV : "../";
-    };
-
-    /**
-     * Method: getAbsoluteBaseURL
-     * Get the complete (absolute) base URL of the "mapfishapp", "geonetwork"
-     * and "geoserver" webapps.
-     */
-    var getAbsoluteBaseURL = function() {
-        var url;
-        if (isHostException()) {
-            url = URL_DEV;
-        } else {
-            url = getAppURL();
-            url = url.slice(0, url.indexOf("mapfishapp"));
-        }
-        return url;
     };
 
     /**
@@ -233,48 +145,6 @@ GEOR.config = (function() {
                 "GEOR.config.CONTEXTS is not configured as expected !");
             // should not happen:
             return "default.wmc";
-        },
-
-        /**
-         * Method: _getBaseURL
-         * Test method
-         */
-        _getBaseURL: function(url) {
-            urlObj = null;
-            hostException = null;
-            getUrlObj(url);
-            var ret = getBaseURL();
-            urlObj = null;
-            hostException = null;
-            return ret;
-        },
-
-        /**
-         * Method: _getAbsoluteBaseURL
-         * Test method
-         */
-        _getAbsoluteBaseURL: function(url) {
-            urlObj = null;
-            hostException = null;
-            getUrlObj(url);
-            var ret = getAbsoluteBaseURL();
-            urlObj = null;
-            hostException = null;
-            return ret;
-        },
-
-        /**
-         * Method: _getAppURL
-         * Test method
-         */
-        _getAppURL: function(url) {
-            urlObj = null;
-            hostException = null;
-            getUrlObj(url);
-            var ret = getAppURL();
-            hostException = null;
-            urlObj = null;
-            return ret;
         },
 
         /**
@@ -376,7 +246,7 @@ GEOR.config = (function() {
          * Defaults to /geoserver/wfs
          */
         GEOSERVER_WFS_URL: getCustomParameter("GEOSERVER_WFS_URL",
-            getBaseURL() + "geoserver/wfs"),
+            "/geoserver/wfs"),
 
         /**
          * Constant: GEOSERVER_WMS_URL
@@ -385,7 +255,7 @@ GEOR.config = (function() {
          * Defaults to /geoserver/wms
          */
         GEOSERVER_WMS_URL: getCustomParameter("GEOSERVER_WMS_URL",
-            getBaseURL() + "geoserver/wms"),
+            "/geoserver/wms"),
 
         /**
          * Constant: GEONETWORK_URL
@@ -393,7 +263,7 @@ GEOR.config = (function() {
          * Defaults to "/geonetwork/srv/fr"
          */
         GEONETWORK_URL: getCustomParameter("GEONETWORK_URL",
-            getBaseURL() + "geonetwork/srv/fr"),
+            "/geonetwork/srv/fr"),
 
         /**
          * Constant: CSW_GETDOMAIN_SORTING
