@@ -245,9 +245,11 @@ GEOR.referentials = (function() {
      */
     var buildFilter = function(queryString, stringAttributes) {
         var l = stringAttributes.length;
-        // we need to replace accentuated chars by their unaccentuated version
+        // we might need to replace accentuated chars by their unaccentuated version
+        if (GEOR.config.DEACCENTUATE_REFERENTIALS_QUERYSTRING === true) {
+            queryString = GEOR.util.stringDeaccentuate(queryString);
+        }
         // and toUpperCase is required, since all the DBF data is UPPERCASED
-        queryString = GEOR.util.stringDeaccentuate(queryString);
         var filterValue = '*' + queryString.toUpperCase() + '*';
             
         if (l == 1) {
