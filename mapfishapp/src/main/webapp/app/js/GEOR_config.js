@@ -487,12 +487,8 @@ GEOR.config = (function() {
              * referencing the wmsc_url here allows the user
              * to be warned that this layer will not be printed:
              *
-             * "wmsc_url": undefined,
+             * "wmsc_url": undefined
              */
-            "http://osm.geobretagne.fr/service/wms":
-                "http://maps.qualitystreetmap.org/geob_wms",
-            "http://geobretagne.fr/geoserver/gwc/service/wms":
-                undefined // no trailing comma
         }),
 
 

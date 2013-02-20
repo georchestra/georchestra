@@ -203,9 +203,7 @@ GEOR.wmc = (function() {
                 // bounding box from wmc does not have the same projection system
                 // as the current map
                 GEOR.util.errorDialog({
-                    msg: tr("The .wmc file cannot be restored. Its spatial " +
-                        "reference system is different from the system of " +
-                        "the current map")
+                    msg: tr("wmc.bad.srs")
                 });
                 return;
             }
