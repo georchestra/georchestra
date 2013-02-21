@@ -102,7 +102,7 @@ public abstract class A_DocService {
         setTempDirectory(docTempDirectory);
         
         Runnable purgeDocsTask = new PurgeDocsRunnable(maxDocAgeInMinutes, getTempDirectory());
-		PurgeDocsTimer.startPurgeDocsTimer(purgeDocsTask);
+		PurgeDocsTimer.startPurgeDocsTimer(purgeDocsTask, maxDocAgeInMinutes);
     }
     
     /**
