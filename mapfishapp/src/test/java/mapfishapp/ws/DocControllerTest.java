@@ -1,5 +1,7 @@
 package mapfishapp.ws;
 
+import java.io.File;
+
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,6 +37,12 @@ public class DocControllerTest {
     public void setUp() {
         _requestPost.setMethod("POST");
         _requestGet.setMethod("GET");
+        
+        File workDir = new File(".");
+        File testTempDir = new File(workDir.getAbsolutePath() + File.separatorChar + "test-temporal");
+        testTempDir.deleteOnExit();
+        
+        _controller.setDocTempDir(testTempDir.getAbsolutePath());
     }
 
     /**

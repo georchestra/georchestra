@@ -16,6 +16,7 @@ import org.xml.sax.SAXException;
 
 /**
  * This service handles the storage and the loading of a wmc file on a temporary directory.
+ * 
  * @author yoann buch  - yoann.buch@gmail.com
  *
  */
@@ -29,8 +30,8 @@ public class WMCDocService extends A_DocService {
     public static final String FILENAME_NODE = "ViewContext";
     public static final String FILENAME_ATTRIBUTE = "id";
     
-    public WMCDocService(int maxDocAgeInMinutes) {
-        super(maxDocAgeInMinutes, FILE_EXTENSION, MIME_TYPE);
+    public WMCDocService(final int maxDocAgeInMinutes, final String tempDir) {
+        super(maxDocAgeInMinutes, FILE_EXTENSION, MIME_TYPE, tempDir);
     }
     
     /*=================================Overridden methods===============================================*/

@@ -13,15 +13,18 @@ final class PurgeDocsRunnable implements Runnable {
 	
 	private final int maxDocAgeInMinutes;
 
-	public PurgeDocsRunnable(int maxDocAgeIn) {
+	private final String tempDirectory;
+
+	public PurgeDocsRunnable(final int maxDocAgeIn, final String tempDirectory) {
 		this.maxDocAgeInMinutes = maxDocAgeIn;
+		this.tempDirectory = tempDirectory;
 	}
 
 	public void run() {
 
-		File dir = new File(A_DocService.DIR_PATH);
+		File dir = new File(this.tempDirectory);
 		if (!dir.exists()) {
-			throw new RuntimeException(A_DocService.DIR_PATH + " dir not found");
+			throw new RuntimeException(this.tempDirectory+ " dir not found");
 		}
 
 		// prepare filter to get old files
