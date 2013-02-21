@@ -3,10 +3,10 @@ package mapfishapp.ws;
 
 /**
  * This service handles the storage and the loading of a sld file on a temporary directory.
+ * 
  * @author yoann buch  - yoann.buch@gmail.com
  *
  */
-
 public class SLDDocService extends A_DocService {
 
     public static final String FILE_EXTENSION = ".sld";
@@ -14,9 +14,10 @@ public class SLDDocService extends A_DocService {
     public static final String SCHEMA_URL = "http://schemas.opengis.net/sld/1.1.0/StyledLayerDescriptor.xsd";
     
     
-    public SLDDocService(int maxDocAgeInMinutes) {
-        super(maxDocAgeInMinutes, FILE_EXTENSION, MIME_TYPE);
+    public SLDDocService(final int maxDocAgeInMinutes, final String tempDir) {
+        super(maxDocAgeInMinutes, FILE_EXTENSION, MIME_TYPE, tempDir);
     }
+    
     
     /*=================================Overridden methods===============================================*/
     
