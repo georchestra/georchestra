@@ -9,6 +9,7 @@ import org.json.JSONTokener;
 
 /**
  * This service handles the storage and the loading of a csv file on a temporary directory.
+ * 
  * @author yoann buch  - yoann.buch@gmail.com
  *
  */
@@ -21,8 +22,8 @@ public class CSVDocService extends A_DocService {
     public static final String COLUMNS_FIELD = "columns";
     public static final String RECORDS_FIELD = "data";
     
-    public CSVDocService(int maxDocAgeInMinutes) {
-        super(maxDocAgeInMinutes, FILE_EXTENSION, MIME_TYPE);
+    public CSVDocService(final int maxDocAgeInMinutes, final String tempDir) {
+        super(maxDocAgeInMinutes, FILE_EXTENSION, MIME_TYPE, tempDir);
     }
 
     /**
