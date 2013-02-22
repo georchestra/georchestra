@@ -31,9 +31,12 @@ Bug fixes:
  * mapfishapp: use toponymName instead of name in GeoNames results, see https://github.com/georchestra/georchestra/issues/45
 
 UPGRADING:
- * mapfishapp config changes (see GEOR_config.js or GEOR_custom.js for more information):
-    * MAP_POS_SRS1 and MAP_POS_SRS2 options have been replaced with POINTER_POSITION_SRS_LIST
-    * DEFAULT_WMC option has been replaced with CONTEXTS
-    * PRINT_LAYOUTS_ACL allows to fine-tune available printing layouts based on user roles
-    * DEFAULT_PRINT_FORMAT is now replaced by DEFAULT_PRINT_LAYOUT
+ * mapfishapp config changes:
+    * client side (see GEOR_config.js or GEOR_custom.js for more information):
+        * MAP_POS_SRS1 and MAP_POS_SRS2 options have been replaced with POINTER_POSITION_SRS_LIST
+        * DEFAULT_WMC option has been replaced with CONTEXTS
+        * PRINT_LAYOUTS_ACL allows to fine-tune available printing layouts based on user roles
+        * DEFAULT_PRINT_FORMAT is now replaced by DEFAULT_PRINT_LAYOUT
+    * server side:
+        * There is a new maven filter for mapfishapp temporary documents: shared.mapfishapp.docTempDir (defaults to /tmp/mapfishapp)
  * In GeoNetwork, it is now recommended to use OGC:WMS protocol rather than OGC:WMS-1.1.1-http-get-map (or any other WMS tagged with a version) to declare WMS layers, see https://github.com/georchestra/georchestra/pull/4
