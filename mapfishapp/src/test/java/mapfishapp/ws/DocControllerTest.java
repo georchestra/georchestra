@@ -39,7 +39,7 @@ public class DocControllerTest {
         _requestGet.setMethod("GET");
         
         File workDir = new File(".");
-        File testTempDir = new File(workDir.getAbsolutePath() + File.separatorChar + "test-temporal");
+        File testTempDir = new File(workDir.getAbsolutePath() + File.separatorChar + "test-temporary");
         testTempDir.deleteOnExit();
         
         _controller.setDocTempDir(testTempDir.getAbsolutePath());

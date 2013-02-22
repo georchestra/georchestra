@@ -52,7 +52,7 @@ public class DocController {
 	public int getMaxDocAgeInMinutes() {return maxDocAgeInMinutes;}
 	public void setMaxDocAgeInMinutes(int maxDocAgeInMinutes) {this.maxDocAgeInMinutes = maxDocAgeInMinutes;}
     
-	/** the temporal directory used by the document services*/
+	/** the temporary directory used by the document services*/
     private String docTempDir;
 
     public String getDocTempDir() {return docTempDir;}

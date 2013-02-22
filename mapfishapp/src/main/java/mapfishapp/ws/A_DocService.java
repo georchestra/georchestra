@@ -32,15 +32,15 @@ import org.xml.sax.SAXException;
 
 public abstract class A_DocService {
 
-	protected static final Log LOG = LogFactory.getLog(A_DocService.class.getPackage().getName());
-	
+    protected static final Log LOG = LogFactory.getLog(A_DocService.class.getPackage().getName());
+
     /**
      * Document prefix helping to differentiate documents among others OS tmp files
      */
     protected static final String DOC_PREFIX = "geodoc";
-    
 
-	/**
+
+    /**
      * File extension. 
      */
     protected String _fileExtension;
@@ -65,23 +65,20 @@ public abstract class A_DocService {
      */
     private String _tempDirectory;  
 
-	public String getTempDirectory() {
-		
-		
-		return _tempDirectory;
-	}
-	
-	/**
-	 * Creates the temporal directory if it doesn't exist and set the path
-	 */
-	private void setTempDirectory(final String tempDirectory) {
-		
-		File t = new File(tempDirectory);
-		if(!t.exists()){
-			t.mkdirs();
-		}
-		_tempDirectory = tempDirectory;
-	}
+    public String getTempDirectory() {
+        return _tempDirectory;
+    }
+
+    /**
+     * Creates the temporary directory if it doesn't exist and set the path
+     */
+    private void setTempDirectory(final String tempDirectory) {
+        File t = new File(tempDirectory);
+        if(!t.exists()){
+            t.mkdirs();
+        }
+        _tempDirectory = tempDirectory;
+    }
     
     
     /*========================Public Methods====================================================*/
@@ -95,14 +92,13 @@ public abstract class A_DocService {
      * @param docTempDirectory
      */
     public A_DocService(int maxDocAgeInMinutes, final String fileExtension, final String MIMEType,  final String docTempDirectory) {
-    	
         _fileExtension = fileExtension;
         _MIMEType = MIMEType;
         
         setTempDirectory(docTempDirectory);
         
         Runnable purgeDocsTask = new PurgeDocsRunnable(maxDocAgeInMinutes, getTempDirectory());
-		PurgeDocsTimer.startPurgeDocsTimer(purgeDocsTask, maxDocAgeInMinutes);
+        PurgeDocsTimer.startPurgeDocsTimer(purgeDocsTask, maxDocAgeInMinutes);
     }
     
     /**
@@ -112,7 +108,6 @@ public abstract class A_DocService {
      * @throws DocServiceException
      */
     public String saveData(final String data) throws DocServiceException {
-        
         // purge doc directory from old files
         // FIXME do not purge for now, this will need to be revisited once
         // we have authentication in place
@@ -136,7 +131,6 @@ public abstract class A_DocService {
      * @throws DocServiceException
      */
     public void loadFile(final String fileName) throws DocServiceException {
-
         // check first if file exists
         if(!isFileExist(fileName)) {
             throw new DocServiceException("Requested file  does not exist.", HttpServletResponse.SC_NOT_FOUND);
@@ -274,13 +268,12 @@ public abstract class A_DocService {
      * @return true: exists, false: not exists
      */
     private boolean isFileExist(final String fileName) {
-        
         // file was stored previously in a known place
-    	final String tempDirectory = getTempDirectory();
+        final String tempDirectory = getTempDirectory();
         File dir = new File(tempDirectory);
         
         if(!dir.exists()) {
-            throw new RuntimeException(tempDirectory + " dir not found");
+            throw new RuntimeException(tempDirectory + " directory not found");
         } 
         
         // prepare filter to get the right file 
@@ -304,7 +297,6 @@ public abstract class A_DocService {
      * @return file content
      */
     private String loadContent(final String fileName) {
-
         File file = new File(getTempDirectory() + File.separatorChar + fileName); 
         String content = "";
         
@@ -337,19 +329,18 @@ public abstract class A_DocService {
             content = new String(bytes);
             
         } catch (FileNotFoundException fnfExc) {
-			fnfExc.printStackTrace();
-		} catch (IOException ioExc) {
-			ioExc.printStackTrace();
-		} finally{
-			if(fis != null) {
-	            try {
-					fis.close();
-				} catch (IOException e) {
-					LOG.error(e);
-				}
-			}
-		}
-
+            fnfExc.printStackTrace();
+        } catch (IOException ioExc) {
+            ioExc.printStackTrace();
+        } finally{
+            if(fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException e) {
+                    LOG.error(e);
+                }
+            }
+        }
         return content;
     }
 
