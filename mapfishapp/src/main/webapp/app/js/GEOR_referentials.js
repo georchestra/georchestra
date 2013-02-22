@@ -445,4 +445,3 @@ GEOR.referentials = (function() {
         }
     };
 })();
->>>>>>> 79e5e55... dos2unix run on js files
