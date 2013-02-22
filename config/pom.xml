@@ -201,6 +201,7 @@ class GenerateConfig {
 							  // note: the params have to be initialized for the required files to be created
 							  // doesn't matter if GenerateConfig is ran or not
 								def params = new Parameters(
+								  project: project,
 									targetDir: new File("${project.build.directory}"),
 									outputDir: new File("${generated.output}"),
 									basedirFile: new File("${basedir}"),

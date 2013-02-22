@@ -9,6 +9,7 @@ class Parameters {
 	def buildSupportDir
 	def log
 	def ant
+	def project
 	
 	def init() {
 	  get = this

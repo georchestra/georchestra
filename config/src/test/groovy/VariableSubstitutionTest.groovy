@@ -29,6 +29,7 @@ public class VariableSubstitutionTest {
 			}
 
 			if(file.isFile() && !ignorable) {
+			  log.debug("Testing "+file+" for unsubstituted substitutions")
 				def m = file.getText("UTF-8") =~ /@\S*@/
 				if(m.find()) {
 				  m.each { failure ->
