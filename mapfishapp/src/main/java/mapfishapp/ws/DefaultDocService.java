@@ -10,23 +10,30 @@ package mapfishapp.ws;
 
 public class DefaultDocService extends A_DocService {
 
-    /**
+
+	/**
      * This constructor is set private. 
      * It forces user to use {@link DefaultDocService#DefaultDocService(String, String)}
-     */
-    @SuppressWarnings("unused")
-    private DefaultDocService(int maxDocAgeInMinutes) {
-        super(maxDocAgeInMinutes, "", "");
+     * 
+	 * @param maxDocAgeInMinutes
+	 * @param tempDir
+	 */
+	@SuppressWarnings("unused")
+    private DefaultDocService(final int maxDocAgeInMinutes, final  String tempDir) {
+        super(maxDocAgeInMinutes, "", "", tempDir);
     }
     
     /**
      * Creates a new Doc Service using all the features of its abstract base class 
      * {@link A_DocService}
-     * @param fileExtension file extension
-     * @param MIMEType mime type
+     * 
+     * @param maxDocAgeInMinutes
+     * @param fileExtension
+     * @param MIMEType
+     * @param tempDir
      */
-    public DefaultDocService(int maxDocAgeInMinutes, String fileExtension, String MIMEType) {
-        super(maxDocAgeInMinutes, fileExtension, MIMEType);
+    public DefaultDocService(final int maxDocAgeInMinutes, final String fileExtension, final String MIMEType, final String tempDir ) {
+        super(maxDocAgeInMinutes, fileExtension, MIMEType, tempDir);
     }
 
 }

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 <beans>
-
     <bean id="homecontroller" 
           class="mapfishapp.ws.HomeController"/>
     <bean id="editcontroller" 
@@ -11,9 +10,11 @@
 	</bean>
 	<bean class="mapfishapp.ws.DocController">
 		<property name="maxDocAgeInMinutes" value="${maxDocAgeInMinutes}"/>
+        <property name="docTempDir" value="/tmp/mapfishapp"/>
 		<property name="credentials">
           <map>${credentials}</map>
 		</property>
+		
 	</bean>
 	
 	<!-- upload de fichiers -->
