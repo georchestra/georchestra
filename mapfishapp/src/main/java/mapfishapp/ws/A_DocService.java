@@ -64,25 +64,24 @@ public abstract class A_DocService {
      * files are stored in the configured directory 
      */
     private String _tempDirectory;  
-	
-	/**
-	 * Creates the temporal directory if it doesn't exist and set the path
-	 */
-	private void setTempDirectory(final String tempDirectory) {
-		
-		File t = new File(tempDirectory);
-		if(!t.exists()){
-			boolean succeed = t.mkdirs();
-			
-			if(!succeed){
-				LOG.error("cannot create the dirctory: " + tempDirectory);
-			}
-		}
-		_tempDirectory = tempDirectory;
-		
-	}
-    
-    
+
+    /**
+     * Creates the temporal directory if it doesn't exist and set the path
+     */
+    private void setTempDirectory(final String tempDirectory) {
+
+        File t = new File(tempDirectory);
+        if(!t.exists()){
+            boolean succeed = t.mkdirs();
+
+            if(!succeed){
+                LOG.error("cannot create the directory: " + tempDirectory);
+            }
+        }
+        _tempDirectory = tempDirectory;
+    }
+
+
     /*========================Public Methods====================================================*/
 
     /**
