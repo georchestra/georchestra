@@ -60,7 +60,16 @@ GEOR.config = (function() {
          */
         EXTRACTOR_URL: getCustomParameter('EXTRACTOR_URL',
             "/extractorapp/"),
+            
+        /**
+         * Constant: DOWNLOAD_URL
+         * The URL to download
+         * Defaults to "/download/"
+         */
+        DOWNLOAD_URL: getCustomParameter('DOWNLOAD_URL',
+            "/download/"),
 
+        
         /**
          * Constant: MAP_DOTS_PER_INCH
          * {Float} Sets the resolution used for scale computation.

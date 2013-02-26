@@ -71,6 +71,10 @@ GEOR.what = (function() {
 
         reset: function() {
             field && field.reset();
+        },
+        
+        setValue: function(value) {
+            field.setValue(value);
         }
     };
 })();

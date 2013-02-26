@@ -224,4 +224,23 @@ Ext.onReady(function() {
     o.on("itemzoom", function(options) {
         GEOR.where.zoomTo(options.record);
     });
+    
+    /* search GET */
+    var search_text = getUrlVars()["any"];
+    if(search_text){
+        GEOR.nav.reset();
+        GEOR.what.setValue(search_text);
+        search();
+    }
+    
+    function getUrlVars(){
+        var vars = [], hash;
+        var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+        for(var i = 0; i < hashes.length; i++){
+            hash = hashes[i].split('=');
+            vars.push(hash[0]);
+            vars[hash[0]] = hash[1];
+        }
+        return vars;
+    }
 });
