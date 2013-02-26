@@ -39,7 +39,7 @@ GEOR.dataview = (function() {
         if (!URIs || !URIs[0]) {
             return '';
         }
-        var id, dl = [], view = [], URI;
+        var id, dl = [], down = [], view = [], URI;
         for (var i=0,l=URIs.length;i<l;i++) {
             id = OpenLayers.Util.createUniqueID('OWS_');
             URI = URIs[i];
@@ -58,6 +58,9 @@ GEOR.dataview = (function() {
                         dl.push('<button class="x-list-btn-dl" id="'+id+'">'
                                 +tr('Download WMS layer', {NAME: (URI.description || URI.name)})
                                 +'</button>');
+                        down.push('<button class="x-list-btn-down" id="'+id+'">'
+                                +tr('Download', {NAME: (URI.description || URI.name)})
+                                +'</button>');
                     } else  {
                         // we have a service
                         view.push('<button class="x-list-btn-view" id="'+id+'">'
@@ -65,6 +68,9 @@ GEOR.dataview = (function() {
                                   +'</button>');
                         dl.push('<button class="x-list-btn-dl" id="'+id+'">'
                                 +tr('Download WMS service', {NAME: (URI.description || URI.value)})
+                                +'</button>');
+                        down.push('<button class="x-list-btn-down" id="'+id+'">'
+                                +tr('Download', {NAME: (URI.description || URI.value)})
                                 +'</button>');
                     }
                 }
@@ -83,7 +89,7 @@ GEOR.dataview = (function() {
             */
             }
         }
-        return dl.join(' ')+view.join(' ');
+        return view.join(' ')+down.join(' ')+dl.join(' ');
     };
 
     var getZoomText = function(values) {
@@ -138,7 +144,9 @@ GEOR.dataview = (function() {
             return;
         }
         var url_key = (elt.hasClass('x-list-btn-view')) ?
-            'VIEWER_URL' : 'EXTRACTOR_URL';
+            'VIEWER_URL' : ((elt.hasClass('x-list-btn-down')) ?
+            'DOWNLOAD_URL' : 'EXTRACTOR_URL');
+
         var services = [], layers = [];
         if (OWSdb[elt.id].name) {
             layers.push({
@@ -155,7 +163,11 @@ GEOR.dataview = (function() {
                 owsurl: OWSdb[elt.id].value
             });
         }
-        submitData(url_key, {services: services, layers: layers});
+        if(elt.hasClass('x-list-btn-down')){
+            submitDataDownload(url_key, OWSdb[elt.id].name);
+        } else {
+            submitData(url_key, {services: services, layers: layers});
+        }
     };
 
     var getRecordFromHref = function(href) {
@@ -176,6 +188,7 @@ GEOR.dataview = (function() {
     var onStoreLoad = function(s) {
         Ext.select('button.x-list-btn-view').on('click', onButtonClick);
         Ext.select('button.x-list-btn-dl').on('click', onButtonClick);
+        Ext.select('button.x-list-btn-down').on('click', onButtonClick);
         Ext.select('.x-view-item a.zoom').on('click', onZoomClick);
         GEOR.waiter.hide();
         // we need to restore selection of items referenced in selectedRecords
