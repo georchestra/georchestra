@@ -1,24 +1,47 @@
 /**
  * Downloads a jar from one of the maven repositories to the 
  * provided location
- *
- * new MavenDownloader(
-      artifact: ['com.vividsolutions','jts','1.13],
-		  to: 'geoserver-webapp/WEB-INF/lib').download()
-  *
+ *<pre><code>
+new MavenDownloader(
+&nbsp;&nbsp;artifact: ['com.vividsolutions','jts','1.13],
+&nbsp;&nbsp;to: 'geoserver-webapp/WEB-INF/lib').download()
+</code></pre>
   * Example will download the jts jar to the geoserver configuration
-  * new MavenDownloader(
-      artifacts: [
-        ['org.geoserver.extension','control-flow','2.2.4'],
-        ['com.vividsolutions','jts','1.13]
-      ],
-      to: 'geoserver-webapp/WEB-INF/lib').download()
-  * 
+  * <pre><code>
+new MavenDownloader(
+&nbsp;&nbsp;artifacts: [
+&nbsp;&nbsp;&nbsp;&nbsp;['org.geoserver.extension','control-flow','2.2.4'],
+&nbsp;&nbsp;&nbsp;&nbsp;['com.vividsolutions','jts','1.13]
+&nbsp;&nbsp;],
+&nbsp;&nbsp;to: 'geoserver-webapp/WEB-INF/lib').download()
+</code></pre>
   * Only one of artifact and artifacts can be declared
   * the to parameter is always relative to the params.outputDir
   */
-class MavenDownloader{
-  def artifacts, artifact, to
+class MavenDownloader {
+  /** The artifacts to download.  This is a collections of
+   * lists(or arrays) that list the artifacts to download.
+   * <p>This property is used when one wants to download many artifacts</p>
+   * <p>See artifact complete details on how to define an artifact for download</p>
+   * <p><strong>Note:</strong> One and only one of artifacts or artifact is required.</p>
+   */
+  def artifacts
+  /** An artifact to download. This is a list (or array) that provides the groupId, artifactId and version
+   * of the artifact to download.  In the future maps will also be permitted so that optional artifact characteristics
+   * like classifier and type.
+   *<p>The format for declaring an artifact is:</p>
+   * <pre>{@code
+[groupId,artifactId,version]
+}</pre>
+   * For example:
+   * <pre>{@code
+['org.geoserver.extension','control-flow','2.2.4']
+}</pre>
+   * <p><strong>Note:</strong> One and only one of artifacts or artifact is required.</p>
+   */
+  def artifact
+  /** The directory to download the file to. Can be a string or file object */
+  def to
   
   def download () {
     if(artifacts != null && artifact != null) {

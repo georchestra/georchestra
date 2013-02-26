@@ -157,6 +157,24 @@
 				<artifactId>gmaven-plugin</artifactId>
 				<executions>
 					<execution>
+						<id>generateJavaStubsForDocs</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generateStubs</goal>
+						</goals>
+						<configuration>
+						  <sources>
+						    <source>
+						      <directory>${basedir}/src/main/scripts</directory>
+						      <includes>
+						        <include>*.groovy</include>
+						        <include>**/*.groovy</include>
+					        </includes>
+						    </source>
+					    </sources>
+					  </configuration>
+				  </execution>
+					<execution>
 						<id>create-default-gen-config-file</id>
 						<phase>generate-resources</phase>
 						<goals>
@@ -165,6 +183,7 @@
 						<configuration>
 							<source><![CDATA[
 							  // delete target dir because we always want it clean
+							  log.info("cleaning target directory: ${project.build.directory}")
 							  new File("${project.build.directory}").deleteDir();
                 def generateConfigFile = new File("${build.support.dir}", "GenerateConfig.groovy")
                 if(generateConfigFile.exists()) {
@@ -260,6 +279,14 @@ class GenerateConfig {
 					<classifier>${server}</classifier>
 				</configuration>
 			</plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.9</version>
+        <configuration>
+          <show>private</show>
+        </configuration>
+      </plugin>
 		</plugins>
 	</build>
 	<dependencies>

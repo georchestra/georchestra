@@ -132,9 +132,11 @@ Suppose that the urlrewrite.xml file in the extractorapp module needs to be modi
       }
     }
 
+Script Writing Resources
+------------------------
 
-Script Examples
----------------
+> The scripting language used for in the GenerateConfig.groovy is the [Groovy](http://groovy.codehaus.org/) programming language.  It is 
+
 
 ### Create new file
 
