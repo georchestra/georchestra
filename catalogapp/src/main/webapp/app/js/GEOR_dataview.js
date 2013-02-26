@@ -96,8 +96,8 @@ GEOR.dataview = (function() {
     var getTemplate = function() {
         return [
             '<tpl for=".">',
-                '<div class="x-view-item">',
-                    '<p><b>{title}</b> - <a href="'+GEOR.config.GEONETWORK_URL,
+                '<div class="x-view-item" style="background:{[xindex % 2 === 0 ? "" : "#e2efcd"]}">',
+                    '<p><b style="text-decoration: underline">{title}</b> <br/> <a href="'+GEOR.config.GEONETWORK_URL,
                         '/metadata.show?uuid={identifier}" class="fullmd" target="_blank">' + tr('record') + '</a>',
                         '{[this.zoom(values)]}</p>',
                     '<p>{abstract}</p>',
