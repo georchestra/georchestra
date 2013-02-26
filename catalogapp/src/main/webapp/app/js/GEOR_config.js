@@ -69,6 +69,33 @@ GEOR.config = (function() {
         DOWNLOAD_URL: getCustomParameter('DOWNLOAD_URL',
             "/download/"),
 
+        /**
+         * Constant: MAP_XMIN aka "left"
+         * {Float} The max extent xmin in MAP coordinates.
+         * Defaults to -75.37 (EPSG:2154 left)
+         */
+        MAP_XMIN: getCustomParameter("MAP_XMIN", -75.37),
+
+        /**
+         * Constant: MAP_YMIN aka "bottom"
+         * {Float} The max extent ymin in MAP coordinates.
+         * Defaults to -25.17 (EPSG:2154 bottom)
+         */
+        MAP_YMIN: getCustomParameter("MAP_YMIN", -25.17),
+
+        /**
+         * Constant: MAP_XMAX aka "right"
+         * {Float} The max extent xmax in MAP coordinates.
+         * Defaults to -54.71 (EPSG:2154 right)
+         */
+        MAP_XMAX: getCustomParameter("MAP_XMAX", -54.71),
+
+        /**
+         * Constant: MAP_YSMAX aka "top"
+         * {Float} The max extent ymax in MAP coordinates
+         * Defaults to -5.75 (EPSG:2154 top)
+         */
+        MAP_YMAX: getCustomParameter("MAP_YMAX", -5.75),
         
         /**
          * Constant: MAP_DOTS_PER_INCH

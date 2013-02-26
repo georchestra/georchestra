@@ -39,7 +39,8 @@ GEOR.where = (function() {
     var extentLayer, vectorLayer;
     var epsg4326, epsg900913;
     var searchExtent;
-
+    
+    var feature_last_id;
 
     var createVectorLayer = function() {
         vectorLayer = new OpenLayers.Layer.Vector('bounds', {
@@ -114,7 +115,13 @@ GEOR.where = (function() {
         if (!epsg900913) {
             epsg900913 = new OpenLayers.Projection("EPSG:900913");
         }
+        var fromProjection = new OpenLayers.Projection("EPSG:4326"); // transform from WGS 1984
+        var extent = new OpenLayers.Bounds(GEOR.config.MAP_XMIN,
+                GEOR.config.MAP_YMIN,
+                GEOR.config.MAP_XMAX,
+                GEOR.config.MAP_YMAX).transform(fromProjection,epsg900913);
         var map = new OpenLayers.Map({
+            restrictedExtent : extent,
             controls: [
                 new OpenLayers.Control.Navigation(),
                 new OpenLayers.Control.Attribution()
@@ -227,7 +234,28 @@ GEOR.where = (function() {
             }
             var featureId = record.get('identifier');
             if (featureId) {
+                //feature last
+                if(feature_last_id){
+                    var feature_last = vectorLayer.getFeatureByAttributeId(feature_last_id);
+                    if(feature_last){ 
+                        feature_last.style= {
+                            fillOpacity: 0,
+                            strokeColor: "#ee9900",
+                            strokeWidth: 2,
+                            strokeOpacity: 0.4
+                        };
+                    }
+                }
                 var feature = vectorLayer.getFeatureByAttributeId(featureId);
+                if(feature){
+                    feature_last_id = featureId;
+                    feature.style = {
+                        fillOpacity: 0.4,
+                        fillColor: "#31b541",
+                        strokeWidth: 2,
+                        strokeOpacity: 0.4
+                    };
+                }
                 feature && map && map.zoomToExtent(feature.geometry.getBounds().scale(1.1));
                 //feature && vectorLayer.drawFeature(feature, "select");
             }
