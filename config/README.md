@@ -226,6 +226,7 @@ This example shows how to update (or create) a properties file using the Propert
  2. 4 properties are updated or added to the properties object
  3. the properties are written to target/generated/security-proxy/maven.filter
 
+
     new PropertyUpdate(
         path: 'maven.filter',
         from: 'defaults/security-proxy', 
