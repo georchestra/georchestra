@@ -12,13 +12,13 @@
 
     <!--  url mapping is directly handled with the spring annotations written in the following controllers -->
     <bean id="homecontroller" 
-          class="extractorapp.ws.doc.HomeController"/>
+          class="org.georchestra.extractorapp.ws.doc.HomeController"/>
         <bean id="ogcproxy" 
-          class="extractorapp.ws.doc.OGCProxy"/>
+          class="org.georchestra.extractorapp.ws.doc.OGCProxy"/>
     <bean id="doc-controller"
-          class="extractorapp.ws.doc.DocController"/>
+          class="org.georchestra.extractorapp.ws.doc.DocController"/>
     <bean id="expire-daemon" init-method="startup" 
-          class="extractorapp.ws.extractor.ExpiredArchiveDaemon">
+          class="org.georchestra.extractorapp.ws.extractor.ExpiredArchiveDaemon">
       <property name="expiry" value="10"/> <!-- days -->
       <property name="period" value="10"/> <!-- minutes -->
       <property name="extractionManager" ref="extractionManager"/>
@@ -26,7 +26,7 @@
      
       
     <bean id="extractor-controller" init-method="validateConfig"
-          class="extractorapp.ws.extractor.ExtractorController">
+          class="org.georchestra.extractorapp.ws.extractor.ExtractorController">
         <property name="responseTemplateFile" 
                   value="/WEB-INF/templates/extractor-http-response-template.xml"/>
         <property name="servletUrl" 
@@ -54,7 +54,7 @@
             </bean>
         </property>
 		<property name="checkFormAcceptance">
-			<bean class="extractorapp.ws.acceptance.CheckFormAcceptance">
+			<bean class="org.georchestra.extractorapp.ws.acceptance.CheckFormAcceptance">
 				<constructor-arg index="0" value="${dlformjdbcurl}" />
 				<constructor-arg index="1" value="${dlformactivated}" />
 			</bean>
@@ -62,11 +62,11 @@
         <property name="extractionManager" ref="extractionManager"/>
     </bean>
     
-    <bean id="taskControllers" class="extractorapp.ws.extractor.task.TaskControllers" init-method="init">
+    <bean id="taskControllers" class="org.georchestra.extractorapp.ws.extractor.task.TaskControllers" init-method="init">
         <property name="extractionManager" ref="extractionManager"/>
     </bean>
 
-    <bean id="extractionManager" class="extractorapp.ws.extractor.task.ExtractionManager" init-method="init">
+    <bean id="extractionManager" class="org.georchestra.extractorapp.ws.extractor.task.ExtractionManager" init-method="init">
         <property name="minThreads" value="1"/>
         <property name="maxExtractions"
                   value="100"/>
