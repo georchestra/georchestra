@@ -16,7 +16,7 @@ if (lang == null || (!lang.equals("en") && !lang.equals("es"))) {
     lang = "${language}";
 }
 Locale l = new Locale(lang);
-ResourceBundle resource = org.georchestra.extractorapp.ws.Utf8ResourceBundle.getBundle("extractorapp.i18n.index",l);
+ResourceBundle resource = org.georchestra.extractorapp.ws.Utf8ResourceBundle.getBundle("org.georchestra.extractorapp.i18n.index",l);
 javax.servlet.jsp.jstl.core.Config.set(
     request,
     javax.servlet.jsp.jstl.core.Config.FMT_LOCALIZATION_CONTEXT,
