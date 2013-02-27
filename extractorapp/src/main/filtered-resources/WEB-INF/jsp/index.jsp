@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page language="java" %>
 <%@ page import="java.util.*" %>
-<%@ page import="org.georchestra.extractorapp.ws.Utf8ResourceBundle %>
+<%@ page import="org.georchestra.extractorapp.ws.Utf8ResourceBundle" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ page pageEncoding="UTF-8"%>
 <%@ page isELIgnored="false" %>
