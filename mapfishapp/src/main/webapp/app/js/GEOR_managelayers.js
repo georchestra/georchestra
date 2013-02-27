@@ -482,17 +482,19 @@ GEOR.managelayers = (function() {
         });
 
         // redraw action (aka "do not used client-cached layer")
-        menuItems.push({
-            iconCls: 'geor-btn-refresh',
-            text: tr("Refresh layer"),
-            listeners: {
-                "click": function(btn, pressed) {
-                    layerRecord.get('layer').mergeNewParams({
-                        nocache: new Date().valueOf()
-                    });
+        if (isWMS) {
+            menuItems.push({
+                iconCls: 'geor-btn-refresh',
+                text: tr("Refresh layer"),
+                listeners: {
+                    "click": function(btn, pressed) {
+                        layerRecord.get('layer').mergeNewParams({
+                            nocache: new Date().valueOf()
+                        });
+                    }
                 }
-            }
-        });
+            });
+        }
 
         menuItems.push("-");
 
