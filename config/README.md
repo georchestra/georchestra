@@ -226,6 +226,7 @@ This example shows how to update (or create) a properties file using the Propert
  2. 4 properties are updated or added to the properties object
  3. the properties are written to target/generated/security-proxy/maven.filter
 
+Example Code:
 
     new PropertyUpdate(
         path: 'maven.filter',
@@ -245,6 +246,8 @@ This first example shows how to generate an xml file based on an existing xml fi
  3. findAll is used to find the category elements with the class attribute that contains the gn string
  4. geor is added to each class attribute in the elements found in the previous step
  5. the updated xml is written to target/generated/security-proxy/file.xml 
+
+Example Code:
 
     new XmlUpdate(
       path: 'file.xml',
@@ -267,6 +270,8 @@ This second example shows how to create a new xml file.
   3. A bean element is created as a child of config.  This element has children
   4. Etc...
  4. The xml is written to target/generated/security-proxy/file.xml
+
+Example Code:
 
     new XmlUpdate(
       path: 'file.xml',
@@ -291,6 +296,8 @@ The text update class assists in updating raw text file by searching for occuran
    * Note: List Javascript the /.../ indicates a regular expression.
    * Note: Currently all matches of the regular expression are replaced
  3. The text is written out to target/generated/geonetwork-client/apps/georchestra/js/Settings.js
+
+Example Code:
 
     new TextUpdate(
       path:  'apps/georchestra/js/Settings.js',
