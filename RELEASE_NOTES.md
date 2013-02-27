@@ -25,6 +25,7 @@ Enhancements:
  * mapfishapp: window buttons consistency and default actions, see https://github.com/georchestra/georchestra/pull/33
  * mapfishapp: by default, the map is now restored with its latest known state (context), see https://github.com/georchestra/georchestra/pull/50
  * mapfishapp: missing translations
+ * extractorapp: packges were renamed as org.georchestra.extractorapp, see https://github.com/georchestra/georchestra/pull/71 
 
 Bug fixes:
  * mapfishapp: fixed erroneous WMSC2WMS mapping, which prevented printing of the GeoBretagne OSM baselayer, see https://github.com/georchestra/georchestra/commit/159bd4f24ecb21b9c76f76d27c1736ec1040f0ab
