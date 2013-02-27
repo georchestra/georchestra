@@ -210,12 +210,12 @@ Many of the support classes extend AbstractUpdate since it provides several ways
 
 The primary responsibility of AbstractUpdate is to provide convenience methods: getFromFile and getToFile for the subclasses based on the parameters.
 
-  new PropertyUpdate (
-    projectPath: 'geonetwork', // projectPath indicates the file is in the <georchestra-root>/geonetwork directory, not a config subdirectory
-    path: 'webapp/WEB-INF/spring.xml'. // path is used to determing both to and from.  
-    to: 'geonetwork-main', // the base of the to file (relative to target/generated).  The path will be appended to the to field.
-    from: 'geonetwork-main/src/main' // the final from file is projectPath/from/path
-  ).update { properties -> /* update properties */}
+    new PropertyUpdate (
+        projectPath: 'geonetwork', // projectPath indicates the file is in the <georchestra-root>/geonetwork directory, not a config subdirectory
+        path: 'webapp/WEB-INF/spring.xml'. // path is used to determing both to and from.  
+        to: 'geonetwork-main', // the base of the to file (relative to target/generated).  The path will be appended to the to field.
+        from: 'geonetwork-main/src/main' // the final from file is projectPath/from/path
+    ).update { properties -> /* update properties */}
 
 In many cases only 'to' and 'from' are required and even some subclasses of AbstractUpdate (like PropertyUpdate) only requires the 'to' field.  Although it is usually beneficial to define the 'path' field so that it doesn't need to be repeated in both 'from' and 'to' fields.
 
@@ -252,8 +252,8 @@ This first example shows how to generate an xml file based on an existing xml fi
           xml.category.findAll {it.@class.contains("gn")}. each {cat ->
               cat.@class = s.@class + " geor" // add new class to element
           }
-      }
-      
+    }
+  
 See http://groovy.codehaus.org/Reading+XML+using+Groovy%27s+XmlParser for more details on how to update the xml
 
 This second example shows how to create a new xml file.  
@@ -276,7 +276,7 @@ This second example shows how to create a new xml file.
               property (key: 'property', value: 'value')
             }
           }
-      }
+    }
 
 See http://groovy.codehaus.org/Creating+XML+using+Groovy%27s+MarkupBuilder for more details on how to construct xml documents with the Groovy MarkupBuilder.
 
@@ -291,13 +291,13 @@ The text update class assists in updating raw text file by searching for occuran
    * Note: Currently all matches of the regular expression are replaced
  3. The text is written out to target/generated/geonetwork-client/apps/georchestra/js/Settings.js
 
-new TextUpdate(
-  path:  'apps/georchestra/js/Settings.js',
-  fromProject: "geonetwork",
-  from: 'web-client/src/main/resources/',
-  to: 'geonetwork-client/',
-  patternsToReplace: [ /GeoNetwork\.Util\.defaultLocale\s*=\s*'eng'/: "GeoNetwork.Util.defaultLocale = 'fre'"]
- * ).update()
+    new TextUpdate(
+      path:  'apps/georchestra/js/Settings.js',
+      fromProject: "geonetwork",
+      from: 'web-client/src/main/resources/',
+      to: 'geonetwork-client/',
+      patternsToReplace: [ /GeoNetwork\.Util\.defaultLocale\s*=\s*'eng'/: "GeoNetwork.Util.defaultLocale = 'fre'"]
+    ).update()
 
 ### MavenDownloader
 
@@ -358,8 +358,8 @@ GenerateConfig.groovy
 
     class GenerateConfig {
       def generate(def project, def log, def ant, def basedirFile, 
-							def target, def subTarget, def targetDir, 
-							def buildSupportDir, def outputDir) {
+    					def target, def subTarget, def targetDir, 
+    					def buildSupportDir, def outputDir) {
         def params = Parameters.get
         new GeoserverConfig().generate(params)
         new GeonetworkConfig().generate(params)
