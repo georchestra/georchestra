@@ -182,9 +182,6 @@
 						</goals>
 						<configuration>
 							<source><![CDATA[
-							  // delete target dir because we always want it clean
-							  log.info("cleaning target directory: ${project.build.directory}")
-							  new File("${project.build.directory}").deleteDir();
                 def generateConfigFile = new File("${build.support.dir}", "GenerateConfig.groovy")
                 if(generateConfigFile.exists()) {
                   log.info(generateConfigFile.path+" exists so it will be used in build")

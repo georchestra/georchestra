@@ -135,20 +135,251 @@ Suppose that the urlrewrite.xml file in the extractorapp module needs to be modi
 Script Writing Resources
 ------------------------
 
-> The scripting language used for in the GenerateConfig.groovy is the [Groovy](http://groovy.codehaus.org/) programming language.  It is 
+> The scripting language used for in the GenerateConfig.groovy is the [Groovy](http://groovy.codehaus.org/) programming language.  It is based on the Java language and most java syntax will work in Groovy as well.  But Groovy is dynamic and has several conveniences that make it better for scripting than java.  It is pretty easy to use Google to find information about Groovy but hopefully the examples provided in this document and the Javadocs will provide a good introduction to the most common tasks needed.
 
 
 ### Create new file
+This example shows one way of creating file objects and writing to the file
 
-### PropertyUpdater
+    // assign file system path separator to variable
+    def S = File.separator
+    // create a new file. Use Groovy's string interpolation to put the correct path separator in path
+    def outputFile = new File(outputDir, "geotwork-main${S}webapp${S}WEB-INF${S}newFile")
+    // write some text to the file
+    outputFile << "text of new file"
 
-### XmlUpdater
+### Copy a file
+This example shows one way of creating file objects and copying the contents of one file to the other file
 
-### TextUpdater
+    // assign file system path separator to variable
+    def S = File.separator
+    // use replace to change / to correct platform separator and use as keyword to change string to a file
+    def outputFile = outputDir+"/geonetwork-main/webapp/WEB-INF/newFile".replace('/',S) as File.class
+    def inputFile = basedirFile+"/../geonetwork-main/webapp/WEB-INF/log4j.cfg".replace('/',S) as File.class
+    // copy one file to the other
+    outputFile << inputFile.getBytes()
+
+### Set class fields during construction
+
+A common pattern used in the support classes of config is a syntax in Groovy where class fields can be set during construction.  Consider the following groovy class:
+
+    class GroovyClass {
+      def field1
+      def field2
+    }
+
+(Note: def field1 is the same as Object field1)
+
+There are no constructors defined but one can create an instance and set the properties in a single declaration:
+
+    new GroovyClass( field1: 'field1', field2: 'field2')
+
+or if one only wants to assign a single field:
+
+    new GroovyClass(field1: 'field')
+
+### Collections in Groovy
+
+Collection objects in Groovy have special syntax to make them easier to work with:
+
+Maps:
+
+    // create map
+    def map = ['key1': 'value1', 'key2': 'value2']
+    // update map
+    map['key1'] = 'newValue'
+    // maps are java.util.Map objects so those methods apply:
+    map.remove('key1')
+
+List:
+
+  // create a list. Result Type is java.util.List
+  def list = ['value1', 'value2']
+  // short hand to add new value
+  list << 'newValue'
+  // normal java.util.List method to add many
+  list.addAll( ['nv1', 'nv2'] )
+  // Access an element in list
+  list[2]
+
+For more on collections in groovy see: http://groovy.codehaus.org/Collections
+
+### AbstractUpdate
+
+Many of the support classes extend AbstractUpdate since it provides several ways of specifying the input and output of an update process.  For clarity, when I update I always mean load an input file, modify it and save it to the target/generated directory.  In no cases should the original file be modified.
+
+The primary responsibility of AbstractUpdate is to provide convenience methods: getFromFile and getToFile for the subclasses based on the parameters.
+
+  new PropertyUpdate (
+    projectPath: 'geonetwork', // projectPath indicates the file is in the <georchestra-root>/geonetwork directory, not a config subdirectory
+    path: 'webapp/WEB-INF/spring.xml'. // path is used to determing both to and from.  
+    to: 'geonetwork-main', // the base of the to file (relative to target/generated).  The path will be appended to the to field.
+    from: 'geonetwork-main/src/main' // the final from file is projectPath/from/path
+  ).update { properties -> /* update properties */}
+
+In many cases only 'to' and 'from' are required and even some subclasses of AbstractUpdate (like PropertyUpdate) only requires the 'to' field.  Although it is usually beneficial to define the 'path' field so that it doesn't need to be repeated in both 'from' and 'to' fields.
+
+### PropertyUpdate
+This example shows how to update (or create) a properties file using the PropertyUpdate support class.
+
+ 1. The maven.filter file is loaded into memory
+ 2. 4 properties are updated or added to the properties object
+ 3. the properties are written to target/generated/security-proxy/maven.filter
+
+    new PropertyUpdate(
+        path: 'maven.filter',
+        from: 'defaults/security-proxy', 
+        to: 'security-proxy').update { properties ->
+            properties['shared.server.name'] = host
+            properties['shared.default.log.level'] = logLevel
+            properties['application_home'] = applicationHome
+            properties['shared.ldapUrl'] = ldapUrl
+    }
+
+### XmlUpdate
+This first example shows how to generate an xml file based on an existing xml file.  
+
+ 1. The file is loaded into memory
+ 2. All category elements are found
+ 3. findAll is used to find the category elements with the class attribute that contains the gn string
+ 4. geor is added to each class attribute in the elements found in the previous step
+ 5. the updated xml is written to target/generated/security-proxy/file.xml 
+
+    new XmlUpdate(
+      path: 'file.xml',
+      from: 'defaults/security-proxy', 
+      to: 'security-proxy').update { xml ->
+          xml.category.findAll {it.@class.contains("gn")}. each {cat ->
+              cat.@class = s.@class + " geor" // add new class to element
+          }
+      }
+      
+See http://groovy.codehaus.org/Reading+XML+using+Groovy%27s+XmlParser for more details on how to update the xml
+
+This second example shows how to create a new xml file.  
+
+ 1. An XmlBuilder is created
+ 2. The builder is passed to the closure
+ 3. The closure constructs the xml:
+  1. A config element is created (with no attributes)
+  2. An import element is created as child of config.  The import element has a file attribute and no children
+  3. A bean element is created as a child of config.  This element has children
+  4. Etc...
+ 4. The xml is written to target/generated/security-proxy/file.xml
+
+    new XmlUpdate(
+      path: 'file.xml',
+      to: 'security-proxy').write { builder ->
+          builder.config() {
+            import(file: 'importFile.xml')
+            bean (id:'newbean', class: 'org.georchestra.Bean') {
+              property (key: 'property', value: 'value')
+            }
+          }
+      }
+
+See http://groovy.codehaus.org/Creating+XML+using+Groovy%27s+MarkupBuilder for more details on how to construct xml documents with the Groovy MarkupBuilder.
+
+### TextUpdate
+
+The text update class assists in updating raw text file by searching for occurances of regular expressions and replacing the matched section with the new text.  This example also illustrates how one can take the text from a georchestra module (in this case Geonetwork) and update that text.
+
+ 1. Load <root>/geonetwork/web-client/src/main/resources/apps/georchestra/js/Settings.js into memory
+   * Note: the from path is constructed from: <fromProject>/<from>/<path>
+ 2. The pattern GeoNetwork\.Util\.defaultLocale\s*=\s*'eng' is replaced with "GeoNetwork.Util.defaultLocale = 'fre'"
+   * Note: List Javascript the /.../ indicates a regular expression.
+   * Note: Currently all matches of the regular expression are replaced
+ 3. The text is written out to target/generated/geonetwork-client/apps/georchestra/js/Settings.js
+
+new TextUpdate(
+  path:  'apps/georchestra/js/Settings.js',
+  fromProject: "geonetwork",
+  from: 'web-client/src/main/resources/',
+  to: 'geonetwork-client/',
+  patternsToReplace: [ /GeoNetwork\.Util\.defaultLocale\s*=\s*'eng'/: "GeoNetwork.Util.defaultLocale = 'fre'"]
+ * ).update()
 
 ### MavenDownloader
 
+The maven downloader support class searches the repositories declared in the root pom.xml and the config pom.xml to locate Maven artifacts and download them.
+
+The following example downloads a single jar to target/generated/geoserver-webapp/WEB-INF/lib.
+  
+    new MavenDownloader(
+      artifact: ['com.vividsolutions','jts','1.13],
+      to: 'geoserver-webapp/WEB-INF/lib').download()
+
+One can also download several jars with one declaration by using the 'artifacts' field instead of the 'artifact' field.
+
+    new MavenDownloader(
+      artifacts: [
+        ['org.geoserver.extension','control-flow','2.2.4'],
+        ['com.vividsolutions','jts','1.13]
+      ],
+      to: 'geoserver-webapp/WEB-INF/lib').download()
+
+### Execute an ant task
+
+Groovy provides a class called the [AntBuilder](http://groovy.codehaus.org/Using+Ant+from+Groovy).  An instance is passed to the GenerateConfig class.  The following example copies the config/configurations/<target>/build_support/geonetwork-main directory to /target/generated
+
+    class GenerateConfig {
+      def generate(def project, def log, def ant, def basedirFile, 
+							def target, def subTarget, def targetDir, 
+							def buildSupportDir, def outputDir) {
+        ant.copy(todir: outputDir+"/geonetwork-main") {
+          fileset (dir: buildSupportDir+"/geonetwork-main")
+        }
+      }
+    }
+    
+### Structured Scripting
+
+If the GenerateConfig script is complex it would likely be a good idea to structure the script in several classes and have GenerateConfig call those classes to do the work.  One can even use packages like in java if one needs to.  Although that is probably more than is typically needed.
+
+A common pattern used could be the following:
+
+GeoserverConfig.groovy:
+
+    class GeoserverConfig {
+      def generate(Parameters params) {
+        // generate geoserver configuration file
+      }
+    }
+
+GeonetworkConfig.groovy:
+
+    class GeonetworkConfig {
+      def generate(Parameters params) {
+        // generate geonetwork configuration file
+      }
+    }
+    
+GenerateConfig.groovy
+
+    class GenerateConfig {
+      def generate(def project, def log, def ant, def basedirFile, 
+							def target, def subTarget, def targetDir, 
+							def buildSupportDir, def outputDir) {
+        def params = Parameters.get
+        new GeoserverConfig().generate(params)
+        new GeonetworkConfig().generate(params)
+      }
+    }
 
 Property vs Profile
 ===================
 
+When building the configuration module there are two Java system properties that are observed.  
+
+ * server - this property defines the directory in config/configurations to use as the configuration
+ * sub.target - this property is optional and is used if the same configuration is used for multiple target servers like test, integration, production.  This property is really only used by GenerateConfig.groovy scripts
+ 
+One can specify them manually on the commandline:
+
+    mvn install -Dserver=template -Dsub.target=test
+    
+Or one can add a profile to <root>/pom.xml that declares the properties when the profile is enabled. There are examples in the pom already that be be used as templates.  The following example enables a profile:
+  
+    mvn install -Ptemplate
+    
+See (http://maven.apache.org/guides/introduction/introduction-to-profiles.html) for more on maven profiles.

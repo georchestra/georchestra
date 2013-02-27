@@ -6,7 +6,7 @@ new MavenDownloader(
 &nbsp;&nbsp;artifact: ['com.vividsolutions','jts','1.13],
 &nbsp;&nbsp;to: 'geoserver-webapp/WEB-INF/lib').download()
 </code></pre>
-  * Example will download the jts jar to the geoserver configuration
+  * Example will download the jts jar and the geoserver control-flow jar to the geoserver configuration
   * <pre><code>
 new MavenDownloader(
 &nbsp;&nbsp;artifacts: [
