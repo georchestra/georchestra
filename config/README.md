@@ -253,7 +253,7 @@ This first example shows how to generate an xml file based on an existing xml fi
               cat.@class = s.@class + " geor" // add new class to element
           }
     }
-  
+
 See http://groovy.codehaus.org/Reading+XML+using+Groovy%27s+XmlParser for more details on how to update the xml
 
 This second example shows how to create a new xml file.  
