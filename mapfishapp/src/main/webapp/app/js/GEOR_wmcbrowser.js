@@ -146,17 +146,17 @@ GEOR.wmcbrowser = (function() {
     };
 
     /**
-     * Method: silentDisableUncheck
-     * uncheck & disable checkbox silently
+     * Method: silentCheck
+     * set checkbox status silently
      *
      * Parameters:
      * cbx - {Ext.form.Checkbox}
+     * checked - {Boolean}
      */
-    var silentDisableUncheck = function(cbx) {
+    var silentCheck = function(cbx, checked) {
         cbx.suspendEvents();
-        cbx.setValue(false);
+        cbx.setValue(checked);
         cbx.resumeEvents();
-        cbx.disable();
     };
 
     /**
@@ -182,10 +182,11 @@ GEOR.wmcbrowser = (function() {
         if (viewHasSelection) {
             cbxChecked = view.getSelectedRecords()[0].get('wmc') === 
                 GEOR.ls.get("default_context");
-            cbx.setValue(cbxChecked);
+            silentCheck(cbx, cbxChecked);
             cbx.setDisabled(!lsAvailable);
         } else {
-            silentDisableUncheck(cbx);
+            silentCheck(cbx, false);
+            cbx.disable();
         }
         formPanel.getForm().reset();
     };
@@ -205,7 +206,8 @@ GEOR.wmcbrowser = (function() {
                 cbx = fbar.getComponent('cbx');
 
             btn.enable();
-            silentDisableUncheck(cbx);
+            silentCheck(cbx, false);
+            cbx.disable();
             // we suppress event to prevent retroaction on this field
             view.clearSelections(true);
         }

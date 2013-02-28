@@ -1,41 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 <beans>
-
     <bean id="homecontroller" 
           class="mapfishapp.ws.HomeController"/>
+
     <bean id="editcontroller" 
           class="mapfishapp.ws.EditController"/>
 
-          
-	<!--  url mapping is directly handled with the spring annotations written in the following controllers -->
-	<bean class="mapfishapp.ws.OGCProxy">
-	</bean>
-	<bean class="mapfishapp.ws.UpLoadGeoFileController">
-		<property name="responseCharset" value="UTF-8"/>
-		<property name="tempDirectory" value="/tmp/mapfish/cache"/>
+    <!--  url mapping is directly handled with the spring annotations written in the following controllers -->
+    <bean class="mapfishapp.ws.OGCProxy">
+    </bean>
 
-		<property name="zipSizeLimit" value="8589934592"/>
-		<property name="kmlSizeLimit" value="8589934592"/>
-		<property name="gpxSizeLimit" value="8589934592"/>
-		<property name="gmlSizeLimit" value="8589934592"/>
-	</bean>
+    <!-- File uploads -->
+    <bean id="multipartResolver"
+      class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize">
+            <value>10000000</value>
+        </property>
+    </bean>
 
-	<bean class="mapfishapp.ws.DocController">
-		<property name="maxDocAgeInMinutes" value="${maxDocAgeInMinutes}"/>
-		<property name="credentials">
-          <map>${credentials}</map>
-		</property>
-	</bean>
-	
-	<!-- upload de fichiers -->
-	<bean id="multipartResolver"
-	  class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-	  <property name="maxUploadSize">
-	    <value>10000000</value>
-	  </property>
-	</bean>
+    <bean class="mapfishapp.ws.UpLoadGeoFileController">
+        <property name="responseCharset" value="UTF-8"/>
+        <property name="tempDirectory" value="${docTempDir}/geoFileUploadsCache"/>
+        <property name="zipSizeLimit" value="8589934592"/>
+        <property name="kmlSizeLimit" value="8589934592"/>
+        <property name="gpxSizeLimit" value="8589934592"/>
+        <property name="gmlSizeLimit" value="8589934592"/>
+    </bean>
 
+    <!-- Documents controller -->
+    <bean class="mapfishapp.ws.DocController">
+        <property name="maxDocAgeInMinutes" value="${maxDocAgeInMinutes}"/>
+        <property name="docTempDir" value="${docTempDir}"/>
+        <property name="credentials">
+            <map>${credentials}</map>
+        </property>
+    </bean>
 
     <!-- View resolver Required to access jsps in WEB-INF/jsp directory-->
     <bean id="viewResolver"
@@ -44,6 +44,4 @@
         <property name="prefix" value="/WEB-INF/jsp/"/>
         <property name="suffix" value=".jsp"/>
     </bean>
-    	
 </beans>
-

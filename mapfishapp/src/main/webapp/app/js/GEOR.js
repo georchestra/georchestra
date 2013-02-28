@@ -37,6 +37,13 @@ Ext.namespace("GEOR");
 
 (function() {
 
+    // monkey patching OpenLayers XML format to add the XML prolog
+    // see http://applis-bretagne.fr/redmine/issues/4536
+    var fn = OpenLayers.Format.XML.prototype.write;
+    OpenLayers.Format.XML.prototype.write = function(node) {
+        return '<?xml version="1.0" encoding="UTF-8"?>' + fn(node);
+    };
+
     var checkRoles = function(module, okRoles) {
         // module is available for everyone 
         // if okRoles is empty or undefined:

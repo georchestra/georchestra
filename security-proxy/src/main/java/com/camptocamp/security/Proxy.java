@@ -504,7 +504,7 @@ public class Proxy {
             
             headerManagement.copyResponseHeaders(request, request.getRequestURI(), proxiedResponse, finalResponse, this.targets);
             
-            if (statusCode == 302)
+            if (statusCode == 302 || statusCode == 301)
             	adjustLocation(request, proxiedResponse, finalResponse);
             
             // get content type

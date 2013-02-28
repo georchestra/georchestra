@@ -337,6 +337,8 @@ GEOR.styler = (function() {
                     getHelpCmp().hide();
                     newLegendPanel(rules);
                     mask.hide();
+                    dirty = false;
+                    pathToSLD = path;
                 } else {
                     mask.hide();
                     Ext.Msg.alert(
