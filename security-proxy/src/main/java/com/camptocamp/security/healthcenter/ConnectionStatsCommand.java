@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.camptocamp.ogcservstatistics.dataservices.AbstractQueryCommand;
+import org.georchestra.ogcservstatistics.dataservices.AbstractQueryCommand;
 
 /**
  * Retrieves from postgres the connection's state maintained in 
