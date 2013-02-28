@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.camptocamp.ogcservstatistics.dataservices.AbstractQueryCommand;
+import org.georchestra.ogcservstatistics.dataservices.AbstractQueryCommand;
 
 /**
  * This command counts the open connections in Postres data base

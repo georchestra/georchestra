@@ -63,7 +63,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.camptocamp.ogcservstatistics.log4j.OGCServiceMessageFormatter;
+import org.georchestra.ogcservstatistics.log4j.OGCServiceMessageFormatter;
+import org.georchestra.security.healthcenter.DatabaseHealthCenter;
 
 
 /**
