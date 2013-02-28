@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.camptocamp.security.healthcenter;
+package org.georchestra.security.healthcenter;
 
 import java.io.IOException;
 import java.sql.Connection;

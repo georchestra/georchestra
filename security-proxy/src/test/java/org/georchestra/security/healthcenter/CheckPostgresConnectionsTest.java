@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.camptocamp.security.healthcenter;
+package org.georchestra.security.healthcenter;
 
 import java.util.List;
 import java.util.Map;
@@ -22,7 +22,8 @@ import org.postgresql.ds.PGSimpleDataSource;
  */
 public final class CheckPostgresConnectionsTest {
 	
-	private final static Log LOGGER = LogFactory.getLog(DatabaseHealthCenterTest.class.getPackage().getName());
+	private final static Log LOGGER = LogFactory.getLog(CheckPostgresConnectionsTest.class.getPackage().getName());
+	
 	static{
 		BasicConfigurator.configure();
 	}
@@ -51,9 +52,9 @@ public final class CheckPostgresConnectionsTest {
 		ic.bind("java:/comp/env/jdbc/postgres", ds);
         
     }	
-	/**
-	 * Test method for {@link com.camptocamp.security.healthcenter.CheckPostgresConnections#countConnection()}.
-	 */
+//	/**
+//	 * Test method for {@link org.georchestra.security.healthcenter.CheckPostgresConnections#countConnection()}.
+//	 */
 //	@Test
 //	public void testCountConnection() throws Exception{
 //		Integer connections = CheckPostgresConnections.countConnection();

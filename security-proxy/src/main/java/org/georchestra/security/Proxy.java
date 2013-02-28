@@ -1,4 +1,4 @@
-package com.camptocamp.security;
+package org.georchestra.security;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -53,6 +53,7 @@ import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.ProxySelectorRoutePlanner;
 import org.apache.http.message.BasicNameValuePair;
+import org.georchestra.security.healthcenter.DatabaseHealthCenter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.DefaultRedirectStrategy;
@@ -63,7 +64,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.camptocamp.ogcservstatistics.log4j.OGCServiceMessageFormatter;
-import com.camptocamp.security.healthcenter.DatabaseHealthCenter;
 
 
 /**

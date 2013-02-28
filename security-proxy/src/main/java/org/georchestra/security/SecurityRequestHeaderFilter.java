@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.camptocamp.security;
+package org.georchestra.security;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;

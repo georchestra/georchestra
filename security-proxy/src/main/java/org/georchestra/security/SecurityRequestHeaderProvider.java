@@ -1,4 +1,4 @@
-package com.camptocamp.security;
+package org.georchestra.security;
 
 import java.util.ArrayList;
 import java.util.Collection;

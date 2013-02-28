@@ -1,4 +1,4 @@
-package com.camptocamp.security.workaround;
+package org.georchestra.security.workaround;
 
 import java.io.IOException;
 

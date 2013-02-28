@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.camptocamp.security.healthcenter;
+package org.georchestra.security.healthcenter;
 
 import java.net.ConnectException;
 import java.sql.Connection;
@@ -9,8 +9,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Properties;
-
-import org.postgresql.PGConnection;
 
 /**
  * This class is responsible maintains the connection to Postgres database.
@@ -47,7 +45,7 @@ final class PostgresConnectionProvider implements DBConnectionProvider {
 	}
 	
 	/* (non-Javadoc)
-	 * @see com.camptocamp.security.healthcenter.DBConnectionProvider#getConnection()
+	 * @see org.georchestra.security.healthcenter.DBConnectionProvider#getConnection()
 	 */
 	@Override
 	public Connection getConnection() throws ConnectException {

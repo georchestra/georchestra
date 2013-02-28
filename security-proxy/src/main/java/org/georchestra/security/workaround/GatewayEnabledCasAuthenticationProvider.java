@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.camptocamp.security.workaround;
+package org.georchestra.security.workaround;
 
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.cas.authentication.CasAuthenticationProvider;

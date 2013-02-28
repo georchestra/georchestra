@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.camptocamp.security.healthcenter;
+package org.georchestra.security.healthcenter;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

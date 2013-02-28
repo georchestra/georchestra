@@ -1,4 +1,4 @@
-package com.camptocamp.security;
+package org.georchestra.security;
 
 import javax.servlet.http.HttpServletRequest;
 

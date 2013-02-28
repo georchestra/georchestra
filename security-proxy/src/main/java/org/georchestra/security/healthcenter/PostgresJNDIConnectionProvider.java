@@ -1,4 +1,4 @@
-package com.camptocamp.security.healthcenter;
+package org.georchestra.security.healthcenter;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -30,7 +30,7 @@ class PostgresJNDIConnectionProvider implements DBConnectionProvider  {
 	
 
 	/**
-	 * @see com.camptocamp.security.healthcenter.DBConnectionProvider#getConnection()
+	 * @see org.georchestra.security.healthcenter.DBConnectionProvider#getConnection()
 	 */
 	@Override
 	public Connection getConnection() throws ConnectException {

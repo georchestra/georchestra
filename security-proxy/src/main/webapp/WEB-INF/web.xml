@@ -13,7 +13,7 @@
 
     <filter>
         <filter-name>UTF8Filter</filter-name>
-        <filter-class>com.camptocamp.security.UTF8Filter</filter-class>
+        <filter-class>org.georchestra.security.UTF8Filter</filter-class>
     </filter>
 
     <filter>

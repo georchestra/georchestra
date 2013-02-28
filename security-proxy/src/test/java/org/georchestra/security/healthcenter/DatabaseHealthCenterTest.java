@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.camptocamp.security.healthcenter;
+package org.georchestra.security.healthcenter;
 
 import static org.junit.Assert.*;
 
@@ -10,10 +10,10 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.georchestra.security.healthcenter.DatabaseHealthCenter;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.camptocamp.security.healthcenter.DatabaseHealthCenter;
 
 /**
  * TODO Work in progress
@@ -32,7 +32,7 @@ public class DatabaseHealthCenterTest {
 		// TODO set 5 database connections
 	}
 	/**
-	 * Test method for {@link com.camptocamp.security.healthcenter.DatabaseHealthCenter#checkConnections(int)}.
+	 * Test method for {@link org.georchestra.security.healthcenter.DatabaseHealthCenter#checkConnections(int)}.
 	 */
 	@Test
 	public void testCheckConnectionsUnstable() {

@@ -6,7 +6,7 @@
 						http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
     <bean id="proxy" 
-          class="com.camptocamp.security.Proxy">
+          class="org.georchestra.security.Proxy">
 <!--          <property name="defaultTarget" value="${proxy.defaultTarget}/sec/"/>-->
           <property name="headerManagement" ref="headerManagementBean"/>
           <property name="defaultCharset" value="UTF-8"/>
@@ -52,11 +52,11 @@ ${proxy.mapping}
     </bean>
           
     <bean id="headerManagementBean"
-          class="com.camptocamp.security.HeadersManagementStrategy">
+          class="org.georchestra.security.HeadersManagementStrategy">
         <property name="headerProviders">
             <list>
-                <bean class="com.camptocamp.security.SecurityRequestHeaderProvider"/>
-                <bean class="com.camptocamp.security.LdapUserDetailsRequestHeaderProvider">
+                <bean class="org.georchestra.security.SecurityRequestHeaderProvider"/>
+                <bean class="org.georchestra.security.LdapUserDetailsRequestHeaderProvider">
                     <constructor-arg index="0" ref="ldapUserSearch"/>
                     <constructor-arg index="1">
                         <map>
@@ -68,7 +68,7 @@ ${proxy.mapping}
         </property>
         <property name="filters">
             <list>
-                <bean class="com.camptocamp.security.SecurityRequestHeaderFilter">
+                <bean class="org.georchestra.security.SecurityRequestHeaderFilter">
                     <property name="trustedHosts">
                         <list>
                             <value>localhost</value>
