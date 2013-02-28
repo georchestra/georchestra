@@ -10,7 +10,7 @@ public class PurgeDocsTimer {
 	private static CopyOnWriteArrayList<Runnable> tasks = new CopyOnWriteArrayList<Runnable>();
 	private static boolean initialized = false;
 
-	private static void intialize() {
+	private static void initialize(final int period) {
 		TimerTask task = new TimerTask() {
 			@Override
 			public void run() {
@@ -19,14 +19,14 @@ public class PurgeDocsTimer {
 				}
 			}
 		};
-		TIMER.scheduleAtFixedRate(task, Calendar.getInstance().getTime(), 60000);
+		TIMER.scheduleAtFixedRate(task, Calendar.getInstance().getTime(), period);
 		initialized = true;
 	}
 
-	public static synchronized void startPurgeDocsTimer(
-			final Runnable purgeMethod) {
-		if (!initialized)
-			intialize();
+	public static synchronized void startPurgeDocsTimer(final Runnable purgeMethod, final int period) {
+		if (!initialized){
+			initialize(period);
+		}
 		if(!tasks.contains(purgeMethod))
 			tasks.add(purgeMethod);
 	}

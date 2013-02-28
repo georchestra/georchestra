@@ -521,7 +521,7 @@ GEOR.ows = (function() {
          * Create an {OpenLayers.Protocol.WFS} instance.
          *
          * Parameters:
-         * record - {Ext.data.Record} Record with "owsURL" and
+         * record - {Ext.data.Record|Object} Record or Hash with "owsURL" and
          *     "typeName" and "featureNS" fields.
          * map - {OpenLayers.Map} Map object.
          * options - {Object} Additional protocol options
@@ -530,8 +530,13 @@ GEOR.ows = (function() {
          * {OpenLayers.Protocol.WFS} The protocol.
          */
         WFSProtocol: function(record, map, options) {
+            record = (record instanceof Ext.data.Record) ? {
+                typeName: record.get("typeName"),
+                featureNS: record.get("featureNS"),
+                owsURL: record.get("owsURL")
+            } : record;
             var featureType, featurePrefix;
-            var parts = record.get("typeName").split(":");
+            var parts = record.typeName.split(":");
             if (parts.length > 1) {
                 featurePrefix = parts[0];
                 featureType = parts[1];
@@ -540,9 +545,9 @@ GEOR.ows = (function() {
                 featureType = parts[0];
             }
             options = Ext.applyIf({
-                url: record.get("owsURL"),
+                url: record.owsURL,
                 featureType: featureType,
-                featureNS: record.get("featureNS"),
+                featureNS: record.featureNS,
                 featurePrefix: featurePrefix,
                 srsNameInQuery: true, // see http://trac.osgeo.org/openlayers/ticket/2228
                 srsName: map.getProjection(),

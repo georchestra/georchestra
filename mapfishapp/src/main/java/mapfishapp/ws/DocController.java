@@ -48,8 +48,15 @@ public class DocController {
      * Time (in minutes) before files are purged automatically from DIR
      */
     private int maxDocAgeInMinutes = 60 * 24;
+    
 	public int getMaxDocAgeInMinutes() {return maxDocAgeInMinutes;}
 	public void setMaxDocAgeInMinutes(int maxDocAgeInMinutes) {this.maxDocAgeInMinutes = maxDocAgeInMinutes;}
+    
+	/** the temporary directory used by the document services*/
+    private String docTempDir;
+
+    public String getDocTempDir() {return docTempDir;}
+	public void setDocTempDir(String docTempDir) {	this.docTempDir = docTempDir; }
 
 	/**
 	 * mapping from hostname -> credentials
@@ -95,7 +102,7 @@ public class DocController {
      */
     @RequestMapping(value="/wmc/", method=RequestMethod.POST)
     public void storeWMCFile(HttpServletRequest request, HttpServletResponse response) {   
-        storeFile(new WMCDocService(maxDocAgeInMinutes), WMC_URL, request, response);   
+        storeFile(new WMCDocService(maxDocAgeInMinutes, this.docTempDir), WMC_URL, request, response);   
     }
     
     /**
@@ -105,7 +112,7 @@ public class DocController {
      */
     @RequestMapping(value="/wmc/*", method=RequestMethod.GET)
     public void getWMCFile(HttpServletRequest request, HttpServletResponse response) { 
-        getFile(new WMCDocService(maxDocAgeInMinutes), request, response);
+        getFile(new WMCDocService(maxDocAgeInMinutes,  this.docTempDir), request, response);
     }
 
     /*======================= JSON to CSV =====================================================================*/
@@ -116,7 +123,7 @@ public class DocController {
      */
     @RequestMapping(value="/csv/", method=RequestMethod.POST)
     public void storeCSVFile(HttpServletRequest request, HttpServletResponse response) {   
-        storeFile(new CSVDocService(maxDocAgeInMinutes), CSV_URL, request, response);   
+        storeFile(new CSVDocService(maxDocAgeInMinutes, this.docTempDir), CSV_URL, request, response);   
     }
     
     /**
@@ -126,7 +133,7 @@ public class DocController {
      */
     @RequestMapping(value="/csv/*", method=RequestMethod.GET)
     public void getCSVFile(HttpServletRequest request, HttpServletResponse response) { 
-        getFile(new CSVDocService(maxDocAgeInMinutes), request, response);
+        getFile(new CSVDocService(maxDocAgeInMinutes, this.docTempDir), request, response);
     }
     
     /*======================= SLD =====================================================================*/
@@ -152,7 +159,7 @@ public class DocController {
 
         if(request.getContentType().contains("application/vnd.ogc.sld+xml")) {
             // sld to store
-            storeFile(new SLDDocService(maxDocAgeInMinutes), SLD_URL, request, response);   
+            storeFile(new SLDDocService(this.maxDocAgeInMinutes, this.docTempDir), SLD_URL, request, response);   
         }
         else if(request.getContentType().contains("application/json") || request.getContentType().contains("text/json")) {
             // classification based on client request
@@ -170,7 +177,7 @@ public class DocController {
      */
     @RequestMapping(value="/sld/*", method=RequestMethod.GET)
     public void getSLDFile(HttpServletRequest request, HttpServletResponse response) { 
-        getFile(new SLDDocService(maxDocAgeInMinutes), request, response);
+        getFile(new SLDDocService(this.maxDocAgeInMinutes, this.docTempDir), request, response);
     }
     
     /*=======================Private Methods==========================================================================*/
@@ -184,7 +191,7 @@ public class DocController {
             SLDClassifier c = new SLDClassifier(credentials, new ClassifierCommand(getBodyFromRequest(request)));
             
             // save SLD content under a file
-            SLDDocService service = new SLDDocService(maxDocAgeInMinutes);
+            SLDDocService service = new SLDDocService(this.maxDocAgeInMinutes, this.docTempDir);
             String fileName = service.saveData(c.getSLD());
             
             PrintWriter out = response.getWriter(); 

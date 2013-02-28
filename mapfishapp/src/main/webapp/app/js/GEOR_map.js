@@ -238,15 +238,17 @@ GEOR.map = (function() {
             var attr = r.get('attribution');
             var layer = r.get('layer');
             if (!attr || !attr.title) {
-                var a;
-                if (layer.url) {
-                    var b = OpenLayers.Util.createUrlObject(layer.url);
+                var a, 
+                    // handle both wms & wfs layers
+                    url = layer.url || (layer.protocol && layer.protocol.url);
+                if (url) {
+                    var b = OpenLayers.Util.createUrlObject(url);
                     if (b && b.host) {
                         a = b.host;
                     }
                 }
                 r.set('attribution', {
-                    title: a || GEOR.config.DEFAULT_ATTRIBUTION
+                    title: a
                 });
             }
 
