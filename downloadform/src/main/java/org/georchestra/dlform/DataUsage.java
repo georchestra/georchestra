@@ -1,4 +1,4 @@
-package org.pigma.dlform;
+package org.georchestra.dlform;
 
 import java.io.OutputStream;
 import java.sql.Connection;
