@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.camptocamp.ogcservstatistics.util;
+package ogr.georchestra.ogcservstatistics.util;
 
 import java.io.File;
 import java.io.IOException;

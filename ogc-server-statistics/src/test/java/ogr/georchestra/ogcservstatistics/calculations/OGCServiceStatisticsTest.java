@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.camptocamp.ogcservstatistics.calculations;
+package ogr.georchestra.ogcservstatistics.calculations;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -125,7 +125,7 @@ public class OGCServiceStatisticsTest {
 	}
 	
 	/**
-	 * Test method for {@link com.camptocamp.ogcservs)tatistics.calculations.OGCServiceStatistics#retrieveConnectionsForLayer()}.
+	 * Test method for {@link ogr.georchestra.ogcservs)tatistics.calculations.OGCServiceStatistics#retrieveConnectionsForLayer()}.
 	 * @throws OGCServStatisticsException 
 	 */
 	@Test
@@ -149,7 +149,7 @@ public class OGCServiceStatisticsTest {
 	}
 
 	/**
-	 * Test method for {@link com.camptocamp.ogcservs)tatistics.calculations.OGCServiceStatistics#retrieveConnectionsForLayer()}.
+	 * Test method for {@link ogr.georchestra.ogcservs)tatistics.calculations.OGCServiceStatistics#retrieveConnectionsForLayer()}.
 	 * @throws OGCServStatisticsException 
 	 */
 	@Test

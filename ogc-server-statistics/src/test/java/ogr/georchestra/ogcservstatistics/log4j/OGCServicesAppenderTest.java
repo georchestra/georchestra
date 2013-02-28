@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.camptocamp.ogcservstatistics.log4j;
+package ogr.georchestra.ogcservstatistics.log4j;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -14,6 +14,8 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
+import ogr.georchestra.ogcservstatistics.util.Utility;
+
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.georchestra.ogcservstatistics.OGCServStatisticsException;
@@ -25,7 +27,6 @@ import org.georchestra.ogcservstatistics.log4j.OGCServicesAppender;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.camptocamp.ogcservstatistics.util.Utility;
 
 
 /**

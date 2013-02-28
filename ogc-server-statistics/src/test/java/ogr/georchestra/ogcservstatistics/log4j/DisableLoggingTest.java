@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.camptocamp.ogcservstatistics.log4j;
+package ogr.georchestra.ogcservstatistics.log4j;
 
 import static org.junit.Assert.assertEquals;
 
