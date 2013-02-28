@@ -26,6 +26,7 @@ Enhancements:
  * mapfishapp: by default, the map is now restored with its latest known state (context), see https://github.com/georchestra/georchestra/pull/50
  * mapfishapp: missing translations
  * mapfishapp: mapfishapp packages were renamed as org.georchestra.mapfishapp, see  https://github.com/georchestra/georchestra/pull/69
+ * downloadform: the packages were renamed as org.georchestra.dlform, see  https://github.com/georchestra/georchestra/pull/72
  * extractorapp: packges were renamed as org.georchestra.extractorapp, see https://github.com/georchestra/georchestra/pull/71 
 
 Bug fixes:
