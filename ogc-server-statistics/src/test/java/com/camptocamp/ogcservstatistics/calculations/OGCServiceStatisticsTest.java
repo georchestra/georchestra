@@ -13,12 +13,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.georchestra.ogcservstatistics.OGCServStatisticsException;
+import org.georchestra.ogcservstatistics.calculations.OGCServiceStatistics;
+import org.georchestra.ogcservstatistics.dataservices.DataServicesConfiguration;
+import org.georchestra.ogcservstatistics.dataservices.DeleteAllCommand;
+import org.georchestra.ogcservstatistics.log4j.OGCServiceMessageFormatter;
 import org.junit.Test;
 
-import com.camptocamp.ogcservstatistics.OGCServStatisticsException;
-import com.camptocamp.ogcservstatistics.dataservices.DataServicesConfiguration;
-import com.camptocamp.ogcservstatistics.dataservices.DeleteAllCommand;
-import com.camptocamp.ogcservstatistics.log4j.OGCServiceMessageFormatter;
 
 
 
@@ -87,7 +88,7 @@ public class OGCServiceStatisticsTest {
 	}
 
 	/**
-	 * Test method for {@link com.camptocamp.ogcservstatistics.calculations.OGCServiceStatistics#list()}.
+	 * Test method for {@link org.georchestra.ogcservstatistics.calculations.OGCServiceStatistics#list()}.
 	 * @throws OGCServStatisticsException 
 	 */
 	@Test
@@ -191,7 +192,7 @@ public class OGCServiceStatisticsTest {
 	}
 	
 	/**
-	 * Test method for {@link com.camptocamp.ogcservstatistics.calculations.OGCServiceStatistics#retrieveMostActiveUsers()}.
+	 * Test method for {@link org.georchestra.ogcservstatistics.calculations.OGCServiceStatistics#retrieveMostActiveUsers()}.
 	 * @throws OGCServStatisticsException 
 	 */
 	@Test
@@ -215,7 +216,7 @@ public class OGCServiceStatisticsTest {
 	}
 
 	/**
-	 * Test method for {@link com.camptocamp.ogcservstatistics.calculations.OGCServiceStatistics#retrieveUserConnectionsForLayer()}.
+	 * Test method for {@link org.georchestra.ogcservstatistics.calculations.OGCServiceStatistics#retrieveUserConnectionsForLayer()}.
 	 * @throws OGCServStatisticsException 
 	 */
 	@Test
@@ -238,7 +239,7 @@ public class OGCServiceStatisticsTest {
 	}
 	
 	/**
-	 * Test method for {@link com.camptocamp.ogcservstatistics.calculations.OGCServiceStatistics#retrieveUserConnectionsForLayer()}.
+	 * Test method for {@link org.georchestra.ogcservstatistics.calculations.OGCServiceStatistics#retrieveUserConnectionsForLayer()}.
 	 * @throws OGCServStatisticsException 
 	 */
 	@Test
@@ -261,7 +262,7 @@ public class OGCServiceStatisticsTest {
 	}
 	
 	/**
-	 * Test method for {@link com.camptocamp.ogcservstatistics.calculations.OGCServiceStatistics#retrieveMostConsultedLayers()}.
+	 * Test method for {@link org.georchestra.ogcservstatistics.calculations.OGCServiceStatistics#retrieveMostConsultedLayers()}.
 	 * @throws OGCServStatisticsException 
 	 */
 	@Test

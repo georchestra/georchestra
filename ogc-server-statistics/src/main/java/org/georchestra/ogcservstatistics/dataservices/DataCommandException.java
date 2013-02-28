@@ -1,4 +1,4 @@
-package com.camptocamp.ogcservstatistics.dataservices;
+package org.georchestra.ogcservstatistics.dataservices;
 
 import java.sql.SQLException;
 

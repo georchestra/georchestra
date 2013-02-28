@@ -16,13 +16,15 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.georchestra.ogcservstatistics.OGCServStatisticsException;
+import org.georchestra.ogcservstatistics.calculations.OGCServiceStatistics;
+import org.georchestra.ogcservstatistics.dataservices.DataServicesConfiguration;
+import org.georchestra.ogcservstatistics.dataservices.DeleteAllCommand;
+import org.georchestra.ogcservstatistics.log4j.OGCServiceMessageFormatter;
+import org.georchestra.ogcservstatistics.log4j.OGCServicesAppender;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.camptocamp.ogcservstatistics.OGCServStatisticsException;
-import com.camptocamp.ogcservstatistics.calculations.OGCServiceStatistics;
-import com.camptocamp.ogcservstatistics.dataservices.DataServicesConfiguration;
-import com.camptocamp.ogcservstatistics.dataservices.DeleteAllCommand;
 import com.camptocamp.ogcservstatistics.util.Utility;
 
 
@@ -69,7 +71,7 @@ public class OGCServicesAppenderTest {
 	}
 	
 	/**
-	 * Test for {@link com.camptocamp.ogcservstatistics.log4j.OGCServicesAppender} configuration
+	 * Test for {@link org.georchestra.ogcservstatistics.log4j.OGCServicesAppender} configuration
 	 * 
 	 * Test that all properties were loaded from log4j.properties 
 	 */

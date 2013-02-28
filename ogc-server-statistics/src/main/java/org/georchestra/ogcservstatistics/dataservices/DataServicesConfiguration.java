@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.camptocamp.ogcservstatistics.dataservices;
+package org.georchestra.ogcservstatistics.dataservices;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

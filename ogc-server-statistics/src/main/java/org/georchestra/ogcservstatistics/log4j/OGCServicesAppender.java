@@ -1,4 +1,4 @@
-package com.camptocamp.ogcservstatistics.log4j;
+package org.georchestra.ogcservstatistics.log4j;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -8,10 +8,10 @@ import java.util.Map;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.spi.ErrorCode;
 import org.apache.log4j.spi.LoggingEvent;
+import org.georchestra.ogcservstatistics.OGCServStatisticsException;
+import org.georchestra.ogcservstatistics.dataservices.DataServicesConfiguration;
+import org.georchestra.ogcservstatistics.dataservices.InsertCommand;
 
-import com.camptocamp.ogcservstatistics.OGCServStatisticsException;
-import com.camptocamp.ogcservstatistics.dataservices.DataServicesConfiguration;
-import com.camptocamp.ogcservstatistics.dataservices.InsertCommand;
 
 /**
  * This appender is responsible to record the OGC services in the configured
@@ -24,7 +24,7 @@ import com.camptocamp.ogcservstatistics.dataservices.InsertCommand;
  * <pre>
  * 
  * log4j.rootLogger= INFO, OGCSERVICES
- * log4j.appender.OGCSERVICES=com.camptocamp.ogcservstatistics.log4j.OGCServicesAppender
+ * log4j.appender.OGCSERVICES=org.georchestra.ogcservstatistics.log4j.OGCServicesAppender
  * log4j.appender.OGCSERVICES.activated=true
  * log4j.appender.OGCSERVICES.jdbcURL=jdbc:postgresql://localhost:5432/testdb
  * log4j.appender.OGCSERVICES.databaseUser=postgres

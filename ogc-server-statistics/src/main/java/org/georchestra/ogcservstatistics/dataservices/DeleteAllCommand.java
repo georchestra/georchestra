@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.camptocamp.ogcservstatistics.dataservices;
+package org.georchestra.ogcservstatistics.dataservices;
 
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -17,7 +17,7 @@ final public class DeleteAllCommand extends AbstractDataCommand {
 	/**
 	 * This method will execute a SQL Delete!
 	 * 
-	 * @see com.camptocamp.ogcservstatistics.dataservices.DataCommand#execute()
+	 * @see org.georchestra.ogcservstatistics.dataservices.DataCommand#execute()
 	 */
 	@Override
 	public void execute() throws DataCommandException {

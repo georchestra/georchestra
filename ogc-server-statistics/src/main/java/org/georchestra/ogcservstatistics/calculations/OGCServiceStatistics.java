@@ -1,21 +1,21 @@
 /**
  * 
  */
-package com.camptocamp.ogcservstatistics.calculations;
+package org.georchestra.ogcservstatistics.calculations;
 
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.PropertyConfigurator;
+import org.georchestra.ogcservstatistics.OGCServStatisticsException;
+import org.georchestra.ogcservstatistics.dataservices.DataServicesConfiguration;
+import org.georchestra.ogcservstatistics.dataservices.QueryCommand;
+import org.georchestra.ogcservstatistics.dataservices.RetrieveAllCommand;
+import org.georchestra.ogcservstatistics.dataservices.RetrieveLayerConnectionsForUserCommand;
+import org.georchestra.ogcservstatistics.dataservices.RetrieveMostActiveUsers;
+import org.georchestra.ogcservstatistics.dataservices.RetrieveMostConsultedLayers;
+import org.georchestra.ogcservstatistics.dataservices.RetrieveUserConnectionForLayerCommand;
 
-import com.camptocamp.ogcservstatistics.OGCServStatisticsException;
-import com.camptocamp.ogcservstatistics.dataservices.DataServicesConfiguration;
-import com.camptocamp.ogcservstatistics.dataservices.QueryCommand;
-import com.camptocamp.ogcservstatistics.dataservices.RetrieveAllCommand;
-import com.camptocamp.ogcservstatistics.dataservices.RetrieveLayerConnectionsForUserCommand;
-import com.camptocamp.ogcservstatistics.dataservices.RetrieveMostActiveUsers;
-import com.camptocamp.ogcservstatistics.dataservices.RetrieveMostConsultedLayers;
-import com.camptocamp.ogcservstatistics.dataservices.RetrieveUserConnectionForLayerCommand;
 
 /**
  * This is a facade which provides a set of convenient methods to retrieve 

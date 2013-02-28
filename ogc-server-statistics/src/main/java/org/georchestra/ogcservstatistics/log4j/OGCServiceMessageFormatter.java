@@ -1,4 +1,4 @@
-package com.camptocamp.ogcservstatistics.log4j;
+package org.georchestra.ogcservstatistics.log4j;
 
 
 import java.io.File;

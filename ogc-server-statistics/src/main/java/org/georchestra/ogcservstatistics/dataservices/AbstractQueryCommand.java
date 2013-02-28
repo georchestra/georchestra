@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.camptocamp.ogcservstatistics.dataservices;
+package org.georchestra.ogcservstatistics.dataservices;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -53,7 +53,7 @@ public abstract class AbstractQueryCommand extends AbstractDataCommand implement
 	/**
 	 * This template method executes the sql statement specified in the prepareStatement method.
 	 *  
-	 * @see com.camptocamp.ogcservstatistics.dataservices.DataCommand#execute()
+	 * @see org.georchestra.ogcservstatistics.dataservices.DataCommand#execute()
 	 */
 	@Override
 	public void execute() throws DataCommandException {
@@ -108,7 +108,7 @@ public abstract class AbstractQueryCommand extends AbstractDataCommand implement
 	
 	
 	/**
-	 * @see com.camptocamp.ogcservstatistics.dataservices.QueryCommand#getResult()
+	 * @see org.georchestra.ogcservstatistics.dataservices.QueryCommand#getResult()
 	 */
 	@Override
 	public List<Map<String, Object>> getResult() {

@@ -12,9 +12,10 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.georchestra.ogcservstatistics.calculations.OGCServiceStatistics;
+import org.georchestra.ogcservstatistics.log4j.OGCServiceMessageFormatter;
 import org.junit.Test;
 
-import com.camptocamp.ogcservstatistics.calculations.OGCServiceStatistics;
 
 /**
  * Test case for activated key. It is configured in false to avoid the insertion of log messages

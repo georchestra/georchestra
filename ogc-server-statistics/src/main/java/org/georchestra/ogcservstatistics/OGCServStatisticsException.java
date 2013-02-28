@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.camptocamp.ogcservstatistics;
+package org.georchestra.ogcservstatistics;
 
 /**
  * @author Mauricio Pazos
