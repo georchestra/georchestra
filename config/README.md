@@ -3,14 +3,14 @@ Config
 
 Configuration in geOrchestra is designed to reduce the amount of work required to maintain a full configuration for all modules as much as possible at the same time allowing for complete customisation.
 
-The rough concept is that a configuration jar is created containing sub directories corresponding to the maven modules in geOrchestra.  The files in the configuration will overwrite the files in the module (or add to module if file does not exist).
+The rough concept is that a configuration jar is created containing sub-directories corresponding to the maven modules in geOrchestra. The files in the configuration will overwrite the files in the module (or add to module if file does not exist).
 
 However, there are several problems with this solution.  For example if a file is large and only a couple lines need to be changed it makes more sense to only update those lines.  The second problem is that many projects have shared configuration parameters like database urls.
 
 There are two parts that are designed to overcome these problems:
 
  * The **shared.maven.filters** properties file in the root config directory is a file called *shared.maven.filters*.  This file contains the parameters that are shared between many projects.  The file contains the default values and when the configuration jar is being built; all text files with @propertyName@ will be replaced with the property in *shared.maven.filters* based on *propertyName*.  
- * To provide further flexibility configurations can have a script in the *build_support* directory called *GenerateConfig.groovy*.  [Groovy](http://groovy.codehaus.org/) is a scripting language based on Java syntax, but has several useful features to make writing scripts easier.
+ * To provide further flexibility, configurations can have a script in the *build_support* directory called *GenerateConfig.groovy*.  [Groovy](http://groovy.codehaus.org/) is a scripting language based on Java syntax, but has several useful features to make writing scripts easier.
 
 Configuration Build Process
 ===========================
@@ -18,19 +18,19 @@ Suppose the maven command:
 
 mvn install -Dserver=myproj -Dsub.target=test
 
- 1. Build config module 
+ 1. Build config module
   1. Execute the configuration/myproj/build_support/GenerateConfig.groovy script
     * **Note:** the value test (value of sub.target property) is passed to GenerateConfig.groovy as the subTarget parameter
-  2. copy files from [default, configuration/<config>/ and target/generated] to target/classes
+  2. copy files from [default, configuration/myproj/ and target/generate] to target/classes
     * All text files are processed and all @propertyName@ tags are replaced by properties loaded from (top has priority):
       * target/generated/shared.maven.filters
-      * configuration/<config>/build_support/shared.maven.filters
+      * configuration/myproj/build_support/shared.maven.filters
       * config/shared.maven.filters
     * Note: build_support directory is not copied
   3. The files in target/classes are bundled up as a jar and installed in the local repository
  2. Build the other modules in geOrchestra
    1. in the maven prepare-resources phase that unpacks the config jar into the modules target directory
-   2. in the maven copy-resources phase the files in src/main/filtered-resources and target/conf/<module name> are copied and processed using the filters in target/conf/<module name>/maven.filters
+   2. in the maven copy-resources phase, the files in src/main/filtered-resources and target/conf/<module name> are copied and processed using the filters in target/conf/<module name>/maven.filters
    3. Normal maven processes continue
 
 Module Components
@@ -40,7 +40,7 @@ Module Components
  - shared.maven.filters
  - defaults - contains configuration settings and default branding
   - DeployScript.groovy - the default deploy script
-  - each sub-directory is a name of one of the geOrchestra modules.  The purpose of each sub-directory is to override files in the actual project module refer to.  For example the file security-proxy/WEB-INF/classes/log4j.properties in the defaults folder will overwrite the WEB-INF/classes/log4j.properties file in the security proxy war if it exists. If the file does not exist the file will be added to the war.
+  - each sub-directory is a name of one of the geOrchestra modules. The purpose of each sub-directory is to override files in the actual project module refer to.  For example the file security-proxy/WEB-INF/classes/log4j.properties in the defaults folder will overwrite the WEB-INF/classes/log4j.properties file in the security proxy war if it exists. If the file does not exist, the file will be added to the war. Note: this is a very convenient place for config files which should be shipped with the project, but which are meant to be overridden by instance specific files.
  - configuration  - contains all the configurations that can be built by configuration module
   - <config> - directory containing all files that differ from the defaults for a particular target platform.  the name of the directory matches the server java property. (mvn -Dserver=config for example)
     - build_support - special directory that is *NOT* copied to the config
