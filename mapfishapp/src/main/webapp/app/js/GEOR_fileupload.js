@@ -69,6 +69,7 @@ GEOR.fileupload = (function() {
             return;
         }
         features = (new OpenLayers.Format.GeoJSON()).read(fc.geojson);
+
         model = new GEOR.FeatureDataModel({
             features: features
         });
@@ -94,12 +95,6 @@ GEOR.fileupload = (function() {
             },
             store: store,
             columns: columnModel,
-            /*
-            sm: new GeoExt.grid.FeatureSelectionModel({
-                singleSelect: false,
-                selectControl: sfControl
-            }),
-            */
             frame: false,
             border: false
         });
@@ -110,6 +105,17 @@ GEOR.fileupload = (function() {
         centerPanel.doLayout();
         form.reset();
         newFile = true;
+
+        var recordType = GeoExt.data.LayerRecord.create(
+            GEOR.ows.getRecordFields()
+        );
+        var layer = new OpenLayers.Layer.Vector();
+        layer.addFeatures(features);
+
+        observable.fireEvent("selectionchanged", [new recordType({
+            title: "geofile "+layer.id, // TODO: should be the original filename
+            layer: layer
+        }, layer.id)]);
     };
 
     /*

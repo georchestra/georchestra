@@ -270,7 +270,9 @@ GEOR.layerfinder = (function() {
                     // WMS layer just need cloning
                     // (well, for the moment - see http://applis-bretagne.fr/redmine/issues/1996)
                     recordsToAdd.push(record.clone());
-                } else {
+                } else if (layer.protocol) {
+                    // we are coming from the WFS tab
+
                     // WFS layers need cloning of protocol.format too ?
                     // "this.format is null" sur :
                     // this.format.geometryName = geometryName; (protocol.WFS.v1 L231)
@@ -294,6 +296,10 @@ GEOR.layerfinder = (function() {
                         },
                         scope: this
                     });
+                } else {
+                    // we have a vector layer without a protocol 
+                    // we are coming from the upload file tab
+                    layerStore.addSorted(record.clone());
                 }
             } else if(record.get("layer_name")) {
                 // we're coming from the CSW tabs
@@ -356,6 +362,9 @@ GEOR.layerfinder = (function() {
                         break;
                     case "wfs":
                         GEOR.wfsbrowser.clearSelection();
+                        break;
+                    case "file":
+                        GEOR.fileupload.clearSelection();
                         break;
                     default:
                         break;
