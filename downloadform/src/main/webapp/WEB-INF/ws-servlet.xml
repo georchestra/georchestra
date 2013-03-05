@@ -3,17 +3,17 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
  
-    <bean name="data_usage" class="org.pigma.dlform.DataUsage">
+    <bean name="data_usage" class="org.georchestra.dlform.DataUsage">
         <constructor-arg ref="postgresqlconnection" />     
     </bean>
     
-    <bean name="extractorapp" class="org.pigma.dlform.ExtractorApp">
+    <bean name="extractorapp" class="org.georchestra.dlform.ExtractorApp">
         <constructor-arg ref="postgresqlconnection" /> 
     </bean>
-    <bean name="geonetwork" class="org.pigma.dlform.GeoNetwork">
+    <bean name="geonetwork" class="org.georchestra.dlform.GeoNetwork">
         <constructor-arg ref="postgresqlconnection" />     
     </bean>
-      <bean name="postgresqlconnection" class="org.pigma.dlform.PostGresqlConnection">
+      <bean name="postgresqlconnection" class="org.georchestra.dlform.PostGresqlConnection">
         <constructor-arg value="${dlJdbcUrl}" /> 
     </bean>
  
