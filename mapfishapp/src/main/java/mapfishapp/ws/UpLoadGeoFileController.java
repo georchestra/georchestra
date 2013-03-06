@@ -3,11 +3,8 @@
  */
 package mapfishapp.ws;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.Iterator;
 import java.util.UUID;
@@ -22,8 +19,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.geotools.referencing.CRS;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -228,10 +223,12 @@ public final class UpLoadGeoFileController {
 			}
 			
 			// create a CRS object from the srs parameter
-			CoordinateReferenceSystem crs;
+			CoordinateReferenceSystem crs = null;
 			try {
-				String srs = request.getParameter("srs");
-				crs = CRS.decode(srs);
+				String srsParam = request.getParameter("srs");
+				if(!"".equals(srsParam)){
+					crs = CRS.decode(srsParam);
+				}
 			} catch (NoSuchAuthorityCodeException e) {
 				LOG.error(e.getMessage());
 				throw new IllegalArgumentException(e);
