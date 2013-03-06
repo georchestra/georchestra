@@ -176,7 +176,7 @@ final class OGRFeatureReader {
 			SimpleFeatureSource source = store.getFeatureSource(typeName);
 
 			Query query = new Query(typeName, Filter.INCLUDE);
-			// if the CRS was set the features must be transformed when the query is executed.
+			// if the CRS was set the features must be transformed when the qury is executed.
 			if(this.targetCRS != null){
 				query.setCoordinateSystemReproject(this.targetCRS);
 			}
