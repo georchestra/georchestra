@@ -8,11 +8,13 @@ import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.geotools.data.Query;
 import org.geotools.data.ogr.OGRDataStore;
 import org.geotools.data.ogr.jni.JniOGR;
-import org.geotools.data.ogr.jni.JniOGRDataStoreFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureSource;
+import org.opengis.filter.Filter;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * OGR Feature Reader.
@@ -31,7 +33,6 @@ import org.geotools.data.simple.SimpleFeatureSource;
 final class OGRFeatureReader {
 	
 	private static final Log LOG = LogFactory.getLog(OGRFeatureReader.class.getPackage().getName());
-
 
 	/**
 	 * 
@@ -106,32 +107,55 @@ final class OGRFeatureReader {
 		/**
 		 * Returns the enumerated value associated to the extension file name
 		 *  
-		 * @param ext
+		 * @param fileExtension file extension
 		 * @return FileFormat enumerated value or null if it doesn't exist.
 		 */
-		public static FileFormat getFileFormat(String ext) {
+		public static FileFormat getFileFormat(String fileExtension) {
 			
-			if("tab".equalsIgnoreCase(ext))	return tab;
-			if("mif".equalsIgnoreCase(ext))	return mif;
-			if("shp".equalsIgnoreCase(ext))	return shp;
-			if("gml".equalsIgnoreCase(ext))	return gml;
-			if("gpx".equalsIgnoreCase(ext))	return gpx;
-			if("kml".equalsIgnoreCase(ext))	return kml;
+			if("tab".equalsIgnoreCase(fileExtension))	return tab;
+			if("mif".equalsIgnoreCase(fileExtension))	return mif;
+			if("shp".equalsIgnoreCase(fileExtension))	return shp;
+			if("gml".equalsIgnoreCase(fileExtension))	return gml;
+			if("gpx".equalsIgnoreCase(fileExtension))	return gpx;
+			if("kml".equalsIgnoreCase(fileExtension))	return kml;
 			
 			return null;
 		}
 	}
-
+	
 	private File basedir;
 	private FileFormat fileFormat;
-	private SimpleFeatureCollection features;
+	private CoordinateReferenceSystem targetCRS;
 
+	/**
+	 * New instance of OGRFeatureReader.
+	 * 
+	 * @param file the file that contains the features to read
+	 * @param fileFormat the file format
+	 * @param targetCRS the coordinate reference that will be used to transform the feature collection 
+	 */
+	public OGRFeatureReader(File file, FileFormat fileFormat, CoordinateReferenceSystem crs) {
+
+		assert  file != null && fileFormat != null && crs != null;
+
+		this.basedir = file;
+		this.fileFormat = fileFormat;
+		this.targetCRS = crs;
+	}
+	
+	/**
+	 * New instance of OGRFeatureReader.
+	 * 
+	 * @param file the file that contains the features to read
+	 * @param fileFormat the file format
+	 */
 	public OGRFeatureReader(File basedir, FileFormat fileFormat) {
 
-		assert  basedir != null && features != null;
+		assert  basedir != null && fileFormat != null;
 
 		this.basedir = basedir;
 		this.fileFormat = fileFormat;
+		this.targetCRS = null;
 
 	}
 
@@ -147,12 +171,20 @@ final class OGRFeatureReader {
 			String ogrName = this.basedir.getAbsolutePath();
 			String ogrDriver = this.fileFormat.getDriver();
 			
-			JniOGRDataStoreFactory jniFactory = JniOGRDataStoreFactory.class.newInstance();
 			OGRDataStore store = new OGRDataStore(ogrName, ogrDriver, null,  new JniOGR() );
-	        SimpleFeatureSource source = store.getFeatureSource(store.getTypeNames()[0]);
+	        final String typeName = store.getTypeNames()[0];
+			SimpleFeatureSource source = store.getFeatureSource(typeName);
 
-	        return source.getFeatures();
+			Query query = new Query(typeName, Filter.INCLUDE);
+			// if the CRS was set the features must be transformed when the qury is executed.
+			if(this.targetCRS != null){
+				query.setCoordinateSystemReproject(this.targetCRS);
+			}
 			
+			SimpleFeatureCollection features = source.getFeatures(query);
+			
+			return features;
+
 		} catch(Exception e ){
 			LOG.error(e.getMessage());
 			throw new IOException(e);

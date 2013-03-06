@@ -23,6 +23,8 @@ import org.apache.commons.logging.LogFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.geojson.feature.FeatureJSON;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -287,10 +289,14 @@ public class UpLoadFileManegement {
 	 *		assumed EPSG:4326 for all kml files
 	 *		assumed EPSG:4326 for all gpx files
 	 *</pre>
-	 * @return feature array with the following syntax: "[f1,f2,...fN]"
-	 * @throws IOException 
+	 *
+	 * @param 	crs if it is not null the features should be transformed to this {@link CoordinateReferenceSystem}, 
+	 * 			in other case they won't transformed.
+	 * 
+	 * @return 	feature array with the following syntax: "[f1,f2,...fN]"
+	 * @throws 	IOException 
 	 */
-	public String getFeatureCollectionAsJSON() throws IOException {
+	public String getFeatureCollectionAsJSON(final CoordinateReferenceSystem crs) throws IOException {
 		
 			// retrieves the feature from file system
 			String jsonResult = "";
@@ -298,7 +304,9 @@ public class UpLoadFileManegement {
 	        String fileName = searchGeoFile();
 	        assert fileName != null; 
 	        
-			OGRFeatureReader reader = new OGRFeatureReader(new File(fileName), this.fileDescriptor.geoFileType);
+	        OGRFeatureReader reader  = (crs != null) 
+						? new OGRFeatureReader(new File(fileName), this.fileDescriptor.geoFileType, crs)
+						: new OGRFeatureReader(new File(fileName), this.fileDescriptor.geoFileType);
 			
 			SimpleFeatureIterator featuresIterator = null;
 			
@@ -306,9 +314,12 @@ public class UpLoadFileManegement {
 	        	
 	        	SimpleFeatureCollection featureCollection = reader.getFeatureCollection();
 	        	
-	        	FeatureJSON fjson = new FeatureJSON();
-	        	fjson.setFeatureType(featureCollection.getSchema());
-	        	fjson.setEncodeFeatureCollectionBounds(true);
+	        	FeatureJSON fjson = new FeatureJSON2();// TODO this is a workaround to solve the crs bug
+	        	
+	        	//fjson.setEncodeFeatureCollectionBounds(true);
+
+	        	SimpleFeatureType schema = featureCollection.getSchema();
+				fjson.setFeatureType(schema);
 	        	fjson.setEncodeFeatureCollectionCRS(true);
 	        	
 	        	StringWriter writer = new StringWriter();
@@ -324,6 +335,19 @@ public class UpLoadFileManegement {
 	        	if(featuresIterator != null) featuresIterator.close();
 	        }
 	        return jsonResult;
+	}
+
+    
+	/**
+	 * Convenient method. 
+	 * 
+	 * @return 	feature array with the following syntax: "[f1,f2,...fN]"
+	 * @throws IOException
+	 * 
+	 * @see {@link #getFeatureCollectionAsJSON(CoordinateReferenceSystem)
+	 */
+	public String getFeatureCollectionAsJSON() throws IOException {
+		return getFeatureCollectionAsJSON(null);
 	}
 
 

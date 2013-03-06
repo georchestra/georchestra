@@ -3,8 +3,11 @@
  */
 package mapfishapp.ws;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.Iterator;
 import java.util.UUID;
@@ -18,6 +21,10 @@ import mapfishapp.ws.upload.UpLoadFileManegement;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.geotools.referencing.CRS;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -147,13 +154,24 @@ public final class UpLoadGeoFileController {
 		this.gmlSizeLimit = gmlSizeLimit;
 	}
 
+	/**
+	 * Load the file provide in the request. The content of this file is returned as a json object. 
+	 * If an CRS is provided the resultant features will be transformed to that CRS before.
+	 * <p>
+	 * The file is maintained in a temporal store that will be cleaned when the response has be done.
+	 * </p> 
+	 *   
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
 	@RequestMapping(method = RequestMethod.POST)
 	public void toGeoJson(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
     	LOG.info("Request: " + request.getRequestURL() ); 
 
     	LOG.info("InputStream: " +request.getInputStream());
-		
+    	
 		
 		if( !(request instanceof MultipartHttpServletRequest) ){
 			final String msg = "MultipartHttpServletRequest is expected";
@@ -181,7 +199,7 @@ public final class UpLoadGeoFileController {
 			workDirectory = makeDirectoryForRequest(this.tempDirectory);
 			
 			// validate the format
-			if( ! currentFile.isValidFormat()	 ) {
+			if( ! currentFile.isValidFormat() ) {
 				writeResponse(response, Status.unsupportedFormat);
 				return;
 			}
@@ -210,16 +228,69 @@ public final class UpLoadGeoFileController {
 					writeResponse(response, st);
 					return;
 				}
-			} 
+			}
 			
-			String jsonFeatureCollection = fileManagement.getFeatureCollectionAsJSON();
+			
+//			CoordinateReferenceSystem crs = CRS.decode("EPSG:2154");//4326, 2154
+			String strRequest = asString(request.getInputStream());
+			CoordinateReferenceSystem crs = decodeCRS(strRequest);
+			
+			String jsonFeatureCollection = (crs != null) 
+						?fileManagement.getFeatureCollectionAsJSON(crs)
+						:fileManagement.getFeatureCollectionAsJSON();
 
 			writeResponse(response, Status.ok, jsonFeatureCollection);
 		
+		} catch (Exception e) {
+			LOG.error(e);
 		} finally{
 			if(workDirectory!= null) cleanTemporalDirectory(workDirectory);
 		}
 	}
+	
+    private CoordinateReferenceSystem decodeCRS(String strJsonTask) {
+
+    	if("".equals( strJsonTask) ){
+    		return null;
+    	}
+    		
+    	try {
+			JSONObject jsonTask = new JSONObject(strJsonTask);
+			
+			final String strState = jsonTask.getString("crs");
+
+			CoordinateReferenceSystem crs = CRS.parseWKT(strState);
+			
+			return crs;
+			
+		} catch (Exception e) {
+			throw new IllegalArgumentException("CRS error:" + e.getMessage() );
+		}
+	}
+
+    /**
+     * Refactoring: this method was copied from FileUtils (extractorapp project)
+     * 
+     * @param inputStream
+     * @return
+     * @throws IOException
+     */
+    public static String asString(InputStream inputStream) throws IOException {
+        BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
+        StringBuilder buffer = new StringBuilder();
+        try {
+            String line = in.readLine();
+            while(line!=null){
+                buffer.append(line);
+                buffer.append("\n");
+                line=in.readLine();
+            }
+        } finally {
+            in.close();
+        }
+
+        return buffer.toString();
+    }
 
 
 	/**
