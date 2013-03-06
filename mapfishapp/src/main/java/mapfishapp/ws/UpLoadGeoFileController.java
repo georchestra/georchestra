@@ -24,6 +24,8 @@ import org.apache.commons.logging.LogFactory;
 import org.geotools.referencing.CRS;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -161,18 +163,13 @@ public final class UpLoadGeoFileController {
 	 * The file is maintained in a temporal store that will be cleaned when the response has be done.
 	 * </p> 
 	 *   
-	 * @param request
+	 * @param request The expected parameters are geofile and srs 
 	 * @param response
 	 * @throws IOException
 	 */
 	@RequestMapping(method = RequestMethod.POST)
 	public void toGeoJson(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-    	LOG.info("Request: " + request.getRequestURL() ); 
-
-    	LOG.info("InputStream: " +request.getInputStream());
-    	
-		
 		if( !(request instanceof MultipartHttpServletRequest) ){
 			final String msg = "MultipartHttpServletRequest is expected";
 			LOG.fatal(msg);
@@ -230,69 +227,34 @@ public final class UpLoadGeoFileController {
 				}
 			}
 			
+			// create a CRS object from the srs parameter
+			CoordinateReferenceSystem crs;
+			try {
+				String srs = request.getParameter("srs");
+				crs = CRS.decode(srs);
+			} catch (NoSuchAuthorityCodeException e) {
+				LOG.error(e.getMessage());
+				throw new IllegalArgumentException(e);
+			} catch (FactoryException e) {
+				LOG.error(e.getMessage());
+				throw new IOException(e);
+			}
 			
-//			CoordinateReferenceSystem crs = CRS.decode("EPSG:2154");//4326, 2154
-			String strRequest = asString(request.getInputStream());
-			CoordinateReferenceSystem crs = decodeCRS(strRequest);
-			
+			// encode the feature collection as json string
 			String jsonFeatureCollection = (crs != null) 
 						?fileManagement.getFeatureCollectionAsJSON(crs)
 						:fileManagement.getFeatureCollectionAsJSON();
 
 			writeResponse(response, Status.ok, jsonFeatureCollection);
 		
-		} catch (Exception e) {
+		} catch (IOException e) {
 			LOG.error(e);
+			throw new IOException(e);
 		} finally{
 			if(workDirectory!= null) cleanTemporalDirectory(workDirectory);
 		}
 	}
 	
-    private CoordinateReferenceSystem decodeCRS(String strJsonTask) {
-
-    	if("".equals( strJsonTask) ){
-    		return null;
-    	}
-    		
-    	try {
-			JSONObject jsonTask = new JSONObject(strJsonTask);
-			
-			final String strState = jsonTask.getString("crs");
-
-			CoordinateReferenceSystem crs = CRS.parseWKT(strState);
-			
-			return crs;
-			
-		} catch (Exception e) {
-			throw new IllegalArgumentException("CRS error:" + e.getMessage() );
-		}
-	}
-
-    /**
-     * Refactoring: this method was copied from FileUtils (extractorapp project)
-     * 
-     * @param inputStream
-     * @return
-     * @throws IOException
-     */
-    public static String asString(InputStream inputStream) throws IOException {
-        BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
-        StringBuilder buffer = new StringBuilder();
-        try {
-            String line = in.readLine();
-            while(line!=null){
-                buffer.append(line);
-                buffer.append("\n");
-                line=in.readLine();
-            }
-        } finally {
-            in.close();
-        }
-
-        return buffer.toString();
-    }
-
-
 	/**
 	 * Returns the size limit (bytes) taking into account the file format.
 	 * 
