@@ -233,6 +233,11 @@ GEOR.map = (function() {
             // Note that the ultimate solution would be to do a getCapabilities
             // request for each OGC server advertised in the WMC
 
+            if (r.get("opaque") === true) {
+                // an opaque layer can be considered as a baselayer
+                // as a result, we apply a transitionEffect, which suits well for baselayers
+                r.get('layer').transitionEffect = 'resize';
+            }
 
             // Format attribution if required:
             var attr = r.get('attribution');
