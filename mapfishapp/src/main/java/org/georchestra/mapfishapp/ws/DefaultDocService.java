@@ -19,7 +19,7 @@ public class DefaultDocService extends A_DocService {
 	 * @param tempDir
 	 */
 	@SuppressWarnings("unused")
-    private DefaultDocService(final int maxDocAgeInMinutes, final  String tempDir) {
+    private DefaultDocService(final long maxDocAgeInMinutes, final  String tempDir) {
         super(maxDocAgeInMinutes, "", "", tempDir);
     }
     
@@ -32,7 +32,7 @@ public class DefaultDocService extends A_DocService {
      * @param MIMEType
      * @param tempDir
      */
-    public DefaultDocService(final int maxDocAgeInMinutes, final String fileExtension, final String MIMEType, final String tempDir ) {
+    public DefaultDocService(final long maxDocAgeInMinutes, final String fileExtension, final String MIMEType, final String tempDir ) {
         super(maxDocAgeInMinutes, fileExtension, MIMEType, tempDir);
     }
 

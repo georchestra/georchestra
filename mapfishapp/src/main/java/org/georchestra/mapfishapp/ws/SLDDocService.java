@@ -14,7 +14,7 @@ public class SLDDocService extends A_DocService {
     public static final String SCHEMA_URL = "http://schemas.opengis.net/sld/1.1.0/StyledLayerDescriptor.xsd";
     
     
-    public SLDDocService(final int maxDocAgeInMinutes, final String tempDir) {
+    public SLDDocService(final long maxDocAgeInMinutes, final String tempDir) {
         super(maxDocAgeInMinutes, FILE_EXTENSION, MIME_TYPE, tempDir);
     }
     

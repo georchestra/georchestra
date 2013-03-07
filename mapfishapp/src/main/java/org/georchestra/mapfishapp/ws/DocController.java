@@ -12,7 +12,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.georchestra.mapfishapp.ws.classif.ClassifierCommand;
 import org.georchestra.mapfishapp.ws.classif.SLDClassifier;
@@ -44,13 +43,11 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
   
 @Controller
 public class DocController {
-    /**
-     * Time (in minutes) before files are purged automatically from DIR
-     */
-    private int maxDocAgeInMinutes = 60 * 24;
+    /*** Time (in minutes) before files are purged automatically from DIR */
+    private long maxDocAgeInMinutes = 60 * 24;
     
-	public int getMaxDocAgeInMinutes() {return maxDocAgeInMinutes;}
-	public void setMaxDocAgeInMinutes(int maxDocAgeInMinutes) {this.maxDocAgeInMinutes = maxDocAgeInMinutes;}
+	public long getMaxDocAgeInMinutes() {return maxDocAgeInMinutes;}
+	public void setMaxDocAgeInMinutes(long maxDocAgeInMinutes) {this.maxDocAgeInMinutes = maxDocAgeInMinutes;}
     
 	/** the temporary directory used by the document services*/
     private String docTempDir;
@@ -102,7 +99,7 @@ public class DocController {
      */
     @RequestMapping(value="/wmc/", method=RequestMethod.POST)
     public void storeWMCFile(HttpServletRequest request, HttpServletResponse response) {   
-        storeFile(new WMCDocService(maxDocAgeInMinutes, this.docTempDir), WMC_URL, request, response);   
+        storeFile(new WMCDocService(this.maxDocAgeInMinutes, this.docTempDir), WMC_URL, request, response);   
     }
     
     /**
@@ -112,7 +109,7 @@ public class DocController {
      */
     @RequestMapping(value="/wmc/*", method=RequestMethod.GET)
     public void getWMCFile(HttpServletRequest request, HttpServletResponse response) { 
-        getFile(new WMCDocService(maxDocAgeInMinutes,  this.docTempDir), request, response);
+        getFile(new WMCDocService(this.maxDocAgeInMinutes,  this.docTempDir), request, response);
     }
 
     /*======================= JSON to CSV =====================================================================*/
@@ -123,7 +120,7 @@ public class DocController {
      */
     @RequestMapping(value="/csv/", method=RequestMethod.POST)
     public void storeCSVFile(HttpServletRequest request, HttpServletResponse response) {   
-        storeFile(new CSVDocService(maxDocAgeInMinutes, this.docTempDir), CSV_URL, request, response);   
+        storeFile(new CSVDocService(this.maxDocAgeInMinutes, this.docTempDir), CSV_URL, request, response);   
     }
     
     /**
@@ -133,7 +130,7 @@ public class DocController {
      */
     @RequestMapping(value="/csv/*", method=RequestMethod.GET)
     public void getCSVFile(HttpServletRequest request, HttpServletResponse response) { 
-        getFile(new CSVDocService(maxDocAgeInMinutes, this.docTempDir), request, response);
+        getFile(new CSVDocService(this.maxDocAgeInMinutes, this.docTempDir), request, response);
     }
     
     /*======================= SLD =====================================================================*/
