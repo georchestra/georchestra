@@ -2,6 +2,7 @@ package org.georchestra.mapfishapp.ws;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.math.BigInteger;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -11,11 +12,11 @@ final class PurgeDocsRunnable implements Runnable {
 	private static final Log LOG = LogFactory.getLog(PurgeDocsRunnable.class.getPackage().getName());
 
 	
-	private final int maxDocAgeInMinutes;
+	private final long maxDocAgeInMinutes;
 
 	private final String tempDirectory;
 
-	public PurgeDocsRunnable(final int maxDocAgeIn, final String tempDirectory) {
+	public PurgeDocsRunnable(final long maxDocAgeIn, final String tempDirectory) {
 		this.maxDocAgeInMinutes = maxDocAgeIn;
 		this.tempDirectory = tempDirectory;
 	}
@@ -37,8 +38,8 @@ final class PurgeDocsRunnable implements Runnable {
 					long lastModified = file.lastModified();
 
 					// has to have a time life above TIMER_MIN minutes
-					int maxMillis= safeConvertToMillis(maxDocAgeInMinutes) ;
-					if (currentTime - lastModified > maxMillis ) {
+					long maxMillis= safeConvertToMillis(maxDocAgeInMinutes) ;
+					if ((currentTime - lastModified) > maxMillis ) {
 						return true;
 					}
 				}
@@ -47,42 +48,44 @@ final class PurgeDocsRunnable implements Runnable {
 
 			/**
 			 * Converts the value to milliseconds taking into account a possible overflow.
-			 * If an overflow exception is found the returned value will be the <code> Integer.MAX_VALUE </code>.
+			 * If an overflow exception is found the returned value will be the <code> Long.MAX_VALUE </code>.
 			 * 
 			 * @param minutes
-			 * @return milliseconds
+			 * @return milliseconds 
 			 */
-			private int safeConvertToMillis(final int minutes)   {
+			private long safeConvertToMillis(final long minutes)   {
 				
 				long safeInteger = 0;
 				try{
-					safeInteger =  intPreconditionCheck( (long)minutes * 60000 );
+					BigInteger bigMilliseconds = (BigInteger.valueOf(60000)).multiply(BigInteger.valueOf(minutes)); 
+					
+					safeInteger =  longPreconditionCheck( bigMilliseconds );
 					
 				} catch(ArithmeticException e){
 				
 					final String message = "An overflow exception have occrurred transforming the configurated maxDocAgeInMinutes value:" + minutes
-							+ ". The value should be less than " + Integer.MAX_VALUE / 60000 + " Minutes";
+							+ ". The value should be less than " + Long.MAX_VALUE / 60000 + " Minutes";
 					
 					LOG.error(message);
 
-					safeInteger = Integer.MAX_VALUE; // set the default value 
+					safeInteger = Long.MAX_VALUE; // set the default value 
 				}
-				return (int)safeInteger; // safe cast
+				return safeInteger; 
 			}
 
 			/**
 			 * checks the integer preconditions
 			 * 
 			 * @param value 
-			 * @return a safe integer
+			 * @return a safe long integer
 			 * @throws ArithmeticException
 			 */
-			private long intPreconditionCheck(long value) throws ArithmeticException {
+			private long longPreconditionCheck(BigInteger value) throws ArithmeticException {
 				
-				if( (value < Integer.MIN_VALUE)  ||  (value > Integer.MAX_VALUE)){
-					throw  new ArithmeticException("integer overflow: " + value );
+				if( (value.compareTo(BigInteger.valueOf(Long.MIN_VALUE)) == -1  )  ||  (value.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) == 1)) {
+					throw  new ArithmeticException("Long overflow: " + value );
 				}
-				return value;
+				return value.longValue();
 					
 			}
 		};
@@ -105,7 +108,10 @@ final class PurgeDocsRunnable implements Runnable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + maxDocAgeInMinutes;
+		result = prime * result
+				+ (int) (maxDocAgeInMinutes ^ (maxDocAgeInMinutes >>> 32));
+		result = prime * result
+				+ ((tempDirectory == null) ? 0 : tempDirectory.hashCode());
 		return result;
 	}
 
@@ -120,7 +126,11 @@ final class PurgeDocsRunnable implements Runnable {
 		PurgeDocsRunnable other = (PurgeDocsRunnable) obj;
 		if (maxDocAgeInMinutes != other.maxDocAgeInMinutes)
 			return false;
+		if (tempDirectory == null) {
+			if (other.tempDirectory != null)
+				return false;
+		} else if (!tempDirectory.equals(other.tempDirectory))
+			return false;
 		return true;
 	}
-
 }

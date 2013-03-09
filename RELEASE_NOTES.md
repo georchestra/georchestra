@@ -31,6 +31,7 @@ Enhancements:
  * extractorapp: packges were renamed as org.georchestra.extractorapp, see https://github.com/georchestra/georchestra/pull/71 
  * security-proxy: the module's packages were renamed as org.georchestra.security, see  https://github.com/georchestra/georchestra/pull/73
  * ogc-server-statistics: the packages were renamed as org.georchestra.ogcservstatistics, see https://github.com/georchestra/georchestra/pull/74
+ * mapfishapp: DocController's maxDocAgeInMinutes was change to manage long integer value, see https://github.com/georchestra/georchestra/pull/81
 
 Bug fixes:
  * mapfishapp: fixed erroneous WMSC2WMS mapping, which prevented printing of the GeoBretagne OSM baselayer, see https://github.com/georchestra/georchestra/commit/159bd4f24ecb21b9c76f76d27c1736ec1040f0ab
