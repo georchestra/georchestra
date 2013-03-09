@@ -14,6 +14,7 @@ New features:
  * extractorapp: extraction bbox is now part of the data bundle, see https://github.com/georchestra/georchestra/pull/35
  * mapfishapp: support for addons & magnifier addon, see https://github.com/georchestra/georchestra/pull/36
  * mapfishapp: cadastre addon, see https://github.com/georchestra/georchestra/pull/48
+ * mapfishapp: support transitionEffect resize (aka "back buffers") on layers coming from a WMC, see https://github.com/georchestra/georchestra/pull/42
 
 Enhancements:
  * mapfishapp: results panel displays URLs as html links, see https://github.com/georchestra/georchestra/pull/21
@@ -25,6 +26,12 @@ Enhancements:
  * mapfishapp: window buttons consistency and default actions, see https://github.com/georchestra/georchestra/pull/33
  * mapfishapp: by default, the map is now restored with its latest known state (context), see https://github.com/georchestra/georchestra/pull/50
  * mapfishapp: missing translations
+ * mapfishapp: mapfishapp packages were renamed as org.georchestra.mapfishapp, see  https://github.com/georchestra/georchestra/pull/69
+ * downloadform: the packages were renamed as org.georchestra.dlform, see  https://github.com/georchestra/georchestra/pull/72
+ * extractorapp: packges were renamed as org.georchestra.extractorapp, see https://github.com/georchestra/georchestra/pull/71 
+ * security-proxy: the module's packages were renamed as org.georchestra.security, see  https://github.com/georchestra/georchestra/pull/73
+ * ogc-server-statistics: the packages were renamed as org.georchestra.ogcservstatistics, see https://github.com/georchestra/georchestra/pull/74
+ * mapfishapp: DocController's maxDocAgeInMinutes was change to manage long integer value, see https://github.com/georchestra/georchestra/pull/81
 
 Bug fixes:
  * mapfishapp: fixed erroneous WMSC2WMS mapping, which prevented printing of the GeoBretagne OSM baselayer, see https://github.com/georchestra/georchestra/commit/159bd4f24ecb21b9c76f76d27c1736ec1040f0ab
@@ -38,6 +45,7 @@ Bug fixes:
 
 UPGRADING:
  * mapfishapp config changes:
+    * don't forget to edit your WMCs to activate back buffers on base layers, see https://github.com/georchestra/georchestra/pull/42
     * client side (see GEOR_config.js or GEOR_custom.js for more information):
         * MAP_POS_SRS1 and MAP_POS_SRS2 options have been replaced with POINTER_POSITION_SRS_LIST
         * DEFAULT_WMC option has been replaced with CONTEXTS

@@ -2,8 +2,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page language="java" %>
 <%@ page import="java.util.*" %>
-<%@ page import="extractorapp.ws.Utf8ResourceBundle" %>
-<%@ page contentType="text/html; charset=UTF-8"%>
+<%@ page import="org.georchestra.extractorapp.ws.Utf8ResourceBundle" %>
+<%@ page contentType="text/html; charset=UTF-8" %>
 <%@ page pageEncoding="UTF-8"%>
 <%@ page isELIgnored="false" %>
 <%
@@ -16,7 +16,7 @@ if (lang == null || (!lang.equals("en") && !lang.equals("es"))) {
     lang = "${language}";
 }
 Locale l = new Locale(lang);
-ResourceBundle resource = Utf8ResourceBundle.getBundle("extractorapp.i18n.index",l);
+ResourceBundle resource = org.georchestra.extractorapp.ws.Utf8ResourceBundle.getBundle("org.georchestra.extractorapp.i18n.index",l);
 javax.servlet.jsp.jstl.core.Config.set(
     request,
     javax.servlet.jsp.jstl.core.Config.FMT_LOCALIZATION_CONTEXT,

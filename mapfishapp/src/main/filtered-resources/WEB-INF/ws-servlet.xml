@@ -2,13 +2,13 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 <beans>
     <bean id="homecontroller" 
-          class="mapfishapp.ws.HomeController"/>
+          class="org.georchestra.mapfishapp.ws.HomeController"/>
 
     <bean id="editcontroller" 
-          class="mapfishapp.ws.EditController"/>
+          class="org.georchestra.mapfishapp.ws.EditController"/>
 
     <!--  url mapping is directly handled with the spring annotations written in the following controllers -->
-    <bean class="mapfishapp.ws.OGCProxy">
+    <bean class="org.georchestra.mapfishapp.ws.OGCProxy">
     </bean>
 
     <!-- File uploads -->
@@ -19,7 +19,7 @@
         </property>
     </bean>
 
-    <bean class="mapfishapp.ws.UpLoadGeoFileController">
+    <bean class="org.georchestra.mapfishapp.ws.UpLoadGeoFileController">
         <property name="responseCharset" value="UTF-8"/>
         <property name="tempDirectory" value="${docTempDir}/geoFileUploadsCache"/>
         <property name="zipSizeLimit" value="8589934592"/>
@@ -29,7 +29,7 @@
     </bean>
 
     <!-- Documents controller -->
-    <bean class="mapfishapp.ws.DocController">
+    <bean class="org.georchestra.mapfishapp.ws.DocController">
         <property name="maxDocAgeInMinutes" value="${maxDocAgeInMinutes}"/>
         <property name="docTempDir" value="${docTempDir}"/>
         <property name="credentials">
