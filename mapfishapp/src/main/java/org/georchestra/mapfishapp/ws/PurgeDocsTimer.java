@@ -10,7 +10,7 @@ public class PurgeDocsTimer {
 	private static CopyOnWriteArrayList<Runnable> tasks = new CopyOnWriteArrayList<Runnable>();
 	private static boolean initialized = false;
 
-	private static void initialize(final int period) {
+	private static void initialize(final long period) {
 		TimerTask task = new TimerTask() {
 			@Override
 			public void run() {
@@ -23,7 +23,7 @@ public class PurgeDocsTimer {
 		initialized = true;
 	}
 
-	public static synchronized void startPurgeDocsTimer(final Runnable purgeMethod, final int period) {
+	public static synchronized void startPurgeDocsTimer(final Runnable purgeMethod, final long period) {
 		if (!initialized){
 			initialize(period);
 		}

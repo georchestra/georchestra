@@ -93,7 +93,7 @@ public abstract class A_DocService {
      * @param MIMEType
      * @param docTempDirectory
      */
-    public A_DocService(int maxDocAgeInMinutes, final String fileExtension, final String MIMEType,  final String docTempDirectory) {
+    public A_DocService(final long maxDocAgeInMinutes, final String fileExtension, final String MIMEType,  final String docTempDirectory) {
         _fileExtension = fileExtension;
         _MIMEType = MIMEType;
         
