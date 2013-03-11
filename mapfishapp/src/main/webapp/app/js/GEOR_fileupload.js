@@ -109,11 +109,11 @@ GEOR.fileupload = (function() {
         var recordType = GeoExt.data.LayerRecord.create(
             GEOR.ows.getRecordFields()
         );
-        var layer = new OpenLayers.Layer.Vector();
+        var layer = new OpenLayers.Layer.Vector("Geofile ");  // TODO: should be the original filename
+        layer.name += layer.id;
         layer.addFeatures(features);
 
         observable.fireEvent("selectionchanged", [new recordType({
-            title: "geofile "+layer.id, // TODO: should be the original filename
             layer: layer
         }, layer.id)]);
     };
