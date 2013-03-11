@@ -1,7 +1,7 @@
 /**
  * 
  */
-package mapfishapp.ws.upload;
+package org.georchestra.mapfishapp.ws.upload;
 
 import java.io.File;
 import java.io.IOException;
