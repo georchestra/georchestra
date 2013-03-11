@@ -135,7 +135,7 @@ GEOR.layerfinder = (function() {
         });
         panels["file"] = GEOR.fileupload.getPanel({
             srs: mapSRS,
-            tabTip: tr("Create layers from local files")
+            tabTip: tr("Add layers from local files")
         });
 
         return new Ext.TabPanel({

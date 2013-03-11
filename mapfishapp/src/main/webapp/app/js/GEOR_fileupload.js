@@ -149,7 +149,8 @@ GEOR.fileupload = (function() {
                     flex: 1,
                     layout: 'fit',
                     items: [{
-                        html: 'feature grid in here'
+                        border: false,
+                        html: ''
                     }]
                 });
             }
@@ -162,12 +163,20 @@ GEOR.fileupload = (function() {
                 },
                 defaults: {border: false},
                 items: [{
+                    xtype: 'box',
+                    height: 35,
+                    autoEl: {
+                        tag: 'div',
+                        cls: 'box-as-panel',
+                        html: tr("Upload a KML, GPX or GML file. Zipped SHP and MIF/MID are also accepted.")
+                    }
+                }, {
                     xtype: 'form',
                     region: "north",
                     fileUpload: true,
                     bodyStyle: 'padding:10px',
-                    labelWidth: 100,
-                    height: 80,
+                    labelWidth: 60,
+                    height: 40,
                     monitorValid: true,
                     buttonAlign: 'right',
                     items: [{
