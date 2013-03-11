@@ -11,15 +11,15 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * Unit Test for {@link UpLoadFileManegement}
+ * Unit Test for {@link UpLoadFileManagement}
  * 
  * @author Mauricio Pazos
  *
  */
-public class UpLoadFileManegementTest {
+public class UpLoadFileManagementTest {
 
 	/**
-	 * Test method for {@link mapfishapp.ws.upload.UpLoadFileManegement#getFeatureCollectionAsJSON()}.
+	 * Test method for {@link mapfishapp.ws.upload.UpLoadFileManagement#getFeatureCollectionAsJSON()}.
 	 * @throws IOException 
 	 */
 	@Test 
@@ -32,7 +32,7 @@ public class UpLoadFileManegementTest {
 		fd.listOfFiles.add(fileName);
 		fd.listOfExtensions.add(FilenameUtils.getExtension(fileName));
 
-		UpLoadFileManegement fm = new UpLoadFileManegement(fd, directory);
+		UpLoadFileManagement fm = new UpLoadFileManagement(fd, directory);
 		
 		String jsonFeatures = fm.getFeatureCollectionAsJSON( );
 		

@@ -33,9 +33,9 @@ import org.springframework.web.multipart.MultipartFile;
  * @author Mauricio Pazos
  *
  */
-public class UpLoadFileManegement {
+public class UpLoadFileManagement {
 	
-	private static final Log LOG = LogFactory.getLog(UpLoadFileManegement.class.getPackage().getName());
+	private static final Log LOG = LogFactory.getLog(UpLoadFileManagement.class.getPackage().getName());
 	
 	private static List<String> VALID_EXTENSIONS;
 	static{
@@ -72,7 +72,7 @@ public class UpLoadFileManegement {
 	
 	
 
-	public UpLoadFileManegement(FileDescriptor currentFile, String workDirectory) {
+	public UpLoadFileManagement(FileDescriptor currentFile, String workDirectory) {
 
 		this.fileDescriptor = currentFile;
 		this.workDirectory = workDirectory;

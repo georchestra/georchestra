@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.georchestra.mapfishapp.ws.upload.FileDescriptor;
-import org.georchestra.mapfishapp.ws.upload.UpLoadFileManegement;
+import org.georchestra.mapfishapp.ws.upload.UpLoadFileManagement;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
@@ -206,7 +206,7 @@ public final class UpLoadGeoFileController {
 				return;
 			}
 			// save the file in the temporal directory
-			UpLoadFileManegement fileManagement = new UpLoadFileManegement(currentFile, workDirectory);
+			UpLoadFileManagement fileManagement = new UpLoadFileManagement(currentFile, workDirectory);
 
 			fileManagement.save(upLoadFile);
 				
@@ -375,7 +375,7 @@ public final class UpLoadGeoFileController {
 	 * @param fileManagement
 	 * @return
 	 */
-	private Status checkGeoFiles(UpLoadFileManegement fileManagement) {
+	private Status checkGeoFiles(UpLoadFileManagement fileManagement) {
 		//a zip file is unzipped to a temporary place and *.SHP, *.shp, *.MIF, *.MID, *.mif, *.mid files are looked for at the root of the archive. If several SHP files are found or several MIF or several MID, the error message is "multiple files"
 		if( ! fileManagement.checkGeoFileExtension() ) {
 			return Status.unsupportedFormat;
