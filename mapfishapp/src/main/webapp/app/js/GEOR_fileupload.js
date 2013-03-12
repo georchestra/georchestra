@@ -61,6 +61,16 @@ GEOR.fileupload = (function() {
      */
     var centerPanel;
 
+    var getFileName = function(fieldValue) {
+        //http://meta.stackoverflow.com/questions/68471/the-image-uploader-shows-fakepath-as-path-when-using-chrome
+        var cmpts = fieldValue.split('\\');
+        if (cmpts.length) {
+            return cmpts[cmpts.length-1];
+        } else {
+            return "geofile";
+        }
+    };
+
     var formSuccess = function(form, action) {
         var features,
             fc = (new OpenLayers.Format.JSON()).read(action.response.responseText);
@@ -103,14 +113,15 @@ GEOR.fileupload = (function() {
         centerPanel.removeAll();
         centerPanel.add(gridPanel);
         centerPanel.doLayout();
+        var fieldValue = form.items.get(0).getValue();
         form.reset();
         newFile = true;
 
         var recordType = GeoExt.data.LayerRecord.create(
             GEOR.ows.getRecordFields()
         );
-        var layer = new OpenLayers.Layer.Vector("Geofile ");  // TODO: should be the original filename
-        layer.name += layer.id;
+
+        var layer = new OpenLayers.Layer.Vector(getFileName(fieldValue));
         layer.addFeatures(features);
 
         observable.fireEvent("selectionchanged", [new recordType({
