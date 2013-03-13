@@ -15,6 +15,9 @@
 /*
  * @include GEOR_util.js
  * @include GEOR_config.js
+ * @include OpenLayers/Format/JSON.js
+ * @include OpenLayers/Format/GeoJSON.js
+ * @include OpenLayers/Layer/Vector.js
  */
 
 Ext.namespace("GEOR");

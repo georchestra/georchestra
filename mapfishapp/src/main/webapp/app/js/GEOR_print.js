@@ -15,7 +15,7 @@
 /*
  * @include GEOR_config.js
  * @include GEOR_util.js
- * @include GeoExt/data/PrintProvider.js
+ * @requires GeoExt/data/PrintProvider.js
  * @include GeoExt/data/PrintPage.js
  * @include GeoExt/plugins/PrintPageField.js
  * @include GeoExt/plugins/PrintProviderField.js
