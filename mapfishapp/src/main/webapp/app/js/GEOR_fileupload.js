@@ -120,7 +120,8 @@ GEOR.fileupload = (function() {
             GEOR.ows.getRecordFields()
         );
 
-        var layer = new OpenLayers.Layer.Vector(getFileName(fieldValue));
+        var name = GEOR.util.shortenLayerName(getFileName(fieldValue)),
+            layer = new OpenLayers.Layer.Vector(name);
         layer.addFeatures(features);
 
         observable.fireEvent("selectionchanged", [new recordType({
@@ -186,7 +187,7 @@ GEOR.fileupload = (function() {
                     fileUpload: true,
                     bodyStyle: 'padding:10px',
                     labelWidth: 60,
-                    height: 40,
+                    height: 50,
                     monitorValid: true,
                     buttonAlign: 'right',
                     items: [{
