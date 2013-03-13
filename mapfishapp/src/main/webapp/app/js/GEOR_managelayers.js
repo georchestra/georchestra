@@ -402,6 +402,7 @@ GEOR.managelayers = (function() {
         var queryable = !!(layerRecord.get("queryable"));
         var layer = layerRecord.get('layer');
         var isWMS = (layer.CLASS_NAME == "OpenLayers.Layer.WMS");
+        var isWFS = (layer.CLASS_NAME == "OpenLayers.Layer.Vector" && !!layer.protocol);
 
         var menuItems = [], url;
 
@@ -531,7 +532,7 @@ GEOR.managelayers = (function() {
         // This depends on http://applis-bretagne.fr/redmine/issues/1984
 
         // TODO: have a generic field in layerrecord stating that a record is WFS or WMS.
-        if (GEOR.querier && (queryable || layer.CLASS_NAME == "OpenLayers.Layer.Vector")) {
+        if (GEOR.querier && (queryable || isWFS)) {
             menuItems.push({
                 iconCls: 'geor-btn-query',
                 text: tr("Build a query"),
@@ -596,20 +597,22 @@ GEOR.managelayers = (function() {
             });
         }
 
-        menuItems.push({
-            iconCls: 'geor-btn-download',
-            text: tr("Download data"),
-            handler: function() {
-                submitData({
-                    layers: [{
-                        layername: layerRecord.get('name'),
-                        metadataURL: url || "",
-                        owstype: isWMS ? "WMS" : "WFS",
-                        owsurl: isWMS ? layer.url : layer.protocol.url
-                    }]
-                })
-            }
-        });
+        if (isWMS || isWFS) {
+            menuItems.push({
+                iconCls: 'geor-btn-download',
+                text: tr("Download data"),
+                handler: function() {
+                    submitData({
+                        layers: [{
+                            layername: layerRecord.get('name'),
+                            metadataURL: url || "",
+                            owstype: isWMS ? "WMS" : "WFS",
+                            owsurl: isWMS ? layer.url : layer.protocol.url
+                        }]
+                    })
+                }
+            });
+        }
 
         if (menuItems.length > 2) {
             menuItems.push("-");
