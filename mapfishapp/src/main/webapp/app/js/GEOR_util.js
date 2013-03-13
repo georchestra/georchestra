@@ -335,6 +335,41 @@ GEOR.util = (function() {
         },
 
         /**
+         * Method: getStyleMap
+         * Returns the standardized StyleMap
+         *
+         * Parameters:
+         * override - {Object} optional hash with properties "default", "select"
+         *
+         * Returns:
+         * {OpenLayers.StyleMap}
+         */
+        getStyleMap: function(override) {
+            override = override || {};
+            var defStyle = OpenLayers.Util.extend({},
+                OpenLayers.Feature.Vector.style['default']);
+            var selStyle = OpenLayers.Util.extend({},
+                OpenLayers.Feature.Vector.style['select']);
+            return new OpenLayers.StyleMap({
+                "default": new OpenLayers.Style(
+                    Ext.apply(defStyle, Ext.apply({
+                        cursor: "pointer",
+                        fillOpacity: 0.1,
+                        strokeWidth: 3
+                    }, override["default"] || {}))
+                ),
+                "select": new OpenLayers.Style(
+                    Ext.apply(selStyle, Ext.apply({
+                        cursor: "pointer",
+                        strokeWidth: 3,
+                        fillOpacity: 0.1,
+                        graphicZIndex: 1000
+                    }, override["select"] || {}))
+                )
+            });
+        },
+
+        /**
          * Method: round
          * Rounds a float with a given number of decimals.
          */

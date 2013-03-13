@@ -291,16 +291,13 @@ GEOR.querier = (function() {
             var style = OpenLayers.Util.extend({}, 
                         OpenLayers.Feature.Vector.style['default']);
             
-            styleMap = new OpenLayers.StyleMap({
-                "default": new OpenLayers.Style(
-                    OpenLayers.Util.extend(style, {
-                        strokeWidth: 2,
-                        strokeColor: "#ee5400",
-                        fillOpacity: 0
-                    })
-                )
+            styleMap = GEOR.util.getStyleMap({
+                "default": {
+                    strokeWidth: 2,
+                    strokeColor: "#ee5400",
+                    fillOpacity: 0
+                }
             });
-            
         },
         
         /*

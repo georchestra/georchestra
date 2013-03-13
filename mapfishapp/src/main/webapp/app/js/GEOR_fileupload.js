@@ -107,13 +107,13 @@ GEOR.fileupload = (function() {
             return;
         }
         features = (new OpenLayers.Format.GeoJSON()).read(fc.geojson);
-        model = new GEOR.FeatureDataModel({
-            features: features
-        });
         if (!features || features.length == 0) {
             alert("No features found");
             return;
         }
+        model = new GEOR.FeatureDataModel({
+            features: features
+        });
         store = new GeoExt.data.FeatureStore({
             features: features,
             fields: model.toStoreFields()
@@ -146,7 +146,13 @@ GEOR.fileupload = (function() {
         );
 
         var name = GEOR.util.shortenLayerName(getFileName(fieldValue)),
-            layer = new OpenLayers.Layer.Vector(name);
+            layer = new OpenLayers.Layer.Vector(name, {
+                styleMap: GEOR.util.getStyleMap(),
+                rendererOptions: {
+                    zIndexing: true
+                }
+            });
+
         layer.addFeatures(features);
 
         observable.fireEvent("selectionchanged", [new recordType({
@@ -234,9 +240,6 @@ GEOR.fileupload = (function() {
                                 newFile = false;
                                 form.submit({
                                     url: "ws/togeojson/",
-                                    // Beware: form submission requires a *success* parameter in json response
-                                    // As said in http://extjs.com/learn/Manual:RESTful_Web_Services
-                                    // "Ext.form.BasicForm hopefully becomes HTTP Status Code aware!"
                                     success: formSuccess,
                                     failure: function(form, action) {
                                         alert("Error : " + action.result.msg);

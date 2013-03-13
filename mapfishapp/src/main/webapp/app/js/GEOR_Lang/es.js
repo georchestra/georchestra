@@ -181,6 +181,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Push down this layer": "Bajar esta capa",
     "Add layers": "Añadir capas",
     "source: ": "fuente: ",
+    "unknown": "desconocido",
     "Actions": "Acciones",
     /* GEOR_map.js strings */
     "Location map": "Mapa de ubicación",
