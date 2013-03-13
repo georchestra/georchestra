@@ -79,7 +79,6 @@ GEOR.fileupload = (function() {
             return;
         }
         features = (new OpenLayers.Format.GeoJSON()).read(fc.geojson);
-
         model = new GEOR.FeatureDataModel({
             features: features
         });

@@ -449,3 +449,12 @@ GEOR.print = (function() {
         }
     };
 })();
+
+
+GeoExt.data.PrintProvider.prototype.encoders.legends["gx_vectorlegend"] = function(legend) {
+    var enc = this.encoders.legends.base.call(this, legend);
+    enc[0].classes.push({
+        name: ""
+    });
+    return enc;
+};
