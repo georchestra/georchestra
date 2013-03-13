@@ -299,7 +299,7 @@ GEOR.layerfinder = (function() {
                 } else {
                     // we have a vector layer without a protocol 
                     // we are coming from the upload file tab
-                    layerStore.addSorted(record.clone());
+                    layerStore.addSorted(record);
                 }
             } else if(record.get("layer_name")) {
                 // we're coming from the CSW tabs

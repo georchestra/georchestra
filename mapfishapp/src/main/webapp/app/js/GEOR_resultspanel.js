@@ -268,30 +268,9 @@ GEOR.resultspanel = (function() {
      * {OpenLayers.Layer.Vector}
      */
     var createVectorLayer = function() {
-        var defStyle = OpenLayers.Util.extend({},
-            OpenLayers.Feature.Vector.style['default']);
-        var selStyle = OpenLayers.Util.extend({},
-            OpenLayers.Feature.Vector.style['select']);
-        var styleMap = new OpenLayers.StyleMap({
-            "default": new OpenLayers.Style(
-                OpenLayers.Util.extend(defStyle, {
-                    cursor: "pointer",
-                    fillOpacity: 0.1,
-                    strokeWidth: 3
-                })
-            ),
-            "select": new OpenLayers.Style(
-                OpenLayers.Util.extend(selStyle, {
-                    cursor: "pointer",
-                    strokeWidth: 3,
-                    fillOpacity: 0.1,
-                    graphicZIndex: 1000
-                })
-            )
-        });
         return new OpenLayers.Layer.Vector("search_results", {
             displayInLayerSwitcher: false,
-            styleMap: styleMap,
+            styleMap: GEOR.util.getStyleMap(),
             rendererOptions: {
                 zIndexing: true
             }
@@ -303,7 +282,8 @@ GEOR.resultspanel = (function() {
      * Callback executed when we receive the XML data.
      *
      * Parameters:
-     * options - {Object} Hash with keys: features and model (optional)
+     * options - {Object} Hash with keys: features, addLayerToMap and model (both optional)
+     * addLayerToMap defaults to true
      */
     var populate = function(options) {
         // we clear the bounds cache:
@@ -312,6 +292,7 @@ GEOR.resultspanel = (function() {
         var features = options.features;
         if (!features || features.length === 0) {
             GEOR.waiter.hide();
+            vectorLayer && vectorLayer.removeAllFeatures();
             observable.fireEvent("panel", {
                 bodyStyle: 'padding:1em;',
                 html: tr("<p>Not any result for that request.</p>")
@@ -321,7 +302,14 @@ GEOR.resultspanel = (function() {
 
         if (!vectorLayer) {
             vectorLayer = createVectorLayer();
-            map.addLayer(vectorLayer);
+        }
+
+        if (options.addLayerToMap !== false) {
+            if (OpenLayers.Util.indexOf(map.layers, vectorLayer) < 0) {
+                map.addLayer(vectorLayer);
+            }
+        } else if (OpenLayers.Util.indexOf(map.layers, vectorLayer) >= 0){
+            map.removeLayer(vectorLayer);
         }
 
         if (options.model) {
@@ -335,7 +323,11 @@ GEOR.resultspanel = (function() {
 
         store = new GeoExt.data.FeatureStore({
             layer: vectorLayer,
-            fields: model.toStoreFields()
+            fields: model.toStoreFields()/*,
+            initDir: (options.addLayerToMap === false) ? 
+                GeoExt.data.FeatureStore.LAYER_TO_STORE : 
+                GeoExt.data.FeatureStore.LAYER_TO_STORE|GeoExt.data.FeatureStore.STORE_TO_LAYER
+            */
         });
 
         Ext.each(features, function(f, i) {
