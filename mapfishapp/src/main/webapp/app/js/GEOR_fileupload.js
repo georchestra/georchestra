@@ -61,6 +61,15 @@ GEOR.fileupload = (function() {
      */
     var centerPanel;
 
+    /**
+     * Method: getFileName
+     *
+     * Parameters:
+     * fieldValue - {String} something like "C:\fakepath\file.zip"
+     *
+     * Returns:
+     * {String} the file name (eg: file.zip)
+     */
     var getFileName = function(fieldValue) {
         //http://meta.stackoverflow.com/questions/68471/the-image-uploader-shows-fakepath-as-path-when-using-chrome
         var cmpts = fieldValue.split('\\');
@@ -71,6 +80,25 @@ GEOR.fileupload = (function() {
         }
     };
 
+    /**
+     * Method: loadPanel
+     *
+     * Parameters:
+     * p - {Object|Ext.Panel}
+     */
+    var loadPanel = function(p) {
+        centerPanel.removeAll();
+        centerPanel.add(p);
+        centerPanel.doLayout();
+    };
+
+    /**
+     * Method: formSuccess
+     *
+     * Parameters:
+     * form - {Ext.form.BasicForm}
+     * action - {Ext.form.Action}
+     */
     var formSuccess = function(form, action) {
         var features,
             fc = (new OpenLayers.Format.JSON()).read(action.response.responseText);
@@ -107,11 +135,8 @@ GEOR.fileupload = (function() {
             frame: false,
             border: false
         });
-        // insert grid in centerPanel
 
-        centerPanel.removeAll();
-        centerPanel.add(gridPanel);
-        centerPanel.doLayout();
+        loadPanel(gridPanel);
         var fieldValue = form.items.get(0).getValue();
         form.reset();
         newFile = true;
@@ -153,14 +178,13 @@ GEOR.fileupload = (function() {
             tr = OpenLayers.i18n;
             var srs = options.srs;
             delete options.srs;
-
-            if (!store) {
-                store = new GeoExt.data.FeatureStore();
+            
+            if (!centerPanel) {
                 centerPanel = new Ext.Panel({
                     flex: 1,
                     layout: 'fit',
+                    defaults: {border: false},
                     items: [{
-                        border: false,
                         html: ''
                     }]
                 });
@@ -233,7 +257,10 @@ GEOR.fileupload = (function() {
          * Clears the current selection
          */
         clearSelection: function() {
-            //cbxSm.clearSelections();
+            loadPanel({
+                html: ''
+            });
+            observable.fireEvent("selectionchanged", []);
         }
     };
 })();
