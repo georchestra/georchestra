@@ -91,15 +91,10 @@ public class UpLoadFileManagementTest {
 	
 	private String getWorkingDirectory() throws IOException{
 		String current = new File( "." ).getCanonicalPath();
-		String directory = current + "/src/test/resources/ogr/georchestra/mapfishapp/ws/upload/";
+		String directory = current + "/src/test/resources/org/georchestra/mapfishapp/ws/upload/";
 
 		return directory;
 	}
-	private String getTestData() throws IOException{
-		
-		String fileName = getWorkingDirectory() + "points-4326.shp";
-
-		return fileName;
-	}
+	
 
 }
