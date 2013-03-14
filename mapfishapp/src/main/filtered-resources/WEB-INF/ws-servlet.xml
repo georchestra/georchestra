@@ -11,19 +11,29 @@
     <bean class="org.georchestra.mapfishapp.ws.OGCProxy">
     </bean>
 
+    <!-- File uploads -->
+    <bean id="multipartResolver"
+      class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize">
+            <value>10000000</value>
+        </property>
+    </bean>
+
+    <bean class="org.georchestra.mapfishapp.ws.UpLoadGeoFileController">
+        <property name="responseCharset" value="UTF-8"/>
+        <property name="tempDirectory" value="${docTempDir}/geoFileUploadsCache"/>
+        <property name="zipSizeLimit" value="8589934592"/>
+        <property name="kmlSizeLimit" value="8589934592"/>
+        <property name="gpxSizeLimit" value="8589934592"/>
+        <property name="gmlSizeLimit" value="8589934592"/>
+    </bean>
+
+    <!-- Documents controller -->
     <bean class="org.georchestra.mapfishapp.ws.DocController">
         <property name="maxDocAgeInMinutes" value="${maxDocAgeInMinutes}"/>
         <property name="docTempDir" value="${docTempDir}"/>
         <property name="credentials">
             <map>${credentials}</map>
-        </property>
-    </bean>
-
-    <!-- upload de fichiers -->
-    <bean id="multipartResolver"
-      class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-        <property name="maxUploadSize">
-            <value>1000000</value>
         </property>
     </bean>
 
@@ -35,4 +45,3 @@
         <property name="suffix" value=".jsp"/>
     </bean>
 </beans>
-

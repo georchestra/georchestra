@@ -1,0 +1,32 @@
+<GMLFeatureClassList>
+  <GMLFeatureClass>
+    <Name>regions</Name>
+    <ElementPath>regions</ElementPath>
+    <GeometryType>6</GeometryType>
+    <SRSName>EPSG:4326</SRSName>
+    <DatasetSpecificInfo>
+      <FeatureCount>50</FeatureCount>
+      <ExtentXMin>-5.14201</ExtentXMin>
+      <ExtentXMax>8.65748</ExtentXMax>
+      <ExtentYMin>41.92478</ExtentYMin>
+      <ExtentYMax>51.08984</ExtentYMax>
+    </DatasetSpecificInfo>
+    <PropertyDefn>
+      <Name>osm_id</Name>
+      <ElementPath>osm_id</ElementPath>
+      <Type>Integer</Type>
+    </PropertyDefn>
+    <PropertyDefn>
+      <Name>name</Name>
+      <ElementPath>name</ElementPath>
+      <Type>String</Type>
+      <Width>29</Width>
+    </PropertyDefn>
+    <PropertyDefn>
+      <Name>code_insee</Name>
+      <ElementPath>code_insee</ElementPath>
+      <Type>String</Type>
+      <Width>2</Width>
+    </PropertyDefn>
+  </GMLFeatureClass>
+</GMLFeatureClassList>

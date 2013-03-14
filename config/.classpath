@@ -1,8 +1,0 @@
-<classpath>
-  <classpathentry kind="src" path="defaults" excluding="shared.maven.filters|**/*.java"/>
-  <classpathentry kind="src" path="configurations/c2cpc61" excluding="build_support/**|**/*.java"/>
-  <classpathentry kind="src" path="target/generated" excluding="/shared.maven.filters|**/*.java"/>
-  <classpathentry kind="output" path="target/classes"/>
-  <classpathentry kind="var" path="M2_REPO/junit/junit/4.8/junit-4.8.jar"/>
-  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-</classpath>

@@ -23,6 +23,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Cancel": "Cancelar",
     "Save": "Guardar",
     "Loading...": "Cargando...",
+    "File": "Archivo",
     "Layer": "Capa",
     "Description": "Descripción",
     "Error": "Error",
@@ -121,6 +122,9 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Not any metadata correspond to the words specified":
         "Ningún metadato corresponde a los términos ingresados",
     /* GEOR_editing.js strings */
+    /* GEOR_fileupload.js strings */
+    //"Local file": "", // TODO
+    //"Upload a KML, GPX or GML file. Zipped SHP and MIF/MID are also accepted.": "",
     /* GEOR_geonames.js strings */
     /* GEOR_getfeatureinfo.js strings */
     "<div>Searching...</div>": "<div>Buscando...</div>",
@@ -128,6 +132,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
          "<div>Búsqueda de objetos activada sobre la capa ${name}. " +
          "Haga clic sobre el mapa.</div>",
     /* GEOR_layerfinder.js strings */
+    //"Add layers from local files": "", // TODO
     "Find layers searching in metadata":
         "Encontrar capas buscando en los metadatos",
     "Find layers from keywords": "Encontrar capas desde palabras clave",
@@ -386,7 +391,6 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Context restoring": "Restaurando el contexto",
     "<p>Please note that the WMC must be UTF-8 encoded</p>": "<p>OjO: el " +
         "archivo de contexto tiene que ser codificado en UTF-8.</p>",
-    "File": "Archivo",
     "Load": "Cargar",
     "Workspace": "Espacio de trabajo",
     "Save the map context": "Guardar el mapa",
