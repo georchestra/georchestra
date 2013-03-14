@@ -23,10 +23,59 @@ public class UpLoadFileManagementTest {
 	 * @throws IOException 
 	 */
 	@Test 
-	public void testGetFeatureCollectionAsJSON() throws IOException {
+	public void testSHPAsJSON() throws IOException {
 		
 		String directory = getWorkingDirectory();
-		String fileName = getTestData();
+		String fileName = directory + "points-4326.shp";
+		
+		testGetGeofileToJSON(directory, fileName);
+	}
+	
+	@Test 
+	public void testKMLAsJSON() throws IOException {
+		
+		String directory = getWorkingDirectory();
+		String fileName = directory + "regions.kml";
+		
+		testGetGeofileToJSON(directory, fileName);
+	}
+	@Test 
+	public void testGMLAsJSON() throws IOException {
+		
+		String directory = getWorkingDirectory();
+		String fileName = directory + "regions.gml";
+		
+		testGetGeofileToJSON(directory, fileName);
+	}
+
+	@Test 
+	public void testGPXAsJSON() throws IOException {
+		
+		String directory = getWorkingDirectory();
+		String fileName = directory + "wp.gpx";
+		
+		testGetGeofileToJSON(directory, fileName);
+	}
+	
+	@Test 
+	public void testTABAsJSON() throws IOException {
+		
+		String directory = getWorkingDirectory();
+		String fileName = directory + "pigma_regions_POLYGON.tab";
+		
+		testGetGeofileToJSON(directory, fileName);
+	}
+
+	@Test 
+	public void testMIFAsJSON() throws IOException {
+		
+		String directory = getWorkingDirectory();
+		String fileName = directory + "pigma_regions_POLYGON.mif";
+		
+		testGetGeofileToJSON(directory, fileName);
+	}
+
+	private void testGetGeofileToJSON(final String directory, final String fileName) throws IOException{
 		
 		FileDescriptor fd = new FileDescriptor(fileName);
 		fd.listOfFiles.add(fileName);
@@ -42,7 +91,7 @@ public class UpLoadFileManagementTest {
 	
 	private String getWorkingDirectory() throws IOException{
 		String current = new File( "." ).getCanonicalPath();
-		String directory = current + "/src/test/resources/upload/";
+		String directory = current + "/src/test/resources/ogr/georchestra/mapfishapp/ws/upload/";
 
 		return directory;
 	}
