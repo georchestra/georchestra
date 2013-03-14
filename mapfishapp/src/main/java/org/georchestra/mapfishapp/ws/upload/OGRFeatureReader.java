@@ -172,11 +172,17 @@ final class OGRFeatureReader {
 			String ogrDriver = this.fileFormat.getDriver();
 			
 			OGRDataStore store = new OGRDataStore(ogrName, ogrDriver, null,  new JniOGR() );
-	        final String typeName = store.getTypeNames()[0];
+			String[] typeNames = store.getTypeNames();
+			if(typeNames.length ==  0 ){
+				final String  msg= "The file " + ogrName + " could not be read using the OGR driver " + ogrDriver;
+				LOG.error(msg);
+				throw new IOException(msg);
+			}
+	        final String typeName =  typeNames[0];
 			SimpleFeatureSource source = store.getFeatureSource(typeName);
 
 			Query query = new Query(typeName, Filter.INCLUDE);
-			// if the CRS was set the features must be transformed when the qury is executed.
+			// if the CRS was set the features must be transformed when the query is executed.
 			if(this.targetCRS != null){
 				query.setCoordinateSystemReproject(this.targetCRS);
 			}
