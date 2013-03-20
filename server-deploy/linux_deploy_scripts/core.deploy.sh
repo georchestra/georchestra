@@ -20,7 +20,6 @@ isOk () {
       exit $2;
  fi
 }
-
 USAGE () {
     echo "deploy.to.*.sh [-P <project_to_deploy>] [-m <deploy_mode>] [-D <property=value>] [-X] target"
     echo "  -P <project_to_deploy> "
