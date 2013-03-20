@@ -233,20 +233,27 @@ GEOR.map = (function() {
             // Note that the ultimate solution would be to do a getCapabilities
             // request for each OGC server advertised in the WMC
 
+            if (r.get("opaque") === true) {
+                // an opaque layer can be considered as a baselayer
+                // as a result, we apply a transitionEffect, which suits well for baselayers
+                r.get('layer').transitionEffect = 'resize';
+            }
 
             // Format attribution if required:
             var attr = r.get('attribution');
             var layer = r.get('layer');
             if (!attr || !attr.title) {
-                var a;
-                if (layer.url) {
-                    var b = OpenLayers.Util.createUrlObject(layer.url);
+                var a, 
+                    // handle both wms & wfs layers
+                    url = layer.url || (layer.protocol && layer.protocol.url);
+                if (url) {
+                    var b = OpenLayers.Util.createUrlObject(url);
                     if (b && b.host) {
                         a = b.host;
                     }
                 }
                 r.set('attribution', {
-                    title: a || GEOR.config.DEFAULT_ATTRIBUTION
+                    title: a
                 });
             }
 

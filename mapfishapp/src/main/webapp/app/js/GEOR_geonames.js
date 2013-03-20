@@ -24,13 +24,13 @@ GEOR.geonames = (function() {
      * Property: map
      * {OpenLayers.Map} The map object
      */
-    var map = null;
+    var map;
 
     /**
      * Property: tr
      * {Function} an alias to OpenLayers.i18n
      */
-    var tr = null;
+    var tr;
 
     /*
      * Method: createCbSearch
@@ -48,7 +48,7 @@ GEOR.geonames = (function() {
                 root: 'geonames',
                 totalProperty: 'totalResultsCount'
             }, [
-                {name: 'name'},
+                {name: 'toponymName'},
                 {name: 'lat'},
                 {name: 'lng'}
             ]),
@@ -59,8 +59,7 @@ GEOR.geonames = (function() {
         // Template to present results
         var tplResult = new Ext.XTemplate(
             '<tpl for="."><div class="search-item">',
-                //"<strong>{name}</strong>",
-                "{name}",
+                "{toponymName}",
             '</div></tpl>'
         );
 
@@ -78,22 +77,20 @@ GEOR.geonames = (function() {
             itemSelector: 'div.search-item',     // needed by the template
             queryParam: 'name_startsWith',       // geonames filter
             minChars: 2,                         // min characters number to
-                                                  // trigger the search
+                                                 // trigger the search
             pageSize: 0,                         // removes paging toolbar
             listeners: {
-                select: function(combo, record, index) {
+                "select": function(combo, record, index) {
                     // geonames lon/lat are in EPSG:4326
                     var lonlat = new OpenLayers.LonLat(
                         record.data.lng,
                         record.data.lat
                     );
-
                     // convert to the map's projection
                     lonlat.transform(
                         new OpenLayers.Projection("EPSG:4326"),
                         map.getProjectionObject()
                     );
-
                     // center map to POI
                     map.setCenter(lonlat, map.baseLayer.numZoomLevels - GEOR.config.GEONAMES_ZOOMLEVEL);
                 }
@@ -123,7 +120,6 @@ GEOR.geonames = (function() {
             return {
                 xtype: 'form',
                 labelWidth: 50,
-                //title: 'Localisation',
                 items: [
                     createCbSearch()
                 ]

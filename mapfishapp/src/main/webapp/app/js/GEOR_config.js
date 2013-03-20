@@ -11,31 +11,10 @@
  * You should have received a copy of the GNU General Public License
  * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+ 
 Ext.namespace("GEOR");
 
 GEOR.config = (function() {
-
-    /**
-     * Constant: URL_DEV
-     * {String} The URL to the OWS dev host.
-     */
-    var URL_DEV =
-        "http://ns383241.ovh.net/";
-    // FIXME: this should not be here...
-
-    /**
-     * Constant: HOST_EXCEPTIONS
-     * {Object}
-     */
-    var HOST_EXCEPTIONS = {
-        "localhost": URL_DEV,           // localhost
-        "\\.wrk\\.cby": URL_DEV,        // c2c chambéry
-        "\\.wrk\\.lsn": URL_DEV,        // c2c lausanne
-        "10\\.26\\.10\\..*$": URL_DEV,  // c2c internal
-        "192\\.168\\..*$": URL_DEV,     // private net
-        "10\\.25\\.40\\..*$": URL_DEV   // c2c VPN
-    };
 
     /**
      * Property: vectorAbility
@@ -50,13 +29,6 @@ GEOR.config = (function() {
      * OpenLayers.Util.createUrlObject().
      */
     var urlObj = null;
-
-    /**
-     * Property: hostException
-     * {Boolean} To cache whether the host is an exception
-     * or not.
-     */
-    var hostException = null;
 
     /**
      * Method: getUrlObj
@@ -77,66 +49,6 @@ GEOR.config = (function() {
             });
         }
         return urlObj;
-    };
-
-    /**
-     * Method: getHostname
-     * Get the application's host name.
-     *
-     * Returns:
-     * {String} The application's host name.
-     */
-    var getHostname = function() {
-        return getUrlObj().host;
-    };
-
-    /**
-     * Method: isHostException
-     * Return true if the client application is running on a host
-     * that satisfies the "host exception" criteria, false otherwise.
-     */
-    var isHostException = function() {
-        if (hostException === null) {
-            hostException = false;
-            for (var h in HOST_EXCEPTIONS) {
-                if (HOST_EXCEPTIONS.hasOwnProperty(h)) {
-                    var re = new RegExp(h);
-                    if (getHostname().match(re)) {
-                        hostException = true;
-                        break;
-                    }
-                }
-            }
-        }
-        return hostException;
-    };
-
-    /**
-     * Method: getBaseURL
-     * Get the base URL of the "mapfishapp", "geonetwork" and "geoserver"
-     * webapps.
-     *
-     * Returns:
-     * {String} The base URL.
-     */
-    var getBaseURL = function() {
-        return isHostException() ? URL_DEV : "../";
-    };
-
-    /**
-     * Method: getAbsoluteBaseURL
-     * Get the complete (absolute) base URL of the "mapfishapp", "geonetwork"
-     * and "geoserver" webapps.
-     */
-    var getAbsoluteBaseURL = function() {
-        var url;
-        if (isHostException()) {
-            url = URL_DEV;
-        } else {
-            url = getAppURL();
-            url = url.slice(0, url.indexOf("mapfishapp"));
-        }
-        return url;
     };
 
     /**
@@ -224,62 +136,15 @@ GEOR.config = (function() {
          * runtime method to get the current default WMC
          */
         DEFAULT_WMC: function() {
-            if (localStorage && 
-                localStorage.getItem("default_context") !== null) {
-                return localStorage.getItem("default_context");
-            }
             if (GEOR.config.CONTEXTS && 
                 GEOR.config.CONTEXTS[0] && 
                 GEOR.config.CONTEXTS[0][2]) {
                 return GEOR.config.CONTEXTS[0][2];
-            } else {
-                alert("Administrator: "+
-                    "GEOR.config.CONTEXTS is not configured as expected !");
             }
+            alert("Administrator: "+
+                "GEOR.config.CONTEXTS is not configured as expected !");
             // should not happen:
             return "default.wmc";
-        },
-
-        /**
-         * Method: _getBaseURL
-         * Test method
-         */
-        _getBaseURL: function(url) {
-            urlObj = null;
-            hostException = null;
-            getUrlObj(url);
-            var ret = getBaseURL();
-            urlObj = null;
-            hostException = null;
-            return ret;
-        },
-
-        /**
-         * Method: _getAbsoluteBaseURL
-         * Test method
-         */
-        _getAbsoluteBaseURL: function(url) {
-            urlObj = null;
-            hostException = null;
-            getUrlObj(url);
-            var ret = getAbsoluteBaseURL();
-            urlObj = null;
-            hostException = null;
-            return ret;
-        },
-
-        /**
-         * Method: _getAppURL
-         * Test method
-         */
-        _getAppURL: function(url) {
-            urlObj = null;
-            hostException = null;
-            getUrlObj(url);
-            var ret = getAppURL();
-            hostException = null;
-            urlObj = null;
-            return ret;
         },
 
         /**
@@ -339,6 +204,8 @@ GEOR.config = (function() {
          *  name - {String} required addon name, which, once lowercased, gives the addon folder name
          *  title - {Object} a required hash storing addon titles by lang key
          *  description - {Object} a required hash storing addon descriptions by lang key
+         *  roles - {Array} optional array of roles allowed to use this addon - defaults to [], which means everyone is allowed to.
+         *          eg: ["ROLE_SV_ADMIN"] will allow the current addon for admin users only
          *  group - {String} an optional group for mutual exclusion between activated tools - default group is "tools"
          *  options - {Object} an optional config object which overrides the package default_options (in manifest.json)
          *  thumbnail - {String} an optional thumbnail path, relative to app/addons/{addon_name.toLowerCase()}/ (defaults to img/icon.png)
@@ -379,7 +246,7 @@ GEOR.config = (function() {
          * Defaults to /geoserver/wfs
          */
         GEOSERVER_WFS_URL: getCustomParameter("GEOSERVER_WFS_URL",
-            getBaseURL() + "geoserver/wfs"),
+            "/geoserver/wfs"),
 
         /**
          * Constant: GEOSERVER_WMS_URL
@@ -388,7 +255,7 @@ GEOR.config = (function() {
          * Defaults to /geoserver/wms
          */
         GEOSERVER_WMS_URL: getCustomParameter("GEOSERVER_WMS_URL",
-            getBaseURL() + "geoserver/wms"),
+            "/geoserver/wms"),
 
         /**
          * Constant: GEONETWORK_URL
@@ -396,7 +263,7 @@ GEOR.config = (function() {
          * Defaults to "/geonetwork/srv/fr"
          */
         GEONETWORK_URL: getCustomParameter("GEONETWORK_URL",
-            getBaseURL() + "geonetwork/srv/fr"),
+            "/geonetwork/srv/fr"),
 
         /**
          * Constant: CSW_GETDOMAIN_SORTING
@@ -423,7 +290,8 @@ GEOR.config = (function() {
         CATALOGS: getCustomParameter("CATALOGS", [
             ['http://geobretagne.fr/geonetwork/srv/fr/csw', 'le catalogue GeoBretagne'],
             ['http://ids.pigma.org/geonetwork/srv/fr/csw', 'le catalogue PIGMA'],
-            ['http://sandre.eaufrance.fr/geonetwork_CSW/srv/fr/csw', 'le catalogue du Sandre']
+            ['http://sandre.eaufrance.fr/geonetwork_CSW/srv/fr/csw', 'le catalogue du Sandre'],
+            ['http://geocatalog.webservice-energy.org/geonetwork/srv/fre/csw', 'le catalogue de webservice-energy']
         ]),
 
         /**
@@ -456,10 +324,10 @@ GEOR.config = (function() {
          * Constant: DEFAULT_THESAURUS_KEY
          * Key (as the one in the response from /geonetwork/srv/fr/xml.thesaurus.getList)
          * of the thesaurus to use as the default (selected) one.
-         * Defaults to 'local._none_.geobretagne' FIXME: should be something else
+         * Defaults to 'external.theme.inspire-theme'
          */
         DEFAULT_THESAURUS_KEY: getCustomParameter("DEFAULT_THESAURUS_KEY",
-            'local._none_.geobretagne'),
+            'external.theme.inspire-theme'),
 
         /**
          * Constant: MAX_FEATURES
@@ -477,14 +345,6 @@ GEOR.config = (function() {
          */
         MAX_LENGTH: getCustomParameter("MAX_LENGTH",
             400/7*1024*getBrowserVectorAbility()*getComputingPower()),
-
-
-        /**
-         * Constant: DEFAULT_ATTRIBUTION
-         * Default attribution for layers which don't have one.
-         * Defaults to ''
-         */
-        DEFAULT_ATTRIBUTION: getCustomParameter("DEFAULT_ATTRIBUTION", ''),
 
         /**
          * Constant: OSM_AS_OVMAP
@@ -550,6 +410,14 @@ GEOR.config = (function() {
          */
         ADDRESS_URL: getCustomParameter("ADDRESS_URL",
             "/addrapp/addresses"),
+
+        /**
+         * Constant: DEACCENTUATE_REFERENTIALS_QUERYSTRING
+         * {Boolean} Whether to deaccentuate the referentials widget query string
+         * Defaults to true
+         */
+        DEACCENTUATE_REFERENTIALS_QUERYSTRING: getCustomParameter("DEACCENTUATE_REFERENTIALS_QUERYSTRING",
+            true),
 
         /**
          * Constant: NS_LOC

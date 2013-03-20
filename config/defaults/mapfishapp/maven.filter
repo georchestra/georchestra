@@ -1,5 +1,6 @@
 # clean docs when they are 1 day old
 maxDocAgeInMinutes=1440
+docTempDir=/tmp/mapfishapp
 #you can provide multiple entries
 credentials=\
 <entry key="@shared.server.name@">\

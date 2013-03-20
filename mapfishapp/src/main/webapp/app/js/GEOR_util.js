@@ -12,6 +12,10 @@
  * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+ * @include GEOR_config.js
+ */
+ 
 Ext.namespace("GEOR");
 
 GEOR.util = (function() {
@@ -139,9 +143,12 @@ GEOR.util = (function() {
             var urlObject = OpenLayers.Util.createUrlObject(url,
                 {ignorePort80: true}
             );
+            var appUrl = OpenLayers.Util.createUrlObject(GEOR.config.MAPFISHAPP_URL,
+                {ignorePort80: true}
+            );
             var path = urlObject.pathname;
-            if (path.indexOf("/mapfishapp") === 0) {
-                path = path.slice("/mapfishapp".length);
+            if (path.indexOf(appUrl.pathname) === 0) {
+                path = path.slice(appUrl.pathname.length);
                 if (path.indexOf("/") === 0) {
                     path = path.slice(1);
                 }

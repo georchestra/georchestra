@@ -245,11 +245,12 @@ GEOR.referentials = (function() {
      */
     var buildFilter = function(queryString, stringAttributes) {
         var l = stringAttributes.length;
-        // we need to replace accentuated chars by their unaccentuated version
+        // we might need to replace accentuated chars by their unaccentuated version
+        if (GEOR.config.DEACCENTUATE_REFERENTIALS_QUERYSTRING === true) {
+            queryString = GEOR.util.stringDeaccentuate(queryString);
+        }
         // and toUpperCase is required, since all the DBF data is UPPERCASED
-        queryString = GEOR.util.stringDeaccentuate(queryString);
         var filterValue = '*' + queryString.toUpperCase() + '*';
-            
         if (l == 1) {
             return new OpenLayers.Filter.Comparison({
                 type: OpenLayers.Filter.Comparison.LIKE,
@@ -306,7 +307,7 @@ GEOR.referentials = (function() {
                     protocol: record.get('layer').protocol
                 }),
                 listeners: {
-                    beforeload: function(store, options) {
+                    "beforeload": function(store, options) {
                         // add a filter to the options passed to proxy.load, 
                         // proxy.load passes these options to protocol.read
                         var params = store.baseParams;
@@ -352,10 +353,10 @@ GEOR.referentials = (function() {
             emptyText: disabled ? tr("Choose a referential") : '',
             store: store,
             listeners: {
-                select : function(combo, record, index) {
+                "select": function(combo, record, index) {
                     onComboSelect(record);
                 },
-                specialkey: function(combo, event) {
+                "specialkey": function(combo, event) {
                     if (event.getKey() == event.ENTER) {
                         onComboSelect(record);
                     }
