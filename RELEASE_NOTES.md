@@ -26,11 +26,7 @@ Enhancements:
  * mapfishapp: window buttons consistency and default actions, see https://github.com/georchestra/georchestra/pull/33
  * mapfishapp: by default, the map is now restored with its latest known state (context), see https://github.com/georchestra/georchestra/pull/50
  * mapfishapp: missing translations
- * mapfishapp: mapfishapp packages were renamed as org.georchestra.mapfishapp, see  https://github.com/georchestra/georchestra/pull/69
- * downloadform: the packages were renamed as org.georchestra.dlform, see  https://github.com/georchestra/georchestra/pull/72
- * extractorapp: packges were renamed as org.georchestra.extractorapp, see https://github.com/georchestra/georchestra/pull/71 
- * security-proxy: the module's packages were renamed as org.georchestra.security, see  https://github.com/georchestra/georchestra/pull/73
- * ogc-server-statistics: the packages were renamed as org.georchestra.ogcservstatistics, see https://github.com/georchestra/georchestra/pull/74
+ * mapfishapp, downloadform, extractorapp, security-proxy, ogc-server-statistics: the java packages now belong to org.georchestra
  * mapfishapp: DocController's maxDocAgeInMinutes was change to manage long integer value, see https://github.com/georchestra/georchestra/pull/81
 
 Bug fixes:
