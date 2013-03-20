@@ -134,11 +134,7 @@
                 <dependency>
                     <groupId>${project.groupId}</groupId>
                     <artifactId>geonetwork-main</artifactId>
-<<<<<<< HEAD
                     <version>${project.version}</version>
-=======
-                    <version>12.11</version>
->>>>>>> origin/improvement/12.11-geonetwork29
                     <classifier>${server}</classifier>
                     <type>war</type>
                 </dependency>
@@ -216,7 +212,7 @@
                 <dependency>
                     <groupId>org.geonetwork-opensource</groupId>
                     <artifactId>geonetwork-main</artifactId>
-                    <version>12.11</version>
+                    <version>${project.version}</version>
                     <classifier>${server}</classifier>
                     <type>war</type>
                 </dependency>
@@ -273,7 +269,7 @@
                 <dependency>
                     <groupId>org.geonetwork-opensource</groupId>
                     <artifactId>geonetwork-main</artifactId>
-                    <version>12.11</version>
+                    <version>${project.version}</version>
                     <classifier>${server}</classifier>
                     <type>war</type>
                 </dependency>

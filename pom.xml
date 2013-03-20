@@ -138,14 +138,10 @@
     </profile>
 
     <profile>
-      <id>pigma_c2cpc61</id>
+      <id>pigma_c2cpc62</id>
       <properties>
         <server>pigma</server>
-<<<<<<< HEAD
         <sub.target>c2cpc62</sub.target>
-=======
-        <sub.target>c2cpc61</sub.target>
->>>>>>> origin/improvement/12.11-geonetwork29
         <geoserver.war.excludes>WEB-INF/lib/*gwc*.jar</geoserver.war.excludes>
       </properties>
     </profile>
