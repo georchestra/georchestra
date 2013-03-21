@@ -56,14 +56,6 @@ class XmlUpdate extends AbstractUpdater {
 		  params.log.info("Loading parameters to update from $fromFile")
 		  xml = new XmlParser().parse(fromFile)
 	  } else {
-<<<<<<< HEAD
-	    writer = new StringWriter()
-	    xml = new MarkupBuilder(writer)
-	  }
-		
-		closure(xml)
-
-=======
       throw new AssertionError("$fromFile does not exist.  Perhaps you want to use write to create the file")
 	  }
 		
@@ -73,15 +65,10 @@ class XmlUpdate extends AbstractUpdater {
 	}
 
   private def write (writer) {
->>>>>>> origin/master
     def text = writer.toString()
 		def toFile = getToFile()
 		params.log.info("Writing updated xml to $toFile")
 
 	  toFile.withWriter('UTF-8'){ w -> w.write(text)}
-<<<<<<< HEAD
-	}
-=======
   }
->>>>>>> origin/master
 }
