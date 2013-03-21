@@ -33,6 +33,27 @@
     <module>server-deploy-support</module>
   </modules>
   <build>
+    <plugins>
+       <!-- initialize git revision info -->
+       <plugin>
+         <groupId>pl.project13.maven</groupId>
+         <artifactId>git-commit-id-plugin</artifactId>
+         <version>2.1.4</version>
+         <executions>
+           <execution>
+             <goals>
+               <goal>revision</goal>
+             </goals>
+           </execution>
+         </executions>
+         <configuration>
+           <prefix>build</prefix>
+           <failOnNoGitDirectory>false</failOnNoGitDirectory>
+           <skipPoms>false</skipPoms>
+           <verbose>false</verbose>
+         </configuration>
+       </plugin>
+    </plugins>
     <pluginManagement>
       <plugins>
         <plugin>
@@ -122,9 +143,9 @@
   <profiles>
 
     <profile>
-      <id>pigma</id>
+      <id>localhost</id>
       <properties>
-        <server>pigma</server>
+        <server>localhost</server>
       </properties>
     </profile>
 
@@ -138,10 +159,10 @@
     </profile>
 
     <profile>
-      <id>pigma_c2cpc62</id>
+      <id>pigma_c2cpc61</id>
       <properties>
         <server>pigma</server>
-        <sub.target>c2cpc62</sub.target>
+        <sub.target>c2cpc61</sub.target>
         <geoserver.war.excludes>WEB-INF/lib/*gwc*.jar</geoserver.war.excludes>
       </properties>
     </profile>

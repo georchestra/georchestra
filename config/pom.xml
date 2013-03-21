@@ -157,6 +157,24 @@
 				<artifactId>gmaven-plugin</artifactId>
 				<executions>
 					<execution>
+						<id>generateJavaStubsForDocs</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generateStubs</goal>
+						</goals>
+						<configuration>
+						  <sources>
+						    <source>
+						      <directory>${basedir}/src/main/scripts</directory>
+						      <includes>
+						        <include>*.groovy</include>
+						        <include>**/*.groovy</include>
+					        </includes>
+						    </source>
+					    </sources>
+					  </configuration>
+				  </execution>
+					<execution>
 						<id>create-default-gen-config-file</id>
 						<phase>generate-resources</phase>
 						<goals>
@@ -200,6 +218,7 @@ class GenerateConfig {
 							  // note: the params have to be initialized for the required files to be created
 							  // doesn't matter if GenerateConfig is ran or not
 								def params = new Parameters(
+								  project: project,
 									targetDir: new File("${project.build.directory}"),
 									outputDir: new File("${generated.output}"),
 									basedirFile: new File("${basedir}"),
@@ -259,6 +278,14 @@ class GenerateConfig {
 					<classifier>${server}</classifier>
 				</configuration>
 			</plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.9</version>
+        <configuration>
+          <show>private</show>
+        </configuration>
+      </plugin>
 		</plugins>
 	</build>
 	<dependencies>

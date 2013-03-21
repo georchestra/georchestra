@@ -12,12 +12,11 @@
 	
 	<properties>
     <maven.test.skip>true</maven.test.skip>
-	  <gs.version>2.1.3</gs.version>
+	  <gs.version>2.2.4</gs.version>
   </properties>
   
 	
 	<modules>
-		<module>spring-security-proxy-headers</module>
 		<module>geoserver-submodule/src</module>
 		<module>webapp</module>
 	</modules>
