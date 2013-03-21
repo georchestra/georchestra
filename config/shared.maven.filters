@@ -1,9 +1,7 @@
 # shared values like public url can be put here
-
-
 shared.server.port=80
 
-shared.language=fr
+shared.language=fre
 
 shared.ldap.host=localhost
 shared.ldap.port=636

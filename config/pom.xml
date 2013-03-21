@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.georchestra</groupId>
 		<artifactId>root</artifactId>
-		<version>1.0</version>
+		<version>13.02</version>
 	</parent>
 	<artifactId>config</artifactId>
 	<packaging>jar</packaging>
@@ -169,6 +169,7 @@
                   log.info(generateConfigFile.path+" exists so it will be used in build")
                 } else {
                   log.info(generateConfigFile.path+" does NOT exist so a default will be created")
+                  generateConfigFile.parentFile.mkdirs()
                   generateConfigFile << """
 // Generated empty build file
 class GenerateConfig {
@@ -211,7 +212,8 @@ class GenerateConfig {
 									
 								params.init()
 
-								log.info("Running groovy configuration generation scripts")
+								log.info("Running groovy configuration generation scripts with parameters: "+params)
+                log.info("")
 
 							  new GenerateConfig().generate(
 									this, log, ant, params.basedirFile, 

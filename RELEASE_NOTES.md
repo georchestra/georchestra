@@ -11,6 +11,7 @@ New features:
  * mapfishapp: print layouts ACL, see https://github.com/georchestra/georchestra/pull/30
  * mapfishapp: spatial query based on a circle, see http://applis-bretagne.fr/redmine/issues/1957
  * geoserver: useful extensions added in template profile, see http://applis-bretagne.fr/redmine/issues/4217
+ * geonetwork: upgraded geonetwork to geonetwork master
  * extractorapp: extraction bbox is now part of the data bundle, see https://github.com/georchestra/georchestra/pull/35
  * mapfishapp: support for addons & magnifier addon, see https://github.com/georchestra/georchestra/pull/36
  * mapfishapp: cadastre addon, see https://github.com/georchestra/georchestra/pull/48

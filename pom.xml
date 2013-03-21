@@ -4,7 +4,7 @@
   <groupId>org.georchestra</groupId>
   <artifactId>root</artifactId>
   <packaging>pom</packaging>
-  <version>1.0</version>
+  <version>13.02</version>
   <name>Root project of the georchestra project</name>
   <url>http://maven.apache.org</url>
   <organization>
@@ -20,7 +20,7 @@
     <!-- default when building without a profile specified -->
     <confdir>${project.build.directory}/conf</confdir>
     <encoding>UTF-8</encoding>
-    <georchestra.version>1.0</georchestra.version>
+    <georchestra.version>${project.version}</georchestra.version>
     <!--<gmaven.runtime>1.8</gmaven.runtime>-->
   </properties>
   <modules>
@@ -141,7 +141,7 @@
       <id>pigma_c2cpc62</id>
       <properties>
         <server>pigma</server>
-        <sub.target>int</sub.target>
+        <sub.target>c2cpc62</sub.target>
         <geoserver.war.excludes>WEB-INF/lib/*gwc*.jar</geoserver.war.excludes>
       </properties>
     </profile>
@@ -154,7 +154,15 @@
         <geoserver.war.excludes>WEB-INF/lib/*gwc*.jar</geoserver.war.excludes>
       </properties>
     </profile>
-    
+    <profile>
+      <id>pigma_c2cpc61</id>
+      <properties>
+        <server>pigma</server>
+        <sub.target>c2cpc61</sub.target>
+        <geoserver.war.excludes>WEB-INF/lib/*gwc*.jar</geoserver.war.excludes>
+      </properties>
+    </profile>
+
     <!-- template profile -->
     <profile>
       <id>template</id>

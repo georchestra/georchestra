@@ -380,7 +380,7 @@ GEOR.config = (function() {
              * referencing the wmsc_url here allows the user
              * to be warned that this layer will not be printed:
              *
-             * "wmsc_url": undefined,
+             * "wmsc_url": undefined
              */
         }),
 
