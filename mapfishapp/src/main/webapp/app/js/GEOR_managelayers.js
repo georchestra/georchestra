@@ -495,10 +495,18 @@ GEOR.managelayers = (function() {
         menuItems.push("-");
 
         // metadata action
-        if (layerRecord.get("metadataURLs") &&
-            layerRecord.get("metadataURLs")[0]) {
-            url = layerRecord.get("metadataURLs")[0];
-            url = (url.href) ? url.href : url;
+        if (layerRecord.get("metadataURLs")) {
+            var murls = layerRecord.get("metadataURLs");
+            var murl = murls[0];
+            // default to first entry
+            url = (murl.href) ? murl.href : murl;
+            for (var i=1 ; i < murls.length ; i++) {
+               murl = murls[i];
+               // prefer text/html format if found
+               if (murl.format && murl.format == 'text/html') {
+                   url = (murl.href) ? murl.href : murl;
+               }
+            }
             menuItems.push({
                 iconCls: 'geor-btn-metadata',
                 text: tr("Show metadata"),
