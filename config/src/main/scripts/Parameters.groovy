@@ -47,16 +47,23 @@ class Parameters {
 	/**
 	 * Do not call.  This is called by framework
 	 */
-	def init() {
+	def init(def delete) {
 	  get = this
-	  
-    log.info("cleaning target directory: ${targetDir}")
+	  targetDir = new File(project.build.directory)
+	  outputDir = new File(project.build.directory, "generated")
+	  basedirFile = project.basedir
+	  projectDir = new File(project.basedir, "configurations/${target}")
+	  buildSupportDir = new File(project.basedir, "configurations/${target}/build_support")
+	
+	  if(delete) {
+		log.info("cleaning target directory: ${targetDir}")
 		targetDir.deleteDir()
 		targetDir.mkdirs()
-    log.info("cleaning output directory: ${outputDir}")
-	  outputDir.deleteDir()
+		log.info("cleaning output directory: ${outputDir}")
+		outputDir.deleteDir()
 		outputDir.mkdirs()
 		new File(outputDir, "shared.maven.filters").write("#place holder")
+	  }
 	}
 	
 	String toString() {

@@ -153,6 +153,16 @@
 				</configuration>
 			</plugin>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<failOnError>false</failOnError>
+					<excludes>
+						<exclude>**/*</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
 				<groupId>org.codehaus.groovy.maven</groupId>
 				<artifactId>gmaven-plugin</artifactId>
 				<executions>
@@ -182,13 +192,14 @@
 						</goals>
 						<configuration>
 							<source><![CDATA[
-                def generateConfigFile = new File("${build.support.dir}", "GenerateConfig.groovy")
-                if(generateConfigFile.exists()) {
-                  log.info(generateConfigFile.path+" exists so it will be used in build")
-                } else {
-                  log.info(generateConfigFile.path+" does NOT exist so a default will be created")
-                  generateConfigFile.parentFile.mkdirs()
-                  generateConfigFile << """
+def supportdir = new File(project.basedir, "configurations/${server}/build_support")
+def generateConfigFile = new File(supportdir, "GenerateConfig.groovy")
+if(generateConfigFile.exists()) {
+  log.info(generateConfigFile.path+" exists so it will be used in build")
+} else {
+  log.info(generateConfigFile.path+" does NOT exist so a default will be created")
+  generateConfigFile.parentFile.mkdirs()
+  generateConfigFile << """
 // Generated empty build file
 class GenerateConfig {
   def generate(def project, def log, def ant, def basedirFile, 
@@ -198,7 +209,7 @@ class GenerateConfig {
 	}
 }
 """
-            } 
+            }
 ]]>
 							</source>
 						</configuration>
@@ -214,31 +225,27 @@ class GenerateConfig {
 								<element>${build.support.dir}</element>
 								<element>${basedir}/src/main/scripts</element>
 							</scriptpath>
-							<source>
-							  // note: the params have to be initialized for the required files to be created
-							  // doesn't matter if GenerateConfig is ran or not
-								def params = new Parameters(
-								  project: project,
-									targetDir: new File("${project.build.directory}"),
-									outputDir: new File("${generated.output}"),
-									basedirFile: new File("${basedir}"),
-									target: "${server}",
-									subTarget: "${sub.target}",
-									projectDir: new File("${conf.base}"),
-									log: log,
-									ant: ant,
-									buildSupportDir: new File("${build.support.dir}"))
-									
-								params.init()
+							<source><![CDATA[
+// note: the params have to be initialized for the required files to be created
+// doesn't matter if GenerateConfig is ran or not
+def params = new Parameters(
+    project: project,
+	target: "${server}",
+	subTarget: "${sub.target}",
+	log: log,
+	ant: ant
+)
+params.init()
 
-								log.info("Running groovy configuration generation scripts with parameters: "+params)
-                log.info("")
+log.info("Running groovy configuration generation scripts with parameters: "+params)
+log.info("")
 
-							  new GenerateConfig().generate(
-									this, log, ant, params.basedirFile, 
-									params.target, params.subTarget, params.projectDir, 
-									params.buildSupportDir, params.outputDir)
-								log.info("Finished running groovy configuration generation scripts")
+new GenerateConfig().generate(
+	this, log, ant, params.basedirFile, 
+	params.target, params.subTarget, params.projectDir, 
+	params.buildSupportDir, params.outputDir)
+log.info("Finished running groovy configuration generation scripts")
+]]>
 							</source>
 						</configuration>
 					</execution>
@@ -251,21 +258,22 @@ class GenerateConfig {
 						<configuration>
 							<scriptpath>
 								<element>${basedir}/src/test/groovy</element>
+								<element>${basedir}/src/main/scripts</element>
 							</scriptpath>
-							<source>
-								log.info("Running variable Substitution test")
-								def targetDir = new File("${project.build.directory}")
-								def basedirFile = new File("${basedir}")
-								def project = "${server}"
-								def subTarget = "${sub.target}"
-								def projectDir = new File("${conf.base}")
-								def buildSupportDir = new File("${build.support.dir}")
-								def outputDir = new File("${project.build.outputDirectory}")
-								new VariableSubstitutionTest().execute(
-									project, log, ant, basedirFile, 
-									project, subTarget, projectDir, 
-									buildSupportDir, outputDir)
-								log.info("Finished running variable substitution test")
+							<source><![CDATA[
+log.info("Running variable Substitution test")
+def params = new Parameters(
+    project: project,
+	target: "${server}",
+	subTarget: "${sub.target}",
+	log: log,
+	ant: ant
+)
+params.init()
+
+new VariableSubstitutionTest().execute(params)
+log.info("Finished running variable substitution test")
+]]>
 							</source>
 						</configuration>
 					</execution>
@@ -278,14 +286,23 @@ class GenerateConfig {
 					<classifier>${server}</classifier>
 				</configuration>
 			</plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.9</version>
-        <configuration>
-          <show>private</show>
-        </configuration>
-      </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.9</version>
+				<configuration>
+					<show>private</show>
+					<quiet>true</quiet>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>javadoc</goal>
+						</goals>
+						<phase>compile</phase>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
