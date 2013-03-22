@@ -381,7 +381,6 @@
 				<os>
 					<!-- name>Windows plateforme</name -->
 					<family>Windows</family>
-					<arch>x86</arch>
 				</os>
 			</activation>
 			<properties>

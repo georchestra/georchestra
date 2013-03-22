@@ -311,11 +311,49 @@
           </execution>
         </executions>
         <configuration>
-          <executable>jsbuild/build.sh</executable>
+          <executable>jsbuild/${jsbuild.command}</executable>
           <arguments>
           </arguments>
         </configuration>
       </plugin>
     </plugins>
   </build>
+  <profiles>
+  		<profile>
+			<id>Windows</id>
+			<activation>
+				<os>
+					<!-- name>Windows plateforme</name -->
+					<family>Windows</family>
+				</os>
+			</activation>
+			<properties>
+				<jsbuild.command>build.bat</jsbuild.command>
+			</properties>
+		</profile>
+		<profile>
+			<id>Unix</id>
+			<activation>
+				<os>
+					<!-- name>Unix plateforme</name -->
+					<family>unix</family>
+				</os>
+			</activation>
+			<properties>
+				<jsbuild.command>build.sh</jsbuild.command>
+			</properties>
+		</profile>
+		<profile>
+			<id>Macintosh</id>
+			<activation>
+				<os>
+					<!-- name>Macintosh platform</name -->
+					<family>mac</family>
+				</os>
+			</activation>
+			<properties>
+				<jsbuild.command>build.sh</jsbuild.command>
+			</properties>
+		</profile>
+	</profiles>
 </project>
