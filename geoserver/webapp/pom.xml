@@ -8,7 +8,7 @@
 	</parent>
 	<artifactId>geoserver-webapp</artifactId>
 	<packaging>war</packaging>
-	<name>Georchesrta GeoServer Web Application</name>
+	<name>geOrchestra GeoServer Web Application</name>
 	<properties>
 		<gs.unpack.dir>${project.build.directory}/geoserver-unpacked-webapp</gs.unpack.dir>
 	</properties>
