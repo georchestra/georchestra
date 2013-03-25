@@ -245,6 +245,11 @@ new GenerateConfig().generate(
 	params.target, params.subTarget, params.projectDir, 
 	params.buildSupportDir, params.outputDir)
 log.info("Finished running groovy configuration generation scripts")
+
+def mavenFilters = new File(params.outputDir, "shared.maven.filters")
+if (!mavenFilters.exists()) {
+	mavenFilters << ""
+}
 ]]>
 							</source>
 						</configuration>
