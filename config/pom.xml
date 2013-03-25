@@ -235,7 +235,7 @@ def params = new Parameters(
 	log: log,
 	ant: ant
 )
-params.init()
+params.init(true)
 
 log.info("Running groovy configuration generation scripts with parameters: "+params)
 log.info("")
