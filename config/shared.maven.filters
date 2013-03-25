@@ -1,9 +1,7 @@
 # shared values like public url can be put here
-
-
 shared.server.port=80
 
-shared.language=fr
+shared.language=fre
 
 shared.ldap.host=localhost
 shared.ldap.port=636
@@ -29,10 +27,10 @@ shared.psql.url=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.
 shared.default.log.level=INFO
 other.framework.log.level=WARN
 
-shared.smtpHost=mail.camptocamp.com
+shared.smtpHost=localhost
 shared.smtpPort=25
-shared.email.replyTo=arnaud.deshogues\@camptocamp.com
-shared.email.from=noreply\@camptocamp.com
+shared.email.replyTo=psc\@georchestra.org
+shared.email.from=psc\@georchestra.org
 
 shared.geonetwork.dir=@shared.tomcat.dir@/work/gn_data
 

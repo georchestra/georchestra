@@ -4,11 +4,11 @@
   <groupId>org.georchestra</groupId>
   <artifactId>root</artifactId>
   <packaging>pom</packaging>
-  <version>1.0</version>
-  <name>Root project of the georchestra project</name>
+  <version>13.02</version>
+  <name>Root project of the geOrchestra project</name>
   <url>http://maven.apache.org</url>
   <organization>
-    <name>Georchestra</name>
+    <name>geOrchestra</name>
   </organization>
   <properties>
     <gt.version>8.6</gt.version>
@@ -20,7 +20,7 @@
     <!-- default when building without a profile specified -->
     <confdir>${project.build.directory}/conf</confdir>
     <encoding>UTF-8</encoding>
-    <georchestra.version>1.0</georchestra.version>
+    <georchestra.version>${project.version}</georchestra.version>
     <!--<gmaven.runtime>1.8</gmaven.runtime>-->
   </properties>
   <modules>
@@ -33,6 +33,27 @@
     <module>server-deploy-support</module>
   </modules>
   <build>
+    <plugins>
+       <!-- initialize git revision info -->
+       <plugin>
+         <groupId>pl.project13.maven</groupId>
+         <artifactId>git-commit-id-plugin</artifactId>
+         <version>2.1.4</version>
+         <executions>
+           <execution>
+             <goals>
+               <goal>revision</goal>
+             </goals>
+           </execution>
+         </executions>
+         <configuration>
+           <prefix>build</prefix>
+           <failOnNoGitDirectory>false</failOnNoGitDirectory>
+           <skipPoms>false</skipPoms>
+           <verbose>false</verbose>
+         </configuration>
+       </plugin>
+    </plugins>
     <pluginManagement>
       <plugins>
         <plugin>
@@ -122,23 +143,14 @@
   <profiles>
 
     <profile>
-      <id>pigma</id>
+      <id>localhost</id>
       <properties>
-        <server>pigma</server>
+        <server>localhost</server>
       </properties>
     </profile>
 
     <profile>
       <id>pigma_int</id>
-      <properties>
-        <server>pigma</server>
-        <sub.target>int</sub.target>
-        <geoserver.war.excludes>WEB-INF/lib/*gwc*.jar</geoserver.war.excludes>
-      </properties>
-    </profile>
-
-    <profile>
-      <id>pigma_c2cpc62</id>
       <properties>
         <server>pigma</server>
         <sub.target>int</sub.target>
@@ -154,7 +166,15 @@
         <geoserver.war.excludes>WEB-INF/lib/*gwc*.jar</geoserver.war.excludes>
       </properties>
     </profile>
-    
+    <profile>
+      <id>pigma_c2cpc61</id>
+      <properties>
+        <server>pigma</server>
+        <sub.target>c2cpc61</sub.target>
+        <geoserver.war.excludes>WEB-INF/lib/*gwc*.jar</geoserver.war.excludes>
+      </properties>
+    </profile>
+
     <!-- template profile -->
     <profile>
       <id>template</id>

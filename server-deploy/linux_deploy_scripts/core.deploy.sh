@@ -20,7 +20,7 @@ isOk () {
       exit $2;
  fi
 }
-function USAGE {
+USAGE () {
     echo "deploy.to.*.sh [-P <project_to_deploy>] [-m <deploy_mode>] [-D <property=value>] [-X] target"
     echo "  -P <project_to_deploy> "
     echo "      the modules (like mapfishapp) to deploy. There can be multiple -p parameters"

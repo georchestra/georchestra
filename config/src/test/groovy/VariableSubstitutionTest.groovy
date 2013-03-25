@@ -4,6 +4,7 @@
  */
 public class VariableSubstitutionTest {
 	def ignorables = [".png", ".gif", ".ico", ".bmp", ".jpg", ".odg", ".pdf", ".swf", ".doc", ".jar", ".class"]
+  def illegalVariableChars = """!@#{}\$%^&*()+=/|\\"';:,"""
 	/**
 	 * @param project The maven project.  you can get all information about the project from this object
 	 * @param log a logger for logging info
@@ -28,9 +29,14 @@ public class VariableSubstitutionTest {
 			}
 
 			if(file.isFile() && !ignorable) {
+			  log.debug("Testing "+file+" for unsubstituted substitutions")
 				def m = file.getText("UTF-8") =~ /@\S*@/
 				if(m.find()) {
-					failures << "${m[0]} was found as an unmatched variable in ${file.path.substring(outputDir.path.length())}.  Define the variable in a shared.maven.filters"
+				  m.each { failure ->
+				    if(!failure.endsWith('\\@') && !failure.findAll{!illegalVariableChars.contains(it)}) {
+					    failures << "${m[0]} was found as an unmatched variable in ${file.path.substring(outputDir.path.length())}.  Define the variable in a shared.maven.filters"
+				    }
+				  }
 				}
 			}
 		}

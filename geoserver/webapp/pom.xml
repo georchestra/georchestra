@@ -4,11 +4,11 @@
 	<parent>
 		<groupId>org.georchestra</groupId>
 		<artifactId>geoserver-root</artifactId>
-		<version>1.0</version>
+		<version>13.02</version>
 	</parent>
 	<artifactId>geoserver-webapp</artifactId>
 	<packaging>war</packaging>
-	<name>Georchesrta GeoServer Web Application</name>
+	<name>geOrchestra GeoServer Web Application</name>
 	<properties>
 		<gs.unpack.dir>${project.build.directory}/geoserver-unpacked-webapp</gs.unpack.dir>
 	</properties>

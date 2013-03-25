@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.georchestra</groupId>
 		<artifactId>root</artifactId>
-		<version>1.0</version>
+		<version>13.02</version>
 	</parent>
 	<artifactId>config</artifactId>
 	<packaging>jar</packaging>
@@ -157,6 +157,24 @@
 				<artifactId>gmaven-plugin</artifactId>
 				<executions>
 					<execution>
+						<id>generateJavaStubsForDocs</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generateStubs</goal>
+						</goals>
+						<configuration>
+						  <sources>
+						    <source>
+						      <directory>${basedir}/src/main/scripts</directory>
+						      <includes>
+						        <include>*.groovy</include>
+						        <include>**/*.groovy</include>
+					        </includes>
+						    </source>
+					    </sources>
+					  </configuration>
+				  </execution>
+					<execution>
 						<id>create-default-gen-config-file</id>
 						<phase>generate-resources</phase>
 						<goals>
@@ -169,6 +187,7 @@
                   log.info(generateConfigFile.path+" exists so it will be used in build")
                 } else {
                   log.info(generateConfigFile.path+" does NOT exist so a default will be created")
+                  generateConfigFile.parentFile.mkdirs()
                   generateConfigFile << """
 // Generated empty build file
 class GenerateConfig {
@@ -199,6 +218,7 @@ class GenerateConfig {
 							  // note: the params have to be initialized for the required files to be created
 							  // doesn't matter if GenerateConfig is ran or not
 								def params = new Parameters(
+								  project: project,
 									targetDir: new File("${project.build.directory}"),
 									outputDir: new File("${generated.output}"),
 									basedirFile: new File("${basedir}"),
@@ -211,7 +231,8 @@ class GenerateConfig {
 									
 								params.init()
 
-								log.info("Running groovy configuration generation scripts")
+								log.info("Running groovy configuration generation scripts with parameters: "+params)
+                log.info("")
 
 							  new GenerateConfig().generate(
 									this, log, ant, params.basedirFile, 
@@ -257,6 +278,14 @@ class GenerateConfig {
 					<classifier>${server}</classifier>
 				</configuration>
 			</plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.9</version>
+        <configuration>
+          <show>private</show>
+        </configuration>
+      </plugin>
 		</plugins>
 	</build>
 	<dependencies>
