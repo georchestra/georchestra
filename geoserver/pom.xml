@@ -12,7 +12,7 @@
 	
 	<properties>
     <maven.test.skip>true</maven.test.skip>
-	  <gs.version>2.2.4</gs.version>
+	  <gs.version>2.3.0</gs.version>
   </properties>
   
 	
