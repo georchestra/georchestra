@@ -14,6 +14,7 @@
     <properties>
         <groovy-version>1.8.0</groovy-version>
         <gmaven-version>1.3</gmaven-version>
+		<postTreatmentScript>println("No post treament script")</postTreatmentScript>
     </properties>
     <dependencies>
         <dependency>
