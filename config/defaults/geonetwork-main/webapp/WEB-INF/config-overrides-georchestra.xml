@@ -53,13 +53,6 @@
         <addXml xpath="">
             <geoserver.url>http://${wfs.host}:${wfs.port}/geoserver/</geoserver.url>
         </addXml>
-        <replaceAtt xpath="mapViewer" attName="options" value="{projection: 'EPSG:4326', maxExtent: new OpenLayers.Bounds(5,45,10,55), units: 'degrees', restrictedExtent: new OpenLayers.Bounds(-2.2, 42.6, 1.9, 46)}"/>
-        <replaceXML xpath="mapSearch/layers">
-            <layer server="http://${wfs.host}:${wfs.port}/geoserver/wms" tocName="Fond GIP"  params="{layers: 'Fond_GIP', transparent: 'true', format: 'image/png'}"  options="{isBaseLayer: true}" />
-        </replaceXML>
-        <replaceXML xpath="mapViewer/layers">
-           <layer server="http://${wfs.host}:${wfs.port}/geoserver/wms" tocName="Fond GIP"  params="{layers: 'Fond_GIP', transparent: 'true', format: 'image/png'}"  options="{isBaseLayer: true}" />
-        </replaceXML>
         <replaceAtt xpath="client" attName="widget" value="true"/>
         <replaceAtt xpath="client" attName="url" value="../../apps/georchestra/"/>
         <replaceAtt xpath="client" attName="createParameter" value="#create"/>
