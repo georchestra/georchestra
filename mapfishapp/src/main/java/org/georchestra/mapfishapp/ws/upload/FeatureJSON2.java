@@ -314,7 +314,8 @@ final class FeatureJSON2 extends FeatureJSON {
 //          }
 			if (encodeFeatureCollectionCRS) {
 				CoordinateReferenceSystem coordinateReferenceSystem = features.getSchema().getCoordinateReferenceSystem();
-				obj.put("crs", createCRS(coordinateReferenceSystem));
+				if(coordinateReferenceSystem != null) // FIXME have a look at this 
+					obj.put("crs", createCRS(coordinateReferenceSystem));
 			}
           
       }

@@ -95,7 +95,7 @@ class FeatureFileReader {
 	 */
 	private boolean isOgrAvailable() {
 
-		return true; // TODO ask for ogr ??
+		return false; // TODO ask for ogr ??
 	}
 
 }

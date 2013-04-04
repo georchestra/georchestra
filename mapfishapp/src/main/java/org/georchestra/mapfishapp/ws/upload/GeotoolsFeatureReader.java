@@ -8,6 +8,10 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.geotools.data.DataStore;
 import org.geotools.data.FileDataStore;
 import org.geotools.data.ServiceInfo;
@@ -15,8 +19,10 @@ import org.geotools.data.mif.MIFDataStoreFactory;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureSource;
+import org.geotools.referencing.CRS;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.pvalsecc.misc.FileUtilities;
 
 /**
  * This implementation is a façade to the Geotools store implementations.
@@ -27,14 +33,14 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 class GeotoolsFeatureReader implements FeatureFileReaderImplementor {
 
+	private static final Log LOG = LogFactory.getLog(GeotoolsFeatureReader.class.getPackage().getName());
+	
 	private static final FileFormat[] formats = new FileFormat[] {
 			FileFormat.shp, 
 			FileFormat.mif, 
 			FileFormat.gpx, 
 			FileFormat.gml,
 			FileFormat.kml };
-
-	
 
 	public GeotoolsFeatureReader() {
 	}
@@ -78,30 +84,28 @@ class GeotoolsFeatureReader implements FeatureFileReaderImplementor {
 	/**
 	 * Reads the features from MIF file.
 	 * 
-	 * @param basedir
+	 * @param file
 	 * @return {@link SimpleFeatureCollection}
 	 * 
 	 * @throws IOException
 	 */
-	private SimpleFeatureCollection readMifFile(File basedir, CoordinateReferenceSystem crs) throws IOException{
+	private SimpleFeatureCollection readMifFile(final File file, final CoordinateReferenceSystem crs) throws IOException{
 
 		HashMap params = new HashMap();
-//        try {
-//            Integer crs = CRS.lookupEpsgCode(schema.getCoordinateReferenceSystem(), true);
-//            params.put(MIFDataStore.PARAM_SRID, crs );
-//        } catch (FactoryException e) {
-//            LOG.warn("unable to convert "+schema.getCoordinateReferenceSystem()+" to a EPSG code", e);
-//        }
+        try {
+        	Integer code = CRS.lookupEpsgCode(crs, true);
+        	params.put(MIFDataStoreFactory.PARAM_COORDSYS.key, code );
+        } catch (Exception e) {
+            LOG.warn("unable to convert "+ crs  + " to a EPSG code", e);
+        }
 		
-        params.put(MIFDataStoreFactory.PARAM_PATH, basedir.getAbsolutePath());
+        params.put(MIFDataStoreFactory.PARAM_PATH.key, file.getAbsolutePath());
         
 		MIFDataStoreFactory storeFactory = new MIFDataStoreFactory();
 		DataStore store = storeFactory.createDataStore(params);
 
-		ServiceInfo info = store.getInfo();
-		URI uriSchema  = info.getSchema();
-		
-		SimpleFeatureType schema = store.getSchema(uriSchema.toString());
+		String typeName = FilenameUtils.getBaseName(file.getAbsolutePath());
+		SimpleFeatureType schema = store.getSchema(typeName);
 
 		SimpleFeatureSource featureSource = store.getFeatureSource(schema.getTypeName());
 

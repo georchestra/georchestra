@@ -682,7 +682,7 @@ public class MIFFile {
 
         mifFile = getFileHandler(file, fName, ".mif", mustExist);
         midFile = getFileHandler(file, fName, ".mid", mustExist);
-        prjFile = getFileHandler(file, fName, ".prj", false);
+//FIXME MAURO HACK        prjFile = getFileHandler(file, fName, ".prj", false);
 
         mifFileOut = getFileHandler(file, fName, ".mif.out", false);
         midFileOut = getFileHandler(file, fName, ".mid.out", false);
