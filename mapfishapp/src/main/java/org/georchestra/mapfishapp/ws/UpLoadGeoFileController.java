@@ -16,6 +16,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.mapfishapp.ws.upload.FileDescriptor;
+import org.georchestra.mapfishapp.ws.upload.FileFormat;
 import org.georchestra.mapfishapp.ws.upload.UpLoadFileManagement;
 import org.geotools.referencing.CRS;
 import org.opengis.referencing.FactoryException;
@@ -43,7 +44,6 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
  *
  */
 @Controller
-@RequestMapping("/togeojson/*")
 public final class UpLoadGeoFileController {
 	
 	private static final Log LOG = LogFactory.getLog(UpLoadGeoFileController.class.getPackage().getName());
@@ -113,6 +113,8 @@ public final class UpLoadGeoFileController {
 	private long kmlSizeLimit;
 	private long gpxSizeLimit;
 	private long gmlSizeLimit;
+	
+	private UpLoadFileManagement fileManagement = new UpLoadFileManagement();
 
 	
 	/**
@@ -150,6 +152,16 @@ public final class UpLoadGeoFileController {
 		this.gmlSizeLimit = gmlSizeLimit;
 	}
 
+	@RequestMapping(value="/formats/*", method = RequestMethod.GET)
+	public void formats(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		
+		// TODO transform the format list to json list and response 
+		FileFormat[] formatList = this.fileManagement.getFormatList();
+		
+		
+		throw new UnsupportedOperationException("impplement me");
+	}
+
 	/**
 	 * Load the file provide in the request. The content of this file is returned as a json object. 
 	 * If an CRS is provided the resultant features will be transformed to that CRS before.
@@ -161,7 +173,7 @@ public final class UpLoadGeoFileController {
 	 * @param response
 	 * @throws IOException
 	 */
-	@RequestMapping(method = RequestMethod.POST)
+	@RequestMapping(value="/togeojson/*", method = RequestMethod.POST)
 	public void toGeoJson(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
 		if( !(request instanceof MultipartHttpServletRequest) ){
@@ -205,9 +217,12 @@ public final class UpLoadGeoFileController {
 				return;
 			}
 			// save the file in the temporal directory
-			UpLoadFileManagement fileManagement = new UpLoadFileManagement(currentFile, workDirectory);
+			
+			this.fileManagement = new UpLoadFileManagement();
+			this.fileManagement.setWorkDirectory(workDirectory); 
+			this.fileManagement.setFileDescriptor(currentFile);
 
-			fileManagement.save(upLoadFile);
+			this.fileManagement.save(upLoadFile);
 				
 			// if the uploaded file is a zip file then checks its content
 			if(fileManagement.containsZipFile()){

@@ -41,7 +41,7 @@ class GeotoolsFeatureReader implements FeatureFileReaderImplementor {
 
 
 	@Override
-	public FileFormat[] getFormats() {
+	public FileFormat[] getFormatList() {
 		// TODO Auto-generated method stub
 		return formats;
 	}

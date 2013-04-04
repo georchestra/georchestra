@@ -45,6 +45,6 @@ interface FeatureFileReaderImplementor {
 	/**
 	 * @return List of available format
 	 */
-	public FileFormat[] getFormats();
+	public FileFormat[] getFormatList();
 
 }

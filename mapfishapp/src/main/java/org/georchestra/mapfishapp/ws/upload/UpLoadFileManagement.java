@@ -67,13 +67,10 @@ public class UpLoadFileManagement {
 	private FileDescriptor fileDescriptor;
 	
 	private String workDirectory;
-	
-	
 
-	public UpLoadFileManagement(FileDescriptor currentFile, String workDirectory) {
+    private FeatureFileReader reader  = new FeatureFileReader();
 
-		this.fileDescriptor = currentFile;
-		this.workDirectory = workDirectory;
+	public UpLoadFileManagement() {
 	}
 
 
@@ -268,6 +265,11 @@ public class UpLoadFileManagement {
 				&&	this.fileDescriptor.listOfExtensions.contains("DAT"); 
 	}
 
+	public FileFormat[] getFormatList(){
+
+		return this.reader.getFormatList();
+	}
+	
 
 	/**
 	 * Create a feature collection with based on the json syntax. The features are readed from the work directory. 
@@ -302,11 +304,10 @@ public class UpLoadFileManagement {
 	        String fileName = searchGeoFile();
 	        assert fileName != null; 
 	        
-	        FeatureFileReader reader  = new FeatureFileReader();
 			SimpleFeatureIterator featuresIterator = null;
 	        try {
 	        	
-	        	SimpleFeatureCollection featureCollection = reader.getFeatureCollection(new File(fileName), this.fileDescriptor.geoFileType, crs);
+	        	SimpleFeatureCollection featureCollection = this.reader.getFeatureCollection(new File(fileName), this.fileDescriptor.geoFileType, crs);
 	        	
 	        	FeatureJSON fjson = new FeatureJSON2();// TODO this is a workaround to solve the crs bug
 	        	
@@ -371,6 +372,16 @@ public class UpLoadFileManagement {
         	}
         }
 		return null;
+	}
+
+
+	public void setWorkDirectory(String workDirectory) {
+		this.workDirectory = workDirectory;
+	}
+
+
+	public void setFileDescriptor(FileDescriptor geoFile) {
+		this.fileDescriptor = geoFile;
 	}
 	
 

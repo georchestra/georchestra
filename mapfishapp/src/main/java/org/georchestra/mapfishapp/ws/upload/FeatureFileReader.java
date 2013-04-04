@@ -35,7 +35,7 @@ class FeatureFileReader {
 	 */
 	public FileFormat[] getFormatList(){
 
-		return this.readerImpl.getFormats();
+		return this.readerImpl.getFormatList();
 	}
 
 
@@ -95,7 +95,7 @@ class FeatureFileReader {
 	 */
 	private boolean isOgrAvailable() {
 
-		return false;
+		return true; // TODO ask for ogr ??
 	}
 
 }

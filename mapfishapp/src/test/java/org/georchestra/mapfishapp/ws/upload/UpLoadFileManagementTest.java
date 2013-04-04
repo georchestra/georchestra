@@ -81,7 +81,10 @@ public class UpLoadFileManagementTest {
 		fd.listOfFiles.add(fileName);
 		fd.listOfExtensions.add(FilenameUtils.getExtension(fileName));
 
-		UpLoadFileManagement fm = new UpLoadFileManagement(fd, directory);
+		UpLoadFileManagement fm = new UpLoadFileManagement();
+		fm.setWorkDirectory(directory);
+		fm.setFileDescriptor(fd);
+		
 		
 		String jsonFeatures = fm.getFeatureCollectionAsJSON( );
 		
