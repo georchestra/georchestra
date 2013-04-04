@@ -49,7 +49,7 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
- * This is a workaround to fix the problem found in the crs generation. 
+ * This is a workaround to fix the problem found in the CRS generation. 
  * For more details about this fix see {@link #writeFeatureCollection(FeatureCollection, Object)} 
  * 
  * @author Mauricio Pazos

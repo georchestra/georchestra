@@ -15,8 +15,6 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import org.georchestra.mapfishapp.ws.upload.OGRFeatureReader.FileFormat;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -304,20 +302,14 @@ public class UpLoadFileManagement {
 	        String fileName = searchGeoFile();
 	        assert fileName != null; 
 	        
-	        OGRFeatureReader reader  = (crs != null) 
-						? new OGRFeatureReader(new File(fileName), this.fileDescriptor.geoFileType, crs)
-						: new OGRFeatureReader(new File(fileName), this.fileDescriptor.geoFileType);
-			
+	        FeatureFileReader reader  = new FeatureFileReader();
 			SimpleFeatureIterator featuresIterator = null;
-			
 	        try {
 	        	
-	        	SimpleFeatureCollection featureCollection = reader.getFeatureCollection();
+	        	SimpleFeatureCollection featureCollection = reader.getFeatureCollection(new File(fileName), this.fileDescriptor.geoFileType, crs);
 	        	
 	        	FeatureJSON fjson = new FeatureJSON2();// TODO this is a workaround to solve the crs bug
 	        	
-	        	//fjson.setEncodeFeatureCollectionBounds(true);
-
 	        	SimpleFeatureType schema = featureCollection.getSchema();
 				fjson.setFeatureType(schema);
 	        	fjson.setEncodeFeatureCollectionCRS(true);
@@ -372,7 +364,7 @@ public class UpLoadFileManagement {
         	
         	String ext = FilenameUtils.getExtension(fileName);
         	
-        	FileFormat fileType = OGRFeatureReader.FileFormat.getFileFormat(ext);
+        	FileFormat fileType = FileFormat.getFileFormat(ext);
         	if(fileType != null){
         		this.fileDescriptor.geoFileType = fileType;
         		return fileName;

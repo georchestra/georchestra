@@ -30,147 +30,27 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Mauricio Pazos
  * 
  */
-final class OGRFeatureReader {
-	
+final class OGRFeatureReader implements FeatureFileReaderImplementor {
+
 	private static final Log LOG = LogFactory.getLog(OGRFeatureReader.class.getPackage().getName());
 
-	/**
-	 * 
-	 * File format available.
-	 *
-	 */
-	public enum FileFormat {
-		tab {
-			@Override
-			public String getDriver() {
-				return "MapInfo File";
-			}
 
-			@Override
-			public String[] getFormatOptions() {
-				return new String[] {};
-			}
-		},
-		mif {
-			@Override
-			public String getDriver() {
-				return "MapInfo File";
-			}
+	public OGRFeatureReader() {
 
-			@Override
-			public String[] getFormatOptions() {
-				return new String[] { "FORMAT=MIF" };
-			}
-		},
-		shp {
-			@Override
-			public String getDriver() {
-				return "ESRI shapefile";
-			}
-		},
-		gml {
-			@Override
-			public String getDriver() {
-				return "GML";
-			}
-		},
-		kml {
-			@Override
-			public String getDriver() {
-				return "KML";
-			}
-
-		},
-		gpx {
-			@Override
-			public String getDriver() {
-				return "GPX";
-			}
-
-		};
-		
-
-		/**
-		 * Returns the OGR driver for this format.
-		 * 
-		 * @return the driver
-		 */
-		public abstract String getDriver();
-
-		/**
-		 * @return Options for this format
-		 */
-		public String[] getFormatOptions() {
-			return null; //default implementation
-		}
-
-		/**
-		 * Returns the enumerated value associated to the extension file name
-		 *  
-		 * @param fileExtension file extension
-		 * @return FileFormat enumerated value or null if it doesn't exist.
-		 */
-		public static FileFormat getFileFormat(String fileExtension) {
-			
-			if("tab".equalsIgnoreCase(fileExtension))	return tab;
-			if("mif".equalsIgnoreCase(fileExtension))	return mif;
-			if("shp".equalsIgnoreCase(fileExtension))	return shp;
-			if("gml".equalsIgnoreCase(fileExtension))	return gml;
-			if("gpx".equalsIgnoreCase(fileExtension))	return gpx;
-			if("kml".equalsIgnoreCase(fileExtension))	return kml;
-			
-			return null;
-		}
 	}
-	
-	private File basedir;
-	private FileFormat fileFormat;
-	private CoordinateReferenceSystem targetCRS;
+
 
 	/**
-	 * New instance of OGRFeatureReader.
-	 * 
-	 * @param file the file that contains the features to read
-	 * @param fileFormat the file format
-	 * @param targetCRS the coordinate reference that will be used to transform the feature collection 
+	 * Returns the set of features maintained in the geofile, reprojected in the target CRS
 	 */
-	public OGRFeatureReader(File file, FileFormat fileFormat, CoordinateReferenceSystem crs) {
-
-		assert  file != null && fileFormat != null && crs != null;
-
-		this.basedir = file;
-		this.fileFormat = fileFormat;
-		this.targetCRS = crs;
-	}
-	
-	/**
-	 * New instance of OGRFeatureReader.
-	 * 
-	 * @param file the file that contains the features to read
-	 * @param fileFormat the file format
-	 */
-	public OGRFeatureReader(File basedir, FileFormat fileFormat) {
-
+	@Override
+	public SimpleFeatureCollection getFeatureCollection(final File basedir, final FileFormat fileFormat, final CoordinateReferenceSystem targetCRS) throws IOException {
 		assert  basedir != null && fileFormat != null;
 
-		this.basedir = basedir;
-		this.fileFormat = fileFormat;
-		this.targetCRS = null;
-
-	}
-
-	/**
-	 * Returns the set of features maintained in the geofile.
-	 * 
-	 * @return {@link SimpleFeatureCollection}
-	 * @throws IOException
-	 */
-	public SimpleFeatureCollection getFeatureCollection() throws IOException {
-
 		try{
-			String ogrName = this.basedir.getAbsolutePath();
-			String ogrDriver = this.fileFormat.getDriver();
-			
+			String ogrName = basedir.getAbsolutePath();
+			String ogrDriver = fileFormat.getDriver();
+
 			OGRDataStore store = new OGRDataStore(ogrName, ogrDriver, null,  new JniOGR() );
 			String[] typeNames = store.getTypeNames();
 			if(typeNames.length ==  0 ){
@@ -183,18 +63,35 @@ final class OGRFeatureReader {
 
 			Query query = new Query(typeName, Filter.INCLUDE);
 			// if the CRS was set the features must be transformed when the query is executed.
-			if(this.targetCRS != null){
-				query.setCoordinateSystemReproject(this.targetCRS);
+			if(targetCRS != null){
+				query.setCoordinateSystemReproject(targetCRS);
 			}
-			
-			SimpleFeatureCollection features = source.getFeatures(query);
-			
-			return features;
 
-		} catch(Exception e ){
+			SimpleFeatureCollection features = source.getFeatures(query);
+
+			return features;
+		} catch(IOException e ){
 			LOG.error(e.getMessage());
 			throw new IOException(e);
 		}
+	}
+
+
+	@Override
+	public SimpleFeatureCollection getFeatureCollection(File basedir, FileFormat fileFormat)
+			throws IOException {
+			
+		return getFeatureCollection(basedir, fileFormat, null);
+	}
+	
+	
+	@Override
+	public FileFormat[] getFormats() {
+
+
+		// TODO Auto-generated method stub
+
+		return null;
 	}
 
 }

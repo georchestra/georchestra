@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.georchestra.mapfishapp.ws.upload.OGRFeatureReader.FileFormat;
-
 import org.apache.commons.io.FilenameUtils;
 
 /**

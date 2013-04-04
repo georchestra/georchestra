@@ -12,12 +12,11 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.georchestra.mapfishapp.ws.upload.FileDescriptor;
-import org.georchestra.mapfishapp.ws.upload.UpLoadFileManagement;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.georchestra.mapfishapp.ws.upload.FileDescriptor;
+import org.georchestra.mapfishapp.ws.upload.UpLoadFileManagement;
 import org.geotools.referencing.CRS;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
