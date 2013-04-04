@@ -137,6 +137,7 @@ Script Writing Resources
 
 > The scripting language used for in the GenerateConfig.groovy is the [Groovy](http://groovy.codehaus.org/) programming language.  It is based on the Java language and most java syntax will work in Groovy as well.  But Groovy is dynamic and has several conveniences that make it better for scripting than java.  It is pretty easy to use Google to find information about Groovy but hopefully the examples provided in this document and the Javadocs will provide a good introduction to the most common tasks needed.
 
+'''Note:''' Javadocs are generated when the config module is built and can be viewed in config\target\site\apidocs\index.html
 
 ### Create new file
 This example shows one way of creating file objects and writing to the file
@@ -326,6 +327,64 @@ One can also download several jars with one declaration by using the 'artifacts'
       ],
       to: 'geoserver-webapp/WEB-INF/lib').download()
 
+### FileSet
+
+A FileSet represents a set of files.  It can be the files in a directory, a single file or all descendants of a directory.
+If the file set contains several files a sort and a filter can be applied to the files
+
+<b>Note:</b> sorting the files requires loading all the files into memory and sorting.  This is both slower and 
+requires more memory.
+
+<b>Note:</b> Sorting only applies to a single source.  Not to all files in the file set.
+ 
+Examples:
+ 
+    // Represents all js files that are descendants of
+    // $basedirFile/src/main/resources/georchestra/js
+    // all directories are recursively visited
+    new FileSet().descendants(
+      source:"$basedirFile/src/main/resources/georchestra/js", 
+      filter:{ it.name.endsWith("*.js") }
+ 	)
+ 
+    // Represents a single file
+    new FileSet().file("App.js")
+
+    // Represents the js files directly (not recursively) in the 
+    // "web-client/src/main/resources/app/search/js" of the geonetwork project
+    // files are sorted by lastmodified date
+    new FileSet(project: "geonetwork").children(
+      source: "web-client/src/main/resources/app/search/js",
+      filter: {it.name.endsWith("*js")},
+      sort: {o1, o2 -> o1.lastModified() - o2.lastModified}
+    )
+
+    // A fileset with first App.js then all js files in geonetwork directory
+    new FileSet().
+      file("App.js").
+      children(
+        source:"geonetwork", 
+        filter: {it.name.endsWith(".js)}
+      )
+
+The each method can be used to iterate through all the files and perform an action on each file in the FileSet
+
+### Minify
+
+The Minify class is a useful class for minifying either Javascript or CSS files into a single file.
+
+Example:
+
+	new Minify(
+			sources: [
+				new FileSet().descendants(
+					source:"$basedirFile/src/main/resources/georchestra/js", 
+					filter:{ it.name.endsWith("*.js") }
+				)
+			],
+			output: "$targetDir/classes/apps/georchestra/js/Minified.js")
+	}
+	  
 ### Execute an ant task
 
 Groovy provides a class called the [AntBuilder](http://groovy.codehaus.org/Using+Ant+from+Groovy).  An instance is passed to the GenerateConfig class.  The following example copies the config/configurations/<target>/build_support/geonetwork-main directory to /target/generated
@@ -391,3 +450,58 @@ Or one can add a profile to <root>/pom.xml that declares the properties when the
     mvn install -Ptemplate
     
 See (http://maven.apache.org/guides/introduction/introduction-to-profiles.html) for more on maven profiles.
+
+Post Treatment Script
+=====================
+
+Consider minification of javascript files in Geonetwork.  In geonetwork minification is done by Yui and the definitions are in the 
+in the pom.xml.  As a result a configuration cannot add files to be minified because maven will not recognize the changes.  To overcome this limitation
+the Georchestra build system has will run a PostTreatment script if it is defined for that project.
+
+To declare a Post Treatment script, create a PostTreatment.groovy file in the project's configuration directory.  
+
+For example, to define a Post Treatment script for geonetwork-client in a project "template". 
+Create the file: config/configurations/template/geonetwork-client/PostTreatment.groovy.  This file should have the class:
+
+    class PostTreatment {
+	    def run(def project, def log, def ant, def basedirFile, def configDir,
+						def target, def subTarget, def targetDir) {
+				...
+			}
+	}
+
+The file can also be generated and written to: conf/target/generated/geonetwork-client.
+
+These scripts will have access to the same classes the GenerateConfig scripts do.  
+
+*Note*: Not all projects support post treatment scripts.  Check the pom.xml for the project and check:
+
+ * The gmaven plugin has been added to the project as follows:
+	<plugin>
+		<groupId>org.codehaus.groovy.maven</groupId>
+		<artifactId>gmaven-plugin</artifactId>
+		<dependencies>
+			<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>config</artifactId>
+					<version>${project.version}</version>
+			</dependency>
+		</dependencies>
+	</plugin>
+ * The property _postTreatmentScript_ does not override the property defined in the root pom.xml.  (Defining this property is a way to disable the post treatment script for projects that need the gmaven plugin but don't need the post treatment script execution)
+ 
+Since one of the more common tasks will be to add a minification step the following example illustrates how to do this.
+
+	class PostTreatment {
+		def run(def project, def log, def ant, def basedirFile, def configDir,
+					def target, def subTarget, def targetDir) {
+			new Minify(
+				sources: [
+					new FileSet().descendants(
+						source:"$basedirFile/src/main/resources/georchestra/js", 
+						filter:{ it.name.endsWith("*.js") }
+					)
+				],
+				output: "$targetDir/classes/apps/georchestra/js/Minified.js")
+		}
+	}

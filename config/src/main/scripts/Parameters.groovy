@@ -12,7 +12,9 @@ class Parameters {
   static Parameters get
   /** The config/target directory */
   File targetDir
-  /** The 'generated' directory.  This is where generated files should go */
+  /** If the script is a GenerateConfig script then outputDir is the the 'generated' directory.  This is where generated files should go.
+	  Otherwise it is project.build.directory/target
+   */
 	File outputDir
 	/** The maven base directory of the config module */
 	File basedirFile
@@ -23,11 +25,14 @@ class Parameters {
 	/** Optional subtarget normally indicating the server that is being built for.  For example 
 	    integration, test, prod, int, etc... */
 	String subTarget
-	/** The directory containing the configuration files.  For example:
+	/** If the script is a GenerateConfig script the directory containing the configuration files.  For example:
 	    config/configuration/<target>
+		
+		Otherwise this will be project.build.directory/conf/project.artifactId
 	*/
 	File projectDir
-	/** The directory: config/configuration/<target>/build_support */
+	/** The directory: config/configuration/<target>/build_support if the script is a GenerateConfig script.  
+		Otherwise it is null */
 	File buildSupportDir
 	/** The A SLF4J Logger instance to use for writing logs during the build process<br/>
 	    Example usage: <code>log.info("building")</code><br/>
@@ -50,10 +55,15 @@ class Parameters {
 	def init(def delete) {
 	  get = this
 	  targetDir = new File(project.build.directory)
-	  outputDir = new File(project.build.directory, "generated")
+	  if (project.artifactId == 'config') {
+		outputDir = new File(project.build.directory, "generated")
+		buildSupportDir = new File(project.basedir, "configurations/${target}/build_support")
+		projectDir = new File(project.basedir, "configurations/${target}")
+	  } else {
+		outputDir = new File(project.build.directory, "classes")
+		projectDir = new File(project.build.directory, "conf/"+project.artifactId)
+	  }
 	  basedirFile = project.basedir
-	  projectDir = new File(project.basedir, "configurations/${target}")
-	  buildSupportDir = new File(project.basedir, "configurations/${target}/build_support")
 	
 	  if(delete) {
 		log.info("cleaning target directory: ${targetDir}")
