@@ -25,7 +25,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.URI;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.CharBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -44,9 +49,14 @@ import org.geotools.feature.SchemaException;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.referencing.CRS;
+import org.geotools.referencing.ReferencingFactoryFinder;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CRSAuthorityFactory;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -60,8 +70,6 @@ import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.PrecisionModel;
 import com.vividsolutions.jts.geom.TopologyException;
 import com.vividsolutions.jts.io.ParseException;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
 /**
@@ -256,21 +264,36 @@ public class MIFFile {
         MIFFileTokenizer mifTokenizer = new MIFFileTokenizer(new BufferedReader(
                     new FileReader(mifFile)));
 
-
+        
         if(prjFile!=null && SRID != null) {
 
-            FileInputStream in = new FileInputStream(prjFile);
-            try {
-                PrjFileReader reader = new PrjFileReader(in.getChannel());
-                crs = reader.getCoordinateReferenceSystem();
-                SRID = CRS.lookupEpsgCode(crs,false);
-            } catch (FactoryException e) {
-                throw new RuntimeException(e);
-            } finally {
-                in.close();
+            if(prjFile.exists() ){
+                FileInputStream in = new FileInputStream(prjFile);
+                try {
+                    PrjFileReader reader = new PrjFileReader(in.getChannel());
+                    crs = reader.getCoordinateReferenceSystem();
+                    SRID = CRS.lookupEpsgCode(crs,false);
+                } catch (FactoryException e) {
+                    throw new RuntimeException(e);
+                } finally {
+                    in.close();
+                }
+            } else {
+            	
+                // retrieves the crs from mif file
+        		FileInputStream in = new FileInputStream(this.mifFile);
+        		try {
+        			SRID = retrieveSRID(in.getChannel());
+        			crs = CRS.decode("EPSG:" + SRID);
+        			
+        		} catch (Exception e) {
+        			e.printStackTrace();
+        			throw new RuntimeException(e);
+        		} finally {
+        			in.close();
+        		}
             }
-
-        }
+        } 
 
         try {
             readMifHeader(false, mifTokenizer);
@@ -284,7 +307,41 @@ public class MIFFile {
         }
     }
 
-    /**
+    private Integer retrieveSRID(FileChannel channel) throws IOException {
+		// create the ByteBuffer
+		FileChannel fc = (FileChannel) channel;
+		ByteBuffer buffer = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
+		buffer.position((int) fc.position());
+
+		// The entire file is in little endian
+		buffer.order(ByteOrder.LITTLE_ENDIAN);
+
+		CharBuffer charBuffer = CharBuffer.allocate(8 * 1024);
+		Charset chars = Charset.forName("ISO-8859-1");
+		CharsetDecoder decoder = chars.newDecoder();
+		
+		decoder.decode(buffer, charBuffer, true);
+		buffer.limit(buffer.capacity());
+		charBuffer.flip();
+		
+		String str = charBuffer.toString();
+		String crsKey = "CoordSys Earth Projection 1";
+		int i = str.indexOf(crsKey);
+		if(i != -1){
+			String value = str.substring(i + crsKey.length() + 1, str.indexOf("Column"));
+			int srid = searchSRID(Integer.parseInt(value.trim()));
+			return srid;
+		}
+		
+		return -1;
+    }
+
+	private int searchSRID(int parseInt) {
+		// TODO Auto-generated method stub
+		return 4326 ; //FIXME MAURO impement me
+	}
+
+	/**
      * <p>
      * This constructor creates a a new MIF/MID file given schema and path.  If
      * a .mif/.mid file pair already exists, it will be overwritten.
@@ -682,7 +739,7 @@ public class MIFFile {
 
         mifFile = getFileHandler(file, fName, ".mif", mustExist);
         midFile = getFileHandler(file, fName, ".mid", mustExist);
-//FIXME MAURO HACK        prjFile = getFileHandler(file, fName, ".prj", false);
+        prjFile = getFileHandler(file, fName, ".prj", false); // FIXME it is necessary to check whether this format actually requires a prj file
 
         mifFileOut = getFileHandler(file, fName, ".mif.out", false);
         midFileOut = getFileHandler(file, fName, ".mid.out", false);
@@ -1011,7 +1068,9 @@ public class MIFFile {
                         builder.add(b.buildDescriptor("MIF_TEXT"));
                     }
 
-                    setSchema(builder.buildFeatureType());
+                    builder.setCRS(crs);
+                    SimpleFeatureType type = builder.buildFeatureType();
+					setSchema(type);
                 } catch (SchemaException schexp) {
                     throw new SchemaException(
                         "Exception creating feature type from MIF header: "
