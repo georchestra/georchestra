@@ -88,7 +88,16 @@ Suppose the test server of a project had one public url and the production serve
       def generate(def project, def log, def ant, def basedirFile, 
 							def target, def subTarget, def targetDir, 
 							def buildSupportDir, def outputDir) {
-        new File(outputDir, 'shared.maven.filters') << "shared.server.name=integration.host.com"
+        def host = "shared.server.name="
+        switch (subTarget) {
+          case "test":
+            host += "integration.host.com"
+            break
+          default: 
+            host += "production.host.com"
+            break
+		}
+        new File(outputDir, 'shared.maven.filters') << host
       }
     }
 
