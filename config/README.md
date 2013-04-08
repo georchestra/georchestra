@@ -1,9 +1,9 @@
 Config
 ======
 
-Configuration in Georchestra is designed to reduce the amount of work required to maintain a full configuration for all modules as much as possible at the same time allowing for complete customisation.
+Configuration in geOrchestra is designed to reduce the amount of work required to maintain a full configuration for all modules as much as possible at the same time allowing for complete customisation.
 
-The rough concept is that a configuration jar is created containing sub directories corresponding to the maven modules in Georchestra.  The files in the configuration will overwrite the files in the module (or add to module if file does not exist).
+The rough concept is that a configuration jar is created containing sub directories corresponding to the maven modules in geOrchestra.  The files in the configuration will overwrite the files in the module (or add to module if file does not exist).
 
 However, there are several problems with this solution.  For example if a file is large and only a couple lines need to be changed it makes more sense to only update those lines.  The second problem is that many projects have shared configuration parameters like database urls.
 
@@ -21,14 +21,14 @@ mvn install -Dserver=myproj -Dsub.target=test
  1. Build config module 
   1. Execute the configuration/myproj/build_support/GenerateConfig.groovy script
     * **Note:** the value test (value of sub.target property) is passed to GenerateConfig.groovy as the subTarget parameter
-  2. copy files from [default, configuration/<config>/ and target/generate] to target/classes
+  2. copy files from [default, configuration/<config>/ and target/generated] to target/classes
     * All text files are processed and all @propertyName@ tags are replaced by properties loaded from (top has priority):
       * target/generated/shared.maven.filters
       * configuration/<config>/build_support/shared.maven.filters
       * config/shared.maven.filters
     * Note: build_support directory is not copied
-  3. The files in target/classes are bundles up as a jar and installed in the local repository
- 2. Build the other modules in Georchestra
+  3. The files in target/classes are bundled up as a jar and installed in the local repository
+ 2. Build the other modules in geOrchestra
    1. in the maven prepare-resources phase that unpacks the config jar into the modules target directory
    2. in the maven copy-resources phase the files in src/main/filtered-resources and target/conf/<module name> are copied and processed using the filters in target/conf/<module name>/maven.filters
    3. Normal maven processes continue
@@ -40,7 +40,7 @@ Module Components
  - shared.maven.filters
  - defaults - contains configuration settings and default branding
   - DeployScript.groovy - the default deploy script
-  - each sub-directory is a name of one of the Georchestra modules.  The purpose of each sub-directory is to override files in the actual project module refer to.  For example the file security-proxy/WEB-INF/classes/log4j.properties in the defaults folder will overwrite the WEB-INF/classes/log4j.properties file in the security proxy war if it exists. If the file does not exist the file will be added to the war.
+  - each sub-directory is a name of one of the geOrchestra modules.  The purpose of each sub-directory is to override files in the actual project module refer to.  For example the file security-proxy/WEB-INF/classes/log4j.properties in the defaults folder will overwrite the WEB-INF/classes/log4j.properties file in the security proxy war if it exists. If the file does not exist the file will be added to the war.
  - configuration  - contains all the configurations that can be built by configuration module
   - <config> - directory containing all files that differ from the defaults for a particular target platform.  the name of the directory matches the server java property. (mvn -Dserver=config for example)
     - build_support - special directory that is *NOT* copied to the config
@@ -75,14 +75,14 @@ This script has two purposes:
  1. The purpose of this script is to allow maximum reuse of the default configuration files
  2. Allow a single configuration directory to be used for test, integration and production servers.  
 
-The way that these scripts can satisfy these two purposes is by reading the base configuration file (be it in defaults, configuration or the basic project module) modifying it and saving it to the target/generated directory.
+The way that these scripts can satisfy these two purposes is by reading the base configuration file (be it in defaults, config or the basic project module) modifying it and saving it to the target/generated directory.
 
 Consider a couple of simple examples.  
 
-Example 1 - Single Configuration multiple target servers:
+Example 1 - Single configuration - Multiple target servers:
 ---------------------------------------------------------
 
-Suppose the test server of a project had one public url and the production server had another.  One might put the public url in the configuration's *shared.maven.filters* file and the GenerateConfig.groovy file will check the subTarget parameter and when the parameter is 'test' (or whatever value the developer chooses) the script will create a new *shared.maven.filters* in the target/generated (passed to script as the outputDir parameter).  Since the *shared.maven.filters* in the target/generated directory has highest precedence it effective overrides the production value with the test server value.
+Suppose the test server of a project had one public url and the production server had another.  One might put the public url in the configuration's *shared.maven.filters* file and the GenerateConfig.groovy file will check the subTarget parameter and when the parameter is 'test' (or whatever value the developer chooses) the script will create a new *shared.maven.filters* in the target/generated (passed to script as the outputDir parameter).  Since the *shared.maven.filters* in the target/generated directory has highest precedence it effectively overrides the production value with the test server value.
 
     class GenerateConfig {
       def generate(def project, def log, def ant, def basedirFile, 
@@ -289,7 +289,7 @@ See http://groovy.codehaus.org/Creating+XML+using+Groovy%27s+MarkupBuilder for m
 
 ### TextUpdate
 
-The text update class assists in updating raw text file by searching for occurances of regular expressions and replacing the matched section with the new text.  This example also illustrates how one can take the text from a georchestra module (in this case Geonetwork) and update that text.
+The text update class assists in updating raw text file by searching for occurances of regular expressions and replacing the matched section with the new text.  This example also illustrates how one can take the text from a geOrchestra module (in this case Geonetwork) and update that text.
 
  1. Load <root>/geonetwork/web-client/src/main/resources/apps/georchestra/js/Settings.js into memory
    * Note: the from path is constructed from: <fromProject>/<from>/<path>
@@ -454,11 +454,11 @@ See (http://maven.apache.org/guides/introduction/introduction-to-profiles.html) 
 Post Treatment Script
 =====================
 
-Consider minification of javascript files in Geonetwork.  In geonetwork minification is done by Yui and the definitions are in the 
-in the pom.xml.  As a result a configuration cannot add files to be minified because maven will not recognize the changes.  To overcome this limitation
-the Georchestra build system has will run a PostTreatment script if it is defined for that project.
+Consider minification of javascript files in Geonetwork.  In geonetwork, minification is done by Yui and the definitions are 
+in the pom.xml.  As a result, a configuration cannot add files to be minified because maven will not recognize the changes.  To overcome this limitation,
+the geOrchestra build system will run a PostTreatment script if it is defined for that project.
 
-To declare a Post Treatment script, create a PostTreatment.groovy file in the project's configuration directory.  
+To declare a post treatment script, create a PostTreatment.groovy file in the project's configuration directory.  
 
 For example, to define a Post Treatment script for geonetwork-client in a project "template". 
 Create the file: config/configurations/template/geonetwork-client/PostTreatment.groovy.  This file should have the class:
