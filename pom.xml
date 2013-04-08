@@ -221,6 +221,7 @@ class PostTreatment {
         <geoserver.war.excludes>WEB-INF/lib/*gwc*.jar</geoserver.war.excludes>
       </properties>
     </profile>
+
     <profile>
       <id>pigma_c2cpc61</id>
       <properties>

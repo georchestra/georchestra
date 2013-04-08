@@ -18,7 +18,7 @@ shared.psql.user=www-data
 shared.psql.pass=www-data
 
 shared.log.dir=/var/log/tomcat
-shared.default.log.level=INFO
+shared.default.log.level=WARN
 other.framework.log.level=WARN
 
 shared.smtpHost=localhost
