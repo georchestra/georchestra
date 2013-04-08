@@ -26,6 +26,8 @@ import org.geotools.data.mif.MIFDataStoreFactory;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureSource;
+import org.geotools.data.store.ReprojectingFeatureCollection;
+import org.geotools.feature.FeatureCollections;
 import org.geotools.gml2.GMLConfiguration;
 import org.geotools.gml2.GMLSchema;
 import org.geotools.gml2.bindings.GML2ParsingUtils;
@@ -85,12 +87,10 @@ class GeotoolsFeatureReader implements FeatureFileReaderImplementor {
 		switch(fileFormat){
 		case shp:
 			return readShpFile(file, targetCRS);
-
 		case mif:
 			return readMifFile(file, targetCRS);
 		case gml:
-			
-			// TODO it is necesary to figure out how to retrieve the gml version from file
+			// TODO it is necessary to figure out how to retrieve the gml version from file
 			return  readGmlFile(file, targetCRS, Version.GML2);
 
 		default:
@@ -98,6 +98,15 @@ class GeotoolsFeatureReader implements FeatureFileReaderImplementor {
 		}
 	}
 
+	/**
+	 * Creates a feature collection from a GML file
+	 * 
+	 * @param file a gml file
+	 * @param targetCRS target crs
+	 * @param version	gml version
+	 * @return {@link SimpleFeatureCollection}
+	 * @throws IOException
+	 */
 	private SimpleFeatureCollection readGmlFile(
 			final File file,
 			final CoordinateReferenceSystem targetCRS,
@@ -106,9 +115,12 @@ class GeotoolsFeatureReader implements FeatureFileReaderImplementor {
 
 		InputStream in = new FileInputStream( file );
 		try {
-			GML gml2 = new GML(version);
-			SimpleFeatureCollection features = gml2.decodeFeatureCollection(in);
+			GML gml = new GML(version);
+			SimpleFeatureCollection features = gml.decodeFeatureCollection(in);
 			
+			if( !targetCRS.equals(features.getSchema().getCoordinateReferenceSystem()) ) {
+				features = new ReprojectingFeatureCollection(features, targetCRS);
+			}
 			return features;
 			
 		} catch (Exception e) {
@@ -119,6 +131,7 @@ class GeotoolsFeatureReader implements FeatureFileReaderImplementor {
 		}
 		
 	}
+
 
 
 	/**
