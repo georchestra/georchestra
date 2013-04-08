@@ -5,6 +5,7 @@ package org.georchestra.mapfishapp.ws.upload;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import org.apache.commons.io.FilenameUtils;
 import org.geotools.referencing.CRS;
@@ -27,55 +28,62 @@ public class UpLoadFileManagementTest {
 	@Test 
 	public void testSHPAsJSON() throws Exception {
 		
-		String directory = getWorkingDirectory();
-		String fileName = directory + "points-4326.shp";
+		String fileName = "points-4326.shp";
+		String directory = getWorkingDirectory(fileName);
+		String fullName = directory + fileName;
 		
-		testGetGeofileToJSON(directory, fileName);
+		testGetGeofileToJSON(directory, fullName);
 	}
 	
 	@Ignore // FIXME
 	public void testKMLAsJSON() throws Exception {
+
+		String fileName = "regions.kml";
+		String directory = getWorkingDirectory(fileName);
+		String fullName = directory + fileName;
 		
-		String directory = getWorkingDirectory();
-		String fileName = directory + "regions.kml";
-		
-		testGetGeofileToJSON(directory, fileName);
+		testGetGeofileToJSON(directory, fullName);
 	}
 	
-	@Ignore // FIXME
+	@Test
 	public void testGMLAsJSON() throws Exception {
 		
-		String directory = getWorkingDirectory();
-		String fileName = directory + "regions.gml";
+		String fileName = "regions.gml";
+		String directory = getWorkingDirectory(fileName);
+		String fullName = directory + fileName;
 		
-		testGetGeofileToJSON(directory, fileName);
+		testGetGeofileToJSON(directory, fullName);
 	}
 
 	@Ignore // FIXME
 	public void testGPXAsJSON() throws Exception {
 		
-		String directory = getWorkingDirectory();
-		String fileName = directory + "wp.gpx";
+		String fileName = "wp.gpx";
+		String directory = getWorkingDirectory(fileName);
+		String fullName = directory + fileName;
 		
-		testGetGeofileToJSON(directory, fileName);
+		testGetGeofileToJSON(directory, fullName);
 	}
 	
 	@Ignore // FIXME
 	public void testTABAsJSON() throws Exception {
 		
-		String directory = getWorkingDirectory();
-		String fileName = directory + "pigma_regions_POLYGON.tab";
+
+		String fileName = "pigma_regions_POLYGON.tab";
+		String directory = getWorkingDirectory(fileName);
+		String fullName = directory + fileName;
 		
-		testGetGeofileToJSON(directory, fileName);
+		testGetGeofileToJSON(directory, fullName);
 	}
 
 	@Test 
 	public void testMIFAsJSON() throws Exception {
 		
-		String directory = getWorkingDirectory();
-		String fileName = directory + "pigma_regions_POLYGON.mif";
+		String fileName = "pigma_regions_POLYGON.mif";
+		String directory = getWorkingDirectory(fileName);
+		String fullName = directory + fileName;
 		
-		testGetGeofileToJSON(directory, fileName);
+		testGetGeofileToJSON(directory, fullName);
 	}
 
 	private void testGetGeofileToJSON(final String directory, final String fileName) throws Exception{
@@ -94,13 +102,15 @@ public class UpLoadFileManagementTest {
 		Assert.assertNotNull(jsonFeatures); 
 	}
 	
-	
-	private String getWorkingDirectory() throws IOException{
-		String current = new File( "." ).getCanonicalPath();
-		String directory = current + "/src/test/resources/org/georchestra/mapfishapp/ws/upload/";
+
+	private String getWorkingDirectory(String fileName) throws Exception{
+		
+		String resource = this.getClass().getResource(fileName).toString();
+		
+		String directory = FilenameUtils.getFullPath(resource);
+		int i = directory.indexOf(":");
+		directory = directory.substring(i + 1);
 
 		return directory;
 	}
-	
-
 }

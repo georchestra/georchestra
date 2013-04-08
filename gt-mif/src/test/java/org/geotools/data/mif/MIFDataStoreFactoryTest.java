@@ -42,18 +42,8 @@ public class MIFDataStoreFactoryTest extends MIFDataStoreFactory {
 		String file = directory.getAbsolutePath() +"/src/test/resources/org/geotools/data/mif/pigma_regions_POLYGON.mif";
 		params.put(MIFDataStoreFactory.PARAM_PATH.key, file);
 
-//		CoordinateReferenceSystem crs = CRS.parseWKT("EPSG:4326");
-//		Integer code = CRS.lookupEpsgCode(crs, true);
-//		params.put(MIFDataStoreFactory.PARAM_COORDSYS.key, code);
-
-		
 		MIFDataStoreFactory storeFactory = new MIFDataStoreFactory();
 		DataStore store = storeFactory.createDataStore(params);
-
-//		ServiceInfo info = store.getInfo();
-//		URI uriSchema = info.getSchema();
-//		SimpleFeatureType schema = store.getSchema(uriSchema.toString());
-
 		SimpleFeatureType type = store.getSchema("pigma_regions_POLYGON");
 		assertNotNull( type.getCoordinateReferenceSystem() ) ;
 

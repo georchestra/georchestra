@@ -110,6 +110,7 @@
 			<version>${gt.version}</version>
 		</dependency>
 
+
 		<dependency>
 			<groupId>org.georchestra</groupId>
 			<artifactId>gt-mif</artifactId>
