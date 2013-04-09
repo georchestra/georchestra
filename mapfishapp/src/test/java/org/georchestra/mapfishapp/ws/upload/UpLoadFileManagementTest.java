@@ -3,9 +3,7 @@
  */
 package org.georchestra.mapfishapp.ws.upload;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 
 import org.apache.commons.io.FilenameUtils;
 import org.geotools.referencing.CRS;
@@ -25,7 +23,7 @@ public class UpLoadFileManagementTest {
 	 * Test method for {@link mapfishapp.ws.upload.UpLoadFileManagement#getFeatureCollectionAsJSON()}.
 	 * @throws IOException 
 	 */
-	@Test 
+	@Test
 	public void testSHPAsJSON() throws Exception {
 		
 		String fileName = "points-4326.shp";
@@ -45,10 +43,10 @@ public class UpLoadFileManagementTest {
 		testGetGeofileToJSON(directory, fullName);
 	}
 	
-	@Ignore
+	@Test
 	public void testGMLAsJSON() throws Exception {
 		
-		String fileName = "regions.gml";
+		String fileName = "feature.gml";
 		String directory = getWorkingDirectory(fileName);
 		String fullName = directory + fileName;
 		
@@ -65,16 +63,6 @@ public class UpLoadFileManagementTest {
 		testGetGeofileToJSON(directory, fullName);
 	}
 	
-	@Ignore // FIXME
-	public void testTABAsJSON() throws Exception {
-		
-
-		String fileName = "pigma_regions_POLYGON.tab";
-		String directory = getWorkingDirectory(fileName);
-		String fullName = directory + fileName;
-		
-		testGetGeofileToJSON(directory, fullName);
-	}
 
 	@Test 
 	public void testMIFAsJSON() throws Exception {
@@ -100,6 +88,8 @@ public class UpLoadFileManagementTest {
 		String jsonFeatures = fm.getFeatureCollectionAsJSON(CRS.decode("EPSG:4326"));
 		
 		Assert.assertNotNull(jsonFeatures); 
+		
+		
 	}
 	
 

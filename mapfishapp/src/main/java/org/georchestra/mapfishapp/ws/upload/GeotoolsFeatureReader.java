@@ -9,10 +9,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 
+import javax.xml.namespace.QName;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.geotools.GML;
 import org.geotools.GML.Version;
 import org.geotools.data.DataStore;
 import org.geotools.data.FileDataStore;
@@ -22,12 +23,12 @@ import org.geotools.data.mif.MIFDataStoreFactory;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureSource;
-import org.geotools.data.store.ReprojectingFeatureCollection;
 import org.geotools.geometry.jts.JTS;
+import org.geotools.gml2.GMLConfiguration;
 import org.geotools.kml.KML;
 import org.geotools.kml.KMLConfiguration;
 import org.geotools.referencing.CRS;
-import org.geotools.xml.Parser;
+import org.geotools.xml.Configuration;
 import org.geotools.xml.StreamingParser;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -51,7 +52,6 @@ class GeotoolsFeatureReader implements FeatureFileReaderImplementor {
 	private static final FileFormat[] formats = new FileFormat[] {
 			FileFormat.shp, 
 			FileFormat.mif, 
-			FileFormat.gpx, 
 			FileFormat.gml,
 			FileFormat.kml };
 
@@ -90,13 +90,14 @@ class GeotoolsFeatureReader implements FeatureFileReaderImplementor {
 		case gml:
 			// TODO it is necessary to figure out how to retrieve the gml version from file
 			return  readGmlFile(file, targetCRS, Version.GML2);
-
 		case kml:
 			return  readKmlFile(file, targetCRS);
+
 		default:
 			throw new IOException("Unsuported format: " + fileFormat.toString());
 		}
 	}
+
 
 	/**
 	 * Creates a feature collection from a kml file. CRS EPSG:4326 is assumed for the kml file.
@@ -113,30 +114,38 @@ class GeotoolsFeatureReader implements FeatureFileReaderImplementor {
 		try{
 			StreamingParser parser = new StreamingParser(new KMLConfiguration(), in, KML.Placemark);
 
-	        SimpleFeature f = null;
+    		// as default EPSG:4326 is assumed
+	        int defaultSRID = 4326;
+    		CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:" + defaultSRID);
 
 	        MathTransform mathTransform = null;
-			ListFeatureCollection list = null;
-	        while ((f = (SimpleFeature) parser.parse()) != null) {
-	        	if(list == null){
-	        		SimpleFeatureType featureType = f.getFeatureType();
-	        		list = new ListFeatureCollection(featureType);
+    		if(!sourceCRS.equals(targetCRS)){
+    			mathTransform = CRS.findMathTransform(sourceCRS, targetCRS);
+    		}
 
-	        		// EPSG:4326 is assumed for kml file
-	        		CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:4326");
-	        		if(!sourceCRS.equals(targetCRS)){
-	        			mathTransform = CRS.findMathTransform(sourceCRS, targetCRS);
-	        		}
+    		// parse  the kml file and create the feature collection
+			ListFeatureCollection list = null;
+	        SimpleFeature f = null;
+	        while ((f = (SimpleFeature) parser.parse()) != null) {
+        	
+        		Geometry geom = (Geometry) f.getDefaultGeometry();
+        		int srid = geom.getFactory().getSRID();
+        		if(srid > 0 ){
+            		geom.setSRID(srid);
+        		} else {
+            		geom.setSRID(defaultSRID);
+        		}
+        				
+	        	if(list == null){
+	        		list = new ListFeatureCollection(f.getFeatureType());
 	        	}
 	        	if(mathTransform  != null){
-	        		
-	        		Geometry srcGeometry = (Geometry) f.getDefaultGeometry();
-	        		Geometry reprojectedGeometry= JTS.transform(srcGeometry, mathTransform);
+	        		// transformation is required
+	        		Geometry reprojectedGeometry= JTS.transform(geom, mathTransform);
 					f.setDefaultGeometry(reprojectedGeometry);
 	        	}
 	        	list.add(f);
 	        }
-
 	        return list;
 	        
 		} catch (Exception e){
@@ -162,23 +171,70 @@ class GeotoolsFeatureReader implements FeatureFileReaderImplementor {
 			final CoordinateReferenceSystem targetCRS,
 			final Version version) 
 		throws IOException{
-
+		
 		InputStream in = new FileInputStream( file );
 		try {
-			GML gml = new GML(version);
-			SimpleFeatureCollection features = gml.decodeFeatureCollection(in);
+			Configuration cfg = (version == Version.GML2)
+					? new org.geotools.gml2.GMLConfiguration()
+					: new org.geotools.gml3.GMLConfiguration();
+			StreamingParser parser = new StreamingParser(cfg , in,  new QName(org.geotools.gml2.GML.NAMESPACE, "featureMember") );
 			
-			if( !targetCRS.equals(features.getSchema().getCoordinateReferenceSystem()) ) {
-				features = new ReprojectingFeatureCollection(features, targetCRS);
+			CoordinateReferenceSystem sourceCRS;
+	        MathTransform mathTransform = null;
+			ListFeatureCollection list = null;
+			SimpleFeature f;
+			while( (f = (SimpleFeature) parser.parse()) != null){
+				
+				if (list == null) {
+					// the first time sets the feature collection with the schema and crs
+					list = new ListFeatureCollection(f.getFeatureType());
+					//sourceCRS = f.getFeatureType().getCoordinateReferenceSystem();
+					sourceCRS = f.getDefaultGeometryProperty().getType().getCoordinateReferenceSystem();
+					if(sourceCRS == null){
+			    		sourceCRS = CRS.decode("EPSG:4326" );
+					}
+		    		if(!sourceCRS.equals(targetCRS)){
+		    			mathTransform = CRS.findMathTransform(sourceCRS, targetCRS);
+		    		}
+				}
+				Geometry geom = (Geometry) f.getDefaultGeometry();
+	        	if(mathTransform  != null){
+	        		// transformation is required
+	        		Geometry reprojectedGeometry= JTS.transform(geom, mathTransform);
+					f.setDefaultGeometry(reprojectedGeometry);
+	        	}
+	        	list.add(f);
 			}
-			return features;
+			return list;
 			
 		} catch (Exception e) {
 			LOG.error(e.getMessage());
 			throw new IOException(e);
-		} finally{
+			
+		} finally {
+		
 			in.close();
 		}
+		
+		
+		// the following strategy doesn't work		
+// the following strategy doesn't work		
+//		InputStream in = new FileInputStream( file );
+//		try {
+//			GML gml = new GML(version);
+//			SimpleFeatureCollection features = gml.decodeFeatureCollection(in);
+//			
+//			if( !targetCRS.equals(features.getSchema().getCoordinateReferenceSystem()) ) {
+//				features = new ReprojectingFeatureCollection(features, targetCRS);
+//			}
+//			return features;
+//			
+//		} catch (Exception e) {
+//			LOG.error(e.getMessage());
+//			throw new IOException(e);
+//		} finally{
+//			in.close();
+//		}
 		
 	}
 
@@ -229,10 +285,19 @@ class GeotoolsFeatureReader implements FeatureFileReaderImplementor {
 		return features;
 	}
 
+	/**
+	 * Retrieves the features from store
+	 * 
+	 * @param typeName
+	 * @param store
+	 * @param targetCRS
+	 * @return
+	 * @throws IOException
+	 */
 	private SimpleFeatureCollection retrieveFeatures(
 				final String typeName,
 				final DataStore store, 
-				final CoordinateReferenceSystem crs)
+				final CoordinateReferenceSystem targetCRS)
 			throws IOException {
 		
 		SimpleFeatureType schema = store.getSchema(typeName);
@@ -240,8 +305,8 @@ class GeotoolsFeatureReader implements FeatureFileReaderImplementor {
 		SimpleFeatureSource featureSource = store.getFeatureSource(schema.getTypeName());
 		
 		Query query = new Query(schema.getTypeName(), Filter.INCLUDE);
-		if(crs != null){
-			query.setCoordinateSystemReproject(crs);
+		if(targetCRS != null){
+			query.setCoordinateSystemReproject(targetCRS);
 		}
 		SimpleFeatureCollection features = featureSource.getFeatures(query);
 		
