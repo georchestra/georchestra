@@ -35,7 +35,7 @@ public class UpLoadFileManagementTest {
 		testGetGeofileToJSON(directory, fullName);
 	}
 	
-	@Ignore 
+	@Test 
 	public void testKMLAsJSON() throws Exception {
 
 		String fileName = "regions.kml";
@@ -45,7 +45,7 @@ public class UpLoadFileManagementTest {
 		testGetGeofileToJSON(directory, fullName);
 	}
 	
-	@Test
+	@Ignore
 	public void testGMLAsJSON() throws Exception {
 		
 		String fileName = "regions.gml";

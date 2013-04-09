@@ -23,14 +23,19 @@ import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.data.store.ReprojectingFeatureCollection;
+import org.geotools.geometry.jts.JTS;
 import org.geotools.kml.KML;
 import org.geotools.kml.KMLConfiguration;
+import org.geotools.referencing.CRS;
 import org.geotools.xml.Parser;
 import org.geotools.xml.StreamingParser;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
+
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * This class is a façade to the Geotools data management implementations.
@@ -93,6 +98,14 @@ class GeotoolsFeatureReader implements FeatureFileReaderImplementor {
 		}
 	}
 
+	/**
+	 * Creates a feature collection from a kml file. CRS EPSG:4326 is assumed for the kml file.
+	 * 
+	 * @param file
+	 * @param targetCRS
+	 * @return
+	 * @throws IOException
+	 */
 	private SimpleFeatureCollection readKmlFile(File file, CoordinateReferenceSystem targetCRS) throws IOException {
         
 		InputStream in = new FileInputStream(file);
@@ -102,10 +115,24 @@ class GeotoolsFeatureReader implements FeatureFileReaderImplementor {
 
 	        SimpleFeature f = null;
 
+	        MathTransform mathTransform = null;
 			ListFeatureCollection list = null;
 	        while ((f = (SimpleFeature) parser.parse()) != null) {
 	        	if(list == null){
-	        		list = new ListFeatureCollection(f.getFeatureType());
+	        		SimpleFeatureType featureType = f.getFeatureType();
+	        		list = new ListFeatureCollection(featureType);
+
+	        		// EPSG:4326 is assumed for kml file
+	        		CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:4326");
+	        		if(!sourceCRS.equals(targetCRS)){
+	        			mathTransform = CRS.findMathTransform(sourceCRS, targetCRS);
+	        		}
+	        	}
+	        	if(mathTransform  != null){
+	        		
+	        		Geometry srcGeometry = (Geometry) f.getDefaultGeometry();
+	        		Geometry reprojectedGeometry= JTS.transform(srcGeometry, mathTransform);
+					f.setDefaultGeometry(reprojectedGeometry);
 	        	}
 	        	list.add(f);
 	        }
