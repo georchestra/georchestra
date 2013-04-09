@@ -1,10 +1,10 @@
 The files in this directory are example scripts for creating a deployment server.  The goals of the scripts are to
 
- # check out the sources code to a given directory
- # optionally checkout the configuration into the sources/config/configurations directory
- # clean the build directory
- # build the full or partial system (dependent on the -P parameters)
- # Deploy built components to a system.  Often there will be multiple targets like integration or production.
+ 1. check out the sources code to a given directory
+ 1. optionally checkout the configuration into the sources/config/configurations directory
+ 1. clean the build directory
+ 1. build the full or partial system (dependent on the -P parameters)
+ 1. Deploy built components to a system.  Often there will be multiple targets like integration or production.
 
 The scripts use a deploy user for performing the build and deployment to the target server.  This allows anyone with the correct sudo privileges to run the build.
 
