@@ -35,7 +35,7 @@ public class UpLoadFileManagementTest {
 		testGetGeofileToJSON(directory, fullName);
 	}
 	
-	@Ignore // FIXME
+	@Ignore 
 	public void testKMLAsJSON() throws Exception {
 
 		String fileName = "regions.kml";
