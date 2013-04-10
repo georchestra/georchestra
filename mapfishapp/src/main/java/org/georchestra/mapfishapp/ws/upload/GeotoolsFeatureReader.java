@@ -24,7 +24,6 @@ import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.geometry.jts.JTS;
-import org.geotools.gml2.GMLConfiguration;
 import org.geotools.kml.KML;
 import org.geotools.kml.KMLConfiguration;
 import org.geotools.referencing.CRS;
@@ -182,28 +181,29 @@ class GeotoolsFeatureReader implements FeatureFileReaderImplementor {
 			CoordinateReferenceSystem sourceCRS;
 	        MathTransform mathTransform = null;
 			ListFeatureCollection list = null;
-			SimpleFeature f;
-			while( (f = (SimpleFeature) parser.parse()) != null){
+			SimpleFeature feature;
+			while( (feature = (SimpleFeature) parser.parse()) != null){
 				
+				Geometry geom = (Geometry) feature.getDefaultGeometry();
 				if (list == null) {
 					// the first time sets the feature collection with the schema and crs
-					list = new ListFeatureCollection(f.getFeatureType());
-					//sourceCRS = f.getFeatureType().getCoordinateReferenceSystem();
-					sourceCRS = f.getDefaultGeometryProperty().getType().getCoordinateReferenceSystem();
-					if(sourceCRS == null){
+					list = new ListFeatureCollection(feature.getFeatureType());
+					int srid = geom.getFactory().getSRID();
+					if(srid > 0 ){
+						sourceCRS = CRS.decode("EPSG:"+ srid );
+					} else {
 			    		sourceCRS = CRS.decode("EPSG:4326" );
 					}
 		    		if(!sourceCRS.equals(targetCRS)){
 		    			mathTransform = CRS.findMathTransform(sourceCRS, targetCRS);
 		    		}
 				}
-				Geometry geom = (Geometry) f.getDefaultGeometry();
 	        	if(mathTransform  != null){
 	        		// transformation is required
 	        		Geometry reprojectedGeometry= JTS.transform(geom, mathTransform);
-					f.setDefaultGeometry(reprojectedGeometry);
+					feature.setDefaultGeometry(reprojectedGeometry);
 	        	}
-	        	list.add(f);
+	        	list.add(feature);
 			}
 			return list;
 			

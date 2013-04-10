@@ -46,7 +46,7 @@ public class UpLoadFileManagementTest {
 	@Test
 	public void testGMLAsJSON() throws Exception {
 		
-		String fileName = "feature.gml";
+		String fileName = "border.gml";
 		String directory = getWorkingDirectory(fileName);
 		String fullName = directory + fileName;
 		
