@@ -18,7 +18,12 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 class FeatureFileReader {
 
-	private final FeatureFileReaderImplementor readerImpl;
+	private static boolean OGR_AVAILABLE;
+	static{
+		OGR_AVAILABLE = OGRFeatureReader.isOK();
+	}
+
+	private FeatureFileReaderImplementor readerImpl = null;
 
 	/**
 	 * Creates a reader
@@ -73,7 +78,7 @@ class FeatureFileReader {
 	/**
 	 * Selects which of the implementations must be created.
 	 */
-	private FeatureFileReaderImplementor createImplementationStrategy(){
+	private static FeatureFileReaderImplementor createImplementationStrategy(){
 
 		FeatureFileReaderImplementor implementor = null; 
 		if( isOgrAvailable() ){
@@ -93,9 +98,9 @@ class FeatureFileReader {
 	 *  
 	 * @return true if ogr is available in the platform.
 	 */
-	private boolean isOgrAvailable() {
-
-		return false; // TODO ask for ogr ??
+	private static boolean isOgrAvailable() {
+		
+		return OGR_AVAILABLE;
 	}
 
 }

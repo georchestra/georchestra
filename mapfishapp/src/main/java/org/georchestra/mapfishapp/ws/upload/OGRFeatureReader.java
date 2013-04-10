@@ -5,6 +5,7 @@ package org.georchestra.mapfishapp.ws.upload;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,7 +38,6 @@ final class OGRFeatureReader implements FeatureFileReaderImplementor {
 	
 	private static final Log LOG = LogFactory.getLog(OGRFeatureReader.class.getPackage().getName());
 
-	
 	private static class OGRDriver{
 		
 		private final String name;
@@ -77,6 +77,10 @@ final class OGRFeatureReader implements FeatureFileReaderImplementor {
 
 	}
 
+	public static int formatCount(){
+	
+		return DRIVERS.keySet().size();
+	}
 	
 	@Override
 	public FileFormat[] getFormatList() {
@@ -96,19 +100,19 @@ final class OGRFeatureReader implements FeatureFileReaderImplementor {
 	 * Returns the set of features maintained in the geofile, reprojected in the target CRS
 	 */
 	@Override
-	public SimpleFeatureCollection getFeatureCollection(final File basedir, final FileFormat fileFormat, final CoordinateReferenceSystem targetCRS) throws IOException {
-		assert  basedir != null && fileFormat != null;
+	public SimpleFeatureCollection getFeatureCollection(final File file, final FileFormat fileFormat, final CoordinateReferenceSystem targetCRS) throws IOException {
+		assert  file != null && fileFormat != null;
 
 		try{
-			String ogrName = basedir.getAbsolutePath();
+			String fullFileName = file.getAbsolutePath();
 
 			OGRDriver driver =  DRIVERS.get(fileFormat);
 			String ogrDriver = driver.getName();
 
-			OGRDataStore store = new OGRDataStore(ogrName, ogrDriver, null,  new JniOGR() );
+			OGRDataStore store = new OGRDataStore(fullFileName, ogrDriver, null,  new JniOGR() );
 			String[] typeNames = store.getTypeNames();
 			if(typeNames.length ==  0 ){
-				final String  msg= "The file " + ogrName + " could not be read using the OGR driver " + ogrDriver;
+				final String  msg= "The file " + fullFileName + " could not be read using the OGR driver " + ogrDriver;
 				LOG.error(msg);
 				throw new IOException(msg);
 			}
@@ -136,6 +140,32 @@ final class OGRFeatureReader implements FeatureFileReaderImplementor {
 			throws IOException {
 			
 		return getFeatureCollection(basedir, fileFormat, null);
+	}
+
+	/**
+	 * Checks whether all drivers required are available.
+	 * 
+	 * @return true means that the drivers are available.
+	 */
+	public static boolean isOK() {
+
+		JniOGR ogr  = new JniOGR();
+
+		ArrayList<String> availableDrivers = new ArrayList<String>();
+		for (int i = 0; i < ogr.GetDriverCount(); i++) {
+		
+			Object driver = ogr.GetDriver(i);
+			String name = ogr.DriverGetName(driver);
+			availableDrivers.add(name.toUpperCase());
+		}
+		for(OGRDriver requiredDriver: DRIVERS.values()){
+			
+			if(!availableDrivers.contains(requiredDriver.getName().toUpperCase()) ){
+				return false;
+			}
+		}
+		
+		return true;
 	}
 	
 
