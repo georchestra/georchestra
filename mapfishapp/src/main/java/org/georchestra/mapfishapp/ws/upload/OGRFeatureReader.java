@@ -5,6 +5,9 @@ package org.georchestra.mapfishapp.ws.upload;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,13 +34,62 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * 
  */
 final class OGRFeatureReader implements FeatureFileReaderImplementor {
-
+	
 	private static final Log LOG = LogFactory.getLog(OGRFeatureReader.class.getPackage().getName());
 
+	
+	private static class OGRDriver{
+		
+		private final String name;
+		private final String[] options;
+		
+		public OGRDriver(final String name, final String[] options) {
+			this.name = name;
+			this.options = options;
+		}
+
+		public OGRDriver(final String name) {
+			this.name = name;
+			this.options = null;
+		}
+		public String getName() {
+			return name;
+		}
+
+		public String[] getOptions() {
+			return options;
+		}
+	}
+	
+	private static Map<FileFormat, OGRDriver> DRIVERS = Collections.synchronizedMap(new HashMap<FileFormat, OGRDriver>());
+	
+	static{
+		
+		DRIVERS.put( FileFormat.tab, new OGRDriver("MapInfo File", new String[] {} ) );
+		DRIVERS.put( FileFormat.mif, new OGRDriver("MapInfo File", new String[] { "FORMAT=MIF" }) );
+		DRIVERS.put( FileFormat.shp, new OGRDriver("ESRI shapefile") );
+		DRIVERS.put( FileFormat.gml, new OGRDriver("GML" ) );
+		DRIVERS.put( FileFormat.kml, new OGRDriver("KML") );
+		DRIVERS.put( FileFormat.gpx, new OGRDriver("GPX") );
+	}
 
 	public OGRFeatureReader() {
 
 	}
+
+	
+	@Override
+	public FileFormat[] getFormatList() {
+
+		FileFormat [] fileFormats = new FileFormat[DRIVERS.keySet().size()];
+		int i = 0;
+		for (FileFormat format : DRIVERS.keySet()) {
+			
+			fileFormats[i++] = format;
+		}
+		return fileFormats;
+	}
+	
 
 
 	/**
@@ -49,7 +101,9 @@ final class OGRFeatureReader implements FeatureFileReaderImplementor {
 
 		try{
 			String ogrName = basedir.getAbsolutePath();
-			String ogrDriver = fileFormat.getDriver();
+
+			OGRDriver driver =  DRIVERS.get(fileFormat);
+			String ogrDriver = driver.getName();
 
 			OGRDataStore store = new OGRDataStore(ogrName, ogrDriver, null,  new JniOGR() );
 			String[] typeNames = store.getTypeNames();
@@ -84,14 +138,5 @@ final class OGRFeatureReader implements FeatureFileReaderImplementor {
 		return getFeatureCollection(basedir, fileFormat, null);
 	}
 	
-	
-	@Override
-	public FileFormat[] getFormatList() {
-
-
-		// TODO Auto-generated method stub
-
-		return null;
-	}
 
 }

@@ -1,75 +1,13 @@
 package org.georchestra.mapfishapp.ws.upload;
 
 /**
- * 
  * Available File formats.
  *
  * @author Mauricio Pazos
  */
 public enum FileFormat {
-		tab {
-			@Override
-			public String getDriver() {
-				return "MapInfo File";
-			}
-
-			@Override
-			public String[] getFormatOptions() {
-				return new String[] {};
-			}
-		},
-		mif {
-			@Override
-			public String getDriver() {
-				return "MapInfo File";
-			}
-
-			@Override
-			public String[] getFormatOptions() {
-				return new String[] { "FORMAT=MIF" };
-			}
-		},
-		shp {
-			@Override
-			public String getDriver() {
-				return "ESRI shapefile";
-			}
-		},
-		gml {
-			@Override
-			public String getDriver() {
-				return "GML";
-			}
-		},
-		kml {
-			@Override
-			public String getDriver() {
-				return "KML";
-			}
-
-		},
-		gpx {
-			@Override
-			public String getDriver() {
-				return "GPX";
-			}
-
-		};
-		
-
-		/**
-		 * Returns the OGR driver for this format.
-		 * 
-		 * @return the driver
-		 */
-		public abstract String getDriver();
-
-		/**
-		 * @return Options for this format
-		 */
-		public String[] getFormatOptions() {
-			return null; //default implementation
-		}
+	
+		tab, mif ,shp , gml, kml , gpx; 
 
 		/**
 		 * Returns the enumerated value associated to the extension file name
@@ -88,5 +26,4 @@ public enum FileFormat {
 			
 			return null;
 		}
-
 }

@@ -88,8 +88,6 @@ public class UpLoadFileManagementTest {
 		String jsonFeatures = fm.getFeatureCollectionAsJSON(CRS.decode("EPSG:4326"));
 		
 		Assert.assertNotNull(jsonFeatures); 
-		
-		
 	}
 	
 
