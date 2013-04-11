@@ -21,7 +21,7 @@ from=@shared.smtp.from@
 privileged_admin_name=@shared.privileged.geoserver.user@
 privileged_admin_pass=@shared.privileged.geoserver.pass@
 
-dlformjdbcurl=@shared.download_form.jdbcurl@?user=@shared.psql.user@&password=@shared.psql.pass@
+dlformjdbcurl=@shared.download_form.jdbcurl@?user=@shared.psql.user@&amp;password=@shared.psql.pass@
 dlformactivated=@shared.download_form.activated@
 
 emailfactory=org.georchestra.extractorapp.ws.EmailFactoryDefault
