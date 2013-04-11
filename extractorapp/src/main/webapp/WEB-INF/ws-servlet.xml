@@ -37,8 +37,6 @@
                   value="application/xml"/>
         <property name="responseCharset" 
                   value="UTF-8"/>
-        <property name="emailFactory" 
-                  ref="emailFactory"/>
         <property name="maxCoverageExtractionSize"
                   value="${maxCoverageExtractionSize}"/>
         <property name="remoteReproject"
