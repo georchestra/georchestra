@@ -513,11 +513,20 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
         var v = this.getValue(),
             words = v.replace(new RegExp("[,;:/%()*!.\\[\\]~&=]","g"), ' ').split(' '),
             // adding wms in the filters list helps getting records where a WMS layer is referenced:
-            filters = [new OpenLayers.Filter.Comparison({
-                type: "~",
-                property: "AnyText",
-                value: '*wms*'
-            })];
+            filters = [
+                // improve relevance of results: (might not be relevant with other csw servers than geonetwork)
+                new OpenLayers.Filter.Comparison({
+                    type: "~",
+                    property: "AnyText",
+                    value: '*wms*'
+                }),
+                // do not request dc:type = service, just dc:type = dataset
+                new OpenLayers.Filter.Comparison({
+                    type: "~",
+                    property: "type",
+                    value: 'dataset'
+                })
+            ];
         Ext.each(words, function(word) {
             if (word) {
                 filters.push(

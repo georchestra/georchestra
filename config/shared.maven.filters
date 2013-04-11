@@ -1,9 +1,8 @@
 # shared values like public url can be put here
-
-
 shared.server.port=80
 
 shared.language=fr
+geonetwork.language=fre
 
 shared.ldap.host=localhost
 shared.ldap.port=636
@@ -11,34 +10,34 @@ shared.ldapUrl=ldaps://@shared.ldap.host@:@shared.ldap.port@
 shared.ldap.userSearchBaseDN=ou=users
 shared.ldap.userSearchFilter=uid=%u
 shared.ldap.groupSearchBaseDN=ou=groups
-
 shared.ldap.admin.dn=cn=admin,@shared.ldap.baseDn@
-
-shared.tomcat.dir=/srv/tomcat/tomcat1
-shared.log.dir=/var/log/tomcat
 
 shared.psql.host=localhost
 shared.psql.port=5432
-shared.psql.geonetwork.db=geonetwork
-shared.psql.ogc.statistics.db=ogcstatistics
 shared.psql.user=www-data
 shared.psql.pass=www-data
 
-shared.psql.url=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.psql.geonetwork.db@
-
-shared.default.log.level=INFO
+shared.log.dir=/var/log/tomcat
+shared.default.log.level=WARN
 other.framework.log.level=WARN
 
-shared.smtpHost=mail.camptocamp.com
+shared.smtpHost=localhost
 shared.smtpPort=25
-shared.email.replyTo=arnaud.deshogues\@camptocamp.com
-shared.email.from=noreply\@camptocamp.com
+shared.email.replyTo=psc\@georchestra.org
+shared.email.from=psc\@georchestra.org
 
-shared.geonetwork.dir=@shared.tomcat.dir@/work/gn_data
+shared.geonetwork.dir=/var/lib/tomcat6/work/gn_data
+shared.psql.geonetwork.db=geonetwork
 
 shared.ogc.statistics.activated=false
+shared.psql.ogc.statistics.db=ogcstatistics
+shared.ogc.statistics.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.psql.ogc.statistics.db@
+
+shared.checkhealth.activated=false
+shared.psql.checkhealth.db=shared.psql.geonetwork.db
+shared.checkhealth.max_db_connections=170
+
 shared.download_form.activated=false
 shared.download_form.pdf_url=/static/cgu.pdf
-
-shared.download_form.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/downloadform
-shared.ogcstatistics.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.psql.ogc.statistics.db@
+shared.psql.download_form.db=downloadform
+shared.download_form.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.psql.download_form.db@

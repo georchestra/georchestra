@@ -20,7 +20,7 @@
     </filter>
    <filter>
         <filter-name>UTF8Filter</filter-name>
-        <filter-class>com.camptocamp.UTF8Filter</filter-class>
+        <filter-class>org.georchestra.mapfishapp.UTF8Filter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>UrlRewriteFilter</filter-name>
@@ -37,7 +37,7 @@
 	    <servlet-class>org.mapfish.print.servlet.MapPrinterServlet</servlet-class>
 	    <init-param>
 	      <param-name>config</param-name>
-	      <param-value>print/config.yaml</param-value>
+	      <param-value>WEB-INF/print/config.yaml</param-value>
 	    </init-param>
   	</servlet>
     <servlet>
@@ -52,7 +52,8 @@
     <servlet-mapping>
         <servlet-name>ws</servlet-name>
         <url-pattern>/ws/*</url-pattern>
-    </servlet-mapping>  
+    </servlet-mapping>
+
     <servlet-mapping>
 	    <servlet-name>mapfish.print</servlet-name>
 	    <url-pattern>/pdf/*</url-pattern>

@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.georchestra</groupId>
 		<artifactId>root</artifactId>
-    <version>1.0</version>
+    <version>13.02</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>cas-server-webapp</artifactId>
@@ -125,6 +125,17 @@
 			  <groupId>org.apache.maven.plugins</groupId>
 			  <artifactId>maven-dependency-plugin</artifactId>
   	        </plugin>
+			<plugin>
+				<groupId>org.codehaus.groovy.maven</groupId>
+				<artifactId>gmaven-plugin</artifactId>
+				<dependencies>
+					<dependency>
+							<groupId>org.georchestra</groupId>
+							<artifactId>config</artifactId>
+							<version>${project.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>

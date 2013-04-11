@@ -4,11 +4,11 @@
   <groupId>org.georchestra</groupId>
   <artifactId>root</artifactId>
   <packaging>pom</packaging>
-  <version>1.0</version>
-  <name>Root project of the georchestra project</name>
+  <version>13.02</version>
+  <name>Root project of the geOrchestra project</name>
   <url>http://maven.apache.org</url>
   <organization>
-    <name>Georchestra</name>
+    <name>geOrchestra</name>
   </organization>
   <properties>
     <gt.version>2.7.4</gt.version>
@@ -20,8 +20,22 @@
     <!-- default when building without a profile specified -->
     <confdir>${project.build.directory}/conf</confdir>
     <encoding>UTF-8</encoding>
-    <georchestra.version>1.0</georchestra.version>
-    <!--<gmaven.runtime>1.8</gmaven.runtime>-->
+    <georchestra.version>${project.version}</georchestra.version>
+    <postTreatmentScript><![CDATA[
+def server=project.properties['server']
+def subTarget=project.properties['subTarget']
+						
+def params = new Parameters(
+    project: project,
+	target: server,
+	subTarget: subTarget,
+	log: log,
+	ant: ant
+)
+params.init(false)
+
+new PostTreatment().run(this, log, ant, project.basedir, params.projectDir, server, subTarget, project.build.directory)
+]]></postTreatmentScript>
   </properties>
   <modules>
     <module>config</module>
@@ -33,8 +47,75 @@
     <module>server-deploy-support</module>
   </modules>
   <build>
+    <plugins>
+       <!-- initialize git revision info -->
+       <plugin>
+         <groupId>pl.project13.maven</groupId>
+         <artifactId>git-commit-id-plugin</artifactId>
+         <version>2.1.4</version>
+         <executions>
+           <execution>
+             <goals>
+               <goal>revision</goal>
+             </goals>
+           </execution>
+         </executions>
+         <configuration>
+           <prefix>build</prefix>
+           <failOnNoGitDirectory>false</failOnNoGitDirectory>
+           <skipPoms>false</skipPoms>
+           <verbose>false</verbose>
+         </configuration>
+       </plugin>
+    </plugins>
     <pluginManagement>
       <plugins>
+		<plugin>
+			<groupId>org.codehaus.groovy.maven</groupId>
+			<artifactId>gmaven-plugin</artifactId>
+		    <version>1.0</version>
+			<executions>
+				<execution>
+					<id>create-missingpost-treatment</id>
+					<phase>prepare-package</phase>
+					<goals>
+						<goal>execute</goal>
+					</goals>
+					<configuration>
+						<source><![CDATA[
+def confDir = new File(project.build.directory, "conf")
+def treatmentFile = new File(confDir, project.artifactId+"/PostTreatment.groovy")
+if(confDir.exists() && !treatmentFile.exists()){
+	treatmentFile.parentFile.mkdirs()
+	treatmentFile << """
+class PostTreatment {
+	def run(def project, def log, def ant, def basedirFile, def configDir,
+					def target, def subTarget, def targetDir) {
+			log.info("No post treatment required for this project")
+		}
+}
+"""
+}
+
+						]]></source>
+					</configuration>
+				</execution>
+				<execution>
+					<id>post-treatment-script</id>
+					<phase>prepare-package</phase>
+					<goals>
+						<goal>execute</goal>
+					</goals>
+					<configuration>
+						<scriptpath>
+							<element>${project.build.directory}/conf/${project.artifactId}</element>
+							<element>${project.build.directory}/conf/scripts</element>
+						</scriptpath>
+						<source>${postTreatmentScript}</source>
+					</configuration>
+				</execution>
+			</executions>
+		</plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
@@ -111,34 +192,20 @@
           <artifactId>maven-resources-plugin</artifactId>
           <version>1.3</version>
         </plugin>
-        <plugin>
-          <groupId>org.codehaus.groovy.maven</groupId>
-          <artifactId>gmaven-plugin</artifactId>
-          <version>1.0</version>
-        </plugin>
       </plugins>
     </pluginManagement>
   </build>
   <profiles>
 
     <profile>
-      <id>pigma</id>
+      <id>localhost</id>
       <properties>
-        <server>pigma</server>
+        <server>localhost</server>
       </properties>
     </profile>
 
     <profile>
       <id>pigma_int</id>
-      <properties>
-        <server>pigma</server>
-        <sub.target>int</sub.target>
-        <geoserver.war.excludes>WEB-INF/lib/*gwc*.jar</geoserver.war.excludes>
-      </properties>
-    </profile>
-
-    <profile>
-      <id>pigma_c2cpc62</id>
       <properties>
         <server>pigma</server>
         <sub.target>int</sub.target>
@@ -154,7 +221,16 @@
         <geoserver.war.excludes>WEB-INF/lib/*gwc*.jar</geoserver.war.excludes>
       </properties>
     </profile>
-    
+
+    <profile>
+      <id>pigma_c2cpc61</id>
+      <properties>
+        <server>pigma</server>
+        <sub.target>c2cpc61</sub.target>
+        <geoserver.war.excludes>WEB-INF/lib/*gwc*.jar</geoserver.war.excludes>
+      </properties>
+    </profile>
+
     <!-- template profile -->
     <profile>
       <id>template</id>
@@ -295,7 +371,7 @@
       <name>OpenGeo Maven Repository</name>
       <url>http://repo.opengeo.org/</url>
       <snapshots>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
       </snapshots>
     </repository>
     <repository>

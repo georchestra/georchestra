@@ -40,6 +40,8 @@ Copy the "template" config directory and edit "yourown" to match your needs:
        (edit files in config/configuration/yourown)
     ./mvn -Dmaven.test.skip=true -Dserver=${PROFILE} install
 
+[Read more](https://github.com/georchestra/georchestra/blob/master/config/README.md) about the configuration process
+
 How to deploy ?
 ===============
 
