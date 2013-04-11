@@ -110,8 +110,4 @@
       <property name="maxUploadSize" value="1000000"/>
     </bean>
     
-
-    <bean id="properties-loader"
-        class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
-        p:locations="/WEB-INF/extractorapp.properties" />
 </beans>
