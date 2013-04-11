@@ -7,10 +7,10 @@ extractionFolderPrefix=extraction-
 host=@shared.server.name@
 
 # The base url of the extractorapp as accessible from outside the intranet
-servletUrl=http://${host}/extractorapp
+servletUrl=http://@shared.server.name@/extractorapp
 
 # Hostname of the geoserver that is secured for geOrchestra.
-secureHost=${host}
+secureHost=@shared.server.name@
 
 # Email properties
 smtpHost=@shared.smtp.host@
@@ -25,6 +25,6 @@ dlformjdbcurl=@shared.download_form.jdbcurl@?user=@shared.psql.user@&password=@s
 dlformactivated=@shared.download_form.activated@
 
 emailfactory=org.georchestra.extractorapp.ws.EmailFactoryDefault
-emailsubject="Your extraction request on ${host}"
+emailsubject="Your extraction request on @shared.server.name@"
 
 language=@shared.language@
