@@ -46,8 +46,8 @@
                   value="${extractionFolderPrefix}"/>
         <property name="adminCredentials">
             <bean class="org.apache.commons.httpclient.UsernamePasswordCredentials">
-                <constructor-arg index="0" value="${priveleged_admin_name}"/>
-                <constructor-arg index="1" value="${priveleged_admin_pass}"/>
+                <constructor-arg index="0" value="${privileged_admin_name}"/>
+                <constructor-arg index="1" value="${privileged_admin_pass}"/>
             </bean>
         </property>
 		<property name="checkFormAcceptance">
