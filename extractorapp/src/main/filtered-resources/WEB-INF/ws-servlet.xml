@@ -52,8 +52,8 @@
         </property>
 		<property name="checkFormAcceptance">
 			<bean class="org.georchestra.extractorapp.ws.acceptance.CheckFormAcceptance">
-				<constructor-arg index="0" value="${dlformjdbcurl}" />
-				<constructor-arg index="1" value="${dlformactivated}" />
+				<constructor-arg index="0" value="${dlformjdbcurl}"/>
+				<constructor-arg index="1" value="${dlformactivated}"/>
 			</bean>
 		</property>
         <property name="extractionManager" ref="extractionManager"/>
