@@ -53,19 +53,15 @@ class GeotoolsFeatureReader implements FeatureFileReaderImplementor {
 			FileFormat.mif, 
 			FileFormat.gml,
 			FileFormat.kml };
-
+	
 	public GeotoolsFeatureReader() {
 	}
 
 	@Override
 	public FileFormat[] getFormatList() {
-		// TODO Auto-generated method stub
 		return formats;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.georchestra.mapfishapp.ws.upload.FeatureFileReaderImplementor#getFeatureCollection()
-	 */
 	@Override
 	public SimpleFeatureCollection getFeatureCollection(final File file, final FileFormat fileFormat) throws IOException {
 
@@ -118,7 +114,7 @@ class GeotoolsFeatureReader implements FeatureFileReaderImplementor {
     		CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:" + defaultSRID);
 
 	        MathTransform mathTransform = null;
-    		if(!sourceCRS.equals(targetCRS)){
+    		if((targetCRS != null) && !sourceCRS.equals(targetCRS) ){
     			mathTransform = CRS.findMathTransform(sourceCRS, targetCRS);
     		}
 
@@ -194,7 +190,7 @@ class GeotoolsFeatureReader implements FeatureFileReaderImplementor {
 					} else {
 			    		sourceCRS = CRS.decode("EPSG:4326" );
 					}
-		    		if(!sourceCRS.equals(targetCRS)){
+		    		if((targetCRS != null) && !sourceCRS.equals(targetCRS)){
 		    			mathTransform = CRS.findMathTransform(sourceCRS, targetCRS);
 		    		}
 				}

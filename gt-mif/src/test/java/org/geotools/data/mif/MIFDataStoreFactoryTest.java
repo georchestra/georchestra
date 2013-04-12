@@ -6,6 +6,7 @@ package org.geotools.data.mif;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
+import java.net.URL;
 import java.util.HashMap;
 
 import org.geotools.data.DataStore;
@@ -38,8 +39,9 @@ public class MIFDataStoreFactoryTest extends MIFDataStoreFactory {
 
 		HashMap params = new HashMap();
 		
-		File directory = new File(".");  
-		String file = directory.getAbsolutePath() +"/src/test/resources/org/geotools/data/mif/pigma_regions_POLYGON.mif";
+		URL url= this.getClass().getResource("pigma_regions_POLYGON.mif");  
+		String file = url.toURI().getPath();
+
 		params.put(MIFDataStoreFactory.PARAM_PATH.key, file);
 
 		MIFDataStoreFactory storeFactory = new MIFDataStoreFactory();

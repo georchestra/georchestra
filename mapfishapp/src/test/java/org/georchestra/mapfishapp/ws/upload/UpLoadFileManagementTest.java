@@ -4,6 +4,7 @@
 package org.georchestra.mapfishapp.ws.upload;
 
 import java.io.IOException;
+import java.net.URL;
 
 import org.apache.commons.io.FilenameUtils;
 import org.geotools.referencing.CRS;
@@ -27,28 +28,27 @@ public class UpLoadFileManagementTest {
 	public void testSHPAsJSON() throws Exception {
 		
 		String fileName = "points-4326.shp";
-		String directory = getWorkingDirectory(fileName);
-		String fullName = directory + fileName;
+		String fullName = makeFullName(fileName);
 		
-		testGetGeofileToJSON(directory, fullName);
+		testGetGeofileToJSON(fullName);
 	}
 	
 	@Test 
 	public void testKMLAsJSON() throws Exception {
 
 		String fileName = "regions.kml";
-		String directory = getWorkingDirectory(fileName);
-		String fullName = directory + fileName;
+		String fullName = makeFullName(fileName);
 		
-		testGetGeofileToJSON(directory, fullName);
+		testGetGeofileToJSON(fullName);
 	}
 	
-	@Ignore
+	@Ignore // FIXME
 	public void testGMLAsJSON() throws Exception {
 		
 		String fileName = "border.gml";
-		String directory = getWorkingDirectory(fileName);
-		String fullName = directory + fileName;
+		String fullName = makeFullName(fileName);
+
+		testGetGeofileToJSON(fullName);
 		
 	}
 
@@ -56,10 +56,9 @@ public class UpLoadFileManagementTest {
 	public void testGPXAsJSON() throws Exception {
 		
 		String fileName = "wp.gpx";
-		String directory = getWorkingDirectory(fileName);
-		String fullName = directory + fileName;
+		String fullName = makeFullName(fileName);
 		
-		testGetGeofileToJSON(directory, fullName);
+		testGetGeofileToJSON(fullName);
 	}
 	
 
@@ -67,20 +66,19 @@ public class UpLoadFileManagementTest {
 	public void testMIFAsJSON() throws Exception {
 		
 		String fileName = "pigma_regions_POLYGON.mif";
-		String directory = getWorkingDirectory(fileName);
-		String fullName = directory + fileName;
+		String fullName = makeFullName(fileName);
 		
-		testGetGeofileToJSON(directory, fullName);
+		testGetGeofileToJSON(fullName);
 	}
 
-	private void testGetGeofileToJSON(final String directory, final String fileName) throws Exception{
+	private void testGetGeofileToJSON(final String fileName) throws Exception{
 		
 		FileDescriptor fd = new FileDescriptor(fileName);
 		fd.listOfFiles.add(fileName);
 		fd.listOfExtensions.add(FilenameUtils.getExtension(fileName));
 
 		UpLoadFileManagement fm = new UpLoadFileManagement();
-		fm.setWorkDirectory(directory);
+		fm.setWorkDirectory(FilenameUtils.getFullPath(fileName));
 		fm.setFileDescriptor(fd);
 		
 		
@@ -90,14 +88,18 @@ public class UpLoadFileManagementTest {
 	}
 	
 
-	private String getWorkingDirectory(String fileName) throws Exception{
+	/**
+	 * Returns path+fileName
+	 * @param fileName
+	 * @return
+	 * @throws Exception
+	 */
+	private String makeFullName(String fileName) throws Exception{
 		
-		String resource = this.getClass().getResource(fileName).toString();
+		URL url= this.getClass().getResource(fileName);
 		
-		String directory = FilenameUtils.getFullPath(resource);
-		int i = directory.indexOf(":");
-		directory = directory.substring(i + 1);
+		String fullFileName = url.toURI().getPath();
 
-		return directory;
+		return fullFileName;
 	}
 }

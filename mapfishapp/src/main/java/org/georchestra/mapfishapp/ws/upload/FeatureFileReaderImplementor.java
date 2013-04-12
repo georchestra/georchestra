@@ -17,7 +17,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 interface FeatureFileReaderImplementor {
 	
-
 	/**
 	 * Returns the set of features maintained in the geofile.
 	 * 

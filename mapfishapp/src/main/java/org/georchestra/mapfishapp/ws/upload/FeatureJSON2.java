@@ -53,7 +53,6 @@ import com.vividsolutions.jts.geom.Geometry;
  * For more details about this fix see {@link #writeFeatureCollection(FeatureCollection, Object)} 
  * 
  * @author Mauricio Pazos
- *
  */
 final class FeatureJSON2 extends FeatureJSON {
 

@@ -26,13 +26,23 @@ class FeatureFileReader {
 	private FeatureFileReaderImplementor readerImpl = null;
 
 	/**
-	 * Creates a reader
+	 * Creates a new instance of {@link FeatureFileReader}.
 	 * 
 	 * @param basedir file to read
 	 * @param fileFormat the format
 	 */
 	public FeatureFileReader() {
 		this.readerImpl = createImplementationStrategy();
+	}
+
+	/**
+	 * Creates a new instance of {@link FeatureFileReader}. The reader will use the implementation provided as parameter.
+	 * 
+	 * @param impl
+	 */
+	public FeatureFileReader(FeatureFileReaderImplementor impl) {
+		
+		this.readerImpl = impl;
 	}
 
 	/**

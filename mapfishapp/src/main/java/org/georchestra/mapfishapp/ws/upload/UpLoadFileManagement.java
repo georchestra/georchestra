@@ -309,7 +309,7 @@ public class UpLoadFileManagement {
 	        	
 	        	SimpleFeatureCollection featureCollection = this.reader.getFeatureCollection(new File(fileName), this.fileDescriptor.geoFileType, crs);
 	        	
-	        	FeatureJSON fjson = new FeatureJSON2();// TODO this is a workaround to solve the crs bug
+	        	FeatureJSON fjson = new FeatureJSON2(); // TODO this is a workaround to solve the crs bug
 	        	
 	        	SimpleFeatureType schema = featureCollection.getSchema();
 				fjson.setFeatureType(schema);
@@ -365,7 +365,7 @@ public class UpLoadFileManagement {
         	
         	String ext = FilenameUtils.getExtension(fileName);
         	
-        	FileFormat fileType = FileFormat.getFileFormat(ext);
+        	FileFormat fileType = FileFormat.valueOf(ext);
         	if(fileType != null){
         		this.fileDescriptor.geoFileType = fileType;
         		return fileName;
