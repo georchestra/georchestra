@@ -14,7 +14,6 @@ cas.private.host=localhost
 defaultTarget.port=8080
 public.ssl=443
 private.ssl=8443
-geoserver.server=http://@shared.server.name@:@shared.server.port@
 
 proxy.defaultTarget=http://localhost:8080
 proxy.mapping=\
@@ -27,6 +26,7 @@ proxy.mapping=\
     <entry key="analytics" value="${proxy.defaultTarget}/analytics-private/" />\
     <entry key="static" value="${proxy.defaultTarget}/static-private/" />
 
+# header mapping
 header.mapping=\
     <entry key="sec-email"     value="mail"/>\
     <entry key="sec-firstname" value="givenName"/>\
@@ -35,7 +35,6 @@ header.mapping=\
     <entry key="sec-tel"       value="telephoneNumber"/>
     
 # database health check parameters
-
 checkHealth=@shared.checkhealth.activated@
 psql.host=@shared.psql.host@
 psql.port=@shared.psql.port@
