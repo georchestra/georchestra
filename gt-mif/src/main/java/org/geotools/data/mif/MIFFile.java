@@ -157,6 +157,7 @@ public class MIFFile {
     private File midFileOut = null;
 
     private File prjFile;
+	private MIFProjReader prjReader;
 
     private Object[] featureDefaults = null;
     private char chDelimiter = '\t'; // TAB is the default delimiter if not specified in header
@@ -325,21 +326,19 @@ public class MIFFile {
 		charBuffer.flip();
 		
 		String str = charBuffer.toString();
-		String crsKey = "CoordSys Earth Projection 1";
+		String crsKey = "CoordSys Earth Projection"; // TODO Mauricio: it is necessary take into account other syntax (have a look at mif specification)
 		int i = str.indexOf(crsKey);
 		if(i != -1){
-			String value = str.substring(i + crsKey.length() + 1, str.indexOf("Column"));
-			int srid = searchSRID(Integer.parseInt(value.trim()));
+			String mifCoordSys = str.substring(i + crsKey.length() + 1, str.indexOf("Column") -1);
+			
+			int srid = this.prjReader.toCRS(mifCoordSys); 
+			
+			
 			return srid;
 		}
 		
 		return -1;
     }
-
-	private int searchSRID(int parseInt) {
-		// TODO Auto-generated method stub
-		return 4326 ; //FIXME MAURO impement me
-	}
 
 	/**
      * <p>
@@ -723,11 +722,10 @@ public class MIFFile {
      *
      * @param path The full path of the .mif file, with or without extension
      * @param mustExist True if opening file for reading
-     *
-     * @throws FileNotFoundException
+     * @throws IOException 
      */
     private void initFiles(String path, boolean mustExist)
-        throws FileNotFoundException {
+        throws IOException {
         File file = new File(path);
 
         if (file.isDirectory()) {
@@ -743,6 +741,9 @@ public class MIFFile {
 
         mifFileOut = getFileHandler(file, fName, ".mif.out", false);
         midFileOut = getFileHandler(file, fName, ".mid.out", false);
+        
+		this.prjReader = new MIFProjReader();
+
     }
 
     /**

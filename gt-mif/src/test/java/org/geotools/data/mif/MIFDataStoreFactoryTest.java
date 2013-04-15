@@ -6,12 +6,14 @@ package org.geotools.data.mif;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 
 import org.geotools.data.DataStore;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureSource;
+import org.geotools.referencing.CRS;
 import org.junit.AfterClass;
 import org.junit.Test;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -37,11 +39,11 @@ public class MIFDataStoreFactoryTest extends MIFDataStoreFactory {
 	@Test
 	public void readFeatures() throws Exception{
 
-		HashMap params = new HashMap();
 		
 		URL url= this.getClass().getResource("pigma_regions_POLYGON.mif");  
 		String file = url.toURI().getPath();
 
+		HashMap params = new HashMap();
 		params.put(MIFDataStoreFactory.PARAM_PATH.key, file);
 
 		MIFDataStoreFactory storeFactory = new MIFDataStoreFactory();
@@ -57,6 +59,39 @@ public class MIFDataStoreFactoryTest extends MIFDataStoreFactory {
 		assertNotNull(features);
 
 	}
+	
+	@Test
+	public void reprojectedFeatures() throws Exception{
+		
+		HashMap params = new HashMap();
+
+		// sets the mif file as parameter
+		URL url= this.getClass().getResource("pigma_regions_POLYGON.mif");  
+		String file = url.toURI().getPath();
+		params.put(MIFDataStoreFactory.PARAM_PATH.key, file);
+
+		// sets the crs as parameter
+		MIFProjReader prjReader = new MIFProjReader();
+		
+		CoordinateReferenceSystem crs = CRS.decode("EPSG:4326");
+		String mifcrs = prjReader.checkSRID(crs);
+		params.put(MIFDataStoreFactory.PARAM_COORDSYS.key, mifcrs);
+		
+		
+		// retrieves the features
+		MIFDataStoreFactory storeFactory = new MIFDataStoreFactory();
+		DataStore store = storeFactory.createDataStore(params);
+		SimpleFeatureType type = store.getSchema("pigma_regions_POLYGON");
+		assertNotNull( type.getCoordinateReferenceSystem() ) ;
+
+		SimpleFeatureSource featureSource = store.getFeatureSource(type.getTypeName());
+
+		SimpleFeatureCollection features = featureSource.getFeatures();
+		assertNotNull( features.getSchema().getCoordinateReferenceSystem());
+		
+		assertNotNull(features);
+	}
+	
 
 
 }
