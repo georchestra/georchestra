@@ -68,3 +68,5 @@ Copy WAR files in Tomcat webapps dir:
     cp -f /tmp/georchestra_deploy_tmp/* /srv/tomcat/webapps
     sudo /etc/init.d/tomcat start
 
+This is the basic idea, but one can use more advanced deploy scripts. An example is provided 
+[here](https://github.com/georchestra/georchestra/blob/master/server-deploy/linux_deploy_scripts/Readme.md).
