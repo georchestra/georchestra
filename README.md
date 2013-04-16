@@ -49,18 +49,19 @@ Collect WAR files in a dedicated directory and rename them:
 
     PROFILE=yourown
     mkdir /tmp/georchestra_deploy_tmp
-    cp `find ~/.m2/repository/org/georchestra/ -name *-${PROFILE}.war` /tmp/georchestra_deploy_tmp
     cd /tmp/georchestra_deploy_tmp
-    cp ~/.m2/repository/org/geonetwork-opensource/geonetwork-main/2.6.4-SNAPSHOT/geonetwork-main-2.6.4-SNAPSHOT-${PROFILE}.war geonetwork-private.war
-    mv analytics-1.0-${PROFILE}.war analytics-private.war
-    mv catalogapp-1.0-${PROFILE}.war catalogapp-private.war
-    mv mapfishapp-1.0-${PROFILE}.war mapfishapp-private.war
-    mv cas-server-webapp-1.0-${PROFILE}.war cas.war
-    mv security-proxy-1.0-${PROFILE}.war ROOT.war
-    mv extractorapp-1.0-${PROFILE}.war extractorapp-private.war
-    mv static-1.0-${PROFILE}.war static.war
-    mv downloadform-1.0-${PROFILE}.war downloadform-private.war
-    mv geoserver-webapp-1.0-${PROFILE}.war geoserver-private.war
+    cp `find ~/.m2/repository/ -name *-13.02-${PROFILE}.war` ./
+    
+    mv security-proxy-13.02-${PROFILE}.war ROOT.war
+    mv analytics-13.02-${PROFILE}.war analytics-private.war
+    mv cas-server-webapp-13.02-${PROFILE}.war cas.war
+    mv catalogapp-13.02-${PROFILE}.war catalogapp-private.war
+    mv downloadform-13.02-${PROFILE}.war downloadform-private.war
+    mv extractorapp-13.02-${PROFILE}.war extractorapp-private.war
+    mv geonetwork-main-13.02-${PROFILE}.war geonetwork-private.war
+    mv geoserver-webapp-13.02-${PROFILE}.war geoserver-private.war
+    mv mapfishapp-13.02-${PROFILE}.war mapfishapp-private.war
+    mv static-13.02-${PROFILE}.war static.war
 
 Copy WAR files in Tomcat webapps dir:
 
