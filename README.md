@@ -35,7 +35,7 @@ Then:
 How to customize ?
 ==================
  
-Copy the "template" config directory (or fork the georchestra/template repository) and edit "yourown" to match your needs:
+Copy the "template" config directory (or fork the [georchestra/template](https://github.com/georchestra/template) repository) and edit "yourown" to match your needs:
 
     PROFILE=yourown
     cp -r config/configurations/template config/configurations/${PROFILE}
