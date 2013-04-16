@@ -67,7 +67,7 @@ class FeatureFileReader {
 	 */
 	public SimpleFeatureCollection getFeatureCollection(final File file, final FileFormat fileFormat) throws IOException {
 
-		return this.readerImpl.getFeatureCollection(file, fileFormat);
+		return this.getFeatureCollection(file, fileFormat, null);
 	}
 
 	/**
@@ -81,8 +81,23 @@ class FeatureFileReader {
 	 * @throws IOException
 	 */
 	public SimpleFeatureCollection getFeatureCollection(final File file, final FileFormat fileFormat, final CoordinateReferenceSystem targetCrs) throws IOException {
+		
+		try{
+			return  this.readerImpl.getFeatureCollection(file, fileFormat, targetCrs);
+			
+		} catch(IOException e){
 
-		return this.readerImpl.getFeatureCollection(file, fileFormat, targetCrs);
+			if (this.readerImpl instanceof OGRFeatureReader) {
+				// switch to geotools implementation
+
+				OGR_AVAILABLE = false;
+				this.readerImpl = new GeotoolsFeatureReader();
+
+				return this.readerImpl.getFeatureCollection(file, fileFormat, targetCrs);
+			}
+				
+		}
+		return null;
 	}
 
 	/**
