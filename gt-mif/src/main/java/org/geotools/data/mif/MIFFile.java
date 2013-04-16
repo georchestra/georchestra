@@ -24,6 +24,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.Serializable;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -39,6 +40,7 @@ import java.util.NoSuchElementException;
 import java.util.Vector;
 import java.util.logging.Logger;
 
+import org.geotools.data.DataAccessFactory.Param;
 import org.geotools.data.FeatureReader;
 import org.geotools.data.FeatureWriter;
 import org.geotools.data.PrjFileReader;
@@ -49,13 +51,10 @@ import org.geotools.feature.SchemaException;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.referencing.CRS;
-import org.geotools.referencing.ReferencingFactoryFinder;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -142,7 +141,7 @@ public class MIFFile {
             "org.geotools.data.mif.MIFFile");
 
     // Header information
-    private HashMap header = new HashMap();
+    private HashMap<String, Object> header = new HashMap<String, Object>();
 
     // File IO Variables
     private File mifFile = null;
@@ -254,7 +253,7 @@ public class MIFFile {
      *
      * @throws IOException If the specified mif file could not be opened
      */
-    public MIFFile(String path, Map params) throws IOException {
+    public MIFFile(final String path, final Map<Param, Object> params) throws IOException {
         // TODO use url instead of String
         super();
 
@@ -377,9 +376,8 @@ public class MIFFile {
      * @throws SchemaException Error setting the given FeatureType as the MIF
      *         schema
      */
-    public MIFFile(String path, SimpleFeatureType featureType, HashMap params)
+    public MIFFile(String path, SimpleFeatureType featureType, HashMap<Param, Object> params)
         throws IOException, SchemaException {
-        // TODO use url instead of String
         super();
 
         parseParams(params);
@@ -404,9 +402,9 @@ public class MIFFile {
      *
      * @throws IOException Error getting parameters from the specified map
      */
-    private void parseParams(Map params) throws IOException {
+    private void parseParams(Map<Param, Object> params) throws IOException {
         if (params == null) {
-            params = new HashMap();
+            params = new HashMap<Param, Object>();
         }
 
         // Sets defaults for header
@@ -470,12 +468,12 @@ public class MIFFile {
      *
      * @throws IOException if required parameter is missing
      */
-    private Object getParam(String name, Object defa, boolean required,
-        Map params) throws IOException {
+    private Object getParam(final String name, final Object defa, final boolean required, final Map<Param, Object> params) throws IOException {
         Object result;
 
+        Param param = new Param(name);
         try {
-            result = params.get(name);
+            result = params.get(param);
         } catch (Exception e) {
             result = null;
         }
@@ -548,9 +546,15 @@ public class MIFFile {
      * @param clause
      *
      */
-    public String getHeaderClause(String clause) {
+    public String getHeaderClause(final String clause) {
         try {
-            return (String) getParam(clause, "", false, header);
+            //return (String) getParam(clause, "", false, header);
+            Object value = header.get(clause);
+            if (value == null) {
+                value = "";
+            }
+
+            return value.toString();
         } catch (Exception e) {
             return "";
         }

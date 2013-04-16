@@ -5,8 +5,7 @@ package org.geotools.data.mif;
 
 import static org.junit.Assert.assertNotNull;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.Serializable;
 import java.net.URL;
 import java.util.HashMap;
 
@@ -43,7 +42,7 @@ public class MIFDataStoreFactoryTest extends MIFDataStoreFactory {
 		URL url= this.getClass().getResource("pigma_regions_POLYGON.mif");  
 		String file = url.toURI().getPath();
 
-		HashMap params = new HashMap();
+		HashMap<String, Serializable> params = new HashMap<String, Serializable>();
 		params.put(MIFDataStoreFactory.PARAM_PATH.key, file);
 
 		MIFDataStoreFactory storeFactory = new MIFDataStoreFactory();
@@ -63,7 +62,7 @@ public class MIFDataStoreFactoryTest extends MIFDataStoreFactory {
 	@Test
 	public void reprojectedFeatures() throws Exception{
 		
-		HashMap params = new HashMap();
+		HashMap<String, Serializable> params = new HashMap<String, Serializable>();
 
 		// sets the mif file as parameter
 		URL url= this.getClass().getResource("pigma_regions_POLYGON.mif");  
@@ -76,7 +75,6 @@ public class MIFDataStoreFactoryTest extends MIFDataStoreFactory {
 		CoordinateReferenceSystem crs = CRS.decode("EPSG:4326");
 		String mifcrs = prjReader.checkSRID(crs);
 		params.put(MIFDataStoreFactory.PARAM_COORDSYS.key, mifcrs);
-		
 		
 		// retrieves the features
 		MIFDataStoreFactory storeFactory = new MIFDataStoreFactory();

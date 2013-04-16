@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.geotools.data.*;
+import org.geotools.data.DataAccessFactory.Param;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.opengis.feature.simple.SimpleFeature;
@@ -66,7 +67,7 @@ public class MIFDataStore extends AbstractDataStore {
     private File filePath;
 
     // The parameter maps to pass to MIFFile constructors
-    private HashMap params = null;
+    private HashMap<Param,Object> params = null;
 
     // A map of MIFFileHolders, indexed by FeatureType name
     private HashMap mifFileHolders = new HashMap();
@@ -90,11 +91,10 @@ public class MIFDataStore extends AbstractDataStore {
      *
      * @see MIFFile#MIFFile(String, Map)
      */
-    public MIFDataStore(String path, HashMap params) throws IOException {
-        // TODO use url instead of String
+    public MIFDataStore(final String path, final HashMap<Param,Object> params) throws IOException {
         super(true); // Is writable
 
-        this.params = (params != null) ? params : new HashMap();
+        this.params = (params != null) ? params : new HashMap<Param,Object>();
 
         filePath = new File(String.valueOf(path));
 
@@ -165,8 +165,7 @@ public class MIFDataStore extends AbstractDataStore {
         try {
             File newFile = new File(filePath, featureType.getTypeName()
                     + ".mif");
-            MIFFile mf = new MIFFile(newFile.getAbsolutePath(), featureType,
-                    params);
+            MIFFile mf = new MIFFile(newFile.getAbsolutePath(), featureType, params);
             MIFFileHolder mfh = new MIFFileHolder(mf);
             mifFileHolders.put(mf.getSchema().getTypeName(), mfh);
         } catch (Exception e) {

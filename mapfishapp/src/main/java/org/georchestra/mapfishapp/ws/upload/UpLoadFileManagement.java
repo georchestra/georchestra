@@ -361,13 +361,13 @@ public class UpLoadFileManagement {
 	 */
 	private String searchGeoFile() {
 
+		// FIXME now that geotools implemetation is available it should ask for the available formats for that impelementation (gt or OGR)
         for( String fileName:  this.fileDescriptor.listOfFiles){
         	
         	String ext = FilenameUtils.getExtension(fileName);
         	
-        	FileFormat fileType = FileFormat.valueOf(ext);
-        	if(fileType != null){
-        		this.fileDescriptor.geoFileType = fileType;
+        	if(FileFormat.contains(ext)){
+        		this.fileDescriptor.geoFileType = FileFormat.valueOf(ext);
         		return fileName;
         	}
         }

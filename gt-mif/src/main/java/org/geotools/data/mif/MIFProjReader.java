@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 import org.geotools.referencing.NamedIdentifier;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 
+import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
@@ -59,8 +60,7 @@ public class MIFProjReader {
     /**
      * Constructor
      */
-    public MIFProjReader(String path) throws IOException {
-        // TODO use url instead of String
+    public MIFProjReader(final String path) throws IOException {
         super();
         checkFileName(path);        
     }
@@ -132,7 +132,8 @@ public class MIFProjReader {
                     String strEpsg = line.subSequence(line.indexOf(SRID_PATTERN)+2,line.lastIndexOf(QUOTE)).toString();
                     Integer epsg = Integer.parseInt(strEpsg);
                     String mifCoordSys = line.substring(line.lastIndexOf(QUOTE)+2);
-
+                    mifCoordSys = mifCoordSys.replaceAll("\\s", "");
+                    
                     if (!mapEpsgToMifCoordSys.containsKey( epsg )) {
                         mapEpsgToMifCoordSys.put(epsg, mifCoordSys); 
                     }
@@ -219,7 +220,7 @@ public class MIFProjReader {
         
         if (crs != null) {
             try {
-                Set ident = crs.getIdentifiers();
+                Set<ReferenceIdentifier> ident = crs.getIdentifiers();
                 if ((ident == null || ident.isEmpty()) && crs == DefaultGeographicCRS.WGS84) {
                     code = "4326";
                 } else {
@@ -252,9 +253,12 @@ public class MIFProjReader {
      * @return the EPSG code
      * @throws IOException 
      */
-	public int toCRS(String mifCoordSys) throws IOException {
+	public int toCRS(final String mifCoordSys) throws IOException {
 		
-		Integer epsg = getMapMifCoordSysToEpsg().get(mifCoordSys);
+		// removes spaces from mifCoordSys
+		String cleanedCoordSys = mifCoordSys.replaceAll("\\s", "");
+				
+		Integer epsg = getMapMifCoordSysToEpsg().get(cleanedCoordSys);
 		
 		if(epsg == null){
 			throw new IOException("the mif coordinate system code wasn't found: " + mifCoordSys);
@@ -263,15 +267,21 @@ public class MIFProjReader {
 		return epsg;
 	}
 
-	public String toMifCoordSys(int epsg) throws IOException {
+	/**
+	 * Looks up the Mif coordinate system code associated to the EPSG code, provided as parameter.
+	 * 
+	 * @param epsg
+	 * @return the mif coordinate system code
+	 * 
+	 * @throws IOException
+	 */
+	public String toMifCoordSys(final int epsg) throws IOException {
 		
 		String mifCoordSys = getMapEpsgToMifCoordSys().get(epsg);
 		
 		if(mifCoordSys == null){
 			throw new IOException("the EPSG wasn't found: " + epsg);
 		}
-		
 		return mifCoordSys;
 	}
-    
 }
