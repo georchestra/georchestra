@@ -20,9 +20,11 @@ How to build ?
 
 First, install the required packages: 
 
-    sudo apt-get install ant ant-optional openjdk-6-jdk
+    sudo apt-get install ant ant-optional openjdk-7-jdk
 
-(Note: GeoServer is known to perform better with Oracle JDK)
+Notes: 
+ * openjdk-6-jdk works too 
+ * GeoServer is known to perform better with Oracle JDK
 
 Then:
 
