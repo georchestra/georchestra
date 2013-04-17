@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.HashMap;
 
 import javax.xml.namespace.QName;
@@ -248,7 +249,7 @@ class GeotoolsFeatureReader implements FeatureFileReaderImplementor {
 
         MIFDataStoreFactory storeFactory = new MIFDataStoreFactory();
 		
-		HashMap params = new HashMap();
+		HashMap<String, Serializable> params = new HashMap<String, Serializable>();
         params.put(MIFDataStoreFactory.PARAM_PATH.key, file.getAbsolutePath());
         DataStore store = storeFactory.createDataStore(params);
 

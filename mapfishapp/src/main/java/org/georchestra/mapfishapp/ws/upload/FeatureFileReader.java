@@ -67,7 +67,7 @@ class FeatureFileReader {
 	 */
 	public SimpleFeatureCollection getFeatureCollection(final File file, final FileFormat fileFormat) throws IOException {
 
-		return this.getFeatureCollection(file, fileFormat, null);
+		return getFeatureCollection(file, fileFormat, null);
 	}
 
 	/**
@@ -88,16 +88,18 @@ class FeatureFileReader {
 		} catch(IOException e){
 
 			if (this.readerImpl instanceof OGRFeatureReader) {
-				// switch to geotools implementation
+				// switches to geotools implementation
 
 				OGR_AVAILABLE = false;
 				this.readerImpl = new GeotoolsFeatureReader();
 
 				return this.readerImpl.getFeatureCollection(file, fileFormat, targetCrs);
+			} else {
+				throw e;
 			}
+			
 				
 		}
-		return null;
 	}
 
 	/**
