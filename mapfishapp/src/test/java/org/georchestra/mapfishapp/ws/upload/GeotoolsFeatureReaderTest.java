@@ -30,7 +30,7 @@ public class GeotoolsFeatureReaderTest {
 	private FeatureFileReader reader = new FeatureFileReader(new GeotoolsFeatureReader());
 
 	
-	@Ignore
+	@Test
 	public void testSHPFormat() throws Exception {
 		
 
@@ -47,7 +47,7 @@ public class GeotoolsFeatureReaderTest {
 	 * Transform the features from 4326 to 2154
 	 * @throws Exception
 	 */
-	@Ignore
+	@Test
 	public void testSHPFormatReprojected() throws Exception {
 		
 		int epsgCode = 2154;
@@ -105,7 +105,7 @@ public class GeotoolsFeatureReaderTest {
 		Assert.assertTrue(!fc.isEmpty());
 	}
 
-	@Ignore
+	@Test 
 	public void testGMLFormat() throws Exception {
 		
 
@@ -117,7 +117,7 @@ public class GeotoolsFeatureReaderTest {
 		Assert.assertTrue(!fc.isEmpty());
 	}
 
-	@Ignore
+	@Test
 	public void testKMLFormat() throws Exception {
 		
 
@@ -148,7 +148,7 @@ public class GeotoolsFeatureReaderTest {
 	 * Test method for {@link org.georchestra.mapfishapp.ws.upload.FeatureFileReader#getFormatList()}.
 	 * @throws IOException 
 	 */
-	@Ignore
+	@Test
 	public void testGetFormatList() throws IOException {
 
 		

@@ -214,8 +214,7 @@ class GeotoolsFeatureReader implements FeatureFileReaderImplementor {
 		}
 		
 		
-		// the following strategy doesn't work		
-// the following strategy doesn't work		
+// FIXME the following strategy doesn't work		
 //		InputStream in = new FileInputStream( file );
 //		try {
 //			GML gml = new GML(version);

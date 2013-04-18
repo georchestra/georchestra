@@ -322,6 +322,7 @@ public class UpLoadFileManagement {
 				
 			} catch (Exception e) {
 				final String message = "Failed reading " + fileName + ".  " + e.getMessage();
+				e.printStackTrace(); //FIXME 
 				LOG.error(message);
 				throw new IOException(message, e);
 			}finally{

@@ -8,7 +8,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.URISyntaxException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,7 +18,6 @@ import java.util.logging.Logger;
 
 import org.geotools.referencing.NamedIdentifier;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
-
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -54,19 +54,25 @@ public class MIFProjReader {
     private static ConcurrentHashMap<Integer, String> mapEpsgToMifCoordSys = null;
     private static ConcurrentHashMap<String, Integer> mapMifCoordSysToEpsg = null;
     
-    // File Input Variable : MIF Projection
-    private static File prjFile = null;
+    /** File Input Variable : MIF Projection */
+    private InputStreamReader prjFile;
     
     /**
      * Constructor
      */
     public MIFProjReader(final String path) throws IOException {
         super();
-        checkFileName(path);        
+
+        File file = new File(path);
+        InputStreamReader is = new FileReader(file );
+        
+        checkFileName(file);
+        
+        this.prjFile = is; 
     }
 
     /**
-     * New instance of MIFProjReader. This constructor will try to retrieve the crs from MAPINFOW.PRJ (in resource folder), it it is not
+     * New instance of {@link MIFProjReader}. This constructor will try to retrieve the crs from MAPINFOW.PRJ (in resource folder), it it is not
      * present in the directory an IOException will be thrown.
      * 
      * @param path
@@ -76,13 +82,12 @@ public class MIFProjReader {
         super();
         
 		try {
-	        URL resource = this.getClass().getResource("MAPINFOW.PRJ");
 			
-			String path = resource.toURI().getPath();
+			InputStream is= getClass().getResourceAsStream("MAPINFOW.PRJ");
 			
-	        checkFileName(path);
-	        
-		} catch (URISyntaxException e) {
+			this.prjFile = new InputStreamReader(is);
+
+		} catch (Exception e) {
 			
 			LOGGER.log(Level.SEVERE, e.getMessage());
 			throw new IOException(e);
@@ -92,25 +97,21 @@ public class MIFProjReader {
     /**
      * Check the path name of the PRJ file
      *
-     * @param path The full path of the .mif file, with or without extension
+     * @param path 
      *
      * @throws FileNotFoundException
      */
-    private void checkFileName(String path)
+    private void checkFileName(File file)
         throws FileNotFoundException {
-        File file = new File(path);
 
         if (file.isDirectory()) {
-            throw new FileNotFoundException(path + " is a directory");
+            throw new FileNotFoundException(file.getAbsolutePath() + " is a directory");
         }
 
         if (!file.getName().equals(PRJ_NAME)) {
-            throw new FileNotFoundException(" Unexpected file " + path + " for MapInfo Projection.");
+            throw new FileNotFoundException(" Unexpected file " + file.getAbsolutePath() + " for MapInfo Projection.");
         }
-        
-        prjFile = file; 
     }
-
     
     /**
      * Reads PRJ file stream tokenizer in order to set the maps which maintain the bidirectional relation epsg 1 <---> 1 mifCoordSys
@@ -121,7 +122,7 @@ public class MIFProjReader {
      *
      * @throws IOException
      */
-	private static void readPrjFile(MIFFileTokenizer prj, ConcurrentHashMap<Integer, String> mapEpsgToMifCoordSys, ConcurrentHashMap<String, Integer> mapMifCoordSysToEpsg)
+	private void readPrjFile(MIFFileTokenizer prj, ConcurrentHashMap<Integer, String> mapEpsgToMifCoordSys, ConcurrentHashMap<String, Integer> mapMifCoordSysToEpsg)
         throws IOException {
         try {
 
@@ -182,8 +183,7 @@ public class MIFProjReader {
         return mapMifCoordSysToEpsg ; 
     }
 
-    
-    private static void initCoordSysMaps() throws IOException {
+    private void initCoordSysMaps() throws IOException {
     	
     	MIFFileTokenizer prjTokenizer = null;
         try {
@@ -193,8 +193,8 @@ public class MIFProjReader {
         	mapEpsgToMifCoordSys = new ConcurrentHashMap<Integer, String>();
         
         	prjTokenizer = new MIFFileTokenizer(
-        						new BufferedReader(
-        								new FileReader(prjFile)));  
+        						new BufferedReader(prjFile));
+        	
             readPrjFile(prjTokenizer, mapEpsgToMifCoordSys, MIFProjReader.mapMifCoordSysToEpsg);
         } catch (Exception e) {
             throw new IOException("Can't read PRJ file : " + e.toString());

@@ -20,7 +20,7 @@ class FeatureFileReader {
 
 	private static boolean OGR_AVAILABLE;
 	static{
-		OGR_AVAILABLE = OGRFeatureReader.isOK();
+		OGR_AVAILABLE =  OGRFeatureReader.isOK();
 	}
 
 	private FeatureFileReaderImplementor readerImpl = null;
