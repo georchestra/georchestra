@@ -10,10 +10,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.geotools.referencing.NamedIdentifier;
@@ -29,51 +27,32 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * MIF/MID text file format.
  * </p>
  * 
- * <p>
- * Open issues:
- * </p>
- * 
- * <ul>
- * <li>
- * CoordSys clause parsing is still not supported for reading MapInfo MIF/MID files.
- * </li>
- * </ul>
- * 
  * @author mcoudert
  */
 public class MIFProjReader {
     
     /** The logger for the mif module. */
     protected static final Logger LOGGER = Logger.getLogger(MIFProjReader.class.getName());
+
+    /** maintains the relation Epsg 1<---->1 Mif Coord Sys */ 
+    private static ConcurrentHashMap<Integer, String> mapEpsgToMifCoordSys = null;
+    private static ConcurrentHashMap<String, Integer> mapMifCoordSysToEpsg = null;
     
-    // Constants
+    /** Mapinfo world projection */
     private static final String PRJ_NAME = "MAPINFOW.PRJ";
     private static final String SRID_PATTERN = "\\p";
     private static final String QUOTE = "\"";
     
-    private static ConcurrentHashMap<Integer, String> mapEpsgToMifCoordSys = null;
-    private static ConcurrentHashMap<String, Integer> mapMifCoordSysToEpsg = null;
-    
     /** File Input Variable : MIF Projection */
-    private InputStreamReader prjFile;
+    private static InputStreamReader PRJ_FILE;
+    static{
+    	//  Retrieves the CRSs from MAPINFOW.PRJ (in resource folder).
+		InputStream is= MIFProjReader.class.getResourceAsStream("MAPINFOW.PRJ");
+		PRJ_FILE = new InputStreamReader(is);
+    }
     
     /**
-     * Constructor
-     */
-    public MIFProjReader(final String path) throws IOException {
-        super();
-
-        File file = new File(path);
-        InputStreamReader is = new FileReader(file );
-        
-        checkFileName(file);
-        
-        this.prjFile = is; 
-    }
-
-    /**
-     * New instance of {@link MIFProjReader}. This constructor will try to retrieve the crs from MAPINFOW.PRJ (in resource folder), it it is not
-     * present in the directory an IOException will be thrown.
+     * New instance of {@link MIFProjReader}. 
      * 
      * @param path
      * @throws IOException
@@ -81,18 +60,24 @@ public class MIFProjReader {
     public MIFProjReader() throws IOException {
         super();
         
-		try {
-			
-			InputStream is= getClass().getResourceAsStream("MAPINFOW.PRJ");
-			
-			this.prjFile = new InputStreamReader(is);
-
-		} catch (Exception e) {
-			
-			LOGGER.log(Level.SEVERE, e.getMessage());
-			throw new IOException(e);
-		}
     }
+
+    /**
+     * Constructor
+     * 
+     * @param projectionFile file which contains the CRS <---> MIF Coord Sys relation
+     */
+    public MIFProjReader(final String projectionFile ) throws IOException {
+        super();
+
+        File file = new File(projectionFile);
+        InputStreamReader is = new FileReader(file );
+        
+        checkFileName(file);
+        
+        PRJ_FILE = is; 
+    }
+
     
     /**
      * Check the path name of the PRJ file
@@ -193,7 +178,7 @@ public class MIFProjReader {
         	mapEpsgToMifCoordSys = new ConcurrentHashMap<Integer, String>();
         
         	prjTokenizer = new MIFFileTokenizer(
-        						new BufferedReader(prjFile));
+        						new BufferedReader(PRJ_FILE));
         	
             readPrjFile(prjTokenizer, mapEpsgToMifCoordSys, MIFProjReader.mapMifCoordSysToEpsg);
         } catch (Exception e) {

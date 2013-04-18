@@ -4,6 +4,7 @@
 package org.georchestra.mapfishapp.ws.upload;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -95,15 +96,29 @@ public class GeotoolsFeatureReaderTest {
 	
 	@Test
 	public void testMIFFormat() throws Exception {
-		
 
 		String fullName = makeFullName("pigma_regions_POLYGON.mif");
 		File file = new File(fullName);
 		
 		SimpleFeatureCollection fc = reader.getFeatureCollection(file, FileFormat.mif);
 		
-		Assert.assertTrue(!fc.isEmpty());
+		assertFeatureCollection(fc,  93, 4326);
 	}
+	
+	
+	@Test
+	public void testMIFFormatReporjected() throws Exception {
+		
+		int epsgCode = 2154;
+
+		String fullName = makeFullName("pigma_regions_POLYGON.mif");
+		File file = new File(fullName);
+		
+		SimpleFeatureCollection fc = reader.getFeatureCollection(file, FileFormat.mif, CRS.decode("EPSG:"+ epsgCode));
+		
+		assertFeatureCollection(fc,  93, epsgCode);
+	}
+
 
 	@Test 
 	public void testGMLFormat() throws Exception {

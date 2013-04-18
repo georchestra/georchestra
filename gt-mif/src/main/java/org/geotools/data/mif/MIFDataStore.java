@@ -65,14 +65,14 @@ public class MIFDataStore extends AbstractDataStore {
     public static final String PARAM_GEOMTYPE = "geometryType";
     public static final String PARAM_SRID = "SRID";
 
-    // The path in which MIF/MIDs are being stored, or the single MIF file 
+    /** The path in which MIF/MIDs are being stored, or the single MIF file */ 
     private File filePath;
 
-    // The parameter maps to pass to MIFFile constructors
+    /** The parameter maps to pass to MIFFile constructors*/
     private HashMap<Param,Object> params = null;
 
     // A map of MIFFileHolders, indexed by FeatureType name
-    private HashMap mifFileHolders = new HashMap();
+    private HashMap<String, MIFFileHolder> mifFileHolders = new HashMap<String, MIFFileHolder> ();
 
     /**
      * <p>
@@ -192,10 +192,11 @@ public class MIFDataStore extends AbstractDataStore {
 
         String[] names = new String[mifFileHolders.size()];
         int index = 0;
-
-        for (Iterator i = mifFileHolders.keySet().iterator(); i.hasNext();)
+        
+        Iterator<String> i = mifFileHolders.keySet().iterator();
+        while (i.hasNext()){
             names[index++] = (String) i.next();
-
+        }
         return names;
     }
 
@@ -228,6 +229,14 @@ public class MIFDataStore extends AbstractDataStore {
         throws IOException {
         return getMIFFile(typeName).getFeatureReader();
     }
+    
+    @Override
+    protected  FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(String typeName, Query query)
+    throws IOException
+    {
+      return getMIFFile(typeName).getFeatureReader( query);
+    }
+    
 
     /**
      * Gets a FeatureWriter from a MIFFile object

@@ -24,7 +24,6 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.Serializable;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -44,18 +43,22 @@ import org.geotools.data.DataAccessFactory.Param;
 import org.geotools.data.FeatureReader;
 import org.geotools.data.FeatureWriter;
 import org.geotools.data.PrjFileReader;
+import org.geotools.data.Query;
 import org.geotools.feature.AttributeTypeBuilder;
 import org.geotools.feature.AttributeTypes;
 import org.geotools.feature.FeatureTypes;
 import org.geotools.feature.SchemaException;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.filter.Filter;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -577,6 +580,18 @@ public class MIFFile {
      * @throws IOException
      */
     public  FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader() throws IOException {
+    	
+    	return createReader(null);
+    }
+
+
+	public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(Query query) throws IOException {
+		
+		return createReader(query);
+	}
+
+	private Reader createReader(Query query) throws IOException{
+		
         MIFFileTokenizer mifTokenizer = null;
         MIFFileTokenizer midTokenizer = null;
 
@@ -588,7 +603,14 @@ public class MIFFile {
                         new FileReader(midFile)));
             readMifHeader(true, mifTokenizer); // skips header
 
-            return new Reader(mifTokenizer, midTokenizer);
+            Reader reader;
+            if(query == null){
+                reader =  new Reader(mifTokenizer, midTokenizer);
+            } else {
+                reader = new Reader(mifTokenizer, midTokenizer, query);
+            }
+            return reader;
+            
         } catch (Exception e) {
             if (mifTokenizer != null) {
                 mifTokenizer.close();
@@ -600,7 +622,9 @@ public class MIFFile {
 
             throw new IOException("Error initializing reader: " + e.toString());
         }
+    	
     }
+    
 
     /**
      * Returns a FeatureWriter for writing features to the MIF/MID file.
@@ -1291,6 +1315,7 @@ public class MIFFile {
      * </p>
      */
     private class Reader implements  FeatureReader<SimpleFeatureType, SimpleFeature> {
+    	
         private MIFFileTokenizer mif = null;
         private MIFFileTokenizer mid = null;
         private boolean mifEOF = false;
@@ -1298,9 +1323,10 @@ public class MIFFile {
         private SimpleFeature inputFeature = null;
         private Object[] inputBuffer = null;
         private MIFValueSetter[] fieldValueSetters;
+		private Query query = null;
+		private MathTransform mathTransformer = null;
 
-        private Reader(MIFFileTokenizer mifTokenizer,
-            MIFFileTokenizer midTokenizer) throws IOException {
+        private Reader(MIFFileTokenizer mifTokenizer, MIFFileTokenizer midTokenizer) throws IOException {
             inputBuffer = new Object[numAttribs];
 
             mif = mifTokenizer;
@@ -1318,7 +1344,33 @@ public class MIFFile {
             }
         }
 
-        public boolean hasNext() {
+        public Reader(MIFFileTokenizer mifTokenizer, MIFFileTokenizer midTokenizer, Query query) throws IOException {
+
+        	this(mifTokenizer, midTokenizer);
+
+        	this.query = query;
+        	
+        	if( this.query.getFilter() != null ){
+        			if( this.query.getFilter() != Filter.INCLUDE )
+        					throw new UnsupportedOperationException("Only Filter.INCLUDE is implemented"); // TODO implement Filter
+        	}
+        	
+            // if a reprojected CRS is specified in the query then the geometry is transformed.
+            if(this.query != null ) {
+            	
+            	CoordinateReferenceSystem targetCrs = query.getCoordinateSystemReproject();
+            	if( targetCrs != null ){
+        			try {
+        				this.mathTransformer = CRS.findMathTransform(crs, targetCrs);
+        				
+        			} catch (Exception e) {
+        				throw new IOException(e);
+        			}
+            	}
+            }
+        }
+
+		public boolean hasNext() {
             return (inputFeature != null);
         }
 
@@ -1372,8 +1424,18 @@ public class MIFFile {
          * @throws IOException
          */
         private SimpleFeature readFeature() throws IOException {
+        	
             SimpleFeature feature = null;
             Geometry geom = readGeometry();
+
+            if(this.mathTransformer != null){
+            	try{
+    				geom = JTS.transform(geom, this.mathTransformer);
+            		
+            	} catch (Exception e) {
+            		throw new IOException(e);
+            	}
+            }
 
             if (mifEOF) {
                 return null;
