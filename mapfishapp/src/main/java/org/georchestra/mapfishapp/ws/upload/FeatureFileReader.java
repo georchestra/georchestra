@@ -20,7 +20,7 @@ class FeatureFileReader {
 
 	private static boolean OGR_AVAILABLE;
 	static{
-		OGR_AVAILABLE =  OGRFeatureReader.isOK();
+		OGR_AVAILABLE = false; // FIXME hack for testing  OGRFeatureReader.isOK();
 	}
 
 	private FeatureFileReaderImplementor readerImpl = null;

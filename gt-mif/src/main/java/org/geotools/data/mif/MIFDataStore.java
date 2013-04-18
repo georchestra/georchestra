@@ -28,6 +28,8 @@ import org.geotools.feature.FeatureIterator;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.geometry.BoundingBox;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
 /**
@@ -156,6 +158,7 @@ public class MIFDataStore extends AbstractDataStore {
      * @throws IOException if init path is not a directory or a MIFFile object
      *         cannot be created
      */
+    @Override
     public void createSchema(SimpleFeatureType featureType) throws IOException {
         if (!filePath.isDirectory()) {
             throw new IOException(
@@ -183,7 +186,8 @@ public class MIFDataStore extends AbstractDataStore {
      *
      * @throws IOException Couldn't scan path for files
      */
-    public String[] getTypeNames() throws IOException {
+    @Override
+	public String[] getTypeNames() throws IOException {
         scanFiles(filePath); // re-scans path just in case some file was added
 
         String[] names = new String[mifFileHolders.size()];
@@ -205,7 +209,8 @@ public class MIFDataStore extends AbstractDataStore {
      *
      * @throws IOException
      */
-    public SimpleFeatureType getSchema(String typeName) throws IOException {
+    @Override
+	public SimpleFeatureType getSchema(String typeName) throws IOException {
         return getMIFFile(typeName).getSchema();
     }
 
@@ -218,7 +223,8 @@ public class MIFDataStore extends AbstractDataStore {
      *
      * @throws IOException
      */
-    protected  FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(String typeName)
+    @Override
+	protected  FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(String typeName)
         throws IOException {
         return getMIFFile(typeName).getFeatureReader();
     }
@@ -254,15 +260,26 @@ public class MIFDataStore extends AbstractDataStore {
 
     @Override
     protected ReferencedEnvelope getBounds(Query query) throws IOException {
-        FeatureSource<SimpleFeatureType,SimpleFeature> src = getFeatureSource(query.getTypeName());
-        FeatureIterator<SimpleFeature> features = src.getFeatures(query).features();
-        ReferencedEnvelope bounds = new ReferencedEnvelope(src.getSchema().getCoordinateReferenceSystem());
+    	
+        FeatureSource<SimpleFeatureType,SimpleFeature> fs = getFeatureSource(query.getTypeName());
+        FeatureIterator<SimpleFeature> iter = fs.getFeatures(query).features();
+        
+        ReferencedEnvelope bounds = null;
         try {
-            while(features.hasNext()) {
-                bounds.expandToInclude(new ReferencedEnvelope(features.next().getBounds()));
+            while(iter.hasNext()) {
+                SimpleFeature feature = iter.next();
+                
+				BoundingBox feautreBounds = feature.getBounds();
+				if(bounds == null){
+					CoordinateReferenceSystem crs = feature.getType().getCoordinateReferenceSystem();
+					bounds = new ReferencedEnvelope(crs);
+				} else {
+					bounds.expandToInclude(new ReferencedEnvelope(feautreBounds));
+				}
+				
             }
         } finally {
-            features.close();
+            iter.close();
         }
         return bounds;
     }

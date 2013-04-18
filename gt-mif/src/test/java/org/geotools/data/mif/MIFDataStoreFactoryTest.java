@@ -6,7 +6,6 @@ package org.geotools.data.mif;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
 
 import java.io.Serializable;
 import java.net.URL;
@@ -17,8 +16,10 @@ import org.geotools.data.Query;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.simple.SimpleFeatureSource;
+import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 import org.junit.AfterClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -34,14 +35,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class MIFDataStoreFactoryTest extends MIFDataStoreFactory {
 
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-	}
-	
-	
 	@Test
 	public void readFeatures() throws Exception{
 
@@ -133,6 +126,41 @@ public class MIFDataStoreFactoryTest extends MIFDataStoreFactory {
 		assertFeatureCollection(fc, 93, epsgCode ); 
 	}
 	
+	/**
+	 * test the getBounds method
+	 * 
+	 * @throws Exception 
+	 * 
+	 */
+	@Test
+	public void getBounds() throws Exception{
+		
+		SimpleFeatureCollection fc = retrieveFeature("pigma_regions_POLYGON");
+		ReferencedEnvelope bounds = fc.getBounds();
+		
+		assertNotNull(bounds);
+
+		Integer epsgCode = CRS.lookupEpsgCode( bounds.getCoordinateReferenceSystem(), true );
+		assertEquals( 4326, epsgCode);
+	}
+	
+	/**
+	 * Test getBounds from a FeatureCollection reprojected to 2154.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void getBoundsReprojected() throws Exception{
+		
+		final int targetCRS = 2154;
+		
+		CoordinateReferenceSystem crs = CRS.decode("EPSG:" + targetCRS);
+		SimpleFeatureCollection fc = retrieveFeature("pigma_regions_POLYGON", crs);
+
+		ReferencedEnvelope bounds = fc.getBounds();
+		Integer epsgCode = CRS.lookupEpsgCode( bounds.getCoordinateReferenceSystem(), true );
+		assertEquals( targetCRS, epsgCode);
+	}
 	
 	private void assertFeatureCollection(SimpleFeatureCollection fc, final int countExpected, final int expectedEPSG) throws Exception {
 		
@@ -162,7 +190,7 @@ public class MIFDataStoreFactoryTest extends MIFDataStoreFactory {
 	private void assertFeatureCRS(final SimpleFeature f, final int expectedEPSG) throws Exception {
 
 		CoordinateReferenceSystem crs = f.getFeatureType().getCoordinateReferenceSystem();
- 		assertTrue( expectedEPSG ==CRS.lookupEpsgCode( crs, true) );
+ 		assertEquals( expectedEPSG, CRS.lookupEpsgCode( crs, true) );
 	}
 
 
@@ -190,11 +218,6 @@ public class MIFDataStoreFactoryTest extends MIFDataStoreFactory {
 		Query query = new Query(layerName, Filter.INCLUDE);
 		if(crs != null){
 			query.setCoordinateSystem(crs);
-
-			// in order to reproject the collection the crs provided should be different to the base crs
-			int baseCRS = CRS.lookupEpsgCode(type.getCoordinateReferenceSystem(), true);
-			int requiredCRS = CRS.lookupEpsgCode(crs, true);
-			assertFalse( baseCRS == requiredCRS);
 		}
 		
 		SimpleFeatureCollection featureCollection = featureSource.getFeatures(query);
