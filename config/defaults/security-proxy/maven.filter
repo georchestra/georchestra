@@ -23,8 +23,7 @@ proxy.mapping=\
     <entry key="catalogapp" value="${proxy.defaultTarget}/catalogapp-private/" />\
     <entry key="geoserver" value="${proxy.defaultTarget}/geoserver-private/" />\
     <entry key="downloadform" value="${proxy.defaultTarget}/downloadform-private/" />\
-    <entry key="analytics" value="${proxy.defaultTarget}/analytics-private/" />\
-    <entry key="static" value="${proxy.defaultTarget}/static-private/" />
+    <entry key="analytics" value="${proxy.defaultTarget}/analytics-private/" />
 
 # header mapping
 header.mapping=\
