@@ -15,6 +15,8 @@ import org.junit.Test;
 /**
  * Unit Test for {@link UpLoadFileManagement}
  * 
+ * This unit test require OGR 
+ * 
  * @author Mauricio Pazos
  *
  */
@@ -50,7 +52,7 @@ public class UpLoadFileManagementTest {
 		testGetGeofileToJSON(fullName);
 	}
 	
-	@Ignore // FIXME
+	@Test
 	public void testGMLAsJSON() throws Exception {
 		
 		String fileName = "border.gml";
@@ -60,7 +62,7 @@ public class UpLoadFileManagementTest {
 		
 	}
 
-	@Ignore // FIXME
+	@Test
 	public void testGPXAsJSON() throws Exception {
 		
 		String fileName = "wp.gpx";

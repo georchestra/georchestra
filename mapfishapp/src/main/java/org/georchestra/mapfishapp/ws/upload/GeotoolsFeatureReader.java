@@ -84,8 +84,7 @@ class GeotoolsFeatureReader implements FeatureFileReaderImplementor {
 		case mif:
 			return readMifFile(file, targetCRS);
 		case gml:
-			// TODO it is necessary to figure out how to retrieve the gml version from file
-			return  readGmlFile(file, targetCRS, Version.GML2);
+			return readGmlFile(file, targetCRS);  
 		case kml:
 			return  readKmlFile(file, targetCRS);
 
@@ -94,6 +93,25 @@ class GeotoolsFeatureReader implements FeatureFileReaderImplementor {
 		}
 	}
 
+
+	/**
+	 * Reads the GML file. The method try to read using GML2 if it cannot then try using GML3
+	 *  
+	 * @param file
+	 * @param targetCRS
+	 * @return {@link SimpleFeatureCollection}
+	 * @throws IOException
+	 */
+	private SimpleFeatureCollection readGmlFile(File file,	CoordinateReferenceSystem targetCRS) throws IOException {
+		
+		SimpleFeatureCollection fc = null;
+		fc = readGmlFile(file, targetCRS, Version.GML2);
+		
+		if(fc == null){
+			fc = readGmlFile(file, targetCRS, Version.GML3);
+		}
+		return fc;
+	}
 
 	/**
 	 * Creates a feature collection from a kml file. CRS EPSG:4326 is assumed for the kml file.

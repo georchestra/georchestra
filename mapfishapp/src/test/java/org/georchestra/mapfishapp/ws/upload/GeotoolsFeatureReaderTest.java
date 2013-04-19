@@ -132,10 +132,8 @@ public class GeotoolsFeatureReaderTest {
 		assertFeatureCollection(fc,  93, epsgCode);
 	}
 
-
 	@Test 
-	public void testGMLFormat() throws Exception {
-		
+	public void testGML2Format() throws Exception {
 
 		String fullName = makeFullName("border.gml");
 		File file = new File(fullName);
@@ -145,9 +143,20 @@ public class GeotoolsFeatureReaderTest {
 		Assert.assertTrue(!fc.isEmpty());
 	}
 
+	@Test 
+	public void testGML3Format() throws Exception {
+
+		String fullName = makeFullName("states-3.gml");
+		File file = new File(fullName);
+		
+		SimpleFeatureCollection fc = reader.getFeatureCollection(file, FileFormat.gml);
+		
+		Assert.assertNotNull(fc);
+		Assert.assertTrue(!fc.isEmpty());
+	}
+	
 	@Test
 	public void testKMLFormat() throws Exception {
-		
 
 		String fullName = makeFullName("regions.kml");
 		File file = new File(fullName);
