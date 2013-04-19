@@ -97,7 +97,7 @@ public class UpLoadFileManagement {
 	}
 
 	/**
-	 * Create the directory structura taking into account the directory path
+	 * Creates the directory structure taking into account the directory path
 	 * @param path
 	 * @throws IOException
 	 */
@@ -322,7 +322,6 @@ public class UpLoadFileManagement {
 				
 			} catch (Exception e) {
 				final String message = "Failed reading " + fileName + ".  " + e.getMessage();
-				e.printStackTrace(); //FIXME 
 				LOG.error(message);
 				throw new IOException(message, e);
 			}finally{

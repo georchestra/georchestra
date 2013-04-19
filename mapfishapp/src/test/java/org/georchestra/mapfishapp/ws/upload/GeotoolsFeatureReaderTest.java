@@ -4,7 +4,6 @@
 package org.georchestra.mapfishapp.ws.upload;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -16,7 +15,6 @@ import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.referencing.CRS;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -30,6 +28,21 @@ public class GeotoolsFeatureReaderTest {
 
 	private FeatureFileReader reader = new FeatureFileReader(new GeotoolsFeatureReader());
 
+
+	@Test
+	public void testSwitchToGeotoolsReaderImpl() throws Exception {
+		
+		FeatureFileReader reader = new FeatureFileReader(new MockReader());
+
+		String fullName = makeFullName("points-4326.shp");
+		File file = new File(fullName);
+		
+		SimpleFeatureCollection fc = reader.getFeatureCollection(file, FileFormat.shp);
+		
+		assertFeatureCollection(fc,  2, 4326);
+
+		assertTrue( reader.readerImpl instanceof GeotoolsFeatureReader );
+	}
 	
 	@Test
 	public void testSHPFormat() throws Exception {
@@ -51,7 +64,7 @@ public class GeotoolsFeatureReaderTest {
 	@Test
 	public void testSHPFormatReprojected() throws Exception {
 		
-		int epsgCode = 2154;
+		final int epsgCode = 2154;
 		
 		String fullName = makeFullName("points-4326.shp");
 		File file = new File(fullName);
@@ -109,7 +122,7 @@ public class GeotoolsFeatureReaderTest {
 	@Test
 	public void testMIFFormatReporjected() throws Exception {
 		
-		int epsgCode = 2154;
+		final int epsgCode = 2154;
 
 		String fullName = makeFullName("pigma_regions_POLYGON.mif");
 		File file = new File(fullName);

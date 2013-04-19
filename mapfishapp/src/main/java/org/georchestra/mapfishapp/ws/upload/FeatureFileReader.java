@@ -20,10 +20,10 @@ class FeatureFileReader {
 
 	private static boolean OGR_AVAILABLE;
 	static{
-		OGR_AVAILABLE = false; // FIXME hack for testing  OGRFeatureReader.isOK();
+		OGR_AVAILABLE = OGRFeatureReader.isOK();
 	}
 
-	private FeatureFileReaderImplementor readerImpl = null;
+	protected FeatureFileReaderImplementor readerImpl = null;
 
 	/**
 	 * Creates a new instance of {@link FeatureFileReader}.
@@ -85,9 +85,9 @@ class FeatureFileReader {
 		try{
 			return  this.readerImpl.getFeatureCollection(file, fileFormat, targetCrs);
 			
-		} catch(IOException e){
+		} catch(Exception e){
 
-			if (this.readerImpl instanceof OGRFeatureReader) {
+			if (!(this.readerImpl instanceof GeotoolsFeatureReader)) {
 				// switches to geotools implementation
 
 				OGR_AVAILABLE = false;
@@ -95,7 +95,7 @@ class FeatureFileReader {
 
 				return this.readerImpl.getFeatureCollection(file, fileFormat, targetCrs);
 			} else {
-				throw e;
+				throw new IOException(e);
 			}
 			
 				
