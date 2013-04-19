@@ -50,15 +50,12 @@ import org.geotools.feature.FeatureTypes;
 import org.geotools.feature.SchemaException;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
-import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.filter.Filter;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -603,13 +600,7 @@ public class MIFFile {
                         new FileReader(midFile)));
             readMifHeader(true, mifTokenizer); // skips header
 
-            Reader reader;
-            if(query == null){
-                reader =  new Reader(mifTokenizer, midTokenizer);
-            } else {
-                reader = new Reader(mifTokenizer, midTokenizer, query);
-            }
-            return reader;
+            return new Reader(mifTokenizer, midTokenizer);
             
         } catch (Exception e) {
             if (mifTokenizer != null) {
@@ -1324,8 +1315,6 @@ public class MIFFile {
         private Object[] inputBuffer = null;
         private MIFValueSetter[] fieldValueSetters;
 		private Query query = null;
-		private int targetSRID = 0;
-		private MathTransform mathTransformer = null;
 
         private Reader(MIFFileTokenizer mifTokenizer, MIFFileTokenizer midTokenizer) throws IOException {
             inputBuffer = new Object[numAttribs];
@@ -1343,60 +1332,6 @@ public class MIFFile {
                 inputFeature = readFeature();
             }
         }
-
-        public Reader(MIFFileTokenizer mifTokenizer, MIFFileTokenizer midTokenizer, Query query) throws IOException {
-
-            inputBuffer = new Object[numAttribs];
-
-            mif = mifTokenizer;
-            mid = midTokenizer;
-
-            setQuery(query);
-
-            // numAttribs == 0 when Reader is called from within readMifHeader for determining geometry Type
-            if (numAttribs > 0) {
-                try {
-                    fieldValueSetters = getValueSetters();
-                } catch (SchemaException e) {
-                    throw new IOException(e.getMessage());
-                }
-
-                inputFeature = readFeature();
-            }
-
-        }
-
-        /**
-         * Initialize the filter and the geometry transformation based on the query.
-         *   
-         * @param query
-         * @throws IOException
-         */
-		private void setQuery(Query query) throws IOException {
-			
-        	this.query = query;
-            if(this.query != null ) {
-            	
-            	if( this.query.getFilter() != null ){
-        			if( this.query.getFilter() != Filter.INCLUDE )
-        					throw new UnsupportedOperationException("Only Filter.INCLUDE is implemented"); // TODO implement Filter
-            	}
-            	
-                // if a reprojected CRS is specified in the query then the geometry will be transformed (see next method).
-            	CoordinateReferenceSystem targetCrs = query.getCoordinateSystemReproject();
-            	if( targetCrs != null ){
-        			try {
-                        this.targetSRID = CRS.lookupEpsgCode(targetCrs,false);
-
-        				this.mathTransformer = CRS.findMathTransform(crs, targetCrs);
-        				
-        			} catch (Exception e) {
-        				throw new IOException(e);
-        			}
-            	}
-            }
-			
-		}
 
 		public boolean hasNext() {
             return (inputFeature != null);
@@ -1458,16 +1393,6 @@ public class MIFFile {
 
             if (mifEOF) {
                 return null;
-            }
-
-            if(this.mathTransformer != null){
-            	try{
-    				geom = JTS.transform(geom, this.mathTransformer); 
-    				geom.setSRID(this.targetSRID);
-            		
-            	} catch (Exception e) {
-            		throw new IOException(e);
-            	}
             }
 
             if (!mid.readLine()) {

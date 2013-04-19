@@ -58,46 +58,6 @@ public class MIFDataStoreFactoryTest extends MIFDataStoreFactory {
 
 	}
 	
-// FIXME remove this test	
-//	@Test
-//	public void reprojectedFeatures() throws Exception{
-//		
-//		HashMap<String, Serializable> params = new HashMap<String, Serializable>();
-//
-//		// sets the mif file as parameter
-//		URL url= this.getClass().getResource("regions_two.mif");  
-//		String file = url.toURI().getPath();
-//		params.put(MIFDataStoreFactory.PARAM_PATH.key, file);
-//
-//		// sets the crs as parameter
-//		MIFProjReader prjReader = new MIFProjReader();
-//		
-//		CoordinateReferenceSystem crs = CRS.decode("EPSG:4326");
-//		String mifcrs = prjReader.checkSRID(crs);
-//		params.put(MIFDataStoreFactory.PARAM_COORDSYS.key, mifcrs);
-//		
-//		// retrieves the features
-//		MIFDataStoreFactory storeFactory = new MIFDataStoreFactory();
-//		DataStore store = storeFactory.createDataStore(params);
-//		SimpleFeatureType type = store.getSchema("regions_two");
-//		assertNotNull( type.getCoordinateReferenceSystem() ) ;
-//
-//		SimpleFeatureSource featureSource = store.getFeatureSource(type.getTypeName());
-//
-//		SimpleFeatureCollection featureCollection = featureSource.getFeatures();
-//		assertNotNull( featureCollection.getSchema().getCoordinateReferenceSystem());
-//		
-//		assertNotNull(featureCollection);
-//
-//		int i= 1;
-//		SimpleFeatureIterator iter = featureCollection.features();
-//		while(iter.hasNext()){
-//			iter.next();
-//			i++;
-//		}
-//		assertEquals(94, i);
-//	}
-	
 	/** 
 	 * Retrieves the features using the CRS registered in the mif file
 	 * @throws Exception
@@ -117,7 +77,7 @@ public class MIFDataStoreFactoryTest extends MIFDataStoreFactory {
 	 * @throws Exception
 	 */
 	@Test
-	public void retrieveFeaturesReprojectedToCRS() throws Exception{
+	public void retrieveFeaturesReprojectedTo2154() throws Exception{
 		
 		final int epsgCode = 2154;
 		CoordinateReferenceSystem crs = CRS.decode("EPSG:" + epsgCode);
