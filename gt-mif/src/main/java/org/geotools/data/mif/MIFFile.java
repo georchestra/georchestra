@@ -101,6 +101,8 @@ import com.vividsolutions.jts.io.ParseException;
  * @version $Id: MIFFile.java 30921 2008-07-05 07:51:23Z jgarnett $
  */
 public class MIFFile {
+    private static Logger LOGGER = org.geotools.util.logging.Logging.getLogger(MIFFile.class.getName());
+
     // Geometry type identifier constants 
     private static final String TYPE_NONE = "none";
     private static final String TYPE_POINT = "point";
@@ -140,8 +142,6 @@ public class MIFFile {
     private static final String DEFAULT_PEN = "Pen (1,2,0)";
     private static final String DEFAULT_BRUSH = "Brush (2,16777215,16777215)";
     private static final String DEFAULT_SYMBOL = "Symbol (34,0,12)";
-    private static Logger LOGGER = org.geotools.util.logging.Logging.getLogger(
-            "org.geotools.data.mif.MIFFile");
 
     // Header information
     private HashMap<String, Object> header = new HashMap<String, Object>();
@@ -1324,6 +1324,7 @@ public class MIFFile {
         private Object[] inputBuffer = null;
         private MIFValueSetter[] fieldValueSetters;
 		private Query query = null;
+		private int targetSRID = 0;
 		private MathTransform mathTransformer = null;
 
         private Reader(MIFFileTokenizer mifTokenizer, MIFFileTokenizer midTokenizer) throws IOException {
@@ -1339,28 +1340,54 @@ public class MIFFile {
                 } catch (SchemaException e) {
                     throw new IOException(e.getMessage());
                 }
-
                 inputFeature = readFeature();
             }
         }
 
         public Reader(MIFFileTokenizer mifTokenizer, MIFFileTokenizer midTokenizer, Query query) throws IOException {
 
-        	this(mifTokenizer, midTokenizer);
+            inputBuffer = new Object[numAttribs];
 
+            mif = mifTokenizer;
+            mid = midTokenizer;
+
+            setQuery(query);
+
+            // numAttribs == 0 when Reader is called from within readMifHeader for determining geometry Type
+            if (numAttribs > 0) {
+                try {
+                    fieldValueSetters = getValueSetters();
+                } catch (SchemaException e) {
+                    throw new IOException(e.getMessage());
+                }
+
+                inputFeature = readFeature();
+            }
+
+        }
+
+        /**
+         * Initialize the filter and the geometry transformation based on the query.
+         *   
+         * @param query
+         * @throws IOException
+         */
+		private void setQuery(Query query) throws IOException {
+			
         	this.query = query;
-        	
-        	if( this.query.getFilter() != null ){
-        			if( this.query.getFilter() != Filter.INCLUDE )
-        					throw new UnsupportedOperationException("Only Filter.INCLUDE is implemented"); // TODO implement Filter
-        	}
-        	
-            // if a reprojected CRS is specified in the query then the geometry is transformed.
             if(this.query != null ) {
             	
+            	if( this.query.getFilter() != null ){
+        			if( this.query.getFilter() != Filter.INCLUDE )
+        					throw new UnsupportedOperationException("Only Filter.INCLUDE is implemented"); // TODO implement Filter
+            	}
+            	
+                // if a reprojected CRS is specified in the query then the geometry will be transformed (see next method).
             	CoordinateReferenceSystem targetCrs = query.getCoordinateSystemReproject();
             	if( targetCrs != null ){
         			try {
+                        this.targetSRID = CRS.lookupEpsgCode(targetCrs,false);
+
         				this.mathTransformer = CRS.findMathTransform(crs, targetCrs);
         				
         			} catch (Exception e) {
@@ -1368,7 +1395,8 @@ public class MIFFile {
         			}
             	}
             }
-        }
+			
+		}
 
 		public boolean hasNext() {
             return (inputFeature != null);
@@ -1428,17 +1456,18 @@ public class MIFFile {
             SimpleFeature feature = null;
             Geometry geom = readGeometry();
 
+            if (mifEOF) {
+                return null;
+            }
+
             if(this.mathTransformer != null){
             	try{
-    				geom = JTS.transform(geom, this.mathTransformer);
+    				geom = JTS.transform(geom, this.mathTransformer); 
+    				geom.setSRID(this.targetSRID);
             		
             	} catch (Exception e) {
             		throw new IOException(e);
             	}
-            }
-
-            if (mifEOF) {
-                return null;
             }
 
             if (!mid.readLine()) {
