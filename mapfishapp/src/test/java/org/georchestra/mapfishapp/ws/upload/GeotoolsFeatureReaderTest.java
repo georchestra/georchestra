@@ -15,9 +15,15 @@ import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.referencing.CRS;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.GeometryDescriptor;
+import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * 
@@ -62,7 +68,7 @@ public class GeotoolsFeatureReaderTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void testSHPFormatReprojected() throws Exception {
+	public void testSHPFormatTo2154() throws Exception {
 		
 		final int epsgCode = 2154;
 		
@@ -75,6 +81,34 @@ public class GeotoolsFeatureReaderTest {
 		
 	}
 	
+	private void assertFeatureCollectionFromGML(SimpleFeatureCollection fc, final int countExpected, final int expectedEPSG) throws Exception {
+		
+		CoordinateReferenceSystem schemaCRS = fc.getSchema().getCoordinateReferenceSystem();
+		
+		assertNotNull(schemaCRS);
+		
+ 		assertTrue( expectedEPSG ==CRS.lookupEpsgCode( schemaCRS, true) );
+		
+		SimpleFeatureIterator iter = fc.features();
+		try{
+			int i= 0;
+			while(iter.hasNext()){
+				
+				SimpleFeature f = iter.next();
+				
+				Geometry geom = (Geometry) f.getDefaultGeometry();
+				assert(geom.getSRID() == expectedEPSG);
+				
+				
+				i++;
+			}
+			assertTrue(countExpected == i);
+			
+		} finally {
+			iter.close();
+		}
+	}
+
 	private void assertFeatureCollection(SimpleFeatureCollection fc, final int countExpected, final int expectedEPSG) throws Exception {
 		
 		CoordinateReferenceSystem schemaCRS = fc.getSchema().getCoordinateReferenceSystem();
@@ -89,7 +123,8 @@ public class GeotoolsFeatureReaderTest {
 			while(iter.hasNext()){
 				
 				SimpleFeature f = iter.next();
-				assertFeatureCRS(f, expectedEPSG);
+				
+				assertFeatureTypeCRS(f.getFeatureType(), expectedEPSG);
 				
 				i++;
 			}
@@ -100,10 +135,20 @@ public class GeotoolsFeatureReaderTest {
 		}
 	}
 
-	private void assertFeatureCRS(final SimpleFeature f, final int expectedEPSG) throws Exception {
+	private void assertFeatureTypeCRS(final SimpleFeatureType t, final int expectedEPSG) throws Exception {
 
-		CoordinateReferenceSystem crs = f.getFeatureType().getCoordinateReferenceSystem();
+		CoordinateReferenceSystem crs = t.getCoordinateReferenceSystem();
  		assertTrue( expectedEPSG ==CRS.lookupEpsgCode( crs, true) );
+	}
+	
+	private void assertGeometryCRS(final GeometryDescriptor geom, final int expectedEPSG) throws FactoryException{
+		
+		CoordinateReferenceSystem crs = geom.getType().getCoordinateReferenceSystem();
+		Integer code = CRS.lookupEpsgCode(crs, true);
+		assertTrue(code == expectedEPSG);
+		
+//		assertTrue( expectedEPSG == geom.getGeometryType().;
+//		assertTrue( expectedEPSG == geom.getSRID());
 	}
 	
 	
@@ -132,7 +177,7 @@ public class GeotoolsFeatureReaderTest {
 		assertFeatureCollection(fc,  93, epsgCode);
 	}
 
-	@Test 
+	@Test
 	public void testGML2Format() throws Exception {
 
 		String fullName = makeFullName("border.gml");
@@ -140,10 +185,23 @@ public class GeotoolsFeatureReaderTest {
 		
 		SimpleFeatureCollection fc = reader.getFeatureCollection(file, FileFormat.gml);
 		
-		Assert.assertTrue(!fc.isEmpty());
+		assertFeatureCollectionFromGML(fc,  50, 4326);
 	}
+	
+	@Test
+	public void testGML2FormatTo2154() throws Exception {
 
-	@Test 
+		String fullName = makeFullName("border.gml");
+		File file = new File(fullName);
+		
+		final int epsgCode = 2154;
+		SimpleFeatureCollection fc = reader.getFeatureCollection(file, FileFormat.gml, CRS.decode("EPSG:"+ epsgCode));
+		
+		assertFeatureCollectionFromGML(fc,  50, epsgCode);
+	}
+	
+
+	@Ignore 
 	public void testGML3Format() throws Exception {
 
 		String fullName = makeFullName("states-3.gml");

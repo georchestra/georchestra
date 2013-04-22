@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.xml.namespace.QName;
@@ -24,6 +25,9 @@ import org.geotools.data.mif.MIFDataStoreFactory;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureSource;
+import org.geotools.feature.AttributeTypeBuilder;
+import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotools.feature.type.FeatureTypeFactoryImpl;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.kml.KML;
 import org.geotools.kml.KMLConfiguration;
@@ -32,6 +36,9 @@ import org.geotools.xml.Configuration;
 import org.geotools.xml.StreamingParser;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
@@ -105,9 +112,9 @@ class GeotoolsFeatureReader implements FeatureFileReaderImplementor {
 	private SimpleFeatureCollection readGmlFile(File file,	CoordinateReferenceSystem targetCRS) throws IOException {
 		
 		SimpleFeatureCollection fc = null;
-		fc = readGmlFile(file, targetCRS, Version.GML2);
-		
-		if(fc == null){
+		try{
+			fc = readGmlFile(file, targetCRS, Version.GML2);
+		} catch(IOException e)  {
 			fc = readGmlFile(file, targetCRS, Version.GML3);
 		}
 		return fc;
@@ -193,34 +200,56 @@ class GeotoolsFeatureReader implements FeatureFileReaderImplementor {
 					: new org.geotools.gml3.GMLConfiguration();
 			StreamingParser parser = new StreamingParser(cfg , in,  new QName(org.geotools.gml2.GML.NAMESPACE, "featureMember") );
 			
+			int targetSRID = 0;
+			if(targetCRS != null){
+				targetSRID = CRS.lookupEpsgCode(targetCRS, true);
+			}
+			
 			CoordinateReferenceSystem sourceCRS;
 	        MathTransform mathTransform = null;
-			ListFeatureCollection list = null;
+			ListFeatureCollection fc = null;
 			SimpleFeature feature;
 			while( (feature = (SimpleFeature) parser.parse()) != null){
 				
 				Geometry geom = (Geometry) feature.getDefaultGeometry();
-				if (list == null) {
-					// the first time sets the feature collection with the schema and crs
-					list = new ListFeatureCollection(feature.getFeatureType());
-					int srid = geom.getFactory().getSRID();
+				
+				// initializes the feature collection
+				if (fc == null) {
+					int srid = geom.getSRID();
 					if(srid > 0 ){
 						sourceCRS = CRS.decode("EPSG:"+ srid );
 					} else {
 			    		sourceCRS = CRS.decode("EPSG:4326" );
 					}
+					SimpleFeatureType type;
 		    		if((targetCRS != null) && !sourceCRS.equals(targetCRS)){
+			    		// transforms the feature type to the target crs,  creates the feature collection 
+						// and finds the math transformation required
+		    			type = SimpleFeatureTypeBuilder.retype(feature.getFeatureType(), targetCRS);
+
 		    			mathTransform = CRS.findMathTransform(sourceCRS, targetCRS);
+		    		} else {
+		    			// uses the original feature type 
+		    			type = SimpleFeatureTypeBuilder.retype(feature.getFeatureType(), sourceCRS);
 		    		}
+					fc = new ListFeatureCollection(type);
+
 				}
+				// reproject the feature's geometry it it is necessary before add the feature to the new feature collection.
 	        	if(mathTransform  != null){
 	        		// transformation is required
 	        		Geometry reprojectedGeometry= JTS.transform(geom, mathTransform);
+	        		reprojectedGeometry.setSRID(targetSRID);
 					feature.setDefaultGeometry(reprojectedGeometry);
 	        	}
-	        	list.add(feature);
+	        	fc.add(feature);
 			}
-			return list;
+			if(fc == null){
+				final String msg = "Fail reading GML file ("+ version + "). It cannot read the file " + file.getAbsoluteFile();
+				LOG.warn(msg);
+				throw new IOException(msg);
+			}
+			return fc;
 			
 		} catch (Exception e) {
 			LOG.error(e.getMessage());
@@ -230,29 +259,7 @@ class GeotoolsFeatureReader implements FeatureFileReaderImplementor {
 		
 			in.close();
 		}
-		
-		
-// FIXME the following strategy doesn't work		
-//		InputStream in = new FileInputStream( file );
-//		try {
-//			GML gml = new GML(version);
-//			SimpleFeatureCollection features = gml.decodeFeatureCollection(in);
-//			
-//			if( !targetCRS.equals(features.getSchema().getCoordinateReferenceSystem()) ) {
-//				features = new ReprojectingFeatureCollection(features, targetCRS);
-//			}
-//			return features;
-//			
-//		} catch (Exception e) {
-//			LOG.error(e.getMessage());
-//			throw new IOException(e);
-//		} finally{
-//			in.close();
-//		}
-		
 	}
-
-
 
 	/**
 	 * Reads the features from MIF file.
@@ -316,12 +323,16 @@ class GeotoolsFeatureReader implements FeatureFileReaderImplementor {
 		
 		SimpleFeatureType schema = store.getSchema(typeName);
 
-		SimpleFeatureSource featureSource = store.getFeatureSource(schema.getTypeName());
-		
 		Query query = new Query(schema.getTypeName(), Filter.INCLUDE);
+		
+		CoordinateReferenceSystem baseCRS = store.getSchema(schema.getTypeName()).getCoordinateReferenceSystem();
+		query.setCoordinateSystem(baseCRS);
 		if(targetCRS != null){
 			query.setCoordinateSystemReproject(targetCRS);
 		}
+		
+		SimpleFeatureSource featureSource = store.getFeatureSource(schema.getTypeName());
+
 		SimpleFeatureCollection features = featureSource.getFeatures(query);
 		
 		return features;
