@@ -20,7 +20,7 @@ isOk () {
       exit $2;
  fi
 }
-USAGE () {
+function USAGE {
     echo "deploy.to.*.sh [-P <project_to_deploy>] [-m <deploy_mode>] [-D <property=value>] [-X] target"
     echo "  -P <project_to_deploy> "
     echo "      the modules (like mapfishapp) to deploy. There can be multiple -p parameters"
@@ -78,32 +78,38 @@ DEPLOY_CACHE=/var/cache/deploy
 
 CHECKOUT_DIR=$DEPLOY_CACHE/checkout
 if [ ! -d $CHECKOUT_DIR ] ; then
+    echo "[deploy] cloning georchestra"
     mkdir -p $CHECKOUT_DIR
-    sudo -u deploy git clone --recursive git://github.com/georchestra/georchestra.git $CHECKOUT_DIR
+    sudo -u deploy git clone -b master --recursive git://github.com/georchestra/georchestra.git $CHECKOUT_DIR
 fi
 
 if [ ! -d $CHECKOUT_DIR/config/configurations/pigma ] ; then
-    sudo -u deploy svn checkout https://project.camptocamp.com/svn/aquitaine_pigma/trunk/config-configuration-pigma/ $CHECKOUT_DIR/config/configurations/pigma
+    echo "[deploy] cloning pigma config"
+    sudo -u deploy git clone --recursive https://github.com/camptocamp/georchestra-pigma-configuration.git $CHECKOUT_DIR/config/configurations/pigma
 fi
+
+
+echo "[deploy] updating configuration"
+cd $CHECKOUT_DIR/config/configurations/pigma
+sudo -u deploy git reset --hard 
+sudo -u deploy git clean -xfd
+sudo -u deploy git pull origin master
+
+echo "[deploy] updating georchestra"
 cd $CHECKOUT_DIR
-
-sudo -u deploy svn revert -R $CHECKOUT_DIR/config/configurations/pigma
-sudo -u deploy svn up $CHECKOUT_DIR/config/configurations/pigma
-
 sudo -u deploy git clean -xf
 sudo -u deploy git reset --hard
+sudo -u deploy git pull 
 
+echo "[deploy] cleaning geonetwork"
 cd $CHECKOUT_DIR/geonetwork
 sudo -u deploy git clean -xdf
 sudo -u deploy git reset --hard
+
+echo "[deploy] updating submodules"
 cd $CHECKOUT_DIR
-
-sudo -u deploy git pull origin master
+sudo -u deploy git submodule sync
 sudo -u deploy git submodule update --init
-
-# copy htdocs error page from PIGMA config to htdocs/error:
-cp -r $CHECKOUT_DIR/config/configurations/pigma/htdocs/* /var/www/aquitaine_pigma/htdocs/
-cp -r $CHECKOUT_DIR/config/configurations/pigma/htdocs/* /var/www/cms/htdocs/
 
 
 ARCHIVE=$DEPLOY_CACHE/archive
@@ -113,7 +119,7 @@ set -x
 MVN="/var/cache/deploy/checkout/build-tools/maven/bin/mvn"
 sudo -u deploy $MVN clean $SYSTEM_PROPS
 #isOk "clean georchestra" $?
-sudo -u deploy $MVN install $PROFILES $SYSTEM_PROPS
+sudo -u deploy $MVN clean install $PROFILES $SYSTEM_PROPS
 isOk "build georchestra" $?
 cd server-deploy
 sudo -u deploy $MVN $PROFILES -Dnon-interactive=true $SYSTEM_PROPS
