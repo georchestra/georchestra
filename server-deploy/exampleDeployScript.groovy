@@ -29,12 +29,12 @@ def ssh = new SSH(log:log,settings:settings,host:"server1")
 
 // create an object for deploying wars to a unix-based machine using SSH
 def server1Deployer = new SSHWarDeployer(
-        log: log,
-        ssh: ssh,
-        projectProperties: project.properties,
-        webappDir: "/srv/tomcat/tomcat1/webapps",
-        startServerCommand: "sudo /etc/init.d/tomcat-tomcat1 start",
-        stopServerCommand: "sudo /etc/init.d/tomcat-tomcat1 stop"
+    log: log,
+    ssh: ssh,
+    projectProperties: project.properties,
+    webappDir: "/srv/tomcat/tomcat1/webapps",
+    startServerCommand: "sudo /etc/init.d/tomcat-tomcat1 start",
+    stopServerCommand: "sudo /etc/init.d/tomcat-tomcat1 stop"
 )
 
 // deploy all artifacts except the geoserver artifact using the server1Deployer 
@@ -49,7 +49,7 @@ if (geoserverArtifact != null) {
   def geoserverSSH = ssh.changeHost("server2")
   // create a deployer based on the tomcat1Deployer but use the new ssh object
   // (since this will deploy to a different server)
-  def geoserverDeployer = tomcat1Deployer.copy(ssh: geoserverSSH)
+  def geoserverDeployer = server1Deployer.copy(ssh: geoserverSSH)
   // finally deploy
   geoserverDeployer.deploy()
 }
