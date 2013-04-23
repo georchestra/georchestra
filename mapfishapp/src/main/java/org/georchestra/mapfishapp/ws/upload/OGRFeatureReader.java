@@ -148,7 +148,6 @@ final class OGRFeatureReader implements FeatureFileReaderImplementor {
 	 * @return true means that the drivers are available.
 	 */
 	public static boolean isOK() {
-
 		JniOGR ogr  = new JniOGR();
 
 		ArrayList<String> availableDrivers = new ArrayList<String>();

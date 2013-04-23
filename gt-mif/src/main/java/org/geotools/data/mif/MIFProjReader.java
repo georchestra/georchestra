@@ -246,7 +246,7 @@ public class MIFProjReader {
 		Integer epsg = getMapMifCoordSysToEpsg().get(cleanedCoordSys);
 		
 		if(epsg == null){
-			throw new IOException("the mif coordinate system code wasn't found: " + mifCoordSys);
+			throw new IOException("The EPSG code wasn't found for the mif coordinate system: " + mifCoordSys);
 		}
 		
 		return epsg;

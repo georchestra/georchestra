@@ -6,8 +6,11 @@ package org.geotools.data.mif;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
 
@@ -38,7 +41,7 @@ public class MIFDataStoreFactoryTest extends MIFDataStoreFactory {
 	public void readFeatures() throws Exception{
 
 		
-		URL url= this.getClass().getResource("regions_two.mif");  
+		URL url= getClass().getResource("regions_two.mif");  
 		String file = url.toURI().getPath();
 
 		HashMap<String, Serializable> params = new HashMap<String, Serializable>();
@@ -55,8 +58,29 @@ public class MIFDataStoreFactoryTest extends MIFDataStoreFactory {
 		assertNotNull( features.getSchema().getCoordinateReferenceSystem());
 		
 		assertNotNull(features);
-
 	}
+	
+	@Test
+	public void crsNotFound() throws URISyntaxException {
+
+		final String layerName = "SBB-NETZ-12-res20_line-train_120919";
+		URL url= getClass().getResource(layerName + ".mif");  
+		String file = url.toURI().getPath();
+
+		try{
+			HashMap<String, Serializable> params = new HashMap<String, Serializable>();
+			params.put(MIFDataStoreFactory.PARAM_PATH.key, file);
+
+			MIFDataStoreFactory storeFactory = new MIFDataStoreFactory();
+			storeFactory.createDataStore(params);
+			
+			fail();
+		} catch (IOException e){
+			
+			assertTrue(true);
+		}
+	}
+	
 	
 	/** 
 	 * Retrieves the features using the CRS registered in the mif file
