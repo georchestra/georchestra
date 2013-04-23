@@ -1,6 +1,8 @@
 # clean docs when they are 1 day old
 maxDocAgeInMinutes=1440
 docTempDir=/tmp/mapfishapp
+language=@shared.language@
+
 #you can provide multiple entries
 credentials=\
 <entry key="@shared.server.name@">\
@@ -8,5 +10,3 @@ credentials=\
         <constructor-arg index="0" value="@shared.privileged.geoserver.user@:@shared.privileged.geoserver.pass@" />\
     </bean>\
 </entry>
-
-language=@shared.language@
