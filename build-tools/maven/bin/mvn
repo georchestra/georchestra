@@ -153,6 +153,8 @@ if [ -z "$JAVA_HOME" ] ; then
 fi
 
 CLASSWORLDS_LAUNCHER=org.codehaus.plexus.classworlds.launcher.Launcher
+MAVEN_OPTS="$MAVEN_OPTS -Xms64m -Xmx1g -XX:PermSize=128m -XX:MaxPermSize=256m"
+
 
 # For Cygwin, switch paths to Windows format before running java
 if $cygwin; then
