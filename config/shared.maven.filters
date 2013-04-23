@@ -34,7 +34,7 @@ shared.psql.ogc.statistics.db=ogcstatistics
 shared.ogc.statistics.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.psql.ogc.statistics.db@
 
 shared.checkhealth.activated=false
-shared.psql.checkhealth.db=shared.psql.geonetwork.db
+shared.psql.checkhealth.db=@shared.psql.geonetwork.db@
 shared.checkhealth.max_db_connections=170
 
 shared.download_form.activated=false
