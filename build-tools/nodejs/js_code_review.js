@@ -2,7 +2,7 @@
 // based on the esprima example: http://esprima.org/doc/#nestedternary
 // see http://esprima.org/demo/parse.html# for parsed code structure
 
-// Usage: node test_esprima.js /path/to/some/directory
+// Usage: node js_code_review.js /path/to/some/directory
 
 /*jslint node:true sloppy:true plusplus:true */
 
@@ -61,6 +61,7 @@ walk(dirname, function (err, results) {
     }
 
     var errors=0;
+    console.log('Check js code in ' + dirname);
     results.forEach(function (filename) {
         var shortname, first, content, syntax;
 
@@ -122,7 +123,7 @@ walk(dirname, function (err, results) {
 
     });
     
-    console.log('\nnodejs_geor_rules.js - end of the test - number of errors: ' + errors);
+    console.log(errors + ' errors');
     process.exit(errors);
 });
 
