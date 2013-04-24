@@ -6,4 +6,6 @@ node_js:
 branches:
   only:
     - test_travisci
-script: "node nodejs_test.js"
+
+install: npm install esprima
+script: "node nodejs_geor_rules.js ./extractorapp/src/main/webapp/app/js/GEOR_Lang/"
