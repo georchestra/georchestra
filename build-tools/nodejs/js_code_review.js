@@ -80,21 +80,6 @@ walk(dirname, function (err, results) {
             console.log('  Line', node.loc.start.line, ':', problem);
         }
 
-        function checkConditional(node) {
-            var condition;
-
-            if (node.consequent.type === 'ConditionalExpression' ||
-                    node.alternate.type === 'ConditionalExpression') {
-
-                condition = content.substring(node.test.range[0], node.test.range[1]);
-                if (condition.length > 20) {
-                    condition = condition.substring(0, 20) + '...';
-                }
-                condition = '"' + condition + '"';
-                report(node, 'Nested ternary for ' + condition);
-            }
-        }
-        
         function checkQuotes(node) {
 			// '' quotes are allowed only if the string contains ""
 			if ((node.raw[0] !== '"') && (node.value.indexOf('"') < 0)) {
