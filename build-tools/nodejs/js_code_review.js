@@ -81,26 +81,25 @@ walk(dirname, function (err, results) {
         }
 
         function checkQuotes(node) {
-			// '' quotes are allowed only if the string contains ""
-			if ((node.raw[0] !== '"') && (node.value.indexOf('"') < 0)) {
-				report(node, 'Incorrect use of quotes: ' + node.raw);
-				errors++;
-				return 1;
-			}
-			return 0;
-		}
-		
-		/* Find "Property" objects with raw beginning with other thing that "\"" */
-		function checkProperty(node) {
-			return checkQuotes(node.key) || checkQuotes(node.value);
-		}
+            // '' quotes are allowed only if the string contains ""
+            if ((node.raw[0] !== '"') && (node.value.indexOf('"') < 0)) {
+                report(node, 'Incorrect use of quotes: ' + node.raw);
+                errors++;
+            }
+        }
+
+        /* Find "Property" objects with raw beginning with other thing that "\"" */
+        function checkProperty(node) {
+            checkQuotes(node.key);
+            checkQuotes(node.value);
+        }
 
         try {
             content = fs.readFileSync(filename, 'utf-8');
             syntax = esprima.parse(content, { tolerant: true, loc: true, range: true, raw: true });
             traverse(syntax, function (node) {
                 if (node.type === 'Property') {
-                    return checkProperty(node);
+                    checkProperty(node);
                 }
             });
         } catch (e) {
