@@ -68,7 +68,7 @@ public class UpLoadFileManagement {
 	
 	private String workDirectory;
 
-    private FeatureFileReader reader  = new FeatureFileReader();
+    private AbstractFeatureGeoFileReader reader  = new AbstractFeatureGeoFileReader();
 
 	public UpLoadFileManagement() {
 	}

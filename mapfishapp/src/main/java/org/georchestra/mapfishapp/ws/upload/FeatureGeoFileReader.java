@@ -7,7 +7,7 @@ import org.geotools.data.simple.SimpleFeatureCollection;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
- * Feature file reader interface.
+ * Feature geofile reader interface.
  * 
  * <p>
  * The implementations of this interface provides the access to the feature which are stored in specific file formats. 
@@ -15,7 +15,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * 
  * @author Mauricio Pazos
  */
-interface FeatureFileReaderImplementor {
+interface FeatureGeoFileReader {
 	
 	/**
 	 * Returns the set of features maintained in the geofile.
@@ -24,9 +24,9 @@ interface FeatureFileReaderImplementor {
 	 * @param fileFormat
 	 * 
 	 * @return {@link SimpleFeatureCollection}
-	 * @throws IOException
+	 * @throws IOException, UnsupportedGeofileFormatException
 	 */
-	public SimpleFeatureCollection getFeatureCollection(final File file, final FileFormat fileFormat) throws IOException;
+	public SimpleFeatureCollection getFeatureCollection(final File file, final FileFormat fileFormat) throws IOException, UnsupportedGeofileFormatException;
 
 	/**
 	 * Returns the set of features maintained in the geofile, reprojected in the target CRS.
@@ -37,9 +37,9 @@ interface FeatureFileReaderImplementor {
 	 * 
 	 * @return {@link SimpleFeatureCollection} in the target CRS
 	 * 
-	 * @throws IOException
+	 * @throws IOException, UnsupportedGeofileFormatException
 	 */
-	public SimpleFeatureCollection getFeatureCollection(final File file, final FileFormat fileFormat, final CoordinateReferenceSystem targetCrs) throws IOException;
+	public SimpleFeatureCollection getFeatureCollection(final File file, final FileFormat fileFormat, final CoordinateReferenceSystem targetCrs) throws IOException, UnsupportedGeofileFormatException;
 
 	/**
 	 * @return List of available format

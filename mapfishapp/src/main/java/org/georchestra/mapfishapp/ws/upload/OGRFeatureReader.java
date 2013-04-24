@@ -34,7 +34,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Mauricio Pazos
  * 
  */
-final class OGRFeatureReader implements FeatureFileReaderImplementor {
+final class OGRFeatureReader implements FeatureGeoFileReader {
 	
 	private static final Log LOG = LogFactory.getLog(OGRFeatureReader.class.getPackage().getName());
 
@@ -97,16 +97,21 @@ final class OGRFeatureReader implements FeatureFileReaderImplementor {
 
 
 	/**
-	 * Returns the set of features maintained in the geofile, reprojected in the target CRS
+	 * Returns the set of features maintained in the geofile, reprojected in the target CRS.
+	 * 
+	 * @throws IOException,  UnsupportedGeofileFormatException 
 	 */
 	@Override
-	public SimpleFeatureCollection getFeatureCollection(final File file, final FileFormat fileFormat, final CoordinateReferenceSystem targetCRS) throws IOException {
+	public SimpleFeatureCollection getFeatureCollection(final File file, final FileFormat fileFormat, final CoordinateReferenceSystem targetCRS) throws IOException, UnsupportedGeofileFormatException {
 		assert  file != null && fileFormat != null;
 
 		try{
 			String fullFileName = file.getAbsolutePath();
 
 			OGRDriver driver =  DRIVERS.get(fileFormat);
+			if(driver == null){
+				throw new UnsupportedGeofileFormatException("The file format is not supported: " + fileFormat );
+			}
 			String ogrDriver = driver.getName();
 
 			OGRDataStore store = new OGRDataStore(fullFileName, ogrDriver, null,  new JniOGR() );
@@ -137,7 +142,7 @@ final class OGRFeatureReader implements FeatureFileReaderImplementor {
 
 	@Override
 	public SimpleFeatureCollection getFeatureCollection(File basedir, FileFormat fileFormat)
-			throws IOException {
+			throws IOException, UnsupportedGeofileFormatException {
 			
 		return getFeatureCollection(basedir, fileFormat, null);
 	}
@@ -148,20 +153,27 @@ final class OGRFeatureReader implements FeatureFileReaderImplementor {
 	 * @return true means that the drivers are available.
 	 */
 	public static boolean isOK() {
-		JniOGR ogr  = new JniOGR();
-
-		ArrayList<String> availableDrivers = new ArrayList<String>();
-		for (int i = 0; i < ogr.GetDriverCount(); i++) {
 		
-			Object driver = ogr.GetDriver(i);
-			String name = ogr.DriverGetName(driver);
-			availableDrivers.add(name.toUpperCase());
-		}
-		for(OGRDriver requiredDriver: DRIVERS.values()){
+		try{
+			JniOGR ogr  = new JniOGR();
+		
+			ArrayList<String> availableDrivers = new ArrayList<String>();
+			for (int i = 0; i < ogr.GetDriverCount(); i++) {
 			
-			if(!availableDrivers.contains(requiredDriver.getName().toUpperCase()) ){
-				return false;
+				Object driver = ogr.GetDriver(i);
+				String name = ogr.DriverGetName(driver);
+				availableDrivers.add(name.toUpperCase());
 			}
+			for(OGRDriver requiredDriver: DRIVERS.values()){
+				
+				if(!availableDrivers.contains(requiredDriver.getName().toUpperCase()) ){
+					return false;
+				}
+			}
+		} catch(Error e)  {
+			String msg = "cannot use the ogr implementation";
+			LOG.warn(msg, e);
+			return false;
 		}
 		
 		return true;

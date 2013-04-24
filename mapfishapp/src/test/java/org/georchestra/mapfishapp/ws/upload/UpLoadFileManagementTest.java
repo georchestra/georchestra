@@ -55,7 +55,7 @@ public class UpLoadFileManagementTest {
 	@Test
 	public void testGMLAsJSON() throws Exception {
 		
-		String fileName = "regions.gml";
+		String fileName = "border.gml";
 		String fullName = makeFullName(fileName);
 
 		testGetGeofileToJSON(fullName);

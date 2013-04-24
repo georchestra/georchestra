@@ -32,13 +32,13 @@ import com.vividsolutions.jts.geom.Geometry;
  */
 public class GeotoolsFeatureReaderTest {
 
-	private FeatureFileReader reader = new FeatureFileReader(new GeotoolsFeatureReader());
+	private AbstractFeatureGeoFileReader reader = new AbstractFeatureGeoFileReader(new GeotoolsFeatureReader());
 
 
 	@Test
 	public void testSwitchToGeotoolsReaderImpl() throws Exception {
 		
-		FeatureFileReader reader = new FeatureFileReader(new MockReader());
+		AbstractFeatureGeoFileReader reader = new AbstractFeatureGeoFileReader(new MockReader());
 
 		String fullName = makeFullName("points-4326.shp");
 		File file = new File(fullName);
@@ -53,14 +53,12 @@ public class GeotoolsFeatureReaderTest {
 	@Test
 	public void testSHPFormat() throws Exception {
 		
-
 		String fullName = makeFullName("points-4326.shp");
 		File file = new File(fullName);
 		
 		SimpleFeatureCollection fc = reader.getFeatureCollection(file, FileFormat.shp);
 		
 		assertFeatureCollection(fc,  2, 4326);
-		
 	}
 
 	/**
@@ -78,7 +76,6 @@ public class GeotoolsFeatureReaderTest {
 		SimpleFeatureCollection fc = reader.getFeatureCollection(file, FileFormat.shp, CRS.decode("EPSG:"+ epsgCode) );
 		
 		assertFeatureCollection(fc,  2, epsgCode);
-		
 	}
 	
 	private void assertFeatureCollectionFromGML(SimpleFeatureCollection fc, final int countExpected, final int expectedEPSG) throws Exception {
@@ -165,7 +162,7 @@ public class GeotoolsFeatureReaderTest {
 	
 	
 	@Test
-	public void testMIFFormatReporjected() throws Exception {
+	public void testMIFFormatTo2154() throws Exception {
 		
 		final int epsgCode = 2154;
 
@@ -201,7 +198,7 @@ public class GeotoolsFeatureReaderTest {
 	}
 	
 
-	@Ignore 
+	@Test 
 	public void testGML3Format() throws Exception {
 
 		String fullName = makeFullName("states-3.gml");
@@ -240,7 +237,7 @@ public class GeotoolsFeatureReaderTest {
 	}
 
 	/**
-	 * Test method for {@link org.georchestra.mapfishapp.ws.upload.FeatureFileReader#getFormatList()}.
+	 * Test method for {@link org.georchestra.mapfishapp.ws.upload.AbstractFeatureGeoFileReader#getFormatList()}.
 	 * @throws IOException 
 	 */
 	@Test

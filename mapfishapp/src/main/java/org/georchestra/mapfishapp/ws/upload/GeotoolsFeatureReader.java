@@ -46,7 +46,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * @author Mauricio Pazos
  *
  */
-class GeotoolsFeatureReader implements FeatureFileReaderImplementor {
+class GeotoolsFeatureReader implements FeatureGeoFileReader {
 
 	private static final Log LOG = LogFactory.getLog(GeotoolsFeatureReader.class.getPackage().getName());
 	
@@ -192,7 +192,7 @@ class GeotoolsFeatureReader implements FeatureFileReaderImplementor {
 			Configuration cfg = (version == Version.GML2)
 					? new org.geotools.gml2.GMLConfiguration()
 					: new org.geotools.gml3.GMLConfiguration();
-			StreamingParser parser = new StreamingParser(cfg , in,  new QName(org.geotools.gml2.GML.NAMESPACE, "featureMember") );
+			StreamingParser parser = new StreamingParser(cfg , in,  SimpleFeature.class );
 			
 			int targetSRID = 0;
 			if(targetCRS != null){

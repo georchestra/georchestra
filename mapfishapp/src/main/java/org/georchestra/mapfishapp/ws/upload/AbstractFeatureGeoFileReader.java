@@ -12,35 +12,36 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Defines the abstract interface (Bridge Pattern). This class is responsible of create the implementation OGR or Geotools for the 
- * feature reader. Thus the client don't need to create a specific reader implementation. 
+ * feature reader. Thus the client don't need to create a specific reader implementation.
  * 
  * @author Mauricio Pazos
  */
-class FeatureFileReader {
+class AbstractFeatureGeoFileReader implements FeatureGeoFileReader{
 
+	/** check if the OGR implementation is live */
 	private static boolean OGR_AVAILABLE;
 	static{
 		OGR_AVAILABLE = OGRFeatureReader.isOK();
 	}
 
-	protected FeatureFileReaderImplementor readerImpl = null;
+	protected FeatureGeoFileReader readerImpl = null;
 
 	/**
-	 * Creates a new instance of {@link FeatureFileReader}.
+	 * Creates a new instance of {@link AbstractFeatureGeoFileReader}.
 	 * 
 	 * @param basedir file to read
 	 * @param fileFormat the format
 	 */
-	public FeatureFileReader() {
+	public AbstractFeatureGeoFileReader() {
 		this.readerImpl = createImplementationStrategy();
 	}
 
 	/**
-	 * Creates a new instance of {@link FeatureFileReader}. The reader will use the implementation provided as parameter.
+	 * Creates a new instance of {@link AbstractFeatureGeoFileReader}. The reader will use the implementation provided as parameter.
 	 * 
 	 * @param impl
 	 */
-	public FeatureFileReader(FeatureFileReaderImplementor impl) {
+	public AbstractFeatureGeoFileReader(FeatureGeoFileReader impl) {
 		
 		this.readerImpl = impl;
 	}
@@ -64,8 +65,9 @@ class FeatureFileReader {
 	 * @return {@link SimpleFeatureCollection}
 	 * 
 	 * @throws IOException
+	 * @throws UnsupportedGeofileFormatException 
 	 */
-	public SimpleFeatureCollection getFeatureCollection(final File file, final FileFormat fileFormat) throws IOException {
+	public SimpleFeatureCollection getFeatureCollection(final File file, final FileFormat fileFormat) throws IOException, UnsupportedGeofileFormatException {
 
 		return getFeatureCollection(file, fileFormat, null);
 	}
@@ -79,13 +81,14 @@ class FeatureFileReader {
 	 * 
 	 * @return {@link SimpleFeatureCollection}
 	 * @throws IOException
+	 * @throws UnsupportedGeofileFormatException 
 	 */
-	public SimpleFeatureCollection getFeatureCollection(final File file, final FileFormat fileFormat, final CoordinateReferenceSystem targetCrs) throws IOException {
+	public SimpleFeatureCollection getFeatureCollection(final File file, final FileFormat fileFormat, final CoordinateReferenceSystem targetCrs) throws IOException, UnsupportedGeofileFormatException {
 		
 		try{
 			return  this.readerImpl.getFeatureCollection(file, fileFormat, targetCrs);
 			
-		} catch(Exception e){
+		} catch(IOException e){
 
 			if (!(this.readerImpl instanceof GeotoolsFeatureReader)) {
 				// switches to geotools implementation
@@ -93,21 +96,29 @@ class FeatureFileReader {
 				OGR_AVAILABLE = false;
 				this.readerImpl = new GeotoolsFeatureReader();
 
-				return this.readerImpl.getFeatureCollection(file, fileFormat, targetCrs);
+				// now try to read using the geotools implementation
+				try {
+					return this.readerImpl.getFeatureCollection(file, fileFormat, targetCrs);
+					
+				} catch (UnsupportedGeofileFormatException gtUnsupoortFileFormat) {
+					throw gtUnsupoortFileFormat;
+				}
 			} else {
+				// it is Geotools implementation, so this class cannot manage the exception;
 				throw new IOException(e);
 			}
-			
 				
+		} catch (UnsupportedGeofileFormatException e) {
+			throw e;
 		}
 	}
 
 	/**
 	 * Selects which of the implementations must be created.
 	 */
-	private static FeatureFileReaderImplementor createImplementationStrategy(){
+	private static FeatureGeoFileReader createImplementationStrategy(){
 
-		FeatureFileReaderImplementor implementor = null; 
+		FeatureGeoFileReader implementor = null; 
 		if( isOgrAvailable() ){
 
 			implementor = new OGRFeatureReader();
