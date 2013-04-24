@@ -109,7 +109,11 @@ class GeotoolsFeatureReader implements FeatureGeoFileReader {
 		try{
 			fc = readGmlFile(file, targetCRS, Version.GML2);
 		} catch(IOException e)  {
+			LOG.warn("fails reading with GML2 reader. Try using GML3");
+			
 			fc = readGmlFile(file, targetCRS, Version.GML3);
+
+			LOG.warn("GML3 readier ends successful");
 		}
 		return fc;
 	}

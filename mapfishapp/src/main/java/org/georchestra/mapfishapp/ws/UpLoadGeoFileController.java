@@ -19,6 +19,8 @@ import org.georchestra.mapfishapp.ws.upload.FileDescriptor;
 import org.georchestra.mapfishapp.ws.upload.FileFormat;
 import org.georchestra.mapfishapp.ws.upload.UpLoadFileManagement;
 import org.geotools.referencing.CRS;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -152,14 +154,51 @@ public final class UpLoadGeoFileController {
 		this.gmlSizeLimit = gmlSizeLimit;
 	}
 
-	@RequestMapping(value="/formats/*", method = RequestMethod.GET)
+	/**
+	 * Returns the set of file formats which this service can manage. 
+	 * 
+	 * <pre>
+	 * URL example
+	 * 
+	 * http://localhost:8080/mapfishapp/ws/formats
+	 * </pre>
+	 *   
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
+	@RequestMapping(value="/formats", method = RequestMethod.GET)
 	public void formats(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		
-		// TODO transform the format list to json list and response 
 		FileFormat[] formatList = this.fileManagement.getFormatList();
 		
+		response.setCharacterEncoding(responseCharset);
+		//response.setContentType("application/json");
+		response.setContentType("text/html");
 		
-		throw new UnsupportedOperationException("impplement me");
+		PrintWriter out = response.getWriter();
+		try {
+			out.println(fileFormatListToJSON( formatList));
+		} finally {
+			out.close();
+		}
+	}
+
+	private String fileFormatListToJSON(FileFormat[] formatList) throws IOException {
+
+		try {
+			JSONArray jsonFormatArray = new JSONArray();
+			for (int i=0; i < formatList.length; i++) {
+				
+				jsonFormatArray.put(i, formatList[i].toString());
+			}
+			return jsonFormatArray.toString();
+		} catch (JSONException e) {
+			
+			LOG.error(e.getMessage());
+			
+			throw new IOException("The file formats aren't available");
+		}
 	}
 
 	/**
