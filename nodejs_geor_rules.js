@@ -10,7 +10,6 @@ var fs = require('fs'),
     esprima = require('esprima'),
     dirname = process.argv[2];
 
-
 // Executes visitor on the object and its children (recursively).
 function traverse(object, visitor) {
     var key, child;
@@ -61,7 +60,7 @@ walk(dirname, function (err, results) {
         return;
     }
 
-	i=0;
+    var errors=0;
     results.forEach(function (filename) {
         var shortname, first, content, syntax;
 
@@ -99,7 +98,7 @@ walk(dirname, function (err, results) {
 			// '' quotes are allowed only if the string contains ""
 			if ((node.raw[0] !== '"') && (node.value.indexOf('"') < 0)) {
 				report(node, 'Incorrect use of quotes: ' + node.raw);
-				i++;
+				errors++;
 				return 1;
 			}
 			return 0;
@@ -122,6 +121,9 @@ walk(dirname, function (err, results) {
         }
 
     });
-    console.log('\nnodejs_geor_rules.js - end of the test - number of errors: ' + i);
-    return i;
+    
+    console.log('\nnodejs_geor_rules.js - end of the test - number of errors: ' + errors);
+    process.exit(errors);
 });
+
+
