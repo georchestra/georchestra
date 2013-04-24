@@ -1,4 +1,9 @@
 language: node_js
 node_js:
   - "0.6"
+
+# whitelist
+branches:
+  only:
+    - test_travisci
 script: "node nodejs_test.js"
