@@ -49,6 +49,7 @@ class AbstractFeatureGeoFileReader implements FeatureGeoFileReader{
 	/**
 	 * @return the list of available format depending on the reader implementation.
 	 */
+	@Override
 	public FileFormat[] getFormatList(){
 
 		return this.readerImpl.getFormatList();
@@ -67,6 +68,7 @@ class AbstractFeatureGeoFileReader implements FeatureGeoFileReader{
 	 * @throws IOException
 	 * @throws UnsupportedGeofileFormatException 
 	 */
+	@Override
 	public SimpleFeatureCollection getFeatureCollection(final File file, final FileFormat fileFormat) throws IOException, UnsupportedGeofileFormatException {
 
 		return getFeatureCollection(file, fileFormat, null);
@@ -83,6 +85,7 @@ class AbstractFeatureGeoFileReader implements FeatureGeoFileReader{
 	 * @throws IOException
 	 * @throws UnsupportedGeofileFormatException 
 	 */
+	@Override
 	public SimpleFeatureCollection getFeatureCollection(final File file, final FileFormat fileFormat, final CoordinateReferenceSystem targetCrs) throws IOException, UnsupportedGeofileFormatException {
 		
 		try{
