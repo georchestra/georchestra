@@ -1,14 +1,14 @@
+// Usage: node js_code_review.js /path/to/some/directory /path/to/other/directory
 
 // based on the esprima example: http://esprima.org/doc/#nestedternary
 // see http://esprima.org/demo/parse.html# for parsed code structure
-
-// Usage: node js_code_review.js /path/to/some/directory
 
 /*jslint node:true sloppy:true plusplus:true */
 
 var fs = require('fs'),
     esprima = require('esprima'),
-    dirname = process.argv[2];
+    async = require('async'),
+    dirs = process.argv.slice(2);
 
 // Executes visitor on the object and its children (recursively).
 function traverse(object, visitor) {
@@ -36,7 +36,7 @@ function walk(dir, done) {
         (function next() {
             var file = list[i++];
             if (!file) {
-                return done(null, results);
+                return done(null, {'dir': dir, 'results': results});
             }
             file = dir + '/' + file;
             fs.stat(file, function (err, stat) {
@@ -54,61 +54,74 @@ function walk(dir, done) {
     });
 }
 
-walk(dirname, function (err, results) {
+async.map(dirs, walk, function (err, results) {
     if (err) {
         console.log('Error', err);
         return;
     }
 
     var errors=0;
-    console.log('Check js code in ' + dirname);
-    results.forEach(function (filename) {
-        var shortname, first, content, syntax;
+    results.forEach(function (result) {
+        console.log('Check js code in ' + result.dir);
+        result.results.forEach(function (filename) {
+            var shortname, dirname, first, content, syntax;
 
-        shortname = filename;
-        first = true;
+            shortname = filename;
+            dirname = result.dir;
+            first = true;
 
-        if (shortname.substr(0, dirname.length) === dirname) {
-            shortname = shortname.substr(dirname.length + 1, shortname.length);
-        }
-
-        function report(node, problem) {
-            if (first === true) {
-                console.log(shortname + ': ');
-                first = false;
+            if (shortname.substr(0, dirname.length) === dirname) {
+                shortname = shortname.substr(dirname.length + 1, shortname.length);
             }
-            console.log('  Line', node.loc.start.line, ':', problem);
-        }
 
-        function checkQuotes(node) {
-            // '' quotes are allowed only if the string contains ""
-            if ((node.raw[0] !== '"') && (node.value.indexOf('"') < 0)) {
-                report(node, 'Incorrect use of quotes: ' + node.raw);
-                errors++;
-            }
-        }
-
-        /* Find "Property" objects with raw beginning with other thing that "\"" */
-        function checkProperty(node) {
-            checkQuotes(node.key);
-            checkQuotes(node.value);
-        }
-
-        try {
-            content = fs.readFileSync(filename, 'utf-8');
-            syntax = esprima.parse(content, { tolerant: true, loc: true, range: true, raw: true });
-            traverse(syntax, function (node) {
-                if (node.type === 'Property') {
-                    checkProperty(node);
+            function report(node, problem) {
+                if (first === true) {
+                    console.log('  ' + shortname + ': ');
+                    first = false;
                 }
-            });
-        } catch (e) {
-        }
+                console.log('    Line', node.loc.start.line, ':', problem);
+            }
 
+            function checkQuotes(node) {
+                // '' quotes are allowed only if the string contains ""
+                if ((node.raw[0] !== '"') && (node.value.indexOf('"') < 0)) {
+                    report(node, 'Incorrect use of quotes: ' + node.raw);
+                    errors++;
+                }
+            }
+
+            // Find "Property" objects with raw beginning with other thing that "\""
+            function checkProperty(node) {
+                checkQuotes(node.key);
+                checkQuotes(node.value);
+            }
+
+            try {
+                content = fs.readFileSync(filename, 'utf-8');
+                syntax = esprima.parse(content, { tolerant: true, loc: true, range: true, raw: true });
+                traverse(syntax, function (node) {
+                    if (node.type === 'Property') {
+                        checkProperty(node);
+                    }
+                });
+            } catch (e) {
+            }
+        })
     });
     
     console.log(errors + ' errors');
     process.exit(errors);
 });
 
+/*
+// How to use an iterator - with async module
+function toto(item, callback) {
+    console.log(item);
+    callback(null, item + ' done');
+}
 
+async.map(dirs, toto, function(err, results){
+    // results is now an array of the name of each dir + ' done'
+    console.log(results);
+});
+*/
