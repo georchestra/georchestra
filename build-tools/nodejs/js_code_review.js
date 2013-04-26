@@ -1,5 +1,7 @@
 // Usage: node js_code_review.js /path/to/some/directory /path/to/other/directory
 
+// For javascript code review, see http://forge.applis-bretagne.fr/issues/4297
+
 // based on the esprima example: http://esprima.org/doc/#nestedternary
 // see http://esprima.org/demo/parse.html# for parsed code structure
 
