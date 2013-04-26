@@ -86,16 +86,26 @@ async.map(dirs, walk, function (err, results) {
 
             function checkQuotes(node) {
                 // '' quotes are allowed only if the string contains ""
+                // OK:  "Untitled": "Sans titre",
+                // OK:  'TYPE for the LAYER layer': '${TYPE} pour la couche "${LAYER}"',
+                // BAD: 'Untitled': 'Sans titre',
+
                 if ((node.raw[0] !== '"') && (node.value.indexOf('"') < 0)) {
-                    report(node, 'Incorrect use of quotes: ' + node.raw);
+                    report(node, 'Use of simple quotes: ' + node.raw);
                     errors++;
                 }
             }
 
             // Find "Property" objects with raw beginning with other thing that "\""
             function checkProperty(node) {
-                checkQuotes(node.key);
-                checkQuotes(node.value);
+                // check the key
+                if (node.key.type == 'Literal') {
+                    checkQuotes(node.key);
+                }
+                // check the value
+                if (node.value.type == 'Literal') {
+                    checkQuotes(node.value);
+                }
             }
 
             try {
