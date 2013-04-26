@@ -130,17 +130,12 @@ async.map(dirs, walk, function (err, results) {
                 }
             }
 
-            // Find "Property" objects with raw beginning with other thing that "\""
-            function checkProperty(node) {
-                // check the key
-                if (node.key.type == 'Literal') {
-                    checkQuotes(node.key);
-                    checkNoBraces(node.key);
-                }
-                // check the value
-                if (node.value.type == 'Literal') {
-                    checkQuotes(node.value);
-                    checkCapsInBraces(node.value);
+            function checkPropertyElement(node, callback) {
+                if (node.type == 'Literal') {
+                    callback(node);
+                } else if ((node.type == 'BinaryExpression') && (node.operator == '+')) {
+                    checkPropertyElement(node.left, callback);
+                    checkPropertyElement(node.right, callback);
                 }
             }
 
@@ -149,7 +144,14 @@ async.map(dirs, walk, function (err, results) {
                 syntax = esprima.parse(content, { tolerant: true, loc: true, range: true, raw: true });
                 traverse(syntax, function (node) {
                     if (node.type === 'Property') {
-                        checkProperty(node);
+                        checkPropertyElement(node.key, function(n) {
+                                checkQuotes(n);
+                                checkNoBraces(n);
+                            });
+                        checkPropertyElement(node.value, function(n) {
+                                checkQuotes(n);
+                                checkCapsInBraces(n);
+                            });
                     }
                 });
             } catch (e) {
