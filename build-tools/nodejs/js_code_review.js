@@ -160,16 +160,3 @@ async.map(dirs, walk, function (err, results) {
     console.log(errors + ' errors');
     process.exit(errors);
 });
-
-/*
-// How to use an iterator - with async module
-function toto(item, callback) {
-    console.log(item);
-    callback(null, item + ' done');
-}
-
-async.map(dirs, toto, function(err, results){
-    // results is now an array of the name of each dir + ' done'
-    console.log(results);
-});
-*/
