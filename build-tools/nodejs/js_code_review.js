@@ -96,15 +96,51 @@ async.map(dirs, walk, function (err, results) {
                 }
             }
 
+            function checkNoBraces (node) {
+                // no braces in key
+                // OK:  "TYPE xx": "${TYPE} xx",
+                // BAD: "{TYPE} xx": "${TYPE} xx",
+                if ((node.value.indexOf('{') >= 0) || (node.value.indexOf('}') >= 0)) {
+                    report(node, 'Use of braces in key: ' + node.value);
+                    errors++;
+                }
+            }
+
+            function checkCapsInBraces (node) {
+                // variables must be capitalized (or underscore)
+                // OK:  "Use of ${VAR_CAPITALIZED_123}"
+                // BAD: "Use of ${var_not_capitalized-2}"
+
+                // Find the closing braces
+                var str = node.value;
+                chunks = str.split("}");
+                // For each chunk (except the last one), find "${"
+                var idx = 0;
+                for (var i=0; i<chunks.length-1;i++) {
+                    if (idx = chunks[i].indexOf("${")) {
+                        // and check the content is only A-Z0-9_
+                        var content = chunks[i].slice(idx+2);
+                        var pattern = /[A-Z0-9_]*/g;
+                        var myArray = pattern.exec(content);
+                        if ((myArray !== null) && (myArray[0] !== content)) {
+                            report(node, "Variable name must verify [A-Z0-9_]: ${" + content + "}");
+                            errors++;
+                        }
+                    }
+                }
+            }
+
             // Find "Property" objects with raw beginning with other thing that "\""
             function checkProperty(node) {
                 // check the key
                 if (node.key.type == 'Literal') {
                     checkQuotes(node.key);
+                    checkNoBraces(node.key);
                 }
                 // check the value
                 if (node.value.type == 'Literal') {
                     checkQuotes(node.value);
+                    checkCapsInBraces(node.value);
                 }
             }
 
