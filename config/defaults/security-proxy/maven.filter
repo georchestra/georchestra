@@ -11,7 +11,6 @@ ldap.admin.password=@shared.ldap.admin.password@
 cas.public.host=@shared.server.name@
 cas.private.host=localhost
 
-defaultTarget.port=8080
 public.ssl=443
 private.ssl=8443
 

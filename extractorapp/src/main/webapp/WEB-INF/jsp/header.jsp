@@ -44,13 +44,8 @@
             <img src="/static/img/logo.png" alt="<fmt:message key='logo'/>" height="50"/>
         </a>
         <ul>
-            <li><a href="/geonetwork/srv/<%= lang %>/main.home"><fmt:message key="catalogue"/></a></li>
+            <li><a href="/geonetwork/"><fmt:message key="catalogue"/></a></li>
             <li><a href="/mapfishapp/"><fmt:message key="viewer"/></a></li>
-        <c:choose>
-            <c:when test='<%= editor == true %>'>
-            <li><a href="/mapfishapp/edit/"><fmt:message key="editor"/></a></li>
-            </c:when>
-        </c:choose>
             <li class="active"><a><fmt:message key="extractor"/></a></li>
             <li><a href="/geoserver/web/"><fmt:message key="services"/></a></li>
         </ul>
