@@ -46,11 +46,6 @@
         <ul>
             <li class="active"><a><fmt:message key="catalogue"/></a></li>
             <li><a href="/mapfishapp/"><fmt:message key="viewer"/></a></li>
-        <c:choose>
-            <c:when test='<%= editor == true %>'>
-            <li><a href="/mapfishapp/edit/"><fmt:message key="editor"/></a></li>
-            </c:when>
-        </c:choose>
             <li><a href="/extractorapp/"><fmt:message key="extractor"/></a></li>
             <li><a href="/geoserver/web/"><fmt:message key="services"/></a></li>
         </ul>

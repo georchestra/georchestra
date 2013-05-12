@@ -8,13 +8,8 @@
             <img src="/static/img/logo.png" alt="geOrchestra" height="50"/>
         </a>
         <ul>
-            <li><a href="/geonetwork/srv/fr/main.home">catalogue</a></li>
+            <li><a href="/geonetwork/">catalogue</a></li>
             <li><a href="/mapfishapp/">visualiseur</a></li>
-        <c:choose>
-            <c:when test='<%= editor == true %>'>
-            <li><a href="/mapfishapp/edit/">éditeur</a></li>
-            </c:when>
-        </c:choose>
             <li><a href="/extractorapp/">extracteur</a></li>
             <li><a href="/geoserver/web/">services</a></li>
         <c:choose>

@@ -49,7 +49,7 @@ public class OGCServicesAppenderTest {
 		// WARNING: because this test will delete all log before execute the test method
 		// you should configure a test table in the log4j.properties file
 		
-		String file = "src/test/resources/com/camptocamp/ogcservstatistics/log4j.properties";
+		String file = "src/test/resources/org/georchestra/ogcservstatistics/log4j.properties";
 		PropertyConfigurator.configure(file);
 		try {
 			DeleteAllCommand cmd = new DeleteAllCommand();

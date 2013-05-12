@@ -44,7 +44,7 @@
             <img src="/static/img/logo.png" alt="<fmt:message key='logo'/>" height="50"/>
         </a>
         <ul>
-            <li><a href="/geonetwork/srv/<%= lang %>/main.home"><fmt:message key="catalogue"/></a></li>
+            <li><a href="/geonetwork/"><fmt:message key="catalogue"/></a></li>
         <c:choose>
             <c:when test='${c.edit != null}'>
             <li><a href="/mapfishapp/"><fmt:message key="viewer"/></a></li>
@@ -52,18 +52,6 @@
             <c:otherwise>
             <li class="active"><a><fmt:message key="viewer"/></a></li>
             </c:otherwise>
-        </c:choose>
-        <c:choose>
-            <c:when test='<%= editor == true %>'>
-                <c:choose>
-                    <c:when test='${c.edit != null}'>
-            <li class="active"><a><fmt:message key="editor"/></a></li>
-                    </c:when>
-                    <c:otherwise>
-            <li><a href="/mapfishapp/edit/"><fmt:message key="editor"/></a></li>
-                    </c:otherwise>
-                </c:choose>
-            </c:when>
         </c:choose>
             <li><a href="/extractorapp/"><fmt:message key="extractor"/></a></li>
             <li><a href="/geoserver/web/"><fmt:message key="services"/></a></li>
