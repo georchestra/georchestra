@@ -55,7 +55,7 @@ Two pages:
 Private UI
 ----------
 
-The private UI will be available at /ldapadmin for members of the SV_ADMIN and SV_ADMIN_USERS groups.
+The private UI will be available at /ldapadmin for members of the SV_ADMIN and ADMIN_USERS groups.
 
 See the wireframe in the current folder.
 
@@ -84,7 +84,7 @@ Dedicated to groups:
  * button to remove a group (users will **not** be deleted)
 
 
-Members of the SV_ADMIN_USERS group will have the same UI, but some buttons will not be shown (or disabled) : group add/remove, "selected users" > "add/remove from group"
+Members of the ADMIN_USERS group will have the same UI, but some buttons will not be shown (or disabled) : group add/remove, "selected users" > "add/remove from group"
 They will have the right to create/read/update/delete users only from the same EL_* groups they belong to.
 
 Notes
