@@ -236,7 +236,7 @@ GEOR.workspace = (function() {
                     },{
                         text: tr("Load a map context"),
                         iconCls: "geor-load-map",
-                        handler: GEOR.wmcbrowser.show,
+                        handler: GEOR.wmcbrowser.show
                     }, '-', {
                         text: tr("Get a permalink"),
                         iconCls: "geor-permalink",
