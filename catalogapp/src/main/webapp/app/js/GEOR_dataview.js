@@ -134,6 +134,18 @@ GEOR.dataview = (function() {
         form[url_key].submit();
     };
 
+    var submitDataDownload = function(url_key,layerName){
+        layerName=layerName.replace(/:/g,'&l=');
+        var url_ftp=GEOR.config[url_key]+"?w="+layerName;
+        form[url_ftp]=form[url_ftp]||Ext.DomHelper.append(Ext.getBody(),{
+            tag:"form",
+            action:url_ftp,
+            target:"_blank",
+            method:"post"
+        });
+        jsonFormat=jsonFormat||new OpenLayers.Format.JSON();
+        form[url_ftp].submit();
+    };
 
     var onButtonClick = function(evt, elt) {
         elt = Ext.get(elt);
