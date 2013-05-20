@@ -28,10 +28,11 @@ import com.vividsolutions.jts.geom.Polygon;
  *
  */
 public class BBoxWriter {
+	
 
 	// Properties of the bbox FeatureType 
 	private static final String GEOMETRY_PROPERTY = "bounding_geom";
-	private static final String ID_PROPERTY = "bounding_id";
+	private static final String ID_PROPERTY = "id";
 	
 	
 	private ReferencedEnvelope bbox;
@@ -99,6 +100,7 @@ public class BBoxWriter {
 										"bounding", 
 										GEOMETRY_PROPERTY +":Polygon:srid="+epsgCode +"," +
 										ID_PROPERTY + ":Integer");
+			
 			return type;
 
 		} catch (Exception e) {
@@ -117,7 +119,7 @@ public class BBoxWriter {
 
 		SimpleFeature feature = DataUtilities.template(type);
 		
-		feature.setAttribute(ID_PROPERTY, 1); // this field is required by mif/mid format
+		feature.setAttribute(ID_PROPERTY, "1"); // this field is required by mif/mid format
 		feature.setAttribute(GEOMETRY_PROPERTY, geom);
 		
 		return feature;
