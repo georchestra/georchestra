@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.data.ogr.OGRDataStore;
@@ -12,6 +14,7 @@ import org.geotools.data.ogr.OGRDataStoreFactory;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.util.ProgressListener;
 
 /**
@@ -26,6 +29,7 @@ import org.opengis.util.ProgressListener;
  * 
  */
 class OGRFeatureWriter implements FeatureWriterStrategy {
+    private static final Log LOG = LogFactory.getLog(OGRFeatureWriter.class.getPackage().getName());
     
 	/**
 	 * Maintains the set of valid formats with theirs driver descriptors associated
@@ -96,6 +100,7 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
 		assert schema != null && basedir != null && features != null;
 		
 		this.progresListener = progresListener;
+		checkSchema(schema);
 		this.schema = schema;
 		this.basedir = basedir;
 		this.fileFormat = fileFormat;
@@ -107,6 +112,43 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
 
 
 	/**
+	 * checks whether the schema is valid.
+	 * <p>
+	 * This method will log some warnings whether the schema is not valid.
+	 * </p>
+	 * @param schema
+	 */
+	private boolean checkSchema(SimpleFeatureType schema) {
+		
+		boolean hasGeometry = false;
+		boolean hasAttr = false;
+		boolean nameLimitOK = true;
+        for (int i = 0, j = 0; i < schema.getAttributeCount(); i++) {
+        	
+            AttributeDescriptor ad = schema.getDescriptor(i);
+            if (ad == schema.getGeometryDescriptor()) {
+            	hasGeometry = true;
+            } else {
+            	hasAttr = true;
+            }
+            if(ad.getLocalName().length() > 10){
+            	nameLimitOK = false;
+            	LOG.warn("Some format requires that the properties' name have got less than 10 character. Take into account this warnning if you experiment problems." 
+            			+ " Schema: "+ schema.getTypeName() + " Property:" + ad.getLocalName());
+            }
+        }
+        if(!hasGeometry){
+        	LOG.warn("The Schema " + schema.getTypeName() + "doesn't contain a geomety property");
+        }
+        if(!hasAttr){
+        	LOG.warn("The Schema " + schema.getTypeName() + "doesn't contain any alfanumeric property");
+        }
+        
+        return hasGeometry && hasAttr && nameLimitOK;
+	}
+
+
+	/**
 	 * Generate the file's vector specified
 	 */
 	@Override
@@ -114,7 +156,7 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
         
 		Map<String, Serializable> map = new java.util.HashMap<String, Serializable>();
 		
-        final String pathName = this.basedir.getAbsolutePath() + "/"+ FileUtils.createFileName(this.basedir.getAbsolutePath(), this.schema, this.fileFormat);
+        final String pathName = this.basedir.getAbsolutePath() + File.pathSeparatorChar + FileUtils.createFileName(this.basedir.getAbsolutePath(), this.schema, this.fileFormat);
 		map.put(OGRDataStoreFactory.OGR_NAME.key, pathName);
 		map.put(OGRDataStoreFactory.OGR_DRIVER_NAME.key, this.fileFormat.getDriver());
 		
