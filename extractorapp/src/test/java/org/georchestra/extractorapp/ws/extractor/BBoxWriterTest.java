@@ -53,6 +53,7 @@ public class BBoxWriterTest {
 		
 		assertTrue(generateFiles.length > 0);
 		
+		FileUtils.delete(baseDir);
 	}
 
 }

@@ -156,7 +156,7 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
         
 		Map<String, Serializable> map = new java.util.HashMap<String, Serializable>();
 		
-        final String pathName = this.basedir.getAbsolutePath() + File.pathSeparatorChar + FileUtils.createFileName(this.basedir.getAbsolutePath(), this.schema, this.fileFormat);
+        final String pathName = this.basedir.getAbsolutePath() + File.separatorChar + FileUtils.createFileName(this.basedir.getAbsolutePath(), this.schema, this.fileFormat);
 		map.put(OGRDataStoreFactory.OGR_NAME.key, pathName);
 		map.put(OGRDataStoreFactory.OGR_DRIVER_NAME.key, this.fileFormat.getDriver());
 		
