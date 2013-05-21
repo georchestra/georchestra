@@ -119,7 +119,7 @@ public class BBoxWriter {
 
 		SimpleFeature feature = DataUtilities.template(type);
 		
-		feature.setAttribute(ID_PROPERTY, "1"); // this field is required by mif/mid format
+		feature.setAttribute(ID_PROPERTY, 1); // this field is required by mif/mid format
 		feature.setAttribute(GEOMETRY_PROPERTY, geom);
 		
 		return feature;
