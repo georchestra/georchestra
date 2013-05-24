@@ -353,7 +353,6 @@ GEOR.mapinit = (function() {
     var createStores = function(wmsServers, callback, scope) {
         var count = wmsServers.length;
         var stores = {};
-
         var capabilitiesCallback = function() {
             count -= 1;
             if (count === 0) {
@@ -362,22 +361,12 @@ GEOR.mapinit = (function() {
         };
         Ext.each(wmsServers, function(wmsServerUrl) {
             GEOR.waiter.show();
-            // with wmsServerUrl:
-            //  - extract service URL
-            //  - extract existing query string (if any)
-            var o = OpenLayers.Util.createUrlObject(wmsServerUrl,
-                {ignorePort80: true}
-            );
-            var baseURL = o.protocol + "//" +  o.host;
-            if (o.port) {
-                baseURL += ":" + o.port;
-            }
-            baseURL += o.pathname;
+            var u = GEOR.util.splitURL(wmsServerUrl);
             stores[wmsServerUrl] = new GEOR.ows.WMSCapabilities({
                 storeOptions: {
-                    url: baseURL
+                    url: u.serviceURL
                 },
-                baseParams: o.args,
+                baseParams: u.params,
                 success: capabilitiesCallback,
                 failure: capabilitiesCallback
             });
