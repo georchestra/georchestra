@@ -362,10 +362,22 @@ GEOR.mapinit = (function() {
         };
         Ext.each(wmsServers, function(wmsServerUrl) {
             GEOR.waiter.show();
+            // with wmsServerUrl:
+            //  - extract service URL
+            //  - extract existing query string (if any)
+            var o = OpenLayers.Util.createUrlObject(wmsServerUrl,
+                {ignorePort80: true}
+            );
+            var baseURL = o.protocol + "//" +  o.host;
+            if (o.port) {
+                baseURL += ":" + o.port;
+            }
+            baseURL += o.pathname;
             stores[wmsServerUrl] = new GEOR.ows.WMSCapabilities({
                 storeOptions: {
-                    url: wmsServerUrl
+                    url: baseURL
                 },
+                baseParams: o.args,
                 success: capabilitiesCallback,
                 failure: capabilitiesCallback
             });
