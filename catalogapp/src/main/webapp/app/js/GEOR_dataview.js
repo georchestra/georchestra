@@ -71,9 +71,6 @@ GEOR.dataview = (function() {
                         dl.push('<button class="x-list-btn-dl" id="'+id+'">'
                                 +tr('Download WMS service', {NAME: (URI.description || URI.value)})
                                 +'</button>');
-                        down.push('<button class="x-list-btn-down" id="'+id+'">'
-                                +tr('Download', {NAME: (URI.description || URI.value)})
-                                +'</button>');
                     }
                 }
                 break;
