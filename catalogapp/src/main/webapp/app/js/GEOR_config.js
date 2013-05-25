@@ -106,6 +106,11 @@ GEOR.config = (function() {
             25.4 / 0.28),
 
         RESULTS_PER_PAGE: getCustomParameter('RESULTS_PER_PAGE',
-            20)
+            20),
+        
+        RESTRICTED_LAYERS: getCustomParameter("RESTRICTED_LAYERS",[
+            "autoridadelectricidad:PLANTA_GENERACION_2012"
+        ])
+       
     };
 })();
