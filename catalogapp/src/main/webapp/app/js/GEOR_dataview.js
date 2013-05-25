@@ -55,12 +55,14 @@ GEOR.dataview = (function() {
                         view.push('<button class="x-list-btn-view" id="'+id+'">'
                                   +tr('View WMS layer', {NAME: (URI.description || URI.name)})
                                   +'</button>');
-                        dl.push('<button class="x-list-btn-dl" id="'+id+'">'
+                        if(GEOR.config.RESTRICTED_LAYERS.indexOf(URI.name) < 0 ){
+                            dl.push('<button class="x-list-btn-dl" id="'+id+'">'
                                 +tr('Download WMS layer', {NAME: (URI.description || URI.name)})
                                 +'</button>');
-                        down.push('<button class="x-list-btn-down" id="'+id+'">'
-                                +tr('Download', {NAME: (URI.description || URI.name)})
-                                +'</button>');
+                            down.push('<button class="x-list-btn-down" id="'+id+'">'
+                                    +tr('Download', {NAME: (URI.description || URI.name)})
+                                    +'</button>');
+                        }
                     } else  {
                         // we have a service
                         view.push('<button class="x-list-btn-view" id="'+id+'">'
