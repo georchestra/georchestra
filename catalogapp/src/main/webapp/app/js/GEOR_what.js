@@ -58,11 +58,12 @@ GEOR.what = (function() {
 
         getFilter: function() {
             var v = field && field.getValue();
+            v = v.replace(new RegExp(" ","g"), '*').split(' ');
             if (v) {
                 return new OpenLayers.Filter.Comparison({
                     type: "~",
                     // OL (format/filter/1.1.0) has wildCard: "*", singleChar: ".", escapeChar: "!" hardcoded
-                    property: "AnyText",
+                    property: "./AnyText",
                     value: '*'+v+'*'
                 });
             }
