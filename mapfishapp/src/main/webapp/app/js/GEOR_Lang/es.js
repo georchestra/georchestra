@@ -166,7 +166,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "DescribeLayer WMS query failed. <br />The query module will be disabled":
         "La consulta WMS DescribeLayer falló." +
         "<br />El módulo de consultas no estará disponible.",
-    "Download data": "Descargar los datos",
+    "Download data": "Extraer los datos",
     "Choose a style": "Elegir un estilo",
     "Modify format": "Modificar el formato",
     "Delete this layer": "Quitar esta capa",
