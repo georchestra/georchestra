@@ -40,10 +40,10 @@ GEOR.config = (function() {
         /**
          * Constant: GEONETWORK_URL
          * The URL to the GeoNetwork server.
-         * Defaults to "/geonetwork/srv/fr"
+         * Defaults to "/geonetwork/srv/fre"
          */
         GEONETWORK_URL: getCustomParameter('GEONETWORK_URL',
-            "/geonetwork/srv/fr"),
+            "/geonetwork/srv/fre"),
 
         /**
          * Constant: VIEWER_URL

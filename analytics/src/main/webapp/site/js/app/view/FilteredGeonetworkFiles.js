@@ -12,7 +12,7 @@ Ext.define('Analytics.view.FilteredGeonetworkFiles', {
                 text: 'Métadonnée',
                 renderer: function(v) {
                     if (!v) return;
-                    var url = '/geonetwork/srv/fr/metadata.show?id='+v;
+                    var url = '/geonetwork/?id='+v;
                     return '<a href="'+url+'" target="_blank">'+v+'</a>'
                 }
             }, {
