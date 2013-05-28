@@ -98,8 +98,7 @@ GEOR.dataview = (function() {
         return [
             '<tpl for=".">',
                 '<div class="x-view-item">',
-                    '<p><b>{title}</b> - <a href="'+GEOR.config.GEONETWORK_URL,
-                        '/metadata.show?uuid={identifier}" class="fullmd" target="_blank">' + tr('record') + '</a>',
+                    '<p><b>{title}</b> - <a href="/geonetwork/?uuid={identifier}" class="fullmd" target="_blank">' + tr('record') + '</a>',
                         '{[this.zoom(values)]}</p>',
                     '<p>{abstract}</p>',
                     '{[this.buttons(values.URI)]}',

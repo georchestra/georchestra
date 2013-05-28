@@ -224,7 +224,8 @@ GEOR.cswquerier = (function() {
             "metadataURL": function(values) {
                 // this part is 100% geonetwork specific:
                 var url = CSWRecordsStore.proxy.url;
-                return url.replace('/csw', '/metadata.show?uuid='+values.md_uuid);
+                // replace /srv/*/csw with /?uuid=
+                return url.replace(/\/srv\/(\S+)\/csw/, '/?uuid='+values.md_uuid);
             },
             "thumbnailURL": function(values) {
                 // this part is also 100% geonetwork specific:
