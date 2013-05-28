@@ -776,7 +776,15 @@ GEOR.config = (function() {
             {"name": "GeoBretagne", "url": "http://geobretagne.fr/geoserver/wfs"},
             {"name": "BMO/OpenStreetMap", "url": "http://bmo.openstreetmap.fr/ows"},
             {"name": "Corine Land Cover", "url": "http://sd1878-2.sivit.org/geoserver/wfs"}
-        ])
+        ]),
     // No trailing comma for the last line (or IE will complain)
+    
+        /**
+         * Constant: RESTRICTED_LAYERS_DOWNLOAD
+         * {Array} Outer layers list, which can not be downloaded
+         */
+        RESTRICTED_LAYERS_DOWNLOAD: getCustomParameter("RESTRICTED_LAYERS_DOWNLOAD",[
+            "autdelectricidad:PLANTA_GENERACION"
+        ])
     };
 })();

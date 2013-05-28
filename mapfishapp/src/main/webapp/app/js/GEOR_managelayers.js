@@ -593,22 +593,23 @@ GEOR.managelayers = (function() {
                 }
             });
         }
-
-        menuItems.push({
-            iconCls: 'geor-btn-download',
-            text: tr("Download data"),
-            handler: function() {
-                submitData({
-                    layers: [{
-                        layername: layerRecord.get('name'),
-                        metadataURL: url || "",
-                        owstype: isWMS ? "WMS" : "WFS",
-                        owsurl: isWMS ? layer.url : layer.protocol.url
-                    }]
-                })
-            }
-        });
-
+        
+        if(GEOR.config.RESTRICTED_LAYERS_DOWNLOAD.indexOf(layerRecord.get('name')) < 0 ){
+            menuItems.push({
+                iconCls: 'geor-btn-download',
+                text: tr("Download data"),
+                handler: function() {
+                    submitData({
+                        layers: [{
+                            layername: layerRecord.get('name'),
+                            metadataURL: url || "",
+                            owstype: isWMS ? "WMS" : "WFS",
+                            owsurl: isWMS ? layer.url : layer.protocol.url
+                        }]
+                    })
+                }
+            });
+        }
         if (menuItems.length > 2) {
             menuItems.push("-");
         }
