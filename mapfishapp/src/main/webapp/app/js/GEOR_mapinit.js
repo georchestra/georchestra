@@ -243,8 +243,8 @@ GEOR.mapinit = (function() {
             columns: [
                 sm,
                 {header: tr("Server"), sortable: true, dataIndex: '_serverURL'},
-                {header: tr("Layer"), width: 50, sortable: true, dataIndex: 'name'},
-                {header: tr("Description"), sortable: true, dataIndex: 'title'}
+                {header: tr("Layer"), sortable: true, dataIndex: 'title'},
+                {header: tr("Description"), sortable: false, dataIndex: 'abstract'}
             ],
             view: new Ext.grid.GroupingView({
                 forceFit:true,
@@ -263,6 +263,7 @@ GEOR.mapinit = (function() {
             closeAction: 'close',
             modal: false,
             items: [grid],
+            width: 700,
             buttons: [{
                 text: tr("Close"),
                 handler: function() {
