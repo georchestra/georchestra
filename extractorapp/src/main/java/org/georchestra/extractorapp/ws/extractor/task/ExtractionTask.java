@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -17,6 +18,7 @@ import org.georchestra.extractorapp.ws.extractor.OversizedCoverageRequestExcepti
 import org.georchestra.extractorapp.ws.extractor.RequestConfiguration;
 import org.georchestra.extractorapp.ws.extractor.WcsExtractor;
 import org.georchestra.extractorapp.ws.extractor.WfsExtractor;
+import org.georchestra.extractorapp.ws.extractor.csw.CSWExtractor;
 import org.geotools.data.wfs.WFSDataStoreFactory;
 import org.json.JSONException;
 import org.opengis.referencing.FactoryException;
@@ -86,6 +88,7 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
                             + request._url + " -- " + request._layerName);
 
                     try {
+                    	// extracs the layer to the temporal directory
                         switch (request._owsType) {
                         case WCS:
                             extractWcsLayer(request, layerTmpDir);
@@ -97,6 +100,11 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
                             throw new IllegalArgumentException(request._owsType
                                     + " not supported");
                         }
+                        // extracts the metadata into the temporal directory
+                        if(request._isoMetadataURL != null && !"".equals(request._isoMetadataURL) ){
+                            extractMetadata(request, layerTmpDir);
+                        }
+                        
                         for (File from : layerTmpDir.listFiles()) {
                             File to = new File(tmpExtractionBundle,
                                     from.getName());
@@ -287,7 +295,9 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
             File requestBaseDir) throws IOException, TransformException,
             FactoryException {
         WcsExtractor extractor = new WcsExtractor(requestBaseDir, requestConfig);
+        
         extractor.checkPermission(request, requestConfig.secureHost, requestConfig.username, requestConfig.roles);
+        
         extractor.extract(request);
     }
 
@@ -295,13 +305,29 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
             File requestBaseDir) throws IOException, TransformException,
             FactoryException {
         WfsExtractor extractor = new WfsExtractor(requestBaseDir,
-                new WFSDataStoreFactory(), requestConfig.adminCredentials.getUserName(),
-                requestConfig.adminCredentials.getPassword(), requestConfig.secureHost);
+                new WFSDataStoreFactory(), 
+                requestConfig.adminCredentials.getUserName(),
+                requestConfig.adminCredentials.getPassword(), 
+                requestConfig.secureHost);
 
         extractor.checkPermission(request, requestConfig.secureHost, requestConfig.username, requestConfig.roles);
 
         extractor.extract(request);
     }
+    
+	private void extractMetadata(ExtractorLayerRequest request, File requestTmpDir) throws MalformedURLException, IOException {
+		
+		final String adminUserName = requestConfig.adminCredentials.getUserName();
+		final String adminPassword = requestConfig.adminCredentials.getPassword();
+		final String secureHost = requestConfig.secureHost;
+		
+		CSWExtractor extractor = new CSWExtractor(requestTmpDir, adminUserName, adminPassword, secureHost);
+		
+		extractor.checkPermission(request, requestConfig.username, requestConfig.roles);
+
+		extractor.extract(request._isoMetadataURL);
+	}
+    
 
     @Override
     public int compareTo(ExtractionTask other) {

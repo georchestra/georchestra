@@ -7,6 +7,7 @@ import java.net.URL;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpRequest;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.georchestra.extractorapp.ws.extractor.ExtractorLayerRequest;
@@ -30,37 +31,46 @@ public class CSWExtractor {
 	
 	protected static final Log LOG = LogFactory.getLog(CSWExtractor.class.getPackage().getName());
 	private File _basedir;
-	private String _password;
+	private String _adminPassword;
 	private String _secureHost;
-	private String _username;
+	private String _adminUserName;
 	
 	
-    public CSWExtractor (File basedir, String userName, String password, String secureHost) {
+	/**
+	 * CSWExtractor
+	 * 
+	 * @param basedir
+	 * @param adminUserName
+	 * @param adminPassword
+	 * @param secureHost
+	 */
+    public CSWExtractor (final File basedir, final String adminUserName, final String adminPassword, final String secureHost) {
     	
         this._basedir = basedir;
-        this._password = password;
-        this._username = userName;
+        this._adminPassword = adminPassword;
+        this._adminUserName = adminUserName;
         this._secureHost = secureHost;
     }
 	
 
     /**
      * checks the permissions to access to the CSW
+     * 
      * @param request
      * @param secureHost
-     * @param username
+     * @param username request user name
      * @param roles
      * @throws MalformedURLException
      * @throws IOException
      */
-	public void checkPermission(ExtractorLayerRequest request, String secureHost, String username, String roles)
+	public void checkPermission(ExtractorLayerRequest request, String username, String roles)
 		    throws MalformedURLException, IOException {
 		
 		URL capabilitiesURL = request.capabilitiesURL("CSW", null);
 		        
-		DefaultHttpClient httpclient = new DefaultHttpClient();
 		HttpGet get = new HttpGet(capabilitiesURL.toExternalForm());
-		if(secureHost.equalsIgnoreCase(request._url.getHost())
+		
+		if(_secureHost.equalsIgnoreCase(request._url.getHost())
 			|| "127.0.0.1".equalsIgnoreCase(request._url.getHost())
 		    || "localhost".equalsIgnoreCase(request._url.getHost())) {
 		    LOG.debug(getClass().getSimpleName()+".checkPermission - Secured Server: adding username header and role headers to request for checkPermission");
@@ -69,7 +79,9 @@ public class CSWExtractor {
 		} else {
 			LOG.debug(getClass().getSimpleName()+"checkPermission - Non Secured Server");
 		}
+		
 // FIXME what should be the strategy to check if this user as access to the matadata catalog?
+//		DefaultHttpClient httpclient = new DefaultHttpClient();
 //		        String capabilities = FileUtils.asString(httpclient.execute(get).getEntity().getContent());
 //		        Pattern regex = Pattern.compile("(?m)<Layer[^>]*>(\\\\n|\\s)*<Name>\\s*"+Pattern.quote(request._layerName)+"\\s*</Name>");
 //		        boolean permitted = regex.matcher(capabilities).find();
@@ -101,18 +113,17 @@ public class CSWExtractor {
                 || "127.0.0.1".equalsIgnoreCase(metadataURL.getHost())
                 || "localhost".equalsIgnoreCase(metadataURL.getHost())) {
         	LOG.debug("CswExtractor.extract - Secured Server: Adding extractionUserName to connection params");
-        	
-        	cswRequest.setUser( _username);  
-        	cswRequest.setPassword(_password); 
+
+            // for secure host it uses the admin credential
+        	cswRequest.setUser( _adminUserName);  
+        	cswRequest.setPassword(_adminPassword); 
         } else {
         	LOG.debug("Non Secured Server");        	
         }
 
         MetadataEntity metadata = MetadataEntity.create(cswRequest);
         
-        String fileName = FileUtils.toSafeFileName("MD_"+"MOCK_ID");// FIXME
-        
-        metadata.save(this._basedir.getAbsolutePath()+ File.separatorChar + fileName +".xml"); // FIXME maybe it is better the metadata id as filename metadata_id.xml
+        metadata.save(this._basedir.getAbsolutePath()+ File.separatorChar + "metadata.xml"); 
         
         return this._basedir.listFiles();
     }
