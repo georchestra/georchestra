@@ -30,8 +30,8 @@ import com.vividsolutions.jts.geom.Polygon;
 public class BBoxWriter {
 
 	// Properties of the bbox FeatureType 
-	private static final String GEOMETRY_PROPERTY = "bounding_geom";
-	private static final String ID_PROPERTY = "bounding_id";
+	private static final String GEOMETRY_PROPERTY = "geom";
+	private static final String ID_PROPERTY = "id";
 	
 	
 	private ReferencedEnvelope bbox;

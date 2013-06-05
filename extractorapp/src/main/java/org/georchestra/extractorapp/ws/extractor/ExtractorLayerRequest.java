@@ -156,11 +156,17 @@ public final class ExtractorLayerRequest {
         return new URL (url);
     }
 
-    private URL parseIsoMetadataURL() throws MalformedURLException, JSONException {
+    private URL parseIsoMetadataURL() throws MalformedURLException {
         
-    	String metadataURL = _layerJson.getString (ISO_METADATA_URL_KEY);
+    	try{
+    		String metadataURL = _layerJson.getString (ISO_METADATA_URL_KEY);
         
-        return new URL (metadataURL);
+    		return new URL (metadataURL);
+    		
+    	} catch(JSONException e){
+    		
+    		return null;
+    	}
     	
     }
     

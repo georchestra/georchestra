@@ -218,6 +218,7 @@ public class WfsExtractor {
         }
         //generates the feature files and bbox file 
         File[] featureFiles = featuresWriter.generateFiles();
+
         File[] bboxFiles = bboxWriter.generateFiles();
 
         File[] fileList = new File[featureFiles.length +bboxFiles.length ];
