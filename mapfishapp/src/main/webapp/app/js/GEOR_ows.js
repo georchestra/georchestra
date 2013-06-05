@@ -478,7 +478,7 @@ GEOR.ows = (function() {
                 },
                 failure: function() {
                     if (!options.useMainService) {
-                        GEOR.ows.hydrateLayerRecord(record, Ext.extend(options, {
+                        GEOR.ows.hydrateLayerRecord(record, Ext.apply(options, {
                             useMainService: true
                         }));
                     } else if (options.failure) {
