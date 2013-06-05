@@ -5,7 +5,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 /**
- * Request builder. 
+ * Request for CSW. 
  * 
  * This class is responsibe to build the request required by the metadata catalog (CSW).
  * 
@@ -14,23 +14,40 @@ import java.net.URL;
  */
 class CSWRequest {
 
+
 	private URL url = null;
 	private Integer timeout = Integer.valueOf(60000);
 	private String user;
 	private String password;
-
-	public String build(){
-		return null; // TODO
+	
+	public URL getUrl() {
+		return url;
 	}
+
+	public void setUrl(URL url) {
+		this.url = url;
+	}
+
+	public Integer getTimeout() {
+		return timeout;
+	}
+
+	public void setTimeout(Integer timeout) {
+		this.timeout = timeout;
+	}
+
+	public String getUser() {
+		return user;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
 
 	public void setURL(URL url) {
 		
 		this.url = url;
-	}
-
-	public void setTimeOut(Integer timeOut) {
-
-		this.timeout = timeOut;
 	}
 	
 

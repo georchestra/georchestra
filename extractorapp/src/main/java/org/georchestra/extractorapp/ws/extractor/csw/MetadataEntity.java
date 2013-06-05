@@ -8,11 +8,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.georchestra.extractorapp.ws.extractor.FileUtils;
 
 
 /**
@@ -50,8 +52,9 @@ final class MetadataEntity {
 		return new MetadataEntity(cswRequest);
 		
 	}
-
 	
+
+		
 	/**
 	 * Stores the metadata retrieved from CSW using the request value.
 	 * 
@@ -60,8 +63,6 @@ final class MetadataEntity {
 	 * @throws IOException
 	 */
 	public void save(final String fileName) throws IOException {
-		
-    	DefaultHttpClient httpclient = new DefaultHttpClient();
     	
         InputStream content = null;
         BufferedReader reader = null;
@@ -70,6 +71,7 @@ final class MetadataEntity {
             writer = new PrintWriter( fileName, "UTF-8" );
 
         	HttpGet get = new HttpGet(this.request.buildURI() );
+        	DefaultHttpClient httpclient = new DefaultHttpClient();
             content = httpclient.execute(get).getEntity().getContent();
             reader = new BufferedReader(new InputStreamReader(content));
 
