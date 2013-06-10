@@ -202,7 +202,7 @@ GEOR.cswquerier = (function() {
         var tpl = [
             '<tpl for=".">',
                 '<div class="x-view-item">',
-                    '<table><tr><td style="vertical-align:text-top;">',
+                    '<table style="width:100%;"><tr><td style="vertical-align:text-top;">',
                         '<p><b>{layer_description}</b></p>',
                         '<p>{md_title} - {[this.abstract(values.md_abstract)]}&nbsp;',
                         '<a href="{[this.metadataURL(values)]}" ext:qtip="' +
