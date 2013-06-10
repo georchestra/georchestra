@@ -229,7 +229,7 @@ GEOR.cswquerier = (function() {
             },
             "thumbnailURL": function(values) {
                 if (values.md_thumbnail_url) {
-                    if (GEOR.config.isUrl(values.md_thumbnail_url)) {
+                    if (GEOR.util.isUrl(values.md_thumbnail_url)) {
                         // full thumbnail URL, yeah !
                         return values.md_thumbnail_url;
                     }
