@@ -228,11 +228,17 @@ GEOR.cswquerier = (function() {
                 return url.replace(/\/srv\/(\S+)\/csw/, '/?uuid='+values.md_uuid);
             },
             "thumbnailURL": function(values) {
-                // this part is also 100% geonetwork specific:
                 if (values.md_thumbnail_url) {
+                    if (GEOR.config.isUrl(values.md_thumbnail_url)) {
+                        // full thumbnail URL, yeah !
+                        return values.md_thumbnail_url;
+                    }
+                    // incomplete thumbnail URL, we're trying to guess it.
+                    // this part is 100% geonetwork specific:
                     var url = CSWRecordsStore.proxy.url;
                     return url.replace('/csw', '/'+values.md_thumbnail_url);
                 }
+                // no thumbnail URL:
                 return GEOR.config.NO_THUMBNAIL_IMAGE_URL;
             },
             "abstract": function(text) {
