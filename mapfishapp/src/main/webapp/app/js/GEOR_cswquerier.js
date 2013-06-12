@@ -527,11 +527,21 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
                     property: "AnyText",
                     value: '*wms*'
                 }),
-                // do not request dc:type = service, just dc:type = dataset
-                new OpenLayers.Filter.Comparison({
-                    type: "~",
-                    property: "type",
-                    value: 'dataset'
+                // do not request dc:type = service, just dc:type = dataset OR series
+                new OpenLayers.Filter.Logical({
+                    type: "||",
+                    filters: [
+                        new OpenLayers.Filter.Comparison({
+                            type: "~",
+                            property: "type",
+                            value: 'dataset'
+                        }),
+                        new OpenLayers.Filter.Comparison({
+                            type: "~",
+                            property: "type",
+                            value: 'series'
+                        })
+                    ]
                 })
             ];
         Ext.each(words, function(word) {
