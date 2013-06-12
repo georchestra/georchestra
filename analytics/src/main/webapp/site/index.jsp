@@ -105,7 +105,7 @@ if(sec_roles != null) {
 			<script type="text/javascript" src="resources/site/js/lib/external/ext/ext.js"></script>
    			<script type="text/javascript" src="resources/site/js/lib/external/ext/locale/ext-lang-fr.js"></script>
 		    <script type="text/javascript" src="resources/site/js/app/Application.js"></script>
-
+            <script type="text/javascript" src="resources/site/js/app/config.js"></script>
 		    <script type="text/javascript">
 			    Ext.onReady(function() {
 			        Ext.get("loading").remove();

@@ -4,7 +4,7 @@
     <c:when test='<%= request.getParameter("noheader") == null %>'>
     <div id="go_head">
         <!-- see http://stackoverflow.com/questions/1037839/how-to-force-link-from-iframe-to-be-opened-in-the-parent-window -->
-        <iframe src="/static/" style="width:100%;height:90px;border:none;overflow:none;" scrolling="no" onload="_headerOnLoad(this)"></iframe>
+        <iframe src="/static/" style="width:100%;border:none;overflow:none;" scrolling="no" onload="_headerOnLoad(this)"></iframe>
     </div>
     <script type="text/javascript">
         var _headerOnLoad = function(iframe) {

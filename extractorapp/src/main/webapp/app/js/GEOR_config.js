@@ -175,6 +175,12 @@ GEOR.config = (function() {
      * Public
      */
     return {
+        /**
+         * Constant: HEADER_HEIGHT
+         * Integer value representing the header height, as set in the shared maven filters
+         * Defaults to 90
+         */
+        HEADER_HEIGHT: getCustomParameter("HEADER_HEIGHT", 90),
 
         /**
          * Constant: EXTRACTOR_BATCH_URL

@@ -36,6 +36,14 @@ GEOR.config = (function() {
     };
 
     return {
+        /**
+         * Constant: HEADER_HEIGHT
+         * Integer value representing the header height, as set in the shared maven filters
+         * Defaults to 90
+         */
+        HEADER_HEIGHT: getCustomParameter("HEADER_HEIGHT", 90),
+
+        /***** Beginning of config options which can be overriden by GEOR.custom *****/
 
         /**
          * Constant: GEONETWORK_URL
