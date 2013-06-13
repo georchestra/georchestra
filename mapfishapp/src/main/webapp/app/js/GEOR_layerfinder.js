@@ -19,6 +19,7 @@
  * @include GEOR_cswbrowser.js
  * @include GEOR_wmsbrowser.js
  * @include GEOR_wfsbrowser.js
+ * @include GEOR_fileupload.js
  */
 
 Ext.namespace("GEOR");
@@ -39,7 +40,7 @@ GEOR.layerfinder = (function() {
     /**
      * Property: currentTab
      * {String} a local cache of the currently active tab
-     * (one of "cswquerier", "cswbrowser", "wms", "wfs")
+     * (one of "cswquerier", "cswbrowser", "wms", "wfs", "file")
      */
     var currentTab = "cswquerier";
 
@@ -51,7 +52,8 @@ GEOR.layerfinder = (function() {
         "cswquerier": null,
         "cswbrowser": null,
         "wms": null,
-        "wfs": null
+        "wfs": null,
+        "file": null
     };
 
     /**
@@ -62,7 +64,8 @@ GEOR.layerfinder = (function() {
         "cswquerier": [],
         "cswbrowser": [],
         "wms": [],
-        "wfs": []
+        "wfs": [],
+        "file": []
     };
 
     /**
@@ -111,6 +114,9 @@ GEOR.layerfinder = (function() {
         GEOR.wfsbrowser.events.on({
             "selectionchanged": selectionChangedListener.call(this, "wfs")
         });
+        GEOR.fileupload.events.on({
+            "selectionchanged": selectionChangedListener.call(this, "file")
+        });
 
         panels["cswquerier"] = GEOR.cswquerier.getPanel({
             tabTip: tr("Find layers searching in metadata")
@@ -127,13 +133,17 @@ GEOR.layerfinder = (function() {
             srs: mapSRS,
             tabTip: tr("Find layers querying WFS servers")
         });
+        panels["file"] = GEOR.fileupload.getPanel({
+            srs: mapSRS,
+            tabTip: tr("Add layers from local files")
+        });
 
         return new Ext.TabPanel({
             border: false,
             activeTab: 0,
             // required for WMS & WFS panels to have correct layout:
             deferredRender: true,
-            items: [panels["cswquerier"], panels["cswbrowser"], panels["wms"], panels["wfs"]],
+            items: [panels["cswquerier"], panels["cswbrowser"], panels["wms"], panels["wfs"], panels["file"]],
             listeners: {
                 'tabchange': function (tp, p) {
                     switch (p) {
@@ -148,6 +158,9 @@ GEOR.layerfinder = (function() {
                         break;
                     case panels["wfs"]:
                         currentTab = "wfs";
+                        break;
+                    case panels["file"]:
+                        currentTab = "file";
                         break;
                     }
                     if (selectedRecords[currentTab].length>0) {
@@ -257,7 +270,9 @@ GEOR.layerfinder = (function() {
                     // WMS layer just need cloning
                     // (well, for the moment - see http://applis-bretagne.fr/redmine/issues/1996)
                     recordsToAdd.push(record.clone());
-                } else {
+                } else if (layer.protocol) {
+                    // we are coming from the WFS tab
+
                     // WFS layers need cloning of protocol.format too ?
                     // "this.format is null" sur :
                     // this.format.geometryName = geometryName; (protocol.WFS.v1 L231)
@@ -281,6 +296,10 @@ GEOR.layerfinder = (function() {
                         },
                         scope: this
                     });
+                } else {
+                    // we have a vector layer without a protocol 
+                    // we are coming from the upload file tab
+                    layerStore.addSorted(record);
                 }
             } else if(record.get("layer_name")) {
                 // we're coming from the CSW tabs
@@ -343,6 +362,9 @@ GEOR.layerfinder = (function() {
                         break;
                     case "wfs":
                         GEOR.wfsbrowser.clearSelection();
+                        break;
+                    case "file":
+                        GEOR.fileupload.clearSelection();
                         break;
                     default:
                         break;

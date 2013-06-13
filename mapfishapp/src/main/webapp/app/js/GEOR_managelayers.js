@@ -23,7 +23,7 @@
  * @include OpenLayers/Format/JSON.js
  * @include GEOR_layerfinder.js
  * @include GEOR_util.js
- * Note: GEOR_querier.js not included here since it's not required for edit app
+ * Note: GEOR_querier.js & GEOR_selectfeature.js not included here since it's not required for edit app
  */
 
 Ext.namespace("GEOR");
@@ -175,13 +175,13 @@ GEOR.managelayers = (function() {
      */
     var formatAttribution = function(layerRecord) {
         var attr = layerRecord.get('attribution');
-        var titleForDisplay = attr.title || '-';
+        var titleForDisplay = attr.title || tr('unknown');
         if (titleForDisplay.length > 16) {
             titleForDisplay = titleForDisplay.substr(0, 13) + '...';
         }
 
         // logo displayed in qtip if set
-        var tip = tr('source: ')+ (attr.title || '-') +
+        var tip = tr('source: ')+ (attr.title || tr('unknown')) +
             ((attr.logo && GEOR.util.isUrl(attr.logo.href, true)) ? '<br /><img src=\''+attr.logo.href+'\' />' : '');
 
         var attrDisplay = (attr.href) ?
@@ -229,7 +229,7 @@ GEOR.managelayers = (function() {
     };
 
     /**
-     * Method: createGfiButton
+     * Method: createInfoButton
      *
      * Parameters:
      * layerRecord - {GeoExt.data.LayerRecord}
@@ -238,10 +238,15 @@ GEOR.managelayers = (function() {
      * {Object} The configured object (xtype: button)
      *          for inclusion in layer manager item toolbar
      */
-    var createGfiButton = function(layerRecord) {
+    var createInfoButton = function(layerRecord) {
+        var layer = layerRecord.get("layer"),
+            isWMS = (layer.CLASS_NAME == "OpenLayers.Layer.WMS");
         return {
             xtype: 'button',
-            disabled: !(layerRecord.get("queryable")),
+            // for vector layers, the button is always enabled:
+            disabled: isWMS ? 
+                !(layerRecord.get("queryable")) : 
+                false,
             iconCls: 'geor-btn-info',
             allowDepress: true,
             enableToggle: true,
@@ -249,7 +254,11 @@ GEOR.managelayers = (function() {
             tooltip: tr("Information on objects of this layer"),
             listeners: {
                 "toggle": function(btn, pressed) {
-                    GEOR.getfeatureinfo.toggle(layerRecord, pressed);
+                    if (isWMS) {
+                        GEOR.getfeatureinfo.toggle(layerRecord, pressed);
+                    } else {
+                        GEOR.selectfeature.toggle(layer, pressed);
+                    }
                 }
             }
         };
@@ -402,6 +411,7 @@ GEOR.managelayers = (function() {
         var queryable = !!(layerRecord.get("queryable"));
         var layer = layerRecord.get('layer');
         var isWMS = (layer.CLASS_NAME == "OpenLayers.Layer.WMS");
+        var isWFS = (layer.CLASS_NAME == "OpenLayers.Layer.Vector" && !!layer.protocol);
 
         var menuItems = [], url;
 
@@ -531,7 +541,7 @@ GEOR.managelayers = (function() {
         // This depends on http://applis-bretagne.fr/redmine/issues/1984
 
         // TODO: have a generic field in layerrecord stating that a record is WFS or WMS.
-        if (GEOR.querier && (queryable || layer.CLASS_NAME == "OpenLayers.Layer.Vector")) {
+        if (GEOR.querier && (queryable || isWFS)) {
             menuItems.push({
                 iconCls: 'geor-btn-query',
                 text: tr("Build a query"),
@@ -596,20 +606,22 @@ GEOR.managelayers = (function() {
             });
         }
 
-        menuItems.push({
-            iconCls: 'geor-btn-download',
-            text: tr("Download data"),
-            handler: function() {
-                submitData({
-                    layers: [{
-                        layername: layerRecord.get('name'),
-                        metadataURL: url || "",
-                        owstype: isWMS ? "WMS" : "WFS",
-                        owsurl: isWMS ? layer.url : layer.protocol.url
-                    }]
-                })
-            }
-        });
+        if (isWMS || isWFS) {
+            menuItems.push({
+                iconCls: 'geor-btn-download',
+                text: tr("Download data"),
+                handler: function() {
+                    submitData({
+                        layers: [{
+                            layername: layerRecord.get('name'),
+                            metadataURL: url || "",
+                            owstype: isWMS ? "WMS" : "WFS",
+                            owsurl: isWMS ? layer.url : layer.protocol.url
+                        }]
+                    })
+                }
+            });
+        }
 
         if (menuItems.length > 2) {
             menuItems.push("-");
@@ -651,8 +663,8 @@ GEOR.managelayers = (function() {
 
         // buttons in the toolbar
         var buttons = [];
-        if (GEOR.getfeatureinfo) {
-            buttons.push(createGfiButton(layerRecord));
+        if (GEOR.getfeatureinfo && GEOR.selectfeature) {
+            buttons.push(createInfoButton(layerRecord));
         }
         buttons = buttons.concat([
         {
