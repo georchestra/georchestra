@@ -1,6 +1,8 @@
 # shared values like public url can be put here
 shared.server.port=80
 
+shared.header.height=90
+
 shared.language=fr
 geonetwork.language=fre
 

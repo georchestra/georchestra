@@ -58,30 +58,6 @@ if(sec_roles != null) {
         #loading-msg {
             font: normal 12px arial,tahoma,sans-serif;
         }
-        #go_head ul {
-            float: left;
-            list-style: none;
-            margin: 20px 0 0 10px;
-            padding: 0;
-            font-size: 18px;
-            display: inline;
-        }
-        #go_head li {
-            margin: 0;
-            padding: 0;
-            display: inline-block;
-        }
-        #go_head .logged {
-            margin        : 20px 15px 0 0;
-            border        : 1px dotted #ddd;
-            border-radius : 0.3em;
-            padding       : 0 0.6em;
-            width         : auto;
-            float         : right;
-            height        : 52px;
-            line-height   : 52px;
-        }
- 
     </style>
 
     <title lang="fr" dir="ltr">Analytics - geOrchestra</title>
@@ -105,7 +81,7 @@ if(sec_roles != null) {
 			<script type="text/javascript" src="resources/site/js/lib/external/ext/ext.js"></script>
    			<script type="text/javascript" src="resources/site/js/lib/external/ext/locale/ext-lang-fr.js"></script>
 		    <script type="text/javascript" src="resources/site/js/app/Application.js"></script>
-
+            <script type="text/javascript" src="resources/site/js/app/config.js"></script>
 		    <script type="text/javascript">
 			    Ext.onReady(function() {
 			        Ext.get("loading").remove();
