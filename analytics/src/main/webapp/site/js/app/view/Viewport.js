@@ -20,7 +20,7 @@ Ext.define('Analytics.view.Viewport', {
             xtype: 'box',
             id: 'geor_header',
             region: 'north', 
-            height: 90,
+            height: GEOR.config.HEADER_HEIGHT,
             contentEl: 'go_head'
         }, {
             region: 'center',

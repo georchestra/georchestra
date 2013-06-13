@@ -9,7 +9,6 @@
       <link rel="stylesheet" href="css/blueprint/screen.css" type="text/css" media="screen, projection" />
       <link rel="stylesheet" href="css/blueprint/print.css" type="text/css" media="print" /> 
 	  <link rel="stylesheet" href="css/geoserver.css" type="text/css" media="screen, projection" />
-      <link rel="stylesheet" href="/static/css/header.css" type="text/css" media="screen, projection" />
       <!--[if IE]>
         <link rel="stylesheet" href="css/blueprint/ie.css" type="text/css" media="screen, projection" />
 	    <link rel="stylesheet" href="css/geoserver-ie.css" type="text/css" media="screen, projection" />
@@ -47,42 +46,19 @@
   </div>
 -->
 
+    <!-- geOrchestra header -->
     <div id="go_head">
-        <a href="#" id="go_home" title="retourner &agrave; l&rsquo;accueil">
-            <img src="/static/img/logo.png" alt="geOrchestra" height="50"/>
-        </a>
-        <ul>
-            <li><a href="/geonetwork/">catalogue</a></li>
-            <li><a href="/mapfishapp/">visualiseur</a></li>
-            <li><a href="/extractorapp/">extracteur</a></li>
-            <li class="active"><a href="/geoserver/web/">services</a></li>
-        </ul>
-        <p class="logged" wicket:id="logoutform">
-            <span wicket:id="username"></span><span class="light"> | </span><a href="/j_spring_security_logout">d&eacute;connexion</a>
-        </p>
-        <p class="logged" wicket:id="loginform">
-            <a href="?login">connexion</a>
-        </p>
+        <!-- see http://stackoverflow.com/questions/1037839/how-to-force-link-from-iframe-to-be-opened-in-the-parent-window -->
+        <iframe src="/static/?active=geoserver" style="width:100%;height:@shared.header.height@px;border:none;overflow:none;" scrolling="no" onload="_headerOnLoad(this)"></iframe>
     </div>
-    <script>
-        (function(){
-            if (!window.addEventListener || !document.querySelectorAll) return;
-            var each = function(els, callback) {
-                for (var i=0,l=els.length;i<l;i++) {
-                    callback(els[i]);
-                }
-            }
-            each(document.querySelectorAll('#go_head li a'), function(li){
-                li.addEventListener('click', function(e) {
-                    each(
-                        document.querySelectorAll('#go_head li'),
-                        function(l){ l.className = '';}
-                    );
-                    li.parentNode.className = 'active';
-                });
-            });
-        })();
+    <script type="text/javascript">
+        var _headerOnLoad = function(iframe) {
+            var base = iframe.contentDocument.createElement('base');
+            base.setAttribute('target', '_parent');
+            iframe.contentDocument.getElementsByTagName('head')[0].appendChild(base);
+        };
     </script>
+    <!-- end of geOrchestra header -->
 
   <div id="main">
     <div class="wrap selfclear">
