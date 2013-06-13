@@ -12,7 +12,7 @@ The public UIs will be accessed:
  * from the CAS login page, by the way of text links: "lost password ?" and "create account".
  * from every SDI page, by clicking on the username: "Edit user details"
 
-These pages should by light (no need to ship ExtJS).
+These pages should be light (no need to ship ExtJS).
 
 ### Lost Password
 
@@ -93,3 +93,5 @@ Notes
 All emails sent by the application should be configurable by the way of templates, as for extractorapp.
 
 The application should be able to find groups and users by the way of filters such as the ones used by the cas (see https://github.com/georchestra/georchestra/blob/master/config/defaults/cas-server-webapp/maven.filter#L4) and defined by the way of the variables shared.ldap.userSearchBaseDN and shared.ldap.groupSearchBaseDN defined in https://github.com/georchestra/georchestra/blob/master/config/shared.maven.filters#L10
+
+The userPassword LDAP field should be SSHA encrypted on creation/update.
