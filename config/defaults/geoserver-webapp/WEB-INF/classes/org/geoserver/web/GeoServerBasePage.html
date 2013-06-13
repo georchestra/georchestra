@@ -9,7 +9,6 @@
       <link rel="stylesheet" href="css/blueprint/screen.css" type="text/css" media="screen, projection" />
       <link rel="stylesheet" href="css/blueprint/print.css" type="text/css" media="print" /> 
 	  <link rel="stylesheet" href="css/geoserver.css" type="text/css" media="screen, projection" />
-      <link rel="stylesheet" href="/static/css/header.css" type="text/css" media="screen, projection" />
       <!--[if IE]>
         <link rel="stylesheet" href="css/blueprint/ie.css" type="text/css" media="screen, projection" />
 	    <link rel="stylesheet" href="css/geoserver-ie.css" type="text/css" media="screen, projection" />
@@ -20,12 +19,23 @@
 </wicket:head>
 <body>
 <!--
-  <div id="header" >
+  <div id="header">
     <div class="wrap">
       <h2><a wicket:id="home" class="pngfix" href="#"><span wicket:id="label">GeoServer 2.0</span></a></h2>
       <div class="button-group selfclear">
-      <form wicket:id="loginform" method="post" action="?login">
+      <form wicket:id="loginform" method="post" action="../j_spring_security_check">
+        <label class="noshow" for="username"><wicket:message key="username">Username</wicket:message></label>
+        <input id="username" type="text" name="username" value="" title="username" wicket:message="title:username"/>
+        <label class="noshow" for="password"><wicket:message key="password">Password</wicket:message></label>
+        <input id="password" type="password" name="password" value="" title="password" wicket:message="title:password"/>
+        <label class="shown" for="_spring_security_remember_me"><wicket:message key="rememberMe">Remember me</wicket:message></label>
+        <input id="_spring_security_remember_me" type="checkbox" name="_spring_security_remember_me" />
         <button class="button-login positive icon" type="submit"><div><wicket:message key="login">Login</wicket:message></div></button>
+        <script type="text/javascript">
+        //<![CDATA[
+        jQuery(document).ready(function() {$('#username, #password').inlineInfoTextify();});
+        //]]>
+        </script>
       </form>
       <div wicket:id="logoutform">
         <a class="button-logout icon" href="j_spring_security_logout"><span><wicket:message key="logout">Logout</wicket:message></span></a>
@@ -36,42 +46,19 @@
   </div>
 -->
 
+    <!-- geOrchestra header -->
     <div id="go_head">
-        <a href="#" id="go_home" title="retourner &agrave; l&rsquo;accueil">
-            <img src="/static/img/logo.png" alt="geOrchestra" height="50"/>
-        </a>
-        <ul>
-            <li><a href="/geonetwork/srv/fr/main.home">catalogue</a></li>
-            <li><a href="/mapfishapp/">visualiseur</a></li>
-            <li><a href="/extractorapp/">extracteur</a></li>
-            <li class="active"><a href="/geoserver/web/">services</a></li>
-        </ul>
-        <p class="logged" wicket:id="logoutform">
-            <span wicket:id="username"></span><span class="light"> | </span><a href="/j_spring_security_logout">d&eacute;connexion</a>
-        </p>
-        <p class="logged" wicket:id="loginform">
-            <a href="?login">connexion</a>
-        </p>
+        <!-- see http://stackoverflow.com/questions/1037839/how-to-force-link-from-iframe-to-be-opened-in-the-parent-window -->
+        <iframe src="/static/?active=geoserver" style="width:100%;height:@shared.header.height@px;border:none;overflow:none;" scrolling="no" onload="_headerOnLoad(this)"></iframe>
     </div>
-    <script>
-        (function(){
-            if (!window.addEventListener || !document.querySelectorAll) return;
-            var each = function(els, callback) {
-                for (var i=0,l=els.length;i<l;i++) {
-                    callback(els[i]);
-                }
-            }
-            each(document.querySelectorAll('#go_head li a'), function(li){
-                li.addEventListener('click', function(e) {
-                    each(
-                        document.querySelectorAll('#go_head li'),
-                        function(l){ l.className = '';}
-                    );
-                    li.parentNode.className = 'active';
-                });
-            });
-        })();
+    <script type="text/javascript">
+        var _headerOnLoad = function(iframe) {
+            var base = iframe.contentDocument.createElement('base');
+            base.setAttribute('target', '_parent');
+            iframe.contentDocument.getElementsByTagName('head')[0].appendChild(base);
+        };
     </script>
+    <!-- end of geOrchestra header -->
 
   <div id="main">
     <div class="wrap selfclear">

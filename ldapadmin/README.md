@@ -12,7 +12,7 @@ The public UIs will be accessed:
  * from the CAS login page, by the way of text links: "lost password ?" and "create account".
  * from every SDI page, by clicking on the username: "Edit user details"
 
-These pages should by light (no need to ship ExtJS).
+These pages should be light (no need to ship ExtJS).
 
 ### Lost Password
 
@@ -55,7 +55,7 @@ Two pages:
 Private UI
 ----------
 
-The private UI will be available at /ldapadmin for members of the SV_ADMIN and SV_ADMIN_USERS groups.
+The private UI will be available at /ldapadmin for members of the SV_ADMIN and ADMIN_USERS groups.
 
 See the wireframe in the current folder.
 
@@ -84,10 +84,14 @@ Dedicated to groups:
  * button to remove a group (users will **not** be deleted)
 
 
-Members of the SV_ADMIN_USERS group will have the same UI, but some buttons will not be shown (or disabled) : group add/remove, "selected users" > "add/remove from group"
+Members of the ADMIN_USERS group will have the same UI, but some buttons will not be shown (or disabled) : group add/remove, "selected users" > "add/remove from group"
 They will have the right to create/read/update/delete users only from the same EL_* groups they belong to.
 
 Notes
 -----
 
 All emails sent by the application should be configurable by the way of templates, as for extractorapp.
+
+The application should be able to find groups and users by the way of filters such as the ones used by the cas (see https://github.com/georchestra/georchestra/blob/master/config/defaults/cas-server-webapp/maven.filter#L4) and defined by the way of the variables shared.ldap.userSearchBaseDN and shared.ldap.groupSearchBaseDN defined in https://github.com/georchestra/georchestra/blob/master/config/shared.maven.filters#L10
+
+The userPassword LDAP field should be SSHA encrypted on creation/update.

@@ -11,10 +11,8 @@ ldap.admin.password=@shared.ldap.admin.password@
 cas.public.host=@shared.server.name@
 cas.private.host=localhost
 
-defaultTarget.port=8080
 public.ssl=443
 private.ssl=8443
-geoserver.server=http://@shared.server.name@:@shared.server.port@
 
 proxy.defaultTarget=http://localhost:8080
 proxy.mapping=\
@@ -24,9 +22,10 @@ proxy.mapping=\
     <entry key="catalogapp" value="${proxy.defaultTarget}/catalogapp-private/" />\
     <entry key="geoserver" value="${proxy.defaultTarget}/geoserver-private/" />\
     <entry key="downloadform" value="${proxy.defaultTarget}/downloadform-private/" />\
-    <entry key="analytics" value="${proxy.defaultTarget}/analytics-private/" />\
-    <entry key="static" value="${proxy.defaultTarget}/static-private/" />
+    <entry key="static" value="${proxy.defaultTarget}/static-private/" />\
+    <entry key="analytics" value="${proxy.defaultTarget}/analytics-private/" />
 
+# header mapping
 header.mapping=\
     <entry key="sec-email"     value="mail"/>\
     <entry key="sec-firstname" value="givenName"/>\
@@ -35,12 +34,10 @@ header.mapping=\
     <entry key="sec-tel"       value="telephoneNumber"/>
     
 # database health check parameters
-
-checkHealth=false
+checkHealth=@shared.checkhealth.activated@
 psql.host=@shared.psql.host@
 psql.port=@shared.psql.port@
-psql.db=@shared.psql.geonetwork.db@
+psql.db=@shared.psql.checkhealth.db@
 psql.user=@shared.psql.user@
 psql.pass=@shared.psql.pass@
-psql.url=@shared.psql.url@
-max.database.connections=170
+max.database.connections=@shared.checkhealth.max_db_connections@

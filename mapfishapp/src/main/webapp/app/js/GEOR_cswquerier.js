@@ -202,7 +202,7 @@ GEOR.cswquerier = (function() {
         var tpl = [
             '<tpl for=".">',
                 '<div class="x-view-item">',
-                    '<table><tr><td style="vertical-align:text-top;">',
+                    '<table style="width:100%;"><tr><td style="vertical-align:text-top;">',
                         '<p><b>{layer_description}</b></p>',
                         '<p>{md_title} - {[this.abstract(values.md_abstract)]}&nbsp;',
                         '<a href="{[this.metadataURL(values)]}" ext:qtip="' +
@@ -224,14 +224,21 @@ GEOR.cswquerier = (function() {
             "metadataURL": function(values) {
                 // this part is 100% geonetwork specific:
                 var url = CSWRecordsStore.proxy.url;
-                return url.replace('/csw', '/metadata.show?uuid='+values.md_uuid);
+                // replace /srv/*/csw with /?uuid=
+                return url.replace(/\/srv\/(\S+)\/csw/, '/?uuid='+values.md_uuid);
             },
             "thumbnailURL": function(values) {
-                // this part is also 100% geonetwork specific:
                 if (values.md_thumbnail_url) {
+                    if (GEOR.util.isUrl(values.md_thumbnail_url)) {
+                        // full thumbnail URL, yeah !
+                        return values.md_thumbnail_url;
+                    }
+                    // incomplete thumbnail URL, we're trying to guess it.
+                    // this part is 100% geonetwork specific:
                     var url = CSWRecordsStore.proxy.url;
                     return url.replace('/csw', '/'+values.md_thumbnail_url);
                 }
+                // no thumbnail URL:
                 return GEOR.config.NO_THUMBNAIL_IMAGE_URL;
             },
             "abstract": function(text) {
@@ -513,11 +520,30 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
         var v = this.getValue(),
             words = v.replace(new RegExp("[,;:/%()*!.\\[\\]~&=]","g"), ' ').split(' '),
             // adding wms in the filters list helps getting records where a WMS layer is referenced:
-            filters = [new OpenLayers.Filter.Comparison({
-                type: "~",
-                property: "AnyText",
-                value: '*wms*'
-            })];
+            filters = [
+                // improve relevance of results: (might not be relevant with other csw servers than geonetwork)
+                new OpenLayers.Filter.Comparison({
+                    type: "~",
+                    property: "AnyText",
+                    value: '*wms*'
+                }),
+                // do not request dc:type = service, just dc:type = dataset OR series
+                new OpenLayers.Filter.Logical({
+                    type: "||",
+                    filters: [
+                        new OpenLayers.Filter.Comparison({
+                            type: "~",
+                            property: "type",
+                            value: 'dataset'
+                        }),
+                        new OpenLayers.Filter.Comparison({
+                            type: "~",
+                            property: "type",
+                            value: 'series'
+                        })
+                    ]
+                })
+            ];
         Ext.each(words, function(word) {
             if (word) {
                 filters.push(

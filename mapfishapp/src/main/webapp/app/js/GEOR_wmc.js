@@ -25,6 +25,18 @@
 
 Ext.namespace("GEOR");
 
+// temporary hack, waiting that GeoServer publishes correct min/maxScale in capabilities
+/*
+ * @requires OpenLayers/Format/WMC/v1_1_0.js
+ */
+OpenLayers.Format.WMC.v1_1_0.prototype.read_sld_MinScaleDenominator = function(layerContext, node) {
+    layerContext.maxScale = null;
+};
+OpenLayers.Format.WMC.v1_1_0.prototype.read_sld_MaxScaleDenominator = function(layerContext, node) {
+    layerContext.minScale = null;
+};
+// end hack
+
 GEOR.wmc = (function() {
     /*
      * Private

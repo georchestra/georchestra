@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.georchestra</groupId>
         <artifactId>root</artifactId>
-        <version>13.02</version>
+        <version>13.02-SNAPSHOT</version>
     </parent>
     <artifactId>server-deploy</artifactId>
     <packaging>pom</packaging>
@@ -23,10 +23,6 @@
     <build>
         <defaultGoal>generate-resources</defaultGoal>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
@@ -132,7 +128,7 @@
                     <type>war</type>
                 </dependency>
                 <dependency>
-                    <groupId>${project.groupId}</groupId>
+                    <groupId>org.geonetwork-opensource</groupId>
                     <artifactId>geonetwork-main</artifactId>
                     <version>${project.version}</version>
                     <classifier>${server}</classifier>

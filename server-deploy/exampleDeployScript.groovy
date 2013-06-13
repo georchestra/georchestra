@@ -16,25 +16,46 @@ def artifacts = new Artifacts(project, Artifacts.standardGeorchestraAliasFunctio
 
 /*
   Create a SSH option that operates on server: server1.
-  The authentication information is read from the maven settings.xml.
-  Passwords do not have to be in the settings.xml.  
+  The authentication information is read from home/deploy_user/.m2/settings.xml
+  Passwords do not have to be in this file.  
   
   If the passwords/passphrases are the deploy will require no interaction with a user.  
   
   If they are not auser will have to enter the password.  
   
   The options are privateKey/passphrase or username/password
+  
+For the record, here is a typical settings.xml file:
+
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                      http://maven.apache.org/xsd/settings-1.0.0.xsd">
+	<servers>
+		<server>
+			<id>server1</id>
+			<username>deploy</username>
+			<privateKey>/home/deploy/.ssh/id_rsa</privateKey>
+		</server>
+		<server>
+			<id>server2</id>
+			<username>deploy</username>
+			<privateKey>/home/deploy/.ssh/id_rsa</privateKey>
+		</server>
+	</servers>
+</settings>
+  
 */
 def ssh = new SSH(log:log,settings:settings,host:"server1")
 
 // create an object for deploying wars to a unix-based machine using SSH
 def server1Deployer = new SSHWarDeployer(
-        log: log,
-        ssh: ssh,
-        projectProperties: project.properties,
-        webappDir: "/srv/tomcat/tomcat1/webapps",
-        startServerCommand: "sudo /etc/init.d/tomcat-tomcat1 start",
-        stopServerCommand: "sudo /etc/init.d/tomcat-tomcat1 stop"
+    log: log,
+    ssh: ssh,
+    projectProperties: project.properties,
+    webappDir: "/srv/tomcat/tomcat1/webapps",
+    startServerCommand: "sudo /etc/init.d/tomcat-tomcat1 start",
+    stopServerCommand: "sudo /etc/init.d/tomcat-tomcat1 stop"
 )
 
 // deploy all artifacts except the geoserver artifact using the server1Deployer 
@@ -49,7 +70,7 @@ if (geoserverArtifact != null) {
   def geoserverSSH = ssh.changeHost("server2")
   // create a deployer based on the tomcat1Deployer but use the new ssh object
   // (since this will deploy to a different server)
-  def geoserverDeployer = tomcat1Deployer.copy(ssh: geoserverSSH)
+  def geoserverDeployer = server1Deployer.copy(ssh: geoserverSSH)
   // finally deploy
   geoserverDeployer.deploy()
 }

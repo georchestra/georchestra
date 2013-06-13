@@ -23,8 +23,7 @@
       <property name="period" value="10"/> <!-- minutes -->
       <property name="extractionManager" ref="extractionManager"/>
     </bean>
-     
-      
+
     <bean id="extractor-controller" init-method="validateConfig"
           class="org.georchestra.extractorapp.ws.extractor.ExtractorController">
         <property name="responseTemplateFile" 
@@ -33,12 +32,12 @@
                   value="${servletUrl}"/>
         <property name="secureHost" 
                   value="${secureHost}"/>
+        <property name="emailFactory" 
+                  ref="emailFactory"/>
         <property name="reponseMimeType" 
                   value="application/xml"/>
         <property name="responseCharset" 
                   value="UTF-8"/>
-        <property name="emailFactory" 
-                  ref="emailFactory"/>
         <property name="maxCoverageExtractionSize"
                   value="${maxCoverageExtractionSize}"/>
         <property name="remoteReproject"
@@ -49,14 +48,14 @@
                   value="${extractionFolderPrefix}"/>
         <property name="adminCredentials">
             <bean class="org.apache.commons.httpclient.UsernamePasswordCredentials">
-                <constructor-arg index="0" value="${priveleged_admin_name}"/>
-                <constructor-arg index="1" value="${priveleged_admin_pass}"/>
+                <constructor-arg index="0" value="${privileged_admin_name}"/>
+                <constructor-arg index="1" value="${privileged_admin_pass}"/>
             </bean>
         </property>
 		<property name="checkFormAcceptance">
 			<bean class="org.georchestra.extractorapp.ws.acceptance.CheckFormAcceptance">
-				<constructor-arg index="0" value="${dlformjdbcurl}" />
-				<constructor-arg index="1" value="${dlformactivated}" />
+				<constructor-arg index="0" value="${dlformjdbcurl}"/>
+				<constructor-arg index="1" value="${dlformactivated}"/>
 			</bean>
 		</property>
         <property name="extractionManager" ref="extractionManager"/>
@@ -113,9 +112,4 @@
       <property name="maxUploadSize" value="1000000"/>
     </bean>
     
-
-    <bean id="properties-loader"
-        class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
-        p:locations="/WEB-INF/extractorapp.properties" />
 </beans>
-

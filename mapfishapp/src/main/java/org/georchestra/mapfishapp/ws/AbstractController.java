@@ -79,8 +79,8 @@ public class AbstractController {
             if (jsonLayers == null) {
                 jsonLayers = jsonServices;
             } else {
-                jsonLayers = new JSONArray(jsonLayers.toString(1).replaceAll("layername", "name").replaceAll("WMS", "WMSLayer"));
-                
+                jsonLayers = new JSONArray(jsonLayers.toString(1).replaceAll("layername", "name").replaceAll("\"WMS\"", "\"WMSLayer\""));
+
                 if(jsonServices!=null) {
                     jsonServices = new JSONArray(jsonServices.toString(1).replaceAll("text", "name"));
                     for (int i = 0; i < jsonServices.length(); i++) {

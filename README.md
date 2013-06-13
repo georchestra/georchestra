@@ -3,7 +3,7 @@ geOrchestra
 
 geOrchestra is a complete **Spatial Data Infrastructure** solution.
 
-It features a **metadata catalog** (GeoNetwork), an **OGC server** (GeoServer), an **advanced viewer**, an **extractor** and **many more** (security and auth system based on proxy/CAS/LDAP, analytics, admin UIs, ...)
+It features a **metadata catalog** (GeoNetwork 2.10-pre), an **OGC server** (GeoServer 2.3.2), an **advanced viewer**, an **extractor** and **many more** (security and auth system based on proxy/CAS/LDAP, analytics, admin UIs, ...)
 
 More information in the modules README:
  * [viewer](https://github.com/georchestra/georchestra/blob/master/mapfishapp/README.md) (aka mapfishapp)
@@ -20,9 +20,11 @@ How to build ?
 
 First, install the required packages: 
 
-    sudo apt-get install ant ant-optional openjdk-6-jdk
+    sudo apt-get install ant ant-optional openjdk-7-jdk
 
-(Note: GeoServer is known to perform better with Oracle JDK)
+Notes: 
+ * openjdk-6-jdk works too 
+ * GeoServer is known to perform better with Oracle JDK
 
 Then:
 
@@ -33,12 +35,14 @@ Then:
 How to customize ?
 ==================
  
-Copy the "template" config directory and edit "yourown" to match your needs:
+Copy the "template" config directory (or fork the [georchestra/template](https://github.com/georchestra/template) repository) and edit "yourown" to match your needs:
 
     PROFILE=yourown
     cp -r config/configurations/template config/configurations/${PROFILE}
        (edit files in config/configuration/yourown)
     ./mvn -Dmaven.test.skip=true -Dserver=${PROFILE} install
+
+[Read more](https://github.com/georchestra/georchestra/blob/master/config/README.md) about the configuration process
 
 How to deploy ?
 ===============
@@ -47,18 +51,19 @@ Collect WAR files in a dedicated directory and rename them:
 
     PROFILE=yourown
     mkdir /tmp/georchestra_deploy_tmp
-    cp `find ~/.m2/repository/org/georchestra/ -name *-${PROFILE}.war` /tmp/georchestra_deploy_tmp
     cd /tmp/georchestra_deploy_tmp
-    cp ~/.m2/repository/org/geonetwork-opensource/geonetwork-main/2.6.4-SNAPSHOT/geonetwork-main-2.6.4-SNAPSHOT-${PROFILE}.war geonetwork-private.war
-    mv analytics-1.0-${PROFILE}.war analytics-private.war
-    mv catalogapp-1.0-${PROFILE}.war catalogapp-private.war
-    mv mapfishapp-1.0-${PROFILE}.war mapfishapp-private.war
-    mv cas-server-webapp-1.0-${PROFILE}.war cas.war
-    mv security-proxy-1.0-${PROFILE}.war ROOT.war
-    mv extractorapp-1.0-${PROFILE}.war extractorapp-private.war
-    mv static-1.0-${PROFILE}.war static.war
-    mv downloadform-1.0-${PROFILE}.war downloadform-private.war
-    mv geoserver-webapp-1.0-${PROFILE}.war geoserver-private.war
+    cp `find ~/.m2/repository/ -name *-13.02-${PROFILE}.war` ./
+    
+    mv security-proxy-13.02-${PROFILE}.war ROOT.war
+    mv analytics-13.02-${PROFILE}.war analytics-private.war
+    mv cas-server-webapp-13.02-${PROFILE}.war cas.war
+    mv catalogapp-13.02-${PROFILE}.war catalogapp-private.war
+    mv downloadform-13.02-${PROFILE}.war downloadform-private.war
+    mv extractorapp-13.02-${PROFILE}.war extractorapp-private.war
+    mv geonetwork-main-13.02-${PROFILE}.war geonetwork-private.war
+    mv geoserver-webapp-13.02-${PROFILE}.war geoserver-private.war
+    mv mapfishapp-13.02-${PROFILE}.war mapfishapp-private.war
+    mv static-13.02-${PROFILE}.war static.war
 
 Copy WAR files in Tomcat webapps dir:
 
@@ -66,3 +71,5 @@ Copy WAR files in Tomcat webapps dir:
     cp -f /tmp/georchestra_deploy_tmp/* /srv/tomcat/webapps
     sudo /etc/init.d/tomcat start
 
+This is the basic idea, but one can use more advanced deploy scripts. An example is provided 
+[here](https://github.com/georchestra/georchestra/blob/master/server-deploy/linux_deploy_scripts/Readme.md).

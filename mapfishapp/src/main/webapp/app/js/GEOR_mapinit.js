@@ -243,8 +243,8 @@ GEOR.mapinit = (function() {
             columns: [
                 sm,
                 {header: tr("Server"), sortable: true, dataIndex: '_serverURL'},
-                {header: tr("Layer"), width: 50, sortable: true, dataIndex: 'name'},
-                {header: tr("Description"), sortable: true, dataIndex: 'title'}
+                {header: tr("Layer"), sortable: true, dataIndex: 'title'},
+                {header: tr("Description"), sortable: false, dataIndex: 'abstract'}
             ],
             view: new Ext.grid.GroupingView({
                 forceFit:true,
@@ -263,6 +263,7 @@ GEOR.mapinit = (function() {
             closeAction: 'close',
             modal: false,
             items: [grid],
+            width: 700,
             buttons: [{
                 text: tr("Close"),
                 handler: function() {
@@ -353,7 +354,6 @@ GEOR.mapinit = (function() {
     var createStores = function(wmsServers, callback, scope) {
         var count = wmsServers.length;
         var stores = {};
-
         var capabilitiesCallback = function() {
             count -= 1;
             if (count === 0) {
@@ -362,10 +362,12 @@ GEOR.mapinit = (function() {
         };
         Ext.each(wmsServers, function(wmsServerUrl) {
             GEOR.waiter.show();
+            var u = GEOR.util.splitURL(wmsServerUrl);
             stores[wmsServerUrl] = new GEOR.ows.WMSCapabilities({
                 storeOptions: {
-                    url: wmsServerUrl
+                    url: u.serviceURL
                 },
+                baseParams: u.params,
                 success: capabilitiesCallback,
                 failure: capabilitiesCallback
             });

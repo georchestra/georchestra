@@ -403,10 +403,11 @@ GEOR.ows = (function() {
             var layerOptions = (options.storeOptions &&
                 options.storeOptions.layerOptions) ?
                     options.storeOptions.layerOptions : {};
+            var baseParams = options.baseParams || {};
             var storeOptions = Ext.applyIf({
-                baseParams: Ext.applyIf({
+                baseParams: Ext.apply({
                     "REQUEST": "GetCapabilities"
-                }, WMS_BASE_PARAMS),
+                }, baseParams, WMS_BASE_PARAMS),
                 layerOptions: Ext.apply({},
                     layerOptions,
                     GEOR.ows.defaultLayerOptions
@@ -477,7 +478,7 @@ GEOR.ows = (function() {
                 },
                 failure: function() {
                     if (!options.useMainService) {
-                        GEOR.ows.hydrateLayerRecord(record, Ext.extend(options, {
+                        GEOR.ows.hydrateLayerRecord(record, Ext.apply(options, {
                             useMainService: true
                         }));
                     } else if (options.failure) {

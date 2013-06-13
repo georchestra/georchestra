@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.georchestra</groupId>
 		<artifactId>geoserver-root</artifactId>
-		<version>13.02</version>
+		<version>13.02-SNAPSHOT</version>
 	</parent>
 	<artifactId>geoserver-webapp</artifactId>
 	<packaging>war</packaging>
@@ -12,35 +12,25 @@
 	<properties>
 		<gs.unpack.dir>${project.build.directory}/geoserver-unpacked-webapp</gs.unpack.dir>
 	</properties>
-	<dependencies>
-		<dependency>
-			<groupId>org.georchestra</groupId>
-			<artifactId>security-filter</artifactId>
-			<version>${project.version}</version>
-			<type>jar</type>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework.security</groupId>
-					<artifactId>spring-security-core</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-core</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-web</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-	</dependencies>
 	<build>
 		<plugins>
 	      <plugin>
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-dependency-plugin</artifactId>
 	      </plugin>
+			<plugin>
+				<groupId>org.codehaus.groovy.maven</groupId>
+				<artifactId>gmaven-plugin</artifactId>
+				<configuration>
+					<classpath>
+					<entry>
+							<groupId>org.georchestra</groupId>
+							<artifactId>config</artifactId>
+							<version>${project.version}</version>
+					</entry>
+					</classpath>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-clean-plugin</artifactId>

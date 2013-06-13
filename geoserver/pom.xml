@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0  http://maven.apache.org/maven-v4_0_0.xsd">
+
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.georchestra</groupId>
 		<artifactId>root</artifactId>
-		<version>13.02</version>
+		<version>13.02-SNAPSHOT</version>
 	</parent>
 	<artifactId>geoserver-root</artifactId>
 	<packaging>pom</packaging>
@@ -12,7 +13,7 @@
 	
 	<properties>
     <maven.test.skip>true</maven.test.skip>
-	  <gs.version>2.2.4</gs.version>
+	  <gs.version>2.3.2</gs.version>
   </properties>
   
 	

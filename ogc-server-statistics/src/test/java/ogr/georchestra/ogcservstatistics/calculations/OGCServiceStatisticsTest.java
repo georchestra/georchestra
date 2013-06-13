@@ -39,7 +39,7 @@ public class OGCServiceStatisticsTest {
 	static{
 		// WARNING: because this test will delete all log before execute the test method
 		// you should configure a test table in the log4j.properties file
-		final String file = "src/test/resources/com/camptocamp/ogcservstatistics/log4j.properties";
+		final String file = "src/test/resources/org/georchestra/ogcservstatistics/log4j.properties";
 		OGCServiceStatistics.configure(file);
 
 		try {

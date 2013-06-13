@@ -43,6 +43,6 @@ class PropertyUpdate extends AbstractUpdater {
 		params.log.info("Writing updated parameters to $toFile")
 		params.log.debug("writing "+properties+" to "+toFile)
 
-	  toFile.withWriter('UTF-8'){ w -> properties.store(w,"updated by pigma's GenerateConfig class")}
+	  toFile.withWriter('UTF-8'){ w -> properties.store(w,"updated by config's GenerateConfig class")}
 	}
 }

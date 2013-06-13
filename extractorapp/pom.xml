@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.georchestra</groupId>
     <artifactId>root</artifactId>
-    <version>13.02</version>
+    <version>13.02-SNAPSHOT</version>
   </parent>
   <artifactId>extractorapp</artifactId>
   <packaging>war</packaging>
@@ -241,6 +241,17 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
       </plugin>
+		<plugin>
+			<groupId>org.codehaus.groovy.maven</groupId>
+			<artifactId>gmaven-plugin</artifactId>
+			<dependencies>
+				<dependency>
+						<groupId>org.georchestra</groupId>
+						<artifactId>config</artifactId>
+						<version>${project.version}</version>
+				</dependency>
+			</dependencies>
+		</plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
@@ -318,11 +329,49 @@
           </execution>
         </executions>
         <configuration>
-          <executable>jsbuild/build.sh</executable>
+          <executable>jsbuild/${jsbuild.command}</executable>
           <arguments>
           </arguments>
         </configuration>
       </plugin>
     </plugins>
   </build>
+  <profiles>
+  		<profile>
+			<id>Windows</id>
+			<activation>
+				<os>
+					<!-- name>Windows plateforme</name -->
+					<family>Windows</family>
+				</os>
+			</activation>
+			<properties>
+				<jsbuild.command>build.bat</jsbuild.command>
+			</properties>
+		</profile>
+		<profile>
+			<id>Unix</id>
+			<activation>
+				<os>
+					<!-- name>Unix plateforme</name -->
+					<family>unix</family>
+				</os>
+			</activation>
+			<properties>
+				<jsbuild.command>build.sh</jsbuild.command>
+			</properties>
+		</profile>
+		<profile>
+			<id>Macintosh</id>
+			<activation>
+				<os>
+					<!-- name>Macintosh platform</name -->
+					<family>mac</family>
+				</os>
+			</activation>
+			<properties>
+				<jsbuild.command>build.sh</jsbuild.command>
+			</properties>
+		</profile>
+	</profiles>
 </project>

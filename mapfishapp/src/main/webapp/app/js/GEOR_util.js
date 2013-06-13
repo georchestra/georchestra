@@ -14,6 +14,7 @@
 
 /*
  * @include GEOR_config.js
+ * @include OpenLayers/Util.js
  */
  
 Ext.namespace("GEOR");
@@ -270,6 +271,32 @@ GEOR.util = (function() {
                 return new RegExp(/^(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?$/i).test(s);
             }
             return new RegExp(/^(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/i).test(s);
+        },
+
+        /**
+         * APIMethod: splitURL
+         *
+         * Parameters:
+         * url - {String} full url string
+         *
+         * Returns:
+         * {Object} with keys: 
+         *    - serviceURL - the full service URL without any parameter
+         *    - params - an object with uppercased keys for each GET parameter
+         */
+        splitURL: function(url) {
+            var o = OpenLayers.Util.createUrlObject(url,
+                {ignorePort80: true}
+            );
+            var u = o.protocol + "//" +  o.host;
+            if (o.port) {
+                u += ":" + o.port;
+            }
+            u += o.pathname;
+            return {
+                serviceURL: u,
+                params: OpenLayers.Util.upperCaseObject(o.args)
+            };
         },
 
         /**

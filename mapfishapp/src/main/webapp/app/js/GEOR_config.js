@@ -130,6 +130,12 @@ GEOR.config = (function() {
     };
 
     return {
+        /**
+         * Constant: HEADER_HEIGHT
+         * Integer value representing the header height, as set in the shared maven filters
+         * Defaults to 90
+         */
+        HEADER_HEIGHT: getCustomParameter("HEADER_HEIGHT", 90),
 
         /**
          * Method: DEFAULT_WMC
@@ -260,10 +266,10 @@ GEOR.config = (function() {
         /**
          * Constant: GEONETWORK_URL
          * The URL to the GeoNetwork server.
-         * Defaults to "/geonetwork/srv/fr"
+         * Defaults to "/geonetwork/srv/fre"
          */
         GEONETWORK_URL: getCustomParameter("GEONETWORK_URL",
-            "/geonetwork/srv/fr"),
+            "/geonetwork/srv/fre"),
 
         /**
          * Constant: CSW_GETDOMAIN_SORTING
@@ -288,9 +294,9 @@ GEOR.config = (function() {
          * List of catalogs for freetext search
          */
         CATALOGS: getCustomParameter("CATALOGS", [
-            ['http://geobretagne.fr/geonetwork/srv/fr/csw', 'le catalogue GeoBretagne'],
-            ['http://ids.pigma.org/geonetwork/srv/fr/csw', 'le catalogue PIGMA'],
-            ['http://sandre.eaufrance.fr/geonetwork_CSW/srv/fr/csw', 'le catalogue du Sandre'],
+            ['http://geobretagne.fr/geonetwork/srv/fre/csw', 'le catalogue GeoBretagne'],
+            ['http://ids.pigma.org/geonetwork/srv/fre/csw', 'le catalogue PIGMA'],
+            ['http://sandre.eaufrance.fr/geonetwork_CSW/srv/fre/csw', 'le catalogue du Sandre'],
             ['http://geocatalog.webservice-energy.org/geonetwork/srv/fre/csw', 'le catalogue de webservice-energy']
         ]),
 
@@ -300,7 +306,7 @@ GEOR.config = (function() {
          * Note: must be one of the URLs in the above CATALOGS config option
          */
         DEFAULT_CSW_URL: getCustomParameter("DEFAULT_CSW_URL",
-            'http://geobretagne.fr/geonetwork/srv/fr/csw'),
+            'http://geobretagne.fr/geonetwork/srv/fre/csw'),
 
         /**
          * Constant: MAX_CSW_RECORDS
@@ -322,7 +328,7 @@ GEOR.config = (function() {
 
         /**
          * Constant: DEFAULT_THESAURUS_KEY
-         * Key (as the one in the response from /geonetwork/srv/fr/xml.thesaurus.getList)
+         * Key (as the one in the response from /geonetwork/srv/fre/xml.thesaurus.getList)
          * of the thesaurus to use as the default (selected) one.
          * Defaults to 'external.theme.inspire-theme'
          */

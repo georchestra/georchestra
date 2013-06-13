@@ -15,7 +15,7 @@ You will find the details about the data structure in the file ogc_statistics_ta
 Configure log4j.properties
 ==========================
 
-The test cases are using the appender configuration present in the src/test/resources/com/camptocamp/ogcservstatistics/log4j.properties
+The test cases are using the appender configuration present in the src/test/resources/org/georchestra/ogcservstatistics/log4j.properties
 
 You should adjust the key values taking into account your postgres configuration.
 

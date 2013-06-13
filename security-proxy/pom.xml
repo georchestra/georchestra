@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.georchestra</groupId>
 		<artifactId>root</artifactId>
-		<version>13.02</version>
+		<version>13.02-SNAPSHOT</version>
 	</parent>
 	<artifactId>security-proxy</artifactId>
 	<packaging>war</packaging>
@@ -142,6 +142,17 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.groovy.maven</groupId>
+				<artifactId>gmaven-plugin</artifactId>
+				<dependencies>
+					<dependency>
+							<groupId>org.georchestra</groupId>
+							<artifactId>config</artifactId>
+							<version>${project.version}</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

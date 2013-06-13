@@ -31,7 +31,7 @@ public class DisableLoggingTest {
 
 	static{
 		// activated=false in the porperties files
-		String file = "src/test/resources/com/camptocamp/ogcservstatistics/log4j-disable.properties";
+		String file = "src/test/resources/org/georchestra/ogcservstatistics/log4j-disable.properties";
 		PropertyConfigurator.configure(file);
 	}
 
