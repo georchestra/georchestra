@@ -178,6 +178,7 @@ GEOR.referentials = (function() {
                 url: GEOR.config.GEOSERVER_WFS_URL,
                 protocolOptions: {
                     srsName: map.getProjection(),
+                    srsNameInQuery: true, // see http://trac.osgeo.org/openlayers/ticket/2228
                     // required so that we do not use the proxy if on same machine:
                     url: GEOR.config.GEOSERVER_WFS_URL
                 }
