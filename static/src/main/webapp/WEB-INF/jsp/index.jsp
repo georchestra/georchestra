@@ -52,7 +52,8 @@ if(sec_roles != null) {
 <head>
   
     <style type="text/css">
-        @import url(http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+        /* see https://github.com/georchestra/georchestra/issues/147 for missing http protocol */
+        @import url(//fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
 
         html, body {
             padding     : 0;
