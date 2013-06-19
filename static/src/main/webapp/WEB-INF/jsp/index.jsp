@@ -9,8 +9,15 @@
 <%
 Boolean anonymous = true;
 
+/*
 response.setDateHeader("Expires", 31536000);
 response.setHeader("Cache-Control", "private, max-age=31536000");
+*/
+
+// to prevent problems with proxies, and for now:
+response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
+response.setHeader("Pragma", "no-cache"); // HTTP 1.0
+response.setDateHeader("Expires", 0); // Proxies.
 
 String lang = request.getParameter("lang");
 String active = request.getParameter("active");
@@ -35,7 +42,7 @@ if(sec_roles != null) {
     for (int i = 0; i < roles.length; i++) {
         // ROLE_ANONYMOUS is added by the security proxy:
         if (roles[i].equals("ROLE_ANONYMOUS")) {
-            response.setHeader("Cache-Control", "public, max-age=31536000");
+            //response.setHeader("Cache-Control", "public, max-age=31536000");
             break;
         }
         if (roles[i].equals("ROLE_SV_EDITOR") || roles[i].equals("ROLE_SV_REVIEWER") || roles[i].equals("ROLE_SV_ADMIN") || roles[i].equals("ROLE_SV_ADMINISTRATOR") || roles[i].equals("ROLE_SV_USER")) {
