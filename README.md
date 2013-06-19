@@ -6,7 +6,7 @@ geOrchestra is a complete **Spatial Data Infrastructure** solution.
 It features a **metadata catalog** (GeoNetwork 2.10), an **OGC server** (GeoServer 2.3.2), an **advanced viewer**, an **extractor** and **many more** (security and auth system based on proxy/CAS/LDAP, analytics, admin UIs, ...)
 
 More information in the modules README:
- * [catalog](https://github.com/georchestra/geonetwork/blob/master/README.md) (aka GeoNetwork)
+ * [catalog](https://github.com/georchestra/geonetwork/blob/georchestra-29/README.md) (aka GeoNetwork)
  * [viewer](https://github.com/georchestra/georchestra/blob/master/mapfishapp/README.md) (aka mapfishapp)
  * [extractor](https://github.com/georchestra/georchestra/blob/master/extractorapp/README.md) (aka extractorapp)
  * [simple catalog](https://github.com/georchestra/georchestra/blob/master/catalogapp/README.md) (aka catalogapp)
