@@ -296,6 +296,7 @@ GEOR.config = (function() {
         CATALOGS: getCustomParameter("CATALOGS", [
             ['http://geobretagne.fr/geonetwork/srv/fre/csw', 'le catalogue GeoBretagne'],
             ['http://ids.pigma.org/geonetwork/srv/fre/csw', 'le catalogue PIGMA'],
+            ['/geonetwork/srv/fre/csw', 'le catalogue local'],
             ['http://sandre.eaufrance.fr/geonetwork_CSW/srv/fre/csw', 'le catalogue du Sandre'],
             ['http://geocatalog.webservice-energy.org/geonetwork/srv/fre/csw', 'le catalogue de webservice-energy']
         ]),
