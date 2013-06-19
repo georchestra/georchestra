@@ -64,7 +64,7 @@ Collect WAR files in a dedicated directory and rename them:
     mv geonetwork-main-13.02-${PROFILE}.war geonetwork-private.war
     mv geoserver-webapp-13.02-${PROFILE}.war geoserver-private.war
     mv mapfishapp-13.02-${PROFILE}.war mapfishapp-private.war
-    mv static-13.02-${PROFILE}.war static.war
+    mv static-13.02-${PROFILE}.war static-private.war
 
 Copy WAR files in Tomcat webapps dir:
 
