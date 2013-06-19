@@ -51,6 +51,11 @@
             </resource>
         </replaceXML>
     </file>
+    <file name=".*/WEB-INF/config.xml">
+        <addXML xpath="services/service[@name='resources.get']/class">
+            <param name="download_form" value="@shared.download_form.activated@" />
+        </addXML>
+    </file>
     <file name=".*/WEB-INF/config-gui.xml">
         <addXml xpath="">
             <geoserver.url>http://${wfs.host}:${wfs.port}/geoserver/</geoserver.url>
