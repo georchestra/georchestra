@@ -20,10 +20,10 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Email": "Correo electrónico",
     "OK": "OK",
     /* GEOR.js strings */
-    "Enter a valid email address: ": 'Ingrese una dirección de correo valida: ',
+    "Enter a valid email address: ": "Ingrese una dirección de correo valida: ",
     "The email address is not valid. Stopping extraction.":
         "La dirección de correo no es valida. Parando la extracción.",
-    "Not any layer in the cart": 'Ninguna capa en la canasta',
+    "Not any layer in the cart": "Ninguna capa en la canasta",
     "You did not select any layer for extracting. Extract all ?":
         "No seleccionó ninguna capa para extracción. ¿Extraer todo?",
     "Yes": "Si",
@@ -66,33 +66,33 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "ajaxglobal.error.title": "Error HTTP ${ERROR}",
     "ajaxglobal.error.body": "Un error occurió.<br />${TEXT}",
     "Warning: the browser may freeze":
-        'Atención: el navegador podría bloquearse',
+        "Atención: el navegador podría bloquearse",
     "ajaxglobal.toobig":
         "Los datos del servidor son muy pesados.<br />" +
         "El servidor mandó ${WEIGHT}KBytes (el limite es de " +
         "${LIMIT}KBytes). <br />¿Desea usted continuar?",
     /* GEOR_config.js */
-    "None": 'Ninguno',
+    "None": "Ninguno",
     "BUFFER meters": "${BUFFER} metros",
     "1 kilometer": "1 kilometro",
     "BUFFER kilometers": "${BUFFER} kilometros",
     /* GEOR_data.js */
     /* GEOR_dlform.js */
-    "Firstname": 'Nombre',
+    "Firstname": "Nombre",
     "Lastname": "Apellido",
     "Company": "Organismo",
-    "Phone": 'Teléfono',
-    "Applications": 'Aplicaciones',
-    "Comments": 'Comentarios',
+    "Phone": "Teléfono",
+    "Applications": "Aplicaciones",
+    "Comments": "Comentarios",
     "dlform.blanktext":
         "Marque la casilla para aceptar las condiciones de utilización",
     "dlform.checkbox":
         "<span style='font-weight:bold;'>Acepto sin reserva los <a href='" +
         "${URL}' target='_blank'>términos de uso</a> " +
         "de los datos.</span>",
-    "Invalid form": 'Formulario inválido',
+    "Invalid form": "Formulario inválido",
     "dlform.save.error":
-        'Error al momento de guardar el formulario. ' +
+        "Error al momento de guardar el formulario. " +
         "Por favor contactese con el administrador de la plataforma.",
     "Take one minute to indicate how you use the data":
         "Tomese un tiempo para indicarnos como utilizará los datos",
