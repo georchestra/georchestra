@@ -463,7 +463,7 @@ GEOR.ows = (function() {
                     if (index < 0) {
                         GEOR.util.errorDialog({
                             msg: OpenLayers.i18n("The NAME layer was not found in WMS service.",
-                                {'name': layername})
+                                {'NAME': layername})
                         });
                         return;
                     }

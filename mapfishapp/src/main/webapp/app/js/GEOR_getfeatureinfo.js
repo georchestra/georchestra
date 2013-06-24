@@ -196,7 +196,7 @@ GEOR.getfeatureinfo = (function() {
                 observable.fireEvent("search", {
                     html: tr("<div>Search on objects active for NAME layer. " +
                              "Clic on the map.</div>",
-                             {'name': title})
+                             {'NAME': title})
                 });
 
                 var ctrlEventsConfig = {
