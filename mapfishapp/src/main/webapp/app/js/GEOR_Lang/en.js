@@ -31,7 +31,7 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
         "(the limit is ${LIMIT}KBytes)<br />Do you want to continue ?",
     /* GEOR_config.js strings */
     /* GEOR_cswbrowser.js strings */
-    "NAME layer": "${name} layer",
+    "NAME layer": "${NAME} layer",
     "cswbrowser.default.thesaurus.mismatch":
         "Administrator: problem in the configuration - " +
         "the DEFAULT_THESAURUS_KEY variable does not match " +

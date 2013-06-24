@@ -84,7 +84,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
         "(la limite est à ${LIMIT}KO)<br />Voulez-vous tout de même continuer ?",
     /* GEOR_config.js strings */
     /* GEOR_cswbrowser.js strings */
-    "NAME layer": "Couche ${name}",
+    "NAME layer": "Couche ${NAME}",
     "Metadata without a name": "Métadonnée non nommée",
     "The getDomain CSW query failed": "La requête CSW getDomain a échoué",
     "Error for the thesaurus": "Erreur sur le thésaurus",
