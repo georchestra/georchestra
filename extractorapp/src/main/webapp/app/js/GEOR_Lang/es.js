@@ -105,67 +105,67 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
         "Extensión (en ${UNIT}, " +
         'SRS = <a href="http://spatialreference.org/ref/epsg/${NUMBER}/"' +
         'target="_blank" style="text-decoration:none">${CRS}</a>)',
-    ' km²': ' km²',
-    ' m²': ' m²',
-    'Output projection': 'Proyección de salida',
-    'Raster resolution (m/pixel)': 'Resolución raster (m/pixel)',
-    'Raster output format': 'Formato de salida raster',
-    'Vector output format': 'Formato de salida vectorial',
-    'Output format': 'Formato de salida',
-    'Bounding box': 'Extensión',
+    " km²": " km²",
+    " m²": " m²",
+    "Output projection": "Proyección de salida",
+    "Raster resolution (m/pixel)": "Resolución raster (m/pixel)",
+    "Raster output format": "Formato de salida raster",
+    "Vector output format": "Formato de salida vectorial",
+    "Output format": "Formato de salida",
+    "Bounding box": "Extensión",
     /* GEOR_layerstree */
     "ERROR: owsinfo.layer should always be defined":
         "ERROR: owsinfo.layer siempre debería estar definido",
-    'layerstree.qtip.wfs': "Servicio WFS <b>${TEXT}</b><br/>${URL}",
-    'layerstree.maxfeatures':
+    "layerstree.qtip.wfs": "Servicio WFS <b>${TEXT}</b><br/>${URL}",
+    "layerstree.maxfeatures":
         "El número máximo de objetos ha sido alcanzado: sólo " +
         "${NB} objetos aparecerán.",
-    'layerstree.qtip.missingwfs':
+    "layerstree.qtip.missingwfs":
         "La capa WFS <b>${NAME}</b> no existe en el servicio especificado " +
         "(${URL})",
-    'layerstree.qtip.unavailablewfs':
+    "layerstree.qtip.unavailablewfs":
         "El servicio WFS <b>${NAME}</b> no está disponible<br/>${URL}",
-    'layerstree.qtip.wms': "Servicio WMS <b>${NAME}</b><br/>${URL}",
-    'layerstree.qtip.badprojection':
+    "layerstree.qtip.wms": "Servicio WMS <b>${NAME}</b><br/>${URL}",
+    "layerstree.qtip.badprojection":
         "No se encuentra ninguna proyección soportada " +
         "para la capa WMS <b>${NAME}</b>",
-    'layerstree.qtip.missingwms':
+    "layerstree.qtip.missingwms":
         "La capa WMS <b>${NAME}</b> no existe en el servicio especificado " +
         "(${URL})",
-    'layerstree.qtip.unavailablewms':
+    "layerstree.qtip.unavailablewms":
         "El servicio WMS <b>${NAME}</b> no está disponible<br/>${URL}",
-    'layerstree.layer.tip':
+    "layerstree.layer.tip":
         "Seleccionar la capa para visualizarla " +
         "y configurar sus parámetros de extracción específicos.<br/>" +
         "Selecciona la casilla para añadir la capa a la canasta de " +
         "extracción. Deselecciona la casilla para sacar la capa de la canasta.",
-    'layerstree.qtip.noextraction':
+    "layerstree.qtip.noextraction":
         "La capa <b>${NAME}</b> no está disponible: " +
         "ningún servicio de extracción",
-    'layerstree.qtip.invalidwcs':
+    "layerstree.qtip.invalidwcs":
         "La capa <b>${NAME}</b> no está disponible: el servicio WCS " +
         "${URL} no es válido",
-    'layerstree.describelayer':
+    "layerstree.describelayer":
         "La capa <b>${NAME}</b> no está disponible: la consulta WMS " +
         "DescribeLayer sobre ${URL} no se pudo realizar exitosamente.",
-    'Your extraction cart': "Su canasta de extracción",
+    "Your extraction cart": "Su canasta de extracción",
     "Loading...": "Cargando...",
-    'Default parameters': "Parámetros por omisión",
-    'layerstree.qtip.defaultparameters':
+    "Default parameters": "Parámetros por omisión",
+    "layerstree.qtip.defaultparameters":
         "<b>Parámetros por omisión</b><br/>" +
         "Estos parámetros serán aplicados a la extracción de todas las capas " +
         "que no definen sus propios parámetros.",
-    'OGC Layers': "Capas OGC",
-    'OGC layers available for extraction':
+    "OGC Layers": "Capas OGC",
+    "OGC layers available for extraction":
         "Capas OGC disponibles para extracción",
-    'OGC services': "Servicios OGC",
-    'The layers of these OGC services can be extracted':
+    "OGC services": "Servicios OGC",
+    "The layers of these OGC services can be extracted":
         "Servicios OGC cuyas capas pueden ser extraidas",
-    'layerstree.email':
+    "layerstree.email":
         "Extracción en curso.\n" +
         "Un correo electrónico será enviado a la dirección ${EMAIL} " +
         "cuando la extracción habrá acabado.",
-    'The extraction request failed.': "El pedido de extracción falló.",
+    "The extraction request failed.": "El pedido de extracción falló.",
     /* GEOR_map.js */
     "Layer probably invisible at this scale: ":
         "Capa probablemente invisible a esta escala: ",
@@ -175,13 +175,13 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     /* GEOR_ows.js */
     /* GEOR_proj4jsdefs.js */
     /* GEOR_referentials.js */
-    'Referential': 'Región',
-    'Select': 'Seleccione',
-    'The selected layer does not have a geometric column':
+    "Referential": "Región",
+    "Select": "Seleccione",
+    "The selected layer does not have a geometric column":
         "La capa seleccionada no tiene una columna geométrica",
-    'Recenter on': 'Posicionarse sobre',
-    'location ?': '¿localidad?',
-    'referentials.help':
+    "Recenter on": "Posicionarse sobre",
+    "location ?": "¿localidad?",
+    "referentials.help":
         "<span>Esta herramienta permite utilizar una extensión geográfica " +
         "de referencia para la extracción actual</span>",
     /* GEOR_toolbar.js */
@@ -194,17 +194,17 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Help": "Ayuda",
     "Show help": "Mostrar la ayuda",
     "Extractor help": "Ayuda del extractor",
-    'Login': 'Conectarse',
-    'Logout': 'Desconectarse',
-    'toolbar.confirm.login':
+    "Login": "Conectarse",
+    "Logout": "Desconectarse",
+    "toolbar.confirm.login":
         "El contexto cartógrafico actual será perdido al momento de entrar " +
         "en la próxima página.",
     /* GEOR_util.js */
-    'Confirm': "Confirmación",
-    'Information': "Información",
-    'Error': "Error",
-    'degrees': 'grados',
-    'meters': 'metros',
+    "Confirm": "Confirmación",
+    "Information": "Información",
+    "Error": "Error",
+    "degrees": "grados",
+    "meters": "metros",
     /* GEOR_waiter.js */
     /* OpenLayers.Control.OutOfRangeLayers.js */
     "List of layers out of range: ": "Lista de capas fuera de la extensión.",
