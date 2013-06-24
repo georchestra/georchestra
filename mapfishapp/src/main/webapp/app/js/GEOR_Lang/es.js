@@ -103,7 +103,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     /* GEOR_cswquerier.js strings */
     "Show metadata sheet in a new window":
         "Mostrar la ficha de metadatos en una nueva ventana",
-    'more': 'más',
+    "more": "más",
     "Clic to select or deselect the layer":
         "Haga clic para seleccionar o deseleccionar la capa",
     "Open the URL url in a new window":
@@ -414,7 +414,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Enter ": "Entrar ",
     "layereditingpanel.cancel.confirm": "Confirma la cancelación de todas " +
         "las modificación<br />desde la última sincronización ?",
-    "Synchronize": 'Sincronizar',
+    "Synchronize": "Sincronizar",
     "layereditingpanel.changes.confirm": "Confirmar o cancelar las " +
         "modificaciones en curso.",
     "Delete": "Quitar",
