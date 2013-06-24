@@ -114,7 +114,7 @@
 		<dependency>
 			<groupId>org.georchestra</groupId>
 			<artifactId>gt-mif</artifactId>
-			<version>13.02</version>
+			<version>13.02-SNAPSHOT</version>
 		</dependency>
 		
         <dependency>
