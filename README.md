@@ -35,22 +35,44 @@ Then:
 
 How to customize ?
 ==================
- 
-Copy the "template" config directory (or fork the [georchestra/template](https://github.com/georchestra/template) repository) and edit "yourown" to match your needs:
 
-    PROFILE=yourown
-    cp -r config/configurations/template config/configurations/${PROFILE}
-       (edit files in config/configuration/yourown)
-    ./mvn -Dmaven.test.skip=true -Dserver=${PROFILE} install
+For testing purposes:
 
-[Read more](https://github.com/georchestra/georchestra/blob/master/config/README.md) about the configuration process
+    cd config/configurations
+    cp -r template myprofile
+
+You can then edit files in myprofile to match your needs.
+
+Finally, to build geOrchestra with your own configuration profile:
+
+    ./mvn -Dmaven.test.skip=true -Dserver=myprofile install
+
+Note: if you're planning to use geOrchestra on the long term, you're better off forking the [georchestra/template](https://github.com/georchestra/template) configuration repository into a private git repository.
+This way, you'll be able to merge into your branch the changes from upstream.
+
+Example workflow:
+
+    cd config/configurations
+    git clone git@github.com:georchestra/template.git myprofile
+    cd myprofile
+    git remote rename origin upstream
+    (feel free to add a new origin to a private server)
+
+Do whatever updates you want in the master branch, and regularly merge the upstream changes:
+
+    git co master
+    git fetch upstream
+    git merge upstream/master
+
+
+Read more about the [configuration process](https://github.com/georchestra/georchestra/blob/master/config/README.md)
 
 How to deploy ?
 ===============
 
 Collect WAR files in a dedicated directory and rename them:
 
-    PROFILE=yourown
+    PROFILE=myprofile
     mkdir /tmp/georchestra_deploy_tmp
     cd /tmp/georchestra_deploy_tmp
     cp `find ~/.m2/repository/ -name *-13.02-${PROFILE}.war` ./
