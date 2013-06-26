@@ -15,6 +15,7 @@ More information in the modules README:
  * [ogc-server-statistics](https://github.com/georchestra/georchestra/blob/master/ogc-server-statistics/README.md)
  * [static](https://github.com/georchestra/georchestra/blob/master/static/README.md)
 
+See also the [release notes](https://github.com/georchestra/georchestra/blob/master/RELEASE_NOTES.md).
 
 How to build ?
 ==============
@@ -67,10 +68,17 @@ Do whatever updates you want in the master branch, and regularly merge the upstr
 
 Read more about the [configuration process](https://github.com/georchestra/georchestra/blob/master/config/README.md)
 
-How to deploy ?
+How to install ?
 ===============
 
-Collect WAR files in a dedicated directory and rename them:
+geOrchestra runs well on Debian boxes.
+An example setup on one Tomcat is described [here](https://github.com/georchestra/georchestra/blob/master/INSTALL.md).
+
+It is also possible to split the webapps across several Tomcat instances. 
+The recommended setup is to have at least 2 tomcats, with one entirely dedicated to GeoServer.
+
+
+Once the system is ready, collect WAR files in a dedicated directory and rename them:
 
     PROFILE=myprofile
     mkdir /tmp/georchestra_deploy_tmp
