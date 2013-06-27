@@ -20,10 +20,10 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Email": "Email",
     "OK": "OK",
     /* GEOR.js strings */
-    "Enter a valid email address: ": 'Saisissez une adresse email valide : ',
+    "Enter a valid email address: ": "Saisissez une adresse email valide : ",
     "The email address is not valid. Stopping extraction.":
         "L'email n'est pas valide. Abandon de l'extraction.",
-    "Not any layer in the cart": 'Aucune couche dans le panier',
+    "Not any layer in the cart": "Aucune couche dans le panier",
     "You did not select any layer for extracting. Extract all ?":
         "Vous n'avez pas sélectionné de couche pour l'extraction. " +
         "Tout extraire ?",
@@ -69,33 +69,33 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "ajaxglobal.error.title": "Erreur HTTP ${ERROR}",
     "ajaxglobal.error.body": "Une erreur est survenue.<br />${TEXT}",
     "Warning: the browser may freeze":
-        'Attention : risque de blocage du navigateur',
+        "Attention : risque de blocage du navigateur",
     "ajaxglobal.toobig":
         "Les données provenant du serveur sont trop volumineuses.<br />" +
         "Le serveur a envoyé ${WEIGHT}KO (la limite est à " +
         "${LIMIT}KO). <br />Voulez-vous tout de même continuer ?",
     /* GEOR_config.js */
-    "None": 'Aucun',
+    "None": "Aucun",
     "BUFFER meters": "${BUFFER} mètres",
     "1 kilometer": "1 kilomètre",
     "BUFFER kilometers": "${BUFFER} kilomètres",
     /* GEOR_data.js */
     /* GEOR_dlform.js */
-    "Firstname": 'Prénom',
+    "Firstname": "Prénom",
     "Lastname": "Nom",
     "Company": "Organisme",
-    "Phone": 'Téléphone',
-    "Applications": 'Applications',
-    "Comments": 'Commentaires',
+    "Phone": "Téléphone",
+    "Applications": "Applications",
+    "Comments": "Commentaires",
     "dlform.blanktext":
         "Cochez la case pour accepter les conditions d'utilisation",
     "dlform.checkbox":
         "<span style='font-weight:bold;'>J'accepte sans réserve les <a href='" +
         "${URL}' target='_blank'>conditions d'utilisation</a> " +
         "des données.</span>",
-    "Invalid form": 'Formulaire invalide',
+    "Invalid form": "Formulaire invalide",
     "dlform.save.error":
-        'Impossible de sauver le formulaire. ' +
+        "Impossible de sauver le formulaire. " +
         "Merci de contacter l'administrateur de la plateforme.",
     "Take one minute to indicate how you use the data":
         "Prenez quelques instants pour nous indiquer l'utilisation des données",
@@ -108,67 +108,67 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
         "Emprise (en ${UNIT}, " +
         'SRS = <a href="http://spatialreference.org/ref/epsg/${NUMBER}/"' +
         'target="_blank" style="text-decoration:none">${CRS}</a>)',
-    ' km²': ' km²',
-    ' m²': ' m²',
-    'Output projection': 'Projection de sortie',
-    'Raster resolution (m/pixel)': 'Résolution raster (m/pixel)',
-    'Raster output format': 'Format de sortie raster',
-    'Vector output format': 'Format de sortie vecteur',
-    'Output format': 'Format de sortie',
-    'Bounding box': 'Emprise',
+    " km²": " km²",
+    " m²": " m²",
+    "Output projection": "Projection de sortie",
+    "Raster resolution (m/pixel)": "Résolution raster (m/pixel)",
+    "Raster output format": "Format de sortie raster",
+    "Vector output format": "Format de sortie vecteur",
+    "Output format": "Format de sortie",
+    "Bounding box": "Emprise",
     /* GEOR_layerstree */
     "ERROR: owsinfo.layer should always be defined":
         "ERREUR: owsinfo.layer devrait être toujours défini",
-    'layerstree.qtip.wfs': "Service WFS <b>${TEXT}</b><br/>${URL}",
-    'layerstree.maxfeatures':
+    "layerstree.qtip.wfs": "Service WFS <b>${TEXT}</b><br/>${URL}",
+    "layerstree.maxfeatures":
         "Le nombre maximal d'objets a été atteint : seulement " +
         "${NB} objets sont affichés.",
-    'layerstree.qtip.missingwfs':
+    "layerstree.qtip.missingwfs":
         "La couche WFS <b>${NAME}</b> n'existe pas sur le service spécifié " +
         "(${URL})",
-    'layerstree.qtip.unavailablewfs':
+    "layerstree.qtip.unavailablewfs":
         "Service WFS <b>${NAME}</b> non disponible<br/>${URL}",
-    'layerstree.qtip.wms': "Service WMS <b>${NAME}</b><br/>${URL}",
-    'layerstree.qtip.badprojection':
+    "layerstree.qtip.wms": "Service WMS <b>${NAME}</b><br/>${URL}",
+    "layerstree.qtip.badprojection":
         "Impossible de trouver une projection supportée " +
         "pour la couche WMS <b>${NAME}</b>",
-    'layerstree.qtip.missingwms':
+    "layerstree.qtip.missingwms":
         "La couche WMS <b>${NAME}</b> n'existe pas sur le service spécifié " +
         "(${URL})",
-    'layerstree.qtip.unavailablewms':
+    "layerstree.qtip.unavailablewms":
         "Service WMS <b>${NAME}</b> non disponible<br/>${URL}",
-    'layerstree.layer.tip':
+    "layerstree.layer.tip":
         "Sélectionnez la couche pour la visualiser " +
         "et configurer ses paramètres d'extraction spécifiques.<br/>" +
         "Cochez la case pour ajouter la couche au panier d'extraction. " +
         "Décochez la case pour retirer la couche du panier.",
-    'layerstree.qtip.noextraction':
+    "layerstree.qtip.noextraction":
         "La couche <b>${NAME}</b> n'est pas disponible : " +
         "aucun service d'extraction",
-    'layerstree.qtip.invalidwcs':
+    "layerstree.qtip.invalidwcs":
         "La couche <b>${NAME}</b> n'est pas disponible : Le service WCS " +
         "${URL} n'est pas valide",
-    'layerstree.describelayer':
+    "layerstree.describelayer":
         "La couche <b>${NAME}</b> n'est pas disponible : la requête WMS " +
         "DescribeLayer sur ${URL} n'a pas abouti.",
-    'Your extraction cart': "Votre panier d'extraction",
+    "Your extraction cart": "Votre panier d'extraction",
     "Loading...": "Chargement...",
-    'Default parameters': "Paramètres par défaut",
-    'layerstree.qtip.defaultparameters':
+    "Default parameters": "Paramètres par défaut",
+    "layerstree.qtip.defaultparameters":
         "<b>Paramètres par défaut</b><br/>" +
         "Ces paramètres sont appliqués à l'extraction de toute couche " +
         "ne faisant pas l'objet de paramètres spécifiques.",
-    'OGC Layers': "Couches OGC",
-    'OGC layers available for extraction':
+    "OGC Layers": "Couches OGC",
+    "OGC layers available for extraction":
         "Couches OGC disponibles pour extraction",
-    'OGC services': "Services OGC",
-    'The layers of these OGC services can be extracted':
+    "OGC services": "Services OGC",
+    "The layers of these OGC services can be extracted":
         "Services OGC dont les couches peuvent être extraites",
-    'layerstree.email':
+    "layerstree.email":
         "Extraction en cours.\n" +
         "Un email sera envoyé à l'adresse ${EMAIL} " +
         "lorsque l'extraction sera terminée.",
-    'The extraction request failed.': "La requête d'extraction n'a pas abouti.",
+    "The extraction request failed.": "La requête d'extraction n'a pas abouti.",
     /* GEOR_map.js */
     "Layer probably invisible at this scale: ":
         "Couche probablement non visible à cette échelle : ",
@@ -178,13 +178,13 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     /* GEOR_ows.js */
     /* GEOR_proj4jsdefs.js */
     /* GEOR_referentials.js */
-    'Referential': 'Référentiel',
-    'Select': 'Sélectionnez',
-    'The selected layer does not have a geometric column':
+    "Referential": "Référentiel",
+    "Select": "Sélectionnez",
+    "The selected layer does not have a geometric column":
         "La couche sélectionnée ne possède pas de colonne géométrique",
-    'Recenter on': 'Recentrer sur',
-    'location ?': 'localité ?',
-    'referentials.help':
+    "Recenter on": "Recentrer sur",
+    "location ?": "localité ?",
+    "referentials.help":
         "<span>Cet outil permet de calquer l'emprise d'extraction courante " +
         "sur celle d'une entité de référence.</span>",
     /* GEOR_toolbar.js */
@@ -197,9 +197,9 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Help": "Aide",
     "Show help": "Afficher l'aide",
     "Extractor help": "Aide de l'extracteur",
-    'Login': 'Connexion',
-    'Logout': 'Déconnexion',
-    'toolbar.confirm.login':
+    "Login": "Connexion",
+    "Logout": "Déconnexion",
+    "toolbar.confirm.login":
         "Vous allez quitter cette page et perdre le contexte cartographique " +
         "courant",
         // ou : "Pour vous connecter, nous vous redirigeons vers une autre
@@ -207,11 +207,11 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
         // Vous pouvez le sauvegarder en annulant cette opération, et en
         // cliquant sur Espace de travail > Sauvegarder la carte" ?
     /* GEOR_util.js */
-    'Confirm': "Confirmation",
-    'Information': "Information",
-    'Error': "Erreur",
-    'degrees': 'degrés',
-    'meters': 'mètres',
+    "Confirm": "Confirmation",
+    "Information": "Information",
+    "Error": "Erreur",
+    "degrees": "degrés",
+    "meters": "mètres",
     /* GEOR_waiter.js */
     /* OpenLayers.Control.OutOfRangeLayers.js */
     "List of layers out of range: ": "Liste des couches hors du zoom.",

@@ -296,6 +296,7 @@ GEOR.config = (function() {
         CATALOGS: getCustomParameter("CATALOGS", [
             ['http://geobretagne.fr/geonetwork/srv/fre/csw', 'le catalogue GeoBretagne'],
             ['http://ids.pigma.org/geonetwork/srv/fre/csw', 'le catalogue PIGMA'],
+            ['/geonetwork/srv/fre/csw', 'le catalogue local'],
             ['http://sandre.eaufrance.fr/geonetwork_CSW/srv/fre/csw', 'le catalogue du Sandre'],
             ['http://geocatalog.webservice-energy.org/geonetwork/srv/fre/csw', 'le catalogue de webservice-energy']
         ]),
@@ -330,10 +331,12 @@ GEOR.config = (function() {
          * Constant: DEFAULT_THESAURUS_KEY
          * Key (as the one in the response from /geonetwork/srv/fre/xml.thesaurus.getList)
          * of the thesaurus to use as the default (selected) one.
-         * Defaults to 'external.theme.inspire-theme'
+         *
+         * local.theme.test is the only one exported by GeoNetwork by default.
+         * It is highly recommended to upload new thesauri and to change this setting.
          */
         DEFAULT_THESAURUS_KEY: getCustomParameter("DEFAULT_THESAURUS_KEY",
-            'external.theme.inspire-theme'),
+            'local.theme.test'),
 
         /**
          * Constant: MAX_FEATURES

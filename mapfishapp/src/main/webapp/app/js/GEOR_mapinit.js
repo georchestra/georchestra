@@ -328,7 +328,7 @@ GEOR.mapinit = (function() {
                     tr("NB layers not imported", {'NB': errors.length}) :
                     tr("One layer not imported"),
                 msg: tr("mapinit.layers.load.error",
-                    {'list': errors.join(', ')})
+                    {'LIST': errors.join(', ')})
             });
         } else {
             var plural = (count>1) ? "s" : "";

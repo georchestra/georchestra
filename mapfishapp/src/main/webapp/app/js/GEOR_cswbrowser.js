@@ -109,7 +109,7 @@ GEOR.cswbrowser = (function() {
                             name += item.description;
                         } else if (item.name) {
                             // should always be the case
-                            name += tr("NAME layer", {'name': item.name});
+                            name += tr("NAME layer", {'NAME': item.name});
                         }
 
                         if (record.rights && record.rights[0]) {

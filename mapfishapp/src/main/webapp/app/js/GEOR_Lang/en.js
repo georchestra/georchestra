@@ -31,58 +31,58 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
         "(the limit is ${LIMIT}KBytes)<br />Do you want to continue ?",
     /* GEOR_config.js strings */
     /* GEOR_cswbrowser.js strings */
-    "NAME layer": "${name} layer",
+    "NAME layer": "${NAME} layer",
     "cswbrowser.default.thesaurus.mismatch":
         "Administrator: problem in the configuration - " +
         "the DEFAULT_THESAURUS_KEY variable does not match " +
         "any value exported by GeoNetwork",
     /* GEOR_cswquerier.js strings */
     "Open the URL url in a new window":
-        "Open the ${url} url in a new window",
+        "Open the ${URL} url in a new window",
     "NB layers": "${NB} layers",
     " in NB metadata": " in ${NB} metadata",
     /* GEOR_editing.js strings */
     /* GEOR_geonames.js strings */
     /* GEOR_getfeatureinfo.js strings */
     "<div>Search on objects active for NAME layer. Clic on the map.</div>":
-         "<div>Search on objects active for ${name} layer. " +
+         "<div>Search on objects active for ${NAME} layer. " +
          "Clic on the map.</div>",
     /* GEOR_layerfinder.js strings */
     "layerfinder.layer.unavailable":
-        "The ${name} layer could not be found in WMS service.<br/<br/>" +
+        "The ${NAME} layer could not be found in WMS service.<br/<br/>" +
         "Do you have sufficient rights ? " +
         "Perhaps this layer is currently unavailable",
     "The NAME layer does not contain a valid geometry column":
-        "The ${name} layer does not contain a valid geometry column.",
+        "The ${NAME} layer does not contain a valid geometry column.",
     /* GEOR_managelayers.js strings */
-    "Confirm NAME layer deletion ?": "Confirm ${name} layer deletion ?",
-    "1:MAXSCALE to 1:MINSCALE": "1:${maxscale} to 1:${minscale}",
+    "Confirm NAME layer deletion ?": "Confirm ${NAME} layer deletion ?",
+    "1:MAXSCALE to 1:MINSCALE": "1:${MAXSCALE} to 1:${MINSCALE}",
     "Visibility range (indicative):<br />from TEXT":
-        "Visibility range (indicative):<br />from ${text}",
+        "Visibility range (indicative):<br />from ${TEXT}",
     /* GEOR_map.js strings */
     "The <b>NAME</b> layer could not appear for that reason: ":
-        "The <b>${name}</b> layer could not appear for that reason: ",
+        "The <b>${NAME}</b> layer could not appear for that reason: ",
     /* GEOR_mapinit.js strings */
     "NB layers not imported": "${NB} layers not imported",
     "mapinit.layers.load.error":
-        "The layers named ${list} could not be loaded. Possible reasons: " +
+        "The layers named ${LIST} could not be loaded. Possible reasons: " +
         "insufficient rights, incompatible CRS or layer does not exist",
     "NB layers imported": "${NB} layers imported",
     /* GEOR_mappanel.js strings */
     /* GEOR_ows.js strings */
     "The NAME layer was not found in WMS service.":
-        "The ${name} layer was not found in WMS service.",
+        "The ${NAME} layer was not found in WMS service.",
     /* GEOR_print.js strings */
     "The NAME layer cannot be printed.":
-        "The ${name} layer cannot be printed.",
+        "The ${NAME} layer cannot be printed.",
     "print.unknown.layout":
          "Configuration error: DEFAULT_PRINT_LAYOUT " +
-         "${layout} not found in print capabilities",
+         "${LAYOUT} not found in print capabilities",
     "print.unknown.resolution":
          "Configuration error: DEFAULT_PRINT_RESOLUTION " +
-         "${resolution} not found in print capabilities",
+         "${RESOLUTION} not found in print capabilities",
     /* GEOR_querier.js strings */
-    "Request on NAME": "Request on ${name}",
+    "Request on NAME": "Request on ${NAME}",
     "querier.layer.no.geom":
         "That layer has no geometric column." +
         "<br />The geometric request module will not work",
@@ -117,7 +117,7 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
     "Unreachable server or insufficient rights": "Could not get a valid response from " +
         "the server. Possible reasons: insufficient rights, server is down, too much data.",
     /* GEOR_EditingPanel.js */
-    "editingpanel.geom.error": "This layer's geometry type is ${type}.<br/>" +
+    "editingpanel.geom.error": "This layer's geometry type is ${TYPE}.<br/>" +
         "Only point, line and polygons" +
         " (and multi-*) are editable.",
     /* GEOR_LayerEditingPanel.js */

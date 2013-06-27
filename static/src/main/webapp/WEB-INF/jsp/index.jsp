@@ -9,8 +9,15 @@
 <%
 Boolean anonymous = true;
 
+/*
 response.setDateHeader("Expires", 31536000);
 response.setHeader("Cache-Control", "private, max-age=31536000");
+*/
+
+// to prevent problems with proxies, and for now:
+response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
+response.setHeader("Pragma", "no-cache"); // HTTP 1.0
+response.setDateHeader("Expires", 0); // Proxies.
 
 String lang = request.getParameter("lang");
 String active = request.getParameter("active");
@@ -35,7 +42,7 @@ if(sec_roles != null) {
     for (int i = 0; i < roles.length; i++) {
         // ROLE_ANONYMOUS is added by the security proxy:
         if (roles[i].equals("ROLE_ANONYMOUS")) {
-            response.setHeader("Cache-Control", "public, max-age=31536000");
+            //response.setHeader("Cache-Control", "public, max-age=31536000");
             break;
         }
         if (roles[i].equals("ROLE_SV_EDITOR") || roles[i].equals("ROLE_SV_REVIEWER") || roles[i].equals("ROLE_SV_ADMIN") || roles[i].equals("ROLE_SV_ADMINISTRATOR") || roles[i].equals("ROLE_SV_USER")) {
@@ -65,7 +72,6 @@ if(sec_roles != null) {
             margin      : 0;
             font-family : 'Yanone Kaffeesatz', arial,verdana,helvetica;
             background  : #fff;
-            height      : 90px;
         }
         #go_home {
             float  : left;
@@ -163,7 +169,7 @@ if(sec_roles != null) {
         <ul>
         <c:choose>
             <c:when test='<%= active.equals("geonetwork") %>'>
-            <li class="active"><a><fmt:message key="catalogue"/></a></li>
+            <li class="active"><a href="/geonetwork/"><fmt:message key="catalogue"/></a></li>
             </c:when>
             <c:otherwise>
             <li><a href="/geonetwork/"><fmt:message key="catalogue"/></a></li>
@@ -190,7 +196,7 @@ if(sec_roles != null) {
 
         <c:choose>
             <c:when test='<%= active.equals("geoserver") %>'>
-            <li class="active"><a><fmt:message key="services"/></a></li>
+            <li class="active"><a href="/geoserver/web/"><fmt:message key="services"/></a></li>
             </c:when>
             <c:otherwise>
             <li><a href="/geoserver/web/"><fmt:message key="services"/></a></li>
@@ -206,7 +212,7 @@ if(sec_roles != null) {
             </c:when>
             <c:otherwise>
         <p class="logged">
-            <a href="?login"><fmt:message key="login"/></a>
+            <a id="login_a"><fmt:message key="login"/></a>
         </p>
             </c:otherwise>
         </c:choose>
@@ -214,6 +220,10 @@ if(sec_roles != null) {
 
     <script>
         (function(){
+            // required to get the correct redirect after login, see https://github.com/georchestra/georchestra/issues/170
+            document.getElementById("login_a").href = parent.window.location + "?login";
+
+            // handle menus
             if (!window.addEventListener || !document.querySelectorAll) return;
             var each = function(els, callback) {
                 for (var i = 0, l=els.length ; i<l ; i++) {

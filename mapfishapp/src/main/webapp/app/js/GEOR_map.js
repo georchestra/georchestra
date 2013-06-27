@@ -288,7 +288,7 @@ GEOR.map = (function() {
      */
     var checkLayer = function(r) {
         var prefix = tr("The <b>NAME</b> layer could not appear for that reason: ",
-            {'name': r.get('title')});
+            {'NAME': r.get('title')});
         var minScale = r.get('minScale');
         var maxScale = r.get('maxScale');
 
