@@ -158,6 +158,9 @@ Apache
     SetEnv no-gzip on
     ProxyTimeout 999999999
 
+    RequestHeader unset sec-username
+    RequestHeader unset sec-roles
+
     RewriteEngine On
     RewriteRule ^/analytics$ /analytics/ [R]
     RewriteRule ^/cas$ /cas/ [R]
