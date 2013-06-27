@@ -74,10 +74,6 @@ How to install ?
 geOrchestra runs well on Debian boxes.
 An example setup on one Tomcat is described [here](https://github.com/georchestra/georchestra/blob/master/INSTALL.md).
 
-It is also possible to split the webapps across several Tomcat instances. 
-The recommended setup is to have at least 2 tomcats, with one entirely dedicated to GeoServer.
-
-
 Once the system is ready, collect WAR files in a dedicated directory and rename them:
 
     PROFILE=myprofile
@@ -104,3 +100,6 @@ Copy WAR files in Tomcat webapps dir:
 
 This is the basic idea, but one can use more advanced deploy scripts. An example is provided 
 [here](https://github.com/georchestra/georchestra/blob/master/server-deploy/linux_deploy_scripts/Readme.md).
+
+Note: it is also possible to split the webapps across several Tomcat instances. 
+The recommended setup is to have at least 2 tomcats, with one entirely dedicated to GeoServer.
