@@ -72,7 +72,6 @@ if(sec_roles != null) {
             margin      : 0;
             font-family : 'Yanone Kaffeesatz', arial,verdana,helvetica;
             background  : #fff;
-            height      : 90px;
         }
         #go_home {
             float  : left;
@@ -213,7 +212,7 @@ if(sec_roles != null) {
             </c:when>
             <c:otherwise>
         <p class="logged">
-            <a href="?login"><fmt:message key="login"/></a>
+            <a id="login_a"><fmt:message key="login"/></a>
         </p>
             </c:otherwise>
         </c:choose>
@@ -221,6 +220,10 @@ if(sec_roles != null) {
 
     <script>
         (function(){
+            // required to get the correct redirect after login, see https://github.com/georchestra/georchestra/issues/170
+            document.getElementById("login_a").href = parent.window.location + "?login";
+
+            // handle menus
             if (!window.addEventListener || !document.querySelectorAll) return;
             var each = function(els, callback) {
                 for (var i = 0, l=els.length ; i<l ; i++) {
