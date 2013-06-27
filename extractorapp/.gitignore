@@ -1,4 +1,5 @@
 src/integration-test/results/
 src/integration-test/scala/
 src/integration-test/lib/
-
+src/main/webapp/WEB-INF/jsp/index.jsp
+src/main/webapp/WEB-INF/ws-servlet.xml
