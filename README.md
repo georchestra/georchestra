@@ -17,6 +17,7 @@ More information in the modules README:
 
 See also the [release notes](https://github.com/georchestra/georchestra/blob/master/RELEASE_NOTES.md).
 
+
 How to build ?
 ==============
 
@@ -33,6 +34,7 @@ Then:
     git clone --recursive https://github.com/georchestra/georchestra.git
     cd georchestra
     ./mvn -Dmaven.test.skip=true -Ptemplate install
+
 
 How to customize ?
 ==================
@@ -67,6 +69,7 @@ Do whatever updates you want in the master branch, and regularly merge the upstr
 
 
 Read more about the [configuration process](https://github.com/georchestra/georchestra/blob/master/config/README.md)
+
 
 How to install ?
 ===============
