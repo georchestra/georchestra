@@ -1,0 +1,59 @@
+{
+    "js": [
+        "js/Annotation.js",
+        "js/FeaturePanel.js",
+        "js/main.js",
+        "../../../lib/externals/ext/examples/ux/Spinner.js",
+        "../../../lib/externals/ext/examples/ux/SpinnerField.js"
+    ],
+    "css": [
+        "resources/css/annotation.css"
+    ],
+    "default_options": {
+        "mode": "static",
+        "baseLayerConfig": {
+            "wmsurl": "http://tile.geobretagne.fr/gwc02/service/wms",
+            "layer": "satellite",
+            "format": "image/jpeg",
+            "buffer": 8
+        }
+    },
+    "i18n": {
+        "en": {},
+        "es": {},
+        "fr": {
+            "Drawing tools": "Outils de dessin",
+            "Delete feature": "Supprimer l'objet",
+            "Do you really want to delete this feature ?": "Voulez-vous vraiment supprimer cet objet ?",
+            "Delete": "Supprimer",
+            "DeleteAll": "Supprimer",
+            "Modify": "Modifier",
+            "LineString": "Ligne",
+            "MultiLineString": "MultiLigne",
+            "Point": "Point",
+            "Circle": "Cercle",
+            "Box": "Rectangle",
+            "MultiPoint": "MultiPoint",
+            "Polygon": "Polygone",
+            "MultiPolygon": "MultiPolygone",
+            "Label": "Étiquette",
+            "Create point": "Créer point",
+            "Create circle": "Créer cercle",
+            "Create box": "Créer rectangle",
+            "Create line": "Créer ligne",
+            "Create polygon": "Créer polygone",
+            "Create label": "Créer étiquette",
+            "Delete all features": "Supprimer tous les objets",
+            "Delete All Features": "Supprimer Tous Les Objets",
+            "Do you really want to delete all features ?": "Voulez-vous vraiment supprimer tous les objets ?",
+            "Close": "Fermer",
+            "Style": "Style",
+            "Size": "Taille",
+            "fontSize": "Taille",
+            "strokeWidth": "Épaisseur",
+            "Color": "Couleur",
+            "Name": "Nom",
+            "no title": "Sans titre"
+        }
+    }
+}
