@@ -129,7 +129,7 @@
         </dependency>
         
         <dependency>
-            <groupId>org.geotools</groupId>
+            <groupId>org.geotools.xsd</groupId>
             <artifactId>gt-xsd-kml</artifactId>
             <version>${gt.version}</version>
         </dependency>
