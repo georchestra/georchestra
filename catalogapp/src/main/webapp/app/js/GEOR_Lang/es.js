@@ -25,19 +25,19 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Which data are you searching for ?": "¿Que datos esta buscando?",
     "On which area ?": "¿Sobre que territorio?",
     "When ?": "¿Cuando?",
-    'clean': 'borrar',
-    'search': 'buscar',
+    "clean": "borrar",
+    "search": "buscar",
     "various.results": "${RESULTS} fichas seleccionadas",
     "one.result": "1 ficha seleccionada",
     /* GEOR_dataview.js strings */
-    'View WMS layer': "<b>Visualizar</b> la capa WMS <b>${NAME}</b>",
-    'Download WMS layer': "<b>Descargar</b> la capa WMS <b>${NAME}</b>",
-    'View WMS service': "<b>Visualizar</b> el servicio WMS <b>${NAME}</b>",
-    'Download WMS service': "<b>Descargar</b> el servicio WMS <b>${NAME}</b>",
-    'Download data': "Descargar el dato ${NAME}",
-    'zoom': 'extensión espacial',
-    'record': 'ficha',
-    'Keywords: ': 'Palabras clave: ',
+    "View WMS layer": "<b>Visualizar</b> la capa WMS <b>${NAME}</b>",
+    "Download WMS layer": "<b>Descargar</b> la capa WMS <b>${NAME}</b>",
+    "View WMS service": "<b>Visualizar</b> el servicio WMS <b>${NAME}</b>",
+    "Download WMS service": "<b>Descargar</b> el servicio WMS <b>${NAME}</b>",
+    "Download data": "Descargar el dato ${NAME}",
+    "zoom": "extensión espacial",
+    "record": "ficha",
+    "Keywords: ": "Palabras clave: ",
     "Server NAME": "Servidor ${NAME}",
     "Oops, a problem occured.": "Oops, occurrió un problema.",
     /* GEOR_nav.js strings */
@@ -49,6 +49,6 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Results N1 to N2 of N": "Resultados ${N1} a ${N2} de ${N}",
     "Result N1 to N2 of N": "Resultado ${N1} a ${N2} de ${N}",
     /* GEOR_what.js strings */
-    'enter one or more keywords': 'ingresar una o varias palabras clave'
+    "enter one or more keywords": "ingresar una o varias palabras clave"
     // no trailing comma
 });

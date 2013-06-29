@@ -235,7 +235,7 @@ GEOR.querier = (function() {
         observable.fireEvent("ready", {
             xtype: 'gx_filterbuilder',
             title: tr("Request on NAME", {
-                'name': GEOR.util.shortenLayerName(layerName)
+                'NAME': GEOR.util.shortenLayerName(layerName)
             }),
             defaultBuilderType: Styler.FilterBuilder.ALL_OF,
             filterPanelOptions: {

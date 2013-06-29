@@ -118,7 +118,7 @@ GEOR.managelayers = (function() {
                 GEOR.util.confirmDialog({
                     msg: tr(
                         "Confirm NAME layer deletion ?",
-                        {'name': layerRecord.get('title')}
+                        {'NAME': layerRecord.get('title')}
                     ),
                     width: 360,
                     yesCallback: function() {
@@ -212,8 +212,8 @@ GEOR.managelayers = (function() {
         // TODO: get min/maxScale from current SLD is not set in layer
         var layer = layerRecord.get('layer');
         var visibilityText = tr("1:MAXSCALE to 1:MINSCALE", {
-            'maxscale': OpenLayers.Number.format(layer.maxScale, 0),
-            'minscale': OpenLayers.Number.format(layer.minScale, 0)
+            'MAXSCALE': OpenLayers.Number.format(layer.maxScale, 0),
+            'MINSCALE': OpenLayers.Number.format(layer.minScale, 0)
         });
         return {
             xtype: 'box',
@@ -221,7 +221,7 @@ GEOR.managelayers = (function() {
             autoEl: {
                 tag: 'span',
                 'ext:qtip': tr("Visibility range (indicative):<br />from TEXT", {
-                    'text': visibilityText
+                    'TEXT': visibilityText
                 }),
                 html: visibilityText
             }

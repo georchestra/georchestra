@@ -252,7 +252,7 @@ GEOR.cswquerier = (function() {
                 var regexp = /(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/gi;
                 return text.replace(regexp,
                     '[<a href="$&" ext:qtip="'+
-                        tr("Open the URL url in a new window", {'url': '$&'})
+                        tr("Open the URL url in a new window", {'URL': '$&'})
                         +'"' +
                     ' target="_blank" onclick="window.open(this.href);return false;">lien</a>]'
                 );

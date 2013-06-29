@@ -13,6 +13,7 @@ With it, you can :
  * print your map,
  * and many more ...
 
+There's also a built-in simple feature editor using the WFS-T protocol.
 
 Parameters
 ==========
@@ -59,6 +60,20 @@ Each "referential" layer should obey these simple rules:
  * it has exactly one geometry column and one string column,
  * the string column can have any name, but its content should be uppercased (this is to overcome a WFS limitation),
  * the geometry column can be of any type (point, line, polygon) but if it's a polygon, it should be as simple as possible (a bounding box is the best option).
+
+
+Feature editor
+==============
+
+Members of the groups SV_EDITOR, SV_REVIEWER or SV_ADMIN can reach the editor at /mapfishapp/edit
+
+The editor looks for layers accessible via WFS-T in one GeoServer namespace (see **NS_EDIT** config option in your config's GEOR_custom.js). By default, NS_EDIT is set to "geor_edit", which means that any layer belonging to the geor_edit namespace and editable for the current user will be available.
+
+Currently, only points, lines and simple polygons can be digitalized, and their attributes filled according to the feature model publicized by the WFS server.
+Snapping on existing features is activated by default.
+
+Once the update session is finished, the user can sync his work on the server. 
+Unfortunately, there is no handling of concurrent edition for now.
 
 
 How to run the viewer without Tomcat ?

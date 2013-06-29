@@ -199,7 +199,7 @@ GEOR.print = (function() {
                             GEOR.util.infoDialog({
                                 title: tr("Layer unavailable for printing"),
                                 msg: [
-                                    tr("The NAME layer cannot be printed.", {'name': layer.name}),
+                                    tr("The NAME layer cannot be printed.", {'NAME': layer.name}),
                                     tr("Contact platform administrator")
                                 ].join('<br/>')
                             });
@@ -229,7 +229,7 @@ GEOR.print = (function() {
                 printProvider.setLayout(printProvider.layouts.getAt(r));
             } else {
                 alert(tr("print.unknown.layout",
-                    {'layout': GEOR.config.DEFAULT_PRINT_LAYOUT}));
+                    {'LAYOUT': GEOR.config.DEFAULT_PRINT_LAYOUT}));
             }
             r = printProvider.dpis.find("value",
                 GEOR.config.DEFAULT_PRINT_RESOLUTION);
@@ -237,7 +237,7 @@ GEOR.print = (function() {
                 printProvider.setDpi(printProvider.dpis.getAt(r));
             } else {
                 alert(tr("print.unknown.resolution",
-                    {'resolution': GEOR.config.DEFAULT_PRINT_RESOLUTION}));
+                    {'RESOLUTION': GEOR.config.DEFAULT_PRINT_RESOLUTION}));
             }
             // The form with fields controlling the print output
             var formPanel = new Ext.form.FormPanel({

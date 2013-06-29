@@ -193,7 +193,7 @@ GEOR.layerfinder = (function() {
             if(index < 0) {
                 GEOR.util.errorDialog({
                     msg: tr("layerfinder.layer.unavailable",
-                        {'name': layerName}
+                        {'NAME': layerName}
                     )
                 });
                 return;
@@ -242,7 +242,7 @@ GEOR.layerfinder = (function() {
             } else {
                 GEOR.util.errorDialog({
                     msg: tr("The NAME layer does not contain a valid geometry column", {
-                        'name': p.featureType
+                        'NAME': p.featureType
                     })
                 });
             }

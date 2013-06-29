@@ -85,7 +85,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
         "(la limite est à ${LIMIT}KO)<br />Voulez-vous tout de même continuer ?",
     /* GEOR_config.js strings */
     /* GEOR_cswbrowser.js strings */
-    "NAME layer": "Couche ${name}",
+    "NAME layer": "Couche ${NAME}",
     "Metadata without a name": "Métadonnée non nommée",
     "The getDomain CSW query failed": "La requête CSW getDomain a échoué",
     "Error for the thesaurus": "Erreur sur le thésaurus",
@@ -101,11 +101,11 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     /* GEOR_cswquerier.js strings */
     "Show metadata sheet in a new window":
         "Afficher la fiche de métadonnées dans une nouvelle fenêtre",
-    'more': 'plus',
+    "more": "plus",
     "Clic to select or deselect the layer":
         "Cliquez pour sélectionner ou désélectionner la couche",
     "Open the URL url in a new window":
-        "Ouvrir l'url ${url} dans une nouvelle fenêtre",
+        "Ouvrir l'url ${URL} dans une nouvelle fenêtre",
     "Unreachable server": "Serveur non disponible",
     "Catalogue": "Catalogue",
     "Find": "Chercher",
@@ -127,7 +127,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     /* GEOR_getfeatureinfo.js strings */
     "<div>Searching...</div>": "<div>Recherche en cours...</div>",
     "<div>Search on objects active for NAME layer. Clic on the map.</div>":
-         "<div>Recherche d\'objets activée sur la couche ${name}. " +
+         "<div>Recherche d\'objets activée sur la couche ${NAME}. " +
          "Cliquez sur la carte.</div>",
     /* GEOR_layerfinder.js strings */
     "Add layers from local files": "Ajouter des couches en uploadant un fichier depuis votre ordinateur",
@@ -139,22 +139,22 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Find layers querying WFS servers":
         "Trouvez des couches en interrogeant des serveurs WFS",
     "layerfinder.layer.unavailable":
-        "La couche ${name} n'a pas été trouvée dans le service WMS.<br/<br/>" +
+        "La couche ${NAME} n'a pas été trouvée dans le service WMS.<br/<br/>" +
         "Peut-être n'avez-vous pas le droit d'y accéder " +
         "ou alors cette couche n'est plus disponible",
     "Layer projection is not compatible":
         "La projection de la couche n'est pas compatible.",
     "The NAME layer does not contain a valid geometry column":
-        "La couche ${name} ne possède pas de colonne géométrique valide.",
+        "La couche ${NAME} ne possède pas de colonne géométrique valide.",
     "Add": "Ajouter",
     "Add layers from a ...": "Ajouter des couches depuis un ...",
     "Malformed URL": "URL non conforme.",
     /* GEOR_managelayers.js strings */
     "Confirm NAME layer deletion ?":
-        "Voulez-vous réellement supprimer la couche ${name} ?",
-    "1:MAXSCALE to 1:MINSCALE": "1:${maxscale} à 1:${minscale}",
+        "Voulez-vous réellement supprimer la couche ${NAME} ?",
+    "1:MAXSCALE to 1:MINSCALE": "1:${MAXSCALE} à 1:${MINSCALE}",
     "Visibility range (indicative):<br />from TEXT":
-        "Plage de visibilité (indicative):<br />de ${text}",
+        "Plage de visibilité (indicative):<br />de ${TEXT}",
     "Information on objects of this layer":
         "Interroger les objets de cette couche",
     "Default style": "Style par défaut",
@@ -186,7 +186,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Warning after loading layer":
         "Avertissement suite au chargement de couche",
     "The <b>NAME</b> layer could not appear for that reason: ":
-        "La couche <b>${name}</b> pourrait ne pas apparaître pour " +
+        "La couche <b>${NAME}</b> pourrait ne pas apparaître pour " +
         "la raison suivante : ",
     "Min/max visibility scales are invalid":
         "Les échelles min/max de visibilité sont invalides.",
@@ -200,7 +200,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "NB layers not imported": "${NB} couches non importées",
     "One layer not imported": "Une couche non importée",
     "mapinit.layers.load.error":
-        "Les couches nommées ${list} n'ont pas pu être chargées. " +
+        "Les couches nommées ${LIST} n'ont pas pu être chargées. " +
         "Raisons possibles : droits insuffisants, SRS incompatible ou couche non existante",
     "NB layers imported": "${NB} couches importées",
     "One layer imported": "Une couche importée",
@@ -214,7 +214,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "scale picker": "échelle",
     /* GEOR_ows.js strings */
     "The NAME layer was not found in WMS service.":
-        "La couche ${name} n'a pas été trouvée dans le service WMS.",
+        "La couche ${NAME} n'a pas été trouvée dans le service WMS.",
     /* GEOR_print.js strings */
     "Sources: ": "Sources : ",
     "Source: ": "Source : ",
@@ -225,16 +225,16 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
         "Contactez l'administrateur de la plateforme.",
     "Layer unavailable for printing": "Couche non disponible pour impression",
     "The NAME layer cannot be printed.":
-        "La couche ${name} ne peut pas encore être imprimée.",
+        "La couche ${NAME} ne peut pas encore être imprimée.",
     "Unable to print": "Impression non disponible",
     "The print server is currently unreachable":
         "Le service d'impression est actuellement inaccessible.",
     "print.unknown.layout":
         "Erreur de configuration: DEFAULT_PRINT_LAYOUT " +
-        "${layout} n'est pas dans la liste des formats d'impression",
+        "${LAYOUT} n'est pas dans la liste des formats d'impression",
     "print.unknown.resolution":
         "Erreur de configuration: DEFAULT_PRINT_RESOLUTION " +
-        "${resolution} n'est pas dans la liste des résolutions d'impression",
+        "${RESOLUTION} n'est pas dans la liste des résolutions d'impression",
     "Title": "Titre",
     "Minimap": "Mini-carte",
     "North": "Nord",
@@ -250,7 +250,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     /* GEOR_querier.js strings */
     "Fields of filters with a red mark are mandatory": "Vous devez remplir " +
         "les champs des filtres marqués en rouge.",
-    "Request on NAME": "Requêteur sur ${name}",
+    "Request on NAME": "Requêteur sur ${NAME}",
     "Search": "Recherche",
     "querier.layer.no.geom":
         "La couche ne possède pas de colonne géométrique." +
@@ -407,7 +407,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "with Walking Papers": "avec Walking Papers",
     /* GEOR_EditingPanel.js */
     "Read-only layer": "Couche non éditable",
-    "editingpanel.geom.error": "La géométrie de cette couche est de type ${type}.<br/>" +
+    "editingpanel.geom.error": "La géométrie de cette couche est de type ${TYPE}.<br/>" +
         "Seules les géométries de type point, ligne et polygone" +
         " (et multi-*) sont éditables.",
     "choose a layer": "choisissez une couche",
@@ -416,7 +416,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Cancel all": "Tout annuler",
     "Enter ": "Saisir ",
     "layereditingpanel.cancel.confirm": "Souhaitez-vous vraiment annuler toutes les modifications<br />depuis la dernière synchronisation ?",
-    "Synchronize": 'Synchroniser',
+    "Synchronize": "Synchroniser",
     "layereditingpanel.changes.confirm": "Veuillez confirmer ou annuler " +
         "les modifications en cours.",
     "Delete": "Supprimer",
