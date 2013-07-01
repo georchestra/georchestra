@@ -1,9 +1,9 @@
 /** api: (define)
- *  module = GeoExt.ux
+ *  module = GEOR
  *  class = Annotation
  *  base_link = `Ext.util.Observable <http://extjs.com/deploy/dev/docs/?class=Ext.util.Observable>`_
  */
-Ext.namespace("GeoExt.ux");
+Ext.namespace("GEOR");
 
 /**
  * @include OpenLayers/Control/DrawFeature.js
@@ -21,11 +21,11 @@ Ext.namespace("GeoExt.ux");
  */
 
 /** api: constructor
- *  .. class:: Anntationj(config)
+ *  .. class:: Annotationj(config)
  *
  *      Create a FeatureEditing main controler.
  */
-Annotation = Ext.extend(Ext.util.Observable, {
+GEOR.Annotation = Ext.extend(Ext.util.Observable, {
 
     /** api: property[map]
      *  ``OpenLayers.Map``  A configured map object.
@@ -59,7 +59,7 @@ Annotation = Ext.extend(Ext.util.Observable, {
     featureControl: null,
 
     /** api: config[featurePanel]
-     *  ``GeoExt.ux.form.FeaturePanel``
+     *  ``GEOR.FeaturePanel``
      *  A reference to the FeaturePanel object created
      */
     featurePanel: null,
@@ -220,7 +220,7 @@ Annotation = Ext.extend(Ext.util.Observable, {
         this.initFeatureControl(layer);
         this.initDeleteAllAction();
 
-        Annotation.superclass.constructor.apply(this, arguments);
+        GEOR.Annotation.superclass.constructor.apply(this, arguments);
     },
 
     /** private: method[initMap]
@@ -565,7 +565,7 @@ Annotation = Ext.extend(Ext.util.Observable, {
             styler: this.styler
         };
 
-        this.featurePanel = new GeoExt.ux.form.FeaturePanel(options);
+        this.featurePanel = new GEOR.FeaturePanel(options);
 
         // display the popup
         popupOptions = {

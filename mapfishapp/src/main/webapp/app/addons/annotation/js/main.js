@@ -19,7 +19,7 @@ GEOR.Addons.Annotation.prototype = {
      */
     init: function(record) {
 
-        var annotation = new Annotation({
+        var annotation = new GEOR.Annotation({
             map: this.map,
             popupOptions: {unpinnable: false, draggable: true}
         });

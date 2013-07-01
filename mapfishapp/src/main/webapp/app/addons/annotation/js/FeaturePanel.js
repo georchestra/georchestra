@@ -5,10 +5,10 @@
  * See http://svn.geoext.org/core/trunk/geoext/license.txt for the full text
  * of the license.
  */
-Ext.namespace("GeoExt.ux.form");
+Ext.namespace("GEOR");
 
 /** api: (define)
- *  module = GeoExt.ux.form
+ *  module = GEOR
  *  class = FeaturePanel
  *  base_link = `Ext.form.FormPanel <http://extjs.com/deploy/dev/docs/?class=Ext.form.FormPanel>`_
  */
@@ -22,10 +22,8 @@ Ext.namespace("GeoExt.ux.form");
 
 /** api: constructor
  *  .. class:: FeaturePanel
- *
- *  Todo
  */
-GeoExt.ux.form.FeaturePanel = Ext.extend(Ext.form.FormPanel, {
+GEOR.FeaturePanel = Ext.extend(Ext.form.FormPanel, {
 
     /** api: config[labelWidth]
      *  ``Number``  Default value.
@@ -103,7 +101,7 @@ GeoExt.ux.form.FeaturePanel = Ext.extend(Ext.form.FormPanel, {
         this.initToolbar();
         this.initMyItems();
 
-        GeoExt.ux.form.FeaturePanel.superclass.initComponent.call(this);
+        GEOR.FeaturePanel.superclass.initComponent.call(this);
     },
 
     /** private: method[initFeatures]
@@ -302,6 +300,3 @@ GeoExt.ux.form.FeaturePanel = Ext.extend(Ext.form.FormPanel, {
     }
 
 });
-
-/** api: xtype = gx_featurepanel */
-Ext.reg("gx_featurepanel", GeoExt.ux.form.FeaturePanel);
