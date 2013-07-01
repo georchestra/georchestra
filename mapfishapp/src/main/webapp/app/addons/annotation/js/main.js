@@ -60,7 +60,7 @@ GEOR.Addons.Annotation.prototype = {
         if (checked) {
             this.window.show();
             this.window.alignTo(
-                GeoExt.MapPanel.guess().body,
+                Ext.get(this.map.div),
                 "t-t",
                 [0, 5],
                 true
