@@ -117,7 +117,8 @@ Annotation = Ext.extend(Ext.util.Observable, {
      */
     defaultStyle: {
         fillColor: "#FF0000",
-        strokeColor: "#FF0000"
+        strokeColor: "#FF0000",
+        fontColor: "#000000"
     },
 
     /** api: config[layerOptions]
