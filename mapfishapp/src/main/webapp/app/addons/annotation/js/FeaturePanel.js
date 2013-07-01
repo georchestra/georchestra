@@ -87,13 +87,6 @@ GEOR.FeaturePanel = Ext.extend(Ext.form.FormPanel, {
      */
     deleteAction: null,
 
-    /** api: property[styler]
-     *  ``Styler``
-     *  The styler type to use.  Possible values are :
-     *  - 'combobox', refering to the 'GeoExt.ux.StyleSelectorComboBox' type
-     */
-    styler: null,
-
     /** private: method[initComponent]
      */
     initComponent: function() {
@@ -128,7 +121,6 @@ GEOR.FeaturePanel = Ext.extend(Ext.form.FormPanel, {
 
     /** private: method[initMyItems]
      *  Create field options and link them to the controler controls and actions
-     *  and a styler (if one was defined in the 'styler' property)
      */
     initMyItems: function() {
         var oItems, oGroup, feature, field;
