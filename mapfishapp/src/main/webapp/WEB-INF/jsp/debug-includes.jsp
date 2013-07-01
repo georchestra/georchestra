@@ -39,6 +39,7 @@
     <script type="text/javascript" src="lib/externals/styler/lib/Styler/widgets/tips/MultiSliderTip.js"></script>
     <script type="text/javascript" src="lib/externals/styler/lib/Styler/widgets/tips/SliderTip.js"></script>
     <script type="text/javascript" src="lib/externals/styler/lib/Styler/widgets/TextSymbolizer.js"></script>
+    <script type="text/javascript" src="lib/externals/styler/lib/Styler/widgets/CircleSegment.js"></script>
     <script type="text/javascript" src="lib/externals/styler/lib/Styler/lang/<%= lang %>.js"></script>
 
     <script type="text/javascript" src="app/js/GEOR_config.js"></script>
