@@ -299,18 +299,10 @@ GEOR.Annotation = Ext.extend(Ext.util.Observable, {
         var control, handler, geometryTypes, geometryType,
                 options, action, iconCls, actionOptions, tooltip;
 
-        geometryTypes = [];
+        geometryTypes = [
+            "Point", "Circle", "LineString", "Polygon", "Box", "Label"
+        ];
 
-        if (OpenLayers.i18n(layer.geometryType)) {
-            geometryTypes.push(OpenLayers.i18n(layer.geometryType));
-        } else {
-            geometryTypes.push(OpenLayers.i18n("annotation.point"));
-            geometryTypes.push(OpenLayers.i18n("annotation.circle"));
-            geometryTypes.push(OpenLayers.i18n("annotation.linestring"));
-            geometryTypes.push(OpenLayers.i18n("annotation.polygon"));
-            geometryTypes.push(OpenLayers.i18n("annotation.box"));
-            geometryTypes.push(OpenLayers.i18n("annotation.label"));
-        }
 
         for (var i = 0; i < geometryTypes.length; i++) {
             options = {
@@ -322,39 +314,36 @@ GEOR.Annotation = Ext.extend(Ext.util.Observable, {
             geometryType = geometryTypes[i];
 
             switch (geometryType) {
-                case OpenLayers.i18n("annotation.linestring"):
-                case OpenLayers.i18n("annotation.multilinestring"):
+                case "LineString":
                     handler = OpenLayers.Handler.Path;
                     iconCls = "gx-featureediting-draw-line";
                     tooltip = OpenLayers.i18n("annotation.create_line");
                     break;
-                case OpenLayers.i18n("annotation.point"):
-                case OpenLayers.i18n("annotation.multipoint"):
+                case "Point":
                     handler = OpenLayers.Handler.Point;
                     iconCls = "gx-featureediting-draw-point";
                     tooltip = OpenLayers.i18n("annotation.create_point");
                     break;
-                case OpenLayers.i18n("annotation.circle"):
+                case "Circle":
                     handler = OpenLayers.Handler.RegularPolygon;
                     options.handlerOptions.sides = 32;
                     options.handlerOptions.irregular = false;
                     iconCls = "gx-featureediting-draw-circle";
                     tooltip = OpenLayers.i18n("annotation.create_circle");
                     break;
-                case OpenLayers.i18n("annotation.polygon"):
-                case OpenLayers.i18n("annotation.multipolygon"):
+                case "Polygon":
                     handler = OpenLayers.Handler.Polygon;
                     iconCls = "gx-featureediting-draw-polygon";
                     tooltip = OpenLayers.i18n("annotation.create_polygon");
                     break;
-                case OpenLayers.i18n("annotation.box"):
+                case "Box":
                     handler = OpenLayers.Handler.RegularPolygon;
                     options.handlerOptions.sides = 4;
                     options.handlerOptions.irregular = true;
                     iconCls = "gx-featureediting-draw-box";
                     tooltip = OpenLayers.i18n("annotation.create_box");
                     break;
-                case OpenLayers.i18n("annotation.label"):
+                case "Label":
                     handler = OpenLayers.Handler.Point;
                     iconCls = "gx-featureediting-draw-label";
                     tooltip = OpenLayers.i18n("annotation.create_label");
@@ -366,21 +355,21 @@ GEOR.Annotation = Ext.extend(Ext.util.Observable, {
 
             this.drawControls.push(control);
 
-            if (geometryType == OpenLayers.i18n("annotation.label")) {
+            if (geometryType == "Label") {
                 control.events.on({
                     "featureadded": this.onLabelAdded,
                     scope: this
                 });
             }
 
-            if (geometryType == OpenLayers.i18n("annotation.circle")) {
+            if (geometryType == "Circle") {
                 control.events.on({
                     "featureadded": this.onCircleAdded,
                     scope: this
                 });
             }
 
-            if (geometryType == OpenLayers.i18n("annotation.box")) {
+            if (geometryType == "Box") {
                 control.events.on({
                     "featureadded": this.onBoxAdded,
                     scope: this
@@ -401,7 +390,7 @@ GEOR.Annotation = Ext.extend(Ext.util.Observable, {
                 pressed: false,
                 tooltip: tooltip,
                 iconCls: iconCls,
-                text: OpenLayers.i18n(geometryType),
+                text: OpenLayers.i18n("annotation." + geometryType.toLowerCase()),
                 iconAlign: 'top',
                 // check item options
                 group: this.toggleGroup,
