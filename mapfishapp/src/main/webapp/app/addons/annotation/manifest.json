@@ -9,15 +9,7 @@
     "css": [
         "resources/css/annotation.css"
     ],
-    "default_options": {
-        "mode": "static",
-        "baseLayerConfig": {
-            "wmsurl": "http://tile.geobretagne.fr/gwc02/service/wms",
-            "layer": "satellite",
-            "format": "image/jpeg",
-            "buffer": 8
-        }
-    },
+    "default_options": {},
     "i18n": {
         "en": {},
         "es": {},
