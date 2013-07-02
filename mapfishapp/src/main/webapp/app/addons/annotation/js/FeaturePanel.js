@@ -139,7 +139,7 @@ GEOR.FeaturePanel = Ext.extend(Ext.form.FormPanel, {
                 oItems.push({
                     xtype: 'spinnerfield',
                     name: 'pointRadius',
-                    fieldLabel: OpenLayers.i18n('Size'),
+                    fieldLabel: OpenLayers.i18n('annotation.size'),
                     value: feature.style.pointRadius || 10,
                     width: 40,
                     minValue: 6,
@@ -157,7 +157,7 @@ GEOR.FeaturePanel = Ext.extend(Ext.form.FormPanel, {
         if (feature.isLabel) {
             oItems.push({
                 name: 'label',
-                fieldLabel: OpenLayers.i18n('Name'),
+                fieldLabel: OpenLayers.i18n('annotation.size'),
                 value: feature.attributes.label,
                 enableKeyEvents: true,
                 listeners: {
@@ -174,7 +174,7 @@ GEOR.FeaturePanel = Ext.extend(Ext.form.FormPanel, {
             || "#00FF00";
         oItems.push({
             xtype: 'compositefield',
-            fieldLabel: OpenLayers.i18n('Color'),
+            fieldLabel: OpenLayers.i18n('annotation.color'),
             items: [{
                 xtype: 'displayfield', value: ''
             },{
@@ -213,7 +213,7 @@ GEOR.FeaturePanel = Ext.extend(Ext.form.FormPanel, {
             oItems.push({
                 xtype: 'spinnerfield',
                 name: 'stroke',
-                fieldLabel: OpenLayers.i18n(attribute),
+                fieldLabel: OpenLayers.i18n('annotation.' + attribute.toLowerCase()),
                 value: feature.style[attribute] || ((feature.isLabel) ? 12 : 1),
                 width: 40,
                 minValue: feature.isLabel ? 10 : 1,
@@ -243,9 +243,9 @@ GEOR.FeaturePanel = Ext.extend(Ext.form.FormPanel, {
         var actionOptions = {
             handler: this.deleteFeatures,
             scope: this,
-            tooltip: OpenLayers.i18n('Delete feature'),
+            tooltip: OpenLayers.i18n('annotation.delete_feature'),
             iconCls: "gx-featureediting-delete",
-            text: OpenLayers.i18n('Delete')
+            text: OpenLayers.i18n('annotation.delete')
         };
 
         this.deleteAction = new Ext.Action(actionOptions);
@@ -257,7 +257,7 @@ GEOR.FeaturePanel = Ext.extend(Ext.form.FormPanel, {
      */
     deleteFeatures: function() {
 
-        Ext.MessageBox.confirm(OpenLayers.i18n('Delete Feature'), OpenLayers.i18n('Do you really want to delete this feature ?'), function(btn) {
+        Ext.MessageBox.confirm(OpenLayers.i18n('annotation.delete_feature'), OpenLayers.i18n('annotation.delete_confirm'), function(btn) {
             if (btn == 'yes') {
                 for (var i = 0; i < this.features.length; i++) {
                     var feature = this.features[i];

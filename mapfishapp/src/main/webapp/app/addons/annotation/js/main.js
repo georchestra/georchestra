@@ -24,7 +24,7 @@ GEOR.Addons.Annotation.prototype = {
             popupOptions: {unpinnable: false, draggable: true}
         });
         this.window = new Ext.Window({
-            title: OpenLayers.i18n('Drawing tools'),
+            title: OpenLayers.i18n('annotation.drawing_tools'),
             width: 420,
             closable: false,
             resizable: false,
