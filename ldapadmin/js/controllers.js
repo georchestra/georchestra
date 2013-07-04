@@ -8,13 +8,7 @@ function UsersCtrl($scope, Users) {
     });
     $scope.users = users;
 
-    var groups = _.chain(users)
-        .sortBy('group')
-        .groupBy('group')
-        .value();
-    //groups = _.keys(groups);
-    //groups = _.uniq(groups);
-    $scope.groups = groups;
+    $scope.groups = ['Administrator', 'SV_XXX', 'SV_YYY', 'EL_XXX', 'EL_YYY'];
   });
 }
 
