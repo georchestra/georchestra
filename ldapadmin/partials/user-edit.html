@@ -1,7 +1,14 @@
-<a class="btn" href="#/"><i class="icon-arrow-left"></i></a>
-<form action="">
-  <div class="control-group">
+<a class="btn" href="#/" name="userForm"><i class="icon-arrow-left"></i></a>
+<form action="" name="userForm">
+  <div class="control-group" ng-class="{error: userForm.name.$invalid}">
     <label for="name">Name</label>
     <input type="text" name="name" ng-model="user.name" required />
+    <span ng-show="userForm.name.$error.required" class="help-inline">Required</span>
+  </div>
+  <div class="control-group" ng-class="{error: userForm.email.$invalid}">
+    <label for="email">E-Mail</label>
+    <input type="email" name="email" ng-model="user.email" required />
+    <span ng-show="userForm.email.$error.required" class="help-inline">Required</span>
+    <span ng-show="userForm.email.$error.email" class="help-inline">Not a valid E-mail</span>
   </div>
 </form>
