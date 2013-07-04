@@ -18,6 +18,7 @@
  * @include GEOR_cswquerier.js
  * @include GEOR_cswbrowser.js
  * @include GEOR_wmsbrowser.js
+ * @include GEOR_wtmsbrowser.js
  * @include GEOR_wfsbrowser.js
  */
 
@@ -50,6 +51,7 @@ GEOR.layerfinder = (function() {
     var panels = {
         "cswquerier": null,
         "cswbrowser": null,
+        "wtms": null,
         "wms": null,
         "wfs": null
     };
@@ -61,6 +63,7 @@ GEOR.layerfinder = (function() {
     var selectedRecords = {
         "cswquerier": [],
         "cswbrowser": [],
+        "wmts": [],
         "wms": [],
         "wfs": []
     };
@@ -108,6 +111,9 @@ GEOR.layerfinder = (function() {
         GEOR.wmsbrowser.events.on({
             "selectionchanged": selectionChangedListener.call(this, "wms")
         });
+        GEOR.wmtsbrowser.events.on({
+            "selectionchanged": selectionChangedListener.call(this, "wmts")
+        });
         GEOR.wfsbrowser.events.on({
             "selectionchanged": selectionChangedListener.call(this, "wfs")
         });
@@ -123,6 +129,10 @@ GEOR.layerfinder = (function() {
             srs: mapSRS,
             tabTip: tr("Find layers querying WMS servers")
         });
+        panels["wmts"] = GEOR.wmtsbrowser.getPanel({
+            srs: mapSRS,
+            tabTip: tr("Find layers querying WMTS servers")
+        });
         panels["wfs"] = GEOR.wfsbrowser.getPanel({
             srs: mapSRS,
             tabTip: tr("Find layers querying WFS servers")
@@ -133,7 +143,7 @@ GEOR.layerfinder = (function() {
             activeTab: 0,
             // required for WMS & WFS panels to have correct layout:
             deferredRender: true,
-            items: [panels["cswquerier"], panels["cswbrowser"], panels["wms"], panels["wfs"]],
+            items: [panels["cswquerier"], panels["cswbrowser"], panels["wmts"], panels["wms"], panels["wfs"]],
             listeners: {
                 'tabchange': function (tp, p) {
                     switch (p) {
@@ -142,6 +152,9 @@ GEOR.layerfinder = (function() {
                         break;
                     case panels["cswbrowser"]:
                         currentTab = "cswbrowser";
+                        break;
+                    case panels["wmts"]:
+                        currentTab = "wmts";
                         break;
                     case panels["wms"]:
                         currentTab = "wms";
@@ -253,8 +266,8 @@ GEOR.layerfinder = (function() {
             if(record instanceof GeoExt.data.LayerRecord) {
                 // we're coming from the WMS or WFS tab
                 var layer = record.get("layer");
-                if (layer instanceof OpenLayers.Layer.WMS) {
-                    // WMS layer just need cloning
+                if (layer instanceof OpenLayers.Layer.WMS || layer instanceof OpenLayers.Layer.WMTS) {
+                    // WMS + WMTS layers just need cloning
                     // (well, for the moment - see http://applis-bretagne.fr/redmine/issues/1996)
                     recordsToAdd.push(record.clone());
                 } else {
@@ -337,6 +350,9 @@ GEOR.layerfinder = (function() {
                         break;
                     case "cswquerier":
                         GEOR.cswquerier.clearSelection();
+                        break;
+                    case "wmts":
+                        GEOR.wmtsbrowser.clearSelection();
                         break;
                     case "wms":
                         GEOR.wmsbrowser.clearSelection();

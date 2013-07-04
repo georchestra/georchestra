@@ -21,10 +21,12 @@
  * @include GeoExt/data/AttributeStore.js
  * @include GeoExt/data/WMSCapabilitiesStore.js
  * @include OpenLayers/Format/WMSCapabilities/v1_1_1.js
+ * @include OpenLayers/Format/WMTSCapabilities/v1_0_0.js
  * @include OpenLayers/Format/WFSCapabilities/v1_0_0.js
  * @include GeoExt/data/WFSCapabilitiesStore.js
  * @include OpenLayers/Strategy/Fixed.js
  * @include OpenLayers/Layer/Vector.js
+ * @include OpenLayers/Layer/WMTS.js
  * @requires GEOR_config.js
  * @include GEOR_waiter.js
  */
@@ -44,7 +46,12 @@ GEOR.ows = (function() {
      * Constant: defaultRecordFields
      * {Array} The fields shared by each layer record in this app.
      */
-    var defaultRecordFields = [
+    var defaultRecordFields = [ 
+        /* TODO: 
+            either augment with WMTS layer record fields 
+            or better: use another record model dedicated to WMS, 
+            or share a common record model between wms, wfs, wmts
+        */
         {name: "name", type: "string"},
         {name: "title", type: "string"},
         {name: "abstract", type: "string"},
@@ -91,6 +98,15 @@ GEOR.ows = (function() {
         "VERSION": "1.1.1",
         "EXCEPTIONS": "application/vnd.ogc.se_inimage",
         "FORMAT": "image/png"
+    };
+
+    /**
+     * Constant: WMTS_BASE_PARAMS
+     * {Object} The base params for WMTS requests.
+     */
+    var WMTS_BASE_PARAMS = {
+        "SERVICE": "WMTS",
+        "VERSION": "1.0.0"
     };
 
     /**
@@ -415,6 +431,41 @@ GEOR.ows = (function() {
                 fields: defaultRecordFields
             }, options.storeOptions);
             var store = new GeoExt.data.WMSCapabilitiesStore(storeOptions);
+            if (options.success) {
+                loadStore(store,
+                          options.success, options.failure, options.scope);
+            }
+            return store;
+        },
+
+        /**
+         * APIMethod: WMTSCapabilities
+         * Create a {GeoExt.data.WMTSCapabilitiesStore} store, load it
+         * if a callback function is provided, and return it.
+         *
+         * Parameters:
+         * options - {Object} An object with the properties:
+         * - success - {Function} Callback function called when the
+         *   store has been successfully loaded.
+         * - failure - {Function} Callback function called when the
+         *   store could not be loaded.
+         * - scope - {Object} The callback execution scope.
+         * - storeOptions - {Object} Additional store options.
+         */
+        WMTSCapabilities: function(options) {
+            options = options || {};
+            var layerOptions = (options.storeOptions &&
+                options.storeOptions.layerOptions) ?
+                    options.storeOptions.layerOptions : {};
+            var baseParams = options.baseParams || {};
+            var storeOptions = Ext.applyIf({
+                baseParams: Ext.apply({
+                    "REQUEST": "GetCapabilities"
+                }, baseParams, WMTS_BASE_PARAMS),
+                layerOptions: Ext.apply({}, layerOptions),
+                //fields: defaultRecordFields // TODO: augment with fields from WMTS
+            }, options.storeOptions);
+            var store = new GeoExt.data.WMTSCapabilitiesStore(storeOptions); // TODO
             if (options.success) {
                 loadStore(store,
                           options.success, options.failure, options.scope);

@@ -377,6 +377,9 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
         "Le serveur publie ${NB} couches dont la projection n'est pas " +
         "compatible",
     "WMS server": "Serveur WMS",
+    /* GEOR_wmtsbrowser.js strings */
+    "Choose a WMTS server: ": "Choisissez un serveur WMTS : ",
+    "WMTS server": "Serveur WMTS",
     /* GEOR_workspace.js strings */
     "Context saving": "Sauvegarde du contexte",
     "The file is required.": "Un nom de fichier est nécessaire.",

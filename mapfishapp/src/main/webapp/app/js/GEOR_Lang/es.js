@@ -380,6 +380,9 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
         "El servicio esta publicando ${NB} capas cuya proyección no es " +
         "compatible",
     "WMS server": "Servicio WMS",
+    /* GEOR_wmtsbrowser.js strings */
+    "Choose a WMTS server: ": "Elija un servicio WMTS: ",
+    "WMTS server": "Servicio WMTS",
     /* GEOR_workspace.js strings */
     "Context saving": "Guardando el contexto",
     "The file is required.": "Se requiere el nombre de archivo.",
