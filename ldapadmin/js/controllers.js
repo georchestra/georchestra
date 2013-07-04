@@ -12,11 +12,11 @@ function UsersCtrl($scope, Users) {
   });
 }
 
-function UsersListCtrl($scope, $routeParams) {
+function UsersListCtrl($scope, $rootScope, $routeParams) {
   //$scope.users is inherited from UsersCtrl's scope
-  if ($routeParams.group) {
-    $scope.groupFilter = {group: $routeParams.group};
-  }
+  var group = $routeParams.group;
+  $scope.groupFilter = {group: group};
+  $rootScope.selectedGroup = group;
 }
 
 function UserEditCtrl($scope, $routeParams, Users) {

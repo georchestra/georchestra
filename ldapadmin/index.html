@@ -10,6 +10,7 @@
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular-resource.js"></script>
     <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
     <link rel="stylesheet" href="lib/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/main.css" />
   </head>
   <body>
     <div class="container-fluid" ng-controller="UsersCtrl">
@@ -21,12 +22,14 @@
             New user
           </a>
           <br />
-          <a href="#/">All users ({{users.length}})</a>
+          <a href="#/" ng-class="{active: selectedGroup == null}">
+            All users ({{users.length}})
+          </a>
           <br />
           <br />
 
           <div ng-repeat="group in groups">
-            <a href="#/groups/{{group}}">
+            <a href="#/groups/{{group}}" ng-class="{active: group==selectedGroup}">
               {{group}}
             </a>
           </div>
