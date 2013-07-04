@@ -21,6 +21,15 @@
             New user
           </a>
           <br />
+          <a href="#/">All users ({{users.length}})</a>
+          <br />
+          <br />
+
+          <div ng-repeat="(group, users) in groups">
+            <a href="#/groups/{{group}}">
+              {{group}} ({{users.length}})
+            </a>
+          </div>
         </div>
         <div class="span9" ng-view>
         <!--Body content-->

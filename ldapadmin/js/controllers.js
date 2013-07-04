@@ -7,11 +7,22 @@ function UsersCtrl($scope, Users) {
       return o.name;
     });
     $scope.users = users;
+
+    var groups = _.chain(users)
+        .sortBy('group')
+        .groupBy('group')
+        .value();
+    //groups = _.keys(groups);
+    //groups = _.uniq(groups);
+    $scope.groups = groups;
   });
 }
 
-function UsersListCtrl($scope) {
+function UsersListCtrl($scope, $routeParams) {
   //$scope.users is inherited from UsersCtrl's scope
+  if ($routeParams.group) {
+    $scope.groupFilter = {group: $routeParams.group};
+  }
 }
 
 function UserEditCtrl($scope, $routeParams, Users) {
