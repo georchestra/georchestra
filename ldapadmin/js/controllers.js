@@ -2,7 +2,12 @@
 
 /* Controllers */
 function UsersCtrl($scope, Users) {
-  $scope.users = Users.query();
+  var users = Users.query(null, function(users) {
+    users = _.sortBy(users, function(o) {
+      return o.name;
+    });
+    $scope.users = users;
+  });
 }
 
 function UsersListCtrl($scope) {
