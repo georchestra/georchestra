@@ -23,6 +23,9 @@ describe('my app', function() {
     it('should render a list of 100 users', function() {
       expect(repeater('.users tr').count()).toEqual(100);
     });
+    it('should sort the list of users', function() {
+      expect(repeater('.users tr').row(0)).toEqual(["Alberta Bennett","Jetsilk"]);
+    });
   });
 
   describe('group', function() {
