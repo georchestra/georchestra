@@ -1,4 +1,22 @@
-<a class="btn" href="javascript:history.back();" name="userForm"><i class="icon-arrow-left"></i></a>
+<div class="btn-group">
+  <a class="btn" href="javascript:history.back();"><i class="icon-arrow-left"></i></a>
+</div>
+<div class="btn-group">
+  <a class="groups btn dropdown-toggle" ng-class="{hide: user == null}" data-toggle="dropdown">
+    <i class="icon-th-list"></i>
+    Groups
+    <span class="caret"></span>
+  </a>
+</div>
+<div class="btn-group">
+  <a class="actions btn dropdown-toggle" ng-class="{hide: user == null}" data-toggle="dropdown">
+    Actions
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu">
+    <li><a href="">Delete user</a></li>
+  </ul>
+</div>
 <form action="" name="userForm">
   <div class="control-group" ng-class="{error: userForm.name.$invalid}">
     <label for="name">Name</label>
