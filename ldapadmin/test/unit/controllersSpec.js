@@ -42,9 +42,32 @@ describe('controllers', function(){
       scope = $rootScope.$new();
       ctrl = $controller('UsersCtrl', {$scope: scope});
     }));
+    it('should create users with 2 items', inject(function($rootScope, $controller) {
+      $httpBackend.flush();
+      expect(scope.users.length).toEqual(2);
+    }));
     it('should create groups with 5 items', inject(function($rootScope, $controller) {
       $httpBackend.flush();
       expect(scope.groups.length).toEqual(5);
+    }));
+  });
+
+  describe('UsersListCtrl', function() {
+    var scope,
+        ctrl;
+
+    it("shouldn't select any group", inject(function($rootScope, $controller) {
+      scope = $rootScope.$new();
+      ctrl = $controller('UsersListCtrl', {$scope: scope});
+      expect(scope.groupFilter).toEqual(null);
+      expect(scope.selectedGroup).toEqual(null);
+    }));
+
+    it("should select a group", inject(function($rootScope, $controller, $routeParams) {
+      scope = $rootScope.$new();
+      ctrl = $controller('UsersListCtrl', {$scope: scope, $routeParams: {group: 'foo'}});
+      expect(scope.groupFilter).toEqual({group: 'foo'});
+      expect(scope.selectedGroup).toEqual('foo');
     }));
   });
 });
