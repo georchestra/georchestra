@@ -11,7 +11,7 @@
       <div class="row-fluid">
         <div class="span3">
           <!--Sidebar content-->
-          <a href="#/users/new" class="btn btn-success">
+          <a id="new_user" href="#/users/new" class="btn btn-success">
             <i class="icon-plus-sign"></i>
             New user
           </a>
@@ -22,10 +22,12 @@
           <br />
           <br />
 
-          <div ng-repeat="group in groups">
-            <a href="#/groups/{{group}}" ng-class="{active: group==selectedGroup}">
-              {{group}}
-            </a>
+          <div class="groups">
+            <div ng-repeat="group in groups">
+              <a href="#/groups/{{group}}" ng-class="{active: group==selectedGroup}">
+                {{group}}
+              </a>
+            </div>
           </div>
         </div>
         <div class="span9" ng-view>
