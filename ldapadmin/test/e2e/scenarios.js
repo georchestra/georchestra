@@ -35,6 +35,7 @@ describe('my app', function() {
     it('should select a group', function() {
       element('.groups div:nth-child(2) a').click();
       expect(browser().location().url()).toBe('/groups/SV_XXX');
+      expect(repeater('.users tr').count()).toEqual(19);
     });
   });
 
