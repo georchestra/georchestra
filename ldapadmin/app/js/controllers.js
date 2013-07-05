@@ -4,8 +4,8 @@
 angular.module('ldapadmin.controllers', [])
   .controller('UsersCtrl', function UsersCtrl($scope, Users) {
     var users = Users.query(null, function(users) {
-      users = _.sortBy(users, function(o) {
-        return o.name;
+      users = users.sort(function(a, b) {
+        return a.name > b.name;
       });
       $scope.users = users;
 
@@ -23,4 +23,7 @@ angular.module('ldapadmin.controllers', [])
     });
   })
   .controller('UserCreateCtrl', function($scope, Users) {
+  })
+  .controller('FooCtrl', function($scope) {
+    $scope.foo = "bar";
   });
