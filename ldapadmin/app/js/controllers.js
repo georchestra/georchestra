@@ -33,7 +33,15 @@ angular.module('ldapadmin.controllers', [])
       $scope.user = Restangular.copy(remote);
 
       $scope.save = function() {
-        Restangular.one('users', user.id).put();
+        $scope.user.put().then(function() {
+          remote = Restangular.copy($scope.user);
+          flash.success = 'User correctly updated';
+          var index = findByAttr($scope.users, 'id', $routeParams.userId);
+
+          if (index !== false) {
+            $scope.users[index] = $scope.user;
+          }
+        });
       };
       $scope.deleteUser = function() {
         Restangular.one('users', user.id).remove().then(

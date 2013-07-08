@@ -36,7 +36,7 @@ class RESTView(object):
     @view_config(route_name='users', renderer='json', request_method='POST')
     def post(self):
         id = str(uuid.uuid4())
-        user ={
+        user = {
             'name': self.request.json_body['name'],
             'email': self.request.json_body['email'],
             'id': id
@@ -46,7 +46,12 @@ class RESTView(object):
 
     @view_config(route_name='user', request_method='PUT')
     def put(self):
-        return Response('post')
+        user = self.request.matchdict['user']
+        for ndx, i in enumerate(_users):
+            if str(i['id']) == user:
+                i['name'] = self.request.json_body['name']
+                i['email'] = self.request.json_body['email']
+        return Response('put')
 
     @view_config(route_name='user', request_method='DELETE')
     def delete(self):
