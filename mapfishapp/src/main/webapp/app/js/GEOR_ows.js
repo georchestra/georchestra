@@ -574,7 +574,14 @@ GEOR.ows = (function() {
             var storeOptions = Ext.applyIf({
                 baseParams: Ext.apply({
                     "REQUEST": "GetCapabilities"
-                }, options.vendorParams || {}, WFS_BASE_PARAMS)
+                }, options.vendorParams || {}, WFS_BASE_PARAMS),
+                fields: [
+                    {name: "type", type: "string", defaultValue: "WFS"},
+                    {name: "name", type: "string"},
+                    {name: "title", type: "string"},
+                    {name: "namespace", type: "string", mapping: "featureNS"},
+                    {name: "abstract", type: "string"}                    
+                ]
             }, options.storeOptions);
             var store = new GeoExt.data.WFSCapabilitiesStore(storeOptions);
             if (options.success) {
