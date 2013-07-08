@@ -10,11 +10,11 @@
 
     <div class="container-fluid" ng-controller="UsersCtrl">
       <!-- Subscribe to success flash messages. -->
-      <div flash-alert="success" active-class="in" class="alert fade">
+      <div flash-alert="success" active-class="in" class="alert hide">
         <span class="alert-message">{{flash.message}}</span>
       </div>
       <!-- Subscribe to error flash messages. -->
-      <div flash-alert="error" active-class="in" class="alert fade">
+      <div flash-alert="error" active-class="in" class="alert hide">
         <strong class="alert-heading">Boo!</strong>
         <span class="alert-message">{{flash.message}}</span>
       </div>

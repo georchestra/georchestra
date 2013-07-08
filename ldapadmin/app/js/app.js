@@ -2,7 +2,7 @@
 
 /* App Module */
 
-angular.module('ldapadmin', ['ldapadmin.controllers', 'ldapadmin.services', 'restangular', 'angular-flash.flash-alert-directive']).
+angular.module('ldapadmin', ['ldapadmin.controllers', 'restangular', 'angular-flash.flash-alert-directive']).
   config(['$routeProvider', function($routeProvider) {
     $routeProvider.
         when('/users', {templateUrl: 'partials/users-list.html',   controller: 'UsersListCtrl'}).

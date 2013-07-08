@@ -1,7 +1,9 @@
 .active {
   font-weight: bold;
 }
-
 .alert {
   position: absolute;
+}
+.alert.in {
+  display: block;
 }
