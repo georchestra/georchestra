@@ -433,3 +433,8 @@ div.olMapViewport {
 .x-menu-list .x-menu-item-checked {
 	font-weight: bold;
 }
+
+/* avoid broken WMTS tiles at the lower end of the pyramid */
+.olImageLoadError {
+	display: none;
+}
