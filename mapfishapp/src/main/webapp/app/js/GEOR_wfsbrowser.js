@@ -84,6 +84,10 @@ GEOR.wfsbrowser = (function() {
                     // to execute an API-action but found an undefined url /
                     // function. Please review your Proxy url/api-configuration."
                     url: "/dummy",
+                    sortInfo: {
+                        field: 'title',
+                        direction: 'ASC'
+                    },
                     layerOptions: function() {
 	                    return {
                             // by default, we want our WFS vector layers
