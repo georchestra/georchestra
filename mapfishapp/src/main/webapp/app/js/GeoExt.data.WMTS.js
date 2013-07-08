@@ -19,6 +19,7 @@ GeoExt.data.WMTSCapabilitiesReader = function(meta, recordType) {
                 {name: "name", type: "string", mapping: "identifier"},
                 {name: "title", type: "string"},
                 {name: "abstract", type: "string"},
+                {name: "queryable", type: "boolean"},
                 {name: "llbbox", mapping: "bounds", convert: function(v){
                     return [v.left, v.bottom, v.right, v.top];
                 }},
@@ -120,9 +121,10 @@ Ext.extend(GeoExt.data.WMTSCapabilitiesReader, Ext.data.DataReader, {
         if (!!data.error) {
             throw new Ext.data.DataReader.Error("invalid-response", data.error);
         }
-        var url = data.operationsMetadata.GetTile.dcp &&
-            data.operationsMetadata.GetTile.dcp.http &&
-            data.operationsMetadata.GetTile.dcp.http.get;
+        var operationsMetadata = data.operationsMetadata,
+            url = operationsMetadata.GetTile.dcp &&
+                operationsMetadata.GetTile.dcp.http &&
+                operationsMetadata.GetTile.dcp.http.get;
         var layers = data.contents && data.contents.layers;
         var tileMatrixSets = data.contents && data.contents.tileMatrixSets;
         var records = [];
@@ -142,6 +144,7 @@ Ext.extend(GeoExt.data.WMTSCapabilitiesReader, Ext.data.DataReader, {
                         v = field.convert(v);
                         values[field.name] = v;
                     }
+                    values.queryable = !!operationsMetadata.GetFeatureInfo;
                     matrixSet = this.matrixSet(layer);
                     options = {
                         url: url,

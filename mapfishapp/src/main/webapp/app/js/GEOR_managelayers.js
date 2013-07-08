@@ -588,7 +588,7 @@ GEOR.managelayers = (function() {
         // The availability of a WFS equivalent layer is.
         // This depends on http://applis-bretagne.fr/redmine/issues/1984
 
-        if (GEOR.querier && (queryable || isWFS)) {
+        if (GEOR.querier && ((isWMS && queryable) || isWFS)) {
             insertSep();
             menuItems.push({
                 iconCls: 'geor-btn-query',
