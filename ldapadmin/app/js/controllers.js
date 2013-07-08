@@ -5,15 +5,6 @@ angular.module('ldapadmin.controllers', [])
   .controller('UsersCtrl', function UsersCtrl($scope, Restangular) {
     var baseUsers = Restangular.all('users');
     baseUsers.getList().then(function(users) {
-      //users = users.sort(function(a, b) {
-        //if (a.name.toLowerCase() > b.name.toLowerCase()) {
-          //return 1;
-        //}
-        //if (a.name.toLowerCase() < b.name.toLowerCase()) {
-          //return -1;
-        //}
-        //return 0;
-      //});
       $scope.users = users;
 
       $scope.groups = ['Administrator', 'SV_XXX', 'SV_YYY', 'EL_XXX', 'EL_YYY'];
