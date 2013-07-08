@@ -701,11 +701,22 @@ GEOR.config = (function() {
             false),
 
         /**
+         * Constant: WMTS_SERVERS
+         * {Array} List of externals WMTS to display in the WMTS servers tab.
+         */
+        WMTS_SERVERS: getCustomParameter("WMTS_SERVERS", [
+            {"name": "GéoPortail IGN", "url": "http://wxs.ign.fr/wnmz6nt68k09rw3f5vwaflk4/wmts"},
+            {"name": "GéoPicardie", "url": "http://www.geopicardie.fr/geoserver/gwc/service/wmts"},
+            {"name": "GéoBretagne rasters", "url": "http://tile.geobretagne.fr/gwc02/service/wmts"},
+            {"name": "GéoBretagne OSM", "url": "http://osm.geobretagne.fr/gwc01/service/wmts"}
+        ]),
+
+        /**
          * Constant: WMS_SERVERS
          * {Array} List of externals WMS to display in the WMS servers tab.
          */
         WMS_SERVERS: getCustomParameter("WMS_SERVERS", [
-            {"name": "GeoBretagne", "url": "http://geobretagne.fr/geoserver/wms"},
+            {"name": "GéoBretagne", "url": "http://geobretagne.fr/geoserver/wms"},
             {"name": "Région Bretagne", "url": "http://kartenn.region-bretagne.fr/geoserver/wms"},
             {"name": "Sandre/zonages", "url": "http://services.sandre.eaufrance.fr/geo/zonage"},
             {"name": "Sandre/ouvrages", "url": "http://services.sandre.eaufrance.fr/geo/ouvrage"},
@@ -731,7 +742,7 @@ GEOR.config = (function() {
          * {Array} List of externals WFS to display in the WFS servers tab.
          */
         WFS_SERVERS: getCustomParameter("WFS_SERVERS", [
-            {"name": "GeoBretagne", "url": "http://geobretagne.fr/geoserver/wfs"},
+            {"name": "GéoBretagne", "url": "http://geobretagne.fr/geoserver/wfs"},
             {"name": "BMO/OpenStreetMap", "url": "http://bmo.openstreetmap.fr/ows"},
             {"name": "Corine Land Cover", "url": "http://sd1878-2.sivit.org/geoserver/wfs"}
         ])

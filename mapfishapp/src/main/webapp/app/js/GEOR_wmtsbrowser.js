@@ -128,13 +128,7 @@ GEOR.wmtsbrowser = (function() {
                 loadingText: tr("Loading..."),
                 mode: 'local',
                 store: new Ext.data.Store({
-                    data: [{ // TODO: GEOR.config option for this
-                        name: "geopicardie",
-                        url: "http://www.geopicardie.fr/geoserver/gwc/service/wmts"
-                    },{
-                        name: "geoportail",
-                        url: "http://wxs.ign.fr/wnmz6nt68k09rw3f5vwaflk4/wmts/"
-                    }],
+                    data: GEOR.config.WMTS_SERVERS,
                     reader: new Ext.data.JsonReader({
                         fields: ['name', 'url']
                     })
