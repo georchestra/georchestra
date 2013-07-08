@@ -7,7 +7,12 @@ It lists the different requests and responses.
 
 Request
 
-    POST users/:userId?name=...&email=...
+    POST users/:userId
+
+Body parameters
+
+    name=...
+    email=...
 
 Response
 
@@ -47,7 +52,7 @@ Response
 
 Request
 
-    GET users
+    GET users/:userId
 
 Response
 
@@ -89,7 +94,12 @@ Create group
 
 Request
 
-    POST groups?name=...&description=...
+    POST groups
+
+Body parameters
+
+    name=...
+    description=...
 
 Reponse
 
@@ -107,10 +117,12 @@ Response
 
     [
         {
-            "name": "Administrator"
+            "name": "Administrator",
+            "description": "une description"
         },
         {
-            "name": "group_A"
+            "name": "group_A",
+            "description": "une description"
         }
     ]
 
@@ -136,7 +148,11 @@ Add users to the given group
 
 Request
 
-    PUT groups/:groupId/users/:[userId0..userIdN]
+    PUT groups/:groupId/users
+
+Body parameters
+
+    users=userId0,userId1,..,userIdN
 
 Response
 
@@ -150,7 +166,11 @@ Remove users from the given group
 
 Request
 
-    DELETE groups/:groupId/users/:[userId0..userIdN]
+    DELETE groups/:groupId/users
+
+Body parameters
+
+    users=userId0,userId1,..,userIdN
 
 Response
 
