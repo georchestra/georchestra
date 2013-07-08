@@ -58,11 +58,11 @@ Ext.extend(GeoExt.data.WMTSCapabilitiesReader, Ext.data.DataReader, {
      */
     imageFormat: function(layer) {
         var formats = layer.formats;
-        if (OpenLayers.Util.indexOf(formats, "image/jpeg")>-1) {
-            return "image/jpeg";
-        }
         if (OpenLayers.Util.indexOf(formats, "image/png")>-1) {
             return "image/png";
+        }
+        if (OpenLayers.Util.indexOf(formats, "image/jpeg")>-1) {
+            return "image/jpeg";
         }
         if (OpenLayers.Util.indexOf(formats, "image/png8")>-1) {
             return "image/png8";
