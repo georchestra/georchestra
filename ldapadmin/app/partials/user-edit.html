@@ -29,4 +29,7 @@
     <span ng-show="userForm.email.$error.required" class="help-inline">Required</span>
     <span ng-show="userForm.email.$error.email" class="help-inline">Not a valid E-mail</span>
   </div>
+  <a href="javascript:window.history.back();" class="btn">Cancel</a>
+  <button ng-click="save()" ng-disabled="isClean() || userForm.$invalid"
+          class="btn btn-primary">Save</button>
 </form>

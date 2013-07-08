@@ -29,26 +29,44 @@ angular.module('ldapadmin.controllers', [])
   })
   .controller('UserEditCtrl', function($scope, $routeParams, Restangular, flash) {
     var user = Restangular.one('users', $routeParams.userId);
-    $scope.user = user.get();
+    user.get().then(function(remote) {
+      $scope.user = Restangular.copy(remote);
 
-    $scope.deleteUser = function() {
-      Restangular.one('users', user.id).remove().then(
-        function() {
-          var index = findByAttr($scope.users, 'id', $routeParams.userId);
+      $scope.save = function() {
+        Restangular.one('users', user.id).put();
+      };
+      $scope.deleteUser = function() {
+        Restangular.one('users', user.id).remove().then(
+          function() {
+            var index = findByAttr($scope.users, 'id', $routeParams.userId);
 
-          if (index !== false) {
-            $scope.users = $scope.users.splice(index, 1);
+            if (index !== false) {
+              $scope.users = $scope.users.splice(index, 1);
+            }
+            window.history.back();
+            flash.success = 'User correctly removed';
+          },
+          function errorCallback() {
+            flash.error = 'Oops error from server :(';
           }
-          window.history.back();
-          flash.success = 'User correctly removed';
-        },
-        function errorCallback() {
-          flash.error = 'Oops error from server :(';
-        }
-      );
-    };
+        );
+      };
+      $scope.isClean = function() {
+        return angular.equals(remote, $scope.user);
+      };
+    });
   })
-  .controller('UserCreateCtrl', function($scope) {
+  .controller('UserCreateCtrl', function($scope, Restangular, flash) {
+      $scope.save = function() {
+        Restangular.all('users').post({
+          name: $scope.user.name,
+          email: $scope.user.email
+        }).then(function(user) {
+          $scope.users.push(user);
+          window.location = "#/users";
+          flash.success = 'User correctly added';
+        });
+      };
   })
   .controller('FooCtrl', function($scope) {
     $scope.foo = "bar";

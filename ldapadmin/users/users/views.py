@@ -2,6 +2,7 @@ from pyramid.view import view_config
 from pyramid.response import Response
 
 import json
+import uuid
 
 json_data = open('data/all.json')
 _users = json.load(json_data, parse_int=int, parse_float=float)
@@ -26,20 +27,31 @@ class RESTView(object):
 
     @view_config(route_name='user', renderer='json', request_method='GET')
     def user(self):
-        user = int(self.request.matchdict['user'])
+        user = self.request.matchdict['user']
         for ndx, i in enumerate(_users):
-            if i['id'] == user:
+            if str(i['id']) == user:
                 return _users[ndx]
-        return 'user not found' 
+        return 'user not found'
 
-    @view_config(route_name='users', request_method='POST')
+    @view_config(route_name='users', renderer='json', request_method='POST')
     def post(self):
+        id = str(uuid.uuid4())
+        user ={
+            'name': self.request.json_body['name'],
+            'email': self.request.json_body['email'],
+            'id': id
+        }
+        _users.append(user)
+        return user
+
+    @view_config(route_name='user', request_method='PUT')
+    def put(self):
         return Response('post')
 
     @view_config(route_name='user', request_method='DELETE')
     def delete(self):
-        user = int(self.request.matchdict['user'])
+        user = self.request.matchdict['user']
         for ndx, i in enumerate(_users):
-            if i['id'] == user:
+            if str(i['id']) == user:
                 del _users[ndx]
         return Response('delete')
