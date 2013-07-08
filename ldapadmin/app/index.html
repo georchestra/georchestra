@@ -7,7 +7,18 @@
     <link rel="stylesheet" href="css/main.css" />
   </head>
   <body>
+
     <div class="container-fluid" ng-controller="UsersCtrl">
+      <!-- Subscribe to success flash messages. -->
+      <div flash-alert="success" active-class="in" class="alert fade">
+        <span class="alert-message">{{flash.message}}</span>
+      </div>
+      <!-- Subscribe to error flash messages. -->
+      <div flash-alert="error" active-class="in" class="alert fade">
+        <strong class="alert-heading">Boo!</strong>
+        <span class="alert-message">{{flash.message}}</span>
+      </div>
+
       <div class="row-fluid">
         <div class="span3">
           <!--Sidebar content-->
@@ -39,6 +50,7 @@
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
     -->
     <script src="lib/angular/angular.js"></script>
+    <script src="lib/angular-flash.min.js"></script>
     <script src="js/app.js"></script>
     <script src="js/services.js"></script>
     <script src="js/controllers.js"></script>
@@ -46,6 +58,7 @@
     <script src="js/directives.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
     <script src="lib/bootstrap/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular-resource.js"></script>
+    <script type="text/javascript" src="//cdn.jsdelivr.net/underscorejs/1.4.3/underscore-min.js"></script>
+    <script type="text/javascript" src="http://cdn.jsdelivr.net/restangular/latest/restangular.min.js"></script>
   </body>
 </html>

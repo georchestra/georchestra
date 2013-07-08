@@ -27,15 +27,19 @@ class RESTView(object):
     @view_config(route_name='user', renderer='json', request_method='GET')
     def user(self):
         user = int(self.request.matchdict['user'])
-        for i in _users:
+        for ndx, i in enumerate(_users):
             if i['id'] == user:
-                return _users[user]
+                return _users[ndx]
         return 'user not found' 
 
     @view_config(route_name='users', request_method='POST')
     def post(self):
         return Response('post')
 
-    @view_config(route_name='users', request_method='DELETE')
+    @view_config(route_name='user', request_method='DELETE')
     def delete(self):
+        user = int(self.request.matchdict['user'])
+        for ndx, i in enumerate(_users):
+            if i['id'] == user:
+                del _users[ndx]
         return Response('delete')

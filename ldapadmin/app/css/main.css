@@ -1,3 +1,7 @@
 .active {
   font-weight: bold;
 }
+
+.alert {
+  position: absolute;
+}
