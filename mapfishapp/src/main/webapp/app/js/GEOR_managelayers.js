@@ -459,8 +459,7 @@ GEOR.managelayers = (function() {
                             map.zoomToExtent(b);
                         }
                     } else {
-                        var bbox = layerRecord.get('bbox');
-                        if (!bbox) {
+                        if (!layerRecord.get('bbox') && !layerRecord.get('llbbox')) {
                             // Get it from the WMS GetCapabilities document
                             GEOR.ows.hydrateLayerRecord(layerRecord, {
                                 success: function(){
