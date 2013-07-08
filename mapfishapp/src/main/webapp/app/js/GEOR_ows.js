@@ -465,12 +465,14 @@ GEOR.ows = (function() {
                     "REQUEST": "GetCapabilities"
                 }, baseParams, WMTS_BASE_PARAMS),
                 layerOptions: Ext.apply({
-                    transitionEffect: 'resize' // testing this, as WMTS is usually for baselayers ...
+                    transitionEffect: 'resize' 
+                    // testing this, as WMTS is usually for baselayers ...
                 }, layerOptions),
                 matrixSetChooser: function(tileMatrixSetLinks) {
+                    // FIXME, a bit dirty
+                    var mapSRS = GeoExt.MapPanel.guess().map.getProjection();
                     for (var i=0, l=tileMatrixSetLinks.length; i<l; i++) {
-                        if (tileMatrixSetLinks[i].tileMatrixSet === 
-                            GeoExt.MapPanel.guess().map.getProjection()) { // FIXME, a bit dirty
+                        if (tileMatrixSetLinks[i].tileMatrixSet === mapSRS) {
                             return tileMatrixSetLinks[i].tileMatrixSet;
                         }
                     }
