@@ -18,6 +18,8 @@
  * @include GEOR_config.js
  */
 
+// TODO: create a class for this panel (already repeated 3 times: wms, wfs, wmts)
+
 Ext.namespace("GEOR");
 
 GEOR.wmtsbrowser = (function() {
@@ -80,7 +82,11 @@ GEOR.wmtsbrowser = (function() {
                     // uncaught exception: Ext.data.DataProxy: DataProxy attempted
                     // to execute an API-action but found an undefined url /
                     // function. Please review your Proxy url/api-configuration.
-                    url: "/dummy"
+                    url: "/dummy",
+                    sortInfo: {
+                        field: 'title',
+                        direction: 'ASC'
+                    }
                 }
             });
 
