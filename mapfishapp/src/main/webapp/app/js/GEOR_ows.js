@@ -52,6 +52,8 @@ GEOR.ows = (function() {
             or better: use another record model dedicated to WMS, 
             or share a common record model between wms, wfs, wmts
         */
+        // for the use of geOrchestra only:
+        {name: "type", type: "string", defaultValue: "WMS"}, // TODO: have a specific one for WFS
         {name: "name", type: "string"},
         {name: "title", type: "string"},
         {name: "abstract", type: "string"},
@@ -462,10 +464,22 @@ GEOR.ows = (function() {
                 baseParams: Ext.apply({
                     "REQUEST": "GetCapabilities"
                 }, baseParams, WMTS_BASE_PARAMS),
-                layerOptions: Ext.apply({}, layerOptions),
-                //fields: defaultRecordFields // TODO: augment with fields from WMTS
+                layerOptions: Ext.apply({
+                    transitionEffect: 'resize' // testing this, as WMTS is usually for baselayers ...
+                }, layerOptions),
+                matrixSetChooser: function(tileMatrixSetLinks) {
+                    for (var i=0, l=tileMatrixSetLinks.length; i<l; i++) {
+                        if (tileMatrixSetLinks[i].tileMatrixSet === 
+                            GeoExt.MapPanel.guess().map.getProjection()) { // FIXME, a bit dirty
+                            return tileMatrixSetLinks[i].tileMatrixSet;
+                        }
+                    }
+                    return null;
+                }
+                //fields: defaultRecordFields // TODO: find the best strategy for record fields
+                // by commenting this, we're using the WMTS reader's default record fields, which is already a good solution.
             }, options.storeOptions);
-            var store = new GeoExt.data.WMTSCapabilitiesStore(storeOptions); // TODO
+            var store = new GeoExt.data.WMTSCapabilitiesStore(storeOptions);
             if (options.success) {
                 loadStore(store,
                           options.success, options.failure, options.scope);

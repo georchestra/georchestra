@@ -64,8 +64,8 @@ Ext.extend(GeoExt.data.WMTSCapabilitiesReader, Ext.data.DataReader, {
         if (OpenLayers.Util.indexOf(formats, "image/png")>-1) {
             return "image/png";
         }
-        if (OpenLayers.Util.indexOf(formats, "image/png; mode=24bit")>-1) {
-            return "image/png; mode=24bit";
+        if (OpenLayers.Util.indexOf(formats, "image/png8")>-1) {
+            return "image/png8";
         }
         if (OpenLayers.Util.indexOf(formats, "image/gif")>-1) {
             return "image/gif";
@@ -84,7 +84,7 @@ Ext.extend(GeoExt.data.WMTSCapabilitiesReader, Ext.data.DataReader, {
                 return styles[i].identifier;
             }
         }
-        return formats[0];
+        return (styles[0] && styles[0].identifier) || "";
     },
     
     /** private: method[matrixSet]
@@ -92,8 +92,14 @@ Ext.extend(GeoExt.data.WMTSCapabilitiesReader, Ext.data.DataReader, {
      *  :return: ``String`` a matrixSet.
      */
     matrixSet: function(layer) {
-        var ms = layer.tileMatrixSetLinks;
-        return ms[0].tileMatrixSet;
+        if (this.meta.matrixSetChooser) {
+            var preferedMatrixSet = 
+                this.meta.matrixSetChooser(layer.tileMatrixSetLinks);
+            if (preferedMatrixSet) {
+                return preferedMatrixSet;
+            }
+        }
+        return layer.tileMatrixSetLinks[0].tileMatrixSet;
     },
 
     /** private: method[readRecords]
@@ -118,11 +124,12 @@ Ext.extend(GeoExt.data.WMTSCapabilitiesReader, Ext.data.DataReader, {
             data.operationsMetadata.GetTile.dcp.http &&
             data.operationsMetadata.GetTile.dcp.http.get;
         var layers = data.contents && data.contents.layers;
+        var tileMatrixSets = data.contents && data.contents.tileMatrixSets;
         var records = [];
 
         if (url && layers) {
             var fields = this.recordType.prototype.fields; 
-            var layer, values, options, params, field, v;
+            var layer, values, options, params, field, v, matrixSet;
 
             for (var i=0, lenI=layers.length; i<lenI; i++){
                 layer = layers[i];
@@ -135,13 +142,19 @@ Ext.extend(GeoExt.data.WMTSCapabilitiesReader, Ext.data.DataReader, {
                         v = field.convert(v);
                         values[field.name] = v;
                     }
+                    matrixSet = this.matrixSet(layer);
                     options = {
                         url: url,
                         layer: layer.identifier,
                         name: layer.title,
                         format: this.imageFormat(layer),
-                        matrixSet: this.matrixSet(layer),
-                        style: this.layerStyle(layer),
+                        matrixSet: matrixSet,
+                        matrixIds: tileMatrixSets[matrixSet].matrixIds,
+                        // TODO: TileMatrixLimits, if any, should be extracted from the capabilities and inserted here (tileFullExtent)
+                        // (TileMatrixSetLink > TileMatrixSetLimits > TileMatrixLimits[] )
+                        
+                        // TODO: enable client zoom for WMTS layers, by adding serverResolutions in the layer options
+                        style: this.layerStyle(layer)
                     };
                     if (this.meta.layerOptions) {
                         Ext.apply(options, this.meta.layerOptions);
@@ -151,7 +164,7 @@ Ext.extend(GeoExt.data.WMTSCapabilitiesReader, Ext.data.DataReader, {
                 }
             }
         }
-        
+
         return {
             totalRecords: records.length,
             success: true,
