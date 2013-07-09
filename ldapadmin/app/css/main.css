@@ -7,3 +7,8 @@
 .alert.in {
   display: block;
 }
+
+.groups li a i {
+  display: inline-block;
+  width: 14px;
+}

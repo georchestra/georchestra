@@ -2,9 +2,9 @@
 
 /* Controllers */
 angular.module('ldapadmin.controllers', [])
-  .controller('GroupsCtrl', function($scope, Restangular) {
+  .controller('GroupsCtrl', function($scope, $rootScope, Restangular) {
     Restangular.all('groups').getList().then(function(groups) {
-      $scope.groups = groups;
+      $rootScope.groups = groups;
     }, function errorCallback() {
       flash.error = 'Oops error from server :(';
     });
@@ -27,6 +27,11 @@ angular.module('ldapadmin.controllers', [])
     var user = Restangular.one('users', $routeParams.userId);
     user.get().then(function(remote) {
       $scope.user = Restangular.copy(remote);
+      $scope.user_groups = angular.copy($scope.groups);
+
+      $.each($scope.user_groups, function(index, value) {
+        $scope.user_groups[index].hasUser = _.contains($scope.user.groups, value.name);
+      });
 
       $scope.save = function() {
         $scope.user.put().then(function() {
@@ -58,6 +63,9 @@ angular.module('ldapadmin.controllers', [])
       $scope.isClean = function() {
         return angular.equals(remote, $scope.user);
       };
+      $scope.selectGroup = function(group) {
+        console.log(group);
+      };
     });
   })
   .controller('UserCreateCtrl', function($scope, Restangular, flash) {
@@ -86,3 +94,8 @@ function findByAttr(collection, attribute, value) {
   }
   return false;
 }
+
+$(document)
+  .on('click.dropdown-menu', '.dropdown-menu.noclose > li', function (e) {
+    e.stopPropagation();
+  });

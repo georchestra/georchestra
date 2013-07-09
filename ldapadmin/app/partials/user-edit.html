@@ -7,6 +7,16 @@
     Groups
     <span class="caret"></span>
   </a>
+  <ul class="dropdown-menu noclose groups">
+    <li ng-repeat="group in user_groups">
+      <a href="javascript:void(0);" ng-click="selectGroup(group)">
+        <i ng-class="{'icon-ok': group.hasUser}"></i>
+        {{group.name}}
+      </a>
+    </li>
+    <li class="divider"></li>
+    <li class="disabled"><a ng-click="apply()">Apply</a></li>
+  </ul>
 </div>
 <div class="btn-group">
   <a class="actions btn dropdown-toggle" ng-class="{hide: user.id == null}" data-toggle="dropdown">
