@@ -4,7 +4,7 @@
 
 describe('controllers', function(){
   beforeEach(module('ldapadmin.controllers'));
-  beforeEach(module('ldapadmin.services'));
+  beforeEach(module('restangular'));
 
   describe('FooCtrl', function() {
     it('should create foo', inject(function($rootScope, $controller) {
@@ -20,7 +20,7 @@ describe('controllers', function(){
         ctrl;
     beforeEach(inject(function(_$httpBackend_, $rootScope, $controller) {
       $httpBackend = _$httpBackend_;
-      $httpBackend.expectGET('data/users/all.json').
+      $httpBackend.expectGET('/users').
         respond([
             {
                 "id": 0,
