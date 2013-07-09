@@ -2,12 +2,14 @@
 
 /* Controllers */
 angular.module('ldapadmin.controllers', [])
+  .controller('GroupsCtrl', function($scope, Restangular) {
+    $scope.groups = ['Administrator', 'SV_XXX', 'SV_YYY', 'EL_XXX', 'EL_YYY'];
+  })
   .controller('UsersCtrl', function UsersCtrl($scope, Restangular) {
     var baseUsers = Restangular.all('users');
     baseUsers.getList().then(function(users) {
       $scope.users = users;
 
-      $scope.groups = ['Administrator', 'SV_XXX', 'SV_YYY', 'EL_XXX', 'EL_YYY'];
     }, function errorCallback() {
       flash.error = 'Oops error from server :(';
     });
@@ -15,7 +17,7 @@ angular.module('ldapadmin.controllers', [])
   .controller('UsersListCtrl', function($scope, $rootScope, $routeParams) {
     //$scope.users is inherited from UsersCtrl's scope
     var group = $routeParams.group;
-    $scope.groupFilter = group ? {group: group} : null;
+    $scope.groupFilter = group ? {groups: group} : null;
     $rootScope.selectedGroup = group;
   })
   .controller('UserEditCtrl', function($scope, $routeParams, Restangular, flash) {
