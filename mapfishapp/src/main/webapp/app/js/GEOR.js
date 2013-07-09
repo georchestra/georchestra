@@ -80,7 +80,6 @@ Ext.namespace("GEOR");
         OpenLayers.Number.thousandsSeparator = " ";
         OpenLayers.ImgPath = 'app/img/openlayers/';
         OpenLayers.DOTS_PER_INCH = GEOR.config.MAP_DOTS_PER_INCH;
-        OpenLayers.IMAGE_RELOAD_ATTEMPTS = 1;
 
         /*
          * Setting of Ext global vars.
