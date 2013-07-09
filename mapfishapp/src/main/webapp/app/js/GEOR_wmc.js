@@ -161,7 +161,7 @@ GEOR.wmc = (function() {
             tr = OpenLayers.i18n;
 
             wmcFormat = new OpenLayers.Format.WMC({
-                //layerOptions: GEOR.ows.defaultLayerOptions
+                //layerOptions: GEOR.ows.defaultWMSLayerOptions
                 // why should we apply default layer options and not use those provided by the WMC ?
             });
             wmcReader = new GeoExt.data.WMCReader(

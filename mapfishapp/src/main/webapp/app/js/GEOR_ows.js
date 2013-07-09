@@ -169,14 +169,22 @@ GEOR.ows = (function() {
         matchGeomProperty: /^gml:(Multi)?(Point|LineString|Polygon|Curve|Surface|Geometry)PropertyType$/,
 
         /**
-         * Property: defaultLayerOptions
+         * Property: defaultWMSLayerOptions
          * {Object} Default OpenLayers WMS layer options
          */
-        defaultLayerOptions: {
+        defaultWMSLayerOptions: {
             singleTile: GEOR.config.TILE_SINGLE,
             gutter: 10,
             buffer: 0,
             tileSize: new OpenLayers.Size(GEOR.config.TILE_WIDTH, GEOR.config.TILE_HEIGHT)
+        },
+
+        /**
+         * Property: defaultWMTSLayerOptions
+         * {Object} Default OpenLayers WMTS layer options
+         */
+        defaultWMTSLayerOptions: {
+            buffer: 0
         },
 
         getRecordFields: function() {
@@ -430,7 +438,7 @@ GEOR.ows = (function() {
                 }, baseParams, WMS_BASE_PARAMS),
                 layerOptions: Ext.apply({},
                     layerOptions,
-                    GEOR.ows.defaultLayerOptions
+                    GEOR.ows.defaultWMSLayerOptions
                 ),
                 fields: defaultRecordFields
             }, options.storeOptions);
@@ -469,7 +477,7 @@ GEOR.ows = (function() {
                 layerOptions: Ext.apply({
                     //transitionEffect: 'resize' 
                     // testing this, as WMTS is usually for baselayers ...
-                }, layerOptions),
+                }, layerOptions, GEOR.ows.defaultWMTSLayerOptions),
                 matrixSetChooser: function(tileMatrixSetLinks) {
                     // FIXME, a bit dirty
                     var mapSRS = GeoExt.MapPanel.guess().map.getProjection();
