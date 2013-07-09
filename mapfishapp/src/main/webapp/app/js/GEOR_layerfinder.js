@@ -18,7 +18,7 @@
  * @include GEOR_cswquerier.js
  * @include GEOR_cswbrowser.js
  * @include GEOR_wmsbrowser.js
- * @include GEOR_wtmsbrowser.js
+ * @include GEOR_wmtsbrowser.js
  * @include GEOR_wfsbrowser.js
  */
 

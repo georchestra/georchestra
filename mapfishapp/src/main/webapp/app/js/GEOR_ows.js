@@ -29,6 +29,8 @@
  * @include OpenLayers/Layer/WMTS.js
  * @requires GEOR_config.js
  * @include GEOR_waiter.js
+ * // FIXME: hack before GeoExt supports WMTS
+ * @include GeoExt.data.WMTS.js
  */
 
 Ext.namespace("GEOR");
