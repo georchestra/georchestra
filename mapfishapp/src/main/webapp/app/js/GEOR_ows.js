@@ -467,7 +467,7 @@ GEOR.ows = (function() {
                     "REQUEST": "GetCapabilities"
                 }, baseParams, WMTS_BASE_PARAMS),
                 layerOptions: Ext.apply({
-                    transitionEffect: 'resize' 
+                    //transitionEffect: 'resize' 
                     // testing this, as WMTS is usually for baselayers ...
                 }, layerOptions),
                 matrixSetChooser: function(tileMatrixSetLinks) {
