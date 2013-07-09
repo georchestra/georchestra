@@ -457,6 +457,8 @@ GEOR.ows = (function() {
          *
          * Parameters:
          * options - {Object} An object with the properties:
+         * - mapSRS - {String} the current map SRS, which will be used to 
+         *   choose the best available TileMatrixSet (optional).
          * - success - {Function} Callback function called when the
          *   store has been successfully loaded.
          * - failure - {Function} Callback function called when the
@@ -475,12 +477,12 @@ GEOR.ows = (function() {
                     "REQUEST": "GetCapabilities"
                 }, baseParams, WMTS_BASE_PARAMS),
                 layerOptions: Ext.apply({
-                    //transitionEffect: 'resize' 
-                    // testing this, as WMTS is usually for baselayers ...
+                    // would be good for WMTS base layers only:
+                    //transitionEffect: 'resize'
                 }, layerOptions, GEOR.ows.defaultWMTSLayerOptions),
                 matrixSetChooser: function(tileMatrixSetLinks) {
-                    // FIXME, a bit dirty
-                    var mapSRS = GeoExt.MapPanel.guess().map.getProjection();
+                    var mapSRS = options.mapSRS ||
+                        GeoExt.MapPanel.guess().map.getProjection();
                     for (var i=0, l=tileMatrixSetLinks.length; i<l; i++) {
                         if (tileMatrixSetLinks[i].tileMatrixSet === mapSRS) {
                             return tileMatrixSetLinks[i].tileMatrixSet;
@@ -488,8 +490,6 @@ GEOR.ows = (function() {
                     }
                     return null;
                 }
-                //fields: defaultRecordFields // TODO: find the best strategy for record fields
-                // by commenting this, we're using the WMTS reader's default record fields, which is already a good solution.
             }, options.storeOptions);
             var store = new GeoExt.data.WMTSCapabilitiesStore(storeOptions);
             if (options.success) {

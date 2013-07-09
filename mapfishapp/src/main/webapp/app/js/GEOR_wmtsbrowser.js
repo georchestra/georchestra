@@ -76,6 +76,7 @@ GEOR.wmtsbrowser = (function() {
             tr = OpenLayers.i18n;
 
             var store = new GEOR.ows.WMTSCapabilities({
+                mapSRS: options.srs,
                 storeOptions: {
                     // url should not be empty unless we want the following
                     // exception to occur:
@@ -145,9 +146,10 @@ GEOR.wmtsbrowser = (function() {
                 displayField: 'name',
                 tpl: '<tpl for="."><div ext:qtip="<b>{name}</b><br/>{url}" class="x-combo-list-item">{name}</div></tpl>'
             });
-
+            /*
             var srs = options.srs;
             delete options.srs;
+            */
             var urlField = new Ext.app.OWSUrlField({
                 fieldLabel: tr("... or enter its address: "),
                 callback: function(r, options, success) {
