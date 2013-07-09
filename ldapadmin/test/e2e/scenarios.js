@@ -47,6 +47,19 @@ describe('my app', function() {
       element('#new_user').click();
       expect(browser().location().url()).toBe('/users/new');
       expect(input('user.name').val()).toBe('');
+
+      input('user.name').enter('toto');
+      input('user.email').enter('toto@mail.zzz');
+      element('.save').click();
+      expect(repeater('.users tr').count()).toEqual(101);
+    });
+  });
+
+  describe('delete user', function() {
+    it('should show the show the edit view', function() {
+      element('.users tr:nth-child(1) td a').click();
+      element('.delete').click();
+      expect(repeater('.users tr').count()).toEqual(100);
     });
   });
 });

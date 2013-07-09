@@ -14,7 +14,7 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu">
-    <li><a ng-click="deleteUser(user)">Delete user</a></li>
+    <li><a ng-click="deleteUser(user)" class="delete">Delete user</a></li>
   </ul>
 </div>
 <form action="" name="userForm">
@@ -29,7 +29,7 @@
     <span ng-show="userForm.email.$error.required" class="help-inline">Required</span>
     <span ng-show="userForm.email.$error.email" class="help-inline">Not a valid E-mail</span>
   </div>
-  <a href="javascript:window.history.back();" class="btn">Cancel</a>
+  <a href="javascript:window.history.back();" class="btn cancel">Cancel</a>
   <button ng-click="save()" ng-disabled="isClean() || userForm.$invalid"
-          class="btn btn-primary">Save</button>
+          class="btn btn-primary save">Save</button>
 </form>
