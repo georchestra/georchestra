@@ -5,6 +5,63 @@
  
 Ext.namespace("GeoExt.data");
 
+
+// Monkey patching openlayers
+/**
+ * @requires OpenLayers/Format/WMTSCapabilities/v1_0_0.js
+ */
+OpenLayers.Format.WMTSCapabilities.v1_0_0.prototype.readers.wmts = OpenLayers.Util.extend(
+    OpenLayers.Format.WMTSCapabilities.v1_0_0.prototype.readers.wmts, {
+        /*
+        // version avec tileMatrix id en clé
+        "TileMatrixSetLimits": function(node, obj) {
+            obj.tileMatrixSetLimits = {};
+            this.readChildNodes(node, obj.tileMatrixSetLimits);
+        },
+        "TileMatrixLimits": function(node, obj) {
+            var o = this.readChildNodes(node);
+            obj[o.tileMatrix] = o;
+        },
+        */
+        // version avec TileMatrixSetLimits sous forme de tableau
+        "TileMatrixSetLimits": function(node, obj) {
+            obj.tileMatrixSetLimits = [];
+            this.readChildNodes(node, obj);
+        },
+        "TileMatrixLimits": function(node, obj) {
+            var tileMatrixLimits = {};
+            this.readChildNodes(node, tileMatrixLimits);
+            obj.tileMatrixSetLimits.push(tileMatrixLimits);
+        },
+        "MinTileRow": function(node, obj) {
+            obj.minTileRow = parseInt(this.getChildValue(node)); 
+        },
+        "MaxTileRow": function(node, obj) {
+            obj.maxTileRow = parseInt(this.getChildValue(node)); 
+        },
+        "MinTileCol": function(node, obj) {
+            obj.minTileCol = parseInt(this.getChildValue(node)); 
+        },
+        "MaxTileCol": function(node, obj) {
+            obj.maxTileCol = parseInt(this.getChildValue(node)); 
+        },
+        "TileMatrix": function(node, obj) {
+            // node could be child of wmts:TileMatrixSet or wmts:TileMatrixLimits
+            if (obj.identifier) {
+                // node is child of wmts:TileMatrixSet
+                var tileMatrix = {
+                    supportedCRS: obj.supportedCRS
+                };
+                this.readChildNodes(node, tileMatrix);
+                obj.matrixIds.push(tileMatrix);
+            } else {
+                obj.tileMatrix = this.getChildValue(node);
+            }
+        }
+    }
+);
+
+
 GeoExt.data.WMTSCapabilitiesReader = function(meta, recordType) {
     meta = meta || {};
     if (!meta.format) {
@@ -124,9 +181,27 @@ Ext.extend(GeoExt.data.WMTSCapabilitiesReader, Ext.data.DataReader, {
         var operationsMetadata = data.operationsMetadata,
             url = operationsMetadata.GetTile.dcp &&
                 operationsMetadata.GetTile.dcp.http &&
-                operationsMetadata.GetTile.dcp.http.get;
+                operationsMetadata.GetTile.dcp.http.get; // when using georchestra branch in georchestra/openlayers
+                //operationsMetadata.GetTile.dcp.http.get[0].url; // when using openlayers master (and TODO: check that corresponding constraint is KVP)
+        
         var layers = data.contents && data.contents.layers;
         var tileMatrixSets = data.contents && data.contents.tileMatrixSets;
+        // compute all server-supported resolutions, in order to build a serverResolutions array
+        // we create a temporary data structure to speed up future lookups.
+        var tileMatrixSetsResolutions = {};
+        Ext.iterate(tileMatrixSets, function(tileMatrixSetId, tileMatrixSet) {
+            tileMatrixSetsResolutions[tileMatrixSetId] = {};
+            Ext.each(tileMatrixSet.matrixIds, function(matrixId) {
+                /*
+                matrixId.resolution = OpenLayers.Util.getResolutionFromScale(
+                    1/matrixId.scaleDenominator, "m"
+                );
+                */
+                tileMatrixSetsResolutions[tileMatrixSetId][matrixId.identifier] = OpenLayers.Util.getResolutionFromScale(
+                    1/matrixId.scaleDenominator, "m"
+                );
+            });
+        });
         var records = [];
 
         if (url && layers) {
@@ -146,6 +221,7 @@ Ext.extend(GeoExt.data.WMTSCapabilitiesReader, Ext.data.DataReader, {
                     }
                     values.queryable = !!operationsMetadata.GetFeatureInfo;
                     matrixSet = this.matrixSet(layer);
+                    
                     options = {
                         url: url,
                         layer: layer.identifier,
@@ -153,12 +229,28 @@ Ext.extend(GeoExt.data.WMTSCapabilitiesReader, Ext.data.DataReader, {
                         format: this.imageFormat(layer),
                         matrixSet: matrixSet,
                         matrixIds: tileMatrixSets[matrixSet].matrixIds,
-                        // TODO: TileMatrixLimits, if any, should be extracted from the capabilities and inserted here (tileFullExtent)
-                        // (TileMatrixSetLink > TileMatrixSetLimits > TileMatrixLimits[] )
-                        
-                        // TODO: enable client zoom for WMTS layers, by adding serverResolutions in the layer options
                         style: this.layerStyle(layer)
                     };
+                    // enable client zoom by adding serverResolutions in the layer options:
+                    var serverResolutions = [], tileMatrixSetLink,
+                        tileMatrixSetLinks = layer.tileMatrixSetLinks;
+                    for (var j=0, len=tileMatrixSetLinks.length; j<len; j++) {
+                        tileMatrixSetLink = tileMatrixSetLinks[j];
+                        if (tileMatrixSetLink.tileMatrixSet === matrixSet) {
+                            if (tileMatrixSetLink.tileMatrixSetLimits) {
+                                Ext.each(tileMatrixSetLink.tileMatrixSetLimits, function(tileMatrixSetLimit) {
+                                    serverResolutions.push(tileMatrixSetsResolutions[matrixSet][tileMatrixSetLimit.tileMatrix]);
+                                })
+                            }
+                            break;
+                        }
+                    }
+                    if (serverResolutions.length) {
+                        serverResolutions.sort(function(a,b){
+                            return b-a;
+                        })
+                        options.serverResolutions = serverResolutions;
+                    }
                     if (this.meta.layerOptions) {
                         Ext.apply(options, this.meta.layerOptions);
                     }
