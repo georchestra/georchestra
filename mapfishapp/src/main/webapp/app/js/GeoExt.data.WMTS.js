@@ -83,7 +83,6 @@ GeoExt.data.WMTSCapabilitiesReader = function(meta, recordType) {
                 {name: "formats"}, // array
                 {name: "styles"}, // array of Objects {abstract, identifier, isDefault, keywords, title}
                 {name: "keywords"} // Object
-                //,{name: "infoFormats"} // array (optional)
             ]
         );
     }
@@ -186,22 +185,20 @@ Ext.extend(GeoExt.data.WMTSCapabilitiesReader, Ext.data.DataReader, {
         
         var layers = data.contents && data.contents.layers;
         var tileMatrixSets = data.contents && data.contents.tileMatrixSets;
-        // compute all server-supported resolutions, in order to build a serverResolutions array
-        // we create a temporary data structure to speed up future lookups.
-        var tileMatrixSetsResolutions = {};
-        Ext.iterate(tileMatrixSets, function(tileMatrixSetId, tileMatrixSet) {
-            tileMatrixSetsResolutions[tileMatrixSetId] = {};
-            Ext.each(tileMatrixSet.matrixIds, function(matrixId) {
-                /*
-                matrixId.resolution = OpenLayers.Util.getResolutionFromScale(
-                    1/matrixId.scaleDenominator, "m"
-                );
-                */
-                tileMatrixSetsResolutions[tileMatrixSetId][matrixId.identifier] = OpenLayers.Util.getResolutionFromScale(
-                    1/matrixId.scaleDenominator, "m"
-                );
+        if (this.meta.clientZoomEnabled) {
+            // compute all server-supported resolutions, in order to build a serverResolutions array
+            // we create a temporary data structure to speed up future lookups.
+            var tileMatrixSetsResolutions = {};
+            Ext.iterate(tileMatrixSets, function(tileMatrixSetId, tileMatrixSet) {
+                tileMatrixSetsResolutions[tileMatrixSetId] = {};
+                Ext.each(tileMatrixSet.matrixIds, function(matrixId) {
+                    tileMatrixSetsResolutions[tileMatrixSetId][matrixId.identifier] = 
+                        OpenLayers.Util.getResolutionFromScale(
+                            1/matrixId.scaleDenominator, "m"
+                        );
+                });
             });
-        });
+        }
         var records = [];
 
         if (url && layers) {
@@ -231,25 +228,27 @@ Ext.extend(GeoExt.data.WMTSCapabilitiesReader, Ext.data.DataReader, {
                         matrixIds: tileMatrixSets[matrixSet].matrixIds,
                         style: this.layerStyle(layer)
                     };
-                    // enable client zoom by adding serverResolutions in the layer options:
-                    var serverResolutions = [], tileMatrixSetLink,
-                        tileMatrixSetLinks = layer.tileMatrixSetLinks;
-                    for (var j=0, len=tileMatrixSetLinks.length; j<len; j++) {
-                        tileMatrixSetLink = tileMatrixSetLinks[j];
-                        if (tileMatrixSetLink.tileMatrixSet === matrixSet) {
-                            if (tileMatrixSetLink.tileMatrixSetLimits) {
-                                Ext.each(tileMatrixSetLink.tileMatrixSetLimits, function(tileMatrixSetLimit) {
-                                    serverResolutions.push(tileMatrixSetsResolutions[matrixSet][tileMatrixSetLimit.tileMatrix]);
-                                })
+                    if (this.meta.clientZoomEnabled) {
+                        // enable client zoom by adding serverResolutions in the layer options:
+                        var serverResolutions = [], tileMatrixSetLink,
+                            tileMatrixSetLinks = layer.tileMatrixSetLinks;
+                        for (var j=0, len=tileMatrixSetLinks.length; j<len; j++) {
+                            tileMatrixSetLink = tileMatrixSetLinks[j];
+                            if (tileMatrixSetLink.tileMatrixSet === matrixSet) {
+                                if (tileMatrixSetLink.tileMatrixSetLimits) {
+                                    Ext.each(tileMatrixSetLink.tileMatrixSetLimits, function(tileMatrixSetLimit) {
+                                        serverResolutions.push(tileMatrixSetsResolutions[matrixSet][tileMatrixSetLimit.tileMatrix]);
+                                    })
+                                }
+                                break;
                             }
-                            break;
                         }
-                    }
-                    if (serverResolutions.length) {
-                        serverResolutions.sort(function(a,b){
-                            return b-a;
-                        })
-                        options.serverResolutions = serverResolutions;
+                        if (serverResolutions.length) {
+                            serverResolutions.sort(function(a,b){
+                                return b-a;
+                            })
+                            options.serverResolutions = serverResolutions;
+                        }
                     }
                     if (this.meta.layerOptions) {
                         Ext.apply(options, this.meta.layerOptions);
