@@ -3,13 +3,16 @@
 /* Controllers */
 angular.module('ldapadmin.controllers', [])
   .controller('GroupsCtrl', function($scope, Restangular) {
-    $scope.groups = ['Administrator', 'SV_XXX', 'SV_YYY', 'EL_XXX', 'EL_YYY'];
+    Restangular.all('groups').getList().then(function(groups) {
+      $scope.groups = groups;
+    }, function errorCallback() {
+      flash.error = 'Oops error from server :(';
+    });
   })
   .controller('UsersCtrl', function UsersCtrl($scope, Restangular) {
     var baseUsers = Restangular.all('users');
     baseUsers.getList().then(function(users) {
       $scope.users = users;
-
     }, function errorCallback() {
       flash.error = 'Oops error from server :(';
     });

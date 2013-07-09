@@ -4,6 +4,10 @@ from pyramid.response import Response
 import json
 import uuid
 
+json_data = open('data/groups.json')
+_groups = json.load(json_data, parse_int=int, parse_float=float)
+json_data.close()
+
 json_data = open('data/all.json')
 _users = json.load(json_data, parse_int=int, parse_float=float)
 json_data.close()
@@ -20,6 +24,10 @@ json_data.close()
 class RESTView(object):
     def __init__(self, request):
         self.request = request
+
+    @view_config(route_name='groups', renderer='json', request_method='GET')
+    def get_groups(self):
+        return _groups
 
     @view_config(route_name='users', renderer='json', request_method='GET')
     def get(self):
