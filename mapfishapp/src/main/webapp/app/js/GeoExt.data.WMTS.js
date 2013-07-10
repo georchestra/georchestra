@@ -348,20 +348,23 @@ Ext.extend(GeoExt.data.WMTSCapabilitiesReader, Ext.data.DataReader, {
         
         var layers = data.contents && data.contents.layers;
         var tileMatrixSets = data.contents && data.contents.tileMatrixSets;
-        if (this.meta.clientZoomEnabled) {
-            // compute all server-supported resolutions, in order to build a serverResolutions array
-            // we create a temporary data structure to speed up future lookups.
-            var tileMatrixSetsResolutions = {};
-            Ext.iterate(tileMatrixSets, function(tileMatrixSetId, tileMatrixSet) {
-                tileMatrixSetsResolutions[tileMatrixSetId] = {};
-                Ext.each(tileMatrixSet.matrixIds, function(matrixId) {
-                    tileMatrixSetsResolutions[tileMatrixSetId][matrixId.identifier] = 
-                        OpenLayers.Util.getResolutionFromScale(
-                            1/matrixId.scaleDenominator, "m"
-                        );
-                });
+        
+        // compute all server-supported resolutions, in order to build a serverResolutions array
+        // we create a temporary data structure to speed up future lookups.
+        var tileMatrixSetsResolutions = {}, tileMatrixSetsScales = {};
+        Ext.iterate(tileMatrixSets, function(tileMatrixSetId, tileMatrixSet) {
+            tileMatrixSetsResolutions[tileMatrixSetId] = {};
+            tileMatrixSetsScales[tileMatrixSetId] = {};
+            Ext.each(tileMatrixSet.matrixIds, function(matrixId) {
+                tileMatrixSetsScales[tileMatrixSetId][matrixId.identifier] = 
+                    matrixId.scaleDenominator;
+                tileMatrixSetsResolutions[tileMatrixSetId][matrixId.identifier] = 
+                    OpenLayers.Util.getResolutionFromScale(
+                        1/matrixId.scaleDenominator, "Meter"
+                    );
             });
-        }
+        });
+        
         var records = [];
 
         if (url && layers) {
@@ -381,7 +384,28 @@ Ext.extend(GeoExt.data.WMTSCapabilitiesReader, Ext.data.DataReader, {
                     }
                     values.queryable = !!operationsMetadata.GetFeatureInfo;
                     matrixSet = this.matrixSet(layer);
-                    
+
+                    // compute server supported resolutions array & min/maxScale for the chosen matrixSet
+                    var resolutions = [], minScaleDenominator, maxScaleDenominator, tileMatrixSetLink,
+                        tileMatrixSetLinks = layer.tileMatrixSetLinks;
+                    for (var j=0, len=tileMatrixSetLinks.length; j<len; j++) {
+                        tileMatrixSetLink = tileMatrixSetLinks[j];
+                        if (tileMatrixSetLink.tileMatrixSet === matrixSet) {
+                            if (tileMatrixSetLink.tileMatrixSetLimits) {
+                                Ext.each(tileMatrixSetLink.tileMatrixSetLimits, function(tileMatrixSetLimit) {
+                                    resolutions.push(tileMatrixSetsResolutions[matrixSet][tileMatrixSetLimit.tileMatrix]);
+                                    var scale = tileMatrixSetsScales[matrixSet][tileMatrixSetLimit.tileMatrix];
+                                    if (!minScaleDenominator || minScaleDenominator > scale) {
+                                        minScaleDenominator = scale;
+                                    }
+                                    if (!maxScaleDenominator || maxScaleDenominator < scale) {
+                                        maxScaleDenominator = scale;
+                                    }
+                                })
+                            }
+                            break;
+                        }
+                    }
                     options = {
                         url: url,
                         layer: layer.identifier,
@@ -391,27 +415,20 @@ Ext.extend(GeoExt.data.WMTSCapabilitiesReader, Ext.data.DataReader, {
                         matrixIds: tileMatrixSets[matrixSet].matrixIds,
                         style: this.layerStyle(layer)
                     };
+                    if (resolutions.length) {
+                        resolutions.sort(function(a,b){
+                            return b-a;
+                        })
+                        Ext.apply(options, {
+                            resolutions: resolutions,
+                            minScale: 1/maxScaleDenominator,
+                            maxScale: 1/(minScaleDenominator-1)
+                            // Note: "minus one" added to prevent IGN's GeoPortail layer 
+                            // from not appearing at ScaleDenominator = 2132.7295838497840572
+                        });
+                    }
                     if (this.meta.clientZoomEnabled) {
-                        // enable client zoom by adding serverResolutions in the layer options:
-                        var resolutions = [], tileMatrixSetLink,
-                            tileMatrixSetLinks = layer.tileMatrixSetLinks;
-                        for (var j=0, len=tileMatrixSetLinks.length; j<len; j++) {
-                            tileMatrixSetLink = tileMatrixSetLinks[j];
-                            if (tileMatrixSetLink.tileMatrixSet === matrixSet) {
-                                if (tileMatrixSetLink.tileMatrixSetLimits) {
-                                    Ext.each(tileMatrixSetLink.tileMatrixSetLimits, function(tileMatrixSetLimit) {
-                                        resolutions.push(tileMatrixSetsResolutions[matrixSet][tileMatrixSetLimit.tileMatrix]);
-                                    })
-                                }
-                                break;
-                            }
-                        }
-                        if (resolutions.length) {
-                            resolutions.sort(function(a,b){
-                                return b-a;
-                            })
-                            options.serverResolutions = resolutions;
-                        }
+                        options.serverResolutions = resolutions;
                     }
                     if (this.meta.layerOptions) {
                         Ext.apply(options, this.meta.layerOptions);
