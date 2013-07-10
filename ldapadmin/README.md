@@ -18,16 +18,20 @@ These pages should be light (no need to ship ExtJS).
 
 The page asks for user email.
 
-If the given email matches one of the LDAP users, an email is sent to this user with a new **strong** password.
-From this moment on, and for a configurable delay (say, one day by default), both passwords (old & new) will be considered as valid.
+If the given email matches one of the LDAP users:
+ * an email is sent to this user with a unique https URL to reset his password (eg: /ldapadmin/public/changePassword?token=54f23f27f6c5f23c68b9b5f9650839dc)
+ * the page displays "an email was sent".
+ * On the /ldapadmin/public/changePassword page:
+   * server-side check that token is valid (postgresql storage). If not, HTTP 400.
+   * two fields ask for new password (client-side check for equality)
+   * on form submission:
+     * check that token is valid. If not, HTTP 400.
+     * the old password is discarded and replaced with the new one
+     * the new page shows "password updated".
 
-During this period:
- * if the user logs in with the new password, the old password is discarded and replaced by the new one.
- * if the user logs in with the old password, the new password is discarded.
-
-If the user does not log in during this period, the new password is discarded.
-
-If the given email does not match one from the LDAP, nothing happens (and no specific message is sent to the requestor - this is to prevent automated email recovery)
+If the given email does not match one from the LDAP:
+ * nothing happens server side
+ * the page displays "an email was sent" (even if no email was sent).
 
 ### Create account
 

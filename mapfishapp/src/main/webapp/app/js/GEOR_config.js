@@ -458,61 +458,67 @@ GEOR.config = (function() {
         /**
          * Constant: MAP_SCALES
          * {Array} The map's scales.
-         * Defaults to GeoBretagne GWC compliant scales
+         * Defaults to GWC EPSG:900913 default gridset scales
          */
         MAP_SCALES : getCustomParameter("MAP_SCALES", [
-            266.591197934,
-            533.182395867,
-            1066.364791734,
-            2132.729583468,
-            4265.459166936,
-            8530.918333871,
-            17061.836667742,
-            34123.673335484,
-            68247.346670968,
-            136494.693341936,
-            272989.386683873,
-            545978.773367746,
-            1091957.546735491,
-            2183915.093470982,
-            4367830.186941965,
-            8735660.373883929
+            266.5911979441132,
+            533.1823958882264,
+            1066.3647917764529,
+            2132.7295835529058,
+            4265.4591671058115,
+            8530.918334211623,
+            17061.836668423246,
+            34123.67333684649,
+            68247.34667369298,
+            136494.69334738597,
+            272989.38669477194,
+            545978.7733895439,
+            1091957.5467790877,
+            2183915.0935581755,
+            4367830.187116351,
+            8735660.374232702,
+            17471320.748465404,
+            34942641.49693081,
+            69885282.99386162,
+            139770565.98772323,
+            279541131.97544646,
+            559082263.9508929
         ]),
 
         /**
          * Constant: MAP_SRS
          * {String} The default map SRS code.
-         * Defaults to EPSG:2154
+         * Defaults to EPSG:3857
          */
-        MAP_SRS: getCustomParameter("MAP_SRS", "EPSG:2154"),
+        MAP_SRS: getCustomParameter("MAP_SRS", "EPSG:3857"),
 
         /**
          * Constant: MAP_XMIN aka "left"
          * {Float} The max extent xmin in MAP_SRS coordinates.
-         * Defaults to -357823.2365 (EPSG:2154 left)
+         * Defaults to -20037508.34 (EPSG:3857 left)
          */
-        MAP_XMIN: getCustomParameter("MAP_XMIN", -357823.2365),
+        MAP_XMIN: getCustomParameter("MAP_XMIN", -20037508.34),
 
         /**
          * Constant: MAP_YMIN aka "bottom"
          * {Float} The max extent ymin in MAP_SRS coordinates.
-         * Defaults to 6037008.6939 (EPSG:2154 bottom)
+         * Defaults to -20037508.34 (EPSG:3857 bottom)
          */
-        MAP_YMIN: getCustomParameter("MAP_YMIN", 6037008.6939),
+        MAP_YMIN: getCustomParameter("MAP_YMIN", -20037508.34),
 
         /**
          * Constant: MAP_XMAX aka "right"
          * {Float} The max extent xmax in MAP_SRS coordinates.
-         * Defaults to 1313632.3628 (EPSG:2154 right)
+         * Defaults to 20037508.34 (EPSG:3857 right)
          */
-        MAP_XMAX: getCustomParameter("MAP_XMAX", 1313632.3628),
+        MAP_XMAX: getCustomParameter("MAP_XMAX", 20037508.34),
 
         /**
          * Constant: MAP_YSMAX aka "top"
          * {Float} The max extent ymax in MAP_SRS coordinates
-         * Defaults to 7230727.3772 (EPSG:2154 top)
+         * Defaults to 20037508.34 (EPSG:3857 top)
          */
-        MAP_YMAX: getCustomParameter("MAP_YMAX", 7230727.3772),
+        MAP_YMAX: getCustomParameter("MAP_YMAX", 20037508.34),
 
         /**
          * Constant: POINTER_POSITION_SRS_LIST
@@ -533,6 +539,7 @@ GEOR.config = (function() {
         PROJ4JS_STRINGS: getCustomParameter("PROJ4JS_STRINGS", {
             "EPSG:4326": "+title=WGS 84, +proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs",
             "EPSG:2154": "+title=RGF-93/Lambert 93, +proj=lcc +lat_1=49 +lat_2=44 +lat_0=46.5 +lon_0=3 +x_0=700000 +y_0=6600000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs",
+            "EPSG:3857": "+title=Web Spherical Mercator, +proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs",
             "EPSG:900913": "+title=Web Spherical Mercator, +proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs"
         }),
 
@@ -654,10 +661,10 @@ GEOR.config = (function() {
         /**
          * Constant: DEFAULT_PRINT_RESOLUTION
          * {String} The default (ie selected) print resolution.
-         * Defaults to "127"
+         * Defaults to "91"
          */
         DEFAULT_PRINT_RESOLUTION: getCustomParameter("DEFAULT_PRINT_RESOLUTION",
-            "127"),
+            "91"),
 
         /**
          * Constant: PDF_FILENAME
