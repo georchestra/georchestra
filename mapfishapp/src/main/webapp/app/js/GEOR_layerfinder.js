@@ -17,9 +17,9 @@
  * @include GEOR_util.js
  * @include GEOR_cswquerier.js
  * @include GEOR_cswbrowser.js
- * @include GEOR_wmsbrowser.js
- * @include GEOR_wmtsbrowser.js
- * @include GEOR_wfsbrowser.js
+ * @include GEOR_LayerBrowser.js
+ * @include GEOR_ows.js
+ * @include OpenLayers/Strategy/BBOX.js
  */
 
 Ext.namespace("GEOR");
@@ -29,7 +29,6 @@ GEOR.layerfinder = (function() {
     /*
      * Private
      */
-
 
     /**
      * Property: layerStore
@@ -51,7 +50,7 @@ GEOR.layerfinder = (function() {
     var panels = {
         "cswquerier": null,
         "cswbrowser": null,
-        "wtms": null,
+        "wmts": null,
         "wms": null,
         "wfs": null
     };
@@ -108,15 +107,6 @@ GEOR.layerfinder = (function() {
         GEOR.cswquerier.events.on({
             "selectionchanged": selectionChangedListener.call(this, "cswquerier")
         });
-        GEOR.wmsbrowser.events.on({
-            "selectionchanged": selectionChangedListener.call(this, "wms")
-        });
-        GEOR.wmtsbrowser.events.on({
-            "selectionchanged": selectionChangedListener.call(this, "wmts")
-        });
-        GEOR.wfsbrowser.events.on({
-            "selectionchanged": selectionChangedListener.call(this, "wfs")
-        });
 
         panels["cswquerier"] = GEOR.cswquerier.getPanel({
             tabTip: tr("Find layers searching in metadata")
@@ -124,18 +114,140 @@ GEOR.layerfinder = (function() {
         panels["cswbrowser"] = GEOR.cswbrowser.getPanel({
             tabTip: tr("Find layers from keywords")
         });
-        var mapSRS = layerStore.map.getProjection();
-        panels["wms"] = GEOR.wmsbrowser.getPanel({
-            srs: mapSRS,
-            tabTip: tr("Find layers querying WMS servers")
+        
+        
+        var mapSRS = layerStore.map.getProjection(),
+        commonStoreOptions = {
+            // url should not be empty unless we want the following
+            // exception to occur:
+            // uncaught exception: Ext.data.DataProxy: DataProxy attempted
+            // to execute an API-action but found an undefined url /
+            // function. Please review your Proxy url/api-configuration.
+            url: "/dummy",
+            sortInfo: {
+                field: 'title',
+                direction: 'ASC'
+            }
+        },
+        layerColumn = {
+            header: tr("Layer"), 
+            dataIndex: "title", 
+            sortable: true, 
+            width: 200
+        },
+        descriptionColumn = {
+            id: "description", 
+            header: tr("Description"), 
+            dataIndex: "abstract"
+        };
+        
+        // WMTS
+        panels["wmts"] = new GEOR.LayerBrowser({
+            title: tr("WMTS server"),
+            tabTip: tr("Find layers querying WMTS servers"),
+            fieldLabel: tr("Choose a WMTS server: "),
+            store: new GEOR.ows.WMTSCapabilities({
+                mapSRS: mapSRS,
+                storeOptions: commonStoreOptions
+            }),
+            servers: GEOR.config.WMTS_SERVERS,
+            columns: [
+                layerColumn,
+                descriptionColumn
+            ],
+            listeners: {
+                "selectionchanged": selectionChangedListener.call(this, "wmts")
+            }
         });
-        panels["wmts"] = GEOR.wmtsbrowser.getPanel({
-            srs: mapSRS,
-            tabTip: tr("Find layers querying WMTS servers")
+
+
+        // WMS
+        var r = function(val) {
+            return (val ? '<img src="app/img/famfamfam/tick.gif" alt="' + tr("Yes") + '">' :
+                '<img src="app/img/famfamfam/cross.gif" alt="' + tr("No") + '">');
+        };
+        panels["wms"] = new GEOR.LayerBrowser({
+            title: tr("WMS server"),
+            tabTip: tr("Find layers querying WMS servers"),
+            fieldLabel: tr("Choose a WMS server: "),
+            store: new GEOR.ows.WMSCapabilities({
+                storeOptions: commonStoreOptions
+            }),
+            servers: GEOR.config.WMS_SERVERS,
+            mapSRS: mapSRS,
+            columns: [
+                layerColumn,
+                {id: "queryable", header: tr("Queryable"), dataIndex: "queryable", sortable: true, width: 75, renderer: r},
+                {id: "opaque", header: tr("Opaque"), dataIndex: "opaque", sortable: true, width: 50, renderer: r},
+                descriptionColumn
+            ],
+            listeners: {
+                "selectionchanged": selectionChangedListener.call(this, "wms")
+            }
         });
-        panels["wfs"] = GEOR.wfsbrowser.getPanel({
-            srs: mapSRS,
-            tabTip: tr("Find layers querying WFS servers")
+
+        
+        // WFS
+        panels["wfs"] = new GEOR.LayerBrowser({
+            title: tr("WFS server"),
+            tabTip: tr("Find layers querying WFS servers"),
+            fieldLabel: tr("Choose a WFS server: "),
+            store: new GEOR.ows.WFSCapabilities({
+                storeOptions: Ext.apply({
+                    layerOptions: function() {
+	                    return {
+                            // by default, we want our WFS vector layers
+                            // to be off, so that the browser is not overwhelmed
+                            // with too many features.
+                            // this gives a chance for the user to zoom in
+                            // before switching the layer on.
+	                        visibility: false,
+	                        displayInLayerSwitcher: true,
+                            // we don't want to have too many features
+                            // => we load only what is needed for current
+                            // map extent
+	                        strategies: [
+                                new OpenLayers.Strategy.BBOX({
+                                    ratio: 1.2
+                                })
+                            ]
+	                    };
+	                },
+                    protocolOptions: {
+                        //autoDestroy: false, // TEST (seems not to work as expected)
+
+                        // we need to set the srsName in the WFS query,
+                        // so that features are returned in the correct SRS.
+                        // Please note that, with WFS 1.0.0, the trick should
+                        // only work with GeoServer:
+                        srsNameInQuery: true,
+                        srsName: mapSRS
+                        // Note: the geometry name will be set later on:
+                        // See http://applis-bretagne.fr/redmine/issues/2145
+                        // and describeFeaturetypeSuccess() in GEOR_layerfinder.js
+
+                        // TODO: MapServer >= 5.6 requires that all propertyNames
+                        // are listed here, if we want to get the geometry.
+                        // This requires that we do a WFS DescribeFeatureType
+                        // and amend the protocol once we get the response.
+                        // see http://applis-bretagne.fr/redmine/issues/1996
+
+                        // I think this will be done as a consequence of
+                        // http://applis-bretagne.fr/redmine/issues/1984 :
+                        // geometryName and propertyNames should be cached
+                        // in the layerStore for future use, after GetCap &
+                        // DescribeFeatureType responses are parsed.
+                    }
+                }, commonStoreOptions)
+            }),
+            servers: GEOR.config.WFS_SERVERS,
+            columns: [
+                layerColumn,
+                descriptionColumn
+            ],
+            listeners: {
+                "selectionchanged": selectionChangedListener.call(this, "wfs")
+            }
         });
 
         return new Ext.TabPanel({
@@ -352,13 +464,13 @@ GEOR.layerfinder = (function() {
                         GEOR.cswquerier.clearSelection();
                         break;
                     case "wmts":
-                        GEOR.wmtsbrowser.clearSelection();
+                        panels["wmts"].clearSelection();
                         break;
                     case "wms":
-                        GEOR.wmsbrowser.clearSelection();
+                        panels["wms"].clearSelection();
                         break;
                     case "wfs":
-                        GEOR.wfsbrowser.clearSelection();
+                        panels["wfs"].clearSelection();
                         break;
                     default:
                         break;
@@ -414,6 +526,7 @@ Ext.app.OWSUrlField = Ext.extend(Ext.form.TwinTriggerField, {
     width: 180,
     hasSearch: false,
     paramName: 'query',
+    scope: null,
 
     cancelRequest: function() {
         var proxy = this.store.proxy;
@@ -438,9 +551,11 @@ Ext.app.OWSUrlField = Ext.extend(Ext.form.TwinTriggerField, {
 
     onTrigger2Click: function(url) {
         this.cancelRequest();
-
-        // trim raw value:
         url = url || this.getRawValue();
+        if (typeof(url) != "string") {
+            return;
+        }
+        // trim raw value:
         url = url.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
         if (url.length < 1) {
             this.onTrigger1Click();
@@ -455,8 +570,7 @@ Ext.app.OWSUrlField = Ext.extend(Ext.form.TwinTriggerField, {
         // update url for OWS getCapabilities request
         this.store.proxy.setUrl(url);
         this.store.load({
-            callback: this.callback,
-            scope: this,
+            callback: Ext.createDelegate(this.callback, this.scope),
             add: false
         });
 

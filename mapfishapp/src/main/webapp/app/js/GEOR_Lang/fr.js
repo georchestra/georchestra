@@ -143,6 +143,23 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Add": "Ajouter",
     "Add layers from a ...": "Ajouter des couches depuis un ...",
     "Malformed URL": "URL non conforme.",
+    "Queryable": "Interrogeable",
+    "Opaque": "Opaque",
+    "Choose a WMS server: ": "Choisissez un serveur WMS : ",
+    "The server is publishing one layer with an incompatible projection":
+        "Le serveur publie une couche dont la projection n'est pas compatible",
+    "The server is publishing NB layers with an incompatible projection":
+        "Le serveur publie ${NB} couches dont la projection n'est pas " +
+        "compatible",
+    "WMS server": "Serveur WMS",
+    "Choose a WMTS server: ": "Choisissez un serveur WMTS : ",
+    "WMTS server": "Serveur WMTS",
+    "Choose a WFS server: ": "Choisissez un serveur WFS : ",
+    "... or enter its address: ": "... ou saisissez son adresse : ",
+    "Unreachable server or insufficient rights": "Réponse invalide du " +
+        "serveur. Raisons possibles : droits insuffisants, " +
+        "serveur injoignable, trop de données, etc.",
+    "WFS server": "Serveur WFS",
     /* GEOR_managelayers.js strings */
     "Confirm NAME layer deletion ?":
         "Voulez-vous réellement supprimer la couche ${NAME} ?",
@@ -348,13 +365,6 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Confirmation": "Confirmation",
     "Information": "Information",
     /* GEOR_waiter.js strings */
-    /* GEOR_wfsbrowser.js strings */
-    "Choose a WFS server: ": "Choisissez un serveur WFS : ",
-    "... or enter its address: ": "... ou saisissez son adresse : ",
-    "Unreachable server or insufficient rights": "Réponse invalide du " +
-        "serveur. Raisons possibles : droits insuffisants, " +
-        "serveur injoignable, trop de données, etc.",
-    "WFS server": "Serveur WFS",
     /* GEOR_wmc.js strings */
     "The provided file is not a valid OGC context": "Le fichier fourni n'est pas un contexte OGC valide",
     "wmc.bad.srs": "Le fichier .wmc ne " +
@@ -367,19 +377,6 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "A unique OSM layer": "Une unique couche OpenStreetMap",
     "default viewer context": "contexte par défaut",
     "(default)": "<br/>(contexte par défaut actuel)",
-    /* GEOR_wmsbrowser.js strings */
-    "Queryable": "Interrogeable",
-    "Opaque": "Opaque",
-    "Choose a WMS server: ": "Choisissez un serveur WMS : ",
-    "The server is publishing one layer with an incompatible projection":
-        "Le serveur publie une couche dont la projection n'est pas compatible",
-    "The server is publishing NB layers with an incompatible projection":
-        "Le serveur publie ${NB} couches dont la projection n'est pas " +
-        "compatible",
-    "WMS server": "Serveur WMS",
-    /* GEOR_wmtsbrowser.js strings */
-    "Choose a WMTS server: ": "Choisissez un serveur WMTS : ",
-    "WMTS server": "Serveur WMTS",
     /* GEOR_workspace.js strings */
     "Context saving": "Sauvegarde du contexte",
     "The file is required.": "Un nom de fichier est nécessaire.",

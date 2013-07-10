@@ -230,24 +230,24 @@ Ext.extend(GeoExt.data.WMTSCapabilitiesReader, Ext.data.DataReader, {
                     };
                     if (this.meta.clientZoomEnabled) {
                         // enable client zoom by adding serverResolutions in the layer options:
-                        var serverResolutions = [], tileMatrixSetLink,
+                        var resolutions = [], tileMatrixSetLink,
                             tileMatrixSetLinks = layer.tileMatrixSetLinks;
                         for (var j=0, len=tileMatrixSetLinks.length; j<len; j++) {
                             tileMatrixSetLink = tileMatrixSetLinks[j];
                             if (tileMatrixSetLink.tileMatrixSet === matrixSet) {
                                 if (tileMatrixSetLink.tileMatrixSetLimits) {
                                     Ext.each(tileMatrixSetLink.tileMatrixSetLimits, function(tileMatrixSetLimit) {
-                                        serverResolutions.push(tileMatrixSetsResolutions[matrixSet][tileMatrixSetLimit.tileMatrix]);
+                                        resolutions.push(tileMatrixSetsResolutions[matrixSet][tileMatrixSetLimit.tileMatrix]);
                                     })
                                 }
                                 break;
                             }
                         }
-                        if (serverResolutions.length) {
-                            serverResolutions.sort(function(a,b){
+                        if (resolutions.length) {
+                            resolutions.sort(function(a,b){
                                 return b-a;
                             })
-                            options.serverResolutions = serverResolutions;
+                            options.serverResolutions = resolutions;
                         }
                     }
                     if (this.meta.layerOptions) {

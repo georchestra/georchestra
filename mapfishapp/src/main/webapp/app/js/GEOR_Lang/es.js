@@ -146,6 +146,23 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Add": "Añadir",
     "Add layers from a ...": "Añadir capas desde un ...",
     "Malformed URL": "URL mal formada.",
+    "Queryable": "Interrogable",
+    "Opaque": "Opaco",
+    "Choose a WMS server: ": "Elija un servicio WMS: ",
+    "... or enter its address: ": "... o llene su dirección: ",
+    "The server is publishing one layer with an incompatible projection":
+        "El servicio está publicando una capa cuya proyección no es compatible",
+    "The server is publishing NB layers with an incompatible projection":
+        "El servicio esta publicando ${NB} capas cuya proyección no es " +
+        "compatible",
+    "WMS server": "Servicio WMS",
+    "Choose a WMTS server: ": "Elija un servicio WMTS: ",
+    "WMTS server": "Servicio WMTS",
+    "Choose a WFS server: ": "Elija un servicio WFS: ",
+    "Unreachable server or insufficient rights": "Respuesta del servidor " +
+        "invalida. Razones posibles: datos demasiado pesados, derechos insuficientes, " +
+        "servidor inalcanzable, etc.",
+    "WFS server": "Servicio WFS",
     /* GEOR_managelayers.js strings */
     "Confirm NAME layer deletion ?":
         "¿Confirma que se suprimirá la capa ${NAME}?",
@@ -349,12 +366,6 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Confirmation": "Confirmación",
     "Information": "Información",
     /* GEOR_waiter.js strings */
-    /* GEOR_wfsbrowser.js strings */
-    "Choose a WFS server: ": "Elija un servicio WFS: ",
-    "Unreachable server or insufficient rights": "Respuesta del servidor " +
-        "invalida. Razones posibles: datos demasiado pesados, derechos insuficientes, " +
-        "servidor inalcanzable, etc.",
-    "WFS server": "Servicio WFS",
     /* GEOR_wmc.js strings */
     "The provided file is not a valid OGC context":
 		"El archivo proveido no es un contexto OGC valido",
@@ -369,20 +380,6 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "A unique OSM layer": "Una capa OpenStreetMap única",
     "default viewer context": "contexto por omisión",
     "(default)": "<br/>(contexto por omisión actual)",
-    /* GEOR_wmsbrowser.js strings */
-    "Queryable": "Interrogable",
-    "Opaque": "Opaco",
-    "Choose a WMS server: ": "Elija un servicio WMS: ",
-    "... or enter its address: ": "... o llene su dirección: ",
-    "The server is publishing one layer with an incompatible projection":
-        "El servicio está publicando una capa cuya proyección no es compatible",
-    "The server is publishing NB layers with an incompatible projection":
-        "El servicio esta publicando ${NB} capas cuya proyección no es " +
-        "compatible",
-    "WMS server": "Servicio WMS",
-    /* GEOR_wmtsbrowser.js strings */
-    "Choose a WMTS server: ": "Elija un servicio WMTS: ",
-    "WMTS server": "Servicio WMTS",
     /* GEOR_workspace.js strings */
     "Context saving": "Guardando el contexto",
     "The file is required.": "Se requiere el nombre de archivo.",
