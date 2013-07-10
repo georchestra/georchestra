@@ -27,11 +27,13 @@ angular.module('ldapadmin.controllers', [])
     var user = Restangular.one('users', $routeParams.userId);
     user.get().then(function(remote) {
       $scope.user = Restangular.copy(remote);
-      $scope.user_groups = angular.copy($scope.groups);
 
+      $scope.user_groups = angular.copy($scope.groups);
       $.each($scope.user_groups, function(index, value) {
         $scope.user_groups[index].hasUser = _.contains($scope.user.groups, value.name);
       });
+      var original_groups = angular.copy($scope.user_groups);
+      $scope.groupsChanged = false;
 
       $scope.save = function() {
         $scope.user.put().then(function() {
@@ -64,7 +66,9 @@ angular.module('ldapadmin.controllers', [])
         return angular.equals(remote, $scope.user);
       };
       $scope.selectGroup = function(group) {
-        console.log(group);
+        group.hasUser = !group.hasUser;
+        // check whether the list of groups changed
+        $scope.groupsChanged = !angular.equals(original_groups, $scope.user_groups);
       };
     });
   })

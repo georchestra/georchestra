@@ -15,7 +15,7 @@
       </a>
     </li>
     <li class="divider"></li>
-    <li class="disabled"><a ng-click="apply()">Apply</a></li>
+    <li ng-class="{disabled: !groupsChanged}"><a ng-click="apply()">Apply</a></li>
   </ul>
 </div>
 <div class="btn-group">
