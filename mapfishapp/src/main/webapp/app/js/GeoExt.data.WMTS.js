@@ -57,6 +57,30 @@ OpenLayers.Format.WMTSCapabilities.v1_0_0.prototype.readers.wmts = OpenLayers.Ut
             } else {
                 obj.tileMatrix = this.getChildValue(node);
             }
+        },
+        "LegendURL": function(node, obj) {
+            obj.legends = obj.legends || [];
+            var legend = {
+                format: node.getAttribute("format"),
+                href: node.getAttribute("xlink:href")
+            };
+            var width = node.getAttribute("width"),
+                height = node.getAttribute("height"),
+                minScaleDenominator = node.getAttribute("minScaleDenominator"),
+                maxScaleDenominator = node.getAttribute("maxScaleDenominator");
+            if (width) {
+                legend.width = width;
+            }
+            if (height) {
+                legend.height = height;
+            }
+            if (minScaleDenominator) {
+                legend.minScaleDenominator = minScaleDenominator;
+            }
+            if (maxScaleDenominator) {
+                legend.maxScaleDenominator = maxScaleDenominator;
+            }
+            obj.legends.push(legend);
         }
     }
 );
