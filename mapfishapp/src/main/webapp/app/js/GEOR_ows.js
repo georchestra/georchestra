@@ -49,13 +49,8 @@ GEOR.ows = (function() {
      * {Array} The fields shared by each layer record in this app.
      */
     var defaultRecordFields = [ 
-        /* TODO: 
-            either augment with WMTS layer record fields 
-            or better: use another record model dedicated to WMS, 
-            or share a common record model between wms, wfs, wmts
-        */
         // for the use of geOrchestra only:
-        {name: "type", type: "string", defaultValue: "WMS"}, // TODO: have a specific one for WFS
+        {name: "type", type: "string", defaultValue: "WMS"},
         {name: "name", type: "string"},
         {name: "title", type: "string"},
         {name: "abstract", type: "string"},

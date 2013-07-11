@@ -216,7 +216,6 @@ GEOR.managelayers = (function() {
      *          for inclusion in layer manager item
      */
     var formatVisibility = function(layerRecord) {
-        // TODO: get min/maxScale from current SLD is not set in layer
         var layer = layerRecord.get('layer');
         var visibilityText = tr("1:MAXSCALE to 1:MINSCALE", {
             'MAXSCALE': OpenLayers.Number.format(layer.maxScale, 0),
@@ -256,7 +255,6 @@ GEOR.managelayers = (function() {
             tooltip: tr("Information on objects of this layer"),
             listeners: {
                 "toggle": function(btn, pressed) {
-                    // TODO: handle WMTS getFeatureInfo
                     GEOR.getfeatureinfo.toggle(layerRecord, pressed);
                 }
             }
@@ -449,7 +447,6 @@ GEOR.managelayers = (function() {
     var createMenu = function(layerRecord) {
         var queryable = !!(layerRecord.get("queryable")),
             layer = layerRecord.get('layer'),
-        // TODO: change this (use layerRecord field type)
             type = layerRecord.get("type"),
             isWMS = type === "WMS",
             isWMTS = type === "WMTS",
