@@ -488,6 +488,8 @@ GEOR.ows = (function() {
                             return tileMatrixSetLinks[i].tileMatrixSet;
                         }
                     }
+                    // TODO: handle the case when there is no suitable TileMatrixSet for the current map projection !!!
+                    // TODO: handle the case when the server resolutions do not match those from the current config !!!
                     return null;
                 }
             }, options.storeOptions);
