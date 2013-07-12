@@ -96,3 +96,7 @@ Install the [Modify Headers](https://addons.mozilla.org/en-US/firefox/addon/modi
  * sec-roles = ROLE_SV_USER or ROLE_SV_EDITOR or ROLE_SV_ADMIN
  
 Note: this works only because the security proxy is not runnning.
+
+How to use GDAL native libraries for file upload functionality ?
+================================================================
+
