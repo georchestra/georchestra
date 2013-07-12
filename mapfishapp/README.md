@@ -100,15 +100,27 @@ Note: this works only because the security proxy is not runnning.
 How to use GDAL native libraries for file upload functionality ?
 ================================================================
 
-The file upload functionality, that allows to upload a vectorial data file to mapfishapp in order to display it as a layer, relies normally on GeoTools. However, the supported file formats are limited (at 07/12/2013: shp, mif, gml and kml). In order to increase the number of supported file formats, you can install GDAL and GDAL java bindings libraries on the server. This would give access, for example, to extra formats such as gpx or tab.
+The file upload functionality, that allows to upload a vectorial data file to mapfishapp in order to display it as a layer, relies normally on GeoTools. However, the supported file formats are limited (at 07/12/2013: shp, mif, gml and kml). In order to increase the number of supported file formats, you can install GDAL and GDAL Java bindings libraries on the server. This would give access, for example, to extra formats such as gpx or tab.
 
-The key element for calling the GDAL/OGR native library from mapfishapp is the **imageio-ext library** (see https://github.com/geosolutions-it/imageio-ext/wiki). It relies on:
+The key element for calling the GDAL native library from mapfishapp is the **imageio-ext library** (see https://github.com/geosolutions-it/imageio-ext/wiki). It relies on:
  * jar files, that are included at build by maven,
- * a java binding library for GDAL, based on the JNI framework,
+ * a GDAL Java binding library, based on the JNI framework,
  * and obviously the GDAL library.
 
 The latter can be installed, on Debian-based distributions, with the libgdal1 package:
 
     sudo apt-get install libgdal1
 
-Some more work is needed for installing the java binding library for GDAL, as there is still no deb package for it (for more information, see https://bugs.launchpad.net/ubuntu/+source/gdal/+bug/786790 - note that packages exist for ruby and perl bindings, hopefully the java's one will be released soon).
+Some more work is needed for installing the GDAL Java binding library, as there is still no deb package for it (for more information, see https://bugs.launchpad.net/ubuntu/+source/gdal/+bug/786790 - note that packages exist for ruby and perl bindings, hopefully the Java's one will be released soon).
+
+To install quickly the GDAL Java binding library on the server:
+ * download and extract the library (see http://demo.geo-solutions.it/share/github/imageio-ext/releases/1.1.X/1.1.7/native/gdal/ for the adequate distribution). For Ubuntu 12:
+    cd /tmp/
+    mkdir gdal
+    cd gdal
+    wget http://demo.geo-solutions.it/share/github/imageio-ext/releases/1.1.X/1.1.7/native/gdal/linux/gdal192-Ubuntu12-gcc4.6.3-x86_64.tar.gz
+    tar xzf gdal192-Ubuntu12-gcc4.6.3-x86_64.tar.gz
+* copy only the necessary files
+    sudo cp libgdaljni.so libgdalconstjni.so libogrjni.so libosrjni.so /usr/lib/
+
+Another way to install the GDAL Java bindings is building it from sources. See http://trac.osgeo.org/gdal/wiki/GdalOgrInJavaBuildInstructionsUnix.
