@@ -57,6 +57,13 @@ GEOR.getfeatureinfo = (function() {
      * {OpenLayers.Control.WMSGetFeatureInfo} The control.
      */
     var ctrl = null;
+    
+    /**
+     * Equal to true if a research is launched on multiple layers
+     * and false if it is on a single layer.
+     * If true, it will force the model to be recreated from the features (see onGetfeatureinfo).
+     */
+    var Xsearch = null;
 
     /**
      * Property: map
@@ -88,8 +95,8 @@ GEOR.getfeatureinfo = (function() {
         OpenLayers.Element.addClass(map.viewPortDiv, "olDrawBox");
 
         var features = info.features;
-
-        if (!model || model.isEmpty()) {
+		  
+        if (!model || model.isEmpty() || Xsearch) {
             model = new GEOR.FeatureDataModel({
                 features: features
             });
@@ -98,6 +105,27 @@ GEOR.getfeatureinfo = (function() {
         observable.fireEvent("searchresults", {
             features: features,
             model: model
+            // we do not know the model with GFI at first time.
+            // but at second time, we can use cached model
+        });
+    };
+    
+    var onGetXfeatureinfo = function(info) {
+        OpenLayers.Element.addClass(map.viewPortDiv, "olDrawBox");
+
+        var features = info.features;
+        
+        var Xmodel = [];
+		  
+		  for(var i = 0; i < features.length; i++){
+        		Xmodel.push(new GEOR.FeatureDataModel({
+        			features: features[i]
+        		}));
+     	  }
+
+        observable.fireEvent("searchXresults", {
+            features: features,
+            model: Xmodel
             // we do not know the model with GFI at first time.
             // but at second time, we can use cached model
         });
@@ -185,6 +213,7 @@ GEOR.getfeatureinfo = (function() {
          */
         toggle: function(record, state) {
             var layer, title;
+            Xsearch = false;
             if (record instanceof OpenLayers.Layer.WMS) {
                 layer = record;
                 title = layer.name;
@@ -261,8 +290,97 @@ GEOR.getfeatureinfo = (function() {
                     scope: this
                 });
             }
-        }
-    };
+        },
+        
+        //copy of the function toggle in order to query several layers at once
+        toggleX: function(record, state) {
+            var layer = [], title = "";
+            Xsearch = true;
+            for(var i = 0; i < record.length; i++){
+                    layer.push(record[i].layer);
+                    title += record[i].layer.name;
+                    if(i < record.length -1){
+                        title+= "/";					
+                    }         
+            }
+
+            if (record instanceof OpenLayers.Layer.WMS) {
+                layer = record;
+            } else if (record instanceof GeoExt.data.LayerRecord) {
+                layer = record.get("layer");
+            }
+            if (state) {
+                observable.fireEvent("search", {
+                    html: tr("<div>Search on objects active for NAME layer. " +
+                             "Clic on the map.</div>",
+                             {'name': title})
+                });
+
+                var ctrlEventsConfig = {
+                    "beforegetfeatureinfo": onBeforegetfeatureinfo,
+                    "getfeatureinfo": onGetXfeatureinfo,
+                    "activate": onCtrlactivate,
+                    "deactivate": onCtrldeactivate,
+                    scope: this
+                };
+
+                // we'd like to activate gfi request on layer
+                if (ctrl) {
+                    ctrl.events.un(ctrlEventsConfig);
+                    ctrl.destroy();
+                }
+                ctrl = new OpenLayers.Control.WMSGetFeatureInfo({
+                    layers: layer,
+                    maxFeatures: GEOR.config.MAX_FEATURES,
+                    infoFormat: 'application/vnd.ogc.gml'
+                });
+                ctrl.events.on(ctrlEventsConfig);
+                map.addControl(ctrl);
+                ctrl.activate();
+					 for(var i = 0; i < layer.length; i++){
+                	record[i].layer.events.on({
+                  	"visibilitychanged": onLayerVisibilitychanged,
+                    	scope: this
+                	});
+             	 }
+                map.events.on({
+                    "removelayer": onLayerRemoved,
+                    scope: this
+                });
+
+            } else {
+                // clear model cache:
+                model = null;
+                if (ctrl.layers[0] === layer[0]) {
+                    // we clicked on a toolbar button, which means we have
+                    // to stop gfi requests.
+                    //
+                    // note: IE produces a js error when reloading the page
+                    // with the gfi control activated, this is because
+                    // ctrl.deactivate() is called here while the control
+                    // has been destroyed and its events property set to
+                    // null, let's guard against that by not attempting
+                    // to deactivate the control if ctrl.events is null.
+                    if (ctrl.events !== null) {
+                        ctrl.deactivate();
+                    }
+                    // we need to collapse the south panel.
+                    observable.fireEvent("shutdown");
+                } else {
+                    // we asked for gfi on another layer
+                }
+                // in either case, we clean events on ctrl's layer
+                ctrl.layers[0].events.un({
+                    "visibilitychanged": onLayerVisibilitychanged,
+                    scope: this
+                });
+                map.events.un({
+                    "removelayer": onLayerRemoved,
+                    scope: this
+                });
+            }
+        },
+	};     		
 })();
 
 

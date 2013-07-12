@@ -126,9 +126,6 @@ Ext.namespace("GEOR");
         if (GEOR.querier) {
             GEOR.querier.init(map);
         }
-        if (GEOR.resultspanel) {
-            GEOR.resultspanel.init(map);
-        }
         GEOR.waiter.init();
 
         var recenteringItems = [
@@ -175,6 +172,29 @@ Ext.namespace("GEOR");
                 defaults: {
                     border:false
                 },
+                tbar:[
+                {
+                    xtype: 'button',
+                    //disabled: !(layerRecord.get("queryable")),
+                    iconCls: 'geor-btn-info',
+                    allowDepress: true,
+                    enableToggle: true,
+                    toggleGroup: 'map',
+                    tooltip: tr("Information on objects of all superposed layers pointed"),
+                    listeners: {
+                        "toggle": function(btn, pressed) {
+                            layerRecord = eastItems[0].getComponent(0).getChecked();
+                            for(var i = 0; i < layerRecord.length; i++){
+                                if(!(layerRecord[i].layer.queryable)){
+                                    delete layerRecord[i];
+                                    layerRecord.splice(i,1);								
+                                }               			
+                            }
+                            GEOR.getfeatureinfo.toggleX(layerRecord, pressed);
+                        }
+            	    }
+                }
+                ],
                 items: [
                     Ext.apply({
                         // nothing
@@ -212,44 +232,46 @@ Ext.namespace("GEOR");
         }
 
         // this panel serves as the container for
-        // the "search results" panel
-        var southPanel = new Ext.Panel({
+        // the "search results" tabs 
+        var tab = new GEOR.resultspanel({html: tr("resultspanel.emptytext")});  
+        var southPanel = new Ext.TabPanel({
             region: "south",
-            hidden: !GEOR.resultspanel, // hide this panel if
-                                        // the resultspanel
-                                        // module is undefined
+            //hidden: !resultspanel, // hide this panel if
+                                     // the resultspanel
+                                     // module is undefined
             split: true,
-            layout: "fit",
             collapsible: true,
             collapsed: true,
             collapseMode: "mini",
+            hideCollapseTool: true,
             header: false,
-            height: 150,
+            height: 200,
+            enableTabScroll: true,
+            activeTab: 0,
             defaults: {
+                layout: 'fit',
                 border: false,
                 frame: false
             },
-            items: [{
-                bodyStyle: 'padding: 5px',
-                html: tr("resultspanel.emptytext")
+            tbar:[{
+                text: 'Nouvelle recherche',
+                handler: function(){
+                    var tab =southPanel.add(new GEOR.resultspanel({html: tr("resultspanel.emptytext")}));						
+                    southPanel.setActiveTab(tab);
+                    southPanel.doLayout();
+                }
             }],
+            items: tab,
             listeners: {
-                "collapse": function() {
-                    // when the user collapses the panel
-                    // hide the features in the layer
-                    if (GEOR.resultspanel) {
-                        GEOR.resultspanel.hide();
-                    }
-                },
-                "expand": function() {
-                    // when the user expands the panel
-                    // show the features in the layer
-                    if (GEOR.resultspanel) {
-                        GEOR.resultspanel.show();
+                'tabchange': function(){
+                    if(southPanel.getActiveTab()){
+                        southPanel.getActiveTab().doLayout();
                     }
                 }
             }
         });
+        
+        southPanel.doLayout();
 
         // the header
         var vpItems = GEOR.header ?
@@ -340,20 +362,22 @@ Ext.namespace("GEOR");
                     eastItems[0].doLayout(); // required
                 },
                 "search": function(panelCfg) {
-                    if (GEOR.resultspanel) {
-                        GEOR.resultspanel.clean();
+                    if (southPanel.getActiveTab()) {
+                        southPanel.getActiveTab().init(map);
+                        southPanel.getActiveTab().clean();
                     }
-                    southPanel.removeAll();
+                    //southPanel.removeAll();
                     var panel = Ext.apply({
                         bodyStyle: 'padding:5px'
                     }, panelCfg);
-                    southPanel.add(panel);
+                    southPanel.getActiveTab().removeAll();
+                    southPanel.getActiveTab().add(panel);
                     southPanel.doLayout();
                     southPanel.expand();
                 },
                 "searchresults": function(options) {
-                    if (GEOR.resultspanel) {
-                        GEOR.resultspanel.populate(options);
+                    if (southPanel.getActiveTab()) {
+                        southPanel.getActiveTab().populate(options);
                     }
                 }
             });
@@ -362,21 +386,36 @@ Ext.namespace("GEOR");
         if (GEOR.getfeatureinfo) {
             GEOR.getfeatureinfo.events.on({
                 "search": function(panelCfg) {
-                    if (GEOR.resultspanel) {
-                        GEOR.resultspanel.clean();
+                    if(!southPanel.getActiveTab()){
+                        southPanel.add(new GEOR.resultspanel({html:tr("resultspanel.emptytext")}));
+                        southPanel.setActiveTab(0);
                     }
-                    southPanel.removeAll();
+                    if(southPanel.getActiveTab()){
+                        southPanel.getActiveTab().init(map);	
+                        southPanel.getActiveTab().clean();
+                    }
                     var panel = Ext.apply({
                         bodyStyle: 'padding:5px'
                     }, panelCfg);
-                    southPanel.add(panel);
+                    southPanel.getActiveTab().removeAll();
+                    southPanel.getActiveTab().add(panel);
                     southPanel.doLayout();
                     southPanel.expand();
                 },
                 "searchresults": function(options) {
-                    if (GEOR.resultspanel) {
-                        GEOR.resultspanel.populate(options);
+                    if (southPanel.getActiveTab()) {
+                        southPanel.getActiveTab().populate(options);
+                        //southPanel.getActiveTab().setTabTitle(options.title);
                     }
+                },
+                "searchXresults": function(options) {
+                    southPanel.getActiveTab().populate({features: [options.features[0]], model: options.model[0]});					 	  
+                        for(var i = 1; i < options.features.length; i++){
+                            var tab =southPanel.add(new GEOR.resultspanel({html: tr("resultspanel.emptytext")}));						
+                            southPanel.setActiveTab(tab);
+                            southPanel.getActiveTab().init(map);
+                            southPanel.getActiveTab().populate({features: [options.features[i]], model: options.model[i]});					 	  
+                        }                
                 },
                 "shutdown": function() {
                     southPanel.collapse();
@@ -409,12 +448,12 @@ Ext.namespace("GEOR");
             });
         }
 
-        if (GEOR.resultspanel) {
-            GEOR.resultspanel.events.on({
+        if (southPanel.getActiveTab()) {
+            southPanel.getActiveTab().events.on({
                 "panel": function(panelCfg) {
-                    southPanel.removeAll();
-                    southPanel.add(panelCfg);
-                    southPanel.doLayout();
+                    southPanel.getActiveTab().removeAll();
+                    southPanel.getActiveTab().add(panelCfg);
+                    southPanel.getActiveTab().doLayout();
                 }
             });
         }
