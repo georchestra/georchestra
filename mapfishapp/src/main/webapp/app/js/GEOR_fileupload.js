@@ -185,8 +185,17 @@ GEOR.fileupload = (function() {
          */
         getPanel: function(options) {
             tr = OpenLayers.i18n;
-            var srs = options.srs;
+            var fileFormatList, srs = options.srs;
             delete options.srs;
+            try {
+                fileFormatList = JSON.parse(GEOR.config.FILE_FORMAT_LIST);
+                fileFormatString = fileFormatList[0].toUpperCase();
+                for (var i = 1; i < fileFormatList.length; i++) {
+                    fileFormatString += ", " + fileFormatList[i].toUpperCase();
+                }
+            } catch (e) {
+                fileFormatString = "";
+            }
             
             if (!centerPanel) {
                 centerPanel = new Ext.Panel({
@@ -199,6 +208,26 @@ GEOR.fileupload = (function() {
                 });
             }
 
+            if (fileFormatString.length == 0) {
+                return new Ext.Panel(Ext.apply({
+                    title: tr("Local file"),
+                    layout: 'vbox',
+                    layoutConfig: {
+                        align: 'stretch'
+                    },
+                    defaults: {border: false},
+                    items: [{
+                        xtype: 'box',
+                        height: 55,
+                        autoEl: {
+                            tag: 'div',
+                            cls: 'box-as-panel',
+                            html: tr("The service is unavailable.")
+                        }
+                    }, centerPanel]
+                }, options));
+            }
+
             return new Ext.Panel(Ext.apply({
                 title: tr("Local file"),
                 layout: 'vbox',
@@ -208,11 +237,13 @@ GEOR.fileupload = (function() {
                 defaults: {border: false},
                 items: [{
                     xtype: 'box',
-                    height: 35,
+                    height: 55,
                     autoEl: {
                         tag: 'div',
                         cls: 'box-as-panel',
-                        html: tr("Upload a KML, GPX or GML file. Zipped SHP and MIF/MID are also accepted.")
+                        html: tr("Upload a vectorial data file. The allowed formats are the following: ")
+                            + fileFormatString + '. '
+                            + tr("<br/>Use ZIP compression for multifiles formats, such as SHP or MIF/MID.")
                     }
                 }, {
                     xtype: 'form',

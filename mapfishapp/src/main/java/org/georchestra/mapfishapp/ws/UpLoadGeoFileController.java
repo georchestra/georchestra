@@ -184,6 +184,16 @@ public final class UpLoadGeoFileController {
 		}
 	}
 
+	public String fileFormatListToJSON() {
+		try {
+			FileFormat[] formatList = this.fileManagement.getFormatList();
+			return fileFormatListToJSON(formatList);
+		} catch (IOException e) {
+			LOG.error(e.getMessage());
+			return "";
+		}
+	}
+
 	private String fileFormatListToJSON(FileFormat[] formatList) throws IOException {
 
 		try {

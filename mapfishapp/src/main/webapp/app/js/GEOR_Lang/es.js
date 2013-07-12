@@ -123,8 +123,12 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
         "Ningún metadato corresponde a los términos ingresados",
     /* GEOR_editing.js strings */
     /* GEOR_fileupload.js strings */
-    //"Local file": "", // TODO
-    //"Upload a KML, GPX or GML file. Zipped SHP and MIF/MID are also accepted.": "",
+    "Local file": "Archivo local",
+    "The service is inactive": "El servicio esta deshabilitado",
+    "Upload a vectorial data file. The allowed formats are the following: ":
+        "Subir un archivo de datos vectoriales. Los formatos aceptados son los siguientes: ",
+    "<br/>Use ZIP compression for multifiles formats, such as SHP or MIF/MID.":
+        "<br/>Usar compresión ZIP para los formatos multiarchivos, como SHP or MIF/MID.",
     /* GEOR_geonames.js strings */
     /* GEOR_getfeatureinfo.js strings */
     "<div>Searching...</div>": "<div>Buscando...</div>",
