@@ -253,19 +253,20 @@ Ext.namespace("GEOR");
                 border: false,
                 frame: false
             },
-            tbar:[{
-                text: 'Nouvelle recherche',
-                handler: function(){
-                    var tab =southPanel.add(new GEOR.resultspanel({html: tr("resultspanel.emptytext")}));						
-                    southPanel.setActiveTab(tab);
-                    southPanel.doLayout();
-                }
-            }],
-            items: tab,
+            items: [tab, {id: 'addPanel', title: '+', style: 'float: right;'}],
             listeners: {
                 'tabchange': function(){
                     if(southPanel.getActiveTab()){
                         southPanel.getActiveTab().doLayout();
+                        if(southPanel.getActiveTab().id == 'addPanel'){
+                            if(southPanel.items.length > 0){
+                                southPanel.remove(Ext.getCmp('addPanel'));
+                            }                        
+                            var tab = southPanel.add(new GEOR.resultspanel({html: tr("resultspanel.emptytext")}));						
+                            southPanel.setActiveTab(tab);
+                            southPanel.insert(southPanel.items.length,{id: 'addPanel', title: '+', style: 'float: right;'});
+                            southPanel.doLayout();
+                        }
                     }
                 }
             }
@@ -386,10 +387,6 @@ Ext.namespace("GEOR");
         if (GEOR.getfeatureinfo) {
             GEOR.getfeatureinfo.events.on({
                 "search": function(panelCfg) {
-                    if(!southPanel.getActiveTab()){
-                        southPanel.add(new GEOR.resultspanel({html:tr("resultspanel.emptytext")}));
-                        southPanel.setActiveTab(0);
-                    }
                     if(southPanel.getActiveTab()){
                         southPanel.getActiveTab().init(map);	
                         southPanel.getActiveTab().clean();

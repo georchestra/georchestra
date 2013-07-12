@@ -170,15 +170,14 @@ GEOR.resultspanel = Ext.extend(Ext.Panel, (function() {
                  * Property: tr
                  * {Function} an alias to OpenLayers.i18n
                  */
-                tr: null
+                tr: null,
+                /*
+                 * Observable object
+                 */
+                events: observable
             }, config);
             GEOR.resultspanel.superclass.constructor.call(this, config);		  
-        },
-
-        /*
-         * Observable object
-         */
-        events: observable,					
+        },				
 
         /**
          * APIMethod: init
