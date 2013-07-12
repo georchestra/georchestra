@@ -146,6 +146,11 @@
 	      <version>${gt.version}</version>
 	    </dependency>
 		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-imageio-ext-gdal</artifactId>
+			<version>${gt.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.16</version>
