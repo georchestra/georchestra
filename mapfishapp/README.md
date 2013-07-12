@@ -97,8 +97,8 @@ Install the [Modify Headers](https://addons.mozilla.org/en-US/firefox/addon/modi
  
 Note: this works only because the security proxy is not runnning.
 
-How to add file formats with GDAL native libraries ?
-====================================================
+Optional: install GDAL native library
+=====================================
 
 The file upload functionality, that allows to upload a vectorial data file to mapfishapp in order to display it as a layer, relies normally on GeoTools. However, the supported file formats are limited (at 07/12/2013: shp, mif, gml and kml). In order to increase the number of supported file formats, you can install GDAL and GDAL Java bindings libraries on the server. This would give access, for example, to extra formats such as gpx or tab.
 
@@ -125,4 +125,4 @@ then copy only the necessary files:
 
     sudo cp libgdaljni.so libgdalconstjni.so libogrjni.so libosrjni.so /usr/lib/
 
-Another way to install the GDAL Java bindings is building it from sources. See http://trac.osgeo.org/gdal/wiki/GdalOgrInJavaBuildInstructionsUnix.
+Another way to install the GDAL Java binding is building it from sources. See http://trac.osgeo.org/gdal/wiki/GdalOgrInJavaBuildInstructionsUnix.
