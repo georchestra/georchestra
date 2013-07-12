@@ -100,4 +100,15 @@ Note: this works only because the security proxy is not runnning.
 How to use GDAL native libraries for file upload functionality ?
 ================================================================
 
-The file upload functionality, that allows to upload a vectorial data file to mapfishapp in order to display it as a layer, relies normally on GeoTools. However, the supported file formats are limited (at 07/12/2013: shp, mif, gml and kml). In order to increase the number of supported file formats, you can install on the server GDAL and GDAL java bindings libraries. This would give access, for example, to extra formats as gpx or tab.
+The file upload functionality, that allows to upload a vectorial data file to mapfishapp in order to display it as a layer, relies normally on GeoTools. However, the supported file formats are limited (at 07/12/2013: shp, mif, gml and kml). In order to increase the number of supported file formats, you can install on the server GDAL and GDAL java bindings libraries. This would give access, for example, to extra formats such as gpx or tab.
+
+The key element for calling the GDAL/OGR native library from mapfishapp is the imageio-ext library (see https://github.com/geosolutions-it/imageio-ext/wiki). It relies:
+ * on jar files, that are directly included in mapfishapp at build by maven through dependencies,
+ * on a java binding library using the JNI framework,
+ * and obviously on the GDAL library.
+
+The latter can be installed, on Debian-based distributions, using the libgdal1 package:
+
+    sudo apt-get install libgdal1
+
+Some more work is needed for installing the java binding library, as there is still no deb package for it (for more information, see https://bugs.launchpad.net/ubuntu/+source/gdal/+bug/786790 - note that packages exist for ruby and perl binding, hopefully the java's one will be released).
