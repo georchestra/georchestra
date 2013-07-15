@@ -20,25 +20,25 @@ describe('my app', function() {
       browser().navigateTo('#/users');
     });
 
-    it('should render a list of 100 users', function() {
-      expect(repeater('.users tr').count()).toEqual(100);
+    it('should render a list of 1000 users', function() {
+      expect(repeater('.users tr').count()).toEqual(1000);
     });
     it('should sort the list of users', function() {
-      expect(repeater('.users tr').row(0)).toEqual(["Alberta Bennett","Jetsilk"]);
+      expect(repeater('.users tr').row(0)).toEqual(["Abby Watkins","Rodeocean"]);
     });
   });
 
   describe('group', function() {
 
-    it('should render a list of 5 users', function() {
+    it('should render a list of 89 users', function() {
       browser().navigateTo('#/groups/Administrator');
-      expect(repeater('.users tr').count()).toEqual(5);
+      expect(repeater('.users tr').count()).toEqual(89);
     });
 
     it('should select a group', function() {
       element('.groups div:nth-child(2) a').click();
       expect(browser().location().url()).toBe('/groups/SV_XXX');
-      expect(repeater('.users tr').count()).toEqual(19);
+      expect(repeater('.users tr').count()).toEqual(166);
     });
   });
 
@@ -51,7 +51,7 @@ describe('my app', function() {
       input('user.name').enter('toto');
       input('user.email').enter('toto@mail.zzz');
       element('.save').click();
-      expect(repeater('.users tr').count()).toEqual(101);
+      expect(repeater('.users tr').count()).toEqual(1001);
     });
   });
 
@@ -59,7 +59,7 @@ describe('my app', function() {
     it('should show the show the edit view', function() {
       element('.users tr:nth-child(1) td a').click();
       element('.delete').click();
-      expect(repeater('.users tr').count()).toEqual(100);
+      expect(repeater('.users tr').count()).toEqual(1000);
     });
   });
 });
