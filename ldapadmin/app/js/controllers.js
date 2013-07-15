@@ -116,6 +116,7 @@ angular.module('ldapadmin.controllers', [])
               // Let's modified the initial values as well. Helps to know if
               // values changed.
               original_groups = angular.copy($scope.user_groups);
+              $scope.groupsChanged = false;
             }
             flash.success = 'Modified successfully';
           },
