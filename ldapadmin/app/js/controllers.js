@@ -41,7 +41,6 @@ angular.module('ldapadmin.controllers', [])
 
       $scope.save = function() {
         $scope.user.put().then(function() {
-          remote = Restangular.copy($scope.user);
           flash.success = 'User correctly updated';
           var index = findByAttr($scope.users, 'id', $routeParams.userId);
 
