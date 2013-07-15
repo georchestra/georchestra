@@ -106,14 +106,6 @@ GEOR.ows = (function() {
     };
 
     /**
-     * Constant: WFS_FEATURE_NAMESPACES
-     * {Array} Array of supported feature namespaces.
-     */
-    var WFS_FEATURE_NAMESPACES = [
-        "http://mapserver.gis.umn.edu/mapserver"
-    ];
-
-    /**
      * Method: buildUrlFromParams
      * Generate the url given a baseUrl and params object.
      *

@@ -661,10 +661,10 @@ GEOR.config = (function() {
         /**
          * Constant: DEFAULT_PRINT_RESOLUTION
          * {String} The default (ie selected) print resolution.
-         * Defaults to "127"
+         * Defaults to "91"
          */
         DEFAULT_PRINT_RESOLUTION: getCustomParameter("DEFAULT_PRINT_RESOLUTION",
-            "127"),
+            "91"),
 
         /**
          * Constant: PDF_FILENAME

@@ -173,6 +173,8 @@ GEOR.print = (function() {
                 },
                 "beforeprint": function(pp) {
                     mask.show();
+                    // closest matching print extent will be chosen:
+                    printPage.fit(layerStore.map, {mode: "closest"});
                     // set a custom PDF file name:
                     pp.customParams.outputFilename = GEOR.config.PDF_FILENAME;
                 },
