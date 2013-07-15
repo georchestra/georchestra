@@ -81,12 +81,6 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
         this.urlField = new Ext.app.OWSUrlField({
             fieldLabel: tr("... or enter its address: "),
             callback: function(r, options, success) {
-                if (!success) {
-                    GEOR.util.errorDialog({
-                        msg: tr("Unreachable server or insufficient rights")
-                    });
-                    return;
-                }
                 // We don't want to display layers
                 // which cannot be served in map's native SRS
                 if (this.mapSRS) {
