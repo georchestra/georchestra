@@ -17,12 +17,45 @@ angular.module('ldapadmin.controllers', [])
       flash.error = 'Oops error from server :(';
     });
   })
-  .controller('UsersListCtrl', function($scope, $rootScope, $routeParams) {
+
+  /**
+   * Users List
+   */
+  .controller('UsersListCtrl', function($scope, $rootScope, $routeParams, $filter) {
     //$scope.users is inherited from UsersCtrl's scope
     var group = $routeParams.group;
     $scope.groupFilter = group ? {groups: group} : null;
     $rootScope.selectedGroup = group;
+
+    $scope.selectedUsers = {};
+
+    // A copy of list of groups (w/ information on whether the user is part
+    // of this group or not
+    $scope.user_groups = angular.copy($scope.groups);
+
+    $scope.selectedUsers = function() {
+      var filter = {selected: true};
+      // we also want to filter by group if a group is selected
+      if (group) {
+        filter.groups = group;
+      }
+      return $filter('filter')($scope.users, filter);
+    };
+    $scope.hasUsers = function(group) {
+      var total = $scope.selectedUsers().length;
+      var inGroup = _.filter($scope.selectedUsers(), function(user) {
+        return user.groups.indexOf(group.name) != -1;
+      });
+      if (inGroup.length === 0) {
+        return false;
+      }
+      return inGroup.length == total ? 'all' : 'some';
+    };
   })
+
+  /**
+   * User Edit
+   */
   .controller('UserEditCtrl', function($scope, $routeParams, Restangular, flash) {
     var user = Restangular.one('users', $routeParams.userId);
     user.get().then(function(remote) {
