@@ -671,9 +671,10 @@ GEOR.managelayers = (function() {
 
         if (!isWFS) {
             menuItems.push("-");
+            stylesMenu = createStylesMenu(layerRecord);
             menuItems.push({
                 text: tr("Choose a style"),
-                menu: createStylesMenu(layerRecord)
+                menu: stylesMenu
             });
             menuItems.push({
                 text: tr("Modify format"),
