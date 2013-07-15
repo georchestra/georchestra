@@ -10,7 +10,9 @@ angular.module('ldapadmin.filters', []).
             len = users.length,
             count = 0;
         for (i = 0; i < len; i++) {
-          count += users[i].groups.indexOf(group) != -1 ? 1 : 0;
+          if (users[i].groups) {
+            count += users[i].groups.indexOf(group) != -1 ? 1 : 0;
+          }
         }
         return count;
       }
