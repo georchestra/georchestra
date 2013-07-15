@@ -220,6 +220,10 @@ OpenLayers.Format.WMTSCapabilities.v1_0_0.prototype.readers.wmts = OpenLayers.Ut
                 legend.maxScaleDenominator = maxScaleDenominator;
             }
             obj.legends.push(legend);
+        },
+        "InfoFormat": function(node, obj) {
+            obj.infoFormats = obj.infoFormats || [];
+            obj.infoFormats.push(this.getChildValue(node));
         }
     }
 );
@@ -244,6 +248,7 @@ GeoExt.data.WMTSCapabilitiesReader = function(meta, recordType) {
                     return [v.left, v.bottom, v.right, v.top];
                 }},
                 {name: "formats"}, // array
+                {name: "infoFormats"}, // array
                 {name: "styles"}, // array of Objects {abstract, identifier, isDefault, keywords, title}
                 {name: "keywords"} // Object
             ]
