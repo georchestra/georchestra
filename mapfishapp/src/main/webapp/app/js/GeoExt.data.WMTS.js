@@ -5,6 +5,8 @@
  
 Ext.namespace("GeoExt.data");
 
+// TODO: OpenLayers + GeoExt patches (including tests)
+
 /**
  * @include GeoExt/widgets/LegendImage.js
  * @requires GeoExt/widgets/LayerLegend.js
@@ -141,16 +143,41 @@ GeoExt.LayerLegend.types["gx_wmtslegend"] = GeoExt.WMTSLegend;
 /** api: xtype = gx_wmslegend */
 Ext.reg('gx_wmtslegend', GeoExt.WMTSLegend);
 
-
-
-
+/*
+OpenLayers.Format.OWSCommon.v1.prototype.readers.ows = OpenLayers.Util.extend(
+    OpenLayers.Format.OWSCommon.v1.prototype.readers.ows, {
+        "WGS84BoundingBox": function(node, obj) {
+            var boundingBox = {};
+            boundingBox.crs = node.getAttribute("crs");
+            if (obj.BoundingBox) {
+                obj.BoundingBox.push(boundingBox);
+            } else {
+                obj.projection = boundingBox.crs; // FIXME: creates an unwanted projection key in our WMTS layer object !!!
+                boundingBox = obj;
+           }
+           this.readChildNodes(node, boundingBox);
+        }
+    }
+);
+*/
 
 // Monkey patching openlayers
+
 /**
  * @requires OpenLayers/Format/WMTSCapabilities/v1_0_0.js
  */
 OpenLayers.Format.WMTSCapabilities.v1_0_0.prototype.readers.wmts = OpenLayers.Util.extend(
     OpenLayers.Format.WMTSCapabilities.v1_0_0.prototype.readers.wmts, {
+        "Layer": function(node, obj) {
+            var layer = {
+                styles: [],
+                formats: [],
+                tileMatrixSetLinks: []
+            };
+            //layer.layers = []; // this layer has nothing to do in here ! (OL Bugfix)
+            this.readChildNodes(node, layer);
+            obj.layers.push(layer);
+        },
         /*
         // version avec tileMatrix id en clé
         "TileMatrixSetLimits": function(node, obj) {
