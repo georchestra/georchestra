@@ -144,33 +144,17 @@ Response
 
 ### UPDATE
 
-Add users to the given group
+Add/Remove users to/from the given group
 
 Request
 
-    PUT groups/:groupId/users
+    POST groups_users
 
 Body parameters
 
     users=userId0,userId1,..,userIdN
-
-Response
-
-    { "success": true }
-    or
-    { "success": false }
-
-### DELETE
-
-Remove users from the given group
-
-Request
-
-    DELETE groups/:groupId/users
-
-Body parameters
-
-    users=userId0,userId1,..,userIdN
+    PUT=groupId0,groupId1,..,groupIdN
+    DELETE=groupId3,groupId4,..,groupIdM
 
 Response
 

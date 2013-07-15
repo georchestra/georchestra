@@ -68,3 +68,25 @@ class RESTView(object):
             if str(i['id']) == user:
                 del _users[ndx]
         return Response('delete')
+
+    ''' Add or remove users to/from groups '''
+    @view_config(route_name='groups_users', request_method='POST')
+    def put_groups(self):
+        users = self.request.json_body['users']
+        to_put = self.request.json_body['PUT']
+        to_delete = self.request.json_body['DELETE']
+
+        print users
+
+        for nj, j in enumerate(users):
+            user = getUserById(j)
+            for group in to_put:
+                user['groups'].append(group)
+            for group in to_delete:
+                user['groups'].remove(group)
+        return Response('put')
+
+def getUserById(id):
+    for ndx, i in enumerate(_users):
+        if str(i['id']) == id:
+            return i
