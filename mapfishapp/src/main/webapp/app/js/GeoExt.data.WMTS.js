@@ -58,7 +58,9 @@ GeoExt.data.PrintProvider.prototype.encoders.layers.WMTS = function(layer) {
 
 // this is an addition:
 GeoExt.data.PrintProvider.prototype.encoders.legends.gx_wmtslegend = function(legend, scale) {
-    return this.encoders.legends.gx_urllegend.call(this, legend);
+    if (legend && legend.items.get(1) && legend.items.get(1).url) {
+        return this.encoders.legends.gx_urllegend.call(this, legend);
+    }
 };
 
 
