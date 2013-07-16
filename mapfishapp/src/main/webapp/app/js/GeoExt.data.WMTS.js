@@ -7,6 +7,61 @@ Ext.namespace("GeoExt.data");
 
 // TODO: OpenLayers + GeoExt patches (including tests)
 
+
+// GeoExt WMTS encoder overriding because we don't want to update the whole lib for now.
+// no functional change - taken from https://github.com/geoext/geoext/blob/master/lib/GeoExt/data/PrintProvider.js
+// on 2013-07-23
+GeoExt.data.PrintProvider.prototype.encoders.layers.WMTS = function(layer) {
+    var enc = this.encoders.layers.HTTPRequest.call(this, layer);
+    enc = Ext.apply(enc, {
+        type: 'WMTS',
+        layer: layer.layer,
+        version: layer.version,
+        requestEncoding: layer.requestEncoding,
+        style: layer.style,
+        dimensions: layer.dimensions,
+        params: layer.params,
+        matrixSet: layer.matrixSet
+    });
+    if (layer.matrixIds) {
+        if (layer.requestEncoding == "KVP") {
+            enc.format = layer.format;
+        }
+        enc.matrixIds = []
+        Ext.each(layer.matrixIds, function(matrixId) {
+            enc.matrixIds.push({
+                identifier: matrixId.identifier,
+                matrixSize: [matrixId.matrixWidth, 
+                        matrixId.matrixHeight],
+                resolution: matrixId.scaleDenominator * 0.28E-3
+                        / OpenLayers.METERS_PER_INCH
+                        / OpenLayers.INCHES_PER_UNIT[layer.units],
+                tileSize: [matrixId.tileWidth, matrixId.tileHeight],
+                topLeftCorner: [matrixId.topLeftCorner.lon, 
+                        matrixId.topLeftCorner.lat]
+            });
+        })
+        return enc;
+    }
+    else {
+        return Ext.apply(enc, {
+            formatSuffix: layer.formatSuffix,
+            tileOrigin: [layer.tileOrigin.lon, layer.tileOrigin.lat],
+            tileSize: [layer.tileSize.w, layer.tileSize.h],
+            maxExtent: (layer.tileFullExtent != null) ? layer.tileFullExtent.toArray() : layer.maxExtent.toArray(),
+            zoomOffset: layer.zoomOffset,
+            resolutions: layer.serverResolutions || layer.resolutions
+        });
+    }
+};
+// end overriding
+
+// this is an addition:
+GeoExt.data.PrintProvider.prototype.encoders.legends.gx_wmtslegend = function(legend, scale) {
+    return this.encoders.legends.gx_urllegend.call(this, legend);
+};
+
+
 /**
  * @include GeoExt/widgets/LegendImage.js
  * @requires GeoExt/widgets/LayerLegend.js
