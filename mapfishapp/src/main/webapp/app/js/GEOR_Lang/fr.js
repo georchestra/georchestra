@@ -122,10 +122,9 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     /* GEOR_fileupload.js strings */
     "Local file": "Fichier",
     "The service is inactive": "Le service est inactif",
-    "Upload a vectorial data file. The allowed formats are the following: ":
-        "Uploadez un fichier de données vectorielles. Les formats acceptés sont les suivants : ",
-    "<br/>Use ZIP compression for multifiles formats, such as SHP or MIF/MID.":
-        "<br/>Utilisez la compression ZIP pour les formats multi-fichiers comme SHP ou MIF/MID.",
+    "Upload a vector data file.": "Uploadez un fichier de données vectorielles.",
+    "The allowed formats are the following: ": "Les formats acceptés sont les suivants : ",
+    "Use ZIP compression for multifiles formats, such as SHP or MIF/MID.": "Utilisez la compression ZIP pour les formats multi-fichiers comme SHP ou MIF/MID.",
     /* GEOR_geonames.js strings */
     /* GEOR_getfeatureinfo.js strings */
     "<div>Searching...</div>": "<div>Recherche en cours...</div>",

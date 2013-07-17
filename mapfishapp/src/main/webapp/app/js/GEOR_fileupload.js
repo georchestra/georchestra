@@ -237,13 +237,16 @@ GEOR.fileupload = (function() {
                 defaults: {border: false},
                 items: [{
                     xtype: 'box',
-                    height: 55,
+                    height: 75,
                     autoEl: {
                         tag: 'div',
                         cls: 'box-as-panel',
-                        html: tr("Upload a vectorial data file. The allowed formats are the following: ")
-                            + fileFormatString + '. '
-                            + tr("<br/>Use ZIP compression for multifiles formats, such as SHP or MIF/MID.")
+                        html: [
+                            '<b>', tr("Upload a vector data file."), '</b><br/><br/>',
+                            tr("The allowed formats are the following: "),
+                            fileFormatString, '. <br/>',
+                            tr("Use ZIP compression for multifiles formats, such as SHP or MIF/MID.")
+                        ].join('')
                     }
                 }, {
                     xtype: 'form',
