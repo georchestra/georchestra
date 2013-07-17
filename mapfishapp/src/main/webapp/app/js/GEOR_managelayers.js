@@ -459,7 +459,8 @@ GEOR.managelayers = (function() {
             type = layerRecord.get("type"),
             isWMS = type === "WMS",
             isWMTS = type === "WMTS",
-            isWFS = type === "WFS";
+            isWFS = type === "WFS",
+            isVector = layer instanceof OpenLayers.Layer.Vector;
 
         var menuItems = [], url, sepInserted;
 
@@ -508,10 +509,7 @@ GEOR.managelayers = (function() {
                 "click": function(btn, pressed) {
                     var layer = layerRecord.get('layer'),
                         map = layer.map;
-                    // TODO: layer.getDataExtent() can be null if layer strategy is bbox
-                    // and there's no feature currently in layer.
-                    // It seems WFS capabilities has a llbbox field in record => parse it
-                    if (isWFS) {
+                    if (isVector) {
                         var b = layer.getDataExtent();
                         if (b && b.getWidth() * b.getHeight()) {
                             map.zoomToExtent(b);
@@ -539,7 +537,7 @@ GEOR.managelayers = (function() {
         });
 
         // redraw action (aka "do not used client-cached layer")
-        if (!isWFS) {
+        if (!isVector) {
             menuItems.push({
                 iconCls: 'geor-btn-refresh',
                 text: tr("Refresh layer"),
