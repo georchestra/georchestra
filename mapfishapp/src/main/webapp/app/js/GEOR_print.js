@@ -15,7 +15,7 @@
 /*
  * @include GEOR_config.js
  * @include GEOR_util.js
- * @include GeoExt/data/PrintProvider.js
+ * @requires GeoExt/data/PrintProvider.js
  * @include GeoExt/data/PrintPage.js
  * @include GeoExt/plugins/PrintPageField.js
  * @include GeoExt/plugins/PrintProviderField.js
@@ -173,6 +173,8 @@ GEOR.print = (function() {
                 },
                 "beforeprint": function(pp) {
                     mask.show();
+                    // closest matching print extent will be chosen:
+                    printPage.fit(layerStore.map, {mode: "closest"});
                     // set a custom PDF file name:
                     pp.customParams.outputFilename = GEOR.config.PDF_FILENAME;
                 },
@@ -199,7 +201,7 @@ GEOR.print = (function() {
                             GEOR.util.infoDialog({
                                 title: tr("Layer unavailable for printing"),
                                 msg: [
-                                    tr("The NAME layer cannot be printed.", {'name': layer.name}),
+                                    tr("The NAME layer cannot be printed.", {'NAME': layer.name}),
                                     tr("Contact platform administrator")
                                 ].join('<br/>')
                             });
@@ -229,7 +231,7 @@ GEOR.print = (function() {
                 printProvider.setLayout(printProvider.layouts.getAt(r));
             } else {
                 alert(tr("print.unknown.layout",
-                    {'layout': GEOR.config.DEFAULT_PRINT_LAYOUT}));
+                    {'LAYOUT': GEOR.config.DEFAULT_PRINT_LAYOUT}));
             }
             r = printProvider.dpis.find("value",
                 GEOR.config.DEFAULT_PRINT_RESOLUTION);
@@ -237,7 +239,7 @@ GEOR.print = (function() {
                 printProvider.setDpi(printProvider.dpis.getAt(r));
             } else {
                 alert(tr("print.unknown.resolution",
-                    {'resolution': GEOR.config.DEFAULT_PRINT_RESOLUTION}));
+                    {'RESOLUTION': GEOR.config.DEFAULT_PRINT_RESOLUTION}));
             }
             // The form with fields controlling the print output
             var formPanel = new Ext.form.FormPanel({
@@ -449,3 +451,12 @@ GEOR.print = (function() {
         }
     };
 })();
+
+
+GeoExt.data.PrintProvider.prototype.encoders.legends["gx_vectorlegend"] = function(legend) {
+    var enc = this.encoders.legends.base.call(this, legend);
+    enc[0].classes.push({
+        name: ""
+    });
+    return enc;
+};

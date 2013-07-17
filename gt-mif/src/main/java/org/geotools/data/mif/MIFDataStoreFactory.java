@@ -16,16 +16,18 @@
  */
 package org.geotools.data.mif;
 
-import com.vividsolutions.jts.geom.GeometryFactory;
-import org.geotools.data.DataStore;
-import org.geotools.data.DataStoreFactorySpi;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URI;
-import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.geotools.data.DataStore;
+import org.geotools.data.DataStoreFactorySpi;
+
+import com.vividsolutions.jts.geom.GeometryFactory;
 
 
 /**
@@ -117,10 +119,31 @@ public class MIFDataStoreFactory implements DataStoreFactorySpi {
         return "MIFDataStore";
     }
 
-    /* (non-Javadoc)
-     * @see org.geotools.data.DataStoreFactorySpi#createDataStore(java.util.Map)
+    /**
+     * <p>
+     * As the creation of new MIF files is simply achieved by createSchema()
+     * calls, this method simply calls {@link #createDataStore(Map)}. 
+     * </p>
+     *
+     * @param params The parameter map
+     *
+     * @return the MIFDataStore instance returned by createDataStore(params)
+     *
+     * @throws IOException
+     *
+     * 
      */
-    public DataStore createDataStore(Map params) throws IOException {
+	public DataStore createNewDataStore(Map<String, Serializable> params) throws IOException {
+		return createDataStore(params);
+	}
+
+	/**
+	 * Makes a {@link MIFDataStore} based on the parameters.
+	 * 
+	 * @param params
+	 * 
+	 */
+	public DataStore createDataStore(Map<String, Serializable> params)	throws IOException {
         if (!processParams(params)) {
             throw new IOException("The parameters map isn't correct.");
         }
@@ -128,7 +151,7 @@ public class MIFDataStoreFactory implements DataStoreFactorySpi {
         MIFDataStore mif = null;
 
         try {
-            HashMap parameters = new HashMap();
+            HashMap<Param,Object> parameters = new HashMap<Param,Object> ();
 
             File path = (File) PARAM_PATH.lookUp(params);
 
@@ -153,14 +176,13 @@ public class MIFDataStoreFactory implements DataStoreFactorySpi {
             mif = new MIFDataStore(path.getPath(), parameters);
 
             return mif;
-        } catch (IOException ex) {
-            throw ex;
+            
         } catch (Exception ex) {
-            throw new IOException(ex.toString());
+            throw new IOException(ex.getMessage());
         }
     }
 
-    private void addParamToMap(Param param, Map params, HashMap map, Object defa) {
+    private void addParamToMap(Param param, Map<String, Serializable> params, HashMap<Param, Object> map, Object defa) {
         Object val = null;
 
         try {
@@ -169,29 +191,12 @@ public class MIFDataStoreFactory implements DataStoreFactorySpi {
         }
 
         if (val != null) {
-            map.put(param.key, val);
+            map.put(param, val);
         } else if (defa != null) {
-            map.put(param.key, defa);
+            map.put(param, defa);
         }
     }
 
-    /**
-     * <p>
-     * As the creation of new MIF files is simply achieved by createSchema()
-     * calls, this method simply calls createDataStore().
-     * </p>
-     *
-     * @param params The parameter map
-     *
-     * @return the MIFDataStore instance returned by createDataStore(params)
-     *
-     * @throws IOException
-     *
-     * @see #createDataStore(Map)
-     */
-    public DataStore createNewDataStore(Map params) throws IOException {
-        return createDataStore(params); // return null????
-    }
 
     /**
      * @see org.geotools.data.DataStoreFactorySpi#getDescription()
@@ -220,18 +225,21 @@ public class MIFDataStoreFactory implements DataStoreFactorySpi {
     /**
      * @see org.geotools.data.DataStoreFactorySpi#canProcess(java.util.Map)
      */
-    public boolean canProcess(Map params) {
+	public boolean canProcess(Map<String, Serializable> params) {
         try {
             return processParams(params);
         } catch (Exception e) {
             return false;
         }
-    }
+	}
+
+    
+    
 
     /*
      * Utility function for processing params
      */
-    private boolean processParams(Map params) throws IOException {
+    private boolean processParams(Map<String,Serializable> params) throws IOException {
 
         String path = String.valueOf(PARAM_PATH.lookUp(params));
         File file = new File(path);
@@ -239,8 +247,7 @@ public class MIFDataStoreFactory implements DataStoreFactorySpi {
         if (!file.isDirectory()) {
             // Try to build a File object pointing to a .mif file
             // Will throw an exception if the file cannot be found
-            MIFFile.getFileHandler(file.getParentFile(),
-                MIFFile.getMifName(file.getName()), ".mif", true);
+            MIFFile.getFileHandler(file.getParentFile(), MIFFile.getMifName(file.getName()), ".mif", true);
         }
 
         return true;
@@ -270,4 +277,6 @@ public class MIFDataStoreFactory implements DataStoreFactorySpi {
         // TODO Check possible use of hints for GeometryFactory, SRID.
         return Collections.EMPTY_MAP;
     }
+
+
 }

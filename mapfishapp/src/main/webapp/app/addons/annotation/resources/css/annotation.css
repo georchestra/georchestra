@@ -1,0 +1,55 @@
+.gx-featureediting-draw-point {
+  background-image: url("../images/silk/bullet_red_add.png") !important;
+}
+
+.gx-featureediting-draw-circle {
+  background-image: url("../images/geosilk/circle_red_add.png") !important;
+}
+
+.gx-featureediting-draw-line {
+  background-image: url("../images/geosilk/line_red_add.png") !important;
+}
+
+.gx-featureediting-draw-polygon {
+  background-image: url("../images/geosilk/shape_red_add.png") !important;
+}
+
+.gx-featureediting-draw-box {
+  background-image: url("../images/geosilk/shape_square_red_add.png") !important;
+}
+
+.gx-featureediting-draw-label {
+  background-image: url("../images/silk/tag_blue_add.png") !important;
+}
+
+.gx-featureediting-editfeature {
+  background-image: url("../images/silk/pencil.png") !important;
+}
+
+.gx-featureediting-delete {
+  background-image: url("../images/silk/delete.png") !important;
+}
+
+.gx-featureediting-import {
+  background-image: url("../images/silk/kml_import.png") !important;
+}
+
+.gx-featureediting-export {
+  background-image: url("../images/silk/kml_export.png") !important;
+}
+
+.gx-popup-anc {
+    background: transparent url(../images/anchor.png) no-repeat 0 0;
+    position: relative;
+    top:-1px;
+    left:5px;
+    z-index:2;
+    height:16px;
+    width:31px;
+}
+
+.annotation .x-toolbar {
+    border: 0;
+    background-image: none;
+    background-color: transparent;
+}

@@ -202,7 +202,7 @@ GEOR.cswquerier = (function() {
         var tpl = [
             '<tpl for=".">',
                 '<div class="x-view-item">',
-                    '<table><tr><td style="vertical-align:text-top;">',
+                    '<table style="width:100%;"><tr><td style="vertical-align:text-top;">',
                         '<p><b>{layer_description}</b></p>',
                         '<p>{md_title} - {[this.abstract(values.md_abstract)]}&nbsp;',
                         '<a href="{[this.metadataURL(values)]}" ext:qtip="' +
@@ -224,14 +224,21 @@ GEOR.cswquerier = (function() {
             "metadataURL": function(values) {
                 // this part is 100% geonetwork specific:
                 var url = CSWRecordsStore.proxy.url;
-                return url.replace('/csw', '/metadata.show?uuid='+values.md_uuid);
+                // replace /srv/*/csw with /?uuid=
+                return url.replace(/\/srv\/(\S+)\/csw/, '/?uuid='+values.md_uuid);
             },
             "thumbnailURL": function(values) {
-                // this part is also 100% geonetwork specific:
                 if (values.md_thumbnail_url) {
+                    if (GEOR.util.isUrl(values.md_thumbnail_url)) {
+                        // full thumbnail URL, yeah !
+                        return values.md_thumbnail_url;
+                    }
+                    // incomplete thumbnail URL, we're trying to guess it.
+                    // this part is 100% geonetwork specific:
                     var url = CSWRecordsStore.proxy.url;
                     return url.replace('/csw', '/'+values.md_thumbnail_url);
                 }
+                // no thumbnail URL:
                 return GEOR.config.NO_THUMBNAIL_IMAGE_URL;
             },
             "abstract": function(text) {
@@ -245,7 +252,7 @@ GEOR.cswquerier = (function() {
                 var regexp = /(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/gi;
                 return text.replace(regexp,
                     '[<a href="$&" ext:qtip="'+
-                        tr("Open the URL url in a new window", {'url': '$&'})
+                        tr("Open the URL url in a new window", {'URL': '$&'})
                         +'"' +
                     ' target="_blank" onclick="window.open(this.href);return false;">lien</a>]'
                 );
@@ -520,11 +527,21 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
                     property: "AnyText",
                     value: '*wms*'
                 }),
-                // do not request dc:type = service, just dc:type = dataset
-                new OpenLayers.Filter.Comparison({
-                    type: "~",
-                    property: "type",
-                    value: 'dataset'
+                // do not request dc:type = service, just dc:type = dataset OR series
+                new OpenLayers.Filter.Logical({
+                    type: "||",
+                    filters: [
+                        new OpenLayers.Filter.Comparison({
+                            type: "~",
+                            property: "type",
+                            value: 'dataset'
+                        }),
+                        new OpenLayers.Filter.Comparison({
+                            type: "~",
+                            property: "type",
+                            value: 'series'
+                        })
+                    ]
                 })
             ];
         Ext.each(words, function(word) {

@@ -28,6 +28,7 @@ import com.vividsolutions.jts.geom.Polygon;
  *
  */
 public class BBoxWriter {
+	
 
 	// Properties of the bbox FeatureType 
 	private static final String GEOMETRY_PROPERTY = "geom";
@@ -99,6 +100,7 @@ public class BBoxWriter {
 										"bounding", 
 										GEOMETRY_PROPERTY +":Polygon:srid="+epsgCode +"," +
 										ID_PROPERTY + ":Integer");
+			
 			return type;
 
 		} catch (Exception e) {

@@ -80,7 +80,11 @@ GEOR.wmsbrowser = (function() {
                     // uncaught exception: Ext.data.DataProxy: DataProxy attempted
                     // to execute an API-action but found an undefined url /
                     // function. Please review your Proxy url/api-configuration.
-                    url: "/dummy"
+                    url: "/dummy",
+                    sortInfo: {
+                        field: 'title',
+                        direction: 'ASC'
+                    }
                 }
             });
 

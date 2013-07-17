@@ -39,6 +39,7 @@
     <script type="text/javascript" src="lib/externals/styler/lib/Styler/widgets/tips/MultiSliderTip.js"></script>
     <script type="text/javascript" src="lib/externals/styler/lib/Styler/widgets/tips/SliderTip.js"></script>
     <script type="text/javascript" src="lib/externals/styler/lib/Styler/widgets/TextSymbolizer.js"></script>
+    <script type="text/javascript" src="lib/externals/styler/lib/Styler/widgets/CircleSegment.js"></script>
     <script type="text/javascript" src="lib/externals/styler/lib/Styler/lang/<%= lang %>.js"></script>
 
     <script type="text/javascript" src="app/js/GEOR_config.js"></script>
@@ -79,10 +80,13 @@
     <script type="text/javascript" src="app/js/GEOR_wmcbrowser.js"></script>
     <script type="text/javascript" src="app/js/GEOR_wmsbrowser.js"></script>
     <script type="text/javascript" src="app/js/GEOR_wfsbrowser.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_fileupload.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_selectfeature.js"></script>
     <script type="text/javascript" src="app/js/GEOR_print.js"></script>
     <script type="text/javascript" src="app/js/GEOR_map.js"></script>
     <script type="text/javascript" src="app/js/GEOR_ajaxglobal.js"></script>
     <script type="text/javascript" src="app/js/GEOR_localStorage.js"></script>
     <script type="text/javascript" src="app/js/GEOR_mapinit.js"></script>
     <script type="text/javascript" src="app/js/GEOR.js"></script>
-    <script type="text/javascript" src="https://getfirebug.com/firebug-lite-beta.js"></script>
+    <!-- uncomment this for IE debugging -->
+    <!--script type="text/javascript" src="https://getfirebug.com/firebug-lite-beta.js"></script-->

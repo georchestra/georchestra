@@ -13,6 +13,8 @@
         <postgis.max.active>50</postgis.max.active>
         <postgis.max.idle>20</postgis.max.idle>
         <postgis.min.idle>0</postgis.min.idle>
+        <pg.jdbc.driver>@shared.psql.jdbc.driver@</pg.jdbc.driver>
+        <pg.jdbc.driver.url>@shared.psql.jdbc.driver.url@</pg.jdbc.driver.url>
         <wfs.host>@shared.server.name@</wfs.host>
         <wfs.port>80</wfs.port>
         <host>@shared.server.name@</host>
@@ -39,8 +41,8 @@
                 <config>
                     <user>${postgis.user}</user>
                     <password>${postgis.pass}</password>
-                    <driver>org.postgis.DriverWrapper</driver>
-                    <url>jdbc:postgresql_postGIS://${postgis.host}:${postgis.port}/${postgis.db}</url>
+                    <driver>${pg.jdbc.driver}</driver>
+                    <url>jdbc:${pg.jdbc.driver.url}://${postgis.host}:${postgis.port}/${postgis.db}</url>
 	                <maxActive>${postgis.max.active}</maxActive>
 			        <maxIdle>${postgis.max.idle}</maxIdle>
         			<minIdle>${postgis.min.idle}</minIdle>
@@ -48,6 +50,11 @@
                 </config>
             </resource>
         </replaceXML>
+    </file>
+    <file name=".*/WEB-INF/config.xml">
+        <addXML xpath="services/service[@name='resources.get']/class">
+            <param name="download_form" value="@shared.download_form.activated@" />
+        </addXML>
     </file>
     <file name=".*/WEB-INF/config-gui.xml">
         <addXml xpath="">

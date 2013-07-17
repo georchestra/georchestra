@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.georchestra</groupId>
 		<artifactId>root</artifactId>
-		<version>13.02-SNAPSHOT</version>
+		<version>13.12-SNAPSHOT</version>
 	</parent>
 	<artifactId>gt-mif</artifactId>
 	<packaging>jar</packaging>
@@ -15,6 +15,20 @@
 			<artifactId>gt-main</artifactId>
 			<version>${gt.version}</version>
 		</dependency>
+		
+	    <dependency>
+	      <groupId>org.geotools</groupId>
+	      <artifactId>gt-epsg-hsql</artifactId>
+	      <version>${gt.version}</version>
+	    </dependency>
+                <!--  Testing -->
+                <dependency>
+                        <groupId>junit</groupId>
+                        <artifactId>junit</artifactId>
+                        <version>4.5</version>
+                        <scope>test</scope>
+                </dependency>
+		
 	</dependencies>
 	<build>
 		<plugins>

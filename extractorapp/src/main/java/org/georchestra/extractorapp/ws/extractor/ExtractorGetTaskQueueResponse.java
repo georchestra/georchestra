@@ -61,7 +61,6 @@ final class ExtractorGetTaskQueueResponse {
     		JSONObject spec = new JSONObject( metadata.getSpec() );  
     		String requestTimeStamp = TaskDescriptor.formatDate(metadata.getRequestTime());
     		
-    		
     		String beginTimeStamp = TaskDescriptor.formatDate(metadata.getBeginTime());
     		String endTimeStamp = TaskDescriptor.formatDate(metadata.getEndTime());
 
