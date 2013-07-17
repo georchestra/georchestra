@@ -111,7 +111,7 @@ The latter can be installed, on Debian-based distributions, with the libgdal1 pa
 
     sudo apt-get install libgdal1
 
-Some more work is needed for installing the GDAL Java binding library, as there is still no deb package for it (for more information, see https://bugs.launchpad.net/ubuntu/+source/gdal/+bug/786790 - note that packages exist for ruby and perl bindings, hopefully the Java's one will be released soon).
+Some more work is needed for installing the GDAL Java binding library, as there is still no deb package for it (note that packages exist for ruby and perl bindings, hopefully the Java's one will be released soon - see a recent proposal http://ftp-master.debian.org/new/gdal_1.10.0-0%7Eexp3.html).
 
 To quickly install the GDAL Java binding library on the server, download and extract the library (see http://demo.geo-solutions.it/share/github/imageio-ext/releases/1.1.X/1.1.7/native/gdal/ for the adequate distribution). For Ubuntu 12:
 
