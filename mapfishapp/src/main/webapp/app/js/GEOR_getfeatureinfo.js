@@ -113,15 +113,29 @@ GEOR.getfeatureinfo = (function() {
     var onGetXfeatureinfo = function(info) {
         OpenLayers.Element.addClass(map.viewPortDiv, "olDrawBox");
 
-        var features = info.features;
-        
+        var features = [];
         var Xmodel = [];
+
+        for(var i = 0; i < info.features.length; i++){
+            features[i] = [info.features[i]];
+            var ii = i+1;
+            while(ii < info.features.length) {
+                if(info.features[i].gml.featureType == info.features[ii].gml.featureType) {
+                    features[i].push(info.features[ii]);
+                    delete info.features[ii];
+                    info.features.splice(ii,1);
+                }
+                else {
+                    ii++;                
+                }
+            }
+        }
 		  
-		  for(var i = 0; i < features.length; i++){
-        		Xmodel.push(new GEOR.FeatureDataModel({
-        			features: features[i]
-        		}));
-     	  }
+        for(var i = 0; i < features.length; i++){
+            Xmodel.push(new GEOR.FeatureDataModel({
+                features: features[i][0]
+            }));
+        }
 
         observable.fireEvent("searchXresults", {
             features: features,
