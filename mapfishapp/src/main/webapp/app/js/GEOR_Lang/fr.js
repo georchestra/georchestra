@@ -23,6 +23,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Cancel": "Annuler",
     "Save": "Sauvegarder",
     "Loading...": "Chargement...",
+    "File": "Fichier",
     "Layer": "Couche",
     "Description": "Description",
     "Error": "Erreur",
@@ -118,6 +119,12 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Not any metadata correspond to the words specified":
         "Aucune métadonnée ne correspond aux termes saisis",
     /* GEOR_editing.js strings */
+    /* GEOR_fileupload.js strings */
+    "Local file": "Fichier",
+    "The service is inactive": "Le service est inactif",
+    "Upload a vector data file.": "Uploadez un fichier de données vectorielles.",
+    "The allowed formats are the following: ": "Les formats acceptés sont les suivants : ",
+    "Use ZIP compression for multifiles formats, such as SHP or MIF/MID.": "Utilisez la compression ZIP pour les formats multi-fichiers comme SHP ou MIF/MID.",
     /* GEOR_geonames.js strings */
     /* GEOR_getfeatureinfo.js strings */
     "<div>Searching...</div>": "<div>Recherche en cours...</div>",
@@ -125,6 +132,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
          "<div>Recherche d\'objets activée sur la couche ${NAME}. " +
          "Cliquez sur la carte.</div>",
     /* GEOR_layerfinder.js strings */
+    "Add layers from local files": "Ajouter des couches en uploadant un fichier depuis votre ordinateur",
     "Find layers searching in metadata":
         "Trouvez des couches en cherchant dans les métadonnées",
     "Find layers from keywords": "Trouvez des couches par mots clés",
@@ -173,6 +181,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Push down this layer": "descendre cette couche",
     "Add layers": "Ajouter des couches",
     "source: ": "source : ",
+    "unknown": "inconnue",
     "Actions": "Actions",
     /* GEOR_map.js strings */
     "Location map": "Carte de situation",
@@ -383,7 +392,6 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Context restoring": "Restauration d'un contexte",
     "<p>Please note that the WMC must be UTF-8 encoded</p>": "<p>Notez que le" +
         " fichier de contexte doit être encodé en UTF-8.</p>",
-    "File": "Fichier",
     "Load": "Charger",
     "Workspace": "Espace de travail",
     "Save the map context": "Sauvegarder la carte",

@@ -91,7 +91,7 @@
 		<dependency>
 			<groupId>org.mapfish.print</groupId>
 			<artifactId>print-lib</artifactId>
-			<version>1.2-GEORCHESTRA</version>
+			<version>1.2.1-GEORCHESTRA</version>
 		</dependency>
 		<!--  geotools -->
 		<dependency>
@@ -104,10 +104,50 @@
 			<artifactId>gt-wfs</artifactId>
 			<version>${gt.version}</version>
 		</dependency>
-		<!-- geotools - handles ESPG -->
 		<dependency>
 			<groupId>org.geotools</groupId>
-			<artifactId>gt-epsg-hsql</artifactId>
+			<artifactId>gt-shapefile</artifactId>
+			<version>${gt.version}</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.georchestra</groupId>
+			<artifactId>gt-mif</artifactId>
+			<version>13.02-SNAPSHOT</version>
+		</dependency>
+		
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-ogr-core</artifactId>
+            <version>${gt.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-ogr-jni</artifactId>
+            <version>${gt.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.geotools.xsd</groupId>
+            <artifactId>gt-xsd-kml</artifactId>
+            <version>${gt.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-geojson</artifactId>
+            <version>${gt.version}</version>
+        </dependency>		
+		<!-- geotools - handles ESPG -->
+	    <dependency>
+	      <groupId>org.geotools</groupId>
+	      <artifactId>gt-epsg-hsql</artifactId>
+	      <version>${gt.version}</version>
+	    </dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-imageio-ext-gdal</artifactId>
 			<version>${gt.version}</version>
 		</dependency>
 		<dependency>

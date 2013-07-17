@@ -122,11 +122,18 @@
       <artifactId>gt-wms</artifactId>
       <version>${gt.version}</version>
     </dependency>
+    
     <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gt-ogr</artifactId>
-      <version>${gt.version}</version>
+        <groupId>org.geotools</groupId>
+        <artifactId>gt-ogr-core</artifactId>
+        <version>${gt.version}</version>
     </dependency>
+    <dependency>
+        <groupId>org.geotools</groupId>
+        <artifactId>gt-ogr-jni</artifactId>
+        <version>${gt.version}</version>
+    </dependency>
+   
     <dependency>
       <groupId>org.geotools.ogc</groupId>
       <artifactId>net.opengis.wfs</artifactId>

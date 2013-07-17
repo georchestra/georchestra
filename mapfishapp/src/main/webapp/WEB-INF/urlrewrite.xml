@@ -14,6 +14,10 @@
         <to type="forward" last="true">/ws/edit</to>
     </rule>
     <rule>
+        <from>^/(ws)?/?togeojson$</from>
+        <to type="forward" last="true">/ws/togeojson</to>
+    </rule>
+    <rule>
         <from>^/ws/(.*)$</from>
         <to type="forward" last="true">/ws/$1</to>
     </rule>

@@ -7,6 +7,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.georchestra.mapfishapp.ws.UpLoadGeoFileController;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,6 +47,8 @@ public class AbstractController {
             radius = null;
         }
         model.put("radius", radius);
+        UpLoadGeoFileController controller = new UpLoadGeoFileController();
+        model.put("fileFormatList", controller.fileFormatListToJSON());
         model.put("debug", Boolean.parseBoolean(request.getParameter("debug")));
     
         return model;
@@ -109,6 +113,8 @@ public class AbstractController {
             radius = null;
         }
         model.put("radius", radius);
+        UpLoadGeoFileController controller = new UpLoadGeoFileController();
+        model.put("fileFormatList", controller.fileFormatListToJSON());
         model.put("data", data);
     
         return model;

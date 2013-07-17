@@ -89,24 +89,19 @@ GEOR.wfsbrowser = (function() {
                         direction: 'ASC'
                     },
                     layerOptions: function() {
-	                    return {
-                            // by default, we want our WFS vector layers
-                            // to be off, so that the browser is not overwhelmed
-                            // with too many features.
-                            // this gives a chance for the user to zoom in
-                            // before switching the layer on.
-	                        visibility: false,
-	                        displayInLayerSwitcher: true,
-                            // we don't want to have too many features
-                            // => we load only what is needed for current
-                            // map extent
-	                        strategies: [
-                                new OpenLayers.Strategy.BBOX({
-                                    ratio: 1.2
-                                })
+                        return {
+                            visibility: true,
+                            displayInLayerSwitcher: true,
+                            styleMap: GEOR.util.getStyleMap(),
+                            rendererOptions: {
+                                zIndexing: true
+                            },
+                            strategies: [
+                                new OpenLayers.Strategy.Fixed()
                             ]
-	                    };
-	                },
+                            //,renderers: ["Canvas"] // in order to load many features
+                        };
+                    },
                     protocolOptions: {
                         //autoDestroy: false, // TEST (seems not to work as expected)
 
