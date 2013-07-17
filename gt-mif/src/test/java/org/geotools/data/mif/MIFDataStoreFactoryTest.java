@@ -21,7 +21,10 @@ import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
+<<<<<<< HEAD
 import org.junit.Ignore;
+=======
+>>>>>>> 1da3728... fixing compilation error in extractorapp
 import org.junit.Test;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -126,7 +129,11 @@ public class MIFDataStoreFactoryTest extends MIFDataStoreFactory {
 		assertNotNull(bounds);
 
 		Integer epsgCode = CRS.lookupEpsgCode( bounds.getCoordinateReferenceSystem(), true );
+<<<<<<< HEAD
 		assertEquals( 4326, epsgCode);
+=======
+		assertEquals( new Integer(4326), epsgCode);
+>>>>>>> 1da3728... fixing compilation error in extractorapp
 	}
 	
 	/**
@@ -144,7 +151,11 @@ public class MIFDataStoreFactoryTest extends MIFDataStoreFactory {
 
 		ReferencedEnvelope bounds = fc.getBounds();
 		Integer epsgCode = CRS.lookupEpsgCode( bounds.getCoordinateReferenceSystem(), true );
+<<<<<<< HEAD
 		assertEquals( targetCRS, epsgCode);
+=======
+		assertEquals( new Integer(targetCRS), epsgCode);
+>>>>>>> 1da3728... fixing compilation error in extractorapp
 	}
 	
 	private void assertFeatureCollection(SimpleFeatureCollection fc, final int countExpected, final int expectedEPSG) throws Exception {
@@ -175,7 +186,11 @@ public class MIFDataStoreFactoryTest extends MIFDataStoreFactory {
 	private void assertFeatureCRS(final SimpleFeature f, final int expectedEPSG) throws Exception {
 
 		CoordinateReferenceSystem crs = f.getFeatureType().getCoordinateReferenceSystem();
+<<<<<<< HEAD
  		assertEquals( expectedEPSG, CRS.lookupEpsgCode( crs, true) );
+=======
+ 		assertEquals( new Integer(expectedEPSG), CRS.lookupEpsgCode( crs, true) );
+>>>>>>> 1da3728... fixing compilation error in extractorapp
 	}
 
 
