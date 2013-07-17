@@ -120,6 +120,9 @@ Ext.namespace("GEOR");
         if (GEOR.getfeatureinfo) {
             GEOR.getfeatureinfo.init(map);
         }
+        if (GEOR.selectfeature) {
+            GEOR.selectfeature.init(map);
+        }
         if (GEOR.querier) {
             GEOR.querier.init(map);
         }
@@ -358,6 +361,31 @@ Ext.namespace("GEOR");
 
         if (GEOR.getfeatureinfo) {
             GEOR.getfeatureinfo.events.on({
+                "search": function(panelCfg) {
+                    if (GEOR.resultspanel) {
+                        GEOR.resultspanel.clean();
+                    }
+                    southPanel.removeAll();
+                    var panel = Ext.apply({
+                        bodyStyle: 'padding:5px'
+                    }, panelCfg);
+                    southPanel.add(panel);
+                    southPanel.doLayout();
+                    southPanel.expand();
+                },
+                "searchresults": function(options) {
+                    if (GEOR.resultspanel) {
+                        GEOR.resultspanel.populate(options);
+                    }
+                },
+                "shutdown": function() {
+                    southPanel.collapse();
+                }
+            });
+        }
+
+        if (GEOR.selectfeature) {
+            GEOR.selectfeature.events.on({
                 "search": function(panelCfg) {
                     if (GEOR.resultspanel) {
                         GEOR.resultspanel.clean();

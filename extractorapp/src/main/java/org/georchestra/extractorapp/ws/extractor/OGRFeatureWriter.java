@@ -57,8 +57,6 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
 			@Override
 			public String getDriver(){return "ESRI shapefile";}
 			
-			@Override
-			public String[] getFormatOptions(){return null;}
 		};
 		
 		/**
@@ -71,7 +69,7 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
 		 * Returns the options related with the indicated file format.
 		 * @return the options for the file format
 		 */
-		public abstract String[] getFormatOptions();
+		public String[] getFormatOptions(){return null;}
 	}
 
 	private ProgressListener progresListener;
@@ -150,6 +148,7 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
 
 	/**
 	 * Generate the file's vector specified
+	 * @return array {@link File} of created files 
 	 */
 	@Override
 	public File[] generateFiles() throws IOException {
@@ -166,7 +165,7 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
             ds = (OGRDataStore) DataStoreFinder.getDataStore(map);
             
 	        ds.createSchema(this.features, true, this.options); //TODO OGR require the following improvements:  use the output crs required (progress Listener should be a parameter)
-	        
+
 	        files =  new File[]{new File( pathName)};
 	        
         } finally {
