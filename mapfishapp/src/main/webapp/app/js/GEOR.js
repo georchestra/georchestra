@@ -264,9 +264,17 @@ Ext.namespace("GEOR");
                             }                        
                             var tab = southPanel.add(new GEOR.resultspanel({html: tr("resultspanel.emptytext")}));						
                             southPanel.setActiveTab(tab);
-                            southPanel.insert(southPanel.items.length,{id: 'addPanel', title: '+', style: 'float: right;'});
+                            southPanel.insert(southPanel.items.length,{id: 'addPanel', title: '+'});
                             southPanel.doLayout();
                         }
+                        for(var i = 0; i < southPanel.items.length-1; i++){
+                            if(southPanel.getComponent(i).vectorLayer) {
+                                southPanel.getComponent(i).vectorLayer.setVisibility(false);                        
+                            }
+                        }
+                        if(southPanel.getActiveTab().vectorLayer) {
+                            southPanel.getActiveTab().vectorLayer.setVisibility(true);
+                        }                        
                     }
                 }
             }
