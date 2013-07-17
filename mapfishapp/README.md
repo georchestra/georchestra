@@ -121,8 +121,10 @@ To quickly install the GDAL Java binding library on the server, download and ext
     wget http://demo.geo-solutions.it/share/github/imageio-ext/releases/1.1.X/1.1.7/native/gdal/linux/gdal192-Ubuntu12-gcc4.6.3-x86_64.tar.gz
     tar xzf gdal192-Ubuntu12-gcc4.6.3-x86_64.tar.gz
 
-then copy only the necessary files to a libraries directory. Classically, `/var/sig/gdal/NativeLibs/` is used for the gdal libraries, but any other directory could be used, provided it's included in the `LD_LIBRARY_PATH` environment variable (`export LD_LIBRARY_PATH=/lib:/usr/lib/:/var/sig/gdal/NativeLibs/:$LD_LIBRARY_PATH` in the tomcat setenv.sh file, for example):
+then copy only the necessary files to an adequate lib directory:
 
     sudo cp libgdaljni.so libgdalconstjni.so libogrjni.so libosrjni.so /var/sig/gdal/NativeLibs/
+
+Classically, in geOrchestra installations, `/var/sig/gdal/NativeLibs/` is used for the gdal libraries, but any other directory could be used, provided it's included in the `LD_LIBRARY_PATH` environment variable, for example by setting `export LD_LIBRARY_PATH=/lib:/usr/lib/:/var/sig/gdal/NativeLibs/:$LD_LIBRARY_PATH` in the tomcat setenv.sh file.
 
 Another way to install the GDAL Java binding is building it from sources. See http://trac.osgeo.org/gdal/wiki/GdalOgrInJavaBuildInstructionsUnix.
