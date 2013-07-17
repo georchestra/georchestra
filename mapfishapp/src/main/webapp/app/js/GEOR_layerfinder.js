@@ -446,7 +446,8 @@ Ext.app.OWSUrlField = Ext.extend(Ext.form.TwinTriggerField, {
         this.cancelRequest();
 
         // trim raw value:
-        url = url || this.getRawValue();
+        url = (typeof(url) === "string") ?
+            url : this.getRawValue();
         url = url.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
         if (url.length < 1) {
             this.onTrigger1Click();
