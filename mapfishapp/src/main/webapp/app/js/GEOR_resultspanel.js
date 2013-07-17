@@ -227,17 +227,12 @@ GEOR.resultspanel = Ext.extend(Ext.Panel, (function() {
                 }, tbtext, '->', {
                     text: tr("Zoom"),
                     tooltip: tr("Zoom to results extent"),
-                    layerBounds: this.layerBounds,
-                    map: this.map,
-                    vectorLayer: this.vectorLayer,
                     handler: function(){
                         zoomToLayerExtent(layerBounds, map, vectorLayer);
                     }
                 },{
                     text: tr("CSV Export"),
                     tooltip: tr("Export results as CSV"),
-                    store: this.store,
-                    model: this.model,
                     handler: function() {
                     csvExportBtnHandler(store, model);            
                 }
@@ -270,9 +265,6 @@ GEOR.resultspanel = Ext.extend(Ext.Panel, (function() {
                     singleSelect: false,
                     selectControl: sfControl
                 }),
-                layerBounds: this.layerBounds,
-                vectorLayer: this.vectorLayer,
-                map: this.map,
                 frame: false,
                 border: false,
                 buttonAlign: 'left',
@@ -282,6 +274,8 @@ GEOR.resultspanel = Ext.extend(Ext.Panel, (function() {
                         zoomToFeatures({features:[store.getAt(rowIndex).get('feature')], vectorLayer:vectorLayer, map:map});
                     },
                     "beforedestroy": function() {
+                        vectorLayer.destroyFeatures();
+                        layerBounds = null;
                         this.selModel.unbind(); // required to handle issue 256
                         // http://applis-bretagne.fr/redmine/issues/show/256
                         // this deactivates Feature handler,
