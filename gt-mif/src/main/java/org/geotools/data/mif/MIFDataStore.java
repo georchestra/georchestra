@@ -23,10 +23,13 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.geotools.data.*;
+import org.geotools.data.DataAccessFactory.Param;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.geometry.BoundingBox;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
 /**
@@ -62,14 +65,14 @@ public class MIFDataStore extends AbstractDataStore {
     public static final String PARAM_GEOMTYPE = "geometryType";
     public static final String PARAM_SRID = "SRID";
 
-    // The path in which MIF/MIDs are being stored, or the single MIF file 
+    /** The path in which MIF/MIDs are being stored, or the single MIF file */ 
     private File filePath;
 
-    // The parameter maps to pass to MIFFile constructors
-    private HashMap params = null;
+    /** The parameter maps to pass to MIFFile constructors*/
+    private HashMap<Param,Object> params = null;
 
     // A map of MIFFileHolders, indexed by FeatureType name
-    private HashMap mifFileHolders = new HashMap();
+    private HashMap<String, MIFFileHolder> mifFileHolders = new HashMap<String, MIFFileHolder> ();
 
     /**
      * <p>
@@ -90,11 +93,10 @@ public class MIFDataStore extends AbstractDataStore {
      *
      * @see MIFFile#MIFFile(String, Map)
      */
-    public MIFDataStore(String path, HashMap params) throws IOException {
-        // TODO use url instead of String
+    public MIFDataStore(final String path, final HashMap<Param,Object> params) throws IOException {
         super(true); // Is writable
 
-        this.params = (params != null) ? params : new HashMap();
+        this.params = (params != null) ? params : new HashMap<Param,Object>();
 
         filePath = new File(String.valueOf(path));
 
@@ -156,6 +158,7 @@ public class MIFDataStore extends AbstractDataStore {
      * @throws IOException if init path is not a directory or a MIFFile object
      *         cannot be created
      */
+    @Override
     public void createSchema(SimpleFeatureType featureType) throws IOException {
         if (!filePath.isDirectory()) {
             throw new IOException(
@@ -165,8 +168,7 @@ public class MIFDataStore extends AbstractDataStore {
         try {
             File newFile = new File(filePath, featureType.getTypeName()
                     + ".mif");
-            MIFFile mf = new MIFFile(newFile.getAbsolutePath(), featureType,
-                    params);
+            MIFFile mf = new MIFFile(newFile.getAbsolutePath(), featureType, params);
             MIFFileHolder mfh = new MIFFileHolder(mf);
             mifFileHolders.put(mf.getSchema().getTypeName(), mfh);
         } catch (Exception e) {
@@ -184,15 +186,17 @@ public class MIFDataStore extends AbstractDataStore {
      *
      * @throws IOException Couldn't scan path for files
      */
-    public String[] getTypeNames() throws IOException {
+    @Override
+	public String[] getTypeNames() throws IOException {
         scanFiles(filePath); // re-scans path just in case some file was added
 
         String[] names = new String[mifFileHolders.size()];
         int index = 0;
-
-        for (Iterator i = mifFileHolders.keySet().iterator(); i.hasNext();)
+        
+        Iterator<String> i = mifFileHolders.keySet().iterator();
+        while (i.hasNext()){
             names[index++] = (String) i.next();
-
+        }
         return names;
     }
 
@@ -206,7 +210,8 @@ public class MIFDataStore extends AbstractDataStore {
      *
      * @throws IOException
      */
-    public SimpleFeatureType getSchema(String typeName) throws IOException {
+    @Override
+	public SimpleFeatureType getSchema(String typeName) throws IOException {
         return getMIFFile(typeName).getSchema();
     }
 
@@ -219,10 +224,19 @@ public class MIFDataStore extends AbstractDataStore {
      *
      * @throws IOException
      */
-    protected  FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(String typeName)
+    @Override
+	protected  FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(String typeName)
         throws IOException {
         return getMIFFile(typeName).getFeatureReader();
     }
+    
+    @Override
+    protected  FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(String typeName, Query query)
+    throws IOException
+    {
+      return getMIFFile(typeName).getFeatureReader( query);
+    }
+    
 
     /**
      * Gets a FeatureWriter from a MIFFile object
@@ -255,15 +269,26 @@ public class MIFDataStore extends AbstractDataStore {
 
     @Override
     protected ReferencedEnvelope getBounds(Query query) throws IOException {
-        FeatureSource<SimpleFeatureType,SimpleFeature> src = getFeatureSource(query.getTypeName());
-        FeatureIterator<SimpleFeature> features = src.getFeatures(query).features();
-        ReferencedEnvelope bounds = new ReferencedEnvelope(src.getSchema().getCoordinateReferenceSystem());
+    	
+        FeatureSource<SimpleFeatureType,SimpleFeature> fs = getFeatureSource(query.getTypeName());
+        FeatureIterator<SimpleFeature> iter = fs.getFeatures(query).features();
+        
+        ReferencedEnvelope bounds = null;
         try {
-            while(features.hasNext()) {
-                bounds.expandToInclude(new ReferencedEnvelope(features.next().getBounds()));
+            while(iter.hasNext()) {
+                SimpleFeature feature = iter.next();
+                
+				BoundingBox feautreBounds = feature.getBounds();
+				if(bounds == null){
+					CoordinateReferenceSystem crs = feature.getType().getCoordinateReferenceSystem();
+					bounds = new ReferencedEnvelope(crs);
+				} else {
+					bounds.expandToInclude(new ReferencedEnvelope(feautreBounds));
+				}
+				
             }
         } finally {
-            features.close();
+            iter.close();
         }
         return bounds;
     }

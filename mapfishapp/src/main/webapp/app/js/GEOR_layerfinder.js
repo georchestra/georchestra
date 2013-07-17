@@ -19,7 +19,8 @@
  * @include GEOR_cswbrowser.js
  * @include GEOR_LayerBrowser.js
  * @include GEOR_ows.js
- * @include OpenLayers/Strategy/BBOX.js
+ * @include OpenLayers/Strategy/Fixed.js
+ * @include GEOR_fileupload.js
  */
 
 Ext.namespace("GEOR");
@@ -39,7 +40,7 @@ GEOR.layerfinder = (function() {
     /**
      * Property: currentTab
      * {String} a local cache of the currently active tab
-     * (one of "cswquerier", "cswbrowser", "wms", "wfs")
+     * (one of "cswquerier", "cswbrowser", "wms", "wfs", "file")
      */
     var currentTab = "cswquerier";
 
@@ -52,7 +53,8 @@ GEOR.layerfinder = (function() {
         "cswbrowser": null,
         "wmts": null,
         "wms": null,
-        "wfs": null
+        "wfs": null,
+        "file": null
     };
 
     /**
@@ -64,7 +66,8 @@ GEOR.layerfinder = (function() {
         "cswbrowser": [],
         "wmts": [],
         "wms": [],
-        "wfs": []
+        "wfs": [],
+        "file": []
     };
 
     /**
@@ -107,6 +110,10 @@ GEOR.layerfinder = (function() {
         GEOR.cswquerier.events.on({
             "selectionchanged": selectionChangedListener.call(this, "cswquerier")
         });
+        GEOR.fileupload.events.on({
+            "selectionchanged": selectionChangedListener.call(this, "file")
+        });
+
 
         panels["cswquerier"] = GEOR.cswquerier.getPanel({
             tabTip: tr("Find layers searching in metadata")
@@ -196,21 +203,16 @@ GEOR.layerfinder = (function() {
                 storeOptions: Ext.apply({
                     layerOptions: function() {
 	                    return {
-                            // by default, we want our WFS vector layers
-                            // to be off, so that the browser is not overwhelmed
-                            // with too many features.
-                            // this gives a chance for the user to zoom in
-                            // before switching the layer on.
-	                        visibility: false,
+	                        visibility: true,
 	                        displayInLayerSwitcher: true,
-                            // we don't want to have too many features
-                            // => we load only what is needed for current
-                            // map extent
+                            styleMap: GEOR.util.getStyleMap(),
+                            rendererOptions: {
+                                zIndexing: true
+                            },
 	                        strategies: [
-                                new OpenLayers.Strategy.BBOX({
-                                    ratio: 1.2
-                                })
+                                new OpenLayers.Strategy.Fixed()
                             ]
+                            //,renderers: ["Canvas"] // in order to load many features
 	                    };
 	                },
                     protocolOptions: {
@@ -249,13 +251,21 @@ GEOR.layerfinder = (function() {
                 "selectionchanged": selectionChangedListener.call(this, "wfs")
             }
         });
+        panels["file"] = GEOR.fileupload.getPanel({
+            srs: mapSRS,
+            tabTip: tr("Add layers from local files")
+        });
 
         return new Ext.TabPanel({
             border: false,
             activeTab: 0,
             // required for WMS & WFS panels to have correct layout:
             deferredRender: true,
-            items: [panels["cswquerier"], panels["cswbrowser"], panels["wmts"], panels["wms"], panels["wfs"]],
+            items: [
+                panels["cswquerier"], panels["cswbrowser"], 
+                panels["wmts"], panels["wms"], panels["wfs"], 
+                panels["file"]
+            ],
             listeners: {
                 'tabchange': function (tp, p) {
                     switch (p) {
@@ -273,6 +283,9 @@ GEOR.layerfinder = (function() {
                         break;
                     case panels["wfs"]:
                         currentTab = "wfs";
+                        break;
+                    case panels["file"]:
+                        currentTab = "file";
                         break;
                     }
                     if (selectedRecords[currentTab].length>0) {
@@ -382,7 +395,9 @@ GEOR.layerfinder = (function() {
                     // WMS + WMTS layers just need cloning
                     // (well, for the moment - see http://applis-bretagne.fr/redmine/issues/1996)
                     recordsToAdd.push(record.clone());
-                } else {
+                } else if (layer.protocol) {
+                    // we are coming from the WFS tab
+
                     // WFS layers need cloning of protocol.format too ?
                     // "this.format is null" sur :
                     // this.format.geometryName = geometryName; (protocol.WFS.v1 L231)
@@ -406,6 +421,10 @@ GEOR.layerfinder = (function() {
                         },
                         scope: this
                     });
+                } else {
+                    // we have a vector layer without a protocol 
+                    // we are coming from the upload file tab
+                    layerStore.addSorted(record);
                 }
             } else if(record.get("layer_name")) {
                 // we're coming from the CSW tabs
@@ -471,6 +490,9 @@ GEOR.layerfinder = (function() {
                         break;
                     case "wfs":
                         panels["wfs"].clearSelection();
+                        break;
+                    case "file":
+                        GEOR.fileupload.clearSelection();
                         break;
                     default:
                         break;

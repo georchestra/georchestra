@@ -15,7 +15,7 @@
 /*
  * @include GEOR_config.js
  * @include GEOR_util.js
- * @include GeoExt/data/PrintProvider.js
+ * @requires GeoExt/data/PrintProvider.js
  * @include GeoExt/data/PrintPage.js
  * @include GeoExt/plugins/PrintPageField.js
  * @include GeoExt/plugins/PrintProviderField.js
@@ -451,3 +451,12 @@ GEOR.print = (function() {
         }
     };
 })();
+
+
+GeoExt.data.PrintProvider.prototype.encoders.legends["gx_vectorlegend"] = function(legend) {
+    var enc = this.encoders.legends.base.call(this, legend);
+    enc[0].classes.push({
+        name: ""
+    });
+    return enc;
+};

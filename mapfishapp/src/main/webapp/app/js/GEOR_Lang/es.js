@@ -23,6 +23,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Cancel": "Cancelar",
     "Save": "Guardar",
     "Loading...": "Cargando...",
+    "File": "Archivo",
     "Layer": "Capa",
     "Description": "Descripción",
     "Error": "Error",
@@ -121,6 +122,13 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Not any metadata correspond to the words specified":
         "Ningún metadato corresponde a los términos ingresados",
     /* GEOR_editing.js strings */
+    /* GEOR_fileupload.js strings */
+    "Local file": "Archivo local",
+    "The service is inactive": "El servicio esta deshabilitado",
+    "Upload a vectorial data file. The allowed formats are the following: ":
+        "Subir un archivo de datos vectoriales. Los formatos aceptados son los siguientes: ",
+    "<br/>Use ZIP compression for multifiles formats, such as SHP or MIF/MID.":
+        "<br/>Usar compresión ZIP para los formatos multiarchivos, como SHP or MIF/MID.",
     /* GEOR_geonames.js strings */
     /* GEOR_getfeatureinfo.js strings */
     "<div>Searching...</div>": "<div>Buscando...</div>",
@@ -128,6 +136,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
          "<div>Búsqueda de objetos activada sobre la capa ${NAME}. " +
          "Haga clic sobre el mapa.</div>",
     /* GEOR_layerfinder.js strings */
+    //"Add layers from local files": "", // TODO
     "Find layers searching in metadata":
         "Encontrar capas buscando en los metadatos",
     "Find layers from keywords": "Encontrar capas desde palabras clave",
@@ -193,6 +202,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Push down this layer": "Bajar esta capa",
     "Add layers": "Añadir capas",
     "source: ": "fuente: ",
+    "unknown": "desconocido",
     "Actions": "Acciones",
     /* GEOR_map.js strings */
     "Location map": "Mapa de ubicación",
@@ -386,7 +396,6 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Context restoring": "Restaurando el contexto",
     "<p>Please note that the WMC must be UTF-8 encoded</p>": "<p>OjO: el " +
         "archivo de contexto tiene que ser codificado en UTF-8.</p>",
-    "File": "Archivo",
     "Load": "Cargar",
     "Workspace": "Espacio de trabajo",
     "Save the map context": "Guardar el mapa",
