@@ -118,7 +118,7 @@ Ext.namespace("GEOR");
             GEOR.print.init(layerStore);
         }
         if (GEOR.getfeatureinfo) {
-            GEOR.getfeatureinfo.init(map);
+            GEOR.getfeatureinfo.init(layerStore);
         }
         if (GEOR.selectfeature) {
             GEOR.selectfeature.init(map);
@@ -183,14 +183,7 @@ Ext.namespace("GEOR");
                     tooltip: tr("Information on objects of all superposed layers pointed"),
                     listeners: {
                         "toggle": function(btn, pressed) {
-                            layerRecord = eastItems[0].getComponent(0).getChecked();
-                            for(var i = 0; i < layerRecord.length; i++){
-                                if(!(layerRecord[i].layer.queryable)){
-                                    delete layerRecord[i];
-                                    layerRecord.splice(i,1);								
-                                }               			
-                            }
-                            GEOR.getfeatureinfo.toggleX(layerRecord, pressed);
+                            GEOR.getfeatureinfo.toggleX(pressed);
                         }
             	    }
                 }
