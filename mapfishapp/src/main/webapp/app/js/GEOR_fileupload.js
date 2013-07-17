@@ -188,7 +188,7 @@ GEOR.fileupload = (function() {
             var fileFormatList, srs = options.srs;
             delete options.srs;
             try {
-                fileFormatList = JSON.parse(GEOR.config.FILE_FORMAT_LIST);
+                fileFormatList = GEOR.config.FILE_FORMAT_LIST;
                 fileFormatString = fileFormatList[0].toUpperCase();
                 for (var i = 1; i < fileFormatList.length; i++) {
                     fileFormatString += ", " + fileFormatList[i].toUpperCase();
