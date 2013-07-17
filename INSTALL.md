@@ -329,3 +329,14 @@ Keystore/Trustore
  
         sudo /etc/init.d/tomcat-tomcat1 restart
     
+
+
+GeoServer
+=========
+
+GeoServer uses the fonts available to the JVM for WMS styling.
+You may have to install the "core fonts for the web" on your server if you need them.
+
+	sudo apt-get install ttf-mscorefonts-installer
+
+Restart your geoserver tomcat and check on /geoserver/web/?wicket:bookmarkablePage=:org.geoserver.web.admin.JVMFontsPage that these are loaded.
