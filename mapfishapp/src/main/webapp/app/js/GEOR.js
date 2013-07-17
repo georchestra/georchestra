@@ -172,22 +172,6 @@ Ext.namespace("GEOR");
                 defaults: {
                     border:false
                 },
-                tbar:[
-                {
-                    xtype: 'button',
-                    //disabled: !(layerRecord.get("queryable")),
-                    iconCls: 'geor-btn-info',
-                    allowDepress: true,
-                    enableToggle: true,
-                    toggleGroup: 'map',
-                    tooltip: tr("Information on objects of all superposed layers pointed"),
-                    listeners: {
-                        "toggle": function(btn, pressed) {
-                            GEOR.getfeatureinfo.toggleX(pressed);
-                        }
-            	    }
-                }
-                ],
                 items: [
                     Ext.apply({
                         // nothing

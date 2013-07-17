@@ -126,6 +126,22 @@ GEOR.toolbar = (function() {
             disabled: true
         }));
 
+        items.push("-");
+        
+        items.push({
+            xtype: 'button',
+            iconCls: 'geor-btn-info',
+            allowDepress: true,
+            enableToggle: true,
+            toggleGroup: 'map',
+            tooltip: tr("Information on objects of all superposed layers pointed"),
+            listeners: {
+                "toggle": function(btn, pressed) {
+                    GEOR.getfeatureinfo.toggleX(pressed);
+                }
+            }
+        });
+
         // create a legend panel, it is used both for displaying
         // the legend in the interface and for inclusion if PDFs
         // created by the print module
