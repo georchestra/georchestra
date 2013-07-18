@@ -23,6 +23,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Cancel": "Cancelar",
     "Save": "Guardar",
     "Loading...": "Cargando...",
+    "File": "Archivo",
     "Layer": "Capa",
     "Description": "Descripción",
     "Error": "Error",
@@ -87,7 +88,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
         "(el límite es ${LIMIT}KBytes)<br />¿Desea continuar?",
     /* GEOR_config.js strings */
     /* GEOR_cswbrowser.js strings */
-    "NAME layer": "Capa ${name}",
+    "NAME layer": "Capa ${NAME}",
     "Metadata without a name": "Metadata sin nombre",
     "The getDomain CSW query failed": "La consulta CSW getDomain falló",
     "Error for the thesaurus": "Error para el tesauro",
@@ -103,11 +104,11 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     /* GEOR_cswquerier.js strings */
     "Show metadata sheet in a new window":
         "Mostrar la ficha de metadatos en una nueva ventana",
-    'more': 'más',
+    "more": "más",
     "Clic to select or deselect the layer":
         "Haga clic para seleccionar o deseleccionar la capa",
     "Open the URL url in a new window":
-        "Abrir la URL ${url} en una nueva ventana",
+        "Abrir la URL ${URL} en una nueva ventana",
     "Unreachable server": "El servidor no está disponible",
     "Catalogue": "Catálogo",
     "Find": "Buscar",
@@ -121,13 +122,20 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Not any metadata correspond to the words specified":
         "Ningún metadato corresponde a los términos ingresados",
     /* GEOR_editing.js strings */
+    /* GEOR_fileupload.js strings */
+    "Local file": "Archivo local",
+    "The service is inactive": "El servicio esta deshabilitado",
+    "Upload a vector data file.": "Subir un archivo de datos vectoriales.",
+    "The allowed formats are the following: ": "Los formatos aceptados son los siguientes: ",
+    "Use ZIP compression for multifiles formats, such as SHP or MIF/MID.": "Usar compresión ZIP para los formatos multiarchivos, como SHP or MIF/MID.",
     /* GEOR_geonames.js strings */
     /* GEOR_getfeatureinfo.js strings */
     "<div>Searching...</div>": "<div>Buscando...</div>",
     "<div>Search on objects active for NAME layer. Clic on the map.</div>":
-         "<div>Búsqueda de objetos activada sobre la capa ${name}. " +
+         "<div>Búsqueda de objetos activada sobre la capa ${NAME}. " +
          "Haga clic sobre el mapa.</div>",
     /* GEOR_layerfinder.js strings */
+    //"Add layers from local files": "", // TODO
     "Find layers searching in metadata":
         "Encontrar capas buscando en los metadatos",
     "Find layers from keywords": "Encontrar capas desde palabras clave",
@@ -136,22 +144,22 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Find layers querying WFS servers":
         "Encontrar capas interrogando servicios WFS",
     "layerfinder.layer.unavailable":
-        "La capa ${name} no pudo ser encontrada en el servicio WMS.<br/<br/>" +
+        "La capa ${NAME} no pudo ser encontrada en el servicio WMS.<br/<br/>" +
         "Tiene el derecho de acceder a esta capa ? " +
         "Quizás la capa no está disponible actualmente",
     "Layer projection is not compatible":
         "La proyección de la capa no es compatible.",
     "The NAME layer does not contain a valid geometry column":
-        "La capa ${name} no contiene una columna de geometría válida.",
+        "La capa ${NAME} no contiene una columna de geometría válida.",
     "Add": "Añadir",
     "Add layers from a ...": "Añadir capas desde un ...",
     "Malformed URL": "URL mal formada.",
     /* GEOR_managelayers.js strings */
     "Confirm NAME layer deletion ?":
-        "¿Confirma que se suprimirá la capa ${name}?",
-    "1:MAXSCALE to 1:MINSCALE": "1:${maxscale} a 1:${minscale}",
+        "¿Confirma que se suprimirá la capa ${NAME}?",
+    "1:MAXSCALE to 1:MINSCALE": "1:${MAXSCALE} a 1:${MINSCALE}",
     "Visibility range (indicative):<br />from TEXT":
-        "Rango de visibilidad (indicativo):<br />de ${text}",
+        "Rango de visibilidad (indicativo):<br />de ${TEXT}",
     "Information on objects of this layer":
         "Información sobre los objetos de esta capa",
     "Default style": "Estilo por omisión",
@@ -176,13 +184,14 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Push down this layer": "Bajar esta capa",
     "Add layers": "Añadir capas",
     "source: ": "fuente: ",
+    "unknown": "desconocido",
     "Actions": "Acciones",
     /* GEOR_map.js strings */
     "Location map": "Mapa de ubicación",
     "Warning after loading layer":
         "Advertencia después de cargar la capa",
     "The <b>NAME</b> layer could not appear for that reason: ":
-        "La capa <b>${name}</b> podría no aparecer por la siguiente razón: ",
+        "La capa <b>${NAME}</b> podría no aparecer por la siguiente razón: ",
     "Min/max visibility scales are invalid":
         "Las escalas min/max de visibilidad son invalidas.",
     "Visibility range does not match map scales":
@@ -194,7 +203,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "NB layers not imported": "${NB} capas no importadas",
     "One layer not imported": "Una capa no importada",
     "mapinit.layers.load.error":
-        "Las capas siguientes: ${list}, no se lograron cargar: " +
+        "Las capas siguientes: ${LIST}, no se lograron cargar: " +
         "SRS incompatible o la capa no existe",
     "NB layers imported": "${NB} capas importadas",
     "One layer imported": "Una capa importada",
@@ -207,7 +216,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "scale picker": "Escala",
     /* GEOR_ows.js strings */
     "The NAME layer was not found in WMS service.":
-        "La capa ${name} no se encuentra en el servicio WMS",
+        "La capa ${NAME} no se encuentra en el servicio WMS",
     /* GEOR_print.js strings */
     "Sources: ": "Fuentes: ",
     "Source: ": "Fuente: ",
@@ -218,16 +227,16 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
         "Contacte el administrador de la plataforma.",
     "Layer unavailable for printing": "La capa no está disponible para " +
         "imprimir",
-    "The NAME layer cannot be printed.": "La capa ${name} no puede imprimirse.",
+    "The NAME layer cannot be printed.": "La capa ${NAME} no puede imprimirse.",
     "Unable to print": "La impresión no está disponible",
     "The print server is currently unreachable":
         "El servicio de impresión está actualmente inaccesible.",
     "print.unknown.layout":
          "Error de configuración: DEFAULT_PRINT_LAYOUT " +
-         "${layout} no se encuentra en los formatos de impresión",
+         "${LAYOUT} no se encuentra en los formatos de impresión",
     "print.unknown.resolution":
          "Error de configuración: DEFAULT_PRINT_RESOLUTION " +
-         "${resolution} no se encuentra en las resoluciones de impresión",
+         "${RESOLUTION} no se encuentra en las resoluciones de impresión",
     "Title": "Título",
     "Minimap": "Mini-mapa",
     "North": "Norte",
@@ -243,7 +252,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     /* GEOR_querier.js strings */
     "Fields of filters with a red mark are mandatory": "Tiene que llenar " +
         "los campos de filtros con rojo.",
-    "Request on NAME": "Consultas sobre ${name}",
+    "Request on NAME": "Consultas sobre ${NAME}",
     "Search": "Búsqueda",
     "querier.layer.no.geom":
         "La capa no contiene ninguna columna geométrica." +
@@ -331,16 +340,16 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     /* GEOR_tools.js strings */
     "distance measure": "Medir una distancia",
     "area measure": "Medir un área",
-    //"Measure": "Mesure", // TODO
-    //"Tools": "Outils",
-    //"tools": "outils",
-    //"tool": "outil",
-    //"No tool": "aucun outil",
-    //"Manage tools": "Gérer les outils",
-    //"remember the selection": "se souvenir de la sélection",
-    //"Available tools:": "Outils disponibles :",
-    //"Clic to select or deselect the tool": "Cliquez pour (dé)sélectionner l'outil",
-    //"Could not load addon ADDONNAME": "Impossible de charger l'addon ${ADDONNAME}",
+    "Measure": "Medida",
+    "Tools": "Herramientas",
+    "tools": "herramientas",
+    "tool": "herramienta",
+    "No tool": "ninguna herramienta",
+    "Manage tools": "Manejar las herramientas",
+    "remember the selection": "acordarse de la selección",
+    "Available tools:": "Herramientas disponibles:",
+    "Clic to select or deselect the tool": "Haga clic para (de)seleccionar la herramienta",
+    "Could not load addon ADDONNAME": "No se pudo cargar el addon ${ADDONNAME}",
     /* GEOR_util.js strings */
     "Characters": "Caracteres",
     "Digital": "Digital",
@@ -386,7 +395,6 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Context restoring": "Restaurando el contexto",
     "<p>Please note that the WMC must be UTF-8 encoded</p>": "<p>OjO: el " +
         "archivo de contexto tiene que ser codificado en UTF-8.</p>",
-    "File": "Archivo",
     "Load": "Cargar",
     "Workspace": "Espacio de trabajo",
     "Save the map context": "Guardar el mapa",
@@ -405,7 +413,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     /* GEOR_EditingPanel.js */
     "Read-only layer": "Esta capa no se puede editar",
     "editingpanel.geom.error": "La geometría de esta capa es de tipo " +
-        "${type}.<br/>Sólo se puede editar las geometrías de tipo punto, " +
+        "${TYPE}.<br/>Sólo se puede editar las geometrías de tipo punto, " +
         "línea y polígono (y multi-*).",
     "choose a layer": "elija una capa",
     /* GEOR_LayerEditingPanel.js */
@@ -414,7 +422,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Enter ": "Entrar ",
     "layereditingpanel.cancel.confirm": "Confirma la cancelación de todas " +
         "las modificación<br />desde la última sincronización ?",
-    "Synchronize": 'Sincronizar',
+    "Synchronize": "Sincronizar",
     "layereditingpanel.changes.confirm": "Confirmar o cancelar las " +
         "modificaciones en curso.",
     "Delete": "Quitar",

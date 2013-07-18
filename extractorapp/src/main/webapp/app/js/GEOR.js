@@ -149,7 +149,7 @@ Ext.namespace("GEOR");
                 xtype: "box",
                 id: "geor_header",
                 region: "north",
-                height: 90,
+                height: GEOR.config.HEADER_HEIGHT,
                 el: "go_head"
             }] : [];
 

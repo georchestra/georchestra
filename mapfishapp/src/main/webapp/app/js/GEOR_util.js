@@ -14,6 +14,7 @@
 
 /*
  * @include GEOR_config.js
+ * @include OpenLayers/Util.js
  */
  
 Ext.namespace("GEOR");
@@ -273,6 +274,32 @@ GEOR.util = (function() {
         },
 
         /**
+         * APIMethod: splitURL
+         *
+         * Parameters:
+         * url - {String} full url string
+         *
+         * Returns:
+         * {Object} with keys: 
+         *    - serviceURL - the full service URL without any parameter
+         *    - params - an object with uppercased keys for each GET parameter
+         */
+        splitURL: function(url) {
+            var o = OpenLayers.Util.createUrlObject(url,
+                {ignorePort80: true}
+            );
+            var u = o.protocol + "//" +  o.host;
+            if (o.port) {
+                u += ":" + o.port;
+            }
+            u += o.pathname;
+            return {
+                serviceURL: u,
+                params: OpenLayers.Util.upperCaseObject(o.args)
+            };
+        },
+
+        /**
          * APIMethod: isNumericType
          *
          * Parameters:
@@ -332,6 +359,41 @@ GEOR.util = (function() {
                 );
             }
             return tplAttribute;
+        },
+
+        /**
+         * Method: getStyleMap
+         * Returns the standardized StyleMap
+         *
+         * Parameters:
+         * override - {Object} optional hash with properties "default", "select"
+         *
+         * Returns:
+         * {OpenLayers.StyleMap}
+         */
+        getStyleMap: function(override) {
+            override = override || {};
+            var defStyle = OpenLayers.Util.extend({},
+                OpenLayers.Feature.Vector.style['default']);
+            var selStyle = OpenLayers.Util.extend({},
+                OpenLayers.Feature.Vector.style['select']);
+            return new OpenLayers.StyleMap({
+                "default": new OpenLayers.Style(
+                    Ext.apply(defStyle, Ext.apply({
+                        cursor: "pointer",
+                        fillOpacity: 0.1,
+                        strokeWidth: 3
+                    }, override["default"] || {}))
+                ),
+                "select": new OpenLayers.Style(
+                    Ext.apply(selStyle, Ext.apply({
+                        cursor: "pointer",
+                        strokeWidth: 3,
+                        fillOpacity: 0.1,
+                        graphicZIndex: 1000
+                    }, override["select"] || {}))
+                )
+            });
         },
 
         /**

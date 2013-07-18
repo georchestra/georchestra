@@ -121,7 +121,7 @@ GEOR.Editing.EditingPanel = Ext.extend(Ext.Panel, {
                                 GEOR.util.infoDialog({
                                     title: OpenLayers.i18n("Read-only layer"),
                                     msg: OpenLayers.i18n("editingpanel.geom.error", {
-                                        'type': type.type
+                                        'TYPE': type.type
                                     })
                                 });
                             } else {

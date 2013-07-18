@@ -25,19 +25,19 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Which data are you searching for ?": "Quelles données cherchez vous ?",
     "On which area ?": "Sur quel territoire ?",
     "When ?": "Quand ?",
-    'clean': 'effacer',
-    'search': 'chercher',
+    "clean": "effacer",
+    "search": "chercher",
     "various.results": "${RESULTS} fiches sélectionnées",
     "one.result": "1 fiche sélectionnée",
     /* GEOR_dataview.js strings */
-    'View WMS layer': "<b>Visualiser</b> la couche WMS <b>${NAME}</b>",
-    'Download WMS layer': "<b>Télécharger</b> la couche WMS <b>${NAME}</b>",
-    'View WMS service': "<b>Visualiser</b> le service WMS <b>${NAME}</b>",
-    'Download WMS service': "<b>Télécharger</b> le service WMS <b>${NAME}</b>",
-    'Download data': "Télécharger la donnée ${NAME}",
-    'zoom': 'zoom',
-    'record': 'fiche',
-    'Keywords: ': 'Mots clés : ',
+    "View WMS layer": "<b>Visualiser</b> la couche WMS <b>${NAME}</b>",
+    "Download WMS layer": "<b>Télécharger</b> la couche WMS <b>${NAME}</b>",
+    "View WMS service": "<b>Visualiser</b> le service WMS <b>${NAME}</b>",
+    "Download WMS service": "<b>Télécharger</b> le service WMS <b>${NAME}</b>",
+    "Download data": "Télécharger la donnée ${NAME}",
+    "zoom": "zoom",
+    "record": "fiche",
+    "Keywords: ": "Mots clés : ",
     "Server NAME": "Serveur ${NAME}",
     "Oops, a problem occured.": "Oops, il y a eu un problème.",
     /* GEOR_nav.js strings */
@@ -49,6 +49,6 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Results N1 to N2 of N": "Résultats ${N1} à ${N2} sur ${N}",
     "Result N1 to N2 of N": "Résultat ${N1} à ${N2} sur ${N}",
     /* GEOR_what.js strings */
-    'enter one or more keywords': 'saisissez un ou plusieurs mots clés'
+    "enter one or more keywords": "saisissez un ou plusieurs mots clés"
     // no trailing comma
 });

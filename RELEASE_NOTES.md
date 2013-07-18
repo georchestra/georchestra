@@ -1,7 +1,42 @@
+Version 13.06
+=============
+
+This release was supported by the French GeoPicardie, GeoBretagne and CIGALsace projects, the GIP ATGeRi and individual contributors.
+
+New features:
+ * geoserver: updated to 2.3.2,
+ * geoserver: patched to include ScaleHint (WMS 1.1.x) and Min/MaxScaleDenominator (WMS 1.3.0) in the capabilities documents, according to the default layer SLD. The patched was accepted in GeoServer master, see http://jira.codehaus.org/browse/GEOS-572
+
+Enhancements:
+ * the header is now part of the static module, and all webapps make use of it. As a result, requests to static pass through the security-proxy,
+ * the header height can be set across all applications by the way of a unique shared maven filter,
+ * mapfishapp: the CSW querier filters results on type = dataset OR series,
+ * extractorapp: supported output formats combos made configurable, ECW output format expunged by default,
+ * the template config was slimmed down: files where default values are suitable for most deployments were moved to config/defaults,
+ * the documentation was improved ([mapfishapp](https://github.com/georchestra/georchestra/blob/master/mapfishapp/README.md#feature-editor), [install](https://github.com/georchestra/georchestra/blob/master/INSTALL.md), [manage configs](https://github.com/georchestra/georchestra/blob/master/README.md#how-to-customize-)),
+ * we now have CI on JS files syntax with Travis !
+
+Bug fixes:
+ * fixed the ability to turn off the downloadform with shared.downloadform.activated,
+ * mapfishapp: referentials search now sends the map srs in the WFS query to allow feature reprojection,
+ * mapfishapp: fixed incorrect thumbnail URLs in CSW querier,
+ * mapfishapp: fixed misaligned thumbnail in CSW querier,
+ * mapfishapp: fixed window + grid problems on service opening, see [issue 109](https://github.com/georchestra/georchestra/issues/109),
+ * mapfishapp: fixed error in GEOR.ows.hydrateLayerRecord when falling back to main service,
+ * mapfishapp: fixed links to MD sheet, see [issue 110](https://github.com/georchestra/georchestra/issues/110),
+ * mapfishapp: fixed broken legend after styling, see [issue 107](https://github.com/georchestra/georchestra/issues/107),
+ * mapfishapp: more robust handling of incoming WMS server URLs (eg: those with a mapfile GET parameter),
+ * geonetwork: fixed ldap attribute mapping.
+ 
+UPGRADING:
+ * mapfishapp's default thesaurus has been set to local.theme.test, which is the only one exported by GeoNetwork by default. Feel free to customize to suit your needs,
+ * geonetwork upgrade instructions are available [here](https://github.com/georchestra/geonetwork/blob/georchestra-29/README.md).
+
+
 Version 13.02
 =============
 
-This new release was made possible thanks to support from the French GIP ATGeRi (http://cartogip.fr/) and contributors.
+This release was made possible thanks to support from the French GIP ATGeRi (http://cartogip.fr/) and contributors.
 
 New features:
  * geoserver: updated to 2.3.0, see http://blog.geoserver.org/2013/03/18/geoserver-2-3-0-released-first-official-osgeo-release/

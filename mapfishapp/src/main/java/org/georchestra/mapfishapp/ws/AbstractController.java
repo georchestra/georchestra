@@ -7,6 +7,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.georchestra.mapfishapp.ws.UpLoadGeoFileController;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,6 +47,8 @@ public class AbstractController {
             radius = null;
         }
         model.put("radius", radius);
+        UpLoadGeoFileController controller = new UpLoadGeoFileController();
+        model.put("fileFormatList", controller.fileFormatListToJSON());
         model.put("debug", Boolean.parseBoolean(request.getParameter("debug")));
     
         return model;
@@ -79,8 +83,8 @@ public class AbstractController {
             if (jsonLayers == null) {
                 jsonLayers = jsonServices;
             } else {
-                jsonLayers = new JSONArray(jsonLayers.toString(1).replaceAll("layername", "name").replaceAll("WMS", "WMSLayer"));
-                
+                jsonLayers = new JSONArray(jsonLayers.toString(1).replaceAll("layername", "name").replaceAll("\"WMS\"", "\"WMSLayer\""));
+
                 if(jsonServices!=null) {
                     jsonServices = new JSONArray(jsonServices.toString(1).replaceAll("text", "name"));
                     for (int i = 0; i < jsonServices.length(); i++) {
@@ -109,6 +113,8 @@ public class AbstractController {
             radius = null;
         }
         model.put("radius", radius);
+        UpLoadGeoFileController controller = new UpLoadGeoFileController();
+        model.put("fileFormatList", controller.fileFormatListToJSON());
         model.put("data", data);
     
         return model;

@@ -184,6 +184,9 @@ if(sec_roles != null) {
         GEOR.config.CUSTOM_CENTER = "${c.lon},${c.lat}";
         GEOR.config.CUSTOM_RADIUS = "${c.radius}";
 
+        // formats managed by server for file upload
+        GEOR.config.FILE_FORMAT_LIST = ${c.fileFormatList};
+
         // lang
         GEOR.config.LANG = '<%= lang %>';
     
