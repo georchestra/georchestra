@@ -1,5 +1,5 @@
 <div class="btn-group">
-  <a class="groups btn dropdown-toggle" ng-class="{hide: selectedUsers().length == 0}" data-toggle="dropdown">
+  <a class="groups btn dropdown-toggle" ng-click="initGroups()" ng-class="{hide: selectedUsers().length == 0}" data-toggle="dropdown">
     <i class="icon-th-list"></i>
     Groups
     <span class="caret"></span>
@@ -7,7 +7,7 @@
   <ul class="dropdown-menu groups">
     <li class="noclose" ng-repeat="group in user_groups">
       <a href="javascript:void(0);" ng-click="selectGroup(group)">
-        <i ng-class="{'icon-ok': hasUsers(group) == 'all', 'icon-minus': hasUsers(group) == 'some'}"></i>
+        <i ng-class="{'icon-ok': group.hasUsers == 'all', 'icon-minus': group.hasUsers == 'some'}"></i>
         {{group.name}}
       </a>
     </li>

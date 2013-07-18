@@ -29,9 +29,8 @@ angular.module('ldapadmin.controllers', [])
 
     $scope.selectedUsers = {};
 
-    // A copy of list of groups (w/ information on whether the user is part
-    // of this group or not
-    $scope.user_groups = angular.copy($scope.groups);
+    // Initials values. Helps to check modifications.
+    var original_groups;
 
     $scope.selectedUsers = function() {
       var filter = {selected: true};
@@ -41,7 +40,7 @@ angular.module('ldapadmin.controllers', [])
       }
       return $filter('filter')($scope.users, filter);
     };
-    $scope.hasUsers = function(group) {
+    function hasUsers(group) {
       var total = $scope.selectedUsers().length;
       var inGroup = _.filter($scope.selectedUsers(), function(user) {
         return user.groups.indexOf(group.name) != -1;
@@ -50,6 +49,26 @@ angular.module('ldapadmin.controllers', [])
         return false;
       }
       return inGroup.length == total ? 'all' : 'some';
+    }
+    $scope.selectGroup = function(group) {
+      if (!group.hasUsers || group.hasUsers == 'some') {
+        group.hasUsers = 'all';
+      } else if (group.hasUsers == 'all') {
+        group.hasUsers = false;
+      }
+      // check whether the list of groups changed
+      $scope.groupsChanged = !angular.equals(original_groups, $scope.user_groups);
+    };
+
+    // we wan't to initialize groups when the groups button is clicked
+    $scope.initGroups = function() {
+      // A copy of list of groups (w/ information on whether the user is part
+      // of this group or not
+      $scope.user_groups = angular.copy($scope.groups);
+      angular.forEach($scope.user_groups, function(group, key) {
+        group.hasUsers = hasUsers(group);
+      });
+      original_groups = angular.copy($scope.user_groups);
     };
   })
 
