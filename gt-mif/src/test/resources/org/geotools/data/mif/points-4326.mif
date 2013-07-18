@@ -1,0 +1,12 @@
+Version 300
+Charset "Neutral"
+Delimiter ","
+CoordSys Earth Projection 1, 104
+Columns 1
+  id Integer
+Data
+
+Point -0.50545905707196 0.539330024813896
+    Symbol (35,0,12)
+Point 0.101612903225806 0.482009925558313
+    Symbol (35,0,12)

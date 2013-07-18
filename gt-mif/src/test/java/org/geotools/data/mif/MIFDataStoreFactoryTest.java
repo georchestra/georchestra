@@ -21,6 +21,7 @@ import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -40,7 +41,7 @@ public class MIFDataStoreFactoryTest extends MIFDataStoreFactory {
 	public void readFeatures() throws Exception{
 
 		
-		URL url= getClass().getResource("regions_two.mif");  
+		URL url= this.getClass().getResource("points-4326.mif");  
 		String file = url.toURI().getPath();
 
 		HashMap<String, Serializable> params = new HashMap<String, Serializable>();
@@ -48,7 +49,7 @@ public class MIFDataStoreFactoryTest extends MIFDataStoreFactory {
 
 		MIFDataStoreFactory storeFactory = new MIFDataStoreFactory();
 		DataStore store = storeFactory.createDataStore(params);
-		SimpleFeatureType type = store.getSchema("regions_two");
+		SimpleFeatureType type = store.getSchema("points-4326");
 		assertNotNull( type.getCoordinateReferenceSystem() ) ;
 
 		SimpleFeatureSource featureSource = store.getFeatureSource(type.getTypeName());
@@ -59,7 +60,7 @@ public class MIFDataStoreFactoryTest extends MIFDataStoreFactory {
 		assertNotNull(features);
 	}
 	
-	@Test
+	@Ignore
 	public void crsNotFound() throws URISyntaxException {
 
 		final String layerName = "SBB-NETZ-12-res20_line-train_120919";
@@ -88,7 +89,7 @@ public class MIFDataStoreFactoryTest extends MIFDataStoreFactory {
 	@Test
 	public void retrieveFeaturesUsingBaseCRS() throws Exception{
 		
-		SimpleFeatureCollection fc = retrieveFeature("regions_two");
+		SimpleFeatureCollection fc = retrieveFeature("points-4326");
 		
 		Integer epsgCode = CRS.lookupEpsgCode(fc.getSchema().getCoordinateReferenceSystem(), true);
 		
@@ -104,7 +105,7 @@ public class MIFDataStoreFactoryTest extends MIFDataStoreFactory {
 		
 		final int epsgCode = 2154;
 		CoordinateReferenceSystem crs = CRS.decode("EPSG:" + epsgCode);
-		SimpleFeatureCollection fc = retrieveFeature("regions_two", crs);
+		SimpleFeatureCollection fc = retrieveFeature("points-4326", crs);
 		
 		assertFeatureCollection(fc, 2, epsgCode ); 
 	}
@@ -119,7 +120,7 @@ public class MIFDataStoreFactoryTest extends MIFDataStoreFactory {
 	@Test
 	public void getBounds() throws Exception{
 		
-		SimpleFeatureCollection fc = retrieveFeature("regions_two");
+		SimpleFeatureCollection fc = retrieveFeature("points-4326");
 		ReferencedEnvelope bounds = fc.getBounds();
 		
 		assertNotNull(bounds);
@@ -139,7 +140,7 @@ public class MIFDataStoreFactoryTest extends MIFDataStoreFactory {
 		final int targetCRS = 2154;
 		
 		CoordinateReferenceSystem crs = CRS.decode("EPSG:" + targetCRS);
-		SimpleFeatureCollection fc = retrieveFeature("regions_two", crs);
+		SimpleFeatureCollection fc = retrieveFeature("points-4326", crs);
 
 		ReferencedEnvelope bounds = fc.getBounds();
 		Integer epsgCode = CRS.lookupEpsgCode( bounds.getCoordinateReferenceSystem(), true );
