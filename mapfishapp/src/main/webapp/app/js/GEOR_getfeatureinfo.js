@@ -155,15 +155,6 @@ GEOR.getfeatureinfo = (function() {
         // to let OL use its own cursor class:
         OpenLayers.Element.removeClass(map.viewPortDiv, "olDrawBox");
 
-        var layers = [];
-        for(var i = 0; i < layerStore.data.length; i++) {
-            var layerRecord = layerStore.getAt(i);
-            if(layerRecord.get("queryable") && layerRecord.getLayer().visibility == true) {
-                layers.push(layerRecord.getLayer());
-            }
-        }
-        ctrl.layers = layers;
-
         observable.fireEvent("search", {
             html: tr("<div>Searching...</div>")
         });
@@ -323,6 +314,7 @@ GEOR.getfeatureinfo = (function() {
         //copy of the function toggle in order to query several layers at once
         toggleX: function(state) {
             var layers = [];
+            Xsearch = true;
             for(var i = 0; i < layerStore.data.length; i++) {
                 var layerRecord = layerStore.getAt(i);
                 if(layerRecord.get("queryable") && layerRecord.getLayer().visibility == true) {
