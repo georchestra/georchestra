@@ -88,5 +88,5 @@ class RESTView(object):
 
 def getUserById(id):
     for ndx, i in enumerate(_users):
-        if str(i['id']) == id:
+        if str(i['id']) == str(id):
             return i

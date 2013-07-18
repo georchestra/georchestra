@@ -21,16 +21,13 @@ angular.module('ldapadmin.controllers', [])
   /**
    * Users List
    */
-  .controller('UsersListCtrl', function($scope, $rootScope, $routeParams, $filter) {
+  .controller('UsersListCtrl', function($scope, $rootScope, $routeParams, $filter, Restangular, flash) {
     //$scope.users is inherited from UsersCtrl's scope
     var group = $routeParams.group;
     $scope.groupFilter = group ? {groups: group} : null;
     $rootScope.selectedGroup = group;
 
     $scope.selectedUsers = {};
-
-    // Initials values. Helps to check modifications.
-    var original_groups;
 
     $scope.selectedUsers = function() {
       var filter = {selected: true};
@@ -57,7 +54,7 @@ angular.module('ldapadmin.controllers', [])
         group.hasUsers = false;
       }
       // check whether the list of groups changed
-      $scope.groupsChanged = !angular.equals(original_groups, $scope.user_groups);
+      $scope.groupsChanged = !angular.equals($scope.original_groups, $scope.user_groups);
     };
 
     // we wan't to initialize groups when the groups button is clicked
@@ -68,7 +65,12 @@ angular.module('ldapadmin.controllers', [])
       angular.forEach($scope.user_groups, function(group, key) {
         group.hasUsers = hasUsers(group);
       });
-      original_groups = angular.copy($scope.user_groups);
+      $scope.original_groups = angular.copy($scope.user_groups);
+    };
+
+    // called when user submits modifications on groups list for a user
+    $scope.apply = function() {
+      postGroups($scope, $scope.selectedUsers(), Restangular, flash);
     };
   })
 
@@ -80,15 +82,6 @@ angular.module('ldapadmin.controllers', [])
     user.get().then(function(remote) {
       $scope.user = Restangular.copy(remote);
 
-      // A copy of list of groups (w/ information on whether the user is part
-      // of this group or not
-      $scope.user_groups = angular.copy($scope.groups);
-      $.each($scope.user_groups, function(index, value) {
-        $scope.user_groups[index].hasUser = _.contains($scope.user.groups, value.name);
-      });
-
-      // Initials values. Helps to check modifications.
-      var original_groups = angular.copy($scope.user_groups);
       $scope.groupsChanged = false;
 
       $scope.save = function() {
@@ -121,61 +114,30 @@ angular.module('ldapadmin.controllers', [])
         return angular.equals(remote, $scope.user);
       };
       $scope.selectGroup = function(group) {
-        group.hasUser = !group.hasUser;
+        group.hasUsers = !group.hasUsers;
         // check whether the list of groups changed
-        $scope.groupsChanged = !angular.equals(original_groups, $scope.user_groups);
+        $scope.groupsChanged = !angular.equals($scope.original_groups, $scope.user_groups);
+      };
+      // we wan't to initialize groups when the groups button is clicked
+      $scope.initGroups = function() {
+        // A copy of list of groups (w/ information on whether the user is part
+        // of this group or not
+        $scope.user_groups = angular.copy($scope.groups);
+        angular.forEach($scope.user_groups, function(group, key) {
+          group.hasUsers = _.contains($scope.user.groups, group.name);
+        });
+        $scope.original_groups = angular.copy($scope.user_groups);
+        $scope.groupsChanged = false;
       };
 
       // called when user submits modifications on groups list for a user
       $scope.apply = function() {
-        var i,
-            len = $scope.user_groups.length,
-            toPut = [],
-            toDelete = [];
-
-        // get the list of groups to put or delete for user
-        for (i=0; i < len; i++) {
-          var g = $scope.user_groups[i],
-              og = original_groups[i];
-
-          if (g.hasUser != og.hasUser) {
-            if (g.hasUser === true) {
-              toPut.push(g.name);
-            } else {
-              toDelete.push(g.name);
-            }
+        postGroups($scope, $scope.user, Restangular, flash, function() {
+          var index = findByAttr($scope.users, 'id', $routeParams.userId);
+          if (index !== false) {
+            $scope.users[index] = $scope.user;
           }
-        }
-
-        var body = {
-          "users": [$routeParams.userId],
-          "PUT": toPut,
-          "DELETE": toDelete
-        };
-
-        Restangular.all('groups_users').post(body).then(
-          function() {
-            // modifications made server-side. Let's update the client
-            var index = findByAttr($scope.users, 'id', $routeParams.userId);
-
-            if (index !== false) {
-              // add the groups
-              $scope.user.groups = _.union($scope.user.groups, toPut);
-              // remove the groups
-              $scope.user.groups = _.difference($scope.user.groups, toDelete);
-
-              $scope.users[index] = $scope.user;
-              // Let's modified the initial values as well. Helps to know if
-              // values changed.
-              original_groups = angular.copy($scope.user_groups);
-              $scope.groupsChanged = false;
-            }
-            flash.success = 'Modified successfully';
-          },
-          function errorCallback() {
-            flash.error = 'Oops error from server :(';
-          }
-        );
+        });
       };
     });
   })
@@ -204,6 +166,54 @@ function findByAttr(collection, attribute, value) {
     }
   }
   return false;
+}
+
+function postGroups($scope, users, Restangular, flash, callback) {
+  var i,
+      len = $scope.user_groups.length,
+      toPut = [],
+      toDelete = [];
+  users = _.isArray(users) ? users : [users];
+
+  // get the list of groups to put or delete for user
+  for (i=0; i < len; i++) {
+    var g = $scope.user_groups[i],
+        og = $scope.original_groups[i];
+
+    if (g.hasUsers != og.hasUsers) {
+      if (g.hasUsers === 'all' || g.hasUsers === true) {
+        toPut.push(g.name);
+      } else if (g.hasUsers === false){
+        toDelete.push(g.name);
+      }
+      // 'some' shouldn't be possible here
+    }
+  }
+
+  var body = {
+    "users": _.pluck(users, 'id'),
+    "PUT": toPut,
+    "DELETE": toDelete
+  };
+
+  Restangular.all('groups_users').post(body).then(
+    function() {
+      angular.forEach(users, function(user) {
+        // add the groups
+        user.groups = _.union(user.groups, toPut);
+        // remove the groups
+        user.groups = _.difference(user.groups, toDelete);
+      });
+      flash.success = 'Modified successfully';
+
+      if (callback) {
+        callback.call();
+      }
+    },
+    function errorCallback() {
+      flash.error = 'Oops error from server :(';
+    }
+  );
 }
 
 $(document)
