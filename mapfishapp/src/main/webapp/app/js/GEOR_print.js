@@ -117,6 +117,35 @@ GEOR.print = (function() {
     };
 
     /**
+     * Method: getProjection
+     * Creates a string with the projection name
+     *
+     * Parameters:
+     * layerStore - {GeoExt.data.LayerStore} The application's layer store.
+     *
+     * Returns:
+     * {String} The projection string
+     */
+    var getProjection = function() {
+        var epsg = layerStore.map.getProjection();
+        proj = Proj4js.defs[epsg];
+        if (!proj) {
+            return '';
+        }
+        s = '';
+        Ext.each(proj.split('+'), function(r){
+            c = r.split("title=");
+            if (c.length > 1) {
+                s = c[1].replace(/,/g,'').trim();
+            }
+        });
+        if (!s) {
+            return '';
+        }
+        return tr("Projection: PROJ", {'PROJ': s});
+    };
+
+    /**
      * Method: initialize
      *
      * Initialize the print module.
@@ -270,6 +299,12 @@ GEOR.print = (function() {
                             printPage: printPage
                         })
                     }, {
+                        xtype: 'hidden',
+                        name: 'projection',
+                        plugins: new GeoExt.plugins.PrintPageField({
+                            printPage: printPage
+                        })
+                    }, {
                         xtype: 'checkbox',
                         fieldLabel: tr("Minimap"),
                         name: 'showOverview',
@@ -386,6 +421,7 @@ GEOR.print = (function() {
                     iconCls: 'mf-print-action',
                     handler: function() {
                         printPage.customParams.copyright = getLayerSources();
+                        printPage.customParams.projection = getProjection();
                         printPage.fit(layerStore.map, false);
                         printProvider.print(layerStore.map, printPage, {
                             legend: legendPanel

@@ -73,6 +73,7 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
     "The NAME layer was not found in WMS service.":
         "The ${NAME} layer was not found in WMS service.",
     /* GEOR_print.js strings */
+    "Projection: PROJ": "Projection: ${PROJ}",
     "The NAME layer cannot be printed.":
         "The ${NAME} layer cannot be printed.",
     "print.unknown.layout":

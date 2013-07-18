@@ -222,6 +222,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     /* GEOR_print.js strings */
     "Sources: ": "Fuentes: ",
     "Source: ": "Fuente: ",
+    "Projection: PROJ": "Proyección: ${PROJ}",
     "Print error": "Error de impresión",
     "Print server returned an error":
         "El servicio de impresión señaló un error.",
