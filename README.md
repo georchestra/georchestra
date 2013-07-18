@@ -27,7 +27,7 @@ First, install the required packages:
 
 Notes: 
  * openjdk-6-jdk works too 
- * GeoServer is known to perform better with Oracle JDK
+ * GeoServer is [known](http://research.geodan.nl/2012/10/openjdk7-vs-oracle-jdk7-with-geoserver/) to perform better with Oracle JDK.
 
 Then:
 
