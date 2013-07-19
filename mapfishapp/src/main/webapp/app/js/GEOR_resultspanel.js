@@ -383,26 +383,6 @@ GEOR.resultspanel = Ext.extend(Ext.Panel, (function() {
         },
 
         /**
-         * APIMethod: show
-         * This method makes the vector layer visible.
-         */
-        /*show: function() {
-              if (vectorLayer) {
-                  vectorLayer.setVisibility(true);
-              }
-          },*/
-
-        /**
-         * APIMethod: hide
-         * This method makes the vector layer invisible.
-         */
-        /*hide: function() {
-              if (vectorLayer) {
-                  vectorLayer.setVisibility(false);
-              }
-          },*/
-
-        /**
          * APIMethod: clean
          * This method destroy the features in the vector layer.
          *

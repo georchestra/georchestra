@@ -236,12 +236,9 @@ Ext.namespace("GEOR");
                     if(southPanel.getActiveTab()){
                         southPanel.getActiveTab().doLayout();
                         if(southPanel.getActiveTab().id == 'addPanel'){
-                            if(southPanel.items.length > 0){
-                                southPanel.remove(Ext.getCmp('addPanel'));
-                            }                        
-                            var tab = southPanel.add(new GEOR.resultspanel({html: tr("resultspanel.emptytext")}));						
+                            var tab = new GEOR.resultspanel({html: tr("resultspanel.emptytext")});
+                            southPanel.insert(southPanel.items.length-1,tab);
                             southPanel.setActiveTab(tab);
-                            southPanel.insert(southPanel.items.length,{id: 'addPanel', title: '+'});
                             southPanel.doLayout();
                         }
                         for(var i = 0; i < southPanel.items.length-1; i++){
@@ -395,15 +392,15 @@ Ext.namespace("GEOR");
                 "searchXresults": function(options) {
                     southPanel.getActiveTab().populate({features: options.features[0], model: options.model[0]});					 	  
                     southPanel.getActiveTab().setTitle(options.title[0]);
-                    southPanel.remove('addPanel');
                         for(var i = 1; i < options.features.length; i++){
-                            var tab =southPanel.add(new GEOR.resultspanel({html: tr("resultspanel.emptytext")}));						
+                            var tab = new GEOR.resultspanel({html: tr("resultspanel.emptytext")});
+                            southPanel.insert(southPanel.items.length-1,tab);
                             southPanel.setActiveTab(tab);
                             southPanel.getActiveTab().init(map);
                             southPanel.getActiveTab().populate({features: options.features[i], model: options.model[i]});					 	  
                             southPanel.getActiveTab().setTitle(options.title[i]);
+                            southPanel.doLayout();						
                         }                
-                    southPanel.insert(southPanel.items.length,{id: 'addPanel', title: '+'});
                 },
                 "shutdown": function() {
                     southPanel.collapse();
