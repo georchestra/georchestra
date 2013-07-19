@@ -644,6 +644,8 @@ GEOR.config = (function() {
             // A4 allowed for everyone:
             'A4 landscape': [],
             'A4 portrait': [],
+            'Letter landscape': [],
+            'Letter portrait': [],
             // A3 not allowed for unconnected users (guests):
             'A3 landscape': ['ROLE_SV_USER', 'ROLE_SV_REVIEWER', 'ROLE_SV_EDITOR', 'ROLE_SV_ADMIN'],
             'A3 portrait': ['ROLE_SV_USER', 'ROLE_SV_REVIEWER', 'ROLE_SV_EDITOR', 'ROLE_SV_ADMIN']
