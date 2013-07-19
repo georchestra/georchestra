@@ -27,7 +27,7 @@ angular.module('ldapadmin.controllers', [])
     $scope.groupFilter = group ? {groups: group} : null;
     $rootScope.selectedGroup = group;
 
-    $scope.selectedUsers = {};
+    $scope.allSelected = false;
 
     $scope.selectedUsers = function() {
       var filter = {selected: true};
@@ -37,6 +37,27 @@ angular.module('ldapadmin.controllers', [])
       }
       return $filter('filter')($scope.users, filter);
     };
+
+    function filteredUsers() {
+      var filter = {};
+      if (group) {
+        filter.groups = group;
+      }
+      return $filter('filter')($scope.users, filter);
+    }
+
+    $scope.$watch('users', function() {
+      $scope.allSelected =
+        $scope.selectedUsers().length == filteredUsers().length &&
+        filteredUsers().length > 0;
+    }, true);
+
+    $scope.selectAll = function() {
+      angular.forEach(filteredUsers(), function(user) {
+        user.selected = $scope.allSelected;
+      });
+    };
+
     function hasUsers(group) {
       var total = $scope.selectedUsers().length;
       var inGroup = _.filter($scope.selectedUsers(), function(user) {

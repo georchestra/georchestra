@@ -8,4 +8,13 @@
     //return function(scope, elm, attrs) {
       //elm.text(version);
     //};
-  //}]);
+  //}]);j
+angular.module('ldapadmin.directives', []).
+  directive('ldapadminCheckAll', function() {
+    // scope should expose 'allSelected' and 'allClear'
+    return function(scope, elm, attrs) {
+      scope.$watch(attrs.ldapadminCheckAll, function(value) {
+        elm.prop('indeterminate', value);
+      }, true);
+    };
+  });

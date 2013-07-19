@@ -11,6 +11,11 @@
 .toolbar {
   margin: 10px 0;
   height: 30px;
+  line-height: 20px;
+}
+.toolbar .checkbox-wrap {
+  padding: 4px 20px 4px 4px;
+  display: inline-block;
 }
 .groups li a i {
   display: inline-block;

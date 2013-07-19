@@ -1,4 +1,7 @@
 <div class="toolbar">
+  <div class="checkbox-wrap">
+    <input type="checkbox" ldapadmin-check-all="!allSelected && selectedUsers().length" ng-change="selectAll()" ng-model="allSelected"/>
+  </div>
   <a class="groups btn dropdown-toggle" ng-click="initGroups()" ng-class="{hide: selectedUsers().length == 0}" data-toggle="dropdown">
     <i class="icon-th-list"></i>
     Groups
