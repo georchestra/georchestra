@@ -97,6 +97,13 @@ GEOR.getfeatureinfo = (function() {
         OpenLayers.Element.addClass(map.viewPortDiv, "olDrawBox");
 
         var features = info.features;
+        var layerTitle = null;
+
+        for(var i = 0; i < info.object.layers.length && features.length > 0; i++) {
+            if(features[0].gml.featureType == ctrl.layers[i].params.LAYERS) {
+                layerTitle = GEOR.util.shortenLayerName(ctrl.layers[i]);
+            }
+        }
 		  
         if (!model || model.isEmpty() || Xsearch) {
             model = new GEOR.FeatureDataModel({
@@ -106,7 +113,8 @@ GEOR.getfeatureinfo = (function() {
 
         observable.fireEvent("searchresults", {
             features: features,
-            model: model
+            model: model,
+            title: layerTitle
             // we do not know the model with GFI at first time.
             // but at second time, we can use cached model
         });
@@ -117,9 +125,15 @@ GEOR.getfeatureinfo = (function() {
 
         var features = [];
         var Xmodel = [];
+        var layerTitle = [];
 
         for(var i = 0; i < info.features.length; i++){
             features[i] = [info.features[i]];
+            for(var iii = 0; iii < info.object.layers.length; iii++) {
+                if(info.features[i].gml.featureType == ctrl.layers[iii].params.LAYERS) {
+                    layerTitle.push(GEOR.util.shortenLayerName(ctrl.layers[iii]));
+                }
+            }
             var ii = i+1;
             while(ii < info.features.length) {
                 if(info.features[i].gml.featureType == info.features[ii].gml.featureType) {
@@ -131,9 +145,6 @@ GEOR.getfeatureinfo = (function() {
                     ii++;                
                 }
             }
-        }
-		  
-        for(var i = 0; i < features.length; i++){
             Xmodel.push(new GEOR.FeatureDataModel({
                 features: features[i][0]
             }));
@@ -141,7 +152,8 @@ GEOR.getfeatureinfo = (function() {
 
         observable.fireEvent("searchXresults", {
             features: features,
-            model: Xmodel
+            model: Xmodel,
+            title: layerTitle
             // we do not know the model with GFI at first time.
             // but at second time, we can use cached model
         });
@@ -154,9 +166,16 @@ GEOR.getfeatureinfo = (function() {
     var onBeforegetfeatureinfo = function() {
         // to let OL use its own cursor class:
         OpenLayers.Element.removeClass(map.viewPortDiv, "olDrawBox");
+        
+        var msg;
+        if(ctrl.layers.length > 0) {
+            msg = "<div>Searching...</div>";
+        } else {
+            msg = "Aucune requête possible";
+        }
 
         observable.fireEvent("search", {
-            html: tr("<div>Searching...</div>")
+            html: tr(msg)
         });
     };
 
@@ -357,12 +376,12 @@ GEOR.getfeatureinfo = (function() {
                     map.events.on({
                         "removelayer": onLayerRemoved,
                         "changelayer": function() {
-                            if(Xsearch == true && ctrl) {     
-                                layers = map.getLayersBy("queryable", true);
-                                for(var i = 0; i < layers.length; i++){
-                                    if(layers[i].visibility == false){
-                                        delete layers[i];
-                                        layers.splice(i,1);
+                            if(Xsearch == true && ctrl) {
+                                layers = [];
+                                for(var i = 0; i < layerStore.data.length; i++) {
+                                    var layerRecord = layerStore.getAt(i);
+                                    if(layerRecord.get("queryable") && layerRecord.getLayer().visibility == true) {
+                                        layers.push(layerRecord.getLayer());
                                     }
                                 }
                                 ctrl.layers = layers;

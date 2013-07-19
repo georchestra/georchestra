@@ -414,14 +414,5 @@ GEOR.resultspanel = Ext.extend(Ext.Panel, (function() {
                 layerBounds = null;
             }
         },
-
-        setTabTitle: function(title) {
-            var tabTitle = "";
-            for(var i = 0; i < 6; i++){
-                tabTitle += title.charAt(i);				
-            }
-            tabTitle += "(...)";
-            this.setTitle(tabTitle);
-        }
     };
 }()));

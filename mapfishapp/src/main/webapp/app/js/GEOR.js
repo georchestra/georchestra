@@ -363,6 +363,7 @@ Ext.namespace("GEOR");
                 },
                 "searchresults": function(options) {
                     if (southPanel.getActiveTab()) {
+                        southPanel.getActiveTab().setTitle(options.name);
                         southPanel.getActiveTab().populate(options);
                     }
                 }
@@ -373,6 +374,7 @@ Ext.namespace("GEOR");
             GEOR.getfeatureinfo.events.on({
                 "search": function(panelCfg) {
                     if(southPanel.getActiveTab()){
+                        southPanel.getActiveTab().setTitle("Recherche");
                         southPanel.getActiveTab().init(map);	
                         southPanel.getActiveTab().clean();
                     }
@@ -387,17 +389,19 @@ Ext.namespace("GEOR");
                 "searchresults": function(options) {
                     if (southPanel.getActiveTab()) {
                         southPanel.getActiveTab().populate(options);
-                        //southPanel.getActiveTab().setTabTitle(options.title);
+                        southPanel.getActiveTab().setTitle(options.title);
                     }
                 },
                 "searchXresults": function(options) {
                     southPanel.getActiveTab().populate({features: options.features[0], model: options.model[0]});					 	  
+                    southPanel.getActiveTab().setTitle(options.title[0]);
                     southPanel.remove('addPanel');
                         for(var i = 1; i < options.features.length; i++){
                             var tab =southPanel.add(new GEOR.resultspanel({html: tr("resultspanel.emptytext")}));						
                             southPanel.setActiveTab(tab);
                             southPanel.getActiveTab().init(map);
                             southPanel.getActiveTab().populate({features: options.features[i], model: options.model[i]});					 	  
+                            southPanel.getActiveTab().setTitle(options.title[i]);
                         }                
                     southPanel.insert(southPanel.items.length,{id: 'addPanel', title: '+'});
                 },

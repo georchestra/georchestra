@@ -135,6 +135,8 @@ GEOR.querier = (function() {
      * {Function} an alias to OpenLayers.i18n
      */
     var tr = null;
+    
+    var name = null;
 
     /**
      * Method: checkFilter
@@ -219,7 +221,8 @@ GEOR.querier = (function() {
 
                 observable.fireEvent("searchresults", {
                     features: response.features,
-                    model: model
+                    model: model,
+                    name: GEOR.util.shortenLayerName(name)
                 });
             },
             scope: this
@@ -232,6 +235,7 @@ GEOR.querier = (function() {
      */
     var buildPanel = function(layerName, r) {
         record = r;
+        name = layerName;
         observable.fireEvent("ready", {
             xtype: 'gx_filterbuilder',
             title: tr("Request on NAME", {
