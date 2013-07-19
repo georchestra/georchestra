@@ -87,6 +87,8 @@ GEOR.print = (function() {
         mapTitle: "",
         mapComments: "",
         copyright: "",
+        scaleLbl: "",
+        dateLbl: "",
         showOverview: true,
         showNorth: true,
         showScalebar: true,
@@ -444,6 +446,8 @@ GEOR.print = (function() {
                     handler: function() {
                         printPage.customParams.copyright = getLayerSources();
                         printPage.customParams.projection = getProjection();
+                        printPage.customParams.scaleLbl = tr("Scale: ");
+                        printPage.customParams.dateLbl = tr("Date: ");
                         printPage.fit(layerStore.map, false);
                         printProvider.print(layerStore.map, printPage, {
                             legend: legendPanel
