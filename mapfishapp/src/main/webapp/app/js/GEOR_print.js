@@ -127,12 +127,11 @@ GEOR.print = (function() {
      * {String} The projection string
      */
     var getProjection = function() {
-        var epsg = layerStore.map.getProjection();
+        var c = '', s = '', epsg = layerStore.map.getProjection();
         proj = Proj4js.defs[epsg];
         if (!proj) {
             return '';
         }
-        s = '';
         Ext.each(proj.split('+'), function(r){
             c = r.split("title=");
             if (c.length > 1) {
