@@ -85,6 +85,7 @@ GEOR.print = (function() {
      */
     var defaultCustomParams = {
         mapTitle: "",
+        mapComments: "",
         copyright: "",
         showOverview: true,
         showNorth: true,
@@ -276,9 +277,29 @@ GEOR.print = (function() {
                 items: [{
                         xtype: 'textfield',
                         fieldLabel: tr("Title"),
-                        width: 200,
+                        width: 300,
                         name: 'mapTitle',
                         enableKeyEvents: true,
+                        selectOnFocus: true,
+                        plugins: new GeoExt.plugins.PrintPageField({
+                            printPage: printPage
+                        }),
+                        listeners: {
+                            "keypress": function(f, e) {
+                                // transfer focus on Print button on ENTER
+                                if (e.getKey() === e.ENTER) {
+                                    win.getFooterToolbar().getComponent('print').focus();
+                                }
+                            }
+                        }
+                    }, {
+                        xtype: 'textarea',
+                        fieldLabel: tr("Comments"),
+                        width: 300,
+                        name: 'mapComments',
+                        grow: true,
+                        maskRe: '',
+                        enableKeyEvents: false,
                         selectOnFocus: true,
                         plugins: new GeoExt.plugins.PrintPageField({
                             printPage: printPage
@@ -351,6 +372,7 @@ GEOR.print = (function() {
                         displayField: "name",
                         valueField: "name",
                         fieldLabel: tr("Format"),
+                        width: 300,
                         forceSelection: true,
                         editable: false,
                         mode: "local",
@@ -364,6 +386,7 @@ GEOR.print = (function() {
                         displayField: "name",
                         valueField: "value",
                         fieldLabel: tr("Resolution"),
+                        width: 300,
                         forceSelection: true,
                         editable: false,
                         tpl: '<tpl for="."><div class="x-combo-list-item">{name} dpi</div></tpl>',
@@ -397,7 +420,7 @@ GEOR.print = (function() {
                 constrainHeader: true,
                 animateTarget: GEOR.config.ANIMATE_WINDOWS && this.el,
                 border: false,
-                width: 350,
+                width: 450,
                 autoHeight: true,
                 closeAction: 'hide',
                 items: [formPanel],

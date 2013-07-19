@@ -241,6 +241,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
          "Error de configuración: DEFAULT_PRINT_RESOLUTION " +
          "${RESOLUTION} no se encuentra en las resoluciones de impresión",
     "Title": "Título",
+    "Comments": "Comentarios",
     "Minimap": "Mini-mapa",
     "North": "Norte",
     "Scale": "Escala",
