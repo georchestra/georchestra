@@ -8,6 +8,10 @@
   display: block;
 }
 
+.toolbar {
+  margin: 10px 0;
+  height: 30px;
+}
 .groups li a i {
   display: inline-block;
   width: 14px;

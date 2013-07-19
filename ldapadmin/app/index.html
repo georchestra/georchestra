@@ -22,11 +22,12 @@
       <div class="row-fluid">
         <div class="span3">
           <!--Sidebar content-->
-          <a id="new_user" href="#/users/new" class="btn btn-success">
-            <i class="icon-plus-sign"></i>
-            New user
-          </a>
-          <br />
+          <div class="toolbar">
+            <a id="new_user" href="#/users/new" class="btn btn-success">
+              <i class="icon-plus-sign"></i>
+              New user
+            </a>
+          </div>
           <a href="#/" ng-class="{active: selectedGroup == null}">
             All users ({{users.length}})
           </a>
