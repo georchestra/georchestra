@@ -1,27 +1,31 @@
 <div class="toolbar">
   <a class="btn" href="javascript:history.back();"><i class="icon-arrow-left"></i></a>
-  <a class="groups btn dropdown-toggle" ng-click="initGroups()" ng-class="{hide: user.id == null}" data-toggle="dropdown">
-    <i class="icon-th-list"></i>
-    Groups
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu groups">
-    <li class="noclose" ng-repeat="group in user_groups">
-      <a href="javascript:void(0);" ng-click="selectGroup(group)">
-        <i ng-class="{'icon-ok': group.hasUsers}"></i>
-        {{group.name}}
-      </a>
-    </li>
-    <li class="divider"></li>
-    <li ng-class="{disabled: !groupsChanged}"><a ng-click="apply()" href="javascript:void(0);">Apply</a></li>
-  </ul>
-  <a class="actions btn dropdown-toggle" ng-class="{hide: user.id == null}" data-toggle="dropdown">
-    Actions
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu">
-    <li><a ng-click="deleteUser(user)" class="delete">Delete user</a></li>
-  </ul>
+  <div class="btn-group">
+    <a class="groups btn dropdown-toggle" ng-click="initGroups()" ng-class="{hide: user.id == null}" data-toggle="dropdown">
+      <i class="icon-th-list"></i>
+      Groups
+      <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu groups">
+      <li class="noclose" ng-repeat="group in user_groups">
+        <a href="javascript:void(0);" ng-click="selectGroup(group)">
+          <i ng-class="{'icon-ok': group.hasUsers}"></i>
+          {{group.name}}
+        </a>
+      </li>
+      <li class="divider"></li>
+      <li ng-class="{disabled: !groupsChanged}"><a ng-click="apply()" href="javascript:void(0);">Apply</a></li>
+    </ul>
+  </div>
+  <div class="btn-group">
+    <a class="actions btn dropdown-toggle" ng-class="{hide: user.id == null}" data-toggle="dropdown">
+      Actions
+      <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+      <li><a ng-click="deleteUser(user)" class="delete">Delete user</a></li>
+    </ul>
+  </div>
 </div>
 <form action="" name="userForm">
   <div class="control-group" ng-class="{error: userForm.name.$invalid}">

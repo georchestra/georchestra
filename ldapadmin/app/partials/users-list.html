@@ -2,21 +2,23 @@
   <div class="checkbox-wrap">
     <input type="checkbox" ldapadmin-check-all="!allSelected && selectedUsers().length" ng-change="selectAll()" ng-model="allSelected"/>
   </div>
-  <a class="groups btn dropdown-toggle" ng-click="initGroups()" ng-class="{hide: selectedUsers().length == 0}" data-toggle="dropdown">
-    <i class="icon-th-list"></i>
-    Groups
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu groups">
-    <li class="noclose" ng-repeat="group in user_groups">
-      <a href="javascript:void(0);" ng-click="selectGroup(group)">
-        <i ng-class="{'icon-ok': group.hasUsers == 'all', 'icon-minus': group.hasUsers == 'some'}"></i>
-        {{group.name}}
-      </a>
-    </li>
-    <li class="divider"></li>
-    <li ng-class="{disabled: !groupsChanged}"><a ng-click="apply()" href="javascript:void(0);">Apply</a></li>
-  </ul>
+  <div class="btn-group">
+    <a class="groups btn dropdown-toggle" ng-click="initGroups()" ng-class="{hide: selectedUsers().length == 0}" data-toggle="dropdown">
+      <i class="icon-th-list"></i>
+      Groups
+      <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu groups">
+      <li class="noclose" ng-repeat="group in user_groups">
+        <a href="javascript:void(0);" ng-click="selectGroup(group)">
+          <i ng-class="{'icon-ok': group.hasUsers == 'all', 'icon-minus': group.hasUsers == 'some'}"></i>
+          {{group.name}}
+        </a>
+      </li>
+      <li class="divider"></li>
+      <li ng-class="{disabled: !groupsChanged}"><a ng-click="apply()" href="javascript:void(0);">Apply</a></li>
+    </ul>
+  </div>
 </div>
 <table class="users table table-striped table-hover table-condensed">
   <tr ng-repeat="user in users | filter:groupFilter | orderBy:'name'" class="">
