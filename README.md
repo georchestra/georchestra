@@ -29,9 +29,12 @@ Notes:
  * openjdk-6-jdk works too 
  * GeoServer is [known](http://research.geodan.nl/2012/10/openjdk7-vs-oracle-jdk7-with-geoserver/) to perform better with Oracle JDK.
 
-Then:
+Then clone the repository (either branch stable or master if you're feeling lucky):
 
-    git clone --recursive https://github.com/georchestra/georchestra.git
+    git clone -b stable --recursive https://github.com/georchestra/georchestra.git
+
+...and build:
+
     cd georchestra
     ./mvn -Dmaven.test.skip=true -Ptemplate install
 
