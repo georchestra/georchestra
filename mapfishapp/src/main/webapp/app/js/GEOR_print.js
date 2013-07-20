@@ -300,20 +300,11 @@ GEOR.print = (function() {
                         width: 300,
                         name: 'mapComments',
                         grow: true,
-                        maskRe: '',
                         enableKeyEvents: false,
                         selectOnFocus: true,
                         plugins: new GeoExt.plugins.PrintPageField({
                             printPage: printPage
                         }),
-                        listeners: {
-                            "keypress": function(f, e) {
-                                // transfer focus on Print button on ENTER
-                                if (e.getKey() === e.ENTER) {
-                                    win.getFooterToolbar().getComponent('print').focus();
-                                }
-                            }
-                        }
                     }, {
                         xtype: 'hidden',
                         name: 'copyright',
