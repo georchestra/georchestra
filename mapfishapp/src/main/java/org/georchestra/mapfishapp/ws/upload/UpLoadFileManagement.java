@@ -72,7 +72,10 @@ public class UpLoadFileManagement {
 
 	public UpLoadFileManagement() {
 	}
-
+	public UpLoadFileManagement(AbstractFeatureGeoFileReader reader ) {
+		
+		this.reader = reader;
+	}
 
 	public void unzip() throws IOException {
 

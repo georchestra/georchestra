@@ -23,9 +23,11 @@ import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
+ * Unit test for {@link GeotoolsFeatureReader}
  * 
  * @author Mauricio Pazos
  *
@@ -35,6 +37,11 @@ public class GeotoolsFeatureReaderTest {
 	private AbstractFeatureGeoFileReader reader = new AbstractFeatureGeoFileReader(new GeotoolsFeatureReader());
 
 
+	/**
+	 * Tests that the geotools implementation is used when the current reader cannot read the file format.
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testSwitchToGeotoolsReaderImpl() throws Exception {
 		
@@ -183,6 +190,70 @@ public class GeotoolsFeatureReaderTest {
 		SimpleFeatureCollection fc = reader.getFeatureCollection(file, FileFormat.gml);
 		
 		assertFeatureCollectionFromGML(fc,  50, 4326);
+	}
+	
+	/**
+	 * This test checks that there is not inversion of coordinates (long/lat) 
+	 */
+	@Test
+	public void testGMLCoordinates() throws Exception {
+		
+		String fullName = makeFullName("gml_4326_accidents.gml");
+		File file = new File(fullName);
+		
+		SimpleFeatureCollection fc = reader.getFeatureCollection(file, FileFormat.gml);
+		
+		double x = -4.566578;
+		double y = 48.585601;
+		int id = 141;
+		int crs = 4326;
+		assertCoordinatedOrder(fc, id, x,  y, crs);
+		
+		
+	}
+	
+	/**
+	 * Checks that the coordinates are in the expected order (x,y).
+	 * 
+	 * @param fc
+	 * @param requiredFeatureID feature to search
+	 * @param xCoordExpected
+	 * @param yCoordExpected
+	 * @param expectedEPSG
+	 */
+	private void assertCoordinatedOrder(SimpleFeatureCollection fc, final int requiredFeatureID, final double xCoordExpected, final double yCoordExpected, final int expectedEPSG) {
+		
+		CoordinateReferenceSystem schemaCRS = fc.getSchema().getCoordinateReferenceSystem();
+		
+		assertNotNull(schemaCRS);
+		
+		SimpleFeatureIterator iter = fc.features();
+		boolean OK = false;
+		try{
+			while(iter.hasNext()){
+				
+				SimpleFeature f = iter.next();
+				
+				int id = Integer.valueOf(f.getAttribute("id").toString());
+				if(id == requiredFeatureID ){
+					Geometry geom = (Geometry) f.getDefaultGeometry();
+					assert(geom.getSRID() == expectedEPSG);
+
+					Coordinate[] coordinates = geom.getCoordinates();
+					
+					assertTrue(coordinates[0].x == xCoordExpected);
+					assertTrue(coordinates[0].y == yCoordExpected);
+					
+					OK = true;
+
+					break;
+				}
+			}
+			
+		} finally {
+			iter.close();
+			assertTrue(OK);
+		}
 	}
 	
 	@Test

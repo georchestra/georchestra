@@ -8,6 +8,7 @@ import java.net.URL;
 
 import org.apache.commons.io.FilenameUtils;
 import org.geotools.referencing.CRS;
+import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -90,24 +91,59 @@ public class UpLoadFileManagementTest {
 		testGetGeofileToJSON(fullName, "EPSG:2154" );
 	}
 
+	@Test 
+	public void testGMLCoordinates() throws Exception {
+		
+		String fileName = "gml_4326_accidents.gml";
+		String fullName = makeFullName(fileName);
+		
+		testGetGeofileToJSON(fullName, "EPSG:4326");
+	}
+
+	/**
+	 * Sets the default crs as epsg:4326, before test.
+	 * 
+	 * @param fileName
+	 * @throws Exception
+	 */
 	private void testGetGeofileToJSON(final String fileName) throws Exception{
 	
 		testGetGeofileToJSON(fileName, "EPSG:4326");
+		
 	}
 	
-	private void testGetGeofileToJSON(final String fileName, final String epsg) throws Exception{
+	
+	private String testGetGeofileToJSON(final String fileName, final String epsg) throws Exception{
+		
+		String jsonFeatures = getFeatureCollectionAsJSON(fileName, epsg);
+		Assert.assertNotNull(jsonFeatures); 
+		
+		return jsonFeatures;
+	}
+	
+	/**
+	 * Sets the bridge {@link AbstractFeatureGeoFileReader} with the {@link GeotoolsFeatureReader} implementation, then
+	 * retrieves the file as Json collection.
+	 * 
+	 * @param fileName
+	 * @param epsg
+	 * @return
+	 * @throws Exception
+	 */
+	private String getFeatureCollectionAsJSON(final String fileName, final String epsg) throws Exception{
 		
 		FileDescriptor fd = new FileDescriptor(fileName);
 		fd.listOfFiles.add(fileName);
 		fd.listOfExtensions.add(FilenameUtils.getExtension(fileName));
 
-		UpLoadFileManagement fm = new UpLoadFileManagement();
+		AbstractFeatureGeoFileReader reader = new AbstractFeatureGeoFileReader(new GeotoolsFeatureReader());
+
+		UpLoadFileManagement fm = new UpLoadFileManagement(reader);
+		
 		fm.setWorkDirectory(FilenameUtils.getFullPath(fileName));
 		fm.setFileDescriptor(fd);
 		
-		String jsonFeatures = fm.getFeatureCollectionAsJSON(CRS.decode(epsg));
-		
-		Assert.assertNotNull(jsonFeatures); 
+		return  fm.getFeatureCollectionAsJSON(CRS.decode(epsg));
 	}
 	
 
