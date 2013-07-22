@@ -157,7 +157,7 @@ GEOR.FeaturePanel = Ext.extend(Ext.form.FormPanel, {
         if (feature.isLabel) {
             oItems.push({
                 name: 'label',
-                fieldLabel: OpenLayers.i18n('annotation.size'),
+                fieldLabel: OpenLayers.i18n('annotation.label'),
                 value: feature.attributes.label,
                 enableKeyEvents: true,
                 listeners: {
