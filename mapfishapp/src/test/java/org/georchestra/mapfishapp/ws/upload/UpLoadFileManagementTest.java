@@ -3,20 +3,25 @@
  */
 package org.georchestra.mapfishapp.ws.upload;
 
+import static org.junit.Assert.*;
+
 import java.io.IOException;
 import java.net.URL;
 
 import org.apache.commons.io.FilenameUtils;
+import org.geotools.feature.FeatureIterator;
+import org.geotools.geojson.feature.FeatureJSON;
 import org.geotools.referencing.CRS;
-import org.json.JSONObject;
-import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.opengis.feature.simple.SimpleFeature;
+
+import com.vividsolutions.jts.geom.Point;
 
 /**
  * Unit Test for {@link UpLoadFileManagement}
  * 
- * This unit test require OGR 
+ * Test the geotools implementation {@link GeotoolsFeatureReader}.  
  * 
  * @author Mauricio Pazos
  *
@@ -27,7 +32,7 @@ public class UpLoadFileManagementTest {
 	 * Test method for {@link mapfishapp.ws.upload.UpLoadFileManagement#getFeatureCollectionAsJSON()}.
 	 * @throws IOException 
 	 */
-	@Test
+	@Ignore
 	public void testSHPAsJSON() throws Exception {
 		
 		String fileName = "points-4326.shp";
@@ -35,7 +40,8 @@ public class UpLoadFileManagementTest {
 		
 		testGetGeofileToJSON(fullName);
 	}
-	@Test
+	
+	@Ignore
 	public void testSHPAsJSONReporjectedTo2154() throws Exception {
 		
 		String fileName = "points-4326.shp";
@@ -44,7 +50,24 @@ public class UpLoadFileManagementTest {
 		testGetGeofileToJSON(fullName,"EPSG:2154");
 	}
 	
-	@Test 
+	/** 
+	 * Tests the coordinates order.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testSHPCoordinates() throws Exception {
+		
+		String fileName = "shp_4326_accidents.shp";
+		String fullName = makeFullName(fileName);
+		
+		String json = testGetGeofileToJSON(fullName, "EPSG:4326");
+		
+		assertCoordinateContains(-2.265330624649336, 48.421434814828025, json );
+	}
+
+	
+	@Ignore 
 	public void testKMLAsJSON() throws Exception {
 
 		String fileName = "regions.kml";
@@ -53,7 +76,24 @@ public class UpLoadFileManagementTest {
 		testGetGeofileToJSON(fullName);
 	}
 	
+	/** 
+	 * Tests the coordinates order.
+	 * 
+	 * @throws Exception
+	 */
 	@Test
+	public void testKMLCoordinates() throws Exception {
+		
+		String fileName = "kml_4326_accidents.kml";
+		String fullName = makeFullName(fileName);
+		
+		String json = testGetGeofileToJSON(fullName, "EPSG:4326");
+		
+		assertCoordinateContains(-2.265330624649336, 48.421434814828025, json );
+	}
+	
+	
+	@Ignore
 	public void testGMLAsJSON() throws Exception {
 		
 		String fileName = "border.gml";
@@ -63,7 +103,7 @@ public class UpLoadFileManagementTest {
 		
 	}
 
-	@Test
+	@Ignore
 	public void testGPXAsJSON() throws Exception {
 		
 		String fileName = "wp.gpx";
@@ -73,7 +113,7 @@ public class UpLoadFileManagementTest {
 	}
 	
 
-	@Test 
+	@Ignore 
 	public void testMIFAsJSON() throws Exception {
 		
 		String fileName = "pigma_regions_POLYGON.mif";
@@ -81,8 +121,25 @@ public class UpLoadFileManagementTest {
 		
 		testGetGeofileToJSON(fullName);
 	}
-
-	@Test 
+	
+	/** 
+	 * Tests the coordinates order.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testMIFCoordinates() throws Exception {
+		
+		String fileName = "mif_4326_accidents.mif";
+		String fullName = makeFullName(fileName);
+		
+		String json = testGetGeofileToJSON(fullName, "EPSG:4326");
+		
+		assertCoordinateContains(-2.265330624649336, 48.421434814828025, json );
+	}
+	
+	
+	@Ignore 
 	public void testMIFAsJSONReprojectedTo2154() throws Exception {
 		
 		String fileName = "pigma_regions_POLYGON.mif";
@@ -91,15 +148,47 @@ public class UpLoadFileManagementTest {
 		testGetGeofileToJSON(fullName, "EPSG:2154" );
 	}
 
-	@Test 
+	
+	/** 
+	 * Tests the coordinates order.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
 	public void testGMLCoordinates() throws Exception {
 		
 		String fileName = "gml_4326_accidents.gml";
 		String fullName = makeFullName(fileName);
 		
-		testGetGeofileToJSON(fullName, "EPSG:4326");
+		String json = testGetGeofileToJSON(fullName, "EPSG:4326");
+		
+		assertCoordinateContains(-2.265330624649336, 48.421434814828025, json );
 	}
 
+	/**
+	 * Assert that the feature in json syntax contains its coordinate in the order x, y.
+	 * 
+	 * @param x
+	 * @param y
+	 * @param json
+	 * @throws Exception
+	 */
+	private void assertCoordinateContains(final double x, final double y, final String json) throws Exception{
+		
+		FeatureJSON featureJSON = new FeatureJSON();
+		
+		FeatureIterator<SimpleFeature> iter = featureJSON.streamFeatureCollection(json);
+		
+		assertTrue(iter.hasNext());
+
+		SimpleFeature f = iter.next();
+
+		Point geom = (Point) f.getDefaultGeometry();
+
+		assertEquals(x, geom.getCoordinate().x, 1.0e15);
+
+		assertEquals(y, geom.getCoordinate().y, 1.0e15);
+	}
 	/**
 	 * Sets the default crs as epsg:4326, before test.
 	 * 
@@ -116,7 +205,7 @@ public class UpLoadFileManagementTest {
 	private String testGetGeofileToJSON(final String fileName, final String epsg) throws Exception{
 		
 		String jsonFeatures = getFeatureCollectionAsJSON(fileName, epsg);
-		Assert.assertNotNull(jsonFeatures); 
+		assertNotNull(jsonFeatures); 
 		
 		return jsonFeatures;
 	}
