@@ -76,10 +76,10 @@ class RESTView(object):
         to_put = self.request.json_body['PUT']
         to_delete = self.request.json_body['DELETE']
 
-        print users
-
         for nj, j in enumerate(users):
             user = getUserById(j)
+            if not 'groups' in user:
+                user['groups'] = []
             for group in to_put:
                 user['groups'].append(group)
             for group in to_delete:
