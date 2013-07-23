@@ -26,13 +26,13 @@ import com.vividsolutions.jts.geom.Point;
  * @author Mauricio Pazos
  *
  */
-public class UpLoadFileManagementTest {
+public class UpLoadFileManagementGTImplTest {
 
 	/**
 	 * Test method for {@link mapfishapp.ws.upload.UpLoadFileManagement#getFeatureCollectionAsJSON()}.
 	 * @throws IOException 
 	 */
-	@Ignore
+	@Test
 	public void testSHPAsJSON() throws Exception {
 		
 		String fileName = "points-4326.shp";
@@ -41,7 +41,7 @@ public class UpLoadFileManagementTest {
 		testGetGeofileToJSON(fullName);
 	}
 	
-	@Ignore
+	@Test
 	public void testSHPAsJSONReporjectedTo2154() throws Exception {
 		
 		String fileName = "points-4326.shp";
@@ -67,7 +67,7 @@ public class UpLoadFileManagementTest {
 	}
 
 	
-	@Ignore 
+	@Test 
 	public void testKMLAsJSON() throws Exception {
 
 		String fileName = "regions.kml";
@@ -93,7 +93,7 @@ public class UpLoadFileManagementTest {
 	}
 	
 	
-	@Ignore
+	@Test
 	public void testGMLAsJSON() throws Exception {
 		
 		String fileName = "border.gml";
@@ -103,17 +103,8 @@ public class UpLoadFileManagementTest {
 		
 	}
 
-	@Ignore
-	public void testGPXAsJSON() throws Exception {
-		
-		String fileName = "wp.gpx";
-		String fullName = makeFullName(fileName);
-		
-		testGetGeofileToJSON(fullName);
-	}
-	
 
-	@Ignore 
+	@Test 
 	public void testMIFAsJSON() throws Exception {
 		
 		String fileName = "pigma_regions_POLYGON.mif";
@@ -139,7 +130,7 @@ public class UpLoadFileManagementTest {
 	}
 	
 	
-	@Ignore 
+	@Test 
 	public void testMIFAsJSONReprojectedTo2154() throws Exception {
 		
 		String fileName = "pigma_regions_POLYGON.mif";
@@ -173,7 +164,7 @@ public class UpLoadFileManagementTest {
 	 * @param json
 	 * @throws Exception
 	 */
-	private void assertCoordinateContains(final double x, final double y, final String json) throws Exception{
+	protected void assertCoordinateContains(final double x, final double y, final String json) throws Exception{
 		
 		FeatureJSON featureJSON = new FeatureJSON();
 		
@@ -195,14 +186,14 @@ public class UpLoadFileManagementTest {
 	 * @param fileName
 	 * @throws Exception
 	 */
-	private void testGetGeofileToJSON(final String fileName) throws Exception{
+	protected void testGetGeofileToJSON(final String fileName) throws Exception{
 	
 		testGetGeofileToJSON(fileName, "EPSG:4326");
 		
 	}
 	
 	
-	private String testGetGeofileToJSON(final String fileName, final String epsg) throws Exception{
+	protected String testGetGeofileToJSON(final String fileName, final String epsg) throws Exception{
 		
 		String jsonFeatures = getFeatureCollectionAsJSON(fileName, epsg);
 		assertNotNull(jsonFeatures); 
@@ -219,20 +210,25 @@ public class UpLoadFileManagementTest {
 	 * @return
 	 * @throws Exception
 	 */
-	private String getFeatureCollectionAsJSON(final String fileName, final String epsg) throws Exception{
+	protected String getFeatureCollectionAsJSON(final String fileName, final String epsg) throws Exception{
 		
 		FileDescriptor fd = new FileDescriptor(fileName);
 		fd.listOfFiles.add(fileName);
 		fd.listOfExtensions.add(FilenameUtils.getExtension(fileName));
 
-		AbstractFeatureGeoFileReader reader = new AbstractFeatureGeoFileReader(new GeotoolsFeatureReader());
-
-		UpLoadFileManagement fm = new UpLoadFileManagement(reader);
+		UpLoadFileManagement fm = create();
 		
 		fm.setWorkDirectory(FilenameUtils.getFullPath(fileName));
 		fm.setFileDescriptor(fd);
 		
 		return  fm.getFeatureCollectionAsJSON(CRS.decode(epsg));
+	}
+	
+	/**
+	 * @return UpLoadFileManagement set with geotools implementation
+	 */
+	protected UpLoadFileManagement create(){
+		return UpLoadFileManagement.create(UpLoadFileManagement.Implementation.geotools);
 	}
 	
 
@@ -242,7 +238,7 @@ public class UpLoadFileManagementTest {
 	 * @return
 	 * @throws Exception
 	 */
-	private String makeFullName(String fileName) throws Exception{
+	protected String makeFullName(String fileName) throws Exception{
 		
 		URL url= this.getClass().getResource(fileName);
 		

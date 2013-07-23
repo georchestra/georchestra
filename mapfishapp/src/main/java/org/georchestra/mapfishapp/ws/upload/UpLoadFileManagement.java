@@ -35,6 +35,8 @@ public class UpLoadFileManagement {
 	
 	private static final Log LOG = LogFactory.getLog(UpLoadFileManagement.class.getPackage().getName());
 	
+	public enum Implementation{ geotools, ogr };
+	
 	private static List<String> VALID_EXTENSIONS;
 	static{
 		
@@ -70,13 +72,32 @@ public class UpLoadFileManagement {
 
     private AbstractFeatureGeoFileReader reader  = new AbstractFeatureGeoFileReader();
 
-	public UpLoadFileManagement() {
-	}
-	public UpLoadFileManagement(AbstractFeatureGeoFileReader reader ) {
-		
-		this.reader = reader;
+
+	/**
+	 * Creates an instance of {@link UpLoadFileManagement}  which is set to use the implementation specified as parameter
+	 * 
+	 * @param impl implementation
+	 */
+	public static UpLoadFileManagement create(Implementation impl) {
+
+		UpLoadFileManagement manager = new UpLoadFileManagement();
+		if(Implementation.geotools == impl ){
+			manager.reader = new AbstractFeatureGeoFileReader(new GeotoolsFeatureReader());
+		} else {
+			manager.reader = new AbstractFeatureGeoFileReader(new OGRFeatureReader());
+		}
+		return manager;
 	}
 
+	/**
+	 * Creates an instance of {@link UpLoadFileManagement} which is set to use the OGR implementation to 
+	 * @return
+	 */
+	public static UpLoadFileManagement create() {
+
+		return create(Implementation.ogr);
+	}
+	
 	public void unzip() throws IOException {
 
 		ZipFile zipFile = new ZipFile(fileDescriptor.savedFile.getAbsolutePath());

@@ -32,8 +32,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 
 /**
- * This controller is responsible for uploading a Zip file which contains a set of geofiles (shp, mid, mif). 
- * 
+ * This controller is responsible for uploading a geofiles and transform their features to json syntax.
  * <pre>
  * In case of success, returns
  * 		{"success":"true","geojson":"{"type":"FeatureCollection","features":[...]}"} 
@@ -41,6 +40,30 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
  * 		Content-Type: text/html (cf introductory paragraph regarding file uploads 
  *      in http://docs.sencha.com/ext-js/3-4/?print=/api/Ext.form.BasicForm)
  * </pre> 
+ * 
+ * One of the following implementation can be set:
+ * 
+ * <p>
+ * <br>OGR Implementation</br> accepts the following files:
+ * <lu>
+ * <li>ESRI Shape in zip:  shp, shx, prj file are expected </li> 
+ * <li>MapInfo MIF in zip:  mif, mid file are expected </li>
+ * <li>MapInfo TAB in zip: tab, id, map, dat are expected </li>  
+ * <li>kml</li> 
+ * <li>gpx</li> 
+ * <li>gml</li>
+ * </lu>
+ * </p>
+ * <p>
+ * <br>Geotools Implementation </br> expects the following files
+ * <lu>
+ * <li>ESRI Shape in zip:  shp, shx, prj file are expected </li> 
+ * <li>MapInfo in zip:  mif, mid file are expected </li>
+ * <li>kml</li> 
+ * <li>gml</li>
+ * </lu>
+ * </p>
+ * 
  * 
  * @author Mauricio Pazos
  *
@@ -267,7 +290,9 @@ public final class UpLoadGeoFileController {
 			}
 			// save the file in the temporal directory
 			
-			this.fileManagement = new UpLoadFileManagement();
+			// this.fileManagement = UpLoadFileManagement.create(); FIXME HACK TO TEST geotools implementation
+			this.fileManagement = UpLoadFileManagement.create(UpLoadFileManagement.Implementation.geotools);
+
 			this.fileManagement.setWorkDirectory(workDirectory); 
 			this.fileManagement.setFileDescriptor(currentFile);
 
@@ -275,7 +300,6 @@ public final class UpLoadGeoFileController {
 				
 			// if the uploaded file is a zip file then checks its content
 			if(fileManagement.containsZipFile()){
-				
 				fileManagement.unzip();
 
 				st  = checkGeoFiles(fileManagement);
@@ -302,8 +326,8 @@ public final class UpLoadGeoFileController {
 			
 			// encode the feature collection as json string
 			String jsonFeatureCollection = (crs != null) 
-						?fileManagement.getFeatureCollectionAsJSON(crs)
-						:fileManagement.getFeatureCollectionAsJSON();
+						?this.fileManagement.getFeatureCollectionAsJSON(crs)
+						:this.fileManagement.getFeatureCollectionAsJSON();
 
 			writeResponse(response, Status.ok, jsonFeatureCollection);
 		
@@ -439,7 +463,8 @@ public final class UpLoadGeoFileController {
 	 * @return
 	 */
 	private Status checkGeoFiles(UpLoadFileManagement fileManagement) {
-		//a zip file is unzipped to a temporary place and *.SHP, *.shp, *.MIF, *.MID, *.mif, *.mid files are looked for at the root of the archive. If several SHP files are found or several MIF or several MID, the error message is "multiple files"
+		// a zip file is unzipped to a temporary place and *.SHP, *.shp, *.MIF, *.MID, *.mif, *.mid files are looked for at the root of the archive. 
+		// If several SHP files are found or several MIF or several MID, the error message is "multiple files"
 		if( ! fileManagement.checkGeoFileExtension() ) {
 			return Status.unsupportedFormat;
 		}

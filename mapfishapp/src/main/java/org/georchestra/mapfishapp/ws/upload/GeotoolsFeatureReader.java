@@ -10,8 +10,6 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 
-import javax.xml.namespace.QName;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
