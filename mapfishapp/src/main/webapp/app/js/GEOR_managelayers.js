@@ -360,6 +360,9 @@ GEOR.managelayers = (function() {
             // build object config for predefined styles
             stylesMenuItems.push(default_style);
             if (styles && styles.length > 0) {
+                styles.sort(function(a,b) {
+                    return (a.name || a.title).toLowerCase() > (b.name || b.title).toLowerCase();
+                });
                 var checked, style;
                 for (var i=0, len=styles.length; i<len; i++) {
                     style = styles[i];

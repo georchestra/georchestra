@@ -85,7 +85,10 @@ GEOR.print = (function() {
      */
     var defaultCustomParams = {
         mapTitle: "",
+        mapComments: "",
         copyright: "",
+        scaleLbl: "",
+        dateLbl: "",
         showOverview: true,
         showNorth: true,
         showScalebar: true,
@@ -114,6 +117,34 @@ GEOR.print = (function() {
             }
         });
         return ((attr.length > 1)?tr("Sources: "):tr("Source: ")) +attr.join(', ');
+    };
+
+    /**
+     * Method: getProjection
+     * Creates a string with the projection name
+     *
+     * Parameters:
+     * layerStore - {GeoExt.data.LayerStore} The application's layer store.
+     *
+     * Returns:
+     * {String} The projection string
+     */
+    var getProjection = function() {
+        var s = '', epsg = layerStore.map.getProjection();
+        proj = Proj4js.defs[epsg];
+        if (!proj) {
+            return '';
+        }
+        Ext.each(proj.split('+'), function(r){
+            var c = r.split("title=");
+            if (c.length > 1) {
+                s = c[1].replace(/,/g,'').trim();
+            }
+        });
+        if (!s) {
+            return '';
+        }
+        return tr("Projection: PROJ", {'PROJ': s});
     };
 
     /**
@@ -248,7 +279,7 @@ GEOR.print = (function() {
                 items: [{
                         xtype: 'textfield',
                         fieldLabel: tr("Title"),
-                        width: 200,
+                        width: 300,
                         name: 'mapTitle',
                         enableKeyEvents: true,
                         selectOnFocus: true,
@@ -264,8 +295,25 @@ GEOR.print = (function() {
                             }
                         }
                     }, {
+                        xtype: 'textarea',
+                        fieldLabel: tr("Comments"),
+                        width: 300,
+                        name: 'mapComments',
+                        grow: true,
+                        enableKeyEvents: false,
+                        selectOnFocus: true,
+                        plugins: new GeoExt.plugins.PrintPageField({
+                            printPage: printPage
+                        }),
+                    }, {
                         xtype: 'hidden',
                         name: 'copyright',
+                        plugins: new GeoExt.plugins.PrintPageField({
+                            printPage: printPage
+                        })
+                    }, {
+                        xtype: 'hidden',
+                        name: 'projection',
                         plugins: new GeoExt.plugins.PrintPageField({
                             printPage: printPage
                         })
@@ -317,6 +365,7 @@ GEOR.print = (function() {
                         displayField: "name",
                         valueField: "name",
                         fieldLabel: tr("Format"),
+                        width: 300,
                         forceSelection: true,
                         editable: false,
                         mode: "local",
@@ -330,6 +379,7 @@ GEOR.print = (function() {
                         displayField: "name",
                         valueField: "value",
                         fieldLabel: tr("Resolution"),
+                        width: 300,
                         forceSelection: true,
                         editable: false,
                         tpl: '<tpl for="."><div class="x-combo-list-item">{name} dpi</div></tpl>',
@@ -363,7 +413,7 @@ GEOR.print = (function() {
                 constrainHeader: true,
                 animateTarget: GEOR.config.ANIMATE_WINDOWS && this.el,
                 border: false,
-                width: 350,
+                width: 450,
                 autoHeight: true,
                 closeAction: 'hide',
                 items: [formPanel],
@@ -386,6 +436,9 @@ GEOR.print = (function() {
                     iconCls: 'mf-print-action',
                     handler: function() {
                         printPage.customParams.copyright = getLayerSources();
+                        printPage.customParams.projection = getProjection();
+                        printPage.customParams.scaleLbl = tr("Scale: ");
+                        printPage.customParams.dateLbl = tr("Date: ");
                         printPage.fit(layerStore.map, false);
                         printProvider.print(layerStore.map, printPage, {
                             legend: legendPanel

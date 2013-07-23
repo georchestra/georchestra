@@ -237,6 +237,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     /* GEOR_print.js strings */
     "Sources: ": "Sources : ",
     "Source: ": "Source : ",
+    "Projection: PROJ": "Projection : ${PROJ}",
     "Print error": "Impression impossible",
     "Print server returned an error":
         "Le service d'impression a signalé une erreur.",
@@ -255,9 +256,12 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
         "Erreur de configuration: DEFAULT_PRINT_RESOLUTION " +
         "${RESOLUTION} n'est pas dans la liste des résolutions d'impression",
     "Title": "Titre",
+    "Comments": "Commentaires",
+    "Scale: ": "Échelle : ",
+    "Date: ": "Date : ",
     "Minimap": "Mini-carte",
     "North": "Nord",
-    "Scale": "Echelle",
+    "Scale": "Échelle",
     "Date": "Date",
     "Legend": "Légende",
     "Format": "Format",

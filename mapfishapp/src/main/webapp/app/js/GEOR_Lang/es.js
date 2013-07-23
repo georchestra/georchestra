@@ -126,8 +126,10 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Local file": "Archivo local",
     "The service is inactive": "El servicio esta deshabilitado",
     "Upload a vector data file.": "Subir un archivo de datos vectoriales.",
-    "The allowed formats are the following: ": "Los formatos aceptados son los siguientes: ",
-    "Use ZIP compression for multifiles formats, such as SHP or MIF/MID.": "Usar compresión ZIP para los formatos multiarchivos, como SHP or MIF/MID.",
+    "The allowed formats are the following: ":
+        "Los formatos aceptados son los siguientes: ",
+    "Use ZIP compression for multifiles formats, such as SHP or MIF/MID.":
+        "Usar compresión ZIP para los formatos multiarchivos, como SHP o MIF/MID.",
     /* GEOR_geonames.js strings */
     /* GEOR_getfeatureinfo.js strings */
     "<div>Searching...</div>": "<div>Buscando...</div>",
@@ -135,7 +137,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
          "<div>Búsqueda de objetos activada sobre la capa ${NAME}. " +
          "Haga clic sobre el mapa.</div>",
     /* GEOR_layerfinder.js strings */
-    //"Add layers from local files": "", // TODO
+    "Add layers from local files": "Añadir capas a partir de archivos locales",
     "Find layers searching in metadata":
         "Encontrar capas buscando en los metadatos",
     "Find layers from keywords": "Encontrar capas desde palabras clave",
@@ -237,6 +239,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     /* GEOR_print.js strings */
     "Sources: ": "Fuentes: ",
     "Source: ": "Fuente: ",
+    "Projection: PROJ": "Proyección: ${PROJ}",
     "Print error": "Error de impresión",
     "Print server returned an error":
         "El servicio de impresión señaló un error.",
@@ -255,6 +258,9 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
          "Error de configuración: DEFAULT_PRINT_RESOLUTION " +
          "${RESOLUTION} no se encuentra en las resoluciones de impresión",
     "Title": "Título",
+    "Comments": "Comentarios",
+    "Scale: ": "Escala: ",
+    "Date: ": "Fecha: ",
     "Minimap": "Mini-mapa",
     "North": "Norte",
     "Scale": "Escala",
