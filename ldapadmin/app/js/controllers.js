@@ -47,9 +47,12 @@ angular.module('ldapadmin.controllers', [])
     }
 
     $scope.$watch('users', function() {
-      $scope.allSelected =
-        $scope.selectedUsers().length == filteredUsers().length &&
-        filteredUsers().length > 0;
+      var filtered = filteredUsers(),
+          selected = $scope.selectedUsers();
+
+      $scope.allSelected = filtered && selected &&
+        selected.length == filtered.length &&
+        filtered.length > 0;
     }, true);
 
     $scope.selectAll = function() {
