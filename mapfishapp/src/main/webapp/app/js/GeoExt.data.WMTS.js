@@ -432,8 +432,7 @@ Ext.extend(GeoExt.data.WMTSCapabilitiesReader, Ext.data.DataReader, {
         var operationsMetadata = data.operationsMetadata,
             url = operationsMetadata.GetTile.dcp &&
                 operationsMetadata.GetTile.dcp.http &&
-                operationsMetadata.GetTile.dcp.http.get; // when using georchestra branch in georchestra/openlayers
-                //operationsMetadata.GetTile.dcp.http.get[0].url; // when using openlayers master (and TODO: check that corresponding constraint is KVP)
+                operationsMetadata.GetTile.dcp.http.get[0].url; // TODO: check that corresponding constraint is KVP
         
         var layers = data.contents && data.contents.layers;
         var tileMatrixSets = data.contents && data.contents.tileMatrixSets;
