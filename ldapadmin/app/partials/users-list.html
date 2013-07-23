@@ -1,6 +1,6 @@
 <div class="toolbar">
   <div class="checkbox-wrap">
-    <input type="checkbox" ldapadmin-check-all="!allSelected && selectedUsers().length" ng-change="selectAll()" ng-model="allSelected"/>
+    <input id="checkAll" type="checkbox" ldapadmin-check-all="!allSelected && selectedUsers().length" ng-change="selectAll()" ng-model="allSelected"/>
   </div>
   <div class="btn-group">
     <a class="groups btn dropdown-toggle" ng-click="initGroups()" ng-class="{hide: selectedUsers().length == 0}" data-toggle="dropdown">
@@ -10,13 +10,13 @@
     </a>
     <ul class="dropdown-menu groups">
       <li class="noclose" ng-repeat="group in user_groups">
-        <a href="javascript:void(0);" ng-click="selectGroup(group)">
+        <a href ng-click="selectGroup(group)">
           <i ng-class="{'icon-ok': group.hasUsers == 'all', 'icon-minus': group.hasUsers == 'some'}"></i>
           {{group.name}}
         </a>
       </li>
       <li class="divider"></li>
-      <li ng-class="{disabled: !groupsChanged}"><a ng-click="apply()" href="javascript:void(0);">Apply</a></li>
+      <li ng-class="{disabled: !groupsChanged}"><a ng-click="apply()" href>Apply</a></li>
     </ul>
   </div>
 </div>
