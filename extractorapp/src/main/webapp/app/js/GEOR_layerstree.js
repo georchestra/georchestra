@@ -319,21 +319,19 @@ GEOR.layerstree = (function() {
      * record - local record item from {Ext.data.Store.data}
      */
     var getIsoMetadataUrl = function(record) {
-		var urls = record.get("metadataURLs");
-		if (!urls) {
-			return null;
-		}
-		var href = null;
-		for (var i in urls) {
-			if (urls[i].type && urls[i].type == 'ISO19115:2003' &&
-			  urls[i].format && urls[i].format == 'text/xml' &&
-			  urls[i].href) {
-				href = urls[i].href;
-				break;
-			}
-		}
-		return href;
-	};
+        var urls = record.get("metadataURLs");
+        if (!urls) {
+            return null;
+        }
+        var href = null;
+        for (var i=0,l=urls.length; i<l; i++) {
+            if (urls[i].type == 'ISO19115:2003' && urls[i].format == 'text/xml' && GEOR.util.isUrl(urls[i].href)) {
+                href = urls[i].href;
+                break;
+            }
+        }
+        return href;
+    };
 
     var appendNodesFromWFSCap = function(wfsinfo, node) {
         GEOR.ows.WFSCapabilities({
@@ -1002,7 +1000,7 @@ GEOR.layerstree = (function() {
                     layerName: local.layerName,
                     namespace: local.namespace
                 };
-                if (local.isoMetadataUrl && local.isoMetadataUrl.length) {
+                if (local.isoMetadataUrl !== null) {
                     out.layers[i].isoMetadataURL = local.isoMetadataUrl;
                 }
             }
