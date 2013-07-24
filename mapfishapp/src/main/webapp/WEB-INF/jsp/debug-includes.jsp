@@ -77,7 +77,6 @@
     <script type="text/javascript" src="app/js/GEOR_layerfinder.js"></script>
     <script type="text/javascript" src="app/js/GEOR_cswbrowser.js"></script>
     <script type="text/javascript" src="app/js/GeoExt.data.CSW.js"></script>
-    <script type="text/javascript" src="app/js/GeoExt.data.WMTS.js"></script>
     <script type="text/javascript" src="app/js/GEOR_cswquerier.js"></script>
     <script type="text/javascript" src="app/js/GEOR_wmcbrowser.js"></script>
     <script type="text/javascript" src="app/js/GEOR_fileupload.js"></script>
