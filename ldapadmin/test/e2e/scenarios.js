@@ -24,7 +24,7 @@ describe('my app', function() {
       expect(repeater('.users tr').count()).toEqual(33);
     });
     it('should sort the list of users', function() {
-      expect(repeater('.users tr').row(0)).toEqual(["Aurora Price","Colaire"]);
+      expect(repeater('.users tr').row(0)).toEqual(["Downs","Alfreda","Xanide"]);
     });
   });
 
@@ -46,10 +46,10 @@ describe('my app', function() {
     it('should show the show the edit view', function() {
       element('#new_user').click();
       expect(browser().location().url()).toBe('/users/new');
-      expect(input('user.name').val()).toBe('');
+      expect(input('user.givenName').val()).toBe('');
 
-      input('user.name').enter('toto');
-      input('user.email').enter('toto@mail.zzz');
+      input('user.givenName').enter('toto');
+      input('user.mail').enter('toto@mail.zzz');
       element('.save').click();
       expect(repeater('.users tr').count()).toEqual(34);
     });
@@ -89,10 +89,9 @@ describe('my app', function() {
       element('.btn.groups').click();
       expect(element('.dropdown-menu.groups li:last-child').attr('class')).toContain('disabled');
       element('ul.groups li:nth-child(3) a', 'SV_YYY group item').click();
-
       element('.dropdown-menu.groups li:last-child a:eq(0)').click();
       browser().navigateTo('#/groups/SV_YYY');
-      expect(repeater('.users tr').count()).toEqual(9);
+      expect(repeater('.users tr').count()).toEqual(6);
     });
   });
 });

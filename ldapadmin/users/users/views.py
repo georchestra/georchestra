@@ -37,17 +37,17 @@ class RESTView(object):
     def user(self):
         user = self.request.matchdict['user']
         for ndx, i in enumerate(_users):
-            if str(i['id']) == user:
+            if str(i['uid']) == user:
                 return _users[ndx]
         return 'user not found'
 
     @view_config(route_name='users', renderer='json', request_method='POST')
     def post(self):
-        id = str(uuid.uuid4())
+        uid = str(uuid.uuid4())
         user = {
-            'name': self.request.json_body['name'],
-            'email': self.request.json_body['email'],
-            'id': id
+            'givenName': self.request.json_body['givenName'],
+            'mail': self.request.json_body['mail'],
+            'uid': uid
         }
         _users.append(user)
         return user
@@ -56,16 +56,16 @@ class RESTView(object):
     def put(self):
         user = self.request.matchdict['user']
         for ndx, i in enumerate(_users):
-            if str(i['id']) == user:
-                i['name'] = self.request.json_body['name']
-                i['email'] = self.request.json_body['email']
+            if str(i['uid']) == user:
+                i['givenName'] = self.request.json_body['givenName']
+                i['mail'] = self.request.json_body['mail']
         return Response('put')
 
     @view_config(route_name='user', request_method='DELETE')
     def delete(self):
         user = self.request.matchdict['user']
         for ndx, i in enumerate(_users):
-            if str(i['id']) == user:
+            if str(i['uid']) == user:
                 del _users[ndx]
         return Response('delete')
 
@@ -86,7 +86,7 @@ class RESTView(object):
                 user['groups'].remove(group)
         return Response('put')
 
-def getUserById(id):
+def getUserById(uid):
     for ndx, i in enumerate(_users):
-        if str(i['id']) == str(id):
+        if str(i['uid']) == str(uid):
             return i

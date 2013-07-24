@@ -111,7 +111,7 @@ angular.module('ldapadmin.controllers', [])
       $scope.save = function() {
         $scope.user.put().then(function() {
           flash.success = 'User correctly updated';
-          var index = findByAttr($scope.users, 'id', $routeParams.userId);
+          var index = findByAttr($scope.users, 'uid', $routeParams.userId);
 
           if (index !== false) {
             $scope.users[index] = $scope.user;
@@ -121,7 +121,7 @@ angular.module('ldapadmin.controllers', [])
       $scope.deleteUser = function() {
         Restangular.one('users', user.id).remove().then(
           function() {
-            var index = findByAttr($scope.users, 'id', $routeParams.userId);
+            var index = findByAttr($scope.users, 'uid', $routeParams.userId);
 
             if (index !== false) {
               $scope.users = $scope.users.splice(index, 1);
@@ -157,7 +157,7 @@ angular.module('ldapadmin.controllers', [])
       // called when user submits modifications on groups list for a user
       $scope.apply = function() {
         postGroups($scope, $scope.user, Restangular, flash, function() {
-          var index = findByAttr($scope.users, 'id', $routeParams.userId);
+          var index = findByAttr($scope.users, 'uid', $routeParams.userId);
           if (index !== false) {
             $scope.users[index] = $scope.user;
           }
@@ -167,10 +167,9 @@ angular.module('ldapadmin.controllers', [])
   })
   .controller('UserCreateCtrl', function($scope, Restangular, flash) {
       $scope.save = function() {
-        Restangular.all('users').post({
-          name: $scope.user.name,
-          email: $scope.user.email
-        }).then(function(user) {
+        Restangular.all('users').post(
+          $scope.user
+        ).then(function(user) {
           $scope.users.push(user);
           window.location = "#/users";
           flash.success = 'User correctly added';
@@ -215,7 +214,7 @@ function postGroups($scope, users, Restangular, flash, callback) {
   }
 
   var body = {
-    "users": _.pluck(users, 'id'),
+    "users": _.pluck(users, 'uid'),
     "PUT": toPut,
     "DELETE": toDelete
   };

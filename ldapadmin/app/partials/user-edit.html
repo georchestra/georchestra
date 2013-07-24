@@ -1,7 +1,7 @@
 <div class="toolbar">
   <a class="btn" href="javascript:history.back();"><i class="icon-arrow-left"></i></a>
   <div class="btn-group">
-    <a class="groups btn dropdown-toggle" ng-click="initGroups()" ng-class="{hide: user.id == null}" data-toggle="dropdown">
+    <a class="groups btn dropdown-toggle" ng-click="initGroups()" ng-class="{hide: user.uid == null}" data-toggle="dropdown">
       <i class="icon-th-list"></i>
       Groups
       <span class="caret"></span>
@@ -18,7 +18,7 @@
     </ul>
   </div>
   <div class="btn-group">
-    <a class="actions btn dropdown-toggle" ng-class="{hide: user.id == null}" data-toggle="dropdown">
+    <a class="actions btn dropdown-toggle" ng-class="{hide: user.uid == null}" data-toggle="dropdown">
       Actions
       <span class="caret"></span>
     </a>
@@ -29,15 +29,15 @@
 </div>
 <form action="" name="userForm">
   <div class="control-group" ng-class="{error: userForm.name.$invalid}">
-    <label for="name">Name</label>
-    <input type="text" name="name" ng-model="user.name" required />
+    <label for="givenName">Name</label>
+    <input type="text" name="name" ng-model="user.givenName" required />
     <span ng-show="userForm.name.$error.required" class="help-inline">Required</span>
   </div>
-  <div class="control-group" ng-class="{error: userForm.email.$invalid}">
-    <label for="email">E-Mail</label>
-    <input type="email" name="email" ng-model="user.email" required />
-    <span ng-show="userForm.email.$error.required" class="help-inline">Required</span>
-    <span ng-show="userForm.email.$error.email" class="help-inline">Not a valid E-mail</span>
+  <div class="control-group" ng-class="{error: userForm.mail.$invalid}">
+    <label for="mail">E-Mail</label>
+    <input type="email" name="mail" ng-model="user.mail" required />
+    <span ng-show="userForm.mail.$error.required" class="help-inline">Required</span>
+    <span ng-show="userForm.mail.$error.email" class="help-inline">Not a valid E-mail</span>
   </div>
   <a href="javascript:window.history.back();" class="btn cancel">Cancel</a>
   <button ng-click="save()" ng-disabled="isClean() || userForm.$invalid"
