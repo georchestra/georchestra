@@ -177,6 +177,7 @@ OpenLayers.Format.OWSCommon.v1.prototype.readers.ows = OpenLayers.Util.extend(
  */
 OpenLayers.Format.WMTSCapabilities.v1_0_0.prototype.readers.wmts = OpenLayers.Util.extend(
     OpenLayers.Format.WMTSCapabilities.v1_0_0.prototype.readers.wmts, {
+        //see https://github.com/openlayers/openlayers/pull/1054
         "Layer": function(node, obj) {
             var layer = {
                 styles: [],
@@ -261,6 +262,7 @@ OpenLayers.Format.WMTSCapabilities.v1_0_0.prototype.readers.wmts = OpenLayers.Ut
             obj.infoFormats = obj.infoFormats || [];
             obj.infoFormats.push(this.getChildValue(node));
         }
+        //see https://github.com/openlayers/openlayers/pull/1056
     }
 );
 
@@ -473,6 +475,7 @@ Ext.extend(GeoExt.data.WMTSCapabilitiesReader, Ext.data.DataReader, {
                     if (this.meta.layerOptions) {
                         Ext.apply(options, this.meta.layerOptions);
                     }
+                    // TODO: use format.createLayer instead !!
                     values.layer = new OpenLayers.Layer.WMTS(options);
                     records.push(new this.recordType(values, values.layer.id));
                 }
