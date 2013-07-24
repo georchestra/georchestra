@@ -23,7 +23,7 @@
  * @include OpenLayers/Control/LoadingPanel.js
  * @include OpenLayers/Kinetic.js
  * @include OpenLayers/Layer/WMS.js
- * @include OpenLayers/Layer/XYZ.js
+ * @include OpenLayers/Layer/OSM.js
  * @include GeoExt/data/LayerRecord.js
  * @include GeoExt/data/LayerStore.js
  * @include GEOR_config.js
