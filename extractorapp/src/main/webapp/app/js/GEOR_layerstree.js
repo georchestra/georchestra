@@ -325,7 +325,7 @@ GEOR.layerstree = (function() {
         }
         var href = null;
         for (var i=0,l=urls.length; i<l; i++) {
-            if (urls[i].type == 'ISO19115:2003' && urls[i].format == 'text/xml' && GEOR.util.isUrl(urls[i].href)) {
+            if (urls[i].type == 'ISO19115:2003' && urls[i].format == 'text/xml' && GEOR.util.isUrl(urls[i].href, true)) {
                 href = urls[i].href;
                 break;
             }
