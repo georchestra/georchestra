@@ -80,8 +80,6 @@ Ext.namespace("GEOR");
         OpenLayers.Number.thousandsSeparator = " ";
         OpenLayers.ImgPath = 'app/img/openlayers/';
         OpenLayers.DOTS_PER_INCH = GEOR.config.MAP_DOTS_PER_INCH;
-        OpenLayers.INCHES_PER_UNIT.m = 39.37; // not 39.3701 ! (fixed in recent versions of OL)
-
 
         /*
          * Setting of Ext global vars.
