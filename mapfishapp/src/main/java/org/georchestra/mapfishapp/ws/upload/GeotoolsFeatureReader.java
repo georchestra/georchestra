@@ -307,7 +307,7 @@ class GeotoolsFeatureReader implements FeatureGeoFileReader {
 	 * 
 	 * @param typeName
 	 * @param store
-	 * @param targetCRS
+	 * @param targetCRS when the target crs is provided the reatures are reprojected
 	 * @return
 	 * @throws IOException
 	 */

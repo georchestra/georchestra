@@ -66,6 +66,22 @@ public class GeotoolsFeatureReaderTest {
 		
 		assertFeatureCollection(fc,  2, 4326);
 	}
+	
+	@Test
+	public void testSHPCoordinatesEPSG4326() throws Exception {
+		
+		String fullName = makeFullName("shp_4326_accidents.shp");
+		File file = new File(fullName);
+		
+		SimpleFeatureCollection fc = reader.getFeatureCollection(file, FileFormat.shp);
+		
+		double x = -2.265330624649336;
+		double y = 48.421434814828025;
+		int id = 205;
+		int crs = 4326;
+		assertCoordinatedOrder(fc, id, x,  y, crs);
+	}
+
 
 	/**
 	 * Transform the features from 4326 to 2154
@@ -192,7 +208,8 @@ public class GeotoolsFeatureReaderTest {
 	}
 	
 	/**
-	 * This test checks that there is not inversion of coordinates (long/lat) 
+	 * Tests gml projected no reprojected
+	 * @throws Exception
 	 */
 	@Test
 	public void testGMLCoordinates() throws Exception {
@@ -200,13 +217,33 @@ public class GeotoolsFeatureReaderTest {
 		String fullName = makeFullName("gml_4326_accidents.gml");
 		File file = new File(fullName);
 		
-		SimpleFeatureCollection fc = reader.getFeatureCollection(file, FileFormat.gml);
+		SimpleFeatureCollection fc = reader.getFeatureCollection(file, FileFormat.gml, null);
 		
-		double x = -2.265330624649336;
-		double y = 48.421434814828025;
+		double x = -2.265330624649336; 
+		double y = 48.421434814828025; 
 		int id = 205;
-		int crs = 4326;
-		assertCoordinatedOrder(fc, id, x,  y, crs);
+		assertCoordinatedOrder(fc, id, x,  y);
+	}
+	
+	
+	/**
+	 * Tests gml projected using EPSG:4326
+	 * @throws Exception
+	 */
+	@Test
+	public void testGMLCoordinatesTransformToEPSG4326() throws Exception {
+		
+		String fullName = makeFullName("gml_4326_accidents.gml");
+		File file = new File(fullName);
+		
+		final int CRS_ID = 4326;
+		CoordinateReferenceSystem crs = CRS.decode("EPSG:"+CRS_ID);
+		SimpleFeatureCollection fc = reader.getFeatureCollection(file, FileFormat.gml, crs);
+		
+		double x = -2.265330624649336; 
+		double y = 48.421434814828025; 
+		int id = 205;
+		assertCoordinatedOrder(fc, id, x,  y, CRS_ID);
 	}
 	
 	/**
@@ -223,30 +260,42 @@ public class GeotoolsFeatureReaderTest {
 		CoordinateReferenceSystem crs = CRS.decode("EPSG:"+CRS_ID);
 		SimpleFeatureCollection fc = reader.getFeatureCollection(file, FileFormat.gml, crs);
 		
-		double x = -2.265330624649336;
-		double y = 48.421434814828025;
+		double x = -2.265330624649336; // FIXME TRANSFORM THIS TO EPSG:3857
+		double y = 48.421434814828025; // FIXME TRANSFORM THIS TO EPSG:3857
 		int id = 205;
 		assertCoordinatedOrder(fc, id, x,  y, CRS_ID);
 	}
 
 	
+
+	private void assertCoordinatedOrder(SimpleFeatureCollection fc, int id,
+			double x, double y) throws Exception{
+		assertCoordinatedOrder(fc, id, x,  y, 0);
+		
+	}
+
 	/**
 	 * Checks that the coordinates are in the expected order (x,y).
 	 * 
 	 * @param fc
 	 * @param requiredFeatureID feature to search
-	 * @param xCoordExpected
-	 * @param yCoordExpected
+	 * @param xExpected
+	 * @param yExpected
 	 * @param expectedEPSG
 	 */
-	private void assertCoordinatedOrder(SimpleFeatureCollection fc, final int requiredFeatureID, final double xCoordExpected, final double yCoordExpected, final int expectedEPSG) {
+	private void assertCoordinatedOrder(SimpleFeatureCollection fc, final int requiredFeatureID, final double xExpected, final double yExpected, final int expectedEPSG) 
+			throws Exception{
 		
 		CoordinateReferenceSystem schemaCRS = fc.getSchema().getCoordinateReferenceSystem();
-		
 		assertNotNull(schemaCRS);
-		
+		if(expectedEPSG != 0l){
+			int code =CRS.lookupEpsgCode(schemaCRS, true);
+			assertTrue( expectedEPSG == code);
+		} 
+
+		double x;
+		double y;
 		SimpleFeatureIterator iter = fc.features();
-		boolean OK = false;
 		try{
 			while(iter.hasNext()){
 				
@@ -255,22 +304,21 @@ public class GeotoolsFeatureReaderTest {
 				int id = Integer.valueOf(f.getAttribute("id").toString());
 				if(id == requiredFeatureID ){
 					Geometry geom = (Geometry) f.getDefaultGeometry();
-					assert(geom.getSRID() == expectedEPSG);
+
 
 					Coordinate[] coordinates = geom.getCoordinates();
 					
-					assertEquals(coordinates[0].x, xCoordExpected, 10e-15);
-					assertEquals(coordinates[0].y, yCoordExpected, 10e-15);
+					assertEquals(xExpected, coordinates[0].x , 10e-15);
+					assertEquals(yExpected, coordinates[0].y, 10e-15);
 					
-					OK = true;
-
+					assertTrue(true);
 					break;
 				}
+				fail("the feature id: " + requiredFeatureID + " wan't found" );
 			}
 			
 		} finally {
 			iter.close();
-			assertTrue("Coordinates no match", OK);
 		}
 	}
 	
@@ -285,6 +333,8 @@ public class GeotoolsFeatureReaderTest {
 		
 		assertFeatureCollectionFromGML(fc,  50, epsgCode);
 	}
+	
+	
 	
 
 	@Ignore 
@@ -338,7 +388,7 @@ public class GeotoolsFeatureReaderTest {
 		FileFormat[] formats = reader.getFormatList();
 		for (int i = 0; i < formats.length; i++) {
 
-			Assert.assertTrue( gtRequiredFormats.contains(formats[i]) );
+			assertTrue( gtRequiredFormats.contains(formats[i]) );
 			
 		}
 		

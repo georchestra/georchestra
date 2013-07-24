@@ -27,7 +27,7 @@ public class UpLoadFileManagementOGRImplTest extends UpLoadFileManagementGTImplT
 		String fileName = "wp.gpx";
 		String fullName = makeFullName(fileName);
 		
-		testGetGeofileToJSON(fullName);
+		testGetGeofileToJSON(fullName, null);
 	}
 	
 

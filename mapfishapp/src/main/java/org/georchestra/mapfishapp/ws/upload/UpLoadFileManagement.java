@@ -322,6 +322,10 @@ public class UpLoadFileManagement {
 	 */
 	public String getFeatureCollectionAsJSON(final CoordinateReferenceSystem crs) throws IOException {
 		
+			if(LOG.isDebugEnabled()){
+				LOG.debug("CRS to reproject:"+  crs);
+			}
+		
 			// retrieves the feature from file system
 			String jsonResult = "";
 		

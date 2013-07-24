@@ -38,7 +38,7 @@ public class UpLoadFileManagementGTImplTest {
 		String fileName = "points-4326.shp";
 		String fullName = makeFullName(fileName);
 		
-		testGetGeofileToJSON(fullName);
+		testGetGeofileToJSON(fullName, null);
 	}
 	
 	@Ignore
@@ -55,8 +55,8 @@ public class UpLoadFileManagementGTImplTest {
 	 * 
 	 * @throws Exception
 	 */
-	@Ignore
-	public void testSHPCoordinates() throws Exception {
+	@Test
+	public void testSHPCoordinatesEPSG4326() throws Exception {
 		
 		String fileName = "shp_4326_accidents.shp";
 		String fullName = makeFullName(fileName);
@@ -66,6 +66,24 @@ public class UpLoadFileManagementGTImplTest {
 		assertCoordinateContains(-2.265330624649336, 48.421434814828025, json );
 	}
 
+	/** 
+	 * Tests the coordinates order.
+	 * <p>
+	 * The retrieved features aren't reprojected. They will be in the base srs.
+	 * </p>
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testSHPCoordinatesNoReprojected() throws Exception {
+		
+		String fileName = "shp_4326_accidents.shp";
+		String fullName = makeFullName(fileName);
+		
+		String json = testGetGeofileToJSON(fullName, null);
+		
+		assertCoordinateContains(-2.265330624649336, 48.421434814828025, json );
+	}
 	
 	@Ignore 
 	public void testKMLAsJSON() throws Exception {
@@ -73,7 +91,7 @@ public class UpLoadFileManagementGTImplTest {
 		String fileName = "regions.kml";
 		String fullName = makeFullName(fileName);
 		
-		testGetGeofileToJSON(fullName);
+		testGetGeofileToJSON(fullName, null);
 	}
 	
 	/** 
@@ -82,7 +100,7 @@ public class UpLoadFileManagementGTImplTest {
 	 * @throws Exception
 	 */
 	@Ignore
-	public void testKMLCoordinates() throws Exception {
+	public void testKMLCoordinatesEPSG4326() throws Exception {
 		
 		String fileName = "kml_4326_accidents.kml";
 		String fullName = makeFullName(fileName);
@@ -93,13 +111,17 @@ public class UpLoadFileManagementGTImplTest {
 	}
 	
 	
-	@Ignore
+	/**
+	 * Read features no reprojected
+	 * @throws Exception
+	 */
+	@Test
 	public void testGMLAsJSON() throws Exception {
 		
 		String fileName = "border.gml";
 		String fullName = makeFullName(fileName);
 
-		testGetGeofileToJSON(fullName);
+		testGetGeofileToJSON(fullName, null);
 		
 	}
 
@@ -110,7 +132,7 @@ public class UpLoadFileManagementGTImplTest {
 		String fileName = "pigma_regions_POLYGON.mif";
 		String fullName = makeFullName(fileName);
 		
-		testGetGeofileToJSON(fullName);
+		testGetGeofileToJSON(fullName, null);
 	}
 	
 	/** 
@@ -119,7 +141,7 @@ public class UpLoadFileManagementGTImplTest {
 	 * @throws Exception
 	 */
 	@Ignore
-	public void testMIFCoordinates() throws Exception {
+	public void testMIFCoordinatesEPSG4326() throws Exception {
 		
 		String fileName = "mif_4326_accidents.mif";
 		String fullName = makeFullName(fileName);
@@ -146,7 +168,7 @@ public class UpLoadFileManagementGTImplTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void testGMLCoordinates() throws Exception {
+	public void testGMLCoordinatesEPSG4326() throws Exception {
 		
 		String fileName = "gml_4326_accidents.gml";
 		String fullName = makeFullName(fileName);
@@ -154,6 +176,23 @@ public class UpLoadFileManagementGTImplTest {
 		String json = testGetGeofileToJSON(fullName, "EPSG:4326");
 		
 		assertCoordinateContains( -2.265330624649336, 48.421434814828025, json );
+	}
+
+	/** 
+	 * Tests the coordinates order. The input layer is projected in epsg:4326,
+	 * the result is reprojected to epsg:3857.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testGMLCoordinatesFrom4326to3857() throws Exception {
+		
+		String fileName = "gml_4326_accidents.gml";
+		String fullName = makeFullName(fileName);
+		
+		String json = testGetGeofileToJSON(fullName, "EPSG:3857");
+		
+		assertCoordinateContains( -252175.451614371791948, 6177255.152005254290998, json );
 	}
 
 	/**
@@ -170,7 +209,7 @@ public class UpLoadFileManagementGTImplTest {
 		
 		FeatureIterator<SimpleFeature> iter = featureJSON.streamFeatureCollection(json);
 		
-		assertTrue(iter.hasNext());
+		assertTrue(iter.hasNext()); // the test data only contains one feature
 
 		SimpleFeature f = iter.next();
 
@@ -179,17 +218,6 @@ public class UpLoadFileManagementGTImplTest {
 		assertEquals(x, geom.getCoordinate().x, 10e-15);
 
 		assertEquals(y, geom.getCoordinate().y, 10e-15);
-	}
-	/**
-	 * Sets the default crs as epsg:4326, before test.
-	 * 
-	 * @param fileName
-	 * @throws Exception
-	 */
-	protected void testGetGeofileToJSON(final String fileName) throws Exception{
-	
-		testGetGeofileToJSON(fileName, "EPSG:4326");
-		
 	}
 	
 	
@@ -221,7 +249,13 @@ public class UpLoadFileManagementGTImplTest {
 		fm.setWorkDirectory(FilenameUtils.getFullPath(fileName));
 		fm.setFileDescriptor(fd);
 		
-		return  fm.getFeatureCollectionAsJSON(CRS.decode(epsg));
+		String json;
+		if(epsg != null){
+			json = fm.getFeatureCollectionAsJSON(CRS.decode(epsg));
+		} else{
+			json = fm.getFeatureCollectionAsJSON();
+		}
+		return  json;
 	}
 	
 	/**
