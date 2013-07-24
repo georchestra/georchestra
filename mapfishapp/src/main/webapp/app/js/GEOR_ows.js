@@ -20,6 +20,7 @@
  * @include GeoExt/data/WMSDescribeLayerStore.js
  * @include GeoExt/data/AttributeStore.js
  * @include GeoExt/data/WMSCapabilitiesStore.js
+ * @include GeoExt/data/WMTSCapabilitiesStore.js
  * @include OpenLayers/Format/WMSCapabilities/v1_1_1.js
  * @include OpenLayers/Format/WMTSCapabilities/v1_0_0.js
  * @include OpenLayers/Format/WFSCapabilities/v1_0_0.js
@@ -29,8 +30,6 @@
  * @include OpenLayers/Layer/WMTS.js
  * @requires GEOR_config.js
  * @include GEOR_waiter.js
- * // FIXME: hack before GeoExt supports WMTS
- * @include GeoExt.data.WMTS.js
  */
 
 Ext.namespace("GEOR");
@@ -475,6 +474,21 @@ GEOR.ows = (function() {
                     // would be good for WMTS base layers only:
                     //transitionEffect: 'resize'
                 }, layerOptions, GEOR.ows.defaultWMTSLayerOptions),
+                fields: [
+                    {name: "type", type: "string", defaultValue: "WMTS"}, // specific for georchestra
+                    // those from the standard WMTS capabilities reader:
+                    {name: "name", type: "string", mapping: "identifier"},
+                    {name: "title", type: "string"},
+                    {name: "abstract", type: "string"},
+                    {name: "queryable", type: "boolean"},
+                    {name: "llbbox", mapping: "bounds", convert: function(v){
+                        return [v.left, v.bottom, v.right, v.top];
+                    }},
+                    {name: "formats"}, // array
+                    {name: "infoFormats"}, // array
+                    {name: "styles"}, // array of Objects {abstract, identifier, isDefault, keywords, title}
+                    {name: "keywords"} // Object
+                ],
                 matrixSetChooser: function(tileMatrixSetLinks) {
                     var mapSRS = options.mapSRS ||
                         GeoExt.MapPanel.guess().map.getProjection();
