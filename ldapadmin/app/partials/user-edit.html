@@ -27,19 +27,80 @@
     </ul>
   </div>
 </div>
-<form action="" name="userForm">
-  <div class="control-group" ng-class="{error: userForm.name.$invalid}">
-    <label for="givenName">Name</label>
-    <input type="text" name="name" ng-model="user.givenName" required />
-    <span ng-show="userForm.name.$error.required" class="help-inline">Required</span>
+<hr />
+<form class="form-fixed" action="" name="userForm">
+
+  <div class="row-fluid">
+    <div class="span1">
+      <input type="text" name="title" class="span12" ng-mode="user.title" placeholder="Mr.">
+    </div>
+    <div class="span6">
+      <div class="control-group" ng-class="{error: userForm.sn.$invalid}">
+        <input type="text" name="sn" ng-model="user.sn" required  placeholder="First Name" class="span12"/>
+        <span ng-show="userForm.sn.$error.required" class="help-inline">Required</span>
+      </div>
+    </div>
+    <div class="span5">
+      <div class="control-group" ng-class="{error: userForm.givenName.$invalid}">
+        <input type="text" name="givenName" ng-model="user.givenName" required  placeholder="Last Name" class="span12"/>
+        <span ng-show="userForm.givenName.$error.required" class="help-inline">Required</span>
+      </div>
+    </div>
   </div>
-  <div class="control-group" ng-class="{error: userForm.mail.$invalid}">
-    <label for="mail">E-Mail</label>
-    <input type="email" name="mail" ng-model="user.mail" required />
-    <span ng-show="userForm.mail.$error.required" class="help-inline">Required</span>
-    <span ng-show="userForm.mail.$error.email" class="help-inline">Not a valid E-mail</span>
+  <div class="row-fluid">
+    <div class="span6">
+      <div class="control-group" ng-class="{error: userForm.mail.$invalid}">
+        <label for="mail">E-Mail</label>
+        <input type="email" name="mail" ng-model="user.mail" required class="span12"/>
+        <span ng-show="userForm.mail.$error.required" class="help-inline">Required</span>
+        <span ng-show="userForm.mail.$error.email" class="help-inline">Not a valid E-mail</span>
+      </div>
+    </div>
+
+    <div class="span3">
+      <div class="control-group">
+        <label class="control-label" for="telephone">Phone</label>
+        <div class="controls">
+          <input id="telephone" name="telephone" ng-model="user.telephoneNumber" type="text" placeholder="" class="span12">
+        </div>
+      </div>
+    </div>
+
+    <div class="span3">
+      <div class="control-group">
+        <label class="control-label" for="fax">Fax</label>
+        <div class="controls">
+          <input id="fax" name="fax" ng-model="user.facsimileTelephoneNumber" type="text" placeholder="" class="span12">
+        </div>
+      </div>
+    </div>
   </div>
-  <a href="javascript:window.history.back();" class="btn cancel">Cancel</a>
-  <button ng-click="save()" ng-disabled="isClean() || userForm.$invalid"
-          class="btn btn-primary save">Save</button>
+
+  <div class="row-fluid">
+    <div class="span10">
+      <label>Address</label>
+      <input type="text" class="span12" ng-model="user.street" placeholder="Street">
+    </div>
+  </div>
+  <div class="row-fluid">
+    <div class="span4 bgcolor">
+      <input type="text" class="span12" ng-model="user.postOfficeBox" placeholder="Post Office Box">
+    </div>
+  </div>
+  <div class="row-fluid">
+    <div class="span3 bgcolor">
+      <input type="text" class="span12" ng-model="user.postalCode" placeholder="Postal Code">
+    </div>
+    <div class="span5 bgcolor">
+      <input type="text" class="span12" ng-model="user.l" placeholder="City">
+    </div>
+  </div>
+
+  <!-- Textarea -->
+
+  <div class="form-actions">
+    <a href="javascript:window.history.back();" class="btn cancel">Cancel</a>
+    <button ng-click="save()" ng-disabled="isClean() || userForm.$invalid"
+            class="btn btn-primary save">Save</button>
+  </div>
 </form>
