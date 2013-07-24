@@ -51,7 +51,7 @@ For example:
 </MetadataURL>
 ```
 
-This metadata information is available only with some configuration in the WMS server. When configuring a layer in GeoServer (http://docs.geoserver.org/stable/en/user/webadmin/data/layers.html#basic-info), fill:
+This metadata information is available only after some configuration in the WMS server. When configuring a layer in GeoServer (http://docs.geoserver.org/stable/en/user/webadmin/data/layers.html#basic-info), fill:
 - the **Type** field with `ISO19115:2003`
 - the **Format** field with `text/xml`
 - the **URL** with the address of the XML ISO19115 metadata document. In GeoNetwork, the XML metadata documents can be accessed by the following URL pattern: `/geonetwork/srv/en/xml.metadata.get?uuid=...`.
