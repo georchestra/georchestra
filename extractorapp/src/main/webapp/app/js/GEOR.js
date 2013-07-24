@@ -236,6 +236,7 @@ Ext.namespace("GEOR");
             }, {
                 layout: "form",
                 region: 'south',
+                footerCssClass: "geor-primary",
                 buttons: [{
                     xtype: 'button',
                     id: "geor-btn-extract-id",
