@@ -310,6 +310,31 @@ GEOR.layerstree = (function() {
         });
     };
 
+    /**
+     * Method: getIsoMetadataUrl
+     * extract the XML ISO19115 metadata URL, or null if there is no
+     * such metadata
+     *
+     * Parameters:
+     * record - local record item from {Ext.data.Store.data}
+     */
+    var getIsoMetadataUrl = function(record) {
+		var urls = record.get("metadataURLs");
+		if (!urls) {
+			return null;
+		}
+		var href = null;
+		for (var i in urls) {
+			if (urls[i].type && urls[i].type == 'ISO19115:2003' &&
+			  urls[i].format && urls[i].format == 'text/xml' &&
+			  urls[i].href) {
+				href = urls[i].href;
+				break;
+			}
+		}
+		return href;
+	};
+
     var appendNodesFromWFSCap = function(wfsinfo, node) {
         GEOR.ows.WFSCapabilities({
             storeOptions: {
@@ -507,7 +532,8 @@ GEOR.layerstree = (function() {
                         layer: record.get("layer"),
                         exportinfo: {
                             srs: srs,
-                            bbox: maxExtent
+                            bbox: maxExtent,
+                            isoMetadataUrl: getIsoMetadataUrl(record)
                         }
                     };
                     owsinfo.layer.addOptions({
@@ -976,6 +1002,9 @@ GEOR.layerstree = (function() {
                     layerName: local.layerName,
                     namespace: local.namespace
                 };
+                if (local.isoMetadataUrl && local.isoMetadataUrl.length) {
+                    out.layers[i].isoMetadataURL = local.isoMetadataUrl;
+                }
             }
 
             return out;
