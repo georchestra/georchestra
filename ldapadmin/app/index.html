@@ -28,12 +28,12 @@
               New user
             </a>
           </div>
+          <hr />
           <a href="#/" ng-class="{active: selectedGroup == null}">
             All users ({{users.length}})
           </a>
           <br />
           <br />
-
           <div class="groups" ng-controller="GroupsCtrl">
             <div ng-repeat="group in groups">
               <a href="#/groups/{{group.name}}" ng-class="{active: group.name==selectedGroup}">
@@ -41,6 +41,11 @@
               </a>
             </div>
           </div>
+          <br />
+          <a id="new_group" href="#/groups/new" class="">
+            <i class="icon-plus-sign"></i>
+            New group
+          </a>
         </div>
         <div class="span9" ng-view>
         <!--Body content-->

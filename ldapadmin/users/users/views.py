@@ -29,6 +29,14 @@ class RESTView(object):
     def get_groups(self):
         return _groups
 
+    @view_config(route_name='groups', renderer='json', request_method='POST')
+    def post_groups(self):
+        uid = str(uuid.uuid4())
+        group = self.request.json_body
+        group['uid'] = uid
+        _groups.append(group)
+        return group
+
     @view_config(route_name='users', renderer='json', request_method='GET')
     def get(self):
         return _users

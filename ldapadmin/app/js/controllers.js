@@ -9,6 +9,17 @@ angular.module('ldapadmin.controllers', [])
       flash.error = 'Oops error from server :(';
     });
   })
+  .controller('GroupCreateCtrl', function($scope, Restangular, flash) {
+      $scope.save = function() {
+        Restangular.all('groups').post(
+          $scope.group
+        ).then(function(group) {
+          $scope.groups.push(group);
+          window.location = "#/users";
+          flash.success = 'Group correctly added';
+        });
+      };
+  })
   .controller('UsersCtrl', function UsersCtrl($scope, Restangular) {
     var baseUsers = Restangular.all('users');
     baseUsers.getList().then(function(users) {

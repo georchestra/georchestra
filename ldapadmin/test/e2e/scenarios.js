@@ -95,4 +95,15 @@ describe('my app', function() {
       expect(repeater('.users tr').count()).toEqual(6);
     });
   });
+  describe('create group', function() {
+    it('should show the show the edit view', function() {
+      element('#new_group').click();
+      expect(browser().location().url()).toBe('/groups/new');
+      expect(input('group.name').val()).toBe('');
+
+      input('group.name').enter('Name for group');
+      element('.save').click();
+      expect(repeater('.groups div').count()).toEqual(6);
+    });
+  });
 });
