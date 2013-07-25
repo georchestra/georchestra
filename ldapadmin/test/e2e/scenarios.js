@@ -31,13 +31,13 @@ describe('my app', function() {
   describe('group', function() {
 
     it('should render a list of 3 users', function() {
-      browser().navigateTo('#/groups/Administrator');
+      browser().navigateTo('#/groups/1');
       expect(repeater('.users tr').count()).toEqual(3);
     });
 
     it('should select a group', function() {
       element('.groups div:nth-child(2) a').click();
-      expect(browser().location().url()).toBe('/groups/SV_XXX');
+      expect(browser().location().url()).toBe('/groups/2');
       expect(repeater('.users tr').count()).toEqual(4);
     });
   });
@@ -66,7 +66,7 @@ describe('my app', function() {
 
   describe('select users', function() {
     it('should select all users', function() {
-      browser().navigateTo('#/groups/Administrator');
+      browser().navigateTo('#/groups/1');
 
       // check the check all checkbox
       element('#checkAll').click();
@@ -91,12 +91,12 @@ describe('my app', function() {
       expect(element('.dropdown-menu.groups li:last-child').attr('class')).toContain('disabled');
       element('ul.groups li:nth-child(3) a', 'SV_YYY group item').click();
       element('.dropdown-menu.groups li:last-child a:eq(0)').click();
-      browser().navigateTo('#/groups/SV_YYY');
+      browser().navigateTo('#/groups/3');
       expect(repeater('.users tr').count()).toEqual(6);
     });
   });
   describe('create group', function() {
-    it('should show the show the edit view', function() {
+    it('should show the group edit view', function() {
       element('#new_group').click();
       expect(browser().location().url()).toBe('/groups/new');
       expect(input('group.name').val()).toBe('');
@@ -104,6 +104,14 @@ describe('my app', function() {
       input('group.name').enter('Name for group');
       element('.save').click();
       expect(repeater('.groups div').count()).toEqual(6);
+    });
+  });
+  describe('delete group', function() {
+    it('should remove the group', function() {
+      browser().navigateTo('#/groups/3');
+
+      element('.delete').click();
+      expect(repeater('.groups div').count()).toEqual(5);
     });
   });
 });

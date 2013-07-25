@@ -36,8 +36,8 @@
           <br />
           <div class="groups" ng-controller="GroupsCtrl">
             <div ng-repeat="group in groups">
-              <a href="#/groups/{{group.name}}" ng-class="{active: group.name==selectedGroup}">
-                {{group.name}} <small>({{users | count:group.name}})</small>
+              <a href="#/groups/{{group.uid}}" ng-class="{active: group.uid==selectedGroup}">
+                {{group.name}} <small>({{users | count:group.uid}})</small>
               </a>
             </div>
           </div>

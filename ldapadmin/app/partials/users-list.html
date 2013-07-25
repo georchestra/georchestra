@@ -19,6 +19,15 @@
       <li ng-class="{disabled: !groupsChanged}"><a ng-click="apply()" href>Apply</a></li>
     </ul>
   </div>
+  <div class="btn-group">
+    <a class="actions btn dropdown-toggle" ng-class="{hide: selectedGroup == null}" data-toggle="dropdown">
+      Actions
+      <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+      <li><a ng-click="deleteGroup(selectedGroup)" class="delete">Delete group</a></li>
+    </ul>
+  </div>
 </div>
 <table class="users table table-striped table-hover table-condensed">
   <tr ng-repeat="user in users | filter:groupFilter | orderBy:'givenName'" class="">

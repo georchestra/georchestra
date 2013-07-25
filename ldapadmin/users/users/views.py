@@ -37,6 +37,20 @@ class RESTView(object):
         _groups.append(group)
         return group
 
+    @view_config(route_name='group', request_method='DELETE')
+    def delete_group(self):
+        group = self.request.matchdict['group']
+
+        for nj, user in enumerate(_users):
+            if 'groups' in user\
+                and group in user['groups']:
+                user['groups'].remove(group)
+
+        for ndx, i in enumerate(_groups):
+            if str(i['uid']) == group:
+                del _groups[ndx]
+        return Response('delete')
+
     @view_config(route_name='users', renderer='json', request_method='GET')
     def get(self):
         return _users

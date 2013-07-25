@@ -75,7 +75,7 @@ angular.module('ldapadmin.controllers', [])
     function hasUsers(group) {
       var total = $scope.selectedUsers().length;
       var inGroup = _.filter($scope.selectedUsers(), function(user) {
-        return user.groups.indexOf(group.name) != -1;
+        return user.groups.indexOf(group.uid) != -1;
       });
       if (inGroup.length === 0) {
         return false;
@@ -106,6 +106,22 @@ angular.module('ldapadmin.controllers', [])
     // called when user submits modifications on groups list for a user
     $scope.apply = function() {
       postGroups($scope, $scope.selectedUsers(), Restangular, flash);
+    };
+    $scope.deleteGroup = function(group) {
+      Restangular.one('groups', group).remove().then(
+        function() {
+          var index = findByAttr($scope.groups, 'uid', $routeParams.group);
+
+          if (index !== false) {
+            $scope.groups = $scope.groups.splice(index, 1);
+          }
+          window.history.back();
+          flash.success = 'Group correctly removed';
+        },
+        function errorCallback() {
+          flash.error = 'Oops error from server :(';
+        }
+      );
     };
   })
 
@@ -159,7 +175,7 @@ angular.module('ldapadmin.controllers', [])
         // of this group or not
         $scope.user_groups = angular.copy($scope.groups);
         angular.forEach($scope.user_groups, function(group, key) {
-          group.hasUsers = _.contains($scope.user.groups, group.name);
+          group.hasUsers = _.contains($scope.user.groups, group.uid);
         });
         $scope.original_groups = angular.copy($scope.user_groups);
         $scope.groupsChanged = false;
@@ -216,9 +232,9 @@ function postGroups($scope, users, Restangular, flash, callback) {
 
     if (g.hasUsers != og.hasUsers) {
       if (g.hasUsers === 'all' || g.hasUsers === true) {
-        toPut.push(g.name);
+        toPut.push(g.uid);
       } else if (g.hasUsers === false){
-        toDelete.push(g.name);
+        toDelete.push(g.uid);
       }
       // 'some' shouldn't be possible here
     }
