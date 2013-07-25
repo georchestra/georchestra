@@ -33,6 +33,43 @@ The application also accepts several GET parameters :
  * **lang** can be set to any of the following : fr, en, es
 
 
+Metadata extraction
+===================
+
+Note that extractorapp includes an XML metadata file in the data bundle when available.
+
+This metadata file is extracted if the WMS `GetCapabilities` response, for the selected layer, contains a `<MetadataURL>` entry with
+- the `text/xml` format
+- the `ISO19115:2003` type.
+
+For example:
+
+```
+<MetadataURL type="ISO19115:2003">
+    <Format>text/xml</Format>
+    <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://www.university.edu/metadata/roads.xml" />
+</MetadataURL>
+```
+
+This metadata information is available only after some configuration in the WMS server. When configuring a layer in GeoServer (http://docs.geoserver.org/stable/en/user/webadmin/data/layers.html#basic-info), fill:
+- the **Type** field with `ISO19115:2003`
+- the **Format** field with `text/xml`
+- the **URL** with the address of the XML ISO19115 metadata document. In GeoNetwork, the XML metadata documents can be accessed by the following URL pattern: `/geonetwork/srv/en/xml.metadata.get?uuid=...`.
+
+Note that various metadata URLs may be specified for a layer in the WMS server, for example an XML metadata document for machines and an HTML document for humans:
+
+```
+<MetadataURL type="ISO19115:2003">
+    <Format>text/xml</Format>
+    <OnlineResource xlink:type="simple" xlink:href="http://www.geopicardie.fr/geonetwork/srv/fre/xml.metadata.get?uuid=c3bf8ed4-2967-4800-ad9c-33d9bf87ab94"/>
+</MetadataURL>
+<MetadataURL type="ISO19115:2003">
+    <Format>text/html</Format>
+    <OnlineResource xlink:type="simple" xlink:href="http://www.geopicardie.fr/geonetwork/apps/georchestra/?uuid=c3bf8ed4-2967-4800-ad9c-33d9bf87ab94"/>
+</MetadataURL>
+```
+
+
 Admin UI
 ========
 

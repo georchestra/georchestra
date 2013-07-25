@@ -62,7 +62,18 @@ public class WcsExtractor {
 		            throw new SecurityException("User does not have sufficient privileges to access the Layer: "+request._layerName+". \n\nCapabilties:  "+capabilities);
 		        }
 		    }
-    public File[] extract (ExtractorLayerRequest request) throws IOException, TransformException, FactoryException {
+	
+	/**
+	 * Creates a directory where the layer is extracted.
+	 * 
+	 * @param request
+	 * @return directory that contains the layers 
+	 * 
+	 * @throws IOException
+	 * @throws TransformException
+	 * @throws FactoryException
+	 */
+    public File extract (ExtractorLayerRequest request) throws IOException, TransformException, FactoryException {
         if (request._owsType != OWSType.WCS) {
             throw new IllegalArgumentException (request._owsType + "must be WCS for the WcsExtractor");
         }
@@ -95,7 +106,7 @@ public class WcsExtractor {
         String safeFileName = FileUtils.toSafeFileName(request._layerName);
         reader.readToFile(basedir, safeFileName, readerRequest.getParameters());
         
-        return basedir.listFiles();
+        return basedir;
     }
     
 }

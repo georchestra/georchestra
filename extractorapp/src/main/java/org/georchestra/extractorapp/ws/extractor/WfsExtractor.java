@@ -155,11 +155,11 @@ public class WfsExtractor {
     }
 
     /**
-     * Extract the data as defined in the request object. Currently only supports export to shapefile
+     * Extract the data as defined in the request object. 
      * 
-     * @return the location of the extracted data
+     * @return the directory that contains the extracted file
      */
-    public File[] extract (ExtractorLayerRequest request) throws IOException, TransformException, FactoryException {
+    public File extract (ExtractorLayerRequest request) throws IOException, TransformException, FactoryException {
         if (request._owsType != OWSType.WFS) {
             throw new IllegalArgumentException (request._owsType + "must be WFS for the WfsExtractor");
         }
@@ -217,15 +217,11 @@ public class WfsExtractor {
             throw new IllegalArgumentException(request._format + " is not a recognized vector format");
         }
         //generates the feature files and bbox file 
-        File[] featureFiles = featuresWriter.generateFiles();
-        File[] bboxFiles = bboxWriter.generateFiles();
+        featuresWriter.generateFiles();
 
-        File[] fileList = new File[featureFiles.length +bboxFiles.length ];
-        
-        System.arraycopy(featureFiles, 0, fileList, 0, featureFiles.length);
-        System.arraycopy(bboxFiles, 0, fileList, featureFiles.length, bboxFiles.length);
+        bboxWriter.generateFiles();
 
-        return fileList;
+        return basedir;
     }
 
 	/* This method is default for testing purposes */
