@@ -119,7 +119,7 @@ angular.module('ldapadmin.controllers', [])
         });
       };
       $scope.deleteUser = function() {
-        Restangular.one('users', user.id).remove().then(
+        Restangular.one('users', user.uid).remove().then(
           function() {
             var index = findByAttr($scope.users, 'uid', $routeParams.userId);
 
