@@ -165,13 +165,17 @@ GEOR.util = (function() {
          *
          * Parameters:
          * s - {String} test string
+         * strict - {Boolean} If true, strict URL matching.
+         *  Else, check the string begins with an URL
          *
          * Returns:
          * {Boolean}
          */
-        isUrl: function(s) {
-            var regexp = /(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
-            return regexp.test(s);
+        isUrl: function(s, strict) {
+            if (strict) {
+                return new RegExp(/^(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?$/i).test(s);
+            }
+            return new RegExp(/^(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/i).test(s);
         },
 
         /**

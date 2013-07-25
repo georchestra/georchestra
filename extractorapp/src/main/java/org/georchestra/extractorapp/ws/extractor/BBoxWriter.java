@@ -31,7 +31,7 @@ public class BBoxWriter {
 	
 
 	// Properties of the bbox FeatureType 
-	private static final String GEOMETRY_PROPERTY = "bounding_geom";
+	private static final String GEOMETRY_PROPERTY = "geom";
 	private static final String ID_PROPERTY = "id";
 	
 	
