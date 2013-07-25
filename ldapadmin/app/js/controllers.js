@@ -9,6 +9,49 @@ angular.module('ldapadmin.controllers', [])
       flash.error = 'Oops error from server :(';
     });
   })
+  /**
+   * Group Edit
+   */
+  .controller('GroupEditCtrl', function($scope, $routeParams, Restangular, flash) {
+    var group = Restangular.one('groups', $routeParams.group);
+    group.get().then(function(remote) {
+      $scope.group = Restangular.copy(remote);
+
+      $scope.save = function() {
+        $scope.group.put().then(function() {
+          flash.success = 'Group correctly updated';
+          var index = findByAttr($scope.groups, 'uid', $routeParams.group);
+
+          if (index !== false) {
+            $scope.groups[index] = angular.copy($scope.group);
+            remote = angular.copy($scope.group);
+          }
+        });
+      };
+      $scope.isClean = function() {
+        return angular.equals(remote, $scope.group);
+      };
+      $scope.deleteGroup = function(group) {
+        Restangular.one('groups', group).remove().then(
+          function() {
+            var index = findByAttr($scope.groups, 'uid', $routeParams.group);
+
+            if (index !== false) {
+              $scope.groups = $scope.groups.splice(index, 1);
+            }
+            window.location = '#/users';
+            flash.success = 'Group correctly removed';
+          },
+          function errorCallback() {
+            flash.error = 'Oops error from server :(';
+          }
+        );
+      };
+    });
+  })
+  /**
+   * Group Create
+   */
   .controller('GroupCreateCtrl', function($scope, Restangular, flash) {
       $scope.save = function() {
         Restangular.all('groups').post(
@@ -115,7 +158,7 @@ angular.module('ldapadmin.controllers', [])
           if (index !== false) {
             $scope.groups = $scope.groups.splice(index, 1);
           }
-          window.history.back();
+          window.location = '#/users';
           flash.success = 'Group correctly removed';
         },
         function errorCallback() {
@@ -141,7 +184,8 @@ angular.module('ldapadmin.controllers', [])
           var index = findByAttr($scope.users, 'uid', $routeParams.userId);
 
           if (index !== false) {
-            $scope.users[index] = $scope.user;
+            $scope.users[index] = angular.copy($scope.user);
+            remote = angular.copy($scope.user);
           }
         });
       };

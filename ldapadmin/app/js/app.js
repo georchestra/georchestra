@@ -10,6 +10,7 @@ angular.module('ldapadmin', ['ldapadmin.filters', 'ldapadmin.controllers', 'ldap
         when('/users/:userId', {templateUrl: 'partials/user-edit.html', controller: 'UserEditCtrl'}).
         when('/groups/new', {templateUrl: 'partials/group-edit.html', controller: 'GroupCreateCtrl'}).
         when('/groups/:group', {templateUrl: 'partials/users-list.html', controller: 'UsersListCtrl'}).
+        when('/groups/:group/edit', {templateUrl: 'partials/group-edit.html', controller: 'GroupEditCtrl'}).
         otherwise({redirectTo: '/users'});
     }
   ])
