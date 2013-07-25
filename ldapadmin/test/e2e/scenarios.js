@@ -48,7 +48,8 @@ describe('my app', function() {
       expect(browser().location().url()).toBe('/users/new');
       expect(input('user.givenName').val()).toBe('');
 
-      input('user.givenName').enter('toto');
+      input('user.givenName').enter('Dupont');
+      input('user.sn').enter('toto');
       input('user.mail').enter('toto@mail.zzz');
       element('.save').click();
       expect(repeater('.users tr').count()).toEqual(34);
