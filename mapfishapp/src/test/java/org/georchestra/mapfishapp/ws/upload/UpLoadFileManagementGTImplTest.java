@@ -28,6 +28,9 @@ import com.vividsolutions.jts.geom.Point;
  */
 public class UpLoadFileManagementGTImplTest {
 
+	public UpLoadFileManagementGTImplTest() {
+		System.setProperty("org.geotools.referencing.forceXY", "true");
+	}
 	/**
 	 * Test method for {@link mapfishapp.ws.upload.UpLoadFileManagement#getFeatureCollectionAsJSON()}.
 	 * @throws IOException 

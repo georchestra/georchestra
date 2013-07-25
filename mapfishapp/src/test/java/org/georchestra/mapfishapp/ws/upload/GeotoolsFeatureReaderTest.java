@@ -36,12 +36,17 @@ public class GeotoolsFeatureReaderTest {
 	private AbstractFeatureGeoFileReader reader = new AbstractFeatureGeoFileReader(new GeotoolsFeatureReader());
 
 
+	
+	public GeotoolsFeatureReaderTest() {
+		System.setProperty("org.geotools.referencing.forceXY", "true");
+	}
+	
 	/**
 	 * Tests that the geotools implementation is used when the current reader cannot read the file format.
 	 * 
 	 * @throws Exception
 	 */
-	@Ignore
+	@Test
 	public void testSwitchToGeotoolsReaderImpl() throws Exception {
 		
 		AbstractFeatureGeoFileReader reader = new AbstractFeatureGeoFileReader(new MockReader());
@@ -56,7 +61,7 @@ public class GeotoolsFeatureReaderTest {
 		assertTrue( reader.readerImpl instanceof GeotoolsFeatureReader );
 	}
 	
-	@Ignore
+	@Test
 	public void testSHPFormat() throws Exception {
 		
 		String fullName = makeFullName("points-4326.shp");
@@ -82,12 +87,29 @@ public class GeotoolsFeatureReaderTest {
 		assertCoordinatedOrder(fc, id, x,  y, crs);
 	}
 
+	@Test
+	public void testSHPCoordinatesEPSG3857() throws Exception {
+		
+		String fullName = makeFullName("shp_4326_accidents.shp");
+		File file = new File(fullName);
+		
+		final int CRS_ID = 3857;
+		CoordinateReferenceSystem crs = CRS.decode("EPSG:"+CRS_ID);
+		SimpleFeatureCollection fc = reader.getFeatureCollection(file, FileFormat.shp, crs);
+		
+		
+		double x = -252175.451614371791948; 
+		double y = 6177255.152005254290998; 
+		
+		int id = 205;
+		assertCoordinatedOrder(fc, id, x,  y, CRS_ID);
+	}
 
 	/**
 	 * Transform the features from 4326 to 2154
 	 * @throws Exception
 	 */
-	@Ignore
+	@Test
 	public void testSHPFormatTo2154() throws Exception {
 		
 		final int epsgCode = 2154;
@@ -155,7 +177,7 @@ public class GeotoolsFeatureReaderTest {
 	}
 
 	private void assertFeatureTypeCRS(final SimpleFeatureType t, final int expectedEPSG) throws Exception {
-
+		// from qgis
 		CoordinateReferenceSystem crs = t.getCoordinateReferenceSystem();
  		assertTrue( expectedEPSG ==CRS.lookupEpsgCode( crs, true) );
 	}
@@ -166,12 +188,10 @@ public class GeotoolsFeatureReaderTest {
 		Integer code = CRS.lookupEpsgCode(crs, true);
 		assertTrue(code == expectedEPSG);
 		
-//		assertTrue( expectedEPSG == geom.getGeometryType().;
-//		assertTrue( expectedEPSG == geom.getSRID());
 	}
 	
 	
-	@Ignore
+	@Test
 	public void testMIFFormat() throws Exception {
 
 		String fullName = makeFullName("pigma_regions_POLYGON.mif");
@@ -183,7 +203,7 @@ public class GeotoolsFeatureReaderTest {
 	}
 	
 	
-	@Ignore
+	@Test
 	public void testMIFFormatTo2154() throws Exception {
 		
 		final int epsgCode = 2154;
@@ -196,7 +216,7 @@ public class GeotoolsFeatureReaderTest {
 		assertFeatureCollection(fc,  93, epsgCode);
 	}
 
-	@Ignore // FIXME change all for Test
+	@Test 
 	public void testGML2Format() throws Exception {
 
 		String fullName = makeFullName("border.gml");
@@ -247,7 +267,7 @@ public class GeotoolsFeatureReaderTest {
 	}
 	
 	/**
-	 * Tests gml projected using EPSG3857
+	 * Tests gml projected using EPSG:3857
 	 * @throws Exception
 	 */
 	@Test
@@ -260,12 +280,33 @@ public class GeotoolsFeatureReaderTest {
 		CoordinateReferenceSystem crs = CRS.decode("EPSG:"+CRS_ID);
 		SimpleFeatureCollection fc = reader.getFeatureCollection(file, FileFormat.gml, crs);
 		
-		double x = -2.265330624649336; // FIXME TRANSFORM THIS TO EPSG:3857
-		double y = 48.421434814828025; // FIXME TRANSFORM THIS TO EPSG:3857
+		double x = -252175.451614371791948; 
+		double y = 6177255.152005254290998; 
+		
 		int id = 205;
 		assertCoordinatedOrder(fc, id, x,  y, CRS_ID);
 	}
 
+	/**
+	 * Tests gml projected using EPSG:2154
+	 * @throws Exception
+	 */
+	@Test
+	public void testGMLCoordinatesTransformToEPSG2154() throws Exception {
+		
+		String fullName = makeFullName("gml_4326_accidents.gml");
+		File file = new File(fullName);
+		
+		final int CRS_ID = 2154;
+		CoordinateReferenceSystem crs = CRS.decode("EPSG:"+CRS_ID);
+		SimpleFeatureCollection fc = reader.getFeatureCollection(file, FileFormat.gml, crs);
+		
+		double x = 310725.620248031220399;
+		double y = 6826444.585061171092093; 
+		
+		int id = 205;
+		assertCoordinatedOrder(fc, id, x,  y, CRS_ID);
+	}
 	
 
 	private void assertCoordinatedOrder(SimpleFeatureCollection fc, int id,
@@ -307,9 +348,10 @@ public class GeotoolsFeatureReaderTest {
 
 
 					Coordinate[] coordinates = geom.getCoordinates();
+					int significantDigit = geom.getPrecisionModel().getMaximumSignificantDigits();
 					
-					assertEquals(xExpected, coordinates[0].x , 10e-15);
-					assertEquals(yExpected, coordinates[0].y, 10e-15);
+					assertEquals(xExpected, coordinates[0].x , significantDigit);
+					assertEquals(yExpected, coordinates[0].y, significantDigit);
 					
 					assertTrue(true);
 					break;
@@ -322,7 +364,7 @@ public class GeotoolsFeatureReaderTest {
 		}
 	}
 	
-	@Ignore
+	@Test
 	public void testGML2FormatTo2154() throws Exception {
 
 		String fullName = makeFullName("border.gml");
@@ -337,7 +379,7 @@ public class GeotoolsFeatureReaderTest {
 	
 	
 
-	@Ignore 
+	@Test 
 	public void testGML3Format() throws Exception {
 
 		String fullName = makeFullName("states-3.gml");
@@ -349,7 +391,7 @@ public class GeotoolsFeatureReaderTest {
 		Assert.assertTrue(!fc.isEmpty());
 	}
 	
-	@Ignore
+	@Test
 	public void testKMLFormat() throws Exception {
 
 		String fullName = makeFullName("regions.kml");
@@ -379,7 +421,7 @@ public class GeotoolsFeatureReaderTest {
 	 * Test method for {@link org.georchestra.mapfishapp.ws.upload.AbstractFeatureGeoFileReader#getFormatList()}.
 	 * @throws IOException 
 	 */
-	@Ignore
+	@Test
 	public void testGetFormatList() throws IOException {
 
 		

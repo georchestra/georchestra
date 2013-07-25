@@ -137,7 +137,7 @@ class GeotoolsFeatureReader implements FeatureGeoFileReader {
 
 	        MathTransform mathTransform = null;
     		if((targetCRS != null) && !sourceCRS.equals(targetCRS) ){
-    			mathTransform = CRS.findMathTransform(sourceCRS, targetCRS);
+    			mathTransform = CRS.findMathTransform(sourceCRS, targetCRS, true);
     		}
 
     		// parse  the kml file and create the feature collection
@@ -195,7 +195,7 @@ class GeotoolsFeatureReader implements FeatureGeoFileReader {
 					? new org.geotools.gml2.GMLConfiguration()
 					: new org.geotools.gml3.GMLConfiguration();
 			StreamingParser parser = new StreamingParser(cfg , in,  SimpleFeature.class );
-			
+
 			int targetSRID = 0;
 			if(targetCRS != null){
 				targetSRID = CRS.lookupEpsgCode(targetCRS, true);
@@ -209,21 +209,23 @@ class GeotoolsFeatureReader implements FeatureGeoFileReader {
 				
 				Geometry geom = (Geometry) feature.getDefaultGeometry();
 				
-				// initializes the feature collection
+				// initializes the feature collection using the crs and the feature type of the first feature 
 				if (fc == null) {
+					
 					int srid = geom.getSRID();
 					if(srid > 0 ){
 						sourceCRS = CRS.decode("EPSG:"+ srid );
 					} else {
-			    		sourceCRS = CRS.decode("EPSG:4326" );
+			    		sourceCRS = CRS.decode("EPSG:4326" ); // if the crs is not present 4326 is assumed
 					}
+					
 					SimpleFeatureType type;
 		    		if((targetCRS != null) && !sourceCRS.equals(targetCRS)){
 			    		// transforms the feature type to the target crs,  creates the feature collection 
 						// and finds the math transformation required
 		    			type = SimpleFeatureTypeBuilder.retype(feature.getFeatureType(), targetCRS);
 
-		    			mathTransform = CRS.findMathTransform(sourceCRS, targetCRS);
+		    			mathTransform = CRS.findMathTransform(sourceCRS, targetCRS, true);
 		    		} else {
 		    			// uses the original feature type 
 		    			type = SimpleFeatureTypeBuilder.retype(feature.getFeatureType(), sourceCRS);
@@ -235,7 +237,7 @@ class GeotoolsFeatureReader implements FeatureGeoFileReader {
 	        	if(mathTransform  != null){
 	        		// transformation is required
 	        		Geometry reprojectedGeometry= JTS.transform(geom, mathTransform);
-	        		reprojectedGeometry.setSRID(targetSRID);
+					reprojectedGeometry.setSRID(targetSRID);
 					feature.setDefaultGeometry(reprojectedGeometry);
 	        	}
 	        	fc.add(feature);
