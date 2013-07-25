@@ -31,16 +31,13 @@
 <form class="form-fixed" action="" name="userForm">
 
   <div class="row-fluid">
-    <div class="span1">
-      <input type="text" name="title" class="span12" ng-mode="user.title" placeholder="Mr.">
-    </div>
     <div class="span6">
       <div class="control-group" ng-class="{error: userForm.sn.$invalid}">
         <input type="text" name="sn" ng-model="user.sn" required  placeholder="First Name" class="span12"/>
         <span ng-show="userForm.sn.$error.required" class="help-inline">Required</span>
       </div>
     </div>
-    <div class="span5">
+    <div class="span6">
       <div class="control-group" ng-class="{error: userForm.givenName.$invalid}">
         <input type="text" name="givenName" ng-model="user.givenName" required  placeholder="Last Name" class="span12"/>
         <span ng-show="userForm.givenName.$error.required" class="help-inline">Required</span>
