@@ -1,7 +1,7 @@
 [
-  {"uid": "1", "name": "Administrator"},
   {"uid": "2", "name": "SV_XXX"},
-  {"uid": "3", "name": "SV_YYY"},
+  {"uid": "1", "name": "Administrator"},
   {"uid": "4", "name": "EL_XXX"},
+  {"uid": "3", "name": "SV_YYY"},
   {"uid": "5", "name": "EL_YYY"}
 ]

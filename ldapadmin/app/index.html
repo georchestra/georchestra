@@ -34,11 +34,27 @@
           </a>
           <br />
           <br />
+          <script type="text/ng-template" id="group_item_renderer.html">
+            <a href="#/groups/{{data.group.uid}}" ng-if="data.group != null" ng-class="{active: data.group.uid==selectedGroup}">
+              <i class="icon-blank"></i>
+              {{data.name}} <small>({{users | count:data.group.uid}})</small>
+            </a>
+            <div ng-if="!data.group" class="accordion-group">
+              <div class="accordion-heading">
+                <a class="accordion-toggle" onclick="$('#collapse{{data.name}}').collapse('toggle');" data-toggle="collapse">
+                  <i class="icon-chevron-right"></i>
+                  {{data.name}}
+                </a>
+              </div>
+              <div id="collapse{{data.name}}" class="accordion-body collapse">
+                <div class="accordion-inner">
+                  <div ng-repeat="data in data.nodes" ng-include="'group_item_renderer.html'"></div>
+                </div>
+              </div>
+            </div>
+          </script>
           <div class="groups" ng-controller="GroupsCtrl">
-            <div ng-repeat="group in groups">
-              <a href="#/groups/{{group.uid}}" ng-class="{active: group.uid==selectedGroup}">
-                {{group.name}} <small>({{users | count:group.uid}})</small>
-              </a>
+            <div class="accordion" ng-repeat="data in groups_tree" ng-include="'group_item_renderer.html'">
             </div>
           </div>
           <br />

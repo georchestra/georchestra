@@ -4,7 +4,33 @@
 angular.module('ldapadmin.controllers', [])
   .controller('GroupsCtrl', function($scope, $rootScope, Restangular) {
     Restangular.all('groups').getList().then(function(groups) {
+      groups.sort(function(a, b) {
+        return (a.name < b.name) ? -1 : 1;
+      });
       $rootScope.groups = groups;
+
+      var groups_tree = [];
+      var prefix,
+          prev_prefix,
+          branch;
+      angular.forEach(groups, function(group, key) {
+        prefix = group.name.indexOf('_') != -1 &&
+          group.name.substring(0, group.name.indexOf('_'));
+
+        if (prefix) {
+          // creating a branch
+          if (prefix != prev_prefix) {
+            branch = {name: prefix, nodes: []};
+            groups_tree.push(branch);
+          }
+          branch.nodes.push({name: group.name, group: group});
+          prev_prefix = prefix;
+        } else {
+          prev_prefix = null;
+          groups_tree.push({name: group.name, group: group});
+        }
+      });
+      $rootScope.groups_tree = groups_tree;
     }, function errorCallback() {
       flash.error = 'Oops error from server :(';
     });
@@ -314,3 +340,6 @@ $(document)
   .on('click.dropdown-menu', '.dropdown-menu > li.noclose', function (e) {
     e.stopPropagation();
   });
+$('.groups').delegate('.accordion', 'show hide', function (n) {
+    $(n.target).siblings('.accordion-heading').find('.accordion-toggle i').toggleClass('icon-chevron-down icon-chevron-right');
+});

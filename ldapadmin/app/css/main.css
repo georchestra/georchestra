@@ -33,3 +33,29 @@
 .form-horizontal .controls {
   margin-left: 110px;
 }
+
+.accordion {
+  margin: 0;
+}
+.accordion-group {
+  border: none;
+}
+.accordion-heading .accordion-toggle {
+  padding: 0;
+}
+.accordion-body {
+  padding-left: 10px;
+}
+.accordion-inner {
+  border: none;
+  padding: 0;
+}
+
+i.icon-blank {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-top: 1px;
+  line-height: 14px;
+  vertical-align: text-top;
+}
