@@ -3,6 +3,7 @@
  */
 package org.georchestra.mapfishapp.ws.upload;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
