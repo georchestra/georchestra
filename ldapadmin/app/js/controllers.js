@@ -9,28 +9,12 @@ angular.module('ldapadmin.controllers', [])
       });
       $rootScope.groups = groups;
 
-      var groups_tree = [];
-      var prefix,
-          prev_prefix,
-          branch;
+      var tree = [];
+      var prefix;
       angular.forEach(groups, function(group, key) {
-        prefix = group.name.indexOf('_') != -1 &&
-          group.name.substring(0, group.name.indexOf('_'));
-
-        if (prefix) {
-          // creating a branch
-          if (prefix != prev_prefix) {
-            branch = {name: prefix, nodes: []};
-            groups_tree.push(branch);
-          }
-          branch.nodes.push({name: group.name, group: group});
-          prev_prefix = prefix;
-        } else {
-          prev_prefix = null;
-          groups_tree.push({name: group.name, group: group});
-        }
+        addNode(tree, group);
       });
-      $rootScope.groups_tree = groups_tree;
+      $rootScope.groups_tree = tree;
     }, function errorCallback() {
       flash.error = 'Oops error from server :(';
     });
@@ -64,6 +48,7 @@ angular.module('ldapadmin.controllers', [])
 
             if (index !== false) {
               $scope.groups = $scope.groups.splice(index, 1);
+              removeNode($scope.groups_tree, group);
             }
             window.location = '#/users';
             flash.success = 'Group correctly removed';
@@ -84,6 +69,10 @@ angular.module('ldapadmin.controllers', [])
           $scope.group
         ).then(function(group) {
           $scope.groups.push(group);
+
+          // update groups tree
+          addNode($scope.groups_tree, group);
+
           window.location = "#/users";
           flash.success = 'Group correctly added';
         });
@@ -183,6 +172,7 @@ angular.module('ldapadmin.controllers', [])
 
           if (index !== false) {
             $scope.groups = $scope.groups.splice(index, 1);
+            removeNode($scope.groups_tree, group);
           }
           window.location = '#/users';
           flash.success = 'Group correctly removed';
@@ -277,6 +267,11 @@ angular.module('ldapadmin.controllers', [])
     $scope.foo = "bar";
   });
 
+function getPrefix(group) {
+  return group.name.indexOf('_') != -1 &&
+         group.name.substring(0, group.name.indexOf('_'));
+}
+
 function findByAttr(collection, attribute, value) {
   var i,
       len = collection.length;
@@ -334,6 +329,37 @@ function postGroups($scope, users, Restangular, flash, callback) {
       flash.error = 'Oops error from server :(';
     }
   );
+}
+
+function addNode(tree, node) {
+  var prefix = getPrefix(node);
+
+  if (prefix) {
+    // creating a branch
+    var branch = _.find(tree, function(obj) {return obj.name ==  prefix;});
+    if (!branch) {
+      branch = {name: prefix, nodes: []};
+      tree.push(branch);
+    }
+    branch.nodes.push({uid: node.uid, name: node.name, group: node});
+  } else {
+    tree.push({uid: node.uid, name: node.name, group: node});
+  }
+}
+
+function removeNode(tree, nodeToRemove) {
+  function loop(nodes) {
+    angular.forEach(nodes, function(node, ndx) {
+      if (node.nodes) {
+        loop(node.nodes);
+      } else {
+        if (node.uid == nodeToRemove) {
+          nodes = nodes.splice(ndx, 1);
+        }
+      }
+    });
+  }
+  loop(tree, nodeToRemove);
 }
 
 $(document)
