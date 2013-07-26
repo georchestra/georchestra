@@ -74,7 +74,7 @@ public class UpLoadFileManagement {
 
 
 	/**
-	 * Creates an instance of {@link UpLoadFileManagement}  which is set to use the implementation specified as parameter
+	 * Creates an instance of {@link UpLoadFileManagement}  which is set to use the implementation specified as parameter.
 	 * 
 	 * @param impl implementation
 	 */
@@ -90,8 +90,8 @@ public class UpLoadFileManagement {
 	}
 
 	/**
-	 * Creates an instance of {@link UpLoadFileManagement} which is set to use the OGR implementation to 
-	 * @return
+	 * Creates an instance of {@link UpLoadFileManagement} which is set to use the OGR implementation (default implementation) 
+	 * @return new instance of {@link UpLoadFileManagement} 
 	 */
 	public static UpLoadFileManagement create() {
 
@@ -389,7 +389,6 @@ public class UpLoadFileManagement {
 	 */
 	private String searchGeoFile() {
 
-		// FIXME now that geotools implemetation is available it should ask for the available formats for that impelementation (gt or OGR)
         for( String fileName:  this.fileDescriptor.listOfFiles){
         	
         	String ext = FilenameUtils.getExtension(fileName);

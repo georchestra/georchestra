@@ -35,7 +35,7 @@ public class UpLoadFileManagementGTImplTest {
 	 * Test method for {@link mapfishapp.ws.upload.UpLoadFileManagement#getFeatureCollectionAsJSON()}.
 	 * @throws IOException 
 	 */
-	@Ignore
+	@Test
 	public void testSHPAsJSON() throws Exception {
 		
 		String fileName = "points-4326.shp";
@@ -44,7 +44,7 @@ public class UpLoadFileManagementGTImplTest {
 		testGetGeofileToJSON(fullName, null);
 	}
 	
-	@Ignore
+	@Test
 	public void testSHPAsJSONReporjectedTo2154() throws Exception {
 		
 		String fileName = "points-4326.shp";
@@ -88,7 +88,7 @@ public class UpLoadFileManagementGTImplTest {
 		assertCoordinateContains(-2.265330624649336, 48.421434814828025, json );
 	}
 	
-	@Ignore 
+	@Test 
 	public void testKMLAsJSON() throws Exception {
 
 		String fileName = "regions.kml";
@@ -102,7 +102,7 @@ public class UpLoadFileManagementGTImplTest {
 	 * 
 	 * @throws Exception
 	 */
-	@Ignore
+	@Test
 	public void testKMLCoordinatesEPSG4326() throws Exception {
 		
 		String fileName = "kml_4326_accidents.kml";
@@ -129,7 +129,7 @@ public class UpLoadFileManagementGTImplTest {
 	}
 
 
-	@Ignore 
+	@Test 
 	public void testMIFAsJSON() throws Exception {
 		
 		String fileName = "pigma_regions_POLYGON.mif";
@@ -143,7 +143,7 @@ public class UpLoadFileManagementGTImplTest {
 	 * 
 	 * @throws Exception
 	 */
-	@Ignore
+	@Test
 	public void testMIFCoordinatesEPSG4326() throws Exception {
 		
 		String fileName = "mif_4326_accidents.mif";
@@ -155,7 +155,7 @@ public class UpLoadFileManagementGTImplTest {
 	}
 	
 	
-	@Ignore 
+	@Test 
 	public void testMIFAsJSONReprojectedTo2154() throws Exception {
 		
 		String fileName = "pigma_regions_POLYGON.mif";

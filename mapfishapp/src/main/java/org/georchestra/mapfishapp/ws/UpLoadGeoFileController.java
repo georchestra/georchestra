@@ -288,10 +288,10 @@ public final class UpLoadGeoFileController {
 				writeResponse(response, Status.sizeError, msg);
 				return;
 			}
-			// save the file in the temporal directory
 			
-			// this.fileManagement = UpLoadFileManagement.create(); FIXME HACK TO TEST geotools implementation
-			this.fileManagement = UpLoadFileManagement.create(UpLoadFileManagement.Implementation.geotools);
+			// save the file in the temporal directory
+			this.fileManagement = UpLoadFileManagement.create(); 
+			// this.fileManagement = UpLoadFileManagement.create(UpLoadFileManagement.Implementation.geotools); HACK to use Geotools Implementation
 
 			this.fileManagement.setWorkDirectory(workDirectory); 
 			this.fileManagement.setFileDescriptor(currentFile);
