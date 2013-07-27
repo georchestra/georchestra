@@ -1,5 +1,8 @@
-Version 13.06
-=============
+The development branch is master. 
+It can be used to build, and report errors, but you are rather advised to use the latest stable builds.
+
+Version 13.06 (current stable version)
+======================================
 
 This release was supported by the French GeoPicardie, GeoBretagne and CIGALsace projects, the GIP ATGeRi and individual contributors.
 
