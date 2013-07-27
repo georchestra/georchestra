@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document><Folder><name>route_accidents_mortels</name>
+<Schema name="route_accidents_mortels" id="route_accidents_mortels">
+	<SimpleField name="Name" type="string"></SimpleField>
+	<SimpleField name="Description" type="string"></SimpleField>
+	<SimpleField name="id" type="int"></SimpleField>
+	<SimpleField name="date" type="string"></SimpleField>
+	<SimpleField name="plage_hora" type="string"></SimpleField>
+	<SimpleField name="jour_nuit" type="string"></SimpleField>
+	<SimpleField name="periode" type="string"></SimpleField>
+	<SimpleField name="meteo" type="string"></SimpleField>
+	<SimpleField name="voie_type" type="string"></SimpleField>
+	<SimpleField name="milieu" type="string"></SimpleField>
+	<SimpleField name="tues_nb" type="int"></SimpleField>
+	<SimpleField name="tues_18_24" type="int"></SimpleField>
+	<SimpleField name="tues_moto_" type="int"></SimpleField>
+	<SimpleField name="tues_pieto" type="int"></SimpleField>
+	<SimpleField name="tues_velo_" type="int"></SimpleField>
+	<SimpleField name="vehicules_" type="int"></SimpleField>
+	<SimpleField name="pl_impliqu" type="string"></SimpleField>
+	<SimpleField name="commune" type="string"></SimpleField>
+	<SimpleField name="departemen" type="string"></SimpleField>
+	<SimpleField name="commentair" type="string"></SimpleField>
+	<SimpleField name="consolide" type="string"></SimpleField>
+	<SimpleField name="anciennete" type="int"></SimpleField>
+	<SimpleField name="f_mois" type="string"></SimpleField>
+	<SimpleField name="f_annee" type="string"></SimpleField>
+</Schema>
+  <Placemark>
+	<ExtendedData><SchemaData schemaUrl="#route_accidents_mortels">
+		<SimpleData name="id">205</SimpleData>
+		<SimpleData name="date">2013/02/18</SimpleData>
+		<SimpleData name="plage_hora">12-18</SimpleData>
+		<SimpleData name="jour_nuit">jour</SimpleData>
+		<SimpleData name="meteo">beau</SimpleData>
+		<SimpleData name="voie_type">rd</SimpleData>
+		<SimpleData name="milieu">hors_agglo</SimpleData>
+		<SimpleData name="tues_nb">1</SimpleData>
+		<SimpleData name="tues_18_24">0</SimpleData>
+		<SimpleData name="tues_moto_">0</SimpleData>
+		<SimpleData name="tues_pieto">0</SimpleData>
+		<SimpleData name="tues_velo_">0</SimpleData>
+		<SimpleData name="vehicules_">1</SimpleData>
+		<SimpleData name="pl_impliqu">T</SimpleData>
+		<SimpleData name="commune">SAINT-MELOIR-DES-BOIS</SimpleData>
+		<SimpleData name="departemen">22</SimpleData>
+		<SimpleData name="commentair">Perte de contr?le et choc contre un arbre</SimpleData>
+		<SimpleData name="consolide">F</SimpleData>
+		<SimpleData name="anciennete">10</SimpleData>
+		<SimpleData name="f_mois">T</SimpleData>
+		<SimpleData name="f_annee">T</SimpleData>
+	</SchemaData></ExtendedData>
+      <Point><coordinates>-2.265330624649335,48.421434814828018</coordinates></Point>
+  </Placemark>
+</Folder></Document></kml>
