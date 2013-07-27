@@ -20,10 +20,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
+import org.geotools.feature.FeatureIterator;
 import org.geotools.geojson.feature.FeatureJSON;
+import org.geotools.geojson.geom.GeometryJSON;
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * This class is responsible to maintain the uploaded file. It includes the method to save, unzip, and check the geofiles.
@@ -337,11 +342,13 @@ public class UpLoadFileManagement {
 	        	
 	        	SimpleFeatureCollection featureCollection = this.reader.getFeatureCollection(new File(fileName), this.fileDescriptor.geoFileType, crs);
 	        	
-	        	FeatureJSON fjson = new FeatureJSON2(); // TODO this is a workaround to solve the crs bug
+	        	//int decimals = getDigits(featureCollection);
+				FeatureJSON fjson = new FeatureJSON2(new GeometryJSON(18)); // TODO this is a workaround to solve the crs bug
 	        	
 	        	SimpleFeatureType schema = featureCollection.getSchema();
 				fjson.setFeatureType(schema);
-	        	fjson.setEncodeFeatureCollectionCRS(true);
+	        	fjson.setEncodeFeatureCollectionCRS(true); 
+	        	//fjson.setEncodeFeatureCRS(true); it is not necessary right now.
 	        	
 	        	StringWriter writer = new StringWriter();
 	        	fjson.writeFeatureCollection(featureCollection, writer);
@@ -359,6 +366,30 @@ public class UpLoadFileManagement {
 	}
 
     
+	/**
+	 * Gets the significant digits from the geometry. (4 is the default)
+	 * @param collection
+	 * @return decimals required to present the geometry's coordinates
+	 */
+	private int getDigits(final SimpleFeatureCollection collection) {
+
+		int decimals = 4;
+
+		FeatureIterator<SimpleFeature> iterator = collection.features();
+		try {
+			if (!iterator.hasNext()) {
+				return decimals;
+			}
+			SimpleFeature feature = iterator.next();
+			Geometry geom = (Geometry) feature.getDefaultGeometry();
+			decimals = geom.getPrecisionModel().getMaximumSignificantDigits();
+		} finally {
+			iterator.close();
+		}
+
+		return decimals;
+	}
+
 	/**
 	 * Convenient method. 
 	 * 

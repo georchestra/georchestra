@@ -218,9 +218,9 @@ public class UpLoadFileManagementGTImplTest {
 
 		Point geom = (Point) f.getDefaultGeometry();
 
-		assertEquals(x, geom.getCoordinate().x, 10e-15);
+		assertEquals(x, geom.getCoordinate().x, 10e-14);
 
-		assertEquals(y, geom.getCoordinate().y, 10e-15);
+		assertEquals(y, geom.getCoordinate().y, 10e-14);
 	}
 	
 	
