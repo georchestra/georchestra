@@ -10,7 +10,7 @@ import org.geotools.data.simple.SimpleFeatureCollection;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
- * Mock Reader for testng support
+ * Mock Reader for testing support
  * 
  * @author Mauricio Pazos
  *
