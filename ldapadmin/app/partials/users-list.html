@@ -8,16 +8,7 @@
       Groups
       <span class="caret"></span>
     </a>
-    <ul class="dropdown-menu groups">
-      <li class="noclose" ng-repeat="group in user_groups">
-        <a href ng-click="selectGroup(group)">
-          <i ng-class="{'icon-ok': group.hasUsers == 'all', 'icon-minus': group.hasUsers == 'some'}"></i>
-          {{group.name}}
-        </a>
-      </li>
-      <li class="divider"></li>
-      <li ng-class="{disabled: !groupsChanged}"><a ng-click="apply()" href>Apply</a></li>
-    </ul>
+    <div groups-dropdown></div>
   </div>
   <div class="btn-group">
     <a class="actions btn dropdown-toggle" ng-class="{hide: selectedGroup == null}" data-toggle="dropdown">

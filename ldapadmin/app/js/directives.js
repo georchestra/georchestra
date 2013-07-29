@@ -17,4 +17,10 @@ angular.module('ldapadmin.directives', []).
         elm.prop('indeterminate', value);
       }, true);
     };
+  })
+  .directive('groupsDropdown', function() {
+    return {
+      replace: true,
+      templateUrl: "partials/groups_dropdown.html"
+    };
   });
