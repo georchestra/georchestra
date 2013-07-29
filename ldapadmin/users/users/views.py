@@ -70,7 +70,17 @@ class RESTView(object):
 
     @view_config(route_name='users', renderer='json', request_method='GET')
     def get(self):
-        return _users
+        users = []
+        for user in _users:
+            users.append({
+                "givenName": user['givenName'],
+                "sn": user['sn'],
+                "uid": user['uid'],
+                "groups": user['groups'],
+                "o": user['o']
+            })
+
+        return users
 
     @view_config(route_name='user', renderer='json', request_method='GET')
     def user(self):
