@@ -155,10 +155,21 @@ angular.module('ldapadmin.controllers', [])
       // A copy of list of groups (w/ information on whether the user is part
       // of this group or not
       $scope.user_groups = angular.copy($scope.groups);
+
+      var tree = [];
+      var prefix;
+      angular.forEach($scope.user_groups, function(group, key) {
+        addNode(tree, group);
+      });
+      $scope.user_groups_tree = tree;
+
       angular.forEach($scope.user_groups, function(group, key) {
         group.hasUsers = hasUsers(group);
       });
+
       $scope.original_groups = angular.copy($scope.user_groups);
+
+      $scope.groupsChanged = false;
     };
 
     // called when user submits modifications on groups list for a user
@@ -234,9 +245,18 @@ angular.module('ldapadmin.controllers', [])
         // A copy of list of groups (w/ information on whether the user is part
         // of this group or not
         $scope.user_groups = angular.copy($scope.groups);
+
+        var tree = [];
+        var prefix;
+        angular.forEach($scope.user_groups, function(group, key) {
+          addNode(tree, group);
+        });
+        $scope.user_groups_tree = tree;
+
         angular.forEach($scope.user_groups, function(group, key) {
           group.hasUsers = _.contains($scope.user.groups, group.uid);
         });
+
         $scope.original_groups = angular.copy($scope.user_groups);
         $scope.groupsChanged = false;
       };

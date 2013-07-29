@@ -118,7 +118,8 @@ class RESTView(object):
             for group in to_put:
                 user['groups'].append(group)
             for group in to_delete:
-                user['groups'].remove(group)
+                if group in user['groups']:
+                    user['groups'].remove(group)
         return Response('put')
 
 def getUserById(uid):

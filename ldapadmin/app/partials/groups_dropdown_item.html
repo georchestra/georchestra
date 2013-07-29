@@ -1,0 +1,9 @@
+  <a ng-if="data.group" href ng-click="selectGroup(data.group)">
+    <i ng-class="{'icon-ok': data.group.hasUsers == true || data.group.hasUsers == 'all',
+      'icon-minus': data.group.hasUsers == 'some'}"></i>
+    {{data.group.name}}
+  </a>
+  <a ng-if="data.nodes.length" href tabindex="-1">{{data.name}}</a>
+  <ul ng-if="data.nodes.length" class="dropdown-menu">
+    <li class="noclose" ng-repeat="data in data.nodes" ng-include="'partials/groups_dropdown_item.html'">
+  </ul>
