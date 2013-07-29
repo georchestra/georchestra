@@ -8,13 +8,13 @@
     </a>
     <ul class="dropdown-menu groups">
       <li class="noclose" ng-repeat="group in user_groups">
-        <a href="javascript:void(0);" ng-click="selectGroup(group)">
+        <a href ng-click="selectGroup(group)">
           <i ng-class="{'icon-ok': group.hasUsers}"></i>
           {{group.name}}
         </a>
       </li>
       <li class="divider"></li>
-      <li ng-class="{disabled: !groupsChanged}"><a ng-click="apply()" href="javascript:void(0);">Apply</a></li>
+      <li ng-class="{disabled: !groupsChanged}"><a ng-click="apply()" href>Apply</a></li>
     </ul>
   </div>
   <div class="btn-group">
