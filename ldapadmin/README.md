@@ -56,6 +56,41 @@ Two pages:
  * userPassword change UI: will display 3 fields. The first one is the current user password, the two other ones are for the new one. If the two latest fields do not match (client-side check), the user won't be able to submit the form and the "new password mismatch" message will be displayed. If the current password is wrong (server side check), the form will be redisplayed with clean fields, and a message will display "invalid password".
 
 
+### System Requirements
+
+ * WEB Containger (Tomcat)
+ * LDAP Server
+ * Postgresql
+
+
+### Install
+
+Postresql
+to create the data base use the following script
+
+[georchestra]/ldapAdmin/
+
+
+### Build
+
+ * mvn install -Dmaven.test.skip=true
+
+
+to crate the eclipse project
+
+ * mvn eclipse:eclipse
+
+
+### Run (Testing)
+
+Testing purpose: 
+
+ * Select Tomcat6 
+ * Then add the following url in your Internet navigator:
+   http://localhost:8080/ldapadmin/public/
+
+
+
 Private UI
 ----------
 
@@ -99,3 +134,5 @@ All emails sent by the application should be configurable by the way of template
 The application should be able to find groups and users by the way of filters such as the ones used by the cas (see https://github.com/georchestra/georchestra/blob/master/config/defaults/cas-server-webapp/maven.filter#L4) and defined by the way of the variables shared.ldap.userSearchBaseDN and shared.ldap.groupSearchBaseDN defined in https://github.com/georchestra/georchestra/blob/master/config/shared.maven.filters#L10
 
 The userPassword LDAP field should be SSHA encrypted on creation/update.
+
+
