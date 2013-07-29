@@ -22,6 +22,9 @@
   display: inline-block;
   width: 14px;
 }
+.dropdown-menu>li>a.group {
+  padding-left: 3px;
+}
 
 .form-fixed {
   width: 600px;
