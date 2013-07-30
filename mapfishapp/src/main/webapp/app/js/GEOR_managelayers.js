@@ -246,11 +246,12 @@ GEOR.managelayers = (function() {
      */
     var createInfoButton = function(layerRecord) {
         var layer = layerRecord.get("layer"),
-            isWMS = (layer.CLASS_NAME == "OpenLayers.Layer.WMS");
+            isWMS = layerRecord.get("type") == "WMS",
+            isWMTS = layerRecord.get("type") == "WMTS";
         return {
             xtype: 'button',
             // for vector layers, the button is always enabled:
-            disabled: isWMS ? 
+            disabled: (isWMS || isWMTS) ? 
                 !(layerRecord.get("queryable")) : 
                 false,
             iconCls: 'geor-btn-info',
@@ -260,7 +261,7 @@ GEOR.managelayers = (function() {
             tooltip: tr("Information on objects of this layer"),
             listeners: {
                 "toggle": function(btn, pressed) {
-                    if (isWMS) {
+                    if (isWMS || isWMTS) {
                         GEOR.getfeatureinfo.toggle(layerRecord, pressed);
                     } else {
                         GEOR.selectfeature.toggle(layer, pressed);
