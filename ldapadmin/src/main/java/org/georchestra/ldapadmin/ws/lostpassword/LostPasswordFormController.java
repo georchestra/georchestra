@@ -6,6 +6,11 @@ package org.georchestra.ldapadmin.ws.lostpassword;
 import java.io.IOException;
 import java.util.UUID;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.georchestra.ldapadmin.ds.AccountDao;
 import org.georchestra.ldapadmin.ds.DataServiceException;
 import org.georchestra.ldapadmin.ds.NotFoundException;
@@ -43,6 +48,8 @@ import org.springframework.web.bind.support.SessionStatus;
 @Controller
 @SessionAttributes(types=LostPasswordFormBean.class)
 public class LostPasswordFormController  {
+	
+	protected static final Log LOG = LogFactory.getLog(LostPasswordFormController.class.getName());
 	
 	// collaborations 
 	private AccountDao accountDao;
@@ -89,6 +96,7 @@ public class LostPasswordFormController  {
 	 */
 	@RequestMapping(value="/public/accounts/lostPassword", method=RequestMethod.POST)
 	public String generateToken(
+						HttpServletRequest request,
 						@ModelAttribute LostPasswordFormBean formBean, 
 						BindingResult resultErrors, 
 						SessionStatus sessionStatus) 
@@ -117,7 +125,8 @@ public class LostPasswordFormController  {
 			
 			String url = makeChangePasswordURL(token);
 
-			this.mailService.sendChangePassowrdURL(account.getUid(), account.getCommonName(), url, account.getEmail());
+			ServletContext servletContext = request.getSession().getServletContext();
+			this.mailService.sendChangePassowrdURL(servletContext, account.getUid(), account.getCommonName(), url, account.getEmail());
 			
 			sessionStatus.setComplete();
 			
@@ -147,6 +156,12 @@ public class LostPasswordFormController  {
 		StringBuilder strBuilder = new StringBuilder(this.ApplicationUrl);
 		strBuilder.append( "/public/accounts/newPassword?token=").append(token);
 		
-		return strBuilder.toString();
+		String url = strBuilder.toString();
+		
+		if(LOG.isDebugEnabled()){
+			LOG.debug("generated url:" + url);
+		}
+		
+		return url;
 	}
 }

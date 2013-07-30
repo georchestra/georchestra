@@ -6,10 +6,10 @@ package org.georchestra.ldapadmin.ws.newaccount;
 import java.io.IOException;
 import java.util.UUID;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import net.tanesha.recaptcha.ReCaptcha;
-import net.tanesha.recaptcha.ReCaptchaResponse;
 
 import org.georchestra.ldapadmin.bs.Moderator;
 import org.georchestra.ldapadmin.ds.AccountDao;
@@ -89,13 +89,14 @@ public final class NewAccountFormController {
 	 * @throws IOException 
 	 */
 	@RequestMapping(value="/public/accounts/new", method=RequestMethod.POST)
-	public String create(HttpServletRequest req,
+	public String create(
+						HttpServletRequest request,
 						@ModelAttribute AccountFormBean formBean,
 						BindingResult result, 
 						SessionStatus sessionStatus) 
 						throws IOException {
 
-		String remoteAddr = req.getRemoteAddr();
+		String remoteAddr = request.getRemoteAddr();
 		new AccountFormValidator(remoteAddr, this.reCaptcha).validate(formBean, result);
 		
 		if(result.hasErrors()){
@@ -121,7 +122,9 @@ public final class NewAccountFormController {
 			this.accountDao.insert(account, groupID);
 
 			if(this.moderator.requiresSignup() ){
-				this.mailService.sendNewAccount(account.getUid(), account.getCommonName(), this.moderator.getModeratorEmail());
+				ServletContext servletContext = request.getSession().getServletContext();
+
+				this.mailService.sendNewAccount(servletContext, account.getUid(), account.getCommonName(), this.moderator.getModeratorEmail());
 			}
 			
 			sessionStatus.setComplete();

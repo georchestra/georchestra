@@ -18,6 +18,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.servlet.ServletContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -63,15 +64,18 @@ public abstract class Email {
     
     /**
      * Read the body from template
+     * @param servletContext 
      * @return
      */
     protected String getBodyTemplate() {
     	
     	if(this.emailBody == null){
-    		this.emailBody = loadBody(this.fileTemplate);
+    		this.emailBody = loadBody(toAbsoltuPath(this.fileTemplate));
     	}
     	return this.emailBody;
     }
+    
+    protected abstract String toAbsoltuPath(String fileTemplate);
     
     /**
      * Loads the body template.
@@ -105,7 +109,12 @@ public abstract class Email {
     }
     
 
-	protected void sendMsg(final String msg) throws AddressException, MessagingException {
+	protected void sendMsg( final String msg) throws AddressException, MessagingException {
+		
+		if(LOG.isDebugEnabled() ){
+			
+			LOG.debug("body: "+ msg );
+		}
 		
 		final Properties props = System.getProperties();
         props.put("mail.smtp.host", smtpHost);

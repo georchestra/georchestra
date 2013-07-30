@@ -2,6 +2,8 @@ package org.georchestra.ldapadmin.mailservice;
 
 import java.io.IOException;
 
+import javax.servlet.ServletContext;
+
 import org.georchestra.lib.mailservice.AbstractEmailFactory;
 
 /**
@@ -15,6 +17,8 @@ class EmailFactoryImpl extends AbstractEmailFactory {
 	private String emailNewAccountFile;
 
 	private String emailChangePasswordFile;
+
+	private ServletContext servletContext;
 
 	public String getEmailNewAccountFile() {
 		return emailNewAccountFile;
@@ -33,7 +37,7 @@ class EmailFactoryImpl extends AbstractEmailFactory {
 	}
 	
 
-	public ChangePasswordEmail createChangePasswordEmail(String[] recipients) throws IOException {
+	public ChangePasswordEmail createChangePasswordEmail(ServletContext servletContext, String[] recipients) throws IOException {
 		
 		ChangePasswordEmail mail =  new ChangePasswordEmail(
 				recipients, 
@@ -45,12 +49,13 @@ class EmailFactoryImpl extends AbstractEmailFactory {
 				this.bodyEncoding,
 				this.subjectEncoding,
 				this.languages,
-				this.emailChangePasswordFile);
+				this.emailChangePasswordFile,
+				servletContext);
 		
 		return mail;
 	}
 	
-	public NewAccountEmail createNewAccountEmail(String[] recipients) throws IOException {
+	public NewAccountEmail createNewAccountEmail(ServletContext servletContext, String[] recipients) throws IOException {
 		
 		NewAccountEmail mail =  new NewAccountEmail(
 				recipients, 
@@ -62,7 +67,8 @@ class EmailFactoryImpl extends AbstractEmailFactory {
 				this.bodyEncoding,
 				this.subjectEncoding,
 				this.languages,
-				this.emailNewAccountFile);
+				this.emailNewAccountFile, 
+				servletContext );
 		
 		return mail;
 	}

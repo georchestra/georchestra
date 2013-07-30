@@ -5,6 +5,7 @@ package org.georchestra.ldapadmin.mailservice;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
+import javax.servlet.ServletContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -20,6 +21,8 @@ class ChangePasswordEmail extends Email {
 
 	private static final Log LOG = LogFactory.getLog(ChangePasswordEmail.class.getName());
 	
+	private ServletContext servletContext;
+	
 	public ChangePasswordEmail(
 			String[] recipients, 
 			String emailSubject,
@@ -30,25 +33,32 @@ class ChangePasswordEmail extends Email {
 			String bodyEncoding, 
 			String subjectEncoding, 
 			String[] languages, 
-			String fileTemplate) {
+			String fileTemplate, 
+			ServletContext servletContext) {
 
 		super(recipients, emailSubject, smtpHost, smtpPort, replyTo, from,
 				bodyEncoding, subjectEncoding, languages, fileTemplate);
 
-		
+		this.servletContext = servletContext;
 	}
 
-	public void sendMsg(final String userName, final String uid, final String url) throws AddressException, MessagingException {
+	public void sendMsg( final String userName, final String uid, final String url) throws AddressException, MessagingException {
 
 		if(LOG.isDebugEnabled() ){
 			
-			LOG.debug("send change password email to user "+ userName+ " - uid: " + uid  );
+			LOG.debug("send change password email to user "+ userName+ " - uid: ." + uid  );
 		}
 		
 		String body = writeNewPasswordMail(userName, url);
-
+		
 		super.sendMsg(body);
 	}
+	
+	@Override
+    protected String toAbsoltuPath(String fileTemplate) {
+
+    	return this.servletContext.getRealPath(fileTemplate);
+    }
 	
 	private String writeNewPasswordMail(final String userName, final String url) {
 		

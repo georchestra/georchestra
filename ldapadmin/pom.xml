@@ -73,12 +73,29 @@
             <version>4.10</version>
             <scope>test</scope>
         </dependency>
+        
+	    <dependency>
+	      <groupId>org.tuckey</groupId>
+	      <artifactId>urlrewritefilter</artifactId>
+	      <version>3.0.4</version>
+	      <exclusions>
+	        <exclusion>
+	          <groupId>commons-logging</groupId>
+	          <artifactId>commons-logging</artifactId>
+	        </exclusion>
+	        <exclusion>
+	          <groupId>log4j</groupId>
+	          <artifactId>log4j</artifactId>
+	        </exclusion>
+	      </exclusions>
+	    </dependency>
+        <!-- 
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>1.2.16</version>
         </dependency>
-        
+         -->
 		<dependency>
 		    <groupId>net.tanesha.recaptcha4j</groupId>
 		    <artifactId>recaptcha4j</artifactId>
