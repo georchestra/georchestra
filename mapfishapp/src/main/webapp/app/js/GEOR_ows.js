@@ -473,6 +473,8 @@ GEOR.ows = (function() {
                 layerOptions: Ext.apply({
                     // would be good for WMTS base layers only:
                     //transitionEffect: 'resize'
+                    projection: options.mapSRS ||
+                        GeoExt.MapPanel.guess().map.getProjection()
                 }, layerOptions, GEOR.ows.defaultWMTSLayerOptions),
                 fields: [
                     {name: "type", type: "string", defaultValue: "WMTS"}, // specific for georchestra
@@ -488,19 +490,7 @@ GEOR.ows = (function() {
                     {name: "infoFormats"}, // array
                     {name: "styles"}, // array of Objects {abstract, identifier, isDefault, keywords, title}
                     {name: "keywords"} // Object
-                ],
-                matrixSetChooser: function(tileMatrixSetLinks) {
-                    var mapSRS = options.mapSRS ||
-                        GeoExt.MapPanel.guess().map.getProjection();
-                    for (var i=0, l=tileMatrixSetLinks.length; i<l; i++) {
-                        if (tileMatrixSetLinks[i].tileMatrixSet === mapSRS) {
-                            return tileMatrixSetLinks[i].tileMatrixSet;
-                        }
-                    }
-                    // TODO: handle the case when there is no suitable TileMatrixSet for the current map projection !!!
-                    // TODO: handle the case when the server resolutions do not match those from the current config !!!
-                    return null;
-                }
+                ]
             }, options.storeOptions);
             var store = new GeoExt.data.WMTSCapabilitiesStore(storeOptions);
             if (options.success) {
