@@ -7,19 +7,19 @@ It lists the different requests and responses.
 
 Request
 
-    POST users/:userId
+    POST users
 
 Body parameters
 
     {
-        "facsimileTelephoneNumber": "fsdfdf"
-        "givenName": "GIRAUD"
-        "l": "dfdf"
-        "mail": "pierre.giraud@gmail.com"
-        "postOfficeBox": "dfdf"
-        "postalCode": "dfdf"
-        "sn": "Pierre"
-        "street": "fdsf"
+        "facsimileTelephoneNumber": "fsdfdf",
+        "givenName": "GIRAUD",
+        "l": "dfdf",
+        "mail": "pierre.giraud@gmail.com",
+        "postOfficeBox": "dfdf",
+        "postalCode": "dfdf",
+        "sn": "Pierre",
+        "street": "fdsf",
         "telephoneNumber": "fdsfd"
     }
 
@@ -28,7 +28,7 @@ Response
     {
         "telephoneNumber": "fdsfd",
         "postOfficeBox": "dfdf",
-        "uid": "2a07825a-b36a-4ca2-8465-83dfa31a64c4",
+        "uid": "pgiraud",
         "facsimileTelephoneNumber": "fsdfdf",
         "l": "dfdf",
         "street": "fdsf",
@@ -53,10 +53,9 @@ Response
             "o": "Zogak",
             "givenName": "Walsh",
             "sn": "Atkins",
-            "groups": ["5",
-            "1"],
-            "uid": "de840827-f31e-4bfa-80a2-a3b18b2b15e2"}
-        }, 
+            "groups": ["Administrator", "SV_XXX"],
+            "uid": "watkins"
+        },
             ...
     ]
 
@@ -64,12 +63,12 @@ Response
 
 Request
 
-    GET users/:userId
+    GET users/:uid
 
 Response
 
     {
-        "uid": "bf303a79-ca65-4866-b69b-2924f338a9b5",
+        "uid": "pgiraud",
         "street": "Brooklyn Avenue",
         "homePostalAddress": "Crawford Avenue 10622 Woodlake",
         "title": "",
@@ -79,7 +78,7 @@ Response
         "postalAddress": "",
         "postOfficeBox": 47,
         "description": "ut velit ut aliquip eiusmod ea deserunt nisi incididunt ut dolor ut cupidatat sint quis consequat consequat cupidatat aliqua occaecat esse sunt labore dolore voluptate excepteur reprehenderit velit anim labore sunt proident est ea deserunt deserunt id incididunt ut excepteur nisi aute consectetur anim consectetur dolore culpa velit sunt ex",
-        "groups": ["5"],
+        "groups": ["Administrator", "SV_XXX"],
         "homePhone": "(816) 450-3050",
         "telephoneNumber": "(907) 441-2066",
         "physicalDeliveryOfficeName": "",
@@ -97,7 +96,7 @@ Response
 
 Request
 
-    PUT users/:userId
+    PUT users/:uid
 
 Body parameters
 
@@ -113,6 +112,9 @@ Body parameters
         "telephoneNumber": "fdsfd"
     }
 
+Note: *Fields that are not present in the parameters should remain untouched
+on the server.*
+
 Response
 
     200 OK
@@ -121,7 +123,7 @@ Response
 
 Request
 
-    DELETE users/:userId
+    DELETE users/:uid
 
 Response
 
@@ -140,15 +142,14 @@ Request
 Body parameters
 
     {
-        "name": "Name of the group"
+        "cn": "Name of the group"
         "description": "Description for the group"
     }
 
 Reponse
 
     {
-        "uid": "134d42ab-923d-4c11-a131-4106f1fa8acd",
-        "name": "Name of the group",
+        "cn": "Name of the group",
         "description": "Description for the group"
     }
     or
@@ -163,11 +164,9 @@ Request
 Response
 
     [{
-        "uid": "4fa3d947-a7e3-4fcc-962b-aa69d211230c",
-        "name": "Administrator"
+        "cn": "Administrator"
     }, {
-        "uid": "134d42ab-923d-4c11-a131-4106f1fa8acd",
-        "name": "Name of the group",
+        "cn": "Name of the group",
         "description": "Description for the group"
     }]
 
@@ -177,14 +176,17 @@ Modify group
 
 Request
 
-    PUT groups/:groupId
+    PUT groups/:cn
 
 Body parameters
 
     {
-        "name": "New name of the group"
+        "cn": "New name of the group"
         "description": "Modified description for the group"
     }
+
+Note: *Fields that are not present in the parameters should remain untouched
+on the server.*
 
 Reponse
 
@@ -196,7 +198,7 @@ Delete group
 
 Request
 
-    DELETE groups/:groupId
+    DELETE groups/:cn
 
 Response
 
@@ -214,9 +216,11 @@ Request
 
 Body parameters
 
-    users=userId0,userId1,..,userIdN
-    PUT=groupId0,groupId1,..,groupIdN
-    DELETE=groupId3,groupId4,..,groupIdM
+    {
+        users: ["uid0","uid1",..,"uidN"],
+        PUT: ["cn0","cn1",..,"cnN"],
+        DELETE: ["cn3","cn4",..,"cnM"]
+    }
 
 Response
 
