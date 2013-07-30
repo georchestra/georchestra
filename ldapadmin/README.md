@@ -58,7 +58,7 @@ Two pages:
 
 ### System Requirements
 
- * WEB Containger (Tomcat)
+ * WEB Containger (Tomcat 6)
  * LDAP Server
  * Postgresql
 
@@ -66,26 +66,52 @@ Two pages:
 ### Install
 
 Postresql
-to create the data base use the following script
 
-[georchestra]/ldapAdmin/
+To create the data base use the following script
+
+[georchestra]/ldapadmin/ldapAdminDB.sql
+
+
+Note: because this is a work in progress right now the the following postgresql parameters are not used. 
+To configure the connection, for testing purpose, change the  UserTokenDao.getConnection() method
+        Example:
+        
+        this.databaseName = "postgres";
+        this.databaseUser = "admin";
+        this.databasePassword = "postgres";
+
+LDAP
+
+The ldap server is configurated in the 
+
+[georchestra]/ldapadmin/src/main/webapp/WEB-INF/spring/webmvc-config.xml
+
+For exemple:
+ 
+<!-- LDAP connection -->
+<bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource">
+  <property name="url" value="ldap://localhost:389" />
+  <property name="base" value="dc=georchestra,dc=org" />
+  <property name="userDn" value="cn=admin,dc=georchestra,dc=org" />
+  <property name="password" value="secret" />
+</bean>
 
 
 ### Build
 
- * mvn install -Dmaven.test.skip=true
+ * ../mvn install -Dmaven.test.skip=true
 
 
 to crate the eclipse project
 
- * mvn eclipse:eclipse
+ * ../mvn eclipse:eclipse
 
 
 ### Run (Testing)
 
 Testing purpose: 
 
- * Select Tomcat6 
+ * deply in Tomcat6 
  * Then add the following url in your Internet navigator:
    http://localhost:8080/ldapadmin/public/
 

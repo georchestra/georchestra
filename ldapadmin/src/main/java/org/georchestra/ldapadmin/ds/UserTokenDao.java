@@ -199,7 +199,6 @@ public class UserTokenDao {
 		}
 	}
 	
-
 	private Connection getConnection() throws  DataServiceException {
 
 		// TODO talk about what is the connection strategy in georchestra 
@@ -209,10 +208,14 @@ public class UserTokenDao {
 				try{
 					Class.forName("org.postgresql.Driver");
 					
-					String url = "jdbc:postgresql://localhost:5432/"+this.databaseName;
+					this.databaseName = "postgres";
+					this.databaseUser = "postgres";
+					this.databasePassword = "postgres";
+					
+					String url = "jdbc:postgresql://localhost:5432/"+ this.databasePassword ;
 					Properties props = new Properties();
-					props.setProperty("user","postgres");
-					props.setProperty("password","postgres");
+					props.setProperty("user", this.databaseUser);
+					props.setProperty("password",this.databasePassword);
 					props.setProperty("ssl","true");
 					props.setProperty("applicationName", "ldapAdmin");
 					this.connection = DriverManager.getConnection(url, props);
