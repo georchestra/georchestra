@@ -121,8 +121,12 @@ GEOR.layerfinder = (function() {
         panels["cswbrowser"] = GEOR.cswbrowser.getPanel({
             tabTip: tr("Find layers from keywords")
         });
-        
-        
+
+        var r = function(val) {
+            return (val ? '<img src="app/img/famfamfam/tick.gif" alt="' + tr("Yes") + '">' :
+                '<img src="app/img/famfamfam/cross.gif" alt="' + tr("No") + '">');
+        };
+
         var mapSRS = layerStore.map.getProjection(),
         commonStoreOptions = {
             // url should not be empty unless we want the following
@@ -146,8 +150,16 @@ GEOR.layerfinder = (function() {
             id: "description", 
             header: tr("Description"), 
             dataIndex: "abstract"
+        },
+        queryableColumn = {
+            id: "queryable", 
+            header: tr("Queryable"), 
+            dataIndex: "queryable", 
+            sortable: true, 
+            width: 75, 
+            renderer: r
         };
-        
+
         // WMTS
         panels["wmts"] = new GEOR.LayerBrowser({
             title: tr("WMTS server"),
@@ -160,6 +172,7 @@ GEOR.layerfinder = (function() {
             servers: GEOR.config.WMTS_SERVERS,
             columns: [
                 layerColumn,
+                queryableColumn,
                 descriptionColumn
             ],
             listeners: {
@@ -167,12 +180,7 @@ GEOR.layerfinder = (function() {
             }
         });
 
-
         // WMS
-        var r = function(val) {
-            return (val ? '<img src="app/img/famfamfam/tick.gif" alt="' + tr("Yes") + '">' :
-                '<img src="app/img/famfamfam/cross.gif" alt="' + tr("No") + '">');
-        };
         panels["wms"] = new GEOR.LayerBrowser({
             title: tr("WMS server"),
             tabTip: tr("Find layers querying WMS servers"),
@@ -184,7 +192,7 @@ GEOR.layerfinder = (function() {
             mapSRS: mapSRS,
             columns: [
                 layerColumn,
-                {id: "queryable", header: tr("Queryable"), dataIndex: "queryable", sortable: true, width: 75, renderer: r},
+                queryableColumn,
                 {id: "opaque", header: tr("Opaque"), dataIndex: "opaque", sortable: true, width: 50, renderer: r},
                 descriptionColumn
             ],
