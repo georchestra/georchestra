@@ -96,27 +96,30 @@ angular.module('ldapadmin.controllers', [])
    */
   .controller('UsersListCtrl', function($scope, $rootScope, $routeParams, $filter, Restangular, flash) {
     //$scope.users is inherited from UsersCtrl's scope
-    var group = $routeParams.group;
-    $scope.groupFilter = group ? {groups: group} : null;
+    var index = findByAttr($scope.groups, 'cn', $routeParams.group);
+    var group = $scope.groups[index];
+    $scope.groupFilter = function(item) {
+      if (group) {
+        return group.users && group.users.indexOf(item.uid) != -1;
+      } else {
+        return true;
+      }
+    };
     $rootScope.selectedGroup = group;
 
     $scope.allSelected = false;
 
     $scope.selectedUsers = function() {
-      var filter = {selected: true};
-      // we also want to filter by group if a group is selected
-      if (group) {
-        filter.groups = group;
-      }
-      return $filter('filter')($scope.users, filter);
+      return _.filter($scope.users, function(user) {
+        return user.selected === true &&
+          (!group || group && group.users && group.users.indexOf(user.uid) != -1);
+      });
     };
 
     function filteredUsers() {
-      var filter = {};
-      if (group) {
-        filter.groups = group;
-      }
-      return $filter('filter')($scope.users, filter);
+      return _.filter($scope.users, function(user) {
+        return !group || group.users && group.users.indexOf(user.uid) != -1;
+      });
     }
 
     $scope.$watch('users', function() {
@@ -136,13 +139,12 @@ angular.module('ldapadmin.controllers', [])
 
     function hasUsers(group) {
       var total = $scope.selectedUsers().length;
-      var inGroup = _.filter($scope.selectedUsers(), function(user) {
-        return user.groups.indexOf(group.cn) != -1;
-      });
-      if (inGroup.length === 0) {
+      var uids = _.pluck($scope.selectedUsers(), 'uid');
+      var inGroup = _.difference(uids, group.users);
+      if (inGroup.length === total) {
         return false;
       }
-      return inGroup.length == total ? 'all' : 'some';
+      return inGroup.length === 0 ? 'all' : 'some';
     }
     $scope.selectGroup = function(group) {
       if (!group.hasUsers || group.hasUsers == 'some') {
@@ -262,7 +264,7 @@ angular.module('ldapadmin.controllers', [])
         $scope.user_groups_tree = tree;
 
         angular.forEach($scope.user_groups, function(group, key) {
-          group.hasUsers = _.contains($scope.user.groups, group.cn);
+          group.hasUsers = _.contains(group.users, $scope.user.uid);
         });
 
         $scope.original_groups = angular.copy($scope.user_groups);
@@ -271,12 +273,7 @@ angular.module('ldapadmin.controllers', [])
 
       // called when user submits modifications on groups list for a user
       $scope.apply = function() {
-        postGroups($scope, $scope.user, Restangular, flash, function() {
-          var index = findByAttr($scope.users, 'uid', $routeParams.userId);
-          if (index !== false) {
-            $scope.users[index] = $scope.user;
-          }
-        });
+        postGroups($scope, $scope.user, Restangular, flash);
       };
     });
   })
@@ -311,12 +308,13 @@ function findByAttr(collection, attribute, value) {
   return false;
 }
 
-function postGroups($scope, users, Restangular, flash, callback) {
+function postGroups($scope, users, Restangular, flash) {
   var i,
       len = $scope.user_groups.length,
       toPut = [],
       toDelete = [];
   users = _.isArray(users) ? users : [users];
+  users = _.pluck(users, 'uid');
 
   // get the list of groups to put or delete for user
   for (i=0; i < len; i++) {
@@ -333,25 +331,31 @@ function postGroups($scope, users, Restangular, flash, callback) {
     }
   }
 
+  // because the number of users can be important (for example when checkAll
+  // checkbox is checked), body is less heavy this way
   var body = {
-    "users": _.pluck(users, 'uid'),
+    "users": users,
     "PUT": toPut,
     "DELETE": toDelete
   };
 
   Restangular.all('groups_users').post(body).then(
     function() {
-      angular.forEach(users, function(user) {
-        // add the groups
-        user.groups = _.union(user.groups, toPut);
-        // remove the groups
-        user.groups = _.difference(user.groups, toDelete);
+      angular.forEach(toPut, function(group) {
+        var index = findByAttr($scope.groups, 'cn', group);
+        group = $scope.groups[index];
+        group.users = _.union(group.users || [], users);
       });
+      angular.forEach(toDelete, function(group) {
+        var index = findByAttr($scope.groups, 'cn', group);
+        group = $scope.groups[index];
+        group.users = _.difference(group.users, users);
+      });
+
       flash.success = 'Modified successfully';
 
-      if (callback) {
-        callback.call();
-      }
+      var index = findByAttr($scope.groups, 'cn', 'a');
+      var group = $scope.groups[index];
     },
     function errorCallback() {
       flash.error = 'Oops error from server :(';

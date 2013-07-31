@@ -32,6 +32,7 @@ class RESTView(object):
     @view_config(route_name='groups', renderer='json', request_method='POST')
     def post_groups(self):
         group = self.request.json_body
+        group['users'] = [];
         _groups.append(group)
         return group
 
@@ -57,14 +58,14 @@ class RESTView(object):
                 return _groups[ndx]
         return 'group not found'
 
-    @view_config(route_name='group', request_method='PUT')
+    @view_config(route_name='group', renderer='json', request_method='PUT')
     def put_group(self):
         group = self.request.matchdict['group']
         for ndx, i in enumerate(_groups):
             if str(i['cn']) == group:
                 _groups[ndx] = self.request.json_body
-        print _groups
-        return Response('put')
+                return _groups[ndx]
+        return 'group not found'
 
     @view_config(route_name='users', renderer='json', request_method='GET')
     def get(self):
@@ -74,7 +75,6 @@ class RESTView(object):
                 "givenName": user['givenName'],
                 "sn": user['sn'],
                 "uid": user['uid'],
-                "groups": user['groups'],
                 "o": user['o']
             })
 
@@ -119,18 +119,20 @@ class RESTView(object):
         to_put = self.request.json_body['PUT']
         to_delete = self.request.json_body['DELETE']
 
-        for nj, j in enumerate(users):
-            user = getUserById(j)
-            if not 'groups' in user:
-                user['groups'] = []
-            for group in to_put:
-                user['groups'].append(group)
-            for group in to_delete:
-                if group in user['groups']:
-                    user['groups'].remove(group)
+        for nj, j in enumerate(to_put):
+            group = getGroupByCn(j)
+            if not 'users' in group:
+                group['users'] = []
+            for user in users:
+                group['users'].append(user)
+
+        for nj, j in enumerate(to_delete):
+            group = getGroupByCn(j)
+            for user in users:
+                group['users'].remove(user)
         return Response('put')
 
-def getUserById(uid):
-    for ndx, i in enumerate(_users):
-        if str(i['uid']) == str(uid):
+def getGroupByCn(cn):
+    for ndx, i in enumerate(_groups):
+        if str(i['cn']) == str(cn):
             return i

@@ -20,11 +20,7 @@
             "homePostalAddress": "Joralemon Street 12196 Gadsden",
             "mail": "walshatkins@datagen.com",
             "mobile": "(998) 443-3166",
-            "roomNumber": 106,
-            "groups": [
-                "EL_YYY",
-                "Administrator"
-            ]
+            "roomNumber": 106
         },
         {
             "uid": "25f03a03-1067-469a-b53c-55ccee45fe10",
@@ -47,12 +43,7 @@
             "homePostalAddress": "Java Street 21276 Rosedale",
             "mail": "dyerberry@buzzness.com",
             "mobile": "(868) 543-2300",
-            "roomNumber": 30,
-            "groups": [
-                "EL_XXX",
-                "EL_YYY",
-                "Administrator"
-            ]
+            "roomNumber": 30
         },
         {
             "uid": "3d138229-9f77-4a8c-96cc-2e2d18601572",
@@ -75,11 +66,7 @@
             "homePostalAddress": "Butler Street 18763 Emory",
             "mail": "wattsoneill@eyeris.com",
             "mobile": "(813) 524-2342",
-            "roomNumber": 150,
-            "groups": [
-                "EL_XXX",
-                "Administrator"
-            ]
+            "roomNumber": 150
         },
         {
             "uid": "52db6639-c9ef-480a-adda-f8b9fd2c3b29",
@@ -102,8 +89,7 @@
             "homePostalAddress": "Kaufman Place 10568 Longoria",
             "mail": "bartlettoliver@quailcom.com",
             "mobile": "(831) 600-2644",
-            "roomNumber": 52,
-            "groups": []
+            "roomNumber": 52
         },
         {
             "uid": "fc913a60-a6d9-4fa6-a034-c7a5b1196887",
@@ -126,8 +112,7 @@
             "homePostalAddress": "Front Street 22616 Babb",
             "mail": "shannondoyle@dyno.com",
             "mobile": "(840) 495-2594",
-            "roomNumber": 28,
-            "groups": []
+            "roomNumber": 28
         },
         {
             "uid": "bac5c5c8-7495-48b0-ab22-c63990e152d4",
@@ -150,10 +135,7 @@
             "homePostalAddress": "Vandalia Avenue 17534 Finzel",
             "mail": "reynacampos@gynk.com",
             "mobile": "(882) 485-3046",
-            "roomNumber": 67,
-            "groups": [
-                "EL_XXX"
-            ]
+            "roomNumber": 67
         },
         {
             "uid": "d49f0b4c-4d28-436e-95c9-6512cfac677d",
@@ -176,10 +158,7 @@
             "homePostalAddress": "Wilson Street 22500 Ahwahnee",
             "mail": "susanafrederick@norsul.com",
             "mobile": "(974) 562-2499",
-            "roomNumber": 87,
-            "groups": [
-                "EL_XXX"
-            ]
+            "roomNumber": 87
         },
         {
             "uid": "f4348ba6-f365-4234-9127-59635ef3b03f",
@@ -202,8 +181,7 @@
             "homePostalAddress": "Cambridge Place 24157 Bradenville",
             "mail": "staciedurham@blanet.com",
             "mobile": "(891) 558-3686",
-            "roomNumber": 74,
-            "groups": []
+            "roomNumber": 74
         },
         {
             "uid": "bb298f4f-ced6-48fc-82c3-95b1b1db321f",
@@ -226,8 +204,7 @@
             "homePostalAddress": "Hall Street 13559 Hamilton",
             "mail": "franroman@polarax.com",
             "mobile": "(829) 596-3372",
-            "roomNumber": 108,
-            "groups": []
+            "roomNumber": 108
         },
         {
             "uid": "9520c29c-af2d-43c6-8e05-c3b31d6f8922",
@@ -250,10 +227,7 @@
             "homePostalAddress": "Jackson Street 23169 Rivera",
             "mail": "laurabentley@ovolo.com",
             "mobile": "(987) 563-3205",
-            "roomNumber": 24,
-            "groups": [
-                "SV_XXX"
-            ]
+            "roomNumber": 24
         },
         {
             "uid": "705b13a9-a149-44e4-b215-0f4c59895dc5",
@@ -276,8 +250,7 @@
             "homePostalAddress": "Fanchon Place 23941 Knowlton",
             "mail": "lelott@izzby.com",
             "mobile": "(943) 414-3570",
-            "roomNumber": 72,
-            "groups": []
+            "roomNumber": 72
         },
         {
             "uid": "dfec28ba-9655-411b-9f33-2c345f7c8dc0",
@@ -300,11 +273,7 @@
             "homePostalAddress": "Kimball Street 14668 Riegelwood",
             "mail": "paulacooke@xiix.com",
             "mobile": "(914) 405-2283",
-            "roomNumber": 102,
-            "groups": [
-                "SV_XXX",
-                "SV_YYY"
-            ]
+            "roomNumber": 102
         },
         {
             "uid": "81a22d5e-631a-487a-aec8-e7f93224108e",
@@ -327,11 +296,7 @@
             "homePostalAddress": "Clarkson Avenue 10125 Hanover",
             "mail": "hardinsloan@artiq.com",
             "mobile": "(922) 581-2017",
-            "roomNumber": 2,
-            "groups": [
-                "SV_YYY",
-                "EL_XXX"
-            ]
+            "roomNumber": 2
         },
         {
             "uid": "f1c39178-cf03-4117-b110-c1c94280a1e1",
@@ -354,10 +319,7 @@
             "homePostalAddress": "Falmouth Street 18039 Hannasville",
             "mail": "duffychristian@uberlux.com",
             "mobile": "(863) 480-2470",
-            "roomNumber": 34,
-            "groups": [
-                "SV_YYY"
-            ]
+            "roomNumber": 34
         },
         {
             "uid": "18248a24-0937-4359-8dcc-325416eea1c1",
@@ -380,8 +342,7 @@
             "homePostalAddress": "Rogers Avenue 20947 Brownlee",
             "mail": "jenniferreilly@plexia.com",
             "mobile": "(944) 557-2868",
-            "roomNumber": 59,
-            "groups": []
+            "roomNumber": 59
         },
         {
             "uid": "9106c59a-92eb-42b7-8451-aaf197657b25",
@@ -404,11 +365,7 @@
             "homePostalAddress": "Prince Street 14977 Albany",
             "mail": "riddlewood@bleeko.com",
             "mobile": "(879) 490-3643",
-            "roomNumber": 17,
-            "groups": [
-                "SV_XXX",
-                "EL_XXX"
-            ]
+            "roomNumber": 17
         },
         {
             "uid": "2d2943ca-2eb2-4d7b-b978-dc6498336d2b",
@@ -431,8 +388,7 @@
             "homePostalAddress": "Brightwater Court 14859 Strong",
             "mail": "keithcortez@zytrex.com",
             "mobile": "(894) 583-3811",
-            "roomNumber": 74,
-            "groups": []
+            "roomNumber": 74
         },
         {
             "uid": "f1d22501-263c-4c2a-8fc7-5d862c1d2151",
@@ -455,10 +411,7 @@
             "homePostalAddress": "Lloyd Court 18255 Croom",
             "mail": "daisyflores@isodrive.com",
             "mobile": "(896) 527-2631",
-            "roomNumber": 144,
-            "groups": [
-                "EL_XXX"
-            ]
+            "oomNumber": 144
         },
         {
             "uid": "bf303a79-ca65-4866-b69b-2924f338a9b5",
@@ -481,10 +434,7 @@
             "homePostalAddress": "Crawford Avenue 10622 Woodlake",
             "mail": "alfredadowns@bitendrex.com",
             "mobile": "(853) 482-2492",
-            "roomNumber": 128,
-            "groups": [
-                "EL_YYY"
-            ]
+            "roomNumber": 128
         },
         {
             "uid": "74ca19b1-5fa5-4233-aeb0-d61ad2df3087",
@@ -507,8 +457,7 @@
             "homePostalAddress": "Roder Avenue 22098 Calverton",
             "mail": "janinepollard@equitax.com",
             "mobile": "(974) 549-3489",
-            "roomNumber": 19,
-            "groups": []
+            "roomNumber": 19
         },
         {
             "uid": "f96d101f-0c3e-4085-b729-f75013c0635e",
@@ -531,8 +480,7 @@
             "homePostalAddress": "Strong Place 12232 Umapine",
             "mail": "pearliewynn@matrixity.com",
             "mobile": "(870) 572-3162",
-            "roomNumber": 71,
-            "groups": []
+            "roomNumber": 71
         },
         {
             "uid": "00092aba-5243-49ff-aa5c-8a221eac90b8",
@@ -555,11 +503,7 @@
             "homePostalAddress": "Orient Avenue 16005 Brandermill",
             "mail": "russellmalone@panzent.com",
             "mobile": "(863) 555-2270",
-            "roomNumber": 87,
-            "groups": [
-                "SV_XXX",
-                "EL_YYY"
-            ]
+            "roomNumber": 87
         },
         {
             "uid": "cde2b602-91ec-4748-a22b-f2ae92352fd6",
@@ -582,11 +526,7 @@
             "homePostalAddress": "Bassett Avenue 22716 Limestone",
             "mail": "wilsonsnider@speedbolt.com",
             "mobile": "(861) 499-3172",
-            "roomNumber": 47,
-            "groups": [
-                "EL_YYY",
-                "EL_XXX"
-            ]
+            "roomNumber": 47
         },
         {
             "uid": "0671540c-08e4-4290-a88d-9c9f83f3e3f5",
@@ -609,10 +549,7 @@
             "homePostalAddress": "Moffat Street 16673 Kula",
             "mail": "nadiarobertson@zerbina.com",
             "mobile": "(835) 522-2632",
-            "roomNumber": 118,
-            "groups": [
-                "SV_YYY"
-            ]
+            "roomNumber": 118
         },
         {
             "uid": "f3e67721-338e-4649-b66f-01445669895d",
@@ -635,205 +572,6 @@
             "homePostalAddress": "Opal Court 15960 Brenton",
             "mail": "megandunn@exostream.com",
             "mobile": "(889) 540-2923",
-            "roomNumber": 139,
-            "groups": []
-        },
-        {
-            "uid": "ba56c3c9-bf1e-486c-9724-db3809ac34af",
-            "sn": "Bradshaw",
-            "telephoneNumber": "(816) 455-3464",
-            "description": "esse cillum occaecat consequat cupidatat sint nisi aute eiusmod nostrud occaecat ex ad nostrud enim ea tempor ut dolore mollit ad deserunt dolor ipsum cupidatat reprehenderit in aute labore fugiat nulla mollit do exercitation culpa cupidatat anim qui occaecat exercitation Lorem consequat nostrud consectetur consequat non occaecat id adipisicing nulla",
-            "title": "",
-            "street": "Vandervoort Place",
-            "facsimileTelephoneNumber": "(888) 475-3382",
-            "postOfficeBox": 19,
-            "postalCode": 14840,
-            "postalAddress": "",
-            "physicalDeliveryOfficeName": "",
-            "o": "Earwax",
-            "ou": "Minga",
-            "st": "North Carolina",
-            "l": "Naomi",
-            "givenName": "Keller",
-            "homePhone": "(985) 553-2518",
-            "homePostalAddress": "Tompkins Avenue 23242 Wacissa",
-            "mail": "kellerbradshaw@minga.com",
-            "mobile": "(898) 467-2806",
-            "roomNumber": 31,
-            "groups": []
-        },
-        {
-            "uid": "b3a22647-8b3d-4a25-9903-9e4caab5cbc1",
-            "sn": "Cobb",
-            "telephoneNumber": "(938) 549-3015",
-            "description": "ad id irure quis velit eiusmod aliquip anim velit nisi amet duis minim nisi adipisicing adipisicing exercitation consectetur ea Lorem consectetur reprehenderit proident laboris sint commodo incididunt non ut voluptate id cillum dolore labore in non non do irure quis dolore eu amet fugiat laborum est dolore aliqua ad culpa",
-            "title": "",
-            "street": "Lake Avenue",
-            "facsimileTelephoneNumber": "(829) 490-3799",
-            "postOfficeBox": 90,
-            "postalCode": 17122,
-            "postalAddress": "",
-            "physicalDeliveryOfficeName": "",
-            "o": "Translink",
-            "ou": "Zensure",
-            "st": "New Mexico",
-            "l": "Steinhatchee",
-            "givenName": "Chase",
-            "homePhone": "(951) 405-3304",
-            "homePostalAddress": "Oriental Boulevard 17758 Gerber",
-            "mail": "chasecobb@zensure.com",
-            "mobile": "(915) 516-3261",
-            "roomNumber": 128,
-            "groups": [
-                "EL_XXX"
-            ]
-        },
-        {
-            "uid": "b9dc0b18-902d-44da-9f49-be1930e62983",
-            "sn": "Conrad",
-            "telephoneNumber": "(991) 485-2372",
-            "description": "ad occaecat et consectetur eu incididunt exercitation ut culpa tempor voluptate aliquip anim mollit eu duis reprehenderit duis sint ullamco cillum eu dolor tempor cupidatat anim adipisicing culpa non duis aliqua adipisicing qui cupidatat excepteur amet exercitation nisi laboris cupidatat nulla ullamco culpa est nisi enim veniam irure incididunt dolore",
-            "title": "",
-            "street": "Bay Street",
-            "facsimileTelephoneNumber": "(869) 480-3398",
-            "postOfficeBox": 96,
-            "postalCode": 12653,
-            "postalAddress": "",
-            "physicalDeliveryOfficeName": "",
-            "o": "Elemantra",
-            "ou": "Digifad",
-            "st": "New Jersey",
-            "l": "Leola",
-            "givenName": "Lewis",
-            "homePhone": "(897) 401-3349",
-            "homePostalAddress": "Franklin Street 21966 Edenburg",
-            "mail": "lewisconrad@digifad.com",
-            "mobile": "(972) 543-2871",
-            "roomNumber": 16,
-            "groups": []
-        },
-        {
-            "uid": "773b703e-458b-4439-9acd-5c1a8f7538ed",
-            "sn": "Mcintosh",
-            "telephoneNumber": "(931) 570-3151",
-            "description": "laborum aliqua veniam dolore do aute aliqua anim qui quis labore eu consequat esse mollit elit adipisicing minim est commodo aliquip anim commodo culpa eiusmod sint mollit proident est esse mollit qui excepteur laborum cillum sit irure esse nisi veniam ut ullamco minim esse ullamco duis quis id deserunt reprehenderit",
-            "title": "",
-            "street": "Fane Court",
-            "facsimileTelephoneNumber": "(926) 560-2761",
-            "postOfficeBox": 92,
-            "postalCode": 18079,
-            "postalAddress": "",
-            "physicalDeliveryOfficeName": "",
-            "o": "Miraclis",
-            "ou": "Automon",
-            "st": "Pennsylvania",
-            "l": "Linwood",
-            "givenName": "Jeri",
-            "homePhone": "(886) 420-3506",
-            "homePostalAddress": "Barlow Drive 17356 Elliott",
-            "mail": "jerimcintosh@automon.com",
-            "mobile": "(909) 408-2324",
-            "roomNumber": 127,
-            "groups": []
-        },
-        {
-            "uid": "650ef98f-bd3d-4ad9-96b0-b28f08403ff7",
-            "sn": "Mcbride",
-            "telephoneNumber": "(878) 570-2676",
-            "description": "minim ad fugiat incididunt labore excepteur nulla dolore excepteur amet cupidatat do enim elit quis consequat duis ex veniam commodo eu eu voluptate deserunt dolor qui in do Lorem sunt ad dolor qui ex ipsum laborum aute ad aute nostrud culpa eiusmod cillum incididunt officia cupidatat deserunt nisi ea minim",
-            "title": "",
-            "street": "Friel Place",
-            "facsimileTelephoneNumber": "(801) 528-3409",
-            "postOfficeBox": 86,
-            "postalCode": 22010,
-            "postalAddress": "",
-            "physicalDeliveryOfficeName": "",
-            "o": "Rameon",
-            "ou": "Photobin",
-            "st": "South Carolina",
-            "l": "Manitou",
-            "givenName": "Leonard",
-            "homePhone": "(935) 493-2343",
-            "homePostalAddress": "Brigham Street 20050 Herlong",
-            "mail": "leonardmcbride@photobin.com",
-            "mobile": "(945) 570-3095",
-            "roomNumber": 50,
-            "groups": []
-        },
-        {
-            "uid": "a36b8652-0ce8-4251-a065-4dca233963e7",
-            "sn": "Maynard",
-            "telephoneNumber": "(994) 593-3143",
-            "description": "quis Lorem eu dolor minim esse deserunt ut ut eu eiusmod culpa et sunt elit reprehenderit ullamco et enim aute anim aute ullamco consectetur et amet non tempor velit occaecat cillum velit amet sunt duis exercitation aliquip est fugiat occaecat est dolor veniam irure non et fugiat est aliqua dolor",
-            "title": "",
-            "street": "Brevoort Place",
-            "facsimileTelephoneNumber": "(915) 521-3898",
-            "postOfficeBox": 15,
-            "postalCode": 11560,
-            "postalAddress": "",
-            "physicalDeliveryOfficeName": "",
-            "o": "Dognosis",
-            "ou": "Zensus",
-            "st": "Rhode Island",
-            "l": "Savage",
-            "givenName": "Merrill",
-            "homePhone": "(937) 561-2977",
-            "homePostalAddress": "Jackson Court 22737 Cobbtown",
-            "mail": "merrillmaynard@zensus.com",
-            "mobile": "(996) 416-3497",
-            "roomNumber": 115,
-            "groups": [
-                "EL_YYY"
-            ]
-        },
-        {
-            "uid": "ee59217d-c425-496b-a83a-45400a21f98f",
-            "sn": "Estrada",
-            "telephoneNumber": "(888) 520-3123",
-            "description": "officia deserunt labore enim voluptate eiusmod qui enim quis reprehenderit duis sunt dolore voluptate laborum deserunt esse sint officia eiusmod consequat voluptate ullamco magna esse minim adipisicing id adipisicing duis laboris qui ea eiusmod mollit culpa labore sint fugiat ex consequat anim voluptate eu occaecat consectetur mollit in id cillum",
-            "title": "",
-            "street": "Linden Street",
-            "facsimileTelephoneNumber": "(854) 540-3932",
-            "postOfficeBox": 83,
-            "postalCode": 18546,
-            "postalAddress": "",
-            "physicalDeliveryOfficeName": "",
-            "o": "Eternis",
-            "ou": "Skinserve",
-            "st": "New York",
-            "l": "Moscow",
-            "givenName": "Judy",
-            "homePhone": "(826) 598-2263",
-            "homePostalAddress": "Hornell Loop 22832 Worton",
-            "mail": "judyestrada@skinserve.com",
-            "mobile": "(886) 592-2135",
-            "roomNumber": 44,
-            "groups": [
-                "EL_XXX"
-            ]
-        },
-        {
-            "uid": "3afa14ad-b6bc-4be8-aad2-7ddb1541942f",
-            "sn": "Mathis",
-            "telephoneNumber": "(892) 516-3526",
-            "description": "adipisicing minim id exercitation nisi do culpa incididunt laborum ullamco reprehenderit officia id excepteur non laborum qui excepteur cillum eiusmod dolor ipsum est enim ipsum ad quis laboris do nostrud nostrud laborum eu reprehenderit officia commodo excepteur elit cillum mollit amet proident laborum aute in ad commodo sit quis nisi",
-            "title": "",
-            "street": "Bokee Court",
-            "facsimileTelephoneNumber": "(825) 510-2245",
-            "postOfficeBox": 34,
-            "postalCode": 23813,
-            "postalAddress": "",
-            "physicalDeliveryOfficeName": "",
-            "o": "Delphide",
-            "ou": "Enaut",
-            "st": "Connecticut",
-            "l": "Suitland",
-            "givenName": "Charlene",
-            "homePhone": "(869) 525-3120",
-            "homePostalAddress": "Cooper Street 23640 Marysville",
-            "mail": "charlenemathis@enaut.com",
-            "mobile": "(992) 438-3835",
-            "roomNumber": 127,
-            "groups": []
+            "roomNumber": 139
         }
     ]
