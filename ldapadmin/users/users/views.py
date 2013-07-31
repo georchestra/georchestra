@@ -31,9 +31,7 @@ class RESTView(object):
 
     @view_config(route_name='groups', renderer='json', request_method='POST')
     def post_groups(self):
-        uid = str(uuid.uuid4())
         group = self.request.json_body
-        group['uid'] = uid
         _groups.append(group)
         return group
 
@@ -47,7 +45,7 @@ class RESTView(object):
                 user['groups'].remove(group)
 
         for ndx, i in enumerate(_groups):
-            if str(i['uid']) == group:
+            if str(i['cn']) == group:
                 del _groups[ndx]
         return Response('delete')
 
@@ -55,7 +53,7 @@ class RESTView(object):
     def group(self):
         group = self.request.matchdict['group']
         for ndx, i in enumerate(_groups):
-            if str(i['uid']) == group:
+            if str(i['cn']) == group:
                 return _groups[ndx]
         return 'group not found'
 
@@ -63,7 +61,7 @@ class RESTView(object):
     def put_group(self):
         group = self.request.matchdict['group']
         for ndx, i in enumerate(_groups):
-            if str(i['uid']) == group:
+            if str(i['cn']) == group:
                 _groups[ndx] = self.request.json_body
         print _groups
         return Response('put')

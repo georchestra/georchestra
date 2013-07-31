@@ -35,9 +35,9 @@
           <br />
           <br />
           <script type="text/ng-template" id="group_item_renderer.html">
-            <a href="#/groups/{{data.group.uid}}" ng-if="data.group != null" ng-class="{active: data.group.uid==selectedGroup}">
+            <a href="#/groups/{{data.group.cn}}" ng-if="data.group != null" ng-class="{active: data.group.cn==selectedGroup}">
               <i class="icon-blank"></i>
-              {{data.name}} <small>({{users | count:data.group.uid}})</small>
+              {{data.name}} <small>({{users | count:data.group.cn}})</small>
             </a>
             <div ng-if="!data.group && data.nodes.length" class="accordion-group">
               <div class="accordion-heading">

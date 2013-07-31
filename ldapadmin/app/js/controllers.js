@@ -5,7 +5,7 @@ angular.module('ldapadmin.controllers', [])
   .controller('GroupsCtrl', function($scope, $rootScope, Restangular) {
     Restangular.all('groups').getList().then(function(groups) {
       groups.sort(function(a, b) {
-        return (a.name < b.name) ? -1 : 1;
+        return (a.cn < b.cn) ? -1 : 1;
       });
       $rootScope.groups = groups;
 
@@ -27,10 +27,14 @@ angular.module('ldapadmin.controllers', [])
     group.get().then(function(remote) {
       $scope.group = Restangular.copy(remote);
 
+      // manually add an id field so that we can use Restangular without
+      // changing the mapping to id field globally
+      $scope.group.id = $scope.group.cn;
+
       $scope.save = function() {
         $scope.group.put().then(function() {
           flash.success = 'Group correctly updated';
-          var index = findByAttr($scope.groups, 'uid', $routeParams.group);
+          var index = findByAttr($scope.groups, 'cn', $routeParams.group);
 
           if (index !== false) {
             $scope.groups[index] = angular.copy($scope.group);
@@ -44,7 +48,7 @@ angular.module('ldapadmin.controllers', [])
       $scope.deleteGroup = function(group) {
         Restangular.one('groups', group).remove().then(
           function() {
-            var index = findByAttr($scope.groups, 'uid', $routeParams.group);
+            var index = findByAttr($scope.groups, 'cn', $routeParams.group);
 
             if (index !== false) {
               $scope.groups = $scope.groups.splice(index, 1);
@@ -133,7 +137,7 @@ angular.module('ldapadmin.controllers', [])
     function hasUsers(group) {
       var total = $scope.selectedUsers().length;
       var inGroup = _.filter($scope.selectedUsers(), function(user) {
-        return user.groups.indexOf(group.uid) != -1;
+        return user.groups.indexOf(group.cn) != -1;
       });
       if (inGroup.length === 0) {
         return false;
@@ -179,7 +183,7 @@ angular.module('ldapadmin.controllers', [])
     $scope.deleteGroup = function(group) {
       Restangular.one('groups', group).remove().then(
         function() {
-          var index = findByAttr($scope.groups, 'uid', $routeParams.group);
+          var index = findByAttr($scope.groups, 'cn', $routeParams.group);
 
           if (index !== false) {
             $scope.groups = $scope.groups.splice(index, 1);
@@ -203,6 +207,10 @@ angular.module('ldapadmin.controllers', [])
     user.get().then(function(remote) {
       $scope.user = Restangular.copy(remote);
 
+      // manually add an id field so that we can use Restangular without
+      // changing the mapping to id field globally
+      $scope.user.id = $scope.user.uid;
+
       $scope.groupsChanged = false;
 
       $scope.save = function() {
@@ -217,7 +225,7 @@ angular.module('ldapadmin.controllers', [])
         });
       };
       $scope.deleteUser = function() {
-        Restangular.one('users', user.uid).remove().then(
+        Restangular.one('users', $scope.user.uid).remove().then(
           function() {
             var index = findByAttr($scope.users, 'uid', $routeParams.userId);
 
@@ -254,7 +262,7 @@ angular.module('ldapadmin.controllers', [])
         $scope.user_groups_tree = tree;
 
         angular.forEach($scope.user_groups, function(group, key) {
-          group.hasUsers = _.contains($scope.user.groups, group.uid);
+          group.hasUsers = _.contains($scope.user.groups, group.cn);
         });
 
         $scope.original_groups = angular.copy($scope.user_groups);
@@ -288,8 +296,8 @@ angular.module('ldapadmin.controllers', [])
   });
 
 function getPrefix(group) {
-  return group.name.indexOf('_') != -1 &&
-         group.name.substring(0, group.name.indexOf('_'));
+  return group.cn.indexOf('_') != -1 &&
+         group.cn.substring(0, group.cn.indexOf('_'));
 }
 
 function findByAttr(collection, attribute, value) {
@@ -317,9 +325,9 @@ function postGroups($scope, users, Restangular, flash, callback) {
 
     if (g.hasUsers != og.hasUsers) {
       if (g.hasUsers === 'all' || g.hasUsers === true) {
-        toPut.push(g.uid);
+        toPut.push(g.cn);
       } else if (g.hasUsers === false){
-        toDelete.push(g.uid);
+        toDelete.push(g.cn);
       }
       // 'some' shouldn't be possible here
     }
@@ -361,9 +369,9 @@ function addNode(tree, node) {
       branch = {name: prefix, nodes: []};
       tree.push(branch);
     }
-    branch.nodes.push({uid: node.uid, name: node.name, group: node});
+    branch.nodes.push({name: node.cn, group: node});
   } else {
-    tree.push({uid: node.uid, name: node.name, group: node});
+    tree.push({name: node.cn, group: node});
   }
 }
 
@@ -373,7 +381,7 @@ function removeNode(tree, nodeToRemove) {
       if (node.nodes) {
         loop(node.nodes);
       } else {
-        if (node.uid == nodeToRemove) {
+        if (node.name == nodeToRemove) {
           nodes = nodes.splice(ndx, 1);
         }
       }

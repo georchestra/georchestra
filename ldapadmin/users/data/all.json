@@ -22,8 +22,8 @@
             "mobile": "(998) 443-3166",
             "roomNumber": 106,
             "groups": [
-                "5",
-                "1"
+                "EL_YYY",
+                "Administrator"
             ]
         },
         {
@@ -49,9 +49,9 @@
             "mobile": "(868) 543-2300",
             "roomNumber": 30,
             "groups": [
-                "4",
-                "5",
-                "1"
+                "EL_XXX",
+                "EL_YYY",
+                "Administrator"
             ]
         },
         {
@@ -77,8 +77,8 @@
             "mobile": "(813) 524-2342",
             "roomNumber": 150,
             "groups": [
-                "4",
-                "1"
+                "EL_XXX",
+                "Administrator"
             ]
         },
         {
@@ -152,7 +152,7 @@
             "mobile": "(882) 485-3046",
             "roomNumber": 67,
             "groups": [
-                "4"
+                "EL_XXX"
             ]
         },
         {
@@ -178,7 +178,7 @@
             "mobile": "(974) 562-2499",
             "roomNumber": 87,
             "groups": [
-                "4"
+                "EL_XXX"
             ]
         },
         {
@@ -252,7 +252,7 @@
             "mobile": "(987) 563-3205",
             "roomNumber": 24,
             "groups": [
-                "2"
+                "SV_XXX"
             ]
         },
         {
@@ -302,8 +302,8 @@
             "mobile": "(914) 405-2283",
             "roomNumber": 102,
             "groups": [
-                "2",
-                "3"
+                "SV_XXX",
+                "SV_YYY"
             ]
         },
         {
@@ -329,8 +329,8 @@
             "mobile": "(922) 581-2017",
             "roomNumber": 2,
             "groups": [
-                "3",
-                "4"
+                "SV_YYY",
+                "EL_XXX"
             ]
         },
         {
@@ -356,7 +356,7 @@
             "mobile": "(863) 480-2470",
             "roomNumber": 34,
             "groups": [
-                "3"
+                "SV_YYY"
             ]
         },
         {
@@ -406,8 +406,8 @@
             "mobile": "(879) 490-3643",
             "roomNumber": 17,
             "groups": [
-                "2",
-                "4"
+                "SV_XXX",
+                "EL_XXX"
             ]
         },
         {
@@ -457,7 +457,7 @@
             "mobile": "(896) 527-2631",
             "roomNumber": 144,
             "groups": [
-                "4"
+                "EL_XXX"
             ]
         },
         {
@@ -483,7 +483,7 @@
             "mobile": "(853) 482-2492",
             "roomNumber": 128,
             "groups": [
-                "5"
+                "EL_YYY"
             ]
         },
         {
@@ -557,8 +557,8 @@
             "mobile": "(863) 555-2270",
             "roomNumber": 87,
             "groups": [
-                "2",
-                "5"
+                "SV_XXX",
+                "EL_YYY"
             ]
         },
         {
@@ -584,8 +584,8 @@
             "mobile": "(861) 499-3172",
             "roomNumber": 47,
             "groups": [
-                "5",
-                "4"
+                "EL_YYY",
+                "EL_XXX"
             ]
         },
         {
@@ -611,7 +611,7 @@
             "mobile": "(835) 522-2632",
             "roomNumber": 118,
             "groups": [
-                "3"
+                "SV_YYY"
             ]
         },
         {
@@ -685,7 +685,7 @@
             "mobile": "(915) 516-3261",
             "roomNumber": 128,
             "groups": [
-                "4"
+                "EL_XXX"
             ]
         },
         {
@@ -783,7 +783,7 @@
             "mobile": "(996) 416-3497",
             "roomNumber": 115,
             "groups": [
-                "5"
+                "EL_YYY"
             ]
         },
         {
@@ -809,7 +809,7 @@
             "mobile": "(886) 592-2135",
             "roomNumber": 44,
             "groups": [
-                "4"
+                "EL_XXX"
             ]
         },
         {

@@ -1,7 +1,7 @@
   <a ng-if="data.group" class="group" href ng-click="selectGroup(data.group)">
     <i ng-class="{'icon-ok': data.group.hasUsers == true || data.group.hasUsers == 'all',
       'icon-minus': data.group.hasUsers == 'some'}"></i>
-    {{data.group.name}}
+    {{data.group.cn}}
   </a>
   <a ng-if="data.nodes.length" href tabindex="-1">{{data.name}}</a>
   <ul ng-if="data.nodes.length" class="dropdown-menu">
