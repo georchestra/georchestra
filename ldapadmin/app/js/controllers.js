@@ -3,6 +3,7 @@
 /* Controllers */
 angular.module('ldapadmin.controllers', [])
   .controller('GroupsCtrl', function($scope, $rootScope, Restangular) {
+    $rootScope.groups = [];
     Restangular.all('groups').getList().then(function(groups) {
       $rootScope.groups = groups;
 
@@ -45,23 +46,6 @@ angular.module('ldapadmin.controllers', [])
       };
       $scope.cancel = function() {
         window.location = '#/groups/' + $scope.group.cn;
-      };
-      $scope.deleteGroup = function(group) {
-        Restangular.one('groups', group).remove().then(
-          function() {
-            var index = findByAttr($scope.groups, 'cn', $routeParams.group);
-
-            if (index !== false) {
-              $scope.groups = $scope.groups.splice(index, 1);
-              removeNode($scope.groups_tree, group);
-            }
-            window.location = '#/users';
-            flash.success = 'Group correctly removed';
-          },
-          function errorCallback() {
-            flash.error = 'Oops error from server :(';
-          }
-        );
       };
     });
   })
@@ -392,7 +376,7 @@ function removeNode(tree, nodeToRemove) {
       if (node.nodes) {
         loop(node.nodes);
       } else {
-        if (node.name == nodeToRemove) {
+        if (node.group.cn == nodeToRemove) {
           nodes = nodes.splice(ndx, 1);
         }
       }

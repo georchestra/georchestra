@@ -75,7 +75,7 @@ class RESTView(object):
                 "givenName": user['givenName'],
                 "sn": user['sn'],
                 "uid": user['uid'],
-                "o": user['o']
+                "o": user['o'] if 'o' in user.keys() else ''
             })
 
         return users

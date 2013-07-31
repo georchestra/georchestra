@@ -1,6 +1,6 @@
 [
   {
-    "cn": "SV_XXX",
+    "cn": "SV_YYY",
     "users": [
       "de840827-f31e-4bfa-80a2-a3b18b2b15e2",
       "3d138229-9f77-4a8c-96cc-2e2d18601572",
@@ -17,6 +17,6 @@
     ]
   },
   {"cn": "EL_XXX"},
-  {"cn": "SV_YYY"},
+  {"cn": "SV_XXX"},
   {"cn": "EL_YYY"}
 ]
