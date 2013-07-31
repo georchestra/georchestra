@@ -20,15 +20,9 @@
       </div>
 
       <div class="row-fluid">
-        <div class="span3">
+        <div class="span3 sidebar">
           <!--Sidebar content-->
-          <div class="toolbar">
-            <a id="new_user" href="#/users/new" class="btn btn-success">
-              <i class="icon-plus-sign"></i>
-              New user
-            </a>
-          </div>
-          <hr />
+          <i class="icon-blank"></i>
           <a href="#/" ng-class="{active: selectedGroup == null}">
             All users ({{users.length}})
           </a>
@@ -58,7 +52,11 @@
             </div>
           </div>
           <br />
-          <a id="new_group" href="#/groups/new" class="">
+          <a id="new_user" href="#/users/new" class="btn">
+            <i class="icon-plus-sign"></i>
+            New user
+          </a>
+          <a id="new_group" href="#/groups/new" class="btn">
             <i class="icon-plus-sign"></i>
             New group
           </a>

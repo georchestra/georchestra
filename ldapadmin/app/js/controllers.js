@@ -168,7 +168,7 @@ angular.module('ldapadmin.controllers', [])
       postGroups($scope, $scope.selectedUsers(), Restangular, flash);
     };
     $scope.deleteGroup = function(group) {
-      if (confirm('Do you really want to remove this group?')) {
+      if (confirm('Do you really want to remove group "' + group + '"?')) {
         Restangular.one('groups', group).remove().then(
           function() {
             var index = findByAttr($scope.groups, 'cn', $routeParams.group);

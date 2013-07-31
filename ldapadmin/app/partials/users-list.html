@@ -1,4 +1,18 @@
 <div class="toolbar">
+  <span ng-class="{hide: selectedGroup == null}">
+    Group: <b>{{selectedGroup.cn}}</b>
+  </span>
+  <div class="btn-group">
+    <a class="actions btn btn-mini dropdown-toggle" ng-class="{hide: selectedGroup == null}" data-toggle="dropdown">
+      <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+      <li><a ng-click="deleteGroup(selectedGroup.cn)" class="delete">Delete group</a></li>
+      <li><a href="#/groups/{{selectedGroup.cn}}/edit" class="edit">Edit group</a></li>
+    </ul>
+  </div>
+</div>
+<div class="toolbar">
   <div class="checkbox-wrap">
     <input id="checkAll" type="checkbox" ldapadmin-check-all="!allSelected && selectedUsers().length" ng-change="selectAll()" ng-model="allSelected"/>
   </div>
@@ -10,16 +24,9 @@
     </a>
     <div groups-dropdown></div>
   </div>
-  <div class="btn-group">
-    <a class="actions btn dropdown-toggle" ng-class="{hide: selectedGroup == null}" data-toggle="dropdown">
-      Actions
-      <span class="caret"></span>
-    </a>
-    <ul class="dropdown-menu">
-      <li><a ng-click="deleteGroup(selectedGroup.cn)" class="delete">Delete group</a></li>
-      <li><a href="#/groups/{{selectedGroup.cn}}/edit" class="edit">Edit group</a></li>
-    </ul>
-  </div>
+</div>
+<div ng-hide="!selectedGroup || selectedGroup.users.length">
+  There are no users in this group.
 </div>
 <table class="users table table-striped table-hover table-condensed">
   <tr ng-repeat="user in users | filter:groupFilter | orderBy:'givenName'" class="">
