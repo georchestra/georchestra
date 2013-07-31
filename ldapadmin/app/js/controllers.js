@@ -168,21 +168,23 @@ angular.module('ldapadmin.controllers', [])
       postGroups($scope, $scope.selectedUsers(), Restangular, flash);
     };
     $scope.deleteGroup = function(group) {
-      Restangular.one('groups', group).remove().then(
-        function() {
-          var index = findByAttr($scope.groups, 'cn', $routeParams.group);
+      if (confirm('Do you really want to remove this group?')) {
+        Restangular.one('groups', group).remove().then(
+          function() {
+            var index = findByAttr($scope.groups, 'cn', $routeParams.group);
 
-          if (index !== false) {
-            $scope.groups = $scope.groups.splice(index, 1);
-            removeNode($scope.groups_tree, group);
+            if (index !== false) {
+              $scope.groups = $scope.groups.splice(index, 1);
+              removeNode($scope.groups_tree, group);
+            }
+            window.location = '#/users';
+            flash.success = 'Group correctly removed';
+          },
+          function errorCallback() {
+            flash.error = 'Oops error from server :(';
           }
-          window.location = '#/users';
-          flash.success = 'Group correctly removed';
-        },
-        function errorCallback() {
-          flash.error = 'Oops error from server :(';
-        }
-      );
+        );
+      }
     };
   })
 
@@ -212,20 +214,22 @@ angular.module('ldapadmin.controllers', [])
         });
       };
       $scope.deleteUser = function() {
-        Restangular.one('users', $scope.user.uid).remove().then(
-          function() {
-            var index = findByAttr($scope.users, 'uid', $routeParams.userId);
+        if (confirm('Do you really want to remove this user?')) {
+          Restangular.one('users', $scope.user.uid).remove().then(
+            function() {
+              var index = findByAttr($scope.users, 'uid', $routeParams.userId);
 
-            if (index !== false) {
-              $scope.users = $scope.users.splice(index, 1);
+              if (index !== false) {
+                $scope.users = $scope.users.splice(index, 1);
+              }
+              window.history.back();
+              flash.success = 'User correctly removed';
+            },
+            function errorCallback() {
+              flash.error = 'Oops error from server :(';
             }
-            window.history.back();
-            flash.success = 'User correctly removed';
-          },
-          function errorCallback() {
-            flash.error = 'Oops error from server :(';
-          }
-        );
+          );
+        }
       };
       $scope.isClean = function() {
         return angular.equals(remote, $scope.user);
