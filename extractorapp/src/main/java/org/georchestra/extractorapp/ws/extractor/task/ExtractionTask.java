@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.extractorapp.ws.extractor.ExtractorController;
@@ -17,6 +18,7 @@ import org.georchestra.extractorapp.ws.extractor.OversizedCoverageRequestExcepti
 import org.georchestra.extractorapp.ws.extractor.RequestConfiguration;
 import org.georchestra.extractorapp.ws.extractor.WcsExtractor;
 import org.georchestra.extractorapp.ws.extractor.WfsExtractor;
+import org.georchestra.extractorapp.ws.extractor.csw.CSWExtractor;
 import org.geotools.data.wfs.WFSDataStoreFactory;
 import org.json.JSONException;
 import org.opengis.referencing.FactoryException;
@@ -86,17 +88,24 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
                             + request._url + " -- " + request._layerName);
 
                     try {
+                    	// extracts the layer in the temporal directory
+                    	File newDir;
                         switch (request._owsType) {
                         case WCS:
-                            extractWcsLayer(request, layerTmpDir);
+                            newDir = extractWcsLayer(request, layerTmpDir);
                             break;
                         case WFS:
-                            extractWfsLayer(request, layerTmpDir);
+                            newDir = extractWfsLayer(request, layerTmpDir);
                             break;
                         default:
                             throw new IllegalArgumentException(request._owsType
                                     + " not supported");
                         }
+                        // extracts the metadata into the temporal directory
+                        if(request._isoMetadataURL != null && !"".equals(request._isoMetadataURL) ){
+                            extractMetadata(request, newDir);
+                        }
+                        
                         for (File from : layerTmpDir.listFiles()) {
                             File to = new File(tmpExtractionBundle,
                                     from.getName());
@@ -283,25 +292,74 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
     }
     
 
-    private void extractWcsLayer(ExtractorLayerRequest request,
-            File requestBaseDir) throws IOException, TransformException,
-            FactoryException {
+    /**
+     * Creates a directory which contains the extracted layers
+     * 
+     * @param request
+     * @param requestBaseDir
+     * @return the directory that contain the layers
+     * 
+     * @throws IOException
+     * @throws TransformException
+     * @throws FactoryException
+     */
+    private File  extractWcsLayer(ExtractorLayerRequest request, File requestBaseDir) 
+    		throws IOException, TransformException, FactoryException {
+    	
         WcsExtractor extractor = new WcsExtractor(requestBaseDir, requestConfig);
+        
         extractor.checkPermission(request, requestConfig.secureHost, requestConfig.username, requestConfig.roles);
-        extractor.extract(request);
+        
+        return extractor.extract(request);
     }
 
-    private void extractWfsLayer(ExtractorLayerRequest request,
-            File requestBaseDir) throws IOException, TransformException,
-            FactoryException {
+    /**
+     * Creates a directory which contains the extracted layers
+     * @param request
+     * @param requestBaseDir
+     * 
+     * @return the directory that contain the layers  
+     * 
+     * @throws IOException
+     * @throws TransformException
+     * @throws FactoryException
+     */
+    private File extractWfsLayer(ExtractorLayerRequest request, File requestBaseDir) 
+    		throws IOException, TransformException, FactoryException {
+    	
         WfsExtractor extractor = new WfsExtractor(requestBaseDir,
-                new WFSDataStoreFactory(), requestConfig.adminCredentials.getUserName(),
-                requestConfig.adminCredentials.getPassword(), requestConfig.secureHost);
+                new WFSDataStoreFactory(), 
+                requestConfig.adminCredentials.getUserName(),
+                requestConfig.adminCredentials.getPassword(), 
+                requestConfig.secureHost);
 
         extractor.checkPermission(request, requestConfig.secureHost, requestConfig.username, requestConfig.roles);
 
-        extractor.extract(request);
+        return extractor.extract(request);
     }
+    
+    /**
+     * Extracts the layer's metadata and save it in the layer directory.
+     * 
+     * @param request
+     * @param layerDirectory
+     * @throws MalformedURLException
+     * @throws IOException
+     */
+	private void extractMetadata(final ExtractorLayerRequest request, final File layerDirectory) throws IOException {
+		
+		final String adminUserName = requestConfig.adminCredentials.getUserName();
+		final String adminPassword = requestConfig.adminCredentials.getPassword();
+		
+		String cswHost = request._isoMetadataURL.getHost();
+		
+		CSWExtractor extractor = new CSWExtractor(layerDirectory, adminUserName, adminPassword, cswHost);
+		
+		extractor.checkPermission(request, requestConfig.username, requestConfig.roles);
+
+		extractor.extract(request._isoMetadataURL);
+	}
+    
 
     @Override
     public int compareTo(ExtractionTask other) {

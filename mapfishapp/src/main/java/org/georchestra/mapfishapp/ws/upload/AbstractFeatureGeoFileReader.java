@@ -35,6 +35,7 @@ class AbstractFeatureGeoFileReader implements FeatureGeoFileReader{
 	public AbstractFeatureGeoFileReader() {
 		this.readerImpl = createImplementationStrategy();
 	}
+	
 
 	/**
 	 * Creates a new instance of {@link AbstractFeatureGeoFileReader}. The reader will use the implementation provided as parameter.
