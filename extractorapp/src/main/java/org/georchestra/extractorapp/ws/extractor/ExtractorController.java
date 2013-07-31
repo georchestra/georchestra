@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.URL;
 import java.nio.channels.Channels;
 import java.util.Arrays;
 import java.util.Collections;
@@ -59,8 +60,6 @@ public class ExtractorController implements ServletContextAware {
     private AbstractEmailFactory		 emailFactory;
     private ServletContext              servletContext;
     private String                      servletUrl;
-    private String                      servletUrlWithPort;
-    private String                      port;
     private String                      extractionFolderPrefix;
     private boolean                     remoteReproject = true;
     private boolean                     useCommandLineGDAL = false;
@@ -255,10 +254,11 @@ public class ExtractorController implements ServletContextAware {
 		if (checkFormAcceptance.isFormAccepted(sessionId,request.getHeader("sec-username"), postData)) {
 			UUID requestUuid = UUID.randomUUID();
 
-			StringBuilder url = new StringBuilder(servletUrlWithPort);
-			if ("80".equals(port)){
-				url = new StringBuilder(servletUrl);
+			URL urlObj = new URL(servletUrl);
+			if (urlObj.getPort() == urlObj.getDefaultPort()) {
+				urlObj = new URL(urlObj.getProtocol(), urlObj.getHost(), urlObj.getFile());
 			}
+			StringBuilder url = new StringBuilder(urlObj.toString());
 			url.append(RESULTS_MAPPING);
 			url.append("?");
 			url.append(UUID_PARAM);
@@ -343,14 +343,6 @@ public class ExtractorController implements ServletContextAware {
     
     public void setServletUrl(String servletUrl) {
         this.servletUrl = servletUrl;
-    }
-
-    public void setServletUrlWithPort(String servletUrlWithPort) {
-        this.servletUrlWithPort = servletUrlWithPort;
-    }
-
-    public void setPort(String port) {
-        this.port = port;
     }
 
     public void setAdminCredentials(UsernamePasswordCredentials adminCredentials) {
