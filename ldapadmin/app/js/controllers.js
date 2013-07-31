@@ -4,14 +4,11 @@
 angular.module('ldapadmin.controllers', [])
   .controller('GroupsCtrl', function($scope, $rootScope, Restangular) {
     Restangular.all('groups').getList().then(function(groups) {
-      groups.sort(function(a, b) {
-        return (a.cn < b.cn) ? -1 : 1;
-      });
       $rootScope.groups = groups;
 
       var tree = [];
       var prefix;
-      angular.forEach(groups, function(group, key) {
+      angular.forEach($rootScope.groups, function(group, key) {
         addNode(tree, group);
       });
       $rootScope.groups_tree = tree;
@@ -37,13 +34,17 @@ angular.module('ldapadmin.controllers', [])
           var index = findByAttr($scope.groups, 'cn', $routeParams.group);
 
           if (index !== false) {
-            $scope.groups[index] = angular.copy($scope.group);
+            $scope.groups[index].cn = $scope.group.cn;
             remote = angular.copy($scope.group);
+            window.location = '#/groups/' + $scope.group.cn + '/edit';
           }
         });
       };
       $scope.isClean = function() {
         return angular.equals(remote, $scope.group);
+      };
+      $scope.cancel = function() {
+        window.location = '#/groups/' + $scope.group.cn;
       };
       $scope.deleteGroup = function(group) {
         Restangular.one('groups', group).remove().then(
@@ -373,10 +374,16 @@ function addNode(tree, node) {
       branch = {name: prefix, nodes: []};
       tree.push(branch);
     }
-    branch.nodes.push({name: node.cn, group: node});
+    branch.nodes.push({group: node});
+    branch.nodes.sort(function(a, b) {
+      return a.group.cn.toLowerCase() > b.group.cn.toLowerCase();
+    });
   } else {
     tree.push({name: node.cn, group: node});
   }
+  tree.sort(function(a, b) {
+    return a.name.toLowerCase() > b.name.toLowerCase();
+  });
 }
 
 function removeNode(tree, nodeToRemove) {

@@ -53,7 +53,6 @@ Response
             "o": "Zogak",
             "givenName": "Walsh",
             "sn": "Atkins",
-            "groups": ["Administrator", "SV_XXX"],
             "uid": "watkins"
         },
             ...
@@ -78,7 +77,6 @@ Response
         "postalAddress": "",
         "postOfficeBox": 47,
         "description": "ut velit ut aliquip eiusmod ea deserunt nisi incididunt ut dolor ut cupidatat sint quis consequat consequat cupidatat aliqua occaecat esse sunt labore dolore voluptate excepteur reprehenderit velit anim labore sunt proident est ea deserunt deserunt id incididunt ut excepteur nisi aute consectetur anim consectetur dolore culpa velit sunt ex",
-        "groups": ["Administrator", "SV_XXX"],
         "homePhone": "(816) 450-3050",
         "telephoneNumber": "(907) 441-2066",
         "physicalDeliveryOfficeName": "",
@@ -164,10 +162,12 @@ Request
 Response
 
     [{
-        "cn": "Administrator"
+        "cn": "Administrator",
+        "users": ['pgiraud']
     }, {
         "cn": "Name of the group",
-        "description": "Description for the group"
+        "description": "Description for the group",
+        "users": []
     }]
 
 ### UPDATE

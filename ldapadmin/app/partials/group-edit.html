@@ -30,7 +30,7 @@
   <!-- Textarea -->
 
   <div class="form-actions">
-    <a href="javascript:window.history.back();" class="btn cancel">Cancel</a>
+    <a href ng-click="cancel()" class="btn cancel">Cancel</a>
     <button ng-click="save()" ng-disabled="isClean() || groupForm.$invalid"
             class="btn btn-primary save">Save</button>
   </div>
