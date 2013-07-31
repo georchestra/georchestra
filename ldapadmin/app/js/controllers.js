@@ -194,11 +194,12 @@ angular.module('ldapadmin.controllers', [])
   .controller('UserEditCtrl', function($scope, $routeParams, Restangular, flash) {
     var user = Restangular.one('users', $routeParams.userId);
     user.get().then(function(remote) {
-      $scope.user = Restangular.copy(remote);
 
       // manually add an id field so that we can use Restangular without
       // changing the mapping to id field globally
-      $scope.user.id = $scope.user.uid;
+      remote.id = remote.uid;
+
+      $scope.user = Restangular.copy(remote);
 
       $scope.groupsChanged = false;
 
