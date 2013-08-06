@@ -2,7 +2,6 @@
 <%@ include file="/WEB-INF/views/header.jsp" %>
 
 <h2/>Internal error</h2>
-<p/>
 
 <% 
 try {
@@ -41,3 +40,5 @@ try {
     ex.printStackTrace(new java.io.PrintWriter(out));
 }
 %>
+
+<%@ include file="/WEB-INF/views/footer.jsp" %>

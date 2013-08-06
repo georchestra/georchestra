@@ -78,7 +78,9 @@ public final class NewAccountFormController {
 	}
 	
 	/**
-	 * Creates a new account in ldap.
+	 * Creates a new account in ldap. If the application was configured as "moderator singnup" the new account is added in the PENDING_USERS group, 
+	 * in other case, it will be inserted in the SV_USER group
+	 * 
 	 * 
 	 * @param formBean
 	 * @param result

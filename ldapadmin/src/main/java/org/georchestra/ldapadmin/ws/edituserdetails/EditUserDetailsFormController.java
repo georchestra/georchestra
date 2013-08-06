@@ -4,6 +4,10 @@
 package org.georchestra.ldapadmin.ws.edituserdetails;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.georchestra.ldapadmin.ds.AccountDao;
 import org.georchestra.ldapadmin.ds.DataServiceException;
@@ -23,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.web.context.request.RequestScope;
 
 /**
  * Support for the Edit Account user interactions.
@@ -62,9 +67,14 @@ public class EditUserDetailsFormController {
 	 * @throws IOException
 	 */
 	@RequestMapping(value="/public/accounts/userdetails", method=RequestMethod.GET)
-	public String setupForm(@RequestParam("uid") String uid,  Model model) throws IOException{
+	public String setupForm(HttpServletRequest request, HttpServletResponse response, @RequestParam("uid") String uid,  Model model) throws IOException{
+// FIXME remove this hack 
+//		if(!request.getHeader("sec-username").equals(uid)){
+//			return "forbidden";
+//		}
 
 		try {
+			
 			this.accountBackup = this.accountDao.findByUID(uid);
 			
 			EditUserDetailsFormBean formBean = createForm(this.accountBackup);
@@ -79,6 +89,7 @@ public class EditUserDetailsFormController {
 		} 
 	}
 	
+
 	/**
 	 * Creates a form based on the account data.
 	 * 
