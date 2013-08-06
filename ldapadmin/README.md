@@ -65,23 +65,28 @@ Two pages:
 
 ### Install Postgresql
 
-To create the data base use the following script
+To create the database use the following script:
 
+```
 [georchestra]/ldapadmin/ldapAdminDB.sql
+```
 
 Note: because this is a work in progress right now the the following postgresql parameters are not used. 
-To configure the connection, for testing purpose, change the  UserTokenDao.getConnection() method
-        Example:
-        
-        this.databaseName = "postgres";
-        this.databaseUser = "admin";
-        this.databasePassword = "postgres";
+To configure the connection, for testing purpose, change the `UserTokenDao.getConnection()` method. For example:
+
+```
+this.databaseName = "postgres";
+this.databaseUser = "admin";
+this.databasePassword = "postgres";
+```
 
 ### Install LDAP
 
-The ldap server is configurated in the 
+The connection to the LDAP server is configurated in the following file:
 
+```
 [georchestra]/ldapadmin/src/main/webapp/WEB-INF/spring/webmvc-config.xml
+```
 
 For exemple:
 
@@ -95,16 +100,28 @@ For exemple:
 </bean>
 ```
 
-If no LDAP server is installed, follow instructions at [georchestra]/INSTALL.md#ldap.
+If no LDAP server is installed, follow instructions at https://github.com/georchestra/georchestra/blob/master/INSTALL.md#ldap.
 
 ### Build
 
- * ../mvn install -Dmaven.test.skip=true
+Build:
+
+```
+../mvn install -Dmaven.test.skip=true
+```
+
+Run with jetty:
+
+```
+../mvn -Dmaven.test.skip=true -Ptemplate jetty:run
+```
 
 
-to crate the eclipse project
+Create the eclipse project
 
- * ../mvn eclipse:eclipse
+```
+../mvn eclipse:eclipse
+```
 
 
 ### Run (Testing)
