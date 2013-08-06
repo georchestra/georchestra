@@ -18,9 +18,7 @@
         <java.version>1.6</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <roo.version>1.1.5.RELEASE</roo.version>
-        <!-- 
         <slf4j.version>1.6.4</slf4j.version>
-         -->
     </properties>
     
     <repositories>
@@ -102,7 +100,6 @@
 		    <version>0.0.7</version>
 		</dependency>        
         
-        <!-- 
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -118,7 +115,6 @@
             <artifactId>slf4j-log4j12</artifactId>
             <version>${slf4j.version}</version>
         </dependency>
-        -->
                 
         
         <dependency>
@@ -524,13 +520,8 @@
             </plugin>
             <plugin>
                 <groupId>org.mortbay.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
-                <version>8.1.4.v20120524</version>
-                <configuration>
-                    <webAppConfig>
-                        <contextPath>/${project.name}</contextPath>
-                    </webAppConfig>
-                </configuration>
+                <artifactId>maven-jetty-plugin</artifactId>
+                <version>6.1.26</version>
             </plugin>
         </plugins>
     </build>
