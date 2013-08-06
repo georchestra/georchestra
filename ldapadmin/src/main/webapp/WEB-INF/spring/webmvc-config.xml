@@ -51,14 +51,14 @@
         To configure the connection, for testing purpose, change the  UserTokenDao.getConnection() method
         Example:
         
-        this.databaseName = "postgres";
-        this.databaseUser = "admin";
-        this.databasePassword = "postgres";
+        this.databaseName = "ldapadmin";
+        this.databaseUser = "ldapadmin";
+        this.databasePassword = "ldapadmin";
      -->
     <bean id="userTokenDao" class="org.georchestra.ldapadmin.ds.UserTokenDao">
-        <property name="databaseUser" value="postgres" />
-        <property name="databasePassword" value="postgres" />
-        <property name="jdbcURL" value="jdbc:postgresql://localhost:5432/postgres" />
+        <property name="databaseUser" value="ldapadmin" />
+        <property name="databasePassword" value="ldapadmin" />
+        <property name="jdbcURL" value="jdbc:postgresql://localhost:5432/ldapadmin" />
     </bean>
 
 	<!-- Resolves localized messages*.properties and application.properties 
