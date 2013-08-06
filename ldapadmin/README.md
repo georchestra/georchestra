@@ -71,8 +71,8 @@ To create the database use the following script:
 [georchestra]/ldapadmin/ldapAdminDB.sql
 ```
 
-Note: because this is a work in progress right now the the following postgresql parameters are not used. 
-To configure the connection, for testing purpose, change the `UserTokenDao.getConnection()` method. For example:
+Note: because this is a work in progress right now the postgresql parameters in `[georchestra]/ldapadmin/src/main/webapp/WEB-INF/spring/webmvc-config.xml` are not used.
+To configure the connection, for testing purpose, directly change the `UserTokenDao.getConnection()` method in the `[georchestra]/ldapadmin/src/main/java/org/georchestra/ldapadmin/ds/UserTokenDao.java` file. For example:
 
 ```
 this.databaseName = "postgres";
