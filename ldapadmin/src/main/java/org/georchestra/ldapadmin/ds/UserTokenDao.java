@@ -208,9 +208,9 @@ public class UserTokenDao {
 				try{
 					Class.forName("org.postgresql.Driver");
 					
-					this.databaseName = "postgres";
-					this.databaseUser = "postgres";
-					this.databasePassword = "postgres";
+					this.databaseName = "ldapadmin";
+					this.databaseUser = "ldapadmin";
+					this.databasePassword = "ldapadmin";
 					
 					String url = "jdbc:postgresql://localhost:5432/"+ this.databasePassword ;
 					Properties props = new Properties();
