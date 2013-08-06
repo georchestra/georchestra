@@ -101,6 +101,7 @@ For exemple:
 ```
 
 If no LDAP server is installed, follow instructions at https://github.com/georchestra/georchestra/blob/master/INSTALL.md#ldap.
+The LDAP server will be installed and an example directory database will be populated and accessible using the above default parameters.
 
 ### Build
 
