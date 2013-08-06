@@ -111,13 +111,6 @@ Build:
 ../mvn install -Dmaven.test.skip=true
 ```
 
-Run with jetty:
-
-```
-../mvn -Dmaven.test.skip=true -Ptemplate jetty:run
-```
-
-
 Create the eclipse project
 
 ```
@@ -129,10 +122,15 @@ Create the eclipse project
 
 Testing purpose: 
 
- * deply in Tomcat6 
+ * deploy in Tomcat6
  * Then add the following url in your Internet navigator:
    http://localhost:8080/ldapadmin/public/
 
+Alternatively, run with jetty:
+
+```
+../mvn -Dmaven.test.skip=true -Ptemplate jetty:run
+```
 
 
 Private UI
