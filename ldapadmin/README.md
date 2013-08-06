@@ -63,9 +63,7 @@ Two pages:
  * Postgresql
 
 
-### Install
-
-Postgresql
+### Install Postgresql
 
 To create the data base use the following script
 
@@ -79,14 +77,15 @@ To configure the connection, for testing purpose, change the  UserTokenDao.getCo
         this.databaseUser = "admin";
         this.databasePassword = "postgres";
 
-LDAP
+### Install LDAP
 
 The ldap server is configurated in the 
 
 [georchestra]/ldapadmin/src/main/webapp/WEB-INF/spring/webmvc-config.xml
 
 For exemple:
- 
+
+```
 <!-- LDAP connection -->
 <bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource">
   <property name="url" value="ldap://localhost:389" />
@@ -94,6 +93,7 @@ For exemple:
   <property name="userDn" value="cn=admin,dc=georchestra,dc=org" />
   <property name="password" value="secret" />
 </bean>
+```
 
 If no LDAP server is installed, follow instructions at [georchestra]/INSTALL.md#ldap.
 
