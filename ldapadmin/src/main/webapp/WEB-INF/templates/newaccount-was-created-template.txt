@@ -1,0 +1,11 @@
+<p> 
+Dear {name},
+</p>
+<p>
+A new account was created
+</p>
+<p> 
+User ID: {uid}
+</p>
+
+

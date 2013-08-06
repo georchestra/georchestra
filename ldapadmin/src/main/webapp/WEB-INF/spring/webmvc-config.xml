@@ -114,9 +114,15 @@
 		<property name="subjectEncoding" value="UTF-8" />
 		<property name="languages" value="fr,fra" />
 		
-		<property name="emailNewAccountFile"
-			value="/WEB-INF/templates/newaccount-email-template.txt" />
+        <property name="accountWasCreatedEmailFile"
+            value="/WEB-INF/templates/newaccount-was-created-template.txt" />
+
+		<property name="accountCreationInProcessEmailFile"
+			value="/WEB-INF/templates/account-creation-in-progrss-template.txt" />
 			
+        <property name="newAccountRequiresSignupEmailFile"
+            value="/WEB-INF/templates/newaccount-requires-singup-template.txt" />
+
         <property name="emailChangePasswordFile"
             value="/WEB-INF/templates/changepassword-email-template.txt" />
 			

@@ -12,17 +12,16 @@ import org.apache.commons.logging.LogFactory;
 import org.georchestra.lib.mailservice.Email;
 
 /**
- * This mail is sent to the moderator when a new account is created.
  * 
  * @author Mauricio Pazos
  *
  */
-class NewAccountEmail extends Email {
+class AccountCreationInProcessEmail extends Email {
 
-	private static final Log LOG = LogFactory.getLog(NewAccountEmail.class.getName());
+	private static final Log LOG = LogFactory.getLog(NewAccountRequiresSignupEmail.class.getName());
 	private ServletContext servletContext;
 
-	public NewAccountEmail(
+	public AccountCreationInProcessEmail(
 			String[] recipients, 
 			String emailSubject,
 			String smtpHost, 
@@ -43,9 +42,9 @@ class NewAccountEmail extends Email {
 	
 	public void sendMsg(final String userName, final String uid ) throws AddressException, MessagingException {
 
-		LOG.debug("New account user in the pending group. User ID: " + uid );
+		LOG.debug("New account user in progress. User ID: " + uid ); 
 		
-		String body = writeNewAccoutnMail(uid, userName);
+		String body = writeNewAccoutnMail(uid, userName); 
 
 		super.sendMsg(body);
 	}
@@ -58,7 +57,6 @@ class NewAccountEmail extends Email {
 
 	private String writeNewAccoutnMail(String uid, String name) {
 
-		//final String body = getBodyTemplate();
 		final String body = this.servletContext.getRealPath(getBodyTemplate());
 
 		
@@ -69,7 +67,5 @@ class NewAccountEmail extends Email {
 
 		return body;
 	}
-	
-	
 
 }

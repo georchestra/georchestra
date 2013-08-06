@@ -14,28 +14,39 @@ import org.georchestra.lib.mailservice.AbstractEmailFactory;
  */
 class EmailFactoryImpl extends AbstractEmailFactory {
 	
-	private String emailNewAccountFile;
+	private String accountWasCreatedEmailFile;
+
+	private String accountCreationInProcessEmailFile;
 
 	private String emailChangePasswordFile;
 
+	private String newAccountRequiresSignupEmailFile;
+	
+
 	private ServletContext servletContext;
 
-	public String getEmailNewAccountFile() {
-		return emailNewAccountFile;
+
+	public void setAccountWasCreatedEmailFile(String accountWasCreatedEmailFile) {
+		this.accountWasCreatedEmailFile = accountWasCreatedEmailFile;
 	}
 
-	public void setEmailNewAccountFile(String emailNewAccountFile) {
-		this.emailNewAccountFile = emailNewAccountFile;
+	public String getAccountCreationInProcessEmailFile() {
+		return accountCreationInProcessEmailFile;
 	}
 
-	public String getEmailChangewPasswordFile() {
-		return emailChangePasswordFile;
+	public void setAccountCreationInProcessEmailFile(String emailNewAccountFile) {
+		this.accountCreationInProcessEmailFile = emailNewAccountFile;
 	}
 
 	public void setEmailChangePasswordFile(String emailNewPasswordFile) {
 		this.emailChangePasswordFile = emailNewPasswordFile;
 	}
 	
+
+	public void setNewAccountRequiresSignupEmailFile(
+			String newAccountRequiresSignupEmailFile) {
+		this.newAccountRequiresSignupEmailFile = newAccountRequiresSignupEmailFile;
+	}
 
 	public ChangePasswordEmail createChangePasswordEmail(ServletContext servletContext, String[] recipients) throws IOException {
 		
@@ -55,9 +66,17 @@ class EmailFactoryImpl extends AbstractEmailFactory {
 		return mail;
 	}
 	
-	public NewAccountEmail createNewAccountEmail(ServletContext servletContext, String[] recipients) throws IOException {
+	/**
+	 * emails to the moderator to inform that a new user is waiting authorization. 
+	 * 
+	 * @param servletContext
+	 * @param recipients
+	 * @return
+	 * @throws IOException
+	 */
+	public NewAccountRequiresSignupEmail createNewAccountRequiresSignupEmail(ServletContext servletContext, String[] recipients) throws IOException {
 		
-		NewAccountEmail mail =  new NewAccountEmail(
+		NewAccountRequiresSignupEmail mail =  new NewAccountRequiresSignupEmail(
 				recipients, 
 				emailSubject,
 				this.smtpHost,
@@ -67,9 +86,55 @@ class EmailFactoryImpl extends AbstractEmailFactory {
 				this.bodyEncoding,
 				this.subjectEncoding,
 				this.languages,
-				this.emailNewAccountFile, 
+				this.newAccountRequiresSignupEmailFile, 
 				servletContext );
 		
 		return mail;
+	}
+
+	/** 
+	 * e-mail to the user to inform the account requires the moderator's singnup
+	 * 
+	 * @param servletContext
+	 * @param strings
+	 * @return
+	 */
+	public AccountCreationInProcessEmail createAccountCreationInProcessEmail(
+			ServletContext servletContext, String[] recipients) {
+		
+		
+		AccountCreationInProcessEmail mail =  new AccountCreationInProcessEmail(
+				recipients, 
+				emailSubject,
+				this.smtpHost,
+				this.smtpPort,
+				this.replyTo,
+				this.from,
+				this.bodyEncoding,
+				this.subjectEncoding,
+				this.languages,
+				this.accountCreationInProcessEmailFile, 
+				servletContext );
+		
+		return mail;
+	}
+
+	public AccountWasCreatedEmail createAccountWasCreatedEmail(ServletContext servletContext, String[] recipients) {
+		
+		AccountWasCreatedEmail mail =  new AccountWasCreatedEmail(
+				recipients, 
+				emailSubject,
+				this.smtpHost,
+				this.smtpPort,
+				this.replyTo,
+				this.from,
+				this.bodyEncoding,
+				this.subjectEncoding,
+				this.languages,
+				this.accountWasCreatedEmailFile, 
+				servletContext );
+		
+		return mail;
+		
 	}
 }
