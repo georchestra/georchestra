@@ -10,7 +10,7 @@ import java.util.List;
 public interface Group {
 	
 	final String SV_USER = "SV_USER";
-	final String PENDING_USERS = "PENDING_USER";
+	final String PENDING_USERS = "PENDING_USERS";
 
 	/**
 	 * 
