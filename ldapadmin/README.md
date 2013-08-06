@@ -58,10 +58,10 @@ Two pages:
 
 ### System Requirements
 
- * WEB Containger (Tomcat 6)
  * LDAP Server
  * Postgresql
 
+For the web container: Tomcat 6, or Maven Jetty (no need to install)
 
 ### Install Postgresql
 
