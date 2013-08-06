@@ -257,7 +257,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Fields of filters with a red mark are mandatory": "Vous devez remplir " +
         "les champs des filtres marqués en rouge.",
     "Request on NAME": "Requêteur sur ${NAME}",
-    "Search": "Recherche",
+    "Search": "Rechercher",
     "querier.layer.no.geom":
         "La couche ne possède pas de colonne géométrique." +
         "<br />Le requêteur géométrique ne sera pas fonctionnel.",
