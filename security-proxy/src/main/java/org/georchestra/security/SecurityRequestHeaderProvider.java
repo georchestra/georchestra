@@ -21,6 +21,8 @@ public class SecurityRequestHeaderProvider extends HeaderProvider {
                 .getAuthentication();
         Collection<GrantedAuthority> authorities = authentication.getAuthorities();
         List<Header> headers = new ArrayList<Header>();
+        if (authentication.getName().equals("anonymousUser"))
+             return headers;
         headers.add(new BasicHeader("sec-username", authentication.getName()));
         StringBuilder roles = new StringBuilder();
         for (GrantedAuthority grantedAuthority : authorities) {
