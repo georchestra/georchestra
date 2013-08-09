@@ -12,18 +12,17 @@ import org.apache.commons.logging.LogFactory;
 import org.georchestra.lib.mailservice.Email;
 
 /**
- * Manages the change password email. This mail is send when a user has lost his password.
- *  
+ * This mail is sent to the moderator when a new account is created.
+ * 
  * @author Mauricio Pazos
  *
  */
-class ChangePasswordEmail extends Email {
+class NewAccountRequiresSignupEmail extends Email {
 
-	private static final Log LOG = LogFactory.getLog(ChangePasswordEmail.class.getName());
-	
+	private static final Log LOG = LogFactory.getLog(NewAccountRequiresSignupEmail.class.getName());
 	private ServletContext servletContext;
-	
-	public ChangePasswordEmail(
+
+	public NewAccountRequiresSignupEmail(
 			String[] recipients, 
 			String emailSubject,
 			String smtpHost, 
@@ -33,24 +32,21 @@ class ChangePasswordEmail extends Email {
 			String bodyEncoding, 
 			String subjectEncoding, 
 			String[] languages, 
-			String fileTemplate, 
-			ServletContext servletContext) {
-
+			String fileBodyTemplate, ServletContext servletContext) {
+	
 		super(recipients, emailSubject, smtpHost, smtpPort, replyTo, from,
-				bodyEncoding, subjectEncoding, languages, fileTemplate);
-
+				bodyEncoding, subjectEncoding, languages, fileBodyTemplate);
+		
 		this.servletContext = servletContext;
+
 	}
+	
+	public void sendMsg(final String userName, final String uid ) throws AddressException, MessagingException {
 
-	public void sendMsg( final String userName, final String uid, final String url) throws AddressException, MessagingException {
+		LOG.debug("New account user in the pending group. User ID: " + uid );
+		
+		String body = writeNewAccoutnMail(uid, userName);
 
-		if(LOG.isDebugEnabled() ){
-			
-			LOG.debug("send change password email to user "+ userName+ " - uid: ." + uid  );
-		}
-		
-		String body = writeNewPasswordMail(userName, url);
-		
 		super.sendMsg(body);
 	}
 	
@@ -59,20 +55,23 @@ class ChangePasswordEmail extends Email {
 
     	return this.servletContext.getRealPath(fileTemplate);
     }
-	
-	private String writeNewPasswordMail(final String userName, final String url) {
-		
+
+	private String writeNewAccoutnMail(String uid, String name) {
+
 		String body = getBodyTemplate();
+
 		
-		body = body.replace("{name}", userName);
-		body = body.replace("{url}", url);
+		body = body.replace("{name}", name);
+		body = body.replace("{uid}", uid);
 		
 		if(LOG.isDebugEnabled() ){
 			
 			LOG.debug("built email: "+ body);
 		}
-		
+
 		return body;
 	}
+	
+	
 
 }

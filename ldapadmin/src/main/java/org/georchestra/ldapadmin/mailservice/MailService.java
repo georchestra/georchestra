@@ -28,10 +28,10 @@ public final class MailService {
 	}
 
 
-	public void sendNewAccount(ServletContext servletContext, final String uid, final String userName, final String moderatorEmail) {
+	public void sendNewAccountRequiresSignup(ServletContext servletContext, final String uid, final String userName, final String moderatorEmail) {
 
 		try {
-			NewAccountEmail email = this.emailFactory.createNewAccountEmail(servletContext,  new String[]{moderatorEmail});
+			NewAccountRequiresSignupEmail email = this.emailFactory.createNewAccountRequiresSignupEmail(servletContext,  new String[]{moderatorEmail});
 			
 			email.sendMsg(userName, uid);
 		
@@ -41,8 +41,45 @@ public final class MailService {
 		} 
 	}
 
+
+	public void sendAccountCreationInProcess(
+			final ServletContext servletContext,
+			final String uid, final String commonName, final String userEmail) {
+
+		if(LOG.isDebugEnabled()){
+			LOG.debug("uid: "+uid+ "- commonName" + commonName + " - email: " + userEmail);
+		}
+		try{
+			AccountCreationInProcessEmail email = this.emailFactory.createAccountCreationInProcessEmail(servletContext, new String[]{userEmail});
+			
+			email.sendMsg(commonName, uid );
+			
+		} catch (Exception e) {
+			
+			LOG.error(e);
+		} 
+		
+	}
 	
 
+	public void sendAccountWasCreated(final ServletContext servletContext, final String uid, final String commonName, final String userEmail) {
+
+		if(LOG.isDebugEnabled()){
+			LOG.debug("uid: "+uid+ "- commonName" + commonName + " - email: " + userEmail);
+		}
+		try{
+			AccountWasCreatedEmail email = this.emailFactory.createAccountWasCreatedEmail(servletContext, new String[]{userEmail});
+			
+			email.sendMsg(commonName, uid );
+			
+		} catch (Exception e) {
+			
+			LOG.error(e);
+		} 
+		
+	}
+
+	
 	/**
 	 * Sent an email to the user whit the unique URL required to change his password.
 	 * @param servletContext 
@@ -72,5 +109,7 @@ public final class MailService {
 		} 
 		
 	}
+
+
 
 }
