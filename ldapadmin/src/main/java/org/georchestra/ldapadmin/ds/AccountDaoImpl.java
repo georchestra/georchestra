@@ -11,6 +11,7 @@ import javax.naming.Name;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
@@ -59,18 +60,22 @@ public final class AccountDaoImpl implements AccountDao{
 	 * @see {@link AccountDao#insert(Account, String)}
 	 */
 	@Override
-	public void insert(final Account account, final String groupID) throws DataServiceException, DuplicatedEmailException{
+	public void insert(final Account account, final String groupID) throws DataServiceException, DuplicatedUidException, DuplicatedEmailException{
 	
 		assert account != null;
 		
 		checkMandatoryFields(account);
 
+		// checks unique uid
+		if(exist(account.getUid().trim())){
+			throw new DuplicatedUidException("there is a user with this user identifier (uid): " + account.getUid());
+		}
+		
 		// checks unique email
 		try {
-
-			findByEmail(account.getEmail());
+			findByEmail(account.getEmail().trim());
 			
-			throw new DuplicatedEmailException("there is a user with this email" + account.getEmail());
+			throw new DuplicatedEmailException("there is a user with this email: " + account.getEmail());
 			
 		} catch (NotFoundException e1) {
 			// if not exist an account with this e-mail the new account can be added. 
@@ -154,8 +159,8 @@ public final class AccountDaoImpl implements AccountDao{
 		EqualsFilter filter = new EqualsFilter("objectClass", "person");
 		return ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(), new AccountContextMapper());
 	}
-	
 
+	
 	/**
 	 * @see {@link AccountDao#findByUID(String)}
 	 */
@@ -166,7 +171,7 @@ public final class AccountDaoImpl implements AccountDao{
 		Account a = (Account) ldapTemplate.lookup(dn, new AccountContextMapper());
 		
 		if(a == null){
-			throw new NotFoundException("There is not a user with this email: " + uid);
+			throw new NotFoundException("There is not a user with this user identifier (uid): " + uid);
 		}
 		
 		return  a;
@@ -197,6 +202,16 @@ public final class AccountDaoImpl implements AccountDao{
 		return  account;
 	}
 	
+	private boolean exist(final String uid) throws DataServiceException{
+
+		try{
+			DistinguishedName dn = buildDn(uid);
+			ldapTemplate.lookup(dn);
+			return true;
+		} catch (NameNotFoundException ex ){
+			return false;
+		}
+	}
 
 	/**
 	 * Create an ldap entry for the user 
@@ -207,6 +222,8 @@ public final class AccountDaoImpl implements AccountDao{
 	private DistinguishedName buildDn(String  uid) {
 		DistinguishedName dn = new DistinguishedName();
 				
+//		dn.add("dc", "org");
+//		dn.add("dc", "georchestra");
 		dn.add("ou", "users");
 		dn.add("uid", uid);
 		
@@ -401,7 +418,7 @@ public final class AccountDaoImpl implements AccountDao{
 		Name dn = buildDn(uid);
 		DirContextOperations context = ldapTemplate.lookupContext(dn);
 		
-		// the followint acction remove the old password. It there are two passowrd (old and new passowrd) they will 
+		// the following action remove the old password. It there are two password (old and new password) they will 
 		// be replaced by a single user password
 		context.setAttributeValue("userPassword", password);
 		

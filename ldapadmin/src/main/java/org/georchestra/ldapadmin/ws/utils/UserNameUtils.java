@@ -18,8 +18,17 @@ public class UserNameUtils {
 			// utility class
 	}
 	
+	public static void validate(String uid, String firstName, String surname, Errors errors) {
+		
+		if( !StringUtils.hasLength(uid)){
+			errors.rejectValue("uid", "uid.error.required", "required");
+		}
+
+		validate(firstName, surname, errors);
+	}
 	
 	public static void validate(String firstName, String surname, Errors errors) {
+		
 		if( !StringUtils.hasLength(firstName)){
 			errors.rejectValue("firstName", "firstName.error.required", "required");
 		}
@@ -28,5 +37,6 @@ public class UserNameUtils {
 			errors.rejectValue("surname", "surname.error.required", "required");
 		}
 	}
+
 
 }

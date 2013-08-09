@@ -4,7 +4,6 @@
 package org.georchestra.ldapadmin.ws.newaccount;
 
 import java.io.IOException;
-import java.util.UUID;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +14,7 @@ import org.georchestra.ldapadmin.bs.Moderator;
 import org.georchestra.ldapadmin.ds.AccountDao;
 import org.georchestra.ldapadmin.ds.DataServiceException;
 import org.georchestra.ldapadmin.ds.DuplicatedEmailException;
+import org.georchestra.ldapadmin.ds.DuplicatedUidException;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
 import org.georchestra.ldapadmin.dto.Group;
@@ -64,7 +64,7 @@ public final class NewAccountFormController {
 	@InitBinder
 	public void initForm( WebDataBinder dataBinder) {
 		
-		dataBinder.setAllowedFields(new String[]{"firstName","surname", "email", "phone", "org", "details", "password", "confirmPassword", "role", "recaptcha_challenge_field", "recaptcha_response_field"});
+		dataBinder.setAllowedFields(new String[]{"firstName","surname", "email", "phone", "org", "details", "uid", "password", "confirmPassword", "role", "recaptcha_challenge_field", "recaptcha_response_field"});
 	}
 	
 	@RequestMapping(value="/public/accounts/new", method=RequestMethod.GET)
@@ -110,7 +110,7 @@ public final class NewAccountFormController {
 		try {
 			
 			Account account =  AccountFactory.createBrief(
-					UUID.randomUUID().toString(),
+					formBean.getUid(),
 					formBean.getPassword(),
 					formBean.getFirstName(),
 					formBean.getSurname(),
@@ -126,23 +126,27 @@ public final class NewAccountFormController {
 			final ServletContext servletContext = request.getSession().getServletContext();
 			if(this.moderator.requiresSignup() ){
 
-				// emil to the moderator
+				// email to the moderator
 				this.mailService.sendNewAccountRequiresSignup(servletContext, account.getUid(), account.getCommonName(), this.moderator.getModeratorEmail());
 				
 				// email to the user
 				this.mailService.sendAccountCreationInProcess(servletContext, account.getUid(), account.getCommonName(), account.getEmail());
 			} else {
-				// emil to the user
+				// email to the user
 				this.mailService.sendAccountWasCreated(servletContext, account.getUid(), account.getCommonName(), account.getEmail());
 			}
-			
 			sessionStatus.setComplete();
 			
 			return "welcomeNewUser";
 			
 		} catch (DuplicatedEmailException e) {
 
-			result.addError(new ObjectError("email", "Exist a user with this e-mail"));
+			result.addError(new ObjectError("email", "email.error.exist"));
+			return "createAccountForm";
+			
+		} catch (DuplicatedUidException e) {
+
+			result.addError(new ObjectError("uid", "uid.error.exist"));
 			return "createAccountForm";
 			
 		} catch (DataServiceException e) {

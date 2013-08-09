@@ -30,7 +30,7 @@ public interface AccountDao {
 	 * @throws DuplicatedEmailException
 	 * @throws RequiredFiedException
 	 */
-	void insert(final Account account, final String groupID) throws DataServiceException, DuplicatedEmailException;
+	void insert(final Account account, final String groupID) throws DataServiceException, DuplicatedUidException, DuplicatedEmailException;
 
 	/**
 	 * Updates the user account

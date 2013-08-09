@@ -80,6 +80,14 @@
 			</fieldset>
 
 			<fieldset>
+                <p>
+                    <form:label path="uid"><s:message code="uid.label" /> *</form:label>
+                    <form:input path="uid" size="30" maxlength="80"/>
+                </p>
+                <p>
+                    <form:errors path="uid" cssClass="error" />
+                </p>
+
 				<p>
 					<form:label path="password"><s:message code="password.label" /> *</form:label>
 					<form:password path="password" size="30" maxlength="80"/>

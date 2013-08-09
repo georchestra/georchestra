@@ -23,8 +23,8 @@ class AccountFormValidator {
 	}
 
 	public void validate(AccountFormBean form, Errors errors) {
-		
-		UserNameUtils.validate( form.getFirstName(), form.getSurname(), errors ); 
+
+		UserNameUtils.validate(form.getUid(), form.getFirstName(), form.getSurname(), errors ); 
 
         EmailUtils.validate(form.getEmail(), errors);
 		
@@ -33,9 +33,7 @@ class AccountFormValidator {
 		validatePhone(form.getPhone(), errors); 
 
 		validateCaptcha(form.getRecaptcha_challenge_field(), form.getRecaptcha_response_field(), errors);
-			
 	}
-
 
 	private void validateCaptcha(final String captchaGenerated, final String userResponse, Errors errors) {
 		
