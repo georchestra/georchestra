@@ -62,10 +62,10 @@ class ChangePasswordEmail extends Email {
 	
 	private String writeNewPasswordMail(final String userName, final String url) {
 		
-		final String body = getBodyTemplate();
+		String body = getBodyTemplate();
 		
-		body.replace("{name}", userName);
-		body.replace("{url}", url);
+		body = body.replace("{name}", userName);
+		body = body.replace("{url}", url);
 		
 		if(LOG.isDebugEnabled() ){
 			

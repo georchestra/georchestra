@@ -15,13 +15,16 @@ import org.georchestra.lib.mailservice.AbstractEmailFactory;
 class EmailFactoryImpl extends AbstractEmailFactory {
 	
 	private String accountWasCreatedEmailFile;
+	private String accountWasCreatedEmailSubject;
 
 	private String accountCreationInProcessEmailFile;
-
-	private String emailChangePasswordFile;
+	private String accountCreationInProcessEmailSubject;
 
 	private String newAccountRequiresSignupEmailFile;
+	private String newAccountRequiresSignupEmailSubject;
 	
+	private String changePasswordEmailFile;
+	private String changePasswordEmailSubject;
 
 	private ServletContext servletContext;
 
@@ -29,30 +32,40 @@ class EmailFactoryImpl extends AbstractEmailFactory {
 	public void setAccountWasCreatedEmailFile(String accountWasCreatedEmailFile) {
 		this.accountWasCreatedEmailFile = accountWasCreatedEmailFile;
 	}
-
-	public String getAccountCreationInProcessEmailFile() {
-		return accountCreationInProcessEmailFile;
+	public void setAccountWasCreatedEmailSubject(String subject) {
+		this.accountWasCreatedEmailSubject = subject;
 	}
 
-	public void setAccountCreationInProcessEmailFile(String emailNewAccountFile) {
-		this.accountCreationInProcessEmailFile = emailNewAccountFile;
-	}
-
-	public void setEmailChangePasswordFile(String emailNewPasswordFile) {
-		this.emailChangePasswordFile = emailNewPasswordFile;
+	public void setAccountCreationInProcessEmailFile(String file) {
+		this.accountCreationInProcessEmailFile = file;
 	}
 	
 
-	public void setNewAccountRequiresSignupEmailFile(
-			String newAccountRequiresSignupEmailFile) {
-		this.newAccountRequiresSignupEmailFile = newAccountRequiresSignupEmailFile;
+	public void setAccountCreationInProcessEmailSubject(String subject) {
+		this.accountCreationInProcessEmailSubject = subject;
+	}
+	
+	public void setNewAccountRequiresSignupEmailFile(String file) {
+		this.newAccountRequiresSignupEmailFile = file;
 	}
 
+	public void setNewAccountRequiresSignupEmailSubject(String subject) {
+		this.newAccountRequiresSignupEmailSubject = subject;
+	}
+	
+	public void setChangePasswordEmailFile(String file) {
+		this.changePasswordEmailFile = file;
+	}
+	
+	public void setChangePasswordEmailSubject(String subject) {
+		this.changePasswordEmailSubject = subject;
+	}
+	
 	public ChangePasswordEmail createChangePasswordEmail(ServletContext servletContext, String[] recipients) throws IOException {
-		
+		super.emailSubject =changePasswordEmailSubject; 
 		ChangePasswordEmail mail =  new ChangePasswordEmail(
 				recipients, 
-				emailSubject,
+				super.emailSubject,
 				this.smtpHost,
 				this.smtpPort,
 				this.replyTo,
@@ -60,7 +73,7 @@ class EmailFactoryImpl extends AbstractEmailFactory {
 				this.bodyEncoding,
 				this.subjectEncoding,
 				this.languages,
-				this.emailChangePasswordFile,
+				this.changePasswordEmailFile,
 				servletContext);
 		
 		return mail;
@@ -76,9 +89,11 @@ class EmailFactoryImpl extends AbstractEmailFactory {
 	 */
 	public NewAccountRequiresSignupEmail createNewAccountRequiresSignupEmail(ServletContext servletContext, String[] recipients) throws IOException {
 		
+		super.emailSubject =this.newAccountRequiresSignupEmailSubject;
+		
 		NewAccountRequiresSignupEmail mail =  new NewAccountRequiresSignupEmail(
 				recipients, 
-				emailSubject,
+				super.emailSubject,
 				this.smtpHost,
 				this.smtpPort,
 				this.replyTo,
@@ -102,10 +117,11 @@ class EmailFactoryImpl extends AbstractEmailFactory {
 	public AccountCreationInProcessEmail createAccountCreationInProcessEmail(
 			ServletContext servletContext, String[] recipients) {
 		
-		
+		super.emailSubject =this.accountCreationInProcessEmailFile;
+
 		AccountCreationInProcessEmail mail =  new AccountCreationInProcessEmail(
 				recipients, 
-				emailSubject,
+				super.emailSubject,
 				this.smtpHost,
 				this.smtpPort,
 				this.replyTo,
@@ -121,9 +137,11 @@ class EmailFactoryImpl extends AbstractEmailFactory {
 
 	public AccountWasCreatedEmail createAccountWasCreatedEmail(ServletContext servletContext, String[] recipients) {
 		
+		super.emailSubject =this.accountWasCreatedEmailSubject;
+
 		AccountWasCreatedEmail mail =  new AccountWasCreatedEmail(
 				recipients, 
-				emailSubject,
+				super.emailSubject,
 				this.smtpHost,
 				this.smtpPort,
 				this.replyTo,

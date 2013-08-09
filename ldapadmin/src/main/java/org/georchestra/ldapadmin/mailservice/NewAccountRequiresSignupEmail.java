@@ -58,14 +58,16 @@ class NewAccountRequiresSignupEmail extends Email {
 
 	private String writeNewAccoutnMail(String uid, String name) {
 
-		//final String body = getBodyTemplate();
-		final String body = this.servletContext.getRealPath(getBodyTemplate());
+		String body = getBodyTemplate();
 
 		
-		body.replace("{name}", name);
-		body.replace("{uid}", uid);
+		body = body.replace("{name}", name);
+		body = body.replace("{uid}", uid);
 		
-		LOG.debug("built email: "+ body);
+		if(LOG.isDebugEnabled() ){
+			
+			LOG.debug("built email: "+ body);
+		}
 
 		return body;
 	}

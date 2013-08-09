@@ -26,8 +26,9 @@
 		<property name="url" value="ldap://localhost:389" />
 		<property name="base" value="dc=georchestra,dc=org" />
 		<property name="userDn" value="cn=admin,dc=georchestra,dc=org" />
-		<property name="password" value="secret" />
+        <property name="password" value="secret" /> 
 	</bean>
+	
 
 	<bean id="ldapTemplate" class="org.springframework.ldap.core.LdapTemplate">
 		<constructor-arg ref="contextSource" />
@@ -105,35 +106,42 @@
 	</bean>
 
 	<!-- Email Factory configuration -->
-	<bean id="emailFactory" class="org.georchestra.ldapadmin.mailservice.EmailFactoryImpl">
-		<property name="smtpHost" value="localhost" />
-		<property name="smtpPort" value="25" />
-		<property name="replyTo" value="psc@georchestra.org" />
-		<property name="from" value="psc@georchestra.org" />
-		<property name="bodyEncoding" value="UTF-8" />
-		<property name="subjectEncoding" value="UTF-8" />
-		<property name="languages" value="fr,fra" />
-		
+    <bean id="emailFactory" class="org.georchestra.ldapadmin.mailservice.EmailFactoryImpl">
+        <property name="smtpHost" value="localhost" />
+        <property name="smtpPort" value="25" />
+        <property name="replyTo" value="psc@georchestra.org" />
+        <property name="from" value="psc@georchestra.org" />
+        <property name="bodyEncoding" value="UTF-8" />
+        <property name="subjectEncoding" value="UTF-8" />
+        <property name="languages" value="fr,fra" />
+        
         <property name="accountWasCreatedEmailFile"
             value="/WEB-INF/templates/newaccount-was-created-template.txt" />
+        <property name="accountWasCreatedEmailSubject"
+            value="The account was created" />
 
-		<property name="accountCreationInProcessEmailFile"
-			value="/WEB-INF/templates/account-creation-in-progrss-template.txt" />
-			
+        <property name="accountCreationInProcessEmailFile"
+            value="/WEB-INF/templates/account-creation-in-progrss-template.txt" />
+        <property name="accountCreationInProcessEmailSubject"
+            value="account creation in process" />
+            
         <property name="newAccountRequiresSignupEmailFile"
             value="/WEB-INF/templates/newaccount-requires-singup-template.txt" />
+        <property name="newAccountRequiresSignupEmailSubject"
+            value="New account requires singnup" />
 
-        <property name="emailChangePasswordFile"
+        <property name="changePasswordEmailFile"
             value="/WEB-INF/templates/changepassword-email-template.txt" />
-			
-	</bean>
+        <property name="changePasswordEmailSubject"
+            value="change password" />
+    </bean>
 
 	<bean id="mailService" class="org.georchestra.ldapadmin.mailservice.MailService">
 		<constructor-arg ref="emailFactory" />
 	</bean>
 
     <bean id="moderator" class="org.georchestra.ldapadmin.bs.Moderator">
-        <property name="requiresSignup" value="false" />
+        <property name="requiresSignup" value="false" /> 
         <property name="moderatorEmail" value="moderator@mail" />
     </bean>
     
