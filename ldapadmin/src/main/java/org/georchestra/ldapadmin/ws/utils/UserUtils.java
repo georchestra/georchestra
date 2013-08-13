@@ -12,9 +12,9 @@ import org.springframework.validation.Errors;
  * @author Mauricio Pazos
  *
  */
-public class UserNameUtils {
+public class UserUtils {
 
-	private UserNameUtils(){
+	private UserUtils(){
 			// utility class
 	}
 	
@@ -24,9 +24,39 @@ public class UserNameUtils {
 			errors.rejectValue("uid", "uid.error.required", "required");
 		}
 
+		if( !StringUtils.hasLength(uid)){
+			errors.rejectValue("uid", "uid.error.required", "required");
+		}
+
+		if( !isUidValid(uid)){
+			errors.rejectValue("uid", "uid.error.invalid", "required");
+		}
+
 		validate(firstName, surname, errors);
 	}
 	
+	/**
+	 * An user identifier (uid) valid only can contain characters, numbers or dot. It must begin with a character.
+	 * 
+	 * @param uid user identifier
+	 * @return true if the uid is valid
+	 */
+	private static boolean isUidValid(String uid) {
+
+		char firstChar = uid.charAt(0); 
+		if(!Character.isLetter(firstChar)){
+			return false;
+		}
+		for(int i=1; i < uid.length(); i++){
+			
+			if( !(Character.isLetter( uid.charAt(i)) ||  Character.isDigit( uid.charAt(i)) || ( uid.charAt(i) == '.')) ){
+				
+				return false;
+			} 
+		}
+		return true;
+	}
+
 	public static void validate(String firstName, String surname, Errors errors) {
 		
 		if( !StringUtils.hasLength(firstName)){

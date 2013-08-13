@@ -3,10 +3,9 @@ package org.georchestra.ldapadmin.ws.newaccount;
 import net.tanesha.recaptcha.ReCaptcha;
 import net.tanesha.recaptcha.ReCaptchaResponse;
 
-import org.apache.commons.validator.routines.EmailValidator;
 import org.georchestra.ldapadmin.ws.utils.EmailUtils;
 import org.georchestra.ldapadmin.ws.utils.PasswordUtils;
-import org.georchestra.ldapadmin.ws.utils.UserNameUtils;
+import org.georchestra.ldapadmin.ws.utils.UserUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 
@@ -24,7 +23,7 @@ class AccountFormValidator {
 
 	public void validate(AccountFormBean form, Errors errors) {
 
-		UserNameUtils.validate(form.getUid(), form.getFirstName(), form.getSurname(), errors ); 
+		UserUtils.validate(form.getUid(), form.getFirstName(), form.getSurname(), errors ); 
 
         EmailUtils.validate(form.getEmail(), errors);
 		

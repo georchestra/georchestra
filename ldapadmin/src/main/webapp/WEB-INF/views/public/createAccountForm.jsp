@@ -24,7 +24,7 @@
     	var name = document.createForm.firstName.value;
     	var surname = document.createForm.surname.value;
     	
-        document.createForm.uid.value = name.charAt(0)+ surname; // strategy 1
+        document.createForm.uid.value = name.toLowerCase().charAt(0)+ surname.toLowerCase(); // strategy 1
     	
         //document.createForm.uid.value = name +"."+ surname;  // strategy 2
     }
@@ -44,6 +44,9 @@
         }
     	return true;
 	}
+    function cleanPasswordError(){
+        document.getElementById("passordError").innerHTML="";
+    }                
     
     function strongPassword(){
     	return true; // TODO 
@@ -134,10 +137,9 @@
                 <p>
                     <form:errors path="uid" cssClass="error" />
                 </p>
-
 				<p>
 					<form:label path="password"><s:message code="password.label" /> *</form:label>
-					<form:password path="password" size="30" maxlength="80"/>
+					<form:password path="password" size="30" maxlength="80" onkeypress="cleanPasswordError();"/>
 				</p>
 				<p>
 					<form:errors path="password" cssClass="error" />

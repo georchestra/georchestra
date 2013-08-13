@@ -15,6 +15,7 @@ import org.georchestra.ldapadmin.ds.AccountDao;
 import org.georchestra.ldapadmin.ds.DataServiceException;
 import org.georchestra.ldapadmin.ds.DuplicatedEmailException;
 import org.georchestra.ldapadmin.ds.DuplicatedUidException;
+import org.georchestra.ldapadmin.ds.NotFoundException;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
 import org.georchestra.ldapadmin.dto.Group;
@@ -145,13 +146,34 @@ public final class NewAccountFormController {
 			return "createAccountForm";
 			
 		} catch (DuplicatedUidException e) {
-
-			result.rejectValue("uid", "uid.error.exist", "the uid exist");
-			return "createAccountForm";
+			
+			try {
+				String proposedUid = generateUid( formBean.getUid() );
+				
+				formBean.setUid(proposedUid);
+				
+				result.rejectValue("uid", "uid.error.exist", "the uid exist");
+				
+				return "createAccountForm";
+				
+			} catch (DataServiceException e1) {
+				throw new IOException(e);
+			}
 			
 		} catch (DataServiceException e) {
 			
 			throw new IOException(e);
 		}
+	}
+
+	private String generateUid(final String uid) throws DataServiceException {
+		
+		String newUid = UidGenerator.next(uid);
+		
+		while(this.accountDao.exist(newUid)){
+				
+			newUid = UidGenerator.next(newUid);
+		}
+		return newUid;
 	}
 }

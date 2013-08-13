@@ -3,7 +3,6 @@
  */
 package org.georchestra.ldapadmin.ds;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.naming.Name;
@@ -67,9 +66,16 @@ public final class AccountDaoImpl implements AccountDao{
 		checkMandatoryFields(account);
 
 		// checks unique uid
-		if(exist(account.getUid().trim())){
+		
+		String uid = account.getUid().toLowerCase();
+		try{
+			findByUID(uid);
+			
 			throw new DuplicatedUidException("there is a user with this user identifier (uid): " + account.getUid());
-		}
+
+		} catch (NotFoundException e1) {
+			// if not exist an account with this uid the new account can be added. 
+		} 
 		
 		// checks unique email
 		try {
@@ -83,7 +89,7 @@ public final class AccountDaoImpl implements AccountDao{
 
 		// insert the new user account
 		try {
-			Name dn = buildDn( account.getUid() );
+			Name dn = buildDn( uid );
 
 			DirContextAdapter context = new DirContextAdapter(dn);
 			mapToContext(account, context);
@@ -167,14 +173,16 @@ public final class AccountDaoImpl implements AccountDao{
 	@Override
 	public Account findByUID(final String uid) throws DataServiceException, NotFoundException{
 
-		DistinguishedName dn = buildDn(uid);
-		Account a = (Account) ldapTemplate.lookup(dn, new AccountContextMapper());
-		
-		if(a == null){
+		try{
+			DistinguishedName dn = buildDn(uid.toLowerCase());
+			Account a = (Account) ldapTemplate.lookup(dn, new AccountContextMapper());
+			
+			return  a;
+			
+		} catch (NameNotFoundException e){
+
 			throw new NotFoundException("There is not a user with this user identifier (uid): " + uid);
 		}
-		
-		return  a;
 		
 	}
 
@@ -202,10 +210,10 @@ public final class AccountDaoImpl implements AccountDao{
 		return  account;
 	}
 	
-	private boolean exist(final String uid) throws DataServiceException{
+	public boolean exist(final String uid) throws DataServiceException{
 
 		try{
-			DistinguishedName dn = buildDn(uid);
+			DistinguishedName dn = buildDn(uid.toLowerCase());
 			ldapTemplate.lookup(dn);
 			return true;
 		} catch (NameNotFoundException ex ){
@@ -300,7 +308,7 @@ public final class AccountDaoImpl implements AccountDao{
 		// inetOrgPerson attributes
 		setAccountField(context, "givenName", account.getGivenName());
 		
-		context.setAttributeValue("uid", account.getUid());
+		context.setAttributeValue("uid", account.getUid().toLowerCase());
 
 		context.setAttributeValue("mail", account.getEmail());
 		
