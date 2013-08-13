@@ -141,12 +141,12 @@ public final class NewAccountFormController {
 			
 		} catch (DuplicatedEmailException e) {
 
-			result.addError(new ObjectError("email", "email.error.exist"));
+			result.rejectValue("email", "email.error.exist", "there is a user with this e-mail");
 			return "createAccountForm";
 			
 		} catch (DuplicatedUidException e) {
 
-			result.addError(new ObjectError("uid", "uid.error.exist"));
+			result.rejectValue("uid", "uid.error.exist", "the uid exist");
 			return "createAccountForm";
 			
 		} catch (DataServiceException e) {
