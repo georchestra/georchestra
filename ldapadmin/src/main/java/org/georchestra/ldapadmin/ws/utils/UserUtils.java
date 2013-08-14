@@ -20,18 +20,17 @@ public class UserUtils {
 	
 	public static void validate(String uid, String firstName, String surname, Errors errors) {
 		
+		// uid validation
 		if( !StringUtils.hasLength(uid)){
 			errors.rejectValue("uid", "uid.error.required", "required");
+		} else{
+
+			if( !isUidValid(uid)){
+				errors.rejectValue("uid", "uid.error.invalid", "required");
+			}
 		}
 
-		if( !StringUtils.hasLength(uid)){
-			errors.rejectValue("uid", "uid.error.required", "required");
-		}
-
-		if( !isUidValid(uid)){
-			errors.rejectValue("uid", "uid.error.invalid", "required");
-		}
-
+		// name validation
 		validate(firstName, surname, errors);
 	}
 	

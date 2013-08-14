@@ -16,6 +16,7 @@
     <link href="<c:url value="/styles/ldapadmin.css" />" rel="stylesheet"  type="text/css" />     
     <title>Create Account Form</title>
     
+    <script type="text/javascript"  src="<c:url value="/js/passwordutils.js" />" > </script>
     
     <script type="text/javascript">
     
@@ -34,30 +35,36 @@
     	var pwd1 = document.createForm.password.value;
         var pwd2 = document.createForm.confirmPassword.value;
     	
-        if(pwd1 == "" && pwd2 == "") return false; 
+        if((pwd1 == "") || (pwd2 == "")) return false; 
 
     	if (pwd1 != pwd2) {
 
-    		  document.getElementById("passordError").innerHTML = "The passwords are not equals";
+    		  document.getElementById("passwordError").innerHTML = "The passwords are not equals";
     		  document.createForm.password.focus();
     		  return false;
         }
     	return true;
 	}
     function cleanPasswordError(){
-        document.getElementById("passordError").innerHTML="";
+        document.getElementById("passwordError").innerHTML="";
     }                
     
     function strongPassword(){
-    	return true; // TODO 
+    	
+    	var score = scorePassword(document.createForm.password.value);
+    	if(score < 60){
+            document.getElementById("passwordError").innerHTML = "A better password is required (<b>good</b> or <b>strong</b> level are acceptable).";
+    		return false;
+    	}  
+        return true;
     }
     
     /**
-     * Validates the fom
+     * Validates the form
      */
     function validateForm(){
     	
-    	if( ! equalsPasswords() ) return false;
+    	if( !equalsPasswords() ) return false;
     	
     	if( !strongPassword() ) return false;
     	
@@ -70,7 +77,7 @@
 <body>
     <div id="formsContent" style="center">
         <h2><s:message code="createAccountFrom.title"/></h2>
-        <form:form id="createForm" name="createForm" method="post" modelAttribute="accountFormBean" cssClass="cleanform" onsubmit="validateForm();" >
+        <form:form id="createForm" name="createForm" method="post" modelAttribute="accountFormBean" cssClass="cleanform" onsubmit="return validateForm();" >
 
             <div class="header">
                 <c:if test="${not empty message}">
@@ -139,11 +146,14 @@
                 </p>
 				<p>
 					<form:label path="password"><s:message code="password.label" /> *</form:label>
-					<form:password path="password" size="30" maxlength="80" onkeypress="cleanPasswordError();"/>
+					<form:password path="password" size="30" maxlength="80" onkeypress="cleanPasswordError();" onkeyup="feedbackPassStrength(password, pwdQuality, value);" />
 				</p>
 				<p>
 					<form:errors path="password" cssClass="error" />
 				</p>
+                <p>
+                    <div id="pwdQuality"></div>
+                </p>
 
 				<p>
 					<form:label path="confirmPassword"><s:message code="confirmPassword.label" /> *</form:label>
@@ -153,7 +163,7 @@
 					<form:errors path="confirmPassword" cssClass="error" />
 				</p>
 				<p>
-				    <div id="passordError"></div>
+				    <div id="passwordError"></div>
 				</p>
 
 			</fieldset>
