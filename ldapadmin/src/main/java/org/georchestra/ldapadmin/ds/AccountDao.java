@@ -66,7 +66,7 @@ public interface AccountDao {
 	 * @throws DataServiceException
 	 * @throws NotFoundException
 	 */
-	void delete(final Account account) throws DataServiceException, NotFoundException;
+	void delete(final String uid) throws DataServiceException, NotFoundException;
 
 	/**
 	 * Returns the account that contains the uid provided as parameter.

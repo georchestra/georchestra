@@ -152,8 +152,8 @@ public final class AccountDaoImpl implements AccountDao{
 	 * @see {@link AccountDao#delete(Account)}
 	 */
 	@Override
-	public void delete(final Account account) throws DataServiceException, NotFoundException{
-		ldapTemplate.unbind(buildDn(account.getUid()));
+	public void delete(final String uid) throws DataServiceException, NotFoundException{
+		ldapTemplate.unbind(buildDn(uid));
 	}
 	
 	/**
