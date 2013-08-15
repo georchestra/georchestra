@@ -16,7 +16,7 @@ public class AccountFactory {
 	private AccountFactory(){}
 
 
-	private static String formatCommonName(String givenName, String surname) {
+	public static String formatCommonName(String givenName, String surname) {
 		return givenName + " " + surname;
 	}
 
@@ -101,9 +101,9 @@ public class AccountFactory {
 	 * Creates an account object with all data.
 	 * 
 	 * @param uid
-	 * @param cn
-	 * @param surname
-	 * @param givenName
+	 * @param cn full name
+	 * @param surname surname 
+	 * @param givenName first name
 	 * @param email
 	 * @param org
 	 * @param title
@@ -132,6 +132,7 @@ public class AccountFactory {
 			String registeredAddress ,
 			String postOfficeBox, 
 			String physicalDeliveryOfficeName) {
+		
 		
 		Account a = new AccountImpl();
 		

@@ -255,9 +255,10 @@ public final class AccountDaoImpl implements AccountDao{
 		if( a.getSurname().length() <= 0){
 			throw new IllegalArgumentException("surname name (sn) is requird");
 		}
-		if( a.getPassword().length() <= 0){
-			throw new IllegalArgumentException("password is requird");
-		}
+// 	TODO password is not mandatory		
+//		if( a.getPassword().length() <= 0){
+//			throw new IllegalArgumentException("password is requird");
+//		}
 		if( a.getEmail().length() <= 0){
 			throw new IllegalArgumentException("email is requird");
 		}

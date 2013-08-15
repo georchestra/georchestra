@@ -12,8 +12,14 @@ public interface Account {
 
 	public   String getUid();
 
+	/**
+	 * Person’s full name.
+	 */
 	public   String getCommonName();
 
+	/**
+	 * Person’s full name.
+	 */
 	public   void setCommonName(String name);
 
 	public   String getOrg();
@@ -48,8 +54,14 @@ public interface Account {
 
 	public   void setSurname(String surname);
 
+	/**
+	 * The givenName attribute is used to hold the part of a person’s name which is not their surname nor middle name.	 
+	 */
 	public   String getGivenName();
 
+	/**
+	 * The givenName attribute is used to hold the part of a person’s name which is not their surname nor middle name.	 
+	 */
 	public   void setGivenName(String givenName);
 
 	public   String getTitle();

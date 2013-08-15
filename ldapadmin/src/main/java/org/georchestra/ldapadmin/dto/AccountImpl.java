@@ -22,8 +22,10 @@ class AccountImpl implements Serializable, Account {
 	
 	// main data
 	private String uid; // uid
-	private String commonName; // cn mandatory
+	
+	private String commonName; // cn: person's full name,  mandatory
 	private String surname; // sn  mandatory
+	
 	private String org; // o
 	private String role; // 
 	private String email;// mail
@@ -66,10 +68,17 @@ class AccountImpl implements Serializable, Account {
 		return this.uid;
 	}
 	
+	/**
+	 * Person’s full name.
+	 */
 	@Override
 	public String getCommonName() {
 		return commonName;
 	}
+	
+	/**
+	 * Person’s full name.
+	 */
 	@Override
 	public void setCommonName(String name) {
 		this.commonName = name;
@@ -146,11 +155,17 @@ class AccountImpl implements Serializable, Account {
 		this.surname = surname;
 	}
 
+	/**
+	 * The givenName attribute is used to hold the part of a person’s name which is not their surname nor middle name.	 
+	 */
 	@Override
 	public String getGivenName() {
 		return givenName;
 	}
 
+	/**
+	 * The givenName attribute is used to hold the part of a person’s name which is not their surname nor middle name.	 
+	 */
 	@Override
 	public void setGivenName(String givenName) {
 		this.givenName = givenName;

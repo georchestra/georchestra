@@ -9,8 +9,6 @@ import org.georchestra.ldapadmin.dto.Account;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONStringer;
-import org.json.JSONWriter;
 
 /**
  * 
@@ -26,11 +24,6 @@ import org.json.JSONWriter;
  */
 final class UserListResponse {
 	
-	public static final String UUID_KEY = "uid";
-	public static final String GIVEN_NAME_KEY = "givenName";
-	public static final String SURNAME_KEY = "sn";
-	public static final String ORG_KEY = "o";	
-
 	private List<Account> accountList;
 
 	public UserListResponse(List<Account> accountList) {
@@ -65,10 +58,10 @@ final class UserListResponse {
     	for (Account account: this.accountList) {
     		
     		JSONObject jsonAccount = new JSONObject();
-    		jsonAccount.put(UUID_KEY, account.getUid());
-    		jsonAccount.put(GIVEN_NAME_KEY, account.getGivenName());
-    		jsonAccount.put(SURNAME_KEY, account.getSurname());
-    		jsonAccount.put(ORG_KEY, account.getOrg());
+    		jsonAccount.put(UserSchema.UUID_KEY, account.getUid());
+    		jsonAccount.put(UserSchema.GIVEN_NAME_KEY, account.getGivenName());
+    		jsonAccount.put(UserSchema.SURNAME_KEY, account.getSurname());
+    		jsonAccount.put(UserSchema.ORG_KEY, account.getOrg());
 
     		jsonTaskArray.put(i, jsonAccount);
     		i++;

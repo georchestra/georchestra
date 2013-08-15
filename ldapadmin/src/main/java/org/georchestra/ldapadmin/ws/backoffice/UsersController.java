@@ -18,7 +18,11 @@ import org.georchestra.ldapadmin.ds.DataServiceException;
 import org.georchestra.ldapadmin.ds.DuplicatedEmailException;
 import org.georchestra.ldapadmin.ds.DuplicatedUidException;
 import org.georchestra.ldapadmin.dto.Account;
+import org.georchestra.ldapadmin.dto.AccountFactory;
 import org.georchestra.ldapadmin.dto.Group;
+import org.georchestra.lib.file.FileUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -123,7 +127,7 @@ public class UsersController {
 		
 	}
 	
-	@RequestMapping(value=BASE_MAPPING + "/users/*", method=RequestMethod.POST)
+	@RequestMapping(value=BASE_MAPPING + "/users", method=RequestMethod.POST)
 	public void create( HttpServletRequest request, HttpServletResponse response ) throws IOException{
 		
 		String jsonResponse = "";
@@ -132,21 +136,21 @@ public class UsersController {
 			Account account = buildAccount(request.getInputStream());
 			this.accountDao.insert(account, Group.SV_USER);
 			
-			jsonResponse = ""; // TODO 
+			jsonResponse = "{ \"success\": true}"; // FIXME ask to pierre (it is not in the spec)
 			
 		} catch(DuplicatedUidException uidex){
 			
 			// add error description
-			jsonResponse = "{ \"success\": false }";
+			jsonResponse = "{ \"success\": false, \"error\": \"duplicated_uid\"}";
 
 		} catch (DuplicatedEmailException emailex){
 			
 			// add error description
-			jsonResponse = "{ \"success\": false }";
+			jsonResponse = "{ \"success\": false, \"error\": \"duplicated_email\"}";
 			
 		} catch (DataServiceException dsex){
 
-			jsonResponse = "{ \"success\": false }";
+			jsonResponse = "{ \"success\": false, \"error\": \"io_fail\" }";
 		}
 
 		
@@ -222,25 +226,43 @@ public class UsersController {
 	}
 
 
-	private Account buildAccount(ServletInputStream inputStream) {
-		// TODO Auto-generated method stub
+	private Account buildAccount(ServletInputStream is) throws IOException {
 		
-		// extract the fields from json parameter
-// example		
-//		{
-//		    "facsimileTelephoneNumber": "fsdfdf",
-//		    "givenName": "GIRAUD",
-//		    "l": "dfdf",
-//		    "mail": "pierre.giraud@gmail.com",
-//		    "postOfficeBox": "dfdf",
-//		    "postalCode": "dfdf",
-//		    "sn": "Pierre",
-//		    "street": "fdsf",
-//		    "telephoneNumber": "fdsfd"
-//		}		
-		//Account a = AccountFactory.createFull(uid, cn, surname, givenName, email, org, title, phone, description, postalAddress, postalCode, registeredAddress, postOfficeBox, physicalDeliveryOfficeName)
-
-		return null;
+		try {
+			String strUser = FileUtils.asString(is);
+			JSONObject json = new JSONObject(strUser);
+			
+			String givenName = json.getString(UserSchema.GIVEN_NAME_KEY);
+			if(givenName.length() == 0){
+				throw new IllegalArgumentException(UserSchema.GIVEN_NAME_KEY + " is required" );
+			}
+			String surname= json.getString(UserSchema.SURNAME_KEY);
+			if(surname.length() == 0){
+				throw new IllegalArgumentException(UserSchema.SURNAME_KEY + " is required" );
+			}
+			
+			String locality = json.getString(UserSchema.LOCALITY_KEY); // TODO l is not added!!!
+			
+			String email = json.getString(UserSchema.MAIL_KEY);
+			String postOfficeBox = json.getString(UserSchema.POSTAL_OFFICE_BOX_KEY);
+			String postalCode = json.getString(UserSchema.POSTAL_CODE_KEY);
+			
+			
+			String postalAddress= json.getString(UserSchema.STREET_KEY); // TODO Is postalAddress equal to street?
+			String phone = json.getString(UserSchema.TELEPHONE_KEY);
+			
+			String uid = givenName.toLowerCase().charAt(0) + surname.toLowerCase();
+			
+			String commonName = AccountFactory.formatCommonName(givenName, surname);
+			
+			Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, "", "", phone, "", postalAddress, postalCode, "", postOfficeBox, "");
+			
+			return a;
+			
+		} catch (JSONException e) {
+			LOG.error(e.getMessage());
+			throw new IOException(e);
+		}
 	}
 	
 }
