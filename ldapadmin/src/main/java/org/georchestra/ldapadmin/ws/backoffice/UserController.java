@@ -20,6 +20,7 @@ import org.georchestra.ldapadmin.ds.DuplicatedUidException;
 import org.georchestra.ldapadmin.ds.NotFoundException;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.Group;
+import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,6 +37,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class UserController {
 	
 	private static final Log LOG = LogFactory.getLog(UserController.class.getName());
+
+	private static final String BASE_MAPPING = "/private";
 
 	private AccountDao accountDao;
 	
@@ -57,37 +60,32 @@ public class UserController {
 	 *	    },
 	 *	        ...
 	 *	]
-	 * 
-	 * 
 	 * </pre>
 	 * 
 	 * @param request
 	 * @param response
 	 * @throws IOException
 	 */
-	@RequestMapping(value="/users", method=RequestMethod.GET)
+	@RequestMapping(value=BASE_MAPPING + "/users", method=RequestMethod.GET)
 	public void findAll( HttpServletRequest request, HttpServletResponse response ) throws IOException{
 		
 		try {
 			List<Account> list = this.accountDao.findAll();
+
+			UserListResponse userListResponse = new UserListResponse(list);
 			
-			String jsonList = accountListAsJson(list);
+			String jsonList = userListResponse.asJsonString();
 			
 			buildResponse(response, jsonList);
 			
-		} catch (DataServiceException e) {
+		} catch (Exception e) {
 			
 			LOG.error(e.getMessage());
 			
 			throw new IOException(e);
-		}
+		} 
 		
 		
-	}
-
-	private String accountListAsJson(List<Account> list) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@RequestMapping(value="/users/*", method=RequestMethod.GET)
