@@ -107,7 +107,7 @@ class AccountImpl implements Serializable, Account {
 		this.phone = phone;
 	}
 	@Override
-	public String getDetails() {
+	public String getDescription() {
 		return details;
 	}
 	@Override

@@ -25,6 +25,11 @@ import org.json.JSONWriter;
  *
  */
 final class UserListResponse {
+	
+	public static final String UUID_KEY = "uid";
+	public static final String GIVEN_NAME_KEY = "givenName";
+	public static final String SURNAME_KEY = "sn";
+	public static final String ORG_KEY = "o";	
 
 	private List<Account> accountList;
 
@@ -60,22 +65,15 @@ final class UserListResponse {
     	for (Account account: this.accountList) {
     		
     		JSONObject jsonAccount = new JSONObject();
-    		jsonAccount.put(AccountDescriptor.UUID_KEY, account.getUid());
-    		jsonAccount.put(AccountDescriptor.GIVEN_NAME_KEY, account.getGivenName());
-    		jsonAccount.put(AccountDescriptor.SURNAME_KEY, account.getSurname());
-    		jsonAccount.put(AccountDescriptor.ORG_KEY, account.getOrg());
+    		jsonAccount.put(UUID_KEY, account.getUid());
+    		jsonAccount.put(GIVEN_NAME_KEY, account.getGivenName());
+    		jsonAccount.put(SURNAME_KEY, account.getSurname());
+    		jsonAccount.put(ORG_KEY, account.getOrg());
 
     		jsonTaskArray.put(i, jsonAccount);
     		i++;
 		}
-    	
-    	JSONWriter jsonTaskQueue = new JSONStringer()
-							.object()
-								.key("tasks")
-								.value(jsonTaskArray)
-							.endObject();
-    	
-		String strTaskQueue = jsonTaskQueue.toString();
+		String strTaskQueue = jsonTaskArray.toString();
 		
 		return strTaskQueue;
 	}

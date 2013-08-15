@@ -32,7 +32,7 @@ public interface Account {
 
 	public   void setPhone(String phone);
 
-	public   String getDetails();
+	public   String getDescription();
 
 	public   void setDetails(String details);
 

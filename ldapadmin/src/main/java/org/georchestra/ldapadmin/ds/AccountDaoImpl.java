@@ -296,7 +296,7 @@ public final class AccountDaoImpl implements AccountDao{
 
 		context.setAttributeValue("cn", account.getCommonName());
 		
-		setAccountField(context, "description", account.getDetails());
+		setAccountField(context, "description", account.getDescription());
 
 		setAccountField(context, "telephoneNumber", account.getPhone());
 
@@ -337,7 +337,7 @@ public final class AccountDaoImpl implements AccountDao{
 
 		context.setAttributeValue("cn", account.getCommonName() );
 		
-		setAccountField(context, "description", account.getDetails());
+		setAccountField(context, "description", account.getDescription());
 
 		setAccountField(context, "telephoneNumber", account.getPhone());
 
