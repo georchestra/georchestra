@@ -118,4 +118,7 @@ public interface Account {
 
 	String getOrganizationalUnit();
 
+	void setHomePostalAddress(String homePostalAddres);
+
+	String getHomePostalAddress();
 }

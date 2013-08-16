@@ -21,7 +21,7 @@ public interface UserSchema {
 	public static final String POSTAL_CODE_KEY = "postalCode";
 	public static final String MAIL_KEY = "mail";
 	public static final String POSTAL_ADDRESS_KEY = "postalAddress";
-	public static final String POSTAL_OFFICE_BOX_KEY = "postOfficeBox";
+	public static final String POST_OFFICE_BOX_KEY = "postOfficeBox";
 	public static final String DESCRIPTION_KEY = "description";
 	public static final String TELEPHONE_KEY = "telephoneNumber";
 	public static final String PHYSICAL_DELIVERY_OFFICE_NAME_KEY = "physicalDeliveryOfficeName";

@@ -116,6 +116,10 @@ public class AccountFactory {
 	 * @param physicalDeliveryOfficeName
 	 * @param locality 
 	 * @param street 
+	 * @param facsimile 
+	 * @param organizationalUnit 
+	 * @param mobile 
+	 * @param roomNumber 
 	 * 
 	 * @return {@link Account}
 	 */
@@ -135,7 +139,13 @@ public class AccountFactory {
 			String postOfficeBox, 
 			String physicalDeliveryOfficeName, 
 			String street, 
-			String locality) {
+			String locality, 
+			String facsimile, 
+			String organizationalUnit,
+			String homePostalAddress,
+			String mobile, 
+			Integer roomNumber,
+			String stateOrProvince) {
 		
 		
 		Account a = new AccountImpl();
@@ -160,6 +170,14 @@ public class AccountFactory {
 		a.setRegisteredAddress(registeredAddress);
 		a.setPostOfficeBox(postOfficeBox);
 		a.setPhysicalDeliveryOfficeName(physicalDeliveryOfficeName);
+		
+		a.setFacsimile(facsimile);
+		a.setOrganizationalUnit(organizationalUnit);
+		
+		a.setHomePostalAddress(homePostalAddress);
+		a.setMobile(mobile);
+		a.setRoomNumber(roomNumber);
+		a.setStateOrProvince(stateOrProvince);
 		
 		return a;
 	}

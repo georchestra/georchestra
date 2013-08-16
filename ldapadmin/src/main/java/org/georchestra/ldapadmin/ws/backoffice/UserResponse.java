@@ -38,7 +38,7 @@ class UserResponse {
 			jsonAccount.put(UserSchema.POSTAL_CODE_KEY, account.getPostalCode());
 			jsonAccount.put(UserSchema.MAIL_KEY, account.getEmail());
 			jsonAccount.put(UserSchema.POSTAL_ADDRESS_KEY, account.getPostalAddress());
-			jsonAccount.put(UserSchema.POSTAL_OFFICE_BOX_KEY, account.getPostOfficeBox());
+			jsonAccount.put(UserSchema.POST_OFFICE_BOX_KEY, account.getPostOfficeBox());
 			jsonAccount.put(UserSchema.DESCRIPTION_KEY, account.getDescription()); 
 			jsonAccount.put(UserSchema.TELEPHONE_KEY, account.getPhone()); 
 			jsonAccount.put(UserSchema.PHYSICAL_DELIVERY_OFFICE_NAME_KEY, account.getPhysicalDeliveryOfficeName()); 

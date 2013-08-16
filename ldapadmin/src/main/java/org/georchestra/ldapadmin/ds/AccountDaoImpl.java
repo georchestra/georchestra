@@ -11,7 +11,6 @@ import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
 import org.georchestra.ldapadmin.dto.UserSchema;
 import org.georchestra.ldapadmin.ws.newaccount.UidGenerator;
-import org.hamcrest.core.IsInstanceOf;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.ContextMapper;
@@ -336,7 +335,7 @@ public final class AccountDaoImpl implements AccountDao{
 
 		setAccountField(context, UserSchema.REGISTERED_ADDRESS_KEY, account.getRegisteredAddress());
 
-		setAccountField(context, UserSchema.POSTAL_OFFICE_BOX_KEY , account.getPostOfficeBox());
+		setAccountField(context, UserSchema.POST_OFFICE_BOX_KEY , account.getPostOfficeBox());
 
 		setAccountField(context, UserSchema.PHYSICAL_DELIVERY_OFFICE_NAME_KEY, account.getPhysicalDeliveryOfficeName());
 
@@ -397,26 +396,35 @@ public final class AccountDaoImpl implements AccountDao{
 			DirContextAdapter context = (DirContextAdapter) ctx;
 			
 			Account account = AccountFactory.createFull(
-					context.getStringAttribute("uid"),
-					context.getStringAttribute("cn"),
-					context.getStringAttribute("sn"),
-					context.getStringAttribute("givenName"),
-					context.getStringAttribute("mail"),
+					context.getStringAttribute(UserSchema.UUID_KEY),
+					context.getStringAttribute(UserSchema.COMMON_NAME_KEY),
+					context.getStringAttribute(UserSchema.SURNAME_KEY),
+					context.getStringAttribute(UserSchema.GIVEN_NAME_KEY),
+					context.getStringAttribute(UserSchema.MAIL_KEY),
 					
-					context.getStringAttribute("o"),
-					context.getStringAttribute("title"),
+					context.getStringAttribute(UserSchema.ORG_KEY),
+					context.getStringAttribute(UserSchema.TITLE_KEY),
 
-					context.getStringAttribute("telephoneNumber"),
-					context.getStringAttribute("description"),
+					context.getStringAttribute(UserSchema.TELEPHONE_KEY),
+					context.getStringAttribute(UserSchema.DESCRIPTION_KEY),
 
-					context.getStringAttribute("postalAddress"),
-					context.getStringAttribute("postalCode"),
-					context.getStringAttribute("registeredAddress"),
-					context.getStringAttribute("postOfficeBox"),
-					context.getStringAttribute("physicalDeliveryOfficeName"),
+					context.getStringAttribute(UserSchema.POSTAL_ADDRESS_KEY),
+					context.getStringAttribute(UserSchema.POSTAL_CODE_KEY),
+					context.getStringAttribute(UserSchema.REGISTERED_ADDRESS_KEY),
+					context.getStringAttribute(UserSchema.POST_OFFICE_BOX_KEY),
+					context.getStringAttribute(UserSchema.PHYSICAL_DELIVERY_OFFICE_NAME_KEY),
+
+					context.getStringAttribute(UserSchema.STREET_KEY),
+					context.getStringAttribute(UserSchema.LOCALITY_KEY),
+
+					context.getStringAttribute(UserSchema.FACSIMILE_KEY),
+					context.getStringAttribute(UserSchema.ORG_UNIT_KEY),
 					
-					context.getStringAttribute("street"),
-					context.getStringAttribute("l"));
+					context.getStringAttribute(UserSchema.HOME_POSTAL_ADDRESS_KEY),
+					context.getStringAttribute(UserSchema.MOBILE_KEY),
+					(Integer)context.getObjectAttribute(UserSchema.ROOM_NUMBER_KEY),
+					context.getStringAttribute(UserSchema.STATE_OR_PROVINCE_KEY)
+				);
 
 			return account;
 		}

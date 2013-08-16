@@ -61,6 +61,9 @@ class AccountImpl implements Serializable, Account {
 
 
 	private String organizationalUnit; // ou
+
+
+	private String homePostalAddres;
 	
 	@Override
 	public String toString() {
@@ -320,5 +323,15 @@ class AccountImpl implements Serializable, Account {
 	@Override
 	public String getOrganizationalUnit() {
 		return this.organizationalUnit;
+	}
+
+	@Override
+	public void setHomePostalAddress(String homePostalAddres) {
+		this.homePostalAddres = homePostalAddres;
+	}
+
+	@Override
+	public String getHomePostalAddress() {
+		return this.homePostalAddres;
 	}
 }

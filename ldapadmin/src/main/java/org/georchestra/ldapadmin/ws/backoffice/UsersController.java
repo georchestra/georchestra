@@ -22,6 +22,7 @@ import org.georchestra.ldapadmin.dto.AccountFactory;
 import org.georchestra.ldapadmin.dto.Group;
 import org.georchestra.ldapadmin.dto.UserSchema;
 import org.georchestra.lib.file.FileUtils;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -167,7 +168,7 @@ public class UsersController {
      * 	"street": "street",
      * 	"postalCode": "postal code",
      *	"l": "locality",
-     * 	"postOfficeBox": "the post office box",
+     * 	"postOfficeBox": "the post office box"
      * }
 	 * </pre>
 	 *
@@ -190,7 +191,7 @@ public class UsersController {
 		String jsonResponse = "";
 		try{
 			
-			Account account = buildAccount(request.getInputStream());
+			Account account = createAccountFromRequestBody(request.getInputStream());
 			storeUser(account);
 			
 			UserResponse userResponse = new UserResponse(account);
@@ -241,6 +242,43 @@ public class UsersController {
 		}		
 	}
 
+	/**
+	 * Modifies the user data using the fields provided in the request body.
+	 * <p>
+	 * The fields that are not present in the parameters will remain untouched in the LDAP store.
+	 * </p>
+	 * <p>
+	 * The request format is:
+	 * [BASE_MAPPING]/users/{uid}
+	 * </p>
+	 * <p>
+	 * The request body should contains a the fields to modify using the JSON syntax. 
+	 * </p>
+	 * <p>
+	 * Example: 
+	 * </p>
+	 * <pre>
+	 * <b>Request</b>
+	 * [BASE_MAPPING]/users/hsimpson
+	 * 
+	 * <b>Body request: </b>
+	 * {"sn": "surname",
+	 *  "givenName": "first name",
+	 *  "mail": "e-mail",
+	 *  "telephoneNumber": "telephone",
+	 *  "facsimileTelephoneNumber": "value",
+     * 	"street": "street",
+     *  "postalCode": "postal code",
+     *  "l": "locality",
+     *  "postOfficeBox": "the post office box"
+     * }
+	 * 
+	 * </pre>
+	 * @param request
+	 * @param response
+	 * 
+	 * @throws IOException if the uid does not exist or fails to access to the LDAP store.
+	 */
 	@RequestMapping(value=BASE_MAPPING + "/users/*", method=RequestMethod.PUT)
 	public void update( HttpServletRequest request, HttpServletResponse response) throws IOException{
 		try{
@@ -248,7 +286,9 @@ public class UsersController {
 
 			Account account = this.accountDao.findByUID(uid);
 			
-			this.accountDao.update(account);
+			Account modified = modifyAccount( account, request.getInputStream());
+			
+			this.accountDao.update(modified);
 
 			response.setStatus(HttpServletResponse.SC_OK);
 			
@@ -310,9 +350,110 @@ public class UsersController {
 			out.close();
 		}
 	}
+	
+	/**
+	 * Modify only the account's fields that are present in the request body.
+	 *  
+	 * @param accont
+	 * @param inputStream
+	 * 
+	 * @return the modified account
+	 * 
+	 * @throws IOException
+	 */
+	private Account modifyAccount(Account accont, ServletInputStream inputStream) throws IOException {
+		
+			String strUser = FileUtils.asString(inputStream);
+			JSONObject json;
+			try {
+				json = new JSONObject(strUser);
+			} catch (JSONException e) {
+				LOG.error(e.getMessage());
+				throw new IOException(e);
+			}
+			
+			String givenName = getFieldValue(json, UserSchema.GIVEN_NAME_KEY);
+			if(givenName != null){
+				accont.setGivenName(givenName);
+			}
+			
+			String surname = getFieldValue(json, UserSchema.SURNAME_KEY);
+			if(surname != null){
+				accont.setSurname(surname);
+			}
+			
+			String email = getFieldValue(json, UserSchema.MAIL_KEY);
+			if(email != null){
+				accont.setEmail(email);
+			}
+			
+			String postOfficeBox = getFieldValue(json, UserSchema.POST_OFFICE_BOX_KEY);
+			if(postOfficeBox != null){
+				accont.setPostOfficeBox(postOfficeBox);
+			}
+
+			String postalCode = getFieldValue(json, UserSchema.POSTAL_CODE_KEY);
+			if(postalCode != null){
+				accont.setPostalCode(postalCode);
+			}
+			
+			String street = getFieldValue(json, UserSchema.STREET_KEY);
+			if(street != null){
+				accont.setStreet(street);
+			}
+
+			String locality = getFieldValue(json, UserSchema.LOCALITY_KEY);
+			if(locality != null){
+				accont.setLocality(locality);
+			}
+
+			String phone = getFieldValue(json, UserSchema.TELEPHONE_KEY);
+			if(phone != null){
+				accont.setPhone(phone);
+			}
+
+			String facsimile = getFieldValue(json, UserSchema.FACSIMILE_KEY);
+			if(facsimile != null){
+				accont.setFacsimile(facsimile);
+			}
+
+			String commonName = AccountFactory.formatCommonName(accont.getGivenName(), accont.getSurname());
+			
+			accont.setCommonName(commonName);
+
+			return accont;
+			
+	}
 
 
-	private Account buildAccount(ServletInputStream is) throws IOException {
+	/**
+	 * Returns the value associated to the fieldName key. 
+	 * 
+	 * If the key value is not present in the JSON object a null value is returned.
+	 * 
+	 * @param json
+	 * @param fieldName
+	 * 
+	 * @return the value
+	 */
+	private String getFieldValue(JSONObject json, String fieldName) {
+		String value;
+		try {
+			value = json.getString(fieldName);
+		} catch (JSONException e) {
+			value = null;
+		}
+		return value;
+	}
+
+	/**
+	 * Create a new account from the body request.
+	 * 
+	 * @param is
+	 * @return
+	 * @throws IOException
+	 */
+	private Account createAccountFromRequestBody(ServletInputStream is) throws IOException {
 		
 		try {
 			String strUser = FileUtils.asString(is);
@@ -329,19 +470,21 @@ public class UsersController {
 			
 			String email = json.getString(UserSchema.MAIL_KEY);
 			
-			String postOfficeBox = json.getString(UserSchema.POSTAL_OFFICE_BOX_KEY);
+			String postOfficeBox = json.getString(UserSchema.POST_OFFICE_BOX_KEY);
 			String postalCode = json.getString(UserSchema.POSTAL_CODE_KEY);
 			
 			String street= json.getString(UserSchema.STREET_KEY); 
 			String locality = json.getString(UserSchema.LOCALITY_KEY); 
 
 			String phone = json.getString(UserSchema.TELEPHONE_KEY);
+			
+			String facsimile = json.getString(UserSchema.FACSIMILE_KEY);
 
 			String uid = createUid(givenName, surname);
 			
 			String commonName = AccountFactory.formatCommonName(givenName, surname);
 			
-			Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, "", "", phone, "", "", postalCode, "", postOfficeBox, "", street, locality);
+			Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, "", "", phone, "", "", postalCode, "", postOfficeBox, "", street, locality, facsimile, "","","",null,"");
 			
 			return a;
 			
