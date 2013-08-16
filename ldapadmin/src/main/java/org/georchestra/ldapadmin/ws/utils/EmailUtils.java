@@ -21,8 +21,7 @@ public class EmailUtils {
 			errors.rejectValue("email", "email.error.required", "required");
 		} else {
 			if (!EmailValidator.getInstance().isValid(email)) {
-				errors.rejectValue("email", "email.error.invalidFormat",
-						"Invalid Format");
+				errors.rejectValue("email", "email.error.invalidFormat", "Invalid Format");
 			}
 		}
 	}

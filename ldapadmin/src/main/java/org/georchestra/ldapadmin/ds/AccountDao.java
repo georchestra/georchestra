@@ -12,6 +12,14 @@ import org.georchestra.ldapadmin.dto.Account;
  */
 public interface AccountDao {
 
+
+	/**
+	 * Checks if the uid exist.
+	 * @param uid
+	 * @return true if the uid exist, false in other case.
+	 * @throws DataServiceException
+	 */
+	public boolean exist(final String uid) throws DataServiceException;
 	
 	/**
 	 * Returns all accounts
@@ -30,7 +38,7 @@ public interface AccountDao {
 	 * @throws DuplicatedEmailException
 	 * @throws RequiredFiedException
 	 */
-	void insert(final Account account, final String groupID) throws DataServiceException, DuplicatedEmailException;
+	void insert(final Account account, final String groupID) throws DataServiceException, DuplicatedUidException, DuplicatedEmailException;
 
 	/**
 	 * Updates the user account

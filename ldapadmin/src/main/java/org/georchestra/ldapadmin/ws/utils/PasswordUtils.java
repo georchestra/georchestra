@@ -49,14 +49,4 @@ public final class PasswordUtils  {
 		}
 	}
 
-	/**
-	 * Generates a new strong password.
-	 * 
-	 * @return new password
-	 */
-	public static String generateNewPassword() {
-		return RandomStringUtils.randomAlphabetic(SIZE);	
-	}
-	
-
 }
