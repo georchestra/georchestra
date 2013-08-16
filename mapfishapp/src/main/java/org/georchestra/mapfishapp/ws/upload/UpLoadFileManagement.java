@@ -75,8 +75,11 @@ public class UpLoadFileManagement {
 	
 	private String workDirectory;
 
-    private AbstractFeatureGeoFileReader reader  = new AbstractFeatureGeoFileReader();
+    private AbstractFeatureGeoFileReader reader;
 
+    private UpLoadFileManagement(){
+    	//use the method factory
+    }
 
 	/**
 	 * Creates an instance of {@link UpLoadFileManagement}  which is set to use the implementation specified as parameter.
@@ -95,12 +98,15 @@ public class UpLoadFileManagement {
 	}
 
 	/**
-	 * Creates an instance of {@link UpLoadFileManagement} which is set to use the OGR implementation (default implementation) 
+	 * Creates an instance of {@link UpLoadFileManagement} which is set to use the OGR implementation if only if gdal/ogr is installed in the system
 	 * @return new instance of {@link UpLoadFileManagement} 
 	 */
 	public static UpLoadFileManagement create() {
 
-		return create(Implementation.ogr);
+		UpLoadFileManagement manager = new UpLoadFileManagement();
+		manager.reader = new AbstractFeatureGeoFileReader();
+
+		return manager;
 	}
 	
 	public void unzip() throws IOException {
