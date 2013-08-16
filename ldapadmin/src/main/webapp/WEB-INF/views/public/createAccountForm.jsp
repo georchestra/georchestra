@@ -76,7 +76,7 @@
 			</s:bind>
 
 			<fieldset>
-
+				<legend>User details</legend>
 				<div class="control-group">
 					<form:label path="firstName" cssClass="control-label"><s:message code="firstName.label" /> *</form:label>
 					<div class="controls">
@@ -98,9 +98,38 @@
 						<form:errors path="email" cssClass="help-inline" />
 					</div>
 				</div>
+				<div class="accordion" id="accordion2">
+					<div class="accordion-heading">
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+							<i class="icon-plus"></i> Optional - enter more details
+						</a>
+					</div>
+					<div id="collapseOne" class="accordion-body collapse">
+						<div class="control-group">
+							<form:label path="phone" cssClass="control-label"><s:message code="phone.label"/> </form:label>
+							<div class="controls">
+								<form:input path="phone" size="30" maxlength="80"/>
+								<form:errors path="phone" cssClass="help-inline" />
+							</div>
+						</div>
+						<div class="control-group">
+							<form:label path="org" cssClass="control-label"><s:message code="organization.label" />  </form:label>
+							<div class="controls">
+								<form:input path="org" size="30" maxlength="80"/>
+							</div>
+						</div>
+						<div class="control-group">
+							<form:label path="details" cssClass="control-label"><s:message code="details.label" />  </form:label>
+							<div class="controls">
+								<form:textarea path="details" rows="3" cols="30" />
+							</div>
+						</div>
+					</div>
+				</div>
 			</fieldset>
 
 			<fieldset>
+				<legend>Credentials</legend>
 				<div class="control-group">
 					<form:label path="uid" cssClass="control-label"><s:message code="uid.label" /> *</form:label>
 					<div class="controls">
@@ -133,6 +162,7 @@
 			</fieldset>
 
 			<fieldset>
+				<legend>ReCaptcha verification</legend>
 				<div class="control-group">
 					<div class="controls">
 						<a id="recaptcha_image" href="#" class="thumbnail"></a>
@@ -151,41 +181,6 @@
 							<a class="btn" href="javascript:Recaptcha.showhelp()"><i class="icon-question-sign"></i></a>
 						</div>
 						<form:errors path="recaptcha_response_field" cssClass="help-inline" />
-					</div>
-				</div>
-			</fieldset>
-
-			<fieldset>
-				<div class="accordion" id="accordion2">
-					<div class="accordion-group">
-						<div class="accordion-heading">
-							<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
-								<i class="icon-plus"></i> Optional - enter more details
-							</a>
-						</div>
-						<div id="collapseOne" class="accordion-body collapse">
-							<div class="accordion-inner">
-								<div class="control-group">
-									<form:label path="phone" cssClass="control-label"><s:message code="phone.label"/> </form:label>
-									<div class="controls">
-										<form:input path="phone" size="30" maxlength="80"/>
-										<form:errors path="phone" cssClass="help-inline" />
-									</div>
-								</div>
-								<div class="control-group">
-									<form:label path="org" cssClass="control-label"><s:message code="organization.label" />  </form:label>
-									<div class="controls">
-										<form:input path="org" size="30" maxlength="80"/>
-									</div>
-								</div>
-								<div class="control-group">
-									<form:label path="details" cssClass="control-label"><s:message code="details.label" />  </form:label>
-									<div class="controls">
-										<form:textarea path="details" rows="3" cols="30" />
-									</div>
-								</div>
-							</div>
-						</div>
 					</div>
 				</div>
 			</fieldset>
