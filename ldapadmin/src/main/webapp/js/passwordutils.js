@@ -50,6 +50,10 @@ function scorePassword( password) {
 function feedbackPassStrength(pwdCtrl, messageCtrl, password){
 
 	if((password == null) || (password=="")){
+		/* quit color and message if empty */
+		messageCtrl.innerHTML="";
+		messageCtrl.style="";
+		pwdCtrl.style.backgroundColor="";
 		return;
 	}
 
