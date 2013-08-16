@@ -119,14 +119,20 @@
 				<div class="control-group">
 					<form:label path="uid" cssClass="control-label"><s:message code="uid.label" /> *</form:label>
 					<div class="controls">
-						<form:input path="uid" size="30" maxlength="80" />
+						<div class="input-append">
+							<form:input path="uid" size="30" maxlength="80" />
+							<span class="add-on"><i class="icon-user"></i></span>
+						</div>
 						<form:errors path="uid" cssClass="help-inline" />
 					</div>
 				</div>
 				<div class="control-group">
 					<form:label path="password" cssClass="control-label"><s:message code="password.label" /> *</form:label>
 					<div class="controls">
-						<form:password path="password" size="30" maxlength="80" onchange="cleanPasswordError();feedbackPassStrength(password, pwdQuality, value);" onkeypress="cleanPasswordError();" onkeyup="feedbackPassStrength(password, pwdQuality, value);" />
+						<div class="input-append">
+							<form:password path="password" size="30" maxlength="80" onchange="cleanPasswordError();feedbackPassStrength(password, pwdQuality, value);" onkeypress="cleanPasswordError();" onkeyup="feedbackPassStrength(password, pwdQuality, value);" />
+							<span class="add-on"><i class="icon-lock"></i></span>
+						</div>
 						<span id="pwdQuality" class="help-inline"></span>
 						<form:errors path="password" cssClass="help-inline" />
 					</div>
