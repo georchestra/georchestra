@@ -51,21 +51,13 @@
         return true;
     }
 
-	/**
-	 * Validates the form
-	 */
-	function validateForm(){
-		if( !equalsPasswords() ) return false;
-		if( !strongPassword() ) return false;
-		return true;
-	}
 	</script>
 </head>
 
 <body>
 	<div class="container" id="formsContent" style="center">
 		<h2 class="text-center"><s:message code="createAccountFrom.title"/></h2>
-		<form:form id="createForm" name="createForm" method="post" modelAttribute="accountFormBean" cssClass="form-horizontal" onsubmit="return validateForm();" >
+		<form:form id="createForm" name="createForm" method="post" modelAttribute="accountFormBean" cssClass="form-horizontal" >
 
 			<c:if test="${not empty message}">
 			<div id="message" class="alert alert-info">
