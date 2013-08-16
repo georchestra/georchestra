@@ -7,21 +7,6 @@ LDAP
 
         apt-get install slapd ldap-utils
 
-* ldap tree config
-
-    in :
-
-        vi /etc/ldap/slapd.d/cn=config/olcDatabase={1}hdb.ldif
-
-    change the values into :
-     
-            olcRootDN= cn=admin,dc=georchestra,dc=org
-            olcSuffix= dc=georchestra,dc=org
-		
-* ldap restart
-
-        /etc/init.d/slapd restart
-
 * sample data import
 
  * getting the data
