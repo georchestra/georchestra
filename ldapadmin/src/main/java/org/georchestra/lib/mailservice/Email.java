@@ -60,9 +60,28 @@ public abstract class Email {
 		this.subjectEncoding = subjectEncoding;
 		this.languages = languages;
 		this.fileTemplate = fileTemplate;
+		
+		if(LOG.isDebugEnabled()){
+			LOG.debug(this.toString());
+		}
 	}
     
-    /**
+    
+    
+    @Override
+	public String toString() {
+		return "Email [DEB_MODEM=" + DEB_MODEM + ", DEB_ADSL=" + DEB_ADSL
+				+ ", DEB_T1=" + DEB_T1 + ", smtpHost=" + smtpHost
+				+ ", smtpPort=" + smtpPort + ", replyTo=" + replyTo + ", from="
+				+ from + ", bodyEncoding=" + bodyEncoding
+				+ ", subjectEncoding=" + subjectEncoding + ", languages="
+				+ Arrays.toString(languages) + ", recipients="
+				+ Arrays.toString(recipients) + ", subject=" + subject
+				+ ", fileTemplate=" + fileTemplate + ", emailBody=" + emailBody
+				+ "]";
+	}
+
+	/**
      * Read the body from template
      * @param servletContext 
      * @return
@@ -118,7 +137,9 @@ public abstract class Email {
 		
 		final Properties props = System.getProperties();
         props.put("mail.smtp.host", smtpHost);
-        props.put("mail.protocol.port", smtpPort);
+        props.put("mail.protocol.port", smtpPort); // from extractorapp
+        //props.put("mail.smtp.port", smtpPort);
+        
         final Session session = Session.getInstance(props, null);
         final MimeMessage message = new MimeMessage(session);
         

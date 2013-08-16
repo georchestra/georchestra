@@ -123,10 +123,17 @@ public final class NewAccountFormController {
 			
 			this.accountDao.insert(account, groupID);
 
+			final ServletContext servletContext = request.getSession().getServletContext();
 			if(this.moderator.requiresSignup() ){
-				ServletContext servletContext = request.getSession().getServletContext();
 
-				this.mailService.sendNewAccount(servletContext, account.getUid(), account.getCommonName(), this.moderator.getModeratorEmail());
+				// emil to the moderator
+				this.mailService.sendNewAccountRequiresSignup(servletContext, account.getUid(), account.getCommonName(), this.moderator.getModeratorEmail());
+				
+				// email to the user
+				this.mailService.sendAccountCreationInProcess(servletContext, account.getUid(), account.getCommonName(), account.getEmail());
+			} else {
+				// emil to the user
+				this.mailService.sendAccountWasCreated(servletContext, account.getUid(), account.getCommonName(), account.getEmail());
 			}
 			
 			sessionStatus.setComplete();
