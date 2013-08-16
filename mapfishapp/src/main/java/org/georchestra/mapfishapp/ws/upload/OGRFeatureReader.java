@@ -155,6 +155,16 @@ final class OGRFeatureReader implements FeatureGeoFileReader {
 	public static boolean isOK() {
 		
 		try{
+			Class.forName("org.geotools.data.ogr.jni.JniOGR");
+			
+		} catch (Throwable e){
+		
+			LOG.info("gdal/ogr is not available in the system", e);
+
+			return false;
+		} 
+		
+		try{
 			JniOGR ogr  = new JniOGR();
 		
 			ArrayList<String> availableDrivers = new ArrayList<String>();
@@ -171,10 +181,10 @@ final class OGRFeatureReader implements FeatureGeoFileReader {
 				}
 			}
 		} catch(Error e)  {
-			String msg = "cannot use the ogr implementation";
-			LOG.warn(msg, e);
+			LOG.warn("the ogr installed in the system doesn't have the drivers required by mapfish", e);
 			return false;
 		}
+		LOG.info("gdal/ogr is available in the system");
 		
 		return true;
 	}
