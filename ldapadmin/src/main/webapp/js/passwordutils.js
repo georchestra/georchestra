@@ -46,6 +46,9 @@ function scorePassword( password) {
  * @param pwdCtrl password control
  * @param messageCtrl the control used to display the password quality
  * @param password 
+ * 
+ * TODO: use bootstrap instead of hardcoding colors. We may also use
+ *       the bootstrap progress bars
  */
 function feedbackPassStrength(pwdCtrl, messageCtrl, password){
     var message = "";
