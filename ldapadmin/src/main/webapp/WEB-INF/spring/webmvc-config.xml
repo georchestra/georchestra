@@ -121,12 +121,12 @@
             value="The account was created" />
 
         <property name="accountCreationInProcessEmailFile"
-            value="/WEB-INF/templates/account-creation-in-progrss-template.txt" />
+            value="/WEB-INF/templates/account-creation-in-progress-template.txt" />
         <property name="accountCreationInProcessEmailSubject"
             value="account creation in process" />
             
         <property name="newAccountRequiresSignupEmailFile"
-            value="/WEB-INF/templates/newaccount-requires-singup-template.txt" />
+            value="/WEB-INF/templates/newaccount-requires-signup-template.txt" />
         <property name="newAccountRequiresSignupEmailSubject"
             value="New account requires singnup" />
 
