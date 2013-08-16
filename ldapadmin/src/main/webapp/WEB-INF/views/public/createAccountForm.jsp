@@ -44,6 +44,11 @@
         document.getElementById("passwordError").innerHTML="";
         document.getElementById("confirmPassword").value="";
     }
+    
+    var RecaptchaOptions = {
+	    theme : 'custom',
+        custom_theme_widget: 'recaptcha_widget'
+    };
 	</script>
 </head>
 
@@ -150,10 +155,21 @@
 			<fieldset>
 				<div class="control-group">
 					<div class="controls">
-						<%
-						ReCaptcha c = ReCaptchaFactory.newReCaptcha("6Lf0h-MSAAAAAOQ4YyRtbCNccU87dlGmokmelZjh", "6Lf0h-MSAAAAAI2nHJfNPDaEXXjsdmn8eKSZUrQZ", false);
-						out.print(c.createRecaptchaHtml(null, null));
-						%>
+						<a id="recaptcha_image" href="#" class="thumbnail"></a>
+						<div class="recaptcha_only_if_incorrect_sol" style="color:red">Incorrect please try again</div>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="recaptcha_only_if_image control-label">Enter the words above:</label>
+					<label class="recaptcha_only_if_audio control-label">Enter the numbers you hear:</label>
+					<div class="controls">
+						<div class="input-append">
+							<input type="text" id="recaptcha_response_field" name="recaptcha_response_field" class="input-recaptcha" />
+							<a class="btn" href="javascript:Recaptcha.reload()"><i class="icon-refresh"></i></a>
+							<a class="btn recaptcha_only_if_image" href="javascript:Recaptcha.switch_type('audio')"><i title="Get an audio CAPTCHA" class="icon-headphones"></i></a>
+							<a class="btn recaptcha_only_if_audio" href="javascript:Recaptcha.switch_type('image')"><i title="Get an image CAPTCHA" class="icon-picture"></i></a>
+							<a class="btn" href="javascript:Recaptcha.showhelp()"><i class="icon-question-sign"></i></a>
+						</div>
 						<form:errors path="recaptcha_response_field" cssClass="help-inline" />
 					</div>
 				</div>
@@ -164,6 +180,7 @@
 			</div>
 		</form:form>
 	</div>
+	<script type="text/javascript" src="http://www.google.com/recaptcha/api/challenge?k=6Lf0h-MSAAAAAOQ4YyRtbCNccU87dlGmokmelZjh"></script>
 	<script src="http://code.jquery.com/jquery.js"></script>
 	<script src='<c:url value="/js/bootstrap.min.js" />'></script>
 </body>
