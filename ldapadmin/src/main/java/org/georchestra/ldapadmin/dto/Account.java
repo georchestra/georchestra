@@ -4,88 +4,118 @@ package org.georchestra.ldapadmin.dto;
  * Account data transfer object.
  * 
  * @author Mauricio Pazos
- *
+ * 
  */
 public interface Account {
 
-	public   void setUid(String uid);
+	void setUid(String uid);
 
-	public   String getUid();
-
-	/**
-	 * Person’s full name.
-	 */
-	public   String getCommonName();
+	String getUid();
 
 	/**
 	 * Person’s full name.
 	 */
-	public   void setCommonName(String name);
-
-	public   String getOrg();
-
-	public   void setOrg(String org);
-
-	public   String getRole();
-
-	public   void setRole(String role);
-
-	public   String getEmail();
-
-	public   void setEmail(String email);
-
-	public   String getPhone();
-
-	public   void setPhone(String phone);
-
-	public   String getDescription();
-
-	public   void setDetails(String details);
-
-	public   void setPassword(String password);
-
-	public   String getPassword();
-
-	public   void setNewPassword(String newPassword);
-
-	public   String getNewPassword();
-
-	public   String getSurname();
-
-	public   void setSurname(String surname);
+	String getCommonName();
 
 	/**
-	 * The givenName attribute is used to hold the part of a person’s name which is not their surname nor middle name.	 
+	 * Person’s full name.
 	 */
-	public   String getGivenName();
+	void setCommonName(String name);
+
+	String getOrg();
+
+	void setOrg(String org);
+
+	String getRole();
+
+	void setRole(String role);
+
+	String getEmail();
+
+	void setEmail(String email);
+
+	String getPhone();
+
+	void setPhone(String phone);
+
+	String getDescription();
+
+	void setDetails(String details);
+
+	void setPassword(String password);
+
+	String getPassword();
+
+	void setNewPassword(String newPassword);
+
+	String getNewPassword();
+
+	String getSurname();
+
+	void setSurname(String surname);
 
 	/**
-	 * The givenName attribute is used to hold the part of a person’s name which is not their surname nor middle name.	 
+	 * The givenName attribute is used to hold the part of a person’s name which
+	 * is not their surname nor middle name.
 	 */
-	public   void setGivenName(String givenName);
+	String getGivenName();
 
-	public   String getTitle();
+	/**
+	 * The givenName attribute is used to hold the part of a person’s name which
+	 * is not their surname nor middle name.
+	 */
+	void setGivenName(String givenName);
 
-	public   void setTitle(String title);
+	String getTitle();
 
-	public   String getPostalAddress();
+	void setTitle(String title);
 
-	public   void setPostalAddress(String postalAddress);
+	String getPostalAddress();
 
-	public   String getPostalCode();
+	void setPostalAddress(String postalAddress);
 
-	public   void setPostalCode(String postalCode);
+	String getPostalCode();
 
-	public   String getRegisteredAddress();
+	void setPostalCode(String postalCode);
 
-	public   void setRegisteredAddress(String registeredAddress);
+	String getRegisteredAddress();
 
-	public   String getPostOfficeBox();
+	void setRegisteredAddress(String registeredAddress);
 
-	public   void setPostOfficeBox(String postOfficeBox);
+	String getPostOfficeBox();
 
-	public   String getPhysicalDeliveryOfficeName();
+	void setPostOfficeBox(String postOfficeBox);
 
-	public   void setPhysicalDeliveryOfficeName( String physicalDeliveryOfficeName);
+	String getPhysicalDeliveryOfficeName();
+
+	void setPhysicalDeliveryOfficeName(String physicalDeliveryOfficeName);
+
+	void setStreet(String street);
+
+	String getStreet();
+
+	void setLocality(String locality);
+
+	String getLocality();
+
+	void setFacsimile(String facsimile);
+
+	String getFacsimile();
+
+	void setMobile(String mobile);
+
+	String getMobile();
+
+	void setRoomNumber(Integer roomNumber);
+
+	Integer getRoomNumber();
+
+	void setStateOrProvince(String stateOrProvince);
+
+	String getStateOrProvince();
+
+	void setOrganizationalUnit(String organizationalUnit);
+
+	String getOrganizationalUnit();
 
 }

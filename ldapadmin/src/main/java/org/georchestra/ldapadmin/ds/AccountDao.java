@@ -101,6 +101,18 @@ public interface AccountDao {
 	 * @param newPassword
 	 */
 	void addNewPassword(String uid, String newPassword);
+
+	
+	/**
+	 * Generates a new Id based on the uid provided as parameter.
+	 * 
+	 * @param uid
+	 *  
+	 * @return a new uid
+	 * 
+	 * @throws DataServiceException
+	 */
+	String generateUid(String uid) throws DataServiceException;
 	
 
 

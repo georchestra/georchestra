@@ -14,9 +14,6 @@ import java.io.Serializable;
  */
 class AccountImpl implements Serializable, Account {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -8022496448991887664L;
 	
 	
@@ -43,6 +40,27 @@ class AccountImpl implements Serializable, Account {
 	private String registeredAddress; //registeredAddress 
 	private String postOfficeBox; // postOfficeBox
 	private String physicalDeliveryOfficeName; //physicalDeliveryOfficeName
+
+
+	private String street;
+
+
+	private String locality; // l
+
+
+	private String facsimile;
+
+
+	private String mobile;
+
+
+	private Integer roomNumber;
+
+
+	private String stateOrProvince; // st
+
+
+	private String organizationalUnit; // ou
 	
 	@Override
 	public String toString() {
@@ -229,5 +247,78 @@ class AccountImpl implements Serializable, Account {
 	@Override
 	public void setPhysicalDeliveryOfficeName(String physicalDeliveryOfficeName) {
 		this.physicalDeliveryOfficeName = physicalDeliveryOfficeName;
+	}
+
+	@Override
+	public void setStreet(String street) {
+		
+		this.street = street;
+	}
+
+	@Override
+	public String getStreet() {
+		return this.street;
+	}
+
+	@Override
+	public void setLocality(String locality) {
+		
+		this.locality = locality;
+	}
+
+	@Override
+	public String getLocality() {
+
+		return this.locality;
+	}
+
+	@Override
+	public void setFacsimile(String facsimile) {
+		this.facsimile = facsimile;
+	}
+
+	@Override
+	public String getFacsimile() {
+		return this.facsimile;
+	}
+
+	@Override
+	public void setMobile( String mobile) {
+		this.mobile = mobile;
+	}
+
+	@Override
+	public String getMobile() {
+		return this.mobile;
+	}
+
+	@Override
+	public void setRoomNumber(Integer roomNumber) {
+		
+		this.roomNumber = roomNumber;
+	}
+	@Override
+	public Integer getRoomNumber() {
+		return this.roomNumber;
+	}
+
+	@Override
+	public void  setStateOrProvince(String stateOrProvince) {
+		this.stateOrProvince = stateOrProvince;
+	}
+
+	@Override
+	public String getStateOrProvince() {
+		return this.stateOrProvince;
+	}
+
+	@Override
+	public void setOrganizationalUnit(String organizationalUnit) {
+		this.organizationalUnit = organizationalUnit;
+	}
+
+	@Override
+	public String getOrganizationalUnit() {
+		return this.organizationalUnit;
 	}
 }

@@ -114,6 +114,8 @@ public class AccountFactory {
 	 * @param registeredAddress
 	 * @param postOfficeBox
 	 * @param physicalDeliveryOfficeName
+	 * @param locality 
+	 * @param street 
 	 * 
 	 * @return {@link Account}
 	 */
@@ -131,7 +133,9 @@ public class AccountFactory {
 			String postalCode, 
 			String registeredAddress ,
 			String postOfficeBox, 
-			String physicalDeliveryOfficeName) {
+			String physicalDeliveryOfficeName, 
+			String street, 
+			String locality) {
 		
 		
 		Account a = new AccountImpl();
@@ -147,6 +151,9 @@ public class AccountFactory {
 
 		a.setPhone(phone);
 		a.setDetails(description);
+		
+		a.setStreet(street);
+		a.setLocality(locality);
 		
 		a.setPostalAddress(postalAddress);
 		a.setPostalCode(postalCode);

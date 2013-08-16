@@ -148,7 +148,7 @@ public final class NewAccountFormController {
 		} catch (DuplicatedUidException e) {
 			
 			try {
-				String proposedUid = generateUid( formBean.getUid() );
+				String proposedUid = this.accountDao.generateUid( formBean.getUid() );
 				
 				formBean.setUid(proposedUid);
 				
@@ -164,16 +164,5 @@ public final class NewAccountFormController {
 			
 			throw new IOException(e);
 		}
-	}
-
-	private String generateUid(final String uid) throws DataServiceException {
-		
-		String newUid = UidGenerator.next(uid);
-		
-		while(this.accountDao.exist(newUid)){
-				
-			newUid = UidGenerator.next(newUid);
-		}
-		return newUid;
 	}
 }

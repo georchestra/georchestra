@@ -6,6 +6,7 @@ package org.georchestra.ldapadmin.ws.backoffice;
 import java.util.List;
 
 import org.georchestra.ldapadmin.dto.Account;
+import org.georchestra.ldapadmin.dto.UserSchema;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
