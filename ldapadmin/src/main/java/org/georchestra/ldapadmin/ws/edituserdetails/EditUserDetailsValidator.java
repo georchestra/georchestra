@@ -3,7 +3,7 @@
  */
 package org.georchestra.ldapadmin.ws.edituserdetails;
 
-import org.georchestra.ldapadmin.ws.utils.UserNameUtils;
+import org.georchestra.ldapadmin.ws.utils.UserUtils;
 import org.springframework.validation.BindingResult;
 
 /**
@@ -14,7 +14,7 @@ public class EditUserDetailsValidator {
 
 	public void validate(EditUserDetailsFormBean form, BindingResult errors) {
 		
-		UserNameUtils.validate( form.getFirstName(), form.getSurname(), errors ); 
+		UserUtils.validate( form.getFirstName(), form.getSurname(), errors ); 
 		
 	}
 

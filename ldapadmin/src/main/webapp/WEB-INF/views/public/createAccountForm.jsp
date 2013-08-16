@@ -15,12 +15,69 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link href="<c:url value="/styles/ldapadmin.css" />" rel="stylesheet"  type="text/css" />     
     <title>Create Account Form</title>
+    
+    <script type="text/javascript"  src="<c:url value="/js/passwordutils.js" />" > </script>
+    
+    <script type="text/javascript">
+    
+    function makeUid(){
+    	
+    	var name = document.createForm.firstName.value;
+    	var surname = document.createForm.surname.value;
+    	
+        document.createForm.uid.value = name.toLowerCase().charAt(0)+ surname.toLowerCase(); // strategy 1
+    	
+        //document.createForm.uid.value = name +"."+ surname;  // strategy 2
+    }
+    
+    function equalsPasswords() {
+    	
+    	var pwd1 = document.createForm.password.value;
+        var pwd2 = document.createForm.confirmPassword.value;
+    	
+        if((pwd1 == "") || (pwd2 == "")) return false; 
+
+    	if (pwd1 != pwd2) {
+
+    		  document.getElementById("passwordError").innerHTML = "The passwords are not equals";
+    		  document.createForm.password.focus();
+    		  return false;
+        }
+    	return true;
+	}
+    function cleanPasswordError(){
+        document.getElementById("passwordError").innerHTML="";
+    }                
+    
+    function strongPassword(){
+    	
+    	var score = scorePassword(document.createForm.password.value);
+    	if(score < 60){
+            document.getElementById("passwordError").innerHTML = "A better password is required (<b>good</b> or <b>strong</b> level are acceptable).";
+    		return false;
+    	}  
+        return true;
+    }
+    
+    /**
+     * Validates the form
+     */
+    function validateForm(){
+    	
+    	if( !equalsPasswords() ) return false;
+    	
+    	if( !strongPassword() ) return false;
+    	
+    	return true;
+    }
+    </script>
+    
 </head>
 
 <body>
     <div id="formsContent" style="center">
         <h2><s:message code="createAccountFrom.title"/></h2>
-        <form:form id="form" method="post" modelAttribute="accountFormBean" cssClass="cleanform">
+        <form:form id="createForm" name="createForm" method="post" modelAttribute="accountFormBean" cssClass="cleanform" onsubmit="return validateForm();" >
 
             <div class="header">
                 <c:if test="${not empty message}">
@@ -37,15 +94,15 @@
 
 				<p>
 					<form:label path="firstName"><s:message code="firstName.label" /> *</form:label>
-					<form:input path="firstName" size="30" maxlength="80"/>
+					<form:input path="firstName" size="30" maxlength="80" onkeyup="makeUid();" />
 				</p>
 				<p>
-					<form:errors path="firstName" cssClass="error" />
+					<form:errors path="firstName" cssClass="error"/>
 				</p>
 
                 <p>
                     <form:label path="surname"><s:message code="surname.label"/> *</form:label>
-                    <form:input path="surname" size="30" maxlength="80"/>
+                    <form:input path="surname" size="30" maxlength="80" onkeyup="makeUid();" />
                 </p>
                 <p>
                     <form:errors path="surname" cssClass="error" />
@@ -80,20 +137,33 @@
 			</fieldset>
 
 			<fieldset>
+                <p>
+                    <form:label path="uid"><s:message code="uid.label" /> *</form:label>
+                    <form:input path="uid" size="30" maxlength="80"/>
+                </p>
+                <p>
+                    <form:errors path="uid" cssClass="error" />
+                </p>
 				<p>
 					<form:label path="password"><s:message code="password.label" /> *</form:label>
-					<form:password path="password" size="30" maxlength="80"/>
+					<form:password path="password" size="30" maxlength="80" onkeypress="cleanPasswordError();" onkeyup="feedbackPassStrength(password, pwdQuality, value);" />
 				</p>
 				<p>
 					<form:errors path="password" cssClass="error" />
 				</p>
+                <p>
+                    <div id="pwdQuality"></div>
+                </p>
 
 				<p>
 					<form:label path="confirmPassword"><s:message code="confirmPassword.label" /> *</form:label>
-					<form:password path="confirmPassword" size="30" maxlength="80"/>
+					<form:password path="confirmPassword" size="30" maxlength="80" onblur="equalsPasswords();"/>
 				</p>
 				<p>
 					<form:errors path="confirmPassword" cssClass="error" />
+				</p>
+				<p>
+				    <div id="passwordError"></div>
 				</p>
 
 			</fieldset>
