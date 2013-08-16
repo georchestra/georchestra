@@ -18,6 +18,9 @@
 	<script type="text/javascript"  src="<c:url value="/js/passwordutils.js" />" > </script>
 	<script type="text/javascript">
 
+	/* to be called when either Firstname or Surname is modified
+	 * ("keyup" or "change" event - "input" event is not available with this version of spring)
+	 */
 	function makeUid(){
 		var name = document.createForm.firstName.value;
 		var surname = document.createForm.surname.value;
