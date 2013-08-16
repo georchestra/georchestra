@@ -21,4 +21,6 @@ public interface GroupDao {
 
 	List<String> findAllGroups() throws DataServiceException;
 
+	void deleteUser(String uid) throws DataServiceException;
+
 }

@@ -68,12 +68,39 @@ public class GroupDaoImpl implements GroupDao {
 		try {
 			context.addAttributeValue("memberUid", userId, false);
 
-			ldapTemplate.modifyAttributes(context);
+			this.ldapTemplate.modifyAttributes(context);
 
 		} catch (Exception e) {
 			throw new DataServiceException(e);		
 		}
 		
+	}
+
+	/**
+	 * Removes the uid from the group (PENDING_USERS or SV_USER)
+	 * 
+	 * @param uid
+	 */
+	@Override
+	public void deleteUser(String uid) throws DataServiceException {
+		
+		// removes the user from SV_USER
+		Name dnSvUser = buildDn(Group.SV_USER);
+		
+		DirContextOperations contextSvUser = ldapTemplate.lookupContext(dnSvUser);
+		contextSvUser.setAttributeValues("objectclass", new String[] { "top", "posixGroup" });
+		contextSvUser.removeAttributeValue("memberUid", uid);
+
+		this.ldapTemplate.modifyAttributes(contextSvUser);
+		
+		// removes the user from PENDING_USERS
+		Name dnPendingUser = buildDn(Group.PENDING_USERS);
+		
+		DirContextOperations contextPending = ldapTemplate.lookupContext(dnPendingUser);
+		contextPending.setAttributeValues("objectclass", new String[] { "top", "posixGroup" });
+		contextPending.removeAttributeValue("memberUid", uid);
+
+		this.ldapTemplate.modifyAttributes(contextPending);
 	}
 	
 	@Override
@@ -133,6 +160,7 @@ public class GroupDaoImpl implements GroupDao {
 			return g;
 		}
 	}
+
 	
 
 }

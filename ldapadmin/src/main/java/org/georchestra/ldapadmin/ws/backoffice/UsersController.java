@@ -17,6 +17,7 @@ import org.georchestra.ldapadmin.ds.AccountDao;
 import org.georchestra.ldapadmin.ds.DataServiceException;
 import org.georchestra.ldapadmin.ds.DuplicatedEmailException;
 import org.georchestra.ldapadmin.ds.DuplicatedUidException;
+import org.georchestra.ldapadmin.ds.NotFoundException;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
 import org.georchestra.ldapadmin.dto.Group;
@@ -41,6 +42,11 @@ public class UsersController {
 	private static final Log LOG = LogFactory.getLog(UsersController.class.getName());
 
 	private static final String BASE_MAPPING = "/private";
+
+	private static final String DUPLICATED_EMAIL = "duplicated_email";
+
+	private static final String NOT_FOUND = "not_found";
+
 
 	private AccountDao accountDao;
 	
@@ -110,24 +116,43 @@ public class UsersController {
 	@RequestMapping(value=BASE_MAPPING + "/users/*", method=RequestMethod.GET)
 	public void findByUid( HttpServletRequest request, HttpServletResponse response) throws IOException{
 		
+		String uid = getUidPathVariable(request);
+
+		// searches the account
+		Account account = null;
 		try {
+			account = this.accountDao.findByUID(uid);
 			
-			String uid = getUidPathVariable(request);
+		} catch (NotFoundException e) {
 			
-			Account account = this.accountDao.findByUID(uid);
+			buildResponse(response, buildResponseMessage(Boolean.FALSE, NOT_FOUND), HttpServletResponse.SC_NOT_FOUND);
 			
-			UserResponse userResponse = new UserResponse(account);
-			
-			String jsonAccount = userResponse.asJsonString();
-			
-			buildResponse(response, jsonAccount, HttpServletResponse.SC_OK);
-			
-		}  catch (Exception e) {
-			LOG.error(e.getMessage());
-			
+			return;
+
+		} catch (DataServiceException e) {
 			throw new IOException(e);
-		} 
+		}
+
+		// sets the account data in the response object
+		UserResponse userResponse = new UserResponse(account);
 		
+		String jsonAccount = userResponse.asJsonString();
+		
+		buildResponse(response, jsonAccount, HttpServletResponse.SC_OK);
+
+	}
+	private String buildResponseMessage(Boolean status){
+		return buildResponseMessage(status, null);
+	}
+	private String buildResponseMessage(Boolean status, String errorMessage){
+		
+		String error;
+		if(errorMessage == null){
+			error = "{ \"success\": "+ status.toString() +" }";
+		} else {
+			error = "{ \"success\": "+ status.toString() +" , \"error\": \"" +errorMessage+ "\" }";
+		}
+		return error;
 	}
 	
 	/**
@@ -202,7 +227,7 @@ public class UsersController {
 		} catch (DuplicatedEmailException emailex){
 			
 			// add error description
-			jsonResponse = "{ \"success\": false, \"error\": \"duplicated_email\"}";
+			jsonResponse = buildResponseMessage(Boolean.FALSE, DUPLICATED_EMAIL); 
 			
 		} catch (DataServiceException dsex){
 
@@ -281,16 +306,32 @@ public class UsersController {
 	 */
 	@RequestMapping(value=BASE_MAPPING + "/users/*", method=RequestMethod.PUT)
 	public void update( HttpServletRequest request, HttpServletResponse response) throws IOException{
-		try{
-			String uid = getUidPathVariable(request);
+		
+		String uid = getUidPathVariable(request);
 
-			Account account = this.accountDao.findByUID(uid);
+		// searches the account
+		Account account = null;
+		try {
+			account = this.accountDao.findByUID(uid);
+			
+		} catch (NotFoundException e) {
+			
+			buildResponse(response, buildResponseMessage(Boolean.FALSE, NOT_FOUND), HttpServletResponse.SC_NOT_FOUND);
+			
+			return;
+
+		} catch (DataServiceException e) {
+			throw new IOException(e);
+		}
+		
+		// modifies the account data
+		try{
 			
 			Account modified = modifyAccount( account, request.getInputStream());
 			
 			this.accountDao.update(modified);
 
-			response.setStatus(HttpServletResponse.SC_OK);
+			buildResponse(response, "{ \"success\": true}", HttpServletResponse.SC_OK);
 			
 		} catch (Exception e){
 			LOG.error(e.getMessage());
@@ -299,6 +340,18 @@ public class UsersController {
 		}
 	}
 
+	/**
+	 * Deletes the user.
+	 * 
+	 * The request format is:
+	 * <pre>
+	 * [BASE_MAPPING]/users/{uid}
+	 * </pre>
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
 	@RequestMapping(value=BASE_MAPPING + "/users/*", method=RequestMethod.DELETE)
 	public void delete( HttpServletRequest request, HttpServletResponse response) throws IOException{
 		try{

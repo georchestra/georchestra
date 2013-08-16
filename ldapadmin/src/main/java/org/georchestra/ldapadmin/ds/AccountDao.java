@@ -8,7 +8,7 @@ import org.georchestra.ldapadmin.dto.Account;
  * Defines the operations to maintain the set of account.
  * 
  * @author Mauricio Pazos
- *
+ * 
  */
 public interface AccountDao {
 

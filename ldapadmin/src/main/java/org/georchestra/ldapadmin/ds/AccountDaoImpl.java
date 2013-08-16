@@ -144,7 +144,6 @@ public final class AccountDaoImpl implements AccountDao{
 		Name dn = buildDn(account.getUid());
 		DirContextOperations context = ldapTemplate.lookupContext(dn);
 
-		//FIXME mapDetailsToContext(account, context);
 		mapToContext(account, context);
 		
 		ldapTemplate.modifyAttributes(context);
@@ -152,11 +151,16 @@ public final class AccountDaoImpl implements AccountDao{
 
 
 	/**
+	 * Removes the user account and the reference included in the group
+	 * 
 	 * @see {@link AccountDao#delete(Account)}
 	 */
 	@Override
 	public void delete(final String uid) throws DataServiceException, NotFoundException{
-		ldapTemplate.unbind(buildDn(uid));
+		this.ldapTemplate.unbind(buildDn(uid), true);
+		
+		this.groupDao.deleteUser( uid );
+
 	}
 	
 	/**
@@ -258,10 +262,6 @@ public final class AccountDaoImpl implements AccountDao{
 		if( a.getSurname().length() <= 0){
 			throw new IllegalArgumentException("surname name (sn) is requird");
 		}
-// 	TODO password is not mandatory		
-//		if( a.getPassword().length() <= 0){
-//			throw new IllegalArgumentException("password is requird");
-//		}
 		if( a.getEmail().length() <= 0){
 			throw new IllegalArgumentException("email is requird");
 		}
@@ -497,8 +497,6 @@ public final class AccountDaoImpl implements AccountDao{
 			pwdValues[1] = newPassword;
 			context.setAttributeValues(pwd, pwdValues);
 		}
-		
-		// TODO this logic requires set the update date (is there any ldap field to support this???)
 		
 		ldapTemplate.modifyAttributes(context);
 	}
