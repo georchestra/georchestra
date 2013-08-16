@@ -48,38 +48,28 @@ function scorePassword( password) {
  * @param password 
  */
 function feedbackPassStrength(pwdCtrl, messageCtrl, password){
-
-	if((password == null) || (password=="")){
-		/* quit color and message if empty */
-		messageCtrl.innerHTML="";
-		messageCtrl.style="";
-		pwdCtrl.style.backgroundColor="";
-		return;
-	}
-
-	var score = scorePassword(password);
-
-    var message = "very weak";
-    var color =  "#e71a1a";
-	if (score > 80){
-    	
-    	message= "strong";
-    	color = "#008000"; 
-    	
-    }else if (score > 60){
-    	
-        message = "good";
-        color =  "#e3cb00";
-        
-    }else if (score >= 30){
-    	
-        message = "weak";
-        color =  "#Fe3d1a";
-        
-    } 
-	
-	messageCtrl.innerHTML = message;
-	messageCtrl.style= "color:" + color;
-	pwdCtrl.style.backgroundColor= color;
-	
+    var message = "";
+    var color = "";
+    if (!password){
+        message = "empty";
+        color = "#e71a1a";
+    } else {
+        var score = scorePassword(password);
+        if (score > 80){
+            message= "strong";
+            color = "#008000";
+        } else if (score > 60) {
+            message = "good";
+            color = "#e3cb00";
+        } else if (score >= 30) {
+            message = "weak";
+            color = "#Fe3d1a";
+        } else {
+            message = "very weak";
+            color = "#e71a1a";
+        }
+    }
+    messageCtrl.innerHTML = message;
+    messageCtrl.style= "color:" + color;
+    pwdCtrl.style.backgroundColor= color;
 }

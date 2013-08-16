@@ -27,11 +27,12 @@
 		document.createForm.uid.value = name.toLowerCase().charAt(0)+ surname.toLowerCase(); // strategy 1
 		//document.createForm.uid.value = name +"."+ surname;  // strategy 2
 	}
+	/* to be called when the password confirmation field loses focus */
 	function equalsPasswords() {
 		var pwd1 = document.createForm.password.value;
 		var pwd2 = document.createForm.confirmPassword.value;
-		if((pwd1 == "") || (pwd2 == "")) return false;
 		if (pwd1 != pwd2) {
+				/* TODO: i18n */
 			  document.getElementById("passwordError").innerHTML = "The passwords are not equals";
 			  document.createForm.password.focus();
 			  return false;
@@ -140,7 +141,7 @@
 				<div class="control-group">
 					<form:label path="password" cssClass="control-label"><s:message code="password.label" /> *</form:label>
 					<div class="controls">
-						<form:password path="password" size="30" maxlength="80" onkeypress="cleanPasswordError();" onkeyup="feedbackPassStrength(password, pwdQuality, value);" />
+						<form:password path="password" size="30" maxlength="80" onchange="feedbackPassStrength(password, pwdQuality, value);" onkeypress="cleanPasswordError();" onkeyup="feedbackPassStrength(password, pwdQuality, value);" />
 						<span id="pwdQuality" class="help-inline"></span>
 						<form:errors path="password" cssClass="help-inline" />
 					</div>
