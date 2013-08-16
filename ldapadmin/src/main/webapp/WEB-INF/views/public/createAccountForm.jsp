@@ -39,8 +39,10 @@
         }
         return true;
     }
+    /* to be called when the password field is modified */
     function cleanPasswordError(){
         document.getElementById("passwordError").innerHTML="";
+        document.getElementById("confirmPassword").value="";
     }
     function strongPassword(){
         var score = scorePassword(document.createForm.password.value);
