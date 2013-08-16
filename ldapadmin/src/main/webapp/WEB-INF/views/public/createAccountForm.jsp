@@ -44,15 +44,6 @@
         document.getElementById("passwordError").innerHTML="";
         document.getElementById("confirmPassword").value="";
     }
-    function strongPassword(){
-        var score = scorePassword(document.createForm.password.value);
-        if(score < 60){
-            document.getElementById("passwordError").innerHTML = "A better password is required (<b>good</b> or <b>strong</b> level are acceptable).";
-            return false;
-        }
-        return true;
-    }
-
 	</script>
 </head>
 
