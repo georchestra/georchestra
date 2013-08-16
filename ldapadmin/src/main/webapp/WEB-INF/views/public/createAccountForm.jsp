@@ -18,38 +18,38 @@
 	<script type="text/javascript"  src="<c:url value="/js/passwordutils.js" />" > </script>
 	<script type="text/javascript">
 
-	/* to be called when either Firstname or Surname is modified
-	 * ("keyup" or "change" event - "input" event is not available with this version of spring)
-	 */
-	function makeUid(){
-		var name = document.createForm.firstName.value;
-		var surname = document.createForm.surname.value;
-		document.createForm.uid.value = name.toLowerCase().charAt(0)+ surname.toLowerCase(); // strategy 1
-		//document.createForm.uid.value = name +"."+ surname;  // strategy 2
-	}
-	/* to be called when the password confirmation field loses focus */
-	function equalsPasswords() {
-		var pwd1 = document.createForm.password.value;
-		var pwd2 = document.createForm.confirmPassword.value;
-		if (pwd1 != pwd2) {
-				/* TODO: i18n */
-			  document.getElementById("passwordError").innerHTML = "The passwords are not equals";
-			  document.createForm.password.focus();
-			  return false;
-		}
-		return true;
-	}
-	function cleanPasswordError(){
-		document.getElementById("passwordError").innerHTML="";
-	}
-	function strongPassword(){
-		var score = scorePassword(document.createForm.password.value);
-		if(score < 60){
-			document.getElementById("passwordError").innerHTML = "A better password is required (<b>good</b> or <b>strong</b> level are acceptable).";
-			return false;
-		}
-		return true;
-	}
+    /* to be called when either Firstname or Surname is modified
+     * ("keyup" or "change" event - "input" event is not available with this version of spring)
+     */
+    function makeUid(){
+        var name = document.createForm.firstName.value;
+        var surname = document.createForm.surname.value;
+        document.createForm.uid.value = name.toLowerCase().charAt(0)+ surname.toLowerCase(); // strategy 1
+        //document.createForm.uid.value = name +"."+ surname;  // strategy 2
+    }
+    /* to be called when the password confirmation field loses focus */
+    function equalsPasswords() {
+        var pwd1 = document.createForm.password.value;
+        var pwd2 = document.createForm.confirmPassword.value;
+        if (pwd1 != pwd2) {
+            /* TODO: i18n */
+            document.getElementById("passwordError").innerHTML = "The passwords are not equals";
+            document.createForm.password.focus();
+            return false;
+        }
+        return true;
+    }
+    function cleanPasswordError(){
+        document.getElementById("passwordError").innerHTML="";
+    }
+    function strongPassword(){
+        var score = scorePassword(document.createForm.password.value);
+        if(score < 60){
+            document.getElementById("passwordError").innerHTML = "A better password is required (<b>good</b> or <b>strong</b> level are acceptable).";
+            return false;
+        }
+        return true;
+    }
 
 	/**
 	 * Validates the form
