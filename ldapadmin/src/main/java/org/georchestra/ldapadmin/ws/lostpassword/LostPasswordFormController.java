@@ -56,8 +56,6 @@ public class LostPasswordFormController  {
 	private MailService mailService;
 	private UserTokenDao userTokenDao;
 	
-	// properties
-	private String ApplicationUrl =""; // TODO configure
 	
 	@Autowired
 	public LostPasswordFormController( AccountDao dao, MailService mailSrv, UserTokenDao userTokenDao){
@@ -123,9 +121,10 @@ public class LostPasswordFormController  {
 			
 			this.userTokenDao.insertToken(account.getUid(), token);
 			
-			String url = makeChangePasswordURL(token);
-
 			ServletContext servletContext = request.getSession().getServletContext();
+			
+			String url = makeChangePasswordURL(request.getServerName(), request.getServerPort(), servletContext.getContextPath(), token);
+
 			this.mailService.sendChangePassowrdURL(servletContext, account.getUid(), account.getCommonName(), url, account.getEmail());
 			
 			sessionStatus.setComplete();
@@ -148,12 +147,16 @@ public class LostPasswordFormController  {
 	/**
 	 * Create the URL to change the password based on the provided token  
 	 * @param token
+	 * @param token2 
 	 * 
 	 * @return a new URL to change password
 	 */
-	private String makeChangePasswordURL(final String token) {
+	private String makeChangePasswordURL(final String host, final int port, String contextPath, final String token) {
 
-		StringBuilder strBuilder = new StringBuilder(this.ApplicationUrl);
+		StringBuilder strBuilder = new StringBuilder("http://");
+		strBuilder.append(host);
+		strBuilder.append(":").append(port);
+		strBuilder.append(contextPath);
 		strBuilder.append( "/public/accounts/newPassword?token=").append(token);
 		
 		String url = strBuilder.toString();

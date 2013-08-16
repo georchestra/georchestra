@@ -12,17 +12,18 @@ import org.apache.commons.logging.LogFactory;
 import org.georchestra.lib.mailservice.Email;
 
 /**
- * This mail is sent to the moderator when a new account is created.
+ * Email to inform that a new account was created. 
  * 
  * @author Mauricio Pazos
  *
  */
-class NewAccountEmail extends Email {
+class AccountWasCreatedEmail extends Email {
 
-	private static final Log LOG = LogFactory.getLog(NewAccountEmail.class.getName());
+	
+	private static final Log LOG = LogFactory.getLog(NewAccountRequiresSignupEmail.class.getName());
 	private ServletContext servletContext;
 
-	public NewAccountEmail(
+	public AccountWasCreatedEmail(
 			String[] recipients, 
 			String emailSubject,
 			String smtpHost, 
@@ -43,7 +44,7 @@ class NewAccountEmail extends Email {
 	
 	public void sendMsg(final String userName, final String uid ) throws AddressException, MessagingException {
 
-		LOG.debug("New account user in the pending group. User ID: " + uid );
+		LOG.debug("New account was created. User Name:"+ userName + "User ID: " + uid );
 		
 		String body = writeNewAccoutnMail(uid, userName);
 
@@ -58,18 +59,17 @@ class NewAccountEmail extends Email {
 
 	private String writeNewAccoutnMail(String uid, String name) {
 
-		//final String body = getBodyTemplate();
-		final String body = this.servletContext.getRealPath(getBodyTemplate());
-
+		String body = getBodyTemplate(); 
 		
-		body.replace("{name}", name);
-		body.replace("{uid}", uid);
+		body = body.replace("{name}", name);
+		body = body.replace("{uid}", uid);
 		
-		LOG.debug("built email: "+ body);
+		if(LOG.isDebugEnabled() ){
+			
+			LOG.debug("built email: "+ body);
+		}
 
 		return body;
 	}
 	
-	
-
 }
