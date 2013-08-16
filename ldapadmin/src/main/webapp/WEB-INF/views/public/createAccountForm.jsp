@@ -84,14 +84,14 @@
 				<div class="control-group">
 					<form:label path="firstName" cssClass="control-label"><s:message code="firstName.label" /> *</form:label>
 					<div class="controls">
-						<form:input path="firstName" size="30" maxlength="80" onkeyup="makeUid();" />
+						<form:input path="firstName" size="30" maxlength="80" onkeyup="makeUid();" onchange="makeUid();" />
 						<form:errors path="firstName" cssClass="help-inline"/>
 					</div>
 				</div>
 				<div class="control-group">
 					<form:label path="surname" cssClass="control-label"><s:message code="surname.label"/> *</form:label>
 					<div class="controls">
-						<form:input path="surname" size="30" maxlength="80" onkeyup="makeUid();" />
+						<form:input path="surname" size="30" maxlength="80" onkeyup="makeUid();" onchange="makeUid();" />
 						<form:errors path="surname" cssClass="help-inline" />
 					</div>
 				</div>
