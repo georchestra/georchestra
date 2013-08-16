@@ -63,16 +63,21 @@
 		<h2 class="text-center"><s:message code="createAccountFrom.title"/></h2>
 		<form:form id="createForm" name="createForm" method="post" modelAttribute="accountFormBean" cssClass="form-horizontal" onsubmit="return validateForm();" >
 
-			<div class="controls">
-				<c:if test="${not empty message}">
-					<p id="message" class="text-success">${message}</p>
-				</c:if>
-				<s:bind path="*">
-					<c:if test="${status.error}">
-						<p id="message" class="text-error"><s:message code="form.error" /></p>
-					</c:if>
-				</s:bind>
+			<c:if test="${not empty message}">
+			<div id="message" class="alert alert-info">
+				<button type="button" class="close" data-dismiss="alert">&times;</button>
+				${message}
 			</div>
+			</c:if>
+
+			<s:bind path="*">
+			<c:if test="${status.error}">
+			<div id="message" class="alert alert-error">
+				<button type="button" class="close" data-dismiss="alert">&times;</button>
+				<s:message code="form.error" />
+			</div>
+			</c:if>
+			</s:bind>
 
 			<fieldset>
 
