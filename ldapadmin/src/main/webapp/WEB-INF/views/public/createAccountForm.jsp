@@ -54,7 +54,9 @@
 
 <body>
 	<div class="container" id="formsContent" style="center">
-		<h2 class="text-center"><s:message code="createAccountFrom.title"/></h2>
+		<div class="page-header">
+			<h1><s:message code="createAccountFrom.title"/></h2>
+		</div>
 		<form:form id="createForm" name="createForm" method="post" modelAttribute="accountFormBean" cssClass="form-horizontal" >
 
 			<c:if test="${not empty message}">
