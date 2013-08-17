@@ -16,6 +16,7 @@ class GroupImpl implements Group {
 
 	private String name;
 	private List<String> userList = new LinkedList<String>();
+	private String description;
 
 	/* (non-Javadoc)
 	 * @see org.georchestra.ldapadmin.dto.Group#getCommonName()
@@ -56,6 +57,17 @@ class GroupImpl implements Group {
 	public void addUser(String userUid) {
 		this.userList.add(userUid);
 
+	}
+
+	@Override
+	public void setDescription(String description) {
+		this.description = description;
+		
+	}
+
+	@Override
+	public String getDescription() {
+		return this.description;
 	}
 
 }

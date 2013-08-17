@@ -1,4 +1,4 @@
-package org.georchestra.ldapadmin.ws.backoffice;
+package org.georchestra.ldapadmin.ws.backoffice.users;
 
 import java.io.IOException;
 

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.georchestra.ldapadmin.ws.backoffice;
+package org.georchestra.ldapadmin.ws.backoffice.users;
 
 import java.io.IOException;
 import java.util.List;
@@ -21,6 +21,7 @@ import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
 import org.georchestra.ldapadmin.dto.Group;
 import org.georchestra.ldapadmin.dto.UserSchema;
+import org.georchestra.ldapadmin.ws.backoffice.utils.ResponseUtil;
 import org.georchestra.lib.file.FileUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,7 +31,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
- * Controls the access to the user account in order to maintain the information.
+ * Web Services to maintain the User information.
  * 
  * @author Mauricio Pazos
  *

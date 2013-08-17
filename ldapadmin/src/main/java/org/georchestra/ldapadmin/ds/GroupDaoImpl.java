@@ -6,18 +6,18 @@ package org.georchestra.ldapadmin.ds;
 import java.util.List;
 
 import javax.naming.Name;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
-import javax.naming.directory.Attribute;
-import javax.naming.directory.Attributes;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.georchestra.ldapadmin.dto.Group;
 import org.georchestra.ldapadmin.dto.GroupFactory;
+import org.georchestra.ldapadmin.dto.GroupSchema;
 import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.DistinguishedName;
 import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
 
 /**
@@ -28,6 +28,7 @@ import org.springframework.ldap.filter.EqualsFilter;
  */
 public class GroupDaoImpl implements GroupDao {
 
+	private static final Log LOG = LogFactory.getLog(GroupDaoImpl.class.getName());
 	
 	private LdapTemplate ldapTemplate;
 	
@@ -84,31 +85,52 @@ public class GroupDaoImpl implements GroupDao {
 	@Override
 	public void deleteUser(String uid) throws DataServiceException {
 		
-		// removes the user from SV_USER
-		Name dnSvUser = buildDn(Group.SV_USER);
+		deleteUser(Group.SV_USER, uid);
 		
-		DirContextOperations contextSvUser = ldapTemplate.lookupContext(dnSvUser);
-		contextSvUser.setAttributeValues("objectclass", new String[] { "top", "posixGroup" });
-		contextSvUser.removeAttributeValue("memberUid", uid);
-
-		this.ldapTemplate.modifyAttributes(contextSvUser);
-		
-		// removes the user from PENDING_USERS
-		Name dnPendingUser = buildDn(Group.PENDING_USERS);
-		
-		DirContextOperations contextPending = ldapTemplate.lookupContext(dnPendingUser);
-		contextPending.setAttributeValues("objectclass", new String[] { "top", "posixGroup" });
-		contextPending.removeAttributeValue("memberUid", uid);
-
-		this.ldapTemplate.modifyAttributes(contextPending);
+		deleteUser(Group.PENDING_USERS, uid);
 	}
 	
+	public void deleteUser(String groupName, String uid) throws DataServiceException {
+		
+		Name dnSvUser = buildDn(groupName);
+		
+		DirContextOperations ctx = ldapTemplate.lookupContext(dnSvUser);
+		ctx.setAttributeValues("objectclass", new String[] { "top", "posixGroup" });
+		ctx.removeAttributeValue("memberUid", uid);
+
+		this.ldapTemplate.modifyAttributes(ctx);
+	}
+	
+	/**
+	 * Returns all groups. Each groups will contains its list of users.
+	 * 
+	 * @return list of {@link Group}
+	 */
 	@Override
-	public List<String> findAllGroups() throws DataServiceException {
+	public List<Group> findAll() throws DataServiceException {
 		
 		EqualsFilter filter = new EqualsFilter("objectClass", "posixGroup");
-		return ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(), new GroupContextMapper());
+		List<Group> groupList = ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(), new GroupContextMapper());
+		
+		return groupList;
 	}
+	
+	public List<String> findUsers(final String groupName) throws DataServiceException{
+		
+		AndFilter filter = new AndFilter();
+		filter.and(new EqualsFilter("objectClass", "ou"));
+		filter.and(new EqualsFilter("ou", "groups"));
+		filter.and(new EqualsFilter("cn", groupName));
+
+		List<String> memberList = ldapTemplate.search(
+								DistinguishedName.EMPTY_PATH, 
+								filter.encode(), 
+								new GroupContextMapper());
+		
+		return  memberList;
+	}
+	
+	
 	
 	private Group findGroupByCN(String groupCN) throws NotFoundException {
 
@@ -133,6 +155,19 @@ public class GroupDaoImpl implements GroupDao {
 	}
 	
 	
+	private static class GroupUserContextMapper implements ContextMapper {
+
+		@Override
+		public Object mapFromContext(Object ctx) {
+			
+			DirContextAdapter context = (DirContextAdapter) ctx;
+
+			String uid = context.getStringAttribute("memberUid");
+
+			return uid;
+		}
+	}
+
 	private static class GroupContextMapper implements ContextMapper {
 
 		@Override
@@ -145,18 +180,13 @@ public class GroupDaoImpl implements GroupDao {
 			g.setName(context.getStringAttribute("cn"));
 			
 			// set the list of user
-			try {
-				Attributes attributes = context.getAttributes("memberUid");
-				NamingEnumeration<? extends Attribute> all = attributes.getAll();
-				while (all.hasMore()) {
-					Attribute user = all.next();
-					g.addUser((String) user.get());
-				}
-				
-			} catch (NamingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			Object[] members = context.getObjectAttributes(GroupSchema.MEMBER_UID_KEY);
+
+			for (int i = 0; i < members.length; i++) {
+
+				g.addUser((String) members[i]);
 			}
+				
 			return g;
 		}
 	}

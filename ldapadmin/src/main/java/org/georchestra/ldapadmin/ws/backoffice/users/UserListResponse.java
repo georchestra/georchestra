@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.georchestra.ldapadmin.ws.backoffice;
+package org.georchestra.ldapadmin.ws.backoffice.users;
 
 import java.util.List;
 
@@ -54,7 +54,7 @@ final class UserListResponse {
 	 */
 	public String asJsonString() throws JSONException {
 
-		JSONArray jsonTaskArray = new JSONArray();
+		JSONArray jsonArray = new JSONArray();
 		int i = 0;
     	for (Account account: this.accountList) {
     		
@@ -64,10 +64,10 @@ final class UserListResponse {
     		jsonAccount.put(UserSchema.SURNAME_KEY, account.getSurname());
     		jsonAccount.put(UserSchema.ORG_KEY, account.getOrg());
 
-    		jsonTaskArray.put(i, jsonAccount);
+    		jsonArray.put(i, jsonAccount);
     		i++;
 		}
-		String strTaskQueue = jsonTaskArray.toString();
+		String strTaskQueue = jsonArray.toString();
 		
 		return strTaskQueue;
 	}

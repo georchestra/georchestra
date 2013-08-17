@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.georchestra.ldapadmin.ws.backoffice;
+package org.georchestra.ldapadmin.ws.backoffice.utils;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Mauricio Pazos
  *
  */
-final class ResponseUtil {
+final public class ResponseUtil {
 
 	
 	private ResponseUtil(){
