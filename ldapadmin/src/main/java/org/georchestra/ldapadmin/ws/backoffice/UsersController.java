@@ -4,7 +4,6 @@
 package org.georchestra.ldapadmin.ws.backoffice;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.List;
 
 import javax.servlet.ServletInputStream;
@@ -84,7 +83,7 @@ public class UsersController {
 			
 			String jsonList = userListResponse.asJsonString();
 			
-			buildResponse(response, jsonList, HttpServletResponse.SC_OK);
+			ResponseUtil.buildResponse(response, jsonList, HttpServletResponse.SC_OK);
 			
 		} catch (Exception e) {
 			
@@ -125,7 +124,7 @@ public class UsersController {
 			
 		} catch (NotFoundException e) {
 			
-			buildResponse(response, buildResponseMessage(Boolean.FALSE, NOT_FOUND), HttpServletResponse.SC_NOT_FOUND);
+			ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(Boolean.FALSE, NOT_FOUND), HttpServletResponse.SC_NOT_FOUND);
 			
 			return;
 
@@ -138,21 +137,8 @@ public class UsersController {
 		
 		String jsonAccount = userResponse.asJsonString();
 		
-		buildResponse(response, jsonAccount, HttpServletResponse.SC_OK);
+		ResponseUtil.buildResponse(response, jsonAccount, HttpServletResponse.SC_OK);
 
-	}
-	private String buildResponseMessage(Boolean status){
-		return buildResponseMessage(status, null);
-	}
-	private String buildResponseMessage(Boolean status, String errorMessage){
-		
-		String error;
-		if(errorMessage == null){
-			error = "{ \"success\": "+ status.toString() +" }";
-		} else {
-			error = "{ \"success\": "+ status.toString() +" , \"error\": \"" +errorMessage+ "\" }";
-		}
-		return error;
 	}
 	
 	/**
@@ -212,8 +198,6 @@ public class UsersController {
 	@RequestMapping(value=BASE_MAPPING + "/users", method=RequestMethod.POST)
 	public void create( HttpServletRequest request, HttpServletResponse response ) throws IOException{
 		
-		int sc = HttpServletResponse.SC_OK;
-		String jsonResponse = "";
 		try{
 			
 			Account account = createAccountFromRequestBody(request.getInputStream());
@@ -221,13 +205,16 @@ public class UsersController {
 			
 			UserResponse userResponse = new UserResponse(account);
 			
-			jsonResponse = userResponse.asJsonString();
+			String jsonResponse = userResponse.asJsonString();
+
+			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_OK);
 			
 			
 		} catch (DuplicatedEmailException emailex){
 			
-			// add error description
-			jsonResponse = buildResponseMessage(Boolean.FALSE, DUPLICATED_EMAIL); 
+			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, DUPLICATED_EMAIL); 
+
+			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
 			
 		} catch (DataServiceException dsex){
 
@@ -235,7 +222,6 @@ public class UsersController {
 			
 			throw new IOException(dsex);
 		}
-		buildResponse(response, jsonResponse, sc);
 	}
 	
 
@@ -316,7 +302,7 @@ public class UsersController {
 			
 		} catch (NotFoundException e) {
 			
-			buildResponse(response, buildResponseMessage(Boolean.FALSE, NOT_FOUND), HttpServletResponse.SC_NOT_FOUND);
+			ResponseUtil.writeError(response, NOT_FOUND);
 			
 			return;
 
@@ -326,14 +312,18 @@ public class UsersController {
 		
 		// modifies the account data
 		try{
-			
-			Account modified = modifyAccount( account, request.getInputStream());
+			final Account modified = modifyAccount( account, request.getInputStream());
 			
 			this.accountDao.update(modified);
 
-			buildResponse(response, "{ \"success\": true}", HttpServletResponse.SC_OK);
+			ResponseUtil.writeSuccess(response);
 			
-		} catch (Exception e){
+		} catch (DuplicatedEmailException e) {
+			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, DUPLICATED_EMAIL); 
+
+			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
+			
+		} catch (DataServiceException e){
 			LOG.error(e.getMessage());
 			
 			throw new IOException(e);
@@ -359,7 +349,7 @@ public class UsersController {
 
 			this.accountDao.delete(uid);
 			
-			response.setStatus(HttpServletResponse.SC_OK);
+			ResponseUtil.writeSuccess(response);
 			
 		} catch (Exception e){
 
@@ -387,21 +377,6 @@ public class UsersController {
 		String uid = path[path.length - 1];
 		
 		return uid;
-	}
-
-	private void buildResponse(HttpServletResponse response, String jsonData, int sc) throws IOException {
-		
-		response.setCharacterEncoding("UTF-8");
-		response.setContentType("text/html");
-		response.setStatus(sc);
-
-		PrintWriter out = response.getWriter();
-		try {
-			out.println(jsonData);
-			
-		} finally {
-			out.close();
-		}
 	}
 	
 	/**
