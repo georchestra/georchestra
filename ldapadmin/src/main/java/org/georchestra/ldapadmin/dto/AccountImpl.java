@@ -65,21 +65,25 @@ class AccountImpl implements Serializable, Account {
 
 	private String homePostalAddres;
 	
+	
 	@Override
 	public String toString() {
-		return "Account [uid=" + uid + ", name=" + commonName + ", org=" + org
-				+ ", role=" + role 
+		return "AccountImpl [uid=" + uid + ", commonName=" + commonName
+				+ ", surname=" + surname + ", org=" + org + ", role=" + role
 				+ ", email=" + email + ", phone=" + phone + ", details="
 				+ details + ", password=" + password + ", newPassword="
-				+ newPassword + ", surname=" + surname + ", givenName="
-				+ givenName + ", title=" + title + ", postalAddress="
-				+ postalAddress + ", postalCode=" + postalCode
-				+ ", registeredAddress=" + registeredAddress
+				+ newPassword + ", givenName=" + givenName + ", title=" + title
+				+ ", postalAddress=" + postalAddress + ", postalCode="
+				+ postalCode + ", registeredAddress=" + registeredAddress
 				+ ", postOfficeBox=" + postOfficeBox
 				+ ", physicalDeliveryOfficeName=" + physicalDeliveryOfficeName
+				+ ", street=" + street + ", locality=" + locality
+				+ ", facsimile=" + facsimile + ", mobile=" + mobile
+				+ ", roomNumber=" + roomNumber + ", stateOrProvince="
+				+ stateOrProvince + ", organizationalUnit="
+				+ organizationalUnit + ", homePostalAddres=" + homePostalAddres
 				+ "]";
 	}
-	
 	@Override
 	public void setUid(String uid) {
 		this.uid = uid;

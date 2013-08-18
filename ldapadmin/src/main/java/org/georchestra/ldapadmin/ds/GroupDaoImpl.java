@@ -12,6 +12,7 @@ import org.apache.commons.logging.LogFactory;
 import org.georchestra.ldapadmin.dto.Group;
 import org.georchestra.ldapadmin.dto.GroupFactory;
 import org.georchestra.ldapadmin.dto.GroupSchema;
+import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
@@ -130,43 +131,63 @@ public class GroupDaoImpl implements GroupDao {
 		return  memberList;
 	}
 	
-	
-	
-	private Group findGroupByCN(String groupCN) throws NotFoundException {
 
-		DistinguishedName dn = buildGroupDn(groupCN);
-		
-		Group g = (Group) ldapTemplate.lookup(dn,  new GroupContextMapper() );
-		
-		if(g == null){
-			throw new NotFoundException("There is not a group with this cn: " + groupCN);
-		}
-		
-		return  g;
-	}
+	/**
+	 * Searches the group by common name (cn)
+	 * 
+	 * @param commonName
+	 * @throws NotFoundException 
+	 */
+	public Group findByCN(String commonName) throws NotFoundException {
 
-	private DistinguishedName buildGroupDn(String  cn) {
-		DistinguishedName dn = new DistinguishedName();
-				
-		dn.add("ou", "groups");
-		dn.add("cn", cn);
-		
-		return dn;
-	}
-	
-	
-	private static class GroupUserContextMapper implements ContextMapper {
-
-		@Override
-		public Object mapFromContext(Object ctx) {
+		try{
+			DistinguishedName dn = buildDn(commonName);
+			Group g = (Group) ldapTemplate.lookup(dn, new GroupContextMapper());
 			
-			DirContextAdapter context = (DirContextAdapter) ctx;
+			return  g;
+			
+		} catch (NameNotFoundException e){
 
-			String uid = context.getStringAttribute("memberUid");
-
-			return uid;
+			throw new NotFoundException("There is not a group with this common name (cn): " + commonName);
 		}
 	}
+	
+//	TODO remove it
+//	private Group findGroupByCN(String groupCN) throws NotFoundException {
+//
+//		DistinguishedName dn = buildGroupDn(groupCN);
+//		
+//		Group g = (Group) ldapTemplate.lookup(dn,  new GroupContextMapper() );
+//		
+//		if(g == null){
+//			throw new NotFoundException("There is not a group with this cn: " + groupCN);
+//		}
+//		
+//		return  g;
+//	}
+//
+//	private DistinguishedName buildGroupDn(String  cn) {
+//		DistinguishedName dn = new DistinguishedName();
+//				
+//		dn.add("ou", "groups");
+//		dn.add("cn", cn);
+//		
+//		return dn;
+//	}
+//	
+//	
+//	private static class GroupUserContextMapper implements ContextMapper {
+//
+//		@Override
+//		public Object mapFromContext(Object ctx) {
+//			
+//			DirContextAdapter context = (DirContextAdapter) ctx;
+//
+//			String uid = context.getStringAttribute("memberUid");
+//
+//			return uid;
+//		}
+//	}
 
 	private static class GroupContextMapper implements ContextMapper {
 
@@ -180,7 +201,8 @@ public class GroupDaoImpl implements GroupDao {
 			g.setName(context.getStringAttribute("cn"));
 			
 			// set the list of user
-			Object[] members = context.getObjectAttributes(GroupSchema.MEMBER_UID_KEY);
+			Object[] members = getUsers(context);
+			
 
 			for (int i = 0; i < members.length; i++) {
 
@@ -189,7 +211,69 @@ public class GroupDaoImpl implements GroupDao {
 				
 			return g;
 		}
+
+		private Object[] getUsers(DirContextAdapter context) {
+			Object[] members = context.getObjectAttributes(GroupSchema.MEMBER_UID_KEY);			
+			if(members == null){
+				
+				members = new Object[0];
+			}
+			return members;
+		}
 	}
+
+	@Override
+	public void insert(Group group) throws DataServiceException, DuplicatedCommonNameException {
+		assert group != null;
+		
+		// checks unique common name
+		try{
+			findByCN(group.getName());
+			
+			throw new DuplicatedCommonNameException("there is a group with this name: " + group.getName());
+
+		} catch (NotFoundException e1) {
+			// if not exist an account with this uid the new account can be added. 
+		} 
+		
+		// insert the new user account
+		Name dn = buildDn(group.getName());
+
+		DirContextAdapter context = new DirContextAdapter(dn);
+		mapToContext(group, context);
+
+		this.ldapTemplate.bind(dn, context, null);
+	}
+
+	private void mapToContext(Group group, DirContextAdapter context) {
+
+		context.setAttributeValues("objectclass", new String[] { "top", "posixGroup" });
+
+		// person attributes
+		setAccountField(context, GroupSchema.COMMON_NAME_KEY, group.getName());
+		
+		setAccountField(context, GroupSchema.DESCRIPTION_KEY, group.getDescription());
+		
+		setAccountField(context, "gidNumber", "10"); // TODO require a sequencer
+	}
+	
+	private void setAccountField(DirContextOperations context,  String fieldName, Object value) {
+
+		if( !isNullValue(value) ){
+			context.setAttributeValue(fieldName, value);
+		}
+	}
+	private boolean isNullValue(Object value) {
+
+		if(value == null) return true;
+		
+		if(value instanceof String){
+			if(((String)value).length() == 0) return true;
+		}
+		
+		return false;
+	}
+	
 
 	
 

@@ -42,6 +42,8 @@ public class UsersController {
 	private static final Log LOG = LogFactory.getLog(UsersController.class.getName());
 
 	private static final String BASE_MAPPING = "/private";
+	private static final String REQUEST_MAPPING = BASE_MAPPING + "/users";	
+	
 
 	private static final String DUPLICATED_EMAIL = "duplicated_email";
 
@@ -74,7 +76,7 @@ public class UsersController {
 	 * @param response
 	 * @throws IOException
 	 */
-	@RequestMapping(value=BASE_MAPPING + "/users", method=RequestMethod.GET)
+	@RequestMapping(value=REQUEST_MAPPING, method=RequestMethod.GET)
 	public void findAll( HttpServletRequest request, HttpServletResponse response ) throws IOException{
 		
 		try {
@@ -113,7 +115,7 @@ public class UsersController {
 	 * @param response Returns the detailed information of the user as json 
 	 * @throws IOException 
 	 */
-	@RequestMapping(value=BASE_MAPPING + "/users/*", method=RequestMethod.GET)
+	@RequestMapping(value=REQUEST_MAPPING+"/*", method=RequestMethod.GET)
 	public void findByUid( HttpServletRequest request, HttpServletResponse response) throws IOException{
 		
 		String uid = getUidPathVariable(request);
@@ -190,13 +192,15 @@ public class UsersController {
 	 * 
 	 * 	{ \"success\": false, \"error\": \"duplicated_email\"}
 	 * 
+	 * Error: 409 conflict with the current state of resource
+	 * 
 	 * </pre>
 	 * 
 	 * @param request HTTP POST data contains the user data
 	 * @param response
 	 * @throws IOException
 	 */
-	@RequestMapping(value=BASE_MAPPING + "/users", method=RequestMethod.POST)
+	@RequestMapping(value=REQUEST_MAPPING, method=RequestMethod.POST)
 	public void create( HttpServletRequest request, HttpServletResponse response ) throws IOException{
 		
 		try{
@@ -291,7 +295,7 @@ public class UsersController {
 	 * 
 	 * @throws IOException if the uid does not exist or fails to access to the LDAP store.
 	 */
-	@RequestMapping(value=BASE_MAPPING + "/users/*", method=RequestMethod.PUT)
+	@RequestMapping(value=REQUEST_MAPPING+ "/*", method=RequestMethod.PUT)
 	public void update( HttpServletRequest request, HttpServletResponse response) throws IOException{
 		
 		String uid = getUidPathVariable(request);
@@ -343,7 +347,7 @@ public class UsersController {
 	 * @param response
 	 * @throws IOException
 	 */
-	@RequestMapping(value=BASE_MAPPING + "/users/*", method=RequestMethod.DELETE)
+	@RequestMapping(value=REQUEST_MAPPING + "/*", method=RequestMethod.DELETE)
 	public void delete( HttpServletRequest request, HttpServletResponse response) throws IOException{
 		try{
 			String uid = getUidPathVariable(request);

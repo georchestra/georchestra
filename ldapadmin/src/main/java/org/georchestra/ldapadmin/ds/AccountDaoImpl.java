@@ -344,42 +344,6 @@ public final class AccountDaoImpl implements AccountDao{
 		setAccountField(context, UserSchema.ORG_UNIT_KEY, account.getOrganizationalUnit());
 	}
 	
-//	private void mapDetailsToContext(Account account, DirContextOperations context){
-//		
-//		context.setAttributeValues("objectclass", new String[] { "top", "person", "organizationalPerson", "inetOrgPerson" });
-//
-//		// person attributes
-//		context.setAttributeValue("sn", account.getSurname());
-//
-//		context.setAttributeValue("cn", account.getCommonName() );
-//		
-//		setAccountField(context, "description", account.getDescription());
-//
-//		setAccountField(context, "telephoneNumber", account.getPhone());
-//
-//		
-//		// organizationalPerson attributes
-//		// any attribute is set right now (when the account is created)
-//		
-//		// inetOrgPerson attributes
-//		setAccountField(context, "givenName", account.getGivenName());
-//		
-//		// additional
-//		setAccountField(context, "o", account.getOrg());
-//
-//		setAccountField(context, "title", account.getTitle());
-//
-//		setAccountField(context, "postalAddress", account.getPostalAddress());
-//
-//		setAccountField(context, "postalCode", account.getPostalCode());
-//
-//		setAccountField(context, "registeredAddress", account.getRegisteredAddress());
-//		
-//		setAccountField(context, "postOfficeBox", account.getPostOfficeBox());
-//		
-//		setAccountField(context, "physicalDeliveryOfficeName", account.getPhysicalDeliveryOfficeName());
-//	}
-	
 	private void setAccountField(DirContextOperations context,  String fieldName, Object value) {
 
 		if( !isNullValue(value) ){

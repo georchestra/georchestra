@@ -70,4 +70,10 @@ class GroupImpl implements Group {
 		return this.description;
 	}
 
+	@Override
+	public String toString() {
+		return "GroupImpl [name=" + name + ", userList=" + userList
+				+ ", description=" + description + "]";
+	}
+
 }

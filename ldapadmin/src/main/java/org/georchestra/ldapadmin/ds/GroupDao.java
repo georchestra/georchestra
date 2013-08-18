@@ -21,6 +21,11 @@ public interface GroupDao {
 	 */
 	void addUser(String  groupID, String userId) throws DataServiceException, NotFoundException;
 
+	/**
+	 * Returns all groups. Each groups will contains its list of users.
+	 * 
+	 * @return list of {@link Group}
+	 */
 	List<Group> findAll() throws DataServiceException;
 
 	/**
@@ -38,6 +43,16 @@ public interface GroupDao {
 	 * @param uid
 	 * @throws DataServiceException
 	 */
-	void deleteUser(String groupName, String uid) throws DataServiceException; 
+	void deleteUser(String groupName, String uid) throws DataServiceException;
+
+	/**
+	 * Adds the group
+	 * 
+	 * @param group
+	 * 
+	 * @throws DataServiceException 
+	 * @throws DuplicatedCommonNameException if the group es present in the LDAP store
+	 */
+	void insert(Group group) throws DataServiceException, DuplicatedCommonNameException; 
 
 }
