@@ -107,8 +107,7 @@
         var pwd1 = document.createForm.password.value;
         var pwd2 = document.createForm.confirmPassword.value;
         if (pwd1 != pwd2) {
-            /* TODO: i18n */
-            document.getElementById("passwordError").innerHTML = "The passwords are not equals";
+            document.getElementById("passwordError").innerHTML = '<s:message code="confirmPassword.error.pwdNotEquals.tag" />';
             document.createForm.password.focus();
             return false;
         }
