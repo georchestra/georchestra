@@ -46,6 +46,7 @@ function scorePassword( password) {
  * @param password 
  * 
  * TODO: We may use the bootstrap progress bars
+ * TODO: i18n of the tags (empty, weak, etc.)
  */
 function feedbackPassStrength(ctrlId, password){
     var message = "";
