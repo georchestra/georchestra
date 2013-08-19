@@ -18,7 +18,7 @@
 </c:if>
 <spring:bind path="${path}">
     <div class="control-group ${status.error ? 'error' : '' }">
-        <label class="control-label" for="${path}"><s:message code="firstName.label" />${label}<c:if test="${required}"><span class="required"> *</span></c:if></label>
+        <label class="control-label" for="${path}"><s:message code="firstName.label" />${label}<c:if test="${required}"><span class="required">&nbsp;*</span></c:if></label>
         <div class="controls">
 			<c:if test="${not empty appendIcon}">
 				<div class="input-append">

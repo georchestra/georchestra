@@ -11,8 +11,8 @@
 		</div>
 	</div>
 	<div class="control-group ${status.error ? 'error' : '' }">
-		<label class="recaptcha_only_if_image control-label">Enter the words above *</label>
-		<label class="recaptcha_only_if_audio control-label">Enter the numbers you hear *</label>
+		<label class="recaptcha_only_if_image control-label">Enter the words above&nbsp;*</label>
+		<label class="recaptcha_only_if_audio control-label">Enter the numbers you hear&nbsp;*</label>
 		<div class="controls">
 			<div class="input-append">
 				<input type="text" size="30" maxlength="80" id="recaptcha_response_field" name="recaptcha_response_field" class="input-xlarge input-recaptcha" />
