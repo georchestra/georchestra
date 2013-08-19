@@ -87,24 +87,15 @@
 				<t:input path="email" required="true">
 					<jsp:attribute name="label"><s:message code="email.label" /></jsp:attribute>
 				</t:input>
-				<div class="accordion" id="accordion2">
-					<div class="accordion-heading">
-						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
-							<i class="icon-plus"></i> Optional - enter more details
-						</a>
-					</div>
-					<div id="collapseOne" class="accordion-body collapse">
-						<t:input path="phone">
-							<jsp:attribute name="label"><s:message code="phone.label" /></jsp:attribute>
-						</t:input>
-						<t:input path="org">
-							<jsp:attribute name="label"><s:message code="organization.label" /></jsp:attribute>
-						</t:input>
-						<t:input path="details">
-							<jsp:attribute name="label"><s:message code="details.label" /></jsp:attribute>
-						</t:input>
-					</div>
-				</div>
+				<t:input path="phone">
+					<jsp:attribute name="label"><s:message code="phone.label" /></jsp:attribute>
+				</t:input>
+				<t:input path="org">
+					<jsp:attribute name="label"><s:message code="organization.label" /></jsp:attribute>
+				</t:input>
+				<t:input path="details">
+					<jsp:attribute name="label"><s:message code="details.label" /></jsp:attribute>
+				</t:input>
 			</fieldset>
 
 			<fieldset>
