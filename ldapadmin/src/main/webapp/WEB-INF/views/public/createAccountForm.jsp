@@ -16,41 +16,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<link href='<c:url value="/css/bootstrap.min.css" />' rel="stylesheet" />
 	<title>Create Account Form</title>
-	<script type="text/javascript"  src="<c:url value="/js/passwordutils.js" />" > </script>
-	<script type="text/javascript">
 
-    /* to be called when either Firstname or Surname is modified
-     * ("keyup" or "change" event - "input" event is not available with this version of spring)
-     */
-    function makeUid(){
-        var name = document.createForm.firstName.value;
-        var surname = document.createForm.surname.value;
-        document.createForm.uid.value = name.toLowerCase().charAt(0)+ surname.toLowerCase(); // strategy 1
-        //document.createForm.uid.value = name +"."+ surname;  // strategy 2
-    }
-    /* to be called when the password confirmation field loses focus */
-    function equalsPasswords() {
-        var pwd1 = document.createForm.password.value;
-        var pwd2 = document.createForm.confirmPassword.value;
-        if (pwd1 != pwd2) {
-            /* TODO: i18n */
-            document.getElementById("passwordError").innerHTML = "The passwords are not equals";
-            document.createForm.password.focus();
-            return false;
-        }
-        return true;
-    }
-    /* to be called when the password field is modified */
-    function cleanPasswordError(){
-        document.getElementById("passwordError").innerHTML="";
-        document.getElementById("confirmPassword").value="";
-    }
-    
-    var RecaptchaOptions = {
-	    theme : 'custom',
-        custom_theme_widget: 'recaptcha_widget'
-    };
-	</script>
 </head>
 
 <body>
@@ -103,7 +69,7 @@
 				<t:input path="uid" required="true" appendIcon="icon-user">
 					<jsp:attribute name="label"><s:message code="uid.label" /></jsp:attribute>
 				</t:input>
-				<t:password path="password" required="true" spanId="pwdQuality" appendIcon="icon-lock" onchange="cleanPasswordError();feedbackPassStrength(password, pwdQuality, value);" onkeypress="cleanPasswordError();" onkeyup="feedbackPassStrength(password, pwdQuality, value);">
+				<t:password path="password" required="true" spanId="pwdQuality" appendIcon="icon-lock" onchange="cleanPasswordError();feedbackPassStrength(password, 'pwdQuality', value);" onkeypress="cleanPasswordError();" onkeyup="feedbackPassStrength(password, 'pwdQuality', value);">
 					<jsp:attribute name="label"><s:message code="password.label" /></jsp:attribute>
 				</t:password>
 				<t:password path="confirmPassword" required="true" spanId="passwordError" onblur="equalsPasswords();">
@@ -121,8 +87,45 @@
 			</div>
 		</form:form>
 	</div>
-	<script type="text/javascript" src="http://www.google.com/recaptcha/api/challenge?k=6Lf0h-MSAAAAAOQ4YyRtbCNccU87dlGmokmelZjh"></script>
 	<script src="http://code.jquery.com/jquery.js"></script>
 	<script src='<c:url value="/js/bootstrap.min.js" />'></script>
+	<script type="text/javascript"  src="<c:url value="/js/passwordutils.js" />" > </script>
+	<script type="text/javascript">
+
+
+    /* to be called when either Firstname or Surname is modified
+     * ("keyup" or "change" event - "input" event is not available with this version of spring)
+     */
+    function makeUid(){
+        var name = document.createForm.firstName.value;
+        var surname = document.createForm.surname.value;
+        document.createForm.uid.value = name.toLowerCase().charAt(0)+ surname.toLowerCase(); // strategy 1
+        //document.createForm.uid.value = name +"."+ surname;  // strategy 2
+    }
+    /* to be called when the password confirmation field loses focus */
+    function equalsPasswords() {
+        var pwd1 = document.createForm.password.value;
+        var pwd2 = document.createForm.confirmPassword.value;
+        if (pwd1 != pwd2) {
+            /* TODO: i18n */
+            document.getElementById("passwordError").innerHTML = "The passwords are not equals";
+            document.createForm.password.focus();
+            return false;
+        }
+        return true;
+    }
+    /* to be called when the password field is modified */
+    function cleanPasswordError(){
+        document.getElementById("passwordError").innerHTML="";
+        document.getElementById("confirmPassword").value="";
+    }
+    
+    var RecaptchaOptions = {
+        theme : 'custom',
+        custom_theme_widget: 'recaptcha_widget'
+    };
+    
+   	</script>
+	<script type="text/javascript" src="http://www.google.com/recaptcha/api/challenge?k=6Lf0h-MSAAAAAOQ4YyRtbCNccU87dlGmokmelZjh"></script>
 </body>
 </html>

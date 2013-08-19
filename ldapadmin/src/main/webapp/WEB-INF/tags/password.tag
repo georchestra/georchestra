@@ -28,11 +28,11 @@
 					<span class="add-on"><i class="${appendIcon}"></i></span>
 				</div>
 			</c:if>
+            <c:if test="${not empty spanId}">
+                <span id="${spanId}" class="label label-important"></span>
+            </c:if>
             <c:if test="${status.error}">
                 <span class="help-inline">${status.errorMessage}</span>
-            </c:if>
-            <c:if test="${not empty spanId}">
-                <span id="${spanId}" class="help-block"></span>
             </c:if>
         </div>
     </div>

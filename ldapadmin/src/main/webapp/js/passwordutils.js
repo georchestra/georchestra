@@ -39,40 +39,43 @@ function scorePassword( password) {
     return parseInt(score);
 }
 
-
 /**
- * Sets the color and message based on the password quality.
+ *  Sets the color and message based on the password quality.
  * 
- * @param pwdCtrl password control
- * @param messageCtrl the control used to display the password quality
+ * @param ctrlId id of the control used to display the password quality
  * @param password 
  * 
- * TODO: use bootstrap instead of hardcoding colors. We may also use
- *       the bootstrap progress bars
+ * TODO: We may use the bootstrap progress bars
  */
-function feedbackPassStrength(pwdCtrl, messageCtrl, password){
+function feedbackPassStrength(p, ctrlId, password){
     var message = "";
-    var color = "";
+    var msgclass = "";
+    var el = $("#"+ctrlId);
+    var pattern = /^label-/;
+
+    $.each( el.attr('class').split(/\s+/), function(index, item){
+        if (item.match(pattern)){
+            el.removeClass(item);
+        }
+    });
     if (!password){
         message = "empty";
-        color = "#e71a1a";
     } else {
         var score = scorePassword(password);
         if (score > 80){
             message= "strong";
-            color = "#008000";
+            msgclass = "success";
         } else if (score > 60) {
             message = "good";
-            color = "#e3cb00";
+            msgclass = "info";
         } else if (score >= 30) {
             message = "weak";
-            color = "#Fe3d1a";
-        } else {
+            msgclass = "warning";
+       } else {
             message = "very weak";
-            color = "#e71a1a";
+            msgclass = "important";
         }
     }
-    messageCtrl.innerHTML = message;
-    messageCtrl.style= "color:" + color;
-    pwdCtrl.style.backgroundColor= color;
+    $("#"+ctrlId).html(message);
+    $("#"+ctrlId).addClass("label-"+msgclass);
 }
