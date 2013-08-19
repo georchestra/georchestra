@@ -27,3 +27,5 @@
 		</div>
 	</div>
 </spring:bind>
+
+<!-- TODO: i18n the captcha texts - it cannot be done using the recaptcha strings, see http://stackoverflow.com/a/17927580-->
