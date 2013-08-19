@@ -24,6 +24,7 @@ import org.springframework.ldap.filter.EqualsFilter;
 /**
  * Maintains the group of users in the ldap store.
  * 
+ * 
  * @author Mauricio Pazos
  *
  */
@@ -42,16 +43,16 @@ public class GroupDaoImpl implements GroupDao {
 	}
 	
 	/**
-	 * Create an ldap entry for the user 
+	 * Create an ldap entry for the group 
 	 * 
-	 * @param uid user id
+	 * @param cn 
 	 * @return
 	 */
-	private DistinguishedName buildDn(String  id) {
+	private DistinguishedName buildDn(String  cn) {
 		DistinguishedName dn = new DistinguishedName();
 				
 		dn.add("ou", "groups");
-		dn.add("cn", id);
+		dn.add("cn", cn);
 		
 		return dn;
 	}
@@ -138,7 +139,8 @@ public class GroupDaoImpl implements GroupDao {
 	 * @param commonName
 	 * @throws NotFoundException 
 	 */
-	public Group findByCN(String commonName) throws NotFoundException {
+	@Override
+	public Group findByCommonName(String commonName) throws DataServiceException, NotFoundException {
 
 		try{
 			DistinguishedName dn = buildDn(commonName);
@@ -152,42 +154,19 @@ public class GroupDaoImpl implements GroupDao {
 		}
 	}
 	
-//	TODO remove it
-//	private Group findGroupByCN(String groupCN) throws NotFoundException {
-//
-//		DistinguishedName dn = buildGroupDn(groupCN);
-//		
-//		Group g = (Group) ldapTemplate.lookup(dn,  new GroupContextMapper() );
-//		
-//		if(g == null){
-//			throw new NotFoundException("There is not a group with this cn: " + groupCN);
-//		}
-//		
-//		return  g;
-//	}
-//
-//	private DistinguishedName buildGroupDn(String  cn) {
-//		DistinguishedName dn = new DistinguishedName();
-//				
-//		dn.add("ou", "groups");
-//		dn.add("cn", cn);
-//		
-//		return dn;
-//	}
-//	
-//	
-//	private static class GroupUserContextMapper implements ContextMapper {
-//
-//		@Override
-//		public Object mapFromContext(Object ctx) {
-//			
-//			DirContextAdapter context = (DirContextAdapter) ctx;
-//
-//			String uid = context.getStringAttribute("memberUid");
-//
-//			return uid;
-//		}
-//	}
+	/**
+	 * Removes the group 
+	 * 
+	 * @param commonName
+	 * 
+	 */
+	@Override
+	public void delete(final String commonName) throws DataServiceException, NotFoundException{
+
+		this.ldapTemplate.unbind(buildDn(commonName), true);
+
+	}
+	
 
 	private static class GroupContextMapper implements ContextMapper {
 
@@ -198,12 +177,14 @@ public class GroupDaoImpl implements GroupDao {
 
 			// set the group name
 			Group g = GroupFactory.create();
-			g.setName(context.getStringAttribute("cn"));
+			g.setName(context.getStringAttribute(GroupSchema.COMMON_NAME_KEY));
+
+			g.setDescription(context.getStringAttribute(GroupSchema.DESCRIPTION_KEY));
 			
+			g.setGidNumber(context.getStringAttribute(GroupSchema.GID_NUMBER_KEY));
+
 			// set the list of user
 			Object[] members = getUsers(context);
-			
-
 			for (int i = 0; i < members.length; i++) {
 
 				g.addUser((String) members[i]);
@@ -224,11 +205,13 @@ public class GroupDaoImpl implements GroupDao {
 
 	@Override
 	public void insert(Group group) throws DataServiceException, DuplicatedCommonNameException {
-		assert group != null;
 		
+		if( group.getName().length()== 0 ){
+			throw new IllegalArgumentException("given name is required");
+		}
 		// checks unique common name
 		try{
-			findByCN(group.getName());
+			findByCommonName(group.getName());
 			
 			throw new DuplicatedCommonNameException("there is a group with this name: " + group.getName());
 
@@ -245,7 +228,7 @@ public class GroupDaoImpl implements GroupDao {
 		this.ldapTemplate.bind(dn, context, null);
 	}
 
-	private void mapToContext(Group group, DirContextAdapter context) {
+	private void mapToContext(Group group, DirContextOperations context) {
 
 		context.setAttributeValues("objectclass", new String[] { "top", "posixGroup" });
 
@@ -254,15 +237,23 @@ public class GroupDaoImpl implements GroupDao {
 		
 		setAccountField(context, GroupSchema.DESCRIPTION_KEY, group.getDescription());
 		
-		setAccountField(context, "gidNumber", "10"); // TODO require a sequencer
+		setAccountField(context, GroupSchema.GID_NUMBER_KEY , group.getGidNumber() ); 
 	}
-	
+
+	/**
+	 * if the value is not null then sets the value in the context.
+	 * 
+	 * @param context
+	 * @param fieldName 
+	 * @param value
+	 */
 	private void setAccountField(DirContextOperations context,  String fieldName, Object value) {
 
 		if( !isNullValue(value) ){
 			context.setAttributeValue(fieldName, value);
 		}
 	}
+	
 	private boolean isNullValue(Object value) {
 
 		if(value == null) return true;
@@ -273,8 +264,28 @@ public class GroupDaoImpl implements GroupDao {
 		
 		return false;
 	}
-	
 
+	/**
+	 * Updates the field of group in the LDAP store
+	 * 
+	 * 
+	 * @param groupName groupName to modify
+	 * @param modified new values
+	 * @throws NotFoundException 
+	 * 
+	 */
+	@Override
+	public void update(final String groupName, final Group group) throws DataServiceException, NotFoundException, DuplicatedCommonNameException {
+		
+		if( group.getName().length()== 0 ){
+			throw new IllegalArgumentException("given name is required");
+		}
+
+		// because cn is part of distinguish name it cannot be updated. So the group is removed to include a new one with the new values
+		delete(groupName);
+			
+		insert(group);
+	}
 	
 
 }

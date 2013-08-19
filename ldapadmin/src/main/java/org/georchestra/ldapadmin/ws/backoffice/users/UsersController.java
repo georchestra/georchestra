@@ -21,6 +21,7 @@ import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
 import org.georchestra.ldapadmin.dto.Group;
 import org.georchestra.ldapadmin.dto.UserSchema;
+import org.georchestra.ldapadmin.ws.backoffice.utils.RequestUtil;
 import org.georchestra.ldapadmin.ws.backoffice.utils.ResponseUtil;
 import org.georchestra.lib.file.FileUtils;
 import org.json.JSONException;
@@ -118,7 +119,7 @@ public class UsersController {
 	@RequestMapping(value=REQUEST_MAPPING+"/*", method=RequestMethod.GET)
 	public void findByUid( HttpServletRequest request, HttpServletResponse response) throws IOException{
 		
-		String uid = getUidPathVariable(request);
+		String uid = RequestUtil.getKeyFromPathVariable(request);
 
 		// searches the account
 		Account account = null;
@@ -298,7 +299,7 @@ public class UsersController {
 	@RequestMapping(value=REQUEST_MAPPING+ "/*", method=RequestMethod.PUT)
 	public void update( HttpServletRequest request, HttpServletResponse response) throws IOException{
 		
-		String uid = getUidPathVariable(request);
+		String uid = RequestUtil.getKeyFromPathVariable(request);
 
 		// searches the account
 		Account account = null;
@@ -350,7 +351,7 @@ public class UsersController {
 	@RequestMapping(value=REQUEST_MAPPING + "/*", method=RequestMethod.DELETE)
 	public void delete( HttpServletRequest request, HttpServletResponse response) throws IOException{
 		try{
-			String uid = getUidPathVariable(request);
+			final String uid = RequestUtil.getKeyFromPathVariable(request);
 
 			this.accountDao.delete(uid);
 			
@@ -366,24 +367,6 @@ public class UsersController {
 
 	}
 
-
-	/**
-	 * Gets the uid parameter from request
-	 * 
-	 * @param request [...]/users/{uid}
-	 * @return returns the uid from request
-	 */
-	private String getUidPathVariable(HttpServletRequest request) {
-
-		String str = request.getRequestURI();
-		
-		String[] path = str.split("/");
-		
-		String uid = path[path.length - 1];
-		
-		return uid;
-	}
-	
 	/**
 	 * Modify only the account's fields that are present in the request body.
 	 *  
@@ -395,89 +378,72 @@ public class UsersController {
 	 * @throws IOException
 	 */
 	private Account modifyAccount(Account accont, ServletInputStream inputStream) throws IOException {
-		
-			String strUser = FileUtils.asString(inputStream);
-			JSONObject json;
-			try {
-				json = new JSONObject(strUser);
-			} catch (JSONException e) {
-				LOG.error(e.getMessage());
-				throw new IOException(e);
-			}
-			
-			String givenName = getFieldValue(json, UserSchema.GIVEN_NAME_KEY);
-			if(givenName != null){
-				accont.setGivenName(givenName);
-			}
-			
-			String surname = getFieldValue(json, UserSchema.SURNAME_KEY);
-			if(surname != null){
-				accont.setSurname(surname);
-			}
-			
-			String email = getFieldValue(json, UserSchema.MAIL_KEY);
-			if(email != null){
-				accont.setEmail(email);
-			}
-			
-			String postOfficeBox = getFieldValue(json, UserSchema.POST_OFFICE_BOX_KEY);
-			if(postOfficeBox != null){
-				accont.setPostOfficeBox(postOfficeBox);
-			}
 
-			String postalCode = getFieldValue(json, UserSchema.POSTAL_CODE_KEY);
-			if(postalCode != null){
-				accont.setPostalCode(postalCode);
-			}
-			
-			String street = getFieldValue(json, UserSchema.STREET_KEY);
-			if(street != null){
-				accont.setStreet(street);
-			}
-
-			String locality = getFieldValue(json, UserSchema.LOCALITY_KEY);
-			if(locality != null){
-				accont.setLocality(locality);
-			}
-
-			String phone = getFieldValue(json, UserSchema.TELEPHONE_KEY);
-			if(phone != null){
-				accont.setPhone(phone);
-			}
-
-			String facsimile = getFieldValue(json, UserSchema.FACSIMILE_KEY);
-			if(facsimile != null){
-				accont.setFacsimile(facsimile);
-			}
-
-			String commonName = AccountFactory.formatCommonName(accont.getGivenName(), accont.getSurname());
-			
-			accont.setCommonName(commonName);
-
-			return accont;
-			
-	}
-
-
-	/**
-	 * Returns the value associated to the fieldName key. 
-	 * 
-	 * If the key value is not present in the JSON object a null value is returned.
-	 * 
-	 * @param json
-	 * @param fieldName
-	 * 
-	 * @return the value
-	 */
-	private String getFieldValue(JSONObject json, String fieldName) {
-		String value;
+		String strUser = FileUtils.asString(inputStream);
+		JSONObject json;
 		try {
-			value = json.getString(fieldName);
+			json = new JSONObject(strUser);
 		} catch (JSONException e) {
-			value = null;
+			LOG.error(e.getMessage());
+			throw new IOException(e);
 		}
-		return value;
+
+		String givenName = RequestUtil.getFieldValue(json, UserSchema.GIVEN_NAME_KEY);
+		if (givenName != null) {
+			accont.setGivenName(givenName);
+		}
+
+		String surname = RequestUtil.getFieldValue(json, UserSchema.SURNAME_KEY);
+		if (surname != null) {
+			accont.setSurname(surname);
+		}
+
+		String email = RequestUtil.getFieldValue(json, UserSchema.MAIL_KEY);
+		if (email != null) {
+			accont.setEmail(email);
+		}
+
+		String postOfficeBox = RequestUtil.getFieldValue(json,
+				UserSchema.POST_OFFICE_BOX_KEY);
+		if (postOfficeBox != null) {
+			accont.setPostOfficeBox(postOfficeBox);
+		}
+
+		String postalCode = RequestUtil.getFieldValue(json, UserSchema.POSTAL_CODE_KEY);
+		if (postalCode != null) {
+			accont.setPostalCode(postalCode);
+		}
+
+		String street = RequestUtil.getFieldValue(json, UserSchema.STREET_KEY);
+		if (street != null) {
+			accont.setStreet(street);
+		}
+
+		String locality = RequestUtil.getFieldValue(json, UserSchema.LOCALITY_KEY);
+		if (locality != null) {
+			accont.setLocality(locality);
+		}
+
+		String phone = RequestUtil.getFieldValue(json, UserSchema.TELEPHONE_KEY);
+		if (phone != null) {
+			accont.setPhone(phone);
+		}
+
+		String facsimile = RequestUtil.getFieldValue(json, UserSchema.FACSIMILE_KEY);
+		if (facsimile != null) {
+			accont.setFacsimile(facsimile);
+		}
+
+		String commonName = AccountFactory.formatCommonName(
+				accont.getGivenName(), accont.getSurname());
+
+		accont.setCommonName(commonName);
+
+		return accont;
+			
 	}
+
+
 
 	/**
 	 * Create a new account from the body request.

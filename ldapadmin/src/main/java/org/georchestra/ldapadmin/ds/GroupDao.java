@@ -53,6 +53,34 @@ public interface GroupDao {
 	 * @throws DataServiceException 
 	 * @throws DuplicatedCommonNameException if the group es present in the LDAP store
 	 */
-	void insert(Group group) throws DataServiceException, DuplicatedCommonNameException; 
+	void insert(Group group) throws DataServiceException, DuplicatedCommonNameException;
 
+	/**
+	 * Removes the group
+	 * 
+	 * @param commonName
+	 * @throws DataServiceException
+	 * @throws NotFoundException
+	 */
+	void delete(String commonName) throws DataServiceException,	NotFoundException;
+
+	/**
+	 * Search the group based on the common name (cn)
+	 * @param commonName
+	 * @return {@link Group}
+	 * 
+	 * @throws NotFoundException
+	 */
+	Group findByCommonName(String commonName) throws DataServiceException, NotFoundException;
+
+	
+	/**
+	 * Modifies the groups fields in the store
+	 * 
+	 * @param groupName
+	 * @param modified
+	 * 
+	 */
+	void update(String groupName, Group modified) throws DataServiceException, NotFoundException, DuplicatedCommonNameException; 
+	
 }

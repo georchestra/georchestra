@@ -35,6 +35,10 @@ public interface Group {
 	void  addUser(String userUid);
 	
 	void setDescription(String description);	
-	String getDescription();	
 
+	String getDescription();
+	
+	void setGidNumber(String stringAttribute);
+	
+	String getGidNumber();	
 }

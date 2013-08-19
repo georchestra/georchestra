@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * A group and its users
+ * A group and its users.
  * 
  * @author Mauricio Pazos
  *
@@ -17,6 +17,7 @@ class GroupImpl implements Group {
 	private String name;
 	private List<String> userList = new LinkedList<String>();
 	private String description;
+	private String gidNumber;
 
 	/* (non-Javadoc)
 	 * @see org.georchestra.ldapadmin.dto.Group#getCommonName()
@@ -71,9 +72,24 @@ class GroupImpl implements Group {
 	}
 
 	@Override
-	public String toString() {
-		return "GroupImpl [name=" + name + ", userList=" + userList
-				+ ", description=" + description + "]";
+	public void setGidNumber(String gidNumber) {
+		
+		this.gidNumber = gidNumber;
+		
 	}
 
+	@Override
+	public String getGidNumber() {
+
+		return this.gidNumber;
+	}
+
+	@Override
+	public String toString() {
+		return "GroupImpl [name=" + name + ", userList=" + userList
+				+ ", description=" + description + ", gidNumber=" + gidNumber
+				+ "]";
+	}
+
+	
 }
