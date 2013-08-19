@@ -67,7 +67,7 @@
 				<t:input path="uid" required="true" appendIcon="icon-user">
 					<jsp:attribute name="label"><s:message code="uid.label" /></jsp:attribute>
 				</t:input>
-				<t:password path="password" required="true" spanId="pwdQuality" appendIcon="icon-lock" onchange="cleanPasswordError();feedbackPassStrength(password, 'pwdQuality', value);" onkeypress="cleanPasswordError();" onkeyup="feedbackPassStrength(password, 'pwdQuality', value);">
+				<t:password path="password" required="true" spanId="pwdQuality" appendIcon="icon-lock" onchange="cleanPasswordError();feedbackPassStrength('pwdQuality', value);" onkeypress="cleanPasswordError();" onkeyup="feedbackPassStrength('pwdQuality', value);">
 					<jsp:attribute name="label"><s:message code="password.label" /></jsp:attribute>
 				</t:password>
 				<t:password path="confirmPassword" required="true" spanId="passwordError" onblur="equalsPasswords();">

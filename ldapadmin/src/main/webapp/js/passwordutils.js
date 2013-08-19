@@ -47,7 +47,7 @@ function scorePassword( password) {
  * 
  * TODO: We may use the bootstrap progress bars
  */
-function feedbackPassStrength(p, ctrlId, password){
+function feedbackPassStrength(ctrlId, password){
     var message = "";
     var msgclass = "";
     var el = $("#"+ctrlId);
