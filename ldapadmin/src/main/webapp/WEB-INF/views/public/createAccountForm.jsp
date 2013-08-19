@@ -4,6 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="s" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 
 <%@ page import="net.tanesha.recaptcha.ReCaptcha" %>
 <%@ page import="net.tanesha.recaptcha.ReCaptchaFactory" %>
@@ -77,27 +78,15 @@
 
 			<fieldset>
 				<legend>User details</legend>
-				<div class="control-group">
-					<form:label path="firstName" cssClass="control-label"><s:message code="firstName.label" /> *</form:label>
-					<div class="controls">
-						<form:input path="firstName" size="30" maxlength="80" onkeyup="makeUid();" onchange="makeUid();" />
-						<form:errors path="firstName" cssClass="help-inline"/>
-					</div>
-				</div>
-				<div class="control-group">
-					<form:label path="surname" cssClass="control-label"><s:message code="surname.label"/> *</form:label>
-					<div class="controls">
-						<form:input path="surname" size="30" maxlength="80" onkeyup="makeUid();" onchange="makeUid();" />
-						<form:errors path="surname" cssClass="help-inline" />
-					</div>
-				</div>
-				<div class="control-group">
-					<form:label path="email" cssClass="control-label"> <s:message code="email.label" /> *</form:label>
-					<div class="controls">
-						<form:input path="email" size="30" maxlength="80"/>
-						<form:errors path="email" cssClass="help-inline" />
-					</div>
-				</div>
+				<t:input path="firstName" required="true" onkeyup="makeUid();" onchange="makeUid();">
+					<jsp:attribute name="label"><s:message code="firstName.label" /></jsp:attribute>
+				</t:input>
+				<t:input path="surname" required="true" onkeyup="makeUid();" onchange="makeUid();">
+					<jsp:attribute name="label"><s:message code="surname.label" /></jsp:attribute>
+				</t:input>
+				<t:input path="email" required="true">
+					<jsp:attribute name="label"><s:message code="email.label" /></jsp:attribute>
+				</t:input>
 				<div class="accordion" id="accordion2">
 					<div class="accordion-heading">
 						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
@@ -105,84 +94,35 @@
 						</a>
 					</div>
 					<div id="collapseOne" class="accordion-body collapse">
-						<div class="control-group">
-							<form:label path="phone" cssClass="control-label"><s:message code="phone.label"/> </form:label>
-							<div class="controls">
-								<form:input path="phone" size="30" maxlength="80"/>
-								<form:errors path="phone" cssClass="help-inline" />
-							</div>
-						</div>
-						<div class="control-group">
-							<form:label path="org" cssClass="control-label"><s:message code="organization.label" />  </form:label>
-							<div class="controls">
-								<form:input path="org" size="30" maxlength="80"/>
-							</div>
-						</div>
-						<div class="control-group">
-							<form:label path="details" cssClass="control-label"><s:message code="details.label" />  </form:label>
-							<div class="controls">
-								<form:textarea path="details" rows="3" cols="30" />
-							</div>
-						</div>
+						<t:input path="phone">
+							<jsp:attribute name="label"><s:message code="phone.label" /></jsp:attribute>
+						</t:input>
+						<t:input path="org">
+							<jsp:attribute name="label"><s:message code="organization.label" /></jsp:attribute>
+						</t:input>
+						<t:input path="details">
+							<jsp:attribute name="label"><s:message code="details.label" /></jsp:attribute>
+						</t:input>
 					</div>
 				</div>
 			</fieldset>
 
 			<fieldset>
 				<legend>Credentials</legend>
-				<div class="control-group">
-					<form:label path="uid" cssClass="control-label"><s:message code="uid.label" /> *</form:label>
-					<div class="controls">
-						<div class="input-append">
-							<form:input path="uid" size="30" maxlength="80" />
-							<span class="add-on"><i class="icon-user"></i></span>
-						</div>
-						<form:errors path="uid" cssClass="help-inline" />
-					</div>
-				</div>
-				<div class="control-group">
-					<form:label path="password" cssClass="control-label"><s:message code="password.label" /> *</form:label>
-					<div class="controls">
-						<div class="input-append">
-							<form:password path="password" size="30" maxlength="80" onchange="cleanPasswordError();feedbackPassStrength(password, pwdQuality, value);" onkeypress="cleanPasswordError();" onkeyup="feedbackPassStrength(password, pwdQuality, value);" />
-							<span class="add-on"><i class="icon-lock"></i></span>
-						</div>
-						<span id="pwdQuality" class="help-inline"></span>
-						<form:errors path="password" cssClass="help-inline" />
-					</div>
-				</div>
-				<div class="control-group">
-					<form:label path="confirmPassword" cssClass="control-label"><s:message code="confirmPassword.label" /> *</form:label>
-					<div class="controls">
-						<form:password path="confirmPassword" size="30" maxlength="80" onblur="equalsPasswords();" />
-						<span id="passwordError" class="help-inline"></span>
-						<form:errors path="confirmPassword" cssClass="help-inline" />
-					</div>
-				</div>
+				<t:input path="uid" required="true" appendIcon="icon-user">
+					<jsp:attribute name="label"><s:message code="uid.label" /></jsp:attribute>
+				</t:input>
+				<t:password path="password" required="true" spanId="pwdQuality" appendIcon="icon-lock" onchange="cleanPasswordError();feedbackPassStrength(password, pwdQuality, value);" onkeypress="cleanPasswordError();" onkeyup="feedbackPassStrength(password, pwdQuality, value);">
+					<jsp:attribute name="label"><s:message code="password.label" /></jsp:attribute>
+				</t:password>
+				<t:password path="confirmPassword" required="true" spanId="passwordError" onblur="equalsPasswords();">
+					<jsp:attribute name="label"><s:message code="confirmPassword.label" /></jsp:attribute>
+				</t:password>
 			</fieldset>
 
 			<fieldset>
 				<legend>ReCaptcha verification</legend>
-				<div class="control-group">
-					<div class="controls">
-						<a id="recaptcha_image" href="#" class="thumbnail"></a>
-						<div class="recaptcha_only_if_incorrect_sol" style="color:red">Incorrect please try again</div>
-					</div>
-				</div>
-				<div class="control-group">
-					<label class="recaptcha_only_if_image control-label">Enter the words above:</label>
-					<label class="recaptcha_only_if_audio control-label">Enter the numbers you hear:</label>
-					<div class="controls">
-						<div class="input-append">
-							<input type="text" id="recaptcha_response_field" name="recaptcha_response_field" class="input-recaptcha" />
-							<a class="btn" href="javascript:Recaptcha.reload()"><i class="icon-refresh"></i></a>
-							<a class="btn recaptcha_only_if_image" href="javascript:Recaptcha.switch_type('audio')"><i title="Get an audio CAPTCHA" class="icon-headphones"></i></a>
-							<a class="btn recaptcha_only_if_audio" href="javascript:Recaptcha.switch_type('image')"><i title="Get an image CAPTCHA" class="icon-picture"></i></a>
-							<a class="btn" href="javascript:Recaptcha.showhelp()"><i class="icon-question-sign"></i></a>
-						</div>
-						<form:errors path="recaptcha_response_field" cssClass="help-inline" />
-					</div>
-				</div>
+				<t:recaptcha path="recaptcha_response_field" />
 			</fieldset>
 
 			<div class="form-actions">
