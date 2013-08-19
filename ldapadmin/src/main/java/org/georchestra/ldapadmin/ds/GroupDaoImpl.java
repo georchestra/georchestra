@@ -74,6 +74,7 @@ public class GroupDaoImpl implements GroupDao {
 			this.ldapTemplate.modifyAttributes(context);
 
 		} catch (Exception e) {
+			LOG.error(e);
 			throw new DataServiceException(e);		
 		}
 		
@@ -285,6 +286,46 @@ public class GroupDaoImpl implements GroupDao {
 		delete(groupName);
 			
 		insert(group);
+	}
+
+	@Override
+	public void addUsers(String groupName, List<String> addList) throws NotFoundException, DataServiceException {
+		
+		for (String uid : addList) {
+			addUser(groupName, uid);
+		}
+	}
+
+	@Override
+	public void deleteUsers(String groupName, List<String> deleteList)
+			throws DataServiceException, NotFoundException {
+		
+		for (String uid : deleteList) {
+			deleteUser(groupName, uid);
+		}
+		
+	}
+
+	@Override
+	public void addUsersInGroups(List<String> putGroup, List<String> users)
+			throws DataServiceException, NotFoundException {
+
+		
+		for (String groupName : putGroup) {
+			
+			addUsers(groupName, users);
+		}
+	}
+
+	@Override
+	public void deleteUsersInGroups(List<String> deleteGroup, List<String> users)
+			throws DataServiceException, NotFoundException {
+
+		for (String groupName : deleteGroup) {
+			
+			deleteUsers(groupName, users);
+		}
+		
 	}
 	
 

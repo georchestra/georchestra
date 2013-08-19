@@ -39,6 +39,35 @@ public class RequestUtil {
 		return uid;
 	}
 
+	
+	/**
+	 * Searches the resource's key in the URI
+	 * 
+	 * @param request format http://BASE_MAPPING/{resourceName}/{resourceKey}
+	 * @param resourceName 
+	 * 
+	 * @return the resource key
+	 */
+	public static String getKeyFromPathVariable(final HttpServletRequest request, final String resourceName) {
+
+		String str = request.getRequestURI();
+		
+		String[] path = str.split("/");
+
+		int resourcePosition = -1;
+		for (int i = 0; i < path.length; i++) {
+			
+			if(path[i].equalsIgnoreCase(resourceName)){
+				resourcePosition = i;
+			}
+		}
+		if(resourcePosition == -1){
+			throw new IllegalArgumentException("resource not found:  " + resourceName);
+		}
+		String resourceKey = path[resourcePosition + 1];
+		
+		return resourceKey;
+	}
 	/**
 	 * Returns the value associated to the fieldName. 
 	 * 

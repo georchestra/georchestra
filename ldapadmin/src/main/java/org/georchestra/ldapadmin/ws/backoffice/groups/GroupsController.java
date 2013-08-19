@@ -4,6 +4,7 @@
 package org.georchestra.ldapadmin.ws.backoffice.groups;
 
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.ServletInputStream;
@@ -22,6 +23,7 @@ import org.georchestra.ldapadmin.dto.GroupSchema;
 import org.georchestra.ldapadmin.ws.backoffice.utils.RequestUtil;
 import org.georchestra.ldapadmin.ws.backoffice.utils.ResponseUtil;
 import org.georchestra.lib.file.FileUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,12 +44,15 @@ public class GroupsController {
 	private static final Log LOG = LogFactory.getLog(GroupsController.class.getName());
 
 	private static final String BASE_MAPPING = "/private";
-	private static final String REQUEST_MAPPING = BASE_MAPPING + "/groups";
+	private static final String BASE_RESOURCE = "groups";
+	private static final String REQUEST_MAPPING = BASE_MAPPING + "/" + BASE_RESOURCE;
 
 	
 	private static final String DUPLICATED_COMMON_NAME = "duplicated_common_name";
 
-	private static final String NOT_FOUND = "not found";
+	private static final String NOT_FOUND = "not_found";
+
+	private static final String USER_NOT_FOUND = "user_not_found";
 
 	
 	private GroupDao groupDao;
@@ -279,6 +284,71 @@ public class GroupsController {
 		}
 	}
 	
+	/**
+	 * Updates the users of group. This method will add or delete the group of users from the list of groups.
+	 *  
+	 * @param request	request [BASE_MAPPING]/groups_users/{cn} body request {"users": [u1,ud,u3], "PUT": [g1,g2], "DELETE":[g3,g4] }
+	 * @param response
+	 * @throws IOException
+	 */
+	@RequestMapping(value=BASE_MAPPING+ "/groups_users", method=RequestMethod.POST)
+	public void updateUsers( HttpServletRequest request, HttpServletResponse response) throws IOException{
+		
+		try{
+			
+			ServletInputStream is = request.getInputStream();
+			String strGroup = FileUtils.asString(is);
+			JSONObject json = new JSONObject(strGroup);
+
+			List<String> users = createUserList(json, "users");
+			
+			List<String> putGroup = createUserList(json, "PUT");
+			this.groupDao.addUsersInGroups(putGroup, users);
+			
+			List<String> deleteGroup = createUserList(json, "DELETE");
+			this.groupDao.deleteUsersInGroups(deleteGroup, users);
+
+			ResponseUtil.writeSuccess(response);
+			
+		}  catch (NotFoundException e) {
+
+			ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(Boolean.FALSE, USER_NOT_FOUND), HttpServletResponse.SC_NOT_FOUND);
+			
+			return;
+			
+		}  catch (DataServiceException e){
+			LOG.error(e.getMessage());
+			
+			throw new IOException(e);
+		} catch (JSONException e) {
+			LOG.error(e.getMessage());
+			
+			throw new IOException(e);
+		}
+	}
+	
+	
+	
+	private List<String> createUserList(JSONObject json, String arrayKey) throws IOException {
+
+		
+		try {
+			
+			List<String> list = new LinkedList<String>();
+
+			JSONArray jsonArray = json.getJSONArray(arrayKey);
+			for (int i = 0; i < jsonArray.length(); i++) {
+				
+				list.add(jsonArray.getString(i));
+			}
+			
+			return list;
+			
+		} catch (Exception e) {
+			LOG.error(e.getMessage());
+			throw new IOException(e);
+		}
+	}
 
 	/**
 	 * Modifies the original field using the values in the inputStream.

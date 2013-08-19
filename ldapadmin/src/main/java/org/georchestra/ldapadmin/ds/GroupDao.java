@@ -21,6 +21,9 @@ public interface GroupDao {
 	 */
 	void addUser(String  groupID, String userId) throws DataServiceException, NotFoundException;
 
+
+	void addUsers(String cn, List<String> addList) throws DataServiceException, NotFoundException; 
+
 	/**
 	 * Returns all groups. Each groups will contains its list of users.
 	 * 
@@ -35,6 +38,8 @@ public interface GroupDao {
 	 * @throws DataServiceException
 	 */
 	void deleteUser(String uid) throws DataServiceException;
+	
+	void deleteUsers(String cn, List<String> deleteList) throws DataServiceException, NotFoundException;
 	
 	/**
 	 * Deletes the user from the user
@@ -81,6 +86,12 @@ public interface GroupDao {
 	 * @param modified
 	 * 
 	 */
-	void update(String groupName, Group modified) throws DataServiceException, NotFoundException, DuplicatedCommonNameException; 
+	void update(String groupName, Group modified) throws DataServiceException, NotFoundException, DuplicatedCommonNameException;
+
+	void addUsersInGroups(List<String> putGroup, List<String> users)  throws DataServiceException, NotFoundException;
+
+	void deleteUsersInGroups(List<String> deleteGroup, List<String> users) throws DataServiceException, NotFoundException;
+
+
 	
 }
