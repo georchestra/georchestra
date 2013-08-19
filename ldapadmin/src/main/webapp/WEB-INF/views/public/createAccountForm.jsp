@@ -9,14 +9,12 @@
 <%@ page import="net.tanesha.recaptcha.ReCaptcha" %>
 <%@ page import="net.tanesha.recaptcha.ReCaptchaFactory" %>
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<link href='<c:url value="/css/bootstrap.min.css" />' rel="stylesheet" />
 	<title>Create Account Form</title>
-
 </head>
 
 <body>
@@ -91,8 +89,6 @@
 	<script src='<c:url value="/js/bootstrap.min.js" />'></script>
 	<script type="text/javascript"  src="<c:url value="/js/passwordutils.js" />" > </script>
 	<script type="text/javascript">
-
-
     /* to be called when either Firstname or Surname is modified
      * ("keyup" or "change" event - "input" event is not available with this version of spring)
      */
@@ -118,12 +114,10 @@
         document.getElementById("passwordError").innerHTML="";
         document.getElementById("confirmPassword").value="";
     }
-    
     var RecaptchaOptions = {
         theme : 'custom',
         custom_theme_widget: 'recaptcha_widget'
     };
-    
    	</script>
 	<script type="text/javascript" src="http://www.google.com/recaptcha/api/challenge?k=6Lf0h-MSAAAAAOQ4YyRtbCNccU87dlGmokmelZjh"></script>
 </body>
