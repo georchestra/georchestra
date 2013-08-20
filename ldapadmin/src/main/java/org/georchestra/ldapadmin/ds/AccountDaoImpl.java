@@ -9,6 +9,8 @@ import javax.naming.Name;
 
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
+import org.georchestra.ldapadmin.dto.UserSchema;
+import org.georchestra.ldapadmin.ws.newaccount.UidGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.ContextMapper;
@@ -142,18 +144,23 @@ public final class AccountDaoImpl implements AccountDao{
 		Name dn = buildDn(account.getUid());
 		DirContextOperations context = ldapTemplate.lookupContext(dn);
 
-		mapDetailsToContext(account, context);
+		mapToContext(account, context);
 		
 		ldapTemplate.modifyAttributes(context);
 	}
 
 
 	/**
+	 * Removes the user account and the reference included in the group
+	 * 
 	 * @see {@link AccountDao#delete(Account)}
 	 */
 	@Override
-	public void delete(final Account account) throws DataServiceException, NotFoundException{
-		ldapTemplate.unbind(buildDn(account.getUid()));
+	public void delete(final String uid) throws DataServiceException, NotFoundException{
+		this.ldapTemplate.unbind(buildDn(uid), true);
+		
+		this.groupDao.deleteUser( uid );
+
 	}
 	
 	/**
@@ -255,9 +262,6 @@ public final class AccountDaoImpl implements AccountDao{
 		if( a.getSurname().length() <= 0){
 			throw new IllegalArgumentException("surname name (sn) is requird");
 		}
-		if( a.getPassword().length() <= 0){
-			throw new IllegalArgumentException("password is requird");
-		}
 		if( a.getEmail().length() <= 0){
 			throw new IllegalArgumentException("email is requird");
 		}
@@ -292,79 +296,55 @@ public final class AccountDaoImpl implements AccountDao{
 		context.setAttributeValues("objectclass", new String[] { "top", "person", "organizationalPerson", "inetOrgPerson" });
 
 		// person attributes
-		context.setAttributeValue("sn", account.getSurname());
+		setAccountField(context, UserSchema.SURNAME_KEY, account.getSurname());
 
-		context.setAttributeValue("cn", account.getCommonName());
+		setAccountField(context, UserSchema.COMMON_NAME_KEY, account.getCommonName());
 		
-		setAccountField(context, "description", account.getDetails());
+		setAccountField(context, UserSchema.DESCRIPTION_KEY, account.getDescription());
 
-		setAccountField(context, "telephoneNumber", account.getPhone());
+		setAccountField(context, UserSchema.TELEPHONE_KEY, account.getPhone());
 
-		context.setAttributeValue("userPassword", account.getPassword());
+		setAccountField(context, UserSchema.USER_PASSWORD_KEY , account.getPassword());
+
+		setAccountField(context, UserSchema.MOBILE_KEY , account.getMobile());
 
 		// organizationalPerson attributes
-		// any attribute is set right now (when the account is created)
+		setAccountField(context, UserSchema.TITLE_KEY, account.getTitle());
+
+		setAccountField(context, UserSchema.STREET_KEY, account.getStreet());
+		
+		setAccountField(context, UserSchema.LOCALITY_KEY, account.getLocality());
+		
+		setAccountField(context, UserSchema.FACSIMILE_KEY, account.getFacsimile());
+		
+		setAccountField(context, UserSchema.ROOM_NUMBER_KEY, account.getRoomNumber());
 		
 		// inetOrgPerson attributes
-		setAccountField(context, "givenName", account.getGivenName());
+		setAccountField(context, UserSchema.GIVEN_NAME_KEY, account.getGivenName());
 		
-		context.setAttributeValue("uid", account.getUid().toLowerCase());
+		setAccountField(context, UserSchema.UUID_KEY, account.getUid().toLowerCase());
 
-		context.setAttributeValue("mail", account.getEmail());
-		
-		// additional
-		setAccountField(context, "o", account.getOrg());
-
-		setAccountField(context, "title", account.getTitle());
-
-		setAccountField(context, "postalAddress", account.getPostalAddress());
-
-		setAccountField(context, "postalCode", account.getPostalCode());
-
-		setAccountField(context, "registeredAddress", account.getRegisteredAddress());
-
-		setAccountField(context, "postOfficeBox", account.getPostOfficeBox());
-
-		setAccountField(context, "physicalDeliveryOfficeName", account.getPhysicalDeliveryOfficeName());
-	}
-	
-	private void mapDetailsToContext(Account account, DirContextOperations context){
-		
-		context.setAttributeValues("objectclass", new String[] { "top", "person", "organizationalPerson", "inetOrgPerson" });
-
-		// person attributes
-		context.setAttributeValue("sn", account.getSurname());
-
-		context.setAttributeValue("cn", account.getCommonName() );
-		
-		setAccountField(context, "description", account.getDetails());
-
-		setAccountField(context, "telephoneNumber", account.getPhone());
-
-		
-		// organizationalPerson attributes
-		// any attribute is set right now (when the account is created)
-		
-		// inetOrgPerson attributes
-		setAccountField(context, "givenName", account.getGivenName());
+		setAccountField(context, UserSchema.MAIL_KEY, account.getEmail());
 		
 		// additional
-		setAccountField(context, "o", account.getOrg());
+		setAccountField(context, UserSchema.ORG_KEY, account.getOrg());
 
-		setAccountField(context, "title", account.getTitle());
+		setAccountField(context, UserSchema.POSTAL_ADDRESS_KEY, account.getPostalAddress());
 
-		setAccountField(context, "postalAddress", account.getPostalAddress());
+		setAccountField(context, UserSchema.POSTAL_CODE_KEY, account.getPostalCode());
 
-		setAccountField(context, "postalCode", account.getPostalCode());
+		setAccountField(context, UserSchema.REGISTERED_ADDRESS_KEY, account.getRegisteredAddress());
 
-		setAccountField(context, "registeredAddress", account.getRegisteredAddress());
-		
-		setAccountField(context, "postOfficeBox", account.getPostOfficeBox());
-		
-		setAccountField(context, "physicalDeliveryOfficeName", account.getPhysicalDeliveryOfficeName());
+		setAccountField(context, UserSchema.POST_OFFICE_BOX_KEY , account.getPostOfficeBox());
+
+		setAccountField(context, UserSchema.PHYSICAL_DELIVERY_OFFICE_NAME_KEY, account.getPhysicalDeliveryOfficeName());
+
+		setAccountField(context, UserSchema.STATE_OR_PROVINCE_KEY, account.getStateOrProvince());
+
+		setAccountField(context, UserSchema.ORG_UNIT_KEY, account.getOrganizationalUnit());
 	}
 	
-	private void setAccountField(DirContextOperations context,  String fieldName, String value) {
+	private void setAccountField(DirContextOperations context,  String fieldName, Object value) {
 
 		if( !isNullValue(value) ){
 			context.setAttributeValue(fieldName, value);
@@ -380,33 +360,47 @@ public final class AccountDaoImpl implements AccountDao{
 			DirContextAdapter context = (DirContextAdapter) ctx;
 			
 			Account account = AccountFactory.createFull(
-					context.getStringAttribute("uid"),
-					context.getStringAttribute("cn"),
-					context.getStringAttribute("sn"),
-					context.getStringAttribute("givenName"),
-					context.getStringAttribute("mail"),
+					context.getStringAttribute(UserSchema.UUID_KEY),
+					context.getStringAttribute(UserSchema.COMMON_NAME_KEY),
+					context.getStringAttribute(UserSchema.SURNAME_KEY),
+					context.getStringAttribute(UserSchema.GIVEN_NAME_KEY),
+					context.getStringAttribute(UserSchema.MAIL_KEY),
 					
-					context.getStringAttribute("o"),
-					context.getStringAttribute("title"),
+					context.getStringAttribute(UserSchema.ORG_KEY),
+					context.getStringAttribute(UserSchema.TITLE_KEY),
 
-					context.getStringAttribute("telephoneNumber"),
-					context.getStringAttribute("description"),
+					context.getStringAttribute(UserSchema.TELEPHONE_KEY),
+					context.getStringAttribute(UserSchema.DESCRIPTION_KEY),
 
-					context.getStringAttribute("postalAddress"),
-					context.getStringAttribute("postalCode"),
-					context.getStringAttribute("registeredAddress"),
-					context.getStringAttribute("postOfficeBox"),
-					context.getStringAttribute("physicalDeliveryOfficeName") );
+					context.getStringAttribute(UserSchema.POSTAL_ADDRESS_KEY),
+					context.getStringAttribute(UserSchema.POSTAL_CODE_KEY),
+					context.getStringAttribute(UserSchema.REGISTERED_ADDRESS_KEY),
+					context.getStringAttribute(UserSchema.POST_OFFICE_BOX_KEY),
+					context.getStringAttribute(UserSchema.PHYSICAL_DELIVERY_OFFICE_NAME_KEY),
+
+					context.getStringAttribute(UserSchema.STREET_KEY),
+					context.getStringAttribute(UserSchema.LOCALITY_KEY),
+
+					context.getStringAttribute(UserSchema.FACSIMILE_KEY),
+					context.getStringAttribute(UserSchema.ORG_UNIT_KEY),
+					
+					context.getStringAttribute(UserSchema.HOME_POSTAL_ADDRESS_KEY),
+					context.getStringAttribute(UserSchema.MOBILE_KEY),
+					(Integer)context.getObjectAttribute(UserSchema.ROOM_NUMBER_KEY),
+					context.getStringAttribute(UserSchema.STATE_OR_PROVINCE_KEY)
+				);
 
 			return account;
 		}
 	}
 	
-	private boolean isNullValue(String str) {
+	private boolean isNullValue(Object value) {
 
-		if(str == null) return true;
+		if(value == null) return true;
 		
-		if(str.length() == 0) return true;
+		if(value instanceof String){
+			if(((String)value).length() == 0) return true;
+		}
 		
 		return false;
 	}
@@ -468,11 +462,29 @@ public final class AccountDaoImpl implements AccountDao{
 			context.setAttributeValues(pwd, pwdValues);
 		}
 		
-		// TODO this logic requires set the update date (is there any ldap field to support this???)
-		
 		ldapTemplate.modifyAttributes(context);
 	}
 
+
+	/**
+	 * Generate a new uid based on the provided uid
+	 *  
+	 * @param
+	 * 
+	 * @return the proposed uid
+	 */
+	@Override
+	public String generateUid(String uid) throws DataServiceException {
+
+		String newUid = UidGenerator.next(uid);
+
+		while (exist(newUid)) {
+
+			newUid = UidGenerator.next(newUid);
+		}
+		
+		return newUid;
+	}
 
 
 	

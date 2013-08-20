@@ -4,76 +4,121 @@ package org.georchestra.ldapadmin.dto;
  * Account data transfer object.
  * 
  * @author Mauricio Pazos
- *
+ * 
  */
 public interface Account {
 
-	public   void setUid(String uid);
+	void setUid(String uid);
 
-	public   String getUid();
+	String getUid();
 
-	public   String getCommonName();
+	/**
+	 * Person’s full name.
+	 */
+	String getCommonName();
 
-	public   void setCommonName(String name);
+	/**
+	 * Person’s full name.
+	 */
+	void setCommonName(String name);
 
-	public   String getOrg();
+	String getOrg();
 
-	public   void setOrg(String org);
+	void setOrg(String org);
 
-	public   String getRole();
+	String getRole();
 
-	public   void setRole(String role);
+	void setRole(String role);
 
-	public   String getEmail();
+	String getEmail();
 
-	public   void setEmail(String email);
+	void setEmail(String email);
 
-	public   String getPhone();
+	String getPhone();
 
-	public   void setPhone(String phone);
+	void setPhone(String phone);
 
-	public   String getDetails();
+	String getDescription();
 
-	public   void setDetails(String details);
+	void setDetails(String details);
 
-	public   void setPassword(String password);
+	void setPassword(String password);
 
-	public   String getPassword();
+	String getPassword();
 
-	public   void setNewPassword(String newPassword);
+	void setNewPassword(String newPassword);
 
-	public   String getNewPassword();
+	String getNewPassword();
 
-	public   String getSurname();
+	String getSurname();
 
-	public   void setSurname(String surname);
+	void setSurname(String surname);
 
-	public   String getGivenName();
+	/**
+	 * The givenName attribute is used to hold the part of a person’s name which
+	 * is not their surname nor middle name.
+	 */
+	String getGivenName();
 
-	public   void setGivenName(String givenName);
+	/**
+	 * The givenName attribute is used to hold the part of a person’s name which
+	 * is not their surname nor middle name.
+	 */
+	void setGivenName(String givenName);
 
-	public   String getTitle();
+	String getTitle();
 
-	public   void setTitle(String title);
+	void setTitle(String title);
 
-	public   String getPostalAddress();
+	String getPostalAddress();
 
-	public   void setPostalAddress(String postalAddress);
+	void setPostalAddress(String postalAddress);
 
-	public   String getPostalCode();
+	String getPostalCode();
 
-	public   void setPostalCode(String postalCode);
+	void setPostalCode(String postalCode);
 
-	public   String getRegisteredAddress();
+	String getRegisteredAddress();
 
-	public   void setRegisteredAddress(String registeredAddress);
+	void setRegisteredAddress(String registeredAddress);
 
-	public   String getPostOfficeBox();
+	String getPostOfficeBox();
 
-	public   void setPostOfficeBox(String postOfficeBox);
+	void setPostOfficeBox(String postOfficeBox);
 
-	public   String getPhysicalDeliveryOfficeName();
+	String getPhysicalDeliveryOfficeName();
 
-	public   void setPhysicalDeliveryOfficeName( String physicalDeliveryOfficeName);
+	void setPhysicalDeliveryOfficeName(String physicalDeliveryOfficeName);
 
+	void setStreet(String street);
+
+	String getStreet();
+
+	void setLocality(String locality);
+
+	String getLocality();
+
+	void setFacsimile(String facsimile);
+
+	String getFacsimile();
+
+	void setMobile(String mobile);
+
+	String getMobile();
+
+	void setRoomNumber(Integer roomNumber);
+
+	Integer getRoomNumber();
+
+	void setStateOrProvince(String stateOrProvince);
+
+	String getStateOrProvince();
+
+	void setOrganizationalUnit(String organizationalUnit);
+
+	String getOrganizationalUnit();
+
+	void setHomePostalAddress(String homePostalAddres);
+
+	String getHomePostalAddress();
 }

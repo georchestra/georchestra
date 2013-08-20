@@ -15,7 +15,6 @@ import org.georchestra.ldapadmin.ds.AccountDao;
 import org.georchestra.ldapadmin.ds.DataServiceException;
 import org.georchestra.ldapadmin.ds.DuplicatedEmailException;
 import org.georchestra.ldapadmin.ds.DuplicatedUidException;
-import org.georchestra.ldapadmin.ds.NotFoundException;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
 import org.georchestra.ldapadmin.dto.Group;
@@ -24,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -35,6 +33,7 @@ import org.springframework.web.bind.support.SessionStatus;
 
 /**
  * Manages the UI Account Form.
+ * 
  * <p>
  * 
  * </p> 
@@ -148,7 +147,7 @@ public final class NewAccountFormController {
 		} catch (DuplicatedUidException e) {
 			
 			try {
-				String proposedUid = generateUid( formBean.getUid() );
+				String proposedUid = this.accountDao.generateUid( formBean.getUid() );
 				
 				formBean.setUid(proposedUid);
 				
@@ -164,16 +163,5 @@ public final class NewAccountFormController {
 			
 			throw new IOException(e);
 		}
-	}
-
-	private String generateUid(final String uid) throws DataServiceException {
-		
-		String newUid = UidGenerator.next(uid);
-		
-		while(this.accountDao.exist(newUid)){
-				
-			newUid = UidGenerator.next(newUid);
-		}
-		return newUid;
 	}
 }

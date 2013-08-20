@@ -35,7 +35,7 @@ public class UserTokenDao {
 	private String databasePassword;
 	private String jdbcURL;
 
-	private String databaseName = "postgres" ;
+	private String databaseName = "postgres" ; // TODO remove
 	
 	public UserTokenDao() {
 		
@@ -207,12 +207,8 @@ public class UserTokenDao {
 				
 				try{
 					Class.forName("org.postgresql.Driver");
+					String url = this.jdbcURL;
 					
-					this.databaseName = "ldapadmin";
-					this.databaseUser = "ldapadmin";
-					this.databasePassword = "ldapadmin";
-					
-					String url = "jdbc:postgresql://localhost:5432/"+ this.databasePassword ;
 					Properties props = new Properties();
 					props.setProperty("user", this.databaseUser);
 					props.setProperty("password",this.databasePassword);

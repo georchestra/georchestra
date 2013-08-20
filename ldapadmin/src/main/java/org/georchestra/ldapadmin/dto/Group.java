@@ -32,6 +32,13 @@ public interface Group {
 	 * adds a user to this group
 	 * @param userUid a user uid
 	 */
-	void  addUser(String userUid);	
+	void  addUser(String userUid);
+	
+	void setDescription(String description);	
 
+	String getDescription();
+	
+	void setGidNumber(String stringAttribute);
+	
+	String getGidNumber();	
 }

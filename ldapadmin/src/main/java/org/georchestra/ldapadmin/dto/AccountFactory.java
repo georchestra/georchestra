@@ -16,7 +16,7 @@ public class AccountFactory {
 	private AccountFactory(){}
 
 
-	private static String formatCommonName(String givenName, String surname) {
+	public static String formatCommonName(String givenName, String surname) {
 		return givenName + " " + surname;
 	}
 
@@ -101,9 +101,9 @@ public class AccountFactory {
 	 * Creates an account object with all data.
 	 * 
 	 * @param uid
-	 * @param cn
-	 * @param surname
-	 * @param givenName
+	 * @param cn full name
+	 * @param surname surname 
+	 * @param givenName first name
 	 * @param email
 	 * @param org
 	 * @param title
@@ -114,6 +114,12 @@ public class AccountFactory {
 	 * @param registeredAddress
 	 * @param postOfficeBox
 	 * @param physicalDeliveryOfficeName
+	 * @param locality 
+	 * @param street 
+	 * @param facsimile 
+	 * @param organizationalUnit 
+	 * @param mobile 
+	 * @param roomNumber 
 	 * 
 	 * @return {@link Account}
 	 */
@@ -131,7 +137,16 @@ public class AccountFactory {
 			String postalCode, 
 			String registeredAddress ,
 			String postOfficeBox, 
-			String physicalDeliveryOfficeName) {
+			String physicalDeliveryOfficeName, 
+			String street, 
+			String locality, 
+			String facsimile, 
+			String organizationalUnit,
+			String homePostalAddress,
+			String mobile, 
+			Integer roomNumber,
+			String stateOrProvince) {
+		
 		
 		Account a = new AccountImpl();
 		
@@ -147,11 +162,22 @@ public class AccountFactory {
 		a.setPhone(phone);
 		a.setDetails(description);
 		
+		a.setStreet(street);
+		a.setLocality(locality);
+		
 		a.setPostalAddress(postalAddress);
 		a.setPostalCode(postalCode);
 		a.setRegisteredAddress(registeredAddress);
 		a.setPostOfficeBox(postOfficeBox);
 		a.setPhysicalDeliveryOfficeName(physicalDeliveryOfficeName);
+		
+		a.setFacsimile(facsimile);
+		a.setOrganizationalUnit(organizationalUnit);
+		
+		a.setHomePostalAddress(homePostalAddress);
+		a.setMobile(mobile);
+		a.setRoomNumber(roomNumber);
+		a.setStateOrProvince(stateOrProvince);
 		
 		return a;
 	}

@@ -41,26 +41,22 @@
         <constructor-arg ref="ldapTemplate" />
         <constructor-arg ref="groupDao" />
 	</bean>
-	
-	<!-- 
-        <property name="ldapTemplate" ref="ldapTemplate" />
-        <property name="groupDao" ref="groupDao" />
-    -->
 
     <!-- userTokenDao  -->
-    <!-- Note: because this is a work in progress right now the the following postgresql parameters are not used. 
-        To configure the connection, for testing purpose, change the  UserTokenDao.getConnection() method
-        Example:
-        
-        this.databaseName = "ldapadmin";
-        this.databaseUser = "ldapadmin";
-        this.databasePassword = "ldapadmin";
-     -->
     <bean id="userTokenDao" class="org.georchestra.ldapadmin.ds.UserTokenDao">
         <property name="databaseUser" value="ldapadmin" />
         <property name="databasePassword" value="ldapadmin" />
         <property name="jdbcURL" value="jdbc:postgresql://localhost:5432/ldapadmin" />
     </bean>
+<!--     
+    <bean id="userTokenDao" class="org.georchestra.ldapadmin.ds.UserTokenDao">
+        <property name="databaseUser" value="postgres" />
+        <property name="databasePassword" value="postgres" />
+        <property name="jdbcURL" value="jdbc:postgresql://localhost:5432/postgres" />
+    </bean>
+ -->    
+    <bean id="expiredTokenCleanTask" class="org.georchestra.ldapadmin.bs.ExpiredTokenCleanTask"/>
+    
 
 	<!-- Resolves localized messages*.properties and application.properties 
 		files in the application to allow for internationalization. The messages*.properties 
