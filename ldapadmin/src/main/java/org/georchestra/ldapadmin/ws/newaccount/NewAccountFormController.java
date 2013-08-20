@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import net.tanesha.recaptcha.ReCaptcha;
 
 import org.georchestra.ldapadmin.bs.Moderator;
+import org.georchestra.ldapadmin.bs.ReCaptchaParameters;
 import org.georchestra.ldapadmin.ds.AccountDao;
 import org.georchestra.ldapadmin.ds.DataServiceException;
 import org.georchestra.ldapadmin.ds.DuplicatedEmailException;
@@ -43,7 +44,7 @@ import org.springframework.web.bind.support.SessionStatus;
  *
  */
 @Controller
-@SessionAttributes(types=AccountFormBean.class)
+@SessionAttributes(value={"reCaptchaPublicKey"},types={AccountFormBean.class})
 public final class NewAccountFormController {
 	
 	private AccountDao accountDao;
@@ -54,12 +55,15 @@ public final class NewAccountFormController {
 
 	private ReCaptcha reCaptcha; 
 
+	private ReCaptchaParameters reCaptchaParameters;
+
 	@Autowired
-	public NewAccountFormController( AccountDao dao, MailService mailSrv , Moderator moderatorRule, ReCaptcha reCaptcha){
+	public NewAccountFormController( AccountDao dao, MailService mailSrv , Moderator moderatorRule, ReCaptcha reCaptcha, ReCaptchaParameters reCaptchaParameters){
 		this.accountDao = dao;
 		this.mailService = mailSrv;
 		this.moderator = moderatorRule;
 		this.reCaptcha = reCaptcha;
+		this.reCaptchaParameters = reCaptchaParameters;
 	}
 	
 	@InitBinder
@@ -74,6 +78,7 @@ public final class NewAccountFormController {
 		AccountFormBean formBean = new AccountFormBean();
 		
 		model.addAttribute(formBean);
+		model.addAttribute("reCaptchaPublicKey", this.reCaptchaParameters.getPublicKey());
 		
 		return "createAccountForm";
 	}

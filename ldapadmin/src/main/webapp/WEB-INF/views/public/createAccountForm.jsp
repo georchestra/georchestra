@@ -120,6 +120,6 @@
     };
    	</script>
 	<!-- TODO: put the key in config module -->
-	<script type="text/javascript" src="http://www.google.com/recaptcha/api/challenge?k=6Lf0h-MSAAAAAOQ4YyRtbCNccU87dlGmokmelZjh"></script>
+	<script type="text/javascript" src="http://www.google.com/recaptcha/api/challenge?k=${reCaptchaPublicKey}"></script>
 </body>
 </html>

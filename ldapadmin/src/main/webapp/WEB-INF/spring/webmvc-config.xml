@@ -20,6 +20,9 @@
 	<bean id='recaptcha' class='net.tanesha.recaptcha.ReCaptchaImpl'>
 		<property name='privateKey' value='6Lf0h-MSAAAAAI2nHJfNPDaEXXjsdmn8eKSZUrQZ' />
 	</bean>
+	<bean id="reCaptchaParameters" class="org.georchestra.ldapadmin.bs.ReCaptchaParameters">
+		<property name='publicKey' value='6Lf0h-MSAAAAAOQ4YyRtbCNccU87dlGmokmelZjh' />
+	</bean>
 
 	<!-- LDAP connection -->
 	<bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource">
