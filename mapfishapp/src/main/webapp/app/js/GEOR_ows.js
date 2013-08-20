@@ -105,7 +105,6 @@ GEOR.ows = (function() {
      */
     var WFS_BASE_PARAMS = {
         "SERVICE": "WFS"
-//        "VERSION": "1.0.0"
     };
 
     /**
