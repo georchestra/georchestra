@@ -22,6 +22,7 @@
  * @include GeoExt/data/WMSCapabilitiesStore.js
  * @include OpenLayers/Format/WMSCapabilities/v1_1_1.js
  * @include OpenLayers/Format/WFSCapabilities/v1_0_0.js
+ * @include OpenLayers/Format/WFSCapabilities/v2_0_0.js
  * @include GeoExt/data/WFSCapabilitiesStore.js
  * @include OpenLayers/Strategy/Fixed.js
  * @include OpenLayers/Layer/Vector.js
@@ -103,8 +104,8 @@ GEOR.ows = (function() {
      * Fixed with http://trac.openlayers.org/ticket/2228
      */
     var WFS_BASE_PARAMS = {
-        "SERVICE": "WFS",
-        "VERSION": "1.0.0"
+        "SERVICE": "WFS"
+//        "VERSION": "1.0.0"
     };
 
     /**
