@@ -50,33 +50,40 @@ function scorePassword( password) {
  */
 function feedbackPassStrength(ctrlId, password){
     var message = "";
-    var msgclass = "";
+    var msgLabelClass = "";
+    var msgOffsetClass = "";
     var el = $("#"+ctrlId);
-    var pattern = /^label-/;
-
+    var patternLabel = /^label-/;
+    var patternOffset = /^col-lg-offset-/;
     $.each( el.attr('class').split(/\s+/), function(index, item){
-        if (item.match(pattern)){
+        if (item.match(patternLabel) || item.match(patternOffset)){
             el.removeClass(item);
         }
     });
     if (!password){
         message = "empty";
+        msgLabelClass = "default";
     } else {
         var score = scorePassword(password);
         if (score > 80){
             message= "strong";
-            msgclass = "success";
+            msgLabelClass = "success";
+            msgOffsetClass = "8";
         } else if (score > 60) {
             message = "good";
-            msgclass = "info";
+            msgLabelClass = "info";
+            msgOffsetClass = "6";
         } else if (score >= 30) {
             message = "weak";
-            msgclass = "warning";
+            msgLabelClass = "warning";
+            msgOffsetClass = "4";
        } else {
             message = "very weak";
-            msgclass = "important";
+            msgLabelClass = "danger";
+            msgOffsetClass = "2";
         }
     }
     $("#"+ctrlId).html(message);
-    $("#"+ctrlId).addClass("label-"+msgclass);
+    $("#"+ctrlId).addClass("label-"+msgLabelClass);
+    $("#"+ctrlId).addClass("col-lg-offset-"+msgOffsetClass);
 }

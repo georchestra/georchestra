@@ -11,23 +11,23 @@
 <%@attribute name="onkeyup" required="false" type="java.lang.String"%>
 <%@attribute name="appendIcon" required="false" type="java.lang.String"%>
 <c:if test="${empty label}">
-    <c:set var="label" value="${fn:toUpperCase(fn:substring(path, 0, 1))}${fn:toLowerCase(fn:substring(path, 1,fn:length(path)))}" />
+	<c:set var="label" value="${fn:toUpperCase(fn:substring(path, 0, 1))}${fn:toLowerCase(fn:substring(path, 1,fn:length(path)))}" />
 </c:if>
 <spring:bind path="${path}">
-    <div class="control-group ${status.error ? 'error' : '' }">
-        <label class="control-label" for="${path}"><s:message code="firstName.label" />${label}<c:if test="${required}"><span class="required">&nbsp;*</span></c:if></label>
-        <div class="controls">
+	<div class="form-group ${status.error ? 'has-error' : '' }">
+		<label class="control-label col-lg-4" for="${path}"><s:message code="firstName.label" />${label}<c:if test="${required}"><span class="required">&nbsp;*</span></c:if></label>
+		<div class="col-lg-8">
 			<c:if test="${not empty appendIcon}">
-				<div class="input-append">
+				<div class="input-group">
 			</c:if>
-				<form:input path="${path}" size="30" maxlength="80" cssClass="${empty cssClass ? 'input-xlarge' : cssClass}" onkeyup="${onkeyup}" onchange="${onchange}" />
+				<form:input path="${path}" size="30" maxlength="80" cssClass="${empty cssClass ? 'form-control' : cssClass}" onkeyup="${onkeyup}" onchange="${onchange}" />
 			<c:if test="${not empty appendIcon}">
-					<span class="add-on"><i class="${appendIcon}"></i></span>
+					<span class="input-group-addon"><i class="glyphicon glyphicon-${appendIcon}"></i></span>
 				</div>
 			</c:if>
-            <c:if test="${status.error}">
-                <span class="help-inline">${status.errorMessage}</span>
-            </c:if>
-        </div>
-    </div>
+			<c:if test="${status.error}">
+				<span class="help-block">${status.errorMessage}</span>
+			</c:if>
+		</div>
+	</div>
 </spring:bind>

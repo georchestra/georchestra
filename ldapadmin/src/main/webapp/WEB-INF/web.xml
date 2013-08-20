@@ -79,7 +79,7 @@
 
     <servlet-mapping>
         <servlet-name>default</servlet-name>
-        <url-pattern>img/*</url-pattern>
+        <url-pattern>fonts/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

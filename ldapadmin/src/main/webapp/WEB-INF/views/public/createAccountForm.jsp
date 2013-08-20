@@ -14,7 +14,10 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<link href='<c:url value="/css/bootstrap.min.css" />' rel="stylesheet" />
+	<link href='<c:url value="/css/ldapadmin.css" />' rel="stylesheet" />
+	<!--TODO: i18n-->
 	<title>Create Account Form</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body>
@@ -25,22 +28,22 @@
 		<form:form id="createForm" name="createForm" method="post" modelAttribute="accountFormBean" cssClass="form-horizontal" >
 
 			<c:if test="${not empty message}">
-			<div id="message" class="alert alert-info">
-				<button type="button" class="close" data-dismiss="alert">&times;</button>
+			<div id="message" class="alert alert-dismissable alert-info">
+				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 				${message}
 			</div>
 			</c:if>
 
 			<s:bind path="*">
 			<c:if test="${status.error}">
-			<div id="message" class="alert alert-error">
-				<button type="button" class="close" data-dismiss="alert">&times;</button>
+			<div id="message" class="alert alert-dismissable alert-danger">
+				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 				<s:message code="form.error" />
 			</div>
 			</c:if>
 			</s:bind>
 
-			<fieldset>
+			<fieldset class="col-lg-6 col-lg-offset-1">
 				<legend>User details</legend>
 				<t:input path="firstName" required="true" onkeyup="makeUid();" onchange="makeUid();">
 					<jsp:attribute name="label"><s:message code="firstName.label" /></jsp:attribute>
@@ -62,12 +65,12 @@
 				</t:input>
 			</fieldset>
 
-			<fieldset>
+			<fieldset class="col-lg-6 col-lg-offset-1">
 				<legend>Credentials</legend>
-				<t:input path="uid" required="true" appendIcon="icon-user">
+				<t:input path="uid" required="true" appendIcon="user">
 					<jsp:attribute name="label"><s:message code="uid.label" /></jsp:attribute>
 				</t:input>
-				<t:password path="password" required="true" spanId="pwdQuality" appendIcon="icon-lock" onchange="cleanPasswordError();feedbackPassStrength('pwdQuality', value);" onkeypress="cleanPasswordError();" onkeyup="feedbackPassStrength('pwdQuality', value);">
+				<t:password path="password" required="true" spanId="pwdQuality" appendIcon="lock" onchange="cleanPasswordError();feedbackPassStrength('pwdQuality', value);" onkeypress="cleanPasswordError();" onkeyup="feedbackPassStrength('pwdQuality', value);">
 					<jsp:attribute name="label"><s:message code="password.label" /></jsp:attribute>
 				</t:password>
 				<t:password path="confirmPassword" required="true" spanId="passwordError" onblur="equalsPasswords();">
@@ -75,17 +78,21 @@
 				</t:password>
 			</fieldset>
 
-			<fieldset>
+			<fieldset class="col-lg-6 col-lg-offset-1">
 				<legend>ReCaptcha verification</legend>
 				<t:recaptcha path="recaptcha_response_field" />
 			</fieldset>
 
-			<div class="form-actions">
-				<button type="submit" class="btn btn-primary"><s:message code="submit.label"/> </button>
+			<fieldset class="col-lg-6 col-lg-offset-1">
+				<div class="form-group">
+					<div class="col-lg-8 col-lg-offset-4 text-right">
+						<button type="submit" class="btn btn-primary btn-lg"><s:message code="submit.label"/> </button>
+					</div>
+				</div>
 			</div>
 		</form:form>
 	</div>
-	<script src="http://code.jquery.com/jquery.js"></script>
+	<script src="//code.jquery.com/jquery.js"></script>
 	<script src='<c:url value="/js/bootstrap.min.js" />'></script>
 	<script type="text/javascript"  src="<c:url value="/js/passwordutils.js" />" > </script>
 	<script type="text/javascript">
