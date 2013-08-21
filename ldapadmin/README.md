@@ -56,6 +56,67 @@ Two pages:
  * userPassword change UI: will display 3 fields. The first one is the current user password, the two other ones are for the new one. If the two latest fields do not match (client-side check), the user won't be able to submit the form and the "new password mismatch" message will be displayed. If the current password is wrong (server side check), the form will be redisplayed with clean fields, and a message will display "invalid password".
 
 
+### System Requirements
+
+ * WEB Containger (Tomcat 6)
+ * LDAP Server
+ * Postgresql
+
+
+### Install
+
+Postresql
+
+To create the data base use the following script
+
+[georchestra]/ldapadmin/ldapAdminDB.sql
+
+
+Note: because this is a work in progress right now the the following postgresql parameters are not used. 
+To configure the connection, for testing purpose, change the  UserTokenDao.getConnection() method
+        Example:
+        
+        this.databaseName = "postgres";
+        this.databaseUser = "admin";
+        this.databasePassword = "postgres";
+
+LDAP
+
+The ldap server is configurated in the 
+
+[georchestra]/ldapadmin/src/main/webapp/WEB-INF/spring/webmvc-config.xml
+
+For exemple:
+ 
+<!-- LDAP connection -->
+<bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource">
+  <property name="url" value="ldap://localhost:389" />
+  <property name="base" value="dc=georchestra,dc=org" />
+  <property name="userDn" value="cn=admin,dc=georchestra,dc=org" />
+  <property name="password" value="secret" />
+</bean>
+
+
+### Build
+
+ * ../mvn install -Dmaven.test.skip=true
+
+
+to crate the eclipse project
+
+ * ../mvn eclipse:eclipse
+
+
+### Run (Testing)
+
+Testing purpose: 
+
+ * deply in Tomcat6 
+ * Then add the following url in your Internet navigator:
+   http://localhost:8080/ldapadmin/public/
+
+
+
 Private UI
 ----------
 
@@ -99,3 +160,5 @@ All emails sent by the application should be configurable by the way of template
 The application should be able to find groups and users by the way of filters such as the ones used by the cas (see https://github.com/georchestra/georchestra/blob/master/config/defaults/cas-server-webapp/maven.filter#L4) and defined by the way of the variables shared.ldap.userSearchBaseDN and shared.ldap.groupSearchBaseDN defined in https://github.com/georchestra/georchestra/blob/master/config/shared.maven.filters#L10
 
 The userPassword LDAP field should be SSHA encrypted on creation/update.
+
+
