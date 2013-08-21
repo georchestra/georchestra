@@ -18,7 +18,7 @@
 		<div class="container">
 			<h1><s:message code="passwordUpdated.title" /></h1>
 			<p><s:message code="passwordUpdated.body" /></p>
-			<p><a class="btn btn-primary btn-lg" href="/ldapadmin/public/"><s:message code="passwordUpdated.link" /></a></p>
+			<p><a class="btn btn-primary btn-lg" href='<c:url value="/public/"/>'><s:message code="passwordUpdated.link" /></a></p>
 		</div>
 	</div>
 	<script src="//code.jquery.com/jquery.js"></script>
