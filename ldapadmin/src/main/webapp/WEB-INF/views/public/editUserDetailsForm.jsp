@@ -91,7 +91,7 @@
 					<div class="col-lg-8">
 						<p class="form-control-static">
 							<a href='<c:out value="/ldapadmin/public/accounts/changePassword?uid=${editUserDetailsFormBean.uid}" />'  >
-								<s:message code="changePassword.link" />
+								<s:message code="editUserDetailsForm.changePassword.link" />
 							</a>
 						</p>
 					</div>
