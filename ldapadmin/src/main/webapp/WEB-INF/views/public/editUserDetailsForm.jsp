@@ -4,98 +4,110 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="s" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-    
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
+
+<!DOCTYPE html>
+<!--TODO: set appropriate lang-->
+<!--TODO: favicon-->
+<html lang="en">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <link href="<c:url value="/styles/ldapadmin.css" />" rel="stylesheet"  type="text/css" />     
-    <title>User Details</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link href='<c:url value="/css/bootstrap.min.css" />' rel="stylesheet" />
+	<link href='<c:url value="/css/ldapadmin.css" />' rel="stylesheet" />
+	<title><s:message code="editUserDetailsForm.title"/></title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
+
 <body>
-    <div id="formsContent" style="center">
-        <h2><s:message code="userDetailsForm.title"/> </h2>
-        <form:form id="form" method="post" modelAttribute="editUserDetailsFormBean" cssClass="cleanform">
+	<div class="container">
+		<div class="page-header">
+			<h1><s:message code="editUserDetailsForm.title"/></h2>
+		</div>
+		<form:form id="form" name="form" method="post" modelAttribute="editUserDetailsFormBean" cssClass="form-horizontal" >
 
-            <div class="header">
-                <c:if test="${not empty message}">
-                    <div id="message" class="success">${message}</div>  
-                </c:if>
-                <s:bind path="*">
-                    <c:if test="${status.error}">
-                        <div id="message" class="error"><s:message code="form.error"/></div>
-                    </c:if>
-                </s:bind>
-            </div>
+			<c:if test="${not empty message}">
+			<div id="message" class="alert alert-dismissable alert-info">
+				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+				${message}
+			</div>
+			</c:if>
 
-            <fieldset>
+			<s:bind path="*">
+			<c:if test="${status.error}">
+			<div id="message" class="alert alert-dismissable alert-danger">
+				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+				<s:message code="form.error" />
+			</div>
+			</c:if>
+			</s:bind>
 
-                <p>
-                    <form:label path="firstName"> <s:message code="firstName.label"/> </form:label>
-                    <form:input path="firstName" size="30" maxlength="80"/>
-                </p>
-                <p>
-                    <form:errors path="firstName" cssClass="error" />
-                </p>
-
-				<p>
-					<form:label path="surname"><s:message code="surname.label"/>  </form:label>
-					<form:input path="surname" size="30" maxlength="80"/>
-				</p>
-				<p>
-					<form:errors path="surname" cssClass="error" />
-				</p>
-
-                <p>
-                    <form:label path="org"><s:message code="organization.label" />  </form:label>
-                    <form:input path="org" size="30" maxlength="80"/>
-                </p>
-
-				<p>
-					<form:label path="title" ><s:message code="title.label" /> </form:label>
-					<form:input path="title" size="30" maxlength="80"/>
-				</p>
-				
+			<fieldset class="col-lg-6 col-lg-offset-1">
+				<legend><s:message code="editUserDetailsForm.fieldset.userDetails"/></legend>
+				<t:input path="firstName" required="true">
+					<jsp:attribute name="label"><s:message code="firstName.label" /></jsp:attribute>
+				</t:input>
+				<t:input path="surname" required="true">
+					<jsp:attribute name="label"><s:message code="surname.label" /></jsp:attribute>
+				</t:input>
+				<t:input path="org">
+					<jsp:attribute name="label"><s:message code="organization.label" /></jsp:attribute>
+				</t:input>
+				<t:input path="title">
+					<jsp:attribute name="label"><s:message code="title.label" /></jsp:attribute>
+				</t:input>
 			</fieldset>
-			
-			<fieldset>
-			    <legend> <s:message code="address.label" /> </legend>
-                <p>
-                    <form:label path="postOfficeBox"> <s:message code="postOfficeBox.label" /> </form:label>
-                    <form:input path="postOfficeBox" size="20" maxlength="20"/>
-                </p>
 
-                <p>
-                    <form:label path="postalAddress"> <s:message code="postalAddress.label"/> </form:label>
-                    <form:textarea path="postalAddress" rows="4" cols="30"/>
-                </p>
+			<fieldset class="col-lg-6 col-lg-offset-1">
+				<legend><s:message code="address.label"/></legend>
+				<t:input path="postOfficeBox">
+					<jsp:attribute name="label"><s:message code="postOfficeBox.label" /></jsp:attribute>
+				</t:input>
+				<t:textarea path="postalAddress">
+					<jsp:attribute name="label"><s:message code="postalAddress.label" /></jsp:attribute>
+				</t:textarea>
+				<t:input path="postalCode">
+					<jsp:attribute name="label"><s:message code="postalCode.label" /></jsp:attribute>
+				</t:input>
+				<t:textarea path="registeredAddress">
+					<jsp:attribute name="label"><s:message code="registeredAddress.label" /></jsp:attribute>
+				</t:textarea>
+				<t:input path="physicalDeliveryOfficeName">
+					<jsp:attribute name="label"><s:message code="physicalDeliveryOfficeName.label" /></jsp:attribute>
+				</t:input>
+			</fieldset>
 
-                <p>
-                    <form:label path="postalCode"> <s:message code="postalCode.label"/> </form:label>
-                    <form:input path="postalCode" size="20" maxlength="20"/>
-                </p>
-                
-                <p>
-                    <form:label path="registeredAddress"> <s:message code="registeredAddress.label"/> </form:label>
-                    <form:textarea path="registeredAddress" rows="4" cols="40"/>
-                </p>
+			<fieldset class="col-lg-6 col-lg-offset-1">
+				<legend><s:message code="editUserDetailsForm.fieldset.credentials"/></legend>
+				<div class="form-group">
+					<label class="col-lg-4 control-label"><s:message code="uid.label" /></label>
+					<div class="col-lg-8">
+						<p class="form-control-static">
+							${editUserDetailsFormBean.uid}
+						</p>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-lg-4 control-label"><s:message code="password.label" /></label>
+					<div class="col-lg-8">
+						<p class="form-control-static">
+							<a href='<c:out value="/ldapadmin/public/accounts/changePassword?uid=${editUserDetailsFormBean.uid}" />'  >
+								<s:message code="changePassword.link" />
+							</a>
+						</p>
+					</div>
+				</div>
+			</fieldset>
 
-                <p>
-                    <form:label path="physicalDeliveryOfficeName"><s:message code="physicalDeliveryOfficeName.label" /> </form:label>
-                    <form:input path="physicalDeliveryOfficeName" size="20" maxlength="20"/>
-                </p>
-                
-                <p>
-	                <a href=<c:out value="/ldapadmin/public/accounts/changePassword?uid=${editUserDetailsFormBean.uid}" />  > 
-	                    <s:message code="changePassword.link" /> 
-	                </a>
-                </p>
-            </fieldset>
-
-			<p>
-				<button type="submit"><s:message code="submit.label" /></button>
-			</p>
+			<fieldset class="col-lg-6 col-lg-offset-1">
+				<div class="form-group">
+					<div class="col-lg-8 col-lg-offset-4 text-right">
+						<button type="submit" class="btn btn-primary btn-lg"><s:message code="submit.label"/> </button>
+					</div>
+				</div>
+			</div>
 		</form:form>
-    </div>
+	</div>
+	<script src="//code.jquery.com/jquery.js"></script>
+	<script src='<c:url value="/js/bootstrap.min.js" />'></script>
 </body>
 </html>
