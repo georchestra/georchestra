@@ -450,6 +450,7 @@ GEOR.ows = (function() {
                     t = layername.split(':');
                 if (t.length > 1) {
                     nsalias = t.shift();
+                    layername = t.shift();
                     url = url.replace("geoserver/wms", "geoserver/"+nsalias+"/wms");
                 }
             }
