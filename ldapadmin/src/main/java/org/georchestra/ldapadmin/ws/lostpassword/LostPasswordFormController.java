@@ -129,7 +129,7 @@ public class LostPasswordFormController  {
 			
 			sessionStatus.setComplete();
 			
-			return "emailWasSentForm";
+			return "emailWasSent";
 			
 		} catch (DataServiceException e) {
 			
