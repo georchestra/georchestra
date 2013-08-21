@@ -24,7 +24,7 @@
 <body>
 	<div class="container">
 		<div class="page-header">
-			<h1><s:message code="createAccountFrom.title"/></h2>
+			<h1><s:message code="createAccountFrom.title"/></h1>
 		</div>
 		<form:form id="form" name="form" method="post" modelAttribute="accountFormBean" cssClass="form-horizontal" >
 

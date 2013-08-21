@@ -21,7 +21,7 @@
 <body>
 	<div class="container">
 		<div class="page-header">
-			<h1><s:message code="newPasswordForm.title"/></h2>
+			<h1><s:message code="newPasswordForm.title"/></h1>
 		</div>
 		<form:form id="form" name="form" method="post" modelAttribute="newPasswordFormBean" cssClass="form-horizontal" >
 

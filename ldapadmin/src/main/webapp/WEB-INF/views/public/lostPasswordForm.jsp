@@ -20,7 +20,7 @@
 <body>
 	<div class="container">
 		<div class="page-header">
-			<h1><s:message code="lostPasswordForm.title"/></h2>
+			<h1><s:message code="lostPasswordForm.title"/></h1>
 		</div>
 		<form:form id="form" name="form" method="post" modelAttribute="lostPasswordFormBean" cssClass="form-horizontal" >
 
