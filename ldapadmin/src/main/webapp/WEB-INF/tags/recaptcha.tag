@@ -4,6 +4,8 @@
 <%@attribute name="path" required="true" type="java.lang.String"%>
 <%@attribute name="spanId" required="false" type="java.lang.String"%>
 <s:bind path="${path}">
+
+<div id="recaptcha_widget" style="display:none">
 	<div class="form-group">
 		<div class="col-lg-8 col-lg-offset-4">
 			<div class="img-thumbnail col-lg-12" >
@@ -28,4 +30,26 @@
 			</c:if>
 		</div>
 	</div>
+</div>
+<script type="text/javascript">
+var RecaptchaOptions = {
+    theme : 'custom',
+    custom_theme_widget: 'recaptcha_widget'
+};
+</script>
+<script type="text/javascript" src="http://www.google.com/recaptcha/api/challenge?k=${reCaptchaPublicKey}"></script>
+
+<noscript>
+<div class="panel panel-default">
+	<div class="panel-heading"><s:message code="recaptcha.noscript.title" /></div>
+	<div class="panel-body">
+		<iframe src="http://www.google.com/recaptcha/api/noscript?k=${reCaptchaPublicKey}"
+			class="col-lg-12" height="300" frameborder="0"></iframe>
+		<br>
+		<textarea name="recaptcha_challenge_field" class="form-control" rows="3"></textarea>
+		<input type="hidden" name="recaptcha_response_field" value="manual_challenge">
+	</div>
+</div>
+</noscript>
+
 </s:bind>

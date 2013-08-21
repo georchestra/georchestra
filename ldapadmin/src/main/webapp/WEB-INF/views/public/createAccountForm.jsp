@@ -121,11 +121,6 @@
         document.getElementById("passwordError").innerHTML="";
         document.getElementById("confirmPassword").value="";
     }
-    var RecaptchaOptions = {
-        theme : 'custom',
-        custom_theme_widget: 'recaptcha_widget'
-    };
-   	</script>
-	<script type="text/javascript" src="http://www.google.com/recaptcha/api/challenge?k=${reCaptchaPublicKey}"></script>
+	</script>
 </body>
 </html>
