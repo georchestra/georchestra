@@ -9,6 +9,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.ldapadmin.ds.DataServiceException;
 import org.georchestra.ldapadmin.ds.UserTokenDao;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * This task searches and removes the expired tokens generated when for the "lost password" use case.
@@ -17,13 +18,21 @@ import org.georchestra.ldapadmin.ds.UserTokenDao;
  *
  */
 class ExpiredTokenCleanTask implements Runnable {
-
+	
 	private static final Log LOG = LogFactory.getLog(ExpiredTokenCleanTask.class.getName());
 
+	private UserTokenDao userTokenDao;
 	
 	private long delayInMillisecconds;
 
+	@Autowired
+	public ExpiredTokenCleanTask(UserTokenDao userTokenDao ) {
+
+		this.userTokenDao = userTokenDao;
+	}
+	
 	public void setDelayInMillisecconds(long delayInMilisecconds) {
+		
 		this.delayInMillisecconds = delayInMilisecconds;
 	}
 
@@ -35,7 +44,6 @@ class ExpiredTokenCleanTask implements Runnable {
 	@Override
 	public void run(){
 
-		UserTokenDao userTokenDao = new UserTokenDao();
 		
 		Calendar calendar = Calendar.getInstance();
 		

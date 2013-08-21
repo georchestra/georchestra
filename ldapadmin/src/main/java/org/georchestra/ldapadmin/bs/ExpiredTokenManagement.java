@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * 
@@ -30,9 +31,14 @@ public final class ExpiredTokenManagement {
 	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
 	/** delay in days to execute the cleaning task */ 
-	private int delayInDays = -1; 
+	private int delayInDays = -1;
+
+	private ExpiredTokenCleanTask expiredTokenCleanTask; 
 	
-	public ExpiredTokenManagement() {
+	
+	@Autowired
+	public ExpiredTokenManagement(ExpiredTokenCleanTask expiredTokenCleanTask) {
+		this.expiredTokenCleanTask = expiredTokenCleanTask;
 	}
 
 	public int getDelayInDays() {
@@ -51,7 +57,7 @@ public final class ExpiredTokenManagement {
 		
 		long delay = toMilliseconds(this.delayInDays);
 
-		final ExpiredTokenCleanTask expiredTokenCleanTask = new ExpiredTokenCleanTask();
+		//final ExpiredTokenCleanTask expiredTokenCleanTask = new ExpiredTokenCleanTask();
 		expiredTokenCleanTask.setDelayInMillisecconds(delay);
 		
 		this.scheduler.scheduleWithFixedDelay(expiredTokenCleanTask, 0, delay, TimeUnit.MILLISECONDS);
