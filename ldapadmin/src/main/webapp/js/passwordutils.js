@@ -42,17 +42,18 @@ function scorePassword( password) {
 /**
  *  Sets the color and message based on the password quality.
  * 
- * @param ctrlId id of the control used to display the password quality
+ * @param elId id of the HTML element used to display the password quality
  * @param password 
  * 
+ * Note: requires jQuery
  * TODO: We may use the bootstrap progress bars
  * TODO: i18n of the tags (empty, weak, etc.)
  */
-function feedbackPassStrength(ctrlId, password){
+function feedbackPassStrength(elId, password){
     var message = "";
     var msgLabelClass = "";
     var msgOffsetClass = "";
-    var el = $("#"+ctrlId);
+    var el = $("#"+elId);
     var patternLabel = /^label-/;
     var patternOffset = /^col-lg-offset-/;
     $.each( el.attr('class').split(/\s+/), function(index, item){
@@ -83,7 +84,7 @@ function feedbackPassStrength(ctrlId, password){
             msgOffsetClass = "2";
         }
     }
-    $("#"+ctrlId).html(message);
-    $("#"+ctrlId).addClass("label-"+msgLabelClass);
-    $("#"+ctrlId).addClass("col-lg-offset-"+msgOffsetClass);
+    $("#"+elId).html(message);
+    $("#"+elId).addClass("label-"+msgLabelClass);
+    $("#"+elId).addClass("col-lg-offset-"+msgOffsetClass);
 }
