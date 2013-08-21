@@ -126,7 +126,6 @@
         custom_theme_widget: 'recaptcha_widget'
     };
    	</script>
-	<!-- TODO: put the key in config module -->
 	<script type="text/javascript" src="http://www.google.com/recaptcha/api/challenge?k=${reCaptchaPublicKey}"></script>
 </body>
 </html>
