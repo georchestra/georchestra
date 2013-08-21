@@ -11,12 +11,13 @@
 
 <!DOCTYPE html>
 <!--TODO: set appropriate lang-->
+<!--TODO: favicon-->
 <html lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<link href='<c:url value="/css/bootstrap.min.css" />' rel="stylesheet" />
 	<link href='<c:url value="/css/ldapadmin.css" />' rel="stylesheet" />
-	<title><s:message code="firstName.label" /><s:message code="createAccountFrom.title"/></title>
+	<title><s:message code="createAccountFrom.title"/></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
