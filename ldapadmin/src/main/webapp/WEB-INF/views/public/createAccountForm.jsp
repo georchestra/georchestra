@@ -26,7 +26,7 @@
 		<div class="page-header">
 			<h1><s:message code="createAccountFrom.title"/></h2>
 		</div>
-		<form:form id="createForm" name="createForm" method="post" modelAttribute="accountFormBean" cssClass="form-horizontal" >
+		<form:form id="form" name="form" method="post" modelAttribute="accountFormBean" cssClass="form-horizontal" >
 
 			<c:if test="${not empty message}">
 			<div id="message" class="alert alert-dismissable alert-info">
@@ -101,18 +101,18 @@
      * ("keyup" or "change" event - "input" event is not available with this version of spring)
      */
     function makeUid(){
-        var name = document.createForm.firstName.value;
-        var surname = document.createForm.surname.value;
-        document.createForm.uid.value = name.toLowerCase().charAt(0)+ surname.toLowerCase(); // strategy 1
-        //document.createForm.uid.value = name +"."+ surname;  // strategy 2
+        var name = document.form.firstName.value;
+        var surname = document.form.surname.value;
+        document.form.uid.value = name.toLowerCase().charAt(0)+ surname.toLowerCase(); // strategy 1
+        //document.form.uid.value = name +"."+ surname;  // strategy 2
     }
     /* to be called when the password confirmation field loses focus */
     function equalPasswords() {
-        var pwd1 = document.createForm.password.value;
-        var pwd2 = document.createForm.confirmPassword.value;
+        var pwd1 = document.form.password.value;
+        var pwd2 = document.form.confirmPassword.value;
         if (pwd1 != pwd2) {
             document.getElementById("passwordError").innerHTML = '<s:message code="confirmPassword.error.pwdNotEquals.tag" />';
-            document.createForm.password.focus();
+            document.form.password.focus();
             return false;
         }
         return true;
