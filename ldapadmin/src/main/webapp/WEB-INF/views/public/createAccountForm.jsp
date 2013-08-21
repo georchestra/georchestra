@@ -45,7 +45,7 @@
 			</s:bind>
 
 			<fieldset class="col-lg-6 col-lg-offset-1">
-				<legend>User details</legend>
+				<legend><s:message code="createAccountFrom.fieldset.userDetails"/></legend>
 				<t:input path="firstName" required="true" onkeyup="makeUid();" onchange="makeUid();">
 					<jsp:attribute name="label"><s:message code="firstName.label" /></jsp:attribute>
 				</t:input>
@@ -67,7 +67,7 @@
 			</fieldset>
 
 			<fieldset class="col-lg-6 col-lg-offset-1">
-				<legend>Credentials</legend>
+				<legend><s:message code="createAccountFrom.fieldset.credentials"/></legend>
 				<t:input path="uid" required="true" appendIcon="user">
 					<jsp:attribute name="label"><s:message code="uid.label" /></jsp:attribute>
 				</t:input>
@@ -80,7 +80,7 @@
 			</fieldset>
 
 			<fieldset class="col-lg-6 col-lg-offset-1">
-				<legend>ReCaptcha verification</legend>
+				<legend><s:message code="createAccountFrom.fieldset.reCaptcha"/></legend>
 				<t:recaptcha path="recaptcha_response_field" />
 			</fieldset>
 
