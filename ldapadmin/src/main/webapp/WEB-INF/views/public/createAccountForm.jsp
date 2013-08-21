@@ -22,7 +22,7 @@
 </head>
 
 <body>
-	<div class="container" id="formsContent" style="center">
+	<div class="container">
 		<div class="page-header">
 			<h1><s:message code="createAccountFrom.title"/></h2>
 		</div>
