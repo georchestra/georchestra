@@ -1,8 +1,28 @@
-<%@ include file="/WEB-INF/views/includes.jsp" %>
-<%@ include file="/WEB-INF/views/header.jsp" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="s" %>
 
-<h2/>Forbidden</h2>
-<p>
-Error: 403
-</p>
-<%@ include file="/WEB-INF/views/footer.jsp" %>
+<!DOCTYPE html>
+<!--TODO: set appropriate lang-->
+<!--TODO: favicon-->
+<!--TODO: Set 403 Forbidden HTTP status code-->
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link href='<c:url value="/css/bootstrap.min.css" />' rel="stylesheet" />
+	<link href='<c:url value="/css/ldapadmin.css" />' rel="stylesheet" />
+	<title><s:message code="forbidden.title" /></title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+	<div class="jumbotron">
+		<div class="container">
+			<h1><s:message code="forbidden.title" /></h1>
+			<p><s:message code="forbidden.body" /></p>
+			<p><a class="btn btn-primary btn-lg" href='<c:url value="/public/"/>'><s:message code="forbidden.link" /></a></p>
+		</div>
+	</div>
+	<script src="//code.jquery.com/jquery.js"></script>
+	<script src='<c:url value="/js/bootstrap.min.js" />'></script>
+</body>
+</html>
