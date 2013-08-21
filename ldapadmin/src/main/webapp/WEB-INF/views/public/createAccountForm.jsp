@@ -17,14 +17,14 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<link href='<c:url value="/css/bootstrap.min.css" />' rel="stylesheet" />
 	<link href='<c:url value="/css/ldapadmin.css" />' rel="stylesheet" />
-	<title><s:message code="createAccountFrom.title"/></title>
+	<title><s:message code="createAccountForm.title"/></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body>
 	<div class="container">
 		<div class="page-header">
-			<h1><s:message code="createAccountFrom.title"/></h1>
+			<h1><s:message code="createAccountForm.title"/></h1>
 		</div>
 		<form:form id="form" name="form" method="post" modelAttribute="accountFormBean" cssClass="form-horizontal" >
 
@@ -45,7 +45,7 @@
 			</s:bind>
 
 			<fieldset class="col-lg-6 col-lg-offset-1">
-				<legend><s:message code="createAccountFrom.fieldset.userDetails"/></legend>
+				<legend><s:message code="createAccountForm.fieldset.userDetails"/></legend>
 				<t:input path="firstName" required="true" onkeyup="makeUid();" onchange="makeUid();">
 					<jsp:attribute name="label"><s:message code="firstName.label" /></jsp:attribute>
 				</t:input>
@@ -67,7 +67,7 @@
 			</fieldset>
 
 			<fieldset class="col-lg-6 col-lg-offset-1">
-				<legend><s:message code="createAccountFrom.fieldset.credentials"/></legend>
+				<legend><s:message code="createAccountForm.fieldset.credentials"/></legend>
 				<t:input path="uid" required="true" appendIcon="user">
 					<jsp:attribute name="label"><s:message code="uid.label" /></jsp:attribute>
 				</t:input>
@@ -80,7 +80,7 @@
 			</fieldset>
 
 			<fieldset class="col-lg-6 col-lg-offset-1">
-				<legend><s:message code="createAccountFrom.fieldset.reCaptcha"/></legend>
+				<legend><s:message code="createAccountForm.fieldset.reCaptcha"/></legend>
 				<t:recaptcha path="recaptcha_response_field" />
 			</fieldset>
 
