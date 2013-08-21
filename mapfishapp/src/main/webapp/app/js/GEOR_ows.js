@@ -443,14 +443,14 @@ GEOR.ows = (function() {
          */
         hydrateLayerRecord: function(record, options) {
             var url = record.get('layer').url,
-                layername = record.get('name'),
-                nsalias;
-                
+                layername = record.get('name');
             if (!options.useMainService && url.indexOf("geoserver/wms") > 0) {
                 // try to use virtual service instead of main service
-                var t = layername.split(':');
+                var nsalias,
+                    t = layername.split(':');
                 if (t.length > 1) {
                     nsalias = t.shift();
+                    layername = t.shift();
                     url = url.replace("geoserver/wms", "geoserver/"+nsalias+"/wms");
                 }
             }
@@ -460,7 +460,7 @@ GEOR.ows = (function() {
                     url: url
                 },
                 success: function(store, records) {
-                    var index = store.find("name", nsalias ? nsalias : layername);
+                    var index = store.find("name", layername);
                     if (index < 0) {
                         GEOR.util.errorDialog({
                             msg: OpenLayers.i18n("The NAME layer was not found in WMS service.",
