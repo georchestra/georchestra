@@ -57,6 +57,11 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
 			@Override
 			public String getDriver(){return "ESRI shapefile";}
 			
+		}, 
+		kml {
+			@Override
+			public String getDriver(){return "KML file";}
+			
 		};
 		
 		/**
