@@ -225,7 +225,8 @@ GEOR.config = (function() {
          * Defaults to GeoTiff
          */
         SUPPORTED_RASTER_FORMATS: getCustomParameter("SUPPORTED_RASTER_FORMATS", [
-            ["geotiff", "GeoTiff"]
+            ["geotiff", "GeoTiff"],
+            ["tiff", "Tif + TFW"]
         ]),
 
         /**

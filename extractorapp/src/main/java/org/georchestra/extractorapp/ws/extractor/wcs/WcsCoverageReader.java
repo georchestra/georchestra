@@ -514,6 +514,21 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
         }
     }
 
+    public static float distFrom(float lat1, float lng1, float lat2, float lng2) {
+        double earthRadius = 3958.75;
+        double dLat = Math.toRadians(lat2-lat1);
+        double dLng = Math.toRadians(lng2-lng1);
+        double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                   Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                   Math.sin(dLng/2) * Math.sin(dLng/2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        double dist = earthRadius * c;
+
+        int meterConversion = 1609;
+
+        return new Float(dist * meterConversion).floatValue();
+        }
+    
     /**
      * This method is responsible fro creating a world file to georeference an
      * image given the image bounding box and the image geometry. The name of
@@ -529,9 +544,14 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
      */
     private void createWorldFile(final WcsReaderRequest request,
             final String baseFile) throws IOException {
-        int width = (int) (request.requestBbox.getWidth() / request.groundResolutionX);
-        int height = (int) (request.requestBbox.getWidth() / request.groundResolutionX);
+    	
+    	float meterWidth  = distFrom(0f,0f,0f,(float)request.requestBbox.getWidth());
+    	float meterHeight = distFrom(0f,0f,(float)request.requestBbox.getHeight(),0f);
+    	
+        int width = (int) (meterWidth / request.groundResolutionX);
+        int height = (int) (meterHeight / request.groundResolutionX);
         ReferencedEnvelope transformedBBox;
+        
         try {
             transformedBBox = new ReferencedEnvelope(request.requestBbox, WGS84)
                     .transform(request.responseCRS, true, 10);
@@ -578,7 +598,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
         // ////////////////////////////////////////////////////////////////////
         final StringBuffer buff = new StringBuffer(baseFile);
         // looking for another extension
-        buff.append(".wld");
+        buff.append(".tfw");
         final File worldFile = new File(buff.toString());
 
         LOG.debug("Writing world file: " + worldFile);
