@@ -427,6 +427,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
         String baseFilePath = file.getPath().substring(0,
                 file.getPath().lastIndexOf('.'));
         createWorldFile(request, baseFilePath);
+        createTABFile(request, baseFilePath);
         createPrjFile(request.responseCRS, baseFilePath);
     }
 
@@ -514,21 +515,6 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
         }
     }
 
-    public static float distFrom(float lat1, float lng1, float lat2, float lng2) {
-        double earthRadius = 3958.75;
-        double dLat = Math.toRadians(lat2-lat1);
-        double dLng = Math.toRadians(lng2-lng1);
-        double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                   Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
-                   Math.sin(dLng/2) * Math.sin(dLng/2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        double dist = earthRadius * c;
-
-        int meterConversion = 1609;
-
-        return new Float(dist * meterConversion).floatValue();
-        }
-    
     /**
      * This method is responsible fro creating a world file to georeference an
      * image given the image bounding box and the image geometry. The name of
@@ -545,23 +531,24 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
     private void createWorldFile(final WcsReaderRequest request,
             final String baseFile) throws IOException {
     	
-    	float meterWidth  = distFrom(0f,0f,0f,(float)request.requestBbox.getWidth());
-    	float meterHeight = distFrom(0f,0f,(float)request.requestBbox.getHeight(),0f);
-    	
-        int width = (int) (meterWidth / request.groundResolutionX);
-        int height = (int) (meterHeight / request.groundResolutionX);
         ReferencedEnvelope transformedBBox;
+        AffineTransform transform;
         
         try {
             transformedBBox = new ReferencedEnvelope(request.requestBbox, WGS84)
                     .transform(request.responseCRS, true, 10);
+            
+        	int width = (int) Math.round(transformedBBox.getWidth() / request.crsResolution());
+            int height = (int) Math.round(transformedBBox.getHeight() / request.crsResolution());
+
+            Rectangle imageSize = new Rectangle(width, height);
+            transform = RendererUtilities.worldToScreenTransform(transformedBBox,imageSize);
+            transform.invert();
+            
         } catch (Exception e) {
             throw new ExtractorException(e);
         }
-        Rectangle imageSize = new Rectangle(width, height);
-        AffineTransform transform = RendererUtilities.worldToScreenTransform(
-                transformedBBox, imageSize);
-
+        
         // /////////////////////////////////////////////////////////////////////
         //
         // CRS information
@@ -615,6 +602,48 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
         } finally {
             out.close();
         }
+    }
+    
+    private void createTABFile(final WcsReaderRequest request,
+            final String baseFile) throws IOException {
+    	
+        ReferencedEnvelope transformedBBox;
+        
+        try {
+            transformedBBox = new ReferencedEnvelope(request.requestBbox, WGS84)
+                    .transform(request.responseCRS, true, 10);
+        } catch (Exception e) {
+            throw new ExtractorException(e);
+        }
+
+    	int width = (int) Math.round(transformedBBox.getWidth() / request.crsResolution());
+        int height = (int) Math.round(transformedBBox.getHeight() / request.crsResolution());
+        
+        final StringBuffer buff = new StringBuffer(baseFile);
+        buff.append(".tab");
+        final File tabFile = new File(buff.toString());
+
+        LOG.debug("Writing TAB file: " + tabFile);
+
+        final PrintWriter out = new PrintWriter(new FileOutputStream(tabFile));
+        try {
+            out.println("!table");
+            out.println("!version 300");
+            out.println("!charset UTF-8");
+            out.println("");
+            out.println("Definition Table");
+            out.println("File " + baseFile);
+            out.println("Type \"RASTER\"");
+            out.println("("+transformedBBox.getMinX()+","+transformedBBox.getMinY()+") (0,0) Label \"Pt 1\",");
+            out.println("("+transformedBBox.getMaxX()+","+transformedBBox.getMinY()+") ("+width+",0) Label \"Pt 2\",");
+            out.println("("+transformedBBox.getMaxX()+","+transformedBBox.getMaxY()+") ("+width+","+height+") Label \"Pt 3\",");
+            out.println("("+transformedBBox.getMinX()+","+transformedBBox.getMaxY()+") (0,"+height+") Label \"Pt 4\",");
+            out.println("CoordSys Earth Projection ");
+            out.flush();
+        } finally {
+            out.close();
+        }
+
     }
 
     /* ------------------- Shared support methods ------------------- */
