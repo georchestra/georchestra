@@ -61,25 +61,9 @@
 				<t:input path="description">
 					<jsp:attribute name="label"><s:message code="description.label" /></jsp:attribute>
 				</t:input>
-			</fieldset>
-
-			<fieldset class="col-lg-6 col-lg-offset-1">
-				<legend><s:message code="address.label"/></legend>
-				<t:input path="postOfficeBox">
-					<jsp:attribute name="label"><s:message code="postOfficeBox.label" /></jsp:attribute>
-				</t:input>
 				<t:textarea path="postalAddress">
 					<jsp:attribute name="label"><s:message code="postalAddress.label" /></jsp:attribute>
 				</t:textarea>
-				<t:input path="postalCode">
-					<jsp:attribute name="label"><s:message code="postalCode.label" /></jsp:attribute>
-				</t:input>
-				<t:textarea path="registeredAddress">
-					<jsp:attribute name="label"><s:message code="registeredAddress.label" /></jsp:attribute>
-				</t:textarea>
-				<t:input path="physicalDeliveryOfficeName">
-					<jsp:attribute name="label"><s:message code="physicalDeliveryOfficeName.label" /></jsp:attribute>
-				</t:input>
 			</fieldset>
 
 			<fieldset class="col-lg-6 col-lg-offset-1">
