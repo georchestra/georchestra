@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import org.georchestra.ldapadmin.dto.Group;
 import org.georchestra.ldapadmin.dto.GroupSchema;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,13 +26,23 @@ public class GroupResponse {
 
 	public String asJsonString() throws IOException {
 		try{
-			JSONObject jsonAccount = new JSONObject();
+			JSONObject jsonGroup = new JSONObject();
 			
-			jsonAccount.put(GroupSchema.COMMON_NAME_KEY, this.group.getName());
+			jsonGroup.put(GroupSchema.COMMON_NAME_KEY, this.group.getName());
 
-			jsonAccount.put(GroupSchema.DESCRIPTION_KEY, this.group.getDescription()); 
-	    	
-			return jsonAccount.toString();
+			jsonGroup.put(GroupSchema.DESCRIPTION_KEY, this.group.getDescription());
+
+			// adds the list of users
+			JSONArray membersArray = new JSONArray();
+			int j = 0;
+			for(String userUid: this.group.getUserList() ){
+
+				membersArray.put(j, userUid);
+				j++;
+			}
+			jsonGroup.put("users", membersArray);
+			
+			return jsonGroup.toString();
 			
 		} catch (JSONException ex){
 

@@ -90,7 +90,53 @@ public class GroupsController {
 		
 		
 	}
-	
+
+	/**
+	 * Returns the detailed information of the group, with its list of users.
+	 * 
+	 * <p>
+	 * If the group identifier is not present in the ldap store an {@link IOException} will be throw.
+	 * </p>
+	 * <p>
+	 * URL Format: [BASE_MAPPING]/groups/{cn}
+	 * </p>
+	 * <p>
+	 * Example: [BASE_MAPPING]/groups/group44
+	 * </p>
+	 * 
+	 * @param request the request includes the group identifier required
+	 * @param response Returns the detailed information of the group as json 
+	 * @throws IOException 
+	 */
+	@RequestMapping(value=REQUEST_MAPPING+"/*", method=RequestMethod.GET)
+	public void findByCN( HttpServletRequest request, HttpServletResponse response) throws IOException{
+		
+		String cn = RequestUtil.getKeyFromPathVariable(request);
+
+		// searches the group
+		Group group = null;
+		try {
+			group = this.groupDao.findByCommonName(cn);
+			
+		} catch (NotFoundException e) {
+			
+			ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(Boolean.FALSE, NOT_FOUND), HttpServletResponse.SC_NOT_FOUND);
+			
+			return;
+
+		} catch (DataServiceException e) {
+			throw new IOException(e);
+		}
+
+		// sets the group data in the response object
+		GroupResponse groupResponse = new GroupResponse(group);
+		
+		String jsonGroup = groupResponse.asJsonString();
+		
+		ResponseUtil.buildResponse(response, jsonGroup, HttpServletResponse.SC_OK);
+
+	}
+
 	/**
 	 * 
 	 * <p>

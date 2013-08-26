@@ -153,7 +153,7 @@ Reponse
     or
     { "success": false }
 
-### READ
+### READ (Complete list of groups)
 
 Request
 
@@ -169,6 +169,21 @@ Response
         "description": "Description for the group",
         "users": []
     }]
+
+
+### READ
+
+Request
+
+    GET groups/:cn
+
+Response
+
+    {
+        "cn": "Name of the group",
+        "description": "Description for the group",
+        "users": ["uid0","uid1"]
+    }
 
 ### UPDATE
 
