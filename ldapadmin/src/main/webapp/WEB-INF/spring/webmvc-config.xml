@@ -15,7 +15,7 @@
 		in the /WEB-INF/views directory -->
 	<bean
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver"
-		p:prefix="/WEB-INF/views/public/" p:suffix=".jsp">
+		p:prefix="/WEB-INF/views/" p:suffix=".jsp">
 	</bean>
 	<bean id='recaptcha' class='net.tanesha.recaptcha.ReCaptchaImpl'>
 		<property name='privateKey' value='6Lf0h-MSAAAAAI2nHJfNPDaEXXjsdmn8eKSZUrQZ' />
