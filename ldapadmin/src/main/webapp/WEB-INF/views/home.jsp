@@ -64,6 +64,34 @@ out.println(l);
 				<td><a href='<c:url value="/account/newPassword?token=d6091eb6-1f8a-4ab6-a4d4-57fdfb46b409" />'><c:url value="/account/newPassword?token=d6091eb6-1f8a-4ab6-a4d4-57fdfb46b409" /></a><br>(the token is created by the <a href='<c:url value="/account/lostPassword" />'>Lost Password</a> page and sent by e-mail)</td>
 			</tr>
 		</table>
+
+		<h2>Private pages</h2>
+		<table class="table">
+			<tr>
+				<th>Private pages</th>
+				<th>Link</th>
+			</tr>
+			<tr>
+				<td>Adminstration</td>
+				<td><a href='<c:url value="/" />'><c:url value="/" /></a></td>
+			</tr>
+			<tr>
+				<td>REST GET users</td>
+				<td><a href='<c:url value="/private/users" />'><c:url value="/private/users" /></a></td>
+			</tr>
+			<tr>
+				<td>REST GET user</td>
+				<td><a href='<c:url value="/private/users/testuser" />'><c:url value="/private/users/testuser" /></a></td>
+			</tr>
+			<tr>
+				<td>REST GET groups</td>
+				<td><a href='<c:url value="/private/groups" />'><c:url value="/private/groups" /></a></td>
+			</tr>
+			<tr>
+				<td>REST GET group</td>
+				<td><a href='<c:url value="/private/groups/SV_ADMIN" />'><c:url value="/private/groups/SV_ADMIN" /></a></td>
+			</tr>
+		</table>
 	</div> <!-- /container -->
 
     <script src="http://code.jquery.com/jquery.js"></script>
