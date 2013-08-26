@@ -45,7 +45,7 @@ class NewAccountRequiresSignupEmail extends Email {
 
 		LOG.debug("New account user in the pending group. User ID: " + uid );
 		
-		String body = writeNewAccoutnMail(uid, userName);
+		String body = writeNewAccountMail(uid, userName);
 
 		super.sendMsg(body);
 	}
@@ -56,7 +56,7 @@ class NewAccountRequiresSignupEmail extends Email {
     	return this.servletContext.getRealPath(fileTemplate);
     }
 
-	private String writeNewAccoutnMail(String uid, String name) {
+	private String writeNewAccountMail(String uid, String name) {
 
 		String body = getBodyTemplate();
 

@@ -46,7 +46,7 @@ class AccountWasCreatedEmail extends Email {
 
 		LOG.debug("New account was created. User Name:"+ userName + "User ID: " + uid );
 		
-		String body = writeNewAccoutnMail(uid, userName);
+		String body = writeNewAccountMail(uid, userName);
 
 		super.sendMsg(body);
 	}
@@ -57,7 +57,7 @@ class AccountWasCreatedEmail extends Email {
     	return this.servletContext.getRealPath(fileTemplate);
     }
 
-	private String writeNewAccoutnMail(String uid, String name) {
+	private String writeNewAccountMail(String uid, String name) {
 
 		String body = getBodyTemplate(); 
 		
