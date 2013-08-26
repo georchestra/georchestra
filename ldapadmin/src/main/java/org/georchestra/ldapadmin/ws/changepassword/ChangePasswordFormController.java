@@ -5,6 +5,8 @@ package org.georchestra.ldapadmin.ws.changepassword;
 
 import java.io.IOException;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.ldapadmin.ds.AccountDao;
@@ -62,7 +64,14 @@ public class ChangePasswordFormController {
 	 * @throws IOException
 	 */
 	@RequestMapping(value="/public/accounts/changePassword", method=RequestMethod.GET)
-	public String setupForm(@RequestParam("uid") String uid, Model model) throws IOException{
+	public String setupForm(HttpServletRequest request, @RequestParam("uid") String uid, Model model) throws IOException{
+		try {
+			if(!request.getHeader("sec-username").equals(uid)){
+				return "forbidden";
+			}
+		} catch (NullPointerException e) {
+			return "forbidden";
+		}
 		
 		ChangePasswordFormBean formBean = new ChangePasswordFormBean();
 		
@@ -86,11 +95,20 @@ public class ChangePasswordFormController {
 	 */
 	@RequestMapping(value="/public/accounts/changePassword", method=RequestMethod.POST)
 	public String changePassword(
+						HttpServletRequest request,
 						@ModelAttribute ChangePasswordFormBean formBean, 
 						BindingResult result, 
 						SessionStatus sessionStatus) 
 						throws IOException {
-		
+		String uid = formBean.getUid();
+		try {
+			if(!request.getHeader("sec-username").equals(uid)){
+				return "forbidden";
+			}
+		} catch (NullPointerException e) {
+			return "forbidden";
+		}
+
 		new ChangePasswordFormValidator().validate(formBean, result);
 		
 		if(result.hasErrors()){
@@ -101,7 +119,6 @@ public class ChangePasswordFormController {
 		// change the user's password
 		try {
 
-			String uid = formBean.getUid();
 			String  password = formBean.getPassword();
 			
 			this.accountDao.changePassword(uid, password);

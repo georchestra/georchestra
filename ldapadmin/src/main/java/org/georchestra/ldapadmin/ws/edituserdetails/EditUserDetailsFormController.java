@@ -68,10 +68,13 @@ public class EditUserDetailsFormController {
 	 */
 	@RequestMapping(value="/public/accounts/userdetails", method=RequestMethod.GET)
 	public String setupForm(HttpServletRequest request, HttpServletResponse response, @RequestParam("uid") String uid,  Model model) throws IOException{
-// FIXME remove this hack 
-//		if(!request.getHeader("sec-username").equals(uid)){
-//			return "forbidden";
-//		}
+		try {
+			if(!request.getHeader("sec-username").equals(uid)){
+				return "forbidden";
+			}
+		} catch (NullPointerException e) {
+			return "forbidden";
+		}
 
 		try {
 			
@@ -131,11 +134,20 @@ public class EditUserDetailsFormController {
 	 */
 	@RequestMapping(value="/public/accounts/userdetails", method=RequestMethod.POST)
 	public String edit(
+						HttpServletRequest request,
 						@ModelAttribute EditUserDetailsFormBean formBean, 
-						BindingResult resultErrors, 
+						BindingResult resultErrors,
 						SessionStatus sessionStatus) 
 						throws IOException {
-		
+		String uid = formBean.getUid();
+		try {
+			if(!request.getHeader("sec-username").equals(uid)){
+				return "forbidden";
+			}
+		} catch (NullPointerException e) {
+			return "forbidden";
+		}
+
 		new EditUserDetailsValidator().validate(formBean, resultErrors);
 		
 		if(resultErrors.hasErrors()){
