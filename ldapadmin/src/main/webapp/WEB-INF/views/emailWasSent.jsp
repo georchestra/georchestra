@@ -18,7 +18,6 @@
 		<div class="container">
 			<h1><s:message code="emailWasSent.title" /></h1>
 			<p><s:message code="emailWasSent.body" /></p>
-			<p><a class="btn btn-primary btn-lg" href='<c:url value="/public/"/>'><s:message code="emailWasSent.link" /></a></p>
 		</div>
 	</div>
 	<script src="//code.jquery.com/jquery.js"></script>

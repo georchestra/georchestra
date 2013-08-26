@@ -19,7 +19,6 @@
 		<div class="container">
 			<h1><s:message code="forbidden.title" /></h1>
 			<p><s:message code="forbidden.body" /></p>
-			<p><a class="btn btn-primary btn-lg" href='<c:url value="/public/"/>'><s:message code="forbidden.link" /></a></p>
 		</div>
 	</div>
 	<script src="//code.jquery.com/jquery.js"></script>
