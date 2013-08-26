@@ -1,5 +1,0 @@
-venv/
-*.egg
-*.egg-info
-*.pyc
-*$py.class
