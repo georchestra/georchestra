@@ -15,5 +15,5 @@ angular.module('ldapadmin', ['ldapadmin.filters', 'ldapadmin.controllers', 'ldap
     }
   ])
   .config(function(RestangularProvider) {
-    RestangularProvider.setBaseUrl("/users");
+    RestangularProvider.setBaseUrl("/ldapadmin/private");
   });
