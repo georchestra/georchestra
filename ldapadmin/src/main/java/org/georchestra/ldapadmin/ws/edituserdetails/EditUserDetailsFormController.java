@@ -52,7 +52,7 @@ public class EditUserDetailsFormController {
 	@InitBinder
 	public void initForm( WebDataBinder dataBinder) {
 		
-		dataBinder.setAllowedFields(new String[]{"uid", "firstName", "surname","org", "title", "postalAddress", "postalCode",  "registeredAddress", "postOfficeBox", "physicalDeliveryOfficeName"});
+		dataBinder.setAllowedFields(new String[]{"uid", "firstName", "surname", "title", "phone", "org", "description", "postalAddress", "postalCode",  "registeredAddress", "postOfficeBox", "physicalDeliveryOfficeName"});
 	}
 	
 	
@@ -104,14 +104,16 @@ public class EditUserDetailsFormController {
 		
 		formBean.setFirstName(account.getGivenName());
 		formBean.setSurname(account.getSurname());
+		formBean.setTitle(account.getTitle());
 
+		formBean.setPhone(account.getPhone());
 		formBean.setOrg(account.getOrg());
+		formBean.setDescription(account.getDescription());
 		formBean.setPhysicalDeliveryOfficeName(account.getPhysicalDeliveryOfficeName());
 		formBean.setPostalAddress(account.getPostalAddress());
 		formBean.setPostalCode(account.getPostalCode());
 		formBean.setPostOfficeBox(account.getPostOfficeBox());
 		formBean.setRegisteredAddress(account.getRegisteredAddress());
-		formBean.setTitle(account.getTitle());
 
 		return formBean;
 	}
@@ -180,13 +182,15 @@ public class EditUserDetailsFormController {
 
 		account.setGivenName( formBean.getFirstName() );
 		account.setSurname(formBean.getSurname());
+		account.setTitle( formBean.getTitle() );
+		account.setPhone(formBean.getPhone());
 		account.setOrg(formBean.getOrg());
+		account.setDescription(formBean.getDescription());
 		account.setPhysicalDeliveryOfficeName(formBean.getPhysicalDeliveryOfficeName());
 		account.setPostalAddress(formBean.getPostalAddress());
 		account.setPostalCode( formBean.getPostalCode() );
 		account.setPostOfficeBox( formBean.getPostOfficeBox() );
 		account.setRegisteredAddress( formBean.getRegisteredAddress() );
-		account.setTitle( formBean.getTitle() );
 		
 		return account;
 	}

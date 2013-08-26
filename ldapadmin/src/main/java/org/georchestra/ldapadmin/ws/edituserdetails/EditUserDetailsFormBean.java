@@ -12,8 +12,10 @@ public class EditUserDetailsFormBean {
 	private String uid; 
 	private String surname; 
 	private String firstName; 
-	private String org;
 	private String title; 
+	private String phone;
+	private String org;
+	private String description;
 	private String postalAddress; 
 	private String postalCode; 
 	private String registeredAddress;  
@@ -23,8 +25,9 @@ public class EditUserDetailsFormBean {
 	@Override
 	public String toString() {
 		return "EditUserDetailsFormBean [uid=" + uid + ", surname=" + surname
-				+ ", givenName=" + firstName + ", org=" + org + ", title="
-				+ title + ", postalAddress=" + postalAddress + ", postalCode="
+				+ ", givenName=" + firstName + ", title=" + title
+				+ ", phone=" + phone + ", org=" + org + ", description="
+				+ description + ", postalAddress=" + postalAddress + ", postalCode="
 				+ postalCode + ", registeredAddress=" + registeredAddress
 				+ ", postOfficeBox=" + postOfficeBox
 				+ ", physicalDeliveryOfficeName=" + physicalDeliveryOfficeName
@@ -49,17 +52,29 @@ public class EditUserDetailsFormBean {
 	public void setFirstName(String givenName) {
 		this.firstName = givenName;
 	}
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	public String getPhone() {
+		return phone;
+	}
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
 	public String getOrg() {
 		return org;
 	}
 	public void setOrg(String org) {
 		this.org = org;
 	}
-	public String getTitle() {
-		return title;
+	public String getDescription() {
+		return description;
 	}
-	public void setTitle(String title) {
-		this.title = title;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 	public String getPostalAddress() {
 		return postalAddress;
