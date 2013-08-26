@@ -64,16 +64,6 @@
 
     <servlet-mapping>
         <servlet-name>default</servlet-name>
-        <url-pattern>styles/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>default</servlet-name>
-        <url-pattern>images/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>default</servlet-name>
         <url-pattern>css/*</url-pattern>
     </servlet-mapping>
 
