@@ -626,6 +626,11 @@ GEOR.styler = (function() {
         mask.msg = tr("Classification ...<br/>(this operation can take " +
             "some time)");
         mask.show();
+        
+        // FIXME : Since GT WFSDatasource doesn't support WFS, we must use an earlier
+        // version to make Styler works.
+        params.wfs_url += "&version=1.0.0";
+        
         OpenLayers.Request.POST({
             url: "ws/sld/",
             data: Ext.util.JSON.encode(params),
