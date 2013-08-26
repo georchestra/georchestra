@@ -27,7 +27,7 @@ class AccountImpl implements Serializable, Account {
 	private String role; // 
 	private String email;// mail
 	private String phone;// telephoneNumber 
-	private String details; // description
+	private String description; // description
 	private String password; // userPassword
 	private String newPassword;
 
@@ -70,8 +70,8 @@ class AccountImpl implements Serializable, Account {
 	public String toString() {
 		return "AccountImpl [uid=" + uid + ", commonName=" + commonName
 				+ ", surname=" + surname + ", org=" + org + ", role=" + role
-				+ ", email=" + email + ", phone=" + phone + ", details="
-				+ details + ", password=" + password + ", newPassword="
+				+ ", email=" + email + ", phone=" + phone + ", description="
+				+ description + ", password=" + password + ", newPassword="
 				+ newPassword + ", givenName=" + givenName + ", title=" + title
 				+ ", postalAddress=" + postalAddress + ", postalCode="
 				+ postalCode + ", registeredAddress=" + registeredAddress
@@ -142,11 +142,11 @@ class AccountImpl implements Serializable, Account {
 	}
 	@Override
 	public String getDescription() {
-		return details;
+		return description;
 	}
 	@Override
-	public void setDetails(String details) {
-		this.details = details;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	@Override

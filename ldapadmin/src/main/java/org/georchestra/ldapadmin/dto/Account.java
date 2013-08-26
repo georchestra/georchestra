@@ -40,7 +40,7 @@ public interface Account {
 
 	String getDescription();
 
-	void setDetails(String details);
+	void setDescription(String description);
 
 	void setPassword(String password);
 

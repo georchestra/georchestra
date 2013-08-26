@@ -61,8 +61,8 @@
 				<t:input path="org">
 					<jsp:attribute name="label"><s:message code="organization.label" /></jsp:attribute>
 				</t:input>
-				<t:input path="details">
-					<jsp:attribute name="label"><s:message code="details.label" /></jsp:attribute>
+				<t:input path="description">
+					<jsp:attribute name="label"><s:message code="description.label" /></jsp:attribute>
 				</t:input>
 			</fieldset>
 

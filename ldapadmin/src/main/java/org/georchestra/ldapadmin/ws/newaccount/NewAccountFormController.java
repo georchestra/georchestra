@@ -68,7 +68,7 @@ public final class NewAccountFormController {
 	@InitBinder
 	public void initForm( WebDataBinder dataBinder) {
 		
-		dataBinder.setAllowedFields(new String[]{"firstName","surname", "email", "phone", "org", "details", "uid", "password", "confirmPassword", "role", "recaptcha_challenge_field", "recaptcha_response_field"});
+		dataBinder.setAllowedFields(new String[]{"firstName","surname", "email", "phone", "org", "description", "uid", "password", "confirmPassword", "role", "recaptcha_challenge_field", "recaptcha_response_field"});
 	}
 	
 	@RequestMapping(value="/public/accounts/new", method=RequestMethod.GET)
@@ -122,7 +122,7 @@ public final class NewAccountFormController {
 					formBean.getEmail(),
 					formBean.getPhone(),
 					formBean.getOrg(),
-					formBean.getDetails() );
+					formBean.getDescription() );
 
 			String groupID = this.moderator.requiresSignup() ? Group.PENDING_USERS : Group.SV_USER; 
 			

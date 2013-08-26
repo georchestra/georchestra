@@ -30,7 +30,7 @@ public class AccountFactory {
 	 * @param email
 	 * @param phone
 	 * @param org
-	 * @param details
+	 * @param description
 	 * @return
 	 */
 	public static Account createBrief(
@@ -41,7 +41,7 @@ public class AccountFactory {
 			String email, 
 			String phone,
 			String org, 
-			String details) {
+			String description) {
 		
 		Account account = new AccountImpl();
 		
@@ -56,7 +56,7 @@ public class AccountFactory {
 		account.setEmail(email);
 		account.setPhone(phone);
 		account.setOrg(org);
-		account.setDetails(details);
+		account.setDescription(description);
 		
 		return account;
 	}
@@ -160,7 +160,7 @@ public class AccountFactory {
 		a.setTitle(title);
 
 		a.setPhone(phone);
-		a.setDetails(description);
+		a.setDescription(description);
 		
 		a.setStreet(street);
 		a.setLocality(locality);
