@@ -63,7 +63,7 @@ public class ChangePasswordFormController {
 	 * 
 	 * @throws IOException
 	 */
-	@RequestMapping(value="/public/accounts/changePassword", method=RequestMethod.GET)
+	@RequestMapping(value="/account/changePassword", method=RequestMethod.GET)
 	public String setupForm(HttpServletRequest request, @RequestParam("uid") String uid, Model model) throws IOException{
 		try {
 			if(!request.getHeader("sec-username").equals(uid)){
@@ -93,7 +93,7 @@ public class ChangePasswordFormController {
 	 * 
 	 * @throws IOException 
 	 */
-	@RequestMapping(value="/public/accounts/changePassword", method=RequestMethod.POST)
+	@RequestMapping(value="/account/changePassword", method=RequestMethod.POST)
 	public String changePassword(
 						HttpServletRequest request,
 						@ModelAttribute ChangePasswordFormBean formBean, 
@@ -125,7 +125,7 @@ public class ChangePasswordFormController {
 			
 			sessionStatus.setComplete();
 			
-			return "redirect:/public/accounts/userdetails?uid=" + uid;			
+			return "redirect:/account/userdetails?uid=" + uid;
 			
 		} catch (DataServiceException e) {
 			

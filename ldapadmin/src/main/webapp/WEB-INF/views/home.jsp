@@ -41,27 +41,27 @@ out.println(l);
 			</tr>
 			<tr class="active">
 				<td>Home</td>
-				<td><a href='#'><c:url value="/public" /></a></td>
+				<td><a href='#'><c:url value="/indexdev" /></a></td>
 			</tr>
 			<tr>
 				<td>Create Account</td>
-				<td><a href='<c:url value="/public/accounts/new" />'><c:url value="/public/accounts/new" /></a></td>
+				<td><a href='<c:url value="/account/new" />'><c:url value="/account/new" /></a></td>
 			</tr>
 			<tr>
 				<td>Lost Password</td>
-				<td><a href='<c:url value="/public/accounts/lostPassword" />'><c:url value="/public/accounts/lostPassword" /></a></td>
+				<td><a href='<c:url value="/account/lostPassword" />'><c:url value="/account/lostPassword" /></a></td>
 			</tr>
 			<tr>
 				<td>Edit "testuser" details</td>
-				<td><a href='<c:url value="/public/accounts/userdetails?uid=testuser" />'><c:url value="/public/accounts/userdetails?uid=testuser" /></a></td>
+				<td><a href='<c:url value="/account/userdetails?uid=testuser" />'><c:url value="/account/userdetails?uid=testuser" /></a></td>
 			</tr>
 			<tr>
 				<td>Change "testuser" password</td>
-				<td><a href='<c:url value="/public/accounts/changePassword?uid=testuser" />'><c:url value="/public/accounts/changePassword?uid=testuser" /></a></td>
+				<td><a href='<c:url value="/account/changePassword?uid=testuser" />'><c:url value="/account/changePassword?uid=testuser" /></a></td>
 			</tr>
 			<tr>
 				<td>Set new password</td>
-				<td><a href='<c:url value="/public/accounts/newPassword?token=d6091eb6-1f8a-4ab6-a4d4-57fdfb46b409" />'><c:url value="/public/accounts/newPassword?token=d6091eb6-1f8a-4ab6-a4d4-57fdfb46b409" /></a><br>(the token is created by the <a href='<c:url value="/public/accounts/lostPassword" />'>Lost Password</a> page and sent by e-mail)</td>
+				<td><a href='<c:url value="/account/newPassword?token=d6091eb6-1f8a-4ab6-a4d4-57fdfb46b409" />'><c:url value="/account/newPassword?token=d6091eb6-1f8a-4ab6-a4d4-57fdfb46b409" /></a><br>(the token is created by the <a href='<c:url value="/account/lostPassword" />'>Lost Password</a> page and sent by e-mail)</td>
 			</tr>
 		</table>
 	</div> <!-- /container -->

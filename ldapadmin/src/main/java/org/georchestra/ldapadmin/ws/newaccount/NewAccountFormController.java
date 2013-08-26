@@ -71,7 +71,7 @@ public final class NewAccountFormController {
 		dataBinder.setAllowedFields(new String[]{"firstName","surname", "email", "phone", "org", "description", "uid", "password", "confirmPassword", "role", "recaptcha_challenge_field", "recaptcha_response_field"});
 	}
 	
-	@RequestMapping(value="/public/accounts/new", method=RequestMethod.GET)
+	@RequestMapping(value="/account/new", method=RequestMethod.GET)
 	public String setupForm(Model model) throws IOException{
 
 		AccountFormBean formBean = new AccountFormBean();
@@ -95,7 +95,7 @@ public final class NewAccountFormController {
 	 * 
 	 * @throws IOException 
 	 */
-	@RequestMapping(value="/public/accounts/new", method=RequestMethod.POST)
+	@RequestMapping(value="/account/new", method=RequestMethod.POST)
 	public String create(
 						HttpServletRequest request,
 						@ModelAttribute AccountFormBean formBean,

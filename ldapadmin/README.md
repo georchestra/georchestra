@@ -19,9 +19,9 @@ These pages should be light (no need to ship ExtJS).
 The page asks for user email.
 
 If the given email matches one of the LDAP users:
- * an email is sent to this user with a unique https URL to reset his password (eg: /ldapadmin/public/changePassword?token=54f23f27f6c5f23c68b9b5f9650839dc)
+ * an email is sent to this user with a unique https URL to reset his password (eg: /ldapadmin/account/changePassword?token=54f23f27f6c5f23c68b9b5f9650839dc)
  * the page displays "an email was sent".
- * On the /ldapadmin/public/changePassword page:
+ * On the /ldapadmin/account/changePassword page:
    * server-side check that token is valid (postgresql storage). If not, HTTP 400.
    * two fields ask for new password (client-side check for equality)
    * on form submission:
@@ -133,7 +133,7 @@ Testing purpose:
 
  * deploy in Tomcat6
  * Then add the following url in your Internet navigator:
-   http://localhost:8080/ldapadmin/public/
+   http://localhost:8080/ldapadmin/public/indexdev
 
 Alternatively, run with jetty:
 

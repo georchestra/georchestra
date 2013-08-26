@@ -66,7 +66,7 @@ public class EditUserDetailsFormController {
 	 * 
 	 * @throws IOException
 	 */
-	@RequestMapping(value="/public/accounts/userdetails", method=RequestMethod.GET)
+	@RequestMapping(value="/account/userdetails", method=RequestMethod.GET)
 	public String setupForm(HttpServletRequest request, HttpServletResponse response, @RequestParam("uid") String uid,  Model model) throws IOException{
 		try {
 			if(!request.getHeader("sec-username").equals(uid)){
@@ -132,7 +132,7 @@ public class EditUserDetailsFormController {
 	 * 
 	 * @throws IOException 
 	 */
-	@RequestMapping(value="/public/accounts/userdetails", method=RequestMethod.POST)
+	@RequestMapping(value="/account/userdetails", method=RequestMethod.POST)
 	public String edit(
 						HttpServletRequest request,
 						@ModelAttribute EditUserDetailsFormBean formBean, 

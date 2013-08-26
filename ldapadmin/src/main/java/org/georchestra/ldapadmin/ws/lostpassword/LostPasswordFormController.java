@@ -70,7 +70,7 @@ public class LostPasswordFormController  {
 		dataBinder.setAllowedFields(new String[]{"email"});
 	}
 	
-	@RequestMapping(value="/public/accounts/lostPassword", method=RequestMethod.GET)
+	@RequestMapping(value="/account/lostPassword", method=RequestMethod.GET)
 	public String setupForm(Model model) throws IOException{
 
 		LostPasswordFormBean formBean = new LostPasswordFormBean();
@@ -92,7 +92,7 @@ public class LostPasswordFormController  {
 	 * 
 	 * @throws IOException 
 	 */
-	@RequestMapping(value="/public/accounts/lostPassword", method=RequestMethod.POST)
+	@RequestMapping(value="/account/lostPassword", method=RequestMethod.POST)
 	public String generateToken(
 						HttpServletRequest request,
 						@ModelAttribute LostPasswordFormBean formBean, 
@@ -157,7 +157,7 @@ public class LostPasswordFormController  {
 		strBuilder.append(host);
 		strBuilder.append(":").append(port);
 		strBuilder.append(contextPath);
-		strBuilder.append( "/public/accounts/newPassword?token=").append(token);
+		strBuilder.append( "/account/newPassword?token=").append(token);
 		
 		String url = strBuilder.toString();
 		

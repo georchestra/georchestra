@@ -80,7 +80,7 @@
 					<label class="col-lg-4 control-label"><s:message code="password.label" /></label>
 					<div class="col-lg-8">
 						<p class="form-control-static">
-							<a href='<c:out value="/ldapadmin/public/accounts/changePassword?uid=${editUserDetailsFormBean.uid}" />'  >
+							<a href='<c:out value="/ldapadmin/account/changePassword?uid=${editUserDetailsFormBean.uid}" />'  >
 								<s:message code="editUserDetailsForm.changePassword.link" />
 							</a>
 						</p>

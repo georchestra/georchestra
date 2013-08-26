@@ -66,7 +66,7 @@ public class NewPasswordFormController {
 	 * 
 	 * @throws IOException
 	 */
-	@RequestMapping(value="/public/accounts/newPassword", method=RequestMethod.GET)
+	@RequestMapping(value="/account/newPassword", method=RequestMethod.GET)
 	public String setupForm(@RequestParam("token") String token, Model model) throws IOException{
 		
 
@@ -106,7 +106,7 @@ public class NewPasswordFormController {
 	 * 
 	 * @throws IOException 
 	 */
-	@RequestMapping(value="/public/accounts/newPassword", method=RequestMethod.POST)
+	@RequestMapping(value="/account/newPassword", method=RequestMethod.POST)
 	public String newPassword(
 						@ModelAttribute NewPasswordFormBean formBean, 
 						BindingResult result, 

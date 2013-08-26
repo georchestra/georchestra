@@ -34,9 +34,9 @@ public class HomeController {
 	}
 	
 	
-	@RequestMapping(value="/public/")
+	@RequestMapping(value="/indexdev")
 	public String home(){
-
+		/* TO BE DELETED when dev has ended */
 		if(LOG.isDebugEnabled()){
 			LOG.debug("home page request");
 		}
