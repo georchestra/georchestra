@@ -1,5 +1,7 @@
 package org.georchestra.extractorapp.ws.extractor.wcs;
 
+import static org.georchestra.extractorapp.ws.extractor.wcs.WcsParameters.FORMAT;
+import static org.georchestra.extractorapp.ws.extractor.wcs.WcsParameters.USERNAME;
 import static org.geotools.referencing.crs.DefaultGeographicCRS.WGS84;
 
 import java.awt.Rectangle;
@@ -48,6 +50,7 @@ import org.opengis.coverage.grid.Format;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridCoverageWriter;
 import org.opengis.parameter.GeneralParameterValue;
+import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -318,7 +321,11 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
                     GridCoverageWriter writer = format.getWriter(tmpFile);
 
                     file.delete();
-                    writer.write((GridCoverage) transformed, null);
+                    
+                    ParameterValue<String> formatParam = FORMAT.createValue ();
+                    formatParam.setValue (request.format);
+                    
+                    writer.write((GridCoverage) transformed, new GeneralParameterValue[] {formatParam});
                     // There may be several files created if dest format is
                     // world+image
                     // so move all files in the tmpDir
