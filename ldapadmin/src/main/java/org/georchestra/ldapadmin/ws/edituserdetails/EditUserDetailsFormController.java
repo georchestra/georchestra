@@ -135,6 +135,7 @@ public class EditUserDetailsFormController {
 	@RequestMapping(value="/account/userdetails", method=RequestMethod.POST)
 	public String edit(
 						HttpServletRequest request,
+						Model model,
 						@ModelAttribute EditUserDetailsFormBean formBean, 
 						BindingResult resultErrors,
 						SessionStatus sessionStatus) 
@@ -162,9 +163,9 @@ public class EditUserDetailsFormController {
 			
 			this.accountDao.update(account);
 			
-			sessionStatus.setComplete();
+			model.addAttribute("success", true);
 
-			return "editUserDetailsSuccess";
+			return "editUserDetailsForm";
 			
 		} catch (DuplicatedEmailException e) {
 
