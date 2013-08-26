@@ -25,10 +25,10 @@
 		</div>
 		<form:form id="form" name="form" method="post" modelAttribute="changePasswordFormBean" cssClass="form-horizontal" >
 
-			<c:if test="${not empty message}">
-			<div id="message" class="alert alert-dismissable alert-info">
+			<c:if test="${not empty success}">
+			<div id="message" class="alert alert-dismissable alert-success">
 				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-				${message}
+				<s:message code="changePasswordForm.success" />
 			</div>
 			</c:if>
 

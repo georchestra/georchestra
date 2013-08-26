@@ -96,6 +96,7 @@ public class ChangePasswordFormController {
 	@RequestMapping(value="/account/changePassword", method=RequestMethod.POST)
 	public String changePassword(
 						HttpServletRequest request,
+						Model model,
 						@ModelAttribute ChangePasswordFormBean formBean, 
 						BindingResult result, 
 						SessionStatus sessionStatus) 
@@ -123,9 +124,9 @@ public class ChangePasswordFormController {
 			
 			this.accountDao.changePassword(uid, password);
 			
-			sessionStatus.setComplete();
-			
-			return "redirect:/account/userdetails?uid=" + uid;
+			model.addAttribute("success", true);
+
+			return "changePasswordForm";
 			
 		} catch (DataServiceException e) {
 			
