@@ -346,6 +346,27 @@ GEOR.ows = (function() {
                         if(!data || !data.documentElement) {
                             data = resp.responseText;
                         }
+                        
+                        // Begin hack
+                        // Since WFS version is no more a default param, we need to retrieve the WFS version of the layer
+                        // to initialize the WFSProtocol with matching version
+                        // Ideally, we should call a capabilities request to get the WFS version, but it is to slow
+                        // So we get the version from the describefeaturetype interpreting the gml version in the schema definition
+                        var version;
+                        
+                        if(resp.responseText.indexOf('http://www.opengis.net/gml/3.2') >= 0) {
+                        	version = "2.0.0";
+                        }
+                        else if(resp.responseText.indexOf('http://www.opengis.net/gml' && resp.responseText.indexOf('gml/3.1.1/base/gml.xsd')) >= 0) {
+                        	version = "1.1.0";
+                        }
+                        else {
+                        	version = "1.0.0";
+                        }
+                        record.set("WFSversion", version);
+                        
+                        // End hack
+                        
                         var format = new OpenLayers.Format.WFSDescribeFeatureType();
                         var jsObj = format.read(data);
 
@@ -534,7 +555,8 @@ GEOR.ows = (function() {
             record = (record instanceof Ext.data.Record) ? {
                 typeName: record.get("typeName"),
                 featureNS: record.get("featureNS"),
-                owsURL: record.get("owsURL")
+                owsURL: record.get("owsURL"),
+                WFSversion : record.get("WFSversion")
             } : record;
             var featureType, featurePrefix;
             var parts = record.typeName.split(":");
@@ -549,10 +571,10 @@ GEOR.ows = (function() {
                 url: record.owsURL,
                 featureType: featureType,
                 featureNS: record.featureNS,
-                featurePrefix: featurePrefix,
+                featurePrefix: featurePrefix || 'feature',
                 srsNameInQuery: true, // see http://trac.osgeo.org/openlayers/ticket/2228
                 srsName: map.getProjection(),
-                version: WFS_BASE_PARAMS["VERSION"]
+                version: WFS_BASE_PARAMS["VERSION"] || record.WFSversion
             }, options || {});
             return new OpenLayers.Protocol.WFS(options);
         }
