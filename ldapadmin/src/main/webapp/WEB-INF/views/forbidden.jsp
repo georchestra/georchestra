@@ -9,8 +9,8 @@
 <html lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<link href='<c:url value="/css/bootstrap.min.css" />' rel="stylesheet" />
-	<link href='<c:url value="/css/ldapadmin.css" />' rel="stylesheet" />
+	<link href='css/bootstrap.min.css' rel="stylesheet" />
+	<link href='css/ldapadmin.css' rel="stylesheet" />
 	<title><s:message code="forbidden.title" /></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
@@ -22,6 +22,6 @@
 		</div>
 	</div>
 	<script src="//code.jquery.com/jquery.js"></script>
-	<script src='<c:url value="/js/bootstrap.min.js" />'></script>
+	<script src='js/bootstrap.min.js'></script>
 </body>
 </html>
