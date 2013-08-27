@@ -12,8 +12,8 @@
 <html lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<link href='<c:url value="/css/bootstrap.min.css" />' rel="stylesheet" />
-	<link href='<c:url value="/css/ldapadmin.css" />' rel="stylesheet" />
+	<link href='css/bootstrap.min.css' rel="stylesheet" />
+	<link href='css/ldapadmin.css' rel="stylesheet" />
 	<title>ldapadmin (under construction)</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
@@ -41,27 +41,27 @@ out.println(l);
 			</tr>
 			<tr class="active">
 				<td>Home</td>
-				<td><a href='#'><c:url value="/indexdev" /></a></td>
+				<td><a href='#'>indexdev</a></td>
 			</tr>
 			<tr>
 				<td>Create Account</td>
-				<td><a href='<c:url value="/account/new" />'><c:url value="/account/new" /></a></td>
+				<td><a href='account/new'>account/new</a></td>
 			</tr>
 			<tr>
 				<td>Lost Password</td>
-				<td><a href='<c:url value="/account/lostPassword" />'><c:url value="/account/lostPassword" /></a></td>
+				<td><a href='account/lostPassword'>account/lostPassword</a></td>
 			</tr>
 			<tr>
 				<td>Edit "testuser" details</td>
-				<td><a href='<c:url value="/account/userdetails?uid=testuser" />'><c:url value="/account/userdetails?uid=testuser" /></a></td>
+				<td><a href='account/userdetails?uid=testuser'>account/userdetails?uid=testuser</a></td>
 			</tr>
 			<tr>
 				<td>Change "testuser" password</td>
-				<td><a href='<c:url value="/account/changePassword?uid=testuser" />'><c:url value="/account/changePassword?uid=testuser" /></a></td>
+				<td><a href='account/changePassword?uid=testuser'>account/changePassword?uid=testuser</a></td>
 			</tr>
 			<tr>
 				<td>Set new password</td>
-				<td><a href='<c:url value="/account/newPassword?token=d6091eb6-1f8a-4ab6-a4d4-57fdfb46b409" />'><c:url value="/account/newPassword?token=d6091eb6-1f8a-4ab6-a4d4-57fdfb46b409" /></a><br>(the token is created by the <a href='<c:url value="/account/lostPassword" />'>Lost Password</a> page and sent by e-mail)</td>
+				<td><a href='account/newPassword?token=d6091eb6-1f8a-4ab6-a4d4-57fdfb46b409'>account/newPassword?token=d6091eb6-1f8a-4ab6-a4d4-57fdfb46b409</a><br>(the token is created by the <a href='account/lostPassword'>Lost Password</a> page and sent by e-mail)</td>
 			</tr>
 		</table>
 
@@ -72,30 +72,30 @@ out.println(l);
 				<th>Link</th>
 			</tr>
 			<tr>
-				<td>Adminstration</td>
-				<td><a href='<c:url value="/" />'><c:url value="/" /></a></td>
+				<td>Administration</td>
+				<td><a href='/'>/</a></td>
 			</tr>
 			<tr>
 				<td>REST GET users</td>
-				<td><a href='<c:url value="/private/users" />'><c:url value="/private/users" /></a></td>
+				<td><a href='private/users'>private/users</a></td>
 			</tr>
 			<tr>
 				<td>REST GET user</td>
-				<td><a href='<c:url value="/private/users/testuser" />'><c:url value="/private/users/testuser" /></a></td>
+				<td><a href='private/users/testuser'>private/users/testuser</a></td>
 			</tr>
 			<tr>
 				<td>REST GET groups</td>
-				<td><a href='<c:url value="/private/groups" />'><c:url value="/private/groups" /></a></td>
+				<td><a href='private/groups'>private/groups</a></td>
 			</tr>
 			<tr>
 				<td>REST GET group</td>
-				<td><a href='<c:url value="/private/groups/SV_ADMIN" />'><c:url value="/private/groups/SV_ADMIN" /></a></td>
+				<td><a href='private/groups/SV_ADMIN'>private/groups/SV_ADMIN</a></td>
 			</tr>
 		</table>
 	</div> <!-- /container -->
 
-    <script src="http://code.jquery.com/jquery.js"></script>
-    <script src='<c:url value="/js/bootstrap.min.js" />'></script>
+    <script src="//code.jquery.com/jquery.js"></script>
+    <script src='js/bootstrap.min.js'></script>
 </body>
 
 </html>
