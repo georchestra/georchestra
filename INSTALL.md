@@ -212,7 +212,7 @@ Apache
 Apache - SSL certificate
 -----------------------
 
-* private key generation
+* private key generation (enter a passphrase)
 
         cd /var/www/georchestra/ssl
         sudo openssl genrsa -des3 -out georchestra.key 1024
@@ -240,9 +240,8 @@ Apache - SSL certificate
 	
         sudo vim /etc/hosts
 
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         127.0.0.1       vm-georchestra
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	* http://vm-georchestra
 	* https://vm-georchestra
 
