@@ -24,7 +24,7 @@ Ext.onReady(function() {
         zoom: 5
     });
 
-    annotation = new Annotation({
+    annotation = new GEOR.Annotation({
         //downloadService: 'http://localhost:5000/filemanager/download',
         map: mapPanel.map,
         popupOptions: {unpinnable: false, draggable: true}
