@@ -86,7 +86,7 @@ Once the system is ready, collect WAR files in a dedicated directory and rename 
     VERSION=13.06
     mkdir -p /tmp/georchestra_deploy_tmp
     cd /tmp/georchestra_deploy_tmp
-    cp `find ~/.m2/repository/ -name *-${VERSION}-${PROFILE}.war` ./
+    cp `find ~/.m2/repository/ -name "*-${VERSION}-${PROFILE}.war"` ./
     
     mv security-proxy-${VERSION}-${PROFILE}.war ROOT.war
     mv analytics-${VERSION}-${PROFILE}.war analytics-private.war
