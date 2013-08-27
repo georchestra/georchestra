@@ -25,7 +25,7 @@ GEOR.Addons.Annotation.prototype = {
         });
         this.window = new Ext.Window({
             title: OpenLayers.i18n('annotation.drawing_tools'),
-            width: 420,
+            width: 440,
             closable: false,
             resizable: false,
             border: false,
