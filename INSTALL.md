@@ -234,9 +234,7 @@ Apache - SSL certificate
 
         sudo service apache2 graceful
         
-* testing
-
-	* update your hosts
+* update your hosts
 
 ```
         sudo vim /etc/hosts
@@ -244,8 +242,10 @@ Apache - SSL certificate
         127.0.0.1       vm-georchestra
 ```
 
-	* http://vm-georchestra
-	* https://vm-georchestra
+* testing
+
+  * http://vm-georchestra
+  * https://vm-georchestra
 
 Tomcat
 =========
