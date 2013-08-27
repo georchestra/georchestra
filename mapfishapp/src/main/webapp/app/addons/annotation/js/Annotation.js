@@ -219,6 +219,8 @@ GEOR.Annotation = Ext.extend(Ext.util.Observable, {
         this.actions.push('-');
         this.initFeatureControl(layer);
         this.initDeleteAllAction();
+        this.actions.push('-');
+        this.initExportAsKmlAction();
 
         GEOR.Annotation.superclass.constructor.apply(this, arguments);
     },
@@ -448,6 +450,45 @@ GEOR.Annotation = Ext.extend(Ext.util.Observable, {
             }
         },
         this);
+    },
+
+    /** private: method[initExportAsKmlAction]
+     *  Create a Ext.Action object that is set as the exportAsKml property
+     *  and pushed to te actions array.
+     */
+    initExportAsKmlAction: function() {
+        var actionOptions = {
+            handler: this.exportAsKml,
+            scope: this,
+            text: OpenLayers.i18n('annotation.export_as_kml'),
+            iconCls: "gx-featureediting-export",
+            iconAlign: 'top',
+            tooltip: OpenLayers.i18n('annotation.export_as_kml_tip')
+        };
+
+        var action = new Ext.Action(actionOptions);
+
+        this.actions.push(action);
+    },
+
+    /** private: method[exportAsKml]
+     *  Called when the exportAsKml is triggered (button pressed).
+     */
+    exportAsKml: function() {
+        GEOR.waiter.show();
+        var format = new OpenLayers.Format.KML({
+            'foldersName': OpenLayers.Util.createUrlObject(window.location).host, // TODO use instance name instead
+            'internalProjection': this.map.getProjectionObject(),
+            'externalProjection': new OpenLayers.Projection("EPSG:4326")
+        });
+        OpenLayers.Request.POST({
+            url: "ws/kml/",
+            data: format.write(this.layer.features),
+            success: function(response) {
+                var o = Ext.decode(response.responseText);
+                window.location.href = o.filepath;
+            }
+        });
     },
 
     /** private: method[getActiveDrawControl]
