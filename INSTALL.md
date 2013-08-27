@@ -64,9 +64,7 @@ Apache
 * modules setup
 
         sudo apt-get install apache2 libapache2-mod-auth-cas
-        ls /etc/apache2/mods-enabled
-        sudo a2enmod proxy_ajp proxy_connect proxy_http proxy
-        sudo a2enmod ssl rewrite
+        sudo a2enmod proxy_ajp proxy_connect proxy_http proxy ssl rewrite headers
         sudo service apache2 graceful
 
 * VirtualHost setup
