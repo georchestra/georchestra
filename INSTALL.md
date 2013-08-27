@@ -234,11 +234,10 @@ Apache - SSL certificate
         
 * update your hosts
 
-```
         sudo vim /etc/hosts
 
+
         127.0.0.1       vm-georchestra
-```
 
 * testing
 
