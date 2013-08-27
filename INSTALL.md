@@ -250,13 +250,21 @@ Apache - SSL certificate
 Tomcat
 =========
 
+Install Tomcat from package
+---------------------------
+
+This one Tomcat instance installation is for test purpose. When running a real-world SDI, you will need to use various Tomcat instances.
+
+    sudo apt-get install tomcat7
+
+
 Keystore/Trustore
 -------------------
 
-* Keystore creation
+* Keystore creation (change the "mdpstore" password)
 
-        cd /srv/tomcat/tomcat1/conf/
-        keytool -genkey -alias georchestra_localhost -keystore keystore -storepass mdpstore -keypass mdpstore -keyalg RSA -keysize 2048
+        cd /etc/tomcat7/
+        sudo keytool -genkey -alias georchestra_localhost -keystore keystore -storepass mdpstore -keypass mdpstore -keyalg RSA -keysize 2048
 
     Put "localhost" in "first name and second name" since sec-proxy and CAS are on the same tomcat
 
@@ -281,22 +289,22 @@ Keystore/Trustore
        
 * truststore config
 
-        vim /srv/tomcat/tomcat1/bin/setenv.sh
+        sudo vim /etc/default/tomcat7
         
     ~~~~~~~~~~~~~~
-    export JAVA_OPTS="$JAVA_OPTS -Djavax.net.ssl.trustStore=/srv/tomcat/tomcat1/conf/keystore -Djavax.net.ssl.trustStorePassword=mdpstore"
+    JAVA_OPTS="$JAVA_OPTS -Djavax.net.ssl.trustStore=/srv/tomcat/tomcat1/conf/keystore -Djavax.net.ssl.rustStorePassword=mdpstore"
     ~~~~~~~~~~~~~~~
 
 * connectors config
 
-        vim /srv/tomcat/tomcat1/conf/server.xml
+        sudo vim /etc/tomcat7/server.xml
         
     ~~~~~~~~~~~~~~~~~~~~~~~~~    
     <Connector port="8443" protocol="HTTP/1.1" SSLEnabled="true"
        URIEncoding="UTF-8"
        maxThreads="150" scheme="https" secure="true"
        clientAuth="false"
-       keystoreFile="/srv/tomcat/tomcat1/conf/keystore"
+       keystoreFile="/etc/tomcat7/keystore"
        keystorePass="mdpstore"
        compression="on"
        compressionMinSize="2048"
@@ -314,7 +322,7 @@ Keystore/Trustore
     
 * Tomcat restart
  
-        sudo /etc/init.d/tomcat-tomcat1 restart
+        sudo service tomcat7 restart
     
 
 
