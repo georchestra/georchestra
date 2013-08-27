@@ -86,7 +86,11 @@ public class DocController {
      * Absolute (from domain name) URL path where the sld service can be called
      */
     public static final String SLD_URL = DOC_URL + "sld/";
-
+    
+    /**
+     * Absolute (from domain name) URL path where the kml service can be called
+     */
+    public static final String KML_URL = DOC_URL + "kml/";
     
     /*=======================Services entry points==========================================================================*/
     
@@ -110,6 +114,27 @@ public class DocController {
     @RequestMapping(value="/wmc/*", method=RequestMethod.GET)
     public void getWMCFile(HttpServletRequest request, HttpServletResponse response) { 
         getFile(new WMCDocService(this.maxDocAgeInMinutes,  this.docTempDir), request, response);
+    }
+
+    /*======================= KML =====================================================================*/
+    /**
+     * POST KML entry point. Store the body of the request POST (or file by upload) in a temporary file.
+     * @param request contains in its body the file in the JSON format
+     * @param response contains the url path to get back the file in CSV: KML_URL/{filename}
+     */
+    @RequestMapping(value="/kml/", method=RequestMethod.POST)
+    public void storeKMLFile(HttpServletRequest request, HttpServletResponse response) {   
+        storeFile(new KMLDocService(this.maxDocAgeInMinutes, this.docTempDir), KML_URL, request, response);   
+    }
+    
+    /**
+     * GET KML entry point. Retrieve the right file previously stored corresponding to the REST argument. 
+     * @param request no parameter. The parameter has to be provided REST style: KML_URL/{filename}
+     * @param response contains the file content
+     */
+    @RequestMapping(value="/kml/*", method=RequestMethod.GET)
+    public void getKMLFile(HttpServletRequest request, HttpServletResponse response) { 
+        getFile(new KMLDocService(this.maxDocAgeInMinutes, this.docTempDir), request, response);
     }
 
     /*======================= JSON to CSV =====================================================================*/
