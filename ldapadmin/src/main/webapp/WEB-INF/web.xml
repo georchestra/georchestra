@@ -65,9 +65,9 @@
     <servlet-mapping>
         <servlet-name>default</servlet-name>
         <url-pattern>/privateui/*</url-pattern>
-        <url-pattern>/css/*</url-pattern>
-        <url-pattern>/fonts/*</url-pattern>
-        <url-pattern>/js/*</url-pattern>
+        <url-pattern>/account/css/*</url-pattern>
+        <url-pattern>/account/fonts/*</url-pattern>
+        <url-pattern>/account/js/*</url-pattern>
     </servlet-mapping>
 
     <session-config>
