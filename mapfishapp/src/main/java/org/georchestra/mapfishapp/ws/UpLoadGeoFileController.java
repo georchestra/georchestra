@@ -139,7 +139,7 @@ public final class UpLoadGeoFileController {
 	private long gpxSizeLimit;
 	private long gmlSizeLimit;
 	
-	private UpLoadFileManagement fileManagement = new UpLoadFileManagement();
+	private UpLoadFileManagement fileManagement = UpLoadFileManagement.create();
 
 	
 	/**
@@ -290,8 +290,6 @@ public final class UpLoadGeoFileController {
 			}
 			
 			// save the file in the temporal directory
-			this.fileManagement = UpLoadFileManagement.create(); 
-			// this.fileManagement = UpLoadFileManagement.create(UpLoadFileManagement.Implementation.geotools); HACK to use Geotools Implementation
 
 			this.fileManagement.setWorkDirectory(workDirectory); 
 			this.fileManagement.setFileDescriptor(currentFile);
