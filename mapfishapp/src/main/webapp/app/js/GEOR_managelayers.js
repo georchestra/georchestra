@@ -39,7 +39,6 @@ GEOR.managelayers = (function() {
      */
     var LayerNode = Ext.extend(GeoExt.tree.LayerNode, {
         constructor: function(config) {
-            config.text = GEOR.util.shortenLayerName(config.layer);
             config.qtip = config.layer.name;
             LayerNode.superclass.constructor.apply(this, [config]);
         }

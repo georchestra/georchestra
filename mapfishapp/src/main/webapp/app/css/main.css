@@ -51,6 +51,13 @@ div.olMapViewport {
 /*
  * layer tree
  */
+.geor-tree-node .x-tree-node-anchor {
+  position: absolute;
+  left: 20px;
+  right: 50px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .gx-tree-layer-actions {
     float: right;
 }
