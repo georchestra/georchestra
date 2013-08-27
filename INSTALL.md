@@ -257,6 +257,9 @@ This one Tomcat instance installation is for test purpose. When running a real-w
 
     sudo apt-get install tomcat7
 
+Remove any webapp
+
+	sudo rm -rf /var/lib/tomcat7/webapps/*
 
 Keystore/Trustore
 -------------------
