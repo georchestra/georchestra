@@ -466,7 +466,7 @@ GEOR.managelayers = (function() {
             isWFS = type === "WFS",
             isVector = layer instanceof OpenLayers.Layer.Vector;
 
-        var menuItems = [], url, murl, sepInserted;
+        var menuItems = [], url, sepInserted;
 
         /**
          * Method: zoomToLayerRecordExtent
@@ -563,10 +563,9 @@ GEOR.managelayers = (function() {
         };
         
         // metadata action
-        if (layerRecord.get("metadataURLs") &&
-            layerRecord.get("metadataURLs")[0]) {
-
-            murl = layerRecord.get("metadataURLs")[0];
+        if (layerRecord.get("metadataURLs")) {
+            var murls = layerRecord.get("metadataURLs");
+            var murl = murls[0];
             // default to first entry
             url = (murl.href) ? murl.href : murl;
             for (var i=1 ; i < murls.length ; i++) {
