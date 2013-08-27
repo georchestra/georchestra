@@ -37,13 +37,13 @@ var RecaptchaOptions = {
     custom_theme_widget: 'recaptcha_widget'
 };
 </script>
-<script type="text/javascript" src="http://www.google.com/recaptcha/api/challenge?k=${reCaptchaPublicKey}"></script>
+<script type="text/javascript" src="//www.google.com/recaptcha/api/challenge?k=${reCaptchaPublicKey}"></script>
 
 <noscript>
 <div class="panel panel-default">
 	<div class="panel-heading"><s:message code="recaptcha.noscript.title" /></div>
 	<div class="panel-body">
-		<iframe src="http://www.google.com/recaptcha/api/noscript?k=${reCaptchaPublicKey}"
+		<iframe src="//www.google.com/recaptcha/api/noscript?k=${reCaptchaPublicKey}"
 			class="col-lg-12" height="300" frameborder="0"></iframe>
 		<br>
 		<textarea name="recaptcha_challenge_field" class="form-control" rows="3"></textarea>
