@@ -260,6 +260,12 @@ This one Tomcat instance installation is for test purpose. When running a real-w
 Remove any webapp
 
 	sudo rm -rf /var/lib/tomcat6/webapps/*
+	
+Create a directory for tomcat6 java preferences (to avoid a `WARNING: Couldn't flush user prefs: java.util.prefs.BackingStoreException: Couldn't get file lock.` error)
+
+	sudo mkdir /usr/share/tomcat6/.java
+	sudo chown tomcat6:tomcat6 /usr/share/tomcat6/.java
+
 
 Keystore/Trustore
 -------------------
