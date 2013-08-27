@@ -96,6 +96,7 @@ Once the system is ready, collect WAR files in a dedicated directory and rename 
     mv extractorapp-${VERSION}-${PROFILE}.war extractorapp-private.war
     mv geonetwork-main-${VERSION}-${PROFILE}.war geonetwork-private.war
     mv geoserver-webapp-${VERSION}-${PROFILE}.war geoserver-private.war
+    mv ldapadmin-${VERSION}-${PROFILE}.war ldapadmin-private.war
     mv mapfishapp-${VERSION}-${PROFILE}.war mapfishapp-private.war
     mv static-${VERSION}-${PROFILE}.war static-private.war
 

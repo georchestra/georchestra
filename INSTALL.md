@@ -121,7 +121,7 @@ Apache
 * Apache config
 
         cd conf/
-        sudo vim proxypass.conf
+        sudo vim /var/www/georchestra/conf/proxypass.conf
         
     should have something like:
         
@@ -158,6 +158,7 @@ Apache
     RewriteRule ^/geoserver2/(.*)$ /geoserver/$1 [R]
     RewriteRule ^/geoserver$ /geoserver/ [R]
     RewriteRule ^/geowebcache$ /geowebcache/ [R]
+    RewriteRule ^/ldapadmin$ /ldapadmin/ [R]
     RewriteRule ^/mapfishapp$ /mapfishapp/ [R]
     RewriteRule ^/proxy$ /proxy/ [R]
     RewriteRule ^/static$ /static/ [R]
@@ -194,6 +195,9 @@ Apache
 
     ProxyPass /j_spring_security_logout ajp://localhost:8009/j_spring_security_logout 
     ProxyPassReverse /j_spring_security_logout ajp://localhost:8009/j_spring_security_logout
+
+    ProxyPass /ldapadmin/ ajp://localhost:8009/ldapadmin/
+    ProxyPassReverse /ldapadmin/ ajp://localhost:8009/ldapadmin/
 
     ProxyPass /mapfishapp/ ajp://localhost:8009/mapfishapp/ 
     ProxyPassReverse /mapfishapp/ ajp://localhost:8009/mapfishapp/
