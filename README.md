@@ -83,26 +83,27 @@ An example setup on one Tomcat is described [here](https://github.com/georchestr
 Once the system is ready, collect WAR files in a dedicated directory and rename them:
 
     PROFILE=myprofile
-    mkdir /tmp/georchestra_deploy_tmp
+    VERSION=13.06
+    mkdir -p /tmp/georchestra_deploy_tmp
     cd /tmp/georchestra_deploy_tmp
-    cp `find ~/.m2/repository/ -name *-13.06-${PROFILE}.war` ./
+    cp `find ~/.m2/repository/ -name *-${VERSION}-${PROFILE}.war` ./
     
-    mv security-proxy-13.06-${PROFILE}.war ROOT.war
-    mv analytics-13.06-${PROFILE}.war analytics-private.war
-    mv cas-server-webapp-13.06-${PROFILE}.war cas.war
-    mv catalogapp-13.06-${PROFILE}.war catalogapp-private.war
-    mv downloadform-13.06-${PROFILE}.war downloadform-private.war
-    mv extractorapp-13.06-${PROFILE}.war extractorapp-private.war
-    mv geonetwork-main-13.06-${PROFILE}.war geonetwork-private.war
-    mv geoserver-webapp-13.06-${PROFILE}.war geoserver-private.war
-    mv mapfishapp-13.06-${PROFILE}.war mapfishapp-private.war
-    mv static-13.06-${PROFILE}.war static-private.war
+    mv security-proxy-${VERSION}-${PROFILE}.war ROOT.war
+    mv analytics-${VERSION}-${PROFILE}.war analytics-private.war
+    mv cas-server-webapp-${VERSION}-${PROFILE}.war cas.war
+    mv catalogapp-${VERSION}-${PROFILE}.war catalogapp-private.war
+    mv downloadform-${VERSION}-${PROFILE}.war downloadform-private.war
+    mv extractorapp-${VERSION}-${PROFILE}.war extractorapp-private.war
+    mv geonetwork-main-${VERSION}-${PROFILE}.war geonetwork-private.war
+    mv geoserver-webapp-${VERSION}-${PROFILE}.war geoserver-private.war
+    mv mapfishapp-${VERSION}-${PROFILE}.war mapfishapp-private.war
+    mv static-${VERSION}-${PROFILE}.war static-private.war
 
 Copy WAR files in Tomcat webapps dir:
 
-    sudo service tomcat7 stop
-    cp -f /tmp/georchestra_deploy_tmp/* /var/lib/tomcat7/webapps
-    sudo service tomcat7 start
+    sudo service tomcat6 stop
+    sudo cp -f /tmp/georchestra_deploy_tmp/* /var/lib/tomcat6/webapps
+    sudo service tomcat6 start
 
 This is the basic idea, but one can use more advanced deploy scripts. An example is provided 
 [here](https://github.com/georchestra/georchestra/blob/master/server-deploy/linux_deploy_scripts/Readme.md).
