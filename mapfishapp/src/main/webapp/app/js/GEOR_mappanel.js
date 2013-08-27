@@ -49,8 +49,13 @@ GEOR.mappanel = (function() {
      * {Function}
      */
     var formatMousePositionOutput = function(projCode) {
-        var format, firstPrefix, secondPrefix;
-        if (projCode == "EPSG:4326") {
+        var format, firstPrefix, secondPrefix, 
+            p = new OpenLayers.Projection(projCode);
+        if (!p.proj) {
+            alert("Missing definition of "+projCode+" for the output mouse position !");
+            return;
+        }
+        if (p.proj.projName === "longlat") {
             format = function(n) {return OpenLayers.Number.format(n, 5)};
             firstPrefix = "Lon = ";
             secondPrefix = ", Lat = ";
