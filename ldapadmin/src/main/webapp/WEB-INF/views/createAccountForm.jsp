@@ -26,7 +26,7 @@
 		<div class="page-header">
 			<h1><s:message code="createAccountForm.title"/></h1>
 		</div>
-		<form:form id="form" name="form" method="post" modelAttribute="accountFormBean" cssClass="form-horizontal" >
+		<form:form id="form" name="form" method="post" action="new" modelAttribute="accountFormBean" cssClass="form-horizontal" >
 
 			<c:if test="${not empty message}">
 			<div id="message" class="alert alert-dismissable alert-info">

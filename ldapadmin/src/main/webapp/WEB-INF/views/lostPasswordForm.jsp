@@ -22,7 +22,7 @@
 		<div class="page-header">
 			<h1><s:message code="lostPasswordForm.title"/></h1>
 		</div>
-		<form:form id="form" name="form" method="post" modelAttribute="lostPasswordFormBean" cssClass="form-horizontal" >
+		<form:form id="form" name="form" method="post" action="lostPassword" modelAttribute="lostPasswordFormBean" cssClass="form-horizontal" >
 
 			<c:if test="${not empty message}">
 			<div id="message" class="alert alert-dismissable alert-info">

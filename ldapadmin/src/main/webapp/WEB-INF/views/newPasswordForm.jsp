@@ -23,7 +23,7 @@
 		<div class="page-header">
 			<h1><s:message code="newPasswordForm.title"/></h1>
 		</div>
-		<form:form id="form" name="form" method="post" modelAttribute="newPasswordFormBean" cssClass="form-horizontal" >
+		<form:form id="form" name="form" method="post" action="newPassword" modelAttribute="newPasswordFormBean" cssClass="form-horizontal" >
 
 			<c:if test="${not empty message}">
 			<div id="message" class="alert alert-dismissable alert-info">
