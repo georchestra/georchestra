@@ -32,7 +32,6 @@ PostGreSQL
 
         sudo su postgres
         createdb geonetwork
-        createlang plpgsql geonetwork
         psql -f /usr/share/postgresql/9.1/contrib/postgis-1.5/postgis.sql geonetwork
         psql -f /usr/share/postgresql/9.1/contrib/postgis-1.5/spatial_ref_sys.sql geonetwork
 
