@@ -13,7 +13,7 @@ LDAP
  
             sudo apt-get install git-core
             git clone git://github.com/georchestra/LDAP.git
-	    cd LDAP
+            cd LDAP
 	
  * inserting the data: follow the instructions in https://github.com/georchestra/LDAP/blob/master/README.md
 
