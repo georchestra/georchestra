@@ -144,7 +144,7 @@
 				<artifactId>maven-dependency-plugin</artifactId>
 			</plugin>
 			<plugin>
-				<groupId>org.codehaus.groovy.maven</groupId>
+				<groupId>org.codehaus.gmaven</groupId>
 				<artifactId>gmaven-plugin</artifactId>
 				<dependencies>
 					<dependency>
