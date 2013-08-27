@@ -5,13 +5,13 @@ LDAP
 
 * install the required packages
 
-        apt-get install slapd ldap-utils
+        sudo apt-get install slapd ldap-utils
 
 * sample data import
 
  * getting the data
  
-            apt-get install git-core
+            sudo apt-get install git-core
             git clone git://github.com/georchestra/LDAP.git
 	
  * inserting the data: follow the instructions in https://github.com/georchestra/LDAP/blob/master/README.md
@@ -25,11 +25,11 @@ PostGreSQL
 
 * Installation 
 
-        apt-get install postgresql postgresql-9.1-postgis postgis	
+        sudo apt-get install postgresql postgresql-9.1-postgis postgis
 	
 * GeoNetwork database setup
 
-        su postgres
+        sudo su postgres
         createdb geonetwork
         createlang plpgsql geonetwork
         psql -f /usr/share/postgresql/9.1/contrib/postgis-1.5/postgis.sql geonetwork
@@ -56,24 +56,24 @@ PostGreSQL
             createdb ogcstatistics
             wget https://raw.github.com/georchestra/georchestra/master/ogc-server-statistics/ogc_statistics_table.sql -O /tmp/ogc_statistics_table.sql
             psql ogcstatistics -f /tmp/ogc_statistics_table.sql
-
+            exit
     
 Apache
 =========
 
 * modules setup
 
-        apt-get install apache2 libapache2-mod-auth-cas 
+        sudo apt-get install apache2 libapache2-mod-auth-cas
         ls /etc/apache2/mods-enabled
-        a2enmod proxy_ajp proxy_connect proxy_http proxy
-        a2enmod ssl rewrite
-        /etc/init.d/apach2 restart
+        sudo a2enmod proxy_ajp proxy_connect proxy_http proxy
+        sudo a2enmod ssl rewrite
+        sudo service apache2 graceful
 
 * VirtualHost setup
 
-        cd /etc/apache2/site-available
-        a2dissite default default-ssl
-        vi georchestra
+        cd /etc/apache2/sites-available
+        sudo a2dissite default default-ssl
+        sudo vi georchestra
 
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    	<VirtualHost *:80>
@@ -100,28 +100,28 @@ Apache
 	</VirtualHost>
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        a2ensite georchestra
+        sudo a2ensite georchestra
    
 * web directories for geOrchestra
 
         cd /var/www
-        mkdir georchestra
+        sudo mkdir georchestra
         cd georchestra
-        mkdir conf htdocs logs ssl
+        sudo mkdir conf htdocs logs ssl
 
     Debian apache user is www-data
 
-        id www-data
+        sudo id www-data
 
     we have to grant write on logs to www-data:
 
-        chgrp www-data logs/
-        chmod g+w logs/
+        sudo chgrp www-data logs/
+        sudo chmod g+w logs/
 
 * Apache config
 
         cd conf/
-        vim proxypass.conf
+        sudo vim proxypass.conf
         
     should have something like:
         
@@ -215,11 +215,11 @@ Apache - SSL certificate
 * private key generation
 
         cd /var/www/georchestra/ssl
-        openssl genrsa -des3 -out georchestra.key 1024
+        sudo openssl genrsa -des3 -out georchestra.key 1024
 
 * certificate generated for this key
 
-        openssl req -new -key georchestra.key -out georchestra.csr
+        sudo openssl req -new -key georchestra.key -out georchestra.csr
 
 * fill the form without providing a password
 
@@ -227,18 +227,18 @@ Apache - SSL certificate
 
 * create an unprotected key
 
-        openssl rsa -in georchestra.key -out georchestra-unprotected.key
-        openssl x509 -req -days 365 -in georchestra.csr -signkey georchestra.key -out georchestra.crt
+        sudo openssl rsa -in georchestra.key -out georchestra-unprotected.key
+        sudo openssl x509 -req -days 365 -in georchestra.csr -signkey georchestra.key -out georchestra.crt
 
 * restart apache
 
-        sudo /etc/init.d/apache2 restart
+        sudo service apache2 graceful
         
 * testing
 
 	* update your hosts
 	
-            vim /etc/hosts
+        sudo vim /etc/hosts
 
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         127.0.0.1       vm-georchestra
