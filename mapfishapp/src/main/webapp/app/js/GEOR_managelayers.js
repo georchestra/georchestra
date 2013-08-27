@@ -466,7 +466,7 @@ GEOR.managelayers = (function() {
             isWFS = type === "WFS",
             isVector = layer instanceof OpenLayers.Layer.Vector;
 
-        var menuItems = [], url, sepInserted;
+        var menuItems = [], url, murl, sepInserted;
 
         /**
          * Method: zoomToLayerRecordExtent
@@ -565,8 +565,17 @@ GEOR.managelayers = (function() {
         // metadata action
         if (layerRecord.get("metadataURLs") &&
             layerRecord.get("metadataURLs")[0]) {
-            url = layerRecord.get("metadataURLs")[0];
-            url = (url.href) ? url.href : url;
+
+            murl = layerRecord.get("metadataURLs")[0];
+            // default to first entry
+            url = (murl.href) ? murl.href : murl;
+            for (var i=1 ; i < murls.length ; i++) {
+               murl = murls[i];
+               // prefer text/html format if found
+               if (murl.format && murl.format == 'text/html') {
+                   url = (murl.href) ? murl.href : murl;
+               }
+            }
             insertSep();
             menuItems.push({
                 iconCls: 'geor-btn-metadata',

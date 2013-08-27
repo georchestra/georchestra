@@ -212,15 +212,7 @@ Ext.namespace("GEOR");
                 items: [{
                     layout: "fit",
                     title: tr("Configuration"),
-                    items: GEOR.layerstree.create(),
-                    bbar: [ '->',
-                        {
-                            id: "geor-btn-extract-id",
-                            text: tr("Extract the selected layers"),
-                            iconCls: "geor-btn-extract",
-                            handler: extractBtnHandler
-                        }
-                    ]
+                    items: GEOR.layerstree.create()
                 }, {
                     layout:"border",
                     title: tr("Recenter"),
@@ -240,6 +232,17 @@ Ext.namespace("GEOR");
                             region: 'center'
                         }
                     ]
+                }]
+            }, {
+                layout: "form",
+                region: 'south',
+                footerCssClass: "geor-primary",
+                buttons: [{
+                    xtype: 'button',
+                    id: "geor-btn-extract-id",
+                    text: tr("Extract the selected layers"),
+                    iconCls: "geor-btn-extract",
+                    handler: extractBtnHandler
                 }]
             }]
         });

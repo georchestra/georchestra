@@ -252,6 +252,7 @@ GeoExt.ux.form.BoundingBoxPanel = Ext.extend(Ext.Panel, {
                 );
             }
             this.bbox = bounds;
+            this.control && this.control.deactivate();
         }
     },
 
@@ -303,6 +304,7 @@ GeoExt.ux.form.BoundingBoxPanel = Ext.extend(Ext.Panel, {
                 this.right.setValue(bounds.right),
                 this.top.setValue(bounds.top)
                 this.bbox = bounds;
+                this.control && this.control.deactivate();
                 delete this._updating;
             }
         }

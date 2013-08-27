@@ -406,18 +406,6 @@ GEOR.config = (function() {
          */
         STARTUP_LAYERS: getCustomParameter("STARTUP_LAYERS", [
             {
-                layername: "ortho",
-                owstype: "WMS",
-                owsurl: "http://bmo.openstreetmap.fr/ows"
-            }, {
-                layername: "fake layer",
-                owstype: "WFS",
-                owsurl: "http://bmo.openstreetmap.fr/ows"
-            },{
-                layername: "voies",
-                owstype: "WFS",
-                owsurl: "http://bmo.openstreetmap.fr/ows"
-            },{
                 owstype: "WMS",
                 owsurl: "http://geolittoral.application.equipement.gouv.fr/wms/metropole",
                 layername: "Sentiers_littoraux"
@@ -453,18 +441,6 @@ GEOR.config = (function() {
                 text: "GeoLittoral",
                 owstype: "WMS",
                 owsurl: "http://geolittoral.application.equipement.gouv.fr/wms/metropole"
-            },{
-                text: "BMO/OSM",
-                owstype: "WMS",
-                owsurl: "http://bmo.openstreetmap.fr/ows"
-            },{
-                text: "BMO/OSM",
-                owstype: "WFS",
-                owsurl: "http://bmo.openstreetmap.fr/ows"
-            }, {
-                text: "BMO/OSM fake",
-                owstype: "WMS",
-                owsurl: "http://bmo.openstreetmap.fr/ows2"
             }
         ]),
 

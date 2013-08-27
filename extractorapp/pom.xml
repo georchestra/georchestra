@@ -166,6 +166,7 @@
       <artifactId>commons-httpclient</artifactId>
       <version>3.1</version>
     </dependency>
+
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-mock</artifactId>
@@ -216,7 +217,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.4</version>
+      <version>4.5</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -242,7 +243,7 @@
         <artifactId>maven-dependency-plugin</artifactId>
       </plugin>
 		<plugin>
-			<groupId>org.codehaus.groovy.maven</groupId>
+			<groupId>org.codehaus.gmaven</groupId>
 			<artifactId>gmaven-plugin</artifactId>
 			<dependencies>
 				<dependency>

@@ -6,6 +6,8 @@ package org.georchestra.mapfishapp.ws.upload;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -18,23 +20,41 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 class AbstractFeatureGeoFileReader implements FeatureGeoFileReader{
 
-	/** check if the OGR implementation is live */
-	private static boolean OGR_AVAILABLE;
-	static{
-		OGR_AVAILABLE = OGRFeatureReader.isOK();
-	}
+	
+	private static final Log LOG = LogFactory.getLog(AbstractFeatureGeoFileReader.class.getPackage().getName());
+
 
 	protected FeatureGeoFileReader readerImpl = null;
 
+	private FeatureGeoFileReader getReaderImpl() {
+		
+		LOG.info("Using implementation: " + this.readerImpl.getClass().getName());
+		return this.readerImpl;
+	}
+
+
+	private void setReaderImpl(FeatureGeoFileReader readerImpl) {
+		
+		LOG.info("It was set: " + readerImpl.getClass().getName());
+		
+		this.readerImpl = readerImpl;
+	}
+
+
 	/**
 	 * Creates a new instance of {@link AbstractFeatureGeoFileReader}.
+	 * 
+	 * <p>
+	 * The default implementation will be OGR if it was installed in the system.
+	 * </p>
 	 * 
 	 * @param basedir file to read
 	 * @param fileFormat the format
 	 */
 	public AbstractFeatureGeoFileReader() {
-		this.readerImpl = createImplementationStrategy();
+		setReaderImpl(createImplementationStrategy());
 	}
+	
 
 	/**
 	 * Creates a new instance of {@link AbstractFeatureGeoFileReader}. The reader will use the implementation provided as parameter.
@@ -43,7 +63,7 @@ class AbstractFeatureGeoFileReader implements FeatureGeoFileReader{
 	 */
 	public AbstractFeatureGeoFileReader(FeatureGeoFileReader impl) {
 		
-		this.readerImpl = impl;
+		setReaderImpl(impl);
 	}
 
 	/**
@@ -52,7 +72,7 @@ class AbstractFeatureGeoFileReader implements FeatureGeoFileReader{
 	@Override
 	public FileFormat[] getFormatList(){
 
-		return this.readerImpl.getFormatList();
+		return getReaderImpl().getFormatList();
 	}
 
 
@@ -89,19 +109,17 @@ class AbstractFeatureGeoFileReader implements FeatureGeoFileReader{
 	public SimpleFeatureCollection getFeatureCollection(final File file, final FileFormat fileFormat, final CoordinateReferenceSystem targetCrs) throws IOException, UnsupportedGeofileFormatException {
 		
 		try{
-			return  this.readerImpl.getFeatureCollection(file, fileFormat, targetCrs);
+			return  getReaderImpl().getFeatureCollection(file, fileFormat, targetCrs);
 			
 		} catch(IOException e){
 
-			if (!(this.readerImpl instanceof GeotoolsFeatureReader)) {
-				// switches to geotools implementation
-
-				OGR_AVAILABLE = false;
-				this.readerImpl = new GeotoolsFeatureReader();
+			if (!(getReaderImpl() instanceof GeotoolsFeatureReader)) {
+				
+				switchToGeotoolsImplementation();
 
 				// now try to read using the geotools implementation
 				try {
-					return this.readerImpl.getFeatureCollection(file, fileFormat, targetCrs);
+					return getReaderImpl().getFeatureCollection(file, fileFormat, targetCrs);
 					
 				} catch (UnsupportedGeofileFormatException gtUnsupoortFileFormat) {
 					throw gtUnsupoortFileFormat;
@@ -117,16 +135,24 @@ class AbstractFeatureGeoFileReader implements FeatureGeoFileReader{
 	}
 
 	/**
+	 * switches to geotools implementation
+	 */
+	private void switchToGeotoolsImplementation() {
+		setReaderImpl( new GeotoolsFeatureReader() );
+	}
+
+
+	/**
 	 * Selects which of the implementations must be created.
 	 */
 	private static FeatureGeoFileReader createImplementationStrategy(){
 
 		FeatureGeoFileReader implementor = null; 
-		if( isOgrAvailable() ){
+		if( OGRFeatureReader.isOK() ){
 
 			implementor = new OGRFeatureReader();
 
-		} else { // by default the geotools implementation is created
+		} else { 
 
 			implementor = new GeotoolsFeatureReader();
 		}
@@ -134,14 +160,5 @@ class AbstractFeatureGeoFileReader implements FeatureGeoFileReader{
 	}
 
 
-	/**
-	 * Decides what is the implementation must be instantiate.
-	 *  
-	 * @return true if ogr is available in the platform.
-	 */
-	private static boolean isOgrAvailable() {
-		
-		return OGR_AVAILABLE;
-	}
 
 }

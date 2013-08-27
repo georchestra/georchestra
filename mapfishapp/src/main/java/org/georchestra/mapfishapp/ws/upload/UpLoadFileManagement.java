@@ -20,10 +20,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
+import org.geotools.feature.FeatureIterator;
 import org.geotools.geojson.feature.FeatureJSON;
+import org.geotools.geojson.geom.GeometryJSON;
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * This class is responsible to maintain the uploaded file. It includes the method to save, unzip, and check the geofiles.
@@ -34,6 +39,8 @@ import org.springframework.web.multipart.MultipartFile;
 public class UpLoadFileManagement {
 	
 	private static final Log LOG = LogFactory.getLog(UpLoadFileManagement.class.getPackage().getName());
+	
+	public enum Implementation{ geotools, ogr };
 	
 	private static List<String> VALID_EXTENSIONS;
 	static{
@@ -68,12 +75,40 @@ public class UpLoadFileManagement {
 	
 	private String workDirectory;
 
-    private AbstractFeatureGeoFileReader reader  = new AbstractFeatureGeoFileReader();
+    private AbstractFeatureGeoFileReader reader;
 
-	public UpLoadFileManagement() {
+    private UpLoadFileManagement(){
+    	//use the method factory
+    }
+
+	/**
+	 * Creates an instance of {@link UpLoadFileManagement}  which is set to use the implementation specified as parameter.
+	 * 
+	 * @param impl implementation
+	 */
+	public static UpLoadFileManagement create(Implementation impl) {
+
+		UpLoadFileManagement manager = new UpLoadFileManagement();
+		if(Implementation.geotools == impl ){
+			manager.reader = new AbstractFeatureGeoFileReader(new GeotoolsFeatureReader());
+		} else {
+			manager.reader = new AbstractFeatureGeoFileReader(new OGRFeatureReader());
+		}
+		return manager;
 	}
 
+	/**
+	 * Creates an instance of {@link UpLoadFileManagement} which is set to use the OGR implementation if only if gdal/ogr is installed in the system
+	 * @return new instance of {@link UpLoadFileManagement} 
+	 */
+	public static UpLoadFileManagement create() {
 
+		UpLoadFileManagement manager = new UpLoadFileManagement();
+		manager.reader = new AbstractFeatureGeoFileReader();
+
+		return manager;
+	}
+	
 	public void unzip() throws IOException {
 
 		ZipFile zipFile = new ZipFile(fileDescriptor.savedFile.getAbsolutePath());
@@ -298,6 +333,10 @@ public class UpLoadFileManagement {
 	 */
 	public String getFeatureCollectionAsJSON(final CoordinateReferenceSystem crs) throws IOException {
 		
+			if(LOG.isDebugEnabled()){
+				LOG.debug("CRS to reproject:"+  crs);
+			}
+		
 			// retrieves the feature from file system
 			String jsonResult = "";
 		
@@ -309,11 +348,13 @@ public class UpLoadFileManagement {
 	        	
 	        	SimpleFeatureCollection featureCollection = this.reader.getFeatureCollection(new File(fileName), this.fileDescriptor.geoFileType, crs);
 	        	
-	        	FeatureJSON fjson = new FeatureJSON2(); // TODO this is a workaround to solve the crs bug
+	        	//int decimals = getDigits(featureCollection);
+				FeatureJSON fjson = new FeatureJSON2(new GeometryJSON(18)); // TODO this is a workaround to solve the crs bug
 	        	
 	        	SimpleFeatureType schema = featureCollection.getSchema();
 				fjson.setFeatureType(schema);
-	        	fjson.setEncodeFeatureCollectionCRS(true);
+	        	fjson.setEncodeFeatureCollectionCRS(true); 
+	        	//fjson.setEncodeFeatureCRS(true); it is not necessary right now.
 	        	
 	        	StringWriter writer = new StringWriter();
 	        	fjson.writeFeatureCollection(featureCollection, writer);
@@ -331,6 +372,30 @@ public class UpLoadFileManagement {
 	}
 
     
+	/**
+	 * Gets the significant digits from the geometry. (4 is the default)
+	 * @param collection
+	 * @return decimals required to present the geometry's coordinates
+	 */
+	private int getDigits(final SimpleFeatureCollection collection) {
+
+		int decimals = 4;
+
+		FeatureIterator<SimpleFeature> iterator = collection.features();
+		try {
+			if (!iterator.hasNext()) {
+				return decimals;
+			}
+			SimpleFeature feature = iterator.next();
+			Geometry geom = (Geometry) feature.getDefaultGeometry();
+			decimals = geom.getPrecisionModel().getMaximumSignificantDigits();
+		} finally {
+			iterator.close();
+		}
+
+		return decimals;
+	}
+
 	/**
 	 * Convenient method. 
 	 * 
@@ -361,7 +426,6 @@ public class UpLoadFileManagement {
 	 */
 	private String searchGeoFile() {
 
-		// FIXME now that geotools implemetation is available it should ask for the available formats for that impelementation (gt or OGR)
         for( String fileName:  this.fileDescriptor.listOfFiles){
         	
         	String ext = FilenameUtils.getExtension(fileName);
