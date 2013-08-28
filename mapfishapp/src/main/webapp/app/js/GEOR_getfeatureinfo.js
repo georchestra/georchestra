@@ -57,7 +57,7 @@ GEOR.getfeatureinfo = (function() {
      * {OpenLayers.Control.WMSGetFeatureInfo} The control.
      */
     var ctrl = null;
-    
+
     /**
      * Equal to true if a research is launched on multiple layers
      * and false if it is on a single layer.
@@ -104,7 +104,7 @@ GEOR.getfeatureinfo = (function() {
                 layerTitle = GEOR.util.shortenLayerName(ctrl.layers[i]);
             }
         }
-		  
+
         if (!model || model.isEmpty() || Xsearch) {
             model = new GEOR.FeatureDataModel({
                 features: features
@@ -119,7 +119,7 @@ GEOR.getfeatureinfo = (function() {
             // but at second time, we can use cached model
         });
     };
-    
+
     var onGetXfeatureinfo = function(info) {
         OpenLayers.Element.addClass(map.viewPortDiv, "olDrawBox");
 
@@ -142,7 +142,7 @@ GEOR.getfeatureinfo = (function() {
                     info.features.splice(ii,1);
                 }
                 else {
-                    ii++;                
+                    ii++;
                 }
             }
             Xmodel.push(new GEOR.FeatureDataModel({
@@ -166,7 +166,7 @@ GEOR.getfeatureinfo = (function() {
     var onBeforegetfeatureinfo = function() {
         // to let OL use its own cursor class:
         OpenLayers.Element.removeClass(map.viewPortDiv, "olDrawBox");
-        
+
         var msg;
         if(ctrl.layers.length > 0) {
             msg = "<div>Searching...</div>";
@@ -329,7 +329,7 @@ GEOR.getfeatureinfo = (function() {
                 });
             }
         },
-        
+
         //copy of the function toggle in order to query several layers at once
         toggleX: function(state) {
             var layers = [];
@@ -367,12 +367,12 @@ GEOR.getfeatureinfo = (function() {
                     ctrl.events.on(ctrlEventsConfig);
                     map.addControl(ctrl);
                     ctrl.activate();
-				    for(var i = 0; i < layers.length; i++){
-                    	layers[i].events.on({
-                      	"visibilitychanged": onLayerVisibilitychanged,
-                        	scope: this
-                    	});
-                 	}
+                    for(var i = 0; i < layers.length; i++){
+                        layers[i].events.on({
+                            "visibilitychanged": onLayerVisibilitychanged,
+                            scope: this
+                        });
+                    }
                     map.events.on({
                         "removelayer": onLayerRemoved,
                         "changelayer": function() {
@@ -385,7 +385,7 @@ GEOR.getfeatureinfo = (function() {
                                     }
                                 }
                                 ctrl.layers = layers;
-                            }            
+                            }
                         },
                         scope: this
                     });
@@ -400,13 +400,13 @@ GEOR.getfeatureinfo = (function() {
                             for(var i = 0; i < layers.length; i++) {
                                 if(ctrl.layers[i] != layers[i]) {
                                     collapse = false;
-                                }     
+                                }
                             }
                         }
                     }
                     else {
                         collapse = false;
-                    } 
+                    }
                     if (collapse) {
                         // we clicked on a toolbar button, which means we have
                         // to stop gfi requests.
@@ -443,8 +443,8 @@ GEOR.getfeatureinfo = (function() {
                 });
                 observable.fireEvent("shutdown");
             }
-        },
-	};     		
+       }
+   };
 })();
 
 

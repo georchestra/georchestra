@@ -127,7 +127,7 @@ GEOR.toolbar = (function() {
         }));
 
         items.push("-");
-        
+
         items.push({
             xtype: 'button',
             iconCls: 'geor-btn-info',

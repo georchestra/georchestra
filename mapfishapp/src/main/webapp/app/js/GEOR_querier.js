@@ -135,7 +135,7 @@ GEOR.querier = (function() {
      * {Function} an alias to OpenLayers.i18n
      */
     var tr = null;
-    
+
     var name = null;
 
     /**

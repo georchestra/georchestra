@@ -210,7 +210,7 @@ Ext.namespace("GEOR");
 
         // this panel serves as the container for
         // the "search results" tabs 
-        var tab = new GEOR.resultspanel({html: tr("resultspanel.emptytext")});  
+        var tab = new GEOR.resultspanel({html: tr("resultspanel.emptytext")});
         var southPanel = new Ext.TabPanel({
             region: "south",
             //hidden: !resultspanel, // hide this panel if
@@ -243,17 +243,17 @@ Ext.namespace("GEOR");
                         }
                         for(var i = 0; i < southPanel.items.length-1; i++){
                             if(southPanel.getComponent(i).vectorLayer) {
-                                southPanel.getComponent(i).vectorLayer.setVisibility(false);                        
+                                southPanel.getComponent(i).vectorLayer.setVisibility(false);
                             }
                         }
                         if(southPanel.getActiveTab().vectorLayer) {
                             southPanel.getActiveTab().vectorLayer.setVisibility(true);
-                        }                        
+                        }
                     }
                 }
             }
         });
-        
+
         southPanel.doLayout();
 
         // the header
@@ -372,7 +372,7 @@ Ext.namespace("GEOR");
                 "search": function(panelCfg) {
                     if(southPanel.getActiveTab()){
                         southPanel.getActiveTab().setTitle("Recherche");
-                        southPanel.getActiveTab().init(map);	
+                        southPanel.getActiveTab().init(map);
                         southPanel.getActiveTab().clean();
                     }
                     var panel = Ext.apply({
@@ -390,17 +390,17 @@ Ext.namespace("GEOR");
                     }
                 },
                 "searchXresults": function(options) {
-                    southPanel.getActiveTab().populate({features: options.features[0], model: options.model[0]});					 	  
+                    southPanel.getActiveTab().populate({features: options.features[0], model: options.model[0]});
                     southPanel.getActiveTab().setTitle(options.title[0]);
                         for(var i = 1; i < options.features.length; i++){
                             var tab = new GEOR.resultspanel({html: tr("resultspanel.emptytext")});
                             southPanel.insert(southPanel.items.length-1,tab);
                             southPanel.setActiveTab(tab);
                             southPanel.getActiveTab().init(map);
-                            southPanel.getActiveTab().populate({features: options.features[i], model: options.model[i]});					 	  
+                            southPanel.getActiveTab().populate({features: options.features[i], model: options.model[i]});
                             southPanel.getActiveTab().setTitle(options.title[i]);
-                            southPanel.doLayout();						
-                        }                
+                            southPanel.doLayout();
+                        }
                 },
                 "shutdown": function() {
                     southPanel.collapse();

@@ -42,7 +42,7 @@ GEOR.resultspanel = Ext.extend(Ext.Panel, (function() {
          */
         "panel"
     );
-    
+
     /**
      * Method: csvExportBtnHandler
      * Triggers the download dialog for CSV export of the store's content
@@ -72,7 +72,7 @@ GEOR.resultspanel = Ext.extend(Ext.Panel, (function() {
             }
         });
     };
-    
+
     /**
      * Method: zoomToFeatures
      * Sets the map extent in order to see all results
@@ -126,7 +126,6 @@ GEOR.resultspanel = Ext.extend(Ext.Panel, (function() {
     };
 
     return {
-    	
         /**
           * Constructor of the resultspanel object.
           * Because of its inheritance from an Ext.apnel, it can use its attributes.
@@ -176,8 +175,8 @@ GEOR.resultspanel = Ext.extend(Ext.Panel, (function() {
                  */
                 events: observable
             }, config);
-            GEOR.resultspanel.superclass.constructor.call(this, config);		  
-        },				
+            GEOR.resultspanel.superclass.constructor.call(this, config); 
+        },
 
         /**
          * APIMethod: init
@@ -234,7 +233,7 @@ GEOR.resultspanel = Ext.extend(Ext.Panel, (function() {
                     text: tr("CSV Export"),
                     tooltip: tr("Export results as CSV"),
                     handler: function() {
-                    csvExportBtnHandler(store, model);            
+                    csvExportBtnHandler(store, model);
                 }
             }];
 
@@ -312,7 +311,7 @@ GEOR.resultspanel = Ext.extend(Ext.Panel, (function() {
          * addLayerToMap defaults to true
          */
         populate: function(options) {
-    	    var layerBounds = this.layerBounds, vectorLayer = this.vectorLayer, map = this.map, model = this.model, store = this.store, tr = this.tr; 
+            var layerBounds = this.layerBounds, vectorLayer = this.vectorLayer, map = this.map, model = this.model, store = this.store, tr = this.tr; 
             // we clear the bounds cache:
             layerBounds = null;
 
