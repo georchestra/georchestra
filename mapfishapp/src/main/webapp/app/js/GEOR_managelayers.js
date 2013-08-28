@@ -824,6 +824,7 @@ GEOR.managelayers = (function() {
 
             return {
                 xtype: "treepanel",
+                id: "geor-layerManager",
                 autoScroll: true,
                 enableDD: true,
                 loader: {
