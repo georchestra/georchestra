@@ -181,6 +181,9 @@ Apache
     ProxyPass /geonetwork/ ajp://localhost:8009/geonetwork/ 
     ProxyPassReverse /geonetwork/ ajp://localhost:8009/geonetwork/
 
+    ProxyPass /geonetwork-private/ ajp://localhost:8009/geonetwork-private/ 
+    ProxyPassReverse /geonetwork-private/ ajp://localhost:8009/geonetwork-private/
+
     ProxyPass /geoserver/ ajp://localhost:8009/geoserver/ 
     ProxyPassReverse /geoserver/ ajp://localhost:8009/geoserver/
 
