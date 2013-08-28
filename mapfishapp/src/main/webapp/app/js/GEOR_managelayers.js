@@ -175,9 +175,6 @@ GEOR.managelayers = (function() {
     var formatAttribution = function(layerRecord) {
         var attr = layerRecord.get('attribution');
         var titleForDisplay = attr.title || tr('unknown');
-        if (titleForDisplay.length > 16) {
-            titleForDisplay = titleForDisplay.substr(0, 13) + '...';
-        }
 
         // logo displayed in qtip if set
         var tip = tr('source: ')+ (attr.title || tr('unknown')) +
