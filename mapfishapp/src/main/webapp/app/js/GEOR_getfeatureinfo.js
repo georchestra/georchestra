@@ -343,7 +343,7 @@ GEOR.getfeatureinfo = (function() {
             if(layers.length > 0) {
                 if (state) {
                     observable.fireEvent("search", {
-                        html: tr("Recherche sur toutes les couches actives")
+                        html: tr("Search on all active layers")
                     });
 
                     var ctrlEventsConfig = {
@@ -439,7 +439,7 @@ GEOR.getfeatureinfo = (function() {
                 }
             } else {
                 observable.fireEvent("search", {
-                    html: tr("Aucune requête possible.")
+                    html: tr("No active layers.")
                 });
                 observable.fireEvent("shutdown");
             }

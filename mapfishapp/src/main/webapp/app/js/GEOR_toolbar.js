@@ -134,7 +134,7 @@ GEOR.toolbar = (function() {
             allowDepress: true,
             enableToggle: true,
             toggleGroup: 'map',
-            tooltip: tr("Information on objects of all superposed layers pointed"),
+            tooltip: tr("Query all active layers"),
             listeners: {
                 "toggle": function(btn, pressed) {
                     GEOR.getfeatureinfo.toggleX(pressed);

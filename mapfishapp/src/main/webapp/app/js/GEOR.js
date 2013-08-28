@@ -209,13 +209,10 @@ Ext.namespace("GEOR");
         }
 
         // this panel serves as the container for
-        // the "search results" tabs 
+        // the "search results" tabs
         var tab = new GEOR.resultspanel({html: tr("resultspanel.emptytext")});
         var southPanel = new Ext.TabPanel({
             region: "south",
-            //hidden: !resultspanel, // hide this panel if
-                                     // the resultspanel
-                                     // module is undefined
             split: true,
             collapsible: true,
             collapsed: true,

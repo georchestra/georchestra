@@ -79,7 +79,7 @@ GEOR.resultspanel = Ext.extend(Ext.Panel, (function() {
      *
      * Parameters:
      * features - {Array(Openlayers.Feature.Vector)} an optional array of features
-     * If not provided, this method will zoom to the vector layer extent.
+     *  If not provided, this method will zoom to the vector layer extent.
      *
      * Returns:
      * {OpenLayers.Bounds} The scaled vector layer bounds
@@ -128,11 +128,11 @@ GEOR.resultspanel = Ext.extend(Ext.Panel, (function() {
     return {
         /**
           * Constructor of the resultspanel object.
-          * Because of its inheritance from an Ext.apnel, it can use its attributes.
+          * Because of its inheritance from an Ext.panel, it can use its attributes.
           */
         constructor: function(config){
             config = Ext.apply({
-                title: "Recherche",
+                title: "Search",
                 closable: true,
                 /**
                  * Property: map
@@ -175,7 +175,7 @@ GEOR.resultspanel = Ext.extend(Ext.Panel, (function() {
                  */
                 events: observable
             }, config);
-            GEOR.resultspanel.superclass.constructor.call(this, config); 
+            GEOR.resultspanel.superclass.constructor.call(this, config);
         },
 
         /**
@@ -198,7 +198,7 @@ GEOR.resultspanel = Ext.extend(Ext.Panel, (function() {
          * store - {GeoExt.data.FeatureStore} our feature store
          */
         createGridPanel: function(store) {
-            var model = this.model, sfControl = this.sfControl, vectorLayer = this.vectorLayer, layerBounds = this.layerBounds, map = this.map, tr = this.tr; 
+            var model = this.model, sfControl = this.sfControl, vectorLayer = this.vectorLayer, layerBounds = this.layerBounds, map = this.map, tr = this.tr;
 
             var columnModel = model.toColumnModel({
                 sortable: true
@@ -311,7 +311,7 @@ GEOR.resultspanel = Ext.extend(Ext.Panel, (function() {
          * addLayerToMap defaults to true
          */
         populate: function(options) {
-            var layerBounds = this.layerBounds, vectorLayer = this.vectorLayer, map = this.map, model = this.model, store = this.store, tr = this.tr; 
+            var layerBounds = this.layerBounds, vectorLayer = this.vectorLayer, map = this.map, model = this.model, store = this.store, tr = this.tr;
             // we clear the bounds cache:
             layerBounds = null;
 
