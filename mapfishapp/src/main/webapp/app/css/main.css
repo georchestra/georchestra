@@ -89,6 +89,8 @@ div.olMapViewport {
     overflow: visible;
 }
 .geor-tree-layer-panel-body {
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 .geor-tree-node .x-tree-elbow, .geor-tree-node .x-tree-elbow-end {
    width: 0px !important;    
