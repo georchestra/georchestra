@@ -39,7 +39,6 @@ GEOR.managelayers = (function() {
      */
     var LayerNode = Ext.extend(GeoExt.tree.LayerNode, {
         constructor: function(config) {
-            config.text = GEOR.util.shortenLayerName(config.layer);
             config.qtip = config.layer.name;
             LayerNode.superclass.constructor.apply(this, [config]);
         }
@@ -183,9 +182,6 @@ GEOR.managelayers = (function() {
     var formatAttribution = function(layerRecord) {
         var attr = layerRecord.get('attribution');
         var titleForDisplay = attr.title || tr('unknown');
-        if (titleForDisplay.length > 16) {
-            titleForDisplay = titleForDisplay.substr(0, 13) + '...';
-        }
 
         // logo displayed in qtip if set
         var tip = tr('source: ')+ (attr.title || tr('unknown')) +
@@ -872,6 +868,7 @@ GEOR.managelayers = (function() {
 
             return {
                 xtype: "treepanel",
+                id: "geor-layerManager",
                 autoScroll: true,
                 enableDD: true,
                 loader: {

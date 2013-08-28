@@ -13,6 +13,7 @@ LDAP
  
             sudo apt-get install git-core
             git clone git://github.com/georchestra/LDAP.git
+            cd LDAP
 	
  * inserting the data: follow the instructions in https://github.com/georchestra/LDAP/blob/master/README.md
 
@@ -31,7 +32,6 @@ PostGreSQL
 
         sudo su postgres
         createdb geonetwork
-        createlang plpgsql geonetwork
         psql -f /usr/share/postgresql/9.1/contrib/postgis-1.5/postgis.sql geonetwork
         psql -f /usr/share/postgresql/9.1/contrib/postgis-1.5/spatial_ref_sys.sql geonetwork
 
@@ -64,9 +64,7 @@ Apache
 * modules setup
 
         sudo apt-get install apache2 libapache2-mod-auth-cas
-        ls /etc/apache2/mods-enabled
-        sudo a2enmod proxy_ajp proxy_connect proxy_http proxy
-        sudo a2enmod ssl rewrite
+        sudo a2enmod proxy_ajp proxy_connect proxy_http proxy ssl rewrite headers
         sudo service apache2 graceful
 
 * VirtualHost setup
@@ -183,6 +181,9 @@ Apache
     ProxyPass /geonetwork/ ajp://localhost:8009/geonetwork/ 
     ProxyPassReverse /geonetwork/ ajp://localhost:8009/geonetwork/
 
+    ProxyPass /geonetwork-private/ ajp://localhost:8009/geonetwork-private/ 
+    ProxyPassReverse /geonetwork-private/ ajp://localhost:8009/geonetwork-private/
+
     ProxyPass /geoserver/ ajp://localhost:8009/geoserver/ 
     ProxyPassReverse /geoserver/ ajp://localhost:8009/geoserver/
 
@@ -236,11 +237,10 @@ Apache - SSL certificate
         
 * update your hosts
 
-```
         sudo vim /etc/hosts
 
+
         127.0.0.1       vm-georchestra
-```
 
 * testing
 
@@ -255,18 +255,24 @@ Install Tomcat from package
 
 This one Tomcat instance installation is for test purpose. When running a real-world SDI, you will need to use various Tomcat instances.
 
-    sudo apt-get install tomcat7
+    sudo apt-get install tomcat6
 
 Remove any webapp
 
-	sudo rm -rf /var/lib/tomcat7/webapps/*
+	sudo rm -rf /var/lib/tomcat6/webapps/*
+	
+Create a directory for tomcat6 java preferences (to avoid a `WARNING: Couldn't flush user prefs: java.util.prefs.BackingStoreException: Couldn't get file lock.` error)
+
+	sudo mkdir /usr/share/tomcat6/.java
+	sudo chown tomcat6:tomcat6 /usr/share/tomcat6/.java
+
 
 Keystore/Trustore
 -------------------
 
 * Keystore creation (change the "mdpstore" password)
 
-        cd /etc/tomcat7/
+        cd /etc/tomcat6/
         sudo keytool -genkey -alias georchestra_localhost -keystore keystore -storepass mdpstore -keypass mdpstore -keyalg RSA -keysize 2048
 
     Put "localhost" in "first name and second name" since sec-proxy and CAS are on the same tomcat
@@ -292,22 +298,22 @@ Keystore/Trustore
        
 * truststore config
 
-        sudo vim /etc/default/tomcat7
+        sudo vim /etc/default/tomcat6
         
     ~~~~~~~~~~~~~~
-    JAVA_OPTS="$JAVA_OPTS -Djavax.net.ssl.trustStore=/srv/tomcat/tomcat1/conf/keystore -Djavax.net.ssl.rustStorePassword=mdpstore"
+    JAVA_OPTS="$JAVA_OPTS -Djavax.net.ssl.trustStore=/etc/tomcat6/keystore -Djavax.net.ssl.rustStorePassword=mdpstore"
     ~~~~~~~~~~~~~~~
 
 * connectors config
 
-        sudo vim /etc/tomcat7/server.xml
+        sudo vim /etc/tomcat6/server.xml
         
     ~~~~~~~~~~~~~~~~~~~~~~~~~    
     <Connector port="8443" protocol="HTTP/1.1" SSLEnabled="true"
        URIEncoding="UTF-8"
        maxThreads="150" scheme="https" secure="true"
        clientAuth="false"
-       keystoreFile="/etc/tomcat7/keystore"
+       keystoreFile="/etc/tomcat6/keystore"
        keystorePass="mdpstore"
        compression="on"
        compressionMinSize="2048"
@@ -325,7 +331,7 @@ Keystore/Trustore
     
 * Tomcat restart
  
-        sudo service tomcat7 restart
+        sudo service tomcat6 restart
     
 
 
