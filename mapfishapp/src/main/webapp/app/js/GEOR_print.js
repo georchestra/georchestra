@@ -223,6 +223,11 @@ GEOR.print = (function() {
                     });
                 },
                 "encodelayer": function(pp, layer, encLayer) {
+                    if (encLayer && encLayer.type === "WMTS") {
+                        // FIXME: these values are incorrect and prevent printing of WMTS layers
+                        delete encLayer['minScaleDenominator'];
+                        delete encLayer['maxScaleDenominator'];
+                    }
                     if (GEOR.config.WMSC2WMS.hasOwnProperty(layer.url)) {
                         if (GEOR.config.WMSC2WMS[layer.url] !== undefined) {
                             //console.log(layer.name + ' - tuilée avec WMS référencé'); // debug
