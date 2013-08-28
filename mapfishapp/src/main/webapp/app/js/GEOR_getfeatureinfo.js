@@ -171,7 +171,7 @@ GEOR.getfeatureinfo = (function() {
         if(ctrl.layers.length > 0) {
             msg = "<div>Searching...</div>";
         } else {
-            msg = "Aucune requête possible";
+            msg = "<div>No layer selected</div>";
         }
 
         observable.fireEvent("search", {
