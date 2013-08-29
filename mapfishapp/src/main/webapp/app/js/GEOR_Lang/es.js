@@ -407,7 +407,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Load a map context": "Cargar un mapa",
     "Get a permalink": "Crear un permalink",
     "Permalink": "Permalink",
-    "valid for ": "válida para ",
+    "valid for ": "válido para ",
     "months": "meses",
     "month": "mes",
     "Share your map with this URL: ": "Compartir su mapa con esta URL",
