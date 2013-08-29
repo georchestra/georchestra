@@ -707,8 +707,6 @@ GEOR.config = (function() {
          * {Array} List of externals WMTS to display in the WMTS servers tab.
          */
         WMTS_SERVERS: getCustomParameter("WMTS_SERVERS", [
-            {"name": "GéoPortail IGN", "url": "http://wxs.ign.fr/wnmz6nt68k09rw3f5vwaflk4/wmts"},
-            {"name": "GéoPicardie", "url": "http://www.geopicardie.fr/geoserver/gwc/service/wmts"},
             {"name": "GéoBretagne rasters", "url": "http://tile.geobretagne.fr/gwc02/service/wmts"},
             {"name": "GéoBretagne OSM", "url": "http://osm.geobretagne.fr/gwc01/service/wmts"}
         ]),
