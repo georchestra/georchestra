@@ -17,11 +17,14 @@
  * @include OpenLayers/Format/WFSDescribeFeatureType.js
  * @include OpenLayers/Protocol/WFS.js
  * @include OpenLayers/Protocol/WFS/v1_0_0.js
+ * @include OpenLayers/Protocol/WFS/v1_1_0.js
+ * @include OpenLayers/Protocol/WFS/v2_0_0.js
  * @include GeoExt/data/WMSDescribeLayerStore.js
  * @include GeoExt/data/AttributeStore.js
  * @include GeoExt/data/WMSCapabilitiesStore.js
  * @include OpenLayers/Format/WMSCapabilities/v1_1_1.js
  * @include OpenLayers/Format/WFSCapabilities/v1_0_0.js
+ * @include OpenLayers/Format/WFSCapabilities/v1_1_0.js
  * @include OpenLayers/Format/WFSCapabilities/v2_0_0.js
  * @include GeoExt/data/WFSCapabilitiesStore.js
  * @include OpenLayers/Strategy/Fixed.js
