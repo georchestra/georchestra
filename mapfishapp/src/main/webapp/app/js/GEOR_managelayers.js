@@ -508,7 +508,7 @@ GEOR.managelayers = (function() {
         menuItems.push("-");
 
         // metadata action
-        if (layerRecord.get("metadataURLs")) {
+        if (layerRecord.get("metadataURLs") && layerRecord.get("metadataURLs").length > 0) {
             var murls = layerRecord.get("metadataURLs");
             var murl = murls[0];
             // default to first entry
