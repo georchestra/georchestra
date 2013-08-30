@@ -177,8 +177,8 @@ public class WfsExtractor {
                 || "127.0.0.1".equalsIgnoreCase(request._url.getHost())
                 || "localhost".equalsIgnoreCase(request._url.getHost())) {
         	LOG.debug("WfsExtractor.extract - Secured Server: Adding extractionUserName to connection params");
-            params.put(WFSDataStoreFactory.USERNAME.key, _adminUsername);  
-            params.put(WFSDataStoreFactory.PASSWORD.key, _adminPassword); 
+            if (_adminUsername != null) params.put(WFSDataStoreFactory.USERNAME.key, _adminUsername);
+            if (_adminPassword != null) params.put(WFSDataStoreFactory.PASSWORD.key, _adminPassword);
         } else {
         	LOG.debug("WfsExtractor.extract - Non Secured Server");        	
         }

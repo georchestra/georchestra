@@ -162,7 +162,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
      * Obtains the coverage from the server and writes it to a file with a .prj
      * and .wld file unless the requested type is a geotiff.
      * 
-     * @param containingDirector
+     * @param containingDirectory
      *            the data to write the files to
      * @param baseFilename
      *            the name (sans extension) of the files
@@ -261,7 +261,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
 
     void transformCoverage(final File sourceFile, final File file,
             final WcsReaderRequest targetRequest,
-            WcsReaderRequest executedRequest, boolean handleFormatTranform) throws IOException {
+            final WcsReaderRequest executedRequest, final boolean handleFormatTranform) throws IOException {
         final CoordinateReferenceSystem original = targetRequest.responseCRS;
         CoordinateReferenceSystem actual = executedRequest.responseCRS;
 
@@ -281,17 +281,27 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
             }
             
             LOG.info("Coverage reprojection/transformation complete");
-        } else if(handleFormatTranform) {
-            if(targetRequest.useCommandLineGDAL) {
+        } else if (handleFormatTranform) {
+            if (targetRequest.useCommandLineGDAL) {
                 GDALCommandLine.gdalTransformation(sourceFile, file, executedRequest, targetRequest);
             } else {
-                // we need to reimplement convertFormat so it can handle non-world+image outputformats
+                // we need to re-implement convertFormat so it can handle non-world+image outputformats
                 throw new UnsupportedOperationException("We do not convert format from geotiff to another format yet in localReproject mode.  Should be pretty easy to implement though");
             }
         } else if(!sourceFile.equals(file)) {
             FileUtils.moveFile(sourceFile, file);
         }
-        
+
+        String name = file.getName().toLowerCase();
+
+        if (name.endsWith(".tif") || name.endsWith("tiff")) {
+            String absolutePath = file.getAbsolutePath();
+            String baseName = absolutePath.substring(0, absolutePath.lastIndexOf(".tif"));
+            createPrjFile(targetRequest.responseCRS, baseName);
+            createWorldFile(targetRequest, baseName, ".tif");
+            createTABFile(targetRequest, baseName);
+        }
+
     }
 
     private void geotoolsTranformation(final File sourceFile,
@@ -301,7 +311,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
         CoverageTransformation<Object> transformation = new CoverageTransformation<Object>() {
 
             @Override
-            public Object transform(GridCoverage coverage) throws IOException,
+            public Object transform(final GridCoverage coverage) throws IOException,
                     FactoryException {
                 boolean writeToTmp = sourceFile.equals(file);
                 Hints hints = new Hints(GeoTools.getDefaultHints());
@@ -370,7 +380,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
 
                 String baseFilePath = file.getPath().substring(0,
                         file.getPath().lastIndexOf('.'));
-                createWorldFile(request, baseFilePath);
+                createWorldFile(request, baseFilePath, FileUtils.extension(file));
                 createPrjFile(request.responseCRS, baseFilePath);
             }
         } else {
@@ -433,7 +443,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
 
         String baseFilePath = file.getPath().substring(0,
                 file.getPath().lastIndexOf('.'));
-        createWorldFile(request, baseFilePath);
+        createWorldFile(request, baseFilePath, FileUtils.extension(file));
         createTABFile(request, baseFilePath);
         createPrjFile(request.responseCRS, baseFilePath);
     }
@@ -529,21 +539,22 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
      * extension, depending on the format (see WorldImageFormat). The projection
      * is in the world file.
      * 
+     *
      * @param baseFile
      *            Basename and path for this image.
+     * @param ext
      * @throws IOException
      *             In case we cannot create the world file.
      * @throws TransformException
      */
     private void createWorldFile(final WcsReaderRequest request,
-            final String baseFile) throws IOException {
+                                 final String baseFile, String ext) throws IOException {
     	
         ReferencedEnvelope transformedBBox;
         AffineTransform transform;
         
         try {
-            transformedBBox = new ReferencedEnvelope(request.requestBbox, WGS84)
-                    .transform(request.responseCRS, true, 10);
+            transformedBBox = request.requestBbox.transform(request.responseCRS, true, 10);
             
         	int width = (int) Math.round(transformedBBox.getWidth() / request.crsResolution());
             int height = (int) Math.round(transformedBBox.getHeight() / request.crsResolution());
@@ -592,7 +603,19 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
         // ////////////////////////////////////////////////////////////////////
         final StringBuffer buff = new StringBuffer(baseFile);
         // looking for another extension
-        buff.append(".tfw");
+        if (ext.substring(0,4).equalsIgnoreCase(".tif")) {
+            buff.append(".tfw");
+        } else if (ext.substring(0,4).equalsIgnoreCase(".png")) {
+            buff.append(".pgw");
+        } else if (ext.substring(0,4).equalsIgnoreCase(".jpg") || ext.substring(0,4).equalsIgnoreCase("jpeg")) {
+            buff.append(".jpw");
+        } else if (ext.substring(0,4).equalsIgnoreCase(".gif")) {
+            buff.append(".gfw");
+        } else if (ext.substring(0,4).equalsIgnoreCase(".bmp")) {
+            buff.append(".bpw");
+        } else {
+            buff.append(".tfw");
+        }
         final File worldFile = new File(buff.toString());
 
         LOG.debug("Writing world file: " + worldFile);

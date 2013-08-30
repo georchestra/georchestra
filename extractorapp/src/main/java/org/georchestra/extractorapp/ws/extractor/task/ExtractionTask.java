@@ -196,8 +196,10 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
      */
     protected File mkDirTmpExtractionBundle(File tmpDir, String name) {
 
-        File tmpExtractionBundle = new File(tmpDir, name);
-        tmpExtractionBundle.mkdirs();
+        File tmpExtractionBundle = new File(tmpDir, FileUtils.toSafeFileName(name));
+        if (!tmpExtractionBundle.mkdirs() && !tmpExtractionBundle.exists()) {
+            throw new RuntimeException("Unable to make directory: "+tmpExtractionBundle);
+        }
         return tmpExtractionBundle;
     }
 
