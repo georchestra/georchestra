@@ -229,6 +229,13 @@ Ext.namespace("GEOR");
             },
             items: [tab, {id: 'addPanel', title: '+', style: 'float: right;'}],
             listeners: {
+                'collapse': function(){
+                    for(var i = 0; i < southPanel.items.length-1; i++){
+                        if(southPanel.getComponent(i).vectorLayer) {
+                            southPanel.getComponent(i).vectorLayer.setVisibility(false);
+                        }
+                    }
+                },
                 'tabchange': function(){
                     if(southPanel.getActiveTab()){
                         southPanel.getActiveTab().doLayout();
