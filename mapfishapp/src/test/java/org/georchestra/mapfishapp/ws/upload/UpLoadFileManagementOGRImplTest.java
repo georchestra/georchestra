@@ -3,7 +3,8 @@
  */
 package org.georchestra.mapfishapp.ws.upload;
 
-import org.junit.Ignore;
+import java.io.IOException;
+
 import org.junit.Test;
 
 /**
@@ -16,9 +17,10 @@ public class UpLoadFileManagementOGRImplTest extends UpLoadFileManagementGTImplT
 
 	/**
 	 * @return UpLoadFileManagement set with geotools implementation
+	 * @throws IOException 
 	 */
 	@Override
-	protected UpLoadFileManagement create(){
+	protected UpLoadFileManagement create() throws IOException{
 		return UpLoadFileManagement.create(UpLoadFileManagement.Implementation.ogr);
 	}
 	

@@ -147,16 +147,45 @@ class AbstractFeatureGeoFileReader implements FeatureGeoFileReader{
 	 */
 	private static FeatureGeoFileReader createImplementationStrategy(){
 
-		FeatureGeoFileReader implementor = null; 
+		FeatureGeoFileReader ogrReader = null; 
+		
+		// checks the OGR status
 		if( OGRFeatureReader.isOK() ){
 
-			implementor = new OGRFeatureReader();
-
-		} else { 
-
-			implementor = new GeotoolsFeatureReader();
+			try {
+				ogrReader = new OGRFeatureReader();
+				
+			} catch (IOException e) {
+				LOG.info("It cannot create OGR implementation, Geotools will be set.");
+			}
 		}
-		return implementor;
+		// if the ogr implementation cannot be created the use the Geotools implementation.
+		if(ogrReader == null){
+			return new GeotoolsFeatureReader();
+		}
+
+		// Decides what is the better implementation. 
+		// OGR will be better implementation than Geotools if and only if the OGR contains all geotools formats. (In other words, geotools formats are a subset of ogr)
+		FileFormat[] ogrFormats = ogrReader.getFormatList();
+		
+		FeatureGeoFileReader gtReader = new GeotoolsFeatureReader();
+		FileFormat[] gtFormats = gtReader.getFormatList();
+		
+		for (FileFormat gtFormat : gtFormats) {
+
+			boolean found = false;
+			for (FileFormat ogrFormat : ogrFormats) {
+				
+				if(gtFormat.equals(ogrFormat)){
+					found = true;
+					break;
+				}
+			}
+			if(!found ){
+				return gtReader;
+			}
+		}
+		return ogrReader;
 	}
 
 
