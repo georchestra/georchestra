@@ -15,7 +15,7 @@ public class UpLoadFileManagementImplSwitchTest {
 
 
 	/**
-	 * Tests that the implemantation created provide the minimum set of geoFile formats
+	 * Tests that the implemantation created provides the minimum set of geoFile formats
 	 * 
 	 * Test method for {@link org.georchestra.mapfishapp.ws.upload.UpLoadFileManagement#getFormatList()}.
 	 */
