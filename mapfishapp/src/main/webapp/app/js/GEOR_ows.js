@@ -22,6 +22,7 @@
  * @include GeoExt/data/WMSCapabilitiesStore.js
  * @include GeoExt/data/WMTSCapabilitiesStore.js
  * @include OpenLayers/Format/WMSCapabilities/v1_1_1.js
+ * @include OpenLayers/Format/WMSCapabilities/v1_3_0.js
  * @include OpenLayers/Format/WMTSCapabilities/v1_0_0.js
  * @include OpenLayers/Format/WFSCapabilities/v1_0_0.js
  * @include GeoExt/data/WFSCapabilitiesStore.js
@@ -114,8 +115,10 @@ GEOR.ows = (function() {
      */
     var WMS_BASE_PARAMS = {
         "SERVICE": "WMS",
-        "VERSION": "1.1.1",
-        "EXCEPTIONS": "application/vnd.ogc.se_inimage",
+        // version not specified => highest version is returned
+        // the correct parser will be used automagically.
+        //"VERSION": "1.1.1",
+        //
         "FORMAT": "image/png"
     };
 
@@ -316,6 +319,12 @@ GEOR.ows = (function() {
                 baseParams: Ext.applyIf({
                     "REQUEST": "DescribeLayer",
                     "LAYERS": layer.params.LAYERS,
+                    // DescribeLayer should use the same WMS version 
+                    // as the getmap requests on this layer: ... but ...
+                    "VERSION": "1.1.1", //rather than layer.params.VERSION, 
+                    // this is because describe layer 1.3.0 is not yet supported by GeoServer
+                    // see: https://github.com/georchestra/georchestra/issues/186
+                    //
                     // WIDTH and HEIGHT params seem to be required for
                     // some versions of MapServer (typ. 5.6.1)
                     // see http://applis-bretagne.fr/redmine/issues/1979
