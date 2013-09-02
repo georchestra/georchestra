@@ -10,7 +10,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * Feature geofile reader interface.
  * 
  * <p>
- * The implementations of this interface provides the access to the feature which are stored in specific file formats. 
+ * The implementations of this interface provide the access to the feature which are stored in specific file formats. 
  * </p>
  * 
  * @author Mauricio Pazos
@@ -42,7 +42,7 @@ interface FeatureGeoFileReader {
 	public SimpleFeatureCollection getFeatureCollection(final File file, final FileFormat fileFormat, final CoordinateReferenceSystem targetCrs) throws IOException, UnsupportedGeofileFormatException;
 
 	/**
-	 * @return List of available format
+	 * @return List of available {@link FileFormat}
 	 */
 	public FileFormat[] getFormatList();
 

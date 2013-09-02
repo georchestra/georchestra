@@ -264,7 +264,7 @@ public class UpLoadFileManagementGTImplTest {
 	/**
 	 * @return UpLoadFileManagement set with geotools implementation
 	 */
-	protected UpLoadFileManagement create(){
+	protected UpLoadFileManagement create() throws IOException{
 		return UpLoadFileManagement.create(UpLoadFileManagement.Implementation.geotools);
 	}
 	

@@ -5,10 +5,11 @@ package org.georchestra.mapfishapp.ws.upload;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,7 +28,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * This class is responsible of retrieving the features stored in different file format.
  * </p>
  * <p>
- * The available file format are enumerated in the {@link FileFormat}.
+ * The available file format are load from ogr driver. 
  * </p>
  * 
  * 
@@ -59,41 +60,125 @@ final class OGRFeatureReader implements FeatureGeoFileReader {
 		public String[] getOptions() {
 			return options;
 		}
+
+		@Override
+		public String toString() {
+			return "OGRDriver [name=" + name + ", options="
+					+ Arrays.toString(options) + "]";
+		}
+		
 	}
 	
 	private static Map<FileFormat, OGRDriver> DRIVERS = Collections.synchronizedMap(new HashMap<FileFormat, OGRDriver>());
 	
-	static{
-		
-		DRIVERS.put( FileFormat.tab, new OGRDriver("MapInfo File", new String[] {} ) );
-		DRIVERS.put( FileFormat.mif, new OGRDriver("MapInfo File", new String[] { "FORMAT=MIF" }) );
-		DRIVERS.put( FileFormat.shp, new OGRDriver("ESRI shapefile") );
-		DRIVERS.put( FileFormat.gml, new OGRDriver("GML" ) );
-		DRIVERS.put( FileFormat.kml, new OGRDriver("KML") );
-		DRIVERS.put( FileFormat.gpx, new OGRDriver("GPX") );
+// 	FIXME remove old	
+//	static{
+//		
+//		DRIVERS.put( FileFormat.tab, new OGRDriver("MapInfo File", new String[] {} ) );
+//		DRIVERS.put( FileFormat.mif, new OGRDriver("MapInfo File", new String[] { "FORMAT=MIF" }) );
+//		DRIVERS.put( FileFormat.shp, new OGRDriver("ESRI shapefile") );
+//		DRIVERS.put( FileFormat.gml, new OGRDriver("GML" ) );
+//		DRIVERS.put( FileFormat.kml, new OGRDriver("KML") );
+//		DRIVERS.put( FileFormat.gpx, new OGRDriver("GPX") );
+//	}
+
+
+	public OGRFeatureReader() throws IOException {
+		loadFormats();
 	}
 
-	public OGRFeatureReader() {
 
-	}
-
-	public static int formatCount(){
+	public int formatCount(){
 	
 		return DRIVERS.keySet().size();
 	}
 	
+// 	FIXME remove old	
+//	@Override
+//	public FileFormat[] getFormatList() {
+//
+//		FileFormat [] fileFormats = new FileFormat[DRIVERS.keySet().size()];
+//		int i = 0;
+//		for (FileFormat format : DRIVERS.keySet()) {
+//			
+//			fileFormats[i++] = format;
+//		}
+//		return fileFormats;
+//	}
+	
+	/**
+	 * Load the available formats
+	 * 
+	 * @throws IOException
+	 */
+	private static Map<FileFormat, OGRDriver>  loadFormats() throws IOException {
+		
+		// if the driver list is empty then try to load the ogr drivers
+		
+		if( DRIVERS.isEmpty() ){
+			try {
+				JniOGR ogr = new JniOGR();
+
+				// retrieves the available drivers, if they are required by
+				// georchestra, they will be added in the list of available formats.
+				for (int i = 0; i < ogr.GetDriverCount(); i++) {
+
+					Object driver = ogr.GetDriver(i);
+					String name = ogr.DriverGetName(driver);
+
+					if ("MapInfo File".equals(name)) {
+
+						loadDriver(FileFormat.tab, new OGRDriver("MapInfo File", new String[] {}));
+						
+						loadDriver(FileFormat.mif, new OGRDriver("MapInfo File", new String[] { "FORMAT=MIF" }));
+
+					} else if ("ESRI shapefile".equals(name)) {
+
+						loadDriver(FileFormat.shp, new OGRDriver("ESRI shapefile"));
+
+					} else if ("GML".equals(name)) {
+
+						loadDriver(FileFormat.gml, new OGRDriver("GML"));
+
+					} else if ("KML".equals(name)) {
+
+						loadDriver(FileFormat.kml, new OGRDriver("KML"));
+
+					} else if ("GPX".equals(name)) {
+						loadDriver(FileFormat.gpx, new OGRDriver("GPX"));
+					}
+				}
+				
+			} catch (Error e) { // catch all exception in the OGR
+				LOG.warn(
+						"the ogr installed in the system doesn't have the drivers required by mapfish",
+						e);
+				throw new IOException();
+			}
+		}
+		return DRIVERS;
+	}
+
+	private static void loadDriver(FileFormat format, OGRDriver ogrDriver) {
+		
+		DRIVERS.put(format, ogrDriver);
+		
+		LOG.info("format:" + format + " Driver:  " + ogrDriver + " was loaded.");
+	}
+
+	/**
+	 * The list of available ogr drivers can change according to the implementation (and the build options).
+	 * 
+	 * Returns the list of {@link FileFormat} provided by the OGR instance.
+	 */
 	@Override
 	public FileFormat[] getFormatList() {
 
-		FileFormat [] fileFormats = new FileFormat[DRIVERS.keySet().size()];
-		int i = 0;
-		for (FileFormat format : DRIVERS.keySet()) {
-			
-			fileFormats[i++] = format;
-		}
-		return fileFormats;
+		Set<FileFormat> keySet = DRIVERS.keySet();
+		FileFormat[] formats = keySet.toArray(new FileFormat[keySet.size()] );
+		
+		return formats;
 	}
-	
 
 
 	/**
@@ -162,28 +247,22 @@ final class OGRFeatureReader implements FeatureGeoFileReader {
 			LOG.info("gdal/ogr is not available in the system", e);
 
 			return false;
-		} 
-		
+		}
+
+		// checks the driver status
 		try{
-			JniOGR ogr  = new JniOGR();
-		
-			ArrayList<String> availableDrivers = new ArrayList<String>();
-			for (int i = 0; i < ogr.GetDriverCount(); i++) {
 			
-				Object driver = ogr.GetDriver(i);
-				String name = ogr.DriverGetName(driver);
-				availableDrivers.add(name.toUpperCase());
+			Map<FileFormat, OGRDriver> loadFormats = loadFormats();
+			if(loadFormats.isEmpty()) {
+				LOG.warn("the list of ogr drivers is empty");
+				return false;
 			}
-			for(OGRDriver requiredDriver: DRIVERS.values()){
-				
-				if(!availableDrivers.contains(requiredDriver.getName().toUpperCase()) ){
-					return false;
-				}
-			}
-		} catch(Error e)  {
+			
+		} catch(IOException e)  {
 			LOG.warn("the ogr installed in the system doesn't have the drivers required by mapfish", e);
 			return false;
 		}
+		
 		LOG.info("gdal/ogr is available in the system");
 		
 		return true;
