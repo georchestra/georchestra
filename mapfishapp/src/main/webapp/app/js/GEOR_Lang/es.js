@@ -373,9 +373,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     /* GEOR_wmc.js strings */
     "The provided file is not a valid OGC context":
 		"El archivo proveido no es un contexto OGC valido",
-    "wmc.bad.srs": "El archivo .wmc no " +
-        "puede ser restaurado. Su sistema de referencia espacial es " +
-        "diferente del sistema del mapa actual.",
+    "Warning: trying to restore WMC with a different projection (PROJCODE1, while map SRS is PROJCODE2). Strange things might occur !": "Warning: trying to restore WMC with a different projection (${PROJCODE1}, while map SRS is ${PROJCODE2}). Strange things might occur !",
     /* GEOR_wmcbrowser.js strings */
     "Could not find WMC file": "El contexto WMC especificado no existe",
     "... or a custom context": "... o un contexto personalizado",

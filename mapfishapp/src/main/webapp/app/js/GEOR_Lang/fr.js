@@ -370,9 +370,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "WFS server": "Serveur WFS",
     /* GEOR_wmc.js strings */
     "The provided file is not a valid OGC context": "Le fichier fourni n'est pas un contexte OGC valide",
-    "wmc.bad.srs": "Le fichier .wmc ne " +
-        "peut pas être restauré. Son système de référence spatiale est " +
-        "différent de celui de la carte en cours.",
+    "Warning: trying to restore WMC with a different projection (PROJCODE1, while map SRS is PROJCODE2). Strange things might occur !": "Attention: nous essayons de restaurer un contexte sauvegardé en ${PROJCODE1} alors que la carte actuelle est en ${PROJCODE2}. Il pourrait y avoir des comportements inattendus.",
     /* GEOR_wmcbrowser.js strings */
     "Could not find WMC file": "Le contexte spécifié n'existe pas",
     "... or a custom context": "... ou un contexte personnalisé",
