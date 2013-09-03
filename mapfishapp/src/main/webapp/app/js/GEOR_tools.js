@@ -226,7 +226,7 @@ GEOR.tools = (function() {
             menu.remove(item, true);
             addon.destroy();
             delete addonsCache[r.id];
-            r.set("loaded", false);
+            r.set("_loaded", false);
         });
         // load new addons:
         GEOR.waiter.show(incoming.length);
@@ -238,7 +238,7 @@ GEOR.tools = (function() {
                     previousState[r.id] = false;
                     // unselect node corresponding to record in dataview:
                     dataview && dataview.deselect(r);
-                    r.set("loaded", false);
+                    r.set("_loaded", false);
                     // warn user:
                     GEOR.util.errorDialog({
                         msg: tr("Could not load addon ADDONNAME",
@@ -289,9 +289,9 @@ GEOR.tools = (function() {
                             // we're passing the record to the init method
                             // so that the addon has access to the administrator's strings
                             addon.init(r);
-                            r.set("loaded", true);
+                            r.set("_loaded", true);
                             // keep the original order (the one defined by the admin)
-                            var records = store.query("loaded", true);
+                            var records = store.query("_loaded", true);
                             for (var i=0,l=records.getCount(); i<l;i++) {
                                 if (records.get(i) === r) {
                                     break;
@@ -400,7 +400,7 @@ GEOR.tools = (function() {
                     // restore tools selection
                     fn: function(dv) {
                         store.each(function(r) {
-                            if (r.get("loaded") === true) {
+                            if (r.get("_loaded") === true) {
                                 dv.select(r, true, true);
                             }
                         });
@@ -519,7 +519,9 @@ GEOR.tools = (function() {
             });
             store = new Ext.data.JsonStore({
                 fields: ["id", "name", "title", "thumbnail", "description", "group", "options", {
-                    name: "loaded", defaultValue: false, type: "boolean"
+                    name: "_loaded", defaultValue: false, type: "boolean"
+                }, {
+                    name: "preloaded", defaultValue: false, type: "boolean"
                 }],
                 data: allowedAddons
             });
@@ -580,12 +582,16 @@ GEOR.tools = (function() {
             }
             var str = GEOR.ls.get("default_tools");
             if (!str) {
-                return;
+                fetchAndLoadTools(store.queryBy(function(r) {
+                    return (r.get('preloaded') == true);
+                }));
             }
-            var ids = str.split(',');
-            fetchAndLoadTools(store.queryBy(function(r) {
-                return (ids.indexOf(r.id) > -1);
-            }));
+            else {
+                var ids = str.split(',');
+                fetchAndLoadTools(store.queryBy(function(r) {
+                    return (ids.indexOf(r.id) > -1);
+                }));
+            }
         }
     };
 })();
