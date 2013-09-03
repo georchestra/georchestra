@@ -24,6 +24,9 @@
  * @include OpenLayers/Kinetic.js
  * @include OpenLayers/Layer/WMS.js
  * @include OpenLayers/Layer/XYZ.js
+ * @include OpenLayers/Layer/OSM.js
+ * @include OpenLayers/Layer/Grid.js
+ * @include OpenLayers/BaseTypes/Size.js
  * @include GeoExt/data/LayerRecord.js
  * @include GeoExt/data/LayerStore.js
  * @include GEOR_config.js
@@ -73,7 +76,18 @@ GEOR.map = (function() {
             isBaseLayer: true,
             tileSize: new OpenLayers.Size(1024, 1024),
             getURL: function() {
-                return 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABAAAAAQAAQMAAABF07nAAAAAAXNSR0IArs4c6QAAAANQTFRF////p8QbyAAAAAFiS0dEAIgFHUgAAAAJcEhZcwAACxMAAAsTAQCanBgAAAAHdElNRQfdCQMOJQp/aXw9AAAAlklEQVR42u3BAQEAAACCIP+vbkhAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADvBgQeAAEN3jhkAAAAAElFTkSuQmCC';
+                return [
+                    'data:image/png;base64,iVBORw0KGgoAAAANSUhEU',
+                    'gAABAAAAAQAAQMAAABF07nAAAAAAXNSR0IArs4c6QAA',
+                    'AANQTFRF////p8QbyAAAAAFiS0dEAIgFHUgAAAAJcEh',
+                    'ZcwAACxMAAAsTAQCanBgAAAAHdElNRQfdCQMOJQp/aX',
+                    'w9AAAAlklEQVR42u3BAQEAAACCIP+vbkhAAQAAAAAAA',
+                    'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+                    'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+                    'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+                    'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADvBgQeAAEN3',
+                    'jhkAAAAAElFTkSuQmCC'
+                ].join(''); 
             }
         });
     };
