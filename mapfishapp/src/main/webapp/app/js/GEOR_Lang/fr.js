@@ -74,7 +74,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Too much data.": "Données trop volumineuses.",
     "Server exception.": "Le serveur a renvoyé une exception.",
     "ajax.defaultexception":
-        "Pour plus d'information, nous vous invitons à " +
+        "Pour plus d'information, vous pouvez " +
         "chercher le code de retour sur <a href=\"http://" +
         "en.wikipedia.org/wiki/List_of_HTTP_status_codes\" target=\"_blank\">" +
         "cette page</a>.",
@@ -370,7 +370,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "WFS server": "Serveur WFS",
     /* GEOR_wmc.js strings */
     "The provided file is not a valid OGC context": "Le fichier fourni n'est pas un contexte OGC valide",
-    "Warning: trying to restore WMC with a different projection (PROJCODE1, while map SRS is PROJCODE2). Strange things might occur !": "Attention: nous essayons de restaurer un contexte sauvegardé en ${PROJCODE1} alors que la carte actuelle est en ${PROJCODE2}. Il pourrait y avoir des comportements inattendus.",
+    "Warning: trying to restore WMC with a different projection (PROJCODE1, while map SRS is PROJCODE2). Strange things might occur !": "Attention: le contexte restauré avait été sauvegardé en ${PROJCODE1} alors que la carte actuelle est en ${PROJCODE2}. Il pourrait y avoir des comportements inattendus.",
     /* GEOR_wmcbrowser.js strings */
     "Could not find WMC file": "Le contexte spécifié n'existe pas",
     "... or a custom context": "... ou un contexte personnalisé",
