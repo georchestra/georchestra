@@ -66,9 +66,15 @@ GEOR.map = (function() {
      * {OpenLayers.Layer} The unique base layer in this app.
      */
     var createMainBaseLayer = function() {
-        return new OpenLayers.Layer("base_layer", {
+        
+        return new OpenLayers.Layer.Grid("base_layer", '', null, {
+            singleTile: false,
             displayInLayerSwitcher: false,
-            isBaseLayer: true
+            isBaseLayer: true,
+            tileSize: new OpenLayers.Size(1024, 1024),
+            getURL: function() {
+                return 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABAAAAAQAAQMAAABF07nAAAAAAXNSR0IArs4c6QAAAANQTFRF////p8QbyAAAAAFiS0dEAIgFHUgAAAAJcEhZcwAACxMAAAsTAQCanBgAAAAHdElNRQfdCQMOJQp/aXw9AAAAlklEQVR42u3BAQEAAACCIP+vbkhAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADvBgQeAAEN3jhkAAAAAElFTkSuQmCC';
+            }
         });
     };
 
