@@ -70,18 +70,6 @@ final class OGRFeatureReader implements FeatureGeoFileReader {
 	}
 	
 	private static Map<FileFormat, OGRDriver> DRIVERS = Collections.synchronizedMap(new HashMap<FileFormat, OGRDriver>());
-	
-// 	FIXME remove old	
-//	static{
-//		
-//		DRIVERS.put( FileFormat.tab, new OGRDriver("MapInfo File", new String[] {} ) );
-//		DRIVERS.put( FileFormat.mif, new OGRDriver("MapInfo File", new String[] { "FORMAT=MIF" }) );
-//		DRIVERS.put( FileFormat.shp, new OGRDriver("ESRI shapefile") );
-//		DRIVERS.put( FileFormat.gml, new OGRDriver("GML" ) );
-//		DRIVERS.put( FileFormat.kml, new OGRDriver("KML") );
-//		DRIVERS.put( FileFormat.gpx, new OGRDriver("GPX") );
-//	}
-
 
 	public OGRFeatureReader() throws IOException {
 		loadFormats();
@@ -92,19 +80,6 @@ final class OGRFeatureReader implements FeatureGeoFileReader {
 	
 		return DRIVERS.keySet().size();
 	}
-	
-// 	FIXME remove old	
-//	@Override
-//	public FileFormat[] getFormatList() {
-//
-//		FileFormat [] fileFormats = new FileFormat[DRIVERS.keySet().size()];
-//		int i = 0;
-//		for (FileFormat format : DRIVERS.keySet()) {
-//			
-//			fileFormats[i++] = format;
-//		}
-//		return fileFormats;
-//	}
 	
 	/**
 	 * Load the available formats
@@ -125,27 +100,28 @@ final class OGRFeatureReader implements FeatureGeoFileReader {
 
 					Object driver = ogr.GetDriver(i);
 					String name = ogr.DriverGetName(driver);
+					LOG.info("try to load driver: " + name );
 
-					if ("MapInfo File".equals(name)) {
+					if ("MapInfo File".equalsIgnoreCase(name)) {
 
-						loadDriver(FileFormat.tab, new OGRDriver("MapInfo File", new String[] {}));
+						loadDriver(FileFormat.tab, new OGRDriver(name, new String[] {}));
 						
-						loadDriver(FileFormat.mif, new OGRDriver("MapInfo File", new String[] { "FORMAT=MIF" }));
+						loadDriver(FileFormat.mif, new OGRDriver(name, new String[] { "FORMAT=MIF" }));
 
-					} else if ("ESRI shapefile".equals(name)) {
+					} else if ("ESRI shapefile".equalsIgnoreCase(name)) {
 
-						loadDriver(FileFormat.shp, new OGRDriver("ESRI shapefile"));
+						loadDriver(FileFormat.shp, new OGRDriver(name));
 
-					} else if ("GML".equals(name)) {
+					} else if ("GML".equalsIgnoreCase(name)) {
 
-						loadDriver(FileFormat.gml, new OGRDriver("GML"));
+						loadDriver(FileFormat.gml, new OGRDriver(name));
 
-					} else if ("KML".equals(name)) {
+					} else if ("KML".equalsIgnoreCase(name)) {
 
-						loadDriver(FileFormat.kml, new OGRDriver("KML"));
+						loadDriver(FileFormat.kml, new OGRDriver(name));
 
-					} else if ("GPX".equals(name)) {
-						loadDriver(FileFormat.gpx, new OGRDriver("GPX"));
+					} else if ("GPX".equalsIgnoreCase(name)) {
+						loadDriver(FileFormat.gpx, new OGRDriver(name));
 					}
 				}
 				
