@@ -231,7 +231,7 @@ GEOR.wmc = (function() {
             // remove all current layers except the lowest index one
             // (our fake base layer)
             for (var i = map.layers.length -1; i >= 1; i--) {
-                map.layers[i].destroy();
+                map.removeLayer(map.layers[i]);
             }
 
             var maxExtent = newContext.maxExtent;
