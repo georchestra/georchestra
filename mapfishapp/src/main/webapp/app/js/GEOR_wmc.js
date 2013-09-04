@@ -18,6 +18,7 @@
  * to restore v1.0 compliant WMCs too => both formats are useful
  * @include OpenLayers/Format/WMC/v1_0_0.js
  * @include OpenLayers/Format/WMC/v1_1_0.js
+ * @include OpenLayers/Projection.js
  * @include GeoExt/data/WMCReader.js
  * @include GEOR_util.js
  * @include GEOR_ows.js
@@ -196,7 +197,8 @@ GEOR.wmc = (function() {
          * zoomToWMC - {Boolean} Whether to zoom to WMC bbox or not, defaults to true
          */
         read: function(wmcString, resetMap, zoomToWMC) {
-            var map = layerStore.map;
+            var map = layerStore.map,
+                mapProj, wmcProj;
             var newContext = wmcFormat.read(wmcString, {}); // get context from wmc
                                                          // using non-API feature
 
@@ -207,13 +209,31 @@ GEOR.wmc = (function() {
                 return;
             }
 
-            if(map.getProjection() && (newContext.projection !== map.getProjection())) {
-                // bounding box from wmc does not have the same projection system
+            // If the context has been saved in a different projection,
+            // we're trying to restore the layers in the current map projection.
+            mapProj = map.getProjection();
+            wmcProj = newContext.projection;
+            if(mapProj && (wmcProj !== mapProj)) {
+                // wmc does not have the same projection system
                 // as the current map
-                GEOR.util.errorDialog({
-                    msg: tr("wmc.bad.srs")
+                GEOR.util.infoDialog({
+                    msg: tr("Warning: trying to restore WMC with a different projection (PROJCODE1, while map SRS is PROJCODE2). Strange things might occur !", {
+                        PROJCODE1: wmcProj,
+                        PROJCODE2: mapProj
+                    })
                 });
-                return;
+                var reproj = function() {
+                    this && this.transform(
+                        new OpenLayers.Projection(wmcProj), 
+                        new OpenLayers.Projection(mapProj)
+                    );
+                };
+                reproj.apply(newContext.bounds);
+                reproj.apply(newContext.maxExtent);
+                Ext.each(newContext.layersContext, function(l) {
+                    reproj.apply(l.maxExtent);
+                });
+                newContext.projection = map.getProjection();
             }
 
             // remove all current layers except the lowest index one
