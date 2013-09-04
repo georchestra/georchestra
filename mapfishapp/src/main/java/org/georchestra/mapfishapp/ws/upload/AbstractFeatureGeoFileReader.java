@@ -106,32 +106,40 @@ class AbstractFeatureGeoFileReader implements FeatureGeoFileReader{
 	 * @throws UnsupportedGeofileFormatException 
 	 */
 	@Override
-	public SimpleFeatureCollection getFeatureCollection(final File file, final FileFormat fileFormat, final CoordinateReferenceSystem targetCrs) throws IOException, UnsupportedGeofileFormatException {
+	public SimpleFeatureCollection getFeatureCollection(final File file, final FileFormat fileFormat, final CoordinateReferenceSystem targetCrs) 
+			throws IOException, UnsupportedGeofileFormatException {
 		
 		try{
 			return  getReaderImpl().getFeatureCollection(file, fileFormat, targetCrs);
 			
-		} catch(IOException e){
-
-			if (!(getReaderImpl() instanceof GeotoolsFeatureReader)) {
+		} catch (UnsupportedGeofileFormatException e) {
+			
+			throw e;
+			
+		} catch(RuntimeException e){
+			// if an error was found and the current implementation is the OGR the implementation then it will be changed to geotools 
+			if( this.readerImpl instanceof OGRFeatureReader){
 				
-				switchToGeotoolsImplementation();
+				LOG.info("OGRFeatureReader fail. Try using the geotools implementation: " + readerImpl.getClass().getName());
 
-				// now try to read using the geotools implementation
-				try {
-					return getReaderImpl().getFeatureCollection(file, fileFormat, targetCrs);
+				switchToGeotoolsImplementation();
+				
+				// if the format is available in geotools then the last read operation will be re-executed.
+				if( getReaderImpl().isSupportedFormat( fileFormat ) ){
+
+					return  getReaderImpl().getFeatureCollection(file, fileFormat, targetCrs);
 					
-				} catch (UnsupportedGeofileFormatException gtUnsupoortFileFormat) {
-					throw gtUnsupoortFileFormat;
+				} else {
+					
+					throw new UnsupportedGeofileFormatException("The format is not supported by geotools implementation");
 				}
 			} else {
-				// it is Geotools implementation, so this class cannot manage the exception;
-				throw new IOException(e);
-			}
 				
-		} catch (UnsupportedGeofileFormatException e) {
-			throw e;
+				throw e; // geotools implementation fails
+				
+			}
 		}
+		
 	}
 
 	/**
@@ -186,6 +194,13 @@ class AbstractFeatureGeoFileReader implements FeatureGeoFileReader{
 			}
 		}
 		return ogrReader;
+	}
+
+
+	@Override
+	public boolean isSupportedFormat(FileFormat fileFormat) {
+		
+		return this.readerImpl.isSupportedFormat(fileFormat);
 	}
 
 

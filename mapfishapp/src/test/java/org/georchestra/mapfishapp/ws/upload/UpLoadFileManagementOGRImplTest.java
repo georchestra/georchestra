@@ -5,15 +5,16 @@ package org.georchestra.mapfishapp.ws.upload;
 
 import java.io.IOException;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * Test case for {@link UpLoadFileManagement} set to use the OGR implementation  
- * 
  * @author Mauricio Pazos
  *
  */
 public class UpLoadFileManagementOGRImplTest extends UpLoadFileManagementGTImplTest {
+
 
 	/**
 	 * @return UpLoadFileManagement set with geotools implementation
