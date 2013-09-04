@@ -10,8 +10,7 @@
 <!--          <property name="defaultTarget" value="${proxy.defaultTarget}/sec/"/>-->
           <property name="headerManagement" ref="headerManagementBean"/>
           <property name="defaultCharset" value="UTF-8"/>
-          <property name="referer" value="${public.host}"/>
-          
+
           <property name="checkHealth" value="${checkHealth}"/>
           <property name="maxDatabaseConnections" value="${max.database.connections}"/>    
                 
@@ -53,6 +52,11 @@ ${proxy.mapping}
           
     <bean id="headerManagementBean"
           class="org.georchestra.security.HeadersManagementStrategy">
+        <!-- If set then the referrer header will always be the current server even if client sends its
+             own referrer header
+
+             Comment out property to use client referrer instead of this host -->
+        <property name="referer" value="${public.host}"/>
         <property name="headerProviders">
             <list>
                 <bean class="org.georchestra.security.SecurityRequestHeaderProvider"/>
