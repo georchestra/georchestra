@@ -1,7 +1,6 @@
 package org.georchestra.extractorapp.ws.extractor.wcs;
 
 import static org.georchestra.extractorapp.ws.extractor.wcs.WcsParameters.FORMAT;
-import static org.georchestra.extractorapp.ws.extractor.wcs.WcsParameters.USERNAME;
 import static org.geotools.referencing.crs.DefaultGeographicCRS.WGS84;
 
 import java.awt.Rectangle;
@@ -24,6 +23,8 @@ import java.util.List;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
@@ -298,7 +299,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
             String absolutePath = file.getAbsolutePath();
             String baseName = absolutePath.substring(0, absolutePath.lastIndexOf(".tif"));
             createPrjFile(targetRequest.responseCRS, baseName);
-            createWorldFile(targetRequest, baseName, ".tif");
+            createWorldFile(file.getAbsoluteFile(), targetRequest, baseName, ".tif");
             createTABFile(targetRequest, baseName);
         }
 
@@ -380,7 +381,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
 
                 String baseFilePath = file.getPath().substring(0,
                         file.getPath().lastIndexOf('.'));
-                createWorldFile(request, baseFilePath, FileUtils.extension(file));
+                createWorldFile(file.getAbsoluteFile(), request, baseFilePath, FileUtils.extension(file));
                 createPrjFile(request.responseCRS, baseFilePath);
             }
         } else {
@@ -443,7 +444,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
 
         String baseFilePath = file.getPath().substring(0,
                 file.getPath().lastIndexOf('.'));
-        createWorldFile(request, baseFilePath, FileUtils.extension(file));
+        createWorldFile(file.getAbsoluteFile(), request, baseFilePath, FileUtils.extension(file));
         createTABFile(request, baseFilePath);
         createPrjFile(request.responseCRS, baseFilePath);
     }
@@ -540,6 +541,8 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
      * is in the world file.
      * 
      *
+     *
+     * @param imageFile
      * @param baseFile
      *            Basename and path for this image.
      * @param ext
@@ -547,26 +550,52 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
      *             In case we cannot create the world file.
      * @throws TransformException
      */
-    private void createWorldFile(final WcsReaderRequest request,
+    private void createWorldFile(File imageFile, final WcsReaderRequest request,
                                  final String baseFile, String ext) throws IOException {
-    	
+
         ReferencedEnvelope transformedBBox;
         AffineTransform transform;
-        
         try {
+            final Iterator<ImageReader> readers = ImageIO.getImageReadersByFormatName(ext.substring(1));
+            int width = -1;
+            int height = -1;
+            while (readers.hasNext() && width < 0 && height < 0) {
+                ImageInputStream stream = null;
+                try {
+                    ImageReader reader = readers.next();
+                    stream = ImageIO.createImageInputStream(imageFile);
+                    reader.setInput(stream, true, false);
+                    width = reader.getWidth(0);
+                    height = reader.getHeight(0);
+                    break;
+                } catch ( Exception e) {
+                    width = -1;
+                    height = -1;
+                    // try next reader;
+                } finally {
+                    if (stream != null) {
+                        stream.close();
+                    }
+                }
+            }
+
             transformedBBox = request.requestBbox.transform(request.responseCRS, true, 10);
-            
-        	int width = (int) Math.round(transformedBBox.getWidth() / request.crsResolution());
-            int height = (int) Math.round(transformedBBox.getHeight() / request.crsResolution());
+            if (width < 0) {
+                width = (int) Math.round(transformedBBox.getWidth() / request.crsResolution());
+            }
+
+            if (height < 0) {
+                height = (int) Math.round(transformedBBox.getHeight() / request.crsResolution());
+            }
 
             Rectangle imageSize = new Rectangle(width, height);
-            transform = RendererUtilities.worldToScreenTransform(transformedBBox,imageSize);
+            transform = RendererUtilities.worldToScreenTransform(transformedBBox, imageSize);
             transform.invert();
-            
+
         } catch (Exception e) {
             throw new ExtractorException(e);
         }
-        
+
         // /////////////////////////////////////////////////////////////////////
         //
         // CRS information
@@ -603,15 +632,15 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
         // ////////////////////////////////////////////////////////////////////
         final StringBuffer buff = new StringBuffer(baseFile);
         // looking for another extension
-        if (ext.substring(0,4).equalsIgnoreCase(".tif")) {
+        if (ext.substring(0, 4).equalsIgnoreCase(".tif")) {
             buff.append(".tfw");
-        } else if (ext.substring(0,4).equalsIgnoreCase(".png")) {
+        } else if (ext.substring(0, 4).equalsIgnoreCase(".png")) {
             buff.append(".pgw");
-        } else if (ext.substring(0,4).equalsIgnoreCase(".jpg") || ext.substring(0,4).equalsIgnoreCase("jpeg")) {
+        } else if (ext.substring(0, 4).equalsIgnoreCase(".jpg") || ext.substring(0, 4).equalsIgnoreCase("jpeg")) {
             buff.append(".jpw");
-        } else if (ext.substring(0,4).equalsIgnoreCase(".gif")) {
+        } else if (ext.substring(0, 4).equalsIgnoreCase(".gif")) {
             buff.append(".gfw");
-        } else if (ext.substring(0,4).equalsIgnoreCase(".bmp")) {
+        } else if (ext.substring(0, 4).equalsIgnoreCase(".bmp")) {
             buff.append(".bpw");
         } else {
             buff.append(".tfw");
@@ -633,7 +662,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
             out.close();
         }
     }
-    
+
     private void createTABFile(final WcsReaderRequest request,
             final String baseFile) throws IOException {
     	
