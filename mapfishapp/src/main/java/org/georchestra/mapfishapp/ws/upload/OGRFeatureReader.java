@@ -163,7 +163,8 @@ final class OGRFeatureReader implements FeatureGeoFileReader {
 	 * @throws IOException,  UnsupportedGeofileFormatException 
 	 */
 	@Override
-	public SimpleFeatureCollection getFeatureCollection(final File file, final FileFormat fileFormat, final CoordinateReferenceSystem targetCRS) throws IOException, UnsupportedGeofileFormatException {
+	public SimpleFeatureCollection getFeatureCollection(final File file, final FileFormat fileFormat, final CoordinateReferenceSystem targetCRS) 
+			throws IOException, UnsupportedGeofileFormatException {
 		assert  file != null && fileFormat != null;
 
 		try{
@@ -194,9 +195,10 @@ final class OGRFeatureReader implements FeatureGeoFileReader {
 			SimpleFeatureCollection features = source.getFeatures(query);
 
 			return features;
-		} catch(IOException e ){
+			
+		} catch(Exception e ){
 			LOG.error(e.getMessage());
-			throw new IOException(e);
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -242,6 +244,18 @@ final class OGRFeatureReader implements FeatureGeoFileReader {
 		LOG.info("gdal/ogr is available in the system");
 		
 		return true;
+	}
+
+
+	@Override
+	public boolean isSupportedFormat(FileFormat fileFormat) {
+		
+		for (FileFormat supported : DRIVERS.keySet()) {
+			if(fileFormat == supported){
+				return true;
+			}
+		}
+		return false;
 	}
 	
 
