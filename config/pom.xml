@@ -170,7 +170,7 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>org.codehaus.gmaven</groupId>
+				<groupId>org.codehaus.groovy.maven</groupId>
 				<artifactId>gmaven-plugin</artifactId>
 				<executions>
 					<execution>

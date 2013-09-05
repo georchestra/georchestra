@@ -373,9 +373,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     /* GEOR_wmc.js strings */
     "The provided file is not a valid OGC context":
 		"El archivo proveido no es un contexto OGC valido",
-    "wmc.bad.srs": "El archivo .wmc no " +
-        "puede ser restaurado. Su sistema de referencia espacial es " +
-        "diferente del sistema del mapa actual.",
+    "Warning: trying to restore WMC with a different projection (PROJCODE1, while map SRS is PROJCODE2). Strange things might occur !": "Advertencia: para cargar el contexto WMC, se necesita reproyectar desde ${PROJCODE1} hacía la proyección del mapa ${PROJCODE2}. ¡El resultado puede ser diferente de lo esperado!",
     /* GEOR_wmcbrowser.js strings */
     "Could not find WMC file": "El contexto WMC especificado no existe",
     "... or a custom context": "... o un contexto personalizado",
@@ -406,6 +404,10 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Save the map context": "Guardar el mapa",
     "Load a map context": "Cargar un mapa",
     "Get a permalink": "Crear un permalink",
+    "Permalink": "Permalink",
+    "valid for ": "válido para ",
+    "months": "meses",
+    "month": "mes",
     "Share your map with this URL: ": "Compartir su mapa con esta URL",
     "Edit in OSM": "Editar en OSM",
     "with JOSM": "con JOSM",

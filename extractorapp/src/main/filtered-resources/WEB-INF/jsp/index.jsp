@@ -81,7 +81,7 @@ window.location = "?login";
     </style>
     <link rel="stylesheet" type="text/css" href="resources/app/css/main.css" />
 
-    <title lang="<%= lang %>" dir="ltr"><fmt:message key="title"/></title>
+    <title lang="<%= lang %>" dir="ltr"><fmt:message key="title"/> - ${instance}</title>
     <script type="text/javascript">
         GEOR = {
             header: <%= request.getParameter("noheader") == null %>

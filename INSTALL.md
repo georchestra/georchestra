@@ -13,6 +13,7 @@ LDAP
  
             sudo apt-get install git-core
             git clone git://github.com/georchestra/LDAP.git
+            cd LDAP
 	
  * inserting the data: follow the instructions in https://github.com/georchestra/LDAP/blob/master/README.md
 
@@ -31,7 +32,6 @@ PostGreSQL
 
         sudo su postgres
         createdb geonetwork
-        createlang plpgsql geonetwork
         psql -f /usr/share/postgresql/9.1/contrib/postgis-1.5/postgis.sql geonetwork
         psql -f /usr/share/postgresql/9.1/contrib/postgis-1.5/spatial_ref_sys.sql geonetwork
 
@@ -64,9 +64,7 @@ Apache
 * modules setup
 
         sudo apt-get install apache2 libapache2-mod-auth-cas
-        ls /etc/apache2/mods-enabled
-        sudo a2enmod proxy_ajp proxy_connect proxy_http proxy
-        sudo a2enmod ssl rewrite
+        sudo a2enmod proxy_ajp proxy_connect proxy_http proxy ssl rewrite headers
         sudo service apache2 graceful
 
 * VirtualHost setup
@@ -184,6 +182,9 @@ Apache
     ProxyPass /geonetwork/ ajp://localhost:8009/geonetwork/ 
     ProxyPassReverse /geonetwork/ ajp://localhost:8009/geonetwork/
 
+    ProxyPass /geonetwork-private/ ajp://localhost:8009/geonetwork-private/ 
+    ProxyPassReverse /geonetwork-private/ ajp://localhost:8009/geonetwork-private/
+
     ProxyPass /geoserver/ ajp://localhost:8009/geoserver/ 
     ProxyPassReverse /geoserver/ ajp://localhost:8009/geoserver/
 
@@ -240,11 +241,10 @@ Apache - SSL certificate
         
 * update your hosts
 
-```
         sudo vim /etc/hosts
 
+
         127.0.0.1       vm-georchestra
-```
 
 * testing
 
