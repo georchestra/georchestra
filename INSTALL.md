@@ -36,12 +36,6 @@ PostGreSQL
         psql -f /usr/share/postgresql/9.1/contrib/postgis-1.5/spatial_ref_sys.sql geonetwork
 
         createuser -DPRS www-data
-        psql geonetwork
-        > ALTER TABLE spatial_ref_sys   OWNER TO "www-data";
-        > ALTER TABLE geometry_columns  OWNER TO "www-data";
-        > ALTER TABLE geography_columns OWNER TO "www-data";
-        > ALTER USER "www-data" WITH PASSWORD 'www-data';
-        > \q
 
 * downloadform and ogcstatistics databases setup
 
@@ -56,8 +50,23 @@ PostGreSQL
             createdb ogcstatistics
             wget https://raw.github.com/georchestra/georchestra/master/ogc-server-statistics/ogc_statistics_table.sql -O /tmp/ogc_statistics_table.sql
             psql ogcstatistics -f /tmp/ogc_statistics_table.sql
-            exit
-    
+
+* Set rights of the www-data user
+
+        echo 'GRANT ALL PRIVILEGES ON DATABASE geonetwork TO "www-data";' | sudo -u postgres psql -d geonetwork
+        echo 'GRANT ALL PRIVILEGES ON SCHEMA public TO "www-data";' | sudo -u postgres psql -d geonetwork
+        echo 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "www-data";' | sudo -u postgres psql -d geonetwork
+        echo 'GRANT ALL PRIVILEGES ON DATABASE downloadform TO "www-data";' | sudo -u postgres psql -d downloadform
+        echo 'GRANT ALL PRIVILEGES ON SCHEMA public TO "www-data";' | sudo -u postgres psql -d downloadform
+        echo 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "www-data";' | sudo -u postgres psql -d downloadform
+        echo 'GRANT ALL PRIVILEGES ON DATABASE ogcstatistics TO "www-data";' | sudo -u postgres psql -d ogcstatistics
+        echo 'GRANT ALL PRIVILEGES ON SCHEMA public TO "www-data";' | sudo -u postgres psql -d ogcstatistics
+        echo 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "www-data";' | sudo -u postgres psql -d ogcstatistics
+        echo 'GRANT ALL PRIVILEGES ON DATABASE ldapadmin TO "www-data";' | sudo -u postgres psql -d ldapadmin
+        echo 'GRANT ALL PRIVILEGES ON SCHEMA public TO "www-data";' | sudo -u postgres psql -d ldapadmin
+        echo 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "www-data";' | sudo -u postgres psql -d ldapadmin
+        exit
+
 Apache
 =========
 
