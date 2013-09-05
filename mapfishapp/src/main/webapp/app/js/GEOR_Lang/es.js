@@ -129,7 +129,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "The allowed formats are the following: ":
         "Los formatos aceptados son los siguientes: ",
     "Use ZIP compression for multifiles formats, such as SHP or MIF/MID.":
-        "Usar compresión ZIP para los formatos multiarchivos, como SHP o MIF/MID.",
+        "Usar compresión ZIP para los formatos multiarchivos, como SHP, MIF/MID o TAB.",
     /* GEOR_geonames.js strings */
     /* GEOR_getfeatureinfo.js strings */
     "<div>Searching...</div>": "<div>Buscando...</div>",
