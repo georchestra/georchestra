@@ -117,19 +117,27 @@ class AbstractFeatureGeoFileReader implements FeatureGeoFileReader{
 			throw e;
 			
 		} catch(RuntimeException e){
-			// if an error was found and the current implementation is the OGR the implementation then it will be changed to geotools 
+			
+			// if an error was found and the current implementation is the OGR the implementation then it will be changed to geotools (only for this operation) 
 			if( this.readerImpl instanceof OGRFeatureReader){
 				
 				LOG.info("OGRFeatureReader fail. Try using the geotools implementation: " + readerImpl.getClass().getName());
 
-				switchToGeotoolsImplementation();
-				
+				FeatureGeoFileReader savedReader = this.readerImpl;
+				setReaderImpl( new GeotoolsFeatureReader() );
+
 				// if the format is available in geotools then the last read operation will be re-executed.
 				if( getReaderImpl().isSupportedFormat( fileFormat ) ){
 
-					return  getReaderImpl().getFeatureCollection(file, fileFormat, targetCrs);
+					SimpleFeatureCollection features = getReaderImpl().getFeatureCollection(file, fileFormat, targetCrs);
+					
+					setReaderImpl( savedReader );
+
+					return features;
 					
 				} else {
+					
+					setReaderImpl( savedReader );
 					
 					throw new UnsupportedGeofileFormatException("The format is not supported by geotools implementation");
 				}
@@ -140,13 +148,6 @@ class AbstractFeatureGeoFileReader implements FeatureGeoFileReader{
 			}
 		}
 		
-	}
-
-	/**
-	 * switches to geotools implementation
-	 */
-	private void switchToGeotoolsImplementation() {
-		setReaderImpl( new GeotoolsFeatureReader() );
 	}
 
 
