@@ -18,6 +18,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
+    <%@ include file="header.jsp" %>
+
 	<div class="container">
 		<div class="page-header">
 			<h1><s:message code="lostPasswordForm.title"/></h1>

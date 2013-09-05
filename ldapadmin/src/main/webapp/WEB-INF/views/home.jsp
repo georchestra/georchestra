@@ -21,6 +21,8 @@
 
 
 <body>
+    <%@ include file="header.jsp" %>
+
 	<div class="container">
 		<div class="page-header">
 			<h1>ldapadmin (under construction)</h1>
