@@ -212,7 +212,6 @@ public class UserTokenDao {
 					Properties props = new Properties();
 					props.setProperty("user", this.databaseUser);
 					props.setProperty("password",this.databasePassword);
-					props.setProperty("ssl","true");
 					props.setProperty("applicationName", "ldapAdmin");
 					this.connection = DriverManager.getConnection(url, props);
 					
