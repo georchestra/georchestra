@@ -47,8 +47,8 @@
 
     <!-- userTokenDao  -->
     <bean id="userTokenDao" class="org.georchestra.ldapadmin.ds.UserTokenDao">
-        <property name="databaseUser" value="ldapadmin" />
-        <property name="databasePassword" value="ldapadmin" />
+        <property name="databaseUser" value="www-data" />
+        <property name="databasePassword" value="www-data" />
         <property name="jdbcURL" value="jdbc:postgresql://localhost:5432/ldapadmin" />
     </bean>
 <!--     
