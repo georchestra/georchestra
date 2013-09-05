@@ -74,10 +74,10 @@ To create the database use the following script:
 Create the user and give it rights on the `ldapadmin` database:
 
 ```
-echo "CREATE ROLE ldapadmin WITH LOGIN PASSWORD 'ldapadmin';" | sudo -u postgres psql
-echo "GRANT ALL PRIVILEGES ON DATABASE ldapadmin TO ldapadmin;" | sudo -u postgres psql -d ldapadmin
-echo "GRANT ALL PRIVILEGES ON SCHEMA public TO ldapadmin;" | sudo -u postgres psql -d ldapadmin
-echo "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO ldapadmin;" | sudo -u postgres psql -d ldapadmin
+echo 'CREATE ROLE "www-data" WITH LOGIN PASSWORD "www-data";' | sudo -u postgres psql
+echo 'GRANT ALL PRIVILEGES ON DATABASE ldapadmin TO "www-data";' | sudo -u postgres psql -d ldapadmin
+echo 'GRANT ALL PRIVILEGES ON SCHEMA public TO "www-data";' | sudo -u postgres psql -d ldapadmin
+echo 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "www-data";' | sudo -u postgres psql -d ldapadmin
 ```
 
 Note: because this is a work in progress right now the postgresql parameters in `[georchestra]/ldapadmin/src/main/webapp/WEB-INF/spring/webmvc-config.xml` are not used.
@@ -85,8 +85,8 @@ To configure the connection, for testing purpose, directly change the `UserToken
 
 ```
 this.databaseName = "ldapadmin";
-this.databaseUser = "georchestra";
-this.databasePassword = "georchestra";
+this.databaseUser = "www-data";
+this.databasePassword = "www-data";
 ```
 
 ### Install LDAP
