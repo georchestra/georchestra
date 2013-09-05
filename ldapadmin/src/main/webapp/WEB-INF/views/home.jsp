@@ -12,8 +12,8 @@
 <html lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<link href='css/bootstrap.min.css' rel="stylesheet" />
-	<link href='css/ldapadmin.css' rel="stylesheet" />
+	<link href='account/css/bootstrap.min.css' rel="stylesheet" />
+	<link href='account/css/ldapadmin.css' rel="stylesheet" />
 	<title>ldapadmin (under construction)</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
@@ -95,7 +95,7 @@ out.println(l);
 	</div> <!-- /container -->
 
     <script src="//code.jquery.com/jquery.js"></script>
-    <script src='js/bootstrap.min.js'></script>
+    <script src='account/js/bootstrap.min.js'></script>
 </body>
 
 </html>
