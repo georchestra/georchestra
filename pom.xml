@@ -254,6 +254,7 @@ class PostTreatment {
         <module>catalogapp</module>
         <module>extractorapp</module>
         <module>geoserver</module>
+        <module>ldapadmin</module>
         <module>mapfishapp</module>
         <module>security-proxy</module>
         <module>geonetwork</module>
@@ -302,6 +303,13 @@ class PostTreatment {
       <id>geoserver</id>
       <modules>
         <module>geoserver</module>
+      </modules>
+    </profile>
+
+    <profile>
+      <id>ldapadmin</id>
+      <modules>
+        <module>ldapadmin</module>
       </modules>
     </profile>
 
