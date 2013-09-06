@@ -75,7 +75,7 @@ out.println(l);
 			</tr>
 			<tr>
 				<td>Administration</td>
-				<td><a href='/'>/</a></td>
+				<td><a href='privateui/index.html'>privateui/index.html</a></td>
 			</tr>
 			<tr>
 				<td>REST GET users</td>
