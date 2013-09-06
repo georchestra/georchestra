@@ -59,6 +59,10 @@ shared.download_form.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.p
 
 shared.ldapadmin.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.psql.ldapadmin.db@
 shared.ldapadmin.email.languages=@shared.ldapadmin.email.languages@
+shared.ldapadmin.email.subject.account.created=@shared.ldapadmin.email.subject.account.created@
+shared.ldapadmin.email.subject.account.in.process=@shared.ldapadmin.email.subject.account.in.process@
+shared.ldapadmin.email.subject.requires.signup=@shared.ldapadmin.email.subject.requires.signup@
+shared.ldapadmin.email.subject.change.password=@shared.ldapadmin.email.subject.change.password@
 shared.ldapadmin.moderator.requires.signup=@shared.ldapadmin.moderator.requires.signup@
 shared.ldapadmin.moderator.email=@shared.ldapadmin.moderator.email@
 shared.ldapadmin.expired.token.delay.in.days=@shared.ldapadmin.expired.token.delay.in.days@

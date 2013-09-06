@@ -21,6 +21,10 @@ smtpPort=@shared.smtp.port@
 replyTo=@shared.smtp.replyTo@
 from=@shared.smtp.from@
 languages=@shared.ldapadmin.email.languages@
+subject.account.created=@shared.ldapadmin.email.subject.account.created@
+subject.account.in.process=@shared.ldapadmin.email.subject.account.in.process@
+subject.requires.signup=@shared.ldapadmin.email.subject.requires.signup@
+subject.change.password=@shared.ldapadmin.email.subject.change.password@
 
 # Moderator
 requiresSignup=@shared.ldapadmin.moderator.requires.signup@

@@ -112,22 +112,22 @@
         <property name="accountWasCreatedEmailFile"
             value="/WEB-INF/templates/newaccount-was-created-template.txt" />
         <property name="accountWasCreatedEmailSubject"
-            value="The account was created" />
+            value="${subject.account.created}" />
 
         <property name="accountCreationInProcessEmailFile"
             value="/WEB-INF/templates/account-creation-in-progress-template.txt" />
         <property name="accountCreationInProcessEmailSubject"
-            value="account creation in process" />
+            value="${subject.account.in.process}" />
             
         <property name="newAccountRequiresSignupEmailFile"
             value="/WEB-INF/templates/newaccount-requires-signup-template.txt" />
         <property name="newAccountRequiresSignupEmailSubject"
-            value="New account requires singnup" />
+            value="${subject.requires.signup}" />
 
         <property name="changePasswordEmailFile"
             value="/WEB-INF/templates/changepassword-email-template.txt" />
         <property name="changePasswordEmailSubject"
-            value="change password" />
+            value="${subject.change.password}" />
     </bean>
 
 	<bean id="mailService" class="org.georchestra.ldapadmin.mailservice.MailService">
