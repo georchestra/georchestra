@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.georchestra.ldapadmin.ds.AccountDao;
 import org.georchestra.ldapadmin.ds.DataServiceException;
@@ -67,7 +66,7 @@ public class EditUserDetailsFormController {
 	 * @throws IOException
 	 */
 	@RequestMapping(value="/account/userdetails", method=RequestMethod.GET)
-	public String setupForm(HttpServletRequest request, HttpServletResponse response, @RequestParam("uid") String uid,  Model model) throws IOException{
+	public String setupForm(HttpServletRequest request, @RequestParam("uid") String uid,  Model model) throws IOException{
 		try {
 			if(!request.getHeader("sec-username").equals(uid)){
 				return "forbidden";
