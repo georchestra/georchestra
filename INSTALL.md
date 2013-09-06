@@ -54,6 +54,8 @@ PostGreSQL
  * ldapadmin
 
             createdb ldapadmin
+            wget https://raw.github.com/georchestra/georchestra/ldapadmin/ldapadmin/ldapAdminDB.sql -O /tmp/ldapAdminDB.sql
+            psql ldapadmin -f /tmp/ldapAdminDB.sql
 
 * Set rights of the www-data user
 
