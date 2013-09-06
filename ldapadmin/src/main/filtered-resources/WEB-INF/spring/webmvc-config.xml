@@ -18,18 +18,18 @@
 		p:prefix="/WEB-INF/views/" p:suffix=".jsp">
 	</bean>
 	<bean id='recaptcha' class='net.tanesha.recaptcha.ReCaptchaImpl'>
-		<property name='privateKey' value='6Lf0h-MSAAAAAI2nHJfNPDaEXXjsdmn8eKSZUrQZ' />
+		<property name='privateKey' value='${privateKey}' />
 	</bean>
 	<bean id="reCaptchaParameters" class="org.georchestra.ldapadmin.bs.ReCaptchaParameters">
-		<property name='publicKey' value='6Lf0h-MSAAAAAOQ4YyRtbCNccU87dlGmokmelZjh' />
+		<property name='publicKey' value='${publicKey}' />
 	</bean>
 
 	<!-- LDAP connection -->
 	<bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource">
-		<property name="url" value="ldap://localhost:389" />
-		<property name="base" value="dc=georchestra,dc=org" />
-		<property name="userDn" value="cn=admin,dc=georchestra,dc=org" />
-        <property name="password" value="secret" /> 
+		<property name="url" value="${ldapUrl}" />
+		<property name="base" value="${baseDN}" />
+		<property name="userDn" value="${ldapAdminDn}" />
+		<property name="password" value="${ldap.admin.password}" />
 	</bean>
 	
 
@@ -47,17 +47,11 @@
 
     <!-- userTokenDao  -->
     <bean id="userTokenDao" class="org.georchestra.ldapadmin.ds.UserTokenDao">
-        <property name="databaseUser" value="www-data" />
-        <property name="databasePassword" value="www-data" />
-        <property name="jdbcURL" value="jdbc:postgresql://localhost:5432/ldapadmin" />
+        <property name="databaseUser" value="${psql.user}" />
+        <property name="databasePassword" value="${psql.pass}" />
+        <property name="jdbcURL" value="${psql.url}" />
     </bean>
-<!--     
-    <bean id="userTokenDao" class="org.georchestra.ldapadmin.ds.UserTokenDao">
-        <property name="databaseUser" value="postgres" />
-        <property name="databasePassword" value="postgres" />
-        <property name="jdbcURL" value="jdbc:postgresql://localhost:5432/postgres" />
-    </bean>
- -->    
+
     <bean id="expiredTokenCleanTask" class="org.georchestra.ldapadmin.bs.ExpiredTokenCleanTask"/>
     
 
@@ -107,13 +101,13 @@
 
 	<!-- Email Factory configuration -->
     <bean id="emailFactory" class="org.georchestra.ldapadmin.mailservice.EmailFactoryImpl">
-        <property name="smtpHost" value="localhost" />
-        <property name="smtpPort" value="25" />
-        <property name="replyTo" value="psc@georchestra.org" />
-        <property name="from" value="psc@georchestra.org" />
+        <property name="smtpHost" value="${smtpHost}" />
+        <property name="smtpPort" value="${smtpPort}" />
+        <property name="replyTo" value="${replyTo}" />
+        <property name="from" value="${from}" />
         <property name="bodyEncoding" value="UTF-8" />
         <property name="subjectEncoding" value="UTF-8" />
-        <property name="languages" value="fr,fra" />
+        <property name="languages" value="${languages}" />
         
         <property name="accountWasCreatedEmailFile"
             value="/WEB-INF/templates/newaccount-was-created-template.txt" />
@@ -141,12 +135,12 @@
 	</bean>
 
     <bean id="moderator" class="org.georchestra.ldapadmin.bs.Moderator">
-        <property name="requiresSignup" value="false" /> 
-        <property name="moderatorEmail" value="moderator@mail" />
+        <property name="requiresSignup" value="${requiresSignup}" />
+        <property name="moderatorEmail" value="${moderatorEmail}" />
     </bean>
     
     <bean id="expiredTokenManagement" class="org.georchestra.ldapadmin.bs.ExpiredTokenManagement">
-        <property name="delayInDays" value="1" />
+        <property name="delayInDays" value="${delayInDays}" />
     </bean>
     
 </beans>

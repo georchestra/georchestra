@@ -1,0 +1,30 @@
+
+
+# ReCaptcha keys
+privateKey=6Lf0h-MSAAAAAI2nHJfNPDaEXXjsdmn8eKSZUrQZ
+publicKey=6Lf0h-MSAAAAAOQ4YyRtbCNccU87dlGmokmelZjh
+
+# LDAP
+ldapUrl=@shared.ldapUrl@
+baseDN=@shared.ldap.baseDn@
+ldapAdminDn=@shared.ldap.admin.dn@
+ldap.admin.password=@shared.ldap.admin.password@
+
+# Database connection
+psql.user=@shared.psql.user@
+psql.pass=@shared.psql.pass@
+psql.url=@shared.ldapadmin.jdbcurl@
+
+# Email properties
+smtpHost=@shared.smtp.host@
+smtpPort=@shared.smtp.port@
+replyTo=@shared.smtp.replyTo@
+from=@shared.smtp.from@
+languages=@shared.ldapadmin.email.languages@
+
+# Moderator
+requiresSignup=@shared.ldapadmin.moderator.requires.signup@
+moderatorEmail=@shared.ldapadmin.moderator.email@
+
+# Expired token
+delayInDays=@shared.ldapadmin.expired.token.delay.in.days@

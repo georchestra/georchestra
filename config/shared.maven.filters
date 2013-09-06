@@ -56,3 +56,9 @@ shared.download_form.activated=false
 shared.download_form.pdf_url=/static/cgu.pdf
 shared.psql.download_form.db=downloadform
 shared.download_form.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.psql.download_form.db@
+
+shared.ldapadmin.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.psql.ldapadmin.db@
+shared.ldapadmin.email.languages=@shared.ldapadmin.email.languages@
+shared.ldapadmin.moderator.requires.signup=@shared.ldapadmin.moderator.requires.signup@
+shared.ldapadmin.moderator.email=@shared.ldapadmin.moderator.email@
+shared.ldapadmin.expired.token.delay.in.days=@shared.ldapadmin.expired.token.delay.in.days@
