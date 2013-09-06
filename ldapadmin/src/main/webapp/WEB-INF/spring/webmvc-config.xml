@@ -70,6 +70,7 @@
 	    id="messageSource"
 	    class="org.springframework.context.support.ReloadableResourceBundleMessageSource"
 		p:basenames="WEB-INF/i18n/messages,WEB-INF/i18n/application"
+		p:defaultEncoding="UTF-8"
 		p:fallbackToSystemLocale="false">
 	</bean>
     <bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor" />
