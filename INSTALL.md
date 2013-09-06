@@ -51,20 +51,24 @@ PostGreSQL
             wget https://raw.github.com/georchestra/georchestra/master/ogc-server-statistics/ogc_statistics_table.sql -O /tmp/ogc_statistics_table.sql
             psql ogcstatistics -f /tmp/ogc_statistics_table.sql
 
+ * ldapadmin
+
+            createdb ldapadmin
+
 * Set rights of the www-data user
 
-        echo 'GRANT ALL PRIVILEGES ON DATABASE geonetwork TO "www-data";' | sudo -u postgres psql -d geonetwork
-        echo 'GRANT ALL PRIVILEGES ON SCHEMA public TO "www-data";' | sudo -u postgres psql -d geonetwork
-        echo 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "www-data";' | sudo -u postgres psql -d geonetwork
-        echo 'GRANT ALL PRIVILEGES ON DATABASE downloadform TO "www-data";' | sudo -u postgres psql -d downloadform
-        echo 'GRANT ALL PRIVILEGES ON SCHEMA public TO "www-data";' | sudo -u postgres psql -d downloadform
-        echo 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "www-data";' | sudo -u postgres psql -d downloadform
-        echo 'GRANT ALL PRIVILEGES ON DATABASE ogcstatistics TO "www-data";' | sudo -u postgres psql -d ogcstatistics
-        echo 'GRANT ALL PRIVILEGES ON SCHEMA public TO "www-data";' | sudo -u postgres psql -d ogcstatistics
-        echo 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "www-data";' | sudo -u postgres psql -d ogcstatistics
-        echo 'GRANT ALL PRIVILEGES ON DATABASE ldapadmin TO "www-data";' | sudo -u postgres psql -d ldapadmin
-        echo 'GRANT ALL PRIVILEGES ON SCHEMA public TO "www-data";' | sudo -u postgres psql -d ldapadmin
-        echo 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "www-data";' | sudo -u postgres psql -d ldapadmin
+        echo 'GRANT ALL PRIVILEGES ON DATABASE geonetwork TO "www-data";' | psql -d geonetwork
+        echo 'GRANT ALL PRIVILEGES ON SCHEMA public TO "www-data";' | psql -d geonetwork
+        echo 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "www-data";' | psql -d geonetwork
+        echo 'GRANT ALL PRIVILEGES ON DATABASE downloadform TO "www-data";' | psql -d downloadform
+        echo 'GRANT ALL PRIVILEGES ON SCHEMA public TO "www-data";' | psql -d downloadform
+        echo 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "www-data";' | psql -d downloadform
+        echo 'GRANT ALL PRIVILEGES ON DATABASE ogcstatistics TO "www-data";' | psql -d ogcstatistics
+        echo 'GRANT ALL PRIVILEGES ON SCHEMA public TO "www-data";' | psql -d ogcstatistics
+        echo 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "www-data";' | psql -d ogcstatistics
+        echo 'GRANT ALL PRIVILEGES ON DATABASE ldapadmin TO "www-data";' | psql -d ldapadmin
+        echo 'GRANT ALL PRIVILEGES ON SCHEMA public TO "www-data";' | psql -d ldapadmin
+        echo 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "www-data";' | psql -d ldapadmin
         exit
 
 Apache
