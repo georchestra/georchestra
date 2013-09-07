@@ -1,7 +1,6 @@
 package org.georchestra.extractorapp.ws.extractor.wcs;
 
 import static org.georchestra.extractorapp.ws.extractor.wcs.WcsParameters.FORMAT;
-import static org.geotools.referencing.crs.DefaultGeographicCRS.WGS84;
 
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
@@ -20,12 +19,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -46,6 +45,7 @@ import org.geotools.parameter.Parameter;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.operation.matrix.XAffineTransform;
 import org.geotools.renderer.lite.RendererUtilities;
+import org.geotools.resources.CRSUtilities;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.grid.Format;
 import org.opengis.coverage.grid.GridCoverage;
@@ -55,6 +55,7 @@ import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
@@ -296,13 +297,8 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
         String name = file.getName().toLowerCase();
 
         if (name.endsWith(".tif") || name.endsWith("tiff")) {
-            String absolutePath = file.getAbsolutePath();
-            String baseName = absolutePath.substring(0, absolutePath.lastIndexOf(".tif"));
-            createPrjFile(targetRequest.responseCRS, baseName);
-            createWorldFile(file.getAbsoluteFile(), targetRequest, baseName, ".tif");
-            createTABFile(targetRequest, baseName);
+//            writeWorldImageExt(targetRequest, file);
         }
-
     }
 
     private void geotoolsTranformation(final File sourceFile,
@@ -370,7 +366,8 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
                 File tmpDir = FileUtils.createTempDirectory();
                 try {
                     File tmpFile = new File(tmpDir, baseFilename + "."+ request.fileExtension());
-                    writeWorldImage(request, tmpFile, in);
+                    writeToFile(tmpFile, in);
+                    writeWorldImageExt(request, tmpFile);
                     convertToGeotiff(tmpFile, file);
                 } finally {
                     FileUtils.delete(tmpDir);
@@ -378,17 +375,15 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
             } else {
                 BufferedImage image = ImageIO.read(in);
                 ImageIO.write(image, request.format, file);
-
-                String baseFilePath = file.getPath().substring(0,
-                        file.getPath().lastIndexOf('.'));
-                createWorldFile(file.getAbsoluteFile(), request, baseFilePath, FileUtils.extension(file));
-                createPrjFile(request.responseCRS, baseFilePath);
+                
+                writeWorldImageExt(request, file);
             }
         } else {
             if (Formats.embeddedCrsFormats.contains(request.format)) {
                 writeToFile(file, in);
             } else {
-                writeWorldImage(request, file, in);
+            	writeToFile(file, in);
+                writeWorldImageExt(request, file);
             }
         }
     }
@@ -411,6 +406,13 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
         CoverageTransformation.perform(tmpFile, transformation);
     }
 
+    /**
+     * Write an image file from an inputstream.
+     * Used when we want to write image from the wcs get coverage server response stream
+     * @param file
+     * @param in
+     * @throws IOException
+     */
     private void writeToFile(File file, InputStream in) throws IOException {
         FileOutputStream fout = new FileOutputStream(file);
         try {
@@ -438,14 +440,69 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
         }
     }
 
-    private void writeWorldImage(WcsReaderRequest request, File file,
-            InputStream in) throws IOException {
-        writeToFile(file, in);
+    /**
+     * Write world image extensions : TFW, PRJ, TAB
+     * @param request
+     * @param file
+     * @param in
+     * @throws IOException
+     */
+    private void writeWorldImageExt(WcsReaderRequest request, File file) throws IOException {
 
         String baseFilePath = file.getPath().substring(0,
                 file.getPath().lastIndexOf('.'));
-        createWorldFile(file.getAbsoluteFile(), request, baseFilePath, FileUtils.extension(file));
-        createTABFile(request, baseFilePath);
+        
+        // Compute image size and image transformed BBOX
+        ReferencedEnvelope transformedBBox;
+        AffineTransform transform;
+        
+        int width = -1;
+        int height = -1;
+        String ext = FileUtils.extension(file);
+
+        try {
+            final Iterator<ImageReader> readers = ImageIO.getImageReadersByFormatName(ext.substring(1));
+            
+            while (readers.hasNext() && width < 0 && height < 0) {
+                ImageInputStream stream = null;
+                try {
+                    ImageReader reader = readers.next();
+                    stream = ImageIO.createImageInputStream(file.getAbsoluteFile());
+                    reader.setInput(stream, true, false);
+                    width = reader.getWidth(0);
+                    height = reader.getHeight(0);
+                    break;
+                } catch ( Exception e) {
+                    width = -1;
+                    height = -1;
+                    // try next reader;
+                } finally {
+                    if (stream != null) {
+                        stream.close();
+                    }
+                }
+            }
+
+            transformedBBox = request.requestBbox.transform(request.responseCRS, true, 10);
+            if (width < 0) {
+                width = (int) Math.round(transformedBBox.getWidth() / request.crsResolution());
+            }
+
+            if (height < 0) {
+                height = (int) Math.round(transformedBBox.getHeight() / request.crsResolution());
+            }
+
+            Rectangle imageSize = new Rectangle(width, height);
+            transform = RendererUtilities.worldToScreenTransform(transformedBBox, imageSize);
+            transform.invert();
+
+        } catch (Exception e) {
+            throw new ExtractorException(e);
+        }
+
+        // Generate TFW TAB PRJ files
+        createWorldFile(transform, ext, baseFilePath);
+        createTABFile(transformedBBox, width, height, baseFilePath, ext);
         createPrjFile(request.responseCRS, baseFilePath);
     }
 
@@ -550,51 +607,8 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
      *             In case we cannot create the world file.
      * @throws TransformException
      */
-    private void createWorldFile(File imageFile, final WcsReaderRequest request,
-                                 final String baseFile, String ext) throws IOException {
-
-        ReferencedEnvelope transformedBBox;
-        AffineTransform transform;
-        try {
-            final Iterator<ImageReader> readers = ImageIO.getImageReadersByFormatName(ext.substring(1));
-            int width = -1;
-            int height = -1;
-            while (readers.hasNext() && width < 0 && height < 0) {
-                ImageInputStream stream = null;
-                try {
-                    ImageReader reader = readers.next();
-                    stream = ImageIO.createImageInputStream(imageFile);
-                    reader.setInput(stream, true, false);
-                    width = reader.getWidth(0);
-                    height = reader.getHeight(0);
-                    break;
-                } catch ( Exception e) {
-                    width = -1;
-                    height = -1;
-                    // try next reader;
-                } finally {
-                    if (stream != null) {
-                        stream.close();
-                    }
-                }
-            }
-
-            transformedBBox = request.requestBbox.transform(request.responseCRS, true, 10);
-            if (width < 0) {
-                width = (int) Math.round(transformedBBox.getWidth() / request.crsResolution());
-            }
-
-            if (height < 0) {
-                height = (int) Math.round(transformedBBox.getHeight() / request.crsResolution());
-            }
-
-            Rectangle imageSize = new Rectangle(width, height);
-            transform = RendererUtilities.worldToScreenTransform(transformedBBox, imageSize);
-            transform.invert();
-
-        } catch (Exception e) {
-            throw new ExtractorException(e);
-        }
+    private void createWorldFile(final AffineTransform transform, 
+    		final String ext, final String baseFile) throws IOException {
 
         // /////////////////////////////////////////////////////////////////////
         //
@@ -643,7 +657,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
         } else if (ext.substring(0, 4).equalsIgnoreCase(".bmp")) {
             buff.append(".bpw");
         } else {
-            buff.append(".tfw");
+            buff.append(".tffw");
         }
         final File worldFile = new File(buff.toString());
 
@@ -663,41 +677,77 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
         }
     }
 
-    private void createTABFile(final WcsReaderRequest request,
-            final String baseFile) throws IOException {
+    private void createTABFile(ReferencedEnvelope transformedBBox, final int width, final int height,
+            final String baseFile, final String ext) throws IOException {
     	
-        ReferencedEnvelope transformedBBox;
-        
-        try {
-            transformedBBox = new ReferencedEnvelope(request.requestBbox, WGS84)
-                    .transform(request.responseCRS, true, 10);
-        } catch (Exception e) {
-            throw new ExtractorException(e);
-        }
-
-    	int width = (int) Math.round(transformedBBox.getWidth() / request.crsResolution());
-        int height = (int) Math.round(transformedBBox.getHeight() / request.crsResolution());
-        
-        final StringBuffer buff = new StringBuffer(baseFile);
+    	final StringBuffer buff = new StringBuffer(baseFile);
         buff.append(".tab");
         final File tabFile = new File(buff.toString());
-
-        LOG.debug("Writing TAB file: " + tabFile);
-
+        
         final PrintWriter out = new PrintWriter(new FileOutputStream(tabFile));
+        
         try {
             out.println("!table");
             out.println("!version 300");
             out.println("!charset UTF-8");
             out.println("");
             out.println("Definition Table");
-            out.println("File " + baseFile);
+            out.println("File " + tabFile.getName().replace(".tab", ".") + ext);
             out.println("Type \"RASTER\"");
             out.println("("+transformedBBox.getMinX()+","+transformedBBox.getMinY()+") (0,0) Label \"Pt 1\",");
             out.println("("+transformedBBox.getMaxX()+","+transformedBBox.getMinY()+") ("+width+",0) Label \"Pt 2\",");
             out.println("("+transformedBBox.getMaxX()+","+transformedBBox.getMaxY()+") ("+width+","+height+") Label \"Pt 3\",");
             out.println("("+transformedBBox.getMinX()+","+transformedBBox.getMaxY()+") (0,"+height+") Label \"Pt 4\",");
-            out.println("CoordSys Earth Projection ");
+            
+            InputStream in = WcsCoverageReader.class.getClassLoader().getResourceAsStream("org/georchestra/extractorapp/proj4MapinfoTab.properties");
+            Properties properties = new Properties();
+            properties.load(in);
+            
+            Iterator<ReferenceIdentifier> iter = transformedBBox.getCoordinateReferenceSystem().getIdentifiers().iterator();
+            String crsCode = iter.next().toString();
+            crsCode = crsCode.replace("EPSG:", "");
+            		
+            out.println(properties.get(crsCode));
+            out.print("units \"" + CRSUtilities.getUnit(transformedBBox.getCoordinateReferenceSystem().getCoordinateSystem()).toString() + "\"");
+            
+            /**
+            GeneralDerivedCRS crs = (GeneralDerivedCRS)request.responseCRS;
+            Conversion conversionFromBase = crs.getConversionFromBase();
+            
+            Unit<?> unit = CRSUtilities.getUnit(crs.getCoordinateSystem());
+            GeodeticDatum datum = (GeodeticDatum)crs.getDatum();
+            
+            // Specific MAPINFO TAB format
+            String projType = conversionFromBase.getMethod().getName().getCode();
+            String datumCode = datum.getEllipsoid().getName().getCode();
+            
+            Map <String, Integer> projectionTypes = new HashMap<String, Integer>();
+            projectionTypes.put("Lambert Conic Conformal (2SP)", 3);
+
+            Map <String, Integer> datumCodes = new HashMap<String, Integer>();
+            datumCodes.put("GRS 1980", 33);
+
+            // get params from CRS
+            Map<String, String> params= new HashMap<String, String>();
+            for (final GeneralParameterValue param : conversionFromBase.getParameterValues().values()) {
+            	if (param instanceof ParameterValue) {
+            		final double value = ((ParameterValue<?>) param).doubleValue();
+            		params.put(param.getDescriptor().getName().getCode(), String.valueOf(value));
+            	}
+            }
+            
+            out.print("CoordSys Earth ");
+            out.print("Projection " + projectionTypes.get(projType) + ", ");
+            out.print(datumCodes.get(datumCode) + ", ");
+            out.print(unit.toString() + ", ");
+            out.print(params.get("central_meridian") + ", ");
+            out.print(params.get("latitude_of_origin") + ", ");
+            out.print(params.get("standard_parallel_2") + ", ");
+            out.print(params.get("standard_parallel_1") + ", ");
+            out.print(params.get("false_easting") + ", ");
+            out.print(params.get("false_northing") + ", ");
+            **/
+            
             out.flush();
         } finally {
             out.close();
