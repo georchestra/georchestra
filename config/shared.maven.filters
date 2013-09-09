@@ -31,7 +31,7 @@ shared.psql.jdbc.driver=org.postgresql.Driver
 shared.psql.jdbc.driver.url=postgresql
 
 
-shared.log.dir=/var/log/tomcat
+shared.log.dir=/var/log/tomcat6
 shared.default.log.level=WARN
 other.framework.log.level=WARN
 
@@ -56,3 +56,13 @@ shared.download_form.activated=false
 shared.download_form.pdf_url=/static/cgu.pdf
 shared.psql.download_form.db=downloadform
 shared.download_form.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.psql.download_form.db@
+
+shared.ldapadmin.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.psql.ldapadmin.db@
+shared.ldapadmin.email.languages=fr,fra
+shared.ldapadmin.email.subject.account.created=The account was created
+shared.ldapadmin.email.subject.account.in.process=Account creation in process
+shared.ldapadmin.email.subject.requires.signup=New account requires signup
+shared.ldapadmin.email.subject.change.password=Change password
+shared.ldapadmin.moderator.requires.signup=false
+shared.ldapadmin.moderator.email=moderator@mail
+shared.ldapadmin.expired.token.delay.in.days=1
