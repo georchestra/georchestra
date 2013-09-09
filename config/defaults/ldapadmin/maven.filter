@@ -1,5 +1,3 @@
-
-
 # ReCaptcha keys
 privateKey=6Lf0h-MSAAAAAI2nHJfNPDaEXXjsdmn8eKSZUrQZ
 publicKey=6Lf0h-MSAAAAAOQ4YyRtbCNccU87dlGmokmelZjh
@@ -13,22 +11,22 @@ ldap.admin.password=@shared.ldap.admin.password@
 # Database connection
 psql.user=@shared.psql.user@
 psql.pass=@shared.psql.pass@
-psql.url=@shared.ldapadmin.jdbcurl@
+psql.url=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/ldapadmin
 
 # Email properties
 smtpHost=@shared.smtp.host@
 smtpPort=@shared.smtp.port@
 replyTo=@shared.smtp.replyTo@
 from=@shared.smtp.from@
-languages=@shared.ldapadmin.email.languages@
-subject.account.created=@shared.ldapadmin.email.subject.account.created@
-subject.account.in.process=@shared.ldapadmin.email.subject.account.in.process@
-subject.requires.signup=@shared.ldapadmin.email.subject.requires.signup@
-subject.change.password=@shared.ldapadmin.email.subject.change.password@
+languages=fr,fra
+subject.account.created=The account was created
+subject.account.in.process=Account creation in process
+subject.requires.signup=New account requires signup
+subject.change.password=Change password
 
 # Moderator
-requiresSignup=@shared.ldapadmin.moderator.requires.signup@
-moderatorEmail=@shared.ldapadmin.moderator.email@
+requiresSignup=false
+moderatorEmail=moderator@mail
 
 # Expired token
-delayInDays=@shared.ldapadmin.expired.token.delay.in.days@
+delayInDays=1
