@@ -24,12 +24,14 @@
   <div class="row-fluid">
     <div class="span6">
       <div class="control-group" ng-class="{error: userForm.sn.$invalid}">
+        <label for="mail">First Name</label>
         <input type="text" name="sn" ng-model="user.sn" required  placeholder="First Name" class="span12"/>
         <span ng-show="userForm.sn.$error.required" class="help-inline">Required</span>
       </div>
     </div>
     <div class="span6">
       <div class="control-group" ng-class="{error: userForm.givenName.$invalid}">
+        <label for="mail">Last Name</label>
         <input type="text" name="givenName" ng-model="user.givenName" required  placeholder="Last Name" class="span12"/>
         <span ng-show="userForm.givenName.$error.required" class="help-inline">Required</span>
       </div>
