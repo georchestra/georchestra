@@ -1,9 +1,4 @@
-The following user is waiting for moderation
-<p> 
+A new account has been created and is waiting for validation.
+
 User name: {name}
-</p>
-<p> 
 User ID: {uid}
-</p>
-
-

@@ -1,8 +1,3 @@
-<p> 
-Dear {name}, your request has been submitted and should be processed in the next hours. Watch your email.
-</p>
-<p> 
-User ID: {uid}
-</p>
+{name}, your request for a new account has been submitted. You will receive an e-mail when the account is validated.
 
-
+Your login is: {uid}
