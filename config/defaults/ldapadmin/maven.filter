@@ -18,9 +18,9 @@ smtpHost=@shared.smtp.host@
 smtpPort=@shared.smtp.port@
 replyTo=@shared.smtp.replyTo@
 from=@shared.smtp.from@
-subject.account.created=[@shared.instance.name@] The account was created
-subject.account.in.process=[@shared.instance.name@] Account creation in process
-subject.requires.signup=[@shared.instance.name@] New account requires signup
+subject.account.created=[@shared.instance.name@] Your account has been created
+subject.account.in.process=[@shared.instance.name@] Your new account is waiting for validation
+subject.requires.signup=[@shared.instance.name@] New account waiting for validation
 subject.change.password=[@shared.instance.name@] Update your password
 
 # Moderator
