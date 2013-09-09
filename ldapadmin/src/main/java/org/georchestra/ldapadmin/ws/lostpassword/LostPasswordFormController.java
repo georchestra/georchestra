@@ -153,9 +153,12 @@ public class LostPasswordFormController  {
 	 */
 	private String makeChangePasswordURL(final String host, final int port, String contextPath, final String token) {
 
-		StringBuilder strBuilder = new StringBuilder("http://");
-		strBuilder.append(host);
-		strBuilder.append(":").append(port);
+		StringBuilder strBuilder = new StringBuilder("");
+		if ((port == 80) || (port == 443)) {
+			strBuilder.append("https://").append(host);
+		} else {
+			strBuilder.append("http://").append(host).append(":").append(port);
+		}
 		strBuilder.append(contextPath);
 		strBuilder.append( "/account/newPassword?token=").append(token);
 		
