@@ -1,16 +1,12 @@
-Le job d'extraction que vous avez soumis à la plateforme geOrchestra est maintenant terminé.
-<br/>
-Cliquez sur le lien suivant pour télécharger votre archive (disponible pendant {expiry} jours) :
-<p> 
-<a href="{link}">{link}</a>
-</p>
-Les couches suivantes ont été extraites avec succès:
+The extraction job you submitted to the geOrchestra platform has finished.
+
+Download your file at {link}. It will be available during {expiry} days.
+
+The following layers have been extracted successfully:
 {successes}
-<br/>
-L'extraction des couches suivantes a échoué. Le fichier 
-failures.html contient plus d'informations:
+
+The following layers could not be extracted. The failures.html file contains more informations:
 {failures}
-<br/>
-L'extraction des couches suivantes a été annulée. La zone demandée a été trop grande:
+
+The following layers' extraction has been canceled. The requested area is too large:
 {oversized}
-<br/>
