@@ -26,6 +26,6 @@ dlformjdbcurl=@shared.download_form.jdbcurl@?user=@shared.psql.user@&amp;passwor
 dlformactivated=@shared.download_form.activated@
 
 emailfactory=org.georchestra.extractorapp.ws.EmailFactoryDefault
-emailsubject=Your extraction request on @shared.server.name@
+emailsubject=[@shared.instance.name@] Your extraction request
 
 language=@shared.language@

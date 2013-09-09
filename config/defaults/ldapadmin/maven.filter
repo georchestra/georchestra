@@ -18,10 +18,10 @@ smtpHost=@shared.smtp.host@
 smtpPort=@shared.smtp.port@
 replyTo=@shared.smtp.replyTo@
 from=@shared.smtp.from@
-subject.account.created=The account was created
-subject.account.in.process=Account creation in process
-subject.requires.signup=New account requires signup
-subject.change.password=Update your password
+subject.account.created=[@shared.instance.name@] The account was created
+subject.account.in.process=[@shared.instance.name@] Account creation in process
+subject.requires.signup=[@shared.instance.name@] New account requires signup
+subject.change.password=[@shared.instance.name@] Update your password
 
 # Moderator
 requiresSignup=false
