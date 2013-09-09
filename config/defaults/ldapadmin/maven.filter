@@ -22,7 +22,7 @@ languages=fr,fra
 subject.account.created=The account was created
 subject.account.in.process=Account creation in process
 subject.requires.signup=New account requires signup
-subject.change.password=Change password
+subject.change.password=Update your password
 
 # Moderator
 requiresSignup=false
