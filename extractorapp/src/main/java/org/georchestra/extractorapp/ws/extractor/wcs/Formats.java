@@ -28,6 +28,8 @@ class Formats {
         gtFormats.put("png", new WorldImageFormat());
         gtFormats.put("gif", new WorldImageFormat());
         gtFormats.put("jpeg", new WorldImageFormat());
+        gtFormats.put("tiff", new WorldImageFormat());
+        gtFormats.put("tif", new WorldImageFormat());
         gtFormats.put("geotiff", new GeoTiffFormat());
         gtFormats.put("jp2ecw", new JP2ECWFormat());
         gtFormats.put("ecw", new ECWFormat());
