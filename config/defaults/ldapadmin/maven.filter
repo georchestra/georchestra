@@ -18,7 +18,6 @@ smtpHost=@shared.smtp.host@
 smtpPort=@shared.smtp.port@
 replyTo=@shared.smtp.replyTo@
 from=@shared.smtp.from@
-languages=@shared.language@
 subject.account.created=The account was created
 subject.account.in.process=Account creation in process
 subject.requires.signup=New account requires signup
@@ -30,3 +29,5 @@ moderatorEmail=moderator@mail
 
 # Expired token
 delayInDays=1
+
+language=@shared.language@

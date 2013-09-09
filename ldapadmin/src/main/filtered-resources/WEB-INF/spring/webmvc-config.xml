@@ -107,7 +107,7 @@
         <property name="from" value="${from}" />
         <property name="bodyEncoding" value="UTF-8" />
         <property name="subjectEncoding" value="UTF-8" />
-        <property name="languages" value="${languages}" />
+        <property name="languages" value="${language}" />
         
         <property name="accountWasCreatedEmailFile"
             value="/WEB-INF/templates/newaccount-was-created-template.txt" />
