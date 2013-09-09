@@ -91,7 +91,7 @@ public final class MailService {
 	 * @param userEmail user email
 	 * 
 	 */
-	public void sendChangePassowrdURL(ServletContext servletContext, final String uid, final String commonName, final String url, final String userEmail) {
+	public void sendChangePasswordURL(ServletContext servletContext, final String uid, final String commonName, final String url, final String userEmail) {
 		
 		if(LOG.isDebugEnabled()){
 			LOG.debug("uid: "+uid+ "- commonName" + commonName + " - url: " + url + " - email: " + userEmail);

@@ -125,7 +125,7 @@ public class LostPasswordFormController  {
 			
 			String url = makeChangePasswordURL(request.getServerName(), request.getServerPort(), servletContext.getContextPath(), token);
 
-			this.mailService.sendChangePassowrdURL(servletContext, account.getUid(), account.getCommonName(), url, account.getEmail());
+			this.mailService.sendChangePasswordURL(servletContext, account.getUid(), account.getCommonName(), url, account.getEmail());
 			
 			sessionStatus.setComplete();
 			
