@@ -311,7 +311,7 @@ public final class UpLoadGeoFileController {
 			CoordinateReferenceSystem crs = null;
 			try {
 				String srsParam = request.getParameter("srs");
-				if(!"".equals(srsParam)){
+				if( (srsParam != null) && (srsParam.length() > 0) ){
 					crs = CRS.decode(srsParam);
 				}
 			} catch (NoSuchAuthorityCodeException e) {
