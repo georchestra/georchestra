@@ -21,23 +21,6 @@ SET client_min_messages = warning;
 COMMENT ON DATABASE postgres IS 'default administrative connection database';
 
 
---
--- TOC entry 162 (class 3079 OID 11677)
--- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
---
-
-CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
-
-
---
--- TOC entry 1894 (class 0 OID 0)
--- Dependencies: 162
--- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
---
-
-COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
-
-
 SET search_path = public, pg_catalog;
 
 SET default_tablespace = '';
