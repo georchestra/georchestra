@@ -24,7 +24,6 @@
  * @include OpenLayers/Kinetic.js
  * @include OpenLayers/Layer/WMS.js
  * @include OpenLayers/Layer/XYZ.js
- * @include OpenLayers/Layer/OSM.js
  * @include OpenLayers/Layer/Grid.js
  * @include OpenLayers/BaseTypes/Size.js
  * @include GeoExt/data/LayerRecord.js
