@@ -693,7 +693,7 @@ GEOR.ows = (function() {
                 featurePrefix: featurePrefix || 'feature',
                 srsNameInQuery: true, // see http://trac.osgeo.org/openlayers/ticket/2228
                 srsName: map.getProjection(),
-                version: WFS_BASE_PARAMS["VERSION"] || record.WFSversion
+                version: record.get("WFSversion")
             }, options || {});
             return new OpenLayers.Protocol.WFS(options);
         }

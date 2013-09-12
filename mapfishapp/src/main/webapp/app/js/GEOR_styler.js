@@ -627,9 +627,10 @@ GEOR.styler = (function() {
             "some time)");
         mask.show();
         
-        // FIXME : Since GT WFSDatasource doesn't support WFS, we must use an earlier
-        // version to make Styler works.
-        params.wfs_url += "&version=1.0.0";
+        // HACK: since GeoTools WFSDatasource doesn't support WFS 2.0.0, 
+        // we must use an earlier WFS version to make Styler work.
+        params.wfs_url = OpenLayers.Util.urlAppend(params.wfs_url, 
+            "VERSION=1.0.0");
         
         OpenLayers.Request.POST({
             url: "ws/sld/",
