@@ -300,7 +300,10 @@ GEOR.getfeatureinfo = (function() {
             } else {
                 // clear model cache:
                 model = null;
-                if (ctrl.layers[0] === layer) {
+                // test for layers array size to see if we're not switching
+                // from a single gfi to a multiple gfi - in that case we dont
+                // want to collapse the south panel
+                if (ctrl.layers[0] === layer && ctrl.layers.length == 1) {
                     // we clicked on a toolbar button, which means we have
                     // to stop gfi requests.
                     //
