@@ -36,12 +36,6 @@ PostGreSQL
         psql -f /usr/share/postgresql/9.1/contrib/postgis-1.5/spatial_ref_sys.sql geonetwork
 
         createuser -DPRS www-data
-        psql geonetwork
-        > ALTER TABLE spatial_ref_sys   OWNER TO "www-data";
-        > ALTER TABLE geometry_columns  OWNER TO "www-data";
-        > ALTER TABLE geography_columns OWNER TO "www-data";
-        > ALTER USER "www-data" WITH PASSWORD 'www-data';
-        > \q
 
 * downloadform and ogcstatistics databases setup
 
@@ -56,8 +50,29 @@ PostGreSQL
             createdb ogcstatistics
             wget https://raw.github.com/georchestra/georchestra/master/ogc-server-statistics/ogc_statistics_table.sql -O /tmp/ogc_statistics_table.sql
             psql ogcstatistics -f /tmp/ogc_statistics_table.sql
-            exit
-    
+
+ * ldapadmin
+
+            createdb ldapadmin
+            wget https://raw.github.com/georchestra/georchestra/master/ldapadmin/ldapAdminDB.sql -O /tmp/ldapAdminDB.sql
+            psql ldapadmin -f /tmp/ldapAdminDB.sql
+
+* Set rights of the www-data user
+
+        echo 'GRANT ALL PRIVILEGES ON DATABASE geonetwork TO "www-data";' | psql -d geonetwork
+        echo 'GRANT ALL PRIVILEGES ON SCHEMA public TO "www-data";' | psql -d geonetwork
+        echo 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "www-data";' | psql -d geonetwork
+        echo 'GRANT ALL PRIVILEGES ON DATABASE downloadform TO "www-data";' | psql -d downloadform
+        echo 'GRANT ALL PRIVILEGES ON SCHEMA public TO "www-data";' | psql -d downloadform
+        echo 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "www-data";' | psql -d downloadform
+        echo 'GRANT ALL PRIVILEGES ON DATABASE ogcstatistics TO "www-data";' | psql -d ogcstatistics
+        echo 'GRANT ALL PRIVILEGES ON SCHEMA public TO "www-data";' | psql -d ogcstatistics
+        echo 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "www-data";' | psql -d ogcstatistics
+        echo 'GRANT ALL PRIVILEGES ON DATABASE ldapadmin TO "www-data";' | psql -d ldapadmin
+        echo 'GRANT ALL PRIVILEGES ON SCHEMA public TO "www-data";' | psql -d ldapadmin
+        echo 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "www-data";' | psql -d ldapadmin
+        exit
+
 Apache
 =========
 
@@ -119,7 +134,7 @@ Apache
 * Apache config
 
         cd conf/
-        sudo vim proxypass.conf
+        sudo vim /var/www/georchestra/conf/proxypass.conf
         
     should have something like:
         
@@ -156,6 +171,7 @@ Apache
     RewriteRule ^/geoserver2/(.*)$ /geoserver/$1 [R]
     RewriteRule ^/geoserver$ /geoserver/ [R]
     RewriteRule ^/geowebcache$ /geowebcache/ [R]
+    RewriteRule ^/ldapadmin$ /ldapadmin/ [R]
     RewriteRule ^/mapfishapp$ /mapfishapp/ [R]
     RewriteRule ^/proxy$ /proxy/ [R]
     RewriteRule ^/static$ /static/ [R]
@@ -195,6 +211,9 @@ Apache
 
     ProxyPass /j_spring_security_logout ajp://localhost:8009/j_spring_security_logout 
     ProxyPassReverse /j_spring_security_logout ajp://localhost:8009/j_spring_security_logout
+
+    ProxyPass /ldapadmin/ ajp://localhost:8009/ldapadmin/
+    ProxyPassReverse /ldapadmin/ ajp://localhost:8009/ldapadmin/
 
     ProxyPass /mapfishapp/ ajp://localhost:8009/mapfishapp/ 
     ProxyPassReverse /mapfishapp/ ajp://localhost:8009/mapfishapp/

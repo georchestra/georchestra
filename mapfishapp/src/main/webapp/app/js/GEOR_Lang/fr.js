@@ -345,7 +345,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "zoom to global extent of the map": "zoom sur l'étendue globale de la " +
         "carte",
     "pan": "glisser - déplacer la carte",
-    "zoom in": "zoom en avant",
+    "zoom in": "zoom en avant (pour zoomer sur une emprise: appuyer sur SHIFT + dessiner l'emprise)",
     "zoom out": "zoom en arrière",
     "back to previous zoom": "revenir à la précédente emprise",
     "go to next zoom": "aller à l'emprise suivante",

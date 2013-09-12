@@ -1,0 +1,33 @@
+# ReCaptcha keys
+privateKey=6Lf0h-MSAAAAAI2nHJfNPDaEXXjsdmn8eKSZUrQZ
+publicKey=6Lf0h-MSAAAAAOQ4YyRtbCNccU87dlGmokmelZjh
+
+# LDAP
+ldapUrl=@shared.ldapUrl@
+baseDN=@shared.ldap.baseDn@
+ldapAdminDn=@shared.ldap.admin.dn@
+ldap.admin.password=@shared.ldap.admin.password@
+
+# Database connection
+psql.user=@shared.psql.user@
+psql.pass=@shared.psql.pass@
+psql.url=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/ldapadmin
+
+# Email properties
+smtpHost=@shared.smtp.host@
+smtpPort=@shared.smtp.port@
+replyTo=@shared.smtp.replyTo@
+from=@shared.smtp.from@
+subject.account.created=The account was created
+subject.account.in.process=Account creation in process
+subject.requires.signup=New account requires signup
+subject.change.password=Update your password
+
+# Moderator
+requiresSignup=false
+moderatorEmail=moderator@mail
+
+# Expired token
+delayInDays=1
+
+language=@shared.language@

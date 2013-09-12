@@ -25,14 +25,15 @@ public class HeadersManagementStrategy {
     private static final String JSESSION_ID = "JSESSIONID";
     private static final String SET_COOKIE_ID ="Set-Cookie";
     private static final String COOKIE_ID ="Cookie";
-    
+    public static final String REFERER_HEADER_NAME = "referer";
+
     /**
      * If true (default is false) AcceptEncoding headers are removed from request headers
      */
     private boolean noAcceptEncoding = false;
     private List<HeaderProvider> headerProviders = Collections.emptyList(); 
     private List<HeaderFilter> filters = Collections.emptyList();
-
+    private String referer = null;
 
     /**
      * Copies the request headers from the original request to the proxy request.  It may modify the
@@ -46,6 +47,9 @@ public class HeadersManagementStrategy {
         StringBuilder headersLog = new StringBuilder("Request Headers:\n");
         headersLog
                 .append("==========================================================\n");
+        if (referer != null) {
+            addHeaderToRequestAndLog(proxyRequest, headersLog, REFERER_HEADER_NAME, this.referer);
+        }
         while (headerNames.hasMoreElements()) {
             headerName = headerNames.nextElement();
             if (headerName.compareToIgnoreCase("content-length") == 0) {
@@ -57,45 +61,43 @@ public class HeadersManagementStrategy {
             if (filter(originalRequest, headerName, proxyRequest)) {
                 continue;
             }
-            if(noAcceptEncoding && headerName.equalsIgnoreCase("Accept-Encoding")) {
+            if (noAcceptEncoding && headerName.equalsIgnoreCase("Accept-Encoding")) {
                 continue;
             }
-            if(headerName.equalsIgnoreCase("host")){
+            if (headerName.equalsIgnoreCase("host")) {
+                continue;
+            }
+            if (referer != null && headerName.equalsIgnoreCase(REFERER_HEADER_NAME)) {
                 continue;
             }
             
             String value = originalRequest.getHeader(headerName);
-            proxyRequest.addHeader(new BasicHeader(headerName, value));
-            headersLog.append("\t" + headerName);
-            headersLog.append("=");
-            headersLog.append(value);
-            headersLog.append("\n");
+            addHeaderToRequestAndLog(proxyRequest, headersLog, headerName, value);
         }
 
         handleRequestCookies(originalRequest, proxyRequest, headersLog);
         HttpSession session = originalRequest.getSession();
 
-        for(HeaderProvider provider : headerProviders) {
+        for (HeaderProvider provider : headerProviders) {
             for (Header header : provider.getCustomRequestHeaders(session)) {
-            	if (( header.getName().equalsIgnoreCase("sec-username") ||
-            		  header.getName().equalsIgnoreCase("sec-roles") ) &&
-            	     proxyRequest.getHeaders(header.getName()) != null &&
-            	     proxyRequest.getHeaders(header.getName()).length > 0) {
-            		Header [] originalHeaders = proxyRequest.getHeaders(header.getName());
-            		for (Header originalHeader : originalHeaders) {
-	            		headersLog.append("\t" + originalHeader.getName());
-	            		headersLog.append("=");
-	            		headersLog.append(originalHeader.getValue());
-	            		headersLog.append("\n");
-            		}
-            	}
-            	else {
-            		proxyRequest.addHeader(header);
-            		headersLog.append("\t" + header.getName());
-            		headersLog.append("=");
-            		headersLog.append(header.getValue());
-            		headersLog.append("\n");
-            	}
+                if ((header.getName().equalsIgnoreCase("sec-username") ||
+                     header.getName().equalsIgnoreCase("sec-roles")) &&
+                    proxyRequest.getHeaders(header.getName()) != null &&
+                    proxyRequest.getHeaders(header.getName()).length > 0) {
+                    Header[] originalHeaders = proxyRequest.getHeaders(header.getName());
+                    for (Header originalHeader : originalHeaders) {
+                        headersLog.append("\t" + originalHeader.getName());
+                        headersLog.append("=");
+                        headersLog.append(originalHeader.getValue());
+                        headersLog.append("\n");
+                    }
+                } else {
+                    proxyRequest.addHeader(header);
+                    headersLog.append("\t" + header.getName());
+                    headersLog.append("=");
+                    headersLog.append(header.getValue());
+                    headersLog.append("\n");
+                }
             }
         }
 
@@ -103,6 +105,14 @@ public class HeadersManagementStrategy {
                 .append("==========================================================");
 
         logger.trace(headersLog.toString());
+    }
+
+    private void addHeaderToRequestAndLog(HttpRequestBase proxyRequest, StringBuilder headersLog, String headerName, String value) {
+        proxyRequest.addHeader(new BasicHeader(headerName, value));
+        headersLog.append("\t" + headerName);
+        headersLog.append("=");
+        headersLog.append(value);
+        headersLog.append("\n");
     }
 
     private void handleRequestCookies(HttpServletRequest originalRequest, HttpRequestBase proxyRequest,
@@ -345,4 +355,7 @@ public class HeadersManagementStrategy {
     public void setFilters(List<HeaderFilter> filters) {
         this.filters = filters;
     }
-}
+
+    public void setReferer(String referer){
+        this.referer = referer;
+    }}

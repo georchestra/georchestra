@@ -126,16 +126,24 @@ public final class FileUtils {
     
     public static void moveFile(File from, File to) throws FileNotFoundException,
             IOException {
+        to.getParentFile().mkdirs();
         if (!from.renameTo(to)) {
-            FileInputStream in = new FileInputStream(from);
-            FileOutputStream out = new FileOutputStream(to);
-            try {
-                in.getChannel().transferTo(0, from.length(), out.getChannel());
-            } finally {
+            if (from.isDirectory()) {
+                to.mkdirs();
+                for (File file: from.listFiles()) {
+                    moveFile(file, new File(to, file.getName()));
+                }
+            } else {
+                FileInputStream in = new FileInputStream(from);
+                FileOutputStream out = new FileOutputStream(to);
                 try {
-                    in.close();
+                    in.getChannel().transferTo(0, from.length(), out.getChannel());
                 } finally {
-                    out.close();
+                    try {
+                        in.close();
+                    } finally {
+                        out.close();
+                    }
                 }
             }
         }
@@ -227,5 +235,13 @@ public final class FileUtils {
         }        
         
         return newName;
-	}    
+	}
+
+    /**
+     * Get the file extension.
+     * @param file the file
+     */
+    public static String extension(File file) {
+        return file.getName().substring(file.getName().lastIndexOf('.'));
+    }
 }

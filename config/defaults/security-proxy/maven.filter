@@ -23,7 +23,8 @@ proxy.mapping=\
     <entry key="geoserver" value="${proxy.defaultTarget}/geoserver-private/" />\
     <entry key="downloadform" value="${proxy.defaultTarget}/downloadform-private/" />\
     <entry key="static" value="${proxy.defaultTarget}/static-private/" />\
-    <entry key="analytics" value="${proxy.defaultTarget}/analytics-private/" />
+    <entry key="analytics" value="${proxy.defaultTarget}/analytics-private/" />\
+    <entry key="ldapadmin" value="${proxy.defaultTarget}/ldapadmin-private/" />
 
 # header mapping
 header.mapping=\

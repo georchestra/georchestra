@@ -115,6 +115,13 @@
                 </dependency>
                 <dependency>
                     <groupId>${project.groupId}</groupId>
+                    <artifactId>ldapadmin</artifactId>
+                    <version>${project.version}</version>
+                    <classifier>${server}</classifier>
+                    <type>war</type>
+                </dependency>
+                <dependency>
+                    <groupId>${project.groupId}</groupId>
                     <artifactId>mapfishapp</artifactId>
                     <version>${project.version}</version>
                     <classifier>${server}</classifier>
@@ -187,6 +194,13 @@
                 <dependency>
                     <groupId>${project.groupId}</groupId>
                     <artifactId>extractorapp</artifactId>
+                    <version>${project.version}</version>
+                    <classifier>${server}</classifier>
+                    <type>war</type>
+                </dependency>
+                <dependency>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>ldapadmin</artifactId>
                     <version>${project.version}</version>
                     <classifier>${server}</classifier>
                     <type>war</type>
@@ -301,6 +315,18 @@
                 <dependency>
                     <groupId>${project.groupId}</groupId>
                     <artifactId>extractorapp</artifactId>
+                    <version>${project.version}</version>
+                    <classifier>${server}</classifier>
+                    <type>war</type>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>ldapadmin</id>
+            <dependencies>
+                <dependency>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>ldapadmin</artifactId>
                     <version>${project.version}</version>
                     <classifier>${server}</classifier>
                     <type>war</type>

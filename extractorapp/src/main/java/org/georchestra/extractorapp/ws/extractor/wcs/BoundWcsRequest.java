@@ -395,27 +395,6 @@ class BoundWcsRequest extends WcsReaderRequest {
         return params.toString ();
     }
 
-    private double crsResolution() {
-        // TODO check if interpolation is None if so then
-        // request full resolution
-
-        if (ScaleUtils.isLatLong(responseCRS)) {
-            try {
-
-                GeodeticCalculator calc = new GeodeticCalculator(responseCRS);
-                ReferencedEnvelope bbox = requestBbox.transform(responseCRS, true);
-                calc.setStartingPosition(bbox.getLowerCorner());
-                
-                calc.setDirection(0, groundResolutionX);
-                return calc.getDestinationGeographicPoint().distance(calc.getStartingGeographicPoint());
-            } catch (Exception e) {
-                throw new ExtractorException(e);
-            }
-        } else {
-            return ScaleUtils.fromMeterToCrs(groundResolutionX, responseCRS);
-        }
-    }
-
     private String resolveFormat (String format) throws IOException {
             if (getUnaliasedFormats ().contains (format)) {
                 return format;

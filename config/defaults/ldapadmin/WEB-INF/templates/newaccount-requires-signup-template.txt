@@ -1,0 +1,9 @@
+The following user is waiting for moderation
+<p> 
+User name: {name}
+</p>
+<p> 
+User ID: {uid}
+</p>
+
+
