@@ -626,6 +626,12 @@ GEOR.styler = (function() {
         mask.msg = tr("Classification ...<br/>(this operation can take " +
             "some time)");
         mask.show();
+        
+        // HACK: since GeoTools WFSDatasource doesn't support WFS 2.0.0, 
+        // we must use an earlier WFS version to make Styler work.
+        params.wfs_url = OpenLayers.Util.urlAppend(params.wfs_url, 
+            "VERSION=1.0.0");
+        
         OpenLayers.Request.POST({
             url: "ws/sld/",
             data: Ext.util.JSON.encode(params),
