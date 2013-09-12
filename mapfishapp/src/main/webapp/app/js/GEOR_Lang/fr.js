@@ -20,6 +20,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Yes": "Oui",
     "No": "Non",
     "OK": "OK",
+    "or": "ou",
     "Cancel": "Annuler",
     "Save": "Sauvegarder",
     "Loading...": "Chargement...",
@@ -124,7 +125,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "The service is inactive": "Le service est inactif",
     "Upload a vector data file.": "Uploadez un fichier de données vectorielles.",
     "The allowed formats are the following: ": "Les formats acceptés sont les suivants : ",
-    "Use ZIP compression for multifiles formats, such as SHP or MIF/MID.": "Utilisez la compression ZIP pour les formats multi-fichiers comme SHP ou MIF/MID.",
+    "Use ZIP compression for multifiles formats, such as": "Utilisez la compression ZIP pour les formats multi-fichiers comme",
     /* GEOR_geonames.js strings */
     /* GEOR_getfeatureinfo.js strings */
     "<div>Searching...</div>": "<div>Recherche en cours...</div>",
