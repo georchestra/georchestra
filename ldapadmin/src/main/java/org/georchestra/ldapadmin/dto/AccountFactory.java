@@ -144,7 +144,7 @@ public class AccountFactory {
 			String organizationalUnit,
 			String homePostalAddress,
 			String mobile, 
-			Integer roomNumber,
+			String roomNumber,
 			String stateOrProvince) {
 		
 		
