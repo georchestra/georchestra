@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.URL;
 import java.nio.channels.Channels;
 import java.util.Arrays;
 import java.util.Collections;
@@ -253,20 +254,23 @@ public class ExtractorController implements ServletContextAware {
 		if (checkFormAcceptance.isFormAccepted(sessionId,request.getHeader("sec-username"), postData)) {
 			UUID requestUuid = UUID.randomUUID();
 
-			StringBuilder url = new StringBuilder(servletUrl);
+			URL urlObj = new URL(servletUrl);
+			if (urlObj.getPort() == urlObj.getDefaultPort()) {
+				urlObj = new URL(urlObj.getProtocol(), urlObj.getHost(), urlObj.getFile());
+			}
+			StringBuilder url = new StringBuilder(urlObj.toString());
 			url.append(RESULTS_MAPPING);
 			url.append("?");
 			url.append(UUID_PARAM);
 			url.append("=");
 			url.append(requestUuid);
 
-			List<ExtractorLayerRequest> requests = Collections
-					.unmodifiableList(ExtractorLayerRequest.parseJson(postData));
+			List<ExtractorLayerRequest> requests = Collections.unmodifiableList(
+																	ExtractorLayerRequest.parseJson(postData));
 			if (requests.size() > 0) {
 				
 				String[] recipients = requests.get(0)._emails;
-				Email email = emailFactory.createEmail(request, recipients,
-						url.toString());
+				Email email = emailFactory.createEmail(request, recipients,	url.toString());
 				
 				String username = request.getHeader("sec-username");
 				String roles = request.getHeader("sec-roles");

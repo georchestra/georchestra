@@ -14,6 +14,7 @@
 
 /*
  * @include OpenLayers/Control/WMSGetFeatureInfo.js
+ * @include OpenLayers/Control/WMTSGetFeatureInfo.js
  * @include OpenLayers/Format/WMSGetFeatureInfo.js
  * @include GEOR_FeatureDataModel.js
  */
@@ -184,13 +185,15 @@ GEOR.getfeatureinfo = (function() {
          * state - {Boolean} Toggle to true or false this layer ?
          */
         toggle: function(record, state) {
-            var layer, title;
+            var layer, title, type;
             if (record instanceof OpenLayers.Layer.WMS) {
                 layer = record;
                 title = layer.name;
+                type = "WMS";
             } else if (record instanceof GeoExt.data.LayerRecord) {
                 layer = record.get("layer");
                 title = record.get("title");
+                type = record.get("type");
             }
             if (state) {
                 observable.fireEvent("search", {
@@ -212,7 +215,11 @@ GEOR.getfeatureinfo = (function() {
                     ctrl.events.un(ctrlEventsConfig);
                     ctrl.destroy();
                 }
-                ctrl = new OpenLayers.Control.WMSGetFeatureInfo({
+                var controlClass = (type === "WMS") ? 
+                    OpenLayers.Control.WMSGetFeatureInfo :
+                    OpenLayers.Control.WMTSGetFeatureInfo;
+
+                ctrl = new controlClass({
                     layers: [layer],
                     maxFeatures: GEOR.config.MAX_FEATURES,
                     infoFormat: 'application/vnd.ogc.gml'

@@ -22,18 +22,43 @@
  * @include GeoExt/data/WMSDescribeLayerStore.js
  * @include GeoExt/data/AttributeStore.js
  * @include GeoExt/data/WMSCapabilitiesStore.js
+ * @include GeoExt/data/WMTSCapabilitiesStore.js
  * @include OpenLayers/Format/WMSCapabilities/v1_1_1.js
+ * @include OpenLayers/Format/WMSCapabilities/v1_3_0.js
+ * @include OpenLayers/Format/WMTSCapabilities/v1_0_0.js
  * @include OpenLayers/Format/WFSCapabilities/v1_0_0.js
  * @include OpenLayers/Format/WFSCapabilities/v1_1_0.js
  * @include OpenLayers/Format/WFSCapabilities/v2_0_0.js
  * @include GeoExt/data/WFSCapabilitiesStore.js
  * @include OpenLayers/Strategy/Fixed.js
  * @include OpenLayers/Layer/Vector.js
+ * @include OpenLayers/Layer/WMTS.js
  * @requires GEOR_config.js
  * @include GEOR_waiter.js
  */
 
 Ext.namespace("GEOR");
+
+// HACK before OL upgrade (remove for the 13.09 release !)
+/*
+ * @requires OpenLayers/Format/WFSCapabilities/v1_0_0.js
+*/
+OpenLayers.Format.WFSCapabilities.v1.prototype.runChildNodes = function(obj, node) {
+    var children = node.childNodes;
+    var childNode, processor;
+    for(var i=0; i<children.length; ++i) {
+        childNode = children[i];
+        if(childNode.nodeType == 1) {
+            // see https://github.com/camptocamp/georchestra-geopicardie-configuration/issues/136
+            // ArcGIS WFS compatibility issues
+            processor = this["read_cap_" + childNode.nodeName.split(":").pop()];
+            if(processor) {
+                processor.apply(this, [obj, childNode]);
+            }
+        }
+    }
+};
+// end hack
 
 /**
  * Module: GEOR.ows
@@ -48,7 +73,9 @@ GEOR.ows = (function() {
      * Constant: defaultRecordFields
      * {Array} The fields shared by each layer record in this app.
      */
-    var defaultRecordFields = [
+    var defaultRecordFields = [ 
+        // for the use of geOrchestra only:
+        {name: "type", type: "string", defaultValue: "WMS"},
         {name: "name", type: "string"},
         {name: "title", type: "string"},
         {name: "abstract", type: "string"},
@@ -92,9 +119,20 @@ GEOR.ows = (function() {
      */
     var WMS_BASE_PARAMS = {
         "SERVICE": "WMS",
-        "VERSION": "1.1.1",
-        "EXCEPTIONS": "application/vnd.ogc.se_inimage",
+        // version not specified => highest version is returned
+        // the correct parser will be used automagically.
+        //"VERSION": "1.1.1",
+        //
         "FORMAT": "image/png"
+    };
+
+    /**
+     * Constant: WMTS_BASE_PARAMS
+     * {Object} The base params for WMTS requests.
+     */
+    var WMTS_BASE_PARAMS = {
+        "SERVICE": "WMTS",
+        "VERSION": "1.0.0"
     };
 
     /**
@@ -152,14 +190,22 @@ GEOR.ows = (function() {
         matchGeomProperty: /^gml:(Multi)?(Point|LineString|Polygon|Curve|Surface|Geometry)PropertyType$/,
 
         /**
-         * Property: defaultLayerOptions
+         * Property: defaultWMSLayerOptions
          * {Object} Default OpenLayers WMS layer options
          */
-        defaultLayerOptions: {
+        defaultWMSLayerOptions: {
             singleTile: GEOR.config.TILE_SINGLE,
             gutter: 10,
             buffer: 0,
             tileSize: new OpenLayers.Size(GEOR.config.TILE_WIDTH, GEOR.config.TILE_HEIGHT)
+        },
+
+        /**
+         * Property: defaultWMTSLayerOptions
+         * {Object} Default OpenLayers WMTS layer options
+         */
+        defaultWMTSLayerOptions: {
+            buffer: 0
         },
 
         getRecordFields: function() {
@@ -276,6 +322,12 @@ GEOR.ows = (function() {
                 baseParams: Ext.applyIf({
                     "REQUEST": "DescribeLayer",
                     "LAYERS": layer.params.LAYERS,
+                    // DescribeLayer should use the same WMS version 
+                    // as the getmap requests on this layer: ... but ...
+                    "VERSION": "1.1.1", //rather than layer.params.VERSION, 
+                    // this is because describe layer 1.3.0 is not yet supported by GeoServer
+                    // see: https://github.com/georchestra/georchestra/issues/186
+                    //
                     // WIDTH and HEIGHT params seem to be required for
                     // some versions of MapServer (typ. 5.6.1)
                     // see http://applis-bretagne.fr/redmine/issues/1979
@@ -434,11 +486,67 @@ GEOR.ows = (function() {
                 }, baseParams, WMS_BASE_PARAMS),
                 layerOptions: Ext.apply({},
                     layerOptions,
-                    GEOR.ows.defaultLayerOptions
+                    GEOR.ows.defaultWMSLayerOptions
                 ),
                 fields: defaultRecordFields
             }, options.storeOptions);
             var store = new GeoExt.data.WMSCapabilitiesStore(storeOptions);
+            if (options.success) {
+                loadStore(store,
+                          options.success, options.failure, options.scope);
+            }
+            return store;
+        },
+
+        /**
+         * APIMethod: WMTSCapabilities
+         * Create a {GeoExt.data.WMTSCapabilitiesStore} store, load it
+         * if a callback function is provided, and return it.
+         *
+         * Parameters:
+         * options - {Object} An object with the properties:
+         * - mapSRS - {String} the current map SRS, which will be used to 
+         *   choose the best available TileMatrixSet (optional).
+         * - success - {Function} Callback function called when the
+         *   store has been successfully loaded.
+         * - failure - {Function} Callback function called when the
+         *   store could not be loaded.
+         * - scope - {Object} The callback execution scope.
+         * - storeOptions - {Object} Additional store options.
+         */
+        WMTSCapabilities: function(options) {
+            options = options || {};
+            var layerOptions = (options.storeOptions &&
+                options.storeOptions.layerOptions) ?
+                    options.storeOptions.layerOptions : {};
+            var baseParams = options.baseParams || {};
+            var storeOptions = Ext.applyIf({
+                baseParams: Ext.apply({
+                    "REQUEST": "GetCapabilities"
+                }, baseParams, WMTS_BASE_PARAMS),
+                layerOptions: Ext.apply({
+                    // would be good for WMTS base layers only:
+                    //transitionEffect: 'resize'
+                    projection: options.mapSRS ||
+                        GeoExt.MapPanel.guess().map.getProjection()
+                }, layerOptions, GEOR.ows.defaultWMTSLayerOptions),
+                fields: [
+                    {name: "type", type: "string", defaultValue: "WMTS"}, // specific for georchestra
+                    // those from the standard WMTS capabilities reader:
+                    {name: "name", type: "string", mapping: "identifier"},
+                    {name: "title", type: "string"},
+                    {name: "abstract", type: "string"},
+                    {name: "queryable", type: "boolean"},
+                    {name: "llbbox", mapping: "bounds", convert: function(v){
+                        return [v.left, v.bottom, v.right, v.top];
+                    }},
+                    {name: "formats"}, // array
+                    {name: "infoFormats"}, // array
+                    {name: "styles"}, // array of Objects {abstract, identifier, isDefault, keywords, title}
+                    {name: "keywords"} // Object
+                ]
+            }, options.storeOptions);
+            var store = new GeoExt.data.WMTSCapabilitiesStore(storeOptions);
             if (options.success) {
                 loadStore(store,
                           options.success, options.failure, options.scope);
@@ -474,6 +582,7 @@ GEOR.ows = (function() {
                     t = layername.split(':');
                 if (t.length > 1) {
                     nsalias = t.shift();
+                    layername = t.shift();
                     url = url.replace("geoserver/wms", "geoserver/"+nsalias+"/wms");
                 }
             }
@@ -531,7 +640,14 @@ GEOR.ows = (function() {
             var storeOptions = Ext.applyIf({
                 baseParams: Ext.apply({
                     "REQUEST": "GetCapabilities"
-                }, options.vendorParams || {}, WFS_BASE_PARAMS)
+                }, options.vendorParams || {}, WFS_BASE_PARAMS),
+                fields: [
+                    {name: "type", type: "string", defaultValue: "WFS"},
+                    {name: "name", type: "string"},
+                    {name: "title", type: "string"},
+                    {name: "namespace", type: "string", mapping: "featureNS"},
+                    {name: "abstract", type: "string"}                    
+                ]
             }, options.storeOptions);
             var store = new GeoExt.data.WFSCapabilitiesStore(storeOptions);
             if (options.success) {

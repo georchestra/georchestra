@@ -5,29 +5,15 @@ LDAP
 
 * install the required packages
 
-        apt-get install slapd ldap-utils
-
-* ldap tree config
-
-    in :
-
-        vi /etc/ldap/slapd.d/cn=config/olcDatabase={1}hdb.ldif
-
-    change the values into :
-     
-            olcRootDN= cn=admin,dc=georchestra,dc=org
-            olcSuffix= dc=georchestra,dc=org
-		
-* ldap restart
-
-        /etc/init.d/slapd restart
+        sudo apt-get install slapd ldap-utils
 
 * sample data import
 
  * getting the data
  
-            apt-get install git-core
+            sudo apt-get install git-core
             git clone git://github.com/georchestra/LDAP.git
+            cd LDAP
 	
  * inserting the data: follow the instructions in https://github.com/georchestra/LDAP/blob/master/README.md
 
@@ -40,22 +26,16 @@ PostGreSQL
 
 * Installation 
 
-        apt-get install postgresql postgresql-9.1-postgis postgis	
+        sudo apt-get install postgresql postgresql-9.1-postgis postgis
 	
 * GeoNetwork database setup
 
-        su postgres
+        sudo su postgres
         createdb geonetwork
-        createlang plpgsql geonetwork
         psql -f /usr/share/postgresql/9.1/contrib/postgis-1.5/postgis.sql geonetwork
         psql -f /usr/share/postgresql/9.1/contrib/postgis-1.5/spatial_ref_sys.sql geonetwork
 
-        createuser www-data
-        psql geonetwork
-        > ALTER TABLE spatial_ref_sys   OWNER TO "www-data";
-        > ALTER TABLE geometry_columns  OWNER TO "www-data";
-        > ALTER TABLE geography_columns OWNER TO "www-data";
-        > ALTER USER "www-data" WITH PASSWORD 'www-data';
+        createuser -DPRS www-data
 
 * downloadform and ogcstatistics databases setup
 
@@ -71,23 +51,42 @@ PostGreSQL
             wget https://raw.github.com/georchestra/georchestra/master/ogc-server-statistics/ogc_statistics_table.sql -O /tmp/ogc_statistics_table.sql
             psql ogcstatistics -f /tmp/ogc_statistics_table.sql
 
-    
+ * ldapadmin
+
+            createdb ldapadmin
+            wget https://raw.github.com/georchestra/georchestra/master/ldapadmin/ldapAdminDB.sql -O /tmp/ldapAdminDB.sql
+            psql ldapadmin -f /tmp/ldapAdminDB.sql
+
+* Set rights of the www-data user
+
+        echo 'GRANT ALL PRIVILEGES ON DATABASE geonetwork TO "www-data";' | psql -d geonetwork
+        echo 'GRANT ALL PRIVILEGES ON SCHEMA public TO "www-data";' | psql -d geonetwork
+        echo 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "www-data";' | psql -d geonetwork
+        echo 'GRANT ALL PRIVILEGES ON DATABASE downloadform TO "www-data";' | psql -d downloadform
+        echo 'GRANT ALL PRIVILEGES ON SCHEMA public TO "www-data";' | psql -d downloadform
+        echo 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "www-data";' | psql -d downloadform
+        echo 'GRANT ALL PRIVILEGES ON DATABASE ogcstatistics TO "www-data";' | psql -d ogcstatistics
+        echo 'GRANT ALL PRIVILEGES ON SCHEMA public TO "www-data";' | psql -d ogcstatistics
+        echo 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "www-data";' | psql -d ogcstatistics
+        echo 'GRANT ALL PRIVILEGES ON DATABASE ldapadmin TO "www-data";' | psql -d ldapadmin
+        echo 'GRANT ALL PRIVILEGES ON SCHEMA public TO "www-data";' | psql -d ldapadmin
+        echo 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "www-data";' | psql -d ldapadmin
+        exit
+
 Apache
 =========
 
 * modules setup
 
-        apt-get install apache2 libapache2-mod-auth-cas 
-        ls /etc/apache2/mods-enabled
-        a2enmod proxy_ajp proxy_connect proxy_http proxy
-        a2enmod ssl rewrite
-        /etc/init.d/apach2 restart
+        sudo apt-get install apache2 libapache2-mod-auth-cas
+        sudo a2enmod proxy_ajp proxy_connect proxy_http proxy ssl rewrite headers
+        sudo service apache2 graceful
 
 * VirtualHost setup
 
-        cd /etc/apache2/site-available
-        a2dissite default default-ssl
-        vi georchestra
+        cd /etc/apache2/sites-available
+        sudo a2dissite default default-ssl
+        sudo vi georchestra
 
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    	<VirtualHost *:80>
@@ -114,28 +113,28 @@ Apache
 	</VirtualHost>
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        a2ensite georchestra
+        sudo a2ensite georchestra
    
 * web directories for geOrchestra
 
         cd /var/www
-        mkdir georchestra
+        sudo mkdir georchestra
         cd georchestra
-        mkdir conf htdocs logs ssl
+        sudo mkdir conf htdocs logs ssl
 
     Debian apache user is www-data
 
-        id www-data
+        sudo id www-data
 
     we have to grant write on logs to www-data:
 
-        chgrp www-data logs/
-        chmod g+w logs/
+        sudo chgrp www-data logs/
+        sudo chmod g+w logs/
 
 * Apache config
 
         cd conf/
-        vim proxypass.conf
+        sudo vim /var/www/georchestra/conf/proxypass.conf
         
     should have something like:
         
@@ -172,6 +171,7 @@ Apache
     RewriteRule ^/geoserver2/(.*)$ /geoserver/$1 [R]
     RewriteRule ^/geoserver$ /geoserver/ [R]
     RewriteRule ^/geowebcache$ /geowebcache/ [R]
+    RewriteRule ^/ldapadmin$ /ldapadmin/ [R]
     RewriteRule ^/mapfishapp$ /mapfishapp/ [R]
     RewriteRule ^/proxy$ /proxy/ [R]
     RewriteRule ^/static$ /static/ [R]
@@ -197,6 +197,9 @@ Apache
     ProxyPass /geonetwork/ ajp://localhost:8009/geonetwork/ 
     ProxyPassReverse /geonetwork/ ajp://localhost:8009/geonetwork/
 
+    ProxyPass /geonetwork-private/ ajp://localhost:8009/geonetwork-private/ 
+    ProxyPassReverse /geonetwork-private/ ajp://localhost:8009/geonetwork-private/
+
     ProxyPass /geoserver/ ajp://localhost:8009/geoserver/ 
     ProxyPassReverse /geoserver/ ajp://localhost:8009/geoserver/
 
@@ -208,6 +211,9 @@ Apache
 
     ProxyPass /j_spring_security_logout ajp://localhost:8009/j_spring_security_logout 
     ProxyPassReverse /j_spring_security_logout ajp://localhost:8009/j_spring_security_logout
+
+    ProxyPass /ldapadmin/ ajp://localhost:8009/ldapadmin/
+    ProxyPassReverse /ldapadmin/ ajp://localhost:8009/ldapadmin/
 
     ProxyPass /mapfishapp/ ajp://localhost:8009/mapfishapp/ 
     ProxyPassReverse /mapfishapp/ ajp://localhost:8009/mapfishapp/
@@ -226,14 +232,14 @@ Apache
 Apache - SSL certificate
 -----------------------
 
-* private key generation
+* private key generation (enter a passphrase)
 
         cd /var/www/georchestra/ssl
-        openssl genrsa -des3 -out georchestra.key 1024
+        sudo openssl genrsa -des3 -out georchestra.key 1024
 
 * certificate generated for this key
 
-        openssl req -new -key georchestra.key -out georchestra.csr
+        sudo openssl req -new -key georchestra.key -out georchestra.csr
 
 * fill the form without providing a password
 
@@ -241,35 +247,52 @@ Apache - SSL certificate
 
 * create an unprotected key
 
-        openssl rsa -in georchestra.key -out georchestra-unprotected.key
-        openssl x509 -req -days 365 -in georchestra.csr -signkey georchestra.key -out georchestra.crt
+        sudo openssl rsa -in georchestra.key -out georchestra-unprotected.key
+        sudo openssl x509 -req -days 365 -in georchestra.csr -signkey georchestra.key -out georchestra.crt
 
 * restart apache
 
-        sudo /etc/init.d/apache2 restart
+        sudo service apache2 graceful
         
+* update your hosts
+
+        sudo vim /etc/hosts
+
+
+        127.0.0.1       vm-georchestra
+
 * testing
 
-	* update your hosts
-	
-            vim /etc/hosts
-
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        127.0.0.1       vm-georchestra
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	* http://vm-georchestra
-	* https://vm-georchestra
+  * http://vm-georchestra
+  * https://vm-georchestra
 
 Tomcat
 =========
 
+Install Tomcat from package
+---------------------------
+
+This one Tomcat instance installation is for test purpose. When running a real-world SDI, you will need to use various Tomcat instances.
+
+    sudo apt-get install tomcat6
+
+Remove any webapp
+
+	sudo rm -rf /var/lib/tomcat6/webapps/*
+	
+Create a directory for tomcat6 java preferences (to avoid a `WARNING: Couldn't flush user prefs: java.util.prefs.BackingStoreException: Couldn't get file lock.` error)
+
+	sudo mkdir /usr/share/tomcat6/.java
+	sudo chown tomcat6:tomcat6 /usr/share/tomcat6/.java
+
+
 Keystore/Trustore
 -------------------
 
-* Keystore creation
+* Keystore creation (change the "mdpstore" password)
 
-        cd /srv/tomcat/tomcat1/conf/
-        keytool -genkey -alias georchestra_localhost -keystore keystore -storepass mdpstore -keypass mdpstore -keyalg RSA -keysize 2048
+        cd /etc/tomcat6/
+        sudo keytool -genkey -alias georchestra_localhost -keystore keystore -storepass mdpstore -keypass mdpstore -keyalg RSA -keysize 2048
 
     Put "localhost" in "first name and second name" since sec-proxy and CAS are on the same tomcat
 
@@ -294,22 +317,22 @@ Keystore/Trustore
        
 * truststore config
 
-        vim /srv/tomcat/tomcat1/bin/setenv.sh
+        sudo vim /etc/default/tomcat6
         
     ~~~~~~~~~~~~~~
-    export JAVA_OPTS="$JAVA_OPTS -Djavax.net.ssl.trustStore=/srv/tomcat/tomcat1/conf/keystore -Djavax.net.ssl.trustStorePassword=mdpstore"
+    JAVA_OPTS="$JAVA_OPTS -Djavax.net.ssl.trustStore=/etc/tomcat6/keystore -Djavax.net.ssl.rustStorePassword=mdpstore"
     ~~~~~~~~~~~~~~~
 
 * connectors config
 
-        vim /srv/tomcat/tomcat1/conf/server.xml
+        sudo vim /etc/tomcat6/server.xml
         
     ~~~~~~~~~~~~~~~~~~~~~~~~~    
     <Connector port="8443" protocol="HTTP/1.1" SSLEnabled="true"
        URIEncoding="UTF-8"
        maxThreads="150" scheme="https" secure="true"
        clientAuth="false"
-       keystoreFile="/srv/tomcat/tomcat1/conf/keystore"
+       keystoreFile="/etc/tomcat6/keystore"
        keystorePass="mdpstore"
        compression="on"
        compressionMinSize="2048"
@@ -327,7 +350,7 @@ Keystore/Trustore
     
 * Tomcat restart
  
-        sudo /etc/init.d/tomcat-tomcat1 restart
+        sudo service tomcat6 restart
     
 
 

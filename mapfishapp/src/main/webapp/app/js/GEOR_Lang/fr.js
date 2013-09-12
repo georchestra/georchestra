@@ -74,7 +74,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Too much data.": "Données trop volumineuses.",
     "Server exception.": "Le serveur a renvoyé une exception.",
     "ajax.defaultexception":
-        "Pour plus d'information, nous vous invitons à " +
+        "Pour plus d'information, vous pouvez " +
         "chercher le code de retour sur <a href=\"http://" +
         "en.wikipedia.org/wiki/List_of_HTTP_status_codes\" target=\"_blank\">" +
         "cette page</a>.",
@@ -151,6 +151,23 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Add": "Ajouter",
     "Add layers from a ...": "Ajouter des couches depuis un ...",
     "Malformed URL": "URL non conforme.",
+    "Queryable": "Interrogeable",
+    "Opaque": "Opaque",
+    "Choose a WMS server: ": "Choisissez un serveur WMS : ",
+    "The server is publishing one layer with an incompatible projection":
+        "Le serveur publie une couche dont la projection n'est pas compatible",
+    "The server is publishing NB layers with an incompatible projection":
+        "Le serveur publie ${NB} couches dont la projection n'est pas " +
+        "compatible",
+    "WMS server": "Serveur WMS",
+    "Choose a WMTS server: ": "Choisissez un serveur WMTS : ",
+    "WMTS server": "Serveur WMTS",
+    "Choose a WFS server: ": "Choisissez un serveur WFS : ",
+    "... or enter its address: ": "... ou saisissez son adresse : ",
+    "Unreachable server or insufficient rights": "Réponse invalide du " +
+        "serveur. Raisons possibles : droits insuffisants, " +
+        "serveur injoignable, trop de données, etc.",
+    "WFS server": "Serveur WFS",
     /* GEOR_managelayers.js strings */
     "Confirm NAME layer deletion ?":
         "Voulez-vous réellement supprimer la couche ${NAME} ?",
@@ -257,7 +274,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Fields of filters with a red mark are mandatory": "Vous devez remplir " +
         "les champs des filtres marqués en rouge.",
     "Request on NAME": "Requêteur sur ${NAME}",
-    "Search": "Recherche",
+    "Search": "Rechercher",
     "querier.layer.no.geom":
         "La couche ne possède pas de colonne géométrique." +
         "<br />Le requêteur géométrique ne sera pas fonctionnel.",
@@ -328,7 +345,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "zoom to global extent of the map": "zoom sur l'étendue globale de la " +
         "carte",
     "pan": "glisser - déplacer la carte",
-    "zoom in": "zoom en avant",
+    "zoom in": "zoom en avant (pour zoomer sur une emprise: appuyer sur SHIFT + dessiner l'emprise)",
     "zoom out": "zoom en arrière",
     "back to previous zoom": "revenir à la précédente emprise",
     "go to next zoom": "aller à l'emprise suivante",
@@ -361,18 +378,9 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Confirmation": "Confirmation",
     "Information": "Information",
     /* GEOR_waiter.js strings */
-    /* GEOR_wfsbrowser.js strings */
-    "Choose a WFS server: ": "Choisissez un serveur WFS : ",
-    "... or enter its address: ": "... ou saisissez son adresse : ",
-    "Unreachable server or insufficient rights": "Réponse invalide du " +
-        "serveur. Raisons possibles : droits insuffisants, " +
-        "serveur injoignable, trop de données, etc.",
-    "WFS server": "Serveur WFS",
     /* GEOR_wmc.js strings */
     "The provided file is not a valid OGC context": "Le fichier fourni n'est pas un contexte OGC valide",
-    "wmc.bad.srs": "Le fichier .wmc ne " +
-        "peut pas être restauré. Son système de référence spatiale est " +
-        "différent de celui de la carte en cours.",
+    "Warning: trying to restore WMC with a different projection (PROJCODE1, while map SRS is PROJCODE2). Strange things might occur !": "Attention: le contexte restauré avait été sauvegardé en ${PROJCODE1} alors que la carte actuelle est en ${PROJCODE2}. Il pourrait y avoir des comportements inattendus.",
     /* GEOR_wmcbrowser.js strings */
     "Could not find WMC file": "Le contexte spécifié n'existe pas",
     "... or a custom context": "... ou un contexte personnalisé",
@@ -380,16 +388,6 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "A unique OSM layer": "Une unique couche OpenStreetMap",
     "default viewer context": "contexte par défaut",
     "(default)": "<br/>(contexte par défaut actuel)",
-    /* GEOR_wmsbrowser.js strings */
-    "Queryable": "Interrogeable",
-    "Opaque": "Opaque",
-    "Choose a WMS server: ": "Choisissez un serveur WMS : ",
-    "The server is publishing one layer with an incompatible projection":
-        "Le serveur publie une couche dont la projection n'est pas compatible",
-    "The server is publishing NB layers with an incompatible projection":
-        "Le serveur publie ${NB} couches dont la projection n'est pas " +
-        "compatible",
-    "WMS server": "Serveur WMS",
     /* GEOR_workspace.js strings */
     "Context saving": "Sauvegarde du contexte",
     "The file is required.": "Un nom de fichier est nécessaire.",
@@ -401,6 +399,10 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Save the map context": "Sauvegarder la carte",
     "Load a map context": "Charger une carte",
     "Get a permalink": "Obtenir un permalien",
+    "Permalink": "Permalien",
+    "valid for ": "valide pendant ",
+    "months": "mois",
+    "month": "mois",
     "Share your map with this URL: ": "Partagez la carte avec l'adresse suivante : ",
     "Edit in OSM": "Editer dans OSM",
     "with JOSM": "avec JOSM",

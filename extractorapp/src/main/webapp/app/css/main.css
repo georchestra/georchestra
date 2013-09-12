@@ -1,6 +1,12 @@
 .geor-btn-extract {
     background-image: url(../img/famfamfam/basket_go.png) !important;
 }
+.geor-primary {
+    background-color: #4460B0;
+    background-image: linear-gradient(#6D8ADD, #4460B0);
+    background-repeat: repeat-x;
+    border-color: #415CA9;
+}
 .basket {
     background-image: url(../img/famfamfam/basket.gif) !important;
 }

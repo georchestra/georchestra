@@ -51,6 +51,13 @@ div.olMapViewport {
 /*
  * layer tree
  */
+.geor-tree-node .x-tree-node-anchor {
+  position: absolute;
+  left: 20px;
+  right: 50px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .gx-tree-layer-actions {
     float: right;
 }
@@ -82,6 +89,8 @@ div.olMapViewport {
     overflow: visible;
 }
 .geor-tree-layer-panel-body {
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 .geor-tree-node .x-tree-elbow, .geor-tree-node .x-tree-elbow-end {
    width: 0px !important;    
@@ -432,4 +441,9 @@ div.olMapViewport {
 /* checked menu item */
 .x-menu-list .x-menu-item-checked {
 	font-weight: bold;
+}
+
+/* avoid broken WMTS tiles at the lower end of the pyramid */
+.olImageLoadError {
+	display: none;
 }

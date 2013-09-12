@@ -39,6 +39,7 @@ public final class ExtractorLayerRequest {
     private static final String            BBOX_SRS_KEY         = "srs";
     private static final String            BBOX_VALUE_KEY       = "value";
     private static final String            RESOLUTION_KEY       = "resolution";
+    private static final String            ISO_METADATA_URL_KEY	= "isoMetadataURL";
 
     public final String[]                  _emails;
     public final URL                       _url;
@@ -50,6 +51,7 @@ public final class ExtractorLayerRequest {
     public final String                    _layerName;
     public final String                    _namespace;
     public final double                    _resolution;
+	public final URL                       _isoMetadataURL;
 
     private final JSONObject               _layerJson;
     private final JSONObject               _globalJson;
@@ -69,6 +71,7 @@ public final class ExtractorLayerRequest {
         _resolution = parseResolution ();
         _layerName = parseLayerName ();
         _namespace = parseNameSpace ();
+        _isoMetadataURL = parseIsoMetadataURL();
     }
 
     /**
@@ -153,6 +156,20 @@ public final class ExtractorLayerRequest {
         return new URL (url);
     }
 
+    private URL parseIsoMetadataURL() throws MalformedURLException {
+        
+    	try{
+    		String metadataURL = _layerJson.getString (ISO_METADATA_URL_KEY);
+        
+    		return new URL (metadataURL);
+    		
+    	} catch(JSONException e){
+    		
+    		return null;
+    	}
+    	
+    }
+    
     private String parseProjection () throws JSONException {
         String projection = get (PROJECTION_KEY, PROJECTION_KEY, false).toString ();
         return projection;

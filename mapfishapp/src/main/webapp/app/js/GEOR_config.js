@@ -458,31 +458,31 @@ GEOR.config = (function() {
         /**
          * Constant: MAP_SCALES
          * {Array} The map's scales.
-         * Defaults to GWC EPSG:900913 default gridset scales
+         * Defaults to the standard spherical mercator gridset scales
          */
         MAP_SCALES : getCustomParameter("MAP_SCALES", [
-            266.5911979441132,
-            533.1823958882264,
-            1066.3647917764529,
-            2132.7295835529058,
-            4265.4591671058115,
-            8530.918334211623,
-            17061.836668423246,
-            34123.67333684649,
-            68247.34667369298,
-            136494.69334738597,
-            272989.38669477194,
-            545978.7733895439,
-            1091957.5467790877,
-            2183915.0935581755,
-            4367830.187116351,
-            8735660.374232702,
-            17471320.748465404,
-            34942641.49693081,
-            69885282.99386162,
-            139770565.98772323,
-            279541131.97544646,
-            559082263.9508929
+            266.590664750604,
+            533.181329502208,
+            1066.362659004416,
+            2132.725318008832,
+            4265.450636017664,
+            8530.90127203433,
+            17061.80254406866,
+            34123.60508813732,
+            68247.21017627465,
+            136494.4203525493,
+            272988.8407050995,
+            545977.681410199,
+            1091955.3628203971,
+            2183910.7256407943,
+            4367821.451281589,
+            8735642.902563179,
+            17471285.805126358,
+            34942571.610252716,
+            69885143.22050543,
+            139770286.44101086,
+            279540572.8820217,
+            559081145.7640435
         ]),
 
         /**
@@ -703,11 +703,20 @@ GEOR.config = (function() {
             false),
 
         /**
+         * Constant: WMTS_SERVERS
+         * {Array} List of externals WMTS to display in the WMTS servers tab.
+         */
+        WMTS_SERVERS: getCustomParameter("WMTS_SERVERS", [
+            {"name": "GéoBretagne rasters", "url": "http://tile.geobretagne.fr/gwc02/service/wmts"},
+            {"name": "GéoBretagne OSM", "url": "http://osm.geobretagne.fr/gwc01/service/wmts"}
+        ]),
+
+        /**
          * Constant: WMS_SERVERS
          * {Array} List of externals WMS to display in the WMS servers tab.
          */
         WMS_SERVERS: getCustomParameter("WMS_SERVERS", [
-            {"name": "GeoBretagne", "url": "http://geobretagne.fr/geoserver/wms"},
+            {"name": "GéoBretagne", "url": "http://geobretagne.fr/geoserver/wms"},
             {"name": "Région Bretagne", "url": "http://kartenn.region-bretagne.fr/geoserver/wms"},
             {"name": "Sandre/zonages", "url": "http://services.sandre.eaufrance.fr/geo/zonage"},
             {"name": "Sandre/ouvrages", "url": "http://services.sandre.eaufrance.fr/geo/ouvrage"},
@@ -733,7 +742,7 @@ GEOR.config = (function() {
          * {Array} List of externals WFS to display in the WFS servers tab.
          */
         WFS_SERVERS: getCustomParameter("WFS_SERVERS", [
-            {"name": "GeoBretagne", "url": "http://geobretagne.fr/geoserver/wfs"},
+            {"name": "GéoBretagne", "url": "http://geobretagne.fr/geoserver/wfs"},
             {"name": "BMO/OpenStreetMap", "url": "http://bmo.openstreetmap.fr/ows"},
             {"name": "Corine Land Cover", "url": "http://sd1878-2.sivit.org/geoserver/wfs"}
         ])

@@ -14,7 +14,8 @@
 
 /*
  * @include OpenLayers/Control/ZoomToMaxExtent.js
- * @include OpenLayers/Control/ZoomBox.js
+ * @include OpenLayers/Control/ZoomIn.js
+ * @include OpenLayers/Control/ZoomOut.js
  * @include OpenLayers/Control/DragPan.js
  * @include OpenLayers/Control/NavigationHistory.js
  * @include OpenLayers/Control/Measure.js
@@ -25,6 +26,7 @@
  * @include GeoExt/widgets/Action.js
  * @include GeoExt/widgets/LegendPanel.js
  * @include GeoExt/widgets/WMSLegend.js
+ * @include GeoExt/widgets/WMTSLegend.js
  * @include GEOR_workspace.js
  * @include GEOR_print.js
  * @include GEOR_config.js
@@ -85,28 +87,20 @@ GEOR.toolbar = (function() {
             pressed: true
         }));
 
-        ctrl = new OpenLayers.Control.ZoomBox({
-          out: false
-        });
+        ctrl = new OpenLayers.Control.ZoomIn();
         items.push(new GeoExt.Action({
             control: ctrl,
             map: map,
             iconCls: "zoomin",
-            tooltip: tr("zoom in"),
-            toggleGroup: "map",
-            allowDepress: false
+            tooltip: tr("zoom in")
         }));
 
-        ctrl = new OpenLayers.Control.ZoomBox({
-          out: true
-        });
+        ctrl = new OpenLayers.Control.ZoomOut();
         items.push(new GeoExt.Action({
             control: ctrl,
             map: map,
             iconCls: "zoomout",
-            tooltip: tr("zoom out"),
-            toggleGroup: "map",
-            allowDepress: false
+            tooltip: tr("zoom out")
         }));
 
         items.push("-");

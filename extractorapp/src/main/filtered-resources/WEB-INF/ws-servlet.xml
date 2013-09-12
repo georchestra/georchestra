@@ -87,7 +87,7 @@
         <property name="subjectEncoding" 
                   value="UTF-8"/>
         <property name="languages"
-                  value="fr,fra"/>
+                  value="${language}"/>
         <property name="expireDeamon"
                   ref="expire-daemon"/>
         <property name="emailTemplateFile" 

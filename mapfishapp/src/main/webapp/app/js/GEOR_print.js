@@ -20,6 +20,10 @@
  * @include GeoExt/plugins/PrintPageField.js
  * @include GeoExt/plugins/PrintProviderField.js
  * @include OpenLayers/Format/GeoJSON.js
+ * @include OpenLayers/Layer/Vector.js
+ * @include OpenLayers/Feature/Vector.js
+ * @include OpenLayers/StyleMap.js
+ * @include OpenLayers/Style.js
  */
 
 Ext.namespace("GEOR");
@@ -78,6 +82,18 @@ GEOR.print = (function() {
      * {Function} an alias to OpenLayers.i18n
      */
     var tr = null;
+
+    /**
+     * Property: boundsLayer
+     * {OpenLayers.Layer.Vector} for print bounds
+     */
+    var boundsLayer;
+
+    /**
+     * Constant: VECTOR_LAYER_NAME
+     * {String} The vector layer name, as used across this module
+     */
+    var VECTOR_LAYER_NAME = '_print_bounds_';
 
     /**
      * property: defaultCustomParams
@@ -196,16 +212,15 @@ GEOR.print = (function() {
                         customParams: defaultCustomParams
                     });
                 },
-                "beforeencodelayer": function(layer) {
-                    if ((layer.CLASS_NAME == "OpenLayers.Layer.Vector") ||
-                        (layer.CLASS_NAME == "OpenLayers.Layer.Vector.RootContainer")) {
+                "beforeencodelayer": function(printProvider, layer) {
+                    if ((layer.CLASS_NAME === "OpenLayers.Layer.Vector") &&
+                        layer.name === VECTOR_LAYER_NAME) {
+                        // do not print bounds layer
                         return false;
                     }
                 },
                 "beforeprint": function(pp) {
                     mask.show();
-                    // closest matching print extent will be chosen:
-                    printPage.fit(layerStore.map, {mode: "closest"});
                     // set a custom PDF file name:
                     pp.customParams.outputFilename = GEOR.config.PDF_FILENAME;
                 },
@@ -223,6 +238,11 @@ GEOR.print = (function() {
                     });
                 },
                 "encodelayer": function(pp, layer, encLayer) {
+                    if (encLayer && encLayer.type === "WMTS") {
+                        // FIXME: these values are incorrect and prevent printing of WMTS layers
+                        delete encLayer['minScaleDenominator'];
+                        delete encLayer['maxScaleDenominator'];
+                    }
                     if (GEOR.config.WMSC2WMS.hasOwnProperty(layer.url)) {
                         if (GEOR.config.WMSC2WMS[layer.url] !== undefined) {
                             //console.log(layer.name + ' - tuilée avec WMS référencé'); // debug
@@ -242,6 +262,17 @@ GEOR.print = (function() {
             }
         });
     };
+    
+    var updateBounds = function() {
+        // closest matching print extent will be chosen:
+        printPage.fit(layerStore.map, {mode: "closest"});
+        var bbox = printPage.getPrintExtent(layerStore.map);
+        boundsLayer.destroyFeatures();
+        boundsLayer.addFeatures([
+            new OpenLayers.Feature.Vector(bbox.toGeometry())
+        ]);
+    };
+    var updateBoundsTask = new Ext.util.DelayedTask(updateBounds);
 
     var showWindow = function() {
         if (!printPage) {
@@ -370,6 +401,9 @@ GEOR.print = (function() {
                         editable: false,
                         mode: "local",
                         triggerAction: "all",
+                        listeners: {
+                            "select": function() {updateBoundsTask.delay(50);}
+                        },
                         plugins: new GeoExt.plugins.PrintProviderField({
                             printProvider: printProvider
                         })
@@ -419,9 +453,34 @@ GEOR.print = (function() {
                 items: [formPanel],
                 listeners: {
                     "show": function() {
+                        // display print bounds
+                        if (!boundsLayer) {
+                            boundsLayer = new OpenLayers.Layer.Vector(VECTOR_LAYER_NAME, {
+                                displayInLayerSwitcher: false,
+                                styleMap: new OpenLayers.StyleMap({
+                                    "default": new OpenLayers.Style({
+                                        fillColor: "#000000",
+                                        fillOpacity: 0,
+                                        strokeColor: "#ff0000",
+                                        strokeDashstyle: "dash",
+                                        strokeWidth: 2,
+                                        strokeOpacity: 1
+                                    })
+                                })
+                            });
+                            layerStore.map.addLayer(boundsLayer);
+                        }
+                        boundsLayer.setVisibility(true);
+                        updateBounds();
+                        layerStore.map.events.register("moveend", this, updateBounds);
+                        
                         // focus first field on show
                         var field = formPanel.getForm().findField('mapTitle');
                         field.focus('', 50);
+                    },
+                    "hide": function() {
+                        layerStore.map.events.unregister("moveend", this, updateBounds);
+                        boundsLayer.setVisibility(false);
                     }
                 },
                 buttons: [{
@@ -439,7 +498,6 @@ GEOR.print = (function() {
                         printPage.customParams.projection = getProjection();
                         printPage.customParams.scaleLbl = tr("Scale: ");
                         printPage.customParams.dateLbl = tr("Date: ");
-                        printPage.fit(layerStore.map, false);
                         printProvider.print(layerStore.map, printPage, {
                             legend: legendPanel
                         });

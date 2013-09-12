@@ -52,7 +52,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
-			<version>${spring.version}</version>
+			<version>3.1.0.RELEASE</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -88,11 +88,13 @@
 			<version>20080701</version>
 		</dependency>
 		<!-- print module -->
+		
 		<dependency>
 			<groupId>org.mapfish.print</groupId>
 			<artifactId>print-lib</artifactId>
-			<version>1.2.1-GEORCHESTRA</version>
+			<version>2.0-SNAPSHOT</version>
 		</dependency>
+		
 		<!--  geotools -->
 		<dependency>
 			<groupId>org.geotools</groupId>
@@ -114,7 +116,7 @@
 		<dependency>
 			<groupId>org.georchestra</groupId>
 			<artifactId>gt-mif</artifactId>
-			<version>13.12-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
 		
         <dependency>
@@ -145,6 +147,14 @@
 	      <artifactId>gt-epsg-hsql</artifactId>
 	      <version>${gt.version}</version>
 	    </dependency>
+	    
+	    <dependency>
+	      <groupId>${project.groupId}</groupId>
+	      <artifactId>epsg-extension</artifactId>
+	      <version>${project.version}</version>
+	    </dependency>
+
+	    
 		<dependency>
 			<groupId>org.geotools</groupId>
 			<artifactId>gt-imageio-ext-gdal</artifactId>
@@ -213,6 +223,8 @@
 				<artifactId>maven-resources-plugin</artifactId>
 				<configuration>
 					<encoding>UTF-8</encoding>
+					
+					
 				</configuration>
 			</plugin>
 			<plugin>
@@ -261,13 +273,19 @@
 			<plugin>
 				<groupId>org.mortbay.jetty</groupId>
 				<artifactId>maven-jetty-plugin</artifactId>
-				<version>6.1.9</version>
+				<version>6.1.26</version>
 				<configuration>
-					<scanIntervalSeconds>5</scanIntervalSeconds>
-					<scanTargets>
+					 <scanIntervalSeconds>5</scanIntervalSeconds>
+					 <scanTargets>
 						<scanTarget>src/main/java/</scanTarget>
 						<scanTarget>src/main/resources/</scanTarget>
-					</scanTargets>
+					 </scanTargets>
+			         <systemProperties>
+			            <systemProperty>
+			              <name>org.geotools.referencing.forceXY</name>
+			              <value>true</value>
+			            </systemProperty>
+			          </systemProperties>
 				</configuration>
 			</plugin>
 			<plugin>
