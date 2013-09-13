@@ -3,6 +3,9 @@ privateKey=6Lf0h-MSAAAAAI2nHJfNPDaEXXjsdmn8eKSZUrQZ
 publicKey=6Lf0h-MSAAAAAOQ4YyRtbCNccU87dlGmokmelZjh
 
 # LDAP
+
+passwordRecoveryContext=@shared.ldap.passwordRecoveryContext@
+
 ldapUrl=@shared.ldapUrl@
 baseDN=@shared.ldap.baseDn@
 ldapAdminDn=@shared.ldap.admin.dn@
