@@ -19,7 +19,7 @@
         };
     </script>
 
-    <div class="container-fluid" ng-controller="UsersCtrl">
+    <div id="container" class="container-fluid" ng-controller="UsersCtrl">
       <!-- Subscribe to success flash messages. -->
       <div flash-alert="success" active-class="in" class="alert hide">
         <span class="alert-message">{{flash.message}}</span>
@@ -31,7 +31,7 @@
       </div>
 
       <div class="row-fluid">
-        <div class="span3 sidebar">
+        <div id="sidebar" class="span3">
           <!--Sidebar content-->
           <i class="icon-blank"></i>
           <a href="#/" ng-class="{active: selectedGroup == null}">
@@ -72,7 +72,7 @@
             New group
           </a>
         </div>
-        <div class="span9" ng-view>
+        <div id="content" class="span9" ng-view>
         <!--Body content-->
         </div>
       </div>

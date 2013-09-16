@@ -1,10 +1,27 @@
-.sidebar {
-  margin-top: 20px;
+#container {
+  bottom: 0;
+  width: 100%;
+  top: 90px;
+  position: absolute;
+  margin: 0;
+  padding: 0;
 }
-.sidebar a {
+#container>.row-fluid {
+  height: 100%;
+}
+#content {
+  height: 100%;
+  position: relative;
+}
+#sidebar {
+  padding: 10px;
+  overflow: auto;
+  height: 100%;
+}
+#sidebar a {
   color: black;
 }
-.sidebar a.active {
+#sidebar a.active {
   font-weight: bold;
   color: #08c;
 }
@@ -15,15 +32,35 @@
   display: block;
 }
 
+#users {
+  width: 100%;
+  margin-bottom: 20px;
+  position: absolute;
+  top: 76px;
+  bottom: 0;
+  overflow: auto;
+  z-index: 0;
+}
+
+#users .table td {
+  border-top: 0;
+  border-bottom: 1px solid #ddd;
+}
+
 .toolbar {
-  margin-top: 10px;
-  margin-bottom: 10px;
   height: 30px;
   line-height: 20px;
+  padding-bottom: 4px;
+  padding-top: 4px;
 }
 .toolbar .checkbox-wrap {
   padding: 4px 20px 4px 4px;
   display: inline-block;
+}
+.toolbar.shadow {
+  box-shadow: 0 10px 10px -10px grey;
+  position: relative;
+  z-index: 1;
 }
 .groups li a i {
   display: inline-block;
