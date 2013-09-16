@@ -1,6 +1,8 @@
-{name}, your account has been created
+{name}, your account has been created.
 
 Your login is: {uid}
+
+Go to https://@shared.server.name@/cas/login to get identified.
 
 ---
 Sent by @shared.instance.name@ (@shared.homepage.url@)

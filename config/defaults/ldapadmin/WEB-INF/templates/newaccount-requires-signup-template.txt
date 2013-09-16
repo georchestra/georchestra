@@ -3,5 +3,7 @@ A new account has been created and is waiting for validation.
 User name: {name}
 User ID: {uid}
 
+Enter https://@shared.server.name@/ldapadmin/privateui/index.html#/groups/PENDING_USERS to review the pending users.
+
 ---
 Sent by @shared.instance.name@ (@shared.homepage.url@)
