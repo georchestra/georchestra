@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.georchestra.ldapadmin.Configuration;
 import org.georchestra.ldapadmin.ds.AccountDao;
 import org.georchestra.ldapadmin.ds.DataServiceException;
 import org.georchestra.ldapadmin.ds.NotFoundException;
@@ -55,13 +56,14 @@ public class LostPasswordFormController  {
 	private AccountDao accountDao;
 	private MailService mailService;
 	private UserTokenDao userTokenDao;
-	
+	private Configuration config;
 	
 	@Autowired
-	public LostPasswordFormController( AccountDao dao, MailService mailSrv, UserTokenDao userTokenDao){
+	public LostPasswordFormController( AccountDao dao, MailService mailSrv, UserTokenDao userTokenDao, Configuration cfg){
 		this.accountDao = dao;
 		this.mailService = mailSrv;
 		this.userTokenDao = userTokenDao;
+		this.config = cfg;
 	}
 	
 	@InitBinder
@@ -121,10 +123,10 @@ public class LostPasswordFormController  {
 			
 			this.userTokenDao.insertToken(account.getUid(), token);
 			
-			ServletContext servletContext = request.getSession().getServletContext();
-			
-			String url = makeChangePasswordURL(request.getServerName(), request.getServerPort(), servletContext.getContextPath(), token);
+			String contextPath = this.config.getPasswordRecoveryContext();
+			String url = makeChangePasswordURL(request.getServerName(), request.getServerPort(), contextPath, token);
 
+			ServletContext servletContext = request.getSession().getServletContext();
 			this.mailService.sendChangePasswordURL(servletContext, account.getUid(), account.getCommonName(), url, account.getEmail());
 			
 			sessionStatus.setComplete();
@@ -144,6 +146,7 @@ public class LostPasswordFormController  {
 		} 
 	}
 
+
 	/**
 	 * Create the URL to change the password based on the provided token  
 	 * @param token
@@ -151,7 +154,7 @@ public class LostPasswordFormController  {
 	 * 
 	 * @return a new URL to change password
 	 */
-	private String makeChangePasswordURL(final String host, final int port, String contextPath, final String token) {
+	private String makeChangePasswordURL(final String host, final int port, final String contextPath, final String token) {
 
 		StringBuilder strBuilder = new StringBuilder("");
 		if ((port == 80) || (port == 443)) {

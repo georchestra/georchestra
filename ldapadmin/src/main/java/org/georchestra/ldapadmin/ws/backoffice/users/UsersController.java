@@ -483,7 +483,7 @@ public class UsersController {
 			
 			String commonName = AccountFactory.formatCommonName(givenName, surname);
 			
-			Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, "", "", phone, "", "", postalCode, "", postOfficeBox, "", street, locality, facsimile, "","","",null,"");
+			Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, "", "", phone, "", "", postalCode, "", postOfficeBox, "", street, locality, facsimile, "","","","","");
 			
 			return a;
 			

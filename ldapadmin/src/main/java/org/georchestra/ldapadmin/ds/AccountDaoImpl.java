@@ -386,7 +386,7 @@ public final class AccountDaoImpl implements AccountDao{
 					
 					context.getStringAttribute(UserSchema.HOME_POSTAL_ADDRESS_KEY),
 					context.getStringAttribute(UserSchema.MOBILE_KEY),
-					(Integer)context.getObjectAttribute(UserSchema.ROOM_NUMBER_KEY),
+					context.getStringAttribute(UserSchema.ROOM_NUMBER_KEY),
 					context.getStringAttribute(UserSchema.STATE_OR_PROVINCE_KEY)
 				);
 

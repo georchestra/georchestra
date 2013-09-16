@@ -106,9 +106,9 @@ public interface Account {
 
 	String getMobile();
 
-	void setRoomNumber(Integer roomNumber);
+	void setRoomNumber(String roomNumber);
 
-	Integer getRoomNumber();
+	String getRoomNumber();
 
 	void setStateOrProvince(String stateOrProvince);
 

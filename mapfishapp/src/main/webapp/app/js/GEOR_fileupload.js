@@ -40,6 +40,8 @@ GEOR.fileupload = (function() {
         "selectionchanged"
     );
 
+    var MULTI_FILES_FORMATS = ['shp', 'mif', 'tab'];
+
     /**
      * Property: tr
      * {Function} an alias to OpenLayers.i18n
@@ -185,18 +187,9 @@ GEOR.fileupload = (function() {
          */
         getPanel: function(options) {
             tr = OpenLayers.i18n;
-            var fileFormatList, srs = options.srs;
+            var srs = options.srs, msg;
             delete options.srs;
-            try {
-                fileFormatList = GEOR.config.FILE_FORMAT_LIST;
-                fileFormatString = fileFormatList[0].toUpperCase();
-                for (var i = 1; i < fileFormatList.length; i++) {
-                    fileFormatString += ", " + fileFormatList[i].toUpperCase();
-                }
-            } catch (e) {
-                fileFormatString = "";
-            }
-            
+
             if (!centerPanel) {
                 centerPanel = new Ext.Panel({
                     flex: 1,
@@ -208,24 +201,28 @@ GEOR.fileupload = (function() {
                 });
             }
 
-            if (fileFormatString.length == 0) {
-                return new Ext.Panel(Ext.apply({
-                    title: tr("Local file"),
-                    layout: 'vbox',
-                    layoutConfig: {
-                        align: 'stretch'
-                    },
-                    defaults: {border: false},
-                    items: [{
-                        xtype: 'box',
-                        height: 55,
-                        autoEl: {
-                            tag: 'div',
-                            cls: 'box-as-panel',
-                            html: tr("The service is unavailable.")
-                        }
-                    }, centerPanel]
-                }, options));
+            if (!GEOR.config.FILE_FORMAT_LIST || 
+                GEOR.config.FILE_FORMAT_LIST.length === 0) {
+
+                msg = tr("The service is unavailable.");
+
+            } else {
+
+                var supportedMulti = [];
+                Ext.each(MULTI_FILES_FORMATS, function(f) {
+                    if (OpenLayers.Util.indexOf(GEOR.config.FILE_FORMAT_LIST, f) > -1) {
+                        supportedMulti.push(f);
+                    }
+                });
+                var last = supportedMulti.pop().toUpperCase();
+                msg = [
+                    '<b>', tr("Upload a vector data file."), '</b><br/><br/>',
+                    tr("The allowed formats are the following: "),
+                    GEOR.config.FILE_FORMAT_LIST.join(", ").toUpperCase(), '. <br/>',
+                    tr("Use ZIP compression for multifiles formats, such as"),
+                    " ", supportedMulti.join(', ').toUpperCase(), " ", tr("or"), " ", last
+                ].join('');
+
             }
 
             return new Ext.Panel(Ext.apply({
@@ -241,12 +238,7 @@ GEOR.fileupload = (function() {
                     autoEl: {
                         tag: 'div',
                         cls: 'box-as-panel',
-                        html: [
-                            '<b>', tr("Upload a vector data file."), '</b><br/><br/>',
-                            tr("The allowed formats are the following: "),
-                            fileFormatString, '. <br/>',
-                            tr("Use ZIP compression for multifiles formats, such as SHP or MIF/MID.")
-                        ].join('')
+                        html: msg
                     }
                 }, {
                     xtype: 'form',

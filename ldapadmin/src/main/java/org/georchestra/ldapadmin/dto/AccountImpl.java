@@ -54,7 +54,7 @@ class AccountImpl implements Serializable, Account {
 	private String mobile;
 
 
-	private Integer roomNumber;
+	private String roomNumber;
 
 
 	private String stateOrProvince; // st
@@ -300,12 +300,12 @@ class AccountImpl implements Serializable, Account {
 	}
 
 	@Override
-	public void setRoomNumber(Integer roomNumber) {
+	public void setRoomNumber(String roomNumber) {
 		
 		this.roomNumber = roomNumber;
 	}
 	@Override
-	public Integer getRoomNumber() {
+	public String getRoomNumber() {
 		return this.roomNumber;
 	}
 
