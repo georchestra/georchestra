@@ -62,7 +62,7 @@ class EmailFactoryImpl extends AbstractEmailFactory {
 	}
 	
 	public ChangePasswordEmail createChangePasswordEmail(ServletContext servletContext, String[] recipients) throws IOException {
-		super.emailSubject =changePasswordEmailSubject; 
+		super.emailSubject =this.changePasswordEmailSubject;
 		ChangePasswordEmail mail =  new ChangePasswordEmail(
 				recipients, 
 				super.emailSubject,
@@ -119,7 +119,7 @@ class EmailFactoryImpl extends AbstractEmailFactory {
 	public AccountCreationInProcessEmail createAccountCreationInProcessEmail(
 			ServletContext servletContext, String[] recipients) {
 		
-		super.emailSubject =this.accountCreationInProcessEmailFile;
+		super.emailSubject =this.accountCreationInProcessEmailSubject;
 
 		AccountCreationInProcessEmail mail =  new AccountCreationInProcessEmail(
 				recipients, 
