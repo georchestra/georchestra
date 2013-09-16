@@ -10,3 +10,6 @@ The following layers could not be extracted. The failures.html file contains mor
 
 The following layers' extraction has been canceled. The requested area is too large:
 {oversized}
+
+---
+Sent by @shared.instance.name@ (@shared.homepage.url@)

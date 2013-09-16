@@ -1,3 +1,6 @@
 {name}, your account has been created
 
 Your login is: {uid}
+
+---
+Sent by @shared.instance.name@ (@shared.homepage.url@)
