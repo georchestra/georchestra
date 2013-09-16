@@ -113,6 +113,13 @@ public abstract class AbstractEmailFactory {
         checkState();
         this.smtpPort = port;
     }
+    public String getEmailHtml() {
+        return emailHtml;
+    }
+    public void setEmailHtml(String emailHtml) {
+        checkState();
+        this.emailHtml = emailHtml;
+    }
     public String getReplyTo() {
         return replyTo;
     }
