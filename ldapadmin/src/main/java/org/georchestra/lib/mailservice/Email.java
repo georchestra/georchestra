@@ -172,10 +172,10 @@ public abstract class Email {
         if (msg != null) {
             MimeBodyPart bodyPart = new MimeBodyPart();
             if ("true".equalsIgnoreCase(emailHtml)) {
-				bodyPart.setText(msg, bodyEncoding, "html");
-			} else {
-				bodyPart.setText(msg, bodyEncoding, "text");
-			}
+                bodyPart.setText(msg, bodyEncoding, "html");
+            } else {
+                bodyPart.setText(msg, bodyEncoding, "text");
+            }
             bodyPart.setContentLanguage(languages);
             multipart.addBodyPart(bodyPart);
             LOG.debug(msg);
