@@ -132,7 +132,7 @@ public abstract class Email {
 	protected String format(List<String> list) {
 		if ("true".equalsIgnoreCase(emailHtml)) {
 			if (list.isEmpty()) {
-				return "<p>aucune</p>";
+				return "<p>None</p>";
 			}
 			StringBuilder b = new StringBuilder("<ul>");
 			for (String string : list) {
@@ -144,7 +144,7 @@ public abstract class Email {
 			return b.toString();
 		} else {
 			if (list.isEmpty()) {
-				return "\naucune\n";
+				return "\nNone\n";
 			}
 			StringBuilder b = new StringBuilder("\n");
 			for (String string : list) {
