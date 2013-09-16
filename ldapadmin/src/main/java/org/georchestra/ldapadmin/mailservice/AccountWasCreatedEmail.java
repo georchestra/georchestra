@@ -28,6 +28,7 @@ class AccountWasCreatedEmail extends Email {
 			String emailSubject,
 			String smtpHost, 
 			int smtpPort, 
+			String emailHtml,
 			String replyTo, 
 			String from,
 			String bodyEncoding, 
@@ -35,7 +36,7 @@ class AccountWasCreatedEmail extends Email {
 			String[] languages, 
 			String fileBodyTemplate, ServletContext servletContext) {
 	
-		super(recipients, emailSubject, smtpHost, smtpPort, replyTo, from,
+		super(recipients, emailSubject, smtpHost, smtpPort, emailHtml, replyTo, from,
 				bodyEncoding, subjectEncoding, languages, fileBodyTemplate);
 		
 		this.servletContext = servletContext;
