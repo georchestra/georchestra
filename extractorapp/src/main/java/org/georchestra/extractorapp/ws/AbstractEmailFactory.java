@@ -84,7 +84,7 @@ public abstract class AbstractEmailFactory {
         StringBuilder builder = new StringBuilder();
         try {
             for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-                builder.append(line);
+                builder.append(line).append('\n');
             }
         } finally {
             reader.close();

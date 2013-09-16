@@ -113,7 +113,7 @@ public abstract class Email {
         	reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), "UTF-8") );
         	StringBuilder builder = new StringBuilder();
             for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-                builder.append(line);
+                builder.append(line).append("\n");
             }
             body = builder.toString();
             
