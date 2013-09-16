@@ -3,7 +3,7 @@ privateKey=6Lf0h-MSAAAAAI2nHJfNPDaEXXjsdmn8eKSZUrQZ
 publicKey=6Lf0h-MSAAAAAOQ4YyRtbCNccU87dlGmokmelZjh
 
 # Application path as seen from the external world:
-passwordRecoveryContext=ldapadmin
+passwordRecoveryContext=/ldapadmin
 
 # LDAP
 ldapUrl=@shared.ldapUrl@
