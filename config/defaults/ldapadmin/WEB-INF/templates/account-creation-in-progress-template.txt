@@ -1,3 +1,6 @@
 {name}, your request for a new account has been submitted. You will receive an e-mail when the account is validated.
 
 Your login is: {uid}
+
+---
+Sent by @shared.instance.name@ (@shared.homepage.url@)
