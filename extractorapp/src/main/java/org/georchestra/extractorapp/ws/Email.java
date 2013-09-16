@@ -130,18 +130,31 @@ public abstract class Email {
     }
 	
 	protected String format(List<String> list) {
-        if (list.isEmpty()) {
-            return "<p>aucune</p>";
-        }
-        StringBuilder b = new StringBuilder("<ul>");
-        for (String string : list) {
-            b.append("<li>");
-            b.append(string);
-            b.append("</li>");
-        }
-        b.append("</ul>");
-
-        return b.toString();
+		if ("true".equalsIgnoreCase(emailHtml)) {
+			if (list.isEmpty()) {
+				return "<p>aucune</p>";
+			}
+			StringBuilder b = new StringBuilder("<ul>");
+			for (String string : list) {
+				b.append("<li>");
+				b.append(string);
+				b.append("</li>");
+			}
+			b.append("</ul>");
+			return b.toString();
+		} else {
+			if (list.isEmpty()) {
+				return "\naucune\n";
+			}
+			StringBuilder b = new StringBuilder("\n");
+			for (String string : list) {
+				b.append("* ");
+				b.append(string);
+				b.append("\n");
+			}
+			b.append("\n");
+			return b.toString();
+		}
     }
     
 	protected String formatTimeEstimation(String msg, final long fileSize) {
