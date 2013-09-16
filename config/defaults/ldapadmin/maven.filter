@@ -35,3 +35,4 @@ moderatorEmail=moderator@mail
 delayInDays=1
 
 language=@shared.language@
+headerHeight=@shared.header.height@

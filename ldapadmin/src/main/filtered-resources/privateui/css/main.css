@@ -1,7 +1,7 @@
 #container {
   bottom: 0;
   width: 100%;
-  top: 90px;
+  top: ${headerHeight}px;
   position: absolute;
   margin: 0;
   padding: 0;
