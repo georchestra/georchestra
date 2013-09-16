@@ -45,7 +45,6 @@ public class UsersController {
 	private static final String BASE_MAPPING = "/private";
 	private static final String REQUEST_MAPPING = BASE_MAPPING + "/users";	
 	
-
 	private static final String DUPLICATED_EMAIL = "duplicated_email";
 
 	private static final String NOT_FOUND = "not_found";
@@ -165,6 +164,8 @@ public class UsersController {
      *	"l": "locality",
      * 	"postOfficeBox": "the post office box",
      * }
+     * 
+     * where <b>sn, givenName, mail</b> are mandatories
 	 * </pre>
 	 * <pre>
 	 * <b>Response</b>
@@ -215,13 +216,19 @@ public class UsersController {
 
 			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_OK);
 			
+		} catch (IllegalArgumentException e ){
+			LOG.warn(e.getMessage());
+			
+			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, e.getMessage()); 
+
+			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
 			
 		} catch (DuplicatedEmailException emailex){
 			
 			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, DUPLICATED_EMAIL); 
 
 			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
-			
+
 		} catch (DataServiceException dsex){
 
 			LOG.error(dsex.getMessage());
@@ -403,8 +410,7 @@ public class UsersController {
 			accont.setEmail(email);
 		}
 
-		String postOfficeBox = RequestUtil.getFieldValue(json,
-				UserSchema.POST_OFFICE_BOX_KEY);
+		String postOfficeBox = RequestUtil.getFieldValue(json, UserSchema.POST_OFFICE_BOX_KEY);
 		if (postOfficeBox != null) {
 			accont.setPostOfficeBox(postOfficeBox);
 		}
@@ -452,45 +458,55 @@ public class UsersController {
 	 * @return
 	 * @throws IOException
 	 */
-	private Account createAccountFromRequestBody(ServletInputStream is) throws IOException {
+	private Account createAccountFromRequestBody(ServletInputStream is) throws IllegalArgumentException, IOException {
 		
+		String strUser = FileUtils.asString(is);
+		JSONObject json;
 		try {
-			String strUser = FileUtils.asString(is);
-			JSONObject json = new JSONObject(strUser);
-			
-			String givenName = json.getString(UserSchema.GIVEN_NAME_KEY);
-			if(givenName.length() == 0){
-				throw new IllegalArgumentException(UserSchema.GIVEN_NAME_KEY + " is required" );
-			}
-			String surname= json.getString(UserSchema.SURNAME_KEY);
-			if(surname.length() == 0){
-				throw new IllegalArgumentException(UserSchema.SURNAME_KEY + " is required" );
-			}
-			
-			String email = json.getString(UserSchema.MAIL_KEY);
-			
-			String postOfficeBox = json.getString(UserSchema.POST_OFFICE_BOX_KEY);
-			String postalCode = json.getString(UserSchema.POSTAL_CODE_KEY);
-			
-			String street= json.getString(UserSchema.STREET_KEY); 
-			String locality = json.getString(UserSchema.LOCALITY_KEY); 
-
-			String phone = json.getString(UserSchema.TELEPHONE_KEY);
-			
-			String facsimile = json.getString(UserSchema.FACSIMILE_KEY);
-
-			String uid = createUid(givenName, surname);
-			
-			String commonName = AccountFactory.formatCommonName(givenName, surname);
-			
-			Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, "", "", phone, "", "", postalCode, "", postOfficeBox, "", street, locality, facsimile, "","","","","");
-			
-			return a;
-			
-		} catch (Exception e) {
+			json = new JSONObject(strUser);
+		} catch (JSONException e) {
 			LOG.error(e.getMessage());
 			throw new IOException(e);
 		}
+		
+		String givenName = RequestUtil.getFieldValue(json, UserSchema.GIVEN_NAME_KEY);
+		if(givenName == null){
+			throw new IllegalArgumentException(UserSchema.GIVEN_NAME_KEY + " is required" );
+		}
+		String surname= RequestUtil.getFieldValue(json, UserSchema.SURNAME_KEY);
+		if(surname == null){
+			throw new IllegalArgumentException(UserSchema.SURNAME_KEY + " is required" );
+		}
+		String email= RequestUtil.getFieldValue(json, UserSchema.MAIL_KEY);
+		if(email == null){
+			throw new IllegalArgumentException(UserSchema.MAIL_KEY + " is required" );
+		}
+		
+		String postOfficeBox =  RequestUtil.getFieldValue(json, UserSchema.POST_OFFICE_BOX_KEY );
+		
+		String postalCode = RequestUtil.getFieldValue(json, UserSchema.POSTAL_CODE_KEY);
+		
+		String street= RequestUtil.getFieldValue(json, UserSchema.STREET_KEY); 
+		String locality = RequestUtil.getFieldValue(json, UserSchema.LOCALITY_KEY); 
+
+		String phone = RequestUtil.getFieldValue(json, UserSchema.TELEPHONE_KEY);
+		
+		String facsimile = RequestUtil.getFieldValue( json, UserSchema.FACSIMILE_KEY);
+
+		String uid;
+		try {
+			uid = createUid(givenName, surname);
+		} catch (DataServiceException e) {
+			LOG.error(e.getMessage());
+			throw new IOException(e);
+		}
+		
+		String commonName = AccountFactory.formatCommonName(givenName, surname);
+		
+		Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, "", "", phone, "", "", postalCode, "", postOfficeBox, "", street, locality, facsimile, "","","","","");
+		
+		return a;
+			
 	}
 
 	/**
