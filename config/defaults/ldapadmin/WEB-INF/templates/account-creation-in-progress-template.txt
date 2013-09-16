@@ -1,4 +1,4 @@
-{name}, your request for a new account has been submitted. You will receive an e-mail when the account is validated.
+{name}, your request for a new account has been submitted.
 
 Your login is: {uid}
 
