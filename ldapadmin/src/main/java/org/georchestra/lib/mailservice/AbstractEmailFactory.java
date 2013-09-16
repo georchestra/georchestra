@@ -102,7 +102,7 @@ public abstract class AbstractEmailFactory {
         checkState();
         this.smtpHost = smtpHost;
     }
-    public int getSmptPort() {
+    public int getSmtpPort() {
         return smtpPort;
     }
     public void setSmtpPort(int port) {
