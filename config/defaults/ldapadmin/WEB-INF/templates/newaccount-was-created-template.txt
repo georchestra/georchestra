@@ -2,7 +2,7 @@
 
 Your login is: {uid}
 
-Go to https://@shared.server.name@/cas/login to get identified.
+Visit https://@shared.server.name@/cas/login to login.
 
 ---
 Sent by @shared.instance.name@ (@shared.homepage.url@)
