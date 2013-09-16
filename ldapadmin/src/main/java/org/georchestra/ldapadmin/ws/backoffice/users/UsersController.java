@@ -460,57 +460,53 @@ public class UsersController {
 	 */
 	private Account createAccountFromRequestBody(ServletInputStream is) throws IllegalArgumentException, IOException {
 		
-			String strUser = FileUtils.asString(is);
-			JSONObject json;
-			try {
-				json = new JSONObject(strUser);
-			} catch (JSONException e) {
-				LOG.error(e.getMessage());
-				throw new IOException(e);
-			}
-			
-			String givenName = RequestUtil.getFieldValue(json, UserSchema.GIVEN_NAME_KEY);
-			if(givenName == null){
-				throw new IllegalArgumentException(UserSchema.GIVEN_NAME_KEY + " is required" );
-			}
-			String surname= RequestUtil.getFieldValue(json, UserSchema.SURNAME_KEY);
-			if(surname == null){
-				throw new IllegalArgumentException(UserSchema.SURNAME_KEY + " is required" );
-			}
-			String email= RequestUtil.getFieldValue(json, UserSchema.MAIL_KEY);
-			if(null == null){
-				throw new IllegalArgumentException(UserSchema.MAIL_KEY + " is required" );
-			}
-			
-			String postOfficeBox =  RequestUtil.getFieldValue(json, UserSchema.POST_OFFICE_BOX_KEY );
-			
-			String postalCode = RequestUtil.getFieldValue(json, UserSchema.POSTAL_CODE_KEY);
-			
-			String street= RequestUtil.getFieldValue(json, UserSchema.STREET_KEY); 
-			String locality = RequestUtil.getFieldValue(json, UserSchema.LOCALITY_KEY); 
+		String strUser = FileUtils.asString(is);
+		JSONObject json;
+		try {
+			json = new JSONObject(strUser);
+		} catch (JSONException e) {
+			LOG.error(e.getMessage());
+			throw new IOException(e);
+		}
+		
+		String givenName = RequestUtil.getFieldValue(json, UserSchema.GIVEN_NAME_KEY);
+		if(givenName == null){
+			throw new IllegalArgumentException(UserSchema.GIVEN_NAME_KEY + " is required" );
+		}
+		String surname= RequestUtil.getFieldValue(json, UserSchema.SURNAME_KEY);
+		if(surname == null){
+			throw new IllegalArgumentException(UserSchema.SURNAME_KEY + " is required" );
+		}
+		String email= RequestUtil.getFieldValue(json, UserSchema.MAIL_KEY);
+		if(email == null){
+			throw new IllegalArgumentException(UserSchema.MAIL_KEY + " is required" );
+		}
+		
+		String postOfficeBox =  RequestUtil.getFieldValue(json, UserSchema.POST_OFFICE_BOX_KEY );
+		
+		String postalCode = RequestUtil.getFieldValue(json, UserSchema.POSTAL_CODE_KEY);
+		
+		String street= RequestUtil.getFieldValue(json, UserSchema.STREET_KEY); 
+		String locality = RequestUtil.getFieldValue(json, UserSchema.LOCALITY_KEY); 
 
-			String phone = RequestUtil.getFieldValue(json, UserSchema.TELEPHONE_KEY);
-			
-			String facsimile = RequestUtil.getFieldValue( json, UserSchema.FACSIMILE_KEY);
+		String phone = RequestUtil.getFieldValue(json, UserSchema.TELEPHONE_KEY);
+		
+		String facsimile = RequestUtil.getFieldValue( json, UserSchema.FACSIMILE_KEY);
 
-			String uid;
-			try {
-				uid = createUid(givenName, surname);
-			} catch (DataServiceException e) {
-				LOG.error(e.getMessage());
-				throw new IOException(e);
-			}
+		String uid;
+		try {
+			uid = createUid(givenName, surname);
+		} catch (DataServiceException e) {
+			LOG.error(e.getMessage());
+			throw new IOException(e);
+		}
+		
+		String commonName = AccountFactory.formatCommonName(givenName, surname);
+		
+		Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, "", "", phone, "", "", postalCode, "", postOfficeBox, "", street, locality, facsimile, "","","","","");
+		
+		return a;
 			
-			String commonName = AccountFactory.formatCommonName(givenName, surname);
-			
-			Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, "", "", phone, "", "", postalCode, "", postOfficeBox, "", street, locality, facsimile, "","","","","");
-			
-			return a;
-			
-//		} catch (Exception e) {
-//			LOG.error(e.getMessage());
-//			throw new IOException(e);
-//		}
 	}
 
 	/**
