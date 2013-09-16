@@ -12,7 +12,7 @@
     </ul>
   </div>
 </div>
-<div class="toolbar">
+<div class="toolbar shadow">
   <div class="checkbox-wrap">
     <input id="checkAll" type="checkbox" ldapadmin-check-all="!allSelected && selectedUsers().length" ng-change="selectAll()" ng-model="allSelected"/>
   </div>
@@ -28,10 +28,12 @@
 <div ng-hide="!selectedGroup || selectedGroup.users.length">
   There are no users in this group.
 </div>
-<table class="users table table-striped table-hover table-condensed">
-  <tr ng-repeat="user in users | filter:groupFilter | orderBy:'givenName'" class="">
-    <td><input type="checkbox" ng-model="user.selected" /></td>
-    <td><a href="#/users/{{user.uid}}">{{user.sn}} {{user.givenName}}</a></td>
-    <td>{{user.o}}</td>
-  </tr>
-</table>
+<div id="users">
+  <table class="users table table-striped table-hover table-condensed">
+    <tr ng-repeat="user in users | filter:groupFilter | orderBy:'givenName'" class="">
+      <td><input type="checkbox" ng-model="user.selected" /></td>
+      <td><a href="#/users/{{user.uid}}">{{user.sn}} {{user.givenName}}</a></td>
+      <td>{{user.o}}</td>
+    </tr>
+  </table>
+</div>
