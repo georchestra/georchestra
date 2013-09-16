@@ -73,7 +73,7 @@
 				<t:input path="uid" required="true" appendIcon="user">
 					<jsp:attribute name="label"><s:message code="uid.label" /></jsp:attribute>
 				</t:input>
-				<t:password path="password" required="true" spanId="pwdQuality" appendIcon="lock" onchange="cleanPasswordError();feedbackPassStrength('pwdQuality', value);" onkeypress="cleanPasswordError();" onkeyup="feedbackPassStrength('pwdQuality', value);">
+				<t:password path="password" required="true" spanId="pwdQuality" appendIcon="lock" onblur="checkPasswordLength();" onchange="cleanPasswordError();feedbackPassStrength('pwdQuality', value);" onkeypress="cleanPasswordError();" onkeyup="feedbackPassStrength('pwdQuality', value);">
 					<jsp:attribute name="label"><s:message code="password.label" /></jsp:attribute>
 				</t:password>
 				<t:password path="confirmPassword" required="true" spanId="passwordError" onblur="equalPasswords();">
@@ -114,6 +114,16 @@
         var pwd2 = document.form.confirmPassword.value;
         if (pwd1 != pwd2) {
             document.getElementById("passwordError").innerHTML = '<s:message code="confirmPassword.error.pwdNotEquals.tag" />';
+            document.form.password.focus();
+            return false;
+        }
+        return true;
+    }
+    /* to be called when the password field loses focus */
+    function checkPasswordLength() {
+        var pwd = document.form.password.value;
+        if (pwd.length < 8) {
+            document.getElementById("pwdQuality").innerHTML = '<s:message code="password.error.sizeError" />';
             document.form.password.focus();
             return false;
         }
