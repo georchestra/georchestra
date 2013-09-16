@@ -13,6 +13,7 @@ import java.net.InetAddress;
 public class EmailDefaultParams {
     private String smtpHost;
     private int smtpPort = -1;
+    private String emailHtml;
     private String replyTo;
     private String from;
     private String bodyEncoding;
@@ -32,6 +33,7 @@ public class EmailDefaultParams {
     protected EmailDefaultParams(EmailDefaultParams defaults) {
         smtpHost = defaults.smtpHost;
         smtpPort = defaults.smtpPort;
+        emailHtml = defaults.emailHtml;
         replyTo = defaults.replyTo;
         from = defaults.from;
         bodyEncoding = defaults.bodyEncoding;
@@ -102,6 +104,13 @@ public class EmailDefaultParams {
     public void setSmtpPort(int port) {
         checkState();
         this.smtpPort = port;
+    }
+    public String getEmailHtml() {
+        return emailHtml;
+    }
+    public void setEmailHtml(String emailHtml) {
+        checkState();
+        this.emailHtml = emailHtml;
     }
     public String getReplyTo() {
         return replyTo;

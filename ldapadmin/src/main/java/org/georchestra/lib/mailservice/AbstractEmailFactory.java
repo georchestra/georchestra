@@ -14,6 +14,7 @@ public abstract class AbstractEmailFactory {
 	
 	protected String smtpHost;
 	protected int smtpPort = -1;
+	protected String emailHtml;
 	protected String replyTo;
 	protected String from;
 	protected String bodyEncoding;
@@ -107,6 +108,13 @@ public abstract class AbstractEmailFactory {
     public void setSmtpPort(int port) {
         checkState();
         this.smtpPort = port;
+    }
+    public String getEmailHtml() {
+        return emailHtml;
+    }
+    public void setEmailHtml(String emailHtml) {
+        checkState();
+        this.emailHtml = emailHtml;
     }
     public String getReplyTo() {
         return replyTo;

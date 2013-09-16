@@ -30,6 +30,7 @@ public abstract class Email {
 
 	private String smtpHost;
     private int smtpPort = -1;
+    private String emailHtml;
     private String replyTo;
     private String from;
     private String bodyEncoding;
@@ -39,7 +40,7 @@ public abstract class Email {
     private String subject;
 	
 	public Email(HttpServletRequest request, String[] recipients,
-			final String emailSubject, final String smtpHost, final int smtpPort,
+			final String emailSubject, final String smtpHost, final int smtpPort, final String emailHtml,
 			final String replyTo, final String from, final String bodyEncoding,
 			final String subjectEncoding, final String[] languages) {
 		
@@ -47,6 +48,7 @@ public abstract class Email {
 		this.subject = emailSubject;
 		this.smtpHost = smtpHost;
 		this.smtpPort = smtpPort;
+		this.emailHtml = emailHtml;
 		this.replyTo = replyTo;
 		this.from = from;
 		this.bodyEncoding = bodyEncoding;

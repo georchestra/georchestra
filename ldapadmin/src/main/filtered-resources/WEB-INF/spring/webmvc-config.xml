@@ -110,6 +110,7 @@
     <bean id="emailFactory" class="org.georchestra.ldapadmin.mailservice.EmailFactoryImpl">
         <property name="smtpHost" value="${smtpHost}" />
         <property name="smtpPort" value="${smtpPort}" />
+        <property name="emailHtml" value="${emailHtml}" />
         <property name="replyTo" value="${replyTo}" />
         <property name="from" value="${from}" />
         <property name="bodyEncoding" value="UTF-8" />

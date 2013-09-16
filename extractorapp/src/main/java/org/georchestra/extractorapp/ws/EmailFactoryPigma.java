@@ -29,6 +29,7 @@ public class EmailFactoryPigma extends AbstractEmailFactory {
 				this.smtpHost,
 				this.smtpPort,
 				this.replyTo,
+				this.emailHtml,
 				this.from,
 				this.bodyEncoding,
 				this.subjectEncoding,

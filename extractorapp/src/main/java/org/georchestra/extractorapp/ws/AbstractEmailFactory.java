@@ -15,6 +15,7 @@ public abstract class AbstractEmailFactory {
 	
 	protected String smtpHost;
 	protected int smtpPort = -1;
+	protected String emailHtml;
 	protected String replyTo;
 	protected String from;
 	protected String bodyEncoding;
