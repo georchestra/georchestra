@@ -46,7 +46,6 @@ public class UsersController {
 	private static final String REQUEST_MAPPING = BASE_MAPPING + "/users";	
 	
 	private static final String DUPLICATED_EMAIL = "duplicated_email";
-	private static final String MANDATORY_FIELD_NOT_FOUND = "mandatory_field_not_found";
 
 	private static final String NOT_FOUND = "not_found";
 
@@ -220,7 +219,7 @@ public class UsersController {
 		} catch (IllegalArgumentException e ){
 			LOG.warn(e.getMessage());
 			
-			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, MANDATORY_FIELD_NOT_FOUND); 
+			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, e.getMessage()); 
 
 			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
 			
@@ -459,22 +458,27 @@ public class UsersController {
 	 * @return
 	 * @throws IOException
 	 */
-	private Account createAccountFromRequestBody(ServletInputStream is) throws IOException {
+	private Account createAccountFromRequestBody(ServletInputStream is) throws IllegalArgumentException, IOException {
 		
-		try {
 			String strUser = FileUtils.asString(is);
-			JSONObject json = new JSONObject(strUser);
+			JSONObject json;
+			try {
+				json = new JSONObject(strUser);
+			} catch (JSONException e) {
+				LOG.error(e.getMessage());
+				throw new IOException(e);
+			}
 			
-			String givenName = json.getString(UserSchema.GIVEN_NAME_KEY);
-			if(givenName.length() == 0){
+			String givenName = RequestUtil.getFieldValue(json, UserSchema.GIVEN_NAME_KEY);
+			if(givenName == null){
 				throw new IllegalArgumentException(UserSchema.GIVEN_NAME_KEY + " is required" );
 			}
-			String surname= json.getString(UserSchema.SURNAME_KEY);
-			if(surname.length() == 0){
+			String surname= RequestUtil.getFieldValue(json, UserSchema.SURNAME_KEY);
+			if(surname == null){
 				throw new IllegalArgumentException(UserSchema.SURNAME_KEY + " is required" );
 			}
-			String email= json.getString(UserSchema.MAIL_KEY);
-			if(surname.length() == 0){
+			String email= RequestUtil.getFieldValue(json, UserSchema.MAIL_KEY);
+			if(null == null){
 				throw new IllegalArgumentException(UserSchema.MAIL_KEY + " is required" );
 			}
 			
@@ -489,7 +493,13 @@ public class UsersController {
 			
 			String facsimile = RequestUtil.getFieldValue( json, UserSchema.FACSIMILE_KEY);
 
-			String uid = createUid(givenName, surname);
+			String uid;
+			try {
+				uid = createUid(givenName, surname);
+			} catch (DataServiceException e) {
+				LOG.error(e.getMessage());
+				throw new IOException(e);
+			}
 			
 			String commonName = AccountFactory.formatCommonName(givenName, surname);
 			
@@ -497,10 +507,10 @@ public class UsersController {
 			
 			return a;
 			
-		} catch (Exception e) {
-			LOG.error(e.getMessage());
-			throw new IOException(e);
-		}
+//		} catch (Exception e) {
+//			LOG.error(e.getMessage());
+//			throw new IOException(e);
+//		}
 	}
 
 	/**
