@@ -33,6 +33,7 @@ public abstract class Email {
 
 	private String smtpHost;
     private int smtpPort = -1;
+    private String emailHtml;
     private String replyTo;
     private String from;
     private String bodyEncoding;
@@ -46,7 +47,7 @@ public abstract class Email {
 	private String emailBody;
 
     public Email( String[] recipients,
-			final String emailSubject, final String smtpHost, final int smtpPort,
+			final String emailSubject, final String smtpHost, final int smtpPort, final String emailHtml,
 			final String replyTo, final String from, final String bodyEncoding,
 			final String subjectEncoding, final String[] languages, String fileTemplate) {
 		
@@ -54,6 +55,7 @@ public abstract class Email {
 		this.subject = emailSubject;
 		this.smtpHost = smtpHost;
 		this.smtpPort = smtpPort;
+		this.emailHtml = emailHtml;
 		this.replyTo = replyTo;
 		this.from = from;
 		this.bodyEncoding = bodyEncoding;
@@ -72,8 +74,8 @@ public abstract class Email {
 	public String toString() {
 		return "Email [DEB_MODEM=" + DEB_MODEM + ", DEB_ADSL=" + DEB_ADSL
 				+ ", DEB_T1=" + DEB_T1 + ", smtpHost=" + smtpHost
-				+ ", smtpPort=" + smtpPort + ", replyTo=" + replyTo + ", from="
-				+ from + ", bodyEncoding=" + bodyEncoding
+				+ ", smtpPort=" + smtpPort + ", emailHtml=" + emailHtml
+				+ ", replyTo=" + replyTo + ", from=" + from + ", bodyEncoding=" + bodyEncoding
 				+ ", subjectEncoding=" + subjectEncoding + ", languages="
 				+ Arrays.toString(languages) + ", recipients="
 				+ Arrays.toString(recipients) + ", subject=" + subject
@@ -111,7 +113,7 @@ public abstract class Email {
         	reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), "UTF-8") );
         	StringBuilder builder = new StringBuilder();
             for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-                builder.append(line);
+                builder.append(line).append("\n");
             }
             body = builder.toString();
             
@@ -169,7 +171,11 @@ public abstract class Email {
 
         if (msg != null) {
             MimeBodyPart bodyPart = new MimeBodyPart();
-            bodyPart.setText(msg, bodyEncoding, "html");
+            if ("true".equalsIgnoreCase(emailHtml)) {
+                bodyPart.setText(msg, bodyEncoding, "html");
+            } else {
+                bodyPart.setText(msg, bodyEncoding, "text");
+            }
             bodyPart.setContentLanguage(languages);
             multipart.addBodyPart(bodyPart);
             LOG.debug(msg);
@@ -198,34 +204,5 @@ public abstract class Email {
         boolean hostPartNotEmpty = parts[1].trim().length() > 0;
         return mainPartNotEmpty && hostPartNotEmpty;
     }
-	
-	protected String format(List<String> list) {
-        if (list.isEmpty()) {
-            return "<p>aucune</p>";
-        }
-        StringBuilder b = new StringBuilder("<ul>");
-        for (String string : list) {
-            b.append("<li>");
-            b.append(string);
-            b.append("</li>");
-        }
-        b.append("</ul>");
 
-        return b.toString();
-    }
-    
-	protected String formatTimeEstimation(String msg, final long fileSize) {
-    	
-    	long fSizeBits = fileSize*8;
-    	long tModem = fSizeBits / DEB_MODEM;
-    	long tADSL = fSizeBits / DEB_ADSL;
-    	long tT1 = fSizeBits / DEB_T1;
-    	
-    	msg = msg.replace("{fSize}", String.valueOf(fileSize));
-    	msg = msg.replace("{tModem}", String.format("%02d:%02d", tModem/3600, (tModem%3600)/60));
-    	msg = msg.replace("{tADSL}", String.format("%02d:%02d", tADSL/3600, (tADSL%3600)/60));
-    	msg = msg.replace("{tT1}", String.format("%02d:%02d", tT1/3600, (tT1%3600)/60));
-   	
-    	return msg;
-    }
 }
