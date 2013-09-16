@@ -2,7 +2,7 @@
 
 shared.instance.name=geOrchestra
 
-shared.homepage.url=http://@shared.server.host@/
+shared.homepage.url=http://@shared.server.name@/
 shared.server.port=80
 
 shared.header.height=90
