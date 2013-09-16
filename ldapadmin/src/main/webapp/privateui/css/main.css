@@ -17,13 +17,16 @@
   height: 100%;
   position: relative;
 }
+#sidebar .toolbar {
+  padding-top: 42px;
+}
 #sidebar>div {
-  padding: 10px;
+  padding-left: 10px;
 }
 #sidebar .content {
   overflow: auto;
   width: 100%;
-  top: 50px;
+  top: 84px;
   bottom: 0;
   position: absolute;
 }
@@ -43,7 +46,6 @@
 
 #users {
   width: 100%;
-  margin-bottom: 20px;
   position: absolute;
   top: 76px;
   bottom: 0;
