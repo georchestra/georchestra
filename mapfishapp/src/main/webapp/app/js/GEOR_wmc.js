@@ -18,6 +18,7 @@
  * to restore v1.0 compliant WMCs too => both formats are useful
  * @include OpenLayers/Format/WMC/v1_0_0.js
  * @include OpenLayers/Format/WMC/v1_1_0.js
+ * @include OpenLayers/Format/OWSContext/v0_3_1.js
  * @include OpenLayers/Projection.js
  * @include GeoExt/data/WMCReader.js
  * @include GEOR_util.js
@@ -36,6 +37,12 @@ GEOR.wmc = (function() {
      * {OpenLayers.Format.WMC} The format to read/write WMC.
      */
     var wmcFormat = null;
+
+    /**
+     * Property: owsContextFormat
+     * {OpenLayers.Format.OWSContext} The format to read/write OWS Contexts.
+     */
+    var owsContextFormat = null;
 
     /**
      * Property: layerStore
@@ -165,6 +172,7 @@ GEOR.wmc = (function() {
                 //layerOptions: GEOR.ows.defaultWMSLayerOptions
                 // why should we apply default layer options and not use those provided by the WMC ?
             });
+            owsContextFormat = new OpenLayers.Format.OWSContext();
             wmcReader = new GeoExt.data.WMCReader(
                 {format: wmcFormat},
                 layerStore.recordType
@@ -198,15 +206,21 @@ GEOR.wmc = (function() {
          */
         read: function(wmcString, resetMap, zoomToWMC) {
             var map = layerStore.map,
-                mapProj, wmcProj;
-            var newContext = wmcFormat.read(wmcString, {}); // get context from wmc
-                                                         // using non-API feature
+                mapProj, wmcProj, newContext;
 
+            try {
+                // trying with WMC format
+                newContext = wmcFormat.read(wmcString);
+            } catch (err) {
+                // trying with OWS Context format
+                newContext = owsContextFormat.read(wmcString);
+            }
+            // FAIL:
             if (newContext.layersContext === undefined) {
                 GEOR.util.errorDialog({
                     msg: tr("The provided file is not a valid OGC context")
                 });
-                return;
+                return false;
             }
 
             // If the context has been saved in a different projection,
@@ -223,7 +237,7 @@ GEOR.wmc = (function() {
                     })
                 });
                 var reproj = function() {
-                    this && this.transform(
+                    this && this.transform && this.transform(
                         new OpenLayers.Projection(wmcProj), 
                         new OpenLayers.Projection(mapProj)
                     );
@@ -238,6 +252,7 @@ GEOR.wmc = (function() {
 
             // remove all current layers except the lowest index one
             // (our fake base layer)
+            // FIXME: should not this code be subject to resetMap option ?
             for (var i = map.layers.length -1; i >= 1; i--) {
                 map.removeLayer(map.layers[i]);
             }
