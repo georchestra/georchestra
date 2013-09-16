@@ -14,9 +14,18 @@
   position: relative;
 }
 #sidebar {
-  padding: 10px;
-  overflow: auto;
   height: 100%;
+  position: relative;
+}
+#sidebar>div {
+  padding: 10px;
+}
+#sidebar .content {
+  overflow: auto;
+  width: 100%;
+  top: 50px;
+  bottom: 0;
+  position: absolute;
 }
 #sidebar a {
   color: black;
