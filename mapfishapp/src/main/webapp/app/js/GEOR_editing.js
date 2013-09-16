@@ -58,6 +58,7 @@ GEOR.editing = (function() {
                     url: GEOR.config.GEOSERVER_WFS_URL,
                     protocolOptions: {
                         srsName: map.getProjection(),
+                        srsNameInQuery: true, // see http://trac.osgeo.org/openlayers/ticket/2228
                         url: GEOR.config.GEOSERVER_WFS_URL
                     },
                     layerOptions: {
