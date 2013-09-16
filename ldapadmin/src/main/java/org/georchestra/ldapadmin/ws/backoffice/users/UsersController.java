@@ -45,8 +45,8 @@ public class UsersController {
 	private static final String BASE_MAPPING = "/private";
 	private static final String REQUEST_MAPPING = BASE_MAPPING + "/users";	
 	
-
 	private static final String DUPLICATED_EMAIL = "duplicated_email";
+	private static final String MANDATORY_FIELD_NOT_FOUND = "mandatory_field_not_found";
 
 	private static final String NOT_FOUND = "not_found";
 
@@ -165,6 +165,8 @@ public class UsersController {
      *	"l": "locality",
      * 	"postOfficeBox": "the post office box",
      * }
+     * 
+     * where <b>sn, givenName, mail</b> are mandatories
 	 * </pre>
 	 * <pre>
 	 * <b>Response</b>
@@ -215,13 +217,19 @@ public class UsersController {
 
 			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_OK);
 			
+		} catch (IllegalArgumentException e ){
+			LOG.warn(e.getMessage());
+			
+			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, MANDATORY_FIELD_NOT_FOUND); 
+
+			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
 			
 		} catch (DuplicatedEmailException emailex){
 			
 			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, DUPLICATED_EMAIL); 
 
 			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
-			
+
 		} catch (DataServiceException dsex){
 
 			LOG.error(dsex.getMessage());
@@ -403,8 +411,7 @@ public class UsersController {
 			accont.setEmail(email);
 		}
 
-		String postOfficeBox = RequestUtil.getFieldValue(json,
-				UserSchema.POST_OFFICE_BOX_KEY);
+		String postOfficeBox = RequestUtil.getFieldValue(json, UserSchema.POST_OFFICE_BOX_KEY);
 		if (postOfficeBox != null) {
 			accont.setPostOfficeBox(postOfficeBox);
 		}
@@ -466,18 +473,21 @@ public class UsersController {
 			if(surname.length() == 0){
 				throw new IllegalArgumentException(UserSchema.SURNAME_KEY + " is required" );
 			}
+			String email= json.getString(UserSchema.MAIL_KEY);
+			if(surname.length() == 0){
+				throw new IllegalArgumentException(UserSchema.MAIL_KEY + " is required" );
+			}
 			
-			String email = json.getString(UserSchema.MAIL_KEY);
+			String postOfficeBox =  RequestUtil.getFieldValue(json, UserSchema.POST_OFFICE_BOX_KEY );
 			
-			String postOfficeBox = json.getString(UserSchema.POST_OFFICE_BOX_KEY);
-			String postalCode = json.getString(UserSchema.POSTAL_CODE_KEY);
+			String postalCode = RequestUtil.getFieldValue(json, UserSchema.POSTAL_CODE_KEY);
 			
-			String street= json.getString(UserSchema.STREET_KEY); 
-			String locality = json.getString(UserSchema.LOCALITY_KEY); 
+			String street= RequestUtil.getFieldValue(json, UserSchema.STREET_KEY); 
+			String locality = RequestUtil.getFieldValue(json, UserSchema.LOCALITY_KEY); 
 
-			String phone = json.getString(UserSchema.TELEPHONE_KEY);
+			String phone = RequestUtil.getFieldValue(json, UserSchema.TELEPHONE_KEY);
 			
-			String facsimile = json.getString(UserSchema.FACSIMILE_KEY);
+			String facsimile = RequestUtil.getFieldValue( json, UserSchema.FACSIMILE_KEY);
 
 			String uid = createUid(givenName, surname);
 			
