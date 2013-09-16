@@ -12,7 +12,7 @@ import java.net.InetAddress;
  */
 public class EmailDefaultParams {
     private String smtpHost;
-    private int smptPort = -1;
+    private int smtpPort = -1;
     private String replyTo;
     private String from;
     private String bodyEncoding;
@@ -31,7 +31,7 @@ public class EmailDefaultParams {
      */
     protected EmailDefaultParams(EmailDefaultParams defaults) {
         smtpHost = defaults.smtpHost;
-        smptPort = defaults.smptPort;
+        smtpPort = defaults.smtpPort;
         replyTo = defaults.replyTo;
         from = defaults.from;
         bodyEncoding = defaults.bodyEncoding;
@@ -60,8 +60,8 @@ public class EmailDefaultParams {
             } catch (IOException e) {
                 throw new IllegalStateException(smtpHost + " is not a reachable address");
             }
-            if (smptPort < 0) {
-                throw new IllegalStateException(smptPort + " is not a legal port make sure it is correctly configured");
+            if (smtpPort < 0) {
+                throw new IllegalStateException(smtpPort + " is not a legal port make sure it is correctly configured");
             }
             if (replyTo == null || from == null) {
                 if (replyTo == null && from == null) {
@@ -96,12 +96,12 @@ public class EmailDefaultParams {
         checkState();
         this.smtpHost = smtpHost;
     }
-    public int getSmptPort() {
-        return smptPort;
+    public int getSmtpPort() {
+        return smtpPort;
     }
     public void setSmtpPort(int port) {
         checkState();
-        this.smptPort = port;
+        this.smtpPort = port;
     }
     public String getReplyTo() {
         return replyTo;
