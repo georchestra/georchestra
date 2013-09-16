@@ -3,6 +3,7 @@
  */
 package org.georchestra.ldapadmin.ds;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.naming.Name;
@@ -173,6 +174,24 @@ public final class AccountDaoImpl implements AccountDao{
 		return ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(), new AccountContextMapper());
 	}
 
+
+	@Override
+	public List<Account> findFilterBy(final UserProtectedFilter filterProtected) throws DataServiceException {
+
+		List<Account> allUsers = findAll();
+		
+		// removes the protected users. 
+		List<Account> filtered = new LinkedList<Account>();
+		for (Account account : allUsers) {
+			
+			if( !filterProtected.isTrue( account.getUid() ) ){
+				filtered.add(account);
+			}
+		}
+		return filtered;
+	}
+
+	
 	
 	/**
 	 * @see {@link AccountDao#findByUID(String)}

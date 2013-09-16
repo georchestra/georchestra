@@ -17,6 +17,7 @@ import org.georchestra.ldapadmin.ds.DataServiceException;
 import org.georchestra.ldapadmin.ds.DuplicatedEmailException;
 import org.georchestra.ldapadmin.ds.DuplicatedUidException;
 import org.georchestra.ldapadmin.ds.NotFoundException;
+import org.georchestra.ldapadmin.ds.UserProtectedFilter;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
 import org.georchestra.ldapadmin.dto.Group;
@@ -34,6 +35,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 /**
  * Web Services to maintain the User information.
  * 
+ * <p>
+ * Provide the operations to access the data layer to update and read the user data. 
+ * The operations will be consistent with the business rules.
+ * </p>
+ * 
  * @author Mauricio Pazos
  *
  */
@@ -46,15 +52,15 @@ public class UsersController {
 	private static final String REQUEST_MAPPING = BASE_MAPPING + "/users";	
 	
 	private static final String DUPLICATED_EMAIL = "duplicated_email";
-
 	private static final String NOT_FOUND = "not_found";
 
-
 	private AccountDao accountDao;
+	private UserRule userRule;
 	
 	@Autowired
-	public UsersController( AccountDao dao){
+	public UsersController( AccountDao dao, UserRule userRule){
 		this.accountDao = dao;
+		this.userRule = userRule;
 	}
 	
 	/**
@@ -80,7 +86,8 @@ public class UsersController {
 	public void findAll( HttpServletRequest request, HttpServletResponse response ) throws IOException{
 		
 		try {
-			List<Account> list = this.accountDao.findAll();
+			UserProtectedFilter filter = new UserProtectedFilter( this.userRule.getListUidProtected() );
+			List<Account> list = this.accountDao.findFilterBy(filter);
 
 			UserListResponse userListResponse = new UserListResponse(list);
 			
@@ -119,6 +126,19 @@ public class UsersController {
 	public void findByUid( HttpServletRequest request, HttpServletResponse response) throws IOException{
 		
 		String uid = RequestUtil.getKeyFromPathVariable(request);
+		
+		if(this.userRule.isProtected(uid) ){
+			
+			String message = "The user is protected: " + uid;
+			LOG.warn(message );
+			
+			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, message); 
+
+			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
+			
+			return;
+		}
+		
 
 		// searches the account
 		Account account = null;
@@ -208,6 +228,19 @@ public class UsersController {
 		try{
 			
 			Account account = createAccountFromRequestBody(request.getInputStream());
+			
+			if(this.userRule.isProtected(account.getUid()) ){
+				
+				String message = "The user is protected: " + account.getUid();
+				LOG.warn(message );
+				
+				String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, message); 
+
+				ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
+				
+				return;
+			}
+			
 			storeUser(account);
 			
 			UserResponse userResponse = new UserResponse(account);
@@ -306,8 +339,20 @@ public class UsersController {
 	@RequestMapping(value=REQUEST_MAPPING+ "/*", method=RequestMethod.PUT)
 	public void update( HttpServletRequest request, HttpServletResponse response) throws IOException{
 		
-		String uid = RequestUtil.getKeyFromPathVariable(request);
+		final String uid = RequestUtil.getKeyFromPathVariable(request);
 
+		if(this.userRule.isProtected(uid) ){
+			
+			String message = "The user is protected, it cannot be updated: " + uid;
+			LOG.warn(message );
+			
+			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, message); 
+
+			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
+			
+			return;
+		}
+		
 		// searches the account
 		Account account = null;
 		try {
@@ -359,6 +404,18 @@ public class UsersController {
 	public void delete( HttpServletRequest request, HttpServletResponse response) throws IOException{
 		try{
 			final String uid = RequestUtil.getKeyFromPathVariable(request);
+			
+			if(this.userRule.isProtected(uid) ){
+				
+				String message = "The user is protected, it cannot be deleted: " + uid;
+				LOG.warn(message );
+				
+				String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, message); 
+
+				ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
+				
+				return;
+			}
 
 			this.accountDao.delete(uid);
 			

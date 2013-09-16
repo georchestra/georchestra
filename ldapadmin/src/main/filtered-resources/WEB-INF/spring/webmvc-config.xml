@@ -53,6 +53,10 @@
 	</bean>
 
     <!-- userTokenDao  -->
+    <bean class="org.georchestra.ldapadmin.ws.backoffice.users.UserRule">
+    
+    </bean>
+    
     <bean id="userTokenDao" class="org.georchestra.ldapadmin.ds.UserTokenDao">
         <property name="databaseUser" value="${psql.user}" />
         <property name="databasePassword" value="${psql.pass}" />
