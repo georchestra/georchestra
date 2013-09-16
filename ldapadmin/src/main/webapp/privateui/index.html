@@ -32,45 +32,48 @@
 
       <div class="row-fluid">
         <div id="sidebar" class="span3">
-          <!--Sidebar content-->
-          <i class="icon-blank"></i>
-          <a href="#/" ng-class="{active: selectedGroup == null}">
-            All users ({{users.length}})
-          </a>
-          <br />
-          <br />
-          <script type="text/ng-template" id="group_item_renderer.html">
-            <a href="#/groups/{{data.group.cn}}" ng-if="data.group != null" ng-class="{active: data.group==selectedGroup}">
-              <i class="icon-blank"></i>
-              {{data.group.cn}} <small>({{data.group.users.length || 0}})</small>
+          <div class="toolbar shadow">
+            <a id="new_user" href="#/users/new" class="btn">
+              <i class="icon-plus-sign"></i>
+              New user
             </a>
-            <div ng-if="!data.group && data.nodes.length" class="accordion-group">
-              <div class="accordion-heading">
-                <a class="accordion-toggle" onclick="$('#collapse{{data.name}}').collapse('toggle');" data-toggle="collapse">
-                  <i class="icon-chevron-right"></i>
-                  {{data.group.cn || data.name}}
-                </a>
-              </div>
-              <div id="collapse{{data.name}}" class="accordion-body collapse">
-                <div class="accordion-inner">
-                  <div ng-repeat="data in data.nodes" ng-include="'group_item_renderer.html'"></div>
+            <a id="new_group" href="#/groups/new" class="btn">
+              <i class="icon-plus-sign"></i>
+              New group
+            </a>
+          </div>
+          <!--Sidebar content-->
+          <div class="content">
+            <i class="icon-blank"></i>
+            <a href="#/" ng-class="{active: selectedGroup == null}">
+              All users ({{users.length}})
+            </a>
+            <br />
+            <br />
+            <script type="text/ng-template" id="group_item_renderer.html">
+              <a href="#/groups/{{data.group.cn}}" ng-if="data.group != null" ng-class="{active: data.group==selectedGroup}">
+                <i class="icon-blank"></i>
+                {{data.group.cn}} <small>({{data.group.users.length || 0}})</small>
+              </a>
+              <div ng-if="!data.group && data.nodes.length" class="accordion-group">
+                <div class="accordion-heading">
+                  <a class="accordion-toggle" onclick="$('#collapse{{data.name}}').collapse('toggle');" data-toggle="collapse">
+                    <i class="icon-chevron-right"></i>
+                    {{data.group.cn || data.name}}
+                  </a>
+                </div>
+                <div id="collapse{{data.name}}" class="accordion-body collapse">
+                  <div class="accordion-inner">
+                    <div ng-repeat="data in data.nodes" ng-include="'group_item_renderer.html'"></div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </script>
-          <div class="groups" ng-controller="GroupsCtrl">
-            <div class="accordion" ng-repeat="data in groups_tree" ng-include="'group_item_renderer.html'">
+            </script>
+            <div class="groups" ng-controller="GroupsCtrl">
+              <div class="accordion" ng-repeat="data in groups_tree" ng-include="'group_item_renderer.html'">
+              </div>
             </div>
           </div>
-          <br />
-          <a id="new_user" href="#/users/new" class="btn">
-            <i class="icon-plus-sign"></i>
-            New user
-          </a>
-          <a id="new_group" href="#/groups/new" class="btn">
-            <i class="icon-plus-sign"></i>
-            New group
-          </a>
         </div>
         <div id="content" class="span9" ng-view>
         <!--Body content-->
