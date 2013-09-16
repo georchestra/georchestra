@@ -204,34 +204,5 @@ public abstract class Email {
         boolean hostPartNotEmpty = parts[1].trim().length() > 0;
         return mainPartNotEmpty && hostPartNotEmpty;
     }
-	
-	protected String format(List<String> list) {
-        if (list.isEmpty()) {
-            return "<p>aucune</p>";
-        }
-        StringBuilder b = new StringBuilder("<ul>");
-        for (String string : list) {
-            b.append("<li>");
-            b.append(string);
-            b.append("</li>");
-        }
-        b.append("</ul>");
 
-        return b.toString();
-    }
-    
-	protected String formatTimeEstimation(String msg, final long fileSize) {
-    	
-    	long fSizeBits = fileSize*8;
-    	long tModem = fSizeBits / DEB_MODEM;
-    	long tADSL = fSizeBits / DEB_ADSL;
-    	long tT1 = fSizeBits / DEB_T1;
-    	
-    	msg = msg.replace("{fSize}", String.valueOf(fileSize));
-    	msg = msg.replace("{tModem}", String.format("%02d:%02d", tModem/3600, (tModem%3600)/60));
-    	msg = msg.replace("{tADSL}", String.format("%02d:%02d", tADSL/3600, (tADSL%3600)/60));
-    	msg = msg.replace("{tT1}", String.format("%02d:%02d", tT1/3600, (tT1%3600)/60));
-   	
-    	return msg;
-    }
 }
