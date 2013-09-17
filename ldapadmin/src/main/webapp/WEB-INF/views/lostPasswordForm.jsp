@@ -6,6 +6,9 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 
+<%@ page import="net.tanesha.recaptcha.ReCaptcha" %>
+<%@ page import="net.tanesha.recaptcha.ReCaptchaFactory" %>
+
 <!DOCTYPE html>
 <!--TODO: set appropriate lang-->
 <!--TODO: favicon-->
@@ -48,6 +51,12 @@
 					<jsp:attribute name="label"><s:message code="email.label" /></jsp:attribute>
 				</t:input>
 			</fieldset>
+
+			<fieldset class="col-lg-6 col-lg-offset-1">
+				<legend><s:message code="lostPasswordForm.fieldset.reCaptcha"/></legend>
+				<t:recaptcha path="recaptcha_response_field" />
+			</fieldset>
+
 			<fieldset class="col-lg-6 col-lg-offset-1">
 				<div class="form-group">
 					<div class="col-lg-8 col-lg-offset-4 text-right">

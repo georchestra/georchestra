@@ -9,9 +9,12 @@ import java.util.UUID;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
+import net.tanesha.recaptcha.ReCaptcha;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.ldapadmin.Configuration;
+import org.georchestra.ldapadmin.bs.ReCaptchaParameters;
 import org.georchestra.ldapadmin.ds.AccountDao;
 import org.georchestra.ldapadmin.ds.DataServiceException;
 import org.georchestra.ldapadmin.ds.NotFoundException;
@@ -19,6 +22,7 @@ import org.georchestra.ldapadmin.ds.UserTokenDao;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.mailservice.MailService;
 import org.georchestra.ldapadmin.ws.utils.EmailUtils;
+import org.georchestra.ldapadmin.ws.utils.RecaptchaUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -47,7 +51,7 @@ import org.springframework.web.bind.support.SessionStatus;
  * @author Mauricio Pazos
  */
 @Controller
-@SessionAttributes(types=LostPasswordFormBean.class)
+@SessionAttributes(value={"reCaptchaPublicKey"},types=LostPasswordFormBean.class)
 public class LostPasswordFormController  {
 	
 	protected static final Log LOG = LogFactory.getLog(LostPasswordFormController.class.getName());
@@ -57,19 +61,23 @@ public class LostPasswordFormController  {
 	private MailService mailService;
 	private UserTokenDao userTokenDao;
 	private Configuration config;
-	
+	private ReCaptcha reCaptcha;
+	private ReCaptchaParameters reCaptchaParameters;
+
 	@Autowired
-	public LostPasswordFormController( AccountDao dao, MailService mailSrv, UserTokenDao userTokenDao, Configuration cfg){
+	public LostPasswordFormController( AccountDao dao, MailService mailSrv, UserTokenDao userTokenDao, Configuration cfg, ReCaptcha reCaptcha, ReCaptchaParameters reCaptchaParameters){
 		this.accountDao = dao;
 		this.mailService = mailSrv;
 		this.userTokenDao = userTokenDao;
 		this.config = cfg;
+		this.reCaptcha = reCaptcha;
+		this.reCaptchaParameters = reCaptchaParameters;
 	}
 	
 	@InitBinder
 	public void initForm( WebDataBinder dataBinder) {
 		
-		dataBinder.setAllowedFields(new String[]{"email"});
+		dataBinder.setAllowedFields(new String[]{"email", "recaptcha_challenge_field", "recaptcha_response_field"});
 	}
 	
 	@RequestMapping(value="/account/lostPassword", method=RequestMethod.GET)
@@ -78,6 +86,7 @@ public class LostPasswordFormController  {
 		LostPasswordFormBean formBean = new LostPasswordFormBean();
 		
 		model.addAttribute(formBean);
+		model.addAttribute("reCaptchaPublicKey", this.reCaptchaParameters.getPublicKey());
 		
 		return "lostPasswordForm";
 	}
@@ -103,10 +112,13 @@ public class LostPasswordFormController  {
 						throws IOException {
 		
 		EmailUtils.validate(formBean.getEmail(), resultErrors);
-
-		
 		if(resultErrors.hasErrors()){
-			
+			return "lostPasswordForm";
+		}
+
+		String remoteAddr = request.getRemoteAddr();
+		new RecaptchaUtils(remoteAddr, this.reCaptcha).validate(formBean.getRecaptcha_challenge_field(), formBean.getRecaptcha_response_field(), resultErrors);
+		if(resultErrors.hasErrors()){
 			return "lostPasswordForm";
 		}
 		
