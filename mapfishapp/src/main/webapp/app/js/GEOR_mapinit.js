@@ -139,7 +139,7 @@ GEOR.mapinit = (function() {
         var failure = function() {
             GEOR.waiter.hide();
             GEOR.util.infoDialog({
-                msg: tr("The provided context is not valid.")
+                msg: tr("The provided context is not valid")
             });
             options.failure && options.failure.call(this);
         };
