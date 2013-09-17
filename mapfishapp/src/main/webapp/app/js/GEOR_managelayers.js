@@ -551,9 +551,11 @@ GEOR.managelayers = (function() {
                                 "featureNS": layerRecord.get('namespace'),
                                 "owsURL": layer.protocol.url,
                                 "typeName": layerRecord.get('name')
-                            }, layer.id));
+                            }, layer.id), function() {
+                                // optional success callback
+                                querierRecord = layerRecord;
+                            });
                         } else { // WMS layer
-                            querierRecord = layerRecord;
                             // all this code should be moved elsewhere, see http://applis-bretagne.fr/redmine/issues/1984 (later)
                             GEOR.waiter.show();
                             GEOR.ows.WMSDescribeLayer(layerRecord, {
@@ -561,17 +563,18 @@ GEOR.managelayers = (function() {
                                     var r = GEOR.ows.getWfsInfo(records);
                                     if (!r) {
                                         GEOR.util.errorDialog({
-                                            msg: tr("Failed to get WFS layer address." +
-                                                 "<br />The query module will be disabled")
+                                            msg: tr("Cannot proceed: failed to get the equivalent WFS layer.")
                                         });
                                         return;
                                     }
-                                    GEOR.querier.create(name, r);
+                                    GEOR.querier.create(name, r, function() {
+                                        // optional success callback
+                                        querierRecord = layerRecord;
+                                    });
                                 },
                                 failure: function() {
                                     GEOR.util.errorDialog({
-                                        msg: tr("DescribeLayer WMS query failed." +
-                                                 "<br />The query module will be disabled")
+                                        msg: tr("Cannot proceed: the DescribeLayer WMS query failed.")
                                     });
                                 },
                                 storeOptions: {

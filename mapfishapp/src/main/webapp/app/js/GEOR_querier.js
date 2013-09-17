@@ -310,8 +310,9 @@ GEOR.querier = (function() {
          * layerName - {String} the "nice" layer name.
          * record - {GeoExt.data.LayerRecord} a WMSDescribeLayer record
          *          with at least three fields "owsURL", "typeName" and "featureNS"
+         * success - {Function} optional success callback
          */
-        create: function(layerName, record) {
+        create: function(layerName, record, success) {
             GEOR.waiter.show();
             attStore = GEOR.ows.WFSDescribeFeatureType(record, {
                 extractFeatureNS: true,
@@ -325,6 +326,9 @@ GEOR.querier = (function() {
                         var r = attStore.getAt(idx);
                         geometryName = r.get('name');
                         attStore.remove(r);
+                        if (success) {
+                            success.call(this);
+                        }
                         buildPanel(layerName, record);
                     } else {
                         GEOR.util.infoDialog({
