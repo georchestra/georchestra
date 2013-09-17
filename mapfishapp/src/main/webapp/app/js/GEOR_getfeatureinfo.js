@@ -15,6 +15,7 @@
 /*
  * @include OpenLayers/Control/WMSGetFeatureInfo.js
  * @include OpenLayers/Format/WMSGetFeatureInfo.js
+ * @include OpenLayers/Projection.js
  * @include GEOR_FeatureDataModel.js
  */
 
@@ -92,6 +93,35 @@ GEOR.getfeatureinfo = (function() {
         if (!model || model.isEmpty()) {
             model = new GEOR.FeatureDataModel({
                 features: features
+            });
+        }
+
+        // Features on-the-fly client-side reprojection (this is a hack, OK)
+        // Discussion happened in https://github.com/georchestra/georchestra/issues/254
+        
+        /*
+         * We're typically getting this kind of string in the GML:
+         *  gml:MultiPolygon srsName="http://www.opengis.net/gml/srs/epsg.xml#3948"
+         */
+        var srsString = /[^]+srsName=\"(.+?)\"[^]+/.exec(info.text)[1];
+        /*
+         * At this stage, we have to normalize these kinds of strings:
+         * http://www.opengis.net/gml/srs/epsg.xml#2154
+         * http://www.opengis.net/def/crs/EPSG/0/4326
+         * urn:x-ogc:def:crs:EPSG:4326
+         * urn:ogc:def:crs:EPSG:4326
+         * EPSG:2154
+         */
+        var srsName = srsString.replace(/.+[#:\/](\d+)$/, "EPSG:$1");
+        
+        if (map.getProjection() !== srsName) {
+            var sourceSRS = new OpenLayers.Projection(srsName),
+                destSRS = map.getProjectionObject();
+            Ext.each(features, function(f) {
+                f.geometry.transform(sourceSRS, destSRS);
+                if (f.bounds && !!f.bounds.transform) {
+                    f.bounds.transform(sourceSRS, destSRS);
+                }
             });
         }
 
