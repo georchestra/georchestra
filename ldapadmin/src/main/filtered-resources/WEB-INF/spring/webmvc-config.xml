@@ -53,6 +53,19 @@
 	</bean>
 
     <!-- userTokenDao  -->
+    <bean class="org.georchestra.ldapadmin.ws.backoffice.users.UserRule">
+    
+        <property name="listOfprotectedUsers">
+            <description>Add one or more user identifiers (uid) of protected user</description>
+            <list>
+                <value>${protectedUser.uid1}</value>
+                <!--  to define an other uid you should add a value like is shown in the following example-->
+                <!--  <value>${protectedUser.uid2}</value> -->
+            </list> 
+        </property>
+    
+    </bean>
+    
     <bean id="userTokenDao" class="org.georchestra.ldapadmin.ds.UserTokenDao">
         <property name="databaseUser" value="${psql.user}" />
         <property name="databasePassword" value="${psql.pass}" />

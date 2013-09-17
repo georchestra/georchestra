@@ -153,6 +153,42 @@ Alternatively, run with jetty:
 ../mvn -Dmaven.test.skip=true -Ptemplate jetty:run
 ```
 
+### Privileged User
+
+Add one or more user identifiers (uid) of those protected users. The protected user wont be available to access or modify operations.
+ 
+    <bean class="org.georchestra.ldapadmin.ws.backoffice.users.UserRule">
+    
+        <property name="listOfprotectedUsers">
+            <description></description>
+            <list>
+            <value> ${protectedUser.uid1} </value>
+            <value> ${protectedUser.uid2} </value>
+            <value> ${protectedUser.uid3} </value>
+            <value> ${protectedUser.uid4} </value>
+            </list> 
+        </property>
+    </bean>
+    
+Example: configure extractorapp_privileged_admin as protected 
+
+/config/defaults/ldapadmin/maven.filter
+
+protectedUser.uid1=@shared.privileged.geoserver.user@
+
+Thus only one uid is required in the spring configuration file
+/WEB-INF/spring/webmvc-config.xml
+
+    <bean class="org.georchestra.ldapadmin.ws.backoffice.users.UserRule">
+    
+        <property name="listOfprotectedUsers">
+            <description></description>
+            <list>
+            <value> ${protectedUser.uid1} </value>
+            </list> 
+        </property>
+    </bean>
+
 
 Private UI
 ----------
