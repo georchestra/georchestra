@@ -1,6 +1,6 @@
 # ReCaptcha keys
-privateKey=6Lf0h-MSAAAAAI2nHJfNPDaEXXjsdmn8eKSZUrQZ
-publicKey=6Lf0h-MSAAAAAOQ4YyRtbCNccU87dlGmokmelZjh
+privateKey=6LcfjucSAAAAAKcnHp14epYOiWOIUfEculd4PvLV
+publicKey=6LcfjucSAAAAAKtNoK5r7IIXxBT-33znNJUgeYg1
 
 # Application path as seen from the external world:
 passwordRecoveryContext=/ldapadmin
