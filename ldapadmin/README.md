@@ -112,6 +112,18 @@ For exemple:
 If no LDAP server is installed, follow instructions at https://github.com/georchestra/georchestra/blob/master/INSTALL.md#ldap.
 The LDAP server will be installed and an example directory database will be populated and accessible using the above default parameters.
 
+### Get a pair of ReCaptcha keys
+
+By default, geOrchestra uses global keys.
+
+To fight spam robots, it may be safer to get a proper pair of keys for your site. Go to https://www.google.com/recaptcha/admin/create and create a pair of private/public keys. Quoting the [documentation](https://developers.google.com/recaptcha/intro), *unless you select the "global key" option, the keys are unique to your domain and sub-domains.*
+
+Once created, set the following `ldapadmin` parameters with the value of the keys:
+* `privateKey`
+* `publicKey`
+
+See https://github.com/georchestra/georchestra/blob/master/config/README.md for details on how to configure these two parameters.
+
 ### Build
 
 Build:
