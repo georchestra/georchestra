@@ -176,7 +176,7 @@ public final class AccountDaoImpl implements AccountDao{
 
 
 	@Override
-	public List<Account> findFilterBy(final UserProtectedFilter filterProtected) throws DataServiceException {
+	public List<Account> findFilterBy(final ProtectedUserFilter filterProtected) throws DataServiceException {
 
 		List<Account> allUsers = findAll();
 		

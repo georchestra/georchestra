@@ -35,7 +35,7 @@ public interface AccountDao {
 	 * @return List of {@link Account}
 	 * @throws DataServiceException
 	 */
-	List<Account> findFilterBy(final UserProtectedFilter uidFilter) throws DataServiceException;
+	List<Account> findFilterBy(final ProtectedUserFilter uidFilter) throws DataServiceException;
 
 	
 	/**

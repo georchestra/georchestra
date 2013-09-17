@@ -17,7 +17,7 @@ import org.georchestra.ldapadmin.ds.DataServiceException;
 import org.georchestra.ldapadmin.ds.DuplicatedEmailException;
 import org.georchestra.ldapadmin.ds.DuplicatedUidException;
 import org.georchestra.ldapadmin.ds.NotFoundException;
-import org.georchestra.ldapadmin.ds.UserProtectedFilter;
+import org.georchestra.ldapadmin.ds.ProtectedUserFilter;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
 import org.georchestra.ldapadmin.dto.Group;
@@ -86,7 +86,7 @@ public class UsersController {
 	public void findAll( HttpServletRequest request, HttpServletResponse response ) throws IOException{
 		
 		try {
-			UserProtectedFilter filter = new UserProtectedFilter( this.userRule.getListUidProtected() );
+			ProtectedUserFilter filter = new ProtectedUserFilter( this.userRule.getListUidProtected() );
 			List<Account> list = this.accountDao.findFilterBy(filter);
 
 			UserListResponse userListResponse = new UserListResponse(list);
