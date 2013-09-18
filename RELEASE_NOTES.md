@@ -9,7 +9,7 @@ The CRAIG (Centre Régional Auvergnat de l'Information Géographique) is also to
 
 New features:
  * mapfishapp: annotation addon with KML export,
- * mapfishapp: geofile upload: support of SHP, MIF/MID, GML, KML by default (uses a geotools implementation). Support of TAB and GPX when OGR is avilable (read this [how to](https://github.com/georchestra/georchestra/tree/master/mapfishapp#optional-install-gdal-native-library)),
+ * mapfishapp: geofile upload: support of SHP, MIF/MID, GML, KML by default (uses a geotools implementation). Support of TAB and GPX when OGR is available (read this [how to](https://github.com/georchestra/georchestra/tree/master/mapfishapp#optional-install-gdal-native-library)),
  * mapfishapp: querier radius is now dynamically displayed in meters/km,
  * mapfishapp: WMS + WFS version autodetection,
  * mapfishapp: WMTS 1.0.0 support,
