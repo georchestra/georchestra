@@ -23,7 +23,7 @@ Enhancements:
  * mapfishapp: external libs such as ExtJS updated to 3.4.1.1 (for IE 10 support), GeoExt and OpenLayers updated to master (yeah !). This brings greater navigation ease and support for other cool stuff.
  * mapfishapp: restoring contexts with different projections,
  * mapfishapp: print improved (updated to MapFish Print 2.0 for WMTS and GeoPortail support, brand new templates, natural 91 dpi resolution and new "comment" field),
- * mapfishapp: referentials search is no more case sensitive whith WFS2,
+ * mapfishapp: referentials search is no more case sensitive with WFS2,
  * mapfishapp: true print extent displayed,
  * mapfishapp: layer name and source smartly ellipsed with CSS rather than JS,
  * mapfishapp: do not close window on style applied,
