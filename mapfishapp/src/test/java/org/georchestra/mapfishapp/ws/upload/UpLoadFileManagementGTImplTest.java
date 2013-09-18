@@ -88,7 +88,7 @@ public class UpLoadFileManagementGTImplTest {
 		assertCoordinateContains(-2.265330624649336, 48.421434814828025, json );
 	}
 	
-	@Test 
+	@Test
 	public void testKMLAsJSON() throws Exception {
 
 		String fileName = "regions.kml";
@@ -264,7 +264,7 @@ public class UpLoadFileManagementGTImplTest {
 	/**
 	 * @return UpLoadFileManagement set with geotools implementation
 	 */
-	protected UpLoadFileManagement create(){
+	protected UpLoadFileManagement create() throws IOException{
 		return UpLoadFileManagement.create(UpLoadFileManagement.Implementation.geotools);
 	}
 	
