@@ -10,7 +10,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * Feature geofile reader interface.
  * 
  * <p>
- * The implementations of this interface provides the access to the feature which are stored in specific file formats. 
+ * The implementations of this interface provide the access to the feature which are stored in specific file formats. 
  * </p>
  * 
  * @author Mauricio Pazos
@@ -26,7 +26,7 @@ interface FeatureGeoFileReader {
 	 * @return {@link SimpleFeatureCollection}
 	 * @throws IOException, UnsupportedGeofileFormatException
 	 */
-	public SimpleFeatureCollection getFeatureCollection(final File file, final FileFormat fileFormat) throws IOException, UnsupportedGeofileFormatException;
+	SimpleFeatureCollection getFeatureCollection(final File file, final FileFormat fileFormat) throws IOException, UnsupportedGeofileFormatException;
 
 	/**
 	 * Returns the set of features maintained in the geofile, reprojected in the target CRS.
@@ -39,11 +39,20 @@ interface FeatureGeoFileReader {
 	 * 
 	 * @throws IOException, UnsupportedGeofileFormatException
 	 */
-	public SimpleFeatureCollection getFeatureCollection(final File file, final FileFormat fileFormat, final CoordinateReferenceSystem targetCrs) throws IOException, UnsupportedGeofileFormatException;
+	SimpleFeatureCollection getFeatureCollection(final File file, final FileFormat fileFormat, final CoordinateReferenceSystem targetCrs) throws IOException, UnsupportedGeofileFormatException;
 
 	/**
-	 * @return List of available format
+	 * @return List of available {@link FileFormat}
 	 */
-	public FileFormat[] getFormatList();
+	FileFormat[] getFormatList();
+	
+
+	/**
+	 * Returns true if the file format is supported
+	 * 
+	 * @param fileFormat
+	 * @return 
+	 */
+	boolean isSupportedFormat(FileFormat fileFormat);
 
 }
