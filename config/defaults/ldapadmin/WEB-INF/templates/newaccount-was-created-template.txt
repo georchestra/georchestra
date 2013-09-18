@@ -1,8 +1,17 @@
-{name}, your account has been created.
+Dear {name},
 
-Your login is: {uid}
 
-Visit https://@shared.server.name@/cas/login to login.
+Your account on "@shared.instance.name@" has been successfully created !
 
+
+Visit https://@shared.server.name@/cas/login to login with your identifier "{uid}" and your password.
+Edit your account details at https://@shared.server.name@/ldapadmin/public/accounts/userdetails?uid={uid}
+
+In case you ever forget your password, visit https://@shared.server.name@/ldapadmin/public/accounts/lostPassword to create a new one.
+
+Have fun with @shared.instance.name@ !
+
+
+Your platform administrator
 ---
 Sent by @shared.instance.name@ (@shared.homepage.url@)
