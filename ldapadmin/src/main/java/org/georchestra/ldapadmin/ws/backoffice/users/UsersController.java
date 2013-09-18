@@ -36,8 +36,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * Web Services to maintain the User information.
  * 
  * <p>
- * Provide the operations to access the data layer to update and read the user data. 
- * The operations will be consistent with the business rules.
+ * This class provides the operations to access the data layer to update and read the user data. 
+ * Those operations will be consistent with the business rules.
  * </p>
  * 
  * @author Mauricio Pazos
@@ -183,6 +183,7 @@ public class UsersController {
      * 	"postalCode": "postal code",
      *	"l": "locality",
      * 	"postOfficeBox": "the post office box",
+     *  "o": "the_organization"
      * }
      * 
      * where <b>sn, givenName, mail</b> are mandatories
@@ -497,6 +498,11 @@ public class UsersController {
 			accont.setFacsimile(facsimile);
 		}
 
+		String org = RequestUtil.getFieldValue(json, UserSchema.ORG_KEY);
+		if (org != null) {
+			accont.setOrg(org);
+		}
+
 		String commonName = AccountFactory.formatCommonName(
 				accont.getGivenName(), accont.getSurname());
 
@@ -550,6 +556,8 @@ public class UsersController {
 		
 		String facsimile = RequestUtil.getFieldValue( json, UserSchema.FACSIMILE_KEY);
 
+		String org = RequestUtil.getFieldValue( json, UserSchema.ORG_KEY);
+
 		String uid;
 		try {
 			uid = createUid(givenName, surname);
@@ -560,7 +568,7 @@ public class UsersController {
 		
 		String commonName = AccountFactory.formatCommonName(givenName, surname);
 		
-		Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, "", "", phone, "", "", postalCode, "", postOfficeBox, "", street, locality, facsimile, "","","","","");
+		Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, org, "", phone, "", "", postalCode, "", postOfficeBox, "", street, locality, facsimile, "","","","","");
 		
 		return a;
 			
