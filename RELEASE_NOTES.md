@@ -8,7 +8,7 @@ This major release was supported by the GeoPicardie, PIGMA, CIGALsace and GeoBre
 The CRAIG (Centre Régional Auvergnat de l'Information Géographique) is also to be thanked for some nice patches.
 
 New features:
- * mapfishapp: annotation addon with KML export,
+ * mapfishapp: [annotation addon](https://github.com/georchestra/georchestra/tree/master/mapfishapp/src/main/webapp/app/addons/annotation) with KML export,
  * mapfishapp: geofile upload: support of SHP, MIF/MID, GML, KML by default (uses a geotools implementation). Support of TAB and GPX when OGR is available (read this [how to](https://github.com/georchestra/georchestra/tree/master/mapfishapp#optional-install-gdal-native-library)),
  * mapfishapp: querier radius is now dynamically displayed in meters/km,
  * mapfishapp: WMS + WFS version autodetection,
