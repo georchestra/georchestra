@@ -105,6 +105,7 @@ GEOR.getfeatureinfo = (function() {
             }
         }
 
+        /* reset model too if we come from a multi-layer query */
         if (!model || model.isEmpty() || Xsearch) {
             model = new GEOR.FeatureDataModel({
                 features: features
@@ -182,10 +183,20 @@ GEOR.getfeatureinfo = (function() {
     /**
      * Method: onLayerVisibilitychanged
      * Callback executed on WMS layer visibility changed
-     * We need to deactivate ouselves
+     * We need to deactivate ourselves or update the list of layers queried
      */
     var onLayerVisibilitychanged = function() {
-        for(var i = 0; i < ctrl.layers.length; i++) {
+        /* update ctrl.layers if we're in a multi-layer query */
+        if (Xsearch) {
+            layers = [];
+            for(var i = 0; i < layerStore.data.length; i++) {
+                var layerRecord = layerStore.getAt(i);
+                if(layerRecord.get("queryable") && layerRecord.getLayer().visibility == true) {
+                    layers.push(layerRecord.getLayer());
+                }
+            }
+            ctrl.layers = layers;
+        } else {
             if (!ctrl.layers[0].visibility) {
                 this.toggle(ctrl.layers[0], false);
             }
@@ -195,11 +206,21 @@ GEOR.getfeatureinfo = (function() {
     /**
      * Method: onLayerRemoved
      * Callback executed on WMS layer removed from map
-     * We need to deactivate ouselves
+     * We need to deactivate ourselves or update the list of layers queried
      */
     var onLayerRemoved = function(options) {
-        if (options.layer === ctrl.layers[0]) {
-            this.toggle(options.layer, false);
+        /* remove options.layer from ctrl.layers if it was being queried in a multi-layer query */
+        if (Xsearch) {
+            for(var i = 0; i < ctrl.layers.length; i++) {
+                if (options.layer === ctrl.layers[i]) {
+                    ctrl.layers.splice(i, 1);
+                    break;
+                }
+            }
+        } else {
+            if (options.layer === ctrl.layers[0]) {
+                this.toggle(options.layer, false);
+            }
         }
     };
 
@@ -251,7 +272,6 @@ GEOR.getfeatureinfo = (function() {
          */
         toggle: function(record, state) {
             var layer, title;
-            Xsearch = false;
             if (record instanceof OpenLayers.Layer.WMS) {
                 layer = record;
                 title = layer.name;
@@ -260,6 +280,7 @@ GEOR.getfeatureinfo = (function() {
                 title = record.get("title");
             }
             if (state) {
+                Xsearch = false;
                 observable.fireEvent("search", {
                     html: tr("<div>Search on objects active for NAME layer. " +
                              "Clic on the map.</div>",
@@ -336,7 +357,6 @@ GEOR.getfeatureinfo = (function() {
         //copy of the function toggle in order to query several layers at once
         toggleX: function(state) {
             var layers = [];
-            Xsearch = true;
             for(var i = 0; i < layerStore.data.length; i++) {
                 var layerRecord = layerStore.getAt(i);
                 if(layerRecord.get("queryable") && layerRecord.getLayer().visibility == true) {
@@ -345,6 +365,7 @@ GEOR.getfeatureinfo = (function() {
             }
             if(layers.length > 0) {
                 if (state) {
+                    Xsearch = true;
                     observable.fireEvent("search", {
                         html: tr("Search on all active layers")
                     });
@@ -378,18 +399,6 @@ GEOR.getfeatureinfo = (function() {
                     }
                     map.events.on({
                         "removelayer": onLayerRemoved,
-                        "changelayer": function() {
-                            if(Xsearch == true && ctrl) {
-                                layers = [];
-                                for(var i = 0; i < layerStore.data.length; i++) {
-                                    var layerRecord = layerStore.getAt(i);
-                                    if(layerRecord.get("queryable") && layerRecord.getLayer().visibility == true) {
-                                        layers.push(layerRecord.getLayer());
-                                    }
-                                }
-                                ctrl.layers = layers;
-                            }
-                        },
                         scope: this
                     });
 
