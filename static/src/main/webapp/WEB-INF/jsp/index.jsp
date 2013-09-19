@@ -221,9 +221,15 @@ if(sec_roles != null) {
     <script>
         (function(){
             // required to get the correct redirect after login, see https://github.com/georchestra/georchestra/issues/170
-            var a = document.getElementById("login_a");
+            var url,
+                a = document.getElementById("login_a");
             if (a !== null) {
-                a.href = parent.window.location.href.split('?')[0] + "?login";
+                url = parent.window.location.href;
+                if (/\/cas\//.test(url)) {
+                    a.href = "/cas/login";
+                } else {
+                    a.href = url.split('?')[0] + "?login";
+                }
             }
 
             // handle menus
