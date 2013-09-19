@@ -39,27 +39,6 @@
 
 Ext.namespace("GEOR");
 
-// HACK before OL upgrade (remove for the 13.09 release !)
-/*
- * @requires OpenLayers/Format/WFSCapabilities/v1_0_0.js
-*/
-OpenLayers.Format.WFSCapabilities.v1.prototype.runChildNodes = function(obj, node) {
-    var children = node.childNodes;
-    var childNode, processor;
-    for(var i=0; i<children.length; ++i) {
-        childNode = children[i];
-        if(childNode.nodeType == 1) {
-            // see https://github.com/camptocamp/georchestra-geopicardie-configuration/issues/136
-            // ArcGIS WFS compatibility issues
-            processor = this["read_cap_" + childNode.nodeName.split(":").pop()];
-            if(processor) {
-                processor.apply(this, [obj, childNode]);
-            }
-        }
-    }
-};
-// end hack
-
 /**
  * Module: GEOR.ows
  * A utility module for creating OWS stores, sending OWS requests, etc.
