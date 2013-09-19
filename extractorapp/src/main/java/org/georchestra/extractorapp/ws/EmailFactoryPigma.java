@@ -28,6 +28,7 @@ public class EmailFactoryPigma extends AbstractEmailFactory {
 		return new Email(request, recipients, emailSubject,
 				this.smtpHost,
 				this.smtpPort,
+				this.emailHtml,
 				this.replyTo,
 				this.from,
 				this.bodyEncoding,

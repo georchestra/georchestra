@@ -133,6 +133,16 @@
         <artifactId>gt-ogr-jni</artifactId>
         <version>${gt.version}</version>
     </dependency>
+    <dependency>
+        <groupId>org.geotools</groupId>
+        <artifactId>gt-xml</artifactId>
+        <version>${gt.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.geotools.xsd</groupId>
+        <artifactId>gt-xsd-kml</artifactId>
+        <version>${gt.version}</version>
+    </dependency>
    
     <dependency>
       <groupId>org.geotools.ogc</groupId>
@@ -211,6 +221,10 @@
 				  <groupId>xml-apis</groupId>
 				  <artifactId>xml-apis</artifactId>
 			  </exclusion>
+			  <exclusion>
+				  <groupId>xerces</groupId>
+				  <artifactId>xercesImpl</artifactId>
+			  </exclusion>
 			</exclusions>
       <version>1.2</version>
     </dependency>
@@ -243,7 +257,7 @@
         <artifactId>maven-dependency-plugin</artifactId>
       </plugin>
 		<plugin>
-			<groupId>org.codehaus.gmaven</groupId>
+			<groupId>org.codehaus.groovy.maven</groupId>
 			<artifactId>gmaven-plugin</artifactId>
 			<dependencies>
 				<dependency>

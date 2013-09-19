@@ -63,7 +63,7 @@ class GeotoolsFeatureReader implements FeatureGeoFileReader {
 	}
 
 	@Override
-	public SimpleFeatureCollection getFeatureCollection(final File file, final FileFormat fileFormat) throws IOException {
+	public SimpleFeatureCollection getFeatureCollection(final File file, final FileFormat fileFormat) throws IOException, UnsupportedGeofileFormatException {
 
 		return getFeatureCollection(file, fileFormat, null);
 	}
@@ -73,7 +73,7 @@ class GeotoolsFeatureReader implements FeatureGeoFileReader {
 			final File file,
 			final FileFormat fileFormat, 
 			final CoordinateReferenceSystem targetCRS)
-		throws IOException {
+		throws IOException, UnsupportedGeofileFormatException {
 		
 		assert file != null && fileFormat != null;
 
@@ -88,7 +88,7 @@ class GeotoolsFeatureReader implements FeatureGeoFileReader {
 			return  readKmlFile(file, targetCRS);
 
 		default:
-			throw new IOException("Unsuported format: " + fileFormat.toString());
+			throw new UnsupportedGeofileFormatException("Unsuported format: " + fileFormat.toString());
 		}
 	}
 
@@ -335,4 +335,16 @@ class GeotoolsFeatureReader implements FeatureGeoFileReader {
 		
 		return features;
 	}
+
+	@Override
+	public boolean isSupportedFormat(FileFormat fileFormat) {
+		for (FileFormat supported : this.formats) {
+			if(fileFormat == supported){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+
 }

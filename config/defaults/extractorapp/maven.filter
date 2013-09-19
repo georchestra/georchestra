@@ -5,6 +5,7 @@ useCommandLineGDAL=false
 extractionFolderPrefix=extraction-
 
 host=@shared.server.name@
+instance=@shared.instance.name@
 
 # The base url of the extractorapp as accessible from outside the intranet
 servletUrl=http://@shared.server.name@:@shared.server.port@/extractorapp
@@ -17,6 +18,7 @@ smtpHost=@shared.smtp.host@
 smtpPort=@shared.smtp.port@
 replyTo=@shared.smtp.replyTo@
 from=@shared.smtp.from@
+emailHtml=@shared.email.html@
 
 privileged_admin_name=@shared.privileged.geoserver.user@
 privileged_admin_pass=@shared.privileged.geoserver.pass@
@@ -25,6 +27,6 @@ dlformjdbcurl=@shared.download_form.jdbcurl@?user=@shared.psql.user@&amp;passwor
 dlformactivated=@shared.download_form.activated@
 
 emailfactory=org.georchestra.extractorapp.ws.EmailFactoryDefault
-emailsubject=Your extraction request on @shared.server.name@
+emailsubject=[@shared.instance.name@] Your extraction request
 
 language=@shared.language@

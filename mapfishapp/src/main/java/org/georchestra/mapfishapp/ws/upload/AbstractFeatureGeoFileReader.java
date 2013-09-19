@@ -106,39 +106,48 @@ class AbstractFeatureGeoFileReader implements FeatureGeoFileReader{
 	 * @throws UnsupportedGeofileFormatException 
 	 */
 	@Override
-	public SimpleFeatureCollection getFeatureCollection(final File file, final FileFormat fileFormat, final CoordinateReferenceSystem targetCrs) throws IOException, UnsupportedGeofileFormatException {
+	public SimpleFeatureCollection getFeatureCollection(final File file, final FileFormat fileFormat, final CoordinateReferenceSystem targetCrs) 
+			throws IOException, UnsupportedGeofileFormatException {
 		
 		try{
 			return  getReaderImpl().getFeatureCollection(file, fileFormat, targetCrs);
 			
-		} catch(IOException e){
-
-			if (!(getReaderImpl() instanceof GeotoolsFeatureReader)) {
+		} catch (UnsupportedGeofileFormatException e) {
+			
+			throw e;
+			
+		} catch(RuntimeException e){
+			
+			// if an error was found and the current implementation is the OGR the implementation then it will be changed to geotools (only for this operation) 
+			if( this.readerImpl instanceof OGRFeatureReader){
 				
-				switchToGeotoolsImplementation();
+				LOG.info("OGRFeatureReader fail. Try using the geotools implementation: " + readerImpl.getClass().getName());
 
-				// now try to read using the geotools implementation
-				try {
-					return getReaderImpl().getFeatureCollection(file, fileFormat, targetCrs);
+				FeatureGeoFileReader savedReader = this.readerImpl;
+				setReaderImpl( new GeotoolsFeatureReader() );
+
+				// if the format is available in geotools then the last read operation will be re-executed.
+				if( getReaderImpl().isSupportedFormat( fileFormat ) ){
+
+					SimpleFeatureCollection features = getReaderImpl().getFeatureCollection(file, fileFormat, targetCrs);
 					
-				} catch (UnsupportedGeofileFormatException gtUnsupoortFileFormat) {
-					throw gtUnsupoortFileFormat;
+					setReaderImpl( savedReader );
+
+					return features;
+					
+				} else {
+					
+					setReaderImpl( savedReader );
+					
+					throw new UnsupportedGeofileFormatException("The format is not supported by geotools implementation");
 				}
 			} else {
-				// it is Geotools implementation, so this class cannot manage the exception;
-				throw new IOException(e);
-			}
 				
-		} catch (UnsupportedGeofileFormatException e) {
-			throw e;
+				throw e; // geotools implementation fails
+				
+			}
 		}
-	}
-
-	/**
-	 * switches to geotools implementation
-	 */
-	private void switchToGeotoolsImplementation() {
-		setReaderImpl( new GeotoolsFeatureReader() );
+		
 	}
 
 
@@ -147,16 +156,52 @@ class AbstractFeatureGeoFileReader implements FeatureGeoFileReader{
 	 */
 	private static FeatureGeoFileReader createImplementationStrategy(){
 
-		FeatureGeoFileReader implementor = null; 
+		FeatureGeoFileReader ogrReader = null; 
+		
+		// checks the OGR status
 		if( OGRFeatureReader.isOK() ){
 
-			implementor = new OGRFeatureReader();
-
-		} else { 
-
-			implementor = new GeotoolsFeatureReader();
+			try {
+				ogrReader = new OGRFeatureReader();
+				
+			} catch (IOException e) {
+				LOG.info("It cannot create OGR implementation, Geotools will be set.");
+			}
 		}
-		return implementor;
+		// if the ogr implementation cannot be created the use the Geotools implementation.
+		if(ogrReader == null){
+			return new GeotoolsFeatureReader();
+		}
+
+		// Decides what is the better implementation. 
+		// OGR will be better implementation than Geotools if and only if the OGR contains all geotools formats. (In other words, geotools formats are a subset of ogr)
+		FileFormat[] ogrFormats = ogrReader.getFormatList();
+		
+		FeatureGeoFileReader gtReader = new GeotoolsFeatureReader();
+		FileFormat[] gtFormats = gtReader.getFormatList();
+		
+		for (FileFormat gtFormat : gtFormats) {
+
+			boolean found = false;
+			for (FileFormat ogrFormat : ogrFormats) {
+				
+				if(gtFormat.equals(ogrFormat)){
+					found = true;
+					break;
+				}
+			}
+			if(!found ){
+				return gtReader;
+			}
+		}
+		return ogrReader;
+	}
+
+
+	@Override
+	public boolean isSupportedFormat(FileFormat fileFormat) {
+		
+		return this.readerImpl.isSupportedFormat(fileFormat);
 	}
 
 

@@ -1,10 +1,14 @@
 # shared values like public url can be put here
+
+shared.instance.name=geOrchestra
+
+shared.homepage.url=http://@shared.server.name@/
 shared.server.port=80
 
 shared.header.height=90
 
-shared.language=fr
-geonetwork.language=fre
+shared.language=en
+geonetwork.language=eng
 
 shared.ldap.host=localhost
 shared.ldap.port=636
@@ -28,7 +32,7 @@ shared.psql.jdbc.driver=org.postgresql.Driver
 shared.psql.jdbc.driver.url=postgresql
 
 
-shared.log.dir=/var/log/tomcat
+shared.log.dir=/var/log/tomcat6
 shared.default.log.level=WARN
 other.framework.log.level=WARN
 

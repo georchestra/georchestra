@@ -94,10 +94,10 @@ if(sec_roles != null) {
     </style>
 <c:choose>
     <c:when test='${c.edit != null}'>
-    <title lang="<%= lang %>" dir="ltr"><fmt:message key="title.editor"/></title>
+    <title lang="<%= lang %>" dir="ltr"><fmt:message key="title.editor"/> - ${instance}</title>
     </c:when>
     <c:otherwise>
-    <title lang="<%= lang %>" dir="ltr"><fmt:message key="title.visual"/></title>
+    <title lang="<%= lang %>" dir="ltr"><fmt:message key="title.visual"/> - ${instance}</title>
     </c:otherwise>
 </c:choose>
     <link rel="stylesheet" type="text/css" href="lib/externals/ext/resources/css/ext-all.css" />
@@ -189,7 +189,9 @@ if(sec_roles != null) {
 
         // lang
         GEOR.config.LANG = '<%= lang %>';
-    
+
+        GEOR.config.maxDocAgeInMinutes = ${maxDocAgeInMinutes};
+
         // security stuff
     <c:choose>
         <c:when test='<%= anonymous == false %>'>

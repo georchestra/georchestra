@@ -14,7 +14,9 @@
 
 /*
  * @include OpenLayers/Control/WMSGetFeatureInfo.js
+ * @include OpenLayers/Control/WMTSGetFeatureInfo.js
  * @include OpenLayers/Format/WMSGetFeatureInfo.js
+ * @include OpenLayers/Projection.js
  * @include GEOR_FeatureDataModel.js
  */
 
@@ -110,6 +112,38 @@ GEOR.getfeatureinfo = (function() {
             model = new GEOR.FeatureDataModel({
                 features: features
             });
+        }
+
+        // Features on-the-fly client-side reprojection (this is a hack, OK)
+        // Discussion happened in https://github.com/georchestra/georchestra/issues/254
+        
+        /*
+         * We're typically getting this kind of string in the GML:
+         *  gml:MultiPolygon srsName="http://www.opengis.net/gml/srs/epsg.xml#3948"
+         */
+        var r =  /[^]+srsName=\"(.+?)\"[^]+/.exec(info.text);
+        if (r) {
+            var srsString = r[1];
+            /*
+             * At this stage, we have to normalize these kinds of strings:
+             * http://www.opengis.net/gml/srs/epsg.xml#2154
+             * http://www.opengis.net/def/crs/EPSG/0/4326
+             * urn:x-ogc:def:crs:EPSG:4326
+             * urn:ogc:def:crs:EPSG:4326
+             * EPSG:2154
+             */
+            var srsName = srsString.replace(/.+[#:\/](\d+)$/, "EPSG:$1");
+            
+            if (map.getProjection() !== srsName) {
+                var sourceSRS = new OpenLayers.Projection(srsName),
+                    destSRS = map.getProjectionObject();
+                Ext.each(features, function(f) {
+                    f.geometry.transform(sourceSRS, destSRS);
+                    if (f.bounds && !!f.bounds.transform) {
+                        f.bounds.transform(sourceSRS, destSRS);
+                    }
+                });
+            }
         }
 
         observable.fireEvent("searchresults", {
@@ -271,13 +305,15 @@ GEOR.getfeatureinfo = (function() {
          * state - {Boolean} Toggle to true or false this layer ?
          */
         toggle: function(record, state) {
-            var layer, title;
+            var layer, title, type;
             if (record instanceof OpenLayers.Layer.WMS) {
                 layer = record;
                 title = layer.name;
+                type = "WMS";
             } else if (record instanceof GeoExt.data.LayerRecord) {
                 layer = record.get("layer");
                 title = record.get("title");
+                type = record.get("type");
             }
             if (state) {
                 Xsearch = false;
@@ -300,7 +336,11 @@ GEOR.getfeatureinfo = (function() {
                     ctrl.events.un(ctrlEventsConfig);
                     ctrl.destroy();
                 }
-                ctrl = new OpenLayers.Control.WMSGetFeatureInfo({
+                var controlClass = (type === "WMS") ? 
+                    OpenLayers.Control.WMSGetFeatureInfo :
+                    OpenLayers.Control.WMTSGetFeatureInfo;
+
+                ctrl = new controlClass({
                     layers: [layer],
                     maxFeatures: GEOR.config.MAX_FEATURES,
                     infoFormat: 'application/vnd.ogc.gml'

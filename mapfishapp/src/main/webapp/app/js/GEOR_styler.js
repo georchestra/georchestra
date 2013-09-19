@@ -504,17 +504,17 @@ GEOR.styler = (function() {
             ),
             pointGraphics: [
                 {display: tr("circle"), value: "circle", mark: true,
-                 preview: "lib/styler/theme/img/circle.gif"},
+                 preview: "lib/externals/styler/theme/img/circle.gif"},
                 {display: tr("square"), value: "square", mark: true,
-                 preview: "lib/styler/theme/img/square.gif"},
+                 preview: "lib/externals/styler/theme/img/square.gif"},
                 {display: tr("triangle"), value: "triangle", mark: true,
-                 preview: "lib/styler/theme/img/triangle.gif"},
+                 preview: "lib/externals/styler/theme/img/triangle.gif"},
                 {display: tr("star"), value: "star", mark: true,
-                 preview: "lib/styler/theme/img/star.gif"},
+                 preview: "lib/externals/styler/theme/img/star.gif"},
                 {display: tr("cross"), value: "cross", mark: true,
-                 preview: "lib/styler/theme/img/cross.gif"},
+                 preview: "lib/externals/styler/theme/img/cross.gif"},
                 {display: tr("x"), value: "x", mark: true,
-                 preview: "lib/styler/theme/img/x.gif"},
+                 preview: "lib/externals/styler/theme/img/x.gif"},
                 {display: tr("customized...")}
             ],
             symbolType: Styler.Util.getSymbolTypeFromRule(rule),
@@ -626,6 +626,12 @@ GEOR.styler = (function() {
         mask.msg = tr("Classification ...<br/>(this operation can take " +
             "some time)");
         mask.show();
+        
+        // HACK: since GeoTools WFSDatasource doesn't support WFS 2.0.0, 
+        // we must use an earlier WFS version to make Styler work.
+        params.wfs_url = OpenLayers.Util.urlAppend(params.wfs_url, 
+            "VERSION=1.0.0");
+        
         OpenLayers.Request.POST({
             url: "ws/sld/",
             data: Ext.util.JSON.encode(params),

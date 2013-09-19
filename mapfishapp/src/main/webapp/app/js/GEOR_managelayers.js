@@ -39,7 +39,6 @@ GEOR.managelayers = (function() {
      */
     var LayerNode = Ext.extend(GeoExt.tree.LayerNode, {
         constructor: function(config) {
-            config.text = GEOR.util.shortenLayerName(config.layer);
             config.qtip = config.layer.name;
             LayerNode.superclass.constructor.apply(this, [config]);
         }
@@ -157,9 +156,16 @@ GEOR.managelayers = (function() {
      */
     var onFormatItemCheck = function(item, checked){
         if (checked === true && item.value) {
-            this.get('layer').mergeNewParams({
-                FORMAT: item.value
-            });
+            var layer = this.get('layer'),
+                t = this.get('type');
+            if (t == "WMS") {
+                layer.mergeNewParams({
+                    FORMAT: item.value
+                });
+            } else if (t == "WMTS") {
+                layer.format = item.value;
+                layer.redraw();
+            }
         }
     };
 
@@ -176,9 +182,6 @@ GEOR.managelayers = (function() {
     var formatAttribution = function(layerRecord) {
         var attr = layerRecord.get('attribution');
         var titleForDisplay = attr.title || tr('unknown');
-        if (titleForDisplay.length > 16) {
-            titleForDisplay = titleForDisplay.substr(0, 13) + '...';
-        }
 
         // logo displayed in qtip if set
         var tip = tr('source: ')+ (attr.title || tr('unknown')) +
@@ -209,7 +212,6 @@ GEOR.managelayers = (function() {
      *          for inclusion in layer manager item
      */
     var formatVisibility = function(layerRecord) {
-        // TODO: get min/maxScale from current SLD is not set in layer
         var layer = layerRecord.get('layer');
         var visibilityText = tr("1:MAXSCALE to 1:MINSCALE", {
             'MAXSCALE': OpenLayers.Number.format(layer.maxScale, 0),
@@ -240,11 +242,12 @@ GEOR.managelayers = (function() {
      */
     var createInfoButton = function(layerRecord) {
         var layer = layerRecord.get("layer"),
-            isWMS = (layer.CLASS_NAME == "OpenLayers.Layer.WMS");
+            isWMS = layerRecord.get("type") == "WMS",
+            isWMTS = layerRecord.get("type") == "WMTS";
         return {
             xtype: 'button',
             // for vector layers, the button is always enabled:
-            disabled: isWMS ? 
+            disabled: (isWMS || isWMTS) ? 
                 !(layerRecord.get("queryable")) : 
                 false,
             iconCls: 'geor-btn-info',
@@ -254,7 +257,7 @@ GEOR.managelayers = (function() {
             tooltip: tr("Information on objects of this layer"),
             listeners: {
                 "toggle": function(btn, pressed) {
-                    if (isWMS) {
+                    if (isWMS || isWMTS) {
                         GEOR.getfeatureinfo.toggle(layerRecord, pressed);
                     } else {
                         GEOR.selectfeature.toggle(layer, pressed);
@@ -276,10 +279,13 @@ GEOR.managelayers = (function() {
      * {Ext.menu.Menu} The configured formats menu
      */
     var createFormatMenu = function(layerRecord) {
-        var formats = layerRecord.get("formats");
-        var layer = layerRecord.get("layer");
+        var formats = layerRecord.get("formats"),
+            layer = layerRecord.get("layer"),
+            type = layerRecord.get("type"),
+            isWMS = type === "WMS",
+            isWMTS = type === "WMTS",
+            formatMenuItems = [];
 
-        var formatMenuItems = [];
         if (formats && formats.length) {
             for (var i=0, len=formats.length; i<len; i++) {
                 var value = formats[i].value || formats[i];
@@ -287,9 +293,12 @@ GEOR.managelayers = (function() {
                     formatMenuItems.push(new Ext.menu.CheckItem({
                         text: value,
                         value: value,
-                        checked: (formats[i].current &&
-                            formats[i].current === true) ||
-                            (layer.params.FORMAT === formats[i]),
+                        checked:
+                            (isWMS && (
+                                (formats[i].current && formats[i].current === true) ||
+                                layer.params.FORMAT === formats[i])
+                            ) ||
+                            (isWMTS && layer.format === formats[i]),
                         group: 'format_' + layer.id,
                         checkHandler: onFormatItemCheck,
                         scope: layerRecord
@@ -298,9 +307,10 @@ GEOR.managelayers = (function() {
             }
         } else {
             // we display the only one we know : the current one
+            var v = (isWMS && layer.params.FORMAT) || (isWMTS && layer.format);
             formatMenuItems.push(new Ext.menu.CheckItem({
-                text: layer.params.FORMAT,
-                value: layer.params.FORMAT,
+                text: v,
+                value: v,
                 checked: true,
                 group: 'format_' + layer.id
             }));
@@ -321,54 +331,87 @@ GEOR.managelayers = (function() {
      * {Ext.menu.Menu} The configured styles menu
      */
     var createStylesMenu = function(layerRecord) {
-        var styles = layerRecord.get("styles");
-        var layer = layerRecord.get("layer");
-
-        var default_style = {
-            // TODO: add style name in ()
-            text: tr("Default style"),
-            value: '',
-            checked: true,
-            group: 'style_' + layer.id,
-            checkHandler: onStyleItemCheck,
-            scope: layerRecord
-        };
-        // build object config for predefined styles
-        var stylesMenuItems = [
-            //'<b class="menu-title">Choisissez un style</b>',
-            default_style
-        ];
-        if (styles && styles.length > 0) {
-            styles.sort(function(a,b) {
-                return (a.name || a.title).toLowerCase() > (b.name || b.title).toLowerCase();
-            });
-            var style, checked;
-            for (var i=0, len=styles.length; i<len; i++) {
-                style = styles[i];
-                if (style.href) {
-                    if (style.current) {
-                        // if the style has an href and is the current
-                        // style we don't want any named style to be
-                        // checked in the list of styles
-                        default_style.checked = false;
-                    }
-                } else {
-                    checked = false;
-                    if(style.current === true) {
-                        default_style.checked = false;
-                        checked = true;
-                    }
-                    stylesMenuItems.push(new Ext.menu.CheckItem({
-                        text: style.name || style.title, // title is a human readable string
-                        // but it is not often relevant (eg: may store "AtlasStyler v1.8")
-                        // moreover, GeoServer 2 displays style name rather than style title.
-                        value: style.name, // name is used in the map request STYLE parameter
-                        checked: checked,
-                        group: 'style_' + layer.id,
-                        checkHandler: onStyleItemCheck,
-                        scope: layerRecord
-                    }));
+        var styles = layerRecord.get("styles"),
+            layer = layerRecord.get("layer"),
+            type = layerRecord.get("type"),
+            isWMS = type === "WMS",
+            isWMTS = type === "WMTS",
+            stylesMenuItems = [],
+            onStyleItemCheck;
+        
+        if (isWMS) {
+            onStyleItemCheck = function(item, checked){
+                if (checked === true) {
+                    observable.fireEvent("selectstyle", this, item.value);
                 }
+            };
+            var default_style = {
+                // TODO: add style name in ()
+                text: tr("Default style"),
+                value: '',
+                checked: true,
+                group: 'style_' + layer.id,
+                checkHandler: onStyleItemCheck,
+                scope: layerRecord
+            };
+            // build object config for predefined styles
+            stylesMenuItems.push(default_style);
+            if (styles && styles.length > 0) {
+                styles.sort(function(a,b) {
+                    return (a.name || a.title).toLowerCase() > (b.name || b.title).toLowerCase();
+                });
+                var checked, style;
+                for (var i=0, len=styles.length; i<len; i++) {
+                    style = styles[i];
+                    if (style.href) {
+                        if (style.current) {
+                            // if the style has an href and is the current
+                            // style we don't want any named style to be
+                            // checked in the list of styles
+                            default_style.checked = false;
+                        }
+                    } else {
+                        checked = false;
+                        if(style.current === true) {
+                            default_style.checked = false;
+                            checked = true;
+                        }
+                        stylesMenuItems.push(new Ext.menu.CheckItem({
+                            text: style.name || style.title, // title is a human readable string
+                            // but it is not often relevant (eg: may store "AtlasStyler v1.8")
+                            // moreover, GeoServer 2 displays style name rather than style title.
+                            value: style.name, // name is used in the map request STYLE parameter
+                            checked: checked,
+                            group: 'style_' + layer.id,
+                            checkHandler: onStyleItemCheck,
+                            scope: layerRecord
+                        }));
+                    }
+                }
+            }
+        } else if (isWMTS) {
+            var identifier;
+            onStyleItemCheck = function(item, checked){
+                if (checked === true) {
+                    // correct way of doing:
+                    layer.style = item.value;
+                    //layer.redraw(); (will be required once the hack below is removed)
+                    
+                    // incorrect way of doing, but mandatory because of 
+                    // https://github.com/GeoWebCache/geowebcache/issues/194
+                    observable.fireEvent("selectstyle", this, item.value);
+                }
+            };
+            for (var i=0, len=styles.length; i<len; i++) {
+                identifier = styles[i].identifier;
+                stylesMenuItems.push(new Ext.menu.CheckItem({
+                    text: identifier,
+                    value: identifier,
+                    checked: layer.style === identifier,
+                    group: 'style_' + layer.id,
+                    checkHandler: onStyleItemCheck,
+                    scope: layerRecord
+                }));
             }
         }
         return new Ext.menu.Menu({
@@ -411,13 +454,15 @@ GEOR.managelayers = (function() {
      * {Ext.menu.Menu} The configured global menu
      */
     var createMenu = function(layerRecord) {
-        var queryable = !!(layerRecord.get("queryable"));
-        var layer = layerRecord.get('layer');
-        var isWMS = (layer.CLASS_NAME == "OpenLayers.Layer.WMS");
-        var isWFS = (layer.CLASS_NAME == "OpenLayers.Layer.Vector" && !!layer.protocol);
+        var queryable = !!(layerRecord.get("queryable")),
+            layer = layerRecord.get('layer'),
+            type = layerRecord.get("type"),
+            isWMS = type === "WMS",
+            isWMTS = type === "WMTS",
+            isWFS = type === "WFS",
+            isVector = layer instanceof OpenLayers.Layer.Vector;
 
-        var menuItems = [], url;
-
+        var menuItems = [], url, sepInserted;
 
         /**
          * Method: zoomToLayerRecordExtent
@@ -430,6 +475,7 @@ GEOR.managelayers = (function() {
                 mapSRS = map.getProjection(),
                 zoomed = false,
                 bb = r.get('bbox');
+
             for (var key in bb) {
                 if (!bb.hasOwnProperty(key)) {
                     continue;
@@ -462,18 +508,14 @@ GEOR.managelayers = (function() {
             listeners: {
                 "click": function(btn, pressed) {
                     var layer = layerRecord.get('layer'),
-                    map = layer.map;
-                    // TODO: layer.getDataExtent() can be null if layer strategy is bbox
-                    // and there's no feature currently in layer.
-                    // It seems WFS capabilities has a llbbox field in record => parse it
-                    if (layer.CLASS_NAME == "OpenLayers.Layer.Vector") {
+                        map = layer.map;
+                    if (isVector) {
                         var b = layer.getDataExtent();
                         if (b && b.getWidth() * b.getHeight()) {
                             map.zoomToExtent(b);
                         }
                     } else {
-                        var bbox = layerRecord.get('bbox');
-                        if (!bbox) {
+                        if (!layerRecord.get('bbox') && !layerRecord.get('llbbox')) {
                             // Get it from the WMS GetCapabilities document
                             GEOR.ows.hydrateLayerRecord(layerRecord, {
                                 success: function(){
@@ -495,7 +537,7 @@ GEOR.managelayers = (function() {
         });
 
         // redraw action (aka "do not used client-cached layer")
-        if (isWMS) {
+        if (!isVector) {
             menuItems.push({
                 iconCls: 'geor-btn-refresh',
                 text: tr("Refresh layer"),
@@ -509,10 +551,15 @@ GEOR.managelayers = (function() {
             });
         }
 
-        menuItems.push("-");
-
+        var insertSep = function() {
+            if (!sepInserted) {
+                menuItems.push("-");
+                sepInserted = true;
+            }
+        };
+        
         // metadata action
-        if (layerRecord.get("metadataURLs")) {
+        if (layerRecord.get("metadataURLs") && layerRecord.get("metadataURLs").length > 0) {
             var murls = layerRecord.get("metadataURLs");
             var murl = murls[0];
             // default to first entry
@@ -524,6 +571,7 @@ GEOR.managelayers = (function() {
                    url = (murl.href) ? murl.href : murl;
                }
             }
+            insertSep();
             menuItems.push({
                 iconCls: 'geor-btn-metadata',
                 text: tr("Show metadata"),
@@ -535,6 +583,7 @@ GEOR.managelayers = (function() {
             });
         }
         if (GEOR.styler && isWMS && queryable) {
+            insertSep();
             menuItems.push({
                 iconCls: 'geor-btn-style',
                 text: tr("Edit symbology"),
@@ -550,9 +599,8 @@ GEOR.managelayers = (function() {
         // we can have the querier or not.
         // The availability of a WFS equivalent layer is.
         // This depends on http://applis-bretagne.fr/redmine/issues/1984
-
-        // TODO: have a generic field in layerrecord stating that a record is WFS or WMS.
-        if (GEOR.querier && (queryable || isWFS)) {
+        if (GEOR.querier && ((isWMS && queryable) || isWFS)) {
+            insertSep();
             menuItems.push({
                 iconCls: 'geor-btn-query',
                 text: tr("Build a query"),
@@ -566,7 +614,7 @@ GEOR.managelayers = (function() {
                         }
                         var layer = layerRecord.get('layer');
                         var name = layerRecord.get('title') || layer.name || '';
-                        if (layer.CLASS_NAME == "OpenLayers.Layer.Vector") { // WFS layer
+                        if (isWFS) {
                             var recordType = GeoExt.data.LayerRecord.create([
                                 {name: "featureNS", type: "string"},
                                 {name: "owsURL", type: "string"},
@@ -576,9 +624,11 @@ GEOR.managelayers = (function() {
                                 "featureNS": layerRecord.get('namespace'),
                                 "owsURL": layer.protocol.url,
                                 "typeName": layerRecord.get('name')
-                            }, layer.id));
+                            }, layer.id), function() {
+                                // optional success callback
+                                querierRecord = layerRecord;
+                            });
                         } else { // WMS layer
-                            querierRecord = layerRecord;
                             // all this code should be moved elsewhere, see http://applis-bretagne.fr/redmine/issues/1984 (later)
                             GEOR.waiter.show();
                             GEOR.ows.WMSDescribeLayer(layerRecord, {
@@ -586,17 +636,18 @@ GEOR.managelayers = (function() {
                                     var r = GEOR.ows.getWfsInfo(records);
                                     if (!r) {
                                         GEOR.util.errorDialog({
-                                            msg: tr("Failed to get WFS layer address." +
-                                                 "<br />The query module will be disabled")
+                                            msg: tr("Cannot proceed: failed to get the equivalent WFS layer.")
                                         });
                                         return;
                                     }
-                                    GEOR.querier.create(name, r);
+                                    GEOR.querier.create(name, r, function() {
+                                        // optional success callback
+                                        querierRecord = layerRecord;
+                                    });
                                 },
                                 failure: function() {
                                     GEOR.util.errorDialog({
-                                        msg: tr("DescribeLayer WMS query failed." +
-                                                 "<br />The query module will be disabled")
+                                        msg: tr("Cannot proceed: the DescribeLayer WMS query failed.")
                                     });
                                 },
                                 storeOptions: {
@@ -618,6 +669,7 @@ GEOR.managelayers = (function() {
         }
 
         if (isWMS || isWFS) {
+            insertSep();
             menuItems.push({
                 iconCls: 'geor-btn-download',
                 text: tr("Download data"),
@@ -634,16 +686,11 @@ GEOR.managelayers = (function() {
             });
         }
 
-        if (menuItems.length > 2) {
+        if (isWMS || isWMTS) {
             menuItems.push("-");
-        }
-
-
-        if (isWMS) {
             stylesMenu = createStylesMenu(layerRecord);
             menuItems.push({
                 text: tr("Choose a style"),
-                disabled: !queryable,
                 menu: stylesMenu
             });
             menuItems.push({
@@ -824,6 +871,7 @@ GEOR.managelayers = (function() {
 
             return {
                 xtype: "treepanel",
+                id: "geor-layerManager",
                 autoScroll: true,
                 enableDD: true,
                 loader: {

@@ -20,6 +20,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Yes": "Si",
     "No": "No",
     "OK": "OK",
+    "or": "o",
     "Cancel": "Cancelar",
     "Save": "Guardar",
     "Loading...": "Cargando...",
@@ -128,8 +129,8 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Upload a vector data file.": "Subir un archivo de datos vectoriales.",
     "The allowed formats are the following: ":
         "Los formatos aceptados son los siguientes: ",
-    "Use ZIP compression for multifiles formats, such as SHP or MIF/MID.":
-        "Usar compresión ZIP para los formatos multiarchivos, como SHP o MIF/MID.",
+    "Use ZIP compression for multifiles formats, such as":
+        "Usar compresión ZIP para los formatos multiarchivos, como",
     /* GEOR_geonames.js strings */
     /* GEOR_getfeatureinfo.js strings */
     "<div>Searching...</div>": "<div>Buscando...</div>",
@@ -156,6 +157,23 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Add": "Añadir",
     "Add layers from a ...": "Añadir capas desde un ...",
     "Malformed URL": "URL mal formada.",
+    "Queryable": "Interrogable",
+    "Opaque": "Opaco",
+    "Choose a WMS server: ": "Elija un servicio WMS: ",
+    "... or enter its address: ": "... o llene su dirección: ",
+    "The server is publishing one layer with an incompatible projection":
+        "El servicio está publicando una capa cuya proyección no es compatible",
+    "The server is publishing NB layers with an incompatible projection":
+        "El servicio esta publicando ${NB} capas cuya proyección no es " +
+        "compatible",
+    "WMS server": "Servicio WMS",
+    "Choose a WMTS server: ": "Elija un servicio WMTS: ",
+    "WMTS server": "Servicio WMTS",
+    "Choose a WFS server: ": "Elija un servicio WFS: ",
+    "Unreachable server or insufficient rights": "Respuesta del servidor " +
+        "invalida. Razones posibles: datos demasiado pesados, derechos insuficientes, " +
+        "servidor inalcanzable, etc.",
+    "WFS server": "Servicio WFS",
     /* GEOR_managelayers.js strings */
     "Confirm NAME layer deletion ?":
         "¿Confirma que se suprimirá la capa ${NAME}?",
@@ -172,12 +190,10 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Show metadata": "Mostrar los metadatos",
     "Edit symbology": "Editar la simbología",
     "Build a query": "Construir una consulta",
-    "Failed to get WFS layer address. <br />The query module will be disabled":
-        "No se puede obtener la dirección de la capa WFS." +
-        "<br />El módulo de consultas no estará disponible.",
-    "DescribeLayer WMS query failed. <br />The query module will be disabled":
-        "La consulta WMS DescribeLayer falló." +
-        "<br />El módulo de consultas no estará disponible.",
+    "Cannot proceed: failed to get the equivalent WFS layer.":
+        "Operación imposible : no se puede obtener la dirección de la capa WFS.",
+    "Cannot proceed: the DescribeLayer WMS query failed.":
+        "Operación imposible : la consulta WMS DescribeLayer falló.",
     "Download data": "Descargar los datos",
     "Choose a style": "Elegir un estilo",
     "Modify format": "Modificar el formato",
@@ -364,18 +380,10 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Confirmation": "Confirmación",
     "Information": "Información",
     /* GEOR_waiter.js strings */
-    /* GEOR_wfsbrowser.js strings */
-    "Choose a WFS server: ": "Elija un servicio WFS: ",
-    "Unreachable server or insufficient rights": "Respuesta del servidor " +
-        "invalida. Razones posibles: datos demasiado pesados, derechos insuficientes, " +
-        "servidor inalcanzable, etc.",
-    "WFS server": "Servicio WFS",
     /* GEOR_wmc.js strings */
     "The provided file is not a valid OGC context":
 		"El archivo proveido no es un contexto OGC valido",
-    "wmc.bad.srs": "El archivo .wmc no " +
-        "puede ser restaurado. Su sistema de referencia espacial es " +
-        "diferente del sistema del mapa actual.",
+    "Warning: trying to restore WMC with a different projection (PROJCODE1, while map SRS is PROJCODE2). Strange things might occur !": "Advertencia: para cargar el contexto WMC, se necesita reproyectar desde ${PROJCODE1} hacía la proyección del mapa ${PROJCODE2}. ¡El resultado puede ser diferente de lo esperado!",
     /* GEOR_wmcbrowser.js strings */
     "Could not find WMC file": "El contexto WMC especificado no existe",
     "... or a custom context": "... o un contexto personalizado",
@@ -384,17 +392,6 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "A unique OSM layer": "Una capa OpenStreetMap única",
     "default viewer context": "contexto por omisión",
     "(default)": "<br/>(contexto por omisión actual)",
-    /* GEOR_wmsbrowser.js strings */
-    "Queryable": "Interrogable",
-    "Opaque": "Opaco",
-    "Choose a WMS server: ": "Elija un servicio WMS: ",
-    "... or enter its address: ": "... o llene su dirección: ",
-    "The server is publishing one layer with an incompatible projection":
-        "El servicio está publicando una capa cuya proyección no es compatible",
-    "The server is publishing NB layers with an incompatible projection":
-        "El servicio esta publicando ${NB} capas cuya proyección no es " +
-        "compatible",
-    "WMS server": "Servicio WMS",
     /* GEOR_workspace.js strings */
     "Context saving": "Guardando el contexto",
     "The file is required.": "Se requiere el nombre de archivo.",
@@ -406,6 +403,10 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Save the map context": "Guardar el mapa",
     "Load a map context": "Cargar un mapa",
     "Get a permalink": "Crear un permalink",
+    "Permalink": "Permalink",
+    "valid for ": "válido para ",
+    "months": "meses",
+    "month": "mes",
     "Share your map with this URL: ": "Compartir su mapa con esta URL",
     "Edit in OSM": "Editar en OSM",
     "with JOSM": "con JOSM",

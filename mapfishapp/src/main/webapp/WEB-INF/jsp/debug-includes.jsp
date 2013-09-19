@@ -73,13 +73,12 @@
     <script type="text/javascript" src="app/js/GEOR_workspace.js"></script>
     <script type="text/javascript" src="app/js/GEOR_mappanel.js"></script>
     <script type="text/javascript" src="app/js/GEOR_managelayers.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_LayerBrowser.js"></script>
     <script type="text/javascript" src="app/js/GEOR_layerfinder.js"></script>
     <script type="text/javascript" src="app/js/GEOR_cswbrowser.js"></script>
     <script type="text/javascript" src="app/js/GeoExt.data.CSW.js"></script>
     <script type="text/javascript" src="app/js/GEOR_cswquerier.js"></script>
     <script type="text/javascript" src="app/js/GEOR_wmcbrowser.js"></script>
-    <script type="text/javascript" src="app/js/GEOR_wmsbrowser.js"></script>
-    <script type="text/javascript" src="app/js/GEOR_wfsbrowser.js"></script>
     <script type="text/javascript" src="app/js/GEOR_fileupload.js"></script>
     <script type="text/javascript" src="app/js/GEOR_selectfeature.js"></script>
     <script type="text/javascript" src="app/js/GEOR_print.js"></script>

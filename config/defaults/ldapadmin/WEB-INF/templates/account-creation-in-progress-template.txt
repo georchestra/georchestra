@@ -1,0 +1,6 @@
+{name}, your request for a new account has been submitted.
+
+Your login is: {uid}
+
+---
+Sent by @shared.instance.name@ (@shared.homepage.url@)

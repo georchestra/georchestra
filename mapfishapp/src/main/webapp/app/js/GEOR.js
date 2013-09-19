@@ -80,7 +80,6 @@ Ext.namespace("GEOR");
         OpenLayers.Number.thousandsSeparator = " ";
         OpenLayers.ImgPath = 'app/img/openlayers/';
         OpenLayers.DOTS_PER_INCH = GEOR.config.MAP_DOTS_PER_INCH;
-        OpenLayers.IMAGE_RELOAD_ATTEMPTS = 3;
 
         /*
          * Setting of Ext global vars.
@@ -343,10 +342,13 @@ Ext.namespace("GEOR");
                     eastItems[0].doLayout(); // required
                 },
                 "showrequest": function() {
-                    eastItems[0].setTitle(querierTitle);
-                    eastItems[0].getLayout().setActiveItem(1);
-                    eastItems[0].getComponent(1).setUp();
-                    eastItems[0].doLayout(); // required
+                    // at this stage, there is no garantee that 2nd cmp exists
+                    if (eastItems[0].getComponent(1)) {
+                        eastItems[0].setTitle(querierTitle);
+                        eastItems[0].getLayout().setActiveItem(1);
+                        eastItems[0].getComponent(1).setUp();
+                        eastItems[0].doLayout(); // required
+                    }
                 },
                 "search": function(panelCfg) {
                     if (southPanel.getActiveTab()) {
@@ -473,11 +475,7 @@ Ext.namespace("GEOR");
 
         GEOR.wmcbrowser.events.on({
             "contextselected": function(o) {
-                try {
-                    GEOR.wmc.read(o.wmcString, true, true);
-                } catch (err) {
-                    return false;
-                }
+                return GEOR.wmc.read(o.wmcString, true, true);
             }
         });
     });

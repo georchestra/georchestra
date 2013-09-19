@@ -18,6 +18,8 @@
  * to restore v1.0 compliant WMCs too => both formats are useful
  * @include OpenLayers/Format/WMC/v1_0_0.js
  * @include OpenLayers/Format/WMC/v1_1_0.js
+ * @include OpenLayers/Format/OWSContext/v0_3_1.js
+ * @include OpenLayers/Projection.js
  * @include GeoExt/data/WMCReader.js
  * @include GEOR_util.js
  * @include GEOR_ows.js
@@ -35,6 +37,12 @@ GEOR.wmc = (function() {
      * {OpenLayers.Format.WMC} The format to read/write WMC.
      */
     var wmcFormat = null;
+
+    /**
+     * Property: owsContextFormat
+     * {OpenLayers.Format.OWSContext} The format to read/write OWS Contexts.
+     */
+    var owsContextFormat = null;
 
     /**
      * Property: layerStore
@@ -161,9 +169,10 @@ GEOR.wmc = (function() {
             tr = OpenLayers.i18n;
 
             wmcFormat = new OpenLayers.Format.WMC({
-                //layerOptions: GEOR.ows.defaultLayerOptions
+                //layerOptions: GEOR.ows.defaultWMSLayerOptions
                 // why should we apply default layer options and not use those provided by the WMC ?
             });
+            owsContextFormat = new OpenLayers.Format.OWSContext();
             wmcReader = new GeoExt.data.WMCReader(
                 {format: wmcFormat},
                 layerStore.recordType
@@ -196,30 +205,56 @@ GEOR.wmc = (function() {
          * zoomToWMC - {Boolean} Whether to zoom to WMC bbox or not, defaults to true
          */
         read: function(wmcString, resetMap, zoomToWMC) {
-            var map = layerStore.map;
-            var newContext = wmcFormat.read(wmcString, {}); // get context from wmc
-                                                         // using non-API feature
+            var map = layerStore.map,
+                mapProj, wmcProj, newContext;
 
+            try {
+                // trying with WMC format
+                newContext = wmcFormat.read(wmcString);
+            } catch (err) {
+                // trying with OWS Context format
+                newContext = owsContextFormat.read(wmcString);
+            }
+            // FAIL:
             if (newContext.layersContext === undefined) {
                 GEOR.util.errorDialog({
                     msg: tr("The provided file is not a valid OGC context")
                 });
-                return;
+                return false;
             }
 
-            if(map.getProjection() && (newContext.projection !== map.getProjection())) {
-                // bounding box from wmc does not have the same projection system
+            // If the context has been saved in a different projection,
+            // we're trying to restore the layers in the current map projection.
+            mapProj = map.getProjection();
+            wmcProj = newContext.projection;
+            if(mapProj && (wmcProj !== mapProj)) {
+                // wmc does not have the same projection system
                 // as the current map
-                GEOR.util.errorDialog({
-                    msg: tr("wmc.bad.srs")
+                GEOR.util.infoDialog({
+                    msg: tr("Warning: trying to restore WMC with a different projection (PROJCODE1, while map SRS is PROJCODE2). Strange things might occur !", {
+                        PROJCODE1: wmcProj,
+                        PROJCODE2: mapProj
+                    })
                 });
-                return;
+                var reproj = function() {
+                    this && this.transform && this.transform(
+                        new OpenLayers.Projection(wmcProj), 
+                        new OpenLayers.Projection(mapProj)
+                    );
+                };
+                reproj.apply(newContext.bounds);
+                reproj.apply(newContext.maxExtent);
+                Ext.each(newContext.layersContext, function(l) {
+                    reproj.apply(l.maxExtent);
+                });
+                newContext.projection = map.getProjection();
             }
 
             // remove all current layers except the lowest index one
             // (our fake base layer)
+            // FIXME: should not this code be subject to resetMap option ?
             for (var i = map.layers.length -1; i >= 1; i--) {
-                map.layers[i].destroy();
+                map.removeLayer(map.layers[i]);
             }
 
             var maxExtent = newContext.maxExtent;

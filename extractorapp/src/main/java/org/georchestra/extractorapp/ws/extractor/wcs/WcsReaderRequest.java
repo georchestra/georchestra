@@ -27,6 +27,7 @@ import java.net.URL;
 import org.georchestra.extractorapp.ws.ExtractorException;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.parameter.ParameterGroup;
+import org.geotools.referencing.GeodeticCalculator;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.ParameterValue;
@@ -128,6 +129,27 @@ public class WcsReaderRequest {
             return new WcsReaderRequest(version, coverage, requestBbox, newCrs, groundResolutionX, format, usePost, remoteReproject, useCommandLineGDAL, username, password);
         } catch (FactoryException e) {
             throw new ExtractorException(e);
+        }
+    }
+
+    public double crsResolution() {
+        // TODO check if interpolation is None if so then
+        // request full resolution
+
+        if (ScaleUtils.isLatLong(responseCRS)) {
+            try {
+
+                GeodeticCalculator calc = new GeodeticCalculator(responseCRS);
+                ReferencedEnvelope bbox = requestBbox.transform(responseCRS, true);
+                calc.setStartingPosition(bbox.getLowerCorner());
+                
+                calc.setDirection(0, groundResolutionX);
+                return calc.getDestinationGeographicPoint().distance(calc.getStartingGeographicPoint());
+            } catch (Exception e) {
+                throw new ExtractorException(e);
+            }
+        } else {
+            return ScaleUtils.fromMeterToCrs(groundResolutionX, responseCRS);
         }
     }
 

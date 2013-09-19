@@ -207,7 +207,7 @@ if(sec_roles != null) {
         <c:choose>
             <c:when test='<%= anonymous == false %>'>
         <p class="logged">
-            <%=request.getHeader("sec-username") %><span class="light"> | </span><a href="/j_spring_security_logout"><fmt:message key="logout"/></a>
+            <a href='/ldapadmin/account/userdetails?uid=<%=request.getHeader("sec-username") %>'><%=request.getHeader("sec-username") %></a><span class="light"> | </span><a href="/j_spring_security_logout"><fmt:message key="logout"/></a>
         </p>
             </c:when>
             <c:otherwise>
@@ -221,9 +221,15 @@ if(sec_roles != null) {
     <script>
         (function(){
             // required to get the correct redirect after login, see https://github.com/georchestra/georchestra/issues/170
-            var a = document.getElementById("login_a");
+            var url,
+                a = document.getElementById("login_a");
             if (a !== null) {
-                a.href = parent.window.location.href.split('?')[0] + "?login";
+                url = parent.window.location.href;
+                if (/\/cas\//.test(url)) {
+                    a.href = "/cas/login";
+                } else {
+                    a.href = url.split('?')[0] + "?login";
+                }
             }
 
             // handle menus

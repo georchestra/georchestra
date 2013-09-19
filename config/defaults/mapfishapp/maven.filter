@@ -1,5 +1,6 @@
 maxDocAgeInMinutes=@shared.mapfishapp.maxDocAgeInMinutes@
 docTempDir=@shared.mapfishapp.docTempDir@
+instance=@shared.instance.name@
 language=@shared.language@
 
 #you can provide multiple entries
