@@ -546,16 +546,78 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
             ];
         Ext.each(words, function(word) {
             if (word) {
-                filters.push(
-                    new OpenLayers.Filter.Comparison({
-                        type: "~",
-                        property: "AnyText",
-                        value: '*'+word+'*'
-                    })
-                );
+                // # to search for keywords
+                if (/^#.+$/.test(word)) {
+                    filters.push(
+                        new OpenLayers.Filter.Comparison({
+                            type: "~",
+                            property: "subject",
+                            value: '*'+word.substr(1)+'*'
+                        })
+                    );
+                }
+                // @ to search for organizations
+                else if (/^@.+$/.test(word)) {
+                    filters.push(
+                        new OpenLayers.Filter.Comparison({
+                            type: "~",
+                            property: "OrganisationName",
+                            value: '*'+word.substr(1)+'*'
+                        })
+                    );
+                }
+                // = for exact word match
+                else if (/^=.+$/.test(word)) {
+                    filters.push(
+                        new OpenLayers.Filter.Comparison({
+                            type: "==",
+                            property: "AnyText",
+                            value: word.substr(1)
+                        })
+                    );
+                }
+                // ! to exclude word
+                else if (/^!.+$/.test(word)) {
+                    filters.push(
+                        new OpenLayers.Filter.Comparison({
+                            type: "!=",
+                            property: "AnyText",
+                            value: word.substr(1)
+                        })
+                    );
+                }
+                // "" or '' for titles
+                else if (/^".+"$/.test(word)||/^'.+'$/.test(word)) {
+                    filters.push(
+                        new OpenLayers.Filter.Logical({
+                            type: "||",
+                            filters: [
+                                new OpenLayers.Filter.Comparison({
+                                    type: "$",
+                                    property: "title",
+                                    value: '*'+word.substr(1)+'*'
+                                }),
+                                new OpenLayers.Filter.Comparison({
+                                    type: "$",
+                                    property: "alternatetitle",
+                                    value: '*'+word.substr(1)+'*'
+                                })
+                            ]
+                        })
+                    );
+                }
+                else {
+                    filters.push(
+                        new OpenLayers.Filter.Comparison({
+                            type: "~",
+                            property: "AnyText",
+                            value: '*'+word+'*'
+                        })
+                    );
+                }
             }
         });
-        if (filters.length == 1) {
+        if (filters.length === 1) {
             return filters[0];
         } else {
             return new OpenLayers.Filter.Logical({
