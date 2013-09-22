@@ -546,72 +546,81 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
             ];
         Ext.each(words, function(word) {
             if (word) {
-                // # to search for keywords
+                // #word : search in keywords
                 if (/^#.+$/.test(word)) {
                     filters.push(
                         new OpenLayers.Filter.Comparison({
                             type: "~",
-                            property: "subject",
-                            value: '*'+word.substr(1)+'*'
+                            property: "Subject",
+                            value: '*'+word.substr(1)+'*',
+                            matchCase: false
                         })
                     );
                 }
-                // @ to search for organizations
+                // @word : search for organizations
                 else if (/^@.+$/.test(word)) {
                     filters.push(
                         new OpenLayers.Filter.Comparison({
                             type: "~",
                             property: "OrganisationName",
-                            value: '*'+word.substr(1)+'*'
+                            value: '*'+word.substr(1)+'*',
+                            matchCase: false
                         })
                     );
                 }
-                // = for exact word match
-                else if (/^=.+$/.test(word)) {
-                    filters.push(
-                        new OpenLayers.Filter.Comparison({
-                            type: "==",
-                            property: "AnyText",
-                            value: word.substr(1)
-                        })
-                    );
-                }
-                // ! to exclude word
-                else if (/^!.+$/.test(word)) {
-                    filters.push(
-                        new OpenLayers.Filter.Comparison({
-                            type: "!=",
-                            property: "AnyText",
-                            value: word.substr(1)
-                        })
-                    );
-                }
-                // "" or '' for titles
+                // "word" or 'word' : search in title|alternatetitle
                 else if (/^".+"$/.test(word)||/^'.+'$/.test(word)) {
+                    var s=word.substr(1,word.length-2);
                     filters.push(
                         new OpenLayers.Filter.Logical({
                             type: "||",
                             filters: [
                                 new OpenLayers.Filter.Comparison({
-                                    type: "$",
-                                    property: "title",
-                                    value: '*'+word.substr(1)+'*'
+                                    type: "~",
+                                    property: "Title",
+                                    value: '*'+s+'*',
+                                    matchCase: false
                                 }),
                                 new OpenLayers.Filter.Comparison({
-                                    type: "$",
-                                    property: "alternatetitle",
-                                    value: '*'+word.substr(1)+'*'
+                                    type: "~",
+                                    property: "AlternateTitle",
+                                    value: '*'+s+'*',
+                                    matchCase: false
                                 })
                             ]
                         })
                     );
                 }
+                // +word : exact word match
+                else if (/\+.+$/.test(word)) {
+                    filters.push(
+                        new OpenLayers.Filter.Comparison({
+                            type: "==",
+                            property: "AnyText",
+                            value: word.substr(1),
+                            matchCase: false
+                        })
+                    );
+                }
+                // -word : to suppress entries with a specific word
+                else if (/^-.+$/.test(word)) {
+                    filters.push(
+                        new OpenLayers.Filter.Comparison({
+                            type: "!=",
+                            property: "AnyText",
+                            value: word.substr(1),
+                            matchCase: false
+                        })
+                    );
+                }
+                // word : full search
                 else {
                     filters.push(
                         new OpenLayers.Filter.Comparison({
                             type: "~",
                             property: "AnyText",
-                            value: '*'+word+'*'
+                            value: '*'+word+'*',
+                            matchCase: false
                         })
                     );
                 }
