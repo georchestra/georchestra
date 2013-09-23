@@ -130,7 +130,12 @@ GEOR.toolbar = (function() {
                 labelCls: 'bold-text',
                 showTitle: true,
                 baseParams: {
-                    FORMAT: 'image/png'
+                    FORMAT: 'image/png',
+                    // geoserver specific:
+                    LEGEND_OPTIONS: [
+                        'forceLabels:on',
+                        'fontAntiAliasing:true'
+                    ].join(';')
                 }
             },
             autoScroll: true
