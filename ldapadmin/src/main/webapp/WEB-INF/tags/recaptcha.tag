@@ -26,7 +26,7 @@
 				<a class="input-group-addon btn" href="javascript:Recaptcha.showhelp()"><i class="glyphicon glyphicon-question-sign"></i></a>
 			</div>
 			<c:if test="${status.error}">
-				<span class="help-block">${status.errorMessage}</span>
+				<span id="span-error" class="help-block">${status.errorMessage}</span>
 			</c:if>
 		</div>
 	</div>

@@ -29,7 +29,7 @@
 				</div>
 			</c:if>
 			<c:if test="${status.error}">
-				<span class="help-block">${status.errorMessage}</span>
+				<span id="span-error" class="help-block">${status.errorMessage}</span>
 			</c:if>
 			<c:if test="${not empty spanId}">
 				<span id="${spanId}" class="help-block label label-danger"></span>
