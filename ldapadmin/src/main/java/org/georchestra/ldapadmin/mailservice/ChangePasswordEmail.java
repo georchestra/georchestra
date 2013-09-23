@@ -50,7 +50,7 @@ class ChangePasswordEmail extends Email {
 			LOG.debug("send change password email to user "+ userName+ " - uid: ." + uid  );
 		}
 		
-		String body = writeNewPasswordMail(userName, url);
+		String body = writeNewPasswordMail(userName, url, uid);
 		
 		super.sendMsg(body);
 	}
@@ -61,12 +61,13 @@ class ChangePasswordEmail extends Email {
     	return this.servletContext.getRealPath(fileTemplate);
     }
 	
-	private String writeNewPasswordMail(final String userName, final String url) {
+	private String writeNewPasswordMail(final String userName, final String url, final String uid) {
 		
 		String body = getBodyTemplate();
 		
 		body = body.replace("{name}", userName);
 		body = body.replace("{url}", url);
+		body = body.replace("{uid}", uid);
 		
 		if(LOG.isDebugEnabled() ){
 			
