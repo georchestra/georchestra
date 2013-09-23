@@ -112,16 +112,12 @@
     function confirmPasswordOnBlur() {
         if (!testConfirmPassword()) {
             document.form.password.focus();
-            return false;
         }
-        return true;
     }
     function passwordOnBlur() {
         if (!testPassword()) {
             document.form.password.focus();
-            return false;
         }
-        return true;
     }
     /* to be called when the password field is modified */
     function cleanPasswordError(){
