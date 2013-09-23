@@ -120,7 +120,7 @@ GEOR.toolbar = (function() {
         }));
 
         // create a legend panel, it is used both for displaying
-        // the legend in the interface and for inclusion if PDFs
+        // the legend in the interface and for inclusion in PDFs
         // created by the print module
         var legendPanel = new GeoExt.LegendPanel({
             layerStore: layerStore,
