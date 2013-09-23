@@ -1,5 +1,11 @@
-The development branch is master. 
-It can be used to build, and report errors, but you are rather advised to use the latest stable builds.
+The development branch is master. It can be used for testing and reporting errors.
+
+For production systems, you are advised to use the branch named "stable".
+This branch receives bug fixes as they arrive.
+
+Every release is supported for 6 months.
+Each time a new release is out, the stable branch is renamed according to the old release version, and a new "stable" branch is forked off master.
+
 
 Version 13.09 (in the works)
 ============================
