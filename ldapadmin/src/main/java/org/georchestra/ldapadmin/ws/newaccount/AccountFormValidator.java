@@ -29,8 +29,6 @@ class AccountFormValidator {
 		
 		PasswordUtils.validate( form.getPassword(), form.getConfirmPassword(), errors);
 		
-		validatePhone(form.getPhone(), errors); 
-
 		validateCaptcha(form.getRecaptcha_challenge_field(), form.getRecaptcha_response_field(), errors);
 	}
 
@@ -51,18 +49,6 @@ class AccountFormValidator {
 				if(!captchaGenerated.equals(trimmedCaptcha)){
 					errors.rejectValue("recaptcha_response_field", "recaptcha_response_field.error.captchaNoMatch", "The texts didn't match");
 					
-				}
-			}
-		}
-	}
-
-	private void validatePhone(final String phone, Errors errors) {
-		
-		if (StringUtils.hasLength(phone.trim())) {
-			for (int i = 0; i < phone.length(); ++i) {
-				if ((Character.isDigit(phone.charAt(i))) == false) {
-					errors.rejectValue("phone", "phone.error.nonNumeric", "The phone should be numeric");
-					break;
 				}
 			}
 		}
