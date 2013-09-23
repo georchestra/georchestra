@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +20,7 @@ import org.georchestra.mapfishapp.ws.upload.FileDescriptor;
 import org.georchestra.mapfishapp.ws.upload.FileFormat;
 import org.georchestra.mapfishapp.ws.upload.UpLoadFileManagement;
 import org.geotools.referencing.CRS;
+import org.hsqldb.lib.HashMap;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.opengis.referencing.FactoryException;
@@ -27,8 +29,11 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.servlet.ModelAndView;
 
 
 /**
@@ -69,7 +74,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
  *
  */
 @Controller
-public final class UpLoadGeoFileController {
+public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 	
 	private static final Log LOG = LogFactory.getLog(UpLoadGeoFileController.class.getPackage().getName());
 	
@@ -490,4 +495,31 @@ public final class UpLoadGeoFileController {
 		
 		return Status.ok;
 	}
+
+	@Override
+    public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception exception) {
+
+		Map<String, Object> model = new java.util.HashMap<String, Object>();
+		
+		if (exception instanceof MaxUploadSizeExceededException) {
+			model.put("errors", exception.getMessage());
+		} else {
+			model.put("errors", "Unexpected error: " + exception.getMessage());
+		}
+
+//		long limit = getSizeLimit(currentFile.originalFileExt);
+//		long size = limit / 1048576; // converts to Mb
+		long size = 99999;
+		final String msg = Status.sizeError.getMessage( size + "MB");
+		
+		try {
+	        writeResponse(response, Status.sizeError, msg);
+        } catch (IOException e) {
+	        // TODO Auto-generated catch block
+	        e.printStackTrace();
+        }
+		
+		return new ModelAndView("", null);
+	}
+	
 }

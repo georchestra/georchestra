@@ -11,13 +11,21 @@
     <bean class="org.georchestra.mapfishapp.ws.OGCProxy">
     </bean>
 
-    <!-- File uploads -->
+    <!-- File uploads 
     <bean id="multipartResolver"
       class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
         <property name="maxUploadSize">
             <value>10000000</value>
         </property>
     </bean>
+    -->
+    <bean id="multipartResolver"
+      class="org.georchestra.mapfishapp.ws.upload.CustomMultipartResolver">
+        <property name="maxUploadSize">
+            <value>10000000</value>
+        </property>
+    </bean>
+
 
     <bean class="org.georchestra.mapfishapp.ws.UpLoadGeoFileController">
         <property name="responseCharset" value="UTF-8"/>
