@@ -359,12 +359,13 @@ GEOR.ows = (function() {
                 // and set it in the original record, so that it can be used
                 // later for protocol creation
 
+                // FIXME: what about options.storeOptions in this case ?
                 store = new Ext.data.Store({
                     reader: new GeoExt.data.AttributeReader({}, attributeStoreFields)
                 });
 
                 Ext.Ajax.request({
-                    url: r.owsURL,
+                    url: r.owsURL.replace(/\?$/,''),
                     method: 'GET',
                     disableCaching: false,
                     headers: {
@@ -384,17 +385,15 @@ GEOR.ows = (function() {
                         // Begin hack
                         // Since WFS version is no more a default param, we need to retrieve the WFS version of the layer
                         // to initialize the WFSProtocol with matching version
-                        // Ideally, we should call a capabilities request to get the WFS version, but it is to slow
+                        // Ideally, we should call a capabilities request to get the WFS version, but it is too slow
                         // So we get the version from the describefeaturetype interpreting the gml version in the schema definition
                         var version;
                         
-                        if(resp.responseText.indexOf('http://www.opengis.net/gml/3.2') >= 0) {
+                        if (resp.responseText.indexOf('http://www.opengis.net/gml/3.2') > 0) {
                         	version = "2.0.0";
-                        }
-                        else if(resp.responseText.indexOf('http://www.opengis.net/gml' && resp.responseText.indexOf('gml/3.1.1/base/gml.xsd')) >= 0) {
+                        } else if (resp.responseText.indexOf('http://www.opengis.net/gml') > 0 && resp.responseText.indexOf('gml/3.1.1/base/gml.xsd') > 0) {
                         	version = "1.1.0";
-                        }
-                        else {
+                        } else {
                         	version = "1.0.0";
                         }
                         record.set("WFSversion", version);
@@ -423,13 +422,13 @@ GEOR.ows = (function() {
             } else {
 
                 var storeOptions = Ext.applyIf({
-                    url: r.owsURL,
+                    url: r.owsURL.replace(/\?$/,''),
                     fields: attributeStoreFields,
                     baseParams: Ext.applyIf({
                         "REQUEST": "DescribeFeatureType",
                         "TYPENAME": r.typeName
                     }, WFS_BASE_PARAMS)
-                }, options.storeOptions);
+                }, options.storeOptions || {});
                 store = new GeoExt.data.AttributeStore(storeOptions);
                 if (options.success) {
                     loadStore(store,
@@ -568,7 +567,7 @@ GEOR.ows = (function() {
             GEOR.waiter.show();
             var store = new GEOR.ows.WMSCapabilities({
                 storeOptions: {
-                    url: url
+                    url: url.replace(/\?$/,'')
                 },
                 success: function(store, records) {
                     var index = store.find("name", layername);
@@ -666,7 +665,7 @@ GEOR.ows = (function() {
                 featureType = parts[0];
             }
             options = Ext.applyIf({
-                url: record.owsURL,
+                url: record.owsURL.replace(/\?$/,''),
                 featureType: featureType,
                 featureNS: record.featureNS,
                 featurePrefix: featurePrefix || 'feature',
