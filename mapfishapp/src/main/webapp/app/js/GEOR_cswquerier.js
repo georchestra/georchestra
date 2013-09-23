@@ -518,7 +518,7 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
     createFilter: function() {
         // see http://osgeo-org.1560.n6.nabble.com/CSW-GetRecords-problem-with-spaces-tp3862749p3862750.html
         var v = this.getValue(),
-            words = v.replace(new RegExp("[,;:/%()*!.\\[\\]~&=]","g"), ' ').split(' '),
+            words = v.replace(new RegExp("[,;:/%()!.\\[\\]~&=]","g"), ' ').split(' '),
             // adding wms in the filters list helps getting records where a WMS layer is referenced:
             filters = [
                 // improve relevance of results: (might not be relevant with other csw servers than geonetwork)
@@ -545,14 +545,19 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
                 })
             ];
         Ext.each(words, function(word) {
+            var searchType = "==";
+            // wildcards allowed
+            if (/\*/.test(word)) {
+                searchType = "~";
+            }
             if (word) {
                 // #word : search in keywords
                 if (/^#.+$/.test(word)) {
                     filters.push(
                         new OpenLayers.Filter.Comparison({
-                            type: "~",
+                            type: searchType,
                             property: "Subject",
-                            value: '*'+word.substr(1)+'*',
+                            value: word.substr(1),
                             matchCase: false
                         })
                     );
@@ -561,78 +566,48 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
                 else if (/^@.+$/.test(word)) {
                     filters.push(
                         new OpenLayers.Filter.Comparison({
-                            type: "~",
+                            type: searchType,
                             property: "OrganisationName",
-                            value: '*'+word.substr(1)+'*',
-                            matchCase: false
-                        })
-                    );
-                }
-                // "word" or 'word' : search in title|alternatetitle
-                else if (/^".+"$/.test(word)||/^'.+'$/.test(word)) {
-                    var s=word.substr(1,word.length-2);
-                    filters.push(
-                        new OpenLayers.Filter.Logical({
-                            type: "||",
-                            filters: [
-                                new OpenLayers.Filter.Comparison({
-                                    type: "~",
-                                    property: "Title",
-                                    value: '*'+s+'*',
-                                    matchCase: false
-                                }),
-                                new OpenLayers.Filter.Comparison({
-                                    type: "~",
-                                    property: "AlternateTitle",
-                                    value: '*'+s+'*',
-                                    matchCase: false
-                                })
-                            ]
-                        })
-                    );
-                }
-                // +word : exact word match
-                else if (/\+.+$/.test(word)) {
-                    filters.push(
-                        new OpenLayers.Filter.Comparison({
-                            type: "==",
-                            property: "AnyText",
                             value: word.substr(1),
                             matchCase: false
                         })
                     );
                 }
-                // -word : to suppress entries with a specific word
+                // -word : suppress entries with a specific word
                 else if (/^-.+$/.test(word)) {
                     filters.push(
-                        new OpenLayers.Filter.Comparison({
-                            type: "!=",
-                            property: "AnyText",
-                            value: word.substr(1),
-                            matchCase: false
-                        })
+                            new OpenLayers.Filter.Logical({
+                                type: "||",
+                                filters: new OpenLayers.Filter.Comparison({
+                                    type: "==",
+                                    property: "AnyText",
+                                    value: word.substr(1),
+                                    matchCase: false
+                                })
+                            })
+                        );
                     );
                 }
                 // ?word : AnyText search
                 else if (/^\?.+$/.test(word)) {
                     filters.push(
                         new OpenLayers.Filter.Comparison({
-                            type: "~",
+                            type: searchType,
                             property: "AnyText",
                             value: word.substr(1),
                             matchCase: false
                         })
                     );
                 }
-                // word : search on predefined queryable properties
+                // word : search for exact match on predefined queryable properties
                 else {
                     var defaultFilters = [];
                     Ext.each(GEOR.config.CSW_FILTER_PROPERTIES, function(property) {
                         defaultFilters.push(
                             new OpenLayers.Filter.Comparison({
-                                type: "~",
+                                type: searchType,
                                 property: property,
-                                value: '*'+word+'*',
+                                value: word,
                                 matchCase: false
                             })
                         );
