@@ -22,16 +22,16 @@ function testFirstname() {
 		addError("firstname", '<s:message code="firstName.error.required" />');
 		return false;
 	}
-  return true;
+	return true;
 }
 function testSurname() {
-  var surname = document.form.surname.value;
+	var surname = document.form.surname.value;
 	removeError("surname");
 	if (!isNotEmpty(surname)) {
-    return false;
-  }
-  return true;
 		addError("surname", '<s:message code="surname.error.required" />');
+		return false;
+	}
+	return true;
 }
 function testEmail() {
 	var email = document.form.email.value;
@@ -43,7 +43,7 @@ function testEmail() {
 		addError("email", '<s:message code="email.error.invalidFormat" />');
 		return false;	
 	}
-  return true;
+	return true;
 }
 function testUid() {
 	var uid = document.form.uid.value;
@@ -69,17 +69,15 @@ function testPassword() {
 function testConfirmPassword() {
 	var password = document.form.password.value;
 	var confirmPassword = document.form.confirmPassword.value;
-	$("#div-confirmPassword").removeClass("has-error");
-	$("#div-confirmPassword > div > span.help-block").remove();
+	removeError("confirmPassword");
 	if (password!=confirmPassword) {
-		$("#div-confirmPassword").addClass("has-error");
-		$("#div-confirmPassword > div").append('<span class="help-block"><s:message code="confirmPassword.error.pwdNotEquals" /></span>');
+		addError("confirmPassword", '<s:message code="confirmPassword.error.pwdNotEquals" />');
 		return false;
 	}
 	return true;
 }
 function setFormError() {
-  $("form#form > #message").remove();
+	$("form#form > #message").remove();
 	$("form#form").prepend('<div id="message" class="alert alert-dismissable alert-danger"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><s:message code="form.error" /></div>');
 }
 

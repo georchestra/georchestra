@@ -116,7 +116,6 @@
         }
         return true;
     }
-    /* to be called when the password field loses focus */
     function passwordOnBlur() {
         if (!testPassword()) {
             document.form.password.focus();
