@@ -1,6 +1,6 @@
 # ReCaptcha keys
-privateKey=6Lf0h-MSAAAAAI2nHJfNPDaEXXjsdmn8eKSZUrQZ
-publicKey=6Lf0h-MSAAAAAOQ4YyRtbCNccU87dlGmokmelZjh
+privateKey=6LcfjucSAAAAAKcnHp14epYOiWOIUfEculd4PvLV
+publicKey=6LcfjucSAAAAAKtNoK5r7IIXxBT-33znNJUgeYg1
 
 # Application path as seen from the external world:
 passwordRecoveryContext=/ldapadmin
@@ -10,6 +10,13 @@ ldapUrl=@shared.ldapUrl@
 baseDN=@shared.ldap.baseDn@
 ldapAdminDn=@shared.ldap.admin.dn@
 ldap.admin.password=@shared.ldap.admin.password@
+
+# list of protected user
+# example
+#protectedUser.uid1=@shared.privileged.geoserver.user@
+#protectedUser.uid2=other
+
+protectedUser.uid1=@shared.privileged.geoserver.user@
 
 # Database connection
 psql.user=@shared.psql.user@
@@ -35,3 +42,4 @@ moderatorEmail=moderator@mail
 delayInDays=1
 
 language=@shared.language@
+headerHeight=@shared.header.height@

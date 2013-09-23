@@ -679,10 +679,10 @@ GEOR.config = (function() {
         /**
          * Constant: HELP_URL
          * {String} URL of the help ressource.
-         * Defaults to "http://www.geobretagne.fr/web/guest/assistance"
+         * Defaults to "http://cms.geobretagne.fr/assistance"
          */
         HELP_URL: getCustomParameter("HELP_URL",
-            "http://www.geobretagne.fr/web/guest/assistance"),
+            "http://cms.geobretagne.fr/assistance"),
 
         /**
          * Constant: DISPLAY_SELECTED_OWS_URL

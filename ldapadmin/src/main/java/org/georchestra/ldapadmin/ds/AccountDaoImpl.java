@@ -3,6 +3,7 @@
  */
 package org.georchestra.ldapadmin.ds;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.naming.Name;
@@ -137,7 +138,7 @@ public final class AccountDaoImpl implements AccountDao{
 			}
 			
 		} catch (NotFoundException e1) {
-			// if not exist an account with this e-mail the it can be part of the updated account. 
+			// if it doesn't exist an account with this e-mail the it can be part of the updated account. 
 		} 
 		
 		// update the entry in the ldap tree
@@ -173,6 +174,24 @@ public final class AccountDaoImpl implements AccountDao{
 		return ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(), new AccountContextMapper());
 	}
 
+
+	@Override
+	public List<Account> findFilterBy(final ProtectedUserFilter filterProtected) throws DataServiceException {
+
+		List<Account> allUsers = findAll();
+		
+		// removes the protected users. 
+		List<Account> filtered = new LinkedList<Account>();
+		for (Account account : allUsers) {
+			
+			if( !filterProtected.isTrue( account.getUid() ) ){
+				filtered.add(account);
+			}
+		}
+		return filtered;
+	}
+
+	
 	
 	/**
 	 * @see {@link AccountDao#findByUID(String)}
@@ -271,21 +290,6 @@ public final class AccountDaoImpl implements AccountDao{
 	 		
 	/**
 	 * Maps the following the account object to the following LDAP entry schema:
-	 *
-	 * <pre>
-	 * dn: uid=anUid,ou=users,dc=georchestra,dc=org
-	 * sn: aSurname
-	 * objectClass: organizationalPerson
-	 * objectClass: person 
-	 * objectClass: inetOrgPerson
-	 * objectClass: top
-	 * mail: aMail
-	 * uid: anUid
-	 * cn: aCommonName
-	 * description: description
-	 * userPassword: secret
-	 * </pre>
-	 * 
 	 * 
 	 * @param account
 	 * @param context

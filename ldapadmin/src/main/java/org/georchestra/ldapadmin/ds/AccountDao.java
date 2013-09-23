@@ -19,7 +19,7 @@ public interface AccountDao {
 	 * @return true if the uid exist, false in other case.
 	 * @throws DataServiceException
 	 */
-	public boolean exist(final String uid) throws DataServiceException;
+	boolean exist(final String uid) throws DataServiceException;
 	
 	/**
 	 * Returns all accounts
@@ -28,6 +28,15 @@ public interface AccountDao {
 	 * @throws DataServiceException
 	 */
 	List<Account> findAll() throws DataServiceException;
+	
+	/**
+	 * Returns all accounts that accomplish the provided filter.
+	 * 
+	 * @return List of {@link Account}
+	 * @throws DataServiceException
+	 */
+	List<Account> findFilterBy(final ProtectedUserFilter uidFilter) throws DataServiceException;
+
 	
 	/**
 	 * Creates a new account
@@ -113,6 +122,7 @@ public interface AccountDao {
 	 * @throws DataServiceException
 	 */
 	String generateUid(String uid) throws DataServiceException;
+
 	
 
 

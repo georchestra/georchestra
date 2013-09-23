@@ -333,10 +333,13 @@ Ext.namespace("GEOR");
                     eastItems[0].doLayout(); // required
                 },
                 "showrequest": function() {
-                    eastItems[0].setTitle(querierTitle);
-                    eastItems[0].getLayout().setActiveItem(1);
-                    eastItems[0].getComponent(1).setUp();
-                    eastItems[0].doLayout(); // required
+                    // at this stage, there is no garantee that 2nd cmp exists
+                    if (eastItems[0].getComponent(1)) {
+                        eastItems[0].setTitle(querierTitle);
+                        eastItems[0].getLayout().setActiveItem(1);
+                        eastItems[0].getComponent(1).setUp();
+                        eastItems[0].doLayout(); // required
+                    }
                 },
                 "search": function(panelCfg) {
                     if (GEOR.resultspanel) {
