@@ -15,6 +15,10 @@ import org.apache.commons.io.FilenameUtils;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.geojson.feature.FeatureJSON;
 import org.geotools.referencing.CRS;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.opengis.feature.simple.SimpleFeature;
 
@@ -96,9 +100,74 @@ public class UpLoadFileManagementGTImplTest {
 		String fileName = "regions.kml";
 		String fullName = makeFullName(fileName);
 		
-		testGetGeofileToJSON(fullName, null);
+		String regions = testGetGeofileToJSON(fullName, null);
+		
+		JSONObject list = new JSONObject(regions);
+		JSONArray jsonArray = list.getJSONArray("features");
+		JSONObject reg = jsonArray.getJSONObject(0);
+		String id = reg.getString("id");
+		
+		JSONObject properties = reg.getJSONObject("properties");// FIXME REMOVE
+		String  p1 = getJsonFieldValue(properties,  "open");
+		String  p2 = getJsonFieldValue(properties,  "visibility");
+		String  name = getJsonFieldValue(properties,  "name");
+		String  desc = getJsonFieldValue(properties,  "description");
+		String  osm_id = getJsonFieldValue(properties,  "osm_id");
+		String  geom = getJsonFieldValue(properties,  "geometry");
+		
 	}
 	
+	@Test
+	public void testKMLExtendedData() throws Exception {
+
+		String fileName = "kml_4326_accidents.kml";
+		String fullName = makeFullName(fileName);
+		
+		String regions = testGetGeofileToJSON(fullName, null);
+		
+		JSONObject list = new JSONObject(regions);
+		JSONArray jsonArray = list.getJSONArray("features");
+		JSONObject reg = jsonArray.getJSONObject(0);
+		String id = reg.getString("id");
+		
+		JSONObject properties = reg.getJSONObject("properties");
+		String  p1 = getJsonFieldValue(properties,  "id");
+		String  p2 = getJsonFieldValue(properties,  "date");
+		String  p3 = getJsonFieldValue(properties,  "plage_hora");
+		String  p4 = getJsonFieldValue(properties,  "jour_nuit");
+		String  p5 = getJsonFieldValue(properties,  "meteo");
+		String  p6 = getJsonFieldValue(properties,  "voie_type");
+		String  p7 = getJsonFieldValue(properties,  "milieu");
+		String  p8 = getJsonFieldValue(properties,  "voie_type");
+		String  p9 = getJsonFieldValue(properties,  "tues_nb");
+		String  p10 = getJsonFieldValue(properties,  "milieu");
+		String  p11 = getJsonFieldValue(properties,  "tues_18_24");
+		String  p12 = getJsonFieldValue(properties,  "tues_moto_");
+		String  p13 = getJsonFieldValue(properties,  "tues_pieto");
+		String  p14 = getJsonFieldValue(properties,  "tues_velo_");
+		String  p15 = getJsonFieldValue(properties,  "vehicules_");
+		String  p16 = getJsonFieldValue(properties,  "pl_impliqu");
+		String  p17 = getJsonFieldValue(properties,  "commune");
+		String  p18 = getJsonFieldValue(properties,  "departemen");
+		String  p19 = getJsonFieldValue(properties,  "commentair");
+		String  p20 = getJsonFieldValue(properties,  "consolide");
+		String  p21 = getJsonFieldValue(properties,  "anciennete");
+		String  p22 = getJsonFieldValue(properties,  "f_mois");
+		String  p23 = getJsonFieldValue(properties,  "f_annee");
+		
+	}
+	
+	private String getJsonFieldValue(JSONObject properties, String field) {
+		 
+		String value;
+		try {
+			value = properties.getString(field);
+		} catch (JSONException e) {
+			value = null;
+		} 
+		 
+		 return value;
+	}
 	/** 
 	 * Tests the coordinates order.
 	 * 
@@ -228,6 +297,8 @@ public class UpLoadFileManagementGTImplTest {
 	
 	protected String testGetGeofileToJSON(final String fileName, final String epsg) throws Exception{
 		
+		assertTrue(fileName.length() >0 );
+		
 		String jsonFeatures = getFeatureCollectionAsJSON(fileName, epsg);
 		assertNotNull(jsonFeatures); 
 		
@@ -236,7 +307,7 @@ public class UpLoadFileManagementGTImplTest {
 	
 	/**
 	 * Sets the bridge {@link AbstractFeatureGeoFileReader} with the {@link GeotoolsFeatureReader} implementation, then
-	 * retrieves the file as Json collection.
+	 * retrieves the file as Json collection. The return value will be null if the file is empty.
 	 * 
 	 * @param fileName
 	 * @param epsg

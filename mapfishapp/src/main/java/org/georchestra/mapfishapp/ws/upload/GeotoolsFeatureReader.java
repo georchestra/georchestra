@@ -28,6 +28,7 @@ import org.geotools.kml.KML;
 import org.geotools.kml.KMLConfiguration;
 import org.geotools.referencing.CRS;
 import org.geotools.xml.Configuration;
+import org.geotools.xml.PullParser;
 import org.geotools.xml.StreamingParser;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -85,7 +86,7 @@ class GeotoolsFeatureReader implements FeatureGeoFileReader {
 		case gml:
 			return readGmlFile(file, targetCRS);  
 		case kml:
-			return  readKmlFile(file, targetCRS);
+			return readKmlFile(file, targetCRS);
 
 		default:
 			throw new UnsupportedGeofileFormatException("Unsuported format: " + fileFormat.toString());
@@ -129,8 +130,6 @@ class GeotoolsFeatureReader implements FeatureGeoFileReader {
 		InputStream in = new FileInputStream(file);
 		
 		try{
-			StreamingParser parser = new StreamingParser(new KMLConfiguration(), in, KML.Placemark);
-
     		// as default EPSG:4326 is assumed
 	        int defaultSRID = 4326;
     		CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:" + defaultSRID);
@@ -141,6 +140,12 @@ class GeotoolsFeatureReader implements FeatureGeoFileReader {
     		}
 
     		// parse  the kml file and create the feature collection
+			KMLConfiguration configuration = new KMLConfiguration(); 
+//			org.geotools.kml.v22.KMLConfiguration configuration = new org.geotools.kml.v22.KMLConfiguration();
+			
+//			StreamingParser parser = new StreamingParser(configuration, in, KML.Placemark);
+			PullParser parser = new PullParser(configuration, in, KML.Placemark);
+
 			ListFeatureCollection list = null;
 	        SimpleFeature f = null;
 	        while ((f = (SimpleFeature) parser.parse()) != null) {
@@ -194,7 +199,7 @@ class GeotoolsFeatureReader implements FeatureGeoFileReader {
 			Configuration cfg = (version == Version.GML2)
 					? new org.geotools.gml2.GMLConfiguration()
 					: new org.geotools.gml3.GMLConfiguration();
-			StreamingParser parser = new StreamingParser(cfg , in,  SimpleFeature.class );
+			PullParser parser = new PullParser(cfg , in,  SimpleFeature.class );
 
 			int targetSRID = 0;
 			if(targetCRS != null){
