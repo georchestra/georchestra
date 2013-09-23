@@ -146,24 +146,24 @@ function feedbackPassStrength(elId, password){
         }
     });
     if (!password){
-        message = "empty";
+        message = '<s:message code="password.label.empty" />';
         msgLabelClass = "default";
     } else {
         var score = scorePassword(password);
         if (score > 80){
-            message= "strong";
+            message= '<s:message code="password.label.strong" />';
             msgLabelClass = "success";
             msgOffsetClass = "8";
         } else if (score > 60) {
-            message = "good";
+            message = '<s:message code="password.label.good" />';
             msgLabelClass = "info";
             msgOffsetClass = "6";
         } else if (score >= 30) {
-            message = "weak";
+            message = '<s:message code="password.label.weak" />';
             msgLabelClass = "warning";
             msgOffsetClass = "4";
        } else {
-            message = "very weak";
+            message = '<s:message code="password.label.veryweak" />';
             msgLabelClass = "danger";
             msgOffsetClass = "2";
         }
