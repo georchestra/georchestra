@@ -613,14 +613,34 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
                         })
                     );
                 }
-                // word : full search
-                else {
+                // ?word : AnyText search
+                else if (/^\?.+$/.test(word)) {
                     filters.push(
                         new OpenLayers.Filter.Comparison({
                             type: "~",
                             property: "AnyText",
-                            value: '*'+word+'*',
+                            value: word.substr(1),
                             matchCase: false
+                        })
+                    );
+                }
+                // word : search on predefined queryable properties
+                else {
+                    var defaultFilters = [];
+                    Ext.each(GEOR.config.CSW_FILTER_PROPERTIES, function(property) {
+                        defaultFilters.push(
+                            new OpenLayers.Filter.Comparison({
+                                type: "~",
+                                property: property,
+                                value: '*'+word+'*',
+                                matchCase: false
+                            })
+                        );
+                     });
+                    filters.push(
+                        new OpenLayers.Filter.Logical({
+                            type: "||",
+                            filters: defaultFilters
                         })
                     );
                 }

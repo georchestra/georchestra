@@ -11,7 +11,7 @@
  * You should have received a copy of the GNU General Public License
  * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 Ext.namespace("GEOR");
 
 GEOR.config = (function() {
@@ -142,8 +142,8 @@ GEOR.config = (function() {
          * runtime method to get the current default WMC
          */
         DEFAULT_WMC: function() {
-            if (GEOR.config.CONTEXTS && 
-                GEOR.config.CONTEXTS[0] && 
+            if (GEOR.config.CONTEXTS &&
+                GEOR.config.CONTEXTS[0] &&
                 GEOR.config.CONTEXTS[0][2]) {
                 return GEOR.config.CONTEXTS[0][2];
             }
@@ -202,7 +202,7 @@ GEOR.config = (function() {
          * Constant: ADDONS
          * An array of addons config objects.
          * Defaults to []
-         * 
+         *
          * An "addon config object" is an object with the following properties:
          *  id - {String} required identifier, which *MUST* :
          *        * be stable across deployments in order to let your users recover their tools
@@ -215,9 +215,9 @@ GEOR.config = (function() {
          *  group - {String} an optional group for mutual exclusion between activated tools - default group is "tools"
          *  options - {Object} an optional config object which overrides the package default_options (in manifest.json)
          *  thumbnail - {String} an optional thumbnail path, relative to app/addons/{addon_name.toLowerCase()}/ (defaults to img/icon.png)
-         *  
+         *
          */
-        ADDONS: getCustomParameter("ADDONS", 
+        ADDONS: getCustomParameter("ADDONS",
             []),
 
         /**
@@ -230,7 +230,7 @@ GEOR.config = (function() {
          *   * the third one is the path to the context (WMC) file
          *   * the last one is a comment which will be shown on thumbnail hovering
          *
-         * Example config : 
+         * Example config :
          *   [
          *      ["OpenStreetMap", "app/img/contexts/osm.png", "default.wmc", "A unique OSM layer"],
          *      ["Orthophoto", "app/img/contexts/ortho.png", "context/ortho.wmc", "Orthophoto 2009"],
@@ -318,6 +318,22 @@ GEOR.config = (function() {
          * Defaults to 20.
          */
         MAX_CSW_RECORDS: getCustomParameter("MAX_CSW_RECORDS", 20),
+
+        /**
+         * Constant: CSW_FILTER_PROPERTIES
+         * A list of properties queried on catalog search.
+         * Use ['AnyText'] to allow search on all metadata fields,
+         * or use a subset of ISO queryable properties to limit search
+         * on those properties.
+         * Defaults to ['Title','AlternateTitle','Abstract','Subject','OrganisationName']
+         */
+        CSW_FILTER_PROPERTIES: getCustomParameter("CSW_FILTER_PROPERTIES", [
+            'Title',
+            'AlternateTitle',
+            'Abstract',
+            'Subject',
+            'OrganisationName'
+        ]),
 
         /**
          * Constant: NO_THUMBNAIL_IMAGE_URL
