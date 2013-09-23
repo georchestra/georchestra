@@ -518,7 +518,7 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
     createFilter: function() {
         // see http://osgeo-org.1560.n6.nabble.com/CSW-GetRecords-problem-with-spaces-tp3862749p3862750.html
         var v = this.getValue(),
-            words = v.replace(new RegExp("[,;:/%()!.\\[\\]~&=]","g"), ' ').split(' '),
+            words = v.replace(new RegExp("[,;:/%()!*.\\[\\]~&=]","g"), ' ').split(' '),
             // adding wms in the filters list helps getting records where a WMS layer is referenced:
             filters = [
                 // improve relevance of results: (might not be relevant with other csw servers than geonetwork)
@@ -545,19 +545,14 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
                 })
             ];
         Ext.each(words, function(word) {
-            var searchType = "==";
-            // wildcards allowed
-            if (/\*/.test(word)) {
-                searchType = "~";
-            }
             if (word) {
                 // #word : search in keywords
                 if (/^#.+$/.test(word)) {
                     filters.push(
                         new OpenLayers.Filter.Comparison({
-                            type: searchType,
+                            type: "~",
                             property: "Subject",
-                            value: word.substr(1),
+                            value: word.substr(1) + "*",
                             matchCase: false
                         })
                     );
@@ -566,35 +561,36 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
                 else if (/^@.+$/.test(word)) {
                     filters.push(
                         new OpenLayers.Filter.Comparison({
-                            type: searchType,
+                            type: "~",
                             property: "OrganisationName",
-                            value: word.substr(1),
+                            value: word.substr(1) + "*",
                             matchCase: false
                         })
                     );
                 }
-                // -word : suppress entries with a specific word
+                // -word : suppress entries with a specific pattern
                 else if (/^-.+$/.test(word)) {
                     filters.push(
-                            new OpenLayers.Filter.Logical({
-                                type: "||",
-                                filters: new OpenLayers.Filter.Comparison({
-                                    type: "==",
+                        new OpenLayers.Filter.Logical({
+                            type: "!",
+                            filters: [
+                                new OpenLayers.Filter.Comparison({
+                                    type: '~',
                                     property: "AnyText",
-                                    value: word.substr(1),
+                                    value: "*" + word.substr(1) + "*",
                                     matchCase: false
                                 })
-                            })
-                        );
+                            ]
+                        })
                     );
                 }
                 // ?word : AnyText search
                 else if (/^\?.+$/.test(word)) {
                     filters.push(
                         new OpenLayers.Filter.Comparison({
-                            type: searchType,
+                            type: "*",
                             property: "AnyText",
-                            value: word.substr(1),
+                            value: word.substr(1) + "*",
                             matchCase: false
                         })
                     );
@@ -605,9 +601,9 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
                     Ext.each(GEOR.config.CSW_FILTER_PROPERTIES, function(property) {
                         defaultFilters.push(
                             new OpenLayers.Filter.Comparison({
-                                type: searchType,
+                                type: '~',
                                 property: property,
-                                value: word,
+                                value: word + '*',
                                 matchCase: false
                             })
                         );
