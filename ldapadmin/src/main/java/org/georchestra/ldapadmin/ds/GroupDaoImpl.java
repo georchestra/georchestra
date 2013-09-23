@@ -3,21 +3,33 @@
  */
 package org.georchestra.ldapadmin.ds;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.TreeSet;
 
 import javax.naming.Name;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.SearchControls;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.Group;
 import org.georchestra.ldapadmin.dto.GroupFactory;
 import org.georchestra.ldapadmin.dto.GroupSchema;
 import org.springframework.ldap.NameNotFoundException;
+import org.springframework.ldap.control.SortControlDirContextProcessor;
+import org.springframework.ldap.core.AttributesMapper;
+import org.springframework.ldap.core.AttributesMapperCallbackHandler;
 import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.DistinguishedName;
 import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.ldap.core.SearchExecutor;
 import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
 
@@ -104,18 +116,19 @@ public class GroupDaoImpl implements GroupDao {
 		this.ldapTemplate.modifyAttributes(ctx);
 	}
 	
-	/**
-	 * Returns all groups. Each groups will contains its list of users.
-	 * 
-	 * @return list of {@link Group}
-	 */
-	@Override
 	public List<Group> findAll() throws DataServiceException {
 		
+
 		EqualsFilter filter = new EqualsFilter("objectClass", "posixGroup");
-		List<Group> groupList = ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(), new GroupContextMapper());
+		List<Group> groupList = ldapTemplate.search( DistinguishedName.EMPTY_PATH, filter.encode(), new GroupContextMapper());
 		
-		return groupList;
+		
+		TreeSet<Group> sorted = new TreeSet<Group>();
+		for (Group g : groupList) {
+			sorted.add(g);
+		}
+		
+		return new LinkedList<Group>(sorted);
 	}
 	
 	public List<String> findUsers(final String groupName) throws DataServiceException{

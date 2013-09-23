@@ -30,6 +30,14 @@ public interface GroupDao {
 	 * @return list of {@link Group}
 	 */
 	List<Group> findAll() throws DataServiceException;
+	
+	/**
+	 * Returns the group's users
+	 * 
+	 * @return list of user uid
+	 */
+	List<String> findUsers(final String groupName) throws DataServiceException;
+
 
 	/**
 	 * Deletes the user from all groups 
