@@ -122,7 +122,6 @@ public class GroupDaoImpl implements GroupDao {
 		EqualsFilter filter = new EqualsFilter("objectClass", "posixGroup");
 		List<Group> groupList = ldapTemplate.search( DistinguishedName.EMPTY_PATH, filter.encode(), new GroupContextMapper());
 		
-		
 		TreeSet<Group> sorted = new TreeSet<Group>();
 		for (Group g : groupList) {
 			sorted.add(g);

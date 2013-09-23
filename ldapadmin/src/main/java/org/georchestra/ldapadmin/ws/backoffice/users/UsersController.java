@@ -5,7 +5,6 @@ package org.georchestra.ldapadmin.ws.backoffice.users;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.TreeSet;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
