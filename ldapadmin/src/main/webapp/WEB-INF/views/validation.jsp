@@ -6,65 +6,62 @@
  * This validation tests are the same as the server-side tests
  */ 
 
+function removeError(id) {
+	$("#div-" + id).removeClass("has-error");
+	$("#div-" + id + "> div > span#span-error").remove();
+}
+function addError(id, errCode) {
+	$("#div-" + id).addClass("has-error");
+	$("#div-" + id + " > div").append('<span id="span-error" class="help-block">' + errCode + '</span>');
+}
+
 function testFirstname() {
 	var firstname = document.form.firstName.value;
-	$("#div-firstName").removeClass("has-error");
-	$("#div-firstName > div > span.help-block").remove();
+	removeError("firstname");
 	if (!isNotEmpty(firstname)) {
-		$("#div-firstName").addClass("has-error");
-		$("#div-firstName > div").append('<span class="help-block"><s:message code="firstName.error.required" /></span>');
+		addError("firstname", '<s:message code="firstName.error.required" />');
 		return false;
 	}
   return true;
 }
 function testSurname() {
   var surname = document.form.surname.value;
-	$("#div-surname").removeClass("has-error");
-	$("#div-surname > div > span.help-block").remove();
+	removeError("surname");
 	if (!isNotEmpty(surname)) {
-		$("#div-surname").addClass("has-error");
-    $("#div-surname > div").append('<span class="help-block"><s:message code="surname.error.required" /></span>');
     return false;
   }
   return true;
+		addError("surname", '<s:message code="surname.error.required" />');
 }
 function testEmail() {
 	var email = document.form.email.value;
-	$("#div-email").removeClass("has-error");
-	$("#div-email > div > span.help-block").remove();
+	removeError("firstname");
 	if (!isNotEmpty(email)) {
-		$("#div-email").addClass("has-error");
-		$("#div-email > div").append('<span class="help-block"><s:message code="email.error.required" /></span>');
+		addError("email", '<s:message code="email.error.required" />');
 		return false;
 	} else if (!emailCheck(email)) {
-		$("#div-email").addClass("has-error");
-		$("#div-email > div").append('<span class="help-block"><s:message code="email.error.invalidFormat" /></span>');
+		addError("email", '<s:message code="email.error.invalidFormat" />');
 		return false;	
 	}
   return true;
 }
 function testUid() {
 	var uid = document.form.uid.value;
-	$("#div-uid").removeClass("has-error");
-	$("#div-uid > div > span.help-block").remove();
+	removeError("uid");
 	if (!isNotEmpty(uid)) {
-		$("#div-uid").addClass("has-error");
-		$("#div-uid > div").append('<span class="help-block"><s:message code="uid.error.required" /></span>');
+		addError("uid", '<s:message code="uid.error.required" />');
 		return false;
 	} else if (!isUidValid(uid)) {
-		$("#div-uid").addClass("has-error");
-		$("#div-uid > div").append('<span class="help-block"><s:message code="uid.error.invalid" /></span>');
+		addError("uid", '<s:message code="uid.error.invalid" />');
 		return false;
 	}
 	return true;
 }
 function testPassword() {
 	var password = document.form.password.value;
-	$("#div-password").removeClass("has-error");
-	$("#div-password > div > span.help-block").remove();
+	removeError("password");
 	if (!isPasswordValid(password)) {
-		$("#div-password").addClass("has-error");
-		$("#div-password > div").append('<span class="help-block"><s:message code="password.error.sizeError" /></span>');
+		addError("password", '<s:message code="password.error.sizeError" />');
 		return false;
 	}
 	return true;
