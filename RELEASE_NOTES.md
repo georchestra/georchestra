@@ -36,7 +36,7 @@ Enhancements:
  * extractorapp: auto-deactivate the "Modify the bbox" button,
  * geonetwork: validation report: translate all reported XSD errors in editor,
  * geonetwork: user menu: improve links according to role,
- * geonetwork: RSS: add URL parameter to only return one link for each metadata ([read more](https://github.com/georchestra/georchestra/issues/235)),
+ * geonetwork: RSS: add URL parameter to only return one link for each metadata,
  * geonetwork: widgets: add privileges panel to batch operation,
  * geonetwork: improve icons and custom one for XLS files,
  * SDI Instance name in page titles across the SDI (shared.instance.name, defaulting to "geOrchestra"),
@@ -47,7 +47,7 @@ Enhancements:
 Bug fixes:
  * security-proxy: now only sends one referer headers - fixes consuming arcgis web services - [read more](https://github.com/georchestra/georchestra/issues/266),
  * static: fixed incorrect login link on CAS pages,
- * geonetwork: editor: suggestion: save changes before processing ([read more](https://github.com/georchestra/georchestra/issues/242)),
+ * geonetwork: editor: suggestion: save changes before processing,
  * geonetwork: user menu: IE compatibility issues fixed.
  * mapfishapp: WM[T]S GetFeatureInfo geometries on the fly reprojection (at last !) - as a result, it is advised to fill the most widely used SRSes in your country in your [GEOR_custom.js](https://github.com/georchestra/template/blob/45eddec545418b4de55952795c66940729d3b547/mapfishapp/app/js/GEOR_custom.js#L365) config file,
  * mapfishapp: fixed fontFamily not taken into account by styler - also requires apt-get install ttf-mscorefonts-installer,
