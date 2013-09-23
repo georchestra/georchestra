@@ -73,7 +73,7 @@
 				<t:input path="uid" required="true" appendIcon="user">
 					<jsp:attribute name="label"><s:message code="uid.label" /></jsp:attribute>
 				</t:input>
-				<t:password path="password" required="true" spanId="pwdQuality" appendIcon="lock" onblur="checkPasswordLength();" onchange="cleanPasswordError();feedbackPassStrength('pwdQuality', value);" onkeypress="cleanPasswordError();" onkeyup="feedbackPassStrength('pwdQuality', value);">
+				<t:password path="password" required="true" spanId="pwdQuality" appendIcon="lock" onblur="passwordOnBlur();" onchange="cleanPasswordError();feedbackPassStrength('pwdQuality', value);" onkeypress="cleanPasswordError();" onkeyup="feedbackPassStrength('pwdQuality', value);">
 					<jsp:attribute name="label"><s:message code="password.label" /></jsp:attribute>
 				</t:password>
 				<t:password path="confirmPassword" required="true" spanId="passwordError" onblur="confirmPasswordOnBlur();">
@@ -117,10 +117,8 @@
         return true;
     }
     /* to be called when the password field loses focus */
-    function checkPasswordLength() {
-        var pwd = document.form.password.value;
-        if (pwd.length < 8) {
-            document.getElementById("pwdQuality").innerHTML = '<s:message code="password.error.sizeError" />';
+    function passwordOnBlur() {
+        if (!testPassword()) {
             document.form.password.focus();
             return false;
         }
