@@ -97,7 +97,6 @@
 	</div>
 	<script src="//code.jquery.com/jquery.js"></script>
 	<script src='js/bootstrap.min.js'></script>
-	<script type="text/javascript"  src="js/passwordutils.js" > </script>
 	<%@ include file="validation.jsp" %>
 	<script type="text/javascript">
     /* to be called when either Firstname or Surname is modified
