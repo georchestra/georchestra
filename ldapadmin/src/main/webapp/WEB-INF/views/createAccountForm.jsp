@@ -76,7 +76,7 @@
 				<t:password path="password" required="true" spanId="pwdQuality" appendIcon="lock" onblur="checkPasswordLength();" onchange="cleanPasswordError();feedbackPassStrength('pwdQuality', value);" onkeypress="cleanPasswordError();" onkeyup="feedbackPassStrength('pwdQuality', value);">
 					<jsp:attribute name="label"><s:message code="password.label" /></jsp:attribute>
 				</t:password>
-				<t:password path="confirmPassword" required="true" spanId="passwordError" onblur="equalPasswords();">
+				<t:password path="confirmPassword" required="true" spanId="passwordError" onblur="confirmPasswordOnBlur();">
 					<jsp:attribute name="label"><s:message code="confirmPassword.label" /></jsp:attribute>
 				</t:password>
 			</fieldset>
@@ -109,12 +109,8 @@
         document.form.uid.value = name.toLowerCase().charAt(0)+ surname.toLowerCase(); // strategy 1
         //document.form.uid.value = name +"."+ surname;  // strategy 2
     }
-    /* to be called when the password confirmation field loses focus */
-    function equalPasswords() {
-        var pwd1 = document.form.password.value;
-        var pwd2 = document.form.confirmPassword.value;
-        if (pwd1 != pwd2) {
-            document.getElementById("passwordError").innerHTML = '<s:message code="confirmPassword.error.pwdNotEquals.tag" />';
+    function confirmPasswordOnBlur() {
+        if (!testConfirmPassword()) {
             document.form.password.focus();
             return false;
         }
