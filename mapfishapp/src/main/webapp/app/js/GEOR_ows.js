@@ -359,12 +359,13 @@ GEOR.ows = (function() {
                 // and set it in the original record, so that it can be used
                 // later for protocol creation
 
+                // FIXME: what about options.storeOptions in this case ?
                 store = new Ext.data.Store({
                     reader: new GeoExt.data.AttributeReader({}, attributeStoreFields)
                 });
 
                 Ext.Ajax.request({
-                    url: r.owsURL,
+                    url: r.owsURL.replace(/\?$/,''),
                     method: 'GET',
                     disableCaching: false,
                     headers: {
@@ -423,13 +424,13 @@ GEOR.ows = (function() {
             } else {
 
                 var storeOptions = Ext.applyIf({
-                    url: r.owsURL,
+                    url: r.owsURL.replace(/\?$/,''),
                     fields: attributeStoreFields,
                     baseParams: Ext.applyIf({
                         "REQUEST": "DescribeFeatureType",
                         "TYPENAME": r.typeName
                     }, WFS_BASE_PARAMS)
-                }, options.storeOptions);
+                }, options.storeOptions || {});
                 store = new GeoExt.data.AttributeStore(storeOptions);
                 if (options.success) {
                     loadStore(store,
@@ -568,7 +569,7 @@ GEOR.ows = (function() {
             GEOR.waiter.show();
             var store = new GEOR.ows.WMSCapabilities({
                 storeOptions: {
-                    url: url
+                    url: url.replace(/\?$/,'')
                 },
                 success: function(store, records) {
                     var index = store.find("name", layername);
@@ -666,7 +667,7 @@ GEOR.ows = (function() {
                 featureType = parts[0];
             }
             options = Ext.applyIf({
-                url: record.owsURL,
+                url: record.owsURL.replace(/\?$/,''),
                 featureType: featureType,
                 featureNS: record.featureNS,
                 featurePrefix: featurePrefix || 'feature',
