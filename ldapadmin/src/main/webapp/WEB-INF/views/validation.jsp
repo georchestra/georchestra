@@ -35,7 +35,7 @@ function testSurname() {
 }
 function testEmail() {
 	var email = document.form.email.value;
-	removeError("firstname");
+	removeError("email");
 	if (!isNotEmpty(email)) {
 		addError("email", '<s:message code="email.error.required" />');
 		return false;
