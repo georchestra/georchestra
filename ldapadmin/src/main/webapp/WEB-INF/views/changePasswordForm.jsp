@@ -25,7 +25,7 @@
 		<div class="page-header">
 			<h1><s:message code="changePasswordForm.title"/></h1>
 		</div>
-		<form:form id="form" name="form" method="post" action="changePassword" modelAttribute="changePasswordFormBean" cssClass="form-horizontal" >
+		<form:form id="form" name="form" method="post" action="changePassword" modelAttribute="changePasswordFormBean" cssClass="form-horizontal" onsubmit="return validate();">
 
 			<c:if test="${not empty success}">
 			<div id="message" class="alert alert-dismissable alert-success">
@@ -45,10 +45,10 @@
 
 			<fieldset class="col-lg-6 col-lg-offset-1">
 				<legend><s:message code="changePasswordForm.fieldset.password"/></legend>
-				<t:password path="password" required="true" spanId="pwdQuality" appendIcon="lock" onchange="cleanPasswordError();feedbackPassStrength('pwdQuality', value);" onkeypress="cleanPasswordError();" onkeyup="feedbackPassStrength('pwdQuality', value);">
+				<t:password path="password" required="true" spanId="pwdQuality" appendIcon="lock" onblur="passwordOnBlur();" onchange="cleanConfirmPassword();feedbackPassStrength('pwdQuality', value);" onkeypress="cleanConfirmPassword();" onkeyup="feedbackPassStrength('pwdQuality', value);">
 					<jsp:attribute name="label"><s:message code="password.label" /></jsp:attribute>
 				</t:password>
-				<t:password path="confirmPassword" required="true" spanId="passwordError" onblur="equalPasswords();">
+				<t:password path="confirmPassword" required="true" onblur="confirmPasswordOnBlur();">
 					<jsp:attribute name="label"><s:message code="confirmPassword.label" /></jsp:attribute>
 				</t:password>
 			</fieldset>
@@ -65,30 +65,28 @@
 	<script src='js/bootstrap.min.js'></script>
 	<%@ include file="validation.jsp" %>
 	<script type="text/javascript">
-    /* to be called when either Firstname or Surname is modified
-     * ("keyup" or "change" event - "input" event is not available with this version of spring)
-     */
-    function makeUid(){
-        var name = document.form.firstName.value;
-        var surname = document.form.surname.value;
-        document.form.uid.value = name.toLowerCase().charAt(0)+ surname.toLowerCase(); // strategy 1
-        //document.form.uid.value = name +"."+ surname;  // strategy 2
-    }
-    /* to be called when the password confirmation field loses focus */
-    function equalPasswords() {
-        var pwd1 = document.form.password.value;
-        var pwd2 = document.form.confirmPassword.value;
-        if (pwd1 != pwd2) {
-            document.getElementById("passwordError").innerHTML = '<s:message code="confirmPassword.error.pwdNotEquals.tag" />';
+    function confirmPasswordOnBlur() {
+        if (!testConfirmPassword()) {
             document.form.password.focus();
+        }
+    }
+    function passwordOnBlur() {
+        if (!testPassword()) {
+            document.form.password.focus();
+        }
+    }
+    function cleanConfirmPassword(){
+        document.getElementById("confirmPassword").value="";
+        removeError("confirmPassword");
+    }
+    /* Validate the form */
+    function validate() {
+        if (testPassword() & testConfirmPassword()) {
+            return true;
+        } else {
+            setFormError();
             return false;
         }
-        return true;
-    }
-    /* to be called when the password field is modified */
-    function cleanPasswordError(){
-        document.getElementById("passwordError").innerHTML="";
-        document.getElementById("confirmPassword").value="";
     }
 	</script>
 </body>
