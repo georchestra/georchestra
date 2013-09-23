@@ -385,17 +385,15 @@ GEOR.ows = (function() {
                         // Begin hack
                         // Since WFS version is no more a default param, we need to retrieve the WFS version of the layer
                         // to initialize the WFSProtocol with matching version
-                        // Ideally, we should call a capabilities request to get the WFS version, but it is to slow
+                        // Ideally, we should call a capabilities request to get the WFS version, but it is too slow
                         // So we get the version from the describefeaturetype interpreting the gml version in the schema definition
                         var version;
                         
-                        if(resp.responseText.indexOf('http://www.opengis.net/gml/3.2') >= 0) {
+                        if (resp.responseText.indexOf('http://www.opengis.net/gml/3.2') > 0) {
                         	version = "2.0.0";
-                        }
-                        else if(resp.responseText.indexOf('http://www.opengis.net/gml' && resp.responseText.indexOf('gml/3.1.1/base/gml.xsd')) >= 0) {
+                        } else if (resp.responseText.indexOf('http://www.opengis.net/gml') > 0 && resp.responseText.indexOf('gml/3.1.1/base/gml.xsd') > 0) {
                         	version = "1.1.0";
-                        }
-                        else {
+                        } else {
                         	version = "1.0.0";
                         }
                         record.set("WFSversion", version);
