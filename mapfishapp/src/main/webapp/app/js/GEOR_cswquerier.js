@@ -518,7 +518,7 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
     createFilter: function() {
         // see http://osgeo-org.1560.n6.nabble.com/CSW-GetRecords-problem-with-spaces-tp3862749p3862750.html
         var v = this.getValue(),
-            words = v.replace(new RegExp("[,;:/%()*!.\\[\\]~&=]","g"), ' ').split(' '),
+            words = v.replace(new RegExp("[,;:/%()!*.\\[\\]~&=]","g"), ' ').split(' '),
             // adding wms in the filters list helps getting records where a WMS layer is referenced:
             filters = [
                 // improve relevance of results: (might not be relevant with other csw servers than geonetwork)
@@ -546,16 +546,78 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
             ];
         Ext.each(words, function(word) {
             if (word) {
-                filters.push(
-                    new OpenLayers.Filter.Comparison({
-                        type: "~",
-                        property: "AnyText",
-                        value: '*'+word+'*'
-                    })
-                );
+                // #word : search in keywords
+                if (/^#.+$/.test(word)) {
+                    filters.push(
+                        new OpenLayers.Filter.Comparison({
+                            type: "~",
+                            property: "Subject",
+                            value: word.substr(1) + "*",
+                            matchCase: false
+                        })
+                    );
+                }
+                // @word : search for organizations
+                else if (/^@.+$/.test(word)) {
+                    filters.push(
+                        new OpenLayers.Filter.Comparison({
+                            type: "~",
+                            property: "OrganisationName",
+                            value: word.substr(1) + "*",
+                            matchCase: false
+                        })
+                    );
+                }
+                // -word : suppress entries with a specific pattern
+                else if (/^-.+$/.test(word)) {
+                    filters.push(
+                        new OpenLayers.Filter.Logical({
+                            type: "!",
+                            filters: [
+                                new OpenLayers.Filter.Comparison({
+                                    type: '~',
+                                    property: "AnyText",
+                                    value: "*" + word.substr(1) + "*",
+                                    matchCase: false
+                                })
+                            ]
+                        })
+                    );
+                }
+                // ?word : AnyText search
+                else if (/^\?.+$/.test(word)) {
+                    filters.push(
+                        new OpenLayers.Filter.Comparison({
+                            type: "*",
+                            property: "AnyText",
+                            value: word.substr(1) + "*",
+                            matchCase: false
+                        })
+                    );
+                }
+                // word : search for exact match on predefined queryable properties
+                else {
+                    var defaultFilters = [];
+                    Ext.each(GEOR.config.CSW_FILTER_PROPERTIES, function(property) {
+                        defaultFilters.push(
+                            new OpenLayers.Filter.Comparison({
+                                type: '~',
+                                property: property,
+                                value: word + '*',
+                                matchCase: false
+                            })
+                        );
+                     });
+                    filters.push(
+                        new OpenLayers.Filter.Logical({
+                            type: "||",
+                            filters: defaultFilters
+                        })
+                    );
+                }
             }
         });
-        if (filters.length == 1) {
+        if (filters.length === 1) {
             return filters[0];
         } else {
             return new OpenLayers.Filter.Logical({
