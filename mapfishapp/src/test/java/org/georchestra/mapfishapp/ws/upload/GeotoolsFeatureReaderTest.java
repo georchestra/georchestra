@@ -404,6 +404,42 @@ public class GeotoolsFeatureReaderTest {
 		Assert.assertTrue(!featureCollection.isEmpty());
 	}
 	
+	@Test
+	public void testKMLExtendedData() throws Exception {
+
+		String fullName = makeFullName("kml_4326_accidents.kml");
+		File file = new File(fullName);
+		
+		SimpleFeatureCollection fc = reader.getFeatureCollection(file, FileFormat.kml);
+		
+		Assert.assertTrue(!fc.isEmpty());
+		
+		SimpleFeature f = fc.features().next();
+		
+		Assert.assertNotNull( f.getProperty("id") );
+		Assert.assertNotNull( f.getProperty("date") );
+		Assert.assertNotNull( f.getProperty("plage_hora") );
+		Assert.assertNotNull( f.getProperty("jour_nuit") );
+		Assert.assertNotNull( f.getProperty("meteo") );
+		Assert.assertNotNull( f.getProperty("voie_type") );
+		Assert.assertNotNull( f.getProperty("milieu") );
+		Assert.assertNotNull( f.getProperty("tues_nb") );
+		Assert.assertNotNull( f.getProperty("tues_18_24") );
+		Assert.assertNotNull( f.getProperty("tues_moto_") );
+		Assert.assertNotNull( f.getProperty("tues_pieto") );
+		Assert.assertNotNull( f.getProperty("tues_velo_") );
+		Assert.assertNotNull( f.getProperty("vehicules_") );
+		Assert.assertNotNull( f.getProperty("vehicules_") );
+		Assert.assertNotNull( f.getProperty("commune") );
+		Assert.assertNotNull( f.getProperty("departemen") );
+		Assert.assertNotNull( f.getProperty("commentair") );
+		Assert.assertNotNull( f.getProperty("consolide") );
+		Assert.assertNotNull( f.getProperty("anciennete") );
+		Assert.assertNotNull( f.getProperty("f_mois") );
+		Assert.assertNotNull( f.getProperty("f_annee") );
+		
+	}
+
 	/**
 	 * Returns path+fileName
 	 * @param fileName

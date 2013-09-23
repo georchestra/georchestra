@@ -308,7 +308,7 @@ public class UpLoadFileManagement {
 	
 
 	/**
-	 * Create a feature collection with based on the json syntax. The features are readed from the work directory. 
+	 * Create a feature collection with based on the json syntax. The features are read from the work directory. 
 	 * The could have one of the accepted format: 
 	 * 
 	 * <ul>
@@ -330,6 +330,10 @@ public class UpLoadFileManagement {
 	 * @param 	crs if it is not null the features should be transformed to this {@link CoordinateReferenceSystem}, 
 	 * 			in other case they won't transformed.
 	 * 
+<<<<<<< HEAD
+=======
+	 * @return 	feature array with the following syntax: "[f1,f2,...fN]", or null if the file is empty.
+>>>>>>> mapfish linked with gt-8.7
 	 * @throws 	IOException 
 	 */
 	public void writeFeatureCollectionAsJSON(Writer writer, final CoordinateReferenceSystem crs ) throws IOException {
@@ -346,6 +350,9 @@ public class UpLoadFileManagement {
 	        try {
 	        	
 	        	SimpleFeatureCollection featureCollection = this.reader.getFeatureCollection(new File(fileName), this.fileDescriptor.geoFileType, crs);
+	        	if(featureCollection == null){
+	        		return null;
+	        	}
 	        	
 	        	//int decimals = getDigits(featureCollection);
 				FeatureJSON fjson = new FeatureJSON2(new GeometryJSON(18)); // TODO FeatureJSON2 is a workaround to solve the crs bug
