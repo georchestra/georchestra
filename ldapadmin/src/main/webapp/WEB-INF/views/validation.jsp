@@ -17,9 +17,9 @@ function addError(id, errCode) {
 
 function testFirstname() {
 	var firstname = document.form.firstName.value;
-	removeError("firstname");
+	removeError("firstName");
 	if (!isNotEmpty(firstname)) {
-		addError("firstname", '<s:message code="firstName.error.required" />');
+		addError("firstName", '<s:message code="firstName.error.required" />');
 		return false;
 	}
 	return true;
