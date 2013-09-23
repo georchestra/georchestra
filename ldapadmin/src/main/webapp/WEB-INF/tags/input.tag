@@ -14,7 +14,7 @@
 	<c:set var="label" value="${fn:toUpperCase(fn:substring(path, 0, 1))}${fn:toLowerCase(fn:substring(path, 1,fn:length(path)))}" />
 </c:if>
 <spring:bind path="${path}">
-	<div class="form-group ${status.error ? 'has-error' : '' }">
+	<div id="div-${path}" class="form-group ${status.error ? 'has-error' : '' }">
 		<label class="control-label col-lg-4" for="${path}">${label}<c:if test="${required}"><span class="required">&nbsp;*</span></c:if></label>
 		<div class="col-lg-8">
 			<c:if test="${not empty appendIcon}">

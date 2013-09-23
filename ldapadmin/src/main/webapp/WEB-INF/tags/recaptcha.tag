@@ -14,7 +14,7 @@
 			<div class="recaptcha_only_if_incorrect_sol" style="color:red"><s:message code="recaptcha.incorrect" /></div>
 		</div>
 	</div>
-	<div class="form-group ${status.error ? 'has-error' : '' }">
+	<div id="div-${path}" class="form-group ${status.error ? 'has-error' : '' }">
 		<label class="recaptcha_only_if_image control-label control-label col-lg-4"><s:message code="recaptcha.words" />&nbsp;*</label>
 		<label class="recaptcha_only_if_audio control-label control-label col-lg-4"><s:message code="recaptcha.numbers" />&nbsp;*</label>
 		<div class="col-lg-8">
