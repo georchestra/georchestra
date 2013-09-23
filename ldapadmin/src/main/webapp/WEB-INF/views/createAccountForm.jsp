@@ -28,7 +28,7 @@
 		<div class="page-header">
 			<h1><s:message code="createAccountForm.title"/></h1>
 		</div>
-		<form:form id="form" name="form" method="post" action="new" modelAttribute="accountFormBean" cssClass="form-horizontal" >
+		<form:form id="form" name="form" method="post" action="new" modelAttribute="accountFormBean" cssClass="form-horizontal" onsubmit="return validate();">
 
 			<c:if test="${not empty message}">
 			<div id="message" class="alert alert-dismissable alert-info">
@@ -98,6 +98,7 @@
 	<script src="//code.jquery.com/jquery.js"></script>
 	<script src='js/bootstrap.min.js'></script>
 	<script type="text/javascript"  src="js/passwordutils.js" > </script>
+	<%@ include file="validation.jsp" %>
 	<script type="text/javascript">
     /* to be called when either Firstname or Surname is modified
      * ("keyup" or "change" event - "input" event is not available with this version of spring)
@@ -133,6 +134,15 @@
     function cleanPasswordError(){
         document.getElementById("passwordError").innerHTML="";
         document.getElementById("confirmPassword").value="";
+    }
+    /* Validate the form */
+    function validate() {
+        if (testFirstname() & testSurname() & testEmail() & testUid() & testPassword() & testConfirmPassword()) {
+            return true;
+        } else {
+            setFormError();
+            return false;
+        }
     }
 	</script>
 </body>
