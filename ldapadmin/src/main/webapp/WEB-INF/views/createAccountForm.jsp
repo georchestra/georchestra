@@ -76,7 +76,7 @@
 				<t:password path="password" required="true" spanId="pwdQuality" appendIcon="lock" onblur="passwordOnBlur();" onchange="cleanPasswordError();feedbackPassStrength('pwdQuality', value);" onkeypress="cleanPasswordError();" onkeyup="feedbackPassStrength('pwdQuality', value);">
 					<jsp:attribute name="label"><s:message code="password.label" /></jsp:attribute>
 				</t:password>
-				<t:password path="confirmPassword" required="true" spanId="passwordError" onblur="confirmPasswordOnBlur();">
+				<t:password path="confirmPassword" required="true" onblur="confirmPasswordOnBlur();">
 					<jsp:attribute name="label"><s:message code="confirmPassword.label" /></jsp:attribute>
 				</t:password>
 			</fieldset>
@@ -125,8 +125,8 @@
     }
     /* to be called when the password field is modified */
     function cleanPasswordError(){
-        document.getElementById("passwordError").innerHTML="";
         document.getElementById("confirmPassword").value="";
+        removeError("confirmPassword");
     }
     /* Validate the form */
     function validate() {
