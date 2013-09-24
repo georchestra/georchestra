@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +19,6 @@ import org.georchestra.mapfishapp.ws.upload.FileDescriptor;
 import org.georchestra.mapfishapp.ws.upload.FileFormat;
 import org.georchestra.mapfishapp.ws.upload.UpLoadFileManagement;
 import org.geotools.referencing.CRS;
-import org.hsqldb.lib.HashMap;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.opengis.referencing.FactoryException;
@@ -90,6 +88,11 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 			public String getMessage( final String jsonFeatures){
 				return "{\"success\": \"true\", \"geojson\":" + jsonFeatures+"}"; 
 			}
+			
+		},
+		ioError{
+			@Override
+			public String getMessage( final String detail){return "{\"success\":false, \"msg\": \"" + detail + "\"}"; }
 			
 		},
 		unsupportedFormat{
@@ -201,7 +204,6 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 		FileFormat[] formatList = this.fileManagement.getFormatList();
 		
 		response.setCharacterEncoding(responseCharset);
-		//response.setContentType("application/json");
 		response.setContentType("text/html");
 		
 		PrintWriter out = response.getWriter();
@@ -340,6 +342,29 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 		} finally{
 			if(workDirectory!= null) cleanTemporalDirectory(workDirectory);
 		}
+	}
+
+	@Override
+    public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception exception) {
+		
+		try {
+			if (exception instanceof MaxUploadSizeExceededException) {
+
+				MaxUploadSizeExceededException sizeException = (MaxUploadSizeExceededException) exception;
+				long size = sizeException.getMaxUploadSize() / 1048576; // converts to Mb
+				writeResponse(
+				        response,
+				        Status.sizeError,
+				        "The configured maximum size is " + size + " MB. ("+sizeException.getMaxUploadSize()+" bytes)");
+			} else {
+
+				writeResponse(response, Status.ioError, exception.getMessage());
+			}
+		} catch (IOException e) {
+			LOG.error(e);
+		}
+		
+		return null ;//new ModelAndView("", null);
 	}
 	
 	/**
@@ -496,30 +521,5 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 		return Status.ok;
 	}
 
-	@Override
-    public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception exception) {
-
-		Map<String, Object> model = new java.util.HashMap<String, Object>();
-		
-		if (exception instanceof MaxUploadSizeExceededException) {
-			model.put("errors", exception.getMessage());
-		} else {
-			model.put("errors", "Unexpected error: " + exception.getMessage());
-		}
-
-//		long limit = getSizeLimit(currentFile.originalFileExt);
-//		long size = limit / 1048576; // converts to Mb
-		long size = 99999;
-		final String msg = Status.sizeError.getMessage( size + "MB");
-		
-		try {
-	        writeResponse(response, Status.sizeError, msg);
-        } catch (IOException e) {
-	        // TODO Auto-generated catch block
-	        e.printStackTrace();
-        }
-		
-		return new ModelAndView("", null);
-	}
 	
 }
