@@ -23,7 +23,7 @@
 
 	<div class="container">
 		<div class="page-header">
-			<h1><s:message code="changePasswordForm.title"/></h1>
+			<h1><s:message code="changePasswordForm.title"/> <small><s:message code="changePasswordForm.subtitle" /></small></h1>
 		</div>
 		<form:form id="form" name="form" method="post" action="changePassword" modelAttribute="changePasswordFormBean" cssClass="form-horizontal col-lg-6 col-lg-offset-1" onsubmit="return validate();">
 
