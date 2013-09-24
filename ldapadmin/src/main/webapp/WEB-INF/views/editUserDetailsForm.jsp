@@ -25,7 +25,7 @@
 		<div class="page-header">
 			<h1><s:message code="editUserDetailsForm.title"/></h1>
 		</div>
-		<form:form id="form" name="form" method="post" action="userdetails" modelAttribute="editUserDetailsFormBean" cssClass="form-horizontal" >
+		<form:form id="form" name="form" method="post" action="userdetails" modelAttribute="editUserDetailsFormBean" cssClass="form-horizontal" onsubmit="return validate();">
 
 			<c:if test="${not empty success}">
 			<div id="message" class="alert alert-dismissable alert-success">
@@ -101,5 +101,17 @@
 	</div>
 	<script src="//code.jquery.com/jquery.js"></script>
 	<script src='js/bootstrap.min.js'></script>
+	<%@ include file="validation.jsp" %>
+	<script type="text/javascript">
+    /* Validate the form */
+    function validate() {
+        if (testFirstname() & testSurname()) {
+            return true;
+        } else {
+            setFormError();
+            return false;
+        }
+    }
+	</script>
 </body>
 </html>
