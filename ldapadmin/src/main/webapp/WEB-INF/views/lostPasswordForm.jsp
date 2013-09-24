@@ -25,8 +25,9 @@
 
 	<div class="container">
 		<div class="page-header">
-			<h1><s:message code="lostPasswordForm.title"/></h1>
+			<h1><s:message code="lostPasswordForm.title"/> <small><s:message code="lostPasswordForm.subtitle" /></small></h1>
 		</div>
+		<p class="lead"><s:message code="lostPasswordForm.description" /></p>
 		<form:form id="form" name="form" method="post" action="lostPassword" modelAttribute="lostPasswordFormBean" cssClass="form-horizontal col-lg-6 col-lg-offset-1" onsubmit="return validate();">
 			<c:if test="${not empty message}">
 			<div id="message" class="alert alert-dismissable alert-info">
