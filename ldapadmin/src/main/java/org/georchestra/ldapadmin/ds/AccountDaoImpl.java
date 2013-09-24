@@ -5,8 +5,11 @@ package org.georchestra.ldapadmin.ds;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.TreeSet;
 
 import javax.naming.Name;
+import javax.naming.NamingException;
+import javax.naming.directory.Attributes;
 
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
@@ -14,6 +17,7 @@ import org.georchestra.ldapadmin.dto.UserSchema;
 import org.georchestra.ldapadmin.ws.newaccount.UidGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NameNotFoundException;
+import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
@@ -173,6 +177,26 @@ public final class AccountDaoImpl implements AccountDao{
 		EqualsFilter filter = new EqualsFilter("objectClass", "person");
 		return ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(), new AccountContextMapper());
 	}
+	
+// TODO Note: this implementation use the SortControlDirContextProcessor but it don't work 	
+//	@Override
+//	public List<Account> findAll() throws DataServiceException {
+//		
+//        UserAttributesMapper mapper = new UserAttributesMapper();
+//		
+//		final EqualsFilter filter = new EqualsFilter("objectClass", "Person");
+//		
+//		final SearchControls searchControl = new SearchControls();
+//		searchControl.setSearchScope(SearchControls.SUBTREE_SCOPE);
+//		searchControl.setDerefLinkFlag(false);
+//		
+//		
+//		final SortControlDirContextProcessor sortControl = new SortControlDirContextProcessor("cn");
+//		
+//		List<Account> list = ldapTemplate.search( DistinguishedName.EMPTY_PATH, filter.encode(), searchControl, mapper, sortControl);
+//		
+//		return list;
+//	}
 
 
 	@Override
@@ -181,14 +205,17 @@ public final class AccountDaoImpl implements AccountDao{
 		List<Account> allUsers = findAll();
 		
 		// removes the protected users. 
-		List<Account> filtered = new LinkedList<Account>();
+		TreeSet<Account> filtered = new TreeSet<Account>();
 		for (Account account : allUsers) {
 			
 			if( !filterProtected.isTrue( account.getUid() ) ){
 				filtered.add(account);
 			}
 		}
-		return filtered;
+		
+		List<Account> list = new LinkedList<Account>(filtered);
+		
+		return list;
 	}
 
 	
@@ -397,6 +424,50 @@ public final class AccountDaoImpl implements AccountDao{
 			return account;
 		}
 	}
+	
+	private static class UserAttributesMapper implements AttributesMapper {
+
+		@Override
+        public Object mapFromAttributes(Attributes attributes)
+                throws NamingException {
+
+			// set the group name
+			Account a = AccountFactory.createFull(
+					(String) attributes.get(UserSchema.UUID_KEY).get(),
+					(String) attributes.get(UserSchema.COMMON_NAME_KEY).get(),
+					(String) attributes.get((UserSchema.SURNAME_KEY)).get(),
+					(String) attributes.get((UserSchema.GIVEN_NAME_KEY)).get(),
+					(String) attributes.get(UserSchema.MAIL_KEY).get(),
+					
+					(String) attributes.get(UserSchema.ORG_KEY).get(),
+					(String) attributes.get(UserSchema.TITLE_KEY).get(),
+
+					(String) attributes.get(UserSchema.TELEPHONE_KEY).get(),
+					(String) attributes.get(UserSchema.DESCRIPTION_KEY).get(),
+
+					(String) attributes.get(UserSchema.POSTAL_ADDRESS_KEY).get(),
+					(String) attributes.get(UserSchema.POSTAL_CODE_KEY).get(),
+					(String) attributes.get(UserSchema.REGISTERED_ADDRESS_KEY).get(),
+					(String) attributes.get(UserSchema.POST_OFFICE_BOX_KEY).get(),
+					(String) attributes.get(UserSchema.PHYSICAL_DELIVERY_OFFICE_NAME_KEY).get(),
+
+					(String) attributes.get(UserSchema.STREET_KEY).get(),
+					(String) attributes.get(UserSchema.LOCALITY_KEY).get(),
+
+					(String) attributes.get(UserSchema.FACSIMILE_KEY).get(),
+					(String) attributes.get(UserSchema.ORG_UNIT_KEY).get(),
+					
+					(String) attributes.get(UserSchema.HOME_POSTAL_ADDRESS_KEY).get(),
+					(String) attributes.get(UserSchema.MOBILE_KEY).get(),
+					(String) attributes.get(UserSchema.ROOM_NUMBER_KEY).get(),
+					(String) attributes.get(UserSchema.STATE_OR_PROVINCE_KEY).get() );
+				
+			return a;
+        }
+
+
+	}
+	
 	
 	private boolean isNullValue(Object value) {
 

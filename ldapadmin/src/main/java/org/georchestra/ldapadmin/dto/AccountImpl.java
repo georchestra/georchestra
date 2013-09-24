@@ -12,7 +12,7 @@ import java.io.Serializable;
  * @author Mauricio Pazos
  *
  */
-class AccountImpl implements Serializable, Account {
+class AccountImpl implements Serializable, Account, Comparable<Account>{
 
 	private static final long serialVersionUID = -8022496448991887664L;
 	
@@ -314,6 +314,57 @@ class AccountImpl implements Serializable, Account {
 		this.stateOrProvince = stateOrProvince;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+    @Override
+    public int hashCode() {
+	    final int prime = 31;
+	    int result = 1;
+	    result = prime * result
+	            + ((givenName == null) ? 0 : givenName.hashCode());
+	    result = prime * result + ((surname == null) ? 0 : surname.hashCode());
+	    result = prime * result + ((uid == null) ? 0 : uid.hashCode());
+	    return result;
+    }
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+    @Override
+    public boolean equals(Object obj) {
+	    if (this == obj) {
+		    return true;
+	    }
+	    if (obj == null) {
+		    return false;
+	    }
+	    if (!(obj instanceof AccountImpl)) {
+		    return false;
+	    }
+	    AccountImpl other = (AccountImpl) obj;
+	    if (givenName == null) {
+		    if (other.givenName != null) {
+			    return false;
+		    }
+	    } else if (!givenName.equals(other.givenName)) {
+		    return false;
+	    }
+	    if (surname == null) {
+		    if (other.surname != null) {
+			    return false;
+		    }
+	    } else if (!surname.equals(other.surname)) {
+		    return false;
+	    }
+	    if (uid == null) {
+		    if (other.uid != null) {
+			    return false;
+		    }
+	    } else if (!uid.equals(other.uid)) {
+		    return false;
+	    }
+	    return true;
+    }
 	@Override
 	public String getStateOrProvince() {
 		return this.stateOrProvince;
@@ -338,4 +389,10 @@ class AccountImpl implements Serializable, Account {
 	public String getHomePostalAddress() {
 		return this.homePostalAddres;
 	}
+	@Override
+    public int compareTo(Account o) {
+
+		return this.uid.compareTo(o.getUid());
+    }
+	
 }
