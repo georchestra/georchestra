@@ -25,7 +25,7 @@
 		<div class="page-header">
 			<h1><s:message code="editUserDetailsForm.title"/></h1>
 		</div>
-		<form:form id="form" name="form" method="post" action="userdetails" modelAttribute="editUserDetailsFormBean" cssClass="form-horizontal" onsubmit="return validate();">
+		<form:form id="form" name="form" method="post" action="userdetails" modelAttribute="editUserDetailsFormBean" cssClass="form-horizontal col-lg-6 col-lg-offset-1" onsubmit="return validate();">
 
 			<c:if test="${not empty success}">
 			<div id="message" class="alert alert-dismissable alert-success">
@@ -43,7 +43,7 @@
 			</c:if>
 			</s:bind>
 
-			<fieldset class="col-lg-6 col-lg-offset-1">
+			<fieldset>
 				<legend><s:message code="editUserDetailsForm.fieldset.userDetails"/></legend>
 				<t:input path="firstName" required="true">
 					<jsp:attribute name="label"><s:message code="firstName.label" /></jsp:attribute>
@@ -68,7 +68,7 @@
 				</t:textarea>
 			</fieldset>
 
-			<fieldset class="col-lg-6 col-lg-offset-1">
+			<fieldset>
 				<legend><s:message code="editUserDetailsForm.fieldset.credentials"/></legend>
 				<div class="form-group">
 					<label class="col-lg-4 control-label"><s:message code="uid.label" /></label>
@@ -90,7 +90,7 @@
 				</div>
 			</fieldset>
 
-			<fieldset class="col-lg-6 col-lg-offset-1">
+			<fieldset>
 				<div class="form-group">
 					<div class="col-lg-8 col-lg-offset-4 text-right">
 						<button type="submit" class="btn btn-primary btn-lg"><s:message code="submit.label"/> </button>
