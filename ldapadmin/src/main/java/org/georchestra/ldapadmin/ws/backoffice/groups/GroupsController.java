@@ -20,6 +20,7 @@ import org.georchestra.ldapadmin.ds.NotFoundException;
 import org.georchestra.ldapadmin.dto.Group;
 import org.georchestra.ldapadmin.dto.GroupFactory;
 import org.georchestra.ldapadmin.dto.GroupSchema;
+import org.georchestra.ldapadmin.dto.UserSchema;
 import org.georchestra.ldapadmin.ws.backoffice.utils.RequestUtil;
 import org.georchestra.ldapadmin.ws.backoffice.utils.ResponseUtil;
 import org.georchestra.lib.file.FileUtils;
@@ -434,12 +435,12 @@ public class GroupsController {
 			String strGroup = FileUtils.asString(is);
 			JSONObject json = new JSONObject(strGroup);
 			
-			String commonName = json.getString(GroupSchema.COMMON_NAME_KEY);
-			if(commonName.length() == 0){
+			String commonName = RequestUtil.getFieldValue(json, GroupSchema.COMMON_NAME_KEY);
+			if(commonName == null){
 				throw new IllegalArgumentException(GroupSchema.COMMON_NAME_KEY + " is required" );
 			}
 			
-			String description = json.getString(GroupSchema.DESCRIPTION_KEY);
+			String description = RequestUtil.getFieldValue(json, GroupSchema.DESCRIPTION_KEY);
 			
 			Group g = GroupFactory.create(commonName, description);
 			
