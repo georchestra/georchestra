@@ -26,8 +26,9 @@
 
 	<div class="container">
 		<div class="page-header">
-			<h1><s:message code="createAccountForm.title"/></h1>
+			<h1><s:message code="createAccountForm.title"/><small> <s:message code="createAccountForm.subtitle" /></small></h1>
 		</div>
+		<p class="lead"><s:message code="createAccountForm.description" /></p>
 		<form:form id="form" name="form" method="post" action="new" modelAttribute="accountFormBean" cssClass="form-horizontal col-lg-6 col-lg-offset-1" onsubmit="return validate();">
 
 			<c:if test="${not empty message}">
