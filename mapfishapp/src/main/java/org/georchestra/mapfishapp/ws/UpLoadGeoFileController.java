@@ -27,8 +27,11 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.servlet.ModelAndView;
 
 
 /**
@@ -69,7 +72,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
  *
  */
 @Controller
-public final class UpLoadGeoFileController {
+public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 	
 	private static final Log LOG = LogFactory.getLog(UpLoadGeoFileController.class.getPackage().getName());
 	
@@ -87,6 +90,11 @@ public final class UpLoadGeoFileController {
 			}
 			
 		},
+		ioError{
+			@Override
+			public String getMessage( final String detail){return "{\"success\":false, \"msg\": \"" + detail + "\"}"; }
+			
+		},
 		unsupportedFormat{
 			@Override
 			public String getMessage( final String detail){return "{\"success\":false, \"msg\": \"unsupported file type\"}"; }
@@ -94,7 +102,7 @@ public final class UpLoadGeoFileController {
 		sizeError{
 			@Override
 			public String getMessage(String detail) {
-				return "{\"success\": \"false\", \"msg\": \"file exceeds the limit\" "	+ detail + "}";
+				return "{\"success\": \"false\", \"msg\": \"file exceeds the limit. "	+ detail + "\"}";
 			}
 		},
 		multiplefiles{
@@ -196,7 +204,6 @@ public final class UpLoadGeoFileController {
 		FileFormat[] formatList = this.fileManagement.getFormatList();
 		
 		response.setCharacterEncoding(responseCharset);
-		//response.setContentType("application/json");
 		response.setContentType("text/html");
 		
 		PrintWriter out = response.getWriter();
@@ -311,7 +318,7 @@ public final class UpLoadGeoFileController {
 			CoordinateReferenceSystem crs = null;
 			try {
 				String srsParam = request.getParameter("srs");
-				if(!"".equals(srsParam)){
+				if( (srsParam != null) && (srsParam.length() > 0) ){
 					crs = CRS.decode(srsParam);
 				}
 			} catch (NoSuchAuthorityCodeException e) {
@@ -335,6 +342,33 @@ public final class UpLoadGeoFileController {
 		} finally{
 			if(workDirectory!= null) cleanTemporalDirectory(workDirectory);
 		}
+	}
+
+	/**
+	 * Handles the exception throws by the {@link CommonsMultipartResolver}. A response error will be made if the size of the uploaded file 
+	 * is greater than the configured maximum (see ws-servlet.xml for more details).
+	 */
+	@Override
+	public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception exception) {
+
+		try {
+			if (exception instanceof MaxUploadSizeExceededException) {
+
+				MaxUploadSizeExceededException sizeException = (MaxUploadSizeExceededException) exception;
+				long size = sizeException.getMaxUploadSize() / 1048576; // converts to Mb
+				writeResponse(
+				        response,
+				        Status.sizeError,
+				        "The configured maximum size is " + size + " MB. ("+sizeException.getMaxUploadSize()+" bytes)");
+			} else {
+
+				writeResponse(response, Status.ioError, exception.getMessage());
+			}
+		} catch (IOException e) {
+			LOG.error(e);
+		}
+		
+		return null ;
 	}
 	
 	/**
@@ -490,4 +524,6 @@ public final class UpLoadGeoFileController {
 		
 		return Status.ok;
 	}
+
+	
 }

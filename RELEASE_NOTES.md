@@ -31,6 +31,7 @@ Enhancements:
  * mapfishapp: print improved (updated to MapFish Print 2.0 for WMTS and GeoPortail support, brand new templates, natural 91 dpi resolution and new "comment" field),
  * mapfishapp: referentials search is no more case sensitive with WFS2,
  * mapfishapp: true print extent displayed,
+ * mapfishapp: WFS layers feature selection & attributes viewing, 
  * mapfishapp: layer name and source smartly ellipsed with CSS rather than JS,
  * mapfishapp: do not close window on style applied,
  * mapfishapp: layer style list is now alphabetically sorted,
