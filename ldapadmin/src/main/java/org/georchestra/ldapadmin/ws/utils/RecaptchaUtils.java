@@ -40,8 +40,10 @@ public class RecaptchaUtils {
 					captchaGenerated, 
 					userResponse);
 			if(!captchaResponse.isValid()){
-				LOG.info("The user response to recaptcha is not valid. The error message is '" + captchaResponse.getErrorMessage() + "'");
+				LOG.info("The user response to recaptcha is not valid. The error message is '" + captchaResponse.getErrorMessage() + "' - see Error Code Reference at https://developers.google.com/recaptcha/docs/verify.");
 				errors.rejectValue("recaptcha_response_field", "recaptcha_response_field.error.captchaNoMatch", "The texts didn't match");
+			} else {
+				LOG.debug("The user response to recaptcha is valid.");
 			}
 		}
 	}
