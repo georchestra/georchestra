@@ -20,6 +20,10 @@ import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
 import org.georchestra.ldapadmin.dto.Group;
 import org.georchestra.ldapadmin.mailservice.MailService;
+import org.georchestra.ldapadmin.ws.utils.EmailUtils;
+import org.georchestra.ldapadmin.ws.utils.PasswordUtils;
+import org.georchestra.ldapadmin.ws.utils.RecaptchaUtils;
+import org.georchestra.ldapadmin.ws.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -104,8 +108,12 @@ public final class NewAccountFormController {
 						throws IOException {
 
 		String remoteAddr = request.getRemoteAddr();
-		new AccountFormValidator(remoteAddr, this.reCaptcha).validate(formBean, result);
-		
+
+		UserUtils.validate(formBean.getUid(), formBean.getFirstName(), formBean.getSurname(), result );
+		EmailUtils.validate(formBean.getEmail(), result);
+		PasswordUtils.validate(formBean.getPassword(), formBean.getConfirmPassword(), result);
+		new RecaptchaUtils(remoteAddr, this.reCaptcha).validate(formBean.getRecaptcha_challenge_field(), formBean.getRecaptcha_response_field(), result);
+
 		if(result.hasErrors()){
 			
 			return "createAccountForm";
