@@ -23,8 +23,9 @@
 
 	<div class="container">
 		<div class="page-header">
-			<h1><s:message code="editUserDetailsForm.title"/></h1>
+			<h1><s:message code="editUserDetailsForm.title"/> <small><s:message code="editUserDetailsForm.subtitle" /></small></h1>
 		</div>
+		<p class="lead"><s:message code="editUserDetailsForm.description" /></p>
 		<form:form id="form" name="form" method="post" action="userdetails" modelAttribute="editUserDetailsFormBean" cssClass="form-horizontal col-lg-6 col-lg-offset-1" onsubmit="return validate();">
 
 			<c:if test="${not empty success}">
