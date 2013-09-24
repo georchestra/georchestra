@@ -102,7 +102,7 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 		sizeError{
 			@Override
 			public String getMessage(String detail) {
-				return "{\"success\": \"false\", \"msg\": \"file exceeds the limit\" "	+ detail + "}";
+				return "{\"success\": \"false\", \"msg\": \"file exceeds the limit. "	+ detail + "\"}";
 			}
 		},
 		multiplefiles{
@@ -344,9 +344,13 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 		}
 	}
 
+	/**
+	 * Handles the exception throws by the {@link CommonsMultipartResolver}. A response error will be made if the size of the uploaded file 
+	 * is greater than the configured maximum (see ws-servlet.xml for more details).
+	 */
 	@Override
-    public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception exception) {
-		
+	public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception exception) {
+
 		try {
 			if (exception instanceof MaxUploadSizeExceededException) {
 
@@ -364,7 +368,7 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 			LOG.error(e);
 		}
 		
-		return null ;//new ModelAndView("", null);
+		return null ;
 	}
 	
 	/**

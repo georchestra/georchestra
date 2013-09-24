@@ -15,12 +15,10 @@
     <bean id="multipartResolver"
       class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
         <property name="maxUploadSize">
-            <value>10000000</value>
-<!-- FIXME!            <value>8589934592</value> -->
-            
+            <!--  Note: this value should be the maximum size specified at the bean org.georchestra.mapfishapp.ws.UpLoadGeoFileController-->
+            <value>8589934592</value> 
         </property>
     </bean>
-    
 
     <bean class="org.georchestra.mapfishapp.ws.UpLoadGeoFileController">
         <property name="responseCharset" value="UTF-8"/>
