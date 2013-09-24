@@ -14,7 +14,7 @@
 			<div class="recaptcha_only_if_incorrect_sol" style="color:red"><s:message code="recaptcha.incorrect" /></div>
 		</div>
 	</div>
-	<div class="form-group ${status.error ? 'has-error' : '' }">
+	<div id="div-${path}" class="form-group ${status.error ? 'has-error' : '' }">
 		<label class="recaptcha_only_if_image control-label control-label col-lg-4"><s:message code="recaptcha.words" />&nbsp;*</label>
 		<label class="recaptcha_only_if_audio control-label control-label col-lg-4"><s:message code="recaptcha.numbers" />&nbsp;*</label>
 		<div class="col-lg-8">
@@ -26,7 +26,7 @@
 				<a class="input-group-addon btn" href="javascript:Recaptcha.showhelp()"><i class="glyphicon glyphicon-question-sign"></i></a>
 			</div>
 			<c:if test="${status.error}">
-				<span class="help-block">${status.errorMessage}</span>
+				<span id="span-error" class="help-block">${status.errorMessage}</span>
 			</c:if>
 		</div>
 	</div>
