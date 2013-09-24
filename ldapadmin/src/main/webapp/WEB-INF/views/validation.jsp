@@ -76,6 +76,15 @@ function testConfirmPassword() {
 	}
 	return true;
 }
+function testRecaptcha() {
+	var recaptcha_response_field = document.form.recaptcha_response_field.value;
+	removeError("recaptcha_response_field");
+	if (!isNotEmpty(recaptcha_response_field)) {
+		addError("recaptcha_response_field", '<s:message code="recaptcha_response_field.error.required" />');
+		return false;
+	}
+	return true;
+}
 function setFormError() {
 	$("form#form > #message").remove();
 	$("form#form").prepend('<div id="message" class="alert alert-dismissable alert-danger"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><s:message code="form.error" /></div>');
