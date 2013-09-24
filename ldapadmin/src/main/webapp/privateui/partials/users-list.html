@@ -30,7 +30,7 @@
 </div>
 <div id="users">
   <table class="users table table-striped table-hover table-condensed">
-    <tr ng-repeat="user in users | filter:groupFilter | orderBy:'givenName'" class="">
+    <tr ng-repeat="user in users | filter:groupFilter | orderBy:'sn'" class="">
       <td><input type="checkbox" ng-model="user.selected" /></td>
       <td><a href="#/users/{{user.uid}}">{{user.sn}} {{user.givenName}}</a></td>
       <td>{{user.o}}</td>
