@@ -21,8 +21,9 @@
 <body>
 	<div class="container">
 		<div class="page-header">
-			<h1><s:message code="newPasswordForm.title"/></h1>
+			<h1><s:message code="newPasswordForm.title"/> <small><s:message code="newPasswordForm.subtitle" /></small></h1>
 		</div>
+		<p class="lead"><s:message code="newPasswordForm.description" /></p>
 		<form:form id="form" name="form" method="post" action="newPassword" modelAttribute="newPasswordFormBean" cssClass="form-horizontal col-lg-6 col-lg-offset-1" onsubmit="return validate();">
 
 			<c:if test="${not empty message}">
