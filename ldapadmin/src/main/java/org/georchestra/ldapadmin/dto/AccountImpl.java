@@ -392,7 +392,7 @@ class AccountImpl implements Serializable, Account, Comparable<Account>{
 	@Override
     public int compareTo(Account o) {
 
-		return this.uid.compareTo(o.getUid());
+		return this.surname.compareTo(o.getSurname());
     }
 	
 }
