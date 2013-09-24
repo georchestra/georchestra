@@ -35,10 +35,7 @@ public class RecaptchaUtils {
 					captchaGenerated, 
 					userResponse);
 			if(!captchaResponse.isValid()){
-				if(!captchaGenerated.equals(trimmedCaptcha)){
-					errors.rejectValue("recaptcha_response_field", "recaptcha_response_field.error.captchaNoMatch", "The texts didn't match");
-					
-				}
+				errors.rejectValue("recaptcha_response_field", "recaptcha_response_field.error.captchaNoMatch", "The texts didn't match");
 			}
 		}
 	}
