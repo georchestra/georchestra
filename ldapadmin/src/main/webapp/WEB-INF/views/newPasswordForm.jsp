@@ -21,9 +21,10 @@
 <body>
 	<div class="container">
 		<div class="page-header">
-			<h1><s:message code="newPasswordForm.title"/></h1>
+			<h1><s:message code="newPasswordForm.title"/> <small><s:message code="newPasswordForm.subtitle" /></small></h1>
 		</div>
-		<form:form id="form" name="form" method="post" action="newPassword" modelAttribute="newPasswordFormBean" cssClass="form-horizontal" onsubmit="return validate();">
+		<p class="lead"><s:message code="newPasswordForm.description" /></p>
+		<form:form id="form" name="form" method="post" action="newPassword" modelAttribute="newPasswordFormBean" cssClass="form-horizontal col-lg-6 col-lg-offset-1" onsubmit="return validate();">
 
 			<c:if test="${not empty message}">
 			<div id="message" class="alert alert-dismissable alert-info">
@@ -41,7 +42,7 @@
 			</c:if>
 			</s:bind>
 
-			<fieldset class="col-lg-6 col-lg-offset-1">
+			<fieldset>
 				<legend><s:message code="newPasswordForm.fieldset.password"/></legend>
 				<t:password path="password" required="true" spanId="pwdQuality" appendIcon="lock" onblur="passwordOnBlur();" onchange="cleanConfirmPassword();feedbackPassStrength('pwdQuality', value);" onkeypress="cleanConfirmPassword();" onkeyup="feedbackPassStrength('pwdQuality', value);">
 					<jsp:attribute name="label"><s:message code="password.label" /></jsp:attribute>
@@ -50,7 +51,7 @@
 					<jsp:attribute name="label"><s:message code="confirmPassword.label" /></jsp:attribute>
 				</t:password>
 			</fieldset>
-			<fieldset class="col-lg-6 col-lg-offset-1">
+			<fieldset>
 				<div class="form-group">
 					<div class="col-lg-8 col-lg-offset-4 text-right">
 						<button type="submit" class="btn btn-primary btn-lg"><s:message code="submit.label"/> </button>

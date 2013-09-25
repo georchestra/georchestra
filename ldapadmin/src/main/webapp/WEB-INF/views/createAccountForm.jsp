@@ -26,9 +26,10 @@
 
 	<div class="container">
 		<div class="page-header">
-			<h1><s:message code="createAccountForm.title"/></h1>
+			<h1><s:message code="createAccountForm.title"/> <small><s:message code="createAccountForm.subtitle" /></small></h1>
 		</div>
-		<form:form id="form" name="form" method="post" action="new" modelAttribute="accountFormBean" cssClass="form-horizontal" onsubmit="return validate();">
+		<p class="lead"><s:message code="createAccountForm.description" /></p>
+		<form:form id="form" name="form" method="post" action="new" modelAttribute="accountFormBean" cssClass="form-horizontal col-lg-6 col-lg-offset-1" onsubmit="return validate();">
 
 			<c:if test="${not empty message}">
 			<div id="message" class="alert alert-dismissable alert-info">
@@ -46,7 +47,7 @@
 			</c:if>
 			</s:bind>
 
-			<fieldset class="col-lg-6 col-lg-offset-1">
+			<fieldset>
 				<legend><s:message code="createAccountForm.fieldset.userDetails"/></legend>
 				<t:input path="firstName" required="true" onkeyup="makeUid();" onchange="makeUid();">
 					<jsp:attribute name="label"><s:message code="firstName.label" /></jsp:attribute>
@@ -68,7 +69,7 @@
 				</t:input>
 			</fieldset>
 
-			<fieldset class="col-lg-6 col-lg-offset-1">
+			<fieldset>
 				<legend><s:message code="createAccountForm.fieldset.credentials"/></legend>
 				<t:input path="uid" required="true" appendIcon="user">
 					<jsp:attribute name="label"><s:message code="uid.label" /></jsp:attribute>
@@ -81,12 +82,12 @@
 				</t:password>
 			</fieldset>
 
-			<fieldset class="col-lg-6 col-lg-offset-1">
+			<fieldset>
 				<legend><s:message code="createAccountForm.fieldset.reCaptcha"/></legend>
 				<t:recaptcha path="recaptcha_response_field" />
 			</fieldset>
 
-			<fieldset class="col-lg-6 col-lg-offset-1">
+			<fieldset>
 				<div class="form-group">
 					<div class="col-lg-8 col-lg-offset-4 text-right">
 						<button type="submit" class="btn btn-primary btn-lg"><s:message code="submit.label"/> </button>
