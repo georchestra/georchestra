@@ -253,36 +253,6 @@ final class FeatureJSON2 extends FeatureJSON {
     public SimpleFeature readFeature(InputStream input) throws IOException {
         return readFeature((Object)input);
     }
-//
-//    /**
-//     * Writes a feature collection as GeoJSON.
-//     * 
-//     * @param features The feature collection.
-//     * @param output The output. See {@link GeoJSONUtil#toWriter(Object)} for details.
-//     */
-//    public void writeFeatureCollection(FeatureCollection features, Object output) throws IOException {
-//        LinkedHashMap obj = new LinkedHashMap();
-//        obj.put("type", "FeatureCollection");
-//        if (encodeFeatureCollectionBounds || encodeFeatureCollectionCRS) {
-//            final ReferencedEnvelope bounds = features.getBounds();
-//            
-//            if (encodeFeatureCollectionBounds) {
-//                obj.put("bbox", new JSONStreamAware() {
-//                    public void writeJSONString(Writer out) throws IOException {
-//                        JSONArray.writeJSONString(Arrays.asList(bounds.getMinX(),
-//                                bounds.getMinY(),bounds.getMaxX(),bounds.getMaxY()), out);
-//                    }
-//                });
-//            }
-//            
-//            if (encodeFeatureCollectionCRS) {
-//                obj.put("crs", createCRS(bounds.getCoordinateReferenceSystem()));
-//            }
-//        }
-//        obj.put("features", new FeatureCollectionEncoder(features, gjson));
-//        GeoJSONUtil.encode(obj, output);
-//    }
-    //
   /**
    * REDEFINED
    * Writes a feature collection as GeoJSON.

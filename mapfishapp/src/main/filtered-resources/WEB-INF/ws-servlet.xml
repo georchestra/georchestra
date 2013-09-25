@@ -19,6 +19,10 @@
                   org.georchestra.mapfishapp.ws.UpLoadGeoFileController -->
             <value>8589934592</value> 
         </property>
+        <property name="MaxInMemorySize">
+            <!--  default value 10240 bytes -->
+            <value>10240</value> 
+        </property>
     </bean>
 
     <bean class="org.georchestra.mapfishapp.ws.UpLoadGeoFileController">
