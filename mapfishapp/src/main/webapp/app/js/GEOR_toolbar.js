@@ -131,7 +131,7 @@ GEOR.toolbar = (function() {
             tooltip: tr("Query all active layers"),
             listeners: {
                 "toggle": function(btn, pressed) {
-                    GEOR.getfeatureinfo.toggleX(pressed);
+                    GEOR.getfeatureinfo.toggle(false, pressed);
                 }
             }
         });

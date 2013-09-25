@@ -390,23 +390,17 @@ Ext.namespace("GEOR");
                     southPanel.expand();
                 },
                 "searchresults": function(options) {
-                    if (southPanel.getActiveTab()) {
-                        southPanel.getActiveTab().populate(options);
-                        southPanel.getActiveTab().setTitle(options.title);
-                    }
-                },
-                "searchXresults": function(options) {
-                    southPanel.getActiveTab().populate({features: options.features[0], model: options.model[0]});
-                    southPanel.getActiveTab().setTitle(options.title[0]);
-                        for(var i = 1; i < options.features.length; i++){
-                            var tab = new GEOR.resultspanel({html: tr("resultspanel.emptytext")});
-                            southPanel.insert(southPanel.items.length-1,tab);
-                            southPanel.setActiveTab(tab);
-                            southPanel.getActiveTab().init(map);
-                            southPanel.getActiveTab().populate({features: options.features[i], model: options.model[i]});
-                            southPanel.getActiveTab().setTitle(options.title[i]);
-                            southPanel.doLayout();
-                        }
+//                  southPanel.remove(southPanel.getActiveTab());
+                    Ext.iterate(options.results, function(featureType, result) {
+                        var tab = new GEOR.resultspanel({html: tr("resultspanel.emptytext")});
+                        tab.init(map);
+                        tab.populate ({features: result.features, model: result.model});
+                        tab.setTitle(result.title);
+                        southPanel.insert(southPanel.items.length-1,tab);
+                    });
+                    // activate last results tab
+                    southPanel.setActiveTab(southPanel.items.length-1);
+                    southPanel.doLayout();
                 },
                 "shutdown": function() {
                     southPanel.collapse();
