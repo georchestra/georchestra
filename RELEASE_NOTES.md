@@ -21,6 +21,7 @@ New features:
  * mapfishapp: WMTS 1.0.0 support,
  * mapfishapp: WFS 2.0.0 support,
  * mapfishapp: French IGN's GeoPortail webservices support,
+ * geoserver: Opaque WMS Layer property support (see [#158](https://github.com/georchestra/georchestra/issues/158)),
  * ldapadmin: a brand new module is available which allows at the same time to: admin your users in your browser, let your users recover their lost password, and let them register too ! More information in the module [README](https://github.com/georchestra/georchestra/blob/master/ldapadmin/README.md),
  * extractorapp: ship metadata in ZIP (read this [how to](https://github.com/georchestra/georchestra/blob/master/extractorapp/README.md#metadata-extraction)),
  * extractorapp: now supports KML, TIF+TFW/TAB output.
@@ -30,6 +31,7 @@ Enhancements:
  * mapfishapp: restoring contexts with different projections,
  * mapfishapp: print improved (updated to MapFish Print 2.0 for WMTS and GeoPortail support, brand new templates, natural 91 dpi resolution and new "comment" field),
  * mapfishapp: referentials search is no more case sensitive with WFS2,
+ * mapfishapp: improved syntax for metadata search (via CSW), see [#325](https://github.com/georchestra/georchestra/pull/325),
  * mapfishapp: true print extent displayed,
  * mapfishapp: WFS layers feature selection & attributes viewing, 
  * mapfishapp: layer name and source smartly ellipsed with CSS rather than JS,
@@ -64,11 +66,14 @@ Bug fixes:
  * mapfishapp: mouse position rounding is now correct for ETRS89, RGF93 and other long-lat based projections,
  * mapfishapp: fixed scrolling on a map without any visible layer,
  * mapfishapp: fixed unresolved images for point symbolizer combo,
+ * mapfishapp: fixed legend label not appearing when only one class is available,
+ * mapfishapp: fixed incorrect describeFeatureType URLs,
  * mapfishapp: fixed broken help url.
 
 
 UPGRADING:
  * mapfishapp: default projection changes from EPSG:2154 to EPSG:3857 (aka Spherical Web Mercator). Your users might need to clear their localStorage, or force loading of the new default context.
+ * LDAP: one group was renamed: STAT_USER became MOD_ANALYTICS and an other one was created: MOD_LDAPADMIN. The latter grants access to the LDAPadmin private UI (/ldapadmin/privateui/index.html), while the former grants access to the analytics app. See [georchestra/LDAP#2](https://github.com/georchestra/LDAP/pull/2).
  * The default application language is now English: shared.language=en + geonetwork.language=eng + default email templates ... be sure to override these in your own config !
  * Remember also to fill these two new global maven filters: shared.homepage.url for your SDI home page (might be something like http://my.sdi.org/portal/) and shared.instance.name (eg: GeoMyCompany)
 
