@@ -393,13 +393,12 @@ Ext.namespace("GEOR");
 //                  southPanel.remove(southPanel.getActiveTab());
                     Ext.iterate(options.results, function(featureType, result) {
                         var tab = new GEOR.resultspanel({html: tr("resultspanel.emptytext")});
-                        tab.init(map);
-                        tab.populate ({features: result.features, model: result.model});
-                        tab.setTitle(result.title);
                         southPanel.insert(southPanel.items.length-1,tab);
+                        southPanel.setActiveTab(tab);
+                        southPanel.getActiveTab().init(map);
+                        southPanel.getActiveTab().populate ({features: result.features, model: result.model});
+                        southPanel.getActiveTab().setTitle(result.title);
                     });
-                    // activate last results tab
-                    southPanel.setActiveTab(southPanel.items.length-1);
                     southPanel.doLayout();
                 },
                 "shutdown": function() {
