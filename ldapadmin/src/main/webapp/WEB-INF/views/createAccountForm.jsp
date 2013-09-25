@@ -124,7 +124,7 @@
     }
     /* Validate the form */
     function validate() {
-        if (testFirstname() & testSurname() & testEmail() & testUid() & testPassword() & testConfirmPassword()) {
+        if (testFirstname() & testSurname() & testEmail() & testUid() & testPassword() & testConfirmPassword() & testRecaptcha()) {
             return true;
         } else {
             setFormError();
