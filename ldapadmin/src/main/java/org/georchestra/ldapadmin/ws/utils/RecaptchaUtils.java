@@ -6,6 +6,9 @@ import net.tanesha.recaptcha.ReCaptchaResponse;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * Utility class to manage recaptcha.
  * 
@@ -14,6 +17,7 @@ import org.springframework.validation.Errors;
  */
 public class RecaptchaUtils {
 	
+	private static final Log LOG = LogFactory.getLog(RecaptchaUtils.class.getName());
 	private String remoteAddr;
 	private ReCaptcha reCaptcha;
 
@@ -27,6 +31,7 @@ public class RecaptchaUtils {
 		final String trimmedCaptcha = userResponse.trim();
 
 		if(!StringUtils.hasLength(trimmedCaptcha)){
+			LOG.info("The user response to recaptcha is empty.");
 			errors.rejectValue("recaptcha_response_field", "recaptcha_response_field.error.required", "required");
 		} else {
 			
@@ -35,10 +40,10 @@ public class RecaptchaUtils {
 					captchaGenerated, 
 					userResponse);
 			if(!captchaResponse.isValid()){
-				if(!captchaGenerated.equals(trimmedCaptcha)){
-					errors.rejectValue("recaptcha_response_field", "recaptcha_response_field.error.captchaNoMatch", "The texts didn't match");
-					
-				}
+				LOG.info("The user response to recaptcha is not valid. The error message is '" + captchaResponse.getErrorMessage() + "' - see Error Code Reference at https://developers.google.com/recaptcha/docs/verify.");
+				errors.rejectValue("recaptcha_response_field", "recaptcha_response_field.error.captchaNoMatch", "The texts didn't match");
+			} else {
+				LOG.debug("The user response to recaptcha is valid.");
 			}
 		}
 	}
