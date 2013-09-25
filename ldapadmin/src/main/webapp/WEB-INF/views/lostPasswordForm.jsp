@@ -72,7 +72,7 @@
 	<script type="text/javascript">
     /* Validate the form */
     function validate() {
-        if (testEmail()) {
+        if (testEmail() & testRecaptcha()) {
             return true;
         } else {
             setFormError();
