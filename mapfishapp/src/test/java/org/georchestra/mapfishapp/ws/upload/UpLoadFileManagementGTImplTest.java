@@ -3,16 +3,18 @@
  */
 package org.georchestra.mapfishapp.ws.upload;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.net.URL;
 
 import org.apache.commons.io.FilenameUtils;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.geojson.feature.FeatureJSON;
 import org.geotools.referencing.CRS;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.opengis.feature.simple.SimpleFeature;
 
@@ -252,13 +254,13 @@ public class UpLoadFileManagementGTImplTest {
 		fm.setWorkDirectory(FilenameUtils.getFullPath(fileName));
 		fm.setFileDescriptor(fd);
 		
-		String json;
+		StringWriter out = new StringWriter();
 		if(epsg != null){
-			json = fm.getFeatureCollectionAsJSON(CRS.decode(epsg));
+			fm.writeFeatureCollectionAsJSON(out, CRS.decode(epsg));
 		} else{
-			json = fm.getFeatureCollectionAsJSON();
+			fm.writeFeatureCollectionAsJSON(out, null);
 		}
-		return  json;
+		return  out.toString();
 	}
 	
 	/**

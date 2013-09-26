@@ -8,7 +8,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -326,21 +326,19 @@ public class UpLoadFileManagement {
 	 *		assumed EPSG:4326 for all gpx files
 	 *</pre>
 	 *
+	 * @param 	writer where the featrue must be written.
 	 * @param 	crs if it is not null the features should be transformed to this {@link CoordinateReferenceSystem}, 
 	 * 			in other case they won't transformed.
 	 * 
-	 * @return 	feature array with the following syntax: "[f1,f2,...fN]"
 	 * @throws 	IOException 
 	 */
-	public String getFeatureCollectionAsJSON(final CoordinateReferenceSystem crs) throws IOException {
+	public void writeFeatureCollectionAsJSON(Writer writer, final CoordinateReferenceSystem crs ) throws IOException {
 		
 			if(LOG.isDebugEnabled()){
 				LOG.debug("CRS to reproject:"+  crs);
 			}
 		
-			// retrieves the feature from file system
-			String jsonResult = "";
-		
+			// retrieves the feature collection from file system and writes the correspondent json string  
 	        String fileName = searchGeoFile();
 	        assert fileName != null; 
 	        
@@ -357,11 +355,8 @@ public class UpLoadFileManagement {
 	        	fjson.setEncodeFeatureCollectionCRS(true); 
 	        	//fjson.setEncodeFeatureCRS(true); it is not necessary right now.
 	        	
-	        	StringWriter writer = new StringWriter();
 	        	fjson.writeFeatureCollection(featureCollection, writer);
 	        	
-				jsonResult = writer.toString();
-				
 			} catch (Exception e) {
 				final String message = "Failed reading " + fileName + ".  " + e.getMessage();
 				LOG.error(message);
@@ -369,7 +364,6 @@ public class UpLoadFileManagement {
 			}finally{
 	        	if(featuresIterator != null) featuresIterator.close();
 	        }
-	        return jsonResult;
 	}
 
     
@@ -395,18 +389,6 @@ public class UpLoadFileManagement {
 		}
 
 		return decimals;
-	}
-
-	/**
-	 * Convenient method. 
-	 * 
-	 * @return 	feature array with the following syntax: "[f1,f2,...fN]"
-	 * @throws IOException
-	 * 
-	 * @see {@link #getFeatureCollectionAsJSON(CoordinateReferenceSystem)
-	 */
-	public String getFeatureCollectionAsJSON() throws IOException {
-		return getFeatureCollectionAsJSON(null);
 	}
 
 
