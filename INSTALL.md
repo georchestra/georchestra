@@ -373,7 +373,9 @@ Keystore/Trustore
 GeoServer
 =========
 
-* Required JAVA_OPTS for GeoServer :
+* Tomcat
+
+Required JAVA_OPTS for GeoServer :
 
     -DGEOSERVER_DATA_DIR=/path/to/geoserver/data/dir \
     -DGEOWEBCACHE_CACHE_DIR=/path/to/geowebcache/cache/dir \
