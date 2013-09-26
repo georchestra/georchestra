@@ -52,6 +52,7 @@ Enhancements:
  * everywhere: plain text emails, with the ability to switch back to HTML via shared.email.html,
  * everywhere: all outgoing emails are now prefixed with the platform name,
  * everywhere: better translations.
+ * improved [installation](https://github.com/georchestra/georchestra/blob/master/INSTALL.md) instructions
 
 Bug fixes:
  * security-proxy: now only sends one referer headers - fixes consuming arcgis web services - [read more](https://github.com/georchestra/georchestra/issues/266),
@@ -68,6 +69,7 @@ Bug fixes:
  * mapfishapp: fixed unresolved images for point symbolizer combo,
  * mapfishapp: fixed legend label not appearing when only one class is available,
  * mapfishapp: fixed incorrect describeFeatureType URLs,
+ * mapfishapp: fixed broken referentials search in IE8,
  * mapfishapp: fixed broken help url.
 
 
