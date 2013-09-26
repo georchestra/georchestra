@@ -286,6 +286,22 @@ Create a directory for tomcat6 java preferences (to avoid a `WARNING: Couldn't f
 	sudo chown tomcat6:tomcat6 /usr/share/tomcat6/.java
 
 
+Environment variables
+----------------------
+
+In case of a 32G RAM server, here are the basic JAVA_OPTS:
+
+```
+export JAVA_OPTS="-Dsun.java2d.opengl=true \
+                  -Djava.awt.headless=true \
+                  -Xms4G \
+                  -Xmx28G \
+                  -XX:MaxPermSize=256m \
+                  "
+```
+
+Some geOrchestra applications will require you to add more JAVA_OPTS, read below...
+
 Keystore/Trustore
 -------------------
 
@@ -320,7 +336,7 @@ Keystore/Trustore
         sudo vim /etc/default/tomcat6
         
     ~~~~~~~~~~~~~~
-    JAVA_OPTS="$JAVA_OPTS -Djavax.net.ssl.trustStore=/etc/tomcat6/keystore -Djavax.net.ssl.rustStorePassword=mdpstore"
+    JAVA_OPTS="$JAVA_OPTS -Djavax.net.ssl.trustStore=/etc/tomcat6/keystore -Djavax.net.ssl.trustStorePassword=mdpstore"
     ~~~~~~~~~~~~~~~
 
 * connectors config
@@ -357,9 +373,53 @@ Keystore/Trustore
 GeoServer
 =========
 
+Required JAVA_OPTS for GeoServer :
+
+    -DGEOSERVER_DATA_DIR=/path/to/geoserver/data/dir \
+    -DGEOWEBCACHE_CACHE_DIR=/path/to/geowebcache/cache/dir \
+    -server \
+    -XX:-UseParallelGC \
+    -XX:SoftRefLRUPolicyMSPerMB=36000 \
+    -XX:NewRatio=2 \
+    -XX:+AggressiveOpts
+
+
 GeoServer uses the fonts available to the JVM for WMS styling.
 You may have to install the "core fonts for the web" on your server if you need them.
 
 	sudo apt-get install ttf-mscorefonts-installer
 
 Restart your geoserver tomcat and check on /geoserver/web/?wicket:bookmarkablePage=:org.geoserver.web.admin.JVMFontsPage that these are loaded.
+
+
+GeoNetwork
+==========
+
+Be sure to include those options in your tomcat JAVA_OPTS setup:
+
+    -Dgeonetwork.dir=/path/to/geonetwork-data-dir \
+    -Dgeonetwork[-private].schema.dir=/path/to/tomcat/webapps/geonetwork[-private]/WEB-INF/data/config/schema_plugins \
+    -Dgeonetwork.jeeves.configuration.overrides.file=/path/to/tomcat/webapps/geonetwork[-private]/WEB-INF/config-overrides-georchestra.xml
+
+... where brackets indicate optional strings, depending on your setup.
+
+
+Extractorapp
+============
+
+Again, it is required to include custom options in your tomcat JAVA_OPTS setup:
+
+    -Dorg.geotools.referencing.forceXY=true \
+    -Dgeobretagne_production=true \
+    -Dextractor.storage.dir=/path/to/temporary/extracts/
+
+
+Finally, you'll have to install GDAL/OGR native libs + data and reference them with these environment variables:
+
+    export LD_LIBRARY_PATH="/path/to/gdal/NativeLibs"
+    export GDAL_DATA="/path/to/gdal/data"
+    export PATH=/path/to/gdal/NativeLibs/:/p01/esri/sdeexe93/lib:$PATH
+    export CLASSPATH=:/path/to/gdal/NativeLibs/:$CLASSPATH
+    export LD_LIBRARY_PATH=/lib:/usr/lib/:/path/to/gdal/NativeLibs/:$LD_LIBRARY_PATH
+
+
