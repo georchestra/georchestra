@@ -373,7 +373,7 @@ Keystore/Trustore
 GeoServer
 =========
 
-Required JAVA_OPTS for GeoServer :
+* Required JAVA_OPTS for GeoServer :
 
     -DGEOSERVER_DATA_DIR=/path/to/geoserver/data/dir \
     -DGEOWEBCACHE_CACHE_DIR=/path/to/geowebcache/cache/dir \
@@ -383,6 +383,7 @@ Required JAVA_OPTS for GeoServer :
     -XX:NewRatio=2 \
     -XX:+AggressiveOpts
 
+* Fonts
 
 GeoServer uses the fonts available to the JVM for WMS styling.
 You may have to install the "core fonts for the web" on your server if you need them.
