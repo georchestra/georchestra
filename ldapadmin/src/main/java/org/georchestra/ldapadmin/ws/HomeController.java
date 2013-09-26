@@ -33,14 +33,4 @@ public class HomeController {
 		this.tokenManagement.start();
 	}
 	
-	
-	@RequestMapping(value="/indexdev")
-	public String home(){
-		/* TO BE DELETED when dev has ended */
-		if(LOG.isDebugEnabled()){
-			LOG.debug("home page request");
-		}
-		
-		return "home";
-	}
 }

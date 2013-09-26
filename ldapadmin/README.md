@@ -145,7 +145,7 @@ Testing purpose:
 
  * deploy in Tomcat6
  * Then add the following url in your Internet navigator:
-   http://localhost:8080/ldapadmin/public/indexdev
+   http://localhost:8080/ldapadmin/privateui/index.html
 
 Alternatively, run with jetty:
 
