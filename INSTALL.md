@@ -421,7 +421,7 @@ Finally, you'll have to install GDAL/OGR native libs + data and reference them w
 
     export LD_LIBRARY_PATH="/path/to/gdal/NativeLibs"
     export GDAL_DATA="/path/to/gdal/data"
-    export PATH=/path/to/gdal/NativeLibs/:/p01/esri/sdeexe93/lib:$PATH
+    export PATH=/path/to/gdal/NativeLibs/:$PATH
     export CLASSPATH=:/path/to/gdal/NativeLibs/:$CLASSPATH
     export LD_LIBRARY_PATH=/lib:/usr/lib/:/path/to/gdal/NativeLibs/:$LD_LIBRARY_PATH
 
