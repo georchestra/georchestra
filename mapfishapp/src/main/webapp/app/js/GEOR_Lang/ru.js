@@ -282,7 +282,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "remember the selection": "Запомнить выбор ou Запомнить выделенное",
     "Available tools:": "Инструменты в распоряжении",
     "Clic to select or deselect the tool": "Щёлкните для того, чтобы выбрать инструмент или отменить его",
-    "Could not load addon ADDONNAME": "Невозможно загрузить аддон ${ИМЯАДДОНА}",
+    "Could not load addon ADDONNAME": "Невозможно загрузить аддон ${ADDONNAME}",
     /* GEOR_util.js strings */
     "Characters": "Письменность",
     "Digital": "Цифровой",
