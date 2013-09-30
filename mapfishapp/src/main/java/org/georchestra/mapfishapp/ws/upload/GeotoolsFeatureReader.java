@@ -24,8 +24,6 @@ import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.geometry.jts.JTS;
-import org.geotools.kml.KML;
-import org.geotools.kml.KMLConfiguration;
 import org.geotools.referencing.CRS;
 import org.geotools.xml.Configuration;
 import org.geotools.xml.PullParser;
@@ -130,19 +128,18 @@ class GeotoolsFeatureReader implements FeatureGeoFileReader {
      */
     private SimpleFeatureCollection readKmlFile(final File file, final CoordinateReferenceSystem targetCRS) throws IOException {
 
-        InputStream in = new FileInputStream(file);
 
         try {
             // as default EPSG:4326 is assumed
             CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:4326");
 
-            KmlFeatureSource reader = new KmlFeatureSource(in);
+            KmlFeatureSource reader = new KmlFeatureSource(file);
             Query q = new Query();
             q.setFilter(Filter.INCLUDE);
             q.setCoordinateSystem(sourceCRS);
             q.setCoordinateSystemReproject(targetCRS);
             
-            ListFeatureCollection list = reader.getFeatures(q);
+            SimpleFeatureCollection list = reader.getFeatures(q);
             
             return list;
 
@@ -150,9 +147,7 @@ class GeotoolsFeatureReader implements FeatureGeoFileReader {
             LOG.error(e.getMessage());
             throw new IOException(e);
 
-        } finally {
-            in.close();
-        }
+        } 
     }
 
     /**

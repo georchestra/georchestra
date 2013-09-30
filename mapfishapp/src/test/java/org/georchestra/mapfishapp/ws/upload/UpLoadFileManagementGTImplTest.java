@@ -99,7 +99,7 @@ public class UpLoadFileManagementGTImplTest {
     }
 
     @Test
-    public void testKMLAsJSON() throws Exception {
+    public void testKML22AsJSON() throws Exception {
 
         String fileName = "regions.kml";
         String fullName = makeFullName(fileName);
@@ -111,19 +111,10 @@ public class UpLoadFileManagementGTImplTest {
         JSONObject reg = jsonArray.getJSONObject(0);
         String id = reg.getString("id");
 
-     // FIXME REMOVE
-//        JSONObject properties = reg.getJSONObject("properties");
-//        String p1 = getJsonFieldValue(properties, "open");
-//        String p2 = getJsonFieldValue(properties, "visibility");
-//        String name = getJsonFieldValue(properties, "name");
-//        String desc = getJsonFieldValue(properties, "description");
-//        String osm_id = getJsonFieldValue(properties, "osm_id");
-//        String geom = getJsonFieldValue(properties, "geometry");
-
     }
 
     @Test
-    public void testKMLExtendedData() throws Exception {
+    public void testKML22ExtendedData() throws Exception {
 
         String fileName = "kml_4326_accidents.kml";
         String fullName = makeFullName(fileName);

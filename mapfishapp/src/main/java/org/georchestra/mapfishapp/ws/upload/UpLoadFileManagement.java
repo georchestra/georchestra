@@ -349,8 +349,7 @@ public class UpLoadFileManagement {
      * 
      * @throws IOException
      */
-    public void writeFeatureCollectionAsJSON(Writer writer,
-            final CoordinateReferenceSystem crs) throws IOException {
+    public void writeFeatureCollectionAsJSON(Writer writer, final CoordinateReferenceSystem crs) throws IOException {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("CRS to reproject:" + crs);
