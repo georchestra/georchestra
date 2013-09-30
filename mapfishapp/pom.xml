@@ -99,20 +99,17 @@
 		<dependency>
 			<groupId>org.geotools</groupId>
 			<artifactId>gt-main</artifactId>
-            <version>8.7</version>
-<!--            <version>${gt.version}</version> -->
+            <version>${gt.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.geotools</groupId>
 			<artifactId>gt-wfs</artifactId>
-            <version>8.7</version>
-<!--            <version>${gt.version}</version> -->
+           <version>${gt.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.geotools</groupId>
 			<artifactId>gt-shapefile</artifactId>
-            <version>8.7</version>
-<!--            <version>${gt.version}</version> -->
+           <version>${gt.version}</version>
 		</dependency>
 
 
@@ -125,35 +122,30 @@
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-ogr-core</artifactId>
-            <version>8.7</version>
-<!--            <version>${gt.version}</version> -->
+           <version>${gt.version}</version>
         </dependency>
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-ogr-jni</artifactId>
-            <version>8.7</version>
-<!--            <version>${gt.version}</version> -->
+           <version>${gt.version}</version>
         </dependency>
         
         <dependency>
             <groupId>org.geotools.xsd</groupId>
             <artifactId>gt-xsd-kml</artifactId>
-            <version>8.7</version>
-<!--            <version>${gt.version}</version> -->
+           <version>${gt.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-geojson</artifactId>
-            <version>8.7</version>
-<!--            <version>${gt.version}</version> -->
+           <version>${gt.version}</version>
         </dependency>		
 		<!-- geotools - handles ESPG -->
 	    <dependency>
 	       <groupId>org.geotools</groupId>
 	       <artifactId>gt-epsg-hsql</artifactId>
-            <version>8.7</version>
-<!--            <version>${gt.version}</version> -->
+           <version>${gt.version}</version>
 	    </dependency>
 	    
 	    <dependency>
@@ -166,8 +158,7 @@
 		<dependency>
 			<groupId>org.geotools</groupId>
 			<artifactId>gt-imageio-ext-gdal</artifactId>
-            <version>8.7</version>
-<!--            <version>${gt.version}</version> -->
+           <version>${gt.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>
