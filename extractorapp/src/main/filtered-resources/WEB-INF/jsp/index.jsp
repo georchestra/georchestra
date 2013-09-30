@@ -48,15 +48,6 @@ if(sec_roles != null) {
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="<%= lang %>" xml:lang="<%= lang %>">
 
-<c:choose>
-    <c:when test='<%= anonymous == true %>'>
-<script type="text/javascript">
-// anonymous users cannot access this protected page
-window.location = "?login";
-</script>
-    </c:when>
-</c:choose>
-
 <head>
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
     <link rel="stylesheet" type="text/css" href="resources/lib/externals/ext/resources/css/ext-all.css" />
