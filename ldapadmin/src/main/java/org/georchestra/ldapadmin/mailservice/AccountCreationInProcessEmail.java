@@ -18,7 +18,7 @@ import org.georchestra.lib.mailservice.Email;
  */
 class AccountCreationInProcessEmail extends Email {
 
-	private static final Log LOG = LogFactory.getLog(NewAccountRequiresSignupEmail.class.getName());
+	private static final Log LOG = LogFactory.getLog(NewAccountRequiresModerationEmail.class.getName());
 	private ServletContext servletContext;
 
 	public AccountCreationInProcessEmail(

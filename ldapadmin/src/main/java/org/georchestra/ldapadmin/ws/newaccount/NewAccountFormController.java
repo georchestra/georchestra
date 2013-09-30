@@ -132,15 +132,15 @@ public final class NewAccountFormController {
 					formBean.getOrg(),
 					formBean.getDescription() );
 
-			String groupID = this.moderator.requiresSignup() ? Group.PENDING_USERS : Group.SV_USER; 
+			String groupID = this.moderator.moderatedSignup() ? Group.PENDING_USERS : Group.SV_USER; 
 			
 			this.accountDao.insert(account, groupID);
 
 			final ServletContext servletContext = request.getSession().getServletContext();
-			if(this.moderator.requiresSignup() ){
+			if(this.moderator.moderatedSignup() ){
 
 				// email to the moderator
-				this.mailService.sendNewAccountRequiresSignup(servletContext, account.getUid(), account.getCommonName(), this.moderator.getModeratorEmail());
+				this.mailService.sendNewAccountRequiresModeration(servletContext, account.getUid(), account.getCommonName(), this.moderator.getModeratorEmail());
 				
 				// email to the user
 				this.mailService.sendAccountCreationInProcess(servletContext, account.getUid(), account.getCommonName(), account.getEmail());

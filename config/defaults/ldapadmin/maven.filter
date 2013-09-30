@@ -31,11 +31,11 @@ from=@shared.smtp.from@
 emailHtml=@shared.email.html@
 subject.account.created=[@shared.instance.name@] Your account has been created
 subject.account.in.process=[@shared.instance.name@] Your new account is waiting for validation
-subject.requires.signup=[@shared.instance.name@] New account waiting for validation
+subject.requires.moderation=[@shared.instance.name@] New account waiting for validation
 subject.change.password=[@shared.instance.name@] Update your password
 
-# Moderator
-requiresSignup=false
+# Moderation (enabled by default - we do not want people to be able to gain access to resources without the admin's consent)
+moderatedSignup=true
 moderatorEmail=moderator@mail
 
 # Expired token

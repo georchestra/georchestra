@@ -28,10 +28,10 @@ public final class MailService {
 	}
 
 
-	public void sendNewAccountRequiresSignup(ServletContext servletContext, final String uid, final String userName, final String moderatorEmail) {
+	public void sendNewAccountRequiresModeration(ServletContext servletContext, final String uid, final String userName, final String moderatorEmail) {
 
 		try {
-			NewAccountRequiresSignupEmail email = this.emailFactory.createNewAccountRequiresSignupEmail(servletContext,  new String[]{moderatorEmail});
+			NewAccountRequiresModerationEmail email = this.emailFactory.createNewAccountRequiresModerationEmail(servletContext,  new String[]{moderatorEmail});
 			
 			email.sendMsg(userName, uid);
 		
