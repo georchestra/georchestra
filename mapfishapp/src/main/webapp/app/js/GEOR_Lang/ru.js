@@ -467,161 +467,104 @@ demandée." +
 "associé à cette couche.", не связан с этим слоем.
 "not any available attribute": "aucun attribut disponible.", нет ни
 одного доступного атрибута.
+
+
 /* GEOR_toolbar.js strings */
-"m": "m", "м"
-"hectares": "hectares", гектары
-"zoom to global extent of the map": "zoom sur l'étendue globale de la
-carte", "zoom" на глобальный масштаб карты
-"pan": "glisser - déplacer la carte", перетащить карту ou переместить карту
-"zoom in": "zoom en avant (pour zoomer sur une emprise: appuyer sur
-SHIFT + dessiner l'emprise)", "zoom" вперёд (для того, чтобы зуммировать
-в определённых рамках : нажать на SHIFT + нарисовать ограничение
-"zoom out": "zoom en arrière", "zoom" назад ou "zoom" обратно
-"back to previous zoom": "revenir à la précédente emprise", вернуться к
-предыдушему ограничению зума
-"go to next zoom": "aller à l'emprise suivante", перейти к следующему
-виду зуммирования
-"Login": "Connexion", Соединение
-"Logout": "Déconnexion", Отключение ou Разъединение
-"Help": "Aide", Помощь
-"Show help": "Afficher l'aide", Показать помощь
-"Show legend": "Afficher la légende", Показать легенду
-"Leave this page ? You will lose the current cartographic context.":
-"Vous allez quitter cette page et perdre le contexte cartographique
-courant", Выйти со страницы? В таком случае, вы потеряете текущий
-картографический контекст.
+"m": "м",
+"hectares": "гектары",
+"zoom to global extent of the map": "на глобальный масштаб карты",
+"pan": "перетащить карту ou переместить карту",
+"zoom in": "вперёд (для того, чтобы зуммировать в определённых рамках : нажать на SHIFT + нарисовать ограничение",
+"zoom out": "назад",
+"back to previous zoom": "вернуться к предыдушему ограничению зума",
+"go to next zoom": "перейти к следующему виду зуммирования",
+"Login": "Соединение",
+"Logout": "Отключение ou Разъединение",
+"Help": "Помощь",
+"Show help": "Показать помощь",
+"Show legend": "Показать легенду",
+"Leave this page ? You will lose the current cartographic context.": "Выйти со страницы? В таком случае, вы потеряете текущий картографический контекст.",
 /* GEOR_tools.js strings */
-"distance measure": "Mesurer une distance", Измерение расстояния.
-"area measure": "Mesurer une surface", Измерение площади
-"Measure": "Mesure", Измерение ou Мера
-"Tools": "Outils", Инструменты
-"tool": "outil", Инструмент
-"tool": "outil", Инструмент
-"No tool": "aucun outil", Никакого инструмента
-"Manage tools": "Gérer les outils", Управлять инструментами
-"remember the selection": "se souvenir de la sélection", Запомнить выбор
-ou Запомнить выделенное
-"Available tools:": "Outils disponibles :", Инструменты в распоряжении
-"Clic to select or deselect the tool": "Cliquez pour Щёлкните для того,
-чтобы выбрать инструмент или отменить его.
-(dé)sélectionner l'outil",
-"Could not load addon ADDONNAME": "Impossible de charger l'addon
-${ADDONNAME}", Невозможно загрузить аддон ${ИМЯАДДОНА}",
+"distance measure": "Измерение расстояния",
+"area measure": "Измерение площади",
+"Measure": "Измерение",
+"Tools": "Инструменты",
+"tool": "Инструмент",
+"No tool": "Никакого инструмента",
+"Manage tools": "Управлять инструментами",
+"remember the selection": "Запомнить выбор",
+"Available tools:": "Инструменты в распоряжении",
+"Clic to select or deselect the tool": "Щёлкните для того, чтобы выбрать инструмент или отменить его.",
+"Could not load addon ADDONNAME": "Невозможно загрузить аддон ${ADDONNAME}",
 /* GEOR_util.js strings */
-"Characters": "Caractères", Письменность (ou Буквы и Цифры в информатике)
-"Digital": "Numérique", Цифровой
-"Boolean": "Booléen", Логический, булев тип данных (или logical data type)
-"Other": "Autre", Другой
-"Confirmation": "Confirmation", Подтверждение
-"Information": "Information", Информация
+"Characters": "Письменность",
+"Digital": "Цифровой",
+"Boolean": "Логический, булев тип данных (или logical data type)",
+"Other": "Другой",
+"Confirmation": "Подтверждение",
+"Information": "Информация",
 /* GEOR_waiter.js strings */
 /* GEOR_wmc.js strings */
-"The provided file is not a valid OGC context": "Le fichier fourni n'est
-pas un contexte OGC valide", Данный файл не является действительным
-контекстом OGC (Open Geospatial Consortium — открытый
-геопространственный консорциум)
-"Warning: trying to restore WMC with a different projection
-(PROJCODE1, while map SRS is PROJCODE2). Strange things might occur !":
-"Attention: le contexte restauré avait été sauvegardé en ${PROJCODE1}
-"Предупреждение : попытка восстановления WMC в одной проекции ${PROJCODE1},
-alors que la carte actuelle est en ${PROJCODE2}. Il pourrait y avoir des
-тогда как данная карта SRS находится в другой ${PROJCODE2}. Здесь
-возможны непредвиденные обстоятельства".
-comportements inattendus.",
+"The provided file is not a valid OGC context": "Данный файл не является действительным контекстом OGC",
+"Warning: trying to restore WMC with a different projection (PROJCODE1, while map SRS is PROJCODE2). Strange things might occur !": "Предупреждение : попытка восстановления WMC в одной проекции ${PROJCODE1}, тогда как данная карта SRS находится в другой ${PROJCODE2}. Здесь возможны непредвиденные обстоятельства",
 /* GEOR_wmcbrowser.js strings */
-"Could not find WMC file": "Le contexte spécifié n'existe pas",
-Невозможно найти WMC файл.
-"... or a custom context": "... ou un contexte personnalisé", ...или
-индивидуальный контекст,
-"Replace current map composition with one of these contexts:":
-"Remplacer la composition actuelle de la carte par l'un de ces contextes
-:", Заменить составляющую текущей карты одним из предложенных контекстов.
-"A unique OSM layer": "Une unique couche OpenStreetMap", Единый слой
-OpenStreetMap
-"default viewer context": "contexte par défaut", контекст вьюера по
-умолчанию
-"(default)": "<br/>(contexte par défaut actuel)",
+"Could not find WMC file": "Невозможно найти WMC файл",
+"... or a custom context": "...или индивидуальный контекст",
+"Replace current map composition with one of these contexts:": "Заменить составляющую текущей карты одним из предложенных контекстов.",
+"A unique OSM layer": "Единый слой OpenStreetMap",
+"default viewer context": "контекст вьюера по умолчанию",
+"(default)": "<br/>(contexte par défaut actuel)", // FIXME
 /* GEOR_workspace.js strings */
-"Context saving": "Sauvegarde du contexte", Сохранение контекста
-"The file is required.": "Un nom de fichier est nécessaire.", Требуется
-имя файла
-"Context restoring": "Restauration d'un contexte", Восстановление контекста
-"<p>Please note that the WMC must be UTF-8 encoded</p>": "<p>Notez
-Обратите внимание на то, что файл в формате WMC должен быть закодирован
-UTF-8.</p>",
-que le fichier de contexte doit être encodé en UTF-8.</p>",
-"Load": "Charger", Загрузить
-"Workspace": "Espace de travail", Рабочее пространство
-"Save the map context": "Sauvegarder la carte", Сохранить карту
-"Load a map context": "Charger une carte", Загрузить карту
-"Get a permalink": "Obtenir un permalien", Получить постоянную ссылку
-"Permalink": "Permalien", Постоянная ссылка
-"valid for ": "valide pendant ", Действителен в течение
-"months": "mois", месяцы
-"month": "mois", месяц
-"Share your map with this URL: ": "Partagez la carte avec l'adresse
-Доступ к вашей карте с этого URL-адреса :
-suivante : ",
-"Edit in OSM": "Editer dans OSM", Редактировать в OSM (OpenStreetMap
-«открытая карта улиц) - некоммерческий веб-картографический проект по
-созданию подробной свободной и бесплатной географической карты мира.
-"with JOSM": "avec JOSM", c JOSM (Java OpenStreetMap Editor -
-расширяемый редактор для OSM)
-"JOSM must be started with the remote control option": "Il vous faut " +
-Необходимо +
-"auparavant lancer JOSM et activer le contrôle à distance", запустить
-JOSM с опцией дистанционного контроля,
-"with Potlatch": "avec Potlatch", c редактором Potlatch
-"Recommended scale is 1:10.000": "Il est recommandé de travailler à des
-échelles proches de 1:10.000", Рекомендуемый масштаб - 1:10.000
-"with Potlatch2": "avec Potlatch2", c редактором Potlatch2
-"with Walking Papers": "avec Walking Papers", при помощи Walking Papers
+"Context saving": "Сохранение контекста",
+"The file is required.": "Требуется имя файла",
+"Context restoring": "Восстановление контекста",
+"<p>Please note that the WMC must be UTF-8 encoded</p>": "<p>Обратите внимание на то, что файл в формате WMC должен быть закодирован UTF-8.</p>",
+"Load": "Загрузить",
+"Workspace": "Рабочее пространство",
+"Save the map context": "Сохранить карту",
+"Load a map context": "Загрузить карту",
+"Get a permalink": "Получить постоянную ссылку",
+"Permalink": "Постоянная ссылка",
+"valid for ": "Действителен в течение ",
+"months": " месяцы",
+"month": "месяц",
+"Share your map with this URL: ": "Доступ к вашей карте с этого URL-адреса : ",
+"Edit in OSM": "Редактировать в OSM (OpenStreetMap «открытая карта улиц) - некоммерческий веб-картографический проект по созданию подробной свободной и бесплатной географической карты мира.",
+"with JOSM": "c JOSM (Java OpenStreetMap Editor - расширяемый редактор для OSM)",
+"JOSM must be started with the remote control option": "Необходимо запустить JOSM с опцией дистанционного контроля",
+"with Potlatch": "c редактором Potlatch",
+"Recommended scale is 1:10.000": "Рекомендуемый масштаб - 1:10.000",
+"with Potlatch2": "c редактором Potlatch2",
+"with Walking Papers": "при помощи Walking Papers",
 /* GEOR_EditingPanel.js */
-"Read-only layer": "Couche non éditable", Cлой только для прочтения
-"editingpanel.geom.error": "La géométrie de cette couche est de type
-${TYPE}. <br/>" + Геометрия этого слоя следующего типа : ${TYPE}.<br/>" +
-"Seules les géométries de type point, ligne et polygone" + Только
-следующие геометрические типы подлежат редактированию : точка, линия и
-многоугольник (а также много-, мульти-)
-" (et multi-*) sont éditables.",
-"choose a layer": "choisissez une couche", Выберите слой
+"Read-only layer": "Cлой только для прочтения",
+"editingpanel.geom.error": "Геометрия этого слоя следующего типа : ${TYPE}.<br/>Только следующие геометрические типы подлежат редактированию : точка, линия и многоугольник (а также много-, мульти-)",
+"choose a layer": "Выберите слой",
 /* GEOR_LayerEditingPanel.js */
-"Modify object": "Modifier un objet", Изменить объект
-"Cancel all": "Tout annuler", Отменить всё ou Аннулировать всё
-"Enter ": "Saisir ", Ввести
-"layereditingpanel.cancel.confirm": "Souhaitez-vous vraiment + Вы
-действительно желаете +
-annuler toutes les modifications<br />depuis la dernière synchronisation
-?", отменить все изменения<br />после последней синхронизации?
-"Synchronize": "Synchroniser", Синхронизировать
-"layereditingpanel.changes.confirm": "Veuillez confirmer ou annuler " +
-Пожалуйста, подтвердите или отмените +
-"les modifications en cours.", текущие изменения.
-"Delete": "Supprimer", Удалить
-"Confirm": "Confirmer", Подтвердить
-" (required)": " (requis)", требуемый, необходимый
-"Text too long": "Texte trop long", Текст слишком длинный
-"Text too short": "Texte trop court", Текст слишком короткий
-"Maximum value exceeded": "Valeur maximale dépassée", Максимальное
-значение превышено
-"Minimum value not reached": "Valeur minimale non atteinte", Минимальное
-значение не достигнуто
-"Invalid number": "Nombre non valide", Число недействительно
-"Synchronization successful.": "Synchronisation réussie.", Синхронизация
-прошла успешно.
-"Synchronization failed.": "Erreur lors de la synchronisation.",
-Произошла ошибка во время процесса синхронизации.
-"Recover": "Restaurer", Восстановить
-"No feature selected !": "Aucun objet sélectionné !", Ни одна функция не
-выбрана
-"a point": "un point", точка (ou пункт)
-"a line": "une ligne", линия
-"a polygon": "un polygone", многоугольник
-"Pending changes": "Modifications en cours", Идёт процесс внесения
-изменений
-"Do you want to confirm changes ?": "Souhaitez-vous confirmer les
-modifications ?", Желаете ли вы подтвердить изменения?
+"Modify object": "Изменить объект",
+"Cancel all": "Отменить всё ou Аннулировать всё",
+"Enter ": "Ввести",
+"layereditingpanel.cancel.confirm": "Вы действительно желаете отменить все изменения<br />после последней синхронизации?",
+"Synchronize": "Синхронизировать",
+"layereditingpanel.changes.confirm": "Пожалуйста, подтвердите или отмените текущие изменения.",
+"Delete": "Удалить",
+"Confirm": "Подтвердить",
+" (required)": " требуемый, необходимый",
+"Text too long": "Текст слишком длинный",
+"Text too short": "Текст слишком короткий",
+"Maximum value exceeded": "Максимальное значение превышено",
+"Minimum value not reached": "Минимальное значение не достигнуто",
+"Invalid number": "Число недействительно",
+"Synchronization successful.": "Синхронизация прошла успешно.",
+"Synchronization failed.": "Произошла ошибка во время процесса синхронизации.",
+"Recover": "Восстановить",
+"No feature selected !": "Ни одна функция не выбрана",
+"a point": "точка",
+"a line": "линия",
+"a polygon": "многоугольник",
+"Pending changes": "Идёт процесс внесения изменений",
+"Do you want to confirm changes ?": "Желаете ли вы подтвердить изменения?",
 /* GeoExt.data.CSW.js */
-"no abstract": "pas de résumé" нет резюме
+"no abstract": "нет резюме"
     // no trailing comma
 });
