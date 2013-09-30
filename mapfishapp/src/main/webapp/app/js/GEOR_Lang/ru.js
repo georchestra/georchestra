@@ -499,7 +499,7 @@ demandée." +
 /* GEOR_util.js strings */
 "Characters": "Письменность",
 "Digital": "Цифровой",
-"Boolean": "Логический, булев тип данных (или logical data type)",
+"Boolean": "Логический",
 "Other": "Другой",
 "Confirmation": "Подтверждение",
 "Information": "Информация",
