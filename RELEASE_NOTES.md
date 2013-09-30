@@ -20,6 +20,7 @@ New features:
  * mapfishapp: WMS + WFS version autodetection,
  * mapfishapp: WMTS 1.0.0 support,
  * mapfishapp: WFS 2.0.0 support,
+ * mapfishapp: OWSContext READ support (WMS layers),
  * mapfishapp: French IGN's GeoPortail webservices support,
  * geoserver: Opaque WMS Layer property support (see [#158](https://github.com/georchestra/georchestra/issues/158)),
  * ldapadmin: a brand new module is available which allows at the same time to: admin your users in your browser, let your users recover their lost password, and let them register too ! More information in the module [README](https://github.com/georchestra/georchestra/blob/master/ldapadmin/README.md),
