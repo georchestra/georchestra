@@ -84,6 +84,7 @@ The geOrchestra viewer is able to query your data via OGC webservices.
 This implies that vector data is transmitted as XML over the air (via WMS getFeatureInfo or WFS getFeature).
 
 Before reporting errors, please check that your data is correct:
+ - layer names should not start with a number,
  - field names should not include accentuated chars,
  - field names should not include spaces,
  - field names should not start with a number !
