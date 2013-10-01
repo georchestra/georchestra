@@ -16,8 +16,8 @@ secureHost=@shared.server.name@
 # Email properties
 smtpHost=@shared.smtp.host@
 smtpPort=@shared.smtp.port@
-replyTo=@shared.smtp.replyTo@
-from=@shared.smtp.from@
+replyTo=@shared.email.replyTo@
+from=@shared.email.from@
 emailHtml=@shared.email.html@
 
 privileged_admin_name=@shared.privileged.geoserver.user@
