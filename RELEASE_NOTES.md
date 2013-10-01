@@ -19,6 +19,7 @@ New features:
  * mapfishapp: WMS + WFS version autodetection,
  * mapfishapp: WMTS 1.0.0 support,
  * mapfishapp: WFS 2.0.0 support,
+ * mapfishapp: WMS 1.3.0 support,
  * mapfishapp: OWSContext 0.3.x READ support (WMS layers),
  * mapfishapp: French IGN's GeoPortail webservices support,
  * mapfishapp: Russian translation (!),
@@ -55,14 +56,14 @@ Enhancements:
  * everywhere: plain text emails, with the ability to switch back to HTML via ```shared.email.html```,
  * everywhere: all outgoing emails are now prefixed with the platform name,
  * everywhere: better translations.
- * improved [installation](https://github.com/georchestra/georchestra/blob/master/INSTALL.md) instructions
+ * documentation: improved [installation](https://github.com/georchestra/georchestra/blob/master/INSTALL.md) instructions
 
 Bug fixes:
  * security-proxy: now only sends one referer headers - fixes consuming arcgis web services - [read more](https://github.com/georchestra/georchestra/issues/266),
- * static: fixed incorrect login link on CAS pages,
  * geoserver: fixed incorrect WMS 1.3.0 scaledenominator values, see [#264](https://github.com/georchestra/georchestra/issues/264),
  * geonetwork: editor: suggestion: changes saved before processing,
  * geonetwork: user menu: IE compatibility issues fixed,
+ * static: fixed incorrect login link on CAS pages,
  * cas: fixed IE8 JS error on login page,
  * extractorapp: fixed app loading on IE8,
  * mapfishapp: WM[T]S GetFeatureInfo geometries on the fly reprojection (at last !) - as a result, it is advised to fill the most widely used SRSes in your country in your [GEOR_custom.js](https://github.com/georchestra/template/blob/45eddec545418b4de55952795c66940729d3b547/mapfishapp/app/js/GEOR_custom.js#L365) config file,
