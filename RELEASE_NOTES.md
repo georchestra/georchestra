@@ -42,6 +42,7 @@ Enhancements:
  * mapfishapp: permalink validity displayed in months,
  * mapfishapp: link to layer metadata which is declared as text/html is now prefered over the other links,
  * mapfishapp: addons can now be loaded by default (read [how](https://github.com/georchestra/template/blob/45eddec545418b4de55952795c66940729d3b547/mapfishapp/app/js/GEOR_custom.js#L64)),
+ * mapfishapp: added a [note on data](https://github.com/georchestra/georchestra/blob/master/mapfishapp/README.md#your-data-in-mapfishapp) in the doc,
  * extractorapp: several small fixes for extractorapp reprojection,
  * extractorapp: more visible extract button,
  * extractorapp: auto-deactivate the "Modify the bbox" button,
