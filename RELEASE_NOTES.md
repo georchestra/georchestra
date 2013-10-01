@@ -43,7 +43,6 @@ Enhancements:
  * mapfishapp: link to layer metadata which is declared as text/html is now prefered over the other links,
  * mapfishapp: addons can now be loaded by default (read [how](https://github.com/georchestra/template/blob/45eddec545418b4de55952795c66940729d3b547/mapfishapp/app/js/GEOR_custom.js#L64)),
  * mapfishapp: added a [note on data](https://github.com/georchestra/georchestra/blob/master/mapfishapp/README.md#your-data-in-mapfishapp) in the doc,
- * mapfishapp: better message when file upload size limit is reached,
  * extractorapp: several small fixes for extractorapp reprojection,
  * extractorapp: more visible extract button,
  * extractorapp: auto-deactivate the "Modify the bbox" button,
@@ -74,9 +73,7 @@ Bug fixes:
  * mapfishapp: fixed legend label not appearing when only one class is available,
  * mapfishapp: fixed incorrect describeFeatureType URLs,
  * mapfishapp: fixed broken referentials search in IE8,
- * mapfishapp: fixed broken help url,
- * mapfishapp: fixed upload file inverts long, lat,
- * mapfishapp: KML file upload: unsupported ExtendedData.
+ * mapfishapp: fixed broken help url
 
 
 UPGRADING:
