@@ -51,8 +51,8 @@ Enhancements:
  * geonetwork: RSS: added URL parameter to only return one link for each metadata,
  * geonetwork: widgets: added privileges panel to batch operation,
  * geonetwork: improved icons plus a custom icon for XLS files,
- * SDI Instance name in page titles across the SDI (shared.instance.name, defaulting to "geOrchestra"),
- * everywhere: plain text emails, with the ability to switch back to HTML via shared.email.html,
+ * SDI Instance name in page titles across the SDI (```shared.instance.name```, defaulting to "geOrchestra"),
+ * everywhere: plain text emails, with the ability to switch back to HTML via ```shared.email.html```,
  * everywhere: all outgoing emails are now prefixed with the platform name,
  * everywhere: better translations.
  * improved [installation](https://github.com/georchestra/georchestra/blob/master/INSTALL.md) instructions
@@ -92,6 +92,7 @@ UPGRADING:
  * Remember also to fill these new global maven filters: 
    * ```shared.homepage.url``` - for your SDI home page (might be something like http://my.sdi.org/portal/),
    * ```shared.instance.name``` - will be displayed in page titles (eg: GeoMyCompany),
+   * ```shared.email.html``` - whether to send emails in plain text (default) or HTML,
    * ```shared.administrator.email``` - this email receives new account requests (eg: me@mycompany.com)
  * shared maven filters renamed:
    * ```shared.smtp.replyTo``` -> ```shared.email.replyTo```
