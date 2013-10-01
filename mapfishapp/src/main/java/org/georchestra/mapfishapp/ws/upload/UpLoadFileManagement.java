@@ -340,13 +340,10 @@ public class UpLoadFileManagement {
      * 	assumed EPSG:4326 for all gpx files
      * </pre>
      * 
-     * @param writer
-     *            where the featrue must be written.
-     * @param crs
-     *            if it is not null the features should be transformed to this
+     * @param writer where the featrue must be written.
+     * @param crs if it is not null the features should be transformed to this
      *            {@link CoordinateReferenceSystem}, in other case they won't
      *            transformed.
-     * 
      * @throws IOException
      */
     public void writeFeatureCollectionAsJSON(Writer writer, final CoordinateReferenceSystem crs) throws IOException {
