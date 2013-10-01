@@ -218,7 +218,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Choose a referential": "Выбрать ссылку",
     /* GEOR_resultspanel.js strings */
     "resultspanel.maxfeature.reached": " <span ext:qtip=\"Используйте более совершенный навигатор для того, чтобы увеличить число фигурирующих на странице объектов.\">Максимальное число объектов достигнуто ${NB}</span>", 
-    "NB results": "${NB}результатов",
+    "NB results": "${NB} результатов",
     "One result": "Один результат",
     "Not any result": "Никакого результата нет",
     "Clean": "Стереть",
