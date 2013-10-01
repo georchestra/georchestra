@@ -13,13 +13,15 @@
 		<dependency>
 			<groupId>org.geotools</groupId>
 			<artifactId>gt-main</artifactId>
-			<version>${gt.version}</version>
+            <version>8.7</version>
+<!-- 			<version>${gt.version}</version> -->
 		</dependency>
 		
 	    <dependency>
 	      <groupId>org.geotools</groupId>
 	      <artifactId>gt-epsg-hsql</artifactId>
-	      <version>${gt.version}</version>
+            <version>8.7</version>
+<!--            <version>${gt.version}</version> -->
 	    </dependency>
                 <!--  Testing -->
                 <dependency>
