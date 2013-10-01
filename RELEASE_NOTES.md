@@ -16,21 +16,21 @@ The CRAIG (Centre Régional Auvergnat de l'Information Géographique) is also to
 New features:
  * mapfishapp: [annotation addon](https://github.com/georchestra/georchestra/tree/master/mapfishapp/src/main/webapp/app/addons/annotation) with KML export,
  * mapfishapp: geofile upload: support of SHP, MIF/MID, GML, KML by default (uses a geotools implementation). Support of TAB and GPX when OGR is available (read this [how to](https://github.com/georchestra/georchestra/tree/master/mapfishapp#optional-install-gdal-native-library)),
- * mapfishapp: querier radius is now dynamically displayed in meters/km,
  * mapfishapp: WMS + WFS version autodetection,
  * mapfishapp: WMTS 1.0.0 support,
  * mapfishapp: WFS 2.0.0 support,
  * mapfishapp: OWSContext 0.3.x READ support (WMS layers),
  * mapfishapp: French IGN's GeoPortail webservices support,
  * mapfishapp: Russian translation (!),
+ * mapfishapp: querier radius is now dynamically displayed in meters/km,
  * geoserver: Opaque WMS Layer property support (see [#158](https://github.com/georchestra/georchestra/issues/158)),
  * ldapadmin: a brand new module is available which allows at the same time to: admin your users in your browser, let your users recover their lost password, and let them register too ! More information in the module [README](https://github.com/georchestra/georchestra/blob/master/ldapadmin/README.md),
  * extractorapp: ship metadata in ZIP (read this [how to](https://github.com/georchestra/georchestra/blob/master/extractorapp/README.md#metadata-extraction)),
- * extractorapp: now supports KML, TIF+TFW/TAB output.
+ * extractorapp: now supports KML & TIF+(TFW,TAB) output.
 
 Enhancements:
  * mapfishapp: external libs such as ExtJS updated to 3.4.1.1 (for IE 10 support), GeoExt and OpenLayers updated to master (yeah !). This brings greater navigation ease and support for other cool stuff.
- * mapfishapp: restoring contexts with different projections,
+ * mapfishapp: added ability to restore contexts with a projection different from the map's (assuming layers will be able to reproject),
  * mapfishapp: print improved (updated to MapFish Print 2.0 for WMTS and GeoPortail support, brand new templates, natural 91 dpi resolution and new "comment" field),
  * mapfishapp: referentials search is no more case sensitive with WFS2,
  * mapfishapp: improved syntax for metadata search (via CSW), see [#325](https://github.com/georchestra/georchestra/pull/325),
@@ -66,7 +66,7 @@ Bug fixes:
  * cas: fixed IE8 JS error on login page,
  * extractorapp: fixed app loading on IE8,
  * mapfishapp: WM[T]S GetFeatureInfo geometries on the fly reprojection (at last !) - as a result, it is advised to fill the most widely used SRSes in your country in your [GEOR_custom.js](https://github.com/georchestra/template/blob/45eddec545418b4de55952795c66940729d3b547/mapfishapp/app/js/GEOR_custom.js#L365) config file,
- * mapfishapp: fixed fontFamily not taken into account by styler - also requires apt-get install ttf-mscorefonts-installer,
+ * mapfishapp: fixed fontFamily not taken into account by styler - also requires ```apt-get install ttf-mscorefonts-installer```,
  * mapfishapp: fixed querier setup issue when WFS service is not available,
  * mapfishapp: more robust layer hydrating from namespaced capabilities,
  * mapfishapp: fixed zooming occuring while drawing features,
@@ -83,19 +83,19 @@ UPGRADING:
  * mapfishapp:
    * default projection changes from EPSG:2154 to EPSG:3857 (aka Spherical Web Mercator). Your users might need to clear their localStorage, or force loading of the new default context.
  * LDAP: see [georchestra/LDAP#2](https://github.com/georchestra/LDAP/pull/2)
-   * one group was renamed: STAT_USER became MOD_ANALYTICS - grants access to the analytics app,
-   * an other one was created: MOD_LDAPADMIN - grants access to the LDAPadmin private UI (/ldapadmin/privateui/index.html).
+   * one group was renamed: ```STAT_USER``` becomes ```MOD_ANALYTICS``` - grants access to the analytics app,
+   * an other one was created: ```MOD_LDAPADMIN``` - grants access to the LDAPadmin private UI (/ldapadmin/privateui/index.html).
  * The default application language is now **English**:
-   * shared.language = en
-   * geonetwork.language = eng
+   * ```shared.language``` = en
+   * ```geonetwork.language``` = eng
    * default email templates [here](https://github.com/georchestra/georchestra/tree/master/config/defaults/ldapadmin/WEB-INF/templates) and [there](https://github.com/georchestra/georchestra/tree/master/config/defaults/extractorapp/WEB-INF/templates): be sure to override them in your own config !
  * Remember also to fill these new global maven filters: 
-   * shared.homepage.url - for your SDI home page (might be something like http://my.sdi.org/portal/),
-   * shared.instance.name - will be displayed in page titles (eg: GeoMyCompany),
-   * shared.administrator.email - this email receives new account requests (eg: me@mycompany.com)
+   * ```shared.homepage.url``` - for your SDI home page (might be something like http://my.sdi.org/portal/),
+   * ```shared.instance.name``` - will be displayed in page titles (eg: GeoMyCompany),
+   * ```shared.administrator.email``` - this email receives new account requests (eg: me@mycompany.com)
  * shared maven filters renamed:
-   * shared.smtp.replyTo -> shared.email.replyTo
-   * shared.smtp.from -> shared.email.from
+   * ```shared.smtp.replyTo``` -> ```shared.email.replyTo```
+   * ```shared.smtp.from``` -> ```shared.email.from```
 
 
 Version 13.06 (current stable version)
