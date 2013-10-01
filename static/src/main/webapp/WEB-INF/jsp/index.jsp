@@ -25,7 +25,7 @@ if (active == null) {
     active = "none";
 }
 
-if (lang == null || (!lang.equals("en") && !lang.equals("es")  && !lang.equals("fr"))) {
+if (lang == null || (!lang.equals("en") && !lang.equals("es")  && !lang.equals("ru") && !lang.equals("fr"))) {
     lang = "fr";
 }
 Locale l = new Locale(lang);
@@ -57,7 +57,7 @@ if(sec_roles != null) {
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
-  
+
     <style type="text/css">
         /* see https://github.com/georchestra/georchestra/issues/147 for missing http protocol */
         @import url(//fonts.googleapis.com/css?family=Yanone+Kaffeesatz);

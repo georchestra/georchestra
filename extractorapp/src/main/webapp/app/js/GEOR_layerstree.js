@@ -350,7 +350,7 @@ GEOR.layerstree = (function() {
                         qtip: tr('layerstree.qtip.wfs', {
                             'TEXT': wfsinfo.text,
                             'URL': wfsinfo.owsurl}),
-                        iconCls: 'wfs-server',
+                        iconCls: 'wfs-server'
                     }, node));
                     new Ext.tree.TreeSorter(serviceNode, {
                         leafAttr: "leaf",
@@ -461,7 +461,7 @@ GEOR.layerstree = (function() {
                         qtip: tr('layerstree.qtip.wms', {
                             'NAME': wmsinfo.text,
                             'URL': wmsinfo.owsurl}),
-                        iconCls: 'wms-server',
+                        iconCls: 'wms-server'
                     }, node));
                     new Ext.tree.TreeSorter(serviceNode, {
                         leafAttr: "leaf",

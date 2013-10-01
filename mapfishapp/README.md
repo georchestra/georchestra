@@ -77,6 +77,21 @@ Once the update session is finished, the user can sync his work on the server.
 Unfortunately, there is no handling of concurrent edition for now.
 
 
+Your data in mapfishapp
+========================
+
+The geOrchestra viewer is able to query your data via OGC webservices. 
+This implies that vector data is transmitted as XML over the air (via WMS getFeatureInfo or WFS getFeature).
+
+Before reporting errors, please check that your data is correct.
+
+Typically, layer names & field names should not:
+ - include spaces nor accentuated chars,
+ - start with a number.
+
+Browsers like FF will typically fail, while Chromium might just ignore the incorrect fields.
+
+
 How to run the viewer without Tomcat ?
 ======================================
 

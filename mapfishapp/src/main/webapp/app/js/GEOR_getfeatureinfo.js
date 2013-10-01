@@ -105,7 +105,7 @@ GEOR.getfeatureinfo = (function() {
          *  gml:MultiPolygon srsName="http://www.opengis.net/gml/srs/epsg.xml#3948"
          */
         var r =  /[^]+srsName=\"(.+?)\"[^]+/.exec(info.text);
-        if (r) {
+        if (r && r[1]) {
             var srsString = r[1];
             /*
              * At this stage, we have to normalize these kinds of strings:
