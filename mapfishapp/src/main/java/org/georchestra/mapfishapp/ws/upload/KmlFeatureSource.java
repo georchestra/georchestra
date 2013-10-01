@@ -34,8 +34,6 @@ import com.vividsolutions.jts.geom.Geometry;
 /**
  * <p>
  *	Access to the kml file. This implementation support kml 2.1 and 2.2.  
- *
- *
  * </p>
  * @author Mauricio Pazos
  *
@@ -83,7 +81,7 @@ class KmlFeatureSource {
      */
     private Configuration getConfig(File f) throws  IOException, UnsupportedGeofileFormatException {
         
-        // detect the kml version from input stream
+        // detects the kml version from input stream
         
         SAXParserFactory factory = SAXParserFactory.newInstance();
         InputStream is = null;
@@ -95,9 +93,7 @@ class KmlFeatureSource {
             is = new FileInputStream(f);
 
             parser.parse(is, handle);
-            
- 
-            
+
         } catch (ParserConfigurationException e) {
 
             LOG.error(e.getMessage());
@@ -206,7 +202,6 @@ class KmlFeatureSource {
         } finally {
             is.close();
         }
-
     }
     
 }
