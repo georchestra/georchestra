@@ -116,7 +116,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Find layers querying WFS servers": "Отыщите слои, опрашивая серверы WFS (Web Feature Service - Сервис Веб-Возможностей)",
     "layerfinder.layer.unavailable": "Cлой ${NAME} не был найден на сервисе WMS.<br/<br/>Возможно, вы не обладаете правом доступа к нему или же, этот слой отсутствует",
     "Layer projection is not compatible": "Проекция слоя не совместима. ou Отображение слоя не совместимо",
-    "The NAME layer does not contain a valid geometry column": "Слой${NAME} не обладает действительным геометрическим столбцом",
+    "The NAME layer does not contain a valid geometry column": "Слой$ ${NAME} не обладает действительным геометрическим столбцом",
     "Add": "Добавить",
     "Add layers from a ...": "Добавить слои из...",
     "Malformed URL": "URL не соответствует требованиям.",
@@ -165,10 +165,10 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Geografic extent does not match map extent": "Географический размер не соответствует размерам карты.",
     /* GEOR_mapinit.js strings */
     "Add layers from WMS services": "Добавить слои из сервисов WMS",
-    "NB layers not imported": "${NB}слоёв не импортированы",
+    "NB layers not imported": "${NB} слоёв не импортированы",
     "One layer not imported": "Не импортирован один слой.",
     "mapinit.layers.load.error":  "Слои с именем ${LIST} не смогли загрузиться. Возможные причины : недостаточные права, несоответствие с SRS (Spatial Reference System - Система Космической Связи) или несуществующий слой.",
-    "NB layers imported": "Закачано ${NB}слоёв",
+    "NB layers imported": "Закачано ${NB} слоёв",
     "One layer imported": "Один слой закачан",
     "Not any layer imported": "Не закачано ни одного слоя.",
     "The provided context is not valid": "Предложенный контекст недействителен",
@@ -177,7 +177,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Coordinates in ": "Координаты в ",
     "scale picker": "масштаб",
     /* GEOR_ows.js strings */
-    "The NAME layer was not found in WMS service.": "Слой${NAME}не был найден в сервисе WMS (Web Map Service : Cервис Веб-Карт).",
+    "The NAME layer was not found in WMS service.": "Слой ${NAME} не был найден в сервисе WMS (Web Map Service : Cервис Веб-Карт).",
     /* GEOR_print.js strings */
     "Sources: ": "Источники",
     "Source: ": "Источник",
