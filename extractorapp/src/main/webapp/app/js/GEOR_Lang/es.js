@@ -211,6 +211,6 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     /* BoundingBoxPanel.js */
     "Modify the bounding box": "Modificar la extensión geográfica",
     "Modify the bounding box drawing a new one on the map":
-        "Modificar la extensión geográfica dibujando una nueva sobre el mapa",
+        "Modificar la extensión geográfica dibujando una nueva sobre el mapa"
     // no trailing comma
 });
