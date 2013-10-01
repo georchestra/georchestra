@@ -6,7 +6,9 @@ package org.georchestra.mapfishapp.ws.upload;
 
 /**
  * <p>
- *	DOCUMENT ME!
+ * This exception is used to break the SAX parsing process, which explore the document in order to identify its version. 
+ * Thus if the version is found in the kml document. 
+ * the rest of document is ignored.
  * </p>
  * @author Mauricio Pazos
  *
