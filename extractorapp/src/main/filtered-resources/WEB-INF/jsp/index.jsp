@@ -148,16 +148,7 @@ if(sec_roles != null) {
         </c:otherwise>
     </c:choose>
     </script>
-    <c:choose>
-        <c:when test='<%= request.getParameter("jsc") != null %>'>
-        <!-- Force GEOR.data.services and GEOR.data.layers from an external JS file -->
-    <script type="text/javascript" src="<%=request.getParameter("jsc") %>"></script>
-    <script type="text/javascript">
-        // we want all layers unchecked by default
-        GEOR.config.LAYERS_CHECKED = false;
-    </script>
-        </c:when>
-    </c:choose>
+
     <c:choose>
         <c:when test='<%= anonymous == false %>'>
     <script type="text/javascript">
