@@ -86,9 +86,7 @@ This implies that vector data is transmitted as XML over the air (via WMS getFea
 Before reporting errors, please check that your data is correct.
 
 Typically, layer names & field names should not:
- - start with a number,
- - include accentuated chars,
- - include spaces,
+ - include spaces nor accentuated chars,
  - start with a number.
 
 Browsers like FF will typically fail, while Chromium might just ignore the incorrect fields.
