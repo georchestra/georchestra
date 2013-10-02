@@ -66,6 +66,7 @@ Bug fixes:
  * static: fixed incorrect login link on CAS pages,
  * cas: fixed IE8 JS error on login page,
  * extractorapp: fixed app loading on IE8,
+ * extractorapp: now reports broken or uninstalled GDAL libraries,
  * mapfishapp: WM[T]S GetFeatureInfo geometries on the fly reprojection (at last !) - as a result, it is advised to fill the most widely used SRSes in your country in your [GEOR_custom.js](https://github.com/georchestra/template/blob/45eddec545418b4de55952795c66940729d3b547/mapfishapp/app/js/GEOR_custom.js#L365) config file,
  * mapfishapp: fixed fontFamily not taken into account by styler - also requires ```apt-get install ttf-mscorefonts-installer```,
  * mapfishapp: fixed querier setup issue when WFS service is not available,
@@ -76,6 +77,7 @@ Bug fixes:
  * mapfishapp: fixed unresolved images for point symbolizer combo,
  * mapfishapp: fixed legend label not appearing when only one class is available,
  * mapfishapp: fixed incorrect describeFeatureType URLs,
+ * mapfishapp: fixed undefined addons title and description when lang dict does not exist yet,
  * mapfishapp: fixed broken referentials search in IE8,
  * mapfishapp: fixed broken help url
 
