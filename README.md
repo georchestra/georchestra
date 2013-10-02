@@ -11,6 +11,7 @@ More information in the modules README:
  * [extractor](https://github.com/georchestra/georchestra/blob/master/extractorapp/README.md) (aka extractorapp)
  * [simple catalog](https://github.com/georchestra/georchestra/blob/master/catalogapp/README.md) (aka catalogapp)
  * [analytics](https://github.com/georchestra/georchestra/blob/master/analytics/README.md)
+ * [ldapadmin](https://github.com/georchestra/georchestra/blob/master/ldapadmin/README.md)
  * [downloadform](https://github.com/georchestra/georchestra/blob/master/downloadform/README.md)
  * [ogc-server-statistics](https://github.com/georchestra/georchestra/blob/master/ogc-server-statistics/README.md)
  * [static](https://github.com/georchestra/georchestra/blob/master/static/README.md)
@@ -70,8 +71,9 @@ Do whatever updates you want in the master branch, and regularly merge the upstr
     git fetch upstream
     git merge upstream/master
 
+Note: merge upstream/master into your config if you're using geOrchestra master, or upstream/stable if you're using geOrchestra stable.
 
-Read more about the [configuration process](https://github.com/georchestra/georchestra/blob/master/config/README.md)
+Read more about the [configuration process](https://github.com/georchestra/georchestra/blob/master/config/README.md).
 
 
 How to install ?
@@ -83,7 +85,7 @@ An example setup on one Tomcat is described [here](https://github.com/georchestr
 Once the system is ready, collect WAR files in a dedicated directory and rename them:
 
     PROFILE=myprofile
-    VERSION=13.06
+    VERSION=13.09
     mkdir -p /tmp/georchestra_deploy_tmp
     cd /tmp/georchestra_deploy_tmp
     cp `find ~/.m2/repository/ -name "*-${VERSION}-${PROFILE}.war"` ./
