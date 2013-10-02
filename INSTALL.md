@@ -289,16 +289,19 @@ Create a directory for tomcat6 java preferences (to avoid a `WARNING: Couldn't f
 Environment variables
 ----------------------
 
-In case of a 32G RAM server, here are the basic JAVA_OPTS:
+In case of a 32G RAM server, add the following options at the end of the configuration file:
 
-```
-export JAVA_OPTS="-Dsun.java2d.opengl=true \
+    sudo nano /etc/default/tomcat6
+
+    ~~~~
+    JAVA_OPTS="$JAVA_OPTS \
+                  -Dsun.java2d.opengl=true \
                   -Djava.awt.headless=true \
                   -Xms4G \
                   -Xmx28G \
                   -XX:MaxPermSize=256m \
                   "
-```
+    ~~~~
 
 Some geOrchestra applications will require you to add more JAVA_OPTS, read below...
 
@@ -377,13 +380,17 @@ GeoServer
 
 Required JAVA_OPTS for GeoServer :
 
-    -DGEOSERVER_DATA_DIR=/path/to/geoserver/data/dir \
-    -DGEOWEBCACHE_CACHE_DIR=/path/to/geowebcache/cache/dir \
-    -server \
-    -XX:-UseParallelGC \
-    -XX:SoftRefLRUPolicyMSPerMB=36000 \
-    -XX:NewRatio=2 \
-    -XX:+AggressiveOpts
+        sudo nano /etc/default/tomcat6
+
+    ~~~~
+    JAVA_OPTS="$JAVA_OPTS -DGEOSERVER_DATA_DIR=/path/to/geoserver/data/dir \
+        -DGEOWEBCACHE_CACHE_DIR=/path/to/geowebcache/cache/dir \
+        -server \
+        -XX:-UseParallelGC \
+        -XX:SoftRefLRUPolicyMSPerMB=36000 \
+        -XX:NewRatio=2 \
+        -XX:+AggressiveOpts"
+    ~~~~
 
 * Fonts
 
@@ -400,9 +407,13 @@ GeoNetwork
 
 Be sure to include those options in your tomcat JAVA_OPTS setup:
 
-    -Dgeonetwork.dir=/path/to/geonetwork-data-dir \
-    -Dgeonetwork[-private].schema.dir=/path/to/tomcat/webapps/geonetwork[-private]/WEB-INF/data/config/schema_plugins \
-    -Dgeonetwork.jeeves.configuration.overrides.file=/path/to/tomcat/webapps/geonetwork[-private]/WEB-INF/config-overrides-georchestra.xml
+        sudo nano /etc/default/tomcat6
+
+    ~~~~
+    JAVA_OPTS="$JAVA_OPTS -Dgeonetwork.dir=/path/to/geonetwork-data-dir \
+        -Dgeonetwork[-private].schema.dir=/path/to/tomcat/webapps/geonetwork[-private]/WEB-INF/data/config/schema_plugins \
+        -Dgeonetwork.jeeves.configuration.overrides.file=/path/to/tomcat/webapps/geonetwork[-private]/WEB-INF/config-overrides-georchestra.xml
+    ~~~~
 
 ... where brackets indicate optional strings, depending on your setup.
 
@@ -412,13 +423,21 @@ Extractorapp
 
 Again, it is required to include custom options in your tomcat JAVA_OPTS setup:
 
-    -Dorg.geotools.referencing.forceXY=true \
-    -Dgeobretagne_production=true \
-    -Dextractor.storage.dir=/path/to/temporary/extracts/
+        sudo nano /etc/default/tomcat6
+
+    ~~~~
+    JAVA_OPTS="$JAVA_OPTS -Dorg.geotools.referencing.forceXY=true \
+        -Dgeobretagne_production=true \
+        -Dextractor.storage.dir=/path/to/temporary/extracts/
+    ~~~~
 
 Note: if the epsg-extension module is installed, one can manage custom EPSG codes by adding:
 
-    -DCUSTOM_EPSG_FILE=file://$CATALINA_BASE/conf/epsg.properties
+        sudo nano /etc/default/tomcat6
+
+    ~~~~
+    JAVA_OPTS="$JAVA_OPTS -DCUSTOM_EPSG_FILE=file://$CATALINA_BASE/conf/epsg.properties
+    ~~~~
 
 .. in which a sample epsg.properties file can be found [here](https://github.com/georchestra/georchestra/blob/master/server-deploy-support/src/main/resources/c2c/tomcat/conf/epsg.properties)
 
@@ -456,6 +475,12 @@ then copy only the necessary files to an adequate lib directory, for example `/u
 
     sudo cp libgdaljni.so libgdalconstjni.so libogrjni.so libosrjni.so /path/to/gdal/NativeLibs
 
-In this case, you need to include this directory in the `LD_LIBRARY_PATH` environment variable, for example by setting `export LD_LIBRARY_PATH=/lib:/usr/lib/:/var/sig/gdal/NativeLibs/:$LD_LIBRARY_PATH` in the tomcat setenv.sh file.
+In this case, you need to include this directory in the `LD_LIBRARY_PATH` environment variable
+
+        sudo nano /etc/default/tomcat6
+
+    ~~~~
+    LD_LIBRARY_PATH=/lib:/usr/lib/:/var/sig/gdal/NativeLibs/:$LD_LIBRARY_PATH
+    ~~~~
 
 Another way to install the GDAL Java binding is building it from sources. See http://trac.osgeo.org/gdal/wiki/GdalOgrInJavaBuildInstructionsUnix.
