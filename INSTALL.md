@@ -86,7 +86,7 @@ Apache
 
         cd /etc/apache2/sites-available
         sudo a2dissite default default-ssl
-        sudo vi georchestra
+        sudo nano georchestra
 
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    	<VirtualHost *:80>
@@ -134,7 +134,7 @@ Apache
 * Apache config
 
         cd conf/
-        sudo vim /var/www/georchestra/conf/proxypass.conf
+        sudo nano /var/www/georchestra/conf/proxypass.conf
         
     should have something like:
         
@@ -256,7 +256,7 @@ Apache - SSL certificate
         
 * update your hosts
 
-        sudo vim /etc/hosts
+        sudo nano /etc/hosts
 
 
         127.0.0.1       vm-georchestra
@@ -289,15 +289,19 @@ Create a directory for tomcat6 java preferences (to avoid a `WARNING: Couldn't f
 Environment variables
 ----------------------
 
-In case of a 32G RAM server, here are the basic JAVA_OPTS:
+In case of a 32G RAM server, add the following options at the end of the configuration file:
 
 ```
-export JAVA_OPTS="-Dsun.java2d.opengl=true \
-                  -Djava.awt.headless=true \
-                  -Xms4G \
-                  -Xmx28G \
-                  -XX:MaxPermSize=256m \
-                  "
+sudo nano /etc/default/tomcat6
+```
+
+```
+JAVA_OPTS="$JAVA_OPTS \
+              -Dsun.java2d.opengl=true \
+              -Djava.awt.headless=true \
+              -Xms4G \
+              -Xmx28G \
+              -XX:MaxPermSize=256m "
 ```
 
 Some geOrchestra applications will require you to add more JAVA_OPTS, read below...
@@ -333,36 +337,47 @@ Keystore/Trustore
        
 * truststore config
 
-        sudo vim /etc/default/tomcat6
-        
-    ~~~~~~~~~~~~~~
-    JAVA_OPTS="$JAVA_OPTS -Djavax.net.ssl.trustStore=/etc/tomcat6/keystore -Djavax.net.ssl.trustStorePassword=mdpstore"
-    ~~~~~~~~~~~~~~~
+```
+sudo nano /etc/default/tomcat6
+```
+
+```
+JAVA_OPTS="$JAVA_OPTS -Djavax.net.ssl.trustStore=/etc/tomcat6/keystore -Djavax.net.ssl.trustStorePassword=mdpstore"
+```
 
 * connectors config
 
-        sudo vim /etc/tomcat6/server.xml
-        
-    ~~~~~~~~~~~~~~~~~~~~~~~~~    
-    <Connector port="8443" protocol="HTTP/1.1" SSLEnabled="true"
-       URIEncoding="UTF-8"
-       maxThreads="150" scheme="https" secure="true"
-       clientAuth="false"
-       keystoreFile="/etc/tomcat6/keystore"
-       keystorePass="mdpstore"
-       compression="on"
-       compressionMinSize="2048"
-       noCompressionUserAgents="gozilla, traviata"
-       compressableMimeType="text/html,text/xml,text/javascript,application/x-javascript,application/javascript,text/css" />
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    
-    ~~~~~~~~~~~~~~~~~~~~~~
-    <Connector URIEncoding="UTF-8"
-           port="8009"
-           protocol="AJP/1.3"
-           connectionTimeout="20000"
-           redirectPort="8443" />
-    ~~~~~~~~~~~~~~~~~~~~~~
+```
+sudo nano /etc/tomcat6/server.xml
+```
+
+```
+<Connector port="8080" protocol="HTTP/1.1"
+   connectionTimeout="20000"
+   URIEncoding="UTF-8"
+   redirectPort="8443" />
+```
+
+```
+<Connector port="8443" protocol="HTTP/1.1" SSLEnabled="true"
+   URIEncoding="UTF-8"
+   maxThreads="150" scheme="https" secure="true"
+   clientAuth="false"
+   keystoreFile="/etc/tomcat6/keystore"
+   keystorePass="mdpstore"
+   compression="on"
+   compressionMinSize="2048"
+   noCompressionUserAgents="gozilla, traviata"
+   compressableMimeType="text/html,text/xml,text/javascript,application/x-javascript,application/javascript,text/css" />
+```
+
+```
+<Connector URIEncoding="UTF-8"
+   port="8009"
+   protocol="AJP/1.3"
+   connectionTimeout="20000"
+   redirectPort="8443" />
+```
     
 * Tomcat restart
  
@@ -377,13 +392,19 @@ GeoServer
 
 Required JAVA_OPTS for GeoServer :
 
-    -DGEOSERVER_DATA_DIR=/path/to/geoserver/data/dir \
+```
+sudo nano /etc/default/tomcat6
+```
+
+```
+JAVA_OPTS="$JAVA_OPTS -DGEOSERVER_DATA_DIR=/path/to/geoserver/data/dir \
     -DGEOWEBCACHE_CACHE_DIR=/path/to/geowebcache/cache/dir \
     -server \
     -XX:-UseParallelGC \
     -XX:SoftRefLRUPolicyMSPerMB=36000 \
     -XX:NewRatio=2 \
-    -XX:+AggressiveOpts
+    -XX:+AggressiveOpts"
+```
 
 * Fonts
 
@@ -400,9 +421,15 @@ GeoNetwork
 
 Be sure to include those options in your tomcat JAVA_OPTS setup:
 
-    -Dgeonetwork.dir=/path/to/geonetwork-data-dir \
+```
+sudo nano /etc/default/tomcat6
+```
+
+```
+JAVA_OPTS="$JAVA_OPTS -Dgeonetwork.dir=/path/to/geonetwork-data-dir \
     -Dgeonetwork[-private].schema.dir=/path/to/tomcat/webapps/geonetwork[-private]/WEB-INF/data/config/schema_plugins \
     -Dgeonetwork.jeeves.configuration.overrides.file=/path/to/tomcat/webapps/geonetwork[-private]/WEB-INF/config-overrides-georchestra.xml
+```
 
 ... where brackets indicate optional strings, depending on your setup.
 
@@ -412,23 +439,70 @@ Extractorapp
 
 Again, it is required to include custom options in your tomcat JAVA_OPTS setup:
 
-    -Dorg.geotools.referencing.forceXY=true \
+```
+sudo nano /etc/default/tomcat6
+```
+
+```
+JAVA_OPTS="$JAVA_OPTS -Dorg.geotools.referencing.forceXY=true \
     -Dgeobretagne_production=true \
     -Dextractor.storage.dir=/path/to/temporary/extracts/
+```
 
 Note: if the epsg-extension module is installed, one can manage custom EPSG codes by adding:
 
-    -DCUSTOM_EPSG_FILE=file://$CATALINA_BASE/conf/epsg.properties
+```
+sudo nano /etc/default/tomcat6
+```
 
-.. in which a sample epsg.properties file can be found [here](https://github.com/georchestra/georchestra/blob/master/server-deploy-support/src/main/resources/c2c/tomcat/conf/epsg.properties)
+```
+JAVA_OPTS="$JAVA_OPTS -DCUSTOM_EPSG_FILE=file://$CATALINA_BASE/conf/epsg.properties
+```
 
+... in which a sample epsg.properties file can be found [here](https://github.com/georchestra/georchestra/blob/master/server-deploy-support/src/main/resources/c2c/tomcat/conf/epsg.properties)
 
-Finally, you'll have to install GDAL/OGR native libs + data and reference them with these environment variables:
+GDAL for Extractorapp and Mapfishapp
+====================================
 
-    export LD_LIBRARY_PATH="/path/to/gdal/NativeLibs"
-    export GDAL_DATA="/path/to/gdal/data"
-    export PATH=/path/to/gdal/NativeLibs/:$PATH
-    export CLASSPATH=:/path/to/gdal/NativeLibs/:$CLASSPATH
-    export LD_LIBRARY_PATH=/lib:/usr/lib/:/path/to/gdal/NativeLibs/:$LD_LIBRARY_PATH
+Extractorapp **requires** GDAL and GDAL Java bindings libraries installed on the server.
 
+Mapfishapp also optionally uses them for the file upload functionality, that allows to upload a vectorial data file to mapfishapp in order to display it as a layer. This functionnality in Mapfishapp relies normally on GeoTools, however, the supported file formats are limited (at 07/12/2013: shp, mif, gml and kml). If GDAL and GDAL Java bindings libraries are installed, the number of supported file formats is increased. This would give access, for example, to extra formats such as gpx or tab.
 
+The key element for calling the GDAL native library from mapfishapp is the **imageio-ext library** (see https://github.com/geosolutions-it/imageio-ext/wiki). It relies on:
+ * jar files, that are included at build by maven,
+ * a GDAL Java binding library, based on the JNI framework,
+ * and obviously the GDAL library.
+
+The latter can be installed, on Debian-based distributions, with the libgdal1 package:
+
+    sudo apt-get install libgdal1
+
+Some more work is needed for installing the GDAL Java binding library, as there is still no deb package for it (note that packages exist for ruby and perl bindings, hopefully the Java's one will be released soon - see a recent proposal http://ftp-master.debian.org/new/gdal_1.10.0-0%7Eexp3.html).
+
+To quickly install the GDAL Java binding library on the server, download and extract the library (see http://demo.geo-solutions.it/share/github/imageio-ext/releases/1.1.X/1.1.7/native/gdal/ for the adequate distribution). For Ubuntu 12:
+
+    cd /tmp/
+    mkdir gdal
+    cd gdal
+    wget http://demo.geo-solutions.it/share/github/imageio-ext/releases/1.1.X/1.1.7/native/gdal/linux/gdal192-Ubuntu12-gcc4.6.3-x86_64.tar.gz
+    tar xzf gdal192-Ubuntu12-gcc4.6.3-x86_64.tar.gz
+
+then copy only the necessary files to an adequate lib directory, for example `/usr/lib/`, that is usually included in the `LD_LIBRARY_PATH` environment variable and therefore allow to load the libraries directly:
+
+    sudo cp libgdaljni.so libgdalconstjni.so libogrjni.so libosrjni.so /usr/lib/
+
+**Alternatively**, you could install the libraries in a specific directory
+
+    sudo cp libgdaljni.so libgdalconstjni.so libogrjni.so libosrjni.so /path/to/gdal/NativeLibs
+
+In this case, you need to include this directory in the `LD_LIBRARY_PATH` environment variable
+
+```
+sudo nano /etc/default/tomcat6
+```
+
+```
+LD_LIBRARY_PATH=/lib:/usr/lib/:/var/sig/gdal/NativeLibs/:$LD_LIBRARY_PATH
+```
+
+Another way to install the GDAL Java binding is building it from sources. See http://trac.osgeo.org/gdal/wiki/GdalOgrInJavaBuildInstructionsUnix.
