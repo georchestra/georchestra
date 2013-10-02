@@ -353,31 +353,31 @@ sudo nano /etc/tomcat6/server.xml
 
 ```
 <Connector port="8080" protocol="HTTP/1.1"
-           connectionTimeout="20000"
-           URIEncoding="UTF-8"
-           redirectPort="8443" />
+   connectionTimeout="20000"
+   URIEncoding="UTF-8"
+   redirectPort="8443" />
 ```
-        
-    ~~~~~~~~~~~~~~~~~~~~~~~~~    
-    <Connector port="8443" protocol="HTTP/1.1" SSLEnabled="true"
-       URIEncoding="UTF-8"
-       maxThreads="150" scheme="https" secure="true"
-       clientAuth="false"
-       keystoreFile="/etc/tomcat6/keystore"
-       keystorePass="mdpstore"
-       compression="on"
-       compressionMinSize="2048"
-       noCompressionUserAgents="gozilla, traviata"
-       compressableMimeType="text/html,text/xml,text/javascript,application/x-javascript,application/javascript,text/css" />
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    
-    ~~~~~~~~~~~~~~~~~~~~~~
-    <Connector URIEncoding="UTF-8"
-           port="8009"
-           protocol="AJP/1.3"
-           connectionTimeout="20000"
-           redirectPort="8443" />
-    ~~~~~~~~~~~~~~~~~~~~~~
+
+```
+<Connector port="8443" protocol="HTTP/1.1" SSLEnabled="true"
+   URIEncoding="UTF-8"
+   maxThreads="150" scheme="https" secure="true"
+   clientAuth="false"
+   keystoreFile="/etc/tomcat6/keystore"
+   keystorePass="mdpstore"
+   compression="on"
+   compressionMinSize="2048"
+   noCompressionUserAgents="gozilla, traviata"
+   compressableMimeType="text/html,text/xml,text/javascript,application/x-javascript,application/javascript,text/css" />
+```
+
+```
+<Connector URIEncoding="UTF-8"
+   port="8009"
+   protocol="AJP/1.3"
+   connectionTimeout="20000"
+   redirectPort="8443" />
+```
     
 * Tomcat restart
  
