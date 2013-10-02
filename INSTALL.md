@@ -291,9 +291,11 @@ Environment variables
 
 In case of a 32G RAM server, add the following options at the end of the configuration file:
 
+```
     sudo nano /etc/default/tomcat6
+```
 
-    ~~~~
+```
     JAVA_OPTS="$JAVA_OPTS \
                   -Dsun.java2d.opengl=true \
                   -Djava.awt.headless=true \
@@ -301,7 +303,7 @@ In case of a 32G RAM server, add the following options at the end of the configu
                   -Xmx28G \
                   -XX:MaxPermSize=256m \
                   "
-    ~~~~
+```
 
 Some geOrchestra applications will require you to add more JAVA_OPTS, read below...
 
