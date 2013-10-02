@@ -345,6 +345,13 @@ Keystore/Trustore
 * connectors config
 
         sudo nano /etc/tomcat6/server.xml
+
+    ~~~~
+    <Connector port="8080" protocol="HTTP/1.1"
+               connectionTimeout="20000"
+               URIEncoding="UTF-8"
+               redirectPort="8443" />
+    ~~~~
         
     ~~~~~~~~~~~~~~~~~~~~~~~~~    
     <Connector port="8443" protocol="HTTP/1.1" SSLEnabled="true"
