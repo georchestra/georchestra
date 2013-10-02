@@ -167,21 +167,16 @@ public abstract class Email {
             message.setSubject(subject, subjectEncoding);
         }
 
-        Multipart multipart = new MimeMultipart();
-
         if (msg != null) {
-            MimeBodyPart bodyPart = new MimeBodyPart();
+            /* See http://www.rgagnon.com/javadetails/java-0321.html */
             if ("true".equalsIgnoreCase(emailHtml)) {
-                bodyPart.setText(msg, bodyEncoding, "html");
+                message.setContent(msg, "text/html; charset=" + bodyEncoding);
             } else {
-                bodyPart.setText(msg, bodyEncoding, "text");
+                message.setContent(msg, "text/plain; charset=" + bodyEncoding);
             }
-            bodyPart.setContentLanguage(languages);
-            multipart.addBodyPart(bodyPart);
             LOG.debug(msg);
         }
 
-        message.setContent(multipart);
         Transport.send(message);
         LOG.debug("extraction email has been sent to:\n"
                 + Arrays.toString(recipients));
