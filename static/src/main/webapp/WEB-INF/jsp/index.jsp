@@ -207,7 +207,7 @@ if(sec_roles != null) {
         <c:choose>
             <c:when test='<%= anonymous == false %>'>
         <p class="logged">
-            <a href='/ldapadmin/account/userdetails?uid=<%=request.getHeader("sec-username") %>'><%=request.getHeader("sec-username") %></a><span class="light"> | </span><a href="/j_spring_security_logout"><fmt:message key="logout"/></a>
+            <a href="/ldapadmin/account/userdetails"><%=request.getHeader("sec-username") %></a><span class="light"> | </span><a href="/j_spring_security_logout"><fmt:message key="logout"/></a>
         </p>
             </c:when>
             <c:otherwise>
