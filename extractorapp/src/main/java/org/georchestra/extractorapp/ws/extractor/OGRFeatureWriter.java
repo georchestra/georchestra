@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Map;
 
+import javax.management.RuntimeErrorException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.geotools.data.DataStore;
@@ -173,7 +175,11 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
 
 	        files =  new File[]{new File( pathName)};
 	        
-        } finally {
+        } catch (NullPointerException e) {
+        	LOG.error("OGRDataStore couldn't be created, please check GDAL librairies are correctly installed on your machine");
+        	throw e;
+        }
+        finally {
             if(ds != null){
             	ds.dispose();
             }

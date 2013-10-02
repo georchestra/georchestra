@@ -373,7 +373,11 @@ GEOR.ows = (function() {
                     },
                     params: Ext.applyIf({
                         "REQUEST": "DescribeFeatureType",
-                        "TYPENAME": r.typeName
+                        "TYPENAME": r.typeName,
+                        // VERSION is required (from the OGC spec) - but GeoServer does well without it.
+                        // This is essentially for MapServer:
+                        "VERSION": "1.0.0"
+                        // for more information, read https://github.com/georchestra/georchestra/issues/314
                     }, WFS_BASE_PARAMS),
                     success: function(resp) {
 
@@ -396,6 +400,7 @@ GEOR.ows = (function() {
                         } else {
                         	version = "1.0.0";
                         }
+                        // FIXME: we might not always have a record in input (might be an object too)
                         record.set("WFSversion", version);
                         
                         // End hack
@@ -403,6 +408,7 @@ GEOR.ows = (function() {
                         var format = new OpenLayers.Format.WFSDescribeFeatureType();
                         var jsObj = format.read(data);
 
+                        // same FIXME here
                         record.set("featureNS", jsObj.targetNamespace);
 
                         store.on({
@@ -426,7 +432,9 @@ GEOR.ows = (function() {
                     fields: attributeStoreFields,
                     baseParams: Ext.applyIf({
                         "REQUEST": "DescribeFeatureType",
-                        "TYPENAME": r.typeName
+                        "TYPENAME": r.typeName,
+                        // see above comment regarding VERSION:
+                        "VERSION": "1.0.0"
                     }, WFS_BASE_PARAMS)
                 }, options.storeOptions || {});
                 store = new GeoExt.data.AttributeStore(storeOptions);
