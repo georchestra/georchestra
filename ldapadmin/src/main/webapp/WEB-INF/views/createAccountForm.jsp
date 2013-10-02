@@ -106,8 +106,27 @@
     function makeUid(){
         var name = document.form.firstName.value;
         var surname = document.form.surname.value;
-        document.form.uid.value = name.toLowerCase().charAt(0)+ surname.toLowerCase(); // strategy 1
-        //document.form.uid.value = name +"."+ surname;  // strategy 2
+        var str = stringDeaccentuate(name.toLowerCase().charAt(0)+ surname.toLowerCase());
+        str = str.replace(/\W*/g, '');
+        document.form.uid.value = str;
+    }
+    /**
+     * stringDeaccentuate
+     * Returns a string without accents
+     *
+     * Parameters:
+     * str - {String}
+     *
+     * Returns:
+     * {String}
+     */
+    function stringDeaccentuate(str) {
+        str = str.replace(/ç/, 'c');
+        str = str.replace(/(á|à|ä|â|å|Â|Ä|Á|À|Ã)/, 'a');
+        str = str.replace(/(é|è|ë|ê|Ê|Ë|É|È|Ę)/, 'e');
+        str = str.replace(/(í|ì|ï|î|Î|Ï|Í|Ì|Į)/, 'i');
+        str = str.replace(/(ó|ò|ö|ô|ø|Ô|Ö|Ó|Ò)/, 'o');
+        return str.replace(/(ú|ù|ü|û|Û|Ü|Ú|Ù|Ų)/, 'u');
     }
     function confirmPasswordOnBlur() {
         if (!testConfirmPassword()) {
