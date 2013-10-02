@@ -292,17 +292,16 @@ Environment variables
 In case of a 32G RAM server, add the following options at the end of the configuration file:
 
 ```
-    sudo nano /etc/default/tomcat6
+sudo nano /etc/default/tomcat6
 ```
 
 ```
-    JAVA_OPTS="$JAVA_OPTS \
-                  -Dsun.java2d.opengl=true \
-                  -Djava.awt.headless=true \
-                  -Xms4G \
-                  -Xmx28G \
-                  -XX:MaxPermSize=256m \
-                  "
+JAVA_OPTS="$JAVA_OPTS \
+              -Dsun.java2d.opengl=true \
+              -Djava.awt.headless=true \
+              -Xms4G \
+              -Xmx28G \
+              -XX:MaxPermSize=256m "
 ```
 
 Some geOrchestra applications will require you to add more JAVA_OPTS, read below...
@@ -338,22 +337,26 @@ Keystore/Trustore
        
 * truststore config
 
-        sudo nano /etc/default/tomcat6
-        
-    ~~~~~~~~~~~~~~
-    JAVA_OPTS="$JAVA_OPTS -Djavax.net.ssl.trustStore=/etc/tomcat6/keystore -Djavax.net.ssl.trustStorePassword=mdpstore"
-    ~~~~~~~~~~~~~~~
+```
+sudo nano /etc/default/tomcat6
+```
+
+```
+JAVA_OPTS="$JAVA_OPTS -Djavax.net.ssl.trustStore=/etc/tomcat6/keystore -Djavax.net.ssl.trustStorePassword=mdpstore"
+```
 
 * connectors config
 
-        sudo nano /etc/tomcat6/server.xml
+```
+sudo nano /etc/tomcat6/server.xml
+```
 
-    ~~~~
-    <Connector port="8080" protocol="HTTP/1.1"
-               connectionTimeout="20000"
-               URIEncoding="UTF-8"
-               redirectPort="8443" />
-    ~~~~
+```
+<Connector port="8080" protocol="HTTP/1.1"
+           connectionTimeout="20000"
+           URIEncoding="UTF-8"
+           redirectPort="8443" />
+```
         
     ~~~~~~~~~~~~~~~~~~~~~~~~~    
     <Connector port="8443" protocol="HTTP/1.1" SSLEnabled="true"
@@ -389,17 +392,19 @@ GeoServer
 
 Required JAVA_OPTS for GeoServer :
 
-        sudo nano /etc/default/tomcat6
+```
+sudo nano /etc/default/tomcat6
+```
 
-    ~~~~
-    JAVA_OPTS="$JAVA_OPTS -DGEOSERVER_DATA_DIR=/path/to/geoserver/data/dir \
-        -DGEOWEBCACHE_CACHE_DIR=/path/to/geowebcache/cache/dir \
-        -server \
-        -XX:-UseParallelGC \
-        -XX:SoftRefLRUPolicyMSPerMB=36000 \
-        -XX:NewRatio=2 \
-        -XX:+AggressiveOpts"
-    ~~~~
+```
+JAVA_OPTS="$JAVA_OPTS -DGEOSERVER_DATA_DIR=/path/to/geoserver/data/dir \
+    -DGEOWEBCACHE_CACHE_DIR=/path/to/geowebcache/cache/dir \
+    -server \
+    -XX:-UseParallelGC \
+    -XX:SoftRefLRUPolicyMSPerMB=36000 \
+    -XX:NewRatio=2 \
+    -XX:+AggressiveOpts"
+```
 
 * Fonts
 
@@ -416,13 +421,15 @@ GeoNetwork
 
 Be sure to include those options in your tomcat JAVA_OPTS setup:
 
-        sudo nano /etc/default/tomcat6
+```
+sudo nano /etc/default/tomcat6
+```
 
-    ~~~~
-    JAVA_OPTS="$JAVA_OPTS -Dgeonetwork.dir=/path/to/geonetwork-data-dir \
-        -Dgeonetwork[-private].schema.dir=/path/to/tomcat/webapps/geonetwork[-private]/WEB-INF/data/config/schema_plugins \
-        -Dgeonetwork.jeeves.configuration.overrides.file=/path/to/tomcat/webapps/geonetwork[-private]/WEB-INF/config-overrides-georchestra.xml
-    ~~~~
+```
+JAVA_OPTS="$JAVA_OPTS -Dgeonetwork.dir=/path/to/geonetwork-data-dir \
+    -Dgeonetwork[-private].schema.dir=/path/to/tomcat/webapps/geonetwork[-private]/WEB-INF/data/config/schema_plugins \
+    -Dgeonetwork.jeeves.configuration.overrides.file=/path/to/tomcat/webapps/geonetwork[-private]/WEB-INF/config-overrides-georchestra.xml
+```
 
 ... where brackets indicate optional strings, depending on your setup.
 
@@ -432,23 +439,27 @@ Extractorapp
 
 Again, it is required to include custom options in your tomcat JAVA_OPTS setup:
 
-        sudo nano /etc/default/tomcat6
+```
+sudo nano /etc/default/tomcat6
+```
 
-    ~~~~
-    JAVA_OPTS="$JAVA_OPTS -Dorg.geotools.referencing.forceXY=true \
-        -Dgeobretagne_production=true \
-        -Dextractor.storage.dir=/path/to/temporary/extracts/
-    ~~~~
+```
+JAVA_OPTS="$JAVA_OPTS -Dorg.geotools.referencing.forceXY=true \
+    -Dgeobretagne_production=true \
+    -Dextractor.storage.dir=/path/to/temporary/extracts/
+```
 
 Note: if the epsg-extension module is installed, one can manage custom EPSG codes by adding:
 
-        sudo nano /etc/default/tomcat6
+```
+sudo nano /etc/default/tomcat6
+```
 
-    ~~~~
-    JAVA_OPTS="$JAVA_OPTS -DCUSTOM_EPSG_FILE=file://$CATALINA_BASE/conf/epsg.properties
-    ~~~~
+```
+JAVA_OPTS="$JAVA_OPTS -DCUSTOM_EPSG_FILE=file://$CATALINA_BASE/conf/epsg.properties
+```
 
-.. in which a sample epsg.properties file can be found [here](https://github.com/georchestra/georchestra/blob/master/server-deploy-support/src/main/resources/c2c/tomcat/conf/epsg.properties)
+... in which a sample epsg.properties file can be found [here](https://github.com/georchestra/georchestra/blob/master/server-deploy-support/src/main/resources/c2c/tomcat/conf/epsg.properties)
 
 GDAL for Extractorapp and Mapfishapp
 ====================================
@@ -486,10 +497,12 @@ then copy only the necessary files to an adequate lib directory, for example `/u
 
 In this case, you need to include this directory in the `LD_LIBRARY_PATH` environment variable
 
-        sudo nano /etc/default/tomcat6
+```
+sudo nano /etc/default/tomcat6
+```
 
-    ~~~~
-    LD_LIBRARY_PATH=/lib:/usr/lib/:/var/sig/gdal/NativeLibs/:$LD_LIBRARY_PATH
-    ~~~~
+```
+LD_LIBRARY_PATH=/lib:/usr/lib/:/var/sig/gdal/NativeLibs/:$LD_LIBRARY_PATH
+```
 
 Another way to install the GDAL Java binding is building it from sources. See http://trac.osgeo.org/gdal/wiki/GdalOgrInJavaBuildInstructionsUnix.
