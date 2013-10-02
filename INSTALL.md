@@ -86,7 +86,7 @@ Apache
 
         cd /etc/apache2/sites-available
         sudo a2dissite default default-ssl
-        sudo vi georchestra
+        sudo nano georchestra
 
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    	<VirtualHost *:80>
@@ -134,7 +134,7 @@ Apache
 * Apache config
 
         cd conf/
-        sudo vim /var/www/georchestra/conf/proxypass.conf
+        sudo nano /var/www/georchestra/conf/proxypass.conf
         
     should have something like:
         
@@ -256,7 +256,7 @@ Apache - SSL certificate
         
 * update your hosts
 
-        sudo vim /etc/hosts
+        sudo nano /etc/hosts
 
 
         127.0.0.1       vm-georchestra
@@ -333,7 +333,7 @@ Keystore/Trustore
        
 * truststore config
 
-        sudo vim /etc/default/tomcat6
+        sudo nano /etc/default/tomcat6
         
     ~~~~~~~~~~~~~~
     JAVA_OPTS="$JAVA_OPTS -Djavax.net.ssl.trustStore=/etc/tomcat6/keystore -Djavax.net.ssl.trustStorePassword=mdpstore"
@@ -341,7 +341,7 @@ Keystore/Trustore
 
 * connectors config
 
-        sudo vim /etc/tomcat6/server.xml
+        sudo nano /etc/tomcat6/server.xml
         
     ~~~~~~~~~~~~~~~~~~~~~~~~~    
     <Connector port="8443" protocol="HTTP/1.1" SSLEnabled="true"
