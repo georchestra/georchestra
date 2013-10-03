@@ -1,14 +1,11 @@
 The development branch is master. It can be used for testing and reporting errors.
 
-For production systems, you are advised to use the branch named "stable".
-This branch receives bug fixes as they arrive.
-
-Every release is supported for 6 months.
-Each time a new release is out, the stable branch is renamed according to the old release version, and a new "stable" branch is forked off master.
+For production systems, you are advised to use the stable branch (currently 13.09).
+This branch receives bug fixes as they arrive, during 6 months at least.
 
 
-Version 13.09 (in the works)
-============================
+Version 13.09 (current stable version)
+=======================================
 
 This major release was supported by the GeoPicardie, PIGMA, CIGALsace and GeoBretagne projects. 
 The CRAIG (Centre Régional Auvergnat de l'Information Géographique) is also to be thanked for some nice patches.
@@ -102,8 +99,8 @@ UPGRADING:
    * ```shared.smtp.from``` -> ```shared.email.from```
 
 
-Version 13.06 (current stable version)
-======================================
+Version 13.06
+==============
 
 This release was supported by the French GeoPicardie, GeoBretagne and CIGALsace projects, the GIP ATGeRi and individual contributors.
 
