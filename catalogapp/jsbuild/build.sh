@@ -5,7 +5,7 @@ set -x
 buildpath="$(cd $(dirname $0); pwd)"
 webapppath="${buildpath}/../src/main/webapp"
 releasepath="${webapppath}/build"
-venv="${buildpath}/venv"
+venv="${buildpath}/env"
 
 #
 # Command path definitions
