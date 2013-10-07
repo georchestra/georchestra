@@ -214,10 +214,10 @@ GEOR.FeaturePanel = Ext.extend(Ext.form.FormPanel, {
                 xtype: 'spinnerfield',
                 name: 'stroke',
                 fieldLabel: OpenLayers.i18n('annotation.' + attribute.toLowerCase()),
-                value: feature.style[attribute] || ((feature.isLabel) ? 12 : 1),
+                value: feature.style[attribute] || ((feature.isLabel) ? 16 : 1),
                 width: 40,
-                minValue: feature.isLabel ? 10 : 1,
-                maxValue: feature.isLabel ? 20 : 10,
+                minValue: feature.isLabel ? 8 : 1,
+                maxValue: feature.isLabel ? 36 : 10,
                 listeners: {
                     spin: function(spinner) {
                         var f = feature;
