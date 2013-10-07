@@ -131,19 +131,21 @@ GEOR.getfeatureinfo = (function() {
                 });
             }
         }
+        // we need to create a results object for each ctrl.layer
+        // to gracefully handle the case when no data is found
+        Ext.each(ctrl.layers, function (layer) {
+            results[layer.params.LAYERS] = {
+                title: GEOR.util.shortenLayerName(layer),
+                features: []
+            };
+        });
 
+        // explode info.features in the different layers
         Ext.each(info.features, function (feature) {
             var featureType = feature.gml.featureType;
-            if (results[featureType] === undefined) {
-                // find corresponding layer in the ctrl
-                for (var i = 0 ; i < ctrl.layers.length && featureType != ctrl.layers[i].params.LAYERS ; i++);
-                results[featureType] = {
-                    title: GEOR.util.shortenLayerName(ctrl.layers[i]),
-                    features: [feature]
-                };
-            } else
-                results[featureType].features.push(feature);
+            results[featureType].features.push(feature);
         });
+
         // generate FeatureDataModels now that we have all features sorted out by featureType
         Ext.iterate(results, function(featuretype, result) {
             result.model = new GEOR.FeatureDataModel({ features: result.features });
