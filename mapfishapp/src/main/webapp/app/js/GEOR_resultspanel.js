@@ -32,7 +32,7 @@
 
 Ext.namespace("GEOR");
 
-GEOR.resultspanel = Ext.extend(Ext.Panel, (function() {
+GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
 
     /**
      * Method: csvExportBtnHandler
@@ -118,7 +118,7 @@ GEOR.resultspanel = Ext.extend(Ext.Panel, (function() {
 
     return {
         /**
-          * Constructor of the resultspanel object.
+          * Constructor of the ResultsPanel object.
           * Because of its inheritance from an Ext.panel, it can use its attributes.
           */
         constructor: function(config){
@@ -162,7 +162,7 @@ GEOR.resultspanel = Ext.extend(Ext.Panel, (function() {
                  */
                 tr: OpenLayers.i18n,
             }, config);
-            GEOR.resultspanel.superclass.constructor.call(this, config);
+            GEOR.ResultsPanel.superclass.constructor.call(this, config);
         },
 
         /**

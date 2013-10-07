@@ -209,7 +209,7 @@ Ext.namespace("GEOR");
 
         // this panel serves as the container for
         // the "search results" tabs
-        var tab = new GEOR.resultspanel({html: tr("resultspanel.emptytext")});
+        var tab = new GEOR.ResultsPanel({html: tr("resultspanel.emptytext")});
         var southPanel = new Ext.TabPanel({
             region: "south",
             split: true,
@@ -239,7 +239,7 @@ Ext.namespace("GEOR");
                     if(southPanel.getActiveTab()){
                         southPanel.getActiveTab().doLayout();
                         if(southPanel.getActiveTab().id == 'addPanel'){
-                            var tab = new GEOR.resultspanel({html: tr("resultspanel.emptytext")});
+                            var tab = new GEOR.ResultsPanel({html: tr("resultspanel.emptytext")});
                             southPanel.insert(southPanel.items.length-1,tab);
                             southPanel.setActiveTab(tab);
                             southPanel.doLayout();
@@ -390,7 +390,7 @@ Ext.namespace("GEOR");
                 "searchresults": function(options) {
 //                  southPanel.remove(southPanel.getActiveTab());
                     Ext.iterate(options.results, function(featureType, result) {
-                        var tab = new GEOR.resultspanel({
+                        var tab = new GEOR.ResultsPanel({
                             html: tr("resultspanel.emptytext"),
                             itemId: featureType, // XXX assume only one tab per featuretype ?
                             map: map
@@ -411,9 +411,11 @@ Ext.namespace("GEOR");
         if (GEOR.selectfeature) {
             GEOR.selectfeature.events.on({
                 "search": function(panelCfg) {
+/*
                     if (GEOR.resultspanel) {
                         GEOR.resultspanel.clean();
                     }
+*/
                     southPanel.removeAll();
                     var panel = Ext.apply({
                         bodyStyle: 'padding:5px'
@@ -423,9 +425,11 @@ Ext.namespace("GEOR");
                     southPanel.expand();
                 },
                 "searchresults": function(options) {
+/*
                     if (GEOR.resultspanel) {
                         GEOR.resultspanel.populate(options);
                     }
+*/
                 },
                 "shutdown": function() {
                     southPanel.collapse();
