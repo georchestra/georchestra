@@ -131,11 +131,14 @@ GEOR.getfeatureinfo = (function() {
                 });
             }
         }
+        var coord = map.getLonLatFromPixel(info.xy).transform(map.projection, new OpenLayers.Projection("EPSG:4326"));
+        var coordstr = "Lon:" + OpenLayers.Number.format(coord.lon, 5) + " Lat:" + OpenLayers.Number.format(coord.lat, 5);
         // we need to create a results object for each ctrl.layer
         // to gracefully handle the case when no data is found
         Ext.each(ctrl.layers, function (layer) {
             results[layer.params.LAYERS] = {
                 title: GEOR.util.shortenLayerName(layer),
+                tooltip: layer.name + " - " + coordstr,
                 features: []
             };
         });

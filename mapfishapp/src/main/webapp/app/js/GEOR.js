@@ -226,7 +226,7 @@ Ext.namespace("GEOR");
                 border: false,
                 frame: false
             },
-            items: [tab, {id: 'addPanel', title: '+', style: 'float: right;'}],
+            items: [tab, {id: 'addPanel', title: '+', tabTip: tr('Add query'), style: 'float: right;'}],
             listeners: {
                 'collapse': function(){
                     for(var i = 0; i < southPanel.items.length-1; i++){
@@ -393,10 +393,11 @@ Ext.namespace("GEOR");
                         var tab = new GEOR.ResultsPanel({
                             html: tr("resultspanel.emptytext"),
                             //itemId: featureType, // XXX assume only one tab per featuretype ?
+                            tabTip: result.tooltip,
+                            title: result.title,
                             map: map
                         });
                         tab.populate ({features: result.features, model: result.model});
-                        tab.setTitle(result.title);
                         southPanel.insert(southPanel.items.length-1,tab);
                         southPanel.setActiveTab(tab);
                     });
