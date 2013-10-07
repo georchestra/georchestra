@@ -34,15 +34,6 @@ Ext.namespace("GEOR");
 
 GEOR.resultspanel = Ext.extend(Ext.Panel, (function() {
 
-    var observable = new Ext.util.Observable();
-    observable.addEvents(
-        /**
-         * Event: panel
-         * Fires when we have a panel to display south
-         */
-        "panel"
-    );
-
     /**
      * Method: csvExportBtnHandler
      * Triggers the download dialog for CSV export of the store's content
@@ -169,25 +160,9 @@ GEOR.resultspanel = Ext.extend(Ext.Panel, (function() {
                  * Property: tr
                  * {Function} an alias to OpenLayers.i18n
                  */
-                tr: null,
-                /*
-                 * Observable object
-                 */
-                events: observable
+                tr: OpenLayers.i18n,
             }, config);
             GEOR.resultspanel.superclass.constructor.call(this, config);
-        },
-
-        /**
-         * APIMethod: init
-         * Initialize this module
-         *
-         * Parameters:
-         * m - {OpenLayers.Map} The map instance.
-         */
-        init: function(m) {
-            this.map = m;
-            this.tr = OpenLayers.i18n;
         },
 
         /**
@@ -250,8 +225,8 @@ GEOR.resultspanel = Ext.extend(Ext.Panel, (function() {
                 // see http://applis-bretagne.fr/redmine/issues/1983
                 sfControl.handlers.feature.stopDown = false;
             }
-
-            observable.fireEvent("panel", {
+            this.removeAll();
+            this.add({
                 xtype: "grid",
                 viewConfig: {
                     // we add an horizontal scroll bar in case
@@ -319,7 +294,8 @@ GEOR.resultspanel = Ext.extend(Ext.Panel, (function() {
             if (!features || features.length === 0) {
                 GEOR.waiter.hide();
                 vectorLayer && vectorLayer.removeAllFeatures();
-                observable.fireEvent("panel", {
+                this.removeAll();
+                this.add({
                     bodyStyle: 'padding:1em;',
                     html: tr("<p>Not any result for that request.</p>")
                 });

@@ -352,7 +352,6 @@ Ext.namespace("GEOR");
                 },
                 "search": function(panelCfg) {
                     if (southPanel.getActiveTab()) {
-                        southPanel.getActiveTab().init(map);
                         southPanel.getActiveTab().clean();
                     }
                     //southPanel.removeAll();
@@ -378,7 +377,6 @@ Ext.namespace("GEOR");
                 "search": function(panelCfg) {
                     if(southPanel.getActiveTab()){
                         southPanel.getActiveTab().setTitle("Recherche");
-                        southPanel.getActiveTab().init(map);
                         southPanel.getActiveTab().clean();
                     }
                     var panel = Ext.apply({
@@ -392,10 +390,13 @@ Ext.namespace("GEOR");
                 "searchresults": function(options) {
 //                  southPanel.remove(southPanel.getActiveTab());
                     Ext.iterate(options.results, function(featureType, result) {
-                        var tab = new GEOR.resultspanel({html: tr("resultspanel.emptytext")});
+                        var tab = new GEOR.resultspanel({
+                            html: tr("resultspanel.emptytext"),
+                            itemId: featureType, // XXX assume only one tab per featuretype ?
+                            map: map
+                        });
                         southPanel.insert(southPanel.items.length-1,tab);
                         southPanel.setActiveTab(tab);
-                        southPanel.getActiveTab().init(map);
                         southPanel.getActiveTab().populate ({features: result.features, model: result.model});
                         southPanel.getActiveTab().setTitle(result.title);
                     });
@@ -428,16 +429,6 @@ Ext.namespace("GEOR");
                 },
                 "shutdown": function() {
                     southPanel.collapse();
-                }
-            });
-        }
-
-        if (southPanel.getActiveTab()) {
-            southPanel.getActiveTab().events.on({
-                "panel": function(panelCfg) {
-                    southPanel.getActiveTab().removeAll();
-                    southPanel.getActiveTab().add(panelCfg);
-                    southPanel.getActiveTab().doLayout();
                 }
             });
         }
