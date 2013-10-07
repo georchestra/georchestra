@@ -388,17 +388,17 @@ Ext.namespace("GEOR");
                     southPanel.expand();
                 },
                 "searchresults": function(options) {
-//                  southPanel.remove(southPanel.getActiveTab());
+                    southPanel.remove(southPanel.getActiveTab());
                     Ext.iterate(options.results, function(featureType, result) {
                         var tab = new GEOR.ResultsPanel({
                             html: tr("resultspanel.emptytext"),
-                            itemId: featureType, // XXX assume only one tab per featuretype ?
+                            //itemId: featureType, // XXX assume only one tab per featuretype ?
                             map: map
                         });
+                        tab.populate ({features: result.features, model: result.model});
+                        tab.setTitle(result.title);
                         southPanel.insert(southPanel.items.length-1,tab);
                         southPanel.setActiveTab(tab);
-                        southPanel.getActiveTab().populate ({features: result.features, model: result.model});
-                        southPanel.getActiveTab().setTitle(result.title);
                     });
                     southPanel.doLayout();
                 },
