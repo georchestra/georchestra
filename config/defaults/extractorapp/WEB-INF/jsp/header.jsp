@@ -8,9 +8,11 @@
     </div>
     <script type="text/javascript">
         var _headerOnLoad = function(iframe) {
-            var base = iframe.contentDocument.createElement('base');
+            var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+            
+            var base = innerDoc.createElement('base');
             base.setAttribute('target', '_parent');
-            iframe.contentDocument.getElementsByTagName('head')[0].appendChild(base);
+            innerDoc.getElementsByTagName('head')[0].appendChild(base);
         };
     </script>
     </c:when>
