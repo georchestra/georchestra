@@ -162,7 +162,6 @@ GEOR.FeaturePanel = Ext.extend(Ext.form.FormPanel, {
                 enableKeyEvents: true,
                 listeners: {
                     keyup: function(field) {
-                        console.log(field.getValue());
                         feature.style.label = field.getValue();
                         feature.layer.drawFeature(feature);
                     }
