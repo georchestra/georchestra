@@ -82,6 +82,7 @@ Bug fixes:
 UPGRADING:
  * mapfishapp:
    * default projection changes from EPSG:2154 to EPSG:3857 (aka Spherical Web Mercator). Your users might need to clear their localStorage, or force loading of the new default context.
+   * default MAP_SCALES changes to match the OGC WMTS spec,
  * LDAP: see [georchestra/LDAP#2](https://github.com/georchestra/LDAP/pull/2)
    * one group was renamed: ```STAT_USER``` becomes ```MOD_ANALYTICS``` - grants access to the analytics app,
    * an other one was created: ```MOD_LDAPADMIN``` - grants access to the LDAPadmin private UI (/ldapadmin/privateui/index.html).
