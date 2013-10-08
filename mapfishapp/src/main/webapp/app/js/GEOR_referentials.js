@@ -180,7 +180,9 @@ GEOR.referentials = (function() {
                     srsName: map.getProjection(),
                     srsNameInQuery: true, // see http://trac.osgeo.org/openlayers/ticket/2228
                     // required so that we do not use the proxy if on same machine:
-                    url: GEOR.config.GEOSERVER_WFS_URL
+                    url: GEOR.config.GEOSERVER_WFS_URL,
+                    // to prevent warning message (too many features):
+                    maxFeatures: 10
                 }
             },
             vendorParams: {
