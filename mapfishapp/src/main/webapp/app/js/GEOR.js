@@ -67,7 +67,6 @@ Ext.namespace("GEOR");
     // save context string before unloading page
     window.onbeforeunload = function() {
         GEOR.ls.set("latest_context", GEOR.wmc.write());
-        return null;
     };
 
     Ext.onReady(function() {
