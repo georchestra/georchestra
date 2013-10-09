@@ -138,7 +138,7 @@ GEOR.getfeatureinfo = (function() {
         Ext.each(ctrl.layers, function (layer) {
             results[layer.params.LAYERS] = {
                 title: GEOR.util.shortenLayerName(layer),
-                tooltip: layer.name + " - " + coordstr,
+                tooltip: layer.name + " - WMS GetFeatureInfo at " + coordstr,
                 features: []
             };
         });

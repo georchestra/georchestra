@@ -352,7 +352,7 @@ Ext.namespace("GEOR");
                 },
                 "search": function(panelCfg) {
                     if (southPanel.getActiveTab()) {
-                        southPanel.getActiveTab().clean();
+                        southPanel.getActiveTab().setTitle("Recherche WFS");
                     }
                     //southPanel.removeAll();
                     var panel = Ext.apply({
@@ -364,10 +364,16 @@ Ext.namespace("GEOR");
                     southPanel.expand();
                 },
                 "searchresults": function(options) {
-                    if (southPanel.getActiveTab()) {
-                        southPanel.getActiveTab().setTitle(options.name);
-                        southPanel.getActiveTab().populate(options);
-                    }
+                    southPanel.remove(southPanel.getActiveTab());
+                    var tab = new GEOR.ResultsPanel({
+                        html: tr("resultspanel.emptytext"),
+                        tabTip: options.tooltip,
+                        title: options.title,
+                        map: map
+                    });
+                    tab.populate ({features: options.features, model: options.model});
+                    southPanel.insert(southPanel.items.length-1,tab);
+                    southPanel.setActiveTab(tab);
                 }
             });
         }
@@ -376,7 +382,7 @@ Ext.namespace("GEOR");
             GEOR.getfeatureinfo.events.on({
                 "search": function(panelCfg) {
                     if(southPanel.getActiveTab()){
-                        southPanel.getActiveTab().setTitle("Recherche");
+                        southPanel.getActiveTab().setTitle("Recherche WMS");
                         southPanel.getActiveTab().clean();
                     }
                     var panel = Ext.apply({
@@ -412,25 +418,29 @@ Ext.namespace("GEOR");
         if (GEOR.selectfeature) {
             GEOR.selectfeature.events.on({
                 "search": function(panelCfg) {
-/*
-                    if (GEOR.resultspanel) {
-                        GEOR.resultspanel.clean();
+                    if(southPanel.getActiveTab()){
+                        southPanel.getActiveTab().setTitle(tr("Select Feature"));
+                        southPanel.getActiveTab().clean();
                     }
-*/
-                    southPanel.removeAll();
                     var panel = Ext.apply({
                         bodyStyle: 'padding:5px'
                     }, panelCfg);
-                    southPanel.add(panel);
+                    southPanel.getActiveTab().removeAll();
+                    southPanel.getActiveTab().add(panel);
                     southPanel.doLayout();
                     southPanel.expand();
                 },
                 "searchresults": function(options) {
-/*
-                    if (GEOR.resultspanel) {
-                        GEOR.resultspanel.populate(options);
-                    }
-*/
+                    southPanel.remove(southPanel.getActiveTab());
+                    var tab = new GEOR.ResultsPanel({
+                        html: tr("resultspanel.emptytext"),
+                        tabTip: options.tooltip,
+                        title: options.title,
+                        map: map
+                    });
+                    tab.populate ({features: options.features, model: options.model});
+                    southPanel.insert(southPanel.items.length-1,tab);
+                    southPanel.setActiveTab(tab);
                 },
                 "shutdown": function() {
                     southPanel.collapse();
