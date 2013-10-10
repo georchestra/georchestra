@@ -37,6 +37,7 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
         "the DEFAULT_THESAURUS_KEY variable does not match " +
         "any value exported by GeoNetwork",
     /* GEOR_cswquerier.js strings */
+    "NAME layer on VALUE": "${NAME} layer on ${VALUE}",
     "Open the URL url in a new window":
         "Open the ${URL} url in a new window",
     "NB layers": "${NB} layers",

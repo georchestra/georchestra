@@ -84,7 +84,7 @@ Ext.extend(GEOR.CustomCSWRecordsReader, Ext.data.DataReader, {
                     Ext.each(r.get('URI'), function (item) {
                         if (GEOR.util.isSuitableDCProtocol(item)) {
 
-                            var tip = 'Couche '+item.name+' sur '+item.value;
+                            var tip = OpenLayers.i18n("NAME layer on VALUE", {'NAME': item.name, 'VALUE': item.value});
                             var description = (item.description) ?
                                 '<span ext:qtip="'+tip+'">'+item.description+'</span>' :
                                 tip;
