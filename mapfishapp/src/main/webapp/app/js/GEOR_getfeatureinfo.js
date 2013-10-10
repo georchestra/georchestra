@@ -103,7 +103,7 @@ GEOR.getfeatureinfo = (function() {
          * We're typically getting this kind of string in the GML:
          *  gml:MultiPolygon srsName="http://www.opengis.net/gml/srs/epsg.xml#3948"
          */
-        var r =  /.+srsName=\"(.+?)\"[^]+/.exec(info.text);
+        var r =  /.+srsName=\"(.+?)\".+/.exec(info.text);
         if (r && r[1]) {
             var srsString = r[1];
             /*
