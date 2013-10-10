@@ -98,6 +98,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
         "la variable DEFAULT_THESAURUS_KEY ne correspond à aucune" +
         " valeur exportée par GeoNetwork",
     /* GEOR_cswquerier.js strings */
+    "NAME layer on VALUE": "Couche ${NAME} sur ${VALUE}",
     "Show metadata sheet in a new window":
         "Afficher la fiche de métadonnées dans une nouvelle fenêtre",
     "more": "plus",
