@@ -84,11 +84,12 @@ class EmailFactoryImpl extends AbstractEmailFactory {
 	 * emails to the moderator to inform that a new user is waiting authorization. 
 	 * 
 	 * @param servletContext
+	 * @param from
 	 * @param recipients
 	 * @return
 	 * @throws IOException
 	 */
-	public NewAccountRequiresModerationEmail createNewAccountRequiresModerationEmail(ServletContext servletContext, String[] recipients) throws IOException {
+	public NewAccountRequiresModerationEmail createNewAccountRequiresModerationEmail(ServletContext servletContext, String from, String[] recipients) throws IOException {
 		
 		super.emailSubject =this.newAccountRequiresModerationEmailSubject;
 		
@@ -99,7 +100,7 @@ class EmailFactoryImpl extends AbstractEmailFactory {
 				this.smtpPort,
 				this.emailHtml,
 				this.replyTo,
-				this.from,
+				from,
 				this.bodyEncoding,
 				this.subjectEncoding,
 				this.languages,
