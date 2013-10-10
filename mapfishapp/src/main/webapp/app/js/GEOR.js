@@ -436,9 +436,10 @@ Ext.namespace("GEOR");
                         html: tr("resultspanel.emptytext"),
                         tabTip: options.tooltip,
                         title: options.title,
+                        sfControl: options.ctrl,
                         map: map
                     });
-                    tab.populate ({features: options.features, model: options.model});
+                    tab.populate ({features: options.features, model: options.model, addLayerToMap: options.addLayerToMap});
                     southPanel.insert(southPanel.items.length-1,tab);
                     southPanel.setActiveTab(tab);
                 },

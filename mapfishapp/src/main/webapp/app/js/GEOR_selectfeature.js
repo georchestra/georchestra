@@ -129,6 +129,7 @@ GEOR.selectfeature = (function() {
         observable.fireEvent("searchresults", {
             features: clone(toArray(selectedFeatures)),
             model: model,
+            ctrl: ctrl,
             tooltip: ctrl.layer.name + " - OpenLayers SelectFeature",
             title: GEOR.util.shortenLayerName(ctrl.layer.name),
             // we do not want the generated vector layer 
@@ -144,6 +145,7 @@ GEOR.selectfeature = (function() {
         observable.fireEvent("searchresults", {
             features: clone(toArray(selectedFeatures)),
             model: model,
+            ctrl: ctrl,
             tooltip: ctrl.layer.name + " - OpenLayers SelectFeature",
             title: GEOR.util.shortenLayerName(ctrl.layer.name),
             // we do not want the generated vector layer 
