@@ -397,7 +397,8 @@ sudo nano /etc/default/tomcat6
 ```
 
 ```
-JAVA_OPTS="$JAVA_OPTS -DGEOSERVER_DATA_DIR=/path/to/geoserver/data/dir \
+JAVA_OPTS="$JAVA_OPTS -Dfile.encoding=UTF8 \
+    -DGEOSERVER_DATA_DIR=/path/to/geoserver/data/dir \
     -DGEOWEBCACHE_CACHE_DIR=/path/to/geowebcache/cache/dir \
     -server \
     -XX:-UseParallelGC \
