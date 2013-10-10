@@ -54,14 +54,17 @@ GEOR.editing = (function() {
          */
         create: function(map) {
             NSALIAS = GEOR.config.NS_EDIT;
+            var url = GEOR.config.GEOSERVER_WFS_URL.replace(
+                /(\/.*\/)wfs/i,
+                "$1" + NSALIAS + "/wfs"
+            );
             var store = GEOR.ows.WFSCapabilities({
-                var onlineResource = GEOR.config.GEOSERVER_WFS_URL.replace(/(\/geoserver\/)/i,"$1" + NSALIAS + "/");
                 storeOptions: {
-                    url: onlineResource,
+                    url: url,
                     protocolOptions: {
                         srsName: map.getProjection(),
                         srsNameInQuery: true, // see http://trac.osgeo.org/openlayers/ticket/2228
-                        url: onlineResource
+                        url: url
                     },
                     layerOptions: {
                         dispayInLayerSwitcher: false
