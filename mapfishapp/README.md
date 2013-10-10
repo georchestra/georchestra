@@ -81,6 +81,12 @@ How to run the viewer without Tomcat ?
 
 This mode is useful for **demo** or **development** purposes.
 
+The *first* time, you need to previously compile mapfishapp and all its dependencies
+
+    $ ./mvn -Dmaven.test.skip=true -Ptemplate -P-all,mapfishapp install;
+
+then, each time you want to test a change in the configuration or the mapfishapp module:
+
     $ cd config
     $ ../mvn -Ptemplate install
     $ cd ../mapfishapp
