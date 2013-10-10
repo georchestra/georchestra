@@ -140,7 +140,7 @@ public final class NewAccountFormController {
 			if(this.moderator.moderatedSignup() ){
 
 				// email to the moderator
-				this.mailService.sendNewAccountRequiresModeration(servletContext, account.getUid(), account.getCommonName(), this.moderator.getModeratorEmail());
+				this.mailService.sendNewAccountRequiresModeration(servletContext, account.getUid(), account.getCommonName(), account.getEmail(), this.moderator.getModeratorEmail());
 				
 				// email to the user
 				this.mailService.sendAccountCreationInProcess(servletContext, account.getUid(), account.getCommonName(), account.getEmail());
