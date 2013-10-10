@@ -268,7 +268,7 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
          * {OpenLayers.Layer.Vector}
          */
         createVectorLayer: function() {
-            return new OpenLayers.Layer.Vector("search_results", {
+            return new OpenLayers.Layer.Vector("search_results_"+this.id, {
                 displayInLayerSwitcher: false,
                 styleMap: GEOR.util.getStyleMap(),
                 rendererOptions: {
@@ -301,7 +301,7 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
                 });
                 return;
             }
-
+            if (!this.vectorLayer)
                 this.vectorLayer = this.createVectorLayer();
 
             if (options.addLayerToMap !== false) {
