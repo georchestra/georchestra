@@ -151,14 +151,18 @@ Alternatively, run with jetty:
 
 * the *first* time, you need to previously compile ldapadmin and all its dependencies
 
-    $ ./mvn -Dmaven.test.skip=true -Ptemplate -P-all,ldapadmin install;
+  ```
+  $ ./mvn -Dmaven.test.skip=true -Ptemplate -P-all,ldapadmin install;
+  ```
 
 * then, each time you want to test a change in the configuration or the ldapadmin module:
 
-    $ cd config
-    $ ../mvn -Ptemplate install
-    $ cd ../ldapadmin
-    $ ../mvn -Dmaven.test.skip=true -Ptemplate jetty:run
+  ```
+  $ cd config
+  $ ../mvn -Ptemplate install
+  $ cd ../ldapadmin
+  $ ../mvn -Dmaven.test.skip=true -Ptemplate jetty:run
+  ```
 
 ### Privileged User
 
