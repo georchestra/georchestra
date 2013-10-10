@@ -201,7 +201,7 @@ GEOR.selectfeature = (function() {
             }
             if (state) {
                 observable.fireEvent("search", {
-                    html: tr("<div>Select features activated on NAME layer." +
+                    html: tr("<div>Select features activated on NAME layer. " +
                           "Clic on the map.</div>",
                           {'NAME': title})
                 });
@@ -235,6 +235,12 @@ GEOR.selectfeature = (function() {
             } else {
                 // clear model cache:
                 model = null;
+                var collapse = true;
+                var ctrls = map.getControlsBy('active',true);
+                for (var i = 0 ; i < ctrls.length; i++) {
+                    if (ctrls[i].CLASS_NAME == "OpenLayers.Control.WMSGetFeatureInfo")
+                        collapse = false;
+                };
                 if (ctrl.layer === layer) {
                     // we clicked on a toolbar button, which means we have
                     // to stop gfi requests.
@@ -255,7 +261,8 @@ GEOR.selectfeature = (function() {
                         ctrl.deactivate();
                     }
                     // we need to collapse the south panel.
-                    observable.fireEvent("shutdown");
+                    if (collapse)
+                        observable.fireEvent("shutdown");
                 } else {
                     // we asked for gfi on another layer
                 }

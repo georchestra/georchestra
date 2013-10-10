@@ -351,21 +351,27 @@ GEOR.getfeatureinfo = (function() {
                 });
 
             } else {
-                // we only want to collapse if the layers array is the same as
+                // we only want to deactivate if the layers array is the same as
                 // ctrl.layers, which would mean that we toggled up the button
                 // which was already toggled down. Otherwise, it means we went
                 // from querying a layer to another, or from/to a single-layer
                 // query to a multi-layer query
-                var collapse = false;
+                var deactivate = false;
                 if(layers.length == ctrl.layers.length) {
-                    collapse = true;
+                    deactivate = true;
                     for(var i = 0; i < layers.length; i++) {
                         if(ctrl.layers[i] != layers[i]) {
-                            collapse = false;
+                            deactivate = false;
                         }
                     }
                 }
-                if (collapse) {
+                var collapse = deactivate;
+                var ctrls = map.getControlsBy('active',true);
+                for (var i = 0 ; i < ctrls.length; i++) {
+                    if (ctrls[i].CLASS_NAME == "OpenLayers.Control.SelectFeature")
+                        collapse = false;
+                };
+                if (deactivate) {
                     // we clicked on a toolbar button, which means we have
                     // to stop gfi requests.
                     //
@@ -379,7 +385,8 @@ GEOR.getfeatureinfo = (function() {
                         ctrl.deactivate();
                     }
                     // we need to collapse the south panel.
-                    observable.fireEvent("shutdown");
+                    if (collapse)
+                        observable.fireEvent("shutdown");
                     // remove visibility events from previous array of layers
                     Ext.each(ctrl.layers, function(l) {
                         l.events.un({
