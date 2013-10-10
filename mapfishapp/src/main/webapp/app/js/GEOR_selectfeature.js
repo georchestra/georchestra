@@ -69,6 +69,12 @@ GEOR.selectfeature = (function() {
      */
     var model = null;
     
+    /**
+     * Property: tr
+     * {Function} an alias to OpenLayers.i18n
+     */
+    var tr = null;
+
     // indexed by their id
     var selectedFeatures = {};
     
@@ -174,6 +180,7 @@ GEOR.selectfeature = (function() {
          */
         init: function(m) { 
             map = m;
+            tr = OpenLayers.i18n;
         },
 
         /**
@@ -194,8 +201,9 @@ GEOR.selectfeature = (function() {
             }
             if (state) {
                 observable.fireEvent("search", {
-                    html: '<div>Recherche d\'objets activée sur la couche '+
-                        title+'. Cliquez sur la carte.</div>'
+                    html: tr("<div>Select features activated on NAME layer." +
+                          "Clic on the map.</div>",
+                          {'NAME': title})
                 });
             
                 if (ctrl) {
