@@ -17,7 +17,6 @@
  * @include OpenLayers/Control/WMTSGetFeatureInfo.js
  * @include OpenLayers/Format/WMSGetFeatureInfo.js
  * @include OpenLayers/Projection.js
- * @include GEOR_FeatureDataModel.js
  */
 
 Ext.namespace("GEOR");
@@ -35,7 +34,7 @@ GEOR.getfeatureinfo = (function() {
          * Fires when we've received a response from server
          *
          * Listener arguments:
-         * options - {Object} A hash containing response, model and format
+         * options - {Object} A hash containing response and format
          */
         "searchresults",
         /**
@@ -67,12 +66,6 @@ GEOR.getfeatureinfo = (function() {
     var map = null;
 
     /**
-     * Property: model
-     * {GEOR.FeatureDataModel} data model
-     */
-    var model = null;
-
-    /**
      * Property: tr
      * {Function} an alias to OpenLayers.i18n
      */
@@ -91,11 +84,23 @@ GEOR.getfeatureinfo = (function() {
 
         var features = info.features;
 
+        // Note: the data model is no more computed and cached in here !
+        // 
+        // Test case: we want a particular column (eg:postal code) 
+        // to be interpreted as STRING, not as INT,
+        // to prevent 02100 from being displayed as 2100.
+        // If the first query matches one result only with postal code = 80100,
+        // the second query will display 02100 as 2100, 
+        // because the stored datamodel will permanently identify the column as INT.
+        // As a result, the computation has to be done on each query.
+
+        /*
         if (!model || model.isEmpty()) {
             model = new GEOR.FeatureDataModel({
                 features: features
             });
         }
+        */
 
         // Features on-the-fly client-side reprojection (this is a hack, OK)
         // Discussion happened in https://github.com/georchestra/georchestra/issues/254
@@ -130,10 +135,7 @@ GEOR.getfeatureinfo = (function() {
         }
 
         observable.fireEvent("searchresults", {
-            features: features,
-            model: model
-            // we do not know the model with GFI at first time.
-            // but at second time, we can use cached model
+            features: features
         });
     };
 
@@ -271,8 +273,6 @@ GEOR.getfeatureinfo = (function() {
                 });
 
             } else {
-                // clear model cache:
-                model = null;
                 if (ctrl.layers[0] === layer) {
                     // we clicked on a toolbar button, which means we have
                     // to stop gfi requests.
