@@ -173,8 +173,10 @@ GEOR.wmc = (function() {
             tr = OpenLayers.i18n;
 
             wmcFormat = new OpenLayers.Format.WMC({
-                //layerOptions: GEOR.ows.defaultLayerOptions
-                // why should we apply default layer options and not use those provided by the WMC ?
+                layerOptions: {
+                    // to prevent automatic restoring of PNG rather than JPEG:
+                    noMagic: true
+                }
             });
             wmcReader = new GeoExt.data.WMCReader(
                 {format: wmcFormat},
