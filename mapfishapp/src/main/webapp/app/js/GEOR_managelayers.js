@@ -559,8 +559,8 @@ GEOR.managelayers = (function() {
         };
         
         // metadata action
-        if (layerRecord.get("metadataURLs")) {
-            var murls = layerRecord.get("metadataURLs");
+        var murls = layerRecord.get("metadataURLs");
+        if (murls && murls.length > 0) {
             var murl = murls[0];
             // default to first entry
             url = (murl.href) ? murl.href : murl;
