@@ -45,7 +45,7 @@ public class EditUserDetailsFormController {
 	@InitBinder
 	public void initForm( WebDataBinder dataBinder) {
 		
-		dataBinder.setAllowedFields(new String[]{"uid", "firstName", "surname", "email", "title", "phone", "org", "description", "postalAddress", "postalCode",  "registeredAddress", "postOfficeBox", "physicalDeliveryOfficeName"});
+		dataBinder.setAllowedFields(new String[]{"uid", "firstName", "surname", "email", "title", "phone", "facsimile", "org", "description", "postalAddress", "postalCode",  "registeredAddress", "postOfficeBox", "physicalDeliveryOfficeName"});
 	}
 	
 	
@@ -100,6 +100,7 @@ public class EditUserDetailsFormController {
 		formBean.setTitle(account.getTitle());
 
 		formBean.setPhone(account.getPhone());
+		formBean.setFacsimile(account.getFacsimile());
 		formBean.setOrg(account.getOrg());
 		formBean.setDescription(account.getDescription());
 		formBean.setPhysicalDeliveryOfficeName(account.getPhysicalDeliveryOfficeName());
@@ -187,6 +188,7 @@ public class EditUserDetailsFormController {
 		account.setSurname(formBean.getSurname());
 		account.setTitle( formBean.getTitle() );
 		account.setPhone(formBean.getPhone());
+		account.setFacsimile(formBean.getFacsimile());
 		account.setOrg(formBean.getOrg());
 		account.setDescription(formBean.getDescription());
 		account.setPhysicalDeliveryOfficeName(formBean.getPhysicalDeliveryOfficeName());
