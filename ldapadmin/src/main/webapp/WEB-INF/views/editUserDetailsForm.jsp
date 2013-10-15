@@ -52,14 +52,14 @@
 				<t:input path="surname" required="true">
 					<jsp:attribute name="label"><s:message code="surname.label" /></jsp:attribute>
 				</t:input>
-				<t:input path="title">
-					<jsp:attribute name="label"><s:message code="title.label" /></jsp:attribute>
-				</t:input>
 				<t:input path="phone">
 					<jsp:attribute name="label"><s:message code="phone.label" /></jsp:attribute>
 				</t:input>
 				<t:input path="org">
 					<jsp:attribute name="label"><s:message code="organization.label" /></jsp:attribute>
+				</t:input>
+				<t:input path="title">
+					<jsp:attribute name="label"><s:message code="title.label" /></jsp:attribute>
 				</t:input>
 				<t:input path="description">
 					<jsp:attribute name="label"><s:message code="description.label" /></jsp:attribute>
