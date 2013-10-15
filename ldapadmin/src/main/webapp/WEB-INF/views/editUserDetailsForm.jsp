@@ -72,9 +72,9 @@
 				<t:input path="title">
 					<jsp:attribute name="label"><s:message code="title.label" /></jsp:attribute>
 				</t:input>
-				<t:input path="description">
+				<t:textarea path="description">
 					<jsp:attribute name="label"><s:message code="description.label" /></jsp:attribute>
-				</t:input>
+				</t:textarea>
 				<t:textarea path="postalAddress">
 					<jsp:attribute name="label"><s:message code="postalAddress.label" /></jsp:attribute>
 				</t:textarea>
