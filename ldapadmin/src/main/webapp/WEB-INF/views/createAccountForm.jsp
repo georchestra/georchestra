@@ -64,6 +64,9 @@
 				<t:input path="org">
 					<jsp:attribute name="label"><s:message code="organization.label" /></jsp:attribute>
 				</t:input>
+				<t:input path="title">
+					<jsp:attribute name="label"><s:message code="title.label" /></jsp:attribute>
+				</t:input>
 				<t:input path="description">
 					<jsp:attribute name="label"><s:message code="description.label" /></jsp:attribute>
 				</t:input>

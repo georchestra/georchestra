@@ -24,6 +24,7 @@ public class AccountFormBean implements Serializable{
 	private String surname;
 	
 	private String org;
+	private String title;
 	private String email;
 	private String phone;
 	private String description;
@@ -64,6 +65,12 @@ public class AccountFormBean implements Serializable{
 	}
 	public void setOrg(String org) {
 		this.org = org;
+	}
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
 	}
 	
 	public String getEmail() {
@@ -109,7 +116,8 @@ public class AccountFormBean implements Serializable{
 	@Override
 	public String toString() {
 		return "AccountFormBean [uid=" + uid + ", firstName=" + firstName
-				+ ", surname=" + surname + ", org=" + org + ", email=" + email
+				+ ", surname=" + surname + ", org=" + org + ", title=" + title
+				+ ", email=" + email
 				+ ", phone=" + phone + ", description=" + description + ", password="
 				+ password + ", confirmPassword=" + confirmPassword
 				+ ", recaptcha_challenge_field=" + recaptcha_challenge_field

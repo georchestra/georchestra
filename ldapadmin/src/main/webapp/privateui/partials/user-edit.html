@@ -23,6 +23,20 @@
 
   <div class="row-fluid">
     <div class="span6">
+      <div class="control-group">
+        <label for="mail">Login</label>
+        <input type="text" name="uid" ng-model="user.uid" ng-readonly="true" placeholder="Login" class="span12"/>
+      </div>
+    </div>
+    <div class="span6">
+      <div class="control-group">
+        <label for="mail">Password</label>
+        <a href="/ldapadmin/account/lostPassword?email={{user.mail}}">Reset password</a>
+      </div>
+    </div>
+  </div>
+  <div class="row-fluid">
+    <div class="span6">
       <div class="control-group" ng-class="{error: userForm.sn.$invalid}">
         <label for="mail">Last Name</label>
         <input type="text" name="sn" ng-model="user.sn" required  placeholder="Last Name" class="span12"/>
@@ -68,28 +82,25 @@
 
   <div class="row-fluid">
     <div class="span10">
-      <label>Address</label>
-      <input type="text" class="span12" ng-model="user.street" placeholder="Street">
-    </div>
-  </div>
-  <div class="row-fluid">
-    <div class="span4 bgcolor">
-      <input type="text" class="span12" ng-model="user.postOfficeBox" placeholder="Post Office Box">
-    </div>
-  </div>
-  <div class="row-fluid">
-    <div class="span3 bgcolor">
-      <input type="text" class="span12" ng-model="user.postalCode" placeholder="Postal Code">
-    </div>
-    <div class="span5 bgcolor">
-      <input type="text" class="span12" ng-model="user.l" placeholder="City">
+      <label class="control-label" for="postalAddress">Address</label>
+      <textarea type="text" name="postalAddress" ng-model="user.postalAddress" class="span12" placeholder="Address" />
     </div>
   </div>
 
   <div class="row-fluid">
-    <div class="span10">
+    <div class="span5 bgcolor">
       <label>Organization</label>
-      <input type="text" class="span5" ng-model="user.o" placeholder="Organization">
+      <input type="text" class="span12" ng-model="user.o" placeholder="Organization">
+    </div>
+    <div class="span5 bgcolor">
+      <label>Title</label>
+      <input type="text" class="span12" ng-model="user.title" placeholder="Title">
+    </div>
+  </div>
+  <div class="row-fluid">
+    <div class="span10">
+      <label>Description</label>
+      <input type="text" class="span12" ng-model="user.description" placeholder="Description">
     </div>
   </div>
 

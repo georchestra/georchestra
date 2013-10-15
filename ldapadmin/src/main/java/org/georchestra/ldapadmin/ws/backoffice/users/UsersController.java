@@ -468,6 +468,11 @@ public class UsersController {
 			accont.setEmail(email);
 		}
 
+		String postalAddress = RequestUtil.getFieldValue(json, UserSchema.POSTAL_ADDRESS_KEY);
+		if (postalAddress != null) {
+			accont.setPostalAddress(postalAddress);
+		}
+
 		String postOfficeBox = RequestUtil.getFieldValue(json, UserSchema.POST_OFFICE_BOX_KEY);
 		if (postOfficeBox != null) {
 			accont.setPostOfficeBox(postOfficeBox);
@@ -501,6 +506,16 @@ public class UsersController {
 		String org = RequestUtil.getFieldValue(json, UserSchema.ORG_KEY);
 		if (org != null) {
 			accont.setOrg(org);
+		}
+
+		String title = RequestUtil.getFieldValue(json, UserSchema.TITLE_KEY);
+		if (title != null) {
+			accont.setTitle(title);
+		}
+
+		String description = RequestUtil.getFieldValue(json, UserSchema.DESCRIPTION_KEY);
+		if (description != null) {
+			accont.setDescription(description);
 		}
 
 		String commonName = AccountFactory.formatCommonName(
@@ -545,6 +560,8 @@ public class UsersController {
 			throw new IllegalArgumentException(UserSchema.MAIL_KEY + " is required" );
 		}
 		
+		String postalAddress =  RequestUtil.getFieldValue(json, UserSchema.POSTAL_ADDRESS_KEY );
+
 		String postOfficeBox =  RequestUtil.getFieldValue(json, UserSchema.POST_OFFICE_BOX_KEY );
 		
 		String postalCode = RequestUtil.getFieldValue(json, UserSchema.POSTAL_CODE_KEY);
@@ -558,6 +575,10 @@ public class UsersController {
 
 		String org = RequestUtil.getFieldValue( json, UserSchema.ORG_KEY);
 
+		String title = RequestUtil.getFieldValue( json, UserSchema.TITLE_KEY);
+
+		String description = RequestUtil.getFieldValue( json, UserSchema.DESCRIPTION_KEY);
+
 		String uid;
 		try {
 			uid = createUid(givenName, surname);
@@ -568,7 +589,7 @@ public class UsersController {
 		
 		String commonName = AccountFactory.formatCommonName(givenName, surname);
 		
-		Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, org, "", phone, "", "", postalCode, "", postOfficeBox, "", street, locality, facsimile, "","","","","");
+		Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, org, title, phone, description, postalAddress, postalCode, "", postOfficeBox, "", street, locality, facsimile, "","","","","");
 		
 		return a;
 			
