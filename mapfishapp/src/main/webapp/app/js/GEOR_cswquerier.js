@@ -275,26 +275,28 @@ GEOR.cswquerier = (function() {
             wmsCount = s.getCount();
 
         if (mdCount) {
-            if (wmsCount == 0) {
-                text = tr("Not any layer");
-            } else if (wmsCount == 1) {
-                text = tr("1 layer");
+            if (mdCount > 1) {
+                text = tr("NB metadata match the query.", {'NB': mdCount});
             } else {
-                text = tr("NB layers", {'NB': wmsCount});
+                text = tr("A single metadata matches the query.");
             }
-			if (mdCount > 1) {
-				text += tr(" in NB metadata", {'NB': mdCount});
-			} else {
-				text += tr(" in 1 metadata");
-			}
+            text += " ";
+            if (wmsCount == 0) {
+                text += tr("No linked layer.");
+            } else if (wmsCount == 1) {
+                text += tr("One layer found.");
+            } else {
+                text += tr("NB layers found.", {'NB': wmsCount});
+            }
+
             // a better indicator would be numberOfRecordsMatched > numberOfRecordsReturned
             // but it is more difficult to obtain than mdCount.
             // For the moment, we'll use this criteria:
             if (mdCount == GEOR.config.MAX_CSW_RECORDS) {
-                text += tr(": precise your request");
+                text += " " + tr("Precise your request.");
             }
         } else {
-            text = tr("Not any metadata correspond to the words specified");
+            text = tr("No metadata matches the query.");
         }
         southPanel.body.dom.innerHTML = "<p>"+text+"</p>";
     };
