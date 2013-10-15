@@ -21,7 +21,8 @@ Body parameters
         "sn": "Pierre",
         "street": "fdsf",
         "telephoneNumber": "fdsfd",
-        "o": "Zogak"
+        "o": "Zogak",
+        "title': "dsfds"
     }
 
 Response
@@ -37,7 +38,8 @@ Response
         "postalCode": "dfdf",
         "mail": "pierre.giraud@gmail.com",
         "givenName": "GIRAUD",
-        "o": "Zogak"
+        "o": "Zogak",
+        "title': "dsfds"
     }
     or
     { "success": false }
@@ -110,7 +112,8 @@ Body parameters
         "sn": "Pierre"
         "street": "fdsf"
         "telephoneNumber": "fdsfd",
-        "o": "Zogak"
+        "o": "Zogak",
+        "title': "dsfds"
     }
 
 Note: *Fields that are not present in the parameters should remain untouched
