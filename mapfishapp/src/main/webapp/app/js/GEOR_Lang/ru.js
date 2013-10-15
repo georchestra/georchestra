@@ -90,13 +90,16 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Catalogue": "Каталог",
     "Find": "Найти",
     "in": "B",
-    "Not any layer": "Слой отсутствует",
-    "1 layer": "Один слой",
-    "NB layers": "${NB}слоёв",
-    " in NB metadata": " в ${NB}метаданных",
-    " in 1 metadata": " в единице метаданных",
-    ": precise your request": " : уточните ваш запрос",
-    "Not any metadata correspond to the words specified": "Никакая из метаданных не соответствует внесённым терминам.",
+    /* To be translated ...
+    "Not any layer": "Aucune couche",
+    "One layer found.": "Une couche trouvée.",
+    "NB layers found.": "${NB} couches trouvées.",
+    "NB metadata match the query.": "${NB} métadonnées correspondent à la requête.",
+    "A single metadata matches the query.": "Une unique métadonnée correspond à la requête.",
+    "Precise your request.": "Précisez votre requête.",
+    "No metadata matches the query.":
+        "Aucune métadonnée ne correspond à la requête.",
+    */
     /* GEOR_editing.js strings */
     /* GEOR_fileupload.js strings */
     "Local file": "Локальный файл",
