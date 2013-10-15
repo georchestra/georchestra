@@ -248,13 +248,13 @@ The userPassword LDAP field should be SSHA encrypted on creation/update.
 Configure the look of the users list
 ------------------------------------
 
-The file ../config/default/ldapadmin/privateui/partials/users-list-table.html defines the way the users list is displayed in the `ldapadmin/privateui/#/users` page. By default, it lists the users, with three columns:
+The file https://github.com/georchestra/georchestra/blob/master/config/default/ldapadmin/privateui/partials/users-list-table.html defines the way the users list is displayed in the `ldapadmin/privateui/#/users` page. By default, it lists the users, with three columns:
 
-* **mandatory** - the first column is used to select an user for an action (eg. add the selected users to a group),
+* the first **mandatory** column is used to select a user for an action (eg. add the selected user to a group),
 * the second column contains the firstname and lastname of the user, with a link to the user administration page,
 * the last column shows the user organization.
 
-The following sample code would show the login, name and organization of the users, and sort them alphabetically:
+Replacing the file by the following sample code would show the login, name and organization of the users, and sort them alphabetically by their login:
 
 ```html
 <thead>
