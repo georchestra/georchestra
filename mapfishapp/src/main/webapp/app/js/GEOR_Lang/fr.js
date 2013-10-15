@@ -113,13 +113,13 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Find": "Chercher",
     "in": "dans",
     "Not any layer": "Aucune couche",
-    "1 layer": "1 couche",
-    "NB layers": "${NB} couches",
-    " in NB metadata": " dans ${NB} metadonnées",
-    " in 1 metadata": " dans 1 metadonnée",
-    ": precise your request": " : précisez votre requête",
-    "Not any metadata correspond to the words specified":
-        "Aucune métadonnée ne correspond aux termes saisis",
+    "One layer found.": "Une couche trouvée.",
+    "NB layers found.": "${NB} couches trouvées.",
+    "NB metadata match the query.": "${NB} métadonnées correspondent à la requête.",
+    "A single metadata matches the query.": "Une unique métadonnée correspond à la requête.",
+    "Precise your request.": "Précisez votre requête.",
+    "No metadata matches the query.":
+        "Aucune métadonnée ne correspond à la requête.",
     /* GEOR_editing.js strings */
     /* GEOR_fileupload.js strings */
     "Local file": "Fichier",
