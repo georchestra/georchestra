@@ -123,8 +123,7 @@ GEOR.layerfinder = (function() {
         });
 
         var r = function(val) {
-            return (val ? '<img src="app/img/famfamfam/tick.gif" alt="' + tr("Yes") + '">' :
-                '<img src="app/img/famfamfam/cross.gif" alt="' + tr("No") + '">');
+            return (val ? '<img src="app/img/famfamfam/tick.gif" alt="' + tr("Yes") + '">' : '');
         };
 
         var mapSRS = layerStore.map.getProjection(),
@@ -156,7 +155,8 @@ GEOR.layerfinder = (function() {
             header: tr("Queryable"), 
             dataIndex: "queryable", 
             sortable: true, 
-            width: 75, 
+            width: 75,
+            align: "center",
             renderer: r
         };
 
@@ -193,7 +193,7 @@ GEOR.layerfinder = (function() {
             columns: [
                 layerColumn,
                 queryableColumn,
-                {id: "opaque", header: tr("Opaque"), dataIndex: "opaque", sortable: true, width: 50, renderer: r},
+                {id: "opaque", header: tr("Opaque"), dataIndex: "opaque", sortable: true, width: 50, align: "center", renderer: r},
                 descriptionColumn
             ],
             listeners: {
