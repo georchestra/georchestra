@@ -3,3 +3,4 @@ src/main/webapp/WEB-INF/spring/
 src/main/webapp/WEB-INF/templates/
 src/main/webapp/privateui/css/main.css
 src/main/webapp/privateui/index.html
+src/main/webapp/privateui/partials/users-list-table.html
