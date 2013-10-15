@@ -96,7 +96,8 @@ GEOR.wmsbrowser = (function() {
             });
 
             var r = function(val) {
-                return (val ? '<img src="app/img/famfamfam/tick.gif" alt="' + tr("Yes") + '">' : '');
+                return (val ? '<img src="app/img/famfamfam/tick.gif" alt="' + tr("Yes") + '">' : 
+                    '<img src="app/img/nope.gif" alt="' + tr("No") + '">');
             };
 
             // create a grid to display records from the store
