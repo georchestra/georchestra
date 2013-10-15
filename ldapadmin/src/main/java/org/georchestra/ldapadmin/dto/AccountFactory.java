@@ -41,6 +41,7 @@ public class AccountFactory {
 			String email, 
 			String phone,
 			String org, 
+			String title,
 			String description) {
 		
 		Account account = new AccountImpl();
@@ -56,6 +57,7 @@ public class AccountFactory {
 		account.setEmail(email);
 		account.setPhone(phone);
 		account.setOrg(org);
+		account.setTitle(title);
 		account.setDescription(description);
 		
 		return account;
