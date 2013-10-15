@@ -245,4 +245,32 @@ The application should be able to find groups and users by the way of filters su
 
 The userPassword LDAP field should be SSHA encrypted on creation/update.
 
+Configure the look of the users list
+------------------------------------
 
+The file https://github.com/georchestra/georchestra/blob/master/config/default/ldapadmin/privateui/partials/users-list-table.html defines the way the users list is displayed in the `ldapadmin/privateui/#/users` page. By default, it lists the users, with three columns:
+
+* the first **mandatory** column is used to select a user for an action (eg. add the selected user to a group),
+* the second column contains the firstname and lastname of the user, with a link to the user administration page,
+* the last column shows the user organization.
+
+Replacing the file by the following sample code would show the login, name and organization of the users, and sort them alphabetically by their login:
+
+```html
+<thead>
+  <tr>
+    <th></th>
+    <th>Login</th>
+    <th>User</th>
+    <th>Organization</th>
+  </tr>
+</thead>
+<tbody>
+  <tr ng-repeat="user in users | filter:groupFilter | orderBy:'uid' " class="">
+    <td><input type="checkbox" ng-model="user.selected" /></td>
+    <td><a href="#/users/{{user.uid}}">{{user.uid}}</a></a></td>
+    <td>{{user.sn}} {{user.givenName}}</td>
+    <td>{{user.o}}</td>
+  </tr>
+</tbody>
+```
