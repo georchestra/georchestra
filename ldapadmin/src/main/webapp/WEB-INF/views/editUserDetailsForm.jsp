@@ -52,6 +52,14 @@
 				<t:input path="surname" required="true">
 					<jsp:attribute name="label"><s:message code="surname.label" /></jsp:attribute>
 				</t:input>
+				<div class="form-group">
+					<label class="col-lg-4 control-label"><s:message code="email.label" /></label>
+					<div class="col-lg-8">
+						<p class="form-control-static">
+							${editUserDetailsFormBean.email}
+						</p>
+					</div>
+				</div>
 				<t:input path="phone">
 					<jsp:attribute name="label"><s:message code="phone.label" /></jsp:attribute>
 				</t:input>
