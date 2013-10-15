@@ -63,6 +63,9 @@
 				<t:input path="phone">
 					<jsp:attribute name="label"><s:message code="phone.label" /></jsp:attribute>
 				</t:input>
+				<t:input path="facsimile">
+					<jsp:attribute name="label"><s:message code="facsimile.label" /></jsp:attribute>
+				</t:input>
 				<t:input path="org">
 					<jsp:attribute name="label"><s:message code="organization.label" /></jsp:attribute>
 				</t:input>
