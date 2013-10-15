@@ -115,7 +115,7 @@ GEOR.toolbar = (function() {
             }
         });
 
-        if (GEOR.header === false) {
+        if (GEOR.header === false || GEOR.config.HEADER_HEIGHT === 0) {
             items.push("-");
             // insert a login or logout link in the toolbar
             items.push(
