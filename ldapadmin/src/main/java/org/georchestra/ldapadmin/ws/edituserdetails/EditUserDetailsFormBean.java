@@ -12,8 +12,10 @@ public class EditUserDetailsFormBean {
 	private String uid; 
 	private String surname; 
 	private String firstName; 
+	private String email;
 	private String title; 
 	private String phone;
+	private String facsimile;
 	private String org;
 	private String description;
 	private String postalAddress; 
@@ -25,8 +27,9 @@ public class EditUserDetailsFormBean {
 	@Override
 	public String toString() {
 		return "EditUserDetailsFormBean [uid=" + uid + ", surname=" + surname
-				+ ", givenName=" + firstName + ", title=" + title
-				+ ", phone=" + phone + ", org=" + org + ", description="
+				+ ", givenName=" + firstName + ", email=" + email + ", title=" + title
+				+ ", phone=" + phone + ", facsimile=" + facsimile
+				+ ", org=" + org + ", description="
 				+ description + ", postalAddress=" + postalAddress + ", postalCode="
 				+ postalCode + ", registeredAddress=" + registeredAddress
 				+ ", postOfficeBox=" + postOfficeBox
@@ -52,6 +55,12 @@ public class EditUserDetailsFormBean {
 	public void setFirstName(String givenName) {
 		this.firstName = givenName;
 	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
 	public String getTitle() {
 		return title;
 	}
@@ -63,6 +72,12 @@ public class EditUserDetailsFormBean {
 	}
 	public void setPhone(String phone) {
 		this.phone = phone;
+	}
+	public String getFacsimile() {
+		return facsimile;
+	}
+	public void setFacsimile(String facsimile) {
+		this.facsimile = facsimile;
 	}
 	public String getOrg() {
 		return org;

@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
@@ -81,9 +82,10 @@ public class LostPasswordFormController  {
 	}
 	
 	@RequestMapping(value="/account/lostPassword", method=RequestMethod.GET)
-	public String setupForm(Model model) throws IOException{
+	public String setupForm(HttpServletRequest request, @RequestParam(value="email", required=false) String email, Model model) throws IOException{
 
 		LostPasswordFormBean formBean = new LostPasswordFormBean();
+		formBean.setEmail(email);
 		
 		model.addAttribute(formBean);
 		model.addAttribute("reCaptchaPublicKey", this.reCaptchaParameters.getPublicKey());
