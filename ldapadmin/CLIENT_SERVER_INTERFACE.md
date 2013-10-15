@@ -16,6 +16,7 @@ Body parameters
         "givenName": "GIRAUD",
         "l": "dfdf",
         "mail": "pierre.giraud@gmail.com",
+        "postalAddress": "dfdf ze5zec ze315",
         "postOfficeBox": "dfdf",
         "postalCode": "dfdf",
         "sn": "Pierre",
@@ -36,6 +37,7 @@ Response
         "l": "dfdf",
         "street": "fdsf",
         "sn": "Pierre",
+        "postalAddress": "dfdf ze5zec ze315",
         "postalCode": "dfdf",
         "mail": "pierre.giraud@gmail.com",
         "givenName": "GIRAUD",
@@ -109,6 +111,7 @@ Body parameters
         "givenName": "GIRAUD"
         "l": "dfdf"
         "mail": "pierre.giraud@gmail.com"
+        "postalAddress": "dfdf ze5zec ze315",
         "postOfficeBox": "dfdf"
         "postalCode": "dfdf"
         "sn": "Pierre"

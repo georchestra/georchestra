@@ -82,21 +82,8 @@
 
   <div class="row-fluid">
     <div class="span10">
-      <label>Address</label>
-      <input type="text" class="span12" ng-model="user.street" placeholder="Street">
-    </div>
-  </div>
-  <div class="row-fluid">
-    <div class="span4 bgcolor">
-      <input type="text" class="span12" ng-model="user.postOfficeBox" placeholder="Post Office Box">
-    </div>
-  </div>
-  <div class="row-fluid">
-    <div class="span3 bgcolor">
-      <input type="text" class="span12" ng-model="user.postalCode" placeholder="Postal Code">
-    </div>
-    <div class="span5 bgcolor">
-      <input type="text" class="span12" ng-model="user.l" placeholder="City">
+      <label class="control-label" for="postalAddress">Address</label>
+      <textarea type="text" name="postalAddress" ng-model="user.postalAddress" class="span12" placeholder="Address" />
     </div>
   </div>
 

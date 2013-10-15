@@ -468,6 +468,11 @@ public class UsersController {
 			accont.setEmail(email);
 		}
 
+		String postalAddress = RequestUtil.getFieldValue(json, UserSchema.POSTAL_ADDRESS_KEY);
+		if (postalAddress != null) {
+			accont.setPostalAddress(postalAddress);
+		}
+
 		String postOfficeBox = RequestUtil.getFieldValue(json, UserSchema.POST_OFFICE_BOX_KEY);
 		if (postOfficeBox != null) {
 			accont.setPostOfficeBox(postOfficeBox);
@@ -555,6 +560,8 @@ public class UsersController {
 			throw new IllegalArgumentException(UserSchema.MAIL_KEY + " is required" );
 		}
 		
+		String postalAddress =  RequestUtil.getFieldValue(json, UserSchema.POSTAL_ADDRESS_KEY );
+
 		String postOfficeBox =  RequestUtil.getFieldValue(json, UserSchema.POST_OFFICE_BOX_KEY );
 		
 		String postalCode = RequestUtil.getFieldValue(json, UserSchema.POSTAL_CODE_KEY);
@@ -582,7 +589,7 @@ public class UsersController {
 		
 		String commonName = AccountFactory.formatCommonName(givenName, surname);
 		
-		Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, org, title, phone, description, "", postalCode, "", postOfficeBox, "", street, locality, facsimile, "","","","","");
+		Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, org, title, phone, description, postalAddress, postalCode, "", postOfficeBox, "", street, locality, facsimile, "","","","","");
 		
 		return a;
 			
