@@ -508,6 +508,11 @@ public class UsersController {
 			accont.setTitle(title);
 		}
 
+		String description = RequestUtil.getFieldValue(json, UserSchema.DESCRIPTION_KEY);
+		if (description != null) {
+			accont.setDescription(description);
+		}
+
 		String commonName = AccountFactory.formatCommonName(
 				accont.getGivenName(), accont.getSurname());
 
@@ -565,6 +570,8 @@ public class UsersController {
 
 		String title = RequestUtil.getFieldValue( json, UserSchema.TITLE_KEY);
 
+		String description = RequestUtil.getFieldValue( json, UserSchema.DESCRIPTION_KEY);
+
 		String uid;
 		try {
 			uid = createUid(givenName, surname);
@@ -575,7 +582,7 @@ public class UsersController {
 		
 		String commonName = AccountFactory.formatCommonName(givenName, surname);
 		
-		Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, org, title, phone, "", "", postalCode, "", postOfficeBox, "", street, locality, facsimile, "","","","","");
+		Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, org, title, phone, description, "", postalCode, "", postOfficeBox, "", street, locality, facsimile, "","","","","");
 		
 		return a;
 			
