@@ -96,8 +96,7 @@ GEOR.wmsbrowser = (function() {
             });
 
             var r = function(val) {
-                return (val ? '<img src="app/img/famfamfam/tick.gif" alt="' + tr("Yes") + '">' :
-                    '<img src="app/img/famfamfam/cross.gif" alt="' + tr("No") + '">');
+                return (val ? '<img src="app/img/famfamfam/tick.gif" alt="' + tr("Yes") + '">' : '');
             };
 
             // create a grid to display records from the store
@@ -111,8 +110,8 @@ GEOR.wmsbrowser = (function() {
                 columns: [
                     cbxSm,
                     {header: tr("Layer"), dataIndex: "title", sortable: true, width: 200},
-                    {id: "queryable", header: tr("Queryable"), dataIndex: "queryable", sortable: true, width: 75, renderer: r},
-                    {id: "opaque", header: tr("Opaque"), dataIndex: "opaque", sortable: true, width: 50, renderer: r},
+                    {id: "queryable", header: tr("Queryable"), dataIndex: "queryable", sortable: true, width: 75, align: "center", renderer: r},
+                    {id: "opaque", header: tr("Opaque"), dataIndex: "opaque", sortable: true, width: 50, align: "center", renderer: r},
                     {id: "description", header: tr("Description"), dataIndex: "abstract"}
                 ],
                 sm: cbxSm,
