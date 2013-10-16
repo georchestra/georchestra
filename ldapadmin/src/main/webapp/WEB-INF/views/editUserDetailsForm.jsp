@@ -67,14 +67,14 @@
 					<jsp:attribute name="label"><s:message code="facsimile.label" /></jsp:attribute>
 				</t:input>
 				<t:input path="org">
-					<jsp:attribute name="label"><s:message code="organization.label" /></jsp:attribute>
+					<jsp:attribute name="label"><s:message code="org.label" /></jsp:attribute>
 				</t:input>
 				<t:input path="title">
 					<jsp:attribute name="label"><s:message code="title.label" /></jsp:attribute>
 				</t:input>
-				<t:input path="description">
+				<t:textarea path="description">
 					<jsp:attribute name="label"><s:message code="description.label" /></jsp:attribute>
-				</t:input>
+				</t:textarea>
 				<t:textarea path="postalAddress">
 					<jsp:attribute name="label"><s:message code="postalAddress.label" /></jsp:attribute>
 				</t:textarea>
@@ -124,6 +124,20 @@
             return false;
         }
     }
+    /* The current Spring version does not include placeholder in
+     * form:input, form:textarea, or form:password
+     * We then add placeholder afterwards by javascript
+     */
+    $(document).ready(function(){
+        $("input#firstName").attr("placeholder", '<s:message code="firstName.placeholder" />');
+        $("input#surname").attr("placeholder", '<s:message code="surname.placeholder" />');
+        $("input#phone").attr("placeholder", '<s:message code="phone.placeholder" />');
+        $("input#facsimile").attr("placeholder", '<s:message code="facsimile.placeholder" />');
+        $("input#org").attr("placeholder", '<s:message code="org.placeholder" />');
+        $("input#title").attr("placeholder", '<s:message code="title.placeholder" />');
+        $("textarea#postalAddress").attr("placeholder", '<s:message code="postalAddress.placeholder" />');
+        $("textarea#description").attr("placeholder", '<s:message code="description.placeholder" />');
+    });
 	</script>
 </body>
 </html>
