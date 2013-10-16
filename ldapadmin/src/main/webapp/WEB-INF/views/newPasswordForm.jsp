@@ -92,8 +92,8 @@
      * We then add placeholder afterwards by javascript
      */
     $(document).ready(function(){
-        $("input#password").attr("placeholder", '<s:message code="password.placeholder" />');
-        $("input#confirmPassword").attr("placeholder", '<s:message code="confirmPassword.placeholder" />');
+        $("input#password").attr("placeholder", "<s:message code="password.placeholder" />");
+        $("input#confirmPassword").attr("placeholder", "<s:message code="confirmPassword.placeholder" />");
     });
 	</script>
 </body>

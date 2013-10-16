@@ -84,7 +84,7 @@
      * We then add placeholder afterwards by javascript
      */
     $(document).ready(function(){
-        $("input#email").attr("placeholder", '<s:message code="email.placeholder" />');
+        $("input#email").attr("placeholder", "<s:message code="email.placeholder" />");
     });
 	</script>
 </body>
