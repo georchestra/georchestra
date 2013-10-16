@@ -79,6 +79,13 @@
             return false;
         }
     }
+    /* The current Spring version does not include placeholder in
+     * form:input, form:textarea, or form:password
+     * We then add placeholder afterwards by javascript
+     */
+    $(document).ready(function(){
+        $("input#email").attr("placeholder", '<s:message code="email.placeholder" />');
+    });
 	</script>
 </body>
 </html>
