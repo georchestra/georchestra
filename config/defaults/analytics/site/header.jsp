@@ -7,7 +7,7 @@
             var innerDoc = iframe.contentDocument || iframe.contentWindow.document,
                 base = innerDoc.createElement('base');
             base.setAttribute('target', '_parent');
-            iframe.contentDocument.getElementsByTagName('head')[0].appendChild(base);
+            innerDoc.getElementsByTagName('head')[0].appendChild(base);
         };
     </script>
     <div id="go_head">
