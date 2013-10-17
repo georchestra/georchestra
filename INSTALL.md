@@ -462,12 +462,14 @@ JAVA_OPTS="$JAVA_OPTS -DCUSTOM_EPSG_FILE=file://$CATALINA_BASE/conf/epsg.propert
 
 ... in which a sample epsg.properties file can be found [here](https://github.com/georchestra/georchestra/blob/master/server-deploy-support/src/main/resources/c2c/tomcat/conf/epsg.properties)
 
-GDAL for Extractorapp and Mapfishapp
-====================================
+GDAL for GeoServer, Extractorapp & Mapfishapp
+=============================================
 
 Extractorapp **requires** GDAL and GDAL Java bindings libraries installed on the server.
 
-Mapfishapp also optionally uses them for the file upload functionality, that allows to upload a vectorial data file to mapfishapp in order to display it as a layer. This functionnality in Mapfishapp relies normally on GeoTools, however, the supported file formats are limited (at 07/12/2013: shp, mif, gml and kml). If GDAL and GDAL Java bindings libraries are installed, the number of supported file formats is increased. This would give access, for example, to extra formats such as gpx or tab.
+GeoServer uses them to access more data formats, read http://docs.geoserver.org/latest/en/user/data/raster/gdal.html
+
+Mapfishapp also optionally uses them for the file upload functionality, that allows to upload a vectorial data file to mapfishapp in order to display it as a layer. This functionnality in Mapfishapp relies normally on GeoTools, however, the supported file formats are limited (at 2013-10-17: shp, mif, gml and kml). If GDAL and GDAL Java bindings libraries are installed, the number of supported file formats is increased. This would give access, for example, to extra formats such as GPX and TAB.
 
 The key element for calling the GDAL native library from mapfishapp is the **imageio-ext library** (see https://github.com/geosolutions-it/imageio-ext/wiki). It relies on:
  * jar files, that are included at build by maven,
@@ -480,13 +482,18 @@ The latter can be installed, on Debian-based distributions, with the libgdal1 pa
 
 Some more work is needed for installing the GDAL Java binding library, as there is still no deb package for it (note that packages exist for ruby and perl bindings, hopefully the Java's one will be released soon - see a recent proposal http://ftp-master.debian.org/new/gdal_1.10.0-0%7Eexp3.html).
 
-To quickly install the GDAL Java binding library on the server, download and extract the library (see http://demo.geo-solutions.it/share/github/imageio-ext/releases/1.1.X/1.1.7/native/gdal/ for the adequate distribution). For Debian Squeeze on amd64:
+To quickly install the GDAL Java binding library on the server, download and extract the library and its data (see http://demo.geo-solutions.it/share/github/imageio-ext/releases/1.1.X/1.1.7/native/gdal/ for the adequate distribution). 
+Example for Debian Squeeze on amd64:
 
-    wget http://demo.geo-solutions.it/share/github/imageio-ext/releases/1.1.X/1.1.7/native/gdal/linux/gdal192-Ubuntu11-gcc4.5.2-x86_64.tar.gz -O /tmp/gdal_libs.tgz
-    tar xvzf /tmp/gdal_libs.tgz
+    wget http://demo.geo-solutions.it/share/github/imageio-ext/releases/1.1.X/1.1.7/native/gdal/linux/gdal192-Ubuntu11-gcc4.5.2-x86_64.tar.gz -O /var/sig/gdal/NativeLibs/gdal_libs.tgz
+    cd /var/sig/gdal/NativeLibs/ && tar xvzf gdal_libs.tgz
+    
+    wget http://demo.geo-solutions.it/share/github/imageio-ext/releases/1.1.X/1.1.7/native/gdal/gdal-data.zip -O /var/sig/gdal/data.zip
+    cd /var/sig/gdal/ && unzip data.zip
 
-It is then recommended to copy the files in a specific directory (eg: /var/sig/gdal/NativeLibs/)
-Next, you have to include this directory in the `LD_LIBRARY_PATH` environment variable
+Next, you have to:
+ - include the newly created directory /var/sig/gdal/NativeLibs/ in the `LD_LIBRARY_PATH` environment variable
+ - create a GDAL_DATA environment variable (eg: export GDAL_DATA="/var/sig/gdal/data")
 
 ```
 sudo nano /etc/default/tomcat6
