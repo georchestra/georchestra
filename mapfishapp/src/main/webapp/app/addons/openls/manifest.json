@@ -1,0 +1,16 @@
+{
+    "js": [
+        "js/main.js"
+    ],
+    "css": [
+        "css/main.css"
+    ],
+    "default_options": {
+        
+    },
+    "i18n": {
+        "en": {},
+        "es": {},
+        "fr": {}
+    }
+}
