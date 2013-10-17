@@ -446,7 +446,6 @@ sudo nano /etc/default/tomcat6
 
 ```
 JAVA_OPTS="$JAVA_OPTS -Dorg.geotools.referencing.forceXY=true \
-    -Dgeobretagne_production=true \
     -Dextractor.storage.dir=/path/to/temporary/extracts/
 ```
 
