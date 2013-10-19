@@ -22,7 +22,7 @@
  * @include GeoExt/data/FeatureStore.js
  * @include GeoExt/data/ProtocolProxy.js
  */
- 
+
 Ext.namespace("GEOR");
 
 GEOR.referentials = (function() {
@@ -32,32 +32,32 @@ GEOR.referentials = (function() {
      * {OpenLayers.Map} The map object
      */
     var map = null;
-    
+
     /*
      * Property: nsAlias
      * {String} the GeoServer namespace alias (aka prefix) with localization layers
      */
     var nsAlias = null;
-    
+
     /*
      * Property: comboPanel
      * {Ext.Panel} the panel with the card layout
      * It can hold as many formPanels as reference layers
      */
     var comboPanel = null;
-    
+
     /*
      * Property: cbPanels
      * {Array} array of formPanels used in card layout
      */
     var cbPanels = [];
-    
+
     /*
      * Property: geometryName
      * {String} the selected layer geometry name
      */
     var geometryName = null;
-    
+
     /*
      * Property: labelWidth
      * {Integer} the label width used for all fields
@@ -95,7 +95,7 @@ GEOR.referentials = (function() {
             '<div class="search-item {[xindex % 2 === 0 ? "even" : "odd"]}">'+
             s.join(' - ')+'</div></tpl>');
     };
-    
+
     /*
      * Method: filterStringType
      * Extracts the string attribute names from an AttributeStore
@@ -112,7 +112,7 @@ GEOR.referentials = (function() {
             var parts = record.get('type').split(':'); // eg: "xsd:string"
             var type = (parts.length == 1) ? parts[0] : parts[1];
             if (type == 'string') {
-                items.push(record.get('name')); 
+                items.push(record.get('name'));
             }
         }, this);
         return items;
@@ -130,19 +130,19 @@ GEOR.referentials = (function() {
         if (!cbPanels[idx]) {
             GEOR.waiter.show();
             comboPanel.disable();
-            
+
             var protocol = record.get('layer').protocol;
-            
+
             var attStore = GEOR.ows.WFSDescribeFeatureType({
                 owsURL: protocol.url,
-                typeName: nsAlias + ':' + idx
+                typeName: idx
             }, {
                 success: function() {
                     // create new formPanel with search combo
                     var panel = new Ext.form.FormPanel({
                         items: [
                             createCbSearch(
-                                record, 
+                                record,
                                 attStore
                             )
                         ]
@@ -163,7 +163,7 @@ GEOR.referentials = (function() {
             comboPanel.layout.setActiveItem(cbPanels[idx]);
         }
     };
-    
+
     /*
      * Method: createLayerCombo
      * Creates the layer combo from WFSCapabilities
@@ -172,24 +172,25 @@ GEOR.referentials = (function() {
      * {Ext.form.ComboBox} the combobox
      */
     var createLayerCombo = function() {
-
+        var url = GEOR.config.GEOSERVER_WFS_URL.replace(
+            /(\/.*\/)wfs/i,
+            "$1" + nsAlias + "/wfs"
+        );
         var store = GEOR.ows.WFSCapabilities({
+            url: url,
             storeOptions: {
-                url: GEOR.config.GEOSERVER_WFS_URL,
+                url: url,
                 protocolOptions: {
                     srsName: map.getProjection(),
                     srsNameInQuery: true, // see http://trac.osgeo.org/openlayers/ticket/2228
                     // required so that we do not use the proxy if on same machine:
-                    url: GEOR.config.GEOSERVER_WFS_URL,
+                    url: url,
                     // to prevent warning message (too many features):
                     maxFeatures: 10
                 }
-            },
-            vendorParams: {
-                namespace: nsAlias
             }
         });
-    
+
         return new Ext.form.ComboBox({
             fieldLabel: tr("Referential"),
             store: store,
@@ -220,20 +221,20 @@ GEOR.referentials = (function() {
         if (feature.bounds) {
             var bounds = feature.bounds;
             if (bounds.getWidth() + bounds.getHeight() == 0) {
-                map.setCenter(bounds.getCenterLonLat(), map.baseLayer.numZoomLevels-1); 
+                map.setCenter(bounds.getCenterLonLat(), map.baseLayer.numZoomLevels-1);
             } else {
                 map.zoomToExtent(bounds.scale(1.05));
             }
         } else if (feature.geometry) {
             var geometry = feature.geometry;
             if (geometry.CLASS_NAME == 'OpenLayers.Geometry.Point') {
-                map.setCenter(geometry.getBounds().getCenterLonLat(), map.baseLayer.numZoomLevels-1); 
+                map.setCenter(geometry.getBounds().getCenterLonLat(), map.baseLayer.numZoomLevels-1);
             } else {
                 map.zoomToExtent(geometry.getBounds().scale(1.05));
             }
         }
     };
-    
+
     /*
      * Method: buildFilter
      * Builds the filter needed to perform the WFS query
@@ -277,21 +278,21 @@ GEOR.referentials = (function() {
             });
         }
     };
-    
+
     /*
      * Method: createCbSearch
-     * Creates the search combo 
+     * Creates the search combo
      *
      * Parameters:
      * record - {Ext.data.Record}
      * attStore - {GeoExt.data.AttributeStore}
      *
      * Returns:
-     * {Ext.form.ComboBox} 
+     * {Ext.form.ComboBox}
      */
     var createCbSearch = function(record, attStore) {
         var store, disabled = false;
-        
+
         if (record && record.get('layer')) {
             // find geometry name
             var idx = attStore.find('type', GEOR.ows.matchGeomProperty);
@@ -313,25 +314,25 @@ GEOR.referentials = (function() {
                 }),
                 listeners: {
                     "beforeload": function(store, options) {
-                        // add a filter to the options passed to proxy.load, 
+                        // add a filter to the options passed to proxy.load,
                         // proxy.load passes these options to protocol.read
                         var params = store.baseParams;
                         options.filter = buildFilter(params['query'], attributes);
-                        
+
                         // with GeoServer2, we need the geometry
                         // since GS2 does not publish bounds as GS1 did
                         // see http://applis-bretagne.fr/redmine/issues/2083
                         options.propertyNames = attributes.concat([geometryName]);
-                        
+
                         // remove the queryParam from the store's base
-                        // params not to pollute the query string:                        
+                        // params not to pollute the query string:
                         delete params['query'];
                     },
                     scope: this
                 }
             });
         } else {
-            // we need to create the first (fake) combo 
+            // we need to create the first (fake) combo
             // (which will never get used)
             // so we create useless store
             store = new GeoExt.data.FeatureStore();
@@ -369,13 +370,13 @@ GEOR.referentials = (function() {
                 scope: this
             }
         });
-        
+
         // hack in order to show the result dataview even
         // in case of "too many features" warning message
         store.on({
             load: function(){
                 cb.focus();
-                // this one is for IE, 
+                // this one is for IE,
                 // since it's not able to focus the element:
                 cb.hasFocus = true;
                 // focusing the element enables the expand()
@@ -383,7 +384,7 @@ GEOR.referentials = (function() {
             },
             scope: this
         });
-        
+
         return cb;
     };
 
@@ -401,13 +402,13 @@ GEOR.referentials = (function() {
          * ns - {String} The GeoServer namespace alias (aka prefix) for localisation layers.
          *
          * Returns:
-         * {Ext.FormPanel} recenter panel config 
+         * {Ext.FormPanel} recenter panel config
          */
         create: function(m, ns) {
-        	map = m;
+            map = m;
             nsAlias = ns;
             tr = OpenLayers.i18n;
-            
+
             comboPanel = new Ext.Panel({
                 layout: 'card',
                 activeItem: 0,
@@ -426,7 +427,7 @@ GEOR.referentials = (function() {
                     ]
                 }]
             });
-            
+
             return {
                 layout: 'border',
                 defaults: {
