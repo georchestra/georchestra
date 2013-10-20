@@ -486,10 +486,10 @@ Example for Debian Wheezy on amd64:
 
     sudo mkdir -p /var/sig/gdal/NativeLibs/
     sudo wget http://demo.geo-solutions.it/share/github/imageio-ext/releases/1.1.X/1.1.7/native/gdal/linux/gdal192-Ubuntu12-gcc4.6.3-x86_64.tar.gz -O /var/sig/gdal/NativeLibs/gdal_libs.tgz
-    sudo cd /var/sig/gdal/NativeLibs/ && sudo tar xvzf gdal_libs.tgz
+    cd /var/sig/gdal/NativeLibs/ && sudo tar xvzf gdal_libs.tgz
     
     sudo wget http://demo.geo-solutions.it/share/github/imageio-ext/releases/1.1.X/1.1.7/native/gdal/gdal-data.zip -O /var/sig/gdal/data.zip
-    sudo cd /var/sig/gdal/ && sudo unzip data.zip
+    cd /var/sig/gdal/ && sudo unzip data.zip
 
 Next, you have to:
  - include the newly created directory /var/sig/gdal/NativeLibs/ in the `LD_LIBRARY_PATH` environment variable
