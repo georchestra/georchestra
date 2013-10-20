@@ -48,6 +48,12 @@ GEOR.map = (function() {
     var map = null;
 
     /**
+     * Property: ls
+     * {GeoExt.data.LayerStore}
+     */
+    var ls = null;
+
+    /**
      * Constant: SCALES
      * {Array} The map's scales.
      */
@@ -58,6 +64,12 @@ GEOR.map = (function() {
      * {Function} an alias to OpenLayers.i18n
      */
     var tr = null;
+
+    /**
+     * Property: _adding
+     * {Boolean}
+     */
+    var _adding = false;
 
     /**
      * Method: createMainBaseLayer
@@ -196,12 +208,19 @@ GEOR.map = (function() {
      */
     var LayerStore = Ext.extend(GeoExt.data.LayerStore, {
         add: function(records) {
-            records = filter(records);
-            LayerStore.superclass.add.call(this, records);
+            // the filter method takes care of adding the records (required because of DescribeLayer XHR)
+            if (_adding) {
+                LayerStore.superclass.add.call(this, records);
+            } else {
+                records = filter(records);
+            }
         },
         insert: function(index, records) {
-            records = filter(records);
-            LayerStore.superclass.insert.call(this, index, records);
+            if (_adding) {
+                LayerStore.superclass.insert.call(this, index, records);
+            } else {
+                records = filter(records, index);
+            }
         }
     });
 
@@ -221,7 +240,7 @@ GEOR.map = (function() {
      * {Array({GeoExt.data.LayerRecord})} The records that pass
      *     the filter.
      */
-    var filter = function(records) {
+    var filter = function(records, index) { // optional index property. if present, we should insert at position "index" rather than add
         var errors = [], keep = [];
 
         Ext.each(records, function(r) {
@@ -286,6 +305,39 @@ GEOR.map = (function() {
             // Errors should be non-blocking since http://applis-bretagne.fr/redmine/issues/1749
             // so we "keep" every layer, and only display a warning message
             keep.push(r);
+
+            // WMSDescribeLayer for each new WMS Layer
+            if (r.get("type") == "WMS") {
+                GEOR.waiter.show();
+                GEOR.ows.WMSDescribeLayer(r, {
+                    success: function(store, records) {
+                        var wfsRecord = GEOR.ows.getWfsInfo(records);
+                        if (wfsRecord) {
+                            r.set("WFS_typeName", wfsRecord.get("typeName"));
+                            r.set("WFS_URL", wfsRecord.get("owsURL"));
+                        }
+                        var wcsRecord = GEOR.ows.getWcsInfo(records);
+                        if (wcsRecord) {
+                            r.set("WCS_typeName", wcsRecord.get("typeName"));
+                            r.set("WCS_URL", wcsRecord.get("owsURL"));
+                        }
+                        _adding = true;
+                        ls && ls.add([r]);
+                        _adding = false; // TODO: add/insert
+                    },
+                    failure: function() {
+                        _adding = true;
+                        ls && ls.add([r]); // TODO: add/insert
+                        _adding = false;
+                    },
+                    scope: this
+                });
+            } else {
+                // add immediately to layerstore
+                _adding = true;
+                ls && ls.add([r]); // TODO: add/insert
+                _adding = false;
+            }
         });
 
         if (errors.length > 0) {
@@ -352,9 +404,17 @@ GEOR.map = (function() {
         var recordType = GeoExt.data.LayerRecord.create(
             GEOR.ows.getRecordFields()
         );
+        recordType = Ext.extend(recordType, {
+            vectorSource: function() {
+                return !!this.get("WFS_URL") && !!this.get("WFS_typeName");
+            },
+            rasterSource: function() {
+                return !!this.get("WCS_URL") && !!this.get("WCS_typeName");
+            }
+        });
         map = createMap();
 
-        var ls = new LayerStore({
+        ls = new LayerStore({
             map: map,
             sortInfo: {
                 // opaque layers at the bottom

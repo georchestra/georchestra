@@ -38,6 +38,23 @@
  * @include OpenLayers/Format/GML/v3.js
  */
 
+
+GeoExt.data.LayerRecord.prototype.setLayer = function(layer) {
+    if (layer !== this.data.layer) {
+        this.dirty = true;
+        if(!this.modified) {
+            this.modified = {};
+        }
+        if(this.modified.layer === undefined) {
+            this.modified.layer = this.data.layer;
+        }
+        this.data.layer = layer;
+        if(!this.editing) {
+            this.afterEdit();
+        }
+    }
+};
+
 Ext.namespace("GEOR");
 
 /**
@@ -53,9 +70,14 @@ GEOR.ows = (function() {
      * Constant: defaultRecordFields
      * {Array} The fields shared by each layer record in this app.
      */
-    var defaultRecordFields = [ 
+    var defaultRecordFields = [
         // for the use of geOrchestra only:
         {name: "type", type: "string", defaultValue: "WMS"},
+        {name: "WCS_typeName", type: "string"},
+        {name: "WCS_URL", type: "string"},
+        {name: "WFS_typeName", type: "string"},
+        {name: "WFS_URL", type: "string"},
+        // end geOrchestra use
         {name: "name", type: "string"},
         {name: "title", type: "string"},
         {name: "abstract", type: "string"},
@@ -158,6 +180,19 @@ GEOR.ows = (function() {
         store.load();
     };
 
+    var getWxsInfo = function(records, owsType) {
+        var i, len = records.length, r;
+        for (i=0; i<len; i++) {
+            r = records[i];
+            if (r.get("owsType") == owsType &&
+                r.get("owsURL") &&
+                r.get("typeName")) {
+                return r;
+            }
+        }
+        return null;
+    };
+
     /*
      * Public
      */
@@ -234,18 +269,14 @@ GEOR.ows = (function() {
          *     records.
          *
          * Returns
-         * record - {Ext.data.Record} The first matching record.
+         * record - {Ext.data.Record} The first matching record, null otherwise
          */
         getWfsInfo:function(records) {
-            var i, len = records.length, r;
-            for (i=0; i<len; i++) {
-                r = records[i];
-                if (r.get("owsType") == "WFS" &&
-                    r.get("owsURL") &&
-                    r.get("typeName")) {
-                    return r;
-                }
-            }
+            return getWxsInfo(records, "WFS");
+        },
+
+        getWcsInfo:function(records) {
+            return getWxsInfo(records, "WCS");
         },
 
         /**
@@ -467,6 +498,17 @@ GEOR.ows = (function() {
                 options.storeOptions.layerOptions) ?
                     options.storeOptions.layerOptions : {};
             var baseParams = options.baseParams || {};
+            var recordType = GeoExt.data.LayerRecord.create(
+                defaultRecordFields
+            );
+            recordType = Ext.extend(recordType, {
+                vectorSource: function() {
+                    return !!this.get("WFS_URL") && !!this.get("WFS_typeName");
+                },
+                rasterSource: function() {
+                    return !!this.get("WCS_URL") && !!this.get("WCS_typeName");
+                }
+            });
             var storeOptions = Ext.applyIf({
                 baseParams: Ext.apply({
                     "REQUEST": "GetCapabilities"
@@ -475,7 +517,8 @@ GEOR.ows = (function() {
                     layerOptions,
                     GEOR.ows.defaultWMSLayerOptions
                 ),
-                fields: defaultRecordFields
+                //fields: defaultRecordFields
+                fields: recordType
             }, options.storeOptions);
             var store = new GeoExt.data.WMSCapabilitiesStore(storeOptions);
             if (options.success) {

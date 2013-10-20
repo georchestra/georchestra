@@ -460,6 +460,10 @@ GEOR.managelayers = (function() {
             isWMS = type === "WMS",
             isWMTS = type === "WMTS",
             isWFS = type === "WFS",
+            vectorSource = (type === "WMS") ?  // TODO: replace vectorSource by hasEquivalentWFS
+                layerRecord.vectorSource() : false,
+            rasterSource = (type === "WMS") ?  // TODO: replace rasterSource by hasEquivalentWCS
+                layerRecord.rasterSource() : false,
             isVector = layer instanceof OpenLayers.Layer.Vector;
 
         var menuItems = [], url, sepInserted;
@@ -582,7 +586,7 @@ GEOR.managelayers = (function() {
                 }
             });
         }
-        if (GEOR.styler && isWMS && queryable) {
+        if (GEOR.styler && vectorSource) {
             insertSep();
             menuItems.push({
                 iconCls: 'geor-btn-style',
@@ -599,7 +603,7 @@ GEOR.managelayers = (function() {
         // we can have the querier or not.
         // The availability of a WFS equivalent layer is.
         // This depends on http://applis-bretagne.fr/redmine/issues/1984
-        if (GEOR.querier && ((isWMS && queryable) || isWFS)) {
+        if (GEOR.querier && (vectorSource || isWFS)) {
             insertSep();
             menuItems.push({
                 iconCls: 'geor-btn-query',
@@ -668,7 +672,7 @@ GEOR.managelayers = (function() {
             });
         }
 
-        if (isWMS || isWFS) {
+        if (vectorSource || rasterSource || isWFS) {
             insertSep();
             menuItems.push({
                 iconCls: 'geor-btn-download',
