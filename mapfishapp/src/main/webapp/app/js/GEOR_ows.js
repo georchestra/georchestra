@@ -38,23 +38,6 @@
  * @include OpenLayers/Format/GML/v3.js
  */
 
-
-GeoExt.data.LayerRecord.prototype.setLayer = function(layer) {
-    if (layer !== this.data.layer) {
-        this.dirty = true;
-        if(!this.modified) {
-            this.modified = {};
-        }
-        if(this.modified.layer === undefined) {
-            this.modified.layer = this.data.layer;
-        }
-        this.data.layer = layer;
-        if(!this.editing) {
-            this.afterEdit();
-        }
-    }
-};
-
 Ext.namespace("GEOR");
 
 /**
