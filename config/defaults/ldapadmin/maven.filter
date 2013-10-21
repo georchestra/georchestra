@@ -45,3 +45,6 @@ delayInDays=1
 
 language=@shared.language@
 headerHeight=@shared.header.height@
+
+# List of required fields in new account form (CSV list)
+newAccountRequiredFields=firstName,surname,email,uid,password,confirmPassword

@@ -165,6 +165,6 @@
     </bean>
     
     <bean id="newAccountFormController" class="org.georchestra.ldapadmin.ws.newaccount.NewAccountFormController">
-        <property name="requiredFields" value="a,b,c,firstName, surname   ,org" />
+        <property name="requiredFields" value="${newAccountRequiredFields}" />
     </bean>
 </beans>
