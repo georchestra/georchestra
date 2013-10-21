@@ -43,7 +43,7 @@ public class EditUserDetailsFormController {
 		this.accountDao = dao;
 	}
 	
-	private static final String[] fields = {"uid", "firstName", "surname", "email", "title", "phone", "facsimile", "org", "description", "postalAddress", "postalCode",  "registeredAddress", "postOfficeBox", "physicalDeliveryOfficeName"};
+	private static final String[] fields = {"uid", "firstName", "surname", "email", "title", "phone", "facsimile", "org", "description", "postalAddress"};
 
 	@InitBinder
 	public void initForm( WebDataBinder dataBinder) {
@@ -106,11 +106,7 @@ public class EditUserDetailsFormController {
 		formBean.setFacsimile(account.getFacsimile());
 		formBean.setOrg(account.getOrg());
 		formBean.setDescription(account.getDescription());
-		formBean.setPhysicalDeliveryOfficeName(account.getPhysicalDeliveryOfficeName());
 		formBean.setPostalAddress(account.getPostalAddress());
-		formBean.setPostalCode(account.getPostalCode());
-		formBean.setPostOfficeBox(account.getPostOfficeBox());
-		formBean.setRegisteredAddress(account.getRegisteredAddress());
 
 		return formBean;
 	}
@@ -194,11 +190,7 @@ public class EditUserDetailsFormController {
 		account.setFacsimile(formBean.getFacsimile());
 		account.setOrg(formBean.getOrg());
 		account.setDescription(formBean.getDescription());
-		account.setPhysicalDeliveryOfficeName(formBean.getPhysicalDeliveryOfficeName());
 		account.setPostalAddress(formBean.getPostalAddress());
-		account.setPostalCode( formBean.getPostalCode() );
-		account.setPostOfficeBox( formBean.getPostOfficeBox() );
-		account.setRegisteredAddress( formBean.getRegisteredAddress() );
 		
 		return account;
 	}

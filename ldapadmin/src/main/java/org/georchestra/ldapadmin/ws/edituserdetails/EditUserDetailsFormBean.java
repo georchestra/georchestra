@@ -19,10 +19,6 @@ public class EditUserDetailsFormBean {
 	private String org;
 	private String description;
 	private String postalAddress; 
-	private String postalCode; 
-	private String registeredAddress;  
-	private String postOfficeBox; 
-	private String physicalDeliveryOfficeName;
 	
 	@Override
 	public String toString() {
@@ -30,10 +26,7 @@ public class EditUserDetailsFormBean {
 				+ ", givenName=" + firstName + ", email=" + email + ", title=" + title
 				+ ", phone=" + phone + ", facsimile=" + facsimile
 				+ ", org=" + org + ", description="
-				+ description + ", postalAddress=" + postalAddress + ", postalCode="
-				+ postalCode + ", registeredAddress=" + registeredAddress
-				+ ", postOfficeBox=" + postOfficeBox
-				+ ", physicalDeliveryOfficeName=" + physicalDeliveryOfficeName
+				+ description + ", postalAddress=" + postalAddress
 				+ "]";
 	}
 	
@@ -97,30 +90,5 @@ public class EditUserDetailsFormBean {
 	public void setPostalAddress(String postalAddress) {
 		this.postalAddress = postalAddress;
 	}
-	public String getPostalCode() {
-		return postalCode;
-	}
-	public void setPostalCode(String postalCode) {
-		this.postalCode = postalCode;
-	}
-	public String getRegisteredAddress() {
-		return registeredAddress;
-	}
-	public void setRegisteredAddress(String registeredAddress) {
-		this.registeredAddress = registeredAddress;
-	}
-	public String getPostOfficeBox() {
-		return postOfficeBox;
-	}
-	public void setPostOfficeBox(String postOfficeBox) {
-		this.postOfficeBox = postOfficeBox;
-	}
-	public String getPhysicalDeliveryOfficeName() {
-		return physicalDeliveryOfficeName;
-	}
-	public void setPhysicalDeliveryOfficeName(String physicalDeliveryOfficeName) {
-		this.physicalDeliveryOfficeName = physicalDeliveryOfficeName;
-	} 
-	
 
 }
