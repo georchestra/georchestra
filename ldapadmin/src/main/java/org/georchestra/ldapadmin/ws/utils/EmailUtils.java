@@ -7,6 +7,8 @@ import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 
+import org.georchestra.ldapadmin.ws.utils.Validation;
+
 /**
  * Utility class to manage the email.
  * 
@@ -17,7 +19,7 @@ public class EmailUtils {
 
 	public static void validate(String email, Errors errors) {
 
-		if (!StringUtils.hasLength(email)) {
+		if ( !StringUtils.hasLength(email) && Validation.isFieldRequired("email") ) {
 			errors.rejectValue("email", "email.error.required", "required");
 		} else {
 			if (!EmailValidator.getInstance().isValid(email)) {
