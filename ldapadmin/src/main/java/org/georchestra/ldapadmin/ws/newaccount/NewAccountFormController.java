@@ -8,6 +8,9 @@ import java.io.IOException;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
+import java.util.Arrays;
+import java.util.List;
+
 import net.tanesha.recaptcha.ReCaptcha;
 
 import org.georchestra.ldapadmin.bs.Moderator;
@@ -59,7 +62,26 @@ public final class NewAccountFormController {
 	private ReCaptcha reCaptcha; 
 
 	private ReCaptchaParameters reCaptchaParameters;
-
+	
+	private List<String> requiredFields;
+	public String getRequiredFields() {
+		return requiredFields.toString();
+	}
+	public void setRequiredFields(String csvRequiredFields) {
+		List<String> requiredFields = Arrays.asList(csvRequiredFields.split("\\s*,\\s*"));
+		this.requiredFields = requiredFields;
+	}
+	private String isFieldRequired (String field) {
+		for (String f : this.requiredFields) {
+			if (field.equals(f)) {
+				return "true";
+			}
+		}
+		return "false";
+	}
+	
+	private static final String[] fields = {"firstName","surname", "email", "phone", "org", "title", "description", "uid", "password", "confirmPassword", "role", "recaptcha_challenge_field", "recaptcha_response_field"};
+	
 	@Autowired
 	public NewAccountFormController( AccountDao dao, MailService mailSrv , Moderator moderatorRule, ReCaptcha reCaptcha, ReCaptchaParameters reCaptchaParameters){
 		this.accountDao = dao;
@@ -72,7 +94,7 @@ public final class NewAccountFormController {
 	@InitBinder
 	public void initForm( WebDataBinder dataBinder) {
 		
-		dataBinder.setAllowedFields(new String[]{"firstName","surname", "email", "phone", "org", "title", "description", "uid", "password", "confirmPassword", "role", "recaptcha_challenge_field", "recaptcha_response_field"});
+		dataBinder.setAllowedFields(fields);
 	}
 	
 	@RequestMapping(value="/account/new", method=RequestMethod.GET)
@@ -82,7 +104,9 @@ public final class NewAccountFormController {
 		
 		model.addAttribute(formBean);
 		model.addAttribute("reCaptchaPublicKey", this.reCaptchaParameters.getPublicKey());
-		
+		for (String f : fields) {
+			model.addAttribute(f + "Required", isFieldRequired(f));
+		}
 		return "createAccountForm";
 	}
 	

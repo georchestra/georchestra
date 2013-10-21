@@ -164,4 +164,7 @@
         <property name="delayInDays" value="${delayInDays}" />
     </bean>
     
+    <bean id="newAccountFormController" class="org.georchestra.ldapadmin.ws.newaccount.NewAccountFormController">
+        <property name="requiredFields" value="a,b,c,firstName, surname   ,org" />
+    </bean>
 </beans>

@@ -49,38 +49,38 @@
 
 			<fieldset>
 				<legend><s:message code="createAccountForm.fieldset.userDetails"/></legend>
-				<t:input path="firstName" required="true" onkeyup="makeUid();" onchange="makeUid();">
+				<t:input path="firstName" required="${firstNameRequired}" onkeyup="makeUid();" onchange="makeUid();">
 					<jsp:attribute name="label"><s:message code="firstName.label" /></jsp:attribute>
 				</t:input>
-				<t:input path="surname" required="true" onkeyup="makeUid();" onchange="makeUid();">
+				<t:input path="surname" required="${surnameRequired}" onkeyup="makeUid();" onchange="makeUid();">
 					<jsp:attribute name="label"><s:message code="surname.label" /></jsp:attribute>
 				</t:input>
-				<t:input path="email" required="true">
+				<t:input path="email" required="${emailRequired}">
 					<jsp:attribute name="label"><s:message code="email.label" /></jsp:attribute>
 				</t:input>
-				<t:input path="phone">
+				<t:input path="phone" required="${phoneRequired}">
 					<jsp:attribute name="label"><s:message code="phone.label" /></jsp:attribute>
 				</t:input>
-				<t:input path="org">
+				<t:input path="org" required="${orgRequired}">
 					<jsp:attribute name="label"><s:message code="org.label" /></jsp:attribute>
 				</t:input>
-				<t:input path="title">
+				<t:input path="title" required="${titleRequired}">
 					<jsp:attribute name="label"><s:message code="title.label" /></jsp:attribute>
 				</t:input>
-				<t:textarea path="description">
+				<t:textarea path="description" required="${descriptionRequired}">
 					<jsp:attribute name="label"><s:message code="description.label" /></jsp:attribute>
 				</t:textarea>
 			</fieldset>
 
 			<fieldset>
 				<legend><s:message code="createAccountForm.fieldset.credentials"/></legend>
-				<t:input path="uid" required="true" appendIcon="user">
+				<t:input path="uid" required="${uidRequired}" appendIcon="user">
 					<jsp:attribute name="label"><s:message code="uid.label" /></jsp:attribute>
 				</t:input>
-				<t:password path="password" required="true" spanId="pwdQuality" appendIcon="lock" onblur="passwordOnBlur();" onchange="cleanConfirmPassword();feedbackPassStrength('pwdQuality', value);" onkeypress="cleanConfirmPassword();" onkeyup="feedbackPassStrength('pwdQuality', value);">
+				<t:password path="password" required="${passwordRequired}" spanId="pwdQuality" appendIcon="lock" onblur="passwordOnBlur();" onchange="cleanConfirmPassword();feedbackPassStrength('pwdQuality', value);" onkeypress="cleanConfirmPassword();" onkeyup="feedbackPassStrength('pwdQuality', value);">
 					<jsp:attribute name="label"><s:message code="password.label" /></jsp:attribute>
 				</t:password>
-				<t:password path="confirmPassword" required="true" onblur="confirmPasswordOnBlur();">
+				<t:password path="confirmPassword" required="${confirmPasswordRequired}" onblur="confirmPasswordOnBlur();">
 					<jsp:attribute name="label"><s:message code="confirmPassword.label" /></jsp:attribute>
 				</t:password>
 			</fieldset>
