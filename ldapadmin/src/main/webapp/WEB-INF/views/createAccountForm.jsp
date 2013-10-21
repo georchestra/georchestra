@@ -163,10 +163,8 @@
         $("input#surname").attr("placeholder", "<s:message code="surname.placeholder" />");
         $("input#email").attr("placeholder", "<s:message code="email.placeholder" />");
         $("input#phone").attr("placeholder", "<s:message code="phone.placeholder" />");
-        $("input#facsimile").attr("placeholder", "<s:message code="facsimile.placeholder" />");
         $("input#org").attr("placeholder", "<s:message code="org.placeholder" />");
         $("input#title").attr("placeholder", "<s:message code="title.placeholder" />");
-        $("textarea#postalAddress").attr("placeholder", "<s:message code="postalAddress.placeholder" />");
         $("textarea#description").attr("placeholder", "<s:message code="description.placeholder" />");
         $("input#uid").attr("placeholder", "<s:message code="uid.placeholder" />");
         $("input#password").attr("placeholder", "<s:message code="password.placeholder" />");
