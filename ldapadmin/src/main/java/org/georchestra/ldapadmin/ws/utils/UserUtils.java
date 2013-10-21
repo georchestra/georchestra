@@ -6,6 +6,8 @@ package org.georchestra.ldapadmin.ws.utils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 
+import org.georchestra.ldapadmin.ws.utils.Validation;
+
 /**
  * Contains useful method that are used in the form validation.  
  * 
@@ -21,7 +23,7 @@ public class UserUtils {
 	public static void validate(String uid, String firstName, String surname, Errors errors) {
 		
 		// uid validation
-		if( !StringUtils.hasLength(uid)){
+		if( !StringUtils.hasLength(uid) && Validation.isFieldRequired("uid") ){
 			errors.rejectValue("uid", "uid.error.required", "required");
 		} else{
 
@@ -58,11 +60,11 @@ public class UserUtils {
 
 	public static void validate(String firstName, String surname, Errors errors) {
 		
-		if( !StringUtils.hasLength(firstName)){
+		if( !StringUtils.hasLength(firstName) && Validation.isFieldRequired("firstName") ){
 			errors.rejectValue("firstName", "firstName.error.required", "required");
 		}
 		
-		if( !StringUtils.hasLength( surname ) ){
+		if( !StringUtils.hasLength( surname ) && Validation.isFieldRequired("surname") ){
 			errors.rejectValue("surname", "surname.error.required", "required");
 		}
 	}
