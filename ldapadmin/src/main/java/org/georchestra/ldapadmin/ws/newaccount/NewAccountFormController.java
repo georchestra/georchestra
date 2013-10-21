@@ -8,9 +8,6 @@ import java.io.IOException;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.commons.lang3.ArrayUtils;
 
 import net.tanesha.recaptcha.ReCaptcha;
@@ -29,6 +26,7 @@ import org.georchestra.ldapadmin.ws.utils.EmailUtils;
 import org.georchestra.ldapadmin.ws.utils.PasswordUtils;
 import org.georchestra.ldapadmin.ws.utils.RecaptchaUtils;
 import org.georchestra.ldapadmin.ws.utils.UserUtils;
+import org.georchestra.ldapadmin.ws.utils.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -65,23 +63,6 @@ public final class NewAccountFormController {
 
 	private ReCaptchaParameters reCaptchaParameters;
 	
-	private List<String> requiredFields;
-	public String getRequiredFields() {
-		return requiredFields.toString();
-	}
-	public void setRequiredFields(String csvRequiredFields) {
-		List<String> requiredFields = Arrays.asList(csvRequiredFields.split("\\s*,\\s*"));
-		this.requiredFields = requiredFields;
-	}
-	private String isFieldRequired (String field) {
-		for (String f : this.requiredFields) {
-			if (field.equals(f)) {
-				return "true";
-			}
-		}
-		return "false";
-	}
-	
 	private static final String[] fields = {"firstName","surname", "email", "phone", "org", "title", "description", "uid", "password", "confirmPassword"};
 	
 	@Autowired
@@ -107,7 +88,7 @@ public final class NewAccountFormController {
 		model.addAttribute(formBean);
 		model.addAttribute("reCaptchaPublicKey", this.reCaptchaParameters.getPublicKey());
 		for (String f : fields) {
-			model.addAttribute(f + "Required", isFieldRequired(f));
+			model.addAttribute(f + "Required", Validation.isFieldRequired(f));
 		}
 		return "createAccountForm";
 	}

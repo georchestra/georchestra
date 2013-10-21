@@ -46,6 +46,6 @@ delayInDays=1
 language=@shared.language@
 headerHeight=@shared.header.height@
 
-# List of required fields in new account form (CSV list) - possible values are:
+# List of required fields in forms (CSV list) - possible values are:
 # firstName,surname,email,phone,org,title,description,uid,password,confirmPassword
-newAccountRequiredFields=firstName,surname,email,uid,password,confirmPassword
+requiredFields=firstName,surname,email,uid,password,confirmPassword
