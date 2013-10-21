@@ -155,7 +155,7 @@ public class LostPasswordFormController  {
 			
 		} catch (NotFoundException e) {
 			
-			resultErrors.rejectValue("email", "mailNoExist", "There is not a user with the provided email.");
+			resultErrors.rejectValue("email", "email.error.notFound", "No user found for this email.");
 			
 			return "lostPasswordForm";
 			
