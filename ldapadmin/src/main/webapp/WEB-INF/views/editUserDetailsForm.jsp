@@ -117,7 +117,10 @@
 	<script type="text/javascript">
     /* Validate the form */
     function validate() {
-        if (testFirstname() & testSurname()) {
+        if (testFirstname() & testSurname() &
+			testField("phone") & testField("org") & testField("title") & testField("description") &
+			testField("facsimile") & testField("postalAddress")
+			) {
             return true;
         } else {
             setFormError();
