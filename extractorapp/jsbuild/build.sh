@@ -15,8 +15,6 @@ rm="/bin/rm"
 sh="/bin/sh"
 cp="/bin/cp"
 
-${rm} -rf "${releasepath}"
-
 #
 # MapFish.js build
 #
