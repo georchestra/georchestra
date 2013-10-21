@@ -27,7 +27,7 @@ public class UserUtils {
 			errors.rejectValue("uid", "uid.error.required", "required");
 		} else{
 
-			if( !isUidValid(uid)){
+			if( StringUtils.hasLength(uid) && !isUidValid(uid)){
 				errors.rejectValue("uid", "uid.error.invalid", "required");
 			}
 		}
