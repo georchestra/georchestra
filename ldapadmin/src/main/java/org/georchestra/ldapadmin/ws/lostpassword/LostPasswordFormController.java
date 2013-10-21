@@ -6,8 +6,9 @@ package org.georchestra.ldapadmin.ws.lostpassword;
 import java.io.IOException;
 import java.util.UUID;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.servlet.ServletContext;
 
 import net.tanesha.recaptcha.ReCaptcha;
 
@@ -52,7 +53,7 @@ import org.springframework.web.bind.support.SessionStatus;
  * @author Mauricio Pazos
  */
 @Controller
-@SessionAttributes(value={"reCaptchaPublicKey"},types=LostPasswordFormBean.class)
+@SessionAttributes(types=LostPasswordFormBean.class)
 public class LostPasswordFormController  {
 	
 	protected static final Log LOG = LogFactory.getLog(LostPasswordFormController.class.getName());
@@ -84,11 +85,12 @@ public class LostPasswordFormController  {
 	@RequestMapping(value="/account/lostPassword", method=RequestMethod.GET)
 	public String setupForm(HttpServletRequest request, @RequestParam(value="email", required=false) String email, Model model) throws IOException{
 
+		HttpSession session = request.getSession();
 		LostPasswordFormBean formBean = new LostPasswordFormBean();
 		formBean.setEmail(email);
 		
 		model.addAttribute(formBean);
-		model.addAttribute("reCaptchaPublicKey", this.reCaptchaParameters.getPublicKey());
+		session.setAttribute("reCaptchaPublicKey", this.reCaptchaParameters.getPublicKey());
 		
 		return "lostPasswordForm";
 	}
