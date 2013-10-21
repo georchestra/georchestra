@@ -251,27 +251,6 @@ GEOR.map = (function() {
                 errors.push(error);
             }
 
-            /*
-            Lesson learned with http://applis-bretagne.fr/redmine/issues/2886 :
-            Do not try to be more intelligent than the WMS server
-
-            // Note: queryable is required in addition to opaque,
-            // because opaque is not a standard WMC feature
-            // This enables us to remove rasters from legend panel
-            if (r.get("opaque") === true || r.get("queryable") === false) {
-                // this record is valid, set its "hideInLegend"
-                // data field to true if the corresponding layer
-                // is a raster layer, i.e. its "opaque" data
-                // field is true
-                r.set("hideInLegend", true);
-                // we set opaque to true so that non queryable
-                // layers are considered as baselayers
-                r.set("opaque", true);
-            }
-            */
-            // Note that the ultimate solution would be to do a getCapabilities
-            // request for each OGC server advertised in the WMC
-
             if (r.get("opaque") === true) {
                 // an opaque layer can be considered as a baselayer
                 // as a result, we apply a transitionEffect, which suits well for baselayers
