@@ -24,12 +24,15 @@ fi
 ${mkdir} -p ${releasepath} ${releasepath}/lang
 
 (cd ${buildpath};
- if [ ! -d ${venv} ]; then
+ ${venv}/bin/jsbuild -h > /dev/null
+ if [ $? -eq 0 ]; then
      echo "creating virtual env and installing jstools..."
+     rm -rf ${venv}
      virtualenv  --no-site-packages ${venv}
      ${venv}/bin/pip install jstools
      echo "done."
  fi;
+
  echo "running jsbuild for main app..."
  ${venv}/bin/jsbuild -o "${releasepath}" main.cfg
  echo "done.")
