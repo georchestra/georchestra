@@ -11,6 +11,7 @@ import org.georchestra.ldapadmin.ds.DataServiceException;
 import org.georchestra.ldapadmin.ds.DuplicatedEmailException;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.ws.utils.UserUtils;
+import org.georchestra.ldapadmin.ws.utils.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -140,6 +141,12 @@ public class EditUserDetailsFormController {
 		}
 
 		UserUtils.validate( formBean.getFirstName(), formBean.getSurname(), resultErrors );
+		Validation.validateField("phone", formBean.getPhone(), resultErrors);
+		Validation.validateField("facsimile", formBean.getFacsimile(), resultErrors);
+		Validation.validateField("title", formBean.getTitle(), resultErrors);
+		Validation.validateField("org", formBean.getOrg(), resultErrors);
+		Validation.validateField("description", formBean.getDescription(), resultErrors);
+		Validation.validateField("postalAddress", formBean.getPostalAddress(), resultErrors);
 		
 		if(resultErrors.hasErrors()){
 			
