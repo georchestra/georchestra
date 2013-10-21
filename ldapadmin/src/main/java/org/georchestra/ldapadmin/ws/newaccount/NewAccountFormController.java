@@ -5,9 +5,9 @@ package org.georchestra.ldapadmin.ws.newaccount;
 
 import java.io.IOException;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.servlet.ServletContext;
 
 import org.apache.commons.lang3.ArrayUtils;
 
