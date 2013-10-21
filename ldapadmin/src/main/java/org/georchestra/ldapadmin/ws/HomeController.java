@@ -64,6 +64,8 @@ public class HomeController {
 						config.getPasswordRecoveryContext() + redirectUrl);
 			}
 			response.sendRedirect(config.getPasswordRecoveryContext() + redirectUrl);
+		} else {
+			response.sendRedirect("/cas/login");
 		}
 	}
 }
