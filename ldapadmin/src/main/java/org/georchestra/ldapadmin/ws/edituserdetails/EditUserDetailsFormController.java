@@ -5,6 +5,7 @@ package org.georchestra.ldapadmin.ws.edituserdetails;
 
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.georchestra.ldapadmin.ds.AccountDao;
 import org.georchestra.ldapadmin.ds.DataServiceException;
@@ -73,9 +74,15 @@ public class EditUserDetailsFormController {
 			
 			this.accountBackup = this.accountDao.findByUID(request.getHeader("sec-username"));
 			
+			HttpSession session = request.getSession();
 			EditUserDetailsFormBean formBean = createForm(this.accountBackup);
 
 			model.addAttribute(formBean);
+			for (String f : fields) {
+				if (Validation.isFieldRequired(f)) {
+					session.setAttribute(f + "Required", "true");
+				}
+			}
 			
 			return "editUserDetailsForm";
 			
