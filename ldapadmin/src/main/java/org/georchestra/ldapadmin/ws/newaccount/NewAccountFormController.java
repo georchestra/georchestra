@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import net.tanesha.recaptcha.ReCaptcha;
 
 import org.georchestra.ldapadmin.bs.Moderator;
@@ -80,7 +82,7 @@ public final class NewAccountFormController {
 		return "false";
 	}
 	
-	private static final String[] fields = {"firstName","surname", "email", "phone", "org", "title", "description", "uid", "password", "confirmPassword", "role", "recaptcha_challenge_field", "recaptcha_response_field"};
+	private static final String[] fields = {"firstName","surname", "email", "phone", "org", "title", "description", "uid", "password", "confirmPassword"};
 	
 	@Autowired
 	public NewAccountFormController( AccountDao dao, MailService mailSrv , Moderator moderatorRule, ReCaptcha reCaptcha, ReCaptchaParameters reCaptchaParameters){
@@ -94,7 +96,7 @@ public final class NewAccountFormController {
 	@InitBinder
 	public void initForm( WebDataBinder dataBinder) {
 		
-		dataBinder.setAllowedFields(fields);
+		dataBinder.setAllowedFields(ArrayUtils.addAll(fields, new String[]{"role", "recaptcha_challenge_field", "recaptcha_response_field"}));
 	}
 	
 	@RequestMapping(value="/account/new", method=RequestMethod.GET)
