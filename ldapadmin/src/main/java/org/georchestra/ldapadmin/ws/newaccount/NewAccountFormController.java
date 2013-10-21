@@ -88,7 +88,9 @@ public final class NewAccountFormController {
 		model.addAttribute(formBean);
 		model.addAttribute("reCaptchaPublicKey", this.reCaptchaParameters.getPublicKey());
 		for (String f : fields) {
-			model.addAttribute(f + "Required", Validation.isFieldRequired(f));
+			if (Validation.isFieldRequired(f)) {
+				model.addAttribute(f + "Required", "true");
+			}
 		}
 		return "createAccountForm";
 	}

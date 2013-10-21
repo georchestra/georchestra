@@ -27,12 +27,12 @@ public class Validation {
 		r.add("password");
 		this.requiredFields = r;
 	}
-	public static String isFieldRequired (String field) {
+	public static boolean isFieldRequired (String field) {
 		for (String f : requiredFields) {
 			if (field.equals(f)) {
-				return "true";
+				return true;
 			}
 		}
-		return "false";
+		return false;
 	}
 }
