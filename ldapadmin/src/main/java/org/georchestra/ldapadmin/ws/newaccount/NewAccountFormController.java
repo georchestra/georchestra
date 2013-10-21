@@ -6,6 +6,7 @@ package org.georchestra.ldapadmin.ws.newaccount;
 import java.io.IOException;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -50,7 +51,7 @@ import org.springframework.web.bind.support.SessionStatus;
  *
  */
 @Controller
-@SessionAttributes(value={"reCaptchaPublicKey"},types={AccountFormBean.class})
+@SessionAttributes(types={AccountFormBean.class})
 public final class NewAccountFormController {
 	
 	private AccountDao accountDao;
@@ -81,15 +82,16 @@ public final class NewAccountFormController {
 	}
 	
 	@RequestMapping(value="/account/new", method=RequestMethod.GET)
-	public String setupForm(Model model) throws IOException{
+	public String setupForm(HttpServletRequest request, Model model) throws IOException{
 
+		HttpSession session = request.getSession();
 		AccountFormBean formBean = new AccountFormBean();
 		
 		model.addAttribute(formBean);
-		model.addAttribute("reCaptchaPublicKey", this.reCaptchaParameters.getPublicKey());
+		session.setAttribute("reCaptchaPublicKey", this.reCaptchaParameters.getPublicKey());
 		for (String f : fields) {
 			if (Validation.isFieldRequired(f)) {
-				model.addAttribute(f + "Required", "true");
+				session.setAttribute(f + "Required", "true");
 			}
 		}
 		return "createAccountForm";
