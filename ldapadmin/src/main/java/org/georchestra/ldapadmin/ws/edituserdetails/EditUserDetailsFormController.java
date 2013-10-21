@@ -43,10 +43,12 @@ public class EditUserDetailsFormController {
 		this.accountDao = dao;
 	}
 	
+	private static final String[] fields = {"uid", "firstName", "surname", "email", "title", "phone", "facsimile", "org", "description", "postalAddress", "postalCode",  "registeredAddress", "postOfficeBox", "physicalDeliveryOfficeName"};
+
 	@InitBinder
 	public void initForm( WebDataBinder dataBinder) {
 		
-		dataBinder.setAllowedFields(new String[]{"uid", "firstName", "surname", "email", "title", "phone", "facsimile", "org", "description", "postalAddress", "postalCode",  "registeredAddress", "postOfficeBox", "physicalDeliveryOfficeName"});
+		dataBinder.setAllowedFields(fields);
 	}
 	
 	
