@@ -616,24 +616,27 @@ GEOR.managelayers = (function() {
                             GEOR.querier.events.fireEvent("showrequest");
                             return;
                         }
-                        var layer = layerRecord.get('layer');
+                        var layer = layerRecord.get('layer'), data;
                         var name = layerRecord.get('title') || layer.name || '';
+                        var recordType = GeoExt.data.LayerRecord.create([
+                            {name: "featureNS", type: "string"},
+                            {name: "owsURL", type: "string"},
+                            {name: "typeName", type: "string"}
+                        ]);
                         if (isWFS) {
-                            var recordType = GeoExt.data.LayerRecord.create([
-                                {name: "featureNS", type: "string"},
-                                {name: "owsURL", type: "string"},
-                                {name: "typeName", type: "string"}
-                            ]);
-                            GEOR.querier.create(name, new recordType({
-                                "featureNS": layerRecord.get('namespace'),
+                            data = {
+                                "featureNS": layerRecord.get("namespace"),
                                 "owsURL": layer.protocol.url,
-                                "typeName": layerRecord.get('name')
-                            }, layer.id), function() {
-                                // optional success callback
-                                querierRecord = layerRecord;
-                            });
-                        } else { // WMS layer
-                            // all this code should be moved elsewhere, see http://applis-bretagne.fr/redmine/issues/1984 (later)
+                                "typeName": layerRecord.get("name")
+                            };
+                        } else { // WMS layer with WFS equivalence
+                            data = {
+                                //"featureNS": layerRecord.get("namespace"),
+                                "owsURL": layerRecord.get("WFS_URL"),
+                                "typeName": layerRecord.get("WFS_typeName")
+                            };
+                            
+                            /*
                             GEOR.waiter.show();
                             GEOR.ows.WMSDescribeLayer(layerRecord, {
                                 success: function(store, records) {
@@ -666,7 +669,12 @@ GEOR.managelayers = (function() {
                                 },
                                 scope: this
                             });
+                            */
                         }
+                        GEOR.querier.create(name, new recordType(data, layer.id), function() {
+                            // optional success callback
+                            querierRecord = layerRecord;
+                        });
                     }
                 }
             });

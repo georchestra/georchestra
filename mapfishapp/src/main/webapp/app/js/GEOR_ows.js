@@ -481,9 +481,9 @@ GEOR.ows = (function() {
                 options.storeOptions.layerOptions) ?
                     options.storeOptions.layerOptions : {};
             var baseParams = options.baseParams || {};
-            var recordType = GeoExt.data.LayerRecord.create(
-                defaultRecordFields
-            );
+            var fields = defaultRecordFields;
+            fields[0].defaultValue = "WMS";
+            var recordType = GeoExt.data.LayerRecord.create(fields);
             recordType = Ext.extend(recordType, {
                 hasEquivalentWFS: function() {
                     return !!this.get("WFS_URL") && !!this.get("WFS_typeName");

@@ -323,7 +323,8 @@ GEOR.map = (function() {
                         }
                         _adding = true;
                         ls && ls.add([r]);
-                        _adding = false; // TODO: add/insert
+                        _adding = false; // TODO: add/insert 
+                        // FIXME ! Generates incorrect order while restoring context
                     },
                     failure: function() {
                         _adding = true;
