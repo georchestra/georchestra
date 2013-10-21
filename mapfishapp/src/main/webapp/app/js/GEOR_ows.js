@@ -485,10 +485,10 @@ GEOR.ows = (function() {
                 defaultRecordFields
             );
             recordType = Ext.extend(recordType, {
-                vectorSource: function() {
+                hasEquivalentWFS: function() {
                     return !!this.get("WFS_URL") && !!this.get("WFS_typeName");
                 },
-                rasterSource: function() {
+                hasEquivalentWCS: function() {
                     return !!this.get("WCS_URL") && !!this.get("WCS_typeName");
                 }
             });

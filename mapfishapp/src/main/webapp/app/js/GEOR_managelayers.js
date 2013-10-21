@@ -460,10 +460,10 @@ GEOR.managelayers = (function() {
             isWMS = type === "WMS",
             isWMTS = type === "WMTS",
             isWFS = type === "WFS",
-            vectorSource = (type === "WMS") ?  // TODO: replace vectorSource by hasEquivalentWFS
-                layerRecord.vectorSource() : false,
-            rasterSource = (type === "WMS") ?  // TODO: replace rasterSource by hasEquivalentWCS
-                layerRecord.rasterSource() : false,
+            hasEquivalentWFS = (type === "WMS") ?
+                layerRecord.hasEquivalentWFS() : false,
+            hasEquivalentWCS = (type === "WMS") ?
+                layerRecord.hasEquivalentWCS() : false,
             isVector = layer instanceof OpenLayers.Layer.Vector;
 
         var menuItems = [], url, sepInserted;
@@ -586,7 +586,7 @@ GEOR.managelayers = (function() {
                 }
             });
         }
-        if (GEOR.styler && vectorSource) {
+        if (GEOR.styler && hasEquivalentWFS) {
             insertSep();
             menuItems.push({
                 iconCls: 'geor-btn-style',
@@ -603,7 +603,7 @@ GEOR.managelayers = (function() {
         // we can have the querier or not.
         // The availability of a WFS equivalent layer is.
         // This depends on http://applis-bretagne.fr/redmine/issues/1984
-        if (GEOR.querier && (vectorSource || isWFS)) {
+        if (GEOR.querier && (hasEquivalentWFS || isWFS)) {
             insertSep();
             menuItems.push({
                 iconCls: 'geor-btn-query',
@@ -672,7 +672,7 @@ GEOR.managelayers = (function() {
             });
         }
 
-        if (vectorSource || rasterSource || isWFS) {
+        if (hasEquivalentWFS || hasEquivalentWCS || isWFS) {
             insertSep();
             menuItems.push({
                 iconCls: 'geor-btn-download',
