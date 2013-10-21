@@ -4,6 +4,7 @@
 package org.georchestra.ldapadmin.ws.utils;
 
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,8 +20,12 @@ public class Validation {
 		return requiredFields.toString();
 	}
 	public void setRequiredFields(String csvRequiredFields) {
-		List<String> requiredFields = Arrays.asList(csvRequiredFields.split("\\s*,\\s*"));
-		this.requiredFields = requiredFields;
+		List<String> r = new ArrayList<String>(Arrays.asList(csvRequiredFields.split("\\s*,\\s*")));
+		// add mandatory fields (they may be present two times, it's not a problem)
+		r.add("email");
+		r.add("uid");
+		r.add("password");
+		this.requiredFields = r;
 	}
 	public static String isFieldRequired (String field) {
 		for (String f : requiredFields) {
