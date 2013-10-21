@@ -147,7 +147,9 @@
     }
     /* Validate the form */
     function validate() {
-        if (testFirstname() & testSurname() & testEmail() & testUid() & testPassword() & testConfirmPassword() & testRecaptcha()) {
+        if (testFirstname() & testSurname() & testEmail() & testUid() & testPassword() & testConfirmPassword() & testRecaptcha() &
+			testField("phone") & testField("org") & testField("title") & testField("description")
+        ) {
             return true;
         } else {
             setFormError();
