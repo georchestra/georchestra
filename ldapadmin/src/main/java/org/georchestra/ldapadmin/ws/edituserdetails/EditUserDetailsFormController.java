@@ -10,6 +10,7 @@ import org.georchestra.ldapadmin.ds.AccountDao;
 import org.georchestra.ldapadmin.ds.DataServiceException;
 import org.georchestra.ldapadmin.ds.DuplicatedEmailException;
 import org.georchestra.ldapadmin.dto.Account;
+import org.georchestra.ldapadmin.ws.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -140,7 +141,7 @@ public class EditUserDetailsFormController {
 			return "forbidden";
 		}
 
-		new EditUserDetailsValidator().validate(formBean, resultErrors);
+		UserUtils.validate( formBean.getFirstName(), formBean.getSurname(), resultErrors );
 		
 		if(resultErrors.hasErrors()){
 			
