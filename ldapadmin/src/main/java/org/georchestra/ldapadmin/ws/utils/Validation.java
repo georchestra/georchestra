@@ -7,6 +7,9 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.util.StringUtils;
+import org.springframework.validation.Errors;
+
 /**
  * Validation class for all forms
  * 
@@ -34,5 +37,10 @@ public class Validation {
 			}
 		}
 		return false;
+	}
+	public static void validateField (String field, String value, Errors errors) {
+		if( Validation.isFieldRequired(field) && !StringUtils.hasLength(value) ){
+			errors.rejectValue(field, "error.required", "required");
+		}
 	}
 }

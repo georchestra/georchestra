@@ -124,6 +124,10 @@ public final class NewAccountFormController {
 		EmailUtils.validate(formBean.getEmail(), result);
 		PasswordUtils.validate(formBean.getPassword(), formBean.getConfirmPassword(), result);
 		new RecaptchaUtils(remoteAddr, this.reCaptcha).validate(formBean.getRecaptcha_challenge_field(), formBean.getRecaptcha_response_field(), result);
+		Validation.validateField("phone", formBean.getPhone(), result);
+		Validation.validateField("title", formBean.getTitle(), result);
+		Validation.validateField("org", formBean.getOrg(), result);
+		Validation.validateField("description", formBean.getDescription(), result);
 
 		if(result.hasErrors()){
 			
