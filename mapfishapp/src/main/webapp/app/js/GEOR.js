@@ -432,6 +432,8 @@ Ext.namespace("GEOR");
                 },
                 "searchresults": function(options) {
                     southPanel.remove(southPanel.getActiveTab());
+                    // XXX disable the selectfeature control -> only remove the tab
+                    if (!options.model) return;
                     var tab = new GEOR.ResultsPanel({
                         html: tr("resultspanel.emptytext"),
                         tabTip: options.tooltip,
