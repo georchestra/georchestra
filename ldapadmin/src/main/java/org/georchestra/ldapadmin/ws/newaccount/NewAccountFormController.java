@@ -5,8 +5,11 @@ package org.georchestra.ldapadmin.ws.newaccount;
 
 import java.io.IOException;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.servlet.ServletContext;
+
+import org.apache.commons.lang3.ArrayUtils;
 
 import net.tanesha.recaptcha.ReCaptcha;
 
@@ -24,6 +27,7 @@ import org.georchestra.ldapadmin.ws.utils.EmailUtils;
 import org.georchestra.ldapadmin.ws.utils.PasswordUtils;
 import org.georchestra.ldapadmin.ws.utils.RecaptchaUtils;
 import org.georchestra.ldapadmin.ws.utils.UserUtils;
+import org.georchestra.ldapadmin.ws.utils.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -47,7 +51,7 @@ import org.springframework.web.bind.support.SessionStatus;
  *
  */
 @Controller
-@SessionAttributes(value={"reCaptchaPublicKey"},types={AccountFormBean.class})
+@SessionAttributes(types={AccountFormBean.class})
 public final class NewAccountFormController {
 	
 	private AccountDao accountDao;
@@ -59,7 +63,9 @@ public final class NewAccountFormController {
 	private ReCaptcha reCaptcha; 
 
 	private ReCaptchaParameters reCaptchaParameters;
-
+	
+	private static final String[] fields = {"firstName","surname", "email", "phone", "org", "title", "description", "uid", "password", "confirmPassword"};
+	
 	@Autowired
 	public NewAccountFormController( AccountDao dao, MailService mailSrv , Moderator moderatorRule, ReCaptcha reCaptcha, ReCaptchaParameters reCaptchaParameters){
 		this.accountDao = dao;
@@ -72,17 +78,22 @@ public final class NewAccountFormController {
 	@InitBinder
 	public void initForm( WebDataBinder dataBinder) {
 		
-		dataBinder.setAllowedFields(new String[]{"firstName","surname", "email", "phone", "org", "title", "description", "uid", "password", "confirmPassword", "role", "recaptcha_challenge_field", "recaptcha_response_field"});
+		dataBinder.setAllowedFields(ArrayUtils.addAll(fields, new String[]{"role", "recaptcha_challenge_field", "recaptcha_response_field"}));
 	}
 	
 	@RequestMapping(value="/account/new", method=RequestMethod.GET)
-	public String setupForm(Model model) throws IOException{
+	public String setupForm(HttpServletRequest request, Model model) throws IOException{
 
+		HttpSession session = request.getSession();
 		AccountFormBean formBean = new AccountFormBean();
 		
 		model.addAttribute(formBean);
-		model.addAttribute("reCaptchaPublicKey", this.reCaptchaParameters.getPublicKey());
-		
+		session.setAttribute("reCaptchaPublicKey", this.reCaptchaParameters.getPublicKey());
+		for (String f : fields) {
+			if (Validation.isFieldRequired(f)) {
+				session.setAttribute(f + "Required", "true");
+			}
+		}
 		return "createAccountForm";
 	}
 	
@@ -113,6 +124,10 @@ public final class NewAccountFormController {
 		EmailUtils.validate(formBean.getEmail(), result);
 		PasswordUtils.validate(formBean.getPassword(), formBean.getConfirmPassword(), result);
 		new RecaptchaUtils(remoteAddr, this.reCaptcha).validate(formBean.getRecaptcha_challenge_field(), formBean.getRecaptcha_response_field(), result);
+		Validation.validateField("phone", formBean.getPhone(), result);
+		Validation.validateField("title", formBean.getTitle(), result);
+		Validation.validateField("org", formBean.getOrg(), result);
+		Validation.validateField("description", formBean.getDescription(), result);
 
 		if(result.hasErrors()){
 			
