@@ -22,6 +22,7 @@
  * @include OpenLayers/Control/PinchZoom.js
  * @include OpenLayers/Control/LoadingPanel.js
  * @include OpenLayers/Kinetic.js
+ * @requires OpenLayers/Layer/Grid.js
  * @include OpenLayers/Layer/WMS.js
  * @include OpenLayers/Layer/OSM.js
  * @include OpenLayers/Layer/Grid.js
@@ -34,6 +35,10 @@
  */
 
 Ext.namespace("GEOR");
+
+// see comment below regarding opaque layers and also
+// https://github.com/georchestra/georchestra/issues/411
+OpenLayers.Layer.Grid.prototype.transitionEffect = null;
 
 GEOR.map = (function() {
 
@@ -253,11 +258,15 @@ GEOR.map = (function() {
             // Note that the ultimate solution would be to do a getCapabilities
             // request for each OGC server advertised in the WMC
 
-            if (r.get("opaque") === true) {
-                // an opaque layer can be considered as a baselayer
-                // as a result, we apply a transitionEffect, which suits well for baselayers
-                r.get('layer').transitionEffect = 'resize';
-            }
+
+            // r.get('layer').transitionEffect = resize would have been set in WMC,
+            // not by the default openlayers GRID layer type,
+            // see the overriding in the first lines of this file.
+            r.get('layer').transitionEffect =
+                (r.get("opaque") === true || r.get('layer').transitionEffect === 'resize') ?
+                'resize' : 'map-resize';
+            // note: an opaque layer can be considered as a baselayer
+            // as a result, we apply a transitionEffect, which suits well for baselayers
 
             // Format attribution if required:
             var attr = r.get('attribution');
