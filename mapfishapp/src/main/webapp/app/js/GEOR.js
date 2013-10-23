@@ -41,7 +41,7 @@ Ext.namespace("GEOR");
     // see http://applis-bretagne.fr/redmine/issues/4536
     var fn = OpenLayers.Format.XML.prototype.write;
     OpenLayers.Format.XML.prototype.write = function(node) {
-        return '<?xml version="1.0" encoding="UTF-8"?>' + fn(node);
+        return '<?xml version="1.0" encoding="UTF-8"?>' + fn.apply(this, [node]);
     };
 
     var checkRoles = function(module, okRoles) {
@@ -67,7 +67,6 @@ Ext.namespace("GEOR");
     // save context string before unloading page
     window.onbeforeunload = function() {
         GEOR.ls.set("latest_context", GEOR.wmc.write());
-        return null;
     };
 
     Ext.onReady(function() {

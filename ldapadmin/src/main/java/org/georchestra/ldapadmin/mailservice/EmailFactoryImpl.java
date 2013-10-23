@@ -20,8 +20,8 @@ class EmailFactoryImpl extends AbstractEmailFactory {
 	private String accountCreationInProcessEmailFile;
 	private String accountCreationInProcessEmailSubject;
 
-	private String newAccountRequiresSignupEmailFile;
-	private String newAccountRequiresSignupEmailSubject;
+	private String newAccountRequiresModerationEmailFile;
+	private String newAccountRequiresModerationEmailSubject;
 	
 	private String changePasswordEmailFile;
 	private String changePasswordEmailSubject;
@@ -45,12 +45,12 @@ class EmailFactoryImpl extends AbstractEmailFactory {
 		this.accountCreationInProcessEmailSubject = subject;
 	}
 	
-	public void setNewAccountRequiresSignupEmailFile(String file) {
-		this.newAccountRequiresSignupEmailFile = file;
+	public void setNewAccountRequiresModerationEmailFile(String file) {
+		this.newAccountRequiresModerationEmailFile = file;
 	}
 
-	public void setNewAccountRequiresSignupEmailSubject(String subject) {
-		this.newAccountRequiresSignupEmailSubject = subject;
+	public void setNewAccountRequiresModerationEmailSubject(String subject) {
+		this.newAccountRequiresModerationEmailSubject = subject;
 	}
 	
 	public void setChangePasswordEmailFile(String file) {
@@ -84,26 +84,27 @@ class EmailFactoryImpl extends AbstractEmailFactory {
 	 * emails to the moderator to inform that a new user is waiting authorization. 
 	 * 
 	 * @param servletContext
+	 * @param from
 	 * @param recipients
 	 * @return
 	 * @throws IOException
 	 */
-	public NewAccountRequiresSignupEmail createNewAccountRequiresSignupEmail(ServletContext servletContext, String[] recipients) throws IOException {
+	public NewAccountRequiresModerationEmail createNewAccountRequiresModerationEmail(ServletContext servletContext, String from, String[] recipients) throws IOException {
 		
-		super.emailSubject =this.newAccountRequiresSignupEmailSubject;
+		super.emailSubject =this.newAccountRequiresModerationEmailSubject;
 		
-		NewAccountRequiresSignupEmail mail =  new NewAccountRequiresSignupEmail(
+		NewAccountRequiresModerationEmail mail =  new NewAccountRequiresModerationEmail(
 				recipients, 
 				super.emailSubject,
 				this.smtpHost,
 				this.smtpPort,
 				this.emailHtml,
 				this.replyTo,
-				this.from,
+				from,
 				this.bodyEncoding,
 				this.subjectEncoding,
 				this.languages,
-				this.newAccountRequiresSignupEmailFile, 
+				this.newAccountRequiresModerationEmailFile, 
 				servletContext );
 		
 		return mail;

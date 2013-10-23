@@ -218,6 +218,6 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     /* BoundingBoxPanel.js */
     "Modify the bounding box": "Modifier cette emprise",
     "Modify the bounding box drawing a new one on the map":
-        "Modifier l'emprise en en dessinant une nouvelle sur la carte",
+        "Modifier l'emprise en en dessinant une nouvelle sur la carte"
     // no trailing comma
 });

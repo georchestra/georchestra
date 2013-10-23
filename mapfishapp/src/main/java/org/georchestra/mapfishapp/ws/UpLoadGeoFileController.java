@@ -6,6 +6,8 @@ package org.georchestra.mapfishapp.ws;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
 import java.util.Iterator;
 import java.util.UUID;
 
@@ -27,8 +29,12 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.servlet.ModelAndView;
 
 
 /**
@@ -69,10 +75,12 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
  *
  */
 @Controller
-public final class UpLoadGeoFileController {
+public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 	
 	private static final Log LOG = LogFactory.getLog(UpLoadGeoFileController.class.getPackage().getName());
 	
+	private static final int MEGABYTE = 1048576;
+
 	/**
 	 * Status of the upload process
 	 * 
@@ -83,8 +91,18 @@ public final class UpLoadGeoFileController {
 		ok{
 			@Override
 			public String getMessage( final String jsonFeatures){
-				return "{\"success\": \"true\", \"geojson\":" + jsonFeatures+"}"; 
+				return "{\"success\": \"true\", \"geojson\": }"; 
 			}
+			
+		},
+		outOfMemoryError{
+			
+			@Override
+			public String getMessage( final String detail){return "{\"success\":false, \"msg\": \"out of memory"+ detail + "\"}"; }
+		},
+		ioError{
+			@Override
+			public String getMessage( final String detail){return "{\"success\":false, \"msg\": \"" + detail + "\"}"; }
 			
 		},
 		unsupportedFormat{
@@ -94,7 +112,7 @@ public final class UpLoadGeoFileController {
 		sizeError{
 			@Override
 			public String getMessage(String detail) {
-				return "{\"success\": \"false\", \"msg\": \"file exceeds the limit\" "	+ detail + "}";
+				return "{\"success\": \"false\", \"msg\": \"file exceeds the limit. "	+ detail + "\"}";
 			}
 		},
 		multiplefiles{
@@ -124,7 +142,7 @@ public final class UpLoadGeoFileController {
 		 * 
 		 * @return JSON string
 		 */
-		public abstract String getMessage( final String detail);
+		public abstract String getMessage( final String detail );
 		
 		public  String getMessage(){ return getMessage("");};
 		
@@ -196,7 +214,6 @@ public final class UpLoadGeoFileController {
 		FileFormat[] formatList = this.fileManagement.getFormatList();
 		
 		response.setCharacterEncoding(responseCharset);
-		//response.setContentType("application/json");
 		response.setContentType("text/html");
 		
 		PrintWriter out = response.getWriter();
@@ -275,7 +292,7 @@ public final class UpLoadGeoFileController {
 			
 			// validate the format
 			if( ! currentFile.isValidFormat() ) {
-				writeResponse(response, Status.unsupportedFormat);
+				writeErrorResponse(response, Status.unsupportedFormat);
 				return;
 			}
 			// validate the size
@@ -285,7 +302,7 @@ public final class UpLoadGeoFileController {
 				long size = limit / 1048576; // converts to Mb
 				final String msg = Status.sizeError.getMessage( size + "MB");
 				
-				writeResponse(response, Status.sizeError, msg);
+				writeErrorResponse(response, Status.sizeError, msg, HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE);
 				return;
 			}
 			
@@ -302,7 +319,7 @@ public final class UpLoadGeoFileController {
 
 				st  = checkGeoFiles(fileManagement);
 				if( st != Status.ok ){
-					writeResponse(response, st);
+					writeErrorResponse(response, st);
 					return;
 				}
 			}
@@ -310,9 +327,9 @@ public final class UpLoadGeoFileController {
 			// create a CRS object from the srs parameter
 			CoordinateReferenceSystem crs = null;
 			try {
-				String srsParam = request.getParameter("srs");
-				if(!"".equals(srsParam)){
-					crs = CRS.decode(srsParam);
+				final String crsParam = request.getParameter("srs");
+				if( (crsParam != null) && (crsParam.length() > 0) ){
+					crs = CRS.decode(crsParam);
 				}
 			} catch (NoSuchAuthorityCodeException e) {
 				LOG.error(e.getMessage());
@@ -322,12 +339,8 @@ public final class UpLoadGeoFileController {
 				throw new IOException(e);
 			}
 			
-			// encode the feature collection as json string
-			String jsonFeatureCollection = (crs != null) 
-						?this.fileManagement.getFeatureCollectionAsJSON(crs)
-						:this.fileManagement.getFeatureCollectionAsJSON();
-
-			writeResponse(response, Status.ok, jsonFeatureCollection);
+			// retrieves the feature collection and write the response
+			writeOKResponse(response, this.fileManagement, crs);
 		
 		} catch (IOException e) {
 			LOG.error(e);
@@ -335,6 +348,156 @@ public final class UpLoadGeoFileController {
 		} finally{
 			if(workDirectory!= null) cleanTemporalDirectory(workDirectory);
 		}
+	}
+	
+	/**
+	 * Write the features in the response object.
+	 * <p>
+	 * The output to build is like to
+	 * 
+	 * "{\"success\": \"true\", \"geojson\":" + jsonFeatures+"}"
+	 * </p> 
+	 * 
+	 * @param response
+	 * @param fileMnagement
+	 * @param crs
+	 * 
+	 * @throws IOException
+	 */
+	private void writeOKResponse( final HttpServletResponse response, final UpLoadFileManagement fileMnagement, final CoordinateReferenceSystem crs) throws IOException {
+		
+		response.setCharacterEncoding(responseCharset);
+		response.setContentType("text/html");
+		response.setStatus(HttpServletResponse.SC_OK);
+
+		PrintWriter out = response.getWriter();
+		try {
+
+			// builds the following response: "{\"success\": \"true\", \"geojson\":" + jsonFeatures+"}");
+			out.print("{\"success\": \"true\", \"geojson\":");
+			
+			fileManagement.writeFeatureCollectionAsJSON(out, crs);
+			
+			out.println("}");
+
+			out.flush();
+
+			if(LOG.isDebugEnabled()){
+				LOG.debug("RESPONSE: OK");
+			}
+			
+		} catch(OutOfMemoryError e){
+			
+			writeErrorResponse(response, Status.outOfMemoryError, buildOutOfMemoryErrorMessage(), HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE);
+		
+		} catch (IOException e) {
+			
+			writeErrorResponse(response, Status.ioError, e.getMessage(), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			
+		} finally {
+
+			if(out != null) out.close();
+		}
+	}
+	
+
+	/**
+	 * Writes in the response object the message taking into account the process {@link Status}.
+	 * Additionally the working directory is removed.
+	 * 
+	 * @param response
+	 * @param st
+	 * @param errorDetail 
+	 * @param responseStatusError 
+	 * 
+	 * @throws IOException
+	 */
+	private void writeErrorResponse( HttpServletResponse response, final Status st, final String errorDetail, final int responseStatusError)  {
+		response.reset();
+		PrintWriter out = null;
+		try {
+			out = response.getWriter();
+			response.setCharacterEncoding(responseCharset);
+			response.setContentType("text/html");
+			response.setStatus(responseStatusError);
+
+			String statusMsg;
+			if("".equals(errorDetail)){
+				statusMsg = st.getMessage();
+			} else {
+				statusMsg = st.getMessage(errorDetail);
+			}
+			out.println(statusMsg);
+			out.flush();			
+
+			if(LOG.isDebugEnabled()){
+				LOG.debug("RESPONSE:" + statusMsg);
+			}
+			
+		} catch (IOException e) {
+			
+			LOG.error(e.getMessage());
+			
+        } finally {
+
+			if(out != null) out.close();
+		}
+	}
+
+	/**
+	 * writes the response using the information provided as parameter
+	 * 
+	 *  
+	 * @param response
+	 * @param st
+	 * @param workDirectory
+	 * @throws IOException
+	 */
+	private void writeErrorResponse( HttpServletResponse response, final Status st) throws IOException {
+		
+		writeErrorResponse(response, st, "", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+	}
+
+
+	/**
+	 * Builds the out of memory Error
+	 * @return out of memory error message
+	 */
+	private String buildOutOfMemoryErrorMessage() {
+
+		MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
+		final long max = memoryMXBean.getHeapMemoryUsage().getMax() / MEGABYTE;
+		final long used = memoryMXBean.getHeapMemoryUsage().getUsed() / MEGABYTE;
+		final String msg = Status.outOfMemoryError.getMessage("There is not enough memory. Maximum = " + max + "Mb, Used = " + used + " Mb.");
+		
+		LOG.error(msg);
+		
+	    return msg;
+    }
+
+	/**
+	 * Handles the exception throws by the {@link CommonsMultipartResolver}. A response error will be made if the size of the uploaded file 
+	 * is greater than the configured maximum (see ws-servlet.xml for more details).
+	 */
+	@Override
+	public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception exception) {
+
+			LOG.error(exception.getMessage());
+
+			if (exception instanceof MaxUploadSizeExceededException) {
+
+				MaxUploadSizeExceededException sizeException = (MaxUploadSizeExceededException) exception;
+				long size = sizeException.getMaxUploadSize() / MEGABYTE; // converts to Mb
+				writeErrorResponse(
+				        response,
+				        Status.sizeError,
+				        "The configured maximum size is " + size + " MB. ("+sizeException.getMaxUploadSize()+" bytes)", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			} else {
+
+				writeErrorResponse(response, Status.ioError, exception.getMessage(), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			}
+			
+		return null ;
 	}
 	
 	/**
@@ -372,54 +535,6 @@ public final class UpLoadGeoFileController {
 		}
 	}
 
-
-	/**
-	 * Writes in the response object the message taking into account the process {@link Status}.
-	 * Additionally the working directory is removed.
-	 * 
-	 * @param response
-	 * @param st
-	 * @param errorDetail 
-	 * 
-	 * @throws IOException
-	 */
-	private void writeResponse( HttpServletResponse response, final Status st, final String errorDetail) throws IOException {
-		PrintWriter out = null;
-		try {
-			out = response.getWriter();
-			response.setCharacterEncoding(responseCharset);
-			response.setContentType("text/html");
-
-			String statusMsg;
-			if("".equals(errorDetail)){
-				statusMsg = st.getMessage();
-			} else {
-				statusMsg = st.getMessage(errorDetail);
-			}
-			out.println(statusMsg);
-			if(LOG.isDebugEnabled()){
-				LOG.debug("RESPONSE:" + statusMsg);
-			} 
-
-		} finally {
-
-			if(out != null) out.close();
-		}
-	}
-
-	/**
-	 * writes the response using the information provided as parameter
-	 * 
-	 *  
-	 * @param response
-	 * @param st
-	 * @param workDirectory
-	 * @throws IOException
-	 */
-	private void writeResponse( HttpServletResponse response, final Status st) throws IOException {
-		
-		writeResponse(response, st, "");
-	}
 
 	/**
 	 * Creates a work directory for this request. An 
@@ -490,4 +605,6 @@ public final class UpLoadGeoFileController {
 		
 		return Status.ok;
 	}
+
+	
 }

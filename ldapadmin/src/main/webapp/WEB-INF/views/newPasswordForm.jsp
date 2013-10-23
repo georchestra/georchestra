@@ -21,9 +21,10 @@
 <body>
 	<div class="container">
 		<div class="page-header">
-			<h1><s:message code="newPasswordForm.title"/></h1>
+			<h1><s:message code="newPasswordForm.title"/> <small><s:message code="newPasswordForm.subtitle" /></small></h1>
 		</div>
-		<form:form id="form" name="form" method="post" action="newPassword" modelAttribute="newPasswordFormBean" cssClass="form-horizontal" >
+		<p class="lead"><s:message code="newPasswordForm.description" /></p>
+		<form:form id="form" name="form" method="post" action="newPassword" modelAttribute="newPasswordFormBean" cssClass="form-horizontal col-lg-6 col-lg-offset-1" onsubmit="return validate();">
 
 			<c:if test="${not empty message}">
 			<div id="message" class="alert alert-dismissable alert-info">
@@ -41,16 +42,16 @@
 			</c:if>
 			</s:bind>
 
-			<fieldset class="col-lg-6 col-lg-offset-1">
+			<fieldset>
 				<legend><s:message code="newPasswordForm.fieldset.password"/></legend>
-				<t:password path="password" required="true" spanId="pwdQuality" appendIcon="lock" onchange="cleanPasswordError();feedbackPassStrength('pwdQuality', value);" onkeypress="cleanPasswordError();" onkeyup="feedbackPassStrength('pwdQuality', value);">
+				<t:password path="password" required="true" spanId="pwdQuality" appendIcon="lock" onblur="passwordOnBlur();" onchange="cleanConfirmPassword();feedbackPassStrength('pwdQuality', value);" onkeypress="cleanConfirmPassword();" onkeyup="feedbackPassStrength('pwdQuality', value);">
 					<jsp:attribute name="label"><s:message code="password.label" /></jsp:attribute>
 				</t:password>
-				<t:password path="confirmPassword" required="true" spanId="passwordError" onblur="equalPasswords();">
+				<t:password path="confirmPassword" required="true" onblur="confirmPasswordOnBlur();">
 					<jsp:attribute name="label"><s:message code="confirmPassword.label" /></jsp:attribute>
 				</t:password>
 			</fieldset>
-			<fieldset class="col-lg-6 col-lg-offset-1">
+			<fieldset>
 				<div class="form-group">
 					<div class="col-lg-8 col-lg-offset-4 text-right">
 						<button type="submit" class="btn btn-primary btn-lg"><s:message code="submit.label"/> </button>
@@ -61,33 +62,39 @@
 	</div>
 	<script src="//code.jquery.com/jquery.js"></script>
 	<script src='js/bootstrap.min.js'></script>
-	<script type="text/javascript"  src="js/passwordutils.js" > </script>
+	<%@ include file="validation.jsp" %>
 	<script type="text/javascript">
-    /* to be called when either Firstname or Surname is modified
-     * ("keyup" or "change" event - "input" event is not available with this version of spring)
-     */
-    function makeUid(){
-        var name = document.form.firstName.value;
-        var surname = document.form.surname.value;
-        document.form.uid.value = name.toLowerCase().charAt(0)+ surname.toLowerCase(); // strategy 1
-        //document.form.uid.value = name +"."+ surname;  // strategy 2
-    }
-    /* to be called when the password confirmation field loses focus */
-    function equalPasswords() {
-        var pwd1 = document.form.password.value;
-        var pwd2 = document.form.confirmPassword.value;
-        if (pwd1 != pwd2) {
-            document.getElementById("passwordError").innerHTML = '<s:message code="confirmPassword.error.pwdNotEquals.tag" />';
+    function confirmPasswordOnBlur() {
+        if (!testConfirmPassword()) {
             document.form.password.focus();
+        }
+    }
+    function passwordOnBlur() {
+        if (!testPassword()) {
+            document.form.password.focus();
+        }
+    }
+    function cleanConfirmPassword(){
+        document.getElementById("confirmPassword").value="";
+        removeError("confirmPassword");
+    }
+    /* Validate the form */
+    function validate() {
+        if (testPassword() & testConfirmPassword()) {
+            return true;
+        } else {
+            setFormError();
             return false;
         }
-        return true;
     }
-    /* to be called when the password field is modified */
-    function cleanPasswordError(){
-        document.getElementById("passwordError").innerHTML="";
-        document.getElementById("confirmPassword").value="";
-    }
+    /* The current Spring version does not include placeholder in
+     * form:input, form:textarea, or form:password
+     * We then add placeholder afterwards by javascript
+     */
+    $(document).ready(function(){
+        $("input#password").attr("placeholder", "<s:message code="password.placeholder" />");
+        $("input#confirmPassword").attr("placeholder", "<s:message code="confirmPassword.placeholder" />");
+    });
 	</script>
 </body>
 </html>

@@ -137,7 +137,7 @@ GEOR.toolbar = (function() {
         });
 
         // create a legend panel, it is used both for displaying
-        // the legend in the interface and for inclusion if PDFs
+        // the legend in the interface and for inclusion in PDFs
         // created by the print module
         var legendPanel = new GeoExt.LegendPanel({
             layerStore: layerStore,
@@ -146,7 +146,12 @@ GEOR.toolbar = (function() {
                 labelCls: 'bold-text',
                 showTitle: true,
                 baseParams: {
-                    FORMAT: 'image/png'
+                    FORMAT: 'image/png',
+                    // geoserver specific:
+                    LEGEND_OPTIONS: [
+                        'forceLabels:on',
+                        'fontAntiAliasing:true'
+                    ].join(';')
                 }
             },
             autoScroll: true
@@ -160,7 +165,7 @@ GEOR.toolbar = (function() {
 
         items.push('->');
 
-        if (GEOR.header === false) {
+        if (GEOR.header === false || GEOR.config.HEADER_HEIGHT === 0) {
             // insert a login or logout link in the toolbar
             var login_html = '<div style="margin-right:1em;font:11px tahoma,verdana,helvetica;"><a href="' + GEOR.config.LOGIN_URL +
                 '" style="text-decoration:none;" onclick="return GEOR.toolbar.confirmLogin()">'+tr("Login")+'</a></div>';

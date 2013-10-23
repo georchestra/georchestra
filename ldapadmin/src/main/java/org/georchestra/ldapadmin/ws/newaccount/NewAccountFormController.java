@@ -20,6 +20,10 @@ import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
 import org.georchestra.ldapadmin.dto.Group;
 import org.georchestra.ldapadmin.mailservice.MailService;
+import org.georchestra.ldapadmin.ws.utils.EmailUtils;
+import org.georchestra.ldapadmin.ws.utils.PasswordUtils;
+import org.georchestra.ldapadmin.ws.utils.RecaptchaUtils;
+import org.georchestra.ldapadmin.ws.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -68,7 +72,7 @@ public final class NewAccountFormController {
 	@InitBinder
 	public void initForm( WebDataBinder dataBinder) {
 		
-		dataBinder.setAllowedFields(new String[]{"firstName","surname", "email", "phone", "org", "description", "uid", "password", "confirmPassword", "role", "recaptcha_challenge_field", "recaptcha_response_field"});
+		dataBinder.setAllowedFields(new String[]{"firstName","surname", "email", "phone", "org", "title", "description", "uid", "password", "confirmPassword", "role", "recaptcha_challenge_field", "recaptcha_response_field"});
 	}
 	
 	@RequestMapping(value="/account/new", method=RequestMethod.GET)
@@ -104,8 +108,12 @@ public final class NewAccountFormController {
 						throws IOException {
 
 		String remoteAddr = request.getRemoteAddr();
-		new AccountFormValidator(remoteAddr, this.reCaptcha).validate(formBean, result);
-		
+
+		UserUtils.validate(formBean.getUid(), formBean.getFirstName(), formBean.getSurname(), result );
+		EmailUtils.validate(formBean.getEmail(), result);
+		PasswordUtils.validate(formBean.getPassword(), formBean.getConfirmPassword(), result);
+		new RecaptchaUtils(remoteAddr, this.reCaptcha).validate(formBean.getRecaptcha_challenge_field(), formBean.getRecaptcha_response_field(), result);
+
 		if(result.hasErrors()){
 			
 			return "createAccountForm";
@@ -122,17 +130,18 @@ public final class NewAccountFormController {
 					formBean.getEmail(),
 					formBean.getPhone(),
 					formBean.getOrg(),
+					formBean.getTitle(),
 					formBean.getDescription() );
 
-			String groupID = this.moderator.requiresSignup() ? Group.PENDING_USERS : Group.SV_USER; 
+			String groupID = this.moderator.moderatedSignup() ? Group.PENDING_USERS : Group.SV_USER; 
 			
 			this.accountDao.insert(account, groupID);
 
 			final ServletContext servletContext = request.getSession().getServletContext();
-			if(this.moderator.requiresSignup() ){
+			if(this.moderator.moderatedSignup() ){
 
 				// email to the moderator
-				this.mailService.sendNewAccountRequiresSignup(servletContext, account.getUid(), account.getCommonName(), this.moderator.getModeratorEmail());
+				this.mailService.sendNewAccountRequiresModeration(servletContext, account.getUid(), account.getCommonName(), account.getEmail(), this.moderator.getModeratorEmail());
 				
 				// email to the user
 				this.mailService.sendAccountCreationInProcess(servletContext, account.getUid(), account.getCommonName(), account.getEmail());

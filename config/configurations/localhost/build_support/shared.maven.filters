@@ -92,7 +92,7 @@ shared.mapfishapp.maxDocAgeInMinutes=44640
 
 
 # --------------------------------------------------
-# SMTP
+# SMTP / Emails
 # --------------------------------------------------
 
 # geOrchestra send notification mails about pending
@@ -101,13 +101,25 @@ shared.mapfishapp.maxDocAgeInMinutes=44640
 # + example +
 # shared.smtp.host=localhost
 # shared.smtp.port=25
-# shared.smtp.replyTo=psc\@georchestra.org
-# shared.smtp.from=psc\@georchestra.org
+# shared.email.replyTo=psc\@georchestra.org
+# shared.email.from=psc\@georchestra.org
 #
 shared.smtp.host=localhost
 shared.smtp.port=25
-shared.smtp.replyTo=psc\@georchestra.org
-shared.smtp.from=psc\@georchestra.org
+
+# for emails sent by extractorapp:
+shared.email.replyTo=psc\@georchestra.org
+shared.email.from=psc\@georchestra.org
+
+# the following email receives new account requests if ldapadmin
+# is configured with moderatedSignup = true (which is the default)
+shared.administrator.email=psc\@georchestra.org
+
+# send notification mails in HTML ?
+# Defaults to: false (ie. plain text emails)
+# If you change this value to true, you should also modify the emails
+# templates in order to have full HTML emails.
+shared.email.html=false
 
 
 

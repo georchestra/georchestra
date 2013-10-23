@@ -11,7 +11,7 @@
  * You should have received a copy of the GNU General Public License
  * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 Ext.namespace("GEOR");
 
 GEOR.config = (function() {
@@ -142,8 +142,8 @@ GEOR.config = (function() {
          * runtime method to get the current default WMC
          */
         DEFAULT_WMC: function() {
-            if (GEOR.config.CONTEXTS && 
-                GEOR.config.CONTEXTS[0] && 
+            if (GEOR.config.CONTEXTS &&
+                GEOR.config.CONTEXTS[0] &&
                 GEOR.config.CONTEXTS[0][2]) {
                 return GEOR.config.CONTEXTS[0][2];
             }
@@ -202,7 +202,7 @@ GEOR.config = (function() {
          * Constant: ADDONS
          * An array of addons config objects.
          * Defaults to []
-         * 
+         *
          * An "addon config object" is an object with the following properties:
          *  id - {String} required identifier, which *MUST* :
          *        * be stable across deployments in order to let your users recover their tools
@@ -215,9 +215,9 @@ GEOR.config = (function() {
          *  group - {String} an optional group for mutual exclusion between activated tools - default group is "tools"
          *  options - {Object} an optional config object which overrides the package default_options (in manifest.json)
          *  thumbnail - {String} an optional thumbnail path, relative to app/addons/{addon_name.toLowerCase()}/ (defaults to img/icon.png)
-         *  
+         *
          */
-        ADDONS: getCustomParameter("ADDONS", 
+        ADDONS: getCustomParameter("ADDONS",
             []),
 
         /**
@@ -230,7 +230,7 @@ GEOR.config = (function() {
          *   * the third one is the path to the context (WMC) file
          *   * the last one is a comment which will be shown on thumbnail hovering
          *
-         * Example config : 
+         * Example config :
          *   [
          *      ["OpenStreetMap", "app/img/contexts/osm.png", "default.wmc", "A unique OSM layer"],
          *      ["Orthophoto", "app/img/contexts/ortho.png", "context/ortho.wmc", "Orthophoto 2009"],
@@ -318,6 +318,22 @@ GEOR.config = (function() {
          * Defaults to 20.
          */
         MAX_CSW_RECORDS: getCustomParameter("MAX_CSW_RECORDS", 20),
+
+        /**
+         * Constant: CSW_FILTER_PROPERTIES
+         * A list of properties queried on catalog search.
+         * Use ['AnyText'] to allow search on all metadata fields,
+         * or use a subset of ISO queryable properties to limit search
+         * on those properties.
+         * Defaults to ['Title','AlternateTitle','Abstract','Subject','OrganisationName']
+         */
+        CSW_FILTER_PROPERTIES: getCustomParameter("CSW_FILTER_PROPERTIES", [
+            'Title',
+            'AlternateTitle',
+            'Abstract',
+            'Subject',
+            'OrganisationName'
+        ]),
 
         /**
          * Constant: NO_THUMBNAIL_IMAGE_URL
@@ -458,31 +474,31 @@ GEOR.config = (function() {
         /**
          * Constant: MAP_SCALES
          * {Array} The map's scales.
-         * Defaults to the standard spherical mercator gridset scales
+         * Defaults to the Well-known scale set GoogleMapsCompatible (see WMTS spec appendix E)
          */
-        MAP_SCALES : getCustomParameter("MAP_SCALES", [
-            266.590664750604,
-            533.181329502208,
-            1066.362659004416,
-            2132.725318008832,
-            4265.450636017664,
-            8530.90127203433,
-            17061.80254406866,
-            34123.60508813732,
-            68247.21017627465,
-            136494.4203525493,
-            272988.8407050995,
-            545977.681410199,
-            1091955.3628203971,
-            2183910.7256407943,
-            4367821.451281589,
-            8735642.902563179,
-            17471285.805126358,
-            34942571.610252716,
-            69885143.22050543,
-            139770286.44101086,
-            279540572.8820217,
-            559081145.7640435
+        MAP_SCALES: getCustomParameter("MAP_SCALES", [
+            266.5911979812228585,
+            533.1823959624461134,
+            1066.3647919248918304,
+            2132.7295838497840572,
+            4265.4591676995681144,
+            8530.9183353991362289,
+            17061.8366707982724577,
+            34123.6733415965449154,
+            68247.3466831930771477,
+            136494.6933663861796617,
+            272989.3867327723085907,
+            545978.7734655447186469,
+            1091957.5469310886252288,
+            2183915.0938621788745877,
+            4367830.1877243577491754,
+            8735660.3754487154983508,
+            17471320.7508974309967016,
+            34942641.5017948619934032,
+            69885283.0035897239868063,
+            139770566.0071793960087234,
+            279541132.0143588959472254,
+            559082264.0287178958533332
         ]),
 
         /**

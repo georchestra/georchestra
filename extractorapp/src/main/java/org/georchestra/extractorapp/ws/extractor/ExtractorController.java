@@ -23,7 +23,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.extractorapp.ws.AbstractEmailFactory;
 import org.georchestra.extractorapp.ws.Email;
-import org.georchestra.extractorapp.ws.SharedConstants;
 import org.georchestra.extractorapp.ws.acceptance.CheckFormAcceptance;
 import org.georchestra.extractorapp.ws.extractor.task.ExecutionMetadata;
 import org.georchestra.extractorapp.ws.extractor.task.ExecutionPriority;
@@ -75,12 +74,10 @@ public class ExtractorController implements ServletContextAware {
     	if(extractionManager==null) {
             throw new AssertionError("A extractionManager needs to be defined in spring configuration");    		
     	}
-        if(SharedConstants.inProduction()){
-            File storageFile = FileUtils.storageFile("");
-            if(!storageFile.exists()){
-                if(!storageFile.mkdirs()){
-                    throw new AssertionError("extractorapp does not have access to "+storageFile+" and cannot create it");
-                }
+        File storageFile = FileUtils.storageFile("");
+        if(!storageFile.exists()){
+            if(!storageFile.mkdirs()){
+                throw new AssertionError("extractorapp does not have access to "+storageFile+" and cannot create it");
             }
         }
     }

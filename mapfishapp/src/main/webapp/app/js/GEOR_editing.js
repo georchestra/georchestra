@@ -35,7 +35,8 @@ GEOR.editing = (function() {
     /**
      * Constant: NSALIAS
      * {String} The editing layers' namespace alias as defined in
-     *    the GeoServer configuration.
+     * the GeoServer configuration. Acts as a shortcut for the WFST
+     * virtual service providing editable layers.
      */
     var NSALIAS = null;
 
@@ -53,20 +54,21 @@ GEOR.editing = (function() {
          */
         create: function(map) {
             NSALIAS = GEOR.config.NS_EDIT;
+            var url = GEOR.config.GEOSERVER_WFS_URL.replace(
+                /(\/.*\/)wfs/i,
+                "$1" + NSALIAS + "/wfs"
+            );
             var store = GEOR.ows.WFSCapabilities({
                 storeOptions: {
-                    url: GEOR.config.GEOSERVER_WFS_URL,
+                    url: url,
                     protocolOptions: {
                         srsName: map.getProjection(),
                         srsNameInQuery: true, // see http://trac.osgeo.org/openlayers/ticket/2228
-                        url: GEOR.config.GEOSERVER_WFS_URL
+                        url: url
                     },
                     layerOptions: {
                         dispayInLayerSwitcher: false
                     }
-                },
-                vendorParams: {
-                    namespace: NSALIAS
                 }
             });
             return {

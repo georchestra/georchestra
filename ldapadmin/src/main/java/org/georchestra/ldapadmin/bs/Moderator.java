@@ -14,15 +14,15 @@ package org.georchestra.ldapadmin.bs;
  */
 public final class Moderator {
 
-	private boolean requiresSignup = false;
+	private boolean moderatedSignup = true;
 
 	private String moderatorEmail = "moderator@mail";
 	
-	public boolean isRequiresSignup() {
-		return requiresSignup;
+	public boolean isModeratedSignup() {
+		return moderatedSignup;
 	}
-	public void setRequiresSignup(boolean requiresSignup) {
-		this.requiresSignup = requiresSignup;
+	public void setModeratedSignup(boolean moderatedSignup) {
+		this.moderatedSignup = moderatedSignup;
 	}
 
 
@@ -33,10 +33,8 @@ public final class Moderator {
 		this.moderatorEmail = moderatorEmail;
 	}
 
-	public boolean requiresSignup() {
-		return this.requiresSignup;
+	public boolean moderatedSignup() {
+		return this.moderatedSignup;
 	}
 	
-	
-
 }

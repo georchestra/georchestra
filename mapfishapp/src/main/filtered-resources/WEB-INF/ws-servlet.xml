@@ -11,11 +11,17 @@
     <bean class="org.georchestra.mapfishapp.ws.OGCProxy">
     </bean>
 
-    <!-- File uploads -->
+    <!-- File uploads --> 
     <bean id="multipartResolver"
       class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
         <property name="maxUploadSize">
-            <value>10000000</value>
+            <!--  Note: this value should be the maximum size specified at the bean 
+                  org.georchestra.mapfishapp.ws.UpLoadGeoFileController -->
+            <value>8589934592</value> 
+        </property>
+        <property name="MaxInMemorySize">
+            <!--  default value 10240 bytes -->
+            <value>10240</value> 
         </property>
     </bean>
 

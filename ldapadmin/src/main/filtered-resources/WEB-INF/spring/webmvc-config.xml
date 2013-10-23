@@ -140,10 +140,10 @@
         <property name="accountCreationInProcessEmailSubject"
             value="${subject.account.in.process}" />
             
-        <property name="newAccountRequiresSignupEmailFile"
-            value="/WEB-INF/templates/newaccount-requires-signup-template.txt" />
-        <property name="newAccountRequiresSignupEmailSubject"
-            value="${subject.requires.signup}" />
+        <property name="newAccountRequiresModerationEmailFile"
+            value="/WEB-INF/templates/newaccount-requires-moderation-template.txt" />
+        <property name="newAccountRequiresModerationEmailSubject"
+            value="${subject.requires.moderation}" />
 
         <property name="changePasswordEmailFile"
             value="/WEB-INF/templates/changepassword-email-template.txt" />
@@ -156,7 +156,7 @@
 	</bean>
 
     <bean id="moderator" class="org.georchestra.ldapadmin.bs.Moderator">
-        <property name="requiresSignup" value="${requiresSignup}" />
+        <property name="moderatedSignup" value="${moderatedSignup}" />
         <property name="moderatorEmail" value="${moderatorEmail}" />
     </bean>
     

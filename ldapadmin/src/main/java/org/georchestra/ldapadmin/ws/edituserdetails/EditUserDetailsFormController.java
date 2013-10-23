@@ -4,29 +4,23 @@
 package org.georchestra.ldapadmin.ws.edituserdetails;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.georchestra.ldapadmin.ds.AccountDao;
 import org.georchestra.ldapadmin.ds.DataServiceException;
 import org.georchestra.ldapadmin.ds.DuplicatedEmailException;
 import org.georchestra.ldapadmin.dto.Account;
-import org.georchestra.ldapadmin.dto.AccountFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
-import org.springframework.web.context.request.RequestScope;
 
 /**
  * Support for the Edit Account user interactions.
@@ -51,14 +45,13 @@ public class EditUserDetailsFormController {
 	@InitBinder
 	public void initForm( WebDataBinder dataBinder) {
 		
-		dataBinder.setAllowedFields(new String[]{"uid", "firstName", "surname", "title", "phone", "org", "description", "postalAddress", "postalCode",  "registeredAddress", "postOfficeBox", "physicalDeliveryOfficeName"});
+		dataBinder.setAllowedFields(new String[]{"uid", "firstName", "surname", "email", "title", "phone", "facsimile", "org", "description", "postalAddress", "postalCode",  "registeredAddress", "postOfficeBox", "physicalDeliveryOfficeName"});
 	}
 	
 	
 	/**
 	 * Retrieves the account data and sets the model before presenting the edit form view.
 	 * 
-	 * @param uid
 	 * @param model
 	 * 
 	 * @return the edit form view
@@ -66,18 +59,15 @@ public class EditUserDetailsFormController {
 	 * @throws IOException
 	 */
 	@RequestMapping(value="/account/userdetails", method=RequestMethod.GET)
-	public String setupForm(HttpServletRequest request, @RequestParam("uid") String uid,  Model model) throws IOException{
-		try {
-			if(!request.getHeader("sec-username").equals(uid)){
-				return "forbidden";
-			}
-		} catch (NullPointerException e) {
+	public String setupForm(HttpServletRequest request,  Model model) throws IOException{
+		
+		if(request.getHeader("sec-username") == null){
 			return "forbidden";
 		}
 
 		try {
 			
-			this.accountBackup = this.accountDao.findByUID(uid);
+			this.accountBackup = this.accountDao.findByUID(request.getHeader("sec-username"));
 			
 			EditUserDetailsFormBean formBean = createForm(this.accountBackup);
 
@@ -103,12 +93,14 @@ public class EditUserDetailsFormController {
 		EditUserDetailsFormBean formBean = new EditUserDetailsFormBean();
 		
 		formBean.setUid(account.getUid());
+		formBean.setEmail(account.getEmail());
 		
 		formBean.setFirstName(account.getGivenName());
 		formBean.setSurname(account.getSurname());
 		formBean.setTitle(account.getTitle());
 
 		formBean.setPhone(account.getPhone());
+		formBean.setFacsimile(account.getFacsimile());
 		formBean.setOrg(account.getOrg());
 		formBean.setDescription(account.getDescription());
 		formBean.setPhysicalDeliveryOfficeName(account.getPhysicalDeliveryOfficeName());
@@ -196,6 +188,7 @@ public class EditUserDetailsFormController {
 		account.setSurname(formBean.getSurname());
 		account.setTitle( formBean.getTitle() );
 		account.setPhone(formBean.getPhone());
+		account.setFacsimile(formBean.getFacsimile());
 		account.setOrg(formBean.getOrg());
 		account.setDescription(formBean.getDescription());
 		account.setPhysicalDeliveryOfficeName(formBean.getPhysicalDeliveryOfficeName());

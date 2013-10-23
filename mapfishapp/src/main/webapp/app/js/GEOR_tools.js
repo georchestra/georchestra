@@ -388,7 +388,8 @@ GEOR.tools = (function() {
                 compiled: true,
                 disableFormats: true,
                 tr: function(v, key) {
-                    return v[key][OpenLayers.Lang.getCode()];
+                    var lang = OpenLayers.Lang.getCode();
+                    return v[key].hasOwnProperty(lang) ? v[key][lang] : v[key]["en"];
                 },
                 thumb: function(v) {
                     var base = "app/addons/"+v.name.toLowerCase()+"/";

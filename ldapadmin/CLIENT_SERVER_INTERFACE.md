@@ -16,12 +16,15 @@ Body parameters
         "givenName": "GIRAUD",
         "l": "dfdf",
         "mail": "pierre.giraud@gmail.com",
+        "postalAddress": "dfdf ze5zec ze315",
         "postOfficeBox": "dfdf",
         "postalCode": "dfdf",
         "sn": "Pierre",
         "street": "fdsf",
         "telephoneNumber": "fdsfd",
-        "o": "Zogak"
+        "o": "Zogak",
+        "title': "dsfds",
+        "description': "fdzd z zdsfds"
     }
 
 Response
@@ -34,10 +37,13 @@ Response
         "l": "dfdf",
         "street": "fdsf",
         "sn": "Pierre",
+        "postalAddress": "dfdf ze5zec ze315",
         "postalCode": "dfdf",
         "mail": "pierre.giraud@gmail.com",
         "givenName": "GIRAUD",
-        "o": "Zogak"
+        "o": "Zogak",
+        "title': "dsfds",
+        "description': "fdzd z zdsfds"
     }
     or
     { "success": false }
@@ -105,12 +111,15 @@ Body parameters
         "givenName": "GIRAUD"
         "l": "dfdf"
         "mail": "pierre.giraud@gmail.com"
+        "postalAddress": "dfdf ze5zec ze315",
         "postOfficeBox": "dfdf"
         "postalCode": "dfdf"
         "sn": "Pierre"
         "street": "fdsf"
         "telephoneNumber": "fdsfd",
-        "o": "Zogak"
+        "o": "Zogak",
+        "title': "dsfds",
+        "description': "fdzd z zdsfds"
     }
 
 Note: *Fields that are not present in the parameters should remain untouched

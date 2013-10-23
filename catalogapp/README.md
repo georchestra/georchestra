@@ -18,7 +18,13 @@ How to run catalogapp without Tomcat ?
 
 This mode is useful for **demo** or **development** purposes.
 
+The *first* time, you need to previously compile catalogapp and all its dependencies
+
+    $ ./mvn -Dmaven.test.skip=true -Ptemplate -P-all,catalogapp install;
+
+then, each time you want to test a change in the configuration or the catalogapp module:
+
     $ cd catalogapp
     $ ../mvn -Ptemplate jetty:run
 
-Point your browser to [http://localhost:8080/catalogapp/?noheader=true](http://localhost:8080/catalogapp/?noheader=true) 
+Point your browser to [http://localhost:8080/catalogapp/?noheader=true](http://localhost:8080/catalogapp/?noheader=true)

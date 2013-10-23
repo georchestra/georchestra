@@ -36,10 +36,14 @@ shared.log.dir=/var/log/tomcat6
 shared.default.log.level=WARN
 other.framework.log.level=WARN
 
-shared.smtpHost=localhost
-shared.smtpPort=25
+shared.smtp.host=localhost
+shared.smtp.port=25
+
+shared.email.html=false
 shared.email.replyTo=psc\@georchestra.org
 shared.email.from=psc\@georchestra.org
+
+shared.administrator.email=psc\@georchestra.org
 
 shared.geonetwork.dir=/var/lib/tomcat6/work/gn_data
 shared.psql.geonetwork.db=geonetwork

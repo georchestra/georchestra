@@ -23,9 +23,10 @@
 
 	<div class="container">
 		<div class="page-header">
-			<h1><s:message code="editUserDetailsForm.title"/></h1>
+			<h1><s:message code="editUserDetailsForm.title"/> <small><s:message code="editUserDetailsForm.subtitle" /></small></h1>
 		</div>
-		<form:form id="form" name="form" method="post" action="userdetails" modelAttribute="editUserDetailsFormBean" cssClass="form-horizontal" >
+		<p class="lead"><s:message code="editUserDetailsForm.description" /></p>
+		<form:form id="form" name="form" method="post" action="userdetails" modelAttribute="editUserDetailsFormBean" cssClass="form-horizontal col-lg-6 col-lg-offset-1" onsubmit="return validate();">
 
 			<c:if test="${not empty success}">
 			<div id="message" class="alert alert-dismissable alert-success">
@@ -43,7 +44,7 @@
 			</c:if>
 			</s:bind>
 
-			<fieldset class="col-lg-6 col-lg-offset-1">
+			<fieldset>
 				<legend><s:message code="editUserDetailsForm.fieldset.userDetails"/></legend>
 				<t:input path="firstName" required="true">
 					<jsp:attribute name="label"><s:message code="firstName.label" /></jsp:attribute>
@@ -51,24 +52,35 @@
 				<t:input path="surname" required="true">
 					<jsp:attribute name="label"><s:message code="surname.label" /></jsp:attribute>
 				</t:input>
-				<t:input path="title">
-					<jsp:attribute name="label"><s:message code="title.label" /></jsp:attribute>
-				</t:input>
+				<div class="form-group">
+					<label class="col-lg-4 control-label"><s:message code="email.label" /></label>
+					<div class="col-lg-8">
+						<p class="form-control-static">
+							${editUserDetailsFormBean.email}
+						</p>
+					</div>
+				</div>
 				<t:input path="phone">
 					<jsp:attribute name="label"><s:message code="phone.label" /></jsp:attribute>
 				</t:input>
+				<t:input path="facsimile">
+					<jsp:attribute name="label"><s:message code="facsimile.label" /></jsp:attribute>
+				</t:input>
 				<t:input path="org">
-					<jsp:attribute name="label"><s:message code="organization.label" /></jsp:attribute>
+					<jsp:attribute name="label"><s:message code="org.label" /></jsp:attribute>
 				</t:input>
-				<t:input path="description">
+				<t:input path="title">
+					<jsp:attribute name="label"><s:message code="title.label" /></jsp:attribute>
+				</t:input>
+				<t:textarea path="description">
 					<jsp:attribute name="label"><s:message code="description.label" /></jsp:attribute>
-				</t:input>
+				</t:textarea>
 				<t:textarea path="postalAddress">
 					<jsp:attribute name="label"><s:message code="postalAddress.label" /></jsp:attribute>
 				</t:textarea>
 			</fieldset>
 
-			<fieldset class="col-lg-6 col-lg-offset-1">
+			<fieldset>
 				<legend><s:message code="editUserDetailsForm.fieldset.credentials"/></legend>
 				<div class="form-group">
 					<label class="col-lg-4 control-label"><s:message code="uid.label" /></label>
@@ -90,7 +102,7 @@
 				</div>
 			</fieldset>
 
-			<fieldset class="col-lg-6 col-lg-offset-1">
+			<fieldset>
 				<div class="form-group">
 					<div class="col-lg-8 col-lg-offset-4 text-right">
 						<button type="submit" class="btn btn-primary btn-lg"><s:message code="submit.label"/> </button>
@@ -101,5 +113,31 @@
 	</div>
 	<script src="//code.jquery.com/jquery.js"></script>
 	<script src='js/bootstrap.min.js'></script>
+	<%@ include file="validation.jsp" %>
+	<script type="text/javascript">
+    /* Validate the form */
+    function validate() {
+        if (testFirstname() & testSurname()) {
+            return true;
+        } else {
+            setFormError();
+            return false;
+        }
+    }
+    /* The current Spring version does not include placeholder in
+     * form:input, form:textarea, or form:password
+     * We then add placeholder afterwards by javascript
+     */
+    $(document).ready(function(){
+        $("input#firstName").attr("placeholder", "<s:message code="firstName.placeholder" />");
+        $("input#surname").attr("placeholder", "<s:message code="surname.placeholder" />");
+        $("input#phone").attr("placeholder", "<s:message code="phone.placeholder" />");
+        $("input#facsimile").attr("placeholder", "<s:message code="facsimile.placeholder" />");
+        $("input#org").attr("placeholder", "<s:message code="org.placeholder" />");
+        $("input#title").attr("placeholder", "<s:message code="title.placeholder" />");
+        $("textarea#postalAddress").attr("placeholder", "<s:message code="postalAddress.placeholder" />");
+        $("textarea#description").attr("placeholder", "<s:message code="description.placeholder" />");
+    });
+	</script>
 </body>
 </html>

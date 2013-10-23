@@ -561,8 +561,9 @@ GEOR.Annotation = Ext.extend(Ext.util.Observable, {
 
         this.featureControl.activate();
 
-        var control = this.featureControl.selectControl;
-        control.select.defer(1, control, [feature]);
+        var control = this.featureControl;
+        control.selectFeature.defer(1, control, [feature]);
+        
     },
 
     /** private: method[onModificationStart]
@@ -620,7 +621,7 @@ GEOR.Annotation = Ext.extend(Ext.util.Observable, {
         popup.on({
             close: function() {
                 if (OpenLayers.Util.indexOf(this.layer.selectedFeatures, feature) > -1) {
-                    this.featureControl.selectControl.unselect(feature);
+                    this.featureControl.unselectFeature(feature);
                     this.featureControl.deactivate();
                 }
             },

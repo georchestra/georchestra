@@ -89,9 +89,9 @@ GEOR.Addons.Cadastre.prototype = {
         }, this);
         // return menu item:
         this.item = new Ext.menu.Item({
-            text: record.get("title")[lang],
+            text: record.get("title")[lang] || record.get("title")["en"],
+            qtip: record.get("description")[lang] || record.get("description")["en"],
             iconCls: 'cadastre-icon',
-            qtip: record.get("description")[lang],
             handler: this.showWindow,
             scope: this
         });

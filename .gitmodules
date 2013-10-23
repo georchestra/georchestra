@@ -1,48 +1,48 @@
 [submodule "mapfishapp/src/main/webapp/lib/externals/ext"]
 	path = mapfishapp/src/main/webapp/lib/externals/ext
-	url = http://github.com/probonogeek/extjs.git
+	url = https://github.com/probonogeek/extjs.git
 [submodule "mapfishapp/src/main/webapp/lib/externals/geoext"]
 	path = mapfishapp/src/main/webapp/lib/externals/geoext
-	url = http://github.com/georchestra/geoext.git
+	url = https://github.com/georchestra/geoext.git
 [submodule "mapfishapp/src/main/webapp/lib/externals/openlayers"]
 	path = mapfishapp/src/main/webapp/lib/externals/openlayers
-	url = http://github.com/georchestra/openlayers.git
+	url = https://github.com/georchestra/openlayers.git
 [submodule "extractorapp/src/main/webapp/lib/externals/geoext"]
 	path = extractorapp/src/main/webapp/lib/externals/geoext
-	url = http://github.com/geoext/geoext.git
+	url = https://github.com/geoext/geoext.git
 [submodule "extractorapp/src/main/webapp/lib/externals/openlayers"]
 	path = extractorapp/src/main/webapp/lib/externals/openlayers
-	url = http://github.com/georchestra/openlayers.git
+	url = https://github.com/georchestra/openlayers.git
 [submodule "extractorapp/src/main/webapp/lib/externals/ext"]
 	path = extractorapp/src/main/webapp/lib/externals/ext
-	url = http://github.com/probonogeek/extjs.git
+	url = https://github.com/probonogeek/extjs.git
 [submodule "extractorapp/src/main/webapp/admin/extjs"]
 	path = extractorapp/src/main/webapp/admin/extjs
-	url = http://github.com/probonogeek/extjs.git
+	url = https://github.com/probonogeek/extjs.git
 [submodule "analytics/src/main/webapp/site/js/lib/external/ext"]
 	path = analytics/src/main/webapp/site/js/lib/external/ext
-	url = http://github.com/probonogeek/extjs.git
+	url = https://github.com/probonogeek/extjs.git
 [submodule "geonetwork"]
 	path = geonetwork
-	url = http://github.com/georchestra/geonetwork.git
+	url = https://github.com/georchestra/geonetwork.git
 [submodule "geoserver/georchestra-geoserver/geoserver-checkouts/geoserver-stable"]
 	path = geoserver/georchestra-geoserver/geoserver-checkouts/geoserver-stable
-	url = http://github.com/geoserver/geoserver.git
+	url = https://github.com/geoserver/geoserver.git
 [submodule "catalogapp/src/main/webapp/lib/externals/ext"]
 	path = catalogapp/src/main/webapp/lib/externals/ext
-	url = http://github.com/probonogeek/extjs.git
+	url = https://github.com/probonogeek/extjs.git
 [submodule "catalogapp/src/main/webapp/lib/externals/openlayers"]
 	path = catalogapp/src/main/webapp/lib/externals/openlayers
-	url = http://github.com/openlayers/openlayers.git
+	url = https://github.com/openlayers/openlayers.git
 [submodule "catalogapp/src/main/webapp/lib/externals/geoext"]
 	path = catalogapp/src/main/webapp/lib/externals/geoext
-	url = http://github.com/geoext/geoext.git
+	url = https://github.com/geoext/geoext.git
 [submodule "geoserver/geoserver-submodule"]
 	path = geoserver/geoserver-submodule
-	url = http://github.com/georchestra/geoserver.git
+	url = https://github.com/georchestra/geoserver.git
 [submodule "mapfishapp/src/main/webapp/lib/externals/styler"]
 	path = mapfishapp/src/main/webapp/lib/externals/styler
-	url = http://github.com/georchestra/styler.git
+	url = https://github.com/georchestra/styler.git
 [submodule "config/configurations/template"]
 	path = config/configurations/template
-	url = http://github.com/georchestra/template.git
+	url = https://github.com/georchestra/template.git

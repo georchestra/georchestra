@@ -15,7 +15,6 @@
 /*
  * @include OpenLayers/Format/WMSDescribeLayer/v1_1.js
  * @include OpenLayers/Format/WFSDescribeFeatureType.js
- * @include OpenLayers/Protocol/WFS.js
  * @include OpenLayers/Protocol/WFS/v1_0_0.js
  * @include OpenLayers/Protocol/WFS/v1_1_0.js
  * @include OpenLayers/Protocol/WFS/v2_0_0.js
@@ -23,18 +22,20 @@
  * @include GeoExt/data/AttributeStore.js
  * @include GeoExt/data/WMSCapabilitiesStore.js
  * @include GeoExt/data/WMTSCapabilitiesStore.js
+ * @include GeoExt/data/WFSCapabilitiesStore.js
  * @include OpenLayers/Format/WMSCapabilities/v1_1_1.js
  * @include OpenLayers/Format/WMSCapabilities/v1_3_0.js
  * @include OpenLayers/Format/WMTSCapabilities/v1_0_0.js
  * @include OpenLayers/Format/WFSCapabilities/v1_0_0.js
  * @include OpenLayers/Format/WFSCapabilities/v1_1_0.js
  * @include OpenLayers/Format/WFSCapabilities/v2_0_0.js
- * @include GeoExt/data/WFSCapabilitiesStore.js
  * @include OpenLayers/Strategy/Fixed.js
  * @include OpenLayers/Layer/Vector.js
  * @include OpenLayers/Layer/WMTS.js
  * @requires GEOR_config.js
  * @include GEOR_waiter.js
+ * @include OpenLayers/Format/GML/v2.js
+ * @include OpenLayers/Format/GML/v3.js
  */
 
 Ext.namespace("GEOR");
@@ -359,12 +360,13 @@ GEOR.ows = (function() {
                 // and set it in the original record, so that it can be used
                 // later for protocol creation
 
+                // FIXME: what about options.storeOptions in this case ?
                 store = new Ext.data.Store({
                     reader: new GeoExt.data.AttributeReader({}, attributeStoreFields)
                 });
 
                 Ext.Ajax.request({
-                    url: r.owsURL,
+                    url: r.owsURL.replace(/\?$/,''),
                     method: 'GET',
                     disableCaching: false,
                     headers: {
@@ -372,7 +374,11 @@ GEOR.ows = (function() {
                     },
                     params: Ext.applyIf({
                         "REQUEST": "DescribeFeatureType",
-                        "TYPENAME": r.typeName
+                        "TYPENAME": r.typeName,
+                        // VERSION is required (from the OGC spec) - but GeoServer does well without it.
+                        // This is essentially for MapServer:
+                        "VERSION": "1.0.0"
+                        // for more information, read https://github.com/georchestra/georchestra/issues/314
                     }, WFS_BASE_PARAMS),
                     success: function(resp) {
 
@@ -384,19 +390,18 @@ GEOR.ows = (function() {
                         // Begin hack
                         // Since WFS version is no more a default param, we need to retrieve the WFS version of the layer
                         // to initialize the WFSProtocol with matching version
-                        // Ideally, we should call a capabilities request to get the WFS version, but it is to slow
+                        // Ideally, we should call a capabilities request to get the WFS version, but it is too slow
                         // So we get the version from the describefeaturetype interpreting the gml version in the schema definition
                         var version;
                         
-                        if(resp.responseText.indexOf('http://www.opengis.net/gml/3.2') >= 0) {
+                        if (resp.responseText.indexOf('http://www.opengis.net/gml/3.2') > 0) {
                         	version = "2.0.0";
-                        }
-                        else if(resp.responseText.indexOf('http://www.opengis.net/gml' && resp.responseText.indexOf('gml/3.1.1/base/gml.xsd')) >= 0) {
+                        } else if (resp.responseText.indexOf('http://www.opengis.net/gml') > 0 && resp.responseText.indexOf('gml/3.1.1/base/gml.xsd') > 0) {
                         	version = "1.1.0";
-                        }
-                        else {
+                        } else {
                         	version = "1.0.0";
                         }
+                        // FIXME: we might not always have a record in input (might be an object too)
                         record.set("WFSversion", version);
                         
                         // End hack
@@ -404,6 +409,7 @@ GEOR.ows = (function() {
                         var format = new OpenLayers.Format.WFSDescribeFeatureType();
                         var jsObj = format.read(data);
 
+                        // same FIXME here
                         record.set("featureNS", jsObj.targetNamespace);
 
                         store.on({
@@ -423,13 +429,15 @@ GEOR.ows = (function() {
             } else {
 
                 var storeOptions = Ext.applyIf({
-                    url: r.owsURL,
+                    url: r.owsURL.replace(/\?$/,''),
                     fields: attributeStoreFields,
                     baseParams: Ext.applyIf({
                         "REQUEST": "DescribeFeatureType",
-                        "TYPENAME": r.typeName
+                        "TYPENAME": r.typeName,
+                        // see above comment regarding VERSION:
+                        "VERSION": "1.0.0"
                     }, WFS_BASE_PARAMS)
-                }, options.storeOptions);
+                }, options.storeOptions || {});
                 store = new GeoExt.data.AttributeStore(storeOptions);
                 if (options.success) {
                     loadStore(store,
@@ -568,7 +576,7 @@ GEOR.ows = (function() {
             GEOR.waiter.show();
             var store = new GEOR.ows.WMSCapabilities({
                 storeOptions: {
-                    url: url
+                    url: url.replace(/\?$/,'')
                 },
                 success: function(store, records) {
                     var index = store.find("name", layername);
@@ -666,7 +674,7 @@ GEOR.ows = (function() {
                 featureType = parts[0];
             }
             options = Ext.applyIf({
-                url: record.owsURL,
+                url: record.owsURL.replace(/\?$/,''),
                 featureType: featureType,
                 featureNS: record.featureNS,
                 featurePrefix: featurePrefix || 'feature',

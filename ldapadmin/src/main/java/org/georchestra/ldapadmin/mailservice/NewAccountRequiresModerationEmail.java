@@ -17,12 +17,12 @@ import org.georchestra.lib.mailservice.Email;
  * @author Mauricio Pazos
  *
  */
-class NewAccountRequiresSignupEmail extends Email {
+class NewAccountRequiresModerationEmail extends Email {
 
-	private static final Log LOG = LogFactory.getLog(NewAccountRequiresSignupEmail.class.getName());
+	private static final Log LOG = LogFactory.getLog(NewAccountRequiresModerationEmail.class.getName());
 	private ServletContext servletContext;
 
-	public NewAccountRequiresSignupEmail(
+	public NewAccountRequiresModerationEmail(
 			String[] recipients, 
 			String emailSubject,
 			String smtpHost, 

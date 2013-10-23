@@ -124,6 +124,12 @@ How to run the extractor without Tomcat ?
 
 This mode is useful for **demo** or **development** purposes.
 
+The *first* time, you need to previously compile extractorapp and all its dependencies
+
+    $ ./mvn -Dmaven.test.skip=true -Ptemplate -P-all,extractorapp install;
+
+then, each time you want to test a change in the configuration or the extractorapp module:
+
     $ cd extractorapp
     $ ../mvn -Ptemplate jetty:run
 

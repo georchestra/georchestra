@@ -54,33 +54,31 @@ public class EmailDefaultParams {
      */
     public void freeze() {
         this.frozen = true;
-        if (SharedConstants.inProduction()) {
-            try {
-                if (!InetAddress.getByName(smtpHost).isReachable(3000)) {
-                    throw new IllegalStateException(smtpHost + " is not a reachable address");
-                }
-            } catch (IOException e) {
+        try {
+            if (!InetAddress.getByName(smtpHost).isReachable(3000)) {
                 throw new IllegalStateException(smtpHost + " is not a reachable address");
             }
-            if (smtpPort < 0) {
-                throw new IllegalStateException(smtpPort + " is not a legal port make sure it is correctly configured");
+        } catch (IOException e) {
+            throw new IllegalStateException(smtpHost + " is not a reachable address");
+        }
+        if (smtpPort < 0) {
+            throw new IllegalStateException(smtpPort + " is not a legal port make sure it is correctly configured");
+        }
+        if (replyTo == null || from == null) {
+            if (replyTo == null && from == null) {
+                throw new IllegalStateException("Either or both from or replyTo must have a valid value");
             }
-            if (replyTo == null || from == null) {
-                if (replyTo == null && from == null) {
-                    throw new IllegalStateException("Either or both from or replyTo must have a valid value");
-                }
-                if (replyTo == null) {
-                    replyTo = from;
-                } else {
-                    from = replyTo;
-                }
+            if (replyTo == null) {
+                replyTo = from;
+            } else {
+                from = replyTo;
             }
-            if (bodyEncoding == null) {
-                bodyEncoding = "UTF-8";
-            }
-            if (subjectEncoding == null) {
-                subjectEncoding = bodyEncoding;
-            }
+        }
+        if (bodyEncoding == null) {
+            bodyEncoding = "UTF-8";
+        }
+        if (subjectEncoding == null) {
+            subjectEncoding = bodyEncoding;
         }
     }
     

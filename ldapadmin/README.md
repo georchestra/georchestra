@@ -16,7 +16,7 @@ These pages should be light (no need to ship ExtJS).
 
 ### Lost Password
 
-The page asks for user email.
+The page asks for user email. An optional `email` parameter can be passed to preset the email field (eg: /ldapadmin/account/lostPassword?email=user@domain.tld).
 
 If the given email matches one of the LDAP users:
  * an email is sent to this user with a unique https URL to reset his password (eg: /ldapadmin/account/changePassword?token=54f23f27f6c5f23c68b9b5f9650839dc)
@@ -145,13 +145,24 @@ Testing purpose:
 
  * deploy in Tomcat6
  * Then add the following url in your Internet navigator:
-   http://localhost:8080/ldapadmin/public/indexdev
+   http://localhost:8080/ldapadmin/privateui/index.html
 
 Alternatively, run with jetty:
 
-```
-../mvn -Dmaven.test.skip=true -Ptemplate jetty:run
-```
+* the *first* time, you need to previously compile ldapadmin and all its dependencies
+
+  ```
+  $ ./mvn -Dmaven.test.skip=true -Ptemplate -P-all,ldapadmin install;
+  ```
+
+* then, each time you want to test a change in the configuration or the ldapadmin module:
+
+  ```
+  $ cd config
+  $ ../mvn -Ptemplate install
+  $ cd ../ldapadmin
+  $ ../mvn -Dmaven.test.skip=true -Ptemplate jetty:run
+  ```
 
 ### Privileged User
 
@@ -234,4 +245,32 @@ The application should be able to find groups and users by the way of filters su
 
 The userPassword LDAP field should be SSHA encrypted on creation/update.
 
+Configure the look of the users list
+------------------------------------
 
+The file https://github.com/georchestra/georchestra/blob/master/config/default/ldapadmin/privateui/partials/users-list-table.html defines the way the users list is displayed in the `ldapadmin/privateui/#/users` page. By default, it lists the users, with three columns:
+
+* the first **mandatory** column is used to select a user for an action (eg. add the selected user to a group),
+* the second column contains the firstname and lastname of the user, with a link to the user administration page,
+* the last column shows the user organization.
+
+Replacing the file by the following sample code would show the login, name and organization of the users, and sort them alphabetically by their login:
+
+```html
+<thead>
+  <tr>
+    <th></th>
+    <th>Login</th>
+    <th>User</th>
+    <th>Organization</th>
+  </tr>
+</thead>
+<tbody>
+  <tr ng-repeat="user in users | filter:groupFilter | orderBy:'uid' " class="">
+    <td><input type="checkbox" ng-model="user.selected" /></td>
+    <td><a href="#/users/{{user.uid}}">{{user.uid}}</a></a></td>
+    <td>{{user.sn}} {{user.givenName}}</td>
+    <td>{{user.o}}</td>
+  </tr>
+</tbody>
+```

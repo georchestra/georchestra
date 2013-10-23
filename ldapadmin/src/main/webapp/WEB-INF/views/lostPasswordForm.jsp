@@ -25,10 +25,10 @@
 
 	<div class="container">
 		<div class="page-header">
-			<h1><s:message code="lostPasswordForm.title"/></h1>
+			<h1><s:message code="lostPasswordForm.title"/> <small><s:message code="lostPasswordForm.subtitle" /></small></h1>
 		</div>
-		<form:form id="form" name="form" method="post" action="lostPassword" modelAttribute="lostPasswordFormBean" cssClass="form-horizontal" >
-
+		<p class="lead"><s:message code="lostPasswordForm.description" /></p>
+		<form:form id="form" name="form" method="post" action="lostPassword" modelAttribute="lostPasswordFormBean" cssClass="form-horizontal col-lg-6 col-lg-offset-1" onsubmit="return validate();">
 			<c:if test="${not empty message}">
 			<div id="message" class="alert alert-dismissable alert-info">
 				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
@@ -45,19 +45,19 @@
 			</c:if>
 			</s:bind>
 
-			<fieldset class="col-lg-6 col-lg-offset-1">
+			<fieldset>
 				<legend><s:message code="lostPasswordForm.fieldset.email"/></legend>
 				<t:input path="email" required="true">
 					<jsp:attribute name="label"><s:message code="email.label" /></jsp:attribute>
 				</t:input>
 			</fieldset>
 
-			<fieldset class="col-lg-6 col-lg-offset-1">
+			<fieldset>
 				<legend><s:message code="lostPasswordForm.fieldset.reCaptcha"/></legend>
 				<t:recaptcha path="recaptcha_response_field" />
 			</fieldset>
 
-			<fieldset class="col-lg-6 col-lg-offset-1">
+			<fieldset>
 				<div class="form-group">
 					<div class="col-lg-8 col-lg-offset-4 text-right">
 						<button type="submit" class="btn btn-primary btn-lg"><s:message code="submit.label"/> </button>
@@ -68,5 +68,24 @@
     </div>
 	<script src="//code.jquery.com/jquery.js"></script>
 	<script src='js/bootstrap.min.js'></script>
+	<%@ include file="validation.jsp" %>
+	<script type="text/javascript">
+    /* Validate the form */
+    function validate() {
+        if (testEmail() & testRecaptcha()) {
+            return true;
+        } else {
+            setFormError();
+            return false;
+        }
+    }
+    /* The current Spring version does not include placeholder in
+     * form:input, form:textarea, or form:password
+     * We then add placeholder afterwards by javascript
+     */
+    $(document).ready(function(){
+        $("input#email").attr("placeholder", "<s:message code="email.placeholder" />");
+    });
+	</script>
 </body>
 </html>

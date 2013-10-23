@@ -1,8 +1,11 @@
-The development branch is master. 
-It can be used to build, and report errors, but you are rather advised to use the latest stable builds.
+The development branch is master. It can be used for testing and reporting errors.
 
-Version 13.09 (in the works)
-============================
+For production systems, you are advised to use the stable branch (currently 13.09).
+This branch receives bug fixes as they arrive, during 6 months at least.
+
+
+Version 13.09 (current stable version)
+=======================================
 
 This major release was supported by the GeoPicardie, PIGMA, CIGALsace and GeoBretagne projects. 
 The CRAIG (Centre Régional Auvergnat de l'Information Géographique) is also to be thanked for some nice patches.
@@ -10,57 +13,95 @@ The CRAIG (Centre Régional Auvergnat de l'Information Géographique) is also to
 New features:
  * mapfishapp: [annotation addon](https://github.com/georchestra/georchestra/tree/master/mapfishapp/src/main/webapp/app/addons/annotation) with KML export,
  * mapfishapp: geofile upload: support of SHP, MIF/MID, GML, KML by default (uses a geotools implementation). Support of TAB and GPX when OGR is available (read this [how to](https://github.com/georchestra/georchestra/tree/master/mapfishapp#optional-install-gdal-native-library)),
- * mapfishapp: querier radius is now dynamically displayed in meters/km,
  * mapfishapp: WMS + WFS version autodetection,
  * mapfishapp: WMTS 1.0.0 support,
  * mapfishapp: WFS 2.0.0 support,
+ * mapfishapp: WMS 1.3.0 support,
+ * mapfishapp: OWSContext 0.3.x READ support (WMS layers),
  * mapfishapp: French IGN's GeoPortail webservices support,
+ * mapfishapp: Russian translation (!),
+ * geoserver: Opaque WMS Layer property support (see [#158](https://github.com/georchestra/georchestra/issues/158)),
  * ldapadmin: a brand new module is available which allows at the same time to: admin your users in your browser, let your users recover their lost password, and let them register too ! More information in the module [README](https://github.com/georchestra/georchestra/blob/master/ldapadmin/README.md),
  * extractorapp: ship metadata in ZIP (read this [how to](https://github.com/georchestra/georchestra/blob/master/extractorapp/README.md#metadata-extraction)),
- * extractorapp: now supports KML, TIF+TFW/TAB output.
+ * extractorapp: now supports KML & TIF+(TFW,TAB) output.
 
 Enhancements:
  * mapfishapp: external libs such as ExtJS updated to 3.4.1.1 (for IE 10 support), GeoExt and OpenLayers updated to master (yeah !). This brings greater navigation ease and support for other cool stuff.
- * mapfishapp: restoring contexts with different projections,
+ * mapfishapp: added ability to restore contexts with a projection different from the map's (assuming layers will be able to reproject),
  * mapfishapp: print improved (updated to MapFish Print 2.0 for WMTS and GeoPortail support, brand new templates, natural 91 dpi resolution and new "comment" field),
  * mapfishapp: referentials search is no more case sensitive with WFS2,
+ * mapfishapp: improved syntax for metadata search (via CSW), see [#325](https://github.com/georchestra/georchestra/pull/325),
  * mapfishapp: true print extent displayed,
+ * mapfishapp: querier radius is now dynamically displayed in meters/km,
+ * mapfishapp: WFS layers feature selection & attributes viewing, 
  * mapfishapp: layer name and source smartly ellipsed with CSS rather than JS,
  * mapfishapp: do not close window on style applied,
  * mapfishapp: layer style list is now alphabetically sorted,
  * mapfishapp: permalink validity displayed in months,
  * mapfishapp: link to layer metadata which is declared as text/html is now prefered over the other links,
  * mapfishapp: addons can now be loaded by default (read [how](https://github.com/georchestra/template/blob/45eddec545418b4de55952795c66940729d3b547/mapfishapp/app/js/GEOR_custom.js#L64)),
+ * mapfishapp: added a [note on data](https://github.com/georchestra/georchestra/blob/master/mapfishapp/README.md#your-data-in-mapfishapp) in the doc,
  * extractorapp: several small fixes for extractorapp reprojection,
  * extractorapp: more visible extract button,
  * extractorapp: auto-deactivate the "Modify the bbox" button,
- * SDI Instance name in page titles across the SDI (shared.instance.name, defaulting to "geOrchestra"),
- * everywhere: plain text emails, with the ability to switch back to HTML via shared.email.html,
+ * geonetwork: validation report: translated all reported XSD errors in editor,
+ * geonetwork: user menu: improved links according to role,
+ * geonetwork: RSS: added URL parameter to only return one link for each metadata,
+ * geonetwork: widgets: added privileges panel to batch operation,
+ * geonetwork: improved icons plus a custom icon for XLS files,
+ * SDI Instance name in page titles across the SDI (```shared.instance.name```, defaulting to "geOrchestra"),
+ * everywhere: plain text emails, with the ability to switch back to HTML via ```shared.email.html```,
  * everywhere: all outgoing emails are now prefixed with the platform name,
  * everywhere: better translations.
+ * documentation: improved [installation](https://github.com/georchestra/georchestra/blob/master/INSTALL.md) instructions
 
 Bug fixes:
  * security-proxy: now only sends one referer headers - fixes consuming arcgis web services - [read more](https://github.com/georchestra/georchestra/issues/266),
+ * geoserver: fixed incorrect WMS 1.3.0 scaledenominator values, see [#264](https://github.com/georchestra/georchestra/issues/264),
+ * geonetwork: editor: suggestion: changes saved before processing,
+ * geonetwork: user menu: IE compatibility issues fixed,
  * static: fixed incorrect login link on CAS pages,
+ * cas: fixed IE8 JS error on login page,
+ * extractorapp: fixed app loading on IE8,
+ * extractorapp: now reports broken or uninstalled GDAL libraries,
  * mapfishapp: WM[T]S GetFeatureInfo geometries on the fly reprojection (at last !) - as a result, it is advised to fill the most widely used SRSes in your country in your [GEOR_custom.js](https://github.com/georchestra/template/blob/45eddec545418b4de55952795c66940729d3b547/mapfishapp/app/js/GEOR_custom.js#L365) config file,
- * mapfishapp: fixed fontFamily not taken into account by styler - also requires apt-get install ttf-mscorefonts-installer,
+ * mapfishapp: fixed fontFamily not taken into account by styler - also requires ```apt-get install ttf-mscorefonts-installer```,
  * mapfishapp: fixed querier setup issue when WFS service is not available,
  * mapfishapp: more robust layer hydrating from namespaced capabilities,
  * mapfishapp: fixed zooming occuring while drawing features,
  * mapfishapp: mouse position rounding is now correct for ETRS89, RGF93 and other long-lat based projections,
  * mapfishapp: fixed scrolling on a map without any visible layer,
  * mapfishapp: fixed unresolved images for point symbolizer combo,
- * mapfishapp: fixed broken help url.
+ * mapfishapp: fixed legend label not appearing when only one class is available,
+ * mapfishapp: fixed incorrect describeFeatureType URLs,
+ * mapfishapp: fixed undefined addons title and description when lang dict does not exist yet,
+ * mapfishapp: fixed broken referentials search in IE8,
+ * mapfishapp: fixed broken help url
 
 
 UPGRADING:
- * mapfishapp: default projection changes from EPSG:2154 to EPSG:3857 (aka Spherical Web Mercator). Your users might need to clear their localStorage, or force loading of the new default context.
- * The default application language is now English: shared.language=en + geonetwork.language=eng + default email templates ... be sure to override these in your own config !
- * Remember also to fill these two new global maven filters: shared.homepage.url for your SDI home page (might be something like http://my.sdi.org/portal/) and shared.instance.name (eg: GeoMyCompany)
+ * mapfishapp:
+   * default projection changes from EPSG:2154 to EPSG:3857 (aka Spherical Web Mercator). Your users might need to clear their localStorage, or force loading of the new default context.
+   * default MAP_SCALES changes to match the OGC WMTS spec,
+ * LDAP: see [georchestra/LDAP#2](https://github.com/georchestra/LDAP/pull/2)
+   * one group was renamed: ```STAT_USER``` becomes ```MOD_ANALYTICS``` - grants access to the analytics app,
+   * an other one was created: ```MOD_LDAPADMIN``` - grants access to the LDAPadmin private UI (/ldapadmin/privateui/index.html).
+ * The default application language is now **English**:
+   * ```shared.language``` = en
+   * ```geonetwork.language``` = eng
+   * default email templates [here](https://github.com/georchestra/georchestra/tree/master/config/defaults/ldapadmin/WEB-INF/templates) and [there](https://github.com/georchestra/georchestra/tree/master/config/defaults/extractorapp/WEB-INF/templates): be sure to override them in your own config !
+ * Remember also to fill these new global maven filters: 
+   * ```shared.homepage.url``` - for your SDI home page (might be something like http://my.sdi.org/portal/),
+   * ```shared.instance.name``` - will be displayed in page titles (eg: GeoMyCompany),
+   * ```shared.email.html``` - whether to send emails in plain text (default) or HTML,
+   * ```shared.administrator.email``` - this email receives new account requests (eg: me@mycompany.com)
+ * shared maven filters renamed:
+   * ```shared.smtp.replyTo``` -> ```shared.email.replyTo```
+   * ```shared.smtp.from``` -> ```shared.email.from```
 
 
-Version 13.06 (current stable version)
-======================================
+Version 13.06
+==============
 
 This release was supported by the French GeoPicardie, GeoBretagne and CIGALsace projects, the GIP ATGeRi and individual contributors.
 

@@ -103,6 +103,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
         "la variable DEFAULT_THESAURUS_KEY no corresponde a ningún " +
         "valor exportado por GeoNetwork",
     /* GEOR_cswquerier.js strings */
+    "NAME layer on VALUE": "Capa ${NAME} sobre ${VALUE}",
     "Show metadata sheet in a new window":
         "Mostrar la ficha de metadatos en una nueva ventana",
     "more": "más",
@@ -114,14 +115,14 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Catalogue": "Catálogo",
     "Find": "Buscar",
     "in": "en",
-    "Not any layer": "Ninguna capa",
-    "1 layer": "1 capa",
-    "NB layers": "${NB} capas",
-    " in NB metadata": " en ${NB} metadatos",
-    " in 1 metadata": " en 1 metadato",
-    ": precise your request": ": precise su consulta",
-    "Not any metadata correspond to the words specified":
-        "Ningún metadato corresponde a los términos ingresados",
+    "No linked layer.": "Ninguna capa.",
+    "One layer found.": "1 capa fundar.",
+    "NB layers found.": "${NB} capas fundar.",
+    "NB metadata match the query.": "${NB} metadatos coincida con la consulta.",
+    "A single metadata matches the query.": "Un solo metadato coincida con la consulta.",
+    "Precise your request.": "Precise su consulta.",
+    "No metadata matches the query.":
+        "Ningún metadato coincida con la consulta.",
     /* GEOR_editing.js strings */
     /* GEOR_fileupload.js strings */
     "Local file": "Archivo local",

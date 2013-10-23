@@ -17,7 +17,6 @@
  * @include OpenLayers/Control/WMTSGetFeatureInfo.js
  * @include OpenLayers/Format/WMSGetFeatureInfo.js
  * @include OpenLayers/Projection.js
- * @include GEOR_FeatureDataModel.js
  */
 
 Ext.namespace("GEOR");
@@ -107,8 +106,8 @@ GEOR.getfeatureinfo = (function() {
          * We're typically getting this kind of string in the GML:
          *  gml:MultiPolygon srsName="http://www.opengis.net/gml/srs/epsg.xml#3948"
          */
-        var r =  /[^]+srsName=\"(.+?)\"[^]+/.exec(info.text);
-        if (r) {
+        var r =  /.+srsName=\"(.+?)\".+/.exec(info.text);
+        if (r && r[1]) {
             var srsString = r[1];
             /*
              * At this stage, we have to normalize these kinds of strings:
