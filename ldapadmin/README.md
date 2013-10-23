@@ -126,7 +126,7 @@ See https://github.com/georchestra/georchestra/blob/master/config/README.md for 
 
 ### Set of required fields
 
-The ldapadmin configuration, in the config module, contains a `requiredFields` parameter that defaults to `firstName,surname,email,uid,password,confirmPassword`. Adding other fields, separated by commas, will make them mandatory in new account and edit forms.
+The ldapadmin configuration, in the config module, contains a `requiredFields` parameter that defaults to `firstName,surname,email,uid,password,confirmPassword`. Adding other fields, separated by commas, will make them mandatory in new account and edit forms. Note that this parameter only affects public UI.
 
 For example, to impose the "Organisation" and "Title" fields to be not empty, set the following parameter in ldapadmin config
 
@@ -134,9 +134,9 @@ For example, to impose the "Organisation" and "Title" fields to be not empty, se
 requiredFields=firstName,surname,email,uid,password,confirmPassword,org,title
 ```
 
-The possible values are: `firstName`, `surname`, `phone`, `facsimile`, `org`, `title`, `description`, `postalAddress`, `email`, `uid`, `password`, `confirmPassword`.
+The possible values are: `firstName`, `surname`, `phone`, `facsimile`, `org`, `title`, `description`, `postalAddress`.
 
-Note that email, uid and password are always required.
+Note that email, uid, password and confirmPassword are always required.
 
 ### Build
 
