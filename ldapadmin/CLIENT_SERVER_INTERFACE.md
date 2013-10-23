@@ -1,3 +1,5 @@
+# Client-server interface
+
 This file describes the interface between client and server.
 It lists the different requests and responses.
 
@@ -254,3 +256,28 @@ Response
     { "success": true }
     or
     { "success": false }
+
+## Use of curl
+
+Curl can be used to test the client-server interface. To get the list of users:
+
+    curl -H "Content-Type: text/xml" --request GET http://vm-georchestra/ldapadmin/private/users/
+
+To create a new group
+
+* create a temporary file
+
+```
+nano /tmp/newgroup.json
+```
+
+```
+{
+    "cn": "Name of the group",
+    "description": "Description for the group"
+}
+```
+
+*  post this file
+
+    curl -H "Content-Type: text/xml" -d @/tmp/newgroup.json --request POST http://vm-georchestra/ldapadmin/private/groups
