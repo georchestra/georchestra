@@ -11,6 +11,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.ldapadmin.ds.AccountDao;
 import org.georchestra.ldapadmin.ds.DataServiceException;
+import org.georchestra.ldapadmin.ws.utils.PasswordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -110,7 +111,7 @@ public class ChangePasswordFormController {
 			return "forbidden";
 		}
 
-		new ChangePasswordFormValidator().validate(formBean, result);
+		PasswordUtils.validate( formBean.getPassword(), formBean.getConfirmPassword(), result);
 		
 		if(result.hasErrors()){
 			
