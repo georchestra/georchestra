@@ -154,7 +154,7 @@ Request
 Body parameters
 
     {
-        "cn": "Name of the group"
+        "cn": "Name of the group",
         "description": "Description for the group"
     }
 
@@ -210,7 +210,7 @@ Request
 Body parameters
 
     {
-        "cn": "New name of the group"
+        "cn": "New name of the group",
         "description": "Modified description for the group"
     }
 
