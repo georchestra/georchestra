@@ -35,7 +35,7 @@ If the given email does not match one from the LDAP:
 
 ### Create account
 
-The page shows a form with typical fields: name, org, role, geographic area, email, phone nb, details. 
+The page shows a form with typical fields: name, org, role, email, phone nb, details.
 The user will be able to pick a **strong** password (must have at least one of: special char, letters and numbers). 
 Password field will be repeated 2 times (client-side check for equality).
 
@@ -52,7 +52,7 @@ What happens here ?
 ### Edit user details
 
 Two pages: 
- * First one (default one): users should be able to edit a subset of LDAP fields, namely: sn, givenName, o, title, postalAddress, postalCode, registeredAddress, postOfficeBox, physicalDeliveryOfficeName (**not mail**). On this page, there will be a link to the userPassword change page.
+ * First one (default one): users should be able to edit a subset of LDAP fields, namely: sn, givenName, phone, facsimile, o, title, postalAddress (**not mail**). On this page, there will be a link to the userPassword change page.
  * userPassword change UI: will display 3 fields. The first one is the current user password, the two other ones are for the new one. If the two latest fields do not match (client-side check), the user won't be able to submit the form and the "new password mismatch" message will be displayed. If the current password is wrong (server side check), the form will be redisplayed with clean fields, and a message will display "invalid password".
 
 
@@ -123,6 +123,20 @@ Once created, set the following `ldapadmin` parameters with the value of the key
 * `publicKey`
 
 See https://github.com/georchestra/georchestra/blob/master/config/README.md for details on how to configure these two parameters.
+
+### Set of required fields
+
+The ldapadmin configuration, in the config module, contains a `requiredFields` parameter that defaults to `firstName,surname,email,uid,password,confirmPassword`. Adding other fields, separated by commas, will make them mandatory in new account and edit forms.
+
+For example, to impose the "Organisation" and "Title" fields to be not empty, set the following parameter in ldapadmin config
+
+```
+requiredFields=firstName,surname,email,uid,password,confirmPassword,org,title
+```
+
+The possible values are: `firstName`, `surname`, `phone`, `facsimile`, `org`, `title`, `description`, `postalAddress`, `email`, `uid`, `password`, `confirmPassword`.
+
+Note that email, uid and password are always required.
 
 ### Build
 
