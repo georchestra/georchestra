@@ -49,5 +49,5 @@ headerHeight=@shared.header.height@
 # List of required fields in forms (CSV list) - possible values are:
 # firstName,surname,phone,facsimile,org,title,description,postalAddress,
 # email,uid,password,confirmPassword
-# Note that email, uid and password are always required
+# Note that email, uid, password and confirmPassword are always required
 requiredFields=firstName,surname,email,uid,password,confirmPassword

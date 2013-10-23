@@ -28,6 +28,7 @@ public class Validation {
 		r.add("email");
 		r.add("uid");
 		r.add("password");
+		r.add("confirmPassword");
 		this.requiredFields = r;
 	}
 	public static boolean isFieldRequired (String field) {
