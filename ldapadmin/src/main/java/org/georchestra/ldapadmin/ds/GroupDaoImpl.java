@@ -93,16 +93,18 @@ public class GroupDaoImpl implements GroupDao {
 	}
 
 	/**
-	 * Removes the uid from the group (PENDING_USERS or SV_USER)
+	 * Removes the uid from all groups
 	 * 
 	 * @param uid
 	 */
 	@Override
 	public void deleteUser(String uid) throws DataServiceException {
 		
-		deleteUser(Group.SV_USER, uid);
+		List<Group> allGroups = findAll();
 		
-		deleteUser(Group.PENDING_USERS, uid);
+		for (Group group : allGroups) {
+			deleteUser(group.getName(), uid);
+		}
 	}
 	
 	public void deleteUser(String groupName, String uid) throws DataServiceException {
