@@ -79,7 +79,7 @@ Read more about the [configuration process](https://github.com/georchestra/georc
 How to install ?
 ===============
 
-geOrchestra runs well on Debian boxes.
+geOrchestra runs well on Debian boxes with Tomcat6 (version 7 might hang your geonetwork, see #418).
 An example setup on one Tomcat is described [here](https://github.com/georchestra/georchestra/blob/master/INSTALL.md).
 
 Once the system is ready, collect WAR files in a dedicated directory and rename them:
