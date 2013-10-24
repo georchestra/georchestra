@@ -1,0 +1,39 @@
+{
+    "js": [
+        "js/main.js",
+        "../../../lib/externals/geoext/lib/GeoExt/widgets/Popup.js"
+    ],
+    "css": [
+        "css/main.css",
+        "../../../lib/externals/geoext/resources/css/popup.css"
+    ],
+    "default_options": {
+        "GeocodedAddressFields": [
+            {"name": "street", "mapping": "Address > StreetAddress > Street"},
+            {"name": "number", "mapping": "Address > StreetAddress > Building/@number"},
+            {"name": "municipality", "mapping": "Place[type=Municipality]"},
+            {"name": "bbox", "mapping": "Place[type=Bbox]"}, 
+            {"name": "accuracy", "mapping": "GeocodeMatchCode/@accuracy"}
+        ],
+        "comboTemplate": "{number} {street} {municipality}",
+        "sortField": "accuracy",
+        "xy": false
+    },
+    "i18n": {
+        "en": {
+            "openls.window_title": "Freetext search recentering (OpenLS)",
+            "openls.field_emptytext": "eg: 13 Rue de Tolbiac, Paris",
+            "openls.field_label": "Address"
+        },
+        "es": {
+            "openls.window_title": "Freetext search recentering (OpenLS)",
+            "openls.field_emptytext": "eg: 13 Rue de Tolbiac, Paris",
+            "openls.field_label": "Address"
+        },
+        "fr": {
+            "openls.window_title": "Recentrage par adresse libre (OpenLS)",
+            "openls.field_emptytext": "ex: 13 Rue de Tolbiac, Paris",
+            "openls.field_label": "Adresse"
+        }
+    }
+}

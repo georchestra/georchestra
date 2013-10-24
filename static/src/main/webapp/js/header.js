@@ -4,3 +4,4 @@ var _headerOnLoad = function(iframe) {
     base.setAttribute('target', '_parent');
     innerDoc.getElementsByTagName('head')[0].appendChild(base);
 };
+
