@@ -227,30 +227,30 @@ Ext.namespace("GEOR");
             },
             items: [tab, {id: 'addPanel', title: '+', tabTip: tr('Add query'), style: 'float: right;'}],
             listeners: {
-                'collapse': function(){
-                    for(var i = 0; i < southPanel.items.length-1; i++){
-                        if(southPanel.getComponent(i).vectorLayer) {
-                            southPanel.getComponent(i).vectorLayer.setVisibility(false);
+                'collapse': function(panel){
+                    Ext.each(panel.items.items, function(i){
+                        if(i.vectorLayer) {
+                            i.vectorLayer.setVisibility(false);
                         }
-                    }
+                    });
                 },
-                'tabchange': function(){
-                    if(southPanel.getActiveTab()){
-                        southPanel.getActiveTab().doLayout();
-                        if(southPanel.getActiveTab().id == 'addPanel'){
-                            var tab = new GEOR.ResultsPanel({html: tr("resultspanel.emptytext")});
-                            southPanel.insert(southPanel.items.length-1,tab);
-                            southPanel.setActiveTab(tab);
-                            southPanel.doLayout();
+                'expand': function(panel){
+                    if(panel.getActiveTab().vectorLayer)
+                        panel.getActiveTab().vectorLayer.setVisibility(true);
+                },
+                'tabchange': function(panel, t){
+                    if(t.id == 'addPanel'){
+                        var tab = new GEOR.ResultsPanel({html: tr("resultspanel.emptytext")});
+                        panel.insert(panel.items.length-1,tab);
+                        panel.setActiveTab(tab);
+                    }
+                    Ext.each(panel.items.items, function(i){
+                        if(i.vectorLayer) {
+                            i.vectorLayer.setVisibility(false);
                         }
-                        for(var i = 0; i < southPanel.items.length-1; i++){
-                            if(southPanel.getComponent(i).vectorLayer) {
-                                southPanel.getComponent(i).vectorLayer.setVisibility(false);
-                            }
-                        }
-                        if(southPanel.getActiveTab().vectorLayer) {
-                            southPanel.getActiveTab().vectorLayer.setVisibility(true);
-                        }
+                    });
+                    if(t.vectorLayer) {
+                        t.vectorLayer.setVisibility(true);
                     }
                 }
             }
