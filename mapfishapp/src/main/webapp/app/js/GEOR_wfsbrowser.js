@@ -76,7 +76,7 @@ GEOR.wfsbrowser = (function() {
             delete options.srs;
             tr = OpenLayers.i18n;
 
-            var store = new GEOR.ows.WFSCapabilities({
+            var store = GEOR.ows.WFSCapabilities({
                 storeOptions: {
                     // url should not be empty unless we want the following
                     // exception to occur:

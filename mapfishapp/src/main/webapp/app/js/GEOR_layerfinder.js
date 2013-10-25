@@ -286,7 +286,7 @@ GEOR.layerfinder = (function() {
                 // we're coming from the CSW tabs
                 // convert records to layer records
                 GEOR.waiter.show(); // increments a counter
-                var store = new GEOR.ows.WMSCapabilities({
+                var store = GEOR.ows.WMSCapabilities({
                     storeOptions: {
                         url: record.get('service_url')
                     },

@@ -363,7 +363,7 @@ GEOR.mapinit = (function() {
         Ext.each(wmsServers, function(wmsServerUrl) {
             GEOR.waiter.show();
             var u = GEOR.util.splitURL(wmsServerUrl);
-            stores[wmsServerUrl] = new GEOR.ows.WMSCapabilities({
+            stores[wmsServerUrl] = GEOR.ows.WMSCapabilities({
                 storeOptions: {
                     url: u.serviceURL
                 },

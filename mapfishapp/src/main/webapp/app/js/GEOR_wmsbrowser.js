@@ -73,7 +73,7 @@ GEOR.wmsbrowser = (function() {
         getPanel: function(options) {
             tr = OpenLayers.i18n;
 
-            var store = new GEOR.ows.WMSCapabilities({
+            var store = GEOR.ows.WMSCapabilities({
                 storeOptions: {
                     // url should not be empty unless we want the following
                     // exception to occur:
