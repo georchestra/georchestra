@@ -5,11 +5,14 @@ package org.georchestra.ldapadmin.ws.edituserdetails;
 
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.georchestra.ldapadmin.ds.AccountDao;
 import org.georchestra.ldapadmin.ds.DataServiceException;
 import org.georchestra.ldapadmin.ds.DuplicatedEmailException;
 import org.georchestra.ldapadmin.dto.Account;
+import org.georchestra.ldapadmin.ws.utils.UserUtils;
+import org.georchestra.ldapadmin.ws.utils.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -42,10 +45,12 @@ public class EditUserDetailsFormController {
 		this.accountDao = dao;
 	}
 	
+	private static final String[] fields = {"uid", "firstName", "surname", "email", "title", "phone", "facsimile", "org", "description", "postalAddress"};
+
 	@InitBinder
 	public void initForm( WebDataBinder dataBinder) {
 		
-		dataBinder.setAllowedFields(new String[]{"uid", "firstName", "surname", "email", "title", "phone", "facsimile", "org", "description", "postalAddress", "postalCode",  "registeredAddress", "postOfficeBox", "physicalDeliveryOfficeName"});
+		dataBinder.setAllowedFields(fields);
 	}
 	
 	
@@ -69,9 +74,15 @@ public class EditUserDetailsFormController {
 			
 			this.accountBackup = this.accountDao.findByUID(request.getHeader("sec-username"));
 			
+			HttpSession session = request.getSession();
 			EditUserDetailsFormBean formBean = createForm(this.accountBackup);
 
 			model.addAttribute(formBean);
+			for (String f : fields) {
+				if (Validation.isFieldRequired(f)) {
+					session.setAttribute(f + "Required", "true");
+				}
+			}
 			
 			return "editUserDetailsForm";
 			
@@ -103,11 +114,7 @@ public class EditUserDetailsFormController {
 		formBean.setFacsimile(account.getFacsimile());
 		formBean.setOrg(account.getOrg());
 		formBean.setDescription(account.getDescription());
-		formBean.setPhysicalDeliveryOfficeName(account.getPhysicalDeliveryOfficeName());
 		formBean.setPostalAddress(account.getPostalAddress());
-		formBean.setPostalCode(account.getPostalCode());
-		formBean.setPostOfficeBox(account.getPostOfficeBox());
-		formBean.setRegisteredAddress(account.getRegisteredAddress());
 
 		return formBean;
 	}
@@ -140,7 +147,13 @@ public class EditUserDetailsFormController {
 			return "forbidden";
 		}
 
-		new EditUserDetailsValidator().validate(formBean, resultErrors);
+		UserUtils.validate( formBean.getFirstName(), formBean.getSurname(), resultErrors );
+		Validation.validateField("phone", formBean.getPhone(), resultErrors);
+		Validation.validateField("facsimile", formBean.getFacsimile(), resultErrors);
+		Validation.validateField("title", formBean.getTitle(), resultErrors);
+		Validation.validateField("org", formBean.getOrg(), resultErrors);
+		Validation.validateField("description", formBean.getDescription(), resultErrors);
+		Validation.validateField("postalAddress", formBean.getPostalAddress(), resultErrors);
 		
 		if(resultErrors.hasErrors()){
 			
@@ -191,11 +204,7 @@ public class EditUserDetailsFormController {
 		account.setFacsimile(formBean.getFacsimile());
 		account.setOrg(formBean.getOrg());
 		account.setDescription(formBean.getDescription());
-		account.setPhysicalDeliveryOfficeName(formBean.getPhysicalDeliveryOfficeName());
 		account.setPostalAddress(formBean.getPostalAddress());
-		account.setPostalCode( formBean.getPostalCode() );
-		account.setPostOfficeBox( formBean.getPostOfficeBox() );
-		account.setRegisteredAddress( formBean.getRegisteredAddress() );
 		
 		return account;
 	}
