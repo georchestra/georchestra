@@ -391,14 +391,14 @@ GEOR.mapinit = (function() {
                 failure: capabilitiesCallback
             };
             if (type == "WMS") {
-                stores[wxsServerUrl] = new GEOR.ows.WMSCapabilities(params);
+                stores[wxsServerUrl] = GEOR.ows.WMSCapabilities(params);
             } else { /* WFS */
                 /* XXX only for WFS, and gross since we dont know the advertised srs of each available layer.. */
                 params.storeOptions.protocolOptions = {
                     srsNameInQuery: true,
                     srsName: layerStore.map.getProjection()
                 };
-                stores[wxsServerUrl] = new GEOR.ows.WFSCapabilities(params);
+                stores[wxsServerUrl] = GEOR.ows.WFSCapabilities(params);
             }
         });
     };
