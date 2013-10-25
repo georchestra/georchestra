@@ -6,7 +6,7 @@ GEOR.Addons.OpenLS = function(map, options) {
 };
 
 GEOR.Addons.OpenLS.prototype = {
-    window: null,
+    win: null,
     addressField: null,
     layer: null,
     popup: null,
@@ -32,7 +32,7 @@ GEOR.Addons.OpenLS.prototype = {
                 }
             })
         });
-        this.window = new Ext.Window({
+        this.win = new Ext.Window({
             title: OpenLayers.i18n('openls.window_title'),
             width: 440,
             closable: true,
@@ -269,8 +269,8 @@ GEOR.Addons.OpenLS.prototype = {
      * Method: showWindow
      */
     showWindow: function() {
-        this.window.show();
-        this.window.alignTo(
+        this.win.show();
+        this.win.alignTo(
             Ext.get(this.map.div),
             "t-t",
             [0, 5],
@@ -283,7 +283,7 @@ GEOR.Addons.OpenLS.prototype = {
      * Called by GEOR_tools when deselecting this addon
      */
     destroy: function() {
-        this.window.hide();
+        this.win.hide();
         this.popup.destroy();
         this.layer = null;
         this.map = null;
