@@ -67,7 +67,7 @@ Example workflow:
 
 Do whatever updates you want in the master branch, and regularly merge the upstream changes:
 
-    git co master
+    git checkout master
     git fetch upstream
     git merge upstream/master
 
