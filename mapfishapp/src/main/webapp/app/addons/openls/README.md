@@ -23,6 +23,9 @@ The addon config should look like this:
         }
     }
 
+Note that, at the time of writing, this addon is only tested to work with the French Geoportail Service.
+We're looking forward to supporting more services in the near future, eg http://www.openrouteservice.org/. Please keep in touch if you're interested to contribute.
+
 Options
 ========
 

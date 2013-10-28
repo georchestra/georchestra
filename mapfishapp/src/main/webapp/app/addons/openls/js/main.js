@@ -123,7 +123,7 @@ GEOR.Addons.OpenLS.prototype = {
                 "beforeload": function(store, options) {
                     var params = store.baseParams;
                     this._requestCount += 1;
-                    params.xmlData = [
+                    params.xmlData = [ // TODO: config set template string
                         '<?xml version="1.0" encoding="UTF-8"?>',
                         '<XLS',
                            ' xmlns:xls="http://www.opengis.net/xls"',
@@ -135,7 +135,7 @@ GEOR.Addons.OpenLS.prototype = {
                             '<RequestHeader/>',
                             '<Request requestID="', this._requestCount, '" version="1.2" methodName="LocationUtilityService">',
                                '<GeocodeRequest returnFreeForm="false">',
-                                 '<Address countryCode="StreetAddress">',
+                                 '<Address countryCode="StreetAddress">', // specific to French GeoPortail Service
                                    '<freeFormAddress>', params['query'], '</freeFormAddress>',
                                  '</Address>',
                                '</GeocodeRequest>',
