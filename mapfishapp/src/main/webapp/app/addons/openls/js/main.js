@@ -21,7 +21,7 @@ GEOR.Addons.OpenLS.prototype = {
      */
     init: function(record) {
         this._format = new OpenLayers.Format.GML({
-            xy: this.xy
+            xy: this.options.xy
         });
         this.layer = new OpenLayers.Layer.Vector("addon_openls_vectors", {
             displayInLayerSwitcher: false,
