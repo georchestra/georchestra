@@ -25,7 +25,7 @@ ${mkdir} -p ${releasepath} ${releasepath}/lang
 
 (cd ${buildpath};
  ${venv}/bin/jsbuild -h > /dev/null
- if [ $? -eq 0 ]; then
+ if  [ ! -d ${venv} ] || [ $? -eq 0 ]; then
      echo "creating virtual env and installing jstools..."
      rm -rf ${venv}
      virtualenv  --no-site-packages ${venv}
