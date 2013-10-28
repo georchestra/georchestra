@@ -200,7 +200,6 @@ GEOR.Addons.OpenLS.prototype = {
             from = new OpenLayers.Projection("EPSG:4326"),
             to = this.map.getProjectionObject();
 
-        this.popup && this.popup.destroy();
         this.layer.destroyFeatures();
         if (!record.get("geometry")) {
             return;
@@ -208,19 +207,30 @@ GEOR.Addons.OpenLS.prototype = {
         geom = record.get("geometry").transform(from, to);
         feature = new OpenLayers.Feature.Vector(geom);
         this.layer.addFeatures([feature]);
-        this.popup = new GeoExt.Popup({
-            location: feature,
-            width: 200,
-            html: new Ext.XTemplate(
-                '<div class="x-combo-list-item">',
-                    this.options.comboTemplate,
-                '</div>'
-            ).apply(record.data),
-            anchorPosition: "top-left",
-            collapsible: false,
-            closable: false,
-            unpinnable: false
-        });
+        if (!this.popup) {
+            this.popup = new GeoExt.Popup({
+                location: feature,
+                width: 200,
+                html: new Ext.XTemplate(
+                    '<div class="x-combo-list-item">',
+                        this.options.comboTemplate,
+                    '</div>'
+                ).apply(record.data),
+                anchorPosition: "top-left",
+                collapsible: false,
+                closable: false,
+                unpinnable: false
+            });
+        } else {
+            this.popup.body.update(
+                new Ext.XTemplate(
+                    '<div class="x-combo-list-item">',
+                        this.options.comboTemplate,
+                    '</div>'
+                ).apply(record.data)
+            );
+            this.popup.location = geom.getBounds().getCenterLonLat();
+        }
         this.popup.show();
         if (record.get("bbox")) {
             // we assume lbrt here, like "2.374215;48.829177;2.375391;48.829831"
