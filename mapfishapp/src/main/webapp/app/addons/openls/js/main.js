@@ -165,7 +165,7 @@ GEOR.Addons.OpenLS.prototype = {
         var store = new Ext.data.Store(storeOptions),
 
         tplResult = new Ext.XTemplate(
-            '<tpl for="."><div class="search-item">',
+            '<tpl for="."><div class="x-combo-list-item">',
                 this.options.comboTemplate,
             '</div></tpl>'
         );
@@ -180,7 +180,6 @@ GEOR.Addons.OpenLS.prototype = {
             queryDelay: 100,
             hideTrigger: true,
             tpl: tplResult,                      // template to display results
-            itemSelector: 'div.search-item',     // needed by the template
             queryParam: 'query',         // do not modify
             minChars: 3,                        // min characters number to
                                                  // trigger the search
@@ -213,9 +212,9 @@ GEOR.Addons.OpenLS.prototype = {
             location: feature,
             width: 200,
             html: new Ext.XTemplate(
-                '<tpl for="."><div class="search-item">',
+                '<div class="x-combo-list-item">',
                     this.options.comboTemplate,
-                '</div></tpl>'
+                '</div>'
             ).apply(record.data),
             anchorPosition: "top-left",
             collapsible: false,

@@ -15,7 +15,7 @@
             {"name": "bbox", "mapping": "Place[type=Bbox]"}, 
             {"name": "accuracy", "mapping": "GeocodeMatchCode/@accuracy"}
         ],
-        "comboTemplate": "{number} {street} {municipality}",
+        "comboTemplate": "{number} {street} <b>{municipality}</b>",
         "sortField": "accuracy",
         "minAccuracy": 0.5,
         "xy": false
