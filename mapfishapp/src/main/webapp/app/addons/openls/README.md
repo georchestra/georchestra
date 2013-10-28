@@ -23,6 +23,9 @@ The addon config should look like this:
         }
     }
 
+Note that, at the time of writing, this addon is only tested to work with the French Geoportail Service.
+We're looking forward to supporting more services in the near future, eg http://www.openrouteservice.org/. Please keep in touch if you're interested to contribute.
+
 Options
 ========
 
@@ -71,8 +74,9 @@ This will match the following response:
 </XLS>
 ```
 
- * **comboTemplate** - the template used to render each address in the combobox list. Defaults to "{number} {street} {municipality}".
- * **sortField** - the field used to sort the responses. The field has to be one of above GeocodedAddressFields. Defaults to ```accuracy```.
+ * **comboTemplate** - the template used to render each address in the combobox list. Defaults to "{number} {street} <b>{municipality}</b>",
+ * **sortField** - the field used to sort the responses. The field has to be one of above GeocodedAddressFields. Defaults to ```accuracy```,
+ * **minAccuracy** - the minimum accuracy value for the record to be displayed in the combo. Ranges from 0 to 1. If set, requires an ```accuracy``` field in the above ```GeocodedAddressFields```. Defaults to 0.5,
  * **xy** - whether the GML Point position is encoded with x (longitudes) or y (latitudes) first. Defaults to false.
  
 Note: to customize the field mappings, read ExtJS's [DomQuery documentation](http://docs.sencha.com/extjs/3.4.0/source/DomQuery.html#Ext-DomQuery)
