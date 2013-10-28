@@ -17,6 +17,7 @@
         ],
         "comboTemplate": "{number} {street} {municipality}",
         "sortField": "accuracy",
+        "minAccuracy": 0.5,
         "xy": false
     },
     "i18n": {

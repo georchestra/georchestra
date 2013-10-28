@@ -149,6 +149,13 @@ GEOR.Addons.OpenLS.prototype = {
                 scope: this
             }
         };
+        if (this.options.minAccuracy > 0) {
+            storeOptions.listeners.load = function(store) {
+                store.filterBy(function(record) {
+                    return record.get('accuracy') > this.options.minAccuracy;
+                }, this);
+            };
+        }
         if (this.options.sortField) {
             storeOptions.sortInfo =  {
                 field: this.options.sortField,
@@ -175,7 +182,7 @@ GEOR.Addons.OpenLS.prototype = {
             tpl: tplResult,                      // template to display results
             itemSelector: 'div.search-item',     // needed by the template
             queryParam: 'query',         // do not modify
-            minChars: 10,                        // min characters number to
+            minChars: 3,                        // min characters number to
                                                  // trigger the search
             pageSize: 0,                         // removes paging toolbar
             listeners: {
