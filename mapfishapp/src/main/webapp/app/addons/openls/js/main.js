@@ -11,6 +11,7 @@ GEOR.Addons.OpenLS.prototype = {
     layer: null,
     popup: null,
     _requestCount: 0,
+    _format: null,
 
     /**
      * Method: init
@@ -19,7 +20,9 @@ GEOR.Addons.OpenLS.prototype = {
      * record - {Ext.data.record} a record with the addon parameters
      */
     init: function(record) {
-        this.addressField = this._createCbSearch();
+        this._format = new OpenLayers.Format.GML({
+            xy: this.xy
+        });
         this.layer = new OpenLayers.Layer.Vector("addon_openls_vectors", {
             displayInLayerSwitcher: false,
             styleMap: new OpenLayers.StyleMap({
@@ -32,6 +35,7 @@ GEOR.Addons.OpenLS.prototype = {
                 }
             })
         });
+        this.addressField = this._createCbSearch();
         this.win = new Ext.Window({
             title: OpenLayers.i18n('openls.window_title'),
             width: 440,
@@ -83,51 +87,8 @@ GEOR.Addons.OpenLS.prototype = {
      * Returns: {OpenLayers.Geometry.Point}
      */
     _readPosition: function(v, node) {
-        var elements = [], 
-            uri = 'http://www.opengis.net/gml', 
-            name = 'pos',
-            pos = "", geom = null;
-        // inspired by OpenLayers XML format getElementsByTagNameNS
-        if(node.getElementsByTagNameNS) {
-            elements = node.getElementsByTagNameNS(uri, name);
-        } else {
-            // brute force method
-            var allNodes = node.getElementsByTagName("*");
-            var potentialNode, fullName;
-            for(var i=0, len=allNodes.length; i<len; ++i) {
-                potentialNode = allNodes[i];
-                fullName = (potentialNode.prefix) ?
-                           (potentialNode.prefix + ":" + name) : name;
-                if((name == "*") || (fullName == potentialNode.nodeName)) {
-                    if((uri == "*") || (uri == potentialNode.namespaceURI)) {
-                        elements.push(potentialNode);
-                    }
-                }
-            }
-        }
-        // inspired by OpenLayers XML format getChildValue
-        if (elements.length > 0) {
-            n = elements[0];
-            for(var child=n.firstChild; child; child=child.nextSibling) {
-                switch(child.nodeType) {
-                    case 3: // text node
-                    case 4: // cdata section
-                        pos += child.nodeValue;
-                }
-            }
-        }
-        // typical pos value here: "48.829685 2.375251" (Paris)
-        if (pos.length) {
-            var p = pos.split(" ");
-            if (this.xy == true) {
-                // we assume here that the order is [long lat]
-                geom = new OpenLayers.Geometry.Point(p[0], p[1]);
-            } else {
-                // we assume here that the order is [lat long]
-                geom = new OpenLayers.Geometry.Point(p[1], p[0]);
-            }
-        }
-        return geom;
+        var f = this._format;
+        return f.parseGeometry.point.call(f, node);
     },
 
     /*
@@ -144,7 +105,7 @@ GEOR.Addons.OpenLS.prototype = {
                 {
                     name: 'geometry', 
                     convert: this._readPosition.createDelegate({
-                        xy: this.options.xy
+                        _format: this._format
                     })
                 },
             ].concat(this.options.GeocodedAddressFields),
@@ -229,17 +190,19 @@ GEOR.Addons.OpenLS.prototype = {
      * Callback on combo selected
      */
     _onComboSelect: function(combo, record) {
-        var bbox, geom;
+        var bbox, geom, feature,
+            from = new OpenLayers.Projection("EPSG:4326"),
+            to = this.map.getProjectionObject();
+
         this.popup && this.popup.destroy();
         this.layer.destroyFeatures();
         if (!record.get("geometry")) {
             return;
         }
-        geom = record.get("geometry").transform(new OpenLayers.Projection("EPSG:4326"), this.map.getProjectionObject());
-        var feature = new OpenLayers.Feature.Vector(geom);
+        geom = record.get("geometry").transform(from, to);
+        feature = new OpenLayers.Feature.Vector(geom);
         this.layer.addFeatures([feature]);
         this.popup = new GeoExt.Popup({
-            //title: 'My Popup',
             location: feature,
             width: 200,
             html: new Ext.XTemplate(
@@ -256,9 +219,9 @@ GEOR.Addons.OpenLS.prototype = {
         if (record.get("bbox")) {
             // we assume lbrt here, like "2.374215;48.829177;2.375391;48.829831"
             // note: this looks very specific to the French Geoportail OLS service
-            bbox = OpenLayers.Bounds.fromArray
-                (record.get("bbox").split(";")
-            ).transform(new OpenLayers.Projection("EPSG:4326"), this.map.getProjectionObject());
+            bbox = OpenLayers.Bounds.fromArray(
+                record.get("bbox").split(";")
+            ).transform(from, to);
         } else {
             bbox = geom.getBounds();
         }
