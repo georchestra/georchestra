@@ -53,12 +53,11 @@ GEOR.Addons.OpenLS.prototype = {
             }],
             listeners: {
                 "hide": function() {
-                    this.popup && this.popup.destroy();
+                    this.popup && this.popup.hide();
+                    this.layer.destroyFeatures();
                     this.map.removeLayer(this.layer);
                 },
                 "show": function() {
-                    this.popup && this.popup.destroy();
-                    this.layer.destroyFeatures();
                     this.map.addLayer(this.layer);
                 },
                 scope: this
@@ -264,6 +263,7 @@ GEOR.Addons.OpenLS.prototype = {
     destroy: function() {
         this.win.hide();
         this.popup.destroy();
+        this.popup = null;
         this.layer = null;
         this.map = null;
     }
