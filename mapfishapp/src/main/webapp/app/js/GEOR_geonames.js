@@ -58,7 +58,7 @@ GEOR.geonames = (function() {
 
         // Template to present results
         var tplResult = new Ext.XTemplate(
-            '<tpl for="."><div class="search-item">',
+            '<tpl for="."><div class="x-combo-list-item">',
                 "{toponymName}",
             '</div></tpl>'
         );
@@ -74,7 +74,6 @@ GEOR.geonames = (function() {
             queryDelay: 100,
             hideTrigger:true,
             tpl: tplResult,                      // template to display results
-            itemSelector: 'div.search-item',     // needed by the template
             queryParam: 'name_startsWith',       // geonames filter
             minChars: 2,                         // min characters number to
                                                  // trigger the search

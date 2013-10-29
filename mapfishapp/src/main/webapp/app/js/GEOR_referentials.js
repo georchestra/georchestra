@@ -92,7 +92,7 @@ GEOR.referentials = (function() {
         }
         return new Ext.XTemplate(
             '<tpl for=".">'+
-            '<div class="search-item {[xindex % 2 === 0 ? "even" : "odd"]}">'+
+            '<div class="x-combo-list-item {[xindex % 2 === 0 ? "even" : "odd"]}">'+
             s.join(' - ')+'</div></tpl>');
     };
     
@@ -352,7 +352,6 @@ GEOR.referentials = (function() {
             queryParam: 'query', // do not modify
             tpl: buildTemplate(attributes),
             pageSize: 0,
-            itemSelector: 'div.search-item',
             emptyText: disabled ? tr("Choose a referential") : '',
             store: store,
             listeners: {
