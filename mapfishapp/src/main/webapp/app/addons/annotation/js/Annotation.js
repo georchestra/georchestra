@@ -476,11 +476,12 @@ GEOR.Annotation = Ext.extend(Ext.util.Observable, {
      */
     exportAsKml: function() {
         GEOR.waiter.show();
-        var format = new OpenLayers.Format.KML({
-            'foldersName': OpenLayers.Util.createUrlObject(window.location).host, // TODO use instance name instead
-            'internalProjection': this.map.getProjectionObject(),
-            'externalProjection': new OpenLayers.Projection("EPSG:4326")
-        });
+        var urlObj = OpenLayers.Util.createUrlObject(window.location.href),
+            format = new OpenLayers.Format.KML({
+                'foldersName': urlObj.host, // TODO use instance name instead
+                'internalProjection': this.map.getProjectionObject(),
+                'externalProjection': new OpenLayers.Projection("EPSG:4326")
+            });
         OpenLayers.Request.POST({
             url: "ws/kml/",
             data: format.write(this.layer.features),
