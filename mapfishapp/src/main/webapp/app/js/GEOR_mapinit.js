@@ -239,8 +239,9 @@ GEOR.mapinit = (function() {
                      * XXX for WFS we dont check srs since at that point
                      * we have no way to know if it's supported
                      */
-                    if (record instanceof GeoExt.data.LayerRecord
-                        || record.get('srs') && (record.get('srs')[srs] === true)) {
+                    if ((record instanceof GeoExt.data.LayerRecord && record.get("layer")
+                        && record.get("layer") instanceOf OpenLayers.Layer.Vector)
+                        || (record.get('srs') && record.get('srs')[srs] === true)) {
                         gls.add([record]);
                     }
                 });
@@ -370,7 +371,7 @@ GEOR.mapinit = (function() {
      * callback - {Function} The callback
      *            (which takes a *stores* object as argument)
      */
-    var createStores = function(wxsServers, callback, type, scope) {
+    var createStores = function(wxsServers, callback, type) {
         var count = wxsServers.length;
         var stores = {};
         var capabilitiesCallback = function() {
