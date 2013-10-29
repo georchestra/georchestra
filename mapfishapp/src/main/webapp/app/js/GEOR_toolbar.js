@@ -173,9 +173,6 @@ GEOR.toolbar = (function() {
             }
         });
 
-        items.push("-");
-        items.push(GEOR.tools.create());
-
         items.push('-');
         items.push({
             text: tr("Legend"),
@@ -214,6 +211,9 @@ GEOR.toolbar = (function() {
                 }
             }
         });
+
+        items.push("-");
+        items.push(GEOR.tools.create());
 
         items.push("-");
         items.push(GEOR.workspace.create(map));
