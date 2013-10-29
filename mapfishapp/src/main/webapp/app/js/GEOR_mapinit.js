@@ -23,6 +23,7 @@
  * @include GeoExt/data/LayerRecord.js
  * @include GeoExt/data/LayerStore.js
  * @include GeoExt/data/WMSCapabilitiesReader.js
+ * @include GeoExt/data/WFSCapabilitiesReader.js
  */
 
 Ext.namespace("GEOR");
