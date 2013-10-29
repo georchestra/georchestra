@@ -219,6 +219,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
         "La extensión geográfica no corresponde a la extensión del mapa",
     /* GEOR_mapinit.js strings */
     "Add layers from WMS services": "Añadir capas desde servicios WMS",
+    "Add layers from WFS services": "Añadir capas desde servicios WFS",
     "NB layers not imported": "${NB} capas no importadas",
     "One layer not imported": "Una capa no importada",
     "mapinit.layers.load.error":

@@ -216,6 +216,8 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     /* GEOR_mapinit.js strings */
     "Add layers from WMS services":
         "Ajouter des couches depuis des services WMS",
+    "Add layers from WFS services":
+        "Ajouter des couches depuis des services WFS",
     "NB layers not imported": "${NB} couches non importées",
     "One layer not imported": "Une couche non importée",
     "mapinit.layers.load.error":

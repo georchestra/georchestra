@@ -168,20 +168,22 @@ GEOR.mapinit = (function() {
     };
 
     /**
-     * Method: getUniqueWmsServers
+     * Method: getUniqueWxsServers
      * Convenience method for getting unique WMS server URLs
      *
      * Parameters:
      * initState - {Array} GEOR.initstate array
      *
      * Returns:
-     * {Object} a hash with keys "WMSLayer" and "WMS" indexing arrays of
-     *          unique WMS server URLs
+     * {Object} a hash with keys "WMSLayer", "WFSLayer", "WFS" and "WMS" indexing arrays of
+     *          unique WMS/WFS server URLs
      */
-    var getUniqueWmsServers = function(initState) {
+    var getUniqueWxsServers = function(initState) {
         var t = {
             "WMSLayer": [],
-            "WMS": []
+            "WMS": [],
+            "WFSLayer": [],
+            "WFS": []
         };
         Ext.each(initState, function(item) {
             if (item.url && item.type && t[item.type].indexOf(item.url)< 0) {
@@ -192,14 +194,17 @@ GEOR.mapinit = (function() {
     };
 
     /**
-     * Method: updateStoreFromWMS
-     * Handles addition of WMS services to map
+     * Method: updateStoreFromWxS
+     * Handles addition of WxS services to map
      *
      * Parameters:
      * stores - {Object} Hash containing stores keyed by server url
+     * type - {String} WMS or WFS, depending on the service
      */
-    var updateStoreFromWMS = function(stores) {
-        var recordType = new GeoExt.data.WMSCapabilitiesReader().recordType;
+    var updateStoreFromWxS = function(stores, type) {
+        var recordType = (type === "WMS"
+            ? new GeoExt.data.WMSCapabilitiesReader().recordType
+            : new GeoExt.data.WFSCapabilitiesReader().recordType);
         recordType.prototype.fields.add(new Ext.data.Field({
             name: "_serverURL", type: "string"
         }));
@@ -217,6 +222,8 @@ GEOR.mapinit = (function() {
                         var layer = r.get("layer");
                         if (layer && layer.url) {
                             r.set("_serverURL", layer.url);
+                        } else if (layer && layer.protocol && layer.protocol.url) {
+                            r.set("_serverURL", layer.protocol.url);
                         }
                     });
                 }
@@ -228,7 +235,13 @@ GEOR.mapinit = (function() {
             if (stores.hasOwnProperty(key)) {
                 var records = stores[key].getRange();
                 Ext.each(records, function(record) {
-                    if (record.get('srs') && (record.get('srs')[srs] === true)) {
+                    /**
+                     * XXX for WFS we dont check srs since at that point
+                     * we have no way to know if it's supported
+                     */
+                    if ((record instanceof GeoExt.data.LayerRecord && record.get("layer")
+                        && record.get("layer") instanceOf OpenLayers.Layer.Vector)
+                        || (record.get('srs') && record.get('srs')[srs] === true)) {
                         gls.add([record]);
                     }
                 });
@@ -257,7 +270,7 @@ GEOR.mapinit = (function() {
             height: 450
         });
         var win = new Ext.Window({
-            title: tr("Add layers from WMS services"),
+            title: tr("Add layers from "+type+" services"),
             layout: 'fit',
             constrainHeader: true,
             closeAction: 'close',
@@ -284,18 +297,20 @@ GEOR.mapinit = (function() {
     };
 
     /**
-     * Method: updateStoreFromWMSLayer
-     * Handles addition of WMS layers to map
+     * Method: updateStoreFromWxSLayer
+     * Handles addition of WxS layers to map
      *
      * Parameters:
      * stores - {Object} Hash containing stores keyed by server url
+     * type - {String} WMS or WFS, depending on the service
+     * (unused because info already present in item.type ?)
      */
-    var updateStoreFromWMSLayer = function(stores) {
+    var updateStoreFromWxSLayer = function(stores, type) {
         // extract from stores layers which were initially requested
         var records = [], record;
         var errors = [], count = 0;
         Ext.each(initState, function(item) {
-            if (item.type == "WMSLayer") {
+            if (item.type == "WMSLayer" || item.type == "WFSLayer") {
                 record = stores[item.url].queryBy(function(r) {
                     return (r.get('name') == item.name);
                 }).first();
@@ -314,7 +329,12 @@ GEOR.mapinit = (function() {
         // check their srs against map's srs
         var srs = layerStore.map.getProjection();
         Ext.each(records, function(record) {
-            if(!record.get('srs') || (record.get('srs')[srs] !== true)) {
+            /**
+             * XXX for WFS we dont check srs since at that point
+             * we have no way to know if it's supported
+             */
+            if(record instanceof OpenLayers.Layer.WMS
+               && (!record.get('srs') || (record.get('srs')[srs] !== true))) {
                 errors.push(record.get('name'));
                 return;
             }
@@ -347,30 +367,40 @@ GEOR.mapinit = (function() {
      * When all done, executes a given callback
      *
      * Parameters:
-     * wmsServers - {Array} Array of WMS server urls
+     * wxsServers - {Array} Array of WxS server urls
      * callback - {Function} The callback
      *            (which takes a *stores* object as argument)
      */
-    var createStores = function(wmsServers, callback, scope) {
-        var count = wmsServers.length;
+    var createStores = function(wxsServers, callback, type) {
+        var count = wxsServers.length;
         var stores = {};
         var capabilitiesCallback = function() {
             count -= 1;
             if (count === 0) {
-                callback(stores);
+                callback(stores, type);
             }
         };
-        Ext.each(wmsServers, function(wmsServerUrl) {
+        Ext.each(wxsServers, function(wxsServerUrl) {
             GEOR.waiter.show();
-            var u = GEOR.util.splitURL(wmsServerUrl);
-            stores[wmsServerUrl] = GEOR.ows.WMSCapabilities({
+            var u = GEOR.util.splitURL(wxsServerUrl);
+            params = {
                 storeOptions: {
                     url: u.serviceURL
                 },
                 baseParams: u.params,
                 success: capabilitiesCallback,
                 failure: capabilitiesCallback
-            });
+            };
+            if (type == "WMS") {
+                stores[wxsServerUrl] = GEOR.ows.WMSCapabilities(params);
+            } else { /* WFS */
+                /* XXX only for WFS, and gross since we dont know the advertised srs of each available layer.. */
+                params.storeOptions.protocolOptions = {
+                    srsNameInQuery: true,
+                    srsName: layerStore.map.getProjection()
+                };
+                stores[wxsServerUrl] = GEOR.ows.WFSCapabilities(params);
+            }
         });
     };
 
@@ -382,9 +412,11 @@ GEOR.mapinit = (function() {
      * initState - {Array} GEOR.initstate array
      */
     var loadLayers = function(initState) {
-        var wmsServers = getUniqueWmsServers(initState);
-        createStores(wmsServers['WMSLayer'], updateStoreFromWMSLayer);
-        createStores(wmsServers['WMS'], updateStoreFromWMS);
+        var wxsServers = getUniqueWxsServers(initState);
+        createStores(wxsServers['WMSLayer'], updateStoreFromWxSLayer, "WMS");
+        createStores(wxsServers['WMS'], updateStoreFromWxS, "WMS");
+        createStores(wxsServers['WFSLayer'], updateStoreFromWxSLayer, "WFS");
+        createStores(wxsServers['WFS'], updateStoreFromWxS, "WFS");
     };
 
     /**
@@ -421,7 +453,6 @@ GEOR.mapinit = (function() {
             layerStore = ls;
             tr = OpenLayers.i18n;
             cb = callback || OpenLayers.Util.Void;
-
             // POSTing a content to the app (which results in GEOR.initstate
             // being set) has priority over everything else:
             if (!GEOR.initstate || !GEOR.initstate[0]) {
@@ -438,7 +469,7 @@ GEOR.mapinit = (function() {
 
             initState = GEOR.initstate;
             // Based on GEOR.initstate, determine whether
-            // to load WMC or WMS layers or WMS services
+            // to load WMC or WxS layers or WxS services
             if (initState.length == 1 && initState[0].type == "WMC" &&
                 initState[0].url) {
                 // load given WMC
