@@ -202,9 +202,9 @@ GEOR.mapinit = (function() {
      * type - {String} WMS or WFS, depending on the service
      */
     var updateStoreFromWxS = function(stores, type) {
-        var recordType = (type === "WMS"
-            ? new GeoExt.data.WMSCapabilitiesReader().recordType
-            : new GeoExt.data.WFSCapabilitiesReader().recordType);
+        var recordType = (type === "WMS") ?
+            new GeoExt.data.WMSCapabilitiesReader().recordType :
+            new GeoExt.data.WFSCapabilitiesReader().recordType;
         recordType.prototype.fields.add(new Ext.data.Field({
             name: "_serverURL", type: "string"
         }));
@@ -239,9 +239,9 @@ GEOR.mapinit = (function() {
                      * XXX for WFS we dont check srs since at that point
                      * we have no way to know if it's supported
                      */
-                    if ((record instanceof GeoExt.data.LayerRecord && record.get("layer")
-                        && record.get("layer") instanceOf OpenLayers.Layer.Vector)
-                        || (record.get('srs') && record.get('srs')[srs] === true)) {
+                    if ((record.get('layer') instanceof OpenLayers.Layer.Vector) ||
+                        (record.get('srs') && record.get('srs')[srs] === true)) {
+
                         gls.add([record]);
                     }
                 });
@@ -333,8 +333,9 @@ GEOR.mapinit = (function() {
              * XXX for WFS we dont check srs since at that point
              * we have no way to know if it's supported
              */
-            if(record instanceof OpenLayers.Layer.WMS
-               && (!record.get('srs') || (record.get('srs')[srs] !== true))) {
+            if (record.get('layer') instanceof OpenLayers.Layer.WMS &&
+               (!record.get('srs') || (record.get('srs')[srs] !== true))) {
+
                 errors.push(record.get('name'));
                 return;
             }
