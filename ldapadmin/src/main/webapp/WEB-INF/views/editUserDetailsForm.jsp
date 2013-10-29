@@ -46,10 +46,10 @@
 
 			<fieldset>
 				<legend><s:message code="editUserDetailsForm.fieldset.userDetails"/></legend>
-				<t:input path="firstName" required="true">
+				<t:input path="firstName" required="${firstNameRequired}">
 					<jsp:attribute name="label"><s:message code="firstName.label" /></jsp:attribute>
 				</t:input>
-				<t:input path="surname" required="true">
+				<t:input path="surname" required="${surnameRequired}">
 					<jsp:attribute name="label"><s:message code="surname.label" /></jsp:attribute>
 				</t:input>
 				<div class="form-group">
@@ -60,22 +60,22 @@
 						</p>
 					</div>
 				</div>
-				<t:input path="phone">
+				<t:input path="phone" required="${phoneRequired}">
 					<jsp:attribute name="label"><s:message code="phone.label" /></jsp:attribute>
 				</t:input>
-				<t:input path="facsimile">
+				<t:input path="facsimile" required="${facsimileRequired}">
 					<jsp:attribute name="label"><s:message code="facsimile.label" /></jsp:attribute>
 				</t:input>
-				<t:input path="org">
+				<t:input path="org" required="${orgRequired}">
 					<jsp:attribute name="label"><s:message code="org.label" /></jsp:attribute>
 				</t:input>
-				<t:input path="title">
+				<t:input path="title" required="${titleRequired}">
 					<jsp:attribute name="label"><s:message code="title.label" /></jsp:attribute>
 				</t:input>
-				<t:textarea path="description">
+				<t:textarea path="description" required="${descriptionRequired}">
 					<jsp:attribute name="label"><s:message code="description.label" /></jsp:attribute>
 				</t:textarea>
-				<t:textarea path="postalAddress">
+				<t:textarea path="postalAddress" required="${postalAddressRequired}">
 					<jsp:attribute name="label"><s:message code="postalAddress.label" /></jsp:attribute>
 				</t:textarea>
 			</fieldset>
@@ -117,7 +117,10 @@
 	<script type="text/javascript">
     /* Validate the form */
     function validate() {
-        if (testFirstname() & testSurname()) {
+        if (testFirstname() & testSurname() &
+			testField("phone") & testField("org") & testField("title") & testField("description") &
+			testField("facsimile") & testField("postalAddress")
+			) {
             return true;
         } else {
             setFormError();

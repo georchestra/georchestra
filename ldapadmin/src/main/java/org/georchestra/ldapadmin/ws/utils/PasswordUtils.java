@@ -7,6 +7,8 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 
+import org.georchestra.ldapadmin.ws.utils.Validation;
+
 /**
  * 
  * @author Mauricio Pazos
@@ -26,12 +28,12 @@ public final class PasswordUtils  {
 		final String pwd1 = password.trim();
 		final String pwd2 = confirmPassword.trim();
 		
-		if( !StringUtils.hasLength(pwd1)){
+		if( !StringUtils.hasLength(pwd1) && Validation.isFieldRequired("password") ){
 			
 			errors.rejectValue("password", "password.error.required", "required");
 			
 		}
-		if( !StringUtils.hasLength(pwd2)){
+		if( !StringUtils.hasLength(pwd2) && Validation.isFieldRequired("confirmPassword") ){
 			
 			errors.rejectValue("confirmPassword", "confirmPassword.error.required", "required");
 		}

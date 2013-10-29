@@ -223,6 +223,15 @@ angular.module('ldapadmin.controllers', [])
               if (index !== false) {
                 $scope.users = $scope.users.splice(index, 1);
               }
+
+              // Remove from all groups
+              var i,
+                  len = $scope.groups.length;
+
+              for (i=0; i < len; i++) {
+                $scope.groups[i].users = _.without($scope.groups[i].users, $routeParams.userId);
+              }
+
               window.history.back();
               flash.success = 'User correctly removed';
             },
