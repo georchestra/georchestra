@@ -211,6 +211,9 @@ Ext.namespace("GEOR");
         var tab = new GEOR.ResultsPanel({html: tr("resultspanel.emptytext")});
         var southPanel = new Ext.TabPanel({
             region: "south",
+            hidden: !GEOR.ResultsPanel, // hide this panel if
+                                        // the ResultsPanel
+                                        // class is undefined
             split: true,
             collapsible: true,
             collapsed: true,
