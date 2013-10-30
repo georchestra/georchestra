@@ -62,7 +62,6 @@ GEOR.getfeatureinfo = (function() {
     /**
      * Equal to true if a research is launched on multiple layers
      * and false if it is on a single layer.
-     * If true, it will force the model to be recreated from the features (see onGetfeatureinfo).
      */
     var Xsearch = null;
 
@@ -90,6 +89,24 @@ GEOR.getfeatureinfo = (function() {
      */
     var onGetfeatureinfo = function(info) {
         OpenLayers.Element.addClass(map.viewPortDiv, "olDrawBox");
+        // Note: the data models are no more computed and cached in here ! see
+        // https://github.com/georchestra/georchestra/commit/dc31ca03815555abcc4de4750ac7d5eae7057fc5
+        // 
+        // Test case: we want a particular column (eg:postal code) 
+        // to be interpreted as STRING, not as INT,
+        // to prevent 02100 from being displayed as 2100.
+        // If the first query matches one result only with postal code = 80100,
+        // the second query will display 02100 as 2100, 
+        // because the stored datamodel will permanently identify the column as INT.
+        // As a result, the computation has to be done on each query.
+
+        /*
+        if (!model || model.isEmpty()) {
+            model = new GEOR.FeatureDataModel({
+                features: features
+            });
+        }
+        */
 
         /* results will be a hashmap of objects keyed on featureType with 4 properties:
          * - model: the corresponding FeatureDataModel
