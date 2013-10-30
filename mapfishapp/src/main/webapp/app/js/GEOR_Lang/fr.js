@@ -132,6 +132,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     /* GEOR_geonames.js strings */
     /* GEOR_getfeatureinfo.js strings */
     "<div>Searching...</div>": "<div>Recherche en cours...</div>",
+    "<div>No layer selected</div>": "<div>Aucune couche sélectionnée</div>",
     "<div>Search on objects active for NAME layer. Clic on the map.</div>":
          "<div>Recherche d\'objets activée sur la couche ${NAME}. " +
          "Cliquez sur la carte.</div>",
