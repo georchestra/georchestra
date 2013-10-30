@@ -208,12 +208,11 @@ GEOR.getfeatureinfo = (function() {
         /* update ctrl.layers if we're in a multi-layer query */
         if (Xsearch) {
             layers = [];
-            for(var i = 0; i < layerStore.data.length; i++) {
-                var layerRecord = layerStore.getAt(i);
+            layerStore.each(function(layerRecord) {
                 if(layerRecord.get("queryable") && layerRecord.getLayer().visibility == true) {
                     layers.push(layerRecord.getLayer());
                 }
-            }
+            });
             ctrl.layers = layers;
         } else {
             if (!ctrl.layers[0].visibility) {
@@ -303,12 +302,11 @@ GEOR.getfeatureinfo = (function() {
                 type = record.get("type");
             } else if (record === false) {
                 type = "WMS"; // XXX assume all layers queried are WMS ?
-                for(var i = 0; i < layerStore.data.length; i++) {
-                    var layerRecord = layerStore.getAt(i);
+                layerStore.each(function(layerRecord) {
                     if(layerRecord.get("queryable") && layerRecord.getLayer().visibility == true) {
                         layers.push(layerRecord.getLayer());
                     }
-                }
+                });
             }
             if (layers.length == 0) {
                 observable.fireEvent("search", {
