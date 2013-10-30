@@ -353,15 +353,16 @@ Ext.namespace("GEOR");
                     }
                 },
                 "search": function(panelCfg) {
-                    if (southPanel.getActiveTab()) {
-                        southPanel.getActiveTab().setTitle(tr("WFS Search"));
+                    var tab = southPanel.getActiveTab();
+                    if (tab) {
+                        tab.setTitle(tr("WFS Search"));
                     }
                     //southPanel.removeAll();
                     var panel = Ext.apply({
                         bodyStyle: 'padding:5px'
                     }, panelCfg);
-                    southPanel.getActiveTab().removeAll();
-                    southPanel.getActiveTab().add(panel);
+                    tab.removeAll();
+                    tab.add(panel);
                     southPanel.doLayout();
                     southPanel.expand();
                 },
@@ -383,15 +384,16 @@ Ext.namespace("GEOR");
         if (GEOR.getfeatureinfo) {
             GEOR.getfeatureinfo.events.on({
                 "search": function(panelCfg) {
-                    if(southPanel.getActiveTab()){
-                        southPanel.getActiveTab().setTitle(tr("WMS Search"));
-                        southPanel.getActiveTab().clean();
+                    var tab = southPanel.getActiveTab();
+                    if(tab){
+                        tab.setTitle(tr("WMS Search"));
+                        tab.clean();
                     }
                     var panel = Ext.apply({
                         bodyStyle: 'padding:5px'
                     }, panelCfg);
-                    southPanel.getActiveTab().removeAll();
-                    southPanel.getActiveTab().add(panel);
+                    tab.removeAll();
+                    tab.add(panel);
                     southPanel.doLayout();
                     southPanel.expand();
                 },
@@ -420,15 +422,16 @@ Ext.namespace("GEOR");
         if (GEOR.selectfeature) {
             GEOR.selectfeature.events.on({
                 "search": function(panelCfg) {
-                    if(southPanel.getActiveTab()){
-                        southPanel.getActiveTab().setTitle(tr("Select Feature"));
-                        southPanel.getActiveTab().clean();
+                    var tab = southPanel.getActiveTab();
+                    if(tab){
+                        tab.setTitle(tr("Select Feature"));
+                        tab.clean();
                     }
                     var panel = Ext.apply({
                         bodyStyle: 'padding:5px'
                     }, panelCfg);
-                    southPanel.getActiveTab().removeAll();
-                    southPanel.getActiveTab().add(panel);
+                    tab.removeAll();
+                    tab.add(panel);
                     southPanel.doLayout();
                     southPanel.expand();
                 },
