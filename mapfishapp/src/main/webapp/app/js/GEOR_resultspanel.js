@@ -76,7 +76,8 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
      * {OpenLayers.Bounds} The scaled vector layer bounds
      */
     var zoomToFeatures = function(info) {
-        var bounds, layerBounds = null, features = info.features, vectorLayer = info.vectorLayer, map = info.map;
+        var bounds, layerBounds = null, features = info.features;
+        var vectorLayer = info.vectorLayer, map = info.map;
         if (features && features[0]) {
             bounds = new OpenLayers.Bounds();
             Ext.each(features, function(f) {
@@ -123,7 +124,7 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
           */
         constructor: function(config){
             config = Ext.apply({
-                title: "Search",
+                title: tr("Search"),
                 closable: true,
                 /**
                  * Property: map
@@ -173,7 +174,8 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
          * store - {GeoExt.data.FeatureStore} our feature store
          */
         createGridPanel: function(store) {
-            var model = this.model, sfControl = this.sfControl, vectorLayer = this.vectorLayer, layerBounds = this.layerBounds, map = this.map, tr = this.tr;
+            var model = this.model, sfControl = this.sfControl, vectorLayer = this.vectorLayer;
+            var layerBounds = this.layerBounds, map = this.map, tr = this.tr;
 
             var columnModel = model.toColumnModel({
                 sortable: true
@@ -245,7 +247,8 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
                 bbar: bbar,
                 listeners: {
                     "rowdblclick": function(grid, rowIndex, e) {
-                        zoomToFeatures({features:[store.getAt(rowIndex).get('feature')], vectorLayer:vectorLayer, map:map});
+                        zoomToFeatures({features:[store.getAt(rowIndex).get('feature')],
+                            vectorLayer:vectorLayer, map:map});
                     },
                     "beforedestroy": function() {
                         vectorLayer.destroyFeatures();
@@ -254,7 +257,7 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
                         // http://applis-bretagne.fr/redmine/issues/show/256
                         // this deactivates Feature handler,
                         // and moves search_results layer back to normal z-index
-                    return true;
+                        return true;
                     }
                 }
             });
@@ -286,7 +289,8 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
          * addLayerToMap defaults to true
          */
         populate: function(options) {
-            var layerBounds = this.layerBounds, vectorLayer = this.vectorLayer, map = this.map, model = this.model, store = this.store, tr = this.tr;
+            var layerBounds = this.layerBounds, vectorLayer = this.vectorLayer;
+            var map = this.map, model = this.model, store = this.store, tr = this.tr;
             // we clear the bounds cache:
             layerBounds = null;
 

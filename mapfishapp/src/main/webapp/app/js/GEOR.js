@@ -354,7 +354,7 @@ Ext.namespace("GEOR");
                 },
                 "search": function(panelCfg) {
                     if (southPanel.getActiveTab()) {
-                        southPanel.getActiveTab().setTitle("Recherche WFS");
+                        southPanel.getActiveTab().setTitle(tr("WFS Search"));
                     }
                     //southPanel.removeAll();
                     var panel = Ext.apply({
@@ -384,7 +384,7 @@ Ext.namespace("GEOR");
             GEOR.getfeatureinfo.events.on({
                 "search": function(panelCfg) {
                     if(southPanel.getActiveTab()){
-                        southPanel.getActiveTab().setTitle("Recherche WMS");
+                        southPanel.getActiveTab().setTitle(tr("WMS Search"));
                         southPanel.getActiveTab().clean();
                     }
                     var panel = Ext.apply({

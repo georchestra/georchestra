@@ -130,14 +130,16 @@ GEOR.getfeatureinfo = (function() {
                 });
             }
         }
-        var coord = map.getLonLatFromPixel(info.xy).transform(map.projection, new OpenLayers.Projection("EPSG:4326"));
-        var coordstr = "Lon:" + OpenLayers.Number.format(coord.lon, 5) + " Lat:" + OpenLayers.Number.format(coord.lat, 5);
+        var coord = map.getLonLatFromPixel(info.xy).transform(map.projection,
+            new OpenLayers.Projection("EPSG:4326"));
+        var coordstr = "Lon: " + OpenLayers.Number.format(coord.lon, 5)
+            + " Lat: " + OpenLayers.Number.format(coord.lat, 5);
         // we need to create a results object for each ctrl.layer
         // to gracefully handle the case when no data is found
         Ext.each(ctrl.layers, function (layer) {
             results[layer.params.LAYERS] = {
                 title: GEOR.util.shortenLayerName(layer),
-                tooltip: layer.name + " - WMS GetFeatureInfo at " + coordstr,
+                tooltip: layer.name + " - " + tr("WMS GetFeatureInfo at ") + coordstr,
                 features: []
             };
         });
@@ -185,7 +187,7 @@ GEOR.getfeatureinfo = (function() {
      * We need to deactivate ourselves or update the list of layers queried
      */
     var onLayerVisibilitychanged = function() {
-        /* XXX remove visibililtychanged event from the layer */
+        /* XXX remove visibilitychanged event from the layer */
         /* update ctrl.layers if we're in a multi-layer query */
         if (Xsearch) {
             layers = [];
@@ -255,7 +257,7 @@ GEOR.getfeatureinfo = (function() {
          * Initialize this module
          *
          * Parameters:
-         * m - {OpenLayers.Map} The map instance.
+         * l - {GeoExt.data.LayerStore} The layerStore instance.
          */
         init: function(l) {
             tr = OpenLayers.i18n;

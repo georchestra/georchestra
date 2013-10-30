@@ -136,7 +136,7 @@ GEOR.selectfeature = (function() {
             features: clone(toArray(selectedFeatures)),
             model: model,
             ctrl: ctrl,
-            tooltip: ctrl.layer.name + " - OpenLayers SelectFeature",
+            tooltip: ctrl.layer.name + " - " + tr("OpenLayers SelectFeature"),
             title: GEOR.util.shortenLayerName(ctrl.layer.name),
             // we do not want the generated vector layer 
             // to be added to the map object:
@@ -152,7 +152,7 @@ GEOR.selectfeature = (function() {
             features: clone(toArray(selectedFeatures)),
             model: model,
             ctrl: ctrl,
-            tooltip: ctrl.layer.name + " - OpenLayers SelectFeature",
+            tooltip: ctrl.layer.name + " - " + tr("OpenLayers SelectFeature"),
             title: GEOR.util.shortenLayerName(ctrl.layer.name),
             // we do not want the generated vector layer 
             // to be added to the map object:
@@ -261,8 +261,9 @@ GEOR.selectfeature = (function() {
                         ctrl.deactivate();
                     }
                     // we need to collapse the south panel.
-                    if (collapse)
+                    if (collapse) {
                         observable.fireEvent("shutdown");
+                    }
                 } else {
                     // we asked for gfi on another layer
                 }

@@ -41,6 +41,8 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Recentering on a given address": "Recentrage sur point adresse",
     "Available layers": "Couches disponibles",
     "Editing": "Edition",
+    "WMS Search": "Recherche WMS",
+    "WFS Search": "Recherche WFS",
     "resultspanel.emptytext":
         "<p>Sélectionnez l'outil d'interrogation " +
         "ou construisez une requête sur une couche.<br />" +
@@ -133,6 +135,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "<div>Search on objects active for NAME layer. Clic on the map.</div>":
          "<div>Recherche d\'objets activée sur la couche ${NAME}. " +
          "Cliquez sur la carte.</div>",
+    "WMS GetFeatureInfo at ": "GetFeatureInfo WMS sur ",
     /* GEOR_layerfinder.js strings */
     "Add layers from local files": "Ajouter des couches en uploadant un fichier depuis votre ordinateur",
     "Find layers searching in metadata":
@@ -274,6 +277,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Fields of filters with a red mark are mandatory": "Vous devez remplir " +
         "les champs des filtres marqués en rouge.",
     "Request on NAME": "Requêteur sur ${NAME}",
+    "WFS GetFeature on filter": "GetFeature WFS sur un filtre",
     "Search": "Rechercher",
     "querier.layer.no.geom":
         "La couche ne possède pas de colonne géométrique." +
@@ -305,6 +309,11 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "<p>Not any result for that request.</p>": "<p>Aucun objet ne " +
         "correspond à votre requête.</p>",
     /* GEOR_scalecombo.js strings */
+    /* GEOR_selectfeature.js strings */
+    "<div>Select features activated on NAME layer. Clic on the map.</div>":
+        "<div>Sélection d\'objets activée sur la couche ${NAME}. " +
+        "Cliquez sur la carte.</div>",
+    "OpenLayers SelectFeature":"Sélection d\'objets",
     /* GEOR_styler.js strings */
     "Download style": "Télécharger le style",
     "You can download your SLD style at ": "Votre SLD est disponible à " +
@@ -352,6 +361,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Login": "Connexion",
     "Logout": "Déconnexion",
     "Help": "Aide",
+    "Query all active layers": "Interroger toutes les couches actives",
     "Show help": "Afficher l'aide",
     "Show legend": "Afficher la légende",
     "Leave this page ? You will lose the current cartographic context.":

@@ -222,7 +222,7 @@ GEOR.querier = (function() {
                 observable.fireEvent("searchresults", {
                     features: response.features,
                     model: model,
-                    tooltip: name + " - WFS GetFeature on filter",
+                    tooltip: name + " - " + tr("WFS GetFeature on filter"),
                     title: GEOR.util.shortenLayerName(name)
                 });
             },
