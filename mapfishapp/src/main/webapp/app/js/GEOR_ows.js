@@ -34,6 +34,7 @@
  * @include OpenLayers/Layer/WMTS.js
  * @requires GEOR_config.js
  * @include GEOR_waiter.js
+ * @include GEOR_util.js
  * @include OpenLayers/Format/GML/v2.js
  * @include OpenLayers/Format/GML/v3.js
  */
@@ -484,15 +485,7 @@ GEOR.ows = (function() {
             var baseParams = options.baseParams || {};
             var fields = defaultRecordFields;
             fields[0].defaultValue = "WMS";
-            var recordType = GeoExt.data.LayerRecord.create(fields);
-            recordType = Ext.extend(recordType, {
-                hasEquivalentWFS: function() {
-                    return !!this.get("WFS_URL") && !!this.get("WFS_typeName");
-                },
-                hasEquivalentWCS: function() {
-                    return !!this.get("WCS_URL") && !!this.get("WCS_typeName");
-                }
-            });
+            var recordType = GEOR.util.createRecordType(fields);
             var storeOptions = Ext.applyIf({
                 baseParams: Ext.apply({
                     "REQUEST": "GetCapabilities"

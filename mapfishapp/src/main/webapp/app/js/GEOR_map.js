@@ -30,6 +30,7 @@
  * @include GeoExt/data/LayerRecord.js
  * @include GeoExt/data/LayerStore.js
  * @include GEOR_config.js
+ * @include GEOR_util.js
  * @include GEOR_ows.js
  * @include GEOR_wmc.js
  */
@@ -408,17 +409,9 @@ GEOR.map = (function() {
      * {GeoExt.data.LayerStore} The global layer store.
      */
     var createLayerStore = function() {
-        var recordType = GeoExt.data.LayerRecord.create(
+        var recordType = GEOR.util.createRecordType(
             GEOR.ows.getRecordFields()
         );
-        recordType = Ext.extend(recordType, {
-            hasEquivalentWFS: function() {
-                return !!this.get("WFS_URL") && !!this.get("WFS_typeName");
-            },
-            hasEquivalentWCS: function() {
-                return !!this.get("WCS_URL") && !!this.get("WCS_typeName");
-            }
-        });
         map = createMap();
 
         ls = new LayerStore({
