@@ -287,7 +287,7 @@ GEOR.mapinit = (function() {
                 text: tr("OK"),
                 handler: function() {
                     Ext.each(sm.getSelections(), function(r) {
-                        layerStore.addSorted(r);
+                        layerStore.add(r);
                     });
                     win.close();
                 }
@@ -341,7 +341,7 @@ GEOR.mapinit = (function() {
                 return;
             }
             count += 1;
-            layerStore.addSorted(record);
+            layerStore.add(record);
         });
         GEOR.waiter.hide();
         if (errors.length) {

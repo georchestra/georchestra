@@ -39,7 +39,7 @@ GEOR.managelayers = (function() {
      */
     var LayerNode = Ext.extend(GeoExt.tree.LayerNode, {
         constructor: function(config) {
-            config.qtip = config.layer.name;
+            config.qtip = config.layer.id; // FIXME, just for dev
             LayerNode.superclass.constructor.apply(this, [config]);
         }
     });

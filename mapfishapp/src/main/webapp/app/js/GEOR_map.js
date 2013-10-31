@@ -78,6 +78,13 @@ GEOR.map = (function() {
     var _adding = false;
 
     /**
+     * Property: layerOrder
+     * {Array} An array of record Ids representing the target state 
+     * of the layerStore
+     */
+    var layerOrder = null;
+
+    /**
      * Method: createMainBaseLayer
      * Create and return the main layer, this layer will not be
      * displayed in the overview map.
@@ -213,22 +220,70 @@ GEOR.map = (function() {
      * A specific GeoExt.data.LayerStore.
      */
     var LayerStore = Ext.extend(GeoExt.data.LayerStore, {
+        //
+        // Implementation guideline: keep an image of the target layerStore 
+        // order, as built by calling add and insert.
+        // When DescribeLayer is over, insert the record where it should be, 
+        // based on the target layer order.
+        //
         add: function(records) {
-            // TODO here: keep locally a FIFO of records to add / insert.
-            // once XHRs are finished, insert layers in store at the corresponding place.
-
-            // the filter method takes care of adding the records (required because of DescribeLayer XHR)
             if (_adding) {
-                LayerStore.superclass.add.call(this, records);
+                // apply correct ordering here
+                var firstRecord = records[0]; // first record to insert
+                var inserted = false;
+                this.each(function(r, idx) {
+                    if (layerOrder.indexOf(firstRecord.id) < layerOrder.indexOf(r.id)) {
+                        //console.log("add: -> newindex : " + idx);
+                        LayerStore.superclass.insert.call(this, idx, records);
+                        inserted = true;
+                        return false; // stop looping
+                    }
+                }, this);
+                if (!inserted) {
+                    LayerStore.superclass.add.call(this, records);
+                    //console.log("add: -> to top of pile.");
+                }
             } else {
                 records = filter(records);
+                // sync layerOrder:
+                Ext.each(records, function(r) {
+                    layerOrder.push(r.id);
+                });
+                //console.log(layerOrder);
             }
         },
         insert: function(index, records) {
+            var i = 0;
             if (_adding) {
-                LayerStore.superclass.insert.call(this, index, records);
+                if (this.getCount() == 0) {
+                    LayerStore.superclass.add.call(this, records);
+                    return;
+                }
+                // apply correct ordering here
+                var firstRecord = records[0]; // first record to insert
+                var inserted = false;
+                this.each(function(r, idx) {
+                    // FIXME: this does not work during layer reordering
+                    if (layerOrder.indexOf(firstRecord.id) < layerOrder.indexOf(r.id)) {
+                        //console.log("oldindex: "+ index +" -> newindex : " + idx);
+                        LayerStore.superclass.insert.call(this, idx, records);
+                        inserted = true;
+                        return false; // stop looping
+                    }
+                }, this);
+                if (!inserted) {
+                    LayerStore.superclass.add.call(this, records);
+                    //console.log("oldindex: "+ index +" -> to top of pile.");
+                }
+
             } else {
                 records = filter(records, index);
+                // sync layerOrder:
+                Ext.each(records, function(r) {
+                    layerOrder.splice(index + i, 0, r.id);
+                    i++;
+                });
+                //console.log(layerOrder);
             }
         }
     });
@@ -316,19 +371,16 @@ GEOR.map = (function() {
                         r.set("_described", true);
                         _adding = true;
                         if (index) {
-                            ls.insert(index,[r]); // FIXME: insertion order might not be correct !
-                            // solution: sort layerstore by 1) new field 2) opaque
-                            // "new field" is filled with WMC layer order...
+                            ls.insert(index, [r]);
                         } else {
                             ls.add([r]);
                         }
-                        _adding = false; // TODO: add/insert 
-                        // FIXME ! Generates incorrect order while restoring context
+                        _adding = false; 
                     },
                     failure: function() {
                         _adding = true;
                         if (index) {
-                            ls.insert(index,[r]); // FIXME: insertion order might not be correct !
+                            ls.insert(index, [r]);
                         } else {
                             ls.add([r]);
                         }
@@ -340,7 +392,7 @@ GEOR.map = (function() {
                 // add immediately to layerstore
                 _adding = true;
                 if (index) {
-                    ls.insert(index,[r]); // FIXME: insertion order might not be correct !
+                    ls.insert(index, [r]);
                 } else {
                     ls.add([r]);
                 }
@@ -409,6 +461,7 @@ GEOR.map = (function() {
      * {GeoExt.data.LayerStore} The global layer store.
      */
     var createLayerStore = function() {
+        layerOrder = [];
         var recordType = GEOR.util.createRecordType(
             GEOR.ows.getRecordFields()
         );
@@ -422,16 +475,22 @@ GEOR.map = (function() {
                 field: 'opaque',
                 direction: 'DESC'
             },
-            fields: recordType
+            fields: recordType,
+            listeners: {
+                "remove": function(store, record, idx) {
+                    // sync layer order
+                    layerOrder = layerOrder.remove(record.id);
+                    //console.log("removed "+record.id+" new order is ", layerOrder);
+                }
+            }
         });
 
-        var layer = createMainBaseLayer();
-        ls.add([new recordType({
-                title: layer.name,
-                layer: layer
-            }, layer.id)]
-        );
-
+        var layer = createMainBaseLayer(),
+        record = new recordType({
+            title: layer.name,
+            layer: layer
+        }, layer.id);
+        ls.add([record]);
         return ls;
     };
 
