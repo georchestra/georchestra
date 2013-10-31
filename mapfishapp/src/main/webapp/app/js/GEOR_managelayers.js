@@ -358,7 +358,11 @@ GEOR.managelayers = (function() {
             stylesMenuItems.push(default_style);
             if (styles && styles.length > 0) {
                 styles.sort(function(a,b) {
-                    return (a.name || a.title).toLowerCase() > (b.name || b.title).toLowerCase();
+                    var aa = (a.name || a.title).toLowerCase(),
+                        bb = (b.name || b.title).toLowerCase();
+                    if (aa > bb) return 1;
+                    if (aa < bb) return -1;
+                    return 0;
                 });
                 var checked, style;
                 for (var i=0, len=styles.length; i<len; i++) {

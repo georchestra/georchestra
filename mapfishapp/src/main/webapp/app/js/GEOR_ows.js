@@ -601,7 +601,7 @@ GEOR.ows = (function() {
                 }
             }
             GEOR.waiter.show();
-            var store = new GEOR.ows.WMSCapabilities({
+            var store = GEOR.ows.WMSCapabilities({
                 storeOptions: {
                     url: url.replace(/\?$/,'')
                 },

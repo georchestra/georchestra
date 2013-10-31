@@ -15,10 +15,18 @@ function addError(id, errCode) {
 	$("#div-" + id + " > div").append('<span id="span-error" class="help-block">' + errCode + '</span>');
 }
 
+function testField(field) {
+	removeError(field);
+	if (!isNotEmpty($("#"+field).val()) && isFieldRequired(field)) {
+		addError(field, '<s:message code="error.required" />');
+		return false;
+	}
+	return true;
+}
 function testFirstname() {
 	var firstname = document.form.firstName.value;
 	removeError("firstName");
-	if (!isNotEmpty(firstname)) {
+	if (!isNotEmpty(firstname) && isFieldRequired("firstName")) {
 		addError("firstName", '<s:message code="firstName.error.required" />');
 		return false;
 	}
@@ -27,7 +35,7 @@ function testFirstname() {
 function testSurname() {
 	var surname = document.form.surname.value;
 	removeError("surname");
-	if (!isNotEmpty(surname)) {
+	if (!isNotEmpty(surname) && isFieldRequired("surname")) {
 		addError("surname", '<s:message code="surname.error.required" />');
 		return false;
 	}
@@ -36,7 +44,7 @@ function testSurname() {
 function testEmail() {
 	var email = document.form.email.value;
 	removeError("email");
-	if (!isNotEmpty(email)) {
+	if (!isNotEmpty(email) && isFieldRequired("email")) {
 		addError("email", '<s:message code="email.error.required" />');
 		return false;
 	} else if (!emailCheck(email)) {
@@ -48,7 +56,7 @@ function testEmail() {
 function testUid() {
 	var uid = document.form.uid.value;
 	removeError("uid");
-	if (!isNotEmpty(uid)) {
+	if (!isNotEmpty(uid) && isFieldRequired("uid")) {
 		addError("uid", '<s:message code="uid.error.required" />');
 		return false;
 	} else if (!isUidValid(uid)) {
@@ -180,6 +188,20 @@ function feedbackPassStrength(elId, password){
     $("#"+elId).html(message);
     $("#"+elId).addClass("label-"+msgLabelClass);
     $("#"+elId).addClass("col-lg-offset-"+msgOffsetClass);
+}
+
+
+/**
+ * Test if a field is required
+ * 
+ * A field is required if its HTML code contains a span with ".required"
+ * class 
+ * 
+ * @param {String} id
+ * @returns {boolean}
+ */
+function isFieldRequired(id) {
+	return $("#div-" + id + " label span").hasClass("required");
 }
 
 /**

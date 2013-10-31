@@ -4,6 +4,7 @@
 package org.georchestra.ldapadmin.ws.backoffice.users;
 
 import java.io.IOException;
+import java.text.Normalizer;
 import java.util.List;
 
 import javax.servlet.ServletInputStream;
@@ -606,7 +607,7 @@ public class UsersController {
 	 */
 	private String createUid(String givenName, String surname) throws DataServiceException {
 		
-		String proposedUid = givenName.toLowerCase().charAt(0) + surname.toLowerCase();
+		String proposedUid = normalizeString(givenName.toLowerCase().charAt(0) + surname.toLowerCase());
 		
 		if(! this.accountDao.exist(proposedUid)){
 			return proposedUid;
@@ -614,5 +615,18 @@ public class UsersController {
 			return this.accountDao.generateUid( proposedUid );
 		}
 	}
-	
+
+	/**
+	 * Deaccentuate a string and remove non-word characters
+	 * 
+	 * references: http://stackoverflow.com/a/8523728 and 
+	 * http://stackoverflow.com/a/2397830
+	 * 
+	 * @param string an accentuated string, eg. "Joá+o"
+	 * @return return the deaccentuated string, eg. "Joao"
+	 */
+	public static String normalizeString(String string) {
+		return Normalizer.normalize(string, Normalizer.Form.NFD)
+			.replaceAll("\\W", "");
+	}
 }

@@ -168,6 +168,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Geografic extent does not match map extent": "Географический размер не соответствует размерам карты.",
     /* GEOR_mapinit.js strings */
     "Add layers from WMS services": "Добавить слои из сервисов WMS",
+    "Add layers from WFS services": "Добавить слои из сервисов WFS",
     "NB layers not imported": "${NB} слоёв не импортированы",
     "One layer not imported": "Не импортирован один слой.",
     "mapinit.layers.load.error":  "Слои с именем ${LIST} не смогли загрузиться. Возможные причины : недостаточные права, несоответствие с SRS (Spatial Reference System - Система Космической Связи) или несуществующий слой.",

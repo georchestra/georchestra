@@ -164,4 +164,7 @@
         <property name="delayInDays" value="${delayInDays}" />
     </bean>
     
+    <bean id="validation" class="org.georchestra.ldapadmin.ws.utils.Validation">
+        <property name="requiredFields" value="${requiredFields}" />
+    </bean>
 </beans>
