@@ -208,6 +208,9 @@ GEOR.map = (function() {
      */
     var LayerStore = Ext.extend(GeoExt.data.LayerStore, {
         add: function(records) {
+            // TODO here: keep locally a FIFO of records to add / insert.
+            // once XHRs are finished, insert layers in store at the corresponding place.
+
             // the filter method takes care of adding the records (required because of DescribeLayer XHR)
             if (_adding) {
                 LayerStore.superclass.add.call(this, records);
@@ -286,7 +289,7 @@ GEOR.map = (function() {
             keep.push(r);
 
             // WMSDescribeLayer for each new WMS Layer
-            if (r.get("type") == "WMS") {
+            if (r.get("type") == "WMS" && r.get("_described") !== true) {
                 GEOR.waiter.show();
                 GEOR.ows.WMSDescribeLayer(r, {
                     success: function(store, records) {
@@ -300,14 +303,26 @@ GEOR.map = (function() {
                             r.set("WCS_typeName", wcsRecord.get("typeName"));
                             r.set("WCS_URL", wcsRecord.get("owsURL"));
                         }
+                        // this is to prevent "reordering layers triggers describeLayer"
+                        r.set("_described", true);
                         _adding = true;
-                        ls && ls.add([r]);
+                        if (index) {
+                            ls.insert(index,[r]); // FIXME: insertion order might not be correct !
+                            // solution: sort layerstore by 1) new field 2) opaque
+                            // "new field" is filled with WMC layer order...
+                        } else {
+                            ls.add([r]);
+                        }
                         _adding = false; // TODO: add/insert 
                         // FIXME ! Generates incorrect order while restoring context
                     },
                     failure: function() {
                         _adding = true;
-                        ls && ls.add([r]); // TODO: add/insert
+                        if (index) {
+                            ls.insert(index,[r]); // FIXME: insertion order might not be correct !
+                        } else {
+                            ls.add([r]);
+                        }
                         _adding = false;
                     },
                     scope: this
@@ -315,7 +330,11 @@ GEOR.map = (function() {
             } else {
                 // add immediately to layerstore
                 _adding = true;
-                ls && ls.add([r]); // TODO: add/insert
+                if (index) {
+                    ls.insert(index,[r]); // FIXME: insertion order might not be correct !
+                } else {
+                    ls.add([r]);
+                }
                 _adding = false;
             }
         });

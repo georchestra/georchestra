@@ -56,6 +56,7 @@ GEOR.ows = (function() {
     var defaultRecordFields = [
         // for the use of geOrchestra only:
         {name: "type", type: "string"},
+        {name: "_described", type: "boolean", defaultValue: false},
         {name: "WCS_typeName", type: "string"},
         {name: "WCS_URL", type: "string"},
         {name: "WFS_typeName", type: "string"},
