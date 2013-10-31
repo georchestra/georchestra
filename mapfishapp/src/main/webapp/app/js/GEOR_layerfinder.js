@@ -433,7 +433,7 @@ Ext.app.OWSUrlField = Ext.extend(Ext.form.TwinTriggerField, {
         }
         if (!GEOR.util.isUrl(url, true)) {
             GEOR.util.errorDialog({
-                msg: tr("Malformed URL")
+                msg: OpenLayers.i18n("Malformed URL")
             });
             return;
         }
