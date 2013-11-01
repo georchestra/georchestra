@@ -429,7 +429,7 @@ sudo nano /etc/default/tomcat6
 ```
 JAVA_OPTS="$JAVA_OPTS -Dgeonetwork.dir=/path/to/geonetwork-data-dir \
     -Dgeonetwork[-private].schema.dir=/path/to/tomcat/webapps/geonetwork[-private]/WEB-INF/data/config/schema_plugins \
-    -Dgeonetwork.jeeves.configuration.overrides.file=/path/to/tomcat/webapps/geonetwork[-private]/WEB-INF/config-overrides-georchestra.xml
+    -Dgeonetwork.jeeves.configuration.overrides.file=/path/to/tomcat/webapps/geonetwork[-private]/WEB-INF/config-overrides-georchestra.xml"
 ```
 
 ... where brackets indicate optional strings, depending on your setup.
@@ -446,7 +446,7 @@ sudo nano /etc/default/tomcat6
 
 ```
 JAVA_OPTS="$JAVA_OPTS -Dorg.geotools.referencing.forceXY=true \
-    -Dextractor.storage.dir=/path/to/temporary/extracts/
+    -Dextractor.storage.dir=/path/to/temporary/extracts/"
 ```
 
 Note: if the epsg-extension module is installed, one can manage custom EPSG codes by adding:
@@ -456,7 +456,7 @@ sudo nano /etc/default/tomcat6
 ```
 
 ```
-JAVA_OPTS="$JAVA_OPTS -DCUSTOM_EPSG_FILE=file://$CATALINA_BASE/conf/epsg.properties
+JAVA_OPTS="$JAVA_OPTS -DCUSTOM_EPSG_FILE=file://$CATALINA_BASE/conf/epsg.properties"
 ```
 
 ... in which a sample epsg.properties file can be found [here](https://github.com/georchestra/georchestra/blob/master/server-deploy-support/src/main/resources/c2c/tomcat/conf/epsg.properties)
