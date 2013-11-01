@@ -17,7 +17,7 @@
         <property name="maxUploadSize">
             <!--  Note: this value should be the maximum size specified at the bean 
                   org.georchestra.mapfishapp.ws.UpLoadGeoFileController -->
-            <value>8589934592</value> 
+            <value>8388608</value>
         </property>
         <property name="MaxInMemorySize">
             <!--  default value 10240 bytes -->
