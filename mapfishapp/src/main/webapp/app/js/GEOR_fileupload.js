@@ -110,6 +110,9 @@ GEOR.fileupload = (function() {
         if (!fc) {
             alert("Incorrect server response");
             return;
+        } else if (fc.success !== "true") {
+            alert(OpenLayers.i18n("server upload error: ERROR", {'ERROR': fc.msg}));
+            return;
         }
         features = (new OpenLayers.Format.GeoJSON()).read(fc.geojson);
         if (!features || features.length == 0) {
