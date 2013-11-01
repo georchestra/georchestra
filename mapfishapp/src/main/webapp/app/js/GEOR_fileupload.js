@@ -98,6 +98,17 @@ GEOR.fileupload = (function() {
     };
 
     /**
+     * Method: errorAndReset
+     *
+     * Parameters:
+     * form - {Ext.form.BasicForm}
+     * err - {String}
+     */
+    var errorAndReset = function(form, err) {
+        alert(OpenLayers.i18n("server upload error: ERROR", {'ERROR': err}));
+    }
+
+    /**
      * Method: formSuccess
      *
      * Parameters:
@@ -108,15 +119,15 @@ GEOR.fileupload = (function() {
         var features,
             fc = (new OpenLayers.Format.JSON()).read(action.response.responseText);
         if (!fc) {
-            alert("Incorrect server response");
+            errorAndReset(form, OpenLayers.i18n("Incorrect server response."));
             return;
         } else if (fc.success !== "true") {
-            alert(OpenLayers.i18n("server upload error: ERROR", {'ERROR': fc.msg}));
+            errorAndReset(form, fc.msg);
             return;
         }
         features = (new OpenLayers.Format.GeoJSON()).read(fc.geojson);
         if (!features || features.length == 0) {
-            alert("No features found");
+            errorAndReset(form, OpenLayers.i18n("No features found."));
             return;
         }
         model = new GEOR.FeatureDataModel({
