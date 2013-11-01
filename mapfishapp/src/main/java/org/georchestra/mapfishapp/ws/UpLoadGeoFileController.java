@@ -491,7 +491,8 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 				writeErrorResponse(
 				        response,
 				        Status.sizeError,
-				        "The configured maximum size is " + size + " MB. ("+sizeException.getMaxUploadSize()+" bytes)", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				        "The configured maximum size is " + size + " MB. ("+sizeException.getMaxUploadSize()+" bytes)",
+				        HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE);
 			} else {
 
 				writeErrorResponse(response, Status.ioError, exception.getMessage(), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
