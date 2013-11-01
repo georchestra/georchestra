@@ -295,7 +295,9 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 				writeErrorResponse(response, Status.unsupportedFormat);
 				return;
 			}
-			// validate the size
+			// validate the size - it's a double-check, since normally
+			// a MaxUploadSizeExceededException has already been
+			// launched and handled
 			long limit = getSizeLimit(currentFile.originalFileExt);
 			if(  upLoadFile.getSize()  > limit ){
 				
