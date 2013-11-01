@@ -287,9 +287,7 @@ GEOR.fileupload = (function() {
                                     url: "ws/togeojson/",
                                     success: formSuccess,
                                     failure: function(form, action) {
-                                        alert("Error : " + action.result.msg);
-                                        form.reset();
-                                        newFile = true;
+                                        errorAndReset(form, action.result.msg);
                                     },
                                     scope: this
                                 });
