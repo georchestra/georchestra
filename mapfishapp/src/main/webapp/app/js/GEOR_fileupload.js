@@ -106,6 +106,8 @@ GEOR.fileupload = (function() {
      */
     var errorAndReset = function(form, err) {
         alert(OpenLayers.i18n("server upload error: ERROR", {'ERROR': err}));
+        form.reset();
+        newFile = true;
     }
 
     /**
