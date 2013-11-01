@@ -129,6 +129,8 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Use ZIP compression for multifiles formats, such as": "Utilisez la compression ZIP pour les formats multi-fichiers comme",
     "server upload error: ERROR":
         "L'upload du fichier a échoué pour la raison suivante : '${ERROR}'",
+    "Incorrect server response.": "Réponse du serveur incorrecte.",
+    "No features found.": "Aucun objet trouvé.",
     /* GEOR_geonames.js strings */
     /* GEOR_getfeatureinfo.js strings */
     "<div>Searching...</div>": "<div>Recherche en cours...</div>",
