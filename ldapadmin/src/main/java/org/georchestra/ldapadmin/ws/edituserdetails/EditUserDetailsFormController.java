@@ -66,7 +66,8 @@ public class EditUserDetailsFormController {
 	@RequestMapping(value="/account/userdetails", method=RequestMethod.GET)
 	public String setupForm(HttpServletRequest request,  Model model) throws IOException{
 		
-		if(request.getHeader("sec-username") == null){
+		if(request.getHeader("sec-username") == null
+			|| "anonymousUser".equals(request.getHeader("sec-username"))){
 			return "forbidden";
 		}
 
