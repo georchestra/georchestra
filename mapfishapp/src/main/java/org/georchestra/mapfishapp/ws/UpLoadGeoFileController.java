@@ -295,7 +295,9 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 				writeErrorResponse(response, Status.unsupportedFormat);
 				return;
 			}
-			// validate the size
+			// validate the size - it's a double-check, since normally
+			// a MaxUploadSizeExceededException has already been
+			// launched and handled
 			long limit = getSizeLimit(currentFile.originalFileExt);
 			if(  upLoadFile.getSize()  > limit ){
 				
@@ -491,7 +493,8 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 				writeErrorResponse(
 				        response,
 				        Status.sizeError,
-				        "The configured maximum size is " + size + " MB. ("+sizeException.getMaxUploadSize()+" bytes)", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				        "The configured maximum size is " + size + " MB. ("+sizeException.getMaxUploadSize()+" bytes)",
+				        HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE);
 			} else {
 
 				writeErrorResponse(response, Status.ioError, exception.getMessage(), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
