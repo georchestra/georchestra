@@ -127,6 +127,8 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Upload a vector data file.": "Uploadez un fichier de données vectorielles.",
     "The allowed formats are the following: ": "Les formats acceptés sont les suivants : ",
     "Use ZIP compression for multifiles formats, such as": "Utilisez la compression ZIP pour les formats multi-fichiers comme",
+    "server upload error: ERROR":
+        "L'upload du fichier a échoué pour la raison suivante : '${ERROR}'",
     /* GEOR_geonames.js strings */
     /* GEOR_getfeatureinfo.js strings */
     "<div>Searching...</div>": "<div>Recherche en cours...</div>",

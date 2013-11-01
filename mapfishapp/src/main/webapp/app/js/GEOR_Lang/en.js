@@ -43,6 +43,8 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
     "NB layers": "${NB} layers",
     " in NB metadata": " in ${NB} metadata",
     /* GEOR_editing.js strings */
+    /* GEOR_fileupload.js strings */
+    "server upload error: ERROR": "The upload failed for the following reason: '${ERROR}'",
     /* GEOR_geonames.js strings */
     /* GEOR_getfeatureinfo.js strings */
     "<div>Search on objects active for NAME layer. Clic on the map.</div>":
