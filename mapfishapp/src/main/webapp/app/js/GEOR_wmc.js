@@ -282,7 +282,7 @@ GEOR.wmc = (function() {
                 // set as type as WMS (might need to be changed when we support more types from OWSContext)
                 r.set("type", "WMS");
                 // add layer from wmc to the current map
-                layerStore.add(r);
+                layerStore.addSorted(r);
             });
 
             if (zoomToWMC === true || zoomToWMC === undefined) {

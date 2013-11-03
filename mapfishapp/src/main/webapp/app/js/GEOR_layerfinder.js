@@ -350,7 +350,7 @@ GEOR.layerfinder = (function() {
             if (data.metadataURL) {
                 r.set("metadataURLs", [data.metadataURL]);
             }
-            layerStore.add(r);
+            layerStore.addSorted(r);
         };
     };
 
@@ -372,7 +372,7 @@ GEOR.layerfinder = (function() {
                 var r = store.getAt(idx);
                 //record.set('geometryName', r.get('name')); // later on ?
                 layer.protocol.setGeometryName(r.get('name'));
-                layerStore.add(record.clone());
+                layerStore.addSorted(record.clone());
             } else {
                 GEOR.util.errorDialog({
                     msg: tr("The NAME layer does not contain a valid geometry column", {
@@ -433,7 +433,7 @@ GEOR.layerfinder = (function() {
                 } else {
                     // we have a vector layer without a protocol 
                     // we are coming from the upload file tab
-                    layerStore.add(record);
+                    layerStore.addSorted(record);
                 }
             } else if(record.get("layer_name")) {
                 // we're coming from the CSW tabs
@@ -453,7 +453,7 @@ GEOR.layerfinder = (function() {
             }
         }
         Ext.each(recordsToAdd, function(r) {
-            layerStore.add(r);
+            layerStore.addSorted(r);
         });
     };
 

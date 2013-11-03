@@ -39,7 +39,7 @@ GEOR.managelayers = (function() {
      */
     var LayerNode = Ext.extend(GeoExt.tree.LayerNode, {
         constructor: function(config) {
-            config.qtip = config.layer.id; // FIXME, just for dev
+            config.qtip = config.layer.name;
             LayerNode.superclass.constructor.apply(this, [config]);
         }
     });
@@ -449,15 +449,15 @@ GEOR.managelayers = (function() {
     };
 
     /**
-     * Method: createMenu
+     * Method: createMenuItems
      *
      * Parameters:
      * layerRecord - {GeoExt.data.LayerRecord}
      *
      * Returns:
-     * {Ext.menu.Menu} The configured global menu
+     * {Array} An array of menu items
      */
-    var createMenu = function(layerRecord) {
+    var createMenuItems = function(layerRecord) {
         var queryable = !!(layerRecord.get("queryable")),
             layer = layerRecord.get('layer'),
             type = layerRecord.get("type"),
@@ -471,6 +471,10 @@ GEOR.managelayers = (function() {
             isVector = layer instanceof OpenLayers.Layer.Vector;
 
         var menuItems = [], url, sepInserted;
+
+        if (isWMS && !layerRecord.get("_described")) {
+            return [];
+        }
 
         /**
          * Method: zoomToLayerRecordExtent
@@ -714,11 +718,7 @@ GEOR.managelayers = (function() {
                 menu: createFormatMenu(layerRecord)
             });
         }
-
-        return new Ext.menu.Menu({
-            ignoreParentClicks: true,
-            items: menuItems
-        });
+        return menuItems;
     };
 
     /**
@@ -743,7 +743,36 @@ GEOR.managelayers = (function() {
         buttons = buttons.concat([
         {
             text: tr("Actions"),
-            menu: createMenu(layerRecord)
+            menu: new Ext.menu.Menu({
+                items: [],
+                ignoreParentClicks: true,
+                listeners: {
+                    "beforeshow": function(menu) {
+                        if (menu.items.length) {
+                            // allow menu appearance
+                            return true;
+                        }
+                        // wait for the layer to be described
+                        var task = Ext.TaskMgr.start({
+                            run: function() {
+                                var menuItems = createMenuItems(layerRecord);
+                                menu.removeAll();
+                                if (!menuItems.length) {
+                                    menu.add(tr("Loading..."));
+                                } else {
+                                    // create + add menu items
+                                    Ext.each(menuItems, function(item) {
+                                        menu.add(item);
+                                    });
+                                    // stop this task
+                                    Ext.TaskMgr.stop(task);
+                                }
+                            },
+                            interval: 20
+                        });
+                    }
+                }
+            })
         }, '-', {
             xtype: "gx_opacityslider",
             width: 100,
