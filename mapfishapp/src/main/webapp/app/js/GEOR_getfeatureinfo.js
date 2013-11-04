@@ -167,7 +167,10 @@ GEOR.getfeatureinfo = (function() {
 
         // explode info.features in the different layers
         Ext.each(info.features, function (feature) {
-            var featureType = feature.gml.featureType;
+            var gml = feature.gml,
+            featureType = gml.featureNSPrefix ? 
+                gml.featureNSPrefix + ":" + gml.featureType :
+                gml.featureType;
             results[featureType].features.push(feature);
         });
 
