@@ -878,7 +878,6 @@ GEOR.styler = (function() {
             // clear cache:
             symbolType = null;
             mask = null;
-
             wmsLayerRecord = layerRecord;
 
             /*
@@ -917,55 +916,39 @@ GEOR.styler = (function() {
             });
             win.show();
 
+            var recordType = Ext.data.Record.create([
+                {name: "featureNS", type: "string"},
+                {name: "WFSVersion", type: "string"},
+                {name: "owsURL", type: "string"},
+                {name: "typeName", type: "string"}
+            ]);
+            var data = {
+                "owsURL": layerRecord.get("WFS_URL"),
+                "typeName": layerRecord.get("WFS_typeName")
+            };
+            wfsInfo = new recordType(data);
 
-            /*
-             * trigger in cascade: WMS DescribeLayer,
-             * WFS DescribeFeatureType, and the
-             * initialization of the styler window.
-             */
-
-            GEOR.ows.WMSDescribeLayer(layerRecord, {
+            // store a reference to the store in a
+            // private attribute of the instance
+            attributes = GEOR.ows.WFSDescribeFeatureType(wfsInfo, {
                 success: function(st, recs, opts) {
-                    // store the WFS information in a private
-                    // attribute of the instance
-                    wfsInfo = GEOR.ows.getWfsInfo(recs);
-                    if (!wfsInfo) {
-                        mask && mask.hide();
+                    // extract & remove geometry column name
+                    var idx = st.find('type', GEOR.ows.matchGeomProperty);
+                    if (idx > -1) {
+                        // we have a geometry
+                        var r = st.getAt(idx);
+                        geometryName = r.get('name');
+                        st.remove(r);
+                    }
+                    if (st.getCount() > 0) {
+                        // we have at least one attribute that we can style
+                        getSymbolType(initStyler);
+                    } else {
+                        // give up
                         giveup([ // FIXME: one key translation
                             tr("Impossible to complete the operation:"),
-                            tr("not any WFS service associated to that layer")
+                            tr("not any available attribute")
                         ].join(" "));
-                    } else {
-                        var store = GEOR.ows.WFSDescribeFeatureType(wfsInfo, {
-                            success: function(st, recs, opts) {
-                                // extract & remove geometry column name
-                                var idx = st.find('type', GEOR.ows.matchGeomProperty);
-                                if (idx > -1) {
-                                    // we have a geometry
-                                    var r = st.getAt(idx);
-                                    geometryName = r.get('name');
-                                    st.remove(r);
-                                }
-                                if (st.getCount() > 0) {
-                                    // we have at least one attribute that we can style
-                                    getSymbolType(initStyler);
-                                } else {
-                                    // give up
-                                    giveup([ // FIXME: one key translation
-                                        tr("Impossible to complete the " +
-                                            "operation:"),
-                                        tr("not any available attribute")
-                                    ].join(" "));
-                                }
-                            },
-                            failure: function() {
-                                mask && mask.hide();
-                                win.close();
-                            }
-                        });
-                        // store a reference to the store in a
-                        // private attribute of the instance
-                        attributes = store;
                     }
                 },
                 failure: function() {
