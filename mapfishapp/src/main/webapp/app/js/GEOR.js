@@ -208,7 +208,9 @@ Ext.namespace("GEOR");
 
         // this panel serves as the container for
         // the "search results" tabs
-        var tab = new GEOR.ResultsPanel({html: tr("resultspanel.emptytext")});
+        var tab = new GEOR.ResultsPanel({
+            html: tr("resultspanel.emptytext")
+        });
         var southPanel = new Ext.TabPanel({
             region: "south",
             hidden: !GEOR.ResultsPanel, // hide this panel if
@@ -228,31 +230,39 @@ Ext.namespace("GEOR");
                 border: false,
                 frame: false
             },
-            items: [tab, {id: 'addPanel', title: '+', tabTip: tr('Add query'), style: 'float: right;'}],
+            items: [tab, {
+                id: 'addPanel', 
+                title: '+', 
+                tabTip: tr('Add query'), 
+                style: 'float: right;'
+            }],
             listeners: {
                 'collapse': function(panel){
                     Ext.each(panel.items.items, function(i){
-                        if(i.vectorLayer) {
+                        if (i.vectorLayer) {
                             i.vectorLayer.setVisibility(false);
                         }
                     });
                 },
                 'expand': function(panel){
-                    if(panel.getActiveTab().vectorLayer)
+                    if (panel.getActiveTab().vectorLayer) {
                         panel.getActiveTab().vectorLayer.setVisibility(true);
+                    }
                 },
                 'tabchange': function(panel, t){
-                    if(t.id == 'addPanel'){
-                        var tab = new GEOR.ResultsPanel({html: tr("resultspanel.emptytext")});
-                        panel.insert(panel.items.length-1,tab);
+                    if (t.id == 'addPanel'){
+                        var tab = new GEOR.ResultsPanel({
+                            html: tr("resultspanel.emptytext")
+                        });
+                        panel.insert(panel.items.length-1, tab);
                         panel.setActiveTab(tab);
                     }
                     Ext.each(panel.items.items, function(i){
-                        if(i.vectorLayer) {
+                        if (i.vectorLayer) {
                             i.vectorLayer.setVisibility(false);
                         }
                     });
-                    if(t.vectorLayer) {
+                    if (t.vectorLayer) {
                         t.vectorLayer.setVisibility(true);
                     }
                 }
@@ -374,8 +384,11 @@ Ext.namespace("GEOR");
                         title: options.title,
                         map: map
                     });
-                    tab.populate ({features: options.features, model: options.model});
-                    southPanel.insert(southPanel.items.length-1,tab);
+                    tab.populate({
+                        features: options.features, 
+                        model: options.model
+                    });
+                    southPanel.insert(southPanel.items.length-1, tab);
                     southPanel.setActiveTab(tab);
                 }
             });
@@ -385,7 +398,7 @@ Ext.namespace("GEOR");
             GEOR.getfeatureinfo.events.on({
                 "search": function(panelCfg) {
                     var tab = southPanel.getActiveTab();
-                    if(tab){
+                    if (tab) {
                         tab.setTitle(tr("WMS Search"));
                         tab.clean();
                     }
@@ -407,8 +420,11 @@ Ext.namespace("GEOR");
                             title: result.title,
                             map: map
                         });
-                        tab.populate ({features: result.features, model: result.model});
-                        southPanel.insert(southPanel.items.length-1,tab);
+                        tab.populate ({
+                            features: result.features, 
+                            model: result.model
+                        });
+                        southPanel.insert(southPanel.items.length-1, tab);
                         southPanel.setActiveTab(tab);
                     });
                     southPanel.doLayout();
@@ -423,7 +439,7 @@ Ext.namespace("GEOR");
             GEOR.selectfeature.events.on({
                 "search": function(panelCfg) {
                     var tab = southPanel.getActiveTab();
-                    if(tab){
+                    if (tab) {
                         tab.setTitle(tr("Select Feature"));
                         tab.clean();
                     }
@@ -438,7 +454,9 @@ Ext.namespace("GEOR");
                 "searchresults": function(options) {
                     southPanel.remove(southPanel.getActiveTab());
                     // XXX disable the selectfeature control -> only remove the tab
-                    if (!options.model) return;
+                    if (!options.model) {
+                        return;
+                    }
                     var tab = new GEOR.ResultsPanel({
                         html: tr("resultspanel.emptytext"),
                         tabTip: options.tooltip,
@@ -446,8 +464,12 @@ Ext.namespace("GEOR");
                         sfControl: options.ctrl,
                         map: map
                     });
-                    tab.populate ({features: options.features, model: options.model, addLayerToMap: options.addLayerToMap});
-                    southPanel.insert(southPanel.items.length-1,tab);
+                    tab.populate ({
+                        features: options.features, 
+                        model: options.model, 
+                        addLayerToMap: options.addLayerToMap
+                    });
+                    southPanel.insert(southPanel.items.length-1, tab);
                     southPanel.setActiveTab(tab);
                 },
                 "shutdown": function() {

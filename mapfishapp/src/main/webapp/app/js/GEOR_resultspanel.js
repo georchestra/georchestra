@@ -56,7 +56,10 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
         var format = new OpenLayers.Format.JSON();
         OpenLayers.Request.POST({
             url: "ws/csv/",
-            data: format.write({columns: model.getFields(), data: data}),
+            data: format.write({
+                columns: model.getFields(), 
+                data: data
+            }),
             success: function(response) {
                 var o = Ext.decode(response.responseText);
                 window.location.href = o.filepath;
@@ -111,7 +114,10 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
      */
     var zoomToLayerExtent = function(layerBounds, map, vectorLayer) {
         if (!layerBounds) {
-            this.layerBounds = zoomToFeatures({map: map, vectorLayer: vectorLayer});
+            this.layerBounds = zoomToFeatures({
+                map: map, 
+                vectorLayer: vectorLayer
+            });
         } else {
             map.zoomToExtent(layerBounds);
         }
@@ -124,7 +130,8 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
           */
         constructor: function(config){
             config = Ext.apply({
-                title: tr("Search"),
+                title: OpenLayers.i18n("Search"),
+
                 closable: true,
                 /**
                  * Property: map
@@ -156,12 +163,7 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
                  * {OpenLayers.Control.SelectFeature} The control used for the feature
                  * selection model
                  */
-                sfControl: null,
-                /**
-                 * Property: tr
-                 * {Function} an alias to OpenLayers.i18n
-                 */
-                tr: OpenLayers.i18n,
+                sfControl: null
             }, config);
             GEOR.ResultsPanel.superclass.constructor.call(this, config);
         },
@@ -175,7 +177,7 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
          */
         createGridPanel: function(store) {
             var model = this.model, sfControl = this.sfControl, vectorLayer = this.vectorLayer;
-            var layerBounds = this.layerBounds, map = this.map, tr = this.tr;
+            var layerBounds = this.layerBounds, map = this.map, tr = OpenLayers.i18n;
 
             var columnModel = model.toColumnModel({
                 sortable: true
@@ -186,7 +188,9 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
 
             var tbtext = new Ext.Toolbar.TextItem({
                 text: (c == GEOR.config.MAX_FEATURES) ?
-                tr("resultspanel.maxfeature.reached", {'NB': GEOR.config.MAX_FEATURES}):
+                tr("resultspanel.maxfeature.reached", {
+                    'NB': GEOR.config.MAX_FEATURES
+                }) :
                 (c>1) ? tr("NB results", {'NB': c}) :
                 (c>0) ? tr("One result") :
                 tr("Not any result")
@@ -247,8 +251,11 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
                 bbar: bbar,
                 listeners: {
                     "rowdblclick": function(grid, rowIndex, e) {
-                        zoomToFeatures({features:[store.getAt(rowIndex).get('feature')],
-                            vectorLayer:vectorLayer, map:map});
+                        zoomToFeatures({
+                            features: [store.getAt(rowIndex).get('feature')],
+                            vectorLayer: vectorLayer,
+                            map: map
+                        });
                     },
                     "beforedestroy": function() {
                         vectorLayer.destroyFeatures();
@@ -290,7 +297,7 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
          */
         populate: function(options) {
             var layerBounds = this.layerBounds, vectorLayer = this.vectorLayer;
-            var map = this.map, model = this.model, store = this.store, tr = this.tr;
+            var map = this.map, model = this.model, store = this.store, tr = OpenLayers.i18n;
             // we clear the bounds cache:
             layerBounds = null;
 
@@ -305,8 +312,9 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
                 });
                 return;
             }
-            if (!this.vectorLayer)
+            if (!this.vectorLayer) {
                 this.vectorLayer = this.createVectorLayer();
+            }
 
             if (options.addLayerToMap !== false) {
                 if (OpenLayers.Util.indexOf(map.layers, this.vectorLayer) < 0) {
@@ -355,7 +363,6 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
                         o[k] = '<a href="'+v+'" target="_blank">'+v+'</a>';
                     }
                 });
-
             });
             store.loadData(features);
             this.createGridPanel(store);
@@ -372,6 +379,6 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
                 vectorLayer.setVisibility(false);
                 layerBounds = null;
             }
-        },
+        }
     };
 }()));

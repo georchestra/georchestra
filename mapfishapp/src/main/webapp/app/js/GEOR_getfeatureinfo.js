@@ -147,10 +147,14 @@ GEOR.getfeatureinfo = (function() {
                 });
             }
         }
-        var coord = map.getLonLatFromPixel(info.xy).transform(map.projection,
-            new OpenLayers.Projection("EPSG:4326"));
-        var coordstr = "Lon: " + OpenLayers.Number.format(coord.lon, 5)
-            + " Lat: " + OpenLayers.Number.format(coord.lat, 5);
+        var coord = map.getLonLatFromPixel(info.xy).transform(
+            map.projection,
+            new OpenLayers.Projection("EPSG:4326")
+        );
+        var coordstr = [
+            "Lon", tr("labelSeparator"), OpenLayers.Number.format(coord.lon, 5),
+            " Lat", tr("labelSeparator"), OpenLayers.Number.format(coord.lat, 5)
+        ].join('');
         // we need to create a results object for each ctrl.layer
         // to gracefully handle the case when no data is found
         Ext.each(ctrl.layers, function (layer) {
@@ -169,7 +173,9 @@ GEOR.getfeatureinfo = (function() {
 
         // generate FeatureDataModels now that we have all features sorted out by featureType
         Ext.iterate(results, function(featuretype, result) {
-            result.model = new GEOR.FeatureDataModel({ features: result.features });
+            result.model = new GEOR.FeatureDataModel({
+                features: result.features
+            });
         });
 
         observable.fireEvent("searchresults", {
@@ -209,7 +215,9 @@ GEOR.getfeatureinfo = (function() {
         if (Xsearch) {
             layers = [];
             layerStore.each(function(layerRecord) {
-                if(layerRecord.get("queryable") && layerRecord.getLayer().visibility == true) {
+                if (layerRecord.get("queryable") && 
+                    layerRecord.getLayer().visibility == true) {
+
                     layers.push(layerRecord.getLayer());
                 }
             });
@@ -229,7 +237,7 @@ GEOR.getfeatureinfo = (function() {
     var onLayerRemoved = function(options) {
         /* remove options.layer from ctrl.layers if it was being queried in a multi-layer query */
         if (Xsearch) {
-            for(var i = 0; i < ctrl.layers.length; i++) {
+            for (var i = 0; i < ctrl.layers.length; i++) {
                 if (options.layer === ctrl.layers[i]) {
                     ctrl.layers.splice(i, 1);
                     break;
@@ -303,7 +311,9 @@ GEOR.getfeatureinfo = (function() {
             } else if (record === false) {
                 type = "WMS"; // XXX assume all layers queried are WMS ?
                 layerStore.each(function(layerRecord) {
-                    if(layerRecord.get("queryable") && layerRecord.getLayer().visibility == true) {
+                    if(layerRecord.get("queryable") && 
+                        layerRecord.getLayer().visibility == true) {
+
                         layers.push(layerRecord.getLayer());
                     }
                 });
@@ -316,10 +326,11 @@ GEOR.getfeatureinfo = (function() {
             } else if (state) {
                 Xsearch = (record === false ? true : false);
                 observable.fireEvent("search", {
-                    html: Xsearch ? tr("Search on all active layers") :
-                             tr("<div>Search on objects active for NAME layer. " +
-                             "Clic on the map.</div>",
-                             {'NAME': title})
+                    html: Xsearch ? 
+                        tr("Search on all active layers") :
+                        tr("<div>Search on objects active for NAME layer. " +
+                            "Clic on the map.</div>",
+                            {'NAME': title})
                 });
 
                 var ctrlEventsConfig = {
@@ -373,10 +384,10 @@ GEOR.getfeatureinfo = (function() {
                 // from querying a layer to another, or from/to a single-layer
                 // query to a multi-layer query
                 var deactivate = false;
-                if(layers.length == ctrl.layers.length) {
+                if (layers.length === ctrl.layers.length) {
                     deactivate = true;
-                    for(var i = 0; i < layers.length; i++) {
-                        if(ctrl.layers[i] != layers[i]) {
+                    for (var i = 0; i < layers.length; i++) {
+                        if (ctrl.layers[i] != layers[i]) {
                             deactivate = false;
                         }
                     }
@@ -384,8 +395,9 @@ GEOR.getfeatureinfo = (function() {
                 var collapse = deactivate;
                 var ctrls = map.getControlsBy('active',true);
                 for (var i = 0 ; i < ctrls.length; i++) {
-                    if (ctrls[i].CLASS_NAME == "OpenLayers.Control.SelectFeature")
+                    if (ctrls[i].CLASS_NAME == "OpenLayers.Control.SelectFeature") {
                         collapse = false;
+                    }
                 };
                 if (deactivate) {
                     // we clicked on a toolbar button, which means we have
@@ -401,8 +413,9 @@ GEOR.getfeatureinfo = (function() {
                         ctrl.deactivate();
                     }
                     // we need to collapse the south panel.
-                    if (collapse)
+                    if (collapse) {
                         observable.fireEvent("shutdown");
+                    }
                     // remove visibility events from previous array of layers
                     Ext.each(ctrl.layers, function(l) {
                         l.events.un({
@@ -418,8 +431,8 @@ GEOR.getfeatureinfo = (function() {
                     // we asked for gfi on another layer
                 }
             }
-       }
-   };
+        }
+    };
 })();
 
 

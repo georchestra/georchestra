@@ -100,7 +100,6 @@ GEOR.selectfeature = (function() {
         }
     };
 
-
     var toArray = function(o) {
         var out = [];
         for (var f in o) {
@@ -112,7 +111,6 @@ GEOR.selectfeature = (function() {
         return out;
     };
 
-
     var clone = function(features) {
         var out = new Array(features.length);
         Ext.each(features, function(f, i) {
@@ -121,17 +119,16 @@ GEOR.selectfeature = (function() {
         return out;
     };
 
-
     var onFeatureselected = function(o) {
         var f = o.feature;
         selectedFeatures[f.id] = f;
-        
+
         if (!model || model.isEmpty()) {
             model = new GEOR.FeatureDataModel({
                 features: [f]
             });
         }
-        
+
         observable.fireEvent("searchresults", {
             features: clone(toArray(selectedFeatures)),
             model: model,
@@ -238,8 +235,10 @@ GEOR.selectfeature = (function() {
                 var collapse = true;
                 var ctrls = map.getControlsBy('active',true);
                 for (var i = 0 ; i < ctrls.length; i++) {
-                    if (ctrls[i].CLASS_NAME == "OpenLayers.Control.WMSGetFeatureInfo")
+                    // FIXME: test "OpenLayers.Control.WMTSGetFeatureInfo" too ?
+                    if (ctrls[i].CLASS_NAME == "OpenLayers.Control.WMSGetFeatureInfo") {
                         collapse = false;
+                    }
                 };
                 if (ctrl.layer === layer) {
                     // we clicked on a toolbar button, which means we have
