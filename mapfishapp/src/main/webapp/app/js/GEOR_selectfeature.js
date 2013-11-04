@@ -69,6 +69,12 @@ GEOR.selectfeature = (function() {
      */
     var model = null;
     
+    /**
+     * Property: tr
+     * {Function} an alias to OpenLayers.i18n
+     */
+    var tr = null;
+
     // indexed by their id
     var selectedFeatures = {};
     
@@ -129,6 +135,9 @@ GEOR.selectfeature = (function() {
         observable.fireEvent("searchresults", {
             features: clone(toArray(selectedFeatures)),
             model: model,
+            ctrl: ctrl,
+            tooltip: ctrl.layer.name + " - " + tr("OpenLayers SelectFeature"),
+            title: GEOR.util.shortenLayerName(ctrl.layer.name),
             // we do not want the generated vector layer 
             // to be added to the map object:
             addLayerToMap: false
@@ -142,6 +151,9 @@ GEOR.selectfeature = (function() {
         observable.fireEvent("searchresults", {
             features: clone(toArray(selectedFeatures)),
             model: model,
+            ctrl: ctrl,
+            tooltip: ctrl.layer.name + " - " + tr("OpenLayers SelectFeature"),
+            title: GEOR.util.shortenLayerName(ctrl.layer.name),
             // we do not want the generated vector layer 
             // to be added to the map object:
             addLayerToMap: false
@@ -168,6 +180,7 @@ GEOR.selectfeature = (function() {
          */
         init: function(m) { 
             map = m;
+            tr = OpenLayers.i18n;
         },
 
         /**
@@ -188,8 +201,9 @@ GEOR.selectfeature = (function() {
             }
             if (state) {
                 observable.fireEvent("search", {
-                    html: '<div>Recherche d\'objets activée sur la couche '+
-                        title+'. Cliquez sur la carte.</div>'
+                    html: tr("<div>Select features activated on NAME layer. " +
+                          "Clic on the map.</div>",
+                          {'NAME': title})
                 });
             
                 if (ctrl) {
@@ -221,6 +235,12 @@ GEOR.selectfeature = (function() {
             } else {
                 // clear model cache:
                 model = null;
+                var collapse = true;
+                var ctrls = map.getControlsBy('active',true);
+                for (var i = 0 ; i < ctrls.length; i++) {
+                    if (ctrls[i].CLASS_NAME == "OpenLayers.Control.WMSGetFeatureInfo")
+                        collapse = false;
+                };
                 if (ctrl.layer === layer) {
                     // we clicked on a toolbar button, which means we have
                     // to stop gfi requests.
@@ -241,7 +261,9 @@ GEOR.selectfeature = (function() {
                         ctrl.deactivate();
                     }
                     // we need to collapse the south panel.
-                    observable.fireEvent("shutdown");
+                    if (collapse) {
+                        observable.fireEvent("shutdown");
+                    }
                 } else {
                     // we asked for gfi on another layer
                 }

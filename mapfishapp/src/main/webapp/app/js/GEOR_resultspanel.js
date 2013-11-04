@@ -32,69 +32,13 @@
 
 Ext.namespace("GEOR");
 
-GEOR.resultspanel = (function() {
-
-    /*
-     * Private
-     */
-
-    var observable = new Ext.util.Observable();
-    observable.addEvents(
-        /**
-         * Event: panel
-         * Fires when we have a panel to display south
-         */
-        "panel"
-    );
-
-    /**
-     * Property: map
-     * {OpenLayers.Map} The map instance.
-     */
-    var map = null;
-
-    /**
-     * Property: store
-     * {GeoExt.data.FeatureStore}
-     */
-    var store = null;
-
-    /**
-     * Property: vectorLayer
-     * {OpenLayers.Layer.Vector} The vector layer on which we display results
-     */
-    var vectorLayer = null;
-
-    /**
-     * Property: model
-     * {GEOR.FeatureDataModel} data model
-     */
-    var model = null;
-
-    /**
-     * Property: layerBounds
-     * {OpenLayers.Bounds} The cached vector layer bounds
-     */
-    var layerBounds = null;
-
-    /**
-     * Property: sfControl
-     * {OpenLayers.Control.SelectFeature} The control used for the feature
-     *  selection model
-     */
-    var sfControl = null;
-
-    /**
-     * Property: tr
-     * {Function} an alias to OpenLayers.i18n
-     */
-    var tr = null;
+GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
 
     /**
      * Method: csvExportBtnHandler
      * Triggers the download dialog for CSV export of the store's content
      */
-    var csvExportBtnHandler = function() {
+    var csvExportBtnHandler = function(store, model) {
         var t = store.getCount();
         if (t === 0) {
             return;
@@ -121,19 +65,6 @@ GEOR.resultspanel = (function() {
     };
 
     /**
-     * Method: zoomToLayerExtent
-     * Sets the map extent in order to see all results
-     * Caches the vector layer extent if required
-     */
-    var zoomToLayerExtent = function() {
-        if (!layerBounds) {
-            layerBounds = zoomToFeatures();
-        } else {
-            map.zoomToExtent(layerBounds);
-        }
-    };
-
-    /**
      * Method: zoomToFeatures
      * Sets the map extent in order to see all results
      *
@@ -144,8 +75,9 @@ GEOR.resultspanel = (function() {
      * Returns:
      * {OpenLayers.Bounds} The scaled vector layer bounds
      */
-    var zoomToFeatures = function(features) {
-        var bounds, layerBounds = null;
+    var zoomToFeatures = function(info) {
+        var bounds, layerBounds = null, features = info.features;
+        var vectorLayer = info.vectorLayer, map = info.map;
         if (features && features[0]) {
             bounds = new OpenLayers.Bounds();
             Ext.each(features, function(f) {
@@ -173,230 +105,260 @@ GEOR.resultspanel = (function() {
     };
 
     /**
-     * Method: createGridPanel
-     * Empties the container panel, creates and loads the gridPanel into it
-     *
-     * Parameters:
-     * store - {GeoExt.data.FeatureStore} our feature store
+     * Method: zoomToLayerExtent
+     * Sets the map extent in order to see all results
+     * Caches the vector layer extent if required
      */
-    var createGridPanel = function(store) {
+    var zoomToLayerExtent = function(layerBounds, map, vectorLayer) {
+        if (!layerBounds) {
+            this.layerBounds = zoomToFeatures({map: map, vectorLayer: vectorLayer});
+        } else {
+            map.zoomToExtent(layerBounds);
+        }
+    };
 
-        var columnModel = model.toColumnModel({
-            sortable: true
-        });
+    return {
+        /**
+          * Constructor of the ResultsPanel object.
+          * Because of its inheritance from an Ext.panel, it can use its attributes.
+          */
+        constructor: function(config){
+            config = Ext.apply({
+                title: tr("Search"),
+                closable: true,
+                /**
+                 * Property: map
+                 * {OpenLayers.Map}  The map instance.
+                 */
+                map: null,
+                /**
+                 * Property: store
+                 * {GeoExt.data.FeatureStore}
+                 */
+                store: null,
+                /**
+                 * Property: vectorLayer
+                 * {OpenLayers.Layer.Vector} The vector layer on which we display results
+                 */
+                vectorLayer: null,
+                /**
+                 * Property: model
+                 * {GEOR.FeatureDataModel} data model
+                 */
+                model: null,
+                /**
+                 * Property: layerBounds
+                 * {OpenLayers.Bounds} The cached vector layer bounds
+                 */
+                layerBounds: null,
+                /**
+                 * Property: sfControl
+                 * {OpenLayers.Control.SelectFeature} The control used for the feature
+                 * selection model
+                 */
+                sfControl: null,
+                /**
+                 * Property: tr
+                 * {Function} an alias to OpenLayers.i18n
+                 */
+                tr: OpenLayers.i18n,
+            }, config);
+            GEOR.ResultsPanel.superclass.constructor.call(this, config);
+        },
 
-        var c = store.getCount();
-        var plural = (c>1) ? "s" : "";
+        /**
+         * Method: createGridPanel
+         * Empties the container panel, creates and loads the gridPanel into it
+         *
+         * Parameters:
+         * store - {GeoExt.data.FeatureStore} our feature store
+         */
+        createGridPanel: function(store) {
+            var model = this.model, sfControl = this.sfControl, vectorLayer = this.vectorLayer;
+            var layerBounds = this.layerBounds, map = this.map, tr = this.tr;
 
-        var tbtext = new Ext.Toolbar.TextItem({
-            text: (c == GEOR.config.MAX_FEATURES) ?
+            var columnModel = model.toColumnModel({
+                sortable: true
+            });
+
+            var c = store.getCount();
+            var plural = (c>1) ? "s" : "";
+
+            var tbtext = new Ext.Toolbar.TextItem({
+                text: (c == GEOR.config.MAX_FEATURES) ?
                 tr("resultspanel.maxfeature.reached", {'NB': GEOR.config.MAX_FEATURES}):
                 (c>1) ? tr("NB results", {'NB': c}) :
                 (c>0) ? tr("One result") :
                 tr("Not any result")
-        });
-
-        var bbar = [{
-            text: tr("Clean"),
-            tooltip: tr("Clean all results on the map and in the table"),
-            handler: function() {
-                vectorLayer.destroyFeatures();
-                layerBounds = null;
-                tbtext.hide();
-            }
-        }, tbtext, '->', {
-            text: tr("Zoom"),
-            tooltip: tr("Zoom to results extent"),
-            handler: zoomToLayerExtent
-        },{
-            text: tr("CSV Export"),
-            tooltip: tr("Export results as CSV"),
-            handler: csvExportBtnHandler
-        }];
-
-        if (!sfControl) {
-            // we need to create the SelectFeature control by ourselves
-            // because we need to modify its internal properties
-            // and we cannot get a reference to these when the control is created
-            // inside the GeoExt.grid.FeatureSelectionModel
-            sfControl = new OpenLayers.Control.SelectFeature(vectorLayer, {
-                toggle: true,
-                multipleKey: Ext.isMac ? "metaKey" : "ctrlKey"
             });
-            map.addControl(sfControl);
-            // see http://applis-bretagne.fr/redmine/issues/1983
-            sfControl.handlers.feature.stopDown = false;
-        }
 
-        observable.fireEvent("panel", {
-            xtype: "grid",
-            viewConfig: {
-                // we add an horizontal scroll bar in case
-                // there are too many attributes to display:
-                forceFit: (columnModel.length < 10)
-            },
-            store: store,
-            columns: columnModel,
-            sm: new GeoExt.grid.FeatureSelectionModel({
-                singleSelect: false,
-                selectControl: sfControl
-            }),
-            frame: false,
-            border: false,
-            buttonAlign: 'left',
-            bbar: bbar,
-            listeners: {
-                "rowdblclick": function(grid, rowIndex, e) {
-                    zoomToFeatures([store.getAt(rowIndex).get('feature')]);
+            var bbar = [{
+                    text: tr("Clean"),
+                    tooltip: tr("Clean all results on the map and in the table"),
+                    handler: function() {
+                        vectorLayer.destroyFeatures();
+                        layerBounds = null;
+                        tbtext.hide();
+                    }
+                }, tbtext, '->', {
+                    text: tr("Zoom"),
+                    tooltip: tr("Zoom to results extent"),
+                    handler: function(){
+                        zoomToLayerExtent(layerBounds, map, vectorLayer);
+                    }
+                },{
+                    text: tr("CSV Export"),
+                    tooltip: tr("Export results as CSV"),
+                    handler: function() {
+                    csvExportBtnHandler(store, model);
+                }
+            }];
+
+            if (!sfControl) {
+                // we need to create the SelectFeature control by ourselves
+                // because we need to modify its internal properties
+                // and we cannot get a reference to these when the control is created
+                // inside the GeoExt.grid.FeatureSelectionModel
+                sfControl = new OpenLayers.Control.SelectFeature(vectorLayer, {
+                    toggle: true,
+                    multipleKey: Ext.isMac ? "metaKey" : "ctrlKey"
+                });
+                map.addControl(sfControl);
+                // see http://applis-bretagne.fr/redmine/issues/1983
+                sfControl.handlers.feature.stopDown = false;
+            }
+            this.removeAll();
+            this.add({
+                xtype: "grid",
+                viewConfig: {
+                    // we add an horizontal scroll bar in case
+                    // there are too many attributes to display:
+                    forceFit: (columnModel.length < 10)
                 },
-                "beforedestroy": function() {
-                    this.selModel.unbind(); // required to handle issue 256
-                    // http://applis-bretagne.fr/redmine/issues/show/256
-                    // this deactivates Feature handler,
-                    // and moves search_results layer back to normal z-index
-                    return true;
-                }
-            }
-        });
-
-    };
-
-    /**
-     * Method: createVectorLayer
-     *
-     * Returns:
-     * {OpenLayers.Layer.Vector}
-     */
-    var createVectorLayer = function() {
-        return new OpenLayers.Layer.Vector("search_results", {
-            displayInLayerSwitcher: false,
-            styleMap: GEOR.util.getStyleMap(),
-            rendererOptions: {
-                zIndexing: true
-            }
-        });
-    };
-
-    /**
-     * Method: populate
-     * Callback executed when we receive the XML data.
-     *
-     * Parameters:
-     * options - {Object} Hash with keys: features, addLayerToMap and model (both optional)
-     * addLayerToMap defaults to true
-     */
-    var populate = function(options) {
-        // we clear the bounds cache:
-        layerBounds = null;
-
-        var features = options.features;
-        if (!features || features.length === 0) {
-            GEOR.waiter.hide();
-            vectorLayer && vectorLayer.removeAllFeatures();
-            observable.fireEvent("panel", {
-                bodyStyle: 'padding:1em;',
-                html: tr("<p>Not any result for that request.</p>")
-            });
-            return;
-        }
-
-        if (!vectorLayer) {
-            vectorLayer = createVectorLayer();
-        }
-
-        if (options.addLayerToMap !== false) {
-            if (OpenLayers.Util.indexOf(map.layers, vectorLayer) < 0) {
-                map.addLayer(vectorLayer);
-            }
-        } else if (OpenLayers.Util.indexOf(map.layers, vectorLayer) >= 0){
-            map.removeLayer(vectorLayer);
-        }
-
-        if (options.model) {
-            model = options.model;
-        } else {
-            // we need to compute the model from the features we got.
-            model = new GEOR.FeatureDataModel({
-                features: features
-            });
-        }
-
-        store = new GeoExt.data.FeatureStore({
-            layer: vectorLayer,
-            fields: model.toStoreFields()/*,
-            initDir: (options.addLayerToMap === false) ? 
-                GeoExt.data.FeatureStore.LAYER_TO_STORE : 
-                GeoExt.data.FeatureStore.LAYER_TO_STORE|GeoExt.data.FeatureStore.STORE_TO_LAYER
-            */
-        });
-
-        Ext.each(features, function(f, i) {
-            // In case we just have a bounds object and no geom,
-            // display the bounding box
-            if (f.bounds && !f.geometry) {
-                if (f.bounds.getWidth() + f.bounds.getHeight() == 0) {
-                    // bounds of a single point => create a true point
-                    features[i].geometry = new OpenLayers.Geometry.Point(
-                        f.bounds.left, f.bounds.top
-                    );
-                } else {
-                    // general case where bounds is a true polygon
-                    features[i].geometry = f.bounds.toGeometry();
-                }
-            }
-            // transform URLs into true links
-            // see http://applis-bretagne.fr/redmine/issues/4505
-            Ext.iterate(f.attributes, function(k, v, o) {
-                if (GEOR.util.isUrl(v, false)) {
-                    o[k] = '<a href="'+v+'" target="_blank">'+v+'</a>';
+                store: store,
+                columns: columnModel,
+                sm: new GeoExt.grid.FeatureSelectionModel({
+                    singleSelect: false,
+                    selectControl: sfControl
+                }),
+                frame: false,
+                border: false,
+                buttonAlign: 'left',
+                bbar: bbar,
+                listeners: {
+                    "rowdblclick": function(grid, rowIndex, e) {
+                        zoomToFeatures({features:[store.getAt(rowIndex).get('feature')],
+                            vectorLayer:vectorLayer, map:map});
+                    },
+                    "beforedestroy": function() {
+                        vectorLayer.destroyFeatures();
+                        layerBounds = null;
+                        this.selModel.unbind(); // required to handle issue 256
+                        // http://applis-bretagne.fr/redmine/issues/show/256
+                        // this deactivates Feature handler,
+                        // and moves search_results layer back to normal z-index
+                        return true;
+                    }
                 }
             });
 
-        });
-        store.loadData(features);
-        createGridPanel(store);
-    };
-
-    /*
-     * Public
-     */
-    return {
-
-        /*
-         * Observable object
-         */
-        events: observable,
+        },
 
         /**
-         * APIMethod: init
-         * Initialize this module
+         * Method: createVectorLayer
+         *
+         * Returns:
+         * {OpenLayers.Layer.Vector}
+         */
+        createVectorLayer: function() {
+            return new OpenLayers.Layer.Vector("search_results_"+this.id, {
+                displayInLayerSwitcher: false,
+                styleMap: GEOR.util.getStyleMap(),
+                rendererOptions: {
+                    zIndexing: true
+                }
+            });
+        },
+
+        /**
+         * Method: populate
+         * Callback executed when we receive the XML data.
          *
          * Parameters:
-         * m - {OpenLayers.Map} The map instance.
+         * options - {Object} Hash with keys: features, addLayerToMap and model (both optional)
+         * addLayerToMap defaults to true
          */
-        init: function(m) {
-            map = m;
-            tr = OpenLayers.i18n;
-        },
+        populate: function(options) {
+            var layerBounds = this.layerBounds, vectorLayer = this.vectorLayer;
+            var map = this.map, model = this.model, store = this.store, tr = this.tr;
+            // we clear the bounds cache:
+            layerBounds = null;
 
-        /**
-         * APIMethod: show
-         * This method makes the vector layer visible.
-         */
-        show: function() {
-            if (vectorLayer) {
-                vectorLayer.setVisibility(true);
+            var features = options.features;
+            if (!features || features.length === 0) {
+                GEOR.waiter.hide();
+                vectorLayer && vectorLayer.removeAllFeatures();
+                this.removeAll();
+                this.add({
+                    bodyStyle: 'padding:1em;',
+                    html: tr("<p>Not any result for that request.</p>")
+                });
+                return;
             }
-        },
+            if (!this.vectorLayer)
+                this.vectorLayer = this.createVectorLayer();
 
-        /**
-         * APIMethod: hide
-         * This method makes the vector layer invisible.
-         */
-        hide: function() {
-            if (vectorLayer) {
-                vectorLayer.setVisibility(false);
+            if (options.addLayerToMap !== false) {
+                if (OpenLayers.Util.indexOf(map.layers, this.vectorLayer) < 0) {
+                    map.addLayer(this.vectorLayer);
+                }
+            } else if (OpenLayers.Util.indexOf(map.layers, this.vectorLayer) >= 0){
+                map.removeLayer(this.vectorLayer);
             }
+
+            if (options.model) {
+                this.model = options.model;
+            } else {
+                // we need to compute the model from the features we got.
+                this.model = new GEOR.FeatureDataModel({
+                    features: features
+                });
+            }
+
+            store = new GeoExt.data.FeatureStore({
+                layer: this.vectorLayer,
+                fields: this.model.toStoreFields()/*,
+                initDir: (options.addLayerToMap === false) ? 
+                    GeoExt.data.FeatureStore.LAYER_TO_STORE : 
+                    GeoExt.data.FeatureStore.LAYER_TO_STORE|GeoExt.data.FeatureStore.STORE_TO_LAYER
+                */
+            });
+
+            Ext.each(features, function(f, i) {
+                // In case we just have a bounds object and no geom,
+                // display the bounding box
+                if (f.bounds && !f.geometry) {
+                    if (f.bounds.getWidth() + f.bounds.getHeight() == 0) {
+                        // bounds of a single point => create a true point
+                        features[i].geometry = new OpenLayers.Geometry.Point(
+                            f.bounds.left, f.bounds.top
+                        );
+                    } else {
+                        // general case where bounds is a true polygon
+                        features[i].geometry = f.bounds.toGeometry();
+                    }
+                }
+                // transform URLs into true links
+                // see http://applis-bretagne.fr/redmine/issues/4505
+                Ext.iterate(f.attributes, function(k, v, o) {
+                    if (GEOR.util.isUrl(v, false)) {
+                        o[k] = '<a href="'+v+'" target="_blank">'+v+'</a>';
+                    }
+                });
+
+            });
+            store.loadData(features);
+            this.createGridPanel(store);
         },
 
         /**
@@ -405,25 +367,11 @@ GEOR.resultspanel = (function() {
          *
          */
         clean: function() {
+            var vectorLayer = this.vectorLayer, layerbounds = this.layerBounds;
             if (vectorLayer) {
-                vectorLayer.destroyFeatures();
+                vectorLayer.setVisibility(false);
                 layerBounds = null;
             }
         },
-
-        /**
-         * APIMethod: populate
-         * This method adds features (resulting from a search request)
-         * to the vector layer and the results panel.
-         *
-         * Parameters:
-         * options - {Object} Hash with keys: features and model (optional)
-         */
-        populate: function(options) {
-            populate(options);
-        }
     };
-})();
-
-
-
+}()));

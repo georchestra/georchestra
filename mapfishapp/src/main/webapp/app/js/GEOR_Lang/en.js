@@ -104,6 +104,10 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
         "Max number of objects reached (${NB})</span>",
     "NB results": "${NB} results",
     /* GEOR_scalecombo.js strings */
+    /* GEOR_selectfeature.js strings */
+    "<div>Select features activated on NAME layer. Clic on the map.</div>":
+         "<div>Select features activated on ${NAME} layer. " +
+         "Clic on the map.</div>",
     /* GEOR_styler.js strings */
     "styler.guidelines":
         "Use the \"+\" button to create a class," +

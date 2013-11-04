@@ -136,6 +136,8 @@ GEOR.querier = (function() {
      */
     var tr = null;
 
+    var name = null;
+
     /**
      * Method: checkFilter
      * Checks that a filter is not missing items.
@@ -219,7 +221,9 @@ GEOR.querier = (function() {
 
                 observable.fireEvent("searchresults", {
                     features: response.features,
-                    model: model
+                    model: model,
+                    tooltip: name + " - " + tr("WFS GetFeature on filter"),
+                    title: GEOR.util.shortenLayerName(name)
                 });
             },
             scope: this
@@ -232,6 +236,7 @@ GEOR.querier = (function() {
      */
     var buildPanel = function(layerName, r) {
         record = r;
+        name = layerName;
         observable.fireEvent("ready", {
             xtype: 'gx_filterbuilder',
             title: tr("Request on NAME", {
