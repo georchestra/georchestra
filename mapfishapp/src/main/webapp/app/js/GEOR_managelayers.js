@@ -455,7 +455,8 @@ GEOR.managelayers = (function() {
      * layerRecord - {GeoExt.data.LayerRecord}
      *
      * Returns:
-     * {Array} An array of menu items
+     * {Array} An array of menu items, empty if the WMS layer 
+     * is not yet described.
      */
     var createMenuItems = function(layerRecord) {
         var queryable = !!(layerRecord.get("queryable")),

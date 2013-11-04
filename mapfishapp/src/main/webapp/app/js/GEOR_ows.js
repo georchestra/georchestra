@@ -494,7 +494,6 @@ GEOR.ows = (function() {
                     layerOptions,
                     GEOR.ows.defaultWMSLayerOptions
                 ),
-                //fields: defaultRecordFields
                 fields: recordType
             }, options.storeOptions);
             var store = new GeoExt.data.WMSCapabilitiesStore(storeOptions);
