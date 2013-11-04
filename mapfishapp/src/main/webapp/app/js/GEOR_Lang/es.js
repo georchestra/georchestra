@@ -191,10 +191,6 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Show metadata": "Mostrar los metadatos",
     "Edit symbology": "Editar la simbología",
     "Build a query": "Construir una consulta",
-    "Cannot proceed: failed to get the equivalent WFS layer.":
-        "Operación imposible : no se puede obtener la dirección de la capa WFS.",
-    "Cannot proceed: the DescribeLayer WMS query failed.":
-        "Operación imposible : la consulta WMS DescribeLayer falló.",
     "Download data": "Descargar los datos",
     "Choose a style": "Elegir un estilo",
     "Modify format": "Modificar el formato",

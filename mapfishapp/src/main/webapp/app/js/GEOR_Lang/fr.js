@@ -186,10 +186,6 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Show metadata": "Afficher les métadonnées",
     "Edit symbology": "Éditer la symbologie",
     "Build a query": "Construire une requête",
-    "Cannot proceed: failed to get the equivalent WFS layer.":
-        "Opération impossible : nous n'avons pu obtenir la couche WFS équivalente.",
-    "Cannot proceed: the DescribeLayer WMS query failed.":
-        "Opération impossible : la requête WMS DescribeLayer a échoué.",
     "Download data": "Télécharger les données",
     "Choose a style": "Choisir un style",
     "Modify format": "Modifier le format",

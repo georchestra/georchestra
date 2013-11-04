@@ -147,8 +147,6 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Show metadata": "Показать метаданные",
     "Edit symbology": "Редактировать символику",
     "Build a query": "Сделать запрос",
-    "Cannot proceed: failed to get the equivalent WFS layer.": "Операция невозможна : мы не смогли получить эквивалентный слой WFS.",
-    "Cannot proceed: the DescribeLayer WMS query failed.": "Операция невозможна : запрос на WMS DescribeLayer провалился.",
     "Download data": "Скачать данные",
     "Choose a style": "Выбрать стиль",
     "Modify format": "Изменить формат",

@@ -639,45 +639,9 @@ GEOR.managelayers = (function() {
                             };
                         } else { // WMS layer with WFS equivalence
                             data = {
-                                //"featureNS": layerRecord.get("namespace"),
                                 "owsURL": layerRecord.get("WFS_URL"),
                                 "typeName": layerRecord.get("WFS_typeName")
                             };
-                            
-                            /*
-                            GEOR.waiter.show();
-                            GEOR.ows.WMSDescribeLayer(layerRecord, {
-                                success: function(store, records) {
-                                    var r = GEOR.ows.getWfsInfo(records);
-                                    if (!r) {
-                                        GEOR.util.errorDialog({
-                                            msg: tr("Cannot proceed: failed to get the equivalent WFS layer.")
-                                        });
-                                        return;
-                                    }
-                                    GEOR.querier.create(name, r, function() {
-                                        // optional success callback
-                                        querierRecord = layerRecord;
-                                    });
-                                },
-                                failure: function() {
-                                    GEOR.util.errorDialog({
-                                        msg: tr("Cannot proceed: the DescribeLayer WMS query failed.")
-                                    });
-                                },
-                                storeOptions: {
-                                    fields: [
-                                        {name: "owsType", type: "string"},
-                                        {name: "owsURL", type: "string"},
-                                        {name: "typeName", type: "string"},
-                                        // and we need to add a special featureNS field
-                                        // which will be filled by WFSDescribeFeatureType:
-                                        {name: "featureNS", type: "string"}
-                                    ]
-                                },
-                                scope: this
-                            });
-                            */
                         }
                         GEOR.querier.create(name, new recordType(data, layer.id), function() {
                             // optional success callback
