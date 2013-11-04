@@ -449,24 +449,33 @@ GEOR.managelayers = (function() {
     };
 
     /**
-     * Method: createMenu
+     * Method: createMenuItems
      *
      * Parameters:
      * layerRecord - {GeoExt.data.LayerRecord}
      *
      * Returns:
-     * {Ext.menu.Menu} The configured global menu
+     * {Array} An array of menu items, empty if the WMS layer 
+     * is not yet described.
      */
-    var createMenu = function(layerRecord) {
+    var createMenuItems = function(layerRecord) {
         var queryable = !!(layerRecord.get("queryable")),
             layer = layerRecord.get('layer'),
             type = layerRecord.get("type"),
             isWMS = type === "WMS",
             isWMTS = type === "WMTS",
             isWFS = type === "WFS",
+            hasEquivalentWFS = (type === "WMS") ?
+                layerRecord.hasEquivalentWFS() : false,
+            hasEquivalentWCS = (type === "WMS") ?
+                layerRecord.hasEquivalentWCS() : false,
             isVector = layer instanceof OpenLayers.Layer.Vector;
 
         var menuItems = [], url, sepInserted;
+
+        if (isWMS && !layerRecord.get("_described")) {
+            return [];
+        }
 
         /**
          * Method: zoomToLayerRecordExtent
@@ -586,7 +595,7 @@ GEOR.managelayers = (function() {
                 }
             });
         }
-        if (GEOR.styler && isWMS && queryable) {
+        if (GEOR.styler && hasEquivalentWFS) {
             insertSep();
             menuItems.push({
                 iconCls: 'geor-btn-style',
@@ -603,7 +612,7 @@ GEOR.managelayers = (function() {
         // we can have the querier or not.
         // The availability of a WFS equivalent layer is.
         // This depends on http://applis-bretagne.fr/redmine/issues/1984
-        if (GEOR.querier && ((isWMS && queryable) || isWFS)) {
+        if (GEOR.querier && (hasEquivalentWFS || isWFS)) {
             insertSep();
             menuItems.push({
                 iconCls: 'geor-btn-query',
@@ -616,63 +625,35 @@ GEOR.managelayers = (function() {
                             GEOR.querier.events.fireEvent("showrequest");
                             return;
                         }
-                        var layer = layerRecord.get('layer');
+                        var layer = layerRecord.get('layer'), data;
                         var name = layerRecord.get('title') || layer.name || '';
+                        var recordType = GeoExt.data.LayerRecord.create([
+                            {name: "featureNS", type: "string"},
+                            {name: "owsURL", type: "string"},
+                            {name: "typeName", type: "string"}
+                        ]);
                         if (isWFS) {
-                            var recordType = GeoExt.data.LayerRecord.create([
-                                {name: "featureNS", type: "string"},
-                                {name: "owsURL", type: "string"},
-                                {name: "typeName", type: "string"}
-                            ]);
-                            GEOR.querier.create(name, new recordType({
-                                "featureNS": layerRecord.get('namespace'),
+                            data = {
+                                "featureNS": layerRecord.get("namespace"),
                                 "owsURL": layer.protocol.url,
-                                "typeName": layerRecord.get('name')
-                            }, layer.id), function() {
-                                // optional success callback
-                                querierRecord = layerRecord;
-                            });
-                        } else { // WMS layer
-                            // all this code should be moved elsewhere, see http://applis-bretagne.fr/redmine/issues/1984 (later)
-                            GEOR.waiter.show();
-                            GEOR.ows.WMSDescribeLayer(layerRecord, {
-                                success: function(store, records) {
-                                    var r = GEOR.ows.getWfsInfo(records);
-                                    if (!r) {
-                                        GEOR.util.errorDialog({
-                                            msg: tr("Cannot proceed: failed to get the equivalent WFS layer.")
-                                        });
-                                        return;
-                                    }
-                                    GEOR.querier.create(name, r, function() {
-                                        // optional success callback
-                                        querierRecord = layerRecord;
-                                    });
-                                },
-                                failure: function() {
-                                    GEOR.util.errorDialog({
-                                        msg: tr("Cannot proceed: the DescribeLayer WMS query failed.")
-                                    });
-                                },
-                                storeOptions: {
-                                    fields: [
-                                        {name: "owsType", type: "string"},
-                                        {name: "owsURL", type: "string"},
-                                        {name: "typeName", type: "string"},
-                                        // and we need to add a special featureNS field
-                                        // which will be filled by WFSDescribeFeatureType:
-                                        {name: "featureNS", type: "string"}
-                                    ]
-                                },
-                                scope: this
-                            });
+                                "typeName": layerRecord.get("name")
+                            };
+                        } else { // WMS layer with WFS equivalence
+                            data = {
+                                "owsURL": layerRecord.get("WFS_URL"),
+                                "typeName": layerRecord.get("WFS_typeName")
+                            };
                         }
+                        GEOR.querier.create(name, new recordType(data, layer.id), function() {
+                            // optional success callback
+                            querierRecord = layerRecord;
+                        });
                     }
                 }
             });
         }
 
-        if (isWMS || isWFS) {
+        if (hasEquivalentWFS || hasEquivalentWCS || isWFS) {
             insertSep();
             menuItems.push({
                 iconCls: 'geor-btn-download',
@@ -702,11 +683,7 @@ GEOR.managelayers = (function() {
                 menu: createFormatMenu(layerRecord)
             });
         }
-
-        return new Ext.menu.Menu({
-            ignoreParentClicks: true,
-            items: menuItems
-        });
+        return menuItems;
     };
 
     /**
@@ -731,7 +708,36 @@ GEOR.managelayers = (function() {
         buttons = buttons.concat([
         {
             text: tr("Actions"),
-            menu: createMenu(layerRecord)
+            menu: new Ext.menu.Menu({
+                items: [],
+                ignoreParentClicks: true,
+                listeners: {
+                    "beforeshow": function(menu) {
+                        if (menu.items.length) {
+                            // allow menu appearance
+                            return true;
+                        }
+                        // wait for the layer to be described
+                        var task = Ext.TaskMgr.start({
+                            run: function() {
+                                var menuItems = createMenuItems(layerRecord);
+                                menu.removeAll();
+                                if (!menuItems.length) {
+                                    menu.add(tr("Loading..."));
+                                } else {
+                                    // create + add menu items
+                                    Ext.each(menuItems, function(item) {
+                                        menu.add(item);
+                                    });
+                                    // stop this task
+                                    Ext.TaskMgr.stop(task);
+                                }
+                            },
+                            interval: 20
+                        });
+                    }
+                }
+            })
         }, '-', {
             xtype: "gx_opacityslider",
             width: 100,

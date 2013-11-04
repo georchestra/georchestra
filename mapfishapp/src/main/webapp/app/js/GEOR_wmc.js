@@ -279,6 +279,8 @@ GEOR.wmc = (function() {
                 if (context && context.metadataURL) {
                     r.set("metadataURLs", [context.metadataURL]);
                 }
+                // set as type as WMS (might need to be changed when we support more types from OWSContext)
+                r.set("type", "WMS");
                 // add layer from wmc to the current map
                 layerStore.addSorted(r);
             });

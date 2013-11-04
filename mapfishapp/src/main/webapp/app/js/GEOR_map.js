@@ -30,6 +30,7 @@
  * @include GeoExt/data/LayerRecord.js
  * @include GeoExt/data/LayerStore.js
  * @include GEOR_config.js
+ * @include GEOR_util.js
  * @include GEOR_ows.js
  * @include GEOR_wmc.js
  */
@@ -51,6 +52,12 @@ GEOR.map = (function() {
      * {OpenLayers.Map} The map
      */
     var map = null;
+
+    /**
+     * Property: ls
+     * {GeoExt.data.LayerStore}
+     */
+    var ls = null;
 
     /**
      * Constant: SCALES
@@ -237,28 +244,6 @@ GEOR.map = (function() {
                 errors.push(error);
             }
 
-            /*
-            Lesson learned with http://applis-bretagne.fr/redmine/issues/2886 :
-            Do not try to be more intelligent than the WMS server
-
-            // Note: queryable is required in addition to opaque,
-            // because opaque is not a standard WMC feature
-            // This enables us to remove rasters from legend panel
-            if (r.get("opaque") === true || r.get("queryable") === false) {
-                // this record is valid, set its "hideInLegend"
-                // data field to true if the corresponding layer
-                // is a raster layer, i.e. its "opaque" data
-                // field is true
-                r.set("hideInLegend", true);
-                // we set opaque to true so that non queryable
-                // layers are considered as baselayers
-                r.set("opaque", true);
-            }
-            */
-            // Note that the ultimate solution would be to do a getCapabilities
-            // request for each OGC server advertised in the WMC
-
-
             // r.get('layer').transitionEffect = resize would have been set in WMC,
             // not by the default openlayers GRID layer type,
             // see the overriding in the first lines of this file.
@@ -295,6 +280,30 @@ GEOR.map = (function() {
             // Errors should be non-blocking since http://applis-bretagne.fr/redmine/issues/1749
             // so we "keep" every layer, and only display a warning message
             keep.push(r);
+
+            // WMSDescribeLayer for each new WMS Layer
+            if (r.get("type") == "WMS" && r.get("_described") !== true) {
+                GEOR.waiter.show();
+                GEOR.ows.WMSDescribeLayer(r, {
+                    success: function(store, records) {
+                        var wfsRecord = GEOR.ows.getWfsInfo(records);
+                        if (wfsRecord) {
+                            r.set("WFS_typeName", wfsRecord.get("typeName"));
+                            r.set("WFS_URL", wfsRecord.get("owsURL"));
+                        }
+                        var wcsRecord = GEOR.ows.getWcsInfo(records);
+                        if (wcsRecord) {
+                            r.set("WCS_typeName", wcsRecord.get("typeName"));
+                            r.set("WCS_URL", wcsRecord.get("owsURL"));
+                        }
+                        r.set("_described", true);
+                    },
+                    failure: function() {
+                        r.set("_described", true);
+                    },
+                    scope: this
+                });
+            }
         });
 
         if (errors.length > 0) {
@@ -358,12 +367,12 @@ GEOR.map = (function() {
      * {GeoExt.data.LayerStore} The global layer store.
      */
     var createLayerStore = function() {
-        var recordType = GeoExt.data.LayerRecord.create(
+        var recordType = GEOR.util.createRecordType(
             GEOR.ows.getRecordFields()
         );
         map = createMap();
 
-        var ls = new LayerStore({
+        ls = new LayerStore({
             map: map,
             sortInfo: {
                 // opaque layers at the bottom
@@ -374,13 +383,12 @@ GEOR.map = (function() {
             fields: recordType
         });
 
-        var layer = createMainBaseLayer();
-        ls.add([new recordType({
-                title: layer.name,
-                layer: layer
-            }, layer.id)]
-        );
-
+        var layer = createMainBaseLayer(),
+        record = new recordType({
+            title: layer.name,
+            layer: layer
+        }, layer.id);
+        ls.add([record]);
         return ls;
     };
 
