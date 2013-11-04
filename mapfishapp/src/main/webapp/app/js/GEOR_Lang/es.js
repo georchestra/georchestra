@@ -44,6 +44,8 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Recentering on a given address": "Posicionarse sobre una dirección",
     "Available layers": "Capas disponibles",
     "Editing": "Edición",
+    "WMS Search": "WMS Buscar",
+    "WFS Search": "WFS Buscar",
     "resultspanel.emptytext":
         "<p>Seleccione la herramienta de interrogación " +
         "o construya una consulta sobre una capa.<br />" +
@@ -135,9 +137,11 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     /* GEOR_geonames.js strings */
     /* GEOR_getfeatureinfo.js strings */
     "<div>Searching...</div>": "<div>Buscando...</div>",
+    "<div>No layer selected</div>": "<div>No capa seleccionada</div>",
     "<div>Search on objects active for NAME layer. Clic on the map.</div>":
          "<div>Búsqueda de objetos activada sobre la capa ${NAME}. " +
          "Haga clic sobre el mapa.</div>",
+    "WMS GetFeatureInfo at ": "GetFeatureInfo WMS sobre ",
     /* GEOR_layerfinder.js strings */
     "Add layers from local files": "Añadir capas a partir de archivos locales",
     "Find layers searching in metadata":
@@ -276,6 +280,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Fields of filters with a red mark are mandatory": "Tiene que llenar " +
         "los campos de filtros con rojo.",
     "Request on NAME": "Consultas sobre ${NAME}",
+    "WFS GetFeature on filter": "GetFeature WFS sobre un filtro",
     "Search": "Búsqueda",
     "querier.layer.no.geom":
         "La capa no contiene ninguna columna geométrica." +
@@ -307,6 +312,11 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "<p>Not any result for that request.</p>": "<p>Ningún objeto " +
         "corresponde a su consulta.</p>",
     /* GEOR_scalecombo.js strings */
+    /* GEOR_selectfeature.js strings */
+    "<div>Select features activated on NAME layer. Clic on the map.</div>":
+         "<div>Seleccion de objetos activada sobre la capa ${NAME}. " +
+         "Haga clic sobre el mapa.</div>",
+    "OpenLayers SelectFeature":"Seleccion de objetos",
     /* GEOR_styler.js strings */
     "Download style": "Descargar el estilo",
     "You can download your SLD style at ": "Su estilo SLD está disponible " +
@@ -355,6 +365,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Login": "Conexión",
     "Logout": "Desconexión",
     "Help": "Ayuda",
+    "Query all active layers": "Consultar todas las activas capas",
     "Show help": "Mostrar la ayuda",
     "Extractor help": "Ayuda del extractor",
     "Show legend": "Mostrar la leyenda",
