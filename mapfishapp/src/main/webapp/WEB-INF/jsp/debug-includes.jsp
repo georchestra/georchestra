@@ -55,7 +55,7 @@
     <script type="text/javascript" src="app/js/GEOR_querier.js"></script>
     <script type="text/javascript" src="app/js/GEOR_styler.js"></script>
     <script type="text/javascript" src="app/js/GEOR_getfeatureinfo.js"></script>
-    <script type="text/javascript" src="app/js/GEOR_resultspanel.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_ResultsPanel.js"></script>
                 </c:otherwise>
             </c:choose>
     <script type="text/javascript" src="app/js/GEOR_util.js"></script>

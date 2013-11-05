@@ -28,7 +28,7 @@
  * @include GEOR_wmc.js
  * @include GEOR_tools.js
  * @include GEOR_wmcbrowser.js
- * Note that GEOR_getfeatureinfo.js, GEOR_resultspanel.js, GEOR_querier.js,
+ * Note that GEOR_getfeatureinfo.js, GEOR_ResultsPanel.js, GEOR_querier.js,
  * GEOR_styler.js should be included here, but they are not required by the edit module.
  * In order to make the edit build "light", those files will be added in main.cfg and not here.
  */
