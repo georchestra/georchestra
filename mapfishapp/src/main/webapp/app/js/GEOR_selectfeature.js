@@ -232,11 +232,11 @@ GEOR.selectfeature = (function() {
             } else {
                 // clear model cache:
                 model = null;
-                var collapse = true;
-                var ctrls = map.getControlsBy('active',true);
+                var ctrls = map.getControlsBy('active',true),
+                    re = /OpenLayers\.Control\.(WMS|WMTS)GetFeatureInfo/,
+                    collapse = true;
                 for (var i = 0 ; i < ctrls.length; i++) {
-                    // FIXME: test "OpenLayers.Control.WMTSGetFeatureInfo" too ?
-                    if (ctrls[i].CLASS_NAME == "OpenLayers.Control.WMSGetFeatureInfo") {
+                    if (re.test(ctrls[i].CLASS_NAME)) {
                         collapse = false;
                     }
                 };
