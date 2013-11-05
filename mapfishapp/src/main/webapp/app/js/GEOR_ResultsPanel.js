@@ -102,9 +102,10 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
      * Returns:
      * {OpenLayers.Bounds} The scaled vector layer bounds
      */
-    var zoomToFeatures = function(info) {
-        var bounds, layerBounds = null, features = info.features;
-        var vectorLayer = info.vectorLayer, map = info.map;
+    var zoomToFeatures = function(features) {
+        var bounds, layerBounds = null;
+        var map = vectorLayer.map;
+
         if (features && features[0]) {
             bounds = new OpenLayers.Bounds();
             Ext.each(features, function(f) {
@@ -136,14 +137,11 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
      * Sets the map extent in order to see all results
      * Caches the vector layer extent if required
      */
-    var zoomToLayerExtent = function(layerBounds, map, vectorLayer) {
+    var zoomToLayerExtent = function(vectorLayer) {
         if (!layerBounds) {
-            layerBounds = zoomToFeatures({
-                map: map, 
-                vectorLayer: vectorLayer
-            });
+            layerBounds = zoomToFeatures(vectorLayer.features);
         } else {
-            map.zoomToExtent(layerBounds);
+            vectorLayer.map.zoomToExtent(layerBounds);
         }
     };
 
@@ -243,7 +241,7 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
                     text: tr("Zoom"),
                     tooltip: tr("Zoom to results extent"),
                     handler: function() {
-                        zoomToLayerExtent(layerBounds, this.map, vectorLayer);
+                        zoomToLayerExtent(vectorLayer);
                     }
                 },{
                     text: tr("CSV Export"),
@@ -286,11 +284,7 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
                 bbar: bbar,
                 listeners: {
                     "rowdblclick": function(grid, rowIndex, e) {
-                        zoomToFeatures({
-                            features: [store.getAt(rowIndex).get('feature')],
-                            vectorLayer: vectorLayer,
-                            map: this.map
-                        });
+                        zoomToFeatures([store.getAt(rowIndex).get('feature')]);
                     },
                     "beforedestroy": function() {
                         vectorLayer.destroyFeatures();
