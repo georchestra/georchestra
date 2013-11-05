@@ -68,7 +68,7 @@ Ext.extend(GEOR.CustomCSWRecordsReader, Ext.data.DataReader, {
             var recordType = this.recordType;
             var i, r, values, thumbnailURL;
 
-            for(i = 0, lenI = rs.length; i < lenI; i++) {
+            for (i = 0, lenI = rs.length; i < lenI; i++) {
                 r = rs[i];
                 thumbnailURL = null;
 

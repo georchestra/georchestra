@@ -422,7 +422,7 @@ GEOR.ows = (function() {
                         });
                         store.loadData(data);
                     },
-                    failure: options.failure || function(){},
+                    failure: options.failure || function() {},
                     scope: options.scope || this
                 });
 
@@ -524,7 +524,7 @@ GEOR.ows = (function() {
                     {name: "title", type: "string"},
                     {name: "abstract", type: "string"},
                     {name: "queryable", type: "boolean"},
-                    {name: "llbbox", mapping: "bounds", convert: function(v){
+                    {name: "llbbox", mapping: "bounds", convert: function(v) {
                         return [v.left, v.bottom, v.right, v.top];
                     }},
                     {name: "formats"}, // array

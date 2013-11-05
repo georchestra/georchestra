@@ -140,7 +140,7 @@ GEOR.managelayers = (function() {
      * item {Ext.menu.CheckItem}
      * checked {Boolean}
      */
-    var onStyleItemCheck = function(item, checked){
+    var onStyleItemCheck = function(item, checked) {
         if (checked === true) {
             observable.fireEvent("selectstyle", this, item.value);
         }
@@ -154,7 +154,7 @@ GEOR.managelayers = (function() {
      * item {Ext.menu.CheckItem}
      * checked {Boolean}
      */
-    var onFormatItemCheck = function(item, checked){
+    var onFormatItemCheck = function(item, checked) {
         if (checked === true && item.value) {
             var layer = this.get('layer'),
                 t = this.get('type');
@@ -340,7 +340,7 @@ GEOR.managelayers = (function() {
             onStyleItemCheck;
         
         if (isWMS) {
-            onStyleItemCheck = function(item, checked){
+            onStyleItemCheck = function(item, checked) {
                 if (checked === true) {
                     observable.fireEvent("selectstyle", this, item.value);
                 }
@@ -395,7 +395,7 @@ GEOR.managelayers = (function() {
             }
         } else if (isWMTS) {
             var identifier;
-            onStyleItemCheck = function(item, checked){
+            onStyleItemCheck = function(item, checked) {
                 if (checked === true) {
                     // correct way of doing:
                     layer.style = item.value;
@@ -522,7 +522,7 @@ GEOR.managelayers = (function() {
                         if (!layerRecord.get('bbox') && !layerRecord.get('llbbox')) {
                             // Get it from the WMS GetCapabilities document
                             GEOR.ows.hydrateLayerRecord(layerRecord, {
-                                success: function(){
+                                success: function() {
                                     zoomToLayerRecordExtent(layerRecord);
                                 },
                                 failure: function() {

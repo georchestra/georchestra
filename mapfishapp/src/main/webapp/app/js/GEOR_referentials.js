@@ -373,7 +373,7 @@ GEOR.referentials = (function() {
         // hack in order to show the result dataview even
         // in case of "too many features" warning message
         store.on({
-            load: function(){
+            load: function() {
                 cb.focus();
                 // this one is for IE,
                 // since it's not able to focus the element:

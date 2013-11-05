@@ -83,14 +83,14 @@ GEOR.Editing.EditingPanel = Ext.extend(Ext.Panel, {
             }]
         }];
 
-        this.on('afterlayout', function(){
+        this.on('afterlayout', function() {
             this.mask = new Ext.LoadMask(this.items.get(1).getEl(), {
                 msg: OpenLayers.i18n('Loading...')
             });
         });
 
         // manage events
-        this.layerCb.on('select', function(combo, record, index){
+        this.layerCb.on('select', function(combo, record, index) {
             this.mask.show();
             if (this.items.get(1).layout.activeItem.tearDown) {
                 this.items.get(1).layout.activeItem.tearDown();

@@ -395,7 +395,7 @@ GEOR.layerfinder = (function() {
         var recordsToAdd = [];
 
         // we need to clone the layers
-        for(var i=0, len=records.length; i<len; i++) {
+        for (var i=0, len=records.length; i<len; i++) {
             record = records[i];
             if (record instanceof GeoExt.data.LayerRecord) {
                 // we're coming from the WMS or WFS tab
