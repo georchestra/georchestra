@@ -66,6 +66,7 @@ GEOR.selectfeature = (function() {
     /**
      * Property: model
      * {GEOR.FeatureDataModel} data model
+     * FIXME: to remove in 13.09 ? see https://github.com/georchestra/georchestra/commit/dc31ca03815555abcc4de4750ac7d5eae7057fc5
      */
     var model = null;
     

@@ -380,7 +380,8 @@ Ext.namespace("GEOR");
                         map: map
                     });
                     tab.populate({
-                        features: options.features, 
+                        features: options.features,
+                        // here we do have a valid model (got from describeFeatureType)
                         model: options.model
                     });
                     southPanel.insert(southPanel.items.length-1, tab);
@@ -416,8 +417,7 @@ Ext.namespace("GEOR");
                             map: map
                         });
                         tab.populate({
-                            features: result.features, 
-                            model: result.model
+                            features: result.features
                         });
                         southPanel.insert(southPanel.items.length-1, tab);
                         southPanel.setActiveTab(tab);

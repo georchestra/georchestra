@@ -100,16 +100,8 @@ GEOR.getfeatureinfo = (function() {
         // because the stored datamodel will permanently identify the column as INT.
         // As a result, the computation has to be done on each query.
 
-        /*
-        if (!model || model.isEmpty()) {
-            model = new GEOR.FeatureDataModel({
-                features: features
-            });
-        }
-        */
 
         /* results will be a hashmap of objects keyed on featureType with 4 properties:
-         * - model: the corresponding FeatureDataModel
          * - features: features for that featureType
          * - title: the shortened tab title
          * - tooltip: the tooltip for the tab
@@ -172,13 +164,6 @@ GEOR.getfeatureinfo = (function() {
                 gml.featureNSPrefix + ":" + gml.featureType :
                 gml.featureType;
             results[featureType].features.push(feature);
-        });
-
-        // generate FeatureDataModels now that we have all features sorted out by featureType
-        Ext.iterate(results, function(featuretype, result) {
-            result.model = new GEOR.FeatureDataModel({
-                features: result.features
-            });
         });
 
         observable.fireEvent("searchresults", {
