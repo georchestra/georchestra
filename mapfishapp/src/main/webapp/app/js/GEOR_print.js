@@ -335,7 +335,7 @@ GEOR.print = (function() {
                         selectOnFocus: true,
                         plugins: new GeoExt.plugins.PrintPageField({
                             printPage: printPage
-                        }),
+                        })
                     }, {
                         xtype: 'hidden',
                         name: 'copyright',
