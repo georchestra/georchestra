@@ -234,20 +234,19 @@ Ext.namespace("GEOR");
                 id: 'addPanel', 
                 title: '+', 
                 tabTip: tr('Add query'), 
-                style: 'float: right;'
+                style: 'float: right;',
+                // hack:
+                lower: Ext.emptyFn,
+                raise: Ext.emptyFn
             }],
             listeners: {
                 'collapse': function(panel) {
-                    Ext.each(panel.items.items, function(i) {
-                        if (i.vectorLayer) {
-                            i.vectorLayer.setVisibility(false);
-                        }
+                    panel.items.each(function(tab) {
+                        tab.lower();
                     });
                 },
                 'expand': function(panel) {
-                    if (panel.getActiveTab().vectorLayer) {
-                        panel.getActiveTab().vectorLayer.setVisibility(true);
-                    }
+                    panel.getActiveTab().raise();
                 },
                 'tabchange': function(panel, t) {
                     if (t.id == 'addPanel') {
@@ -257,14 +256,10 @@ Ext.namespace("GEOR");
                         panel.insert(panel.items.length-1, tab);
                         panel.setActiveTab(tab);
                     }
-                    Ext.each(panel.items.items, function(i) {
-                        if (i.vectorLayer) {
-                            i.vectorLayer.setVisibility(false);
-                        }
+                    panel.items.each(function(tab) {
+                        tab.lower();
                     });
-                    if (t.vectorLayer) {
-                        t.vectorLayer.setVisibility(true);
-                    }
+                    t.raise();
                 }
             }
         });
@@ -420,7 +415,7 @@ Ext.namespace("GEOR");
                             title: result.title,
                             map: map
                         });
-                        tab.populate ({
+                        tab.populate({
                             features: result.features, 
                             model: result.model
                         });
@@ -464,7 +459,7 @@ Ext.namespace("GEOR");
                         sfControl: options.ctrl,
                         map: map
                     });
-                    tab.populate ({
+                    tab.populate({
                         features: options.features, 
                         model: options.model, 
                         addLayerToMap: options.addLayerToMap

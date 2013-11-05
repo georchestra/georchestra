@@ -35,6 +35,30 @@ Ext.namespace("GEOR");
 GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
 
     /**
+     * Property: store
+     * {GeoExt.data.FeatureStore}
+     */
+    var store = null;
+
+    /**
+     * Property: vectorLayer
+     * {OpenLayers.Layer.Vector} The vector layer on which we display results
+     */
+    var vectorLayer = null;
+
+    /**
+     * Property: model
+     * {GEOR.FeatureDataModel} data model
+     */
+    var model = null;
+
+    /**
+     * Property: layerBounds
+     * {OpenLayers.Bounds} The cached vector layer bounds
+     */
+    var layerBounds = null;
+
+    /**
      * Method: csvExportBtnHandler
      * Triggers the download dialog for CSV export of the store's content
      */
@@ -114,7 +138,7 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
      */
     var zoomToLayerExtent = function(layerBounds, map, vectorLayer) {
         if (!layerBounds) {
-            this.layerBounds = zoomToFeatures({
+            layerBounds = zoomToFeatures({
                 map: map, 
                 vectorLayer: vectorLayer
             });
@@ -149,41 +173,34 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
           */
         constructor: function(config) {
             config = Ext.apply({
+
+                /**
+                 * Property: title
+                 * {String}
+                 */
                 title: OpenLayers.i18n("Search"),
 
+                /**
+                 * Property: closable
+                 * {Boolean}
+                 */
                 closable: true,
+
                 /**
                  * Property: map
-                 * {OpenLayers.Map}  The map instance.
+                 * {OpenLayers.Map} The map instance.
                  */
                 map: null,
-                /**
-                 * Property: store
-                 * {GeoExt.data.FeatureStore}
-                 */
-                store: null,
-                /**
-                 * Property: vectorLayer
-                 * {OpenLayers.Layer.Vector} The vector layer on which we display results
-                 */
-                vectorLayer: null,
-                /**
-                 * Property: model
-                 * {GEOR.FeatureDataModel} data model
-                 */
-                model: null,
-                /**
-                 * Property: layerBounds
-                 * {OpenLayers.Bounds} The cached vector layer bounds
-                 */
-                layerBounds: null,
+
                 /**
                  * Property: sfControl
-                 * {OpenLayers.Control.SelectFeature} The control used for the feature
-                 * selection model
+                 * {OpenLayers.Control.SelectFeature} The control used for the 
+                 * feature selection model
                  */
                 sfControl: null
+
             }, config);
+
             GEOR.ResultsPanel.superclass.constructor.call(this, config);
         },
 
@@ -195,8 +212,7 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
          * store - {GeoExt.data.FeatureStore} our feature store
          */
         createGridPanel: function(store) {
-            var model = this.model, sfControl = this.sfControl, vectorLayer = this.vectorLayer;
-            var layerBounds = this.layerBounds, map = this.map, tr = OpenLayers.i18n;
+            var tr = OpenLayers.i18n;
 
             var columnModel = model.toColumnModel({
                 sortable: true
@@ -227,7 +243,7 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
                     text: tr("Zoom"),
                     tooltip: tr("Zoom to results extent"),
                     handler: function() {
-                        zoomToLayerExtent(layerBounds, map, vectorLayer);
+                        zoomToLayerExtent(layerBounds, this.map, vectorLayer);
                     }
                 },{
                     text: tr("CSV Export"),
@@ -237,18 +253,18 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
                 }
             }];
 
-            if (!sfControl) {
+            if (!this.sfControl) {
                 // we need to create the SelectFeature control by ourselves
                 // because we need to modify its internal properties
                 // and we cannot get a reference to these when the control is created
                 // inside the GeoExt.grid.FeatureSelectionModel
-                sfControl = new OpenLayers.Control.SelectFeature(vectorLayer, {
+                this.sfControl = new OpenLayers.Control.SelectFeature(vectorLayer, {
                     toggle: true,
                     multipleKey: Ext.isMac ? "metaKey" : "ctrlKey"
                 });
-                map.addControl(sfControl);
+                this.map.addControl(this.sfControl);
                 // see http://applis-bretagne.fr/redmine/issues/1983
-                sfControl.handlers.feature.stopDown = false;
+                this.sfControl.handlers.feature.stopDown = false;
             }
             this.removeAll();
             this.add({
@@ -262,7 +278,7 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
                 columns: columnModel,
                 sm: new GeoExt.grid.FeatureSelectionModel({
                     singleSelect: false,
-                    selectControl: sfControl
+                    selectControl: this.sfControl
                 }),
                 frame: false,
                 border: false,
@@ -273,7 +289,7 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
                         zoomToFeatures({
                             features: [store.getAt(rowIndex).get('feature')],
                             vectorLayer: vectorLayer,
-                            map: map
+                            map: this.map
                         });
                     },
                     "beforedestroy": function() {
@@ -287,7 +303,6 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
                     }
                 }
             });
-
         },
 
         /**
@@ -299,8 +314,8 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
          * addLayerToMap defaults to true
          */
         populate: function(options) {
-            var layerBounds = this.layerBounds, vectorLayer = this.vectorLayer;
-            var map = this.map, model = this.model, store = this.store, tr = OpenLayers.i18n;
+            var tr = OpenLayers.i18n;
+
             // we clear the bounds cache:
             layerBounds = null;
 
@@ -315,30 +330,30 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
                 });
                 return;
             }
-            if (!this.vectorLayer) {
-                this.vectorLayer = createVectorLayer(this.id);
+            if (!vectorLayer) {
+                vectorLayer = createVectorLayer(this.id);
             }
 
             if (options.addLayerToMap !== false) {
-                if (OpenLayers.Util.indexOf(map.layers, this.vectorLayer) < 0) {
-                    map.addLayer(this.vectorLayer);
+                if (OpenLayers.Util.indexOf(this.map.layers, vectorLayer) < 0) {
+                    this.map.addLayer(vectorLayer);
                 }
-            } else if (OpenLayers.Util.indexOf(map.layers, this.vectorLayer) >= 0) {
-                map.removeLayer(this.vectorLayer);
+            } else if (OpenLayers.Util.indexOf(this.map.layers, vectorLayer) >= 0) {
+                this.map.removeLayer(vectorLayer);
             }
 
             if (options.model) {
-                this.model = options.model;
+                model = options.model;
             } else {
                 // we need to compute the model from the features we got.
-                this.model = new GEOR.FeatureDataModel({
+                model = new GEOR.FeatureDataModel({
                     features: features
                 });
             }
 
             store = new GeoExt.data.FeatureStore({
-                layer: this.vectorLayer,
-                fields: this.model.toStoreFields()/*,
+                layer: vectorLayer,
+                fields: model.toStoreFields()/*,
                 initDir: (options.addLayerToMap === false) ? 
                     GeoExt.data.FeatureStore.LAYER_TO_STORE : 
                     GeoExt.data.FeatureStore.LAYER_TO_STORE|GeoExt.data.FeatureStore.STORE_TO_LAYER
@@ -373,14 +388,33 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
 
         /**
          * APIMethod: clean
-         * This method destroy the features in the vector layer.
+         * This method destroys the features in the vector layer.
          *
          */
         clean: function() {
-            var vectorLayer = this.vectorLayer, layerbounds = this.layerBounds;
             if (vectorLayer) {
                 vectorLayer.setVisibility(false);
                 layerBounds = null;
+            }
+        },
+
+        /**
+         * APIMethod: lower
+         * Hides the attached vector layer.
+         */
+        lower: function() {
+            if (vectorLayer) {
+                vectorLayer.setVisibility(false);
+            }
+        },
+
+        /**
+         * APIMethod: raise
+         * Displays the attached vector layer.
+         */
+        raise: function() {
+            if (vectorLayer) {
+                vectorLayer.setVisibility(true);
             }
         }
     };
