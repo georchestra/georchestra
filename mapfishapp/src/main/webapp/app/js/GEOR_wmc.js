@@ -128,7 +128,7 @@ GEOR.wmc = (function() {
                 Ext.each(styles, function (item) {
                     var style = {};
                     Ext.apply(style, {current: false}, item);
-                    if(layer.params.STYLES === style.name) {
+                    if (layer.params.STYLES === style.name) {
                         style.current = true;
                     }
                     layerContext.styles.push(style);
@@ -141,7 +141,7 @@ GEOR.wmc = (function() {
                     var format = {};
                     var f = (item instanceof Object) ? item.value : item;
                     Ext.apply(format, {current: false}, {value: f});
-                    if(layer.params.FORMAT == f) {
+                    if (layer.params.FORMAT == f) {
                         format.current = true;
                     }
                     layerContext.formats.push(format);
@@ -229,7 +229,7 @@ GEOR.wmc = (function() {
             // we're trying to restore the layers in the current map projection.
             mapProj = map.getProjection();
             wmcProj = newContext.projection;
-            if(mapProj && (wmcProj !== mapProj)) {
+            if (mapProj && (wmcProj !== mapProj)) {
                 // wmc does not have the same projection system
                 // as the current map
                 GEOR.util.infoDialog({

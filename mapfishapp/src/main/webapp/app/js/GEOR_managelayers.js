@@ -376,7 +376,7 @@ GEOR.managelayers = (function() {
                         }
                     } else {
                         checked = false;
-                        if(style.current === true) {
+                        if (style.current === true) {
                             default_style.checked = false;
                             checked = true;
                         }

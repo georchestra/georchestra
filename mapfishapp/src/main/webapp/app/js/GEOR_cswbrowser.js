@@ -88,7 +88,7 @@ GEOR.cswbrowser = (function() {
     var filterCswRecord = function(records) {
         var filtered = [], name, rights = [], metadataURL;
         Ext.each(records, function (record) {
-            if(record.URI) {
+            if (record.URI) {
                 // multiple WMS can be found in one csw:Record
                 Ext.each(record.URI, function (item) {
                     if (GEOR.util.isSuitableDCProtocol(item)) {
@@ -369,7 +369,7 @@ GEOR.cswbrowser = (function() {
                 }
             });
             var registerCheckbox = function(node){
-                if(!node.hasListener("checkchange")) {
+                if (!node.hasListener("checkchange")) {
                     node.on("checkchange", function(node, checked) {
                         observable.fireEvent("selectionchanged",
                             tree.getChecked('record'));

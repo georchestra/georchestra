@@ -425,9 +425,9 @@ GEOR.print = (function() {
                         // the plugin will work even if we modify a combo value
                         setValue: function(v){
                             var text = v;
-                            if(this.valueField){
+                            if (this.valueField){
                                 var r = this.findRecord(this.valueField, v);
-                                if(r){
+                                if (r){
                                     text = r.data[this.displayField];
                                 }
                             }

@@ -383,7 +383,7 @@ GEOR.ows = (function() {
                     success: function(resp) {
 
                         var data = resp.responseXML;
-                        if(!data || !data.documentElement) {
+                        if (!data || !data.documentElement) {
                             data = resp.responseText;
                         }
                         
