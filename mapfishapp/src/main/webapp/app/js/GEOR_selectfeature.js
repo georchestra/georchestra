@@ -13,7 +13,6 @@
  */
 
 /*
- * @include GEOR_FeatureDataModel.js
  * @include OpenLayers/Control/SelectFeature.js
  */
 
@@ -32,7 +31,7 @@ GEOR.selectfeature = (function() {
          * Fires when we've received a response from server 
          *
          * Listener arguments:
-         * options - {Object} A hash containing response, model and format
+         * options - {Object} A hash containing response and format
          */
         "searchresults",
         /**
@@ -62,14 +61,7 @@ GEOR.selectfeature = (function() {
      * {OpenLayers.Map} The map instance.
      */
     var map = null;
-    
-    /**
-     * Property: model
-     * {GEOR.FeatureDataModel} data model
-     * FIXME: to remove in 13.09 ? see https://github.com/georchestra/georchestra/commit/dc31ca03815555abcc4de4750ac7d5eae7057fc5
-     */
-    var model = null;
-    
+
     /**
      * Property: tr
      * {Function} an alias to OpenLayers.i18n
@@ -124,15 +116,8 @@ GEOR.selectfeature = (function() {
         var f = o.feature;
         selectedFeatures[f.id] = f;
 
-        if (!model || model.isEmpty()) {
-            model = new GEOR.FeatureDataModel({
-                features: [f]
-            });
-        }
-
         observable.fireEvent("searchresults", {
             features: clone(toArray(selectedFeatures)),
-            model: model,
             ctrl: ctrl,
             tooltip: ctrl.layer.name + " - " + tr("OpenLayers SelectFeature"),
             title: GEOR.util.shortenLayerName(ctrl.layer.name),
@@ -148,7 +133,6 @@ GEOR.selectfeature = (function() {
 
         observable.fireEvent("searchresults", {
             features: clone(toArray(selectedFeatures)),
-            model: model,
             ctrl: ctrl,
             tooltip: ctrl.layer.name + " - " + tr("OpenLayers SelectFeature"),
             title: GEOR.util.shortenLayerName(ctrl.layer.name),
@@ -231,8 +215,7 @@ GEOR.selectfeature = (function() {
                 });
                 
             } else {
-                // clear model cache:
-                model = null;
+
                 var ctrls = map.getControlsBy('active',true),
                     re = /OpenLayers\.Control\.(WMS|WMTS)GetFeatureInfo/,
                     collapse = true;
@@ -241,6 +224,7 @@ GEOR.selectfeature = (function() {
                         collapse = false;
                     }
                 };
+
                 if (ctrl.layer === layer) {
                     // we clicked on a toolbar button, which means we have
                     // to stop gfi requests.
