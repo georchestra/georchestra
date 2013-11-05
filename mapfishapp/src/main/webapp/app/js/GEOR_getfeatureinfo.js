@@ -101,7 +101,7 @@ GEOR.getfeatureinfo = (function() {
         // As a result, the computation has to be done on each query.
 
 
-        /* results will be a hashmap of objects keyed on featureType with 4 properties:
+        /* results will be a hashmap of objects keyed on featureType with 3 properties:
          * - features: features for that featureType
          * - title: the shortened tab title
          * - tooltip: the tooltip for the tab

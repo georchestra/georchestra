@@ -68,9 +68,12 @@ GEOR.selectfeature = (function() {
      */
     var tr = null;
 
-    // indexed by their id
-    var selectedFeatures = {};
-    
+    /**
+     * Property: selectedFeatures
+     * {Object} features indexed by their id
+     */
+    var selectedFeatures = null;
+
     /**
      * Method: onLayerVisibilitychanged
      * Callback executed on WMS layer visibility changed
@@ -92,54 +95,44 @@ GEOR.selectfeature = (function() {
             this.toggle(options.layer, false);
         }
     };
-
-    var toArray = function(o) {
-        var out = [];
-        for (var f in o) {
-            if (!o.hasOwnProperty(f)) {
-                continue;
-            }
-            out.push(o[f]);
-        }
-        return out;
-    };
-
-    var clone = function(features) {
-        var out = new Array(features.length);
-        Ext.each(features, function(f, i) {
-            out[i] = f.clone();
+    
+    /**
+     * Method: fireSearchresults
+     * 
+     */
+    var fireSearchresults = function() {
+        var fs = [];
+        Ext.iterate(selectedFeatures, function(k, v) {
+            fs.push(v.clone());
         });
-        return out;
+        observable.fireEvent("searchresults", {
+            features: fs,
+            ctrl: ctrl,
+            tooltip: ctrl.layer.name + " - " + tr("OpenLayers SelectFeature"),
+            title: GEOR.util.shortenLayerName(ctrl.layer.name),
+            // we do not want the generated vector layer 
+            // to be added to the map object:
+            addLayerToMap: false
+        });
     };
 
+    /**
+     * Method: onFeatureselected
+     * Callback
+     */
     var onFeatureselected = function(o) {
         var f = o.feature;
         selectedFeatures[f.id] = f;
-
-        observable.fireEvent("searchresults", {
-            features: clone(toArray(selectedFeatures)),
-            ctrl: ctrl,
-            tooltip: ctrl.layer.name + " - " + tr("OpenLayers SelectFeature"),
-            title: GEOR.util.shortenLayerName(ctrl.layer.name),
-            // we do not want the generated vector layer 
-            // to be added to the map object:
-            addLayerToMap: false
-        });
+        fireSearchresults();
     };
 
-
+    /**
+     * Method: onFeatureunselected
+     * Callback
+     */
     var onFeatureunselected = function(o) {
         delete selectedFeatures[o.feature.id];
-
-        observable.fireEvent("searchresults", {
-            features: clone(toArray(selectedFeatures)),
-            ctrl: ctrl,
-            tooltip: ctrl.layer.name + " - " + tr("OpenLayers SelectFeature"),
-            title: GEOR.util.shortenLayerName(ctrl.layer.name),
-            // we do not want the generated vector layer 
-            // to be added to the map object:
-            addLayerToMap: false
-        });
+        fireSearchresults();
     };
 
 
@@ -163,6 +156,7 @@ GEOR.selectfeature = (function() {
         init: function(m) { 
             map = m;
             tr = OpenLayers.i18n;
+            selectedFeatures = {};
         },
 
         /**
@@ -216,7 +210,7 @@ GEOR.selectfeature = (function() {
                 
             } else {
 
-                var ctrls = map.getControlsBy('active',true),
+                var ctrls = map.getControlsBy('active', true),
                     re = /OpenLayers\.Control\.(WMS|WMTS)GetFeatureInfo/,
                     collapse = true;
                 for (var i = 0 ; i < ctrls.length; i++) {
