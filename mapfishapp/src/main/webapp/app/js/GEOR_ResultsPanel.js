@@ -123,6 +123,25 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
         }
     };
 
+    /**
+     * Method: createVectorLayer
+     *
+     * Parameters:
+     * id - {String}
+     *
+     * Returns:
+     * {OpenLayers.Layer.Vector}
+     */
+    var createVectorLayer = function(id) {
+        return new OpenLayers.Layer.Vector("search_results_"+id, {
+            displayInLayerSwitcher: false,
+            styleMap: GEOR.util.getStyleMap(),
+            rendererOptions: {
+                zIndexing: true
+            }
+        });
+    };
+
     return {
         /**
           * Constructor of the ResultsPanel object.
@@ -272,22 +291,6 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
         },
 
         /**
-         * Method: createVectorLayer
-         *
-         * Returns:
-         * {OpenLayers.Layer.Vector}
-         */
-        createVectorLayer: function() {
-            return new OpenLayers.Layer.Vector("search_results_"+this.id, {
-                displayInLayerSwitcher: false,
-                styleMap: GEOR.util.getStyleMap(),
-                rendererOptions: {
-                    zIndexing: true
-                }
-            });
-        },
-
-        /**
          * Method: populate
          * Callback executed when we receive the XML data.
          *
@@ -313,7 +316,7 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
                 return;
             }
             if (!this.vectorLayer) {
-                this.vectorLayer = this.createVectorLayer();
+                this.vectorLayer = createVectorLayer(this.id);
             }
 
             if (options.addLayerToMap !== false) {
