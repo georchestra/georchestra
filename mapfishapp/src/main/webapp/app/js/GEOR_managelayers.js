@@ -41,6 +41,11 @@ GEOR.managelayers = (function() {
         constructor: function(config) {
             config.qtip = config.layer.name;
             LayerNode.superclass.constructor.apply(this, [config]);
+            this.on("rendernode", function(node) {
+                if (config.layer.transitionEffect == 'resize') {
+                    node.ui.addClass("geor-baselayer");
+                }
+            });
         }
     });
     Ext.tree.TreePanel.nodeTypes.geor_layer = LayerNode;
