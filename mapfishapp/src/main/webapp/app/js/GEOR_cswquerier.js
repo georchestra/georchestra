@@ -36,7 +36,7 @@ Ext.namespace("GEOR");
  */
 GEOR.CustomCSWRecordsReader = function(meta, recordType) {
     meta = meta || {};
-    if(!(recordType instanceof Function)) {
+    if (!(recordType instanceof Function)) {
         recordType = Ext.data.Record.create([
             {name: "layer_name"},
             {name: "layer_description"},
@@ -64,7 +64,7 @@ Ext.extend(GEOR.CustomCSWRecordsReader, Ext.data.DataReader, {
      */
     readRecords : function(rs) {
         var records = [];
-        if(rs) {
+        if (rs) {
             var recordType = this.recordType;
             var i, r, values, thumbnailURL;
 
@@ -72,10 +72,10 @@ Ext.extend(GEOR.CustomCSWRecordsReader, Ext.data.DataReader, {
                 r = rs[i];
                 thumbnailURL = null;
 
-                if(r.get('URI')) {
+                if (r.get('URI')) {
                     // thumbnail URL (common to all layers in this MD):
                     Ext.each(r.get('URI'), function (item) {
-                        if((item.name && item.name.toLowerCase() == "thumbnail") && item.value) {
+                        if ((item.name && item.name.toLowerCase() == "thumbnail") && item.value) {
                             thumbnailURL = item.value;
                         }
                     });

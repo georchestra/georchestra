@@ -324,7 +324,7 @@ GEOR.layerfinder = (function() {
         var layerName = record.get('layer_name');
         return function(store, records) {
             var index = store.find("name", layerName);
-            if(index < 0) {
+            if (index < 0) {
                 GEOR.util.errorDialog({
                     msg: tr("layerfinder.layer.unavailable",
                         {'NAME': layerName}
@@ -334,7 +334,7 @@ GEOR.layerfinder = (function() {
             }
             var r = records[index];
             var srs = layerStore.map.getProjection();
-            if(!r.get('srs') || (r.get('srs')[srs] !== true)) {
+            if (!r.get('srs') || (r.get('srs')[srs] !== true)) {
                 GEOR.util.errorDialog({
                     msg: tr("Layer projection is not compatible")
                 });
@@ -397,7 +397,7 @@ GEOR.layerfinder = (function() {
         // we need to clone the layers
         for(var i=0, len=records.length; i<len; i++) {
             record = records[i];
-            if(record instanceof GeoExt.data.LayerRecord) {
+            if (record instanceof GeoExt.data.LayerRecord) {
                 // we're coming from the WMS or WFS tab
                 var layer = record.get("layer");
                 if (layer instanceof OpenLayers.Layer.WMS || layer instanceof OpenLayers.Layer.WMTS) {
@@ -435,7 +435,7 @@ GEOR.layerfinder = (function() {
                     // we are coming from the upload file tab
                     layerStore.addSorted(record);
                 }
-            } else if(record.get("layer_name")) {
+            } else if (record.get("layer_name")) {
                 // we're coming from the CSW tabs
                 // convert records to layer records
                 GEOR.waiter.show(); // increments a counter

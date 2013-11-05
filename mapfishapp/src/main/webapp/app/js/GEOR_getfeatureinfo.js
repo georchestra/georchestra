@@ -196,7 +196,7 @@ GEOR.getfeatureinfo = (function() {
         OpenLayers.Element.removeClass(map.viewPortDiv, "olDrawBox");
 
         var msg;
-        if(ctrl.layers.length > 0) {
+        if (ctrl.layers.length > 0) {
             msg = "<div>Searching...</div>";
         } else {
             msg = "<div>No layer selected</div>";
@@ -314,7 +314,7 @@ GEOR.getfeatureinfo = (function() {
             } else if (record === false) {
                 type = "WMS"; // XXX assume all layers queried are WMS ?
                 layerStore.each(function(layerRecord) {
-                    if(layerRecord.get("queryable") && 
+                    if (layerRecord.get("queryable") && 
                         layerRecord.getLayer().visibility == true) {
 
                         layers.push(layerRecord.getLayer());

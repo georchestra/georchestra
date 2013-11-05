@@ -169,7 +169,7 @@ GEOR.toolbar = (function() {
             // insert a login or logout link in the toolbar
             var login_html = '<div style="margin-right:1em;font:11px tahoma,verdana,helvetica;"><a href="' + GEOR.config.LOGIN_URL +
                 '" style="text-decoration:none;" onclick="return GEOR.toolbar.confirmLogin()">'+tr("Login")+'</a></div>';
-            if(!GEOR.config.ANONYMOUS) {
+            if (!GEOR.config.ANONYMOUS) {
                 login_html = '<div style="margin-right:1em;font:11px tahoma,verdana,helvetica;">'+GEOR.config.USERNAME + '&nbsp;<a href="' + GEOR.config.LOGOUT_URL +
                     '" style="text-decoration:none;">'+tr("Logout")+'</a></div>';
             }
@@ -181,7 +181,7 @@ GEOR.toolbar = (function() {
             text: tr("Help"),
             tooltip: tr("Show help"),
             handler: function() {
-                if(Ext.isIE) {
+                if (Ext.isIE) {
                     window.open(GEOR.config.HELP_URL);
                 } else {
                     window.open(GEOR.config.HELP_URL, tr("Help"), "menubar=no,status=no,scrollbars=yes");
