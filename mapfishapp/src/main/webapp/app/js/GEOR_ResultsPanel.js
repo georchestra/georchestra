@@ -128,7 +128,7 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
           * Constructor of the ResultsPanel object.
           * Because of its inheritance from an Ext.panel, it can use its attributes.
           */
-        constructor: function(config){
+        constructor: function(config) {
             config = Ext.apply({
                 title: OpenLayers.i18n("Search"),
 
@@ -207,7 +207,7 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
                 }, tbtext, '->', {
                     text: tr("Zoom"),
                     tooltip: tr("Zoom to results extent"),
-                    handler: function(){
+                    handler: function() {
                         zoomToLayerExtent(layerBounds, map, vectorLayer);
                     }
                 },{
@@ -320,7 +320,7 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
                 if (OpenLayers.Util.indexOf(map.layers, this.vectorLayer) < 0) {
                     map.addLayer(this.vectorLayer);
                 }
-            } else if (OpenLayers.Util.indexOf(map.layers, this.vectorLayer) >= 0){
+            } else if (OpenLayers.Util.indexOf(map.layers, this.vectorLayer) >= 0) {
                 map.removeLayer(this.vectorLayer);
             }
 

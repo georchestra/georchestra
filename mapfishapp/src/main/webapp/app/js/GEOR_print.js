@@ -151,7 +151,7 @@ GEOR.print = (function() {
         if (!proj) {
             return '';
         }
-        Ext.each(proj.split('+'), function(r){
+        Ext.each(proj.split('+'), function(r) {
             var c = r.split("title=");
             if (c.length > 1) {
                 s = c[1].replace(/,/g,'').trim();
@@ -423,11 +423,11 @@ GEOR.print = (function() {
                             printProvider: printProvider
                         }),
                         // the plugin will work even if we modify a combo value
-                        setValue: function(v){
+                        setValue: function(v) {
                             var text = v;
-                            if (this.valueField){
+                            if (this.valueField) {
                                 var r = this.findRecord(this.valueField, v);
-                                if (r){
+                                if (r) {
                                     text = r.data[this.displayField];
                                 }
                             }

@@ -360,7 +360,7 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
             });
         });
 
-        this.formPanel.on('clientvalidation', function(formPanel, valid){
+        this.formPanel.on('clientvalidation', function(formPanel, valid) {
             if (this.isFeatureDirty()) {
                 this.saveBtn.enable();
                 this.cancelBtn.enable();
@@ -527,7 +527,7 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
         // Pass all fields to the setValues, otherwise only fields that are in feature.attributes are
         // considered as not dirty
         var attributes={};
-        this.formPanel.getForm().items.each(function(field){
+        this.formPanel.getForm().items.each(function(field) {
         	attributes[field.getName()] = '';
         });
         Ext.apply(attributes, feature.attributes)
@@ -610,7 +610,7 @@ GEOR.Editing.LayerEditingPanel = Ext.extend(Ext.Panel, {
      */
     cleanForm: function() {
         var form = this.formPanel.getForm();
-        Ext.each(form.items.items, function(field){
+        Ext.each(form.items.items, function(field) {
             field.setValue('');
         });
     },

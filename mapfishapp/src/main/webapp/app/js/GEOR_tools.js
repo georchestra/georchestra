@@ -205,7 +205,7 @@ GEOR.tools = (function() {
      */
     var fetchAndLoadTools = function(records) {
         var newState = {};
-        store.each(function(r){
+        store.each(function(r) {
             newState[r.id] = (records.indexOf(r) > -1);
         });
         // compute diff with previous selection state:

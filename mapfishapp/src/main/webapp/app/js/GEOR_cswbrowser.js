@@ -368,7 +368,7 @@ GEOR.cswbrowser = (function() {
                     nodeType: 'async'
                 }
             });
-            var registerCheckbox = function(node){
+            var registerCheckbox = function(node) {
                 if (!node.hasListener("checkchange")) {
                     node.on("checkchange", function(node, checked) {
                         observable.fireEvent("selectionchanged",

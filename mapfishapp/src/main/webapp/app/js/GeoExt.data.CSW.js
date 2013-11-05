@@ -69,8 +69,8 @@ GeoExt.data.CSWRecord.create = function(o) {
         p.fields.add(f);
     });
 
-    if(o) {
-        for(var i = 0, len = o.length; i < len; i++){
+    if (o) {
+        for (var i = 0, len = o.length; i < len; i++) {
             p.fields.add(new Ext.data.Field(o[i]));
         }
     }
@@ -86,10 +86,10 @@ GeoExt.data.CSWRecord.create = function(o) {
 
 GeoExt.data.CSWRecordsReader = function(meta, recordType) {
     meta = meta || {};
-    if(!meta.format) {
+    if (!meta.format) {
         meta.format = new OpenLayers.Format.CSWGetRecords();
     }
-    if(typeof recordType !== "function") {
+    if (typeof recordType !== "function") {
         recordType = GeoExt.data.CSWRecord.create(
             recordType || meta.fields
         );
@@ -108,7 +108,7 @@ Ext.extend(GeoExt.data.CSWRecordsReader, Ext.data.DataReader, {
      */
     read: function(request) {
         var data = request.responseXML;
-        if(!data || !data.documentElement) {
+        if (!data || !data.documentElement) {
             data = request.responseText;
         }
         return this.readRecords(data);
@@ -156,7 +156,7 @@ Ext.extend(GeoExt.data.CSWRecordsReader, Ext.data.DataReader, {
      *  Create a data block containing Ext.data.Records from an XML document.
      */
     readRecords: function(data) {
-        if(typeof data === "string" || data.nodeType) {
+        if (typeof data === "string" || data.nodeType) {
             data = this.meta.format.read(data);
         }
         if (!!data.error) {
@@ -168,11 +168,11 @@ Ext.extend(GeoExt.data.CSWRecordsReader, Ext.data.DataReader, {
         if (data.records) {
             rs = data.records;
             var fields = this.recordType.prototype.fields;
-            for(var i=0, l=rs.length; i<l; i++){
+            for (var i=0, l=rs.length; i<l; i++) {
                 r = rs[i];
-                if(r.title && r.title instanceof Array && r.title[0]) {
+                if (r.title && r.title instanceof Array && r.title[0]) {
                     values = {};
-                    for(var j=0, lj=fields.length; j<lj; j++) {
+                    for (var j=0, lj=fields.length; j<lj; j++) {
                         field = fields.items[j];
                         v = this.parseField(field.name, (r[field.mapping || field.name])) ||
                             field.defaultValue;

@@ -187,7 +187,7 @@ GEOR.mappanel = (function() {
                 tbar: GEOR.toolbar.create(layerStore),
                 bbar: new Ext.Toolbar(buildBbarCfg(map))
                 // hack for better ergonomics:
-                //,updateMapSize: function(){}
+                //,updateMapSize: function() {}
                 // but is responsible of https://github.com/georchestra/georchestra/issues/367
             };
         }

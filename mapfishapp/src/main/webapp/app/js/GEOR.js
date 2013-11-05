@@ -237,27 +237,27 @@ Ext.namespace("GEOR");
                 style: 'float: right;'
             }],
             listeners: {
-                'collapse': function(panel){
-                    Ext.each(panel.items.items, function(i){
+                'collapse': function(panel) {
+                    Ext.each(panel.items.items, function(i) {
                         if (i.vectorLayer) {
                             i.vectorLayer.setVisibility(false);
                         }
                     });
                 },
-                'expand': function(panel){
+                'expand': function(panel) {
                     if (panel.getActiveTab().vectorLayer) {
                         panel.getActiveTab().vectorLayer.setVisibility(true);
                     }
                 },
-                'tabchange': function(panel, t){
-                    if (t.id == 'addPanel'){
+                'tabchange': function(panel, t) {
+                    if (t.id == 'addPanel') {
                         var tab = new GEOR.ResultsPanel({
                             html: tr("resultspanel.emptytext")
                         });
                         panel.insert(panel.items.length-1, tab);
                         panel.setActiveTab(tab);
                     }
-                    Ext.each(panel.items.items, function(i){
+                    Ext.each(panel.items.items, function(i) {
                         if (i.vectorLayer) {
                             i.vectorLayer.setVisibility(false);
                         }
