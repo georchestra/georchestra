@@ -497,7 +497,8 @@ GEOR.managelayers = (function() {
                     } else {
                         menuItem.setText(tr("Stop editing"));
                         GEOR.edit.activate({
-                            protocol: protocol
+                            protocol: protocol,
+                            layer: layerRecord.getLayer()
                         });
                         // TODO
                     }

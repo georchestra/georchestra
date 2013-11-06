@@ -15,8 +15,9 @@
 
 /*
  * @include OpenLayers/Control/GetFeature.js
- * @include OpenLayers/Control/SelectFeature.js
+ * @include OpenLayers/Control/ModifyFeature.js
  * @include OpenLayers/Layer/Vector.js
+ * @include OpenLayers/Strategy/Save.js
  * @include GEOR_util.js
  */
 
@@ -35,10 +36,10 @@ GEOR.edit = (function() {
     var getFeature;
 
     /**
-     * Property: selectFeature
-     * {OpenLayers.Control.SelectFeature}
+     * Property: modifyFeature
+     * {OpenLayers.Control.ModifyFeature}
      */
-    var selectFeature;
+    var modifyFeature;
 
     /**
      * Property: vectorLayer
@@ -51,6 +52,12 @@ GEOR.edit = (function() {
      * {OpenLayers.Map}
      */
     var map;
+
+    /**
+     * Property: strategy
+     * {OpenLayers.Strategy.Save}
+     */
+    var strategy;
 
     var tr;
 
@@ -93,7 +100,9 @@ GEOR.edit = (function() {
                     eventListeners: {
                         "hoverfeature": function(e) {
                             vectorLayer.removeFeatures(vectorLayer.features[0]);
-                            vectorLayer.addFeatures([e.feature]);
+                            vectorLayer.addFeatures([e.feature], {
+                                silent: true // we do not want to trigger save on feature added
+                            });
                         }/*,
                         "outfeature": function(e) {
                             vectorLayer.removeFeatures([e.feature]);
@@ -102,33 +111,50 @@ GEOR.edit = (function() {
                 });
             }
             if (!vectorLayer) {
+                strategy = new OpenLayers.Strategy.Save({
+                    auto: true
+                });
+                strategy.events.on({
+                    "success": function() {
+                        options.layer.mergeNewParams({
+                            nocache: new Date().valueOf()
+                        });
+                    },
+                    "fail": function() {
+                        GEOR.util.errorDialog({
+                            msg: OpenLayers.i18n('Synchronization failed.')
+                        });
+                    }
+                });
                 vectorLayer = new OpenLayers.Layer.Vector("_geor_edit", {
                     displayInLayerSwitcher: false,
+                    protocol: options.protocol,
+                    strategies: [
+                        strategy
+                    ],
                     eventListeners: {
-                        "featureselected": function(o) {
+                        "beforefeaturemodified": function(o) {
                             // we do not want to trigger additional useless XHRs 
                             // once one feature has been chosen for edition:
                             getFeature.deactivate();
-                            // TODO: show attributes panel for edition
+                            // TODO: show attributes panel for edition, configure ModifyFeature control
                         },
-                        "featureunselected": function(o) {
+                        "afterfeaturemodified": function(o) {
                             // reactivate getFeature once feature is unselected
                             getFeature.activate();
+                            // TODO: auto-commit
                         }
                     }
                 });
-                selectFeature = new OpenLayers.Control.SelectFeature(vectorLayer, {
+                modifyFeature = new OpenLayers.Control.ModifyFeature(vectorLayer, {
                     autoActivate: true, // Do not forget to manually deactivate it !
-                    multiple: false,
                     clickout: true,
                     toggle: false,
-                    hover: false,
-                    highlightOnly: false,
-                    box: false
+                    mode: OpenLayers.Control.ModifyFeature.DRAG | OpenLayers.Control.ModifyFeature.RESHAPE
                 });
             }
             map.addLayer(vectorLayer);
-            map.addControls([getFeature, selectFeature]);
+            map.addControls([getFeature, modifyFeature]);
 
         }
     };
