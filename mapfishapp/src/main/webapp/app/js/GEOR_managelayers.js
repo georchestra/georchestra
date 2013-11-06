@@ -449,6 +449,65 @@ GEOR.managelayers = (function() {
     };
 
     /**
+     * Method: editHandler
+     * Callback executed on edit menu item clicked
+     *
+     * Parameters:
+     * menuItem - {Ext.menu.Item}
+     * layerRecord - {GeoExt.data.LayerRecord}
+     */
+    var editHandler = function(menuItem, layerRecord) {
+        if (menuItem.text === tr("Edit this layer")) {
+            var o = {
+                owsURL: layerRecord.get("WFS_URL"),
+                typeName: layerRecord.get("WFS_typeName")
+            };
+            GEOR.ows.WFSDescribeFeatureType(o, {
+                extractFeatureNS: true,
+                success: function(attributeStore, rec, opts) {
+                    // the "o" object will get augmented by WFSDescribeFeatureType:
+                    var protocol = GEOR.ows.WFSProtocol({
+                        typeName: layerRecord.get("WFS_typeName"),
+                        featureNS: o.featureNS,
+                        owsURL: layerRecord.get("WFS_URL"),
+                        WFSversion : o.WFSversion
+                    }, layerRecord.getLayer().map);
+
+                    var matchGeomProperty =
+                        /^gml:(Multi)?(Point|LineString|Polygon|Curve|Surface|Geometry)PropertyType$/;
+                    // here, we complement the protocol with a valid geometryName
+                    // else, "the_geom" is used as default geometryName and this can lead to pbs
+                    attributeStore.each(function(r) {
+                        if (r.get('type').match(matchGeomProperty)) {
+                            protocol.setGeometryName(r.get('name'));
+                            // stop looping:
+                            return false;
+                        }
+                    });
+                    var type = GEOR.ows.getSymbolTypeFromAttributeStore(attributeStore);
+                    if (!OpenLayers.Handler[(type.type == 'Line') ? 'Path' : type.type]) {
+                        GEOR.util.infoDialog({
+                            title: OpenLayers.i18n("Read-only layer"),
+                            msg: OpenLayers.i18n("editingpanel.geom.error", {
+                                'TYPE': type.type
+                            })
+                        });
+                    } else {
+                        menuItem.setText(tr("Stop editing"));
+                        //GEOR.edit.create();
+                        // TODO
+                    }
+                },
+                scope: this
+            });
+        } else {
+            // stop editing
+            menuItem.setText(tr("Edit this layer"));
+            // TODO
+        }
+    };
+
+    /**
      * Method: createMenuItems
      *
      * Parameters:
@@ -471,7 +530,7 @@ GEOR.managelayers = (function() {
                 layerRecord.hasEquivalentWCS() : false,
             isVector = layer instanceof OpenLayers.Layer.Vector;
 
-        var menuItems = [], url, sepInserted;
+        var menuItems = [], url, sepInserted, item;
 
         if (isWMS && !layerRecord.get("_described")) {
             return [];
@@ -666,9 +725,19 @@ GEOR.managelayers = (function() {
                             owstype: isWMS ? "WMS" : "WFS",
                             owsurl: isWMS ? layer.url : layer.protocol.url
                         }]
-                    })
+                    });
                 }
             });
+        }
+
+        if (hasEquivalentWFS) {
+            insertSep();
+            item = new Ext.menu.Item({
+                iconCls: 'geor-btn-edit',
+                text: tr("Edit this layer")
+            });
+            item.on("click", editHandler.createCallback(item, layerRecord));
+            menuItems.push(item);
         }
 
         if (isWMS || isWMTS) {

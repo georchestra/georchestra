@@ -204,6 +204,8 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "source: ": "source : ",
     "unknown": "inconnue",
     "Actions": "Actions",
+    "Edit this layer": "Editer cette couche",
+    "Stop editing": "Arrêter l'édition",
     /* GEOR_map.js strings */
     "Location map": "Carte de situation",
     "Warning after loading layer":

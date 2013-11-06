@@ -160,6 +160,8 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "source: ": "источник : ",
     "unknown": "неизвестный",
     "Actions": "Действия",
+    //"Edit this layer": "Editer cette couche",
+    //"Stop editing": "Arrêter l'édition",
     /* GEOR_map.js strings */
     "Location map": "арта локализации",
     "Warning after loading layer": "Уведомление, следующее за загрузкой слоя",

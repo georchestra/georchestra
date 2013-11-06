@@ -417,16 +417,18 @@ GEOR.ows = (function() {
                         } else {
                         	version = "1.0.0";
                         }
-                        // FIXME: we might not always have a record in input (might be an object too)
-                        record.set("WFSversion", version);
-                        
                         // End hack
                         
                         var format = new OpenLayers.Format.WFSDescribeFeatureType();
                         var jsObj = format.read(data);
 
-                        // same FIXME here
-                        record.set("featureNS", jsObj.targetNamespace);
+                        if (record instanceof Ext.data.Record) {
+                            record.set("WFSversion", version);
+                            record.set("featureNS", jsObj.targetNamespace);
+                        } else {
+                            record.WFSversion = version;
+                            record.featureNS = jsObj.targetNamespace;
+                        }
 
                         store.on({
                             load: function() {
