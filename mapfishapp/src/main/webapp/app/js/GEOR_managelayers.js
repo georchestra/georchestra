@@ -472,7 +472,8 @@ GEOR.managelayers = (function() {
                         typeName: layerRecord.get("WFS_typeName"),
                         featureNS: o.featureNS,
                         owsURL: layerRecord.get("WFS_URL"),
-                        WFSversion : o.WFSversion
+                        WFSversion : o.WFSversion,
+                        autoDestroy: true
                     }, layerRecord.getLayer().map);
 
                     var matchGeomProperty =
@@ -508,7 +509,7 @@ GEOR.managelayers = (function() {
         } else {
             // stop editing
             menuItem.setText(tr("Edit this layer"));
-            // TODO
+            GEOR.edit.deactivate();
         }
     };
 
