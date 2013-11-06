@@ -131,7 +131,6 @@ GEOR.edit = (function() {
                     });
                 },
                 "fail": function() {
-                    options.layer.setVisibility(true);
                     GEOR.util.errorDialog({
                         msg: OpenLayers.i18n('Synchronization failed.')
                     });
@@ -168,9 +167,6 @@ GEOR.edit = (function() {
 
         /*
          * Method: deactivate
-         *
-         * Parameters:
-         *  - {}
          */
         deactivate: function() {
             if (modifyFeature && getFeature) {
