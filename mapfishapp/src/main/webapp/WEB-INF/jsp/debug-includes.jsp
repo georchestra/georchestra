@@ -86,6 +86,7 @@
     <script type="text/javascript" src="app/js/GEOR_ajaxglobal.js"></script>
     <script type="text/javascript" src="app/js/GEOR_localStorage.js"></script>
     <script type="text/javascript" src="app/js/GEOR_mapinit.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_edit.js"></script>
     <script type="text/javascript" src="app/js/GEOR.js"></script>
     <!-- uncomment this for IE debugging -->
     <!--script type="text/javascript" src="https://getfirebug.com/firebug-lite-beta.js"></script-->

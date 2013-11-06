@@ -22,6 +22,7 @@
  * @include GeoExt/widgets/tree/TreeNodeUIEventMixin.js
  * @include OpenLayers/Format/JSON.js
  * @include GEOR_layerfinder.js
+ * @include GEOR_edit.js
  * @include GEOR_util.js
  * Note: GEOR_querier.js & GEOR_selectfeature.js not included here since it's not required for edit app
  */
@@ -462,6 +463,7 @@ GEOR.managelayers = (function() {
                 owsURL: layerRecord.get("WFS_URL"),
                 typeName: layerRecord.get("WFS_typeName")
             };
+            GEOR.waiter.show();
             GEOR.ows.WFSDescribeFeatureType(o, {
                 extractFeatureNS: true,
                 success: function(attributeStore, rec, opts) {
@@ -494,7 +496,9 @@ GEOR.managelayers = (function() {
                         });
                     } else {
                         menuItem.setText(tr("Stop editing"));
-                        //GEOR.edit.create();
+                        GEOR.edit.activate({
+                            protocol: protocol
+                        });
                         // TODO
                     }
                 },
