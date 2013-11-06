@@ -459,6 +459,7 @@ GEOR.managelayers = (function() {
      */
     var editHandler = function(menuItem, layerRecord) {
         if (menuItem.text === tr("Edit this layer")) {
+            // start editing
             var o = {
                 owsURL: layerRecord.get("WFS_URL"),
                 typeName: layerRecord.get("WFS_typeName")
@@ -496,19 +497,19 @@ GEOR.managelayers = (function() {
                             })
                         });
                     } else {
-                        menuItem.setText(tr("Stop editing"));
+                        //menuItem.setText(tr("Stop editing"));
                         GEOR.edit.activate({
+                            menuItem: menuItem,
                             protocol: protocol,
                             layer: layerRecord.getLayer()
                         });
-                        // TODO
                     }
                 },
                 scope: this
             });
         } else {
             // stop editing
-            menuItem.setText(tr("Edit this layer"));
+            //menuItem.setText(tr("Edit this layer"));
             GEOR.edit.deactivate();
         }
     };

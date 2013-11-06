@@ -59,6 +59,12 @@ GEOR.edit = (function() {
      */
     var strategy;
 
+    /**
+     * Property: menuItem
+     * {Ext.menu.Item} The menu item for the current layer in edition
+     */
+    var menuItem;
+
     var tr;
 
     return {
@@ -88,6 +94,8 @@ GEOR.edit = (function() {
          */
         activate: function(options) {
             GEOR.edit.deactivate();
+            menuItem = options.menuItem;
+            menuItem.setText(tr("Stop editing"));
             getFeature = new OpenLayers.Control.GetFeature({
                 protocol: options.protocol,
                 autoActivate: true, // Do not forget to manually deactivate it !
@@ -165,8 +173,6 @@ GEOR.edit = (function() {
          *  - {}
          */
         deactivate: function() {
-            // TODO: inform managelayers that edition has stopped on other layer ?
-            // (to update its menu item)
             if (modifyFeature && getFeature) {
                 modifyFeature.deactivate();
                 getFeature.deactivate();
@@ -183,6 +189,11 @@ GEOR.edit = (function() {
                 vectorLayer.destroy();
                 vectorLayer = null;
                 strategy = null;
+            }
+            // update layer menu item text
+            if (menuItem) {
+                menuItem.setText(tr("Edit this layer"));
+                menuitem = null;
             }
         }
     };
