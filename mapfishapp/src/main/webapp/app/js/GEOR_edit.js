@@ -15,6 +15,8 @@
 
 /*
  * @include OpenLayers/Control/GetFeature.js
+ * @include OpenLayers/Control/SelectFeature.js
+ * @include OpenLayers/Layer/Vector.js
  * @include GEOR_util.js
  */
 
@@ -31,6 +33,12 @@ GEOR.edit = (function() {
      * {OpenLayers.Control.GetFeature}
      */
     var getFeature;
+
+    /**
+     * Property: selectFeature
+     * {OpenLayers.Control.SelectFeature}
+     */
+    var selectFeature;
 
     /**
      * Property: vectorLayer
@@ -75,6 +83,7 @@ GEOR.edit = (function() {
             if (!getFeature) {
                 getFeature = new OpenLayers.Control.GetFeature({
                     protocol: options.protocol,
+                    autoActivate: true, // Do not forget to manually deactivate it !
                     multiple: false,
                     hover: true,
                     click: false,
@@ -94,12 +103,33 @@ GEOR.edit = (function() {
             }
             if (!vectorLayer) {
                 vectorLayer = new OpenLayers.Layer.Vector("_geor_edit", {
-                    displayInLayerswitcher: false
+                    displayInLayerSwitcher: false,
+                    eventListeners: {
+                        "featureselected": function(o) {
+                            // we do not want to trigger additional useless XHRs 
+                            // once one feature has been chosen for edition:
+                            getFeature.deactivate();
+                            // TODO: show attributes panel for edition
+                        },
+                        "featureunselected": function(o) {
+                            // reactivate getFeature once feature is unselected
+                            getFeature.activate();
+                        }
+                    }
+                });
+                selectFeature = new OpenLayers.Control.SelectFeature(vectorLayer, {
+                    autoActivate: true, // Do not forget to manually deactivate it !
+                    multiple: false,
+                    clickout: true,
+                    toggle: false,
+                    hover: false,
+                    highlightOnly: false,
+                    box: false
                 });
             }
             map.addLayer(vectorLayer);
-            map.addControl(getFeature);
-            getFeature.activate();
+            map.addControls([getFeature, selectFeature]);
+
         }
     };
 })();
