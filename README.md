@@ -15,6 +15,7 @@ More information in the modules README:
  * [downloadform](https://github.com/georchestra/georchestra/blob/master/downloadform/README.md)
  * [ogc-server-statistics](https://github.com/georchestra/georchestra/blob/master/ogc-server-statistics/README.md)
  * [static](https://github.com/georchestra/georchestra/blob/master/static/README.md)
+ * [geoserver](https://github.com/georchestra/georchestra/blob/master/geoserver/README.md)
 
 See also the [release notes](https://github.com/georchestra/georchestra/blob/master/RELEASE_NOTES.md).
 
@@ -38,6 +39,8 @@ Then clone the repository (either the stable branch or master if you're feeling 
 
     cd georchestra
     ./mvn -Dmaven.test.skip=true -Ptemplate install
+	
+if geofence is desired add -Pgeofence to enable the geofence profile.
 
 
 How to customize ?
@@ -113,3 +116,32 @@ This is the basic idea, but one can use more advanced deploy scripts. An example
 
 Note: it is also possible to split the webapps across several Tomcat instances. 
 The recommended setup is to have at least 2 tomcats, with one entirely dedicated to GeoServer.
+
+How to build a single module
+============================
+
+Many modules can be built standalone without building the entire system.  This can be done by enabling or disabling maven profiles.
+
+To build a single module (and its dependencies) you must disable the 'all' profile and enable the profile you wish to enable:
+
+    ./mvn install -P-all -Pgeoserver -Ptemplate
+	
+`-P-all` disables the all profile
+`-Pgeoserver` activates the geoserver profile
+`-Ptemplate` enables the template profile (which indicates which configuration to use)
+
+Multiple modules can be built in a single command:
+
+   ./mvn install -P-all -Pgeoserver -Pgeonetwork -Ptemplate
+
+Some pertinent profiles:
+
+ * all - The profile indicating all modules are to be built.  By default this is enabled 
+ * geoserver - The profile indicating only geoserver and its dependencies modules will be built.
+ * geonetwork - The profile indicating only geonetwork and its dependencies modules will be built.
+ * extractorapp - The profile indicating only extractorapp and its dependencies modules will be built.
+ * mapfishapp - The profile indicating only mapfishapp and its dependencies modules will be built.
+ * proxy - The profile indicating only security-proxy and its dependencies modules will be built.
+ 
+To see which profiles can be used in this way open (https://github.com/georchestra/georchestra/blob/master/pom.xml) and search for <profile>.  The profiles containing <module> are the
+ones that control which modules are built.

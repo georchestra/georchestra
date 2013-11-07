@@ -58,9 +58,9 @@
 						  <excludes>${geoserver.war.excludes}</excludes>
 							<artifactItems>
 								<artifactItem>
-									<groupId>it.geosolutions.geofence.geoserver</groupId>
-									<artifactId>geofence-web-app</artifactId>
-									<version>${geofence.version}</version>
+									<groupId>${geoserver.webapp.groupId}</groupId>
+									<artifactId>${geoserver.webapp.artifactId}</artifactId>
+									<version>${geoserver.webapp.version}</version>
 									<type>jar</type>
 								</artifactItem>
 							</artifactItems>
