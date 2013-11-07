@@ -1,0 +1,10 @@
+.x-toolbar .gx-map-measurelength,
+.x-toolbar .gx-map-measurearea {
+    background-image: url(../images/measure.png);
+}
+.x-toolbar .gx-map-measurelength {
+    background-position: 0 0;
+}
+.x-toolbar .gx-map-measurearea {
+    background-position: -16px 0;
+}

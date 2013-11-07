@@ -1,0 +1,170 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>terrestris FeatureSelectionModel in Action</title>
+
+        <link rel="stylesheet" type="text/css" href="http://extjs.cachefly.net/ext-3.2.0/resources/css/ext-all.css" />
+        <link rel="stylesheet" type="text/css" href="http://extjs.cachefly.net/ext-3.2.0/examples/shared/examples.css" />
+        <script type="text/javascript" src="http://extjs.cachefly.net/ext-3.2.0/adapter/ext/ext-base.js"></script>
+        <script type="text/javascript" src="http://extjs.cachefly.net/ext-3.2.0/ext-all-debug.js"></script>
+        <script type="text/javascript" src="http://www.openlayers.org/api/2.10/OpenLayers.js"></script>
+        <script type="text/javascript" src="http://dev.geoext.org/ux/geoext/lib/GeoExt.js"></script> 
+        
+        <script type="text/javascript" src="../lib/GeoExt.ux/Ext.ux.grid.GridMouseEvents.js"></script>
+        <script type="text/javascript" src="../lib/GeoExt.ux/GeoExt.ux.FeatureSelectionModel.js"></script>
+        
+        
+        <script type="text/javascript">
+        /**
+         * Copyright (c) 2010 terrestris GmbH & Co KG
+         *
+         * Published under the BSD license.
+         * See http://svn.geoext.org/core/trunk/geoext/license.txt for the full text
+         * of the license.
+         */    
+            
+        /**
+         * Copyright (c) 2008-2010 The Open Source Geospatial Foundation
+         *
+         * Published under the BSD license.
+         * See http://svn.geoext.org/core/trunk/geoext/license.txt for the full text
+         * of the license.
+         */
+        
+        /** api: example[feature-grid]
+         *  Grid with Features
+         *  ------------------
+         *  Synchronize selection of features between a grid and a layer.
+         */
+        var mapPanel, store, gridPanel, mainPanel;
+        
+        Ext.onReady(function(){
+            // create map instance
+            var map = new OpenLayers.Map();
+            var wmsLayer = new OpenLayers.Layer.WMS("vmap0", "http://vmap0.tiles.osgeo.org/wms/vmap0", {
+                layers: 'basic'
+            });
+            
+            // create styles for points
+            var pointStyles = new OpenLayers.StyleMap({
+                "default": OpenLayers.Util.applyDefaults({
+                    fillColor: 'green',
+                    fillOpacity: 1.0,
+                    strokeColor: 'black',
+                    strokeOpacity: 1.0
+                }, OpenLayers.Feature.Vector.style["default"]),
+                "hover": OpenLayers.Util.applyDefaults({
+                    fillColor: 'red',
+                    fillOpacity: 1.0,
+                    strokeColor: 'black',
+                    strokeOpacity: 1.0
+                }, OpenLayers.Feature.Vector.style.temporary),
+                "select": OpenLayers.Util.applyDefaults({
+                    fillColor: 'blue',
+                    fillOpacity: 1.0,
+                    strokeColor: 'black',
+                    strokeOpacity: 1.0
+                }, OpenLayers.Feature.Vector.style.select)
+            });
+            
+            // create vector layer
+            var vecLayer = new OpenLayers.Layer.Vector("vector", {styleMap: pointStyles});
+            map.addLayers([wmsLayer, vecLayer]);
+            
+            // create map panel
+            mapPanel = new GeoExt.MapPanel({
+                title: "Map",
+                region: "center",
+                height: 400,
+                width: 600,
+                map: map,
+                center: new OpenLayers.LonLat(5, 45),
+                zoom: 6
+            });
+            
+            // create feature store, binding it to the vector layer
+            store = new GeoExt.data.FeatureStore({
+                layer: vecLayer,
+                fields: [{
+                    name: 'name',
+                    type: 'string'
+                }, {
+                    name: 'elevation',
+                    type: 'float'
+                }],
+                proxy: new GeoExt.data.ProtocolProxy({
+                    protocol: new OpenLayers.Protocol.HTTP({
+                        url: "summits.json",
+                        format: new OpenLayers.Format.GeoJSON()
+                    })
+                }),
+                autoLoad: true
+            });
+            
+            // control for hovering
+            hoverControl = new OpenLayers.Control.SelectFeature(vecLayer, {
+                hover: true,
+                highlightOnly: true,
+                renderIntent: 'hover',
+                multiple: true,
+                allowSelection: false
+            });
+            map.addControl(hoverControl);
+            hoverControl.activate();
+
+            selectControl = new OpenLayers.Control.SelectFeature(vecLayer, {
+                hover: false,
+                multiple: false
+            });
+            map.addControl(selectControl);
+            selectControl.activate();
+            
+            // create grid panel configured with feature store
+            gridPanel = new Ext.grid.GridPanel({
+                title: "Feature Grid",
+                region: "east",
+                store: store,
+                width: 320,
+                columns: [{
+                    header: "Name",
+                    width: 200,
+                    dataIndex: "name"
+                }, {
+                    header: "Elevation",
+                    width: 100,
+                    dataIndex: "elevation"
+                }],
+                sm: new GeoExt.ux.FeatureSelectionModel({selectControl: selectControl, hoverControl: hoverControl, controlMode: 'both'}),
+                plugins: [Ext.ux.grid.GridMouseEvents]
+            });
+            
+            // create a panel and add the map panel and grid panel
+            // inside it
+            mainPanel = new Ext.Panel({
+                renderTo: "mainpanel",
+                layout: "border",
+                height: 400,
+                width: 920,
+                items: [mapPanel, gridPanel]
+            });
+        });
+        
+
+        </script>
+
+    </head>
+    <body>
+        <h1>Grid Panel configured with a hover and a select control with an extended FeatureSelectionModel</h1>
+
+        <p>This example shows an Ext grid allowing hovering and selection functionality</p>
+        
+        <p>
+            A an extended GeoExt feature selection model is used to select and hover rows in 
+            the grid by selecting and hovering features in the layer, and vice-versa.
+        </p> 
+
+        <p>See <a href="../lib/GeoExt.ux/GeoExt.ux.FeatureSelectionModel.js">GeoExt.ux.FeatureSelectionModel.js</a>.</p>
+
+        <div id="mainpanel"></div>
+    </body>
+</html>
