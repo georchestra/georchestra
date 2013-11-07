@@ -189,7 +189,7 @@ GEOR.edit = (function() {
             // update layer menu item text
             if (menuItem) {
                 menuItem.setText(tr("Edit this layer"));
-                menuitem = null;
+                menuItem = null;
             }
         }
     };
