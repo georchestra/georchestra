@@ -53,7 +53,7 @@ shared.maven.filters
 
 The *shared.maven.filters* properties file in the root config directory is a file called *shared.maven.filters*.  This file contains the parameters that are shared between many projects.  The file contains the default values and when the configuration jar is being built; all text files with @propertyName@ will be replaced with the property in *shared.maven.filters* based on *propertyName*.
 
-In addition to the *shared.maven.filters* each configuration has to have a *shared.maven.filters* in its build_support directory as well.  At minimum these files must have:
+In addition to the *shared.maven.filters* each configuration has to have a *shared.maven.filters* in its build_support directory as well.  At minimum these files must contain the following properties:
 
  * shared.privileged.geoserver.user
  * shared.privileged.geoserver
