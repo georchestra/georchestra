@@ -497,10 +497,10 @@ GEOR.managelayers = (function() {
                             })
                         });
                     } else {
-                        //menuItem.setText(tr("Stop editing"));
                         GEOR.edit.activate({
                             menuItem: menuItem,
                             protocol: protocol,
+                            store: attributeStore,
                             layer: layerRecord.getLayer()
                         });
                     }
@@ -509,7 +509,6 @@ GEOR.managelayers = (function() {
             });
         } else {
             // stop editing
-            //menuItem.setText(tr("Edit this layer"));
             GEOR.edit.deactivate();
         }
     };
