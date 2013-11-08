@@ -139,6 +139,8 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Unreachable server or insufficient rights": "Ответ сервера недействителен. Возможные причины : недостаточные права, сервер недостижим, слишком много данных, и т.д...",
     "WFS server": "Сервер WFS",
     /* GEOR_managelayers.js strings */
+    //"Set as overlay": "Passer en calque",
+    //"Set as baselayer": "Passer en couche de fond",
     "Confirm NAME layer deletion ?": "Вы действительно хотите удалить слой${NAME} ?",
     "1:MAXSCALE to 1:MINSCALE": "1:${MAXSCALE} à 1:${MINSCALE}",
     "Visibility range (indicative):<br />from TEXT": "Индикаторный диапазон видимости ${TEXT}",

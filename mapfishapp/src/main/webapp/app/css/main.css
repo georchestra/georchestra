@@ -450,3 +450,8 @@ div.olMapViewport {
 .olImageLoadError {
 	display: none;
 }
+
+/* base layers are shown with a different color */
+#geor-layerManager .geor-baselayer {
+	background-color: #f2f0f5;
+}

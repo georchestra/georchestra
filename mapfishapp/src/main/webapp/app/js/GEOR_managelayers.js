@@ -42,6 +42,11 @@ GEOR.managelayers = (function() {
         constructor: function(config) {
             config.qtip = config.layer.name;
             LayerNode.superclass.constructor.apply(this, [config]);
+            this.on("rendernode", function(node) {
+                if (config.layer.transitionEffect == 'resize') {
+                    node.ui.addClass("geor-baselayer");
+                }
+            });
         }
     });
     Ext.tree.TreePanel.nodeTypes.geor_layer = LayerNode;
@@ -534,7 +539,9 @@ GEOR.managelayers = (function() {
                 layerRecord.hasEquivalentWFS() : false,
             hasEquivalentWCS = (type === "WMS") ?
                 layerRecord.hasEquivalentWCS() : false,
-            isVector = layer instanceof OpenLayers.Layer.Vector;
+            isVector = layer instanceof OpenLayers.Layer.Vector,
+            isBaseLayer = layerRecord.get("opaque") || 
+                layer.transitionEffect === "resize";
 
         var menuItems = [], url, sepInserted, item;
 
@@ -673,10 +680,6 @@ GEOR.managelayers = (function() {
             });
         }
 
-        // TODO: queryable is not the correct boolean here to decide whether
-        // we can have the querier or not.
-        // The availability of a WFS equivalent layer is.
-        // This depends on http://applis-bretagne.fr/redmine/issues/1984
         if (GEOR.querier && (hasEquivalentWFS || isWFS)) {
             insertSep();
             menuItems.push({
@@ -756,6 +759,18 @@ GEOR.managelayers = (function() {
             menuItems.push({
                 text: tr("Modify format"),
                 menu: createFormatMenu(layerRecord)
+            });
+            menuItems.push({
+                text: isBaseLayer ? 
+                    tr("Set as overlay") : tr("Set as baselayer"),
+                handler: function() {
+                    var store = layerRecord.store;
+                    layerRecord.set("opaque", !isBaseLayer);
+                    layer.transitionEffect = isBaseLayer ? 
+                        "map-resize" : "resize";
+                    store.remove(layerRecord);
+                    store.addSorted(layerRecord);
+                }
             });
         }
         return menuItems;
