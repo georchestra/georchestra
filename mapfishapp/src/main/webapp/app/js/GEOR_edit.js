@@ -141,6 +141,7 @@ GEOR.edit = (function() {
             });
             vectorLayer = new OpenLayers.Layer.Vector("_geor_edit", {
                 displayInLayerSwitcher: false,
+                styleMap: GEOR.util.getStyleMap(),
                 protocol: options.protocol,
                 strategies: [strategy],
                 eventListeners: {
