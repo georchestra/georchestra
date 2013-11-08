@@ -93,7 +93,7 @@ GEOR.ows = (function() {
      * Constant: attributeStoreFields
      * {Array} The fields shared by each attributeStore record in this app.
      */
-    var attributeStoreFields = ["name", "type", "restriction", {name:"nillable", type: "boolean"}];
+    var attributeStoreFields = ["name", "type", "restriction", {name:"nillable", type: "boolean"}, "annotation", "value"];
     // Note: a NOT NULL clause for a field in postgresql db is translated by GeoServer 1.7.x into
     //  <xsd:element maxOccurs="1" minOccurs="1" name="nom" nillable="true" type="xsd:string"/>
     // while in GeoServer 2.x, it leads to the correct xsd:
@@ -377,8 +377,9 @@ GEOR.ows = (function() {
                 // later for protocol creation
 
                 // FIXME: what about options.storeOptions in this case ?
-                store = new Ext.data.Store({
-                    reader: new GeoExt.data.AttributeReader({}, attributeStoreFields)
+                store = new GeoExt.data.AttributeStore({
+                    //reader: new GeoExt.data.AttributeReader({}, attributeStoreFields)
+                    fields: attributeStoreFields
                 });
 
                 Ext.Ajax.request({

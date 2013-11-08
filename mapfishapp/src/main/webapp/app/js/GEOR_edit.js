@@ -15,9 +15,10 @@
 
 /*
  * @include OpenLayers/Control/GetFeature.js
- * @include OpenLayers/Control/ModifyFeature.js
+ * @include OpenLayers/Control/SelectFeature.js
  * @include OpenLayers/Layer/Vector.js
  * @include OpenLayers/Strategy/Save.js
+ * @include GeoExt.ux/FeatureEditorGrid.js
  * @include GEOR_util.js
  */
 
@@ -36,10 +37,10 @@ GEOR.edit = (function() {
     var getFeature;
 
     /**
-     * Property: modifyFeature
-     * {OpenLayers.Control.ModifyFeature}
+     * Property: selectFeature
+     * {OpenLayers.Control.SelectFeature}
      */
-    var modifyFeature;
+    var selectFeature;
 
     /**
      * Property: vectorLayer
@@ -65,7 +66,7 @@ GEOR.edit = (function() {
      */
     var menuItem;
 
-    var tr;
+    var tr, win;
 
     return {
     
@@ -111,14 +112,11 @@ GEOR.edit = (function() {
                         vectorLayer.addFeatures([e.feature], {
                             silent: true // we do not want to trigger save on feature added
                         });
-                    }/*,
-                    "outfeature": function(e) {
-                        vectorLayer.removeFeatures([e.feature]);
-                    }*/
+                    }
                 }
             });
             strategy = new OpenLayers.Strategy.Save({
-                auto: true,
+                //auto: true,
                 autoDestroy: true
             });
             strategy.events.on({
@@ -129,6 +127,10 @@ GEOR.edit = (function() {
                     options.layer.mergeNewParams({
                         nocache: new Date().valueOf()
                     });
+                    win.close();
+                    vectorLayer.destroyFeatures();
+                    // reactivate getFeature control: (to go on with editing)
+                    getFeature.activate();
                 },
                 "fail": function() {
                     GEOR.util.errorDialog({
@@ -142,40 +144,101 @@ GEOR.edit = (function() {
                 protocol: options.protocol,
                 strategies: [strategy],
                 eventListeners: {
-                    "beforefeaturemodified": function(o) {
+                    "featureselected": function(o) {
                         // we do not want to trigger additional useless XHRs 
                         // once one feature has been chosen for edition:
                         getFeature.deactivate();
-                        // TODO: show attributes panel for edition, configure ModifyFeature control
-                    },
-                    "afterfeaturemodified": function(o) {
-                        // reactivate getFeature once feature is unselected
-                        getFeature.activate();
+                        // we have to unselect it because 
+                        // the modifyFeatureControl will standalone select it.
+                        selectFeature.unselect(o.feature);
+                        // sync feature values to store
+                        var store = options.store, 
+                        a = o.feature.attributes;
+                        store.each(function(r) {
+                            r.set("value", a[r.get("name")]);
+                        });
+                        store.feature = o.feature;
+                        store.bind.call(store);
+                        // display Editor Grid
+                        var editorGrid = new GeoExt.ux.FeatureEditorGrid({
+                            store: store,
+                            forceValidation: true,
+                            trackMouseOver: true,
+                            allowSave: true,
+                            allowCancel: true,
+                            allowDelete: true,
+                            border: false,
+                            hideHeaders: true,
+                            viewConfig: {
+                                forceFit: true,
+                                scrollOffset: 2 // the grid will never have scrollbars
+                            },
+                            listeners: {
+                                "done": function(panel, e) {
+                                    var feature = e.feature, modified = e.modified;
+                                    if(feature.state != null) {
+                                        strategy.save();
+                                    }
+                                },
+                                "cancel": function(panel, e) {
+                                    var feature = e.feature, modified = e.modified;
+                                    panel.cancel();
+                                    win.close();
+                                    // reactivate getFeature control: (to go on with editing)
+                                    getFeature.activate();
+                                    // we call cancel() ourselves so return false here
+                                    return false;
+                                }
+                            }
+                        });
+                        win = new Ext.Window({
+                            title: tr('Feature attributes'),
+                            width: 440,
+                            height: 350,
+                            closable: true,
+                            closeAction: "close",
+                            resizable: true,
+                            border: true,
+                            layout: 'fit',
+                            items: [editorGrid],
+                            listeners: {
+                                "hide": function() {
+
+                                },
+                                "show": function() {
+
+                                },
+                                scope: this
+                            }
+                        });
+                        win.show();
                     }
                 }
             });
-            modifyFeature = new OpenLayers.Control.ModifyFeature(vectorLayer, {
+            selectFeature = new OpenLayers.Control.SelectFeature(vectorLayer, {
                 autoActivate: true, // Do not forget to manually deactivate it !
+                multiple: false,
                 clickout: true,
                 toggle: false,
-                mode: OpenLayers.Control.ModifyFeature.DRAG | 
-                    OpenLayers.Control.ModifyFeature.RESHAPE
+                hover: false,
+                highlightOnly: false,
+                box: false
             });
             map.addLayer(vectorLayer);
-            map.addControls([getFeature, modifyFeature]);
+            map.addControls([getFeature, selectFeature]);
         },
 
         /*
          * Method: deactivate
          */
         deactivate: function() {
-            if (modifyFeature && getFeature) {
-                modifyFeature.deactivate();
+            if (selectFeature && getFeature) {
+                selectFeature.deactivate();
                 getFeature.deactivate();
                 // will take care of removing them from map:
-                modifyFeature.destroy();
+                selectFeature.destroy();
                 getFeature.destroy();
-                modifyFeature = null;
+                selectFeature = null;
                 getFeature = null;
             }
             // will take care of destroying protocol 

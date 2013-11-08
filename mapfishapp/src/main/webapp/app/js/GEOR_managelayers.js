@@ -482,33 +482,42 @@ GEOR.managelayers = (function() {
                         autoDestroy: true
                     }, layerRecord.getLayer().map);
 
-                    var matchGeomProperty =
-                        /^gml:(Multi)?(Point|LineString|Polygon|Curve|Surface|Geometry)PropertyType$/;
                     // here, we complement the protocol with a valid geometryName
                     // else, "the_geom" is used as default geometryName and this can lead to pbs
+                    var geomRecord;
                     attributeStore.each(function(r) {
-                        if (r.get('type').match(matchGeomProperty)) {
+                        if (r.get('type').match(GEOR.ows.matchGeomProperty)) {
+                            geomRecord = r;
                             protocol.setGeometryName(r.get('name'));
                             // stop looping:
                             return false;
                         }
                     });
+                    if (!geomRecord) {
+                        GEOR.util.infoDialog({
+                            msg: tr("The layer does not advertise a geometry column.")
+                        });
+                        return;
+                    }
                     var type = GEOR.ows.getSymbolTypeFromAttributeStore(attributeStore);
                     if (!OpenLayers.Handler[(type.type == 'Line') ? 'Path' : type.type]) {
                         GEOR.util.infoDialog({
                             title: OpenLayers.i18n("Read-only layer"),
-                            msg: OpenLayers.i18n("editingpanel.geom.error", {
+                            msg: OpenLayers.i18n("editingpanel.geom.error", { // FIXME
                                 'TYPE': type.type
                             })
                         });
-                    } else {
-                        GEOR.edit.activate({
-                            menuItem: menuItem,
-                            protocol: protocol,
-                            store: attributeStore,
-                            layer: layerRecord.getLayer()
-                        });
+                        return;
                     }
+                    // we do not need the geometry column record anymore:
+                    attributeStore.remove(geomRecord);
+                    // go for edition !
+                    GEOR.edit.activate({
+                        menuItem: menuItem,
+                        protocol: protocol,
+                        store: attributeStore,
+                        layer: layerRecord.getLayer()
+                    });
                 },
                 scope: this
             });
