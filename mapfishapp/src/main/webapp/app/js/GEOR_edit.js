@@ -225,6 +225,8 @@ GEOR.edit = (function() {
                 highlightOnly: false,
                 box: false
             });
+            // to allow map panning while on feature:
+            selectFeature.handlers.feature.stopDown = false;
             map.addLayer(vectorLayer);
             map.addControls([getFeature, selectFeature]);
         },
