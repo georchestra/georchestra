@@ -105,7 +105,7 @@ GEOR.edit = (function() {
                 click: false,
                 single: true,
                 maxFeatures: 1,
-                clickTolerance: 5,
+                clickTolerance: 7,
                 eventListeners: {
                     "hoverfeature": function(e) {
                         vectorLayer.removeFeatures(vectorLayer.features[0]);
@@ -128,9 +128,6 @@ GEOR.edit = (function() {
                         nocache: new Date().valueOf()
                     });
                     win.close();
-                    vectorLayer.destroyFeatures();
-                    // reactivate getFeature control: (to go on with editing)
-                    getFeature.activate();
                 },
                 "fail": function() {
                     GEOR.util.errorDialog({
@@ -146,17 +143,29 @@ GEOR.edit = (function() {
                 strategies: [strategy],
                 eventListeners: {
                     "featureselected": function(o) {
+                        /*
+                        if (o.feature === options.store.feature) {
+                            // we're already editing it
+                            return;
+                        }
+                        */
                         // we do not want to trigger additional useless XHRs 
                         // once one feature has been chosen for edition:
                         getFeature.deactivate();
-                        // we have to unselect it because 
+                        // we have to unselect the feature because 
                         // the modifyFeatureControl will standalone select it.
-                        selectFeature.unselect(o.feature);
+                        //selectFeature.unselect(o.feature);
+                        // we also have to deactivate the control, which will do both:
+                        selectFeature.deactivate();
                         // sync feature values to store
                         var store = options.store, 
                         a = o.feature.attributes;
                         store.each(function(r) {
-                            r.set("value", a[r.get("name")]);
+                            // idea: do not set the dirty flag:
+                            r.data["value"] = a[r.get("name")];
+                            // instead of
+                            //r.set("value", a[r.get("name")]);
+                            // FIXME
                         });
                         store.feature = o.feature;
                         store.bind.call(store);
@@ -170,6 +179,12 @@ GEOR.edit = (function() {
                             allowDelete: true,
                             border: false,
                             hideHeaders: true,
+                            modifyControlOptions: {
+                                clickout: false,
+                                toggle: false,
+                                mode: OpenLayers.Control.ModifyFeature.RESHAPE | 
+                                    OpenLayers.Control.ModifyFeature.DRAG
+                            },
                             viewConfig: {
                                 forceFit: true,
                                 scrollOffset: 2 // the grid will never have scrollbars
@@ -177,16 +192,15 @@ GEOR.edit = (function() {
                             listeners: {
                                 "done": function(panel, e) {
                                     var feature = e.feature, modified = e.modified;
-                                    if(feature.state != null) {
+                                    if (feature.state != null) {
                                         strategy.save();
                                     }
                                 },
                                 "cancel": function(panel, e) {
                                     var feature = e.feature, modified = e.modified;
                                     panel.cancel();
+                                    // closing window will cause destroy of it and associated components, including editorGrid:
                                     win.close();
-                                    // reactivate getFeature control: (to go on with editing)
-                                    getFeature.activate();
                                     // we call cancel() ourselves so return false here
                                     return false;
                                 }
@@ -196,15 +210,17 @@ GEOR.edit = (function() {
                             title: tr('Feature attributes'),
                             width: 440,
                             height: 350,
-                            closable: true,
+                            closable: false,
                             closeAction: "close",
                             resizable: true,
                             border: true,
                             layout: 'fit',
                             items: [editorGrid],
                             listeners: {
-                                "hide": function() {
-
+                                "close": function() {
+                                    // reactivate getFeature control: (to go on with editing)
+                                    getFeature.activate();
+                                    selectFeature.activate();
                                 },
                                 "show": function() {
 
