@@ -184,8 +184,8 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
         "servidor inalcanzable, etc.",
     "WFS server": "Servicio WFS",
     /* GEOR_managelayers.js strings */
-    //"Set as overlay": "Passer en calque",
-    //"Set as baselayer": "Passer en couche de fond",
+    "Set as overlay": "Pasar en capa de superposición",
+    "Set as baselayer": "Pasar en capa de fondo",
     "Confirm NAME layer deletion ?":
         "¿Confirma que se suprimirá la capa ${NAME}?",
     "1:MAXSCALE to 1:MINSCALE": "1:${MAXSCALE} a 1:${MINSCALE}",
