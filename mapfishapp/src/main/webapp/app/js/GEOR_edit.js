@@ -176,11 +176,12 @@ GEOR.edit = (function() {
                             store: store,
                             forceValidation: true,
                             trackMouseOver: true,
+                            width: 350,
                             allowSave: true,
                             allowCancel: true,
                             allowDelete: true,
                             border: false,
-                            hideHeaders: true,
+                            hideHeaders: false,
                             modifyControlOptions: {
                                 clickout: false,
                                 toggle: false,
@@ -188,8 +189,7 @@ GEOR.edit = (function() {
                                     OpenLayers.Control.ModifyFeature.DRAG
                             },
                             viewConfig: {
-                                forceFit: true,
-                                scrollOffset: 2 // the grid will never have scrollbars
+                                forceFit: true
                             },
                             listeners: {
                                 "done": function(panel, e) {
@@ -211,7 +211,7 @@ GEOR.edit = (function() {
                         win = new GeoExt.Popup({
                             location: store.feature,
                             title: tr('Feature attributes'),
-                            width: 350,
+                            //width: 350,
                             height: 250,
                             panIn: false,
                             border: true,
