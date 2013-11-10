@@ -18,12 +18,20 @@
  * @include OpenLayers/Control/SelectFeature.js
  * @include OpenLayers/Layer/Vector.js
  * @include OpenLayers/Strategy/Save.js
+ * @requires GeoExt/data/AttributeStore.js
  * @include GeoExt/widgets/Popup.js
  * @include GeoExt.ux/FeatureEditorGrid.js
  * @include GEOR_util.js
  */
 
 Ext.namespace("GEOR");
+
+// missing piece in AttributeStore:
+GeoExt.data.AttributeStore.prototype.unbind = function() {
+    this.un("update", this.onUpdate, this);
+    this.un("load", this.onLoad, this);
+    this.un("add", this.onAdd, this);
+};
 
 GEOR.edit = (function() {
 
@@ -144,20 +152,13 @@ GEOR.edit = (function() {
                 strategies: [strategy],
                 eventListeners: {
                     "featureselected": function(o) {
-                        /*
-                        if (o.feature === options.store.feature) {
-                            // we're already editing it
-                            return;
-                        }
-                        */
                         // we do not want to trigger additional useless XHRs 
                         // once one feature has been chosen for edition:
                         getFeature.deactivate();
                         // we have to unselect the feature because 
                         // the modifyFeatureControl will standalone select it.
-                        //selectFeature.unselect(o.feature);
                         // we also have to deactivate the control, which will do both:
-                        selectFeature.deactivate();
+                        selectFeature.deactivate(); // calls unselect(o.feature) before
                         // sync feature values to store
                         var store = options.store, 
                         a = o.feature.attributes;
@@ -223,6 +224,11 @@ GEOR.edit = (function() {
                             layout: 'fit',
                             items: [editorGrid],
                             listeners: {
+                                "destroy": function() {
+                                    // called after close:
+                                    store.unbind.call(store);
+                                    vectorLayer.removeAllFeatures();
+                                },
                                 "close": function() {
                                     // reactivate getFeature control: (to go on with editing)
                                     getFeature.activate();
@@ -258,6 +264,8 @@ GEOR.edit = (function() {
          */
         deactivate: function() {
             if (selectFeature && getFeature) {
+                // remove the 2 lines below when
+                // http://trac.openlayers.org/ticket/2210 is fixed
                 selectFeature.deactivate();
                 getFeature.deactivate();
                 // will take care of removing them from map:

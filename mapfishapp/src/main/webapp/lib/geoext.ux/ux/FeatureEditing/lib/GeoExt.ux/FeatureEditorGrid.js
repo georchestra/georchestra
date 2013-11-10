@@ -304,7 +304,7 @@ GeoExt.ux.FeatureEditorGrid = Ext.extend(Ext.grid.EditorGridPanel, {
      *  Called when a feature is modified in the layer.
      */
     onFeaturemodified: function(e) {
-        if(e.feature === this.store.feature) {
+        if(this.store && e.feature === this.store.feature) {
             this.dirty = true;
             this.saveButton.setDisabled();
         }
