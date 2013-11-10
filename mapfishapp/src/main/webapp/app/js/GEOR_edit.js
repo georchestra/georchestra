@@ -18,6 +18,7 @@
  * @include OpenLayers/Control/SelectFeature.js
  * @include OpenLayers/Layer/Vector.js
  * @include OpenLayers/Strategy/Save.js
+ * @include GeoExt/widgets/Popup.js
  * @include GeoExt.ux/FeatureEditorGrid.js
  * @include GEOR_util.js
  */
@@ -206,14 +207,19 @@ GEOR.edit = (function() {
                                 }
                             }
                         });
-                        win = new Ext.Window({
+                        win = new GeoExt.Popup({
+                            location: store.feature,
                             title: tr('Feature attributes'),
-                            width: 440,
-                            height: 350,
+                            width: 350,
+                            height: 250,
+                            panIn: false,
+                            border: true,
+                            anchorPosition: "top-left",
+                            collapsible: false,
                             closable: false,
                             closeAction: "close",
                             resizable: true,
-                            border: true,
+                            unpinnable: false,
                             layout: 'fit',
                             items: [editorGrid],
                             listeners: {
