@@ -898,6 +898,7 @@ GEOR.managelayers = (function() {
                 xtype: "treepanel",
                 id: "geor-layerManager",
                 autoScroll: true,
+                trackMouseOver: false,
                 enableDD: true,
                 loader: {
                     applyLoader: false,
