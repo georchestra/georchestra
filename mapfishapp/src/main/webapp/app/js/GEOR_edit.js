@@ -220,7 +220,8 @@ GEOR.edit = (function() {
                             closable: true,
                             closeAction: "close",
                             resizable: true,
-                            unpinnable: false,
+                            unpinnable: true,
+                            constrainHeader: true,
                             layout: 'fit',
                             items: [editorGrid],
                             listeners: {
