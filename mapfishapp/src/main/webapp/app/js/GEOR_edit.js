@@ -263,6 +263,9 @@ GEOR.edit = (function() {
          * Method: deactivate
          */
         deactivate: function() {
+            if (win) {
+                win.close();
+            }
             if (selectFeature && getFeature) {
                 // remove the 2 lines below when
                 // http://trac.openlayers.org/ticket/2210 is fixed
