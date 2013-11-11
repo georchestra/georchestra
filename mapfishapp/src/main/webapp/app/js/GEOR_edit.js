@@ -200,8 +200,8 @@ GEOR.edit = (function() {
                                 },
                                 "cancel": function(panel, e) {
                                     var feature = e.feature, modified = e.modified;
-                                    panel.cancel();
-                                    // closing window will cause destroy of it and associated components, including editorGrid:
+                                    // closing window will cause destroy of it and associated components, 
+                                    // including editorGrid:
                                     win.close();
                                     // we call cancel() ourselves so return false here
                                     return false;
@@ -217,7 +217,7 @@ GEOR.edit = (function() {
                             border: true,
                             anchorPosition: "top-left",
                             collapsible: false,
-                            closable: false,
+                            closable: true,
                             closeAction: "close",
                             resizable: true,
                             unpinnable: false,
@@ -230,6 +230,7 @@ GEOR.edit = (function() {
                                     vectorLayer.removeAllFeatures();
                                 },
                                 "close": function() {
+                                    editorGrid.cancel();
                                     // reactivate getFeature control: (to go on with editing)
                                     getFeature.activate();
                                     selectFeature.activate();
