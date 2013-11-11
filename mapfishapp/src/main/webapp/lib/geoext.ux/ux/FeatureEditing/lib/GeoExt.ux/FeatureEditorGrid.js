@@ -241,12 +241,19 @@ GeoExt.ux.FeatureEditorGrid = Ext.extend(Ext.grid.EditorGridPanel, {
         this.dirty = feature.state == OpenLayers.State.INSERT;
 
         // create column model
-        var columns = [
-            { header: this.nameHeader, dataIndex: this.nameField },
-            new Ext.grid.Column({
+        var columns = [{ 
+            header: this.nameHeader,
+            dataIndex: this.nameField,
+            sortable: true,
+            width: 100,
+            fixed: true
+        }, new Ext.grid.Column({
+                id: "value",
                 header: this.valueHeader,
                 dataIndex: "value",
                 editable: true,
+                menuDisabled: true,
+                sortable: true,
                 getEditor: this.getEditor.createDelegate(this)
             })
         ];

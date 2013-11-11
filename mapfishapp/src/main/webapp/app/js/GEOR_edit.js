@@ -174,12 +174,38 @@ GEOR.edit = (function() {
                             store: store,
                             forceValidation: true,
                             trackMouseOver: true,
-                            width: 350,
+                            width: 400,
                             allowSave: true,
                             allowCancel: true,
                             allowDelete: true,
                             border: false,
                             hideHeaders: false,
+                            // make the value column the biggest:
+                            autoExpandColumn: "value",
+                            extraColumns: [{
+                                header: tr("Type"),
+                                dataIndex: "type",
+                                width: 50,
+                                fixed: true,
+                                menuDisabled: true,
+                                sortable: true,
+                                renderer: function(v) {
+                                    var r = v.split(":");
+                                    return tr(r.pop());
+                                }
+                            }, {
+                                header: tr("Nillable"),
+                                dataIndex: "nillable",
+                                width: 50,
+                                fixed: true,
+                                menuDisabled: true,
+                                sortable: true,
+                                renderer: function(v) {
+                                    return v ? 
+                                        '<img src="app/img/famfamfam/tick.gif" style="width:12px;height:12px;" alt="' + tr("Yes") + '">' : 
+                                        '<img src="app/img/nope.gif" style="width:12px;height:12px;" alt="' + tr("No") + '">';
+                                }
+                            }],
                             modifyControlOptions: {
                                 clickout: false,
                                 toggle: false,
