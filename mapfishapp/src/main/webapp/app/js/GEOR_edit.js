@@ -163,11 +163,9 @@ GEOR.edit = (function() {
                         var store = options.store, 
                         a = o.feature.attributes;
                         store.each(function(r) {
-                            // idea: do not set the dirty flag:
-                            r.data["value"] = a[r.get("name")];
-                            // instead of
-                            //r.set("value", a[r.get("name")]);
-                            // FIXME
+                            r.set("value", a[r.get("name")]);
+                            // reset the dirty flag:
+                            r.commit(true); // equivalent to r.dirty = false;
                         });
                         store.feature = o.feature;
                         store.bind.call(store);
