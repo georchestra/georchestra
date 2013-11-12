@@ -236,7 +236,6 @@ GEOR.edit = (function() {
                         win = new GeoExt.Popup({
                             location: store.feature,
                             title: tr('Feature attributes'),
-                            //width: 350,
                             height: 250,
                             panIn: false,
                             border: true,
@@ -256,7 +255,11 @@ GEOR.edit = (function() {
                                     vectorLayer.removeAllFeatures();
                                 },
                                 "close": function() {
-                                    editorGrid.cancel();
+                                    if (store.feature && store.feature.layer) {
+                                        editorGrid.cancel();
+                                        // cancel() makes the assumption that feature.layer is defined
+                                        // which is not our case here when the feature is deleted.
+                                    }
                                     // reactivate getFeature control: (to go on with editing)
                                     getFeature.activate();
                                     selectFeature.activate();
