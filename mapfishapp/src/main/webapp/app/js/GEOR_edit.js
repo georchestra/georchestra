@@ -175,6 +175,7 @@ GEOR.edit = (function() {
                             forceValidation: true,
                             trackMouseOver: true,
                             width: 400,
+                            cls: "editorgrid",
                             allowSave: true,
                             allowCancel: true,
                             allowDelete: true,

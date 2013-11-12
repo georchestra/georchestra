@@ -455,3 +455,8 @@ div.olMapViewport {
 #geor-layerManager .geor-baselayer {
 	background-color: #f2f0f5;
 }
+
+/* Mouse pointer hover editor grid row: */
+.editorgrid .x-grid3-td-value div {
+	cursor: pointer !important;
+}
