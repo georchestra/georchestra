@@ -258,7 +258,7 @@ GEOR.edit = (function() {
                                     if (store.feature && store.feature.layer) {
                                         editorGrid.cancel();
                                         // cancel() makes the assumption that feature.layer is defined
-                                        // which is not our case here when the feature is deleted.
+                                        // which is not the case here when the feature is deleted.
                                     }
                                     // reactivate getFeature control: (to go on with editing)
                                     getFeature.activate();
