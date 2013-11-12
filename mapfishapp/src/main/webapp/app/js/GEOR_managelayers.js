@@ -485,7 +485,7 @@ GEOR.managelayers = (function() {
 
                     // here, we complement the protocol with a valid geometryName
                     // else, "the_geom" is used as default geometryName and this can lead to pbs
-                    var geomRecord;
+                    var geomRecord, roGeo = false;
                     attributeStore.each(function(r) {
                         if (r.get('type').match(GEOR.ows.matchGeomProperty)) {
                             geomRecord = r;
@@ -498,7 +498,8 @@ GEOR.managelayers = (function() {
                         GEOR.util.infoDialog({
                             msg: tr("The layer does not advertise a geometry column.")
                         });
-                        return;
+                        // then work in attributes editing "only" mode:
+                        roGeo = true;
                     }
                     var type = GEOR.ows.getSymbolTypeFromAttributeStore(attributeStore);
                     if (!OpenLayers.Handler[(type.type == 'Line') ? 'Path' : type.type]) {
@@ -508,16 +509,21 @@ GEOR.managelayers = (function() {
                                 'TYPE': type.type
                             })
                         });
-                        return;
+                        // then work in attributes editing "only" mode:
+                        roGeo = true;
                     }
                     // we do not need the geometry column record anymore:
-                    attributeStore.remove(geomRecord);
+                    if (geomRecord) {
+                        attributeStore.remove(geomRecord);
+                    }
                     // go for edition !
                     GEOR.edit.activate({
                         menuItem: menuItem,
                         protocol: protocol,
                         store: attributeStore,
-                        layer: layerRecord.getLayer()
+                        layer: layerRecord.getLayer(),
+                        geomType: type.type, // FIXME: Line, Point, Polygon only ATM !
+                        roGeometry: roGeo
                     });
                 },
                 scope: this

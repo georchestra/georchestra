@@ -176,6 +176,12 @@ GEOR.edit = (function() {
                             trackMouseOver: true,
                             width: 400,
                             cls: "editorgrid",
+                            modifyControlOptions: {
+                                // hack to make all features unselectable
+                                // thus unmodifable, in Read Only mode:
+                                geometryTypes: options.roGeometry ? 
+                                    "none" : options.geomType
+                            },
                             allowSave: true,
                             allowCancel: true,
                             allowDelete: true,
