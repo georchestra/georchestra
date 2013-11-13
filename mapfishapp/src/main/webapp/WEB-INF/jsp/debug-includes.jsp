@@ -46,20 +46,10 @@
 
     <script type="text/javascript" src="app/js/GEOR_config.js"></script>
     <script type="text/javascript" src="app/js/GEOR_Lang/<%= lang %>.js"></script>
-            <c:choose>
-                <c:when test='${c.edit}'>
-    <script type="text/javascript" src="lib/Ext.ux/lib/Ext.ux/widgets/collapsedtitle/PanelCollapsedTitle.js"></script>
-    <script type="text/javascript" src="app/js/GEOR_Editing/GEOR_LayerEditingPanel.js"></script>
-    <script type="text/javascript" src="app/js/GEOR_Editing/GEOR_EditingPanel.js"></script>
-    <script type="text/javascript" src="app/js/GEOR_editing.js"></script>
-                </c:when>
-                <c:otherwise>
     <script type="text/javascript" src="app/js/GEOR_querier.js"></script>
     <script type="text/javascript" src="app/js/GEOR_styler.js"></script>
     <script type="text/javascript" src="app/js/GEOR_getfeatureinfo.js"></script>
     <script type="text/javascript" src="app/js/GEOR_ResultsPanel.js"></script>
-                </c:otherwise>
-            </c:choose>
     <script type="text/javascript" src="app/js/GEOR_util.js"></script>
     <script type="text/javascript" src="app/js/GEOR_FeatureDataModel.js"></script>
     <script type="text/javascript" src="app/js/GEOR_ClassificationPanel.js"></script>
