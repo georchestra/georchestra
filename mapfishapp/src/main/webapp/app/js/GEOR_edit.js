@@ -314,6 +314,9 @@ GEOR.edit = (function() {
             if (roGeometry) {
                 return;
             }
+            if (win) {
+                win.close();
+            }
             getFeature.deactivate();
             selectFeature.deactivate();
             var handler = OpenLayers.Handler[(geomType == 'Line') ? 'Path' : geomType];
