@@ -310,11 +310,12 @@ GEOR.ows = (function() {
                 layer = layer.get("layer");
             }
             options = options || {};
+            var url = (layer.url instanceof Array) ? layer.url[0] : layer.url;
             var storeOptions = Ext.applyIf({
                 // For some reason, if layer.url ends up with ?
                 // the generated request URL is not correct
                 // see http://applis-bretagne.fr/redmine/issues/1979
-                url: layer.url.replace(/\?$/,''),
+                url: url.replace(/\?$/,''),
                 baseParams: Ext.applyIf({
                     "REQUEST": "DescribeLayer",
                     "LAYERS": layer.params.LAYERS,
