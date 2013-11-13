@@ -4,9 +4,6 @@
     <bean id="homecontroller" 
           class="org.georchestra.mapfishapp.ws.HomeController"/>
 
-    <bean id="editcontroller" 
-          class="org.georchestra.mapfishapp.ws.EditController"/>
-
     <!--  url mapping is directly handled with the spring annotations written in the following controllers -->
     <bean class="org.georchestra.mapfishapp.ws.OGCProxy">
     </bean>
