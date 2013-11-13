@@ -502,7 +502,7 @@ GEOR.managelayers = (function() {
                     });
                     if (!geomRecord) {
                         GEOR.util.infoDialog({
-                            msg: tr("The layer does not advertise a geometry column.")
+                            msg: tr("The layer does not advertise a geometry column.") // TODO: better message (mention read-only geometries)
                         });
                         // then work in attributes editing "only" mode:
                         roGeo = true;
@@ -510,8 +510,8 @@ GEOR.managelayers = (function() {
                     var type = GEOR.ows.getSymbolTypeFromAttributeStore(attributeStore);
                     if (!OpenLayers.Handler[(type.type == 'Line') ? 'Path' : type.type]) {
                         GEOR.util.infoDialog({
-                            title: OpenLayers.i18n("Read-only layer"),
-                            msg: OpenLayers.i18n("editingpanel.geom.error", { // FIXME
+                            title: tr("Read-only layer"),
+                            msg: tr("editingpanel.geom.error", { // TODO: change message key !
                                 'TYPE': type.type
                             })
                         });

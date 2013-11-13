@@ -29,9 +29,12 @@
  * @include GEOR_tools.js
  * @include GEOR_edit.js
  * @include GEOR_wmcbrowser.js
- * Note that GEOR_getfeatureinfo.js, GEOR_ResultsPanel.js, GEOR_querier.js,
- * GEOR_styler.js should be included here, but they are not required by the edit module.
- * In order to make the edit build "light", those files will be added in main.cfg and not here.
+ * @include GEOR_getfeatureinfo.js
+ * @include GEOR_selectfeature.js
+ * @include GEOR_ResultsPanel.js
+ * @include GEOR_querier.js
+ * @include GEOR_styler.js
+ * @include GEOR_wmc.js
  */
 
 Ext.namespace("GEOR");

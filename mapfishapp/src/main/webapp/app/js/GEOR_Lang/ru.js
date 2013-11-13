@@ -338,31 +338,6 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     /* GEOR_EditingPanel.js */
     "Read-only layer": "Cлой только для прочтения",
     "editingpanel.geom.error": "Геометрия этого слоя следующего типа : ${TYPE}.<br/>Только следующие геометрические типы подлежат редактированию : точка, линия и многоугольник (а также много-, мульти-)",
-    "choose a layer": "Выберите слой",
-    /* GEOR_LayerEditingPanel.js */
-    "Modify object": "Изменить объект",
-    "Cancel all": "Отменить всё ou Аннулировать всё",
-    "Enter ": "Ввести",
-    "layereditingpanel.cancel.confirm": "Вы действительно желаете отменить все изменения<br />после последней синхронизации?",
-    "Synchronize": "Синхронизировать",
-    "layereditingpanel.changes.confirm": "Пожалуйста, подтвердите или отмените текущие изменения.",
-    "Delete": "Удалить",
-    "Confirm": "Подтвердить",
-    " (required)": "требуемый",
-    "Text too long": "Текст слишком длинный",
-    "Text too short": "Текст слишком короткий",
-    "Maximum value exceeded": "Максимальное значение превышено",
-    "Minimum value not reached": "Минимальное значение не достигнуто",
-    "Invalid number": "Число недействительно",
-    "Synchronization successful.": "Синхронизация прошла успешно.",
-    "Synchronization failed.": "Произошла ошибка во время процесса синхронизации.",
-    "Recover": "Восстановить",
-    "No feature selected !": "Ни одна функция не выбрана",
-    "a point": "точка",
-    "a line": "линия",
-    "a polygon": "многоугольник",
-    "Pending changes": "Идёт процесс внесения изменений",
-    "Do you want to confirm changes ?": "Желаете ли вы подтвердить изменения?",
     /* GeoExt.data.CSW.js */
     "no abstract": "нет резюме"
     // no trailing comma

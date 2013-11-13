@@ -298,26 +298,11 @@ div.olMapViewport {
     width:20px !important;
 }
 
-/* TODO: remove those classes when /mapfishapp/edit is deprecated */
-
-.drawpoint {
-  background-image:url(../img/geosilk/pencil_add.png) !important;
-}
-
-.drawline {
-  background-image:url(../img/geosilk/line_orange_add.png) !important;
-}
-
-.drawpolygon {
-  background-image:url(../img/geosilk/shape_square_orange_add.png) !important;
-}
-
 .info {
   background-image:url(../img/mapfish/info.png) !important;
   height:20px !important;
   width:20px !important;
 }
-
 
 .even {
 	background: #F0F0F0

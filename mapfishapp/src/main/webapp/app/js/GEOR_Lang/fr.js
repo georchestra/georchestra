@@ -121,7 +121,6 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Precise your request.": "Précisez votre requête.",
     "No metadata matches the query.":
         "Aucune métadonnée ne correspond à la requête.",
-    /* GEOR_editing.js strings */
     /* GEOR_fileupload.js strings */
     "Local file": "Fichier",
     "The service is inactive": "Le service est inactif",
@@ -438,32 +437,6 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "editingpanel.geom.error": "La géométrie de cette couche est de type ${TYPE}.<br/>" +
         "Seules les géométries de type point, ligne et polygone" +
         " (et multi-*) sont éditables.",
-    "choose a layer": "choisissez une couche",
-    /* GEOR_LayerEditingPanel.js */
-    "Modify object": "Modifier un objet",
-    "Cancel all": "Tout annuler",
-    "Enter ": "Saisir ",
-    "layereditingpanel.cancel.confirm": "Souhaitez-vous vraiment annuler toutes les modifications<br />depuis la dernière synchronisation ?",
-    "Synchronize": "Synchroniser",
-    "layereditingpanel.changes.confirm": "Veuillez confirmer ou annuler " +
-        "les modifications en cours.",
-    "Delete": "Supprimer",
-    "Confirm": "Confirmer",
-    " (required)": " (requis)",
-    "Text too long": "Texte trop long",
-    "Text too short": "Texte trop court",
-    "Maximum value exceeded": "Valeur maximale dépassée",
-    "Minimum value not reached": "Valeur minimale non atteinte",
-    "Invalid number": "Nombre non valide",
-    "Synchronization successful.": "Synchronisation réussie.",
-    "Synchronization failed.": "Erreur lors de la synchronisation.",
-    "Recover": "Restaurer",
-    "No feature selected !": "Aucun objet sélectionné !",
-    "a point": "un point",
-    "a line": "une ligne",
-    "a polygon": "un polygone",
-    "Pending changes": "Modifications en cours",
-    "Do you want to confirm changes ?": "Souhaitez-vous confirmer les modifications ?",
     /* GeoExt.data.CSW.js */
     "no abstract": "pas de résumé"
     // no trailing comma

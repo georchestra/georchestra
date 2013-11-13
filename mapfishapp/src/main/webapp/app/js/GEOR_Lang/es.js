@@ -442,33 +442,6 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "editingpanel.geom.error": "La geometría de esta capa es de tipo " +
         "${TYPE}.<br/>Sólo se puede editar las geometrías de tipo punto, " +
         "línea y polígono (y multi-*).",
-    "choose a layer": "elija una capa",
-    /* GEOR_LayerEditingPanel.js */
-    "Modify object": "Modificar un objeto",
-    "Cancel all": "Cancelar todo",
-    "Enter ": "Entrar ",
-    "layereditingpanel.cancel.confirm": "Confirma la cancelación de todas " +
-        "las modificación<br />desde la última sincronización ?",
-    "Synchronize": "Sincronizar",
-    "layereditingpanel.changes.confirm": "Confirmar o cancelar las " +
-        "modificaciones en curso.",
-    "Delete": "Quitar",
-    "Confirm": "Confirmar",
-    " (required)": " (requerido)",
-    "Text too long": "Texto demasiado largo",
-    "Text too short": "Texto demasiado corto",
-    "Maximum value exceeded": "Excede el valor máximo",
-    "Minimum value not reached": "No llega al valor mínimo",
-    "Invalid number": "Número invalido",
-    "Synchronization successful.": "Sincronización exitosa.",
-    "Synchronization failed.": "Error durante la sincronización.",
-    "Recover": "Restaurar",
-    "No feature selected !": "Ningún objeto seleccionado !",
-    "a point": "un punto",
-    "a line": "una línea",
-    "a polygon": "un polígono",
-    "Pending changes": "Modificaciones en curso",
-    "Do you want to confirm changes ?": "¿Desea confirmar las modificaciones ?",
     /* GeoExt.data.CSW.js */
     "no abstract": "ningún abstracto"
     // no trailing comma
