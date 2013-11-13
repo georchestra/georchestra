@@ -215,7 +215,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     //"Draw new line": "Dessiner une nouvelle ligne",
     //"Draw new polygon": "Dessiner un nouveau polygone",
     //"Edition": "Edition",
-    //"Editing": "Edition",
+    //"Editing": "Edition en cours",
     //"Switch on/off edit mode for this layer": "Basculer cette couche en mode édition",
     /* GEOR_map.js strings */
     "Location map": "Mapa de ubicación",
