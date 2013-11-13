@@ -166,7 +166,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     //"Draw new line": "Dessiner une nouvelle ligne",
     //"Draw new polygon": "Dessiner un nouveau polygone",
     //"Edition": "Edition",
-    //"Editing": "Edition en cours",
+    "Editing": "Издание",
     //"Switch on/off edit mode for this layer": "Basculer cette couche en mode édition",
     /* GEOR_map.js strings */
     "Location map": "арта локализации",

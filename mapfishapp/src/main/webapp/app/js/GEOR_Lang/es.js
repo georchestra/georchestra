@@ -43,7 +43,6 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Addresses": "Direcciones",
     "Recentering on a given address": "Posicionarse sobre una dirección",
     "Available layers": "Capas disponibles",
-    "Editing": "Edición",
     "WMS Search": "WMS Buscar",
     "WFS Search": "WFS Buscar",
     "resultspanel.emptytext":
