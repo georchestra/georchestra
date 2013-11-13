@@ -102,6 +102,12 @@ GEOR.managelayers = (function() {
     var tr = null;
 
     /**
+     * Property: panelCache
+     * {Object} an object storing references to layer panels keyed by record.id
+     */
+    var panelCache;
+
+    /**
      * Method: actionHandler
      * The action listener.
      */
@@ -460,11 +466,11 @@ GEOR.managelayers = (function() {
      * Callback executed on edit menu item clicked
      *
      * Parameters:
-     * menuItem - {Ext.menu.Item}
+     * splitButton - {Ext.SplitButton}
      * layerRecord - {GeoExt.data.LayerRecord}
      */
-    var editHandler = function(menuItem, layerRecord) {
-        if (menuItem.text === tr("Edit this layer")) {
+    var editHandler = function(splitButton, layerRecord) {
+        if (splitButton.text === tr("Edition")) {
             // start editing
             var o = {
                 owsURL: layerRecord.get("WFS_URL"),
@@ -511,6 +517,8 @@ GEOR.managelayers = (function() {
                         });
                         // then work in attributes editing "only" mode:
                         roGeo = true;
+                    } else {
+                        layerRecord.set("geometryType", type.type); // TODO: handle multi-*
                     }
                     // we do not need the geometry column record anymore:
                     if (geomRecord) {
@@ -518,7 +526,7 @@ GEOR.managelayers = (function() {
                     }
                     // go for edition !
                     GEOR.edit.activate({
-                        menuItem: menuItem,
+                        splitButton: splitButton,
                         protocol: protocol,
                         store: attributeStore,
                         layer: layerRecord.getLayer(),
@@ -755,19 +763,9 @@ GEOR.managelayers = (function() {
             });
         }
 
-        if (hasEquivalentWFS) {
-            insertSep();
-            item = new Ext.menu.Item({
-                iconCls: 'geor-btn-edit',
-                text: tr("Edit this layer")
-            });
-            item.on("click", editHandler.createCallback(item, layerRecord));
-            menuItems.push(item);
-        }
-
         if (isWMS || isWMTS) {
             menuItems.push("-");
-            stylesMenu = createStylesMenu(layerRecord);
+            stylesMenu = createStylesMenu(layerRecord); // FIXME: should not be affected to a global var in this module !
             menuItems.push({
                 text: tr("Choose a style"),
                 menu: stylesMenu
@@ -789,6 +787,43 @@ GEOR.managelayers = (function() {
                 }
             });
         }
+        return menuItems;
+    };
+
+    /**
+     * Method: createEditionItems
+     *
+     * Parameters:
+     * layerRecord - {GeoExt.data.LayerRecord}
+     *
+     * Returns:
+     * {Array} An array of menu items, empty if the WMS layer 
+     * is not yet described.
+     */
+    var createEditionItems = function(layerRecord) {
+        var type = layerRecord.get("type"),
+
+        isWMS = type === "WMS",
+
+        hasEquivalentWFS = isWMS ?
+                layerRecord.hasEquivalentWFS() : false,
+
+        menuItems = [], draw;
+
+        if (isWMS && !layerRecord.get("_described")) {
+            return [];
+        }
+
+        if (hasEquivalentWFS) {
+            type = layerRecord.get("geometryType").toLowerCase();
+            draw = new Ext.menu.Item({
+                iconCls: 'geor-btn-edit-'+type,
+                handler: GEOR.edit.draw,
+                text: tr("Draw new " + type)
+            });
+            menuItems.push(draw);
+        }
+
         return menuItems;
     };
 
@@ -844,6 +879,60 @@ GEOR.managelayers = (function() {
                     }
                 }
             })
+        }, {
+            xtype: "splitbutton",
+            text: tr("Edition"),
+            tooltip: tr("Switch on/off edit mode for this layer"), 
+            disabled: true, // enabled on WMS layer successfully described
+            handler: function() {
+                if (this.disabled) {
+                    // do nothing
+                    return;
+                }
+                editHandler(this, layerRecord);
+            },
+            arrowHandler: function() {
+                if (this.disabled) {
+                    // do nothing
+                    return;
+                }
+            },
+            menu: new Ext.menu.Menu({
+                items: [],
+                ignoreParentClicks: true,
+                listeners: {
+                    "beforeshow": function(menu) {
+                        if (this.ownerCt.text === tr("Edition")) {
+                            // we're activating edit mode when drop down is clicked:
+                            editHandler(this.ownerCt, layerRecord);
+                            // no menu displayed when edit mode is toggled off:
+                            return false;
+                        }
+                        if (menu.items.length) {
+                            // allow menu appearance
+                            return true;
+                        }
+                        // wait for the layer to be described
+                        var task = Ext.TaskMgr.start({
+                            run: function() {
+                                var menuItems = createEditionItems(layerRecord);
+                                menu.removeAll();
+                                if (!menuItems.length) {
+                                    menu.add(tr("Loading..."));
+                                } else {
+                                    // create + add menu items
+                                    Ext.each(menuItems, function(item) {
+                                        menu.add(item);
+                                    });
+                                    // stop this task
+                                    Ext.TaskMgr.stop(task);
+                                }
+                            },
+                            interval: 20
+                        });
+                    }
+                }
+            })
         }, '-', {
             xtype: "gx_opacityslider",
             width: 100,
@@ -878,8 +967,7 @@ GEOR.managelayers = (function() {
         panelItems.push(formatAttribution(layerRecord));
 
         // return the panel
-        return {
-            xtype: "panel",
+        panelCache[layerRecord.id] = new Ext.Panel({
             border: false,
             cls: "gx-tree-layer-panel",
             // we add a class to the bwrap element
@@ -903,7 +991,8 @@ GEOR.managelayers = (function() {
                     }
                 });
             }
-        };
+        });
+        return panelCache[layerRecord.id];
     };
 
     /*
@@ -927,6 +1016,7 @@ GEOR.managelayers = (function() {
          */
         create: function(layerStore) {
             tr = OpenLayers.i18n;
+            panelCache = {};
             Ext.QuickTips.init();
             // create the layer container
             layerContainer = new GeoExt.tree.LayerContainer({
@@ -1022,6 +1112,29 @@ GEOR.managelayers = (function() {
                     }
                 }]
             };
+        },
+
+        /**
+         * APIMethod: updatePanel
+         * Updates the layer panel appearance once the layer has been described.
+         *
+         * Parameters:
+         * layerRecord - {GeoExt.data.LayerRecord} A layer record.
+         */
+        updatePanel: function(layerRecord) {
+            if (!layerRecord || !layerRecord.id) {
+                return;
+            }
+            var panel = panelCache[layerRecord.id];
+            if (!panel) {
+                return;
+            }
+            var btn = panel.findByType("splitbutton")[0];
+            if (layerRecord.get("type") === "WMS" && layerRecord.hasEquivalentWFS()) {
+                btn.enable();
+            } else {
+                btn.disable();
+            }
         },
 
         /**

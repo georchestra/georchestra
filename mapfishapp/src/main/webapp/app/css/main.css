@@ -298,6 +298,8 @@ div.olMapViewport {
     width:20px !important;
 }
 
+/* TODO: remove those classes when /mapfishapp/edit is deprecated */
+
 .drawpoint {
   background-image:url(../img/geosilk/pencil_add.png) !important;
 }
@@ -459,4 +461,20 @@ div.olMapViewport {
 /* Mouse pointer hover editor grid row: */
 .editorgrid .x-grid3-td-value div {
 	cursor: pointer !important;
+}
+
+.now-editing button {
+    color: red;
+}
+
+.geor-btn-edit-point {
+    background-image:url(../img/geosilk/pencil_add.png) !important;
+}
+
+.geor-btn-edit-line {
+	background-image:url(../img/geosilk/line_orange_add.png) !important;
+}
+
+.geor-btn-edit-polygon {
+	background-image:url(../img/geosilk/shape_square_orange_add.png) !important;
 }

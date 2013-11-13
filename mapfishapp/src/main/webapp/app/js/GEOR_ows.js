@@ -62,6 +62,7 @@ GEOR.ows = (function() {
         {name: "WCS_URL", type: "string"},
         {name: "WFS_typeName", type: "string"},
         {name: "WFS_URL", type: "string"},
+        {name: "geometryType", type: "string", defaultValue: "unknown"},
         // end geOrchestra use
         {name: "name", type: "string"},
         {name: "title", type: "string"},

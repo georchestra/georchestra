@@ -321,6 +321,11 @@ Ext.namespace("GEOR");
          * acting as a mediator between the modules with
          * the objective of making them independent.
          */
+        GEOR.map.events.on({
+            "describelayer": function(record) {
+                GEOR.managelayers.updatePanel(record);
+            }
+        });
         if (GEOR.querier) {
             var querierTitle;
             GEOR.querier.events.on({

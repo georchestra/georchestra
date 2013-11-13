@@ -211,8 +211,12 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "source: ": "fuente: ",
     "unknown": "desconocido",
     "Actions": "Acciones",
-    //"Edit this layer": "Editer cette couche",
-    //"Stop editing": "Arrêter l'édition",
+    //"Draw new point": "Dessiner un nouveau point",
+    //"Draw new line": "Dessiner une nouvelle ligne",
+    //"Draw new polygon": "Dessiner un nouveau polygone",
+    //"Edition": "Edition",
+    //"Editing": "Edition",
+    //"Switch on/off edit mode for this layer": "Basculer cette couche en mode édition",
     /* GEOR_map.js strings */
     "Location map": "Mapa de ubicación",
     "Warning after loading layer":

@@ -16,6 +16,10 @@
 /*
  * @include OpenLayers/Control/GetFeature.js
  * @include OpenLayers/Control/SelectFeature.js
+ * @include OpenLayers/Control/DrawFeature.js
+ * @include OpenLayers/Handler/Point.js
+ * @include OpenLayers/Handler/Path.js
+ * @include OpenLayers/Handler/Polygon.js
  * @include OpenLayers/Layer/Vector.js
  * @include OpenLayers/Strategy/Save.js
  * @requires GeoExt/data/AttributeStore.js
@@ -52,6 +56,12 @@ GEOR.edit = (function() {
     var selectFeature;
 
     /**
+     * Property: drawFeature
+     * {OpenLayers.Control.DrawFeature}
+     */
+    var drawFeature;
+
+    /**
      * Property: vectorLayer
      * {OpenLayers.Layer.Vector}
      */
@@ -70,19 +80,14 @@ GEOR.edit = (function() {
     var strategy;
 
     /**
-     * Property: menuItem
-     * {Ext.menu.Item} The menu item for the current layer in edition
+     * Property: splitButton
+     * {Ext.SplitButton} The edition button
      */
-    var menuItem;
+    var splitButton;
 
-    var tr, win;
+    var tr, win, geomType, roGeometry;
 
     return {
-    
-        /*
-         * Observable object
-         */
-        //events: observable,
         
         /**
          * APIMethod: init
@@ -104,8 +109,11 @@ GEOR.edit = (function() {
          */
         activate: function(options) {
             GEOR.edit.deactivate();
-            menuItem = options.menuItem;
-            menuItem.setText(tr("Stop editing"));
+            splitButton = options.splitButton;
+            splitButton.el.addClass("now-editing");
+            splitButton.setText(tr("Editing"));
+            geomType = options.geomType;
+            roGeometry = options.roGeometry || false;
             getFeature = new OpenLayers.Control.GetFeature({
                 protocol: options.protocol,
                 autoActivate: true, // Do not forget to manually deactivate it !
@@ -125,7 +133,6 @@ GEOR.edit = (function() {
                 }
             });
             strategy = new OpenLayers.Strategy.Save({
-                //auto: true,
                 autoDestroy: true
             });
             strategy.events.on({
@@ -159,6 +166,10 @@ GEOR.edit = (function() {
                         // the modifyFeatureControl will standalone select it.
                         // we also have to deactivate the control, which will do both:
                         selectFeature.deactivate(); // calls unselect(o.feature) before
+                        // draw one feature at a time:
+                        if (drawFeature) {
+                            drawFeature.deactivate();
+                        }
                         // sync feature values to store
                         var store = options.store, 
                         a = o.feature.attributes;
@@ -271,7 +282,7 @@ GEOR.edit = (function() {
                                     selectFeature.activate();
                                 },
                                 "show": function() {
-
+                                    // nothing for now
                                 },
                                 scope: this
                             }
@@ -296,6 +307,36 @@ GEOR.edit = (function() {
         },
 
         /*
+         * Method: draw
+         * Note: can be called only when it is activated on the same layer. (TODO: checks)
+         */
+        draw: function() {
+            if (roGeometry) {
+                return;
+            }
+            getFeature.deactivate();
+            selectFeature.deactivate();
+            var handler = OpenLayers.Handler[(geomType == 'Line') ? 'Path' : geomType];
+            drawFeature = new OpenLayers.Control.DrawFeature(vectorLayer, handler, {
+                handlerOptions: {
+                    // TODO: handle multi-geometries
+                    holeModifier: "altKey"
+                },
+                eventListeners: {
+                    "featureadded": function(o) {
+                        // mimic selection:
+                        vectorLayer.events.triggerEvent("featureselected", {
+                            feature: o.feature
+                        });
+                        // this will trigger a call to modifyFeature.select from the FeatureEditorGrid
+                    }
+                },
+                autoActivate: true
+            });
+            map.addControl(drawFeature);
+        },
+
+        /*
          * Method: deactivate
          */
         deactivate: function() {
@@ -313,6 +354,11 @@ GEOR.edit = (function() {
                 selectFeature = null;
                 getFeature = null;
             }
+            if (drawFeature) {
+                drawFeature.deactivate();
+                drawFeature.destroy();
+                drawFeature = null;
+            }
             // will take care of destroying protocol 
             // and strategy in correct order, 
             // unregistering listeners, removing from map:
@@ -322,9 +368,10 @@ GEOR.edit = (function() {
                 strategy = null;
             }
             // update layer menu item text
-            if (menuItem) {
-                menuItem.setText(tr("Edit this layer"));
-                menuItem = null;
+            if (splitButton) {
+                splitButton.el.removeClass("now-editing");
+                splitButton.setText(tr("Edition"));
+                splitButton = null;
             }
         }
     };
