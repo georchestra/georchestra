@@ -523,7 +523,8 @@ GEOR.managelayers = (function() {
                         // then work in attributes editing "only" mode:
                         roGeo = true;
                     } else {
-                        layerRecord.set("geometryType", type.type); // TODO: handle multi-*
+                        layerRecord.set("geometryType", type.type); // Line, Point, Polygon
+                        layerRecord.set("multiGeometry", type.multi === "Multi");
                     }
                     // we do not need the geometry column record anymore:
                     if (geomRecord) {
@@ -534,8 +535,7 @@ GEOR.managelayers = (function() {
                         splitButton: splitButton,
                         protocol: protocol,
                         store: attributeStore,
-                        layer: layerRecord.getLayer(),
-                        geomType: type.type, // FIXME: Line, Point, Polygon only ATM !
+                        layerRecord: layerRecord,
                         roGeometry: roGeo
                     });
                 },

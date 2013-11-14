@@ -85,7 +85,7 @@ GEOR.edit = (function() {
      */
     var splitButton;
 
-    var tr, win, geomType, roGeometry;
+    var tr, win, geomType, roGeometry, multiGeom;
 
     return {
         
@@ -112,7 +112,8 @@ GEOR.edit = (function() {
             splitButton = options.splitButton;
             splitButton.el.addClass("now-editing");
             splitButton.setText(tr("Editing"));
-            geomType = options.geomType;
+            geomType = options.layerRecord.get("geometryType"); // Line, Point, Polygon
+            multiGeom = options.layerRecord.get("multiGeometry"); // Boolean
             roGeometry = options.roGeometry || false;
             getFeature = new OpenLayers.Control.GetFeature({
                 protocol: options.protocol,
@@ -140,7 +141,7 @@ GEOR.edit = (function() {
                     GEOR.waiter.show();
                 },
                 "success": function() {
-                    options.layer.mergeNewParams({
+                    options.layerRecord.getLayer().mergeNewParams({
                         nocache: new Date().valueOf()
                     });
                     win.close();
@@ -320,12 +321,15 @@ GEOR.edit = (function() {
             }
             getFeature.deactivate();
             selectFeature.deactivate();
-            var handler = OpenLayers.Handler[(geomType == 'Line') ? 'Path' : geomType];
+            var handler = OpenLayers.Handler[(geomType == 'Line') ? 'Path' : geomType],
+            options = {
+                holeModifier: "altKey"
+            };
+            if (multiGeom) {
+                options.multi = true
+            }
             drawFeature = new OpenLayers.Control.DrawFeature(vectorLayer, handler, {
-                handlerOptions: {
-                    // TODO: handle multi-geometries
-                    holeModifier: "altKey"
-                },
+                handlerOptions: options,
                 eventListeners: {
                     "featureadded": function(o) {
                         // mimic selection:

@@ -62,7 +62,8 @@ GEOR.ows = (function() {
         {name: "WCS_URL", type: "string"},
         {name: "WFS_typeName", type: "string"},
         {name: "WFS_URL", type: "string"},
-        {name: "geometryType", type: "string", defaultValue: "unknown"},
+        {name: "geometryType", type: "string", defaultValue: "unknown"}, // Line, Point, Polygon
+        {name: "multiGeometry", type: "boolean"},
         // end geOrchestra use
         {name: "name", type: "string"},
         {name: "title", type: "string"},
