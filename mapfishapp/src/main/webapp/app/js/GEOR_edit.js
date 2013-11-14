@@ -130,6 +130,14 @@ GEOR.edit = (function() {
                         vectorLayer.addFeatures([e.feature], {
                             silent: true // we do not want to trigger save on feature added
                         });
+                    },
+                    "outfeature": function(e) {
+                        vectorLayer.removeAllFeatures();
+                    },
+                    "deactivate": function() {
+                        // hack to enable selection of same feature in control's hoverSelect():
+                        getFeature.hoverFeature = null;
+                        // (this is an OpenLayers bug)
                     }
                 }
             });
