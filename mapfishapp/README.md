@@ -1,10 +1,10 @@
 Mapfishapp
 ==========
 
-Mapfishapp is geOrchestra's advanced viewer.
+Mapfishapp is geOrchestra's advanced viewer and editor.
 
 With it, you can :
- * browse through CSW, WMS & WFS services and add any layer to the current map,
+ * browse through CSW, WMTS, WMS & WFS services and add any layer to the current map,
  * upload geo files for viewing (shapefile, mif/mid, tab, kml, gml, gpx),
  * create custom SLDs and style WMS layers, 
  * query layers either with a simple tool or an advanced one supporting conditions on attributes and geometries,
@@ -66,16 +66,17 @@ Each "referential" layer should obey these simple rules:
 Feature editor
 ==============
 
-Members of the groups SV_EDITOR, SV_REVIEWER or SV_ADMIN can reach the editor at /mapfishapp/edit
+By default, members of the ADMINISTRATOR group have the ability to see the edit functions provided by /mapfishapp/.
+This can be configured in GEOR_custom.js (in your profile), please have a look at the ROLES_FOR_EDIT config option.
 
-The editor looks for layers accessible via WFS-T in one GeoServer namespace (see **NS_EDIT** config option in your config's GEOR_custom.js). By default, NS_EDIT is set to "geor_edit", which means that any layer belonging to the geor_edit namespace and editable for the current user will be available.
+Currently, we support:
+ * attributes editing for all layers and geometry types (according to the feature model publicized by WFS DescribeFeatureType),
+ * drawing new points, lines and simple polygons.
 
-Currently, only points, lines and simple polygons can be digitalized, and their attributes filled according to the feature model publicized by the WFS server.
-Snapping on existing features is activated by default.
+All WMS layers with a WFS equivalent service are available for edition (the previous **NS_EDIT** config option is deprecated).
+In case the user does not have the rights to edit a layer, the first transaction will fail, and the changes will be lost.
 
-Once the update session is finished, the user can sync his work on the server. 
-Unfortunately, there is no handling of concurrent edition for now.
-
+There is no handling of concurrent edition or feature locking for now.
 
 Your data in mapfishapp
 ========================
