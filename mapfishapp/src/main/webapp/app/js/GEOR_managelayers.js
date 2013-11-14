@@ -847,11 +847,8 @@ GEOR.managelayers = (function() {
         var layerRecord = node.layerStore.getById(layer.id);
 
         // buttons in the toolbar
-        var buttons = [];
-        if (GEOR.getfeatureinfo && GEOR.selectfeature) {
-            buttons.push(createInfoButton(layerRecord));
-        }
-        buttons.push({
+        var buttons = [createInfoButton(layerRecord), 
+        {
             text: tr("Actions"),
             menu: new Ext.menu.Menu({
                 items: [],
@@ -883,7 +880,7 @@ GEOR.managelayers = (function() {
                     }
                 }
             })
-        });
+        }];
         
         if (GEOR.edit) {
             buttons.push({

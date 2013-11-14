@@ -123,15 +123,11 @@ Ext.namespace("GEOR");
         if (GEOR.print) {
             GEOR.print.init(layerStore);
         }
-        if (GEOR.getfeatureinfo) {
-            GEOR.getfeatureinfo.init(layerStore);
-        }
-        if (GEOR.selectfeature) {
-            GEOR.selectfeature.init(map);
-        }
         if (GEOR.querier) {
             GEOR.querier.init(map);
         }
+        GEOR.getfeatureinfo.init(layerStore);
+        GEOR.selectfeature.init(map);
         GEOR.waiter.init();
 
         var recenteringItems = [
@@ -273,7 +269,6 @@ Ext.namespace("GEOR");
                 el: "go_head"
             }] : [];
 
-
         vpItems.push(
             // the map panel
             Ext.apply({
@@ -316,6 +311,9 @@ Ext.namespace("GEOR");
          * acting as a mediator between the modules with
          * the objective of making them independent.
          */
+
+        // update layer panels in layer tree 
+        // when the layers have been described:
         GEOR.map.events.on({
             "describelayer": function(record) {
                 GEOR.managelayers.updatePanel(record);
