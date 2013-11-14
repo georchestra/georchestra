@@ -316,10 +316,10 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 			this.fileManagement.save(upLoadFile);
 				
 			// if the uploaded file is a zip file then checks its content
-			if(fileManagement.containsZipFile()){
-				fileManagement.unzip();
+			if(this.fileManagement.containsZipFile()){
+				this.fileManagement.unzip();
 
-				st  = checkGeoFiles(fileManagement);
+				st  = checkGeoFiles(this.fileManagement);
 				if( st != Status.ok ){
 					writeErrorResponse(response, st);
 					return;
@@ -361,12 +361,12 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 	 * </p> 
 	 * 
 	 * @param response
-	 * @param fileMnagement
+	 * @param fileManagement
 	 * @param crs
 	 * 
 	 * @throws IOException
 	 */
-	private void writeOKResponse( final HttpServletResponse response, final UpLoadFileManagement fileMnagement, final CoordinateReferenceSystem crs) throws IOException {
+	private void writeOKResponse( final HttpServletResponse response, final UpLoadFileManagement fileManagement, final CoordinateReferenceSystem crs) throws IOException {
 		
 		response.setCharacterEncoding(responseCharset);
 		response.setContentType("text/html");

@@ -435,7 +435,7 @@ public class UpLoadFileManagement {
             String ext = FilenameUtils.getExtension(fileName);
 
             if (FileFormat.contains(ext)) {
-                this.fileDescriptor.geoFileType = FileFormat.valueOf(ext);
+                this.fileDescriptor.geoFileType = FileFormat.valueOf(ext.toLowerCase());
                 return fileName;
             }
         }
