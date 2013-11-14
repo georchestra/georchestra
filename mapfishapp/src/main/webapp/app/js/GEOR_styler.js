@@ -903,7 +903,13 @@ GEOR.styler = (function() {
                     handler: dlStyle
                 },{
                     text: tr("Apply"),
-                    handler: applyStyling
+                    handler: function() {
+                        // we're done, apply styling
+                        // to layer
+                        applyStyling(function(ok){
+                            return;
+                        });
+                    }
                 }],
                 listeners: {
                     "afterrender": function() {
