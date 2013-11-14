@@ -196,12 +196,6 @@ GEOR.edit = (function() {
                             trackMouseOver: true,
                             width: 400,
                             cls: "editorgrid",
-                            modifyControlOptions: {
-                                // hack to make all features unselectable
-                                // thus unmodifable, in Read Only mode:
-                                geometryTypes: roGeometry ? "none" : null
-                                // "none" does not match any of "OpenLayers.Geometry.*"
-                            },
                             allowSave: true,
                             allowCancel: true,
                             allowDelete: true,
@@ -238,7 +232,11 @@ GEOR.edit = (function() {
                                 clickout: false,
                                 toggle: false,
                                 mode: OpenLayers.Control.ModifyFeature.RESHAPE | 
-                                    OpenLayers.Control.ModifyFeature.DRAG
+                                    OpenLayers.Control.ModifyFeature.DRAG,
+                                // hack to make all features unselectable
+                                // thus unmodifable, in Read Only mode:
+                                geometryTypes: roGeometry ? "none" : null
+                                // "none" does not match any of "OpenLayers.Geometry.*"
                             },
                             viewConfig: {
                                 forceFit: true
