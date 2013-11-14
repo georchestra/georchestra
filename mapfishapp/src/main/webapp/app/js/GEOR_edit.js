@@ -191,8 +191,8 @@ GEOR.edit = (function() {
                             modifyControlOptions: {
                                 // hack to make all features unselectable
                                 // thus unmodifable, in Read Only mode:
-                                geometryTypes: options.roGeometry ? 
-                                    "none" : options.geomType
+                                geometryTypes: roGeometry ? "none" : null
+                                // "none" does not match any of "OpenLayers.Geometry.*"
                             },
                             allowSave: true,
                             allowCancel: true,
