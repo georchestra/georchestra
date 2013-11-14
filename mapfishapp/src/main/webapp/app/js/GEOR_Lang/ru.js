@@ -100,7 +100,8 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "No metadata matches the query.":
         "Aucune métadonnée ne correspond à la requête.",
     */
-    /* GEOR_editing.js strings */
+    /* GEOR_edit.js strings */
+    
     /* GEOR_fileupload.js strings */
     "Local file": "Локальный файл",
     "The service is inactive": "Сервис не работает",

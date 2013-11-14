@@ -42,7 +42,8 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
         "Open the ${URL} url in a new window",
     "NB layers": "${NB} layers",
     " in NB metadata": " in ${NB} metadata",
-    /* GEOR_editing.js strings */
+    /* GEOR_edit.js strings */
+    
     /* GEOR_fileupload.js strings */
     "server upload error: ERROR": "The upload failed for the following reason: '${ERROR}'",
     /* GEOR_geonames.js strings */

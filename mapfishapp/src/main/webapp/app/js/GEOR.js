@@ -154,27 +154,24 @@ Ext.namespace("GEOR");
         /*
          * Create the page's layout.
          */
-        var plugins = (GEOR.editing === undefined) ?
-            [] : [Ext.ux.PanelCollapsedTitle];
 
         var eastItems = [
             new Ext.Panel({
                 // this panel contains the "manager layer" and
                 // "querier" components
-                region: (GEOR.editing !== undefined) ? "north" : "center",
+                region: "center",
                 height: 270, // has no effect when region is
                              // "center"
                 layout: "card",
                 activeItem: 0,
                 title: tr("Available layers"),
-                plugins: plugins,
-                split: (GEOR.editing !== undefined),
-                collapsible: (GEOR.editing !== undefined),
-                collapsed: (GEOR.editing !== undefined),
+                split: false,
+                collapsible: false,
+                collapsed: false,
                 // we use hideMode: "offsets" here to workaround this bug in
                 // extjs 3.x, see the bug report:
                 // http://www.sencha.com/forum/showthread.php?107119-DEFER-1207-Slider-in-panel-with-collapsed-true-make-slider-weird
-                hideMode: 'offsets',
+                //hideMode: 'offsets',
                 defaults: {
                     border:false
                 },
@@ -205,14 +202,6 @@ Ext.namespace("GEOR");
                 items: recenteringItems
             })
         ];
-        if (GEOR.editing) {
-            eastItems.push(
-                Ext.apply({
-                    region: "center",
-                    title: tr("Editing")
-                }, GEOR.editing.create(map))
-            );
-        }
 
         // this panel serves as the container for
         // the "search results" tabs

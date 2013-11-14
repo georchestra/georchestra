@@ -124,7 +124,8 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Precise your request.": "Precise su consulta.",
     "No metadata matches the query.":
         "Ningún metadato coincida con la consulta.",
-    /* GEOR_editing.js strings */
+    /* GEOR_edit.js strings */
+    
     /* GEOR_fileupload.js strings */
     "Local file": "Archivo local",
     "The service is inactive": "El servicio esta deshabilitado",

@@ -432,7 +432,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
         "échelles proches de 1:10.000",
     "with Potlatch2": "avec Potlatch2",
     "with Walking Papers": "avec Walking Papers",
-    /* GEOR_EditingPanel.js */
+    /* GEOR_edit.js */
     "Read-only layer": "Couche non éditable",
     "editingpanel.geom.error": "La géométrie de cette couche est de type ${TYPE}.<br/>" +
         "Seules les géométries de type point, ligne et polygone" +
