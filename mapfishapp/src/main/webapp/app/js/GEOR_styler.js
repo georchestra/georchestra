@@ -904,7 +904,19 @@ GEOR.styler = (function() {
                     handler: dlStyle
                 },{
                     text: tr("Apply"),
-                    handler: applyStyling
+                    handler: function() {
+                        // we're done, apply styling
+                        // to layer
+                        applyStyling(function(ok){
+                            // close window if apply styling
+                            // went ok, otherwise leave the
+                            // window open to give the user
+                            // a chance to correct things
+                            if (ok) {
+                                win.close();
+                            }
+                        });
+                    }
                 }],
                 listeners: {
                     "afterrender": function() {
