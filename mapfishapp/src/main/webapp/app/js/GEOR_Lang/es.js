@@ -13,6 +13,10 @@
  */
 
 /*
+ * @requires GeoExt/Lang.js
+ */
+
+/*
  * Spanish translation file
  */
 OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
@@ -449,4 +453,21 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     /* GeoExt.data.CSW.js */
     "no abstract": "ningún abstracto"
     // no trailing comma
+});
+
+GeoExt.Lang.add("fr", {
+    "GeoExt.ux.FeatureEditorGrid.prototype": {
+        deleteMsgTitle: "Delete Feature?",
+        deleteMsg: "Are you sure you want to delete this feature?",
+        deleteButtonText: "Delete",
+        deleteButtonTooltip: "Delete this feature",
+        cancelMsgTitle: "Cancel Editing?",
+        cancelMsg: "There are unsaved changes. Are you sure you want to cancel?",
+        cancelButtonText: "Cancel",
+        cancelButtonTooltip: "Stop editing, discard changes",
+        saveButtonText: "Save",
+        saveButtonTooltip: "Save changes",
+        nameHeader: "Name",
+        valueHeader: "Value"
+    }
 });

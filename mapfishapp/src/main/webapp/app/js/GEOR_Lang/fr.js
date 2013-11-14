@@ -13,6 +13,10 @@
  */
 
 /*
+ * @requires GeoExt/Lang.js
+ */
+
+/*
  * French translation file
  */
 OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
@@ -443,4 +447,21 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     /* GeoExt.data.CSW.js */
     "no abstract": "pas de résumé"
     // no trailing comma
+});
+
+GeoExt.Lang.add("fr", {
+    "GeoExt.ux.FeatureEditorGrid.prototype": {
+        deleteMsgTitle: "Suppression",
+        deleteMsg: "Confirmer la suppression de cet objet vectoriel ?",
+        deleteButtonText: "Supprimer",
+        deleteButtonTooltip: "Supprimer cet objet",
+        cancelMsgTitle: "Annulation",
+        cancelMsg: "L'objet a été modifié localement. Confirmer l'abandon des changements ?",
+        cancelButtonText: "Annuler",
+        cancelButtonTooltip: "Abandonner les modifications en cours",
+        saveButtonText: "Enregistrer",
+        saveButtonTooltip: "Enregistrer les modifications",
+        nameHeader: "Attribut",
+        valueHeader: "Valeur"
+    }
 });
