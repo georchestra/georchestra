@@ -13,6 +13,10 @@
  */
 
 /*
+ * @requires GeoExt/Lang.js
+ */
+
+/*
  * Spanish translation file
  */
 OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
@@ -33,6 +37,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "labelSeparator": " : ",
     "File submission failed or invalid file": "El envío del archivo falló - " +
         "verificar si el archivo es valido",
+    "Type": "Tipo",
     /* GEOR.js strings */
     "Cities": "Ciudades",
     "Recentering on GeoNames cities":
@@ -43,7 +48,6 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Addresses": "Direcciones",
     "Recentering on a given address": "Posicionarse sobre una dirección",
     "Available layers": "Capas disponibles",
-    "Editing": "Edición",
     "WMS Search": "WMS Buscar",
     "WFS Search": "WFS Buscar",
     "resultspanel.emptytext":
@@ -52,7 +56,6 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
         "Los atributos de los objetos se mostrarán en este espacio.</p>",
     /* GEOR_ClassificationPanel.js strings */
     "Attribute": "Atributo",
-    "Type": "Tipo",
     "Number of classes": "Número de clases",
     "Minimum size": "Tamaño mínimo",
     "Maximum size": "Tamaño máximo",
@@ -125,7 +128,6 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Precise your request.": "Precise su consulta.",
     "No metadata matches the query.":
         "Ningún metadato coincida con la consulta.",
-    /* GEOR_editing.js strings */
     /* GEOR_fileupload.js strings */
     "Local file": "Archivo local",
     "The service is inactive": "El servicio esta deshabilitado",
@@ -211,6 +213,17 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "source: ": "fuente: ",
     "unknown": "desconocido",
     "Actions": "Acciones",
+    //"Draw new point": "Dessiner un nouveau point",
+    //"Draw new line": "Dessiner une nouvelle ligne",
+    //"Draw new polygon": "Dessiner un nouveau polygone",
+    /*
+    "Edition": "Edition",
+    "Editing": "Edition en cours",
+    "Switch on/off edit mode for this layer": "Basculer cette couche en mode édition",
+    "No geometry column.": "Colonne géométrique non détectée.",
+    "Geometry column type (TYPE) is unsupported.": "Le type de la colonne géométrique (${TYPE}) n'est pas supporté.",
+    "Switching to attributes-only edition.": "Seuls les attributs des objets existants seront éditables.",
+    */
     /* GEOR_map.js strings */
     "Location map": "Mapa de ubicación",
     "Warning after loading layer":
@@ -432,39 +445,29 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
         "1:10.000",
     "with Potlatch2": "con Potlatch2",
     "with Walking Papers": "con Walking Papers",
-    /* GEOR_EditingPanel.js */
-    "Read-only layer": "Esta capa no se puede editar",
-    "editingpanel.geom.error": "La geometría de esta capa es de tipo " +
-        "${TYPE}.<br/>Sólo se puede editar las geometrías de tipo punto, " +
-        "línea y polígono (y multi-*).",
-    "choose a layer": "elija una capa",
-    /* GEOR_LayerEditingPanel.js */
-    "Modify object": "Modificar un objeto",
-    "Cancel all": "Cancelar todo",
-    "Enter ": "Entrar ",
-    "layereditingpanel.cancel.confirm": "Confirma la cancelación de todas " +
-        "las modificación<br />desde la última sincronización ?",
-    "Synchronize": "Sincronizar",
-    "layereditingpanel.changes.confirm": "Confirmar o cancelar las " +
-        "modificaciones en curso.",
-    "Delete": "Quitar",
-    "Confirm": "Confirmar",
-    " (required)": " (requerido)",
-    "Text too long": "Texto demasiado largo",
-    "Text too short": "Texto demasiado corto",
-    "Maximum value exceeded": "Excede el valor máximo",
-    "Minimum value not reached": "No llega al valor mínimo",
-    "Invalid number": "Número invalido",
-    "Synchronization successful.": "Sincronización exitosa.",
+    /* GEOR_edit.js */
+    "Req.": "Req.", // requis
+    "Required": "Requis",
+    "Not required": "Non requis",
     "Synchronization failed.": "Error durante la sincronización.",
-    "Recover": "Restaurar",
-    "No feature selected !": "Ningún objeto seleccionado !",
-    "a point": "un punto",
-    "a line": "una línea",
-    "a polygon": "un polígono",
-    "Pending changes": "Modificaciones en curso",
-    "Do you want to confirm changes ?": "¿Desea confirmar las modificaciones ?",
     /* GeoExt.data.CSW.js */
     "no abstract": "ningún abstracto"
     // no trailing comma
+});
+
+GeoExt.Lang.add("fr", {
+    "GeoExt.ux.FeatureEditorGrid.prototype": {
+        deleteMsgTitle: "Delete Feature?",
+        deleteMsg: "Are you sure you want to delete this feature?",
+        deleteButtonText: "Delete",
+        deleteButtonTooltip: "Delete this feature",
+        cancelMsgTitle: "Cancel Editing?",
+        cancelMsg: "There are unsaved changes. Are you sure you want to cancel?",
+        cancelButtonText: "Cancel",
+        cancelButtonTooltip: "Stop editing, discard changes",
+        saveButtonText: "Save",
+        saveButtonTooltip: "Save changes",
+        nameHeader: "Name",
+        valueHeader: "Value"
+    }
 });

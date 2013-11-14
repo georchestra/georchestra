@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html debug="true">
+<head>
+
+    <script type="text/javascript" src="http://www.openlayers.org/api/2.9/OpenLayers.js"></script>
+    <script type="text/javascript" src="http://extjs.cachefly.net/ext-3.2.0/adapter/ext/ext-base.js"></script>
+    <script type="text/javascript" src="http://extjs.cachefly.net/ext-3.2.0/ext-all.js"></script>
+    <script type="text/javascript" src="../../../../../../geoext/lib/GeoExt.js"></script>
+    <script type="text/javascript" src="../../../lib/GeoExt.ux/GeoNamesSearchCombo.js"></script>
+
+    <script type="text/javascript">
+        function test_ctor(t) {
+            t.plan(5);
+
+            // set up
+
+            var c, map = {};
+
+            // test
+
+            c = new GeoExt.ux.GeoNamesSearchCombo({
+                renderTo: "GeoNamesSearch",
+                map: map
+            });
+            t.ok(c instanceof GeoExt.ux.GeoNamesSearchCombo,
+                 "ctor creates a GeoExt.ux.GeoNamesSearchCombo object");
+            t.ok(c instanceof Ext.form.ComboBox,
+                 "ctor creates an Ext.form.ComboBox object");
+            t.ok(c.hasListener("select"),
+                 "ctor registers a \"select\" listener");
+            t.eq(c.map, map,
+                 "ctor sets map in instance");
+            c.destroy();
+
+            c = new GeoExt.ux.GeoNamesSearchCombo({
+                renderTo: "GeoNamesSearch",
+                zoom: -1
+            });
+            t.ok(!c.hasListener("select"),
+                 "ctor does not register a \"select\" listener if the " +
+                 "zoom value is negative");
+            c.destroy();
+        }
+    </script>
+<body>
+  <div id="GeoNamesSearch"></div>
+</body>
+</html>

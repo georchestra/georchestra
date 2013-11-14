@@ -122,6 +122,9 @@ div.olMapViewport {
 .geor-btn-download {
     background-image: url(../img/famfamfam/disk.png) !important;
 }
+.geor-btn-edit {
+    background-image: url(../img/famfamfam/server_edit.png) !important;
+}
 .geor-service {
     background-image: url(../img/geosilk/server_map.png) !important;
 }
@@ -295,24 +298,11 @@ div.olMapViewport {
     width:20px !important;
 }
 
-.drawpoint {
-  background-image:url(../img/geosilk/pencil_add.png) !important;
-}
-
-.drawline {
-  background-image:url(../img/geosilk/line_orange_add.png) !important;
-}
-
-.drawpolygon {
-  background-image:url(../img/geosilk/shape_square_orange_add.png) !important;
-}
-
 .info {
   background-image:url(../img/mapfish/info.png) !important;
   height:20px !important;
   width:20px !important;
 }
-
 
 .even {
 	background: #F0F0F0
@@ -451,4 +441,25 @@ div.olMapViewport {
 /* base layers are shown with a different color */
 #geor-layerManager .geor-baselayer {
 	background-color: #f2f0f5;
+}
+
+/* Mouse pointer hover editor grid row: */
+.editorgrid .x-grid3-td-value div {
+	cursor: pointer !important;
+}
+
+.now-editing button {
+    color: red;
+}
+
+.geor-btn-edit-point {
+    background-image:url(../img/geosilk/pencil_add.png) !important;
+}
+
+.geor-btn-edit-line {
+	background-image:url(../img/geosilk/line_orange_add.png) !important;
+}
+
+.geor-btn-edit-polygon {
+	background-image:url(../img/geosilk/shape_square_orange_add.png) !important;
 }

@@ -62,6 +62,8 @@ GEOR.ows = (function() {
         {name: "WCS_URL", type: "string"},
         {name: "WFS_typeName", type: "string"},
         {name: "WFS_URL", type: "string"},
+        {name: "geometryType", type: "string", defaultValue: "unknown"}, // Line, Point, Polygon
+        {name: "multiGeometry", type: "boolean"},
         // end geOrchestra use
         {name: "name", type: "string"},
         {name: "title", type: "string"},
@@ -93,7 +95,7 @@ GEOR.ows = (function() {
      * Constant: attributeStoreFields
      * {Array} The fields shared by each attributeStore record in this app.
      */
-    var attributeStoreFields = ["name", "type", "restriction", {name:"nillable", type: "boolean"}];
+    var attributeStoreFields = ["name", "type", "restriction", {name:"nillable", type: "boolean"}, "annotation", "value"];
     // Note: a NOT NULL clause for a field in postgresql db is translated by GeoServer 1.7.x into
     //  <xsd:element maxOccurs="1" minOccurs="1" name="nom" nillable="true" type="xsd:string"/>
     // while in GeoServer 2.x, it leads to the correct xsd:
@@ -378,8 +380,9 @@ GEOR.ows = (function() {
                 // later for protocol creation
 
                 // FIXME: what about options.storeOptions in this case ?
-                store = new Ext.data.Store({
-                    reader: new GeoExt.data.AttributeReader({}, attributeStoreFields)
+                store = new GeoExt.data.AttributeStore({
+                    //reader: new GeoExt.data.AttributeReader({}, attributeStoreFields)
+                    fields: attributeStoreFields
                 });
 
                 Ext.Ajax.request({
@@ -418,16 +421,18 @@ GEOR.ows = (function() {
                         } else {
                         	version = "1.0.0";
                         }
-                        // FIXME: we might not always have a record in input (might be an object too)
-                        record.set("WFSversion", version);
-                        
                         // End hack
                         
                         var format = new OpenLayers.Format.WFSDescribeFeatureType();
                         var jsObj = format.read(data);
 
-                        // same FIXME here
-                        record.set("featureNS", jsObj.targetNamespace);
+                        if (record instanceof Ext.data.Record) {
+                            record.set("WFSversion", version);
+                            record.set("featureNS", jsObj.targetNamespace);
+                        } else {
+                            record.WFSversion = version;
+                            record.featureNS = jsObj.targetNamespace;
+                        }
 
                         store.on({
                             load: function() {

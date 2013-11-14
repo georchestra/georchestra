@@ -27,10 +27,14 @@
  * @include GEOR_print.js
  * @include GEOR_wmc.js
  * @include GEOR_tools.js
+ * @include GEOR_edit.js
  * @include GEOR_wmcbrowser.js
- * Note that GEOR_getfeatureinfo.js, GEOR_ResultsPanel.js, GEOR_querier.js,
- * GEOR_styler.js should be included here, but they are not required by the edit module.
- * In order to make the edit build "light", those files will be added in main.cfg and not here.
+ * @include GEOR_getfeatureinfo.js
+ * @include GEOR_selectfeature.js
+ * @include GEOR_ResultsPanel.js
+ * @include GEOR_querier.js
+ * @include GEOR_styler.js
+ * @include GEOR_wmc.js
  */
 
 Ext.namespace("GEOR");
@@ -103,6 +107,7 @@ Ext.namespace("GEOR");
         checkRoles('styler', GEOR.config.ROLES_FOR_STYLER);
         checkRoles('querier', GEOR.config.ROLES_FOR_QUERIER);
         checkRoles('print', GEOR.config.ROLES_FOR_PRINTER);
+        checkRoles('edit', GEOR.config.ROLES_FOR_EDIT);
 
         /*
          * Initialize the application.
@@ -112,18 +117,17 @@ Ext.namespace("GEOR");
 
         GEOR.wmc.init(layerStore);
         GEOR.tools.init(layerStore);
+        if (GEOR.edit) {
+            GEOR.edit.init(map);
+        }
         if (GEOR.print) {
             GEOR.print.init(layerStore);
-        }
-        if (GEOR.getfeatureinfo) {
-            GEOR.getfeatureinfo.init(layerStore);
-        }
-        if (GEOR.selectfeature) {
-            GEOR.selectfeature.init(map);
         }
         if (GEOR.querier) {
             GEOR.querier.init(map);
         }
+        GEOR.getfeatureinfo.init(layerStore);
+        GEOR.selectfeature.init(map);
         GEOR.waiter.init();
 
         var recenteringItems = [
@@ -146,27 +150,24 @@ Ext.namespace("GEOR");
         /*
          * Create the page's layout.
          */
-        var plugins = (GEOR.editing === undefined) ?
-            [] : [Ext.ux.PanelCollapsedTitle];
 
         var eastItems = [
             new Ext.Panel({
                 // this panel contains the "manager layer" and
                 // "querier" components
-                region: (GEOR.editing !== undefined) ? "north" : "center",
+                region: "center",
                 height: 270, // has no effect when region is
                              // "center"
                 layout: "card",
                 activeItem: 0,
                 title: tr("Available layers"),
-                plugins: plugins,
-                split: (GEOR.editing !== undefined),
-                collapsible: (GEOR.editing !== undefined),
-                collapsed: (GEOR.editing !== undefined),
+                split: false,
+                collapsible: false,
+                collapsed: false,
                 // we use hideMode: "offsets" here to workaround this bug in
                 // extjs 3.x, see the bug report:
                 // http://www.sencha.com/forum/showthread.php?107119-DEFER-1207-Slider-in-panel-with-collapsed-true-make-slider-weird
-                hideMode: 'offsets',
+                //hideMode: 'offsets',
                 defaults: {
                     border:false
                 },
@@ -197,14 +198,6 @@ Ext.namespace("GEOR");
                 items: recenteringItems
             })
         ];
-        if (GEOR.editing) {
-            eastItems.push(
-                Ext.apply({
-                    region: "center",
-                    title: tr("Editing")
-                }, GEOR.editing.create(map))
-            );
-        }
 
         // this panel serves as the container for
         // the "search results" tabs
@@ -276,7 +269,6 @@ Ext.namespace("GEOR");
                 el: "go_head"
             }] : [];
 
-
         vpItems.push(
             // the map panel
             Ext.apply({
@@ -319,6 +311,14 @@ Ext.namespace("GEOR");
          * acting as a mediator between the modules with
          * the objective of making them independent.
          */
+
+        // update layer panels in layer tree 
+        // when the layers have been described:
+        GEOR.map.events.on({
+            "describelayer": function(record) {
+                GEOR.managelayers.updatePanel(record);
+            }
+        });
         if (GEOR.querier) {
             var querierTitle;
             GEOR.querier.events.on({

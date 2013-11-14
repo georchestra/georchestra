@@ -11,6 +11,10 @@
  */
 
 /*
+ * @requires GeoExt/Lang.js
+ */
+
+/*
  * Russian translation file courtesy of Liudmila Tesson
  */
 OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
@@ -30,6 +34,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Close": "Закрыть",
     "labelSeparator": " : ",
     "File submission failed or invalid file": "Ошибка отправки файла – возможно, что файл недействителен",
+    "Type": "Тип",
     /* GEOR.js strings */
     "Cities": "Населённые пункты",
     "Recentering on GeoNames cities": "Переориентация на населённые пункты<br /> GeoNames.",
@@ -42,7 +47,6 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "resultspanel.emptytext": "<p> Выберите инструмент запроса или создайте запрос на слой. <br />Атрибуты объектов появятся в этой рамке. </p>",
     /* GEOR_ClassificationPanel.js strings */
     "Attribute": "Атрибут",
-    "Type": "Тип",
     "Number of classes": "Число классов",
     "Minimum size": "Минимальный размер",
     "Maximum size": "Максимальный размер",
@@ -99,8 +103,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Precise your request.": "Précisez votre requête.",
     "No metadata matches the query.":
         "Aucune métadonnée ne correspond à la requête.",
-    */
-    /* GEOR_editing.js strings */
+    */    
     /* GEOR_fileupload.js strings */
     "Local file": "Локальный файл",
     "The service is inactive": "Сервис не работает",
@@ -162,6 +165,18 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "source: ": "источник : ",
     "unknown": "неизвестный",
     "Actions": "Действия",
+    //"Draw new point": "Dessiner un nouveau point",
+    //"Draw new line": "Dessiner une nouvelle ligne",
+    //"Draw new polygon": "Dessiner un nouveau polygone",
+    //"Edition": "Edition",
+    "Editing": "Издание",
+    /*
+    "Edition": "Edition",
+    "Switch on/off edit mode for this layer": "Basculer cette couche en mode édition",
+    "No geometry column.": "Colonne géométrique non détectée.",
+    "Geometry column type (TYPE) is unsupported.": "Геометрия этого слоя следующего типа : ${TYPE}.",
+    "Switching to attributes-only edition.": "Seuls les attributs des objets existants seront éditables.",
+    */
     /* GEOR_map.js strings */
     "Location map": "арта локализации",
     "Warning after loading layer": "Уведомление, следующее за загрузкой слоя",
@@ -329,35 +344,29 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Recommended scale is 1:10.000": "Рекомендуемый масштаб - 1:10.000",
     "with Potlatch2": "c редактором Potlatch2",
     "with Walking Papers": "при помощи Walking Papers",
-    /* GEOR_EditingPanel.js */
-    "Read-only layer": "Cлой только для прочтения",
-    "editingpanel.geom.error": "Геометрия этого слоя следующего типа : ${TYPE}.<br/>Только следующие геометрические типы подлежат редактированию : точка, линия и многоугольник (а также много-, мульти-)",
-    "choose a layer": "Выберите слой",
-    /* GEOR_LayerEditingPanel.js */
-    "Modify object": "Изменить объект",
-    "Cancel all": "Отменить всё ou Аннулировать всё",
-    "Enter ": "Ввести",
-    "layereditingpanel.cancel.confirm": "Вы действительно желаете отменить все изменения<br />после последней синхронизации?",
-    "Synchronize": "Синхронизировать",
-    "layereditingpanel.changes.confirm": "Пожалуйста, подтвердите или отмените текущие изменения.",
-    "Delete": "Удалить",
-    "Confirm": "Подтвердить",
-    " (required)": "требуемый",
-    "Text too long": "Текст слишком длинный",
-    "Text too short": "Текст слишком короткий",
-    "Maximum value exceeded": "Максимальное значение превышено",
-    "Minimum value not reached": "Минимальное значение не достигнуто",
-    "Invalid number": "Число недействительно",
-    "Synchronization successful.": "Синхронизация прошла успешно.",
+    /* GEOR_edit.js */
+    //"Req.": "Req.", // requis
+    //"Required": "Requis",
+    //"Not required": "Non requis",
     "Synchronization failed.": "Произошла ошибка во время процесса синхронизации.",
-    "Recover": "Восстановить",
-    "No feature selected !": "Ни одна функция не выбрана",
-    "a point": "точка",
-    "a line": "линия",
-    "a polygon": "многоугольник",
-    "Pending changes": "Идёт процесс внесения изменений",
-    "Do you want to confirm changes ?": "Желаете ли вы подтвердить изменения?",
     /* GeoExt.data.CSW.js */
     "no abstract": "нет резюме"
     // no trailing comma
+});
+
+GeoExt.Lang.add("fr", {
+    "GeoExt.ux.FeatureEditorGrid.prototype": {
+        deleteMsgTitle: "Delete Feature?",
+        deleteMsg: "Are you sure you want to delete this feature?",
+        deleteButtonText: "Delete",
+        deleteButtonTooltip: "Delete this feature",
+        cancelMsgTitle: "Cancel Editing?",
+        cancelMsg: "There are unsaved changes. Are you sure you want to cancel?",
+        cancelButtonText: "Cancel",
+        cancelButtonTooltip: "Stop editing, discard changes",
+        saveButtonText: "Save",
+        saveButtonTooltip: "Save changes",
+        nameHeader: "Name",
+        valueHeader: "Value"
+    }
 });

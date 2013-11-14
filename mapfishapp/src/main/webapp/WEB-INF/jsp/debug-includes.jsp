@@ -12,6 +12,8 @@
 
     <script type="text/javascript" src="lib/addins/loadingPanel/trunk/lib/OpenLayers/Control/LoadingPanel.js"></script>
 
+    <script type="text/javascript" src="lib/geoext.ux/ux/FeatureEditing/lib/GeoExt.ux/FeatureEditorGrid.js"></script>
+    
     <script type="text/javascript" src="lib/externals/styler/lib/Styler/Util.js"></script>
     <script type="text/javascript" src="lib/externals/styler/lib/Styler/SchemaManager.js"></script>
     <script type="text/javascript" src="lib/externals/styler/lib/Styler/SLDManager.js"></script>
@@ -44,20 +46,10 @@
 
     <script type="text/javascript" src="app/js/GEOR_config.js"></script>
     <script type="text/javascript" src="app/js/GEOR_Lang/<%= lang %>.js"></script>
-            <c:choose>
-                <c:when test='${c.edit}'>
-    <script type="text/javascript" src="lib/Ext.ux/lib/Ext.ux/widgets/collapsedtitle/PanelCollapsedTitle.js"></script>
-    <script type="text/javascript" src="app/js/GEOR_Editing/GEOR_LayerEditingPanel.js"></script>
-    <script type="text/javascript" src="app/js/GEOR_Editing/GEOR_EditingPanel.js"></script>
-    <script type="text/javascript" src="app/js/GEOR_editing.js"></script>
-                </c:when>
-                <c:otherwise>
     <script type="text/javascript" src="app/js/GEOR_querier.js"></script>
     <script type="text/javascript" src="app/js/GEOR_styler.js"></script>
     <script type="text/javascript" src="app/js/GEOR_getfeatureinfo.js"></script>
     <script type="text/javascript" src="app/js/GEOR_ResultsPanel.js"></script>
-                </c:otherwise>
-            </c:choose>
     <script type="text/javascript" src="app/js/GEOR_util.js"></script>
     <script type="text/javascript" src="app/js/GEOR_FeatureDataModel.js"></script>
     <script type="text/javascript" src="app/js/GEOR_ClassificationPanel.js"></script>
@@ -86,6 +78,7 @@
     <script type="text/javascript" src="app/js/GEOR_ajaxglobal.js"></script>
     <script type="text/javascript" src="app/js/GEOR_localStorage.js"></script>
     <script type="text/javascript" src="app/js/GEOR_mapinit.js"></script>
+    <script type="text/javascript" src="app/js/GEOR_edit.js"></script>
     <script type="text/javascript" src="app/js/GEOR.js"></script>
     <!-- uncomment this for IE debugging -->
     <!--script type="text/javascript" src="https://getfirebug.com/firebug-lite-beta.js"></script-->

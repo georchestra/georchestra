@@ -247,8 +247,7 @@ GEOR.config = (function() {
         /**
          * Constant: GEOSERVER_WFS_URL
          * The URL to GeoServer WFS.
-         * This is required if and only if the edit application is used
-         * or if the "referentials" module is activated.
+         * This is required if and only if the "referentials" module is activated.
          * Defaults to /geoserver/wfs
          */
         GEOSERVER_WFS_URL: getCustomParameter("GEOSERVER_WFS_URL",
@@ -452,16 +451,6 @@ GEOR.config = (function() {
          */
         NS_LOC: getCustomParameter("NS_LOC", "geor_loc"),
 
-
-        /**
-         * Constant: NS_EDIT
-         * {String} The editing layers' namespace alias as defined in
-         *    the GeoServer configuration.
-         * Defaults to "geor_edit"
-         */
-        NS_EDIT: getCustomParameter("NS_EDIT", "geor_edit"),
-
-
         /**
          * Constant: CSW_GETDOMAIN_PROPERTY
          * {String} the property used to query the CSW for keywords.
@@ -650,6 +639,15 @@ GEOR.config = (function() {
          */
         ROLES_FOR_PRINTER: getCustomParameter("ROLES_FOR_PRINTER",
             []),
+
+        /**
+         * Constant: ROLES_FOR_EDIT
+         * {Array} roles required for the edit functions to show up
+         * Empty array means the module is available for everyone
+         * Defaults to ['ROLE_ADMINISTRATOR']
+         */
+        ROLES_FOR_EDIT: getCustomParameter("ROLES_FOR_EDIT",
+            ['ROLE_ADMINISTRATOR']),
 
         /**
          * Constant: PRINT_LAYOUTS_ACL

@@ -49,7 +49,6 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
         "Open the ${URL} url in a new window",
     "NB layers": "${NB} layers",
     " in NB metadata": " in ${NB} metadata",
-    /* GEOR_editing.js strings */
     /* GEOR_fileupload.js strings */
     "server upload error: ERROR": "The upload failed for the following reason: '${ERROR}'",
     /* GEOR_geonames.js strings */
@@ -130,14 +129,7 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
     "Warning: trying to restore WMC with a different projection (PROJCODE1, while map SRS is PROJCODE2). Strange things might occur !": "Warning: trying to restore WMC with a different projection (${PROJCODE1}, while map SRS is ${PROJCODE2}). Strange things might occur !",
     /* GEOR_wmcbrowser.js strings */
     "(default)": "<br/>(current default context)",
+    /* GEOR_edit.js */
     /* GEOR_workspace.js strings */
-    /* GEOR_EditingPanel.js */
-    "editingpanel.geom.error": "This layer's geometry type is ${TYPE}.<br/>" +
-        "Only point, line and polygons" +
-        " (and multi-*) are editable.",
-    /* GEOR_LayerEditingPanel.js */
-    "layereditingpanel.cancel.confirm": "Do you really want to cancel all modifications<br />since last synchronisation ?",
-    "layereditingpanel.changes.confirm": "Please confirm or cancel current modifications",
-    "Please select one feature.": "Veuillez sélectionner un objet."
     // no trailing comma
 });

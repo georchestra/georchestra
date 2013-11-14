@@ -46,6 +46,17 @@ GEOR.map = (function() {
     /*
      * Private
      */
+    var observable = new Ext.util.Observable();
+    observable.addEvents(
+        /**
+         * Event: describelayer
+         * Fires when a layer is described 
+         *
+         * Listener arguments:
+         * record - {GeoExt.data.LayerRecord}
+         */
+        "describelayer"
+    );
 
     /**
      * Property: map
@@ -297,9 +308,13 @@ GEOR.map = (function() {
                             r.set("WCS_URL", wcsRecord.get("owsURL"));
                         }
                         r.set("_described", true);
+                        // fire event to let the whole app know about it.
+                        observable.fireEvent("describelayer", r);
                     },
                     failure: function() {
                         r.set("_described", true);
+                        // fire event
+                        observable.fireEvent("describelayer", r);
                     },
                     scope: this
                 });
@@ -397,6 +412,11 @@ GEOR.map = (function() {
      */
 
     return {
+
+        /*
+         * Observable object
+         */
+        events: observable,
 
         /**
          * APIMethod: create

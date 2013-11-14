@@ -37,8 +37,6 @@ ${mkdir} -p ${releasepath} ${releasepath}/lang
 
  echo "running jsbuild for main app..."
  ${venv}/bin/jsbuild -o "${releasepath}" main.cfg
- echo "running jsbuild for edit app..."
- ${venv}/bin/jsbuild -o "${releasepath}" edit.cfg
  echo "done.")
 
 #
