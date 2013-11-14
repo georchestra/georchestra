@@ -212,16 +212,17 @@ GEOR.edit = (function() {
                                     return tr(r.pop());
                                 }
                             }, {
-                                header: tr("Nillable"),
+                                header: tr("Req."), // Required
                                 dataIndex: "nillable",
                                 width: 50,
                                 fixed: true,
                                 menuDisabled: true,
                                 sortable: true,
+                                align: "center",
                                 renderer: function(v) {
-                                    return v ? 
-                                        '<img src="app/img/famfamfam/tick.gif" style="width:12px;height:12px;" alt="' + tr("Yes") + '">' : 
-                                        '<img src="app/img/nope.gif" style="width:12px;height:12px;" alt="' + tr("No") + '">';
+                                    return !v ?
+                                        '<img src="app/img/famfamfam/bullet_red.png" style="width:12px;height:12px;" alt="' + tr("Required") + '">' : 
+                                        '<img src="app/img/nope.gif" style="width:12px;height:12px;" alt="' + tr("Not required") + '">';
                                 }
                             }],
                             modifyControlOptions: {
