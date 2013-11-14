@@ -846,8 +846,7 @@ GEOR.managelayers = (function() {
         if (GEOR.getfeatureinfo && GEOR.selectfeature) {
             buttons.push(createInfoButton(layerRecord));
         }
-        buttons = buttons.concat([
-        {
+        buttons.push({
             text: tr("Actions"),
             menu: new Ext.menu.Menu({
                 items: [],
@@ -879,61 +878,66 @@ GEOR.managelayers = (function() {
                     }
                 }
             })
-        }, {
-            xtype: "splitbutton",
-            text: tr("Edition"),
-            tooltip: tr("Switch on/off edit mode for this layer"), 
-            disabled: true, // enabled on WMS layer successfully described
-            handler: function() {
-                if (this.disabled) {
-                    // do nothing
-                    return;
-                }
-                editHandler(this, layerRecord);
-            },
-            arrowHandler: function() {
-                if (this.disabled) {
-                    // do nothing
-                    return;
-                }
-            },
-            menu: new Ext.menu.Menu({
-                items: [],
-                ignoreParentClicks: true,
-                listeners: {
-                    "beforeshow": function(menu) {
-                        if (this.ownerCt.text === tr("Edition")) {
-                            // we're activating edit mode when drop down is clicked:
-                            editHandler(this.ownerCt, layerRecord);
-                            // no menu displayed when edit mode is toggled off:
-                            return false;
-                        }
-                        if (menu.items.length) {
-                            // allow menu appearance
-                            return true;
-                        }
-                        // wait for the layer to be described
-                        var task = Ext.TaskMgr.start({
-                            run: function() {
-                                var menuItems = createEditionItems(layerRecord);
-                                menu.removeAll();
-                                if (!menuItems.length) {
-                                    menu.add(tr("Loading..."));
-                                } else {
-                                    // create + add menu items
-                                    Ext.each(menuItems, function(item) {
-                                        menu.add(item);
-                                    });
-                                    // stop this task
-                                    Ext.TaskMgr.stop(task);
-                                }
-                            },
-                            interval: 20
-                        });
+        });
+        
+        if (GEOR.edit) {
+            buttons.push({
+                xtype: "splitbutton",
+                text: tr("Edition"),
+                tooltip: tr("Switch on/off edit mode for this layer"), 
+                disabled: true, // enabled on WMS layer successfully described
+                handler: function() {
+                    if (this.disabled) {
+                        // do nothing
+                        return;
                     }
-                }
-            })
-        }, '-', {
+                    editHandler(this, layerRecord);
+                },
+                arrowHandler: function() {
+                    if (this.disabled) {
+                        // do nothing
+                        return;
+                    }
+                },
+                menu: new Ext.menu.Menu({
+                    items: [],
+                    ignoreParentClicks: true,
+                    listeners: {
+                        "beforeshow": function(menu) {
+                            if (this.ownerCt.text === tr("Edition")) {
+                                // we're activating edit mode when drop down is clicked:
+                                editHandler(this.ownerCt, layerRecord);
+                                // no menu displayed when edit mode is toggled off:
+                                return false;
+                            }
+                            if (menu.items.length) {
+                                // allow menu appearance
+                                return true;
+                            }
+                            // wait for the layer to be described
+                            var task = Ext.TaskMgr.start({
+                                run: function() {
+                                    var menuItems = createEditionItems(layerRecord);
+                                    menu.removeAll();
+                                    if (!menuItems.length) {
+                                        menu.add(tr("Loading..."));
+                                    } else {
+                                        // create + add menu items
+                                        Ext.each(menuItems, function(item) {
+                                            menu.add(item);
+                                        });
+                                        // stop this task
+                                        Ext.TaskMgr.stop(task);
+                                    }
+                                },
+                                interval: 20
+                            });
+                        }
+                    }
+                })
+            });
+        }
+        buttons = buttons.concat(['-', {
             xtype: "gx_opacityslider",
             width: 100,
             // hack for http://applis-bretagne.fr/redmine/issues/2026 :
@@ -1129,11 +1133,15 @@ GEOR.managelayers = (function() {
             if (!panel) {
                 return;
             }
-            var btn = panel.findByType("splitbutton")[0];
+            var btns = panel.findByType("splitbutton");
+            if (!btns.length) {
+                // for instance when GEOR.edit is null (no permission)
+                return;
+            }
             if (layerRecord.get("type") === "WMS" && layerRecord.hasEquivalentWFS()) {
-                btn.enable();
+                btns[0].enable();
             } else {
-                btn.disable();
+                btns[0].disable();
             }
         },
 

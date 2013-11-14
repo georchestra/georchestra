@@ -107,6 +107,7 @@ Ext.namespace("GEOR");
         checkRoles('styler', GEOR.config.ROLES_FOR_STYLER);
         checkRoles('querier', GEOR.config.ROLES_FOR_QUERIER);
         checkRoles('print', GEOR.config.ROLES_FOR_PRINTER);
+        checkRoles('edit', GEOR.config.ROLES_FOR_EDIT);
 
         /*
          * Initialize the application.
@@ -116,7 +117,9 @@ Ext.namespace("GEOR");
 
         GEOR.wmc.init(layerStore);
         GEOR.tools.init(layerStore);
-        GEOR.edit.init(map);
+        if (GEOR.edit) {
+            GEOR.edit.init(map);
+        }
         if (GEOR.print) {
             GEOR.print.init(layerStore);
         }
