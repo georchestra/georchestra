@@ -216,6 +216,7 @@ GEOR.edit = (function() {
                                 }
                             }, {
                                 header: tr("Req."), // Required
+                                tooltip: tr("Required"),
                                 dataIndex: "nillable",
                                 width: 50,
                                 fixed: true,
