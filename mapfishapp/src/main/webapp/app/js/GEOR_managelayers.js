@@ -886,8 +886,11 @@ GEOR.managelayers = (function() {
             buttons.push({
                 xtype: "splitbutton",
                 text: tr("Edition"),
-                tooltip: tr("Switch on/off edit mode for this layer"), 
-                disabled: true, // enabled on WMS layer successfully described
+                tooltip: tr("Switch on/off edit mode for this layer"),
+                // disabled by default, enabled on WMS layer successfully described:
+                // see GEOR.js (mediator)
+                disabled: !(layerRecord.get("type") === "WMS" && 
+                    layerRecord.hasEquivalentWFS()),
                 handler: function() {
                     if (this.disabled) {
                         // do nothing
@@ -1022,8 +1025,13 @@ GEOR.managelayers = (function() {
          */
         create: function(layerStore) {
             tr = OpenLayers.i18n;
-            panelCache = {};
             Ext.QuickTips.init();
+            // handle our panels cache:
+            panelCache = {};
+            layerStore.on("remove", function(s, record) {
+                // remove entry:
+                delete panelCache[record.id];
+            });
             // create the layer container
             layerContainer = new GeoExt.tree.LayerContainer({
                 layerStore: layerStore,
