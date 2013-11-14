@@ -244,13 +244,13 @@ GEOR.edit = (function() {
                             },
                             listeners: {
                                 "done": function(panel, e) {
-                                    var feature = e.feature, modified = e.modified;
-                                    if (feature.state != null) {
+                                    //var feature = e.feature, modified = e.modified;
+                                    if (e.feature.state != null) {
                                         strategy.save();
                                     }
                                 },
                                 "cancel": function(panel, e) {
-                                    var feature = e.feature, modified = e.modified;
+                                    //var feature = e.feature, modified = e.modified;
                                     // closing window will cause destroy of it and associated components, 
                                     // including editorGrid:
                                     win.close();
