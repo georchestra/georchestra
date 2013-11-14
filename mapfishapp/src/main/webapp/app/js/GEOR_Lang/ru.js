@@ -30,6 +30,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Close": "Закрыть",
     "labelSeparator": " : ",
     "File submission failed or invalid file": "Ошибка отправки файла – возможно, что файл недействителен",
+    "Type": "Тип",
     /* GEOR.js strings */
     "Cities": "Населённые пункты",
     "Recentering on GeoNames cities": "Переориентация на населённые пункты<br /> GeoNames.",
@@ -42,7 +43,6 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "resultspanel.emptytext": "<p> Выберите инструмент запроса или создайте запрос на слой. <br />Атрибуты объектов появятся в этой рамке. </p>",
     /* GEOR_ClassificationPanel.js strings */
     "Attribute": "Атрибут",
-    "Type": "Тип",
     "Number of classes": "Число классов",
     "Minimum size": "Минимальный размер",
     "Maximum size": "Максимальный размер",
@@ -99,9 +99,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Precise your request.": "Précisez votre requête.",
     "No metadata matches the query.":
         "Aucune métadonnée ne correspond à la requête.",
-    */
-    /* GEOR_edit.js strings */
-    
+    */    
     /* GEOR_fileupload.js strings */
     "Local file": "Локальный файл",
     "The service is inactive": "Сервис не работает",
@@ -168,7 +166,13 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     //"Draw new polygon": "Dessiner un nouveau polygone",
     //"Edition": "Edition",
     "Editing": "Издание",
-    //"Switch on/off edit mode for this layer": "Basculer cette couche en mode édition",
+    /*
+    "Edition": "Edition",
+    "Switch on/off edit mode for this layer": "Basculer cette couche en mode édition",
+    "No geometry column.": "Colonne géométrique non détectée.",
+    "Geometry column type (TYPE) is unsupported.": "Геометрия этого слоя следующего типа : ${TYPE}.",
+    "Switching to attributes-only edition.": "Seuls les attributs des objets existants seront éditables.",
+    */
     /* GEOR_map.js strings */
     "Location map": "арта локализации",
     "Warning after loading layer": "Уведомление, следующее за загрузкой слоя",
@@ -336,9 +340,11 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Recommended scale is 1:10.000": "Рекомендуемый масштаб - 1:10.000",
     "with Potlatch2": "c редактором Potlatch2",
     "with Walking Papers": "при помощи Walking Papers",
-    /* GEOR_EditingPanel.js */
-    "Read-only layer": "Cлой только для прочтения",
-    "editingpanel.geom.error": "Геометрия этого слоя следующего типа : ${TYPE}.<br/>Только следующие геометрические типы подлежат редактированию : точка, линия и многоугольник (а также много-, мульти-)",
+    /* GEOR_edit.js */
+    //"Req.": "Req.", // requis
+    //"Required": "Requis",
+    //"Not required": "Non requis",
+    "Synchronization failed.": "Произошла ошибка во время процесса синхронизации.",
     /* GeoExt.data.CSW.js */
     "no abstract": "нет резюме"
     // no trailing comma

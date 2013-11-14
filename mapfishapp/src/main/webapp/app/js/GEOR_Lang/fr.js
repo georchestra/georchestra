@@ -32,6 +32,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Close": "Fermer",
     "labelSeparator": " : ",
     "File submission failed or invalid file": "L'envoi du fichier a échoué - le fichier est peut-être non valide",
+    "Type": "Type",
     /* GEOR.js strings */
     "Cities": "Localités",
     "Recentering on GeoNames cities": "Recentrage sur localités<br />de la base GeoNames",
@@ -48,7 +49,6 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
         "Les attributs des objets s'afficheront dans ce cadre.</p>",
     /* GEOR_ClassificationPanel.js strings */
     "Attribute": "Attribut",
-    "Type": "Type",
     "Number of classes": "Nombre de classes",
     "Minimum size": "Taille minimum",
     "Maximum size": "Taille maximum",
@@ -210,6 +210,9 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Edition": "Edition",
     "Editing": "Edition en cours",
     "Switch on/off edit mode for this layer": "Basculer cette couche en mode édition",
+    "No geometry column.": "Colonne géométrique non détectée.",
+    "Geometry column type (TYPE) is unsupported.": "Le type de la colonne géométrique (${TYPE}) n'est pas supporté.",
+    "Switching to attributes-only edition.": "Seuls les attributs des objets existants seront éditables.",
     /* GEOR_map.js strings */
     "Location map": "Carte de situation",
     "Warning after loading layer":
@@ -433,10 +436,10 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "with Potlatch2": "avec Potlatch2",
     "with Walking Papers": "avec Walking Papers",
     /* GEOR_edit.js */
-    "Read-only layer": "Couche non éditable",
-    "editingpanel.geom.error": "La géométrie de cette couche est de type ${TYPE}.<br/>" +
-        "Seules les géométries de type point, ligne et polygone" +
-        " (et multi-*) sont éditables.",
+    "Req.": "Req.", // requis
+    "Required": "Requis",
+    "Not required": "Non requis",
+    "Synchronization failed.": "Erreur lors de la synchronisation.",
     /* GeoExt.data.CSW.js */
     "no abstract": "pas de résumé"
     // no trailing comma

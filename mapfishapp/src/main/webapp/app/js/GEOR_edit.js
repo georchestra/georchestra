@@ -147,7 +147,7 @@ GEOR.edit = (function() {
                 },
                 "fail": function() {
                     GEOR.util.errorDialog({
-                        msg: OpenLayers.i18n('Synchronization failed.')
+                        msg: tr('Synchronization failed.')
                     });
                     // TODO: handle this case
                 }
@@ -253,7 +253,7 @@ GEOR.edit = (function() {
                         });
                         win = new GeoExt.Popup({
                             location: store.feature,
-                            title: tr('Feature attributes'),
+                            title: tr("Edition"),
                             height: 250,
                             panIn: false,
                             border: true,
