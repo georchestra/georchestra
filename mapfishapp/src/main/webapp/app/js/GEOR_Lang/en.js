@@ -115,6 +115,7 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
     "<div>Select features activated on NAME layer. Clic on the map.</div>":
          "<div>Select features activated on ${NAME} layer. " +
          "Clic on the map.</div>",
+    "OpenLayers SelectFeature":"Select features",
     /* GEOR_styler.js strings */
     "styler.guidelines":
         "Use the \"+\" button to create a class," +
