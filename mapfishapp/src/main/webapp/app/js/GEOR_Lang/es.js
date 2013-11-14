@@ -332,7 +332,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "<div>Select features activated on NAME layer. Clic on the map.</div>":
          "<div>Seleccion de objetos activada sobre la capa ${NAME}. " +
          "Haga clic sobre el mapa.</div>",
-    "OpenLayers SelectFeature":"Seleccion de objetos",
+    "OpenLayers SelectFeature":"Selección de objetos",
     /* GEOR_styler.js strings */
     "Download style": "Descargar el estilo",
     "You can download your SLD style at ": "Su estilo SLD está disponible " +

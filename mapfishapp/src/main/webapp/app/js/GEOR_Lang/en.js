@@ -26,6 +26,13 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
     /* GEOR_FeatureDataModel.js strings */
     /* GEOR_address.js strings */
     /* GEOR_ajaxglobal.js strings strings */
+    "ajax.badresponse":
+        "The server responded, but the content of the response is " +
+        "different to what expected",
+    "ajax.defaultexception":
+        "To get more information, look for the error code at <a href=\"http://" +
+        "en.wikipedia.org/wiki/List_of_HTTP_status_codes\" target=\"_blank\">" +
+        "wikipedia</a>.",
     "ajaxglobal.data.too.big": "Datas sent by the server are too " +
         "big.<br />Server sent ${SENT}KBytes " +
         "(the limit is ${LIMIT}KBytes)<br />Do you want to continue ?",
@@ -107,23 +114,22 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
     "<div>Select features activated on NAME layer. Clic on the map.</div>":
          "<div>Select features activated on ${NAME} layer. " +
          "Clic on the map.</div>",
+    "OpenLayers SelectFeature":"Select features",
     /* GEOR_styler.js strings */
     "styler.guidelines":
         "Use the \"+\" button to create a class," +
         "and the \"Analyze\" button to create a set " +
         "of classes defined by a thematic analyze.</p>",
+    /* GEOR_toolbar.js strings */
     /* GEOR_tools.js strings */
     "Could not load addon ADDONNAME": "Could not load addon ${ADDONNAME}",
+    /* GEOR_util.js strings */
+    /* GEOR_waiter.js strings */
     /* GEOR_wmc.js strings */
     "Warning: trying to restore WMC with a different projection (PROJCODE1, while map SRS is PROJCODE2). Strange things might occur !": "Warning: trying to restore WMC with a different projection (${PROJCODE1}, while map SRS is ${PROJCODE2}). Strange things might occur !",
     /* GEOR_wmcbrowser.js strings */
     "(default)": "<br/>(current default context)",
     /* GEOR_edit.js */
-    "editingpanel.geom.error": "This layer's geometry type is ${TYPE}.<br/>" +
-        "Only point, line and polygons" +
-        " (and multi-*) are editable.",
-    "layereditingpanel.cancel.confirm": "Do you really want to cancel all modifications<br />since last synchronisation ?",
-    "layereditingpanel.changes.confirm": "Please confirm or cancel current modifications",
-    "Please select one feature.": "Veuillez sélectionner un objet."
+    /* GEOR_workspace.js strings */
     // no trailing comma
 });
