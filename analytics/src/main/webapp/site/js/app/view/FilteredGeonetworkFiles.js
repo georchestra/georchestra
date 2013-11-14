@@ -4,12 +4,13 @@ Ext.define('Analytics.view.FilteredGeonetworkFiles', {
     store: 'FilteredGeonetworkFiles',
     
     initComponent: function() {
+        var tr = OpenLayers.i18n;
         this.columns = Ext.apply(this.columns || {}, {
             items: [{
                 dataIndex: 'metadata_id',
                 flex: 0, // will not be resized
                 width: 100,
-                text: 'Métadonnée',
+                text: tr('Metadata'),
                 renderer: function(v) {
                     if (!v) return;
                     var url = '/geonetwork/?id='+v;
@@ -19,12 +20,12 @@ Ext.define('Analytics.view.FilteredGeonetworkFiles', {
                 dataIndex: 'filename',
                 flex: 1, // will be resized
                 width: 570,
-                text: 'Fichier'
+                text: tr('File')
             }, {
                 dataIndex: 'count',
                 flex: 0, // will not be resized
                 width: 130,
-                text: 'Nombre de requêtes'
+                text: tr('Number of requests')
             }]
         });
 

@@ -4,11 +4,13 @@ Ext.define('Analytics.view.ExtractorLayers', {
     store: 'ExtractorLayers',
 
     initComponent: function() {
+        var tr = OpenLayers.i18n;
         // in order to have the tooltip over each row:
         this.columns = {
             defaults: {
                 renderer: function(value, md){ 
-                    md.tdAttr = 'data-qtip="double-cliquez pour afficher le détail"';
+                    var qtip=tr("double-click to see details");
+                    md.tdAttr = 'data-qtip="'+qtip+'"';
                     return value;
                 }
             }
@@ -32,10 +34,10 @@ Ext.define('Analytics.view.ExtractorLayers', {
         
         new Ext.Window({
             title: [
-                'Utilisateurs ayant téléchargé la couche',
+                tr('The last users who downloaded the layer'),
                 rec.get('ows_type'),
                 rec.get('layer_name'),
-                'du service',
+                tr('service'),
                 rec.get('ows_url')
             ].join(' '),
             width: 800,

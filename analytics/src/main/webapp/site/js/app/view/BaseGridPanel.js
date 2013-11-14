@@ -5,10 +5,11 @@ Ext.define('Analytics.view.BaseGridPanel', {
     forceFit: true,
     
     initComponent: function() {
+        var tr = OpenLayers.i18n;
         Ext.apply(this, {
             tools: [{
                 type: 'save',
-                tooltip: "Export CSV"
+                tooltip: tr("Export to CSV")
             }],
             selModel: {
                 mode: 'single'
@@ -17,10 +18,10 @@ Ext.define('Analytics.view.BaseGridPanel', {
             bbar: Ext.create('Ext.PagingToolbar', {
                 store: this.getStore(),
                 displayInfo: true,
-                beforePageText: "Page",
-                afterPageText: "sur {0}",
-                displayMsg: 'Enregistrements {0} à {1} sur {2}',
-                emptyMsg: "Aucun enregistrement"
+                beforePageText: tr("Page"),
+                afterPageText: tr("of N1"),
+                displayMsg: tr('Records N0 to N1 of N2'),
+                emptyMsg: tr("No records")
             }),
             listeners: {
                 "itemdblclick": this.onItemDoubleClick,

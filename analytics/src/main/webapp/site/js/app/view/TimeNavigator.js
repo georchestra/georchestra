@@ -1,6 +1,7 @@
 Ext.define('Analytics.view.TimeNavigator', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.timenavigator',
+    tr: null,
     
     layout: {
         type: 'hbox',
@@ -13,6 +14,7 @@ Ext.define('Analytics.view.TimeNavigator', {
     },
     
     initComponent: function() {
+        tr = OpenLayers.i18n;
         this.items = [{
             xtype: 'container',
             items: [{
@@ -20,7 +22,7 @@ Ext.define('Analytics.view.TimeNavigator', {
                 scale: 'medium',
                 id: 'previous',
                 cls: 'centered',
-                text: 'mois précédent',
+                text: tr('previous month'),
                 icon: 'resources/site/images/famfamfam/resultset_previous.png',
                 iconAlign: 'left',
                 width: 180
@@ -43,7 +45,7 @@ Ext.define('Analytics.view.TimeNavigator', {
                     xtype: 'button',
                     scale: 'medium',
                     id: 'switchMode',
-                    text: 'statistiques globales',
+                    text: tr('Global statistics'),
                     width: 180
                 }]
             }]
@@ -54,7 +56,7 @@ Ext.define('Analytics.view.TimeNavigator', {
                 scale: 'medium',
                 id: 'next',
                 cls: 'centered',
-                text: 'mois suivant',
+                text: tr('next month'),
                 icon: 'resources/site/images/famfamfam/resultset_next.png',
                 iconAlign: 'right',
                 width: 180
@@ -75,17 +77,17 @@ Ext.define('Analytics.view.TimeNavigator', {
         return Ext.Date.format(date, 'F Y');
     },
     
-	toGlobalMode: function(btn) {
+    toGlobalMode: function(btn) {
 		this.getChildByElement('previous').setVisible(false);
 		this.getChildByElement('next').setVisible(false);
-		this.changeText('Statistiques globales');
-		btn.setText('statistiques mensuelles');
+		this.changeText(tr('Global statistics'));
+		btn.setText(tr('Monthly statistics'));
     },
     
     toMonthlyMode: function(date,btn) {
 		this.getChildByElement('previous').setVisible(true);
 		this.getChildByElement('next').setVisible(true);
 		this.changeText(this.formatDate(date));
-		btn.setText('statistiques globales');
+		btn.setText(tr('Global statistics'));
     },
 });

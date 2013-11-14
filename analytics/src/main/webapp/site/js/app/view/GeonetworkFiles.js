@@ -4,11 +4,13 @@ Ext.define('Analytics.view.GeonetworkFiles', {
     store: 'GeonetworkFiles',
 
     initComponent: function() {
+        var tr = OpenLayers.i18n;
         // in order to have the tooltip over each row:
         this.columns = {
             defaults: {
                 renderer: function(value, md){ 
-                    md.tdAttr = 'data-qtip="double-cliquez pour afficher le détail"';
+                    var qtip=tr("double-click to see details");
+                    md.tdAttr = 'data-qtip="'+qtip+'"';
                     return value;
                 }
             }
@@ -29,9 +31,9 @@ Ext.define('Analytics.view.GeonetworkFiles', {
 
         new Ext.Window({
             title: [
-                'Utilisateurs ayant téléchargé le fichier',
+                tr('The last users who downloaded the file'),
                 rec.get('filename'),
-                'de la métadonnée',
+                tr('the metadata'),
                 rec.get('metadata_id')
             ].join(' '),
             width: 800,
