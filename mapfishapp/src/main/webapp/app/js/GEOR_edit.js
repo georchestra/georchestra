@@ -109,6 +109,11 @@ GEOR.edit = (function() {
          */
         activate: function(options) {
             GEOR.edit.deactivate();
+            map.events.register("preremovelayer", this, function(o) {
+                if (o.layer.id === options.layerRecord.id) {
+                    GEOR.edit.deactivate();
+                }
+            });
             splitButton = options.splitButton;
             splitButton.el.addClass("now-editing");
             splitButton.setText(tr("Editing"));
