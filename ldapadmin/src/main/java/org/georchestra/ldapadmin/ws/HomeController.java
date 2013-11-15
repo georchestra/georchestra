@@ -44,7 +44,7 @@ public class HomeController {
 		this.tokenManagement.start();
 	}
 	
-	@RequestMapping(value={"/"})
+	@RequestMapping(value="/")
 	public void root(HttpServletRequest request, HttpServletResponse response) throws IOException{
 		
 		String roles = request.getHeader("sec-roles");
