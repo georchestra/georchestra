@@ -69,7 +69,13 @@ public class HomeController {
 
 	@RequestMapping(value="/privateui/")
 	public String privateui(HttpServletRequest request) throws IOException{
-
-		return "privateUi";
+		String roles = request.getHeader("sec-roles");
+		if(roles != null && !roles.equals("ROLE_ANONYMOUS")) {
+			List<String> rolesList = Arrays.asList(roles.split(","));
+			if(rolesList.contains("MOD_LDAPADMIN")) {
+				return "privateUi";
+			}
+		}
+		return "forbidden";
 	}
 }
