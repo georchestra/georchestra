@@ -30,6 +30,7 @@
     <servlet-mapping>
         <servlet-name>ldapadmin</servlet-name>
         <url-pattern>/</url-pattern>
+        <url-pattern>/privateui/</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
