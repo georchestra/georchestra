@@ -61,9 +61,9 @@ public class HomeController {
 			}
 			if(LOG.isDebugEnabled()){
 				LOG.debug("root page request -> redirection to " +
-						config.getPasswordRecoveryContext() + redirectUrl);
+						config.getPublicContextPath() + redirectUrl);
 			}
-			response.sendRedirect(config.getPasswordRecoveryContext() + redirectUrl);
+			response.sendRedirect(config.getPublicContextPath() + redirectUrl);
 		}
 	}
 
