@@ -44,7 +44,7 @@ public class HomeController {
 		this.tokenManagement.start();
 	}
 	
-	@RequestMapping(value={"/privateui","/"})
+	@RequestMapping(value={"/"})
 	public void root(HttpServletRequest request, HttpServletResponse response) throws IOException{
 		
 		String roles = request.getHeader("sec-roles");
@@ -54,7 +54,7 @@ public class HomeController {
 			List<String> rolesList = Arrays.asList(roles.split(","));
 			
 			if(rolesList.contains("MOD_LDAPADMIN")) {
-				redirectUrl = "/privateui/index.html";
+				redirectUrl = "/privateui/";
 			}
 			else {
 				redirectUrl = "/account/userdetails";
@@ -65,5 +65,11 @@ public class HomeController {
 			}
 			response.sendRedirect(config.getPasswordRecoveryContext() + redirectUrl);
 		}
+	}
+
+	@RequestMapping(value="/privateui/")
+	public String privateui(HttpServletRequest request) throws IOException{
+
+		return "privateUi";
 	}
 }
