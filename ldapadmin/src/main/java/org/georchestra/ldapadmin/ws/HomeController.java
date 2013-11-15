@@ -53,7 +53,7 @@ public class HomeController {
 			String redirectUrl;
 			List<String> rolesList = Arrays.asList(roles.split(","));
 			
-			if(rolesList.contains("MOD_LDAPADMIN")) {
+			if(rolesList.contains("ROLE_MOD_LDAPADMIN")) {
 				redirectUrl = "/privateui/";
 			}
 			else {
@@ -72,7 +72,7 @@ public class HomeController {
 		String roles = request.getHeader("sec-roles");
 		if(roles != null && !roles.equals("ROLE_ANONYMOUS")) {
 			List<String> rolesList = Arrays.asList(roles.split(","));
-			if(rolesList.contains("MOD_LDAPADMIN")) {
+			if(rolesList.contains("ROLE_MOD_LDAPADMIN")) {
 				return "privateUi";
 			}
 		}
