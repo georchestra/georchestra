@@ -17,6 +17,7 @@
  * @include OpenLayers/Control/GetFeature.js
  * @include OpenLayers/Control/SelectFeature.js
  * @include OpenLayers/Control/DrawFeature.js
+ * @include OpenLayers/Control/Snapping.js
  * @include OpenLayers/Handler/Point.js
  * @include OpenLayers/Handler/Path.js
  * @include OpenLayers/Handler/Polygon.js
@@ -60,6 +61,12 @@ GEOR.edit = (function() {
      * {OpenLayers.Control.DrawFeature}
      */
     var drawFeature;
+
+    /**
+     * Property: snap
+     * {OpenLayers.Control.Snapping}
+     */
+    var snap;
 
     /**
      * Property: vectorLayer
@@ -183,6 +190,7 @@ GEOR.edit = (function() {
                         // draw one feature at a time:
                         if (drawFeature) {
                             drawFeature.deactivate();
+                            snap.deactivate();
                         }
                         // sync feature values to store
                         var store = options.store, 
@@ -331,7 +339,7 @@ GEOR.edit = (function() {
             if (win) {
                 win.close();
             }
-            getFeature.deactivate();
+            //getFeature.deactivate(); // this is to allow snapping !
             selectFeature.deactivate();
             var handler = OpenLayers.Handler[(geomType == 'Line') ? 'Path' : geomType],
             options = {
@@ -340,6 +348,10 @@ GEOR.edit = (function() {
             if (multiGeom) {
                 options.multi = true
             }
+            snap = new OpenLayers.Control.Snapping({
+                layer: vectorLayer, 
+                autoActivate: true
+            });
             drawFeature = new OpenLayers.Control.DrawFeature(vectorLayer, handler, {
                 handlerOptions: options,
                 eventListeners: {
@@ -353,7 +365,7 @@ GEOR.edit = (function() {
                 },
                 autoActivate: true
             });
-            map.addControl(drawFeature);
+            map.addControls([drawFeature, snap]);
         },
 
         /*
@@ -378,6 +390,11 @@ GEOR.edit = (function() {
                 drawFeature.deactivate();
                 drawFeature.destroy();
                 drawFeature = null;
+            }
+            if (snap) {
+                snap.deactivate();
+                snap.destroy();
+                snap = null;
             }
             // will take care of destroying protocol 
             // and strategy in correct order, 
