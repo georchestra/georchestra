@@ -222,7 +222,6 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "No geometry column.": "Ninguna columna geométrica encontrada.",
     "Geometry column type (TYPE) is unsupported.": "El tipo de la columna geométrica (${TYPE}) no esta soportado.",
     "Switching to attributes-only edition.": "Solo se podrá editar los atributos de los objetos existentes.",
-    */
     /* GEOR_map.js strings */
     "Location map": "Mapa de ubicación",
     "Warning after loading layer":
