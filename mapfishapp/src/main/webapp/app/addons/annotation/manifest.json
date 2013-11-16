@@ -4,12 +4,10 @@
         "js/FeaturePanel.js",
         "js/main.js",
         "../../../lib/externals/ext/examples/ux/Spinner.js",
-        "../../../lib/externals/ext/examples/ux/SpinnerField.js",
-        "../../../lib/externals/geoext/lib/GeoExt/widgets/Popup.js"
+        "../../../lib/externals/ext/examples/ux/SpinnerField.js"
     ],
     "css": [
-        "resources/css/annotation.css",
-        "../../../lib/externals/geoext/resources/css/popup.css"
+        "resources/css/annotation.css"
     ],
     "default_options": {},
     "i18n": {
