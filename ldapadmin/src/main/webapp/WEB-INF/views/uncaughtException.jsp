@@ -11,8 +11,8 @@
 <html lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<link href='../account/css/bootstrap.min.css' rel="stylesheet" />
-	<link href='../account/css/ldapadmin.css' rel="stylesheet" />
+	<link href='${publicContextPath}/account/css/bootstrap.min.css' rel="stylesheet" />
+	<link href='${publicContextPath}/account/css/ldapadmin.css' rel="stylesheet" />
 	<title><s:message code="uncaughtException.title"/></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
@@ -65,6 +65,6 @@ try {
 		</pre>
 	</div>
 	<script src="//code.jquery.com/jquery.js"></script>
-	<script src='../account/js/bootstrap.min.js'></script>
+	<script src='${publicContextPath}/account/js/bootstrap.min.js'></script>
 </body>
 </html>

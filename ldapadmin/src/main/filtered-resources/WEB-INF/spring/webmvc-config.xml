@@ -12,6 +12,8 @@
         http://www.springframework.org/schema/mvc
         http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
+	<mvc:annotation-driven />
+
 	<!-- The controllers are autodetected POJOs labeled with the @Controller 
 		annotation. -->
 	<context:component-scan base-package="org.georchestra.ldapadmin.ws" />
@@ -21,9 +23,11 @@
 		
     <bean class='org.georchestra.ldapadmin.Configuration'>
         <property name='publicContextPath' value='${publicContextPath}' />
-        
     </bean>
-    
+
+	<mvc:interceptors>
+		<bean class="org.georchestra.ldapadmin.ConfigurationInterceptor" />
+	</mvc:interceptors>
     		
 	<bean
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver"
