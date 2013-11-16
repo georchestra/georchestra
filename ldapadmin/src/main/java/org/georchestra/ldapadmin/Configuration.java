@@ -45,7 +45,7 @@ public final class Configuration {
 			return;
 		}
 		
-		LOG.info("password recovery context was configured: "+ this.passwordRecoveryContext);
+		LOG.info("password recovery context was configured: "+ this.publicContextPath);
 	}
 
 	public void setPublicContextPath(String publicContextPath) {
