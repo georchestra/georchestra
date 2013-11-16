@@ -446,7 +446,7 @@ div.olMapViewport {
 }
 
 .now-editing button {
-    color: red;
+    color: red !important;
 }
 
 .geor-btn-edit-point {
