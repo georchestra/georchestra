@@ -213,16 +213,15 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "source: ": "fuente: ",
     "unknown": "desconocido",
     "Actions": "Acciones",
-    //"Draw new point": "Dessiner un nouveau point",
-    //"Draw new line": "Dessiner une nouvelle ligne",
-    //"Draw new polygon": "Dessiner un nouveau polygone",
-    /*
-    "Edition": "Edition",
-    "Editing": "Edition en cours",
-    "Switch on/off edit mode for this layer": "Basculer cette couche en mode édition",
-    "No geometry column.": "Colonne géométrique non détectée.",
-    "Geometry column type (TYPE) is unsupported.": "Le type de la colonne géométrique (${TYPE}) n'est pas supporté.",
-    "Switching to attributes-only edition.": "Seuls les attributs des objets existants seront éditables.",
+    "Draw new point": "Dibujar un nuevo punto",
+    "Draw new line": "Dibujar una nueva línea",
+    "Draw new polygon": "Dibujar un nuevo polígono",
+    "Edition": "Edición",
+    "Editing": "Edición en curso",
+    "Switch on/off edit mode for this layer": "Activar/desactivar el modo de edición para esta capa",
+    "No geometry column.": "Ninguna columna geométrica encontrada.",
+    "Geometry column type (TYPE) is unsupported.": "El tipo de la columna geométrica (${TYPE}) no esta soportado.",
+    "Switching to attributes-only edition.": "Solo se podrá editar los atributos de los objetos existentes.",
     */
     /* GEOR_map.js strings */
     "Location map": "Mapa de ubicación",
@@ -446,9 +445,9 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "with Potlatch2": "con Potlatch2",
     "with Walking Papers": "con Walking Papers",
     /* GEOR_edit.js */
-    "Req.": "Req.", // requis
-    "Required": "Requis",
-    "Not required": "Non requis",
+    "Req.": "Req.",
+    "Required": "Requerido",
+    "Not required": "No requerido",
     "Synchronization failed.": "Error durante la sincronización.",
     /* GeoExt.data.CSW.js */
     "no abstract": "ningún abstracto"
@@ -457,17 +456,17 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
 
 GeoExt.Lang.add("fr", {
     "GeoExt.ux.FeatureEditorGrid.prototype": {
-        deleteMsgTitle: "Delete Feature?",
-        deleteMsg: "Are you sure you want to delete this feature?",
-        deleteButtonText: "Delete",
-        deleteButtonTooltip: "Delete this feature",
-        cancelMsgTitle: "Cancel Editing?",
-        cancelMsg: "There are unsaved changes. Are you sure you want to cancel?",
-        cancelButtonText: "Cancel",
-        cancelButtonTooltip: "Stop editing, discard changes",
-        saveButtonText: "Save",
-        saveButtonTooltip: "Save changes",
-        nameHeader: "Name",
-        valueHeader: "Value"
+        deleteMsgTitle: "¿Borrar el objeto?",
+        deleteMsg: "¿Confirma la supresión del objeto?",
+        deleteButtonText: "Borrar",
+        deleteButtonTooltip: "Borrar este objeto",
+        cancelMsgTitle: "¿Cancelar la edición?",
+        cancelMsg: "Varios cambios no han sido guardados. ¿Confirma la cancelación?",
+        cancelButtonText: "Cancelar",
+        cancelButtonTooltip: "Parar la edición, descartando los cambios",
+        saveButtonText: "Guardar",
+        saveButtonTooltip: "Guardar los cambios",
+        nameHeader: "Nombre",
+        valueHeader: "Valor"
     }
 });
