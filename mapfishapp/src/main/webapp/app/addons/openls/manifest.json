@@ -1,11 +1,9 @@
 {
     "js": [
-        "js/main.js",
-        "../../../lib/externals/geoext/lib/GeoExt/widgets/Popup.js"
+        "js/main.js"
     ],
     "css": [
-        "css/main.css",
-        "../../../lib/externals/geoext/resources/css/popup.css"
+        "css/main.css"
     ],
     "default_options": {
         "GeocodedAddressFields": [
