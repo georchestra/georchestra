@@ -64,6 +64,9 @@ public class HomeController {
 						config.getPublicContextPath() + redirectUrl);
 			}
 			response.sendRedirect(config.getPublicContextPath() + redirectUrl);
+		} else {
+			/* TODO: send a 403 error */
+			return;
 		}
 	}
 
