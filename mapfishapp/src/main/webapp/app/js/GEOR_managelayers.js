@@ -25,7 +25,8 @@
  * @include GEOR_edit.js
  * @include GEOR_ows.js
  * @include GEOR_util.js
- * Note: GEOR_querier.js & GEOR_selectfeature.js not included here since it's not required for edit app
+ * @include GEOR_querier.js
+ * @include GEOR_selectfeature.js
  */
 
 Ext.namespace("GEOR");
