@@ -717,6 +717,14 @@ GEOR.config = (function() {
             false),
 
         /**
+         * Constant: EDITABLE_LAYERS
+         * {RegExp} 
+         * 
+         */
+        EDITABLE_LAYERS: getCustomParameter("EDITABLE_LAYERS",
+            /.*/i),
+
+        /**
          * Constant: WMTS_SERVERS
          * {Array} List of externals WMTS to display in the WMTS servers tab.
          */

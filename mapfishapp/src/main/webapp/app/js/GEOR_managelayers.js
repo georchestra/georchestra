@@ -109,6 +109,18 @@ GEOR.managelayers = (function() {
     var panelCache;
 
     /**
+     * Method: checkEditEnabled
+     * A convenient method to check that a layer is editable.
+     */
+    var checkEditEnabled = function(layerRecord) {
+        var url = layerRecord.getLayer().url;
+        url = url instanceof Array ? url[0] : url;
+        return layerRecord.get("type") === "WMS" &&
+            layerRecord.hasEquivalentWFS() &&
+            GEOR.config.EDITABLE_LAYERS.test(url);
+    };
+
+    /**
      * Method: actionHandler
      * The action listener.
      */
@@ -890,8 +902,7 @@ GEOR.managelayers = (function() {
                 tooltip: tr("Switch on/off edit mode for this layer"),
                 // disabled by default, enabled on WMS layer successfully described:
                 // see GEOR.js (mediator)
-                disabled: !(layerRecord.get("type") === "WMS" && 
-                    layerRecord.hasEquivalentWFS()),
+                disabled: !checkEditEnabled(layerRecord),
                 handler: function() {
                     if (this.disabled) {
                         // do nothing
@@ -1149,7 +1160,7 @@ GEOR.managelayers = (function() {
                 // for instance when GEOR.edit is null (no permission)
                 return;
             }
-            if (layerRecord.get("type") === "WMS" && layerRecord.hasEquivalentWFS()) {
+            if (checkEditEnabled(layerRecord)) {
                 btns[0].enable();
             } else {
                 btns[0].disable();
