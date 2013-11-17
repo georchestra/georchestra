@@ -348,24 +348,33 @@ GEOR.edit = (function() {
             if (multiGeom) {
                 options.multi = true
             }
-            snap = new OpenLayers.Control.Snapping({
-                layer: vectorLayer, 
-                autoActivate: true
-            });
-            drawFeature = new OpenLayers.Control.DrawFeature(vectorLayer, handler, {
-                handlerOptions: options,
-                eventListeners: {
-                    "featureadded": function(o) {
-                        // mimic selection:
-                        vectorLayer.events.triggerEvent("featureselected", {
-                            feature: o.feature
-                        });
-                        // this will trigger a call to modifyFeature.select from the FeatureEditorGrid
-                    }
-                },
-                autoActivate: true
-            });
-            map.addControls([drawFeature, snap]);
+            if (!snap) {
+                snap = new OpenLayers.Control.Snapping({
+                    layer: vectorLayer, 
+                    autoActivate: true
+                });
+                map.addControl(snap);
+            } else {
+                snap.activate();
+            }
+            if (!drawFeature) {
+                drawFeature = new OpenLayers.Control.DrawFeature(vectorLayer, handler, {
+                    handlerOptions: options,
+                    eventListeners: {
+                        "featureadded": function(o) {
+                            // mimic selection:
+                            vectorLayer.events.triggerEvent("featureselected", {
+                                feature: o.feature
+                            });
+                            // this will trigger a call to modifyFeature.select from the FeatureEditorGrid
+                        }
+                    },
+                    autoActivate: true
+                });
+                map.addControl(drawFeature);
+            } else {
+                drawFeature.activate();
+            }
         },
 
         /*
