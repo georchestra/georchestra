@@ -34,6 +34,7 @@
 			</activation>
 			<modules>
 				<module>geofence/src</module>
+				<module>geofence-webapp</module>
 				<module>webapp</module>
 			</modules>
 			<properties>
