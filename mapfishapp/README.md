@@ -71,12 +71,12 @@ This can be configured in GEOR_custom.js (in your profile), please have a look a
 
 Currently, we support:
  * attributes editing for all layers and geometry types (according to the feature model publicized by WFS DescribeFeatureType),
- * drawing new points, lines and simple polygons.
+ * drawing new points, lines and simple polygons with snapping on surrounding features.
 
-All WMS layers with a WFS equivalent service are available for edition (the previous **NS_EDIT** config option is deprecated).
+All WMS layers with a WFS equivalent service whose URL matches the EDITABLE_LAYERS regexp (provided by your config) are available for edition (the previous **NS_EDIT** config option is deprecated).
 In case the user does not have the rights to edit a layer, the first transaction will fail, and the changes will be lost.
 
-There is no handling of concurrent edition or feature locking for now.
+There is no handling of concurrent edition nor feature locking for now.
 
 Your data in mapfishapp
 ========================
