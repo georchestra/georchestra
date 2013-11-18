@@ -66,17 +66,24 @@ Each "referential" layer should obey these simple rules:
 Feature editor
 ==============
 
-By default, members of the ADMINISTRATOR group have the ability to see the edit functions provided by /mapfishapp/.
-This can be configured in GEOR_custom.js (in your profile), please have a look at the ROLES_FOR_EDIT config option.
-
-Currently, we support:
+Currently, the integrated editor supports:
  * attributes editing for all layers and geometry types (according to the feature model publicized by WFS DescribeFeatureType),
  * drawing new points, lines and simple polygons with snapping on surrounding features.
 
-All WMS layers with a WFS equivalent service whose URL matches the EDITABLE_LAYERS regexp (provided by your config) are available for edition (the previous **NS_EDIT** config option is deprecated).
+Every WMS layer:
+ * with a WFS equivalent service, **and**
+ * whose URL matches the GEOR.config.EDITABLE_LAYERS regexp (provided by your config) 
+... is available for edition.
+
+By default:
+ * the template config provides ```GEOR.config.EDITABLE_LAYERS = /.*@shared.server.name@.*/i``` which means that all WMS layers served by the platform host will be editable.
+ * members of the ADMINISTRATOR group have the ability to see the edit functions provided by /mapfishapp/. This can be configured in GEOR_custom.js (in your profile), please have a look at the ROLES_FOR_EDIT config option.
+
 In case the user does not have the rights to edit a layer, the first transaction will fail, and the changes will be lost.
 
 There is no handling of concurrent edition nor feature locking for now.
+
+NOTE: the previous **NS_EDIT** config option is deprecated
 
 Your data in mapfishapp
 ========================
