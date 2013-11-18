@@ -585,7 +585,7 @@ GEOR.managelayers = (function() {
             isBaseLayer = layerRecord.get("opaque") || 
                 layer.transitionEffect === "resize";
 
-        var menuItems = [], url, sepInserted, item;
+        var menuItems = [], sepInserted, item;
 
         if (isWMS && !layerRecord.get("_described")) {
             return [];
@@ -686,25 +686,13 @@ GEOR.managelayers = (function() {
         };
         
         // metadata action
-        var murls = layerRecord.get("metadataURLs");
-        if (murls && murls.length > 0) {
-            var murl = murls[0];
-            // default to first entry
-            url = (murl.href) ? murl.href : murl;
-            for (var i=1 ; i < murls.length ; i++) {
-               murl = murls[i];
-               // prefer text/html format if found
-               if (murl.format && murl.format == 'text/html') {
-                   url = (murl.href) ? murl.href : murl;
-               }
-            }
-            insertSep();
+        if (layer.metadataURL) {
             menuItems.push({
                 iconCls: 'geor-btn-metadata',
                 text: tr("Show metadata"),
                 listeners: {
                     "click": function(btn, pressed) {
-                        window.open(url);
+                        window.open(layer.metadataURL);
                     }
                 }
             });
