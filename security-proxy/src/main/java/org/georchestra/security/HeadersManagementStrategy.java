@@ -70,6 +70,10 @@ public class HeadersManagementStrategy {
             if (referer != null && headerName.equalsIgnoreCase(REFERER_HEADER_NAME)) {
                 continue;
             }
+            if (headerName.equalsIgnoreCase("sec-username") ||
+                headerName.equalsIgnoreCase("sec-roles")) {
+                continue;
+            }
             
             String value = originalRequest.getHeader(headerName);
             addHeaderToRequestAndLog(proxyRequest, headersLog, headerName, value);
