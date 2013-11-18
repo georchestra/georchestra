@@ -228,7 +228,11 @@ if(sec_roles != null) {
                 if (/\/cas\//.test(url)) {
                     a.href = "/cas/login";
                 } else {
-                    a.href = url.split('?')[0] + "?login";
+                    /* Taken from https://github.com/openlayers/openlayers/blob/master/lib/OpenLayers/Util.js#L557 */
+                    var paramStr="login", parts = (url + " ").split(/[?&]/);
+                    a.href = url + (parts.pop() === " " ?
+                        paramStr :
+                        parts.length ? "&" + paramStr : "?" + paramStr);
                 }
             }
 
