@@ -286,10 +286,22 @@ GEOR.map = (function() {
                 });
             }
 
-            // set layer.metadataURL if record has metadataURLs
-            // so that this can be saved in a WMC context
-            if (r.get('metadataURLs') && r.get('metadataURLs')[0]) {
-                layer.metadataURL = [r.get('metadataURLs')[0]];
+            // Set layer.metadataURL if record has metadataURLs
+            // so that this can be saved in a WMC context.
+            // Saving the first occurence whose format matches text/html
+            // see https://github.com/georchestra/georchestra/issues/454
+            var murls = r.get("metadataURLs");
+            if (murls && murls.length > 0) {
+                var murl = murls[0];
+                // default to first entry
+                layer.metadataURL = (murl.href) ? murl.href : murl;
+                Ext.each(murls, function(murl) {
+                    // prefer text/html format if found
+                    if (murl.format && murl.format == 'text/html') {
+                        layer.metadataURL = (murl.href) ? murl.href : murl;
+                        return false; // stop looping
+                    }
+                });
             }
 
             // Errors should be non-blocking since http://applis-bretagne.fr/redmine/issues/1749
