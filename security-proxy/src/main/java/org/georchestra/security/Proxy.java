@@ -49,6 +49,7 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpTrace;
 import org.apache.http.client.params.ClientPNames;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.ProxySelectorRoutePlanner;
@@ -144,7 +145,7 @@ public class Proxy {
 
     
     @RequestMapping(params="login", method={GET,POST} )
-    public void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, URISyntaxException {
         String uri = request.getRequestURI();
         if(uri.startsWith("sec")) {
             uri=uri.substring(3);
@@ -152,24 +153,20 @@ public class Proxy {
             uri=uri.substring(4);
         }
         
+        URIBuilder uriBuilder = new URIBuilder(uri);
         Enumeration parameterNames = request.getParameterNames();
-        StringBuilder queryString = new StringBuilder("");
         while(parameterNames.hasMoreElements())
         {
             String paramName = (String)parameterNames.nextElement();
             if (!"login".equals(paramName)) {
                 String[] paramValues = request.getParameterValues(paramName);
                 for (int i = 0; i < paramValues.length; i++) {
-                    queryString.append("&" + paramName + "=" + paramValues[i]);
+                    uriBuilder.setParameter(paramName, paramValues[i]);
                 }
             }
         }
-        if (queryString.length() > 0 && queryString.charAt(0) == '&') {
-            queryString.setCharAt(0, '?');
-            uri += queryString.toString();
-        }
 
-        redirectStrategy.sendRedirect(request, response, uri);
+        redirectStrategy.sendRedirect(request, response, uriBuilder.build().toString());
     }
 
     @RequestMapping(params={"login","url"}, method={GET,POST})
