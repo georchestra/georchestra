@@ -70,15 +70,23 @@ Ext.extend(GEOR.CustomCSWRecordsReader, Ext.data.DataReader, {
 
             for (i = 0, lenI = rs.length; i < lenI; i++) {
                 r = rs[i];
-                thumbnailURL = null;
+                thumbnailURL = null, secondChoice = null;
 
                 if (r.get('URI')) {
                     // thumbnail URL (common to all layers in this MD):
                     Ext.each(r.get('URI'), function (item) {
-                        if ((item.name && item.name.toLowerCase() == "thumbnail") && item.value) {
-                            thumbnailURL = item.value;
+                        if (item.protocol && /image\/(png|jpg|jpeg|gif)/i.test(item.protocol) && item.value) {
+                            if (item.name && item.name.toLowerCase() === "thumbnail") {
+                                thumbnailURL = item.value;
+                                return false; // stop looping (we found the best possible thumbnail)
+                            } else {
+                                secondChoice = item.value;
+                            }
                         }
                     });
+                    if (!thumbnailURL) {
+                        thumbnailURL = secondChoice;
+                    }
 
                     // multiple WMS can be found in one csw:record
                     Ext.each(r.get('URI'), function (item) {
