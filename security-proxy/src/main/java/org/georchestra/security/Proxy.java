@@ -151,6 +151,24 @@ public class Proxy {
         } else if(uri.startsWith("/sec")) {
             uri=uri.substring(4);
         }
+        
+        Enumeration parameterNames = request.getParameterNames();
+        StringBuilder queryString = new StringBuilder("");
+        while(parameterNames.hasMoreElements())
+        {
+            String paramName = (String)parameterNames.nextElement();
+            if (!"login".equals(paramName)) {
+                String[] paramValues = request.getParameterValues(paramName);
+                for (int i = 0; i < paramValues.length; i++) {
+                    queryString.append("&" + paramName + "=" + paramValues[i]);
+                }
+            }
+        }
+        if (queryString.length() > 0 && queryString.charAt(0) == '&') {
+            queryString.setCharAt(0, '?');
+            uri += queryString.toString();
+        }
+
         redirectStrategy.sendRedirect(request, response, uri);
     }
 
