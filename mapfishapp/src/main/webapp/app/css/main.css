@@ -348,6 +348,7 @@ div.olMapViewport {
 .x-list div.x-view-item img.thumb {
 	padding: 5px;
 	border: 1px solid #bbb;
+	max-width: 180px; /* to cope with larger images (geonetwork has 180px thumbnails)*/
 }
 
 /* Bold layer names in layer manager http://applis-bretagne.fr/redmine/issues/4532 */
