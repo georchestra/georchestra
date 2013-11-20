@@ -669,7 +669,7 @@ GEOR.managelayers = (function() {
                     submitData({
                         layers: [{
                             layername: layerRecord.get('name'),
-                            metadataURL: url || "",
+                            metadataURL: layer.metadataURL || "",
                             owstype: isWMS ? "WMS" : "WFS",
                             owsurl: isWMS ? layer.url : layer.protocol.url
                         }]
