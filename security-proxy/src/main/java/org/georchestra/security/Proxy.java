@@ -49,6 +49,7 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpTrace;
 import org.apache.http.client.params.ClientPNames;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.ProxySelectorRoutePlanner;
@@ -144,14 +145,28 @@ public class Proxy {
 
     
     @RequestMapping(params="login", method={GET,POST} )
-    public void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, URISyntaxException {
         String uri = request.getRequestURI();
         if(uri.startsWith("sec")) {
             uri=uri.substring(3);
         } else if(uri.startsWith("/sec")) {
             uri=uri.substring(4);
         }
-        redirectStrategy.sendRedirect(request, response, uri);
+        
+        URIBuilder uriBuilder = new URIBuilder(uri);
+        Enumeration parameterNames = request.getParameterNames();
+        while(parameterNames.hasMoreElements())
+        {
+            String paramName = (String)parameterNames.nextElement();
+            if (!"login".equals(paramName)) {
+                String[] paramValues = request.getParameterValues(paramName);
+                for (int i = 0; i < paramValues.length; i++) {
+                    uriBuilder.setParameter(paramName, paramValues[i]);
+                }
+            }
+        }
+
+        redirectStrategy.sendRedirect(request, response, uriBuilder.build().toString());
     }
 
     @RequestMapping(params={"login","url"}, method={GET,POST})
