@@ -80,19 +80,28 @@ angular.module('ldapadmin.controllers', [])
    * Users List
    */
   .controller('UsersListCtrl', function($scope, $rootScope, $routeParams, $filter, Restangular, flash) {
-    //$scope.users is inherited from UsersCtrl's scope
-    var index = findByAttr($scope.groups, 'cn', $routeParams.group);
-    var group = $scope.groups[index];
-    $scope.groupFilter = function(item) {
-      if (group) {
-        return group.users && group.users.indexOf(item.uid) != -1;
-      } else {
-        return true;
-      }
-    };
-    $rootScope.selectedGroup = group;
+    var group;
 
-    $scope.allSelected = false;
+    function selectGroup() {
+      //$scope.users is inherited from UsersCtrl's scope
+      var index = findByAttr($scope.groups, 'cn', $routeParams.group);
+      var group = $scope.groups[index];
+      $scope.groupFilter = function(item) {
+        if (group) {
+          return group.users && group.users.indexOf(item.uid) != -1;
+        } else {
+          return true;
+        }
+      };
+      $rootScope.selectedGroup = group;
+
+      $scope.allSelected = false;
+    }
+
+    // wait for groups to be loaded from service, prevents race condition
+    $scope.$watch('groups', function() {
+      selectGroup();
+    });
 
     $scope.selectedUsers = function() {
       return _.filter($scope.users, function(user) {
