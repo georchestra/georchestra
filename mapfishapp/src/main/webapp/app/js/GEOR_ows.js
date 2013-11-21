@@ -493,6 +493,7 @@ GEOR.ows = (function() {
             fields[0].defaultValue = "WMS";
             var recordType = GEOR.util.createRecordType(fields);
             var storeOptions = Ext.applyIf({
+                rawAttribution: true, // see https://github.com/geoext/geoext/pull/90
                 baseParams: Ext.apply({
                     "REQUEST": "GetCapabilities"
                 }, baseParams, WMS_BASE_PARAMS),
