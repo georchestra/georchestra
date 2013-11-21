@@ -31,6 +31,8 @@
  * @include OpenLayers/Filter/Logical.js
  * @include OpenLayers/Format/Filter.js
  * @include OpenLayers/Format/XML.js
+ // see https://github.com/georchestra/georchestra/issues/482 :
+ * @include OpenLayers/Format/WKT.js
  * @include OpenLayers/Control/ModifyFeature.js
  * @include OpenLayers/Control/DrawFeature.js
  * @include OpenLayers/Handler/Point.js
