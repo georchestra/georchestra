@@ -203,7 +203,8 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
         "Rango de visibilidad (indicativo):<br />de ${TEXT}",
     "Information on objects of this layer":
         "Información sobre los objetos de esta capa",
-    "Default style": "Estilo por omisión",
+    "default style": "estilo por omisión",
+    "no styling": "no estilo",
     "Recenter on the layer": "Ajustar vista sobre la capa",
     "Impossible to get layer extent":
         "No se puede obtener la extensión de la capa.",

@@ -156,7 +156,8 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "1:MAXSCALE to 1:MINSCALE": "1:${MAXSCALE} à 1:${MINSCALE}",
     "Visibility range (indicative):<br />from TEXT": "Индикаторный диапазон видимости ${TEXT}",
     "Information on objects of this layer": "Справиться у объектов этого слоя",
-    "Default style": "Стиль по умолчанию",
+    "default style": "Стиль по умолчанию",
+    //"no styling": "Стиль по умолчанию", // TODO: translate
     "Recenter on the layer": "Повторное центрирование на слое",
     "Impossible to get layer extent": "Невозможно получить размер слоя.",
     "Refresh layer": "Обновить слой.",

@@ -198,7 +198,8 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
         "Plage de visibilité (indicative):<br />de ${TEXT}",
     "Information on objects of this layer":
         "Interroger les objets de cette couche",
-    "Default style": "Style par défaut",
+    "default style": "style par défaut",
+    "no styling": "absence de style",
     "Recenter on the layer": "Recentrer sur la couche",
     "Impossible to get layer extent":
         "Impossible d'obtenir l'étendue de la couche.",
