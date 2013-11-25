@@ -22,115 +22,115 @@ import java.io.*
  * </code></pre>
  */
 class Minify {
-	/** NOT API */
-	static final String TAG = "[YUI minification]"
-	/**
-	 * A list of FileSet objects. There must be at least one source
-	 */
-	List sources
-	/**
-	 * The output file.  Can be a string or file object
-	 */
-	def output
-	/**
-	 * if true then we are minifying javascript (default)
-	 * if false then we are minifying css
-	 */
-	boolean js = true
-	/**
-	 * The charset to use for reading the files
-	 */
-	String charset = "UTF-8"
-	/**
-	 * if true then output extra debug information
-	 */
-	boolean verbose = false
-	/**
-	 * munge the variable names.  Will result in smaller files
-	 */
-	boolean munge = true
-	/**
-	 * Don't do all the optimizations for the minification. Good for debugging.  
-	 */
-	boolean disableOptimizations = false
-	/**
-	 * Keep all semicolons in minified file
-	 */
-	boolean preserveAllSemiColons = true
-	/**
-	 * how wide to allow a line in the minified file
-	 */
-	int linebreakpos  = 8000
+  /** NOT API */
+  static final String TAG = "[YUI minification]"
+  /**
+   * A list of FileSet objects. There must be at least one source
+   */
+  List sources
+  /**
+   * The output file.  Can be a string or file object
+   */
+  def output
+  /**
+   * if true then we are minifying javascript (default)
+   * if false then we are minifying css
+   */
+  boolean js = true
+  /**
+   * The charset to use for reading the files
+   */
+  String charset = "UTF-8"
+  /**
+   * if true then output extra debug information
+   */
+  boolean verbose = false
+  /**
+   * munge the variable names.  Will result in smaller files
+   */
+  boolean munge = true
+  /**
+   * Don't do all the optimizations for the minification. Good for debugging.
+   */
+  boolean disableOptimizations = false
+  /**
+   * Keep all semicolons in minified file
+   */
+  boolean preserveAllSemiColons = true
+  /**
+   * how wide to allow a line in the minified file
+   */
+  int linebreakpos  = 8000
 
-	/**
-	 * Perform the minification
-	 */
-	def execute() {
-		def params = Parameters.get
-		def log = params.log
-		log.info("Beginning minification for $output")
-		
-		File outputFile
-		if(output instanceof File) {
-			outputFile = output
-		} else {
-			def tmp = new File( output.toString().replace("/", File.separator))
-			if (tmp.isAbsolute()) {
-				outputFile = tmp
-			} else {
-				outputFile = new File(params.outputDir, tmp.path)
-			}
-		}
+  /**
+   * Perform the minification
+   */
+  def execute() {
+    def params = Parameters.get
+    def log = params.log
+    log.info("Beginning minification for $output")
 
-		outputFile.parentFile.mkdirs()
-		outputFile.withWriter(charset, { writer ->
-			sources.each { it.each { file ->
-				log.info("$TAG compressing: $file") 
-				file.withReader( charset, { reader ->
-					if (js) {
-						jsCompress(file, reader, writer, log)
-					} else {
-						cssCompress(reader, writer, log)
-					}
-				})
-			}}
-		})
-		log.info("Done minification for $output")
-	}
+    File outputFile
+    if(output instanceof File) {
+      outputFile = output
+    } else {
+      def tmp = new File( output.toString().replace("/", File.separator))
+      if (tmp.isAbsolute()) {
+        outputFile = tmp
+      } else {
+        outputFile = new File(params.outputDir, tmp.path)
+      }
+    }
 
-	/** NOT API */
-	private formatLog (File file, def message, def sourceName, def line, def lineSource, def lineOffset) {
-		if (line < 0) {
-			return " $TAG $file:$message"
-		} else {
-			return " $TAG $file:$line:$lineOffset:$message"
-		}
-	}
-	
-	/** NOT API */
-	private void jsCompress(File file, Reader reader, Writer writer, def log) {
-		def compressor = new JavaScriptCompressor(reader, [
+    outputFile.parentFile.mkdirs()
+    outputFile.withWriter(charset, { writer ->
+      sources.each { it.each { file ->
+        log.info("$TAG compressing: $file")
+        file.withReader( charset, { reader ->
+          if (js) {
+            jsCompress(file, reader, writer, log)
+          } else {
+            cssCompress(reader, writer, log)
+          }
+        })
+      }}
+    })
+    log.info("Done minification for $output")
+  }
 
-			warning: { message, sourceName, line, lineSource, lineOffset ->
-				log.warning(formatLog(file, message, sourceName, line, lineSource, lineOffset))
-			},
+  /** NOT API */
+  private formatLog (File file, def message, def sourceName, def line, def lineSource, def lineOffset) {
+    if (line < 0) {
+      return " $TAG $file:$message"
+    } else {
+      return " $TAG $file:$line:$lineOffset:$message"
+    }
+  }
 
-			error: { message, sourceName, line, lineSource, lineOffset ->
-				log.error(formatLog(file, message, sourceName, line, lineSource, lineOffset))
-			},
+  /** NOT API */
+  private void jsCompress(File file, Reader reader, Writer writer, def log) {
+    def compressor = new JavaScriptCompressor(reader, [
 
-			runtimeError : { message, sourceName, line, lineSource, lineOffset ->
-				log.error(formatLog(file, message, sourceName, line, lineSource, lineOffset))
-				return new EvaluatorException(message)
-			}
-		] as ErrorReporter)
+      warning: { message, sourceName, line, lineSource, lineOffset ->
+        log.warning(formatLog(file, message, sourceName, line, lineSource, lineOffset))
+      },
 
-		compressor.compress(writer, linebreakpos, munge, verbose, preserveAllSemiColons, disableOptimizations)
-	}
+      error: { message, sourceName, line, lineSource, lineOffset ->
+        log.error(formatLog(file, message, sourceName, line, lineSource, lineOffset))
+      },
 
-	/** NOT API */
-	private void cssCompress(Reader reader, Writer writer, def log) {
-		CssCompressor compressor = new CssCompressor(reader)
-		compressor.compress(writer, linebreakpos)
-	}
+      runtimeError : { message, sourceName, line, lineSource, lineOffset ->
+        log.error(formatLog(file, message, sourceName, line, lineSource, lineOffset))
+        return new EvaluatorException(message)
+      }
+    ] as ErrorReporter)
+
+    compressor.compress(writer, linebreakpos, munge, verbose, preserveAllSemiColons, disableOptimizations)
+  }
+
+  /** NOT API */
+  private void cssCompress(Reader reader, Writer writer, def log) {
+    CssCompressor compressor = new CssCompressor(reader)
+    compressor.compress(writer, linebreakpos)
+  }
 }
