@@ -19,7 +19,7 @@ class Parameters {
   /** The maven base directory of the config module */
   File basedirFile
   /** A string indicating the target configuration.  This is the value of the server java property and
-      the name of the configuration directory 
+      the name of the configuration directory
   */
   String target
   /** Optional subtarget normally indicating the server that is being built for.  For example
