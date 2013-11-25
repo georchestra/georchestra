@@ -157,13 +157,16 @@ GEOR.getfeatureinfo = (function() {
             };
         });
 
-        // explode info.features in the different layers
+        // explode info.features in the different layers, taking care of
+        // harmonized layer names:
+        // http://boundlessgeo.com/2012/04/inspire-harmonized-layer-names-in-geoserver/
         Ext.each(info.features, function (feature) {
-            var gml = feature.gml,
-            featureType = gml.featureNSPrefix ? 
-                gml.featureNSPrefix + ":" + gml.featureType :
-                gml.featureType;
-            results[featureType].features.push(feature);
+            var featureType, gml = feature.gml;
+            if (gml.featureNSPrefix && gml.featureNSPrefix + ":" + gml.featureType in results) {
+                results[gml.featureNSPrefix + ":" + gml.featureType].features.push(feature);
+            } else if (gml.featureType in results) {
+                results[gml.featureType].features.push(feature);
+            } // else: cannot find the layer, do nothing
         });
 
         observable.fireEvent("searchresults", {
