@@ -17,10 +17,11 @@ import org.georchestra.ldapadmin.ds.DataServiceException;
 import org.georchestra.ldapadmin.ds.DuplicatedCommonNameException;
 import org.georchestra.ldapadmin.ds.GroupDao;
 import org.georchestra.ldapadmin.ds.NotFoundException;
+import org.georchestra.ldapadmin.ds.ProtectedUserFilter;
 import org.georchestra.ldapadmin.dto.Group;
 import org.georchestra.ldapadmin.dto.GroupFactory;
 import org.georchestra.ldapadmin.dto.GroupSchema;
-import org.georchestra.ldapadmin.dto.UserSchema;
+import org.georchestra.ldapadmin.ws.backoffice.users.UserRule;
 import org.georchestra.ldapadmin.ws.backoffice.utils.RequestUtil;
 import org.georchestra.ldapadmin.ws.backoffice.utils.ResponseUtil;
 import org.georchestra.lib.file.FileUtils;
@@ -57,10 +58,12 @@ public class GroupsController {
 
 	
 	private GroupDao groupDao;
+	private ProtectedUserFilter filter;
 	
 	@Autowired
-	public GroupsController( GroupDao dao){
+	public GroupsController( GroupDao dao, UserRule userRule){
 		this.groupDao = dao;
+		this.filter = new ProtectedUserFilter( userRule.getListUidProtected() );
 	}
 
 	/**
@@ -76,7 +79,7 @@ public class GroupsController {
 		try {
 			List<Group> list = this.groupDao.findAll();
 
-			GroupListResponse listResponse = new GroupListResponse(list);
+			GroupListResponse listResponse = new GroupListResponse(list, this.filter);
 			
 			String jsonList = listResponse.asJsonString();
 			
@@ -130,7 +133,7 @@ public class GroupsController {
 		}
 
 		// sets the group data in the response object
-		GroupResponse groupResponse = new GroupResponse(group);
+		GroupResponse groupResponse = new GroupResponse(group, this.filter);
 		
 		String jsonGroup = groupResponse.asJsonString();
 		
@@ -179,7 +182,7 @@ public class GroupsController {
 				
 			this.groupDao.insert( group );
 			
-			GroupResponse groupResponse = new GroupResponse(group);
+			GroupResponse groupResponse = new GroupResponse(group, this.filter);
 			
 			String jsonResponse = groupResponse.asJsonString();
 

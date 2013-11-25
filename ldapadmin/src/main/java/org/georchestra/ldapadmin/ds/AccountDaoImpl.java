@@ -5,7 +5,6 @@ package org.georchestra.ldapadmin.ds;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.TreeSet;
 
 import javax.naming.Name;
 import javax.naming.NamingException;
@@ -204,21 +203,10 @@ public final class AccountDaoImpl implements AccountDao{
 
 		List<Account> allUsers = findAll();
 		
-		// removes the protected users. 
-		TreeSet<Account> filtered = new TreeSet<Account>();
-		for (Account account : allUsers) {
-			
-			if( !filterProtected.isTrue( account.getUid() ) ){
-				filtered.add(account);
-			}
-		}
-		
-		List<Account> list = new LinkedList<Account>(filtered);
+		List<Account> list = filterProtected.filterUsersList(allUsers);
 		
 		return list;
 	}
-
-	
 	
 	/**
 	 * @see {@link AccountDao#findByUID(String)}
