@@ -221,8 +221,13 @@ angular.module('ldapadmin.controllers', [])
             $scope.users[index] = angular.copy($scope.user);
             remote = angular.copy($scope.user);
           }
-        }, function() {
+        }, function(args) {
           flash.error = 'User could not be updated';
+          if (args.data && args.data.error == 'duplicated_email') {
+              flash.error = 'User could not be updated - email already in use';
+          } else {
+              flash.error = 'User could not be updated';
+          }
         });
       };
       $scope.deleteUser = function() {
