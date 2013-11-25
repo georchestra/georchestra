@@ -355,6 +355,7 @@ GEOR.managelayers = (function() {
             };
             // build object config for predefined styles
             stylesMenuItems.push(default_style);
+            stylesMenuItems.push('-');
             if (styles && styles.length > 0) {
                 styles = styles.concat([]); // to prevent modification of original styles
                 var defaultStyleName = styles[0].name;
