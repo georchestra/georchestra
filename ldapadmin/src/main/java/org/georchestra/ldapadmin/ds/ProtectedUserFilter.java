@@ -45,18 +45,34 @@ public class ProtectedUserFilter {
 	}
 	
         public List<Account> filterUsersList(final List<Account> users) {
-		
+
 		// removes the protected users. 
 		TreeSet<Account> filtered = new TreeSet<Account>();
 		for (Account account : users) {
-			
+
 			if( !this.isTrue( account.getUid() ) ){
 				filtered.add(account);
 			}
 		}
-		
+
 		List<Account> list = new LinkedList<Account>(filtered);
-		
+
+		return list;
+	}
+
+        public List<String> filterStringList(final List<String> users) {
+
+		// removes the protected users.
+		TreeSet<String> filtered = new TreeSet<String>();
+		for (String uid : users) {
+
+			if( !this.isTrue( uid ) ){
+				filtered.add(uid);
+			}
+		}
+
+		List<String> list = new LinkedList<String>(filtered);
+
 		return list;
 	}
 }
