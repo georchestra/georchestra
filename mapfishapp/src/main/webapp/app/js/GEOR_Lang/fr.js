@@ -127,8 +127,16 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Upload a vector data file.": "Uploadez un fichier de données vectorielles.",
     "The allowed formats are the following: ": "Les formats acceptés sont les suivants : ",
     "Use ZIP compression for multifiles formats, such as": "Utilisez la compression ZIP pour les formats multi-fichiers comme",
+    "fileupload_error_incompleteMIF": "Fichier MID/MIF incomplet.",
+    "fileupload_error_incompleteSHP": "Fichier shapefile incomplet.",
+    "fileupload_error_incompleteTAB": "Fichier TAB incomplet.",
+    "fileupload_error_ioError": "Erreur d'I/O sur le serveur. Contacter l'administrateur de la plateforme pour plus de détails.",
+    "fileupload_error_multipleFiles": "L'archive ZIP contient plusieurs fichiers de données. Elle ne doit en contenir qu'un seul.",
+    "fileupload_error_outOfMemory": "Le serveur ne dispose plus de la mémoire suffisante. Contacter l'administrateur de la plateforme pour plus de détails.",
+    "fileupload_error_sizeError": "Le fichier est trop grand pour pouvoir être traité.",
+    "fileupload_error_unsupportedFormat": "Ce format de données n'est pas géré par l'application.",
     "server upload error: ERROR":
-        "L'upload du fichier a échoué pour la raison suivante : '${ERROR}'",
+        "L'upload du fichier a échoué. ${ERROR}",
     "Incorrect server response.": "Réponse du serveur incorrecte.",
     "No features found.": "Aucun objet trouvé.",
     /* GEOR_geonames.js strings */

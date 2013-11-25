@@ -124,7 +124,7 @@ GEOR.fileupload = (function() {
             errorAndReset(form, OpenLayers.i18n("Incorrect server response."));
             return;
         } else if (fc.success !== "true") {
-            errorAndReset(form, fc.msg);
+            errorAndReset(form, OpenLayers.i18n(fc.error));
             return;
         }
         features = (new OpenLayers.Format.GeoJSON()).read(fc.geojson);
@@ -287,7 +287,7 @@ GEOR.fileupload = (function() {
                                     url: "ws/togeojson/",
                                     success: formSuccess,
                                     failure: function(form, action) {
-                                        errorAndReset(form, action.result.msg);
+                                        errorAndReset(form, OpenLayers.i18n(action.result.error));
                                     },
                                     scope: this
                                 });

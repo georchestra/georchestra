@@ -98,38 +98,38 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 		outOfMemoryError{
 			
 			@Override
-			public String getMessage( final String detail){return "{\"success\":false, \"msg\": \"out of memory"+ detail + "\"}"; }
+			public String getMessage( final String detail){return "{\"success\":false, \"error\":\"fileupload_error_outOfMemory\", \"msg\": \"out of memory"+ detail + "\"}"; }
 		},
 		ioError{
 			@Override
-			public String getMessage( final String detail){return "{\"success\":false, \"msg\": \"" + detail + "\"}"; }
+			public String getMessage( final String detail){return "{\"success\":false, \"error\":\"fileupload_error_ioError\", \"msg\": \"" + detail + "\"}"; }
 			
 		},
 		unsupportedFormat{
 			@Override
-			public String getMessage( final String detail){return "{\"success\":false, \"msg\": \"unsupported file type\"}"; }
+			public String getMessage( final String detail){return "{\"success\":false, \"error\":\"fileupload_error_unsupportedFormat\", \"msg\": \"unsupported file type\"}"; }
 		}, 
 		sizeError{
 			@Override
 			public String getMessage(String detail) {
-				return "{\"success\": \"false\", \"msg\": \"file exceeds the limit. "	+ detail + "\"}";
+				return "{\"success\": \"false\", \"error\":\"fileupload_error_sizeError\", \"msg\": \"file exceeds the limit. "	+ detail + "\"}";
 			}
 		},
 		multiplefiles{
 			@Override
-			public String getMessage( final String detail){return "{\"success\": \"false\", \"msg\": \"multiple files\"}"; }
+			public String getMessage( final String detail){return "{\"success\": \"false\", \"error\":\"fileupload_error_multipleFiles\", \"msg\": \"multiple files\"}"; }
 		}, 
 		incompleteMIF{
 			@Override
-			public String getMessage( final String detail){return "{\"success\": \"false\", \"msg\": \"incomplete MIF/MID\"}"; }
+			public String getMessage( final String detail){return "{\"success\": \"false\", \"error\":\"fileupload_error_incompleteMIF\", \"msg\": \"incomplete MIF/MID\"}"; }
 		}, 
 		incompleteSHP{
 			@Override
-			public String getMessage( final String detail){return "{\"success\": \"false\", \"msg\": \"incomplete shapefile\"}"; }
+			public String getMessage( final String detail){return "{\"success\": \"false\", \"error\":\"fileupload_error_incompleteSHP\", \"msg\": \"incomplete shapefile\"}"; }
 		}, 
 		incompleteTAB{
 			@Override
-			public String getMessage( final String detail){return "{\"success\": \"false\", \"msg\": \"incomplete TAB file\"}"; }
+			public String getMessage( final String detail){return "{\"success\": \"false\", \"error\":\"fileupload_error_incompleteTAB\", \"msg\": \"incomplete TAB file\"}"; }
 		},
 		ready{
 			@Override

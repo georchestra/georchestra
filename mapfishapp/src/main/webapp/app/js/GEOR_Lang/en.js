@@ -51,7 +51,15 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
     " in NB metadata": " in ${NB} metadata",
     /* GEOR_editing.js strings */
     /* GEOR_fileupload.js strings */
-    "server upload error: ERROR": "The upload failed for the following reason: '${ERROR}'",
+    "fileupload_error_incompleteMIF": "Incomplete MID/MIF file.",
+    "fileupload_error_incompleteSHP": "Incomplete shapefile.",
+    "fileupload_error_incompleteTAB": "Incomplete TAB file.",
+    "fileupload_error_ioError": "Server-side I/O exception. Contact platform administrator for more details.",
+    "fileupload_error_multipleFiles": "Multiple data files encountered in ZIP archive. It should only contain one.",
+    "fileupload_error_outOfMemory": "Server is out of memory. Contact platform administrator for more details.",
+    "fileupload_error_sizeError": "This file is too large to be uploaded.",
+    "fileupload_error_unsupportedFormat": "This format is not supported.",
+    "server upload error: ERROR": "Upload failed. ${ERROR}",
     /* GEOR_geonames.js strings */
     /* GEOR_getfeatureinfo.js strings */
     "<div>Search on objects active for NAME layer. Clic on the map.</div>":

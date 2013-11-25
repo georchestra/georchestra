@@ -132,8 +132,16 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
         "Los formatos aceptados son los siguientes: ",
     "Use ZIP compression for multifiles formats, such as":
         "Usar compresión ZIP para los formatos multiarchivos, como",
+    "fileupload_error_incompleteMIF": "Archivo MID/MIF incompleto.",
+    "fileupload_error_incompleteSHP": "Archivo shapefile incompleto.",
+    "fileupload_error_incompleteTAB": "Archivo TAB incompleto.",
+    "fileupload_error_ioError": "Error de I/O en el servidor. Contactar el administrador de la plataforma para más detalles.",
+    "fileupload_error_multipleFiles": "El ZIP contiene varios archivos de datos. Solo tiene que contener uno.",
+    "fileupload_error_outOfMemory": "El servidor ya no tiene memoria disponible. Contactar el administrador de la plataforma para más detalles.",
+    "fileupload_error_sizeError": "El tamaño del archivo es demasiado grande.",
+    "fileupload_error_unsupportedFormat": "Este formato no esta soportado.",
     "server upload error: ERROR":
-        "El archivo local no pudó ser subido por la razón siguiente: '${ERROR}'",
+        "El archivo local no pudó ser subido. ${ERROR}",
     "Incorrect server response.": "Respuesta incorrecta del servidor.",
     "No features found.": "No se encontró ningún objeto geográfico.",
     /* GEOR_geonames.js strings */
