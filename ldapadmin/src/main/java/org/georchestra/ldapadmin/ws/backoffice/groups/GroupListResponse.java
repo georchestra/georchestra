@@ -5,6 +5,7 @@ package org.georchestra.ldapadmin.ws.backoffice.groups;
 
 import java.util.List;
 
+import org.georchestra.ldapadmin.ds.ProtectedUserFilter;
 import org.georchestra.ldapadmin.dto.Group;
 import org.georchestra.ldapadmin.dto.GroupSchema;
 import org.json.JSONArray;
@@ -18,13 +19,14 @@ import org.json.JSONObject;
 final class GroupListResponse {
 
 	private List<Group> groupList;
+	private ProtectedUserFilter filter;
 
-	public GroupListResponse(List<Group> list) {
+	public GroupListResponse(List<Group> list, ProtectedUserFilter filter) {
 		this.groupList = list;
+		this.filter = filter;
 	}
 
 	public String asJsonString() throws JSONException {
-
 		JSONArray jsonGroupArray = new JSONArray();
 		int i = 0;
     	for (Group group: this.groupList) {
@@ -36,9 +38,11 @@ final class GroupListResponse {
     		jsonGroup.put(GroupSchema.DESCRIPTION_KEY, group.getDescription());
 
     		// adds the list of users
+    		List<String> list = filter.filterStringList(group.getUserList());
+
     		JSONArray membersArray = new JSONArray();
     		int j = 0;
-    		for(String userUid: group.getUserList() ){
+    		for(String userUid: list){
     			
     			membersArray.put(j, userUid);
     			j++;
