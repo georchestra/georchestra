@@ -221,6 +221,8 @@ angular.module('ldapadmin.controllers', [])
             $scope.users[index] = angular.copy($scope.user);
             remote = angular.copy($scope.user);
           }
+        }, function() {
+          flash.error = 'User could not be updated';
         });
       };
       $scope.deleteUser = function() {
