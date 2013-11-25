@@ -59,7 +59,7 @@ class XmlUpdate extends AbstractUpdater {
       throw new AssertionError("$fromFile does not exist.  Perhaps you want to use write to create the file")
     }
 
-    def writer = new StringWriter()
+    writer = new StringWriter()
     new XmlNodePrinter(new PrintWriter(writer)).print(xml)
     writer(writer)
   }
