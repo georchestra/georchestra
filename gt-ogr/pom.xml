@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- =======================================================================    
-        Maven Project Configuration File                                        
-                                                                                
-        The Geotools Project                                                    
-            http://www.geotools.org/                                            
-                                                                                
-        Version: $Id: pom.xml 34947M 2011-12-15 14:30:54Z (local) $              
-     ======================================================================= -->
-  <project xmlns="http://maven.apache.org/POM/4.0.0" 
-           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-           xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
-                               http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<!--=======================================================================
+	Maven Project Configuration File
+
+	The Geotools Project
+		http://www.geotools.org/
+
+	Version: $Id: pom.xml 34947M 2011-12-15 14:30:54Z (local) $
+======================================================================= -->
+	<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>org.georchestra</groupId>
@@ -19,38 +16,37 @@
 		<version>13.09</version>
 	</parent>
 
-
-  <!-- =========================================================== -->
-  <!--     Module Description                                      -->
-  <!-- =========================================================== -->
-  <groupId>org.geotools</groupId>
-  <artifactId>gt-ogr</artifactId>
+	<!-- =========================================================== -->
+	<!--     Module Description                                      -->
+	<!-- =========================================================== -->
+	<groupId>org.geotools</groupId>
+	<artifactId>gt-ogr</artifactId>
 	<version>${gt.version}</version>
-  <packaging>jar</packaging>
-  <name>OGR datastore module</name>
-  
-  <properties>
-    <maven.test.skip>true</maven.test.skip>
-  </properties>
+	<packaging>jar</packaging>
+	<name>OGR datastore module</name>
 
-  <scm>
-    <connection>
-      scm:svn:http://svn.geotools.org/trunk/modules/unsupported/ogr/
-    </connection>
-    <url>http://svn.geotools.org/trunk/modules/unsupported/ogr/</url>
-  </scm>
+	<properties>
+		<maven.test.skip>true</maven.test.skip>
+	</properties>
 
-  <description>
-    A datastore levearing OGR for reading/writing a slew of data formats
-  </description>
+	<scm>
+		<connection>
+			scm:svn:http://svn.geotools.org/trunk/modules/unsupported/ogr/
+		</connection>
+		<url>http://svn.geotools.org/trunk/modules/unsupported/ogr/</url>
+	</scm>
 
-  <licenses>
-    <license>
-      <name>Lesser General Public License (LGPL)</name>
-      <url>http://www.gnu.org/copyleft/lesser.txt</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
+	<description>
+		A datastore levearing OGR for reading/writing a slew of data formats
+	</description>
+
+	<licenses>
+		<license>
+			<name>Lesser General Public License (LGPL)</name>
+			<url>http://www.gnu.org/copyleft/lesser.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
 
 	<repositories>
 		<repository>
@@ -60,94 +56,92 @@
 		</repository>
 	</repositories>
 
-  <!-- =========================================================== -->
-  <!--     Developers and Contributors                             -->
-  <!-- =========================================================== -->
-  <developers>
-    <developer>
-      <name>Andrea Aime</name>
-      <id>aaime</id>
-      <email>aaime@users.sourceforge.net</email>
-      <organization>University of Modena and Reggio Emilia</organization>
-      <roles>
-        <role>Module Maintainer</role>
-        <role>Java Developer</role>
-      </roles>
-    </developer>
-  </developers>
+	<!-- =========================================================== -->
+	<!--     Developers and Contributors                             -->
+	<!-- =========================================================== -->
+	<developers>
+		<developer>
+			<name>Andrea Aime</name>
+			<id>aaime</id>
+			<email>aaime@users.sourceforge.net</email>
+			<organization>University of Modena and Reggio Emilia</organization>
+			<roles>
+				<role>Module Maintainer</role>
+				<role>Java Developer</role>
+			</roles>
+		</developer>
+	</developers>
 
-
-  <!-- =========================================================== -->
-  <!--     Dependency Management                                   -->
-  <!-- =========================================================== -->
-  <dependencies>
-    <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gt-data</artifactId>
+	<!-- =========================================================== -->
+	<!--     Dependency Management                                   -->
+	<!-- =========================================================== -->
+	<dependencies>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-data</artifactId>
 			<version>${gt.version}</version>
-    </dependency>    
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
 			<version>4.8</version>
-    </dependency>    
+		</dependency>
 
-   <dependency>
-      <groupId>com.nativelibs4java</groupId>
-      <artifactId>bridj</artifactId>
-      <classifier>c-only</classifier>
-      <version>0.6</version>
+		<dependency>
+			<groupId>com.nativelibs4java</groupId>
+			<artifactId>bridj</artifactId>
+			<classifier>c-only</classifier>
+			<version>0.6</version>
 
-      <exclusions>
-        <exclusion>
-          <groupId>com.nativelibs4java.thirdparty.com.google.android</groupId>
-          <artifactId>dx</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    
+			<exclusions>
+				<exclusion>
+					<groupId>com.nativelibs4java.thirdparty.com.google.android</groupId>
+					<artifactId>dx</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 
-    <!-- Test dependencies -->
-    <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gt-sample-data</artifactId>
+		<!-- Test dependencies -->
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-sample-data</artifactId>
 			<version>${gt.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gt-epsg-hsql</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-epsg-hsql</artifactId>
 			<version>${gt.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gt-shapefile</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-shapefile</artifactId>
 			<version>${gt.version}</version>
-      <scope>test</scope>
-    </dependency>
+			<scope>test</scope>
+		</dependency>
 
-    <dependency>
-    	<groupId>org.geotools</groupId>
-    	<artifactId>gt-jdbc</artifactId>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-jdbc</artifactId>
 			<version>${gt.version}</version>
-    </dependency>
-  </dependencies>
-  
-  <build>
-    <plugins>
-	    <plugin>
-	        <groupId>org.apache.maven.plugins</groupId>
-	        <artifactId>maven-surefire-plugin</artifactId>
-	        <configuration>
-	          <systemProperties>
-	            <property>
-	              <name>java.library.path</name>
-	              <value>${java.library.path}</value>
-	            </property>
-	          </systemProperties>
-	        </configuration>
-	      </plugin>
-      </plugins>
-  </build>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<systemProperties>
+						<property>
+							<name>java.library.path</name>
+							<value>${java.library.path}</value>
+						</property>
+					</systemProperties>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>

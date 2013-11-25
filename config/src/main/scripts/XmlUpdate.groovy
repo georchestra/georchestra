@@ -64,11 +64,12 @@ class XmlUpdate extends AbstractUpdater {
     writer(writer)
   }
 
-  private def write (writer) {
+  /* Already defined before
+   *private def write (writer) {
     def text = writer.toString()
     def toFile = getToFile()
     params.log.info("Writing updated xml to $toFile")
 
     toFile.withWriter('UTF-8'){ w -> w.write(text)}
-  }
+  }*/
 }

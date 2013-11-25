@@ -227,21 +227,21 @@
 def supportdir = new File(project.basedir, "configurations/${server}/build_support")
 def generateConfigFile = new File(supportdir, "GenerateConfig.groovy")
 if(generateConfigFile.exists()) {
-  log.info(generateConfigFile.path+" exists so it will be used in build")
+	log.info(generateConfigFile.path+" exists so it will be used in build")
 } else {
-  log.info(generateConfigFile.path+" does NOT exist so a default will be created")
-  generateConfigFile.parentFile.mkdirs()
-  generateConfigFile << """
+	log.info(generateConfigFile.path+" does NOT exist so a default will be created")
+	generateConfigFile.parentFile.mkdirs()
+	generateConfigFile << """
 // Generated empty build file
 class GenerateConfig {
-  def generate(def project, def log, def ant, def basedirFile, 
-	  def target, def subTarget, def targetDir, 
+	def generate(def project, def log, def ant, def basedirFile,
+		def target, def subTarget, def targetDir,
 		def buildSupportDir, def outputDir) {
 		// do nothing
 	}
 }
 """
-            }
+}
 ]]>
 							</source>
 						</configuration>
@@ -261,7 +261,7 @@ class GenerateConfig {
 // note: the params have to be initialized for the required files to be created
 // doesn't matter if GenerateConfig is ran or not
 def params = new Parameters(
-    project: project,
+	project: project,
 	target: "${server}",
 	subTarget: "${sub.target}",
 	log: log,
@@ -301,7 +301,7 @@ if (!mavenFilters.exists()) {
 							<source><![CDATA[
 log.info("Running variable Substitution test")
 def params = new Parameters(
-    project: project,
+	project: project,
 	target: "${server}",
 	subTarget: "${sub.target}",
 	log: log,
