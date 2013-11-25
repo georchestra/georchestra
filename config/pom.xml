@@ -14,7 +14,7 @@
 		<generated.output>${basedir}/target/generated</generated.output>
 		<conf.base>${basedir}/configurations/${server}</conf.base>
 		<build.support.dir>${conf.base}/build_support/</build.support.dir>
-		<postTreatmentScript>println("No post treament script")</postTreatmentScript>
+		<postTreatmentScript>println("No post treatment script")</postTreatmentScript>
 	</properties>
 	<dependencies>
 		<dependency>
