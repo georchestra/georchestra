@@ -10,6 +10,25 @@
 	<packaging>jar</packaging>
 	<name>Configuration Project</name>
 	<url>http://www.georchestra.org</url>
+	<properties>
+		<generated.output>${basedir}/target/generated</generated.output>
+		<conf.base>${basedir}/configurations/${server}</conf.base>
+		<build.support.dir>${conf.base}/build_support/</build.support.dir>
+		<postTreatmentScript>println("No post treament script")</postTreatmentScript>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.yahoo.platform.yui</groupId>
+			<artifactId>yuicompressor</artifactId>
+			<version>2.4.7</version>
+		</dependency>
+	</dependencies>
 	<build>
 		<filters>
 			<filter>${basedir}/shared.maven.filters</filter>
@@ -180,16 +199,16 @@
 							<goal>generateStubs</goal>
 						</goals>
 						<configuration>
-						  <sources>
-						    <source>
-						      <directory>${basedir}/src/main/scripts</directory>
-						      <includes>
-						        <include>**/*.groovy</include>
-					        </includes>
-						    </source>
-					    </sources>
-					  </configuration>
-				  </execution>
+							<sources>
+								<source>
+									<directory>${basedir}/src/main/scripts</directory>
+									<includes>
+										<include>**/*.groovy</include>
+									</includes>
+								</source>
+							</sources>
+						</configuration>
+					</execution>
 					<execution>
 						<id>create-default-gen-config-file</id>
 						<phase>generate-resources</phase>
@@ -317,23 +336,4 @@ log.info("Finished running variable substitution test")
 			</plugin>
 		</plugins>
 	</build>
-	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.8</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.yahoo.platform.yui</groupId>
-			<artifactId>yuicompressor</artifactId>
-			<version>2.4.7</version>
-		</dependency>
-	</dependencies>
-	<properties>
-		<generated.output>${basedir}/target/generated</generated.output>
-		<conf.base>${basedir}/configurations/${server}</conf.base>
-		<build.support.dir>${conf.base}/build_support/</build.support.dir>
-		<postTreatmentScript>println("No post treament script")</postTreatmentScript>
-	</properties>
 </project>
