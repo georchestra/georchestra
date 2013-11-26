@@ -317,11 +317,18 @@ log.info("Finished running variable substitution test")
 			<artifactId>yuicompressor</artifactId>
 			<version>2.4.7</version>
 		</dependency>
+		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy-all</artifactId>
+			<version>${groovy-version}</version>
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
 	<properties>
 		<generated.output>${basedir}/target/generated</generated.output>
 		<conf.base>${basedir}/configurations/${server}</conf.base>
 		<build.support.dir>${conf.base}/build_support/</build.support.dir>
 		<postTreatmentScript>println("No post treatment script")</postTreatmentScript>
+		<groovy-version>1.6.0</groovy-version>
 	</properties>
 </project>
