@@ -48,40 +48,40 @@
 				<filtering>true</filtering>
 				<excludes>
 					<exclude>shared.maven.filters</exclude>
-					<exclude>*.class</exclude>
-					<exclude>*.jar</exclude>
-					<exclude>*.png</exclude>
-					<exclude>*.gif</exclude>
-					<exclude>*.bmp</exclude>
-					<exclude>*.png*</exclude>
-					<exclude>*.png</exclude>
-					<exclude>*.exe</exclude>
-					<exclude>*.jpg</exclude>
-					<exclude>*.jpeg</exclude>
-					<exclude>*.ico</exclude>
-					<exclude>*.odg</exclude>
-					<exclude>*.swf</exclude>
-					<exclude>*.doc</exclude>
+					<exclude>**/*.class</exclude>
+					<exclude>**/*.jar</exclude>
+					<exclude>**/*.png</exclude>
+					<exclude>**/*.gif</exclude>
+					<exclude>**/*.bmp</exclude>
+					<exclude>**/*.png*</exclude>
+					<exclude>**/*.png</exclude>
+					<exclude>**/*.exe</exclude>
+					<exclude>**/*.jpg</exclude>
+					<exclude>**/*.jpeg</exclude>
+					<exclude>**/*.ico</exclude>
+					<exclude>**/*.odg</exclude>
+					<exclude>**/*.swf</exclude>
+					<exclude>**/*.doc</exclude>
 				</excludes>
 			</resource>
 			<resource>
 				<directory>${basedir}/defaults</directory>
 				<filtering>false</filtering>
 				<includes>
-					<include>*.class</include>
-					<include>*.jar</include>
-					<include>*.png</include>
-					<include>*.gif</include>
-					<include>*.bmp</include>
-					<include>*.png*</include>
-					<include>*.png</include>
-					<include>*.exe</include>
-					<include>*.jpg</include>
-					<include>*.jpeg</include>
-					<include>*.ico</include>
-					<include>*.odg</include>
-					<include>*.swf</include>
-					<include>*.doc</include>
+					<include>**/*.class</include>
+					<include>**/*.jar</include>
+					<include>**/*.png</include>
+					<include>**/*.gif</include>
+					<include>**/*.bmp</include>
+					<include>**/*.png*</include>
+					<include>**/*.png</include>
+					<include>**/*.exe</include>
+					<include>**/*.jpg</include>
+					<include>**/*.jpeg</include>
+					<include>**/*.ico</include>
+					<include>**/*.odg</include>
+					<include>**/*.swf</include>
+					<include>**/*.doc</include>
 				</includes>
 			</resource>
 			<resource>
@@ -89,40 +89,40 @@
 				<filtering>true</filtering>
 				<excludes>
 					<exclude>build_support/**</exclude>
-					<exclude>*.class</exclude>
-					<exclude>*.jar</exclude>
-					<exclude>*.png</exclude>
-					<exclude>*.gif</exclude>
-					<exclude>*.bmp</exclude>
-					<exclude>*.png*</exclude>
-					<exclude>*.png</exclude>
-					<exclude>*.exe</exclude>
-					<exclude>*.jpg</exclude>
-					<exclude>*.jpeg</exclude>
-					<exclude>*.ico</exclude>
-					<exclude>*.odg</exclude>
-					<exclude>*.swf</exclude>
-					<exclude>*.doc</exclude>
+					<exclude>**/*.class</exclude>
+					<exclude>**/*.jar</exclude>
+					<exclude>**/*.png</exclude>
+					<exclude>**/*.gif</exclude>
+					<exclude>**/*.bmp</exclude>
+					<exclude>**/*.png*</exclude>
+					<exclude>**/*.png</exclude>
+					<exclude>**/*.exe</exclude>
+					<exclude>**/*.jpg</exclude>
+					<exclude>**/*.jpeg</exclude>
+					<exclude>**/*.ico</exclude>
+					<exclude>**/*.odg</exclude>
+					<exclude>**/*.swf</exclude>
+					<exclude>**/*.doc</exclude>
 				</excludes>
 			</resource>
 			<resource>
 				<directory>${conf.base}</directory>
 				<filtering>false</filtering>
 				<includes>
-					<include>*.class</include>
-					<include>*.jar</include>
-					<include>*.png</include>
-					<include>*.gif</include>
-					<include>*.bmp</include>
-					<include>*.png*</include>
-					<include>*.png</include>
-					<include>*.exe</include>
-					<include>*.jpg</include>
-					<include>*.jpeg</include>
-					<include>*.ico</include>
-					<include>*.odg</include>
-					<include>*.swf</include>
-					<include>*.doc</include>
+					<include>**/*.class</include>
+					<include>**/*.jar</include>
+					<include>**/*.png</include>
+					<include>**/*.gif</include>
+					<include>**/*.bmp</include>
+					<include>**/*.png*</include>
+					<include>**/*.png</include>
+					<include>**/*.exe</include>
+					<include>**/*.jpg</include>
+					<include>**/*.jpeg</include>
+					<include>**/*.ico</include>
+					<include>**/*.odg</include>
+					<include>**/*.swf</include>
+					<include>**/*.doc</include>
 				</includes>
 			</resource>
 			<resource>
@@ -130,40 +130,40 @@
 				<filtering>true</filtering>
 				<excludes>
 					<exclude>/shared.maven.filters</exclude>
-					<exclude>*.class</exclude>
-					<exclude>*.jar</exclude>
-					<exclude>*.png</exclude>
-					<exclude>*.gif</exclude>
-					<exclude>*.bmp</exclude>
-					<exclude>*.png*</exclude>
-					<exclude>*.png</exclude>
-					<exclude>*.exe</exclude>
-					<exclude>*.jpg</exclude>
-					<exclude>*.jpeg</exclude>
-					<exclude>*.ico</exclude>
-					<exclude>*.odg</exclude>
-					<exclude>*.swf</exclude>
-					<exclude>*.doc</exclude>
+					<exclude>**/*.class</exclude>
+					<exclude>**/*.jar</exclude>
+					<exclude>**/*.png</exclude>
+					<exclude>**/*.gif</exclude>
+					<exclude>**/*.bmp</exclude>
+					<exclude>**/*.png*</exclude>
+					<exclude>**/*.png</exclude>
+					<exclude>**/*.exe</exclude>
+					<exclude>**/*.jpg</exclude>
+					<exclude>**/*.jpeg</exclude>
+					<exclude>**/*.ico</exclude>
+					<exclude>**/*.odg</exclude>
+					<exclude>**/*.swf</exclude>
+					<exclude>**/*.doc</exclude>
 				</excludes>
 			</resource>
 			<resource>
 				<directory>${generated.output}</directory>
 				<filtering>false</filtering>
 				<includes>
-					<include>*.class</include>
-					<include>*.jar</include>
-					<include>*.png</include>
-					<include>*.gif</include>
-					<include>*.bmp</include>
-					<include>*.png*</include>
-					<include>*.png</include>
-					<include>*.exe</include>
-					<include>*.jpg</include>
-					<include>*.jpeg</include>
-					<include>*.ico</include>
-					<include>*.odg</include>
-					<include>*.swf</include>
-					<include>*.doc</include>
+					<include>**/*.class</include>
+					<include>**/*.jar</include>
+					<include>**/*.png</include>
+					<include>**/*.gif</include>
+					<include>**/*.bmp</include>
+					<include>**/*.png*</include>
+					<include>**/*.png</include>
+					<include>**/*.exe</include>
+					<include>**/*.jpg</include>
+					<include>**/*.jpeg</include>
+					<include>**/*.ico</include>
+					<include>**/*.odg</include>
+					<include>**/*.swf</include>
+					<include>**/*.doc</include>
 				</includes>
 			</resource>
 			<resource>
