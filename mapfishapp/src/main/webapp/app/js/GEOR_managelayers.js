@@ -206,13 +206,27 @@ GEOR.managelayers = (function() {
      *          for inclusion in layer manager item
      */
     var formatAttribution = function(layerRecord) {
-        var attr = layerRecord.get('attribution'),
-        logo = attr.logo,
+        var attr = layerRecord.get('attribution');
+        if (!attr) {
+            attr = {};
+        }
+        if (!attr.title) {
+            // if no attribution text is set, use the service hostname
+            var layer = layerRecord.getLayer(),
+            url = layer.url || (layer.protocol && layer.protocol.url);
+            if (url) {
+                var b = OpenLayers.Util.createUrlObject(url);
+                if (b && b.host) {
+                    attr.title = b.host;
+                }
+            }
+        }
+        var logo = attr.logo,
         titleForDisplay = attr.title || tr('unknown'),
         // logo displayed in qtip if set
         width = (logo && logo.width) ? 'width=\''+logo.width+'\'' : '',
         height = (logo && logo.height) ? 'height=\''+logo.height+'\'' : '',
-        tip = tr('source: ')+ (attr.title || '-') +
+        tip = tr('source: ')+ titleForDisplay +
             ((logo && GEOR.util.isUrl(logo.href, true)) ? 
                 '<br /><img src=\''+logo.href+'\' '+width+' '+height+' />' : ''),
         attrDisplay = (attr.href) ?
