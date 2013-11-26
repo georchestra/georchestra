@@ -255,15 +255,20 @@ GEOR.map = (function() {
                 errors.push(error);
             }
 
+            var layer = r.get('layer');
             // r.get('layer').transitionEffect = resize would have been set in WMC,
             // not by the default openlayers GRID layer type,
             // see the overriding in the first lines of this file.
-            r.get('layer').transitionEffect =
-                (r.get("opaque") === true || r.get('layer').transitionEffect === 'resize') ?
+            layer.transitionEffect =
+                (r.get("opaque") === true || layer.transitionEffect === 'resize') ?
                 'resize' : 'map-resize';
             // note: an opaque layer can be considered as a baselayer
             // as a result, we apply a transitionEffect, which suits well for baselayers
 
+            // force map scales, see https://github.com/georchestra/georchestra/issues/431
+            // this is required to get initResolutions() working:
+            layer.options.scales = GEOR.config.MAP_SCALES;
+            
             // Format attribution if required:
             var attr = r.get('attribution');
             var layer = r.get('layer');
