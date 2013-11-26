@@ -37,7 +37,7 @@ import org.springframework.web.context.ServletContextAware;
 
 /**
  * Controller for the Extractor
- * 
+ *
  * @author jeichar
  */
 @Controller
@@ -66,14 +66,14 @@ public class ExtractorController implements ServletContextAware {
 
 	private UsernamePasswordCredentials adminCredentials;
 	private String secureHost;
-	private long maxCoverageExtractionSize = Long.MAX_VALUE;     
+	private long maxCoverageExtractionSize = Long.MAX_VALUE;
 	private CheckFormAcceptance checkFormAcceptance;
-	
+
 	private ExtractionManager extractionManager;
-	
+
 	public void validateConfig() {
 		if(extractionManager==null) {
-			throw new AssertionError("A extractionManager needs to be defined in spring configuration");    		
+			throw new AssertionError("A extractionManager needs to be defined in spring configuration");
 		}
 		if(SharedConstants.inProduction()){
 			File storageFile = FileUtils.storageFile("");
@@ -84,12 +84,12 @@ public class ExtractorController implements ServletContextAware {
 			}
 		}
 	}
-	
+
 	@RequestMapping(value = RESULTS_MAPPING, method = RequestMethod.GET)
 	public void results(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String uuid = request.getParameter(UUID_PARAM);
 		File file = FileUtils.storageFile(uuid+EXTRACTION_ZIP_EXT);
-		
+
 		if(file.exists()) {
 			LOG.info("request for extraction archive: "+file+" requested by "+request.getRemoteAddr());
 			FileInputStream in = new FileInputStream(file);
@@ -99,7 +99,7 @@ public class ExtractorController implements ServletContextAware {
 				response.setHeader("Content-Disposition","attachment; filename="+extractionFolderPrefix+uuid+".zip");
 				in.getChannel().transferTo(0, file.length(), Channels.newChannel(out));
 			}finally{
-				try { 
+				try {
 					in.close();
 				} finally {
 					out.close();
@@ -123,23 +123,23 @@ public class ExtractorController implements ServletContextAware {
 
 	/**
 	 * Lists the tasks waiting in the extraction queue.
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 * @throws Exception
 	 */
 	@RequestMapping(value = EXTRACTOR_TASKS, method = RequestMethod.GET)
 	public void getTaskQueue( HttpServletRequest request, HttpServletResponse response) throws Exception {
-		
+
 		LOG.debug("Executing getTaskQueue - GET - " + request.getRequestURL() );
-		
+
 		List<ExecutionMetadata> taskQueue = extractionManager.getTaskQueue();
-		
+
 		ExtractorGetTaskQueueResponse responseData = ExtractorGetTaskQueueResponse.newInstance(taskQueue);
 
 		response.setCharacterEncoding(responseCharset);
 		response.setContentType("application/json");
-		
+
 		PrintWriter out = response.getWriter();
 		try {
 			out.println(responseData.asJsonString());
@@ -149,34 +149,34 @@ public class ExtractorController implements ServletContextAware {
 	}
 
 	/**
-	 * Analyzes the changes required in the task described in the parameter. 
+	 * Analyzes the changes required in the task described in the parameter.
 	 * This method supposes that only one change is done in one call.
 	 * <pre>
 	 * Expected uri: /extractor/task/{uuid}
 	 * </pre>
-	 * Spring 2.5 has not got @PathVariable, thus this method was defined as "/*" to match uuid. 
+	 * Spring 2.5 has not got @PathVariable, thus this method was defined as "/*" to match uuid.
 	 * The task id is retrieved from json object maintianed in the request content.
-	 * 
-	 * 
+	 *
+	 *
 	 * @param jsonTask
 	 * @throws Exception
 	 */
 	@RequestMapping(value = EXTRACTOR_TASKS+"/*", method = RequestMethod.PUT)
 	public void updateTask( HttpServletRequest request, HttpServletResponse response) throws Exception {
-		
-		LOG.debug("Executing updateTask - PUT - " + request.getRequestURL() ); 
+
+		LOG.debug("Executing updateTask - PUT - " + request.getRequestURL() );
 
 		String jsonTask = FileUtils.asString(request.getInputStream());
-		
+
 		TaskDescriptor taskParam = new TaskDescriptor(jsonTask);
-		
+
 		// Analyzes the changes required. This method suppose that only one change is done in one call.
 		String id = taskParam.getID();
 		TaskDescriptor currentTask;
 		try {
 			currentTask = findTask(id);
 		} catch (TaskNotFoundException e) {
-			// the task could be removed from the queue. 
+			// the task could be removed from the queue.
 			return;
 		}
 		if( currentTask.getPriority() != taskParam.getPriority() ){
@@ -185,14 +185,14 @@ public class ExtractorController implements ServletContextAware {
 				updatePriority( id, taskParam.getPriority().ordinal() );
 			} catch (Exception e) {
 				LOG.error(e.getMessage());
-			} 
-			
-		} 
+			}
+
+		}
 		if ( currentTask.getStatus() !=  taskParam.getStatus() ){
 			// changes the task status
-			this.extractionManager.updateStatus(id, taskParam.getStatus()); 
+			this.extractionManager.updateStatus(id, taskParam.getStatus());
 		}
-	}	
+	}
 
 	/**
 	 * Finds the task with the indeed uuid
@@ -201,26 +201,26 @@ public class ExtractorController implements ServletContextAware {
 	 * @throws TaskNotFoundException
 	 */
 	private TaskDescriptor findTask(final String id) throws TaskNotFoundException {
-		
+
 		ExtractionTask foundTask = extractionManager.findTask(id);
 		if(foundTask == null){
 			// the required task could be removed. It could be removed for the queue by other process.
 			throw new TaskNotFoundException("The task wask not found. ID: " + id);
 		}
 		TaskDescriptor task = new TaskDescriptor(foundTask.executionMetadata);
-		
+
 		return task;
 	}
 
 	/**
-	 * Updates the task's priority.  
-	 * 
+	 * Updates the task's priority.
+	 *
 	 * @param uuid
 	 * @param priority valid values are 0-LOW, 1-MEDIUM, 2-HIGH
 	 * @throws Exception
 	 */
 	private void updatePriority( String uuid, int priority) throws IllegalArgumentException, InvalidPriorityException {
-		
+
 		if(uuid == null || "".equals(uuid)){
 			final String msg = "updatePriority method expects an uuid";
 			IllegalArgumentException e = new IllegalArgumentException(msg);
@@ -228,20 +228,20 @@ public class ExtractorController implements ServletContextAware {
 			throw e;
 		}
 		if( priority < ExecutionPriority.LOW.ordinal() || priority > ExecutionPriority.HIGH.ordinal() ){
-			final String msg = "updatePriority method expects an priority value between " + ExecutionPriority.LOW.ordinal() + 
+			final String msg = "updatePriority method expects an priority value between " + ExecutionPriority.LOW.ordinal() +
 					" and " + ExecutionPriority.HIGH.ordinal();
 			InvalidPriorityException e = new InvalidPriorityException(msg);
 			LOG.error(msg, e);
 			throw e;
-			
+
 		}
 		ExtractorUpdatePriorityRequest updatePriorityRequest = ExtractorUpdatePriorityRequest.newInstance(uuid, priority);
-		
+
 		this.extractionManager.updatePriority(updatePriorityRequest._uuid, updatePriorityRequest._priority);
-	}	
+	}
 
 
-	
+
 	// ----------------- implementation of extraction ----------------- //
 
 
@@ -250,7 +250,7 @@ public class ExtractorController implements ServletContextAware {
 		String postData = FileUtils.asString(request.getInputStream());
 		String reponseData = "";
 		String sessionId = request.getSession() != null ? request.getSession().getId() : "";
-		
+
 		if (checkFormAcceptance.isFormAccepted(sessionId,request.getHeader("sec-username"), postData)) {
 			UUID requestUuid = UUID.randomUUID();
 
@@ -268,18 +268,18 @@ public class ExtractorController implements ServletContextAware {
 			List<ExtractorLayerRequest> requests = Collections.unmodifiableList(
 																	ExtractorLayerRequest.parseJson(postData));
 			if (requests.size() > 0) {
-				
+
 				String[] recipients = requests.get(0)._emails;
 				Email email = emailFactory.createEmail(request, recipients,	url.toString());
-				
+
 				String username = request.getHeader("sec-username");
 				String roles = request.getHeader("sec-roles");
 				RequestConfiguration requestConfig = new RequestConfiguration(
-						requests, requestUuid, email, 
-						servletContext, testing, username, roles, adminCredentials, secureHost, extractionFolderPrefix, 
+						requests, requestUuid, email,
+						servletContext, testing, username, roles, adminCredentials, secureHost, extractionFolderPrefix,
 						maxCoverageExtractionSize, remoteReproject, useCommandLineGDAL, postData);
 				ExtractionTask extractor = new ExtractionTask(requestConfig);
-				
+
 				LOG.info("Sending mail to user");
 				try {
 					email.sendAck();
@@ -317,7 +317,7 @@ public class ExtractorController implements ServletContextAware {
 
 	// ----------------- JavaBean methods ----------------- //
 
-	
+
 	/**
 	 * Sets the template used to respond to the user. Each instance of {link}
 	 * will be replaced with the URL
@@ -337,10 +337,10 @@ public class ExtractorController implements ServletContextAware {
 	/**
 	 * Sets the template used to will be emailed to the user when extraction is
 	 * complete.
-	 * 
+	 *
 	 * Each instance of {link} will be replaced with the extraction bundle URL
 	 */
-	
+
 	public void setServletUrl(String servletUrl) {
 		this.servletUrl = servletUrl;
 	}
@@ -348,7 +348,7 @@ public class ExtractorController implements ServletContextAware {
 	public void setAdminCredentials(UsernamePasswordCredentials adminCredentials) {
 		this.adminCredentials = adminCredentials;
 	}
-	
+
 	public void setSecureHost(String secureHost) {
 		this.secureHost = secureHost;
 	}
@@ -383,15 +383,15 @@ public class ExtractorController implements ServletContextAware {
 	public void setExtractionManager(ExtractionManager extractionManager) {
 		this.extractionManager = extractionManager;
 	}
-	
+
 	public void setRemoteReproject(boolean remoteReproject) {
 		this.remoteReproject = remoteReproject;
-	}	
+	}
 
 	public void setUseCommandLineGDAL(boolean useCommandLineGDAL) {
 		this.useCommandLineGDAL = useCommandLineGDAL;
 	}
-	
+
 	public void setExtractionFolderPrefix(String extractionFolderPrefix) {
 		if(extractionFolderPrefix==null) {
 			this.extractionFolderPrefix = "extraction-";
@@ -399,9 +399,9 @@ public class ExtractorController implements ServletContextAware {
 			this.extractionFolderPrefix = extractionFolderPrefix;
 		}
 	}
-	
+
 	// ----------------- Methods for accessing servlet context ----------------- //
-	// ServletContext is required for determining where files are within the 
+	// ServletContext is required for determining where files are within the
 	// webapp
 	@Override
 	public void setServletContext(ServletContext servletContext) {
