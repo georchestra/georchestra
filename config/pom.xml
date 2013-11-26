@@ -50,11 +50,9 @@
 					<exclude>shared.maven.filters</exclude>
 					<exclude>**/*.class</exclude>
 					<exclude>**/*.jar</exclude>
-					<exclude>**/*.png</exclude>
 					<exclude>**/*.gif</exclude>
 					<exclude>**/*.bmp</exclude>
 					<exclude>**/*.png*</exclude>
-					<exclude>**/*.png</exclude>
 					<exclude>**/*.exe</exclude>
 					<exclude>**/*.jpg</exclude>
 					<exclude>**/*.jpeg</exclude>
@@ -70,11 +68,9 @@
 				<includes>
 					<include>**/*.class</include>
 					<include>**/*.jar</include>
-					<include>**/*.png</include>
 					<include>**/*.gif</include>
 					<include>**/*.bmp</include>
 					<include>**/*.png*</include>
-					<include>**/*.png</include>
 					<include>**/*.exe</include>
 					<include>**/*.jpg</include>
 					<include>**/*.jpeg</include>
@@ -91,11 +87,9 @@
 					<exclude>build_support/**</exclude>
 					<exclude>**/*.class</exclude>
 					<exclude>**/*.jar</exclude>
-					<exclude>**/*.png</exclude>
 					<exclude>**/*.gif</exclude>
 					<exclude>**/*.bmp</exclude>
 					<exclude>**/*.png*</exclude>
-					<exclude>**/*.png</exclude>
 					<exclude>**/*.exe</exclude>
 					<exclude>**/*.jpg</exclude>
 					<exclude>**/*.jpeg</exclude>
@@ -111,11 +105,9 @@
 				<includes>
 					<include>**/*.class</include>
 					<include>**/*.jar</include>
-					<include>**/*.png</include>
 					<include>**/*.gif</include>
 					<include>**/*.bmp</include>
 					<include>**/*.png*</include>
-					<include>**/*.png</include>
 					<include>**/*.exe</include>
 					<include>**/*.jpg</include>
 					<include>**/*.jpeg</include>
@@ -132,11 +124,9 @@
 					<exclude>/shared.maven.filters</exclude>
 					<exclude>**/*.class</exclude>
 					<exclude>**/*.jar</exclude>
-					<exclude>**/*.png</exclude>
 					<exclude>**/*.gif</exclude>
 					<exclude>**/*.bmp</exclude>
 					<exclude>**/*.png*</exclude>
-					<exclude>**/*.png</exclude>
 					<exclude>**/*.exe</exclude>
 					<exclude>**/*.jpg</exclude>
 					<exclude>**/*.jpeg</exclude>
@@ -152,11 +142,9 @@
 				<includes>
 					<include>**/*.class</include>
 					<include>**/*.jar</include>
-					<include>**/*.png</include>
 					<include>**/*.gif</include>
 					<include>**/*.bmp</include>
 					<include>**/*.png*</include>
-					<include>**/*.png</include>
 					<include>**/*.exe</include>
 					<include>**/*.jpg</include>
 					<include>**/*.jpeg</include>
