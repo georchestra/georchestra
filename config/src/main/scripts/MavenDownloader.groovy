@@ -69,38 +69,38 @@ class MavenDownloader {
       }
       def path = "${groupId.replace('.','/')}/$artifactId/$version/$fileName"
       def toFile = new File(new File(params.outputDir, to), fileName)
-	  if (!toFile.parentFile.exists()) {
-		  if (!toFile.parentFile.mkdirs()) {
-			throw new AssertionError("Unable to create directory: "+toFile.parentFile+".  Check permissions on file and parent directories")
-		  }
-	  }
+      if (!toFile.parentFile.exists()) {
+        if (!toFile.parentFile.mkdirs()) {
+          throw new AssertionError("Unable to create directory: "+toFile.parentFile+".  Check permissions on file and parent directories")
+        }
+      }
       def errors = ""
-  	  for ( repo in params.project.repositories ) {
+      for ( repo in params.project.repositories ) {
         def url = repo.url
         if(url.endsWith("/")) {
           url += path
         } else {
           url += "/"+path
         }
-  	    try {
-		  if (toFile.exists()) {
-			if (!toFile.delete()) {
-				throw new AssertionError("Unable to delete: "+toFile+".  Check permissions on file and parent directories")
-			}				
-		}
-		  
-  	      toFile << new URL(url).openStream()
-  	      params.log.info("Downloaded $url to "+toFile)
-  	      success = true
-  	      break;
+        try {
+          if (toFile.exists()) {
+            if (!toFile.delete()) {
+              throw new AssertionError("Unable to delete: "+toFile+".  Check permissions on file and parent directories")
+            }
+          }
+
+          toFile << new URL(url).openStream()
+          params.log.info("Downloaded $url to "+toFile)
+          success = true
+          break;
         } catch (e) {
-			errors != "\n"+repo.url +"->"+ e.message;
+          errors != "\n"+repo.url +"->"+ e.message;
         }
-  	  }
-  	  if (!success) {
-		Log.error("Unable to download artifacts: "+errors)
-  	    throw new AssertionError("Failed to download artifact: ${groupId}.${artifactId}.${version}")
-  	  }
+      }
+      if (!success) {
+        Log.error("Unable to download artifacts: "+errors)
+        throw new AssertionError("Failed to download artifact: ${groupId}.${artifactId}.${version}")
+      }
     }
   }
 
