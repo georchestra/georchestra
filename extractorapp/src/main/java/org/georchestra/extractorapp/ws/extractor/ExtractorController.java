@@ -265,12 +265,11 @@ public class ExtractorController implements ServletContextAware {
 			url.append("=");
 			url.append(requestUuid);
 
-			List<ExtractorLayerRequest> requests = Collections.unmodifiableList(
-																	ExtractorLayerRequest.parseJson(postData));
+			List<ExtractorLayerRequest> requests = Collections.unmodifiableList(ExtractorLayerRequest.parseJson(postData));
 			if (requests.size() > 0) {
 
 				String[] recipients = requests.get(0)._emails;
-				Email email = emailFactory.createEmail(request, recipients,	url.toString());
+				Email email = emailFactory.createEmail(request, recipients, url.toString());
 
 				String username = request.getHeader("sec-username");
 				String roles = request.getHeader("sec-roles");
