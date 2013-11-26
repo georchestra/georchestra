@@ -31,17 +31,17 @@ class XmlUpdate extends AbstractUpdater {
    */
   def write(closure) {
     def xml, writer
-		def fromFile = getFromFile()
-		if(fromFile == null) {
-		  params.log.info("Creating new file")
-	    writer = new StringWriter()
-	    xml = new MarkupBuilder(writer)
-	  } else {
-	    params.log.info("Overwriting $fromFile")
-	  }
-	  closure(doc)
-	  
-		doUpdate(writer)
+    def fromFile = getFromFile()
+    if(fromFile == null) {
+      params.log.info("Creating new file")
+      writer = new StringWriter()
+      xml = new MarkupBuilder(writer)
+    } else {
+      params.log.info("Overwriting $fromFile")
+    }
+    closure(doc)
+
+    doUpdate(writer)
   }
   /**
    * Load an existing xml file update the xml in-memory and output updated file to generated directory
@@ -49,26 +49,27 @@ class XmlUpdate extends AbstractUpdater {
    * @param closure a closure that takes an <a href="http://groovy.codehaus.org/Reading+XML+using+Groovy%27s+XmlParser">XmlParser</a> and updates the xml using
    the parser.  (See link for examples)
    */
-	def update(closure) {
-		def xml, writer
-		def fromFile = getFromFile()
-		if(fromFile != null) {
-		  params.log.info("Loading parameters to update from $fromFile")
-		  xml = new XmlParser().parse(fromFile)
-	  } else {
+  def update(closure) {
+    def xml, writer
+    def fromFile = getFromFile()
+    if(fromFile != null) {
+      params.log.info("Loading parameters to update from $fromFile")
+      xml = new XmlParser().parse(fromFile)
+    } else {
       throw new AssertionError("$fromFile does not exist.  Perhaps you want to use write to create the file")
-	  }
-		
-		def writer = new StringWriter()
+    }
+
+    writer = new StringWriter()
     new XmlNodePrinter(new PrintWriter(writer)).print(xml)
     writer(writer)
-	}
-
-  private def write (writer) {
-    def text = writer.toString()
-		def toFile = getToFile()
-		params.log.info("Writing updated xml to $toFile")
-
-	  toFile.withWriter('UTF-8'){ w -> w.write(text)}
   }
+
+  /* Already defined before
+   *private def write (writer) {
+    def text = writer.toString()
+    def toFile = getToFile()
+    params.log.info("Writing updated xml to $toFile")
+
+    toFile.withWriter('UTF-8'){ w -> w.write(text)}
+  }*/
 }

@@ -14,19 +14,19 @@
 	</properties>
 	<build>
 		<plugins>
-	      <plugin>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-dependency-plugin</artifactId>
-	      </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+			</plugin>
 			<plugin>
 				<groupId>org.codehaus.groovy.maven</groupId>
 				<artifactId>gmaven-plugin</artifactId>
 				<configuration>
 					<classpath>
 					<entry>
-							<groupId>org.georchestra</groupId>
-							<artifactId>config</artifactId>
-							<version>${project.version}</version>
+						<groupId>org.georchestra</groupId>
+						<artifactId>config</artifactId>
+						<version>${project.version}</version>
 					</entry>
 					</classpath>
 				</configuration>
@@ -55,7 +55,7 @@
 						</goals>
 						<phase>generate-sources</phase>
 						<configuration>
-						  <excludes>${geoserver.war.excludes}</excludes>
+							<excludes>${geoserver.war.excludes}</excludes>
 							<artifactItems>
 								<artifactItem>
 									<groupId>org.geoserver.web</groupId>
@@ -114,9 +114,9 @@
 					<contextPath>geoserver</contextPath>
 					<!-- uncomment following to set a GEOSERVER_DATA_DIR -->
 					<!--
-            <systemProperties> <systemProperty> <name>GEOSERVER_DATA_DIR</name>
-            <value>/home/ak/geoserver_data</value> </systemProperty> </systemProperties>
-          -->
+						<systemProperties> <systemProperty> <name>GEOSERVER_DATA_DIR</name>
+						<value>/home/ak/geoserver_data</value> </systemProperty> </systemProperties>
+					-->
 				</configuration>
 			</plugin>
 		</plugins>

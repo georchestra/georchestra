@@ -10,6 +10,32 @@
 	<packaging>jar</packaging>
 	<name>Configuration Project</name>
 	<url>http://www.georchestra.org</url>
+	<properties>
+		<generated.output>${basedir}/target/generated</generated.output>
+		<conf.base>${basedir}/configurations/${server}</conf.base>
+		<build.support.dir>${conf.base}/build_support/</build.support.dir>
+		<postTreatmentScript>println("No post treatment script")</postTreatmentScript>
+		<groovy-version>1.6.0</groovy-version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.yahoo.platform.yui</groupId>
+			<artifactId>yuicompressor</artifactId>
+			<version>2.4.7</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy-all</artifactId>
+			<version>${groovy-version}</version>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
 	<build>
 		<filters>
 			<filter>${basedir}/shared.maven.filters</filter>
@@ -22,40 +48,36 @@
 				<filtering>true</filtering>
 				<excludes>
 					<exclude>shared.maven.filters</exclude>
-					<exclude>*.class</exclude>
-					<exclude>*.jar</exclude>
-					<exclude>*.png</exclude>
-					<exclude>*.gif</exclude>
-					<exclude>*.bmp</exclude>
-					<exclude>*.png*</exclude>
-					<exclude>*.png</exclude>
-					<exclude>*.exe</exclude>
-					<exclude>*.jpg</exclude>
-					<exclude>*.jpeg</exclude>
-					<exclude>*.ico</exclude>
-					<exclude>*.odg</exclude>
-					<exclude>*.swf</exclude>
-					<exclude>*.doc</exclude>
+					<exclude>**/*.class</exclude>
+					<exclude>**/*.jar</exclude>
+					<exclude>**/*.gif</exclude>
+					<exclude>**/*.bmp</exclude>
+					<exclude>**/*.png*</exclude>
+					<exclude>**/*.exe</exclude>
+					<exclude>**/*.jpg</exclude>
+					<exclude>**/*.jpeg</exclude>
+					<exclude>**/*.ico</exclude>
+					<exclude>**/*.odg</exclude>
+					<exclude>**/*.swf</exclude>
+					<exclude>**/*.doc</exclude>
 				</excludes>
 			</resource>
 			<resource>
 				<directory>${basedir}/defaults</directory>
 				<filtering>false</filtering>
 				<includes>
-					<include>*.class</include>
-					<include>*.jar</include>
-					<include>*.png</include>
-					<include>*.gif</include>
-					<include>*.bmp</include>
-					<include>*.png*</include>
-					<include>*.png</include>
-					<include>*.exe</include>
-					<include>*.jpg</include>
-					<include>*.jpeg</include>
-					<include>*.ico</include>
-					<include>*.odg</include>
-					<include>*.swf</include>
-					<include>*.doc</include>
+					<include>**/*.class</include>
+					<include>**/*.jar</include>
+					<include>**/*.gif</include>
+					<include>**/*.bmp</include>
+					<include>**/*.png*</include>
+					<include>**/*.exe</include>
+					<include>**/*.jpg</include>
+					<include>**/*.jpeg</include>
+					<include>**/*.ico</include>
+					<include>**/*.odg</include>
+					<include>**/*.swf</include>
+					<include>**/*.doc</include>
 				</includes>
 			</resource>
 			<resource>
@@ -63,40 +85,36 @@
 				<filtering>true</filtering>
 				<excludes>
 					<exclude>build_support/**</exclude>
-					<exclude>*.class</exclude>
-					<exclude>*.jar</exclude>
-					<exclude>*.png</exclude>
-					<exclude>*.gif</exclude>
-					<exclude>*.bmp</exclude>
-					<exclude>*.png*</exclude>
-					<exclude>*.png</exclude>
-					<exclude>*.exe</exclude>
-					<exclude>*.jpg</exclude>
-					<exclude>*.jpeg</exclude>
-					<exclude>*.ico</exclude>
-					<exclude>*.odg</exclude>
-					<exclude>*.swf</exclude>
-					<exclude>*.doc</exclude>
+					<exclude>**/*.class</exclude>
+					<exclude>**/*.jar</exclude>
+					<exclude>**/*.gif</exclude>
+					<exclude>**/*.bmp</exclude>
+					<exclude>**/*.png*</exclude>
+					<exclude>**/*.exe</exclude>
+					<exclude>**/*.jpg</exclude>
+					<exclude>**/*.jpeg</exclude>
+					<exclude>**/*.ico</exclude>
+					<exclude>**/*.odg</exclude>
+					<exclude>**/*.swf</exclude>
+					<exclude>**/*.doc</exclude>
 				</excludes>
 			</resource>
 			<resource>
 				<directory>${conf.base}</directory>
 				<filtering>false</filtering>
 				<includes>
-					<include>*.class</include>
-					<include>*.jar</include>
-					<include>*.png</include>
-					<include>*.gif</include>
-					<include>*.bmp</include>
-					<include>*.png*</include>
-					<include>*.png</include>
-					<include>*.exe</include>
-					<include>*.jpg</include>
-					<include>*.jpeg</include>
-					<include>*.ico</include>
-					<include>*.odg</include>
-					<include>*.swf</include>
-					<include>*.doc</include>
+					<include>**/*.class</include>
+					<include>**/*.jar</include>
+					<include>**/*.gif</include>
+					<include>**/*.bmp</include>
+					<include>**/*.png*</include>
+					<include>**/*.exe</include>
+					<include>**/*.jpg</include>
+					<include>**/*.jpeg</include>
+					<include>**/*.ico</include>
+					<include>**/*.odg</include>
+					<include>**/*.swf</include>
+					<include>**/*.doc</include>
 				</includes>
 			</resource>
 			<resource>
@@ -104,40 +122,36 @@
 				<filtering>true</filtering>
 				<excludes>
 					<exclude>/shared.maven.filters</exclude>
-					<exclude>*.class</exclude>
-					<exclude>*.jar</exclude>
-					<exclude>*.png</exclude>
-					<exclude>*.gif</exclude>
-					<exclude>*.bmp</exclude>
-					<exclude>*.png*</exclude>
-					<exclude>*.png</exclude>
-					<exclude>*.exe</exclude>
-					<exclude>*.jpg</exclude>
-					<exclude>*.jpeg</exclude>
-					<exclude>*.ico</exclude>
-					<exclude>*.odg</exclude>
-					<exclude>*.swf</exclude>
-					<exclude>*.doc</exclude>
+					<exclude>**/*.class</exclude>
+					<exclude>**/*.jar</exclude>
+					<exclude>**/*.gif</exclude>
+					<exclude>**/*.bmp</exclude>
+					<exclude>**/*.png*</exclude>
+					<exclude>**/*.exe</exclude>
+					<exclude>**/*.jpg</exclude>
+					<exclude>**/*.jpeg</exclude>
+					<exclude>**/*.ico</exclude>
+					<exclude>**/*.odg</exclude>
+					<exclude>**/*.swf</exclude>
+					<exclude>**/*.doc</exclude>
 				</excludes>
 			</resource>
 			<resource>
 				<directory>${generated.output}</directory>
 				<filtering>false</filtering>
 				<includes>
-					<include>*.class</include>
-					<include>*.jar</include>
-					<include>*.png</include>
-					<include>*.gif</include>
-					<include>*.bmp</include>
-					<include>*.png*</include>
-					<include>*.png</include>
-					<include>*.exe</include>
-					<include>*.jpg</include>
-					<include>*.jpeg</include>
-					<include>*.ico</include>
-					<include>*.odg</include>
-					<include>*.swf</include>
-					<include>*.doc</include>
+					<include>**/*.class</include>
+					<include>**/*.jar</include>
+					<include>**/*.gif</include>
+					<include>**/*.bmp</include>
+					<include>**/*.png*</include>
+					<include>**/*.exe</include>
+					<include>**/*.jpg</include>
+					<include>**/*.jpeg</include>
+					<include>**/*.ico</include>
+					<include>**/*.odg</include>
+					<include>**/*.swf</include>
+					<include>**/*.doc</include>
 				</includes>
 			</resource>
 			<resource>
@@ -180,16 +194,16 @@
 							<goal>generateStubs</goal>
 						</goals>
 						<configuration>
-						  <sources>
-						    <source>
-						      <directory>${basedir}/src/main/scripts</directory>
-						      <includes>
-						        <include>**/*.groovy</include>
-					        </includes>
-						    </source>
-					    </sources>
-					  </configuration>
-				  </execution>
+							<sources>
+								<source>
+									<directory>${basedir}/src/main/scripts</directory>
+									<includes>
+										<include>**/*.groovy</include>
+									</includes>
+								</source>
+							</sources>
+						</configuration>
+					</execution>
 					<execution>
 						<id>create-default-gen-config-file</id>
 						<phase>generate-resources</phase>
@@ -201,21 +215,21 @@
 def supportdir = new File(project.basedir, "configurations/${server}/build_support")
 def generateConfigFile = new File(supportdir, "GenerateConfig.groovy")
 if(generateConfigFile.exists()) {
-  log.info(generateConfigFile.path+" exists so it will be used in build")
+	log.info(generateConfigFile.path+" exists so it will be used in build")
 } else {
-  log.info(generateConfigFile.path+" does NOT exist so a default will be created")
-  generateConfigFile.parentFile.mkdirs()
-  generateConfigFile << """
+	log.info(generateConfigFile.path+" does NOT exist so a default will be created")
+	generateConfigFile.parentFile.mkdirs()
+	generateConfigFile << """
 // Generated empty build file
 class GenerateConfig {
-  def generate(def project, def log, def ant, def basedirFile, 
-	  def target, def subTarget, def targetDir, 
+	def generate(def project, def log, def ant, def basedirFile,
+		def target, def subTarget, def targetDir,
 		def buildSupportDir, def outputDir) {
 		// do nothing
 	}
 }
 """
-            }
+}
 ]]>
 							</source>
 						</configuration>
@@ -235,7 +249,7 @@ class GenerateConfig {
 // note: the params have to be initialized for the required files to be created
 // doesn't matter if GenerateConfig is ran or not
 def params = new Parameters(
-    project: project,
+	project: project,
 	target: "${server}",
 	subTarget: "${sub.target}",
 	log: log,
@@ -275,7 +289,7 @@ if (!mavenFilters.exists()) {
 							<source><![CDATA[
 log.info("Running variable Substitution test")
 def params = new Parameters(
-    project: project,
+	project: project,
 	target: "${server}",
 	subTarget: "${sub.target}",
 	log: log,
@@ -317,23 +331,4 @@ log.info("Finished running variable substitution test")
 			</plugin>
 		</plugins>
 	</build>
-	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.8</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.yahoo.platform.yui</groupId>
-			<artifactId>yuicompressor</artifactId>
-			<version>2.4.7</version>
-		</dependency>
-	</dependencies>
-	<properties>
-		<generated.output>${basedir}/target/generated</generated.output>
-		<conf.base>${basedir}/configurations/${server}</conf.base>
-		<build.support.dir>${conf.base}/build_support/</build.support.dir>
-		<postTreatmentScript>println("No post treament script")</postTreatmentScript>
-	</properties>
 </project>
