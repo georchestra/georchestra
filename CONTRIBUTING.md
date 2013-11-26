@@ -5,7 +5,7 @@ First of all: thanks for contributing!
 ## Code conventions
 
 * Javascript: four space indents. No tabs.
-* Java:
+* Java: tab indents. No spaces. No trailing spaces or tabs.
 * XML:
 
 ## Commits policy
