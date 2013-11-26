@@ -42,7 +42,7 @@ import org.springframework.web.context.ServletContextAware;
  */
 @Controller
 public class ExtractorController implements ServletContextAware {
-	public static final String EXTRACTION_ZIP_EXT = "-extraction.zip";
+	public static final String    EXTRACTION_ZIP_EXT = "-extraction.zip";
 
 	private static final Log      LOG = LogFactory.getLog(ExtractorController.class.getPackage().getName());
 
@@ -57,7 +57,7 @@ public class ExtractorController implements ServletContextAware {
 	private String                      responseTemplateFile;
 	private String                      reponseMimeType;
 	private String                      responseCharset;
-	private AbstractEmailFactory		 emailFactory;
+	private AbstractEmailFactory        emailFactory;
 	private ServletContext              servletContext;
 	private String                      servletUrl;
 	private String                      extractionFolderPrefix;
@@ -65,11 +65,11 @@ public class ExtractorController implements ServletContextAware {
 	private boolean                     useCommandLineGDAL = false;
 
 	private UsernamePasswordCredentials adminCredentials;
-	private String secureHost;
-	private long maxCoverageExtractionSize = Long.MAX_VALUE;
-	private CheckFormAcceptance checkFormAcceptance;
+	private String                      secureHost;
+	private long                        maxCoverageExtractionSize = Long.MAX_VALUE;
+	private CheckFormAcceptance         checkFormAcceptance;
 
-	private ExtractionManager extractionManager;
+	private ExtractionManager           extractionManager;
 
 	public void validateConfig() {
 		if(extractionManager==null) {
