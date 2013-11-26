@@ -268,24 +268,6 @@ GEOR.map = (function() {
             // force map scales, see https://github.com/georchestra/georchestra/issues/431
             // this is required to get initResolutions() working:
             layer.options.scales = GEOR.config.MAP_SCALES;
-            
-            // Format attribution if required:
-            var attr = r.get('attribution');
-            var layer = r.get('layer');
-            if (!attr || !attr.title) {
-                var a, 
-                    // handle both wms & wfs layers
-                    url = layer.url || (layer.protocol && layer.protocol.url);
-                if (url) {
-                    var b = OpenLayers.Util.createUrlObject(url);
-                    if (b && b.host) {
-                        a = b.host;
-                    }
-                }
-                r.set('attribution', {
-                    title: a
-                });
-            }
 
             // Set layer.metadataURL if record has metadataURLs
             // so that this can be saved in a WMC context.
