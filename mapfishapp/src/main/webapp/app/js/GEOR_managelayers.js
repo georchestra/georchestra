@@ -173,14 +173,16 @@ GEOR.managelayers = (function() {
      *          for inclusion in layer manager item
      */
     var formatAttribution = function(layerRecord) {
-        var attr = layerRecord.get('attribution');
-        var titleForDisplay = attr.title || '-';
-
+        var attr = layerRecord.get('attribution'),
+        logo = attr.logo,
+        titleForDisplay = attr.title || '-',
         // logo displayed in qtip if set
-        var tip = tr('source: ')+ (attr.title || '-') +
-            ((attr.logo && GEOR.util.isUrl(attr.logo.href, true)) ? '<br /><img src=\''+attr.logo.href+'\' />' : '');
-
-        var attrDisplay = (attr.href) ?
+        width = (logo && logo.width) ? 'width=\''+logo.width+'\'' : '',
+        height = (logo && logo.height) ? 'height=\''+logo.height+'\'' : '',
+        tip = tr('source: ')+ (attr.title || '-') +
+            ((logo && GEOR.util.isUrl(logo.href, true)) ? 
+                '<br /><img src=\''+logo.href+'\' '+width+' '+height+' />' : ''),
+        attrDisplay = (attr.href) ?
             '<a href="'+attr.href+'" target="_blank" ext:qtip="'+tip+'">'+titleForDisplay+'</a>' :
             '<span ext:qtip="'+tip+'">'+titleForDisplay+'</span>';
 
