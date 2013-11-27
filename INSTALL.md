@@ -35,9 +35,9 @@ PostGreSQL
         psql -f /usr/share/postgresql/9.1/contrib/postgis-1.5/postgis.sql geonetwork
         psql -f /usr/share/postgresql/9.1/contrib/postgis-1.5/spatial_ref_sys.sql geonetwork
 
-        createuser -DPRS www-data
+        createuser -SDRIP www-data
 
-* downloadform and ogcstatistics databases setup
+* databases setup:
 
  * downloadform
 
@@ -49,13 +49,19 @@ PostGreSQL
 
             createdb ogcstatistics
             wget https://raw.github.com/georchestra/georchestra/master/ogc-server-statistics/ogc_statistics_table.sql -O /tmp/ogc_statistics_table.sql
-            psql ogcstatistics -f /tmp/ogc_statistics_table.sql
+            psql -d ogcstatistics -f /tmp/ogc_statistics_table.sql
 
  * ldapadmin
 
             createdb ldapadmin
             wget https://raw.github.com/georchestra/georchestra/master/ldapadmin/ldapAdminDB.sql -O /tmp/ldapAdminDB.sql
-            psql ldapadmin -f /tmp/ldapAdminDB.sql
+            psql -d ldapadmin -f /tmp/ldapAdminDB.sql
+
+ * mapfishapp
+
+            createdb mapfishapp
+            wget https://raw.github.com/georchestra/georchestra/master/mapfishapp/database.sql -O /tmp/mapfishapp.sql
+            psql -d mapfishapp -f /tmp/mapfishapp.sql
 
 * Set rights of the www-data user
 
@@ -71,6 +77,9 @@ PostGreSQL
         echo 'GRANT ALL PRIVILEGES ON DATABASE ldapadmin TO "www-data";' | psql -d ldapadmin
         echo 'GRANT ALL PRIVILEGES ON SCHEMA public TO "www-data";' | psql -d ldapadmin
         echo 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "www-data";' | psql -d ldapadmin
+        echo 'GRANT ALL PRIVILEGES ON DATABASE mapfishapp TO "www-data";' | psql -d mapfishapp
+        echo 'GRANT ALL PRIVILEGES ON SCHEMA geodoc TO "www-data";' | psql -d mapfishapp
+        echo 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA geodoc TO "www-data";' | psql -d mapfishapp
         exit
 
 Apache
