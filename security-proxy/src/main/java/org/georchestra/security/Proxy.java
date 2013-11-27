@@ -847,16 +847,27 @@ public class Proxy {
                             // that the request cannot be fulfilled, nothing good would happen otherwise
                         } 
                         if(charset == null) {
+                            String guessedCharset = null;
                             if(logger.isDebugEnabled()) {
-                                logger.debug("unable to find charset so using default:"+defaultCharset);
+                                logger.debug("unable to find charset so using the first one from the accept-charset request header");
                             }
                             String calculateDefaultCharset = calculateDefaultCharset(orignalRequest);
-                            if (calculateDefaultCharset !=null ) { 
-                                String adjustedContentType = proxiedResponse.getEntity().getContentType().getValue() + ";charset=" + calculateDefaultCharset;
-                                finalResponse.setHeader("Content-Type", adjustedContentType);
-                                first = false; // we found the encoding, don't try to do it again
-                                finalResponse.setCharacterEncoding(calculateDefaultCharset);
+                            if (calculateDefaultCharset !=null ) {
+                                guessedCharset = calculateDefaultCharset;
+                                if(logger.isDebugEnabled()) {
+                                    logger.debug("hopefully the server responded with this charset: "+calculateDefaultCharset);
+                                }
+                            } else {
+                                guessedCharset = defaultCharset;
+                                if(logger.isDebugEnabled()) {
+                                    logger.debug("unable to find charset, so using default:"+defaultCharset);
+                                }
                             }
+                            String adjustedContentType = proxiedResponse.getEntity().getContentType().getValue() + ";charset=" + guessedCharset;
+                            finalResponse.setHeader("Content-Type", adjustedContentType);
+                            first = false; // we found the encoding, don't try to do it again
+                            finalResponse.setCharacterEncoding(guessedCharset);
+
                         } else {
                             if(logger.isDebugEnabled()) {
                                 logger.debug("found charset: "+charset);
@@ -868,7 +879,7 @@ public class Proxy {
                         }
                     }
                 }
-                
+
                 // for everyone, the stream is just forwarded to the client
                 streamToClient.write(buf, 0, len);
             }
@@ -889,7 +900,7 @@ public class Proxy {
     private String calculateDefaultCharset(HttpServletRequest originalRequest) {
         String acceptCharset = originalRequest.getHeader("accept-charset");
         
-        String calculatedCharset = "ISO-8859-1";
+        String calculatedCharset = null;
         
         if(acceptCharset !=null) {
             calculatedCharset = acceptCharset.split(",")[0];
