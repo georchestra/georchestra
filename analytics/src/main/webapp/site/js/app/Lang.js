@@ -8,7 +8,7 @@
  * Internationalization namespace.  Contains dictionaries in various languages
  *     and methods to set and get the current language.
  */
-var Analytics =  Analytics || {}
+var Analytics =  Analytics || {};
 
 Analytics.Lang = {
     /** 
