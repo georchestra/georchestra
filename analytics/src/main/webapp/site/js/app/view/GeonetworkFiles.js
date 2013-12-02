@@ -4,7 +4,7 @@ Ext.define('Analytics.view.GeonetworkFiles', {
     store: 'GeonetworkFiles',
 
     initComponent: function() {
-        var tr = Lang.i18n;
+        var tr = Analytics.Lang.i18n;
         // in order to have the tooltip over each row:
         this.columns = {
             defaults: {

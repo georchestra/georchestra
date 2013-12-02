@@ -15,7 +15,7 @@
 /*
  * Spanish translation file
  */
-Lang.es = {
+Analytics.Lang.es = {
     "Page":"Página",
     "of N1":"de {0}",
     "Name":"Nombre",

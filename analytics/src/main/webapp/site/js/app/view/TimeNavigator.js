@@ -14,7 +14,7 @@ Ext.define('Analytics.view.TimeNavigator', {
     },
     
     initComponent: function() {
-        tr = Lang.i18n;
+        tr = Analytics.Lang.i18n;
         this.items = [{
             xtype: 'container',
             items: [{

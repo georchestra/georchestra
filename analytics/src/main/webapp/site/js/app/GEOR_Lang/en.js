@@ -15,7 +15,7 @@
 /*
  * English translation file
  */
-Lang.en = {
+Analytics.Lang.en = {
     "Page":"Page",
     "of N1":"of {0}",
     "Name":"Name",

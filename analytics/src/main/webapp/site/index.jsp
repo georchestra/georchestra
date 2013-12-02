@@ -90,7 +90,7 @@
                     <span id="loading-msg"><fmt:message key="loading"/></span>
                 </div>
                 
-                <script type="text/javascript" src="resources/site/js/lib/external/openlayers/Lang.js"></script>
+                <script type="text/javascript" src="resources/site/js/app/Lang.js"></script>
                 <script type="text/javascript" src="resources/site/js/lib/external/ext/ext.js"></script>
                 <script type="text/javascript" src="resources/site/js/lib/external/ext/locale/ext-lang-<%= lang %>.js"></script>
                 <script type="text/javascript" src="resources/site/js/app/GEOR_Lang/<%= lang %>.js"></script>
@@ -98,7 +98,7 @@
                     Ext.onReady(function() {
                         Ext.get("loading").remove();
                         // lang
-                        Lang.setCode('<%= lang %>');
+                        Analytics.Lang.setCode('<%= lang %>');
                     });
                 </script>
                 <script type="text/javascript" src="resources/site/js/app/Application.js"></script>

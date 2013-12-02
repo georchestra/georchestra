@@ -16,7 +16,7 @@ Ext.define('Analytics.view.Viewport', {
     layout: 'border',
     
     initComponent: function() {
-        var tr = Lang.i18n;
+        var tr = Analytics.Lang.i18n;
         this.items = [{
             xtype: 'box',
             id: 'geor_header',

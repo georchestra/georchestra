@@ -5,7 +5,7 @@ Ext.define('Analytics.view.BaseGridPanel', {
     forceFit: true,
     
     initComponent: function() {
-        var tr = Lang.i18n;
+        var tr = Analytics.Lang.i18n;
         Ext.apply(this, {
             tools: [{
                 type: 'save',
