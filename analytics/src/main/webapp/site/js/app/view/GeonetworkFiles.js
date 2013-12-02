@@ -31,9 +31,9 @@ Ext.define('Analytics.view.GeonetworkFiles', {
 
         new Ext.Window({
             title: [
-                tr('The last users who downloaded the file'),
+                tr('The last users who downloaded the file')+" ",
                 rec.get('filename'),
-                tr('the metadata'),
+                tr('from metadata'),
                 rec.get('metadata_id')
             ].join(' '),
             width: 800,

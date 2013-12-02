@@ -36,7 +36,7 @@ Ext.define('Analytics.view.OGCLayers', {
             title: [
                 tr('The last users who downloaded the layer'),
                 rec.get('layer'),
-                tr('service'),
+                tr('from service'),
                 rec.get('service')
             ].join(' '),
             width: 800,

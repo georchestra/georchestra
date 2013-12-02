@@ -27,7 +27,7 @@ Ext.define('Analytics.view.ExtractorUsers', {
         }]);
         
         new Ext.Window({
-            title: tr("The layers have been downloaded by the user ")+
+            title: tr("The layers have been downloaded by the user")+" "+
                 rec.get('username'),
             width: 800,
             height: 400,
