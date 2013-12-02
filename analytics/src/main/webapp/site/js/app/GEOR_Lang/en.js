@@ -43,7 +43,7 @@ Lang.en = {
     "Select this tab to access to the statistics of the extractor":"Select this tab to access to the statistics of the extractor",
     "Select this tab to access the OGC service statistic":"Select this tab to access the OGC service statistics",
     "double-click to see details":"double-click to see details",
-    "The layers have been downloaded by the user":"The layers have been downloaded by the user",
+    "The layers have been downloaded by the user ":"The layers have been downloaded by the user ",
     "The last users who downloaded the layer":"The last users who downloaded the layer",
     "Files downloaded by the user":"Files downloaded by the user ",
     "The last users who downloaded the file":"The last users who downloaded the file ",

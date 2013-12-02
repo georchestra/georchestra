@@ -43,7 +43,7 @@ Lang.es = {
     "Select this tab to access to the statistics of the extractor":"Seleccione esta pestaña para acceder a las estadísticas de las descargas del extractor",
     "Select this tab to access the OGC service statistic":"Seleccione está pestaña para acceder a las estadísticas de los servicios OGC",
     "double-click to see details":"haga doble-clic para ver los detalles",
-    "The layers have been downloaded by the user":"Las capas han sido descargadas por el usuario",
+    "The layers have been downloaded by the user ":"Las capas han sido descargadas por el usuario ",
     "The last users who downloaded the layer":"Los últimos usuarios que descargaron la capa",
     "Files downloaded by the user":"Los archivos descargados por el usuario ",
     "The last users who downloaded the file":"Los últimos usuarios que descargaron el archivo ",
