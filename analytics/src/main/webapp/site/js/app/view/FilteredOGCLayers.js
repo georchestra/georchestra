@@ -4,7 +4,7 @@ Ext.define('Analytics.view.FilteredOGCLayers', {
     store: 'FilteredOGCLayers',
 
     initComponent: function() {
-        var tr = OpenLayers.i18n;
+        var tr = Lang.i18n;
         this.columns = Ext.apply(this.columns || {}, {
             items: [{
                 dataIndex: 'service',

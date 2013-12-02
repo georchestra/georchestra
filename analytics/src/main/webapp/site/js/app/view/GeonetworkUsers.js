@@ -4,7 +4,7 @@ Ext.define('Analytics.view.GeonetworkUsers', {
     store: 'GeonetworkUsers',
 
     initComponent: function() {
-        var tr = OpenLayers.i18n;
+        var tr = Lang.i18n;
         // in order to have the tooltip over each row:
         this.columns = {
             defaults: {

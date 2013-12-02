@@ -4,7 +4,7 @@ Ext.define('Analytics.view.GeonetworkGroups', {
     store: 'GeonetworkGroups',
     
     initComponent: function() {
-        var tr = OpenLayers.i18n;
+        var tr = Lang.i18n;
         this.columns = Ext.apply(this.columns || {}, {
             items: [{
                 dataIndex: 'company',

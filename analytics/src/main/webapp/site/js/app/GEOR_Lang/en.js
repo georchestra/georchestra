@@ -15,7 +15,7 @@
 /*
  * English translation file
  */
-OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
+Lang.en = {
     "Page":"Page",
     "of N1":"of {0}",
     "Name":"Name",
@@ -52,4 +52,4 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
     "No records":"No records",
     "Export to CSV":"Export to CSV"    
     // no trailing comma
-});
+};
