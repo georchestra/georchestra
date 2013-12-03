@@ -99,7 +99,7 @@ Typically, layer names & field names should not:
  
 Browsers like IE or FF will typically fail, while Chromium might just ignore the incorrect fields.
 
-You should also take care not to insert special chars in the service description fields. Eg: "Service WMS de GéoPicardie - Département de l'Oise" will break your capabilities for IE, while it will work with "Service WMS de GéoPicardie - Département de lʼOise" or "Service WMS de GéoPicardie - Département de l&apos;Oise". GeoServer should do the mapping, but it does not at the moment.
+You should also take care not to insert special chars in the service description fields. Eg: ```"Service WMS de GéoPicardie - Département de l'Oise"``` will break your capabilities for IE, while it will work with ```"Service WMS de GéoPicardie - Département de lʼOise"``` or ```"Service WMS de GéoPicardie - Département de l&apos;Oise"```. GeoServer should do the mapping, but it does not at the moment.
 Here are the corresponding strings to use:
 ```
 "   &quot;
