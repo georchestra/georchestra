@@ -34,10 +34,11 @@ Ext.define('Analytics.view.ExtractorLayers', {
         
         new Ext.Window({
             title: [
-                tr('The last users who downloaded the layer'),
-                rec.get('ows_type'),
+                tr('Latest users who downloaded the OWSTYPE layer', {
+                    'OWSTYPE': rec.get('ows_type')
+                }),
                 rec.get('layer_name'),
-                tr('service'),
+                tr('from service'),
                 rec.get('ows_url')
             ].join(' '),
             width: 800,

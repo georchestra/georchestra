@@ -31,7 +31,7 @@ Ext.define('Analytics.view.Viewport', {
             items: [{
                 tabConfig: {
                     title: tr('Downloads from GeoNetwork'),
-                    tooltip: tr('Select this tab to access the statistics of the downloads catalog')
+                    tooltip: tr('Select this tab to access the statistics of downloads from the catalog')
                 },
                 layout: 'border',
                 defaults: {border: false},
@@ -79,7 +79,7 @@ Ext.define('Analytics.view.Viewport', {
             }, {
                 tabConfig: {
                     title: tr('OGC Services'),
-                    tooltip: tr('Select this tab to access the OGC service statistic')
+                    tooltip: tr('Select this tab to access the OGC service statistics')
                 },
                 layout: 'border',
                 defaults: {border: false},

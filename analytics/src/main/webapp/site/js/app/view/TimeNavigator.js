@@ -2,17 +2,17 @@ Ext.define('Analytics.view.TimeNavigator', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.timenavigator',
     tr: null,
-    
+
     layout: {
         type: 'hbox',
         align: 'stretch'
     },
-    
+
     defaults: {
         flex: 1,
         style: 'text-align:center;'
     },
-    
+
     initComponent: function() {
         tr = Analytics.Lang.i18n;
         this.items = [{
@@ -35,13 +35,13 @@ Ext.define('Analytics.view.TimeNavigator', {
                 pack  : 'start'
             },
             items:[{
-            	cls: 'dateCenter',
-            	xtype: 'container',
-            	html: this.formatDate(new Date())
+                cls: 'dateCenter',
+                xtype: 'container',
+                html: this.formatDate(new Date())
             },{
-            	xtype: 'container',
-            	cls: 'dateCenterBut',
-            	items: [{
+                xtype: 'container',
+                cls: 'dateCenterBut',
+                items: [{
                     xtype: 'button',
                     scale: 'medium',
                     id: 'switchMode',
@@ -64,30 +64,30 @@ Ext.define('Analytics.view.TimeNavigator', {
         }];
         this.callParent();
     },
-    
+
     replaceDate: function(date) {
-    	this.changeText(this.formatDate(date));
+        this.changeText(this.formatDate(date));
     },
-    
+
     changeText: function(txt) {
-    	this.getComponent(1).getComponent(0).update(txt);
+        this.getComponent(1).getComponent(0).update(txt);
     },
-    
+
     formatDate: function(date) {
         return Ext.Date.format(date, 'F Y');
     },
-    
+
     toGlobalMode: function(btn) {
-		this.getChildByElement('previous').setVisible(false);
-		this.getChildByElement('next').setVisible(false);
-		this.changeText(tr('Global statistics'));
-		btn.setText(tr('Monthly statistics'));
+        this.getChildByElement('previous').setVisible(false);
+        this.getChildByElement('next').setVisible(false);
+        this.changeText(tr('Global statistics'));
+        btn.setText(tr('Monthly statistics'));
     },
-    
+
     toMonthlyMode: function(date,btn) {
-		this.getChildByElement('previous').setVisible(true);
-		this.getChildByElement('next').setVisible(true);
-		this.changeText(this.formatDate(date));
-		btn.setText(tr('Global statistics'));
+        this.getChildByElement('previous').setVisible(true);
+        this.getChildByElement('next').setVisible(true);
+        this.changeText(this.formatDate(date));
+        btn.setText(tr('Global statistics'));
     },
 });
