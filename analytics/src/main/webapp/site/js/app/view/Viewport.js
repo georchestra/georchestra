@@ -16,6 +16,7 @@ Ext.define('Analytics.view.Viewport', {
     layout: 'border',
     
     initComponent: function() {
+        var tr = Analytics.Lang.i18n;
         this.items = [{
             xtype: 'box',
             id: 'geor_header',
@@ -29,23 +30,23 @@ Ext.define('Analytics.view.Viewport', {
             deferredRender: false,
             items: [{
                 tabConfig: {
-                    title: 'Téléchargements depuis GeoNetwork',
-                    tooltip: 'Sélectionnez cet onglet pour accéder aux statistiques des téléchargements de fichiers depuis le catalogue'
+                    title: tr('Downloads from GeoNetwork'),
+                    tooltip: tr('Select this tab to access the statistics of the downloads catalog')
                 },
                 layout: 'border',
                 defaults: {border: false},
                 items: [{
-                    title: 'Fichiers',
+                    title: tr('Files'),
                     region: 'west',
                     split: true,
                     width: '50%',
                     xtype: 'geonetworkfileslist'
                 }, {
-                    title: 'Utilisateurs',
+                    title: tr('Users'),
                     region: 'center',
                     xtype: 'geonetworkuserslist'
                 }, {
-                    title: 'Organismes',
+                    title: tr('Organisms'),
                     split: true,
                     region: 'east',
                     width: '25%',
@@ -53,23 +54,23 @@ Ext.define('Analytics.view.Viewport', {
                 }]
             }, {
                 tabConfig: {
-                    title: 'Extractions personnalisées',
-                    tooltip: 'Sélectionnez cet onglet pour accéder aux statistiques des extractions'
+                    title: tr('Personalized extractions'),
+                    tooltip: tr('Select this tab to access to the statistics of the extractor')
                 },
                 layout: 'border',
                 defaults: {border: false},
                 items: [{
-                    title: 'Couches',
+                    title: tr('Layers'),
                     region: 'west',
                     split: true,
                     width: '50%',
                     xtype: 'extractorlayerslist'
                 }, {
-                    title: 'Utilisateurs',
+                    title: tr('Users'),
                     region: 'center',
                     xtype: 'extractoruserslist'
                 },{
-                    title: 'Organismes',
+                    title: tr('Organisms'),
                     split: true,
                     region: 'east',
                     width: '25%',
@@ -77,23 +78,23 @@ Ext.define('Analytics.view.Viewport', {
                 }]
             }, {
                 tabConfig: {
-                    title: 'Services OGC',
-                    tooltip: 'Sélectionnez cet onglet pour accéder aux statistiques des services OGC de la plateforme'
+                    title: tr('OGC Services'),
+                    tooltip: tr('Select this tab to access the OGC service statistic')
                 },
                 layout: 'border',
                 defaults: {border: false},
                 items: [{
-                    title: 'Couches',
+                    title: tr('Layers'),
                     region: 'west',
                     split: true,
                     width: '50%',
                     xtype: 'ogclayerslist'
                 }, {
-                    title: 'Utilisateurs',
+                    title: tr('Users'),
                     region: 'center',
                     xtype: 'ogcuserslist'
                 },{
-                    title: 'Organismes',
+                    title: tr('Organisms'),
                     split: true,
                     region: 'east',
                     width: '25%',

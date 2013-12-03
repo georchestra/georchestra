@@ -4,11 +4,13 @@ Ext.define('Analytics.view.GeonetworkUsers', {
     store: 'GeonetworkUsers',
 
     initComponent: function() {
+        var tr = Analytics.Lang.i18n;
         // in order to have the tooltip over each row:
         this.columns = {
             defaults: {
                 renderer: function(value, md){ 
-                    md.tdAttr = 'data-qtip="double-cliquez pour afficher le détail"';
+                    var qtip=tr("double-click to see details");
+                    md.tdAttr = 'data-qtip="'+qtip+'"';
                     return value;
                 }
             }
@@ -25,7 +27,7 @@ Ext.define('Analytics.view.GeonetworkUsers', {
         }]);
         
         new Ext.Window({
-            title: "Fichiers téléchargés par l'utilisateur " +
+            title: tr("Files downloaded by the user")+" "+
                 rec.get('username'),
             width: 800,
             height: 400,
