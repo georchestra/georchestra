@@ -2,8 +2,8 @@ Ext.Loader.setConfig({
     enabled: true,
     disableCaching: false,
     paths: {
-        'Ext': 'resources/site/js/lib/external/ext/src',
-        'Analytics': 'resources/site/js/app'
+        'Ext': 'resources/js/lib/external/ext/src',
+        'Analytics': 'resources/js/app'
     }
 });
 
@@ -26,7 +26,7 @@ Ext.require([
 
 Ext.application({
     name: 'Analytics',
-    appFolder:'resources/site/js/app', // strange that it needs to be here // kind of redundant with the above Ext.Loader paths
+    appFolder:'resources/js/app', // strange that it needs to be here // kind of redundant with the above Ext.Loader paths
     autoCreateViewport: true, // By setting autoCreateViewport to true, the framework will, by convention, include the app/view/Viewport.js file
     models: ['OGCLayer','OGCUser','OGCGroup','GeonetworkFile','GeonetworkUser','GeonetworkGroup','ExtractorLayer','ExtractorUser','ExtractorGroup'],
     stores: [

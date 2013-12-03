@@ -23,7 +23,7 @@ Ext.define('Analytics.view.TimeNavigator', {
                 id: 'previous',
                 cls: 'centered',
                 text: tr('previous month'),
-                icon: 'resources/site/images/famfamfam/resultset_previous.png',
+                icon: 'resources/images/famfamfam/resultset_previous.png',
                 iconAlign: 'left',
                 width: 180
             }]
@@ -57,7 +57,7 @@ Ext.define('Analytics.view.TimeNavigator', {
                 id: 'next',
                 cls: 'centered',
                 text: tr('next month'),
-                icon: 'resources/site/images/famfamfam/resultset_next.png',
+                icon: 'resources/images/famfamfam/resultset_next.png',
                 iconAlign: 'right',
                 width: 180
             }]

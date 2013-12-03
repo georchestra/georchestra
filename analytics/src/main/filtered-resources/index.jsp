@@ -9,7 +9,7 @@
 <%
     String lang = request.getParameter("lang");
     if (lang == null || (!lang.equals("en") && !lang.equals("es") && !lang.equals("fr"))) {
-        lang = "es";
+        lang = "${language}";
     }
     Locale l = new Locale(lang);
     ResourceBundle resource = Utf8ResourceBundle.getBundle("analytics.i18n.index",l);
@@ -25,9 +25,9 @@
 
     <head>
         <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
-        <title lang="<%= lang%>" dir="ltr"><fmt:message key="title.analytics"/> - geOrchestra</title>
-        <link rel="stylesheet" type="text/css" href="resources/site/js/lib/external/ext/resources/css/ext-all-gray.css" />
-        <link rel="stylesheet" type="text/css" href="resources/site/css/app.css" />
+        <title lang="<%= lang%>" dir="ltr"><fmt:message key="title.analytics"/> - ${instance}</title>
+        <link rel="stylesheet" type="text/css" href="resources/js/lib/external/ext/resources/css/ext-all-gray.css" />
+        <link rel="stylesheet" type="text/css" href="resources/css/app.css" />
         <style type="text/css">
             body {
                 background: #ffffff;
@@ -60,14 +60,14 @@
             <span><fmt:message key="loading"/></span>
         </div>
         <div id="loading">
-            <img src="resources/site/images/loading.gif" alt="chargement" width="32" height="32" style="margin-right:8px;float:left;vertical-align:top;"/>
+            <img src="resources/images/loading.gif" alt="chargement" width="32" height="32" style="margin-right:8px;float:left;vertical-align:top;"/>
             <span id="loading-msg"><fmt:message key="loading"/></span>
         </div>
         
-        <script type="text/javascript" src="resources/site/js/app/Lang.js"></script>
-        <script type="text/javascript" src="resources/site/js/lib/external/ext/ext.js"></script>
-        <script type="text/javascript" src="resources/site/js/lib/external/ext/locale/ext-lang-<%= lang %>.js"></script>
-        <script type="text/javascript" src="resources/site/js/app/GEOR_Lang/<%= lang %>.js"></script>
+        <script type="text/javascript" src="resources/js/app/Lang.js"></script>
+        <script type="text/javascript" src="resources/js/lib/external/ext/ext.js"></script>
+        <script type="text/javascript" src="resources/js/lib/external/ext/locale/ext-lang-<%= lang %>.js"></script>
+        <script type="text/javascript" src="resources/js/app/GEOR_Lang/<%= lang %>.js"></script>
         <script type="text/javascript">
             Ext.onReady(function() {
                 Ext.get("loading").remove();
@@ -75,8 +75,8 @@
                 Analytics.Lang.setCode('<%= lang %>');
             });
         </script>
-        <script type="text/javascript" src="resources/site/js/app/Application.js"></script>
-        <script type="text/javascript" src="resources/site/js/app/config.js"></script>
+        <script type="text/javascript" src="resources/js/app/Application.js"></script>
+        <script type="text/javascript" src="resources/js/app/config.js"></script>
 
         <noscript><p><fmt:message key="need.javascript"/></p></noscript>
     </body>
