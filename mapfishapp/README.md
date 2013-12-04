@@ -96,9 +96,18 @@ Before reporting errors, please check that your data is correct.
 Typically, layer names & field names should not:
  - include spaces nor accentuated chars,
  - start with a number.
+ 
+Browsers like IE or FF will typically fail, while Chromium might just ignore the incorrect fields.
 
-Browsers like FF will typically fail, while Chromium might just ignore the incorrect fields.
-
+You should also take care not to insert special chars in the service description fields. Eg: ```"Service WMS de GéoPicardie - Département de l'Oise"``` will break your capabilities for IE, while it will work with ```"Service WMS de GéoPicardie - Département de lʼOise"``` or ```"Service WMS de GéoPicardie - Département de l&apos;Oise"```. GeoServer should do the mapping, but it does not at the moment.
+Here are the corresponding strings to use:
+```
+"   &quot;
+'   &apos;
+<   &lt;
+>   &gt;
+&   &amp;
+```
 
 How to run the viewer without Tomcat ?
 ======================================

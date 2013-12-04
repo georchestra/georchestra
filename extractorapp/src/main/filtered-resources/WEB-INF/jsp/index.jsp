@@ -124,7 +124,7 @@ if(sec_roles != null) {
         <% 
           String proxyHost = "/proxy/?url=";
           Boolean jettyrun = false;
-          if(request.getContextPath().equals("/extractorapp")) {
+          if(request.getHeader("sec-proxy") == null) {
             proxyHost = "/extractorapp/ws/ogcproxy/?url=";
             jettyrun = true;
           }

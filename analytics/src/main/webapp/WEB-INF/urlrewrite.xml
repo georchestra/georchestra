@@ -5,7 +5,6 @@
         "http://tuckey.org/res/dtds/urlrewrite3.0.dtd">
 
 <urlrewrite>
-
     <rule>
         <from>^/ws/(.*)$</from>
         <to type="forward">/ws/$1</to>

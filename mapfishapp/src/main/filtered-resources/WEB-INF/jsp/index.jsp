@@ -130,7 +130,7 @@ if(sec_roles != null) {
 
         <% 
           String proxyHost = "/proxy/?url=";
-          if(request.getContextPath().equals("/mapfishapp")) {
+          if(request.getHeader("sec-proxy") == null) {
             proxyHost = "ws/ogcproxy/?url=";
           }
         %>
