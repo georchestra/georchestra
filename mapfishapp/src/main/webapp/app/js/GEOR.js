@@ -35,6 +35,7 @@
  * @include GEOR_querier.js
  * @include GEOR_styler.js
  * @include GEOR_wmc.js
+ * @include GEOR_helper.js
  */
 
 Ext.namespace("GEOR");
