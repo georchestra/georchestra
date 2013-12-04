@@ -78,6 +78,8 @@ public class HeadersManagementStrategy {
             String value = originalRequest.getHeader(headerName);
             addHeaderToRequestAndLog(proxyRequest, headersLog, headerName, value);
         }
+        // see https://github.com/georchestra/georchestra/issues/509:
+        addHeaderToRequestAndLog(proxyRequest, headersLog, "sec-proxy", "true");
 
         handleRequestCookies(originalRequest, proxyRequest, headersLog);
         HttpSession session = originalRequest.getSession();
