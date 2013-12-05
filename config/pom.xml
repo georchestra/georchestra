@@ -157,6 +157,8 @@
 					<delimiters>
 						<delimiter>@</delimiter>
 					</delimiters>
+					<!-- Bug #479: see https://github.com/georchestra/georchestra/issues/479 -->
+					<encoding>ISO-8859-1</encoding>
 				</configuration>
 			</plugin>
 			<plugin>
