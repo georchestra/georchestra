@@ -238,8 +238,10 @@ GEOR.edit = (function() {
                                 align: "center",
                                 renderer: function(v) {
                                     return !v ?
-                                        '<img src="app/img/famfamfam/bullet_red.png" style="width:12px;height:12px;" alt="' + tr("Required") + '">' : 
-                                        '<img src="app/img/nope.gif" style="width:12px;height:12px;" alt="' + tr("Not required") + '">';
+                                        '<img src="'+GEOR.config.PATHNAME+
+                                            '/app/img/famfamfam/bullet_red.png" style="width:12px;height:12px;" alt="' + tr("Required") + '">' : 
+                                        '<img src="'+GEOR.config.PATHNAME+
+                                            '/app/img/nope.gif" style="width:12px;height:12px;" alt="' + tr("Not required") + '">';
                                 }
                             }],
                             modifyControlOptions: {

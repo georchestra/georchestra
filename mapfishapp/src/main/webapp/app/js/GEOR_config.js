@@ -24,50 +24,6 @@ GEOR.config = (function() {
     var vectorAbility = null;
 
     /**
-     * Property: urlObj.
-     * {Object} The URL object as returned by
-     * OpenLayers.Util.createUrlObject().
-     */
-    var urlObj = null;
-
-    /**
-     * Method: getUrlObj
-     * Get the URL object corresponding to the URL passed as a
-     * parameter.
-     *
-     * Parameters:
-     * url - {String}
-     *
-     * Returns:
-     * {Object} The URL object.
-     */
-    var getUrlObj = function(url) {
-        url = url || window.location.href;
-        if (urlObj === null) {
-            urlObj = OpenLayers.Util.createUrlObject(url, {
-                ignorePort80:true
-            });
-        }
-        return urlObj;
-    };
-
-    /**
-     * Method: getAppURL
-     * Get the complete (absolute) URL of the "mapfishapp" webapp.
-     *
-     * Returns:
-     * {String} The complete mapfishapp URL.
-     */
-    var getAppURL = function() {
-        var o = getUrlObj();
-        var url = o.protocol + '//' + o.host;
-        if (o.port && o.port != "80") {
-            url += ':' + o.port;
-        }
-        return url + o.pathname;
-    };
-
-    /**
      * Method: getBrowserVectorAbility
      * Get an empirical integer parameter
      * about this browser's vector handling abilities.
@@ -165,12 +121,6 @@ GEOR.config = (function() {
          * Username can be overriden dynamically in index.jsp
          */
         USERNAME: null,
-
-        /**
-         * Constant: MAPFISHAPP_URL
-         * The URL to mapfishapp.
-         */
-        MAPFISHAPP_URL: getAppURL(),
 
         /**
          * Constant: LOGIN_URL

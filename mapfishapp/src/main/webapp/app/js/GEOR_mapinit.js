@@ -455,12 +455,17 @@ GEOR.mapinit = (function() {
             layerStore = ls;
             tr = OpenLayers.i18n;
             cb = callback || OpenLayers.Util.Void;
+            var url;
             // POSTing a content to the app (which results in GEOR.initstate
             // being set) has priority over everything else:
             if (!GEOR.initstate || !GEOR.initstate[0]) {
                 // if a custom WMC is provided as GET parameter, load it:
                 if (GEOR.config.CUSTOM_WMC) {
-                    updateStoreFromWMC(GEOR.config.CUSTOM_WMC, {
+                    url = GEOR.config.CUSTOM_WMC;
+                    if (/^ws\/wmc\/geodoc(\d{19}).wmc$/.test(GEOR.config.CUSTOM_WMC)) {
+                        url = GEOR.config.PATHNAME + '/' + url;
+                    }
+                    updateStoreFromWMC(url, {
                         failure: loadDefaultWMC
                     });
                 } else {

@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-    <!DOCTYPE urlrewrite
-        PUBLIC "-//tuckey.org//DTD UrlRewrite 3.0//EN"
-        "http://tuckey.org/res/dtds/urlrewrite3.0.dtd">
+<!DOCTYPE urlrewrite PUBLIC "-//tuckey.org//DTD UrlRewrite 3.0//EN"
+"http://tuckey.org/res/dtds/urlrewrite3.0.dtd">
 
 <urlrewrite>
+    <rule>
+        <from>^/map/(\d{19})/?$</from>
+        <to type="forward" last="true">/ws/home?wmc=ws/wmc/geodoc$1.wmc</to>
+    </rule>
     <rule>
         <from>^/(ws)?/?$</from>
         <to type="forward" last="true">/ws/home</to>
@@ -21,5 +23,4 @@
         <from>^/(.*)$</from>
         <to type="forward">/$1</to>
     </rule>
-
 </urlrewrite>

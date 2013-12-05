@@ -144,12 +144,9 @@ GEOR.util = (function() {
             var urlObject = OpenLayers.Util.createUrlObject(url,
                 {ignorePort80: true}
             );
-            var appUrl = OpenLayers.Util.createUrlObject(GEOR.config.MAPFISHAPP_URL,
-                {ignorePort80: true}
-            );
             var path = urlObject.pathname;
-            if (path.indexOf(appUrl.pathname) === 0) {
-                path = path.slice(appUrl.pathname.length);
+            if (path.indexOf(GEOR.config.PATHNAME) === 0) {
+                path = path.slice(GEOR.config.PATHNAME.length);
                 if (path.indexOf("/") === 0) {
                     path = path.slice(1);
                 }

@@ -224,7 +224,7 @@ GEOR.Addons.Cadastre.prototype = {
         }
         if (n.hasOwnProperty("file")) {
             OpenLayers.Request.GET({
-                url: "app/addons/cadastre/"+n.file,
+                url: GEOR.config.PATHNAME + "/app/addons/cadastre/"+n.file,
                 success: function(resp) {
                     if (resp && resp.responseText) {
                         var o = this.jsonFormat.read(resp.responseText);

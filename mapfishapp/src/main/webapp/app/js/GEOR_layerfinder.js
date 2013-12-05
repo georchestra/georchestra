@@ -123,8 +123,8 @@ GEOR.layerfinder = (function() {
         });
 
         var r = function(val) {
-            return (val ? '<img src="app/img/famfamfam/tick.gif" alt="' + tr("Yes") + '">' : 
-                '<img src="app/img/nope.gif" alt="' + tr("No") + '">');
+            return (val ? '<img src="'+GEOR.config.PATHNAME+'/app/img/famfamfam/tick.gif" alt="' + tr("Yes") + '">' : 
+                '<img src="'+GEOR.config.PATHNAME+'/app/img/nope.gif" alt="' + tr("No") + '">');
         };
 
         var mapSRS = layerStore.map.getProjection(),

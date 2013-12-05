@@ -177,9 +177,7 @@ GEOR.print = (function() {
         tr = OpenLayers.i18n;
 
         // The printProvider that connects us to the print service
-        var r = GEOR.config.MAPFISHAPP_URL.split('/');
-        r.pop(); // remove "edit" or latest "/" part
-        var serviceUrl = r.join('/')+'/pdf';
+        var serviceUrl = GEOR.config.PATHNAME + '/pdf';
         printProvider = new GeoExt.data.PrintProvider({
             url: serviceUrl,
             autoLoad: true,

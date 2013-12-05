@@ -11,6 +11,9 @@
 Boolean anonymous = true;
 Boolean admin = false;
 
+// the context path (might not be the public context path ! -> to be improved with https://github.com/georchestra/georchestra/issues/227)
+String context = request.getContextPath().split("-")[0]; // eg /mapfishapp
+
 String lang = request.getParameter("lang");
 if (lang == null || (!lang.equals("en") && !lang.equals("es") && !lang.equals("ru") && !lang.equals("fr"))) {
     lang = "${language}";
@@ -74,15 +77,15 @@ if(sec_roles != null) {
     </style>
     <title lang="<%= lang %>" dir="ltr"><fmt:message key="title.visual"/> - ${instance}</title>
 
-    <link rel="stylesheet" type="text/css" href="lib/externals/ext/resources/css/ext-all.css" />
-    <link rel="stylesheet" type="text/css" href="lib/externals/ext/resources/css/xtheme-gray.css" />
-    <link rel="stylesheet" type="text/css" href="lib/externals/styler/theme/css/styler.css" />
-    <link rel="stylesheet" type="text/css" href="lib/externals/geoext/resources/css/popup.css" />
-    <link rel="stylesheet" type="text/css" href="lib/Ext.ux/lib/Ext.ux/widgets/palettecombobox/palettecombobox.ux.css" />
-    <link rel="stylesheet" type="text/css" href="lib/Ext.ux/lib/Ext.ux/widgets/colorpicker/colorpicker.css" />
-    <link rel="stylesheet" type="text/css" href="lib/Ext.ux/lib/Ext.ux/widgets/spinner/Spinner.css" />
-    <link rel="stylesheet" type="text/css" href="app/openlayers_gray_theme/style.css" />
-    <link rel="stylesheet" type="text/css" href="app/css/main.css" />
+    <link rel="stylesheet" type="text/css" href="<%= context %>/lib/externals/ext/resources/css/ext-all.css" />
+    <link rel="stylesheet" type="text/css" href="<%= context %>/lib/externals/ext/resources/css/xtheme-gray.css" />
+    <link rel="stylesheet" type="text/css" href="<%= context %>/lib/externals/styler/theme/css/styler.css" />
+    <link rel="stylesheet" type="text/css" href="<%= context %>/lib/externals/geoext/resources/css/popup.css" />
+    <link rel="stylesheet" type="text/css" href="<%= context %>/lib/Ext.ux/lib/Ext.ux/widgets/palettecombobox/palettecombobox.ux.css" />
+    <link rel="stylesheet" type="text/css" href="<%= context %>/lib/Ext.ux/lib/Ext.ux/widgets/colorpicker/colorpicker.css" />
+    <link rel="stylesheet" type="text/css" href="<%= context %>/lib/Ext.ux/lib/Ext.ux/widgets/spinner/Spinner.css" />
+    <link rel="stylesheet" type="text/css" href="<%= context %>/app/openlayers_gray_theme/style.css" />
+    <link rel="stylesheet" type="text/css" href="<%= context %>/app/css/main.css" />
     <script type="text/javascript">
         GEOR = {
             header: <%= request.getParameter("noheader") == null %>
@@ -98,7 +101,7 @@ if(sec_roles != null) {
         <span><fmt:message key="loading"/></span>
     </div>
     <div id="loading">
-        <img src="app/img/loading.gif" alt="<fmt:message key='loading'/>" width="32" height="32" style="margin-right:8px;float:left;vertical-align:top;"/>
+        <img src="<%= context %>/app/img/loading.gif" alt="<fmt:message key='loading'/>" width="32" height="32" style="margin-right:8px;float:left;vertical-align:top;"/>
         <span id="loading-msg"><fmt:message key="loading"/></span>
     </div>
     
@@ -106,21 +109,21 @@ if(sec_roles != null) {
     <iframe style="position: absolute; width: 1px; height: 1px; top: -1em;visibility:hidden;" tabindex="-1" aria-hidden="true" frameborder="0" width="0" height="0" marginheight="0" marginwidth="0" scrolling="no"></iframe>
     
 
-    <script type="text/javascript" src="lib/externals/ext/adapter/ext/ext-base.js"></script>
+    <script type="text/javascript" src="<%= context %>/lib/externals/ext/adapter/ext/ext-base.js"></script>
     
     <!--
         loading custom parameters (see build profile)
     -->
-    <script type="text/javascript" src="app/js/GEOR_custom.js"></script>
+    <script type="text/javascript" src="<%= context %>/app/js/GEOR_custom.js"></script>
     
     <c:choose>
         <c:when test='<%= request.getParameter("debug") != null %>'>
     <%@ include file="debug-includes.jsp" %>
         </c:when>
         <c:otherwise>
-    <script type="text/javascript" src="lib/externals/ext/ext-all.js"></script>
-    <script type="text/javascript" src="build/mapfishapp.js"></script>
-    <script type="text/javascript" src="build/lang/<%= lang %>.js"></script>
+    <script type="text/javascript" src="<%= context %>/lib/externals/ext/ext-all.js"></script>
+    <script type="text/javascript" src="<%= context %>/build/mapfishapp.js"></script>
+    <script type="text/javascript" src="<%= context %>/build/lang/<%= lang %>.js"></script>
         </c:otherwise>
     </c:choose>
 
@@ -131,7 +134,7 @@ if(sec_roles != null) {
         <% 
           String proxyHost = "/proxy/?url=";
           if(request.getHeader("sec-proxy") == null) {
-            proxyHost = "ws/ogcproxy/?url=";
+            proxyHost = context + "/ws/ogcproxy/?url=";
           }
         %>
         // set proxy host
@@ -168,6 +171,7 @@ if(sec_roles != null) {
         </c:when>
     </c:choose>
         GEOR.config.ROLES = [<%= js_roles %>];
+        GEOR.config.PATHNAME = '<%= context %>';
     </script>
     <noscript><p><fmt:message key="need.javascript"/></p></noscript>
 </body>

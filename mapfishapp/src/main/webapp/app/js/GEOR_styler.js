@@ -181,7 +181,10 @@ GEOR.styler = (function() {
                 observable.fireEvent(
                     "sldready",
                     wmsLayerRecord,
-                    GEOR.config.MAPFISHAPP_URL + pathToSLD
+                    [
+                        window.location.protocol, '//', window.location.host,
+                        GEOR.config.PATHNAME, '/', pathToSLD
+                    ].join('')
                 );
             }
             callback.apply(scope, [true]);
@@ -201,7 +204,10 @@ GEOR.styler = (function() {
             if (!sldURL) {
                 return;
             }
-            sldURL = GEOR.config.MAPFISHAPP_URL + sldURL;
+            sldURL = [
+                window.location.protocol, '//', window.location.host,
+                GEOR.config.PATHNAME, '/', sldURL
+            ].join('');
             GEOR.util.urlDialog({
                 title: tr("Download style"),
                 msg: tr("You can download your SLD style at ") +
@@ -243,7 +249,10 @@ GEOR.styler = (function() {
                     applySLD && observable.fireEvent(
                         "sldready",
                         wmsLayerRecord,
-                        GEOR.config.MAPFISHAPP_URL + pathToSLD
+                        [
+                            window.location.protocol, '//', window.location.host,
+                            GEOR.config.PATHNAME, '/', pathToSLD
+                        ].join('')
                     );
                     // indicate that the SLD at pathToSLD matches
                     // our set of rules
@@ -259,7 +268,7 @@ GEOR.styler = (function() {
                 mask.msg = tr("Saving SLD");
                 mask.show();
                 Ext.Ajax.request({
-                    url: "ws/sld/",
+                    url: GEOR.config.PATHNAME + "/ws/sld/",
                     method: "POST",
                     headers: {
                         "Content-Type": "application/vnd.ogc.sld+xml; charset=UTF-8"
@@ -633,7 +642,7 @@ GEOR.styler = (function() {
             "VERSION=1.0.0");
         
         OpenLayers.Request.POST({
-            url: "ws/sld/",
+            url: GEOR.config.PATHNAME + "/ws/sld/",
             data: Ext.util.JSON.encode(params),
             headers: {
                 "Content-Type": "application/json"
@@ -815,8 +824,8 @@ GEOR.styler = (function() {
          */
         var url = wmsLayerRecord.get("layer").params.SLD;
         if (url) {
-              var path = GEOR.util.getAppRelativePath(url);
-              getSLD(path);
+            var path = GEOR.util.getAppRelativePath(url);
+            getSLD(path);
         }
 
         /*

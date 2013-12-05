@@ -222,7 +222,7 @@ GEOR.cswquerier = (function() {
                         // tried with the "html only" solution provided on
                         // http://stackoverflow.com/questions/980855/inputting-a-default-image-in-case-the-src-arribute-of-an-html-img-is-not-valid
                         // but the headers sent by GN are incorrect for the image to display as an HTML object tag
-                        '<img src="{[this.thumbnailURL(values)]}" class="thumb" onerror="this.src=\'app/img/broken.png\';"/>',
+                        '<img src="{[this.thumbnailURL(values)]}" class="thumb" onerror="this.src=\'',GEOR.config.PATHNAME,'/app/img/broken.png\';"/>',
                     '</td></tr></table>',
                 '</div>',
             '</tpl>'
@@ -247,7 +247,7 @@ GEOR.cswquerier = (function() {
                     return url.replace('/csw', '/'+values.md_thumbnail_url);
                 }
                 // no thumbnail URL:
-                return GEOR.config.NO_THUMBNAIL_IMAGE_URL;
+                return GEOR.config.PATHNAME + '/' + GEOR.config.NO_THUMBNAIL_IMAGE_URL;
             },
             "abstract": function(text) {
                 // two things here:

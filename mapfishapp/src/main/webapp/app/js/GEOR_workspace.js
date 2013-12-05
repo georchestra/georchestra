@@ -50,14 +50,14 @@ GEOR.workspace = (function() {
         var formPanel = this.findParentByType('form');
         GEOR.waiter.show();
         OpenLayers.Request.POST({
-            url: "ws/wmc/",
+            url: GEOR.config.PATHNAME + "/ws/wmc/",
             data: GEOR.wmc.write({
                 id: formPanel.getForm().findField('filename').getValue()
             }),
             success: function(response) {
                 formPanel.ownerCt.close();
                 var o = Ext.decode(response.responseText);
-                window.location.href = o.filepath;
+                window.location.href = GEOR.config.PATHNAME + "/" + o.filepath;
             },
             scope: this
         });
@@ -70,22 +70,26 @@ GEOR.workspace = (function() {
     var permalink = function() {
         GEOR.waiter.show();
         OpenLayers.Request.POST({
-            url: "ws/wmc/",
+            url: GEOR.config.PATHNAME + "/ws/wmc/",
             data: GEOR.wmc.write({
                 id: Math.random().toString(16).substr(2)
             }),
             success: function(response) {
                 var o = Ext.decode(response.responseText),
-                    params = OpenLayers.Util.getParameters();
-                params.wmc = o.filepath;
-                // we have to unset these params since the have precedence 
+                    params = OpenLayers.Util.getParameters(),
+                    id =  /^.+(\d{19}).wmc$/.exec(o.filepath)[1];
+                // we have to unset these params since they have precedence 
                 // over the WMC:
                 delete params.bbox;
                 delete params.lon; delete params.lat; delete params.radius;
-                var url = OpenLayers.Util.urlAppend(
-                    window.location.href.split('?')[0], 
-                    OpenLayers.Util.getParameterString(params)
-                );
+                var qs = OpenLayers.Util.getParameterString(params);
+                if (qs) {
+                    qs = "?"+qs;
+                }
+                var url = [
+                    window.location.protocol, '//', window.location.host,
+                    GEOR.config.PATHNAME, '/map/', id, qs
+                ].join('');
                 var months = Math.round(GEOR.config.maxDocAgeInMinutes/44640);
                 GEOR.util.urlDialog({
                     title: tr("Permalink"),
@@ -282,10 +286,7 @@ GEOR.workspace = (function() {
                                 protocol: 'llz'
                             })
                         }]
-                    }/*, {
-                        text: "Editer dans geOrchestra"
-                        // TODO: we need to be able to open mapfishapp/edit with a bbox parameter
-                    }*/]
+                    }]
                 })
             };
         }

@@ -88,7 +88,7 @@ GEOR.wmcbrowser = (function() {
     var fetchAndRestoreWMC = function(wmc) {
         GEOR.waiter.show();
         OpenLayers.Request.GET({
-            url: wmc,
+            url: GEOR.config.PATHNAME + "/" + wmc,
             success: function(response) {
                 var status = observable.fireEvent("contextselected", {
                     wmcString: response.responseXML || response.responseText
@@ -130,7 +130,7 @@ GEOR.wmcbrowser = (function() {
             form = formPanel.getForm();
             if (form.isValid()) {
                 form.submit({
-                    url: "ws/wmc/",
+                    url: GEOR.config.PATHNAME + "/ws/wmc/",
                     // Beware: form submission requires a *success* parameter in json response
                     // As said in http://extjs.com/learn/Manual:RESTful_Web_Services
                     // "Ext.form.BasicForm hopefully becomes HTTP Status Code aware!"
@@ -258,7 +258,7 @@ GEOR.wmcbrowser = (function() {
             tpl: new Ext.XTemplate(
                 '<tpl for=".">',
                     '<div class="thumb-wrap {[this.isDefault(values)]}" ext:qtip="{[this.tr(values)]}">',
-                    '<div class="thumb"><img src="{thumbnail}" ext:qtip="{[this.tr(values)]}"></div>',
+                    '<div class="thumb"><img src="',GEOR.config.PATHNAME,'/{thumbnail}" ext:qtip="{[this.tr(values)]}"></div>',
                     '<span>{label}</span></div>',
                 '</tpl>',
                 '<div class="x-clear"></div>', 
