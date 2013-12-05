@@ -181,10 +181,7 @@ GEOR.styler = (function() {
                 observable.fireEvent(
                     "sldready",
                     wmsLayerRecord,
-                    [
-                        window.location.protocol, '//', window.location.host,
-                        GEOR.config.PATHNAME, '/', pathToSLD
-                    ].join('')
+                    pathToSLD
                 );
             }
             callback.apply(scope, [true]);
@@ -245,14 +242,14 @@ GEOR.styler = (function() {
             } else {
                 // define the callbacks
                 var success = function(response) {
-                    pathToSLD = Ext.decode(response.responseText).filepath;
+                    pathToSLD = [
+                        GEOR.config.PATHNAME, '/', 
+                        Ext.decode(response.responseText).filepath
+                    ].join('');
                     applySLD && observable.fireEvent(
                         "sldready",
                         wmsLayerRecord,
-                        [
-                            window.location.protocol, '//', window.location.host,
-                            GEOR.config.PATHNAME, '/', pathToSLD
-                        ].join('')
+                        pathToSLD
                     );
                     // indicate that the SLD at pathToSLD matches
                     // our set of rules
@@ -650,7 +647,10 @@ GEOR.styler = (function() {
             success: function(response) {
                 // response contains the URL to the
                 // SLD stored on the server
-                var path = Ext.decode(response.responseText).filepath;
+                var path = [
+                    GEOR.config.PATHNAME, '/', 
+                    Ext.decode(response.responseText).filepath
+                ].join('');
                 getSLD(path);
                 // store the path to SLD , we'll need it when
                 // applying the new style to the layer
