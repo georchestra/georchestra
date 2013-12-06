@@ -116,7 +116,11 @@ GEOR.edit = (function() {
          */
         activate: function(options) {
             GEOR.edit.deactivate();
-            GEOR.helper.msg("Edition activée", "Survolez les objets de la couche que vous souhaitez modifier, ou choisissez \"nouvel objet\" dans le menu d'édition de la couche", 5);
+            GEOR.helper.msg(
+                tr("Edit activated"),
+                tr("Hover the feature you wish to edit, or choose \"new feature\" in the edit menu"),
+                5
+            );
             map.events.register("preremovelayer", this, function(o) {
                 if (o.layer.id === options.layerRecord.id) {
                     GEOR.edit.deactivate();

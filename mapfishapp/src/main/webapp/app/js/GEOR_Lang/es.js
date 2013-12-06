@@ -389,11 +389,16 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Logout": "Desconexión",
     "Help": "Ayuda",
     "Query all active layers": "Consultar todas las activas capas",
-    "Show help": "Mostrar la ayuda",
     "Extractor help": "Ayuda del extractor",
     "Show legend": "Mostrar la leyenda",
     "Leave this page ? You will lose the current cartographic context.":
         "Usted desea salir de esta página ? Se perderá el contexto cartográfico actual.",
+    /*
+    "Online help": "Aide en ligne",
+    "Display the user guide": "Afficher le guide de l'utilisateur",
+    "Contextual help": "Aide contextuelle",
+    "Activate or deactivate contextual help bubbles": "Activer ou désactiver les bulles d'aide contextuelle",
+    */
     /* GEOR_tools.js strings */
     "distance measure": "Medir una distancia",
     "area measure": "Medir un área",
@@ -457,6 +462,8 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Required": "Requerido",
     "Not required": "No requerido",
     "Synchronization failed.": "Error durante la sincronización.",
+    //"Edit activated": "Edition activée", 
+    //"Hover the feature you wish to edit, or choose \"new feature\" in the edit menu": "Survolez les objets de la couche que vous souhaitez modifier, ou choisissez \"nouvel objet\" dans le menu d'édition de la couche",
     /* GeoExt.data.CSW.js */
     "no abstract": "ningún abstracto"
     // no trailing comma
