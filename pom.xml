@@ -38,6 +38,7 @@ new PostTreatment().run(this, log, ant, project.basedir, params.projectDir, serv
 ]]></postTreatmentScript>
 	</properties>
 	<modules>
+		<module>geotools</module>
 		<module>config</module>
 		<module>static</module>
 		<module>epsg-extension</module>

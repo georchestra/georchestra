@@ -46,3 +46,6 @@
 [submodule "config/configurations/template"]
 	path = config/configurations/template
 	url = https://github.com/georchestra/template.git
+[submodule "geotools"]
+	path = geotools
+	url = https://github.com/georchestra/geotools.git
