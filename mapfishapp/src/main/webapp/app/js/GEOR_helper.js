@@ -11,10 +11,14 @@
  * You should have received a copy of the GNU General Public License
  * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 /*
  * Inspired from http://dev.sencha.com/deploy/ext-3.4.0/examples/shared/examples.js
  * which is copyright 2006-2011 Sencha Inc.
+ */
+
+/*
+ * @include GEOR_localStorage.js
  */
 
 Ext.namespace("GEOR");
@@ -36,7 +40,10 @@ GEOR.helper = function(){
     };
 
     return {
-        msg: function(title, text, duration){
+        msg: function(title, text, duration) {
+            if (GEOR.ls.get("no_contextual_help")) {
+                return;
+            }
             if (!msgCt){
                 msgCt = Ext.DomHelper.insertFirst(document.body, {
                     id:'help-div'

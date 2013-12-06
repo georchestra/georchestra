@@ -179,13 +179,32 @@ GEOR.toolbar = (function() {
 
         items.push({
             text: tr("Help"),
-            tooltip: tr("Show help"),
-            handler: function() {
-                if (Ext.isIE) {
-                    window.open(GEOR.config.HELP_URL);
-                } else {
-                    window.open(GEOR.config.HELP_URL, tr("Help"), "menubar=no,status=no,scrollbars=yes");
-                }
+            menu: {
+                items: [{
+                    text: tr("Online help"),
+                    tooltip: tr("Display the user guide"),
+                    handler: function() {
+                        if (Ext.isIE) {
+                            window.open(GEOR.config.HELP_URL);
+                        } else {
+                            window.open(GEOR.config.HELP_URL, tr("Help"), "menubar=no,status=no,scrollbars=yes");
+                        }
+                    }
+                }, '-', {
+                    xtype: "menucheckitem",
+                    text: tr("Contextual help"),
+                    qtip: tr("Activate or deactivate contextual help bubbles"),
+                    checked: true,
+                    listeners: {
+                        "checkchange": function(item, checked) {
+                            if (!checked) {
+                                GEOR.ls.set("no_contextual_help", "true");
+                            } else {
+                                GEOR.ls.remove("no_contextual_help");
+                            }
+                        }
+                    }
+                }]
             }
         });
 
