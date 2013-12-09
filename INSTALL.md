@@ -63,8 +63,8 @@ PostGreSQL
         echo 'GRANT ALL PRIVILEGES ON SCHEMA public TO "www-data";' | psql -d geonetwork
         echo 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "www-data";' | psql -d geonetwork
         echo 'GRANT ALL PRIVILEGES ON DATABASE downloadform TO "www-data";' | psql -d downloadform
-        echo 'GRANT ALL PRIVILEGES ON SCHEMA public TO "www-data";' | psql -d downloadform
-        echo 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "www-data";' | psql -d downloadform
+        echo 'GRANT ALL PRIVILEGES ON SCHEMA download TO "www-data";' | psql -d downloadform
+        echo 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA download TO "www-data";' | psql -d downloadform
         echo 'GRANT ALL PRIVILEGES ON DATABASE ogcstatistics TO "www-data";' | psql -d ogcstatistics
         echo 'GRANT ALL PRIVILEGES ON SCHEMA public TO "www-data";' | psql -d ogcstatistics
         echo 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "www-data";' | psql -d ogcstatistics
