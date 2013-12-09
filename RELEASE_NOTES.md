@@ -4,6 +4,84 @@ For production systems, you are advised to use the stable branch (currently 13.0
 This branch receives bug fixes as they arrive, during 6 months at least.
 
 
+Version 13.12 (development version)
+====================================
+
+New features:
+ * mapfishapp: multi-layer querier tool - see [#435](https://github.com/georchestra/georchestra/pull/435)
+ * mapfishapp: Extractor addon - see the [README](https://github.com/georchestra/georchestra/blob/master/mapfishapp/src/main/webapp/app/addons/extractor/README.md)
+ * mapfishapp: OpenLS addon - see the [README](https://github.com/georchestra/georchestra/blob/master/mapfishapp/src/main/webapp/app/addons/openls/README.md)
+ * mapfishapp editor revamped - read [this](https://github.com/georchestra/georchestra/blob/master/mapfishapp/README.md#feature-editor)
+ * GeoFence integration
+
+Enhancements:
+ * analytics: translated to ES, thanks to GeoBolivia !
+ * doc: improved installation instructions for gdal native libs
+ * js minification: test that jsbuild is working, rather than only testing if venv exists
+ * ldapadmin: in the mail sent to the moderator, the "from" field is set to the user email - see [#380](https://github.com/georchestra/georchestra/pull/380)
+ * ldapadmin: improved description fields - see #400
+ * ldapadmin: added ability to configure fields in users list - read the [how-to](https://github.com/georchestra/georchestra/blob/master/ldapadmin/README.md#configure-the-look-of-the-users-list)
+ * ldapadmin: in case of duplicated email error, the message is more explicit
+ * ldapadmin: add validation for four optional fields, depending on the config
+ * mapfishapp: WMS DescribeLayer on each WMS layer - see [#401](https://github.com/georchestra/georchestra/pull/401)
+ * mapfishapp: new layer menu item to set layer as baselayer/overlay - see [#445](https://github.com/georchestra/georchestra/pull/445)
+ * mapfishapp: preserve the full attribution information on context save/restore - see [#422](https://github.com/georchestra/georchestra/pull/422)
+ * mapfishapp: cswquerier: better results count
+ * mapfishapp: wms layer tab: red crosses removed, icons centered
+ * mapfishapp: backbuffer hidden behind baselayer for non-opaque baselayers - see [#411](https://github.com/georchestra/georchestra/pull/411)
+ * mapfishapp: allow to POST the url of a WFS service or layer - see [#392](https://github.com/georchestra/georchestra/pull/392)
+ * mapfishapp: baselayers have a different color in the layer manager
+ * proxy: new filter to make basic auth challenge if https and matches user-agent - read the [notes](https://github.com/georchestra/georchestra/commit/8828a11ffb0cb716ad0a6bb1f847ce24328ea450)
+
+Bug fixes:
+ * analytics: fixed wrong password for jdbc postgresql
+ * geoserver: fixed "inspire extension not deployed"
+ * header: fixed IE8 compatibility + header frameborder size set to 0
+ * ldapadmin: fixed incorrect generation of login - see [#344](https://github.com/georchestra/georchestra/pull/344)
+ * ldapadmin: remove user from groups after deleting the user - see [#406](https://github.com/georchestra/georchestra/pull/406)
+ * ldapadmin: prevent race condition when opening /#groups/:group directly.
+ * ldapadmin: fixed erroneous admin count - see [#405](https://github.com/georchestra/georchestra/pull/405)
+ * mapfishapp: fixed incorrect styles ordering
+ * mapfishapp: annotation addon: fixed label size
+ * mapfishapp: fix for vector features incompletely displayed - see [#367](https://github.com/georchestra/georchestra/pull/367)
+ * mapfishapp: fixing buggy legend makes the print fail - see [#362](https://github.com/georchestra/georchestra/pull/362)
+ * mapfishapp: window.onbeforeunload should not return null (IE popup)
+ * mapfishapp: fixed "too many features" message in referentials search
+ * mapfishapp: fixed gfi feature reprojection in IE
+ * mapfishapp: always compute data model on getfeatureinfo
+ * mapfishapp: Try to find a text/html metadataURL entry
+ * mapfishapp: fixed WFS2 capabilities - see [#373](https://github.com/georchestra/georchestra/pull/373)
+ * mapfishapp: fixed JPEG layers in WMC loaded as PNG - see [#370](https://github.com/georchestra/georchestra/pull/370)
+ * mapfishapp: connection link in toolbar when header height = 0
+ * mapfishapp: referential recenter : fix for old fashioned namespace usage
+ * mapfishapp: fixed missing dependency to WFSCapabilitiesReader
+ * mapfishapp: annotation addon: fixed calling createUrlObject with an object parameter - see [#437](https://github.com/georchestra/georchestra/pull/437)
+ * mapfishapp: in layerfinder, fixed incorrect reference to OpenLayers.i18n method
+ * mapfishapp: file upload - the limit is 8MB, not 8GB
+ * mapfishapp: file upload - better handling of server-side errors
+ * mapfishapp: fixed extra comma (IE) in GEOR_print
+ * mapfishapp: fixed wrong popup anchor position on edit - see [#456](https://github.com/georchestra/georchestra/pull/456)
+ * mapfishapp: annotations: fixed popup anchor - see [#366](https://github.com/georchestra/georchestra/pull/366)
+ * mapfishapp: fixed potentially incorrect metadata url - see [#454](https://github.com/georchestra/georchestra/pull/454)
+ * mapfishapp: less strict filtering of suitable images for thumbnail display in CSW querier
+ * mapfishapp: fixed missing dependency to WKT format - see [#482](https://github.com/georchestra/georchestra/pull/482)
+ * mapfishapp: fixed incorrect maxScaleDenominator on WMC restored - see [#431](https://github.com/georchestra/georchestra/pull/431)
+ * mapfishapp: attribution logo correctly sized - see [#490](https://github.com/georchestra/georchestra/pull/490)
+ * mapfishapp: fixed wrong proxy selected when the webapp name does not contain private - see [#509](https://github.com/georchestra/georchestra/pull/509)
+ * mapfishapp: fixed various problems in legend printing
+ * mapfishapp: set a white background to the overview map in the printed PDF - see [#372](https://github.com/georchestra/georchestra/pull/372)
+ * proxy: fixed charset detection in ArcGIS server responses - see [#498](https://github.com/georchestra/georchestra/pull/498)
+ * proxy: removed sec-* headers from client request - see [#154](https://github.com/georchestra/georchestra/pull/154)
+ * static: maintains existing URI parameters when adding the "login" param
+
+UPGRADING:
+ * mapfishapp:
+   * NS_EDIT config option has been removed. All layers served by the platform geoserver are editable, provided the user has the rights to.
+ * geoserver: be sure to set the file.encoding tomcat option for geoserver to interpret correctly UTF-8 SLDs.
+ * removed the geobretagne_production env variable - see [#97](https://github.com/georchestra/georchestra/pull/97)
+ * analytics: the ExtJS submodule path has changed, be sure to run ```git submodule update --init``` when you switch branches.
+
+
 Version 13.09 (current stable version)
 =======================================
 
