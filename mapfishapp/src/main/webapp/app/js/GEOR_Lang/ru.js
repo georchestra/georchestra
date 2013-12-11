@@ -299,9 +299,14 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Login": "Соединение",
     "Logout": "Отключение",
     "Help": "Помощь",
-    "Show help": "Показать помощь",
     "Show legend": "Показать легенду",
     "Leave this page ? You will lose the current cartographic context.": "Выйти со страницы? В таком случае, вы потеряете текущий картографический контекст.",
+    /*
+    "Online help": "Aide en ligne",
+    "Display the user guide": "Afficher le guide de l'utilisateur",
+    "Contextual help": "Aide contextuelle",
+    "Activate or deactivate contextual help bubbles": "Activer ou désactiver les bulles d'aide contextuelle",
+    */
     /* GEOR_tools.js strings */
     "distance measure": "Измерение расстояния.",
     "area measure": "Измерение площади",
@@ -357,6 +362,8 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     //"Req.": "Req.", // requis
     //"Required": "Requis",
     //"Not required": "Non requis",
+    //"Edit activated": "Edition activée", 
+    //"Hover the feature you wish to edit, or choose \"new feature\" in the edit menu": "Survolez les objets de la couche que vous souhaitez modifier, ou choisissez \"nouvel objet\" dans le menu d'édition de la couche",
     "Synchronization failed.": "Произошла ошибка во время процесса синхронизации.",
     /* GeoExt.data.CSW.js */
     "no abstract": "нет резюме"

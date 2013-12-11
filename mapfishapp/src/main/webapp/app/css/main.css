@@ -461,3 +461,14 @@ div.olMapViewport {
 .geor-btn-edit-polygon {
 	background-image:url(../img/geosilk/shape_square_orange_add.png) !important;
 }
+
+.help .x-box-mc {
+    font-size:14px;
+}
+#help-div {
+    position:absolute;
+    left:35%;
+    top:10px;
+    width:350px;
+    z-index:20000;
+}
