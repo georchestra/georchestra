@@ -215,7 +215,7 @@ GEOR.config = (function() {
          *
          */
         PDF_URL: getCustomParameter("PDF_URL",
-            "/static/cgu.pdf"),
+            "/header/cgu.pdf"),
 
         /***** Beginning of config options which can be overriden by GEOR.custom *****/
 
