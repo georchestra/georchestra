@@ -29,7 +29,7 @@ Note that it is possible to use a classical form submission and send this JSON s
 
 The application also accepts several GET parameters :
  * **debug** when set to true, the application loads unminified javascript files
- * **noheader** when set to true, the application does not load the static header
+ * **noheader** when set to true, the application does not load the header
  * **lang** can be set to any of the following : fr, en, es
 
 

@@ -14,7 +14,7 @@ More information in the modules README:
  * [ldapadmin](https://github.com/georchestra/georchestra/blob/master/ldapadmin/README.md)
  * [downloadform](https://github.com/georchestra/georchestra/blob/master/downloadform/README.md)
  * [ogc-server-statistics](https://github.com/georchestra/georchestra/blob/master/ogc-server-statistics/README.md)
- * [static](https://github.com/georchestra/georchestra/blob/master/static/README.md)
+ * [header](https://github.com/georchestra/georchestra/blob/master/header/README.md)
 
 See also the [release notes](https://github.com/georchestra/georchestra/blob/master/RELEASE_NOTES.md).
 
@@ -100,7 +100,7 @@ Once the system is ready, collect WAR files in a dedicated directory and rename 
     mv geoserver-webapp-${VERSION}-${PROFILE}.war geoserver-private.war
     mv ldapadmin-${VERSION}-${PROFILE}.war ldapadmin-private.war
     mv mapfishapp-${VERSION}-${PROFILE}.war mapfishapp-private.war
-    mv static-${VERSION}-${PROFILE}.war static-private.war
+    mv header-${VERSION}-${PROFILE}.war header-private.war
 
 Copy WAR files in Tomcat webapps dir:
 

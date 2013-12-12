@@ -94,7 +94,7 @@
 				</dependency>
 				<dependency>
 					<groupId>${project.groupId}</groupId>
-					<artifactId>static</artifactId>
+					<artifactId>header</artifactId>
 					<version>${project.version}</version>
 					<classifier>${server}</classifier>
 					<type>war</type>
@@ -181,7 +181,7 @@
 				</dependency>
 				<dependency>
 					<groupId>${project.groupId}</groupId>
-					<artifactId>static</artifactId>
+					<artifactId>header</artifactId>
 					<version>${project.version}</version>
 					<classifier>${server}</classifier>
 					<type>war</type>
@@ -374,11 +374,11 @@
 			</dependencies>
 		</profile>
 		<profile>
-			<id>static</id>
+			<id>headerc</id>
 			<dependencies>
 				<dependency>
 					<groupId>${project.groupId}</groupId>
-					<artifactId>static</artifactId>
+					<artifactId>header</artifactId>
 					<version>${project.version}</version>
 					<classifier>${server}</classifier>
 					<type>war</type>
