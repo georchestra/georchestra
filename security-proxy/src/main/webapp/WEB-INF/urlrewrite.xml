@@ -51,6 +51,10 @@
         <to type="forward">/$1</to>
     </rule>
     <rule>
+        <from>^/bootstrap/(.*)$</from>
+        <to type="forward">/$1</to>
+    </rule>
+    <rule>
         <from>^/(.*)$</from>
         <to type="forward">/sec/$1</to>
     </rule>
