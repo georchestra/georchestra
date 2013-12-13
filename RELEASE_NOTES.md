@@ -101,6 +101,7 @@ UPGRADING:
  * frontend webserver:
    * add a proxy rule for `/_static/` subdirectory (see https://github.com/georchestra/georchestra/tree/master/INSTALL.md)
 
+
 Version 13.06
 ==============
 
