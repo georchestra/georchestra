@@ -20,6 +20,7 @@
 		<div class="page-header">
 			<h1><s:message code="404.title"/></h1>
 		</div>
+		<p class="lead"><s:message code="404.text"/></p>
 	</div>
 </body>
 </html>
