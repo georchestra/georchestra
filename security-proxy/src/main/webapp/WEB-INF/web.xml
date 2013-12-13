@@ -97,7 +97,7 @@
     <!-- url mapping -->
     <servlet-mapping>
         <servlet-name>default</servlet-name>
-        <url-pattern>/bootstrap/*</url-pattern>
+        <url-pattern>/_static/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>proxy</servlet-name>

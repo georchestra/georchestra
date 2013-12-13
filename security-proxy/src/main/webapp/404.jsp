@@ -11,7 +11,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title><s:message code="404.title"/></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link href='/bootstrap/css/bootstrap.min.css' rel="stylesheet" />
+	<link href='/_static/bootstrap_3.0.0/css/bootstrap.min.css' rel="stylesheet" />
 </head>
 
 <body>

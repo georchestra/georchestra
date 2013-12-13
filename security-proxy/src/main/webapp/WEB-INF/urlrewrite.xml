@@ -47,11 +47,7 @@
         <to type="forward">/$1</to>
     </rule>
     <rule>
-        <from>^/(jquery-min.js|empty|cas-logout.jsp|casfailed.jsp|favicon.ico|receptor|j_spring_security_logout|j_spring_cas_security_check)$</from>
-        <to type="forward">/$1</to>
-    </rule>
-    <rule>
-        <from>^/bootstrap/(.*)$</from>
+        <from>^/(jquery-min.js|empty|cas-logout.jsp|casfailed.jsp|favicon.ico|receptor|j_spring_security_logout|j_spring_cas_security_check|_static/.*)$</from>
         <to type="forward">/$1</to>
     </rule>
     <rule>
