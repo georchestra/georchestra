@@ -3,9 +3,7 @@
  */
 package org.georchestra.ogcservstatistics.dataservices;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 
 /**
  * This Singleton maintains the configuration data required to access to the database where
@@ -54,7 +52,7 @@ public final class DataServicesConfiguration {
 	 * @return {@link Connection}
 	 * @throws SQLException
 	 */
-	public Connection getConnection() throws SQLException {
+	public Connection getConnection() throws SQLException, ClassNotFoundException {
 
 		Class.forName("org.postgresql.Driver");
 
