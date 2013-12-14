@@ -56,6 +56,8 @@ public final class DataServicesConfiguration {
 	 */
 	public Connection getConnection() throws SQLException {
 
+		Class.forName("org.postgresql.Driver");
+
 		if(this.connection == null){
 			synchronized (this) {
 				
