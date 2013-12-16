@@ -131,7 +131,7 @@ GEOR.getfeatureinfo = (function() {
             if (map.getProjection() !== srsName) {
                 var sourceSRS = new OpenLayers.Projection(srsName),
                     destSRS = map.getProjectionObject();
-                Ext.each(features, function(f) {
+                Ext.each(info.features, function(f) {
                     if (f.geometry && !!f.geometry.transform) {
                         f.geometry.transform(sourceSRS, destSRS);
                     }
