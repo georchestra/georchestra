@@ -165,6 +165,7 @@ if(sec_roles != null) {
         <c:when test='<%= anonymous == false %>'>
         GEOR.config.ANONYMOUS = false;
         GEOR.config.USERNAME = "<%=request.getHeader("sec-username") %>";
+        GEOR.config.USEREMAIL = "<%=request.getHeader("sec-email") %>";
         </c:when>
     </c:choose>
         GEOR.config.ROLES = [<%= js_roles %>];
