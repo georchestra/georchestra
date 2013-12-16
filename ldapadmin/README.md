@@ -109,7 +109,7 @@ For exemple:
 </bean>
 ```
 
-If no LDAP server is installed, follow instructions at https://github.com/georchestra/georchestra/blob/master/INSTALL.md#ldap.
+If no LDAP server is installed, follow these [instructions](/INSTALL.md#ldap).
 The LDAP server will be installed and an example directory database will be populated and accessible using the above default parameters.
 
 ### Get a pair of ReCaptcha keys
@@ -122,7 +122,7 @@ Once created, set the following `ldapadmin` parameters with the value of the key
 * `privateKey`
 * `publicKey`
 
-See https://github.com/georchestra/georchestra/blob/master/config/README.md for details on how to configure these two parameters.
+See [the configuration guide](../config/README.md) for details on how to configure these two parameters.
 
 ### Set of required fields
 
@@ -255,14 +255,14 @@ Notes
 
 All emails sent by the application should be configurable by the way of templates, as for extractorapp.
 
-The application should be able to find groups and users by the way of filters such as the ones used by the cas (see https://github.com/georchestra/georchestra/blob/master/config/defaults/cas-server-webapp/maven.filter#L4) and defined by the way of the variables shared.ldap.userSearchBaseDN and shared.ldap.groupSearchBaseDN defined in https://github.com/georchestra/georchestra/blob/master/config/shared.maven.filters#L10
+The application should be able to find groups and users by the way of filters such as the ones used by the cas (have a look at the [cas maven filters](../config/defaults/cas-server-webapp/maven.filter#L4) and defined by the way of the variables shared.ldap.userSearchBaseDN and shared.ldap.groupSearchBaseDN defined in [config/shared.maven.filters](../config/shared.maven.filters#L10)
 
 The userPassword LDAP field should be SSHA encrypted on creation/update.
 
 Configure the look of the users list
 ------------------------------------
 
-The file https://github.com/georchestra/georchestra/blob/master/config/default/ldapadmin/privateui/partials/users-list-table.html defines the way the users list is displayed in the `ldapadmin/privateui/#/users` page. By default, it lists the users, with three columns:
+The file [config/default/ldapadmin/privateui/partials/users-list-table.html](../config/default/ldapadmin/privateui/partials/users-list-table.html) defines the way the users list is displayed in the `ldapadmin/privateui/#/users` page. By default, it lists the users, with three columns:
 
 * the first **mandatory** column is used to select a user for an action (eg. add the selected user to a group),
 * the second column contains the firstname and lastname of the user, with a link to the user administration page,

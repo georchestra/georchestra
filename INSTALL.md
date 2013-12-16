@@ -459,7 +459,7 @@ sudo nano /etc/default/tomcat6
 JAVA_OPTS="$JAVA_OPTS -DCUSTOM_EPSG_FILE=file://$CATALINA_BASE/conf/epsg.properties"
 ```
 
-... in which a sample epsg.properties file can be found [here](https://github.com/georchestra/georchestra/blob/master/server-deploy-support/src/main/resources/c2c/tomcat/conf/epsg.properties)
+... in which a sample epsg.properties file can be found [here](server-deploy-support/src/main/resources/c2c/tomcat/conf/epsg.properties)
 
 GDAL for GeoServer, Extractorapp & Mapfishapp
 =============================================

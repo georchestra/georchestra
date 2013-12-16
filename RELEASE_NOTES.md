@@ -9,9 +9,9 @@ Version 13.12 (development version)
 
 New features:
  * mapfishapp: multi-layer querier tool - see [#435](https://github.com/georchestra/georchestra/pull/435)
- * mapfishapp: Extractor addon - see the [README](https://github.com/georchestra/georchestra/blob/master/mapfishapp/src/main/webapp/app/addons/extractor/README.md)
- * mapfishapp: OpenLS addon - see the [README](https://github.com/georchestra/georchestra/blob/master/mapfishapp/src/main/webapp/app/addons/openls/README.md)
- * mapfishapp editor revamped - read [this](https://github.com/georchestra/georchestra/blob/master/mapfishapp/README.md#feature-editor)
+ * mapfishapp: Extractor addon - see the [README](mapfishapp/src/main/webapp/app/addons/extractor/README.md)
+ * mapfishapp: OpenLS addon - see the [README](mapfishapp/src/main/webapp/app/addons/openls/README.md)
+ * mapfishapp editor revamped - read [this](mapfishapp/README.md#feature-editor)
  * GeoFence integration
 
 Enhancements:
@@ -20,7 +20,7 @@ Enhancements:
  * js minification: test that jsbuild is working, rather than only testing if venv exists
  * ldapadmin: in the mail sent to the moderator, the "from" field is set to the user email - see [#380](https://github.com/georchestra/georchestra/pull/380)
  * ldapadmin: improved description fields - see #400
- * ldapadmin: added ability to configure fields in users list - read the [how-to](https://github.com/georchestra/georchestra/blob/master/ldapadmin/README.md#configure-the-look-of-the-users-list)
+ * ldapadmin: added ability to configure fields in users list - read the [how-to](ldapadmin/README.md#configure-the-look-of-the-users-list)
  * ldapadmin: in case of duplicated email error, the message is more explicit
  * ldapadmin: add validation for four optional fields, depending on the config
  * mapfishapp: WMS DescribeLayer on each WMS layer - see [#401](https://github.com/georchestra/georchestra/pull/401)
@@ -101,8 +101,8 @@ New features:
  * mapfishapp: French IGN's GeoPortail webservices support,
  * mapfishapp: Russian translation (!),
  * geoserver: Opaque WMS Layer property support (see [#158](https://github.com/georchestra/georchestra/issues/158)),
- * ldapadmin: a brand new module is available which allows at the same time to: admin your users in your browser, let your users recover their lost password, and let them register too ! More information in the module [README](https://github.com/georchestra/georchestra/blob/master/ldapadmin/README.md),
- * extractorapp: ship metadata in ZIP (read this [how to](https://github.com/georchestra/georchestra/blob/master/extractorapp/README.md#metadata-extraction)),
+ * ldapadmin: a brand new module is available which allows at the same time to: admin your users in your browser, let your users recover their lost password, and let them register too ! More information in the module [README](ldapadmin/README.md),
+ * extractorapp: ship metadata in ZIP (read this [how to](extractorapp/README.md#metadata-extraction)),
  * extractorapp: now supports KML & TIF+(TFW,TAB) output.
 
 Enhancements:
@@ -120,7 +120,7 @@ Enhancements:
  * mapfishapp: permalink validity displayed in months,
  * mapfishapp: link to layer metadata which is declared as text/html is now prefered over the other links,
  * mapfishapp: addons can now be loaded by default (read [how](https://github.com/georchestra/template/blob/45eddec545418b4de55952795c66940729d3b547/mapfishapp/app/js/GEOR_custom.js#L64)),
- * mapfishapp: added a [note on data](https://github.com/georchestra/georchestra/blob/master/mapfishapp/README.md#your-data-in-mapfishapp) in the doc,
+ * mapfishapp: added a [note on data](mapfishapp/README.md#your-data-in-mapfishapp) in the doc,
  * extractorapp: several small fixes for extractorapp reprojection,
  * extractorapp: more visible extract button,
  * extractorapp: auto-deactivate the "Modify the bbox" button,
@@ -133,7 +133,7 @@ Enhancements:
  * everywhere: plain text emails, with the ability to switch back to HTML via ```shared.email.html```,
  * everywhere: all outgoing emails are now prefixed with the platform name,
  * everywhere: better translations.
- * documentation: improved [installation](https://github.com/georchestra/georchestra/blob/master/INSTALL.md) instructions
+ * documentation: improved [installation](INSTALL.md) instructions
 
 Bug fixes:
  * security-proxy: now only sends one referer headers - fixes consuming arcgis web services - [read more](https://github.com/georchestra/georchestra/issues/266),
@@ -195,7 +195,7 @@ Enhancements:
  * mapfishapp: the CSW querier filters results on type = dataset OR series,
  * extractorapp: supported output formats combos made configurable, ECW output format expunged by default,
  * the template config was slimmed down: files where default values are suitable for most deployments were moved to config/defaults,
- * the documentation was improved ([mapfishapp](https://github.com/georchestra/georchestra/blob/master/mapfishapp/README.md#feature-editor), [install](https://github.com/georchestra/georchestra/blob/master/INSTALL.md), [manage configs](https://github.com/georchestra/georchestra/blob/master/README.md#how-to-customize-)),
+ * the documentation was improved ([mapfishapp](mapfishapp/README.md#feature-editor), [install](INSTALL.md), [manage configs](README.md#how-to-customize-)),
  * we now have CI on JS files syntax with Travis !
 
 Bug fixes:
