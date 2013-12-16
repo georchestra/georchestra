@@ -12,7 +12,7 @@ Boolean admin = false;
 Boolean editor = false;
 
 String lang = request.getParameter("lang");
-if (lang == null || (!lang.equals("en") && !lang.equals("es"))) {
+if (lang == null || (!lang.equals("en") && !lang.equals("es") && !lang.equals("fr"))) {
     lang = "${language}";
 }
 Locale l = new Locale(lang);
