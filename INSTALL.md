@@ -174,7 +174,7 @@ Apache
     RewriteRule ^/ldapadmin$ /ldapadmin/ [R]
     RewriteRule ^/mapfishapp$ /mapfishapp/ [R]
     RewriteRule ^/proxy$ /proxy/ [R]
-    RewriteRule ^/static$ /static/ [R]
+    RewriteRule ^/header$ /header/ [R]
 
     ProxyPass /analytics/ ajp://localhost:8009/analytics/ 
     ProxyPassReverse /analytics/ ajp://localhost:8009/analytics/
@@ -221,8 +221,8 @@ Apache
     ProxyPass /proxy/ ajp://localhost:8009/proxy/ 
     ProxyPassReverse /proxy/ ajp://localhost:8009/proxy/
 
-    ProxyPass /static/ ajp://localhost:8009/static/ 
-    ProxyPassReverse /static/ ajp://localhost:8009/static/
+    ProxyPass /header/ ajp://localhost:8009/header/
+    ProxyPassReverse /header/ ajp://localhost:8009/header/
 
 
     AddType application/vnd.ogc.context+xml .wmc

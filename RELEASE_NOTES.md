@@ -32,6 +32,7 @@ Enhancements:
  * mapfishapp: allow to POST the url of a WFS service or layer - see [#392](https://github.com/georchestra/georchestra/pull/392)
  * mapfishapp: baselayers have a different color in the layer manager
  * proxy: new filter to make basic auth challenge if https and matches user-agent - read the [notes](https://github.com/georchestra/georchestra/commit/8828a11ffb0cb716ad0a6bb1f847ce24328ea450)
+ * static: module is now called "header"
 
 Bug fixes:
  * analytics: fixed wrong password for jdbc postgresql
@@ -72,7 +73,7 @@ Bug fixes:
  * mapfishapp: set a white background to the overview map in the printed PDF - see [#372](https://github.com/georchestra/georchestra/pull/372)
  * proxy: fixed charset detection in ArcGIS server responses - see [#498](https://github.com/georchestra/georchestra/pull/498)
  * proxy: removed sec-* headers from client request - see [#154](https://github.com/georchestra/georchestra/pull/154)
- * static: maintains existing URI parameters when adding the "login" param
+ * header: maintains existing URI parameters when adding the "login" param
 
 UPGRADING:
  * mapfishapp:
@@ -80,6 +81,7 @@ UPGRADING:
  * geoserver: be sure to set the file.encoding tomcat option for geoserver to interpret correctly UTF-8 SLDs.
  * removed the geobretagne_production env variable - see [#97](https://github.com/georchestra/georchestra/pull/97)
  * analytics: the ExtJS submodule path has changed, be sure to run ```git submodule update --init``` when you switch branches.
+ * static/header: as "static" module has been renamed "header", your deployment scripts *must* be adapted, as well as your apache2 configuration (or any other reverse proxy).
 
 
 Version 13.09 (current stable version)

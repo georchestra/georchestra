@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page language="java" %>
 <%@ page import="java.util.*" %>
-<%@ page import="org.georchestra._static.Utf8ResourceBundle" %>
+<%@ page import="org.georchestra._header.Utf8ResourceBundle" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ page isELIgnored="false" %>
 <%
@@ -29,7 +29,7 @@ if (lang == null || (!lang.equals("en") && !lang.equals("es")  && !lang.equals("
     lang = "fr";
 }
 Locale l = new Locale(lang);
-ResourceBundle resource = org.georchestra._static.Utf8ResourceBundle.getBundle("_static.i18n.index",l);
+ResourceBundle resource = org.georchestra._header.Utf8ResourceBundle.getBundle("_header.i18n.index",l);
 javax.servlet.jsp.jstl.core.Config.set(
     request,
     javax.servlet.jsp.jstl.core.Config.FMT_LOCALIZATION_CONTEXT,

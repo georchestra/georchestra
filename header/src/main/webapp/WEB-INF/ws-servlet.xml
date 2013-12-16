@@ -2,7 +2,7 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 <beans>
 
-   	<bean id="defaultcontroller" class="org.georchestra._static.DefaultController"/>
+	<bean id="defaultcontroller" class="org.georchestra._header.DefaultController"/>
 	
     <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"></property>

@@ -6,12 +6,12 @@
 		<artifactId>root</artifactId>
 		<version>13.12-SNAPSHOT</version>
 	</parent>
-	<artifactId>static</artifactId>
+	<artifactId>header</artifactId>
 	<packaging>war</packaging>
-	<name>static content for geOrchestra</name>
+	<name>Common header for geOrchestra modules</name>
 	<url>http://www.georchestra.org</url>
 	<properties>
-		<finalName>static</finalName>
+		<finalName>header</finalName>
 		<java-version>1.6</java-version>
 	</properties>
 	<dependencies>
@@ -83,7 +83,7 @@
 				<artifactId>maven-war-plugin</artifactId>
 				<configuration>
 					<classifier>${server}</classifier>
-					<warName>static-private</warName>
+					<warName>header-private</warName>
 				</configuration>
 			</plugin>
 			<plugin>

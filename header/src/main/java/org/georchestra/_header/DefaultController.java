@@ -1,4 +1,4 @@
-package org.georchestra._static;
+package org.georchestra._header;
 
 import java.io.IOException;
 import java.util.Map;

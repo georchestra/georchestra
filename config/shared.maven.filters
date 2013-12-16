@@ -58,6 +58,6 @@ shared.psql.checkhealth.db=@shared.psql.geonetwork.db@
 shared.checkhealth.max_db_connections=170
 
 shared.download_form.activated=false
-shared.download_form.pdf_url=/static/cgu.pdf
+shared.download_form.pdfurl=
 shared.psql.download_form.db=downloadform
 shared.download_form.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.psql.download_form.db@

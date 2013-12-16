@@ -26,7 +26,7 @@ The application accepts several GET parameters :
  * **radius** in meters, when set in addition to the lon and lat params, allows to control the resulting zoom level,
  * **lang** can be set to any of the following : fr, en, es,
  * **debug** when set to true, the application loads unminified javascript files,
- * **noheader** when set to true, the application does not load the static header
+ * **noheader** when set to true, the application does not load the header
 
 
 It is also possible to POST a JSON string to the home controller, for instance :
