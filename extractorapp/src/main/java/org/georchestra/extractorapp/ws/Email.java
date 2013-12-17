@@ -81,11 +81,8 @@ public abstract class Email {
         }
 
         if (!validRecipients) {
-            message.addRecipient(Message.RecipientType.TO, new InternetAddress(from));
-            message.setSubject(
-                    "[ERREUR] Message non délivré : "
-                            + subject,
-                            subjectEncoding);
+	    LOG.error("Mail could not be sent, none of the recipients are valid: " + recipients.toString());
+	    return;
         } else {
             message.setSubject(subject, subjectEncoding);
         }
