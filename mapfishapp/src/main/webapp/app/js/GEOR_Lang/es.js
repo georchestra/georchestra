@@ -253,7 +253,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
         "SRS incompatible o la capa no existe",
     "NB layers imported": "${NB} capas importadas",
     "One layer imported": "Una capa importada",
-    "Not any layer imported": "Ninguna capa importada",
+    "No layer imported": "Ninguna capa importada",
     "The provided context is not valid": "El contexto proveído no es valido",
     "The default context is not defined (and it is a BIG problem!)":
         "El contexto por omisión no está definido ",
@@ -324,7 +324,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
         "Número de objetos máximo alcanzado (${NB})</span>",
     "NB results": "${NB} resultados",
     "One result": "1 resultado",
-    "Not any result": "Ningún resultado",
+    "No result": "Ningún resultado",
     "Clean": "Quitar",
     "Clean all results on the map and in the table": "Quitar los resultados" +
         "del mapa y en la tabla",
@@ -332,7 +332,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Zoom to results extent": "Zoom sobre la extensión de los resultados",
     "CSV Export": "Exportar en CSV",
     "Export results as CSV": "Exportar todos los resultados en CSV",
-    "<p>Not any result for that request.</p>": "<p>Ningún objeto " +
+    "<p>No result for that request.</p>": "<p>Ningún objeto " +
         "corresponde a su consulta.</p>",
     /* GEOR_scalecombo.js strings */
     /* GEOR_selectfeature.js strings */
@@ -372,9 +372,9 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Apply": "Aplicar",
     "Impossible to complete the operation:":
         "Imposible completar la operación:",
-    "not any WFS service associated to that layer": "ningún servicio WFS " +
+    "no WFS service associated to that layer": "ningún servicio WFS " +
         "asociado a esta capa.",
-    "not any available attribute": "ningún atributo disponible.",
+    "no available attribute": "ningún atributo disponible.",
     /* GEOR_toolbar.js strings */
     "m": "m",
     "hectares": "hectáreas",

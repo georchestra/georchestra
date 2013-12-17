@@ -23,7 +23,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Enter a valid email address: ": "Saisissez une adresse email valide : ",
     "The email address is not valid. Stopping extraction.":
         "L'email n'est pas valide. Abandon de l'extraction.",
-    "Not any layer in the cart": "Aucune couche dans le panier",
+    "No layer in the cart": "Aucune couche dans le panier",
     "You did not select any layer for extracting. Extract all ?":
         "Vous n'avez pas sélectionné de couche pour l'extraction. " +
         "Tout extraire ?",

@@ -23,7 +23,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Enter a valid email address: ": "Ingrese una dirección de correo valida: ",
     "The email address is not valid. Stopping extraction.":
         "La dirección de correo no es valida. Parando la extracción.",
-    "Not any layer in the cart": "Ninguna capa en la canasta",
+    "No layer in the cart": "Ninguna capa en la canasta",
     "You did not select any layer for extracting. Extract all ?":
         "No seleccionó ninguna capa para extracción. ¿Extraer todo?",
     "Yes": "Si",

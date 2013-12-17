@@ -951,9 +951,9 @@ GEOR.styler = (function() {
                         getSymbolType(initStyler);
                     } else {
                         // give up
-                        giveup([ // FIXME: one key translation
+                        giveup([
                             tr("Impossible to complete the operation:"),
-                            tr("not any available attribute")
+                            tr("no available attribute")
                         ].join(" "));
                     }
                 },
