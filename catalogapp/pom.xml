@@ -16,12 +16,6 @@
 		<org.slf4j-version>1.6.1</org.slf4j-version>
 		<force.sdk.version>22.0.3-BETA</force.sdk.version>
 	</properties>
-
-	<scm>
-		<connection>scm:svn:http://repository.georchestra.org/svn-georchestra/catalogapp/trunk</connection>
-		<developerConnection>scm:svn:http://repository.georchestra.org:80/svn-georchestra/catalogapp/trunk</developerConnection>
-		<url>http://repository.georchestra.org/svn-georchestra/catalogapp/trunk</url>
-	</scm>
 	<dependencies>
 		<dependency>
 			<groupId>org.tuckey</groupId>

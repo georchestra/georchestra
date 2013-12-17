@@ -13,11 +13,6 @@
 	<properties>
 		<finalName>mapfishapp</finalName>
 	</properties>
-	<scm>
-		<connection>scm:svn:http://repository.georchestra.org/svn-georchestra/mapfishapp/trunk</connection>
-		<developerConnection>scm:svn:http://repository.georchestra.org:81/svn-georchestra/mapfishapp/trunk</developerConnection>
-		<url>http://repository.georchestra.org/svn-georchestra/mapfishapp/trunk</url>
-	</scm>
 	<dependencies>
 		<dependency>
 			<groupId>commons-lang</groupId>
