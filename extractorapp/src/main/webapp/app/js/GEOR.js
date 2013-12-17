@@ -89,7 +89,7 @@ Ext.namespace("GEOR");
         if (GEOR.layerstree.getSelectedLayersCount() > 0) {
             extractHandler(this);
         } else {
-            var dialog = Ext.Msg.confirm(tr("Not any layer in the cart"),
+            var dialog = Ext.Msg.confirm(tr("No layer in the cart"),
             tr("You did not select any layer for extracting. Extract all ?"), function(btn, text){
                 if (btn == 'yes'){
                     GEOR.layerstree.selectAllLayers();

@@ -939,7 +939,7 @@ GEOR.styler = (function() {
                         mask && mask.hide();
                         giveup([ // FIXME: one key translation
                             tr("Impossible to complete the operation:"),
-                            tr("not any WFS service associated to that layer")
+                            tr("no WFS service associated to that layer")
                         ].join(" "));
                     } else {
                         var store = GEOR.ows.WFSDescribeFeatureType(wfsInfo, {
@@ -960,7 +960,7 @@ GEOR.styler = (function() {
                                     giveup([ // FIXME: one key translation
                                         tr("Impossible to complete the " +
                                             "operation:"),
-                                        tr("not any available attribute")
+                                        tr("no available attribute")
                                     ].join(" "));
                                 }
                             },

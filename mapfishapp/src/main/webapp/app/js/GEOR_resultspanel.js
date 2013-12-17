@@ -193,7 +193,7 @@ GEOR.resultspanel = (function() {
                 tr("resultspanel.maxfeature.reached", {'NB': GEOR.config.MAX_FEATURES}):
                 (c>1) ? tr("NB results", {'NB': c}) :
                 (c>0) ? tr("One result") :
-                tr("Not any result")
+                tr("No result")
         });
 
         var bbar = [{
@@ -295,7 +295,7 @@ GEOR.resultspanel = (function() {
             vectorLayer && vectorLayer.removeAllFeatures();
             observable.fireEvent("panel", {
                 bodyStyle: 'padding:1em;',
-                html: tr("<p>Not any result for that request.</p>")
+                html: tr("<p>No result for that request.</p>")
             });
             return;
         }
