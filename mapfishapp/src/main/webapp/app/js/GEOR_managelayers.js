@@ -180,14 +180,16 @@ GEOR.managelayers = (function() {
      *          for inclusion in layer manager item
      */
     var formatAttribution = function(layerRecord) {
-        var attr = layerRecord.get('attribution');
-        var titleForDisplay = attr.title || tr('unknown');
-
+        var attr = layerRecord.get('attribution'),
+        logo = attr.logo,
+        titleForDisplay = attr.title || tr('unknown'),
         // logo displayed in qtip if set
-        var tip = tr('source: ')+ (attr.title || tr('unknown')) +
-            ((attr.logo && GEOR.util.isUrl(attr.logo.href, true)) ? '<br /><img src=\''+attr.logo.href+'\' />' : '');
-
-        var attrDisplay = (attr.href) ?
+        width = (logo && logo.width) ? 'width=\''+logo.width+'\'' : '',
+        height = (logo && logo.height) ? 'height=\''+logo.height+'\'' : '',
+        tip = tr('source: ')+ (attr.title || '-') +
+            ((logo && GEOR.util.isUrl(logo.href, true)) ? 
+                '<br /><img src=\''+logo.href+'\' '+width+' '+height+' />' : ''),
+        attrDisplay = (attr.href) ?
             '<a href="'+attr.href+'" target="_blank" ext:qtip="'+tip+'">'+titleForDisplay+'</a>' :
             '<span ext:qtip="'+tip+'">'+titleForDisplay+'</span>';
 
@@ -346,8 +348,7 @@ GEOR.managelayers = (function() {
                 }
             };
             var default_style = {
-                // TODO: add style name in ()
-                text: tr("Default style"),
+                text: tr("no styling"),
                 value: '',
                 checked: true,
                 group: 'style_' + layer.id,
@@ -356,7 +357,10 @@ GEOR.managelayers = (function() {
             };
             // build object config for predefined styles
             stylesMenuItems.push(default_style);
+            stylesMenuItems.push('-');
             if (styles && styles.length > 0) {
+                styles = styles.concat([]); // to prevent modification of original styles
+                var defaultStyleName = styles[0].name;
                 styles.sort(function(a,b) {
                     var aa = (a.name || a.title).toLowerCase(),
                         bb = (b.name || b.title).toLowerCase();
@@ -364,7 +368,7 @@ GEOR.managelayers = (function() {
                     if (aa < bb) return -1;
                     return 0;
                 });
-                var checked, style;
+                var checked, style, text;
                 for (var i=0, len=styles.length; i<len; i++) {
                     style = styles[i];
                     if (style.href) {
@@ -380,8 +384,10 @@ GEOR.managelayers = (function() {
                             default_style.checked = false;
                             checked = true;
                         }
+                        text = (style.name || style.title) + // title is a human readable string
+                            (style.name === defaultStyleName ? " - <b>"+tr("default style")+"</b>" : "");
                         stylesMenuItems.push(new Ext.menu.CheckItem({
-                            text: style.name || style.title, // title is a human readable string
+                            text: text,
                             // but it is not often relevant (eg: may store "AtlasStyler v1.8")
                             // moreover, GeoServer 2 displays style name rather than style title.
                             value: style.name, // name is used in the map request STYLE parameter
@@ -564,6 +570,7 @@ GEOR.managelayers = (function() {
         
         // metadata action
         if (layer.metadataURL) {
+            insertSep();
             menuItems.push({
                 iconCls: 'geor-btn-metadata',
                 text: tr("Show metadata"),
@@ -669,7 +676,7 @@ GEOR.managelayers = (function() {
                     submitData({
                         layers: [{
                             layername: layerRecord.get('name'),
-                            metadataURL: url || "",
+                            metadataURL: layer.metadataURL || "",
                             owstype: isWMS ? "WMS" : "WFS",
                             owsurl: isWMS ? layer.url : layer.protocol.url
                         }]

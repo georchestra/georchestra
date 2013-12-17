@@ -1,7 +1,6 @@
 package org.georchestra.ldapadmin.ds;
 
 import java.util.List;
-import java.util.TreeSet;
 
 import org.georchestra.ldapadmin.dto.Account;
 
@@ -33,12 +32,12 @@ public interface AccountDao {
 	/**
 	 * Returns all accounts that accomplish the provided filter.
 	 * 
+	 * @param uidFilter
 	 * @return List of {@link Account}
 	 * @throws DataServiceException
 	 */
 	List<Account> findFilterBy(final ProtectedUserFilter uidFilter) throws DataServiceException;
 
-	
 	/**
 	 * Creates a new account
 	 * 

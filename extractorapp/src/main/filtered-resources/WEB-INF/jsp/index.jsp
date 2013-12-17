@@ -12,7 +12,7 @@ Boolean admin = false;
 Boolean editor = false;
 
 String lang = request.getParameter("lang");
-if (lang == null || (!lang.equals("en") && !lang.equals("es"))) {
+if (lang == null || (!lang.equals("en") && !lang.equals("es") && !lang.equals("fr"))) {
     lang = "${language}";
 }
 Locale l = new Locale(lang);
@@ -124,7 +124,7 @@ if(sec_roles != null) {
         <% 
           String proxyHost = "/proxy/?url=";
           Boolean jettyrun = false;
-          if(request.getContextPath().equals("/extractorapp")) {
+          if(request.getHeader("sec-proxy") == null) {
             proxyHost = "/extractorapp/ws/ogcproxy/?url=";
             jettyrun = true;
           }

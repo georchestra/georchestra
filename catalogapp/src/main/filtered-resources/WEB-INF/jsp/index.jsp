@@ -113,13 +113,14 @@ if(sec_roles != null) {
     <script type="text/javascript">
         // remove the loading element
         Ext.get("loading").remove();
-        
+
         <% 
           String proxyHost = "/proxy/?url=";
-          if(request.getContextPath().equals("/catalogapp")) {
+          if(request.getHeader("sec-proxy") == null) {
             proxyHost = "ws/ogcproxy/?url=";
           }
         %>
+
         // set proxy host
         OpenLayers.ProxyHost = '<%= proxyHost %>';
         

@@ -169,10 +169,10 @@ if(sec_roles != null) {
         <ul>
         <c:choose>
             <c:when test='<%= active.equals("geonetwork") %>'>
-            <li class="active"><a href="/geonetwork/"><fmt:message key="catalogue"/></a></li>
+            <li class="active"><a href="/geonetwork/apps/georchestra/"><fmt:message key="catalogue"/></a></li>
             </c:when>
             <c:otherwise>
-            <li><a href="/geonetwork/"><fmt:message key="catalogue"/></a></li>
+            <li><a href="/geonetwork/apps/georchestra/"><fmt:message key="catalogue"/></a></li>
             </c:otherwise>
         </c:choose>
 

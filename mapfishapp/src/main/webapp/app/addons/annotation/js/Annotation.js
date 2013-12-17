@@ -564,7 +564,7 @@ GEOR.Annotation = Ext.extend(Ext.util.Observable, {
 
         var control = this.featureControl;
         control.selectFeature.defer(1, control, [feature]);
-        
+
     },
 
     /** private: method[onModificationStart]
