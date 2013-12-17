@@ -416,6 +416,11 @@ You may have to install the "core fonts for the web" on your server if you need 
 
 Restart your geoserver tomcat and check on /geoserver/web/?wicket:bookmarkablePage=:org.geoserver.web.admin.JVMFontsPage that these are loaded.
 
+* Fine tuning (optional but highly recommended)
+
+Please refer to the excellent "[Running in a Production Environment](http://docs.geoserver.org/stable/en/user/production/index.html)" section of the GeoServer documentation.
+
+You may also want to setup limits to the number of concurrent requests handled by your GeoServer. By default, geOrchestra GeoServer ships with the [control flow](http://docs.geoserver.org/stable/en/user/extensions/controlflow/index.html) module installed, but not activated. To do so, you have to create a custom ```controlflow.properties``` file in your geoserver data dir. Please refer to the module documentation for the syntax.
 
 GeoNetwork
 ==========
