@@ -224,6 +224,8 @@ Apache
     ProxyPass /header/ ajp://localhost:8009/header/
     ProxyPassReverse /header/ ajp://localhost:8009/header/
 
+    ProxyPass /_static/ ajp://localhost:8009/_static/
+    ProxyPassReverse /_static/ ajp://localhost:8009/_static/
 
     AddType application/vnd.ogc.context+xml .wmc
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
