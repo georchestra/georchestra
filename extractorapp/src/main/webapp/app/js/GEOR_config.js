@@ -384,14 +384,14 @@ GEOR.config = (function() {
          * {Array} Array of buffer values with their display name
          */
         BUFFER_VALUES: getCustomParameter("BUFFER_VALUES", [
-            [0,tr("None")],
-            [10,tr("BUFFER meters", {"BUFFER": 10})],
-            [50,tr("BUFFER meters", {"BUFFER": 50})],
-            [100,tr("BUFFER meters", {"BUFFER": 100})],
-            [500,tr("BUFFER meters", {"BUFFER": 500})],
-            [1000,tr("1 kilometer")],
-            [5000,tr("BUFFER kilometers", {"BUFFER": 5})],
-            [10000,tr("BUFFER kilometers", {"BUFFER": 10})]
+            [0, "None"],
+            [10, "BUFFER meters"],
+            [50, "BUFFER meters"],
+            [100, "BUFFER meters"],
+            [500, "BUFFER meters"],
+            [1000, "BUFFER kilometer"],
+            [5000, "BUFFER kilometers"],
+            [10000, "BUFFER kilometers"]
         ]),
 
         /**

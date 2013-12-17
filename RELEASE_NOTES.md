@@ -78,6 +78,8 @@ Bug fixes:
 UPGRADING:
  * mapfishapp:
    * NS_EDIT config option has been removed. All layers served by the platform geoserver are editable, provided the user has the rights to.
+ * extractorapp:
+   * BUFFER_VALUES has changed. If you had a custom value in your GEOR_custom.js file, you have to modify it according to the new syntax.
  * geoserver: be sure to set the file.encoding tomcat option for geoserver to interpret correctly UTF-8 SLDs.
  * removed the geobretagne_production env variable - see [#97](https://github.com/georchestra/georchestra/pull/97)
  * analytics: the ExtJS submodule path has changed, be sure to run ```git submodule update --init``` when you switch branches.

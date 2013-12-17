@@ -77,7 +77,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     /* GEOR_config.js */
     "None": "Aucun",
     "BUFFER meters": "${BUFFER} mètres",
-    "1 kilometer": "1 kilomètre",
+    "BUFFER kilometer": "${BUFFER} kilomètre",
     "BUFFER kilometers": "${BUFFER} kilomètres",
     /* GEOR_data.js */
     /* GEOR_dlform.js */

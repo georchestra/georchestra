@@ -229,10 +229,15 @@ GEOR.referentials = (function() {
      * {Ext.form.ComboBox} the combobox
      */
     var createBufferCombo = function() {
-    
+        var data = [];
+        Ext.each(GEOR.config.BUFFER_VALUES, function(b) {
+            data.push([b[0], tr(b[1], {
+                "BUFFER": (b[0] > 999) ? b[0]/1000 : b[0]
+            })]);
+        });
         var store = new Ext.data.SimpleStore({
             fields: ['value', 'text'],
-            data: GEOR.config.BUFFER_VALUES
+            data: data
         });
     
         return new Ext.form.ComboBox({
