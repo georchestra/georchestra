@@ -1,5 +1,0 @@
-mapfish            http://www.mapfish.org/svn/mapfish/sandbox/camptocamp/MapFishGeoBretagne/mapfish
-openlayers -r12195 http://svn.openlayers.org/trunk/openlayers
-geoext -r2789      http://svn.geoext.org/core/trunk/geoext
-ext                http://svn.geoext.org/ext/3.4.0
-

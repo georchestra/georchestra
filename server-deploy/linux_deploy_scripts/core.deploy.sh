@@ -66,9 +66,9 @@ if [ -z $TARGET ] ; then
     exit 1;
 fi
 
-
-
-PROFILES="$PROFILES -Ppigma_$TARGET"
+PROFILES="$PROFILES -Dserver=your_profile -Dsub.target=$TARGET"
+#geoserver extensions
+PROFILES="$PROFILES -Pgdal -Pjp2k -Pmonitor -Pinspire -Pwps -Pcss -Ppyramid"
 
 echo "[deploy] Deploy mode is $MODE"
 echo "[deploy] Deploy profiles are $PROFILES"
@@ -80,26 +80,29 @@ CHECKOUT_DIR=$DEPLOY_CACHE/checkout
 if [ ! -d $CHECKOUT_DIR ] ; then
     echo "[deploy] cloning georchestra"
     mkdir -p $CHECKOUT_DIR
-    sudo -u deploy git clone -b master --recursive git://github.com/georchestra/georchestra.git $CHECKOUT_DIR
+    sudo -u deploy git clone -b 13.12 --recursive git://github.com/georchestra/georchestra.git $CHECKOUT_DIR
 fi
 
-if [ ! -d $CHECKOUT_DIR/config/configurations/pigma ] ; then
-    echo "[deploy] cloning pigma config"
-    sudo -u deploy git clone --recursive https://github.com/camptocamp/georchestra-pigma-configuration.git $CHECKOUT_DIR/config/configurations/pigma
+if [ ! -d $CHECKOUT_DIR/config/configurations/your_profile ] ; then
+    echo "[deploy] cloning config"
+    sudo -u deploy git clone -b 13.12 --recursive https://github.com/your_org/your_profile.git $CHECKOUT_DIR/config/configurations/your_profile
 fi
-
 
 echo "[deploy] updating configuration"
-cd $CHECKOUT_DIR/config/configurations/pigma
+cd $CHECKOUT_DIR/config/configurations/your_profile
 sudo -u deploy git reset --hard 
 sudo -u deploy git clean -xfd
-sudo -u deploy git pull origin master
+sudo -u deploy git fetch origin
+sudo -u deploy git checkout 13.12
+sudo -u deploy git merge origin/13.12
 
 echo "[deploy] updating georchestra"
 cd $CHECKOUT_DIR
 sudo -u deploy git clean -xf
 sudo -u deploy git reset --hard
-sudo -u deploy git pull 
+sudo -u deploy git fetch origin
+sudo -u deploy git checkout 13.12
+sudo -u deploy git merge origin/13.12
 
 echo "[deploy] cleaning geonetwork"
 cd $CHECKOUT_DIR/geonetwork
@@ -117,9 +120,9 @@ ARCHIVE=$DEPLOY_CACHE/archive
 
 set -x
 MVN="/var/cache/deploy/checkout/build-tools/maven/bin/mvn"
-sudo -u deploy $MVN clean $SYSTEM_PROPS
+#sudo -u deploy $MVN clean $SYSTEM_PROPS
 #isOk "clean georchestra" $?
-sudo -u deploy $MVN clean install $PROFILES $SYSTEM_PROPS
+sudo -u deploy $MVN install $PROFILES $SYSTEM_PROPS
 isOk "build georchestra" $?
 cd server-deploy
 sudo -u deploy $MVN $PROFILES -Dnon-interactive=true $SYSTEM_PROPS

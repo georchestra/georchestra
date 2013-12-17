@@ -208,33 +208,6 @@ class PostTreatment {
 			</properties>
 		</profile>
 
-		<profile>
-			<id>pigma_int</id>
-			<properties>
-				<server>pigma</server>
-				<sub.target>int</sub.target>
-				<geoserver.war.excludes>WEB-INF/lib/*gwc*.jar</geoserver.war.excludes>
-			</properties>
-		</profile>
-
-		<profile>
-			<id>pigma_prod</id>
-			<properties>
-				<server>pigma</server>
-				<sub.target>prod</sub.target>
-				<geoserver.war.excludes>WEB-INF/lib/*gwc*.jar</geoserver.war.excludes>
-			</properties>
-		</profile>
-
-		<profile>
-			<id>pigma_c2cpc61</id>
-			<properties>
-				<server>pigma</server>
-				<sub.target>c2cpc61</sub.target>
-				<geoserver.war.excludes>WEB-INF/lib/*gwc*.jar</geoserver.war.excludes>
-			</properties>
-		</profile>
-
 		<!-- template profile -->
 		<profile>
 			<id>template</id>
