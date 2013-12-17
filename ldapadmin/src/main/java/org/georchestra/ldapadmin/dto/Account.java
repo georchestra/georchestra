@@ -26,10 +26,6 @@ public interface Account {
 
 	void setOrg(String org);
 
-	String getRole();
-
-	void setRole(String role);
-
 	String getEmail();
 
 	void setEmail(String email);

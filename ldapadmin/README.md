@@ -35,7 +35,7 @@ If the given email does not match one from the LDAP:
 
 ### Create account
 
-The page shows a form with typical fields: name, org, role, email, phone nb, details.
+The page shows a form with typical fields: name, org, title, email, phone nb, details.
 The user will be able to pick a **strong** password (must have at least one of: special char, letters and numbers). 
 Password field will be repeated 2 times (client-side check for equality).
 
