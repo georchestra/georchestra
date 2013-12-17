@@ -139,7 +139,7 @@ public class LostPasswordFormController  {
 			
 			this.userTokenDao.insertToken(account.getUid(), token);
 			
-			String contextPath = this.config.getPasswordRecoveryContext();
+			String contextPath = this.config.getPublicContextPath();
 			String url = makeChangePasswordURL(request.getServerName(), request.getServerPort(), contextPath, token);
 
 			ServletContext servletContext = request.getSession().getServletContext();

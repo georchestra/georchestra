@@ -20,36 +20,36 @@ public final class Configuration {
 
 	protected static final Log LOG = LogFactory.getLog(Configuration.class.getName());
 
-	private String passwordRecoveryContext;
+	private String publicContextPath;
 
-	public String getPasswordRecoveryContext() {
+	public String getPublicContextPath() {
 		
 		checkConfiguration();
 		
-		return this.passwordRecoveryContext;
+		return this.publicContextPath;
 	}
 
 	private void checkConfiguration() {
 
 		String message = "password recovery context was not configured.";
 		
-		if(this.passwordRecoveryContext == null){
+		if(this.publicContextPath == null){
 
 			LOG.warn(message);
 		
 			return;
 		}
-		if(this.passwordRecoveryContext.length() == 0){
+		if(this.publicContextPath.length() == 0){
 			
 			LOG.warn(message);
 			return;
 		}
 		
-		LOG.info("password recovery context was configured: "+ this.passwordRecoveryContext);
+		LOG.info("password recovery context was configured: "+ this.publicContextPath);
 	}
 
-	public void setPasswordRecoveryContext(String passwordRecoveryContext) {
-		this.passwordRecoveryContext = passwordRecoveryContext;
+	public void setPublicContextPath(String publicContextPath) {
+		this.publicContextPath = publicContextPath;
 	}
 	
 	
