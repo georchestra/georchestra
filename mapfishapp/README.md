@@ -9,7 +9,7 @@ With it, you can :
  * create custom SLDs and style WMS layers, 
  * query layers either with a simple tool or an advanced one supporting conditions on attributes and geometries,
  * share your map with a permalink, or save it as a WMC file and restore it later,
- * load and create custom tools for specific needs,
+ * load and create custom tools for specific needs (read [how](src/main/webapp/app/addons/README.md)),
  * export feature attributes,
  * [print](https://github.com/georchestra/template/blob/master/mapfishapp/WEB-INF/print/README.md) your map,
  * and many more ...
