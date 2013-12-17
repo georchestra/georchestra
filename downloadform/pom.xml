@@ -9,7 +9,7 @@
 	<artifactId>downloadform</artifactId>
 	<packaging>war</packaging>
 	<name>Download form webapp</name>
-	<url>http://www.pigma.org</url>
+	<url>http://www.georchestra.org</url>
 	<dependencies>
 		<dependency>
 			<groupId>org.jdom</groupId>
