@@ -52,6 +52,10 @@
         <error-code>404</error-code>
         <location>/WEB-INF/views/resourceNotFound.jsp</location>
     </error-page>
+    <error-page>
+        <error-code>403</error-code>
+        <location>/WEB-INF/views/forbidden.jsp</location>
+    </error-page>
     
     <filter>
         <filter-name>characterEncodingFilter</filter-name>
