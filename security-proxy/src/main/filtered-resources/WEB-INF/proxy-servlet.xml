@@ -56,7 +56,7 @@ ${proxy.mapping}
              own referrer header
 
              Comment out property to use client referrer instead of this host -->
-        <property name="referer" value="${public.host}"/>
+        <property name="referer" value="http://${public.host}/"/>
         <property name="headerProviders">
             <list>
                 <bean class="org.georchestra.security.SecurityRequestHeaderProvider"/>
