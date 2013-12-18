@@ -1,7 +1,7 @@
 /**
  * 
  */
-package ogr.georchestra.ogcservstatistics.calculations;
+package org.georchestra.ogcservstatistics.calculations;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;

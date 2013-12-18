@@ -146,7 +146,7 @@ public class WfsExtractor {
         }
 
         String capabilities = FileUtils.asString(httpclient.execute(get).getEntity().getContent());
-        Pattern regex = Pattern.compile("(?m)<FeatureType[^>]*>(\\\\n|\\s)*<Name>\\s*"+Pattern.quote(request._layerName)+"\\s*</Name>");
+        Pattern regex = Pattern.compile("(?m)<FeatureType[^>]*>(\\\\n|\\s)*<Name>\\s*(\\w*:)?"+Pattern.quote(request._layerName)+"\\s*</Name>");
         boolean permitted = regex.matcher(capabilities).find();
         
         if(!permitted) {
