@@ -49,7 +49,7 @@ final class OGCServiceParser {
 	private static final String DESCRIBEFEATURETYPE = "DESCRIBEFEATURETYPE";
 	private static final String GETCOVERAGE = "GETCOVERAGE";
 	private static final String DESCRIBECOVERAGE = "DESCRIBECOVERAGE";
-	private static final String GETTITLE = "GETTITLE";
+	private static final String GETTILE = "GETTILE";
 	private static final String GETSTYLES = "GETSTYLES";
 	// WFS2 support
 	private static final String GETPROPERTYVALUE = "GETPROPERTYVALUE";
@@ -72,7 +72,7 @@ final class OGCServiceParser {
 			REQUEST_KEYWORD+DESCRIBEFEATURETYPE,
 			REQUEST_KEYWORD+GETCOVERAGE,
 			REQUEST_KEYWORD+DESCRIBECOVERAGE,
-			REQUEST_KEYWORD+GETTITLE,
+			REQUEST_KEYWORD+GETTILE,
 			REQUEST_KEYWORD+GETSTYLES,
 			// WFS2
 			REQUEST_KEYWORD+GETPROPERTYVALUE,
