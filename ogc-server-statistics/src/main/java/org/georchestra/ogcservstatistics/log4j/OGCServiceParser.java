@@ -49,6 +49,18 @@ final class OGCServiceParser {
 	private static final String DESCRIBEFEATURETYPE = "DESCRIBEFEATURETYPE";
 	private static final String GETCOVERAGE = "GETCOVERAGE";
 	private static final String DESCRIBECOVERAGE = "DESCRIBECOVERAGE";
+	private static final String GETTITLE = "GETTITLE";
+	private static final String GETSTYLES = "GETSTYLES";
+	// WFS2 support
+	private static final String GETPROPERTYVALUE = "GETPROPERTYVALUE";
+	private static final String LOCKFEATURE = "LOCKFEATURE";
+	private static final String GETFEATUREWITHLOCK = "GETFEATUREWITHLOCK";
+	private static final String LISTSTOREDQUERIES = "LISTSTOREDQUERIES";
+	private static final String DESCRIBESTOREDQUERIES = "DESCRIBESTOREDQUERIES";
+	private static final String CREATESTOREDQUERY = "CREATESTOREDQUERY";
+	private static final String DROPSTOREDQUERY = "DROPSTOREDQUERY";
+	
+	
 	
 	private static final String[] REQUEST_TYPE = 
 		{ 	REQUEST_KEYWORD+GETCAPABILITIES,
@@ -59,7 +71,17 @@ final class OGCServiceParser {
 			REQUEST_KEYWORD+GETFEATURE,
 			REQUEST_KEYWORD+DESCRIBEFEATURETYPE,
 			REQUEST_KEYWORD+GETCOVERAGE,
-			REQUEST_KEYWORD+DESCRIBECOVERAGE
+			REQUEST_KEYWORD+DESCRIBECOVERAGE,
+			REQUEST_KEYWORD+GETTITLE,
+			REQUEST_KEYWORD+GETSTYLES,
+			// WFS2
+			REQUEST_KEYWORD+GETPROPERTYVALUE,
+			REQUEST_KEYWORD+LOCKFEATURE,
+			REQUEST_KEYWORD+GETFEATUREWITHLOCK,
+			REQUEST_KEYWORD+LISTSTOREDQUERIES,
+			REQUEST_KEYWORD+DESCRIBESTOREDQUERIES,
+			REQUEST_KEYWORD+CREATESTOREDQUERY,
+			REQUEST_KEYWORD+DROPSTOREDQUERY
 		};
 	
 	private static final String[] LAYER_KEYWORD = {"LAYERS=", "LAYER=","TYPENAME=", "QUERY_LAYERS="};
@@ -137,27 +159,27 @@ final class OGCServiceParser {
 	public static List<Map<String, Object>> parseLog(final String message) throws ParseException, UnsupportedEncodingException {
 
 		String work = new String(message);
-		String[] splitedMessage = work.split("["+OGCServiceMessageFormatter.SEPARATOR+"]");
-		if(splitedMessage.length < 3){
+		String[] splittedMessage = work.split("["+OGCServiceMessageFormatter.SEPARATOR+"]");
+		if(splittedMessage.length < 3){
 			throw new ParseException("the message has not be recognized. Use OGCServiceMessageFormatter.format(...) to build the message", 0);
 		}
 
 		// extracts user 
-		final String user=  splitedMessage[0];
+		final String user=  splittedMessage[0];
 		
 		// extracts date
 		DateFormat format = new SimpleDateFormat(OGCServiceMessageFormatter.DATE_FORMAT);
-		Date date = format.parse(splitedMessage[1] );
+		Date date = format.parse(splittedMessage[1] );
 		
 		// parses service and layer from request
-		String request = URLDecoder.decode(splitedMessage[2], "UTF-8");
+		String request = URLDecoder.decode(splittedMessage[2], "UTF-8");
 		String service = parseService(request);
 		String ogcReq = parseRequest(request).toLowerCase();
 		
 		// parses org (it is optional)
 		String org;
-		if(splitedMessage.length == 4){
-			org = splitedMessage[3];
+		if(splittedMessage.length == 4){
+			org = splittedMessage[3];
 		} else {
 			org = "";
 		}
