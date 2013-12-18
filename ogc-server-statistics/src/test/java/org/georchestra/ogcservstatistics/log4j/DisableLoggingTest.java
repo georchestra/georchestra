@@ -1,7 +1,7 @@
 /**
  * 
  */
-package ogr.georchestra.ogcservstatistics.log4j;
+package org.georchestra.ogcservstatistics.log4j;
 
 import static org.junit.Assert.assertEquals;
 

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package ogr.georchestra.ogcservstatistics.util;
+package org.georchestra.ogcservstatistics.util;
 
 import java.io.File;
 import java.io.IOException;

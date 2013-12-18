@@ -1,7 +1,7 @@
 /**
  * 
  */
-package ogr.georchestra.ogcservstatistics.log4j;
+package org.georchestra.ogcservstatistics.log4j;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -14,7 +14,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
-import ogr.georchestra.ogcservstatistics.util.Utility;
+import org.georchestra.ogcservstatistics.util.Utility;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
