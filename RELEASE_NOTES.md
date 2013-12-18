@@ -98,6 +98,8 @@ UPGRADING:
  * shared maven filters renamed:
    * ```shared.smtp.replyTo``` -> ```shared.email.replyTo```
    * ```shared.smtp.from``` -> ```shared.email.from```
+ * frontend webserver:
+   * add a proxy rule for `/_static/` subdirectory (see https://github.com/georchestra/georchestra/tree/master/INSTALL.md)
 
 
 Version 13.06

@@ -24,7 +24,6 @@ class AccountImpl implements Serializable, Account, Comparable<Account>{
 	private String surname; // sn  mandatory
 	
 	private String org; // o
-	private String role; // 
 	private String email;// mail
 	private String phone;// telephoneNumber 
 	private String description; // description
@@ -69,7 +68,7 @@ class AccountImpl implements Serializable, Account, Comparable<Account>{
 	@Override
 	public String toString() {
 		return "AccountImpl [uid=" + uid + ", commonName=" + commonName
-				+ ", surname=" + surname + ", org=" + org + ", role=" + role
+				+ ", surname=" + surname + ", org=" + org
 				+ ", email=" + email + ", phone=" + phone + ", description="
 				+ description + ", password=" + password + ", newPassword="
 				+ newPassword + ", givenName=" + givenName + ", title=" + title
@@ -115,14 +114,6 @@ class AccountImpl implements Serializable, Account, Comparable<Account>{
 	@Override
 	public void setOrg(String org) {
 		this.org = org;
-	}
-	@Override
-	public String getRole() {
-		return role;
-	}
-	@Override
-	public void setRole(String role) {
-		this.role = role;
 	}
 	@Override
 	public String getEmail() {

@@ -91,7 +91,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Find": "Найти",
     "in": "B",
     /* To be translated ...
-    "Not any layer": "Aucune couche",
+    "No layer": "Aucune couche",
     "One layer found.": "Une couche trouvée.",
     "NB layers found.": "${NB} couches trouvées.",
     "NB metadata match the query.": "${NB} métadonnées correspondent à la requête.",
@@ -185,7 +185,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "mapinit.layers.load.error":  "Слои с именем ${LIST} не смогли загрузиться. Возможные причины : недостаточные права, несоответствие с SRS (Spatial Reference System - Система Космической Связи) или несуществующий слой.",
     "NB layers imported": "Закачано ${NB} слоёв",
     "One layer imported": "Один слой закачан",
-    "Not any layer imported": "Не закачано ни одного слоя.",
+    "No layer imported": "Не закачано ни одного слоя.",
     "The provided context is not valid": "Предложенный контекст недействителен",
     "The default context is not defined (and it is a BIG problem!)": "Контекст по умолчанию не определён. Это представляет собой серьёзную проблему!",
     /* GEOR_mappanel.js strings */
@@ -235,14 +235,14 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "resultspanel.maxfeature.reached": " <span ext:qtip=\"Используйте более совершенный навигатор для того, чтобы увеличить число фигурирующих на странице объектов.\">Максимальное число объектов достигнуто ${NB}</span>", 
     "NB results": "${NB} результатов",
     "One result": "Один результат",
-    "Not any result": "Никакого результата нет",
+    "No result": "Никакого результата нет",
     "Clean": "Стереть",
     "Clean all results on the map and in the table": "Удалить все результаты с карты и таблицы.",
     "Zoom": "Zoom",
     "Zoom to results extent": "Применить величину зума карты на результаты.",
     "CSV Export": "Экспорт CSV (Comma-Separated Values - значения, разделённые запятыми : текстовый формат)",
     "Export results as CSV": "Выслать все результаты в текстовом формате CSV",
-    "<p>Not any result for that request.</p>": "<p>Никакой объект не соответствует вашему запросу.</p>",
+    "<p>No result for that request.</p>": "<p>Никакой объект не соответствует вашему запросу.</p>",
     /* GEOR_scalecombo.js strings */
     /* GEOR_styler.js strings */
     "Download style": "Скачать стиль",
@@ -269,8 +269,8 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Styler": "Стайлер",
     "Apply": "Применить",
     "Impossible to complete the operation:": "Невозможно завершить операцию ou Операция невозможна",
-    "not any WFS service associated to that layer": "Никакой сервис WFS не связан с этим слоем.",
-    "not any available attribute": "нет ни одного доступного атрибута.",
+    "no WFS service associated to that layer": "Никакой сервис WFS не связан с этим слоем.",
+    "no available attribute": "нет ни одного доступного атрибута.",
     /* GEOR_toolbar.js strings */
     "m": "м",
     "hectares": "гектары",
