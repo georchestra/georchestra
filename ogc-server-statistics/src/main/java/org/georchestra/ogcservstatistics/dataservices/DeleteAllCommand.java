@@ -26,7 +26,7 @@ final public class DeleteAllCommand extends AbstractDataCommand {
 		Statement pStmt=null;
         try {
 			pStmt = this.connection.createStatement();
-			pStmt.execute("DELETE FROM OGC_SERVICES_LOG");
+			pStmt.execute("DELETE FROM ogcstatistics.OGC_SERVICES_LOG");
 			
 		} catch (SQLException e) {
 			e.printStackTrace();

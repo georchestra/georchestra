@@ -55,7 +55,7 @@ public class CheckFormAcceptance {
 			String sel = "SELECT " +
 						"			COUNT(id) " +
 						"FROM " +
-						"			download.extractorapp_log " +
+						"			downloadform.extractorapp_log " +
 						"WHERE " +
 						"			(sessionid = ? OR (username = ?  AND username != 'anonymousUser')) " +
 						"AND " +

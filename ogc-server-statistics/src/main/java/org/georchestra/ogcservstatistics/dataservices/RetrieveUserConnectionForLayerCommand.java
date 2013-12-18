@@ -31,7 +31,7 @@ public final class RetrieveUserConnectionForLayerCommand extends AbstractQueryCo
 		StringBuilder sql = new StringBuilder();
 
 		sql.append(" SELECT ").append(LAYER_COLUMN ).append(",").append(USER_COLUMN ).append(",count("+USER_COLUMN+") as ").append(CONNECTIONS_COLUMN)
-				.append(" FROM OGC_SERVICES_LOG");
+				.append(" FROM ogcstatistics.OGC_SERVICES_LOG");
 		if(this.month > 0){
 			sql.append(" WHERE EXTRACT(ISOYEAR FROM date) = ? AND EXTRACT(MONTH FROM date) = ?");
 		} else {

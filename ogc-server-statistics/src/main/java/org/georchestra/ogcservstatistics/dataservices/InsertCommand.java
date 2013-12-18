@@ -23,7 +23,7 @@ public final class InsertCommand extends AbstractDataCommand {
 	public final static String REQUEST_COLUMN = "request";
 	public final static String ORG_COLUMN = "org";
 	
-	private static final String SQL_INSERT= "INSERT INTO ogc_services_log("+USER__COLUMN+","+ DATE_COLUMN+ ","+  SERVICE_COLUMN+ "," +LAYER_COLUMN+ "," +REQUEST_COLUMN+ "," +ORG_COLUMN+ ") VALUES (?, ?, ?, ?, ?,?)";
+	private static final String SQL_INSERT= "INSERT INTO ogcstatistics.ogc_services_log("+USER__COLUMN+","+ DATE_COLUMN+ ","+  SERVICE_COLUMN+ "," +LAYER_COLUMN+ "," +REQUEST_COLUMN+ "," +ORG_COLUMN+ ") VALUES (?, ?, ?, ?, ?,?)";
 	
 	private Map<String, Object> rowValues;
 	
