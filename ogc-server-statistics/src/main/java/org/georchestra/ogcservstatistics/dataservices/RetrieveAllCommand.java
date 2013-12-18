@@ -23,7 +23,7 @@ final public class RetrieveAllCommand extends AbstractQueryCommand{
 	final static String LAYER_COLUMN = "layer";
 	
 	final static String SQL = " SELECT "+ DATE_COLUMN+ "," + USER__COLUMN +","+ SERVICE_COLUMN+","+LAYER_COLUMN 
-							+ " FROM OGC_SERVICES_LOG"
+							+ " FROM ogcstatistics.OGC_SERVICES_LOG"
 							+ " ORDER BY "+ DATE_COLUMN+ "," + USER__COLUMN +","+ SERVICE_COLUMN+","+LAYER_COLUMN;
  	
 	protected PreparedStatement prepareStatement() throws SQLException{

@@ -32,11 +32,11 @@ public class GeoNetwork extends AbstractApplication {
 
 	private final Log logger = LogFactory.getLog(getClass());
 	
-	private final String insertDlQuery = "INSERT INTO download.geonetwork_log (username, sessionid, first_name, second_name, " +
+	private final String insertDlQuery = "INSERT INTO downloadform.geonetwork_log (username, sessionid, first_name, second_name, " +
 			"company, email, phone, comment, metadata_id, filename) " +
 			"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 	
-	private final String insertDataUseQuery = "INSERT INTO download.logtable_datause (logtable_id, datause_id) " +
+	private final String insertDataUseQuery = "INSERT INTO downloadform.logtable_datause (logtable_id, datause_id) " +
 			"VALUES (?,?);";
 	
 	private String fileName;

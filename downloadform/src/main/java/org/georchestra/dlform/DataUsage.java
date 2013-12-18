@@ -46,7 +46,7 @@ public class DataUsage {
 			sql = connection.createStatement();
 
 			results = sql
-					.executeQuery("SELECT * FROM download.data_use");
+					.executeQuery("SELECT * FROM downloadform.data_use");
 			ResultSetMetaData md = results.getMetaData();
 			if (results != null) {
 				while (results.next()) {

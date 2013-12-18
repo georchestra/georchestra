@@ -17,7 +17,7 @@ import org.georchestra.lib.sqlcommand.AbstractUpdateCommand;
 final class DeleteUserTokenCommand extends AbstractUpdateCommand{
 
 
-	private static final String SQL= "DELETE FROM "+ DatabaseSchema.TABLE_USER_TOKEN + " WHERE "+ DatabaseSchema.UID_COLUMN + " = ?";
+	private static final String SQL= "DELETE FROM "+ DatabaseSchema.SCHEMA_NAME + "." + DatabaseSchema.TABLE_USER_TOKEN + " WHERE "+ DatabaseSchema.UID_COLUMN + " = ?";
 	
 	private String uid;
 	

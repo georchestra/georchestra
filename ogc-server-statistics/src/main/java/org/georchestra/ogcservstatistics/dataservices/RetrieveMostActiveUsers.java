@@ -28,7 +28,7 @@ final public class RetrieveMostActiveUsers extends AbstractQueryCommand{
 		sql.append(" SELECT ")
 				.append(USER_COLUMN)
 				.append(",count(").append(USER_COLUMN).append(") as ").append(CONNECTIONS_COLUMN)
-				.append(" FROM OGC_SERVICES_LOG");
+				.append(" FROM ogcstatistics.OGC_SERVICES_LOG");
 		if(this.month > 0){
 			sql.append(" WHERE EXTRACT(ISOYEAR FROM date) = ? AND EXTRACT(MONTH FROM date) = ?");
 		} else {

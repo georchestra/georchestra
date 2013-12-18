@@ -63,54 +63,6 @@ Two pages:
 
 For the web container: Tomcat 6, or Maven Jetty (no need to install)
 
-### Install Postgresql
-
-To create the database use the following script:
-
-```
-[georchestra]/ldapadmin/ldapAdminDB.sql
-```
-
-Create the user and give it rights on the `ldapadmin` database:
-
-```
-echo 'CREATE ROLE "www-data" WITH LOGIN PASSWORD "www-data";' | sudo -u postgres psql
-echo 'GRANT ALL PRIVILEGES ON DATABASE ldapadmin TO "www-data";' | sudo -u postgres psql -d ldapadmin
-echo 'GRANT ALL PRIVILEGES ON SCHEMA public TO "www-data";' | sudo -u postgres psql -d ldapadmin
-echo 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "www-data";' | sudo -u postgres psql -d ldapadmin
-```
-
-Note: because this is a work in progress right now the postgresql parameters in `[georchestra]/ldapadmin/src/main/webapp/WEB-INF/spring/webmvc-config.xml` are not used.
-To configure the connection, for testing purpose, directly change the `UserTokenDao.getConnection()` method in the `[georchestra]/ldapadmin/src/main/java/org/georchestra/ldapadmin/ds/UserTokenDao.java` file. For example:
-
-```
-this.databaseName = "ldapadmin";
-this.databaseUser = "www-data";
-this.databasePassword = "www-data";
-```
-
-### Install LDAP
-
-The connection to the LDAP server is configurated in the following file:
-
-```
-[georchestra]/ldapadmin/src/main/webapp/WEB-INF/spring/webmvc-config.xml
-```
-
-For exemple:
-
-```
-<!-- LDAP connection -->
-<bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource">
-  <property name="url" value="ldap://localhost:389" />
-  <property name="base" value="dc=georchestra,dc=org" />
-  <property name="userDn" value="cn=admin,dc=georchestra,dc=org" />
-  <property name="password" value="secret" />
-</bean>
-```
-
-If no LDAP server is installed, follow these [instructions](/INSTALL.md#ldap).
-The LDAP server will be installed and an example directory database will be populated and accessible using the above default parameters.
 
 ### Get a pair of ReCaptcha keys
 
