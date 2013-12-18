@@ -24,54 +24,53 @@ LDAP
 PostGreSQL
 ==========
 
-* Installation 
+* Installation:
 
         sudo apt-get install postgresql postgresql-9.1-postgis postgis
 	
-* GeoNetwork database setup
+* GeoNetwork database setup:
 
         sudo su postgres
         createdb geonetwork
         psql -f /usr/share/postgresql/9.1/contrib/postgis-1.5/postgis.sql geonetwork
         psql -f /usr/share/postgresql/9.1/contrib/postgis-1.5/spatial_ref_sys.sql geonetwork
+        createuser -SDRIP www-data
+        psql -d geonetwork -c 'GRANT ALL PRIVILEGES ON DATABASE geonetwork TO "www-data";'
+        psql -d geonetwork -c 'GRANT ALL PRIVILEGES ON SCHEMA public TO "www-data";'
+        psql -d geonetwork -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "www-data";'
 
-        createuser -DPRS www-data
+* "georchestra" database hosting schemas specific to deployed modules:
 
-* downloadform and ogcstatistics databases setup
+        createdb georchestra
+        createuser -SDRIP www-data
+        psql -d georchestra -c 'GRANT ALL PRIVILEGES ON DATABASE georchestra TO "www-data";' 
 
- * downloadform
+Note 1: It is possible to store webapp-specific schemas in separate databases.
 
-            createdb downloadform
-            wget https://raw.github.com/georchestra/georchestra/master/downloadform/samples/sample.sql -O /tmp/downloadform.sql
-            psql -d downloadform -f /tmp/downloadform.sql
+Note 2: PostGIS extensions are not required for now in the georchestra database.
 
- * ogcstatistics
+ * if the ldapadmin webapp is deployed:
 
-            createdb ogcstatistics
-            wget https://raw.github.com/georchestra/georchestra/master/ogc-server-statistics/ogc_statistics_table.sql -O /tmp/ogc_statistics_table.sql
-            psql ogcstatistics -f /tmp/ogc_statistics_table.sql
+        wget https://raw.github.com/georchestra/georchestra/master/ldapadmin/database.sql -O /tmp/ldapadmin.sql
+        psql -d georchestra -f /tmp/ldapadmin.sql
+        psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA ldapadmin TO "www-data";'
+        psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ldapadmin TO "www-data";'
 
- * ldapadmin
+ * if shared.download_form.activated is true in your setup (false by default):
 
-            createdb ldapadmin
-            wget https://raw.github.com/georchestra/georchestra/master/ldapadmin/ldapAdminDB.sql -O /tmp/ldapAdminDB.sql
-            psql ldapadmin -f /tmp/ldapAdminDB.sql
+        wget https://raw.github.com/georchestra/georchestra/master/downloadform/database.sql -O /tmp/downloadform.sql
+        psql -d georchestra -f /tmp/downloadform.sql
+        psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA downloadform TO "www-data";'
+        psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA downloadform TO "www-data";'
+        
+ * if shared.ogc.statistics.activated is true in your setup (false by default):
 
-* Set rights of the www-data user
+        wget https://raw.github.com/georchestra/georchestra/master/ogc-server-statistics/database.sql -O /tmp/ogcstatistics.sql
+        psql -d georchestra -f /tmp/ogcstatistics.sql
+        psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA ogcstatistics TO "www-data";'
+        psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ogcstatistics TO "www-data";'
 
-        echo 'GRANT ALL PRIVILEGES ON DATABASE geonetwork TO "www-data";' | psql -d geonetwork
-        echo 'GRANT ALL PRIVILEGES ON SCHEMA public TO "www-data";' | psql -d geonetwork
-        echo 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "www-data";' | psql -d geonetwork
-        echo 'GRANT ALL PRIVILEGES ON DATABASE downloadform TO "www-data";' | psql -d downloadform
-        echo 'GRANT ALL PRIVILEGES ON SCHEMA download TO "www-data";' | psql -d downloadform
-        echo 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA download TO "www-data";' | psql -d downloadform
-        echo 'GRANT ALL PRIVILEGES ON DATABASE ogcstatistics TO "www-data";' | psql -d ogcstatistics
-        echo 'GRANT ALL PRIVILEGES ON SCHEMA public TO "www-data";' | psql -d ogcstatistics
-        echo 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "www-data";' | psql -d ogcstatistics
-        echo 'GRANT ALL PRIVILEGES ON DATABASE ldapadmin TO "www-data";' | psql -d ldapadmin
-        echo 'GRANT ALL PRIVILEGES ON SCHEMA public TO "www-data";' | psql -d ldapadmin
-        echo 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "www-data";' | psql -d ldapadmin
-        exit
+
 
 Apache
 =========
