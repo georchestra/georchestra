@@ -38,6 +38,7 @@ PostGreSQL
         psql -d geonetwork -c 'GRANT ALL PRIVILEGES ON DATABASE geonetwork TO "www-data";'
         psql -d geonetwork -c 'GRANT ALL PRIVILEGES ON SCHEMA public TO "www-data";'
         psql -d geonetwork -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "www-data";'
+        psql -d geonetwork -c 'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO "www-data";'
 
 * "georchestra" database hosting schemas specific to deployed modules:
 
@@ -55,6 +56,7 @@ Note 2: PostGIS extensions are not required for now in the georchestra database.
         psql -d georchestra -f /tmp/ldapadmin.sql
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA ldapadmin TO "www-data";'
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ldapadmin TO "www-data";'
+        psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA ldapadmin TO "www-data";'
 
  * if shared.download_form.activated is true in your setup (false by default):
 
@@ -62,6 +64,7 @@ Note 2: PostGIS extensions are not required for now in the georchestra database.
         psql -d georchestra -f /tmp/downloadform.sql
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA downloadform TO "www-data";'
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA downloadform TO "www-data";'
+        psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA downloadform TO "www-data";'
         
  * if shared.ogc.statistics.activated is true in your setup (false by default):
 
@@ -69,6 +72,7 @@ Note 2: PostGIS extensions are not required for now in the georchestra database.
         psql -d georchestra -f /tmp/ogcstatistics.sql
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA ogcstatistics TO "www-data";'
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ogcstatistics TO "www-data";'
+        psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA ogcstatistics TO "www-data";'
 
 
 
