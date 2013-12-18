@@ -21,7 +21,7 @@ protectedUser.uid1=@shared.privileged.geoserver.user@
 # Database connection
 psql.user=@shared.psql.user@
 psql.pass=@shared.psql.pass@
-psql.url=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/ldapadmin
+psql.url=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.ldapadmin.db@
 
 # Email properties
 smtpHost=@shared.smtp.host@
