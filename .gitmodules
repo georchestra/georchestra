@@ -48,4 +48,4 @@
 	url = https://github.com/georchestra/template.git
 [submodule "geoserver/geofence"]
 	path = geoserver/geofence
-	url = https://github.com:georchestra/geofence.git
+	url = https://github.com/georchestra/geofence.git
