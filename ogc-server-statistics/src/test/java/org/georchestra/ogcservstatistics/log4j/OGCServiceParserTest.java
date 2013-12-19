@@ -10,7 +10,7 @@ public class OGCServiceParserTest {
 	@Test
 	public void testParseRequest() throws Exception {
 		 String[] REQUESTS_TO_BE_PARSED = {
-				 "anonymousUser|2013/12/18|http://localhost/geoserver?SERVICE=WmTS&REQUEST=GeTTITLE",
+				 "anonymousUser|2013/12/18|http://localhost/geoserver?SERVICE=WmTS&REQUEST=GeTTILE",
 				 "anonymousUser|2013/12/18|http://localhost/mapserver?SeRVICE=WMS&REQUEsT=GETStyles",
 				 "anonymousUser|2013/12/18|http://localhost/mapserver?SeRVICE=wFs&REQUEsT=GetPropertyValue",
 				 "anonymousUser|2013/12/18|http://localhost/mapserver?SeRVICE=wFs&REQUEsT=GetPropertyValue",
