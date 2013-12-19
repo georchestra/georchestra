@@ -5,6 +5,7 @@ package org.georchestra.ldapadmin.ws.edituserdetails;
 
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.georchestra.ldapadmin.ds.AccountDao;
@@ -64,11 +65,11 @@ public class EditUserDetailsFormController {
 	 * @throws IOException
 	 */
 	@RequestMapping(value="/account/userdetails", method=RequestMethod.GET)
-	public String setupForm(HttpServletRequest request,  Model model) throws IOException{
+	public String setupForm(HttpServletRequest request, HttpServletResponse response,  Model model) throws IOException{
 		
 		if(request.getHeader("sec-username") == null
 			|| "anonymousUser".equals(request.getHeader("sec-username"))){
-			return "forbidden";
+			response.sendError(HttpServletResponse.SC_FORBIDDEN);
 		}
 
 		try {
@@ -134,6 +135,7 @@ public class EditUserDetailsFormController {
 	@RequestMapping(value="/account/userdetails", method=RequestMethod.POST)
 	public String edit(
 						HttpServletRequest request,
+						HttpServletResponse response,
 						Model model,
 						@ModelAttribute EditUserDetailsFormBean formBean, 
 						BindingResult resultErrors,
@@ -142,10 +144,10 @@ public class EditUserDetailsFormController {
 		String uid = formBean.getUid();
 		try {
 			if(!request.getHeader("sec-username").equals(uid)){
-				return "forbidden";
+				response.sendError(HttpServletResponse.SC_FORBIDDEN);
 			}
 		} catch (NullPointerException e) {
-			return "forbidden";
+			response.sendError(HttpServletResponse.SC_FORBIDDEN);
 		}
 
 		UserUtils.validate( formBean.getFirstName(), formBean.getSurname(), resultErrors );
