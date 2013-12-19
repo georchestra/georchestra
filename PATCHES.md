@@ -21,7 +21,8 @@ Mapfishapp
 * GeoExt
     * georchestra-13.06 - based on https://github.com/georchestra/geoext/commit/142ac6fd59d8fbdbc7a6dc274ea81eeeebe3ea9d
         * [MERGED] https://github.com/geoext/geoext/pull/18 - Fixing legend url with custom format.
-    * georchestra-13.09 - uses master @ https://github.com/geoext/geoext/commit/442b358998e2a0074c0b2c7ea9c0f58e3d9a902f
+    * georchestra-13.09 - based on https://github.com/geoext/geoext/commit/442b358998e2a0074c0b2c7ea9c0f58e3d9a902f
+        * https://github.com/geoext/geoext/pull/96 - WMS print encoder supports WMS 1.3.0
     * georchestra-13.12 - based on https://github.com/geoext/geoext/commit/d092615a8ae14acdd3899dabe3ff94969fa9adc4
         * https://github.com/geoext/geoext/pull/96 - WMS print encoder supports WMS 1.3.0
 
