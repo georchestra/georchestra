@@ -54,7 +54,6 @@ class ArtifactsTest {
 
         assertNotNull artifacts.artifacts.find{it.name == "cas.war"}
         assertNotNull artifacts.artifacts.find{it.name == "ROOT.war"}
-        assertNotNull artifacts.artifacts.find{it.name == "header-private.war"}
         assertNotNull artifacts.artifacts.find{it.name == "geonetwork-private.war"}
     }
     @Test
