@@ -12,7 +12,7 @@ New features:
  * mapfishapp: Extractor addon - see the [README](mapfishapp/src/main/webapp/app/addons/extractor/README.md)
  * mapfishapp: OpenLS addon - see the [README](mapfishapp/src/main/webapp/app/addons/openls/README.md)
  * mapfishapp editor revamped - read [this](mapfishapp/README.md#feature-editor)
- * GeoFence integration
+ * GeoFence integration, see https://github.com/georchestra/georchestra/issues/534
 
 Enhancements:
  * analytics: translated to ES, thanks to GeoBolivia !
