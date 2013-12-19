@@ -52,9 +52,9 @@ class ArtifactsTest {
     void standardGeorchestraMapping() {
         def artifacts = new Artifacts(project, Artifacts.standardGeorchestraAliasFunction)
 
-        assertNotNull artifacts.artifacts.find{it.name == "doc.war"}
         assertNotNull artifacts.artifacts.find{it.name == "cas.war"}
         assertNotNull artifacts.artifacts.find{it.name == "ROOT.war"}
+        assertNotNull artifacts.artifacts.find{it.name == "header-private.war"}
         assertNotNull artifacts.artifacts.find{it.name == "geonetwork-private.war"}
     }
     @Test
