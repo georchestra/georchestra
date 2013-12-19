@@ -63,7 +63,7 @@ OpenLayers.Control.Magnifier = OpenLayers.Class(OpenLayers.Control, {
             this.mmap.removeLayer(this.mmap.layers[i]);
         }
         var layer = evt.layer.clone();
-        layer.buffer = 8;
+        layer.buffer = this.baseLayerConfig.buffer;
         layer.setIsBaseLayer(true);
         this.mmap.addLayer(layer);
     },
@@ -72,12 +72,13 @@ OpenLayers.Control.Magnifier = OpenLayers.Class(OpenLayers.Control, {
         var layers = [];
         var layer = null;
         if (this.mode === "static") {
-            layer = new OpenLayers.Layer.WMS("magnifier", this.baseLayerConfig.wmsurl, {
+            layer = new OpenLayers.Layer.WMS("_magnifier", this.baseLayerConfig.wmsurl, {
                 layers: this.baseLayerConfig.layer,
                 format: this.baseLayerConfig.format
+            }, {
+                buffer: this.baseLayerConfig.buffer,
+                isBaseLayer: true
             });
-            layer.buffer = this.baseLayerConfig.buffer;
-            layer.setIsBaseLayer(true);
             layers.push(layer);
         } else {
             var visiblelayers = this.map.getLayersBy("visibility", true);
@@ -90,7 +91,6 @@ OpenLayers.Control.Magnifier = OpenLayers.Class(OpenLayers.Control, {
                 }
             }
         }
-
         return layers;
     },
 
@@ -99,16 +99,15 @@ OpenLayers.Control.Magnifier = OpenLayers.Class(OpenLayers.Control, {
         this.factorDisplay = new OpenLayers.Control({
             displayClass: 'olMagnifierFactorDisplay'
         });
+        var p = this.map.projection instanceof OpenLayers.Projection ?
+            this.map.projection.getCode() : this.map.projection;
         this.mmap = new OpenLayers.Map(this.div, OpenLayers.Util.applyDefaults({
             controls: [this.factorDisplay],
-            projection: new OpenLayers.Projection("EPSG:2154"),
-            displayProjection: new OpenLayers.Projection("EPSG:2154"), // FIXME: this one has been customized to fit geobretagne needs !!!
-            // use control from https://github.com/fredj/openlayers-magnifier/blob/master/lib/OpenLayers/Control/Magnifier.js
+            projection: p,
+            displayProjection: p,
             theme: null,
-            units: 'm',
-            maxExtent: new OpenLayers.Bounds(-357823.2365, 6037008.6939, 2146865.3059, 8541697.2363),
-            numZoomLevels: 'auto',
-            maxResolution: 156543.0339,
+            units: this.map.units,
+            maxExtent: this.map.maxExtent.clone(),
             scales: this.map.scales,
             layers: this.getLayers(),
             eventListeners: {
@@ -121,6 +120,8 @@ OpenLayers.Control.Magnifier = OpenLayers.Class(OpenLayers.Control, {
         if (this.draggable) {
             this.handlers.drag = new OpenLayers.Handler.Drag(this, {
                 move: this.drag
+            }, {
+                down: OpenLayers.Event.stop // in original control // removed by geob
             });
             this.handlers.drag.setMap(this.mmap);
             this.handlers.drag.activate();
@@ -137,6 +138,7 @@ OpenLayers.Control.Magnifier = OpenLayers.Class(OpenLayers.Control, {
 
         this.map.events.on({
             move: this.update,
+            //changebaselayer: this.changelayer, // never triggered in geOrchestra
             scope: this
         });
 
