@@ -1,3 +1,7 @@
+.addon-annotation {
+  background-image: url(../../img/icon.png) !important;
+}
+
 .gx-featureediting-draw-point {
   background-image: url("../images/silk/bullet_red_add.png") !important;
 }
