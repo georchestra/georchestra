@@ -31,6 +31,17 @@ GEOR.wmc = (function() {
     /*
      * Private
      */
+    var observable = new Ext.util.Observable();
+    observable.addEvents(
+        /**
+         * Event: beforecontextrestore
+         * Fires when a context is to be restored 
+         *
+         * Listener arguments:
+         * count - {Integer} the number of records to restore
+         */
+        "beforecontextrestore"
+    );
 
     /**
      * Property: wmcFormat
@@ -146,6 +157,11 @@ GEOR.wmc = (function() {
 
     return {
 
+        /*
+         * Observable object
+         */
+        events: observable,
+
         /**
          * APIMethod: init
          * Initialize this module
@@ -197,7 +213,7 @@ GEOR.wmc = (function() {
          */
         read: function(wmcString, resetMap, zoomToWMC) {
             var map = layerStore.map,
-                mapProj, wmcProj, newContext;
+                mapProj, wmcProj, newContext, records;
 
             try {
                 // trying with WMC format
@@ -254,8 +270,10 @@ GEOR.wmc = (function() {
                 var fakeBaseLayer = map.layers[0];
                 fakeBaseLayer.addOptions({maxExtent: maxExtent});
             }
-
-            Ext.each(wmcReader.readRecords(newContext).records, function(r) {
+            records = wmcReader.readRecords(newContext).records;
+            // fire event to let the whole app know about it.
+            observable.fireEvent("beforecontextrestore", records.length);
+            Ext.each(records, function(r) {
                 // restore metadataURLs in record
                 var context = null;
                 for (var i=0, l = newContext.layersContext.length; i<l; i++) {
