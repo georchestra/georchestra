@@ -19,14 +19,14 @@ response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // H
 response.setHeader("Pragma", "no-cache"); // HTTP 1.0
 response.setDateHeader("Expires", 0); // Proxies.
 
-String lang = request.getParameter("lang");
 String active = request.getParameter("active");
 if (active == null) {
     active = "none";
 }
 
-if (lang == null || (!lang.equals("en") && !lang.equals("es")  && !lang.equals("ru") && !lang.equals("fr"))) {
-    lang = "fr";
+String lang = request.getParameter("lang");
+if (lang == null || (!lang.equals("en") && !lang.equals("es") && !lang.equals("ru") && !lang.equals("fr"))) {
+    lang = "${language}";
 }
 Locale l = new Locale(lang);
 ResourceBundle resource = org.georchestra._header.Utf8ResourceBundle.getBundle("_header.i18n.index",l);
