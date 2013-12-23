@@ -11,12 +11,15 @@ New features:
  * mapfishapp: multi-layer querier tool - see [#435](https://github.com/georchestra/georchestra/pull/435)
  * mapfishapp: Extractor addon - see the [README](mapfishapp/src/main/webapp/app/addons/extractor/README.md)
  * mapfishapp: OpenLS addon - see the [README](mapfishapp/src/main/webapp/app/addons/openls/README.md)
- * mapfishapp editor revamped - read [this](mapfishapp/README.md#feature-editor)
- * GeoFence integration, see https://github.com/georchestra/georchestra/issues/534
+ * mapfishapp: editor revamped - read [this](mapfishapp/README.md#feature-editor)
+ * GeoFence integration, see [#534](https://github.com/georchestra/georchestra/issues/534) and the [documentation](https://github.com/georchestra/geofence/blob/georchestra/georchestra.md)
 
 Enhancements:
  * analytics: translated to ES, thanks to GeoBolivia !
+ * analytics: tab displayed or not based on shared.download_form.activated and shared.ogc.statistics.activated
  * doc: improved installation instructions for gdal native libs
+ * doc: installation instructions updated with GeoServer fine tuning instructions
+ * doc: added a [README](mapfishapp/src/main/webapp/app/addons/README.md) for mapfishapp addons
  * js minification: test that jsbuild is working, rather than only testing if venv exists
  * ldapadmin: in the mail sent to the moderator, the "from" field is set to the user email - see [#380](https://github.com/georchestra/georchestra/pull/380)
  * ldapadmin: improved description fields - see #400
@@ -31,17 +34,29 @@ Enhancements:
  * mapfishapp: backbuffer hidden behind baselayer for non-opaque baselayers - see [#411](https://github.com/georchestra/georchestra/pull/411)
  * mapfishapp: allow to POST the url of a WFS service or layer - see [#392](https://github.com/georchestra/georchestra/pull/392)
  * mapfishapp: baselayers have a different color in the layer manager
+ * mapfishapp: contextual help bubbles (eg: on layer edit activated)
+ * mapfishapp: print now supports WMS 1.3.0-only capable servers
+ * mapfishapp: annotation addon: added an icon & made the window closable
+ * mapfishapp: OGC Exception Report handling deactivated during context restore - see [#532](https://github.com/georchestra/georchestra/issues/532)
+ * ogc-server-statistics: now logging WMTS GetTile, WMS GetStyles + WFS2 operations, see [#527](https://github.com/georchestra/georchestra/issues/527)
  * proxy: new filter to make basic auth challenge if https and matches user-agent - read the [notes](https://github.com/georchestra/georchestra/commit/8828a11ffb0cb716ad0a6bb1f847ce24328ea450)
+ * proxy: overridable HTTP 40x error pages, see for instance [config/defaults/security-proxy/403.jsp](config/defaults/security-proxy/403.jsp)
  * static: module is now called "header"
+ * downloadform, ogcstatistics and ldapadmin now share the same postgresql database by default, each in their own schema. Please refer to [#516](https://github.com/georchestra/georchestra/issues/516) and the migration guide below.
 
 Bug fixes:
  * analytics: fixed wrong password for jdbc postgresql
+ * extractorapp: fixed the checkPermission method for local layers
+ * extractorapp: fixed impossibility to switch to french when default lang is english or spanish
+ * extractorapp: fixed invalid buffer combo text
+ * geonetwork: download form now opens also in metadata view if activated, see [#416](https://github.com/georchestra/georchestra/issues/416)
  * geoserver: fixed "inspire extension not deployed"
  * header: fixed IE8 compatibility + header frameborder size set to 0
  * ldapadmin: fixed incorrect generation of login - see [#344](https://github.com/georchestra/georchestra/pull/344)
  * ldapadmin: remove user from groups after deleting the user - see [#406](https://github.com/georchestra/georchestra/pull/406)
  * ldapadmin: prevent race condition when opening /#groups/:group directly.
  * ldapadmin: fixed erroneous admin count - see [#405](https://github.com/georchestra/georchestra/pull/405)
+ * ldapadmin: send HTTP 403 status code when access is forbidden, not 200 - see [#244](https://github.com/georchestra/georchestra/issues/244)
  * mapfishapp: fixed incorrect styles ordering
  * mapfishapp: annotation addon: fixed label size
  * mapfishapp: fix for vector features incompletely displayed - see [#367](https://github.com/georchestra/georchestra/pull/367)
@@ -70,21 +85,28 @@ Bug fixes:
  * mapfishapp: attribution logo correctly sized - see [#490](https://github.com/georchestra/georchestra/pull/490)
  * mapfishapp: fixed wrong proxy selected when the webapp name does not contain private - see [#509](https://github.com/georchestra/georchestra/pull/509)
  * mapfishapp: fixed various problems in legend printing
+ * mapfishapp: fixed missing GEOR.config.USEREMAIL
  * mapfishapp: set a white background to the overview map in the printed PDF - see [#372](https://github.com/georchestra/georchestra/pull/372)
+ * mapfishapp: overview map now working at most small scales - see [#513](https://github.com/georchestra/georchestra/issues/513)
+ * mapfishapp: fixed magnifier tool - see [#500](https://github.com/georchestra/georchestra/issues/500)
+ * mapfishapp: fixed too much space between elements in FireFox - see [#539](https://github.com/georchestra/georchestra/issues/539)
+ * ogcservstatistics - fixed missing potgresql driver loading
  * proxy: fixed charset detection in ArcGIS server responses - see [#498](https://github.com/georchestra/georchestra/pull/498)
  * proxy: removed sec-* headers from client request - see [#154](https://github.com/georchestra/georchestra/pull/154)
+ * proxy: fixed incorrect referer value - see [#533](https://github.com/georchestra/georchestra/issues/533)
  * header: maintains existing URI parameters when adding the "login" param
 
 UPGRADING:
- * mapfishapp:
-   * NS_EDIT config option has been removed. All layers served by the platform geoserver are editable, provided the user has the rights to.
+ * analytics: the ExtJS submodule path has changed, be sure to run ```git submodule update --init``` when you switch branches.
+ * databases: the downloadform, ogcstatistics and ldapadmin databases are now merged into a single one named "georchestra". Each webapp expects to find its tables in a dedicated schema ("downloadform" for the downloadform module, "ogcstatistics" for ogc-server-statistics, and "ldapadmin" for ldapadmin). See https://github.com/georchestra/georchestra/pull/535 for the complete patch. If you currently have one dedicated database for each module, you can keep your setup, provided you customize the ```shared.psql.ogc.statistics.db```, ```shared.psql.download_form.db``` & ```shared.ldapadmin.db``` maven filters in your own config. In any case, you'll have to rename the ```download``` schema (of the previous ```downloadform``` database) into ```downloadform```, and migrate the tables which were in the public schema of the databases ```ogcstatistics``` and ```ldapadmin``` into the newly created schemas.
  * extractorapp:
    * BUFFER_VALUES has changed. If you had a custom value in your GEOR_custom.js file, you have to modify it according to the new syntax.
- * geoserver: be sure to set the file.encoding tomcat option for geoserver to interpret correctly UTF-8 SLDs.
- * removed the geobretagne_production env variable - see [#97](https://github.com/georchestra/georchestra/pull/97)
- * analytics: the ExtJS submodule path has changed, be sure to run ```git submodule update --init``` when you switch branches.
- * static/header: as "static" module has been renamed "header", your deployment scripts *must* be adapted, as well as your apache2 configuration (or any other reverse proxy).
- * databases: the downloadform, ogcstatistics and ldapadmin databases are now merged into a single one named "georchestra". Each webapp expects to find its tables in a dedicated schema ("downloadform" for the downloadform module, "ogcstatistics" for ogc-server-statistics, and "ldapadmin" for ldapadmin). See https://github.com/georchestra/georchestra/pull/535 for the complete patch. If you currently have one dedicated database for each module, you can keep your setup, provided you customize the ```shared.psql.ogc.statistics.db```, ```shared.psql.download_form.db``` & ```shared.ldapadmin.db``` maven filters in your own config. In any case, you'll have to rename the ```download``` schema (of the previous ```downloadform``` database) into ```downloadform```, and migrate the tables which were in the public schema of the databases ```ogcstatistics``` and ```ldapadmin``` into the newly created schemas.
+   * the ```geobretagne_production``` env variable has been removed - see [#97](https://github.com/georchestra/georchestra/pull/97)
+ * geoserver: be sure to set the file.encoding tomcat option for geoserver to interpret correctly UTF-8 SLDs (read [how](INSTALL.md#geoserver)).
+ * mapfishapp:
+   * the NS_EDIT config option has been removed. All layers served by the platform geoserver are editable, provided the user has the rights to.
+ * static: the "static" module has been renamed into "header": your deployment scripts *must* be adapted, as well as your apache2 configuration (or any other reverse proxy).
+
 
 Version 13.09 (current stable version)
 =======================================
