@@ -47,8 +47,8 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
     "NAME layer on VALUE": "${NAME} layer on ${VALUE}",
     "Open the URL url in a new window":
         "Open the ${URL} url in a new window",
-    "NB layers": "${NB} layers",
-    " in NB metadata": " in ${NB} metadata",
+    "NB layers found.": "${NB} layers found.",
+    "NB metadata match the query.": "${NB} metadata match the query.",
     /* GEOR_editing.js strings */
     /* GEOR_fileupload.js strings */
     "fileupload_error_incompleteMIF": "Incomplete MIF/MID file.",
