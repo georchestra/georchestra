@@ -9,20 +9,20 @@ Version 13.12 (development version)
 
 New features:
  * mapfishapp: multi-layer querier tool - see [#435](https://github.com/georchestra/georchestra/pull/435)
- * mapfishapp: Extractor addon - see the [README](mapfishapp/src/main/webapp/app/addons/extractor/README.md)
+ * mapfishapp: extractor addon - see the [README](mapfishapp/src/main/webapp/app/addons/extractor/README.md)
  * mapfishapp: OpenLS addon - see the [README](mapfishapp/src/main/webapp/app/addons/openls/README.md)
  * mapfishapp: editor revamped - read [this](mapfishapp/README.md#feature-editor)
- * GeoFence integration, see [#534](https://github.com/georchestra/georchestra/issues/534) and the [documentation](https://github.com/georchestra/geofence/blob/georchestra/georchestra.md)
+ * GeoFence integration (not activated by default), see [#534](https://github.com/georchestra/georchestra/issues/534) and the [documentation](https://github.com/georchestra/geofence/blob/georchestra/georchestra.md)
 
 Enhancements:
  * analytics: translated to ES, thanks to GeoBolivia !
- * analytics: tab displayed or not based on shared.download_form.activated and shared.ogc.statistics.activated
- * doc: improved installation instructions for gdal native libs
- * doc: installation instructions updated with GeoServer fine tuning instructions
+ * analytics: tab displayed or not based on ```shared.download_form.activated``` and ```shared.ogc.statistics.activated```
+ * doc: improved [installation instructions for gdal native libs](INSTALL.md#gdal-for-geoserver-extractorapp--mapfishapp)
+ * doc: installation instructions updated with [GeoServer fine tuning instructions](INSTALL.md#geoserver)
  * doc: added a [README](mapfishapp/src/main/webapp/app/addons/README.md) for mapfishapp addons
  * js minification: test that jsbuild is working, rather than only testing if venv exists
  * ldapadmin: in the mail sent to the moderator, the "from" field is set to the user email - see [#380](https://github.com/georchestra/georchestra/pull/380)
- * ldapadmin: improved description fields - see #400
+ * ldapadmin: improved description fields - see [#400](https://github.com/georchestra/georchestra/pull/400)
  * ldapadmin: added ability to configure fields in users list - read the [how-to](ldapadmin/README.md#configure-the-look-of-the-users-list)
  * ldapadmin: in case of duplicated email error, the message is more explicit
  * ldapadmin: add validation for four optional fields, depending on the config
@@ -33,9 +33,9 @@ Enhancements:
  * mapfishapp: wms layer tab: red crosses removed, icons centered
  * mapfishapp: backbuffer hidden behind baselayer for non-opaque baselayers - see [#411](https://github.com/georchestra/georchestra/pull/411)
  * mapfishapp: allow to POST the url of a WFS service or layer - see [#392](https://github.com/georchestra/georchestra/pull/392)
- * mapfishapp: baselayers have a different color in the layer manager
- * mapfishapp: contextual help bubbles (eg: on layer edit activated)
- * mapfishapp: print now supports WMS 1.3.0-only capable servers
+ * mapfishapp: baselayers have a specific color in the layer manager - customizable, see [0a56ed](https://github.com/georchestra/georchestra/commit/0a56edc8e0ea6361e056ce30047d8eddaa7c4c75)
+ * mapfishapp: contextual help bubbles (eg: on layer edit activated), see [#466](https://github.com/georchestra/georchestra/issues/466)
+ * mapfishapp: print now supports WMS 1.3.0-only capable servers, see [#511](https://github.com/georchestra/georchestra/issues/511)
  * mapfishapp: annotation addon: added an icon & made the window closable
  * mapfishapp: OGC Exception Report handling deactivated during context restore - see [#532](https://github.com/georchestra/georchestra/issues/532)
  * ogc-server-statistics: now logging WMTS GetTile, WMS GetStyles + WFS2 operations, see [#527](https://github.com/georchestra/georchestra/issues/527)
@@ -95,7 +95,7 @@ Bug fixes:
  * proxy: fixed charset detection in ArcGIS server responses - see [#498](https://github.com/georchestra/georchestra/pull/498)
  * proxy: removed sec-* headers from client request - see [#154](https://github.com/georchestra/georchestra/pull/154)
  * proxy: fixed incorrect referer value - see [#533](https://github.com/georchestra/georchestra/issues/533)
- * header: maintains existing URI parameters when adding the "login" param
+ * header: maintains existing URI parameters when adding the "login" param - see [#175](https://github.com/georchestra/georchestra/issues/175)
 
 UPGRADING:
  * analytics: the ExtJS submodule path has changed, be sure to run ```git submodule update --init``` when you switch branches.
