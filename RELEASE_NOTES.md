@@ -8,15 +8,15 @@ Version 13.12 (development version)
 ====================================
 
 New features:
+ * [GeoFence](https://github.com/geosolutions-it/geofence/blob/master/README.markdown) integration (not activated by default), see [#534](https://github.com/georchestra/georchestra/issues/534) and the [documentation](https://github.com/georchestra/geofence/blob/georchestra/georchestra.md)
  * mapfishapp: multi-layer querier tool - see [#435](https://github.com/georchestra/georchestra/pull/435)
  * mapfishapp: extractor addon - see the [README](mapfishapp/src/main/webapp/app/addons/extractor/README.md)
  * mapfishapp: OpenLS addon - see the [README](mapfishapp/src/main/webapp/app/addons/openls/README.md)
  * mapfishapp: editor revamped - read [this](mapfishapp/README.md#feature-editor)
- * GeoFence integration (not activated by default), see [#534](https://github.com/georchestra/georchestra/issues/534) and the [documentation](https://github.com/georchestra/geofence/blob/georchestra/georchestra.md)
 
 Enhancements:
  * analytics: translated to ES, thanks to GeoBolivia !
- * analytics: tab displayed or not based on ```shared.download_form.activated``` and ```shared.ogc.statistics.activated```
+ * analytics: tabs displayed or not based on ```shared.download_form.activated``` and ```shared.ogc.statistics.activated```
  * doc: improved [installation instructions for gdal native libs](INSTALL.md#gdal-for-geoserver-extractorapp--mapfishapp)
  * doc: installation instructions updated with [GeoServer fine tuning instructions](INSTALL.md#geoserver)
  * doc: added a [README](mapfishapp/src/main/webapp/app/addons/README.md) for mapfishapp addons
@@ -86,11 +86,15 @@ Bug fixes:
  * mapfishapp: attribution logo correctly sized - see [#490](https://github.com/georchestra/georchestra/pull/490)
  * mapfishapp: fixed wrong proxy selected when the webapp name does not contain private - see [#509](https://github.com/georchestra/georchestra/pull/509)
  * mapfishapp: fixed various problems in legend printing
- * mapfishapp: fixed missing GEOR.config.USEREMAIL
+ * mapfishapp: fixed missing GEOR.config.USEREMAIL (used by the extractor addon)
  * mapfishapp: set a white background to the overview map in the printed PDF - see [#372](https://github.com/georchestra/georchestra/pull/372)
  * mapfishapp: overview map now working at most small scales - see [#513](https://github.com/georchestra/georchestra/issues/513)
  * mapfishapp: fixed magnifier tool - see [#500](https://github.com/georchestra/georchestra/issues/500)
  * mapfishapp: fixed too much space between elements in FireFox - see [#539](https://github.com/georchestra/georchestra/issues/539)
+ * mapfishapp: print: white background for the overview map, see [b09cc9](https://github.com/georchestra/template/commit/b09cc94dcb66186b2ca48d5d0df5b2b7b95e1ed8)
+ * mapfishapp: print: scaled down legend icons to match map icons size, see [436913](https://github.com/georchestra/template/commit/43691352bc81d024dff01245ba33c47605c7a607)
+ * mapfishapp: print: limit legend texts width, and wrap them, see [78c05d](https://github.com/georchestra/template/commit/78c05d9d01699411df282ae6fca1965a9825b21b)
+ * mapfishapp: print: left align the legend to its column container, see [d707a8](https://github.com/georchestra/template/commit/d707a8f7371bf56059758802e7afbb891f34bfce)
  * ogcservstatistics - fixed missing potgresql driver loading
  * proxy: fixed charset detection in ArcGIS server responses - see [#498](https://github.com/georchestra/georchestra/pull/498)
  * proxy: removed sec-* headers from client request - see [#154](https://github.com/georchestra/georchestra/pull/154)
@@ -100,12 +104,17 @@ Bug fixes:
 UPGRADING:
  * analytics: the ExtJS submodule path has changed, be sure to run ```git submodule update --init``` when you switch branches.
  * databases: the downloadform, ogcstatistics and ldapadmin databases are now merged into a single one named "georchestra". Each webapp expects to find its tables in a dedicated schema ("downloadform" for the downloadform module, "ogcstatistics" for ogc-server-statistics, and "ldapadmin" for ldapadmin). See https://github.com/georchestra/georchestra/pull/535 for the complete patch. If you currently have one dedicated database for each module, you can keep your setup, provided you customize the ```shared.psql.ogc.statistics.db```, ```shared.psql.download_form.db``` & ```shared.ldapadmin.db``` maven filters in your own config. In any case, you'll have to rename the ```download``` schema (of the previous ```downloadform``` database) into ```downloadform```, and migrate the tables which were in the public schema of the databases ```ogcstatistics``` and ```ldapadmin``` into the newly created schemas.
+ * download form: the module is disabled by default (shared.download_form.activated=false). Be sure to set the value you want in your shared.maven.filters file.
  * extractorapp:
    * BUFFER_VALUES has changed. If you had a custom value in your GEOR_custom.js file, you have to modify it according to the new syntax.
    * the ```geobretagne_production``` env variable has been removed - see [#97](https://github.com/georchestra/georchestra/pull/97)
  * geoserver: be sure to set the file.encoding tomcat option for geoserver to interpret correctly UTF-8 SLDs (read [how](INSTALL.md#geoserver)).
+ * ldapadmin: new shared.ldapadmin.db parameter to specify the ldapadmin database name (defaults to "georchestra").
  * mapfishapp:
-   * the NS_EDIT config option has been removed. All layers served by the platform geoserver are editable, provided the user has the rights to.
+   * the NS_EDIT config option has been removed. By default, all layers served by the platform geoserver are editable (see GEOR.custom.EDITABLE_LAYERS), provided the user has the rights to (defaults to members of ROLE_ADMINISTRATOR, see GEOR.custom.ROLES_FOR_EDIT).
+   * the contexts referenced in your GEOR.custom.CONTEXTS array are now able to reference layers with their full attribution information (text, logo & link). Have a look at the provided [default.wmc](https://github.com/georchestra/template/blob/55f24c8625e737d0b4567db92966c98502578766/mapfishapp/default.wmc#L39).
+   * print: some parameters have changed when the print module was updated: maxIconWidth -> iconMaxWidth, maxIconHeight -> iconMaxHeight (see [e6231c](https://github.com/georchestra/template/commit/e6231c8cbf325dfa2bf96fcaa14096fc0c64ab89)).
+ * ogcservstatistics - disabled by default: shared.ogc.statistics.activated=false. Be sure to set the value you want in your shared.maven.filters file.
  * static: the "static" module has been renamed into "header": your deployment scripts *must* be adapted, as well as your apache2 configuration (or any other reverse proxy).
 
 
