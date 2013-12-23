@@ -52,6 +52,7 @@ Bug fixes:
  * geonetwork: download form now opens also in metadata view if activated, see [#416](https://github.com/georchestra/georchestra/issues/416)
  * geoserver: fixed "inspire extension not deployed"
  * header: fixed IE8 compatibility + header frameborder size set to 0
+ * header: the platform-wide language set by shared.language is now enforced in the header module, see [#540](https://github.com/georchestra/georchestra/issues/540)
  * ldapadmin: fixed incorrect generation of login - see [#344](https://github.com/georchestra/georchestra/pull/344)
  * ldapadmin: remove user from groups after deleting the user - see [#406](https://github.com/georchestra/georchestra/pull/406)
  * ldapadmin: prevent race condition when opening /#groups/:group directly.
