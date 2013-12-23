@@ -94,6 +94,7 @@ Bug fixes:
  * mapfishapp: print: scaled down legend icons to match map icons size, see [436913](https://github.com/georchestra/template/commit/43691352bc81d024dff01245ba33c47605c7a607)
  * mapfishapp: print: limit legend texts width, and wrap them, see [78c05d](https://github.com/georchestra/template/commit/78c05d9d01699411df282ae6fca1965a9825b21b)
  * mapfishapp: print: left align the legend to its column container, see [d707a8](https://github.com/georchestra/template/commit/d707a8f7371bf56059758802e7afbb891f34bfce)
+ * mapfishapp: fixed incorrect metadata URL in csw browser ("add a layer from thesaurus") - see [#542](https://github.com/georchestra/georchestra/issues/542)
  * ogcservstatistics - fixed missing postgresql driver loading
  * proxy: fixed charset detection in ArcGIS server responses - see [#498](https://github.com/georchestra/georchestra/pull/498)
  * proxy: removed ```sec-*``` headers from client request - see [#154](https://github.com/georchestra/georchestra/pull/154)
