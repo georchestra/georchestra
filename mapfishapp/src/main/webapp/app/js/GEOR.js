@@ -451,3 +451,24 @@ Ext.namespace("GEOR");
         });
     });
 })();
+
+//Initialize doc classes, see https://github.com/georchestra/georchestra/issues/539
+// to workaround an ExtJS bug.
+(function(){
+    var initExtCss = function() {
+        // find the body element
+        var bd = document.body || document.getElementsByTagName('body')[0];
+        if (!bd) {
+            return false;
+        }
+        var cls = [];
+        if (Ext.isGecko) {
+            cls.push('ext-gecko');
+        }
+        Ext.fly(bd, '_internal').addClass(cls);
+        return true;
+    };
+    if (!initExtCss()) {
+        Ext.onReady(initExtCss);
+    }
+})();
