@@ -99,8 +99,10 @@ GEOR.cswbrowser = (function() {
 
                         metadataURL = null;
                         if (record.identifier && record.identifier[0]) {
-                            metadataURL = GEOR.config.GEONETWORK_URL;
-                            metadataURL.replace(/\/srv\/(\S+)/, '/?uuid='+record.identifier[0].value);
+                            metadataURL = GEOR.config.GEONETWORK_URL.replace(
+                                /\/srv\/(\S+)/, 
+                                '/?uuid='+record.identifier[0].value
+                            );
                             name += '<a href="'+metadataURL +
                                 '" target="_blank" onclick="window.open(this.href);return false;">'+mdTitle+'</a>';
                         }
