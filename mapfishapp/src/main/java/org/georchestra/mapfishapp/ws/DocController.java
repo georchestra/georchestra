@@ -226,7 +226,7 @@ public class DocController {
     /**
      * Store a file sent by the client. 2 modes: <br />
      * - content is stored in POST Body
-     * - file can be sent by upload. Take into account only on file
+     * - file can be sent by upload. Take into account only one file
      * @param docService Any service implementing A_DocService
      * @param request request contains in its body the file
      * @param response response contains the url path to get back the file: SERVICE_URL/{filename}
