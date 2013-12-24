@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0  http://maven.apache.org/maven-v4_0_0.xsd">
-
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.georchestra</groupId>
@@ -10,15 +9,47 @@
 	<artifactId>geoserver-root</artifactId>
 	<packaging>pom</packaging>
 	<name>Geoserver 2.x root module</name>
-	
+
 	<properties>
-    <maven.test.skip>true</maven.test.skip>
-	  <gs.version>2.3.2</gs.version>
-  </properties>
-  
-	
+		<maven.test.skip>true</maven.test.skip>
+		<gs.version>2.3.2</gs.version>
+		<geofence.version>2.2-SNAPSHOT</geofence.version>
+
+		<geoserver.webapp.groupId>org.geoserver.web</geoserver.webapp.groupId>
+		<geoserver.webapp.artifactId>web-app</geoserver.webapp.artifactId>
+		<geoserver.webapp.version>${gs.version}</geoserver.webapp.version>
+	</properties>
+
 	<modules>
 		<module>geoserver-submodule/src</module>
-		<module>webapp</module>
 	</modules>
+
+	<profiles>
+		<profile>
+			<id>geofence</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<modules>
+				<module>geofence/src</module>
+				<module>geofence-webapp</module>
+				<module>webapp</module>
+			</modules>
+			<properties>
+				<geofence>geofence</geofence>
+				<geoserver.webapp.groupId>it.geosolutions.geofence.geoserver</geoserver.webapp.groupId>
+				<geoserver.webapp.artifactId>geofence-web-app</geoserver.webapp.artifactId>
+				<geoserver.webapp.version>${geofence.version}</geoserver.webapp.version>
+			</properties>	
+		</profile>
+		<profile>
+			<id>no_geofence</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<modules>
+				<module>webapp</module>
+			</modules>
+		</profile>
+	</profiles>
 </project>

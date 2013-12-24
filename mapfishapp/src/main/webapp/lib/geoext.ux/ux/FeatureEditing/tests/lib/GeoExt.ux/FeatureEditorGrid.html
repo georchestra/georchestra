@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html debug="true">
+  <head>
+    <script type="text/javascript" src="http://www.openlayers.org/api/2.9/OpenLayers.js"></script>
+    <script type="text/javascript" src="http://extjs.cachefly.net/ext-3.1.1/adapter/ext/ext-base.js"></script>
+    <script type="text/javascript" src="http://extjs.cachefly.net/ext-3.1.1/ext-all.js"></script>
+    <script type="text/javascript" src="../../../../../../geoext/lib/GeoExt.js"></script>
+    <script type="text/javascript" src="../../../lib/GeoExt.ux/FeatureEditorGrid.js"></script>
+
+    <script type="text/javascript">
+        function test_ctor(t) {
+            t.plan(27);
+
+            // set up
+
+            var map, layer, feature, grid, store;
+
+            map = new OpenLayers.Map("map", {allOverlays: true});
+
+            layer = new OpenLayers.Layer.Vector("vector");
+            map.addLayer(layer);
+
+            feature = new OpenLayers.Feature.Vector(
+                new OpenLayers.Geometry.Point(1, 2),
+                {foo: "foo", bar: "bar"}
+            );
+            layer.addFeatures(feature);
+
+            // test
+            function _test(id) {
+                // 12 tests
+                t.ok(grid instanceof GeoExt.ux.FeatureEditorGrid,
+                     "[" + id + "] ctor returns a FeatureEditorGrid");
+                t.ok(grid instanceof Ext.grid.EditorGridPanel,
+                     "[" + id + "] ctor returns an EditorGridPanel");
+                t.ok(grid.feature === undefined,
+                     "[" + id + "] ctor does not set the feature in the instance");
+                t.ok(grid.modifyControl instanceof OpenLayers.Control.ModifyFeature,
+                     "[" + id + "] ctor creates a ModifyFeature control");
+                t.ok(grid.modifyControl.layer === layer,
+                     "[" + id + "] ctor provides the layer to the ModifyFeature");
+                t.ok(grid.modifyControl.active,
+                     "[" + id + "] ctor activates the ModifyFeature control");
+                t.ok(grid.modifyControl.feature === feature,
+                     "[" + id + "] ctor selects the feature");
+                t.ok(layer.events.listeners["featuremodified"][0].func === grid.onFeaturemodified,
+                     "[" + id + "] ctor registers a featuremodified listener");
+                t.ok(grid.hasListener("afteredit"),
+                     "[" + id + "] ctor registers an afteredit listener");
+                t.eq(grid.deleteButton.hidden, true,
+                     "[" + id + "] ctor hides the delete button by default");
+                t.eq(grid.cancelButton.hidden, false,
+                     "[" + id + "] ctor doesn't hide the cancel button by default");
+                t.eq(grid.saveButton.hidden, false,
+                     "[" + id + "] ctor doesn't hide the save button by default");
+            }
+
+            // provide the ctor with a feature
+            // 14 tests
+            grid = new GeoExt.ux.FeatureEditorGrid({
+                renderTo: "grid",
+                feature: feature
+            });
+            _test("1");
+            t.ok(grid.store instanceof GeoExt.data.AttributeStore,
+                 "[1] ctor creates an AttributeStore if none is provided");
+            t.ok(grid.store.feature === feature,
+                 "[1] ctor passes the feature to the created AttributeStore");
+            grid.destroy();
+
+            // provide the ctor with a store
+            // 13 tests
+            store = new GeoExt.data.AttributeStore({
+                data: [{
+                    name: "foo",
+                    type: "string"
+                }, {
+                    name: "bar",
+                    type: "string"
+                }],
+                feature: feature
+            });
+            grid = new GeoExt.ux.FeatureEditorGrid({
+                renderTo: "grid",
+                store: store
+            });
+            _test("2");
+            t.ok(grid.store === store,
+                 "[2] ctor sets the provided store in the instance");
+            grid.destroy();
+
+            // tear down
+
+            map.destroy();
+        }
+
+        function test_destroy(t) {
+            t.plan(2);
+
+            // set up
+
+            var map, layer, feature, grid, store;
+
+            map = new OpenLayers.Map("map", {allOverlays: true});
+
+            layer = new OpenLayers.Layer.Vector("vector");
+            map.addLayer(layer);
+
+            feature = new OpenLayers.Feature.Vector(
+                new OpenLayers.Geometry.Point(1, 2),
+                {foo: "foo", bar: "bar"}
+            );
+            layer.addFeatures(feature);
+
+            store = new GeoExt.data.AttributeStore({
+                data: [{
+                    name: "foo",
+                    type: "string"
+                }, {
+                    name: "bar",
+                    type: "string"
+                }],
+                feature: feature
+            });
+
+            grid = new GeoExt.ux.FeatureEditorGrid({
+                renderTo: "grid",
+                store: store
+            });
+
+
+            // test
+
+            grid.destroy();
+            t.ok(layer.events.listeners["featuremodified"].length === 0,
+                 "destroy unregisters the featuremodified listeners");
+            t.ok(!grid.modifyControl.events,
+                 "destroy destroys the ModifyFeature");
+
+            // tear down
+
+            map.destroy();
+        }
+
+        function test_onFeaturemodified(t) {
+            t.plan(2);
+
+            // set up
+
+            var map, layer, feature, grid, store;
+
+            map = new OpenLayers.Map("map", {allOverlays: true});
+
+            layer = new OpenLayers.Layer.Vector("vector");
+            map.addLayer(layer);
+
+            feature = new OpenLayers.Feature.Vector(
+                new OpenLayers.Geometry.Point(1, 2),
+                {foo: "foo", bar: "bar"}
+            );
+            layer.addFeatures(feature);
+
+            store = new GeoExt.data.AttributeStore({
+                data: [{
+                    name: "foo",
+                    type: "string"
+                }, {
+                    name: "bar",
+                    type: "string"
+                }],
+                feature: feature
+            });
+
+            grid = new GeoExt.ux.FeatureEditorGrid({
+                renderTo: "grid",
+                store: store
+            });
+
+            // test
+
+            // trigger "featuremodified" on the layer for our feature
+            // and test that the dirty property is set to true
+            grid.dirty = false;
+            layer.events.triggerEvent("featuremodified", {feature: feature});
+            t.eq(grid.dirty, true,
+                 "dirty set to true when the feature is modified");
+
+            // trigger "featuremodified" on the layer for another feature
+            // and test that the dirty property isn't set to true
+            grid.dirty = false;
+            layer.events.triggerEvent("featuremodified", {feature: "fake"});
+            t.eq(grid.dirty, false,
+                 "dirty not set to true when another feature is modified");
+
+            // tear down
+
+            grid.destroy();
+        }
+
+        function test_getEditor(t) {
+            t.plan(2);
+
+            // set up
+
+            var map, layer, feature, grid, store, field;
+
+            map = new OpenLayers.Map("map", {allOverlays: true});
+
+            layer = new OpenLayers.Layer.Vector("vector");
+            map.addLayer(layer);
+
+            feature = new OpenLayers.Feature.Vector(
+                new OpenLayers.Geometry.Point(1, 2),
+                {foo: "foo", bar: "bar"}
+            );
+            layer.addFeatures(feature);
+
+            store = new GeoExt.data.AttributeStore({
+                data: [{
+                    name: "foo",
+                    type: "string"
+                }, {
+                    name: "bar",
+                    type: "unknown"
+                }],
+                feature: feature
+            });
+
+            grid = new GeoExt.ux.FeatureEditorGrid({
+                renderTo: "grid",
+                store: store
+            });
+
+            // test
+
+            field = grid.getEditor(0).field;
+            t.ok(field instanceof Ext.form.TextField,
+                 "getEditor returns a TextField for a record of type \"string\"");
+
+            field = grid.getEditor(1).field;
+            t.ok(field instanceof Ext.form.TextField,
+                 "getEditor returns a TextField for a record of an unknown type");
+
+            // tear down
+
+            grid.destroy();
+        }
+
+        function test_cancelHandler(t) {
+            t.plan(18);
+
+            // set up
+
+            var map, layer, feature, grid, store, ret, log1, log2;
+
+            map = new OpenLayers.Map("map", {allOverlays: true});
+
+            layer = new OpenLayers.Layer.Vector("vector");
+            map.addLayer(layer);
+
+            feature = new OpenLayers.Feature.Vector(
+                new OpenLayers.Geometry.Point(1, 2),
+                {foo: "foo", bar: "bar"}
+            );
+            layer.addFeatures(feature);
+
+            store = new GeoExt.data.AttributeStore({
+                data: [{
+                    name: "foo",
+                    type: "string"
+                }, {
+                    name: "bar",
+                    type: "string"
+                }],
+                feature: feature
+            });
+
+            grid = new GeoExt.ux.FeatureEditorGrid({
+                renderTo: "grid",
+                store: store
+            });
+
+            grid.cancelMsg = undefined;
+
+            grid.on({
+                cancel: function(grid, e) {
+                    log1.push({
+                        grid: grid,
+                        feature: e.feature,
+                        modified: e.modified,
+                        foo: e.foo
+                    });
+                    return ret;
+                }
+            });
+
+            grid.cancel = function() {
+                log2++;
+            };
+
+            var _test = function(id, state, foo, cancel) {
+                t.eq(log1.length, 1,
+                     "[" + id + "] cancelHandler triggers \"cancel\" event once");
+                t.ok(log1[0].grid === grid,
+                     "[" + id + "] \"cancel\" listener given expected grid");
+                t.ok(log1[0].feature === feature,
+                     "[" + id + "] \"cancel\" listener given expected feature");
+                t.eq(log1[0].modified, state,
+                     "[" + id + "] \"cancel\" listener given expected state");
+                t.eq(log1[0].foo, foo,
+                     "[" + id + "] \"cancel\" listener given expected extra property");
+                t.eq(log2, cancel,
+                     "[" + id + "] \"cancel\" method called " + cancel + " time");
+            };
+
+            // test
+
+            // with "dirty" set to false
+            log1 = []; log2 = 0;
+            ret = undefined;
+            grid.dirty = false;
+            grid.cancelHandler({foo: "foo"});
+            _test("1", false, "foo", 1);
+
+            // with "dirty" set to true
+            log1 = []; log2 = 0;
+            ret = undefined;
+            grid.dirty = true;
+            grid.cancelHandler({foo: "foo"});
+            _test("2", true, "foo", 1);
+
+            // with the "cancel" listener returning false
+            log1 = []; log2 = 0;
+            ret = false;
+            grid.dirty = true;
+            grid.cancelHandler({foo: "foo"});
+            _test("3", true, "foo", 0);
+
+            // tear down
+
+            grid.destroy();
+        }
+
+        function test_deleteHandler(t) {
+            t.plan(12);
+
+            // set up
+
+            var map, layer, feature, grid, store, log;
+
+            map = new OpenLayers.Map("map", {allOverlays: true});
+
+            layer = new OpenLayers.Layer.Vector("vector");
+            map.addLayer(layer);
+
+            feature = new OpenLayers.Feature.Vector(
+                new OpenLayers.Geometry.Point(1, 2),
+                {foo: "foo", bar: "bar"}
+            );
+            layer.addFeatures(feature);
+
+            store = new GeoExt.data.AttributeStore({
+                data: [{
+                    name: "foo",
+                    type: "string"
+                }, {
+                    name: "bar",
+                    type: "string"
+                }],
+                feature: feature
+            });
+
+            grid = new GeoExt.ux.FeatureEditorGrid({
+                renderTo: "grid",
+                store: store
+            });
+
+            grid.deleteMsg = undefined;
+
+            grid.on({
+                done: function(grid, e) {
+                    log.push({
+                        grid: grid,
+                        feature: e.feature,
+                        modified: e.modified,
+                        foo: e.foo
+                    });
+                }
+            });
+
+            var _test = function(id, foo) {
+                t.eq(log.length, 1,
+                     "[" + id + "] deletelHandler triggers \"done\" event once");
+                t.ok(log[0].grid === grid,
+                     "[" + id + "] \"done\" listener given expected grid");
+                t.ok(log[0].feature === feature,
+                     "[" + id + "] \"done\" listener given expected feature");
+                t.eq(log[0].modified, true,
+                     "[" + id + "] \"done\" listener given modified true");
+                t.eq(log[0].foo, foo,
+                     "[" + id + "] \"done\" listener given expected extra property");
+                t.eq(log[0].feature.state, OpenLayers.State.DELETE,
+                     "[" + id + "] feature has the DELETE state");
+            };
+
+            // test
+
+            // with "dirty" set to false
+            log = [];
+            grid.dirty = false;
+            grid.deleteHandler({foo: "foo"});
+            _test("1", "foo");
+
+            // with "dirty" set to true
+            log = [];
+            grid.dirty = true;
+            grid.deleteHandler({foo: "foo"});
+            _test("2", "foo");
+
+            // tear down
+
+            grid.destroy();
+        }
+    </script>
+  <body>
+      <div id="map" style="width:600px; height: 400px"></div>
+      <div id="grid"></div>
+  </body>
+</html>

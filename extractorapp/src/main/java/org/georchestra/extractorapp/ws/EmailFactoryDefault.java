@@ -20,6 +20,7 @@ public class EmailFactoryDefault extends AbstractEmailFactory {
 		return new Email(request, recipients, emailSubject,
 				this.smtpHost,
 				this.smtpPort,
+				this.emailHtml,
 				this.replyTo,
 				this.from,
 				this.bodyEncoding,

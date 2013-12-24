@@ -13,7 +13,7 @@
   <!-- 
     This filter delegates a different chain of sub-filters for administration
     console pages and OWS services. Basically, we set up a chain involving basic/anonymous
-    authentication for OWS services, and a form based authentication for  the web console, 
+    authentication for OWS services, and a form based authentication for the web console, 
     so that accessing the console by means of simple calls is still easy.
     
     An attempt at form+basic has been done, that would have eased writing code accessing

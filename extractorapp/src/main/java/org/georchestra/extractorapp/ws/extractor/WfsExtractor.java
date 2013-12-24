@@ -146,7 +146,7 @@ public class WfsExtractor {
         }
 
         String capabilities = FileUtils.asString(httpclient.execute(get).getEntity().getContent());
-        Pattern regex = Pattern.compile("(?m)<FeatureType[^>]*>(\\\\n|\\s)*<Name>\\s*"+Pattern.quote(request._layerName)+"\\s*</Name>");
+        Pattern regex = Pattern.compile("(?m)<FeatureType[^>]*>(\\\\n|\\s)*<Name>\\s*(\\w*:)?"+Pattern.quote(request._layerName)+"\\s*</Name>");
         boolean permitted = regex.matcher(capabilities).find();
         
         if(!permitted) {
@@ -177,8 +177,8 @@ public class WfsExtractor {
                 || "127.0.0.1".equalsIgnoreCase(request._url.getHost())
                 || "localhost".equalsIgnoreCase(request._url.getHost())) {
         	LOG.debug("WfsExtractor.extract - Secured Server: Adding extractionUserName to connection params");
-            params.put(WFSDataStoreFactory.USERNAME.key, _adminUsername);  
-            params.put(WFSDataStoreFactory.PASSWORD.key, _adminPassword); 
+            if (_adminUsername != null) params.put(WFSDataStoreFactory.USERNAME.key, _adminUsername);
+            if (_adminPassword != null) params.put(WFSDataStoreFactory.PASSWORD.key, _adminPassword);
         } else {
         	LOG.debug("WfsExtractor.extract - Non Secured Server");        	
         }
@@ -213,6 +213,9 @@ public class WfsExtractor {
         } else if ("tab".equalsIgnoreCase(request._format)) {
         	featuresWriter = new OGRFeatureWriter(progressListener, sourceSchema,  basedir, OGRFeatureWriter.FileFormat.tab, features);
         	bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.tab, request._projection, progressListener );
+        } else if ("kml".equalsIgnoreCase(request._format)) {
+        	featuresWriter = new KMLFeatureWriter(progressListener, sourceSchema, basedir, features);
+        	bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.kml, request._projection, progressListener );
         } else {
             throw new IllegalArgumentException(request._format + " is not a recognized vector format");
         }

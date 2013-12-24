@@ -13,9 +13,9 @@
  * &nbsp;&nbsp;patternsToReplace: [ /GeoNetwork\.Util\.defaultLocale\s*=\s*'eng'/: "GeoNetwork.Util.defaultLocale = 'fre'"]
  * ).update()
  * </code></pre>
-	* for a description of path, fromProject, from and to see AbstractUpdater
-	* 
-	* <strong>Note:</strong> unlike many other updaters a from file is required
+  * for a description of path, fromProject, from and to see AbstractUpdater
+  *
+  * <strong>Note:</strong> unlike many other updaters a from file is required
   * <strong>Note:</strong> source file is not modified.  It is read and the updated file
   * is written to the directory containing generated files
   */

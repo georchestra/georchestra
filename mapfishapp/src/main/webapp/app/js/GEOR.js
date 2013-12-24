@@ -27,10 +27,15 @@
  * @include GEOR_print.js
  * @include GEOR_wmc.js
  * @include GEOR_tools.js
+ * @include GEOR_edit.js
  * @include GEOR_wmcbrowser.js
- * Note that GEOR_getfeatureinfo.js, GEOR_resultspanel.js, GEOR_querier.js,
- * GEOR_styler.js should be included here, but they are not required by the edit module.
- * In order to make the edit build "light", those files will be added in main.cfg and not here.
+ * @include GEOR_getfeatureinfo.js
+ * @include GEOR_selectfeature.js
+ * @include GEOR_ResultsPanel.js
+ * @include GEOR_querier.js
+ * @include GEOR_styler.js
+ * @include GEOR_wmc.js
+ * @include GEOR_helper.js
  */
 
 Ext.namespace("GEOR");
@@ -41,7 +46,7 @@ Ext.namespace("GEOR");
     // see http://applis-bretagne.fr/redmine/issues/4536
     var fn = OpenLayers.Format.XML.prototype.write;
     OpenLayers.Format.XML.prototype.write = function(node) {
-        return '<?xml version="1.0" encoding="UTF-8"?>' + fn(node);
+        return '<?xml version="1.0" encoding="UTF-8"?>' + fn.apply(this, [node]);
     };
 
     var checkRoles = function(module, okRoles) {
@@ -67,7 +72,6 @@ Ext.namespace("GEOR");
     // save context string before unloading page
     window.onbeforeunload = function() {
         GEOR.ls.set("latest_context", GEOR.wmc.write());
-        return null;
     };
 
     Ext.onReady(function() {
@@ -80,7 +84,6 @@ Ext.namespace("GEOR");
         OpenLayers.Number.thousandsSeparator = " ";
         OpenLayers.ImgPath = 'app/img/openlayers/';
         OpenLayers.DOTS_PER_INCH = GEOR.config.MAP_DOTS_PER_INCH;
-        OpenLayers.IMAGE_RELOAD_ATTEMPTS = 3;
 
         /*
          * Setting of Ext global vars.
@@ -105,6 +108,7 @@ Ext.namespace("GEOR");
         checkRoles('styler', GEOR.config.ROLES_FOR_STYLER);
         checkRoles('querier', GEOR.config.ROLES_FOR_QUERIER);
         checkRoles('print', GEOR.config.ROLES_FOR_PRINTER);
+        checkRoles('edit', GEOR.config.ROLES_FOR_EDIT);
 
         /*
          * Initialize the application.
@@ -114,21 +118,17 @@ Ext.namespace("GEOR");
 
         GEOR.wmc.init(layerStore);
         GEOR.tools.init(layerStore);
+        if (GEOR.edit) {
+            GEOR.edit.init(map);
+        }
         if (GEOR.print) {
             GEOR.print.init(layerStore);
-        }
-        if (GEOR.getfeatureinfo) {
-            GEOR.getfeatureinfo.init(map);
-        }
-        if (GEOR.selectfeature) {
-            GEOR.selectfeature.init(map);
         }
         if (GEOR.querier) {
             GEOR.querier.init(map);
         }
-        if (GEOR.resultspanel) {
-            GEOR.resultspanel.init(map);
-        }
+        GEOR.getfeatureinfo.init(layerStore);
+        GEOR.selectfeature.init(map);
         GEOR.waiter.init();
 
         var recenteringItems = [
@@ -151,27 +151,24 @@ Ext.namespace("GEOR");
         /*
          * Create the page's layout.
          */
-        var plugins = (GEOR.editing === undefined) ?
-            [] : [Ext.ux.PanelCollapsedTitle];
 
         var eastItems = [
             new Ext.Panel({
                 // this panel contains the "manager layer" and
                 // "querier" components
-                region: (GEOR.editing !== undefined) ? "north" : "center",
+                region: "center",
                 height: 270, // has no effect when region is
                              // "center"
                 layout: "card",
                 activeItem: 0,
                 title: tr("Available layers"),
-                plugins: plugins,
-                split: (GEOR.editing !== undefined),
-                collapsible: (GEOR.editing !== undefined),
-                collapsed: (GEOR.editing !== undefined),
+                split: false,
+                collapsible: false,
+                collapsed: false,
                 // we use hideMode: "offsets" here to workaround this bug in
                 // extjs 3.x, see the bug report:
                 // http://www.sencha.com/forum/showthread.php?107119-DEFER-1207-Slider-in-panel-with-collapsed-true-make-slider-weird
-                hideMode: 'offsets',
+                //hideMode: 'offsets',
                 defaults: {
                     border:false
                 },
@@ -202,54 +199,66 @@ Ext.namespace("GEOR");
                 items: recenteringItems
             })
         ];
-        if (GEOR.editing) {
-            eastItems.push(
-                Ext.apply({
-                    region: "center",
-                    title: tr("Editing")
-                }, GEOR.editing.create(map))
-            );
-        }
 
         // this panel serves as the container for
-        // the "search results" panel
-        var southPanel = new Ext.Panel({
+        // the "search results" tabs
+        var tab = new GEOR.ResultsPanel({
+            html: tr("resultspanel.emptytext")
+        });
+        var southPanel = new Ext.TabPanel({
             region: "south",
-            hidden: !GEOR.resultspanel, // hide this panel if
-                                        // the resultspanel
-                                        // module is undefined
+            hidden: !GEOR.ResultsPanel, // hide this panel if
+                                        // the ResultsPanel
+                                        // class is undefined
             split: true,
-            layout: "fit",
             collapsible: true,
             collapsed: true,
             collapseMode: "mini",
+            hideCollapseTool: true,
             header: false,
-            height: 150,
+            height: 200,
+            enableTabScroll: true,
+            activeTab: 0,
             defaults: {
+                layout: 'fit',
                 border: false,
                 frame: false
             },
-            items: [{
-                bodyStyle: 'padding: 5px',
-                html: tr("resultspanel.emptytext")
+            items: [tab, {
+                id: 'addPanel', 
+                title: '+', 
+                tabTip: tr('Add query'), 
+                style: 'float: right;',
+                // hack:
+                lower: Ext.emptyFn,
+                raise: Ext.emptyFn
             }],
             listeners: {
-                "collapse": function() {
-                    // when the user collapses the panel
-                    // hide the features in the layer
-                    if (GEOR.resultspanel) {
-                        GEOR.resultspanel.hide();
-                    }
+                'collapse': function(panel) {
+                    panel.items.each(function(tab) {
+                        tab.lower();
+                    });
                 },
-                "expand": function() {
-                    // when the user expands the panel
-                    // show the features in the layer
-                    if (GEOR.resultspanel) {
-                        GEOR.resultspanel.show();
+                'expand': function(panel) {
+                    panel.getActiveTab().raise();
+                },
+                'tabchange': function(panel, t) {
+                    if (t.id == 'addPanel') {
+                        var tab = new GEOR.ResultsPanel({
+                            html: tr("resultspanel.emptytext")
+                        });
+                        panel.insert(panel.items.length-1, tab);
+                        panel.setActiveTab(tab);
                     }
+                    panel.items.each(function(tab) {
+                        tab.lower();
+                    });
+                    t.raise();
                 }
             }
         });
+
+        southPanel.doLayout();
 
         // the header
         var vpItems = GEOR.header ?
@@ -260,7 +269,6 @@ Ext.namespace("GEOR");
                 height: GEOR.config.HEADER_HEIGHT,
                 el: "go_head"
             }] : [];
-
 
         vpItems.push(
             // the map panel
@@ -288,6 +296,42 @@ Ext.namespace("GEOR");
             items: vpItems
         });
 
+        /*
+         * Register to events on various modules to deal with
+         * the communication between them. Really, we're
+         * acting as a mediator between the modules with
+         * the objective of making them independent.
+         */
+
+        // When the wmc module is asked to restore a context, it informs 
+        // the mediator about it, with the number of WMS records 
+        // to restore. As a result, we're deactivating OGCExceptionReports.
+        // But we're always listening to describelayers. When the number of 
+        // WMS layers to restore is reached, we're reactivating
+        // OGCExceptionReports.
+        var describeLayerCount;
+        GEOR.wmc.events.on({
+            "beforecontextrestore": function(count) {
+                // prevent OGCExceptionReport warnings during context restore:
+                GEOR.ajaxglobal.disableOGCExceptionReports = true;
+                describeLayerCount = count;
+            }
+        });
+        GEOR.map.events.on({
+            "describelayer": function(record) {
+                // update the layer panel in layer tree 
+                // when the layer has been described:
+                GEOR.managelayers.updatePanel(record);
+
+                // restore OGCExceptionReport warnings on context restored,
+                // and all describelayer queries finished.
+                describeLayerCount -= 1;
+                if (describeLayerCount == 0) {
+                    GEOR.ajaxglobal.disableOGCExceptionReports = false;
+                }
+            }
+        });
+
         // Handle layerstore initialisation
         // with wms/services/wmc from "panier"
         GEOR.mapinit.init(layerStore, function() {
@@ -298,12 +342,6 @@ Ext.namespace("GEOR");
         // errors when loading WMC are not catched by GEOR.ajaxglobal
         // but by the mapinit module, which handles them more appropriately
 
-        /*
-         * Register to events on various modules to deal with
-         * the communication between them. Really, we're
-         * acting as a mediator between the modules with
-         * the objective of making them independent.
-         */
         if (GEOR.querier) {
             var querierTitle;
             GEOR.querier.events.on({
@@ -334,27 +372,43 @@ Ext.namespace("GEOR");
                     eastItems[0].doLayout(); // required
                 },
                 "showrequest": function() {
-                    eastItems[0].setTitle(querierTitle);
-                    eastItems[0].getLayout().setActiveItem(1);
-                    eastItems[0].getComponent(1).setUp();
-                    eastItems[0].doLayout(); // required
+                    // at this stage, there is no garantee that 2nd cmp exists
+                    if (eastItems[0].getComponent(1)) {
+                        eastItems[0].setTitle(querierTitle);
+                        eastItems[0].getLayout().setActiveItem(1);
+                        eastItems[0].getComponent(1).setUp();
+                        eastItems[0].doLayout(); // required
+                    }
                 },
                 "search": function(panelCfg) {
-                    if (GEOR.resultspanel) {
-                        GEOR.resultspanel.clean();
+                    var tab = southPanel.getActiveTab();
+                    if (tab) {
+                        tab.setTitle(tr("WFS Search"));
                     }
-                    southPanel.removeAll();
+                    //southPanel.removeAll();
                     var panel = Ext.apply({
                         bodyStyle: 'padding:5px'
                     }, panelCfg);
-                    southPanel.add(panel);
+                    tab.removeAll();
+                    tab.add(panel);
                     southPanel.doLayout();
                     southPanel.expand();
                 },
                 "searchresults": function(options) {
-                    if (GEOR.resultspanel) {
-                        GEOR.resultspanel.populate(options);
-                    }
+                    southPanel.remove(southPanel.getActiveTab());
+                    var tab = new GEOR.ResultsPanel({
+                        html: tr("resultspanel.emptytext"),
+                        tabTip: options.tooltip,
+                        title: options.title,
+                        map: map
+                    });
+                    tab.populate({
+                        features: options.features,
+                        // here we do have a valid model (got from describeFeatureType)
+                        model: options.model
+                    });
+                    southPanel.insert(southPanel.items.length-1, tab);
+                    southPanel.setActiveTab(tab);
                 }
             });
         }
@@ -362,21 +416,36 @@ Ext.namespace("GEOR");
         if (GEOR.getfeatureinfo) {
             GEOR.getfeatureinfo.events.on({
                 "search": function(panelCfg) {
-                    if (GEOR.resultspanel) {
-                        GEOR.resultspanel.clean();
+                    var tab = southPanel.getActiveTab();
+                    if (tab) {
+                        tab.setTitle(tr("WMS Search"));
+                        tab.clean();
                     }
-                    southPanel.removeAll();
                     var panel = Ext.apply({
                         bodyStyle: 'padding:5px'
                     }, panelCfg);
-                    southPanel.add(panel);
+                    tab.removeAll();
+                    tab.add(panel);
                     southPanel.doLayout();
                     southPanel.expand();
                 },
                 "searchresults": function(options) {
-                    if (GEOR.resultspanel) {
-                        GEOR.resultspanel.populate(options);
-                    }
+                    southPanel.remove(southPanel.getActiveTab());
+                    Ext.iterate(options.results, function(featureType, result) {
+                        var tab = new GEOR.ResultsPanel({
+                            html: tr("resultspanel.emptytext"),
+                            //itemId: featureType, // XXX assume only one tab per featuretype ?
+                            tabTip: result.tooltip,
+                            title: result.title,
+                            map: map
+                        });
+                        tab.populate({
+                            features: result.features
+                        });
+                        southPanel.insert(southPanel.items.length-1, tab);
+                        southPanel.setActiveTab(tab);
+                    });
+                    southPanel.doLayout();
                 },
                 "shutdown": function() {
                     southPanel.collapse();
@@ -387,34 +456,42 @@ Ext.namespace("GEOR");
         if (GEOR.selectfeature) {
             GEOR.selectfeature.events.on({
                 "search": function(panelCfg) {
-                    if (GEOR.resultspanel) {
-                        GEOR.resultspanel.clean();
+                    var tab = southPanel.getActiveTab();
+                    if (tab) {
+                        tab.setTitle(tr("Select Feature"));
+                        tab.clean();
                     }
-                    southPanel.removeAll();
                     var panel = Ext.apply({
                         bodyStyle: 'padding:5px'
                     }, panelCfg);
-                    southPanel.add(panel);
+                    tab.removeAll();
+                    tab.add(panel);
                     southPanel.doLayout();
                     southPanel.expand();
                 },
                 "searchresults": function(options) {
-                    if (GEOR.resultspanel) {
-                        GEOR.resultspanel.populate(options);
-                    }
+                    southPanel.remove(southPanel.getActiveTab());
+                    /*
+                    // XXX disable the selectfeature control -> only remove the tab
+                    if (!options.model) {
+                        return;
+                    }*/
+                    var tab = new GEOR.ResultsPanel({
+                        html: tr("resultspanel.emptytext"),
+                        tabTip: options.tooltip,
+                        title: options.title,
+                        sfControl: options.ctrl,
+                        map: map
+                    });
+                    tab.populate({
+                        features: options.features, 
+                        addLayerToMap: options.addLayerToMap
+                    });
+                    southPanel.insert(southPanel.items.length-1, tab);
+                    southPanel.setActiveTab(tab);
                 },
                 "shutdown": function() {
                     southPanel.collapse();
-                }
-            });
-        }
-
-        if (GEOR.resultspanel) {
-            GEOR.resultspanel.events.on({
-                "panel": function(panelCfg) {
-                    southPanel.removeAll();
-                    southPanel.add(panelCfg);
-                    southPanel.doLayout();
                 }
             });
         }
@@ -445,12 +522,29 @@ Ext.namespace("GEOR");
 
         GEOR.wmcbrowser.events.on({
             "contextselected": function(o) {
-                try {
-                    GEOR.wmc.read(o.wmcString, true, true);
-                } catch (err) {
-                    return false;
-                }
+                return GEOR.wmc.read(o.wmcString, true, true);
             }
         });
     });
+})();
+
+//Initialize doc classes, see https://github.com/georchestra/georchestra/issues/539
+// to workaround an ExtJS bug.
+(function(){
+    var initExtCss = function() {
+        // find the body element
+        var bd = document.body || document.getElementsByTagName('body')[0];
+        if (!bd) {
+            return false;
+        }
+        var cls = [];
+        if (Ext.isGecko) {
+            cls.push('ext-gecko');
+        }
+        Ext.fly(bd, '_internal').addClass(cls);
+        return true;
+    };
+    if (!initExtCss()) {
+        Ext.onReady(initExtCss);
+    }
 })();

@@ -1,0 +1,916 @@
+<?xml version='1.0' encoding="iso-8859-1" standalone="no" ?>
+<!DOCTYPE WMT_MS_Capabilities SYSTEM "http://schemas.opengis.net/wms/1.1.1/WMS_MS_Capabilities.dtd"
+ [
+ <!ELEMENT VendorSpecificCapabilities EMPTY>
+ ]>  <!-- end of DOCTYPE declaration -->
+
+<WMT_MS_Capabilities version="1.1.1">
+
+<!-- MapServer version 5.4.0-rc2 OUTPUT=GIF OUTPUT=PNG OUTPUT=JPEG OUTPUT=WBMP OUTPUT=SVG SUPPORTS=PROJ SUPPORTS=AGG SUPPORTS=FREETYPE SUPPORTS=ICONV SUPPORTS=WMS_SERVER SUPPORTS=WMS_CLIENT SUPPORTS=WFS_SERVER SUPPORTS=WFS_CLIENT SUPPORTS=WCS_SERVER SUPPORTS=SOS_SERVER SUPPORTS=GEOS SUPPORTS=RGBA_PNG INPUT=EPPL7 INPUT=POSTGIS INPUT=OGR INPUT=GDAL INPUT=SHAPEFILE -->
+
+<Service>
+  <Name>OGC:WMS</Name>
+  <Title>La Base de données géographiques et administratives</Title>
+  <Abstract></Abstract>
+        <KeywordList>
+          <Keyword>La Base de données géographiques et administratives</Keyword>
+          <Keyword> BDGA</Keyword>
+        </KeywordList>
+  <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://dev4.mapgears.com/cgi-bin/mswms_bdga?"/>
+  <ContactInformation>
+    <ContactPersonPrimary>
+      <ContactPerson></ContactPerson>
+      <ContactOrganization>Ministère de la sécurité publique du Québec</ContactOrganization>
+    </ContactPersonPrimary>
+      <ContactPosition></ContactPosition>
+    <ContactAddress>
+        <AddressType>postal</AddressType>
+        <Address>2525, boul. Laurier, 10e étage</Address>
+        <City>Québec</City>
+        <StateOrProvince>Quebec</StateOrProvince>
+        <PostCode>G1V2L2</PostCode>
+        <Country>Canada</Country>
+    </ContactAddress>
+      <ContactVoiceTelephone></ContactVoiceTelephone>
+      <ContactFacsimileTelephone></ContactFacsimileTelephone>
+  <ContactElectronicMailAddress></ContactElectronicMailAddress>
+  </ContactInformation>
+  <Fees>Aucun</Fees>
+  <AccessConstraints>L&#39;utilisation des données de ce service WMS est sujette aux conditions d&#39;utilisation stipulées par l&#39;entente ou l&#39;accord de licence entre Le Ministère de la sécurité publique(MSP) et son propriétaire.  Ce service WMS est diffusé selon les informations fournies par le propriétaire et n&#39;a aucune valeur légale. Le Ministère de la sécurité publique n&#39;est pas responsable des erreurs qui pourraient s&#39;y retrouver.</AccessConstraints>
+</Service>
+
+<Capability>
+  <Request>
+    <GetCapabilities>
+      <Format>application/vnd.ogc.wms_xml</Format>
+      <DCPType>
+        <HTTP>
+          <Get><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://dev4.mapgears.com/cgi-bin/mswms_bdga?"/></Get>
+          <Post><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://dev4.mapgears.com/cgi-bin/mswms_bdga?"/></Post>
+        </HTTP>
+      </DCPType>
+    </GetCapabilities>
+    <GetMap>
+      <Format>image/png</Format>
+      <Format>image/gif</Format>
+      <Format>image/png; mode=24bit</Format>
+      <Format>image/jpeg</Format>
+      <Format>image/vnd.wap.wbmp</Format>
+      <Format>image/tiff</Format>
+      <Format>image/svg+xml</Format>
+      <DCPType>
+        <HTTP>
+          <Get><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://dev4.mapgears.com/cgi-bin/mswms_bdga?"/></Get>
+          <Post><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://dev4.mapgears.com/cgi-bin/mswms_bdga?"/></Post>
+        </HTTP>
+      </DCPType>
+    </GetMap>
+    <GetFeatureInfo>
+      <Format>text/plain</Format>
+      <Format>text/html</Format>
+      <Format>application/vnd.ogc.gml</Format>
+      <DCPType>
+        <HTTP>
+          <Get><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://dev4.mapgears.com/cgi-bin/mswms_bdga?"/></Get>
+          <Post><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://dev4.mapgears.com/cgi-bin/mswms_bdga?"/></Post>
+        </HTTP>
+      </DCPType>
+    </GetFeatureInfo>
+    <DescribeLayer>
+      <Format>text/xml</Format>
+      <DCPType>
+        <HTTP>
+          <Get><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://dev4.mapgears.com/cgi-bin/mswms_bdga?"/></Get>
+          <Post><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://dev4.mapgears.com/cgi-bin/mswms_bdga?"/></Post>
+        </HTTP>
+      </DCPType>
+    </DescribeLayer>
+    <GetLegendGraphic>
+      <Format>image/png</Format>
+      <Format>image/gif</Format>
+      <Format>image/png; mode=24bit</Format>
+      <Format>image/jpeg</Format>
+      <Format>image/vnd.wap.wbmp</Format>
+      <DCPType>
+        <HTTP>
+          <Get><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://dev4.mapgears.com/cgi-bin/mswms_bdga?"/></Get>
+          <Post><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://dev4.mapgears.com/cgi-bin/mswms_bdga?"/></Post>
+        </HTTP>
+      </DCPType>
+    </GetLegendGraphic>
+    <GetStyles>
+      <Format>text/xml</Format>
+      <DCPType>
+        <HTTP>
+          <Get><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://dev4.mapgears.com/cgi-bin/mswms_bdga?"/></Get>
+          <Post><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://dev4.mapgears.com/cgi-bin/mswms_bdga?"/></Post>
+        </HTTP>
+      </DCPType>
+    </GetStyles>
+  </Request>
+  <Exception>
+    <Format>application/vnd.ogc.se_xml</Format>
+    <Format>application/vnd.ogc.se_inimage</Format>
+    <Format>application/vnd.ogc.se_blank</Format>
+  </Exception>
+  <VendorSpecificCapabilities />
+  <UserDefinedSymbolization SupportSLD="1" UserLayer="0" UserStyle="1" RemoteWFS="0"/>
+  <Layer>
+    <Name>BDGA</Name>
+    <Title>La Base de données géographiques et administratives</Title>
+    <SRS>EPSG:2036</SRS>
+    <SRS>EPSG:2037</SRS>
+    <SRS>EPSG:2148</SRS>
+    <SRS>EPSG:2149</SRS>
+    <SRS>EPSG:2150</SRS>
+    <SRS>EPSG:4269</SRS>
+    <SRS>EPSG:4326</SRS>
+    <SRS>EPSG:26917</SRS>
+    <SRS>EPSG:26918</SRS>
+    <SRS>EPSG:26919</SRS>
+    <SRS>EPSG:26920</SRS>
+    <SRS>EPSG:32183</SRS>
+    <SRS>EPSG:32184</SRS>
+    <SRS>EPSG:32185</SRS>
+    <SRS>EPSG:32186</SRS>
+    <SRS>EPSG:32187</SRS>
+    <SRS>EPSG:32188</SRS>
+    <SRS>EPSG:32189</SRS>
+    <SRS>EPSG:32190</SRS>
+    <SRS>EPSG:42105</SRS>
+    <SRS>EPSG:32198</SRS>
+    <SRS>EPSG:42304</SRS>
+    <SRS>EPSG:900913</SRS>
+    <LatLonBoundingBox minx="-90.2178" miny="42.8632" maxx="-46.7822" maxy="64.2855" />
+    <BoundingBox SRS="EPSG:32198"
+                minx="-1.1e+06" miny="-23500" maxx="1.1e+06" maxy="2.2535e+06" />
+    <Attribution>
+        <Title>Service pour la sécurité publique</Title>
+        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.msp.gouv.qc.ca/"/>
+        <LogoURL width="211" height="85">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://www.msp.gouv.qc.ca/imgsite/piv/entete_msp_drapeau.gif"/>
+          </LogoURL>
+    </Attribution>
+    <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>background</Name>
+<!-- WARNING: Mandatory metadata '..._title' was missing in this context. -->
+        <Title>background</Title>
+<!-- WARNING: Mandatory mapfile parameter '(at least one of) MAP.PROJECTION, LAYER.PROJECTION or wms_srs metadata' was missing in this context. -->
+        <!-- WARNING: Optional LatLonBoundingBox could not be established for this layer.  Consider setting LAYER.EXTENT or wms_extent metadata. Also check that your data exists in the DATA statement -->
+    </Layer>
+    <Layer>
+      <Name>bdga</Name>
+      <Title>Carte topographique</Title>
+      <Abstract>bdga</Abstract>
+      <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>BDGA_HABIT_S_POLY</Name>
+        <Title>Zones habitées</Title>
+        <Abstract>(1/4 000 000)</Abstract>
+        <KeywordList>
+          <Keyword></Keyword>
+        </KeywordList>
+        <SRS>EPSG:4326</SRS>
+        <SRS>EPSG:2036</SRS>
+        <SRS>EPSG:2037</SRS>
+        <SRS>EPSG:2148</SRS>
+        <SRS>EPSG:2149</SRS>
+        <SRS>EPSG:2150</SRS>
+        <SRS>EPSG:4269</SRS>
+        <SRS>EPSG:26917</SRS>
+        <SRS>EPSG:26918</SRS>
+        <SRS>EPSG:26919</SRS>
+        <SRS>EPSG:26920</SRS>
+        <SRS>EPSG:32183</SRS>
+        <SRS>EPSG:32184</SRS>
+        <SRS>EPSG:32185</SRS>
+        <SRS>EPSG:32186</SRS>
+        <SRS>EPSG:32187</SRS>
+        <SRS>EPSG:32188</SRS>
+        <SRS>EPSG:32189</SRS>
+        <SRS>EPSG:32190</SRS>
+        <SRS>EPSG:32198</SRS>
+        <SRS>EPSG:42105</SRS>
+        <SRS>EPSG:42304</SRS>
+        <SRS>EPSG:900913</SRS>
+        <LatLonBoundingBox minx="-90.2178" miny="42.8632" maxx="-46.7822" maxy="64.2855" />
+        <BoundingBox SRS="EPSG:32198"
+                    minx="-1.1e+06" miny="-23500" maxx="1.1e+06" maxy="2.2535e+06" />
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="133" height="23">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://dev4.mapgears.com/cgi-bin/mswms_bdga?version=1.1.1&amp;service=WMS&amp;request=GetLegendGraphic&amp;layer=BDGA_HABIT_S_POLY&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <ScaleHint min="0" max="2000.60042220284" />
+      </Layer>
+      <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>BDGA_HYDRO_L_ARC</Name>
+        <Title>Rivières</Title>
+        <Abstract>(1/1 000 000)</Abstract>
+        <KeywordList>
+          <Keyword></Keyword>
+        </KeywordList>
+        <SRS>EPSG:2036</SRS>
+        <SRS>EPSG:2037</SRS>
+        <SRS>EPSG:2148</SRS>
+        <SRS>EPSG:2149</SRS>
+        <SRS>EPSG:2150</SRS>
+        <SRS>EPSG:4269</SRS>
+        <SRS>EPSG:4326</SRS>
+        <SRS>EPSG:26917</SRS>
+        <SRS>EPSG:26918</SRS>
+        <SRS>EPSG:26919</SRS>
+        <SRS>EPSG:26920</SRS>
+        <SRS>EPSG:32183</SRS>
+        <SRS>EPSG:32184</SRS>
+        <SRS>EPSG:32185</SRS>
+        <SRS>EPSG:32186</SRS>
+        <SRS>EPSG:32187</SRS>
+        <SRS>EPSG:32188</SRS>
+        <SRS>EPSG:32189</SRS>
+        <SRS>EPSG:32190</SRS>
+        <SRS>EPSG:32198</SRS>
+        <SRS>EPSG:42105</SRS>
+        <SRS>EPSG:42304</SRS>
+        <SRS>EPSG:900913</SRS>
+        <LatLonBoundingBox minx="-90.2178" miny="42.8632" maxx="-46.7822" maxy="64.2855" />
+        <BoundingBox SRS="EPSG:32198"
+                    minx="-1.1e+06" miny="-23500" maxx="1.1e+06" maxy="2.2535e+06" />
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="147" height="41">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://dev4.mapgears.com/cgi-bin/mswms_bdga?version=1.1.1&amp;service=WMS&amp;request=GetLegendGraphic&amp;layer=BDGA_HYDRO_L_ARC&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <ScaleHint min="0" max="250.449229911678" />
+      </Layer>
+      <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>BDGA_ENERG_L_ARC</Name>
+        <Title>Énergie</Title>
+        <Abstract>(1/1 000 000)</Abstract>
+        <KeywordList>
+          <Keyword></Keyword>
+        </KeywordList>
+        <SRS>EPSG:2036</SRS>
+        <SRS>EPSG:2037</SRS>
+        <SRS>EPSG:2148</SRS>
+        <SRS>EPSG:2149</SRS>
+        <SRS>EPSG:2150</SRS>
+        <SRS>EPSG:4269</SRS>
+        <SRS>EPSG:4326</SRS>
+        <SRS>EPSG:26917</SRS>
+        <SRS>EPSG:26918</SRS>
+        <SRS>EPSG:26919</SRS>
+        <SRS>EPSG:26920</SRS>
+        <SRS>EPSG:32183</SRS>
+        <SRS>EPSG:32184</SRS>
+        <SRS>EPSG:32185</SRS>
+        <SRS>EPSG:32186</SRS>
+        <SRS>EPSG:32187</SRS>
+        <SRS>EPSG:32188</SRS>
+        <SRS>EPSG:32189</SRS>
+        <SRS>EPSG:32190</SRS>
+        <SRS>EPSG:32198</SRS>
+        <SRS>EPSG:42105</SRS>
+        <SRS>EPSG:42304</SRS>
+        <SRS>EPSG:900913</SRS>
+        <LatLonBoundingBox minx="-90.2178" miny="42.8632" maxx="-46.7822" maxy="64.2855" />
+        <BoundingBox SRS="EPSG:32198"
+                    minx="-1.1e+06" miny="-23500" maxx="1.1e+06" maxy="2.2535e+06" />
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="231" height="23">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://dev4.mapgears.com/cgi-bin/mswms_bdga?version=1.1.1&amp;service=WMS&amp;request=GetLegendGraphic&amp;layer=BDGA_ENERG_L_ARC&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <ScaleHint min="0" max="501.397362671785" />
+      </Layer>
+      <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>BDGA_TRANS_L_ARC</Name>
+        <Title>Transport</Title>
+        <Abstract>(1/1 000 000)</Abstract>
+        <KeywordList>
+          <Keyword></Keyword>
+        </KeywordList>
+        <SRS>EPSG:2036</SRS>
+        <SRS>EPSG:2037</SRS>
+        <SRS>EPSG:2148</SRS>
+        <SRS>EPSG:2149</SRS>
+        <SRS>EPSG:2150</SRS>
+        <SRS>EPSG:4269</SRS>
+        <SRS>EPSG:4326</SRS>
+        <SRS>EPSG:26917</SRS>
+        <SRS>EPSG:26918</SRS>
+        <SRS>EPSG:26919</SRS>
+        <SRS>EPSG:26920</SRS>
+        <SRS>EPSG:32183</SRS>
+        <SRS>EPSG:32184</SRS>
+        <SRS>EPSG:32185</SRS>
+        <SRS>EPSG:32186</SRS>
+        <SRS>EPSG:32187</SRS>
+        <SRS>EPSG:32188</SRS>
+        <SRS>EPSG:32189</SRS>
+        <SRS>EPSG:32190</SRS>
+        <SRS>EPSG:32198</SRS>
+        <SRS>EPSG:42105</SRS>
+        <SRS>EPSG:42304</SRS>
+        <SRS>EPSG:900913</SRS>
+        <LatLonBoundingBox minx="-90.2178" miny="42.8632" maxx="-46.7822" maxy="64.2855" />
+        <BoundingBox SRS="EPSG:32198"
+                    minx="-1.1e+06" miny="-23500" maxx="1.1e+06" maxy="2.2535e+06" />
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="112" height="41">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://dev4.mapgears.com/cgi-bin/mswms_bdga?version=1.1.1&amp;service=WMS&amp;request=GetLegendGraphic&amp;layer=BDGA_TRANS_L_ARC&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <ScaleHint min="0" max="501.397362671785" />
+      </Layer>
+      <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>BDGA_HABIT_P_POINT</Name>
+        <Title>Ville</Title>
+        <Abstract>(1/1 000 000)</Abstract>
+        <KeywordList>
+          <Keyword></Keyword>
+        </KeywordList>
+        <SRS>EPSG:2036</SRS>
+        <SRS>EPSG:2037</SRS>
+        <SRS>EPSG:2148</SRS>
+        <SRS>EPSG:2149</SRS>
+        <SRS>EPSG:2150</SRS>
+        <SRS>EPSG:4269</SRS>
+        <SRS>EPSG:4326</SRS>
+        <SRS>EPSG:26917</SRS>
+        <SRS>EPSG:26918</SRS>
+        <SRS>EPSG:26919</SRS>
+        <SRS>EPSG:26920</SRS>
+        <SRS>EPSG:32183</SRS>
+        <SRS>EPSG:32184</SRS>
+        <SRS>EPSG:32185</SRS>
+        <SRS>EPSG:32186</SRS>
+        <SRS>EPSG:32187</SRS>
+        <SRS>EPSG:32188</SRS>
+        <SRS>EPSG:32189</SRS>
+        <SRS>EPSG:32190</SRS>
+        <SRS>EPSG:32198</SRS>
+        <SRS>EPSG:42105</SRS>
+        <SRS>EPSG:42304</SRS>
+        <SRS>EPSG:900913</SRS>
+        <LatLonBoundingBox minx="-90.2178" miny="42.8632" maxx="-46.7822" maxy="64.2855" />
+        <BoundingBox SRS="EPSG:32198"
+                    minx="-1.1e+06" miny="-23500" maxx="1.1e+06" maxy="2.2535e+06" />
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="280" height="113">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://dev4.mapgears.com/cgi-bin/mswms_bdga?version=1.1.1&amp;service=WMS&amp;request=GetLegendGraphic&amp;layer=BDGA_HABIT_P_POINT&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <ScaleHint min="0" max="1002.79472534357" />
+      </Layer>
+      <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>BDGA_TRANS_P_POINT</Name>
+        <Title>Transport point</Title>
+        <Abstract>(1/1 000 000)</Abstract>
+        <KeywordList>
+          <Keyword></Keyword>
+        </KeywordList>
+        <SRS>EPSG:2036</SRS>
+        <SRS>EPSG:2037</SRS>
+        <SRS>EPSG:2148</SRS>
+        <SRS>EPSG:2149</SRS>
+        <SRS>EPSG:2150</SRS>
+        <SRS>EPSG:4269</SRS>
+        <SRS>EPSG:4326</SRS>
+        <SRS>EPSG:26917</SRS>
+        <SRS>EPSG:26918</SRS>
+        <SRS>EPSG:26919</SRS>
+        <SRS>EPSG:26920</SRS>
+        <SRS>EPSG:32183</SRS>
+        <SRS>EPSG:32184</SRS>
+        <SRS>EPSG:32185</SRS>
+        <SRS>EPSG:32186</SRS>
+        <SRS>EPSG:32187</SRS>
+        <SRS>EPSG:32188</SRS>
+        <SRS>EPSG:32189</SRS>
+        <SRS>EPSG:32190</SRS>
+        <SRS>EPSG:32198</SRS>
+        <SRS>EPSG:42105</SRS>
+        <SRS>EPSG:42304</SRS>
+        <SRS>EPSG:900913</SRS>
+        <LatLonBoundingBox minx="-90.2178" miny="42.8632" maxx="-46.7822" maxy="64.2855" />
+        <BoundingBox SRS="EPSG:32198"
+                    minx="-1.1e+06" miny="-23500" maxx="1.1e+06" maxy="2.2535e+06" />
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="98" height="41">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://dev4.mapgears.com/cgi-bin/mswms_bdga?version=1.1.1&amp;service=WMS&amp;request=GetLegendGraphic&amp;layer=BDGA_TRANS_P_POINT&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <ScaleHint min="0" max="501.397362671785" />
+      </Layer>
+    </Layer>
+    <Layer>
+      <Name>hydro_poly</Name>
+      <Title>Carte topographique</Title>
+      <Abstract>hydro_poly</Abstract>
+      <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>BDGA_HYDRO_S_POLY</Name>
+        <Title>Fleuve, lacs, rivières</Title>
+        <Abstract>(1/4 000 000)</Abstract>
+        <KeywordList>
+          <Keyword></Keyword>
+        </KeywordList>
+        <SRS>EPSG:2036</SRS>
+        <SRS>EPSG:2037</SRS>
+        <SRS>EPSG:2148</SRS>
+        <SRS>EPSG:2149</SRS>
+        <SRS>EPSG:2150</SRS>
+        <SRS>EPSG:4269</SRS>
+        <SRS>EPSG:4326</SRS>
+        <SRS>EPSG:26917</SRS>
+        <SRS>EPSG:26918</SRS>
+        <SRS>EPSG:26919</SRS>
+        <SRS>EPSG:26920</SRS>
+        <SRS>EPSG:32183</SRS>
+        <SRS>EPSG:32184</SRS>
+        <SRS>EPSG:32185</SRS>
+        <SRS>EPSG:32186</SRS>
+        <SRS>EPSG:32187</SRS>
+        <SRS>EPSG:32188</SRS>
+        <SRS>EPSG:32189</SRS>
+        <SRS>EPSG:32190</SRS>
+        <SRS>EPSG:32198</SRS>
+        <SRS>EPSG:42105</SRS>
+        <SRS>EPSG:42304</SRS>
+        <SRS>EPSG:900913</SRS>
+        <LatLonBoundingBox minx="-90.2178" miny="42.8632" maxx="-46.7822" maxy="64.2855" />
+        <BoundingBox SRS="EPSG:32198"
+                    minx="-1.1e+06" miny="-23500" maxx="1.1e+06" maxy="2.2535e+06" />
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="189" height="59">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://dev4.mapgears.com/cgi-bin/mswms_bdga?version=1.1.1&amp;service=WMS&amp;request=GetLegendGraphic&amp;layer=BDGA_HYDRO_S_POLY&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+      </Layer>
+      <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>BDGA_HYDRO_S_ARC</Name>
+        <Title>Limites hydrographique</Title>
+        <Abstract>(1/4 000 000)</Abstract>
+        <KeywordList>
+          <Keyword></Keyword>
+        </KeywordList>
+        <SRS>EPSG:2036</SRS>
+        <SRS>EPSG:2037</SRS>
+        <SRS>EPSG:2148</SRS>
+        <SRS>EPSG:2149</SRS>
+        <SRS>EPSG:2150</SRS>
+        <SRS>EPSG:4269</SRS>
+        <SRS>EPSG:4326</SRS>
+        <SRS>EPSG:26917</SRS>
+        <SRS>EPSG:26918</SRS>
+        <SRS>EPSG:26919</SRS>
+        <SRS>EPSG:26920</SRS>
+        <SRS>EPSG:32183</SRS>
+        <SRS>EPSG:32184</SRS>
+        <SRS>EPSG:32185</SRS>
+        <SRS>EPSG:32186</SRS>
+        <SRS>EPSG:32187</SRS>
+        <SRS>EPSG:32188</SRS>
+        <SRS>EPSG:32189</SRS>
+        <SRS>EPSG:32190</SRS>
+        <SRS>EPSG:32198</SRS>
+        <SRS>EPSG:42105</SRS>
+        <SRS>EPSG:42304</SRS>
+        <SRS>EPSG:900913</SRS>
+        <LatLonBoundingBox minx="-90.2178" miny="42.8632" maxx="-46.7822" maxy="64.2855" />
+        <BoundingBox SRS="EPSG:32198"
+                    minx="-1.1e+06" miny="-23500" maxx="1.1e+06" maxy="2.2535e+06" />
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="175" height="23">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://dev4.mapgears.com/cgi-bin/mswms_bdga?version=1.1.1&amp;service=WMS&amp;request=GetLegendGraphic&amp;layer=BDGA_HYDRO_S_ARC&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <ScaleHint min="0" max="2000.60042220284" />
+      </Layer>
+    </Layer>
+    <Layer>
+      <Name>admin</Name>
+      <Title>Découpage administratif</Title>
+      <Abstract>admin</Abstract>
+      <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>BDGA_MUNIC_S_POLY_1M</Name>
+        <Title>Municipalité</Title>
+        <Abstract></Abstract>
+        <KeywordList>
+          <Keyword></Keyword>
+        </KeywordList>
+        <SRS>EPSG:2036</SRS>
+        <SRS>EPSG:2037</SRS>
+        <SRS>EPSG:2148</SRS>
+        <SRS>EPSG:2149</SRS>
+        <SRS>EPSG:2150</SRS>
+        <SRS>EPSG:4269</SRS>
+        <SRS>EPSG:4326</SRS>
+        <SRS>EPSG:26917</SRS>
+        <SRS>EPSG:26918</SRS>
+        <SRS>EPSG:26919</SRS>
+        <SRS>EPSG:26920</SRS>
+        <SRS>EPSG:32183</SRS>
+        <SRS>EPSG:32184</SRS>
+        <SRS>EPSG:32185</SRS>
+        <SRS>EPSG:32186</SRS>
+        <SRS>EPSG:32187</SRS>
+        <SRS>EPSG:32188</SRS>
+        <SRS>EPSG:32189</SRS>
+        <SRS>EPSG:32190</SRS>
+        <SRS>EPSG:32198</SRS>
+        <SRS>EPSG:42105</SRS>
+        <SRS>EPSG:42304</SRS>
+        <SRS>EPSG:900913</SRS>
+        <LatLonBoundingBox minx="-90.2178" miny="42.8632" maxx="-46.7822" maxy="64.2855" />
+        <BoundingBox SRS="EPSG:32198"
+                    minx="-1.1e+06" miny="-23500" maxx="1.1e+06" maxy="2.2535e+06" />
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="119" height="23">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://dev4.mapgears.com/cgi-bin/mswms_bdga?version=1.1.1&amp;service=WMS&amp;request=GetLegendGraphic&amp;layer=BDGA_MUNIC_S_POLY_1M&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <ScaleHint min="4.98902848429637" max="99.7805696859274" />
+      </Layer>
+      <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>BDGA_MRC_S_POLY_1M</Name>
+        <Title>Municipalité régionale de compté</Title>
+        <Abstract>(1/1 000 000)</Abstract>
+        <KeywordList>
+          <Keyword></Keyword>
+        </KeywordList>
+        <SRS>EPSG:32198</SRS>
+        <SRS>EPSG:2036</SRS>
+        <SRS>EPSG:2037</SRS>
+        <SRS>EPSG:2148</SRS>
+        <SRS>EPSG:2149</SRS>
+        <SRS>EPSG:2150</SRS>
+        <SRS>EPSG:4269</SRS>
+        <SRS>EPSG:4326</SRS>
+        <SRS>EPSG:26917</SRS>
+        <SRS>EPSG:26918</SRS>
+        <SRS>EPSG:26919</SRS>
+        <SRS>EPSG:26920</SRS>
+        <SRS>EPSG:32183</SRS>
+        <SRS>EPSG:32184</SRS>
+        <SRS>EPSG:32185</SRS>
+        <SRS>EPSG:32186</SRS>
+        <SRS>EPSG:32187</SRS>
+        <SRS>EPSG:32188</SRS>
+        <SRS>EPSG:32189</SRS>
+        <SRS>EPSG:32190</SRS>
+        <SRS>EPSG:42105</SRS>
+        <SRS>EPSG:42304</SRS>
+        <SRS>EPSG:900913</SRS>
+        <LatLonBoundingBox minx="-90.2178" miny="42.8632" maxx="-46.7822" maxy="64.2855" />
+        <BoundingBox SRS="EPSG:32198"
+                    minx="-1.1e+06" miny="-23500" maxx="1.1e+06" maxy="2.2535e+06" />
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="56" height="77">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://dev4.mapgears.com/cgi-bin/mswms_bdga?version=1.1.1&amp;service=WMS&amp;request=GetLegendGraphic&amp;layer=BDGA_MRC_S_POLY_1M&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <ScaleHint min="0" max="2000.60042220284" />
+      </Layer>
+      <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>BDGA_REGIO_S_POLY_1M</Name>
+        <Title>Région administrative</Title>
+        <Abstract>Province de Québec (1/1 000 000)</Abstract>
+        <KeywordList>
+          <Keyword></Keyword>
+        </KeywordList>
+        <SRS>EPSG:2036</SRS>
+        <SRS>EPSG:2037</SRS>
+        <SRS>EPSG:2148</SRS>
+        <SRS>EPSG:2149</SRS>
+        <SRS>EPSG:2150</SRS>
+        <SRS>EPSG:4269</SRS>
+        <SRS>EPSG:4326</SRS>
+        <SRS>EPSG:26917</SRS>
+        <SRS>EPSG:26918</SRS>
+        <SRS>EPSG:26919</SRS>
+        <SRS>EPSG:26920</SRS>
+        <SRS>EPSG:32183</SRS>
+        <SRS>EPSG:32184</SRS>
+        <SRS>EPSG:32185</SRS>
+        <SRS>EPSG:32186</SRS>
+        <SRS>EPSG:32187</SRS>
+        <SRS>EPSG:32188</SRS>
+        <SRS>EPSG:32189</SRS>
+        <SRS>EPSG:32190</SRS>
+        <SRS>EPSG:32198</SRS>
+        <SRS>EPSG:42105</SRS>
+        <SRS>EPSG:42304</SRS>
+        <SRS>EPSG:900913</SRS>
+        <LatLonBoundingBox minx="-90.2178" miny="42.8632" maxx="-46.7822" maxy="64.2855" />
+        <BoundingBox SRS="EPSG:32198"
+                    minx="-1.1e+06" miny="-23500" maxx="1.1e+06" maxy="2.2535e+06" />
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="182" height="77">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://dev4.mapgears.com/cgi-bin/mswms_bdga?version=1.1.1&amp;service=WMS&amp;request=GetLegendGraphic&amp;layer=BDGA_REGIO_S_POLY_1M&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <ScaleHint min="125.224614955839" max="0" />
+        <!-- WARNING: Only MINSCALEDENOM and no MAXSCALEDENOM specified in the mapfile. A default value of 0 has been returned for the Max ScaleHint but this is probably not what you want. -->
+      </Layer>
+      <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>BDGA_REGIO_S_POLY_1M_2M</Name>
+        <Title>Région administrative 2M</Title>
+        <Abstract>Province de Québec (1/1 000 000)</Abstract>
+        <KeywordList>
+          <Keyword></Keyword>
+        </KeywordList>
+        <SRS>EPSG:2036</SRS>
+        <SRS>EPSG:2037</SRS>
+        <SRS>EPSG:2148</SRS>
+        <SRS>EPSG:2149</SRS>
+        <SRS>EPSG:2150</SRS>
+        <SRS>EPSG:4269</SRS>
+        <SRS>EPSG:4326</SRS>
+        <SRS>EPSG:26917</SRS>
+        <SRS>EPSG:26918</SRS>
+        <SRS>EPSG:26919</SRS>
+        <SRS>EPSG:26920</SRS>
+        <SRS>EPSG:32183</SRS>
+        <SRS>EPSG:32184</SRS>
+        <SRS>EPSG:32185</SRS>
+        <SRS>EPSG:32186</SRS>
+        <SRS>EPSG:32187</SRS>
+        <SRS>EPSG:32188</SRS>
+        <SRS>EPSG:32189</SRS>
+        <SRS>EPSG:32190</SRS>
+        <SRS>EPSG:32198</SRS>
+        <SRS>EPSG:42105</SRS>
+        <SRS>EPSG:42304</SRS>
+        <SRS>EPSG:900913</SRS>
+        <LatLonBoundingBox minx="-90.2178" miny="42.8632" maxx="-46.7822" maxy="64.2855" />
+        <BoundingBox SRS="EPSG:32198"
+                    minx="-1.1e+06" miny="-23500" maxx="1.1e+06" maxy="2.2535e+06" />
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="203" height="23">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://dev4.mapgears.com/cgi-bin/mswms_bdga?version=1.1.1&amp;service=WMS&amp;request=GetLegendGraphic&amp;layer=BDGA_REGIO_S_POLY_1M_2M&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <ScaleHint min="498.902848429637" max="1002.79472534357" />
+      </Layer>
+      <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>BDGA_REGIO_S_POLY_1M_4M</Name>
+        <Title>Région administrative 4M</Title>
+        <Abstract>Province de Québec (1/1 000 000)</Abstract>
+        <KeywordList>
+          <Keyword></Keyword>
+        </KeywordList>
+        <SRS>EPSG:2036</SRS>
+        <SRS>EPSG:2037</SRS>
+        <SRS>EPSG:2148</SRS>
+        <SRS>EPSG:2149</SRS>
+        <SRS>EPSG:2150</SRS>
+        <SRS>EPSG:4269</SRS>
+        <SRS>EPSG:4326</SRS>
+        <SRS>EPSG:26917</SRS>
+        <SRS>EPSG:26918</SRS>
+        <SRS>EPSG:26919</SRS>
+        <SRS>EPSG:26920</SRS>
+        <SRS>EPSG:32183</SRS>
+        <SRS>EPSG:32184</SRS>
+        <SRS>EPSG:32185</SRS>
+        <SRS>EPSG:32186</SRS>
+        <SRS>EPSG:32187</SRS>
+        <SRS>EPSG:32188</SRS>
+        <SRS>EPSG:32189</SRS>
+        <SRS>EPSG:32190</SRS>
+        <SRS>EPSG:32198</SRS>
+        <SRS>EPSG:42105</SRS>
+        <SRS>EPSG:42304</SRS>
+        <SRS>EPSG:900913</SRS>
+        <LatLonBoundingBox minx="-90.2178" miny="42.8632" maxx="-46.7822" maxy="64.2855" />
+        <BoundingBox SRS="EPSG:32198"
+                    minx="-1.1e+06" miny="-23500" maxx="1.1e+06" maxy="2.2535e+06" />
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="203" height="23">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://dev4.mapgears.com/cgi-bin/mswms_bdga?version=1.1.1&amp;service=WMS&amp;request=GetLegendGraphic&amp;layer=BDGA_REGIO_S_POLY_1M_4M&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <ScaleHint min="997.805696859274" max="2000.60042220284" />
+      </Layer>
+      <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>BDGA_REGIO_S_POLY_1M_8M</Name>
+        <Title>Région administrative 8M</Title>
+        <Abstract>Province de Québec (1/1 000 000)</Abstract>
+        <KeywordList>
+          <Keyword></Keyword>
+        </KeywordList>
+        <SRS>EPSG:2036</SRS>
+        <SRS>EPSG:2037</SRS>
+        <SRS>EPSG:2148</SRS>
+        <SRS>EPSG:2149</SRS>
+        <SRS>EPSG:2150</SRS>
+        <SRS>EPSG:4269</SRS>
+        <SRS>EPSG:4326</SRS>
+        <SRS>EPSG:26917</SRS>
+        <SRS>EPSG:26918</SRS>
+        <SRS>EPSG:26919</SRS>
+        <SRS>EPSG:26920</SRS>
+        <SRS>EPSG:32183</SRS>
+        <SRS>EPSG:32184</SRS>
+        <SRS>EPSG:32185</SRS>
+        <SRS>EPSG:32186</SRS>
+        <SRS>EPSG:32187</SRS>
+        <SRS>EPSG:32188</SRS>
+        <SRS>EPSG:32189</SRS>
+        <SRS>EPSG:32190</SRS>
+        <SRS>EPSG:32198</SRS>
+        <SRS>EPSG:42105</SRS>
+        <SRS>EPSG:42304</SRS>
+        <SRS>EPSG:900913</SRS>
+        <LatLonBoundingBox minx="-90.2178" miny="42.8632" maxx="-46.7822" maxy="64.2855" />
+        <BoundingBox SRS="EPSG:32198"
+                    minx="-1.1e+06" miny="-23500" maxx="1.1e+06" maxy="2.2535e+06" />
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="203" height="23">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://dev4.mapgears.com/cgi-bin/mswms_bdga?version=1.1.1&amp;service=WMS&amp;request=GetLegendGraphic&amp;layer=BDGA_REGIO_S_POLY_1M_8M&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <ScaleHint min="1995.61139371855" max="4001.20084440569" />
+      </Layer>
+      <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>BDGA_REGIO_S_POLY_1M_13M</Name>
+        <Title>Région administrative 13M</Title>
+        <Abstract>Province de Québec (1/1 000 000)</Abstract>
+        <KeywordList>
+          <Keyword></Keyword>
+        </KeywordList>
+        <SRS>EPSG:2036</SRS>
+        <SRS>EPSG:2037</SRS>
+        <SRS>EPSG:2148</SRS>
+        <SRS>EPSG:2149</SRS>
+        <SRS>EPSG:2150</SRS>
+        <SRS>EPSG:4269</SRS>
+        <SRS>EPSG:4326</SRS>
+        <SRS>EPSG:26917</SRS>
+        <SRS>EPSG:26918</SRS>
+        <SRS>EPSG:26919</SRS>
+        <SRS>EPSG:26920</SRS>
+        <SRS>EPSG:32183</SRS>
+        <SRS>EPSG:32184</SRS>
+        <SRS>EPSG:32185</SRS>
+        <SRS>EPSG:32186</SRS>
+        <SRS>EPSG:32187</SRS>
+        <SRS>EPSG:32188</SRS>
+        <SRS>EPSG:32189</SRS>
+        <SRS>EPSG:32190</SRS>
+        <SRS>EPSG:32198</SRS>
+        <SRS>EPSG:42105</SRS>
+        <SRS>EPSG:42304</SRS>
+        <SRS>EPSG:900913</SRS>
+        <LatLonBoundingBox minx="-90.2178" miny="42.8632" maxx="-46.7822" maxy="64.2855" />
+        <BoundingBox SRS="EPSG:32198"
+                    minx="-1.1e+06" miny="-23500" maxx="1.1e+06" maxy="2.2535e+06" />
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="210" height="23">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://dev4.mapgears.com/cgi-bin/mswms_bdga?version=1.1.1&amp;service=WMS&amp;request=GetLegendGraphic&amp;layer=BDGA_REGIO_S_POLY_1M_13M&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <ScaleHint min="3991.2227874371" max="0" />
+        <!-- WARNING: Only MINSCALEDENOM and no MAXSCALEDENOM specified in the mapfile. A default value of 0 has been returned for the Max ScaleHint but this is probably not what you want. -->
+      </Layer>
+    </Layer>
+    <Layer>
+      <Name>roads</Name>
+      <Title>Carte topographique</Title>
+      <Abstract>roads</Abstract>
+      <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>BDGA_ROUTE_L_ARC</Name>
+        <Title>Routes</Title>
+        <Abstract>(1/1 000 000)</Abstract>
+        <KeywordList>
+          <Keyword></Keyword>
+        </KeywordList>
+        <SRS>EPSG:32198</SRS>
+        <SRS>EPSG:2036</SRS>
+        <SRS>EPSG:2037</SRS>
+        <SRS>EPSG:2148</SRS>
+        <SRS>EPSG:2149</SRS>
+        <SRS>EPSG:2150</SRS>
+        <SRS>EPSG:4269</SRS>
+        <SRS>EPSG:4326</SRS>
+        <SRS>EPSG:26917</SRS>
+        <SRS>EPSG:26918</SRS>
+        <SRS>EPSG:26919</SRS>
+        <SRS>EPSG:26920</SRS>
+        <SRS>EPSG:32183</SRS>
+        <SRS>EPSG:32184</SRS>
+        <SRS>EPSG:32185</SRS>
+        <SRS>EPSG:32186</SRS>
+        <SRS>EPSG:32187</SRS>
+        <SRS>EPSG:32188</SRS>
+        <SRS>EPSG:32189</SRS>
+        <SRS>EPSG:32190</SRS>
+        <SRS>EPSG:42105</SRS>
+        <SRS>EPSG:42304</SRS>
+        <SRS>EPSG:900913</SRS>
+        <LatLonBoundingBox minx="-90.2178" miny="42.8632" maxx="-46.7822" maxy="64.2855" />
+        <BoundingBox SRS="EPSG:32198"
+                    minx="-1.1e+06" miny="-23500" maxx="1.1e+06" maxy="2.2535e+06" />
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="147" height="257">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://dev4.mapgears.com/cgi-bin/mswms_bdga?version=1.1.1&amp;service=WMS&amp;request=GetLegendGraphic&amp;layer=BDGA_ROUTE_L_ARC&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <ScaleHint min="0" max="1002.79472534357" />
+      </Layer>
+      <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>BDGA_ROUTE_L_ARC_ANNO</Name>
+        <Title>Routes annotation</Title>
+        <Abstract>(1/1 000 000)</Abstract>
+        <KeywordList>
+          <Keyword></Keyword>
+        </KeywordList>
+        <SRS>EPSG:2036</SRS>
+        <SRS>EPSG:2037</SRS>
+        <SRS>EPSG:2148</SRS>
+        <SRS>EPSG:2149</SRS>
+        <SRS>EPSG:2150</SRS>
+        <SRS>EPSG:4269</SRS>
+        <SRS>EPSG:4326</SRS>
+        <SRS>EPSG:26917</SRS>
+        <SRS>EPSG:26918</SRS>
+        <SRS>EPSG:26919</SRS>
+        <SRS>EPSG:26920</SRS>
+        <SRS>EPSG:32183</SRS>
+        <SRS>EPSG:32184</SRS>
+        <SRS>EPSG:32185</SRS>
+        <SRS>EPSG:32186</SRS>
+        <SRS>EPSG:32187</SRS>
+        <SRS>EPSG:32188</SRS>
+        <SRS>EPSG:32189</SRS>
+        <SRS>EPSG:32190</SRS>
+        <SRS>EPSG:32198</SRS>
+        <SRS>EPSG:42105</SRS>
+        <SRS>EPSG:42304</SRS>
+        <SRS>EPSG:900913</SRS>
+        <LatLonBoundingBox minx="-90.2178" miny="42.8632" maxx="-46.7822" maxy="64.2855" />
+        <BoundingBox SRS="EPSG:32198"
+                    minx="-1.1e+06" miny="-23500" maxx="1.1e+06" maxy="2.2535e+06" />
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="119" height="113">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://dev4.mapgears.com/cgi-bin/mswms_bdga?version=1.1.1&amp;service=WMS&amp;request=GetLegendGraphic&amp;layer=BDGA_ROUTE_L_ARC_ANNO&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <ScaleHint min="0" max="501.397362671785" />
+      </Layer>
+    </Layer>
+  </Layer>
+</Capability>
+</WMT_MS_Capabilities>

@@ -19,50 +19,50 @@ abstract class AbstractUpdater {
   /** [Optional] a path to add to end of both to and from */
   String path
   /** [Optional] if non-null it is the directory name of one of the root projects */
-	String from
-	/** File to write the updated/created file to.  This is relative to the directory containing the generated files */
-	String to
-	/** [Optional] if non-null it is the directory name of one of the root projects */
-	String fromProject
-	
-	protected def getParams() {
-	  return Parameters.get
+  String from
+  /** File to write the updated/created file to.  This is relative to the directory containing the generated files */
+  String to
+  /** [Optional] if non-null it is the directory name of one of the root projects */
+  String fromProject
+
+  protected def getParams() {
+    return Parameters.get
   }
-	
-	protected File getFromFile() {
-	  if(from == null) {
-	    return null;
-	  }
-	  def fromFile;
 
-	  if(fromProject != null) {
-	    fromFile = new File(params.basedirFile.parent+("/$fromProject/$from").replace('/', File.separator))
-	  } else {
-	    fromFile = new File(params.basedirFile, from.replace('/', File.separator))
-	  }
+  protected File getFromFile() {
+    if(from == null) {
+      return null;
+    }
+    def fromFile;
 
-	  if (path != null) {
-	    fromFile = new File(fromFile, path.replace('/',File.separator))
-	  }
+    if(fromProject != null) {
+      fromFile = new File(params.basedirFile.parent+("/$fromProject/$from").replace('/', File.separator))
+    } else {
+      fromFile = new File(params.basedirFile, from.replace('/', File.separator))
+    }
 
-	  assert fromFile.exists(), "from file: $fromFile does not exist"
-	  
-	  return fromFile;
-	}
-	
-		
-	protected File getToFile() {
-	  assert to !=null, "the to file cannot be null"
+    if (path != null) {
+      fromFile = new File(fromFile, path.replace('/',File.separator))
+    }
 
-	  def toFile = new File(params.outputDir, to.replace('/', File.separator))
+    assert fromFile.exists(), "from file: $fromFile does not exist"
 
-	  if (path != null) {
-	    toFile = new File(toFile, path.replace('/',File.separator))
-	  }
+    return fromFile;
+  }
 
-	  toFile.parentFile.mkdirs()
-	  
-	  return toFile;
-	}
-	
+
+  protected File getToFile() {
+    assert to !=null, "the to file cannot be null"
+
+    def toFile = new File(params.outputDir, to.replace('/', File.separator))
+
+    if (path != null) {
+      toFile = new File(toFile, path.replace('/',File.separator))
+    }
+
+    toFile.parentFile.mkdirs()
+
+    return toFile;
+  }
+
 }

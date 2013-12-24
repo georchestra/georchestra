@@ -31,6 +31,8 @@
  * @include OpenLayers/Filter/Logical.js
  * @include OpenLayers/Format/Filter.js
  * @include OpenLayers/Format/XML.js
+ // see https://github.com/georchestra/georchestra/issues/482 :
+ * @include OpenLayers/Format/WKT.js
  * @include OpenLayers/Control/ModifyFeature.js
  * @include OpenLayers/Control/DrawFeature.js
  * @include OpenLayers/Handler/Point.js
@@ -136,6 +138,8 @@ GEOR.querier = (function() {
      */
     var tr = null;
 
+    var name = null;
+
     /**
      * Method: checkFilter
      * Checks that a filter is not missing items.
@@ -219,7 +223,9 @@ GEOR.querier = (function() {
 
                 observable.fireEvent("searchresults", {
                     features: response.features,
-                    model: model
+                    model: model,
+                    tooltip: name + " - " + tr("WFS GetFeature on filter"),
+                    title: GEOR.util.shortenLayerName(name)
                 });
             },
             scope: this
@@ -232,6 +238,7 @@ GEOR.querier = (function() {
      */
     var buildPanel = function(layerName, r) {
         record = r;
+        name = layerName;
         observable.fireEvent("ready", {
             xtype: 'gx_filterbuilder',
             title: tr("Request on NAME", {
@@ -307,8 +314,9 @@ GEOR.querier = (function() {
          * layerName - {String} the "nice" layer name.
          * record - {GeoExt.data.LayerRecord} a WMSDescribeLayer record
          *          with at least three fields "owsURL", "typeName" and "featureNS"
+         * success - {Function} optional success callback
          */
-        create: function(layerName, record) {
+        create: function(layerName, record, success) {
             GEOR.waiter.show();
             attStore = GEOR.ows.WFSDescribeFeatureType(record, {
                 extractFeatureNS: true,
@@ -322,6 +330,9 @@ GEOR.querier = (function() {
                         var r = attStore.getAt(idx);
                         geometryName = r.get('name');
                         attStore.remove(r);
+                        if (success) {
+                            success.call(this);
+                        }
                         buildPanel(layerName, record);
                     } else {
                         GEOR.util.infoDialog({

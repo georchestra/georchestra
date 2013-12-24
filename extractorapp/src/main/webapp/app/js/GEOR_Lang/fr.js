@@ -23,7 +23,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Enter a valid email address: ": "Saisissez une adresse email valide : ",
     "The email address is not valid. Stopping extraction.":
         "L'email n'est pas valide. Abandon de l'extraction.",
-    "Not any layer in the cart": "Aucune couche dans le panier",
+    "No layer in the cart": "Aucune couche dans le panier",
     "You did not select any layer for extracting. Extract all ?":
         "Vous n'avez pas sélectionné de couche pour l'extraction. " +
         "Tout extraire ?",
@@ -77,7 +77,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     /* GEOR_config.js */
     "None": "Aucun",
     "BUFFER meters": "${BUFFER} mètres",
-    "1 kilometer": "1 kilomètre",
+    "BUFFER kilometer": "${BUFFER} kilomètre",
     "BUFFER kilometers": "${BUFFER} kilomètres",
     /* GEOR_data.js */
     /* GEOR_dlform.js */
@@ -218,6 +218,6 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     /* BoundingBoxPanel.js */
     "Modify the bounding box": "Modifier cette emprise",
     "Modify the bounding box drawing a new one on the map":
-        "Modifier l'emprise en en dessinant une nouvelle sur la carte",
+        "Modifier l'emprise en en dessinant une nouvelle sur la carte"
     // no trailing comma
 });

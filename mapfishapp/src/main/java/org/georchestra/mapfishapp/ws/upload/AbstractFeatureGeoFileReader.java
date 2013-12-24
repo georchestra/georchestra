@@ -6,143 +6,220 @@ package org.georchestra.mapfishapp.ws.upload;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-
 /**
- * Defines the abstract interface (Bridge Pattern). This class is responsible of create the implementation OGR or Geotools for the 
- * feature reader. Thus the client don't need to create a specific reader implementation.
+ * Defines the abstract interface (Bridge Pattern). This class is responsible of
+ * create the implementation OGR or Geotools for the feature reader. Thus the
+ * client don't need to create a specific reader implementation.
  * 
  * @author Mauricio Pazos
  */
-class AbstractFeatureGeoFileReader implements FeatureGeoFileReader{
+class AbstractFeatureGeoFileReader implements FeatureGeoFileReader {
 
-	/** check if the OGR implementation is live */
-	private static boolean OGR_AVAILABLE;
-	static{
-		OGR_AVAILABLE = OGRFeatureReader.isOK();
-	}
+    private static final Log       LOG        = LogFactory
+                                                      .getLog(AbstractFeatureGeoFileReader.class
+                                                              .getPackage()
+                                                              .getName());
 
-	protected FeatureGeoFileReader readerImpl = null;
+    protected FeatureGeoFileReader readerImpl = null;
 
-	/**
-	 * Creates a new instance of {@link AbstractFeatureGeoFileReader}.
-	 * 
-	 * @param basedir file to read
-	 * @param fileFormat the format
-	 */
-	public AbstractFeatureGeoFileReader() {
-		this.readerImpl = createImplementationStrategy();
-	}
-	
+    private FeatureGeoFileReader getReaderImpl() {
 
-	/**
-	 * Creates a new instance of {@link AbstractFeatureGeoFileReader}. The reader will use the implementation provided as parameter.
-	 * 
-	 * @param impl
-	 */
-	public AbstractFeatureGeoFileReader(FeatureGeoFileReader impl) {
-		
-		this.readerImpl = impl;
-	}
+        LOG.info("Using implementation: "
+                + this.readerImpl.getClass().getName());
+        return this.readerImpl;
+    }
 
-	/**
-	 * @return the list of available format depending on the reader implementation.
-	 */
-	@Override
-	public FileFormat[] getFormatList(){
+    private void setReaderImpl(FeatureGeoFileReader readerImpl) {
 
-		return this.readerImpl.getFormatList();
-	}
+        LOG.info("It was set: " + readerImpl.getClass().getName());
 
+        this.readerImpl = readerImpl;
+    }
 
-	/**
-	 * Returns the feature collection contained by the file.
-	 * 
-	 * @param file
-	 * @param fileFormat
-	 * @param targetCrs crs used to reproject the returned feature collection
-	 * 
-	 * @return {@link SimpleFeatureCollection}
-	 * 
-	 * @throws IOException
-	 * @throws UnsupportedGeofileFormatException 
-	 */
-	@Override
-	public SimpleFeatureCollection getFeatureCollection(final File file, final FileFormat fileFormat) throws IOException, UnsupportedGeofileFormatException {
+    /**
+     * Creates a new instance of {@link AbstractFeatureGeoFileReader}.
+     * 
+     * <p>
+     * The default implementation will be OGR if it was installed in the system.
+     * </p>
+     * 
+     * @param basedir
+     *            file to read
+     * @param fileFormat
+     *            the format
+     */
+    public AbstractFeatureGeoFileReader() {
+        setReaderImpl(createImplementationStrategy());
+    }
 
-		return getFeatureCollection(file, fileFormat, null);
-	}
+    /**
+     * Creates a new instance of {@link AbstractFeatureGeoFileReader}. The
+     * reader will use the implementation provided as parameter.
+     * 
+     * @param impl
+     */
+    public AbstractFeatureGeoFileReader(FeatureGeoFileReader impl) {
 
-	/**
-	 * Returns the feature collection contained by the file. The features will be reprojected to the target CRS
-	 * 
-	 * @param file path and file name
-	 * @param fileFormat 
-	 * @param targetCrs crs used to reproject the returned feature collection
-	 * 
-	 * @return {@link SimpleFeatureCollection}
-	 * @throws IOException
-	 * @throws UnsupportedGeofileFormatException 
-	 */
-	@Override
-	public SimpleFeatureCollection getFeatureCollection(final File file, final FileFormat fileFormat, final CoordinateReferenceSystem targetCrs) throws IOException, UnsupportedGeofileFormatException {
-		
-		try{
-			return  this.readerImpl.getFeatureCollection(file, fileFormat, targetCrs);
-			
-		} catch(IOException e){
+        setReaderImpl(impl);
+    }
 
-			if (!(this.readerImpl instanceof GeotoolsFeatureReader)) {
-				// switches to geotools implementation
+    /**
+     * @return the list of available format depending on the reader
+     *         implementation.
+     */
+    @Override
+    public FileFormat[] getFormatList() {
 
-				OGR_AVAILABLE = false;
-				this.readerImpl = new GeotoolsFeatureReader();
+        return getReaderImpl().getFormatList();
+    }
 
-				// now try to read using the geotools implementation
-				try {
-					return this.readerImpl.getFeatureCollection(file, fileFormat, targetCrs);
-					
-				} catch (UnsupportedGeofileFormatException gtUnsupoortFileFormat) {
-					throw gtUnsupoortFileFormat;
-				}
-			} else {
-				// it is Geotools implementation, so this class cannot manage the exception;
-				throw new IOException(e);
-			}
-				
-		} catch (UnsupportedGeofileFormatException e) {
-			throw e;
-		}
-	}
+    /**
+     * Returns the feature collection contained by the file.
+     * 
+     * @param file
+     * @param fileFormat
+     * @param targetCrs
+     *            crs used to reproject the returned feature collection
+     * 
+     * @return {@link SimpleFeatureCollection}
+     * 
+     * @throws IOException
+     * @throws UnsupportedGeofileFormatException
+     */
+    @Override
+    public SimpleFeatureCollection getFeatureCollection(final File file,
+            final FileFormat fileFormat) throws IOException,
+            UnsupportedGeofileFormatException {
 
-	/**
-	 * Selects which of the implementations must be created.
-	 */
-	private static FeatureGeoFileReader createImplementationStrategy(){
+        return getFeatureCollection(file, fileFormat, null);
+    }
 
-		FeatureGeoFileReader implementor = null; 
-		if( isOgrAvailable() ){
+    /**
+     * Returns the feature collection contained by the file. The features will
+     * be reprojected to the target CRS
+     * 
+     * @param file
+     *            path and file name
+     * @param fileFormat
+     * @param targetCrs
+     *            crs used to reproject the returned feature collection
+     * 
+     * @return {@link SimpleFeatureCollection}
+     * @throws IOException
+     * @throws UnsupportedGeofileFormatException
+     */
+    @Override
+    public SimpleFeatureCollection getFeatureCollection(final File file,
+            final FileFormat fileFormat,
+            final CoordinateReferenceSystem targetCrs) throws IOException,
+            UnsupportedGeofileFormatException {
 
-			implementor = new OGRFeatureReader();
+        try {
+            return getReaderImpl().getFeatureCollection(file, fileFormat,
+                    targetCrs);
 
-		} else { // by default the geotools implementation is created
+        } catch (UnsupportedGeofileFormatException e) {
 
-			implementor = new GeotoolsFeatureReader();
-		}
-		return implementor;
-	}
+            throw e;
 
+        } catch (RuntimeException e) {
 
-	/**
-	 * Decides what is the implementation must be instantiate.
-	 *  
-	 * @return true if ogr is available in the platform.
-	 */
-	private static boolean isOgrAvailable() {
-		
-		return OGR_AVAILABLE;
-	}
+            // if an error was found and the current implementation is the OGR
+            // the implementation then it will be changed to geotools (only for
+            // this operation)
+            if (this.readerImpl instanceof OGRFeatureReader) {
+
+                LOG.info("OGRFeatureReader fail. Try using the geotools implementation: "
+                        + readerImpl.getClass().getName());
+
+                FeatureGeoFileReader savedReader = this.readerImpl;
+                setReaderImpl(new GeotoolsFeatureReader());
+
+                // if the format is available in geotools then the last read
+                // operation will be re-executed.
+                if (getReaderImpl().isSupportedFormat(fileFormat)) {
+
+                    SimpleFeatureCollection features = getReaderImpl()
+                            .getFeatureCollection(file, fileFormat, targetCrs);
+
+                    setReaderImpl(savedReader);
+
+                    return features;
+
+                } else {
+
+                    setReaderImpl(savedReader);
+
+                    throw new UnsupportedGeofileFormatException(
+                            "The format is not supported by geotools implementation");
+                }
+            } else {
+
+                throw e; // geotools implementation fails
+
+            }
+        }
+
+    }
+
+    /**
+     * Selects which of the implementations must be created.
+     */
+    private static FeatureGeoFileReader createImplementationStrategy() {
+
+        FeatureGeoFileReader ogrReader = null;
+
+        // checks the OGR status
+        if (OGRFeatureReader.isOK()) {
+
+            try {
+                ogrReader = new OGRFeatureReader();
+
+            } catch (IOException e) {
+                LOG.info("It cannot create OGR implementation, Geotools will be set.");
+            }
+        }
+        // if the ogr implementation cannot be created the use the Geotools
+        // implementation.
+        if (ogrReader == null) {
+            return new GeotoolsFeatureReader();
+        }
+
+        // Decides what is the better implementation.
+        // OGR will be better implementation than Geotools if and only if the
+        // OGR contains all geotools formats. (In other words, geotools formats
+        // are a subset of ogr)
+        FileFormat[] ogrFormats = ogrReader.getFormatList();
+
+        FeatureGeoFileReader gtReader = new GeotoolsFeatureReader();
+        FileFormat[] gtFormats = gtReader.getFormatList();
+
+        for (FileFormat gtFormat : gtFormats) {
+
+            boolean found = false;
+            for (FileFormat ogrFormat : ogrFormats) {
+
+                if (gtFormat.equals(ogrFormat)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                return gtReader;
+            }
+        }
+        return ogrReader;
+    }
+
+    @Override
+    public boolean isSupportedFormat(FileFormat fileFormat) {
+
+        return this.readerImpl.isSupportedFormat(fileFormat);
+    }
 
 }

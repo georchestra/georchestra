@@ -504,17 +504,17 @@ GEOR.styler = (function() {
             ),
             pointGraphics: [
                 {display: tr("circle"), value: "circle", mark: true,
-                 preview: "lib/styler/theme/img/circle.gif"},
+                 preview: "lib/externals/styler/theme/img/circle.gif"},
                 {display: tr("square"), value: "square", mark: true,
-                 preview: "lib/styler/theme/img/square.gif"},
+                 preview: "lib/externals/styler/theme/img/square.gif"},
                 {display: tr("triangle"), value: "triangle", mark: true,
-                 preview: "lib/styler/theme/img/triangle.gif"},
+                 preview: "lib/externals/styler/theme/img/triangle.gif"},
                 {display: tr("star"), value: "star", mark: true,
-                 preview: "lib/styler/theme/img/star.gif"},
+                 preview: "lib/externals/styler/theme/img/star.gif"},
                 {display: tr("cross"), value: "cross", mark: true,
-                 preview: "lib/styler/theme/img/cross.gif"},
+                 preview: "lib/externals/styler/theme/img/cross.gif"},
                 {display: tr("x"), value: "x", mark: true,
-                 preview: "lib/styler/theme/img/x.gif"},
+                 preview: "lib/externals/styler/theme/img/x.gif"},
                 {display: tr("customized...")}
             ],
             symbolType: Styler.Util.getSymbolTypeFromRule(rule),
@@ -626,6 +626,12 @@ GEOR.styler = (function() {
         mask.msg = tr("Classification ...<br/>(this operation can take " +
             "some time)");
         mask.show();
+        
+        // HACK: since GeoTools WFSDatasource doesn't support WFS 2.0.0, 
+        // we must use an earlier WFS version to make Styler work.
+        params.wfs_url = OpenLayers.Util.urlAppend(params.wfs_url, 
+            "VERSION=1.0.0");
+        
         OpenLayers.Request.POST({
             url: "ws/sld/",
             data: Ext.util.JSON.encode(params),
@@ -872,7 +878,6 @@ GEOR.styler = (function() {
             // clear cache:
             symbolType = null;
             mask = null;
-
             wmsLayerRecord = layerRecord;
 
             /*
@@ -898,7 +903,13 @@ GEOR.styler = (function() {
                     handler: dlStyle
                 },{
                     text: tr("Apply"),
-                    handler: applyStyling
+                    handler: function() {
+                        // we're done, apply styling
+                        // to layer
+                        applyStyling(function(ok){
+                            return;
+                        });
+                    }
                 }],
                 listeners: {
                     "afterrender": function() {
@@ -911,55 +922,39 @@ GEOR.styler = (function() {
             });
             win.show();
 
+            var recordType = Ext.data.Record.create([
+                {name: "featureNS", type: "string"},
+                {name: "WFSVersion", type: "string"},
+                {name: "owsURL", type: "string"},
+                {name: "typeName", type: "string"}
+            ]);
+            var data = {
+                "owsURL": layerRecord.get("WFS_URL"),
+                "typeName": layerRecord.get("WFS_typeName")
+            };
+            wfsInfo = new recordType(data);
 
-            /*
-             * trigger in cascade: WMS DescribeLayer,
-             * WFS DescribeFeatureType, and the
-             * initialization of the styler window.
-             */
-
-            GEOR.ows.WMSDescribeLayer(layerRecord, {
+            // store a reference to the store in a
+            // private attribute of the instance
+            attributes = GEOR.ows.WFSDescribeFeatureType(wfsInfo, {
                 success: function(st, recs, opts) {
-                    // store the WFS information in a private
-                    // attribute of the instance
-                    wfsInfo = GEOR.ows.getWfsInfo(recs);
-                    if (!wfsInfo) {
-                        mask && mask.hide();
-                        giveup([ // FIXME: one key translation
-                            tr("Impossible to complete the operation:"),
-                            tr("not any WFS service associated to that layer")
-                        ].join(" "));
+                    // extract & remove geometry column name
+                    var idx = st.find('type', GEOR.ows.matchGeomProperty);
+                    if (idx > -1) {
+                        // we have a geometry
+                        var r = st.getAt(idx);
+                        geometryName = r.get('name');
+                        st.remove(r);
+                    }
+                    if (st.getCount() > 0) {
+                        // we have at least one attribute that we can style
+                        getSymbolType(initStyler);
                     } else {
-                        var store = GEOR.ows.WFSDescribeFeatureType(wfsInfo, {
-                            success: function(st, recs, opts) {
-                                // extract & remove geometry column name
-                                var idx = st.find('type', GEOR.ows.matchGeomProperty);
-                                if (idx > -1) {
-                                    // we have a geometry
-                                    var r = st.getAt(idx);
-                                    geometryName = r.get('name');
-                                    st.remove(r);
-                                }
-                                if (st.getCount() > 0) {
-                                    // we have at least one attribute that we can style
-                                    getSymbolType(initStyler);
-                                } else {
-                                    // give up
-                                    giveup([ // FIXME: one key translation
-                                        tr("Impossible to complete the " +
-                                            "operation:"),
-                                        tr("not any available attribute")
-                                    ].join(" "));
-                                }
-                            },
-                            failure: function() {
-                                mask && mask.hide();
-                                win.close();
-                            }
-                        });
-                        // store a reference to the store in a
-                        // private attribute of the instance
-                        attributes = store;
+                        // give up
+                        giveup([
+                            tr("Impossible to complete the operation:"),
+                            tr("no available attribute")
+                        ].join(" "));
                     }
                 },
                 failure: function() {

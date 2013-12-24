@@ -22,28 +22,53 @@
  * @include OpenLayers/Control/PinchZoom.js
  * @include OpenLayers/Control/LoadingPanel.js
  * @include OpenLayers/Kinetic.js
+ * @requires OpenLayers/Layer/Grid.js
  * @include OpenLayers/Layer/WMS.js
- * @include OpenLayers/Layer/XYZ.js
+ * @include OpenLayers/Layer/OSM.js
+ * @include OpenLayers/Layer/Grid.js
+ * @include OpenLayers/BaseTypes/Size.js
  * @include GeoExt/data/LayerRecord.js
  * @include GeoExt/data/LayerStore.js
  * @include GEOR_config.js
+ * @include GEOR_util.js
  * @include GEOR_ows.js
  * @include GEOR_wmc.js
  */
 
 Ext.namespace("GEOR");
 
+// see comment below regarding opaque layers and also
+// https://github.com/georchestra/georchestra/issues/411
+OpenLayers.Layer.Grid.prototype.transitionEffect = null;
+
 GEOR.map = (function() {
 
     /*
      * Private
      */
+    var observable = new Ext.util.Observable();
+    observable.addEvents(
+        /**
+         * Event: describelayer
+         * Fires when a layer is described 
+         *
+         * Listener arguments:
+         * record - {GeoExt.data.LayerRecord}
+         */
+        "describelayer"
+    );
 
     /**
      * Property: map
      * {OpenLayers.Map} The map
      */
     var map = null;
+
+    /**
+     * Property: ls
+     * {GeoExt.data.LayerStore}
+     */
+    var ls = null;
 
     /**
      * Constant: SCALES
@@ -66,9 +91,27 @@ GEOR.map = (function() {
      * {OpenLayers.Layer} The unique base layer in this app.
      */
     var createMainBaseLayer = function() {
-        return new OpenLayers.Layer("base_layer", {
+        
+        // Grid of blank images of 1024x1024
+        return new OpenLayers.Layer.Grid("base_layer", '', null, {
+            singleTile: false,
             displayInLayerSwitcher: false,
-            isBaseLayer: true
+            isBaseLayer: true,
+            tileSize: new OpenLayers.Size(1024, 1024),
+            getURL: function() {
+                return [
+                    'data:image/png;base64,iVBORw0KGgoAAAANSUhEU',
+                    'gAABAAAAAQAAQMAAABF07nAAAAAAXNSR0IArs4c6QAA',
+                    'AANQTFRF////p8QbyAAAAAFiS0dEAIgFHUgAAAAJcEh',
+                    'ZcwAACxMAAAsTAQCanBgAAAAHdElNRQfdCQMOJQp/aX',
+                    'w9AAAAlklEQVR42u3BAQEAAACCIP+vbkhAAQAAAAAAA',
+                    'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+                    'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+                    'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+                    'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADvBgQeAAEN3',
+                    'jhkAAAAAElFTkSuQmCC'
+                ].join(''); 
+            }
         });
     };
 
@@ -95,21 +138,16 @@ GEOR.map = (function() {
                 },
                 title: tr("Location map"),
                 minRectSize: 10,
-                // with these settings, a unique OSM zoom level is displayed:
-                minRatio: 1,
-                maxRatio: 100000,
+                minRatio: 32,
+                maxRatio: 128,
                 layers: [
                     new OpenLayers.Layer.OSM("_OSM", [
                         'http://a'+u, 'http://b'+u, 'http://c'+u
                     ], {
                         transitionEffect: 'resize',
                         buffer: 0,
-                        // do not fetch useless low zoom level tiles:
-                        maxResolution: 9783.939619141,
-                        numZoomLevels: 15,
-                        zoomOffset: 4,
                         attribution: [
-                            "(c) <a href='http://openstreetmap.org/'>OSM</a>",
+                            "(c) <a href='http://www.openstreetmap.org/copyright'>OSM</a>",
                             "<a href='http://creativecommons.org/licenses/by-sa/2.0/'>by-sa</a>"
                         ].join(' ')
                     })
@@ -212,60 +250,69 @@ GEOR.map = (function() {
                 errors.push(error);
             }
 
-            /*
-            Lesson learned with http://applis-bretagne.fr/redmine/issues/2886 :
-            Do not try to be more intelligent than the WMS server
-
-            // Note: queryable is required in addition to opaque,
-            // because opaque is not a standard WMC feature
-            // This enables us to remove rasters from legend panel
-            if (r.get("opaque") === true || r.get("queryable") === false) {
-                // this record is valid, set its "hideInLegend"
-                // data field to true if the corresponding layer
-                // is a raster layer, i.e. its "opaque" data
-                // field is true
-                r.set("hideInLegend", true);
-                // we set opaque to true so that non queryable
-                // layers are considered as baselayers
-                r.set("opaque", true);
-            }
-            */
-            // Note that the ultimate solution would be to do a getCapabilities
-            // request for each OGC server advertised in the WMC
-
-            if (r.get("opaque") === true) {
-                // an opaque layer can be considered as a baselayer
-                // as a result, we apply a transitionEffect, which suits well for baselayers
-                r.get('layer').transitionEffect = 'resize';
-            }
-
-            // Format attribution if required:
-            var attr = r.get('attribution');
             var layer = r.get('layer');
-            if (!attr || !attr.title) {
-                var a, 
-                    // handle both wms & wfs layers
-                    url = layer.url || (layer.protocol && layer.protocol.url);
-                if (url) {
-                    var b = OpenLayers.Util.createUrlObject(url);
-                    if (b && b.host) {
-                        a = b.host;
-                    }
-                }
-                r.set('attribution', {
-                    title: a
-                });
-            }
+            // r.get('layer').transitionEffect = resize would have been set in WMC,
+            // not by the default openlayers GRID layer type,
+            // see the overriding in the first lines of this file.
+            layer.transitionEffect =
+                (r.get("opaque") === true || layer.transitionEffect === 'resize') ?
+                'resize' : 'map-resize';
+            // note: an opaque layer can be considered as a baselayer
+            // as a result, we apply a transitionEffect, which suits well for baselayers
 
-            // set layer.metadataURL if record has metadataURLs
-            // so that this can be saved in a WMC context
-            if (r.get('metadataURLs') && r.get('metadataURLs')[0]) {
-                layer.metadataURL = [r.get('metadataURLs')[0]];
+            // force map scales, see https://github.com/georchestra/georchestra/issues/431
+            // this is required to get initResolutions() working:
+            layer.options.scales = GEOR.config.MAP_SCALES;
+
+            // Set layer.metadataURL if record has metadataURLs
+            // so that this can be saved in a WMC context.
+            // Saving the first occurence whose format matches text/html
+            // see https://github.com/georchestra/georchestra/issues/454
+            var murls = r.get("metadataURLs");
+            if (murls && murls.length > 0) {
+                var murl = murls[0];
+                // default to first entry
+                layer.metadataURL = (murl.href) ? murl.href : murl;
+                Ext.each(murls, function(murl) {
+                    // prefer text/html format if found
+                    if (murl.format && murl.format == 'text/html') {
+                        layer.metadataURL = (murl.href) ? murl.href : murl;
+                        return false; // stop looping
+                    }
+                });
             }
 
             // Errors should be non-blocking since http://applis-bretagne.fr/redmine/issues/1749
             // so we "keep" every layer, and only display a warning message
             keep.push(r);
+
+            // WMSDescribeLayer for each new WMS Layer
+            if (r.get("type") == "WMS" && r.get("_described") !== true) {
+                GEOR.waiter.show();
+                GEOR.ows.WMSDescribeLayer(r, {
+                    success: function(store, records) {
+                        var wfsRecord = GEOR.ows.getWfsInfo(records);
+                        if (wfsRecord) {
+                            r.set("WFS_typeName", wfsRecord.get("typeName"));
+                            r.set("WFS_URL", wfsRecord.get("owsURL"));
+                        }
+                        var wcsRecord = GEOR.ows.getWcsInfo(records);
+                        if (wcsRecord) {
+                            r.set("WCS_typeName", wcsRecord.get("typeName"));
+                            r.set("WCS_URL", wcsRecord.get("owsURL"));
+                        }
+                        r.set("_described", true);
+                        // fire event to let the whole app know about it.
+                        observable.fireEvent("describelayer", r);
+                    },
+                    failure: function() {
+                        r.set("_described", true);
+                        // fire event
+                        observable.fireEvent("describelayer", r);
+                    },
+                    scope: this
+                });
+            }
         });
 
         if (errors.length > 0) {
@@ -329,12 +376,12 @@ GEOR.map = (function() {
      * {GeoExt.data.LayerStore} The global layer store.
      */
     var createLayerStore = function() {
-        var recordType = GeoExt.data.LayerRecord.create(
+        var recordType = GEOR.util.createRecordType(
             GEOR.ows.getRecordFields()
         );
         map = createMap();
 
-        var ls = new LayerStore({
+        ls = new LayerStore({
             map: map,
             sortInfo: {
                 // opaque layers at the bottom
@@ -345,13 +392,12 @@ GEOR.map = (function() {
             fields: recordType
         });
 
-        var layer = createMainBaseLayer();
-        ls.add([new recordType({
-                title: layer.name,
-                layer: layer
-            }, layer.id)]
-        );
-
+        var layer = createMainBaseLayer(),
+        record = new recordType({
+            title: layer.name,
+            layer: layer
+        }, layer.id);
+        ls.add([record]);
         return ls;
     };
 
@@ -360,6 +406,11 @@ GEOR.map = (function() {
      */
 
     return {
+
+        /*
+         * Observable object
+         */
+        events: observable,
 
         /**
          * APIMethod: create

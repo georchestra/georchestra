@@ -5,7 +5,7 @@ set -x
 buildpath="$(cd $(dirname $0); pwd)"
 webapppath="${buildpath}/../src/main/webapp"
 releasepath="${webapppath}/build"
-venv="${buildpath}/venv"
+venv="${buildpath}/env"
 
 #
 # Command path definitions
@@ -15,8 +15,6 @@ mkdir="/bin/mkdir"
 rm="/bin/rm"
 sh="/bin/sh"
 cp="/bin/cp"
-
-${rm} -rf "${releasepath}"
 
 #
 # build
@@ -28,16 +26,17 @@ fi
 ${mkdir} -p ${releasepath} ${releasepath}/lang
 
 (cd ${buildpath};
- if [ ! -d ${venv} ]; then
+ ${venv}/bin/jsbuild -h > /dev/null
+ if  [ ! -d ${venv} ] || [ $? -eq 0 ]; then
      echo "creating virtual env and installing jstools..."
-     ${python} go-jstools.py ${venv} --no-site-packages > /dev/null
+     rm -rf ${venv}
+     virtualenv  --no-site-packages ${venv}
+     ${venv}/bin/pip install jstools
      echo "done."
  fi;
- 
+
  echo "running jsbuild for main app..."
  ${venv}/bin/jsbuild -o "${releasepath}" main.cfg
- echo "running jsbuild for edit app..."
- ${venv}/bin/jsbuild -o "${releasepath}" edit.cfg
  echo "done.")
 
 #

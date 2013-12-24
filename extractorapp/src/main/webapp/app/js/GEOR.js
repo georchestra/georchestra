@@ -89,7 +89,7 @@ Ext.namespace("GEOR");
         if (GEOR.layerstree.getSelectedLayersCount() > 0) {
             extractHandler(this);
         } else {
-            var dialog = Ext.Msg.confirm(tr("Not any layer in the cart"),
+            var dialog = Ext.Msg.confirm(tr("No layer in the cart"),
             tr("You did not select any layer for extracting. Extract all ?"), function(btn, text){
                 if (btn == 'yes'){
                     GEOR.layerstree.selectAllLayers();
@@ -101,8 +101,13 @@ Ext.namespace("GEOR");
         }
     };
 
-    Ext.onReady(function() {
-
+    /* 
+     * In IE, document.namespaces is not loaded when Ext.onReady is triggered, that causes 
+     * an error in OpenLayers VML Loading. Need to use window.onload instead  
+     * http://stackoverflow.com/questions/1081812/javascript-unspecified-error-in-open-layers
+     */
+    window.onload = function() {
+        
         /*
          * Setting of OpenLayers global vars.
          */
@@ -306,5 +311,5 @@ Ext.namespace("GEOR");
         // we monitor ajax requests only when the layer tree has finished loading
         // so that the user is not bothered with useless popups
         GEOR.layerstree.init(map, vectorLayer, GEOR.ajaxglobal.init);
-    });
+    };
 })();

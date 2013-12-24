@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html debug="true">
+  <head>
+    <script type="text/javascript" src="http://www.openlayers.org/api/2.11/OpenLayers.js"></script>
+    <script type="text/javascript" src="http://extjs.cachefly.net/ext-3.4.0/adapter/ext/ext-base.js"></script> 
+    <script type="text/javascript" src="http://extjs.cachefly.net/ext-3.4.0/ext-all.js"></script>
+    <script type="text/javascript" src="../../../../../../geoext/lib/GeoExt.js"></script>
+    <script type="text/javascript" src="../../../lib/GeoExt.ux/Measure.js"></script>
+
+    <script type="text/javascript">
+        function test_ctor(t) {
+            t.plan(9);
+
+            // set up
+
+            var action;
+
+            var map = new OpenLayers.Map("map");
+
+            // test
+
+            action = new GeoExt.ux.Measure({
+                handlerClass: OpenLayers.Handler.Polygon,
+                template: "a template string",
+                map: map
+            });
+            t.ok(action instanceof GeoExt.ux.Measure,
+                 "ctor returns a GeoExt.ux.Measure");
+            t.ok(action instanceof GeoExt.Action,
+                 "ctor returns a GeoExt.Action");
+            t.ok(action.template instanceof Ext.XTemplate,
+                 "ctor creates an XTemplate");
+            t.ok(action.control instanceof OpenLayers.Control.Measure,
+                 "ctor creates a measure control");
+            t.ok(action.control.handler instanceof OpenLayers.Handler.Polygon,
+                 "ctor creates a measure control with correct handler type");
+            t.eq(action.control.persist, true,
+                 "ctor creates measure control with persist set to true");
+
+            action.control.activate();
+            t.ok(action.control.handler.layer.styleMap instanceof OpenLayers.StyleMap,
+                 "ctor provides a default style map for the sketch layer");
+
+            var styleMap = new OpenLayers.StyleMap();
+            action = new GeoExt.ux.Measure({
+                handlerClass: OpenLayers.Handler.Polygon,
+                template: "a template string",
+                map: map,
+                styleMap: styleMap,
+                controlOptions: {foo: "foo"}
+            });
+            action.control.activate();
+            t.ok(action.control.handler.layer.styleMap == styleMap,
+                 "ctor passes user-provider style map to sketch layer");
+            t.eq(action.control.foo, "foo",
+                 "ctor sets user-provider control options");
+
+            // tear down
+        }
+    </script>
+  <body>
+    <div id="map" style="width:600px;height:400px;"></div>
+  </body>
+</html>

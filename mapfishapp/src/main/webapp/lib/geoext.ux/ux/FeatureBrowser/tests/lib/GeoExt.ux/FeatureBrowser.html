@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html debug="true">
+  <head>
+    <script type="text/javascript" src="http://www.openlayers.org/api/2.11/OpenLayers.js"></script>
+    <script type="text/javascript" src="http://extjs.cachefly.net/ext-3.4.0/adapter/ext/ext-base.js"></script> 
+    <script type="text/javascript" src="http://extjs.cachefly.net/ext-3.4.0/ext-all.js"></script>
+    <script type="text/javascript" src="../../../../../../geoext/lib/GeoExt.js"></script>
+    <script type="text/javascript" src="../../../lib/GeoExt.ux/FeatureBrowser.js"></script>
+
+    <script type="text/javascript">
+        var features = [
+            new OpenLayers.Feature.Vector(null, {
+                foo: "foo0",
+                bar: "bar0",
+                baz: "baz0"
+            }),
+            new OpenLayers.Feature.Vector(null, {
+                foo: "foo1",
+                bar: "bar1",
+                baz: "baz1"
+            })
+        ];
+
+        function test_initialize(t) {
+            t.plan(3);
+            var browser;
+
+            browser = new GeoExt.ux.FeatureBrowser({
+                features: features
+            });
+            t.ok(browser instanceof GeoExt.ux.FeatureBrowser, "Instance created correctly");
+            t.eq(browser.items.getCount(), 2, "Correct number of items");
+            browser.destroy();
+
+            browser = new GeoExt.ux.FeatureBrowser({
+                features: [features[0]]
+            });
+            t.ok(browser.getBottomToolbar() == null, "No bbar required");
+            browser.destroy();
+        }
+
+        function test_events(t) {
+            t.plan(3);
+            var browser;
+
+            var count = 0;
+            var selectedFeature;
+            browser = new GeoExt.ux.FeatureBrowser({
+                renderTo: Ext.getBody(),
+                features: features,
+                listeners: {
+                    featureselected: function(panel, feature) {
+                        count++;
+                        selectedFeature = feature;
+                    }
+                }
+            });
+            t.ok(selectedFeature == features[0], "featureselected listener called with correct argument");
+
+            var nextBtn = Ext.getCmp('move-next' + browser.id);
+            nextBtn.handler.call(nextBtn, nextBtn, Ext.EventObject)
+            t.eq(count, 2, "featureselected event triggered twice");
+            t.ok(selectedFeature == features[1], "featureselected listener called with correct argument");
+            browser.destroy();
+        }
+
+        function test_getTemplate(t) {
+            t.plan(7);
+
+            var browser, tpl;
+            
+            // no template
+            browser = new GeoExt.ux.FeatureBrowser({
+                features: features
+            });
+            tpl = browser.getTemplateForFeature(features[0]);
+            t.eq(tpl.apply(features[0].attributes),
+                 '<div><b>foo: </b>foo0</div><div><b>bar: </b>bar0</div><div><b>baz: </b>baz0</div>',
+                "Template is correct when no template given"
+            );
+
+            // no template, with skippedFeatureAttributes
+            browser = new GeoExt.ux.FeatureBrowser({
+                features: features,
+                skippedFeatureAttributes: ["bar", "baz"]
+            });
+            tpl = browser.getTemplateForFeature(features[0]);
+            t.eq(tpl.apply(features[0].attributes),
+                 '<div><b>foo: </b>foo0</div>',
+                "Template is correct when no template given and skippedFeatureAttributes provided"
+            );
+
+            // a unique template
+            browser = new GeoExt.ux.FeatureBrowser({
+                features: features,
+                tpl: new Ext.Template('{foo}')  
+            });
+            tpl = browser.getTemplateForFeature(features[0]);
+            t.eq(tpl.apply(features[0].attributes), 'foo0',
+                "Template is correct when a template is given"
+            );
+            tpl = browser.getTemplateForFeature(features[1]);
+            t.eq(tpl.apply(features[1].attributes), 'foo1',
+                "Template is correct when a template is given"
+            );
+
+            // a hash
+            browser = new GeoExt.ux.FeatureBrowser({
+                features: features,
+                tplFeatureAttribute: 'foo',
+                tpl: {
+                    'foo0': new Ext.Template('{foo}')
+                }
+            });
+            tpl = browser.getTemplateForFeature(features[0]);
+            t.eq(tpl.apply(features[0].attributes), 'foo0',
+                "Template is correct when tpl is a hash and feature matches"
+            );
+            tpl = browser.getTemplateForFeature(features[1]);
+            t.eq(tpl.apply(features[1].attributes),
+                 '<div><b>foo: </b>foo1</div><div><b>bar: </b>bar1</div><div><b>baz: </b>baz1</div>',
+                "Template is correct when tpl is a hash and feature doesn't match"
+            );
+
+            // a hash and elseTpl defined
+            browser = new GeoExt.ux.FeatureBrowser({
+                features: features,
+                tplFeatureAttribute: 'foo',
+                elseTpl: new Ext.Template('truite'),
+                tpl: {
+                    'never': 'something'
+                }
+            });
+            tpl = browser.getTemplateForFeature(features[1]);
+            t.eq(tpl.apply(features[1].attributes), 'truite',
+                "Template is correct when tpl is a hash, elseTpl given and feature doesn't match"
+            );
+        }
+    </script>
+  <body>
+    <div id="map" style="width:600px;height:400px;"></div>
+  </body>
+</html>

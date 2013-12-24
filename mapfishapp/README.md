@@ -1,15 +1,15 @@
 Mapfishapp
 ==========
 
-Mapfishapp is geOrchestra's advanced viewer.
+Mapfishapp is geOrchestra's advanced viewer and editor.
 
 With it, you can :
- * browse through CSW, WMS & WFS services and add any layer to the current map,
+ * browse through CSW, WMTS, WMS & WFS services and add any layer to the current map,
  * upload geo files for viewing (shapefile, mif/mid, tab, kml, gml, gpx),
  * create custom SLDs and style WMS layers, 
  * query layers either with a simple tool or an advanced one supporting conditions on attributes and geometries,
  * share your map with a permalink, or save it as a WMC file and restore it later,
- * load and create custom tools for specific needs,
+ * load and create custom tools for specific needs (read [how](src/main/webapp/app/addons/README.md)),
  * export feature attributes,
  * [print](https://github.com/georchestra/template/blob/master/mapfishapp/WEB-INF/print/README.md) your map,
  * and many more ...
@@ -26,7 +26,7 @@ The application accepts several GET parameters :
  * **radius** in meters, when set in addition to the lon and lat params, allows to control the resulting zoom level,
  * **lang** can be set to any of the following : fr, en, es,
  * **debug** when set to true, the application loads unminified javascript files,
- * **noheader** when set to true, the application does not load the static header
+ * **noheader** when set to true, the application does not load the header
 
 
 It is also possible to POST a JSON string to the home controller, for instance :
@@ -66,21 +66,59 @@ Each "referential" layer should obey these simple rules:
 Feature editor
 ==============
 
-Members of the groups SV_EDITOR, SV_REVIEWER or SV_ADMIN can reach the editor at /mapfishapp/edit
+Currently, the integrated editor supports:
+ * attributes editing for all layers and geometry types (according to the feature model publicized by WFS DescribeFeatureType),
+ * drawing new points, lines and simple polygons with snapping on surrounding features.
 
-The editor looks for layers accessible via WFS-T in one GeoServer namespace (see **NS_EDIT** config option in your config's GEOR_custom.js). By default, NS_EDIT is set to "geor_edit", which means that any layer belonging to the geor_edit namespace and editable for the current user will be available.
+Every WMS layer:
+ * with a WFS equivalent service, **and**
+ * whose URL matches the GEOR.config.EDITABLE_LAYERS regexp (provided by your config) 
+... is available for edition.
 
-Currently, only points, lines and simple polygons can be digitalized, and their attributes filled according to the feature model publicized by the WFS server.
-Snapping on existing features is activated by default.
+By default:
+ * the template config provides ```GEOR.config.EDITABLE_LAYERS = /.*@shared.server.name@.*/i``` which means that all WMS layers served by the platform host will be editable.
+ * members of the ADMINISTRATOR group have the ability to see the edit functions provided by /mapfishapp/. This can be configured in GEOR_custom.js (in your profile), please have a look at the ROLES_FOR_EDIT config option.
 
-Once the update session is finished, the user can sync his work on the server. 
-Unfortunately, there is no handling of concurrent edition for now.
+In case the user does not have the rights to edit a layer, the first transaction will fail, and the changes will be lost.
 
+There is no handling of concurrent edition nor feature locking for now.
+
+NOTE: the previous **NS_EDIT** config option is deprecated
+
+Your data in mapfishapp
+========================
+
+The geOrchestra viewer is able to query your data via OGC webservices. 
+This implies that vector data is transmitted as XML over the air (via WMS getFeatureInfo or WFS getFeature).
+
+Before reporting errors, please check that your data is correct.
+
+Typically, layer names & field names should not:
+ - include spaces nor accentuated chars,
+ - start with a number.
+ 
+Browsers like IE or FF will typically fail, while Chromium might just ignore the incorrect fields.
+
+You should also take care not to insert special chars in the service description fields. Eg: ```"Service WMS de GéoPicardie - Département de l'Oise"``` will break your capabilities for IE, while it will work with ```"Service WMS de GéoPicardie - Département de lʼOise"``` or ```"Service WMS de GéoPicardie - Département de l&apos;Oise"```. GeoServer should do the mapping, but it does not at the moment.
+Here are the corresponding strings to use:
+```
+"   &quot;
+'   &apos;
+<   &lt;
+>   &gt;
+&   &amp;
+```
 
 How to run the viewer without Tomcat ?
 ======================================
 
 This mode is useful for **demo** or **development** purposes.
+
+The *first* time, you need to previously compile mapfishapp and all its dependencies
+
+    $ ./mvn -Dmaven.test.skip=true -Ptemplate -P-all,mapfishapp install;
+
+then, each time you want to test a change in the configuration or the mapfishapp module:
 
     $ cd config
     $ ../mvn -Ptemplate install
@@ -97,35 +135,3 @@ Install the [Modify Headers](https://addons.mozilla.org/en-US/firefox/addon/modi
  * sec-roles = ROLE_SV_USER or ROLE_SV_EDITOR or ROLE_SV_ADMIN
  
 Note: this works only because the security proxy is not runnning.
-
-Optional: install GDAL native library
-=====================================
-
-The file upload functionality, that allows to upload a vectorial data file to mapfishapp in order to display it as a layer, relies normally on GeoTools. However, the supported file formats are limited (at 07/12/2013: shp, mif, gml and kml). In order to increase the number of supported file formats, you can install GDAL and GDAL Java bindings libraries on the server. This would give access, for example, to extra formats such as gpx or tab.
-
-The key element for calling the GDAL native library from mapfishapp is the **imageio-ext library** (see https://github.com/geosolutions-it/imageio-ext/wiki). It relies on:
- * jar files, that are included at build by maven,
- * a GDAL Java binding library, based on the JNI framework,
- * and obviously the GDAL library.
-
-The latter can be installed, on Debian-based distributions, with the libgdal1 package:
-
-    sudo apt-get install libgdal1
-
-Some more work is needed for installing the GDAL Java binding library, as there is still no deb package for it (note that packages exist for ruby and perl bindings, hopefully the Java's one will be released soon - see a recent proposal http://ftp-master.debian.org/new/gdal_1.10.0-0%7Eexp3.html).
-
-To quickly install the GDAL Java binding library on the server, download and extract the library (see http://demo.geo-solutions.it/share/github/imageio-ext/releases/1.1.X/1.1.7/native/gdal/ for the adequate distribution). For Ubuntu 12:
-
-    cd /tmp/
-    mkdir gdal
-    cd gdal
-    wget http://demo.geo-solutions.it/share/github/imageio-ext/releases/1.1.X/1.1.7/native/gdal/linux/gdal192-Ubuntu12-gcc4.6.3-x86_64.tar.gz
-    tar xzf gdal192-Ubuntu12-gcc4.6.3-x86_64.tar.gz
-
-then copy only the necessary files to an adequate lib directory:
-
-    sudo cp libgdaljni.so libgdalconstjni.so libogrjni.so libosrjni.so /var/sig/gdal/NativeLibs/
-
-Classically, in geOrchestra installations, `/var/sig/gdal/NativeLibs/` is used for the gdal libraries, but any other directory could be used, provided it's included in the `LD_LIBRARY_PATH` environment variable, for example by setting `export LD_LIBRARY_PATH=/lib:/usr/lib/:/var/sig/gdal/NativeLibs/:$LD_LIBRARY_PATH` in the tomcat setenv.sh file.
-
-Another way to install the GDAL Java binding is building it from sources. See http://trac.osgeo.org/gdal/wiki/GdalOgrInJavaBuildInstructionsUnix.

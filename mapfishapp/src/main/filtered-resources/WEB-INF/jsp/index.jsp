@@ -9,11 +9,10 @@
 <%@ page isELIgnored="false" %>
 <%
 Boolean anonymous = true;
-Boolean editor = false;
 Boolean admin = false;
 
 String lang = request.getParameter("lang");
-if (lang == null || (!lang.equals("en") && !lang.equals("es")  && !lang.equals("fr"))) {
+if (lang == null || (!lang.equals("en") && !lang.equals("es") && !lang.equals("ru") && !lang.equals("fr"))) {
     lang = "${language}";
 }
 Locale l = new Locale(lang);
@@ -39,7 +38,6 @@ if(sec_roles != null) {
             admin = true;
         }
         if (roles[i].equals("ROLE_SV_EDITOR") || roles[i].equals("ROLE_SV_REVIEWER") || roles[i].equals("ROLE_SV_ADMIN")) {
-            editor = true;
             anonymous = false;
         }
         if (roles[i].equals("ROLE_SV_USER")) {
@@ -54,24 +52,6 @@ if(sec_roles != null) {
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="<%= lang %>" xml:lang="<%= lang %>">
 
-<c:choose>
-    <c:when test='${c.edit != null && !c.edit}'>
-<head>
-    <title>Accès refusé</title>
-</head>
-        <c:choose>
-            <c:when test='<%= anonymous == true %>'>
-    <script type="text/javascript">
-        // anonymous users cannot access this protected edit page
-        window.location = "?login";
-    </script>
-            </c:when>
-            <c:otherwise>
-    <% response.sendError(403); %>
-            </c:otherwise>
-        </c:choose>
-    </c:when>
-    <c:otherwise>
 <head>
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
@@ -92,17 +72,12 @@ if(sec_roles != null) {
             font: normal 12px arial,tahoma,sans-serif;
         }
     </style>
-<c:choose>
-    <c:when test='${c.edit != null}'>
-    <title lang="<%= lang %>" dir="ltr"><fmt:message key="title.editor"/></title>
-    </c:when>
-    <c:otherwise>
-    <title lang="<%= lang %>" dir="ltr"><fmt:message key="title.visual"/></title>
-    </c:otherwise>
-</c:choose>
+    <title lang="<%= lang %>" dir="ltr"><fmt:message key="title.visual"/> - ${instance}</title>
+
     <link rel="stylesheet" type="text/css" href="lib/externals/ext/resources/css/ext-all.css" />
     <link rel="stylesheet" type="text/css" href="lib/externals/ext/resources/css/xtheme-gray.css" />
     <link rel="stylesheet" type="text/css" href="lib/externals/styler/theme/css/styler.css" />
+    <link rel="stylesheet" type="text/css" href="lib/externals/geoext/resources/css/popup.css" />
     <link rel="stylesheet" type="text/css" href="lib/Ext.ux/lib/Ext.ux/widgets/palettecombobox/palettecombobox.ux.css" />
     <link rel="stylesheet" type="text/css" href="lib/Ext.ux/lib/Ext.ux/widgets/colorpicker/colorpicker.css" />
     <link rel="stylesheet" type="text/css" href="lib/Ext.ux/lib/Ext.ux/widgets/spinner/Spinner.css" />
@@ -144,14 +119,7 @@ if(sec_roles != null) {
         </c:when>
         <c:otherwise>
     <script type="text/javascript" src="lib/externals/ext/ext-all.js"></script>
-            <c:choose>
-                <c:when test='${c.edit}'>
-    <script type="text/javascript" src="build/mapfisheditapp.js"></script>
-                </c:when>
-                <c:otherwise>
     <script type="text/javascript" src="build/mapfishapp.js"></script>
-                </c:otherwise>
-            </c:choose>
     <script type="text/javascript" src="build/lang/<%= lang %>.js"></script>
         </c:otherwise>
     </c:choose>
@@ -162,7 +130,7 @@ if(sec_roles != null) {
 
         <% 
           String proxyHost = "/proxy/?url=";
-          if(request.getContextPath().equals("/mapfishapp")) {
+          if(request.getHeader("sec-proxy") == null) {
             proxyHost = "ws/ogcproxy/?url=";
           }
         %>
@@ -189,18 +157,19 @@ if(sec_roles != null) {
 
         // lang
         GEOR.config.LANG = '<%= lang %>';
-    
+
+        GEOR.config.maxDocAgeInMinutes = ${maxDocAgeInMinutes};
+
         // security stuff
     <c:choose>
         <c:when test='<%= anonymous == false %>'>
         GEOR.config.ANONYMOUS = false;
         GEOR.config.USERNAME = "<%=request.getHeader("sec-username") %>";
+        GEOR.config.USEREMAIL = "<%=request.getHeader("sec-email") %>";
         </c:when>
     </c:choose>
         GEOR.config.ROLES = [<%= js_roles %>];
     </script>
     <noscript><p><fmt:message key="need.javascript"/></p></noscript>
 </body>
-    </c:otherwise>
-</c:choose>
 </html>

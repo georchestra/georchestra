@@ -382,7 +382,7 @@ GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
      */
     filldsClassifType: function(dataType) {
         var data = [[OpenLayers.i18n('Unique values'), 'unique_values']];
-        if(GEOR.util.isNumericType(dataType)) {
+        if (GEOR.util.isNumericType(dataType)) {
             data.push([OpenLayers.i18n('Color range'), 'choropleths']);
             if ((this.symbolType == 'Point') || (this.symbolType == 'Line')) {
                 data.push([OpenLayers.i18n('Proportional symbols'), 'prop_symbols']);
@@ -449,7 +449,7 @@ GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
         if (!cmp) {
             return;
         }
-        if(classificationType === 'choropleths') {
+        if (classificationType === 'choropleths') {
             cmp.layout.setActiveItem(0);
         } else if (classificationType === 'prop_symbols') {
             cmp.layout.setActiveItem(1);
@@ -469,7 +469,7 @@ GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
      * oldVal - (undefined because {Ext.form.NumberField} lost them when override)
      */
     on_sbMinSize_changed: function(spinBox, newVal, oldVal) {
-        if(this.sbMinSize.getValue() >= this.sbMaxSize.getValue()) {
+        if (this.sbMinSize.getValue() >= this.sbMaxSize.getValue()) {
             spinBox.setValue(spinBox.getValue() - 1);
         }
     },
@@ -484,7 +484,7 @@ GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
      * oldVal - (undefined because {Ext.form.NumberField} lost them when override)
      */
     on_sbMaxSize_changed: function(spinBox, newVal, oldVal) {
-        if(this.sbMinSize.getValue() >= this.sbMaxSize.getValue()) {
+        if (this.sbMinSize.getValue() >= this.sbMaxSize.getValue()) {
             spinBox.setValue(spinBox.getValue() + 1);
         }
     },
@@ -532,19 +532,19 @@ GEOR.ClassificationPanel = Ext.extend(Ext.Panel, {
 
         // classification specific parameters
         var type = this.cbClassifType.getValue();
-        if(type === 'choropleths') {
+        if (type === 'choropleths') {
             Ext.apply(request, {
                 class_count: this.sbClassCountChoropleth.getValue(),
                 first_color: this.cpFirstColor.getValue(),
                 last_color: this.cpLastColor.getValue()
             });
-        } else if(type === 'prop_symbols') {
+        } else if (type === 'prop_symbols') {
             Ext.apply(request, {
                 class_count: this.sbClassCountPropSymbol.getValue(),
                 min_size: this.sbMinSize.getValue(),
                 max_size: this.sbMaxSize.getValue()
             });
-        } else if(type === 'unique_values') {
+        } else if (type === 'unique_values') {
             Ext.apply(request, {
                 palette: this.cbPalette.getValue()
             });

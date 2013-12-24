@@ -1,1 +1,2 @@
 language=@shared.language@
+instance=@shared.instance.name@

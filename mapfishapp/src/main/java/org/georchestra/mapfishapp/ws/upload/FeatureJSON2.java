@@ -17,11 +17,8 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.geotools.data.crs.ForceCoordinateSystemFeatureResults;
-import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
-import org.geotools.feature.SchemaException;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.geojson.GeoJSONUtil;
 import org.geotools.geojson.feature.AttributeIO;
@@ -253,36 +250,6 @@ final class FeatureJSON2 extends FeatureJSON {
     public SimpleFeature readFeature(InputStream input) throws IOException {
         return readFeature((Object)input);
     }
-//
-//    /**
-//     * Writes a feature collection as GeoJSON.
-//     * 
-//     * @param features The feature collection.
-//     * @param output The output. See {@link GeoJSONUtil#toWriter(Object)} for details.
-//     */
-//    public void writeFeatureCollection(FeatureCollection features, Object output) throws IOException {
-//        LinkedHashMap obj = new LinkedHashMap();
-//        obj.put("type", "FeatureCollection");
-//        if (encodeFeatureCollectionBounds || encodeFeatureCollectionCRS) {
-//            final ReferencedEnvelope bounds = features.getBounds();
-//            
-//            if (encodeFeatureCollectionBounds) {
-//                obj.put("bbox", new JSONStreamAware() {
-//                    public void writeJSONString(Writer out) throws IOException {
-//                        JSONArray.writeJSONString(Arrays.asList(bounds.getMinX(),
-//                                bounds.getMinY(),bounds.getMaxX(),bounds.getMaxY()), out);
-//                    }
-//                });
-//            }
-//            
-//            if (encodeFeatureCollectionCRS) {
-//                obj.put("crs", createCRS(bounds.getCoordinateReferenceSystem()));
-//            }
-//        }
-//        obj.put("features", new FeatureCollectionEncoder(features, gjson));
-//        GeoJSONUtil.encode(obj, output);
-//    }
-    //
   /**
    * REDEFINED
    * Writes a feature collection as GeoJSON.
@@ -346,24 +313,24 @@ final class FeatureJSON2 extends FeatureJSON {
      * 
      * @throws IOException In the event of a parsing error or if the input json is invalid.
      */
-    public FeatureCollection readFeatureCollection(Object input) throws IOException {
-        FeatureCollection features = new DefaultFeatureCollection(null, null);
-        FeatureCollectionIterator it = (FeatureCollectionIterator) streamFeatureCollection(input);
-        while(it.hasNext()) {
-            features.add(it.next());
-        }
-
-        //check for the case of a crs specified post features in the json
-        if (features.getSchema().getCoordinateReferenceSystem() == null 
-                && it.getHandler().getCRS() != null ) {
-            try {
-                features = new ForceCoordinateSystemFeatureResults(features, it.getHandler().getCRS());
-            } catch (SchemaException e) {
-                throw (IOException) new IOException().initCause(e);
-            }
-        }
-        return features;
-    }
+//    public FeatureCollection readFeatureCollection(Object input) throws IOException {
+//    	DefaultFeatureCollection features = new DefaultFeatureCollection(null, null);
+//        FeatureCollectionIterator it = (FeatureCollectionIterator) streamFeatureCollection(input);
+//        while(it.hasNext()) {
+//            features.add(it.next());
+//        }
+//
+//        //check for the case of a crs specified post features in the json
+//        if (features.getSchema().getCoordinateReferenceSystem() == null 
+//                && it.getHandler().getCRS() != null ) {
+//            try {
+//                features = new ForceCoordinateSystemFeatureResults(features, it.getHandler().getCRS());
+//            } catch (SchemaException e) {
+//                throw (IOException) new IOException().initCause(e);
+//            }
+//        }
+//        return features;
+//    }
 
     /**
      * Reads a feature collection from GeoJSON.
@@ -627,7 +594,9 @@ final class FeatureJSON2 extends FeatureJSON {
                 }
             }
             finally {
-                features.close(i);
+                if( i != null ){
+                    i.close();
+                }
             }
             out.write("]");
             out.flush();

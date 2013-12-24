@@ -29,7 +29,7 @@ Note that it is possible to use a classical form submission and send this JSON s
 
 The application also accepts several GET parameters :
  * **debug** when set to true, the application loads unminified javascript files
- * **noheader** when set to true, the application does not load the static header
+ * **noheader** when set to true, the application does not load the header
  * **lang** can be set to any of the following : fr, en, es
 
 
@@ -105,7 +105,7 @@ Templates for these emails can be found in config/defaults/extractorapp/WEB-INF/
 This gives you the opportunity to override them by copying to your own profile.
 
 By default, the ack mail template does not support string substitution, but the second email template does.
-These variables are :
+These variables are:
  * **link** the HTTP link to download the data,
  * **emails** the recipient emails,
  * **expiry** the expiry date in days,
@@ -116,13 +116,19 @@ These variables are :
 These template variables are defined in extractorapp/src/main/java/extractorapp/ws/EmailFactoryDefault.java
 
 Note that you are free to define your own variables by using a custom EmailFactory, such as extractorapp/src/main/java/extractorapp/ws/EmailFactoryPigma.java. 
-In that case, be sure to specify emailfactory=org.georchestra.extractorapp.ws.EmailFactoryPigma in your_config/extractorapp/maven.filter 
+In this case, be sure to specify emailfactory=org.georchestra.extractorapp.ws.EmailFactoryPigma in your_config/extractorapp/maven.filter
 
 
 How to run the extractor without Tomcat ?
 =========================================
 
 This mode is useful for **demo** or **development** purposes.
+
+The *first* time, you need to previously compile extractorapp and all its dependencies
+
+    $ ./mvn -Dmaven.test.skip=true -Ptemplate -P-all,extractorapp install;
+
+then, each time you want to test a change in the configuration or the extractorapp module:
 
     $ cd extractorapp
     $ ../mvn -Ptemplate jetty:run

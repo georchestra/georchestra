@@ -111,7 +111,7 @@ GEOR.referentials = (function() {
         }
         return new Ext.XTemplate(
             '<tpl for=".">'+
-            '<div class="search-item {[xindex % 2 === 0 ? "even" : "odd"]}">'+
+            '<div class="x-combo-list-item {[xindex % 2 === 0 ? "even" : "odd"]}">'+
             s.join(' - ')+'</div></tpl>');
     };
     
@@ -229,10 +229,15 @@ GEOR.referentials = (function() {
      * {Ext.form.ComboBox} the combobox
      */
     var createBufferCombo = function() {
-    
+        var data = [];
+        Ext.each(GEOR.config.BUFFER_VALUES, function(b) {
+            data.push([b[0], tr(b[1], {
+                "BUFFER": (b[0] > 999) ? b[0]/1000 : b[0]
+            })]);
+        });
         var store = new Ext.data.SimpleStore({
             fields: ['value', 'text'],
-            data: GEOR.config.BUFFER_VALUES
+            data: data
         });
     
         return new Ext.form.ComboBox({
@@ -439,7 +444,6 @@ GEOR.referentials = (function() {
             queryParam: 'query', // do not modify
             tpl: buildTemplate(attributes),
             pageSize: 0,
-            itemSelector: 'div.search-item',
             emptyText: disabled ? '' : tr('location ?'),
             store: store,
             listeners: {

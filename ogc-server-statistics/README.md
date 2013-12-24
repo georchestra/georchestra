@@ -9,7 +9,7 @@ Creating the Logging table
 
 This module requires a logging table called "ogc_services_log" in a postgres database.
  
-You will find the details about the data structure in the file ogc_statistics_table.sql
+You will find the details about the data structure in the file database.sql
 
 
 Configure log4j.properties

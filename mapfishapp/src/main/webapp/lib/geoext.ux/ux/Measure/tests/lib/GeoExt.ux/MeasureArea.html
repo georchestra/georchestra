@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html debug="true">
+  <head>
+    <script type="text/javascript" src="http://www.openlayers.org/api/2.11/OpenLayers.js"></script>
+    <script type="text/javascript" src="http://extjs.cachefly.net/ext-3.4.0/adapter/ext/ext-base.js"></script> 
+    <script type="text/javascript" src="http://extjs.cachefly.net/ext-3.4.0/ext-all.js"></script>
+    <script type="text/javascript" src="../../../../../../geoext/lib/GeoExt.js"></script>
+    <script type="text/javascript" src="../../../lib/GeoExt.ux/Measure.js"></script>
+    <script type="text/javascript" src="../../../lib/GeoExt.ux/MeasureArea.js"></script>
+
+    <script type="text/javascript">
+        function test_ctor(t) {
+            t.plan(4);
+
+            // set up
+
+            var action;
+
+            // test
+
+            action = new GeoExt.ux.MeasureArea();
+            t.ok(action instanceof GeoExt.ux.MeasureArea,
+                 "ctor returns a GeoExt.ux.MeasureArea");
+            t.ok(action instanceof GeoExt.ux.Measure,
+                 "ctor returns a GeoExt.ux.Measure");
+            t.ok(action.template instanceof Ext.XTemplate,
+                 "ctor creates an XTemplate");
+            t.ok(action.control.handler instanceof OpenLayers.Handler.Polygon,
+                 "ctor creates a measure control with a polygon handler");
+
+            // tear down
+        }
+    </script>
+  <body>
+  </body>
+</html>

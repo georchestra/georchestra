@@ -33,14 +33,14 @@ public class ExtractorApp extends AbstractApplication {
 
 	private final Log logger = LogFactory.getLog(getClass());
 
-	private final String insertDlQuery = "INSERT INTO download.extractorapp_log (username, sessionid, first_name, second_name, " +
+	private final String insertDlQuery = "INSERT INTO downloadform.extractorapp_log (username, sessionid, first_name, second_name, " +
 			"company, email, phone, comment, json_spec) " +
 			"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
 	
-	private final String insertDataUseQuery = "INSERT INTO download.logtable_datause (logtable_id, datause_id) " +
+	private final String insertDataUseQuery = "INSERT INTO downloadform.logtable_datause (logtable_id, datause_id) " +
 			"VALUES (?,?);";
 	
-	private final String insertLayersQuery = "INSERT INTO download.extractorapp_layers(" +
+	private final String insertLayersQuery = "INSERT INTO downloadform.extractorapp_layers(" +
             "extractorapp_log_id, projection, resolution, format, bbox_srs, " +
             "\"left\", bottom, \"right\", top, ows_url, ows_type, layer_name)" +
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
