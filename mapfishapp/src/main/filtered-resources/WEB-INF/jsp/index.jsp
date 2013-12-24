@@ -161,8 +161,6 @@ if(sec_roles != null) {
         // lang
         GEOR.config.LANG = '<%= lang %>';
 
-        GEOR.config.maxDocAgeInMinutes = ${maxDocAgeInMinutes};
-
         // security stuff
     <c:choose>
         <c:when test='<%= anonymous == false %>'>

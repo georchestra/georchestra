@@ -12,8 +12,8 @@ public class KMLDocService extends A_DocService {
     public static final String FILE_EXTENSION = ".kml";
     public static final String MIME_TYPE = "application/vnd.google-earth.kml+xml";
 
-    public KMLDocService(final long maxDocAgeInMinutes, final String tempDir) {
-        super(maxDocAgeInMinutes, FILE_EXTENSION, MIME_TYPE, tempDir);
+    public KMLDocService(final String tempDir) {
+        super(FILE_EXTENSION, MIME_TYPE, tempDir);
     }
 
     /**

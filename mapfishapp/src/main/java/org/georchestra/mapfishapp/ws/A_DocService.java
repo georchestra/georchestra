@@ -88,19 +88,15 @@ public abstract class A_DocService {
     /**
      * Subclasses have to provide their file extension name and MIME type
      * 
-     * @param maxDocAgeInMinutes
      * @param fileExtension
      * @param MIMEType
      * @param docTempDirectory
      */
-    public A_DocService(final long maxDocAgeInMinutes, final String fileExtension, final String MIMEType,  final String docTempDirectory) {
+    public A_DocService(final String fileExtension, final String MIMEType,  final String docTempDirectory) {
         _fileExtension = fileExtension;
         _MIMEType = MIMEType;
         
         setTempDirectory(docTempDirectory);
-        
-        Runnable purgeDocsTask = new PurgeDocsRunnable(maxDocAgeInMinutes, _tempDirectory);
-        PurgeDocsTimer.startPurgeDocsTimer(purgeDocsTask, maxDocAgeInMinutes);
     }
     
     /**
@@ -110,11 +106,7 @@ public abstract class A_DocService {
      * @throws DocServiceException
      */
     public String saveData(final String data) throws DocServiceException {
-        // purge doc directory from old files
-        // FIXME do not purge for now, this will need to be revisited once
-        // we have authentication in place
-        //purgeDocDir();
-        
+
         _content = data;
         
         // actions to take before saving data

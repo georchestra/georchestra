@@ -90,15 +90,11 @@ GEOR.workspace = (function() {
                     window.location.protocol, '//', window.location.host,
                     GEOR.config.PATHNAME, '/map/', id, qs
                 ].join('');
-                var months = Math.round(GEOR.config.maxDocAgeInMinutes/44640);
                 GEOR.util.urlDialog({
                     title: tr("Permalink"),
                     msg: [
                         tr("Share your map with this URL: "),
-                        '<br /><a href="'+url+'">'+url+'</a>', 
-                        '<br/>(',
-                        tr("valid for "), months, " ",
-                        tr("month"+(months>1?"s":"")) + ")"
+                        '<br /><a href="'+url+'">'+url+'</a>'
                     ].join('')
                 });
             },

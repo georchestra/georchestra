@@ -15,25 +15,23 @@ public class DefaultDocService extends A_DocService {
      * This constructor is set private. 
      * It forces user to use {@link DefaultDocService#DefaultDocService(String, String)}
      * 
-	 * @param maxDocAgeInMinutes
 	 * @param tempDir
 	 */
 	@SuppressWarnings("unused")
-    private DefaultDocService(final long maxDocAgeInMinutes, final  String tempDir) {
-        super(maxDocAgeInMinutes, "", "", tempDir);
+    private DefaultDocService(final String tempDir) {
+        super("", "", tempDir);
     }
     
     /**
      * Creates a new Doc Service using all the features of its abstract base class 
      * {@link A_DocService}
      * 
-     * @param maxDocAgeInMinutes
      * @param fileExtension
      * @param MIMEType
      * @param tempDir
      */
-    public DefaultDocService(final long maxDocAgeInMinutes, final String fileExtension, final String MIMEType, final String tempDir ) {
-        super(maxDocAgeInMinutes, fileExtension, MIMEType, tempDir);
+    public DefaultDocService(final String fileExtension, final String MIMEType, final String tempDir ) {
+        super(fileExtension, MIMEType, tempDir);
     }
 
 }

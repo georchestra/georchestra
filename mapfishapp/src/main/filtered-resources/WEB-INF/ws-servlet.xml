@@ -33,7 +33,6 @@
 
     <!-- Documents controller -->
     <bean class="org.georchestra.mapfishapp.ws.DocController">
-        <property name="maxDocAgeInMinutes" value="${maxDocAgeInMinutes}"/>
         <property name="docTempDir" value="${docTempDir}"/>
         <property name="credentials">
             <map>${credentials}</map>

@@ -43,12 +43,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
   
 @Controller
 public class DocController {
-    /*** Time (in minutes) before files are purged automatically from DIR */
-    private long maxDocAgeInMinutes = 60 * 24;
-    
-	public long getMaxDocAgeInMinutes() {return maxDocAgeInMinutes;}
-	public void setMaxDocAgeInMinutes(long maxDocAgeInMinutes) {this.maxDocAgeInMinutes = maxDocAgeInMinutes;}
-    
+
 	/** the temporary directory used by the document services*/
     private String docTempDir;
 
@@ -103,7 +98,7 @@ public class DocController {
      */
     @RequestMapping(value="/wmc/", method=RequestMethod.POST)
     public void storeWMCFile(HttpServletRequest request, HttpServletResponse response) {   
-        storeFile(new WMCDocService(this.maxDocAgeInMinutes, this.docTempDir), WMC_URL, request, response);   
+        storeFile(new WMCDocService(this.docTempDir), WMC_URL, request, response);   
     }
     
     /**
@@ -113,7 +108,7 @@ public class DocController {
      */
     @RequestMapping(value="/wmc/*", method=RequestMethod.GET)
     public void getWMCFile(HttpServletRequest request, HttpServletResponse response) { 
-        getFile(new WMCDocService(this.maxDocAgeInMinutes,  this.docTempDir), request, response);
+        getFile(new WMCDocService(this.docTempDir), request, response);
     }
 
     /*======================= KML =====================================================================*/
@@ -124,7 +119,7 @@ public class DocController {
      */
     @RequestMapping(value="/kml/", method=RequestMethod.POST)
     public void storeKMLFile(HttpServletRequest request, HttpServletResponse response) {   
-        storeFile(new KMLDocService(this.maxDocAgeInMinutes, this.docTempDir), KML_URL, request, response);   
+        storeFile(new KMLDocService(this.docTempDir), KML_URL, request, response);   
     }
     
     /**
@@ -134,7 +129,7 @@ public class DocController {
      */
     @RequestMapping(value="/kml/*", method=RequestMethod.GET)
     public void getKMLFile(HttpServletRequest request, HttpServletResponse response) { 
-        getFile(new KMLDocService(this.maxDocAgeInMinutes, this.docTempDir), request, response);
+        getFile(new KMLDocService(this.docTempDir), request, response);
     }
 
     /*======================= JSON to CSV =====================================================================*/
@@ -145,7 +140,7 @@ public class DocController {
      */
     @RequestMapping(value="/csv/", method=RequestMethod.POST)
     public void storeCSVFile(HttpServletRequest request, HttpServletResponse response) {   
-        storeFile(new CSVDocService(this.maxDocAgeInMinutes, this.docTempDir), CSV_URL, request, response);   
+        storeFile(new CSVDocService(this.docTempDir), CSV_URL, request, response);   
     }
     
     /**
@@ -155,7 +150,7 @@ public class DocController {
      */
     @RequestMapping(value="/csv/*", method=RequestMethod.GET)
     public void getCSVFile(HttpServletRequest request, HttpServletResponse response) { 
-        getFile(new CSVDocService(this.maxDocAgeInMinutes, this.docTempDir), request, response);
+        getFile(new CSVDocService(this.docTempDir), request, response);
     }
     
     /*======================= SLD =====================================================================*/
@@ -181,7 +176,7 @@ public class DocController {
 
         if(request.getContentType().contains("application/vnd.ogc.sld+xml")) {
             // sld to store
-            storeFile(new SLDDocService(this.maxDocAgeInMinutes, this.docTempDir), SLD_URL, request, response);   
+            storeFile(new SLDDocService(this.docTempDir), SLD_URL, request, response);   
         }
         else if(request.getContentType().contains("application/json") || request.getContentType().contains("text/json")) {
             // classification based on client request
@@ -199,7 +194,7 @@ public class DocController {
      */
     @RequestMapping(value="/sld/*", method=RequestMethod.GET)
     public void getSLDFile(HttpServletRequest request, HttpServletResponse response) { 
-        getFile(new SLDDocService(this.maxDocAgeInMinutes, this.docTempDir), request, response);
+        getFile(new SLDDocService(this.docTempDir), request, response);
     }
     
     /*=======================Private Methods==========================================================================*/
@@ -213,7 +208,7 @@ public class DocController {
             SLDClassifier c = new SLDClassifier(credentials, new ClassifierCommand(getBodyFromRequest(request)));
             
             // save SLD content under a file
-            SLDDocService service = new SLDDocService(this.maxDocAgeInMinutes, this.docTempDir);
+            SLDDocService service = new SLDDocService(this.docTempDir);
             String fileName = service.saveData(c.getSLD());
             
             PrintWriter out = response.getWriter(); 
