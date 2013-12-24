@@ -199,7 +199,7 @@ UPGRADING:
    * default MAP_SCALES changes to match the OGC WMTS spec,
  * LDAP: see [georchestra/LDAP#2](https://github.com/georchestra/LDAP/pull/2)
    * one group was renamed: ```STAT_USER``` becomes ```MOD_ANALYTICS``` - grants access to the analytics app,
-   * an other one was created: ```MOD_LDAPADMIN``` - grants access to the LDAPadmin private UI (/ldapadmin/privateui/index.html).
+   * an other one was created: ```MOD_LDAPADMIN``` - grants access to the LDAPadmin private UI (/ldapadmin/privateui/).
  * The default application language is now **English**:
    * ```shared.language``` = en
    * ```geonetwork.language``` = eng
