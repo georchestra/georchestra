@@ -15,6 +15,7 @@
         <s:intercept-url pattern=".*\?.*casLogin.*" access="ROLE_SV_USER,ROLE_SV_EDITOR,ROLE_SV_REVIEWER,ROLE_SV_ADMIN" />
         <s:intercept-url pattern="/extractorapp/admin/.*" access="ROLE_ADMINISTRATOR,ROLE_SV_ADMIN" />
         <s:intercept-url pattern="/extractorapp/.*" access="ROLE_SV_USER,ROLE_SV_EDITOR,ROLE_SV_REVIEWER,ROLE_SV_ADMIN" />
+        <s:intercept-url pattern="/geofence/.*" access="ROLE_ADMINISTRATOR" />
         <s:intercept-url pattern="/analytics/.*" access="ROLE_ADMINISTRATOR,ROLE_SV_ADMIN,ROLE_MOD_ANALYTICS" />
         <s:intercept-url pattern="/ldapadmin/privateui/.*" access="ROLE_ADMINISTRATOR,ROLE_SV_ADMIN,ROLE_MOD_LDAPADMIN" />
         <s:intercept-url pattern="/ldapadmin/private/.*" access="ROLE_ADMINISTRATOR,ROLE_SV_ADMIN,ROLE_MOD_LDAPADMIN" />
@@ -151,5 +152,12 @@
         <property name="sendRenew" value="false"/>
     </bean>
     
+    <bean
+        id="messageSource"
+        class="org.springframework.context.support.ReloadableResourceBundleMessageSource"
+        p:basenames="WEB-INF/i18n/application"
+        p:defaultEncoding="UTF-8"
+        p:fallbackToSystemLocale="false">
+    </bean>
     <!-- end cas config -->
 </beans>

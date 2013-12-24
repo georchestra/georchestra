@@ -78,7 +78,7 @@ public final class NewAccountFormController {
 	@InitBinder
 	public void initForm( WebDataBinder dataBinder) {
 		
-		dataBinder.setAllowedFields(ArrayUtils.addAll(fields, new String[]{"role", "recaptcha_challenge_field", "recaptcha_response_field"}));
+		dataBinder.setAllowedFields(ArrayUtils.addAll(fields, new String[]{"recaptcha_challenge_field", "recaptcha_response_field"}));
 	}
 	
 	@RequestMapping(value="/account/new", method=RequestMethod.GET)

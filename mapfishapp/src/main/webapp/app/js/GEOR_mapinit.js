@@ -358,7 +358,7 @@ GEOR.mapinit = (function() {
                 msg: (count>1) ?
                     tr("NB layers imported", {'NB': count}):
                     (count==1) ? tr("One layer imported"):
-                    tr("Not any layer imported")
+                    tr("No layer imported")
             });
         }
     };

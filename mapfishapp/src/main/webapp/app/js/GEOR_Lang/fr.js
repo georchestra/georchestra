@@ -117,7 +117,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Catalogue": "Catalogue",
     "Find": "Chercher",
     "in": "dans",
-    "Not any layer": "Aucune couche",
+    "No layer": "Aucune couche",
     "One layer found.": "Une couche trouvée.",
     "NB layers found.": "${NB} couches trouvées.",
     "NB metadata match the query.": "${NB} métadonnées correspondent à la requête.",
@@ -251,7 +251,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
         "Raisons possibles : droits insuffisants, SRS incompatible ou couche non existante",
     "NB layers imported": "${NB} couches importées",
     "One layer imported": "Une couche importée",
-    "Not any layer imported": "Aucune couche importée",
+    "No layer imported": "Aucune couche importée",
     "The provided context is not valid": "Le contexte fourni n'est pas valide",
     "The default context is not defined (and it is a BIG problem!)":
         "Le contexte par défaut n'est pas défini " +
@@ -322,7 +322,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
         "Nombre maximum d'objets atteint (${NB})</span>",
     "NB results": "${NB} résultats",
     "One result": "1 résultat",
-    "Not any result": "Aucun résultat",
+    "No result": "Aucun résultat",
     "Clean": "Effacer",
     "Clean all results on the map and in the table": "Supprimer les " +
         "résultats affichés sur la carte et dans le tableau",
@@ -331,7 +331,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
         "des résultats",
     "CSV Export": "Export CSV",
     "Export results as CSV": "Exporter l'ensemble des résultats en CSV",
-    "<p>Not any result for that request.</p>": "<p>Aucun objet ne " +
+    "<p>No result for that request.</p>": "<p>Aucun objet ne " +
         "correspond à votre requête.</p>",
     /* GEOR_scalecombo.js strings */
     /* GEOR_selectfeature.js strings */
@@ -370,9 +370,9 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Styler": "Styleur",
     "Apply": "Appliquer",
     "Impossible to complete the operation:": "Opération impossible :",
-    "not any WFS service associated to that layer": "aucun service WFS " +
+    "no WFS service associated to that layer": "aucun service WFS " +
         "associé à cette couche.",
-    "not any available attribute": "aucun attribut disponible.",
+    "no available attribute": "aucun attribut disponible.",
     /* GEOR_toolbar.js strings */
     "m": "m",
     "hectares": "hectares",
@@ -387,11 +387,14 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Logout": "Déconnexion",
     "Help": "Aide",
     "Query all active layers": "Interroger toutes les couches actives",
-    "Show help": "Afficher l'aide",
     "Show legend": "Afficher la légende",
     "Leave this page ? You will lose the current cartographic context.":
         "Vous allez quitter cette page et perdre le contexte cartographique " +
         "courant",
+    "Online help": "Aide en ligne",
+    "Display the user guide": "Afficher le guide de l'utilisateur",
+    "Contextual help": "Aide contextuelle",
+    "Activate or deactivate contextual help bubbles": "Activer ou désactiver les bulles d'aide contextuelle",
     /* GEOR_tools.js strings */
     "distance measure": "Mesurer une distance",
     "area measure": "Mesurer une surface",
@@ -453,6 +456,8 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Required": "Requis",
     "Not required": "Non requis",
     "Synchronization failed.": "Erreur lors de la synchronisation.",
+    "Edit activated": "Edition activée", 
+    "Hover the feature you wish to edit, or choose \"new feature\" in the edit menu": "Survolez les objets de la couche que vous souhaitez modifier, ou choisissez \"nouvel objet\" dans le menu d'édition de la couche",
     /* GeoExt.data.CSW.js */
     "no abstract": "pas de résumé"
     // no trailing comma

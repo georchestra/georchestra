@@ -37,9 +37,9 @@ class QueryUserTokenExpiredCommand extends org.georchestra.lib.sqlcommand.Abstra
 		StringBuilder sql = new StringBuilder();
 
 		sql.append(" SELECT ")
-				.append(DatabaseSchema.UID_COLUMN).append(",").append(DatabaseSchema.TOKEN_COLUMN ).append(",").append(DatabaseSchema.CREATEION_DATE_COLUMN )
-				.append(" FROM ").append(DatabaseSchema.TABLE_USER_TOKEN)
-				.append(" WHERE "+DatabaseSchema.CREATEION_DATE_COLUMN +" <= ?");
+				.append(DatabaseSchema.UID_COLUMN).append(",").append(DatabaseSchema.TOKEN_COLUMN ).append(",").append(DatabaseSchema.CREATION_DATE_COLUMN )
+				.append(" FROM ").append(DatabaseSchema.SCHEMA_NAME + "." + DatabaseSchema.TABLE_USER_TOKEN)
+				.append(" WHERE "+DatabaseSchema.CREATION_DATE_COLUMN +" <= ?");
 		
 		return sql.toString();
 	}
@@ -66,7 +66,7 @@ class QueryUserTokenExpiredCommand extends org.georchestra.lib.sqlcommand.Abstra
 		Map<String,Object> row = new HashMap<String, Object>(3);
 		row.put(DatabaseSchema.UID_COLUMN, rs.getString(DatabaseSchema.UID_COLUMN));
 		row.put(DatabaseSchema.TOKEN_COLUMN, rs.getString(DatabaseSchema.TOKEN_COLUMN));
-		row.put(DatabaseSchema.CREATEION_DATE_COLUMN, rs.getTimestamp(DatabaseSchema.CREATEION_DATE_COLUMN));
+		row.put(DatabaseSchema.CREATION_DATE_COLUMN, rs.getTimestamp(DatabaseSchema.CREATION_DATE_COLUMN));
 		
 		return row;
 	}

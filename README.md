@@ -7,16 +7,16 @@ It features a **metadata catalog** (GeoNetwork 2.10), an **OGC server** (GeoServ
 
 More information in the modules README:
  * [catalog](https://github.com/georchestra/geonetwork/blob/georchestra-29/README.md) (aka GeoNetwork)
- * [viewer](https://github.com/georchestra/georchestra/blob/master/mapfishapp/README.md) (aka mapfishapp)
- * [extractor](https://github.com/georchestra/georchestra/blob/master/extractorapp/README.md) (aka extractorapp)
- * [simple catalog](https://github.com/georchestra/georchestra/blob/master/catalogapp/README.md) (aka catalogapp)
- * [analytics](https://github.com/georchestra/georchestra/blob/master/analytics/README.md)
- * [ldapadmin](https://github.com/georchestra/georchestra/blob/master/ldapadmin/README.md)
- * [downloadform](https://github.com/georchestra/georchestra/blob/master/downloadform/README.md)
- * [ogc-server-statistics](https://github.com/georchestra/georchestra/blob/master/ogc-server-statistics/README.md)
- * [static](https://github.com/georchestra/georchestra/blob/master/static/README.md)
+ * [viewer](mapfishapp/README.md) (aka mapfishapp)
+ * [extractor](extractorapp/README.md) (aka extractorapp)
+ * [simple catalog](catalogapp/README.md) (aka catalogapp)
+ * [analytics](analytics/README.md)
+ * [ldapadmin](ldapadmin/README.md)
+ * [downloadform](downloadform/README.md)
+ * [ogc-server-statistics](ogc-server-statistics/README.md)
+ * [header](header/README.md)
 
-See also the [release notes](https://github.com/georchestra/georchestra/blob/master/RELEASE_NOTES.md).
+See also the [release notes](RELEASE_NOTES.md).
 
 
 How to build ?
@@ -73,14 +73,14 @@ Do whatever updates you want in the master branch, and regularly merge the upstr
 
 Note: merge upstream/master into your config if you're using geOrchestra master, or upstream/13.09 if you're using geOrchestra stable.
 
-Read more about the [configuration process](https://github.com/georchestra/georchestra/blob/master/config/README.md).
+Read more about the [configuration process](config/README.md).
 
 
 How to install ?
 ===============
 
 geOrchestra runs well on Debian boxes with Tomcat6 (version 7 might hang your geonetwork, see #418).
-An example setup on one Tomcat is described [here](https://github.com/georchestra/georchestra/blob/master/INSTALL.md).
+An example setup on one Tomcat is described [here](INSTALL.md).
 
 Once the system is ready, collect WAR files in a dedicated directory and rename them:
 
@@ -100,7 +100,7 @@ Once the system is ready, collect WAR files in a dedicated directory and rename 
     mv geoserver-webapp-${VERSION}-${PROFILE}.war geoserver-private.war
     mv ldapadmin-${VERSION}-${PROFILE}.war ldapadmin-private.war
     mv mapfishapp-${VERSION}-${PROFILE}.war mapfishapp-private.war
-    mv static-${VERSION}-${PROFILE}.war static-private.war
+    mv header-${VERSION}-${PROFILE}.war header-private.war
 
 Copy WAR files in Tomcat webapps dir:
 
@@ -109,7 +109,7 @@ Copy WAR files in Tomcat webapps dir:
     sudo service tomcat6 start
 
 This is the basic idea, but one can use more advanced deploy scripts. An example is provided 
-[here](https://github.com/georchestra/georchestra/blob/master/server-deploy/linux_deploy_scripts/Readme.md).
+[here](server-deploy/linux_deploy_scripts/Readme.md).
 
 Note: it is also possible to split the webapps across several Tomcat instances. 
 The recommended setup is to have at least 2 tomcats, with one entirely dedicated to GeoServer.

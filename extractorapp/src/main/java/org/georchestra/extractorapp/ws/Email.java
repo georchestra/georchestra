@@ -81,11 +81,8 @@ public abstract class Email {
         }
 
         if (!validRecipients) {
-            message.addRecipient(Message.RecipientType.TO, new InternetAddress(from));
-            message.setSubject(
-                    "[ERREUR] Message non délivré : "
-                            + subject,
-                            subjectEncoding);
+	    LOG.error("Mail could not be sent, none of the recipients are valid: " + recipients.toString());
+	    return;
         } else {
             message.setSubject(subject, subjectEncoding);
         }
@@ -125,9 +122,6 @@ public abstract class Email {
 	
 	protected String format(List<String> list) {
 		if ("true".equalsIgnoreCase(emailHtml)) {
-			if (list.isEmpty()) {
-				return "<p>None</p>";
-			}
 			StringBuilder b = new StringBuilder("<ul>");
 			for (String string : list) {
 				b.append("<li>");
@@ -137,9 +131,6 @@ public abstract class Email {
 			b.append("</ul>");
 			return b.toString();
 		} else {
-			if (list.isEmpty()) {
-				return "\nNone\n";
-			}
 			StringBuilder b = new StringBuilder("\n");
 			for (String string : list) {
 				b.append("* ");

@@ -93,7 +93,7 @@ public class UserTokenDao {
 			Calendar cal = Calendar.getInstance();
 			Date date = cal.getTime();
 			Timestamp currentDay = new Timestamp(date.getTime());
-			row.put(DatabaseSchema.CREATEION_DATE_COLUMN,  currentDay);
+			row.put(DatabaseSchema.CREATION_DATE_COLUMN,  currentDay);
 			
 			cmd.setRowValues( row );
 			cmd.execute();

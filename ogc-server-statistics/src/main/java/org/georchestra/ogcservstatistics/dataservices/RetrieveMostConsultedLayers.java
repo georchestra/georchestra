@@ -29,7 +29,7 @@ final public class RetrieveMostConsultedLayers extends AbstractQueryCommand {
 		sql.append(" SELECT ")
 				.append(LAYER_COLUMN)
 				.append(",count(").append(LAYER_COLUMN).append(") as ").append(CONNECTIONS_COLUMN)
-				.append(" FROM OGC_SERVICES_LOG");
+				.append(" FROM ogcstatistics.OGC_SERVICES_LOG");
 		if(this.month > 0){
 			sql.append(" WHERE EXTRACT(ISOYEAR FROM date) = ? AND EXTRACT(MONTH FROM date) = ?");
 		} else {

@@ -243,11 +243,8 @@ GEOR.config = (function() {
          * List of catalogs for freetext search
          */
         CATALOGS: getCustomParameter("CATALOGS", [
-            ['http://geobretagne.fr/geonetwork/srv/fre/csw', 'le catalogue GeoBretagne'],
-            ['http://ids.pigma.org/geonetwork/srv/fre/csw', 'le catalogue PIGMA'],
-            ['/geonetwork/srv/fre/csw', 'le catalogue local'],
-            ['http://sandre.eaufrance.fr/geonetwork_CSW/srv/fre/csw', 'le catalogue du Sandre'],
-            ['http://geocatalog.webservice-energy.org/geonetwork/srv/fre/csw', 'le catalogue de webservice-energy']
+            ['http://sdi.georchestra.org/geonetwork/srv/fre/csw', 'le catalogue geOrchestra démo'],
+            ['/geonetwork/srv/fre/csw', 'le catalogue local']
         ]),
 
         /**
@@ -256,7 +253,7 @@ GEOR.config = (function() {
          * Note: must be one of the URLs in the above CATALOGS config option
          */
         DEFAULT_CSW_URL: getCustomParameter("DEFAULT_CSW_URL",
-            'http://geobretagne.fr/geonetwork/srv/fre/csw'),
+            'http://sdi.georchestra.org/geonetwork/srv/fre/csw'),
 
         /**
          * Constant: MAX_CSW_RECORDS

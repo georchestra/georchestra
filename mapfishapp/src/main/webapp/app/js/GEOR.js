@@ -35,6 +35,7 @@
  * @include GEOR_querier.js
  * @include GEOR_styler.js
  * @include GEOR_wmc.js
+ * @include GEOR_helper.js
  */
 
 Ext.namespace("GEOR");
@@ -295,6 +296,42 @@ Ext.namespace("GEOR");
             items: vpItems
         });
 
+        /*
+         * Register to events on various modules to deal with
+         * the communication between them. Really, we're
+         * acting as a mediator between the modules with
+         * the objective of making them independent.
+         */
+
+        // When the wmc module is asked to restore a context, it informs 
+        // the mediator about it, with the number of WMS records 
+        // to restore. As a result, we're deactivating OGCExceptionReports.
+        // But we're always listening to describelayers. When the number of 
+        // WMS layers to restore is reached, we're reactivating
+        // OGCExceptionReports.
+        var describeLayerCount;
+        GEOR.wmc.events.on({
+            "beforecontextrestore": function(count) {
+                // prevent OGCExceptionReport warnings during context restore:
+                GEOR.ajaxglobal.disableOGCExceptionReports = true;
+                describeLayerCount = count;
+            }
+        });
+        GEOR.map.events.on({
+            "describelayer": function(record) {
+                // update the layer panel in layer tree 
+                // when the layer has been described:
+                GEOR.managelayers.updatePanel(record);
+
+                // restore OGCExceptionReport warnings on context restored,
+                // and all describelayer queries finished.
+                describeLayerCount -= 1;
+                if (describeLayerCount == 0) {
+                    GEOR.ajaxglobal.disableOGCExceptionReports = false;
+                }
+            }
+        });
+
         // Handle layerstore initialisation
         // with wms/services/wmc from "panier"
         GEOR.mapinit.init(layerStore, function() {
@@ -305,20 +342,6 @@ Ext.namespace("GEOR");
         // errors when loading WMC are not catched by GEOR.ajaxglobal
         // but by the mapinit module, which handles them more appropriately
 
-        /*
-         * Register to events on various modules to deal with
-         * the communication between them. Really, we're
-         * acting as a mediator between the modules with
-         * the objective of making them independent.
-         */
-
-        // update layer panels in layer tree 
-        // when the layers have been described:
-        GEOR.map.events.on({
-            "describelayer": function(record) {
-                GEOR.managelayers.updatePanel(record);
-            }
-        });
         if (GEOR.querier) {
             var querierTitle;
             GEOR.querier.events.on({
@@ -503,4 +526,25 @@ Ext.namespace("GEOR");
             }
         });
     });
+})();
+
+//Initialize doc classes, see https://github.com/georchestra/georchestra/issues/539
+// to workaround an ExtJS bug.
+(function(){
+    var initExtCss = function() {
+        // find the body element
+        var bd = document.body || document.getElementsByTagName('body')[0];
+        if (!bd) {
+            return false;
+        }
+        var cls = [];
+        if (Ext.isGecko) {
+            cls.push('ext-gecko');
+        }
+        Ext.fly(bd, '_internal').addClass(cls);
+        return true;
+    };
+    if (!initExtCss()) {
+        Ext.onReady(initExtCss);
+    }
 })();

@@ -58,10 +58,10 @@
 							<excludes>${geoserver.war.excludes}</excludes>
 							<artifactItems>
 								<artifactItem>
-									<groupId>org.geoserver.web</groupId>
-									<artifactId>web-app</artifactId>
-									<version>${gs.version}</version>
-									<type>war</type>
+									<groupId>${geoserver.webapp.groupId}</groupId>
+									<artifactId>${geoserver.webapp.artifactId}</artifactId>
+									<version>${geoserver.webapp.version}</version>
+									<type>jar</type>
 								</artifactItem>
 							</artifactItems>
 							<outputDirectory>${gs.unpack.dir}</outputDirectory>

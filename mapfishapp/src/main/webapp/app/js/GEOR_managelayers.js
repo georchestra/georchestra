@@ -707,6 +707,7 @@ GEOR.managelayers = (function() {
         
         // metadata action
         if (layer.metadataURL) {
+            insertSep();
             menuItems.push({
                 iconCls: 'geor-btn-metadata',
                 text: tr("Show metadata"),

@@ -17,42 +17,36 @@ Ext.define('Analytics.view.Viewport', {
     
     initComponent: function() {
         var tr = Analytics.Lang.i18n;
-        this.items = [{
-            xtype: 'box',
-            id: 'geor_header',
-            region: 'north', 
-            height: GEOR.config.HEADER_HEIGHT,
-            contentEl: 'go_head'
-        }, {
-            region: 'center',
-            xtype: 'tabpanel',
-            // required in order to control all panel tools:
-            deferredRender: false,
-            items: [{
+        var tabs = [];
+        if (GEOR.config.OGC_STATISTICS === true) {
+            tabs.push({
                 tabConfig: {
-                    title: tr('Downloads from GeoNetwork'),
-                    tooltip: tr('Select this tab to access the statistics of downloads from the catalog')
+                    title: tr('OGC Services'),
+                    tooltip: tr('Select this tab to access the OGC service statistics')
                 },
                 layout: 'border',
                 defaults: {border: false},
                 items: [{
-                    title: tr('Files'),
+                    title: tr('Layers'),
                     region: 'west',
                     split: true,
                     width: '50%',
-                    xtype: 'geonetworkfileslist'
+                    xtype: 'ogclayerslist'
                 }, {
                     title: tr('Users'),
                     region: 'center',
-                    xtype: 'geonetworkuserslist'
-                }, {
+                    xtype: 'ogcuserslist'
+                },{
                     title: tr('Organisms'),
                     split: true,
                     region: 'east',
                     width: '25%',
-                    xtype: 'geonetworkgroupslist'
+                    xtype: 'ogcgroupslist'
                 }]
-            }, {
+            });
+        }
+        if (GEOR.config.DOWNLOAD_FORM === true) {
+            tabs.push({
                 tabConfig: {
                     title: tr('Personalized extractions'),
                     tooltip: tr('Select this tab to access to the statistics of the extractor')
@@ -78,29 +72,51 @@ Ext.define('Analytics.view.Viewport', {
                 }]
             }, {
                 tabConfig: {
-                    title: tr('OGC Services'),
-                    tooltip: tr('Select this tab to access the OGC service statistics')
+                    title: tr('Downloads from GeoNetwork'),
+                    tooltip: tr('Select this tab to access the statistics of downloads from the catalog')
                 },
                 layout: 'border',
                 defaults: {border: false},
                 items: [{
-                    title: tr('Layers'),
+                    title: tr('Files'),
                     region: 'west',
                     split: true,
                     width: '50%',
-                    xtype: 'ogclayerslist'
+                    xtype: 'geonetworkfileslist'
                 }, {
                     title: tr('Users'),
                     region: 'center',
-                    xtype: 'ogcuserslist'
-                },{
+                    xtype: 'geonetworkuserslist'
+                }, {
                     title: tr('Organisms'),
                     split: true,
                     region: 'east',
                     width: '25%',
-                    xtype: 'ogcgroupslist'
+                    xtype: 'geonetworkgroupslist'
                 }]
-            }]
+            });
+        }
+        if (!tabs.length) {
+            tabs.push({
+                tabConfig: {
+                    title: tr('analytics')
+                },
+                bodyStyle: "padding: 10px;",
+                html: tr("Nothing to show in here, ogc services statistics and download form are deactivated. Please contact your administrator.")
+            });
+        }
+        this.items = [{
+            xtype: 'box',
+            id: 'geor_header',
+            region: 'north', 
+            height: GEOR.config.HEADER_HEIGHT,
+            contentEl: 'go_head'
+        }, {
+            region: 'center',
+            xtype: 'tabpanel',
+            // required in order to control all panel tools:
+            deferredRender: false,
+            items: tabs
         }, {
             region: 'south',
             border: false,

@@ -4,6 +4,122 @@ For production systems, you are advised to use the stable branch (currently 13.0
 This branch receives bug fixes as they arrive, during 6 months at least.
 
 
+Version 13.12 (development version)
+====================================
+
+New features:
+ * [GeoFence](https://github.com/geosolutions-it/geofence/blob/master/README.markdown) integration (not activated by default), see [#534](https://github.com/georchestra/georchestra/issues/534) and the [documentation](https://github.com/georchestra/geofence/blob/georchestra/georchestra.md)
+ * mapfishapp: multi-layer querier tool (thanks to the [CRAIG](http://craig.fr/)) - see [#435](https://github.com/georchestra/georchestra/pull/435)
+ * mapfishapp: extractor addon - see the [README](mapfishapp/src/main/webapp/app/addons/extractor/README.md)
+ * mapfishapp: OpenLS addon - see the [README](mapfishapp/src/main/webapp/app/addons/openls/README.md)
+ * mapfishapp: editor revamped - read [this](mapfishapp/README.md#feature-editor)
+
+Enhancements:
+ * analytics: translated to ES, thanks to [GeoBolivia](http://geo.gob.bo/) !
+ * analytics: tabs displayed or not based on ```shared.download_form.activated``` and ```shared.ogc.statistics.activated``` values.
+ * doc: improved [installation instructions for gdal native libs](INSTALL.md#gdal-for-geoserver-extractorapp--mapfishapp)
+ * doc: installation instructions updated with [GeoServer fine tuning instructions](INSTALL.md#geoserver)
+ * doc: added a [README](mapfishapp/src/main/webapp/app/addons/README.md) for mapfishapp addons
+ * js minification: test that jsbuild is working, rather than only testing if venv exists
+ * ldapadmin: in the mail sent to the moderator, the "from" field is set to the user email - see [#380](https://github.com/georchestra/georchestra/pull/380)
+ * ldapadmin: improved description fields - see [#400](https://github.com/georchestra/georchestra/pull/400)
+ * ldapadmin: added ability to configure fields in users list - read the [how-to](ldapadmin/README.md#configure-the-look-of-the-users-list)
+ * ldapadmin: in case of duplicated email error, the message is more explicit
+ * mapfishapp: WMS DescribeLayer on each WMS layer - see [#401](https://github.com/georchestra/georchestra/pull/401)
+ * mapfishapp: new layer menu item to set layer as baselayer/overlay - see [#445](https://github.com/georchestra/georchestra/pull/445)
+ * mapfishapp: preserve the full attribution information on context save/restore - see [#422](https://github.com/georchestra/georchestra/pull/422)
+ * mapfishapp: cswquerier: better results count
+ * mapfishapp: wms layer tab: red crosses removed, icons centered
+ * mapfishapp: backbuffer hidden behind baselayer for non-opaque baselayers - see [#411](https://github.com/georchestra/georchestra/pull/411)
+ * mapfishapp: allow to POST the url of a WFS service or layer - see [#392](https://github.com/georchestra/georchestra/pull/392)
+ * mapfishapp: baselayers have a specific color in the layer manager - customizable, see [0a56ed](https://github.com/georchestra/georchestra/commit/0a56edc8e0ea6361e056ce30047d8eddaa7c4c75)
+ * mapfishapp: contextual help bubbles (eg: on layer edit activated), see [#466](https://github.com/georchestra/georchestra/issues/466)
+ * mapfishapp: print now supports WMS 1.3.0-only capable servers, see [#511](https://github.com/georchestra/georchestra/issues/511)
+ * mapfishapp: annotation addon: added an icon & made the window closable
+ * mapfishapp: OGC Exception Report handling deactivated during context restore - see [#532](https://github.com/georchestra/georchestra/issues/532)
+ * ogc-server-statistics: now logging WMTS GetTile, WMS GetStyles + WFS2 operations, see [#527](https://github.com/georchestra/georchestra/issues/527)
+ * proxy: new filter to make basic auth challenge if https and matches user-agent, useful for ArcGIS clients - read the [notes](https://github.com/georchestra/georchestra/commit/8828a11ffb0cb716ad0a6bb1f847ce24328ea450)
+ * proxy: overridable HTTP 40x error pages, see for instance [config/defaults/security-proxy/403.jsp](config/defaults/security-proxy/403.jsp)
+ * static: module is now called "header"
+ * downloadform, ogcstatistics and ldapadmin modules now share the same postgresql database by default, each in their own schema. Please refer to [#516](https://github.com/georchestra/georchestra/issues/516) and the migration guide below.
+
+Bug fixes:
+ * analytics: fixed wrong password for jdbc postgresql
+ * extractorapp: fixed the ```checkPermission``` method for local layers
+ * extractorapp: fixed impossibility to switch to french when default lang is english or spanish
+ * extractorapp: fixed invalid buffer combo text
+ * geonetwork: download form now opens also in metadata view if activated, see [#416](https://github.com/georchestra/georchestra/issues/416)
+ * geoserver: fixed "inspire extension not deployed"
+ * header: fixed IE8 compatibility + header frameborder size set to 0
+ * header: the platform-wide language set by ```shared.language``` is now enforced in the header module, see [#540](https://github.com/georchestra/georchestra/issues/540)
+ * ldapadmin: fixed incorrect generation of login - see [#344](https://github.com/georchestra/georchestra/pull/344)
+ * ldapadmin: remove user from groups after deleting the user - see [#406](https://github.com/georchestra/georchestra/pull/406)
+ * ldapadmin: prevent race condition when opening ```/#groups/:group``` directly.
+ * ldapadmin: fixed erroneous admin count - see [#405](https://github.com/georchestra/georchestra/pull/405)
+ * ldapadmin: send HTTP 403 status code when access is forbidden, not 200 - see [#244](https://github.com/georchestra/georchestra/issues/244)
+ * mapfishapp: fixed incorrect styles ordering
+ * mapfishapp: annotation addon: fixed label size
+ * mapfishapp: fix for vector features incompletely displayed - see [#367](https://github.com/georchestra/georchestra/pull/367)
+ * mapfishapp: buggy legend url does not make the print fail anymore- see [#362](https://github.com/georchestra/georchestra/pull/362)
+ * mapfishapp: ```window.onbeforeunload``` should not return null (fixed annoying IE popup)
+ * mapfishapp: fixed "too many features" message in referentials search
+ * mapfishapp: fixed WMS GetFeatureInfo feature reprojection in IE
+ * mapfishapp: always compute data model on getfeatureinfo
+ * mapfishapp: always prefer ```text/html``` metadataURL entries
+ * mapfishapp: fixed WFS2 capabilities - see [#373](https://github.com/georchestra/georchestra/pull/373)
+ * mapfishapp: fixed JPEG layers in WMC loaded as PNG - see [#370](https://github.com/georchestra/georchestra/pull/370)
+ * mapfishapp: connection link in toolbar when header height is set to 0
+ * mapfishapp: referential recenter : fix for old fashioned namespace usage
+ * mapfishapp: fixed missing dependency to WFSCapabilitiesReader
+ * mapfishapp: annotation addon: fixed calling ```createUrlObject``` with an object parameter - see [#437](https://github.com/georchestra/georchestra/pull/437)
+ * mapfishapp: in layerfinder, fixed incorrect reference to ```OpenLayers.i18n``` method
+ * mapfishapp: file upload - the limit is 8MB, not 8GB
+ * mapfishapp: file upload - better handling of server-side errors
+ * mapfishapp: fixed extra comma (IE) in GEOR_print
+ * mapfishapp: fixed wrong popup anchor position on edit - see [#456](https://github.com/georchestra/georchestra/pull/456)
+ * mapfishapp: annotations: fixed popup anchor - see [#366](https://github.com/georchestra/georchestra/pull/366)
+ * mapfishapp: fixed potentially incorrect metadata url - see [#454](https://github.com/georchestra/georchestra/pull/454)
+ * mapfishapp: less strict filtering of suitable images for thumbnail display in CSW querier
+ * mapfishapp: fixed missing dependency to WKT format - see [#482](https://github.com/georchestra/georchestra/pull/482)
+ * mapfishapp: fixed incorrect ```maxScaleDenominator``` on WMC restored - see [#431](https://github.com/georchestra/georchestra/pull/431)
+ * mapfishapp: attribution logo correctly sized - see [#490](https://github.com/georchestra/georchestra/pull/490)
+ * mapfishapp: fixed wrong proxy selected when the webapp name does not contain private - see [#509](https://github.com/georchestra/georchestra/pull/509)
+ * mapfishapp: fixed various problems in legend printing
+ * mapfishapp: fixed missing ```GEOR.config.USEREMAIL``` (used by the extractor addon)
+ * mapfishapp: set a white background to the overview map in the printed PDF - see [#372](https://github.com/georchestra/georchestra/pull/372)
+ * mapfishapp: overview map now working at most small scales - see [#513](https://github.com/georchestra/georchestra/issues/513)
+ * mapfishapp: fixed magnifier tool - see [#500](https://github.com/georchestra/georchestra/issues/500)
+ * mapfishapp: fixed too much space between elements in FireFox - see [#539](https://github.com/georchestra/georchestra/issues/539)
+ * mapfishapp: print: white background for the overview map, see [b09cc9](https://github.com/georchestra/template/commit/b09cc94dcb66186b2ca48d5d0df5b2b7b95e1ed8)
+ * mapfishapp: print: scaled down legend icons to match map icons size, see [436913](https://github.com/georchestra/template/commit/43691352bc81d024dff01245ba33c47605c7a607)
+ * mapfishapp: print: limit legend texts width, and wrap them, see [78c05d](https://github.com/georchestra/template/commit/78c05d9d01699411df282ae6fca1965a9825b21b)
+ * mapfishapp: print: left align the legend to its column container, see [d707a8](https://github.com/georchestra/template/commit/d707a8f7371bf56059758802e7afbb891f34bfce)
+ * mapfishapp: fixed incorrect metadata URL in csw browser ("add a layer from thesaurus") - see [#542](https://github.com/georchestra/georchestra/issues/542)
+ * ogcservstatistics - fixed missing postgresql driver loading
+ * proxy: fixed charset detection in ArcGIS server responses - see [#498](https://github.com/georchestra/georchestra/pull/498)
+ * proxy: removed ```sec-*``` headers from client request - see [#154](https://github.com/georchestra/georchestra/pull/154)
+ * proxy: fixed incorrect referer value - see [#533](https://github.com/georchestra/georchestra/issues/533)
+ * header: maintains existing URI parameters when adding the "login" param - see [#175](https://github.com/georchestra/georchestra/issues/175)
+
+UPGRADING:
+ * analytics: the ExtJS submodule path has changed, be sure to run ```git submodule update --init``` when you switch branches.
+ * databases: the downloadform, ogcstatistics and ldapadmin databases are now merged into a single one named "georchestra". Each webapp expects to find its tables in a dedicated schema ("downloadform" for the downloadform module, "ogcstatistics" for ogc-server-statistics, and "ldapadmin" for ldapadmin). See https://github.com/georchestra/georchestra/pull/535 for the complete patch. If you currently have one dedicated database for each module, you can keep your setup, provided you customize the ```shared.psql.ogc.statistics.db```, ```shared.psql.download_form.db``` & ```shared.ldapadmin.db``` maven filters in your own config. In any case, you'll have to rename the ```download``` schema (of the previous ```downloadform``` database) into ```downloadform```, and migrate the tables which were in the public schema of the databases ```ogcstatistics``` and ```ldapadmin``` into the newly created schemas.
+ * download form: the module is disabled by default (```shared.download_form.activated=false```). Be sure to set the value you want in your shared.maven.filters file.
+ * extractorapp:
+   * ```BUFFER_VALUES``` has changed. If you had a custom value in your GEOR_custom.js file, you have to modify it according to the new syntax.
+   * the ```geobretagne_production``` env variable has been removed - see [#97](https://github.com/georchestra/georchestra/pull/97)
+ * geoserver: be sure to set the ```file.encoding``` tomcat option for geoserver to interpret correctly UTF-8 SLDs (read [how](INSTALL.md#geoserver)).
+ * ldapadmin:
+   * new ```shared.ldapadmin.db``` parameter to specify the ldapadmin database name (defaults to "georchestra").
+   * the ldapadmin private app is now accessed via /ldapadmin/privateui/ rather than /ldapadmin/privateui/index.html
+ * mapfishapp:
+   * the ```NS_EDIT``` config option has been removed. By default, all layers served by the platform geoserver are editable (see ```GEOR.custom.EDITABLE_LAYERS```), provided the user has the rights to (defaults to members of ```ROLE_ADMINISTRATOR```, see ```GEOR.custom.ROLES_FOR_EDIT```).
+   * the contexts referenced in your ```GEOR.custom.CONTEXTS``` array are now able to reference layers with their full attribution information (text, logo & link). Have a look at the provided [default.wmc](https://github.com/georchestra/template/blob/55f24c8625e737d0b4567db92966c98502578766/mapfishapp/default.wmc#L39).
+   * print: some parameters have changed when the print module was updated: ```maxIconWidth``` -> ```iconMaxWidth```, ```maxIconHeight``` -> ```iconMaxHeight``` (see [e6231c](https://github.com/georchestra/template/commit/e6231c8cbf325dfa2bf96fcaa14096fc0c64ab89)).
+ * ogcservstatistics - disabled by default: ```shared.ogc.statistics.activated=false```. Be sure to set the value you want in your shared.maven.filters file.
+ * static: the "static" module has been renamed into "header": your deployment scripts *must* be adapted, as well as your apache2 configuration (or any other reverse proxy).
+
+
 Version 13.09 (current stable version)
 =======================================
 
@@ -21,8 +137,8 @@ New features:
  * mapfishapp: French IGN's GeoPortail webservices support,
  * mapfishapp: Russian translation (!),
  * geoserver: Opaque WMS Layer property support (see [#158](https://github.com/georchestra/georchestra/issues/158)),
- * ldapadmin: a brand new module is available which allows at the same time to: admin your users in your browser, let your users recover their lost password, and let them register too ! More information in the module [README](https://github.com/georchestra/georchestra/blob/master/ldapadmin/README.md),
- * extractorapp: ship metadata in ZIP (read this [how to](https://github.com/georchestra/georchestra/blob/master/extractorapp/README.md#metadata-extraction)),
+ * ldapadmin: a brand new module is available which allows at the same time to: admin your users in your browser, let your users recover their lost password, and let them register too ! More information in the module [README](ldapadmin/README.md),
+ * extractorapp: ship metadata in ZIP (read this [how to](extractorapp/README.md#metadata-extraction)),
  * extractorapp: now supports KML & TIF+(TFW,TAB) output.
 
 Enhancements:
@@ -40,7 +156,7 @@ Enhancements:
  * mapfishapp: permalink validity displayed in months,
  * mapfishapp: link to layer metadata which is declared as text/html is now prefered over the other links,
  * mapfishapp: addons can now be loaded by default (read [how](https://github.com/georchestra/template/blob/45eddec545418b4de55952795c66940729d3b547/mapfishapp/app/js/GEOR_custom.js#L64)),
- * mapfishapp: added a [note on data](https://github.com/georchestra/georchestra/blob/master/mapfishapp/README.md#your-data-in-mapfishapp) in the doc,
+ * mapfishapp: added a [note on data](mapfishapp/README.md#your-data-in-mapfishapp) in the doc,
  * extractorapp: several small fixes for extractorapp reprojection,
  * extractorapp: more visible extract button,
  * extractorapp: auto-deactivate the "Modify the bbox" button,
@@ -53,7 +169,7 @@ Enhancements:
  * everywhere: plain text emails, with the ability to switch back to HTML via ```shared.email.html```,
  * everywhere: all outgoing emails are now prefixed with the platform name,
  * everywhere: better translations.
- * documentation: improved [installation](https://github.com/georchestra/georchestra/blob/master/INSTALL.md) instructions
+ * documentation: improved [installation](INSTALL.md) instructions
 
 Bug fixes:
  * security-proxy: now only sends one referer headers - fixes consuming arcgis web services - [read more](https://github.com/georchestra/georchestra/issues/266),
@@ -85,7 +201,7 @@ UPGRADING:
    * default MAP_SCALES changes to match the OGC WMTS spec,
  * LDAP: see [georchestra/LDAP#2](https://github.com/georchestra/LDAP/pull/2)
    * one group was renamed: ```STAT_USER``` becomes ```MOD_ANALYTICS``` - grants access to the analytics app,
-   * an other one was created: ```MOD_LDAPADMIN``` - grants access to the LDAPadmin private UI (/ldapadmin/privateui/index.html).
+   * an other one was created: ```MOD_LDAPADMIN``` - grants access to the LDAPadmin private UI (/ldapadmin/privateui/).
  * The default application language is now **English**:
    * ```shared.language``` = en
    * ```geonetwork.language``` = eng
@@ -98,6 +214,8 @@ UPGRADING:
  * shared maven filters renamed:
    * ```shared.smtp.replyTo``` -> ```shared.email.replyTo```
    * ```shared.smtp.from``` -> ```shared.email.from```
+ * frontend webserver:
+   * add a proxy rule for `/_static/` subdirectory (see https://github.com/georchestra/georchestra/tree/master/INSTALL.md)
 
 
 Version 13.06
@@ -115,7 +233,7 @@ Enhancements:
  * mapfishapp: the CSW querier filters results on type = dataset OR series,
  * extractorapp: supported output formats combos made configurable, ECW output format expunged by default,
  * the template config was slimmed down: files where default values are suitable for most deployments were moved to config/defaults,
- * the documentation was improved ([mapfishapp](https://github.com/georchestra/georchestra/blob/master/mapfishapp/README.md#feature-editor), [install](https://github.com/georchestra/georchestra/blob/master/INSTALL.md), [manage configs](https://github.com/georchestra/georchestra/blob/master/README.md#how-to-customize-)),
+ * the documentation was improved ([mapfishapp](mapfishapp/README.md#feature-editor), [install](INSTALL.md), [manage configs](README.md#how-to-customize-)),
  * we now have CI on JS files syntax with Travis !
 
 Bug fixes:

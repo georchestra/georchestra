@@ -2,8 +2,8 @@
 privateKey=6LcfjucSAAAAAKcnHp14epYOiWOIUfEculd4PvLV
 publicKey=6LcfjucSAAAAAKtNoK5r7IIXxBT-33znNJUgeYg1
 
-# Application path as seen from the external world:
-passwordRecoveryContext=/ldapadmin
+# Application path as seen from the external world
+publicContextPath=/ldapadmin
 
 # LDAP
 ldapUrl=@shared.ldapUrl@
@@ -21,7 +21,7 @@ protectedUser.uid1=@shared.privileged.geoserver.user@
 # Database connection
 psql.user=@shared.psql.user@
 psql.pass=@shared.psql.pass@
-psql.url=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/ldapadmin
+psql.url=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.ldapadmin.db@
 
 # Email properties
 smtpHost=@shared.smtp.host@

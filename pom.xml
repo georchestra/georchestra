@@ -41,7 +41,7 @@ new PostTreatment().run(this, log, ant, project.basedir, params.projectDir, serv
 		<module>config</module>
 		<module>gt-mif</module>
 		<!-- <module>gt-ogr</module> now the geotools implementation is used -->
-		<module>static</module>
+		<module>header</module>
 		<module>epsg-extension</module>
 		<module>ogc-server-statistics</module>
 		<module>server-deploy-support</module>
@@ -208,33 +208,6 @@ class PostTreatment {
 			</properties>
 		</profile>
 
-		<profile>
-			<id>pigma_int</id>
-			<properties>
-				<server>pigma</server>
-				<sub.target>int</sub.target>
-				<geoserver.war.excludes>WEB-INF/lib/*gwc*.jar</geoserver.war.excludes>
-			</properties>
-		</profile>
-
-		<profile>
-			<id>pigma_prod</id>
-			<properties>
-				<server>pigma</server>
-				<sub.target>prod</sub.target>
-				<geoserver.war.excludes>WEB-INF/lib/*gwc*.jar</geoserver.war.excludes>
-			</properties>
-		</profile>
-
-		<profile>
-			<id>pigma_c2cpc61</id>
-			<properties>
-				<server>pigma</server>
-				<sub.target>c2cpc61</sub.target>
-				<geoserver.war.excludes>WEB-INF/lib/*gwc*.jar</geoserver.war.excludes>
-			</properties>
-		</profile>
-
 		<!-- template profile -->
 		<profile>
 			<id>template</id>
@@ -264,7 +237,7 @@ class PostTreatment {
 				<module>geonetwork</module>
 				<module>downloadform</module>
 				<module>analytics</module>
-				<module>static</module>
+				<module>header</module>
 			</modules>
 		</profile>
 
@@ -290,9 +263,9 @@ class PostTreatment {
 		</profile>
 
 		<profile>
-			<id>static</id>
+			<id>header</id>
 			<modules>
-				<module>static</module>
+				<module>header</module>
 			</modules>
 		</profile>
 

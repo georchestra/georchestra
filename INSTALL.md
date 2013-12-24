@@ -24,63 +24,64 @@ LDAP
 PostGreSQL
 ==========
 
-* Installation 
+* Installation:
 
         sudo apt-get install postgresql postgresql-9.1-postgis postgis
 	
-* GeoNetwork database setup
+* GeoNetwork database setup:
 
         sudo su postgres
         createdb geonetwork
         psql -f /usr/share/postgresql/9.1/contrib/postgis-1.5/postgis.sql geonetwork
         psql -f /usr/share/postgresql/9.1/contrib/postgis-1.5/spatial_ref_sys.sql geonetwork
-
         createuser -SDRIP www-data
+        psql -d geonetwork -c 'GRANT ALL PRIVILEGES ON DATABASE geonetwork TO "www-data";'
+        psql -d geonetwork -c 'GRANT ALL PRIVILEGES ON SCHEMA public TO "www-data";'
+        psql -d geonetwork -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "www-data";'
+        psql -d geonetwork -c 'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO "www-data";'
 
-* databases setup:
+* "georchestra" database hosting schemas specific to deployed modules:
 
- * downloadform
+        createdb georchestra
+        createuser -SDRIP www-data
+        psql -d georchestra -c 'GRANT ALL PRIVILEGES ON DATABASE georchestra TO "www-data";'
 
-            createdb downloadform
-            wget https://raw.github.com/georchestra/georchestra/master/downloadform/samples/sample.sql -O /tmp/downloadform.sql
-            psql -d downloadform -f /tmp/downloadform.sql
+Note 1: It is possible to store webapp-specific schemas in separate databases.
 
- * ogcstatistics
+Note 2: PostGIS extensions are not required for now in the georchestra database.
 
-            createdb ogcstatistics
-            wget https://raw.github.com/georchestra/georchestra/master/ogc-server-statistics/ogc_statistics_table.sql -O /tmp/ogc_statistics_table.sql
-            psql -d ogcstatistics -f /tmp/ogc_statistics_table.sql
+ * if mapfishapp is deployed:
 
- * ldapadmin
+        wget https://raw.github.com/georchestra/georchestra/master/mapfishapp/database.sql -O /tmp/mapfishapp.sql
+        psql -d georchestra -f /tmp/mapfishapp.sql
+        psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA mapfishapp TO "www-data";'
+        psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA mapfishapp TO "www-data";'
+        psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA mapfishapp TO "www-data";'
 
-            createdb ldapadmin
-            wget https://raw.github.com/georchestra/georchestra/master/ldapadmin/ldapAdminDB.sql -O /tmp/ldapAdminDB.sql
-            psql -d ldapadmin -f /tmp/ldapAdminDB.sql
+ * if the ldapadmin webapp is deployed:
 
- * mapfishapp
+        wget https://raw.github.com/georchestra/georchestra/master/ldapadmin/database.sql -O /tmp/ldapadmin.sql
+        psql -d georchestra -f /tmp/ldapadmin.sql
+        psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA ldapadmin TO "www-data";'
+        psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ldapadmin TO "www-data";'
+        psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA ldapadmin TO "www-data";'
 
-            createdb mapfishapp
-            wget https://raw.github.com/georchestra/georchestra/master/mapfishapp/database.sql -O /tmp/mapfishapp.sql
-            psql -d mapfishapp -f /tmp/mapfishapp.sql
+ * if shared.download_form.activated is true in your setup (false by default):
 
-* Set rights of the www-data user
+        wget https://raw.github.com/georchestra/georchestra/master/downloadform/database.sql -O /tmp/downloadform.sql
+        psql -d georchestra -f /tmp/downloadform.sql
+        psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA downloadform TO "www-data";'
+        psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA downloadform TO "www-data";'
+        psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA downloadform TO "www-data";'
+        
+ * if shared.ogc.statistics.activated is true in your setup (false by default):
 
-        echo 'GRANT ALL PRIVILEGES ON DATABASE geonetwork TO "www-data";' | psql -d geonetwork
-        echo 'GRANT ALL PRIVILEGES ON SCHEMA public TO "www-data";' | psql -d geonetwork
-        echo 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "www-data";' | psql -d geonetwork
-        echo 'GRANT ALL PRIVILEGES ON DATABASE downloadform TO "www-data";' | psql -d downloadform
-        echo 'GRANT ALL PRIVILEGES ON SCHEMA public TO "www-data";' | psql -d downloadform
-        echo 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "www-data";' | psql -d downloadform
-        echo 'GRANT ALL PRIVILEGES ON DATABASE ogcstatistics TO "www-data";' | psql -d ogcstatistics
-        echo 'GRANT ALL PRIVILEGES ON SCHEMA public TO "www-data";' | psql -d ogcstatistics
-        echo 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "www-data";' | psql -d ogcstatistics
-        echo 'GRANT ALL PRIVILEGES ON DATABASE ldapadmin TO "www-data";' | psql -d ldapadmin
-        echo 'GRANT ALL PRIVILEGES ON SCHEMA public TO "www-data";' | psql -d ldapadmin
-        echo 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "www-data";' | psql -d ldapadmin
-        echo 'GRANT ALL PRIVILEGES ON DATABASE mapfishapp TO "www-data";' | psql -d mapfishapp
-        echo 'GRANT ALL PRIVILEGES ON SCHEMA geodoc TO "www-data";' | psql -d mapfishapp
-        echo 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA geodoc TO "www-data";' | psql -d mapfishapp
-        exit
+        wget https://raw.github.com/georchestra/georchestra/master/ogc-server-statistics/database.sql -O /tmp/ogcstatistics.sql
+        psql -d georchestra -f /tmp/ogcstatistics.sql
+        psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA ogcstatistics TO "www-data";'
+        psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ogcstatistics TO "www-data";'
+        psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA ogcstatistics TO "www-data";'
+
 
 Apache
 =========
@@ -183,7 +184,7 @@ Apache
     RewriteRule ^/ldapadmin$ /ldapadmin/ [R]
     RewriteRule ^/mapfishapp$ /mapfishapp/ [R]
     RewriteRule ^/proxy$ /proxy/ [R]
-    RewriteRule ^/static$ /static/ [R]
+    RewriteRule ^/header$ /header/ [R]
 
     ProxyPass /analytics/ ajp://localhost:8009/analytics/ 
     ProxyPassReverse /analytics/ ajp://localhost:8009/analytics/
@@ -230,9 +231,11 @@ Apache
     ProxyPass /proxy/ ajp://localhost:8009/proxy/ 
     ProxyPassReverse /proxy/ ajp://localhost:8009/proxy/
 
-    ProxyPass /static/ ajp://localhost:8009/static/ 
-    ProxyPassReverse /static/ ajp://localhost:8009/static/
+    ProxyPass /header/ ajp://localhost:8009/header/
+    ProxyPassReverse /header/ ajp://localhost:8009/header/
 
+    ProxyPass /_static/ ajp://localhost:8009/_static/
+    ProxyPassReverse /_static/ ajp://localhost:8009/_static/
 
     AddType application/vnd.ogc.context+xml .wmc
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -425,6 +428,11 @@ You may have to install the "core fonts for the web" on your server if you need 
 
 Restart your geoserver tomcat and check on /geoserver/web/?wicket:bookmarkablePage=:org.geoserver.web.admin.JVMFontsPage that these are loaded.
 
+* Fine tuning (optional but highly recommended)
+
+Please refer to the excellent "[Running in a Production Environment](http://docs.geoserver.org/stable/en/user/production/index.html)" section of the GeoServer documentation.
+
+You may also want to setup limits to the number of concurrent requests handled by your GeoServer. By default, geOrchestra GeoServer ships with the [control flow](http://docs.geoserver.org/stable/en/user/extensions/controlflow/index.html) module installed, but not activated. To do so, you have to create a custom ```controlflow.properties``` file in your geoserver data dir. Please refer to the module documentation for the syntax.
 
 GeoNetwork
 ==========
@@ -468,7 +476,7 @@ sudo nano /etc/default/tomcat6
 JAVA_OPTS="$JAVA_OPTS -DCUSTOM_EPSG_FILE=file://$CATALINA_BASE/conf/epsg.properties"
 ```
 
-... in which a sample epsg.properties file can be found [here](https://github.com/georchestra/georchestra/blob/master/server-deploy-support/src/main/resources/c2c/tomcat/conf/epsg.properties)
+... in which a sample epsg.properties file can be found [here](server-deploy-support/src/main/resources/c2c/tomcat/conf/epsg.properties)
 
 GDAL for GeoServer, Extractorapp & Mapfishapp
 =============================================

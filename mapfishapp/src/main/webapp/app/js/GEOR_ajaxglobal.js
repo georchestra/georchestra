@@ -147,7 +147,7 @@ GEOR.ajaxglobal = (function() {
                 runCallbacks = false;
             } else {
                 // deal with Service Exception Report
-                if (request.responseXML) {
+                if (request.responseXML && !GEOR.ajaxglobal.disableOGCExceptionReports) {
                     var data = (new OpenLayers.Format.OGCExceptionReport()).read(request.responseXML);
                     if (data.exceptionReport && data.exceptionReport.exceptions) {
                         var exceptions = data.exceptionReport.exceptions;
@@ -171,6 +171,12 @@ GEOR.ajaxglobal = (function() {
     };
 
     return {
+
+        /**
+         * APIProperty: disableOGCExceptionReports
+         * Set to true to disable OGC Exception Report handling
+         */
+        disableOGCExceptionReports: false,
 
         /**
          * APIMethod: init

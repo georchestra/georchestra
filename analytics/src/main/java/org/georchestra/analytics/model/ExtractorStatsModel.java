@@ -14,16 +14,16 @@ public class ExtractorStatsModel extends AbstractModel  {
 	}
 	
 	private final String selectLayersQ = "SELECT y.ows_url, y.ows_type, y.layer_name, count(*) as count " +
-			"FROM download.extractorapp_log l, download.extractorapp_layers y " +
+			"FROM downloadform.extractorapp_log l, downloadform.extractorapp_layers y " +
 			"where extract(month from requested_at) = ? AND extract(year from requested_at) = ? " +
 			"AND l.id = y.extractorapp_log_id group by y.layer_name, y.ows_url, y.ows_type " +
 			"order by @sort@ LIMIT ? OFFSET ?;";
 	
-	private final String selectUsersQ = "SELECT l.username as username, count(*) as count FROM download.extractorapp_log l, download.extractorapp_layers y " +
+	private final String selectUsersQ = "SELECT l.username as username, count(*) as count FROM downloadform.extractorapp_log l, downloadform.extractorapp_layers y " +
 			"where extract(month from requested_at) = ? AND extract(year from requested_at) = ? " +
 			"AND l.id = y.extractorapp_log_id group by l.username order by @sort@ LIMIT ? OFFSET ?;";
 
-	private final String selectGroupsQ = "SELECT l.company as company, count(*) as count FROM download.extractorapp_log l, download.extractorapp_layers y " +
+	private final String selectGroupsQ = "SELECT l.company as company, count(*) as count FROM downloadform.extractorapp_log l, downloadform.extractorapp_layers y " +
 			"where extract(month from requested_at) = ? AND extract(year from requested_at) = ? " +
 			"AND l.id = y.extractorapp_log_id group by l.company order by @sort@ LIMIT ? OFFSET ?;";
 

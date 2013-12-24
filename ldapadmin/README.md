@@ -35,7 +35,7 @@ If the given email does not match one from the LDAP:
 
 ### Create account
 
-The page shows a form with typical fields: name, org, role, email, phone nb, details.
+The page shows a form with typical fields: name, org, title, email, phone nb, details.
 The user will be able to pick a **strong** password (must have at least one of: special char, letters and numbers). 
 Password field will be repeated 2 times (client-side check for equality).
 
@@ -63,54 +63,6 @@ Two pages:
 
 For the web container: Tomcat 6, or Maven Jetty (no need to install)
 
-### Install Postgresql
-
-To create the database use the following script:
-
-```
-[georchestra]/ldapadmin/ldapAdminDB.sql
-```
-
-Create the user and give it rights on the `ldapadmin` database:
-
-```
-echo 'CREATE ROLE "www-data" WITH LOGIN PASSWORD "www-data";' | sudo -u postgres psql
-echo 'GRANT ALL PRIVILEGES ON DATABASE ldapadmin TO "www-data";' | sudo -u postgres psql -d ldapadmin
-echo 'GRANT ALL PRIVILEGES ON SCHEMA public TO "www-data";' | sudo -u postgres psql -d ldapadmin
-echo 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "www-data";' | sudo -u postgres psql -d ldapadmin
-```
-
-Note: because this is a work in progress right now the postgresql parameters in `[georchestra]/ldapadmin/src/main/webapp/WEB-INF/spring/webmvc-config.xml` are not used.
-To configure the connection, for testing purpose, directly change the `UserTokenDao.getConnection()` method in the `[georchestra]/ldapadmin/src/main/java/org/georchestra/ldapadmin/ds/UserTokenDao.java` file. For example:
-
-```
-this.databaseName = "ldapadmin";
-this.databaseUser = "www-data";
-this.databasePassword = "www-data";
-```
-
-### Install LDAP
-
-The connection to the LDAP server is configurated in the following file:
-
-```
-[georchestra]/ldapadmin/src/main/webapp/WEB-INF/spring/webmvc-config.xml
-```
-
-For exemple:
-
-```
-<!-- LDAP connection -->
-<bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource">
-  <property name="url" value="ldap://localhost:389" />
-  <property name="base" value="dc=georchestra,dc=org" />
-  <property name="userDn" value="cn=admin,dc=georchestra,dc=org" />
-  <property name="password" value="secret" />
-</bean>
-```
-
-If no LDAP server is installed, follow instructions at https://github.com/georchestra/georchestra/blob/master/INSTALL.md#ldap.
-The LDAP server will be installed and an example directory database will be populated and accessible using the above default parameters.
 
 ### Get a pair of ReCaptcha keys
 
@@ -122,7 +74,7 @@ Once created, set the following `ldapadmin` parameters with the value of the key
 * `privateKey`
 * `publicKey`
 
-See https://github.com/georchestra/georchestra/blob/master/config/README.md for details on how to configure these two parameters.
+See [the configuration guide](../config/README.md) for details on how to configure these two parameters.
 
 ### Set of required fields
 
@@ -159,7 +111,7 @@ Testing purpose:
 
  * deploy in Tomcat6
  * Then add the following url in your Internet navigator:
-   http://localhost:8080/ldapadmin/privateui/index.html
+   http://localhost:8080/ldapadmin/privateui/
 
 Alternatively, run with jetty:
 
@@ -255,14 +207,14 @@ Notes
 
 All emails sent by the application should be configurable by the way of templates, as for extractorapp.
 
-The application should be able to find groups and users by the way of filters such as the ones used by the cas (see https://github.com/georchestra/georchestra/blob/master/config/defaults/cas-server-webapp/maven.filter#L4) and defined by the way of the variables shared.ldap.userSearchBaseDN and shared.ldap.groupSearchBaseDN defined in https://github.com/georchestra/georchestra/blob/master/config/shared.maven.filters#L10
+The application should be able to find groups and users by the way of filters such as the ones used by the cas (have a look at the [cas maven filters](../config/defaults/cas-server-webapp/maven.filter#L4) and defined by the way of the variables shared.ldap.userSearchBaseDN and shared.ldap.groupSearchBaseDN defined in [config/shared.maven.filters](../config/shared.maven.filters#L10)
 
 The userPassword LDAP field should be SSHA encrypted on creation/update.
 
 Configure the look of the users list
 ------------------------------------
 
-The file https://github.com/georchestra/georchestra/blob/master/config/default/ldapadmin/privateui/partials/users-list-table.html defines the way the users list is displayed in the `ldapadmin/privateui/#/users` page. By default, it lists the users, with three columns:
+The file [config/default/ldapadmin/privateui/partials/users-list-table.html](../config/default/ldapadmin/privateui/partials/users-list-table.html) defines the way the users list is displayed in the `ldapadmin/privateui/#/users` page. By default, it lists the users, with three columns:
 
 * the first **mandatory** column is used to select a user for an action (eg. add the selected user to a group),
 * the second column contains the firstname and lastname of the user, with a link to the user administration page,

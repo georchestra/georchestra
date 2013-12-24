@@ -529,8 +529,8 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
  throws IOException {
 
         Set<String> crss = request.getSupportedResponseCRSs();
-        // Hack mostly for pigma. It will work so long as backing servers
-        // are Geoservers
+        // Hack. It will work so long as backing servers
+        // are GeoServers
         if (crss.isEmpty() && request.getNativeCRSs().isEmpty())
             return request;
         if (!crss.contains(request.getResponseEpsgCode())) {

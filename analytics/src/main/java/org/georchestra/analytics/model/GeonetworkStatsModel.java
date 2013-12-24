@@ -14,15 +14,15 @@ public class GeonetworkStatsModel extends AbstractModel  {
 		super(pgpool);
 	}
 	
-	private final String selectFilesQ = "SELECT filename, metadata_id, count(*) as count FROM download.geonetwork_log " +
+	private final String selectFilesQ = "SELECT filename, metadata_id, count(*) as count FROM downloadform.geonetwork_log " +
 			"where extract(month from requested_at) = ? AND extract(year from requested_at) = ? " +
 			"group by metadata_id, filename order by @sort@ LIMIT ? OFFSET ?;";
 	
-	private final String selectUsersQ = "SELECT username, count(*) as count FROM download.geonetwork_log " +
+	private final String selectUsersQ = "SELECT username, count(*) as count FROM downloadform.geonetwork_log " +
 			"where extract(month from requested_at) = ? AND extract(year from requested_at) = ? " +
 			"group by username order by @sort@ LIMIT ? OFFSET ?;";
 	
-	private final String selectGroupsQ = "SELECT company, count(*) as count FROM download.geonetwork_log " +
+	private final String selectGroupsQ = "SELECT company, count(*) as count FROM downloadform.geonetwork_log " +
 			"where extract(month from requested_at) = ? AND extract(year from requested_at) = ? " +
 			"group by company order by @sort@ LIMIT ? OFFSET ?;";
 

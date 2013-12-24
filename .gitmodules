@@ -46,3 +46,6 @@
 [submodule "config/configurations/template"]
 	path = config/configurations/template
 	url = https://github.com/georchestra/template.git
+[submodule "geoserver/geofence"]
+	path = geoserver/geofence
+	url = https://github.com/georchestra/geofence.git

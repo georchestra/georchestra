@@ -44,7 +44,7 @@ public class HomeController {
 		this.tokenManagement.start();
 	}
 	
-	@RequestMapping(value={"/privateui","/"})
+	@RequestMapping(value="/")
 	public void root(HttpServletRequest request, HttpServletResponse response) throws IOException{
 		
 		String roles = request.getHeader("sec-roles");
@@ -53,17 +53,32 @@ public class HomeController {
 			String redirectUrl;
 			List<String> rolesList = Arrays.asList(roles.split(","));
 			
-			if(rolesList.contains("MOD_LDAPADMIN")) {
-				redirectUrl = "/privateui/index.html";
+			if(rolesList.contains("ROLE_MOD_LDAPADMIN")) {
+				redirectUrl = "/privateui/";
 			}
 			else {
 				redirectUrl = "/account/userdetails";
 			}
 			if(LOG.isDebugEnabled()){
 				LOG.debug("root page request -> redirection to " +
-						config.getPasswordRecoveryContext() + redirectUrl);
+						config.getPublicContextPath() + redirectUrl);
 			}
-			response.sendRedirect(config.getPasswordRecoveryContext() + redirectUrl);
+			response.sendRedirect(config.getPublicContextPath() + redirectUrl);
+		} else {
+			/* TODO: send a 403 error */
+			return;
 		}
+	}
+
+	@RequestMapping(value="/privateui/")
+	public String privateui(HttpServletRequest request) throws IOException{
+		String roles = request.getHeader("sec-roles");
+		if(roles != null && !roles.equals("ROLE_ANONYMOUS")) {
+			List<String> rolesList = Arrays.asList(roles.split(","));
+			if(rolesList.contains("ROLE_MOD_LDAPADMIN")) {
+				return "privateUi";
+			}
+		}
+		return "forbidden";
 	}
 }
