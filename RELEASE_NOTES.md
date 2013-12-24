@@ -109,7 +109,9 @@ UPGRADING:
    * ```BUFFER_VALUES``` has changed. If you had a custom value in your GEOR_custom.js file, you have to modify it according to the new syntax.
    * the ```geobretagne_production``` env variable has been removed - see [#97](https://github.com/georchestra/georchestra/pull/97)
  * geoserver: be sure to set the ```file.encoding``` tomcat option for geoserver to interpret correctly UTF-8 SLDs (read [how](INSTALL.md#geoserver)).
- * ldapadmin: new ```shared.ldapadmin.db``` parameter to specify the ldapadmin database name (defaults to "georchestra").
+ * ldapadmin:
+   * new ```shared.ldapadmin.db``` parameter to specify the ldapadmin database name (defaults to "georchestra").
+   * the ldapadmin private app is now accessed via /ldapadmin/privateui/ rather than /ldapadmin/privateui/index.html
  * mapfishapp:
    * the ```NS_EDIT``` config option has been removed. By default, all layers served by the platform geoserver are editable (see ```GEOR.custom.EDITABLE_LAYERS```), provided the user has the rights to (defaults to members of ```ROLE_ADMINISTRATOR```, see ```GEOR.custom.ROLES_FOR_EDIT```).
    * the contexts referenced in your ```GEOR.custom.CONTEXTS``` array are now able to reference layers with their full attribution information (text, logo & link). Have a look at the provided [default.wmc](https://github.com/georchestra/template/blob/55f24c8625e737d0b4567db92966c98502578766/mapfishapp/default.wmc#L39).
