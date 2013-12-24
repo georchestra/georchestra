@@ -389,31 +389,6 @@ public class UpLoadFileManagement {
     }
 
     /**
-     * Gets the significant digits from the geometry. (4 is the default)
-     * 
-     * @param collection
-     * @return decimals required to present the geometry's coordinates
-     */
-    private int getDigits(final SimpleFeatureCollection collection) {
-
-        int decimals = 4;
-
-        FeatureIterator<SimpleFeature> iterator = collection.features();
-        try {
-            if (!iterator.hasNext()) {
-                return decimals;
-            }
-            SimpleFeature feature = iterator.next();
-            Geometry geom = (Geometry) feature.getDefaultGeometry();
-            decimals = geom.getPrecisionModel().getMaximumSignificantDigits();
-        } finally {
-            iterator.close();
-        }
-
-        return decimals;
-    }
-
-    /**
      * Searches, in the set of file uploaded, a file with a geofile extension.
      * <ul>
      * <li>shp</li>
