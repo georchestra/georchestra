@@ -11,7 +11,7 @@
  * You should have received a copy of the GNU General Public License
  * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 Ext.namespace("GEOR");
 
 GEOR.config = (function() {
@@ -142,8 +142,8 @@ GEOR.config = (function() {
          * runtime method to get the current default WMC
          */
         DEFAULT_WMC: function() {
-            if (GEOR.config.CONTEXTS && 
-                GEOR.config.CONTEXTS[0] && 
+            if (GEOR.config.CONTEXTS &&
+                GEOR.config.CONTEXTS[0] &&
                 GEOR.config.CONTEXTS[0][2]) {
                 return GEOR.config.CONTEXTS[0][2];
             }
@@ -202,7 +202,7 @@ GEOR.config = (function() {
          * Constant: ADDONS
          * An array of addons config objects.
          * Defaults to []
-         * 
+         *
          * An "addon config object" is an object with the following properties:
          *  id - {String} required identifier, which *MUST* :
          *        * be stable across deployments in order to let your users recover their tools
@@ -215,9 +215,9 @@ GEOR.config = (function() {
          *  group - {String} an optional group for mutual exclusion between activated tools - default group is "tools"
          *  options - {Object} an optional config object which overrides the package default_options (in manifest.json)
          *  thumbnail - {String} an optional thumbnail path, relative to app/addons/{addon_name.toLowerCase()}/ (defaults to img/icon.png)
-         *  
+         *
          */
-        ADDONS: getCustomParameter("ADDONS", 
+        ADDONS: getCustomParameter("ADDONS",
             []),
 
         /**
@@ -230,7 +230,7 @@ GEOR.config = (function() {
          *   * the third one is the path to the context (WMC) file
          *   * the last one is a comment which will be shown on thumbnail hovering
          *
-         * Example config : 
+         * Example config :
          *   [
          *      ["OpenStreetMap", "app/img/contexts/osm.png", "default.wmc", "A unique OSM layer"],
          *      ["Orthophoto", "app/img/contexts/ortho.png", "context/ortho.wmc", "Orthophoto 2009"],
@@ -247,8 +247,7 @@ GEOR.config = (function() {
         /**
          * Constant: GEOSERVER_WFS_URL
          * The URL to GeoServer WFS.
-         * This is required if and only if the edit application is used
-         * or if the "referentials" module is activated.
+         * This is required if and only if the "referentials" module is activated.
          * Defaults to /geoserver/wfs
          */
         GEOSERVER_WFS_URL: getCustomParameter("GEOSERVER_WFS_URL",
@@ -294,11 +293,8 @@ GEOR.config = (function() {
          * List of catalogs for freetext search
          */
         CATALOGS: getCustomParameter("CATALOGS", [
-            ['http://geobretagne.fr/geonetwork/srv/fre/csw', 'le catalogue GeoBretagne'],
-            ['http://ids.pigma.org/geonetwork/srv/fre/csw', 'le catalogue PIGMA'],
-            ['/geonetwork/srv/fre/csw', 'le catalogue local'],
-            ['http://sandre.eaufrance.fr/geonetwork_CSW/srv/fre/csw', 'le catalogue du Sandre'],
-            ['http://geocatalog.webservice-energy.org/geonetwork/srv/fre/csw', 'le catalogue de webservice-energy']
+            ['http://sdi.georchestra.org/geonetwork/srv/fre/csw', 'le catalogue geOrchestra démo'],
+            ['/geonetwork/srv/fre/csw', 'le catalogue local']
         ]),
 
         /**
@@ -307,7 +303,7 @@ GEOR.config = (function() {
          * Note: must be one of the URLs in the above CATALOGS config option
          */
         DEFAULT_CSW_URL: getCustomParameter("DEFAULT_CSW_URL",
-            'http://geobretagne.fr/geonetwork/srv/fre/csw'),
+            'http://sdi.georchestra.org/geonetwork/srv/fre/csw'),
 
         /**
          * Constant: MAX_CSW_RECORDS
@@ -318,6 +314,22 @@ GEOR.config = (function() {
          * Defaults to 20.
          */
         MAX_CSW_RECORDS: getCustomParameter("MAX_CSW_RECORDS", 20),
+
+        /**
+         * Constant: CSW_FILTER_PROPERTIES
+         * A list of properties queried on catalog search.
+         * Use ['AnyText'] to allow search on all metadata fields,
+         * or use a subset of ISO queryable properties to limit search
+         * on those properties.
+         * Defaults to ['Title','AlternateTitle','Abstract','Subject','OrganisationName']
+         */
+        CSW_FILTER_PROPERTIES: getCustomParameter("CSW_FILTER_PROPERTIES", [
+            'Title',
+            'AlternateTitle',
+            'Abstract',
+            'Subject',
+            'OrganisationName'
+        ]),
 
         /**
          * Constant: NO_THUMBNAIL_IMAGE_URL
@@ -436,16 +448,6 @@ GEOR.config = (function() {
          */
         NS_LOC: getCustomParameter("NS_LOC", "geor_loc"),
 
-
-        /**
-         * Constant: NS_EDIT
-         * {String} The editing layers' namespace alias as defined in
-         *    the GeoServer configuration.
-         * Defaults to "geor_edit"
-         */
-        NS_EDIT: getCustomParameter("NS_EDIT", "geor_edit"),
-
-
         /**
          * Constant: CSW_GETDOMAIN_PROPERTY
          * {String} the property used to query the CSW for keywords.
@@ -458,31 +460,31 @@ GEOR.config = (function() {
         /**
          * Constant: MAP_SCALES
          * {Array} The map's scales.
-         * Defaults to GWC EPSG:900913 default gridset scales
+         * Defaults to the Well-known scale set GoogleMapsCompatible (see WMTS spec appendix E)
          */
-        MAP_SCALES : getCustomParameter("MAP_SCALES", [
-            266.5911979441132,
-            533.1823958882264,
-            1066.3647917764529,
-            2132.7295835529058,
-            4265.4591671058115,
-            8530.918334211623,
-            17061.836668423246,
-            34123.67333684649,
-            68247.34667369298,
-            136494.69334738597,
-            272989.38669477194,
-            545978.7733895439,
-            1091957.5467790877,
-            2183915.0935581755,
-            4367830.187116351,
-            8735660.374232702,
-            17471320.748465404,
-            34942641.49693081,
-            69885282.99386162,
-            139770565.98772323,
-            279541131.97544646,
-            559082263.9508929
+        MAP_SCALES: getCustomParameter("MAP_SCALES", [
+            266.5911979812228585,
+            533.1823959624461134,
+            1066.3647919248918304,
+            2132.7295838497840572,
+            4265.4591676995681144,
+            8530.9183353991362289,
+            17061.8366707982724577,
+            34123.6733415965449154,
+            68247.3466831930771477,
+            136494.6933663861796617,
+            272989.3867327723085907,
+            545978.7734655447186469,
+            1091957.5469310886252288,
+            2183915.0938621788745877,
+            4367830.1877243577491754,
+            8735660.3754487154983508,
+            17471320.7508974309967016,
+            34942641.5017948619934032,
+            69885283.0035897239868063,
+            139770566.0071793960087234,
+            279541132.0143588959472254,
+            559082264.0287178958533332
         ]),
 
         /**
@@ -636,6 +638,15 @@ GEOR.config = (function() {
             []),
 
         /**
+         * Constant: ROLES_FOR_EDIT
+         * {Array} roles required for the edit functions to show up
+         * Empty array means the module is available for everyone
+         * Defaults to ['ROLE_ADMINISTRATOR']
+         */
+        ROLES_FOR_EDIT: getCustomParameter("ROLES_FOR_EDIT",
+            ['ROLE_ADMINISTRATOR']),
+
+        /**
          * Constant: PRINT_LAYOUTS_ACL
          * {Object} roles required for each print layout
          * Empty array means "layout is available for everyone"
@@ -679,10 +690,10 @@ GEOR.config = (function() {
         /**
          * Constant: HELP_URL
          * {String} URL of the help ressource.
-         * Defaults to "http://www.geobretagne.fr/web/guest/assistance"
+         * Defaults to "http://cms.geobretagne.fr/assistance"
          */
         HELP_URL: getCustomParameter("HELP_URL",
-            "http://www.geobretagne.fr/web/guest/assistance"),
+            "http://cms.geobretagne.fr/assistance"),
 
         /**
          * Constant: DISPLAY_SELECTED_OWS_URL
@@ -710,11 +721,28 @@ GEOR.config = (function() {
         LOGIN_IN_TOOLBAR: getCustomParameter("LOGIN_IN_TOOLBAR", false),
 
         /**
+         * Constant: EDITABLE_LAYERS
+         * {RegExp} 
+         * 
+         */
+        EDITABLE_LAYERS: getCustomParameter("EDITABLE_LAYERS",
+            /.*/i),
+
+        /**
+         * Constant: WMTS_SERVERS
+         * {Array} List of externals WMTS to display in the WMTS servers tab.
+         */
+        WMTS_SERVERS: getCustomParameter("WMTS_SERVERS", [
+            {"name": "GéoBretagne rasters", "url": "http://tile.geobretagne.fr/gwc02/service/wmts"},
+            {"name": "GéoBretagne OSM", "url": "http://osm.geobretagne.fr/gwc01/service/wmts"}
+        ]),
+
+        /**
          * Constant: WMS_SERVERS
          * {Array} List of externals WMS to display in the WMS servers tab.
          */
         WMS_SERVERS: getCustomParameter("WMS_SERVERS", [
-            {"name": "GeoBretagne", "url": "http://geobretagne.fr/geoserver/wms"},
+            {"name": "GéoBretagne", "url": "http://geobretagne.fr/geoserver/wms"},
             {"name": "Région Bretagne", "url": "http://kartenn.region-bretagne.fr/geoserver/wms"},
             {"name": "Sandre/zonages", "url": "http://services.sandre.eaufrance.fr/geo/zonage"},
             {"name": "Sandre/ouvrages", "url": "http://services.sandre.eaufrance.fr/geo/ouvrage"},
@@ -740,7 +768,7 @@ GEOR.config = (function() {
          * {Array} List of externals WFS to display in the WFS servers tab.
          */
         WFS_SERVERS: getCustomParameter("WFS_SERVERS", [
-            {"name": "GeoBretagne", "url": "http://geobretagne.fr/geoserver/wfs"},
+            {"name": "GéoBretagne", "url": "http://geobretagne.fr/geoserver/wfs"},
             {"name": "BMO/OpenStreetMap", "url": "http://bmo.openstreetmap.fr/ows"},
             {"name": "Corine Land Cover", "url": "http://sd1878-2.sivit.org/geoserver/wfs"}
         ])

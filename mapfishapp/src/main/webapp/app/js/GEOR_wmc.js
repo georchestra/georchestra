@@ -18,6 +18,8 @@
  * to restore v1.0 compliant WMCs too => both formats are useful
  * @include OpenLayers/Format/WMC/v1_0_0.js
  * @include OpenLayers/Format/WMC/v1_1_0.js
+ * @include OpenLayers/Format/OWSContext/v0_3_1.js
+ * @include OpenLayers/Projection.js
  * @include GeoExt/data/WMCReader.js
  * @include GEOR_util.js
  * @include GEOR_ows.js
@@ -29,12 +31,29 @@ GEOR.wmc = (function() {
     /*
      * Private
      */
+    var observable = new Ext.util.Observable();
+    observable.addEvents(
+        /**
+         * Event: beforecontextrestore
+         * Fires when a context is to be restored 
+         *
+         * Listener arguments:
+         * count - {Integer} the number of records to restore
+         */
+        "beforecontextrestore"
+    );
 
     /**
      * Property: wmcFormat
      * {OpenLayers.Format.WMC} The format to read/write WMC.
      */
     var wmcFormat = null;
+
+    /**
+     * Property: owsContextFormat
+     * {OpenLayers.Format.OWSContext} The format to read/write OWS Contexts.
+     */
+    var owsContextFormat = null;
 
     /**
      * Property: layerStore
@@ -88,17 +107,6 @@ GEOR.wmc = (function() {
             // Note: this fixes http://applis-bretagne.fr/redmine/issues/4510
             var layerContext = wmcFormat.layerToContext(layer); 
             
-            // only the first metadataURL can be saved to WMC:
-            // see http://applis-bretagne.fr/redmine/issues/2091
-            if (layerContext.metadataURL && layerContext.metadataURL[0]) {
-                if (typeof layerContext.metadataURL[0] == 'string') {
-                    layerContext.metadataURL = layerContext.metadataURL[0];
-                } else if (layerContext.metadataURL[0].href) {
-                    layerContext.metadataURL = layerContext.metadataURL[0].href;
-                } else {
-                    delete layerContext.metadataURL;
-                }
-            }
             var queryable = record.get('queryable');
             var styles = record.get('styles');
             var formats = record.get('formats');
@@ -120,7 +128,7 @@ GEOR.wmc = (function() {
                 Ext.each(styles, function (item) {
                     var style = {};
                     Ext.apply(style, {current: false}, item);
-                    if(layer.params.STYLES === style.name) {
+                    if (layer.params.STYLES === style.name) {
                         style.current = true;
                     }
                     layerContext.styles.push(style);
@@ -133,7 +141,7 @@ GEOR.wmc = (function() {
                     var format = {};
                     var f = (item instanceof Object) ? item.value : item;
                     Ext.apply(format, {current: false}, {value: f});
-                    if(layer.params.FORMAT == f) {
+                    if (layer.params.FORMAT == f) {
                         format.current = true;
                     }
                     layerContext.formats.push(format);
@@ -149,6 +157,11 @@ GEOR.wmc = (function() {
 
     return {
 
+        /*
+         * Observable object
+         */
+        events: observable,
+
         /**
          * APIMethod: init
          * Initialize this module
@@ -161,9 +174,12 @@ GEOR.wmc = (function() {
             tr = OpenLayers.i18n;
 
             wmcFormat = new OpenLayers.Format.WMC({
-                //layerOptions: GEOR.ows.defaultLayerOptions
-                // why should we apply default layer options and not use those provided by the WMC ?
+                layerOptions: {
+                    // to prevent automatic restoring of PNG rather than JPEG:
+                    noMagic: true
+                }
             });
+            owsContextFormat = new OpenLayers.Format.OWSContext();
             wmcReader = new GeoExt.data.WMCReader(
                 {format: wmcFormat},
                 layerStore.recordType
@@ -196,30 +212,56 @@ GEOR.wmc = (function() {
          * zoomToWMC - {Boolean} Whether to zoom to WMC bbox or not, defaults to true
          */
         read: function(wmcString, resetMap, zoomToWMC) {
-            var map = layerStore.map;
-            var newContext = wmcFormat.read(wmcString, {}); // get context from wmc
-                                                         // using non-API feature
+            var map = layerStore.map,
+                mapProj, wmcProj, newContext, records;
 
+            try {
+                // trying with WMC format
+                newContext = wmcFormat.read(wmcString);
+            } catch (err) {
+                // trying with OWS Context format
+                newContext = owsContextFormat.read(wmcString);
+            }
+            // FAIL:
             if (newContext.layersContext === undefined) {
                 GEOR.util.errorDialog({
                     msg: tr("The provided file is not a valid OGC context")
                 });
-                return;
+                return false;
             }
 
-            if(map.getProjection() && (newContext.projection !== map.getProjection())) {
-                // bounding box from wmc does not have the same projection system
+            // If the context has been saved in a different projection,
+            // we're trying to restore the layers in the current map projection.
+            mapProj = map.getProjection();
+            wmcProj = newContext.projection;
+            if (mapProj && (wmcProj !== mapProj)) {
+                // wmc does not have the same projection system
                 // as the current map
-                GEOR.util.errorDialog({
-                    msg: tr("wmc.bad.srs")
+                GEOR.util.infoDialog({
+                    msg: tr("Warning: trying to restore WMC with a different projection (PROJCODE1, while map SRS is PROJCODE2). Strange things might occur !", {
+                        PROJCODE1: wmcProj,
+                        PROJCODE2: mapProj
+                    })
                 });
-                return;
+                var reproj = function() {
+                    this && this.transform && this.transform(
+                        new OpenLayers.Projection(wmcProj), 
+                        new OpenLayers.Projection(mapProj)
+                    );
+                };
+                reproj.apply(newContext.bounds);
+                reproj.apply(newContext.maxExtent);
+                Ext.each(newContext.layersContext, function(l) {
+                    reproj.apply(l.maxExtent);
+                });
+                newContext.projection = map.getProjection();
             }
 
             // remove all current layers except the lowest index one
             // (our fake base layer)
+            // FIXME: should not this code be subject to resetMap option ?
             for (var i = map.layers.length -1; i >= 1; i--) {
-                map.layers[i].destroy();
+                map.removeLayer(map.layers[i]);
             }
 
             var maxExtent = newContext.maxExtent;
@@ -228,8 +270,10 @@ GEOR.wmc = (function() {
                 var fakeBaseLayer = map.layers[0];
                 fakeBaseLayer.addOptions({maxExtent: maxExtent});
             }
-
-            Ext.each(wmcReader.readRecords(newContext).records, function(r) {
+            records = wmcReader.readRecords(newContext).records;
+            // fire event to let the whole app know about it.
+            observable.fireEvent("beforecontextrestore", records.length);
+            Ext.each(records, function(r) {
                 // restore metadataURLs in record
                 var context = null;
                 for (var i=0, l = newContext.layersContext.length; i<l; i++) {
@@ -242,6 +286,8 @@ GEOR.wmc = (function() {
                 if (context && context.metadataURL) {
                     r.set("metadataURLs", [context.metadataURL]);
                 }
+                // set as type as WMS (might need to be changed when we support more types from OWSContext)
+                r.set("type", "WMS");
                 // add layer from wmc to the current map
                 layerStore.addSorted(r);
             });

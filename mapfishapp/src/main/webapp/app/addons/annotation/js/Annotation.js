@@ -219,6 +219,8 @@ GEOR.Annotation = Ext.extend(Ext.util.Observable, {
         this.actions.push('-');
         this.initFeatureControl(layer);
         this.initDeleteAllAction();
+        this.actions.push('-');
+        this.initExportAsKmlAction();
 
         GEOR.Annotation.superclass.constructor.apply(this, arguments);
     },
@@ -450,6 +452,46 @@ GEOR.Annotation = Ext.extend(Ext.util.Observable, {
         this);
     },
 
+    /** private: method[initExportAsKmlAction]
+     *  Create a Ext.Action object that is set as the exportAsKml property
+     *  and pushed to te actions array.
+     */
+    initExportAsKmlAction: function() {
+        var actionOptions = {
+            handler: this.exportAsKml,
+            scope: this,
+            text: OpenLayers.i18n('annotation.export_as_kml'),
+            iconCls: "gx-featureediting-export",
+            iconAlign: 'top',
+            tooltip: OpenLayers.i18n('annotation.export_as_kml_tip')
+        };
+
+        var action = new Ext.Action(actionOptions);
+
+        this.actions.push(action);
+    },
+
+    /** private: method[exportAsKml]
+     *  Called when the exportAsKml is triggered (button pressed).
+     */
+    exportAsKml: function() {
+        GEOR.waiter.show();
+        var urlObj = OpenLayers.Util.createUrlObject(window.location.href),
+            format = new OpenLayers.Format.KML({
+                'foldersName': urlObj.host, // TODO use instance name instead
+                'internalProjection': this.map.getProjectionObject(),
+                'externalProjection': new OpenLayers.Projection("EPSG:4326")
+            });
+        OpenLayers.Request.POST({
+            url: "ws/kml/",
+            data: format.write(this.layer.features),
+            success: function(response) {
+                var o = Ext.decode(response.responseText);
+                window.location.href = o.filepath;
+            }
+        });
+    },
+
     /** private: method[getActiveDrawControl]
      *  :return: ``OpenLayers.Control.DrawFeature or false``
      *  Get the current active DrawFeature control.  If none is active, false
@@ -520,8 +562,9 @@ GEOR.Annotation = Ext.extend(Ext.util.Observable, {
 
         this.featureControl.activate();
 
-        var control = this.featureControl.selectControl;
-        control.select.defer(1, control, [feature]);
+        var control = this.featureControl;
+        control.selectFeature.defer(1, control, [feature]);
+
     },
 
     /** private: method[onModificationStart]
@@ -579,7 +622,7 @@ GEOR.Annotation = Ext.extend(Ext.util.Observable, {
         popup.on({
             close: function() {
                 if (OpenLayers.Util.indexOf(this.layer.selectedFeatures, feature) > -1) {
-                    this.featureControl.selectControl.unselect(feature);
+                    this.featureControl.unselectFeature(feature);
                     this.featureControl.deactivate();
                 }
             },

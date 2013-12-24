@@ -397,6 +397,28 @@ GEOR.util = (function() {
         },
 
         /**
+         * Method: createRecordType
+         * Returns a layer record type with additional methods.
+         *
+         * Parameters:
+         * fields - {Array} an array of field config objects
+         *
+         * Returns:
+         * {Function} A specialized `GeoExt.data.LayerRecord` constructor.
+         */
+        createRecordType: function(fields) {
+            var recordType = GeoExt.data.LayerRecord.create(fields);
+            return Ext.extend(recordType, {
+                hasEquivalentWFS: function() {
+                    return !!this.get("WFS_URL") && !!this.get("WFS_typeName");
+                },
+                hasEquivalentWCS: function() {
+                    return !!this.get("WCS_URL") && !!this.get("WCS_typeName");
+                }
+            });
+        },
+
+        /**
          * Method: round
          * Rounds a float with a given number of decimals.
          */

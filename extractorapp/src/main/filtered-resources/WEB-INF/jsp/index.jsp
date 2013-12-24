@@ -12,7 +12,7 @@ Boolean admin = false;
 Boolean editor = false;
 
 String lang = request.getParameter("lang");
-if (lang == null || (!lang.equals("en") && !lang.equals("es"))) {
+if (lang == null || (!lang.equals("en") && !lang.equals("es") && !lang.equals("fr"))) {
     lang = "${language}";
 }
 Locale l = new Locale(lang);
@@ -48,15 +48,6 @@ if(sec_roles != null) {
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="<%= lang %>" xml:lang="<%= lang %>">
 
-<c:choose>
-    <c:when test='<%= anonymous == true %>'>
-<script type="text/javascript">
-// anonymous users cannot access this protected page
-window.location = "?login";
-</script>
-    </c:when>
-</c:choose>
-
 <head>
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
     <link rel="stylesheet" type="text/css" href="resources/lib/externals/ext/resources/css/ext-all.css" />
@@ -81,7 +72,7 @@ window.location = "?login";
     </style>
     <link rel="stylesheet" type="text/css" href="resources/app/css/main.css" />
 
-    <title lang="<%= lang %>" dir="ltr"><fmt:message key="title"/></title>
+    <title lang="<%= lang %>" dir="ltr"><fmt:message key="title"/> - ${instance}</title>
     <script type="text/javascript">
         GEOR = {
             header: <%= request.getParameter("noheader") == null %>
@@ -133,7 +124,7 @@ window.location = "?login";
         <% 
           String proxyHost = "/proxy/?url=";
           Boolean jettyrun = false;
-          if(request.getContextPath().equals("/extractorapp")) {
+          if(request.getHeader("sec-proxy") == null) {
             proxyHost = "/extractorapp/ws/ogcproxy/?url=";
             jettyrun = true;
           }
@@ -157,16 +148,7 @@ window.location = "?login";
         </c:otherwise>
     </c:choose>
     </script>
-    <c:choose>
-        <c:when test='<%= request.getParameter("jsc") != null %>'>
-        <!-- Force GEOR.data.services and GEOR.data.layers from an external JS file -->
-    <script type="text/javascript" src="<%=request.getParameter("jsc") %>"></script>
-    <script type="text/javascript">
-        // we want all layers unchecked by default
-        GEOR.config.LAYERS_CHECKED = false;
-    </script>
-        </c:when>
-    </c:choose>
+
     <c:choose>
         <c:when test='<%= anonymous == false %>'>
     <script type="text/javascript">

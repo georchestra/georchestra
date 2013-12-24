@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html debug="true">
+  <head>
+    <script type="text/javascript" src="http://www.openlayers.org/api/2.10/OpenLayers.js">
+    </script>
+    <script type="text/javascript" src="http://extjs.cachefly.net/ext-3.2.0/adapter/ext/ext-base.js">
+    </script>
+    <script type="text/javascript" src="http://extjs.cachefly.net/ext-3.2.0/ext-all.js">
+    </script>
+    <script type="text/javascript" src="../../../../../../geoext/lib/GeoExt.js">
+    </script>
+	<script type="text/javascript" src="../../../lib/GeoExt.ux/Ext.ux.grid.GridMouseEvents.js">
+    </script>
+    <script type="text/javascript" src="../../../lib/GeoExt.ux/GeoExt.ux.FeatureSelectionModel.js">
+    </script>
+
+    <script type="text/javascript">
+        function test_ctor(t) {
+            t.plan(5);
+
+            // set up
+            var map, layer, feature, grid, store, selectControl;
+
+            map = new OpenLayers.Map("map", {allOverlays: true});
+
+            layer = new OpenLayers.Layer.Vector("vector");
+            map.addLayer(layer);
+
+            feature = new OpenLayers.Feature.Vector(
+                new OpenLayers.Geometry.Point(1, 2),
+                {foo: "foo", bar: "bar"}
+            );
+            layer.addFeatures(feature);
+
+            store = new GeoExt.data.FeatureStore({
+                layer: layer,
+                features: [feature]
+            });
+			
+		    selectControl = new OpenLayers.Control.SelectFeature(layer, {
+                hover: false,
+                multiple: false
+            });
+            map.addControl(selectControl);
+            selectControl.activate();
+
+            grid = new Ext.grid.GridPanel({
+                renderTo: "grid",
+                store: store,
+                columns: [{
+                    header: "Name",
+                    width: 200,
+                    dataIndex: "name"
+                }, {
+                    header: "Elevation",
+                    width: 100,
+                    dataIndex: "elevation"
+                }],
+                sm: new GeoExt.ux.FeatureSelectionModel(),
+                plugins: [Ext.ux.grid.GridMouseEvents]
+            });
+			
+			// 5 tests
+			
+            t.ok(grid instanceof Ext.grid.GridPanel,
+                 "ctor creates a Ext.grid.GridPanel object");
+            t.ok(grid.getSelectionModel() instanceof GeoExt.ux.FeatureSelectionModel,
+                 "grid's selection model is an instance of GeoExt.ux.FeatureSelectionModel");
+            t.ok(grid.getSelectionModel() instanceof GeoExt.grid.FeatureSelectionModel,
+                 "grid's selection model is an instance of GeoExt.grid.FeatureSelectionModel");
+            t.ok(grid.getSelectionModel().bound,
+                 "class binds a select control if standard constructor is used");
+		    t.ok(!grid.getSelectionModel().boundHover,
+                 "class binds no hover control if standard constructor is used");
+				 
+            grid.destroy();
+        }
+		
+        function test_controls(t){
+            t.plan(12);
+			
+            // set up
+            var map, layer, feature, grid, store, selectControl;
+
+            map = new OpenLayers.Map("map", {allOverlays: true});
+
+            layer = new OpenLayers.Layer.Vector("vector");
+            map.addLayer(layer);
+
+            feature = new OpenLayers.Feature.Vector(
+                new OpenLayers.Geometry.Point(1, 2),
+                {foo: "foo", bar: "bar"}
+            );
+            layer.addFeatures(feature);
+
+            store = new GeoExt.data.FeatureStore({
+                layer: layer,
+                features: [feature]
+            });
+            
+            grid = new Ext.grid.GridPanel({
+                renderTo: "grid",
+                store: store,
+                columns: [{
+                    header: "Name",
+                    width: 200,
+                    dataIndex: "name"
+                }, {
+                    header: "Elevation",
+                    width: 100,
+                    dataIndex: "elevation"
+                }],
+                sm: new GeoExt.ux.FeatureSelectionModel({controlMode: 'select'}),
+                plugins: [Ext.ux.grid.GridMouseEvents]
+            });
+			
+			var sm = grid.getSelectionModel();
+			
+            t.ok(sm.bound,
+                 "Selection model binds a select control if controlMode is set to 'select' in constructor");
+            t.ok(!sm.boundHover,
+                 "Selection model binds no hover control if controlMode is set to 'select' in constructor");
+		    t.ok(sm.hasListener('rowselect'),
+                 "class has listener 'rowselect' if controlMode is set to 'select' in constructor");
+		    t.ok(!sm.hasListener('rowmouseenter'),
+                 "class has no listener 'rowmouseenter' if controlMode is set to 'select' in constructor");
+		    
+			grid.destroy();
+				 
+            grid = new Ext.grid.GridPanel({
+                renderTo: "grid",
+                store: store,
+                columns: [{
+                    header: "Name",
+                    width: 200,
+                    dataIndex: "name"
+                }, {
+                    header: "Elevation",
+                    width: 100,
+                    dataIndex: "elevation"
+                }],
+                sm: new GeoExt.ux.FeatureSelectionModel({controlMode: 'hover'}),
+                plugins: [Ext.ux.grid.GridMouseEvents]
+            });
+			
+			var sm = grid.getSelectionModel();
+            
+            t.ok(!sm.bound,
+                 "Selection model binds no select control if controlMode is set to 'hover' in constructor");
+            t.ok(sm.boundHover,
+                 "Selection model binds a hover control if controlMode is set to 'hover' in constructor");
+		    t.ok(!sm.hasListener('rowselect'),
+                 "class has no listener 'rowselect' if controlMode is set to 'hover' in constructor");
+            t.ok(grid.hasListener('rowmouseenter'),
+                 "class has a listener 'rowmouseenter' if controlMode is set to 'hover' in constructor");
+				 
+		    grid.destroy();
+			
+            grid = new Ext.grid.GridPanel({
+                renderTo: "grid",
+                store: store,
+                columns: [{
+                    header: "Name",
+                    width: 200,
+                    dataIndex: "name"
+                }, {
+                    header: "Elevation",
+                    width: 100,
+                    dataIndex: "elevation"
+                }],
+                sm: new GeoExt.ux.FeatureSelectionModel({controlMode: 'both'}),
+                plugins: [Ext.ux.grid.GridMouseEvents]
+            });
+			
+			var sm = grid.getSelectionModel();
+            
+            t.ok(grid.getSelectionModel().bound,
+                 "Selection model binds a select control if controlMode is set to 'both' in constructor");
+            t.ok(grid.getSelectionModel().boundHover,
+                 "Selection model binds a hover control if controlMode is set to 'both' in constructor");
+            t.ok(sm.hasListener('rowselect'),
+                 "class has a listener 'rowselect' if controlMode is set to 'both' in constructor");
+            t.ok(grid.hasListener('rowmouseenter'),
+                 "class has a listener 'rowmouseenter' if controlMode is set to 'both' in constructor");
+                 
+            grid.destroy();
+        }
+    </script>
+  <body>
+      <div id="map" style="width:600px; height: 400px"></div>
+      <div id="grid"></div>
+  </body>
+</html>

@@ -15,6 +15,7 @@ public abstract class AbstractEmailFactory {
 	
 	protected String smtpHost;
 	protected int smtpPort = -1;
+	protected String emailHtml;
 	protected String replyTo;
 	protected String from;
 	protected String bodyEncoding;
@@ -47,33 +48,31 @@ public abstract class AbstractEmailFactory {
      */
     public void freeze() {
         this.frozen = true;
-        if (SharedConstants.inProduction()) {
-            try {
-                if (!InetAddress.getByName(smtpHost).isReachable(3000)) {
-                    throw new IllegalStateException(smtpHost + " is not a reachable address");
-                }
-            } catch (IOException e) {
+        try {
+            if (!InetAddress.getByName(smtpHost).isReachable(3000)) {
                 throw new IllegalStateException(smtpHost + " is not a reachable address");
             }
-            if (smtpPort < 0) {
-                throw new IllegalStateException(smtpPort + " is not a legal port make sure it is correctly configured");
+        } catch (IOException e) {
+            throw new IllegalStateException(smtpHost + " is not a reachable address");
+        }
+        if (smtpPort < 0) {
+            throw new IllegalStateException(smtpPort + " is not a legal port make sure it is correctly configured");
+        }
+        if (replyTo == null || from == null) {
+            if (replyTo == null && from == null) {
+                throw new IllegalStateException("Either or both from or replyTo must have a valid value");
             }
-            if (replyTo == null || from == null) {
-                if (replyTo == null && from == null) {
-                    throw new IllegalStateException("Either or both from or replyTo must have a valid value");
-                }
-                if (replyTo == null) {
-                    replyTo = from;
-                } else {
-                    from = replyTo;
-                }
+            if (replyTo == null) {
+                replyTo = from;
+            } else {
+                from = replyTo;
             }
-            if (bodyEncoding == null) {
-                bodyEncoding = "UTF-8";
-            }
-            if (subjectEncoding == null) {
-                subjectEncoding = bodyEncoding;
-            }
+        }
+        if (bodyEncoding == null) {
+            bodyEncoding = "UTF-8";
+        }
+        if (subjectEncoding == null) {
+            subjectEncoding = bodyEncoding;
         }
     }
     
@@ -83,7 +82,7 @@ public abstract class AbstractEmailFactory {
         StringBuilder builder = new StringBuilder();
         try {
             for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-                builder.append(line);
+                builder.append(line).append('\n');
             }
         } finally {
             reader.close();
@@ -105,12 +104,19 @@ public abstract class AbstractEmailFactory {
         checkState();
         this.smtpHost = smtpHost;
     }
-    public int getSmptPort() {
+    public int getSmtpPort() {
         return smtpPort;
     }
     public void setSmtpPort(int port) {
         checkState();
         this.smtpPort = port;
+    }
+    public String getEmailHtml() {
+        return emailHtml;
+    }
+    public void setEmailHtml(String emailHtml) {
+        checkState();
+        this.emailHtml = emailHtml;
     }
     public String getReplyTo() {
         return replyTo;

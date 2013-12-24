@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html debug="true">
+  <head>
+    <script type="text/javascript" src="http://www.openlayers.org/api/2.11/OpenLayers.js"></script>
+    <script type="text/javascript" src="http://extjs.cachefly.net/ext-3.4.0/adapter/ext/ext-base.js"></script>
+    <script type="text/javascript" src="http://extjs.cachefly.net/ext-3.4.0/ext-all.js"></script>
+    <script type="text/javascript" src="../../../../../../geoext/lib/GeoExt.js"></script>
+    <script type="text/javascript" src="../../../lib/GeoExt.ux/SimplePrint.js"></script>
+
+    <script type="text/javascript">
+        var printCapabilities = {"scales":[{"name":"1:25,000","value":"25000"},{"name":"1:50,000","value":"50000"},{"name":"1:100,000","value":"100000"},{"name":"1:200,000","value":"200000"},{"name":"1:500,000","value":"500000"},{"name":"1:1,000,000","value":"1000000"},{"name":"1:2,000,000","value":"2000000"},{"name":"1:4,000,000","value":"4000000"}],"dpis":[{"name":"75","value":"75"},{"name":"150","value":"150"},{"name":"300","value":"300"}],"layouts":[{"name":"A4 portrait","map":{"width":440,"height":483},"rotation":true},{"name":"Legal","map":{"width":440,"height":483},"rotation":false}],"printURL":"http://demo.opengeo.org/geoserver/pdf/print.pdf","createURL":"http://demo.opengeo.org/geoserver/pdf/create.json"};
+       
+        function test_initComponent(t) {
+            t.plan(5);
+            
+            var mapPanel = new GeoExt.MapPanel({
+                renderTo: "mappanel",
+                width: 256,
+                height: 256,
+                layers: [new OpenLayers.Layer.WMS("Tasmania State Boundaries",
+                    "http://demo.opengeo.org/geoserver/wms",
+                    {layers: "topp:tasmania_state_boundaries"}, {singleTile: true})],
+                center: [146.56, -41.56],
+                zoom: 7
+            });
+            var printProvider = new GeoExt.data.PrintProvider({
+                capabilities: printCapabilities
+            });
+            var printForm = new GeoExt.ux.SimplePrint({
+                renderTo: "printform",
+                width: 200,
+                height: 400,
+                mapPanel: mapPanel,
+                printProvider: printProvider
+            });
+            
+            t.ok(printForm.printExtent, "PrintExtent created.");
+            t.ok(printForm.printExtent.map == mapPanel.map, "PrintExtent added to map.");
+            t.ok(printForm.printPage, "PrintPage assigned.");
+            t.eq(printForm.items.getCount(), 4, "Form has four items.");
+            t.ok(printForm.busyMask, "busy mask created.");
+            
+            printForm.destroy();
+            mapPanel.destroy();
+        }
+
+        function test_comboOptions(t) {
+
+            var printForm = new GeoExt.ux.SimplePrint({
+                mapPanel:  new GeoExt.MapPanel({
+                    renderTo: "mappanel"
+                }),
+                printProvider: new GeoExt.data.PrintProvider({
+                    capabilities: printCapabilities
+                }),
+                comboOptions: {
+                    foo: 'bar',
+                    displayField: 'baz',
+                }
+            });
+
+            var comboboxes = printForm.items.filter('xtype', 'combo');
+            t.plan(comboboxes.getCount() * 2);
+            comboboxes.each(function(combo) {
+                t.eq(combo.foo, 'bar', 'combo.foo is set');
+                t.eq(combo.displayField, 'baz', 'combo.displayField is set');
+            });
+            printForm.destroy();
+        }
+
+        function test_printExtentOptions(t) {
+            t.plan(2);
+
+            var printForm = new GeoExt.ux.SimplePrint({
+                mapPanel:  new GeoExt.MapPanel({
+                    renderTo: "mappanel"
+                }),
+                printProvider: new GeoExt.data.PrintProvider({
+                    capabilities: printCapabilities
+                }),
+                printExtentOptions: {
+                    foo: "bar",
+                    baz: 42,
+                }
+            });
+
+            t.eq(printForm.printExtent.foo, "bar", "printExtentOptions.foo passed to printExtent");
+            t.eq(printForm.printExtent.baz, 42, "printExtentOptions.baz passed to printExtent");
+
+            printForm.destroy();
+        }
+    </script>
+  <body>
+    <div id="mappanel"></div>
+    <div id="printform"></div>
+  </body>
+</html>

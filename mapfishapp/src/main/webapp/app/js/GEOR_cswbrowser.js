@@ -88,7 +88,7 @@ GEOR.cswbrowser = (function() {
     var filterCswRecord = function(records) {
         var filtered = [], name, rights = [], metadataURL;
         Ext.each(records, function (record) {
-            if(record.URI) {
+            if (record.URI) {
                 // multiple WMS can be found in one csw:Record
                 Ext.each(record.URI, function (item) {
                     if (GEOR.util.isSuitableDCProtocol(item)) {
@@ -99,7 +99,8 @@ GEOR.cswbrowser = (function() {
 
                         metadataURL = null;
                         if (record.identifier && record.identifier[0]) {
-                            metadataURL = '/geonetwork/?uuid='+ record.identifier[0].value;
+                            metadataURL = GEOR.config.GEONETWORK_URL;
+                            metadataURL.replace(/\/srv\/(\S+)/, '/?uuid='+record.identifier[0].value);
                             name += '<a href="'+metadataURL +
                                 '" target="_blank" onclick="window.open(this.href);return false;">'+mdTitle+'</a>';
                         }
@@ -367,8 +368,8 @@ GEOR.cswbrowser = (function() {
                     nodeType: 'async'
                 }
             });
-            var registerCheckbox = function(node){
-                if(!node.hasListener("checkchange")) {
+            var registerCheckbox = function(node) {
+                if (!node.hasListener("checkchange")) {
                     node.on("checkchange", function(node, checked) {
                         observable.fireEvent("selectionchanged",
                             tree.getChecked('record'));

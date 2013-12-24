@@ -1,344 +1,368 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.georchestra</groupId>
-    <artifactId>root</artifactId>
-    <version>13.12-SNAPSHOT</version>
-  </parent>
-  <artifactId>extractorapp</artifactId>
-  <packaging>war</packaging>
-  <name>Extractorapp Webapp</name>
-  <url>http://www.georchestra.org</url>
-    
-  <dependencies>
-    <dependency>
-      <groupId>org.tuckey</groupId>
-      <artifactId>urlrewritefilter</artifactId>
-      <version>3.0.4</version>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>log4j</groupId>
-          <artifactId>log4j</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-webmvc</artifactId>
-      <version>${spring.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>commons-fileupload</groupId>
-      <artifactId>commons-fileupload</artifactId>
-      <version>1.2.1</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <version>1.4</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpclient</artifactId>
-      <version>4.1.2</version>
-    </dependency>
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>jstl</artifactId>
-      <version>1.1.2</version>
-      <scope>compile</scope>
-    </dependency>
-    <!---->
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <version>2.4</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>taglibs</groupId>
-      <artifactId>standard</artifactId>
-      <version>1.1.2</version>
-    </dependency>
-    <dependency>
-      <groupId>org.json</groupId>
-      <artifactId>json</artifactId>
-      <version>20080701</version>
-    </dependency>
-    <!--  geotools -->
-    <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gt-main</artifactId>
-      <version>${gt.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gt-wfs</artifactId>
-      <version>${gt.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gt-shapefile</artifactId>
-      <version>${gt.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>gt-mif</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gt-geotiff</artifactId>
-      <version>${gt.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gt-image</artifactId>
-      <version>${gt.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gt-render</artifactId>
-      <version>${gt.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gt-imageio-ext-gdal</artifactId>
-      <version>${gt.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.geotools.xsd</groupId>
-      <artifactId>gt-xsd-wfs</artifactId>
-      <version>${gt.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gt-wms</artifactId>
-      <version>${gt.version}</version>
-    </dependency>
-    
-    <dependency>
-        <groupId>org.geotools</groupId>
-        <artifactId>gt-ogr-core</artifactId>
-        <version>${gt.version}</version>
-    </dependency>
-    <dependency>
-        <groupId>org.geotools</groupId>
-        <artifactId>gt-ogr-jni</artifactId>
-        <version>${gt.version}</version>
-    </dependency>
-   
-    <dependency>
-      <groupId>org.geotools.ogc</groupId>
-      <artifactId>net.opengis.wfs</artifactId>
-      <version>${gt.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.geotools</groupId>
-          <artifactId>gt2-api</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <!-- geotools - handles ESPG -->
-    <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gt-epsg-hsql</artifactId>
-      <version>${gt.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>epsg-extension</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>xpp3</groupId>
-      <artifactId>xpp3</artifactId>
-      <version>1.1.3.4.O</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-httpclient</groupId>
-      <artifactId>commons-httpclient</artifactId>
-      <version>3.1</version>
-    </dependency>
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.georchestra</groupId>
+		<artifactId>root</artifactId>
+		<version>13.12-SNAPSHOT</version>
+	</parent>
+	<artifactId>extractorapp</artifactId>
+	<packaging>war</packaging>
+	<name>Extractorapp Webapp</name>
+	<url>http://www.georchestra.org</url>
 
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-mock</artifactId>
-      <version>2.0.3</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-test</artifactId>
-      <version>${spring.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>javax.mail</groupId>
-      <artifactId>mail</artifactId>
-      <version>1.4.1</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
-      <version>1.1.1</version>
-    </dependency>
-    <dependency>
-      <groupId>postgresql</groupId>
-      <artifactId>postgresql</artifactId>
-      <version>9.0-801.jdbc4</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-dbcp</groupId>
-      <artifactId>commons-dbcp</artifactId>
-      <version>1.2.2</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-pool</groupId>
-      <artifactId>commons-pool</artifactId>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.tuckey</groupId>
+			<artifactId>urlrewritefilter</artifactId>
+			<version>3.0.4</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${spring.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>1.2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>1.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.1.2</version>
+			<scope>compile</scope>
+		</dependency>
+
+
+
+		<!---->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.4</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>taglibs</groupId>
+			<artifactId>standard</artifactId>
+			<version>1.1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20080701</version>
+		</dependency>
+
+
+
+		<!-- geotools -->
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-main</artifactId>
+			<version>${gt.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-wfs</artifactId>
+			<version>${gt.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-shapefile</artifactId>
+			<version>${gt.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>gt-mif</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-geotiff</artifactId>
+			<version>${gt.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-image</artifactId>
+			<version>${gt.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-render</artifactId>
+			<version>${gt.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-imageio-ext-gdal</artifactId>
+			<version>${gt.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools.xsd</groupId>
+			<artifactId>gt-xsd-wfs</artifactId>
+			<version>${gt.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-wms</artifactId>
+			<version>${gt.version}</version>
+		</dependency>
+
+
+
+		<dependency>
+				<groupId>org.geotools</groupId>
+				<artifactId>gt-ogr-core</artifactId>
+				<version>${gt.version}</version>
+		</dependency>
+		<dependency>
+				<groupId>org.geotools</groupId>
+				<artifactId>gt-ogr-jni</artifactId>
+				<version>${gt.version}</version>
+		</dependency>
+		<dependency>
+				<groupId>org.geotools</groupId>
+				<artifactId>gt-xml</artifactId>
+				<version>${gt.version}</version>
+		</dependency>
+		<dependency>
+				<groupId>org.geotools.xsd</groupId>
+				<artifactId>gt-xsd-kml</artifactId>
+				<version>${gt.version}</version>
+		</dependency>
+
+
+
+		<dependency>
+			<groupId>org.geotools.ogc</groupId>
+			<artifactId>net.opengis.wfs</artifactId>
+			<version>${gt.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.geotools</groupId>
+					<artifactId>gt2-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- geotools - handles ESPG -->
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-epsg-hsql</artifactId>
+			<version>${gt.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>epsg-extension</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>xpp3</groupId>
+			<artifactId>xpp3</artifactId>
+			<version>1.1.3.4.O</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-httpclient</groupId>
+			<artifactId>commons-httpclient</artifactId>
+			<version>3.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-mock</artifactId>
+			<version>2.0.3</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.4.1</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>9.0-801.jdbc4</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-dbcp</groupId>
+			<artifactId>commons-dbcp</artifactId>
+			<version>1.2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-pool</groupId>
+			<artifactId>commons-pool</artifactId>
 			<exclusions>
 				<exclusion>
 					<groupId>commons-collections</groupId>
 					<artifactId>commons-collections</artifactId>
 				</exclusion>
 				<exclusion>
-				  <groupId>xml-apis</groupId>
-				  <artifactId>xml-apis</artifactId>
-			  </exclusion>
+					<groupId>xml-apis</groupId>
+					<artifactId>xml-apis</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>xerces</groupId>
+					<artifactId>xercesImpl</artifactId>
+				</exclusion>
 			</exclusions>
-      <version>1.2</version>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.5</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>apache-log4j-extras</artifactId>
-      <version>1.1</version>
-      <type>jar</type>
-      <scope>runtime</scope>
-    </dependency>
+			<version>1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.5</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>apache-log4j-extras</artifactId>
+			<version>1.1</version>
+			<type>jar</type>
+			<scope>runtime</scope>
+		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.16</version>
 			<type>jar</type>
 		</dependency>
-		
-  </dependencies>
-  <build>
-    <finalName>extractorapp-private</finalName>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-      </plugin>
+	</dependencies>
+	<build>
+		<finalName>extractorapp-private</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+			</plugin>
 		<plugin>
 			<groupId>org.codehaus.groovy.maven</groupId>
 			<artifactId>gmaven-plugin</artifactId>
 			<dependencies>
 				<dependency>
-						<groupId>org.georchestra</groupId>
-						<artifactId>config</artifactId>
-						<version>${project.version}</version>
+					<groupId>org.georchestra</groupId>
+					<artifactId>config</artifactId>
+					<version>${project.version}</version>
 				</dependency>
 			</dependencies>
 		</plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-war-plugin</artifactId>
-        <configuration>
-          <warName>extractorapp-private</warName>
-        </configuration>
-      </plugin>
-      <plugin>
-        <!-- Copy du fichier default.wmc.example si il n'existe -->
-        <!-- pas de fichier default.wmc dans le repertoire src/main/webapp.-->
-        <!-- Ce fichier n'est pas écrasé si le packageur de l'application -->
-        <!-- a placé son propre fichier default.wmc -->
-        <artifactId>maven-antrun-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>serverConfigCopy</id>
-            <phase>generate-sources</phase>
-            <configuration>
-              <tasks>
-                <!-- global configuration from profile (print/viewer/startup layers/...) -->
-                <copy todir="${basedir}/src/main/webapp/" filtering="true" overwrite="true" verbose="true" failonerror="false">
-                  <fileset dir="${basedir}/src/main/filtered-resources/"/>
-                  <filterset begintoken="$${" endtoken="}" recurse="false">
-                    <filtersfile file="${confdir}/${project.artifactId}/maven.filter"/>
-                  </filterset>
-                </copy>
-                <copy todir="${basedir}/src/main/webapp/" overwrite="true" verbose="true" failonerror="false">
-                  <fileset dir="${confdir}/${project.artifactId}">
-                    <exclude name="**/maven.filter"/>
-                  </fileset>
-                </copy>
-              </tasks>
-            </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>  
-      <plugin>
-        <groupId>org.mortbay.jetty</groupId>
-        <artifactId>maven-jetty-plugin</artifactId>
-        <version>6.1.26</version>
-        <configuration>
-          <webApp>${basedir}/target/extractorapp.war</webApp>
-          <scanIntervalSeconds>5</scanIntervalSeconds>
-          <scanTargets>
-            <scanTarget>src/main/java</scanTarget>
-            <scanTarget>src/main/resources</scanTarget>
-          </scanTargets>
-         <systemProperties>
-            <systemProperty>
-              <name>org.geotools.referencing.forceXY</name>
-              <value>true</value>
-            </systemProperty>
-            <systemProperty>
-              <name>extractor.storage.dir</name>
-              <value>target/</value>
-            </systemProperty>
-          </systemProperties>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>1.1</version>
-        <executions>
-          <execution>
-            <id>build-javascript</id>
-            <phase>generate-sources</phase>
-            <inherited>false</inherited>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <executable>jsbuild/${jsbuild.command}</executable>
-          <arguments>
-          </arguments>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-  <profiles>
-  		<profile>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<warName>extractorapp-private</warName>
+				</configuration>
+			</plugin>
+			<plugin>
+				<!-- Copy du fichier default.wmc.example si il n'existe -->
+				<!-- pas de fichier default.wmc dans le repertoire src/main/webapp.-->
+				<!-- Ce fichier n'est pas écrasé si le packageur de l'application -->
+				<!-- a placé son propre fichier default.wmc -->
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>serverConfigCopy</id>
+						<phase>generate-sources</phase>
+						<configuration>
+							<tasks>
+								<!-- global configuration from profile (print/viewer/startup layers/...) -->
+								<copy todir="${basedir}/src/main/webapp/" filtering="true" overwrite="true" verbose="true" failonerror="false">
+									<fileset dir="${basedir}/src/main/filtered-resources/"/>
+									<filterset begintoken="$${" endtoken="}" recurse="false">
+										<filtersfile file="${confdir}/${project.artifactId}/maven.filter"/>
+									</filterset>
+								</copy>
+								<copy todir="${basedir}/src/main/webapp/" overwrite="true" verbose="true" failonerror="false">
+									<fileset dir="${confdir}/${project.artifactId}">
+										<exclude name="**/maven.filter"/>
+									</fileset>
+								</copy>
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.mortbay.jetty</groupId>
+				<artifactId>maven-jetty-plugin</artifactId>
+				<version>6.1.26</version>
+				<configuration>
+					<webApp>${basedir}/target/extractorapp.war</webApp>
+					<scanIntervalSeconds>5</scanIntervalSeconds>
+					<scanTargets>
+						<scanTarget>src/main/java</scanTarget>
+						<scanTarget>src/main/resources</scanTarget>
+					</scanTargets>
+					<systemProperties>
+						<systemProperty>
+							<name>org.geotools.referencing.forceXY</name>
+							<value>true</value>
+						</systemProperty>
+						<systemProperty>
+							<name>extractor.storage.dir</name>
+							<value>target/</value>
+						</systemProperty>
+					</systemProperties>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.1</version>
+				<executions>
+					<execution>
+						<id>build-javascript</id>
+						<phase>generate-sources</phase>
+						<inherited>false</inherited>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<executable>jsbuild/${jsbuild.command}</executable>
+					<arguments>
+					</arguments>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<profiles>
+		<profile>
 			<id>Windows</id>
 			<activation>
 				<os>

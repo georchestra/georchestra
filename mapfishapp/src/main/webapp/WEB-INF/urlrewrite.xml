@@ -10,10 +10,6 @@
         <to type="forward" last="true">/ws/home</to>
     </rule>
     <rule>
-        <from>^/(ws)?/?edit$</from>
-        <to type="forward" last="true">/ws/edit</to>
-    </rule>
-    <rule>
         <from>^/(ws)?/?togeojson$</from>
         <to type="forward" last="true">/ws/togeojson</to>
     </rule>

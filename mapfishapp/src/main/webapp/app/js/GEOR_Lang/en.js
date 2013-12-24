@@ -26,6 +26,13 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
     /* GEOR_FeatureDataModel.js strings */
     /* GEOR_address.js strings */
     /* GEOR_ajaxglobal.js strings strings */
+    "ajax.badresponse":
+        "The server responded, but the content of the response is " +
+        "different to what expected",
+    "ajax.defaultexception":
+        "To get more information, look for the error code at <a href=\"http://" +
+        "en.wikipedia.org/wiki/List_of_HTTP_status_codes\" target=\"_blank\">" +
+        "wikipedia</a>.",
     "ajaxglobal.data.too.big": "Datas sent by the server are too " +
         "big.<br />Server sent ${SENT}KBytes " +
         "(the limit is ${LIMIT}KBytes)<br />Do you want to continue ?",
@@ -37,11 +44,22 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
         "the DEFAULT_THESAURUS_KEY variable does not match " +
         "any value exported by GeoNetwork",
     /* GEOR_cswquerier.js strings */
+    "NAME layer on VALUE": "${NAME} layer on ${VALUE}",
     "Open the URL url in a new window":
         "Open the ${URL} url in a new window",
-    "NB layers": "${NB} layers",
-    " in NB metadata": " in ${NB} metadata",
+    "NB layers found.": "${NB} layers found.",
+    "NB metadata match the query.": "${NB} metadata match the query.",
     /* GEOR_editing.js strings */
+    /* GEOR_fileupload.js strings */
+    "fileupload_error_incompleteMIF": "Incomplete MIF/MID file.",
+    "fileupload_error_incompleteSHP": "Incomplete shapefile.",
+    "fileupload_error_incompleteTAB": "Incomplete TAB file.",
+    "fileupload_error_ioError": "Server-side I/O exception. Contact platform administrator for more details.",
+    "fileupload_error_multipleFiles": "Multiple data files encountered in ZIP archive. It should only contain one.",
+    "fileupload_error_outOfMemory": "Server is out of memory. Contact platform administrator for more details.",
+    "fileupload_error_sizeError": "This file is too large to be uploaded.",
+    "fileupload_error_unsupportedFormat": "This format is not supported.",
+    "server upload error: ERROR": "Upload failed. ${ERROR}",
     /* GEOR_geonames.js strings */
     /* GEOR_getfeatureinfo.js strings */
     "<div>Search on objects active for NAME layer. Clic on the map.</div>":
@@ -54,6 +72,10 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
         "Perhaps this layer is currently unavailable",
     "The NAME layer does not contain a valid geometry column":
         "The ${NAME} layer does not contain a valid geometry column.",
+    "The server is publishing NB layers with an incompatible projection":
+        "The server is publishing ${NB} layers with an incompatible projection",
+    "Unreachable server or insufficient rights": "Could not get a valid response from " +
+        "the server. Possible reasons: insufficient rights, server is down, too much data.",
     /* GEOR_managelayers.js strings */
     "Confirm NAME layer deletion ?": "Confirm ${NAME} layer deletion ?",
     "1:MAXSCALE to 1:MINSCALE": "1:${MAXSCALE} to 1:${MINSCALE}",
@@ -97,33 +119,26 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
         "Max number of objects reached (${NB})</span>",
     "NB results": "${NB} results",
     /* GEOR_scalecombo.js strings */
+    /* GEOR_selectfeature.js strings */
+    "<div>Select features activated on NAME layer. Clic on the map.</div>":
+         "<div>Select features activated on ${NAME} layer. " +
+         "Clic on the map.</div>",
+    "OpenLayers SelectFeature":"Select features",
     /* GEOR_styler.js strings */
     "styler.guidelines":
         "Use the \"+\" button to create a class," +
         "and the \"Analyze\" button to create a set " +
         "of classes defined by a thematic analyze.</p>",
+    /* GEOR_toolbar.js strings */
     /* GEOR_tools.js strings */
     "Could not load addon ADDONNAME": "Could not load addon ${ADDONNAME}",
+    /* GEOR_util.js strings */
+    /* GEOR_waiter.js strings */
     /* GEOR_wmc.js strings */
-    "wmc.bad.srs":
-        "The .wmc file cannot be restored. Its spatial " +
-        "reference system is different from the system of " +
-        "the current map",
+    "Warning: trying to restore WMC with a different projection (PROJCODE1, while map SRS is PROJCODE2). Strange things might occur !": "Warning: trying to restore WMC with a different projection (${PROJCODE1}, while map SRS is ${PROJCODE2}). Strange things might occur !",
     /* GEOR_wmcbrowser.js strings */
     "(default)": "<br/>(current default context)",
-    /* GEOR_wmsbrowser.js strings */
-    "The server is publishing NB layers with an incompatible projection":
-        "The server is publishing ${NB} layers with an incompatible projection",
-    /* GEOR_wfsbrowser.js strings */
-    "Unreachable server or insufficient rights": "Could not get a valid response from " +
-        "the server. Possible reasons: insufficient rights, server is down, too much data.",
-    /* GEOR_EditingPanel.js */
-    "editingpanel.geom.error": "This layer's geometry type is ${TYPE}.<br/>" +
-        "Only point, line and polygons" +
-        " (and multi-*) are editable.",
-    /* GEOR_LayerEditingPanel.js */
-    "layereditingpanel.cancel.confirm": "Do you really want to cancel all modifications<br />since last synchronisation ?",
-    "layereditingpanel.changes.confirm": "Please confirm or cancel current modifications",
-    "Please select one feature.": "Veuillez sélectionner un objet."
+    /* GEOR_edit.js */
+    /* GEOR_workspace.js strings */
     // no trailing comma
 });

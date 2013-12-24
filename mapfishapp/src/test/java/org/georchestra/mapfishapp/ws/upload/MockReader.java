@@ -44,4 +44,9 @@ public final class MockReader implements FeatureGeoFileReader {
 		return new FileFormat[]{};
 	}
 
+	@Override
+	public boolean isSupportedFormat(FileFormat fileFormat) {
+		throw new UnsupportedOperationException("unsupported");
+	}
+
 }

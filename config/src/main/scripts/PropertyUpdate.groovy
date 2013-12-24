@@ -27,22 +27,22 @@ class PropertyUpdate extends AbstractUpdater {
    * </ul>
    * @param closure that takes a java.util.Properties object and updates the properties.
    */
-	def update(closure) {
-		def properties = new Properties()
-		def fromFile = getFromFile()
-		if(fromFile != null) {
-		  params.log.info("Loading parameters to update from $fromFile")
-		  fromFile.withReader { r -> 
-			  properties.load(r)
-		  }
-	  }
-		
-		closure(properties)
+  def update(closure) {
+    def properties = new Properties()
+    def fromFile = getFromFile()
+    if(fromFile != null) {
+      params.log.info("Loading parameters to update from $fromFile")
+      fromFile.withReader { r ->
+        properties.load(r)
+      }
+    }
 
-		def toFile = getToFile()
-		params.log.info("Writing updated parameters to $toFile")
-		params.log.debug("writing "+properties+" to "+toFile)
+    closure(properties)
 
-	  toFile.withWriter('UTF-8'){ w -> properties.store(w,"updated by config's GenerateConfig class")}
-	}
+    def toFile = getToFile()
+    params.log.info("Writing updated parameters to $toFile")
+    params.log.debug("writing "+properties+" to "+toFile)
+
+    toFile.withWriter('UTF-8'){ w -> properties.store(w,"updated by config's GenerateConfig class")}
+  }
 }

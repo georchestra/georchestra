@@ -36,7 +36,7 @@ Ext.namespace("GEOR");
  */
 GEOR.CustomCSWRecordsReader = function(meta, recordType) {
     meta = meta || {};
-    if(!(recordType instanceof Function)) {
+    if (!(recordType instanceof Function)) {
         recordType = Ext.data.Record.create([
             {name: "layer_name"},
             {name: "layer_description"},
@@ -64,27 +64,35 @@ Ext.extend(GEOR.CustomCSWRecordsReader, Ext.data.DataReader, {
      */
     readRecords : function(rs) {
         var records = [];
-        if(rs) {
+        if (rs) {
             var recordType = this.recordType;
             var i, r, values, thumbnailURL;
 
-            for(i = 0, lenI = rs.length; i < lenI; i++) {
+            for (i = 0, lenI = rs.length; i < lenI; i++) {
                 r = rs[i];
-                thumbnailURL = null;
+                thumbnailURL = null, secondChoice = null;
 
-                if(r.get('URI')) {
+                if (r.get('URI')) {
                     // thumbnail URL (common to all layers in this MD):
                     Ext.each(r.get('URI'), function (item) {
-                        if((item.name && item.name.toLowerCase() == "thumbnail") && item.value) {
-                            thumbnailURL = item.value;
+                        if (item.protocol && /image\/(png|jpg|jpeg|gif)/i.test(item.protocol) && item.value) {
+                            if (item.name && item.name.toLowerCase() === "thumbnail") {
+                                thumbnailURL = item.value;
+                                return false; // stop looping (we found the best possible thumbnail)
+                            } else {
+                                secondChoice = item.value;
+                            }
                         }
                     });
+                    if (!thumbnailURL) {
+                        thumbnailURL = secondChoice;
+                    }
 
                     // multiple WMS can be found in one csw:record
                     Ext.each(r.get('URI'), function (item) {
                         if (GEOR.util.isSuitableDCProtocol(item)) {
 
-                            var tip = 'Couche '+item.name+' sur '+item.value;
+                            var tip = OpenLayers.i18n("NAME layer on VALUE", {'NAME': item.name, 'VALUE': item.value});
                             var description = (item.description) ?
                                 '<span ext:qtip="'+tip+'">'+item.description+'</span>' :
                                 tip;
@@ -275,26 +283,28 @@ GEOR.cswquerier = (function() {
             wmsCount = s.getCount();
 
         if (mdCount) {
-            if (wmsCount == 0) {
-                text = tr("Not any layer");
-            } else if (wmsCount == 1) {
-                text = tr("1 layer");
+            if (mdCount > 1) {
+                text = tr("NB metadata match the query.", {'NB': mdCount});
             } else {
-                text = tr("NB layers", {'NB': wmsCount});
+                text = tr("A single metadata matches the query.");
             }
-			if (mdCount > 1) {
-				text += tr(" in NB metadata", {'NB': mdCount});
-			} else {
-				text += tr(" in 1 metadata");
-			}
+            text += " ";
+            if (wmsCount == 0) {
+                text += tr("No linked layer.");
+            } else if (wmsCount == 1) {
+                text += tr("One layer found.");
+            } else {
+                text += tr("NB layers found.", {'NB': wmsCount});
+            }
+
             // a better indicator would be numberOfRecordsMatched > numberOfRecordsReturned
             // but it is more difficult to obtain than mdCount.
             // For the moment, we'll use this criteria:
             if (mdCount == GEOR.config.MAX_CSW_RECORDS) {
-                text += tr(": precise your request");
+                text += " " + tr("Precise your request.");
             }
         } else {
-            text = tr("Not any metadata correspond to the words specified");
+            text = tr("No metadata matches the query.");
         }
         southPanel.body.dom.innerHTML = "<p>"+text+"</p>";
     };
@@ -518,7 +528,7 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
     createFilter: function() {
         // see http://osgeo-org.1560.n6.nabble.com/CSW-GetRecords-problem-with-spaces-tp3862749p3862750.html
         var v = this.getValue(),
-            words = v.replace(new RegExp("[,;:/%()*!.\\[\\]~&=]","g"), ' ').split(' '),
+            words = v.replace(new RegExp("[,;:/%()!*.\\[\\]~&=]","g"), ' ').split(' '),
             // adding wms in the filters list helps getting records where a WMS layer is referenced:
             filters = [
                 // improve relevance of results: (might not be relevant with other csw servers than geonetwork)
@@ -546,16 +556,78 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
             ];
         Ext.each(words, function(word) {
             if (word) {
-                filters.push(
-                    new OpenLayers.Filter.Comparison({
-                        type: "~",
-                        property: "AnyText",
-                        value: '*'+word+'*'
-                    })
-                );
+                // #word : search in keywords
+                if (/^#.+$/.test(word)) {
+                    filters.push(
+                        new OpenLayers.Filter.Comparison({
+                            type: "~",
+                            property: "Subject",
+                            value: word.substr(1) + "*",
+                            matchCase: false
+                        })
+                    );
+                }
+                // @word : search for organizations
+                else if (/^@.+$/.test(word)) {
+                    filters.push(
+                        new OpenLayers.Filter.Comparison({
+                            type: "~",
+                            property: "OrganisationName",
+                            value: word.substr(1) + "*",
+                            matchCase: false
+                        })
+                    );
+                }
+                // -word : suppress entries with a specific pattern
+                else if (/^-.+$/.test(word)) {
+                    filters.push(
+                        new OpenLayers.Filter.Logical({
+                            type: "!",
+                            filters: [
+                                new OpenLayers.Filter.Comparison({
+                                    type: '~',
+                                    property: "AnyText",
+                                    value: "*" + word.substr(1) + "*",
+                                    matchCase: false
+                                })
+                            ]
+                        })
+                    );
+                }
+                // ?word : AnyText search
+                else if (/^\?.+$/.test(word)) {
+                    filters.push(
+                        new OpenLayers.Filter.Comparison({
+                            type: "*",
+                            property: "AnyText",
+                            value: word.substr(1) + "*",
+                            matchCase: false
+                        })
+                    );
+                }
+                // word : search for exact match on predefined queryable properties
+                else {
+                    var defaultFilters = [];
+                    Ext.each(GEOR.config.CSW_FILTER_PROPERTIES, function(property) {
+                        defaultFilters.push(
+                            new OpenLayers.Filter.Comparison({
+                                type: '~',
+                                property: property,
+                                value: word + '*',
+                                matchCase: false
+                            })
+                        );
+                     });
+                    filters.push(
+                        new OpenLayers.Filter.Logical({
+                            type: "||",
+                            filters: defaultFilters
+                        })
+                    );
+                }
             }
         });
-        if (filters.length == 1) {
+        if (filters.length === 1) {
             return filters[0];
         } else {
             return new OpenLayers.Filter.Logical({

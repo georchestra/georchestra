@@ -19,8 +19,8 @@ GEOR.Addons.Magnifier.prototype = {
     init: function(record) {
         var lang = OpenLayers.Lang.getCode(),
             item = new Ext.menu.CheckItem({
-                text: record.get("title")[lang],
-                qtip: record.get("description")[lang],
+                text: record.get("title")[lang] || record.get("title")["en"],
+                qtip: record.get("description")[lang] || record.get("description")["en"],
                 //iconCls: "addon-magnifier",
                 checked: false,
                 listeners: {

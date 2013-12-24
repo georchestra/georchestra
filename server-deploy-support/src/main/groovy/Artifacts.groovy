@@ -18,13 +18,11 @@ class Artifacts {
     /**
      * maps cas-server-webapp to cas.war
      *      security-proxy to ROOT.war (required for tomcat servers to be the / webapp)
-     *      geobretagne-doc to doc.war
      *      added -private to all other artifacts
      */
     static def standardGeorchestraAliasFunction = versionNumToPrivateMapping {artifact ->
         if (artifact.name.startsWith("cas-server-webapp")) return "cas.war"
         else if (artifact.name.startsWith("security-proxy")) return "ROOT.war"
-        else if (artifact.name.startsWith("static")) return "static-private.war"
         else if (artifact.name.startsWith("geonetwork-main")) return "geonetwork-private.war"
         else return null
     }

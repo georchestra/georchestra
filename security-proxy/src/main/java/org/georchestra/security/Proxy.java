@@ -49,6 +49,7 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpTrace;
 import org.apache.http.client.params.ClientPNames;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.ProxySelectorRoutePlanner;
@@ -109,7 +110,6 @@ public class Proxy {
      */
     private String                    defaultTarget;
     private Map<String, String>       targets = Collections.emptyMap();
-    private String referer;
     /**
      * must be defined
      */
@@ -117,7 +117,7 @@ public class Proxy {
     private FilterRequestsStrategy    strategyForFilteringRequests = new AcceptAllRequests();
     private List<String>              requireCharsetContentTypes   = Collections.emptyList();
     private String defaultCharset = "UTF-8";
-    
+
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
     
@@ -145,14 +145,28 @@ public class Proxy {
 
     
     @RequestMapping(params="login", method={GET,POST} )
-    public void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, URISyntaxException {
         String uri = request.getRequestURI();
         if(uri.startsWith("sec")) {
             uri=uri.substring(3);
         } else if(uri.startsWith("/sec")) {
             uri=uri.substring(4);
         }
-        redirectStrategy.sendRedirect(request, response, uri);
+        
+        URIBuilder uriBuilder = new URIBuilder(uri);
+        Enumeration parameterNames = request.getParameterNames();
+        while(parameterNames.hasMoreElements())
+        {
+            String paramName = (String)parameterNames.nextElement();
+            if (!"login".equals(paramName)) {
+                String[] paramValues = request.getParameterValues(paramName);
+                for (int i = 0; i < paramValues.length; i++) {
+                    uriBuilder.setParameter(paramName, paramValues[i]);
+                }
+            }
+        }
+
+        redirectStrategy.sendRedirect(request, response, uriBuilder.build().toString());
     }
 
     @RequestMapping(params={"login","url"}, method={GET,POST})
@@ -626,7 +640,6 @@ public class Proxy {
                 logger.debug("New request is: " + sURL + "\nRequest is GET");
 
                 HttpGet get = new HttpGet(uri);
-                get.setHeader("Referer", this.referer);
                 targetRequest = get;
                 break;
             }
@@ -634,7 +647,6 @@ public class Proxy {
                 logger.debug("New request is: " + sURL + "\nRequest is POST");
 
                 HttpPost post = new HttpPost(uri);
-                post.setHeader("Referer", this.referer);
                 HttpEntity entity;
                 request.setCharacterEncoding("UTF8");
                 if (isFormContentType(request)) {
@@ -835,16 +847,27 @@ public class Proxy {
                             // that the request cannot be fulfilled, nothing good would happen otherwise
                         } 
                         if(charset == null) {
+                            String guessedCharset = null;
                             if(logger.isDebugEnabled()) {
-                                logger.debug("unable to find charset so using default:"+defaultCharset);
+                                logger.debug("unable to find charset so using the first one from the accept-charset request header");
                             }
                             String calculateDefaultCharset = calculateDefaultCharset(orignalRequest);
-                            if (calculateDefaultCharset !=null ) { 
-                                String adjustedContentType = proxiedResponse.getEntity().getContentType().getValue() + ";charset=" + calculateDefaultCharset;
-                                finalResponse.setHeader("Content-Type", adjustedContentType);
-                                first = false; // we found the encoding, don't try to do it again
-                                finalResponse.setCharacterEncoding(calculateDefaultCharset);
+                            if (calculateDefaultCharset !=null ) {
+                                guessedCharset = calculateDefaultCharset;
+                                if(logger.isDebugEnabled()) {
+                                    logger.debug("hopefully the server responded with this charset: "+calculateDefaultCharset);
+                                }
+                            } else {
+                                guessedCharset = defaultCharset;
+                                if(logger.isDebugEnabled()) {
+                                    logger.debug("unable to find charset, so using default:"+defaultCharset);
+                                }
                             }
+                            String adjustedContentType = proxiedResponse.getEntity().getContentType().getValue() + ";charset=" + guessedCharset;
+                            finalResponse.setHeader("Content-Type", adjustedContentType);
+                            first = false; // we found the encoding, don't try to do it again
+                            finalResponse.setCharacterEncoding(guessedCharset);
+
                         } else {
                             if(logger.isDebugEnabled()) {
                                 logger.debug("found charset: "+charset);
@@ -856,7 +879,7 @@ public class Proxy {
                         }
                     }
                 }
-                
+
                 // for everyone, the stream is just forwarded to the client
                 streamToClient.write(buf, 0, len);
             }
@@ -877,7 +900,7 @@ public class Proxy {
     private String calculateDefaultCharset(HttpServletRequest originalRequest) {
         String acceptCharset = originalRequest.getHeader("accept-charset");
         
-        String calculatedCharset = "ISO-8859-1";
+        String calculatedCharset = null;
         
         if(acceptCharset !=null) {
             calculatedCharset = acceptCharset.split(",")[0];
@@ -1029,9 +1052,6 @@ public class Proxy {
     }
     public void setTargets(Map<String,String> targets) {
         this.targets = targets;
-    }
-    public void setReferer(String referer){
-            this.referer = referer;
     }
     public void setContextpath(String contextpath) {
 //        this.contextpath = contextpath;

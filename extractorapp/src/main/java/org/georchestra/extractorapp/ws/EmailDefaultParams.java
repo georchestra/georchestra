@@ -12,7 +12,8 @@ import java.net.InetAddress;
  */
 public class EmailDefaultParams {
     private String smtpHost;
-    private int smptPort = -1;
+    private int smtpPort = -1;
+    private String emailHtml;
     private String replyTo;
     private String from;
     private String bodyEncoding;
@@ -31,7 +32,8 @@ public class EmailDefaultParams {
      */
     protected EmailDefaultParams(EmailDefaultParams defaults) {
         smtpHost = defaults.smtpHost;
-        smptPort = defaults.smptPort;
+        smtpPort = defaults.smtpPort;
+        emailHtml = defaults.emailHtml;
         replyTo = defaults.replyTo;
         from = defaults.from;
         bodyEncoding = defaults.bodyEncoding;
@@ -52,33 +54,31 @@ public class EmailDefaultParams {
      */
     public void freeze() {
         this.frozen = true;
-        if (SharedConstants.inProduction()) {
-            try {
-                if (!InetAddress.getByName(smtpHost).isReachable(3000)) {
-                    throw new IllegalStateException(smtpHost + " is not a reachable address");
-                }
-            } catch (IOException e) {
+        try {
+            if (!InetAddress.getByName(smtpHost).isReachable(3000)) {
                 throw new IllegalStateException(smtpHost + " is not a reachable address");
             }
-            if (smptPort < 0) {
-                throw new IllegalStateException(smptPort + " is not a legal port make sure it is correctly configured");
+        } catch (IOException e) {
+            throw new IllegalStateException(smtpHost + " is not a reachable address");
+        }
+        if (smtpPort < 0) {
+            throw new IllegalStateException(smtpPort + " is not a legal port make sure it is correctly configured");
+        }
+        if (replyTo == null || from == null) {
+            if (replyTo == null && from == null) {
+                throw new IllegalStateException("Either or both from or replyTo must have a valid value");
             }
-            if (replyTo == null || from == null) {
-                if (replyTo == null && from == null) {
-                    throw new IllegalStateException("Either or both from or replyTo must have a valid value");
-                }
-                if (replyTo == null) {
-                    replyTo = from;
-                } else {
-                    from = replyTo;
-                }
+            if (replyTo == null) {
+                replyTo = from;
+            } else {
+                from = replyTo;
             }
-            if (bodyEncoding == null) {
-                bodyEncoding = "UTF-8";
-            }
-            if (subjectEncoding == null) {
-                subjectEncoding = bodyEncoding;
-            }
+        }
+        if (bodyEncoding == null) {
+            bodyEncoding = "UTF-8";
+        }
+        if (subjectEncoding == null) {
+            subjectEncoding = bodyEncoding;
         }
     }
     
@@ -96,12 +96,19 @@ public class EmailDefaultParams {
         checkState();
         this.smtpHost = smtpHost;
     }
-    public int getSmptPort() {
-        return smptPort;
+    public int getSmtpPort() {
+        return smtpPort;
     }
     public void setSmtpPort(int port) {
         checkState();
-        this.smptPort = port;
+        this.smtpPort = port;
+    }
+    public String getEmailHtml() {
+        return emailHtml;
+    }
+    public void setEmailHtml(String emailHtml) {
+        checkState();
+        this.emailHtml = emailHtml;
     }
     public String getReplyTo() {
         return replyTo;

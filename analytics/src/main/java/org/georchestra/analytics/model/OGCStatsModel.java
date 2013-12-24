@@ -13,15 +13,15 @@ public class OGCStatsModel extends AbstractModel  {
 		super(pgpool);
 	}
 	
-	private final String selectLayersQ = "SELECT service, layer, request, count(*) as count FROM ogc_services_log " +
+	private final String selectLayersQ = "SELECT service, layer, request, count(*) as count FROM ogcstatistics.ogc_services_log " +
 			"where extract(month from date) = ? AND extract(year from date) = ? " +
 			"group by layer, service,request order by @sort@ LIMIT ? OFFSET ?;";
 	
-	private final String selectUsersQ = "SELECT user_name, count(*) as count FROM ogc_services_log " +
+	private final String selectUsersQ = "SELECT user_name, count(*) as count FROM ogcstatistics.ogc_services_log " +
 			"where extract(month from date) = ? AND extract(year from date) = ? " +
 			"group by user_name order by @sort@ LIMIT ? OFFSET ?;";
 	
-	private final String selectGroupsQ = "SELECT org, count(*) as count FROM ogc_services_log " +
+	private final String selectGroupsQ = "SELECT org, count(*) as count FROM ogcstatistics.ogc_services_log " +
 			"where extract(month from date) = ? AND extract(year from date) = ? " +
 			"group by org order by @sort@ LIMIT ? OFFSET ?;";
 	

@@ -126,7 +126,11 @@ GEOR.FeatureDataModel.prototype = {
      *          Defaults to 'string' if no match.
      */
     guessType: function(input) {
-        if (/^\d+$/.test(input)) {
+        if (/^\d+$/.test(input) && ! /^0/.test(input)) {
+            // second test is required to prevent postal codes 
+            // like 02100 to be interpreted as integers 
+            // (thus truncated by ExtJS)
+            // see https://github.com/camptocamp/georchestra-geopicardie-configuration/issues/215
             return 'int';
         }
         if (Ext.isDate(input)) {

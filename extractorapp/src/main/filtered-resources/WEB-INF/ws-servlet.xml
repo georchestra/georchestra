@@ -78,6 +78,8 @@
                   value="${smtpHost}"/>
         <property name="smtpPort" 
                   value="${smtpPort}"/>
+        <property name="emailHtml"
+                  value="${emailHtml}"/>
         <property name="replyTo" 
                   value="${replyTo}"/>
         <property name="from" 
@@ -87,7 +89,7 @@
         <property name="subjectEncoding" 
                   value="UTF-8"/>
         <property name="languages"
-                  value="fr,fra"/>
+                  value="${language}"/>
         <property name="expireDeamon"
                   ref="expire-daemon"/>
         <property name="emailTemplateFile" 

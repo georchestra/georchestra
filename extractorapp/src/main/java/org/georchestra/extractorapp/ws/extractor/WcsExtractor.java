@@ -81,7 +81,9 @@ public class WcsExtractor {
         WcsCoverageReader reader = _format.getReader(request._url);
 
         File basedir = request.createContainingDir(_basedir);
-        basedir.mkdirs();
+        if (!basedir.mkdirs() && !basedir.exists()) {
+            throw new RuntimeException("Unable to create " + basedir.getAbsolutePath());
+        }
 
         CoordinateReferenceSystem requestCRS = CRS.decode(request._epsg);
         String username;

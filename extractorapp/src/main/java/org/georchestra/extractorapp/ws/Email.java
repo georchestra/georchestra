@@ -13,7 +13,6 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
@@ -30,6 +29,7 @@ public abstract class Email {
 
 	private String smtpHost;
     private int smtpPort = -1;
+    private String emailHtml;
     private String replyTo;
     private String from;
     private String bodyEncoding;
@@ -39,7 +39,7 @@ public abstract class Email {
     private String subject;
 	
 	public Email(HttpServletRequest request, String[] recipients,
-			final String emailSubject, final String smtpHost, final int smtpPort,
+			final String emailSubject, final String smtpHost, final int smtpPort, final String emailHtml,
 			final String replyTo, final String from, final String bodyEncoding,
 			final String subjectEncoding, final String[] languages) {
 		
@@ -47,6 +47,7 @@ public abstract class Email {
 		this.subject = emailSubject;
 		this.smtpHost = smtpHost;
 		this.smtpPort = smtpPort;
+		this.emailHtml = emailHtml;
 		this.replyTo = replyTo;
 		this.from = from;
 		this.bodyEncoding = bodyEncoding;
@@ -80,26 +81,22 @@ public abstract class Email {
         }
 
         if (!validRecipients) {
-            message.addRecipient(Message.RecipientType.TO, new InternetAddress(from));
-            message.setSubject(
-                    "[ERREUR] Message non délivré : "
-                            + subject,
-                            subjectEncoding);
+	    LOG.error("Mail could not be sent, none of the recipients are valid: " + recipients.toString());
+	    return;
         } else {
             message.setSubject(subject, subjectEncoding);
         }
 
-        Multipart multipart = new MimeMultipart();
-
         if (msg != null) {
-            MimeBodyPart bodyPart = new MimeBodyPart();
-            bodyPart.setText(msg, bodyEncoding, "html");
-            bodyPart.setContentLanguage(languages);
-            multipart.addBodyPart(bodyPart);
+            /* See http://www.rgagnon.com/javadetails/java-0321.html */
+            if ("true".equalsIgnoreCase(emailHtml)) {
+                message.setContent(msg, "text/html; charset=" + bodyEncoding);
+            } else {
+                message.setContent(msg, "text/plain; charset=" + bodyEncoding);
+            }
             LOG.debug(msg);
         }
 
-        message.setContent(multipart);
         Transport.send(message);
         LOG.debug("extraction email has been sent to:\n"
                 + Arrays.toString(recipients));
@@ -124,18 +121,25 @@ public abstract class Email {
     }
 	
 	protected String format(List<String> list) {
-        if (list.isEmpty()) {
-            return "<p>aucune</p>";
-        }
-        StringBuilder b = new StringBuilder("<ul>");
-        for (String string : list) {
-            b.append("<li>");
-            b.append(string);
-            b.append("</li>");
-        }
-        b.append("</ul>");
-
-        return b.toString();
+		if ("true".equalsIgnoreCase(emailHtml)) {
+			StringBuilder b = new StringBuilder("<ul>");
+			for (String string : list) {
+				b.append("<li>");
+				b.append(string);
+				b.append("</li>");
+			}
+			b.append("</ul>");
+			return b.toString();
+		} else {
+			StringBuilder b = new StringBuilder("\n");
+			for (String string : list) {
+				b.append("* ");
+				b.append(string);
+				b.append("\n");
+			}
+			b.append("\n");
+			return b.toString();
+		}
     }
     
 	protected String formatTimeEstimation(String msg, final long fileSize) {

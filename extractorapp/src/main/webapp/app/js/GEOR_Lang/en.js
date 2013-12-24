@@ -47,6 +47,7 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
         "${LIMIT}KBytes). <br />Do you want to continue ?",
     /* GEOR_config.js */
     "BUFFER meters": "${BUFFER} meters",
+    "BUFFER kilometer": "${BUFFER} kilometer",
     "BUFFER kilometers": "${BUFFER} kilometers",
     /* GEOR_data.js */
     /* GEOR_dlform.js */

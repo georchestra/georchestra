@@ -22,8 +22,11 @@ proxy.mapping=\
     <entry key="catalogapp" value="${proxy.defaultTarget}/catalogapp-private/" />\
     <entry key="geoserver" value="${proxy.defaultTarget}/geoserver-private/" />\
     <entry key="downloadform" value="${proxy.defaultTarget}/downloadform-private/" />\
-    <entry key="static" value="${proxy.defaultTarget}/static-private/" />\
-    <entry key="analytics" value="${proxy.defaultTarget}/analytics-private/" />
+    <entry key="header" value="${proxy.defaultTarget}/header-private/" />\
+    <entry key="analytics" value="${proxy.defaultTarget}/analytics-private/" />\
+    <entry key="ldapadmin" value="${proxy.defaultTarget}/ldapadmin-private/" />\
+    <entry key="static" value="${proxy.defaultTarget}/header-private/" />
+# Note the last entry, "static", is for retro-compatibility - it might disappear in a future release
 
 # header mapping
 header.mapping=\

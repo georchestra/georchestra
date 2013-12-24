@@ -13,6 +13,10 @@
  */
 
 /*
+ * @requires GeoExt/Lang.js
+ */
+
+/*
  * French translation file
  */
 OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
@@ -20,6 +24,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Yes": "Oui",
     "No": "Non",
     "OK": "OK",
+    "or": "ou",
     "Cancel": "Annuler",
     "Save": "Sauvegarder",
     "Loading...": "Chargement...",
@@ -31,6 +36,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Close": "Fermer",
     "labelSeparator": " : ",
     "File submission failed or invalid file": "L'envoi du fichier a échoué - le fichier est peut-être non valide",
+    "Type": "Type",
     /* GEOR.js strings */
     "Cities": "Localités",
     "Recentering on GeoNames cities": "Recentrage sur localités<br />de la base GeoNames",
@@ -39,14 +45,14 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Addresses": "Adresses",
     "Recentering on a given address": "Recentrage sur point adresse",
     "Available layers": "Couches disponibles",
-    "Editing": "Edition",
+    "WMS Search": "Recherche WMS",
+    "WFS Search": "Recherche WFS",
     "resultspanel.emptytext":
         "<p>Sélectionnez l'outil d'interrogation " +
         "ou construisez une requête sur une couche.<br />" +
         "Les attributs des objets s'afficheront dans ce cadre.</p>",
     /* GEOR_ClassificationPanel.js strings */
     "Attribute": "Attribut",
-    "Type": "Type",
     "Number of classes": "Nombre de classes",
     "Minimum size": "Taille minimum",
     "Maximum size": "Taille maximum",
@@ -74,7 +80,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Too much data.": "Données trop volumineuses.",
     "Server exception.": "Le serveur a renvoyé une exception.",
     "ajax.defaultexception":
-        "Pour plus d'information, nous vous invitons à " +
+        "Pour plus d'information, vous pouvez " +
         "chercher le code de retour sur <a href=\"http://" +
         "en.wikipedia.org/wiki/List_of_HTTP_status_codes\" target=\"_blank\">" +
         "cette page</a>.",
@@ -99,6 +105,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
         "la variable DEFAULT_THESAURUS_KEY ne correspond à aucune" +
         " valeur exportée par GeoNetwork",
     /* GEOR_cswquerier.js strings */
+    "NAME layer on VALUE": "Couche ${NAME} sur ${VALUE}",
     "Show metadata sheet in a new window":
         "Afficher la fiche de métadonnées dans une nouvelle fenêtre",
     "more": "plus",
@@ -110,27 +117,40 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Catalogue": "Catalogue",
     "Find": "Chercher",
     "in": "dans",
-    "Not any layer": "Aucune couche",
-    "1 layer": "1 couche",
-    "NB layers": "${NB} couches",
-    " in NB metadata": " dans ${NB} metadonnées",
-    " in 1 metadata": " dans 1 metadonnée",
-    ": precise your request": " : précisez votre requête",
-    "Not any metadata correspond to the words specified":
-        "Aucune métadonnée ne correspond aux termes saisis",
-    /* GEOR_editing.js strings */
+    "No layer": "Aucune couche",
+    "One layer found.": "Une couche trouvée.",
+    "NB layers found.": "${NB} couches trouvées.",
+    "NB metadata match the query.": "${NB} métadonnées correspondent à la requête.",
+    "A single metadata matches the query.": "Une unique métadonnée correspond à la requête.",
+    "Precise your request.": "Précisez votre requête.",
+    "No metadata matches the query.":
+        "Aucune métadonnée ne correspond à la requête.",
     /* GEOR_fileupload.js strings */
     "Local file": "Fichier",
     "The service is inactive": "Le service est inactif",
     "Upload a vector data file.": "Uploadez un fichier de données vectorielles.",
     "The allowed formats are the following: ": "Les formats acceptés sont les suivants : ",
-    "Use ZIP compression for multifiles formats, such as SHP or MIF/MID.": "Utilisez la compression ZIP pour les formats multi-fichiers comme SHP ou MIF/MID.",
+    "Use ZIP compression for multifiles formats, such as": "Utilisez la compression ZIP pour les formats multi-fichiers comme",
+    "fileupload_error_incompleteMIF": "Fichier MIF/MID incomplet.",
+    "fileupload_error_incompleteSHP": "Fichier shapefile incomplet.",
+    "fileupload_error_incompleteTAB": "Fichier TAB incomplet.",
+    "fileupload_error_ioError": "Erreur d'I/O sur le serveur. Contacter l'administrateur de la plateforme pour plus de détails.",
+    "fileupload_error_multipleFiles": "L'archive ZIP contient plusieurs fichiers de données. Elle ne doit en contenir qu'un seul.",
+    "fileupload_error_outOfMemory": "Le serveur ne dispose plus de la mémoire suffisante. Contacter l'administrateur de la plateforme pour plus de détails.",
+    "fileupload_error_sizeError": "Le fichier est trop grand pour pouvoir être traité.",
+    "fileupload_error_unsupportedFormat": "Ce format de données n'est pas géré par l'application.",
+    "server upload error: ERROR":
+        "L'upload du fichier a échoué. ${ERROR}",
+    "Incorrect server response.": "Réponse du serveur incorrecte.",
+    "No features found.": "Aucun objet trouvé.",
     /* GEOR_geonames.js strings */
     /* GEOR_getfeatureinfo.js strings */
     "<div>Searching...</div>": "<div>Recherche en cours...</div>",
+    "<div>No layer selected</div>": "<div>Aucune couche sélectionnée</div>",
     "<div>Search on objects active for NAME layer. Clic on the map.</div>":
          "<div>Recherche d\'objets activée sur la couche ${NAME}. " +
          "Cliquez sur la carte.</div>",
+    "WMS GetFeatureInfo at ": "GetFeatureInfo WMS sur ",
     /* GEOR_layerfinder.js strings */
     "Add layers from local files": "Ajouter des couches en uploadant un fichier depuis votre ordinateur",
     "Find layers searching in metadata":
@@ -151,7 +171,26 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Add": "Ajouter",
     "Add layers from a ...": "Ajouter des couches depuis un ...",
     "Malformed URL": "URL non conforme.",
+    "Queryable": "Interrogeable",
+    "Opaque": "Opaque",
+    "Choose a WMS server: ": "Choisissez un serveur WMS : ",
+    "The server is publishing one layer with an incompatible projection":
+        "Le serveur publie une couche dont la projection n'est pas compatible",
+    "The server is publishing NB layers with an incompatible projection":
+        "Le serveur publie ${NB} couches dont la projection n'est pas " +
+        "compatible",
+    "WMS server": "Serveur WMS",
+    "Choose a WMTS server: ": "Choisissez un serveur WMTS : ",
+    "WMTS server": "Serveur WMTS",
+    "Choose a WFS server: ": "Choisissez un serveur WFS : ",
+    "... or enter its address: ": "... ou saisissez son adresse : ",
+    "Unreachable server or insufficient rights": "Réponse invalide du " +
+        "serveur. Raisons possibles : droits insuffisants, " +
+        "serveur injoignable, trop de données, etc.",
+    "WFS server": "Serveur WFS",
     /* GEOR_managelayers.js strings */
+    "Set as overlay": "Passer en calque",
+    "Set as baselayer": "Passer en couche de fond",
     "Confirm NAME layer deletion ?":
         "Voulez-vous réellement supprimer la couche ${NAME} ?",
     "1:MAXSCALE to 1:MINSCALE": "1:${MAXSCALE} à 1:${MINSCALE}",
@@ -159,7 +198,8 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
         "Plage de visibilité (indicative):<br />de ${TEXT}",
     "Information on objects of this layer":
         "Interroger les objets de cette couche",
-    "Default style": "Style par défaut",
+    "default style": "style par défaut",
+    "no styling": "absence de style",
     "Recenter on the layer": "Recentrer sur la couche",
     "Impossible to get layer extent":
         "Impossible d'obtenir l'étendue de la couche.",
@@ -167,12 +207,6 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Show metadata": "Afficher les métadonnées",
     "Edit symbology": "Éditer la symbologie",
     "Build a query": "Construire une requête",
-    "Failed to get WFS layer address. <br />The query module will be disabled":
-        "Impossible d'obtenir l'adresse de la couche WFS." +
-        "<br />Le requêteur ne sera pas disponible.",
-    "DescribeLayer WMS query failed. <br />The query module will be disabled":
-        "La requête WMS DescribeLayer a malheureusement échoué." +
-        "<br />Le requêteur ne sera pas disponible.",
     "Download data": "Télécharger les données",
     "Choose a style": "Choisir un style",
     "Modify format": "Modifier le format",
@@ -183,6 +217,15 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "source: ": "source : ",
     "unknown": "inconnue",
     "Actions": "Actions",
+    "Draw new point": "Dessiner un nouveau point",
+    "Draw new line": "Dessiner une nouvelle ligne",
+    "Draw new polygon": "Dessiner un nouveau polygone",
+    "Edition": "Edition",
+    "Editing": "Edition en cours",
+    "Switch on/off edit mode for this layer": "Basculer cette couche en mode édition",
+    "No geometry column.": "Colonne géométrique non détectée.",
+    "Geometry column type (TYPE) is unsupported.": "Le type de la colonne géométrique (${TYPE}) n'est pas supporté.",
+    "Switching to attributes-only edition.": "Seuls les attributs des objets existants seront éditables.",
     /* GEOR_map.js strings */
     "Location map": "Carte de situation",
     "Warning after loading layer":
@@ -199,6 +242,8 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     /* GEOR_mapinit.js strings */
     "Add layers from WMS services":
         "Ajouter des couches depuis des services WMS",
+    "Add layers from WFS services":
+        "Ajouter des couches depuis des services WFS",
     "NB layers not imported": "${NB} couches non importées",
     "One layer not imported": "Une couche non importée",
     "mapinit.layers.load.error":
@@ -206,7 +251,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
         "Raisons possibles : droits insuffisants, SRS incompatible ou couche non existante",
     "NB layers imported": "${NB} couches importées",
     "One layer imported": "Une couche importée",
-    "Not any layer imported": "Aucune couche importée",
+    "No layer imported": "Aucune couche importée",
     "The provided context is not valid": "Le contexte fourni n'est pas valide",
     "The default context is not defined (and it is a BIG problem!)":
         "Le contexte par défaut n'est pas défini " +
@@ -257,6 +302,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Fields of filters with a red mark are mandatory": "Vous devez remplir " +
         "les champs des filtres marqués en rouge.",
     "Request on NAME": "Requêteur sur ${NAME}",
+    "WFS GetFeature on filter": "GetFeature WFS sur un filtre",
     "Search": "Rechercher",
     "querier.layer.no.geom":
         "La couche ne possède pas de colonne géométrique." +
@@ -276,7 +322,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
         "Nombre maximum d'objets atteint (${NB})</span>",
     "NB results": "${NB} résultats",
     "One result": "1 résultat",
-    "Not any result": "Aucun résultat",
+    "No result": "Aucun résultat",
     "Clean": "Effacer",
     "Clean all results on the map and in the table": "Supprimer les " +
         "résultats affichés sur la carte et dans le tableau",
@@ -285,9 +331,14 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
         "des résultats",
     "CSV Export": "Export CSV",
     "Export results as CSV": "Exporter l'ensemble des résultats en CSV",
-    "<p>Not any result for that request.</p>": "<p>Aucun objet ne " +
+    "<p>No result for that request.</p>": "<p>Aucun objet ne " +
         "correspond à votre requête.</p>",
     /* GEOR_scalecombo.js strings */
+    /* GEOR_selectfeature.js strings */
+    "<div>Select features activated on NAME layer. Clic on the map.</div>":
+        "<div>Sélection d\'objets activée sur la couche ${NAME}. " +
+        "Cliquez sur la carte.</div>",
+    "OpenLayers SelectFeature":"Sélection d\'objets",
     /* GEOR_styler.js strings */
     "Download style": "Télécharger le style",
     "You can download your SLD style at ": "Votre SLD est disponible à " +
@@ -319,27 +370,31 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Styler": "Styleur",
     "Apply": "Appliquer",
     "Impossible to complete the operation:": "Opération impossible :",
-    "not any WFS service associated to that layer": "aucun service WFS " +
+    "no WFS service associated to that layer": "aucun service WFS " +
         "associé à cette couche.",
-    "not any available attribute": "aucun attribut disponible.",
+    "no available attribute": "aucun attribut disponible.",
     /* GEOR_toolbar.js strings */
     "m": "m",
     "hectares": "hectares",
     "zoom to global extent of the map": "zoom sur l'étendue globale de la " +
         "carte",
     "pan": "glisser - déplacer la carte",
-    "zoom in": "zoom en avant",
+    "zoom in": "zoom en avant (pour zoomer sur une emprise: appuyer sur SHIFT + dessiner l'emprise)",
     "zoom out": "zoom en arrière",
     "back to previous zoom": "revenir à la précédente emprise",
     "go to next zoom": "aller à l'emprise suivante",
     "Login": "Connexion",
     "Logout": "Déconnexion",
     "Help": "Aide",
-    "Show help": "Afficher l'aide",
+    "Query all active layers": "Interroger toutes les couches actives",
     "Show legend": "Afficher la légende",
     "Leave this page ? You will lose the current cartographic context.":
         "Vous allez quitter cette page et perdre le contexte cartographique " +
         "courant",
+    "Online help": "Aide en ligne",
+    "Display the user guide": "Afficher le guide de l'utilisateur",
+    "Contextual help": "Aide contextuelle",
+    "Activate or deactivate contextual help bubbles": "Activer ou désactiver les bulles d'aide contextuelle",
     /* GEOR_tools.js strings */
     "distance measure": "Mesurer une distance",
     "area measure": "Mesurer une surface",
@@ -361,18 +416,9 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Confirmation": "Confirmation",
     "Information": "Information",
     /* GEOR_waiter.js strings */
-    /* GEOR_wfsbrowser.js strings */
-    "Choose a WFS server: ": "Choisissez un serveur WFS : ",
-    "... or enter its address: ": "... ou saisissez son adresse : ",
-    "Unreachable server or insufficient rights": "Réponse invalide du " +
-        "serveur. Raisons possibles : droits insuffisants, " +
-        "serveur injoignable, trop de données, etc.",
-    "WFS server": "Serveur WFS",
     /* GEOR_wmc.js strings */
     "The provided file is not a valid OGC context": "Le fichier fourni n'est pas un contexte OGC valide",
-    "wmc.bad.srs": "Le fichier .wmc ne " +
-        "peut pas être restauré. Son système de référence spatiale est " +
-        "différent de celui de la carte en cours.",
+    "Warning: trying to restore WMC with a different projection (PROJCODE1, while map SRS is PROJCODE2). Strange things might occur !": "Attention: le contexte restauré avait été sauvegardé en ${PROJCODE1} alors que la carte actuelle est en ${PROJCODE2}. Il pourrait y avoir des comportements inattendus.",
     /* GEOR_wmcbrowser.js strings */
     "Could not find WMC file": "Le contexte spécifié n'existe pas",
     "... or a custom context": "... ou un contexte personnalisé",
@@ -380,16 +426,6 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "A unique OSM layer": "Une unique couche OpenStreetMap",
     "default viewer context": "contexte par défaut",
     "(default)": "<br/>(contexte par défaut actuel)",
-    /* GEOR_wmsbrowser.js strings */
-    "Queryable": "Interrogeable",
-    "Opaque": "Opaque",
-    "Choose a WMS server: ": "Choisissez un serveur WMS : ",
-    "The server is publishing one layer with an incompatible projection":
-        "Le serveur publie une couche dont la projection n'est pas compatible",
-    "The server is publishing NB layers with an incompatible projection":
-        "Le serveur publie ${NB} couches dont la projection n'est pas " +
-        "compatible",
-    "WMS server": "Serveur WMS",
     /* GEOR_workspace.js strings */
     "Context saving": "Sauvegarde du contexte",
     "The file is required.": "Un nom de fichier est nécessaire.",
@@ -401,6 +437,10 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Save the map context": "Sauvegarder la carte",
     "Load a map context": "Charger une carte",
     "Get a permalink": "Obtenir un permalien",
+    "Permalink": "Permalien",
+    "valid for ": "valide pendant ",
+    "months": "mois",
+    "month": "mois",
     "Share your map with this URL: ": "Partagez la carte avec l'adresse suivante : ",
     "Edit in OSM": "Editer dans OSM",
     "with JOSM": "avec JOSM",
@@ -411,38 +451,31 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
         "échelles proches de 1:10.000",
     "with Potlatch2": "avec Potlatch2",
     "with Walking Papers": "avec Walking Papers",
-    /* GEOR_EditingPanel.js */
-    "Read-only layer": "Couche non éditable",
-    "editingpanel.geom.error": "La géométrie de cette couche est de type ${TYPE}.<br/>" +
-        "Seules les géométries de type point, ligne et polygone" +
-        " (et multi-*) sont éditables.",
-    "choose a layer": "choisissez une couche",
-    /* GEOR_LayerEditingPanel.js */
-    "Modify object": "Modifier un objet",
-    "Cancel all": "Tout annuler",
-    "Enter ": "Saisir ",
-    "layereditingpanel.cancel.confirm": "Souhaitez-vous vraiment annuler toutes les modifications<br />depuis la dernière synchronisation ?",
-    "Synchronize": "Synchroniser",
-    "layereditingpanel.changes.confirm": "Veuillez confirmer ou annuler " +
-        "les modifications en cours.",
-    "Delete": "Supprimer",
-    "Confirm": "Confirmer",
-    " (required)": " (requis)",
-    "Text too long": "Texte trop long",
-    "Text too short": "Texte trop court",
-    "Maximum value exceeded": "Valeur maximale dépassée",
-    "Minimum value not reached": "Valeur minimale non atteinte",
-    "Invalid number": "Nombre non valide",
-    "Synchronization successful.": "Synchronisation réussie.",
+    /* GEOR_edit.js */
+    "Req.": "Req.", // requis
+    "Required": "Requis",
+    "Not required": "Non requis",
     "Synchronization failed.": "Erreur lors de la synchronisation.",
-    "Recover": "Restaurer",
-    "No feature selected !": "Aucun objet sélectionné !",
-    "a point": "un point",
-    "a line": "une ligne",
-    "a polygon": "un polygone",
-    "Pending changes": "Modifications en cours",
-    "Do you want to confirm changes ?": "Souhaitez-vous confirmer les modifications ?",
+    "Edit activated": "Edition activée", 
+    "Hover the feature you wish to edit, or choose \"new feature\" in the edit menu": "Survolez les objets de la couche que vous souhaitez modifier, ou choisissez \"nouvel objet\" dans le menu d'édition de la couche",
     /* GeoExt.data.CSW.js */
     "no abstract": "pas de résumé"
     // no trailing comma
+});
+
+GeoExt.Lang.add("fr", {
+    "GeoExt.ux.FeatureEditorGrid.prototype": {
+        deleteMsgTitle: "Suppression",
+        deleteMsg: "Confirmer la suppression de cet objet vectoriel ?",
+        deleteButtonText: "Supprimer",
+        deleteButtonTooltip: "Supprimer cet objet",
+        cancelMsgTitle: "Annulation",
+        cancelMsg: "L'objet a été modifié localement. Confirmer l'abandon des changements ?",
+        cancelButtonText: "Annuler",
+        cancelButtonTooltip: "Abandonner les modifications en cours",
+        saveButtonText: "Enregistrer",
+        saveButtonTooltip: "Enregistrer les modifications",
+        nameHeader: "Attribut",
+        valueHeader: "Valeur"
+    }
 });

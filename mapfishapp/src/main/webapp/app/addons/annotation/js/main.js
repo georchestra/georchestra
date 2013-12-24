@@ -25,8 +25,9 @@ GEOR.Addons.Annotation.prototype = {
         });
         this.window = new Ext.Window({
             title: OpenLayers.i18n('annotation.drawing_tools'),
-            width: 420,
-            closable: false,
+            width: 440,
+            closable: true,
+            closeAction: "hide",
             resizable: false,
             border: false,
             cls: 'annotation',
@@ -34,14 +35,20 @@ GEOR.Addons.Annotation.prototype = {
                 xtype: 'toolbar',
                 border: false,
                 items: annotation.actions
-            }]
+            }],
+            listeners: {
+                "hide": function() {
+                    item.setChecked(false);
+                },
+                scope: this
+            }
         });
 
         var lang = OpenLayers.Lang.getCode(),
             item = new Ext.menu.CheckItem({
-                text: record.get("title")[lang],
-                qtip: record.get("description")[lang],
-                //iconCls: "addon-magnifier",
+                text: record.get("title")[lang] || record.get("title")["en"],
+                qtip: record.get("description")[lang] || record.get("description")["en"],
+                iconCls: "addon-annotation",
                 checked: false,
                 listeners: {
                     "checkchange": this.onCheckchange,

@@ -46,7 +46,7 @@ if(sec_roles != null) {
 
 <head>
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
-    <title lang="<%= lang %>" dir="ltr"><fmt:message key="title.catalogue"/></title>
+    <title lang="<%= lang %>" dir="ltr"><fmt:message key="title.catalogue"/> - ${instance}</title>
     <link rel="stylesheet" type="text/css" href="lib/externals/ext/resources/css/ext-all.css" />
     <link rel="stylesheet" type="text/css" href="lib/externals/ext/resources/css/xtheme-gray.css" />
     <!--
@@ -113,13 +113,14 @@ if(sec_roles != null) {
     <script type="text/javascript">
         // remove the loading element
         Ext.get("loading").remove();
-        
+
         <% 
           String proxyHost = "/proxy/?url=";
-          if(request.getContextPath().equals("/catalogapp")) {
+          if(request.getHeader("sec-proxy") == null) {
             proxyHost = "ws/ogcproxy/?url=";
           }
         %>
+
         // set proxy host
         OpenLayers.ProxyHost = '<%= proxyHost %>';
         

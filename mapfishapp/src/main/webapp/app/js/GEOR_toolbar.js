@@ -14,7 +14,8 @@
 
 /*
  * @include OpenLayers/Control/ZoomToMaxExtent.js
- * @include OpenLayers/Control/ZoomBox.js
+ * @include OpenLayers/Control/ZoomIn.js
+ * @include OpenLayers/Control/ZoomOut.js
  * @include OpenLayers/Control/DragPan.js
  * @include OpenLayers/Control/NavigationHistory.js
  * @include OpenLayers/Control/Measure.js
@@ -25,6 +26,7 @@
  * @include GeoExt/widgets/Action.js
  * @include GeoExt/widgets/LegendPanel.js
  * @include GeoExt/widgets/WMSLegend.js
+ * @include GeoExt/widgets/WMTSLegend.js
  * @include GEOR_workspace.js
  * @include GEOR_print.js
  * @include GEOR_config.js
@@ -85,28 +87,20 @@ GEOR.toolbar = (function() {
             pressed: true
         }));
 
-        ctrl = new OpenLayers.Control.ZoomBox({
-          out: false
-        });
+        ctrl = new OpenLayers.Control.ZoomIn();
         items.push(new GeoExt.Action({
             control: ctrl,
             map: map,
             iconCls: "zoomin",
-            tooltip: tr("zoom in"),
-            toggleGroup: "map",
-            allowDepress: false
+            tooltip: tr("zoom in")
         }));
 
-        ctrl = new OpenLayers.Control.ZoomBox({
-          out: true
-        });
+        ctrl = new OpenLayers.Control.ZoomOut();
         items.push(new GeoExt.Action({
             control: ctrl,
             map: map,
             iconCls: "zoomout",
-            tooltip: tr("zoom out"),
-            toggleGroup: "map",
-            allowDepress: false
+            tooltip: tr("zoom out")
         }));
 
         items.push("-");
@@ -126,8 +120,24 @@ GEOR.toolbar = (function() {
             disabled: true
         }));
 
+        items.push("-");
+
+        items.push({
+            xtype: 'button',
+            iconCls: 'geor-btn-info',
+            allowDepress: true,
+            enableToggle: true,
+            toggleGroup: 'map',
+            tooltip: tr("Query all active layers"),
+            listeners: {
+                "toggle": function(btn, pressed) {
+                    GEOR.getfeatureinfo.toggle(false, pressed);
+                }
+            }
+        });
+
         // create a legend panel, it is used both for displaying
-        // the legend in the interface and for inclusion if PDFs
+        // the legend in the interface and for inclusion in PDFs
         // created by the print module
         var legendPanel = new GeoExt.LegendPanel({
             layerStore: layerStore,
@@ -136,7 +146,12 @@ GEOR.toolbar = (function() {
                 labelCls: 'bold-text',
                 showTitle: true,
                 baseParams: {
-                    FORMAT: 'image/png'
+                    FORMAT: 'image/png',
+                    // geoserver specific:
+                    LEGEND_OPTIONS: [
+                        'forceLabels:on',
+                        'fontAntiAliasing:true'
+                    ].join(';')
                 }
             },
             autoScroll: true
@@ -150,11 +165,11 @@ GEOR.toolbar = (function() {
 
         items.push('->');
 
-        if (GEOR.config.LOGIN_IN_TOOLBAR) {
+        if (GEOR.config.LOGIN_IN_TOOLBAR || GEOR.config.HEADER_HEIGHT === 0) {
             // insert a login or logout link in the toolbar
             var login_html = '<div style="margin-right:1em;font:11px tahoma,verdana,helvetica;"><a href="' + GEOR.config.LOGIN_URL +
                 '" style="text-decoration:none;" onclick="return GEOR.toolbar.confirmLogin()">'+tr("Login")+'</a></div>';
-            if(!GEOR.config.ANONYMOUS) {
+            if (!GEOR.config.ANONYMOUS) {
                 login_html = '<div style="margin-right:1em;font:11px tahoma,verdana,helvetica;">'+GEOR.config.USERNAME + '&nbsp;<a href="' + GEOR.config.LOGOUT_URL +
                     '" style="text-decoration:none;">'+tr("Logout")+'</a></div>';
             }
@@ -164,18 +179,34 @@ GEOR.toolbar = (function() {
 
         items.push({
             text: tr("Help"),
-            tooltip: tr("Show help"),
-            handler: function() {
-                if(Ext.isIE) {
-                    window.open(GEOR.config.HELP_URL);
-                } else {
-                    window.open(GEOR.config.HELP_URL, tr("Help"), "menubar=no,status=no,scrollbars=yes");
-                }
+            menu: {
+                items: [{
+                    text: tr("Online help"),
+                    tooltip: tr("Display the user guide"),
+                    handler: function() {
+                        if (Ext.isIE) {
+                            window.open(GEOR.config.HELP_URL);
+                        } else {
+                            window.open(GEOR.config.HELP_URL, tr("Help"), "menubar=no,status=no,scrollbars=yes");
+                        }
+                    }
+                }, '-', {
+                    xtype: "menucheckitem",
+                    text: tr("Contextual help"),
+                    qtip: tr("Activate or deactivate contextual help bubbles"),
+                    checked: true,
+                    listeners: {
+                        "checkchange": function(item, checked) {
+                            if (!checked) {
+                                GEOR.ls.set("no_contextual_help", "true");
+                            } else {
+                                GEOR.ls.remove("no_contextual_help");
+                            }
+                        }
+                    }
+                }]
             }
         });
-
-        items.push("-");
-        items.push(GEOR.tools.create());
 
         items.push('-');
         items.push({
@@ -215,6 +246,9 @@ GEOR.toolbar = (function() {
                 }
             }
         });
+
+        items.push("-");
+        items.push(GEOR.tools.create());
 
         items.push("-");
         items.push(GEOR.workspace.create(map));
