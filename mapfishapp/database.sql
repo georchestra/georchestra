@@ -1,9 +1,8 @@
 begin;
 
-create schema geodoc;
-grant all on schema geodoc to "www-data";
+create schema mapfishapp;
 
-create table geodoc.geodocs (
+create table mapfishapp.geodocs (
   id bigserial primary key, -- 1 to 9223372036854775807 (~ 1E19)
   username varchar(200), -- can be NULL (eg: anonymous user)
   standard varchar(3), -- eg: CSV, KML, SLD, WMC
@@ -15,14 +14,11 @@ create table geodoc.geodocs (
   access_count integer default 0 -- access count, defaults to 0
 );
 
-grant all on geodoc.geodocs to "www-data";
-grant all on geodoc.geodocs_id_seq to "www-data";
-
-create index geodocs_file_hash on geodoc.geodocs using btree (file_hash);
-create index geodocs_username on geodoc.geodocs using btree (username);
-create index geodocs_standard on geodoc.geodocs using btree (standard, standard_version);
-create index geodocs_created_at on geodoc.geodocs using btree (created_at);
-create index geodocs_last_access on geodoc.geodocs using btree (last_access);
-create index geodocs_access_count on geodoc.geodocs using btree (access_count);
+create index geodocs_file_hash on mapfishapp.geodocs using btree (file_hash);
+create index geodocs_username on mapfishapp.geodocs using btree (username);
+create index geodocs_standard on mapfishapp.geodocs using btree (standard, standard_version);
+create index geodocs_created_at on mapfishapp.geodocs using btree (created_at);
+create index geodocs_last_access on mapfishapp.geodocs using btree (last_access);
+create index geodocs_access_count on mapfishapp.geodocs using btree (access_count);
 
 commit;
