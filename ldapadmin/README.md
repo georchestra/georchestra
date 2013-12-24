@@ -159,7 +159,7 @@ Testing purpose:
 
  * deploy in Tomcat6
  * Then add the following url in your Internet navigator:
-   http://localhost:8080/ldapadmin/privateui/index.html
+   http://localhost:8080/ldapadmin/privateui/
 
 Alternatively, run with jetty:
 
