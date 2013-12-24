@@ -164,11 +164,18 @@ GEOR.getfeatureinfo = (function() {
         // http://boundlessgeo.com/2012/04/inspire-harmonized-layer-names-in-geoserver/
         Ext.each(info.features, function (feature) {
             var featureType, gml = feature.gml;
-            if (gml.featureNSPrefix && results.hasOwnProperty(gml.featureNSPrefix + ":" + gml.featureType)) {
-                results[gml.featureNSPrefix + ":" + gml.featureType].features.push(feature);
-            } else if (results.hasOwnProperty(gml.featureType)) {
-                results[gml.featureType].features.push(feature);
-            } // else: cannot find the layer, do nothing
+            if (gml) { // set by OpenLayers.Format.GML's parseFeature
+                // GeoServer
+                if (gml.featureNSPrefix && results.hasOwnProperty(gml.featureNSPrefix + ":" + gml.featureType)) {
+                    results[gml.featureNSPrefix + ":" + gml.featureType].features.push(feature);
+                } else if (results.hasOwnProperty(gml.featureType)) {
+                    results[gml.featureType].features.push(feature);
+                } 
+                // else: cannot find the layer, do nothing
+            } else if (feature.type) { // set by OpenLayers.Format.WMSGetFeatureInfo's read_msGMLOutput
+                // MapServer
+                results[feature.type].features.push(feature);
+            }
         });
 
         observable.fireEvent("searchresults", {
