@@ -6,6 +6,7 @@ package org.georchestra.mapfishapp.ws;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.util.Iterator;
@@ -21,6 +22,7 @@ import org.georchestra.mapfishapp.ws.upload.FileDescriptor;
 import org.georchestra.mapfishapp.ws.upload.FileFormat;
 import org.georchestra.mapfishapp.ws.upload.UpLoadFileManagement;
 import org.geotools.referencing.CRS;
+import org.geotools.referencing.operation.projection.ProjectionException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.opengis.referencing.FactoryException;
@@ -108,7 +110,11 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 		unsupportedFormat{
 			@Override
 			public String getMessage( final String detail){return "{\"success\":false, \"error\":\"fileupload_error_unsupportedFormat\", \"msg\": \"unsupported file type\"}"; }
-		}, 
+		},
+		projectionError{
+			@Override
+			public String getMessage( final String detail){return "{\"success\":false, \"error\":\"fileupload_error_projectionError\", \"msg\": \"Error occured while parsing coordinates\"}"; }
+		},
 		sizeError{
 			@Override
 			public String getMessage(String detail) {
@@ -263,7 +269,7 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 	 * @throws IOException
 	 */
 	@RequestMapping(value="/togeojson/*", method = RequestMethod.POST)
-	public void toGeoJson(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public void toGeoJson(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		if( !(request instanceof MultipartHttpServletRequest) ){
 			final String msg = "MultipartHttpServletRequest is expected";
@@ -283,7 +289,7 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 				throw new IOException(msg);
 			}
 			String fileName = (String) fileNames.next();
-			MultipartFile upLoadFile =multipartRequest.getFile(fileName);
+			MultipartFile upLoadFile = multipartRequest.getFile(fileName);
 			FileDescriptor currentFile = createFileDescriptor(upLoadFile.getOriginalFilename());
 			// process the uploaded file
 			Status st = Status.ready;
@@ -316,11 +322,11 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 			this.fileManagement.save(upLoadFile);
 				
 			// if the uploaded file is a zip file then checks its content
-			if(this.fileManagement.containsZipFile()){
+			if (this.fileManagement.containsZipFile()) {
 				this.fileManagement.unzip();
 
 				st  = checkGeoFiles(this.fileManagement);
-				if( st != Status.ok ){
+				if (st != Status.ok) {
 					writeErrorResponse(response, st);
 					return;
 				}
@@ -347,7 +353,12 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 		} catch (IOException e) {
 			LOG.error(e);
 			throw new IOException(e);
-		} finally{
+		} catch (ProjectionException e) {
+			LOG.error(e.getMessage());
+			throw e;
+		}
+
+		finally{
 			if(workDirectory!= null) cleanTemporalDirectory(workDirectory);
 		}
 	}
@@ -364,10 +375,12 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 	 * @param fileManagement
 	 * @param crs
 	 * 
-	 * @throws IOException
+	 * @throws Exception
 	 */
-	private void writeOKResponse( final HttpServletResponse response, final UpLoadFileManagement fileManagement, final CoordinateReferenceSystem crs) throws IOException {
-		
+	private void writeOKResponse( final HttpServletResponse response, final UpLoadFileManagement fileManagement, final CoordinateReferenceSystem crs) throws Exception {
+
+		StringWriter json_out = new StringWriter();
+
 		response.setCharacterEncoding(responseCharset);
 		response.setContentType("text/html");
 		response.setStatus(HttpServletResponse.SC_OK);
@@ -375,11 +388,11 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 		PrintWriter out = response.getWriter();
 		try {
 
+			fileManagement.writeFeatureCollectionAsJSON(json_out, crs);
+
 			// builds the following response: "{\"success\": \"true\", \"geojson\":" + jsonFeatures+"}");
 			out.print("{\"success\": \"true\", \"geojson\":");
-			
-			fileManagement.writeFeatureCollectionAsJSON(out, crs);
-			
+			out.print(json_out.toString());
 			out.println("}");
 
 			out.flush();
@@ -387,17 +400,13 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 			if(LOG.isDebugEnabled()){
 				LOG.debug("RESPONSE: OK");
 			}
-			
 		} catch(OutOfMemoryError e){
-			
 			writeErrorResponse(response, Status.outOfMemoryError, buildOutOfMemoryErrorMessage(), HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE);
-		
 		} catch (IOException e) {
-			
 			writeErrorResponse(response, Status.ioError, e.getMessage(), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			
+		} catch (ProjectionException e) {
+			writeErrorResponse(response, Status.projectionError, e.getMessage(), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} finally {
-
 			if(out != null) out.close();
 		}
 	}

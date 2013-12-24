@@ -23,6 +23,7 @@ import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.geojson.feature.FeatureJSON;
 import org.geotools.geojson.geom.GeometryJSON;
+import org.geotools.referencing.operation.projection.ProjectionException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -202,7 +203,7 @@ public class UpLoadFileManagement {
     public File save(MultipartFile uploadFile) throws IOException {
 
         try {
-            // transfers the up load file to the work directory
+            // transfers the uploaded file to the work directory
             final String originalFileName = uploadFile.getOriginalFilename();
             File outFile = new File(this.workDirectory + "/" + originalFileName);
             uploadFile.transferTo(outFile);
@@ -346,14 +347,14 @@ public class UpLoadFileManagement {
      *            transformed.
      * @throws IOException
      */
-    public void writeFeatureCollectionAsJSON(Writer writer, final CoordinateReferenceSystem crs) throws IOException {
+    public void writeFeatureCollectionAsJSON(Writer writer, final CoordinateReferenceSystem crs) throws Exception {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("CRS to reproject:" + crs);
         }
 
-        // retrieves the feature collection from file system and writes the
-        // correspondent json string
+        // retrieves the feature collection from the filesystem and writes the
+        // underlying JSON string
         String fileName = searchGeoFile();
         assert fileName != null;
 
@@ -365,18 +366,19 @@ public class UpLoadFileManagement {
             if (featureCollection == null) {
                 return;
             }
-
-            // int decimals = getDigits(featureCollection);
-            FeatureJSON fjson = new FeatureJSON2(new GeometryJSON(18)); // TODO FeatureJSON2 is a workaround to solve the crs bug
-
+            // TODO FeatureJSON2 is a workaround to solve the crs bug
+            FeatureJSON fjson = new FeatureJSON2(new GeometryJSON(18));
             SimpleFeatureType schema = featureCollection.getSchema();
             fjson.setFeatureType(schema);
             fjson.setEncodeFeatureCollectionCRS(true);
-            // fjson.setEncodeFeatureCRS(true); it is not necessary right now.
 
             fjson.writeFeatureCollection(featureCollection, writer);
 
-        } catch (Exception e) {
+        } catch (ProjectionException e) {
+            LOG.error("Failed reading " + fileName + ": " + e.getMessage());
+            throw e;
+        }
+        catch (Exception e) {
             
             final String message = "Failed reading " + fileName + ".  "
                     + e.getMessage();

@@ -9,6 +9,7 @@ import java.io.IOException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.referencing.operation.projection.ProjectionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -94,7 +95,7 @@ class AbstractFeatureGeoFileReader implements FeatureGeoFileReader {
     @Override
     public SimpleFeatureCollection getFeatureCollection(final File file,
             final FileFormat fileFormat) throws IOException,
-            UnsupportedGeofileFormatException {
+            UnsupportedGeofileFormatException, ProjectionException {
 
         return getFeatureCollection(file, fileFormat, null);
     }
@@ -117,18 +118,15 @@ class AbstractFeatureGeoFileReader implements FeatureGeoFileReader {
     public SimpleFeatureCollection getFeatureCollection(final File file,
             final FileFormat fileFormat,
             final CoordinateReferenceSystem targetCrs) throws IOException,
-            UnsupportedGeofileFormatException {
-
+            UnsupportedGeofileFormatException, ProjectionException {
         try {
             return getReaderImpl().getFeatureCollection(file, fileFormat,
                     targetCrs);
-
         } catch (UnsupportedGeofileFormatException e) {
-
             throw e;
-
+        } catch (ProjectionException e) {
+            throw e;
         } catch (RuntimeException e) {
-
             // if an error was found and the current implementation is the OGR
             // the implementation then it will be changed to geotools (only for
             // this operation)
