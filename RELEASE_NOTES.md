@@ -103,7 +103,26 @@ Bug fixes:
 
 UPGRADING:
  * analytics: the ExtJS submodule path has changed, be sure to run ```git submodule update --init``` when you switch branches.
- * databases: the downloadform, ogcstatistics and ldapadmin databases are now merged into a single one named "georchestra". Each webapp expects to find its tables in a dedicated schema ("downloadform" for the downloadform module, "ogcstatistics" for ogc-server-statistics, and "ldapadmin" for ldapadmin). See https://github.com/georchestra/georchestra/pull/535 for the complete patch. If you currently have one dedicated database for each module, you can keep your setup, provided you customize the ```shared.psql.ogc.statistics.db```, ```shared.psql.download_form.db``` & ```shared.ldapadmin.db``` maven filters in your own config. In any case, you'll have to rename the ```download``` schema (of the previous ```downloadform``` database) into ```downloadform```, and migrate the tables which were in the public schema of the databases ```ogcstatistics``` and ```ldapadmin``` into the newly created schemas.
+ * databases: the downloadform, ogcstatistics and ldapadmin databases are now merged into a single one named "georchestra". Each webapp expects to find its tables in a dedicated schema ("downloadform" for the downloadform module, "ogcstatistics" for ogc-server-statistics, and "ldapadmin" for ldapadmin). See https://github.com/georchestra/georchestra/pull/535 for the complete patch. If you currently have one dedicated database for each module, you can keep your setup, provided you customize the ```shared.psql.ogc.statistics.db```, ```shared.psql.download_form.db``` & ```shared.ldapadmin.db``` maven filters in your own config. In any case, you'll have to rename the ```download``` schema (of the previous ```downloadform``` database) into ```downloadform```, and migrate the tables which were in the public schema of the databases ```ogcstatistics``` and ```ldapadmin``` into the newly created schemas. Example migration script:
+```
+psql -d downloadform -c 'alter schema download rename to downloadform;'
+
+wget https://raw.github.com/georchestra/georchestra/master/ldapadmin/database.sql -O /tmp/ldapadmin.sql
+psql -d ldapadmin -f /tmp/ldapadmin.sql
+psql -d ldapadmin -c 'GRANT ALL PRIVILEGES ON SCHEMA ldapadmin TO "www-data";'
+psql -d ldapadmin -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ldapadmin TO "www-data";'
+psql -d ldapadmin -c 'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA ldapadmin TO "www-data";'
+psql -d ldapadmin -c 'insert into ldapadmin.user_token (uid, token, creation_date) select uid, token, creation_date from public.user_token;'
+psql -d ldapadmin -c 'drop table public.user_token;'
+
+wget https://raw.github.com/georchestra/georchestra/master/ogc-server-statistics/database.sql -O /tmp/ogcstatistics.sql
+psql -d ogcstatistics -f /tmp/ogcstatistics.sql
+psql -d ogcstatistics -c 'GRANT ALL PRIVILEGES ON SCHEMA ogcstatistics TO "www-data";'
+psql -d ogcstatistics -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ogcstatistics TO "www-data";'
+psql -d ogcstatistics -c 'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA ogcstatistics TO "www-data";'
+psql -d ogcstatistics -c 'insert into ogcstatistics.ogc_services_log (id, user_name, date, service, layer, request, org) select id, user_name, date, service, layer, request, org from public.ogc_services_log;'
+psql -d ogcstatistics -c 'drop table public.ogc_services_log;'
+```
  * download form: the module is disabled by default (```shared.download_form.activated=false```). Be sure to set the value you want in your shared.maven.filters file.
  * extractorapp:
    * ```BUFFER_VALUES``` has changed. If you had a custom value in your GEOR_custom.js file, you have to modify it according to the new syntax.
