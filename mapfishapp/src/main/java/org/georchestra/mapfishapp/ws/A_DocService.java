@@ -12,6 +12,15 @@ import java.io.InputStream;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
+import java.util.Random;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.ResultSet;
+import java.sql.Timestamp;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.Source;
@@ -25,11 +34,6 @@ import org.apache.commons.logging.LogFactory;
 import org.xml.sax.SAXException;
 
 import org.georchestra.mapfishapp.model.ConnectionPool;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.ResultSet;
 
 
 /**
@@ -127,10 +131,13 @@ public abstract class A_DocService {
         // actions to take before saving data
         preSave();
 
-        // compute data md5
+        // compute md5: not on data, because it would not be unique across users, but on a random string
         String hash = null;
         try {
-            hash = MD5(_content);
+            //hash = MD5(_content);
+            Random r = new Random();
+            Double d = r.nextDouble();
+            hash = MD5(_content + d.toString() );
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
@@ -159,7 +166,6 @@ public abstract class A_DocService {
         catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            //if (rs != null) try { rs.close(); } catch (SQLException e) {e.printStackTrace();}
             if (st != null) try { st.close(); } catch (SQLException e) {e.printStackTrace();}
             if (connection != null) try { connection.close(); } catch (SQLException e) {e.printStackTrace();}
         }
@@ -285,7 +291,7 @@ public abstract class A_DocService {
      * @param text input string
      * @return md5 hash
      */
-    private String MD5(final String text) throws NoSuchAlgorithmException {        
+    private String MD5(final String text) throws NoSuchAlgorithmException {
         byte[] toHash = text.getBytes();
         byte[] MD5Digest = null;
         StringBuilder hashString = new StringBuilder();
@@ -309,7 +315,7 @@ public abstract class A_DocService {
     
     /**
      * Check that data exists in db under provided hash
-     * @param fileName geodoc1694e3cc580768d5125816b574915e97.wmc or geodoc\d{19}.wmc
+     * @param fileName eg geodoc1694e3cc580768d5125816b574915e97.wmc or geodoc\d{19}.wmc
      * @return true: exists, false: not exists
      */
     private boolean isFileExist(final String fileName) throws SQLException, RuntimeException {
@@ -381,26 +387,22 @@ public abstract class A_DocService {
         String content = "";
         // test fileName to know if the file is stored in db or file.
         if (fileName.length() == 4+32+DOC_PREFIX.length()) {
-            
+            String hash = fileName.substring(DOC_PREFIX.length(), DOC_PREFIX.length() + 32);
             // newest database storage
             ResultSet rs = null;
             PreparedStatement st = null;
 
             Connection connection = null;
+            int count = 0;
             try {
                 connection = pgPool.getConnection();
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-            
-            try {
-                st = connection.prepareStatement("SELECT raw_file_content from mapfishapp.geodocs WHERE file_hash = ?;");
-                st.setString(1, fileName.substring(DOC_PREFIX.length(), DOC_PREFIX.length() + 32));
+                st = connection.prepareStatement("SELECT raw_file_content, access_count from mapfishapp.geodocs WHERE file_hash = ?;");
+                st.setString(1, hash);
                 rs = st.executeQuery();
                 
                 if (rs.next()) {
                     content = rs.getString(1);
+                    count = rs.getInt(2);
                 }
             } catch(SQLException e) {
                 e.printStackTrace();
@@ -409,6 +411,27 @@ public abstract class A_DocService {
                 if (st != null) try { st.close(); } catch (SQLException e) {e.printStackTrace();}
                 if (connection != null) try { connection.close(); } catch (SQLException e) {e.printStackTrace();}
             }
+            
+            // now that we have loaded the content, update the metadata fields
+            try {
+                connection = pgPool.getConnection();
+                st = connection.prepareStatement("UPDATE mapfishapp.geodocs set last_access = ? , access_count = ? WHERE file_hash = ?;");
+                
+                Date javaDate = new Date();
+                long javaTime = javaDate.getTime();
+                
+                st.setTimestamp(1, new Timestamp(javaTime));
+                st.setInt(2, count + 1);
+                st.setString(3, hash);
+                st.execute();
+            }
+            catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                if (st != null) try { st.close(); } catch (SQLException e) {e.printStackTrace();}
+                if (connection != null) try { connection.close(); } catch (SQLException e) {e.printStackTrace();}
+            }
+            
 
         } else {
             // plain old "file" storage
