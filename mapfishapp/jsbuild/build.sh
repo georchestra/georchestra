@@ -37,7 +37,8 @@ ${mkdir} -p ${releasepath} ${releasepath}/lang
 
  echo "running jsbuild for main app..."
  ${venv}/bin/jsbuild -o "${releasepath}" main.cfg
- echo "done.")
+ echo "done."
+)
 
 #
 # OpenLayers resources

@@ -34,7 +34,7 @@ import java.sql.ResultSet;
 
 /**
  * This service is the basic template to handle the storage and the loading of a file
- * Some methods can be override to provide treatments specific to a file extension.
+ * Some methods can be overridden to provide treatments specific to a file extension.
  * 
  * @author yoann buch  - yoann.buch@gmail.com
  *
@@ -45,7 +45,7 @@ public abstract class A_DocService {
     protected static final Log LOG = LogFactory.getLog(A_DocService.class.getPackage().getName());
 
     /**
-     * Document prefix helping to differentiate documents among others OS tmp files
+     * Document prefix helping to differentiate documents among other OS temporary files
      */
     protected static final String DOC_PREFIX = "geodoc";
 
@@ -75,7 +75,7 @@ public abstract class A_DocService {
     protected String _name;
 
     /**
-     * files are stored in the configured directory 
+     * old files can be read from the configured directory 
      */
     private String _tempDirectory;
 	
@@ -159,12 +159,9 @@ public abstract class A_DocService {
         catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            try {
-                if (st != null) st.close();
-            } 
-            catch (SQLException e) {
-                e.printStackTrace();
-            }
+            //if (rs != null) try { rs.close(); } catch (SQLException e) {e.printStackTrace();}
+            if (st != null) try { st.close(); } catch (SQLException e) {e.printStackTrace();}
+            if (connection != null) try { connection.close(); } catch (SQLException e) {e.printStackTrace();}
         }
 
         return DOC_PREFIX + hash + _fileExtension;
@@ -343,8 +340,9 @@ public abstract class A_DocService {
             } catch(SQLException e) {
                 throw e;
             } finally {
-                if (st != null) st.close();		
-                if (rs != null) rs.close();
+                if (rs != null) try { rs.close(); } catch (SQLException e) {e.printStackTrace();}
+                if (st != null) try { st.close(); } catch (SQLException e) {e.printStackTrace();}
+                if (connection != null) try { connection.close(); } catch (SQLException e) {e.printStackTrace();}
             }
             
             return count == 1;
@@ -380,47 +378,81 @@ public abstract class A_DocService {
      * @return file content
      */
     private String loadContent(final String fileName) {
-        File file = new File(_tempDirectory + File.separatorChar + fileName); 
         String content = "";
-        
-        FileInputStream  fis = null;
-        try {
-            fis = new FileInputStream(file);
+        // test fileName to know if the file is stored in db or file.
+        if (fileName.length() == 4+32+DOC_PREFIX.length()) {
             
-            // get file size
-            long fileSize = file.length();
-            if (fileSize > Integer.MAX_VALUE) {
-                throw new IOException("File is too big");
+            // newest database storage
+            ResultSet rs = null;
+            PreparedStatement st = null;
+
+            Connection connection = null;
+            try {
+                connection = pgPool.getConnection();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+            
+            try {
+                st = connection.prepareStatement("SELECT raw_file_content from mapfishapp.geodocs WHERE file_hash = ?;");
+                st.setString(1, fileName.substring(DOC_PREFIX.length(), DOC_PREFIX.length() + 32));
+                rs = st.executeQuery();
+                
+                if (rs.next()) {
+                    content = rs.getString(1);
+                }
+            } catch(SQLException e) {
+                e.printStackTrace();
+            } finally {
+                if (rs != null) try { rs.close(); } catch (SQLException e) {e.printStackTrace();}
+                if (st != null) try { st.close(); } catch (SQLException e) {e.printStackTrace();}
+                if (connection != null) try { connection.close(); } catch (SQLException e) {e.printStackTrace();}
             }
 
-            // allocate necessary memory to store content
-            byte[] bytes = new byte[(int) fileSize];
+        } else {
+            // plain old "file" storage
+            File file = new File(_tempDirectory + File.separatorChar + fileName); 
             
-            // read the content in the byte array
-            int offset = 0;
-            int numRead = 0;
-            while (offset < bytes.length && (numRead=fis.read(bytes, offset, bytes.length-offset)) >= 0) {
-                offset += numRead;
-            }
+            FileInputStream  fis = null;
+            try {
+                fis = new FileInputStream(file);
+                
+                // get file size
+                long fileSize = file.length();
+                if (fileSize > Integer.MAX_VALUE) {
+                    throw new IOException("File is too big");
+                }
+
+                // allocate necessary memory to store content
+                byte[] bytes = new byte[(int) fileSize];
+                
+                // read the content in the byte array
+                int offset = 0;
+                int numRead = 0;
+                while (offset < bytes.length && (numRead=fis.read(bytes, offset, bytes.length-offset)) >= 0) {
+                    offset += numRead;
+                }
+                
+                // Ensure all the bytes have been read 
+                if (offset < bytes.length) {
+                    throw new IOException("Could not completely read file " + file.getName());
+                }
             
-            // Ensure all the bytes have been read 
-            if (offset < bytes.length) {
-                throw new IOException("Could not completely read file " + file.getName());
-            }
-        
-            // return the file content
-            content = new String(bytes);
-            
-        } catch (FileNotFoundException fnfExc) {
-            fnfExc.printStackTrace();
-        } catch (IOException ioExc) {
-            ioExc.printStackTrace();
-        } finally{
-            if(fis != null) {
-                try {
-                    fis.close();
-                } catch (IOException e) {
-                    LOG.error(e);
+                // return the file content
+                content = new String(bytes);
+                
+            } catch (FileNotFoundException fnfExc) {
+                fnfExc.printStackTrace();
+            } catch (IOException ioExc) {
+                ioExc.printStackTrace();
+            } finally{
+                if(fis != null) {
+                    try {
+                        fis.close();
+                    } catch (IOException e) {
+                        LOG.error(e);
+                    }
                 }
             }
         }
