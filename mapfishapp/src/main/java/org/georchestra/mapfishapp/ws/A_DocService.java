@@ -142,7 +142,7 @@ public abstract class A_DocService {
             e.printStackTrace();
         }
         
-        // extract standard (+ standard version, later on)
+        // extract standard
         String standard = _fileExtension.substring(1);
 
         // write data to Db
