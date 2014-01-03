@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import org.georchestra.mapfishapp.model.ConnectionPool;
+
 /**
  * This controller represents the entry point to access RESTful document services.
  * This REST service provides an indirection point to save a file server side generated on the client side and a solution to get it back. <br />
@@ -49,7 +51,13 @@ public class DocController {
 
     public String getDocTempDir() {return docTempDir;}
 	public void setDocTempDir(String docTempDir) {	this.docTempDir = docTempDir; }
+    
+	/** the postgresql connection pool used by the document services*/
+    private ConnectionPool connectionPool;
 
+    public ConnectionPool getConnectionPool() {return connectionPool;}
+	public void setConnectionPool(ConnectionPool connectionPool) {	this.connectionPool = connectionPool; }
+    
 	/**
 	 * mapping from hostname -> credentials
 	 */
@@ -98,7 +106,7 @@ public class DocController {
      */
     @RequestMapping(value="/wmc/", method=RequestMethod.POST)
     public void storeWMCFile(HttpServletRequest request, HttpServletResponse response) {   
-        storeFile(new WMCDocService(this.docTempDir), WMC_URL, request, response);   
+        storeFile(new WMCDocService(this.docTempDir, this.connectionPool), WMC_URL, request, response);   
     }
     
     /**
@@ -108,7 +116,7 @@ public class DocController {
      */
     @RequestMapping(value="/wmc/*", method=RequestMethod.GET)
     public void getWMCFile(HttpServletRequest request, HttpServletResponse response) { 
-        getFile(new WMCDocService(this.docTempDir), request, response);
+        getFile(new WMCDocService(this.docTempDir, this.connectionPool), request, response);
     }
 
     /*======================= KML =====================================================================*/
@@ -119,7 +127,7 @@ public class DocController {
      */
     @RequestMapping(value="/kml/", method=RequestMethod.POST)
     public void storeKMLFile(HttpServletRequest request, HttpServletResponse response) {   
-        storeFile(new KMLDocService(this.docTempDir), KML_URL, request, response);   
+        storeFile(new KMLDocService(this.docTempDir, this.connectionPool), KML_URL, request, response);   
     }
     
     /**
@@ -129,7 +137,7 @@ public class DocController {
      */
     @RequestMapping(value="/kml/*", method=RequestMethod.GET)
     public void getKMLFile(HttpServletRequest request, HttpServletResponse response) { 
-        getFile(new KMLDocService(this.docTempDir), request, response);
+        getFile(new KMLDocService(this.docTempDir, this.connectionPool), request, response);
     }
 
     /*======================= JSON to CSV =====================================================================*/
@@ -140,7 +148,7 @@ public class DocController {
      */
     @RequestMapping(value="/csv/", method=RequestMethod.POST)
     public void storeCSVFile(HttpServletRequest request, HttpServletResponse response) {   
-        storeFile(new CSVDocService(this.docTempDir), CSV_URL, request, response);   
+        storeFile(new CSVDocService(this.docTempDir, this.connectionPool), CSV_URL, request, response);   
     }
     
     /**
@@ -150,7 +158,7 @@ public class DocController {
      */
     @RequestMapping(value="/csv/*", method=RequestMethod.GET)
     public void getCSVFile(HttpServletRequest request, HttpServletResponse response) { 
-        getFile(new CSVDocService(this.docTempDir), request, response);
+        getFile(new CSVDocService(this.docTempDir, this.connectionPool), request, response);
     }
     
     /*======================= SLD =====================================================================*/
@@ -176,7 +184,7 @@ public class DocController {
 
         if(request.getContentType().contains("application/vnd.ogc.sld+xml")) {
             // sld to store
-            storeFile(new SLDDocService(this.docTempDir), SLD_URL, request, response);   
+            storeFile(new SLDDocService(this.docTempDir, this.connectionPool), SLD_URL, request, response);   
         }
         else if(request.getContentType().contains("application/json") || request.getContentType().contains("text/json")) {
             // classification based on client request
@@ -194,7 +202,7 @@ public class DocController {
      */
     @RequestMapping(value="/sld/*", method=RequestMethod.GET)
     public void getSLDFile(HttpServletRequest request, HttpServletResponse response) { 
-        getFile(new SLDDocService(this.docTempDir), request, response);
+        getFile(new SLDDocService(this.docTempDir, this.connectionPool), request, response);
     }
     
     /*=======================Private Methods==========================================================================*/
@@ -208,8 +216,8 @@ public class DocController {
             SLDClassifier c = new SLDClassifier(credentials, new ClassifierCommand(getBodyFromRequest(request)));
             
             // save SLD content under a file
-            SLDDocService service = new SLDDocService(this.docTempDir);
-            String fileName = service.saveData(c.getSLD());
+            SLDDocService service = new SLDDocService(this.docTempDir, this.connectionPool);
+            String fileName = service.saveData(c.getSLD(), request.getHeader("sec-username"));
             
             PrintWriter out = response.getWriter(); 
             out.println("{\"success\":true,\"" + FILEPATH_VARNAME + "\":\"" + SLD_URL + fileName + "\"}"); 
@@ -272,7 +280,7 @@ public class DocController {
                
             // let the specific service handles the storage on the server
             // get back the file name under which it is saved
-            String fileName = docService.saveData(fileContent);
+            String fileName = docService.saveData(fileContent, request.getHeader("sec-username"));
 
             // send back to client the url path to retrieve this file later on
             response.setStatus(HttpServletResponse.SC_CREATED); // 201 created, new resource created

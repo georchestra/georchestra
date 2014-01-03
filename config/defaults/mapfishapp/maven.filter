@@ -1,7 +1,8 @@
 docTempDir=@shared.mapfishapp.docTempDir@
 instance=@shared.instance.name@
 language=@shared.language@
-jdbcUrl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.psql.mapfishapp.db@
+
+jdbcUrl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.psql.mapfishapp.db@?user=@shared.psql.user@&amp;password=@shared.psql.pass@
 
 #you can provide multiple entries
 credentials=\

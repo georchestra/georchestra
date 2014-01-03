@@ -8,6 +8,10 @@
         <to type="forward" last="true">/ws/home?wmc=ws/wmc/geodoc$1.wmc</to>
     </rule>
     <rule>
+        <from>^/map/(\w{32})/?$</from>
+        <to type="forward" last="true">/ws/home?wmc=ws/wmc/geodoc$1.wmc</to>
+    </rule>
+    <rule>
         <from>^/(ws)?/?$</from>
         <to type="forward" last="true">/ws/home</to>
     </rule>

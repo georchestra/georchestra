@@ -13,6 +13,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import org.georchestra.mapfishapp.model.ConnectionPool;
+
 
 /**
  * This service handles the storage and the loading of a wmc file on a temporary directory.
@@ -30,8 +32,8 @@ public class WMCDocService extends A_DocService {
     public static final String FILENAME_NODE = "ViewContext";
     public static final String FILENAME_ATTRIBUTE = "id";
     
-    public WMCDocService(final String tempDir) {
-        super(FILE_EXTENSION, MIME_TYPE, tempDir);
+    public WMCDocService(final String tempDir, ConnectionPool pgpool) {
+        super(FILE_EXTENSION, MIME_TYPE, tempDir, pgpool);
     }
     
     /*=================================Overridden methods===============================================*/

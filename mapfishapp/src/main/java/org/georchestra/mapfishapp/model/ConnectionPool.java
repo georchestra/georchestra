@@ -5,11 +5,11 @@ import java.sql.SQLException;
 
 import org.apache.commons.dbcp.BasicDataSource;
 
-public class PostGresqlConnection {
+public class ConnectionPool {
 
 	private BasicDataSource basicDataSource;
 	
-	public PostGresqlConnection (String jdbcUrl) {
+	public ConnectionPool (String jdbcUrl) {
 
 		basicDataSource = new BasicDataSource();
 
@@ -21,7 +21,7 @@ public class PostGresqlConnection {
 		basicDataSource.setMaxOpenPreparedStatements(-1);
 
 		basicDataSource.setDefaultReadOnly(false);
-		basicDataSource.setDefaultAutoCommit(false);
+		basicDataSource.setDefaultAutoCommit(true);
 
 		basicDataSource.setUrl(jdbcUrl);
 	}
@@ -29,7 +29,7 @@ public class PostGresqlConnection {
     public Connection getConnection() throws SQLException
     {
         return basicDataSource.getConnection();
-    }  
+    }
 
 }
 

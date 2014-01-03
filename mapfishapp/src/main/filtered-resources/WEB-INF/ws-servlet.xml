@@ -31,16 +31,18 @@
         <property name="gmlSizeLimit" value="8589934592"/>
     </bean>
 
+
+    <bean id="pgpool" class="org.georchestra.mapfishapp.model.ConnectionPool">
+        <constructor-arg value="${jdbcUrl}" /> 
+    </bean>
+
     <!-- Documents controller -->
     <bean class="org.georchestra.mapfishapp.ws.DocController">
         <property name="docTempDir" value="${docTempDir}"/>
+        <property name="connectionPool" ref="pgpool"/>
         <property name="credentials">
             <map>${credentials}</map>
         </property>
-    </bean>
-
-    <bean class="org.georchestra.mapfishapp.model.PostGresqlConnection">
-        <constructor-arg value="${jdbcUrl}" /> 
     </bean>
     
     <!-- View resolver Required to access jsps in WEB-INF/jsp directory-->

@@ -1,5 +1,6 @@
 package org.georchestra.mapfishapp.ws;
 
+import org.georchestra.mapfishapp.model.ConnectionPool;
 
 /**
  * This service handles the storage and the loading of a sld file on a temporary directory.
@@ -14,8 +15,8 @@ public class SLDDocService extends A_DocService {
     public static final String SCHEMA_URL = "http://schemas.opengis.net/sld/1.1.0/StyledLayerDescriptor.xsd";
     
     
-    public SLDDocService(final String tempDir) {
-        super(FILE_EXTENSION, MIME_TYPE, tempDir);
+    public SLDDocService(final String tempDir, ConnectionPool pgpool) {
+        super(FILE_EXTENSION, MIME_TYPE, tempDir, pgpool);
     }
     
     

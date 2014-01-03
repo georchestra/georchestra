@@ -10,6 +10,8 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.Source;
@@ -22,10 +24,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.xml.sax.SAXException;
 
-import org.georchestra.mapfishapp.model;
+import org.georchestra.mapfishapp.model.ConnectionPool;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
- * This service is the basic template to handle the storage and the loading of a file on a temporary directory.
+ * This service is the basic template to handle the storage and the loading of a file
  * Some methods can be override to provide treatments specific to a file extension.
  * 
  * @author yoann buch  - yoann.buch@gmail.com
@@ -48,6 +54,11 @@ public abstract class A_DocService {
     protected String _fileExtension;
     
     /**
+     * Db connection pool (shared between services).
+     */
+    protected ConnectionPool pgPool;
+
+    /**
      * MIME type.
      */
     private String _MIMEType;
@@ -65,7 +76,7 @@ public abstract class A_DocService {
     /**
      * files are stored in the configured directory 
      */
-    private String _tempDirectory;  
+    private String _tempDirectory;
 	
 	/**
 	 * Creates the temporal directory if it doesn't exist and set the path
@@ -77,13 +88,13 @@ public abstract class A_DocService {
 			boolean succeed = t.mkdirs();
 			
 			if(!succeed){
-				LOG.error("cannot create the dirctory: " + tempDirectory);
+				LOG.error("cannot create the directory: " + tempDirectory);
 			}
 		}
 		_tempDirectory = tempDirectory;
 		
 	}
-    
+
     
     /*========================Public Methods====================================================*/
 
@@ -94,30 +105,84 @@ public abstract class A_DocService {
      * @param MIMEType
      * @param docTempDirectory
      */
-    public A_DocService(final String fileExtension, final String MIMEType,  final String docTempDirectory) {
+    public A_DocService(final String fileExtension, final String MIMEType,  final String docTempDirectory, ConnectionPool pgpool) {
         _fileExtension = fileExtension;
         _MIMEType = MIMEType;
-        
+        pgPool = pgpool;
         setTempDirectory(docTempDirectory);
     }
     
     /**
      * Store the given data
      * @param data raw data to be stored
+     * @param username the current user name or empty string if anonymous (correct ?)
      * @return file name
      * @throws DocServiceException
      */
-    public String saveData(final String data) throws DocServiceException {
+    public String saveData(final String data, final String username) throws DocServiceException {
 
         _content = data;
         
         // actions to take before saving data
         preSave();
         
-        // store file under a file and get its name
-        String fileName = saveDataIntoFile(_content);
+        // store content under a file and get its name
+        //String fileName = saveDataIntoFile(_content);
         
-        return fileName;   
+        // compute data md5
+        String hash = null;
+        try {
+            hash = MD5(_content);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        
+        // extract standard (+ standard version, later on)
+        String standard = _fileExtension.substring(1);
+        
+        // get user name - DONE in arguments
+        
+        // write data to Db
+        Connection connection = null;
+        try {
+            connection = pgPool.getConnection();
+        }
+        catch (Exception e) {
+            // FIXME: what to do ?
+            e.printStackTrace();
+            /*
+			connection.rollback();
+			if (out != null) {
+				out.write("Int'l Server Error: unable to handle request.".getBytes());
+			}
+			logger.error("Caught exception while executing service: ", e);
+			response.setStatus(500);
+            */
+		}
+        
+        PreparedStatement st = null;
+        try {
+            st = connection.prepareStatement("INSERT INTO mapfishapp.geodocs (username, standard, raw_file_content, file_hash) VALUES (?,?,?,?);");
+            st.setString(1, username);
+            st.setString(2, standard);
+            st.setString(3, _content);
+            st.setString(4, hash);
+            st.execute();
+        }
+        catch (SQLException e) {
+            // FIXME: what to do ?
+            e.printStackTrace();
+        } finally {
+            try {
+                if (st != null) st.close();
+            } 
+            catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        //return fileName; // FIXME: return hash
+        return hash;
     }
     
     /**
@@ -228,6 +293,34 @@ public abstract class A_DocService {
     
     /*=====================Private Methods - Common to every DocService=========================================*/
     
+
+    /**
+     * Returns a md5 hash from a given string
+     * @param text input string
+     * @return md5 hash
+     */
+    private String MD5(final String text) throws NoSuchAlgorithmException {        
+        byte[] toHash = text.getBytes();
+        byte[] MD5Digest = null;
+        StringBuilder hashString = new StringBuilder();
+        
+        MessageDigest algo = MessageDigest.getInstance("MD5");
+        algo.reset();
+        algo.update(toHash);
+        MD5Digest = algo.digest();
+        
+        for (int i = 0; i < MD5Digest.length; i++) {
+            String hex = Integer.toHexString(MD5Digest[i]);
+            if (hex.length() == 1) {
+                hashString.append('0');
+                hashString.append(hex.charAt(hex.length() - 1));
+            } else {
+                hashString.append(hex.substring(hex.length() - 2));
+            }
+        }
+        return hashString.toString();        
+    }
+
     /**
      * Save the given data under a specific name and location
      * @param data data to be stored

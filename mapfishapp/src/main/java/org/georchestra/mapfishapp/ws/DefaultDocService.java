@@ -1,5 +1,7 @@
 package org.georchestra.mapfishapp.ws;
 
+import org.georchestra.mapfishapp.model.ConnectionPool;
+
 /**
  * This is a convenient class that provides a basic DocService.
  * It means that the features of the abstract base class {@link A_DocService} is enough to do the job.
@@ -18,8 +20,8 @@ public class DefaultDocService extends A_DocService {
 	 * @param tempDir
 	 */
 	@SuppressWarnings("unused")
-    private DefaultDocService(final String tempDir) {
-        super("", "", tempDir);
+    private DefaultDocService(final String tempDir, ConnectionPool pgpool) {
+        super("", "", tempDir, pgpool);
     }
     
     /**
@@ -30,8 +32,8 @@ public class DefaultDocService extends A_DocService {
      * @param MIMEType
      * @param tempDir
      */
-    public DefaultDocService(final String fileExtension, final String MIMEType, final String tempDir ) {
-        super(fileExtension, MIMEType, tempDir);
+    public DefaultDocService(final String fileExtension, final String MIMEType, final String tempDir, ConnectionPool pgpool ) {
+        super(fileExtension, MIMEType, tempDir, pgpool);
     }
 
 }
