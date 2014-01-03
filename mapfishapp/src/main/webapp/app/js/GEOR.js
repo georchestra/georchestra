@@ -313,7 +313,7 @@ Ext.namespace("GEOR");
         GEOR.wmc.events.on({
             "beforecontextrestore": function(count) {
                 // prevent OGCExceptionReport warnings during context restore:
-                GEOR.ajaxglobal.disableOGCExceptionReports = true;
+                GEOR.ajaxglobal.disableAllErrors = true;
                 describeLayerCount = count;
             }
         });
@@ -327,7 +327,7 @@ Ext.namespace("GEOR");
                 // and all describelayer queries finished.
                 describeLayerCount -= 1;
                 if (describeLayerCount == 0) {
-                    GEOR.ajaxglobal.disableOGCExceptionReports = false;
+                    GEOR.ajaxglobal.disableAllErrors = false;
                 }
             }
         });

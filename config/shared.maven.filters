@@ -15,7 +15,7 @@ shared.ldap.port=636
 shared.ldapUrl=ldaps://@shared.ldap.host@:@shared.ldap.port@
 shared.ldap.userSearchBaseDN=ou=users
 shared.ldap.uid=uid
-shared.ldap.userSearchFilter=@uid@=%u
+shared.ldap.userSearchFilter=@shared.ldap.uid@=%u
 shared.ldap.groupSearchBaseDN=ou=groups
 shared.ldap.admin.dn=cn=admin,@shared.ldap.baseDn@
 
