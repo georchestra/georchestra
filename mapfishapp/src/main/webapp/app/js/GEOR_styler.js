@@ -201,10 +201,6 @@ GEOR.styler = (function() {
             if (!sldURL) {
                 return;
             }
-            sldURL = [
-                window.location.protocol, '//', window.location.host,
-                GEOR.config.PATHNAME, '/', sldURL
-            ].join('');
             GEOR.util.urlDialog({
                 title: tr("Download style"),
                 msg: tr("You can download your SLD style at ") +
@@ -243,7 +239,8 @@ GEOR.styler = (function() {
                 // define the callbacks
                 var success = function(response) {
                     pathToSLD = [
-                        GEOR.config.PATHNAME, '/', 
+                        window.location.protocol, '//', window.location.host,
+                        GEOR.config.PATHNAME, '/',
                         Ext.decode(response.responseText).filepath
                     ].join('');
                     applySLD && observable.fireEvent(
@@ -648,6 +645,7 @@ GEOR.styler = (function() {
                 // response contains the URL to the
                 // SLD stored on the server
                 var path = [
+                    window.location.protocol, '//', window.location.host,
                     GEOR.config.PATHNAME, '/', 
                     Ext.decode(response.responseText).filepath
                 ].join('');
