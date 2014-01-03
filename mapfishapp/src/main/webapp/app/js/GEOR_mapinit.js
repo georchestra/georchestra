@@ -462,7 +462,12 @@ GEOR.mapinit = (function() {
                 // if a custom WMC is provided as GET parameter, load it:
                 if (GEOR.config.CUSTOM_WMC) {
                     url = GEOR.config.CUSTOM_WMC;
+                    // to recover contexts stored in plain files and indexed with a 19 digits string:
                     if (/^ws\/wmc\/geodoc(\d{19}).wmc$/.test(GEOR.config.CUSTOM_WMC)) {
+                        url = GEOR.config.PATHNAME + '/' + url;
+                    }
+                    // to recover contexts stored in database and indexed with a 32 chars string:
+                    if (/^ws\/wmc\/geodoc(\w{32}).wmc$/.test(GEOR.config.CUSTOM_WMC)) {
                         url = GEOR.config.PATHNAME + '/' + url;
                     }
                     updateStoreFromWMC(url, {

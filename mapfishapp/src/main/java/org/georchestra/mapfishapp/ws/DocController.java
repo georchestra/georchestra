@@ -317,7 +317,7 @@ public class DocController {
                 return;
             }
             
-            // let the specific service retrieves the file stored on the server
+            // let the specific service retrieve the file stored on the server
             docService.loadFile(fileName);
             
             // send back the file content

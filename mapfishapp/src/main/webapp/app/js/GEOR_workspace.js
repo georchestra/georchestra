@@ -77,7 +77,7 @@ GEOR.workspace = (function() {
             success: function(response) {
                 var o = Ext.decode(response.responseText),
                     params = OpenLayers.Util.getParameters(),
-                    id =  /^.+(\d{19}).wmc$/.exec(o.filepath)[1];
+                    id =  /^.+(\w{32}).wmc$/.exec(o.filepath)[1];
                 // we have to unset these params since they have precedence 
                 // over the WMC:
                 delete params.bbox;
