@@ -379,7 +379,6 @@ public abstract class A_DocService {
             // newest database storage
             ResultSet rs = null;
             PreparedStatement st = null;
-
             Connection connection = null;
             int count = 0;
             try {
@@ -387,39 +386,30 @@ public abstract class A_DocService {
                 st = connection.prepareStatement("SELECT raw_file_content, access_count from mapfishapp.geodocs WHERE file_hash = ?;");
                 st.setString(1, hash);
                 rs = st.executeQuery();
-                
+
                 if (rs.next()) {
                     content = rs.getString(1);
                     count = rs.getInt(2);
                 }
-            } catch(SQLException e) {
-                e.printStackTrace();
-            } finally {
-                if (rs != null) try { rs.close(); } catch (SQLException e) {e.printStackTrace();}
-                if (st != null) try { st.close(); } catch (SQLException e) {e.printStackTrace();}
-                if (connection != null) try { connection.close(); } catch (SQLException e) {e.printStackTrace();}
-            }
-            
-            // now that we have loaded the content, update the metadata fields
-            try {
-                connection = pgPool.getConnection();
+
+                // now that we have loaded the content, update the metadata fields
                 st = connection.prepareStatement("UPDATE mapfishapp.geodocs set last_access = ? , access_count = ? WHERE file_hash = ?;");
-                
+
                 Date javaDate = new Date();
                 long javaTime = javaDate.getTime();
                 
                 st.setTimestamp(1, new Timestamp(javaTime));
                 st.setInt(2, count + 1);
                 st.setString(3, hash);
-                st.execute();
+                st.executeUpdate();
             }
             catch (SQLException e) {
                 e.printStackTrace();
             } finally {
+                if (rs != null) try { rs.close(); } catch (SQLException e) {e.printStackTrace();}
                 if (st != null) try { st.close(); } catch (SQLException e) {e.printStackTrace();}
                 if (connection != null) try { connection.close(); } catch (SQLException e) {e.printStackTrace();}
             }
-            
 
         } else {
             // plain old "file" storage
