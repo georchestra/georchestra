@@ -784,6 +784,7 @@ GEOR.styler = (function() {
         legendContainer = new Ext.Panel({
             region: 'west',
             width: 250,
+            split: true,
             autoScroll: true,
             items: [{
                 xtype: "box",
@@ -832,6 +833,7 @@ GEOR.styler = (function() {
         win.add({
             layout: "border",
             border: false,
+            defaults: {border: false},
             items: [
                 legendContainer,
                 stylerContainer
@@ -900,7 +902,7 @@ GEOR.styler = (function() {
                 modal: false,
                 disabled: true,
                 buttons: [{
-                    text: tr("Cancel"),
+                    text: tr("Close"),
                     handler: function() {
                         win.close();
                     }
