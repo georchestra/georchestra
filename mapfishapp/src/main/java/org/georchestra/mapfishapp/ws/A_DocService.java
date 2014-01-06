@@ -147,15 +147,9 @@ public abstract class A_DocService {
 
         // write data to Db
         Connection connection = null;
-        try {
-            connection = pgPool.getConnection();
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-		}
-        
         PreparedStatement st = null;
         try {
+            connection = pgPool.getConnection();
             st = connection.prepareStatement("INSERT INTO mapfishapp.geodocs (username, standard, raw_file_content, file_hash) VALUES (?,?,?,?);");
             st.setString(1, username);
             st.setString(2, standard);
@@ -324,18 +318,12 @@ public abstract class A_DocService {
             // newest database storage
             ResultSet rs = null;
             PreparedStatement st = null;
-
             Connection connection = null;
-            try {
-                connection = pgPool.getConnection();
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
 
             boolean exists = false;
             int count = 0;
             try {
+                connection = pgPool.getConnection();
                 st = connection.prepareStatement("SELECT count(*) from mapfishapp.geodocs WHERE file_hash = ?;");
                 st.setString(1, fileName.substring(DOC_PREFIX.length(), DOC_PREFIX.length() + 32));
                 rs = st.executeQuery();
@@ -351,7 +339,7 @@ public abstract class A_DocService {
                 if (connection != null) try { connection.close(); } catch (SQLException e) {e.printStackTrace();}
             }
             
-            return count == 1;
+            return count > 0;
 
         } else { // plain old "file" storage
     
