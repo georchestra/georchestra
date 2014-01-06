@@ -47,12 +47,14 @@ GEOR.workspace = (function() {
      * Handler for the button triggering the WMC save dialog
      */
     var saveBtnHandler = function() {
-        var formPanel = this.findParentByType('form');
+        var formPanel = this.findParentByType('form'), 
+            form = formPanel.getForm();
         GEOR.waiter.show();
         OpenLayers.Request.POST({
             url: GEOR.config.PATHNAME + "/ws/wmc/",
             data: GEOR.wmc.write({
-                id: formPanel.getForm().findField('filename').getValue()
+                title: form.findField('title').getValue(),
+                "abstract": form.findField('abstract').getValue()
             }),
             success: function(response) {
                 formPanel.ownerCt.close();
@@ -72,7 +74,7 @@ GEOR.workspace = (function() {
         OpenLayers.Request.POST({
             url: GEOR.config.PATHNAME + "/ws/wmc/",
             data: GEOR.wmc.write({
-                id: Math.random().toString(16).substr(2)
+                title: ""
             }),
             success: function(response) {
                 var o = Ext.decode(response.responseText),
@@ -122,13 +124,13 @@ GEOR.workspace = (function() {
             constrainHeader: true,
             animateTarget: GEOR.config.ANIMATE_WINDOWS && this.el,
             width: 400,
-            height: 120,
+            height: 180,
             closeAction: 'close',
             plain: true,
             listeners: {
                 "show": function() {
                     // focus first field on show
-                    var field = this.items.get(0).getForm().findField('filename');
+                    var field = this.items.get(0).getForm().findField('title');
                     field.focus('', 50);
                 }
             },
@@ -141,11 +143,26 @@ GEOR.workspace = (function() {
                 buttonAlign: 'right',
                 items: [{
                     xtype: 'textfield',
-                    name: 'filename',
-                    width: 200,
-                    fieldLabel: "Nom",
-                    allowBlank: false,
-                    blankText: tr("The file is required."),
+                    name: 'title',
+                    width: 280,
+                    fieldLabel: tr("Title"),
+                    //allowBlank: false,
+                    //blankText: tr("The file is required."),
+                    enableKeyEvents: true,
+                    selectOnFocus: true,
+                    listeners: {
+                        "keypress": function(f, e) {
+                            // transfer focus on Print button on ENTER
+                            if (e.getKey() === e.ENTER) {
+                                popup.items.get(0).getFooterToolbar().getComponent('save').focus();
+                            }
+                        }
+                    }
+                }, {
+                    xtype: 'textarea',
+                    name: 'abstract',
+                    width: 280,
+                    fieldLabel: tr("Abstract"),
                     enableKeyEvents: true,
                     selectOnFocus: true,
                     listeners: {

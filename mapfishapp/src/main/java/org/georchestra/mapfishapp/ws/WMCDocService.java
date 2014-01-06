@@ -9,7 +9,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -29,8 +29,7 @@ public class WMCDocService extends A_DocService {
     public static final String MIME_TYPE = "application/vnd.ogc.context+xml";
     public static final String SCHEMA_URL = "http://schemas.opengis.net/context/1.1.0/context.xsd";
 
-    public static final String FILENAME_NODE = "ViewContext";
-    public static final String FILENAME_ATTRIBUTE = "id";
+    public static final String FILENAME_NODE = "Title";
     
     public WMCDocService(final String tempDir, ConnectionPool pgpool) {
         super(FILE_EXTENSION, MIME_TYPE, tempDir, pgpool);
@@ -93,10 +92,10 @@ public class WMCDocService extends A_DocService {
             
             // get hidden file name
             NodeList nodes = document.getElementsByTagName(FILENAME_NODE);
-            if(nodes.getLength() == 1) {
-                Element child = (Element) nodes.item(0);
-                fileName = child.getAttribute(FILENAME_ATTRIBUTE);
-            }      
+            if(nodes.getLength() > 0) {
+                Node child = nodes.item(0);
+                fileName = child.getTextContent();
+            }
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
         } catch (SAXException e) {

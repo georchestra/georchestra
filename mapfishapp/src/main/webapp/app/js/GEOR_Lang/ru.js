@@ -35,6 +35,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "labelSeparator": " : ",
     "File submission failed or invalid file": "Ошибка отправки файла – возможно, что файл недействителен",
     "Type": "Тип",
+    "Title": "Заголовок",
     /* GEOR.js strings */
     "Cities": "Населённые пункты",
     "Recentering on GeoNames cities": "Переориентация на населённые пункты<br /> GeoNames.",
@@ -222,7 +223,6 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "The print server is currently unreachable": "Сервер печати временно недоступен.",
     "print.unknown.layout": "Ошибка конфигурации : DEFAULT_PRINT_LAYOUT ${LAYOUT} отсутствует в списке печатных форматов",
     "print.unknown.resolution": "Ошибка конфигурации : DEFAULT_PRINT_RESOLUTION ${RESOLUTION} не находится в списке резолюций печати.",
-    "Title": "Заголовок",
     "Comments": "Комментарии",
     "Scale: ": "Масштаб",
     "Date: ": "Дата : ",
@@ -337,6 +337,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "A unique OSM layer": "Единый слой OpenStreetMap",
     "default viewer context": "контекст вьюера по умолчанию",
     /* GEOR_workspace.js strings */
+    //"Abstract": "Résumé",
     "Context saving": "Сохранение контекста",
     "The file is required.": "Требуется имя файла",
     "Context restoring": "Восстановление контекста",

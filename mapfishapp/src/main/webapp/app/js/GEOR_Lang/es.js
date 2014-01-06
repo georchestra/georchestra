@@ -38,6 +38,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "File submission failed or invalid file": "El envío del archivo falló - " +
         "verificar si el archivo es valido",
     "Type": "Tipo",
+    "Title": "Título",
     /* GEOR.js strings */
     "Cities": "Ciudades",
     "Recentering on GeoNames cities":
@@ -284,7 +285,6 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "print.unknown.resolution":
          "Error de configuración: DEFAULT_PRINT_RESOLUTION " +
          "${RESOLUTION} no se encuentra en las resoluciones de impresión",
-    "Title": "Título",
     "Comments": "Comentarios",
     "Scale: ": "Escala: ",
     "Date: ": "Fecha: ",
@@ -431,6 +431,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "default viewer context": "contexto por omisión",
     "(default)": "<br/>(contexto por omisión actual)",
     /* GEOR_workspace.js strings */
+    "Abstract": "Resumen",
     "Context saving": "Guardando el contexto",
     "The file is required.": "Se requiere el nombre de archivo.",
     "Context restoring": "Restaurando el contexto",
