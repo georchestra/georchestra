@@ -49,6 +49,28 @@ Bug fixes:
  * extractorapp: fixed impossibility to switch to french when default lang is english or spanish
  * extractorapp: fixed invalid buffer combo text
  * geonetwork: download form now opens also in metadata view if activated, see [#416](https://github.com/georchestra/georchestra/issues/416)
+ * geonetwork: download form triggered in metadata view too
+ * geonetwork: fixed missing thumbnail in CSW query requesting DC in full mode for profil France records
+ * geonetwork: thumbnails: add protocol for JPG (csw)
+ * geonetwork: widgets / keyword selection / support 2 concepts with same label
+ * geonetwork: editor / XML view / do not escape &#10;
+ * geonetwork: ISO19110 / fixed missing label. Add the capability to set contact logo.
+ * geonetwork: spatial index / fixed corrupted shapefile when empty polygon.
+ * geonetwork: ISO19110 / relation now displays title.
+ * geonetwork: properly unzip file
+ * geonetwork: widgets / properly propagate sortby options.
+ * geonetwork: fixed map coords position when page scrolled
+ * geonetwork: fixed facet layout issue
+ * geonetwork: widgets / add privileges panel to batch operation.
+ * geonetwork: ISO19139 / improve labels
+ * geonetwork: fixed tooltip display error on IE
+ * geonetwork: hide user menu if hideSignOut option is enable IE
+ * geonetwork: add option to hide sign out action from user menu.
+ * geonetwork: editor / suggestion / save changes before processing
+ * geonetwork: RSS / add URL parameter to only return one link for each metadata
+ * geonetwork: widgets / action menu is now in a custom element in the template
+ * geonetwork: put default list width of some other search criterias to auto
+ * geonetwork: search suggestion / properly returned field value with line break
  * geoserver: fixed "inspire extension not deployed"
  * header: fixed IE8 compatibility + header frameborder size set to 0
  * header: the platform-wide language set by ```shared.language``` is now enforced in the header module, see [#540](https://github.com/georchestra/georchestra/issues/540)
