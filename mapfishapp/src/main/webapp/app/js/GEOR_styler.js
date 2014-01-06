@@ -79,14 +79,14 @@ GEOR.styler = (function() {
     var attributes = null;
 
     /**
-     * Property: pathToSLD
-     * {String} The path part of the URL to the SLD document.
+     * Property: sldURL
+     * {String} The URL to the SLD document.
      */
-    var pathToSLD = null;
+    var sldURL = null;
 
     /**
      * Property: dirty
-     * {Boolean} Is true when the SLD pointed to by pathToSLD
+     * {Boolean} Is true when the SLD pointed to by sldURL
      * does not match the set of rules in the legend panel.
      */
     var dirty = false;
@@ -175,13 +175,13 @@ GEOR.styler = (function() {
             // once the SLD is saved
             saveSLD(callback, scope);
         } else {
-            if (pathToSLD) {
-                // pathToSLD matches our set of rules, we
+            if (sldURL) {
+                // sldURL matches our set of rules, we
                 // fire the "sldready" event.
                 observable.fireEvent(
                     "sldready",
                     wmsLayerRecord,
-                    pathToSLD
+                    sldURL
                 );
             }
             callback.apply(scope, [true]);
@@ -213,7 +213,7 @@ GEOR.styler = (function() {
             // in this case (cf third arg)
             saveSLD(callback, scope, false);
         } else {
-            pathToSLD && callback.apply(scope, [true, pathToSLD]);
+            sldURL && callback.apply(scope, [true, sldURL]);
         }
     };
 
@@ -238,7 +238,7 @@ GEOR.styler = (function() {
             } else {
                 // define the callbacks
                 var success = function(response) {
-                    pathToSLD = [
+                    sldURL = [
                         window.location.protocol, '//', window.location.host,
                         GEOR.config.PATHNAME, '/',
                         Ext.decode(response.responseText).filepath
@@ -246,14 +246,14 @@ GEOR.styler = (function() {
                     applySLD && observable.fireEvent(
                         "sldready",
                         wmsLayerRecord,
-                        pathToSLD
+                        sldURL
                     );
-                    // indicate that the SLD at pathToSLD matches
+                    // indicate that the SLD at sldURL matches
                     // our set of rules
                     dirty = false;
 
                     mask.hide();
-                    callback.apply(scope, [true, pathToSLD]);
+                    callback.apply(scope, [true, sldURL]);
                 };
                 var failure = function(response) {
                     mask.hide();
@@ -311,10 +311,10 @@ GEOR.styler = (function() {
      * Get a SLD from the "ws/sld" web service.
      *
      * Parameters:
-     * path - {String} The path to the SLD doc.
+     * url - {String} The URL to the SLD doc.
      */
-    var getSLD = function(path) {
-        if (path) {
+    var getSLD = function(url) {
+        if (url) {
             mask.msg = tr("Get SLD");
             mask.show();
             // define the callbacks
@@ -341,7 +341,7 @@ GEOR.styler = (function() {
                     newLegendPanel(rules);
                     mask.hide();
                     dirty = false;
-                    pathToSLD = path;
+                    sldURL = url;
                 } else {
                     mask.hide();
                     Ext.Msg.alert(
@@ -355,7 +355,7 @@ GEOR.styler = (function() {
             };
             Ext.Ajax.request({
                 method: "GET",
-                url: path,
+                url: url,
                 success: success,
                 failure: failure
             });
@@ -644,17 +644,17 @@ GEOR.styler = (function() {
             success: function(response) {
                 // response contains the URL to the
                 // SLD stored on the server
-                var path = [
+                var url = [
                     window.location.protocol, '//', window.location.host,
                     GEOR.config.PATHNAME, '/', 
                     Ext.decode(response.responseText).filepath
                 ].join('');
-                getSLD(path);
+                getSLD(url);
                 // store the path to SLD , we'll need it when
                 // applying the new style to the layer
-                pathToSLD = path;
+                sldURL = url;
 
-                // indicate that the SLD at pathToSLD matches
+                // indicate that the SLD at sldURL matches
                 // our set of rules
                 dirty = false;
 
@@ -822,8 +822,7 @@ GEOR.styler = (function() {
          */
         var url = wmsLayerRecord.get("layer").params.SLD;
         if (url) {
-            var path = GEOR.util.getAppRelativePath(url);
-            getSLD(path);
+            getSLD(url);
         }
 
         /*
