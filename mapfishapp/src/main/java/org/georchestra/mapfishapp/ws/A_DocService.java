@@ -155,7 +155,7 @@ public abstract class A_DocService {
             st.setString(2, standard);
             st.setString(3, _content);
             st.setString(4, hash);
-            st.execute();
+            st.executeUpdate();
         }
         catch (SQLException e) {
             e.printStackTrace();
