@@ -241,13 +241,16 @@ GEOR.workspace = (function() {
                     title: ""
                 }),
                 success: function(response) {
-                    var o = Ext.decode(response.responseText);
-                    var wmcUrl = [
-                        window.location.protocol, '//', window.location.host,
-                        GEOR.config.PATHNAME, '/', o.filepath
-                    ].join('');
+                    var o = Ext.decode(response.responseText),
+                        id =  /^.+(\w{32}).wmc$/.exec(o.filepath)[1],
+                        basePath = [
+                            window.location.protocol, 
+                            '//', window.location.host,
+                            GEOR.config.PATHNAME, '/'
+                        ].join('');
                     var url = new Ext.XTemplate(options.url).apply({
-                        context_url: wmcUrl
+                        context_url: basePath + o.filepath,
+                        map_url: basePath + 'map/' + id
                     });
                     window.open(url);
                 },

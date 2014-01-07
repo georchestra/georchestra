@@ -324,7 +324,7 @@ public abstract class A_DocService {
             int count = 0;
             try {
                 connection = pgPool.getConnection();
-                st = connection.prepareStatement("SELECT count(*) from mapfishapp.geodocs WHERE file_hash = ?;");
+                st = connection.prepareStatement("SELECT count(*)::integer from mapfishapp.geodocs WHERE file_hash = ?;");
                 st.setString(1, fileName.substring(DOC_PREFIX.length(), DOC_PREFIX.length() + 32));
                 rs = st.executeQuery();
                 
