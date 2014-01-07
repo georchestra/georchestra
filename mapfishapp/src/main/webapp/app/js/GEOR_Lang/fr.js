@@ -427,6 +427,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "default viewer context": "contexte par défaut",
     "(default)": "<br/>(contexte par défaut actuel)",
     /* GEOR_workspace.js strings */
+    "Share this map": "Partager cette carte",
     "Abstract": "Résumé",
     "Context saving": "Sauvegarde du contexte",
     "The file is required.": "Un nom de fichier est nécessaire.",

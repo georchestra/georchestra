@@ -431,6 +431,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "default viewer context": "contexto por omisión",
     "(default)": "<br/>(contexto por omisión actual)",
     /* GEOR_workspace.js strings */
+    "Share this map": "Comparte este mapa",
     "Abstract": "Resumen",
     "Context saving": "Guardando el contexto",
     "The file is required.": "Se requiere el nombre de archivo.",

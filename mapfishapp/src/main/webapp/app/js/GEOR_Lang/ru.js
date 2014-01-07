@@ -337,6 +337,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "A unique OSM layer": "Единый слой OpenStreetMap",
     "default viewer context": "контекст вьюера по умолчанию",
     /* GEOR_workspace.js strings */
+    //"Share this map": "Partager cette carte",
     //"Abstract": "Résumé",
     "Context saving": "Сохранение контекста",
     "The file is required.": "Требуется имя файла",

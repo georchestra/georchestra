@@ -672,6 +672,24 @@ GEOR.config = (function() {
             /.*/i),
 
         /**
+         * Constant: SEND_MAP_TO
+         * {Array} List of menu items configs
+         *
+         * Each menu item config **must** have the following properties: 
+         *  - name: the link name. Will be localized by OpenLayers.i18n
+         *  - url: the template url for the link. Must contain the {context_url} string,
+         * which will be replaced by the generated WMC link.
+         *
+         * Each menu item config **may** have the following properties: 
+         *  - qtip: the tip appearing on menu item hover
+         *  - iconCls: the CSS class which will be appended to the menu item
+         */
+        SEND_MAP_TO: getCustomParameter("SEND_MAP_TO", [
+            {"name": "Mobile viewer", "url": "http://sdi.georchestra.org/sviewer/?wmc={context_url}", "qtip": "Mobile compatible viewer on sdi.georchestra.org"},
+            {"name": "Desktop viewer", "url": "http://sdi.georchestra.org/mapfishapp/?wmc={context_url}", "qtip": "Desktop viewer on sdi.georchestra.org"}
+        ]),
+
+        /**
          * Constant: WMTS_SERVERS
          * {Array} List of externals WMTS to display in the WMTS servers tab.
          */

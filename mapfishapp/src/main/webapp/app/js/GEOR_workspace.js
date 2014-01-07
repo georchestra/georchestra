@@ -29,7 +29,6 @@ GEOR.workspace = (function() {
      * Private
      */
 
-
     /**
      * Property: map
      * {OpenLayers.Map} The map object
@@ -228,6 +227,58 @@ GEOR.workspace = (function() {
         };
     };
 
+    /**
+     * Method: shareLink
+     * Creates handlers for map link sharing
+     */
+    var shareLink = function(options) {
+        return function() {
+            GEOR.waiter.show();
+            OpenLayers.Request.POST({
+                url: GEOR.config.PATHNAME + "/ws/wmc/",
+                data: GEOR.wmc.write({
+                    title: ""
+                }),
+                success: function(response) {
+                    var o = Ext.decode(response.responseText);
+                    var wmcUrl = [
+                        window.location.protocol, '//', window.location.host,
+                        GEOR.config.PATHNAME, '/', o.filepath
+                    ].join('');
+                    var url = new Ext.XTemplate(options.url).apply({
+                        context_url: wmcUrl
+                    });
+                    window.open(url);
+                },
+                scope: this
+            });
+        }
+    };
+
+    /**
+     * Method: getShareMenu
+     * Creates the sub menu for map sharing
+     */
+    var getShareMenu = function() {
+        var menu = [], cfg;
+        Ext.each(GEOR.config.SEND_MAP_TO, function(item) {
+            cfg = {
+                text: tr(item.name),
+                handler: shareLink.call(this, {
+                    url: item.url
+                })
+            };
+            if (item.qtip) {
+                cfg.qtip = tr(item.qtip);
+            }
+            if (item.iconCls) {
+                cfg.iconCls = item.iconCls;
+            }
+            menu.push(cfg);
+        });
+        return menu;
+    };
+
     /*
      * Public
      */
@@ -264,7 +315,14 @@ GEOR.workspace = (function() {
                         text: tr("Get a permalink"),
                         iconCls: "geor-permalink",
                         handler: permalink
-                    }, '-', {
+                    }, {
+                        text: tr("Share this map"),
+                        iconCls: "geor-share",
+                        plugins: [{
+                            ptype: 'menuqtips'
+                        }],
+                        menu: getShareMenu()
+                    },'-', {
                         text: tr("Edit in OSM"),
                         iconCls: "geor-edit-osm",
                         plugins: [{
