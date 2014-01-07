@@ -93,6 +93,7 @@ GEOR.workspace = (function() {
                 ].join('');
                 GEOR.util.urlDialog({
                     title: tr("Permalink"),
+                    width: 450,
                     msg: [
                         tr("Share your map with this URL: "),
                         '<br /><a href="'+url+'">'+url+'</a>'

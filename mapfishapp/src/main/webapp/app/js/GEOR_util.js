@@ -232,7 +232,7 @@ GEOR.util = (function() {
             var win = new Ext.Window({
                 title: options.title,
                 layout: "fit",
-                width: 400,
+                width: options.width || 400,
                 closeAction: 'close',
                 constrainHeader: true,
                 modal: false,
