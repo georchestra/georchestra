@@ -714,6 +714,13 @@ GEOR.config = (function() {
             false),
 
         /**
+         * Constant: LOGIN_IN_TOOLBAR
+         * {Boolean} Do we want the login/logout button/link to appear in the toolbar ?
+         * Defaults to false
+         */
+        LOGIN_IN_TOOLBAR: getCustomParameter("LOGIN_IN_TOOLBAR", false),
+
+        /**
          * Constant: EDITABLE_LAYERS
          * {RegExp} 
          * 
