@@ -338,6 +338,10 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "default viewer context": "контекст вьюера по умолчанию",
     /* GEOR_workspace.js strings */
     //"Share this map": "Partager cette carte",
+    //"Mobile viewer": "Visualiseur mobile",
+    //"Mobile compatible viewer on sdi.georchestra.org": "Visualiseur mobile sur sdi.georchestra.org",
+    //"Desktop viewer": "Visualiseur web",
+    //"Desktop viewer on sdi.georchestra.org": "Visualiseur web sur sdi.georchestra.org",
     //"Abstract": "Résumé",
     "Context saving": "Сохранение контекста",
     "The file is required.": "Требуется имя файла",

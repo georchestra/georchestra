@@ -432,6 +432,12 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "(default)": "<br/>(contexto por omisión actual)",
     /* GEOR_workspace.js strings */
     "Share this map": "Comparte este mapa",
+    /*
+    "Mobile viewer": "Visualiseur mobile",
+    "Mobile compatible viewer on sdi.georchestra.org": "Visualiseur mobile sur sdi.georchestra.org",
+    "Desktop viewer": "Visualiseur web",
+    "Desktop viewer on sdi.georchestra.org": "Visualiseur web sur sdi.georchestra.org",
+    */
     "Abstract": "Resumen",
     "Context saving": "Guardando el contexto",
     "The file is required.": "Se requiere el nombre de archivo.",
