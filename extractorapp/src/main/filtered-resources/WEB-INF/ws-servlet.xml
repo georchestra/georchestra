@@ -15,8 +15,6 @@
           class="org.georchestra.extractorapp.ws.doc.HomeController"/>
         <bean id="ogcproxy" 
           class="org.georchestra.extractorapp.ws.doc.OGCProxy"/>
-    <bean id="doc-controller"
-          class="org.georchestra.extractorapp.ws.doc.DocController"/>
     <bean id="expire-daemon" init-method="startup" 
           class="org.georchestra.extractorapp.ws.extractor.ExpiredArchiveDaemon">
       <property name="expiry" value="10"/> <!-- days -->
