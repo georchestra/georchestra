@@ -324,9 +324,14 @@ public class DocController {
             response.setStatus(HttpServletResponse.SC_OK); 
             response.setContentType(docService.getMIMEType()); // MIME type of the file
             response.setCharacterEncoding("utf-8");
-            response.setHeader("Content-Disposition", "attachment; filename=\"" + docService.getName() + "\""); 
-            PrintWriter out = response.getWriter(); 
-            out.println(docService.getContent());      
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + docService.getName() + "\"");
+            response.setHeader("Cache-Control", "public, max-age=31536000"); // 1 year
+            // see http://stackoverflow.com/questions/3339859/what-is-the-risk-of-having-http-header-cache-control-public
+            // there is a tradeoff between privacy and performance here ...
+            // Documents like CSV may contain sensitive information => private
+            // but we want it to be be fast => cached by proxies => public
+            PrintWriter out = response.getWriter();
+            out.println(docService.getContent());
         } 
         catch (DocServiceException docExc) {
             sendErrorToClient(response, docExc.getErrorCode() , docExc.toString());
