@@ -37,6 +37,7 @@ Enhancements:
  * mapfishapp: print now supports WMS 1.3.0-only capable servers, see [#511](https://github.com/georchestra/georchestra/issues/511)
  * mapfishapp: annotation addon: added an icon & made the window closable
  * mapfishapp: OGC Exception Report handling deactivated during context restore - see [#532](https://github.com/georchestra/georchestra/issues/532)
+ * mapfishapp: allow to show login/logout button in toolbar even if header is shown - see [#43](https://github.com/georchestra/georchestra/issues/43)
  * ogc-server-statistics: now logging WMTS GetTile, WMS GetStyles + WFS2 operations, see [#527](https://github.com/georchestra/georchestra/issues/527)
  * proxy: new filter to make basic auth challenge if https and matches user-agent, useful for ArcGIS clients - read the [notes](https://github.com/georchestra/georchestra/commit/8828a11ffb0cb716ad0a6bb1f847ce24328ea450)
  * proxy: overridable HTTP 40x error pages, see for instance [config/defaults/security-proxy/403.jsp](config/defaults/security-proxy/403.jsp)
@@ -48,6 +49,9 @@ Bug fixes:
  * extractorapp: fixed the ```checkPermission``` method for local layers
  * extractorapp: fixed impossibility to switch to french when default lang is english or spanish
  * extractorapp: fixed invalid buffer combo text
+ * extractorapp: removed useless classes - see [#551](https://github.com/georchestra/georchestra/issues/551)
+ * extractorapp: bbox writer always uses geotools' ShpFeatureWriter, which allows extractorapp to not rely mandatorily on gdal/ogr native libs - see [#409](https://github.com/georchestra/georchestra/issues/409)
+ * extractorapp: fixed parameter order on CheckFormAcceptance bean instantiation - see [b299ec](https://github.com/georchestra/georchestra/commit/b299ec9f55777ef9f3610c14f01e0449e0067f3c)
  * geonetwork: download form now opens also in metadata view if activated, see [#416](https://github.com/georchestra/georchestra/issues/416)
  * geonetwork: download form triggered in metadata view too
  * geonetwork: fixed missing thumbnail in CSW query requesting DC in full mode for profil France records
