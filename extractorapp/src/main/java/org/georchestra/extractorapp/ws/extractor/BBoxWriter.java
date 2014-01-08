@@ -82,7 +82,8 @@ public class BBoxWriter {
 		// writes the file
         SimpleFeatureCollection features = DataUtilities.collection(new SimpleFeature[]{bboxFeature});
         
-        FeatureWriterStrategy writer = new OGRFeatureWriter(this.progress, type,  this.baseDir, this.fileFormat, features);
+        // bbox in shapefile format
+        FeatureWriterStrategy writer = new ShpFeatureWriter(this.progress, features.getSchema(), this.baseDir, features);
         return writer.generateFiles();
 	}
 
