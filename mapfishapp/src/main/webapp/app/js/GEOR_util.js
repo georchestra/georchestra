@@ -169,7 +169,10 @@ GEOR.util = (function() {
             if (GEOR.util.isUrl(input)) {
                 return input;
             }
-            return GEOR.config.PATHNAME + '/' + input;
+            return [
+                window.location.protocol, '//', window.location.host,
+                GEOR.config.PATHNAME, '/', input
+            ].join('');
         },
 
         /**

@@ -114,7 +114,7 @@ GEOR.wmcbrowser = (function() {
         var record = view.getRecord(node);
         if (record) {
             fetchAndRestoreWMC(
-                GEOR.util.getValidURI(record.get('wmc'))
+                GEOR.util.getValidURI(record.get("wmc"))
             );
         }
     };
@@ -182,7 +182,7 @@ GEOR.wmcbrowser = (function() {
 
         btn.setDisabled(!viewHasSelection);
         if (viewHasSelection) {
-            cbxChecked = view.getSelectedRecords()[0].get('wmc') === 
+            cbxChecked = GEOR.util.getValidURI(view.getSelectedRecords()[0].get("wmc")) === 
                 GEOR.ls.get("default_context");
             silentCheck(cbx, cbxChecked);
             cbx.setDisabled(!lsAvailable);
@@ -227,7 +227,8 @@ GEOR.wmcbrowser = (function() {
         var record = view.getSelectedRecords()[0];
         if (checked) {
             // set the currently selected context as default one
-            GEOR.ls.set("default_context", record.get("wmc"));
+            GEOR.ls.set("default_context", 
+                GEOR.util.getValidURI(record.get("wmc")));
         } else {
             GEOR.ls.remove("default_context");
         }
@@ -279,7 +280,7 @@ GEOR.wmcbrowser = (function() {
                     return GEOR.util.getValidURI(v.thumbnail);
                 },
                 isDefault: function(v) {
-                    return (v.wmc === GEOR.ls.get("default_context")) ? 
+                    return (GEOR.util.getValidURI(v.wmc) === GEOR.ls.get("default_context")) ? 
                         "default" : "";
                 }
             }),
