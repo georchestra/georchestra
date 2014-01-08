@@ -247,7 +247,7 @@ GEOR.cswquerier = (function() {
                     return url.replace('/csw', '/'+values.md_thumbnail_url);
                 }
                 // no thumbnail URL:
-                return GEOR.config.PATHNAME + '/' + GEOR.config.NO_THUMBNAIL_IMAGE_URL;
+                return GEOR.util.getValidURI(GEOR.config.NO_THUMBNAIL_IMAGE_URL);
             },
             "abstract": function(text) {
                 // two things here:

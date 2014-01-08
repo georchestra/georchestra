@@ -83,12 +83,12 @@ GEOR.wmcbrowser = (function() {
      * Fetch the WMC content and restore it.
      *
      * Parameters:
-     * wmc - {String} the WMC URL
+     * wmcURI - {String} the WMC URI
      */
-    var fetchAndRestoreWMC = function(wmc) {
+    var fetchAndRestoreWMC = function(wmcURI) {
         GEOR.waiter.show();
         OpenLayers.Request.GET({
-            url: GEOR.config.PATHNAME + "/" + wmc,
+            url: wmcURI,
             success: function(response) {
                 var status = observable.fireEvent("contextselected", {
                     wmcString: response.responseXML || response.responseText
@@ -113,7 +113,9 @@ GEOR.wmcbrowser = (function() {
     var onDblclick = function(view, index, node) {
         var record = view.getRecord(node);
         if (record) {
-            fetchAndRestoreWMC(record.get('wmc'));
+            fetchAndRestoreWMC(
+                GEOR.util.getValidURI(record.get('wmc'))
+            );
         }
     };
 
@@ -136,7 +138,7 @@ GEOR.wmcbrowser = (function() {
                     // "Ext.form.BasicForm hopefully becomes HTTP Status Code aware!"
                     success: function(form, action) {
                         var o = Ext.decode(action.response.responseText);
-                        fetchAndRestoreWMC(o.filepath);
+                        fetchAndRestoreWMC(GEOR.config.PATHNAME + "/" + o.filepath);
                     },
                     failure: onFailure.createCallback("File submission failed or invalid file"),
                     scope: this
@@ -258,7 +260,7 @@ GEOR.wmcbrowser = (function() {
             tpl: new Ext.XTemplate(
                 '<tpl for=".">',
                     '<div class="thumb-wrap {[this.isDefault(values)]}" ext:qtip="{[this.tr(values)]}">',
-                    '<div class="thumb"><img src="',GEOR.config.PATHNAME,'/{thumbnail}" ext:qtip="{[this.tr(values)]}"></div>',
+                    '<div class="thumb"><img src="{[this.getThumbnailURI(values)]}" ext:qtip="{[this.tr(values)]}"></div>',
                     '<span>{label}</span></div>',
                 '</tpl>',
                 '<div class="x-clear"></div>', 
@@ -272,6 +274,9 @@ GEOR.wmcbrowser = (function() {
                         out += " " + tr("(" + d + ")");
                     }
                     return out;
+                },
+                getThumbnailURI: function(v) {
+                    return GEOR.util.getValidURI(v.thumbnail);
                 },
                 isDefault: function(v) {
                     return (v.wmc === GEOR.ls.get("default_context")) ? 

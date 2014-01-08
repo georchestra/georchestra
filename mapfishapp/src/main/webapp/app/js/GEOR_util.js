@@ -155,6 +155,24 @@ GEOR.util = (function() {
         },
 
         /**
+         * APIMethod: getValidURI
+         * Given an URI or a path relative to /mapfishapp,
+         * Outputs the valid, full, URI.
+         *
+         * Parameters:
+         * input - {String} URI or relative path
+         *
+         * Returns:
+         * {String} a valid URI
+         */
+        getValidURI: function(input) {
+            if (GEOR.util.isUrl(input)) {
+                return input;
+            }
+            return GEOR.config.PATHNAME + '/' + input;
+        },
+
+        /**
          * APIMethod: confirmDialog
          * Shows a confirm dialog box
          *
