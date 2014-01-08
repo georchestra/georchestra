@@ -249,8 +249,8 @@ GEOR.workspace = (function() {
                             GEOR.config.PATHNAME, '/'
                         ].join('');
                     var url = new Ext.XTemplate(options.url).apply({
-                        context_url: encodeURI(basePath + o.filepath),
-                        map_url: encodeURI(basePath + 'map/' + id)
+                        context_url: basePath + o.filepath,
+                        map_url: basePath + 'map/' + id
                     });
                     window.open(url);
                 },
