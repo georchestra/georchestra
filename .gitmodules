@@ -49,3 +49,6 @@
 [submodule "geoserver/geofence"]
 	path = geoserver/geofence
 	url = https://github.com/georchestra/geofence.git
+[submodule "geotools"]
+	path = geotools
+	url = https://github.com/georchestra/geotools.git
