@@ -41,7 +41,6 @@ new PostTreatment().run(this, log, ant, project.basedir, params.projectDir, serv
 		<module>geotools</module>
 		<module>config</module>
 		<module>header</module>
-		<module>static</module>
 		<module>epsg-extension</module>
 		<module>ogc-server-statistics</module>
 		<module>server-deploy-support</module>
