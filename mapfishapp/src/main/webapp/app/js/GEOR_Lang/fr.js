@@ -139,7 +139,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "fileupload_error_outOfMemory": "Le serveur ne dispose plus de la mémoire suffisante. Contacter l'administrateur de la plateforme pour plus de détails.",
     "fileupload_error_sizeError": "Le fichier est trop grand pour pouvoir être traité.",
     "fileupload_error_unsupportedFormat": "Ce format de données n'est pas géré par l'application.",
-    "fileupload_error_projectionError": "Une erreur est survenue lors de la lecture des coordonnées géographiques.",
+    "fileupload_error_projectionError": "Une erreur est survenue lors de la lecture des coordonnées géographiques. Êtes-vous sûr que le fichier contient les informations de projection ?",
     "server upload error: ERROR":
         "L'upload du fichier a échoué. ${ERROR}",
     "Incorrect server response.": "Réponse du serveur incorrecte.",

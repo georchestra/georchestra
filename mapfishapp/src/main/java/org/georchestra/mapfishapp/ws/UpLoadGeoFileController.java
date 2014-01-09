@@ -100,7 +100,7 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 		outOfMemoryError{
 			
 			@Override
-			public String getMessage( final String detail){return "{\"success\":false, \"error\":\"fileupload_error_outOfMemory\", \"msg\": \"out of memory"+ detail + "\"}"; }
+			public String getMessage( final String detail){return "{\"success\":false, \"error\":\"fileupload_error_outOfMemory\", \"msg\": \"out of memory - "+ detail + "\"}"; }
 		},
 		ioError{
 			@Override
@@ -113,7 +113,7 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 		},
 		projectionError{
 			@Override
-			public String getMessage( final String detail){return "{\"success\":false, \"error\":\"fileupload_error_projectionError\", \"msg\": \"Error occured while parsing coordinates\"}"; }
+			public String getMessage( final String detail){return "{\"success\":false, \"error\":\"fileupload_error_projectionError\", \"msg\": \"Error occured while parsing coordinates: "+ detail + "\"}"; }
 		},
 		sizeError{
 			@Override

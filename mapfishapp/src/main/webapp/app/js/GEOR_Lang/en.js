@@ -59,7 +59,7 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
     "fileupload_error_outOfMemory": "Server is out of memory. Contact platform administrator for more details.",
     "fileupload_error_sizeError": "This file is too large to be uploaded.",
     "fileupload_error_unsupportedFormat": "This format is not supported.",
-    "fileupload_error_projectionError": "Error occured while trying to parse coordinates.",
+    "fileupload_error_projectionError": "Error occured while trying to parse coordinates. Are you sure the file contains SRS information ?",
     "server upload error: ERROR": "Upload failed. ${ERROR}",
     /* GEOR_geonames.js strings */
     /* GEOR_getfeatureinfo.js strings */
