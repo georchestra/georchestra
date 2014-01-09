@@ -150,6 +150,9 @@ div.olMapViewport {
 .geor-permalink {
     background-image: url(../img/famfamfam/link.png) !important;
 }
+.geor-share {
+    background-image: url(../img/share.png) !important;
+}
 .geor-edit-osm {
     background-image: url(../img/osm_logo.png) !important;
 }

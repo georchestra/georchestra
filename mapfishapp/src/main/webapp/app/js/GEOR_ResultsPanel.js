@@ -79,14 +79,14 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, (function() {
         }
         var format = new OpenLayers.Format.JSON();
         OpenLayers.Request.POST({
-            url: "ws/csv/",
+            url: GEOR.config.PATHNAME + "/ws/csv/",
             data: format.write({
                 columns: model.getFields(), 
                 data: data
             }),
             success: function(response) {
                 var o = Ext.decode(response.responseText);
-                window.location.href = o.filepath;
+                window.location.href = GEOR.config.PATHNAME + "/" + o.filepath;
             }
         });
     };

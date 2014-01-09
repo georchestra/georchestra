@@ -232,7 +232,8 @@ GEOR.tools = (function() {
         GEOR.waiter.show(incoming.length);
         Ext.each(incoming, function(r) {
             var addonName = r.get("name"),
-                addonPath = "app/addons/" + addonName.toLowerCase() + "/",
+                addonPath = GEOR.config.PATHNAME + "/app/addons/" +
+                    addonName.toLowerCase() + "/",
                 failure = function() {
                     // if an addon fails to load properly, update previousState accordingly
                     previousState[r.id] = false;
@@ -392,7 +393,7 @@ GEOR.tools = (function() {
                     return v[key].hasOwnProperty(lang) ? v[key][lang] : v[key]["en"];
                 },
                 thumb: function(v) {
-                    var base = "app/addons/"+v.name.toLowerCase()+"/";
+                    var base = GEOR.config.PATHNAME+"/app/addons/"+v.name.toLowerCase()+"/";
                     return base + ((v.thumbnail) ? v.thumbnail : "img/thumbnail.png");
                 }
             }),

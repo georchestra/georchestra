@@ -191,14 +191,19 @@ GEOR.wmc = (function() {
          * Write a wmc string given the layer store.
          *
          * Parameters:
-         * options - {Object} Optional object to pass to wmc format write method
+         * options - {Object} options overriding map context
          *
          * Returns:
          * {String} The WMC string.
          */
         write: function(options) {
-            var context = writeWmcContext(layerStore);
-            return wmcFormat.write(context, options);
+            var context = Ext.apply(
+                writeWmcContext(layerStore), 
+                options || {}
+            );
+            return wmcFormat.write(context, {
+                id: Math.random().toString(16).substr(2)
+            });
         },
 
         /*

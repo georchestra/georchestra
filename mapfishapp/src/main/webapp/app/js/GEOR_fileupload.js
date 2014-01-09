@@ -284,7 +284,7 @@ GEOR.fileupload = (function() {
                             if (isValid && newFile) {
                                 newFile = false;
                                 form.submit({
-                                    url: "ws/togeojson/",
+                                    url: GEOR.config.PATHNAME + "/ws/togeojson/",
                                     success: formSuccess,
                                     failure: function(form, action) {
                                         errorAndReset(form, OpenLayers.i18n(action.result.error));

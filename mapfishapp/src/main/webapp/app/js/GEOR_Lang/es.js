@@ -38,6 +38,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "File submission failed or invalid file": "El envío del archivo falló - " +
         "verificar si el archivo es valido",
     "Type": "Tipo",
+    "Title": "Título",
     /* GEOR.js strings */
     "Cities": "Ciudades",
     "Recentering on GeoNames cities":
@@ -285,7 +286,6 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "print.unknown.resolution":
          "Error de configuración: DEFAULT_PRINT_RESOLUTION " +
          "${RESOLUTION} no se encuentra en las resoluciones de impresión",
-    "Title": "Título",
     "Comments": "Comentarios",
     "Scale: ": "Escala: ",
     "Date: ": "Fecha: ",
@@ -432,6 +432,14 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "default viewer context": "contexto por omisión",
     "(default)": "<br/>(contexto por omisión actual)",
     /* GEOR_workspace.js strings */
+    "Share this map": "Comparte este mapa",
+    /*
+    "Mobile viewer": "Visualiseur mobile",
+    "Mobile compatible viewer on sdi.georchestra.org": "Visualiseur mobile sur sdi.georchestra.org",
+    "Desktop viewer": "Visualiseur web",
+    "Desktop viewer on sdi.georchestra.org": "Visualiseur web sur sdi.georchestra.org",
+    */
+    "Abstract": "Resumen",
     "Context saving": "Guardando el contexto",
     "The file is required.": "Se requiere el nombre de archivo.",
     "Context restoring": "Restaurando el contexto",
@@ -443,9 +451,6 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Load a map context": "Cargar un mapa",
     "Get a permalink": "Crear un permalink",
     "Permalink": "Permalink",
-    "valid for ": "válido para ",
-    "months": "meses",
-    "month": "mes",
     "Share your map with this URL: ": "Compartir su mapa con esta URL",
     "Edit in OSM": "Editar en OSM",
     "with JOSM": "con JOSM",

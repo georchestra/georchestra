@@ -29,7 +29,6 @@ GEOR.workspace = (function() {
      * Private
      */
 
-
     /**
      * Property: map
      * {OpenLayers.Map} The map object
@@ -47,17 +46,19 @@ GEOR.workspace = (function() {
      * Handler for the button triggering the WMC save dialog
      */
     var saveBtnHandler = function() {
-        var formPanel = this.findParentByType('form');
+        var formPanel = this.findParentByType('form'), 
+            form = formPanel.getForm();
         GEOR.waiter.show();
         OpenLayers.Request.POST({
-            url: "ws/wmc/",
+            url: GEOR.config.PATHNAME + "/ws/wmc/",
             data: GEOR.wmc.write({
-                id: formPanel.getForm().findField('filename').getValue()
+                title: form.findField('title').getValue(),
+                "abstract": form.findField('abstract').getValue()
             }),
             success: function(response) {
                 formPanel.ownerCt.close();
                 var o = Ext.decode(response.responseText);
-                window.location.href = o.filepath;
+                window.location.href = GEOR.config.PATHNAME + "/" + o.filepath;
             },
             scope: this
         });
@@ -70,31 +71,32 @@ GEOR.workspace = (function() {
     var permalink = function() {
         GEOR.waiter.show();
         OpenLayers.Request.POST({
-            url: "ws/wmc/",
+            url: GEOR.config.PATHNAME + "/ws/wmc/",
             data: GEOR.wmc.write({
-                id: Math.random().toString(16).substr(2)
+                title: ""
             }),
             success: function(response) {
                 var o = Ext.decode(response.responseText),
-                    params = OpenLayers.Util.getParameters();
-                params.wmc = o.filepath;
-                // we have to unset these params since the have precedence 
+                    params = OpenLayers.Util.getParameters(),
+                    id =  /^.+(\w{32}).wmc$/.exec(o.filepath)[1];
+                // we have to unset these params since they have precedence 
                 // over the WMC:
                 delete params.bbox;
                 delete params.lon; delete params.lat; delete params.radius;
-                var url = OpenLayers.Util.urlAppend(
-                    window.location.href.split('?')[0], 
-                    OpenLayers.Util.getParameterString(params)
-                );
-                var months = Math.round(GEOR.config.maxDocAgeInMinutes/44640);
+                var qs = OpenLayers.Util.getParameterString(params);
+                if (qs) {
+                    qs = "?"+qs;
+                }
+                var url = [
+                    window.location.protocol, '//', window.location.host,
+                    GEOR.config.PATHNAME, '/map/', id, qs
+                ].join('');
                 GEOR.util.urlDialog({
                     title: tr("Permalink"),
+                    width: 450,
                     msg: [
                         tr("Share your map with this URL: "),
-                        '<br /><a href="'+url+'">'+url+'</a>', 
-                        '<br/>(',
-                        tr("valid for "), months, " ",
-                        tr("month"+(months>1?"s":"")) + ")"
+                        '<br /><a href="'+url+'">'+url+'</a>'
                     ].join('')
                 });
             },
@@ -122,13 +124,13 @@ GEOR.workspace = (function() {
             constrainHeader: true,
             animateTarget: GEOR.config.ANIMATE_WINDOWS && this.el,
             width: 400,
-            height: 120,
+            height: 180,
             closeAction: 'close',
             plain: true,
             listeners: {
                 "show": function() {
                     // focus first field on show
-                    var field = this.items.get(0).getForm().findField('filename');
+                    var field = this.items.get(0).getForm().findField('title');
                     field.focus('', 50);
                 }
             },
@@ -141,11 +143,26 @@ GEOR.workspace = (function() {
                 buttonAlign: 'right',
                 items: [{
                     xtype: 'textfield',
-                    name: 'filename',
-                    width: 200,
-                    fieldLabel: "Nom",
-                    allowBlank: false,
-                    blankText: tr("The file is required."),
+                    name: 'title',
+                    width: 280,
+                    fieldLabel: tr("Title"),
+                    //allowBlank: false,
+                    //blankText: tr("The file is required."),
+                    enableKeyEvents: true,
+                    selectOnFocus: true,
+                    listeners: {
+                        "keypress": function(f, e) {
+                            // transfer focus on Print button on ENTER
+                            if (e.getKey() === e.ENTER) {
+                                popup.items.get(0).getFooterToolbar().getComponent('save').focus();
+                            }
+                        }
+                    }
+                }, {
+                    xtype: 'textarea',
+                    name: 'abstract',
+                    width: 280,
+                    fieldLabel: tr("Abstract"),
                     enableKeyEvents: true,
                     selectOnFocus: true,
                     listeners: {
@@ -211,6 +228,61 @@ GEOR.workspace = (function() {
         };
     };
 
+    /**
+     * Method: shareLink
+     * Creates handlers for map link sharing
+     */
+    var shareLink = function(options) {
+        return function() {
+            GEOR.waiter.show();
+            OpenLayers.Request.POST({
+                url: GEOR.config.PATHNAME + "/ws/wmc/",
+                data: GEOR.wmc.write({
+                    title: ""
+                }),
+                success: function(response) {
+                    var o = Ext.decode(response.responseText),
+                        id =  /^.+(\w{32}).wmc$/.exec(o.filepath)[1],
+                        basePath = [
+                            window.location.protocol, 
+                            '//', window.location.host,
+                            GEOR.config.PATHNAME, '/'
+                        ].join('');
+                    var url = new Ext.XTemplate(options.url).apply({
+                        context_url: basePath + o.filepath,
+                        map_url: basePath + 'map/' + id
+                    });
+                    window.open(url);
+                },
+                scope: this
+            });
+        }
+    };
+
+    /**
+     * Method: getShareMenu
+     * Creates the sub menu for map sharing
+     */
+    var getShareMenu = function() {
+        var menu = [], cfg;
+        Ext.each(GEOR.config.SEND_MAP_TO, function(item) {
+            cfg = {
+                text: tr(item.name),
+                handler: shareLink.call(this, {
+                    url: item.url
+                })
+            };
+            if (item.qtip) {
+                cfg.qtip = tr(item.qtip);
+            }
+            if (item.iconCls) {
+                cfg.iconCls = item.iconCls;
+            }
+            menu.push(cfg);
+        });
+        return menu;
+    };
+
     /*
      * Public
      */
@@ -247,7 +319,14 @@ GEOR.workspace = (function() {
                         text: tr("Get a permalink"),
                         iconCls: "geor-permalink",
                         handler: permalink
-                    }, '-', {
+                    }, {
+                        text: tr("Share this map"),
+                        iconCls: "geor-share",
+                        plugins: [{
+                            ptype: 'menuqtips'
+                        }],
+                        menu: getShareMenu()
+                    },'-', {
                         text: tr("Edit in OSM"),
                         iconCls: "geor-edit-osm",
                         plugins: [{
@@ -282,10 +361,7 @@ GEOR.workspace = (function() {
                                 protocol: 'llz'
                             })
                         }]
-                    }/*, {
-                        text: "Editer dans geOrchestra"
-                        // TODO: we need to be able to open mapfishapp/edit with a bbox parameter
-                    }*/]
+                    }]
                 })
             };
         }

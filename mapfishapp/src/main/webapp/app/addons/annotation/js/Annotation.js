@@ -454,7 +454,7 @@ GEOR.Annotation = Ext.extend(Ext.util.Observable, {
 
     /** private: method[initExportAsKmlAction]
      *  Create a Ext.Action object that is set as the exportAsKml property
-     *  and pushed to te actions array.
+     *  and pushed to the actions array.
      */
     initExportAsKmlAction: function() {
         var actionOptions = {
@@ -483,11 +483,11 @@ GEOR.Annotation = Ext.extend(Ext.util.Observable, {
                 'externalProjection': new OpenLayers.Projection("EPSG:4326")
             });
         OpenLayers.Request.POST({
-            url: "ws/kml/",
+            url: GEOR.config.PATHNAME + "/ws/kml/",
             data: format.write(this.layer.features),
             success: function(response) {
                 var o = Ext.decode(response.responseText);
-                window.location.href = o.filepath;
+                window.location.href = GEOR.config.PATHNAME + "/" + o.filepath;
             }
         });
     },
