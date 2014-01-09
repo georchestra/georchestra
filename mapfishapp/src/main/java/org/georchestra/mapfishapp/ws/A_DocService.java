@@ -12,7 +12,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Date;
 import java.util.Random;
 
 import java.sql.Connection;
@@ -20,7 +19,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.ResultSet;
-import java.sql.Timestamp;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.Source;
@@ -380,27 +378,19 @@ public abstract class A_DocService {
             ResultSet rs = null;
             PreparedStatement st = null;
             Connection connection = null;
-            int count = 0;
             try {
                 connection = pgPool.getConnection();
-                st = connection.prepareStatement("SELECT raw_file_content, access_count from mapfishapp.geodocs WHERE file_hash = ?;");
+                st = connection.prepareStatement("SELECT raw_file_content from mapfishapp.geodocs WHERE file_hash = ?;");
                 st.setString(1, hash);
                 rs = st.executeQuery();
 
                 if (rs.next()) {
                     content = rs.getString(1);
-                    count = rs.getInt(2);
                 }
 
                 // now that we have loaded the content, update the metadata fields
-                st = connection.prepareStatement("UPDATE mapfishapp.geodocs set last_access = ? , access_count = ? WHERE file_hash = ?;");
-
-                Date javaDate = new Date();
-                long javaTime = javaDate.getTime();
-                
-                st.setTimestamp(1, new Timestamp(javaTime));
-                st.setInt(2, count + 1);
-                st.setString(3, hash);
+                st = connection.prepareStatement("UPDATE mapfishapp.geodocs set last_access = now() , access_count = access_count + 1 WHERE file_hash = ?;");
+                st.setString(1, hash);
                 st.executeUpdate();
             }
             catch (SQLException e) {
