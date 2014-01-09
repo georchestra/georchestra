@@ -672,6 +672,14 @@ GEOR.config = (function() {
             /.*/i),
 
         /**
+         * Constant: FORCE_LOGIN_IN_TOOLBAR
+         * {Boolean} If true, the login link is always shown in the app toolbar.
+         * Defaults to false.
+         */
+        FORCE_LOGIN_IN_TOOLBAR: getCustomParameter("FORCE_LOGIN_IN_TOOLBAR",
+            false),
+
+        /**
          * Constant: SEND_MAP_TO
          * {Array} List of menu items configs
          *
