@@ -434,6 +434,8 @@ Please refer to the excellent "[Running in a Production Environment](http://docs
 
 You may also want to setup limits to the number of concurrent requests handled by your GeoServer. By default, geOrchestra GeoServer ships with the [control flow](http://docs.geoserver.org/stable/en/user/extensions/controlflow/index.html) module installed, but not activated. To do so, you have to create a custom ```controlflow.properties``` file in your geoserver data dir. Please refer to the module documentation for the syntax.
 
+For GeoWebCache, a collection of tips and tricks can be found here:  http://geo-solutions.blogspot.fr/2012/05/tips-tricks-geowebcache-tweaks.html
+
 GeoNetwork
 ==========
 
