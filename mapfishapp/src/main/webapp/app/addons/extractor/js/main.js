@@ -33,7 +33,7 @@ GEOR.Addons.Extractor.prototype = {
         var lang = OpenLayers.Lang.getCode();
         this.jsonFormat = new OpenLayers.Format.JSON();
         var style = {
-            externalGraphic: "app/addons/extractor/img/shading.png",
+            externalGraphic: GEOR.config.MAPFISHAPP_URL + "/app/addons/extractor/img/shading.png",
             graphicWidth: 16,
             graphicHeight: 16,
             graphicOpacity: 1,

@@ -81,15 +81,6 @@ shared.ldap.admin.password=secret
 shared.privileged.geoserver.user=extractorapp_privileged_admin
 shared.privileged.geoserver.pass=gerlsSnFd6SmM
 
-# --------------------------------------------------
-# MAPFISHAPP VIEWER
-# --------------------------------------------------
-
-# the mapfishapp viewer expires wmc and sld every x minutes
-# (44640 minutes means "1 month permalink validity")
-shared.mapfishapp.maxDocAgeInMinutes=44640
-
-
 
 # --------------------------------------------------
 # SMTP / Emails

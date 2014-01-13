@@ -44,11 +44,19 @@ PostGreSQL
 
         createdb georchestra
         createuser -SDRIP www-data
-        psql -d georchestra -c 'GRANT ALL PRIVILEGES ON DATABASE georchestra TO "www-data";' 
+        psql -d georchestra -c 'GRANT ALL PRIVILEGES ON DATABASE georchestra TO "www-data";'
 
 Note 1: It is possible to store webapp-specific schemas in separate databases.
 
 Note 2: PostGIS extensions are not required for now in the georchestra database.
+
+ * if mapfishapp is deployed:
+
+        wget https://raw.github.com/georchestra/georchestra/master/mapfishapp/database.sql -O /tmp/mapfishapp.sql
+        psql -d georchestra -f /tmp/mapfishapp.sql
+        psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA mapfishapp TO "www-data";'
+        psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA mapfishapp TO "www-data";'
+        psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA mapfishapp TO "www-data";'
 
  * if the ldapadmin webapp is deployed:
 
@@ -58,7 +66,7 @@ Note 2: PostGIS extensions are not required for now in the georchestra database.
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ldapadmin TO "www-data";'
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA ldapadmin TO "www-data";'
 
- * if shared.download_form.activated is true in your setup (false by default):
+ * if ```shared.download_form.activated``` is true in your setup (false by default):
 
         wget https://raw.github.com/georchestra/georchestra/master/downloadform/database.sql -O /tmp/downloadform.sql
         psql -d georchestra -f /tmp/downloadform.sql
@@ -66,14 +74,13 @@ Note 2: PostGIS extensions are not required for now in the georchestra database.
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA downloadform TO "www-data";'
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA downloadform TO "www-data";'
         
- * if shared.ogc.statistics.activated is true in your setup (false by default):
+ * if ```shared.ogc.statistics.activated``` is true in your setup (false by default):
 
         wget https://raw.github.com/georchestra/georchestra/master/ogc-server-statistics/database.sql -O /tmp/ogcstatistics.sql
         psql -d georchestra -f /tmp/ogcstatistics.sql
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA ogcstatistics TO "www-data";'
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ogcstatistics TO "www-data";'
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA ogcstatistics TO "www-data";'
-
 
 
 Apache

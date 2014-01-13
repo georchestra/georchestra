@@ -25,6 +25,7 @@ import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
+import org.geotools.referencing.operation.projection.ProjectionException;
 import org.geotools.xml.Configuration;
 import org.geotools.xml.PullParser;
 import org.opengis.feature.simple.SimpleFeature;
@@ -63,7 +64,7 @@ class GeotoolsFeatureReader implements FeatureGeoFileReader {
     public SimpleFeatureCollection getFeatureCollection(
             final File file,
             final FileFormat fileFormat) throws IOException,
-            UnsupportedGeofileFormatException {
+            UnsupportedGeofileFormatException, ProjectionException {
 
         return getFeatureCollection(file, fileFormat, null);
     }
@@ -72,7 +73,7 @@ class GeotoolsFeatureReader implements FeatureGeoFileReader {
     public SimpleFeatureCollection getFeatureCollection(final File file,
             final FileFormat fileFormat,
             final CoordinateReferenceSystem targetCRS) throws IOException,
-            UnsupportedGeofileFormatException {
+            UnsupportedGeofileFormatException, ProjectionException {
 
         assert file != null && fileFormat != null;
 
@@ -102,7 +103,7 @@ class GeotoolsFeatureReader implements FeatureGeoFileReader {
      * @throws IOException
      */
     private SimpleFeatureCollection readGmlFile(File file,
-            CoordinateReferenceSystem targetCRS) throws IOException {
+            CoordinateReferenceSystem targetCRS) throws IOException, ProjectionException {
 
         SimpleFeatureCollection fc = null;
         try {
@@ -161,11 +162,11 @@ class GeotoolsFeatureReader implements FeatureGeoFileReader {
      *            gml version
      *            
      * @return {@link SimpleFeatureCollection}
-     * @throws IOException
+     * @throws IOException, ProjectionException
      */
     private SimpleFeatureCollection readGmlFile(final File file,
             final CoordinateReferenceSystem targetCRS, final Version version)
-            throws IOException {
+            throws IOException, ProjectionException {
 
         InputStream in = new FileInputStream(file);
         try {
@@ -231,7 +232,8 @@ class GeotoolsFeatureReader implements FeatureGeoFileReader {
                 throw new IOException(msg);
             }
             return fc;
-
+        } catch (ProjectionException e) {
+            throw e;
         } catch (Exception e) {
             LOG.error(e.getMessage());
             throw new IOException(e);

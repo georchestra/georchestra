@@ -10,6 +10,15 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Random;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.ResultSet;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.Source;
@@ -22,9 +31,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.xml.sax.SAXException;
 
+import org.georchestra.mapfishapp.model.ConnectionPool;
+
+
 /**
- * This service is the basic template to handle the storage and the loading of a file on a temporary directory.
- * Some methods can be override to provide treatments specific to a file extension.
+ * This service is the basic template to handle the storage and the loading of a file
+ * Some methods can be overridden to provide treatments specific to a file extension.
  * 
  * @author yoann buch  - yoann.buch@gmail.com
  *
@@ -35,16 +47,20 @@ public abstract class A_DocService {
     protected static final Log LOG = LogFactory.getLog(A_DocService.class.getPackage().getName());
 
     /**
-     * Document prefix helping to differentiate documents among others OS tmp files
+     * Document prefix helping to differentiate documents among other OS temporary files
      */
     protected static final String DOC_PREFIX = "geodoc";
-
 
     /**
      * File extension. 
      */
     protected String _fileExtension;
     
+    /**
+     * Db connection pool (shared between services).
+     */
+    protected ConnectionPool pgPool;
+
     /**
      * MIME type.
      */
@@ -61,9 +77,9 @@ public abstract class A_DocService {
     protected String _name;
 
     /**
-     * files are stored in the configured directory 
+     * old files can be read from the configured directory 
      */
-    private String _tempDirectory;  
+    private String _tempDirectory;
 	
 	/**
 	 * Creates the temporal directory if it doesn't exist and set the path
@@ -75,55 +91,78 @@ public abstract class A_DocService {
 			boolean succeed = t.mkdirs();
 			
 			if(!succeed){
-				LOG.error("cannot create the dirctory: " + tempDirectory);
+				LOG.error("cannot create the directory: " + tempDirectory);
 			}
 		}
 		_tempDirectory = tempDirectory;
 		
 	}
-    
+
     
     /*========================Public Methods====================================================*/
 
     /**
      * Subclasses have to provide their file extension name and MIME type
      * 
-     * @param maxDocAgeInMinutes
      * @param fileExtension
      * @param MIMEType
      * @param docTempDirectory
      */
-    public A_DocService(final long maxDocAgeInMinutes, final String fileExtension, final String MIMEType,  final String docTempDirectory) {
+    public A_DocService(final String fileExtension, final String MIMEType,  final String docTempDirectory, ConnectionPool pgpool) {
         _fileExtension = fileExtension;
         _MIMEType = MIMEType;
-        
+        pgPool = pgpool;
         setTempDirectory(docTempDirectory);
-        
-        Runnable purgeDocsTask = new PurgeDocsRunnable(maxDocAgeInMinutes, _tempDirectory);
-        PurgeDocsTimer.startPurgeDocsTimer(purgeDocsTask, maxDocAgeInMinutes);
     }
     
     /**
      * Store the given data
      * @param data raw data to be stored
+     * @param username the current user name or empty string if anonymous (correct ?)
      * @return file name
      * @throws DocServiceException
      */
-    public String saveData(final String data) throws DocServiceException {
-        // purge doc directory from old files
-        // FIXME do not purge for now, this will need to be revisited once
-        // we have authentication in place
-        //purgeDocDir();
-        
+    public String saveData(final String data, final String username) throws DocServiceException {
+
         _content = data;
-        
+
         // actions to take before saving data
         preSave();
+
+        // compute md5: not on data, because it would not be unique across users, but on a random string
+        String hash = null;
+        try {
+            //hash = MD5(_content);
+            Random r = new Random();
+            Double d = r.nextDouble();
+            hash = MD5(_content + d.toString() );
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
         
-        // store file under a file and get its name
-        String fileName = saveDataIntoFile(_content);
-        
-        return fileName;   
+        // extract standard
+        String standard = _fileExtension.substring(1);
+
+        // write data to Db
+        Connection connection = null;
+        PreparedStatement st = null;
+        try {
+            connection = pgPool.getConnection();
+            st = connection.prepareStatement("INSERT INTO mapfishapp.geodocs (username, standard, raw_file_content, file_hash) VALUES (?,?,?,?);");
+            st.setString(1, username);
+            st.setString(2, standard);
+            st.setString(3, _content);
+            st.setString(4, hash);
+            st.executeUpdate();
+        }
+        catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (st != null) try { st.close(); } catch (SQLException e) {LOG.error(e);}
+            if (connection != null) try { connection.close(); } catch (SQLException e) {LOG.error(e);}
+        }
+
+        return DOC_PREFIX + hash + _fileExtension;
     }
     
     /**
@@ -133,12 +172,16 @@ public abstract class A_DocService {
      * @throws DocServiceException
      */
     public void loadFile(final String fileName) throws DocServiceException {
-        // check first if file exists
-        if(!isFileExist(fileName)) {
-            throw new DocServiceException("Requested file  does not exist.", HttpServletResponse.SC_NOT_FOUND);
+        // check first if data exists somewhere (db / file)
+        try {
+            if (!isFileExist(fileName)) {
+                throw new DocServiceException("Requested file does not exist.", HttpServletResponse.SC_NOT_FOUND);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
         
-        // default, file name will the one generated by OS
+        // default, file name will be the one generated by OS
         _name = fileName;
         
         // load file content
@@ -234,62 +277,91 @@ public abstract class A_DocService {
     
     /*=====================Private Methods - Common to every DocService=========================================*/
     
+
     /**
-     * Save the given data under a specific name and location
-     * @param data data to be stored
-     * @return file name
+     * Returns a md5 hash from a given string
+     * @param text input string
+     * @return md5 hash
      */
-    private String saveDataIntoFile(final String data) {
-        String fileName = "";
-        try {
-            // file saved under: DOC_PREFIX + ID generated by OS + _fileExtension in the DIR_PATH
-            File file = File.createTempFile(DOC_PREFIX, _fileExtension, new File(_tempDirectory));  
-            file.deleteOnExit(); // will be purged when JVM stops
-          
-            // write content file as bytes
-            DataOutputStream out = new DataOutputStream(new FileOutputStream(file));
-            out.write(data.getBytes("UTF-8"));
-            out.close();  
-            
-            fileName = file.getName();
-            
+    private String MD5(final String text) throws NoSuchAlgorithmException {
+        byte[] toHash = text.getBytes();
+        byte[] MD5Digest = null;
+        StringBuilder hashString = new StringBuilder();
+        
+        MessageDigest algo = MessageDigest.getInstance("MD5");
+        algo.reset();
+        algo.update(toHash);
+        MD5Digest = algo.digest();
+        
+        for (int i = 0; i < MD5Digest.length; i++) {
+            String hex = Integer.toHexString(MD5Digest[i]);
+            if (hex.length() == 1) {
+                hashString.append('0');
+                hashString.append(hex.charAt(hex.length() - 1));
+            } else {
+                hashString.append(hex.substring(hex.length() - 2));
+            }
         }
-        catch(FileNotFoundException fnfExc) {
-            fnfExc.printStackTrace();
-        }
-        catch(IOException ioExc) {
-            ioExc.printStackTrace();
-        }
-      
-        return fileName;
+        return hashString.toString();        
     }
     
     /**
-     * Check that file exists in DIR_PATH
-     * @param fileName
+     * Check that data exists in db under provided hash
+     * @param fileName eg geodoc1694e3cc580768d5125816b574915e97.wmc or geodoc\d{19}.wmc
      * @return true: exists, false: not exists
      */
-    private boolean isFileExist(final String fileName) {
-        // file was stored previously in a known place
-        File dir = new File(_tempDirectory);
-        
-        if(!dir.exists()) {
-            throw new RuntimeException(_tempDirectory + " directory not found");
-        } 
-        
-        // prepare filter to get the right file 
-        FilenameFilter filter = 
-            new FilenameFilter() {
-                                    public boolean accept(File dir, String name) {
-                                        
-                                        return fileName.equals(name);
-                                    }
-                                }; 
-                                
-        // get file thanks to the previous filter
-        String[] fileList = dir.list(filter);  
-        
-        return fileList.length == 1;
+    private boolean isFileExist(final String fileName) throws SQLException, RuntimeException {
+        // test fileName to know if file is stored in db or file.
+        if (fileName.length() == 4+32+DOC_PREFIX.length()) {
+            // newest database storage
+            ResultSet rs = null;
+            PreparedStatement st = null;
+            Connection connection = null;
+
+            boolean exists = false;
+            int count = 0;
+            try {
+                connection = pgPool.getConnection();
+                st = connection.prepareStatement("SELECT count(*)::integer from mapfishapp.geodocs WHERE file_hash = ?;");
+                st.setString(1, fileName.substring(DOC_PREFIX.length(), DOC_PREFIX.length() + 32));
+                rs = st.executeQuery();
+                
+                if (rs.next()) {
+                    count = rs.getInt(1);
+                }
+            } catch(SQLException e) {
+                throw new RuntimeException(e);
+            } finally {
+                if (rs != null) try { rs.close(); } catch (SQLException e) {LOG.error(e);}
+                if (st != null) try { st.close(); } catch (SQLException e) {LOG.error(e);}
+                if (connection != null) try { connection.close(); } catch (SQLException e) {LOG.error(e);}
+            }
+            
+            return count > 0;
+
+        } else { // plain old "file" storage
+    
+            // file was stored previously in a known place
+            File dir = new File(_tempDirectory);
+            
+            if(!dir.exists()) {
+                throw new RuntimeException(_tempDirectory + " directory not found");
+            } 
+            
+            // prepare filter to get the right file 
+            FilenameFilter filter = 
+                new FilenameFilter() {
+                                        public boolean accept(File dir, String name) {
+                                            
+                                            return fileName.equals(name);
+                                        }
+                                    }; 
+                                    
+            // get file thanks to the previous filter
+            String[] fileList = dir.list(filter);  
+            
+            return fileList.length == 1;
+        }
     }
     
     /**
@@ -298,47 +370,80 @@ public abstract class A_DocService {
      * @return file content
      */
     private String loadContent(final String fileName) {
-        File file = new File(_tempDirectory + File.separatorChar + fileName); 
         String content = "";
-        
-        FileInputStream  fis = null;
-        try {
-            fis = new FileInputStream(file);
-            
-            // get file size
-            long fileSize = file.length();
-            if (fileSize > Integer.MAX_VALUE) {
-                throw new IOException("File is too big");
+        // test fileName to know if the file is stored in db or file.
+        if (fileName.length() == 4+32+DOC_PREFIX.length()) {
+            String hash = fileName.substring(DOC_PREFIX.length(), DOC_PREFIX.length() + 32);
+            // newest database storage
+            ResultSet rs = null;
+            PreparedStatement st = null;
+            Connection connection = null;
+            try {
+                connection = pgPool.getConnection();
+                st = connection.prepareStatement("SELECT raw_file_content from mapfishapp.geodocs WHERE file_hash = ?;");
+                st.setString(1, hash);
+                rs = st.executeQuery();
+
+                if (rs.next()) {
+                    content = rs.getString(1);
+                }
+
+                // now that we have loaded the content, update the metadata fields
+                st = connection.prepareStatement("UPDATE mapfishapp.geodocs set last_access = now() , access_count = access_count + 1 WHERE file_hash = ?;");
+                st.setString(1, hash);
+                st.executeUpdate();
+            }
+            catch (SQLException e) {
+                throw new RuntimeException(e);
+            } finally {
+                if (rs != null) try { rs.close(); } catch (SQLException e) {LOG.error(e);}
+                if (st != null) try { st.close(); } catch (SQLException e) {LOG.error(e);}
+                if (connection != null) try { connection.close(); } catch (SQLException e) {LOG.error(e);}
             }
 
-            // allocate necessary memory to store content
-            byte[] bytes = new byte[(int) fileSize];
+        } else {
+            // plain old "file" storage
+            File file = new File(_tempDirectory + File.separatorChar + fileName); 
             
-            // read the content in the byte array
-            int offset = 0;
-            int numRead = 0;
-            while (offset < bytes.length && (numRead=fis.read(bytes, offset, bytes.length-offset)) >= 0) {
-                offset += numRead;
-            }
+            FileInputStream  fis = null;
+            try {
+                fis = new FileInputStream(file);
+                
+                // get file size
+                long fileSize = file.length();
+                if (fileSize > Integer.MAX_VALUE) {
+                    throw new IOException("File is too big");
+                }
+
+                // allocate necessary memory to store content
+                byte[] bytes = new byte[(int) fileSize];
+                
+                // read the content in the byte array
+                int offset = 0;
+                int numRead = 0;
+                while (offset < bytes.length && (numRead=fis.read(bytes, offset, bytes.length-offset)) >= 0) {
+                    offset += numRead;
+                }
+                
+                // Ensure all the bytes have been read 
+                if (offset < bytes.length) {
+                    throw new IOException("Could not completely read file " + file.getName());
+                }
             
-            // Ensure all the bytes have been read 
-            if (offset < bytes.length) {
-                throw new IOException("Could not completely read file " + file.getName());
-            }
-        
-            // return the file content
-            content = new String(bytes);
-            
-        } catch (FileNotFoundException fnfExc) {
-            fnfExc.printStackTrace();
-        } catch (IOException ioExc) {
-            ioExc.printStackTrace();
-        } finally{
-            if(fis != null) {
-                try {
-                    fis.close();
-                } catch (IOException e) {
-                    LOG.error(e);
+                // return the file content
+                content = new String(bytes);
+                
+            } catch (FileNotFoundException fnfExc) {
+                fnfExc.printStackTrace();
+            } catch (IOException ioExc) {
+                ioExc.printStackTrace();
+            } finally{
+                if(fis != null) {
+                    try {
+                        fis.close();
+                    } catch (IOException e) {
+                        LOG.error(e);
+                    }
                 }
             }
         }

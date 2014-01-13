@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.referencing.operation.projection.ProjectionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -26,10 +27,11 @@ interface FeatureGeoFileReader {
      * @return {@link SimpleFeatureCollection}
      * @throws IOException
      *             , UnsupportedGeofileFormatException
+     *             , ProjectionException
      */
     SimpleFeatureCollection getFeatureCollection(final File file,
             final FileFormat fileFormat) throws IOException,
-            UnsupportedGeofileFormatException;
+            UnsupportedGeofileFormatException, ProjectionException;
 
     /**
      * Returns the set of features maintained in the geofile, reprojected in the
@@ -48,7 +50,7 @@ interface FeatureGeoFileReader {
     SimpleFeatureCollection getFeatureCollection(final File file,
             final FileFormat fileFormat,
             final CoordinateReferenceSystem targetCrs) throws IOException,
-            UnsupportedGeofileFormatException;
+            UnsupportedGeofileFormatException, ProjectionException;
 
     /**
      * @return List of available {@link FileFormat}

@@ -24,50 +24,6 @@ GEOR.config = (function() {
     var vectorAbility = null;
 
     /**
-     * Property: urlObj.
-     * {Object} The URL object as returned by
-     * OpenLayers.Util.createUrlObject().
-     */
-    var urlObj = null;
-
-    /**
-     * Method: getUrlObj
-     * Get the URL object corresponding to the URL passed as a
-     * parameter.
-     *
-     * Parameters:
-     * url - {String}
-     *
-     * Returns:
-     * {Object} The URL object.
-     */
-    var getUrlObj = function(url) {
-        url = url || window.location.href;
-        if (urlObj === null) {
-            urlObj = OpenLayers.Util.createUrlObject(url, {
-                ignorePort80:true
-            });
-        }
-        return urlObj;
-    };
-
-    /**
-     * Method: getAppURL
-     * Get the complete (absolute) URL of the "mapfishapp" webapp.
-     *
-     * Returns:
-     * {String} The complete mapfishapp URL.
-     */
-    var getAppURL = function() {
-        var o = getUrlObj();
-        var url = o.protocol + '//' + o.host;
-        if (o.port && o.port != "80") {
-            url += ':' + o.port;
-        }
-        return url + o.pathname;
-    };
-
-    /**
      * Method: getBrowserVectorAbility
      * Get an empirical integer parameter
      * about this browser's vector handling abilities.
@@ -165,12 +121,6 @@ GEOR.config = (function() {
          * Username can be overriden dynamically in index.jsp
          */
         USERNAME: null,
-
-        /**
-         * Constant: MAPFISHAPP_URL
-         * The URL to mapfishapp.
-         */
-        MAPFISHAPP_URL: getAppURL(),
 
         /**
          * Constant: LOGIN_URL
@@ -720,6 +670,33 @@ GEOR.config = (function() {
          */
         EDITABLE_LAYERS: getCustomParameter("EDITABLE_LAYERS",
             /.*/i),
+
+        /**
+         * Constant: FORCE_LOGIN_IN_TOOLBAR
+         * {Boolean} If true, the login link is always shown in the app toolbar.
+         * Defaults to false.
+         */
+        FORCE_LOGIN_IN_TOOLBAR: getCustomParameter("FORCE_LOGIN_IN_TOOLBAR",
+            false),
+
+        /**
+         * Constant: SEND_MAP_TO
+         * {Array} List of menu items configs
+         *
+         * Each menu item config **must** have the following properties: 
+         *  - name: the link name. Will be localized by OpenLayers.i18n
+         *  - url: the template url for the link. Must contain one of 
+         *   {context_url} or {map_url} strings, which will be resp. 
+         *   replaced by the generated WMC link and the map permalink.
+         *
+         * Each menu item config **may** have the following properties: 
+         *  - qtip: the tip appearing on menu item hover. Will be localized by OpenLayers.i18n
+         *  - iconCls: the CSS class which will be appended to the menu item
+         */
+        SEND_MAP_TO: getCustomParameter("SEND_MAP_TO", [
+            {"name": "Mobile viewer", "url": "http://sdi.georchestra.org/sviewer/?wmc={context_url}", "qtip": "Mobile compatible viewer on sdi.georchestra.org"},
+            {"name": "Desktop viewer", "url": "http://sdi.georchestra.org/mapfishapp/?wmc={context_url}", "qtip": "Desktop viewer on sdi.georchestra.org"}
+        ]),
 
         /**
          * Constant: WMTS_SERVERS

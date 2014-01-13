@@ -82,13 +82,13 @@ Ext.namespace("GEOR");
          */
         OpenLayers.Lang.setCode(GEOR.config.LANG);
         OpenLayers.Number.thousandsSeparator = " ";
-        OpenLayers.ImgPath = 'app/img/openlayers/';
+        OpenLayers.ImgPath = GEOR.config.PATHNAME + '/app/img/openlayers/';
         OpenLayers.DOTS_PER_INCH = GEOR.config.MAP_DOTS_PER_INCH;
 
         /*
          * Setting of Ext global vars.
          */
-        Ext.BLANK_IMAGE_URL = "lib/externals/ext/resources/images/default/s.gif";
+        Ext.BLANK_IMAGE_URL = GEOR.config.PATHNAME + "/lib/externals/ext/resources/images/default/s.gif";
         Ext.apply(Ext.MessageBox.buttonText, {
             yes: tr("Yes"),
             no: tr("No"),
@@ -313,7 +313,7 @@ Ext.namespace("GEOR");
         GEOR.wmc.events.on({
             "beforecontextrestore": function(count) {
                 // prevent OGCExceptionReport warnings during context restore:
-                GEOR.ajaxglobal.disableOGCExceptionReports = true;
+                GEOR.ajaxglobal.disableAllErrors = true;
                 describeLayerCount = count;
             }
         });
@@ -327,7 +327,7 @@ Ext.namespace("GEOR");
                 // and all describelayer queries finished.
                 describeLayerCount -= 1;
                 if (describeLayerCount == 0) {
-                    GEOR.ajaxglobal.disableOGCExceptionReports = false;
+                    GEOR.ajaxglobal.disableAllErrors = false;
                 }
             }
         });

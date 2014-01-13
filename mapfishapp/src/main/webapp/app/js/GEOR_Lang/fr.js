@@ -37,6 +37,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "labelSeparator": " : ",
     "File submission failed or invalid file": "L'envoi du fichier a échoué - le fichier est peut-être non valide",
     "Type": "Type",
+    "Title": "Titre",
     /* GEOR.js strings */
     "Cities": "Localités",
     "Recentering on GeoNames cities": "Recentrage sur localités<br />de la base GeoNames",
@@ -139,6 +140,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "fileupload_error_outOfMemory": "Le serveur ne dispose plus de la mémoire suffisante. Contacter l'administrateur de la plateforme pour plus de détails.",
     "fileupload_error_sizeError": "Le fichier est trop grand pour pouvoir être traité.",
     "fileupload_error_unsupportedFormat": "Ce format de données n'est pas géré par l'application.",
+    "fileupload_error_projectionError": "Une erreur est survenue lors de la lecture des coordonnées géographiques. Êtes-vous sûr que le fichier contient les informations de projection ?",
     "server upload error: ERROR":
         "L'upload du fichier a échoué. ${ERROR}",
     "Incorrect server response.": "Réponse du serveur incorrecte.",
@@ -283,7 +285,6 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "print.unknown.resolution":
         "Erreur de configuration: DEFAULT_PRINT_RESOLUTION " +
         "${RESOLUTION} n'est pas dans la liste des résolutions d'impression",
-    "Title": "Titre",
     "Comments": "Commentaires",
     "Scale: ": "Échelle : ",
     "Date: ": "Date : ",
@@ -427,6 +428,12 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "default viewer context": "contexte par défaut",
     "(default)": "<br/>(contexte par défaut actuel)",
     /* GEOR_workspace.js strings */
+    "Share this map": "Partager cette carte",
+    "Mobile viewer": "Visualiseur mobile",
+    "Mobile compatible viewer on sdi.georchestra.org": "Visualiseur mobile sur sdi.georchestra.org",
+    "Desktop viewer": "Visualiseur web",
+    "Desktop viewer on sdi.georchestra.org": "Visualiseur web sur sdi.georchestra.org",
+    "Abstract": "Résumé",
     "Context saving": "Sauvegarde du contexte",
     "The file is required.": "Un nom de fichier est nécessaire.",
     "Context restoring": "Restauration d'un contexte",
@@ -438,9 +445,6 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Load a map context": "Charger une carte",
     "Get a permalink": "Obtenir un permalien",
     "Permalink": "Permalien",
-    "valid for ": "valide pendant ",
-    "months": "mois",
-    "month": "mois",
     "Share your map with this URL: ": "Partagez la carte avec l'adresse suivante : ",
     "Edit in OSM": "Editer dans OSM",
     "with JOSM": "avec JOSM",

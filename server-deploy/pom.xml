@@ -374,7 +374,7 @@
 			</dependencies>
 		</profile>
 		<profile>
-			<id>headerc</id>
+			<id>header</id>
 			<dependencies>
 				<dependency>
 					<groupId>${project.groupId}</groupId>

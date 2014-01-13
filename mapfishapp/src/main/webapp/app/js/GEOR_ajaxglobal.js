@@ -60,6 +60,9 @@ GEOR.ajaxglobal = (function() {
      */
     var handleFailure = function(options) {
         var text, width = 400;
+        if (GEOR.ajaxglobal.disableAllErrors) {
+            return;
+        }
         switch(options.request.status) {
             case 0:
                 text = tr("Server did not respond.");
@@ -177,6 +180,12 @@ GEOR.ajaxglobal = (function() {
          * Set to true to disable OGC Exception Report handling
          */
         disableOGCExceptionReports: false,
+
+        /**
+         * APIProperty: disableAllErrors
+         * Set to true to disable XHR error handling
+         */
+        disableAllErrors: false,
 
         /**
          * APIMethod: init

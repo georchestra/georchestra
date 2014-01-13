@@ -28,6 +28,7 @@ import org.georchestra.extractorapp.ws.extractor.task.ExecutionMetadata;
 import org.georchestra.extractorapp.ws.extractor.task.ExecutionPriority;
 import org.georchestra.extractorapp.ws.extractor.task.ExtractionManager;
 import org.georchestra.extractorapp.ws.extractor.task.ExtractionTask;
+import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -246,7 +247,15 @@ public class ExtractorController implements ServletContextAware {
 			HttpServletResponse response) throws Exception {
 		String postData = FileUtils.asString(request.getInputStream());
 		String reponseData = "";
-		String sessionId = request.getSession() != null ? request.getSession().getId() : "";
+
+		String sessionId;
+		try {
+			JSONObject jso = new JSONObject(postData);
+			sessionId = (String) jso.get("sessionid");
+		} catch (Exception e) {
+			LOG.error("Unable to decode the sessionid sent by the client: " + e.getMessage());
+			sessionId = null;
+		}
 
 		if (checkFormAcceptance.isFormAccepted(sessionId,request.getHeader("sec-username"), postData)) {
 			UUID requestUuid = UUID.randomUUID();

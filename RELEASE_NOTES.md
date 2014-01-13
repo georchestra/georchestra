@@ -37,6 +37,7 @@ Enhancements:
  * mapfishapp: print now supports WMS 1.3.0-only capable servers, see [#511](https://github.com/georchestra/georchestra/issues/511)
  * mapfishapp: annotation addon: added an icon & made the window closable
  * mapfishapp: OGC Exception Report handling deactivated during context restore - see [#532](https://github.com/georchestra/georchestra/issues/532)
+ * mapfishapp: allow to show login/logout button in toolbar even if header is shown - see [#43](https://github.com/georchestra/georchestra/issues/43)
  * ogc-server-statistics: now logging WMTS GetTile, WMS GetStyles + WFS2 operations, see [#527](https://github.com/georchestra/georchestra/issues/527)
  * proxy: new filter to make basic auth challenge if https and matches user-agent, useful for ArcGIS clients - read the [notes](https://github.com/georchestra/georchestra/commit/8828a11ffb0cb716ad0a6bb1f847ce24328ea450)
  * proxy: overridable HTTP 40x error pages, see for instance [config/defaults/security-proxy/403.jsp](config/defaults/security-proxy/403.jsp)
@@ -48,7 +49,32 @@ Bug fixes:
  * extractorapp: fixed the ```checkPermission``` method for local layers
  * extractorapp: fixed impossibility to switch to french when default lang is english or spanish
  * extractorapp: fixed invalid buffer combo text
+ * extractorapp: removed useless classes - see [#551](https://github.com/georchestra/georchestra/issues/551)
+ * extractorapp: bbox writer always uses geotools' ShpFeatureWriter, which allows extractorapp to not rely mandatorily on gdal/ogr native libs - see [#409](https://github.com/georchestra/georchestra/issues/409)
+ * extractorapp: fixed parameter order on CheckFormAcceptance bean instantiation - see [b299ec](https://github.com/georchestra/georchestra/commit/b299ec9f55777ef9f3610c14f01e0449e0067f3c)
  * geonetwork: download form now opens also in metadata view if activated, see [#416](https://github.com/georchestra/georchestra/issues/416)
+ * geonetwork: download form triggered in metadata view too
+ * geonetwork: fixed missing thumbnail in CSW query requesting DC in full mode for profil France records
+ * geonetwork: thumbnails: add protocol for JPG (csw)
+ * geonetwork: widgets / keyword selection / support 2 concepts with same label
+ * geonetwork: editor / XML view / do not escape &#10;
+ * geonetwork: ISO19110 / fixed missing label. Add the capability to set contact logo.
+ * geonetwork: spatial index / fixed corrupted shapefile when empty polygon.
+ * geonetwork: ISO19110 / relation now displays title.
+ * geonetwork: properly unzip file
+ * geonetwork: widgets / properly propagate sortby options.
+ * geonetwork: fixed map coords position when page scrolled
+ * geonetwork: fixed facet layout issue
+ * geonetwork: widgets / add privileges panel to batch operation.
+ * geonetwork: ISO19139 / improve labels
+ * geonetwork: fixed tooltip display error on IE
+ * geonetwork: hide user menu if hideSignOut option is enable IE
+ * geonetwork: add option to hide sign out action from user menu.
+ * geonetwork: editor / suggestion / save changes before processing
+ * geonetwork: RSS / add URL parameter to only return one link for each metadata
+ * geonetwork: widgets / action menu is now in a custom element in the template
+ * geonetwork: put default list width of some other search criterias to auto
+ * geonetwork: search suggestion / properly returned field value with line break
  * geoserver: fixed "inspire extension not deployed"
  * header: fixed IE8 compatibility + header frameborder size set to 0
  * header: the platform-wide language set by ```shared.language``` is now enforced in the header module, see [#540](https://github.com/georchestra/georchestra/issues/540)
@@ -103,7 +129,30 @@ Bug fixes:
 
 UPGRADING:
  * analytics: the ExtJS submodule path has changed, be sure to run ```git submodule update --init``` when you switch branches.
- * databases: the downloadform, ogcstatistics and ldapadmin databases are now merged into a single one named "georchestra". Each webapp expects to find its tables in a dedicated schema ("downloadform" for the downloadform module, "ogcstatistics" for ogc-server-statistics, and "ldapadmin" for ldapadmin). See https://github.com/georchestra/georchestra/pull/535 for the complete patch. If you currently have one dedicated database for each module, you can keep your setup, provided you customize the ```shared.psql.ogc.statistics.db```, ```shared.psql.download_form.db``` & ```shared.ldapadmin.db``` maven filters in your own config. In any case, you'll have to rename the ```download``` schema (of the previous ```downloadform``` database) into ```downloadform```, and migrate the tables which were in the public schema of the databases ```ogcstatistics``` and ```ldapadmin``` into the newly created schemas.
+ * databases: the downloadform, ogcstatistics and ldapadmin databases are now merged into a single one named "georchestra". Each webapp expects to find its tables in a dedicated schema ("downloadform" for the downloadform module, "ogcstatistics" for ogc-server-statistics, and "ldapadmin" for ldapadmin). See https://github.com/georchestra/georchestra/pull/535 for the complete patch. If you currently have one dedicated database for each module, you can keep your setup, provided you customize the ```shared.psql.ogc.statistics.db```, ```shared.psql.download_form.db``` & ```shared.ldapadmin.db``` maven filters in your own config. In any case, you'll have to rename the ```download``` schema (of the previous ```downloadform``` database) into ```downloadform```, and migrate the tables which were in the public schema of the databases ```ogcstatistics``` and ```ldapadmin``` into the newly created schemas. 
+ 
+Example migration script:
+ 
+```
+psql -d downloadform -c 'alter schema download rename to downloadform;'
+
+wget https://raw.github.com/georchestra/georchestra/master/ldapadmin/database.sql -O /tmp/ldapadmin.sql
+psql -d ldapadmin -f /tmp/ldapadmin.sql
+psql -d ldapadmin -c 'GRANT ALL PRIVILEGES ON SCHEMA ldapadmin TO "www-data";'
+psql -d ldapadmin -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ldapadmin TO "www-data";'
+psql -d ldapadmin -c 'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA ldapadmin TO "www-data";'
+psql -d ldapadmin -c 'insert into ldapadmin.user_token (uid, token, creation_date) select uid, token, creation_date from public.user_token;'
+psql -d ldapadmin -c 'drop table public.user_token;'
+
+wget https://raw.github.com/georchestra/georchestra/master/ogc-server-statistics/database.sql -O /tmp/ogcstatistics.sql
+psql -d ogcstatistics -f /tmp/ogcstatistics.sql
+psql -d ogcstatistics -c 'GRANT ALL PRIVILEGES ON SCHEMA ogcstatistics TO "www-data";'
+psql -d ogcstatistics -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ogcstatistics TO "www-data";'
+psql -d ogcstatistics -c 'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA ogcstatistics TO "www-data";'
+psql -d ogcstatistics -c 'insert into ogcstatistics.ogc_services_log (id, user_name, date, service, layer, request, org) select id, user_name, date, service, layer, request, org from public.ogc_services_log;'
+psql -d ogcstatistics -c 'drop table public.ogc_services_log;'
+```
+
  * download form: the module is disabled by default (```shared.download_form.activated=false```). Be sure to set the value you want in your shared.maven.filters file.
  * extractorapp:
    * ```BUFFER_VALUES``` has changed. If you had a custom value in your GEOR_custom.js file, you have to modify it according to the new syntax.

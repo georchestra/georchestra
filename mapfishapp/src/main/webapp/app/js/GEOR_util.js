@@ -144,17 +144,35 @@ GEOR.util = (function() {
             var urlObject = OpenLayers.Util.createUrlObject(url,
                 {ignorePort80: true}
             );
-            var appUrl = OpenLayers.Util.createUrlObject(GEOR.config.MAPFISHAPP_URL,
-                {ignorePort80: true}
-            );
             var path = urlObject.pathname;
-            if (path.indexOf(appUrl.pathname) === 0) {
-                path = path.slice(appUrl.pathname.length);
+            if (path.indexOf(GEOR.config.PATHNAME) === 0) {
+                path = path.slice(GEOR.config.PATHNAME.length);
                 if (path.indexOf("/") === 0) {
                     path = path.slice(1);
                 }
                 return path;
             }
+        },
+
+        /**
+         * APIMethod: getValidURI
+         * Given an URI or a path relative to /mapfishapp,
+         * Outputs the valid, full, URI.
+         *
+         * Parameters:
+         * input - {String} URI or relative path
+         *
+         * Returns:
+         * {String} a valid URI
+         */
+        getValidURI: function(input) {
+            if (GEOR.util.isUrl(input)) {
+                return input;
+            }
+            return [
+                window.location.protocol, '//', window.location.host,
+                GEOR.config.PATHNAME, '/', input
+            ].join('');
         },
 
         /**
@@ -235,7 +253,7 @@ GEOR.util = (function() {
             var win = new Ext.Window({
                 title: options.title,
                 layout: "fit",
-                width: 400,
+                width: options.width || 400,
                 closeAction: 'close',
                 constrainHeader: true,
                 modal: false,

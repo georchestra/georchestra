@@ -11,7 +11,7 @@
 		<name>geOrchestra</name>
 	</organization>
 	<properties>
-		<gt.version>8.6</gt.version>
+		<gt.version>9.5</gt.version>
 		<spring.version>2.5.6.SEC01</spring.version>
 		<security.version>2.0.5.RELEASE</security.version>
 		<spring.ldap.version>1.3.0.RELEASE</spring.ldap.version>
@@ -38,9 +38,8 @@ new PostTreatment().run(this, log, ant, project.basedir, params.projectDir, serv
 ]]></postTreatmentScript>
 	</properties>
 	<modules>
+		<module>geotools</module>
 		<module>config</module>
-		<module>gt-mif</module>
-		<!-- <module>gt-ogr</module> now the geotools implementation is used -->
 		<module>header</module>
 		<module>epsg-extension</module>
 		<module>ogc-server-statistics</module>
@@ -363,16 +362,6 @@ class PostTreatment {
 			<id>jetty-repository</id>
 			<name>Jetty Maven2 Repository</name>
 			<url>http://oss.sonatype.org/content/groups/jetty/</url>
-		</repository>
-		<repository>
-			<id>jasig-repository</id>
-			<name>JA-SIG Maven2 Repository</name>
-			<url>http://developer.ja-sig.org/maven2</url>
-		</repository>
-		<repository>
-			<id>scala-tools.org</id>
-			<name>Scala-tools Maven2 Repository</name>
-			<url>http://scala-tools.org/repo-releases</url>
 		</repository>
 	</repositories>
 	<pluginRepositories>
