@@ -57,7 +57,7 @@ public class CheckFormAcceptance {
 						"FROM " +
 						"			downloadform.extractorapp_log " +
 						"WHERE " +
-						"			(sessionid = ? OR username = ?) " +
+						"           (username = null AND sessionid = ?) OR (username = ?  AND username IS NOT null) " + 
 						"AND " +
 						"           json_spec = ?;";
 			
