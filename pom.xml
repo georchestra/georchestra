@@ -363,16 +363,6 @@ class PostTreatment {
 			<name>Jetty Maven2 Repository</name>
 			<url>http://oss.sonatype.org/content/groups/jetty/</url>
 		</repository>
-		<repository>
-			<id>jasig-repository</id>
-			<name>JA-SIG Maven2 Repository</name>
-			<url>http://developer.ja-sig.org/maven2</url>
-		</repository>
-		<repository>
-			<id>scala-tools.org</id>
-			<name>Scala-tools Maven2 Repository</name>
-			<url>http://scala-tools.org/repo-releases</url>
-		</repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
