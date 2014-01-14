@@ -113,9 +113,9 @@ In this case instead of copying the entire maven.filters file one could use the 
 							def target, def subTarget, def targetDir, 
 							def buildSupportDir, def outputDir) {
         new PropertyUpdate(
-          path: 'extractorapp/maven.filters',
-          from: 'defaults/',
-          to: outputDir).update { originalProperties ->
+          path: 'maven.filter',
+          from: 'defaults/extractorapp',
+          to: 'extractorapp').update { properties ->
             properties['extractionFolderPrefix'] = 'proj-extract-'
         }
       }
