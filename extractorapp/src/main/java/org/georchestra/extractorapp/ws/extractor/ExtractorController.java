@@ -253,7 +253,7 @@ public class ExtractorController implements ServletContextAware {
 			JSONObject jso = new JSONObject(postData);
 			sessionId = (String) jso.get("sessionid");
 		} catch (Exception e) {
-			LOG.error("Unable to decode the sessionid sent by the client: " + e.getMessage());
+			LOG.debug("Unable to decode the sessionid sent by the client: " + e.getMessage());
 			sessionId = null;
 		}
 
