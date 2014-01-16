@@ -51,9 +51,10 @@ shared.psql.geonetwork.db=geonetwork
 shared.geonetwork.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.psql.geonetwork.db@
 
 shared.ogc.statistics.activated=false
-
+shared.ogc.statistics.db=georchestra
+shared.ogc.statistics.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.ogc.statistics.db@
 
 shared.download_form.activated=false
+shared.download_form.db=georchestra
+shared.download_form.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.download_form.db@
 shared.download_form.pdfurl=
-shared.psql.download_form.db=georchestra
-shared.download_form.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.psql.download_form.db@
