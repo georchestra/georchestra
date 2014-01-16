@@ -250,7 +250,8 @@ GEOR.workspace = (function() {
                         ].join('');
                     var url = new Ext.XTemplate(options.url).apply({
                         context_url: basePath + o.filepath,
-                        map_url: basePath + 'map/' + id
+                        map_url: basePath + 'map/' + id,
+                        id: id
                     });
                     window.open(url);
                 },

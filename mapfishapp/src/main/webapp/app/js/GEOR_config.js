@@ -686,8 +686,8 @@ GEOR.config = (function() {
          * Each menu item config **must** have the following properties: 
          *  - name: the link name. Will be localized by OpenLayers.i18n
          *  - url: the template url for the link. Must contain one of 
-         *   {context_url} or {map_url} strings, which will be resp. 
-         *   replaced by the generated WMC link and the map permalink.
+         *   {context_url}, {map_url} or {id} strings, which will be resp. 
+         *   replaced by the generated WMC link, the map permalink and the map id.
          *
          * Each menu item config **may** have the following properties: 
          *  - qtip: the tip appearing on menu item hover. Will be localized by OpenLayers.i18n
