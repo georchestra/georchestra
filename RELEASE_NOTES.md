@@ -7,6 +7,9 @@ This branch receives bug fixes as they arrive, during 6 months at least.
 Version 13.12 (development version)
 ====================================
 
+This release was supported by the GeoPicardie, PIGMA, CIGALsace and GeoBretagne projects. 
+The CRAIG (Centre Régional Auvergnat de l'Information Géographique) is also to be thanked for some nice patches.
+
 New features:
  * [GeoFence](https://github.com/geosolutions-it/geofence/blob/master/README.markdown) integration (not activated by default), see [#534](https://github.com/georchestra/georchestra/issues/534) and the [documentation](https://github.com/georchestra/geofence/blob/georchestra/georchestra.md)
  * mapfishapp: multi-layer querier tool (thanks to the [CRAIG](http://craig.fr/)) - see [#435](https://github.com/georchestra/georchestra/pull/435)
@@ -45,6 +48,7 @@ Enhancements:
  * ogc-server-statistics: now logging WMTS GetTile, WMS GetStyles + WFS2 operations, see [#527](https://github.com/georchestra/georchestra/issues/527)
  * proxy: new filter to make basic auth challenge if https and matches user-agent, useful for ArcGIS clients - read the [notes](https://github.com/georchestra/georchestra/commit/8828a11ffb0cb716ad0a6bb1f847ce24328ea450)
  * proxy: overridable HTTP 40x error pages, see for instance [config/defaults/security-proxy/403.jsp](config/defaults/security-proxy/403.jsp)
+ * proxy: does not send sec-username & sec-roles headers when the user is anonymous, see [#223](https://github.com/georchestra/georchestra/pull/223)
  * static: module is now called "header"
  * downloadform, ogcstatistics and ldapadmin modules now share the same postgresql database by default, each in their own schema. Please refer to [#516](https://github.com/georchestra/georchestra/issues/516) and the migration guide below.
 
@@ -168,6 +172,7 @@ psql -d ogcstatistics -c 'drop table public.ogc_services_log;'
    * new ```shared.ldapadmin.db``` parameter to specify the ldapadmin database name (defaults to "georchestra").
    * the ldapadmin private app is now accessed via /ldapadmin/privateui/ rather than /ldapadmin/privateui/index.html
  * mapfishapp:
+   * geonames now require you to create an account in order to enable queries on their free web services. Please change the default account in your profile's GEOR_custom.js ```GEONAMES_FILTERS``` variable.
    * addons: custom addons relying on local web services should no longer assume that the application path is ```/mapfishapp```. Instead, they should use the new ```GEOR.config.PATHNAME``` constant, eg [here](https://github.com/georchestra/georchestra/blob/04017309f3880a0c558537235c92f70a269722d1/mapfishapp/src/main/webapp/app/addons/annotation/js/Annotation.js#L486).
    * the app now requires a dedicated database schema, please refer to the [INSTALL.md](INSTALL.md#postgresql) documentation.
    * new config option: ```SEND_MAP_TO``` for [#443](https://github.com/georchestra/georchestra/issues/443), please read the [doc](https://github.com/georchestra/template/blob/34496d62701e809c80235275a9e2a0b4b46f1123/mapfishapp/app/js/GEOR_custom.js#L583).
