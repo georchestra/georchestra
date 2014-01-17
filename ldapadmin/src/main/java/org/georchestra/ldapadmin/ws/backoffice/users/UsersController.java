@@ -126,7 +126,7 @@ public class UsersController {
 	@RequestMapping(value=REQUEST_MAPPING+"/*", method=RequestMethod.GET)
 	public void findByUid( HttpServletRequest request, HttpServletResponse response) throws IOException{
 		
-		String uid = RequestUtil.getKeyFromPathVariable(request);
+		String uid = RequestUtil.getKeyFromPathVariable(request).toLowerCase();
 		
 		if(this.userRule.isProtected(uid) ){
 			
@@ -341,7 +341,7 @@ public class UsersController {
 	@RequestMapping(value=REQUEST_MAPPING+ "/*", method=RequestMethod.PUT)
 	public void update( HttpServletRequest request, HttpServletResponse response) throws IOException{
 		
-		final String uid = RequestUtil.getKeyFromPathVariable(request);
+		final String uid = RequestUtil.getKeyFromPathVariable(request).toLowerCase();
 
 		if(this.userRule.isProtected(uid) ){
 			
@@ -405,7 +405,7 @@ public class UsersController {
 	@RequestMapping(value=REQUEST_MAPPING + "/*", method=RequestMethod.DELETE)
 	public void delete( HttpServletRequest request, HttpServletResponse response) throws IOException{
 		try{
-			final String uid = RequestUtil.getKeyFromPathVariable(request);
+			final String uid = RequestUtil.getKeyFromPathVariable(request).toLowerCase();
 			
 			if(this.userRule.isProtected(uid) ){
 				

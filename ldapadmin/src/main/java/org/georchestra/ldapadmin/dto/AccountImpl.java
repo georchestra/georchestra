@@ -32,7 +32,7 @@ class AccountImpl implements Serializable, Account, Comparable<Account>{
 
 	// user details
 	// sn, givenName, o, title, postalAddress, postalCode, registeredAddress, postOfficeBox, physicalDeliveryOfficeName
-	private String givenName; // givenName (optonal)
+	private String givenName; // givenName (optional)
 	private String title; // title
 	private String postalAddress; //postalAddress
 	private String postalCode; // postalCode
