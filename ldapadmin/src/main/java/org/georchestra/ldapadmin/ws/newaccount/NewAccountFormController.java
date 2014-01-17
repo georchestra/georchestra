@@ -138,7 +138,7 @@ public final class NewAccountFormController {
 		try {
 			
 			Account account =  AccountFactory.createBrief(
-					formBean.getUid(),
+					formBean.getUid().toLowerCase(),
 					formBean.getPassword(),
 					formBean.getFirstName(),
 					formBean.getSurname(),
