@@ -177,9 +177,7 @@ public class GroupsController {
 		try{
 			
 			Group group = createGroupFromRequestBody(request.getInputStream());
-			
-			group.setGidNumber(generateGIDNumber(group.getName()));
-				
+            
 			this.groupDao.insert( group );
 			
 			GroupResponse groupResponse = new GroupResponse(group, this.filter);
@@ -202,22 +200,7 @@ public class GroupsController {
 			throw new IOException(dsex);
 		}
 	}
-	/**
-	 * Generate the id value based on the ASCII values.
-	 * 
-	 * @param commonName
-	 * @return a number as string
-	 */
-	private String generateGIDNumber(final String commonName) {
-		
-		char[] charArray = commonName.toCharArray();
 
-		int i = 0;
-		for (char c : charArray) {
-			i = i + c;
-		}
-		return String.valueOf(i);
-	}
 
 	/**
 	 * Deletes the group.
@@ -422,7 +405,6 @@ public class GroupsController {
 		String cn = RequestUtil.getFieldValue(json, GroupSchema.COMMON_NAME_KEY);
 		if (cn != null) {
 			group.setName(cn);
-			group.setGidNumber(generateGIDNumber(cn));
 		}
 
 		String description = RequestUtil.getFieldValue(json, GroupSchema.DESCRIPTION_KEY);

@@ -17,7 +17,6 @@ class GroupImpl implements Group, Comparable<Group> {
 	private String name;
 	private List<String> userList = new LinkedList<String>();
 	private String description;
-	private String gidNumber;
 
 	/* (non-Javadoc)
 	 * @see org.georchestra.ldapadmin.dto.Group#getCommonName()
@@ -48,7 +47,7 @@ class GroupImpl implements Group, Comparable<Group> {
 	 */
 	@Override
 	public void setUserList(List<String> userUidList) {
-		this.userList = userUidList;
+		this.userList = userUidList; // FIXME: check OK
 	}
 
 	/* (non-Javadoc)
@@ -56,7 +55,7 @@ class GroupImpl implements Group, Comparable<Group> {
 	 */
 	@Override
 	public void addUser(String userUid) {
-		this.userList.add(userUid);
+		this.userList.add(userUid); // FIXME: check OK
 
 	}
 
@@ -71,23 +70,11 @@ class GroupImpl implements Group, Comparable<Group> {
 		return this.description;
 	}
 
-	@Override
-	public void setGidNumber(String gidNumber) {
-		
-		this.gidNumber = gidNumber;
-		
-	}
-
-	@Override
-	public String getGidNumber() {
-
-		return this.gidNumber;
-	}
 
 	@Override
 	public String toString() {
 		return "GroupImpl [name=" + name + ", userList=" + userList
-				+ ", description=" + description + ", gidNumber=" + gidNumber
+				+ ", description=" + description
 				+ "]";
 	}
 	

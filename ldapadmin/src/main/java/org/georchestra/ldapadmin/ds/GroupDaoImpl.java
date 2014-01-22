@@ -60,28 +60,43 @@ public class GroupDaoImpl implements GroupDao {
 	 * @param cn 
 	 * @return
 	 */
-	private DistinguishedName buildDn(String  cn) {
+	private DistinguishedName buildGroupDn(String cn) {
 		DistinguishedName dn = new DistinguishedName();
-				
+        
 		dn.add("ou", "groups");
 		dn.add("cn", cn);
 		
 		return dn;
 	}
-	
+
+	/**
+	 * Create an ldap entry for the user 
+	 * 
+	 * @param uid 
+	 * @return
+	 */
+	private DistinguishedName buildUserDn(String uid) {
+		DistinguishedName dn = new DistinguishedName();
+        
+		dn.add("ou", "users");
+		dn.add("uid", uid);
+		
+		return dn;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.georchestra.ldapadmin.ds.GroupDao#addUser(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public void addUser(final String groupID, final String userId) throws NotFoundException, DataServiceException {
 		
-		Name dn = buildDn(groupID);
+		Name dn = buildGroupDn(groupID);
 		DirContextOperations context = ldapTemplate.lookupContext(dn);
 
-		context.setAttributeValues("objectclass", new String[] { "top", "posixGroup" });
+		context.setAttributeValues("objectclass", new String[] { "top", "groupOfNames" });
 
 		try {
-			context.addAttributeValue("memberUid", userId, false);
+			context.addAttributeValue("member", buildUserDn(userId), false);
 
 			this.ldapTemplate.modifyAttributes(context);
 
@@ -109,19 +124,18 @@ public class GroupDaoImpl implements GroupDao {
 	
 	public void deleteUser(String groupName, String uid) throws DataServiceException {
 		
-		Name dnSvUser = buildDn(groupName);
+		Name dnSvUser = buildGroupDn(groupName);
 		
 		DirContextOperations ctx = ldapTemplate.lookupContext(dnSvUser);
-		ctx.setAttributeValues("objectclass", new String[] { "top", "posixGroup" });
-		ctx.removeAttributeValue("memberUid", uid);
+		ctx.setAttributeValues("objectclass", new String[] { "top", "groupOfNames" });
+		ctx.removeAttributeValue("member", buildUserDn(uid));
 
 		this.ldapTemplate.modifyAttributes(ctx);
 	}
 	
 	public List<Group> findAll() throws DataServiceException {
 		
-
-		EqualsFilter filter = new EqualsFilter("objectClass", "posixGroup");
+		EqualsFilter filter = new EqualsFilter("objectClass", "groupOfNames");
 		List<Group> groupList = ldapTemplate.search( DistinguishedName.EMPTY_PATH, filter.encode(), new GroupContextMapper());
 		
 		TreeSet<Group> sorted = new TreeSet<Group>();
@@ -158,7 +172,7 @@ public class GroupDaoImpl implements GroupDao {
 	public Group findByCommonName(String commonName) throws DataServiceException, NotFoundException {
 
 		try{
-			DistinguishedName dn = buildDn(commonName);
+			DistinguishedName dn = buildGroupDn(commonName);
 			Group g = (Group) ldapTemplate.lookup(dn, new GroupContextMapper());
 			
 			return  g;
@@ -178,7 +192,7 @@ public class GroupDaoImpl implements GroupDao {
 	@Override
 	public void delete(final String commonName) throws DataServiceException, NotFoundException{
 
-		this.ldapTemplate.unbind(buildDn(commonName), true);
+		this.ldapTemplate.unbind(buildGroupDn(commonName), true);
 
 	}
 	
@@ -196,20 +210,19 @@ public class GroupDaoImpl implements GroupDao {
 
 			g.setDescription(context.getStringAttribute(GroupSchema.DESCRIPTION_KEY));
 			
-			g.setGidNumber(context.getStringAttribute(GroupSchema.GID_NUMBER_KEY));
 
 			// set the list of user
 			Object[] members = getUsers(context);
 			for (int i = 0; i < members.length; i++) {
 
-				g.addUser((String) members[i]);
+				g.addUser((String) members[i]); // FIXME: might break here (members[i] is a DN object, not a uid anymore)
 			}
 				
 			return g;
 		}
 
 		private Object[] getUsers(DirContextAdapter context) {
-			Object[] members = context.getObjectAttributes(GroupSchema.MEMBER_UID_KEY);			
+			Object[] members = context.getObjectAttributes(GroupSchema.MEMBER_KEY);			
 			if(members == null){
 				
 				members = new Object[0];
@@ -235,7 +248,7 @@ public class GroupDaoImpl implements GroupDao {
 		} 
 		
 		// insert the new user account
-		Name dn = buildDn(group.getName());
+		Name dn = buildGroupDn(group.getName());
 
 		DirContextAdapter context = new DirContextAdapter(dn);
 		mapToContext(group, context);
@@ -245,14 +258,13 @@ public class GroupDaoImpl implements GroupDao {
 
 	private void mapToContext(Group group, DirContextOperations context) {
 
-		context.setAttributeValues("objectclass", new String[] { "top", "posixGroup" });
+		context.setAttributeValues("objectclass", new String[] { "top", "groupOfNames" });
 
 		// person attributes
 		setAccountField(context, GroupSchema.COMMON_NAME_KEY, group.getName());
 		
 		setAccountField(context, GroupSchema.DESCRIPTION_KEY, group.getDescription());
 		
-		setAccountField(context, GroupSchema.GID_NUMBER_KEY , group.getGidNumber() ); 
 	}
 
 	/**
