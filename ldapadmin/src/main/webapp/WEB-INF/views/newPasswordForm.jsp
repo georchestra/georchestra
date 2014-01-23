@@ -19,6 +19,8 @@
 </head>
 
 <body>
+    <%@ include file="header.jsp" %>
+
 	<div class="container">
 		<div class="page-header">
 			<h1><s:message code="newPasswordForm.title"/> <small><s:message code="newPasswordForm.subtitle" /></small></h1>
