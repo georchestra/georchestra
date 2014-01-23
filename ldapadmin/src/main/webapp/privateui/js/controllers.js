@@ -387,17 +387,25 @@ function addNode(tree, node) {
     if (!branch) {
       branch = {name: prefix, nodes: []};
       tree.push(branch);
+      tree.sort(function(a, b) {
+        if (a.name.toLowerCase() > b.name.toLowerCase()) {
+          return 1;
+        } else {
+          return -1;
+        }
+      });
     }
     branch.nodes.push({group: node});
     branch.nodes.sort(function(a, b) {
-      return a.group.cn.toLowerCase() > b.group.cn.toLowerCase();
+      if (a.group.cn.toLowerCase() > b.group.cn.toLowerCase()) {
+        return 1;
+      } else {
+        return -1;
+      }
     });
   } else {
     tree.push({name: node.cn, group: node});
   }
-  tree.sort(function(a, b) {
-    return a.name.toLowerCase() > b.name.toLowerCase();
-  });
 }
 
 function removeNode(tree, nodeToRemove) {
