@@ -247,13 +247,18 @@ public class GroupDaoImpl implements GroupDao {
 			// if not exist an account with this uid the new account can be added. 
 		} 
 		
-		// insert the new user account
+		// inserts the new group
 		Name dn = buildGroupDn(group.getName());
 
 		DirContextAdapter context = new DirContextAdapter(dn);
 		mapToContext(group, context);
 
-		this.ldapTemplate.bind(dn, context, null);
+		try {
+		  this.ldapTemplate.bind(dn, context, null);
+		} catch (org.springframework.ldap.NamingException e) {
+			LOG.error(e);
+			throw new DataServiceException(e);
+		}
 	}
 
 	private void mapToContext(Group group, DirContextOperations context) {
@@ -265,6 +270,9 @@ public class GroupDaoImpl implements GroupDao {
 		
 		setAccountField(context, GroupSchema.DESCRIPTION_KEY, group.getDescription());
 		
+		// groupOfNames needs to have at least one member at creation
+		setAccountField(context, GroupSchema.MEMBER_KEY, "uid=fakeuser");
+
 	}
 
 	/**

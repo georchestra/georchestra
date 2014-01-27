@@ -4,6 +4,7 @@
 package org.georchestra.ldapadmin.ws.backoffice.groups;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -29,6 +30,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -55,11 +57,23 @@ public class GroupsController {
 	private static final String NOT_FOUND = "not_found";
 
 	private static final String USER_NOT_FOUND = "user_not_found";
-
 	
+
 	private GroupDao groupDao;
 	private ProtectedUserFilter filter;
 	
+	/**
+	 * Builds a JSON response in case of error.
+	 * @param mesg a descriptive message of the encountered error.
+	 * @return a string of the response.
+	 */
+	private String buildErrorResponse(String mesg) {
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("success", false);
+		map.put("error_message", mesg);
+		return new JSONObject(map).toString();
+	}
+
 	@Autowired
 	public GroupsController( GroupDao dao, UserRule userRule){
 		this.groupDao = dao;
@@ -88,7 +102,9 @@ public class GroupsController {
 		} catch (Exception e) {
 			
 			LOG.error(e.getMessage());
-			
+			ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()),
+					HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+
 			throw new IOException(e);
 		} 
 		
@@ -129,6 +145,9 @@ public class GroupsController {
 			return;
 
 		} catch (DataServiceException e) {
+			LOG.error(e.getMessage());
+			ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()),
+					HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			throw new IOException(e);
 		}
 
@@ -194,9 +213,9 @@ public class GroupsController {
 			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
 			
 		} catch (DataServiceException dsex){
-
 			LOG.error(dsex.getMessage());
-			
+			ResponseUtil.buildResponse(response, buildErrorResponse(dsex.getMessage()),
+					HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			throw new IOException(dsex);
 		}
 	}
@@ -226,9 +245,9 @@ public class GroupsController {
 			ResponseUtil.writeSuccess(response);
 			
 		} catch (Exception e){
-
 			LOG.error(e.getMessage());
-			
+			ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()),
+					HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			throw new IOException(e);
 		}
 	}
@@ -312,7 +331,8 @@ public class GroupsController {
 			
 		}  catch (DataServiceException e){
 			LOG.error(e.getMessage());
-			
+			ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()),
+					HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			throw new IOException(e);
 		}
 	}
@@ -351,11 +371,13 @@ public class GroupsController {
 			
 		}  catch (DataServiceException e){
 			LOG.error(e.getMessage());
-			
+			ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()),
+					HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			throw new IOException(e);
 		} catch (JSONException e) {
 			LOG.error(e.getMessage());
-			
+			ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()),
+					HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			throw new IOException(e);
 		}
 	}

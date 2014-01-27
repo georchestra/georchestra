@@ -64,6 +64,8 @@ angular.module('ldapadmin.controllers', [])
 
           window.location = "#/users";
           flash.success = 'Group correctly added';
+        }, function errorCallback() {
+            flash.error = 'Error creating the group :(';
         });
       };
   })
