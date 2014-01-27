@@ -105,10 +105,11 @@ GEOR.fileupload = (function() {
      * err - {String}
      */
     var errorAndReset = function(form, err) {
+        centerPanel.el.unmask();
         alert(OpenLayers.i18n("server upload error: ERROR", {'ERROR': err}));
         form.reset();
         newFile = true;
-    }
+    };
 
     /**
      * Method: formSuccess
@@ -118,6 +119,7 @@ GEOR.fileupload = (function() {
      * action - {Ext.form.Action}
      */
     var formSuccess = function(form, action) {
+        centerPanel.el.unmask();
         var features,
             fc = (new OpenLayers.Format.JSON()).read(action.response.responseText);
         if (!fc) {
@@ -283,6 +285,7 @@ GEOR.fileupload = (function() {
                             var form = fp.getForm();
                             if (isValid && newFile) {
                                 newFile = false;
+                                centerPanel.el.mask(OpenLayers.i18n("Loading..."));
                                 form.submit({
                                     url: "ws/togeojson/",
                                     success: formSuccess,
