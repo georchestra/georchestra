@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.georchestra.ldapadmin.ws.lostpassword;
+package org.georchestra.ldapadmin.ws.passwordrecovery;
 
 import java.io.Serializable;
 
