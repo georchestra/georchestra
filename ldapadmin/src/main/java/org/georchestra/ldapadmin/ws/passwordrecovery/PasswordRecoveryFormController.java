@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.georchestra.ldapadmin.ws.lostpassword;
+package org.georchestra.ldapadmin.ws.passwordrecovery;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -53,10 +53,10 @@ import org.springframework.web.bind.support.SessionStatus;
  * @author Mauricio Pazos
  */
 @Controller
-@SessionAttributes(types=LostPasswordFormBean.class)
-public class LostPasswordFormController  {
+@SessionAttributes(types=PasswordRecoveryFormBean.class)
+public class PasswordRecoveryFormController  {
 	
-	protected static final Log LOG = LogFactory.getLog(LostPasswordFormController.class.getName());
+	protected static final Log LOG = LogFactory.getLog(PasswordRecoveryFormController.class.getName());
 	
 	// collaborations 
 	private AccountDao accountDao;
@@ -67,7 +67,7 @@ public class LostPasswordFormController  {
 	private ReCaptchaParameters reCaptchaParameters;
 
 	@Autowired
-	public LostPasswordFormController( AccountDao dao, MailService mailSrv, UserTokenDao userTokenDao, Configuration cfg, ReCaptcha reCaptcha, ReCaptchaParameters reCaptchaParameters){
+	public PasswordRecoveryFormController( AccountDao dao, MailService mailSrv, UserTokenDao userTokenDao, Configuration cfg, ReCaptcha reCaptcha, ReCaptchaParameters reCaptchaParameters){
 		this.accountDao = dao;
 		this.mailService = mailSrv;
 		this.userTokenDao = userTokenDao;
@@ -82,17 +82,17 @@ public class LostPasswordFormController  {
 		dataBinder.setAllowedFields(new String[]{"email", "recaptcha_challenge_field", "recaptcha_response_field"});
 	}
 	
-	@RequestMapping(value="/account/lostPassword", method=RequestMethod.GET)
+	@RequestMapping(value="/account/passwordrecovery", method=RequestMethod.GET)
 	public String setupForm(HttpServletRequest request, @RequestParam(value="email", required=false) String email, Model model) throws IOException{
 
 		HttpSession session = request.getSession();
-		LostPasswordFormBean formBean = new LostPasswordFormBean();
+		PasswordRecoveryFormBean formBean = new PasswordRecoveryFormBean();
 		formBean.setEmail(email);
 		
 		model.addAttribute(formBean);
 		session.setAttribute("reCaptchaPublicKey", this.reCaptchaParameters.getPublicKey());
 		
-		return "lostPasswordForm";
+		return "passwordRecoveryForm";
 	}
 	
 	/**
@@ -107,23 +107,23 @@ public class LostPasswordFormController  {
 	 * 
 	 * @throws IOException 
 	 */
-	@RequestMapping(value="/account/lostPassword", method=RequestMethod.POST)
+	@RequestMapping(value="/account/passwordrecovery", method=RequestMethod.POST)
 	public String generateToken(
 						HttpServletRequest request,
-						@ModelAttribute LostPasswordFormBean formBean, 
+						@ModelAttribute PasswordRecoveryFormBean formBean, 
 						BindingResult resultErrors, 
 						SessionStatus sessionStatus) 
 						throws IOException {
 		
 		EmailUtils.validate(formBean.getEmail(), resultErrors);
 		if(resultErrors.hasErrors()){
-			return "lostPasswordForm";
+			return "passwordRecoveryForm";
 		}
 
 		String remoteAddr = request.getRemoteAddr();
 		new RecaptchaUtils(remoteAddr, this.reCaptcha).validate(formBean.getRecaptcha_challenge_field(), formBean.getRecaptcha_response_field(), resultErrors);
 		if(resultErrors.hasErrors()){
-			return "lostPasswordForm";
+			return "passwordRecoveryForm";
 		}
 		
 		try {
@@ -157,7 +157,7 @@ public class LostPasswordFormController  {
 			
 			resultErrors.rejectValue("email", "email.error.notFound", "No user found for this email.");
 			
-			return "lostPasswordForm";
+			return "passwordRecoveryForm";
 			
 		} 
 	}
