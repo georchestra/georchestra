@@ -17,7 +17,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<link href='css/bootstrap.min.css' rel="stylesheet" />
 	<link href='css/ldapadmin.css' rel="stylesheet" />
-	<title><s:message code="lostPasswordForm.title"/></title>
+	<title><s:message code="passwordRecoveryForm.title"/></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
@@ -25,10 +25,10 @@
 
 	<div class="container">
 		<div class="page-header">
-			<h1><s:message code="lostPasswordForm.title"/> <small><s:message code="lostPasswordForm.subtitle" /></small></h1>
+			<h1><s:message code="passwordRecoveryForm.title"/> <small><s:message code="passwordRecoveryForm.subtitle" /></small></h1>
 		</div>
-		<p class="lead"><s:message code="lostPasswordForm.description" /></p>
-		<form:form id="form" name="form" method="post" action="lostPassword" modelAttribute="lostPasswordFormBean" cssClass="form-horizontal col-lg-6 col-lg-offset-1" onsubmit="return validate();">
+		<p class="lead"><s:message code="passwordRecoveryForm.description" /></p>
+		<form:form id="form" name="form" method="post" action="passwordRecovery" modelAttribute="passwordRecoveryFormBean" cssClass="form-horizontal col-lg-6 col-lg-offset-1" onsubmit="return validate();">
 			<c:if test="${not empty message}">
 			<div id="message" class="alert alert-dismissable alert-info">
 				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
@@ -46,14 +46,14 @@
 			</s:bind>
 
 			<fieldset>
-				<legend><s:message code="lostPasswordForm.fieldset.email"/></legend>
+				<legend><s:message code="passwordRecoveryForm.fieldset.email"/></legend>
 				<t:input path="email" required="true">
 					<jsp:attribute name="label"><s:message code="email.label" /></jsp:attribute>
 				</t:input>
 			</fieldset>
 
 			<fieldset>
-				<legend><s:message code="lostPasswordForm.fieldset.reCaptcha"/></legend>
+				<legend><s:message code="passwordRecoveryForm.fieldset.reCaptcha"/></legend>
 				<t:recaptcha path="recaptcha_response_field" />
 			</fieldset>
 
