@@ -82,7 +82,7 @@ public class PasswordRecoveryFormController  {
 		dataBinder.setAllowedFields(new String[]{"email", "recaptcha_challenge_field", "recaptcha_response_field"});
 	}
 	
-	@RequestMapping(value="/account/passwordrecovery", method=RequestMethod.GET)
+	@RequestMapping(value="/account/passwordRecovery", method=RequestMethod.GET)
 	public String setupForm(HttpServletRequest request, @RequestParam(value="email", required=false) String email, Model model) throws IOException{
 
 		HttpSession session = request.getSession();
@@ -107,7 +107,7 @@ public class PasswordRecoveryFormController  {
 	 * 
 	 * @throws IOException 
 	 */
-	@RequestMapping(value="/account/passwordrecovery", method=RequestMethod.POST)
+	@RequestMapping(value="/account/passwordRecovery", method=RequestMethod.POST)
 	public String generateToken(
 						HttpServletRequest request,
 						@ModelAttribute PasswordRecoveryFormBean formBean, 
