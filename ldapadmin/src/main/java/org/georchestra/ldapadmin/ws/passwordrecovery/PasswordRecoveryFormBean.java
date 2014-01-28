@@ -1,8 +1,8 @@
-package org.georchestra.ldapadmin.ws.lostpassword;
+package org.georchestra.ldapadmin.ws.passwordrecovery;
 
 import java.io.Serializable;
 
-public class LostPasswordFormBean implements Serializable{
+public class PasswordRecoveryFormBean implements Serializable{
 
 	/**
 	 * 
@@ -15,7 +15,7 @@ public class LostPasswordFormBean implements Serializable{
 	
 	@Override
 	public String toString() {
-		return "LostPasswordFormBean [email=" + email
+		return "PasswordRecoveryFormBean [email=" + email
 				+ ", recaptcha_challenge_field=" + recaptcha_challenge_field
 				+ ", recaptcha_response_field=" + recaptcha_response_field
 				+ "]";
