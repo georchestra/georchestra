@@ -1,14 +1,15 @@
 /**
- * 
+ *
  */
 package org.georchestra.ldapadmin.dto;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 /**
  * A group and its users.
- * 
+ *
  * @author Mauricio Pazos
  *
  */
@@ -47,7 +48,14 @@ class GroupImpl implements Group, Comparable<Group> {
 	 */
 	@Override
 	public void setUserList(List<String> userUidList) {
-		this.userList = userUidList; // FIXME: check OK
+		this.userList = userUidList;
+		// The full DN is stored LDAP-side, we only need
+		// the user identifier (uid).
+		Iterator<String> uids = userUidList.iterator();
+		while (uids.hasNext()) {
+			String cur = uids.next();
+			cur = cur.replaceAll("uid=([^,]+).*$", "$1");
+		}
 	}
 
 	/* (non-Javadoc)
@@ -55,14 +63,14 @@ class GroupImpl implements Group, Comparable<Group> {
 	 */
 	@Override
 	public void addUser(String userUid) {
-		this.userList.add(userUid); // FIXME: check OK
-
+		// Extracting the uid
+		this.userList.add(userUid.replaceAll("uid=([^,]+).*$", "$1"));
 	}
 
 	@Override
 	public void setDescription(String description) {
 		this.description = description;
-		
+
 	}
 
 	@Override
@@ -77,8 +85,8 @@ class GroupImpl implements Group, Comparable<Group> {
 				+ ", description=" + description
 				+ "]";
 	}
-	
-	
+
+
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
@@ -118,9 +126,9 @@ class GroupImpl implements Group, Comparable<Group> {
 
 	@Override
     public int compareTo(Group o) {
-	    
+
 	    return this.name.compareTo(o.getName());
     }
 
-	
+
 }

@@ -92,7 +92,7 @@ public final class AccountDaoImpl implements AccountDao{
 			// if not exist an account with this e-mail the new account can be added. 
 		} 
 
-		// insert the new user account
+		// inserts the new user account
 		try {
 			Name dn = buildDn( uid );
 
@@ -271,7 +271,7 @@ public final class AccountDaoImpl implements AccountDao{
 		DistinguishedName dn = new DistinguishedName();
 		dn.add("ou", "users");
 		dn.add("uid", uid);
-		
+
 		return dn;
 	}
 	

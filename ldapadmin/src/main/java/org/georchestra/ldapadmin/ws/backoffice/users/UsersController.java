@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.georchestra.ldapadmin.ws.backoffice.users;
 
@@ -35,39 +35,39 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * Web Services to maintain the User information.
- * 
+ *
  * <p>
- * This class provides the operations to access the data layer to update and read the user data. 
+ * This class provides the operations to access the data layer to update and read the user data.
  * Those operations will be consistent with the business rules.
  * </p>
- * 
+ *
  * @author Mauricio Pazos
  *
  */
 @Controller
 public class UsersController {
-	
+
 	private static final Log LOG = LogFactory.getLog(UsersController.class.getName());
 
 	private static final String BASE_MAPPING = "/private";
-	private static final String REQUEST_MAPPING = BASE_MAPPING + "/users";	
-	
+	private static final String REQUEST_MAPPING = BASE_MAPPING + "/users";
+
 	private static final String DUPLICATED_EMAIL = "duplicated_email";
 	private static final String NOT_FOUND = "not_found";
 
 	private AccountDao accountDao;
 	private UserRule userRule;
-	
+
 	@Autowired
 	public UsersController( AccountDao dao, UserRule userRule){
 		this.accountDao = dao;
 		this.userRule = userRule;
 	}
-	
+
 	/**
 	 * Returns array of users using json syntax.
 	 * <pre>
-	 * 
+	 *
 	 *	[
 	 *	    {
 	 *	        "o": "Zogak",
@@ -78,37 +78,37 @@ public class UsersController {
 	 *	        ...
 	 *	]
 	 * </pre>
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 * @throws IOException
 	 */
 	@RequestMapping(value=REQUEST_MAPPING, method=RequestMethod.GET)
 	public void findAll( HttpServletRequest request, HttpServletResponse response ) throws IOException{
-		
+
 		try {
 			ProtectedUserFilter filter = new ProtectedUserFilter( this.userRule.getListUidProtected() );
 			List<Account> list = this.accountDao.findFilterBy(filter);
 
 			UserListResponse userListResponse = new UserListResponse(list);
-			
+
 			String jsonList = userListResponse.asJsonString();
-			
+
 			ResponseUtil.buildResponse(response, jsonList, HttpServletResponse.SC_OK);
-			
+
 		} catch (Exception e) {
-			
+
 			LOG.error(e.getMessage());
-			
+
 			throw new IOException(e);
-		} 
-		
-		
+		}
+
+
 	}
 
 	/**
 	 * Returns the detailed information of the user.
-	 * 
+	 *
 	 * <p>
 	 * If the user identifier is not present in the ldap store an {@link IOException} will be throw.
 	 * </p>
@@ -118,38 +118,38 @@ public class UsersController {
 	 * <p>
 	 * Example: [BASE_MAPPING]/users/hsimpson
 	 * </p>
-	 * 
+	 *
 	 * @param request the request includes the user identifier required
-	 * @param response Returns the detailed information of the user as json 
-	 * @throws IOException 
+	 * @param response Returns the detailed information of the user as json
+	 * @throws IOException
 	 */
 	@RequestMapping(value=REQUEST_MAPPING+"/*", method=RequestMethod.GET)
 	public void findByUid( HttpServletRequest request, HttpServletResponse response) throws IOException{
-		
+
 		String uid = RequestUtil.getKeyFromPathVariable(request).toLowerCase();
-		
+
 		if(this.userRule.isProtected(uid) ){
-			
+
 			String message = "The user is protected: " + uid;
 			LOG.warn(message );
-			
-			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, message); 
+
+			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, message);
 
 			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
-			
+
 			return;
 		}
-		
+
 
 		// searches the account
 		Account account = null;
 		try {
 			account = this.accountDao.findByUID(uid);
-			
+
 		} catch (NotFoundException e) {
-			
+
 			ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(Boolean.FALSE, NOT_FOUND), HttpServletResponse.SC_NOT_FOUND);
-			
+
 			return;
 
 		} catch (DataServiceException e) {
@@ -158,21 +158,21 @@ public class UsersController {
 
 		// sets the account data in the response object
 		UserResponse userResponse = new UserResponse(account);
-		
+
 		String jsonAccount = userResponse.asJsonString();
-		
+
 		ResponseUtil.buildResponse(response, jsonAccount, HttpServletResponse.SC_OK);
 
 	}
-	
+
 	/**
 	 * <p>
 	 * Creates a new user.
 	 * </p>
-	 * 
+	 *
 	 * <pre>
 	 * <b>Request</b>
-	 * 
+	 *
 	 * user data:
 	 * {
      *  "sn": "surname",
@@ -186,18 +186,18 @@ public class UsersController {
      * 	"postOfficeBox": "the post office box",
      *  "o": "the_organization"
      * }
-     * 
+     *
      * where <b>sn, givenName, mail</b> are mandatories
 	 * </pre>
 	 * <pre>
 	 * <b>Response</b>
-	 * 
+	 *
 	 * <b>- Success case</b>
-	 *  
-	 * The generated uid is added to the user data. So, a succeeded response should look like: 
+	 *
+	 * The generated uid is added to the user data. So, a succeeded response should look like:
 	 * {
 	 * 	<b>"uid": generated uid</b>
-	 *  
+	 *
      *  "sn": "surname",
      *	"givenName": "first name",
      *	"mail": "e-mail",
@@ -211,94 +211,94 @@ public class UsersController {
 	 * </pre>
 	 *
 	 * <pre>
-	 * <b>- Error case</b> 
+	 * <b>- Error case</b>
 	 * If the provided e-mail exists in the LDAP store the response will contain:
-	 * 
+	 *
 	 * 	{ \"success\": false, \"error\": \"duplicated_email\"}
-	 * 
+	 *
 	 * Error: 409 conflict with the current state of resource
-	 * 
+	 *
 	 * </pre>
-	 * 
+	 *
 	 * @param request HTTP POST data contains the user data
 	 * @param response
 	 * @throws IOException
 	 */
 	@RequestMapping(value=REQUEST_MAPPING, method=RequestMethod.POST)
 	public void create( HttpServletRequest request, HttpServletResponse response ) throws IOException{
-		
+
 		try{
-			
+
 			Account account = createAccountFromRequestBody(request.getInputStream());
-			
+
 			if(this.userRule.isProtected(account.getUid()) ){
-				
+
 				String message = "The user is protected: " + account.getUid();
 				LOG.warn(message );
-				
-				String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, message); 
+
+				String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, message);
 
 				ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
-				
+
 				return;
 			}
-			
+
 			storeUser(account);
-			
+
 			UserResponse userResponse = new UserResponse(account);
-			
+
 			String jsonResponse = userResponse.asJsonString();
 
 			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_OK);
-			
+
 		} catch (IllegalArgumentException e ){
 			LOG.warn(e.getMessage());
-			
-			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, e.getMessage()); 
+
+			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, e.getMessage());
 
 			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
-			
+
 		} catch (DuplicatedEmailException emailex){
-			
-			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, DUPLICATED_EMAIL); 
+
+			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, DUPLICATED_EMAIL);
 
 			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
 
 		} catch (DataServiceException dsex){
-
-			LOG.error(dsex.getMessage());
-			
+			LOG.error(dsex.getMessage(), dsex);
+			ResponseUtil.buildResponse(response, "{ \"success\": false }",
+					HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			throw new IOException(dsex);
 		}
 	}
-	
+
 
 	/**
 	 * Saves the user in the LDAP store.
-	 * 
+	 *
 	 * @param account
-	 * @throws DuplicatedEmailException 
-	 * @throws DataServiceException 
-	 * @throws IOException 
+	 * @throws DuplicatedEmailException
+	 * @throws DataServiceException
+	 * @throws IOException
 	 */
 	private void storeUser(Account account) throws DuplicatedEmailException, DataServiceException, IOException {
 		try {
-			
+
 			this.accountDao.insert(account, Group.SV_USER);
-			
+
 		} catch (DuplicatedEmailException e) {
 			throw e;
 
 		} catch (DataServiceException e) {
-			
+
 			throw e;
-			
+
 		} catch (DuplicatedUidException e) {
-			
+
 			// this case is not possible because the uid is generated by the application
 			LOG.error(e);
 			throw new IOException(e);
-		}		
+		}
 	}
 
 	/**
@@ -311,15 +311,15 @@ public class UsersController {
 	 * [BASE_MAPPING]/users/{uid}
 	 * </p>
 	 * <p>
-	 * The request body should contains a the fields to modify using the JSON syntax. 
+	 * The request body should contains a the fields to modify using the JSON syntax.
 	 * </p>
 	 * <p>
-	 * Example: 
+	 * Example:
 	 * </p>
 	 * <pre>
 	 * <b>Request</b>
 	 * [BASE_MAPPING]/users/hsimpson
-	 * 
+	 *
 	 * <b>Body request: </b>
 	 * {"sn": "surname",
 	 *  "givenName": "first name",
@@ -331,73 +331,73 @@ public class UsersController {
      *  "l": "locality",
      *  "postOfficeBox": "the post office box"
      * }
-	 * 
+	 *
 	 * </pre>
 	 * @param request
 	 * @param response
-	 * 
+	 *
 	 * @throws IOException if the uid does not exist or fails to access to the LDAP store.
 	 */
 	@RequestMapping(value=REQUEST_MAPPING+ "/*", method=RequestMethod.PUT)
 	public void update( HttpServletRequest request, HttpServletResponse response) throws IOException{
-		
+
 		final String uid = RequestUtil.getKeyFromPathVariable(request).toLowerCase();
 
 		if(this.userRule.isProtected(uid) ){
-			
+
 			String message = "The user is protected, it cannot be updated: " + uid;
 			LOG.warn(message );
-			
-			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, message); 
+
+			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, message);
 
 			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
-			
+
 			return;
 		}
-		
+
 		// searches the account
 		Account account = null;
 		try {
 			account = this.accountDao.findByUID(uid);
-			
+
 		} catch (NotFoundException e) {
-			
+
 			ResponseUtil.writeError(response, NOT_FOUND);
-			
+
 			return;
 
 		} catch (DataServiceException e) {
 			throw new IOException(e);
 		}
-		
+
 		// modifies the account data
 		try{
 			final Account modified = modifyAccount( account, request.getInputStream());
-			
+
 			this.accountDao.update(modified);
 
 			ResponseUtil.writeSuccess(response);
-			
+
 		} catch (DuplicatedEmailException e) {
-			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, DUPLICATED_EMAIL); 
+			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, DUPLICATED_EMAIL);
 
 			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
-			
+
 		} catch (DataServiceException e){
 			LOG.error(e.getMessage());
-			
+
 			throw new IOException(e);
 		}
 	}
 
 	/**
 	 * Deletes the user.
-	 * 
+	 *
 	 * The request format is:
 	 * <pre>
 	 * [BASE_MAPPING]/users/{uid}
 	 * </pre>
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 * @throws IOException
@@ -406,41 +406,41 @@ public class UsersController {
 	public void delete( HttpServletRequest request, HttpServletResponse response) throws IOException{
 		try{
 			final String uid = RequestUtil.getKeyFromPathVariable(request).toLowerCase();
-			
+
 			if(this.userRule.isProtected(uid) ){
-				
+
 				String message = "The user is protected, it cannot be deleted: " + uid;
 				LOG.warn(message );
-				
-				String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, message); 
+
+				String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, message);
 
 				ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
-				
+
 				return;
 			}
 
 			this.accountDao.delete(uid);
-			
+
 			ResponseUtil.writeSuccess(response);
-			
+
 		} catch (Exception e){
 
 			LOG.error(e.getMessage());
-			
+
 			throw new IOException(e);
 		}
-		
+
 
 	}
 
 	/**
 	 * Modify only the account's fields that are present in the request body.
-	 *  
+	 *
 	 * @param accont
 	 * @param inputStream
-	 * 
+	 *
 	 * @return the modified account
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	private Account modifyAccount(Account accont, ServletInputStream inputStream) throws IOException {
@@ -525,20 +525,20 @@ public class UsersController {
 		accont.setCommonName(commonName);
 
 		return accont;
-			
+
 	}
 
 
 
 	/**
 	 * Create a new account from the body request.
-	 * 
+	 *
 	 * @param is
 	 * @return
 	 * @throws IOException
 	 */
 	private Account createAccountFromRequestBody(ServletInputStream is) throws IllegalArgumentException, IOException {
-		
+
 		String strUser = FileUtils.asString(is);
 		JSONObject json;
 		try {
@@ -547,7 +547,7 @@ public class UsersController {
 			LOG.error(e.getMessage());
 			throw new IOException(e);
 		}
-		
+
 		String givenName = RequestUtil.getFieldValue(json, UserSchema.GIVEN_NAME_KEY);
 		if(givenName == null){
 			throw new IllegalArgumentException(UserSchema.GIVEN_NAME_KEY + " is required" );
@@ -560,18 +560,18 @@ public class UsersController {
 		if(email == null){
 			throw new IllegalArgumentException(UserSchema.MAIL_KEY + " is required" );
 		}
-		
+
 		String postalAddress =  RequestUtil.getFieldValue(json, UserSchema.POSTAL_ADDRESS_KEY );
 
 		String postOfficeBox =  RequestUtil.getFieldValue(json, UserSchema.POST_OFFICE_BOX_KEY );
-		
+
 		String postalCode = RequestUtil.getFieldValue(json, UserSchema.POSTAL_CODE_KEY);
-		
-		String street= RequestUtil.getFieldValue(json, UserSchema.STREET_KEY); 
-		String locality = RequestUtil.getFieldValue(json, UserSchema.LOCALITY_KEY); 
+
+		String street= RequestUtil.getFieldValue(json, UserSchema.STREET_KEY);
+		String locality = RequestUtil.getFieldValue(json, UserSchema.LOCALITY_KEY);
 
 		String phone = RequestUtil.getFieldValue(json, UserSchema.TELEPHONE_KEY);
-		
+
 		String facsimile = RequestUtil.getFieldValue( json, UserSchema.FACSIMILE_KEY);
 
 		String org = RequestUtil.getFieldValue( json, UserSchema.ORG_KEY);
@@ -587,28 +587,28 @@ public class UsersController {
 			LOG.error(e.getMessage());
 			throw new IOException(e);
 		}
-		
+
 		String commonName = AccountFactory.formatCommonName(givenName, surname);
-		
+
 		Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, org, title, phone, description, postalAddress, postalCode, "", postOfficeBox, "", street, locality, facsimile, "","","","","");
-		
+
 		return a;
-			
+
 	}
 
 	/**
 	 * Creates a uid based on the given name and surname
-	 * 
+	 *
 	 * @param givenName
 	 * @param surname
 	 * @return return the proposed uid
-	 * 
-	 * @throws DataServiceException 
+	 *
+	 * @throws DataServiceException
 	 */
 	private String createUid(String givenName, String surname) throws DataServiceException {
-		
+
 		String proposedUid = normalizeString(givenName.toLowerCase().charAt(0) + surname.toLowerCase());
-		
+
 		if(! this.accountDao.exist(proposedUid)){
 			return proposedUid;
 		} else {
@@ -618,10 +618,10 @@ public class UsersController {
 
 	/**
 	 * Deaccentuate a string and remove non-word characters
-	 * 
-	 * references: http://stackoverflow.com/a/8523728 and 
+	 *
+	 * references: http://stackoverflow.com/a/8523728 and
 	 * http://stackoverflow.com/a/2397830
-	 * 
+	 *
 	 * @param string an accentuated string, eg. "Joá+o"
 	 * @return return the deaccentuated string, eg. "Joao"
 	 */
