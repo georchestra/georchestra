@@ -226,7 +226,7 @@ public class GroupDaoImpl implements GroupDao {
 			Object[] members = getUsers(context);
 			for (int i = 0; i < members.length; i++) {
 
-				g.addUser((String) members[i]); // FIXME: might break here (members[i] is a DN object, not a uid anymore)
+				g.addUser((String) members[i]);
 			}
 
 			return g;

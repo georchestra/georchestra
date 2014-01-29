@@ -26,13 +26,13 @@ public interface Group {
 	 */
 	List<String> getUserList();
 	
-	void  setUserList(List<String> userUidList); // FIXME: check OK
+	void  setUserList(List<String> userUidList);
 	
 	/**
 	 * adds a user to this group
 	 * @param userUid a user dn
 	 */
-	void  addUser(String userUid); // FIXME: check OK
+	void  addUser(String userUid);
 	
 	void setDescription(String description);	
 
