@@ -1,4 +1,6 @@
-A new account has been created and is waiting for validation.
+Dear admin,
+
+A new account has been created on @shared.homepage.url@ and is waiting for validation.
 
 User name: {name}
 User ID: {uid}
