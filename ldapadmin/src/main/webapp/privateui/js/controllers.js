@@ -64,6 +64,8 @@ angular.module('ldapadmin.controllers', [])
 
           window.location = "#/users";
           flash.success = 'Group correctly added';
+        }, function errorCallback() {
+            flash.error = 'Error creating the group :(';
         });
       };
   })
@@ -190,7 +192,7 @@ angular.module('ldapadmin.controllers', [])
             flash.success = 'Group correctly removed';
           },
           function errorCallback() {
-            flash.error = 'Oops error from server :(';
+            flash.error = 'Error removing the group';
           }
         );
       }
@@ -300,6 +302,13 @@ angular.module('ldapadmin.controllers', [])
           $scope.users.push(user);
           window.location = "#/users";
           flash.success = 'User correctly added';
+        },
+        function errorCallback(response) {
+          if (response.status == 409) {
+            flash.error = 'Error while creating the user: is the specified e-mail already used ?';
+          } else {
+            flash.error = 'Error while creating the user';
+          }
         });
       };
   })
