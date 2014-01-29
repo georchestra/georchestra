@@ -138,14 +138,14 @@ Bug fixes:
  * build now passes on windows.
 
 UPGRADING:
- * As a result of [#569](https://github.com/georchestra/georchestra/issues/569), LDAP groups are now ```groupOfNames``` instances rather than ```posixGroup``` instances. You have to migrate your LDAP tree, according to the following procedure:
-   * dump your ldap **groups** with 
+ * As a result of [#569](https://github.com/georchestra/georchestra/issues/569), LDAP groups are now ```groupOfNames``` instances rather than ```posixGroup``` instances. You have to migrate your LDAP tree, according to the following procedure (please change the ```dc=georchestra,dc=org``` string for your own base DN):
+   * dump your ldap **groups** with:
 
    ```
    ldapsearch -xLLL -D "cn=admin,dc=georchestra,dc=org" -w your_ldap_password -b "ou=groups,dc=georchestra,dc=org" > /tmp/dump.ldif
    ```
 
-   * migration: (please change the ```dc=georchestra,dc=org``` string for your own base DN)
+   * migration:
    
    ```
    sed -i 's/\(memberUid: \)\(.*\)/member: uid=\2,ou=users,dc=georchestra,dc=org/' /tmp/dump.ldif
