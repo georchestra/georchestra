@@ -147,21 +147,21 @@ UPGRADING:
    * dump your ldap **groups** with:
 
    ```
-   ldapsearch -xLLL -D "cn=admin,dc=georchestra,dc=org" -w your_ldap_password -b "ou=groups,dc=georchestra,dc=org" > /tmp/dump.ldif
+   ldapsearch -xLLL -D "cn=admin,dc=georchestra,dc=org" -w your_ldap_password -b "ou=groups,dc=georchestra,dc=org" > /tmp/groups.ldif
    ```
 
    * migration:
    
    ```
-   sed -i 's/\(memberUid: \)\(.*\)/member: uid=\2,ou=users,dc=georchestra,dc=org/' /tmp/dump.ldif
-   sed -i 's/posixGroup/groupOfNames/' /tmp/dump.ldif
-   sed -i '/gidNumber/d' /tmp/dump.ldif
-   sed -i 's/objectClass: groupOfNames/objectClass: groupOfNames\nmember: uid=fakeuser/' /tmp/dump.ldif
+   sed -i 's/\(memberUid: \)\(.*\)/member: uid=\2,ou=users,dc=georchestra,dc=org/' /tmp/groups.ldif
+   sed -i 's/posixGroup/groupOfNames/' /tmp/groups.ldif
+   sed -i '/gidNumber/d' /tmp/groups.ldif
+   sed -i 's/objectClass: groupOfNames/objectClass: groupOfNames\nmember: uid=fakeuser/' /tmp/groups.ldif
    ```
    
    * drop your groups organizationalUnit (```ou```)
    * optionally, have a look at the provided [georchestra-memberof.ldif](https://github.com/georchestra/LDAP/blob/master/georchestra-memberof.ldif) file, which creates & configures the [memberOf overlay](http://www.openldap.org/doc/admin24/overlays.html). As root, and after checking that the file targets the correct database (```olcDatabase={1}hdb``` by default): ```ldapadd -Y EXTERNAL -H ldapi:// < georchestra-memberof.ldif```
-   * import the updated groups LDIF.
+   * import the updated groups.ldif file.
  * analytics: the ExtJS submodule path has changed, be sure to run ```git submodule update --init``` when you switch branches.
  * databases: the downloadform, ogcstatistics and ldapadmin databases are now merged into a single one named "georchestra". Each webapp expects to find its tables in a dedicated schema ("downloadform" for the downloadform module, "ogcstatistics" for ogc-server-statistics, and "ldapadmin" for ldapadmin). See [#535](https://github.com/georchestra/georchestra/pull/535) for the complete patch. If you currently have one dedicated database for each module, you can keep your setup, provided you customize the ```shared.psql.ogc.statistics.db```, ```shared.psql.download_form.db``` & ```shared.ldapadmin.db``` maven filters in your own config. In any case, you'll have to rename the ```download``` schema (of the previous ```downloadform``` database) into ```downloadform```, and migrate the tables which were in the public schema of the databases ```ogcstatistics``` and ```ldapadmin``` into the newly created schemas. 
  
