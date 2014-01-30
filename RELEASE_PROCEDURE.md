@@ -113,6 +113,8 @@ git pull origin georchestra-13.12
 cd -
 ```
 
+Manually update the files mentionning the current release version (```README.md``` and ```RELEASE_NOTES.md```).
+
 Commit and propagate the changes:
 
 ```
