@@ -32,7 +32,7 @@ Notes:
 
 Then clone the repository (either the stable branch or master if you're feeling lucky):
 
-    git clone -b 13.09 --recursive https://github.com/georchestra/georchestra.git
+    git clone -b 14.01 --recursive https://github.com/georchestra/georchestra.git
 
 ...and build:
 
@@ -71,7 +71,7 @@ Do whatever updates you want in the master branch, and regularly merge the upstr
     git fetch upstream
     git merge upstream/master
 
-Note: merge upstream/master into your config if you're using geOrchestra master, or upstream/13.09 if you're using geOrchestra stable.
+Note: merge upstream/master into your config if you're using geOrchestra master, or upstream/14.01 if you're using geOrchestra stable.
 
 Read more about the [configuration process](config/README.md).
 
@@ -85,7 +85,7 @@ An example setup on one Tomcat is described [here](INSTALL.md).
 Once the system is ready, collect WAR files in a dedicated directory and rename them:
 
     PROFILE=myprofile
-    VERSION=13.09
+    VERSION=14.01
     mkdir -p /tmp/georchestra_deploy_tmp
     cd /tmp/georchestra_deploy_tmp
     cp `find ~/.m2/repository/ -name "*-${VERSION}-${PROFILE}.war"` ./

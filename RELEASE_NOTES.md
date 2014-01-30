@@ -1,11 +1,11 @@
 The development branch is master. It can be used for testing and reporting errors.
 
-For production systems, you are advised to use the stable branch (currently 13.09).
+For production systems, you are advised to use the stable branch (currently 14.01).
 This branch receives bug fixes as they arrive, during 6 months at least.
 
 
-Version 14.01 (development version)
-====================================
+Version 14.01 (current stable version)
+======================================
 
 This release was supported by the GeoPicardie, PIGMA, CIGALsace and GeoBretagne projects. 
 The CRAIG (Centre Régional Auvergnat de l'Information Géographique) is also to be thanked for some nice patches.
@@ -209,8 +209,8 @@ psql -d ogcstatistics -c 'drop table public.ogc_services_log;'
  * static: the "static" module has been renamed into "header": your deployment scripts *must* be adapted, as well as your apache2 configuration (or any other reverse proxy).
 
 
-Version 13.09 (current stable version)
-=======================================
+Version 13.09 
+==============
 
 This major release was supported by the GeoPicardie, PIGMA, CIGALsace and GeoBretagne projects. 
 The CRAIG (Centre Régional Auvergnat de l'Information Géographique) is also to be thanked for some nice patches.
