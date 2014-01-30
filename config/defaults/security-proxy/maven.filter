@@ -21,6 +21,7 @@ proxy.mapping=\
     <entry key="geonetwork" value="${proxy.defaultTarget}/geonetwork-private/" />\
     <entry key="catalogapp" value="${proxy.defaultTarget}/catalogapp-private/" />\
     <entry key="geoserver" value="${proxy.defaultTarget}/geoserver-private/" />\
+    <entry key="geofence" value="${proxy.defaultTarget}/geofence-private/" />\
     <entry key="downloadform" value="${proxy.defaultTarget}/downloadform-private/" />\
     <entry key="header" value="${proxy.defaultTarget}/header-private/" />\
     <entry key="analytics" value="${proxy.defaultTarget}/analytics-private/" />\

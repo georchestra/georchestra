@@ -64,3 +64,7 @@ shared.download_form.activated=false
 shared.download_form.pdfurl=
 shared.psql.download_form.db=georchestra
 shared.download_form.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.psql.download_form.db@
+
+shared.geofence.host=localhost
+shared.geofence.port=8080
+shared.geofence.webapp=geofence-private
