@@ -146,6 +146,7 @@ cd geonetwork
 git fetch origin
 git checkout georchestra-14.06
 git pull origin georchestra-14.06
+cd -
 ```
 
 Commit and propagate the changes:
