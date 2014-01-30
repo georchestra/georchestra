@@ -4,7 +4,7 @@ For production systems, you are advised to use the stable branch (currently 13.0
 This branch receives bug fixes as they arrive, during 6 months at least.
 
 
-Version 13.12 (development version)
+Version 14.01 (development version)
 ====================================
 
 This release was supported by the GeoPicardie, PIGMA, CIGALsace and GeoBretagne projects. 
