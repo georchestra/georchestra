@@ -157,4 +157,4 @@ git commit -m "updated GeoNetwork submodule"
 git push origin master
 ```
 
-geOrchestra 14.06 is now released, congrats !
+geOrchestra 13.12 is now released, congrats !
