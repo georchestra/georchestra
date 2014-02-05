@@ -61,3 +61,9 @@ shared.download_form.pdfurl=
 shared.geofence.host=localhost
 shared.geofence.port=8080
 shared.geofence.webapp=geofence-private
+
+shared.ldapadmin.db=georchestra
+shared.ldapadmin.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.ldapadmin.db@
+
+shared.mapfishapp.db=georchestra
+shared.mapfishapp.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.mapfishapp.db@

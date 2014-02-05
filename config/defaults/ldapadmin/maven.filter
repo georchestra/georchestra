@@ -18,10 +18,9 @@ ldap.admin.password=@shared.ldap.admin.password@
 protectedUser.uid1=@shared.privileged.geoserver.user@
 
 # Database connection
+psql.url=@shared.ldapadmin.jdbcurl@
 psql.user=@shared.psql.user@
 psql.pass=@shared.psql.pass@
-ldapadmin.db= # filled by GenerateConfig.groovy
-psql.url=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@ldapadmin.db@
 
 # Email properties
 smtpHost=@shared.smtp.host@
@@ -34,6 +33,7 @@ emailHtml=@shared.email.html@
 # Moderation (enabled by default - we do not want people to be able to gain access to resources without the admin's consent)
 moderatorEmail=@shared.administrator.email@
 
+# filled by GenerateConfig.groovy
 privateKey=
 publicKey=
 publicContextPath=
@@ -44,3 +44,4 @@ subject.change.password=
 moderatedSignup=
 delayInDays=
 requiredFields=
+
