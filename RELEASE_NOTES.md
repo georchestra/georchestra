@@ -12,6 +12,8 @@ The CRAIG (Centre Régional Auvergnat de l'Information Géographique) is also to
 
 New features:
  * [GeoFence](https://github.com/geosolutions-it/geofence/blob/master/README.markdown) integration (not activated by default), see [#534](https://github.com/georchestra/georchestra/issues/534) and the [documentation](https://github.com/georchestra/geofence/blob/georchestra/georchestra.md)
+ * geoserver: new kml and tiff+tab datastores, see [#557](https://github.com/georchestra/georchestra/issues/557)
+ * geoserver: now supports data security with GWC requests, see [GEOS-4217](http://jira.codehaus.org/browse/GEOS-4217) and [geoserver/geoserver#341](https://github.com/geoserver/geoserver/pull/341)
  * mapfishapp: multi-layer querier tool (thanks to the [CRAIG](http://craig.fr/)) - see [#435](https://github.com/georchestra/georchestra/pull/435)
  * mapfishapp: extractor addon - see the [README](mapfishapp/src/main/webapp/app/addons/extractor/README.md)
  * mapfishapp: OpenLS addon - see the [README](mapfishapp/src/main/webapp/app/addons/openls/README.md)
