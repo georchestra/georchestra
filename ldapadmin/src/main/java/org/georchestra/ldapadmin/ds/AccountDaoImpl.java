@@ -3,7 +3,6 @@
  */
 package org.georchestra.ldapadmin.ds;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.naming.Name;
@@ -93,7 +92,7 @@ public final class AccountDaoImpl implements AccountDao{
 			// if not exist an account with this e-mail the new account can be added. 
 		} 
 
-		// insert the new user account
+		// inserts the new user account
 		try {
 			Name dn = buildDn( uid );
 
@@ -270,12 +269,9 @@ public final class AccountDaoImpl implements AccountDao{
 	 */
 	private DistinguishedName buildDn(String  uid) {
 		DistinguishedName dn = new DistinguishedName();
-				
-//		dn.add("dc", "org");
-//		dn.add("dc", "georchestra");
 		dn.add("ou", "users");
 		dn.add("uid", uid);
-		
+
 		return dn;
 	}
 	

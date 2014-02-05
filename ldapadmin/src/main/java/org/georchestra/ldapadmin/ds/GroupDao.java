@@ -14,7 +14,7 @@ import org.georchestra.ldapadmin.dto.Group;
 public interface GroupDao {
 
 	/**
-	 * add the user to the group
+	 * adds the user to the group
 	 * @param uid
 	 * @throws NotFoundException 
 	 * @throws DataServiceException 

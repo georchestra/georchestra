@@ -32,7 +32,6 @@ shared.psql.pass=www-data
 shared.psql.jdbc.driver=org.postgresql.Driver
 shared.psql.jdbc.driver.url=postgresql
 
-
 shared.log.dir=/var/log/tomcat6
 shared.default.log.level=WARN
 other.framework.log.level=WARN
@@ -58,3 +57,7 @@ shared.download_form.activated=false
 shared.download_form.db=georchestra
 shared.download_form.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.download_form.db@
 shared.download_form.pdfurl=
+
+shared.geofence.host=localhost
+shared.geofence.port=8080
+shared.geofence.webapp=geofence-private

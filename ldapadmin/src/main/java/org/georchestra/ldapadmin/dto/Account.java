@@ -2,9 +2,9 @@ package org.georchestra.ldapadmin.dto;
 
 /**
  * Account data transfer object.
- * 
+ *
  * @author Mauricio Pazos
- * 
+ *
  */
 public interface Account {
 

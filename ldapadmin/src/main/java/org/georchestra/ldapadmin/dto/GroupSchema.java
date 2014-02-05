@@ -13,8 +13,7 @@ public interface GroupSchema {
 	
 	public static final String COMMON_NAME_KEY = "cn"; // group name
 	public static final String DESCRIPTION_KEY = "description";
-	public static final String MEMBER_UID_KEY = "memberUid";
-	public static final String GID_NUMBER_KEY = "gidNumber";
+	public static final String MEMBER_KEY = "member";
 
 
 }

@@ -16,7 +16,7 @@ These pages should be light (no need to ship ExtJS).
 
 ### Lost Password
 
-The page asks for user email. An optional `email` parameter can be passed to preset the email field (eg: /ldapadmin/account/lostPassword?email=user@domain.tld).
+The page asks for user email. An optional `email` parameter can be passed to preset the email field (eg: /ldapadmin/account/passwordRecovery?email=user@domain.tld).
 
 If the given email matches one of the LDAP users:
  * an email is sent to this user with a unique https URL to reset his password (eg: /ldapadmin/account/changePassword?token=54f23f27f6c5f23c68b9b5f9650839dc)

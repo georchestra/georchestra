@@ -57,6 +57,9 @@
   border-top: 0;
   border-bottom: 1px solid #ddd;
 }
+#noone {
+  margin-top: 40px;
+}
 
 .toolbar {
   height: 30px;

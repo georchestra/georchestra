@@ -1,42 +1,41 @@
 /**
- * 
+ *
  */
 package org.georchestra.ldapadmin.dto;
 
 import java.io.Serializable;
 
 /**
- * Account this is a Data transfer Object. 
- *  
- *  
+ * Account this is a Data transfer Object.
+ *
+ *
  * @author Mauricio Pazos
  *
  */
 class AccountImpl implements Serializable, Account, Comparable<Account>{
 
 	private static final long serialVersionUID = -8022496448991887664L;
-	
-	
+
 	// main data
 	private String uid; // uid
-	
+
 	private String commonName; // cn: person's full name,  mandatory
 	private String surname; // sn  mandatory
-	
+
 	private String org; // o
 	private String email;// mail
-	private String phone;// telephoneNumber 
+	private String phone;// telephoneNumber
 	private String description; // description
 	private String password; // userPassword
 	private String newPassword;
 
 	// user details
 	// sn, givenName, o, title, postalAddress, postalCode, registeredAddress, postOfficeBox, physicalDeliveryOfficeName
-	private String givenName; // givenName (optonal)
+	private String givenName; // givenName (optional)
 	private String title; // title
 	private String postalAddress; //postalAddress
 	private String postalCode; // postalCode
-	private String registeredAddress; //registeredAddress 
+	private String registeredAddress; //registeredAddress
 	private String postOfficeBox; // postOfficeBox
 	private String physicalDeliveryOfficeName; //physicalDeliveryOfficeName
 
@@ -63,8 +62,8 @@ class AccountImpl implements Serializable, Account, Comparable<Account>{
 
 
 	private String homePostalAddres;
-	
-	
+
+
 	@Override
 	public String toString() {
 		return "AccountImpl [uid=" + uid + ", commonName=" + commonName
@@ -91,7 +90,7 @@ class AccountImpl implements Serializable, Account, Comparable<Account>{
 	public String getUid(){
 		return this.uid;
 	}
-	
+
 	/**
 	 * Person’s full name.
 	 */
@@ -99,7 +98,7 @@ class AccountImpl implements Serializable, Account, Comparable<Account>{
 	public String getCommonName() {
 		return commonName;
 	}
-	
+
 	/**
 	 * Person’s full name.
 	 */
@@ -153,12 +152,12 @@ class AccountImpl implements Serializable, Account, Comparable<Account>{
 	@Override
 	public void setNewPassword(String newPassword) {
 		this.newPassword = newPassword;
-		
+
 	}
 	@Override
 	public String getNewPassword() {
 		return this.newPassword;
-		
+
 	}
 
 	@Override
@@ -172,7 +171,7 @@ class AccountImpl implements Serializable, Account, Comparable<Account>{
 	}
 
 	/**
-	 * The givenName attribute is used to hold the part of a person’s name which is not their surname nor middle name.	 
+	 * The givenName attribute is used to hold the part of a person’s name which is not their surname nor middle name.
 	 */
 	@Override
 	public String getGivenName() {
@@ -180,7 +179,7 @@ class AccountImpl implements Serializable, Account, Comparable<Account>{
 	}
 
 	/**
-	 * The givenName attribute is used to hold the part of a person’s name which is not their surname nor middle name.	 
+	 * The givenName attribute is used to hold the part of a person’s name which is not their surname nor middle name.
 	 */
 	@Override
 	public void setGivenName(String givenName) {
@@ -249,7 +248,7 @@ class AccountImpl implements Serializable, Account, Comparable<Account>{
 
 	@Override
 	public void setStreet(String street) {
-		
+
 		this.street = street;
 	}
 
@@ -260,7 +259,7 @@ class AccountImpl implements Serializable, Account, Comparable<Account>{
 
 	@Override
 	public void setLocality(String locality) {
-		
+
 		this.locality = locality;
 	}
 
@@ -292,7 +291,7 @@ class AccountImpl implements Serializable, Account, Comparable<Account>{
 
 	@Override
 	public void setRoomNumber(String roomNumber) {
-		
+
 		this.roomNumber = roomNumber;
 	}
 	@Override
@@ -382,8 +381,7 @@ class AccountImpl implements Serializable, Account, Comparable<Account>{
 	}
 	@Override
     public int compareTo(Account o) {
-
 		return this.surname.compareTo(o.getSurname());
     }
-	
+
 }
