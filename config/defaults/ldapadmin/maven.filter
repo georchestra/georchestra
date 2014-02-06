@@ -1,9 +1,8 @@
-# ReCaptcha keys
-privateKey=6LcfjucSAAAAAKcnHp14epYOiWOIUfEculd4PvLV
-publicKey=6LcfjucSAAAAAKtNoK5r7IIXxBT-33znNJUgeYg1
+# It is recommended that you do not copy this file into your own profile
+# (unless you know what you're doing)
 
-# Application path as seen from the external world
-publicContextPath=/ldapadmin
+language=@shared.language@
+headerHeight=@shared.header.height@
 
 # LDAP
 ldapUrl=@shared.ldapUrl@
@@ -19,9 +18,9 @@ ldap.admin.password=@shared.ldap.admin.password@
 protectedUser.uid1=@shared.privileged.geoserver.user@
 
 # Database connection
+psql.url=@shared.ldapadmin.jdbcurl@
 psql.user=@shared.psql.user@
 psql.pass=@shared.psql.pass@
-psql.url=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.ldapadmin.db@
 
 # Email properties
 smtpHost=@shared.smtp.host@
@@ -31,23 +30,18 @@ replyTo=@shared.email.replyTo@
 from=@shared.email.from@
 emailHtml=@shared.email.html@
 
-subject.account.created=[@shared.instance.name@] Your account has been created
-subject.account.in.process=[@shared.instance.name@] Your new account is waiting for validation
-subject.requires.moderation=[@shared.instance.name@] New account waiting for validation
-subject.change.password=[@shared.instance.name@] Update your password
-
 # Moderation (enabled by default - we do not want people to be able to gain access to resources without the admin's consent)
-moderatedSignup=true
 moderatorEmail=@shared.administrator.email@
 
-# Expired token
-delayInDays=1
+# filled by GenerateConfig.groovy
+privateKey=
+publicKey=
+publicContextPath=
+subject.account.created=
+subject.account.in.process=
+subject.requires.moderation=
+subject.change.password=
+moderatedSignup=
+delayInDays=
+requiredFields=
 
-language=@shared.language@
-headerHeight=@shared.header.height@
-
-# List of required fields in forms (CSV list) - possible values are:
-# firstName,surname,phone,facsimile,org,title,description,postalAddress
-#
-# Note that email, uid, password and confirmPassword are always required
-requiredFields=firstName,surname

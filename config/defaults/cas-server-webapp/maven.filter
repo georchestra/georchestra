@@ -1,3 +1,6 @@
+# It is recommended that you do not copy this file into your own profile
+# (unless you know what you're doing)
+
 host=@shared.server.name@
 port=@shared.server.port@
 ldapUrl=@shared.ldapUrl@
