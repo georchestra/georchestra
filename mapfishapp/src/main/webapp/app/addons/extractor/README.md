@@ -22,7 +22,7 @@ Typical configuration to include in your GEOR_custom.js file:
         "options": {
             "srsData": [
                 ["EPSG:4326", "WGS84 (EPSG:4326)"],
-                ["EPSG:2154", "Lambert 93 (EPSG:2154)"]
+                ["EPSG:3857", "Spherical Mercator (EPSG:3857)"]
             ],
             "defaultSRS": "EPSG:4326",
             "defaultVectorFormat": "shp", // must be one of shp, mif, tab, kml

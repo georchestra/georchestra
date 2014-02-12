@@ -201,7 +201,7 @@ GEOR.querier = (function() {
                 // Houston, we've got a pb ...
                 
                 // When using WFS 1.0, getFeature requests are honored with geodata in the original data's SRS 
-                // ... which might not be EPSG:2154 !
+                // ... which might not be the map SRS !
                 // When using GeoServer, an additional parameter can be used (srsName) to ask for feature reprojection, 
                 // which is not part of the WFS 1.0 spec
                 // When using MapServer, it seems that we have no way to do the same.

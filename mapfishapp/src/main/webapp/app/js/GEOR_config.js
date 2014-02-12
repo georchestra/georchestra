@@ -475,22 +475,21 @@ GEOR.config = (function() {
         /**
          * Constant: POINTER_POSITION_SRS_LIST
          * {Array} The cursor position will be displayed using these SRS.
-         * Defaults to [["EPSG:4326", "WGS 84"],["EPSG:2154", "Lambert 93"]]
+         * Defaults to [["EPSG:4326", "WGS 84"],["EPSG:3857", "Spherical Mercator"]]
          */
         POINTER_POSITION_SRS_LIST: getCustomParameter("POINTER_POSITION_SRS_LIST",  [
             ["EPSG:4326", "WGS 84"],
-            ["EPSG:2154", "Lambert 93"]
+            ["EPSG:3857", "Spherical Mercator"]
         ]),
 
         /**
          * Constant: PROJ4JS_STRINGS
          * {Object} The list of supported SRS with their definitions.
-         * Defaults to "EPSG:4326", "EPSG:2154" & "EPSG:900913" being defined
+         * Defaults to "EPSG:4326", "EPSG:3857" & "EPSG:900913" being defined
          * Note that "EPSG:900913" is required if OSM_AS_OVMAP is set to true
          */
         PROJ4JS_STRINGS: getCustomParameter("PROJ4JS_STRINGS", {
             "EPSG:4326": "+title=WGS 84, +proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs",
-            "EPSG:2154": "+title=RGF-93/Lambert 93, +proj=lcc +lat_1=49 +lat_2=44 +lat_0=46.5 +lon_0=3 +x_0=700000 +y_0=6600000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs",
             "EPSG:3857": "+title=Web Spherical Mercator, +proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs",
             "EPSG:900913": "+title=Web Spherical Mercator, +proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs"
         }),
