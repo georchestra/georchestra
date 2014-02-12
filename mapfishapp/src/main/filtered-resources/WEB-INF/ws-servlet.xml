@@ -28,10 +28,10 @@
     <bean class="org.georchestra.mapfishapp.ws.UpLoadGeoFileController">
         <property name="responseCharset" value="UTF-8"/>
         <property name="tempDirectory" value="${docTempDir}/geoFileUploadsCache"/>
-        <property name="zipSizeLimit" value="8589934592"/>
-        <property name="kmlSizeLimit" value="8589934592"/>
-        <property name="gpxSizeLimit" value="8589934592"/>
-        <property name="gmlSizeLimit" value="8589934592"/>
+        <property name="zipSizeLimit" value="8388608"/>
+        <property name="kmlSizeLimit" value="8388608"/>
+        <property name="gpxSizeLimit" value="8388608"/>
+        <property name="gmlSizeLimit" value="8388608"/>
     </bean>
 
     <!-- Documents controller -->
