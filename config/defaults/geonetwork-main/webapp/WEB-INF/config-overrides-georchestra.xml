@@ -21,7 +21,7 @@
         <port>80</port>
     </properties>
     <file name=".*/WEB-INF/config.xml">
-        <replaceText xpath="default/language">fre</replaceText>
+        <replaceText xpath="default/language">@shared.geonetwork.language@</replaceText>
 <!--        <replaceAtt xpath="appHandler/param[@name = 'preferredSchema']" attName="value" value="iso19139.fra"/> -->
         <replaceAtt xpath="appHandler/param[@name = 'useSubversion']" attName="value" value="false"/>
         <replaceAtt xpath="appHandler/param[@name = 'maxWritesInTransaction']" attName="value" value="1"/>
