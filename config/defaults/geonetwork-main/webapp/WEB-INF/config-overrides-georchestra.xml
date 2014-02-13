@@ -9,7 +9,7 @@
         <postgis.pass>@shared.psql.pass@</postgis.pass>
         <postgis.host>@shared.psql.host@</postgis.host>
         <postgis.port>@shared.psql.port@</postgis.port>
-        <postgis.db>@shared.psql.geonetwork.db@</postgis.db>
+        <postgis.db>@shared.geonetwork.db@</postgis.db>
         <postgis.max.active>50</postgis.max.active>
         <postgis.max.idle>20</postgis.max.idle>
         <postgis.min.idle>0</postgis.min.idle>

@@ -45,10 +45,6 @@ shared.email.from=psc\@georchestra.org
 
 shared.administrator.email=psc\@georchestra.org
 
-shared.geonetwork.dir=/var/lib/tomcat6/work/gn_data
-shared.psql.geonetwork.db=geonetwork
-shared.geonetwork.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.psql.geonetwork.db@
-
 shared.ogc.statistics.activated=false
 shared.ogc.statistics.db=georchestra
 shared.ogc.statistics.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.ogc.statistics.db@
@@ -63,3 +59,5 @@ shared.ldapadmin.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@
 
 shared.mapfishapp.db=georchestra
 shared.mapfishapp.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.mapfishapp.db@
+
+shared.geonetwork.db=geonetwork
