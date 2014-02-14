@@ -67,7 +67,7 @@ Note 2: PostGIS extensions are not required in the georchestra database, unless 
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ldapadmin TO "www-data";'
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA ldapadmin TO "www-data";'
 
-* if geofence is deployed:
+ * if geofence is deployed:
 
         createlang plpgsql georchestra
         psql -f /usr/share/postgresql/9.1/contrib/postgis-1.5/postgis.sql georchestra
