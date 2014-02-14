@@ -61,3 +61,5 @@ shared.mapfishapp.db=georchestra
 shared.mapfishapp.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.mapfishapp.db@
 
 shared.geonetwork.db=geonetwork
+
+shared.geofence.db=georchestra

@@ -32,6 +32,7 @@ PostGreSQL
 
         sudo su postgres
         createdb geonetwork
+        createlang plpgsql geonetwork
         psql -f /usr/share/postgresql/9.1/contrib/postgis-1.5/postgis.sql geonetwork
         psql -f /usr/share/postgresql/9.1/contrib/postgis-1.5/spatial_ref_sys.sql geonetwork
         createuser -SDRIP www-data
@@ -48,7 +49,7 @@ PostGreSQL
 
 Note 1: It is possible to store webapp-specific schemas in separate databases.
 
-Note 2: PostGIS extensions are not required for now in the georchestra database.
+Note 2: PostGIS extensions are not required in the georchestra database, unless GeoFence is deployed (see below).
 
  * if mapfishapp is deployed:
 
@@ -65,6 +66,19 @@ Note 2: PostGIS extensions are not required for now in the georchestra database.
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA ldapadmin TO "www-data";'
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ldapadmin TO "www-data";'
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA ldapadmin TO "www-data";'
+
+* if geofence is deployed:
+
+        createlang plpgsql georchestra
+        psql -f /usr/share/postgresql/9.1/contrib/postgis-1.5/postgis.sql georchestra
+        psql -f /usr/share/postgresql/9.1/contrib/postgis-1.5/spatial_ref_sys.sql georchestra
+        psql -d georchestra -c 'GRANT SELECT ON public.spatial_ref_sys to "www-data";'
+        psql -d georchestra -c 'GRANT SELECT,INSERT,DELETE ON public.geometry_columns to "www-data";'
+        wget https://raw.github.com/georchestra/geofence/georchestra/doc/setup/sql/002_create_schema_postgres.sql -O /tmp/geofence.sql
+        psql -d georchestra -f /tmp/geofence.sql
+        psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA geofence TO "www-data";'
+        psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA geofence TO "www-data";'
+        psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA geofence TO "www-data";'
 
  * if ```shared.download_form.activated``` is true in your setup (false by default):
 
