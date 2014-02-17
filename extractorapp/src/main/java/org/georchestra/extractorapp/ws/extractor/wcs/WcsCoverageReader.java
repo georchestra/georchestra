@@ -36,7 +36,9 @@ import org.geotools.coverage.grid.io.AbstractGridFormat;
 import org.geotools.coverage.grid.io.GridFormatFinder;
 import org.geotools.coverage.grid.io.UnknownFormat;
 import org.geotools.coverage.processing.Operations;
+import org.geotools.data.MapInfoFileReader;
 import org.geotools.data.ServiceInfo;
+import org.geotools.data.mif.MIFProjReader;
 import org.geotools.factory.GeoTools;
 import org.geotools.factory.Hints;
 import org.geotools.gce.geotiff.GeoTiffWriter;
@@ -703,11 +705,13 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
             Properties properties = new Properties();
             properties.load(in);
             
+            MIFProjReader tabProjReader = new MIFProjReader();
+            
             Iterator<ReferenceIdentifier> iter = transformedBBox.getCoordinateReferenceSystem().getIdentifiers().iterator();
             String crsCode = iter.next().toString();
-            crsCode = crsCode.replace("EPSG:", "");
-            		
-            out.println(properties.get(crsCode));
+            int crs = Integer.valueOf(crsCode.replace("EPSG:", ""));
+            
+            out.println("CoordSys Earth Projection " + tabProjReader.toMifCoordSys(crs));
             out.print("units \"" + CRSUtilities.getUnit(transformedBBox.getCoordinateReferenceSystem().getCoordinateSystem()).toString() + "\"");
             
             /**
