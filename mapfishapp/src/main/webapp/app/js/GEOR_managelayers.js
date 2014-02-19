@@ -368,7 +368,7 @@ GEOR.managelayers = (function() {
                     if (aa < bb) return -1;
                     return 0;
                 });
-                var checked, style, text;
+                var checked, style, text, cfg;
                 for (var i=0, len=styles.length; i<len; i++) {
                     style = styles[i];
                     if (style.href) {
@@ -384,18 +384,21 @@ GEOR.managelayers = (function() {
                             default_style.checked = false;
                             checked = true;
                         }
-                        text = (style.name || style.title) + // title is a human readable string
+                        text = (style.title || style.name) + // title is a human readable string
                             (style.name === defaultStyleName ? " - <b>"+tr("default style")+"</b>" : "");
-                        stylesMenuItems.push(new Ext.menu.CheckItem({
+                        cfg = {
+                            xtype: "menucheckitem",
                             text: text,
-                            // but it is not often relevant (eg: may store "AtlasStyler v1.8")
-                            // moreover, GeoServer 2 displays style name rather than style title.
                             value: style.name, // name is used in the map request STYLE parameter
                             checked: checked,
                             group: 'style_' + layer.id,
                             checkHandler: onStyleItemCheck,
                             scope: layerRecord
-                        }));
+                        };
+                        if (style['abstract']) { // this is the "sld:abstract" field
+                            cfg.qtip = style['abstract'];
+                        }
+                        stylesMenuItems.push(cfg);
                     }
                 }
             }
@@ -414,14 +417,15 @@ GEOR.managelayers = (function() {
             };
             for (var i=0, len=styles.length; i<len; i++) {
                 identifier = styles[i].identifier;
-                stylesMenuItems.push(new Ext.menu.CheckItem({
+                stylesMenuItems.push({
+                    xtype: "menucheckitem",
                     text: identifier,
                     value: identifier,
                     checked: layer.style === identifier,
                     group: 'style_' + layer.id,
                     checkHandler: onStyleItemCheck,
                     scope: layerRecord
-                }));
+                });
             }
         }
         return new Ext.menu.Menu({
@@ -690,6 +694,9 @@ GEOR.managelayers = (function() {
             stylesMenu = createStylesMenu(layerRecord);
             menuItems.push({
                 text: tr("Choose a style"),
+                plugins: [{
+                    ptype: 'menuqtips'
+                }],
                 menu: stylesMenu
             });
             menuItems.push({
