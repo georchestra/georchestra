@@ -190,6 +190,7 @@ Apache
     RewriteRule ^/geowebcache$ /geowebcache/ [R]
     RewriteRule ^/header$ /header/ [R]
     RewriteRule ^/ldapadmin$ /ldapadmin/ [R]
+    RewriteRule ^/ldapadmin/privateui$ /ldapadmin/privateui/ [R]
     RewriteRule ^/mapfishapp$ /mapfishapp/ [R]
     RewriteRule ^/proxy$ /proxy/ [R]
     
