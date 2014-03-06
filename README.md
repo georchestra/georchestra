@@ -80,7 +80,9 @@ How to install ?
 ===============
 
 geOrchestra runs well on Debian boxes with Tomcat6 (version 7 might hang your geonetwork, see #418).
-An example setup on one Tomcat is described [here](INSTALL.md).
+The minimum system requirement is 2 cores and 4Gb RAM. More is better ;-)
+
+To install the required packages and setup the system, follow the [install guide](INSTALL.md) (based on a unique tomcat instance).
 
 Once the system is ready, collect WAR files in a dedicated directory and rename them:
 
@@ -110,6 +112,3 @@ Copy WAR files in Tomcat webapps dir:
 
 This is the basic idea, but one can use more advanced deploy scripts. An example is provided 
 [here](server-deploy/linux_deploy_scripts/Readme.md).
-
-Note: it is also possible to split the webapps across several Tomcat instances. 
-The recommended setup is to have at least 2 tomcats, with one entirely dedicated to GeoServer.
