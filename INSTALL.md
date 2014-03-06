@@ -43,8 +43,8 @@ Note 2: PostGIS extensions are not required in the georchestra database, unless 
  * if **geonetwork** is to be deployed, you need to create a dedicated user and schema:
 
         createuser -SDRIP geonetwork (the default setup expects that the geonetwork user password is www-data)
-        psql -d geonetwork -c 'CREATE SCHEMA geonetwork;'
-        psql -d geonetwork -c 'GRANT ALL PRIVILEGES ON SCHEMA geonetwork TO "geonetwork";'
+        psql -d georchestra -c 'CREATE SCHEMA geonetwork;'
+        psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA geonetwork TO "geonetwork";'
 
  * if **mapfishapp** is deployed:
 
