@@ -5,7 +5,19 @@
     <import file="/WEB-INF/config-overrides-dev.xml"/>
     
     <properties>
-        <postgis.user>@shared.psql.user@</postgis.user>
+        <!-- 
+        
+        To have the geonetwork tables located inside a "geonetwork" schema
+        inside the "georchestra" database, we use the fact that the default 
+        search_path in postgresql is set to '$user,public'.
+        
+        Please refer to https://github.com/georchestra/georchestra/issues/601 
+        for more information.
+        
+        Of course, you are free to customize this in your own profile ...
+        
+        -->
+        <postgis.user>geonetwork</postgis.user>
         <postgis.pass>@shared.psql.pass@</postgis.pass>
         <postgis.host>@shared.psql.host@</postgis.host>
         <postgis.port>@shared.psql.port@</postgis.port>
