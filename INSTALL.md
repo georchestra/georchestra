@@ -179,6 +179,7 @@ Apache
     RewriteRule ^/catalogapp$ /catalogapp/ [R]
     RewriteRule ^/downloadform$ /downloadform/ [R]
     RewriteRule ^/extractorapp$ /extractorapp/ [R]
+    RewriteRule ^/extractorapp/admin$ /extractorapp/admin/ [R]
     RewriteRule ^/geonetwork$ /geonetwork/ [R]
     RewriteRule ^/geoserver$ /geoserver/ [R]
     RewriteRule ^/geofence$ /geofence/ [R]
