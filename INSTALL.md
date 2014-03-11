@@ -600,3 +600,5 @@ The recommended production setup is to have 2 or 3 tomcat instances:
  - one for the security proxy and CAS
  - one for geoserver
  - one for all the other webapps
+
+There is no tutorial for this at the moment, so feel free to ask for guidance on the https://groups.google.com/forum/#!forum/georchestra-dev mailing list.
