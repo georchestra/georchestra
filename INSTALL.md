@@ -366,8 +366,6 @@ Create a directory for tomcat6 java preferences (to avoid a `WARNING: Couldn't f
 Environment variables
 ----------------------
 
-In case of a 32G RAM server, add the following options at the end of the configuration file:
-
 ```
 sudo nano /etc/default/tomcat6
 ```
@@ -377,7 +375,7 @@ JAVA_OPTS="$JAVA_OPTS \
               -Dsun.java2d.opengl=true \
               -Djava.awt.headless=true \
               -Xms4G \
-              -Xmx28G \
+              -Xmx8G \
               -XX:MaxPermSize=256m "
 ```
 
@@ -474,14 +472,19 @@ sudo nano /etc/default/tomcat6
 ```
 
 ```
-JAVA_OPTS="$JAVA_OPTS -Dfile.encoding=UTF8 \
+JAVA_OPTS="$JAVA_OPTS
+    -Xms2G -Xmx2G -XX:PermSize=256m -XX:MaxPermSize=256m \
     -DGEOSERVER_DATA_DIR=/path/to/geoserver/data/dir \
     -DGEOWEBCACHE_CACHE_DIR=/path/to/geowebcache/cache/dir \
+    -Djava.awt.headless=true \
+    -Dfile.encoding=UTF8 \
+    -Djavax.servlet.request.encoding=UTF-8 \
+    -Djavax.servlet.response.encoding=UTF-8 \
     -server \
-    -XX:+UseParallelGC \
+    -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:ParallelGCThreads=2 \
     -XX:SoftRefLRUPolicyMSPerMB=36000 \
     -XX:NewRatio=2 \
-    -XX:+AggressiveOpts"
+    -XX:+AggressiveOpts "  
 ```
 
 * Fonts
