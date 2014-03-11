@@ -372,7 +372,6 @@ sudo nano /etc/default/tomcat6
 
 ```
 JAVA_OPTS="$JAVA_OPTS \
-              -Dsun.java2d.opengl=true \
               -Djava.awt.headless=true \
               -Xms4G \
               -Xmx8G \
