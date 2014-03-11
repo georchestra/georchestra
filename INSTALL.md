@@ -152,11 +152,9 @@ Apache
 
 * Error documents (useful when tomcat restarts for maintenance)
 
-    Feel free to customize the provided 50x.html file:
-
-       mkdir -p /var/www/georchestra/htdocs/errors
+        mkdir -p /var/www/georchestra/htdocs/errors
         wget http://sdi.georchestra.org/errors/50x.html -O /var/www/georchestra/htdocs/errors/50x.html
-        
+
 
 * Apache config
 
