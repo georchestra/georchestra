@@ -594,7 +594,7 @@ Production ready setup
 
 The above setup is great for testing purposes.
 
-If you plan to use geOrchestra with a great number of users, or if high availability is a concern, it is recommended to split the webapps across several Tomcat instances, eventually load balancing GeoServer. 
+If you plan to use geOrchestra with a large number of users, or if high availability is a concern, it is recommended to split the webapps across several Tomcat instances, eventually load balancing GeoServer. 
 
 The recommended production setup is to have 2 or 3 tomcat instances:
  - one for the security proxy and CAS
