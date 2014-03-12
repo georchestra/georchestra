@@ -260,7 +260,7 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<finalName>extractorapp-private</finalName>
+		<finalName>extractorapp</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -281,7 +281,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
 				<configuration>
-					<warName>extractorapp-private</warName>
+					<warName>extractorapp</warName>
 				</configuration>
 			</plugin>
 			<plugin>

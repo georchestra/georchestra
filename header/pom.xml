@@ -96,7 +96,7 @@
 				<artifactId>maven-war-plugin</artifactId>
 				<configuration>
 					<classifier>${server}</classifier>
-					<warName>header-private</warName>
+					<warName>header</warName>
 				</configuration>
 			</plugin>
 			<plugin>

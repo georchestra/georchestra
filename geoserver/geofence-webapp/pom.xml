@@ -76,7 +76,7 @@
                 <configuration>
                     <warSourceDirectory>${gf.unpack.dir}</warSourceDirectory>
                     <webXml>${gf.unpack.dir}/WEB-INF/web.xml</webXml>
-                    <warName>geofence-private</warName>
+                    <warName>geofence</warName>
                     <filter>${confdir}/${project.artifactId}/maven.filter</filter>
                     <webResources>
                         <resource>

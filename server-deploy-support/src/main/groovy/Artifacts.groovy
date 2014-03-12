@@ -18,12 +18,11 @@ class Artifacts {
     /**
      * maps cas-server-webapp to cas.war
      *      security-proxy to ROOT.war (required for tomcat servers to be the / webapp)
-     *      added -private to all other artifacts
      */
     static def standardGeorchestraAliasFunction = versionNumToPrivateMapping {artifact ->
         if (artifact.name.startsWith("cas-server-webapp")) return "cas.war"
         else if (artifact.name.startsWith("security-proxy")) return "ROOT.war"
-        else if (artifact.name.startsWith("geonetwork-main")) return "geonetwork-private.war"
+        else if (artifact.name.startsWith("geonetwork-main")) return "geonetwork.war"
         else return null
     }
     /**
@@ -35,7 +34,7 @@ class Artifacts {
      * if the artifact is of the form:  .+-<version>.war then the <version> is
      * replaced with the word private.
      *
-     * For example extractorapp-1.0.war will be mapped to extractorapp-private.war
+     * For example extractorapp-1.0.war will be mapped to extractorapp.war
      *
      * @param explicitMapping a function to override the default behaviour
      */
@@ -47,7 +46,7 @@ class Artifacts {
                 def regex = /(.+)-\d.+\.war/
                 if (file.name ==~ regex) {
                     def matcher = file.name =~ regex
-                    return matcher[0][1]+"-private.war"
+                    return matcher[0][1]+".war"
                 } else {
                     return file.name
                 }

@@ -2,7 +2,7 @@
   Reads all war dependencies of of server-deploy module to determine which webapps need to be deployed
   the second param is the Alias function.  The war files that are supplied to the script have the full 
   module name and version as defined in their pom.  For example extractorapp-1.0.war is the 
-  actual file, the aliasFunction will map that to extractorapp-private.war which is what the deployed
+  actual file, the aliasFunction will map that to extractorapp.war which is what the deployed
   system expects.  The artifacts can be mapped to any desired name.  
   
   The Artifacts object uses the maven dependencies to look up the artifacts that need to be deployed

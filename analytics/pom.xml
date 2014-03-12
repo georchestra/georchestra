@@ -100,7 +100,7 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<finalName>analytics-private</finalName>
+		<finalName>analytics</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -121,7 +121,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
 				<configuration>
-					<warName>analytics-private</warName>
+					<warName>analytics</warName>
 				</configuration>
 			</plugin>
 			<plugin>
