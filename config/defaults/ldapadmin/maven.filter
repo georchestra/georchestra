@@ -11,6 +11,8 @@ baseDN=@shared.ldap.baseDn@
 ldapAdminDn=@shared.ldap.admin.dn@
 ldap.admin.password=@shared.ldap.admin.password@
 
+accountUniqueNumberField=employeeNumber
+
 # list of protected user
 # example
 #protectedUser.uid1=@shared.privileged.geoserver.user@

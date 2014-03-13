@@ -59,6 +59,7 @@
 	<bean id="accountDao" class="org.georchestra.ldapadmin.ds.AccountDaoImpl">
         <constructor-arg ref="ldapTemplate" />
         <constructor-arg ref="groupDao" />
+        <property name="uniqueNumberField" value="${accountUniqueNumberField}"/>
 	</bean>
 
     <!-- userTokenDao  -->
