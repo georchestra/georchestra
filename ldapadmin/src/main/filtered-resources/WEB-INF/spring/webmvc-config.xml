@@ -54,6 +54,7 @@
 	</bean>
 	<bean id="groupDao" class="org.georchestra.ldapadmin.ds.GroupDaoImpl">
 		<property name="ldapTemplate" ref="ldapTemplate" />
+        <property name="uniqueNumberField" value="${groupUniqueNumberField}"/>
 	</bean>
 
 	<bean id="accountDao" class="org.georchestra.ldapadmin.ds.AccountDaoImpl">

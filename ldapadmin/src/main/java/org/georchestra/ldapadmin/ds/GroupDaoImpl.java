@@ -6,11 +6,13 @@ package org.georchestra.ldapadmin.ds;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.naming.InvalidNameException;
 import javax.naming.Name;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
+import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.SearchControls;
@@ -51,15 +53,22 @@ public class GroupDaoImpl implements GroupDao {
 
 	private LdapTemplate ldapTemplate;
 
-	public LdapTemplate getLdapTemplate() {
+    private String uniqueNumberField = "ou";
+
+    private AtomicInteger uniqueNumberCounter = new AtomicInteger(-1);
+
+    public LdapTemplate getLdapTemplate() {
 		return ldapTemplate;
 	}
 
 	public void setLdapTemplate(LdapTemplate ldapTemplate) {
 		this.ldapTemplate = ldapTemplate;
 	}
+    public void setUniqueNumberField(String uniqueNumberField) {
+        this.uniqueNumberField = uniqueNumberField;
+    }
 
-	/**
+    /**
 	 * Create an ldap entry for the group
 	 *
 	 * @param cn
@@ -243,7 +252,7 @@ public class GroupDaoImpl implements GroupDao {
 	}
 
 	@Override
-	public void insert(Group group) throws DataServiceException, DuplicatedCommonNameException {
+	public synchronized void insert(Group group) throws DataServiceException, DuplicatedCommonNameException {
 
 		if( group.getName().length()== 0 ){
 			throw new IllegalArgumentException("given name is required");
@@ -259,11 +268,15 @@ public class GroupDaoImpl implements GroupDao {
 			// the new account can be safely added.
 		}
 
-		// inserts the new group
+
+        EqualsFilter filter = new EqualsFilter("objectClass", "groupOfNames");
+        Integer uniqueNumber = AccountDaoImpl.findUniqueNumber(filter, uniqueNumberField, this.uniqueNumberCounter, ldapTemplate);
+
+        // inserts the new group
 		Name dn = buildGroupDn(group.getName());
 
 		DirContextAdapter context = new DirContextAdapter(dn);
-		mapToContext(group, context);
+		mapToContext(uniqueNumber, group, context);
 
 		try {
 		  this.ldapTemplate.bind(dn, context, null);
@@ -273,10 +286,14 @@ public class GroupDaoImpl implements GroupDao {
 		}
 	}
 
-	private void mapToContext(Group group, DirContextOperations context) {
+	private void mapToContext(Integer uniqueNumber, Group group, DirContextOperations context) {
 
 		context.setAttributeValues("objectclass", new String[] { "top", "groupOfNames" });
 
+        // person attributes
+        if (uniqueNumber != null) {
+            setAccountField(context, uniqueNumberField, uniqueNumber.toString());
+        }
 		// person attributes
 		setAccountField(context, GroupSchema.COMMON_NAME_KEY, group.getName());
 
@@ -323,16 +340,61 @@ public class GroupDaoImpl implements GroupDao {
 	 *
 	 */
 	@Override
-	public void update(final String groupName, final Group group) throws DataServiceException, NotFoundException, DuplicatedCommonNameException {
+	public synchronized void update(final String groupName, final Group group) throws DataServiceException, NotFoundException, DuplicatedCommonNameException {
 
 		if( group.getName().length()== 0 ){
 			throw new IllegalArgumentException("given name is required");
 		}
 
-		// because cn is part of distinguish name it cannot be updated. So the group is removed to include a new one with the new values
+        if (!group.getName().equals(groupName)) {
+            // checks unique common name
+            try{
+                findByCommonName(group.getName());
+
+                throw new DuplicatedCommonNameException("there is a group with this name: " + group.getName());
+
+            } catch (NotFoundException e1) {
+                // if an account with the specified uid cannot be retrieved, then
+                // the new account can be safely added.
+            }
+        }
+
+
+        DistinguishedName dn = buildGroupDn(groupName);
+
+        Integer uniqueNumber = (Integer) ldapTemplate.lookup(dn, new AttributesMapper() {
+            @Override
+            public Object mapFromAttributes(Attributes attributes) throws NamingException {
+                final Attribute attribute = attributes.get(uniqueNumberField);
+                if (attribute == null || attribute.size() == 0) {
+                    return -1;
+                }
+                try {
+                    return Integer.parseInt(attribute.get().toString());
+                } catch (NumberFormatException e) {
+                    return -1;
+                }
+            }
+        });
+
+                // because cn is part of distinguish name it cannot be updated. So the group is removed to include a new one with the new values
 		delete(groupName);
 
-		insert(group);
+        if (uniqueNumber == -1) {
+            // no unique number defined so just insert it and which will assign a unique number
+            insert(group);
+        } else {
+            // inserts the new group
+            DirContextAdapter context = new DirContextAdapter(dn);
+            mapToContext(uniqueNumber, group, context);
+
+            try {
+                this.ldapTemplate.bind(dn, context, null);
+            } catch (org.springframework.ldap.NamingException e) {
+                LOG.error(e);
+                throw new DataServiceException(e);
+            }
+        }
 	}
 
 	@Override
