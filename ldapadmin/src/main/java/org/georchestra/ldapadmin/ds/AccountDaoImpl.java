@@ -4,9 +4,11 @@
 package org.georchestra.ldapadmin.ds;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.naming.Name;
 import javax.naming.NamingException;
+import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 
 import org.georchestra.ldapadmin.dto.Account;
@@ -21,6 +23,7 @@ import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.DistinguishedName;
 import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.ldap.filter.AbstractFilter;
 import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
 
@@ -33,9 +36,10 @@ public final class AccountDaoImpl implements AccountDao{
 	
 	private LdapTemplate ldapTemplate;
 	private GroupDao groupDao;
-	
-	
-	@Autowired
+    private String uniqueNumberField = "employeeNumber";
+    private AtomicInteger uniqueNumberCounter = new AtomicInteger(-1);
+
+    @Autowired
 	public AccountDaoImpl( LdapTemplate ldapTemplate, GroupDao groupDao) {
 	
 		this.ldapTemplate =ldapTemplate;
@@ -58,13 +62,16 @@ public final class AccountDaoImpl implements AccountDao{
 	public void setGroupDao(GroupDao groupDao) {
 		this.groupDao = groupDao;
 	}
-	
+
+    public void setUniqueNumberField(String uniqueNumberField) {
+        this.uniqueNumberField = uniqueNumberField;
+    }
 
 	/**
 	 * @see {@link AccountDao#insert(Account, String)}
 	 */
 	@Override
-	public void insert(final Account account, final String groupID) throws DataServiceException, DuplicatedUidException, DuplicatedEmailException{
+	public synchronized void insert(final Account account, final String groupID) throws DataServiceException, DuplicatedUidException, DuplicatedEmailException{
 	
 		assert account != null;
 		
@@ -80,8 +87,8 @@ public final class AccountDaoImpl implements AccountDao{
 
 		} catch (NotFoundException e1) {
 			// if not exist an account with this uid the new account can be added. 
-		} 
-		
+		}
+
 		// checks unique email
 		try {
 			findByEmail(account.getEmail().trim());
@@ -92,12 +99,19 @@ public final class AccountDaoImpl implements AccountDao{
 			// if not exist an account with this e-mail the new account can be added. 
 		} 
 
+
+
 		// inserts the new user account
 		try {
 			Name dn = buildDn( uid );
+            AndFilter filter = new AndFilter();
+            filter.and(new EqualsFilter("objectClass", "inetOrgPerson"));
+            filter.and(new EqualsFilter("objectClass", "organizationalPerson"));
+            filter.and(new EqualsFilter("objectClass", "person"));
 
+            Integer uniqueNumber = findUniqueNumber(filter, uniqueNumberField, this.uniqueNumberCounter, ldapTemplate);
 			DirContextAdapter context = new DirContextAdapter(dn);
-			mapToContext(account, context);
+			mapToContext(uniqueNumber, account, context);
 
 			this.ldapTemplate.bind(dn, context, null);
 
@@ -108,8 +122,58 @@ public final class AccountDaoImpl implements AccountDao{
 		}
 	}
 
+    static Integer findUniqueNumber(AbstractFilter searchFilter, final String uniqueNumberField, AtomicInteger uniqueNumber, LdapTemplate ldapTemplate) {
+        if (uniqueNumberField == null || uniqueNumberField.trim().isEmpty()) {
+            return null;
+        }
+        if (uniqueNumber.get() < 0) {
+            @SuppressWarnings("unchecked")
+            final List<Integer> uniqueIds = ldapTemplate.search(DistinguishedName.EMPTY_PATH, searchFilter.encode(), new AttributesMapper() {
+                @Override
+                public Object mapFromAttributes(Attributes attributes) throws NamingException {
+                    final Attribute attribute = attributes.get(uniqueNumberField);
+                    if (attribute == null) {
+                        return 0;
+                    }
+                    final Object number = attribute.get();
+                    if (number != null) {
+                        try {
+                            return Integer.valueOf(number.toString());
+                        } catch (NumberFormatException e) {
+                            return 0;
+                        }
+                    }
+                    return 0;
+                }
+            });
 
-	/**
+            for (Integer uniqueId : uniqueIds) {
+                if (uniqueId != null && uniqueId > uniqueNumber.get()) {
+                    uniqueNumber.set(uniqueId);
+                }
+            }
+            if (uniqueNumber.get() < 0) {
+                uniqueNumber.set(0);
+            }
+            uniqueNumber.incrementAndGet();
+        }
+
+        boolean isUnique = false;
+        while (!isUnique) {
+            AndFilter filter = new AndFilter();
+            filter.and(searchFilter);
+            filter.and(new EqualsFilter(uniqueNumberField, uniqueNumber.get()));
+            isUnique = ldapTemplate.search(
+                    DistinguishedName.EMPTY_PATH,
+                    filter.encode(),
+                    new AccountContextMapper()).isEmpty();
+            uniqueNumber.incrementAndGet();
+        }
+        return uniqueNumber.get();
+    }
+
+
+    /**
 	 * @see {@link AccountDao#update(Account)}
 	 */
 	@Override
@@ -147,7 +211,7 @@ public final class AccountDaoImpl implements AccountDao{
 		Name dn = buildDn(account.getUid());
 		DirContextOperations context = ldapTemplate.lookupContext(dn);
 
-		mapToContext(account, context);
+		mapToContext(null /*don't update number */, account, context);
 		
 		ldapTemplate.modifyAttributes(context);
 	}
@@ -301,16 +365,19 @@ public final class AccountDaoImpl implements AccountDao{
 	 		
 	/**
 	 * Maps the following the account object to the following LDAP entry schema:
-	 * 
-	 * @param account
-	 * @param context
-	 * @param createEntry
-	 */
-	private void mapToContext(Account account, DirContextOperations context) {
+	 *
+     * @param uniqueNumber
+     * @param account
+     * @param context
+     */
+	private void mapToContext(Integer uniqueNumber, Account account, DirContextOperations context) {
 		
 		context.setAttributeValues("objectclass", new String[] { "top", "person", "organizationalPerson", "inetOrgPerson" });
 
 		// person attributes
+        if (uniqueNumber != null) {
+		    setAccountField(context, uniqueNumberField, uniqueNumber.toString());
+        }
 		setAccountField(context, UserSchema.SURNAME_KEY, account.getSurname());
 
 		setAccountField(context, UserSchema.COMMON_NAME_KEY, account.getCommonName());
