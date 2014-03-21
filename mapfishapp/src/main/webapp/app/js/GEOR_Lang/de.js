@@ -193,7 +193,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Set as overlay": "Wechseln in nächsthöhere Schicht",
     "Set as baselayer": "Wechseln in nächsttiefere Schicht",
     "Confirm NAME layer deletion ?":
-        "Voulez-vous réellement supprimer la couche ${NAME} ?",
+        "Bestätigung des Löschvorgangs des Layers ${NAME} ?",
     "1:MAXSCALE to 1:MINSCALE": "1:${MAXSCALE} bis 1:${MINSCALE}",
     "Visibility range (indicative):<br />from TEXT":
         "Zoomschärfe : :<br /> ${TEXT}",
@@ -226,7 +226,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Switch on/off edit mode for this layer": "Layer in Bearbeitungsmodus wechseln",
     "No geometry column.": "Geometrische Spalte nicht gefunden.",
     "Geometry column type (TYPE) is unsupported.": "${TYPE}) Typ geometrische Spalte ungültig.",
-    "Switching to attributes-only edition.": "Seuls les attributs des objets existants seront éditables.",
+    "Switching to attributes-only edition.": "Nur die Objektattribute sind veränderbar.",
     /* GEOR_map.js strings */
     "Location map": "Lageplan",
     "Warning after loading layer":
@@ -299,21 +299,20 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Printing...": "Druckvorgang aktiv...",
     "Print current map": "Drucken der aktiven Karte",
     /* GEOR_querier.js strings */
-    "Fields of filters with a red mark are mandatory": "Vous devez remplir " +
-        "les champs des filtres marqués en rouge.",
+    "Fields of filters with a red mark are mandatory": "Rote Felder sind auszufüllen",
     "Request on NAME": "Sucher auf ${NAME}",
-    "WFS GetFeature on filter": "GetFeature WFS sur un filtre",
+    "WFS GetFeature on filter": "GetFeature WFS auf einem Filter",
     "Search": "Suchen",
     "querier.layer.no.geom":
-        "La couche ne possède pas de colonne géométrique." +
-        "<br />Le requêteur géométrique ne sera pas fonctionnel.",
+        "Geometrische Spalte nicht vorhanden." +
+        "<br />Sucher nicht verfügbar.",
     "querier.layer.error":
-        "Impossible d'obtenir les caractéristiques de la couche demandée." +
-        "<br />Le requêteur ne sera pas disponible.",
+        "Charakteristiken der angeforderten Layer nicht möglich." +
+        "<br />Sucher nicht verfügbar.",
     /* GEOR_referentials.js strings */
     "Referential": "Datenbasis",
     "There is no geometry column in the selected referential":
-        "Le référentiel sélectionné ne possède pas de colonne géométrique",
+        "Geometrische Spalte nicht auffindbar",
     "Choose a referential": "Wählen Sie die Referenzen",
     /* GEOR_resultspanel.js strings */
     "resultspanel.maxfeature.reached":
@@ -324,29 +323,28 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "One result": "1 Ergebnis",
     "No result": "kein Ergebnis",
     "Clean": "löchen",
-    "Clean all results on the map and in the table": "Supprimer les " +
-        "résultats affichés sur la carte et dans le tableau",
+    "Clean all results on the map and in the table": "Löschen " +
+        "der aufgezeichneten Ergebnisse auf Karte und Liste",
     "Zoom": "Zoom",
     "Zoom to results extent": "Zoom auf Ergebnis",
-    "CSV Export": "Export CSV",
-    "Export results as CSV": "Exporter l'ensemble des résultats en CSV",
+    "CSV Export": "CSV exportieren",
+    "Export results as CSV": "Exportieren der Gesamtergebnisse aus CSV",
     "<p>No result for that request.</p>": "<p>Kein Ergebnis zu Ihrer Anfrage.</p>",
     /* GEOR_scalecombo.js strings */
     /* GEOR_selectfeature.js strings */
     "<div>Select features activated on NAME layer. Clic on the map.</div>":
         "<div>Objektabfragen activiert ${NAME}. " +
         "Klicken Sie auf die Karte.</div>",
-    "OpenLayers SelectFeature":"Sélection d\'objets",
+    "OpenLayers SelectFeature":"Objektselektion",
     /* GEOR_styler.js strings */
     "Download style": "Stil downladen",
-    "You can download your SLD style at ": "Votre SLD est disponible à " +
-        "l\'adresse suivante : ",
+    "You can download your SLD style at ": "SLD auf folgender Adresse verfügbar : ",
     "Thanks!": "Danke !",
-    "Saving SLD": "Sauvegarde du SLD",
+    "Saving SLD": "die SLD-Speicherung",
     "Some classes are invalid, verify that all fields are correct": "Des " +
         "Klassen ungültig, überprüfen Sie ob die Felder korrekt sind",
-    "Get SLD": "Récupération du SLD",
-    "Malformed SLD": "Le SLD n'est pas conforme.",
+    "Get SLD": "SLD holen",
+    "Malformed SLD": "SLD nicht konform.",
     "circle": "Kreis",
     "square": "Viereck",
     "triangle": "Dreieck",
@@ -357,41 +355,39 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Classification ...<br/>(this operation can take some time)":
         "Klassifikation ...<br/>(Diese Operation kann Zeit benötigen)",
     "Class": "Klass",
-    "Untitled": "ohne Titel",
+    "Untitled": "Ohne Titel",
     "styler.guidelines":
-        "Utiliser le bouton \"+\" pour créer une classe, et le bouton " +
-        "\"Analyse\" pour créer un ensemble de classes définies par une " +
-        "analyse thématique.</p>", 
+        "Benutzen Sie den Button \"+\" Um eine Klasse zu schaffen und den Button " +
+        "\"Analyse\" Um eine Gesamtklasse der thematischen Analyse zu schaffen.</p>", 
     "Analyze": "Analyse",
     "Add a class": "Klasse hinzufügen",
-    "Delete the selected class": "Supprimer la classe sélectionnée",
+    "Delete the selected class": "Gewählte Klasse löschen",
     "Styler": "Styler",
     "Apply": "Ausführen",
-    "Impossible to complete the operation:": "Opération impossible :",
+    "Impossible to complete the operation:": "Operation nicht möglich :",
     "no WFS service associated to that layer": "kein WFS Service " +
         "mit diesem Layer verbunden.",
     "no available attribute": "kein Attribut verfügbar.",
     /* GEOR_toolbar.js strings */
     "m": "m",
-    "hectares": "hectares",
+    "hectares": "Hektare",
     "zoom to global extent of the map": "Maximaler Kartenausschnitt",
-    "pan": "glisser - déplacer la carte",
-    "zoom in": "Vergrössern (pour zoomer sur une emprise: appuyer sur SHIFT + dessiner l'emprise)",
+    "pan": "Karte verschieben",
+    "zoom in": "Vergrössern (Um auf eine Teilansicht zu zoomen, bitte SHIFT drücken und Ansicht zeichnen)",
     "zoom out": "Verkleinern",
     "back to previous zoom": "vorherige Kartenansicht",
     "go to next zoom": "nächste Kartenansicht",
     "Login": "Login",
     "Logout": "Logout",
     "Help": "Hilfe",
-    "Query all active layers": "Interroger toutes les couches actives",
+    "Query all active layers": "Alle aktivierten Layer abfragen",
     "Show legend": "Legende anzeigen",
     "Leave this page ? You will lose the current cartographic context.":
-        "Vous allez quitter cette page et perdre le contexte cartographique " +
-        "courant",
-    "Online help": "Aide en ligne",
-    "Display the user guide": "Afficher le guide de l'utilisateur",
-    "Contextual help": "Aide contextuelle",
-    "Activate or deactivate contextual help bubbles": "Activer ou désactiver les bulles d'aide contextuelle",
+        "Sie verlassen diese Seite und verlieren die geschaffenen Karten",
+    "Online help": "Hilfe",
+    "Display the user guide": "Hilfe anzeigen",
+    "Contextual help": "Hinweise",
+    "Activate or deactivate contextual help bubbles": "Aktivieren der Hinweisblasen",
     /* GEOR_tools.js strings */
     "distance measure": "Distanz messen",
     "area measure": "Oberfläche messen",
@@ -400,11 +396,11 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "tools": "Werkzeuge",
     "tool": "Werkzeug",
     "No tool": "kein Werkzeug",
-    "Manage tools": "Gérer les outils",
-    "remember the selection": "se souvenir de la sélection",
-    "Available tools:": "Outils disponibles :",
+    "Manage tools": "Utensilien verwalten",
+    "remember the selection": "Erinnern der Selektion",
+    "Available tools:": "Utensilien vorhanden :",
     "Clic to select or deselect the tool": "Klicken um Werkzeug abzuwählen",
-    "Could not load addon ADDONNAME": "Impossible de charger l'addon ${ADDONNAME}",
+    "Could not load addon ADDONNAME": "${ADDONNAME} Addon laden unmöglich ",
     /* GEOR_util.js strings */
     "Characters": "Zeichen",
     "Digital": "Digital",
@@ -414,67 +410,66 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Information": "Information",
     /* GEOR_waiter.js strings */
     /* GEOR_wmc.js strings */
-    "The provided file is not a valid OGC context": "Le fichier fourni n'est pas un contexte OGC valide",
-    "Warning: trying to restore WMC with a different projection (PROJCODE1, while map SRS is PROJCODE2). Strange things might occur !": "Attention: le contexte restauré avait été sauvegardé en ${PROJCODE1} alors que la carte actuelle est en ${PROJCODE2}. Il pourrait y avoir des comportements inattendus.",
+    "The provided file is not a valid OGC context": "OGC entspricht nicht dieser Datei",
+    "Warning: trying to restore WMC with a different projection (PROJCODE1, while map SRS is PROJCODE2). Strange things might occur !": "Achtung: die restaurierte Karte wurde mit ${PROJCODE1} abgespeichert, die aktuelle Karte mit ${PROJCODE2}. Unerwartete Probleme können auftreten.",
     /* GEOR_wmcbrowser.js strings */
-    "Could not find WMC file": "Le contexte spécifié n'existe pas",
+    "Could not find WMC file": "Gewählte Karte nicht vorhanden",
     "... or a custom context": "... oder einer personalisierten Karte",
-    "Replace current map composition with one of these contexts:": "Remplacer la composition actuelle de la carte par l'un de ces contextes :",
-    "A unique OSM layer": "Une unique couche OpenStreetMap",
+    "Replace current map composition with one of these contexts:": "Aktuelle Karte ersetzen durch :",
+    "A unique OSM layer": "Ein einziger Layer OpenStreetMap",
     "default viewer context": "Standarteinstellung",
     "(default)": "<br/>(Standardeinstellung)",
     /* GEOR_workspace.js strings */
-    "Share this map": "Partager cette carte",
-    "Mobile viewer": "Visualiseur mobile",
-    "Mobile compatible viewer on sdi.georchestra.org": "Visualiseur mobile sur sdi.georchestra.org",
-    "Desktop viewer": "Visualiseur web",
-    "Desktop viewer on sdi.georchestra.org": "Visualiseur web sur sdi.georchestra.org",
+    "Share this map": "Karte teilen",
+    "Mobile viewer": "Kartenviewer für mobile Technologie",
+    "Mobile compatible viewer on sdi.georchestra.org": "Kartenviewer für mobile Technologie auf sdi.georchestra.org",
+    "Desktop viewer": "Web Kartenviewer",
+    "Desktop viewer on sdi.georchestra.org": "Web Kartenviewer auf sdi.georchestra.org",
     "Abstract": "Zusammenfassung",
-    "Context saving": "Sauvegarde du contexte",
-    "The file is required.": "Un nom de fichier est nécessaire.",
-    "Context restoring": "Restauration d'un contexte",
+    "Context saving": "Kontextspeicherung",
+    "The file is required.": "Dateiname nötig.",
+    "Context restoring": "Kontext restaurieren",
     "<p>Please note that the WMC must be UTF-8 encoded</p>": "<p>der WMC muss UTF8 kodiert sein</p>",
     "Load": "laden",
-    "Workspace": "Espace de travail",
-    "Save the map context": "Sauvegarder la carte",
+    "Workspace": "Menü",
+    "Save the map context": "die Kartenspeicherung",
     "Load a map context": "Karte laden",
     "Get a permalink": "Permalink bekommen",
     "Permalink": "Permalink",
-    "Share your map with this URL: ": "Partagez la carte avec l'adresse suivante : ",
-    "Edit in OSM": "Editer dans OSM",
+    "Share your map with this URL: ": "Karte mit folgender Adresse teilen : ",
+    "Edit in OSM": "Berarbeitet im OSM",
     "with JOSM": "mit JOSM",
-    "JOSM must be started with the remote control option": "Il vous faut " +
-        "auparavant lancer JOSM et activer le contrôle à distance",
+    "JOSM must be started with the remote control option": "Bitte " +
+        "vorher JOSM und Distanzkontrolle aktivieren",
     "with Potlatch": "mit Potlatch",
-    "Recommended scale is 1:10.000": "Il est recommandé de travailler à des " +
-        "échelles proches de 1:10.000",
+    "Recommended scale is 1:10.000": "Empfohlener Maßstab : 1/10000",
     "with Potlatch2": "mit Potlatch2",
     "with Walking Papers": "mit Walking Papers",
     /* GEOR_edit.js */
     "Req.": "Req.", // requis
-    "Required": "Requis",
-    "Not required": "Non requis",
-    "Synchronization failed.": "Erreur lors de la synchronisation.",
-    "Edit activated": "Edition activée", 
-    "Hover the feature you wish to edit, or choose \"new feature\" in the edit menu": "Survolez les objets de la couche que vous souhaitez modifier, ou choisissez \"nouvel objet\" dans le menu d'édition de la couche",
+    "Required": "Pflicht",
+    "Not required": "Nicht Pflicht",
+    "Synchronization failed.": "Synchronisationsfehler",
+    "Edit activated": "Bearbeitung aktiviert", 
+    "Hover the feature you wish to edit, or choose \"new feature\" in the edit menu": "Uberfliegen der zu verändernden Layerobjekte, oder wählen Sie \"neues Objekt\" im Layermenü",
     /* GeoExt.data.CSW.js */
-    "no abstract": "pas de résumé"
+    "no abstract": "Keine Zusammenfassung"
     // no trailing comma
 });
 
 GeoExt.Lang.add("fr", {
     "GeoExt.ux.FeatureEditorGrid.prototype": {
-        deleteMsgTitle: "Suppression",
-        deleteMsg: "Confirmer la suppression de cet objet vectoriel ?",
+        deleteMsgTitle: "Löschung",
+        deleteMsg: "löschen bestätigen ?",
         deleteButtonText: "löschen",
-        deleteButtonTooltip: "Supprimer cet objet",
-        cancelMsgTitle: "Annulation",
-        cancelMsg: "L'objet a été modifié localement. Confirmer l'abandon des changements ?",
-        cancelButtonText: "Annuler",
-        cancelButtonTooltip: "Abandonner les modifications en cours",
-        saveButtonText: "Enregistrer",
-        saveButtonTooltip: "Enregistrer les modifications",
+        deleteButtonTooltip: "Objekt löschen",
+        cancelMsgTitle: "Annulierung",
+        cancelMsg: "Objekt verändert. Bestätigen Sie das Löschen der Änderung ?",
+        cancelButtonText: "Annulieren",
+        cancelButtonTooltip: "Aktuelle Änderungen verwerfen",
+        saveButtonText: "speichern",
+        saveButtonTooltip: "Änderungen speichern",
         nameHeader: "Attribut",
-        valueHeader: "Valeur"
+        valueHeader: "Wert"
     }
 });
