@@ -468,6 +468,27 @@ sudo nano /etc/tomcat6/server.xml
 GeoServer
 =========
 
+* "Data dir"
+
+GeoServer configuration files reside in a particular directory, which is (incorrectly) called the "data dir".
+
+Regarding this data dir, there are 2 recommendations:
+ * it should not reside inside the deployed webapp,
+ * before starting geoserver for the first time, it should be manually populated with a provided "[minimal data dir](https://github.com/georchestra/geoserver_minimal_datadir/blob/master/README.md)".
+
+To this purpose:
+
+```
+sudo -u tomcat mkdir /path/to/geoserver/data/dir
+cd /path/to/geoserver/data/
+```
+
+Finally, you should clone the provided minimal data dir, either branch ```master``` for regular geoserver security or ```geofence``` if you are using geofence.
+```
+sudo -u tomcat git clone -b master https://github.com/georchestra/geoserver_minimal_datadir.git dir
+```
+
+
 * Tomcat
 
 Required JAVA_OPTS for GeoServer :
@@ -491,6 +512,8 @@ JAVA_OPTS="$JAVA_OPTS
     -XX:NewRatio=2 \
     -XX:+AggressiveOpts "  
 ```
+
+Be sure to provide the correct ```GEOSERVER_DATA_DIR``` path !
 
 * Fonts
 
