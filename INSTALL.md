@@ -472,9 +472,9 @@ GeoServer
 
 GeoServer configuration files reside in a particular directory, which is (incorrectly) called the "data dir".
 
-Regarding this data dir, there are 2 recommendations:
- * it should not reside inside the deployed webapp,
- * before starting geoserver for the first time, it should be manually populated with a provided "[minimal data dir](https://github.com/georchestra/geoserver_minimal_datadir/blob/master/README.md)".
+Regarding this data dir, there are 2 recommendations: 
+1) it should not reside inside the deployed webapp,
+2) before starting geoserver for the first time, it should be manually populated with a provided "[minimal data dir](https://github.com/georchestra/geoserver_minimal_datadir/blob/master/README.md)".
 
 To this purpose:
 
