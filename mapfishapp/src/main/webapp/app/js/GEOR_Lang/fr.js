@@ -209,7 +209,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Show metadata": "Afficher les métadonnées",
     "Edit symbology": "Éditer la symbologie",
     "Build a query": "Construire une requête",
-    "Download data": "Télécharger les données",
+    "Download data": "Extraire les données",
     "Choose a style": "Choisir un style",
     "Modify format": "Modifier le format",
     "Delete this layer": "Supprimer cette couche",
