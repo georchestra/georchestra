@@ -5,15 +5,13 @@ LDAP
 
 * install the required packages
 
-        sudo apt-get install slapd ldap-utils
+        sudo apt-get install slapd ldap-utils git-core
 
 * sample data import
 
- * getting the data
+ * getting the data, where XX stands for the geOrchestra version you're using (eg: ```13.09```, ```14.01``` or ```master``` for unstable)
  
-            sudo apt-get install git-core
-            git clone git://github.com/georchestra/LDAP.git
-            cd LDAP
+            git clone -b XX git://github.com/georchestra/LDAP.git
 	
  * inserting the data: follow the instructions in https://github.com/georchestra/LDAP/blob/master/README.md
 
