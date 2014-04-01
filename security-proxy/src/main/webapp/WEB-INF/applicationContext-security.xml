@@ -16,7 +16,7 @@
         <s:intercept-url pattern="/extractorapp/admin/.*" access="ROLE_ADMINISTRATOR" />
         <s:intercept-url pattern="/extractorapp/.*" access="ROLE_MOD_EXTRACTORAPP" />
         <s:intercept-url pattern="/geofence/.*" access="ROLE_ADMINISTRATOR" />
-        <s:intercept-url pattern="/analytics/.*" access="ROLE_ADMINISTRATOR,ROLE_SV_ADMIN,ROLE_MOD_ANALYTICS" />
+        <s:intercept-url pattern="/analytics/.*" access="ROLE_MOD_ANALYTICS" />
         <!-- ldapadmin private UI is restricted to members of the MOD_LDAPADMIN group: -->
         <s:intercept-url pattern="/ldapadmin/privateui/.*" access="ROLE_MOD_LDAPADMIN" />
         <!-- ldapadmin private ui web services: -->
