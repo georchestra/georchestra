@@ -60,7 +60,7 @@ Note 2: PostGIS extensions are not required in the georchestra database, unless 
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ldapadmin TO "www-data";'
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA ldapadmin TO "www-data";'
 
- * if **geofence** is deployed:
+ * if **geofence** is deployed: (make sure to set the correct values for the ```baseURL```, ```username``` and ```password``` fields in the ```geofence.gf_gsinstance``` table)
 
         createlang plpgsql georchestra
         psql -f /usr/share/postgresql/9.1/contrib/postgis-1.5/postgis.sql georchestra
@@ -69,6 +69,7 @@ Note 2: PostGIS extensions are not required in the georchestra database, unless 
         psql -d georchestra -c 'GRANT SELECT,INSERT,DELETE ON public.geometry_columns to "www-data";'
         wget https://raw.github.com/georchestra/geofence/georchestra/doc/setup/sql/002_create_schema_postgres.sql -O /tmp/geofence.sql
         psql -d georchestra -f /tmp/geofence.sql
+        psql -d georchestra -c 'INSERT INTO geofence.gf_gsinstance (id, baseURL, dateCreation, description, "name", "password", username) values (0, 'http(s)://@shared.server.name@/geoserver', 'now', 'locale geoserver', 'default-gs', '@shared.privileged.geoserver.pass@', '@shared.privileged.geoserver.user@');'
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA geofence TO "www-data";'
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA geofence TO "www-data";'
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA geofence TO "www-data";'
