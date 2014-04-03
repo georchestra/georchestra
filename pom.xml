@@ -381,9 +381,14 @@ class PostTreatment {
 			</snapshots>
 		</repository>
 		<repository>
+			<id>java.net</id>
+			<name>Maven.org repository</name>
+			<url>http://repo1.maven.org/maven2/</url>
+		</repository>
+		<repository>
 			<id>jetty-repository</id>
 			<name>Jetty Maven2 Repository</name>
-			<url>http://oss.sonatype.org/content/groups/jetty/</url>
+			<url>https://oss.sonatype.org/content/groups/jetty/</url>
 		</repository>
 		<repository>
 			<id>jasig-repository</id>
