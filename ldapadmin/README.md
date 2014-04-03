@@ -147,7 +147,7 @@ Add one or more user identifiers (uid) of those protected users. The protected u
         </property>
     </bean>
     
-Example: configure extractorapp_privileged_admin as protected 
+Example: configure geoserver_privileged_user as protected 
 
 /config/defaults/ldapadmin/maven.filter
 
