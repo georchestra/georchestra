@@ -9,6 +9,7 @@ More information in the modules README:
  * [catalog](https://github.com/georchestra/geonetwork/blob/georchestra-29/README.md) (aka GeoNetwork)
  * [viewer](mapfishapp/README.md) (aka mapfishapp)
  * [extractor](extractorapp/README.md) (aka extractorapp)
+ * [geofence](https://github.com/georchestra/geofence/blob/georchestra/georchestra.md)
  * [simple catalog](catalogapp/README.md) (aka catalogapp)
  * [analytics](analytics/README.md)
  * [ldapadmin](ldapadmin/README.md)
