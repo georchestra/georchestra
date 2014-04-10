@@ -73,25 +73,11 @@ Note that various metadata URLs may be specified for a layer in the WMS server, 
 Admin UI
 ========
 
-Admin users have the ability to manage the job queue at this URL : /extractorapp/admin/
+Members of the ```ADMINISTRATOR``` LDAP group have the ability to manage extraction jobs at this URL : http(s)://you.sdi.org/extractorapp/admin/
 
 Jobs (except the running one) can be manually paused, cancelled, set to a higher or a lower priority.
 
-
-How to allow unprotected access ?
-=================================
-
-By default, the application is not available to unauthenticated users. They are redirected to the CAS login page with this code in index.jsp :
-
-    <c:choose>
-        <c:when test='<%= anonymous == true %>'>
-            <script type="text/javascript">
-            window.location = "?login";
-            </script>
-        </c:when>
-    </c:choose>
-    
-To grant access to all users, copy index.jsp in your profile and remove the above code. 
+The UI is just a lightweight frontend to a REST API.
 
 
 How to customize the default emails ?
