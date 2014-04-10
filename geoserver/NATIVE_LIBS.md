@@ -155,13 +155,11 @@ The webapps requiring GDAL/OGR bindings (GeoServer, but potentially mapfishapp) 
 ```
 export GDAL_DATA="/opt/gdal-georchestra/share/gdal"
 export PATH=/opt/gdal-georchestra/bin:$PATH
-export CLASSPATH=/opt/gdal-georchestra/java:$CLASSPATH
 export LD_LIBRARY_PATH=/lib:/opt/gdal-georchestra/lib:/opt/gdal-georchestra/java:$LD_LIBRARY_PAT
 
 CATALINA_OPTS="[...]
  -DGDAL_DATA=$GDAL_DATA \
  -Djava.library.path=$LD_LIBRARY_PATH \
- -classpath $CLASSPATH \
   [...]
 "
 
@@ -169,9 +167,9 @@ CATALINA_OPTS="[...]
 
 ## Other manual tweaks
 
-Please note that some of the webapps do already include the `gdal-ogr-bindings.jar` package, under potentially another names. These come from GeoSolution and can be outdated and/or not compatible with our version of GDAL. If you have some files into your `webapps/*/WEB-INF/lib` named `imageio-ext-gdal-bindings-1.9.2.jar`, they may be redundant with our jar file. I had to overwrite them with mine.
+Please note that some of the webapps do already include the `gdal-ogr-bindings.jar` package, under potentially another names. These come from GeoSolution and can be outdated and/or not compatible with our version of GDAL. If you have some files into your `webapps/*/WEB-INF/lib` named `imageio-ext-gdal-bindings-1.9.2.jar` or simply `gdal-x.y.z.jar`, they may be redundant with our jar file and should be excluded for further builds. To put it simply, each duplicated jars will try to load the same native library, and will fail if the library has already been loaded.
 
-In the future, I think the proper way to package and provide GDAL native support would be at a tomcat-level, not webapp-level. So we should consider building the geOrchestra webapps without this jar, and install the `gdal-ogr-bindings.jar` into the `lib/` subdirectory of tomcat.
+The proper way to package and provide GDAL native support would be at a tomcat-level, not webapp-level. We should consider building the geOrchestra webapps without this jar, and install the `gdal-ogr-bindings.jar` (`gdal.jar` in the zip file) into the `lib/` subdirectory of considered tomcats.
 
 ## OGR output format
 
