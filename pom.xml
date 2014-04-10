@@ -361,7 +361,7 @@ class PostTreatment {
 		<repository>
 			<id>jetty-repository</id>
 			<name>Jetty Maven2 Repository</name>
-			<url>http://oss.sonatype.org/content/groups/jetty/</url>
+			<url>https://oss.sonatype.org/content/groups/jetty/</url>
 		</repository>
 	</repositories>
 	<pluginRepositories>
