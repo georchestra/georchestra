@@ -371,8 +371,7 @@ GEOR.layerstree = (function() {
                             bbox: GEOR.config.GLOBAL_MAX_EXTENT,
                             owsType: wfsinfo.owstype, // WFS
                             owsUrl: wfsinfo.owsurl,
-                            layerName: record.get("name"),
-                            namespace: record.get("namespace")
+                            layerName: wfsinfo.layername
                         }
                     };
                     // remove autoActivation of the strategy to prevent the refresh
@@ -997,8 +996,7 @@ GEOR.layerstree = (function() {
                     },
                     owsUrl: local.owsUrl,
                     owsType: local.owsType,
-                    layerName: local.layerName,
-                    namespace: local.namespace
+                    layerName: local.layerName
                 };
                 if (local.isoMetadataUrl !== null) {
                     out.layers[i].isoMetadataURL = local.isoMetadataUrl;
