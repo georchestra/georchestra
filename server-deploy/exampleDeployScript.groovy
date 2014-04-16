@@ -21,7 +21,7 @@ def artifacts = new Artifacts(project, Artifacts.standardGeorchestraAliasFunctio
   
   If the passwords/passphrases are the deploy will require no interaction with a user.  
   
-  If they are not auser will have to enter the password.  
+  If they are not a user will have to enter the password.  
   
   The options are privateKey/passphrase or username/password
   
@@ -46,16 +46,16 @@ For the record, here is a typical settings.xml file:
 </settings>
   
 */
-def ssh = new SSH(log:log,settings:settings,host:"server1")
+def ssh = new SSH(log:log, settings:settings, host:"server1")
 
 // create an object for deploying wars to a unix-based machine using SSH
 def server1Deployer = new SSHWarDeployer(
     log: log,
     ssh: ssh,
     projectProperties: project.properties,
-    webappDir: "/srv/tomcat/tomcat1/webapps",
-    startServerCommand: "sudo /etc/init.d/tomcat-tomcat1 start",
-    stopServerCommand: "sudo /etc/init.d/tomcat-tomcat1 stop"
+    webappDir: "/srv/tomcat/webapps",
+    startServerCommand: "sudo /etc/init.d/tomcat start",
+    stopServerCommand: "sudo /etc/init.d/tomcat stop"
 )
 
 // deploy all artifacts except the geoserver artifact using the server1Deployer 
@@ -72,5 +72,5 @@ if (geoserverArtifact != null) {
   // (since this will deploy to a different server)
   def geoserverDeployer = server1Deployer.copy(ssh: geoserverSSH)
   // finally deploy
-  geoserverDeployer.deploy()
+  geoserverDeployer.deploy(geoserverArtifact)
 }
