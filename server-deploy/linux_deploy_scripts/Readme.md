@@ -15,3 +15,5 @@ The user executing the scripts has to have the sudo permission:
   (deploy) /var/cache/deploy/checkout/build-tools/maven/bin/mvn
 
 where /var/cache/deploy/checkout is the directory that the sources were cloned into.
+
+Finally, you may want to read about the [DeployScript.groovy](https://github.com/georchestra/template/blob/master/DeployScript.groovy) script which is run by the server-deploy module when deploying.
