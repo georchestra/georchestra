@@ -637,7 +637,8 @@ GEOR.layerstree = (function() {
                         }
                         owsinfo.exportinfo.owsType = records[0].get("owsType");
                         owsinfo.exportinfo.owsUrl = records[0].get("owsURL");
-                        owsinfo.exportinfo.layerName = records[0].get("layerName");
+                        owsinfo.exportinfo.layerName = records[0].get("typeName");
+                        // typeName is "geor:sdi" while layerName might just be "sdi", see https://github.com/georchestra/georchestra/issues/517
                         owsinfo.exportinfo.layerType = records[0].get("layerType");
 
                         if (!(((owsinfo.exportinfo.owsType == "WFS") ||
