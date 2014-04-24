@@ -1,11 +1,5 @@
 package org.georchestra.security;
 
-import java.util.*;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
@@ -14,9 +8,19 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.message.BasicHeader;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 /**
  * A strategy for copying headers from the request to the proxied request and
- * the same for the response headers
+ * the same for the response headers.
  * 
  * @author jeichar
  */
@@ -32,8 +36,12 @@ public class HeadersManagementStrategy {
      */
     private boolean noAcceptEncoding = false;
     private List<HeaderProvider> headerProviders = Collections.emptyList(); 
-    private List<HeaderFilter> filters = Collections.emptyList();
+    private List<HeaderFilter> filters = new ArrayList<HeaderFilter>(1);
     private String referer = null;
+
+    public HeadersManagementStrategy() {
+        filters.add(new SecurityRequestHeaderFilter());
+    }
 
     /**
      * Copies the request headers from the original request to the proxy request.  It may modify the
@@ -70,11 +78,6 @@ public class HeadersManagementStrategy {
             if (referer != null && headerName.equalsIgnoreCase(REFERER_HEADER_NAME)) {
                 continue;
             }
-            if (headerName.equalsIgnoreCase("sec-username") ||
-                headerName.equalsIgnoreCase("sec-roles")) {
-                continue;
-            }
-            
             String value = originalRequest.getHeader(headerName);
             addHeaderToRequestAndLog(proxyRequest, headersLog, headerName, value);
         }
