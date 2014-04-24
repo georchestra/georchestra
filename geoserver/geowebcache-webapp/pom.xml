@@ -6,13 +6,49 @@
         <artifactId>geoserver-root</artifactId>
         <version>14.01</version>
     </parent>
-    <artifactId>geofence-webapp</artifactId>
+    <artifactId>geowebcache-webapp</artifactId>
     <packaging>war</packaging>
-    <name>geOrchestra Geofence Web Application</name>
+    <name>geOrchestra GeoWebCache Web Application</name>
     <properties>
-        <gf.unpack.dir>${project.build.directory}/geofence-unpacked-webapp</gf.unpack.dir>
+        <gwc.unpack.dir>${project.build.directory}/unpacked-webapp</gwc.unpack.dir>
+        <geowebcache.war.excludes></geowebcache.war.excludes>
+        <maven.test.skip>false</maven.test.skip>
     </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.geowebcache</groupId>
+            <artifactId>gwc-web</artifactId>
+            <version>${geowebcache.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.9.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>3.1.1.RELEASE</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
     <build>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+            </testResource>
+            <testResource>
+                <directory>src/main/webapp/WEB-INF</directory>
+            </testResource>
+        </testResources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -56,16 +92,16 @@
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
-                            <excludes>${geofence.war.excludes}</excludes>
+                            <excludes>${geowebcache.war.excludes}</excludes>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>it.geosolutions.geofence</groupId>
-                                    <artifactId>geofence-gui-web</artifactId>
-                                    <version>${geofence.version}</version>
-                                    <type>war</type>
+                                    <groupId>org.geowebcache</groupId>
+                                    <artifactId>gwc-web</artifactId>
+                                    <version>${geowebcache.version}</version>
+                                    <type>jar</type>
                                 </artifactItem>
                             </artifactItems>
-                            <outputDirectory>${gf.unpack.dir}</outputDirectory>
+                            <outputDirectory>${gwc.unpack.dir}</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
@@ -75,9 +111,9 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.2</version>
                 <configuration>
-                    <warSourceDirectory>${gf.unpack.dir}</warSourceDirectory>
-                    <webXml>${gf.unpack.dir}/WEB-INF/web.xml</webXml>
-                    <warName>geofence-private</warName>
+                    <warSourceDirectory>${gwc.unpack.dir}</warSourceDirectory>
+                    <webXml>${gwc.unpack.dir}/WEB-INF/web.xml</webXml>
+                    <warName>geowebcache-private</warName>
                     <filter>${confdir}/${project.artifactId}/maven.filter</filter>
                     <webResources>
                         <resource>
@@ -88,10 +124,13 @@
                                 <exclude>README</exclude>
                             </excludes>
                         </resource>
+                        <resource>
+                            <filtering>false</filtering>
+                            <directory>src/main/webapp</directory>
+                        </resource>
                     </webResources>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
 </project>

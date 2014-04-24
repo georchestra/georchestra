@@ -274,6 +274,7 @@
 					<groupId>org.georchestra</groupId>
 					<artifactId>config</artifactId>
 					<version>${project.version}</version>
+                    <classifier>${server}</classifier>
 				</dependency>
 			</dependencies>
 		</plugin>
