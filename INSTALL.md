@@ -29,7 +29,7 @@ PostGreSQL
 
 * "georchestra" database hosting schemas specific to deployed modules:
 
-        createdb georchestra
+        createdb -E UTF8 -T template0 georchestra
         createuser -SDRIP www-data (the default setup expects that the www-data user password is www-data)
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON DATABASE georchestra TO "www-data";'
 
