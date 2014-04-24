@@ -3,16 +3,15 @@
  */
 package org.georchestra.security;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.http.client.methods.HttpRequestBase;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.http.client.methods.HttpRequestBase;
 
 /**
  * Filters out sec-username when not from trusted hosts
@@ -28,7 +27,7 @@ public class SecurityRequestHeaderFilter implements HeaderFilter {
     public boolean filter(String headerName, HttpServletRequest originalRequest, HttpRequestBase proxyRequest) {
     	try {
 	        String remoteHost = originalRequest.getRemoteHost();
-	        InetAddress remotsHostAddress =  InetAddress.getByName(remoteHost);
+	        InetAddress remoteHostAddress =  InetAddress.getByName(remoteHost);
 	        
 	        for (String host : trustedHosts) {
 	
@@ -38,7 +37,7 @@ public class SecurityRequestHeaderFilter implements HeaderFilter {
 	            	log.debug("filter: headerName: " + headerName + " check remote host: " + remoteHost + " against: " + host);
 	            }
 	        	
-	        	if (remotsHostAddress.equals(hostAddress)) {
+	        	if (remoteHostAddress.equals(hostAddress)) {
 	        		if (log.isDebugEnabled()) {
 	        			log.debug("Return false for header: " + headerName + " because host: " + remoteHost + " is trusted.");
 	        		}
@@ -53,7 +52,7 @@ public class SecurityRequestHeaderFilter implements HeaderFilter {
 
     	} catch (UnknownHostException e) {
 			log.error(e);
-			throw new IllegalStateException(e.getMessage() +  ". Checkthe trusted host configuration.");
+			throw new IllegalStateException(e.getMessage() +  ". Check the trusted host configuration.");
 		}
     }
 
