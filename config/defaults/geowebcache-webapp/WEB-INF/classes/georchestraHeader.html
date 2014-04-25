@@ -1,0 +1,8 @@
+<html>
+    <body>
+      <p>This is the placeholder Georchestra header.  The configuration will replace this.</p>
+      <!-- @@username@@ will be replaced by the username before writing -->
+      <p><a id="loginLink" href="#" onclick="alert('this will redirect to cas')">Login</a></p>
+      <p id="userInfo" >@@username@@</p>
+      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+      <script type="application/javascript">if ('@@username@@' !== 'anonymousUser') $('#loginLink').hide(); else $('#userInfo').hide();</script>

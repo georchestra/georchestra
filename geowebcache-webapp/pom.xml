@@ -40,6 +40,13 @@
             <version>3.1.1.RELEASE</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>apache-log4j-extras</artifactId>
+            <version>1.1</version>
+            <type>jar</type>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
     <build>
         <testResources>
@@ -93,7 +100,7 @@
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
-                            <excludes>${geowebcache.war.excludes}</excludes>
+                            <excludes>**/acegi-config.xml,**/geowebcache-servlet.xml,**/log4j.*,**/web.xml,${geowebcache.war.excludes}</excludes>
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>org.geowebcache</groupId>
@@ -130,6 +137,43 @@
                             <directory>src/main/webapp</directory>
                         </resource>
                     </webResources>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.mortbay.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>7.5.0.v20110901</version>
+                <configuration>
+                    <connectors>
+                        <connector implementation="org.eclipse.jetty.server.bio.SocketConnector">
+                            <port>8080</port>
+                            <maxIdleTime>10000</maxIdleTime>
+                            <requestHeaderSize>20000</requestHeaderSize>
+                        </connector>
+                        <!--<connector implementation="org.eclipse.jetty.server.ssl.SslSocketConnector">-->
+                            <!--&lt;!&ndash; Note: If another server needs to communicate with this one with-->
+                                  <!--https then it needs the environment variables set as follows:-->
+                                  <!---Djavax.net.ssl.trustStore=keystore.jks -Djavax.net.ssl.trustStorePassword=password-->
+                                  <!--&ndash;&gt;-->
+                            <!--<port>8443</port>-->
+                            <!--<keystore>${project.basedir}/keystore.jks</keystore>-->
+                            <!--<password>password</password>-->
+                            <!--<keyPassword>password</keyPassword>-->
+                            <!--<truststore>${project.basedir}/keystore.jks</truststore>-->
+                            <!--<trustPassword>password</trustPassword>-->
+                            <!--<maxIdleTime>60000</maxIdleTime>-->
+                        <!--</connector>-->
+                    </connectors>
+                    <webAppSourceDirectory>${project.build.directory}/geonetwork</webAppSourceDirectory>
+                    <webAppConfig>
+                        <contextPath>/gwc</contextPath>
+                        <descriptor>${basedir}/src/main/webapp/WEB-INF/web.xml</descriptor>
+                        <baseResource implementation="org.eclipse.jetty.util.resource.ResourceCollection">
+                            <resourcesAsCSV>${basedir}/src/main/webapp,${confdir}/${project.artifactId},${gwc.unpack.dir}</resourcesAsCSV>
+                        </baseResource>
+                    </webAppConfig>
+                    <stopKey>GWC_JETTY_STOP</stopKey>
+                    <stopPort>8090</stopPort>
                 </configuration>
             </plugin>
         </plugins>

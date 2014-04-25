@@ -81,7 +81,7 @@
     <bean id="authenticationManager" class="org.acegisecurity.providers.ProviderManager">
         <property name="providers">
             <list>
-                <ref local="daoAuthenticationProvider" />
+                <ref bean="daoAuthenticationProvider" />
             </list>
         </property>
     </bean>
