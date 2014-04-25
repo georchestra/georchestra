@@ -120,10 +120,17 @@
                 <version>2.2</version>
                 <configuration>
                     <warSourceDirectory>${gwc.unpack.dir}</warSourceDirectory>
-                    <webXml>${gwc.unpack.dir}/WEB-INF/web.xml</webXml>
+                    <webXml>${basedir}/src/main/webapp/WEB-INF/web.xml</webXml>
                     <warName>geowebcache-private</warName>
                     <filter>${confdir}/${project.artifactId}/maven.filter</filter>
                     <webResources>
+                        <resource>
+                            <filtering>false</filtering>
+                            <directory>src/main/webapp</directory>
+                            <excludes>
+                                <exclude>gwc.properties</exclude>
+                            </excludes>
+                        </resource>
                         <resource>
                             <filtering>false</filtering>
                             <directory>${confdir}/${project.artifactId}</directory>
@@ -131,10 +138,6 @@
                                 <exclude>maven.filter</exclude>
                                 <exclude>README</exclude>
                             </excludes>
-                        </resource>
-                        <resource>
-                            <filtering>false</filtering>
-                            <directory>src/main/webapp</directory>
                         </resource>
                     </webResources>
                 </configuration>

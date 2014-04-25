@@ -8,6 +8,9 @@
                 PATTERN_TYPE_APACHE_ANT
                 /rest/web/**=httpSessionContextIntegrationFilter,preAuthFilter,anonymousProcessingFilter,exceptionTranslationFilter
                 /rest/**=httpSessionContextIntegrationFilter,preAuthFilter,exceptionTranslationFilter,restFilterInvocationInterceptor
+                /demo=httpSessionContextIntegrationFilter,preAuthFilter,anonymousProcessingFilter,exceptionTranslationFilter,restFilterInvocationInterceptor
+                /demo/**=httpSessionContextIntegrationFilter,preAuthFilter,anonymousProcessingFilter,exceptionTranslationFilter,restFilterInvocationInterceptor
+                /home=httpSessionContextIntegrationFilter,preAuthFilter,anonymousProcessingFilter,exceptionTranslationFilter,restFilterInvocationInterceptor
                 /**=httpSessionContextIntegrationFilter,preAuthFilter,anonymousProcessingFilter,exceptionTranslationFilter
             </value>
         </property>

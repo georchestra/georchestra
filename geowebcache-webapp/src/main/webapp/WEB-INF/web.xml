@@ -39,10 +39,6 @@
         <filter-name>Acegi Filter Chain Proxy</filter-name>
         <url-pattern>/demo/*</url-pattern>
     </filter-mapping>
-    <filter-mapping>
-        <filter-name>Acegi Filter Chain Proxy</filter-name>
-        <url-pattern>/demos/*</url-pattern>
-    </filter-mapping>
 
 
     <!--  spring context loader -->

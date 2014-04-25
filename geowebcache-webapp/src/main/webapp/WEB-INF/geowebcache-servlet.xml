@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
-<beans>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd">
   <description>
    Bean configuration file for the gwc-web module
   </description>
@@ -36,7 +40,15 @@
         <constructor-arg ref="gwcStorageBroker"/>
         <constructor-arg ref="gwcXmlConfig"/>
         <constructor-arg ref="gwcRuntimeStats"/>
+        <constructor-arg value="${headerURL}"/>
         <property name="defaultStorageFinder" ref="gwcDefaultStorageFinder"/>
     </bean>
 
+    <bean id="gwcURLMangler" class="org.geowebcache.util.GeorchestraURLMangler">
+        <constructor-arg value="${baseUrl}" />
+        <constructor-arg value="${contextPath}" />
+        <constructor-arg value="${path}" />
+    </bean>
+
+    <context:property-placeholder location="classpath:gwc.properties" />
 </beans>

@@ -11,13 +11,9 @@ import org.apache.commons.lang.StringUtils;
  */
 public class GeorchestraURLMangler implements URLMangler {
 
-	private String baseURL;
-	private String contextPath;
-	private String path;
-	
-	public void setBaseURL(String baseURL) {this.baseURL = baseURL; }
-    public void setContextPath(String contextPath) {this.contextPath = contextPath; }
-	public void setPath(String path) {this.path = path; }
+	private final String baseURL;
+	private final String contextPath;
+	private final String path;
 
 	public GeorchestraURLMangler(String baseUrl, String contextPath, String path) {
 		this.baseURL = baseUrl;
