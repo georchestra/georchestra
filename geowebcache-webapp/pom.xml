@@ -94,7 +94,7 @@
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>unpack-geofence-war</id>
+                        <id>unpack-geowebcache-war</id>
                         <goals>
                             <goal>unpack</goal>
                         </goals>
