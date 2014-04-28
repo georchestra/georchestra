@@ -157,7 +157,7 @@ UPGRADING:
    ```
    sed -i 's/\(memberUid: \)\(.*\)/member: uid=\2,ou=users,dc=georchestra,dc=org/' /tmp/groups.ldif
    sed -i 's/posixGroup/groupOfNames/' /tmp/groups.ldif
-   sed -i '/gidNumber/d' /tmp/groups.ldif
+   sed -i '/gidNumber/d' /tmp/groups.ldif OR sed -i 's/gidNumber/ou/' /tmp/groups.ldif if geofence is deployed
    sed -i 's/objectClass: groupOfNames/objectClass: groupOfNames\nmember: uid=fakeuser/' /tmp/groups.ldif
    ```
    
