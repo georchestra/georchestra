@@ -230,6 +230,7 @@ class PostTreatment {
 				<module>catalogapp</module>
 				<module>extractorapp</module>
 				<module>geoserver</module>
+				<module>geowebcache-webapp</module>
 				<module>ldapadmin</module>
 				<module>mapfishapp</module>
 				<module>security-proxy</module>
@@ -279,6 +280,20 @@ class PostTreatment {
 			<id>geoserver</id>
 			<modules>
 				<module>geoserver</module>
+			</modules>
+		</profile>
+
+		<profile>
+			<id>geowebcache</id>
+			<modules>
+				<module>geowebcache-webapp</module>
+			</modules>
+		</profile>
+
+		<profile>
+			<id>gwc</id>
+			<modules>
+				<module>geowebcache-webapp</module>
 			</modules>
 		</profile>
 

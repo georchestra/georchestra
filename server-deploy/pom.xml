@@ -150,6 +150,13 @@
 				</dependency>
 				<dependency>
 					<groupId>${project.groupId}</groupId>
+					<artifactId>geowebcache-webapp</artifactId>
+					<version>${project.version}</version>
+					<classifier>${server}</classifier>
+					<type>war</type>
+				</dependency>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
 					<artifactId>geofence-webapp</artifactId>
 					<version>${project.version}</version>
 					<classifier>${server}</classifier>
@@ -238,6 +245,13 @@
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>geoserver-webapp</artifactId>
+					<version>${project.version}</version>
+					<classifier>${server}</classifier>
+					<type>war</type>
+				</dependency>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>geowebcache-webapp</artifactId>
 					<version>${project.version}</version>
 					<classifier>${server}</classifier>
 					<type>war</type>
@@ -369,6 +383,18 @@
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>geoserver-webapp</artifactId>
+					<version>${project.version}</version>
+					<classifier>${server}</classifier>
+					<type>war</type>
+				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>geowebcache</id>
+			<dependencies>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>geowebcache-webapp</artifactId>
 					<version>${project.version}</version>
 					<classifier>${server}</classifier>
 					<type>war</type>

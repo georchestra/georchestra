@@ -105,10 +105,10 @@ class C2CDeploy {
     def deploy() {
         systemConfiguration()
 
-        def tomcat1 = artifacts.findAll {return !(it.name.startsWith("geoserver"))}
+        def tomcat1 = artifacts.findAll {return !(it.name.startsWith("geoserver") || it.name.startsWith("geofence"))}
         tomcat1Deployer.deploy(tomcat1)
 
-        def geoserver = artifacts.find {return it.name.startsWith("geoserver")}
+        def geoserver = artifacts.find {return it.name.startsWith("geoserver") || it.name.startsWith("geofence")}
         if (geoserver != null) {
             geoserverDeployer.deploy(geoserver)
         }
