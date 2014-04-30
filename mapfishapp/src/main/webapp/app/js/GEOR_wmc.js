@@ -293,6 +293,10 @@ GEOR.wmc = (function() {
                 }
                 // set as type as WMS (might need to be changed when we support more types from OWSContext)
                 r.set("type", "WMS");
+                // change exception format depending on the WMS version: 
+                // (see https://github.com/camptocamp/georchestra-pigma-configuration/issues/112)
+                var params = r.get('layer').params;
+                params.EXCEPTIONS = GEOR.ows.wmsVersionToExceptionsMapping[params.VERSION];
                 // add layer from wmc to the current map
                 layerStore.addSorted(r);
             });

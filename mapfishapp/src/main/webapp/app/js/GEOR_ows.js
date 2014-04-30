@@ -192,6 +192,18 @@ GEOR.ows = (function() {
         matchGeomProperty: /^gml:(Multi)?(Point|LineString|Polygon|Curve|Surface|Geometry)PropertyType$/,
 
         /**
+         * Property: wmsVersionToExceptionsMapping
+         * {Object} We want WMS XML exceptions. 
+         * But the EXCEPTIONS parameter value changes with the WMS version ...
+         */
+        wmsVersionToExceptionsMapping: {
+            "1.0.0": "WMS_XML",
+            "1.1.0": "application/vnd.ogc.se_xml",
+            "1.1.1": "application/vnd.ogc.se_xml",
+            "1.3.0": "XML"
+        },
+
+        /**
          * Property: defaultWMSLayerOptions
          * {Object} Default OpenLayers WMS layer options
          */
