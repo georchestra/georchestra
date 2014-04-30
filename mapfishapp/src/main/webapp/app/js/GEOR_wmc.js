@@ -268,6 +268,10 @@ GEOR.wmc = (function() {
                 if (context && context.metadataURL) {
                     r.set("metadataURLs", [context.metadataURL]);
                 }
+                // change exception format depending on the WMS version: 
+                // (see https://github.com/camptocamp/georchestra-pigma-configuration/issues/112)
+                var params = r.get('layer').params;
+                params.EXCEPTIONS = GEOR.ows.wmsVersionToExceptionsMapping[params.VERSION];
                 // add layer from wmc to the current map
                 layerStore.addSorted(r);
             });
