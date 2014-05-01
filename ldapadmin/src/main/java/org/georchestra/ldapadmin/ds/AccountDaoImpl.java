@@ -560,7 +560,7 @@ public final class AccountDaoImpl implements AccountDao{
 		LdapShaPasswordEncoder lspe = new LdapShaPasswordEncoder();
 		String encrypted = lspe.encodePassword(password,
 					String.valueOf(System.currentTimeMillis()).getBytes());
-	
+
 		context.setAttributeValue("userPassword", encrypted);
 		
 		ldapTemplate.modifyAttributes(context);
