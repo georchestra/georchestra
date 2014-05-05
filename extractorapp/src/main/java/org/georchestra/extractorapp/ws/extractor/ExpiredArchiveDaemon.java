@@ -13,7 +13,7 @@ import org.georchestra.extractorapp.ws.extractor.task.ExtractionManager;
 /**
  * This is a bean that starts a timer in the startup method.  When the timer task is run (this)
  * all files in the archive storage directory are checked and the expired elements are deleted.
- * 
+ *
  * @author jeichar
  */
 public class ExpiredArchiveDaemon extends TimerTask implements FilenameFilter {
@@ -21,7 +21,8 @@ public class ExpiredArchiveDaemon extends TimerTask implements FilenameFilter {
     private static final Log    LOG = LogFactory.getLog(ExpiredArchiveDaemon.class.getPackage().getName());
     private static final long   SECOND = 1000;
     private static final long   MINUTE = 60 * SECOND;
-    private static final long   DAYS   = 24 * MINUTE;
+    private static final long   HOUR   = 60 * MINUTE;
+    private static final long   DAYS   = 24 * HOUR;
 
     private long                period = 10 * MINUTE;
     private long                expiry = 10 * DAYS;
@@ -39,16 +40,16 @@ public class ExpiredArchiveDaemon extends TimerTask implements FilenameFilter {
 
     @Override
     public void run() {
-        
+
         LOG.debug(getClass().getName() + " performing sweep");
         File storageFile = FileUtils.storageFile("");
 
         if(!storageFile.exists()) return;
 
         extractionManager.cleanExpiredTasks(expiry);
-        
+
         for (File f : storageFile.listFiles(this)) {
-            if (f.lastModified() > expiry+System.currentTimeMillis()) {
+            if (f.lastModified() + expiry < System.currentTimeMillis()) {
                 if (f.delete()) {
                     LOG.info("Deleted expired archive: " + f.getName());
                 } else {
@@ -65,7 +66,7 @@ public class ExpiredArchiveDaemon extends TimerTask implements FilenameFilter {
     public void setExpiry(long expiry) {
         this.expiry = expiry * DAYS;
     }
-    
+
     public long getExpiry() {
     	return this.expiry / DAYS;
     }
@@ -76,6 +77,10 @@ public class ExpiredArchiveDaemon extends TimerTask implements FilenameFilter {
      */
     public void setPeriod(long period) {
         this.period = period * MINUTE;
+    }
+
+    public long getPeriod() {
+    	return this.period / MINUTE;
     }
 
     @Override
