@@ -60,6 +60,13 @@ ${proxy.mapping}
         <property name="headerProviders">
             <list>
                 <bean class="org.georchestra.security.SecurityRequestHeaderProvider"/>
+                <bean class="org.georchestra.security.ImpersonateUserRequestHeaderProvider">
+                    <property name="trustedUsers">
+                        <list>
+                            <value>${privileged_admin_name}</value>
+                        </list>
+                    </property>
+                </bean>
                 <bean class="org.georchestra.security.LdapUserDetailsRequestHeaderProvider">
                     <constructor-arg index="0" ref="ldapUserSearch"/>
                     <constructor-arg index="1">
@@ -72,16 +79,7 @@ ${proxy.mapping}
         </property>
         <property name="filters">
             <list>
-                <bean class="org.georchestra.security.SecurityRequestHeaderFilter">
-                    <property name="trustedHosts">
-                        <list>
-                            <value>localhost</value>
-                            <value>127.0.0.1</value>
-                            <value>127.0.1.1</value>
-                            <value>${public.host}</value>
-                        </list>
-                    </property>
-                </bean>
+                <bean class="org.georchestra.security.SecurityRequestHeaderFilter" />
             </list>
         </property>
     </bean>

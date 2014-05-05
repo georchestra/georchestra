@@ -45,3 +45,6 @@ psql.db=@shared.psql.checkhealth.db@
 psql.user=@shared.psql.user@
 psql.pass=@shared.psql.pass@
 max.database.connections=@shared.checkhealth.max_db_connections@
+
+privileged_admin_name=@shared.privileged.geoserver.user@
+
