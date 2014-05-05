@@ -46,11 +46,11 @@ import org.georchestra.extractorapp.ws.extractor.OversizedCoverageRequestExcepti
 import org.georchestra.extractorapp.ws.extractor.XmlUtils;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
-import org.geotools.referencing.GeodeticCalculator;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
 
 
 /**
@@ -252,6 +252,7 @@ class BoundWcsRequest extends WcsReaderRequest {
 
     private Set<String> getUnaliasedFormats () throws IOException {
         if (formats == null) {
+        	// NOTE: seems only available in v1.0.0 of WCS
             NodeList nodes = select ("//wcs:formats", getDescribeCoverage());
             formats = new HashSet<String> ();
             for (int i = 0; i < nodes.getLength (); i++) {

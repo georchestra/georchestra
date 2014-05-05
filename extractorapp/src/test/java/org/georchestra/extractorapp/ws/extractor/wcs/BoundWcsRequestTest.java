@@ -10,6 +10,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+
+import junit.framework.Assert;
 
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
@@ -39,6 +42,7 @@ import org.mockito.Mockito;
 public class BoundWcsRequestTest {
 
 	private final File describeCoverageSample = new File("src/test/resources/describecoveragesample.xml");
+	private final File getCapabilitiesSample = new File("src/test/resources/getcapabilitiessample.xml");
 
 	@Before
 	public void setUp() throws Exception {
@@ -48,13 +52,20 @@ public class BoundWcsRequestTest {
 	public void tearDown() throws Exception {
 	}
 
+
+	private HttpEntity heMocked = Mockito.mock(HttpEntity.class);
+	
+	private void setOutputDocument(File f) throws Exception {
+			Mockito.when(heMocked.getContent()).thenReturn(new FileInputStream(f));
+	}
+	
 	public HttpClient getMockHttpClient() {
 		HttpClient mock = Mockito.mock(HttpClient.class);
 		HttpParams paramsMock = Mockito.mock(HttpParams.class);
 		ClientConnectionManager connectionMock = Mockito.mock(ClientConnectionManager.class);
 		HttpResponse hrMocked = Mockito.mock(HttpResponse.class);
 		StatusLine slMocked = Mockito.mock(StatusLine.class);
-		HttpEntity heMocked = Mockito.mock(HttpEntity.class);
+
 		Header headerMocked = Mockito.mock(Header.class);
 
 
@@ -74,18 +85,6 @@ public class BoundWcsRequestTest {
 		Mockito.when(hrMocked.getStatusLine()).thenReturn(slMocked);
 		Mockito.when(slMocked.getStatusCode()).thenReturn(200);
 		Mockito.when(heMocked.getContentType()).thenReturn(headerMocked);
-		try {
-			Mockito.when(heMocked.getContent()).thenReturn(new FileInputStream(describeCoverageSample));
-		} catch (IllegalStateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		Mockito.when(headerMocked.getElements()).thenReturn(new HeaderElement[0]);
 		return mock;
 	}
@@ -102,8 +101,56 @@ public class BoundWcsRequestTest {
 		HttpClient mockClient = getMockHttpClient();
 		bwr.setHttpClient(mockClient);
 
-		bwr.getSupportedFormats();
-
+		
+		// DescribeCoverage related tests
+		setOutputDocument(describeCoverageSample);
+		bwr.getCoverage();
+		
+		// supported formats
+		Set<String> fmts = bwr.getSupportedFormats();
+		String[] expectedFmts =  {"jpg", "geotiff", "tif", "jpeg", "png", "gif", "tiff"};
+		assertArrayEquals(expectedFmts, fmts.toArray());
+		
+		// supported response CRS
+		Set<String> supportedResponseCrs = bwr.getSupportedResponseCRSs();
+		String[] expectedResponseCrs = { "EPSG:4326" };
+		assertArrayEquals(expectedResponseCrs, supportedResponseCrs.toArray());
+		
+		// num bands
+		int numBands  = bwr.numBands();
+		assertEquals(numBands, 1);
+		
+		// supported request CRS
+		Set<String> supportedRequestCrs = bwr.getSupportedRequestCRSs();
+		String[] expectedRequestCrs = { "EPSG:4326" };
+		assertArrayEquals(expectedRequestCrs, supportedRequestCrs.toArray());
+		
+		// Native CRS
+		Set<String> nativeCRSs = bwr.getNativeCRSs();
+		String[] expectedNativeCRSs = { "EPSG:4326" };
+		assertArrayEquals(expectedNativeCRSs, nativeCRSs.toArray());		
+		
+		// just to recall getDescribeCoverage(), should be defined as for now
+		assertTrue(bwr.getDescribeCoverage() instanceof String);
+		
+		// Same
+		assertTrue(bwr.getSupportedFormats() instanceof Set<?>);
+		assertTrue(bwr.getSupportedResponseCRSs() instanceof Set<?>);
+		assertTrue(bwr.numBands() == 1);
+		assertTrue(bwr.getSupportedRequestCRSs() instanceof Set<?>);
+		assertTrue(bwr.getNativeCRSs() instanceof Set<?>);
+		
+		
+		
+		// GetCapabilities related tests
+		setOutputDocument(getCapabilitiesSample);
+		
+		String getCap = bwr.getCapabilities();
+		assertTrue(getCap instanceof String);
+		// another time
+		assertTrue(bwr.getCapabilities() instanceof String);
+		
+		
 		System.out.println("blah");
 	}
 
