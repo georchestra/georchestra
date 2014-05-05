@@ -1,0 +1,110 @@
+package org.georchestra.extractorapp.ws.extractor.wcs;
+
+import static org.junit.Assert.*;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.http.Header;
+import org.apache.http.HeaderElement;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.ParseException;
+import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.impl.client.AbstractHttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.SchemeRegistryFactory;
+import org.apache.http.params.HttpParams;
+import org.apache.http.protocol.HttpContext;
+import org.geotools.referencing.CRS;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mockito;
+
+public class BoundWcsRequestTest {
+
+	private final File describeCoverageSample = new File("src/test/resources/describecoveragesample.xml");
+
+	@Before
+	public void setUp() throws Exception {
+	}
+
+	@After
+	public void tearDown() throws Exception {
+	}
+
+	public HttpClient getMockHttpClient() {
+		HttpClient mock = Mockito.mock(HttpClient.class);
+		HttpParams paramsMock = Mockito.mock(HttpParams.class);
+		ClientConnectionManager connectionMock = Mockito.mock(ClientConnectionManager.class);
+		HttpResponse hrMocked = Mockito.mock(HttpResponse.class);
+		StatusLine slMocked = Mockito.mock(StatusLine.class);
+		HttpEntity heMocked = Mockito.mock(HttpEntity.class);
+		Header headerMocked = Mockito.mock(Header.class);
+
+
+		Mockito.when(connectionMock.getSchemeRegistry()).thenReturn(SchemeRegistryFactory.createDefault());
+		Mockito.when(hrMocked.getEntity()).thenReturn(heMocked);
+		Mockito.when(mock.getParams()).thenReturn(paramsMock);
+		Mockito.when(mock.getConnectionManager()).thenReturn(connectionMock);
+		try {
+			Mockito.when(mock.execute(Mockito.any(HttpUriRequest.class), Mockito.any(HttpContext.class))).thenReturn(hrMocked);
+		} catch (ClientProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Mockito.when(hrMocked.getStatusLine()).thenReturn(slMocked);
+		Mockito.when(slMocked.getStatusCode()).thenReturn(200);
+		Mockito.when(heMocked.getContentType()).thenReturn(headerMocked);
+		try {
+			Mockito.when(heMocked.getContent()).thenReturn(new FileInputStream(describeCoverageSample));
+		} catch (IllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Mockito.when(headerMocked.getElements()).thenReturn(new HeaderElement[0]);
+		return mock;
+	}
+
+
+	@Test
+	public void BoundWcsRequestTest() throws Throwable {
+		WcsReaderRequest rq = new WcsReaderRequestFactory().create("1.0", "myCov", 0, 0, 1, 1, CRS.decode("EPSG:4326"),
+				CRS.decode("EPSG:2154"), 1, "GeoTiff", true, true, true, "scott", "tiger");
+
+		BoundWcsRequest bwr = new BoundWcsRequest(new URL("http://localhost/"), rq);
+
+
+		HttpClient mockClient = getMockHttpClient();
+		bwr.setHttpClient(mockClient);
+
+		bwr.getSupportedFormats();
+
+		System.out.println("blah");
+	}
+
+}

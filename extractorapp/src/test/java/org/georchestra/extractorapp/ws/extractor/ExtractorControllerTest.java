@@ -198,6 +198,9 @@ public class ExtractorControllerTest {
 			fail("Unexpected: " + e.getMessage());
 		}
 
+		// creates a dummy task in the extractionmanager
+		// TODO finish to test ...
+
 		assertTrue(invalidJsonThrown);
 		assertTrue(correctlyFormattedJson);
 	}

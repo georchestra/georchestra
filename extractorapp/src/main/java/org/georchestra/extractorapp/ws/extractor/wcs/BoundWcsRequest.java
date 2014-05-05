@@ -26,6 +26,7 @@ import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.auth.params.AuthPNames;
 import org.apache.http.client.AuthCache;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -34,6 +35,7 @@ import org.apache.http.client.params.ClientPNames;
 import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.impl.client.AbstractHttpClient;
 import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.ProxySelectorRoutePlanner;
@@ -55,7 +57,7 @@ import org.w3c.dom.NodeList;
  * Represents a {@link WcsReaderRequest} that has been bound to a URL and will
  * lazily download and cache different requests like describeCoverage and
  * getCapabilities
- * 
+ *
  * @author jeichar
  */
 class BoundWcsRequest extends WcsReaderRequest {
@@ -63,7 +65,7 @@ class BoundWcsRequest extends WcsReaderRequest {
     private static final String              DESCRIBE_COVERAGE     = "DescribeCoverage";
     private static final String                   GET_COVERAGE          = "GetCoverage";
     private static final Map<String, Set<String>> FORMAT_ALIASES;
-    
+
     private static final Log       LOG = LogFactory.getLog(BoundWcsRequest.class.getPackage().getName());
     private static final String XML_ERROR_TYPE = "application/vnd.ogc.se_xml";
     private int bands = -1;
@@ -87,12 +89,18 @@ class BoundWcsRequest extends WcsReaderRequest {
     private Set<String>                      formats;
     private Set<String>                      responseCrss, requestCrss, nativeCRSs;
 
+    private HttpClient httpClient = new DefaultHttpClient();
+
+    public void setHttpClient(HttpClient c) {
+    	this.httpClient = c;
+    }
+
     BoundWcsRequest (URL wcsUrl, WcsReaderRequest request) {
         super (request);
         _wcsUrl = wcsUrl;
     }
 
-    private BoundWcsRequest (String version, String coverage, ReferencedEnvelope bbox, CoordinateReferenceSystem responseCRS, double resx, 
+    private BoundWcsRequest (String version, String coverage, ReferencedEnvelope bbox, CoordinateReferenceSystem responseCRS, double resx,
             String format, boolean usePost, boolean remoteReproject, boolean useCommandLineGDAL, String username, String password, URL wcsUrl, String capabilities, String describeCoverage) {
         super(version, coverage, bbox, responseCRS, resx, format, usePost, remoteReproject, useCommandLineGDAL, username, password);
         this._wcsUrl = wcsUrl;
@@ -173,7 +181,7 @@ class BoundWcsRequest extends WcsReaderRequest {
             for (int i = 0; i < nodes.getLength (); i++) {
                 nativeCRSs.add (nodes.item (i).getTextContent ().trim ().toUpperCase ());
             }
-            
+
             nodes = select ("//wcs:spatialDomain/*/@srsName", getDescribeCoverage());
             for (int i = 0; i < nodes.getLength (); i++) {
                 nativeCRSs.add (nodes.item (i).getTextContent ().trim ().toUpperCase ());
@@ -186,7 +194,7 @@ class BoundWcsRequest extends WcsReaderRequest {
 
     /**
      * Download describeCoverage document and return it in string form.
-     * 
+     *
      * Downloading only occurs once and is cached so a new instance will be
      * required to redownload
      */
@@ -202,7 +210,7 @@ class BoundWcsRequest extends WcsReaderRequest {
 
     /**
      * Download getCapabilities document and return it in string form.
-     * 
+     *
      * Downloading only occurs once and is cached so a new instance will be
      * required to redownload
      */
@@ -270,27 +278,26 @@ class BoundWcsRequest extends WcsReaderRequest {
     }
 
 	/**
-	 * 
+	 *
 	 * @param resolveFormat
 	 *            Currently all parameters are sent in all requests. (Format
 	 *            parameter is sent for a describeLayer request which is
 	 *            unnecessary, but should ignored). Because of this I had an
 	 *            infinite loop. The describeLayer request required for getting
 	 *            the supported formats was trying to resolve the aliases in
-	 *            order to make the request. 
+	 *            order to make the request.
 	 */
     private InputStream makeRequest (String request, URL wcsUrl, boolean resolveFormat, int timeout) throws IOException, ProtocolException,
             MalformedURLException {
-    	DefaultHttpClient httpclient = new DefaultHttpClient();
-        httpclient.getParams().setParameter("http.socket.timeout", new Integer(timeout));
-        httpclient.getParams().setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, true);
+        httpClient.getParams().setParameter("http.socket.timeout", new Integer(timeout));
+        httpClient.getParams().setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, true);
 
         ProxySelectorRoutePlanner routePlanner = new ProxySelectorRoutePlanner(
-                httpclient.getConnectionManager().getSchemeRegistry(),
+                httpClient.getConnectionManager().getSchemeRegistry(),
                 ProxySelector.getDefault());
-
-        ((DefaultHttpClient)httpclient).setRoutePlanner(routePlanner); 
-
+        if (httpClient instanceof AbstractHttpClient) {
+        	((AbstractHttpClient) httpClient).setRoutePlanner(routePlanner);
+        }
         HttpRequestBase httpRequest;
 		if (usePost && false) {
         	HttpPost httpPost = new HttpPost(request);
@@ -309,14 +316,16 @@ class BoundWcsRequest extends WcsReaderRequest {
             LOG.info("making GET request to "+spec);
             httpRequest = new HttpGet(spec);
         }
-        
 
-		
+
+
 		BasicHttpContext localcontext = new BasicHttpContext();
 		if(username != null) {
 			AuthScope authScope = new AuthScope(wcsUrl.getHost(), wcsUrl.getPort());
 			Credentials credentials = new UsernamePasswordCredentials(username, password);
-			httpclient.getCredentialsProvider().setCredentials(authScope, credentials );
+
+			if (httpClient instanceof AbstractHttpClient)
+				((AbstractHttpClient) httpClient).getCredentialsProvider().setCredentials(authScope, credentials );
 
 			// Create AuthCache instance
 			AuthCache authCache = new BasicAuthCache();
@@ -325,15 +334,15 @@ class BoundWcsRequest extends WcsReaderRequest {
 			authCache.put(new HttpHost(wcsUrl.getHost(), wcsUrl.getPort()), basicAuth);
 
 			// Add AuthCache to the execution context
-			localcontext.setAttribute(ClientContext.AUTH_CACHE, authCache);        
+			localcontext.setAttribute(ClientContext.AUTH_CACHE, authCache);
 
 			ArrayList<String> authpref = new ArrayList<String>();
 			authpref.add(AuthPolicy.BASIC);
 			authpref.add(AuthPolicy.DIGEST);
-			httpclient.getParams().setParameter(AuthPNames.TARGET_AUTH_PREF, authpref);
+			httpClient.getParams().setParameter(AuthPNames.TARGET_AUTH_PREF, authpref);
 		}
-		
-		HttpResponse response = httpclient.execute(httpRequest, localcontext);
+
+		HttpResponse response = httpClient.execute(httpRequest, localcontext);
         // check for an error response from the server
 		int statusCode = response.getStatusLine().getStatusCode();
 		LOG.debug("WCS response status : " + statusCode);
@@ -344,7 +353,7 @@ class BoundWcsRequest extends WcsReaderRequest {
             String error = FileUtils.asString(response.getEntity().getContent());
             throw new ExtractorException("Error from server while fetching coverage:"+error);
         } else {
-            return response.getEntity().getContent();            
+            return response.getEntity().getContent();
         }
     }
 
