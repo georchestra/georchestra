@@ -1,5 +1,6 @@
 package org.georchestra.extractorapp.ws.extractor;
 
+import com.google.common.io.Files;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -18,6 +19,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import static java.lang.String.valueOf;
 import static org.junit.Assert.assertEquals;
@@ -98,7 +101,36 @@ public class WcsExtractorTest extends AbstractTestWithServer {
         final File extract = wcsExtractor.extract(request);
         assertTrue(this.serverWasCalled);
 
-        assertEquals(1, extract.listFiles().length);
+        final String[] fileNames = extract.list();
+        assertEquals(1, fileNames.length);
+        assertTrue(fileNames[0], fileNames[0].endsWith(".tif"));
+
+        for (File file : extract.listFiles()) {
+            assertTrue(file.length() > 0);
+        }
+    }
+    @Test
+    public void testExtract_TIF() throws Exception {
+        RequestConfiguration requestConfig = createRequestConfiguration(null, null);
+        WcsExtractor wcsExtractor = new WcsExtractor(testDir.getRoot(), requestConfig);
+
+        ExtractorLayerRequest request = createLayerRequestObject("nurc:Arc_Sample", "tif");
+        final File extract = wcsExtractor.extract(request);
+        assertTrue(this.serverWasCalled);
+
+        final String[] fileNames = extract.list();
+        assertEquals(Arrays.toString(fileNames), 4, fileNames.length);
+
+        Set<String> extensions = new HashSet<String>();
+        for (String fileName : fileNames) {
+            extensions.add(Files.getFileExtension(fileName));
+        }
+
+        assertTrue(Arrays.toString(fileNames), extensions.containsAll(Arrays.asList("tif", "tfw", "prj", "tab")));
+
+        for (File file : extract.listFiles()) {
+            assertTrue(file.length() > 0);
+        }
     }
 
     public RequestConfiguration createRequestConfiguration(String extractorappUsername, String extractorappPassword) {
@@ -123,6 +155,8 @@ public class WcsExtractorTest extends AbstractTestWithServer {
                 } else if (query.contains("REQUEST=DESCRIBECOVERAGE")) {
                     respondWith1_0_0DescribeCoverageDocument(httpExchange);
                 } else if (query.contains("REQUEST=GETCOVERAGE") && query.contains("FORMAT=GEOTIFF")) {
+                    respondWithGeotiff(httpExchange);
+                } else if (query.contains("REQUEST=GETCOVERAGE") && query.contains("FORMAT=TIFF")) {
                     respondWithGeotiff(httpExchange);
                 } else {
                     sendError(httpExchange, 404, "Not a recognized request: " + httpExchange.getRequestURI());
