@@ -22,7 +22,8 @@ import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFactorySpi;
 import org.geotools.data.Query;
@@ -61,8 +62,6 @@ import java.util.regex.Pattern;
  * @author jeichar
  */
 public class WfsExtractor {
-	
-	
 	protected static final Log LOG = LogFactory.getLog(WcsExtractor.class.getPackage().getName());
 
     /**
@@ -141,7 +140,8 @@ public class WfsExtractor {
     public void checkPermission(ExtractorLayerRequest request, String secureHost, String username, String roles) throws IOException {
         URL capabilitiesURL = request.capabilitiesURL("WFS", "1.0.0");
 
-    	DefaultHttpClient httpclient = new DefaultHttpClient();
+        final HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+
         HttpClientContext localContext = HttpClientContext.create();
         final HttpHost httpHost = new HttpHost(capabilitiesURL.getHost(), capabilitiesURL.getPort());
     	HttpGet get = new HttpGet(capabilitiesURL.toExternalForm());
@@ -151,25 +151,27 @@ public class WfsExtractor {
         	LOG.debug("WfsExtractor.checkPermission - Secured Server: adding username header and role headers to request for checkPermission");
             if(username != null) get.addHeader("imp-username", username);
             if(roles != null) get.addHeader("imp-roles", roles);
+            if (username != null) {
+                CredentialsProvider credsProvider = new BasicCredentialsProvider();
+                credsProvider.setCredentials(
+                        new AuthScope(capabilitiesURL.getHost(), capabilitiesURL.getPort()),
+                        new UsernamePasswordCredentials(_adminUsername, _adminPassword));
+                httpClientBuilder.setDefaultCredentialsProvider(credsProvider);
 
-            CredentialsProvider credsProvider = new BasicCredentialsProvider();
-            credsProvider.setCredentials(
-                    new AuthScope(capabilitiesURL.getHost(), capabilitiesURL.getPort()),
-                    new UsernamePasswordCredentials(_adminUsername, _adminPassword));
-            httpclient.setCredentialsProvider(credsProvider);
+                AuthCache authCache = new BasicAuthCache();
+                // Generate BASIC scheme object and add it to the local
+                // auth cache
+                BasicScheme basicAuth = new BasicScheme();
+                authCache.put(httpHost, basicAuth);
 
-            AuthCache authCache = new BasicAuthCache();
-            // Generate BASIC scheme object and add it to the local
-            // auth cache
-            BasicScheme basicAuth = new BasicScheme();
-            authCache.put(httpHost, basicAuth);
-
-            // Add AuthCache to the execution context
-            localContext.setAuthCache(authCache);
+                // Add AuthCache to the execution context
+                localContext.setAuthCache(authCache);
+            }
         } else {
         	LOG.debug("WfsExtractor.checkPermission - Non Secured Server");
         }
 
+        final CloseableHttpClient httpclient = httpClientBuilder.build();
         String capabilities = FileUtils.asString(httpclient.execute(httpHost, get, localContext).getEntity().getContent());
         Pattern regex = Pattern.compile("(?m)<FeatureType[^>]*>(\\\\n|\\s)*<Name>\\s*(\\w*:)?"+Pattern.quote(request._layerName)+"\\s*</Name>");
         boolean permitted = regex.matcher(capabilities).find();
