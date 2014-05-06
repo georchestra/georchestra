@@ -1,41 +1,34 @@
 package org.georchestra.extractorapp.ws.extractor.wcs;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.geotools.referencing.CRS;
+import org.junit.Assume;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
-import org.geotools.referencing.CRS;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class GDALCommandLineTest {
 
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
+
 	private URL sampletif = GDALCommandLineTest.class.getResource("/latlong.tif");
-
-	@Before
-	public void setUp() throws Exception {
-	}
-
-	@After
-	public void tearDown() throws Exception {
-	}
 
 	@Test
 	public final void testGdalTransformation() throws Exception {
-		System.out.println(System.getProperty("java.library.path"));
-		File tmpFile = null;
-		try {
-			tmpFile = File.createTempFile("gdalCmdlineTmpFile", ".tif");
-			// javadoc is not clear, making sure we sweep it off at JVM end
-			tmpFile.deleteOnExit();
-		} catch (IOException e) {
-			fail("Unexpected: " +e.getMessage());
-		}
-
+        try {
+            final Process exec = Runtime.getRuntime().exec("gdalwarp --help-general");
+            exec.destroy();
+        } catch (IOException e) {
+            Assume.assumeNoException("Test aborted because gdalwarp is not on PATH", e);
+        }
+        File tmpFile = folder.newFile("gdalCmdlineTmpFile.tif");
 		// This should fail
 		boolean npeCaught = false;
 		try {

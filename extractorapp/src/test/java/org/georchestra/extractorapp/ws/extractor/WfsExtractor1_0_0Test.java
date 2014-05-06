@@ -9,7 +9,6 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
-
 import org.apache.commons.codec.binary.Base64;
 import org.geotools.data.FileDataStore;
 import org.geotools.data.Query;
@@ -20,6 +19,7 @@ import org.geotools.data.wfs.WFSDataStoreFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -39,7 +39,6 @@ import static java.lang.String.valueOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.*;
 
 
 public class WfsExtractor1_0_0Test extends AbstractTestWithServer {
@@ -206,8 +205,7 @@ public class WfsExtractor1_0_0Test extends AbstractTestWithServer {
         try {
         	extract = wfsExtractor.extract(request);
         } catch(IllegalStateException e){
-        	System.out.println("OGRDataStore is not available. Check configuration.");
-        	return;
+            Assume.assumeNoException(e);
         }
 
         assertTrue(this.usesVersion1_0_0);
@@ -225,7 +223,7 @@ public class WfsExtractor1_0_0Test extends AbstractTestWithServer {
         });
     }
 
-    @Ignore
+    @Test @Ignore("Currently MIF export always fails")
     public void testExtract_1_0_0_Mif() throws Exception {
 
         WfsExtractor wfsExtractor = new WfsExtractor(testDir.getRoot(), factory);
@@ -235,8 +233,7 @@ public class WfsExtractor1_0_0Test extends AbstractTestWithServer {
         try {
             extract = wfsExtractor.extract(request);
         } catch(IllegalStateException e){
-            System.out.println("OGRDataStore is not available. Check configuration.");
-            return;
+            Assume.assumeNoException(e);
         }
 
         assertTrue(this.usesVersion1_0_0);
