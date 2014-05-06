@@ -12,6 +12,7 @@ import org.georchestra.extractorapp.ws.extractor.WfsExtractor1_0_0Test;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -34,6 +35,11 @@ public class CSWExtractorTest extends AbstractTestWithServer {
     private boolean serverWasCalled = false;
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
+
+    @Before
+    public void before() {
+        this.serverWasCalled = false;
+    }
 
     @Test
     public void testCheckPermission_no_auth_permitted() throws Exception {

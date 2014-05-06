@@ -1,16 +1,5 @@
 package org.georchestra.extractorapp.ws.extractor.wcs;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Set;
-
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
@@ -29,22 +18,29 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Set;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 public class BoundWcsRequestTest {
 	private InputStream describeCoverageSample;
 	private InputStream getCapabilitiesSample;
 
 	@Before
 	public void setUp() throws Exception {
-		describeCoverageSample = BoundWcsRequestTest.class.getResourceAsStream("/describecoveragesample.xml");
-		getCapabilitiesSample = BoundWcsRequestTest.class.getResourceAsStream("/getcapabilitiessample.xml");
+		describeCoverageSample = BoundWcsRequestTest.class.getResourceAsStream("/wcs/describecoveragesample.xml");
+		getCapabilitiesSample = BoundWcsRequestTest.class.getResourceAsStream("/wcs/getcapabilitiessample.xml");
 	}
 
 	@After
-	public void tearDown() {
-		try {
+	public void tearDown() throws IOException {
 		describeCoverageSample.close();
 		getCapabilitiesSample.close();
-		} catch (IOException e) {}
 	}
 
 

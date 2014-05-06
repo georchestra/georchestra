@@ -106,9 +106,9 @@ public class WcsExtractor {
         String password;
         // HACK  I want unrestricted access to layers. 
         // Security check takes place in ExtractorThread
-        if(requestConfig.secureHost.equalsIgnoreCase(request._url.getHost())
+        if(requestConfig.adminCredentials != null && (requestConfig.secureHost.equalsIgnoreCase(request._url.getHost())
                 || "127.0.0.1".equalsIgnoreCase(request._url.getHost())
-                || "localhost".equalsIgnoreCase(request._url.getHost())) {
+                || "localhost".equalsIgnoreCase(request._url.getHost()))) {
         	LOG.debug("WcsExtractor.extract - Secured Server: Adding extractionUserName to connection params");
             username = requestConfig.adminCredentials.getUserName();
             password = requestConfig.adminCredentials.getPassword();
