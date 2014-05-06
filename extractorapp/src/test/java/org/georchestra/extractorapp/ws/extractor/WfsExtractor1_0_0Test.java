@@ -9,6 +9,7 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
+
 import org.apache.commons.codec.binary.Base64;
 import org.geotools.data.FileDataStore;
 import org.geotools.data.Query;
@@ -20,6 +21,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -222,6 +224,36 @@ public class WfsExtractor1_0_0Test extends AbstractTestWithServer {
             }
         });
     }
+
+    @Ignore
+    public void testExtract_1_0_0_Mif() throws Exception {
+
+        WfsExtractor wfsExtractor = new WfsExtractor(testDir.getRoot(), factory);
+        ExtractorLayerRequest request = createLayerRequestObject("sf:archsites", "mif");
+
+        File extract = null;
+        try {
+            extract = wfsExtractor.extract(request);
+        } catch(IllegalStateException e){
+            System.out.println("OGRDataStore is not available. Check configuration.");
+            return;
+        }
+
+        assertTrue(this.usesVersion1_0_0);
+        assertTrue(this.serverWasCalled);
+
+        List<String> fileNames = Arrays.asList(extract.list());
+        assertEquals(6, extract.listFiles().length);
+        assertBoundingPolygon(extract);
+
+        Collections2.filter(fileNames, new Predicate<String>() {
+            @Override
+            public boolean apply(String input) {
+                return input.toLowerCase().endsWith("tab");
+            }
+        });
+    }
+
     private void assertBoundingPolygon(File extractDir) throws IOException {
         List<String> fileNames = Arrays.asList(extractDir.list());
         final String shapefileName = "bounding_POLYGON.shp";
