@@ -20,32 +20,32 @@ import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.util.ProgressListener;
 
 /**
- * This writer sets the OGRDataStore that is responsible of generating the vector file in the format required. 
- * 
+ * This writer sets the OGRDataStore that is responsible of generating the vector file in the format required.
+ *
  * <p>
  * Note: this was written thinking in future extensions to support more format. Right now TAB format is my goal.
  * The extension should be very simple adding the new format and driver in the {@link FileFormat} enumerate type.
  * </p>
- * 
+ *
  * @author Mauricio Pazos
- * 
+ *
  */
 class OGRFeatureWriter implements FeatureWriterStrategy {
     private static final Log LOG = LogFactory.getLog(OGRFeatureWriter.class.getPackage().getName());
-    
+
 	/**
 	 * Maintains the set of valid formats with theirs driver descriptors associated
 	 */
-	
+
 	public  enum FileFormat{
-		
+
 		tab {
 			@Override
 			public String getDriver(){return "MapInfo File";}
-			
+
 			@Override
 			public String[] getFormatOptions(){return new String[]{};}
-		}, 
+		},
 		mif {
 
 			@Override
@@ -53,26 +53,26 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
 
 			@Override
 			public String[] getFormatOptions() { return new String[]{"FORMAT=MIF"};	}
-			
-		}, 
+
+		},
 		shp {
 			@Override
 			public String getDriver(){return "ESRI shapefile";}
-			
-		}, 
+
+		},
 		kml {
 			@Override
 			public String getDriver(){return "KML file";}
-			
+
 		};
-		
+
 		/**
 		 * Returns the OGR driver for this format
 		 * @return the driver
 		 */
 		public abstract String getDriver();
-		
-		/** 
+
+		/**
 		 * Returns the options related with the indicated file format.
 		 * @return the options for the file format
 		 */
@@ -84,12 +84,12 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
 	private final File basedir;
 	private final SimpleFeatureCollection features;
 	private final FileFormat fileFormat;
-	private final String[] options; 
-	
+	private final String[] options;
+
 	/**
 	 * New instance of {@link OGRFeatureWriter}
-	 * 
-	 * @param progressListener 
+	 *
+	 * @param progressListener
 	 * @param schema		output schema
 	 * @param basedir		output folder
 	 * @param fileFormat 	output fileExtension
@@ -103,15 +103,15 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
 			SimpleFeatureCollection features) {
 
 		assert schema != null && basedir != null && features != null;
-		
+
 		this.progresListener = progresListener;
 		checkSchema(schema);
 		this.schema = schema;
 		this.basedir = basedir;
 		this.fileFormat = fileFormat;
-		
+
 		this.options = fileFormat.getFormatOptions();
-		
+
 		this.features = features;
 	}
 
@@ -124,12 +124,12 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
 	 * @param schema
 	 */
 	private boolean checkSchema(SimpleFeatureType schema) {
-		
+
 		boolean hasGeometry = false;
 		boolean hasAttr = false;
 		boolean nameLimitOK = true;
         for (int i = 0, j = 0; i < schema.getAttributeCount(); i++) {
-        	
+
             AttributeDescriptor ad = schema.getDescriptor(i);
             if (ad == schema.getGeometryDescriptor()) {
             	hasGeometry = true;
@@ -138,7 +138,7 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
             }
             if(ad.getLocalName().length() > 10){
             	nameLimitOK = false;
-            	LOG.warn("Some format requires that the properties' name have got less than 10 character. Take into account this warnning if you experiment problems." 
+            	LOG.warn("Some format requires that the properties' name have got less than 10 character. Take into account this warnning if you experiment problems."
             			+ " Schema: "+ schema.getTypeName() + " Property:" + ad.getLocalName());
             }
         }
@@ -148,42 +148,41 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
         if(!hasAttr){
         	LOG.warn("The Schema " + schema.getTypeName() + "doesn't contain any alfanumeric property");
         }
-        
+
         return hasGeometry && hasAttr && nameLimitOK;
 	}
 
 
 	/**
 	 * Generate the file's vector specified
-	 * @return array {@link File} of created files 
+	 * @return array {@link File} of created files
 	 */
 	@Override
 	public File[] generateFiles() throws IOException {
-        
+
 		Map<String, Serializable> map = new java.util.HashMap<String, Serializable>();
-		
+
         final String pathName = this.basedir.getAbsolutePath() + File.separatorChar + FileUtils.createFileName(this.basedir.getAbsolutePath(), this.schema, this.fileFormat);
 		map.put(OGRDataStoreFactory.OGR_NAME.key, pathName);
 		map.put(OGRDataStoreFactory.OGR_DRIVER_NAME.key, this.fileFormat.getDriver());
-		
+
 		File[] files = new File[]{};
         OGRDataStore ds = null;
         try {
             ds = (OGRDataStore) DataStoreFinder.getDataStore(map);
-            
+            if (ds == null) {
+            	throw new IllegalStateException("OGRDataStore couldn't be created, please check GDAL librairies are correctly installed on your machine");
+            }
 	        ds.createSchema(this.features, true, this.options); //TODO OGR require the following improvements:  use the output crs required (progress Listener should be a parameter)
 
 	        files =  new File[]{new File( pathName)};
-	        
-        } catch (NullPointerException e) {
-        	LOG.error("OGRDataStore couldn't be created, please check GDAL librairies are correctly installed on your machine");
-        	throw e;
+
         }
         finally {
             if(ds != null){
             	ds.dispose();
             }
-        }		
+        }
         return files;
 	}
 
@@ -193,9 +192,9 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
         if(!basedir.exists()){
             ds.createSchema(this.schema);
         }
-        
+
         return ds;
-		
+
 	}
 
 }

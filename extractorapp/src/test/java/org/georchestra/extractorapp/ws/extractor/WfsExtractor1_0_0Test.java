@@ -37,6 +37,8 @@ import static java.lang.String.valueOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.*;
+
 
 public class WfsExtractor1_0_0Test extends AbstractTestWithServer {
     @Rule
@@ -192,6 +194,34 @@ public class WfsExtractor1_0_0Test extends AbstractTestWithServer {
         });
     }
 
+    @Test
+    public void testExtract_1_0_0_Tab() throws Exception {
+
+        WfsExtractor wfsExtractor = new WfsExtractor(testDir.getRoot(), factory);
+        ExtractorLayerRequest request = createLayerRequestObject("sf:archsites", "tab");
+
+        File extract = null;
+        try {
+        	extract = wfsExtractor.extract(request);
+        } catch(IllegalStateException e){
+        	System.out.println("OGRDataStore is not available. Check configuration.");
+        	return;
+        }
+
+        assertTrue(this.usesVersion1_0_0);
+        assertTrue(this.serverWasCalled);
+
+        List<String> fileNames = Arrays.asList(extract.list());
+        assertEquals(8, extract.listFiles().length);
+        assertBoundingPolygon(extract);
+
+        Collections2.filter(fileNames, new Predicate<String>() {
+            @Override
+            public boolean apply(String input) {
+                return input.toLowerCase().endsWith("tab");
+            }
+        });
+    }
     private void assertBoundingPolygon(File extractDir) throws IOException {
         List<String> fileNames = Arrays.asList(extractDir.list());
         final String shapefileName = "bounding_POLYGON.shp";
