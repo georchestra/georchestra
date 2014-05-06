@@ -29,3 +29,6 @@ private.ssl=
 proxy.defaultTarget=
 proxy.mapping=
 header.mapping=
+
+privileged_admin_name=@shared.privileged.geoserver.user@
+

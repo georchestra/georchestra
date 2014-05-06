@@ -1,11 +1,6 @@
 package org.georchestra.extractorapp.ws.extractor;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.vividsolutions.jts.geom.Envelope;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 import org.json.JSONArray;
@@ -16,30 +11,34 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import com.vividsolutions.jts.geom.Envelope;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Encapsulates all the parameters of an extractor request for one layer
  * 
  * @author jeichar
  */
-public final class ExtractorLayerRequest {
-    private static final String            EMAILS_KEY           = "emails";
-    private static final String            LAYERS_KEY           = "layers";
-    private static final String            NAMESPACE_KEY        = "namespace";
-    private static final String            GLOBAL_PROPS_KEY     = "globalProperties";
-    private static final String            URL_KEY              = "owsUrl";
-    private static final String            TYPE_KEY             = "owsType";
-    private static final String            LAYER_NAME_KEY       = "layerName";
-    private static final String            PROJECTION_KEY       = "projection";
-    private static final String            FORMAT_KEY           = "format";
-    private static final String            VECTOR_FORMAT_KEY    = "vectorFormat";
-    private static final String            RASTER_FORMAT_KEY    = "rasterFormat";
-    private static final String            BBOX_KEY             = "bbox";
-    private static final String            BBOX_SRS_KEY         = "srs";
-    private static final String            BBOX_VALUE_KEY       = "value";
-    private static final String            RESOLUTION_KEY       = "resolution";
-    private static final String            ISO_METADATA_URL_KEY	= "isoMetadataURL";
+public class ExtractorLayerRequest {
+    static final String            EMAILS_KEY           = "emails";
+    static final String            LAYERS_KEY           = "layers";
+    static final String            NAMESPACE_KEY        = "namespace";
+    static final String            GLOBAL_PROPS_KEY     = "globalProperties";
+    static final String            URL_KEY              = "owsUrl";
+    static final String            TYPE_KEY             = "owsType";
+    static final String            LAYER_NAME_KEY       = "layerName";
+    static final String            PROJECTION_KEY       = "projection";
+    static final String            FORMAT_KEY           = "format";
+    static final String            VECTOR_FORMAT_KEY    = "vectorFormat";
+    static final String            RASTER_FORMAT_KEY    = "rasterFormat";
+    static final String            BBOX_KEY             = "bbox";
+    static final String            BBOX_SRS_KEY         = "srs";
+    static final String            BBOX_VALUE_KEY       = "value";
+    static final String            RESOLUTION_KEY       = "resolution";
+    static final String            ISO_METADATA_URL_KEY	= "isoMetadataURL";
 
     public final String[]                  _emails;
     public final URL                       _url;

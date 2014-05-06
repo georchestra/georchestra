@@ -1,14 +1,17 @@
 package org.georchestra.extractorapp.ws.extractor;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.regex.Pattern;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpHost;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.AuthCache;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.impl.client.BasicAuthCache;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.georchestra.extractorapp.ws.extractor.wcs.WcsCoverageReader;
 import org.georchestra.extractorapp.ws.extractor.wcs.WcsFormat;
@@ -18,6 +21,12 @@ import org.geotools.referencing.CRS;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.regex.Pattern;
 
 
 /**
@@ -43,18 +52,38 @@ public class WcsExtractor {
 		        URL capabilitiesURL = request.capabilitiesURL("WMS", null);
 		        
 		    	DefaultHttpClient httpclient = new DefaultHttpClient();
+                HttpClientContext localContext = HttpClientContext.create();
+                final HttpHost httpHost = new HttpHost(capabilitiesURL.getHost(), capabilitiesURL.getPort());
 		    	HttpGet get = new HttpGet(capabilitiesURL.toExternalForm());
 		        if(secureHost.equalsIgnoreCase(request._url.getHost())
 		                || "127.0.0.1".equalsIgnoreCase(request._url.getHost())
 		                || "localhost".equalsIgnoreCase(request._url.getHost())) {
 		        	LOG.debug(getClass().getSimpleName()+".checkPermission - Secured Server: adding username header and role headers to request for checkPermission");
-		            if(username != null) get.addHeader("sec-username", username);
-		            if(roles != null) get.addHeader("sec-roles", roles);
-		        } else {
+		            if(username != null) get.addHeader("imp-username", username);
+		            if(roles != null) get.addHeader("imp-roles", roles);
+
+                    String extractorAppUsername = requestConfig.adminCredentials.getUserName();
+                    String extractorAppPassword = requestConfig.adminCredentials.getPassword();
+                    CredentialsProvider credsProvider = new BasicCredentialsProvider();
+                    credsProvider.setCredentials(
+                            new AuthScope(capabilitiesURL.getHost(), capabilitiesURL.getPort()),
+                            new UsernamePasswordCredentials(extractorAppUsername, extractorAppPassword));
+                    httpclient.setCredentialsProvider(credsProvider);
+
+                    AuthCache authCache = new BasicAuthCache();
+                    // Generate BASIC scheme object and add it to the local
+                    // auth cache
+                    BasicScheme basicAuth = new BasicScheme();
+                    authCache.put(httpHost, basicAuth);
+
+                    // Add AuthCache to the execution context
+                    localContext.setAuthCache(authCache);
+
+                } else {
 		        	LOG.debug(getClass().getSimpleName()+"checkPermission - Non Secured Server");
 		        }
 
-		        String capabilities = FileUtils.asString(httpclient.execute(get).getEntity().getContent());
+		        String capabilities = FileUtils.asString(httpclient.execute(httpHost, get, localContext).getEntity().getContent());
 		        Pattern regex = Pattern.compile("(?m)<Layer[^>]*>(\\\\n|\\s)*<Name>\\s*"+Pattern.quote(request._layerName)+"\\s*</Name>");
 		        boolean permitted = regex.matcher(capabilities).find();
 		        

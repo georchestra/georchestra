@@ -1,19 +1,29 @@
 package org.georchestra.extractorapp.ws.extractor;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
-
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryCollection;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpHost;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.AuthCache;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.impl.client.BasicAuthCache;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFactorySpi;
 import org.geotools.data.Query;
@@ -36,16 +46,15 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.ProgressListener;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.geom.MultiPoint;
-import com.vividsolutions.jts.geom.MultiPolygon;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Obtains data from a WFS and write the data out to the filesystem
@@ -53,8 +62,6 @@ import com.vividsolutions.jts.geom.Polygon;
  * @author jeichar
  */
 public class WfsExtractor {
-	
-	
 	protected static final Log LOG = LogFactory.getLog(WcsExtractor.class.getPackage().getName());
 
     /**
@@ -133,19 +140,39 @@ public class WfsExtractor {
     public void checkPermission(ExtractorLayerRequest request, String secureHost, String username, String roles) throws IOException {
         URL capabilitiesURL = request.capabilitiesURL("WFS", "1.0.0");
 
-    	DefaultHttpClient httpclient = new DefaultHttpClient();
+        final HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+
+        HttpClientContext localContext = HttpClientContext.create();
+        final HttpHost httpHost = new HttpHost(capabilitiesURL.getHost(), capabilitiesURL.getPort());
     	HttpGet get = new HttpGet(capabilitiesURL.toExternalForm());
         if(secureHost.equalsIgnoreCase(request._url.getHost())
                 || "127.0.0.1".equalsIgnoreCase(request._url.getHost())
                 || "localhost".equalsIgnoreCase(request._url.getHost())) {
         	LOG.debug("WfsExtractor.checkPermission - Secured Server: adding username header and role headers to request for checkPermission");
-            if(username != null) get.addHeader("sec-username", username);
-            if(roles != null) get.addHeader("sec-roles", roles);
+            if(username != null) get.addHeader("imp-username", username);
+            if(roles != null) get.addHeader("imp-roles", roles);
+            if (username != null) {
+                CredentialsProvider credsProvider = new BasicCredentialsProvider();
+                credsProvider.setCredentials(
+                        new AuthScope(capabilitiesURL.getHost(), capabilitiesURL.getPort()),
+                        new UsernamePasswordCredentials(_adminUsername, _adminPassword));
+                httpClientBuilder.setDefaultCredentialsProvider(credsProvider);
+
+                AuthCache authCache = new BasicAuthCache();
+                // Generate BASIC scheme object and add it to the local
+                // auth cache
+                BasicScheme basicAuth = new BasicScheme();
+                authCache.put(httpHost, basicAuth);
+
+                // Add AuthCache to the execution context
+                localContext.setAuthCache(authCache);
+            }
         } else {
         	LOG.debug("WfsExtractor.checkPermission - Non Secured Server");
         }
 
-        String capabilities = FileUtils.asString(httpclient.execute(get).getEntity().getContent());
+        final CloseableHttpClient httpclient = httpClientBuilder.build();
+        String capabilities = FileUtils.asString(httpclient.execute(httpHost, get, localContext).getEntity().getContent());
         Pattern regex = Pattern.compile("(?m)<FeatureType[^>]*>(\\\\n|\\s)*<Name>\\s*(\\w*:)?"+Pattern.quote(request._layerName)+"\\s*</Name>");
         boolean permitted = regex.matcher(capabilities).find();
         
