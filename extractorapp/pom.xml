@@ -10,6 +10,9 @@
 	<packaging>war</packaging>
 	<name>Extractorapp Webapp</name>
 	<url>http://www.georchestra.org</url>
+    <properties>
+        <maven.test.skip>false</maven.test.skip>
+    </properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.tuckey</groupId>

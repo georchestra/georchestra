@@ -1,6 +1,13 @@
 package org.georchestra.extractorapp.ws.extractor;
 
-import static org.junit.Assert.*;
+import junit.framework.Assert;
+import org.georchestra.extractorapp.ws.extractor.task.ExtractionManager;
+import org.json.JSONObject;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -11,17 +18,9 @@ import java.util.Date;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import junit.framework.Assert;
-
-import org.georchestra.extractorapp.ws.extractor.task.ExtractionManager;
-import org.json.JSONObject;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-
-import com.sun.net.httpserver.Authenticator.Success;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeFalse;
 
 public class ExtractorControllerTest {
 
@@ -92,8 +91,19 @@ public class ExtractorControllerTest {
 			storageDirProp = System.getProperty("extractor.storage.dir");
 			// this should not be accessible by a regular user
 			// which runs the testsuite
-			storageDirProp = System.setProperty("extractor.storage.dir",
-					"/root/extratorappStorage");
+            final String unwriteablePath;
+            final String osName = System.getProperty("os.name").toLowerCase();
+            if (osName.contains("windows")) {
+                unwriteablePath = "c:/windows/extractorAppDir";
+            } else {
+                unwriteablePath = "/bin/extractorAppDir";
+            }
+
+            assumeFalse(new File(unwriteablePath).exists());
+            assumeFalse(new File(unwriteablePath).mkdirs());
+
+            storageDirProp = System.setProperty("extractor.storage.dir",
+                    unwriteablePath);
 			ExtractionManager em = new ExtractionManager();
 			ec.setExtractionManager(em);
 			try {
