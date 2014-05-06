@@ -3,16 +3,10 @@ package org.georchestra.extractorapp.ws.extractor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpHost;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.AuthCache;
-import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.impl.auth.BasicScheme;
-import org.apache.http.impl.client.BasicAuthCache;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.georchestra.extractorapp.ws.extractor.wcs.WcsCoverageReader;
 import org.georchestra.extractorapp.ws.extractor.wcs.WcsFormat;
 import org.georchestra.extractorapp.ws.extractor.wcs.WcsReaderRequest;
@@ -49,48 +43,41 @@ public class WcsExtractor {
 
 	public void checkPermission(ExtractorLayerRequest request, String secureHost, String username, String roles)
 		    throws MalformedURLException, IOException {
-		        URL capabilitiesURL = request.capabilitiesURL("WMS", null);
-		        
-		    	DefaultHttpClient httpclient = new DefaultHttpClient();
-                HttpClientContext localContext = HttpClientContext.create();
-                final HttpHost httpHost = new HttpHost(capabilitiesURL.getHost(), capabilitiesURL.getPort());
-		    	HttpGet get = new HttpGet(capabilitiesURL.toExternalForm());
-		        if(secureHost.equalsIgnoreCase(request._url.getHost())
-		                || "127.0.0.1".equalsIgnoreCase(request._url.getHost())
-		                || "localhost".equalsIgnoreCase(request._url.getHost())) {
-		        	LOG.debug(getClass().getSimpleName()+".checkPermission - Secured Server: adding username header and role headers to request for checkPermission");
-		            if(username != null) get.addHeader("imp-username", username);
-		            if(roles != null) get.addHeader("imp-roles", roles);
+        URL capabilitiesURL = request.capabilitiesURL("WMS", null);
 
-                    String extractorAppUsername = requestConfig.adminCredentials.getUserName();
-                    String extractorAppPassword = requestConfig.adminCredentials.getPassword();
-                    CredentialsProvider credsProvider = new BasicCredentialsProvider();
-                    credsProvider.setCredentials(
-                            new AuthScope(capabilitiesURL.getHost(), capabilitiesURL.getPort()),
-                            new UsernamePasswordCredentials(extractorAppUsername, extractorAppPassword));
-                    httpclient.setCredentialsProvider(credsProvider);
+        final HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
 
-                    AuthCache authCache = new BasicAuthCache();
-                    // Generate BASIC scheme object and add it to the local
-                    // auth cache
-                    BasicScheme basicAuth = new BasicScheme();
-                    authCache.put(httpHost, basicAuth);
+        HttpClientContext localContext = HttpClientContext.create();
+        final HttpHost httpHost = new HttpHost(capabilitiesURL.getHost(), capabilitiesURL.getPort());
+        HttpGet get = new HttpGet(capabilitiesURL.toExternalForm());
+        if (username != null && (secureHost.equalsIgnoreCase(request._url.getHost())
+            || "127.0.0.1".equalsIgnoreCase(request._url.getHost())
+            || "localhost".equalsIgnoreCase(request._url.getHost()))) {
+            LOG.debug(getClass().getSimpleName() + ".checkPermission - Secured Server: adding username header and role headers to " +
+                      "request for checkPermission");
 
-                    // Add AuthCache to the execution context
-                    localContext.setAuthCache(authCache);
+            WfsExtractor.addImpersonateUserHeaders(username, roles, get);
 
-                } else {
-		        	LOG.debug(getClass().getSimpleName()+"checkPermission - Non Secured Server");
-		        }
+            String extractorAppUsername = requestConfig.adminCredentials.getUserName();
+            String extractorAppPassword = requestConfig.adminCredentials.getPassword();
 
-		        String capabilities = FileUtils.asString(httpclient.execute(httpHost, get, localContext).getEntity().getContent());
-		        Pattern regex = Pattern.compile("(?m)<Layer[^>]*>(\\\\n|\\s)*<Name>\\s*"+Pattern.quote(request._layerName)+"\\s*</Name>");
-		        boolean permitted = regex.matcher(capabilities).find();
-		        
-		        if(!permitted) {
-		            throw new SecurityException("User does not have sufficient privileges to access the Layer: "+request._layerName+". \n\nCapabilties:  "+capabilities);
-		        }
-		    }
+            WfsExtractor.enablePreemptiveBasicAuth(capabilitiesURL, httpClientBuilder, localContext, httpHost,
+                    extractorAppUsername, extractorAppPassword);
+
+        } else {
+            LOG.debug(getClass().getSimpleName() + "checkPermission - Non Secured Server");
+        }
+
+        final CloseableHttpClient httpclient = httpClientBuilder.build();
+        String capabilities = FileUtils.asString(httpclient.execute(httpHost, get, localContext).getEntity().getContent());
+        Pattern regex = Pattern.compile("(?m)<Layer[^>]*>(\\\\n|\\s)*<Name>\\s*" + Pattern.quote(request._layerName) + "\\s*</Name>");
+        boolean permitted = regex.matcher(capabilities).find();
+
+        if (!permitted) {
+            throw new SecurityException("User does not have sufficient privileges to access the Layer: " + request._layerName + ". " +
+                                        "\n\nCapabilties:  " + capabilities);
+        }
+    }
 	
 	/**
 	 * Creates a directory where the layer is extracted.

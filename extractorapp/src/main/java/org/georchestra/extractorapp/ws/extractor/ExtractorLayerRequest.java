@@ -27,18 +27,18 @@ public class ExtractorLayerRequest {
     static final String            LAYERS_KEY           = "layers";
     static final String            NAMESPACE_KEY        = "namespace";
     static final String            GLOBAL_PROPS_KEY     = "globalProperties";
-    static final String            URL_KEY              = "owsUrl";
-    static final String            TYPE_KEY             = "owsType";
-    static final String            LAYER_NAME_KEY       = "layerName";
-    static final String            PROJECTION_KEY       = "projection";
-    static final String            FORMAT_KEY           = "format";
+    public static final String            URL_KEY              = "owsUrl";
+    public static final String            TYPE_KEY             = "owsType";
+    public static final String            LAYER_NAME_KEY       = "layerName";
+    public static final String            PROJECTION_KEY       = "projection";
+    public static final String            FORMAT_KEY           = "format";
     static final String            VECTOR_FORMAT_KEY    = "vectorFormat";
     static final String            RASTER_FORMAT_KEY    = "rasterFormat";
-    static final String            BBOX_KEY             = "bbox";
-    static final String            BBOX_SRS_KEY         = "srs";
-    static final String            BBOX_VALUE_KEY       = "value";
+    public static final String            BBOX_KEY             = "bbox";
+    public static final String            BBOX_SRS_KEY         = "srs";
+    public static final String            BBOX_VALUE_KEY       = "value";
     static final String            RESOLUTION_KEY       = "resolution";
-    static final String            ISO_METADATA_URL_KEY	= "isoMetadataURL";
+    public static final String            ISO_METADATA_URL_KEY	= "isoMetadataURL";
 
     public final String[]                  _emails;
     public final URL                       _url;

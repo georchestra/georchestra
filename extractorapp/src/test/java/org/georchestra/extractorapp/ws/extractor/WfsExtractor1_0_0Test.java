@@ -19,7 +19,6 @@ import org.geotools.data.wfs.WFSDataStoreFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -29,26 +28,21 @@ import org.opengis.referencing.FactoryException;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.String.valueOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class WfsExtractor1_0_0Test {
+public class WfsExtractor1_0_0Test extends AbstractTestWithServer {
     @Rule
     public TemporaryFolder testDir = new TemporaryFolder();
 
     private WFSDataStoreFactory factory;
-    private HttpServer server;
-
-    private AtomicInteger portInc = new AtomicInteger(23878);
     private boolean usesVersion1_0_0;
     private boolean serverWasCalled = false;
 
@@ -57,8 +51,11 @@ public class WfsExtractor1_0_0Test {
     public void before() throws IOException {
         usesVersion1_0_0 = true;
         this.factory = new WFSDataStoreFactory();
-        this.server = HttpServer.create(new InetSocketAddress(portInc.incrementAndGet()), 0);
-        this.server.createContext("/geoserver/wfs", new HttpHandler() {
+    }
+
+    @Override
+    protected void configureContext(HttpServer server) {
+        server.createContext("/geoserver/wfs", new HttpHandler() {
             @Override
             public void handle(HttpExchange httpExchange) throws IOException {
                 final String query = httpExchange.getRequestURI().getQuery().toUpperCase();
@@ -71,18 +68,10 @@ public class WfsExtractor1_0_0Test {
                 } else if (query.contains("REQUEST=GETFEATURE")) {
                     respondWith1_0_0GetFeatureDocument(httpExchange);
                 } else {
-                    final byte[] response = ("Not a recognized request: " + httpExchange.getRequestURI()).getBytes("UTF-8");
-                    httpExchange.sendResponseHeaders(404, response.length);
-                    httpExchange.getResponseBody().write(response);
+                    sendError(httpExchange, 404, "Not a recognized request: " + httpExchange.getRequestURI());
                 }
             }
         });
-        this.server.start();
-    }
-
-    @After
-    public void after() {
-        this.server.stop(0);
     }
 
     @Test(expected = SecurityException.class)
@@ -112,22 +101,17 @@ public class WfsExtractor1_0_0Test {
         final String impUser = "impUser";
         final String extractorappUsername = "extractorapUsername";
         final String extractorappPassword = "password";
-        this.server.removeContext("/geoserver/wfs");
-        this.server.createContext("/geoserver/wfs", new HttpHandler() {
+        setServerContext("/geoserver/wfs", new HttpHandler() {
             @Override
             public void handle(HttpExchange httpExchange) throws IOException {
                 serverWasCalled = true;
                 final Headers requestHeaders = httpExchange.getRequestHeaders();
                 final String authorization = requestHeaders.getFirst("Authorization");
-                String authString = extractorappUsername + ":" + extractorappPassword;
-                byte[] authEncBytes = Base64.encodeBase64(authString.getBytes());
-                String authStringEnc = new String(authEncBytes);
+                String authStringEnc = encodeUserNameAndPassForBasicAuth(extractorappUsername, extractorappPassword);
                 if (authorization.equals("Basic " + authStringEnc) && requestHeaders.getFirst("imp-username").equals(impUser)) {
                     respondWith1_0_0CapabiltiesDocument(httpExchange);
                 } else {
-                    final byte[] bytes = "Illegal Auth".getBytes("UTF-8");
-                    httpExchange.sendResponseHeaders(401, bytes.length);
-                    httpExchange.getResponseBody().write(bytes);
+                    sendError(httpExchange, 401, "Illegal Auth");
                 }
 
             }
@@ -227,7 +211,7 @@ public class WfsExtractor1_0_0Test {
 
     private ExtractorLayerRequest createLayerRequestObject(String layerName, String formatType) throws JSONException, FactoryException,
             MalformedURLException {
-        int port = this.server.getAddress().getPort();
+        int port = getServerPort();
         JSONObject layerJson = new JSONObject();
         layerJson.put(ExtractorLayerRequest.URL_KEY, "http://localhost:" + port + "/geoserver/wfs");
         layerJson.put(ExtractorLayerRequest.PROJECTION_KEY, "EPSG:26713");
@@ -263,14 +247,14 @@ public class WfsExtractor1_0_0Test {
 
     private void respondWith1_0_0DescribeFeatureDocument(HttpExchange httpExchange) throws IOException {
         final byte[] response = TestResourceUtils.getResourceAsBytes(WfsExtractor1_0_0Test.class,
-                "/wfs/wfs_1_0_0_describeFeatureType.xml");
+                "/wfs/wfs_1_0_0_describeFeatureType-point.xml");
 
         writeResponse(httpExchange, response);
     }
 
     private void respondWith1_0_0GetFeatureDocument(HttpExchange httpExchange) throws IOException {
         final byte[] response = TestResourceUtils.getResourceAsBytes(WfsExtractor1_0_0Test.class,
-                "/wfs/wfs_1_0_0_getFeature.xml");
+                "/wfs/wfs_1_0_0_getFeature-point.xml");
 
         writeResponse(httpExchange, response);
     }
@@ -278,16 +262,15 @@ public class WfsExtractor1_0_0Test {
     private void respondWith1_0_0CapabiltiesDocument(HttpExchange httpExchange) throws IOException {
         String capabilities = TestResourceUtils.getResourceAsString(WfsExtractor1_0_0Test.class, "/wfs/wfs_1_0_0_capabilities.xml");
 
-        capabilities = capabilities.replace("@@port@@", valueOf(this.server.getAddress().getPort()));
+        capabilities = capabilities.replace("@@port@@", valueOf(getServerPort()));
         byte[] response = capabilities.getBytes("UTF-8");
         writeResponse(httpExchange, response);
     }
 
-
-    private void writeResponse(HttpExchange httpExchange, byte[] response) throws IOException {
-        httpExchange.sendResponseHeaders(200, response.length);
-        httpExchange.getResponseBody().write(response);
-        httpExchange.getResponseBody().close();
+    public static String encodeUserNameAndPassForBasicAuth(String extractorappUsername, String extractorappPassword) {
+        String authString = extractorappUsername + ":" + extractorappPassword;
+        byte[] authEncBytes = Base64.encodeBase64(authString.getBytes());
+        return new String(authEncBytes);
     }
 
 }
