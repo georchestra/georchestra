@@ -12,6 +12,7 @@
   <url>http://www.georchestra.org</url>
   <properties>
     <finalName>mapfishapp</finalName>
+    <maven.test.skip>false</maven.test.skip>
   </properties>
   <dependencies>
     <dependency>
@@ -429,17 +430,6 @@
           <url>file:///var/devel/repo/georchestra/htdocs/</url>
         </site>
       </distributionManagement>
-    </profile>
-    <profile>
-      <id>skipTests</id>
-      <activation>
-        <property>
-          <name>!enableTests</name>
-        </property>
-      </activation>
-      <properties>
-        <maven.test.skip.exec>true</maven.test.skip.exec>
-      </properties>
     </profile>
     <profile>
       <id>Windows</id>
