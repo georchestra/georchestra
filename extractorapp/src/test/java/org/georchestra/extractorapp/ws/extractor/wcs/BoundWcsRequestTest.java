@@ -1,35 +1,25 @@
 package org.georchestra.extractorapp.ws.extractor.wcs;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.MalformedURLException;
+import java.io.InputStream;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
-
-import junit.framework.Assert;
 
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
-import org.apache.http.ParseException;
 import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.impl.client.AbstractHttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.SchemeRegistryFactory;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
@@ -40,25 +30,30 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 public class BoundWcsRequestTest {
-
-	private final File describeCoverageSample = new File("src/test/resources/describecoveragesample.xml");
-	private final File getCapabilitiesSample = new File("src/test/resources/getcapabilitiessample.xml");
+	private InputStream describeCoverageSample;
+	private InputStream getCapabilitiesSample;
 
 	@Before
 	public void setUp() throws Exception {
+		describeCoverageSample = BoundWcsRequestTest.class.getResourceAsStream("/describecoveragesample.xml");
+		getCapabilitiesSample = BoundWcsRequestTest.class.getResourceAsStream("/getcapabilitiessample.xml");
 	}
 
 	@After
-	public void tearDown() throws Exception {
+	public void tearDown() {
+		try {
+		describeCoverageSample.close();
+		getCapabilitiesSample.close();
+		} catch (IOException e) {}
 	}
 
 
 	private HttpEntity heMocked = Mockito.mock(HttpEntity.class);
-	
-	private void setOutputDocument(File f) throws Exception {
-			Mockito.when(heMocked.getContent()).thenReturn(new FileInputStream(f));
+
+	private void setOutputDocument(InputStream f) throws Exception {
+			Mockito.when(heMocked.getContent()).thenReturn(f);
 	}
-	
+
 	public HttpClient getMockHttpClient() {
 		HttpClient mock = Mockito.mock(HttpClient.class);
 		HttpParams paramsMock = Mockito.mock(HttpParams.class);
@@ -101,57 +96,54 @@ public class BoundWcsRequestTest {
 		HttpClient mockClient = getMockHttpClient();
 		bwr.setHttpClient(mockClient);
 
-		
+
 		// DescribeCoverage related tests
 		setOutputDocument(describeCoverageSample);
 		bwr.getCoverage();
-		
+
 		// supported formats
 		Set<String> fmts = bwr.getSupportedFormats();
 		String[] expectedFmts =  {"jpg", "geotiff", "tif", "jpeg", "png", "gif", "tiff"};
 		assertArrayEquals(expectedFmts, fmts.toArray());
-		
+
 		// supported response CRS
 		Set<String> supportedResponseCrs = bwr.getSupportedResponseCRSs();
 		String[] expectedResponseCrs = { "EPSG:4326" };
 		assertArrayEquals(expectedResponseCrs, supportedResponseCrs.toArray());
-		
+
 		// num bands
 		int numBands  = bwr.numBands();
 		assertEquals(numBands, 1);
-		
+
 		// supported request CRS
 		Set<String> supportedRequestCrs = bwr.getSupportedRequestCRSs();
 		String[] expectedRequestCrs = { "EPSG:4326" };
 		assertArrayEquals(expectedRequestCrs, supportedRequestCrs.toArray());
-		
+
 		// Native CRS
 		Set<String> nativeCRSs = bwr.getNativeCRSs();
 		String[] expectedNativeCRSs = { "EPSG:4326" };
-		assertArrayEquals(expectedNativeCRSs, nativeCRSs.toArray());		
-		
+		assertArrayEquals(expectedNativeCRSs, nativeCRSs.toArray());
+
 		// just to recall getDescribeCoverage(), should be defined as for now
 		assertTrue(bwr.getDescribeCoverage() instanceof String);
-		
+
 		// Same
 		assertTrue(bwr.getSupportedFormats() instanceof Set<?>);
 		assertTrue(bwr.getSupportedResponseCRSs() instanceof Set<?>);
 		assertTrue(bwr.numBands() == 1);
 		assertTrue(bwr.getSupportedRequestCRSs() instanceof Set<?>);
 		assertTrue(bwr.getNativeCRSs() instanceof Set<?>);
-		
-		
-		
+
+
+
 		// GetCapabilities related tests
 		setOutputDocument(getCapabilitiesSample);
-		
+
 		String getCap = bwr.getCapabilities();
 		assertTrue(getCap instanceof String);
 		// another time
 		assertTrue(bwr.getCapabilities() instanceof String);
-		
-		
-		System.out.println("blah");
 	}
 
 }
