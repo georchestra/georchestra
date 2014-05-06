@@ -1,19 +1,21 @@
 package org.georchestra.extractorapp.ws.extractor.csw;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpHost;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.georchestra.extractorapp.ws.extractor.ExtractorLayerRequest;
+import org.georchestra.extractorapp.ws.extractor.FileUtils;
+import org.georchestra.extractorapp.ws.extractor.WfsExtractor;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.regex.Pattern;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.georchestra.extractorapp.ws.extractor.ExtractorLayerRequest;
-import org.georchestra.extractorapp.ws.extractor.FileUtils;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.operation.TransformException;
 
 
 /**
@@ -66,31 +68,39 @@ public class CSWExtractor {
 		    throws IOException {
 
 		InputStream content = null;
-		try {
-			HttpGet get = new HttpGet(request._isoMetadataURL.toURI());
+        boolean isMetadata = false;
+        try {
+            final HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+
+            HttpClientContext localContext = HttpClientContext.create();
+            final HttpHost httpHost = new HttpHost(request._isoMetadataURL.getHost(), request._isoMetadataURL.getPort());
+
+            HttpGet get = new HttpGet(request._isoMetadataURL.toURI());
 			
-	        if(_secureHost.equalsIgnoreCase(request._isoMetadataURL.getHost())
+	        if(username != null && (_secureHost.equalsIgnoreCase(request._isoMetadataURL.getHost())
 	                || "127.0.0.1".equalsIgnoreCase(request._isoMetadataURL.getHost())
-	                || "localhost".equalsIgnoreCase(request._isoMetadataURL.getHost())) {
+	                || "localhost".equalsIgnoreCase(request._isoMetadataURL.getHost()))) {
 	        	LOG.debug(getClass().getName()+ ".checkPermission - Secured Server: adding username header and role headers to request for checkPermission");
-	            if(username != null) get.addHeader("sec-username", username);
-	            if(roles != null) get.addHeader("sec-roles", roles);
+                WfsExtractor.addImpersonateUserHeaders(username, roles, get);
+
+                WfsExtractor.enablePreemptiveBasicAuth(request._isoMetadataURL, httpClientBuilder, localContext, httpHost,
+                        _adminUserName, _adminPassword);
+
 	        } else {
-	        	LOG.debug("WfsExtractor.checkPermission - Non Secured Server");
+	        	LOG.debug("WcsExtractor.checkPermission - Non Secured Server");
 	        }
 
 	        // checks whether it is a metadata
-        	DefaultHttpClient httpclient = new DefaultHttpClient();
-			content = httpclient.execute(get).getEntity().getContent();
+
+            final CloseableHttpClient httpclient = httpClientBuilder.build();
+			content = httpclient.execute(httpHost, get, localContext).getEntity().getContent();
 
 			String metadata = FileUtils.asString(content);
 			Pattern regex = Pattern.compile("<gmd:MD_Metadata>*");
-			boolean isMetadata = regex.matcher(metadata).find();
-			
-			if(!isMetadata){
-	            throw new SecurityException("The metadata is not available: "+request._isoMetadataURL);
-			}
-		} catch (Exception e) {
+
+            isMetadata = regex.matcher(metadata).find();
+
+        } catch (Exception e) {
 				
 			throw new IOException(e);
 
@@ -99,18 +109,15 @@ public class CSWExtractor {
 			if (content != null)
 				content.close();
 		}
-		
-		
+
+        if(!isMetadata){
+            throw new SecurityException("The metadata is not available: "+request._isoMetadataURL);
+        }
+
 	}
 
 	/**
 	 * Requests to the CSW for a metadata the content will be stored in the temporl dir as xml document.
-	 *  
-	 * @param request
-	 * 
-	 * @throws IOException
-	 * @throws TransformException
-	 * @throws FactoryException
 	 */
     public void extract (final URL metadataURL) throws IOException {
         assert metadataURL != null: metadataURL + "must be provided";
