@@ -34,17 +34,17 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Factory methods for creating WcsReaderRequest objects
- * 
+ *
  * @author jeichar
  */
 public class WcsReaderRequestFactory {
 
     // ---- Factory methods with explicit resolution and height ----- //
-  
+
 
     /**
      * Create a new instance of WcsReaderRequest
-     * 
+     *
      * @param version
      *            WCS version to use. Can use {@link #DEFAULT_VERSION}
      * @param coverage
@@ -58,7 +58,7 @@ public class WcsReaderRequestFactory {
      * @param maxy
      *            envelope param
      * @param requestCRS
-     *            WCS version to use. Can use {@link #DEFAULT_CRS}
+     *            request CRS to use. Can use {@link #DEFAULT_CRS}
      * @param resolution
      *            resolution of the returned image
      * @param height
@@ -67,7 +67,7 @@ public class WcsReaderRequestFactory {
      *            format of the image
      * @param usePost
      *            if true post will be used for making requests
-     * @param remoteReproject 
+     * @param remoteReproject
      *            if true reprojection will be done on WCS side if possible
      */
     public static WcsReaderRequest create(String version, String coverage, double minx, double miny, double maxx,
@@ -81,7 +81,7 @@ public class WcsReaderRequestFactory {
     /**
      * Use {@link WcsReaderRequestFactory} to create instances of
      * {@link WcsReaderRequestFactory}
-     * 
+     *
      * @param version
      *            WCS version to use. Can use {@link #DEFAULT_VERSION}
      * @param coverage
@@ -94,7 +94,7 @@ public class WcsReaderRequestFactory {
      *            format of the image
      * @param usePost
      *            if true post will be used for making requests
-     * @param remoteReproject 
+     * @param remoteReproject
      *            if true reprojection will be done on WCS side if possible
      */
     public static WcsReaderRequest create(String version, String coverage, ReferencedEnvelope bbox,
@@ -193,7 +193,7 @@ public class WcsReaderRequestFactory {
                 throw new IllegalArgumentException(param + "is not a recognized parameter");
             }
         }
-        
+
 
         for (GeneralParameterValue param : resolution) {
             if (param.getDescriptor().getName().equals(RESX.getName())) {
