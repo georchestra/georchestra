@@ -1,24 +1,17 @@
 package org.georchestra.mapfishapp.ws;
 
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.georchestra.mapfishapp.ws.OGCProxy;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -32,7 +25,20 @@ public class OGCProxyTest {
     
     private OGCProxy _proxy = new OGCProxy();
     
-    private HttpURLConnection mockedHttpClient = Mockito.mock(HttpURLConnection.class);
+	private InputStream featureCollection;
+	private InputStream getFeatureInfo;
+
+	@Before
+	public void setUp() throws Exception {
+		featureCollection = OGCProxyTest.class.getResourceAsStream("/opengeo_featurecollection_post.xml");
+		getFeatureInfo = OGCProxyTest.class.getResourceAsStream("/opengeo_getfeatureinfo_1.1.0.xml");
+	}
+	@After
+	public void tearDown() throws IOException {
+		featureCollection.close();
+	}
+
+    private MockHttpURLConnection mockedHttpUrlConnection = new MockHttpURLConnection();
     
     
     public final String[] localHostList = {"localhost"};
@@ -45,7 +51,10 @@ public class OGCProxyTest {
     @Test
     public void testGetFeatureInfo() throws Exception {
         MockHttpServletRequest _request = new MockHttpServletRequest();
-        MockHttpServletResponse _response = new MockHttpServletResponse();  
+        MockHttpServletResponse _response = new MockHttpServletResponse();
+        
+        mockedHttpUrlConnection.setContentType("application/vnd.ogc.gml");
+        mockedHttpUrlConnection.setInputStream(getFeatureInfo);
         
         // remote host to test
         String url = "http://demo.opengeo.org/geoserver/wms?service=WMS&version=1.1.0&request=getfeatureinfo&layers=topp%3Atasmania_water_bodies&query_layers=topp%3Atasmania_water_bodies&styles=&bbox=140.5315%2C-44.423%2C151.7815%2C-38.798&srs=EPSG%3A4326&feature_count=10&x=281&y=141&height=256&width=512&info_format=application/vnd.ogc.gml";
@@ -56,7 +65,7 @@ public class OGCProxyTest {
         _request.setMethod("GET"); 
         
         // launch request 
-        _proxy.handleGETRequest(_request, _response, url, mockedHttpClient);
+        _proxy.handleGETRequest(_request, _response, url, mockedHttpUrlConnection);
         
         // tests
 
@@ -95,29 +104,38 @@ public class OGCProxyTest {
     @Test
     public void testGetFeatureWithPOST() throws Exception {
 
+//    	URL testblah = OGCProxyTest.class.getResource("/opengeo_featurecollection_post.xml");
+//    	System.out.println(testblah.getFile());
         MockHttpServletRequest _request = new MockHttpServletRequest();
         MockHttpServletResponse _response = new MockHttpServletResponse();
 
+        mockedHttpUrlConnection.setContentType("application/xml");
+        mockedHttpUrlConnection.setInputStream(featureCollection);
+        
         String url = "http://demo.opengeo.org/geoserver/wfs";
-
-        String content = "<wfs:GetFeature xmlns:wfs=\"http://www.opengis.net/wfs\" service=\"WFS\" version=\"1.1.0\" maxFeatures=\"1\" xsi:schemaLocation=\"http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/WFS-transaction.xsd\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:topp=\"http://www.openplans.org/topp\"><wfs:Query typeName=\"topp:states\" xmlns:topp=\"http://www.openplans.org/topp\"/></wfs:GetFeature>";
+        String content = "<wfs:GetFeature xmlns:wfs=\"http://www.opengis.net/wfs\" service=\"WFS\" "
+        		+ "version=\"1.1.0\" maxFeatures=\"1\" xsi:schemaLocation=\"http://www.opengis.net/wfs "
+        		+ "http://schemas.opengis.net/wfs/1.1.0/WFS-transaction.xsd\" "
+        		+ "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:topp=\"http://www.openplans.org/topp\">"
+        		+ "<wfs:Query typeName=\"topp:states\" xmlns:topp=\"http://www.openplans.org/topp\"/>"
+        		+ "</wfs:GetFeature>";
 
         // set method
         _request.setMethod("POST");
 
         // set Content-Type
-        // /!\ for some reason setContentType does not the job!
-        //_request.setContentType("application-xml");
         _request.addHeader("Content-Type", "application/xml");
 
         // set content
         _request.setContent(content.getBytes());
 
         // launch request
-        _proxy.handlePOSTRequest(_request, _response, url, mockedHttpClient);
+        _proxy.handlePOSTRequest(_request, _response, url, mockedHttpUrlConnection);
 
-        assertEquals(_response.getErrorMessage(), 200, _response.getStatus()); // status code 200 espected : OK
-        assertTrue(_response.getContentAsString().contains("<wfs:FeatureCollection numberOfFeatures=\"1\""));
+        // status code 200 expected : OK
+        assertEquals(_response.getErrorMessage(), 200, _response.getStatus());
+        // should match the fake file
+        assertTrue(_response.getContentAsString().contains("numberOfFeatures=\"49\""));
     }
 
 
@@ -162,7 +180,7 @@ public class OGCProxyTest {
 		_request.setMethod("GET");
 
 		// set host forbidden by Proxy
-		_proxy.handleGETRequest(_request, _response, "http://www.example.com/", mockedHttpClient);
+		_proxy.handleGETRequest(_request, _response, "http://www.example.com/", mockedHttpUrlConnection);
 		// expect reject from proxy : status 400, bad request
 		assertEquals(_response.getErrorMessage(), 400, _response.getStatus());
 
@@ -177,11 +195,9 @@ public class OGCProxyTest {
 		assertFalse(_proxy.isFilteringOnFinalHost());
 		// set method
 		_request.setMethod("GET");
-
-		// set host forbidden by Proxy
-		Mockito.when(mockedHttpClient.getContentType()).thenReturn(null);
-		
-		_proxy.handleGETRequest(_request, _response, "http://www.example.com/", mockedHttpClient);
+		mockedHttpUrlConnection.setContentType(null);
+		// set host forbidden by Proxy		
+		_proxy.handleGETRequest(_request, _response, "http://www.example.com/", mockedHttpUrlConnection);
 		// content-type returned is null
 		assertEquals(_response.getErrorMessage(), 403, _response.getStatus());
     }
@@ -277,41 +293,7 @@ public class OGCProxyTest {
     @Test
     public void testCopyHeadersToConnection() throws Exception {
 
-    	// Another class to mock the httpUrlConnection
-    	final class MyHttpURLConnection extends HttpURLConnection {
-    		private Map<String, List<String> > requestProperties = new HashMap<String,List<String>>();
-			protected MyHttpURLConnection(URL u) {
-				super(u);
-			}
-			@Override
-			public void disconnect() {
-				
-			}
-			@Override
-			public boolean usingProxy() {
-				return false;
-			}
-			@Override
-			public void connect() throws IOException {
-				
-			}
-			@Override
-			public void setRequestProperty(String k, String v) {
-				List<String> l = requestProperties.get(k);
-				if (l == null) {
-					List<String> val = new ArrayList<String>();
-					val.add(v);
-					requestProperties.put(k, val);
-					return;
-				}
-				l.add(v);
-				requestProperties.put(k, l);
-			}
-			@Override
-			public Map<String, List<String>> getRequestProperties() {
-				return requestProperties;
-			}
-    	}
+ 
         MockHttpServletRequest _request = new MockHttpServletRequest();
         MockHttpServletResponse _response = new MockHttpServletResponse();        
         
@@ -326,11 +308,10 @@ public class OGCProxyTest {
         // set method
         _request.setMethod("GET");
  
-        MyHttpURLConnection u = new MyHttpURLConnection(new URL("http://example.com"));
-        
+       
         // copy headers from request to connection
-        _proxy.copyHeadersToConnection(_request, u);
-        assertEquals(2, u.getRequestProperties().size()); // connection should contain headers
+        _proxy.copyHeadersToConnection(_request, mockedHttpUrlConnection);
+        assertEquals(2, mockedHttpUrlConnection.getRequestProperties().size()); // connection should contain headers
     }
 
     
