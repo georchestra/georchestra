@@ -6,8 +6,11 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -25,15 +28,23 @@ public class OGCProxyTest {
     
 	private InputStream featureCollection;
 	private InputStream getFeatureInfo;
-
+	private InputStream getCapabilities;
+	private InputStream getCapabilitiesGZipped;
+	
 	@Before
 	public void setUp() throws Exception {
 		featureCollection = OGCProxyTest.class.getResourceAsStream("/opengeo_featurecollection_post.xml");
 		getFeatureInfo = OGCProxyTest.class.getResourceAsStream("/opengeo_getfeatureinfo_1.1.0.xml");
+		getCapabilities = OGCProxyTest.class.getResourceAsStream("/opengeo_getcapabilities_1.1.0.xml");
+		getCapabilitiesGZipped = OGCProxyTest.class.getResourceAsStream("/opengeo_getcapabilities_1.1.0.xml.gz");
 	}
+
 	@After
 	public void tearDown() throws IOException {
-		featureCollection.close();
+    	mockedHttpUrlConnection.reset();
+		try { featureCollection.close(); } catch (Throwable e) {};
+		try { getFeatureInfo.close(); } catch (Throwable e) {};
+		try { getCapabilities.close(); } catch (Throwable e) {};
 	}
 
     private MockHttpURLConnection mockedHttpUrlConnection = new MockHttpURLConnection();
@@ -82,8 +93,14 @@ public class OGCProxyTest {
         MockHttpServletRequest _request = new MockHttpServletRequest();
         MockHttpServletResponse _response = new MockHttpServletResponse();
         
+        mockedHttpUrlConnection.setContentType("application/vnd.ogc.wms_xml;charset=UTF-8");
+        mockedHttpUrlConnection.setHeaderFields("Content-Type", "application/vnd.ogc.wms_xml;charset=UTF-8");
+        
+        mockedHttpUrlConnection.setInputStream(getCapabilities);
+        
         // remote host to test
         String url = "http://demo.opengeo.org/geoserver/wms?service=WMS&version=1.1.0&request=getcapabilities";
+        
         
         assertEquals(true, _proxy.isHostAllowed("demo.opengeo.org")); // host should be allowed
 
@@ -91,7 +108,7 @@ public class OGCProxyTest {
         _request.setMethod("GET"); 
 
         // launch request
-        _proxy.handleGETRequest(_request, _response, url);
+        _proxy.handleGETRequest(_request, _response, url, mockedHttpUrlConnection);
             
         assertEquals(_response.getErrorMessage(), 200, _response.getStatus()); // status code 200 expected : OK
         
@@ -102,8 +119,6 @@ public class OGCProxyTest {
     @Test
     public void testGetFeatureWithPOST() throws Exception {
 
-//    	URL testblah = OGCProxyTest.class.getResource("/opengeo_featurecollection_post.xml");
-//    	System.out.println(testblah.getFile());
         MockHttpServletRequest _request = new MockHttpServletRequest();
         MockHttpServletResponse _response = new MockHttpServletResponse();
 
@@ -141,23 +156,26 @@ public class OGCProxyTest {
     public void testHeaders() throws Exception {
         MockHttpServletRequest _request = new MockHttpServletRequest();
         MockHttpServletResponse _response = new MockHttpServletResponse();        
-        // remote host to test
-    	// This does not exist anymore ...
-        String url = "http://drebretagne-geobretagne.int.lsn.camptocamp.com/geoserver/wms?request=GetCapabilities&service=WMS";        
-        _request.addHeader("Accept-Encoding", "gzip,deflate"); // some browser let servers return compressed data
+        String url = "http://localhost/wms?request=GetCapabilities&service=WMS";        
+        mockedHttpUrlConnection.setContentType("application/xml");
+        mockedHttpUrlConnection.setInputStream(getCapabilitiesGZipped);
 
+        mockedHttpUrlConnection.setHeaderFields("Content-Encoding", "gzip");
+        
+        _request.addHeader("Accept-Encoding", "gzip,deflate"); // some browser let servers return compressed data
+        
         // set method
         _request.setMethod("GET"); 
 
         // launch request
-        _proxy.handleGETRequest(_request, _response, url);
+        _proxy.handleGETRequest(_request, _response, url, mockedHttpUrlConnection);
 
         assertEquals(_response.getErrorMessage(), 200, _response.getStatus()); // status code 200 expected : OK  
         
         // test that headers from server were copied in response
         // check known headers
-        //assertEquals(true, _response.containsHeader("Content-Encoding")); // Content-Encoding exists
-        //assertEquals("gzip", _response.getHeader("Content-Encoding").toString()); // the service tested returns gzip
+        assertTrue(_response.containsHeader("Content-Encoding")); // Content-Encoding exists
+        assertEquals("gzip", _response.getHeader("Content-Encoding").toString()); // the service tested returns gzip
                                                                                   // therefore headers must contain the gzip one
                                                                                   // to warn browser
     }
@@ -237,7 +255,7 @@ public class OGCProxyTest {
         // set method
         _request.setMethod("GET"); 
 
-        _proxy.handleGETRequest(_request, _response, url);
+        _proxy.handleGETRequest(_request, _response, url, mockedHttpUrlConnection);
         
         assertEquals(_response.getErrorMessage(), 400, _response.getStatus()); // expect reject from proxy : status 400, bad request
     }
@@ -266,7 +284,7 @@ public class OGCProxyTest {
     public void testIsContentTypeValid() throws Exception {
         
         // test if every single content type listed in the proxy will be validated
-        assertEquals(true, areContentTypeAllValid());
+        assertTrue(areContentTypeAllValid());
     }
     
     /**
@@ -277,7 +295,7 @@ public class OGCProxyTest {
         
         for(String contentType : _proxy.getValidContentTypes())
         {
-            if(!_proxy.isContentTypeValid(contentType + ";text-encoding")) { // add text encoding (somtimes appended to the content type)
+            if(!_proxy.isContentTypeValid(contentType + ";text-encoding")) { // add text encoding (sometimes appended to the content type)
                 return false;
             }
         }

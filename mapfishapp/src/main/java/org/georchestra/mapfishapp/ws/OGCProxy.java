@@ -179,8 +179,7 @@ public class OGCProxy {
 			// content type has to be valid
 			if (!isContentTypeValid(contentType)) {
 				if (connectionWithFinalHost.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
-					// content type was not valid because it was a not found
-					// page (text/html)
+					// content type was not valid because page was not found (text/html)
 					response.sendError(HttpServletResponse.SC_NOT_FOUND, "Remote host answered with 404 not found");
 					return;
 				}
