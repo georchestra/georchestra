@@ -176,22 +176,21 @@ public class OGCProxy {
                 return;
             }
             
-            // content type has to be valid
-            if (!isContentTypeValid(contentType)) {
-                
-                if (connectionWithFinalHost.getResponseMessage() != null) {
-                    if (connectionWithFinalHost.getResponseMessage().equalsIgnoreCase("Not Found")) {
-                        // content type was not valid because it was a not found page (text/html)
-                        response.sendError(HttpServletResponse.SC_NOT_FOUND, "Remote host not found"); 
-                        return;
-                    }
-                }
-                
-                response.sendError(HttpServletResponse.SC_FORBIDDEN, 
-                        "The content type of the remote host's response \"" + contentType 
-                        + "\" is not allowed by the proxy rules");
-                return;
-            }
+			// content type has to be valid
+			if (!isContentTypeValid(contentType)) {
+				if (connectionWithFinalHost.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
+					// content type was not valid because it was a not found
+					// page (text/html)
+					response.sendError(HttpServletResponse.SC_NOT_FOUND, "Remote host answered with 404 not found");
+					return;
+				}
+
+				response.sendError(HttpServletResponse.SC_FORBIDDEN,
+						"The content type of the remote host's response \""
+								+ contentType
+								+ "\" is not allowed by the proxy rules");
+				return;
+			}
             
             // send remote host's response to client
             
