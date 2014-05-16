@@ -8,7 +8,7 @@
   </parent>
   <artifactId>mapfishapp</artifactId>
   <packaging>war</packaging>
-  <name>mapfishapp Maven Webapp</name>
+  <name>Mapfishapp Webapp</name>
   <url>http://www.georchestra.org</url>
   <properties>
     <finalName>mapfishapp</finalName>
@@ -45,11 +45,11 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-		<groupId>org.springframework</groupId>
-		<artifactId>spring-mock</artifactId>
-		<version>2.0.3</version>
-      	<scope>test</scope>	
-	</dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-mock</artifactId>
+      <version>2.0.3</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-mock</artifactId>
@@ -59,7 +59,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-webmvc</artifactId>
-      <version>3.1.0.RELEASE</version>
+      <version>${spring.version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -266,8 +266,8 @@
         <configuration>
           <scanIntervalSeconds>5</scanIntervalSeconds>
           <scanTargets>
-            <scanTarget>src/main/java/</scanTarget>
-            <scanTarget>src/main/resources/</scanTarget>
+            <scanTarget>src/main/java</scanTarget>
+            <scanTarget>src/main/resources</scanTarget>
           </scanTargets>
           <systemProperties>
             <systemProperty>
@@ -320,13 +320,6 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>cobertura-maven-plugin</artifactId>
         <version>2.5.2</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>clean</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
     <resources>
@@ -338,7 +331,6 @@
       </resource>
     </resources>
   </build>
-  <!-- To use the report goals in your POM or parent POM -->
   <reporting>
     <plugins>
       <plugin>
@@ -394,35 +386,6 @@
   </reporting>
   <profiles>
     <profile>
-      <id>georchestra</id>
-      <activation>
-        <property>
-          <name>georchestra</name>
-        </property>
-      </activation>
-      <properties>
-        <maven.test.skip.exec>false</maven.test.skip.exec>
-      </properties>
-      <distributionManagement>
-        <!-- use the following if you're not using a snapshot version. -->
-        <repository>
-          <id>repo</id>
-          <name>Mapfish Repository</name>
-          <url>file:///var/devel/repo/releases/mapfishapp</url>
-        </repository>
-        <!-- use the following if you ARE using a snapshot version. -->
-        <snapshotRepository>
-          <id>repo</id>
-          <name>Mapfish snapshot Repository</name>
-          <url>file:///var/devel/repo/snapshots/mapfishapp</url>
-        </snapshotRepository>
-        <site>
-          <id>www.georchestra.org</id>
-          <url>file:///var/devel/repo/georchestra/htdocs/</url>
-        </site>
-      </distributionManagement>
-    </profile>
-    <profile>
       <id>Windows</id>
       <activation>
         <os>
@@ -438,7 +401,7 @@
       <id>Unix</id>
       <activation>
         <os>
-          <!-- name>Unix plateforme</name -->
+          <!-- name>Unix platform</name -->
           <family>unix</family>
         </os>
       </activation>
