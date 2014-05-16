@@ -46,7 +46,7 @@ Note 2: PostGIS extensions are not required in the georchestra database, unless 
 
  * if **mapfishapp** is deployed:
 
-        wget https://raw.github.com/georchestra/georchestra/master/mapfishapp/database.sql -O /tmp/mapfishapp.sql
+        wget --no-check-certificate https://raw.github.com/georchestra/georchestra/master/mapfishapp/database.sql -O /tmp/mapfishapp.sql
         psql -d georchestra -f /tmp/mapfishapp.sql
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA mapfishapp TO "www-data";'
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA mapfishapp TO "www-data";'
@@ -54,7 +54,7 @@ Note 2: PostGIS extensions are not required in the georchestra database, unless 
 
  * if the **ldapadmin** webapp is deployed:
 
-        wget https://raw.github.com/georchestra/georchestra/master/ldapadmin/database.sql -O /tmp/ldapadmin.sql
+        wget --no-check-certificate https://raw.github.com/georchestra/georchestra/master/ldapadmin/database.sql -O /tmp/ldapadmin.sql
         psql -d georchestra -f /tmp/ldapadmin.sql
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA ldapadmin TO "www-data";'
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ldapadmin TO "www-data";'
@@ -67,7 +67,7 @@ Note 2: PostGIS extensions are not required in the georchestra database, unless 
         psql -f /usr/share/postgresql/9.1/contrib/postgis-1.5/spatial_ref_sys.sql georchestra
         psql -d georchestra -c 'GRANT SELECT ON public.spatial_ref_sys to "www-data";'
         psql -d georchestra -c 'GRANT SELECT,INSERT,DELETE ON public.geometry_columns to "www-data";'
-        wget https://raw.github.com/georchestra/geofence/georchestra/doc/setup/sql/002_create_schema_postgres.sql -O /tmp/geofence.sql
+        wget --no-check-certificate https://raw.github.com/georchestra/geofence/georchestra/doc/setup/sql/002_create_schema_postgres.sql -O /tmp/geofence.sql
         psql -d georchestra -f /tmp/geofence.sql
         psql -d georchestra -c 'INSERT INTO geofence.gf_gsinstance (id, baseURL, dateCreation, description, "name", "password", username) values (0, 'http(s)://@shared.server.name@/geoserver', 'now', 'locale geoserver', 'default-gs', '@shared.privileged.geoserver.pass@', '@shared.privileged.geoserver.user@');'
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA geofence TO "www-data";'
@@ -76,7 +76,7 @@ Note 2: PostGIS extensions are not required in the georchestra database, unless 
 
  * if the **downloadform** module is deployed and ```shared.download_form.activated``` is true in your setup (false by default):
 
-        wget https://raw.github.com/georchestra/georchestra/master/downloadform/database.sql -O /tmp/downloadform.sql
+        wget --no-check-certificate https://raw.github.com/georchestra/georchestra/master/downloadform/database.sql -O /tmp/downloadform.sql
         psql -d georchestra -f /tmp/downloadform.sql
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA downloadform TO "www-data";'
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA downloadform TO "www-data";'
@@ -84,7 +84,7 @@ Note 2: PostGIS extensions are not required in the georchestra database, unless 
         
  * if the **security proxy** is deployed and ```shared.ogc.statistics.activated``` is true in your setup (false by default):
 
-        wget https://raw.github.com/georchestra/georchestra/master/ogc-server-statistics/database.sql -O /tmp/ogcstatistics.sql
+        wget --no-check-certificate https://raw.github.com/georchestra/georchestra/master/ogc-server-statistics/database.sql -O /tmp/ogcstatistics.sql
         psql -d georchestra -f /tmp/ogcstatistics.sql
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA ogcstatistics TO "www-data";'
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ogcstatistics TO "www-data";'
