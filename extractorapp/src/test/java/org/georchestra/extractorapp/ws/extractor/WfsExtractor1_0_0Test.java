@@ -9,13 +9,17 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
+
 import org.apache.commons.codec.binary.Base64;
+import org.geotools.data.DataStore;
 import org.geotools.data.FileDataStore;
 import org.geotools.data.Query;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.data.wfs.WFSDataStoreFactory;
+import org.geotools.util.NullProgressListener;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,6 +30,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.FactoryException;
 
 import java.io.File;
@@ -223,7 +228,60 @@ public class WfsExtractor1_0_0Test extends AbstractTestWithServer {
         });
     }
 
-    @Test @Ignore("Currently MIF export always fails")
+    @Test
+    @Ignore("Currently MIF export always fails")
+    public void testOgrFeatureWriterFromShapeToMif() throws Exception {
+        DataStore ds = new ShapefileDataStoreFactory().createDataStore(this.getClass().getResource("/shp/savoie.shp"));
+
+        SimpleFeatureType schema = ds.getSchema("savoie");
+        SimpleFeatureCollection c = ds.getFeatureSource("savoie").getFeatures();
+
+        FeatureWriterStrategy fw = new OGRFeatureWriter(
+                new NullProgressListener(), schema,
+                testDir.newFolder("miftest"), OGRFeatureWriter.FileFormat.mif,
+                c);
+        File[] results = {};
+        try {
+            results = fw.generateFiles();
+        } catch (IllegalStateException e) {
+            Assume.assumeNoException(e);
+        }
+
+        for (File i : results) {
+            assertTrue("file does not exist or is empty: "+ i.getName(), (i.exists() && i.length() > 0));
+        }
+
+    }
+
+
+    @Test
+    public void testOgrFeatureWriterFromShapeToKml() throws Exception {
+        DataStore ds = new ShapefileDataStoreFactory().createDataStore(this.getClass().getResource("/shp/savoie.shp"));
+
+        SimpleFeatureType schema = ds.getSchema("savoie");
+        SimpleFeatureCollection c = ds.getFeatureSource("savoie").getFeatures();
+
+        FeatureWriterStrategy fw = new OGRFeatureWriter(
+                new NullProgressListener(), schema,
+                testDir.newFolder("kmltest"), OGRFeatureWriter.FileFormat.kml,
+                c);
+
+        File[] results = {};
+        try {
+            results = fw.generateFiles();
+        } catch (IllegalStateException e) {
+            Assume.assumeNoException(e);
+        }
+
+
+        for (File i : results) {
+            assertTrue("file does not exist or is empty: "+ i.getName(), (i.exists() && i.length() > 0));
+        }
+
+    }
+
+    @Test
+    @Ignore("Currently MIF export always fails")
     public void testExtract_1_0_0_Mif() throws Exception {
 
         WfsExtractor wfsExtractor = new WfsExtractor(testDir.getRoot(), factory);

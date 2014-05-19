@@ -62,7 +62,7 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
 		},
 		kml {
 			@Override
-			public String getDriver(){return "KML file";}
+			public String getDriver(){return "KML";}
 
 		};
 
@@ -104,7 +104,7 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
 
 		assert schema != null && basedir != null && features != null;
 
-		this.progresListener = progresListener;
+		this.progresListener = progressListener;
 		checkSchema(schema);
 		this.schema = schema;
 		this.basedir = basedir;
@@ -171,20 +171,20 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
         try {
             ds = (OGRDataStore) DataStoreFinder.getDataStore(map);
             if (ds == null) {
-            	throw new IllegalStateException("OGRDataStore couldn't be created, please check GDAL librairies are correctly installed on your machine");
+                throw new IllegalStateException(
+                        "OGRDataStore couldn't be created, please check GDAL librairies are correctly installed on your machine");
             }
-	        ds.createSchema(this.features, true, this.options); //TODO OGR require the following improvements:  use the output crs required (progress Listener should be a parameter)
-
-	        files =  new File[]{new File( pathName)};
-
-        }
-        finally {
-            if(ds != null){
-            	ds.dispose();
+            // TODO OGR require the following improvements: use the output crs
+            // required (progress Listener should be a parameter)
+            ds.createSchema(this.features, true, this.options);
+            files = new File[] { new File(pathName) };
+        } finally {
+            if (ds != null) {
+                ds.dispose();
             }
         }
         return files;
-	}
+    }
 
 	protected DataStore getDataStore() throws  IOException{
 
