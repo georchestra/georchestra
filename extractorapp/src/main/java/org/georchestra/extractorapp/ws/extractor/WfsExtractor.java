@@ -62,6 +62,7 @@ import java.util.regex.Pattern;
  * @author jeichar
  */
 public class WfsExtractor {
+
 	protected static final Log LOG = LogFactory.getLog(WcsExtractor.class.getPackage().getName());
 
     /**
@@ -250,7 +251,7 @@ public class WfsExtractor {
         	featuresWriter = new OGRFeatureWriter(progressListener, sourceSchema,  basedir, OGRFeatureWriter.FileFormat.tab, features);
         	bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.tab, request._projection, progressListener );
         } else if ("kml".equalsIgnoreCase(request._format)) {
-        	featuresWriter = new KMLFeatureWriter(progressListener, sourceSchema, basedir, features);
+        	featuresWriter = new OGRFeatureWriter(progressListener, sourceSchema, basedir, OGRFeatureWriter.FileFormat.kml, features);
         	bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.kml, request._projection, progressListener );
         } else {
             throw new IllegalArgumentException(request._format + " is not a recognized vector format");
