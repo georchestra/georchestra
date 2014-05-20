@@ -87,9 +87,9 @@
       <version>${gt.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.geotools</groupId>
+      <groupId>org.georchestra</groupId>
       <artifactId>gt-mif</artifactId>
-      <version>${gt.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geotools</groupId>
