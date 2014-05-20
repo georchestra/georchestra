@@ -63,7 +63,7 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
 		},
 		kml {
 			@Override
-			public String getDriver(){return "KML file";}
+			public String getDriver(){return "KML";}
 
 		};
 
