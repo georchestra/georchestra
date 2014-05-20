@@ -111,9 +111,9 @@
       <version>${gt.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.georchestra</groupId>
+      <groupId>org.geotools</groupId>
       <artifactId>gt-mif</artifactId>
-      <version>${project.version}</version>
+      <version>${gt.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geotools</groupId>
@@ -175,6 +175,16 @@
       <version>1.1</version>
       <type>jar</type>
       <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>9.1-901.jdbc4</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-dbcp</groupId>
+      <artifactId>commons-dbcp</artifactId>
+      <version>1.2.2</version>
     </dependency>
     <!-- These should be provided by the system                           -->
     <!-- e.g.: sudo apt-get install libjai-imageio-core-java libgdal-java -->
