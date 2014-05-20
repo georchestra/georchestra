@@ -116,5 +116,41 @@
             "annotation.name": "Nom",
             "annotation.no_title": "Sans titre"
         }
+    },
+     "de": {
+            "annotation.drawing_tools": "Malutensilien",
+            "annotation.delete_feature": "Objekt löschen",
+            "annotation.delete_confirm": "Wollen Sie wirklich das Objekt löschen ?",
+            "annotation.delete": "Löschen",
+            "annotation.delete_all": "Löschen",
+            "annotation.export_as_kml": "exportieren",
+            "annotation.export_as_kml_tip": "exportieren in KML",
+            "annotation.modify": "ändern",
+            "annotation.linestring": "Linie",
+            "annotation.multilinestring": "Multilinie",
+            "annotation.point": "Punkt",
+            "annotation.circle": "Kreis",
+            "annotation.box": "Rechteck",
+            "annotation.multipoint": "Multipunkt",
+            "annotation.polygon": "Polygon",
+            "annotation.multipolygon": "Multipolygon",
+            "annotation.label": "Etikett",
+            "annotation.create_point": "Punkt ertstellen",
+            "annotation.create_circle": "Kreis erstellen",
+            "annotation.create_box": "Rechteck erstellen",
+            "annotation.create_line": "Linie erstellen",
+            "annotation.create_polygon": "Polygon ertsellen",
+            "annotation.create_label": "Etikett ertsellen",
+            "annotation.delete_all_features": "Alle Objekte löschen",
+            "annotation.delete_features_confirm": "Wollen Sie wirklich alle Objekte löschen ?",
+            "annotation.close": "Schließen",
+            "annotation.style": "Stil",
+            "annotation.size": "Größe",
+            "annotation.fontsize": "Größe",
+            "annotation.strokewidth": "Stärke",
+            "annotation.color": "Farbe",
+            "annotation.name": "Name",
+            "annotation.no_title": "ohne Titel"
+        }
     }
 }
