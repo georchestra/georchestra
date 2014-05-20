@@ -259,12 +259,6 @@
         </configuration>
       </plugin>
       <plugin>
-        <!--
-					Copy du fichier default.wmc.example si il n'existe
-					pas de fichier default.wmc dans le repertoire src/main/webapp.
-					Ce fichier n'est pas écrasé si le packageur de l'application
-					a placé son propre fichier default.wmc
-				-->
         <artifactId>maven-antrun-plugin</artifactId>
         <executions>
           <execution>
@@ -272,9 +266,7 @@
             <phase>generate-sources</phase>
             <configuration>
               <tasks>
-                <!--
-									global configuration from profile (print/viewer/startup layers/...)
-								-->
+                <!-- global configuration from profile (print/viewer/startup layers/...) -->
                 <copy todir="${basedir}/src/main/webapp/" filtering="true" overwrite="true" verbose="true" failonerror="false">
                   <fileset dir="${basedir}/src/main/filtered-resources/"/>
                   <filterset begintoken="$${" endtoken="}" recurse="false">
@@ -324,10 +316,7 @@
         <artifactId>tomcat-maven-plugin</artifactId>
         <version>1.0-beta-1</version>
         <configuration>
-          <!--
-					<server> and <url> must be specified on the "mvn tomcat:redeploy"
-					command line.
-					-->
+          <!-- <server> and <url> must be specified on the "mvn tomcat:redeploy" command line.  -->
           <path>/${project.build.finalName}</path>
         </configuration>
       </plugin>
@@ -354,10 +343,6 @@
         </executions>
         <configuration>
           <executable>jsbuild/${jsbuild.command}</executable>
-          <!--
-						<arguments>
-						</arguments>
-					-->
         </configuration>
       </plugin>
       <plugin>
