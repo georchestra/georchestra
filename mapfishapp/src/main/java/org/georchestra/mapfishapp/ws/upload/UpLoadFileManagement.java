@@ -360,15 +360,15 @@ public class UpLoadFileManagement {
 
         SimpleFeatureIterator featuresIterator = null;
         try {
-            SimpleFeatureCollection featureCollection = this.reader
-                    .getFeatureCollection(new File(fileName),
-                            this.fileDescriptor.geoFileType, crs);
+            SimpleFeatureCollection featureCollection = this.reader.getFeatureCollection(new File(fileName),
+                            								this.fileDescriptor.geoFileType, crs);
             if (featureCollection == null) {
                 return;
             }
             // TODO FeatureJSON2 is a workaround to solve the crs bug
             FeatureJSON fjson = new FeatureJSON2(new GeometryJSON(18));
             SimpleFeatureType schema = featureCollection.getSchema();
+
             fjson.setFeatureType(schema);
             fjson.setEncodeFeatureCollectionCRS(true);
 

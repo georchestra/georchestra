@@ -187,8 +187,7 @@ final class OGRFeatureReader implements FeatureGeoFileReader {
             }
             String ogrDriver = driver.getName();
 
-            OGRDataStore store = new OGRDataStore(fullFileName, ogrDriver,
-                    null, new JniOGR());
+            OGRDataStore store = new OGRDataStore(fullFileName, ogrDriver, null, new JniOGR());
             String[] typeNames = store.getTypeNames();
             if (typeNames.length == 0) {
                 final String msg = "The file " + fullFileName
