@@ -118,47 +118,43 @@ public class UpLoadFileManagementGTImplTest {
 
     }
 
-    @Test
-    public void testKML22ExtendedData() throws Exception {
+	@Test
+	public void testKML22ExtendedData() throws Exception {
 
-    	assumeTrue("KML OGR Implementation is known not to give "
-    			+ "the same results as the pure GeoTools one",
-    			this.getClass().equals(UpLoadFileManagementGTImplTest.class));
+		String fileName = "kml_4326_accidents.kml";
+		String fullName = makeFullName(fileName);
 
-        String fileName = "kml_4326_accidents.kml";
-        String fullName = makeFullName(fileName);
-    	
-    	String regions = testGetGeofileToJSON(fullName, null);
+		String regions = testGetGeofileToJSON(fullName, null);
 
-        JSONObject list = new JSONObject(regions);
-        JSONArray jsonArray = list.getJSONArray("features");
-        JSONObject reg = jsonArray.getJSONObject(0);
+		JSONObject list = new JSONObject(regions);
+		JSONArray jsonArray = list.getJSONArray("features");
+		JSONObject reg = jsonArray.getJSONObject(0);
 
-        JSONObject properties = reg.getJSONObject("properties");
-        assertNotNull(getJsonFieldValue(properties, "id"));
-        assertNotNull(getJsonFieldValue(properties, "date"));
-        assertNotNull(getJsonFieldValue(properties, "plage_hora"));
-        assertNotNull(getJsonFieldValue(properties, "jour_nuit"));
-        assertNotNull(getJsonFieldValue(properties, "meteo"));
-        assertNotNull(getJsonFieldValue(properties, "voie_type"));
-        assertNotNull(getJsonFieldValue(properties, "milieu"));
-        assertNotNull(getJsonFieldValue(properties, "voie_type"));
-        assertNotNull(getJsonFieldValue(properties, "tues_nb"));
-        assertNotNull(getJsonFieldValue(properties, "milieu"));
-        assertNotNull(getJsonFieldValue(properties, "tues_18_24"));
-        assertNotNull(getJsonFieldValue(properties, "tues_moto_"));
-        assertNotNull(getJsonFieldValue(properties, "tues_pieto"));
-        assertNotNull(getJsonFieldValue(properties, "tues_velo_"));
-        assertNotNull(getJsonFieldValue(properties, "vehicules_"));
-        assertNotNull(getJsonFieldValue(properties, "pl_impliqu"));
-        assertNotNull(getJsonFieldValue(properties, "commune"));
-        assertNotNull(getJsonFieldValue(properties, "departemen"));
-        assertNotNull(getJsonFieldValue(properties, "commentair"));
-        assertNotNull(getJsonFieldValue(properties, "consolide"));
-        assertNotNull(getJsonFieldValue(properties, "anciennete"));
-        assertNotNull(getJsonFieldValue(properties, "f_mois"));
-        assertNotNull(getJsonFieldValue(properties, "f_annee"));
-    }
+		JSONObject properties = reg.getJSONObject("properties");
+		assertNotNull(getJsonFieldValue(properties, "id"));
+		assertNotNull(getJsonFieldValue(properties, "date"));
+		assertNotNull(getJsonFieldValue(properties, "plage_hora"));
+		assertNotNull(getJsonFieldValue(properties, "jour_nuit"));
+		assertNotNull(getJsonFieldValue(properties, "meteo"));
+		assertNotNull(getJsonFieldValue(properties, "voie_type"));
+		assertNotNull(getJsonFieldValue(properties, "milieu"));
+		assertNotNull(getJsonFieldValue(properties, "voie_type"));
+		assertNotNull(getJsonFieldValue(properties, "tues_nb"));
+		assertNotNull(getJsonFieldValue(properties, "milieu"));
+		assertNotNull(getJsonFieldValue(properties, "tues_18_24"));
+		assertNotNull(getJsonFieldValue(properties, "tues_moto_"));
+		assertNotNull(getJsonFieldValue(properties, "tues_pieto"));
+		assertNotNull(getJsonFieldValue(properties, "tues_velo_"));
+		assertNotNull(getJsonFieldValue(properties, "vehicules_"));
+		assertNotNull(getJsonFieldValue(properties, "pl_impliqu"));
+		assertNotNull(getJsonFieldValue(properties, "commune"));
+		assertNotNull(getJsonFieldValue(properties, "departemen"));
+		assertNotNull(getJsonFieldValue(properties, "commentair"));
+		assertNotNull(getJsonFieldValue(properties, "consolide"));
+		assertNotNull(getJsonFieldValue(properties, "anciennete"));
+		assertNotNull(getJsonFieldValue(properties, "f_mois"));
+		assertNotNull(getJsonFieldValue(properties, "f_annee"));
+	}
 
     private String getJsonFieldValue(JSONObject properties, String field) {
 
