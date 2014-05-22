@@ -477,12 +477,20 @@ GEOR.layerstree = (function() {
                 var appendRecord = function(record) {
                     var maxExtent, srs;
                     var bbox = record.get("bbox");
-
-                    for(var p in bbox) { // TODO: try to find a better SRS. see http://applis-bretagne.fr/redmine/issues/1949
-                        srs = bbox[p].srs;
-                        maxExtent = OpenLayers.Bounds.fromArray(bbox[p].bbox);
-                        break;
+                    // trying to keep the main SRS, as requested by the administrator:
+                    if (bbox.hasOwnProperty(GEOR.config.GLOBAL_EPSG)) {
+                        srs = bbox[GEOR.config.GLOBAL_EPSG].srs;
+                        maxExtent = OpenLayers.Bounds.fromArray(bbox[GEOR.config.GLOBAL_EPSG].bbox);
                     }
+                    // fallback 1
+                    if(!(srs && maxExtent)) {
+                        for(var p in bbox) {
+                            srs = bbox[p].srs;
+                            maxExtent = OpenLayers.Bounds.fromArray(bbox[p].bbox);
+                            break;
+                        }
+                    }
+                    // fallback 2
                     if(!(srs && maxExtent)) {
                         // no bbox found!
                         // we need to build one here...
@@ -506,9 +514,8 @@ GEOR.layerstree = (function() {
                             new OpenLayers.Projection("EPSG:4326"),
                             new OpenLayers.Projection(srs));
                     }
-
+                    // we should never end up here, since llbbox is required.
                     if(!(srs && maxExtent)) {
-
                         // append error node here
                         parentNode.appendChild(new Ext.tree.TreeNode({
                             text: GEOR.util.shortenLayerName(wmsinfo.layername, maxLayerNameLength),
