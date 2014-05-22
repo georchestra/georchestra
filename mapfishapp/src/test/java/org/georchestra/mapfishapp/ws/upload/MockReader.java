@@ -33,7 +33,9 @@ public final class MockReader implements FeatureGeoFileReader {
 	public SimpleFeatureCollection getFeatureCollection(File file,
 			FileFormat fileFormat, CoordinateReferenceSystem targetCrs)
 			throws IOException {
-		throw new IOException("unsupported");
+		
+		throw new RuntimeException("unsupported");
+		
 	}
 
 	/* (non-Javadoc)
@@ -47,6 +49,12 @@ public final class MockReader implements FeatureGeoFileReader {
 	@Override
 	public boolean isSupportedFormat(FileFormat fileFormat) {
 		throw new UnsupportedOperationException("unsupported");
+	}
+
+	@Override
+	public boolean allowsGeoToolsFallback() {
+		// TODO Auto-generated method stub
+		return true;
 	}
 
 }

@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.EnumSet;
 
+import org.geotools.data.DefaultFeatureResults;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.referencing.CRS;
@@ -59,8 +60,10 @@ public class GeotoolsFeatureReaderTest {
 		SimpleFeatureCollection fc = reader.getFeatureCollection(file, FileFormat.shp);
 		
 		assertFeatureCollection(fc,  2, 4326);
-
-		assertTrue( reader.readerImpl instanceof GeotoolsFeatureReader );
+		assertTrue(fc instanceof DefaultFeatureResults);
+		
+		// The readerImpl is restored after having used the GeoTools one
+		assertTrue( reader.readerImpl instanceof MockReader );
 	}
 	
 	@Test

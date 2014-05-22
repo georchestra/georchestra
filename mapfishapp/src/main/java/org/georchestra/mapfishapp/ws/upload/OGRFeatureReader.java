@@ -98,7 +98,7 @@ final class OGRFeatureReader implements FeatureGeoFileReader {
                 JniOGR ogr = new JniOGR();
 
                 // retrieves the available drivers, if they are required by
-                // georchestra, they will be added in the list of available
+                // geOrchestra, they will be added in the list of available
                 // formats.
                 for (int i = 0; i < ogr.GetDriverCount(); i++) {
 
@@ -272,5 +272,10 @@ final class OGRFeatureReader implements FeatureGeoFileReader {
         }
         return false;
     }
+
+	@Override
+	public boolean allowsGeoToolsFallback() {
+		return true;
+	}
 
 }
