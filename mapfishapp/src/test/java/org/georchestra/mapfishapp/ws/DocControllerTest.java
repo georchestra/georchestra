@@ -78,6 +78,7 @@ public class DocControllerTest {
         _requestPost.setRequestURI(DOMAIN_NAME + DocController.WMC_URL); // fake URI, Rest style
         _requestPost.setContent(fileContent.getBytes()); // fake body containing wmc file
 
+        _controller.setConnectionPool(new MockConnectionPool("ignored"));
         _controller.storeWMCFile(_requestPost, _responsePost);
         assertEquals(201, _responsePost.getStatus()); // 201 Created
 
