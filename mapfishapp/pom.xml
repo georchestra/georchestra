@@ -186,36 +186,6 @@
       <artifactId>commons-dbcp</artifactId>
       <version>1.2.2</version>
     </dependency>
-    <!-- These should be provided by the system                           -->
-    <!-- e.g.: sudo apt-get install libjai-imageio-core-java libgdal-java -->
-    <dependency>
-      <groupId>javax.media</groupId>
-      <artifactId>jai_core</artifactId>
-      <version>1.2</version>
-      <scope>system</scope>
-      <systemPath>${jai.path}/jai_core.jar</systemPath>
-    </dependency>
-    <dependency>
-      <groupId>javax.media</groupId>
-      <artifactId>jai_codec</artifactId>
-      <version>1.2</version>
-      <scope>system</scope>
-      <systemPath>${jai.path}/jai_codec.jar</systemPath>
-    </dependency>
-    <dependency>
-      <groupId>javax.media</groupId>
-      <artifactId>jai_imageio</artifactId>
-      <version>1.2</version>
-      <scope>system</scope>
-      <systemPath>${jai.path}/jai_imageio.jar</systemPath>
-    </dependency>
-    <dependency>
-      <groupId>org.gdal</groupId>
-      <artifactId>gdal</artifactId>
-      <version>1.11</version>
-      <scope>system</scope>
-      <systemPath>${gdal.path}/gdal.jar</systemPath>
-    </dependency>
   </dependencies>
   <build>
     <finalName>${finalName}</finalName>
