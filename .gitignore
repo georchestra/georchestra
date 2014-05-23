@@ -7,7 +7,7 @@
 */jsbuild/setuptools-*.egg
 */src/main/webapp/WEB-INF/jsp/header.jsp
 PostTreatment.groovy
-*/.classpath
-*/.project
-*/.settings
+**/.project
+**/.classpath
+**/.settings
 
