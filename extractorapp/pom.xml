@@ -356,7 +356,6 @@
         </executions>
         <configuration>
           <executable>jsbuild/${jsbuild.command}</executable>
-          <arguments></arguments>
         </configuration>
       </plugin>
     </plugins>
