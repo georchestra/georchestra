@@ -24,7 +24,7 @@ How to build ?
 
 First, install the required packages: 
 
-    sudo apt-get install ant ant-optional openjdk-7-jdk python-virtualenv
+    sudo apt-get install ant ant-optional openjdk-7-jdk python-virtualenv libjai-imageio-core-java
 
 Notes: 
  * openjdk-6-jdk works too 
