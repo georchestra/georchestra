@@ -23,17 +23,17 @@ public class ClassifierCommand {
     /**
      * All following members are designed to map names used by the client side and the java code
      */
-    private static final String JSON_WFSURL = "wfs_url";
-    private static final String JSON_FEATURETYPE = "layer_name";
-    private static final String JSON_PROPERTY = "attribute_name";
+    private static final String JSON_WFSURL             = "wfs_url";
+    private static final String JSON_FEATURETYPE        = "layer_name";
+    private static final String JSON_PROPERTY           = "attribute_name";
     private static final String JSON_CLASSIFICATIONTYPE = "type";
-    private static final String JSON_SYMBOLTYPE = "symbol_type";
-    private static final String JSON_FIRSTCOLOR = "first_color";
-    private static final String JSON_LASTCOLOR = "last_color";
-    private static final String JSON_MINSIZE = "min_size";
-    private static final String JSON_MAXSIZE = "max_size";
-    private static final String JSON_CLASSCOUNT = "class_count";
-    private static final String JSON_PALETTEID = "palette";
+    private static final String JSON_SYMBOLTYPE         = "symbol_type";
+    private static final String JSON_FIRSTCOLOR         = "first_color";
+    private static final String JSON_LASTCOLOR          = "last_color";
+    private static final String JSON_MINSIZE            = "min_size";
+    private static final String JSON_MAXSIZE            = "max_size";
+    private static final String JSON_CLASSCOUNT         = "class_count";
+    private static final String JSON_PALETTEID          = "palette";
     
     /**
      * Type of classification

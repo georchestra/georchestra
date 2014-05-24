@@ -42,6 +42,7 @@ public class ClassifierCommandTest {
         jsonRequest.append("wfs_url:\"" + wfsUrl + "\",");
         jsonRequest.append("layer_name:\"" + featureTypeName + "\",");
         jsonRequest.append("attribute_name:\"" + propertyName + "\",");
+        jsonRequest.append("symbol_type:\"point\",");
         jsonRequest.append("class_count:\"" + classCount + "\",");
         jsonRequest.append("first_color:\"" + firstColor + "\",");
         jsonRequest.append("last_color:\"" + lastColor + "\"");
@@ -80,7 +81,8 @@ public class ClassifierCommandTest {
         jsonRequest.append("wfs_url:\"" + wfsUrl + "\",");
         jsonRequest.append("layer_name:\"" + featureTypeName + "\",");
         jsonRequest.append("attribute_name:\"" + propertyName + "\",");
-        jsonRequest.append("palette:\"" + paletteID + "\"");
+        jsonRequest.append("palette:\"" + paletteID + "\",");
+        jsonRequest.append("symbol_type:\"point\"");
         jsonRequest.append("}");
         
         // create command
@@ -119,7 +121,8 @@ public class ClassifierCommandTest {
         jsonRequest.append("attribute_name:\"" + propertyName + "\",");
         jsonRequest.append("class_count:\"" + classCount + "\",");
         jsonRequest.append("min_size:\"" + minSize + "\",");
-        jsonRequest.append("max_size:\"" + maxSize + "\"");
+        jsonRequest.append("max_size:\"" + maxSize + "\",");
+        jsonRequest.append("symbol_type:\"point\"");
         jsonRequest.append("}");
         
         // create command
