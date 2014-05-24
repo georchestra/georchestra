@@ -29,7 +29,7 @@ public class SLDClassifierTest {
 
     private static final Map<String, UsernamePasswordCredentials> EMPTY_MAP = Collections.<String,UsernamePasswordCredentials>emptyMap();
 
-    @Test(timeout=10000)
+    @Test
     public void testChoropleths() throws Exception {
          
         // build JSON request
@@ -56,7 +56,7 @@ public class SLDClassifierTest {
         JSONTokener tokener = new JSONTokener(jsonRequest.toString());
         JSONObject jObj = new JSONObject(tokener);
         ClassifierCommand command = new ClassifierCommand(jObj);
-        SLDClassifier classifier = new SLDClassifier(EMPTY_MAP, command);
+        SLDClassifier classifier = new SLDClassifier(EMPTY_MAP, command, new MockWFSDataStoreFactory());
 
         Document doc = createDomDocument(classifier.getSLD());
 
@@ -67,7 +67,7 @@ public class SLDClassifierTest {
         
     }
     
-    @Test(timeout=10000)
+    @Test
     public void testSymbols() throws Exception {
         
         // build JSON request
@@ -94,8 +94,7 @@ public class SLDClassifierTest {
         JSONTokener tokener = new JSONTokener(jsonRequest.toString());
         JSONObject jObj = new JSONObject(tokener);
         ClassifierCommand command = new ClassifierCommand(jObj);
-        SLDClassifier classifier = new SLDClassifier(EMPTY_MAP, command);
-        
+        SLDClassifier classifier = new SLDClassifier(EMPTY_MAP, command, new MockWFSDataStoreFactory());
         Document doc = createDomDocument(classifier.getSLD());
 
         // need as many rules, filters and symbolizers as classes
@@ -104,7 +103,7 @@ public class SLDClassifierTest {
         assertEquals(classCount, doc.getElementsByTagName("sld:PointSymbolizer").getLength());
     }
     
-    @Test(timeout=10000)
+    @Test
     public void testUniqueValues() throws Exception {
         
         // build JSON request
@@ -127,7 +126,7 @@ public class SLDClassifierTest {
         JSONTokener tokener = new JSONTokener(jsonRequest.toString());
         JSONObject jObj = new JSONObject(tokener);
         ClassifierCommand command = new ClassifierCommand(jObj);
-        SLDClassifier classifier = new SLDClassifier(EMPTY_MAP, command);
+        SLDClassifier classifier = new SLDClassifier(EMPTY_MAP, command, new MockWFSDataStoreFactory());
         
         Document doc = createDomDocument(classifier.getSLD());
 

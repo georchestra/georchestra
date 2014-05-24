@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-
 import org.georchestra.mapfishapp.model.ConnectionPool;
+import org.geotools.data.wfs.WFSDataStoreFactory;
 
 /**
  * This controller represents the entry point to access RESTful document services.
@@ -213,7 +213,8 @@ public class DocController {
     private void doClassification(HttpServletRequest request, HttpServletResponse response) {
         try {
             // classification based on client request in json
-            SLDClassifier c = new SLDClassifier(credentials, new ClassifierCommand(getBodyFromRequest(request)));
+            SLDClassifier c = new SLDClassifier(credentials, new ClassifierCommand(getBodyFromRequest(request)),
+            		new WFSDataStoreFactory());
             
             // save SLD content under a file
             SLDDocService service = new SLDDocService(this.docTempDir, this.connectionPool);
