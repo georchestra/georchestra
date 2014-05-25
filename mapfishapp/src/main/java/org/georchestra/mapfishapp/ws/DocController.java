@@ -58,6 +58,8 @@ public class DocController {
     public ConnectionPool getConnectionPool() {return connectionPool;}
 	public void setConnectionPool(ConnectionPool connectionPool) {	this.connectionPool = connectionPool; }
     
+	private WFSDataStoreFactory factory = new WFSDataStoreFactory();
+	public void setWFSDataStoreFactory(WFSDataStoreFactory fac) { factory = fac; }
 	/**
 	 * mapping from hostname -> credentials
 	 */
@@ -214,7 +216,7 @@ public class DocController {
         try {
             // classification based on client request in json
             SLDClassifier c = new SLDClassifier(credentials, new ClassifierCommand(getBodyFromRequest(request)),
-            		new WFSDataStoreFactory());
+            		factory);
             
             // save SLD content under a file
             SLDDocService service = new SLDDocService(this.docTempDir, this.connectionPool);

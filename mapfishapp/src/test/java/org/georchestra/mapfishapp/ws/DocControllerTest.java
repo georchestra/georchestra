@@ -3,11 +3,13 @@ package org.georchestra.mapfishapp.ws;
 import java.io.File;
 
 import org.georchestra.mapfishapp.ws.DocController;
+import org.georchestra.mapfishapp.ws.classif.MockWFSDataStoreFactory;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -199,6 +201,7 @@ public class DocControllerTest {
         jsonRequest.append("attribute_name:\"PERSONS\",");
         jsonRequest.append("class_count:\"" + classCount + "\",");
         jsonRequest.append("min_size:\"" + minSize + "\",");
+        jsonRequest.append("symbol_type:\"point\",");
         jsonRequest.append("max_size:\"" + maxSize + "\"");
         jsonRequest.append("}");
         
@@ -206,6 +209,9 @@ public class DocControllerTest {
         _requestPost.setContent(jsonRequest.toString().getBytes()); // fake body containing json request
         _requestPost.setContentType("application/json");
 
+        // Using a fake WFSDataStoreFactory to avoid remote connection to WFS
+        _controller.setWFSDataStoreFactory(new MockWFSDataStoreFactory());
+        
         _controller.doSLDPost(_requestPost, _responsePost);
         
         assertEquals(200, _responseGet.getStatus()); // 200 OK
