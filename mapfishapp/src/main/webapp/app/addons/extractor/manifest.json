@@ -55,6 +55,19 @@
             "Resolution for rasters (cm)": "Résolution des couches rasters (en cm)",
             "Email": "Courriel",
             "This field should be an e-mail address in the format user@domain.com": "Ce champ doit être une adresse email au format utilisateur@domaine.com"
+        },
+         "de": {
+            "addon_extractor_popup_title": "Extraktions-parameter",
+            "Close": "Schließen",
+            "Extract": "extrahieren",
+            "The extraction request succeeded, check your email.": "erfolgreiche Extraktion. E-mail folgt.",
+            "The extraction request failed.": "extraktion nicht erfolgt.",
+            "SRS": "SRS",
+            "Format for vectors": "Format des Layervectors",
+            "Format for rasters": "Format des Layerrasters",
+            "Resolution for rasters (cm)": "Layer auflösung in cm",
+            "Email": "Email Adresse",
+            "This field should be an e-mail address in the format user@domain.com": "Formularfeld muss eine e-mailadresse beinhalten"
         }
     }
 }

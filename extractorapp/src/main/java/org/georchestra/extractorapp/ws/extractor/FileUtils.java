@@ -46,7 +46,7 @@ public final class FileUtils {
         if(!file.getPath().startsWith(baseFile.getPath())) {
             throw new ExtractorException("When performing a Zip all files must be within the baseFile: "+file+" not contained by "+baseFile);
         }
-        
+
         if (file.isDirectory()) {
             for (File f : file.listFiles()) {
                 zipDir(zip, baseFile, f);
@@ -57,9 +57,9 @@ public final class FileUtils {
             zip.putNextEntry(next);
             FileInputStream in = new FileInputStream(file);
             try {
-              in.getChannel().transferTo(0, file.length(), Channels.newChannel(zip));  
+              in.getChannel().transferTo(0, file.length(), Channels.newChannel(zip));
             } finally {
-              in.close();  
+              in.close();
             }
         }
     }
@@ -123,7 +123,7 @@ public final class FileUtils {
             }
         }
     }
-    
+
     public static void moveFile(File from, File to) throws FileNotFoundException,
             IOException {
         to.getParentFile().mkdirs();
@@ -179,11 +179,11 @@ public final class FileUtils {
 
     public static String getExtractorStorageDir() {
         String baseStorageDir = System.getProperty("extractor.storage.dir");
-        
+
         if(baseStorageDir==null){
             baseStorageDir = System.getenv("extractor.storage.dir");
-        } 
-        /* still null ? let's try something else */ 
+        }
+        /* still null ? let's try something else */
         if (baseStorageDir == null){
             baseStorageDir = System.getProperty("java.io.tmpdir")+File.separator+"extractorStorage";
         }
@@ -217,23 +217,23 @@ public final class FileUtils {
         }
         throw new AssertionError("Unable to make a temporary director in base: "+tmpDir);
     }
-    
+
 	public static String createFileName(final String baseDir, final SimpleFeatureType type, final FileFormat ext){
-		
+
 		String layerName = type.getTypeName();
 		Class<?> geomClass = type.getGeometryDescriptor().getType().getBinding();
-				
+
         GeomType geomType = WfsExtractor.GeomType.lookup (geomClass);
-				
-        String newName = FileUtils.toSafeFileName(layerName + "_" + geomType+"."+ext);
-        
+
+        String newName = FileUtils.toSafeFileName(layerName + "_" + geomType + "." + ext);
+
         File file = new File(newName);
         for (int i = 1; file.exists(); i++) {
             newName = layerName + "_" + geomType + i;
-            newName = FileUtils.toSafeFileName(newName+"."+ext);
+            newName = FileUtils.toSafeFileName(newName + "." + ext);
             file = new File(baseDir, newName + "." + ext);
-        }        
-        
+        }
+
         return newName;
 	}
 

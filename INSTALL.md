@@ -46,7 +46,7 @@ Note 2: PostGIS extensions are not required in the georchestra database, unless 
 
  * if **mapfishapp** is deployed:
 
-        wget https://raw.github.com/georchestra/georchestra/master/mapfishapp/database.sql -O /tmp/mapfishapp.sql
+        wget --no-check-certificate https://raw.github.com/georchestra/georchestra/master/mapfishapp/database.sql -O /tmp/mapfishapp.sql
         psql -d georchestra -f /tmp/mapfishapp.sql
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA mapfishapp TO "www-data";'
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA mapfishapp TO "www-data";'
@@ -54,7 +54,7 @@ Note 2: PostGIS extensions are not required in the georchestra database, unless 
 
  * if the **ldapadmin** webapp is deployed:
 
-        wget https://raw.github.com/georchestra/georchestra/master/ldapadmin/database.sql -O /tmp/ldapadmin.sql
+        wget --no-check-certificate https://raw.github.com/georchestra/georchestra/master/ldapadmin/database.sql -O /tmp/ldapadmin.sql
         psql -d georchestra -f /tmp/ldapadmin.sql
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA ldapadmin TO "www-data";'
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ldapadmin TO "www-data";'
@@ -67,7 +67,7 @@ Note 2: PostGIS extensions are not required in the georchestra database, unless 
         psql -f /usr/share/postgresql/9.1/contrib/postgis-1.5/spatial_ref_sys.sql georchestra
         psql -d georchestra -c 'GRANT SELECT ON public.spatial_ref_sys to "www-data";'
         psql -d georchestra -c 'GRANT SELECT,INSERT,DELETE ON public.geometry_columns to "www-data";'
-        wget https://raw.github.com/georchestra/geofence/georchestra/doc/setup/sql/002_create_schema_postgres.sql -O /tmp/geofence.sql
+        wget --no-check-certificate https://raw.github.com/georchestra/geofence/georchestra/doc/setup/sql/002_create_schema_postgres.sql -O /tmp/geofence.sql
         psql -d georchestra -f /tmp/geofence.sql
         psql -d georchestra -c 'INSERT INTO geofence.gf_gsinstance (id, baseURL, dateCreation, description, "name", "password", username) values (0, 'http(s)://@shared.server.name@/geoserver', 'now', 'locale geoserver', 'default-gs', '@shared.privileged.geoserver.pass@', '@shared.privileged.geoserver.user@');'
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA geofence TO "www-data";'
@@ -76,7 +76,7 @@ Note 2: PostGIS extensions are not required in the georchestra database, unless 
 
  * if the **downloadform** module is deployed and ```shared.download_form.activated``` is true in your setup (false by default):
 
-        wget https://raw.github.com/georchestra/georchestra/master/downloadform/database.sql -O /tmp/downloadform.sql
+        wget --no-check-certificate https://raw.github.com/georchestra/georchestra/master/downloadform/database.sql -O /tmp/downloadform.sql
         psql -d georchestra -f /tmp/downloadform.sql
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA downloadform TO "www-data";'
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA downloadform TO "www-data";'
@@ -84,7 +84,7 @@ Note 2: PostGIS extensions are not required in the georchestra database, unless 
         
  * if the **security proxy** is deployed and ```shared.ogc.statistics.activated``` is true in your setup (false by default):
 
-        wget https://raw.github.com/georchestra/georchestra/master/ogc-server-statistics/database.sql -O /tmp/ogcstatistics.sql
+        wget --no-check-certificate https://raw.github.com/georchestra/georchestra/master/ogc-server-statistics/database.sql -O /tmp/ogcstatistics.sql
         psql -d georchestra -f /tmp/ogcstatistics.sql
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA ogcstatistics TO "www-data";'
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ogcstatistics TO "www-data";'
@@ -585,9 +585,9 @@ GeoServer uses them to access more data formats, read http://docs.geoserver.org/
 Mapfishapp also optionally uses them for the file upload functionality, that allows to upload a vectorial data file to mapfishapp in order to display it as a layer. This functionnality in Mapfishapp relies normally on GeoTools, however, the supported file formats are limited (at 2013-10-17: shp, mif, gml and kml). If GDAL and GDAL Java bindings libraries are installed, the number of supported file formats is increased. This would give access, for example, to extra formats such as GPX and TAB.
 
 The key element for calling the GDAL native library from mapfishapp is the **imageio-ext library** (see https://github.com/geosolutions-it/imageio-ext/wiki). It relies on:
- * jar files, that are included at build by maven,
- * a GDAL Java binding library, based on the JNI framework,
- * and obviously the GDAL library.
+ * jar files,
+ * a GDAL Java native binding library, based on the JNI framework, named gdaljni, or ogrjni,
+ * and the GDAL library.
 
 The latter can be installed, on Debian-based distributions, with the libgdal1 package:
 
@@ -595,7 +595,12 @@ The latter can be installed, on Debian-based distributions, with the libgdal1 pa
 
 Some more work is needed for installing the GDAL Java binding library, as there is still no deb package for it (note that packages exist for ruby and perl bindings, hopefully the Java's one will be released soon - see a recent proposal http://ftp-master.debian.org/new/gdal_1.10.0-0%7Eexp3.html).
 
-To quickly install the GDAL Java binding library on the server, download and extract the library and its data (see http://demo.geo-solutions.it/share/github/imageio-ext/releases/1.1.X/1.1.7/native/gdal/ for the adequate distribution). 
+To quickly install the GDAL Java binding library on the server, download and extract the library and its data. To do so, you can use 2 repositories providing binary packages for given distribution:
+
+ * GeoSolutions http://demo.geo-solutions.it/share/github/imageio-ext/releases/1.1.X/1.1.7/native/gdal/ which provides a package with ECW support (which can cause some licensing issues, and some of the packages are outdated, since the distributions evolved and updated their Glibc version, see #409) ;
+ * geOrchestra-provided packages http://sdi.georchestra.org/~pmauduit/gdalogr-java-bindings/ which provides "vanilla" GDAL packages as well as a specific one (mifmid-patched) which allows the use of MIF/MID format across GDAL/OGR via GeoTools (see #409)
+
+
 Example for Debian Wheezy on amd64:
 
     sudo mkdir -p /var/sig/gdal/NativeLibs/
@@ -616,8 +621,19 @@ sudo nano /etc/default/tomcat6
 ```
 LD_LIBRARY_PATH=/lib:/usr/lib/:/var/sig/gdal/NativeLibs/:$LD_LIBRARY_PATH
 ```
+Then you will have to make sure that the Tomcat will share the `gdal.jar` across the different webapps ; you can do this by creating a file in your `${catalina.base}/conf` directory, named `catalina.properties`, containing:
 
-Another way to install the GDAL Java binding is building it from sources. See http://trac.osgeo.org/gdal/wiki/GdalOgrInJavaBuildInstructionsUnix.
+```
+common.loader=${catalina.base}/lib,${catalina.base}/lib/*.jar,${catalina.home}/lib,${catalina.home}/lib/*.jar
+server.loader=
+shared.loader=${catalina.base}/lib/*.jar
+```
+
+Then, ensure that the installed `gdal.jar` is reachable by the classloader by copying it or creating a symlink to it into `${catalina.base}/lib`. See https://groups.google.com/forum/#!topic/georchestra-dev/K7GK_cLeAyk for more informations. The main motivation by doing so is to avoid that the different webapp contexts have to load the same native libraries more than once. THis is the reason why we have to share the classes ensuring the native bindings role.
+
+
+If you do not want to use the precompiled binaries, another way to install the GDAL Java binding is building it from sources. See http://trac.osgeo.org/gdal/wiki/GdalOgrInJavaBuildInstructionsUnix.
+
 
 Production ready setup
 ======================

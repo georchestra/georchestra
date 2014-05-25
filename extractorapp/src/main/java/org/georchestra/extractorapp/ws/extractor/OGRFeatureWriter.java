@@ -13,6 +13,7 @@ import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.data.ogr.OGRDataStore;
 import org.geotools.data.ogr.OGRDataStoreFactory;
+import org.geotools.data.ogr.jni.JniOGRDataStoreFactory;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -62,7 +63,7 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
 		},
 		kml {
 			@Override
-			public String getDriver(){return "KML file";}
+			public String getDriver(){return "KML";}
 
 		};
 
@@ -79,7 +80,7 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
 		public String[] getFormatOptions(){return null;}
 	}
 
-	private ProgressListener progresListener;
+	private ProgressListener progressListener;
 	private final SimpleFeatureType schema;
 	private final File basedir;
 	private final SimpleFeatureCollection features;
@@ -96,7 +97,7 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
 	 * @param features		input the set of Features to write
 	 */
 	public OGRFeatureWriter(
-			ProgressListener progressListener,
+			ProgressListener _progressListener,
 			SimpleFeatureType schema,
 			File basedir,
 			FileFormat fileFormat,
@@ -104,7 +105,15 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
 
 		assert schema != null && basedir != null && features != null;
 
-		this.progresListener = progresListener;
+		// This is needed since this class relies heavily on OGR
+		try {
+            Class.forName("org.gdal.ogr.ogr");
+        } catch (Throwable e) {
+            LOG.info("gdal/ogr is not available in the system, some of the features won't be available.", e);
+        }
+
+		this.progressListener = _progressListener;
+
 		checkSchema(schema);
 		this.schema = schema;
 		this.basedir = basedir;
@@ -170,13 +179,22 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
         OGRDataStore ds = null;
         try {
             ds = (OGRDataStore) DataStoreFinder.getDataStore(map);
+            // Sometimes GeoTools is unable to find a datastore
+            // even if an OGRDataStore can actually be created.
+            // Trying to force via JNIOGRDataStoreFactory ...
+            if (ds == null) {
+                ds = (OGRDataStore) new JniOGRDataStoreFactory().createNewDataStore(map);
+            }
             if (ds == null) {
             	throw new IllegalStateException("OGRDataStore couldn't be created, please check GDAL librairies are correctly installed on your machine");
             }
 	        ds.createSchema(this.features, true, this.options); //TODO OGR require the following improvements:  use the output crs required (progress Listener should be a parameter)
-
 	        files =  new File[]{new File( pathName)};
-
+        } catch (NullPointerException e) {
+        	LOG.error("OGRDataStore couldn't be created, please check GDAL librairies are correctly installed on your machine");
+        	throw e;
+        } catch (Exception e) {
+        	LOG.error(e);
         }
         finally {
             if(ds != null){
@@ -184,7 +202,7 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
             }
         }
         return files;
-	}
+    }
 
 	protected DataStore getDataStore() throws  IOException{
 
