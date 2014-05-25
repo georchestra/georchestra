@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Map;
 
-import javax.management.RuntimeErrorException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.geotools.data.DataStore;
@@ -24,7 +22,7 @@ import org.opengis.util.ProgressListener;
  * This writer sets the OGRDataStore that is responsible of generating the vector file in the format required.
  *
  * <p>
- * Note: this was written thinking in future extensions to support more format. Right now TAB format is my goal.
+ * Note: this was written thinking in future extensions to support more formats. Right now TAB format is my goal.
  * The extension should be very simple adding the new format and driver in the {@link FileFormat} enumerate type.
  * </p>
  *
@@ -86,6 +84,7 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
 	private final SimpleFeatureCollection features;
 	private final FileFormat fileFormat;
 	private final String[] options;
+	private boolean ogrAvailable = true;
 
 	/**
 	 * New instance of {@link OGRFeatureWriter}
@@ -110,6 +109,7 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
             Class.forName("org.gdal.ogr.ogr");
         } catch (Throwable e) {
             LOG.info("gdal/ogr is not available in the system, some of the features won't be available.", e);
+            ogrAvailable = false;
         }
 
 		this.progressListener = _progressListener;
@@ -169,6 +169,9 @@ class OGRFeatureWriter implements FeatureWriterStrategy {
 	@Override
 	public File[] generateFiles() throws IOException {
 
+	    if (! ogrAvailable) {
+            throw new IllegalStateException("OGR reported as unavailable, please check GDAL librairies are correctly installed on your machine");
+	    }
 		Map<String, Serializable> map = new java.util.HashMap<String, Serializable>();
 
         final String pathName = this.basedir.getAbsolutePath() + File.separatorChar + FileUtils.createFileName(this.basedir.getAbsolutePath(), this.schema, this.fileFormat);
