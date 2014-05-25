@@ -39,27 +39,25 @@ public class SLDClassifierTest {
         String firstColor = "#0000ff";
         String lastColor = "#ff0000";
         int classCount = 3;
+
+        JSONObject jsReq = new JSONObject().put("type", "CHOROPLETHS")
+        	.put("wfs_url", wfsUrl)
+        	.put("layer_name", featureTypeName)
+        	.put("attribute_name", propertyName)
+        	.put("class_count", classCount)
+        	.put("first_color", firstColor)
+        	.put("symbol_type", "polygon")
+        	.put("last_color", lastColor);
         
-        StringBuilder jsonRequest = new StringBuilder();
-        jsonRequest.append("{");
-        jsonRequest.append("type:\"CHOROPLETHS\",");
-        jsonRequest.append("wfs_url:\"" + wfsUrl + "\",");
-        jsonRequest.append("layer_name:\"" + featureTypeName + "\",");
-        jsonRequest.append("attribute_name:\"" + propertyName + "\",");
-        jsonRequest.append("class_count:\"" + classCount + "\",");
-        jsonRequest.append("first_color:\"" + firstColor + "\",");
-        jsonRequest.append("symbol_type:\"point\",");
-        jsonRequest.append("last_color:\"" + lastColor + "\"");
-        jsonRequest.append("}");
         
         // create command
-        JSONTokener tokener = new JSONTokener(jsonRequest.toString());
-        JSONObject jObj = new JSONObject(tokener);
-        ClassifierCommand command = new ClassifierCommand(jObj);
+        ClassifierCommand command = new ClassifierCommand(jsReq);
         SLDClassifier classifier = new SLDClassifier(EMPTY_MAP, command, new MockWFSDataStoreFactory());
 
         Document doc = createDomDocument(classifier.getSLD());
 
+        System.out.println(classifier.getSLD());
+        
         // need as many rules, filters and symbolizers as classes
         assertEquals(classCount, doc.getElementsByTagName("sld:Rule").getLength());
         assertEquals(classCount, doc.getElementsByTagName("ogc:Filter").getLength());
@@ -77,23 +75,18 @@ public class SLDClassifierTest {
         int minSize = 4;
         int lastSize = 24;
         int classCount = 3;
-        
-        StringBuilder jsonRequest = new StringBuilder();
-        jsonRequest.append("{");
-        jsonRequest.append("type:\"PROP_SYMBOLS\",");
-        jsonRequest.append("wfs_url:\"" + wfsUrl + "\",");
-        jsonRequest.append("layer_name:\"" + featureTypeName + "\",");
-        jsonRequest.append("attribute_name:\"" + propertyName + "\",");
-        jsonRequest.append("class_count:\"" + classCount + "\",");
-        jsonRequest.append("min_size:\"" + minSize + "\",");
-        jsonRequest.append("symbol_type:\"point\",");
-        jsonRequest.append("max_size:\"" + lastSize + "\"");
-        jsonRequest.append("}");
-        
+
+        JSONObject jsReq = new JSONObject().put("type", "PROP_SYMBOLS")
+            	.put("wfs_url", wfsUrl)
+            	.put("layer_name", featureTypeName)
+            	.put("attribute_name", propertyName)
+            	.put("class_count", classCount)
+            	.put("min_size", minSize)
+            	.put("symbol_type", "point")
+            	.put("max_size", lastSize);
+
         // create command
-        JSONTokener tokener = new JSONTokener(jsonRequest.toString());
-        JSONObject jObj = new JSONObject(tokener);
-        ClassifierCommand command = new ClassifierCommand(jObj);
+        ClassifierCommand command = new ClassifierCommand(jsReq);
         SLDClassifier classifier = new SLDClassifier(EMPTY_MAP, command, new MockWFSDataStoreFactory());
         Document doc = createDomDocument(classifier.getSLD());
 
@@ -111,21 +104,16 @@ public class SLDClassifierTest {
         String featureTypeName = "topp:states";
         String propertyName = "STATE_NAME";
         int paletteID = 1;
-        
-        StringBuilder jsonRequest = new StringBuilder();
-        jsonRequest.append("{");
-        jsonRequest.append("type:\"unique_values\",");
-        jsonRequest.append("wfs_url:\"" + wfsUrl + "\",");
-        jsonRequest.append("layer_name:\"" + featureTypeName + "\",");
-        jsonRequest.append("attribute_name:\"" + propertyName + "\",");
-        jsonRequest.append("symbol_type:\"point\",");
-        jsonRequest.append("palette:\"" + paletteID + "\"");
-        jsonRequest.append("}");
+
+        JSONObject jsReq = new JSONObject().put("type", "unique_values")
+            	.put("wfs_url", wfsUrl)
+            	.put("layer_name", featureTypeName)
+            	.put("attribute_name", propertyName)
+            	.put("symbol_type", "point")
+            	.put("palette", paletteID);
         
         // create command
-        JSONTokener tokener = new JSONTokener(jsonRequest.toString());
-        JSONObject jObj = new JSONObject(tokener);
-        ClassifierCommand command = new ClassifierCommand(jObj);
+        ClassifierCommand command = new ClassifierCommand(jsReq);
         SLDClassifier classifier = new SLDClassifier(EMPTY_MAP, command, new MockWFSDataStoreFactory());
         
         Document doc = createDomDocument(classifier.getSLD());
