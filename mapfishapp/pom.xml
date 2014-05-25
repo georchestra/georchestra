@@ -202,23 +202,6 @@
           <artifactId>maven-pmd-plugin</artifactId>
           <version>2.4</version>
         </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-changelog-plugin</artifactId>
-          <version>2.1</version>
-          <dependencies>
-            <dependency>
-              <groupId>org.apache.maven.scm</groupId>
-              <artifactId>maven-scm-provider-gitexe</artifactId>
-              <version>1.2</version>
-            </dependency>
-            <dependency>
-              <groupId>org.codehaus.plexus</groupId>
-              <artifactId>plexus-utils</artifactId>
-              <version>2.0.1</version>
-            </dependency>
-          </dependencies>
-        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
@@ -384,16 +367,6 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>jdepend-maven-plugin</artifactId>
         <version>2.0</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-scm-plugin</artifactId>
-        <version>1.8.1</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-changelog-plugin</artifactId>
-        <version>2.2</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
