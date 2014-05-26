@@ -88,7 +88,7 @@
             "annotation.delete_feature": "Supprimer l'objet",
             "annotation.delete_confirm": "Voulez-vous vraiment supprimer cet objet ?",
             "annotation.delete": "Supprimer",
-            "annotation.delete_all": "Supprimer",
+            "annotation.delete_all": "Effacer",
             "annotation.export_as_kml": "Exporter",
             "annotation.export_as_kml_tip": "Exporter en KML",
             "annotation.modify": "Modifier",
