@@ -276,7 +276,7 @@ GEOR.FeaturePanel = Ext.extend(Ext.form.FormPanel, {
      */
     getActions: function() {
         return [this.deleteAction, '->', {
-            text: 'OK',
+            text: OpenLayers.i18n('annotation.close'),
             handler: function() {
                 this.ownerCt.close();
             },
