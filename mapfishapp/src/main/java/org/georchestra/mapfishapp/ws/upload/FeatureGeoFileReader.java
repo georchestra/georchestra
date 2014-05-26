@@ -65,4 +65,6 @@ interface FeatureGeoFileReader {
      */
     boolean isSupportedFormat(FileFormat fileFormat);
 
+	boolean allowsGeoToolsFallback();
+
 }

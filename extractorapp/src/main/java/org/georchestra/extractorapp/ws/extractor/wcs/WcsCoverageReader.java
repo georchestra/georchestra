@@ -20,11 +20,13 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.ServiceConfigurationError;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,7 +38,6 @@ import org.geotools.coverage.grid.io.AbstractGridFormat;
 import org.geotools.coverage.grid.io.GridFormatFinder;
 import org.geotools.coverage.grid.io.UnknownFormat;
 import org.geotools.coverage.processing.Operations;
-import org.geotools.data.MapInfoFileReader;
 import org.geotools.data.ServiceInfo;
 import org.geotools.data.mif.MIFProjReader;
 import org.geotools.factory.GeoTools;
@@ -64,24 +65,24 @@ import org.opengis.referencing.operation.TransformException;
 
 /**
  * Reads coverages from a WCS.
- * 
+ *
  * Currently a grid coverage can only be read if the name of the layer is known.
- * 
+ *
  * This is an implementation of the Geotools coverage reader API which makes a
  * request to the WCS and returns the grid coverage received.
- * 
+ *
  * Currently each request for the coverage results in a new read but future
  * versions may be able to add some caching.
- * 
+ *
  * The API is extended to allow the coverage to be written to a file rather than
  * constructing a GridCoverage object
- * 
+ *
  * Be warned that not all of the API is supported because they are not required
  * for geOrchestra but this class could be the start of support for a
  * full-fledged WCS client
- * 
+ *
  * @see #readToFile(File, String, GeneralParameterValue[])
- * 
+ *
  * @author jeichar
  */
 @SuppressWarnings({ "deprecation" })
@@ -165,7 +166,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
     /**
      * Obtains the coverage from the server and writes it to a file with a .prj
      * and .wld file unless the requested type is a geotiff.
-     * 
+     *
      * @param containingDirectory
      *            the data to write the files to
      * @param baseFilename
@@ -173,7 +174,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
      * @param parameters
      *            the parameters for making the request
      * @return the image file
-     * 
+     *
      * @throws IllegalArgumentException
      * @throws IOException
      */
@@ -257,7 +258,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
         } finally {
         	if(tmpFile != null)
         		FileUtils.delete(tmpFile);
-        	
+
             if (input != null)
                 IOUtils.closeQuietly(input);
         }
@@ -283,7 +284,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
             } else {
                 geotoolsTranformation(sourceFile, file, targetRequest, original);
             }
-            
+
             LOG.info("Coverage reprojection/transformation complete");
         } else if (handleFormatTranform) {
             if (targetRequest.useCommandLineGDAL) {
@@ -330,10 +331,10 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
                     GridCoverageWriter writer = format.getWriter(tmpFile);
 
                     file.delete();
-                    
+
                     ParameterValue<String> formatParam = FORMAT.createValue ();
                     formatParam.setValue (request.format);
-                    
+
                     writer.write((GridCoverage) transformed, new GeneralParameterValue[] {formatParam});
                     // There may be several files created if dest format is
                     // world+image
@@ -377,7 +378,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
             } else {
                 BufferedImage image = ImageIO.read(in);
                 ImageIO.write(image, request.format, file);
-                
+
                 writeWorldImageExt(request, file);
             }
         } else {
@@ -453,18 +454,18 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
 
         String baseFilePath = file.getPath().substring(0,
                 file.getPath().lastIndexOf('.'));
-        
+
         // Compute image size and image transformed BBOX
         ReferencedEnvelope transformedBBox;
         AffineTransform transform;
-        
+
         int width = -1;
         int height = -1;
         String ext = FileUtils.extension(file);
 
         try {
             final Iterator<ImageReader> readers = ImageIO.getImageReadersByFormatName(ext.substring(1));
-            
+
             while (readers.hasNext() && width < 0 && height < 0) {
                 ImageInputStream stream = null;
                 try {
@@ -500,6 +501,8 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
 
         } catch (Exception e) {
             throw new ExtractorException(e);
+        } catch (ServiceConfigurationError e) {
+            throw new RuntimeException(e.getMessage());
         }
 
         // Generate TFW TAB PRJ files
@@ -598,7 +601,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
      * the file is composed by the name of the image file with a proper
      * extension, depending on the format (see WorldImageFormat). The projection
      * is in the world file.
-     * 
+     *
      *
      *
      * @param imageFile
@@ -609,7 +612,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
      *             In case we cannot create the world file.
      * @throws TransformException
      */
-    private void createWorldFile(final AffineTransform transform, 
+    private void createWorldFile(final AffineTransform transform,
     		final String ext, final String baseFile) throws IOException {
 
         // /////////////////////////////////////////////////////////////////////
@@ -681,13 +684,13 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
 
     private void createTABFile(ReferencedEnvelope transformedBBox, final int width, final int height,
             final String baseFile, final String ext) throws IOException {
-    	
+
     	final StringBuffer buff = new StringBuffer(baseFile);
         buff.append(".tab");
         final File tabFile = new File(buff.toString());
-        
+
         final PrintWriter out = new PrintWriter(new FileOutputStream(tabFile));
-        
+
         try {
             out.println("!table");
             out.println("!version 300");
@@ -700,31 +703,31 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
             out.println("("+transformedBBox.getMaxX()+","+transformedBBox.getMinY()+") ("+width+",0) Label \"Pt 2\",");
             out.println("("+transformedBBox.getMaxX()+","+transformedBBox.getMaxY()+") ("+width+","+height+") Label \"Pt 3\",");
             out.println("("+transformedBBox.getMinX()+","+transformedBBox.getMaxY()+") (0,"+height+") Label \"Pt 4\",");
-            
+
             InputStream in = WcsCoverageReader.class.getClassLoader().getResourceAsStream("org/georchestra/extractorapp/proj4MapinfoTab.properties");
             Properties properties = new Properties();
             properties.load(in);
-            
+
             MIFProjReader tabProjReader = new MIFProjReader();
-            
+
             Iterator<ReferenceIdentifier> iter = transformedBBox.getCoordinateReferenceSystem().getIdentifiers().iterator();
             String crsCode = iter.next().toString();
             int crs = Integer.valueOf(crsCode.replace("EPSG:", ""));
-            
+
             out.println("CoordSys Earth Projection " + tabProjReader.toMifCoordSys(crs));
             out.print("units \"" + CRSUtilities.getUnit(transformedBBox.getCoordinateReferenceSystem().getCoordinateSystem()).toString() + "\"");
-            
+
             /**
             GeneralDerivedCRS crs = (GeneralDerivedCRS)request.responseCRS;
             Conversion conversionFromBase = crs.getConversionFromBase();
-            
+
             Unit<?> unit = CRSUtilities.getUnit(crs.getCoordinateSystem());
             GeodeticDatum datum = (GeodeticDatum)crs.getDatum();
-            
+
             // Specific MAPINFO TAB format
             String projType = conversionFromBase.getMethod().getName().getCode();
             String datumCode = datum.getEllipsoid().getName().getCode();
-            
+
             Map <String, Integer> projectionTypes = new HashMap<String, Integer>();
             projectionTypes.put("Lambert Conic Conformal (2SP)", 3);
 
@@ -739,7 +742,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
             		params.put(param.getDescriptor().getName().getCode(), String.valueOf(value));
             	}
             }
-            
+
             out.print("CoordSys Earth ");
             out.print("Projection " + projectionTypes.get(projType) + ", ");
             out.print(datumCodes.get(datumCode) + ", ");
@@ -751,7 +754,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
             out.print(params.get("false_easting") + ", ");
             out.print(params.get("false_northing") + ", ");
             **/
-            
+
             out.flush();
         } finally {
             out.close();

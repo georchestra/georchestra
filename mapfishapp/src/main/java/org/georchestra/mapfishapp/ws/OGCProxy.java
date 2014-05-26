@@ -17,9 +17,9 @@ import java.util.zip.DeflaterOutputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletInputStream;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,14 +48,14 @@ public class OGCProxy {
      * List of allowed hosts.
      * If empty, means everyone's allowed
      */
-    public static final String[] _allowedHosts = 
+    private String[] _allowedHosts = 
                                     {
                                     };
 
     /**
      * List of valid content types
      */
-    public static final String[] _validContentTypes = 
+    private String[] _validContentTypes = 
                                     {
                                         "application/xml", "text/xml",
                                         "application/vnd.ogc.se_xml",           // OGC Service Exception 
@@ -74,10 +74,11 @@ public class OGCProxy {
      * @param request. Must contains a "url" parameter pointing to the remote host
      * @param response. Contains in its content response from remote host
      * @param sURL. Automatically filled by the Spring url mapping
+     * @param HttpConnection. To use a specific HttpConnection, can be null
      */
     @RequestMapping(method=RequestMethod.POST)
-    public void handlePOSTRequest(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) {   
-        handleRequest(request, response, sURL);
+    public void handlePOSTRequest(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL, HttpURLConnection htc) {   
+        handleRequest(request, response, sURL, htc);
     }
    
     /**
@@ -85,16 +86,23 @@ public class OGCProxy {
      * @param request. Must contains a "url" parameter pointing to the remote host
      * @param response. Contains in its content response from remote host
      * @param sURL. Automatically filled by the Spring url mapping
+     * @param HttpConnection. To use a specific HttpConnection, can be null
      */
     @RequestMapping(method=RequestMethod.GET)
-    public void handleGETRequest(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) {   
-        handleRequest(request, response, sURL);
+    public void handleGETRequest(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL, HttpURLConnection htc) {   
+        handleRequest(request, response, sURL, htc);
     }
 
+	public void handleGETRequest(HttpServletRequest _request, HttpServletResponse _response, String string) {
+		handleGETRequest(_request, _response, string, null);
+	}
+	public void handlePOSTRequest(HttpServletRequest _request, HttpServletResponse _response, String string) {
+		handlePOSTRequest(_request, _response, string, null);		
+	}
     /**
      *
      */
-    private void handleRequest(HttpServletRequest request, HttpServletResponse response, String sURL) {
+    private void handleRequest(HttpServletRequest request, HttpServletResponse response, String sURL, HttpURLConnection htc) {
         try {
             
             URL url = null;
@@ -127,8 +135,13 @@ public class OGCProxy {
 
             // open communication between proxy and final host
             // all actions before the connection can be taken now
-            HttpURLConnection connectionWithFinalHost = (HttpURLConnection) url.openConnection();
-
+           	HttpURLConnection connectionWithFinalHost ;
+           	
+            if (htc == null) {
+            	connectionWithFinalHost = (HttpURLConnection) url.openConnection();
+            } else {
+            	connectionWithFinalHost = htc;
+        	}
             // set request method
             connectionWithFinalHost.setRequestMethod(requestMethod);
 
@@ -163,22 +176,20 @@ public class OGCProxy {
                 return;
             }
             
-            // content type has to be valid
-            if (!isContentTypeValid(contentType)) {
-                
-                if (connectionWithFinalHost.getResponseMessage() != null) {
-                    if (connectionWithFinalHost.getResponseMessage().equalsIgnoreCase("Not Found")) {
-                        // content type was not valid because it was a not found page (text/html)
-                        response.sendError(HttpServletResponse.SC_NOT_FOUND, "Remote host not found"); 
-                        return;
-                    }
-                }
-                
-                response.sendError(HttpServletResponse.SC_FORBIDDEN, 
-                        "The content type of the remote host's response \"" + contentType 
-                        + "\" is not allowed by the proxy rules");
-                return;
-            }
+			// content type has to be valid
+			if (!isContentTypeValid(contentType)) {
+				if (connectionWithFinalHost.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
+					// content type was not valid because page was not found (text/html)
+					response.sendError(HttpServletResponse.SC_NOT_FOUND, "Remote host answered with 404 not found");
+					return;
+				}
+
+				response.sendError(HttpServletResponse.SC_FORBIDDEN,
+						"The content type of the remote host's response \""
+								+ contentType
+								+ "\" is not allowed by the proxy rules");
+				return;
+			}
             
             // send remote host's response to client
             
@@ -417,7 +428,7 @@ public class OGCProxy {
             // Proxy doesn't filter anyone
             return true;
         }
-        for (String allowedHost : OGCProxy._allowedHosts) {
+        for (String allowedHost : _allowedHosts) {
             if (allowedHost.equals(host)) {
                 return true;
             }
@@ -430,9 +441,39 @@ public class OGCProxy {
      */
     protected boolean isFilteringOnFinalHost() {
         
-        return (OGCProxy._allowedHosts.length == 0)?(false):(true);
+        return (_allowedHosts.length == 0)?(false):(true);
     }
     
+	public String[] getAllowedHosts() {
+		return _allowedHosts;
+	}
+	
+	public String getAllowedHost(int index) {
+		if ((_allowedHosts.length < index) || (index < 0))
+			return null;
+		return _allowedHosts[index];
+	}
+    
+    public void setAllowedHosts(String[] hosts) {
+    	if (hosts == null) {
+    		String[] emptyString = {};
+    		_allowedHosts = emptyString;
+    		return;
+    	}
+    	_allowedHosts = hosts;
+    }
+    
+    public void setValidContentTypes(String[] vct) {
+    	if (vct == null) {
+    		String[] emptyString = {};
+    		_validContentTypes = emptyString;
+    		return;
+    	}
+    	_validContentTypes = vct;
+    }
+    public String[] getValidContentTypes() {
+    	return _validContentTypes;
+    }
     /**
      * Check if the content type is accepted by the proxy
      * @param contentType
@@ -442,11 +483,14 @@ public class OGCProxy {
         
         // focus only on type, not on the text encoding
         String type = contentType.split(";")[0];
-        for (String validTypeContent : OGCProxy._validContentTypes) {
+        for (String validTypeContent : _validContentTypes) {
             if (validTypeContent.equals(type)) {
                 return true;
             }
         }
         return false;       
     }
+
+	
+
 }

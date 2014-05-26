@@ -98,7 +98,7 @@ final class OGRFeatureReader implements FeatureGeoFileReader {
                 JniOGR ogr = new JniOGR();
 
                 // retrieves the available drivers, if they are required by
-                // georchestra, they will be added in the list of available
+                // geOrchestra, they will be added in the list of available
                 // formats.
                 for (int i = 0; i < ogr.GetDriverCount(); i++) {
 
@@ -187,8 +187,7 @@ final class OGRFeatureReader implements FeatureGeoFileReader {
             }
             String ogrDriver = driver.getName();
 
-            OGRDataStore store = new OGRDataStore(fullFileName, ogrDriver,
-                    null, new JniOGR());
+            OGRDataStore store = new OGRDataStore(fullFileName, ogrDriver, null, new JniOGR());
             String[] typeNames = store.getTypeNames();
             if (typeNames.length == 0) {
                 final String msg = "The file " + fullFileName
@@ -273,5 +272,10 @@ final class OGRFeatureReader implements FeatureGeoFileReader {
         }
         return false;
     }
+
+	@Override
+	public boolean allowsGeoToolsFallback() {
+		return true;
+	}
 
 }

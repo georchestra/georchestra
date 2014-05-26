@@ -1,14 +1,16 @@
 package org.georchestra.extractorapp.ws.extractor;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-import com.google.common.io.Files;
-import com.sun.net.httpserver.Headers;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpServer;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
+import static java.lang.String.valueOf;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
 import org.geotools.data.DataStore;
@@ -33,17 +35,15 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.FactoryException;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
-import static java.lang.String.valueOf;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.common.io.Files;
+import com.sun.net.httpserver.Headers;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpServer;
+import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
 
 
 public class WfsExtractor1_0_0Test extends AbstractTestWithServer {
@@ -179,6 +179,7 @@ public class WfsExtractor1_0_0Test extends AbstractTestWithServer {
 
     @Test
     public void testExtract_1_0_0_KmlOutput() throws Exception {
+        assumeOgrPresent();
 
         WfsExtractor wfsExtractor = new WfsExtractor(testDir.getRoot(), factory);
         ExtractorLayerRequest request = createLayerRequestObject("sf:archsites", "kml");
@@ -198,6 +199,14 @@ public class WfsExtractor1_0_0Test extends AbstractTestWithServer {
                 return input.toLowerCase().endsWith("kml");
             }
         });
+    }
+
+    private void assumeOgrPresent() {
+        try {
+            Class.forName("org.gdal.ogr.ogrJNI");
+        } catch (ClassNotFoundException e) {
+            Assume.assumeNoException("OGR JNI does not seem to be reachable,  skipping test", e);
+        }
     }
 
     @Test
@@ -256,6 +265,7 @@ public class WfsExtractor1_0_0Test extends AbstractTestWithServer {
 
     @Test
     public void testOgrFeatureWriterFromShapeToKml() throws Exception {
+        assumeOgrPresent();
         DataStore ds = new ShapefileDataStoreFactory().createDataStore(this.getClass().getResource("/shp/savoie.shp"));
 
         SimpleFeatureType schema = ds.getSchema("savoie");

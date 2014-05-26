@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.geotools.coverage.grid.io.AbstractGridFormat;
 import org.geotools.coverageio.gdal.ecw.ECWFormat;
 import org.geotools.coverageio.gdal.jp2ecw.JP2ECWFormat;
@@ -23,6 +25,8 @@ class Formats {
     public static final Set<String> preferredFormats;
     // formats that contain the CRS information and do not need
     public static final Set<String> embeddedCrsFormats;
+    protected static final Log LOG = LogFactory.getLog(Formats.class.getPackage().getName());
+
     static {
 
         gtFormats.put("png", new WorldImageFormat());
@@ -31,8 +35,12 @@ class Formats {
         gtFormats.put("tiff", new WorldImageFormat());
         gtFormats.put("tif", new WorldImageFormat());
         gtFormats.put("geotiff", new GeoTiffFormat());
-        gtFormats.put("jp2ecw", new JP2ECWFormat());
-        gtFormats.put("ecw", new ECWFormat());
+        try {
+            gtFormats.put("jp2ecw", new JP2ECWFormat());
+            gtFormats.put("ecw", new ECWFormat());
+        } catch (Throwable e) {
+            LOG.error("Unable to instantiate JP2ECWFormat, please check GDAL setup.");
+        }
         String[] formats = { "png", "geotiff", "gif", "jpeg", "jp2ecw", "ecw" };
         preferredFormats = Collections.unmodifiableSet(gtFormats.keySet());
 

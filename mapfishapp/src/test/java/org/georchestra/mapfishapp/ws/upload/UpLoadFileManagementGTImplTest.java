@@ -6,7 +6,11 @@ package org.georchestra.mapfishapp.ws.upload;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
+import static org.junit.Assume.assumeNoException;
 
+
+import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URL;
@@ -18,6 +22,7 @@ import org.geotools.referencing.CRS;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Assume;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.opengis.feature.simple.SimpleFeature;
@@ -113,45 +118,43 @@ public class UpLoadFileManagementGTImplTest {
 
     }
 
-    @Test
-    public void testKML22ExtendedData() throws Exception {
+	@Test
+	public void testKML22ExtendedData() throws Exception {
 
-        String fileName = "kml_4326_accidents.kml";
-        String fullName = makeFullName(fileName);
+		String fileName = "kml_4326_accidents.kml";
+		String fullName = makeFullName(fileName);
 
-        String regions = testGetGeofileToJSON(fullName, null);
+		String regions = testGetGeofileToJSON(fullName, null);
 
-        JSONObject list = new JSONObject(regions);
-        JSONArray jsonArray = list.getJSONArray("features");
-        JSONObject reg = jsonArray.getJSONObject(0);
-        String id = reg.getString("id");
+		JSONObject list = new JSONObject(regions);
+		JSONArray jsonArray = list.getJSONArray("features");
+		JSONObject reg = jsonArray.getJSONObject(0);
 
-        JSONObject properties = reg.getJSONObject("properties");
-        assertNotNull( getJsonFieldValue(properties, "id"));
-        assertNotNull( getJsonFieldValue(properties, "date"));
-        assertNotNull(getJsonFieldValue(properties, "plage_hora"));
-        assertNotNull(getJsonFieldValue(properties, "jour_nuit"));
-        assertNotNull(getJsonFieldValue(properties, "meteo"));
-        assertNotNull(getJsonFieldValue(properties, "voie_type"));
-        assertNotNull(getJsonFieldValue(properties, "milieu"));
-        assertNotNull(getJsonFieldValue(properties, "voie_type"));
-        assertNotNull(getJsonFieldValue(properties, "tues_nb"));
-        assertNotNull(getJsonFieldValue(properties, "milieu"));
-        assertNotNull(getJsonFieldValue(properties, "tues_18_24"));
-        assertNotNull(getJsonFieldValue(properties, "tues_moto_"));
-        assertNotNull(getJsonFieldValue(properties, "tues_pieto"));
-        assertNotNull(getJsonFieldValue(properties, "tues_velo_"));
-        assertNotNull(getJsonFieldValue(properties, "vehicules_"));
-        assertNotNull(getJsonFieldValue(properties, "pl_impliqu"));
-        assertNotNull(getJsonFieldValue(properties, "commune"));
-        assertNotNull(getJsonFieldValue(properties, "departemen"));
-        assertNotNull(getJsonFieldValue(properties, "commentair"));
-        assertNotNull(getJsonFieldValue(properties, "consolide"));
-        assertNotNull(getJsonFieldValue(properties, "anciennete"));
-        assertNotNull(getJsonFieldValue(properties, "f_mois"));
-        assertNotNull(getJsonFieldValue(properties, "f_annee"));
-
-    }
+		JSONObject properties = reg.getJSONObject("properties");
+		assertNotNull(getJsonFieldValue(properties, "id"));
+		assertNotNull(getJsonFieldValue(properties, "date"));
+		assertNotNull(getJsonFieldValue(properties, "plage_hora"));
+		assertNotNull(getJsonFieldValue(properties, "jour_nuit"));
+		assertNotNull(getJsonFieldValue(properties, "meteo"));
+		assertNotNull(getJsonFieldValue(properties, "voie_type"));
+		assertNotNull(getJsonFieldValue(properties, "milieu"));
+		assertNotNull(getJsonFieldValue(properties, "voie_type"));
+		assertNotNull(getJsonFieldValue(properties, "tues_nb"));
+		assertNotNull(getJsonFieldValue(properties, "milieu"));
+		assertNotNull(getJsonFieldValue(properties, "tues_18_24"));
+		assertNotNull(getJsonFieldValue(properties, "tues_moto_"));
+		assertNotNull(getJsonFieldValue(properties, "tues_pieto"));
+		assertNotNull(getJsonFieldValue(properties, "tues_velo_"));
+		assertNotNull(getJsonFieldValue(properties, "vehicules_"));
+		assertNotNull(getJsonFieldValue(properties, "pl_impliqu"));
+		assertNotNull(getJsonFieldValue(properties, "commune"));
+		assertNotNull(getJsonFieldValue(properties, "departemen"));
+		assertNotNull(getJsonFieldValue(properties, "commentair"));
+		assertNotNull(getJsonFieldValue(properties, "consolide"));
+		assertNotNull(getJsonFieldValue(properties, "anciennete"));
+		assertNotNull(getJsonFieldValue(properties, "f_mois"));
+		assertNotNull(getJsonFieldValue(properties, "f_annee"));
+	}
 
     private String getJsonFieldValue(JSONObject properties, String field) {
 
@@ -241,6 +244,7 @@ public class UpLoadFileManagementGTImplTest {
         String fileName = "gml_4326_accidents.gml";
         String fullName = makeFullName(fileName);
 
+        	
         String json = testGetGeofileToJSON(fullName, "EPSG:4326");
 
         assertCoordinateContains(-2.265330624649336, 48.421434814828025, json);
@@ -287,13 +291,12 @@ public class UpLoadFileManagementGTImplTest {
 
         Point geom = (Point) f.getDefaultGeometry();
 
-        assertEquals(x, geom.getCoordinate().x, 10e-14);
+        assertEquals(x, geom.getCoordinate().x, 10e-8);
 
-        assertEquals(y, geom.getCoordinate().y, 10e-14);
+        assertEquals(y, geom.getCoordinate().y, 10e-8);
     }
 
-    protected String testGetGeofileToJSON(final String fileName,
-            final String epsg) throws Exception {
+    protected String testGetGeofileToJSON(final String fileName, final String epsg) throws Exception {
 
         assertTrue(fileName.length() > 0);
 
@@ -332,15 +335,15 @@ public class UpLoadFileManagementGTImplTest {
             fm.writeFeatureCollectionAsJSON(out, null);
         }
         return out.toString();
-    }
+	}
 
-    /**
-     * @return UpLoadFileManagement set with geotools implementation
-     */
-    protected UpLoadFileManagement create() throws IOException {
-        return UpLoadFileManagement
-                .create(UpLoadFileManagement.Implementation.geotools);
-    }
+	/**
+	 * @return UpLoadFileManagement set with geotools implementation
+	 */
+	protected UpLoadFileManagement create() throws IOException {
+		return UpLoadFileManagement
+				.create(UpLoadFileManagement.Implementation.geotools);
+	}
 
     /**
      * Returns path+fileName
@@ -357,4 +360,6 @@ public class UpLoadFileManagementGTImplTest {
 
         return fullFileName;
     }
+
+
 }

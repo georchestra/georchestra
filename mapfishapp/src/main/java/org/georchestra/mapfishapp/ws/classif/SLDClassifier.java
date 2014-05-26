@@ -18,7 +18,6 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.TransformerException;
 
-
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.georchestra.mapfishapp.ws.DocServiceException;
 import org.georchestra.mapfishapp.ws.classif.ClassifierCommand.E_ClassifType;
@@ -55,16 +54,21 @@ public class SLDClassifier {
     private StyledLayerDescriptor _sld = null;
     private Map<String, UsernamePasswordCredentials> _credentials;
     
+    private WFSDataStoreFactory _factory = new WFSDataStoreFactory();
+    
+    public void setWFSDataStoreFactory(WFSDataStoreFactory f) { _factory = f; } 
+    
     /**
      * This classifier can only be requested by a ClassifierCommand given the wide range of cases and different 
      * parameters. The SLD is directly generated and be accessed via {@link SLDClassifier#getSLD()}
      * @param command ClassifierCommand provides the type of classification and display
      * @throws DocServiceException When client request is not valid
      */
-    public SLDClassifier(Map<String, UsernamePasswordCredentials> credentials, final ClassifierCommand command) throws DocServiceException {
+    public SLDClassifier(Map<String, UsernamePasswordCredentials> credentials, final ClassifierCommand command, WFSDataStoreFactory fac) throws DocServiceException {
         this._credentials = credentials;
             _command = command;
-            
+            if (fac != null)
+            	_factory = fac;
             // turn off logger
             Handler[] handlers = Logger.getLogger("").getHandlers();
             for (int index = 0; index < handlers.length; index++ ) {
@@ -75,7 +79,7 @@ public class SLDClassifier {
             doClassification();
     }
 
-    /**
+	/**
      * Gets the generated SLD file content 
      * @return SLD content as String
      */
@@ -336,7 +340,7 @@ public class SLDClassifier {
             m.put(WFSDataStoreFactory.ENCODING, "UTF-8"); // try to force UTF-8
             // TODO : configurable ?
             m.put(WFSDataStoreFactory.MAXFEATURES.key, 2000);
-            wfs = (new WFSDataStoreFactory()).createDataStore(m);     
+            wfs = _factory.createDataStore(m);     
         } 
         catch(SocketTimeoutException e) {
             throw new DocServiceException("WFS is unavailable", HttpServletResponse.SC_GATEWAY_TIMEOUT);

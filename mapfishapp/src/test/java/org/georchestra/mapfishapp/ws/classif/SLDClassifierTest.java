@@ -11,10 +11,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.georchestra.mapfishapp.ws.classif.ClassifierCommand;
-import org.georchestra.mapfishapp.ws.classif.SLDClassifier;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
@@ -29,9 +26,9 @@ public class SLDClassifierTest {
 
     private static final Map<String, UsernamePasswordCredentials> EMPTY_MAP = Collections.<String,UsernamePasswordCredentials>emptyMap();
 
-    @Test(timeout=10000)
+    @Test
     public void testChoropleths() throws Exception {
-         
+
         // build JSON request
         String wfsUrl = "http://sigma.openplans.org/geoserver/wfs?service=WFS&request=GetCapabilities";
         String featureTypeName = "topp:states";
@@ -39,23 +36,17 @@ public class SLDClassifierTest {
         String firstColor = "#0000ff";
         String lastColor = "#ff0000";
         int classCount = 3;
-        
-        StringBuilder jsonRequest = new StringBuilder();
-        jsonRequest.append("{");
-        jsonRequest.append("type:\"CHOROPLETHS\",");
-        jsonRequest.append("wfs_url:\"" + wfsUrl + "\",");
-        jsonRequest.append("layer_name:\"" + featureTypeName + "\",");
-        jsonRequest.append("attribute_name:\"" + propertyName + "\",");
-        jsonRequest.append("class_count:\"" + classCount + "\",");
-        jsonRequest.append("first_color:\"" + firstColor + "\",");
-        jsonRequest.append("last_color:\"" + lastColor + "\"");
-        jsonRequest.append("}");
-        
+
+        JSONObject jsReq = new JSONObject().put("type", "CHOROPLETHS")
+                .put("wfs_url", wfsUrl).put("layer_name", featureTypeName)
+                .put("attribute_name", propertyName)
+                .put("class_count", classCount).put("first_color", firstColor)
+                .put("symbol_type", "polygon").put("last_color", lastColor);
+
+
         // create command
-        JSONTokener tokener = new JSONTokener(jsonRequest.toString());
-        JSONObject jObj = new JSONObject(tokener);
-        ClassifierCommand command = new ClassifierCommand(jObj);
-        SLDClassifier classifier = new SLDClassifier(EMPTY_MAP, command);
+        ClassifierCommand command = new ClassifierCommand(jsReq);
+        SLDClassifier classifier = new SLDClassifier(EMPTY_MAP, command, new MockWFSDataStoreFactory());
 
         Document doc = createDomDocument(classifier.getSLD());
 
@@ -63,12 +54,12 @@ public class SLDClassifierTest {
         assertEquals(classCount, doc.getElementsByTagName("sld:Rule").getLength());
         assertEquals(classCount, doc.getElementsByTagName("ogc:Filter").getLength());
         assertEquals(classCount, doc.getElementsByTagName("sld:PolygonSymbolizer").getLength());
-        
+
     }
-    
-    @Test(timeout=10000)
+
+    @Test
     public void testSymbols() throws Exception {
-        
+
         // build JSON request
         String wfsUrl = "http://sigma.openplans.org/geoserver/wfs?service=WFS&request=GetCapabilities";
         String featureTypeName = "topp:states";
@@ -76,24 +67,19 @@ public class SLDClassifierTest {
         int minSize = 4;
         int lastSize = 24;
         int classCount = 3;
-        
-        StringBuilder jsonRequest = new StringBuilder();
-        jsonRequest.append("{");
-        jsonRequest.append("type:\"PROP_SYMBOLS\",");
-        jsonRequest.append("wfs_url:\"" + wfsUrl + "\",");
-        jsonRequest.append("layer_name:\"" + featureTypeName + "\",");
-        jsonRequest.append("attribute_name:\"" + propertyName + "\",");
-        jsonRequest.append("class_count:\"" + classCount + "\",");
-        jsonRequest.append("min_size:\"" + minSize + "\",");
-        jsonRequest.append("max_size:\"" + lastSize + "\"");
-        jsonRequest.append("}");
-        
+
+        JSONObject jsReq = new JSONObject().put("type", "PROP_SYMBOLS")
+                    .put("wfs_url", wfsUrl)
+                    .put("layer_name", featureTypeName)
+                    .put("attribute_name", propertyName)
+                    .put("class_count", classCount)
+                    .put("min_size", minSize)
+                    .put("symbol_type", "point")
+                    .put("max_size", lastSize);
+
         // create command
-        JSONTokener tokener = new JSONTokener(jsonRequest.toString());
-        JSONObject jObj = new JSONObject(tokener);
-        ClassifierCommand command = new ClassifierCommand(jObj);
-        SLDClassifier classifier = new SLDClassifier(EMPTY_MAP, command);
-        
+        ClassifierCommand command = new ClassifierCommand(jsReq);
+        SLDClassifier classifier = new SLDClassifier(EMPTY_MAP, command, new MockWFSDataStoreFactory());
         Document doc = createDomDocument(classifier.getSLD());
 
         // need as many rules, filters and symbolizers as classes
@@ -101,31 +87,27 @@ public class SLDClassifierTest {
         assertEquals(classCount, doc.getElementsByTagName("ogc:Filter").getLength());
         assertEquals(classCount, doc.getElementsByTagName("sld:PointSymbolizer").getLength());
     }
-    
-    @Test(timeout=10000)
+
+    @Test
     public void testUniqueValues() throws Exception {
-        
+
         // build JSON request
         String wfsUrl = "http://sigma.openplans.org/geoserver/wfs?service=WFS&request=GetCapabilities";
         String featureTypeName = "topp:states";
         String propertyName = "STATE_NAME";
         int paletteID = 1;
-        
-        StringBuilder jsonRequest = new StringBuilder();
-        jsonRequest.append("{");
-        jsonRequest.append("type:\"unique_values\",");
-        jsonRequest.append("wfs_url:\"" + wfsUrl + "\",");
-        jsonRequest.append("layer_name:\"" + featureTypeName + "\",");
-        jsonRequest.append("attribute_name:\"" + propertyName + "\",");
-        jsonRequest.append("palette:\"" + paletteID + "\"");
-        jsonRequest.append("}");
-        
+
+        JSONObject jsReq = new JSONObject().put("type", "unique_values")
+                    .put("wfs_url", wfsUrl)
+                    .put("layer_name", featureTypeName)
+                    .put("attribute_name", propertyName)
+                    .put("symbol_type", "polygon")
+                    .put("palette", paletteID);
+
         // create command
-        JSONTokener tokener = new JSONTokener(jsonRequest.toString());
-        JSONObject jObj = new JSONObject(tokener);
-        ClassifierCommand command = new ClassifierCommand(jObj);
-        SLDClassifier classifier = new SLDClassifier(EMPTY_MAP, command);
-        
+        ClassifierCommand command = new ClassifierCommand(jsReq);
+        SLDClassifier classifier = new SLDClassifier(EMPTY_MAP, command, new MockWFSDataStoreFactory());
+
         Document doc = createDomDocument(classifier.getSLD());
 
         // should retrieve expected tags
@@ -133,9 +115,9 @@ public class SLDClassifierTest {
         assertEquals(true, doc.getElementsByTagName("sld:NamedLayer").getLength() != 0);
         assertEquals(true, doc.getElementsByTagName("sld:Rule").getLength() != 0);
         assertEquals(true, doc.getElementsByTagName("ogc:Filter").getLength() != 0);
-        assertEquals(true, doc.getElementsByTagName("sld:PolygonSymbolizer").getLength() != 0);  
+        assertEquals(true, doc.getElementsByTagName("sld:PolygonSymbolizer").getLength() != 0);
     }
-    
+
     private Document createDomDocument(final String content) throws Exception {
         // create xml doc
         final DocumentBuilderFactory lDocumentBuilderFactory = DocumentBuilderFactory.newInstance();

@@ -1,19 +1,8 @@
 package org.georchestra.extractorapp.ws.extractor;
 
-import com.google.common.io.Files;
-import com.sun.net.httpserver.Headers;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpServer;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.opengis.referencing.FactoryException;
+import static java.lang.String.valueOf;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,9 +11,23 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import static java.lang.String.valueOf;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.georchestra.extractorapp.ws.ExtractorException;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.junit.Assume;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+import org.opengis.referencing.FactoryException;
+
+import com.google.common.io.Files;
+import com.sun.net.httpserver.Headers;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpServer;
 
 public class WcsExtractorTest extends AbstractTestWithServer {
 
@@ -94,6 +97,11 @@ public class WcsExtractorTest extends AbstractTestWithServer {
 
     @Test
     public void testExtract_Geotiff() throws Exception {
+        try {
+            Class.forName("org.gdal.gdal.gdal");
+        } catch (ClassNotFoundException e) {
+            Assume.assumeNoException("GDAL JNI could not be found. Skipping test.", e);
+        }
         RequestConfiguration requestConfig = createRequestConfiguration(null, null);
         WcsExtractor wcsExtractor = new WcsExtractor(testDir.getRoot(), requestConfig);
 
@@ -115,7 +123,14 @@ public class WcsExtractorTest extends AbstractTestWithServer {
         WcsExtractor wcsExtractor = new WcsExtractor(testDir.getRoot(), requestConfig);
 
         ExtractorLayerRequest request = createLayerRequestObject("nurc:Arc_Sample", "tif");
-        final File extract = wcsExtractor.extract(request);
+        File extract = null;
+        try {
+            extract = wcsExtractor.extract(request);
+        } catch (RuntimeException e)
+        {
+            if (!( e instanceof ExtractorException))
+                Assume.assumeNoException("RuntimeException occured, please check gdal/ogr native bindings setup.", e);
+        }
         assertTrue(this.serverWasCalled);
 
         final String[] fileNames = extract.list();
