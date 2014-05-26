@@ -430,17 +430,6 @@
       </distributionManagement>
     </profile>
     <profile>
-      <id>skipTests</id>
-      <activation>
-        <property>
-          <name>!enableTests</name>
-        </property>
-      </activation>
-      <properties>
-        <maven.test.skip.exec>true</maven.test.skip.exec>
-      </properties>
-    </profile>
-    <profile>
       <id>Windows</id>
       <activation>
         <os>
