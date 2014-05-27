@@ -13,6 +13,8 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
@@ -29,10 +31,12 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONWriter;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONAware;
 import org.json.simple.JSONStreamAware;
 import org.json.simple.parser.JSONParser;
+import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -51,6 +55,7 @@ import com.vividsolutions.jts.geom.Geometry;
  */
 final class FeatureJSON2 extends FeatureJSON {
 
+    private static final Log LOG = LogFactory.getLog(FeatureJSON2.class.getPackage().getName());
 
     GeometryJSON gjson;
     SimpleFeatureType featureType;
@@ -545,8 +550,7 @@ final class FeatureJSON2 extends FeatureJSON {
             return ret.toString(4);
 
             } catch (JSONException e) {
-                // Well, that's embarrassing ...
-                // TODO: Better error checking ?
+                LOG.error("Unable to encode the feature into GeoJSON, returning an empty object.");
                 return "{}";
             }
         }
@@ -567,30 +571,40 @@ final class FeatureJSON2 extends FeatureJSON {
         }
 
         public void writeJSONString(Writer out) throws IOException {
-            FeatureEncoder featureEncoder =
-                new FeatureEncoder((SimpleFeatureType) features.getSchema());
-
-            out.write("[");
-            FeatureIterator i = features.features();
+            SimpleFeatureType ft = (SimpleFeatureType) features.getSchema();
+            FeatureEncoder featureEncoder = new FeatureEncoder(ft);
+            JSONWriter jsRet = new JSONWriter(out);
             try {
-                if (i.hasNext()) {
-                    SimpleFeature f = (SimpleFeature) i.next();
-                    out.write(featureEncoder.toJSONString(f));
-
-                    while(i.hasNext()) {
-                        out.write(",");
-                        f = (SimpleFeature) i.next();
-                        out.write(featureEncoder.toJSONString(f));
+                jsRet.array();
+                FeatureIterator i = features.features();
+                try {
+                    if (i == null) {
+                        jsRet.endArray();
+                        return;
                     }
+                    while (i.hasNext()) {
+                        Feature f = i.next();
+                        try {
+                            if (f instanceof SimpleFeature) {
+                                jsRet.value(new JSONObject(featureEncoder.toJSONString((SimpleFeature) f)));
+                            }
+                        } catch (NullPointerException e) {
+                            LOG.error("Unable to convert feature into JSON, skipping it. " + e.getMessage());
+                        }
+                    }
+                }  catch (Throwable e) {
+                    LOG.error("Unable to convert the featurecollection into JSON: " + e.getMessage());
+                    LOG.error("Ignoring ...");
+                }finally {
+                    if (i != null) {
+                        i.close();
+                    }
+                    jsRet.endArray();
                 }
+
+            } catch (JSONException e) {
+                LOG.error("Unable to generate JSON: " + e.getMessage());
             }
-            finally {
-                if( i != null ){
-                    i.close();
-                }
-            }
-            out.write("]");
-            out.flush();
         }
     }
 
