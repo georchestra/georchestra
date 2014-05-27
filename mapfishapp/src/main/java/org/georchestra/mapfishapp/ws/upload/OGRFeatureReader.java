@@ -39,8 +39,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 final class OGRFeatureReader implements FeatureGeoFileReader {
 
-    private static final Log LOG = LogFactory.getLog(OGRFeatureReader.class
-                                         .getPackage().getName());
+    private static final Log LOG = LogFactory.getLog(OGRFeatureReader.class.getPackage().getName());
 
     private static class OGRDriver {
 
@@ -73,8 +72,7 @@ final class OGRFeatureReader implements FeatureGeoFileReader {
 
     }
 
-    private static Map<FileFormat, OGRDriver> DRIVERS = Collections
-                                                              .synchronizedMap(new HashMap<FileFormat, OGRDriver>());
+    private static Map<FileFormat, OGRDriver> DRIVERS = Collections.synchronizedMap(new HashMap<FileFormat, OGRDriver>());
 
     public OGRFeatureReader() throws IOException {
         loadFormats();
@@ -128,7 +126,12 @@ final class OGRFeatureReader implements FeatureGeoFileReader {
                         loadDriver(FileFormat.kml, new OGRDriver(name));
 
                     } else if ("GPX".equalsIgnoreCase(name)) {
+
                         loadDriver(FileFormat.gpx, new OGRDriver(name));
+
+                    } else if ("OSM".equalsIgnoreCase(name)) {
+
+                        loadDriver(FileFormat.osm, new OGRDriver(name));
                     }
                 }
 
