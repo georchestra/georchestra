@@ -169,11 +169,48 @@ GEOR.FeaturePanel = Ext.extend(Ext.form.FormPanel, {
             });
         }
 
-        var color = feature.style[(feature.isLabel ? 'fontColor' : 'fillColor')]
+        if (feature.geometry.CLASS_NAME !== "OpenLayers.Geometry.LineString" &&
+            !feature.isLabel) {
+            var fillColor = feature.style.fillColor;
+            oItems.push({
+                xtype: 'compositefield',
+                fieldLabel: OpenLayers.i18n('annotation.fillcolor'),
+                items: [{
+                    xtype: 'displayfield', value: ''
+                },{
+                    xtype: 'button',
+                    text: '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
+                    menu: {
+                        xtype: 'colormenu',
+                        value: fillColor.replace('#', ''),
+                        listeners: {
+                            select: function(menu, color) {
+                                color = "#" + color;
+                                menu.ownerCt.ownerCt.btnEl.setStyle("background", color);
+                                feature.style.fillColor = color;
+                                feature.layer.drawFeature(feature);
+                            },
+                            scope: this
+                        }
+                    },
+                    listeners: {
+                        render: function(button) {
+                            button.btnEl.setStyle("background", fillColor);
+                        }
+                    }
+                }]
+            });
+        }
+
+        var color = feature.style[(feature.isLabel ? 'fontColor' : 'strokeColor')]
             || "#00FF00";
+        var label = (
+            feature.geometry.CLASS_NAME == "OpenLayers.Geometry.LineString" ||
+            feature.isLabel
+        ) ? 'annotation.color' : 'annotation.outlinecolor';
         oItems.push({
             xtype: 'compositefield',
-            fieldLabel: OpenLayers.i18n('annotation.color'),
+            fieldLabel: OpenLayers.i18n(label),
             items: [{
                 xtype: 'displayfield', value: ''
             },{
@@ -189,7 +226,6 @@ GEOR.FeaturePanel = Ext.extend(Ext.form.FormPanel, {
                             if (feature.isLabel) {
                                 feature.style.fontColor = color;
                             } else {
-                                feature.style.fillColor = color;
                                 feature.style.strokeColor = color;
                             }
                             feature.layer.drawFeature(feature);
@@ -276,7 +312,7 @@ GEOR.FeaturePanel = Ext.extend(Ext.form.FormPanel, {
      */
     getActions: function() {
         return [this.deleteAction, '->', {
-            text: 'OK',
+            text: OpenLayers.i18n('annotation.close'),
             handler: function() {
                 this.ownerCt.close();
             },
