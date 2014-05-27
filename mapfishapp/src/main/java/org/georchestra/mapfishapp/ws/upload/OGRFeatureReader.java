@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.georchestra.mapfishapp.ws.upload;
 
@@ -18,12 +18,13 @@ import org.geotools.data.ogr.OGRDataStore;
 import org.geotools.data.ogr.jni.JniOGR;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureSource;
+import org.geotools.referencing.operation.projection.ProjectionException;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * OGR Feature Reader.
- * 
+ *
  * <p>
  * This class is responsible of retrieving the features stored in different file
  * format.
@@ -31,10 +32,10 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * <p>
  * The available file format are load from ogr driver.
  * </p>
- * 
- * 
+ *
+ *
  * @author Mauricio Pazos
- * 
+ *
  */
 final class OGRFeatureReader implements FeatureGeoFileReader {
 
@@ -86,7 +87,7 @@ final class OGRFeatureReader implements FeatureGeoFileReader {
 
     /**
      * Load the available formats
-     * 
+     *
      * @throws IOException
      */
     private static Map<FileFormat, OGRDriver> loadFormats() throws IOException {
@@ -151,7 +152,7 @@ final class OGRFeatureReader implements FeatureGeoFileReader {
     /**
      * The list of available ogr drivers can change according to the
      * implementation (and the build options).
-     * 
+     *
      * Returns the list of {@link FileFormat} provided by the OGR instance.
      */
     @Override
@@ -166,7 +167,7 @@ final class OGRFeatureReader implements FeatureGeoFileReader {
     /**
      * Returns the set of features maintained in the geofile, reprojected in the
      * target CRS.
-     * 
+     *
      * @throws IOException
      *             , UnsupportedGeofileFormatException
      */
@@ -200,6 +201,14 @@ final class OGRFeatureReader implements FeatureGeoFileReader {
             SimpleFeatureSource source = store.getFeatureSource(typeName);
 
             Query query = new Query(typeName, Filter.INCLUDE);
+            // if the OGRDataStore does not have a CRS, it can lead to issues
+            // afterwards, while trying to reproject the features.
+            CoordinateReferenceSystem scrs = source.getSchema().getCoordinateReferenceSystem();
+            if (scrs == null) {
+                LOG.error("error with the provided data: Unable to find the underlying coordinate reference system");
+                // Note: pure geotools implementation should fallback afterwards
+                throw new ProjectionException("Unknown SRS on the provided data");
+            }
             // if the CRS was set the features must be transformed when the
             // query is executed.
             if (targetCRS != null) {
@@ -226,7 +235,7 @@ final class OGRFeatureReader implements FeatureGeoFileReader {
 
     /**
      * Checks whether all drivers required are available.
-     * 
+     *
      * @return true means that the drivers are available.
      */
     public static boolean isOK() {
