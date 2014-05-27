@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.georchestra.mapfishapp.ws.upload;
 
@@ -20,23 +20,19 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
-import org.geotools.feature.FeatureIterator;
 import org.geotools.geojson.feature.FeatureJSON;
 import org.geotools.geojson.geom.GeometryJSON;
 import org.geotools.referencing.operation.projection.ProjectionException;
-import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.vividsolutions.jts.geom.Geometry;
-
 /**
  * This class is responsible to maintain the uploaded file. It includes the
  * method to save, unzip, and check the geofiles.
- * 
+ *
  * @author Mauricio Pazos
- * 
+ *
  */
 public class UpLoadFileManagement {
 
@@ -72,6 +68,10 @@ public class UpLoadFileManagement {
         VALID_EXTENSIONS.add("KML");
 
         VALID_EXTENSIONS.add("GPX");
+
+        // OSM
+        VALID_EXTENSIONS.add("OSM");
+
     }
 
     private FileDescriptor               fileDescriptor;
@@ -87,7 +87,7 @@ public class UpLoadFileManagement {
     /**
      * Creates an instance of {@link UpLoadFileManagement} which is set to use
      * the implementation specified as parameter.
-     * 
+     *
      * @param impl
      *            implementation
      * @throws IOException
@@ -109,7 +109,7 @@ public class UpLoadFileManagement {
     /**
      * Creates an instance of {@link UpLoadFileManagement} which is set to use
      * the OGR implementation if only if gdal/ogr is installed in the system
-     * 
+     *
      * @return new instance of {@link UpLoadFileManagement}
      */
     public static UpLoadFileManagement create() {
@@ -129,7 +129,7 @@ public class UpLoadFileManagement {
         Enumeration<? extends ZipEntry> entries = zipFile.entries();
         while (entries.hasMoreElements()) {
 
-            ZipEntry entry = (ZipEntry) entries.nextElement();
+            ZipEntry entry = entries.nextElement();
             String path = workDirectory + File.separator + entry.getName();
 
             String extension = FilenameUtils.getExtension(path).toUpperCase();
@@ -145,7 +145,7 @@ public class UpLoadFileManagement {
 
     /**
      * Creates the directory structure taking into account the directory path
-     * 
+     *
      * @param path
      * @throws IOException
      */
@@ -160,7 +160,7 @@ public class UpLoadFileManagement {
 
     /**
      * Extract the file entry from the zip file.
-     * 
+     *
      * @param zipFile
      * @param entry
      * @param outFile
@@ -191,14 +191,14 @@ public class UpLoadFileManagement {
 
     /**
      * Saves the upload file in the temporal directory.
-     * 
-     * 
+     *
+     *
      * @param uploadFile
      * @param downloadDirectory
      * @return {@link File} the saved file
-     * 
+     *
      * @throws IOException
-     * 
+     *
      */
     public File save(MultipartFile uploadFile) throws IOException {
 
@@ -232,7 +232,7 @@ public class UpLoadFileManagement {
 
     /**
      * Checks if the work directory contains files with valid extensions.
-     * 
+     *
      * @return true if the extensions are OK
      */
     public boolean checkGeoFileExtension() {
@@ -254,8 +254,8 @@ public class UpLoadFileManagement {
      * a zip file is unzipped to a temporary place and *.shp, *.mid, *.tab files
      * are looked for at the root of the archive. If several SHP or several MIF
      * or several TAB files are found, the error message is "multiple files"
-     * 
-     * @return true if the work directory contain only a one shp or mid o tab
+     *
+     * @return true if the work directory contain only a one shp or mid or tab
      */
     public boolean checkSingleGeoFile() {
 
@@ -287,7 +287,7 @@ public class UpLoadFileManagement {
 
     /**
      * if filename.mif is found, it is assumed that filename.mid exists too.
-     * 
+     *
      * @return false if fid file doesn't exist.
      */
     public boolean checkMIFCompletness() {
@@ -299,7 +299,7 @@ public class UpLoadFileManagement {
     /**
      * if filename.shp is found, it is assumed that filename.shx and
      * filename.prj are also present (the DBF is not mandatory).
-     * 
+     *
      * @return true if shx and prj are found
      */
     public boolean checkSHPCompletness() {
@@ -324,14 +324,14 @@ public class UpLoadFileManagement {
      * Create a feature collection with based on the json syntax. The features
      * are read from the work directory. The could have one of the accepted
      * format:
-     * 
+     *
      * <ul>
      * <li>zip: shp, mif, tab</li>
      * <li>kml</li>
      * <li>gpx</li>
      * <li>gml</li>
      * </ul>
-     * 
+     *
      * <pre>
      * the file SRS is obtained :
      * 	from the prj file for shapefiles
@@ -340,7 +340,7 @@ public class UpLoadFileManagement {
      * 	assumed EPSG:4326 for all kml files
      * 	assumed EPSG:4326 for all gpx files
      * </pre>
-     * 
+     *
      * @param writer where the featrue must be written.
      * @param crs if it is not null the features should be transformed to this
      *            {@link CoordinateReferenceSystem}, in other case they won't
@@ -379,12 +379,12 @@ public class UpLoadFileManagement {
             throw e;
         }
         catch (Exception e) {
-            
+
             final String message = "Failed reading " + fileName + ".  "
                     + e.getMessage();
             LOG.error(message);
             throw new IOException(message, e);
-            
+
         } finally {
             if (featuresIterator != null) featuresIterator.close();
         }
@@ -400,9 +400,9 @@ public class UpLoadFileManagement {
      * <li>gpx</li>
      * <li>gml</li>
      * </ul>
-     * 
+     *
      * Returns the name of geofile.
-     * 
+     *
      * @return the geofile
      */
     private String searchGeoFile() {
