@@ -3,6 +3,16 @@ var redLiningPanel, mapPanel;
 Ext.onReady(function() {
     OpenLayers.Lang.setCode('fr');
 
+    OpenLayers.Request.GET({
+        url: "../manifest.json",
+        async: false,
+        success: function(response) {
+            var o = (new OpenLayers.Format.JSON()).read(response.responseText);
+            OpenLayers.Lang.fr =
+                OpenLayers.Util.extend(OpenLayers.Lang.fr, o.i18n.fr);
+        }
+    });
+
     Ext.QuickTips.init();
 
     mapPanel = new GeoExt.MapPanel({
