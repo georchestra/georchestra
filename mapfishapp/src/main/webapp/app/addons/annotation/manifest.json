@@ -121,9 +121,8 @@
             "annotation.outlinecolor": "Contour",
             "annotation.name": "Nom",
             "annotation.no_title": "Sans titre"
-        }
-    },
-     "de": {
+        },
+        "de": {
             "annotation.drawing_tools": "Malutensilien",
             "annotation.delete_feature": "Objekt löschen",
             "annotation.delete_confirm": "Wollen Sie wirklich das Objekt löschen ?",
@@ -160,3 +159,4 @@
         }
     }
 }
+
