@@ -128,7 +128,7 @@
             "annotation.delete_feature": "Objekt löschen",
             "annotation.delete_confirm": "Wollen Sie wirklich das Objekt löschen ?",
             "annotation.delete": "Löschen",
-            "annotation.delete_all": "Löschen",
+            "annotation.delete_all": "Alles löschen",
             "annotation.export_as_kml": "exportieren",
             "annotation.export_as_kml_tip": "exportieren in KML",
             "annotation.modify": "ändern",
