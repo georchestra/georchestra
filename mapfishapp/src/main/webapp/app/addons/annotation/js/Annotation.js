@@ -612,7 +612,6 @@ GEOR.Annotation = Ext.extend(Ext.util.Observable, {
         popupOptions = OpenLayers.Util.applyDefaults(popupOptions, {
             layout: 'fit',
             border: false,
-            closable: false,
             width: 280
         });
 
