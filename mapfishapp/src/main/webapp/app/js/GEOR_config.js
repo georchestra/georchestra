@@ -54,20 +54,6 @@ GEOR.config = (function() {
     };
 
     /**
-     * Method: getComputingPower
-     * Get an empirical floating parameter
-     * about the client's CPU power (2009 CPU = 1)
-     *
-     * Returns:
-     * {Number} The parameter
-     */
-    var getComputingPower = function() {
-        // not implemented for now.
-        // eg: time to load app (not the files) ...
-        return 1;
-    };
-
-    /**
      * Method: getCustomParameter
      *  If parameter paramName exists in GEOR.custom, returns its value
      *  else defaults to the mandatory defaultValue
@@ -306,7 +292,7 @@ GEOR.config = (function() {
          * Defaults to a value estimated by an empirical formula
          */
         MAX_FEATURES: getCustomParameter("MAX_FEATURES",
-            50*getBrowserVectorAbility()*getComputingPower()),
+            50*getBrowserVectorAbility()),
 
         /**
          * Constant: MAX_LENGTH
@@ -315,7 +301,7 @@ GEOR.config = (function() {
          * Defaults to a value estimated by an empirical formula
          */
         MAX_LENGTH: getCustomParameter("MAX_LENGTH",
-            400/7*1024*getBrowserVectorAbility()*getComputingPower()),
+            400/7*1024*getBrowserVectorAbility()),
 
         /**
          * Constant: OSM_AS_OVMAP
