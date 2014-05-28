@@ -75,7 +75,7 @@ public class OGCProxy {
      * @param sURL
      * @param htc
      */
-    public void handlePOSTRequest(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL, HttpURLConnection htc) {
+    public void handlePOSTRequest(HttpServletRequest request, HttpServletResponse response, String sURL, HttpURLConnection htc) {
         handleRequest(request, response, sURL, htc);
     }
 
@@ -86,7 +86,7 @@ public class OGCProxy {
      * @param sURL
      * @param htc
      */
-    public void handleGETRequest(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL, HttpURLConnection htc) {
+    public void handleGETRequest(HttpServletRequest request, HttpServletResponse response, String sURL, HttpURLConnection htc) {
         handleRequest(request, response, sURL, htc);
     }
 
@@ -98,8 +98,8 @@ public class OGCProxy {
      * @param HttpConnection. To use a specific HttpConnection, can be null
      */
     @RequestMapping(method=RequestMethod.GET)
-	public void handleGETRequest(HttpServletRequest _request, HttpServletResponse _response, String string) {
-		handleGETRequest(_request, _response, string, null);
+	public void handleGETRequest(HttpServletRequest _request, HttpServletResponse _response, @RequestParam("url") String sURL) {
+		handleGETRequest(_request, _response, sURL, null);
 	}
     /**
      * Proxy entry point. Accessible via POST.
@@ -109,8 +109,8 @@ public class OGCProxy {
      * @param HttpConnection. To use a specific HttpConnection, can be null
      */
     @RequestMapping(method=RequestMethod.POST)
-	public void handlePOSTRequest(HttpServletRequest _request, HttpServletResponse _response, String string) {
-		handlePOSTRequest(_request, _response, string, null);
+	public void handlePOSTRequest(HttpServletRequest _request, HttpServletResponse _response, @RequestParam("url") String sURL) {
+		handlePOSTRequest(_request, _response, sURL, null);
 	}
     /**
      *
