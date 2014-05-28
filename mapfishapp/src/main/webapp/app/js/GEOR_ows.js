@@ -23,6 +23,7 @@
  * @include GeoExt/data/WMSCapabilitiesStore.js
  * @include GeoExt/data/WMTSCapabilitiesStore.js
  * @include GeoExt/data/WFSCapabilitiesStore.js
+ * @include OpenLayers/Format/WMSCapabilities/v1_1_0.js
  * @include OpenLayers/Format/WMSCapabilities/v1_1_1.js
  * @include OpenLayers/Format/WMSCapabilities/v1_3_0.js
  * @include OpenLayers/Format/WMTSCapabilities/v1_0_0.js
