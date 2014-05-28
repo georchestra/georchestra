@@ -363,8 +363,25 @@ GEOR.cswbrowser = (function() {
          */
         getPanel: function(options) {
             tr = OpenLayers.i18n;
+            var ISO639 = {
+                'ar': 'ara', 
+                'ca': 'cat', 
+                'cn': 'chi', 
+                'de': 'ger', 
+                'en': 'eng', 
+                'es': 'spa', 
+                'fr': 'fre', 
+                'it': 'ita', 
+                'nl': 'dut', 
+                'no': 'nor',
+                'pl': 'pol', 
+                'pt': 'por', 
+                'ru': 'rus',
+                'fi': 'fin',
+                'tr': 'tur'
+            };
             GEONETWORK_URL = GEOR.config.GEONETWORK_BASE_URL 
-                + '/srv/' + GEOR.config.LANG;
+                + '/srv/' + ISO639[GEOR.config.LANG];
             tree = new Ext.tree.TreePanel({
                 region: 'center',
                 useArrows:true,
