@@ -3,7 +3,9 @@
     <script type="text/javascript" src="lib/Ext.ux/lib/Ext.ux.js"></script>
     <script type="text/javascript" src="lib/proj4js/lib/proj4js.js"></script>
     <script type="text/javascript" src="lib/proj4js/lib/projCode/lcc.js"></script>
+    <script type="text/javascript" src="lib/proj4js/lib/projCode/laea.js"></script>
     <script type="text/javascript" src="lib/proj4js/lib/projCode/merc.js"></script>
+    <script type="text/javascript" src="lib/proj4js/lib/projCode/utm.js"></script>
     <script type="text/javascript" src="lib/externals/openlayers/lib/OpenLayers.js"></script>
     <script type="text/javascript" src="lib/externals/openlayers/lib/OpenLayers/Lang/<%= lang %>.js"></script>
     <script type="text/javascript" src="lib/externals/geoext/lib/GeoExt.js"></script>
