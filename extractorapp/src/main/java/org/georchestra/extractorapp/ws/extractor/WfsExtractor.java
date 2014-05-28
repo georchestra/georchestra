@@ -1,19 +1,29 @@
 package org.georchestra.extractorapp.ws.extractor;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
-
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryCollection;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpHost;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.AuthCache;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.impl.client.BasicAuthCache;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFactorySpi;
 import org.geotools.data.Query;
@@ -36,33 +46,31 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.ProgressListener;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.geom.MultiPoint;
-import com.vividsolutions.jts.geom.MultiPolygon;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Obtains data from a WFS and write the data out to the filesystem
- * 
+ *
  * @author jeichar
  */
 public class WfsExtractor {
-	
-	
+
 	protected static final Log LOG = LogFactory.getLog(WcsExtractor.class.getPackage().getName());
 
     /**
      * Enumerate general types of geometries we accept. Multi/normal is ignored
      * because shapefiles are always multigeom
-     * 
+     *
      * The binding is the class to use when creating shapefile datastores
-     * 
+     *
      * @author jeichar
      */
     enum GeomType {
@@ -103,16 +111,16 @@ public class WfsExtractor {
     private final String _secureHost;
 
     /**
-     * 
+     *
      * Should only be used by tests
-     * 
+     *
      */
     public WfsExtractor (File basedir, DataStoreFactorySpi datastoreFactory) {
         this(basedir, datastoreFactory, "", "", "localhost");
     }
 
     /**
-     * 
+     *
      * @param basedir
      *            the directory that the extracted files will be written in
      * @param datastoreFactory
@@ -120,7 +128,7 @@ public class WfsExtractor {
      *            This is mainly to simplify testing
      * @param adminUsername username that give admin access to geoserver
      * @param adminPassword password the the admin user
-     * @param secureHost 
+     * @param secureHost
      */
     public WfsExtractor (File basedir, DataStoreFactorySpi datastoreFactory, String adminUsername, String adminPassword, String secureHost) {
         this._basedir = basedir;
@@ -133,30 +141,59 @@ public class WfsExtractor {
     public void checkPermission(ExtractorLayerRequest request, String secureHost, String username, String roles) throws IOException {
         URL capabilitiesURL = request.capabilitiesURL("WFS", "1.0.0");
 
-    	DefaultHttpClient httpclient = new DefaultHttpClient();
+        final HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+
+        HttpClientContext localContext = HttpClientContext.create();
+        final HttpHost httpHost = new HttpHost(capabilitiesURL.getHost(), capabilitiesURL.getPort());
     	HttpGet get = new HttpGet(capabilitiesURL.toExternalForm());
-        if(secureHost.equalsIgnoreCase(request._url.getHost())
+        if(username != null && (secureHost.equalsIgnoreCase(request._url.getHost())
                 || "127.0.0.1".equalsIgnoreCase(request._url.getHost())
-                || "localhost".equalsIgnoreCase(request._url.getHost())) {
+                || "localhost".equalsIgnoreCase(request._url.getHost()))) {
         	LOG.debug("WfsExtractor.checkPermission - Secured Server: adding username header and role headers to request for checkPermission");
-            if(username != null) get.addHeader("sec-username", username);
-            if(roles != null) get.addHeader("sec-roles", roles);
+
+            addImpersonateUserHeaders(username, roles, get);
+
+            enablePreemptiveBasicAuth(capabilitiesURL, httpClientBuilder, localContext, httpHost, _adminUsername, _adminPassword);
         } else {
         	LOG.debug("WfsExtractor.checkPermission - Non Secured Server");
         }
 
-        String capabilities = FileUtils.asString(httpclient.execute(get).getEntity().getContent());
+        final CloseableHttpClient httpclient = httpClientBuilder.build();
+        String capabilities = FileUtils.asString(httpclient.execute(httpHost, get, localContext).getEntity().getContent());
         Pattern regex = Pattern.compile("(?m)<FeatureType[^>]*>(\\\\n|\\s)*<Name>\\s*(\\w*:)?"+Pattern.quote(request._layerName)+"\\s*</Name>");
         boolean permitted = regex.matcher(capabilities).find();
-        
+
         if(!permitted) {
             throw new SecurityException("User does not have sufficient privileges to access the Layer: "+request._layerName+". \n\nCapabilties:  "+capabilities);
         }
     }
 
+    public static void addImpersonateUserHeaders(String username, String roles, HttpGet get) {
+        get.addHeader("imp-username", username);
+        if(roles != null) get.addHeader("imp-roles", roles);
+    }
+
+    public static void enablePreemptiveBasicAuth(URL capabilitiesURL, HttpClientBuilder httpClientBuilder, HttpClientContext localContext,
+                                                 HttpHost httpHost, String adminUsername, String adminPassword) {
+        CredentialsProvider credsProvider = new BasicCredentialsProvider();
+        credsProvider.setCredentials(
+                new AuthScope(capabilitiesURL.getHost(), capabilitiesURL.getPort()),
+                new UsernamePasswordCredentials(adminUsername, adminPassword));
+        httpClientBuilder.setDefaultCredentialsProvider(credsProvider);
+
+        AuthCache authCache = new BasicAuthCache();
+        // Generate BASIC scheme object and add it to the local
+        // auth cache
+        BasicScheme basicAuth = new BasicScheme();
+        authCache.put(httpHost, basicAuth);
+
+        // Add AuthCache to the execution context
+        localContext.setAuthCache(authCache);
+    }
+
     /**
-     * Extract the data as defined in the request object. 
-     * 
+     * Extract the data as defined in the request object.
+     *
      * @return the directory that contains the extracted file
      */
     public File extract (ExtractorLayerRequest request) throws IOException, TransformException, FactoryException {
@@ -170,8 +207,8 @@ public class WfsExtractor {
         params.put (WFSDataStoreFactory.PROTOCOL.key, true);
         params.put (WFSDataStoreFactory.TIMEOUT.key, Integer.valueOf(60000));
         params.put (WFSDataStoreFactory.MAXFEATURES.key, Integer.valueOf(0));
-        
-        // HACK  I want unrestricted access to layers. 
+
+        // HACK  I want unrestricted access to layers.
         // Security check takes place in ExtractorThread
         if(_secureHost.equalsIgnoreCase(request._url.getHost())
                 || "127.0.0.1".equalsIgnoreCase(request._url.getHost())
@@ -180,13 +217,13 @@ public class WfsExtractor {
             if (_adminUsername != null) params.put(WFSDataStoreFactory.USERNAME.key, _adminUsername);
             if (_adminPassword != null) params.put(WFSDataStoreFactory.PASSWORD.key, _adminPassword);
         } else {
-        	LOG.debug("WfsExtractor.extract - Non Secured Server");        	
+        	LOG.debug("WfsExtractor.extract - Non Secured Server");
         }
-        
+
         DataStore sourceDs = _datastoreFactory.createDataStore (params);
 
         SimpleFeatureType sourceSchema = sourceDs.getSchema (request.getWFSName());
-		Query query = createQuery(request, sourceSchema);
+        Query query = createQuery(request, sourceSchema);
 		SimpleFeatureCollection features = sourceDs.getFeatureSource(request.getWFSName())
 														.getFeatures(query);
 
@@ -197,7 +234,7 @@ public class WfsExtractor {
             }
         };
         File basedir = request.createContainingDir(_basedir);
-        
+
         basedir.mkdirs();
 
         FeatureWriterStrategy featuresWriter;
@@ -207,19 +244,19 @@ public class WfsExtractor {
             featuresWriter = new ShpFeatureWriter(progressListener, sourceSchema, basedir, features);
         	bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.shp, request._projection, progressListener );
         } else if ("mif".equalsIgnoreCase(request._format)) {
-        	// writer = new MifFeatureWriter(progressListener, sourceSchema, basedir, features);
+        	//featuresWriter = new MifFeatureWriter(progressListener, sourceSchema, basedir, features);
         	featuresWriter = new OGRFeatureWriter(progressListener, sourceSchema,  basedir, OGRFeatureWriter.FileFormat.mif, features);
         	bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.mif, request._projection, progressListener );
         } else if ("tab".equalsIgnoreCase(request._format)) {
         	featuresWriter = new OGRFeatureWriter(progressListener, sourceSchema,  basedir, OGRFeatureWriter.FileFormat.tab, features);
         	bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.tab, request._projection, progressListener );
         } else if ("kml".equalsIgnoreCase(request._format)) {
-        	featuresWriter = new KMLFeatureWriter(progressListener, sourceSchema, basedir, features);
+        	featuresWriter = new OGRFeatureWriter(progressListener, sourceSchema, basedir, OGRFeatureWriter.FileFormat.kml, features);
         	bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.kml, request._projection, progressListener );
         } else {
             throw new IllegalArgumentException(request._format + " is not a recognized vector format");
         }
-        //generates the feature files and bbox file 
+        //generates the feature files and bbox file
         featuresWriter.generateFiles();
 
         bboxWriter.generateFiles();
@@ -232,20 +269,20 @@ public class WfsExtractor {
             FactoryException {
         switch (request._owsType) {
         case WFS:
-            
+
             // bbox may not be in the same projection as the data so it sometimes necessary to reproject the request BBOX
             ReferencedEnvelope bbox = request._bbox;
             if (schema.getCoordinateReferenceSystem () != null) {
                 bbox = request._bbox.transform (schema.getCoordinateReferenceSystem (), true, 10);
             }
-            
+
             FilterFactory2 filterFactory = CommonFactoryFinder.getFilterFactory2 (GeoTools.getDefaultHints ());
             String propertyName = schema.getGeometryDescriptor ().getLocalName ();
             PropertyName geomProperty = filterFactory.property (propertyName);
             Geometry bboxGeom = new GeometryFactory ().toGeometry (bbox);
             String epsgCode = "EPSG:"+CRS.lookupEpsgCode(bbox.getCoordinateReferenceSystem(),false);
             bboxGeom.setUserData(epsgCode);
-            
+
             Literal geometry = filterFactory.literal (bboxGeom);
             Intersects filter = filterFactory.intersects (geomProperty, geometry);
 
@@ -262,7 +299,7 @@ public class WfsExtractor {
 
             String[] propArray = properties.toArray (new String[properties.size ()]);
             Query query = new Query (request.getWFSName(), filter, propArray);
-            
+
             query.setCoordinateSystemReproject (request._projection);
 
             return query;

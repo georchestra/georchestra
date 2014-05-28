@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.naming.NamingEnumeration;
 import javax.naming.directory.Attribute;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
@@ -42,7 +43,7 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
 
     @SuppressWarnings("unchecked")
 	@Override
-    protected Collection<Header> getCustomRequestHeaders(HttpSession session) {
+    protected Collection<Header> getCustomRequestHeaders(HttpSession session, HttpServletRequest originalRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(authentication instanceof AnonymousAuthenticationToken){
             return Collections.emptyList();

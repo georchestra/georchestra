@@ -94,6 +94,17 @@
             "tab1field2label": "Section",
             "tab2field2label": "Propriétaire",
             "tab1field3label": "Parcelle"
+        },
+         "de": {
+            "addon_cadastre_popup_title": "Parzellensuche",
+            "sync map extent": "Synchronisieren der Kartenausdehnung",
+            "tab1title": "mittels Referenz",
+            "tab2title": "mittels Eigentümer",
+            "tab1field1label": "Kommune",
+            "tab2field1label": "Kommune",
+            "tab1field2label": "Sektion",
+            "tab2field2label": "Eigentümer",
+            "tab1field3label": "Parzelle"
         }
     }
 }

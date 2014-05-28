@@ -13,7 +13,7 @@
 	<properties>
 		<spring.version>3.0.7.RELEASE</spring.version>
 		<security.version>3.0.5.RELEASE</security.version>
-		<maven.test.skip>true</maven.test.skip>
+		<maven.test.skip>false</maven.test.skip>
 	</properties>
 	<dependencies>
 		<dependency>

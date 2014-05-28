@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.georchestra.extractorapp.ws.extractor;
 
@@ -16,8 +16,8 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.util.ProgressListener;
 
 /**
- * This class implements the shape file writing strategy
- * 
+ * This class implements the KML file writing strategy
+ *
  * @author Florent Gravin
  *
  */
@@ -25,20 +25,20 @@ final class KMLFeatureWriter extends FileFeatureWriter {
 
 	/**
 	 * New instance of {@link OGRFeatureWriter}
-	 * 
-	 * @param progressListener 
+	 *
+	 * @param progressListener
 	 * @param schema		output schema
 	 * @param basedir		output folder
 	 * @param features		input the set of Features to write
 	 */
 	public KMLFeatureWriter(
-			ProgressListener progresListener, 
+			ProgressListener progresListener,
 			SimpleFeatureType schema,
 			File basedir,
 			SimpleFeatureCollection features) {
 
 		super(progresListener, schema, basedir, features);
-	
+
 	}
 
 	/**
@@ -48,33 +48,33 @@ final class KMLFeatureWriter extends FileFeatureWriter {
 	protected DatastoreFactory getDatastoreFactory() throws  IOException{
 		return null;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return Format file extension
 	 */
 	protected String extension() {
 		return "kml";
 	}
-	
+
 	/**
 	 * Generates a vector files in the specified format
-	 * 
-	 * @throws IOException 
+	 *
+	 * @throws IOException
 	 */
 	@Override
 	public File[] generateFiles() throws IOException {
-		
+
 		File[] files = null;
 		FileOutputStream fop = null;
 
 		SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder ();
 		builder.setName (schema.getName ());
-		
+
 		try{
 			File file = new File(basedir, builder.getName() + "."+ extension());
 			fop = new FileOutputStream(file);
-			
+
 			Encoder encoder = new Encoder(new KMLConfiguration());
 			encoder.setIndenting(true);
 
@@ -82,7 +82,7 @@ final class KMLFeatureWriter extends FileFeatureWriter {
 
 			files = new File[1];
 			files[0] = file;
-			
+
 			if(LOG.isDebugEnabled()){
 
 				for (int i = 0; i < files.length; i++) {
@@ -91,19 +91,19 @@ final class KMLFeatureWriter extends FileFeatureWriter {
 			}
 			fop.flush();
 			return files;
-			
+
 		} catch (IOException e ){
-			
+
 			final String message = "Failed generation: " + this.schema.getName() + " - "  +  e.getMessage();
 			LOG.error(message);
-			
+
 			throw e;
-		} 
+		}
 		finally {
 			if(fop != null) {
 				fop.close();
 			}
-			
+
 		}
 	}
 

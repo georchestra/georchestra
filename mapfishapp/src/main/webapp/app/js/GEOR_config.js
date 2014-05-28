@@ -17,57 +17,6 @@ Ext.namespace("GEOR");
 GEOR.config = (function() {
 
     /**
-     * Property: vectorAbility
-     * {Number} Integer representing
-     *  browser ability to handle features
-     */
-    var vectorAbility = null;
-
-    /**
-     * Method: getBrowserVectorAbility
-     * Get an empirical integer parameter
-     * about this browser's vector handling abilities.
-     *
-     * Returns:
-     * {Number} The parameter
-     */
-    var getBrowserVectorAbility = function() {
-        // TODO: these figures need to be adapted from experiments
-        if (vectorAbility) {
-            return vectorAbility;
-        } else if (Ext.isChrome) {
-            vectorAbility = 50;
-        } else if (Ext.isGecko) {
-            vectorAbility = 30;
-        } else if (Ext.isIE) {
-            vectorAbility = 10;
-        } else if (Ext.isOpera) {
-            vectorAbility = 25;
-        } else if (Ext.isSafari) {
-            vectorAbility = 50;
-        } else {
-            // we don't want to prevent future browsers
-            // from displaying a great number of features
-            vectorAbility = 100;
-        }
-        return vectorAbility;
-    };
-
-    /**
-     * Method: getComputingPower
-     * Get an empirical floating parameter
-     * about the client's CPU power (2009 CPU = 1)
-     *
-     * Returns:
-     * {Number} The parameter
-     */
-    var getComputingPower = function() {
-        // not implemented for now.
-        // eg: time to load app (not the files) ...
-        return 1;
-    };
-
-    /**
      * Method: getCustomParameter
      *  If parameter paramName exists in GEOR.custom, returns its value
      *  else defaults to the mandatory defaultValue
@@ -213,12 +162,13 @@ GEOR.config = (function() {
             "/geoserver/wms"),
 
         /**
-         * Constant: GEONETWORK_URL
-         * The URL to the GeoNetwork server.
-         * Defaults to "/geonetwork/srv/fre"
+         * Constant: GEONETWORK_BASE_URL
+         * The base URL to the local GeoNetwork server.
+         * Required for CSW Browser module.
+         * Defaults to "/geonetwork"
          */
-        GEONETWORK_URL: getCustomParameter("GEONETWORK_URL",
-            "/geonetwork/srv/fre"),
+        GEONETWORK_BASE_URL: getCustomParameter("GEONETWORK_BASE_URL",
+            "/geonetwork"),
 
         /**
          * Constant: CSW_GETDOMAIN_SORTING
@@ -303,19 +253,19 @@ GEOR.config = (function() {
         /**
          * Constant: MAX_FEATURES
          * The maximum number of vector features displayed.
-         * Defaults to a value estimated by an empirical formula
+         * Defaults to 1000
          */
         MAX_FEATURES: getCustomParameter("MAX_FEATURES",
-            50*getBrowserVectorAbility()*getComputingPower()),
+            1000),
 
         /**
          * Constant: MAX_LENGTH
          * The maximum number of chars in a XML response
          * before triggering an alert.
-         * Defaults to a value estimated by an empirical formula
+         * Defaults to 2 millions
          */
         MAX_LENGTH: getCustomParameter("MAX_LENGTH",
-            400/7*1024*getBrowserVectorAbility()*getComputingPower()),
+            2048*1024),
 
         /**
          * Constant: OSM_AS_OVMAP

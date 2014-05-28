@@ -1,12 +1,11 @@
 package org.georchestra.extractorapp.ws.extractor;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import org.georchestra.extractorapp.ws.extractor.task.ExtractionManager;
 import org.junit.Assert;
