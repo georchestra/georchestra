@@ -99,6 +99,7 @@ Ext.namespace("GEOR");
         /*
          * Setting of proj4js global vars.
          */
+        Proj4js.libPath = GEOR.config.PATHNAME + "/lib/proj4js/lib/";
         Ext.apply(Proj4js.defs, GEOR.config.PROJ4JS_STRINGS);
 
         /*

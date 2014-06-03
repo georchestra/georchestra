@@ -1,0 +1,1 @@
+Proj4js.defs["EPSG:3068"] = "+proj=cass +lat_0=52.41864827777778 +lon_0=13.62720366666667 +x_0=40000 +y_0=10000 +ellps=bessel +datum=potsdam +units=m +no_defs";
