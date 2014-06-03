@@ -96,9 +96,6 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
     "layerstree.qtip.noextraction":
         "The <b>${NAME}</b> layer is not available: " +
         "there is no extraction service",
-    "layerstree.qtip.invalidwcs":
-        "The <b>${NAME}</b> layer is not available: the WCS service " +
-        "${URL} is not valid",
     "layerstree.describelayer":
         "The <b>${NAME}</b> layer is not available: the DescribeLayer WMS " +
         "request on ${URL} could not conclude succesfully.",

@@ -363,42 +363,6 @@ GEOR.ows = (function() {
                 loadStore(store, options.success, options.failure, options.scope);
             }
             return store;
-        },
-
-        /**
-         * APIMethod: WFSDescribeFeatureTypeUrl
-         * Generate the url to query a WFS DescribeFeatureType given a
-         * baseUrl of the WFS service and a typeName.
-         *
-         * Parameters:
-         * baseUrl - baseUrl of the WFS service
-         * typeName - typeName used to build the url.
-         */
-        WFSDescribeFeatureTypeUrl: function(baseUrl, typeName) {
-            var params = Ext.applyIf({
-                "REQUEST": "DescribeFeatureType",
-                "TYPENAME": typeName
-            }, WFS_BASE_PARAMS);
-
-            return buildUrlFromParams(baseUrl, params);
-        },
-
-        /**
-         * APIMethod: WCSDescribeCoverageUrl
-         * Generate the url to query a WCS DescribeCoverage given a
-         * baseUrl of the WCS service and an identifier.
-         *
-         * Parameters:
-         * baseUrl - baseUrl of the WCS service
-         * identifier - identifier used to build the url.
-         */
-        WCSDescribeCoverageUrl: function(baseUrl, identifier) {
-            var params = Ext.applyIf({
-                "REQUEST": "DescribeCoverage",
-                "IDENTIFIERS": identifier
-            }, WCS_BASE_PARAMS);
-
-            return buildUrlFromParams(baseUrl, params);
         }
 
     };

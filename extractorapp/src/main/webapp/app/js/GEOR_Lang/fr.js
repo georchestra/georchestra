@@ -145,9 +145,6 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "layerstree.qtip.noextraction":
         "La couche <b>${NAME}</b> n'est pas disponible : " +
         "aucun service d'extraction",
-    "layerstree.qtip.invalidwcs":
-        "La couche <b>${NAME}</b> n'est pas disponible : Le service WCS " +
-        "${URL} n'est pas valide",
     "layerstree.describelayer":
         "La couche <b>${NAME}</b> n'est pas disponible : la requête WMS " +
         "DescribeLayer sur ${URL} n'a pas abouti.",
