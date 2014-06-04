@@ -475,3 +475,8 @@ div.olMapViewport {
     width:350px;
     z-index:20000;
 }
+
+#geor-layerManager .x-tree-node .x-tree-selected {
+	background-color: #fff;
+}
+
