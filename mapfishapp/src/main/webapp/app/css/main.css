@@ -448,3 +448,7 @@ div.olMapViewport {
 .olImageLoadError {
 	display: none;
 }
+
+#geor-layerManager .x-tree-node .x-tree-selected {
+	background-color: #fff;
+}
