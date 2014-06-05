@@ -251,11 +251,12 @@ Ext.namespace("GEOR");
                         });
                         panel.insert(panel.items.length-1, tab);
                         panel.setActiveTab(tab);
+                    } else {
+                        panel.items.each(function(tab) {
+                            tab.lower();
+                        });
+                        t.raise();
                     }
-                    panel.items.each(function(tab) {
-                        tab.lower();
-                    });
-                    t.raise();
                 }
             }
         });
