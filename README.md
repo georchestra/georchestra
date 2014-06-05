@@ -30,6 +30,7 @@ First, install the required packages:
 Notes: 
  * openjdk-6-jdk works too 
  * GeoServer is [known](http://research.geodan.nl/2012/10/openjdk7-vs-oracle-jdk7-with-geoserver/) to perform better with Oracle JDK.
+ * libjai-imageio-core-java is a non-free package
 
 Then clone the repository (either the stable branch or master if you're feeling lucky):
 
