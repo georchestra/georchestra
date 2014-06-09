@@ -58,8 +58,9 @@ public class DataUsage {
 					record.put(md.getColumnLabel(2), results.getString(2));
 					ret.put(record);
 				}
+	            results.close();
 			}
-			results.close();
+
 		} finally {
 			if (results != null) results.close();
 			if (sql != null) sql.close();

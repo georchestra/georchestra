@@ -20,14 +20,15 @@ import org.springframework.mock.web.MockHttpServletResponse;
 public class DataUsageTest {
     private DataUsage dataUsageController;
 
+    DataSource ds = Mockito.mock(DataSource.class);
+    Connection mockedConnection = Mockito.mock(Connection.class);
+    Statement mockedStatement = Mockito.mock(Statement.class);
+    ResultSet mockedResultset = Mockito.mock(ResultSet.class);
+    ResultSetMetaData mockedRsMd = Mockito.mock(ResultSetMetaData.class);
+
+
     @Before
     public void setUp() throws SQLException {
-        DataSource ds = Mockito.mock(DataSource.class);
-        Connection mockedConnection = Mockito.mock(Connection.class);
-        Statement mockedStatement = Mockito.mock(Statement.class);
-        ResultSet mockedResultset = Mockito.mock(ResultSet.class);
-        ResultSetMetaData mockedRsMd = Mockito.mock(ResultSetMetaData.class);
-
         Mockito.when(ds.getConnection()).thenReturn(mockedConnection);
         Mockito.when(mockedConnection.createStatement()).thenReturn(mockedStatement);
         Mockito.when(mockedStatement.executeQuery("SELECT * FROM downloadform.data_use"))
@@ -49,6 +50,7 @@ public class DataUsageTest {
     public void testDeactivatedDataUsage() throws Exception {
         dataUsageController.setActivated(false);
         MockHttpServletResponse mockedResp = new MockHttpServletResponse();
+
         dataUsageController.handleRequest(null, mockedResp);
 
         JSONObject ret = new JSONObject(mockedResp.getContentAsString());
@@ -61,16 +63,30 @@ public class DataUsageTest {
     public void testDataUsage() throws Exception {
         dataUsageController.setActivated(true);
         MockHttpServletResponse mockedResp = new MockHttpServletResponse();
+
         dataUsageController.handleRequest(null, mockedResp);
 
         JSONObject ret = new JSONObject(mockedResp.getContentAsString());
         JSONObject firstline = (JSONObject) ((JSONArray) ret.get("rows")).get(0);
         JSONObject secondline = (JSONObject) ((JSONArray) ret.get("rows")).get(1);
-
         assertTrue(firstline.get("id").equals("1"));
         assertTrue(firstline.get("name").equals("Gestion domaine public"));
         assertTrue(secondline.get("id").equals("2"));
         assertTrue(secondline.get("name").equals("Formation"));
 
+    }
+
+    @Test
+    public void testDataUsageWithNullResult() throws Exception {
+        dataUsageController.setActivated(true);
+        MockHttpServletResponse mockedResp = new MockHttpServletResponse();
+        Mockito.when(mockedStatement.executeQuery("SELECT * FROM downloadform.data_use"))
+        .thenReturn(null);
+
+        dataUsageController.handleRequest(null, mockedResp);
+
+        JSONObject ret = new JSONObject(mockedResp.getContentAsString());
+        JSONArray rows = (JSONArray) ret.get("rows");
+        assertTrue(rows.length() == 0);
     }
 }
