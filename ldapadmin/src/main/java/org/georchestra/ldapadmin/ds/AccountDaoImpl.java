@@ -38,7 +38,7 @@ public final class AccountDaoImpl implements AccountDao{
 	private LdapTemplate ldapTemplate;
 	private GroupDao groupDao;
     private String uniqueNumberField = "employeeNumber";
-	private LdapRdn userSearchBaseRdn;
+	private LdapRdn userSearchBaseDN;
     private AtomicInteger uniqueNumberCounter = new AtomicInteger(-1);
 
     @Autowired
@@ -69,8 +69,8 @@ public final class AccountDaoImpl implements AccountDao{
         this.uniqueNumberField = uniqueNumberField;
     }
 
-	public void setUserSearchBaseRdn(String userSearchBaseDN) {
-		this.userSearchBaseRdn = new LdapRdn(userSearchBaseDN);
+	public void setUserSearchBaseDN(String userSearchBaseDN) {
+		this.userSearchBaseDN = new LdapRdn(userSearchBaseDN);
 	}
 
 	/**
@@ -339,7 +339,7 @@ public final class AccountDaoImpl implements AccountDao{
 	 */
 	private DistinguishedName buildDn(String  uid) {
 		DistinguishedName dn = new DistinguishedName();
-		dn.add(userSearchBaseRdn);
+		dn.add(userSearchBaseDN);
 		dn.add("uid", uid);
 
 		return dn;

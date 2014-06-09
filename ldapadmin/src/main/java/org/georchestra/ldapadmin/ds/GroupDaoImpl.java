@@ -55,8 +55,8 @@ public class GroupDaoImpl implements GroupDao {
 	private LdapTemplate ldapTemplate;
 
     private String uniqueNumberField = "ou";
-	private LdapRdn groupSearchBaseRdn;
-	private LdapRdn userSearchBaseRdn;
+	private LdapRdn groupSearchBaseDN;
+	private LdapRdn userSearchBaseDN;
     private AtomicInteger uniqueNumberCounter = new AtomicInteger(-1);
 
     public LdapTemplate getLdapTemplate() {
@@ -69,11 +69,11 @@ public class GroupDaoImpl implements GroupDao {
     public void setUniqueNumberField(String uniqueNumberField) {
         this.uniqueNumberField = uniqueNumberField;
     }
-	public void setGroupSearchBaseRdn(String groupSearchBaseDN) {
-		this.groupSearchBaseRdn = new LdapRdn(groupSearchBaseDN);
+	public void setGroupSearchBaseDN(String groupSearchBaseDN) {
+		this.groupSearchBaseDN = new LdapRdn(groupSearchBaseDN);
 	}
-	public void setUserSearchBaseRdn(String userSearchBaseDN) {
-		this.userSearchBaseRdn = new LdapRdn(userSearchBaseDN);
+	public void setUserSearchBaseDN(String userSearchBaseDN) {
+		this.userSearchBaseDN = new LdapRdn(userSearchBaseDN);
 	}
 
     /**
@@ -85,7 +85,7 @@ public class GroupDaoImpl implements GroupDao {
 	private DistinguishedName buildGroupDn(String cn) {
 		DistinguishedName dn = new DistinguishedName();
 
-		dn.add(groupSearchBaseRdn);
+		dn.add(groupSearchBaseDN);
 		dn.add("cn", cn);
 
 		return dn;
@@ -103,7 +103,7 @@ public class GroupDaoImpl implements GroupDao {
 			LdapContextSource ctxsrc = (LdapContextSource) this.ldapTemplate.getContextSource();
 			dn.addAll(ctxsrc.getBaseLdapPath());
 		} catch (InvalidNameException e) {}
-		dn.add(userSearchBaseRdn);
+		dn.add(userSearchBaseDN);
 		dn.add("uid", uid);
 
 		return dn;
@@ -176,7 +176,7 @@ public class GroupDaoImpl implements GroupDao {
 
 		AndFilter filter = new AndFilter();
 		filter.and(new EqualsFilter("objectClass", "ou"));
-		filter.and(new EqualsFilter(groupSearchBaseRdn.getKey(), groupSearchBaseRdn.getValue()));
+		filter.and(new EqualsFilter(groupSearchBaseDN.getKey(), groupSearchBaseDN.getValue()));
 		filter.and(new EqualsFilter("cn", groupName));
 
 		List<String> memberList = ldapTemplate.search(
