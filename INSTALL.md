@@ -411,7 +411,17 @@ Keystore/Trustore
     Est-ce CN=localhost, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=Unknown ?
       [non] :  oui
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    
+
+    In case the LDAP connection uses SSL, the certificate must be added to the keystore. First get the public key:
+
+        echo "" | openssl s_client -connect LDAPHOST:LDAPPORT -showcerts 2>/dev/null | openssl x509 -out /tmp/certfile.txt
+
+    and then add it to the keystore
+
+        sudo keytool -import -alias cert_ldap -file /tmp/certfile.txt -keystore /etc/tomcat6/keystore
+
+    Verify the list of keys in keystore
+
         keytool -keystore keystore -list
        
 * truststore config
