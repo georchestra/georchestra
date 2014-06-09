@@ -63,9 +63,9 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
     "server upload error: ERROR": "Upload failed. ${ERROR}",
     /* GEOR_geonames.js strings */
     /* GEOR_getfeatureinfo.js strings */
-    "<div>Search on objects active for NAME layer. Clic on the map.</div>":
+    "<div>Search on objects active for NAME layer. Click on the map.</div>":
          "<div>Search on objects active for ${NAME} layer. " +
-         "Clic on the map.</div>",
+         "Click on the map.</div>",
     /* GEOR_layerfinder.js strings */
     "layerfinder.layer.unavailable":
         "The ${NAME} layer could not be found in WMS service.<br/<br/>" +
@@ -121,9 +121,9 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
     "NB results": "${NB} results",
     /* GEOR_scalecombo.js strings */
     /* GEOR_selectfeature.js strings */
-    "<div>Select features activated on NAME layer. Clic on the map.</div>":
+    "<div>Select features activated on NAME layer. Click on the map.</div>":
          "<div>Select features activated on ${NAME} layer. " +
-         "Clic on the map.</div>",
+         "Click on the map.</div>",
     "OpenLayers SelectFeature":"Select features",
     /* GEOR_styler.js strings */
     "styler.guidelines":

@@ -89,7 +89,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     /* GEOR_cswquerier.js strings */
     "Show metadata sheet in a new window": "Показать список метаданных в новом окне",
     "more": "более, ещё...",
-    "Clic to select or deselect the layer": "Нажать, чтобы выбрать или отменить выделение слоя.",
+    "Click to select or deselect the layer": "Нажать, чтобы выбрать или отменить выделение слоя.",
     "Open the URL url in a new window": "Открыть URL в новом окне.",
     "Unreachable server": "Сервер недоступен",
     "Catalogue": "Каталог",
@@ -125,7 +125,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     /* GEOR_geonames.js strings */
     /* GEOR_getfeatureinfo.js strings */
     "<div>Searching...</div>": "<div>Идёт поиск...</div>",
-    "<div>Search on objects active for NAME layer. Clic on the map.</div>": "<div>Поиск объектов запущен на слое ${NAME}. Щёлкните мышкой на карте.</div>",
+    "<div>Search on objects active for NAME layer. Click on the map.</div>": "<div>Поиск объектов запущен на слое ${NAME}. Щёлкните мышкой на карте.</div>",
     /* GEOR_layerfinder.js strings */
     "Add layers from local files": "Добавить слои из локальных файлов.",
     "Find layers searching in metadata": "Найти слои, проводя поиск в базе метаданных.",
@@ -317,7 +317,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Manage tools": "Управлять инструментами",
     "remember the selection": "Запомнить выбор ou Запомнить выделенное",
     "Available tools:": "Инструменты в распоряжении",
-    "Clic to select or deselect the tool": "Щёлкните для того, чтобы выбрать инструмент или отменить его",
+    "Click to select or deselect the tool": "Щёлкните для того, чтобы выбрать инструмент или отменить его",
     "Could not load addon ADDONNAME": "Невозможно загрузить аддон ${ADDONNAME}",
     /* GEOR_util.js strings */
     "Characters": "Письменность",

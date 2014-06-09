@@ -380,7 +380,7 @@ GEOR.tools = (function() {
                         '<table><tr><td width="100%" style="vertical-align:text-top;">',
                             '<p><b>{[this.tr(values, "title")]}</b></p>',
                             '<p>{[this.tr(values, "description")]}</p>',
-                        '</td><td width="50" style="text-align:center;" ext:qtip="'+tr("Clic to select or deselect the tool")+'">',
+                        '</td><td width="50" style="text-align:center;" ext:qtip="'+tr("Click to select or deselect the tool")+'">',
                             '<img src="{[this.thumb(values)]}" class="thumb" />',
                         '</td></tr></table>',
                     '</div>',
