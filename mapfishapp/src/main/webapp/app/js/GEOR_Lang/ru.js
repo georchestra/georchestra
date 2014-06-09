@@ -190,7 +190,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     /* GEOR_map.js strings */
     "Location map": "арта локализации",
     "Warning after loading layer": "Уведомление, следующее за загрузкой слоя",
-    "The <b>NAME</b> layer could not appear for that reason: ": "Возможное отсутствие слоя<b>${NAME}</b>по следующей причине: ",
+    "The <b>NAME</b> layer could not appear for this reason: ": "Возможное отсутствие слоя<b>${NAME}</b>по следующей причине: ",
     "Min/max visibility scales are invalid": "Минмальный/Максимальный масштабы видимости являются недействительными.",
     "Visibility range does not match map scales": "видимости не соответствует масштабам карты.",
     "Geografic extent does not match map extent": "Географический размер не соответствует размерам карты.",
@@ -258,7 +258,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Zoom to results extent": "Применить величину зума карты на результаты.",
     "CSV Export": "Экспорт CSV (Comma-Separated Values - значения, разделённые запятыми : текстовый формат)",
     "Export results as CSV": "Выслать все результаты в текстовом формате CSV",
-    "<p>No result for that request.</p>": "<p>Никакой объект не соответствует вашему запросу.</p>",
+    "<p>No result for this request.</p>": "<p>Никакой объект не соответствует вашему запросу.</p>",
     /* GEOR_scalecombo.js strings */
     /* GEOR_styler.js strings */
     "Download style": "Скачать стиль",
@@ -285,7 +285,6 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Styler": "Стайлер",
     "Apply": "Применить",
     "Impossible to complete the operation:": "Невозможно завершить операцию ou Операция невозможна",
-    "no WFS service associated to that layer": "Никакой сервис WFS не связан с этим слоем.",
     "no available attribute": "нет ни одного доступного атрибута.",
     /* GEOR_toolbar.js strings */
     "m": "м",

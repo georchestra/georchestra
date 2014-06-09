@@ -232,7 +232,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Location map": "Carte de situation",
     "Warning after loading layer":
         "Avertissement suite au chargement de couche",
-    "The <b>NAME</b> layer could not appear for that reason: ":
+    "The <b>NAME</b> layer could not appear for this reason: ":
         "La couche <b>${NAME}</b> pourrait ne pas apparaître pour " +
         "la raison suivante : ",
     "Min/max visibility scales are invalid":
@@ -332,7 +332,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
         "des résultats",
     "CSV Export": "Export CSV",
     "Export results as CSV": "Exporter l'ensemble des résultats en CSV",
-    "<p>No result for that request.</p>": "<p>Aucun objet ne " +
+    "<p>No result for this request.</p>": "<p>Aucun objet ne " +
         "correspond à votre requête.</p>",
     /* GEOR_scalecombo.js strings */
     /* GEOR_selectfeature.js strings */
@@ -371,8 +371,6 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Styler": "Styleur",
     "Apply": "Appliquer",
     "Impossible to complete the operation:": "Opération impossible :",
-    "no WFS service associated to that layer": "aucun service WFS " +
-        "associé à cette couche.",
     "no available attribute": "aucun attribut disponible.",
     /* GEOR_toolbar.js strings */
     "m": "m",
