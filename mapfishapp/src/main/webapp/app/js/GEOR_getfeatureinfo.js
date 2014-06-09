@@ -116,6 +116,16 @@ GEOR.getfeatureinfo = (function() {
          *  gml:MultiPolygon srsName="http://www.opengis.net/gml/srs/epsg.xml#3948"
          */
         var r =  /.+srsName=\"(.+?)\".+/.exec(info.text);
+        /*
+         * WARNING: this can lead to erroneous results for multiple layer queries !
+         *
+         * The WMSGetFeatureInfo control indeed warns:
+         *      "If drillDown is set to true and
+         *      multiple requests were issued to collect feature info from all
+         *      layers, *text* and *request* will only contain the response body
+         *      and request object of the last request."
+         *
+         */
         if (r && r[1]) {
             var srsString = r[1];
             /*
@@ -369,6 +379,7 @@ GEOR.getfeatureinfo = (function() {
 
                 ctrl = new controlClass({
                     layers: layers,
+                    drillDown: true,
                     maxFeatures: GEOR.config.MAX_FEATURES,
                     infoFormat: 'application/vnd.ogc.gml'
                 });
