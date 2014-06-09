@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
- * This controller manages the download requests made from
- * geOrchestra's geonetwork application.
+ * This controller manages the download requests made from geOrchestra's
+ * geonetwork application.
  *
  * @author pmauduit
  *
@@ -29,91 +29,88 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class GeoNetwork extends AbstractApplication {
 
     private static String INSERT_DOWNLOAD_QUERY = "INSERT INTO downloadform.geonetwork_log "
-            + "   (username, sessionid, first_name, second_name, " +
-            "company, email, phone, comment, metadata_id, filename) " +
-            "VALUES "
+            + "   (username, sessionid, first_name, second_name, "
+            + "company, email, phone, comment, metadata_id, filename) " + "VALUES "
             + "   (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 
-	public GeoNetwork(DataSource ds, boolean activated) {
-		super(ds, activated, GeoNetwork.INSERT_DOWNLOAD_QUERY);
-	}
+    public GeoNetwork(DataSource ds, boolean activated) {
+        super(ds, activated, GeoNetwork.INSERT_DOWNLOAD_QUERY);
+    }
 
-	private final Log logger = LogFactory.getLog(getClass());
+    private final Log logger = LogFactory.getLog(getClass());
 
+    private String fileName;
+    private int metadataId;
 
+    protected boolean isInvalid(DownloadQuery q) {
+        return q.isInvalid() || (q.getFileName() == null) || (q.getMetadataId() == -1);
+    }
 
+    @RequestMapping(method = { RequestMethod.GET, RequestMethod.POST })
+    public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-	private String fileName;
-	private int metadataId;
+        OutputStream out = response.getOutputStream();
+        JSONObject object = new JSONObject();
 
-	protected boolean isInvalid(DownloadQuery q) {
-		return q.isInvalid() || (fileName == null) || (metadataId == -1);
-	}
-
-	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST })
-	public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
-
-		OutputStream out = response.getOutputStream();
-		JSONObject object   = new JSONObject();
-
-        if (! activated) {
+        if (!activated) {
             out.write(Utils.serviceDisabled());
             out.close();
             return;
         }
         DownloadQuery q = initializeVariables(request);
 
-        fileName     = request.getParameter("fname");
-		metadataId   = request.getParameter("id") != null ? Integer.parseInt(request.getParameter("id")) : -1;
+        Connection connection = null;
+        ResultSet resultSet = null;
 
-		Connection connection = null;
-		ResultSet resultSet = null;
+        try {
 
-		try {
+            connection = dataSource.getConnection();
+            connection.setAutoCommit(false);
 
-			connection = dataSource.getConnection();
-			connection.setAutoCommit(false);
+            // Check form validity
+            if (isInvalid(q)) {
+                object.put("success", false);
+                object.put("msg", "invalid form");
+                out.write(object.toString().getBytes());
+            } else {
+                PreparedStatement st = prepareStatement(q);
 
-			// Check form validity
-			if (isInvalid(q)) {
-				object.put("success", false);
-				object.put("msg", "invalid form");
-				out.write(object.toString().getBytes());
-			} else {
-				PreparedStatement st = prepareStatement(q);
+                st.setInt(9, metadataId);
+                st.setString(10, fileName);
 
-				st.setInt(9, metadataId);
-				st.setString(10, fileName);
+                st.executeUpdate();
+                resultSet = st.getGeneratedKeys();
+                resultSet.next();
 
-				st.executeUpdate();
-				resultSet = st.getGeneratedKeys();
-				resultSet.next();
+                int idInserted = resultSet.getInt(1);
 
-				int idInserted = resultSet.getInt(1);
+                insertDataUse(idInserted, q);
+                connection.commit();
 
-				insertDataUse(idInserted, q);
-				connection.commit();
-
-				object.put("success", true);
-				object.put("msg", "Successfully added the record in database.");
-				out.write(object.toString().getBytes());
-			}
-		} catch (Exception e) {
-			connection.rollback();
-			if (out != null) {
-				out.write("Unable to handle request.".getBytes());
-			}
-			logger.error("Caught exception while executing service: ", e);
-			response.setStatus(500);
-		} finally {
-			if (out != null) {
-				out.close();
-			}
-			if (resultSet != null) { resultSet.close(); }
-			if (connection != null) {
-				connection.close();
-			}
-		}
-	}
+                object.put("success", true);
+                object.put("msg", "Successfully added the record in database.");
+                out.write(object.toString().getBytes());
+            }
+        } catch (Exception e) {
+            if (connection != null)
+                connection.rollback();
+            if (out != null) {
+                String message = "{ error: \"Unable to handle request: " + e + "\" }";
+                out.write(message.getBytes());
+            }
+            logger.error("Caught exception while executing service: ", e);
+            response.setStatus(500);
+        } finally {
+            if (out != null) {
+                out.close();
+            }
+            if (resultSet != null) {
+                resultSet.close();
+            }
+            if (connection != null) {
+                connection.close();
+            }
+        }
+    }
 
 }

@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
@@ -36,7 +37,8 @@ public abstract class AbstractApplication {
         activated = _activated;
         insertDownloadQuery = _insertDownloadQuery;
     }
-
+    public abstract void handleRequest(HttpServletRequest request, HttpServletResponse mockedResponse)
+            throws Exception;
     protected abstract boolean isInvalid(DownloadQuery q);
 
     /**
@@ -87,12 +89,11 @@ public abstract class AbstractApplication {
      */
     protected void insertDataUse(int idInserted, DownloadQuery q)
             throws Exception {
-        for (String dataUse : q.getDataUse()) {
-            int dataUseI = Integer.parseInt(dataUse);
+        for (Integer dataUse : q.getDataUse()) {
+            int dataUseI = dataUse.intValue();
             PreparedStatement dataUseSt = null;
             try {
-                dataUseSt = dataSource.getConnection().prepareStatement(
-                        insertDataUseQuery);
+                dataUseSt = dataSource.getConnection().prepareStatement(insertDataUseQuery);
                 dataUseSt.setInt(1, idInserted);
                 dataUseSt.setInt(2, dataUseI);
                 dataUseSt.execute();

@@ -1,5 +1,7 @@
 package org.georchestra.dlform;
 
+import java.util.ArrayList;
+
 import javax.servlet.http.HttpServletRequest;
 
 
@@ -11,13 +13,26 @@ public class DownloadQuery {
     private String company;
     private String email;
     private String tel;
-    private String[] dataUse;
+    private Integer[] dataUse;
     private String comment;
     private boolean ok;
     private String userName;
     private String sessionId;
 
+    /* extractorapp specific variables */
     private String jsonSpec;
+
+    /* geonetwork specific variables */
+    private int metadataId;
+    private String fileName;
+
+
+    public int getMetadataId() {
+        return metadataId;
+    }
+    public String getFileName() {
+        return fileName;
+    }
 
     public String getJsonSpec() {
         return jsonSpec;
@@ -37,7 +52,7 @@ public class DownloadQuery {
     public String getTel() {
         return tel;
     }
-    public String[] getDataUse() {
+    public Integer[] getDataUse() {
         return dataUse;
     }
     public String getComment() {
@@ -68,9 +83,26 @@ public class DownloadQuery {
         tel = request.getHeader("sec-tel") != null ?
                 request.getHeader("sec-tel") : request.getParameter("tel");
 
-        dataUse = request.getParameter("datause") != null ?
+        // datause is an array of int
+        String[] dUse = request.getParameter("datause") != null ?
                 request.getParameter("datause").split(",") : null;
-
+        if ((dUse != null) && (dUse.length > 0)) {
+            ArrayList<Integer> tmpdataUse = new ArrayList<Integer>();
+            for (String t : dUse) {
+                try {
+                    tmpdataUse.add(new Integer(t));
+                } catch (NumberFormatException e) {
+                    // Discards the unparseable input
+                }
+            }
+            if (tmpdataUse.size() > 0) {
+                dataUse = tmpdataUse.toArray(new Integer[tmpdataUse.size()]);
+            }
+            else {
+                // No valid record sent
+                dataUse = null;
+            }
+        }
         comment = request.getParameter("comment");
 
         ok = request.getParameter("ok") != null ?
@@ -81,6 +113,9 @@ public class DownloadQuery {
         sessionId = request.getParameter("sessionid");
 
         jsonSpec  = request.getParameter("json_spec");
+
+        fileName     = request.getParameter("fname");
+        metadataId   = request.getParameter("id") != null ? Integer.parseInt(request.getParameter("id")) : -1;
     }
     public boolean isInvalid() {
         return ((firstName == null) || (secondName == null)

@@ -67,6 +67,9 @@ public class ExtractorApp extends AbstractApplication {
 		DownloadQuery q = new DownloadQuery(request);
 		try {
 			connection = dataSource.getConnection();
+			if (connection == null) {
+			    throw new RuntimeException("could not get a connection to the database");
+			}
 			connection.setAutoCommit(false);
 			if (isInvalid(q)) {
 				object.put("success", false);
@@ -90,26 +93,28 @@ public class ExtractorApp extends AbstractApplication {
 				object.put("success", true);
 				object.put("msg", "Successfully added the record in database.");
 
-				out.write(object.toString().getBytes());
+				out.write(object.toString(4).getBytes());
 			}
 		} catch (Exception e) {
-			connection.rollback();
+		    if (connection != null) {
+		        connection.rollback();
+		    }
 			if (out != null) {
-				out.write("Unable to handle request.".getBytes());
+			    String message = "{ error: \"Unable to handle request: "+ e + "\" }";
+				out.write(message.getBytes());
 			}
 			logger.error("Caught exception while executing service: ", e);
 			response.setStatus(500);
 		} finally {
-			if (st != null) st.close();
-
+			if (st != null) {
+			    st.close();
+			}
 			if (resultSet != null) {
 				resultSet.close();
 			}
-
 			if (out != null) {
 				out.close();
 			}
-
 			if (connection != null) {
 				connection.setAutoCommit(true);
 				connection.close();
