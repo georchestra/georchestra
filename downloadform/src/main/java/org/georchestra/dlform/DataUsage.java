@@ -20,11 +20,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
- * data_usage controller
+ * data_usage controller: returns the content of the table downloadform.data_use
+ * as a JSON object.
  *
  * author: pmauduit
  */
-
 @Controller
 @RequestMapping("/data_usage")
 public class DataUsage {
@@ -32,9 +32,11 @@ public class DataUsage {
 	private final Log logger = LogFactory.getLog(getClass());
 
 	private DataSource dataSource;
+	private boolean activated;
 
-	public DataUsage(DataSource ds) {
+	public DataUsage(DataSource ds, boolean _activated) {
 		dataSource = ds;
+		activated = _activated;
 	}
 
 	private JSONArray getUsage() throws Exception {
@@ -68,22 +70,29 @@ public class DataUsage {
 
 	}
 	@RequestMapping(method = RequestMethod.POST)
-	public void handlePOSTRequest(HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
+	public void handlePOSTRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		handleGETRequest(request, response);
 	}
+
 	@RequestMapping(method = RequestMethod.GET)
-	public void handleGETRequest(HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
+	public void handleGETRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		response.setHeader("Content-Type", "application/json; charset=UTF-8");
-		OutputStream out = null;
+	    OutputStream out = null;
+	    out = response.getOutputStream();
+
+	    if (! activated) {
+		    out = response.getOutputStream();
+		    out.write(Utils.serviceDisabled());
+		    out.close();
+		    return;
+		}
+
 		JSONObject object = new JSONObject();
 		try {
 			  object.put("rows", getUsage());
-			  out = response.getOutputStream();
-			  out.write(object.toString().getBytes("UTF-8"));
+			  out.write(object.toString(4).getBytes("UTF-8"));
 		} catch (Exception e) {
-		    logger.debug("Failure obtaining the datausage", e);
+		    logger.debug("Failure obtaining the datause", e);
 		    throw e;
 		} finally {
 			if (out != null) {

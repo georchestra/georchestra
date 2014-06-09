@@ -4,7 +4,6 @@ import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,7 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
- * data_usage controller
+ * ExtractorApp controller: this controller manages extraction requests
+ * issued from the geOrchestra extractorapp application.
  *
  * author: pmauduit
  */
@@ -28,54 +28,54 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping("/extractorapp")
 public class ExtractorApp extends AbstractApplication {
 
-	protected ExtractorApp(DataSource ds) {
-		super(ds);
-	}
+    private final Log logger = LogFactory.getLog(getClass());
 
-	private final Log logger = LogFactory.getLog(getClass());
+    private static String INSERT_DOWNLOAD_QUERY = "INSERT INTO downloadform.extractorapp_log (username, sessionid, first_name, second_name, " +
+            "company, email, phone, comment, json_spec) " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
 
-	private final String insertDlQuery = "INSERT INTO downloadform.extractorapp_log (username, sessionid, first_name, second_name, " +
-			"company, email, phone, comment, json_spec) " +
-			"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
-
-	private final String insertDataUseQuery = "INSERT INTO downloadform.logtable_datause (logtable_id, datause_id) " +
-			"VALUES (?,?);";
-
-	private final String insertLayersQuery = "INSERT INTO downloadform.extractorapp_layers(" +
+    private final String insertLayersQuery = "INSERT INTO downloadform.extractorapp_layers(" +
             "extractorapp_log_id, projection, resolution, format, bbox_srs, " +
             "\"left\", bottom, \"right\", top, ows_url, ows_type, layer_name)" +
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 
-	private String jsonSpec;
+	public ExtractorApp(DataSource ds, boolean activated) {
+		super(ds, activated, ExtractorApp.INSERT_DOWNLOAD_QUERY);
+	}
 
 
-	protected boolean isInvalid() {
-		return super.isInvalid() || (jsonSpec == null);
+	protected boolean isInvalid(DownloadQuery q) {
+		return q.isInvalid() || (q.getJsonSpec() == null);
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public void handleGETRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-		OutputStream out = null;
+        OutputStream out = response.getOutputStream();
+
+        if (! activated) {
+            out = response.getOutputStream();
+            out.write(Utils.serviceDisabled());
+            out.close();
+            return;
+        }
 		JSONObject object   = new JSONObject();
 		ResultSet resultSet = null;
 		super.initializeVariables(request);
 		Connection connection = null;
-		jsonSpec =request.getParameter("json_spec");
 		PreparedStatement st = null;
-
+		DownloadQuery q = new DownloadQuery(request);
 		try {
 			connection = dataSource.getConnection();
 			connection.setAutoCommit(false);
-			out = response.getOutputStream();
-			if (isInvalid()) {
+			if (isInvalid(q)) {
 				object.put("success", false);
 				object.put("msg", "invalid form");
 				out.write(object.toString().getBytes());
 			} else {
-				st = prepareFirstStatement(connection, insertDlQuery, Statement.RETURN_GENERATED_KEYS);
+				st = prepareStatement(q);
 
-				st.setString(9, jsonSpec);
+				st.setString(9, q.getJsonSpec());
 
 				st.executeUpdate();
 				resultSet = st.getGeneratedKeys();
@@ -83,8 +83,8 @@ public class ExtractorApp extends AbstractApplication {
 
 				int idInserted = resultSet.getInt(1);
 
-				insertDataUse(connection, insertDataUseQuery, idInserted);
-				insertLayersLogs(connection, idInserted);
+				insertDataUse(idInserted, q);
+				insertLayersLogs(idInserted, q);
 				connection.commit();
 
 				object.put("success", true);
@@ -95,7 +95,7 @@ public class ExtractorApp extends AbstractApplication {
 		} catch (Exception e) {
 			connection.rollback();
 			if (out != null) {
-				out.write("Int'l Server Error: unable to handle request.".getBytes());
+				out.write("Unable to handle request.".getBytes());
 			}
 			logger.error("Caught exception while executing service: ", e);
 			response.setStatus(500);
@@ -117,11 +117,11 @@ public class ExtractorApp extends AbstractApplication {
 		}
 	}
 
-	protected void insertLayersLogs(Connection connection,  int idInserted) throws Exception {
+	protected void insertLayersLogs(int idInserted, DownloadQuery q) throws Exception {
 
 		PreparedStatement st = null;
 
-		JSONObject obj 	= new JSONObject(jsonSpec);
+		JSONObject obj 	= new JSONObject(q.getJsonSpec());
 		JSONObject jProp = obj.getJSONObject("globalProperties");
 
 		String projection = jProp.getString("projection");
@@ -170,7 +170,7 @@ public class ExtractorApp extends AbstractApplication {
 					lFormat = lFormat.equals("null") ? rasterFormat : lFormat;
 				}
 
-				st = connection.prepareStatement(insertLayersQuery);
+				st = dataSource.getConnection().prepareStatement(insertLayersQuery);
 				st.setInt(1, idInserted);
 				st.setString(2, lProjection);
 				st.setDouble(3, lResolution);

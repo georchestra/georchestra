@@ -4,7 +4,6 @@ import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,66 +17,70 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
- * data_usage controller
+ * This controller manages the download requests made from
+ * geOrchestra's geonetwork application.
  *
- * author: pmauduit
+ * @author pmauduit
+ *
  */
 
 @Controller
 @RequestMapping("/geonetwork")
 public class GeoNetwork extends AbstractApplication {
 
-	protected GeoNetwork(DataSource ds) {
-		super(ds);
+    private static String INSERT_DOWNLOAD_QUERY = "INSERT INTO downloadform.geonetwork_log "
+            + "   (username, sessionid, first_name, second_name, " +
+            "company, email, phone, comment, metadata_id, filename) " +
+            "VALUES "
+            + "   (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+
+	public GeoNetwork(DataSource ds, boolean activated) {
+		super(ds, activated, GeoNetwork.INSERT_DOWNLOAD_QUERY);
 	}
 
 	private final Log logger = LogFactory.getLog(getClass());
 
-	private final String insertDlQuery = "INSERT INTO downloadform.geonetwork_log (username, sessionid, first_name, second_name, " +
-			"company, email, phone, comment, metadata_id, filename) " +
-			"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 
-	private final String insertDataUseQuery = "INSERT INTO downloadform.logtable_datause (logtable_id, datause_id) " +
-			"VALUES (?,?);";
+
 
 	private String fileName;
 	private int metadataId;
 
-	protected boolean isInvalid() {
-		return super.isInvalid() || (fileName == null) || (metadataId == -1);
+	protected boolean isInvalid(DownloadQuery q) {
+		return q.isInvalid() || (fileName == null) || (metadataId == -1);
 	}
 
-	@RequestMapping(method = RequestMethod.GET)
-	public void handleGetRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		handlePOSTRequest(request, response);
-	}
+	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST })
+	public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-	@RequestMapping(method = RequestMethod.POST)
-	public void handlePOSTRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
-
-		OutputStream out = null;
+		OutputStream out = response.getOutputStream();
 		JSONObject object   = new JSONObject();
 
-		super.initializeVariables(request);
+        if (! activated) {
+            out.write(Utils.serviceDisabled());
+            out.close();
+            return;
+        }
+        DownloadQuery q = initializeVariables(request);
 
-		fileName     = request.getParameter("fname");
+        fileName     = request.getParameter("fname");
 		metadataId   = request.getParameter("id") != null ? Integer.parseInt(request.getParameter("id")) : -1;
 
 		Connection connection = null;
 		ResultSet resultSet = null;
 
 		try {
+
 			connection = dataSource.getConnection();
 			connection.setAutoCommit(false);
-			out = response.getOutputStream();
 
 			// Check form validity
-			if (isInvalid()) {
+			if (isInvalid(q)) {
 				object.put("success", false);
 				object.put("msg", "invalid form");
 				out.write(object.toString().getBytes());
 			} else {
-				PreparedStatement st = prepareFirstStatement(connection, insertDlQuery, Statement.RETURN_GENERATED_KEYS);
+				PreparedStatement st = prepareStatement(q);
 
 				st.setInt(9, metadataId);
 				st.setString(10, fileName);
@@ -88,7 +91,7 @@ public class GeoNetwork extends AbstractApplication {
 
 				int idInserted = resultSet.getInt(1);
 
-				insertDataUse(connection, insertDataUseQuery, idInserted);
+				insertDataUse(idInserted, q);
 				connection.commit();
 
 				object.put("success", true);
@@ -98,19 +101,16 @@ public class GeoNetwork extends AbstractApplication {
 		} catch (Exception e) {
 			connection.rollback();
 			if (out != null) {
-				out.write("Int'l Server Error: unable to handle request.".getBytes());
+				out.write("Unable to handle request.".getBytes());
 			}
-			logger.error("Cauht exception while executing service: ", e);
+			logger.error("Caught exception while executing service: ", e);
 			response.setStatus(500);
 		} finally {
-
 			if (out != null) {
 				out.close();
 			}
 			if (resultSet != null) { resultSet.close(); }
-
 			if (connection != null) {
-				connection.setAutoCommit(true);
 				connection.close();
 			}
 		}
