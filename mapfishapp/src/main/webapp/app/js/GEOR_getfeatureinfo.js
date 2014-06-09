@@ -349,7 +349,7 @@ GEOR.getfeatureinfo = (function() {
                     html: Xsearch ? 
                         tr("Search on all active layers") :
                         tr("<div>Search on objects active for NAME layer. " +
-                            "Clic on the map.</div>",
+                            "Click on the map.</div>",
                             {'NAME': title})
                 });
 

@@ -178,7 +178,7 @@ GEOR.selectfeature = (function() {
             if (state) {
                 observable.fireEvent("search", {
                     html: tr("<div>Select features activated on NAME layer. " +
-                          "Clic on the map.</div>",
+                          "Click on the map.</div>",
                           {'NAME': title})
                 });
             
