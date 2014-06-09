@@ -10,19 +10,18 @@ import javax.sql.DataSource;
 import org.apache.commons.logging.Log;
 
 /**
- * Abstract class that defines a generic behaviour for the different applications
- * that should ask the user for submitting a form, containing some informations
- * about his download.
+ * Abstract class that defines a generic behaviour for the different
+ * applications that should ask the user for submitting a form, containing some
+ * informations about his download.
  *
- * {@see ExtractorApp}
- * {@see GeoNetwork}
+ * {@see ExtractorApp} {@see GeoNetwork}
  *
  * @author pmauduit
  */
 public abstract class AbstractApplication {
-	protected Log logger;
+    protected Log logger;
 
-	protected DataSource dataSource;
+    protected DataSource dataSource;
 
     protected boolean activated;
     protected String insertDownloadQuery;
@@ -31,74 +30,91 @@ public abstract class AbstractApplication {
             + "    downloadform.logtable_datause (logtable_id, datause_id) "
             + "VALUES " + "    (?,?);";
 
-    protected AbstractApplication(DataSource ds, boolean _activated, String _insertDownloadQuery) {
-		dataSource = ds;
-		activated = _activated;
-		insertDownloadQuery = _insertDownloadQuery;
-	}
+    protected AbstractApplication(DataSource ds, boolean _activated,
+            String _insertDownloadQuery) {
+        dataSource = ds;
+        activated = _activated;
+        insertDownloadQuery = _insertDownloadQuery;
+    }
 
     protected abstract boolean isInvalid(DownloadQuery q);
-	/**
-	 * Convenience method used for testing purposes.
-	 * @param ds a DataSource
-	 */
-	public void setDataSource(DataSource ds) {
-	    dataSource = ds;
-	}
 
-	/**
-	 * Prepares a DownloadQuery object, containing all the informations needed to be saved
-	 * in database.
-	 * @param request
-	 * @return DownloadQuery a download query object.
-	 */
-	protected DownloadQuery initializeVariables(HttpServletRequest request) {
-	    return new DownloadQuery(request);
-	}
-
-	/**
-	 * This method prepares a statement to insert the download request into database.
-	 *
-	 * @param q
-	 * @return PreparedStatement the statement can be completed (if extra parameters to be set)
-	 * by the daughter classes.
-	 *
-	 * @throws SQLException
-	 */
-	protected PreparedStatement prepareStatement(DownloadQuery q) throws SQLException {
-	       PreparedStatement st = dataSource.getConnection().prepareStatement(insertDownloadQuery,Statement.RETURN_GENERATED_KEYS);
-	        st.setString(1, q.getUserName());
-	        st.setString(2, q.getSessionId());
-	        st.setString(3, q.getFirstName());
-	        st.setString(4, q.getSecondName());
-	        st.setString(5, q.getCompany());
-	        st.setString(6, q.getEmail());
-	        st.setString(7, q.getTel());
-	        st.setString(8, q.getComment());
-	        return st;
-	}
     /**
-     * This method inserts the data_usage into the database.
+     * Prepares a DownloadQuery object, containing all the informations needed
+     * to be saved in database.
+     *
+     * @param request
+     * @return DownloadQuery a download query object.
+     */
+    protected DownloadQuery initializeVariables(HttpServletRequest request) {
+        return new DownloadQuery(request);
+    }
+
+    /**
+     * This method prepares a statement to insert the download request into
+     * database.
      *
      * @param q
-     * @return PreparedStatement the statement can be completed (if extra parameters to be set)
-     * by the daughter classes.
+     * @return PreparedStatement the statement can be completed (if extra
+     *         parameters to be set) by the daughter classes.
      *
      * @throws SQLException
      */
-	protected void insertDataUse(int idInserted, DownloadQuery q) throws Exception {
-	        for (String dataUse : q.getDataUse()) {
-	            int dataUseI = Integer.parseInt(dataUse);
-	            PreparedStatement dataUseSt = null;
-	            try {
-	                dataUseSt = dataSource.getConnection().prepareStatement(insertDataUseQuery);
-	                dataUseSt.setInt(1, idInserted);
-	                dataUseSt.setInt(2, dataUseI);
-	                dataUseSt.execute();
-	            } finally {
-	                if (dataUseSt != null) dataUseSt.close();
-	            }
-	        }
-	    }
+    protected PreparedStatement prepareStatement(DownloadQuery q)
+            throws SQLException {
+        PreparedStatement st = dataSource.getConnection().prepareStatement(
+                insertDownloadQuery, Statement.RETURN_GENERATED_KEYS);
+        st.setString(1, q.getUserName());
+        st.setString(2, q.getSessionId());
+        st.setString(3, q.getFirstName());
+        st.setString(4, q.getSecondName());
+        st.setString(5, q.getCompany());
+        st.setString(6, q.getEmail());
+        st.setString(7, q.getTel());
+        st.setString(8, q.getComment());
+        return st;
+    }
 
+    /**
+     * This method inserts the data_usage into the database.
+     *
+     * @param idInserted
+     * @param q
+     * @return PreparedStatement the statement can be completed (if extra
+     *         parameters to be set) by the daughter classes.
+     *
+     * @throws SQLException
+     */
+    protected void insertDataUse(int idInserted, DownloadQuery q)
+            throws Exception {
+        for (String dataUse : q.getDataUse()) {
+            int dataUseI = Integer.parseInt(dataUse);
+            PreparedStatement dataUseSt = null;
+            try {
+                dataUseSt = dataSource.getConnection().prepareStatement(
+                        insertDataUseQuery);
+                dataUseSt.setInt(1, idInserted);
+                dataUseSt.setInt(2, dataUseI);
+                dataUseSt.execute();
+            } finally {
+                if (dataUseSt != null)
+                    dataUseSt.close();
+            }
+        }
+    }
+
+    /**
+     * Convenience method used for testing purposes.
+     * @param ds a DataSource
+     */
+    public void setDataSource(DataSource ds) {
+        dataSource = ds;
+    }
+    /**
+     * Convenience method used for testing purposes.
+     * @param activated wheter the service is activated or not.
+     */
+    public void setActivated(boolean _activated) {
+        activated = _activated;
+    }
 }

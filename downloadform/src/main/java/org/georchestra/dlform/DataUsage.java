@@ -40,7 +40,7 @@ public class DataUsage {
 	}
 
 	private JSONArray getUsage() throws Exception {
-		JSONArray ret = new JSONArray ();
+		JSONArray ret = new JSONArray();
 		Connection connection = null;
 		Statement sql = null;
 		ResultSet results = null;
@@ -48,15 +48,14 @@ public class DataUsage {
 			connection = dataSource.getConnection();
 			sql = connection.createStatement();
 
-			results = sql
-					.executeQuery("SELECT * FROM downloadform.data_use");
-			ResultSetMetaData md = results.getMetaData();
+			results = sql.executeQuery("SELECT * FROM downloadform.data_use");
+
 			if (results != null) {
+		        ResultSetMetaData md = results.getMetaData();
 				while (results.next()) {
 					HashMap<String, String> record = new HashMap<String, String>();
 					record.put(md.getColumnLabel(1), results.getString(1));
 					record.put(md.getColumnLabel(2), results.getString(2));
-
 					ret.put(record);
 				}
 			}
@@ -69,13 +68,9 @@ public class DataUsage {
 		return ret;
 
 	}
-	@RequestMapping(method = RequestMethod.POST)
-	public void handlePOSTRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		handleGETRequest(request, response);
-	}
 
-	@RequestMapping(method = RequestMethod.GET)
-	public void handleGETRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST})
+	public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		response.setHeader("Content-Type", "application/json; charset=UTF-8");
 	    OutputStream out = null;
 	    out = response.getOutputStream();
@@ -92,13 +87,21 @@ public class DataUsage {
 			  object.put("rows", getUsage());
 			  out.write(object.toString(4).getBytes("UTF-8"));
 		} catch (Exception e) {
-		    logger.debug("Failure obtaining the datause", e);
+		    logger.debug("Failure obtaining the data_use table content", e);
 		    throw e;
 		} finally {
 			if (out != null) {
 				out.close();
 			}
 		}
+	}
+
+	/**
+	 * Method used only for convenience (testing).
+	 * @param activated whether the service should be activated or not.
+	 */
+	public void setActivated(boolean _activated) {
+	    activated = _activated;
 	}
 
 }
