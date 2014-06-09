@@ -22,6 +22,7 @@ import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.DistinguishedName;
+import org.springframework.ldap.core.LdapRdn;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.filter.AbstractFilter;
 import org.springframework.ldap.filter.AndFilter;
@@ -37,6 +38,7 @@ public final class AccountDaoImpl implements AccountDao{
 	private LdapTemplate ldapTemplate;
 	private GroupDao groupDao;
     private String uniqueNumberField = "employeeNumber";
+	private LdapRdn userSearchBaseRdn;
     private AtomicInteger uniqueNumberCounter = new AtomicInteger(-1);
 
     @Autowired
@@ -66,6 +68,10 @@ public final class AccountDaoImpl implements AccountDao{
     public void setUniqueNumberField(String uniqueNumberField) {
         this.uniqueNumberField = uniqueNumberField;
     }
+
+	public void setUserSearchBaseRdn(String userSearchBaseDN) {
+		this.userSearchBaseRdn = new LdapRdn(userSearchBaseDN);
+	}
 
 	/**
 	 * @see {@link AccountDao#insert(Account, String)}
@@ -333,7 +339,7 @@ public final class AccountDaoImpl implements AccountDao{
 	 */
 	private DistinguishedName buildDn(String  uid) {
 		DistinguishedName dn = new DistinguishedName();
-		dn.add("ou", "users");
+		dn.add(userSearchBaseRdn);
 		dn.add("uid", uid);
 
 		return dn;

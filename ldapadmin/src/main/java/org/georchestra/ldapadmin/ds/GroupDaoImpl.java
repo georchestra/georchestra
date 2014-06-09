@@ -32,6 +32,7 @@ import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.DistinguishedName;
+import org.springframework.ldap.core.LdapRdn;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.SearchExecutor;
 import org.springframework.ldap.core.support.LdapContextSource;
@@ -54,7 +55,8 @@ public class GroupDaoImpl implements GroupDao {
 	private LdapTemplate ldapTemplate;
 
     private String uniqueNumberField = "ou";
-
+	private LdapRdn groupSearchBaseRdn;
+	private LdapRdn userSearchBaseRdn;
     private AtomicInteger uniqueNumberCounter = new AtomicInteger(-1);
 
     public LdapTemplate getLdapTemplate() {
@@ -67,6 +69,12 @@ public class GroupDaoImpl implements GroupDao {
     public void setUniqueNumberField(String uniqueNumberField) {
         this.uniqueNumberField = uniqueNumberField;
     }
+	public void setGroupSearchBaseRdn(String groupSearchBaseDN) {
+		this.groupSearchBaseRdn = new LdapRdn(groupSearchBaseDN);
+	}
+	public void setUserSearchBaseRdn(String userSearchBaseDN) {
+		this.userSearchBaseRdn = new LdapRdn(userSearchBaseDN);
+	}
 
     /**
 	 * Create an ldap entry for the group
@@ -77,7 +85,7 @@ public class GroupDaoImpl implements GroupDao {
 	private DistinguishedName buildGroupDn(String cn) {
 		DistinguishedName dn = new DistinguishedName();
 
-		dn.add("ou", "groups");
+		dn.add(groupSearchBaseRdn);
 		dn.add("cn", cn);
 
 		return dn;
@@ -95,9 +103,7 @@ public class GroupDaoImpl implements GroupDao {
 			LdapContextSource ctxsrc = (LdapContextSource) this.ldapTemplate.getContextSource();
 			dn.addAll(ctxsrc.getBaseLdapPath());
 		} catch (InvalidNameException e) {}
-		// TODO: the baseDN of the users should be retrieved from the shared
-		// configuration.
-		dn.add("ou", "users");
+		dn.add(userSearchBaseRdn);
 		dn.add("uid", uid);
 
 		return dn;
@@ -170,7 +176,7 @@ public class GroupDaoImpl implements GroupDao {
 
 		AndFilter filter = new AndFilter();
 		filter.and(new EqualsFilter("objectClass", "ou"));
-		filter.and(new EqualsFilter("ou", "groups"));
+		filter.and(new EqualsFilter(groupSearchBaseRdn.getKey(), groupSearchBaseRdn.getValue()));
 		filter.and(new EqualsFilter("cn", groupName));
 
 		List<String> memberList = ldapTemplate.search(
