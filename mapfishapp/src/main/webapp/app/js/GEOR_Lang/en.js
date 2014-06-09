@@ -83,8 +83,8 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
     "Visibility range (indicative):<br />from TEXT":
         "Visibility range (indicative):<br />from ${TEXT}",
     /* GEOR_map.js strings */
-    "The <b>NAME</b> layer could not appear for that reason: ":
-        "The <b>${NAME}</b> layer could not appear for that reason: ",
+    "The <b>NAME</b> layer could not appear for this reason: ":
+        "The <b>${NAME}</b> layer could not appear for this reason: ",
     /* GEOR_mapinit.js strings */
     "NB layers not imported": "${NB} layers not imported",
     "mapinit.layers.load.error":
@@ -108,10 +108,10 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
     /* GEOR_querier.js strings */
     "Request on NAME": "Request on ${NAME}",
     "querier.layer.no.geom":
-        "That layer has no geometric column." +
+        "This layer has no geometric column." +
         "<br />The geometric request module will not work",
     "querier.layer.error":
-        "Impossible to get the characteristics of that layer" +
+        "Impossible to get the characteristics of this layer" +
         "<br />The geometric request module will be disabled",
     /* GEOR_resultspanel.js */
     "resultspanel.maxfeature.reached":
