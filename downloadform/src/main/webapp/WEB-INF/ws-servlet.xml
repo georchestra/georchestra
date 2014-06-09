@@ -4,21 +4,22 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
  
     <bean name="data_usage" class="org.georchestra.dlform.DataUsage">
-        <constructor-arg ref="postgresqlconnection" />     
+        <constructor-arg ref="dataSource" />     
     </bean>
     <bean name="extractorapp" class="org.georchestra.dlform.ExtractorApp">
-        <constructor-arg ref="postgresqlconnection" /> 
+        <constructor-arg ref="dataSource" /> 
     </bean>
     <bean name="geonetwork" class="org.georchestra.dlform.GeoNetwork">
-        <constructor-arg ref="postgresqlconnection" />     
+        <constructor-arg ref="dataSource" />     
     </bean>
 
-    <bean name="postgresqlconnection" class="org.georchestra.dlform.PostGresqlConnection">
-        <constructor-arg value="${dlJdbcUrl}" /> 
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="org.postgresql.Driver"/>
+        <property name="url" value="${dlJdbcUrl}"/>
     </bean>
- 
+
     <!-- Substitutes any ${...} variables in this (and loaded) spring configuration file
-with values from the properties file -->
+         with values from the properties file -->
     <bean id="properties-loader"
           class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
           p:locations="/WEB-INF/downloadform.properties"/>

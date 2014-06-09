@@ -8,6 +8,7 @@ import java.sql.Statement;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * data_usage controller
- * 
+ *
  * author: pmauduit
  */
 
@@ -26,47 +27,47 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping("/geonetwork")
 public class GeoNetwork extends AbstractApplication {
 
-	protected GeoNetwork(PostGresqlConnection pgpool) {
-		super(pgpool);
+	protected GeoNetwork(DataSource ds) {
+		super(ds);
 	}
 
 	private final Log logger = LogFactory.getLog(getClass());
-	
+
 	private final String insertDlQuery = "INSERT INTO downloadform.geonetwork_log (username, sessionid, first_name, second_name, " +
 			"company, email, phone, comment, metadata_id, filename) " +
 			"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
-	
+
 	private final String insertDataUseQuery = "INSERT INTO downloadform.logtable_datause (logtable_id, datause_id) " +
 			"VALUES (?,?);";
-	
+
 	private String fileName;
 	private int metadataId;
-	
+
 	protected boolean isInvalid() {
 		return super.isInvalid() || (fileName == null) || (metadataId == -1);
 	}
-	
+
 	@RequestMapping(method = RequestMethod.GET)
 	public void handleGetRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		handlePOSTRequest(request, response);
 	}
-	
+
 	@RequestMapping(method = RequestMethod.POST)
 	public void handlePOSTRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		
+
 		OutputStream out = null;
 		JSONObject object   = new JSONObject();
-			
+
 		super.initializeVariables(request);
-		
+
 		fileName     = request.getParameter("fname");
 		metadataId   = request.getParameter("id") != null ? Integer.parseInt(request.getParameter("id")) : -1;
 
 		Connection connection = null;
 		ResultSet resultSet = null;
-		
+
 		try {
-			connection = postgresqlConnection.getConnection();
+			connection = dataSource.getConnection();
 			connection.setAutoCommit(false);
 			out = response.getOutputStream();
 
@@ -84,12 +85,12 @@ public class GeoNetwork extends AbstractApplication {
 				st.executeUpdate();
 				resultSet = st.getGeneratedKeys();
 				resultSet.next();
-				
+
 				int idInserted = resultSet.getInt(1);
-				
+
 				insertDataUse(connection, insertDataUseQuery, idInserted);
 				connection.commit();
-				
+
 				object.put("success", true);
 				object.put("msg", "Successfully added the record in database.");
 				out.write(object.toString().getBytes());
@@ -108,9 +109,9 @@ public class GeoNetwork extends AbstractApplication {
 			}
 			if (resultSet != null) { resultSet.close(); }
 
-			if (connection != null) { 
+			if (connection != null) {
 				connection.setAutoCommit(true);
-				connection.close(); 
+				connection.close();
 			}
 		}
 	}

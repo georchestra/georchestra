@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 
@@ -21,13 +22,13 @@ public abstract class AbstractApplication {
 	protected boolean ok;
 	protected String userName;
 	protected String sessionId;
-	
-	protected PostGresqlConnection postgresqlConnection;
-	
-	protected AbstractApplication(PostGresqlConnection pgpool) {
-		postgresqlConnection = pgpool;
+
+	protected DataSource dataSource;
+
+	protected AbstractApplication(DataSource ds) {
+		dataSource = ds;
 	}
-	
+
 	protected boolean isInvalid() {
 		return ((firstName == null) || (secondName == null)	|| (company == null) || (email == null)
 				|| (dataUseStr == null) || (ok == false) || (sessionId == null));
@@ -50,7 +51,7 @@ public abstract class AbstractApplication {
 
 		sessionId    = request.getParameter("sessionid");
 	}
-	
+
 	protected void insertDataUse(Connection connection, String insertDataUseQuery, int idInserted) throws Exception {
 		for (String dataUse : dataUseStr) {
 			int dataUseI = Integer.parseInt(dataUse);
@@ -68,7 +69,7 @@ public abstract class AbstractApplication {
 	protected PreparedStatement prepareFirstStatement(Connection connection,
 			String query, int returnGeneratedKeys) throws SQLException {
 		PreparedStatement st = connection.prepareStatement(query,Statement.RETURN_GENERATED_KEYS);
-		
+
 
 		st.setString(1, userName);
 		st.setString(2, sessionId);

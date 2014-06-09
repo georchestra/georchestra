@@ -9,6 +9,7 @@ import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * data_usage controller
- * 
+ *
  * author: pmauduit
  */
 
@@ -30,10 +31,10 @@ public class DataUsage {
 
 	private final Log logger = LogFactory.getLog(getClass());
 
-	private PostGresqlConnection postgresqlConnection;
-	
-	public DataUsage(PostGresqlConnection pgpool) {
-		postgresqlConnection = pgpool;
+	private DataSource dataSource;
+
+	public DataUsage(DataSource ds) {
+		dataSource = ds;
 	}
 
 	private JSONArray getUsage() throws Exception {
@@ -42,7 +43,7 @@ public class DataUsage {
 		Statement sql = null;
 		ResultSet results = null;
 		try {
-			connection = postgresqlConnection.getConnection();
+			connection = dataSource.getConnection();
 			sql = connection.createStatement();
 
 			results = sql
@@ -53,7 +54,7 @@ public class DataUsage {
 					HashMap<String, String> record = new HashMap<String, String>();
 					record.put(md.getColumnLabel(1), results.getString(1));
 					record.put(md.getColumnLabel(2), results.getString(2));
-					
+
 					ret.put(record);
 				}
 			}

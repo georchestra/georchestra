@@ -8,6 +8,7 @@ import java.sql.Statement;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * data_usage controller
- * 
+ *
  * author: pmauduit
  */
 
@@ -27,8 +28,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping("/extractorapp")
 public class ExtractorApp extends AbstractApplication {
 
-	protected ExtractorApp(PostGresqlConnection pgpool) {
-		super(pgpool);
+	protected ExtractorApp(DataSource ds) {
+		super(ds);
 	}
 
 	private final Log logger = LogFactory.getLog(getClass());
@@ -36,25 +37,25 @@ public class ExtractorApp extends AbstractApplication {
 	private final String insertDlQuery = "INSERT INTO downloadform.extractorapp_log (username, sessionid, first_name, second_name, " +
 			"company, email, phone, comment, json_spec) " +
 			"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
-	
+
 	private final String insertDataUseQuery = "INSERT INTO downloadform.logtable_datause (logtable_id, datause_id) " +
 			"VALUES (?,?);";
-	
+
 	private final String insertLayersQuery = "INSERT INTO downloadform.extractorapp_layers(" +
             "extractorapp_log_id, projection, resolution, format, bbox_srs, " +
             "\"left\", bottom, \"right\", top, ows_url, ows_type, layer_name)" +
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
-	
+
 	private String jsonSpec;
-	
-	
+
+
 	protected boolean isInvalid() {
 		return super.isInvalid() || (jsonSpec == null);
 	}
-	
+
 	@RequestMapping(method = RequestMethod.POST)
 	public void handleGETRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		
+
 		OutputStream out = null;
 		JSONObject object   = new JSONObject();
 		ResultSet resultSet = null;
@@ -62,9 +63,9 @@ public class ExtractorApp extends AbstractApplication {
 		Connection connection = null;
 		jsonSpec =request.getParameter("json_spec");
 		PreparedStatement st = null;
-		
+
 		try {
-			connection = postgresqlConnection.getConnection();
+			connection = dataSource.getConnection();
 			connection.setAutoCommit(false);
 			out = response.getOutputStream();
 			if (isInvalid()) {
@@ -75,20 +76,20 @@ public class ExtractorApp extends AbstractApplication {
 				st = prepareFirstStatement(connection, insertDlQuery, Statement.RETURN_GENERATED_KEYS);
 
 				st.setString(9, jsonSpec);
-				
+
 				st.executeUpdate();
 				resultSet = st.getGeneratedKeys();
 				resultSet.next();
-				
+
 				int idInserted = resultSet.getInt(1);
-				
+
 				insertDataUse(connection, insertDataUseQuery, idInserted);
 				insertLayersLogs(connection, idInserted);
 				connection.commit();
-				
+
 				object.put("success", true);
 				object.put("msg", "Successfully added the record in database.");
-				
+
 				out.write(object.toString().getBytes());
 			}
 		} catch (Exception e) {
@@ -100,7 +101,7 @@ public class ExtractorApp extends AbstractApplication {
 			response.setStatus(500);
 		} finally {
 			if (st != null) st.close();
-			
+
 			if (resultSet != null) {
 				resultSet.close();
 			}
@@ -108,26 +109,26 @@ public class ExtractorApp extends AbstractApplication {
 			if (out != null) {
 				out.close();
 			}
-			
+
 			if (connection != null) {
 				connection.setAutoCommit(true);
 				connection.close();
 			}
 		}
 	}
-	
+
 	protected void insertLayersLogs(Connection connection,  int idInserted) throws Exception {
-		
+
 		PreparedStatement st = null;
-	    
+
 		JSONObject obj 	= new JSONObject(jsonSpec);
 		JSONObject jProp = obj.getJSONObject("globalProperties");
-		
+
 		String projection = jProp.getString("projection");
 		double resolution = jProp.getDouble("resolution");
 		String rasterFormat  = jProp.getString("rasterFormat");
 		String vectorFormat  = jProp.getString("vectorFormat");
-		
+
 		JSONObject jBbox = jProp.getJSONObject("bbox");
 		String bbox_srs = jBbox.getString("srs");
 		JSONArray jValue = jBbox.getJSONArray("value");
@@ -135,9 +136,9 @@ public class ExtractorApp extends AbstractApplication {
 		double bottom = jValue.getDouble(1);
 		double right = jValue.getDouble(2);
 		double top = jValue.getDouble(3);
-		
+
 		try {
-			
+
 			JSONArray jLayers = obj.getJSONArray("layers");
 			for (int i =0;  i < jLayers.length() ; ++i) {
 				JSONObject jLayer = jLayers.getJSONObject(i);
@@ -147,10 +148,10 @@ public class ExtractorApp extends AbstractApplication {
 				String owsType  = jLayer.getString("owsType");
 				String owsUrl  = jLayer.getString("owsUrl");
 				String layerName  = jLayer.getString("layerName");
-				
+
 				double lLeft=left, lBottom=bottom, lRight=right, lTop=top;
 				String lSrs=bbox_srs;
-				
+
 				if(!jLayer.getString("bbox").equals("null")) {
 					JSONObject lBbox = jLayer.getJSONObject("bbox");
 					lSrs = lBbox.getString("srs").equals("null") ? lSrs : lBbox.getString("srs");
@@ -162,13 +163,13 @@ public class ExtractorApp extends AbstractApplication {
 						lTop = lValue.getDouble(3);
 					}
 				}
-				
+
 				if("WFS".equals(owsType)) {
 					lFormat = lFormat.equals("null") ? vectorFormat : lFormat;
 				} else if ("WCS".equals(owsType)) {
 					lFormat = lFormat.equals("null") ? rasterFormat : lFormat;
 				}
-				
+
 				st = connection.prepareStatement(insertLayersQuery);
 				st.setInt(1, idInserted);
 				st.setString(2, lProjection);
