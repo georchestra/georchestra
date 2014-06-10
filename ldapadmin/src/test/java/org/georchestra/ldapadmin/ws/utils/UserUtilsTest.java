@@ -15,19 +15,24 @@ public class UserUtilsTest {
 
 	@Test
 	public void testIsUidValid1() {
-		Boolean result = UserUtils.isUidValid("123456");
+		boolean result = UserUtils.isUidValid("123456");
 		assertEquals(false, result);
 	}
 
 	@Test
 	public void testIsUidValid2() {
-		Boolean result = UserUtils.isUidValid("a1234.asd56");
+		boolean result = UserUtils.isUidValid("a1234.asd56");
 		assertEquals(true, result);
 	}
 
 	@Test
 	public void testIsUidValid3() {
-		Boolean result = UserUtils.isUidValid("a_1234.asd56");
+		boolean result = UserUtils.isUidValid("a_1234.asd56");
 		assertEquals(false, result);
+	}
+
+	@Test
+	public void testIsUidValid4() {
+		assertEquals("[A-Za-z]+[A-Za-z0-9.]*", UserUtils.getUidRegExp());
 	}
 }
