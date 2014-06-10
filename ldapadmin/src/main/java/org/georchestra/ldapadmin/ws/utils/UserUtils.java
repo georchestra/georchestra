@@ -43,19 +43,8 @@ public class UserUtils {
 	 * @return true if the uid is valid
 	 */
 	public static boolean isUidValid(String uid) {
-
-		char firstChar = uid.charAt(0); 
-		if(!Character.isLetter(firstChar)){
-			return false;
-		}
-		for(int i=1; i < uid.length(); i++){
-			
-			if( !(Character.isLetter( uid.charAt(i)) ||  Character.isDigit( uid.charAt(i)) || ( uid.charAt(i) == '.')) ){
-				
-				return false;
-			} 
-		}
-		return true;
+		String pattern = "[A-Za-z]+[A-Za-z0-9.]*";
+		return uid.matches(pattern);
 	}
 
 	public static void validate(String firstName, String surname, Errors errors) {
