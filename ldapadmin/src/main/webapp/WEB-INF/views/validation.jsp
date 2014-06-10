@@ -53,13 +53,13 @@ function testEmail() {
 	}
 	return true;
 }
-function testUid() {
+function testUid(regexp) {
 	var uid = document.form.uid.value;
 	removeError("uid");
 	if (!isNotEmpty(uid) && isFieldRequired("uid")) {
 		addError("uid", '<s:message code="uid.error.required" />');
 		return false;
-	} else if (!isUidValid(uid)) {
+	} else if (!isUidValid(uid, regexp)) {
 		addError("uid", '<s:message code="uid.error.invalid" />');
 		return false;
 	}
@@ -207,14 +207,16 @@ function isFieldRequired(id) {
 /**
  * Test if a uid string is valid
  * 
- * The first character must be a letter, and the uid must contain only
+ * By default, the first character must be a letter, and the uid must contain only
  * letters, digits and/or the '.' character
  * 
  * @param {String} uid
+ * @param {String} regexpStr
  * @returns {boolean}
  */
-function isUidValid(uid) {
-	var match = str.match(/${uidRegExp}/ig);
+function isUidValid(uid, regexpStr) {
+	regexp = new RegExp(regexpStr, "gi");
+	var match = str.match(regexp);
 	return match != null && uid == match[0];
 }
 

@@ -94,6 +94,7 @@ public final class NewAccountFormController {
 				session.setAttribute(f + "Required", "true");
 			}
 		}
+		session.setAttribute("uidRegExp", UserUtils.getUidRegExp());
 		return "createAccountForm";
 	}
 	
