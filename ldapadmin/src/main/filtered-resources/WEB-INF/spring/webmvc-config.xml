@@ -182,4 +182,8 @@
 	<bean id="userUtils" class="org.georchestra.ldapadmin.ws.utils.UserUtils">
 		<property name="uidRegExp" value="${uidRegExp}" />
 	</bean>
+
+	<bean id="accountForm" class="org.georchestra.ldapadmin.ws.newaccount.AccountFormBean">
+		<property name="generateUid" value="${generateUid}" />
+	</bean>
 </beans>

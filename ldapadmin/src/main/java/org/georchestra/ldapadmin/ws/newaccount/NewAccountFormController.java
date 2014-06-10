@@ -63,6 +63,9 @@ public final class NewAccountFormController {
 	private ReCaptcha reCaptcha; 
 
 	private ReCaptchaParameters reCaptchaParameters;
+
+	@Autowired
+	private AccountFormBean formBean;
 	
 	private static final String[] fields = {"firstName","surname", "email", "phone", "org", "title", "description", "uid", "password", "confirmPassword"};
 	
@@ -85,10 +88,9 @@ public final class NewAccountFormController {
 	public String setupForm(HttpServletRequest request, Model model) throws IOException{
 
 		HttpSession session = request.getSession();
-		AccountFormBean formBean = new AccountFormBean();
-		
 		model.addAttribute(formBean);
 		session.setAttribute("reCaptchaPublicKey", this.reCaptchaParameters.getPublicKey());
+		session.setAttribute("generateUid", formBean.getGenerateUid());
 		for (String f : fields) {
 			if (Validation.isFieldRequired(f)) {
 				session.setAttribute(f + "Required", "true");
