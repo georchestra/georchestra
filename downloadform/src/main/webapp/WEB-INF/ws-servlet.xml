@@ -12,10 +12,13 @@
     <constructor-arg ref="dataSource"/>
     <constructor-arg value="${activated}"/>
   </bean>
-  <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+  <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
     <property name="url" value="${dlJdbcUrl}"/>
-    <property name="initialSize" value="1"/>
-    <property name="maxActive" value="5"/>
+    <property name="testOnBorrow" value="true"/>
+    <property name="poolPreparedStatements" value="true"/>
+    <property name="maxOpenPreparedStatements" value="-1"/>
+    <property name="defaultReadOnly" value="false"/>
+    <property name="defaultAutoCommit" value="true"/>
   </bean>
   <!-- Substitutes any ${...} variables in this (and loaded) spring configuration file
          with values from the properties file -->

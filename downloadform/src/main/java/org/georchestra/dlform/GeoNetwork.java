@@ -39,9 +39,6 @@ public class GeoNetwork extends AbstractApplication {
 
     private final Log logger = LogFactory.getLog(getClass());
 
-    private String fileName;
-    private int metadataId;
-
     protected boolean isInvalid(DownloadQuery q) {
         return q.isInvalid() || (q.getFileName() == null) || (q.getMetadataId() == -1);
     }
@@ -73,10 +70,10 @@ public class GeoNetwork extends AbstractApplication {
                 object.put("msg", "invalid form");
                 out.write(object.toString().getBytes());
             } else {
-                PreparedStatement st = prepareStatement(q);
+                PreparedStatement st = prepareStatement(connection, q);
 
-                st.setInt(9, metadataId);
-                st.setString(10, fileName);
+                st.setInt(9, q.getMetadataId());
+                st.setString(10, q.getFileName());
 
                 st.executeUpdate();
                 resultSet = st.getGeneratedKeys();
@@ -84,7 +81,7 @@ public class GeoNetwork extends AbstractApplication {
 
                 int idInserted = resultSet.getInt(1);
 
-                insertDataUse(idInserted, q);
+                insertDataUse(idInserted, q, connection);
                 connection.commit();
 
                 object.put("success", true);
@@ -95,7 +92,7 @@ public class GeoNetwork extends AbstractApplication {
             if (connection != null)
                 connection.rollback();
             if (out != null) {
-                String message = "{ error: \"Unable to handle request: " + e + "\" }";
+                String message = "{ error: \"Unable to handle request: " + e.toString().replaceAll("\"", "") + "\" }";
                 out.write(message.getBytes());
             }
             logger.error("Caught exception while executing service: ", e);

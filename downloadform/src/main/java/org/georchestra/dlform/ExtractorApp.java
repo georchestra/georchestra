@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
  *
  * author: pmauduit
  */
-
 @Controller
 @RequestMapping("/extractorapp")
 public class ExtractorApp extends AbstractApplication {
@@ -61,7 +60,7 @@ public class ExtractorApp extends AbstractApplication {
         }
 		JSONObject object   = new JSONObject();
 		ResultSet resultSet = null;
-		super.initializeVariables(request);
+
 		Connection connection = null;
 		PreparedStatement st = null;
 		DownloadQuery q = new DownloadQuery(request);
@@ -76,7 +75,7 @@ public class ExtractorApp extends AbstractApplication {
 				object.put("msg", "invalid form");
 				out.write(object.toString().getBytes());
 			} else {
-				st = prepareStatement(q);
+				st = prepareStatement(connection, q);
 
 				st.setString(9, q.getJsonSpec());
 
@@ -86,8 +85,8 @@ public class ExtractorApp extends AbstractApplication {
 
 				int idInserted = resultSet.getInt(1);
 
-				insertDataUse(idInserted, q);
-				insertLayersLogs(idInserted, q);
+				insertDataUse(idInserted, q, connection);
+				insertLayersLogs(idInserted, q, connection);
 				connection.commit();
 
 				object.put("success", true);
@@ -122,7 +121,7 @@ public class ExtractorApp extends AbstractApplication {
 		}
 	}
 
-	protected void insertLayersLogs(int idInserted, DownloadQuery q) throws Exception {
+	protected void insertLayersLogs(int idInserted, DownloadQuery q, Connection c) throws Exception {
 
 		PreparedStatement st = null;
 
@@ -175,7 +174,7 @@ public class ExtractorApp extends AbstractApplication {
 					lFormat = lFormat.equals("null") ? rasterFormat : lFormat;
 				}
 
-				st = dataSource.getConnection().prepareStatement(insertLayersQuery);
+				st = c.prepareStatement(insertLayersQuery);
 				st.setInt(1, idInserted);
 				st.setString(2, lProjection);
 				st.setDouble(3, lResolution);

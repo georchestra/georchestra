@@ -1,5 +1,6 @@
 package org.georchestra.dlform;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -62,10 +63,9 @@ public abstract class AbstractApplication {
      *
      * @throws SQLException
      */
-    protected PreparedStatement prepareStatement(DownloadQuery q)
+    protected PreparedStatement prepareStatement(Connection c, DownloadQuery q)
             throws SQLException {
-        PreparedStatement st = dataSource.getConnection().prepareStatement(
-                insertDownloadQuery, Statement.RETURN_GENERATED_KEYS);
+        PreparedStatement st = c.prepareStatement(insertDownloadQuery, Statement.RETURN_GENERATED_KEYS);
         st.setString(1, q.getUserName());
         st.setString(2, q.getSessionId());
         st.setString(3, q.getFirstName());
@@ -87,13 +87,13 @@ public abstract class AbstractApplication {
      *
      * @throws SQLException
      */
-    protected void insertDataUse(int idInserted, DownloadQuery q)
+    protected void insertDataUse(int idInserted, DownloadQuery q, Connection c)
             throws Exception {
         for (Integer dataUse : q.getDataUse()) {
             int dataUseI = dataUse.intValue();
             PreparedStatement dataUseSt = null;
             try {
-                dataUseSt = dataSource.getConnection().prepareStatement(insertDataUseQuery);
+                dataUseSt = c.prepareStatement(insertDataUseQuery);
                 dataUseSt.setInt(1, idInserted);
                 dataUseSt.setInt(2, dataUseI);
                 dataUseSt.execute();
