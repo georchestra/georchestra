@@ -107,7 +107,7 @@
      * ("keyup" or "change" event - "input" event is not available with this version of spring)
      */
     function makeUid(){
-        if (!"${generateUid}".equals("false")) {
+        if (!"${accountFormBean.generateUid}".equals("false")) {
             var name = document.form.firstName.value;
             var surname = document.form.surname.value;
             var str = stringDeaccentuate(name.toLowerCase().charAt(0)+ surname.toLowerCase());

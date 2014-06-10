@@ -90,7 +90,6 @@ public final class NewAccountFormController {
 		HttpSession session = request.getSession();
 		model.addAttribute(formBean);
 		session.setAttribute("reCaptchaPublicKey", this.reCaptchaParameters.getPublicKey());
-		session.setAttribute("generateUid", formBean.getGenerateUid());
 		for (String f : fields) {
 			if (Validation.isFieldRequired(f)) {
 				session.setAttribute(f + "Required", "true");
