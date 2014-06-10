@@ -210,9 +210,6 @@ Ext.namespace("GEOR");
         
         var southPanel = new Ext.TabPanel({
             region: "south",
-            hidden: !GEOR.ResultsPanel, // hide this panel if
-                                        // the ResultsPanel
-                                        // class is undefined
             split: true,
             collapsible: true,
             collapsed: true,
