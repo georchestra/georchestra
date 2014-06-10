@@ -147,7 +147,7 @@
     }
     /* Validate the form */
     function validate() {
-        if (testFirstname() & testSurname() & testEmail() & testUid(${uidRegExp}) & testPassword() & testConfirmPassword() & testRecaptcha() &
+        if (testFirstname() & testSurname() & testEmail() & testUid("${uidRegExp}") & testPassword() & testConfirmPassword() & testRecaptcha() &
 			testField("phone") & testField("org") & testField("title") & testField("description")
         ) {
             return true;
