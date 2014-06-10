@@ -42,7 +42,7 @@ public class UserUtils {
 	 * @param uid user identifier
 	 * @return true if the uid is valid
 	 */
-	private static boolean isUidValid(String uid) {
+	public static boolean isUidValid(String uid) {
 
 		char firstChar = uid.charAt(0); 
 		if(!Character.isLetter(firstChar)){
