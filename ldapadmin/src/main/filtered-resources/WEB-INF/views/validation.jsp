@@ -214,11 +214,8 @@ function isFieldRequired(id) {
  * @returns {boolean}
  */
 function isUidValid(uid) {
-	if (uid.charAt(0).match(/[a-z]/ig) && (uid.match(/[a-z0-9\.]/ig).length == uid.length)) {
-		return true;
-	} else {
-		return false;
-	}
+	var match = str.match(/${uidRegExp}/ig);
+	return match != null && uid == match[0];
 }
 
 /**
