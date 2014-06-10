@@ -213,6 +213,7 @@ angular.module('ldapadmin.controllers', [])
       $scope.user = Restangular.copy(remote);
 
       $scope.groupsChanged = false;
+      $scope.editUid = false;
 
       $scope.save = function() {
         $scope.user.put().then(function() {
@@ -295,6 +296,7 @@ angular.module('ldapadmin.controllers', [])
     });
   })
   .controller('UserCreateCtrl', function($scope, Restangular, flash) {
+      $scope.editUid = "${generateUid}"==="false";
       $scope.save = function() {
         Restangular.all('users').post(
           $scope.user
