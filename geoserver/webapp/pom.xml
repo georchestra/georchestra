@@ -149,7 +149,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.extension</groupId>
-                    <artifactId>arcsde</artifactId> 
+                    <artifactId>gs-arcsde</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -178,7 +178,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.extension</groupId>
-                    <artifactId>sqlserver</artifactId> 
+                    <artifactId>gs-sqlserver</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -188,7 +188,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.extension</groupId>
-                    <artifactId>oracle</artifactId> 
+                    <artifactId>gs-oracle</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -198,7 +198,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.extension</groupId>
-                    <artifactId>mysql</artifactId> 
+                    <artifactId>gs-mysql</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -213,7 +213,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver</groupId>
-                    <artifactId>wfsv</artifactId>
+                    <artifactId>gs-wfsv</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -223,7 +223,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.extension</groupId>
-                    <artifactId>h2</artifactId>
+                    <artifactId>gs-h2</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -233,7 +233,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.extension</groupId>
-                    <artifactId>validation</artifactId>
+                    <artifactId>gs-validation</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -253,7 +253,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.extension</groupId>
-                    <artifactId>geosearch</artifactId> 
+                    <artifactId>gs-geosearch</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -263,7 +263,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.extension</groupId>
-                    <artifactId>imagemosaic-jdbc</artifactId> 
+                    <artifactId>gs-imagemosaic-jdbc</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -273,7 +273,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.extension</groupId>
-                    <artifactId>feature-pregeneralized</artifactId> 
+                    <artifactId>gs-feature-pregeneralized</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -283,7 +283,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.community</groupId>
-                    <artifactId>printing</artifactId>
+                    <artifactId>gs-printing</artifactId>
                     <version>${gs.version}</version> 
                 </dependency>
             </dependencies>
@@ -293,7 +293,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.community</groupId>
-                    <artifactId>scriptlet</artifactId>
+                    <artifactId>gs-scriptlet</artifactId>
                     <version>${gs.version}</version> 
                 </dependency>
             </dependencies>
@@ -303,7 +303,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver</groupId>
-                    <artifactId>dxf</artifactId>
+                    <artifactId>gs-dxf</artifactId>
                     <version>${gs.version}</version> 
                 </dependency>
             </dependencies>
@@ -313,7 +313,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.community</groupId>
-                    <artifactId>istyler</artifactId>
+                    <artifactId>gs-istyler</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -323,7 +323,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.community</groupId>
-                    <artifactId>sldService</artifactId>
+                    <artifactId>gs-sldService</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -333,7 +333,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.community</groupId>
-                    <artifactId>proxy</artifactId>
+                    <artifactId>gs-proxy</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -343,7 +343,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.extension</groupId>
-                    <artifactId>control-flow</artifactId>
+                    <artifactId>gs-control-flow</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -353,7 +353,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.community</groupId>
-                    <artifactId>python</artifactId>
+                    <artifactId>gs-python</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -373,7 +373,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.extension</groupId>
-                    <artifactId>charts</artifactId>
+                    <artifactId>gs-charts</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -383,12 +383,12 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.extension</groupId>
-                    <artifactId>wps-core</artifactId>
+                    <artifactId>gs-wps-core</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
                 <dependency>
                     <groupId>org.geoserver.extension</groupId>
-                    <artifactId>web-wps</artifactId>
+                    <artifactId>gs-web-wps</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -398,7 +398,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.community</groupId>
-                    <artifactId>css</artifactId>
+                    <artifactId>gs-css</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -408,7 +408,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.community</groupId>
-                    <artifactId>gss</artifactId>
+                    <artifactId>gs-gss</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -418,7 +418,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.community</groupId>
-                    <artifactId>ftp</artifactId>
+                    <artifactId>gs-ftp</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -431,7 +431,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.extension</groupId>
-                    <artifactId>monitor-core</artifactId>
+                    <artifactId>gs-monitor-core</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -444,7 +444,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.extension</groupId>
-                    <artifactId>monitor-hibernate</artifactId>
+                    <artifactId>gs-monitor-hibernate</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -454,7 +454,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.extension</groupId>
-                    <artifactId>ogr</artifactId>
+                    <artifactId>gs-ogr</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -464,7 +464,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.community</groupId>
-                    <artifactId>dbconfig</artifactId>
+                    <artifactId>gs-dbconfig</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -474,7 +474,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.community</groupId>
-                    <artifactId>spatialite</artifactId>
+                    <artifactId>gs-spatialite</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -484,7 +484,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.community</groupId>
-                    <artifactId>wps-sextante</artifactId>
+                    <artifactId>gs-wps-sextante</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -494,7 +494,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.extension</groupId>
-                    <artifactId>inspire</artifactId>
+                    <artifactId>gs-inspire</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -504,7 +504,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.extension</groupId>
-                    <artifactId>querylayer</artifactId>
+                    <artifactId>gs-querylayer</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -514,7 +514,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.extension</groupId>
-                    <artifactId>gdal</artifactId>
+                    <artifactId>gs-gdal</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -524,7 +524,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.community</groupId>
-                    <artifactId>simpleFeatureService</artifactId>
+                    <artifactId>gs-simpleFeatureService</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -544,7 +544,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.extension</groupId>
-                    <artifactId>teradata</artifactId>
+                    <artifactId>gs-teradata</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -554,7 +554,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.security</groupId>
-                    <artifactId>sec-cas</artifactId>
+                    <artifactId>gs-sec-cas</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -574,7 +574,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.community</groupId>
-                    <artifactId>feature-aggregate</artifactId>
+                    <artifactId>gs-feature-aggregate</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -584,7 +584,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.community</groupId>
-                    <artifactId>authkey</artifactId>
+                    <artifactId>gs-authkey</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -604,7 +604,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.csw</groupId>
-                    <artifactId>csw-core</artifactId>
+                    <artifactId>gs-csw-core</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -614,7 +614,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.csw</groupId>
-                    <artifactId>csw-simple-store</artifactId>
+                    <artifactId>gs-csw-simple-store</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -624,7 +624,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.community</groupId>
-                    <artifactId>jdbcconfig</artifactId>
+                    <artifactId>gs-jdbcconfig</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -637,7 +637,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.script</groupId>
-                    <artifactId>script-py</artifactId>
+                    <artifactId>gs-script-py</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -650,7 +650,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.script</groupId>
-                    <artifactId>script-js</artifactId>
+                    <artifactId>gs-script-js</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -663,7 +663,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.script</groupId>
-                    <artifactId>script-bsh</artifactId>
+                    <artifactId>gs-script-bsh</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -676,7 +676,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.script</groupId>
-                    <artifactId>script-rb</artifactId>
+                    <artifactId>gs-script-rb</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -689,7 +689,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.script</groupId>
-                    <artifactId>script-groovy</artifactId>
+                    <artifactId>gs-script-groovy</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -702,7 +702,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver</groupId>
-                    <artifactId>xslt</artifactId>
+                    <artifactId>gs-xslt</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -715,7 +715,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.community</groupId>
-                    <artifactId>wcs2_0</artifactId>
+                    <artifactId>gs-wcs2_0</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -725,7 +725,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.community</groupId>
-                    <artifactId>w3ds</artifactId>
+                    <artifactId>gs-w3ds</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
@@ -735,7 +735,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.geoserver.community</groupId>
-                    <artifactId>libjpeg-turbo</artifactId>
+                    <artifactId>gs-libjpeg-turbo</artifactId>
                     <version>${gs.version}</version>
                 </dependency>
             </dependencies>
