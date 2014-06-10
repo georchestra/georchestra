@@ -49,4 +49,4 @@ delayInDays=
 requiredFields=
 
 # Validation
-uidRegExp=[A-Za-z]+[A-Za-z0-9.]*
+uidRegExp=[A-Za-z]+[A-Za-z0-9\.]*
