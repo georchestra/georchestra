@@ -175,7 +175,8 @@ public class UsersController {
 	 *
 	 * user data:
 	 * {
-     *  "sn": "surname",
+     *	"uid": "user ID",
+     *	"sn": "surname",
      *	"givenName": "first name",
      *	"mail": "e-mail",
      * 	"telephoneNumber": "telephone"
@@ -194,11 +195,11 @@ public class UsersController {
 	 *
 	 * <b>- Success case</b>
 	 *
-	 * The generated uid is added to the user data. So, a succeeded response should look like:
+	 * If uid is not present in user data, a new uid is generated based in sn and givenName. So, a succeeded response should look like:
 	 * {
-	 * 	<b>"uid": generated uid</b>
+	 *	"uid": uid, or "generated" uid
 	 *
-     *  "sn": "surname",
+     *	"sn": "surname",
      *	"givenName": "first name",
      *	"mail": "e-mail",
      * 	"telephoneNumber": "telephone"
@@ -580,9 +581,12 @@ public class UsersController {
 
 		String description = RequestUtil.getFieldValue( json, UserSchema.DESCRIPTION_KEY);
 
-		String uid;
-		try {
+		String uid = RequestUtil.getFieldValue(json, UserSchema.UUID_KEY);
+		if (uid == null) {
 			uid = createUid(givenName, surname);
+		}
+		try {
+			uid = proposeUid(uid);
 		} catch (DataServiceException e) {
 			LOG.error(e.getMessage());
 			throw new IOException(e);
@@ -601,18 +605,28 @@ public class UsersController {
 	 *
 	 * @param givenName
 	 * @param surname
+	 * @return return the generated uid
+	 *
+	 * @throws DataServiceException
+	 */
+	private String createUid(String givenName, String surname) {
+		return normalizeString(givenName.toLowerCase().charAt(0) + surname.toLowerCase());
+	}
+
+	/**
+	 * Test if uid already exists and propose alternative if so
+	 *
+	 * @param uid
 	 * @return return the proposed uid
 	 *
 	 * @throws DataServiceException
 	 */
-	private String createUid(String givenName, String surname) throws DataServiceException {
+	private String proposeUid(String uid) throws DataServiceException {
 
-		String proposedUid = normalizeString(givenName.toLowerCase().charAt(0) + surname.toLowerCase());
-
-		if(! this.accountDao.exist(proposedUid)){
-			return proposedUid;
+		if(! this.accountDao.exist(uid)){
+			return uid;
 		} else {
-			return this.accountDao.generateUid( proposedUid );
+			return this.accountDao.generateUid( uid );
 		}
 	}
 
