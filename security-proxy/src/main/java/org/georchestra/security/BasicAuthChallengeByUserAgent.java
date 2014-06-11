@@ -1,5 +1,7 @@
 package org.georchestra.security;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
@@ -9,6 +11,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,13 +33,15 @@ import java.util.regex.Pattern;
 public class BasicAuthChallengeByUserAgent extends BasicAuthenticationFilter {
 
     private final List<Pattern> _userAgents = new ArrayList<Pattern>();
-    private AuthenticationException _exception = new AuthenticationException("No basic authentication credentials provided") {
-    };
+    private boolean ignoreHttps = false;
+    private static final Log LOGGER = LogFactory.getLog(BasicAuthChallengeByUserAgent.class.getPackage().getName());
+    private AuthenticationException _exception = new AuthenticationException("No basic authentication credentials provided") {};
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
 
-        if(!req.getScheme().equalsIgnoreCase("https")) {
+        if(!req.getScheme().equalsIgnoreCase("https") && ! ignoreHttps) {
+            LOGGER.debug("not in HTTPS, skipping filter.");
             chain.doFilter(req, res);
             return;
         }
@@ -49,9 +54,11 @@ public class BasicAuthChallengeByUserAgent extends BasicAuthenticationFilter {
             if ((auth == null) || !auth.startsWith("Basic ")) {
                 getAuthenticationEntryPoint().commence(request, (HttpServletResponse) res, _exception);
             } else {
+                LOGGER.debug("Activating filter ...");
                 super.doFilter(req, res, chain);
             }
         } else {
+            LOGGER.debug("the user-agent does not match, skipping filter.");
             chain.doFilter(req, res);
         }
     }
@@ -78,4 +85,11 @@ public class BasicAuthChallengeByUserAgent extends BasicAuthenticationFilter {
         }
     }
 
+    /**
+     * Sets the ignoreHttps flag.
+     * if set to true the filter is active even on regular non-SSL HTTP requests.
+     */
+    public void setIgnoreHttps(boolean f) {
+        ignoreHttps = f;
+    }
 }
