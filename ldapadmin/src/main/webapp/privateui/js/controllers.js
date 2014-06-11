@@ -296,7 +296,7 @@ angular.module('ldapadmin.controllers', [])
     });
   })
   .controller('UserCreateCtrl', function($scope, Restangular, flash) {
-      $scope.editUid = "${generateUid}"==="false";
+      $scope.editUid = GEOR_config.editUid;
       $scope.save = function() {
         Restangular.all('users').post(
           $scope.user

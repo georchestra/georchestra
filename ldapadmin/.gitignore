@@ -5,5 +5,5 @@ src/main/webapp/WEB-INF/views/header.jsp
 src/main/webapp/WEB-INF/views/validation.jsp
 src/main/webapp/privateui/css/main.css
 src/main/webapp/privateui/index.html
-src/main/webapp/privateui/js/controllers.js
+src/main/webapp/privateui/js/config.js
 src/main/webapp/privateui/partials/users-list-table.html
