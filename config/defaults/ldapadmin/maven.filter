@@ -12,6 +12,8 @@ ldap.admin.password=@shared.ldap.admin.password@
 
 accountUniqueNumberField=employeeNumber
 groupUniqueNumberField=ou
+userSearchBaseDN=@shared.ldap.userSearchBaseDN@
+groupSearchBaseDN=@shared.ldap.groupSearchBaseDN@
 
 # list of protected user
 # example
