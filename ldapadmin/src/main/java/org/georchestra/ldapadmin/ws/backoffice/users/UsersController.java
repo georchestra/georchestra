@@ -195,7 +195,9 @@ public class UsersController {
 	 *
 	 * <b>- Success case</b>
 	 *
-	 * If uid is not present in user data, a new uid is generated based in sn and givenName. So, a succeeded response should look like:
+	 * If uid is not present in user data, a new uid is generated
+	 * based in sn and givenName. So, a succeeded response should
+	 * look like:
 	 * {
 	 *	"uid": uid, or "generated" uid
 	 *
