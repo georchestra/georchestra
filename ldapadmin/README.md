@@ -16,7 +16,7 @@ These pages should be light (no need to ship ExtJS).
 
 ### Lost Password
 
-The page asks for user email. An optional `email` parameter can be passed to preset the email field (eg: /ldapadmin/account/lostPassword?email=user@domain.tld).
+The page asks for user email. An optional `email` parameter can be passed to preset the email field (eg: /ldapadmin/account/passwordRecovery?email=user@domain.tld).
 
 If the given email matches one of the LDAP users:
  * an email is sent to this user with a unique https URL to reset his password (eg: /ldapadmin/account/changePassword?token=54f23f27f6c5f23c68b9b5f9650839dc)
@@ -147,7 +147,7 @@ Add one or more user identifiers (uid) of those protected users. The protected u
         </property>
     </bean>
     
-Example: configure extractorapp_privileged_admin as protected 
+Example: configure geoserver_privileged_user as protected 
 
 /config/defaults/ldapadmin/maven.filter
 
@@ -170,7 +170,7 @@ Thus only one uid is required in the spring configuration file
 Private UI
 ----------
 
-The private UI will be available at /ldapadmin for members of the SV_ADMIN and ADMIN_USERS groups.
+The private UI will be available at /ldapadmin for members of the MOD_LDAPADMIN group.
 
 See the wireframe in the current folder.
 
@@ -199,7 +199,7 @@ Dedicated to groups:
  * button to remove a group (users will **not** be deleted)
 
 
-Members of the ADMIN_USERS group will have the same UI, but some buttons will not be shown (or disabled) : group add/remove, "selected users" > "add/remove from group"
+Members of the MOD_LDAPADMIN group will have the same UI, but some buttons will not be shown (or disabled) : group add/remove, "selected users" > "add/remove from group"
 They will have the right to create/read/update/delete users only from the same EL_* groups they belong to.
 
 Notes

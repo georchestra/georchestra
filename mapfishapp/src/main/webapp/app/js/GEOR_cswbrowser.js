@@ -76,6 +76,12 @@ GEOR.cswbrowser = (function() {
     var tr = null;
 
     /**
+     * Property: GEONETWORK_URL
+     * {String} eg: /geonetwork/srv/fre
+     */
+    var GEONETWORK_URL;
+
+    /**
      * Method: filterCswRecord
      * Keep only WMS-1.1.1 records with a correct layer name and server URL
      *
@@ -99,10 +105,8 @@ GEOR.cswbrowser = (function() {
 
                         metadataURL = null;
                         if (record.identifier && record.identifier[0]) {
-                            metadataURL = GEOR.config.GEONETWORK_URL.replace(
-                                /\/srv\/(\S+)/, 
-                                '/?uuid='+record.identifier[0].value
-                            );
+                            metadataURL = GEOR.config.GEONETWORK_BASE_URL + 
+                                '/?uuid='+record.identifier[0].value;
                             name += '<a href="'+metadataURL +
                                 '" target="_blank" onclick="window.open(this.href);return false;">'+mdTitle+'</a>';
                         }
@@ -162,7 +166,7 @@ GEOR.cswbrowser = (function() {
     var appendKeyword = function(tree, keyword) {
         if (!xmlTreeLoader) {
             xmlTreeLoader = new Ext.ux.tree.XmlTreeLoader({
-                url: GEOR.config.GEONETWORK_URL + '/csw',
+                url: GEONETWORK_URL + '/csw',
                 parseInput: function(treeLoader, treeNode) {
                     var getRecordsFormat = new OpenLayers.Format.CSWGetRecords({
                         maxRecords: 100
@@ -263,7 +267,7 @@ GEOR.cswbrowser = (function() {
         cleanTree(tree);
         var getDomainFormat = new OpenLayers.Format.CSWGetDomain();
         OpenLayers.Request.POST({
-            url: GEOR.config.GEONETWORK_URL + '/csw',
+            url: GEONETWORK_URL + '/csw',
             data: getDomainFormat.write({
                 PropertyName: GEOR.config.CSW_GETDOMAIN_PROPERTY
             }),
@@ -300,7 +304,7 @@ GEOR.cswbrowser = (function() {
             });
         }
         OpenLayers.Request.GET({
-            url: GEOR.config.GEONETWORK_URL + '/xml.search.keywords',
+            url: GEONETWORK_URL + '/xml.search.keywords',
             params: {
                 pNewSearch: 'true',
                 pKeyword: '*',
@@ -359,6 +363,25 @@ GEOR.cswbrowser = (function() {
          */
         getPanel: function(options) {
             tr = OpenLayers.i18n;
+            var ISO639 = {
+                'ar': 'ara', 
+                'ca': 'cat', 
+                'cn': 'chi', 
+                'de': 'ger', 
+                'en': 'eng', 
+                'es': 'spa', 
+                'fr': 'fre', 
+                'it': 'ita', 
+                'nl': 'dut', 
+                'no': 'nor',
+                'pl': 'pol', 
+                'pt': 'por', 
+                'ru': 'rus',
+                'fi': 'fin',
+                'tr': 'tur'
+            };
+            GEONETWORK_URL = GEOR.config.GEONETWORK_BASE_URL 
+                + '/srv/' + ISO639[GEOR.config.LANG];
             tree = new Ext.tree.TreePanel({
                 region: 'center',
                 useArrows:true,
@@ -390,7 +413,7 @@ GEOR.cswbrowser = (function() {
             var thesauriStore = new Ext.data.Store({
                 autoLoad: true,
                 proxy: new Ext.data.HttpProxy({
-                    url: GEOR.config.GEONETWORK_URL + '/xml.thesaurus.getList',
+                    url: GEONETWORK_URL + '/xml.thesaurus.getList',
                     method: 'GET',
                     disableCaching: false
                 }),

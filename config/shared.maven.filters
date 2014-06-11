@@ -8,7 +8,7 @@ shared.server.port=80
 shared.header.height=90
 
 shared.language=en
-geonetwork.language=eng
+shared.geonetwork.language=eng
 
 shared.ldap.host=localhost
 shared.ldap.port=636
@@ -32,7 +32,6 @@ shared.psql.pass=www-data
 shared.psql.jdbc.driver=org.postgresql.Driver
 shared.psql.jdbc.driver.url=postgresql
 
-
 shared.log.dir=/var/log/tomcat6
 shared.default.log.level=WARN
 other.framework.log.level=WARN
@@ -46,21 +45,21 @@ shared.email.from=psc\@georchestra.org
 
 shared.administrator.email=psc\@georchestra.org
 
-shared.psql.mapfishapp.db=georchestra
-
-shared.geonetwork.dir=/var/lib/tomcat6/work/gn_data
-shared.psql.geonetwork.db=geonetwork
-shared.geonetwork.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.psql.geonetwork.db@
-
 shared.ogc.statistics.activated=false
-shared.psql.ogc.statistics.db=georchestra
-shared.ogc.statistics.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.psql.ogc.statistics.db@
-
-shared.checkhealth.activated=false
-shared.psql.checkhealth.db=@shared.psql.geonetwork.db@
-shared.checkhealth.max_db_connections=170
+shared.ogc.statistics.db=georchestra
+shared.ogc.statistics.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.ogc.statistics.db@
 
 shared.download_form.activated=false
+shared.download_form.db=georchestra
+shared.download_form.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.download_form.db@
 shared.download_form.pdfurl=
-shared.psql.download_form.db=georchestra
-shared.download_form.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.psql.download_form.db@
+
+shared.ldapadmin.db=georchestra
+shared.ldapadmin.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.ldapadmin.db@
+
+shared.mapfishapp.db=georchestra
+shared.mapfishapp.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.mapfishapp.db@
+
+shared.geonetwork.db=georchestra
+
+shared.geofence.db=georchestra

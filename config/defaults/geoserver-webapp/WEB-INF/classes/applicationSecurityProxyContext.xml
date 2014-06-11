@@ -33,15 +33,15 @@
       <value>
         CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
         PATTERN_TYPE_APACHE_ANT
-        /web/**=httpSessionContextIntegrationFilterWithASCTrue,logoutFilter,proxyHeadersContextIntegrationFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeProcessingFilter,anonymousProcessingFilter,consoleExceptionTranslationFilter,filterInvocationInterceptor
-        /j_spring_security_check/**=httpSessionContextIntegrationFilterWithASCTrue,logoutFilter,proxyHeadersContextIntegrationFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeProcessingFilter,anonymousProcessingFilter,consoleExceptionTranslationFilter,filterInvocationInterceptor
-        /j_spring_security_logout/**=httpSessionContextIntegrationFilterWithASCTrue,logoutFilter,proxyHeadersContextIntegrationFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeProcessingFilter,anonymousProcessingFilter,consoleExceptionTranslationFilter,filterInvocationInterceptor
-        /rest/**=httpSessionContextIntegrationFilterWithASCFalse,proxyHeadersContextIntegrationFilter,basicProcessingFilter,anonymousProcessingFilter,owsExceptionTranslationFilter,restFilterInvocationInterceptor
+        /web/**=httpSessionContextIntegrationFilterWithASCTrue,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeProcessingFilter,anonymousProcessingFilter,consoleExceptionTranslationFilter,filterInvocationInterceptor
+        /j_spring_security_check/**=httpSessionContextIntegrationFilterWithASCTrue,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeProcessingFilter,anonymousProcessingFilter,consoleExceptionTranslationFilter,filterInvocationInterceptor
+        /j_spring_security_logout/**=httpSessionContextIntegrationFilterWithASCTrue,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeProcessingFilter,anonymousProcessingFilter,consoleExceptionTranslationFilter,filterInvocationInterceptor
+        /rest/**=httpSessionContextIntegrationFilterWithASCFalse,basicProcessingFilter,anonymousProcessingFilter,owsExceptionTranslationFilter,restFilterInvocationInterceptor
 
 /gwc/rest/web/**=anonymousProcessingFilter,consoleExceptionTranslationFilter,filterInvocationInterceptor
 
-/gwc/rest/**=httpSessionContextIntegrationFilterWithASCFalse,proxyHeadersContextIntegrationFilter,basicProcessingFilter,owsExceptionTranslationFilter,restFilterInvocationInterceptor
-        /**=httpSessionContextIntegrationFilterWithASCFalse,proxyHeadersContextIntegrationFilter,basicProcessingFilter,anonymousProcessingFilter,owsExceptionTranslationFilter,filterInvocationInterceptor
+/gwc/rest/**=httpSessionContextIntegrationFilterWithASCFalse,basicProcessingFilter,owsExceptionTranslationFilter,restFilterInvocationInterceptor
+        /**=httpSessionContextIntegrationFilterWithASCFalse,basicProcessingFilter,anonymousProcessingFilter,owsExceptionTranslationFilter,filterInvocationInterceptor
       </value>
     </property>
   </bean>
@@ -333,20 +333,5 @@
     class="org.geoserver.security.OperationSecurityCallback">
     <constructor-arg ref="serviceRulesDao"/>
   </bean>
-
-  <bean id="proxyHeadersContextIntegrationFilter"
-     class="org.georchestra.security.ProxyProcessingFilter">
-   <property name="forceHeadersUsage" value="false" />
-     <property name="securityProxyServers">
-       <list>
-         <value>localhost</value>
-           <value>127.0.0.1</value>
-           <value>rbr-vgeobretagne01</value>
-           <value>192.168.35.11</value>
-           <value>rbr-vgeobretagne02</value>
-           <value>192.168.35.12</value>
-       </list>
-     </property>
-   </bean>
 
 </beans>

@@ -110,7 +110,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Show metadata sheet in a new window":
         "Afficher la fiche de métadonnées dans une nouvelle fenêtre",
     "more": "plus",
-    "Clic to select or deselect the layer":
+    "Click to select or deselect the layer":
         "Cliquez pour sélectionner ou désélectionner la couche",
     "Open the URL url in a new window":
         "Ouvrir l'url ${URL} dans une nouvelle fenêtre",
@@ -149,7 +149,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     /* GEOR_getfeatureinfo.js strings */
     "<div>Searching...</div>": "<div>Recherche en cours...</div>",
     "<div>No layer selected</div>": "<div>Aucune couche sélectionnée</div>",
-    "<div>Search on objects active for NAME layer. Clic on the map.</div>":
+    "<div>Search on objects active for NAME layer. Click on the map.</div>":
          "<div>Recherche d\'objets activée sur la couche ${NAME}. " +
          "Cliquez sur la carte.</div>",
     "WMS GetFeatureInfo at ": "GetFeatureInfo WMS sur ",
@@ -209,7 +209,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Show metadata": "Afficher les métadonnées",
     "Edit symbology": "Éditer la symbologie",
     "Build a query": "Construire une requête",
-    "Download data": "Télécharger les données",
+    "Download data": "Extraire les données",
     "Choose a style": "Choisir un style",
     "Modify format": "Modifier le format",
     "Delete this layer": "Supprimer cette couche",
@@ -232,7 +232,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Location map": "Carte de situation",
     "Warning after loading layer":
         "Avertissement suite au chargement de couche",
-    "The <b>NAME</b> layer could not appear for that reason: ":
+    "The <b>NAME</b> layer could not appear for this reason: ":
         "La couche <b>${NAME}</b> pourrait ne pas apparaître pour " +
         "la raison suivante : ",
     "Min/max visibility scales are invalid":
@@ -332,11 +332,11 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
         "des résultats",
     "CSV Export": "Export CSV",
     "Export results as CSV": "Exporter l'ensemble des résultats en CSV",
-    "<p>No result for that request.</p>": "<p>Aucun objet ne " +
+    "<p>No result for this request.</p>": "<p>Aucun objet ne " +
         "correspond à votre requête.</p>",
     /* GEOR_scalecombo.js strings */
     /* GEOR_selectfeature.js strings */
-    "<div>Select features activated on NAME layer. Clic on the map.</div>":
+    "<div>Select features activated on NAME layer. Click on the map.</div>":
         "<div>Sélection d\'objets activée sur la couche ${NAME}. " +
         "Cliquez sur la carte.</div>",
     "OpenLayers SelectFeature":"Sélection d\'objets",
@@ -371,8 +371,6 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Styler": "Styleur",
     "Apply": "Appliquer",
     "Impossible to complete the operation:": "Opération impossible :",
-    "no WFS service associated to that layer": "aucun service WFS " +
-        "associé à cette couche.",
     "no available attribute": "aucun attribut disponible.",
     /* GEOR_toolbar.js strings */
     "m": "m",
@@ -407,7 +405,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Manage tools": "Gérer les outils",
     "remember the selection": "se souvenir de la sélection",
     "Available tools:": "Outils disponibles :",
-    "Clic to select or deselect the tool": "Cliquez pour (dé)sélectionner l'outil",
+    "Click to select or deselect the tool": "Cliquez pour (dé)sélectionner l'outil",
     "Could not load addon ADDONNAME": "Impossible de charger l'addon ${ADDONNAME}",
     /* GEOR_util.js strings */
     "Characters": "Caractères",

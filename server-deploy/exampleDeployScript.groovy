@@ -2,7 +2,7 @@
   Reads all war dependencies of of server-deploy module to determine which webapps need to be deployed
   the second param is the Alias function.  The war files that are supplied to the script have the full 
   module name and version as defined in their pom.  For example extractorapp-1.0.war is the 
-  actual file, the aliasFunction will map that to extractorapp-private.war which is what the deployed
+  actual file, the aliasFunction will map that to extractorapp.war which is what the deployed
   system expects.  The artifacts can be mapped to any desired name.  
   
   The Artifacts object uses the maven dependencies to look up the artifacts that need to be deployed
@@ -21,7 +21,7 @@ def artifacts = new Artifacts(project, Artifacts.standardGeorchestraAliasFunctio
   
   If the passwords/passphrases are the deploy will require no interaction with a user.  
   
-  If they are not auser will have to enter the password.  
+  If they are not a user will have to enter the password.  
   
   The options are privateKey/passphrase or username/password
   
@@ -46,16 +46,16 @@ For the record, here is a typical settings.xml file:
 </settings>
   
 */
-def ssh = new SSH(log:log,settings:settings,host:"server1")
+def ssh = new SSH(log:log, settings:settings, host:"server1")
 
 // create an object for deploying wars to a unix-based machine using SSH
 def server1Deployer = new SSHWarDeployer(
     log: log,
     ssh: ssh,
     projectProperties: project.properties,
-    webappDir: "/srv/tomcat/tomcat1/webapps",
-    startServerCommand: "sudo /etc/init.d/tomcat-tomcat1 start",
-    stopServerCommand: "sudo /etc/init.d/tomcat-tomcat1 stop"
+    webappDir: "/srv/tomcat/webapps",
+    startServerCommand: "sudo /etc/init.d/tomcat start",
+    stopServerCommand: "sudo /etc/init.d/tomcat stop"
 )
 
 // deploy all artifacts except the geoserver artifact using the server1Deployer 
@@ -72,5 +72,5 @@ if (geoserverArtifact != null) {
   // (since this will deploy to a different server)
   def geoserverDeployer = server1Deployer.copy(ssh: geoserverSSH)
   // finally deploy
-  geoserverDeployer.deploy()
+  geoserverDeployer.deploy(geoserverArtifact)
 }

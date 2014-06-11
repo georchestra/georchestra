@@ -61,7 +61,16 @@ public abstract class A_DocService {
      */
     protected ConnectionPool pgPool;
 
-    /**
+	/**
+	 * Sets pgPool (used for testing).
+	 * 
+	 * @param pgPool
+	 */
+	public void setPgPool(ConnectionPool pgPool) {
+		this.pgPool = pgPool;
+	}
+
+	/**
      * MIME type.
      */
     private String _MIMEType;

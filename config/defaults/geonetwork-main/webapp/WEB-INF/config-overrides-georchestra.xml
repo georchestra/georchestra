@@ -5,11 +5,23 @@
     <import file="/WEB-INF/config-overrides-dev.xml"/>
     
     <properties>
-        <postgis.user>@shared.psql.user@</postgis.user>
+        <!-- 
+        
+        To have the geonetwork tables located inside a "geonetwork" schema
+        inside the "georchestra" database, we use the fact that the default 
+        search_path in postgresql is set to '$user,public'.
+        
+        Please refer to https://github.com/georchestra/georchestra/issues/601 
+        for more information.
+        
+        Of course, you are free to customize this in your own profile ...
+        
+        -->
+        <postgis.user>geonetwork</postgis.user>
         <postgis.pass>@shared.psql.pass@</postgis.pass>
         <postgis.host>@shared.psql.host@</postgis.host>
         <postgis.port>@shared.psql.port@</postgis.port>
-        <postgis.db>@shared.psql.geonetwork.db@</postgis.db>
+        <postgis.db>@shared.geonetwork.db@</postgis.db>
         <postgis.max.active>50</postgis.max.active>
         <postgis.max.idle>20</postgis.max.idle>
         <postgis.min.idle>0</postgis.min.idle>
@@ -21,7 +33,7 @@
         <port>80</port>
     </properties>
     <file name=".*/WEB-INF/config.xml">
-        <replaceText xpath="default/language">fre</replaceText>
+        <replaceText xpath="default/language">@shared.geonetwork.language@</replaceText>
 <!--        <replaceAtt xpath="appHandler/param[@name = 'preferredSchema']" attName="value" value="iso19139.fra"/> -->
         <replaceAtt xpath="appHandler/param[@name = 'useSubversion']" attName="value" value="false"/>
         <replaceAtt xpath="appHandler/param[@name = 'maxWritesInTransaction']" attName="value" value="1"/>

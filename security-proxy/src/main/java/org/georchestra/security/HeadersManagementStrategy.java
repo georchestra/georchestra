@@ -1,11 +1,5 @@
 package org.georchestra.security;
 
-import java.util.*;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
@@ -14,26 +8,47 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.message.BasicHeader;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import static org.georchestra.security.HeaderNames.ACCEPT_ENCODING;
+import static org.georchestra.security.HeaderNames.CONTENT_LENGTH;
+import static org.georchestra.security.HeaderNames.COOKIE_ID;
+import static org.georchestra.security.HeaderNames.HOST;
+import static org.georchestra.security.HeaderNames.LOCATION;
+import static org.georchestra.security.HeaderNames.REFERER_HEADER_NAME;
+import static org.georchestra.security.HeaderNames.SEC_PROXY;
+import static org.georchestra.security.HeaderNames.SEC_ROLES;
+import static org.georchestra.security.HeaderNames.SEC_USERNAME;
+import static org.georchestra.security.HeaderNames.TRANSFER_ENCODING;
+
 /**
  * A strategy for copying headers from the request to the proxied request and
- * the same for the response headers
+ * the same for the response headers.
  * 
  * @author jeichar
  */
 public class HeadersManagementStrategy {
     protected static final Log logger = LogFactory.getLog(Proxy.class.getPackage().getName());
-    private static final String JSESSION_ID = "JSESSIONID";
-    private static final String SET_COOKIE_ID ="Set-Cookie";
-    private static final String COOKIE_ID ="Cookie";
-    public static final String REFERER_HEADER_NAME = "referer";
 
     /**
      * If true (default is false) AcceptEncoding headers are removed from request headers
      */
     private boolean noAcceptEncoding = false;
     private List<HeaderProvider> headerProviders = Collections.emptyList(); 
-    private List<HeaderFilter> filters = Collections.emptyList();
+    private List<HeaderFilter> filters = new ArrayList<HeaderFilter>(1);
     private String referer = null;
+
+    public HeadersManagementStrategy() {
+        filters.add(new SecurityRequestHeaderFilter());
+    }
 
     /**
      * Copies the request headers from the original request to the proxy request.  It may modify the
@@ -52,7 +67,7 @@ public class HeadersManagementStrategy {
         }
         while (headerNames.hasMoreElements()) {
             headerName = headerNames.nextElement();
-            if (headerName.compareToIgnoreCase("content-length") == 0) {
+            if (headerName.compareToIgnoreCase(CONTENT_LENGTH) == 0) {
                 continue;
             }
             if (headerName.equalsIgnoreCase(COOKIE_ID)) {
@@ -61,33 +76,31 @@ public class HeadersManagementStrategy {
             if (filter(originalRequest, headerName, proxyRequest)) {
                 continue;
             }
-            if (noAcceptEncoding && headerName.equalsIgnoreCase("Accept-Encoding")) {
+            if (noAcceptEncoding && headerName.equalsIgnoreCase(ACCEPT_ENCODING)) {
                 continue;
             }
-            if (headerName.equalsIgnoreCase("host")) {
+            if (headerName.equalsIgnoreCase(HOST)) {
+                continue;
+            }
+            if (headerName.equalsIgnoreCase(SEC_USERNAME) || headerName.equalsIgnoreCase(SEC_ROLES) ) {
                 continue;
             }
             if (referer != null && headerName.equalsIgnoreCase(REFERER_HEADER_NAME)) {
                 continue;
             }
-            if (headerName.equalsIgnoreCase("sec-username") ||
-                headerName.equalsIgnoreCase("sec-roles")) {
-                continue;
-            }
-            
             String value = originalRequest.getHeader(headerName);
             addHeaderToRequestAndLog(proxyRequest, headersLog, headerName, value);
         }
         // see https://github.com/georchestra/georchestra/issues/509:
-        addHeaderToRequestAndLog(proxyRequest, headersLog, "sec-proxy", "true");
+        addHeaderToRequestAndLog(proxyRequest, headersLog, SEC_PROXY, "true");
 
         handleRequestCookies(originalRequest, proxyRequest, headersLog);
         HttpSession session = originalRequest.getSession();
 
         for (HeaderProvider provider : headerProviders) {
-            for (Header header : provider.getCustomRequestHeaders(session)) {
-                if ((header.getName().equalsIgnoreCase("sec-username") ||
-                     header.getName().equalsIgnoreCase("sec-roles")) &&
+            for (Header header : provider.getCustomRequestHeaders(session, originalRequest)) {
+                if ((header.getName().equalsIgnoreCase(SEC_USERNAME) ||
+                     header.getName().equalsIgnoreCase(SEC_ROLES)) &&
                     proxyRequest.getHeaders(header.getName()) != null &&
                     proxyRequest.getHeaders(header.getName()).length > 0) {
                     Header[] originalHeaders = proxyRequest.getHeaders(header.getName());
@@ -131,7 +144,7 @@ public class HeadersManagementStrategy {
             for(String requestCookies : value.split(";")) {
                 String trimmed = requestCookies.trim();
                 if(trimmed.length() > 0) {
-                    if(!trimmed.startsWith(JSESSION_ID)) {
+                    if(!trimmed.startsWith(HeaderNames.JSESSION_ID)) {
                         if(cookies.length() > 0) cookies.append("; ");
                         cookies.append(trimmed);
                     }
@@ -140,8 +153,8 @@ public class HeadersManagementStrategy {
         }
         HttpSession session = originalRequest.getSession();
         String requestPath = proxyRequest.getURI().getPath();
-        if(session != null && session.getAttribute(JSESSION_ID)!=null) {
-            Map<String,String> jessionIds = (Map) session.getAttribute(JSESSION_ID);
+        if(session != null && session.getAttribute(HeaderNames.JSESSION_ID)!=null) {
+            Map<String,String> jessionIds = (Map) session.getAttribute(HeaderNames.JSESSION_ID);
             String currentPath = null;
             String currentId = null;
             for (String path : jessionIds.keySet()) {
@@ -194,9 +207,9 @@ public class HeadersManagementStrategy {
         // Set Response headers
         for (Header header : proxyResponse.getAllHeaders()) {
             headersLog.append("\t");
-            if (header.getName().equalsIgnoreCase(SET_COOKIE_ID)) {
+            if (header.getName().equalsIgnoreCase(HeaderNames.SET_COOKIE_ID)) {
                 continue;
-            } else if ("location".equalsIgnoreCase(header.getName())) {
+            } else if (LOCATION.equalsIgnoreCase(header.getName())) {
 //            	DO NOTHING
 //            	Handle in Proxy.java
 //            	if (logger.isDebugEnabled()) {
@@ -225,7 +238,7 @@ public class HeadersManagementStrategy {
             }
         }
 
-        Header[] cookieHeaders = proxyResponse.getHeaders(SET_COOKIE_ID);
+        Header[] cookieHeaders = proxyResponse.getHeaders(HeaderNames.SET_COOKIE_ID);
         if(cookieHeaders!=null) {
             handleResponseCookies(originalRequestURI, finalResponse, cookieHeaders, session,headersLog);
         }
@@ -273,7 +286,7 @@ public class HeadersManagementStrategy {
     		String [] requestPath = StringUtils.split(location.substring(1), "/");
     		if (logger.isDebugEnabled()) {
     			if (requestPath.length > 0)
-    				logger.debug("Santize location: " + requestPath[0]);
+    				logger.debug("Sanitize location: " + requestPath[0]);
     		}
     		if (requestPath.length > 0 && targets.containsKey(requestPath[0])) {
     			requestPath[0] = targets.get(requestPath[0]);
@@ -295,7 +308,7 @@ public class HeadersManagementStrategy {
                 if(cookie.trim().length() == 0) {
                     continue;
                 }
-                if(cookie.trim().startsWith(JSESSION_ID)) {
+                if(cookie.trim().startsWith(HeaderNames.JSESSION_ID)) {
                     String path = "";
                     if(parts.length == 2) {
                         path = parts[1];
@@ -309,8 +322,8 @@ public class HeadersManagementStrategy {
 
             if(cookies.length() > 0) {
                 cookies.append("; Path= /" + originalPath);
-                finalResponse.addHeader(SET_COOKIE_ID, cookies.toString());
-                headersLog.append("\t" + SET_COOKIE_ID);
+                finalResponse.addHeader(HeaderNames.SET_COOKIE_ID, cookies.toString());
+                headersLog.append("\t" + HeaderNames.SET_COOKIE_ID);
                 headersLog.append("=");
                 headersLog.append(cookies);
                 headersLog.append("\n");
@@ -320,10 +333,10 @@ public class HeadersManagementStrategy {
     }
 
     private void storeJsessionHeader(HttpSession session, String path, String cookie, StringBuilder headersLog) {
-        Map<String,String> map = (Map<String, String>) session.getAttribute(JSESSION_ID);
+        Map<String,String> map = (Map<String, String>) session.getAttribute(HeaderNames.JSESSION_ID);
         if(map==null) {
             map = new HashMap<String,String>();
-            session.setAttribute(JSESSION_ID, map);
+            session.setAttribute(HeaderNames.JSESSION_ID, map);
         }
         if(path.length() > 0) {
             // clean out session IDs with longer path since this should supercede them
@@ -345,7 +358,7 @@ public class HeadersManagementStrategy {
     }
 
     private boolean defaultIgnores(Header header) {
-        boolean transferEncoding = header.getName().equalsIgnoreCase("Transfer-Encoding") && header.getValue().equalsIgnoreCase("chunked");
+        boolean transferEncoding = header.getName().equalsIgnoreCase(TRANSFER_ENCODING) && header.getValue().equalsIgnoreCase(HeaderNames.CHUNKED);
         
         return transferEncoding;
     }

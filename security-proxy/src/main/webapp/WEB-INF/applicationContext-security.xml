@@ -13,10 +13,10 @@
     <s:http entry-point-ref="casProcessingFilterEntryPoint" path-type="regex" realm="${realmName}" >
         <s:intercept-url pattern=".*\?.*login.*" access="ROLE_SV_USER,ROLE_SV_EDITOR,ROLE_SV_REVIEWER,ROLE_SV_ADMIN" />
         <s:intercept-url pattern=".*\?.*casLogin.*" access="ROLE_SV_USER,ROLE_SV_EDITOR,ROLE_SV_REVIEWER,ROLE_SV_ADMIN" />
-        <s:intercept-url pattern="/extractorapp/admin/.*" access="ROLE_ADMINISTRATOR,ROLE_SV_ADMIN" />
-        <s:intercept-url pattern="/extractorapp/.*" access="ROLE_SV_USER,ROLE_SV_EDITOR,ROLE_SV_REVIEWER,ROLE_SV_ADMIN" />
+        <s:intercept-url pattern="/extractorapp/admin/.*" access="ROLE_ADMINISTRATOR" />
+        <s:intercept-url pattern="/extractorapp/.*" access="ROLE_MOD_EXTRACTORAPP" />
         <s:intercept-url pattern="/geofence/.*" access="ROLE_ADMINISTRATOR" />
-        <s:intercept-url pattern="/analytics/.*" access="ROLE_ADMINISTRATOR,ROLE_SV_ADMIN,ROLE_MOD_ANALYTICS" />
+        <s:intercept-url pattern="/analytics/.*" access="ROLE_MOD_ANALYTICS" />
         <!-- ldapadmin private UI is restricted to members of the MOD_LDAPADMIN group: -->
         <s:intercept-url pattern="/ldapadmin/privateui/.*" access="ROLE_MOD_LDAPADMIN" />
         <!-- ldapadmin private ui web services: -->
@@ -44,6 +44,7 @@
             <list>
                 <value>.*ArcGIS.*</value>
                 <value>.*uDig.*</value>
+                <value>.*QGIS.*</value>
             </list>
         </property>
         <property name="ignoreFailure" value="false"/>

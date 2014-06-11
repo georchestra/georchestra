@@ -334,7 +334,7 @@ GEOR.map = (function() {
      * {String} An error message.
      */
     var checkLayer = function(r) {
-        var prefix = tr("The <b>NAME</b> layer could not appear for that reason: ",
+        var prefix = tr("The <b>NAME</b> layer could not appear for this reason: ",
             {'NAME': r.get('title')});
         var minScale = r.get('minScale');
         var maxScale = r.get('maxScale');

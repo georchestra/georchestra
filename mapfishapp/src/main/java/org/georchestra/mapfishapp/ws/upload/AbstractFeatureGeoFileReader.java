@@ -130,7 +130,7 @@ class AbstractFeatureGeoFileReader implements FeatureGeoFileReader {
             // if an error was found and the current implementation is the OGR
             // the implementation then it will be changed to geotools (only for
             // this operation)
-            if (this.readerImpl instanceof OGRFeatureReader) {
+            if (this.readerImpl.allowsGeoToolsFallback()) {
 
                 LOG.info("OGRFeatureReader fail. Try using the geotools implementation: "
                         + readerImpl.getClass().getName());
@@ -219,5 +219,10 @@ class AbstractFeatureGeoFileReader implements FeatureGeoFileReader {
 
         return this.readerImpl.isSupportedFormat(fileFormat);
     }
+
+	@Override
+	public boolean allowsGeoToolsFallback() {
+		return false;
+	}
 
 }

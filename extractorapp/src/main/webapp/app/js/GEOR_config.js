@@ -315,9 +315,9 @@ GEOR.config = (function() {
          * Constant: MAP_POS_SRS1
          * {String} The cursor position will be displayed using this SRS.
          * Set to "" if you do not want to have mouse position displayed.
-         * Defaults to "EPSG:2154"
+         * Defaults to "EPSG:4326"
          */
-        MAP_POS_SRS1: getCustomParameter("MAP_POS_SRS1", "EPSG:2154"),
+        MAP_POS_SRS1: getCustomParameter("MAP_POS_SRS1", "EPSG:4326"),
 
         /**
          * Constant: MAP_POS_SRS2
@@ -358,11 +358,8 @@ GEOR.config = (function() {
          * List of projections that extractor supports for reprojection
          */
         SUPPORTED_REPROJECTIONS: getCustomParameter("SUPPORTED_REPROJECTIONS", [
-            ["EPSG:27562", "EPSG:27562 - NTF (Paris) / Lambert Centre France"],
-            ["EPSG:27572", "EPSG:27572 - NTF (Paris) / Lambert zone II"],
-            ["EPSG:2154", "EPSG:2154 - Lambert 93"],
-            ["EPSG:4171", "EPSG:4171 - RGF93"],
-            ["EPSG:4326", "EPSG:4326 - WGS84"]
+            ["EPSG:4326", "EPSG:4326 - WGS84"],
+            ["EPSG:3857", "Spherical Mercator"]
         ]),
 
         /**
@@ -457,10 +454,10 @@ GEOR.config = (function() {
         /**
          * Constant: HELP_URL
          * {String} URL of the help ressource.
-         * Defaults to "http://www.geobretagne.fr/web/guest/assistance"
+         * Defaults to "http://cms.geobretagne.fr/assistance"
          */
         HELP_URL: getCustomParameter("HELP_URL",
-            "http://www.geobretagne.fr/web/guest/assistance")
+            "http://cms.geobretagne.fr/assistance")
         // No trailing comma for the last line (or IE will complain)
     };
 })();

@@ -1,3 +1,6 @@
+# It is recommended that you do not copy this file into your own profile
+# (unless you know what you're doing)
+
 public_host=@shared.server.name@
 
 #LDAP config
@@ -9,38 +12,23 @@ ldapAdminDn=@shared.ldap.admin.dn@
 ldap.admin.password=@shared.ldap.admin.password@
 
 cas.public.host=@shared.server.name@
-cas.private.host=localhost
 
-public.ssl=443
-private.ssl=8443
-
-proxy.defaultTarget=http://localhost:8080
-proxy.mapping=\
-    <entry key="extractorapp" value="${proxy.defaultTarget}/extractorapp-private/" />\
-    <entry key="mapfishapp" value="${proxy.defaultTarget}/mapfishapp-private/" />\
-    <entry key="geonetwork" value="${proxy.defaultTarget}/geonetwork-private/" />\
-    <entry key="catalogapp" value="${proxy.defaultTarget}/catalogapp-private/" />\
-    <entry key="geoserver" value="${proxy.defaultTarget}/geoserver-private/" />\
-    <entry key="downloadform" value="${proxy.defaultTarget}/downloadform-private/" />\
-    <entry key="header" value="${proxy.defaultTarget}/header-private/" />\
-    <entry key="analytics" value="${proxy.defaultTarget}/analytics-private/" />\
-    <entry key="ldapadmin" value="${proxy.defaultTarget}/ldapadmin-private/" />\
-    <entry key="static" value="${proxy.defaultTarget}/header-private/" />
-# Note the last entry, "static", is for retro-compatibility - it might disappear in a future release
-
-# header mapping
-header.mapping=\
-    <entry key="sec-email"     value="mail"/>\
-    <entry key="sec-firstname" value="givenName"/>\
-    <entry key="sec-lastname"  value="sn"/>\
-    <entry key="sec-org"       value="o"/>\
-    <entry key="sec-tel"       value="telephoneNumber"/>
-    
 # database health check parameters
-checkHealth=@shared.checkhealth.activated@
 psql.host=@shared.psql.host@
 psql.port=@shared.psql.port@
-psql.db=@shared.psql.checkhealth.db@
 psql.user=@shared.psql.user@
 psql.pass=@shared.psql.pass@
+checkHealth=@shared.checkhealth.activated@
+psql.db=@shared.psql.checkhealth.db@
 max.database.connections=@shared.checkhealth.max_db_connections@
+
+# filled by GenerateConfig.groovy:
+cas.private.host=
+public.ssl=
+private.ssl=
+proxy.defaultTarget=
+proxy.mapping=
+header.mapping=
+
+privileged_admin_name=@shared.privileged.geoserver.user@
+

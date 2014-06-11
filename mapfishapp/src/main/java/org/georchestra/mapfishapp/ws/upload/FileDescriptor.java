@@ -9,7 +9,7 @@ import org.apache.commons.io.FilenameUtils;
 
 /**
  * Maintains useful file information about the uploaded file.
- * 
+ *
  * @author Mauricio Pazos
  */
 public class FileDescriptor {
@@ -45,7 +45,8 @@ public class FileDescriptor {
         return "zip".equalsIgnoreCase(originalFileExt)
                 || "kml".equalsIgnoreCase(originalFileExt)
                 || "gpx".equalsIgnoreCase(originalFileExt)
-                || "gml".equalsIgnoreCase(originalFileExt);
+                || "gml".equalsIgnoreCase(originalFileExt)
+                || "osm".equalsIgnoreCase(originalFileExt);
     }
 
     public boolean isZipFile() {

@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.georchestra</groupId>
 		<artifactId>geoserver-root</artifactId>
-		<version>13.12-SNAPSHOT</version>
+		<version>14.06-SNAPSHOT</version>
 	</parent>
 	<artifactId>geoserver-webapp</artifactId>
 	<packaging>war</packaging>
@@ -27,6 +27,7 @@
 						<groupId>org.georchestra</groupId>
 						<artifactId>config</artifactId>
 						<version>${project.version}</version>
+                        <classifier>${server}</classifier>
 					</entry>
 					</classpath>
 				</configuration>
@@ -76,7 +77,7 @@
 				<configuration>
 					<warSourceDirectory>${gs.unpack.dir}</warSourceDirectory>
 					<webXml>${gs.unpack.dir}/WEB-INF/web.xml</webXml>
-					<warName>geoserver-private</warName>
+					<warName>geoserver</warName>
 					<filter>${confdir}/${project.artifactId}/maven.filter</filter>
 					<webResources>
 						<resource>

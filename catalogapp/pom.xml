@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.georchestra</groupId>
 		<artifactId>root</artifactId>
-		<version>13.12-SNAPSHOT</version>
+		<version>14.06-SNAPSHOT</version>
 	</parent>
 	<name>catalogapp</name>
 	<artifactId>catalogapp</artifactId>
@@ -91,6 +91,7 @@
 						<groupId>org.georchestra</groupId>
 						<artifactId>config</artifactId>
 						<version>${project.version}</version>
+                        <classifier>${server}</classifier>
 					</dependency>
 				</dependencies>
 			</plugin>
@@ -125,7 +126,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
 				<configuration>
-					<warName>catalogapp-private</warName>
+					<warName>catalogapp</warName>
 				</configuration>
 			</plugin>
 			<plugin>

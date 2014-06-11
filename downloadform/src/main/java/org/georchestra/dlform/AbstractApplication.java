@@ -6,80 +6,116 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 
+/**
+ * Abstract class that defines a generic behaviour for the different
+ * applications that should ask the user for submitting a form, containing some
+ * informations about his download.
+ *
+ * {@see ExtractorApp} {@see GeoNetwork}
+ *
+ * @author pmauduit
+ */
 public abstract class AbstractApplication {
-	protected Log logger;
-	protected String firstName;
-	protected String secondName;
-	protected String company;
-	protected String email;
-	protected String tel;
-	protected String[] dataUseStr;
-	protected String comment;
-	protected boolean ok;
-	protected String userName;
-	protected String sessionId;
-	
-	protected PostGresqlConnection postgresqlConnection;
-	
-	protected AbstractApplication(PostGresqlConnection pgpool) {
-		postgresqlConnection = pgpool;
-	}
-	
-	protected boolean isInvalid() {
-		return ((firstName == null) || (secondName == null)	|| (company == null) || (email == null)
-				|| (dataUseStr == null) || (ok == false) || (sessionId == null));
-	}
+    protected Log logger;
 
+    protected DataSource dataSource;
 
+    protected boolean activated;
+    protected String insertDownloadQuery;
 
-	public void initializeVariables(HttpServletRequest request) {
-		// Rely first on the headers given by the Security-proxy
-		// fallback on the form fields (in case of unauthenticated)
-		firstName    = request.getHeader("sec-firstname") != null ? request.getHeader("sec-firstname") : request.getParameter("first_name");
-		secondName   = request.getHeader("sec-lastname")  != null ? request.getHeader("sec-lastname")  : request.getParameter("last_name");
-		company      = request.getHeader("sec-org")       != null ? request.getHeader("sec-org")       : request.getParameter("company");
-		email        = request.getHeader("sec-email")     != null ? request.getHeader("sec-email")     : request.getParameter("email");
-		tel          = request.getHeader("sec-tel")       != null ? request.getHeader("sec-tel")       : request.getParameter("tel");
-		dataUseStr = request.getParameter("datause")    != null ? request.getParameter("datause").split(",") : null;
-		comment      = request.getParameter("comment");
-		ok          = request.getParameter("ok")         != null ? request.getParameter("ok").equalsIgnoreCase("on") : false;
-		userName     = request.getHeader("sec-username");
+    protected String insertDataUseQuery = "INSERT INTO "
+            + "    downloadform.logtable_datause (logtable_id, datause_id) "
+            + "VALUES " + "    (?,?);";
 
-		sessionId    = request.getParameter("sessionid");
-	}
-	
-	protected void insertDataUse(Connection connection, String insertDataUseQuery, int idInserted) throws Exception {
-		for (String dataUse : dataUseStr) {
-			int dataUseI = Integer.parseInt(dataUse);
-			PreparedStatement dataUseSt = null;
-			try {
-				dataUseSt = connection.prepareStatement(insertDataUseQuery);
-				dataUseSt.setInt(1, idInserted);
-				dataUseSt.setInt(2, dataUseI);
-				dataUseSt.execute();
-			} finally {
-				if (dataUseSt != null) dataUseSt.close();
-			}
-		}
-	}
-	protected PreparedStatement prepareFirstStatement(Connection connection,
-			String query, int returnGeneratedKeys) throws SQLException {
-		PreparedStatement st = connection.prepareStatement(query,Statement.RETURN_GENERATED_KEYS);
-		
+    protected AbstractApplication(DataSource ds, boolean _activated,
+            String _insertDownloadQuery) {
+        dataSource = ds;
+        activated = _activated;
+        insertDownloadQuery = _insertDownloadQuery;
+    }
+    public abstract void handleRequest(HttpServletRequest request, HttpServletResponse mockedResponse)
+            throws Exception;
+    protected abstract boolean isInvalid(DownloadQuery q);
 
-		st.setString(1, userName);
-		st.setString(2, sessionId);
-		st.setString(3, firstName);
-		st.setString(4, secondName);
-		st.setString(5, company);
-		st.setString(6, email);
-		st.setString(7, tel);
-		st.setString(8, comment);
+    /**
+     * Prepares a DownloadQuery object, containing all the informations needed
+     * to be saved in database.
+     *
+     * @param request
+     * @return DownloadQuery a download query object.
+     */
+    protected DownloadQuery initializeVariables(HttpServletRequest request) {
+        return new DownloadQuery(request);
+    }
 
-		return st;
-	}
+    /**
+     * This method prepares a statement to insert the download request into
+     * database.
+     *
+     * @param q
+     * @return PreparedStatement the statement can be completed (if extra
+     *         parameters to be set) by the daughter classes.
+     *
+     * @throws SQLException
+     */
+    protected PreparedStatement prepareStatement(Connection c, DownloadQuery q)
+            throws SQLException {
+        PreparedStatement st = c.prepareStatement(insertDownloadQuery, Statement.RETURN_GENERATED_KEYS);
+        st.setString(1, q.getUserName());
+        st.setString(2, q.getSessionId());
+        st.setString(3, q.getFirstName());
+        st.setString(4, q.getSecondName());
+        st.setString(5, q.getCompany());
+        st.setString(6, q.getEmail());
+        st.setString(7, q.getTel());
+        st.setString(8, q.getComment());
+        return st;
+    }
 
+    /**
+     * This method inserts the data_usage into the database.
+     *
+     * @param idInserted
+     * @param q
+     * @return PreparedStatement the statement can be completed (if extra
+     *         parameters to be set) by the daughter classes.
+     *
+     * @throws SQLException
+     */
+    protected void insertDataUse(int idInserted, DownloadQuery q, Connection c)
+            throws Exception {
+        for (Integer dataUse : q.getDataUse()) {
+            int dataUseI = dataUse.intValue();
+            PreparedStatement dataUseSt = null;
+            try {
+                dataUseSt = c.prepareStatement(insertDataUseQuery);
+                dataUseSt.setInt(1, idInserted);
+                dataUseSt.setInt(2, dataUseI);
+                dataUseSt.execute();
+            } finally {
+                if (dataUseSt != null)
+                    dataUseSt.close();
+            }
+        }
+    }
+
+    /**
+     * Convenience method used for testing purposes.
+     * @param ds a DataSource
+     */
+    public void setDataSource(DataSource ds) {
+        dataSource = ds;
+    }
+    /**
+     * Convenience method used for testing purposes.
+     * @param activated wheter the service is activated or not.
+     */
+    public void setActivated(boolean _activated) {
+        activated = _activated;
+    }
 }

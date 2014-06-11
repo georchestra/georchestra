@@ -14,7 +14,7 @@ public abstract class HeaderProvider {
      * Called by {@link HeadersManagementStrategy#configureRequestHeaders(HttpServletRequest, HttpRequestBase)} to allow
      * extra headers to be added to the copied headers.
      */
-    protected Collection<Header> getCustomRequestHeaders(HttpSession session) {
+    protected Collection<Header> getCustomRequestHeaders(HttpSession session, HttpServletRequest originalRequest) {
         return Collections.emptyList();
     }
 

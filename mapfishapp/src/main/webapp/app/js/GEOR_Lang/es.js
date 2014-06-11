@@ -113,7 +113,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Show metadata sheet in a new window":
         "Mostrar la ficha de metadatos en una nueva ventana",
     "more": "más",
-    "Clic to select or deselect the layer":
+    "Click to select or deselect the layer":
         "Haga clic para seleccionar o deseleccionar la capa",
     "Open the URL url in a new window":
         "Abrir la URL ${URL} en una nueva ventana",
@@ -154,7 +154,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     /* GEOR_getfeatureinfo.js strings */
     "<div>Searching...</div>": "<div>Buscando...</div>",
     "<div>No layer selected</div>": "<div>No capa seleccionada</div>",
-    "<div>Search on objects active for NAME layer. Clic on the map.</div>":
+    "<div>Search on objects active for NAME layer. Click on the map.</div>":
          "<div>Búsqueda de objetos activada sobre la capa ${NAME}. " +
          "Haga clic sobre el mapa.</div>",
     "WMS GetFeatureInfo at ": "GetFeatureInfo WMS sobre ",
@@ -237,7 +237,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Location map": "Mapa de ubicación",
     "Warning after loading layer":
         "Advertencia después de cargar la capa",
-    "The <b>NAME</b> layer could not appear for that reason: ":
+    "The <b>NAME</b> layer could not appear for this reason: ":
         "La capa <b>${NAME}</b> podría no aparecer por la siguiente razón: ",
     "Min/max visibility scales are invalid":
         "Las escalas min/max de visibilidad son invalidas.",
@@ -333,11 +333,11 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Zoom to results extent": "Zoom sobre la extensión de los resultados",
     "CSV Export": "Exportar en CSV",
     "Export results as CSV": "Exportar todos los resultados en CSV",
-    "<p>No result for that request.</p>": "<p>Ningún objeto " +
+    "<p>No result for this request.</p>": "<p>Ningún objeto " +
         "corresponde a su consulta.</p>",
     /* GEOR_scalecombo.js strings */
     /* GEOR_selectfeature.js strings */
-    "<div>Select features activated on NAME layer. Clic on the map.</div>":
+    "<div>Select features activated on NAME layer. Click on the map.</div>":
          "<div>Seleccion de objetos activada sobre la capa ${NAME}. " +
          "Haga clic sobre el mapa.</div>",
     "OpenLayers SelectFeature":"Selección de objetos",
@@ -373,8 +373,6 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Apply": "Aplicar",
     "Impossible to complete the operation:":
         "Imposible completar la operación:",
-    "no WFS service associated to that layer": "ningún servicio WFS " +
-        "asociado a esta capa.",
     "no available attribute": "ningún atributo disponible.",
     /* GEOR_toolbar.js strings */
     "m": "m",
@@ -409,7 +407,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Manage tools": "Manejar las herramientas",
     "remember the selection": "acordarse de la selección",
     "Available tools:": "Herramientas disponibles:",
-    "Clic to select or deselect the tool": "Haga clic para (de)seleccionar la herramienta",
+    "Click to select or deselect the tool": "Haga clic para (de)seleccionar la herramienta",
     "Could not load addon ADDONNAME": "No se pudo cargar el addon ${ADDONNAME}",
     /* GEOR_util.js strings */
     "Characters": "Caracteres",

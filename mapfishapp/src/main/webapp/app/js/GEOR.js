@@ -99,6 +99,7 @@ Ext.namespace("GEOR");
         /*
          * Setting of proj4js global vars.
          */
+        Proj4js.libPath = GEOR.config.PATHNAME + "/lib/proj4js/lib/";
         Ext.apply(Proj4js.defs, GEOR.config.PROJ4JS_STRINGS);
 
         /*
@@ -205,11 +206,10 @@ Ext.namespace("GEOR");
         var tab = new GEOR.ResultsPanel({
             html: tr("resultspanel.emptytext")
         });
+        var tabCreationLocked = false;
+        
         var southPanel = new Ext.TabPanel({
             region: "south",
-            hidden: !GEOR.ResultsPanel, // hide this panel if
-                                        // the ResultsPanel
-                                        // class is undefined
             split: true,
             collapsible: true,
             collapsed: true,
@@ -243,17 +243,18 @@ Ext.namespace("GEOR");
                     panel.getActiveTab().raise();
                 },
                 'tabchange': function(panel, t) {
-                    if (t.id == 'addPanel') {
+                    if (t.id == 'addPanel' && !tabCreationLocked) {
                         var tab = new GEOR.ResultsPanel({
                             html: tr("resultspanel.emptytext")
                         });
                         panel.insert(panel.items.length-1, tab);
                         panel.setActiveTab(tab);
+                    } else {
+                        panel.items.each(function(tab) {
+                            tab.lower();
+                        });
+                        t.raise();
                     }
-                    panel.items.each(function(tab) {
-                        tab.lower();
-                    });
-                    t.raise();
                 }
             }
         });
@@ -331,6 +332,17 @@ Ext.namespace("GEOR");
                 }
             }
         });
+        
+        // this is a utility method taking a lock 
+        // before the active tab is removed
+        // and releasing it after 
+        // to prevent unwanted tab creation
+        // when switching the active one to "+"
+        var removeActiveTab = function() {
+            tabCreationLocked = true;
+            southPanel.remove(southPanel.getActiveTab());
+            tabCreationLocked = false;
+        }
 
         // Handle layerstore initialisation
         // with wms/services/wmc from "panier"
@@ -395,7 +407,7 @@ Ext.namespace("GEOR");
                     southPanel.expand();
                 },
                 "searchresults": function(options) {
-                    southPanel.remove(southPanel.getActiveTab());
+                    removeActiveTab();
                     var tab = new GEOR.ResultsPanel({
                         html: tr("resultspanel.emptytext"),
                         tabTip: options.tooltip,
@@ -430,7 +442,7 @@ Ext.namespace("GEOR");
                     southPanel.expand();
                 },
                 "searchresults": function(options) {
-                    southPanel.remove(southPanel.getActiveTab());
+                    removeActiveTab();
                     Ext.iterate(options.results, function(featureType, result) {
                         var tab = new GEOR.ResultsPanel({
                             html: tr("resultspanel.emptytext"),
@@ -470,7 +482,7 @@ Ext.namespace("GEOR");
                     southPanel.expand();
                 },
                 "searchresults": function(options) {
-                    southPanel.remove(southPanel.getActiveTab());
+                    removeActiveTab();
                     /*
                     // XXX disable the selectfeature control -> only remove the tab
                     if (!options.model) {

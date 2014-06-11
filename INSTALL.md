@@ -1,19 +1,17 @@
-Install notes for a fresh Debian stable.
+Install notes for a fresh Debian stable, based on a unique tomcat instance.
 
 LDAP
 =====
 
 * install the required packages
 
-        sudo apt-get install slapd ldap-utils
+        sudo apt-get install slapd ldap-utils git-core
 
 * sample data import
 
- * getting the data
+ * getting the data, where XX stands for the geOrchestra version you're using (eg: ```13.09```, ```14.01``` or ```master``` for unstable)
  
-            sudo apt-get install git-core
-            git clone git://github.com/georchestra/LDAP.git
-            cd LDAP
+            git clone -b XX git://github.com/georchestra/LDAP.git
 	
  * inserting the data: follow the instructions in https://github.com/georchestra/LDAP/blob/master/README.md
 
@@ -27,56 +25,66 @@ PostGreSQL
 * Installation:
 
         sudo apt-get install postgresql postgresql-9.1-postgis postgis
-	
-* GeoNetwork database setup:
 
-        sudo su postgres
-        createdb geonetwork
-        psql -f /usr/share/postgresql/9.1/contrib/postgis-1.5/postgis.sql geonetwork
-        psql -f /usr/share/postgresql/9.1/contrib/postgis-1.5/spatial_ref_sys.sql geonetwork
-        createuser -SDRIP www-data
-        psql -d geonetwork -c 'GRANT ALL PRIVILEGES ON DATABASE geonetwork TO "www-data";'
-        psql -d geonetwork -c 'GRANT ALL PRIVILEGES ON SCHEMA public TO "www-data";'
-        psql -d geonetwork -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "www-data";'
-        psql -d geonetwork -c 'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO "www-data";'
 
 * "georchestra" database hosting schemas specific to deployed modules:
 
-        createdb georchestra
-        createuser -SDRIP www-data
+        createdb -E UTF8 -T template0 georchestra
+        createuser -SDRIP www-data (the default setup expects that the www-data user password is www-data)
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON DATABASE georchestra TO "www-data";'
 
-Note 1: It is possible to store webapp-specific schemas in separate databases.
+Note 1: It is of course possible to store webapp-specific schemas in separate databases, taking advantage of geOrchestra's extreme configurability.
 
-Note 2: PostGIS extensions are not required for now in the georchestra database.
+Note 2: PostGIS extensions are not required in the georchestra database, unless GeoFence is deployed (see below), or ```shared.psql.jdbc.driver=org.postgis.DriverWrapper``` in your configuration (but this is not the default setup).
 
- * if mapfishapp is deployed:
 
-        wget https://raw.github.com/georchestra/georchestra/master/mapfishapp/database.sql -O /tmp/mapfishapp.sql
+ * if **geonetwork** is to be deployed, you need to create a dedicated user and schema:
+
+        createuser -SDRIP geonetwork (the default setup expects that the geonetwork user password is www-data)
+        psql -d georchestra -c 'CREATE SCHEMA geonetwork;'
+        psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA geonetwork TO "geonetwork";'
+
+ * if **mapfishapp** is deployed:
+
+        wget --no-check-certificate https://raw.github.com/georchestra/georchestra/master/mapfishapp/database.sql -O /tmp/mapfishapp.sql
         psql -d georchestra -f /tmp/mapfishapp.sql
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA mapfishapp TO "www-data";'
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA mapfishapp TO "www-data";'
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA mapfishapp TO "www-data";'
 
- * if the ldapadmin webapp is deployed:
+ * if the **ldapadmin** webapp is deployed:
 
-        wget https://raw.github.com/georchestra/georchestra/master/ldapadmin/database.sql -O /tmp/ldapadmin.sql
+        wget --no-check-certificate https://raw.github.com/georchestra/georchestra/master/ldapadmin/database.sql -O /tmp/ldapadmin.sql
         psql -d georchestra -f /tmp/ldapadmin.sql
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA ldapadmin TO "www-data";'
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ldapadmin TO "www-data";'
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA ldapadmin TO "www-data";'
 
- * if ```shared.download_form.activated``` is true in your setup (false by default):
+ * if **geofence** is deployed: (make sure to set the correct values for the ```baseURL```, ```username``` and ```password``` fields in the ```geofence.gf_gsinstance``` table)
 
-        wget https://raw.github.com/georchestra/georchestra/master/downloadform/database.sql -O /tmp/downloadform.sql
+        createlang plpgsql georchestra
+        psql -f /usr/share/postgresql/9.1/contrib/postgis-1.5/postgis.sql georchestra
+        psql -f /usr/share/postgresql/9.1/contrib/postgis-1.5/spatial_ref_sys.sql georchestra
+        psql -d georchestra -c 'GRANT SELECT ON public.spatial_ref_sys to "www-data";'
+        psql -d georchestra -c 'GRANT SELECT,INSERT,DELETE ON public.geometry_columns to "www-data";'
+        wget --no-check-certificate https://raw.github.com/georchestra/geofence/georchestra/doc/setup/sql/002_create_schema_postgres.sql -O /tmp/geofence.sql
+        psql -d georchestra -f /tmp/geofence.sql
+        psql -d georchestra -c 'INSERT INTO geofence.gf_gsinstance (id, baseURL, dateCreation, description, "name", "password", username) values (0, 'http(s)://@shared.server.name@/geoserver', 'now', 'locale geoserver', 'default-gs', '@shared.privileged.geoserver.pass@', '@shared.privileged.geoserver.user@');'
+        psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA geofence TO "www-data";'
+        psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA geofence TO "www-data";'
+        psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA geofence TO "www-data";'
+
+ * if the **downloadform** module is deployed and ```shared.download_form.activated``` is true in your setup (false by default):
+
+        wget --no-check-certificate https://raw.github.com/georchestra/georchestra/master/downloadform/database.sql -O /tmp/downloadform.sql
         psql -d georchestra -f /tmp/downloadform.sql
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA downloadform TO "www-data";'
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA downloadform TO "www-data";'
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA downloadform TO "www-data";'
         
- * if ```shared.ogc.statistics.activated``` is true in your setup (false by default):
+ * if the **security proxy** is deployed and ```shared.ogc.statistics.activated``` is true in your setup (false by default):
 
-        wget https://raw.github.com/georchestra/georchestra/master/ogc-server-statistics/database.sql -O /tmp/ogcstatistics.sql
+        wget --no-check-certificate https://raw.github.com/georchestra/georchestra/master/ogc-server-statistics/database.sql -O /tmp/ogcstatistics.sql
         psql -d georchestra -f /tmp/ogcstatistics.sql
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA ogcstatistics TO "www-data";'
         psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ogcstatistics TO "www-data";'
@@ -88,7 +96,7 @@ Apache
 
 * modules setup
 
-        sudo apt-get install apache2 libapache2-mod-auth-cas
+        sudo apt-get install apache2
         sudo a2enmod proxy_ajp proxy_connect proxy_http proxy ssl rewrite headers
         sudo service apache2 graceful
 
@@ -141,6 +149,12 @@ Apache
         sudo chgrp www-data logs/
         sudo chmod g+w logs/
 
+* Error documents (useful when tomcat restarts for maintenance)
+
+        mkdir -p /var/www/georchestra/htdocs/errors
+        wget http://sdi.georchestra.org/errors/50x.html -O /var/www/georchestra/htdocs/errors/50x.html
+
+
 * Apache config
 
         cd conf/
@@ -156,19 +170,13 @@ Apache
         LoadModule proxy_http_module /usr/lib/apache2/modules/mod_proxy_http.so
     </IfModule>
 
-    <Proxy *>
-        Order deny,allow
-        Allow from all
-    </Proxy>
-
     RewriteLog /tmp/rewrite.log
     RewriteLogLevel 3
 
     SetEnv no-gzip on
     ProxyTimeout 999999999
-
-    RequestHeader unset sec-username
-    RequestHeader unset sec-roles
+    
+    AddType application/vnd.ogc.context+xml .wmc
 
     RewriteEngine On
     RewriteRule ^/analytics$ /analytics/ [R]
@@ -176,45 +184,22 @@ Apache
     RewriteRule ^/catalogapp$ /catalogapp/ [R]
     RewriteRule ^/downloadform$ /downloadform/ [R]
     RewriteRule ^/extractorapp$ /extractorapp/ [R]
-    RewriteRule ^/extractorapp$ /extractorapp/ [R]
+    RewriteRule ^/extractorapp/admin$ /extractorapp/admin/ [R]
     RewriteRule ^/geonetwork$ /geonetwork/ [R]
-    RewriteRule ^/geoserver2/(.*)$ /geoserver/$1 [R]
     RewriteRule ^/geoserver$ /geoserver/ [R]
+    RewriteRule ^/geofence$ /geofence/ [R]
     RewriteRule ^/geowebcache$ /geowebcache/ [R]
+    RewriteRule ^/header$ /header/ [R]
     RewriteRule ^/ldapadmin$ /ldapadmin/ [R]
+    RewriteRule ^/ldapadmin/privateui$ /ldapadmin/privateui/ [R]
     RewriteRule ^/mapfishapp$ /mapfishapp/ [R]
     RewriteRule ^/proxy$ /proxy/ [R]
-    RewriteRule ^/header$ /header/ [R]
-
-    ProxyPass /analytics/ ajp://localhost:8009/analytics/ 
-    ProxyPassReverse /analytics/ ajp://localhost:8009/analytics/
-
-    ProxyPass /cas/ ajp://localhost:8009/cas/ 
-    ProxyPassReverse /cas/ ajp://localhost:8009/cas/
+    
+    ErrorDocument 502 /errors/50x.html
+    ErrorDocument 503 /errors/50x.html
 
     ProxyPass /casfailed.jsp ajp://localhost:8009/casfailed.jsp 
     ProxyPassReverse /casfailed.jsp ajp://localhost:8009/casfailed.jsp
-
-    ProxyPass /catalogapp/ ajp://localhost:8009/catalogapp/ 
-    ProxyPassReverse /catalogapp/ ajp://localhost:8009/catalogapp/
-
-    ProxyPass /downloadform/ ajp://localhost:8009/downloadform/ 
-    ProxyPassReverse /downloadform/ ajp://localhost:8009/downloadform/
-
-    ProxyPass /extractorapp/ ajp://localhost:8009/extractorapp/ 
-    ProxyPassReverse /extractorapp/ ajp://localhost:8009/extractorapp/
-
-    ProxyPass /geonetwork/ ajp://localhost:8009/geonetwork/ 
-    ProxyPassReverse /geonetwork/ ajp://localhost:8009/geonetwork/
-
-    ProxyPass /geonetwork-private/ ajp://localhost:8009/geonetwork-private/ 
-    ProxyPassReverse /geonetwork-private/ ajp://localhost:8009/geonetwork-private/
-
-    ProxyPass /geoserver/ ajp://localhost:8009/geoserver/ 
-    ProxyPassReverse /geoserver/ ajp://localhost:8009/geoserver/
-
-    ProxyPass /geowebcache/ ajp://localhost:8009/geowebcache/ 
-    ProxyPassReverse /geowebcache/ ajp://localhost:8009/geowebcache/
 
     ProxyPass /j_spring_cas_security_check ajp://localhost:8009/j_spring_cas_security_check 
     ProxyPassReverse /j_spring_cas_security_check ajp://localhost:8009/j_spring_cas_security_check
@@ -222,22 +207,107 @@ Apache
     ProxyPass /j_spring_security_logout ajp://localhost:8009/j_spring_security_logout 
     ProxyPassReverse /j_spring_security_logout ajp://localhost:8009/j_spring_security_logout
 
+    <Proxy ajp://localhost:8009/analytics/*>
+        Order deny,allow
+        Allow from all
+    </Proxy>
+    ProxyPass /analytics/ ajp://localhost:8009/analytics/ 
+    ProxyPassReverse /analytics/ ajp://localhost:8009/analytics/
+
+    <Proxy ajp://localhost:8009/cas/*>
+        Order deny,allow
+        Allow from all
+    </Proxy>
+    ProxyPass /cas/ ajp://localhost:8009/cas/ 
+    ProxyPassReverse /cas/ ajp://localhost:8009/cas/
+
+    <Proxy ajp://localhost:8009/catalogapp/*>
+        Order deny,allow
+        Allow from all
+    </Proxy>
+    ProxyPass /catalogapp/ ajp://localhost:8009/catalogapp/ 
+    ProxyPassReverse /catalogapp/ ajp://localhost:8009/catalogapp/
+
+    <Proxy ajp://localhost:8009/downloadform/*>
+        Order deny,allow
+        Allow from all
+    </Proxy>
+    ProxyPass /downloadform/ ajp://localhost:8009/downloadform/ 
+    ProxyPassReverse /downloadform/ ajp://localhost:8009/downloadform/
+
+    <Proxy ajp://localhost:8009/extractorapp/*>
+        Order deny,allow
+        Allow from all
+    </Proxy>
+    ProxyPass /extractorapp/ ajp://localhost:8009/extractorapp/ 
+    ProxyPassReverse /extractorapp/ ajp://localhost:8009/extractorapp/
+
+    <Proxy ajp://localhost:8009/geonetwork/*>
+        Order deny,allow
+        Allow from all
+    </Proxy>
+    ProxyPass /geonetwork/ ajp://localhost:8009/geonetwork/ 
+    ProxyPassReverse /geonetwork/ ajp://localhost:8009/geonetwork/
+
+    <Proxy ajp://localhost:8009/geonetwork-private/*>
+        Order deny,allow
+        Allow from all
+    </Proxy>
+    ProxyPass /geonetwork-private/ ajp://localhost:8009/geonetwork-private/ 
+    ProxyPassReverse /geonetwork-private/ ajp://localhost:8009/geonetwork-private/
+
+    <Proxy ajp://localhost:8009/geoserver/*>
+        Order deny,allow
+        Allow from all
+    </Proxy>
+    ProxyPass /geoserver/ ajp://localhost:8009/geoserver/ 
+    ProxyPassReverse /geoserver/ ajp://localhost:8009/geoserver/
+
+    <Proxy ajp://localhost:8009/geofence/*>
+        Order deny,allow
+        Allow from all
+    </Proxy>
+    ProxyPass /geofence/ ajp://localhost:8009/geofence/ 
+    ProxyPassReverse /geofence/ ajp://localhost:8009/geofence/
+
+    ProxyPass /geowebcache/ ajp://localhost:8009/geowebcache/ 
+    ProxyPassReverse /geowebcache/ ajp://localhost:8009/geowebcache/
+
+    <Proxy ajp://localhost:8009/ldapadmin/*>
+        Order deny,allow
+        Allow from all
+    </Proxy>
     ProxyPass /ldapadmin/ ajp://localhost:8009/ldapadmin/
     ProxyPassReverse /ldapadmin/ ajp://localhost:8009/ldapadmin/
 
+    <Proxy ajp://localhost:8009/mapfishapp/*>
+        Order deny,allow
+        Allow from all
+    </Proxy>
     ProxyPass /mapfishapp/ ajp://localhost:8009/mapfishapp/ 
     ProxyPassReverse /mapfishapp/ ajp://localhost:8009/mapfishapp/
 
+    <Proxy ajp://localhost:8009/proxy/*>
+        Order deny,allow
+        Allow from all
+    </Proxy>
     ProxyPass /proxy/ ajp://localhost:8009/proxy/ 
     ProxyPassReverse /proxy/ ajp://localhost:8009/proxy/
 
+    <Proxy ajp://localhost:8009/header/*>
+        Order deny,allow
+        Allow from all
+    </Proxy>
     ProxyPass /header/ ajp://localhost:8009/header/
     ProxyPassReverse /header/ ajp://localhost:8009/header/
 
+    <Proxy ajp://localhost:8009/_static/*>
+        Order deny,allow
+        Allow from all
+    </Proxy>
     ProxyPass /_static/ ajp://localhost:8009/_static/
     ProxyPassReverse /_static/ ajp://localhost:8009/_static/
 
-    AddType application/vnd.ogc.context+xml .wmc
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  
@@ -301,18 +371,15 @@ Create a directory for tomcat6 java preferences (to avoid a `WARNING: Couldn't f
 Environment variables
 ----------------------
 
-In case of a 32G RAM server, add the following options at the end of the configuration file:
-
 ```
 sudo nano /etc/default/tomcat6
 ```
 
 ```
 JAVA_OPTS="$JAVA_OPTS \
-              -Dsun.java2d.opengl=true \
               -Djava.awt.headless=true \
               -Xms4G \
-              -Xmx28G \
+              -Xmx8G \
               -XX:MaxPermSize=256m "
 ```
 
@@ -344,7 +411,17 @@ Keystore/Trustore
     Est-ce CN=localhost, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=Unknown ?
       [non] :  oui
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    
+
+    In case the LDAP connection uses SSL, the certificate must be added to the keystore. First get the public key:
+
+        echo "" | openssl s_client -connect LDAPHOST:LDAPPORT -showcerts 2>/dev/null | openssl x509 -out /tmp/certfile.txt
+
+    and then add it to the keystore
+
+        sudo keytool -import -alias cert_ldap -file /tmp/certfile.txt -keystore /etc/tomcat6/keystore
+
+    Verify the list of keys in keystore
+
         keytool -keystore keystore -list
        
 * truststore config
@@ -400,6 +477,27 @@ sudo nano /etc/tomcat6/server.xml
 GeoServer
 =========
 
+* "Data dir"
+
+GeoServer configuration files reside in a particular directory, which is (incorrectly) called the "data dir".
+
+Regarding this data dir, there are 2 recommendations: 
+1) it should not reside inside the deployed webapp,
+2) before starting geoserver for the first time, it should be manually populated with a provided "[minimal data dir](https://github.com/georchestra/geoserver_minimal_datadir/blob/master/README.md)".
+
+To this purpose:
+
+```
+sudo -u tomcat mkdir /path/to/geoserver/data/dir
+cd /path/to/geoserver/data/
+```
+
+Finally, you should clone the provided minimal data dir, either branch ```master``` for regular geoserver security or ```geofence``` if you are using geofence.
+```
+sudo -u tomcat git clone -b master https://github.com/georchestra/geoserver_minimal_datadir.git dir
+```
+
+
 * Tomcat
 
 Required JAVA_OPTS for GeoServer :
@@ -409,15 +507,22 @@ sudo nano /etc/default/tomcat6
 ```
 
 ```
-JAVA_OPTS="$JAVA_OPTS -Dfile.encoding=UTF8 \
+JAVA_OPTS="$JAVA_OPTS
+    -Xms2G -Xmx2G -XX:PermSize=256m -XX:MaxPermSize=256m \
     -DGEOSERVER_DATA_DIR=/path/to/geoserver/data/dir \
     -DGEOWEBCACHE_CACHE_DIR=/path/to/geowebcache/cache/dir \
+    -Djava.awt.headless=true \
+    -Dfile.encoding=UTF8 \
+    -Djavax.servlet.request.encoding=UTF-8 \
+    -Djavax.servlet.response.encoding=UTF-8 \
     -server \
-    -XX:+UseParallelGC \
+    -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:ParallelGCThreads=2 \
     -XX:SoftRefLRUPolicyMSPerMB=36000 \
     -XX:NewRatio=2 \
-    -XX:+AggressiveOpts"
+    -XX:+AggressiveOpts "  
 ```
+
+Be sure to provide the correct ```GEOSERVER_DATA_DIR``` path !
 
 * Fonts
 
@@ -490,9 +595,9 @@ GeoServer uses them to access more data formats, read http://docs.geoserver.org/
 Mapfishapp also optionally uses them for the file upload functionality, that allows to upload a vectorial data file to mapfishapp in order to display it as a layer. This functionnality in Mapfishapp relies normally on GeoTools, however, the supported file formats are limited (at 2013-10-17: shp, mif, gml and kml). If GDAL and GDAL Java bindings libraries are installed, the number of supported file formats is increased. This would give access, for example, to extra formats such as GPX and TAB.
 
 The key element for calling the GDAL native library from mapfishapp is the **imageio-ext library** (see https://github.com/geosolutions-it/imageio-ext/wiki). It relies on:
- * jar files, that are included at build by maven,
- * a GDAL Java binding library, based on the JNI framework,
- * and obviously the GDAL library.
+ * jar files,
+ * a GDAL Java native binding library, based on the JNI framework, named gdaljni, or ogrjni,
+ * and the GDAL library.
 
 The latter can be installed, on Debian-based distributions, with the libgdal1 package:
 
@@ -500,7 +605,12 @@ The latter can be installed, on Debian-based distributions, with the libgdal1 pa
 
 Some more work is needed for installing the GDAL Java binding library, as there is still no deb package for it (note that packages exist for ruby and perl bindings, hopefully the Java's one will be released soon - see a recent proposal http://ftp-master.debian.org/new/gdal_1.10.0-0%7Eexp3.html).
 
-To quickly install the GDAL Java binding library on the server, download and extract the library and its data (see http://demo.geo-solutions.it/share/github/imageio-ext/releases/1.1.X/1.1.7/native/gdal/ for the adequate distribution). 
+To quickly install the GDAL Java binding library on the server, download and extract the library and its data. To do so, you can use 2 repositories providing binary packages for given distribution:
+
+ * GeoSolutions http://demo.geo-solutions.it/share/github/imageio-ext/releases/1.1.X/1.1.7/native/gdal/ which provides a package with ECW support (which can cause some licensing issues, and some of the packages are outdated, since the distributions evolved and updated their Glibc version, see #409) ;
+ * geOrchestra-provided packages http://sdi.georchestra.org/~pmauduit/gdalogr-java-bindings/ which provides "vanilla" GDAL packages as well as a specific one (mifmid-patched) which allows the use of MIF/MID format across GDAL/OGR via GeoTools (see #409)
+
+
 Example for Debian Wheezy on amd64:
 
     sudo mkdir -p /var/sig/gdal/NativeLibs/
@@ -521,5 +631,30 @@ sudo nano /etc/default/tomcat6
 ```
 LD_LIBRARY_PATH=/lib:/usr/lib/:/var/sig/gdal/NativeLibs/:$LD_LIBRARY_PATH
 ```
+Then you will have to make sure that the Tomcat will share the `gdal.jar` across the different webapps ; you can do this by creating a file in your `${catalina.base}/conf` directory, named `catalina.properties`, containing:
 
-Another way to install the GDAL Java binding is building it from sources. See http://trac.osgeo.org/gdal/wiki/GdalOgrInJavaBuildInstructionsUnix.
+```
+common.loader=${catalina.base}/lib,${catalina.base}/lib/*.jar,${catalina.home}/lib,${catalina.home}/lib/*.jar
+server.loader=
+shared.loader=${catalina.base}/lib/*.jar
+```
+
+Then, ensure that the installed `gdal.jar` is reachable by the classloader by copying it or creating a symlink to it into `${catalina.base}/lib`. See https://groups.google.com/forum/#!topic/georchestra-dev/K7GK_cLeAyk for more informations. The main motivation by doing so is to avoid that the different webapp contexts have to load the same native libraries more than once. THis is the reason why we have to share the classes ensuring the native bindings role.
+
+
+If you do not want to use the precompiled binaries, another way to install the GDAL Java binding is building it from sources. See http://trac.osgeo.org/gdal/wiki/GdalOgrInJavaBuildInstructionsUnix.
+
+
+Production ready setup
+======================
+
+The above setup is great for testing purposes.
+
+If you plan to use geOrchestra with a large number of users, or if high availability is a concern, it is recommended to split the webapps across several Tomcat instances, eventually load balancing GeoServer. 
+
+The recommended production setup is to have 2 or 3 tomcat instances:
+ - one for the security proxy and CAS
+ - one for geoserver
+ - one for all the other webapps
+
+There is no tutorial for this at the moment, so feel free to ask for guidance on the https://groups.google.com/forum/#!forum/georchestra-dev mailing list.

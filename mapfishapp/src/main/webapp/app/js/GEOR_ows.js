@@ -23,6 +23,7 @@
  * @include GeoExt/data/WMSCapabilitiesStore.js
  * @include GeoExt/data/WMTSCapabilitiesStore.js
  * @include GeoExt/data/WFSCapabilitiesStore.js
+ * @include OpenLayers/Format/WMSCapabilities/v1_1_0.js
  * @include OpenLayers/Format/WMSCapabilities/v1_1_1.js
  * @include OpenLayers/Format/WMSCapabilities/v1_3_0.js
  * @include OpenLayers/Format/WMTSCapabilities/v1_0_0.js
@@ -190,6 +191,18 @@ GEOR.ows = (function() {
          * DescribeFeatureType responses.
          */
         matchGeomProperty: /^gml:(Multi)?(Point|LineString|Polygon|Curve|Surface|Geometry)PropertyType$/,
+
+        /**
+         * Property: wmsVersionToExceptionsMapping
+         * {Object} We want WMS XML exceptions. 
+         * But the EXCEPTIONS parameter value changes with the WMS version ...
+         */
+        wmsVersionToExceptionsMapping: {
+            "1.0.0": "WMS_XML",
+            "1.1.0": "application/vnd.ogc.se_xml",
+            "1.1.1": "application/vnd.ogc.se_xml",
+            "1.3.0": "XML"
+        },
 
         /**
          * Property: defaultWMSLayerOptions

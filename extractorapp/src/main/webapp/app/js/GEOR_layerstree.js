@@ -371,8 +371,7 @@ GEOR.layerstree = (function() {
                             bbox: GEOR.config.GLOBAL_MAX_EXTENT,
                             owsType: wfsinfo.owstype, // WFS
                             owsUrl: wfsinfo.owsurl,
-                            layerName: record.get("name"),
-                            namespace: record.get("namespace")
+                            layerName: wfsinfo.layername
                         }
                     };
                     // remove autoActivation of the strategy to prevent the refresh
@@ -478,12 +477,20 @@ GEOR.layerstree = (function() {
                 var appendRecord = function(record) {
                     var maxExtent, srs;
                     var bbox = record.get("bbox");
-
-                    for(var p in bbox) { // TODO: try to find a better SRS. see http://applis-bretagne.fr/redmine/issues/1949
-                        srs = bbox[p].srs;
-                        maxExtent = OpenLayers.Bounds.fromArray(bbox[p].bbox);
-                        break;
+                    // trying to keep the main SRS, as requested by the administrator:
+                    if (bbox.hasOwnProperty(GEOR.config.GLOBAL_EPSG)) {
+                        srs = bbox[GEOR.config.GLOBAL_EPSG].srs;
+                        maxExtent = OpenLayers.Bounds.fromArray(bbox[GEOR.config.GLOBAL_EPSG].bbox);
                     }
+                    // fallback 1
+                    if(!(srs && maxExtent)) {
+                        for(var p in bbox) {
+                            srs = bbox[p].srs;
+                            maxExtent = OpenLayers.Bounds.fromArray(bbox[p].bbox);
+                            break;
+                        }
+                    }
+                    // fallback 2
                     if(!(srs && maxExtent)) {
                         // no bbox found!
                         // we need to build one here...
@@ -507,9 +514,8 @@ GEOR.layerstree = (function() {
                             new OpenLayers.Projection("EPSG:4326"),
                             new OpenLayers.Projection(srs));
                     }
-
+                    // we should never end up here, since llbbox is required.
                     if(!(srs && maxExtent)) {
-
                         // append error node here
                         parentNode.appendChild(new Ext.tree.TreeNode({
                             text: GEOR.util.shortenLayerName(wmsinfo.layername, maxLayerNameLength),
@@ -606,7 +612,6 @@ GEOR.layerstree = (function() {
         var tip = tr('layerstree.layer.tip');
         if(owsinfo.owstype == "WMS") {
             counter += 1; // une requete XHR (a) en plus est necessaire (WMSDescribeLayer)
-            //console.log('compteur incrémenté de 1 (a) -> '+counter);
 
             // NOTE for the future: do not query N times the same server with the same request
             // keep a local db of responses :-)
@@ -638,113 +643,38 @@ GEOR.layerstree = (function() {
                         }
                         owsinfo.exportinfo.owsType = records[0].get("owsType");
                         owsinfo.exportinfo.owsUrl = records[0].get("owsURL");
-                        owsinfo.exportinfo.layerName = records[0].get("layerName");
+                        owsinfo.exportinfo.layerName = records[0].get("typeName");
+                        // typeName is "geor:sdi" while layerName might just be "sdi", see https://github.com/georchestra/georchestra/issues/517
                         owsinfo.exportinfo.layerType = records[0].get("layerType");
-
-                        if (!(((owsinfo.exportinfo.owsType == "WFS") ||
-                            (owsinfo.exportinfo.owsType == "WCS")) &&
-                            owsinfo.exportinfo.owsUrl)) {
-
-                            parentNode.appendChild(new Ext.tree.TreeNode({
-                                text: GEOR.util.shortenLayerName(owsinfo.text, maxLayerNameLength),
-                                disabled: true,
+                        
+                        var cfg = {
+                            text: GEOR.util.shortenLayerName(owsinfo.text, maxLayerNameLength),
+                            leaf: true
+                        };
+                        
+                        if (owsinfo.exportinfo.owsType == 'WCS') { // RASTER
+                            Ext.apply(cfg, {
+                                iconCls: 'raster-layer',
+                                owsinfo: owsinfo,
+                                checked: GEOR.config.LAYERS_CHECKED,
+                                qtip: '<b>'+owsinfo.text+'</b><br/>' + tip
+                            });
+                        } else if (owsinfo.exportinfo.owsType == 'WFS') { // VECTOR
+                            Ext.apply(cfg, {
+                                iconCls: 'vector-layer',
+                                owsinfo: owsinfo,
+                                checked: GEOR.config.LAYERS_CHECKED,
+                                qtip: '<b>'+owsinfo.text+'</b><br/>' + tip
+                            });
+                        } else { // ERROR
+                            Ext.apply(cfg, {
                                 iconCls: 'error-layer',
                                 checked: false,
-                                qtip: tr('layerstree.qtip.noextraction',
-                                         {'NAME': owsinfo.text}),
-                                leaf: true
-                            }));
-
-                            checkNullCounter(); // XHR (a)
-                            return;
-                        }
-
-                        if (owsinfo.exportinfo.owsType == 'WCS') {
-                            parentNode.appendChild(
-                                new Ext.tree.TreeNode({
-                                    text: GEOR.util.shortenLayerName(owsinfo.text, maxLayerNameLength),
-                                    iconCls: 'raster-layer',
-                                    owsinfo: owsinfo,
-                                    checked: GEOR.config.LAYERS_CHECKED,
-                                    qtip: '<b>'+owsinfo.text+'</b><br/>' + tip,
-                                    leaf: true
-                                })
-                            );
-                        } else {
-                            /////////////////////////////////////////////////////////////////////
-                            // Hack to overcome a geoserver bug: DescribeLayer request always
-                            // returns WFS (even when the service should be WCS).
-                            // See: https://jira.codehaus.org/browse/GEOS-2631
-                            //
-                            // The hack performs a "ping" request on the service using a WFS
-                            // DescribeFeatureType: if it succeeds, a WFS node is inserted
-                            // in the tree (as normal), and if it fails, then it tries to
-                            // guess the WCS service url, and insert a WCS node in the tree
-                            // only if ping to the new WCS service url succeeds (using a WCS
-                            // DescribeCoverage request).
-                            /////////////////////////////////////////////////////////////////////
-                            counter += 1; // une requete XHR (b) en plus est necessaire (WFSDescribeFeatureType)
-                            //console.log('compteur incrémenté de 1 (b) -> '+counter);
-                            Ext.Ajax.request({
-                                url: GEOR.ows.WFSDescribeFeatureTypeUrl(
-                                    owsinfo.exportinfo.owsUrl,
-                                    owsinfo.exportinfo.layerName),
-                                disableCaching: false,
-                                success: function(response) {
-                                    parentNode.appendChild(new Ext.tree.TreeNode({
-                                        text: GEOR.util.shortenLayerName(owsinfo.text, maxLayerNameLength),
-                                        iconCls: 'vector-layer',
-                                        owsinfo: owsinfo,
-                                        checked: GEOR.config.LAYERS_CHECKED,
-                                        qtip: '<b>'+owsinfo.text+'</b><br/>' + tip,
-                                        leaf: true
-                                    }));
-                                    checkNullCounter(); // XHR (b)
-                                },
-                                failure: function(response) {
-                                    var regex = new RegExp("/wfs/WfsDispatcher");
-                                    var wcs_url = owsinfo.exportinfo.owsUrl.replace(regex, "/wcs/WcsDispatcher");
-                                    var wcs_fullurl = GEOR.ows.WCSDescribeCoverageUrl(wcs_url,owsinfo.exportinfo.layerName);
-                                    counter += 1; // une requete XHR (c) en plus est necessaire (WCSDescribeCoverage)
-                                    //console.log('compteur incrémenté de 1 (c) -> '+counter);
-                                    Ext.Ajax.request({
-                                        url: wcs_fullurl,
-                                        disableCaching: false,
-                                        success: function(response) {
-                                            owsinfo.exportinfo.owsUrl = wcs_url;
-                                            owsinfo.exportinfo.owsType = "WCS";
-                                            parentNode.appendChild(new Ext.tree.TreeNode({
-                                                text: GEOR.util.shortenLayerName(owsinfo.text, maxLayerNameLength),
-                                                iconCls: 'raster-layer',
-                                                owsinfo: owsinfo,
-                                                checked: GEOR.config.LAYERS_CHECKED,
-                                                qtip: '<b>'+owsinfo.text+'</b><br/>' + tip,
-                                                leaf: true
-                                            }));
-                                            checkNullCounter(); // XHR (c)
-                                        },
-                                        failure: function(response) {
-                                            checkNullCounter();  // XHR (c)
-
-                                            parentNode.appendChild(new Ext.tree.TreeNode({
-                                                text: GEOR.util.shortenLayerName(owsinfo.text, maxLayerNameLength),
-                                                disabled: true,
-                                                iconCls: 'error-layer',
-                                                checked: false,
-                                                qtip: tr('layerstree.qtip.invalidwcs',
-                                                         {'NAME': owsinfo.text,
-                                                         'URL': wcs_fullurl}),
-                                                leaf: true
-                                            }));
-
-                                        },
-                                        scope: this
-                                    });
-                                    checkNullCounter(); // XHR (b)
-                                },
-                                scope: this
+                                qtip: tr('layerstree.qtip.noextraction', {'NAME': owsinfo.text})
                             });
                         }
+                        
+                        parentNode.appendChild(new Ext.tree.TreeNode(cfg));
                         checkNullCounter(); // XHR (a)
                     },
                     failure: function() {
@@ -997,8 +927,7 @@ GEOR.layerstree = (function() {
                     },
                     owsUrl: local.owsUrl,
                     owsType: local.owsType,
-                    layerName: local.layerName,
-                    namespace: local.namespace
+                    layerName: local.layerName
                 };
                 if (local.isoMetadataUrl !== null) {
                     out.layers[i].isoMetadataURL = local.isoMetadataUrl;

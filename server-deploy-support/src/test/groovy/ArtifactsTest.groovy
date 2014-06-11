@@ -27,7 +27,7 @@ class ArtifactsTest {
         assert artifacts.simpleNameMap['aliased'] != null
         assert artifacts.nameMap['aliased.war'] != null
 
-        assertNotNull artifacts.artifacts.find{it.name == "versioned-private.war"}
+        assertNotNull artifacts.artifacts.find{it.name == "versioned.war"}
 
         artifacts.each {a ->
             assert a.name == aliasFunction(a.file)
@@ -39,7 +39,7 @@ class ArtifactsTest {
     void find() {
         def artifacts = new Artifacts(project)
 
-        assertEquals artifacts.artifacts.find{return it.name == "versioned-private.war"}, artifacts.find{return it.name == "versioned-private.war"}
+        assertEquals artifacts.artifacts.find{return it.name == "versioned.war"}, artifacts.find{return it.name == "versioned.war"}
     }
     @Test
     void findAll() {
@@ -54,7 +54,7 @@ class ArtifactsTest {
 
         assertNotNull artifacts.artifacts.find{it.name == "cas.war"}
         assertNotNull artifacts.artifacts.find{it.name == "ROOT.war"}
-        assertNotNull artifacts.artifacts.find{it.name == "geonetwork-private.war"}
+        assertNotNull artifacts.artifacts.find{it.name == "geonetwork.war"}
     }
     @Test
     void each() {

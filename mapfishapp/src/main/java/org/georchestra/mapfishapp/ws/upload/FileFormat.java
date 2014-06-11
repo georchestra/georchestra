@@ -4,12 +4,12 @@ package org.georchestra.mapfishapp.ws.upload;
  * GeoFile formats.
  * <p>
  * </p>
- * 
+ *
  * @author Mauricio Pazos
  */
 public enum FileFormat {
 
-    shp, mif, tab, gml, kml, gpx;
+    shp, mif, tab, gml, kml, gpx, osm;
 
     public static boolean contains(final String ext) {
 

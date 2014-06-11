@@ -3,12 +3,13 @@ geOrchestra
 
 geOrchestra is a complete **Spatial Data Infrastructure** solution.
 
-It features a **metadata catalog** (GeoNetwork 2.10), an **OGC server** (GeoServer 2.3.2), an **advanced viewer and editor**, an **extractor** and **many more** (security and auth system based on proxy/CAS/LDAP, analytics, admin UIs, ...)
+It features a **metadata catalog** (GeoNetwork 2.10), an **OGC server** (GeoServer 2.3.2) with fine-grained access control (based on GeoFence), an **advanced viewer and editor**, an **extractor** and **many more** (security and auth system based on proxy/CAS/LDAP, analytics, admin UIs, ...)
 
 More information in the modules README:
  * [catalog](https://github.com/georchestra/geonetwork/blob/georchestra-29/README.md) (aka GeoNetwork)
  * [viewer](mapfishapp/README.md) (aka mapfishapp)
  * [extractor](extractorapp/README.md) (aka extractorapp)
+ * [geofence](https://github.com/georchestra/geofence/blob/georchestra/georchestra.md)
  * [simple catalog](catalogapp/README.md) (aka catalogapp)
  * [analytics](analytics/README.md)
  * [ldapadmin](ldapadmin/README.md)
@@ -24,15 +25,16 @@ How to build ?
 
 First, install the required packages: 
 
-    sudo apt-get install ant ant-optional openjdk-7-jdk python-virtualenv
+    sudo apt-get install ant ant-optional openjdk-7-jdk python-virtualenv libjai-imageio-core-java
 
 Notes: 
  * openjdk-6-jdk works too 
  * GeoServer is [known](http://research.geodan.nl/2012/10/openjdk7-vs-oracle-jdk7-with-geoserver/) to perform better with Oracle JDK.
+ * libjai-imageio-core-java is a non-free package
 
 Then clone the repository (either the stable branch or master if you're feeling lucky):
 
-    git clone -b 13.09 --recursive https://github.com/georchestra/georchestra.git
+    git clone -b 14.01 --recursive https://github.com/georchestra/georchestra.git
 
 ...and build:
 
@@ -71,7 +73,7 @@ Do whatever updates you want in the master branch, and regularly merge the upstr
     git fetch upstream
     git merge upstream/master
 
-Note: merge upstream/master into your config if you're using geOrchestra master, or upstream/13.09 if you're using geOrchestra stable.
+Note: merge upstream/master into your config if you're using geOrchestra master, or upstream/14.01 if you're using geOrchestra stable.
 
 Read more about the [configuration process](config/README.md).
 
@@ -80,12 +82,14 @@ How to install ?
 ===============
 
 geOrchestra runs well on Debian boxes with Tomcat6 (version 7 might hang your geonetwork, see #418).
-An example setup on one Tomcat is described [here](INSTALL.md).
+The minimum system requirement is 2 cores and 4Gb RAM. More is better ;-)
+
+To install the required packages and setup the system, follow the [install guide](INSTALL.md) (based on a unique tomcat instance).
 
 Once the system is ready, collect WAR files in a dedicated directory and rename them:
 
     PROFILE=myprofile
-    VERSION=13.09
+    VERSION=14.01
     mkdir -p /tmp/georchestra_deploy_tmp
     cd /tmp/georchestra_deploy_tmp
     cp `find ~/.m2/repository/ -name "*-${VERSION}-${PROFILE}.war"` ./
@@ -108,8 +112,5 @@ Copy WAR files in Tomcat webapps dir:
     sudo cp -f /tmp/georchestra_deploy_tmp/* /var/lib/tomcat6/webapps
     sudo service tomcat6 start
 
-This is the basic idea, but one can use more advanced deploy scripts. An example is provided 
-[here](server-deploy/linux_deploy_scripts/Readme.md).
-
-Note: it is also possible to split the webapps across several Tomcat instances. 
-The recommended setup is to have at least 2 tomcats, with one entirely dedicated to GeoServer.
+This is the basic idea, but one can fully automate this step with custom crafted deployment scripts. 
+An [example](server-deploy/linux_deploy_scripts/) is provided in the server-deploy module.

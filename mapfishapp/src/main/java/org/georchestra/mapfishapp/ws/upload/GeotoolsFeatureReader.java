@@ -334,4 +334,10 @@ class GeotoolsFeatureReader implements FeatureGeoFileReader {
         return false;
     }
 
+	@Override
+	public boolean allowsGeoToolsFallback() {
+		// GeoTools cannot fallback onto itself
+		return false;
+	}
+
 }

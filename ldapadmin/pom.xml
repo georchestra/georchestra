@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.georchestra</groupId>
 		<artifactId>root</artifactId>
-		<version>13.12-SNAPSHOT</version>
+		<version>14.06-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>ldapadmin</artifactId>
@@ -448,6 +448,7 @@
 						<groupId>org.georchestra</groupId>
 						<artifactId>config</artifactId>
 						<version>${project.version}</version>
+                        <classifier>${server}</classifier>
 					</dependency>
 				</dependencies>
 			</plugin>
@@ -483,7 +484,7 @@
 				<artifactId>maven-war-plugin</artifactId>
 				<version>2.2</version>
 				<configuration>
-					<warName>ldapadmin-private</warName>
+					<warName>ldapadmin</warName>
 				</configuration>
 			</plugin>
 			<plugin>
