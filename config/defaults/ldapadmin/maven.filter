@@ -47,7 +47,5 @@ subject.change.password=
 moderatedSignup=
 delayInDays=
 requiredFields=
-
-# Validation
-uidRegExp=[A-Za-z]+[A-Za-z0-9\.]*
-generateUid=true
+generateUid=
+uidRegExp=
