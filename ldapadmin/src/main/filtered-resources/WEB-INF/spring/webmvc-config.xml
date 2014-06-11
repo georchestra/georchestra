@@ -55,12 +55,15 @@
 	<bean id="groupDao" class="org.georchestra.ldapadmin.ds.GroupDaoImpl">
 		<property name="ldapTemplate" ref="ldapTemplate" />
         <property name="uniqueNumberField" value="${groupUniqueNumberField}"/>
+		<property name="userSearchBaseDN" value="${userSearchBaseDN}"/>
+		<property name="groupSearchBaseDN" value="${groupSearchBaseDN}"/>
 	</bean>
 
 	<bean id="accountDao" class="org.georchestra.ldapadmin.ds.AccountDaoImpl">
         <constructor-arg ref="ldapTemplate" />
         <constructor-arg ref="groupDao" />
         <property name="uniqueNumberField" value="${accountUniqueNumberField}"/>
+		<property name="userSearchBaseDN" value="${userSearchBaseDN}"/>
 	</bean>
 
     <!-- userTokenDao  -->

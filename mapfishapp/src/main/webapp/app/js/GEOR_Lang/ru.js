@@ -106,6 +106,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
         "Aucune métadonnée ne correspond à la requête.",
     */    
     /* GEOR_fileupload.js strings */
+    "2D only": "2D",
     "Local file": "Локальный файл",
     "The service is inactive": "Сервис не работает",
     "Upload a vector data file.": "Загрузите файл с векторными данными.",
