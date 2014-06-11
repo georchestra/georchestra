@@ -127,6 +127,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "No metadata matches the query.":
         "Keine Metadaten entsprechen der Anfrage.",
     /* GEOR_fileupload.js strings */
+    "2D only": "nur 2D",
     "Local file": "Datei",
     "The service is inactive": "Dienstleistung ist nicht aktiv",
     "Upload a vector data file.": "Laden einer Datei mit vektoriellen Daten",
