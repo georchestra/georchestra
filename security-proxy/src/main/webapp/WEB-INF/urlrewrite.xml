@@ -1,58 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-    <!DOCTYPE urlrewrite
-        PUBLIC "-//tuckey.org//DTD UrlRewrite 3.0//EN"
-        "http://tuckey.org/res/dtds/urlrewrite3.0.dtd">
+<!DOCTYPE urlrewrite
+    PUBLIC "-//tuckey.org//DTD UrlRewrite 3.0//EN"
+    "http://tuckey.org/res/dtds/urlrewrite3.0.dtd">
 
 <urlrewrite>
     <!-- Hack for geoserver 
          It is too hard for me to access the links so I am renaming 
          the following for login and logout
          -->
+
     <rule>
         <from>^/geoserver/admin/login.do$</from>
-        <to type="redirect">/geoserver?login</to>
+        <to type="redirect" last="true">/geoserver?login</to>
     </rule>
     <rule>
         <from>^/geoserver/j_acegi_logout$</from>
-        <to type="redirect">/j_spring_security_logout</to>
+        <to type="redirect" last="true">/j_spring_security_logout</to>
     </rule>
     <!-- End hack for geoserver -->
     <rule>
-        <from>^/sec/(.*)$</from>
-        <to type="forward">/sec/$1</to>
-    </rule>
-    <rule>
         <from>^/gateway$</from>
-        <to type="forward">/sec/gateway?url=/</to>
+        <to type="forward" last="true">/sec/gateway?url=/</to>
     </rule>
     <rule>
         <from>^/gateway\?url=(.*)$</from>
-        <to type="forward">/sec/gateway?url=$1</to>
+        <to type="forward" last="true">/sec/gateway?url=$1</to>
     </rule>
     <rule>
         <from>^/sec/ogcproxy/(.*)$</from>
-        <to type="forward">/sec/proxy/$1</to>
+        <to type="forward" last="true">/sec/proxy/$1</to>
     </rule>
     <rule>
         <from>^/ogcproxy/(.*)$</from>
-        <to type="forward">/sec/proxy/$1</to>
+        <to type="forward" last="true">/sec/proxy/$1</to>
     </rule>
     <rule>
         <from>^/(load|load\.html)\?(.*)$</from>
-        <to type="forward">/$1?$2</to>
+        <to type="forward" last="true">/$1?$2</to>
     </rule>
     <rule>
         <from>^/(load|load\.html)$</from>
-        <to type="forward">/$1</to>
+        <to type="forward" last="true">/$1</to>
     </rule>
     <rule>
         <from>^/(jquery-min.js|empty|cas-logout.jsp|casfailed.jsp|favicon.ico|receptor|j_spring_security_logout|j_spring_cas_security_check|_static/.*)$</from>
-        <to type="forward">/$1</to>
+        <to type="forward" last="true">/$1</to>
     </rule>
     <rule>
-        <from>^/(.*)$</from>
-        <to type="forward">/sec/$1</to>
+        <from>^/(?!sec/)(.+)</from>
+        <to type="forward" last="true">/sec/$1</to>
     </rule>
 
 </urlrewrite>
