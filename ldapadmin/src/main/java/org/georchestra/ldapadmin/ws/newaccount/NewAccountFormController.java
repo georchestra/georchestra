@@ -112,12 +112,11 @@ public final class NewAccountFormController {
 	 * @throws IOException
 	 */
 	@RequestMapping(value="/account/new", method=RequestMethod.POST)
-	public String create(
-						HttpServletRequest request,
-						@ModelAttribute AccountFormBean formBean,
-						BindingResult result,
-						SessionStatus sessionStatus)
-						throws IOException {
+	public String create(HttpServletRequest request,
+						 @ModelAttribute AccountFormBean formBean,
+						 BindingResult result,
+						 SessionStatus sessionStatus)
+						 throws IOException {
 
 		String remoteAddr = request.getRemoteAddr();
 

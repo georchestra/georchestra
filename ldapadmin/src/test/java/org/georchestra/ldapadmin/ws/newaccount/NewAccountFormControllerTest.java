@@ -1,12 +1,11 @@
 package org.georchestra.ldapadmin.ws.newaccount;
 
-import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 
 import net.tanesha.recaptcha.ReCaptcha;
+import net.tanesha.recaptcha.ReCaptchaResponse;
 
 import org.georchestra.ldapadmin.bs.Moderator;
 import org.georchestra.ldapadmin.bs.ReCaptchaParameters;
@@ -31,7 +30,11 @@ public class NewAccountFormControllerTest {
     private Moderator  mod = new Moderator();
     private ReCaptcha  rec = Mockito.mock(ReCaptcha.class);
     private ReCaptchaParameters rep = new ReCaptchaParameters();
+    private ReCaptchaResponse rer = Mockito.mock(ReCaptchaResponse.class);
 
+    AccountFormBean formBean = Mockito.mock(AccountFormBean.class);
+    BindingResult result = Mockito.mock(BindingResult.class);
+    SessionStatus status = Mockito.mock(SessionStatus.class);
 
     @Before
     public void setUp() throws Exception {
@@ -42,20 +45,35 @@ public class NewAccountFormControllerTest {
     public void tearDown() throws Exception {
     }
 
+    /**
+     * General case : creating a user with all the
+     * requirements fulfilled.
+     *
+     * @throws IOException
+     */
     @Test
     public void testCreate() throws IOException {
-
         HttpServletRequest request = new MockHttpServletRequest();
-        AccountFormBean formBean = Mockito.mock(AccountFormBean.class);
-        BindingResult result = Mockito.mock(BindingResult.class);
-        SessionStatus status = Mockito.mock(SessionStatus.class);
-        // To be continued ...
-        try {
-            ctrl.create(request, formBean, result, status);
-        } catch (Throwable e) {
-            assertTrue(e instanceof NullPointerException);
-        }
 
+
+        Mockito.when(formBean.getUid()).thenReturn("1");
+        Mockito.when(formBean.getFirstName()).thenReturn("test");
+        Mockito.when(formBean.getSurname()).thenReturn("test");
+        Mockito.when(formBean.getEmail()).thenReturn("test@localhost.com");
+        Mockito.when(formBean.getPassword()).thenReturn("abc1234");
+        Mockito.when(formBean.getConfirmPassword()).thenReturn("abc1234");
+        Mockito.when(formBean.getRecaptcha_challenge_field()).thenReturn("abc1234");
+        Mockito.when(formBean.getRecaptcha_response_field()).thenReturn("abc1234");
+        Mockito.when(formBean.getPhone()).thenReturn("+331234567890");
+        Mockito.when(formBean.getTitle()).thenReturn("+331234567890");
+        Mockito.when(formBean.getOrg()).thenReturn("geOrchestra testing team");
+        Mockito.when(formBean.getDescription()).thenReturn("Bot Unit Testing");
+
+        Mockito.when(rec.checkAnswer(Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(rer);
+        Mockito.when(rer.isValid()).thenReturn(true);
+
+        String ret = ctrl.create(request, formBean, result, status);
+        assert (ret.equals("welcomeNewUser"));
     }
 
 }
