@@ -19,7 +19,7 @@ public class SecurityRequestHeaderProvider extends HeaderProvider {
 
         Authentication authentication = SecurityContextHolder.getContext()
                 .getAuthentication();
-        Collection<GrantedAuthority> authorities = authentication.getAuthorities();
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         List<Header> headers = new ArrayList<Header>();
         if (authentication.getName().equals("anonymousUser"))
              return headers;
