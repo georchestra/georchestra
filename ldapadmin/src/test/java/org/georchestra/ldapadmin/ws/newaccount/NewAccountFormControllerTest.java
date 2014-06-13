@@ -3,6 +3,8 @@ package org.georchestra.ldapadmin.ws.newaccount;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -12,7 +14,9 @@ import net.tanesha.recaptcha.ReCaptchaResponse;
 import org.georchestra.ldapadmin.bs.Moderator;
 import org.georchestra.ldapadmin.bs.ReCaptchaParameters;
 import org.georchestra.ldapadmin.ds.AccountDao;
+import org.georchestra.ldapadmin.ds.DataServiceException;
 import org.georchestra.ldapadmin.ds.DuplicatedEmailException;
+import org.georchestra.ldapadmin.ds.DuplicatedUidException;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.mailservice.EmailFactoryImpl;
 import org.georchestra.ldapadmin.mailservice.MailService;
@@ -24,6 +28,7 @@ import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.support.SessionStatus;
 
 public class NewAccountFormControllerTest {
@@ -43,15 +48,6 @@ public class NewAccountFormControllerTest {
     AccountFormBean formBean = Mockito.mock(AccountFormBean.class);
     BindingResult result = Mockito.mock(BindingResult.class);
     SessionStatus status = Mockito.mock(SessionStatus.class);
-
-    @Before
-    public void setUp() throws Exception {
-        ctrl = new NewAccountFormController(dao, srv, mod, rec, rep);
-    }
-
-    @After
-    public void tearDown() throws Exception {
-    }
 
     private void configureLegitFormBean() {
         Validation v = new Validation();
@@ -74,6 +70,16 @@ public class NewAccountFormControllerTest {
         Mockito.when(rer.isValid()).thenReturn(true);
     }
 
+
+    @Before
+    public void setUp() throws Exception {
+        ctrl = new NewAccountFormController(dao, srv, mod, rec, rep);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+    }
+
     /**
      * General case : creating a user with all the
      * requirements fulfilled.
@@ -88,6 +94,32 @@ public class NewAccountFormControllerTest {
 
         assertTrue(ret.equals("welcomeNewUser"));
     }
+
+    /**
+     * Tests the initform method.
+     */
+    @Test
+    public void testInitForm() {
+        WebDataBinder bind = new WebDataBinder(null);
+
+        ctrl.initForm(bind);
+        List<String> expectedFields = Arrays.asList(bind.getAllowedFields());
+
+        assertTrue(expectedFields.contains("firstName"));
+        assertTrue(expectedFields.contains("surname"));
+        assertTrue(expectedFields.contains("email"));
+        assertTrue(expectedFields.contains("phone"));
+        assertTrue(expectedFields.contains("org"));
+        assertTrue(expectedFields.contains("title"));
+        assertTrue(expectedFields.contains("description"));
+        assertTrue(expectedFields.contains("uid"));
+        assertTrue(expectedFields.contains("password"));
+        assertTrue(expectedFields.contains("confirmPassword"));
+        assertTrue(expectedFields.contains("recaptcha_challenge_field"));
+        assertTrue(expectedFields.contains("recaptcha_response_field"));
+    }
+
+
     /**
      * General case : creating a user with all the
      * requirements fulfilled - no moderation needed.
@@ -127,12 +159,55 @@ public class NewAccountFormControllerTest {
     @Test
     public void testCreateDuplicatedEmail() throws Exception {
         configureLegitFormBean();
-        Mockito.doThrow(new DuplicatedEmailException("User already exists")).when(dao).insert((Account) Mockito.any(), Mockito.anyString());
+        Mockito.doThrow(new DuplicatedEmailException("User already exists")).
+            when(dao).insert((Account) Mockito.any(), Mockito.anyString());
 
         String ret = ctrl.create(request, formBean, result, status);
 
+        // The user must be redirected to the Create Account form
         assertTrue(ret.equals("createAccountForm"));
     }
+
+    @Test
+    public void testCreateUserWithError() throws Exception {
+        configureLegitFormBean();
+        Mockito.doThrow(new DataServiceException("Something went wrong when dealing with LDAP")).
+            when(dao).insert((Account) Mockito.any(), Mockito.anyString());
+
+        try {
+            ctrl.create(request, formBean, result, status);
+        } catch (Throwable e) {
+            assertTrue (e instanceof IOException);
+        }
+    }
+
+    /**
+     * Trying to create a new user, which already exists (UID clashes).
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testCreateDuplicatedUid() throws Exception {
+        configureLegitFormBean();
+        Mockito.doThrow(new DuplicatedUidException("User ID already exists")).
+            when(dao).insert((Account) Mockito.any(), Mockito.anyString());
+
+        String ret = ctrl.create(request, formBean, result, status);
+
+        // The user must be redirected to the Create Account form
+        assertTrue(ret.equals("createAccountForm"));
+
+        // Same scenario, but unable to generate a new UID
+        Mockito.doThrow(new DataServiceException("something has messed up")).
+            when(dao).generateUid(Mockito.anyString());
+        try {
+            ctrl.create(request, formBean, result, status);
+        } catch (Throwable e) {
+            assertTrue (e instanceof IOException);
+        }
+
+    }
+
     /**
      *
      * Tests the general case of generating a user creation form.
@@ -150,4 +225,47 @@ public class NewAccountFormControllerTest {
         assertTrue(ret.equals("createAccountForm"));
     }
 
+    /**
+     * Tests the AccountFormBean object creation.
+     *
+     * The usefulness of this test is questionable, since the underlying tested
+     * classes does pretty trivial things. This is just to ensure a good coverage.
+     */
+    @Test
+    public void testAccountFormBean() {
+        AccountFormBean t = new AccountFormBean();
+        t.setConfirmPassword("test");
+        t.setDescription("testing account");
+        // TODO only tested client-side ? related to
+        // https://github.com/georchestra/georchestra/issues/682
+        t.setEmail("test@localhost.com");
+        t.setFirstName("Test");
+        t.setOrg("geOrchestra");
+        t.setPassword("monkey123");
+        t.setPhone("+331234567890");
+        t.setRecaptcha_challenge_field("good");
+        t.setRecaptcha_response_field("wrong");
+        t.setSurname("testmaster");
+        t.setTitle("software engineer");
+        t.setUid("123123-21465456-3434");
+
+        assertTrue(t.getConfirmPassword().equals("test"));
+        assertTrue(t.getDescription().equals("testing account"));
+        assertTrue(t.getEmail().equals("test@localhost.com"));
+        assertTrue(t.getFirstName().equals("Test"));
+        assertTrue(t.getOrg().equals("geOrchestra"));
+        assertTrue(t.getPassword().equals("monkey123"));
+        assertTrue(t.getPhone().equals("+331234567890"));
+        assertTrue(t.getRecaptcha_challenge_field().equals("good"));
+        assertTrue(t.getRecaptcha_response_field().equals("wrong"));
+        assertTrue(t.getSurname().equals("testmaster"));
+        assertTrue(t.getTitle().equals("software engineer"));
+        assertTrue(t.getUid().equals("123123-21465456-3434"));
+        assertTrue(t.toString().equals("AccountFormBean [uid=123123-21465456-3434, "
+                + "firstName=Test, surname=testmaster, org=geOrchestra, "
+                + "title=software engineer, email=test@localhost.com, "
+                + "phone=+331234567890, description=testing account, "
+                + "password=monkey123, confirmPassword=test, recaptcha_challenge_field=good, "
+                + "recaptcha_response_field=wrong]"));
+    }
 }
