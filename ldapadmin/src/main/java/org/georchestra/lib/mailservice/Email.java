@@ -81,12 +81,12 @@ public abstract class Email {
     protected String getBodyTemplate() {
 
     	if(this.emailBody == null){
-    		this.emailBody = loadBody(toAbsoltuPath(this.fileTemplate));
+    		this.emailBody = loadBody(toAbsolutePath(this.fileTemplate));
     	}
     	return this.emailBody;
     }
 
-    protected abstract String toAbsoltuPath(String fileTemplate);
+    protected abstract String toAbsolutePath(String fileTemplate);
 
     /**
      * Loads the body template.

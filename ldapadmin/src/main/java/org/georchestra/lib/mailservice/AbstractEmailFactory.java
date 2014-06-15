@@ -21,7 +21,6 @@ public abstract class AbstractEmailFactory {
 	protected String bodyEncoding;
 	protected String subjectEncoding;
 	protected String[] languages;
-//	protected ExpiredArchiveDaemon expireDeamon;
 	protected String  emailAckTemplateFile;
 	protected String  emailTemplateFile;
 	protected String  emailSubject;
@@ -89,7 +88,7 @@ public abstract class AbstractEmailFactory {
 
     private void checkState() {
         if (frozen) {
-            throw new IllegalStateException("EmailDefaultParams have already been frozen");
+            throw new IllegalStateException(this.getClass().getName() + " has already been frozen");
         }
     }
 
@@ -150,13 +149,7 @@ public abstract class AbstractEmailFactory {
         checkState();
         this.languages = languages;
     }
-//    public ExpiredArchiveDaemon getExpireDeamon() {
-//    	return this.expireDeamon;
-//    }
-//    public void setExpireDeamon(ExpiredArchiveDaemon deamon){
-//    	checkState();
-//    	this.expireDeamon = deamon;
-//    }
+
     public void setEmailAckTemplateFile(String emailAckTemplateFile) {
 		this.emailAckTemplateFile = emailAckTemplateFile;
 	}

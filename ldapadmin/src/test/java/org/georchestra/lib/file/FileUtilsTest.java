@@ -239,13 +239,13 @@ public class FileUtilsTest {
     public void testToSafeFileName() {
         String[] testedPaths = new String[] {
                 "../../../../../../../etc/passwd",
-                "soundslegitasFilename",
+                "soundslegitAsFilename",
                 "C:\\windows\\system32\\kernel32.dll",
                 "some<>inconvient***Characters\\\\///"
                 };
         String[] expectedOutputPaths = new String[] {
                 ".._.._.._.._.._.._.._etc_passwd",
-                "soundslegitasFilename",
+                "soundslegitAsFilename",
                 "C__windows_system32_kernel32.dll",
                 "some__inconvient___Characters_____"
         };
