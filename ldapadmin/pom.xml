@@ -576,6 +576,7 @@
         <configuration>
           <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
         </configuration>
+        <version>2.7</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
