@@ -5,6 +5,8 @@ package org.georchestra.ldapadmin.dto;
 
 import java.io.Serializable;
 
+import org.springframework.security.authentication.encoding.LdapShaPasswordEncoder;
+
 /**
  * Account this is a Data transfer Object.
  *
@@ -141,7 +143,10 @@ class AccountImpl implements Serializable, Account, Comparable<Account>{
 
 	@Override
 	public void setPassword(String password) {
-		this.password = password;
+		LdapShaPasswordEncoder lspe = new LdapShaPasswordEncoder();
+		String encrypted = lspe.encodePassword(password,
+					String.valueOf(System.currentTimeMillis()).getBytes());
+		this.password = encrypted;
 	}
 
 	@Override
@@ -151,7 +156,10 @@ class AccountImpl implements Serializable, Account, Comparable<Account>{
 
 	@Override
 	public void setNewPassword(String newPassword) {
-		this.newPassword = newPassword;
+		LdapShaPasswordEncoder lspe = new LdapShaPasswordEncoder();
+		String encrypted = lspe.encodePassword(newPassword,
+					String.valueOf(System.currentTimeMillis()).getBytes());
+		this.newPassword = encrypted;
 
 	}
 	@Override

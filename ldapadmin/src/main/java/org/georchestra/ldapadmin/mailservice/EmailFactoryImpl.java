@@ -8,12 +8,12 @@ import org.georchestra.lib.mailservice.AbstractEmailFactory;
 
 /**
  * Creates the e-mails required for this application.
- * 
+ *
  * @author Mauricio Pazos
  *
  */
-class EmailFactoryImpl extends AbstractEmailFactory {
-	
+public class EmailFactoryImpl extends AbstractEmailFactory {
+
 	private String accountWasCreatedEmailFile;
 	private String accountWasCreatedEmailSubject;
 
@@ -22,12 +22,9 @@ class EmailFactoryImpl extends AbstractEmailFactory {
 
 	private String newAccountRequiresModerationEmailFile;
 	private String newAccountRequiresModerationEmailSubject;
-	
+
 	private String changePasswordEmailFile;
 	private String changePasswordEmailSubject;
-
-	private ServletContext servletContext;
-
 
 	public void setAccountWasCreatedEmailFile(String accountWasCreatedEmailFile) {
 		this.accountWasCreatedEmailFile = accountWasCreatedEmailFile;
@@ -39,12 +36,12 @@ class EmailFactoryImpl extends AbstractEmailFactory {
 	public void setAccountCreationInProcessEmailFile(String file) {
 		this.accountCreationInProcessEmailFile = file;
 	}
-	
+
 
 	public void setAccountCreationInProcessEmailSubject(String subject) {
 		this.accountCreationInProcessEmailSubject = subject;
 	}
-	
+
 	public void setNewAccountRequiresModerationEmailFile(String file) {
 		this.newAccountRequiresModerationEmailFile = file;
 	}
@@ -52,19 +49,19 @@ class EmailFactoryImpl extends AbstractEmailFactory {
 	public void setNewAccountRequiresModerationEmailSubject(String subject) {
 		this.newAccountRequiresModerationEmailSubject = subject;
 	}
-	
+
 	public void setChangePasswordEmailFile(String file) {
 		this.changePasswordEmailFile = file;
 	}
-	
+
 	public void setChangePasswordEmailSubject(String subject) {
 		this.changePasswordEmailSubject = subject;
 	}
-	
+
 	public ChangePasswordEmail createChangePasswordEmail(ServletContext servletContext, String[] recipients) throws IOException {
 		super.emailSubject =this.changePasswordEmailSubject;
 		ChangePasswordEmail mail =  new ChangePasswordEmail(
-				recipients, 
+				recipients,
 				super.emailSubject,
 				this.smtpHost,
 				this.smtpPort,
@@ -76,13 +73,13 @@ class EmailFactoryImpl extends AbstractEmailFactory {
 				this.languages,
 				this.changePasswordEmailFile,
 				servletContext);
-		
+
 		return mail;
 	}
-	
+
 	/**
-	 * emails to the moderator to inform that a new user is waiting authorization. 
-	 * 
+	 * emails to the moderator to inform that a new user is waiting authorization.
+	 *
 	 * @param servletContext
 	 * @param from
 	 * @param recipients
@@ -90,11 +87,11 @@ class EmailFactoryImpl extends AbstractEmailFactory {
 	 * @throws IOException
 	 */
 	public NewAccountRequiresModerationEmail createNewAccountRequiresModerationEmail(ServletContext servletContext, String from, String[] recipients) throws IOException {
-		
+
 		super.emailSubject =this.newAccountRequiresModerationEmailSubject;
-		
+
 		NewAccountRequiresModerationEmail mail =  new NewAccountRequiresModerationEmail(
-				recipients, 
+				recipients,
 				super.emailSubject,
 				this.smtpHost,
 				this.smtpPort,
@@ -104,26 +101,26 @@ class EmailFactoryImpl extends AbstractEmailFactory {
 				this.bodyEncoding,
 				this.subjectEncoding,
 				this.languages,
-				this.newAccountRequiresModerationEmailFile, 
+				this.newAccountRequiresModerationEmailFile,
 				servletContext );
-		
+
 		return mail;
 	}
 
-	/** 
+	/**
 	 * e-mail to the user to inform the account requires the moderator's singnup
-	 * 
+	 *
 	 * @param servletContext
 	 * @param strings
 	 * @return
 	 */
 	public AccountCreationInProcessEmail createAccountCreationInProcessEmail(
 			ServletContext servletContext, String[] recipients) {
-		
+
 		super.emailSubject =this.accountCreationInProcessEmailSubject;
 
 		AccountCreationInProcessEmail mail =  new AccountCreationInProcessEmail(
-				recipients, 
+				recipients,
 				super.emailSubject,
 				this.smtpHost,
 				this.smtpPort,
@@ -133,18 +130,18 @@ class EmailFactoryImpl extends AbstractEmailFactory {
 				this.bodyEncoding,
 				this.subjectEncoding,
 				this.languages,
-				this.accountCreationInProcessEmailFile, 
+				this.accountCreationInProcessEmailFile,
 				servletContext );
-		
+
 		return mail;
 	}
 
 	public AccountWasCreatedEmail createAccountWasCreatedEmail(ServletContext servletContext, String[] recipients) {
-		
+
 		super.emailSubject =this.accountWasCreatedEmailSubject;
 
 		AccountWasCreatedEmail mail =  new AccountWasCreatedEmail(
-				recipients, 
+				recipients,
 				super.emailSubject,
 				this.smtpHost,
 				this.smtpPort,
@@ -154,10 +151,10 @@ class EmailFactoryImpl extends AbstractEmailFactory {
 				this.bodyEncoding,
 				this.subjectEncoding,
 				this.languages,
-				this.accountWasCreatedEmailFile, 
+				this.accountWasCreatedEmailFile,
 				servletContext );
-		
+
 		return mail;
-		
+
 	}
 }

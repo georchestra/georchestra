@@ -13,60 +13,53 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * This task searches and removes the expired tokens generated when for the "lost password" use case.
- * 
+ *
  * @author Mauricio Pazos
  *
  */
 class ExpiredTokenCleanTask implements Runnable {
-	
+
 	private static final Log LOG = LogFactory.getLog(ExpiredTokenCleanTask.class.getName());
 
 	private UserTokenDao userTokenDao;
-	
-	private long delayInMillisecconds;
+
+	private long delayInMilliseconds;
 
 	@Autowired
-	public ExpiredTokenCleanTask(UserTokenDao userTokenDao ) {
+	public ExpiredTokenCleanTask(UserTokenDao userTokenDao) {
 
 		this.userTokenDao = userTokenDao;
 	}
-	
-	public void setDelayInMillisecconds(long delayInMilisecconds) {
-		
-		this.delayInMillisecconds = delayInMilisecconds;
+
+	public void setDelayInMilliseconds(long delayInMiliseconds) {
+
+		this.delayInMilliseconds = delayInMiliseconds;
 	}
 
 	/**
 	 * Removes the expired tokens
-	 *  
-	 * This task is scheduled taking into account the delay period. 
+	 *
+	 * This task is scheduled taking into account the delay period.
 	 */
 	@Override
-	public void run(){
+	public void run() {
 
-		
 		Calendar calendar = Calendar.getInstance();
-		
+
 		long now = calendar.getTimeInMillis();
-		Date expired = new Date(now - this.delayInMillisecconds);
+		Date expired = new Date(now - this.delayInMilliseconds);
 
 		try {
 			List<Map<String, Object>>  userTokenToDelete = userTokenDao.findBeforeDate(expired);
 			for (Map<String, Object> userToken : userTokenToDelete) {
-				
 				try {
-					userTokenDao.delete( (String) userToken.get("uid") );
-					
+					userTokenDao.delete((String) userToken.get("uid"));
 				} catch (Exception e) {
 					LOG.error(e.getMessage());
-				} 
+				}
 			}
-			
 		} catch (DataServiceException e1) {
 			LOG.error(e1);
 		}
-		
 	}
-	
-
 }
