@@ -74,7 +74,6 @@
         </addXml>
         <replaceAtt xpath="client" attName="widget" value="true"/>
         <replaceAtt xpath="client" attName="url" value="../../apps/georchestra/"/>
-        <replaceAtt xpath="client" attName="parameters" value="hl=@shared.geonetwork.language@"/>
         <replaceAtt xpath="client" attName="createParameter" value="#create"/>
         <replaceAtt xpath="client" attName="stateId" value="s"/>
     </file>
