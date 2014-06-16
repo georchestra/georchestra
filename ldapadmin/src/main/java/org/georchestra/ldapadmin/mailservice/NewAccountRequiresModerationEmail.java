@@ -52,7 +52,7 @@ class NewAccountRequiresModerationEmail extends Email {
 	}
 	
 	@Override
-    protected String toAbsoltuPath(String fileTemplate) {
+    protected String toAbsolutePath(String fileTemplate) {
 
     	return this.servletContext.getRealPath(fileTemplate);
     }

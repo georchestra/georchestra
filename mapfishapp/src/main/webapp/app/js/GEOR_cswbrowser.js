@@ -16,6 +16,7 @@
 /*
  * @requires GeoExt/data/LayerRecord.js
  * @include OpenLayers/Request.js
+ * @include OpenLayers/Format/XML.js
  * @include OpenLayers/Format/CSWGetDomain/v2_0_2.js
  * @include OpenLayers/Format/CSWGetRecords/v2_0_2.js
  * @include OpenLayers/Filter/Comparison.js
@@ -26,6 +27,22 @@
  */
 
 Ext.namespace("GEOR");
+
+Ext.define('GEOR.XmlReader', {
+    extend: 'Ext.data.XmlReader',
+    read : function(response){
+        //IE10 issue
+        if(!response.responseXML) {
+            var parser = new DOMParser();
+            response.responseXML = (new OpenLayers.Format.XML()).read(response.responseText);
+        }
+        var doc = response.responseXML;
+        if(!doc) {
+            throw {message: "XmlReader.read: XML Document not available"};
+        }
+        return this.readRecords(doc);
+    }
+});
 
 GEOR.cswbrowser = (function() {
 
@@ -321,7 +338,7 @@ GEOR.cswbrowser = (function() {
                     {name: 'description', mapping: 'definition'},
                     {name: 'uri', mapping: 'uri'}
                 ]);
-                var myReader = new Ext.data.XmlReader({
+                var myReader = new GEOR.XmlReader({
                    record: "keyword",
                    id: "id"
                 }, keywordType);
@@ -417,7 +434,7 @@ GEOR.cswbrowser = (function() {
                     method: 'GET',
                     disableCaching: false
                 }),
-                reader: new Ext.data.XmlReader({
+                reader: new GEOR.XmlReader({
                     record: 'thesaurus',
                     id: 'key'
                 }, recordType)

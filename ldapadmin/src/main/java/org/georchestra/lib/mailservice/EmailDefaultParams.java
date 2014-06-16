@@ -7,7 +7,7 @@ import java.net.InetAddress;
 /**
  * The common parameters for sending emails. This class can be frozen if it is a
  * defaults class so that it cannot be changed after original configuration.
- * 
+ *
  * @author jeichar
  */
 public class EmailDefaultParams {
@@ -19,13 +19,13 @@ public class EmailDefaultParams {
     private String bodyEncoding;
     private String subjectEncoding;
     private String[] languages;
-    
+
     private boolean frozen = false;
-    
+
     public EmailDefaultParams() {
         // this is the default constructor for use by spring
     }
-    
+
     /**
      * Copy constructor
      * @param defaults the defaults to copy into this object
@@ -40,15 +40,15 @@ public class EmailDefaultParams {
         subjectEncoding = defaults.subjectEncoding;
         languages = defaults.languages;
     }
-    
-    // -------------- Not public API -------------- // 
+
+    // -------------- Not public API -------------- //
     /**
      * Signals that the values for this object are set and may not
      * be changed.  This is to ensure that when the defaults are set
      * by Spring that later no one will change them programatically.
-     * 
+     *
      * The defaults should only be set via spring configuration.
-     * 
+     *
      * Freeze will be called by the class that has the parameter
      * set by spring.
      */
@@ -81,14 +81,14 @@ public class EmailDefaultParams {
             subjectEncoding = bodyEncoding;
         }
     }
-    
+
     private void checkState() {
         if (frozen) {
-            throw new IllegalStateException("EmailDefaultParams have already been frozen");
+            throw new IllegalStateException(this.getClass().getName() + " has already been frozen");
         }
     }
-    
-    // -------------- Bean setters/getters -------------- // 
+
+    // -------------- Bean setters/getters -------------- //
     public String getSmtpHost() {
         return smtpHost;
     }

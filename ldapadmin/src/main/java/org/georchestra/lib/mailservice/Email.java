@@ -5,30 +5,22 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Properties;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.Multipart;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
-import javax.servlet.ServletContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public abstract class Email {
-	
+
 	protected static final Log LOG = LogFactory.getLog(Email.class.getName());
-	
-    private final int DEB_MODEM = 56;
-    private final int DEB_ADSL = 2000;
-    private final int DEB_T1 = 20000;
 
 	private String smtpHost;
     private int smtpPort = -1;
@@ -49,7 +41,7 @@ public abstract class Email {
 			final String emailSubject, final String smtpHost, final int smtpPort, final String emailHtml,
 			final String replyTo, final String from, final String bodyEncoding,
 			final String subjectEncoding, final String[] languages, String fileTemplate) {
-		
+
 		this.recipients = recipients;
 		this.subject = emailSubject;
 		this.smtpHost = smtpHost;
@@ -61,18 +53,17 @@ public abstract class Email {
 		this.subjectEncoding = subjectEncoding;
 		this.languages = languages;
 		this.fileTemplate = fileTemplate;
-		
+
 		if(LOG.isDebugEnabled()){
-			LOG.debug(this.toString());
+			LOG.debug("Email instanciated: " + this.toString());
 		}
 	}
-    
-    
-    
+
+
+
     @Override
 	public String toString() {
-		return "Email [DEB_MODEM=" + DEB_MODEM + ", DEB_ADSL=" + DEB_ADSL
-				+ ", DEB_T1=" + DEB_T1 + ", smtpHost=" + smtpHost
+		return "Email [smtpHost=" + smtpHost
 				+ ", smtpPort=" + smtpPort + ", emailHtml=" + emailHtml
 				+ ", replyTo=" + replyTo + ", from=" + from + ", bodyEncoding=" + bodyEncoding
 				+ ", subjectEncoding=" + subjectEncoding + ", languages="
@@ -84,28 +75,28 @@ public abstract class Email {
 
 	/**
      * Read the body from template
-     * @param servletContext 
+     * @param servletContext
      * @return
      */
     protected String getBodyTemplate() {
-    	
+
     	if(this.emailBody == null){
-    		this.emailBody = loadBody(toAbsoltuPath(this.fileTemplate));
+    		this.emailBody = loadBody(toAbsolutePath(this.fileTemplate));
     	}
     	return this.emailBody;
     }
-    
-    protected abstract String toAbsoltuPath(String fileTemplate);
-    
+
+    protected abstract String toAbsolutePath(String fileTemplate);
+
     /**
      * Loads the body template.
-     * 
+     *
      * @param fileName path + file name
      * @return
      * @throws IOException
      */
     private String loadBody(final String fileName) {
-    	
+
     	BufferedReader reader = null;
     	String body = null;
         try {
@@ -115,7 +106,7 @@ public abstract class Email {
                 builder.append(line).append("\n");
             }
             body = builder.toString();
-            
+
         } catch (Exception e ){
         	LOG.error(e);
         } finally {
@@ -127,23 +118,22 @@ public abstract class Email {
         }
         return body;
     }
-    
+
 
 	protected void sendMsg( final String msg) throws AddressException, MessagingException {
-		
+
 		if(LOG.isDebugEnabled() ){
-			
+
 			LOG.debug("body: "+ msg );
 		}
-		
+
 		final Properties props = System.getProperties();
         props.put("mail.smtp.host", smtpHost);
-        props.put("mail.protocol.port", smtpPort); // from extractorapp
-        //props.put("mail.smtp.port", smtpPort);
-        
+        props.put("mail.protocol.port", smtpPort);
+
         final Session session = Session.getInstance(props, null);
         final MimeMessage message = new MimeMessage(session);
-        
+
         if (isValidEmailAddress(from)) {
             message.setFrom(new InternetAddress(from));
         }
@@ -180,7 +170,7 @@ public abstract class Email {
         LOG.debug("extraction email has been sent to:\n"
                 + Arrays.toString(recipients));
 	}
-	
+
 	protected static boolean isValidEmailAddress(String address) {
         if (address == null) {
             return false;

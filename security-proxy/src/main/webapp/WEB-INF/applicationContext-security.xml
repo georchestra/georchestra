@@ -47,6 +47,7 @@
                 <value>.*QGIS.*</value>
             </list>
         </property>
+        <property name="ignoreHttps" value="true" />
         <property name="ignoreFailure" value="false"/>
         <property name="credentialsCharset" value="UTF-8"/>
         <property name="authenticationManager" ref="authenticationManager"/>
