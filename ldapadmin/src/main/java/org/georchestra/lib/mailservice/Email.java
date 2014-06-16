@@ -167,7 +167,7 @@ public abstract class Email {
         }
 
         Transport.send(message);
-        LOG.debug("extraction email has been sent to:\n"
+        LOG.debug("email has been sent to:\n"
                 + Arrays.toString(recipients));
 	}
 
