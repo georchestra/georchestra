@@ -8,12 +8,17 @@ import javax.naming.AuthenticationException;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.OperationNotSupportedException;
+import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.ldap.InitialLdapContext;
 
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
+import org.springframework.ldap.core.ContextSource;
+import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
+import org.springframework.ldap.core.DistinguishedName;
+import org.springframework.ldap.core.support.BaseLdapPathContextSource;
 import org.springframework.ldap.support.LdapUtils;
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -25,6 +30,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.ldap.SpringSecurityLdapTemplate;
 import org.springframework.security.ldap.authentication.AbstractLdapAuthenticationProvider;
+import org.springframework.security.ldap.ppolicy.PasswordPolicyControl;
+import org.springframework.security.ldap.ppolicy.PasswordPolicyControlExtractor;
+import org.springframework.security.ldap.userdetails.DefaultLdapAuthoritiesPopulator;
 import org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -74,6 +82,9 @@ public class CustomAuthenticationProvider extends AbstractLdapAuthenticationProv
 
     private LdapAuthoritiesPopulator populator;
 
+    private ContextSource ldapContextSource;
+    private String ldapUserDnPattern;
+
     // Only used to allow tests to substitute a mock LdapContext
     ContextFactory contextFactory = new ContextFactory();
 
@@ -83,34 +94,85 @@ public class CustomAuthenticationProvider extends AbstractLdapAuthenticationProv
      * @param url
      *            an LDAP url (or multiple URLs)
      */
-    public CustomAuthenticationProvider(String domain, String url, LdapAuthoritiesPopulator _populator) {
+    public CustomAuthenticationProvider(String domain, String url,
+            LdapAuthoritiesPopulator _populator, ContextSource contextSource,
+            String _ldapUserDnPattern) {
         Assert.isTrue(StringUtils.hasText(url), "Url cannot be empty");
         this.domain = StringUtils.hasText(domain) ? domain.toLowerCase() : null;
         this.url = url;
         rootDn = this.domain == null ? null : rootDnFromDomain(this.domain);
         populator = _populator;
+        ldapContextSource = contextSource;
+        ldapUserDnPattern = _ldapUserDnPattern;
     }
 
     @Override
-    protected DirContextOperations doAuthentication(
-            UsernamePasswordAuthenticationToken auth) {
+    protected DirContextOperations doAuthentication(UsernamePasswordAuthenticationToken auth) {
         String username = auth.getName();
         String password = (String) auth.getCredentials();
 
-        DirContext ctx = bindAsUser(username, password);
-
+        DirContext ctx = null;
         try {
+            ctx = bindAsUser(username, password);
             return searchForUser(ctx, username);
-
+        } catch (BadCredentialsException e) {
+            // try with the OpenLDAP instead
+            DirContextOperations dirctxop = tryOpenLDAPBind(username, password);
+            if (dirctxop == null)
+                throw badCredentials(e);
+            else
+                return dirctxop;
         } catch (NamingException e) {
             logger.error(
                     "Failed to locate directory entry for authenticated user: "
                             + username, e);
-            throw badCredentials(e);
+                throw badCredentials(e);
+
+        } finally {
+            if (ctx != null) {
+                LdapUtils.closeContext(ctx);
+            }
+        }
+    }
+
+    private DirContextOperations tryOpenLDAPBind(String username, String password) {
+        // type checking
+
+        BaseLdapPathContextSource ctxSource = (BaseLdapPathContextSource) ldapContextSource;
+        String strUserDn = ldapUserDnPattern.replace("{0}" , username);
+
+        DistinguishedName userDn = new DistinguishedName(strUserDn);
+        DistinguishedName fullDn = new DistinguishedName(strUserDn);
+        fullDn.prepend(ctxSource.getBaseLdapPath());
+
+        logger.debug("Attempting to bind as " + fullDn + " onto the OpenLDAP server");
+
+        DirContext ctx = null;
+        try {
+            ctx = ctxSource.getContext(fullDn.toString(), password);
+            // Check for password policy control
+            PasswordPolicyControl ppolicy = PasswordPolicyControlExtractor.extractControl(ctx);
+
+            logger.debug("Retrieving attributes...");
+
+            Attributes attrs = ctx.getAttributes(userDn);
+
+            DirContextAdapter result = new DirContextAdapter(attrs, userDn);
+
+            if (ppolicy != null) {
+                result.setAttributeValue(ppolicy.getID(), ppolicy);
+            }
+
+            return result;
+        } catch (Throwable e) {
+            logger.debug("Error while trying to bind as " + fullDn);
         } finally {
             LdapUtils.closeContext(ctx);
         }
+
+        return null;
     }
+
 
     /**
      * Returns the user authorities from the OpenLDAP
