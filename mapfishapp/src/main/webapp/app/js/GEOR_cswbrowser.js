@@ -30,10 +30,9 @@ Ext.namespace("GEOR");
 
 Ext.define('GEOR.XmlReader', {
     extend: 'Ext.data.XmlReader',
-    read : function(response){
-        //IE10 issue
+    read: function(response){
+        // to work around an IE10 issue
         if(!response.responseXML) {
-            var parser = new DOMParser();
             response.responseXML = (new OpenLayers.Format.XML()).read(response.responseText);
         }
         var doc = response.responseXML;
