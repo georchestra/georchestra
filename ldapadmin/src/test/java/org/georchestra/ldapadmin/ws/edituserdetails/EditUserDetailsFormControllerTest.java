@@ -1,7 +1,6 @@
 package org.georchestra.ldapadmin.ws.edituserdetails;
 
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,7 +14,9 @@ import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.support.SessionStatus;
 
 
 public class EditUserDetailsFormControllerTest {
@@ -24,9 +25,31 @@ public class EditUserDetailsFormControllerTest {
 
     private AccountDao dao = Mockito.mock(AccountDao.class);
 
+    private MockHttpServletRequest request = new MockHttpServletRequest();
+    private MockHttpServletResponse response = new MockHttpServletResponse();
+
+    private EditUserDetailsFormBean formBean = new EditUserDetailsFormBean();
+    private BindingResult resultErrors = Mockito.mock(BindingResult.class);
+
+    private SessionStatus sessionStatus = Mockito.mock(SessionStatus.class);
+
+    Model model = Mockito.mock(Model.class);
+
     @Before
     public void setUp() throws Exception {
         ctrl = new EditUserDetailsFormController(dao);
+        formBean.setDescription("description");
+        formBean.setEmail("email");
+        formBean.setFacsimile("+331234567890");
+        formBean.setFirstName("testFirst");
+        formBean.setOrg("geOrchestra testing LLC");
+        formBean.setPhone("+331234567891");
+        formBean.setPostalAddress("48 Avenue du Lac du Bourget. 73377 Le Bourget-du-Lac");
+        formBean.setSurname("misterTest");
+        formBean.setTitle("test engineer");
+        formBean.setUid("mtester");
+
+
     }
 
     @After
@@ -59,9 +82,8 @@ public class EditUserDetailsFormControllerTest {
 
     @Test
     public void testSetupForm() throws Exception {
-        Model model = Mockito.mock(Model.class);
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        MockHttpServletResponse response = new MockHttpServletResponse();
+
+
         Account mockedAccount = Mockito.mock(Account.class);
         Mockito.when(dao.findByUID(Mockito.anyString())).thenReturn(mockedAccount);
 
@@ -70,42 +92,40 @@ public class EditUserDetailsFormControllerTest {
         assertTrue(ret.equals("editUserDetailsForm"));
     }
 
+    /**
+     * Testing the general case on EditUserDetail controller,
+     * general case.
+     *
+     * @throws Exception
+     */
     @Test
-    public void testEdit() {
-        fail("Not yet implemented");
+    public void testEdit() throws Exception {
+       ctrl.setAccountBackup(Mockito.mock(Account.class));
+       String ret = ctrl.edit(request, response, model, formBean, resultErrors, sessionStatus);
+
+       assertTrue (ret.equals("editUserDetailsForm"));
     }
 
     /**
-     * Tests the underlying form bean class (EditUserDetailsFormBean)
+     * Tests the underlying form bean class (EditUserDetailsFormBean).
      */
     @Test
     public void testEditUserDetailsFormBean() {
-        EditUserDetailsFormBean tested = new EditUserDetailsFormBean();
-
-        tested.setDescription("description");
-        tested.setEmail("email");
-        tested.setFacsimile("+331234567890");
-        tested.setFirstName("testFirst");
-        tested.setOrg("geOrchestra testing LLC");
-        tested.setPhone("+331234567891");
-        tested.setPostalAddress("48 Avenue du Lac du Bourget. 73377 Le Bourget-du-Lac");
-        tested.setSurname("misterTest");
-        tested.setTitle("test engineer");
-        tested.setUid("mtester");
-
-        assertTrue(tested.getUid().equals("mtester"));
-        assertTrue(tested.getDescription().equals("description"));
-        assertTrue(tested.getSurname().equals("misterTest"));
-        assertTrue(tested.getFirstName().equals("testFirst"));
-        assertTrue(tested.getEmail().equals("email"));
-        assertTrue(tested.getTitle().equals("test engineer"));
-        assertTrue(tested.getPhone().equals("+331234567891"));
-        assertTrue(tested.getFacsimile().equals("+331234567890"));
-        assertTrue(tested.getOrg().equals("geOrchestra testing LLC"));
-        assertTrue(tested.getPostalAddress().equals("48 Avenue du Lac du Bourget. 73377 Le Bourget-du-Lac"));
 
 
-        assertTrue(tested.toString().equals("EditUserDetailsFormBean [uid=mtester, surname=misterTest, "
+        assertTrue(formBean.getUid().equals("mtester"));
+        assertTrue(formBean.getDescription().equals("description"));
+        assertTrue(formBean.getSurname().equals("misterTest"));
+        assertTrue(formBean.getFirstName().equals("testFirst"));
+        assertTrue(formBean.getEmail().equals("email"));
+        assertTrue(formBean.getTitle().equals("test engineer"));
+        assertTrue(formBean.getPhone().equals("+331234567891"));
+        assertTrue(formBean.getFacsimile().equals("+331234567890"));
+        assertTrue(formBean.getOrg().equals("geOrchestra testing LLC"));
+        assertTrue(formBean.getPostalAddress().equals("48 Avenue du Lac du Bourget. 73377 Le Bourget-du-Lac"));
+
+
+        assertTrue(formBean.toString().equals("EditUserDetailsFormBean [uid=mtester, surname=misterTest, "
                 + "givenName=testFirst, email=email, title=test engineer, phone=+331234567891, facsimile=+331234567890, "
                 + "org=geOrchestra testing LLC, description=description, postalAddress=48 Avenue du Lac du Bourget. 73377 "
                 + "Le Bourget-du-Lac]"));

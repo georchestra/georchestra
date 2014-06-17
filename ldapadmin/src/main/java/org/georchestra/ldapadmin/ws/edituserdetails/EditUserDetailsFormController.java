@@ -212,4 +212,12 @@ public class EditUserDetailsFormController {
 
 		return account;
 	}
+
+	/**
+	 * Setter only meant for testing purposes.
+	 *
+	 */
+	public void setAccountBackup(Account a) {
+	    this.accountBackup = a;
+	}
 }
