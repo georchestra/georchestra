@@ -100,7 +100,9 @@ public class GroupDaoImpl implements GroupDao {
 		try {
 			LdapContextSource ctxsrc = (LdapContextSource) this.ldapTemplate.getContextSource();
 			dn.addAll(ctxsrc.getBaseLdapPath());
-		} catch (InvalidNameException e) {}
+		} catch (InvalidNameException e) {
+		    LOG.error("unable to construct the userDn: "+e.getMessage());
+		}
 		dn.add(userSearchBaseDN);
 		dn.add("uid", uid);
 
@@ -270,8 +272,10 @@ public class GroupDaoImpl implements GroupDao {
 			throw new DuplicatedCommonNameException("there is a group with this name: " + group.getName());
 
 		} catch (NotFoundException e1) {
-			// if an account with the specified uid cannot be retrieved, then
-			// the new account can be safely added.
+			// if an group with the specified name cannot be retrieved, then
+			// the new group can be safely added.
+		    LOG.debug("The group with name " + group.getName() + " does not exist yet, it can "
+		            + "then be safely created." );
 		}
 
 
@@ -343,9 +347,9 @@ public class GroupDaoImpl implements GroupDao {
 
 		if(value == null) return true;
 
-		if(value instanceof String){
-			if(((String)value).length() == 0) return true;
-		}
+        if (value instanceof String && (((String) value).length() == 0)) {
+            return true;
+        }
 
 		return false;
 	}
@@ -374,8 +378,10 @@ public class GroupDaoImpl implements GroupDao {
                 throw new DuplicatedCommonNameException("there is a group with this name: " + group.getName());
 
             } catch (NotFoundException e1) {
-                // if an account with the specified uid cannot be retrieved, then
-                // the new account can be safely added.
+                // if a group with the specified name cannot be retrieved, then
+                // the new group can be safely renamed.
+                LOG.debug("no account with name " + group.getName() + " can be found, it is then "
+                        + "safe to rename the group.");
             }
         }
 

@@ -11,6 +11,8 @@ import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
 import org.georchestra.ldapadmin.dto.UserSchema;
@@ -44,6 +46,7 @@ public final class AccountDaoImpl implements AccountDao{
 
     private AtomicInteger uniqueNumberCounter = new AtomicInteger(-1);
 
+    private static final Log LOG = LogFactory.getLog(AccountDaoImpl.class.getName());
     @Autowired
 	public AccountDaoImpl( LdapTemplate ldapTemplate, GroupDao groupDao) {
 
@@ -95,7 +98,8 @@ public final class AccountDaoImpl implements AccountDao{
 			throw new DuplicatedUidException("there is a user with this user identifier (uid): " + account.getUid());
 
 		} catch (NotFoundException e1) {
-			// if not exist an account with this uid the new account can be added.
+			// if no account with the given UID can be found, then the new account can be added.
+		    LOG.debug("User with uid "+uid+" not found, account can be created");
 		}
 
 		// checks unique email
@@ -105,7 +109,8 @@ public final class AccountDaoImpl implements AccountDao{
 			throw new DuplicatedEmailException("there is a user with this email: " + account.getEmail());
 
 		} catch (NotFoundException e1) {
-			// if not exist an account with this e-mail the new account can be added.
+                  // if no other accounts with the same e-mail exists yet, then the new account can be added.
+                  LOG.debug("No account with the mail "+ account.getEmail()+ ", account can be created.");
 		}
 
 
@@ -213,7 +218,8 @@ public final class AccountDaoImpl implements AccountDao{
 			}
 
 		} catch (NotFoundException e1) {
-			// if it doesn't exist an account with this e-mail the it can be part of the updated account.
+                  // if it doesn't exist an account with this e-mail, then it can be part of the updated account.
+                  LOG.debug("Updated account with email "+ account.getEmail() + " does not exist, update possible.");
 		}
 
 		// update the entry in the ldap tree
@@ -533,8 +539,8 @@ public final class AccountDaoImpl implements AccountDao{
 
 		if(value == null) return true;
 
-		if(value instanceof String){
-			if(((String)value).length() == 0) return true;
+		if(value instanceof String && (((String)value).length() == 0)){
+			return true;
 		}
 
 		return false;
@@ -562,7 +568,7 @@ public final class AccountDaoImpl implements AccountDao{
 					String.valueOf(System.currentTimeMillis()).getBytes());
 
 		context.setAttributeValue("userPassword", encrypted);
-		
+
 		ldapTemplate.modifyAttributes(context);
 	}
 

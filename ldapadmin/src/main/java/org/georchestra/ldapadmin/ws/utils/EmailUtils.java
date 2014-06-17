@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.georchestra.ldapadmin.ws.utils;
 
@@ -7,11 +7,9 @@ import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 
-import org.georchestra.ldapadmin.ws.utils.Validation;
-
 /**
  * Utility class to manage the email.
- * 
+ *
  * @author Mauricio Pazos
  *
  */
