@@ -49,4 +49,5 @@ subject.change.password=
 moderatedSignup=
 delayInDays=
 requiredFields=
-
+generateUid=
+uidRegExp=

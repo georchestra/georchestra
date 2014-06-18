@@ -16,8 +16,13 @@ import org.georchestra.ldapadmin.ws.utils.Validation;
  */
 public class UserUtils {
 
-	private UserUtils(){
-			// utility class
+	private static String uidRegExp = "[A-Za-z]+[A-Za-z0-9.]*";
+
+	public static String getUidRegExp() {
+		return uidRegExp;
+	}
+	public void setUidRegExp(String uidRegExp) {
+		this.uidRegExp = uidRegExp;
 	}
 	
 	public static void validate(String uid, String firstName, String surname, Errors errors) {
@@ -42,20 +47,8 @@ public class UserUtils {
 	 * @param uid user identifier
 	 * @return true if the uid is valid
 	 */
-	private static boolean isUidValid(String uid) {
-
-		char firstChar = uid.charAt(0); 
-		if(!Character.isLetter(firstChar)){
-			return false;
-		}
-		for(int i=1; i < uid.length(); i++){
-			
-			if( !(Character.isLetter( uid.charAt(i)) ||  Character.isDigit( uid.charAt(i)) || ( uid.charAt(i) == '.')) ){
-				
-				return false;
-			} 
-		}
-		return true;
+	public static boolean isUidValid(String uid) {
+		return uid.matches(uidRegExp);
 	}
 
 	public static void validate(String firstName, String surname, Errors errors) {

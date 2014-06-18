@@ -33,6 +33,8 @@ public class AccountFormBean implements Serializable{
 	
 	private String recaptcha_challenge_field;
 	private String recaptcha_response_field;	
+
+	private String generateUid;
 	
 	public String getRecaptcha_challenge_field() {
 		return recaptcha_challenge_field;
@@ -113,6 +115,14 @@ public class AccountFormBean implements Serializable{
 
 		this.surname = sn;
 	}
+
+	public String getGenerateUid() {
+		return generateUid;
+	}
+	public void setGenerateUid(String generateUid) {
+		this.generateUid = generateUid;
+	}
+
 	@Override
 	public String toString() {
 		return "AccountFormBean [uid=" + uid + ", firstName=" + firstName
@@ -122,6 +132,7 @@ public class AccountFormBean implements Serializable{
 				+ password + ", confirmPassword=" + confirmPassword
 				+ ", recaptcha_challenge_field=" + recaptcha_challenge_field
 				+ ", recaptcha_response_field=" + recaptcha_response_field
+				+ ", generateUid=" + generateUid
 				+ "]";
 	}
 	

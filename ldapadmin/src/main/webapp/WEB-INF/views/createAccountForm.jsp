@@ -107,11 +107,13 @@
      * ("keyup" or "change" event - "input" event is not available with this version of spring)
      */
     function makeUid(){
-        var name = document.form.firstName.value;
-        var surname = document.form.surname.value;
-        var str = stringDeaccentuate(name.toLowerCase().charAt(0)+ surname.toLowerCase());
-        str = str.replace(/\W*/g, '');
-        document.form.uid.value = str;
+        if (!"${accountFormBean.generateUid}".equals("false")) {
+            var name = document.form.firstName.value;
+            var surname = document.form.surname.value;
+            var str = stringDeaccentuate(name.toLowerCase().charAt(0)+ surname.toLowerCase());
+            str = str.replace(/\W*/g, '');
+            document.form.uid.value = str;
+        }
     }
     /**
      * stringDeaccentuate
@@ -147,7 +149,7 @@
     }
     /* Validate the form */
     function validate() {
-        if (testFirstname() & testSurname() & testEmail() & testUid() & testPassword() & testConfirmPassword() & testRecaptcha() &
+        if (testFirstname() & testSurname() & testEmail() & testUid("${uidRegExp}") & testPassword() & testConfirmPassword() & testRecaptcha() &
 			testField("phone") & testField("org") & testField("title") & testField("description")
         ) {
             return true;
