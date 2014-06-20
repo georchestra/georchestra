@@ -2,3 +2,6 @@
 # (unless you know what you're doing)
 
 language=@shared.language@
+
+# filled by GenerateConfig.groovy
+ldapadminPublicContextPath=
