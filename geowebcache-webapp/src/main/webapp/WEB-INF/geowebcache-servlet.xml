@@ -47,7 +47,6 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
     <bean id="gwcURLMangler" class="org.geowebcache.util.GeorchestraURLMangler">
         <constructor-arg value="${baseUrl}" />
         <constructor-arg value="${contextPath}" />
-        <constructor-arg value="${path}" />
     </bean>
 
     <context:property-placeholder location="classpath:gwc.properties" />
