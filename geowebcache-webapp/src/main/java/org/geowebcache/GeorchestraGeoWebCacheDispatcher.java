@@ -26,12 +26,9 @@ import javax.servlet.http.HttpServletResponseWrapper;
  * @author Jesse on 4/25/2014.
  */
 public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher {
-    public static final String GEORCHESTRA_SHARED_HEADER = "@@georchestraSharedHeader@@";
-    private static Log log = LogFactory.getLog(GeorchestraGeoWebCacheDispatcher.class);
 
-    private final URL headerURL;
+    private static Log log = LogFactory.getLog(GeorchestraGeoWebCacheDispatcher.class);
     private final String rawHeader;
-    private String header;
     private final TileLayerDispatcher tileLayerDispatcher;
     private final GridSetBroker gridSetBroker;
 
@@ -49,38 +46,11 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher {
             GridSetBroker gridSetBroker,
             StorageBroker storageBroker,
             Configuration mainConfiguration,
-            RuntimeStats runtimeStats,
-            String headerURL) throws IOException {
+            RuntimeStats runtimeStats) throws IOException {
         super(tileLayerDispatcher, gridSetBroker, storageBroker, mainConfiguration, runtimeStats);
         this.tileLayerDispatcher = tileLayerDispatcher;
         this.gridSetBroker = gridSetBroker;
-        if (headerURL == null || headerURL.trim().isEmpty()) {
-            this.headerURL = null;
-        } else {
-            this.headerURL = new URL(headerURL);
-        }
         this.rawHeader = IOUtils.toString(GeorchestraGeoWebCacheDispatcher.class.getResourceAsStream("/georchestraHeader.html"));
-    }
-
-    private synchronized String getHeader() {
-        if (this.header == null) {
-            String georchestraHeader = "";
-            if (this.headerURL != null) {
-                try {
-                    georchestraHeader = IOUtils.toString(this.headerURL);
-                    final Matcher matcher = Pattern.compile("<\\s*body\\s*>(.*)</\\s*body\\s*>").matcher(georchestraHeader);
-                    if (matcher.find()) {
-                        georchestraHeader = matcher.group(1);
-                    }
-                } catch (IOException e) {
-                    return this.rawHeader.replace(GEORCHESTRA_SHARED_HEADER, "");
-                }
-            }
-
-            this.header = this.rawHeader.replace(GEORCHESTRA_SHARED_HEADER, georchestraHeader);
-        }
-
-        return this.header;
     }
 
     @Override
@@ -154,12 +124,8 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher {
 
         final String bodyTag = "<body>";
         final String htmlBody = html.substring(html.indexOf(bodyTag) + bodyTag.length());
-        String username = "";
-        if (SecurityContextHolder.getContext().getAuthentication() != null) {
-            username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-        }
 
-        StringBuilder builder = new StringBuilder(getHeader().replaceAll("@@username@@", username));
+        StringBuilder builder = new StringBuilder(this.rawHeader);
         builder.append(htmlBody);
         final byte[] bytes = builder.toString().getBytes("UTF-8");
         response.setContentLength(bytes.length);

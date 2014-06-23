@@ -40,7 +40,6 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
         <constructor-arg ref="gwcStorageBroker"/>
         <constructor-arg ref="gwcXmlConfig"/>
         <constructor-arg ref="gwcRuntimeStats"/>
-        <constructor-arg value="${headerURL}"/>
         <property name="defaultStorageFinder" ref="gwcDefaultStorageFinder"/>
     </bean>
 
