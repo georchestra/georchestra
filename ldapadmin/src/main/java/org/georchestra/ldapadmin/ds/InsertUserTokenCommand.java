@@ -30,7 +30,7 @@ final class InsertUserTokenCommand extends AbstractUpdateCommand{
 	 */
 	public void setRowValues(final Map<String, Object> row) {
 
-		assert row.keySet().size() == 2;
+		assert row.keySet().size() == 3;
 
 		this.rowValues = row;
 	}
