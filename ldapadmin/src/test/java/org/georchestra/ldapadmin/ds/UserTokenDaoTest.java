@@ -1,5 +1,6 @@
 package org.georchestra.ldapadmin.ds;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.Connection;
@@ -64,6 +65,21 @@ public class UserTokenDaoTest {
 
     @Test
     public void findUserByTokenTest() throws Exception {
+        ResultSet rs = Mockito.mock(ResultSet.class);
+        Mockito.when(rs.next()).thenReturn(true, true, false);
+        Mockito.when(rs.getString(DatabaseSchema.UID_COLUMN)).thenReturn("pmauduit", "fvanderbiest");
+        Mockito.when(rs.getString(DatabaseSchema.TOKEN_COLUMN)).thenReturn("mytoken1", "mytoken2");
+        Mockito.when(rs.getTimestamp(DatabaseSchema.CREATION_DATE_COLUMN)).thenReturn(new Timestamp(1234), new Timestamp(5678));
+        Mockito.when(preparedStatement.executeQuery()).thenReturn(rs);
+
+        String ret = userTokenDao.findUserByToken("abcde");
+
+        assertTrue(ret.equals("pmauduit"));
+
+    }
+
+    @Test
+    public void findBeforeDateTest() throws Exception {
         // Testing the regular case
         ResultSet rs = Mockito.mock(ResultSet.class);
         Mockito.when(rs.next()).thenReturn(true, true, false);
@@ -85,17 +101,44 @@ public class UserTokenDaoTest {
     }
 
     @Test
-    public void findBeforeDateTest() {
+    public void existTest() throws Exception {
+        ResultSet rs = Mockito.mock(ResultSet.class);
+        Mockito.when(rs.next()).thenReturn(true, true, false);
+        Mockito.when(rs.getString(DatabaseSchema.UID_COLUMN)).thenReturn("1", "2");
+        Mockito.when(rs.getString(DatabaseSchema.TOKEN_COLUMN)).thenReturn("mytoken1", "mytoken2");
+        Mockito.when(rs.getTimestamp(DatabaseSchema.CREATION_DATE_COLUMN)).thenReturn(new Timestamp(1234), new Timestamp(5678));
+        Mockito.when(preparedStatement.executeQuery()).thenReturn(rs);
 
+        boolean ret = userTokenDao.exist("42");
+
+        assertTrue(ret);
+
+        // Same test with no result
+        Mockito.when(rs.next()).thenReturn(false);
+
+        ret = userTokenDao.exist("42");
+
+        assertFalse(ret);
     }
 
     @Test
-    public void existTest() {
+    public void deleteTest() throws Exception {
+        // No element deleted
+        try {
+            userTokenDao.delete("54");
+        } catch (Throwable e) {
+            assertTrue (e instanceof DataServiceException);
+        }
 
-    }
+        // normal case
+        Mockito.when(preparedStatement.executeUpdate()).thenReturn(1);
+        boolean nothingRaised = false;
 
-    @Test
-    public void deleteTest() {
+        try {
+            userTokenDao.delete("54");
+            nothingRaised = true;
+        } catch (Throwable e) {}
 
+        assertTrue(nothingRaised);
     }
 }

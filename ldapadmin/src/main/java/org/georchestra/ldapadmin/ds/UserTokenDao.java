@@ -82,6 +82,7 @@ public class UserTokenDao {
     public String findUserByToken(String token) throws DataServiceException, NotFoundException {
         Connection c = null;
         try {
+            c = dataSource.getConnection();
             QueryByTokenCommand cmd = new QueryByTokenCommand();
 
             cmd.setConnection(c);
