@@ -196,4 +196,8 @@ public class UserTokenDao {
             }
         }
     }
+
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 }
