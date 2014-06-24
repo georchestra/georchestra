@@ -1,10 +1,12 @@
-package org.georchestra.ldapadmin.ws.backoffice.users;
+package org.georchestra.ldapadmin.ws.backoffice;
 
 import static org.junit.Assume.assumeTrue;
 
 import org.georchestra.ldapadmin.ds.AccountDao;
 import org.georchestra.ldapadmin.ds.AccountDaoImpl;
 import org.georchestra.ldapadmin.ds.GroupDaoImpl;
+import org.georchestra.ldapadmin.ws.backoffice.users.UserRule;
+import org.georchestra.ldapadmin.ws.backoffice.users.UsersController;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,7 +15,7 @@ import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-public class UsersControllerTest {
+public class UsersGroupsControllerTest {
 
     private UsersController ctrl;
     private AccountDao dao;
