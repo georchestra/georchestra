@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.georchestra.mapfishapp.ws.upload;
 
@@ -38,8 +38,8 @@ import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * This class is a façade to the Geotools data management implementations.
- * 
- * 
+ *
+ *
  * @author Mauricio Pazos
  *
  */
@@ -48,9 +48,9 @@ class GeotoolsFeatureReader implements FeatureGeoFileReader {
     private static final Log   LOG     = LogFactory.getLog(GeotoolsFeatureReader.class.getPackage().getName());
 
     private final FileFormat[] formats = new FileFormat[] {
-                                                        FileFormat.shp, 
-                                                        FileFormat.mif, 
-                                                        FileFormat.gml, 
+                                                        FileFormat.shp,
+                                                        FileFormat.mif,
+                                                        FileFormat.gml,
                                                         FileFormat.kml };
 
     public GeotoolsFeatureReader() {}
@@ -96,7 +96,7 @@ class GeotoolsFeatureReader implements FeatureGeoFileReader {
     /**
      * Reads the GML file. The method try to read using GML2 if it cannot then
      * try using GML3
-     * 
+     *
      * @param file
      * @param targetCRS
      * @return {@link SimpleFeatureCollection}
@@ -121,7 +121,7 @@ class GeotoolsFeatureReader implements FeatureGeoFileReader {
     /**
      * Creates a feature collection from a kml file. CRS EPSG:4326 is assumed
      * for the kml file.
-     * 
+     *
      * @param file
      * @param targetCRS
      * @return
@@ -139,28 +139,28 @@ class GeotoolsFeatureReader implements FeatureGeoFileReader {
             q.setFilter(Filter.INCLUDE);
             q.setCoordinateSystem(sourceCRS);
             q.setCoordinateSystemReproject(targetCRS);
-            
+
             SimpleFeatureCollection list = reader.getFeatures(q);
-            
+
             return list;
 
         } catch (Exception e) {
             LOG.error(e.getMessage());
             throw new IOException(e);
 
-        } 
+        }
     }
 
     /**
      * Creates a feature collection from a GML file.
-     * 
+     *
      * @param file
      *            a gml file
      * @param targetCRS
      *            target crs
      * @param version
      *            gml version
-     *            
+     *
      * @return {@link SimpleFeatureCollection}
      * @throws IOException, ProjectionException
      */
@@ -246,10 +246,10 @@ class GeotoolsFeatureReader implements FeatureGeoFileReader {
 
     /**
      * Reads the features from MIF file.
-     * 
+     *
      * @param file
      * @return {@link SimpleFeatureCollection}
-     * 
+     *
      * @throws IOException
      */
     private SimpleFeatureCollection readMifFile(final File file,
@@ -270,10 +270,10 @@ class GeotoolsFeatureReader implements FeatureGeoFileReader {
 
     /**
      * Reads the features from Shape file.
-     * 
+     *
      * @param file
      * @return {@link SimpleFeatureCollection}
-     * 
+     *
      * @throws IOException
      */
     private SimpleFeatureCollection readShpFile(final File file, final CoordinateReferenceSystem crs) throws IOException {
@@ -293,7 +293,7 @@ class GeotoolsFeatureReader implements FeatureGeoFileReader {
 
     /**
      * Retrieves the features from store
-     * 
+     *
      * @param typeName
      * @param store
      * @param targetCRS
