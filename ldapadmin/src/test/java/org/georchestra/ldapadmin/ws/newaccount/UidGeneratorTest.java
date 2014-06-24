@@ -1,9 +1,6 @@
-/**
- * 
- */
 package org.georchestra.ldapadmin.ws.newaccount;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
@@ -17,7 +14,7 @@ public class UidGeneratorTest {
 	public void testWithoutNumer() {
 
 		String result = UidGenerator.next( "hsimpson");
-		
+
 		assertEquals("hsimpson1", result);
 	}
 
@@ -25,14 +22,14 @@ public class UidGeneratorTest {
 	public void testNext1() {
 
 		String result = UidGenerator.next( "hsimpson1");
-		
+
 		assertEquals("hsimpson2", result);
 	}
 	@Test
 	public void testNext2() {
 
 		String result = UidGenerator.next( "hsimpson2");
-		
+
 		assertEquals("hsimpson3", result);
 	}
 }

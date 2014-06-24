@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Mauricio Pazos
  *
  */
-class ExpiredTokenCleanTask implements Runnable {
+public class ExpiredTokenCleanTask implements Runnable {
 
 	private static final Log LOG = LogFactory.getLog(ExpiredTokenCleanTask.class.getName());
 
