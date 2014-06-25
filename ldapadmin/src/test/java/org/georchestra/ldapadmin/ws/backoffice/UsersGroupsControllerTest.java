@@ -13,11 +13,14 @@ import org.georchestra.ldapadmin.ds.GroupDaoImpl;
 import org.georchestra.ldapadmin.ws.backoffice.groups.GroupsController;
 import org.georchestra.ldapadmin.ws.backoffice.users.UserRule;
 import org.georchestra.ldapadmin.ws.backoffice.users.UsersController;
+import org.hamcrest.Matchers;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ErrorCollector;
 import org.springframework.ldap.core.AuthenticationSource;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;
@@ -36,7 +39,6 @@ public class UsersGroupsControllerTest {
     private LdapTemplate ldapTemplate;
     private LdapContextSource contextSource;
 
-
     private boolean testSuiteActivated = false;
 
     private static String ENV_ACTIVATED = "ldapadmin.test.openldap.activated";
@@ -45,9 +47,13 @@ public class UsersGroupsControllerTest {
     private static String ENV_LDAPURL = "ldapadmin.test.openldap.ldapurl";
     private static String ENV_BASEDN = "ldapadmin.test.openldap.basedn";
 
+    @Rule
+    public ErrorCollector collector = new ErrorCollector();
+
     @Before
     public void setUp() throws Exception {
-        testSuiteActivated = "true".equalsIgnoreCase(System.getProperty(ENV_ACTIVATED));
+        testSuiteActivated = "true".equalsIgnoreCase(System
+                .getProperty(ENV_ACTIVATED));
         final String bindDn = System.getProperty(ENV_BINDDN);
         final String password = System.getProperty(ENV_PASSWORD);
         String ldapurl = System.getProperty(ENV_LDAPURL);
@@ -60,8 +66,8 @@ public class UsersGroupsControllerTest {
         assumeTrue(testSuiteActivated);
 
         userRule = new UserRule();
-        userRule.setListOfprotectedUsers(Arrays.asList(new String[]{"extractorapp_privileged_admin"}));
-
+        userRule.setListOfprotectedUsers(Arrays
+                .asList(new String[] { "extractorapp_privileged_admin" }));
 
         contextSource = new DefaultSpringSecurityContextSource(ldapurl + basedn);
         contextSource.setBase(basedn);
@@ -71,15 +77,24 @@ public class UsersGroupsControllerTest {
         contextSource.setAuthenticationSource(new AuthenticationSource() {
             @Override
             public String getPrincipal() {
-                   return bindDn;
+                return bindDn;
             }
+
             @Override
             public String getCredentials() {
                 return password;
             }
         });
-        contextSource.setBaseEnvironmentProperties(new HashMap<String,Object>());
+        contextSource
+                .setBaseEnvironmentProperties(new HashMap<String, Object>());
+
+        // Setting the following property to true on huge directories (PIGMA)
+        // can lead to org.springframework.ldap.SizeLimitExceededException being
+        // thrown. By default, OpenLDAP on debian limits the number of object
+        // returned for non privileged users to 500 objects.
+
         contextSource.setAnonymousReadOnly(false);
+
         contextSource.setCacheEnvironmentProperties(false);
 
         ldapTemplate = new LdapTemplate(contextSource);
@@ -123,13 +138,12 @@ public class UsersGroupsControllerTest {
         groupCtrl.findAll(request, response);
         JSONArray groupJson = new JSONArray(response.getContentAsString());
 
-
         // Parses the output of groups controller
         Set<String> encounteredUsersInGroups = new HashSet<String>();
         for (int i = 0; i < groupJson.length(); ++i) {
             JSONObject curGrp = (JSONObject) groupJson.get(i);
             JSONArray curUsrs = (JSONArray) curGrp.get("users");
-            for (int j = 0; j < curUsrs.length() ; ++j) {
+            for (int j = 0; j < curUsrs.length(); ++j) {
                 encounteredUsersInGroups.add((String) curUsrs.get(j));
             }
         }
@@ -145,11 +159,14 @@ public class UsersGroupsControllerTest {
 
         // Every users in groups should exist
         for (String user : encounteredUsersInGroups) {
-            assertTrue(user + " is not in the expected users", encounteredUsers.contains(user));
+            collector.checkThat(user + " is not in the expected users, but is member of groups",
+                    encounteredUsers.contains(user), Matchers.equalTo(true));
         }
         // Every users should be affected to at least one group
         for (String user : encounteredUsers) {
-            assertTrue(user + " does not belong to any group", encounteredUsers.contains(user));
+            collector.checkThat(user + " is not in any groups",
+                    encounteredUsersInGroups.contains(user), Matchers.equalTo(true));
         }
+
     }
 }
