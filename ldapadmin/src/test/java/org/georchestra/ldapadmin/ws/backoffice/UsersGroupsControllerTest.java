@@ -1,14 +1,24 @@
 package org.georchestra.ldapadmin.ws.backoffice;
 
+
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assume.assumeTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.logging.LogFactory;
 import org.georchestra.ldapadmin.ds.AccountDaoImpl;
 import org.georchestra.ldapadmin.ds.GroupDaoImpl;
+import org.georchestra.ldapadmin.ds.NotFoundException;
+import org.georchestra.ldapadmin.dto.Account;
+import org.georchestra.ldapadmin.dto.AccountFactory;
+import org.georchestra.ldapadmin.dto.Group;
+import org.georchestra.ldapadmin.dto.GroupFactory;
 import org.georchestra.ldapadmin.ws.backoffice.groups.GroupsController;
 import org.georchestra.ldapadmin.ws.backoffice.users.UserRule;
 import org.georchestra.ldapadmin.ws.backoffice.users.UsersController;
@@ -20,12 +30,15 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
+import org.mockito.Mockito;
 import org.springframework.ldap.core.AuthenticationSource;
+import org.springframework.ldap.core.ContextMapper;
+import org.springframework.ldap.core.DistinguishedName;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
+import org.springframework.security.ldap.DefaultSpringSecurityContextSource;
 
 public class UsersGroupsControllerTest {
 
@@ -38,7 +51,6 @@ public class UsersGroupsControllerTest {
     private LdapTemplate ldapTemplate;
     private LdapContextSource contextSource;
 
-    private boolean testSuiteActivated = false;
 
     private static String ENV_ACTIVATED = "ldapadmin.test.openldap.activated";
     private static String ENV_BINDDN = "ldapadmin.test.openldap.binddn";
@@ -46,29 +58,20 @@ public class UsersGroupsControllerTest {
     private static String ENV_LDAPURL = "ldapadmin.test.openldap.ldapurl";
     private static String ENV_BASEDN = "ldapadmin.test.openldap.basedn";
 
+    private String basedn ;
+    private boolean realLdapActivated ;
+
+
     @Rule
     public ErrorCollector collector = new ErrorCollector();
 
-    @Before
-    public void setUp() throws Exception {
-        testSuiteActivated = "true".equalsIgnoreCase(System
-                .getProperty(ENV_ACTIVATED));
+    private void setUpRealLdap() {
         final String bindDn = System.getProperty(ENV_BINDDN);
         final String password = System.getProperty(ENV_PASSWORD);
         String ldapurl = System.getProperty(ENV_LDAPURL);
-        String basedn = System.getProperty(ENV_BASEDN);
+        basedn = System.getProperty(ENV_BASEDN);
 
-        // if a LDAP is available locally, then uses it (or disables the test
-        // suite, it surely isn't a good idea to launch destructive LDAP queries
-        // on production).
-
-        assumeTrue(testSuiteActivated);
-
-        userRule = new UserRule();
-        userRule.setListOfprotectedUsers(Arrays
-                .asList(new String[] { "extractorapp_privileged_admin" }));
-
-        contextSource = new LdapContextSource();
+        contextSource = new DefaultSpringSecurityContextSource(ldapurl + basedn);
         contextSource.setBase(basedn);
         contextSource.setUrl(ldapurl);
         contextSource.setUserDn(bindDn);
@@ -89,14 +92,81 @@ public class UsersGroupsControllerTest {
 
         // Setting the following property to true on huge directories (PIGMA)
         // can lead to org.springframework.ldap.SizeLimitExceededException being
-        // thrown. By default, OpenLDAP on debian limits the number of object
+        // thrown. By default, OpenLDAP on debian limits the number of objects
         // returned for non privileged users to 500 objects.
-
         contextSource.setAnonymousReadOnly(false);
 
         contextSource.setCacheEnvironmentProperties(false);
 
         ldapTemplate = new LdapTemplate(contextSource);
+    }
+    private void setUpMockedObjects() {
+
+        ldapTemplate = Mockito.mock(LdapTemplate.class);
+        contextSource = Mockito.mock(LdapContextSource.class);
+
+        // fake account list
+        List<Account> fakeAccountList = new ArrayList<Account>();
+        fakeAccountList.add(AccountFactory.createFull("testadmin", "testadmin", "testadmin", "administrator",
+                "psc@georchestra.org", "geOrchestra", "administrator", "+331234567890", "admin",
+                "48 avenue du lac du Bourget", "73000", "registeredAddress", "BP 352", "Le-Bourget-du-Lac",
+                "avenue du lac du Bourget", "Savoie-Technolac", "+331234567899", "geodata administration",
+                "Undisclosed", "+336123457890", "42", "Rhone-Alpes"));
+
+        fakeAccountList.add(AccountFactory.createFull("testuser", "testuser", "testuser", "regular user",
+                "psc@georchestra.org", "geOrchestra", "user", "+331234567890", "user",
+                "48 avenue du lac du Bourget", "73000", "registeredAddress", "BP 352", "Le-Bourget-du-Lac",
+                "avenue du lac du Bourget", "Savoie-Technolac", "+331234567899", "Peon",
+                "Undisclosed", "+336123457890", "42", "Rhone-Alpes"));
+
+
+        // fake group List
+        List<Group> fakeGroupList = new ArrayList<Group>();
+        Group adminGrp = GroupFactory.create("ADMINISTRATOR", "groups of the administrators");
+        adminGrp.setUserList(Arrays.asList(new String[] {"testadmin"}));
+
+        Group userGrp = GroupFactory.create("USER", "regular users");
+        userGrp.setUserList(Arrays.asList(new String[] {"testuser"}));
+
+        fakeGroupList.add(adminGrp);
+        fakeGroupList.add(userGrp);
+
+
+
+        Mockito.when(ldapTemplate.search(Mockito.any(DistinguishedName.class), Mockito.anyString(),
+                Mockito.any(ContextMapper.class))).thenReturn(fakeAccountList, fakeGroupList);
+
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        realLdapActivated = "true".equalsIgnoreCase(System.getProperty(ENV_ACTIVATED));
+
+        if (realLdapActivated) {
+            // if a LDAP is available locally and the environment
+            // is correctly configured, then uses it, instead of mocks.
+            //
+            // To configure the env, add the following to maven / jvm
+            // properties, e.g.:
+            //
+            // $ mvn clean test -Dtest=UsersGroupsControllerTest                        \
+            //        -Dldapadmin.test.openldap.activated=true                          \
+            //        -Dldapadmin.test.openldap.binddn="cn=admin,dc=georchestra,dc=org" \
+            //        -Dldapadmin.test.openldap.password=secret                         \
+            //        -Dldapadmin.test.openldap.ldapurl="ldap://localhost:389"          \
+            //        -Dldapadmin.test.openldap.basedn="dc=georchestra,dc=org"
+            //
+            // This will activate the test onto a "real" OpenLDAP server,
+            // giving some hints about the possible inconsistencies related
+            // to your OpenLDAP geOrchestra tree.
+            setUpRealLdap();
+        } else {
+            setUpMockedObjects();
+        }
+        userRule = new UserRule();
+        userRule.setListOfprotectedUsers(Arrays
+                .asList(new String[] { "geoserver_privileged_user" }));
+
 
         // Configures groupDao
         groupDao = new GroupDaoImpl();
@@ -113,7 +183,6 @@ public class UsersGroupsControllerTest {
 
         userCtrl = new UsersController(dao, userRule);
         groupCtrl = new GroupsController(groupDao, userRule);
-
     }
 
     @After
@@ -166,6 +235,48 @@ public class UsersGroupsControllerTest {
             collector.checkThat(user + " is not in any groups",
                     encounteredUsersInGroups.contains(user), Matchers.equalTo(true));
         }
+
+    }
+
+    private final String TEST_GROUP_NAME = "LDAPADMIN_TESTSUITE_SAMPLE_GROUP" ;
+
+    /**
+     * This test is related to reveal issue #650
+     * https://github.com/georchestra/georchestra/issues/650
+     */
+    @Test
+    public final void testModifyGroup_issue650() throws Exception {
+        // This test needs to run onto a real LDAP
+        assumeTrue(realLdapActivated);
+
+        // first, ensures the following group does not exist
+        try {
+            groupDao.delete(TEST_GROUP_NAME);
+        } catch (NotFoundException e) {
+            LogFactory.getLog(this.getClass()).info(TEST_GROUP_NAME + " does not exist in the LDAP tree, it is safe to create it");
+        }
+        // Then creates it
+        Group testGrp = GroupFactory.create(TEST_GROUP_NAME, "sample group");
+        testGrp.addUser("uid=testadmin,ou=users," + basedn);
+        testGrp.addUser("uid=testuser,ou=users," + basedn);
+        groupDao.insert(testGrp);
+
+        // Retrieves the saved group
+        Group retrievedGrp = groupDao.findByCommonName(TEST_GROUP_NAME);
+
+        collector.checkThat("Group should have contained 2 users", retrievedGrp.getUserList().size(), equalTo(2));
+
+        // Then modifies the group desc
+        retrievedGrp.setDescription("sample group with updated desc");
+        groupDao.update(TEST_GROUP_NAME, retrievedGrp);
+
+        Group retrievedGrp2 = groupDao.findByCommonName(TEST_GROUP_NAME);
+
+        // should still contain 2 users
+        collector.checkThat("Group should have contained 2 users", retrievedGrp.getUserList().size(), equalTo(2));
+
+        // Actually deletes the group
+        groupDao.delete(TEST_GROUP_NAME);
 
     }
 }

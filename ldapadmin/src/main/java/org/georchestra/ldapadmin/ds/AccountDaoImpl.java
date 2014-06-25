@@ -245,15 +245,15 @@ public final class AccountDaoImpl implements AccountDao{
 
 	}
 
-	/**
-	 * @see {@link AccountDao#findAll()}
-	 */
-	@Override
-	public List<Account> findAll() throws DataServiceException{
+    /**
+     * @see {@link AccountDao#findAll()}
+     */
+    @Override
+    public List<Account> findAll() throws DataServiceException {
 
-		EqualsFilter filter = new EqualsFilter("objectClass", "person");
-		return ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(), new AccountContextMapper());
-	}
+        EqualsFilter filter = new EqualsFilter("objectClass", "person");
+        return ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(), new AccountContextMapper());
+    }
 
 // TODO Note: this implementation use the SortControlDirContextProcessor but it don't work
 //	@Override
