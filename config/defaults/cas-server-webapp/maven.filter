@@ -4,4 +4,5 @@
 host=@shared.server.name@
 port=@shared.server.port@
 ldapUrl=@shared.ldapUrl@
-userFilter=@shared.ldap.userSearchFilter@,@shared.ldap.userSearchBaseDN@,@shared.ldap.baseDn@
+baseDn=@shared.ldap.userSearchBaseDN@,@shared.ldap.baseDn@
+userFilter=(@shared.ldap.uid@={user})

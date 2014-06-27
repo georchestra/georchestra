@@ -32,7 +32,14 @@
             <param-name>logLevel</param-name>
             <param-value>OFF</param-value>
         </init-param>
-        
+        <init-param>
+          <param-name>statusPath</param-name>
+          <param-value>/rewrite-status</param-value>
+      </init-param>
+    <init-param>
+        <param-name>statusEnabled</param-name>
+        <param-value>false</param-value>
+    </init-param>
     </filter>
 
 <!--    <filter>-->
@@ -55,17 +62,18 @@
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 
-  <filter-mapping>
-    <filter-name>springSecurityFilterChain</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
-  
-  <filter-mapping>
+
+    <filter-mapping>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
       <filter-name>UrlRewriteFilter</filter-name>
       <url-pattern>/*</url-pattern>
+      <dispatcher>REQUEST</dispatcher>
+      <dispatcher>FORWARD</dispatcher>
   </filter-mapping>
-
-
 <!--  <listener>-->
 <!--          <listener-class>org.jasig.cas.client.session.SingleSignOutHttpSessionListener</listener-class>-->
 <!--  </listener>-->

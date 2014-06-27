@@ -118,10 +118,6 @@
                 <property name="defaultTargetUrl" value="/"/>
             </bean>
         </property>
-        
-<!--        <property name="useRelativeContext" value="true" />-->
-        <property name="proxyGrantingTicketStorage" ref="proxyGrantingTicketStorage" />
-        <property name="proxyReceptorUrl" value="/receptor" />
     </bean>
 
     <bean id="casFilter"
@@ -140,15 +136,9 @@
         <property name="ticketValidator">
                 <bean class="org.jasig.cas.client.validation.Cas20ServiceTicketValidator">
                         <constructor-arg index="0" value="${casTicketValidation}" />
-                        <property name="proxyGrantingTicketStorage" ref="proxyGrantingTicketStorage" />
-                        <property name="proxyCallbackUrl" value="${casCallbackUrl}" />
             </bean>
         </property>
         <property name="key" value="security-proxy"/>
-    </bean>
-
-    <bean id="proxyGrantingTicketStorage" class="org.jasig.cas.client.proxy.ProxyGrantingTicketStorageImpl">
-      <constructor-arg index="0" value="7200000" />
     </bean>
 
     <bean id="serviceProperties" class="org.springframework.security.cas.ServiceProperties">
