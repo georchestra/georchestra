@@ -104,9 +104,11 @@ public class ChangePasswordFormController {
 		try {
 			if(!request.getHeader("sec-username").equals(uid)){
 				response.sendError(HttpServletResponse.SC_FORBIDDEN);
+				return null;
 			}
 		} catch (NullPointerException e) {
 			response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return null;
 		}
 
 		PasswordUtils.validate( formBean.getPassword(), formBean.getConfirmPassword(), result);

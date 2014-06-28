@@ -553,7 +553,7 @@ public final class AccountDaoImpl implements AccountDao{
 		if( uid.length() == 0) {
 			throw new IllegalArgumentException("uid is required");
 		}
-		if( password.length()== 0 ){
+		if( password.length() == 0 ){
 			throw new IllegalArgumentException("password is required");
 		}
 
