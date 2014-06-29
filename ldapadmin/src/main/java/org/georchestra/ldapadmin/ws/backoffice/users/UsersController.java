@@ -97,9 +97,8 @@ public class UsersController {
 			ResponseUtil.buildResponse(response, jsonList, HttpServletResponse.SC_OK);
 
 		} catch (Exception e) {
-
 			LOG.error(e.getMessage());
-
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			throw new IOException(e);
 		}
 
@@ -127,7 +126,12 @@ public class UsersController {
 	public void findByUid( HttpServletRequest request, HttpServletResponse response) throws IOException{
 
 		String uid = RequestUtil.getKeyFromPathVariable(request).toLowerCase();
-
+		if (uid.isEmpty()) {
+	        ResponseUtil.buildResponse(response,
+	                ResponseUtil.buildResponseMessage(false, "not_found_uid_empty"),
+	                HttpServletResponse.SC_NOT_FOUND);
+	        return;
+		}
 		if(this.userRule.isProtected(uid) ){
 
 			String message = "The user is protected: " + uid;
@@ -153,6 +157,7 @@ public class UsersController {
 			return;
 
 		} catch (DataServiceException e) {
+		    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			throw new IOException(e);
 		}
 
