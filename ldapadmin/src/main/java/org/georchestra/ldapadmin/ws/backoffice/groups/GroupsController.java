@@ -61,7 +61,7 @@ public class GroupsController {
 	private GroupDao groupDao;
 	private ProtectedUserFilter filter;
 
-	    /**
+        /**
      * Builds a JSON response in case of error.
      *
      * @param mesg
@@ -310,8 +310,11 @@ public class GroupsController {
 		Group group = null;
 		try {
 			group = this.groupDao.findByCommonName(cn);
+
 		} catch (NotFoundException e) {
+
 			ResponseUtil.writeError(response, NOT_FOUND);
+
 			return;
 		} catch (DataServiceException e) {
 		    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
