@@ -310,14 +310,21 @@ public class GroupDaoImpl implements GroupDao {
 		setAccountField(context, GroupSchema.DESCRIPTION_KEY, group.getDescription());
 
 		// groupOfNames objects need to have at least one member at creation
-        if (group.getUserList().size() == 0) {
-            String FakeUserUid = String.format("uid=%s",
-                    Configuration.FAKE_USER);
-            setAccountField(context, GroupSchema.MEMBER_KEY, FakeUserUid);
-        } else {
-            setMemberField(context, GroupSchema.MEMBER_KEY, group.getUserList());
-        }
+		if (group.getUserList().size() == 0) {
+		    String FakeUserUid = String.format("uid=%s", Configuration.FAKE_USER);
+		    setAccountField(context, GroupSchema.MEMBER_KEY, FakeUserUid);
+		} else {
+		    setMemberField(context, GroupSchema.MEMBER_KEY, group.getUserList());
+		}
 
+	}
+
+	private void setMemberField(DirContextOperations context, String memberAttr, List<String> users) {
+	    List<String> usersFullDn = new ArrayList<String>(users.size());
+	    for (String uid : users) {
+	        usersFullDn.add(buildUserDn(uid).encode());
+	    }
+	    context.setAttributeValues(memberAttr,usersFullDn.toArray());
 	}
 
     private void setMemberField(DirContextOperations context,
