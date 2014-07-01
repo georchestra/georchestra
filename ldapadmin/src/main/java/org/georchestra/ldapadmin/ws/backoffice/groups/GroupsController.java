@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.georchestra.ldapadmin.ws.backoffice.groups;
 
@@ -37,7 +37,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * Web Services to maintain the Groups information.
- * 
+ *
  * @author Mauricio Pazos
  *
  */
@@ -51,17 +51,17 @@ public class GroupsController {
 	private static final String BASE_RESOURCE = "groups";
 	private static final String REQUEST_MAPPING = BASE_MAPPING + "/" + BASE_RESOURCE;
 
-	
+
 	private static final String DUPLICATED_COMMON_NAME = "duplicated_common_name";
 
 	private static final String NOT_FOUND = "not_found";
 
 	private static final String USER_NOT_FOUND = "user_not_found";
-	
+
 
 	private GroupDao groupDao;
 	private ProtectedUserFilter filter;
-	
+
 	/**
 	 * Builds a JSON response in case of error.
 	 * @param mesg a descriptive message of the encountered error.
@@ -81,39 +81,39 @@ public class GroupsController {
 	}
 
 	/**
-	 * Returns all groups. Each groups will contains its list of users. 
-	 * 
+	 * Returns all groups. Each groups will contains its list of users.
+	 *
 	 * @param request
 	 * @param response
 	 * @throws IOException
 	 */
 	@RequestMapping(value=REQUEST_MAPPING, method=RequestMethod.GET)
 	public void findAll( HttpServletRequest request, HttpServletResponse response ) throws IOException{
-		
+
 		try {
 			List<Group> list = this.groupDao.findAll();
 
 			GroupListResponse listResponse = new GroupListResponse(list, this.filter);
-			
+
 			String jsonList = listResponse.asJsonString();
-			
+
 			ResponseUtil.buildResponse(response, jsonList, HttpServletResponse.SC_OK);
-			
+
 		} catch (Exception e) {
-			
+
 			LOG.error(e.getMessage());
 			ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()),
 					HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
 			throw new IOException(e);
-		} 
-		
-		
+		}
+
+
 	}
 
 	/**
 	 * Returns the detailed information of the group, with its list of users.
-	 * 
+	 *
 	 * <p>
 	 * If the group identifier is not present in the ldap store an {@link IOException} will be throw.
 	 * </p>
@@ -123,25 +123,25 @@ public class GroupsController {
 	 * <p>
 	 * Example: [BASE_MAPPING]/groups/group44
 	 * </p>
-	 * 
+	 *
 	 * @param request the request includes the group identifier required
-	 * @param response Returns the detailed information of the group as json 
-	 * @throws IOException 
+	 * @param response Returns the detailed information of the group as json
+	 * @throws IOException
 	 */
 	@RequestMapping(value=REQUEST_MAPPING+"/*", method=RequestMethod.GET)
 	public void findByCN( HttpServletRequest request, HttpServletResponse response) throws IOException{
-		
+
 		String cn = RequestUtil.getKeyFromPathVariable(request);
 
 		// searches the group
 		Group group = null;
 		try {
 			group = this.groupDao.findByCommonName(cn);
-			
+
 		} catch (NotFoundException e) {
-			
+
 			ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(Boolean.FALSE, NOT_FOUND), HttpServletResponse.SC_NOT_FOUND);
-			
+
 			return;
 
 		} catch (DataServiceException e) {
@@ -153,22 +153,22 @@ public class GroupsController {
 
 		// sets the group data in the response object
 		GroupResponse groupResponse = new GroupResponse(group, this.filter);
-		
+
 		String jsonGroup = groupResponse.asJsonString();
-		
+
 		ResponseUtil.buildResponse(response, jsonGroup, HttpServletResponse.SC_OK);
 
 	}
 
 	/**
-	 * 
+	 *
 	 * <p>
 	 * Creates a new group.
 	 * </p>
-	 * 
+	 *
 	 * <pre>
 	 * <b>Request</b>
-	 * 
+	 *
 	 * group data:
 	 * {
      *   "cn": "Name of the group"
@@ -177,41 +177,41 @@ public class GroupsController {
 	 * </pre>
 	 * <pre>
 	 * <b>Response</b>
-	 * 
+	 *
 	 * <b>- Success case</b>
-	 *  
+	 *
 	 * {
 	 *  "cn": "Name of the group",
 	 *  "description": "Description for the group"
-	 * }	 
+	 * }
 	 * </pre>
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 * @throws IOException
 	 */
 	@RequestMapping(value=REQUEST_MAPPING, method=RequestMethod.POST)
 	public void create( HttpServletRequest request, HttpServletResponse response ) throws IOException{
-		
+
 		try{
-			
+
 			Group group = createGroupFromRequestBody(request.getInputStream());
-            
+
 			this.groupDao.insert( group );
-			
+
 			GroupResponse groupResponse = new GroupResponse(group, this.filter);
-			
+
 			String jsonResponse = groupResponse.asJsonString();
 
 			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_OK);
-			
-			
+
+
 		} catch (DuplicatedCommonNameException emailex){
-			
-			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, DUPLICATED_COMMON_NAME); 
+
+			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, DUPLICATED_COMMON_NAME);
 
 			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
-			
+
 		} catch (DataServiceException dsex){
 			LOG.error(dsex.getMessage());
 			ResponseUtil.buildResponse(response, buildErrorResponse(dsex.getMessage()),
@@ -223,14 +223,14 @@ public class GroupsController {
 
 	/**
 	 * Deletes the group.
-	 * 
+	 *
 	 * The request format is:
 	 * <pre>
 	 * [BASE_MAPPING]/groups/{cn}
-	 * 
+	 *
 	 * Where <b>cn</b> is the name of group to delete.
 	 * </pre>
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 * @throws IOException
@@ -241,9 +241,13 @@ public class GroupsController {
 			String cn = RequestUtil.getKeyFromPathVariable(request);
 
 			this.groupDao.delete(cn);
-			
+
 			ResponseUtil.writeSuccess(response);
-			
+
+		} catch (NotFoundException e) {
+	          LOG.error(e.getMessage());
+	            ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()),
+	                    HttpServletResponse.SC_NOT_FOUND);
 		} catch (Exception e){
 			LOG.error(e.getMessage());
 			ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()),
@@ -260,75 +264,75 @@ public class GroupsController {
 	 * <pre>
 	 * The request format is:
 	 * [BASE_MAPPING]/groups/{cn}
-	 * 
+	 *
 	 * Where <b>cn</b> is the name of group to delete.
 	 * </pre>
 	 * <p>
-	 * The request body should contains a the fields to modify using the JSON syntax. 
+	 * The request body should contains a the fields to modify using the JSON syntax.
 	 * </p>
 	 * <p>
-	 * Example: 
+	 * Example:
 	 * </p>
 	 * <pre>
 	 * <b>Request</b>
 	 * [BASE_MAPPING]/groups/users
-	 * 
+	 *
 	 * <b>Body request: </b>
 	 * group data:
 	 * {
      *   "cn": "newName"
      *   "description": "new Description"
      *   }
-	 * 
+	 *
 	 * </pre>
-	 * 
+	 *
 	 * @param request [BASE_MAPPING]/groups/{cn}  body request {"cn": value1, "description": value2 }
 	 * @param response
-	 * 
+	 *
 	 * @throws IOException if the uid does not exist or fails to access to the LDAP store.
 	 */
 	@RequestMapping(value=REQUEST_MAPPING+ "/*", method=RequestMethod.PUT)
 	public void update( HttpServletRequest request, HttpServletResponse response) throws IOException{
-		
+
 		String cn = RequestUtil.getKeyFromPathVariable(request);
 
 		// searches the group
 		Group group = null;
 		try {
 			group = this.groupDao.findByCommonName(cn);
-			
+
 		} catch (NotFoundException e) {
-			
+
 			ResponseUtil.writeError(response, NOT_FOUND);
-			
+
 			return;
 
 		} catch (DataServiceException e) {
 			throw new IOException(e);
 		}
-		
+
 		// modifies the group data
 		try{
 			final Group modified = modifyGroup( group, request.getInputStream());
-			
+
 			this.groupDao.update(cn, modified);
 
 			ResponseUtil.writeSuccess(response);
-			
+
 		}  catch (NotFoundException e) {
 
 			ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(Boolean.FALSE, NOT_FOUND), HttpServletResponse.SC_NOT_FOUND);
-			
+
 			return;
-			
+
 		} catch (DuplicatedCommonNameException e) {
-			
-			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, DUPLICATED_COMMON_NAME); 
+
+			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, DUPLICATED_COMMON_NAME);
 
 			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
-			
+
 			return;
-			
+
 		}  catch (DataServiceException e){
 			LOG.error(e.getMessage());
 			ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()),
@@ -336,39 +340,39 @@ public class GroupsController {
 			throw new IOException(e);
 		}
 	}
-	
+
 	/**
 	 * Updates the users of group. This method will add or delete the group of users from the list of groups.
-	 *  
+	 *
 	 * @param request	request [BASE_MAPPING]/groups_users/{cn} body request {"users": [u1,ud,u3], "PUT": [g1,g2], "DELETE":[g3,g4] }
 	 * @param response
 	 * @throws IOException
 	 */
 	@RequestMapping(value=BASE_MAPPING+ "/groups_users", method=RequestMethod.POST)
 	public void updateUsers( HttpServletRequest request, HttpServletResponse response) throws IOException{
-		
+
 		try{
-			
+
 			ServletInputStream is = request.getInputStream();
 			String strGroup = FileUtils.asString(is);
 			JSONObject json = new JSONObject(strGroup);
 
 			List<String> users = createUserList(json, "users");
-			
+
 			List<String> putGroup = createUserList(json, "PUT");
 			this.groupDao.addUsersInGroups(putGroup, users);
-			
+
 			List<String> deleteGroup = createUserList(json, "DELETE");
 			this.groupDao.deleteUsersInGroups(deleteGroup, users);
 
 			ResponseUtil.writeSuccess(response);
-			
+
 		}  catch (NotFoundException e) {
 
 			ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(Boolean.FALSE, USER_NOT_FOUND), HttpServletResponse.SC_NOT_FOUND);
-			
+
 			return;
-			
+
 		}  catch (DataServiceException e){
 			LOG.error(e.getMessage());
 			ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()),
@@ -381,24 +385,24 @@ public class GroupsController {
 			throw new IOException(e);
 		}
 	}
-	
-	
-	
+
+
+
 	private List<String> createUserList(JSONObject json, String arrayKey) throws IOException {
 
-		
+
 		try {
-			
+
 			List<String> list = new LinkedList<String>();
 
 			JSONArray jsonArray = json.getJSONArray(arrayKey);
 			for (int i = 0; i < jsonArray.length(); i++) {
-				
+
 				list.add(jsonArray.getString(i));
 			}
-			
+
 			return list;
-			
+
 		} catch (Exception e) {
 			LOG.error(e.getMessage());
 			throw new IOException(e);
@@ -407,10 +411,10 @@ public class GroupsController {
 
 	/**
 	 * Modifies the original field using the values in the inputStream.
-	 * 
+	 *
 	 * @param group group to modify
 	 * @param inputStream contains the new values
-	 * 
+	 *
 	 * @return the {@link Group} modified
 	 */
 	private Group modifyGroup(Group group, ServletInputStream inputStream) throws IOException{
@@ -441,23 +445,23 @@ public class GroupsController {
 		try {
 			String strGroup = FileUtils.asString(is);
 			JSONObject json = new JSONObject(strGroup);
-			
+
 			String commonName = RequestUtil.getFieldValue(json, GroupSchema.COMMON_NAME_KEY);
 			if(commonName == null){
 				throw new IllegalArgumentException(GroupSchema.COMMON_NAME_KEY + " is required" );
 			}
-			
+
 			String description = RequestUtil.getFieldValue(json, GroupSchema.DESCRIPTION_KEY);
-			
+
 			Group g = GroupFactory.create(commonName, description);
-			
+
 			return g;
-			
+
 		} catch (Exception e) {
 			LOG.error(e.getMessage());
 			throw new IOException(e);
 		}
 	}
-	
-	
+
+
 }
