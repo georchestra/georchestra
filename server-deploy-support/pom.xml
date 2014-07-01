@@ -11,7 +11,6 @@
 	<name>Modules deployment</name>
 	<properties>
 		<groovy-version>1.8.0</groovy-version>
-		<gmaven-version>1.3</gmaven-version>
 		<postTreatmentScript>println("No post treament script")</postTreatmentScript>
 	</properties>
 	<dependencies>
@@ -58,7 +57,7 @@
 					<dependency>
 						<groupId>org.codehaus.gmaven.runtime</groupId>
 						<artifactId>gmaven-runtime-1.7</artifactId>
-						<version>${gmaven-version}</version>
+						<version>${gmaven.runtime.version}</version>
 						<exclusions>
 							<exclusion>
 								<groupId>org.codehaus.groovy</groupId>
