@@ -372,6 +372,8 @@ public class UsersController {
 			return;
 
 		} catch (DataServiceException e) {
+		    // TODO: Better error handling ?
+		    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			throw new IOException(e);
 		}
 
@@ -441,14 +443,14 @@ public class UsersController {
 	/**
 	 * Modify only the account's fields that are present in the request body.
 	 *
-	 * @param accont
+	 * @param account
 	 * @param inputStream
 	 *
 	 * @return the modified account
 	 *
 	 * @throws IOException
 	 */
-	private Account modifyAccount(Account accont, ServletInputStream inputStream) throws IOException {
+	private Account modifyAccount(Account account, ServletInputStream inputStream) throws IOException {
 
 		String strUser = FileUtils.asString(inputStream);
 		JSONObject json;
@@ -461,75 +463,75 @@ public class UsersController {
 
 		String givenName = RequestUtil.getFieldValue(json, UserSchema.GIVEN_NAME_KEY);
 		if (givenName != null) {
-			accont.setGivenName(givenName);
+			account.setGivenName(givenName);
 		}
 
 		String surname = RequestUtil.getFieldValue(json, UserSchema.SURNAME_KEY);
 		if (surname != null) {
-			accont.setSurname(surname);
+			account.setSurname(surname);
 		}
 
 		String email = RequestUtil.getFieldValue(json, UserSchema.MAIL_KEY);
 		if (email != null) {
-			accont.setEmail(email);
+			account.setEmail(email);
 		}
 
 		String postalAddress = RequestUtil.getFieldValue(json, UserSchema.POSTAL_ADDRESS_KEY);
 		if (postalAddress != null) {
-			accont.setPostalAddress(postalAddress);
+			account.setPostalAddress(postalAddress);
 		}
 
 		String postOfficeBox = RequestUtil.getFieldValue(json, UserSchema.POST_OFFICE_BOX_KEY);
 		if (postOfficeBox != null) {
-			accont.setPostOfficeBox(postOfficeBox);
+			account.setPostOfficeBox(postOfficeBox);
 		}
 
 		String postalCode = RequestUtil.getFieldValue(json, UserSchema.POSTAL_CODE_KEY);
 		if (postalCode != null) {
-			accont.setPostalCode(postalCode);
+			account.setPostalCode(postalCode);
 		}
 
 		String street = RequestUtil.getFieldValue(json, UserSchema.STREET_KEY);
 		if (street != null) {
-			accont.setStreet(street);
+			account.setStreet(street);
 		}
 
 		String locality = RequestUtil.getFieldValue(json, UserSchema.LOCALITY_KEY);
 		if (locality != null) {
-			accont.setLocality(locality);
+			account.setLocality(locality);
 		}
 
 		String phone = RequestUtil.getFieldValue(json, UserSchema.TELEPHONE_KEY);
 		if (phone != null) {
-			accont.setPhone(phone);
+			account.setPhone(phone);
 		}
 
 		String facsimile = RequestUtil.getFieldValue(json, UserSchema.FACSIMILE_KEY);
 		if (facsimile != null) {
-			accont.setFacsimile(facsimile);
+			account.setFacsimile(facsimile);
 		}
 
 		String org = RequestUtil.getFieldValue(json, UserSchema.ORG_KEY);
 		if (org != null) {
-			accont.setOrg(org);
+			account.setOrg(org);
 		}
 
 		String title = RequestUtil.getFieldValue(json, UserSchema.TITLE_KEY);
 		if (title != null) {
-			accont.setTitle(title);
+			account.setTitle(title);
 		}
 
 		String description = RequestUtil.getFieldValue(json, UserSchema.DESCRIPTION_KEY);
 		if (description != null) {
-			accont.setDescription(description);
+			account.setDescription(description);
 		}
 
 		String commonName = AccountFactory.formatCommonName(
-				accont.getGivenName(), accont.getSurname());
+				account.getGivenName(), account.getSurname());
 
-		accont.setCommonName(commonName);
+		account.setCommonName(commonName);
 
-		return accont;
+		return account;
 
 	}
 

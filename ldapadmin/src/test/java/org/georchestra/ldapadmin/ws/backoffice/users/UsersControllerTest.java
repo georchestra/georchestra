@@ -2,8 +2,10 @@ package org.georchestra.ldapadmin.ws.backoffice.users;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.eq;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.naming.Name;
@@ -11,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.georchestra.ldapadmin.ds.AccountDaoImpl;
 import org.georchestra.ldapadmin.ds.DataServiceException;
+import org.georchestra.ldapadmin.ds.DuplicatedEmailException;
 import org.georchestra.ldapadmin.ds.GroupDaoImpl;
 import org.georchestra.ldapadmin.ds.NotFoundException;
 import org.georchestra.ldapadmin.dto.Account;
@@ -22,6 +25,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.ContextMapper;
+import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.DistinguishedName;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;
@@ -210,11 +214,171 @@ public class UsersControllerTest {
 
     @Test
     public void testCreateDuplicateEmailException() throws Exception {
+        JSONObject reqUsr = new JSONObject().
+                put("sn", "geoserver privileged user").
+                put("mail","tomcat@localhost").
+                put("givenName", "GS Priv User").
+                put("telephoneNumber", "+331234567890").
+                put("facsimileTelephoneNumber", "+33123456788").
+                put("street", "Avenue des Ducs de Savoie").
+                put("postalCode", "73000").
+                put("l", "Chambéry").
+                put("postOfficeBox", "1234").
+                put("o", "GeoServer");
+        request.setRequestURI("/ldapadmin/users/geoserver");
+        request.setContent(reqUsr.toString().getBytes());
+        Mockito.doThrow(DuplicatedEmailException.class).when(ldapTemplate).lookup((Name) Mockito.any());
 
+        usersCtrl.create(request, response);
+
+        JSONObject ret = new JSONObject(response.getContentAsString());
+        assertTrue(response.getStatus() == HttpServletResponse.SC_CONFLICT);
+        assertFalse(ret.getBoolean("success"));
+        assertTrue(ret.getString("error").equals("duplicated_email"));
     }
 
     @Test
     public void testCreateDataServiceException() throws Exception {
+        JSONObject reqUsr = new JSONObject().
+                put("sn", "geoserver privileged user").
+                put("mail","tomcat@localhost").
+                put("givenName", "GS Priv User").
+                put("telephoneNumber", "+331234567890").
+                put("facsimileTelephoneNumber", "+33123456788").
+                put("street", "Avenue des Ducs de Savoie").
+                put("postalCode", "73000").
+                put("l", "Chambéry").
+                put("postOfficeBox", "1234").
+                put("o", "GeoServer");
+        request.setRequestURI("/ldapadmin/users/geoserver");
+        request.setContent(reqUsr.toString().getBytes());
+        //Mockito.doThrow(DataServiceException.class).when(ldapTemplate).lookup((Name) Mockito.any());
+        Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup((Name) Mockito.any());
+        Mockito.doThrow(DataServiceException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (ContextMapper) Mockito.any());
+
+
+        try {
+            usersCtrl.create(request, response);
+        } catch (Throwable e) {
+            JSONObject ret = new JSONObject(response.getContentAsString());
+            assertTrue(e instanceof IOException);
+            assertTrue(response.getStatus() == HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            assertFalse(ret.getBoolean("success"));
+        }
+    }
+
+
+    @Test
+    public void createUser() throws Exception {
+        JSONObject reqUsr = new JSONObject().
+                put("sn", "geoserver privileged user").
+                put("mail","tomcat@localhost").
+                put("givenName", "GS Priv User").
+                put("telephoneNumber", "+331234567890").
+                put("facsimileTelephoneNumber", "+33123456788").
+                put("street", "Avenue des Ducs de Savoie").
+                put("postalCode", "73000").
+                put("l", "Chambéry").
+                put("postOfficeBox", "1234").
+                put("o", "GeoServer");
+        request.setRequestURI("/ldapadmin/users/geoserver");
+        request.setContent(reqUsr.toString().getBytes());
+        Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup((Name) Mockito.any());
+        // TODO: Why 2 different codes checking that
+        // the user exists the same way, but 2 different ways ?
+        Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (ContextMapper) Mockito.any());
+
+
+        Mockito.when(ldapTemplate.search((Name) Mockito.any(), Mockito.anyString(),(ContextMapper) Mockito.any()))
+            .thenReturn(new ArrayList());
+        Mockito.when(ldapTemplate.lookupContext(new DistinguishedName("cn=SV_USER,ou=groups")))
+            .thenReturn(Mockito.mock(DirContextOperations.class));
+
+        usersCtrl.create(request, response);
+
+        JSONObject ret = new JSONObject(response.getContentAsString());
+        assertTrue(response.getStatus() == HttpServletResponse.SC_OK);
+
+        assertTrue(ret.getString("uid").equals("ggeoserverprivilegeduser"));
+        assertTrue(ret.getString("mail").equals("tomcat@localhost"));
+        assertTrue(ret.getString("sn").equals("geoserver privileged user"));
+        assertTrue(ret.getString("ou").equals(""));
+        assertTrue(ret.getString("facsimileTelephoneNumber").equals("+33123456788"));
+        assertTrue(ret.getString("street").equals("Avenue des Ducs de Savoie"));
+        assertTrue(ret.getString("o").equals("GeoServer"));
+        assertTrue(ret.getString("l").equals("Chambéry"));
+        assertTrue(ret.getString("givenName").equals("GS Priv User"));
+        assertTrue(ret.getString("postalCode").equals("73000"));
+        assertTrue(ret.getString("roomNumber").equals(""));
+        assertTrue(ret.getString("telephoneNumber").equals("+331234567890"));
+        assertTrue(ret.getString("physicalDeliveryOfficeName").equals(""));
+        assertTrue(ret.getString("st").equals(""));
+        assertTrue(ret.getString("postOfficeBox").equals("1234"));
+        assertTrue(ret.getString("mobile").equals(""));
+
+    }
+
+    @Test
+    public void testUpdateUserProtected() throws Exception {
+        request.setRequestURI("/ldapadmin/users/geoserver_privileged_user");
+
+        usersCtrl.update(request, response);
+
+        JSONObject ret = new JSONObject(response.getContentAsString());
+        assertTrue(response.getStatus() == HttpServletResponse.SC_CONFLICT);
+        assertFalse(ret.getBoolean("success"));
+        assertTrue(ret.getString("error").equals("The user is protected, it cannot be updated: geoserver_privileged_user"));
+    }
+
+    @Test
+    public void testUpdateUserNotFound() throws Exception {
+        request.setRequestURI("/ldapadmin/users/usernotfound");
+
+        Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate)
+            .lookup(eq(new DistinguishedName("uid=usernotfound,ou=users")), (ContextMapper) Mockito.any());
+
+        usersCtrl.update(request, response);
+
+        JSONObject ret = new JSONObject(response.getContentAsString());
+        assertTrue(response.getStatus() == HttpServletResponse.SC_NOT_FOUND);
+        assertFalse(ret.getBoolean("success"));
+        assertTrue(ret.getString("error").equals("not_found"));
+    }
+
+    @Test
+    public void testUpdateUserDataServiceException() throws Exception {
+        request.setRequestURI("/ldapadmin/users/pmauduit");
+
+        Mockito.doThrow(DataServiceException.class).when(ldapTemplate)
+            .lookup(eq(new DistinguishedName("uid=pmauduit,ou=users")), (ContextMapper) Mockito.any());
+
+        try {
+            usersCtrl.update(request, response);
+        } catch (Throwable e) {
+            assertTrue(e instanceof IOException);
+            assertTrue(response.getStatus() == HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Test
+    public void testUpdateDuplicatedEmailException() throws Exception {
+        request.setRequestURI("/ldapadmin/users/pmauduit");
+        JSONObject reqUsr = new JSONObject().put("mail","tomcat2@localhost");
+        request.setContent(reqUsr.toString().getBytes());
+
+
+        usersCtrl.update(request, response);
+
+    }
+
+    @Test
+    public void testUpdateDataServiceExceptionWhileModifying() throws Exception {
+
+    }
+
+
+    @Test
+    public void testUpdate() throws Exception {
 
     }
 
