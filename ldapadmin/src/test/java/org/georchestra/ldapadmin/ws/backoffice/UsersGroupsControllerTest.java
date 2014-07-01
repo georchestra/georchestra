@@ -1,6 +1,5 @@
 package org.georchestra.ldapadmin.ws.backoffice;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
 
 import java.util.Arrays;
@@ -26,7 +25,7 @@ import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.security.ldap.DefaultSpringSecurityContextSource;
+
 
 public class UsersGroupsControllerTest {
 
@@ -69,7 +68,7 @@ public class UsersGroupsControllerTest {
         userRule.setListOfprotectedUsers(Arrays
                 .asList(new String[] { "extractorapp_privileged_admin" }));
 
-        contextSource = new DefaultSpringSecurityContextSource(ldapurl + basedn);
+        contextSource = new LdapContextSource();
         contextSource.setBase(basedn);
         contextSource.setUrl(ldapurl);
         contextSource.setUserDn(bindDn);

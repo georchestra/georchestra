@@ -3,6 +3,7 @@
  */
 package org.georchestra.ldapadmin.ds;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
@@ -10,31 +11,24 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.naming.InvalidNameException;
 import javax.naming.Name;
-import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
-import javax.naming.directory.DirContext;
-import javax.naming.directory.SearchControls;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.ldapadmin.Configuration;
-import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.Group;
 import org.georchestra.ldapadmin.dto.GroupFactory;
 import org.georchestra.ldapadmin.dto.GroupSchema;
 import org.springframework.ldap.NameNotFoundException;
-import org.springframework.ldap.control.SortControlDirContextProcessor;
 import org.springframework.ldap.core.AttributesMapper;
-import org.springframework.ldap.core.AttributesMapperCallbackHandler;
 import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.DistinguishedName;
 import org.springframework.ldap.core.LdapRdn;
 import org.springframework.ldap.core.LdapTemplate;
-import org.springframework.ldap.core.SearchExecutor;
 import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
@@ -55,8 +49,10 @@ public class GroupDaoImpl implements GroupDao {
 	private LdapTemplate ldapTemplate;
 
     private String uniqueNumberField = "ou";
-	private LdapRdn groupSearchBaseDN;
-	private LdapRdn userSearchBaseDN;
+
+    private LdapRdn groupSearchBaseDN;
+    private LdapRdn userSearchBaseDN;
+
     private AtomicInteger uniqueNumberCounter = new AtomicInteger(-1);
 
     public LdapTemplate getLdapTemplate() {
@@ -69,12 +65,14 @@ public class GroupDaoImpl implements GroupDao {
     public void setUniqueNumberField(String uniqueNumberField) {
         this.uniqueNumberField = uniqueNumberField;
     }
+
 	public void setGroupSearchBaseDN(String groupSearchBaseDN) {
 		this.groupSearchBaseDN = new LdapRdn(groupSearchBaseDN);
 	}
 	public void setUserSearchBaseDN(String userSearchBaseDN) {
 		this.userSearchBaseDN = new LdapRdn(userSearchBaseDN);
 	}
+
 
     /**
 	 * Create an ldap entry for the group
@@ -217,9 +215,11 @@ public class GroupDaoImpl implements GroupDao {
 	 */
 	@Override
 	public void delete(final String commonName) throws DataServiceException, NotFoundException{
-
-		this.ldapTemplate.unbind(buildGroupDn(commonName), true);
-
+	    try {
+	        this.ldapTemplate.unbind(buildGroupDn(commonName), true);
+	    } catch (NameNotFoundException e) {
+	        throw new NotFoundException(e);
+	    }
 	}
 
 
@@ -306,10 +306,24 @@ public class GroupDaoImpl implements GroupDao {
 		setAccountField(context, GroupSchema.DESCRIPTION_KEY, group.getDescription());
 
 		// groupOfNames objects need to have at least one member at creation
-		String FakeUserUid = String.format("uid=%s", Configuration.FAKE_USER);
-		setAccountField(context, GroupSchema.MEMBER_KEY, FakeUserUid);
+        if (group.getUserList().size() == 0) {
+            String FakeUserUid = String.format("uid=%s",
+                    Configuration.FAKE_USER);
+            setAccountField(context, GroupSchema.MEMBER_KEY, FakeUserUid);
+        } else {
+            setMemberField(context, GroupSchema.MEMBER_KEY, group.getUserList());
+        }
 
 	}
+
+    private void setMemberField(DirContextOperations context,
+            String memberAttr, List<String> users) {
+        List<String> usersFullDn = new ArrayList<String>(users.size());
+        for (String uid : users) {
+            usersFullDn.add(buildUserDn(uid).encode());
+        }
+        context.setAttributeValues(memberAttr, usersFullDn.toArray());
+    }
 
 	/**
 	 * if the value is not null then sets the value in the context.
