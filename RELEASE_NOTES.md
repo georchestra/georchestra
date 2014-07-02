@@ -4,6 +4,33 @@ For production systems, you are advised to use the stable branch (currently 14.0
 This branch receives bug fixes as they arrive, during 6 months at least.
 
 
+Version 14.06 (dev version)
+======================================
+
+New features:
+ * GeoWebCache standalone is now part of the geOrchestra suite
+
+Enhancements:
+ * deploy: a default [deployment script](https://github.com/georchestra/template/blob/master/DeployScript.groovy) is now provided by the template config
+ * downloadform: complete revamp, including more testing
+ * extractorapp: improved test coverage
+ * extractorapp: access is now restricted to members of a specific group (```MOD_EXTRACTORAPP```)
+ * geoserver: basic data_dir with sensible defaults for geOrchestra
+ * ldapadmin: SSHA password encryption
+ * ldapadmin: now take into account shared.ldap.* values
+ * mapfishapp: german translation (thanks to CIGALsace)
+ * mapfishapp: display SLD title before its name - see [#597](https://github.com/georchestra/georchestra/issues/597)
+ * all modules are now using the same database by default - see [#601](https://github.com/georchestra/georchestra/issues/601)
+ * system wide favicon
+
+Bug fixes:
+ * extractorapp: fixed several client-side issues regarding handling of namespaced layer names and virtual services - see [#517](https://github.com/georchestra/georchestra/issues/517#issuecomment-40697504) and [#634](https://github.com/georchestra/georchestra/issues/634)
+ * mapfishapp: multilayer querier tool - several issues fixed
+ * proxy: customizable error pages
+
+UPGRADING: TODO
+
+
 Version 14.01 (current stable version)
 ======================================
 

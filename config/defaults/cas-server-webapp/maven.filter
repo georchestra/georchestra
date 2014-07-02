@@ -4,4 +4,12 @@
 host=@shared.server.name@
 port=@shared.server.port@
 ldapUrl=@shared.ldapUrl@
-userFilter=@shared.ldap.userSearchFilter@,@shared.ldap.userSearchBaseDN@,@shared.ldap.baseDn@
+groupSearchBaseDn=@shared.ldap.groupSearchBaseDN@,@shared.ldap.baseDn@
+userSearchBaseDn=@shared.ldap.userSearchBaseDN@,@shared.ldap.baseDn@
+userFilter=(@shared.ldap.uid@={user})
+ldapAdminUsername=@shared.ldap.admin.dn@
+ldapAdminPassword=@shared.ldap.admin.password@
+ldapGroupSearchFilter=@shared.ldap.groupSearchFilter@
+authoritiesBaseDN=@shared.ldap.groupSearchBaseDN@
+groupRoleAttribute=@shared.ldap.groupRoleAttribute@
+ldapPendingGroupName=@shared.ldap.ldapPendingGroupName@

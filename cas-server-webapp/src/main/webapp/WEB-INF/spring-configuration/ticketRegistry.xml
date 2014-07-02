@@ -1,19 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
     <description>
     	Configuration for the default TicketRegistry which stores the tickets in-memory and cleans them out as specified intervals.
     </description>
        
-    <!-- Ticket Registry -->
-	<bean id="ticketRegistry" class="org.jasig.cas.ticket.registry.DefaultTicketRegistry" />
+  <!-- Ticket Registry -->
+  <bean id="ticketRegistry" class="org.jasig.cas.ticket.registry.DefaultTicketRegistry" />
 	
 	<!--Quartz -->
 	<!-- TICKET REGISTRY CLEANER -->
 	<bean id="ticketRegistryCleaner" class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner"
-		p:ticketRegistry-ref="ticketRegistry" />
+		p:ticketRegistry-ref="ticketRegistry"
+		p:logoutManager-ref="logoutManager" />
 	
 	<bean id="jobDetailTicketRegistryCleaner" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
 		p:targetObject-ref="ticketRegistryCleaner"
@@ -23,13 +44,4 @@
 		p:jobDetail-ref="jobDetailTicketRegistryCleaner"
 		p:startDelay="20000"
 		p:repeatInterval="5000000" />
-
-	<bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-		<property name="triggers">
-			<list>
-				<ref
-					local="triggerJobDetailTicketRegistryCleaner" />
-			</list>
-		</property>
-	</bean>
 </beans>

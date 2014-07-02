@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.georchestra.ldapadmin.ds;
 
@@ -11,11 +11,14 @@ public class NotFoundException extends Exception {
 
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 5259195828182895643L;
 
 	public NotFoundException(String message) {
 		super(message);
+	}
+	public NotFoundException(Throwable e) {
+	    super(e);
 	}
 }

@@ -24,7 +24,7 @@ The application accepts several GET parameters :
  * **bbox** in the form left,bottom,right,top in WGS84 coordinates overrides the extent of any WMC,
  * **lon** and **lat** in WGS84 coordinates override the extent of any WMC to center the map,
  * **radius** in meters, when set in addition to the lon and lat params, allows to control the resulting zoom level,
- * **lang** can be set to any of the following : fr, en, es,
+ * **lang** can be set to any of the following : fr, en, es, ru, de
  * **debug** when set to true, the application loads unminified javascript files,
  * **noheader** when set to true, the application does not load the header
 

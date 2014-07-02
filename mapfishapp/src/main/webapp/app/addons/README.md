@@ -15,6 +15,17 @@ We currently have the following addons available:
  * [magnifier](magnifier/README.md) which allows one to explore a map area with configured imagery.
  * [openls](openls/README.md) which allows one to locate an address on the map.
 
+
+Finding more addons
+====================
+
+There are other places where one can find contributed addons:
+ * https://github.com/georchestra/addons
+ * https://github.com/geobolivia/addons
+ * https://github.com/geobretagne/addons
+ * https://github.com/geosas/
+
+
 Deploying addons
 =================
 

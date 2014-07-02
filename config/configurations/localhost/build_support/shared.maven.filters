@@ -38,7 +38,7 @@ shared.language=fr
 # shared.ldap.port=389
 
 shared.ldap.host=localhost
-shared.ldap.port=389
+shared.ldap.port=33389
 
 # shared.ldapUrl is automatically computed with the above
 # shared.ldap parameters but you may override this setting
@@ -59,7 +59,7 @@ shared.ldapUrl=ldap://@shared.ldap.host@:@shared.ldap.port@
 # shared.ldap.admin.dn=cn=admin,@shared.ldap.baseDn@
 # shared.ldap.admin.password=secret
 #
-shared.ldap.baseDn=dc=georchestra,dc=org
+shared.ldap.baseDn=dc=pigma,dc=org
 shared.ldap.userSearchBaseDN=ou=users
 shared.ldap.groupSearchBaseDN=ou=groups
 shared.ldap.admin.dn=cn=admin,@shared.ldap.baseDn@
@@ -126,7 +126,7 @@ shared.email.html=false
 # Here we use /tmp because we want to prevent this kind of error 
 # http://applis-bretagne.fr/redmine/issues/4311 when Tomcat is not installed
 #
-shared.log.dir=/tmp
+shared.log.dir=e:/tmp
 
 
 # --------------------------------------------------

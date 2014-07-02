@@ -48,9 +48,9 @@ public class ProtectedUserFilter {
 
 		// removes the protected users.
 		TreeSet<Account> filtered = new TreeSet<Account>();
+
 		for (Account account : users) {
-			String FakeUserUid = String.format("uid=%s", Configuration.FAKE_USER);
-			if(!this.isProtected(account.getUid()) && (! account.getUid().equals(FakeUserUid))) {
+			if(!this.isProtected(account.getUid()) && (! account.getUid().equals(Configuration.FAKE_USER))) {
 				filtered.add(account);
 			}
 		}

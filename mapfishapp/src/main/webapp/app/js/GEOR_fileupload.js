@@ -236,7 +236,8 @@ GEOR.fileupload = (function() {
                 msg = [
                     '<b>', tr("Upload a vector data file."), '</b><br/><br/>',
                     tr("The allowed formats are the following: "),
-                    GEOR.config.FILE_FORMAT_LIST.join(", ").toUpperCase(), '. <br/>',
+                    GEOR.config.FILE_FORMAT_LIST.join(", ").toUpperCase(), '. (',
+                    tr("2D only"),') <br/>',
                     tr("Use ZIP compression for multifiles formats, such as"),
                     " ", supportedMulti.join(', ').toUpperCase(), " ", tr("or"), " ", last
                 ].join('');
