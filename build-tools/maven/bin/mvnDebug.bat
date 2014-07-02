@@ -38,6 +38,8 @@
 @REM enable echoing my setting MAVEN_BATCH_ECHO to 'on'
 @if "%MAVEN_BATCH_ECHO%" == "on"  echo %MAVEN_BATCH_ECHO%
 
+SET MAVEN_OPTS=%MAVEN_OPTS% -Xms64m -Xmx1g -XX:PermSize=128m -XX:MaxPermSize=256m
+
 @echo Preparing to Execute Maven in Debug Mode
 
 @REM set %HOME% to equivalent of $HOME
