@@ -1,0 +1,97 @@
+package org.georchestra.cas.ldap;
+
+import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.LdapAuthenticationHandler;
+import org.jasig.cas.authentication.PreventedException;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
+import org.ldaptive.BindRequest;
+import org.ldaptive.Connection;
+import org.ldaptive.Credential;
+import org.ldaptive.DefaultConnectionFactory;
+import org.ldaptive.LdapEntry;
+import org.ldaptive.LdapException;
+import org.ldaptive.SearchOperation;
+import org.ldaptive.SearchRequest;
+import org.ldaptive.SearchResult;
+import org.ldaptive.auth.Authenticator;
+
+import java.security.GeneralSecurityException;
+import java.util.Collection;
+import javax.security.auth.login.AccountException;
+import javax.validation.constraints.NotNull;
+
+/**
+ * Extends Ldap authentication handler by checking whether the user is pending or valid.
+ *
+ * @author Jesse on 6/26/2014.
+ */
+public class GeorchestraLdapAuthenticationHandler extends LdapAuthenticationHandler {
+    private final String adminUser;
+    private final String adminPassword;
+    private final String baseDn;
+    private final String groupSearchFilter;
+    private final String groupRoleAttribute;
+    private final String pendingGroupName;
+
+    private DefaultConnectionFactory connectionFactory;
+
+    /**
+     * Creates a new authentication handler that delegates to the given authenticator.
+     *
+     * @param authenticator Ldaptive authenticator component.
+     */
+    public GeorchestraLdapAuthenticationHandler(@NotNull Authenticator authenticator,
+                                                @NotNull String adminUser,
+                                                @NotNull String adminPassword,
+                                                @NotNull String baseDn,
+                                                @NotNull String groupSearchFilter,
+                                                @NotNull String groupRoleAttribute,
+                                                @NotNull String pendingGroupName) {
+        super(authenticator);
+        this.adminUser = adminUser;
+        this.adminPassword = adminPassword;
+        this.baseDn = baseDn;
+        this.groupSearchFilter = groupSearchFilter;
+        this.groupRoleAttribute = groupRoleAttribute;
+        this.pendingGroupName = pendingGroupName;
+    }
+
+    @Override
+    protected HandlerResult authenticateUsernamePasswordInternal(UsernamePasswordCredential upc)
+            throws GeneralSecurityException, PreventedException {
+        final HandlerResult handlerResult = super.authenticateUsernamePasswordInternal(upc);
+
+        final Connection conn = this.connectionFactory.getConnection();
+        try {
+            BindRequest bindRequest = new BindRequest(adminUser, new Credential(adminPassword));
+            conn.open(bindRequest);
+
+            SearchOperation search = new SearchOperation(conn);
+            final String searchFilter = this.groupSearchFilter.replace("{1}", upc.getUsername());
+            SearchResult result = search.execute(
+                    new SearchRequest(this.baseDn, searchFilter, this.groupRoleAttribute)).getResult();
+
+            if (result.getEntries().isEmpty()) {
+                throw new AccountException("User is not part of any groups.");
+            }
+            for (LdapEntry entry : result.getEntries()) {
+                final Collection<String> groupNames = entry.getAttribute(this.groupRoleAttribute).getStringValues();
+                for (String name : groupNames) {
+                    if (name.equals(this.pendingGroupName)) {
+                        throw new AccountException("User is still a pending user.");
+                    }
+                }
+            }
+        } catch (LdapException e) {
+            throw new PreventedException("Unexpected LDAP error", e);
+        } finally {
+            conn.close();
+        }
+
+        return handlerResult;
+    }
+
+    public void setConnectionFactory(DefaultConnectionFactory connectionFactory) {
+        this.connectionFactory = connectionFactory;
+    }
+}

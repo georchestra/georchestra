@@ -34,13 +34,13 @@
 +-->
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:p="http://www.springframework.org/schema/p"
-       xmlns:c="http://www.springframework.org/schema/c"
-       xmlns:tx="http://www.springframework.org/schema/tx"
-       xmlns:util="http://www.springframework.org/schema/util"
-       xmlns:sec="http://www.springframework.org/schema/security"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:c="http://www.springframework.org/schema/c"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:sec="http://www.springframework.org/schema/security"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
@@ -89,17 +89,25 @@
 
     <!-- Required for proxy ticket mechanism. -->
     <bean id="proxyAuthenticationHandler"
-          class="org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler"
-          p:httpClient-ref="httpClient" />
+        class="org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler"
+        p:httpClient-ref="httpClient" />
 
     <bean id="principalResolver"
-          class="org.jasig.cas.authentication.principal.BasicPrincipalResolver">
+        class="org.jasig.cas.authentication.principal.BasicPrincipalResolver">
     </bean>
 
     <bean id="ldapPasswordHandler"
-          class="org.jasig.cas.authentication.LdapAuthenticationHandler"
-          p:principalIdAttribute="uid">
+        class="org.georchestra.cas.ldap.GeorchestraLdapAuthenticationHandler"
+        p:principalIdAttribute="uid"
+        p:connectionFactory-ref="connectionFactory">
         <constructor-arg ref="authenticator" />
+        <constructor-arg value="${ldap.admin.username}" />
+        <constructor-arg value="${ldap.admin.password}" />
+        <constructor-arg value="${ldap.authn.groupSearchBaseDn}" />
+        <constructor-arg value="${ldap.authn.groupSearchFilter}" />
+        <constructor-arg value="${ldap.authn.groupRoleAttribute}" />
+        <constructor-arg value="${ldap.authn.pendingGroupName}" />
+
     </bean>
 
     <!--
@@ -110,43 +118,43 @@
        | See http://www.ldaptive.org/docs/guide/connections for more information.
        -->
     <bean id="connectionConfig" class="org.ldaptive.ConnectionConfig"
-          p:ldapUrl="${ldap.url}"
-          p:connectTimeout="${ldap.connectTimeout}"
-          p:useStartTLS="${ldap.useStartTLS}" />
+        p:ldapUrl="${ldap.url}"
+        p:connectTimeout="${ldap.connectTimeout}"
+        p:useStartTLS="${ldap.useStartTLS}" />
 
     <bean id="connectionFactory" class="org.ldaptive.DefaultConnectionFactory"
         p:connectionConfig-ref="connectionConfig" />
 
     <bean id="ldapPoolConfig" class="org.ldaptive.pool.PoolConfig"
-          p:minPoolSize="${ldap.pool.minSize}"
-          p:maxPoolSize="${ldap.pool.maxSize}"
-          p:validateOnCheckOut="${ldap.pool.validateOnCheckout}"
-          p:validatePeriodically="${ldap.pool.validatePeriodically}"
-          p:validatePeriod="${ldap.pool.validatePeriod}" />
+        p:minPoolSize="${ldap.pool.minSize}"
+        p:maxPoolSize="${ldap.pool.maxSize}"
+        p:validateOnCheckOut="${ldap.pool.validateOnCheckout}"
+        p:validatePeriodically="${ldap.pool.validatePeriodically}"
+        p:validatePeriod="${ldap.pool.validatePeriod}" />
 
     <bean id="pruneStrategy" class="org.ldaptive.pool.IdlePruneStrategy"
-          p:prunePeriod="${ldap.pool.prunePeriod}"
-          p:idleTime="${ldap.pool.idleTime}" />
+        p:prunePeriod="${ldap.pool.prunePeriod}"
+        p:idleTime="${ldap.pool.idleTime}" />
 
     <bean id="searchValidator" class="org.ldaptive.pool.SearchValidator" />
 
     <bean id="connectionPool" class="org.ldaptive.pool.BlockingConnectionPool"
-          init-method="initialize"
-          p:poolConfig-ref="ldapPoolConfig"
-          p:blockWaitTime="${ldap.pool.blockWaitTime}"
-          p:pruneStrategy-ref="pruneStrategy"
-          p:connectionFactory-ref="connectionFactory" />
+        init-method="initialize"
+        p:poolConfig-ref="ldapPoolConfig"
+        p:blockWaitTime="${ldap.pool.blockWaitTime}"
+        p:pruneStrategy-ref="pruneStrategy"
+        p:connectionFactory-ref="connectionFactory" />
 
     <bean id="pooledLdapConnectionFactory" class="org.ldaptive.pool.PooledConnectionFactory"
-          p:connectionPool-ref="connectionPool" />
+        p:connectionPool-ref="connectionPool" />
 
     <!--
        | This configuration uses a connection pool for both search and bind operations.
        | Pooling all operations is strongly recommended.
        -->
     <bean id="authenticator" class="org.ldaptive.auth.Authenticator"
-          c:resolver-ref="pooledSearchDnResolver"
-          c:handler-ref="pooledBindHandler" />
+        c:resolver-ref="pooledSearchDnResolver"
+        c:handler-ref="pooledBindHandler" />
 
     <!--
        | Contrast with org.ldaptive.auth.FormatDnResolver, which constructs bind DN
@@ -154,13 +162,13 @@
        | FormatDnResolver is preferable for directories that support it, such as Active Directory.
        -->
     <bean id="pooledSearchDnResolver" class="org.ldaptive.auth.PooledSearchDnResolver"
-          p:baseDn="${ldap.authn.baseDn}"
-          p:allowMultipleDns="false"
-          p:connectionFactory-ref="pooledLdapConnectionFactory"
-          p:userFilter="${ldap.authn.searchFilter}" />
+        p:baseDn="${ldap.authn.userSearchBaseDn}"
+        p:allowMultipleDns="false"
+        p:connectionFactory-ref="pooledLdapConnectionFactory"
+        p:userFilter="${ldap.authn.searchFilter}" />
 
     <bean id="pooledBindHandler" class="org.ldaptive.auth.PooledBindAuthenticationHandler"
-          p:connectionFactory-ref="pooledLdapConnectionFactory"/>
+        p:connectionFactory-ref="pooledLdapConnectionFactory"/>
 
     <!-- 
     Sample, in-memory data store for the ServiceRegistry. A real implementation
@@ -168,12 +176,12 @@
     The name of this bean should remain "serviceRegistryDao".
     +-->
     <bean id="serviceRegistryDao" class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl"
-            p:registeredServices-ref="registeredServicesList" />
+        p:registeredServices-ref="registeredServicesList" />
 
     <util:list id="registeredServicesList">
         <bean class="org.jasig.cas.services.RegexRegisteredService"
-              p:id="0" p:name="HTTP and IMAP" p:description="Allows HTTP(S) and IMAP(S) protocols"
-              p:serviceId="^(https?|imaps?)://.*" p:evaluationOrder="10000001" />
+            p:id="0" p:name="HTTP and IMAP" p:description="Allows HTTP(S) and IMAP(S) protocols"
+            p:serviceId="^(https?|imaps?)://.*" p:evaluationOrder="10000001" />
         <!--
         Use the following definition instead of the above to further restrict access
         to services within your domain (including sub domains).
@@ -194,23 +202,23 @@
         </bean>
         -->
     </util:list>
-    
+
     <bean id="auditTrailManager" class="com.github.inspektr.audit.support.Slf4jLoggingAuditTrailManager" />
-    
+
     <bean id="healthCheckMonitor" class="org.jasig.cas.monitor.HealthCheckMonitor" p:monitors-ref="monitorsList" />
-  
+
     <util:list id="monitorsList">
-      <bean class="org.jasig.cas.monitor.MemoryMonitor" p:freeMemoryWarnThreshold="10" />
-      <!--
-        NOTE
-        The following ticket registries support SessionMonitor:
-          * DefaultTicketRegistry
-          * JpaTicketRegistry
-        Remove this monitor if you use an unsupported registry.
-      -->
-      <bean class="org.jasig.cas.monitor.SessionMonitor"
-          p:ticketRegistry-ref="ticketRegistry"
-          p:serviceTicketCountWarnThreshold="5000"
-          p:sessionCountWarnThreshold="100000" />
+        <bean class="org.jasig.cas.monitor.MemoryMonitor" p:freeMemoryWarnThreshold="10" />
+        <!--
+          NOTE
+          The following ticket registries support SessionMonitor:
+            * DefaultTicketRegistry
+            * JpaTicketRegistry
+          Remove this monitor if you use an unsupported registry.
+        -->
+        <bean class="org.jasig.cas.monitor.SessionMonitor"
+            p:ticketRegistry-ref="ticketRegistry"
+            p:serviceTicketCountWarnThreshold="5000"
+            p:sessionCountWarnThreshold="100000" />
     </util:list>
 </beans>
