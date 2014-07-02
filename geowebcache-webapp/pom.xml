@@ -21,6 +21,12 @@
             <artifactId>gwc-web</artifactId>
             <version>${geowebcache.version}</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -100,7 +106,7 @@
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
-                            <excludes>**/acegi-config.xml,**/geowebcache-servlet.xml,**/log4j.*,**/web.xml,${geowebcache.war.excludes}</excludes>
+                            <excludes>**/acegi-config.xml,**/geowebcache-servlet.xml,**/lib/log4j-*.jar,**/log4j.*,**/web.xml,${geowebcache.war.excludes}</excludes>
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>org.geowebcache</groupId>
