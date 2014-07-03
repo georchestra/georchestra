@@ -7,28 +7,140 @@ This branch receives bug fixes as they arrive, during 6 months at least.
 Version 14.06 (dev version)
 ======================================
 
+Contributions from Rennes, CIGAL, GeoBretagne, GeoPicardie, PIGMA, GeoBolivia & developers on their free time.
+Note on the 13.06 release: end-of-life in april. As a result, will not receive bug fixes anymore.
+
 New features:
  * GeoWebCache standalone is now part of the geOrchestra suite
 
+Taking into account commits up to June 12th ...
+
 Enhancements:
+ * analytics: access is now restricted to members of group ```MOD_ANALYTICS``` only,
+ * cas: upgraded to latest CAS Server 4.0.0 release
+ * cas: unmodified files where removed from template config
+ * cas: username field autocompleted on browsers that support it
+ * catalogapp: german translation
  * deploy: a default [deployment script](https://github.com/georchestra/template/blob/master/DeployScript.groovy) is now provided by the template config
- * downloadform: complete revamp, including more testing
- * extractorapp: improved test coverage
+ * downloadform: complete revamp, including more testing, see #657
+ * extractorapp: now displays layers using the configured GLOBAL_EPSG srs, if they support if.
+ * extractorapp: much improved test coverage
  * extractorapp: access is now restricted to members of a specific group (```MOD_EXTRACTORAPP```)
- * geoserver: basic data_dir with sensible defaults for geOrchestra
+ * extractorapp admin: access is now restricted to members of group ```ADMINISTRATOR``` (geoserver admin)
+ * extractorapp: german translation
+ * extractorapp: the privileged user is allowed to use imp-username/imp-roles headers to impersonate an arbitrary user for security check
+ * extractorapp: improved GDAL/OGR handling,
+ * extractorapp: proper reporting in case the OGRDataStore cannot be created, with an invitation to check the GDAL libraries setup,
+ * extractorapp: dropped support for geoserver 1.x, which results in better startup performance, see https://github.com/georchestra/georchestra/issues/640
+ * geoserver: the project now provides a basic data_dir with sensible defaults for geOrchestra, see https://github.com/georchestra/georchestra/blob/master/INSTALL.md#geoserver and https://github.com/georchestra/geoserver_minimal_datadir
+ * geofence: performance improvement for getcapabilities requests,
+ * geofence: allows dynamic styles and remote layers by default,
+ * geofence: conforms to the global logging strategy as set by shared maven filters,
+ * geofence: allow dynamic geofencing based on inetOrgPerson's "l" field storing the limiting EWKT geometry,
+ * ldapadmin: improved compatibility with geofence, by automatic management of unique numeric identifiers for users and groups.
  * ldapadmin: SSHA password encryption
+ * ldapadmin: much improved test coverage,
  * ldapadmin: now take into account shared.ldap.* values
- * mapfishapp: german translation (thanks to CIGALsace)
+ * ldapadmin: now uses configured LDAP users and groups DN instead of hardcoded values,
+ * mapfishapp: improved testsuite coverage,
+ * mapfishapp: annotation addon improved (outline and fill colors),
+ * mapfishapp: using adequate XML exception format string, depending on WMS version,
+ * mapfishapp: max_features and max_length set to higher numbers
+ * mapfishapp: german translation, including for the supported addons (thanks to CIGALsace)
  * mapfishapp: display SLD title before its name - see [#597](https://github.com/georchestra/georchestra/issues/597)
+ * mapfishapp: file upload is now using a pure JSON implementation,
+ * mapfishapp: file upload checks that a SRS can be guessed by OGRFeatureReader, or else falling back onto the pure GeoTools implementation,
+ * mapfishapp: file upload supports OSM files to some extent,
+ * mapfishapp: local proj4js definitions to prevent mixed active content warning in case of HTTPS access, see https://github.com/georchestra/georchestra/issues/602
+ * server-deploy: now supports deploying geofence-webapp
  * all modules are now using the same database by default - see [#601](https://github.com/georchestra/georchestra/issues/601)
  * system wide favicon
 
 Bug fixes:
  * extractorapp: fixed several client-side issues regarding handling of namespaced layer names and virtual services - see [#517](https://github.com/georchestra/georchestra/issues/517#issuecomment-40697504) and [#634](https://github.com/georchestra/georchestra/issues/634)
+ * extractorapp: fixed too early expiration of archive download link,
+ * extractorapp: fixed protected layer cannot be extracted, see https://github.com/georchestra/georchestra/issues/633
+ * extractorapp: fixed KML export. Note: MIF export via OGR can only work with a patched version of GDAL, or GDAL >= 1.11.1, see http://trac.osgeo.org/gdal/ticket/5477.
+ * geofence: avoid NPE with dynamic geofencing - https://github.com/georchestra/georchestra/issues/629
+ * geonetwork: shared.geonetwork.language enforced - #595
+ * mapfishapp: restored getfeatureinfo on aggregated layers - https://github.com/georchestra/georchestra/issues/658
+ * mapfishapp: truly independant tabs in resultspanel - #671
+ * mapfishapp: fixed missing drillDown option for getFeatureInfo control - #674
  * mapfishapp: multilayer querier tool - several issues fixed
- * proxy: customizable error pages
+ * mapfishapp: fixed file upload limits values (8Mb limit really enforced) - #592
+ * mapfishapp: fixed thesaurus keywords request lang - #624
+ * mapfishapp: compatibility with WMS 1.1.0 servers - #663
+ * proxy: ignores non HTTPS request check, to allow OGC web service usage, see https://github.com/georchestra/georchestra/commit/a24c7427a484028a5be211c3d6cbe516dbf2c04b
+ * proxy: returns earlier in case of 403|404 error code - see #506
+ * proxy: really customizable error pages
+ * proxy: always remove incoming sec-* headers
+ * proxy: added QuantumGIS to the list of clients triggering basic auth, thus allowing access to protected layers (along with uDig and ArcGIS clients)
 
-UPGRADING: TODO
+
+UPGRADING: WORK IN PROGRESS
+
+2 steps :
+ - checkout branch 14.06 in your georchestra sources repository
+ - go to config/configuration/<yours> and merge the changes from the upstream template configuration. To this purpose, we highly recommend setting up a git repository in this directory (git init && git add . && git commit).
+ 
+Jetty Maven2 Repository provided by oss.sonatype.org seems to require https now.
+The fix was pushed to the georchestra and geonetwork repositories, but in the mean time, your /home/$USER/.m2 local repository might have gotten corrupted with html files rather than jars. If you experience compilation errors, you might need to clean your local maven repo, by running ```rm -rf ~/.m2/repository/org/apache/maven```
+
+LDAP update:
+shared.privileged.geoserver.user=extractorapp_privileged_admin -> geoserver_privileged_user
+the LDAP repository holds branches for 13.09, 14.01 and 14.06 releases.
+In 13.09, groups are instances of posixGroup. From 14.01 on, they are instances of groupOfNames
+Be sure to create the MOD_EXTRACTORAPP group and assign it the users which already had access to extractorapp (typically previous members of SV_USER)
+
+Databases:
+geonetwork database merged into georchestra db by default. It is now a schema inside the georchestra db.
+It requires that a "geonetwork" db user is created and granted rights, see https://github.com/georchestra/georchestra/blob/master/INSTALL.md#postgresql
+
+Native libs:
+Doc how to compile bindings with native libs (gdal/ogr): https://github.com/georchestra/georchestra/blob/master/geoserver/NATIVE_LIBS.md
+gdal.jar is no more provided by the webapp, because it can lead to issues when the libs are loaded several times in the same servlet container.
+It should be installed once and for all in a folder accessible by the servlet container, read the above documentation, section "Tomcat configuration"
+
+Artifacts names without the private suffix. 
+This implies that the security proxy resides in a different servlet container than the proxied webapps by default.
+If this is not your case, juste rename them back with the "-private" suffix.
+
+
+The way geOrchestra is configured has been streamlined:
+ - there are **default parameters which are shared by several modules**, in [config/shared.maven.filters](config/shared.maven.filters). A "standard" install should not require you to bother about them. But if your setup is different from the default one, you may have to copy one or more of theses properties into your own shared maven filters (read on), in order to be able to customize them.
+ - there are also **shared parameters which have to be customized** for your own instance. These can be found in the build_support/shared.maven.filters file inside your own configuration directory. As your config dir inherits from the template config dir, it should be very similar to [georchestra/template:build_support/shared.maven.filters](https://github.com/georchestra/template/blob/master/build_support/shared.maven.filters). The shared maven filters from this file override those from [config/defaults](config/defaults)
+ - finally, there are parameters for (nearly) every individual geOrchestra module (geoserver, geofence, mapfishapp, extractorapp, proxy, ldapadmin, header), which can be customized via the build_support/GenerateConfig.groovy in your own config dir. Have a look at the one provided by the template config for an example:  [georchestra/template:build_support/GenerateConfig.groovy](https://github.com/georchestra/template/blob/master/build_support/GenerateConfig.groovy).
+
+As a result, a "standard geOrchestra configuration" should not require you to edit more than 2 files: one for the shared parameters, and an other one for module-specific parameters.
+
+Sidenote: copying maven.filter files in your own configuration dir (which was an older practice) is not anymore recommended because it is more difficult to maintain when upgrading version.
+
+shared.mapfishapp.docTempDir removed because it is not shared -> mapfishapp docTempDir is now set by build_support/GenerateConfig.groovy
+shared.checkhealth.* removed for the same reason
+settings for ldapadmin, sec-proxy and extractorapp are now customizable via build_support/GenerateConfig.groovy
+
+shared.psql.ogc.statistics.db renamed into shared.ogc.statistics.db
+shared.psql.download_form.db renamed into shared.download_form.db
+shared.psql.geonetwork.db -> shared.geonetwork.db
+shared.ldapadmin.db
+
+shared.geofence.* removed -> see build_support/GenerateConfig.groovy
+except shared.geofence.db
+
+removed useless shared.geonetwork.dir
+
+geonetwork.language renamed into shared.geonetwork.language
+shared.psql.geonetwork.db -> shared.geonetwork.db
+
+=> you should merge branch 14.06 of the template configuration into your own configuration repository, and resolve conflicts
+=> you should remove any maven.filter file from your own configuration, and eventually copy the values you had customized into build_support/GenerateConfig.groovy
+
+
+If you're using ldapadmin, make sure you've setup [ReCaptcha](http://www.google.com/recaptcha/) keys for your own domain (search for privateKey / publicKey in your GenerateConfig.groovy).
+
+French projections (typically EPSG:2154) have been removed from extractorapp and mapfishapp config files. Be sure to check your GEOR_custom.js files if you need them.
+
+mapfishapp: GEONETWORK_URL: "http://geobretagne.fr/geonetwork/srv/fre" removed in favor of GEONETWORK_BASE_URL: "http://geobretagne.fr/geonetwork",
 
 
 Version 14.01 (current stable version)
