@@ -433,14 +433,14 @@ public class UsersController {
 
 			ResponseUtil.writeSuccess(response);
 
-		} catch (Exception e){
-
+		} catch (DataServiceException e){
 			LOG.error(e.getMessage());
-
-			throw new IOException(e);
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            throw new IOException(e);
+		} catch (NotFoundException e) {
+            String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, NOT_FOUND);
+            ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_NOT_FOUND);
 		}
-
-
 	}
 
 	/**

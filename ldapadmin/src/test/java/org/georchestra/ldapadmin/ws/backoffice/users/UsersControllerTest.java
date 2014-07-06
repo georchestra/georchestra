@@ -464,7 +464,51 @@ public class UsersControllerTest {
     }
 
     @Test
+    public void testDeleteUserProtected() throws Exception {
+        request.setRequestURI("/ldapadmin/users/geoserver_privileged_user");
+
+        usersCtrl.delete(request, response);
+
+        JSONObject ret = new JSONObject(response.getContentAsString());
+        assertTrue(response.getStatus() == HttpServletResponse.SC_CONFLICT);
+        assertFalse(ret.getBoolean("success"));
+        assertTrue(ret.getString("error").equals("The user is protected, it cannot be deleted: geoserver_privileged_user"));
+
+    }
+
+    @Test
+    public void testDeleteDataServiceExceptionCaught() throws Exception {
+        request.setRequestURI("/ldapadmin/users/pmauduit");
+        Mockito.doThrow(DataServiceException.class).when(ldapTemplate).unbind((Name) Mockito.any(), eq(true));
+        boolean caught = false;
+
+
+        try {
+            usersCtrl.delete(request, response);
+        } catch (Throwable e) {
+            caught = true;
+            assertTrue(e instanceof IOException);
+            assertTrue(response.getStatus() == HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
+        assertTrue(caught);
+    }
+
+    @Test
+    public void testDeleteNotFoundExceptionCaught() throws Exception {
+        request.setRequestURI("/ldapadmin/users/pmauduitnotfound");
+        Mockito.doThrow(NotFoundException.class).when(ldapTemplate).unbind((Name) Mockito.any(), eq(true));
+
+        usersCtrl.delete(request, response);
+
+        JSONObject ret = new JSONObject(response.getContentAsString());
+        assertTrue(response.getStatus() == HttpServletResponse.SC_NOT_FOUND);
+        assertFalse(ret.getBoolean("success"));
+        assertTrue(ret.getString("error").equals("not_found"));
+    }
+
+    @Test
     public void testDelete() throws Exception {
+
 
     }
 }
