@@ -1,4 +1,4 @@
-package org.georchestra.lib.mailservice;
+package org.georchestra.ldapadmin.mailservice;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;

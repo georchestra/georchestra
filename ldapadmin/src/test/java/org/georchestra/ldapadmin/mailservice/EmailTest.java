@@ -2,7 +2,6 @@ package org.georchestra.ldapadmin.mailservice;
 
 import static org.junit.Assert.assertTrue;
 
-import org.georchestra.lib.mailservice.Email;
 import org.junit.Before;
 import org.junit.Test;
 
