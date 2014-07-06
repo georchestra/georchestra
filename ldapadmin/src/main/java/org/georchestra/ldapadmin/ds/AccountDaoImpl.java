@@ -300,7 +300,7 @@ public final class AccountDaoImpl implements AccountDao{
 
 		} catch (NameNotFoundException e){
 
-			throw new NotFoundException("There is not a user with this user identifier (uid): " + uid);
+			throw new NotFoundException("There is no user with this identifier (uid): " + uid);
 		}
 
 	}

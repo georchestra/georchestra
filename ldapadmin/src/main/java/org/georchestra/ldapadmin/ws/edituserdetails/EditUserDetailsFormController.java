@@ -70,7 +70,7 @@ public class EditUserDetailsFormController {
 
 		if(request.getHeader("sec-username") == null) {
 			response.sendError(HttpServletResponse.SC_FORBIDDEN);
-			// TODO wondering if the code should not return at this point.
+			return null;
 		}
 
 		try {
