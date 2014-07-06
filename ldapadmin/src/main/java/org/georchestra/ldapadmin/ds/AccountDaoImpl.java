@@ -36,130 +36,131 @@ import org.springframework.security.authentication.encoding.LdapShaPasswordEncod
  *
  * @author Mauricio Pazos
  */
-public final class AccountDaoImpl implements AccountDao{
+public final class AccountDaoImpl implements AccountDao {
 
-	private LdapTemplate ldapTemplate;
-	private GroupDao groupDao;
+    private LdapTemplate ldapTemplate;
+    private GroupDao groupDao;
     private String uniqueNumberField = "employeeNumber";
-
-	private LdapRdn userSearchBaseDN;
-
+    private LdapRdn userSearchBaseDN;
     private AtomicInteger uniqueNumberCounter = new AtomicInteger(-1);
 
     private static final Log LOG = LogFactory.getLog(AccountDaoImpl.class.getName());
+
     @Autowired
-	public AccountDaoImpl( LdapTemplate ldapTemplate, GroupDao groupDao) {
+    public AccountDaoImpl(LdapTemplate ldapTemplate, GroupDao groupDao) {
 
-		this.ldapTemplate =ldapTemplate;
-		this.groupDao = groupDao;
-	}
+        this.ldapTemplate = ldapTemplate;
+        this.groupDao = groupDao;
+    }
 
+    public LdapTemplate getLdapTemplate() {
+        return ldapTemplate;
+    }
 
-	public LdapTemplate getLdapTemplate() {
-		return ldapTemplate;
-	}
+    public void setLdapTemplate(LdapTemplate ldapTemplate) {
+        this.ldapTemplate = ldapTemplate;
+    }
 
-	public void setLdapTemplate(LdapTemplate ldapTemplate) {
-		this.ldapTemplate = ldapTemplate;
-	}
+    public GroupDao getGroupDao() {
+        return groupDao;
+    }
 
-	public GroupDao getGroupDao() {
-		return groupDao;
-	}
-
-	public void setGroupDao(GroupDao groupDao) {
-		this.groupDao = groupDao;
-	}
+    public void setGroupDao(GroupDao groupDao) {
+        this.groupDao = groupDao;
+    }
 
     public void setUniqueNumberField(String uniqueNumberField) {
         this.uniqueNumberField = uniqueNumberField;
     }
 
-	public void setUserSearchBaseDN(String userSearchBaseDN) {
-		this.userSearchBaseDN = new LdapRdn(userSearchBaseDN);
-	}
+    public void setUserSearchBaseDN(String userSearchBaseDN) {
+        this.userSearchBaseDN = new LdapRdn(userSearchBaseDN);
+    }
 
-	/**
-	 * @see {@link AccountDao#insert(Account, String)}
-	 */
-	@Override
-	public synchronized void insert(final Account account, final String groupID) throws DataServiceException, DuplicatedUidException, DuplicatedEmailException{
+    /**
+     * @see {@link AccountDao#insert(Account, String)}
+     */
+    @Override
+    public synchronized void insert(final Account account, final String groupID) throws DataServiceException,
+            DuplicatedUidException, DuplicatedEmailException {
 
-		assert account != null;
+        assert account != null;
 
-		checkMandatoryFields(account);
+        checkMandatoryFields(account);
 
-		// checks unique uid
+        // checks unique uid
 
-		String uid = account.getUid().toLowerCase();
-		try{
-			findByUID(uid);
+        String uid = account.getUid().toLowerCase();
+        try {
+            findByUID(uid);
 
-			throw new DuplicatedUidException("there is a user with this user identifier (uid): " + account.getUid());
+            throw new DuplicatedUidException("there is a user with this user identifier (uid): " + account.getUid());
 
-		} catch (NotFoundException e1) {
-			// if no account with the given UID can be found, then the new account can be added.
-		    LOG.debug("User with uid "+uid+" not found, account can be created");
-		}
+        } catch (NotFoundException e1) {
+            // if no account with the given UID can be found, then the new
+            // account can be added.
+            LOG.debug("User with uid " + uid + " not found, account can be created");
+        }
 
-		// checks unique email
-		try {
-			findByEmail(account.getEmail().trim());
+        // checks unique email
+        try {
+            findByEmail(account.getEmail().trim());
 
-			throw new DuplicatedEmailException("there is a user with this email: " + account.getEmail());
+            throw new DuplicatedEmailException("there is a user with this email: " + account.getEmail());
 
-		} catch (NotFoundException e1) {
-                  // if no other accounts with the same e-mail exists yet, then the new account can be added.
-                  LOG.debug("No account with the mail "+ account.getEmail()+ ", account can be created.");
-		}
+        } catch (NotFoundException e1) {
+            // if no other accounts with the same e-mail exists yet, then the
+            // new account can be added.
+            LOG.debug("No account with the mail " + account.getEmail() + ", account can be created.");
+        }
 
-
-
-		// inserts the new user account
-		try {
-			Name dn = buildDn( uid );
+        // inserts the new user account
+        try {
+            Name dn = buildDn(uid);
             AndFilter filter = new AndFilter();
             filter.and(new EqualsFilter("objectClass", "inetOrgPerson"));
             filter.and(new EqualsFilter("objectClass", "organizationalPerson"));
             filter.and(new EqualsFilter("objectClass", "person"));
 
             Integer uniqueNumber = findUniqueNumber(filter, uniqueNumberField, this.uniqueNumberCounter, ldapTemplate);
-			DirContextAdapter context = new DirContextAdapter(dn);
-			mapToContext(uniqueNumber, account, context);
+            DirContextAdapter context = new DirContextAdapter(dn);
+            mapToContext(uniqueNumber, account, context);
 
-			this.ldapTemplate.bind(dn, context, null);
+            this.ldapTemplate.bind(dn, context, null);
 
-			this.groupDao.addUser( groupID, account.getUid() );
+            this.groupDao.addUser(groupID, account.getUid());
 
-		} catch (NotFoundException e) {
-			throw new DataServiceException(e);
-		}
-	}
+        } catch (NotFoundException e) {
+            throw new DataServiceException(e);
+        }
+    }
 
-    static Integer findUniqueNumber(AbstractFilter searchFilter, final String uniqueNumberField, AtomicInteger uniqueNumber, LdapTemplate ldapTemplate) {
+    static Integer findUniqueNumber(AbstractFilter searchFilter, final String uniqueNumberField,
+            AtomicInteger uniqueNumber, LdapTemplate ldapTemplate) {
         if (uniqueNumberField == null || uniqueNumberField.trim().isEmpty()) {
             return null;
         }
         if (uniqueNumber.get() < 0) {
             @SuppressWarnings("unchecked")
-            final List<Integer> uniqueIds = ldapTemplate.search(DistinguishedName.EMPTY_PATH, searchFilter.encode(), new AttributesMapper() {
-                @Override
-                public Object mapFromAttributes(Attributes attributes) throws NamingException {
-                    final Attribute attribute = attributes.get(uniqueNumberField);
-                    if (attribute == null) {
-                        return 0;
-                    }
-                    final Object number = attribute.get();
-                    if (number != null) {
-                        try {
-                            return Integer.valueOf(number.toString());
-                        } catch (NumberFormatException e) {
+            final List<Integer> uniqueIds = ldapTemplate.search(DistinguishedName.EMPTY_PATH, searchFilter.encode(),
+                    new AttributesMapper() {
+                        @Override
+                        public Object mapFromAttributes(Attributes attributes) throws NamingException {
+                            final Attribute attribute = attributes.get(uniqueNumberField);
+                            if (attribute == null) {
+                                return 0;
+                            }
+                            final Object number = attribute.get();
+                            if (number != null) {
+                                try {
+                                    return Integer.valueOf(number.toString());
+                                } catch (NumberFormatException e) {
+                                    return 0;
+                                }
+                            }
                             return 0;
                         }
-                    }
-                    return 0;
-                }
-            });
+                    });
 
             for (Integer uniqueId : uniqueIds) {
                 if (uniqueId != null && uniqueId > uniqueNumber.get()) {
@@ -177,40 +178,38 @@ public final class AccountDaoImpl implements AccountDao{
             AndFilter filter = new AndFilter();
             filter.and(searchFilter);
             filter.and(new EqualsFilter(uniqueNumberField, uniqueNumber.get()));
-            isUnique = ldapTemplate.search(
-                    DistinguishedName.EMPTY_PATH,
-                    filter.encode(),
-                    new AccountContextMapper()).isEmpty();
+            isUnique = ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(), new AccountContextMapper())
+                    .isEmpty();
             uniqueNumber.incrementAndGet();
         }
         return uniqueNumber.get();
     }
 
-
     /**
-	 * @see {@link AccountDao#update(Account)}
-	 */
-	@Override
-	public void update(final Account account) throws DataServiceException, DuplicatedEmailException{
+     * @see {@link AccountDao#update(Account)}
+     */
+    @Override
+    public void update(final Account account) throws DataServiceException, DuplicatedEmailException {
 
-		// checks mandatory fields
-		if( account.getUid().length() == 0) {
-			throw new IllegalArgumentException("uid is required");
-		}
-		if( account.getSurname().length()== 0 ){
-			throw new IllegalArgumentException("surname is required");
-		}
-		if( account.getCommonName().length()== 0 ){
-			throw new IllegalArgumentException("common name is required");
-		}
-		if( account.getGivenName().length()== 0 ){
-			throw new IllegalArgumentException("given name is required");
-		}
+        // checks mandatory fields
+        if (account.getUid().length() == 0) {
+            throw new IllegalArgumentException("uid is required");
+        }
+        if (account.getSurname().length() == 0) {
+            throw new IllegalArgumentException("surname is required");
+        }
+        if (account.getCommonName().length() == 0) {
+            throw new IllegalArgumentException("common name is required");
+        }
+        if (account.getGivenName().length() == 0) {
+            throw new IllegalArgumentException("given name is required");
+        }
 
-		// checks unique email
-		try {
+        // checks unique email
+        try {
 
-			// if the email is found in other account different that this account, the new email cannot be used.
+            // if the email is found in other account different that this
+            // account, the new email cannot be used.
             Account foundAccount = findByEmail(account.getEmail());
 
             if (!foundAccount.getUid().equals(account.getUid())) {
@@ -218,33 +217,33 @@ public final class AccountDaoImpl implements AccountDao{
                         + account.getEmail());
             }
 
-		} catch (NotFoundException e1) {
-                  // if it doesn't exist an account with this e-mail, then it can be part of the updated account.
-                  LOG.debug("Updated account with email "+ account.getEmail() + " does not exist, update possible.");
-		}
+        } catch (NotFoundException e1) {
+            // if it doesn't exist an account with this e-mail the it can be
+            // part of the updated account.
+            LOG.debug("Updated account with email " + account.getEmail() + " does not exist, update possible.");
+        }
 
-		// update the entry in the ldap tree
-		Name dn = buildDn(account.getUid());
-		DirContextOperations context = ldapTemplate.lookupContext(dn);
+        // update the entry in the ldap tree
+        Name dn = buildDn(account.getUid());
+        DirContextOperations context = ldapTemplate.lookupContext(dn);
 
-		mapToContext(null /*don't update number */, account, context);
+        mapToContext(null /* don't update number */, account, context);
 
-		ldapTemplate.modifyAttributes(context);
-	}
+        ldapTemplate.modifyAttributes(context);
+    }
 
+    /**
+     * Removes the user account and the reference included in the group
+     *
+     * @see {@link AccountDao#delete(Account)}
+     */
+    @Override
+    public void delete(final String uid) throws DataServiceException, NotFoundException {
+        this.ldapTemplate.unbind(buildDn(uid), true);
 
-	/**
-	 * Removes the user account and the reference included in the group
-	 *
-	 * @see {@link AccountDao#delete(Account)}
-	 */
-	@Override
-	public void delete(final String uid) throws DataServiceException, NotFoundException{
-		this.ldapTemplate.unbind(buildDn(uid), true);
+        this.groupDao.deleteUser(uid);
 
-		this.groupDao.deleteUser( uid );
-
-	}
+    }
 
     /**
      * @see {@link AccountDao#findAll()}
@@ -256,307 +255,276 @@ public final class AccountDaoImpl implements AccountDao{
         return ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(), new AccountContextMapper());
     }
 
-// TODO Note: this implementation use the SortControlDirContextProcessor but it don't work
-//	@Override
-//	public List<Account> findAll() throws DataServiceException {
-//
-//        UserAttributesMapper mapper = new UserAttributesMapper();
-//
-//		final EqualsFilter filter = new EqualsFilter("objectClass", "Person");
-//
-//		final SearchControls searchControl = new SearchControls();
-//		searchControl.setSearchScope(SearchControls.SUBTREE_SCOPE);
-//		searchControl.setDerefLinkFlag(false);
-//
-//
-//		final SortControlDirContextProcessor sortControl = new SortControlDirContextProcessor("cn");
-//
-//		List<Account> list = ldapTemplate.search( DistinguishedName.EMPTY_PATH, filter.encode(), searchControl, mapper, sortControl);
-//
-//		return list;
-//	}
+    // TODO Note: this implementation use the SortControlDirContextProcessor but
+    // it don't work
+    // @Override
+    // public List<Account> findAll() throws DataServiceException {
+    //
+    // UserAttributesMapper mapper = new UserAttributesMapper();
+    //
+    // final EqualsFilter filter = new EqualsFilter("objectClass", "Person");
+    //
+    // final SearchControls searchControl = new SearchControls();
+    // searchControl.setSearchScope(SearchControls.SUBTREE_SCOPE);
+    // searchControl.setDerefLinkFlag(false);
+    //
+    //
+    // final SortControlDirContextProcessor sortControl = new
+    // SortControlDirContextProcessor("cn");
+    //
+    // List<Account> list = ldapTemplate.search( DistinguishedName.EMPTY_PATH,
+    // filter.encode(), searchControl, mapper, sortControl);
+    //
+    // return list;
+    // }
 
+    @Override
+    public List<Account> findFilterBy(final ProtectedUserFilter filterProtected) throws DataServiceException {
 
-	@Override
-	public List<Account> findFilterBy(final ProtectedUserFilter filterProtected) throws DataServiceException {
+        List<Account> allUsers = findAll();
 
-		List<Account> allUsers = findAll();
+        List<Account> list = filterProtected.filterUsersList(allUsers);
 
-		List<Account> list = filterProtected.filterUsersList(allUsers);
+        return list;
+    }
 
-		return list;
-	}
+    /**
+     * @see {@link AccountDao#findByUID(String)}
+     */
+    @Override
+    public Account findByUID(final String uid) throws DataServiceException, NotFoundException {
 
-	/**
-	 * @see {@link AccountDao#findByUID(String)}
-	 */
-	@Override
-	public Account findByUID(final String uid) throws DataServiceException, NotFoundException{
+        try {
+            DistinguishedName dn = buildDn(uid.toLowerCase());
+            Account a = (Account) ldapTemplate.lookup(dn, new AccountContextMapper());
 
-		try{
-			DistinguishedName dn = buildDn(uid.toLowerCase());
-			Account a = (Account) ldapTemplate.lookup(dn, new AccountContextMapper());
+            return a;
 
-			return  a;
+        } catch (NameNotFoundException e) {
 
-		} catch (NameNotFoundException e){
+            throw new NotFoundException("There is no user with this identifier (uid): " + uid);
+        }
 
-			throw new NotFoundException("There is no user with this identifier (uid): " + uid);
-		}
+    }
 
-	}
+    /**
+     * @see {@link AccountDao#findByEmail(String)}
+     */
+    @Override
+    public Account findByEmail(final String email) throws DataServiceException, NotFoundException {
 
-	/**
-	 * @see {@link AccountDao#findByEmail(String)}
-	 */
-	@Override
-	public Account findByEmail(final String email) throws DataServiceException, NotFoundException {
+        AndFilter filter = new AndFilter();
+        filter.and(new EqualsFilter("objectClass", "inetOrgPerson"));
+        filter.and(new EqualsFilter("objectClass", "organizationalPerson"));
+        filter.and(new EqualsFilter("objectClass", "person"));
+        filter.and(new EqualsFilter("mail", email));
 
-		AndFilter filter = new AndFilter();
-		filter.and(new EqualsFilter("objectClass", "inetOrgPerson"));
-		filter.and(new EqualsFilter("objectClass", "organizationalPerson"));
-		filter.and(new EqualsFilter("objectClass", "person"));
-		filter.and(new EqualsFilter("mail", email));
+        List<Account> accountList = ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(),
+                new AccountContextMapper());
+        if (accountList.isEmpty()) {
+            throw new NotFoundException("There is no user with this email: " + email);
+        }
+        Account account = accountList.get(0);
 
-		List<Account> accountList = ldapTemplate.search(
-								DistinguishedName.EMPTY_PATH,
-								filter.encode(),
-								new AccountContextMapper());
-		if(accountList.isEmpty()){
-			throw new NotFoundException("There is no user with this email: " + email);
-		}
-		Account account = accountList.get(0);
+        return account;
+    }
 
-		return  account;
-	}
+    public boolean exist(final String uid) throws DataServiceException {
 
-	public boolean exist(final String uid) throws DataServiceException{
+        try {
+            DistinguishedName dn = buildDn(uid.toLowerCase());
+            ldapTemplate.lookup(dn);
+            return true;
+        } catch (NameNotFoundException ex) {
+            return false;
+        }
+    }
 
-		try{
-			DistinguishedName dn = buildDn(uid.toLowerCase());
-			ldapTemplate.lookup(dn);
-			return true;
-		} catch (NameNotFoundException ex ){
-			return false;
-		}
-	}
+    /**
+     * Create an ldap entry for the user
+     *
+     * @param uid
+     *            user id
+     * @return
+     */
+    private DistinguishedName buildDn(String uid) {
+        DistinguishedName dn = new DistinguishedName();
+        dn.add(userSearchBaseDN);
+        dn.add("uid", uid);
 
-	/**
-	 * Create an ldap entry for the user
-	 *
-	 * @param uid user id
-	 * @return
-	 */
-	private DistinguishedName buildDn(String  uid) {
-		DistinguishedName dn = new DistinguishedName();
-		dn.add(userSearchBaseDN);
-		dn.add("uid", uid);
+        return dn;
+    }
 
-		return dn;
-	}
+    /**
+     * Checks that mandatory fields are present in the {@link Account}
+     */
+    private void checkMandatoryFields(Account a) throws IllegalArgumentException {
 
-	/**
-	 * Checks that  mandatory fields are present in the {@link Account}
-	 */
-	private void checkMandatoryFields( Account a ) throws IllegalArgumentException{
+        // required by the account entry
+        if (a.getUid().length() <= 0) {
+            throw new IllegalArgumentException("uid is requird");
+        }
 
-		// required by the account entry
-		if( a.getUid().length() <= 0 ){
-			throw new  IllegalArgumentException("uid is requird");
-		}
+        // required field in Person object
+        if (a.getGivenName().length() <= 0) {
+            throw new IllegalArgumentException("Given name (cn) is requird");
+        }
+        if (a.getSurname().length() <= 0) {
+            throw new IllegalArgumentException("surname name (sn) is requird");
+        }
+        if (a.getEmail().length() <= 0) {
+            throw new IllegalArgumentException("email is requird");
+        }
 
-		// required field in Person object
-		if( a.getGivenName().length() <= 0 ){
-			throw new  IllegalArgumentException("Given name (cn) is requird");
-		}
-		if( a.getSurname().length() <= 0){
-			throw new IllegalArgumentException("surname name (sn) is requird");
-		}
-		if( a.getEmail().length() <= 0){
-			throw new IllegalArgumentException("email is requird");
-		}
+    }
 
-	}
-
-
-	/**
-	 * Maps the following the account object to the following LDAP entry schema:
-	 *
+    /**
+     * Maps the following the account object to the following LDAP entry schema:
+     *
      * @param uniqueNumber
      * @param account
      * @param context
      */
-	private void mapToContext(Integer uniqueNumber, Account account, DirContextOperations context) {
+    private void mapToContext(Integer uniqueNumber, Account account, DirContextOperations context) {
 
-		context.setAttributeValues("objectclass", new String[] { "top", "person", "organizationalPerson", "inetOrgPerson" });
+        context.setAttributeValues("objectclass", new String[] { "top", "person", "organizationalPerson",
+                "inetOrgPerson" });
 
-		// person attributes
+        // person attributes
         if (uniqueNumber != null) {
-		    setAccountField(context, uniqueNumberField, uniqueNumber.toString());
+            setAccountField(context, uniqueNumberField, uniqueNumber.toString());
         }
-		setAccountField(context, UserSchema.SURNAME_KEY, account.getSurname());
+        setAccountField(context, UserSchema.SURNAME_KEY, account.getSurname());
 
-		setAccountField(context, UserSchema.COMMON_NAME_KEY, account.getCommonName());
+        setAccountField(context, UserSchema.COMMON_NAME_KEY, account.getCommonName());
 
-		setAccountField(context, UserSchema.DESCRIPTION_KEY, account.getDescription());
+        setAccountField(context, UserSchema.DESCRIPTION_KEY, account.getDescription());
 
-		setAccountField(context, UserSchema.TELEPHONE_KEY, account.getPhone());
+        setAccountField(context, UserSchema.TELEPHONE_KEY, account.getPhone());
 
-		setAccountField(context, UserSchema.USER_PASSWORD_KEY , account.getPassword());
+        setAccountField(context, UserSchema.USER_PASSWORD_KEY, account.getPassword());
 
-		setAccountField(context, UserSchema.MOBILE_KEY , account.getMobile());
+        setAccountField(context, UserSchema.MOBILE_KEY, account.getMobile());
 
-		// organizationalPerson attributes
-		setAccountField(context, UserSchema.TITLE_KEY, account.getTitle());
+        // organizationalPerson attributes
+        setAccountField(context, UserSchema.TITLE_KEY, account.getTitle());
 
-		setAccountField(context, UserSchema.STREET_KEY, account.getStreet());
+        setAccountField(context, UserSchema.STREET_KEY, account.getStreet());
 
-		setAccountField(context, UserSchema.LOCALITY_KEY, account.getLocality());
+        setAccountField(context, UserSchema.LOCALITY_KEY, account.getLocality());
 
-		setAccountField(context, UserSchema.FACSIMILE_KEY, account.getFacsimile());
+        setAccountField(context, UserSchema.FACSIMILE_KEY, account.getFacsimile());
 
-		setAccountField(context, UserSchema.ROOM_NUMBER_KEY, account.getRoomNumber());
+        setAccountField(context, UserSchema.ROOM_NUMBER_KEY, account.getRoomNumber());
 
-		// inetOrgPerson attributes
-		setAccountField(context, UserSchema.GIVEN_NAME_KEY, account.getGivenName());
+        // inetOrgPerson attributes
+        setAccountField(context, UserSchema.GIVEN_NAME_KEY, account.getGivenName());
 
-		setAccountField(context, UserSchema.UUID_KEY, account.getUid().toLowerCase());
+        setAccountField(context, UserSchema.UUID_KEY, account.getUid().toLowerCase());
 
-		setAccountField(context, UserSchema.MAIL_KEY, account.getEmail());
+        setAccountField(context, UserSchema.MAIL_KEY, account.getEmail());
 
-		// additional
-		setAccountField(context, UserSchema.ORG_KEY, account.getOrg());
+        // additional
+        setAccountField(context, UserSchema.ORG_KEY, account.getOrg());
 
-		setAccountField(context, UserSchema.POSTAL_ADDRESS_KEY, account.getPostalAddress());
+        setAccountField(context, UserSchema.POSTAL_ADDRESS_KEY, account.getPostalAddress());
 
-		setAccountField(context, UserSchema.POSTAL_CODE_KEY, account.getPostalCode());
+        setAccountField(context, UserSchema.POSTAL_CODE_KEY, account.getPostalCode());
 
-		setAccountField(context, UserSchema.REGISTERED_ADDRESS_KEY, account.getRegisteredAddress());
+        setAccountField(context, UserSchema.REGISTERED_ADDRESS_KEY, account.getRegisteredAddress());
 
-		setAccountField(context, UserSchema.POST_OFFICE_BOX_KEY , account.getPostOfficeBox());
+        setAccountField(context, UserSchema.POST_OFFICE_BOX_KEY, account.getPostOfficeBox());
 
-		setAccountField(context, UserSchema.PHYSICAL_DELIVERY_OFFICE_NAME_KEY, account.getPhysicalDeliveryOfficeName());
+        setAccountField(context, UserSchema.PHYSICAL_DELIVERY_OFFICE_NAME_KEY, account.getPhysicalDeliveryOfficeName());
 
-		setAccountField(context, UserSchema.STATE_OR_PROVINCE_KEY, account.getStateOrProvince());
+        setAccountField(context, UserSchema.STATE_OR_PROVINCE_KEY, account.getStateOrProvince());
 
-		setAccountField(context, UserSchema.ORG_UNIT_KEY, account.getOrganizationalUnit());
-	}
+        setAccountField(context, UserSchema.ORG_UNIT_KEY, account.getOrganizationalUnit());
+    }
 
-	private void setAccountField(DirContextOperations context,  String fieldName, Object value) {
+    private void setAccountField(DirContextOperations context, String fieldName, Object value) {
 
-		if( !isNullValue(value) ){
-			context.setAttributeValue(fieldName, value);
-		}
-	}
-
-
-	private static class AccountContextMapper implements ContextMapper {
-
-		@Override
-		public Object mapFromContext(Object ctx) {
-
-			DirContextAdapter context = (DirContextAdapter) ctx;
-
-			Account account = AccountFactory.createFull(
-					context.getStringAttribute(UserSchema.UUID_KEY),
-					context.getStringAttribute(UserSchema.COMMON_NAME_KEY),
-					context.getStringAttribute(UserSchema.SURNAME_KEY),
-					context.getStringAttribute(UserSchema.GIVEN_NAME_KEY),
-					context.getStringAttribute(UserSchema.MAIL_KEY),
-
-					context.getStringAttribute(UserSchema.ORG_KEY),
-					context.getStringAttribute(UserSchema.TITLE_KEY),
-
-					context.getStringAttribute(UserSchema.TELEPHONE_KEY),
-					context.getStringAttribute(UserSchema.DESCRIPTION_KEY),
-
-					context.getStringAttribute(UserSchema.POSTAL_ADDRESS_KEY),
-					context.getStringAttribute(UserSchema.POSTAL_CODE_KEY),
-					context.getStringAttribute(UserSchema.REGISTERED_ADDRESS_KEY),
-					context.getStringAttribute(UserSchema.POST_OFFICE_BOX_KEY),
-					context.getStringAttribute(UserSchema.PHYSICAL_DELIVERY_OFFICE_NAME_KEY),
-
-					context.getStringAttribute(UserSchema.STREET_KEY),
-					context.getStringAttribute(UserSchema.LOCALITY_KEY),
-
-					context.getStringAttribute(UserSchema.FACSIMILE_KEY),
-					context.getStringAttribute(UserSchema.ORG_UNIT_KEY),
-
-					context.getStringAttribute(UserSchema.HOME_POSTAL_ADDRESS_KEY),
-					context.getStringAttribute(UserSchema.MOBILE_KEY),
-					context.getStringAttribute(UserSchema.ROOM_NUMBER_KEY),
-					context.getStringAttribute(UserSchema.STATE_OR_PROVINCE_KEY)
-				);
-
-			return account;
-		}
-	}
-
-	private static class UserAttributesMapper implements AttributesMapper {
-
-		@Override
-        public Object mapFromAttributes(Attributes attributes)
-                throws NamingException {
-
-			// set the group name
-			Account a = AccountFactory.createFull(
-					(String) attributes.get(UserSchema.UUID_KEY).get(),
-					(String) attributes.get(UserSchema.COMMON_NAME_KEY).get(),
-					(String) attributes.get((UserSchema.SURNAME_KEY)).get(),
-					(String) attributes.get((UserSchema.GIVEN_NAME_KEY)).get(),
-					(String) attributes.get(UserSchema.MAIL_KEY).get(),
-
-					(String) attributes.get(UserSchema.ORG_KEY).get(),
-					(String) attributes.get(UserSchema.TITLE_KEY).get(),
-
-					(String) attributes.get(UserSchema.TELEPHONE_KEY).get(),
-					(String) attributes.get(UserSchema.DESCRIPTION_KEY).get(),
-
-					(String) attributes.get(UserSchema.POSTAL_ADDRESS_KEY).get(),
-					(String) attributes.get(UserSchema.POSTAL_CODE_KEY).get(),
-					(String) attributes.get(UserSchema.REGISTERED_ADDRESS_KEY).get(),
-					(String) attributes.get(UserSchema.POST_OFFICE_BOX_KEY).get(),
-					(String) attributes.get(UserSchema.PHYSICAL_DELIVERY_OFFICE_NAME_KEY).get(),
-
-					(String) attributes.get(UserSchema.STREET_KEY).get(),
-					(String) attributes.get(UserSchema.LOCALITY_KEY).get(),
-
-					(String) attributes.get(UserSchema.FACSIMILE_KEY).get(),
-					(String) attributes.get(UserSchema.ORG_UNIT_KEY).get(),
-
-					(String) attributes.get(UserSchema.HOME_POSTAL_ADDRESS_KEY).get(),
-					(String) attributes.get(UserSchema.MOBILE_KEY).get(),
-					(String) attributes.get(UserSchema.ROOM_NUMBER_KEY).get(),
-					(String) attributes.get(UserSchema.STATE_OR_PROVINCE_KEY).get() );
-
-			return a;
+        if (!isNullValue(value)) {
+            context.setAttributeValue(fieldName, value);
         }
+    }
 
+    private static class AccountContextMapper implements ContextMapper {
 
-	}
+        @Override
+        public Object mapFromContext(Object ctx) {
 
+            DirContextAdapter context = (DirContextAdapter) ctx;
 
-	private boolean isNullValue(Object value) {
+            Account account = AccountFactory.createFull(context.getStringAttribute(UserSchema.UUID_KEY),
+                    context.getStringAttribute(UserSchema.COMMON_NAME_KEY),
+                    context.getStringAttribute(UserSchema.SURNAME_KEY),
+                    context.getStringAttribute(UserSchema.GIVEN_NAME_KEY),
+                    context.getStringAttribute(UserSchema.MAIL_KEY),
 
-		if(value == null) return true;
+                    context.getStringAttribute(UserSchema.ORG_KEY), context.getStringAttribute(UserSchema.TITLE_KEY),
 
-		if(value instanceof String && (((String)value).length() == 0)){
-			return true;
-		}
+                    context.getStringAttribute(UserSchema.TELEPHONE_KEY),
+                    context.getStringAttribute(UserSchema.DESCRIPTION_KEY),
 
-		return false;
-	}
+                    context.getStringAttribute(UserSchema.POSTAL_ADDRESS_KEY),
+                    context.getStringAttribute(UserSchema.POSTAL_CODE_KEY),
+                    context.getStringAttribute(UserSchema.REGISTERED_ADDRESS_KEY),
+                    context.getStringAttribute(UserSchema.POST_OFFICE_BOX_KEY),
+                    context.getStringAttribute(UserSchema.PHYSICAL_DELIVERY_OFFICE_NAME_KEY),
 
+                    context.getStringAttribute(UserSchema.STREET_KEY),
+                    context.getStringAttribute(UserSchema.LOCALITY_KEY),
 
-	@Override
-	public void changePassword(final String uid, final String password) throws DataServiceException {
+                    context.getStringAttribute(UserSchema.FACSIMILE_KEY),
+                    context.getStringAttribute(UserSchema.ORG_UNIT_KEY),
 
-		if( uid.length() == 0) {
-			throw new IllegalArgumentException("uid is required");
-		}
-		if( password.length() == 0 ){
-			throw new IllegalArgumentException("password is required");
-		}
+                    context.getStringAttribute(UserSchema.HOME_POSTAL_ADDRESS_KEY),
+                    context.getStringAttribute(UserSchema.MOBILE_KEY),
+                    context.getStringAttribute(UserSchema.ROOM_NUMBER_KEY),
+                    context.getStringAttribute(UserSchema.STATE_OR_PROVINCE_KEY));
+
+            return account;
+        }
+    }
+
+    private static class UserAttributesMapper implements AttributesMapper {
+
+        @Override
+        public Object mapFromAttributes(Attributes attributes) throws NamingException {
+
+            // set the group name
+            Account a = AccountFactory.createFull((String) attributes.get(UserSchema.UUID_KEY).get(),
+                    (String) attributes.get(UserSchema.COMMON_NAME_KEY).get(),
+                    (String) attributes.get((UserSchema.SURNAME_KEY)).get(),
+                    (String) attributes.get((UserSchema.GIVEN_NAME_KEY)).get(),
+                    (String) attributes.get(UserSchema.MAIL_KEY).get(),
+
+                    (String) attributes.get(UserSchema.ORG_KEY).get(), (String) attributes.get(UserSchema.TITLE_KEY)
+                            .get(),
+
+                    (String) attributes.get(UserSchema.TELEPHONE_KEY).get(),
+                    (String) attributes.get(UserSchema.DESCRIPTION_KEY).get(),
+
+                    (String) attributes.get(UserSchema.POSTAL_ADDRESS_KEY).get(),
+                    (String) attributes.get(UserSchema.POSTAL_CODE_KEY).get(),
+                    (String) attributes.get(UserSchema.REGISTERED_ADDRESS_KEY).get(),
+                    (String) attributes.get(UserSchema.POST_OFFICE_BOX_KEY).get(),
+                    (String) attributes.get(UserSchema.PHYSICAL_DELIVERY_OFFICE_NAME_KEY).get(),
+
+                    (String) attributes.get(UserSchema.STREET_KEY).get(),
+                    (String) attributes.get(UserSchema.LOCALITY_KEY).get(),
+
+                    (String) attributes.get(UserSchema.FACSIMILE_KEY).get(),
+                    (String) attributes.get(UserSchema.ORG_UNIT_KEY).get(),
+
+                    (String) attributes.get(UserSchema.HOME_POSTAL_ADDRESS_KEY).get(),
+                    (String) attributes.get(UserSchema.MOBILE_KEY).get(),
+                    (String) attributes.get(UserSchema.ROOM_NUMBER_KEY).get(),
+                    (String) attributes.get(UserSchema.STATE_OR_PROVINCE_KEY).get());
+
+            return a;
+        }
 
 		 // update the entry in the ldap tree
 		Name dn = buildDn(uid);
@@ -567,73 +535,103 @@ public final class AccountDaoImpl implements AccountDao{
 		LdapShaPasswordEncoder lspe = new LdapShaPasswordEncoder();
 		String encrypted = lspe.encodePassword(password,
 					String.valueOf(System.currentTimeMillis()).getBytes());
+    }
 
-		context.setAttributeValue("userPassword", encrypted);
+    private boolean isNullValue(Object value) {
 
-		ldapTemplate.modifyAttributes(context);
-	}
+        if (value == null)
+            return true;
 
+        if (value instanceof String && (((String) value).length() == 0)) {
+            return true;
+        }
 
-	/**
-	 * Adds the new password in the user password array.
-	 * The new password is maintained in array with two userPassword attributes.
-	 * <pre>
-	 * Format:
-	 * userPassword[0] : old password
-	 * userPassword[1] : new password
-	 * </pre>
-	 * @see {@link AccountDao#addNewPassword(String, String)}
-	 */
-	@Override
-	public void addNewPassword(String uid, String newPassword) {
-		if( uid.length() == 0) {
-			throw new IllegalArgumentException("uid is required");
-		}
-		if( newPassword.length()== 0 ){
-			throw new IllegalArgumentException("new password is required");
-		}
-		LdapShaPasswordEncoder lspe = new LdapShaPasswordEncoder();
-		String encrypted = lspe.encodePassword(newPassword,
-					String.valueOf(System.currentTimeMillis()).getBytes());
-		// update the entry in the LDAP tree
-		Name dn = buildDn(uid);
-		DirContextOperations context = ldapTemplate.lookupContext(dn);
+        return false;
+    }
 
-		final String pwd = "userPassword";
-		Object[] pwdValues = context.getObjectAttributes(pwd);
-		if(pwdValues.length < 2){
-			// adds the new password
-			context.addAttributeValue(pwd, encrypted, false);
-		} else {
-			// update the last password with the new password
-			pwdValues[1] = newPassword;
-			context.setAttributeValues(pwd, pwdValues);
-		}
+    @Override
+    public void changePassword(final String uid, final String password) throws DataServiceException {
 
-		ldapTemplate.modifyAttributes(context);
-	}
+        if (uid.length() == 0) {
+            throw new IllegalArgumentException("uid is required");
+        }
+        if (password.length() == 0) {
+            throw new IllegalArgumentException("password is required");
+        }
 
+        // update the entry in the ldap tree
+        Name dn = buildDn(uid);
+        DirContextOperations context = ldapTemplate.lookupContext(dn);
 
-	/**
-	 * Generate a new uid based on the provided uid
-	 *
-	 * @param
-	 *
-	 * @return the proposed uid
-	 */
-	@Override
-	public String generateUid(String uid) throws DataServiceException {
+        // the following action removes the old password. It there are two
+        // passwords (old and new password) they will
+        // be replaced by a single user password
+        LdapShaPasswordEncoder lspe = new LdapShaPasswordEncoder();
+        String encrypted = lspe.encodePassword(password, String.valueOf(System.currentTimeMillis()).getBytes());
 
-		String newUid = UidGenerator.next(uid);
+        context.setAttributeValue("userPassword", encrypted);
 
-		while (exist(newUid)) {
+        ldapTemplate.modifyAttributes(context);
+    }
 
-			newUid = UidGenerator.next(newUid);
-		}
+    /**
+     * Adds the new password in the user password array. The new password is
+     * maintained in array with two userPassword attributes.
+     *
+     * <pre>
+     * Format:
+     * userPassword[0] : old password
+     * userPassword[1] : new password
+     * </pre>
+     *
+     * @see {@link AccountDao#addNewPassword(String, String)}
+     */
+    @Override
+    public void addNewPassword(String uid, String newPassword) {
+        if (uid.length() == 0) {
+            throw new IllegalArgumentException("uid is required");
+        }
+        if (newPassword.length() == 0) {
+            throw new IllegalArgumentException("new password is required");
+        }
+        LdapShaPasswordEncoder lspe = new LdapShaPasswordEncoder();
+        String encrypted = lspe.encodePassword(newPassword, String.valueOf(System.currentTimeMillis()).getBytes());
+        // update the entry in the LDAP tree
+        Name dn = buildDn(uid);
+        DirContextOperations context = ldapTemplate.lookupContext(dn);
 
-		return newUid;
-	}
+        final String pwd = "userPassword";
+        Object[] pwdValues = context.getObjectAttributes(pwd);
+        if (pwdValues.length < 2) {
+            // adds the new password
+            context.addAttributeValue(pwd, encrypted, false);
+        } else {
+            // update the last password with the new password
+            pwdValues[1] = newPassword;
+            context.setAttributeValues(pwd, pwdValues);
+        }
 
+        ldapTemplate.modifyAttributes(context);
+    }
 
+    /**
+     * Generate a new uid based on the provided uid
+     *
+     * @param
+     *
+     * @return the proposed uid
+     */
+    @Override
+    public String generateUid(String uid) throws DataServiceException {
+
+        String newUid = UidGenerator.next(uid);
+
+        while (exist(newUid)) {
+
+            newUid = UidGenerator.next(newUid);
+        }
+
+        return newUid;
+    }
 
 }
