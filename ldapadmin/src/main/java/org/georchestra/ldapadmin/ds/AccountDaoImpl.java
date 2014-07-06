@@ -211,11 +211,12 @@ public final class AccountDaoImpl implements AccountDao{
 		try {
 
 			// if the email is found in other account different that this account, the new email cannot be used.
-			Account foundAccount = findByEmail(account.getEmail());
+            Account foundAccount = findByEmail(account.getEmail());
 
-			if( !foundAccount.getUid().equals(account.getUid()) ){
-				throw new DuplicatedEmailException("there is a user with this email" + account.getEmail());
-			}
+            if (!foundAccount.getUid().equals(account.getUid())) {
+                throw new DuplicatedEmailException("There is already an existing user with this email: "
+                        + account.getEmail());
+            }
 
 		} catch (NotFoundException e1) {
                   // if it doesn't exist an account with this e-mail, then it can be part of the updated account.
@@ -322,7 +323,7 @@ public final class AccountDaoImpl implements AccountDao{
 								filter.encode(),
 								new AccountContextMapper());
 		if(accountList.isEmpty()){
-			throw new NotFoundException("There is not a user with this email: " + email);
+			throw new NotFoundException("There is no user with this email: " + email);
 		}
 		Account account = accountList.get(0);
 

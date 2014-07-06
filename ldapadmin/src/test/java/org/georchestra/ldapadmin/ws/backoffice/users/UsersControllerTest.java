@@ -7,6 +7,7 @@ import static org.mockito.Matchers.eq;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.naming.Name;
 import javax.servlet.http.HttpServletResponse;
@@ -284,8 +285,7 @@ public class UsersControllerTest {
         request.setRequestURI("/ldapadmin/users/geoserver");
         request.setContent(reqUsr.toString().getBytes());
         Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup((Name) Mockito.any());
-        // TODO: Why 2 different codes checking that
-        // the user exists the same way, but 2 different ways ?
+        // TODO: Why 2 different codes checking that the user exists ?
         Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (ContextMapper) Mockito.any());
 
 
@@ -365,21 +365,106 @@ public class UsersControllerTest {
         request.setRequestURI("/ldapadmin/users/pmauduit");
         JSONObject reqUsr = new JSONObject().put("mail","tomcat2@localhost");
         request.setContent(reqUsr.toString().getBytes());
-
+        Account fakedAccount = AccountFactory.createBrief("pmauduit", "monkey123", "Pierre",
+                "pmauduit", "pmauduit@georchestra.org", "+33123456789", "geOrchestra",
+                "developer & sysadmin", "dev&ops");
+        Account fakedAccount2 = AccountFactory.createBrief("pmauduit2", "monkey123", "Pierre",
+                "pmauduit", "tomcat2@localhost", "+33123456789", "geOrchestra",
+                "developer & sysadmin", "dev&ops");
+        Mockito.doReturn(fakedAccount).when(ldapTemplate).lookup((Name) Mockito.any(), (ContextMapper) Mockito.any());
+        // Returns the same account when searching it back
+        String mFilter = "(&(objectClass=inetOrgPerson)(objectClass=organizationalPerson)"
+                + "(objectClass=person)(mail=tomcat2@localhost))";
+        List<Account> listFakedAccount = new ArrayList<Account>();
+        listFakedAccount.add(fakedAccount2);
+        Mockito.doReturn(listFakedAccount).when(ldapTemplate).search(eq(DistinguishedName.EMPTY_PATH),
+                eq(mFilter), (ContextMapper) Mockito.any());
 
         usersCtrl.update(request, response);
 
+        JSONObject ret = new JSONObject(response.getContentAsString());
+        assertTrue(response.getStatus() == HttpServletResponse.SC_CONFLICT);
+        assertFalse(ret.getBoolean("success"));
+        assertTrue(ret.getString("error").equals("duplicated_email"));
     }
 
     @Test
     public void testUpdateDataServiceExceptionWhileModifying() throws Exception {
+        request.setRequestURI("/ldapadmin/users/pmauduit");
+        JSONObject reqUsr = new JSONObject().put("mail","tomcat2@localhost");
+        request.setContent(reqUsr.toString().getBytes());
+        Account fakedAccount = AccountFactory.createBrief("pmauduit", "monkey123", "Pierre",
+                "pmauduit", "pmauduit@georchestra.org", "+33123456789", "geOrchestra",
+                "developer & sysadmin", "dev&ops");
+        String mFilter = "(&(objectClass=inetOrgPerson)(objectClass=organizationalPerson)"
+                + "(objectClass=person)(mail=tomcat2@localhost))";
+        Mockito.doReturn(fakedAccount).when(ldapTemplate).lookup((Name) Mockito.any(), (ContextMapper) Mockito.any());
+        Mockito.doThrow(DataServiceException.class).when(ldapTemplate).search(eq(DistinguishedName.EMPTY_PATH),
+                eq(mFilter), (ContextMapper) Mockito.any());
 
+        try {
+            usersCtrl.update(request, response);
+        } catch (Throwable e) {
+            assertTrue(e instanceof IOException);
+            assertTrue(response.getStatus() ==  HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
     }
 
+    @Test
+    public void testUpdateBadJSON() throws Exception {
+        request.setRequestURI("/ldapadmin/users/pmauduit");
+        request.setContent("{[this is ] } not valid JSON obviously ....".getBytes());
+
+        try {
+            usersCtrl.update(request, response);
+        } catch (Throwable e) {
+            assertTrue(e instanceof IOException);
+            JSONObject ret = new JSONObject(response.getContentAsString());
+            assertFalse(ret.getBoolean("success"));
+            assertTrue(ret.getString("error").equals("params_not_understood"));
+        }
+
+    }
 
     @Test
     public void testUpdate() throws Exception {
+        request.setRequestURI("/ldapadmin/users/pmauduit");
+        JSONObject reqUsr = new JSONObject().put("sn","newPmauduit")
+                .put("postalAddress", "newAddress")
+                .put("postOfficeBox", "newPOBox")
+                .put("postalCode", "73000")
+                .put("street", "newStreet")
+                .put("l", "newLocality") // locality
+                .put("telephoneNumber", "+33987654321")
+                .put("facsimileTelephoneNumber", "+339182736745")
+                .put("o", "newgeOrchestra") // organization
+                .put("title", "CEO")
+                .put("description", "CEO geOrchestra Corporation")
+                .put("givenName", "newPierre");
+        request.setContent(reqUsr.toString().getBytes());
+        Account fakedAccount = AccountFactory.createBrief("pmauduit", "monkey123", "Pierre",
+                "pmauduit", "pmauduit@georchestra.org", "+33123456789", "geOrchestra",
+                "developer & sysadmin", "dev&ops");
+        Mockito.doReturn(fakedAccount).when(ldapTemplate).lookup((Name) Mockito.any(), (ContextMapper) Mockito.any());
+        // Returns the same account when searching it back
+        String mFilter = "(&(objectClass=inetOrgPerson)(objectClass=organizationalPerson)"
+                + "(objectClass=person)(mail=tomcat2@localhost))";
+        List<Account> listFakedAccount = new ArrayList<Account>();
+        listFakedAccount.add(fakedAccount);
+        Mockito.doReturn(listFakedAccount).when(ldapTemplate).search(eq(DistinguishedName.EMPTY_PATH),
+                eq(mFilter), (ContextMapper) Mockito.any());
+        Mockito.doReturn(Mockito.mock(DirContextOperations.class)).when(ldapTemplate).lookupContext((Name) Mockito.any());
+
+        usersCtrl.update(request, response);
+
+        JSONObject ret = new JSONObject(response.getContentAsString());
+        assertTrue(response.getStatus() == HttpServletResponse.SC_OK);
+        assertTrue(ret.getBoolean("success"));
 
     }
 
+    @Test
+    public void testDelete() throws Exception {
+
+    }
 }

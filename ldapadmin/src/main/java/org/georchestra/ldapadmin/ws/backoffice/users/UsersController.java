@@ -53,6 +53,7 @@ public class UsersController {
 	private static final String REQUEST_MAPPING = BASE_MAPPING + "/users";
 
 	private static final String DUPLICATED_EMAIL = "duplicated_email";
+	private static final String PARAMS_NOT_UNDERSTOOD = "params_not_understood";
 	private static final String NOT_FOUND = "not_found";
 
 	private AccountDao accountDao;
@@ -372,7 +373,6 @@ public class UsersController {
 			return;
 
 		} catch (DataServiceException e) {
-		    // TODO: Better error handling ?
 		    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			throw new IOException(e);
 		}
@@ -389,10 +389,13 @@ public class UsersController {
 			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, DUPLICATED_EMAIL);
 
 			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
-
+		} catch (IOException e) {
+	          String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, PARAMS_NOT_UNDERSTOOD);
+              ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_BAD_REQUEST);
+              throw e;
 		} catch (DataServiceException e){
 			LOG.error(e.getMessage());
-
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			throw new IOException(e);
 		}
 	}
