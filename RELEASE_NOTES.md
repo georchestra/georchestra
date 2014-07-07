@@ -7,8 +7,8 @@ This branch receives bug fixes as they arrive, during 6 months at least.
 Version 14.06 (dev version)
 ======================================
 
-Contributions from Rennes, CIGAL, GeoBretagne, GeoPicardie, PIGMA, GeoBolivia & developers on their free time.
-Note on the 13.06 release: end-of-life in april. As a result, will not receive bug fixes anymore.
+Contributions from Rennes, CIGAL, GeoBretagne, GeoPicardie, PIGMA, GeoBolivia & developers on their free time.  
+Note on the 13.06 release: end-of-life was in april, earlier this year. As a result, it will not receive bug fixes anymore.
 
 New features:
  * GeoWebCache standalone is now part of the geOrchestra suite
