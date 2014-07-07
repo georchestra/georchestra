@@ -37,6 +37,7 @@ Enhancements:
  * geofence: allows dynamic styles and remote layers by default,
  * geofence: conforms to the global logging strategy as set by shared maven filters,
  * geofence: allow [dynamic geofencing](https://github.com/georchestra/geofence/blob/georchestra/georchestra.md#static--dynamic-geofencing) based on inetOrgPerson's "l" field storing the limiting EWKT geometry,
+ * header: only members of the ```MOD_EXTRACTORAP``` group see the link to the extractor - see [#717](https://github.com/georchestra/georchestra/issues/717),
  * ldapadmin: improved compatibility with geofence, by automatic management of unique numeric identifiers for users and groups,
  * ldapadmin: SSHA password encryption,
  * ldapadmin: much improved test coverage,
