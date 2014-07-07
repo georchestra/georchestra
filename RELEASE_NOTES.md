@@ -16,68 +16,68 @@ New features:
 Enhancements:
  * analytics: access is now restricted to members of the ```MOD_ANALYTICS``` group **only**,
  * cas: upgraded to latest CAS Server 4.0.0 release - see [#503](https://github.com/georchestra/georchestra/issues/503),
- * cas: members of the ```PENDING_USERS``` group are not allowed to login anymore - see [#581](https://github.com/georchestra/georchestra/issues/581)
- * cas: unmodified files where removed from template config
- * cas: username field autocompleted on browsers that support it
- * catalogapp: german translation
- * deploy: a default [deployment script](https://github.com/georchestra/template/blob/master/DeployScript.groovy) is now provided by the template config
- * downloadform: complete revamp, including more testing, see [#657](https://github.com/georchestra/georchestra/issues/657)
- * extractorapp: now displays layers using the configured GLOBAL_EPSG srs, if they support if.
- * extractorapp: much improved test coverage
- * extractorapp: access is now restricted to members of a specific group (```MOD_EXTRACTORAPP```)
- * extractorapp admin: access is now restricted to members of group ```ADMINISTRATOR``` (geoserver admin)
- * extractorapp: german translation
- * extractorapp: the privileged user is allowed to use imp-username/imp-roles headers to impersonate an arbitrary user for security check
+ * cas: members of the ```PENDING_USERS``` group are not allowed to login anymore - see [#581](https://github.com/georchestra/georchestra/issues/581),
+ * cas: unmodified files where removed from template config,
+ * cas: username field autocompleted on browsers that support it,
+ * catalogapp: german translation,
+ * deploy: a default [deployment script](https://github.com/georchestra/template/blob/master/DeployScript.groovy) is now provided by the template config,
+ * downloadform: complete revamp, including more testing, see [#657](https://github.com/georchestra/georchestra/issues/657),
+ * extractorapp: now displays layers using the configured GLOBAL_EPSG srs, if they support it,
+ * extractorapp: much improved test coverage,
+ * extractorapp: access is now restricted to members of a specific group (```MOD_EXTRACTORAPP```),
+ * extractorapp admin: access is now restricted to members of group ```ADMINISTRATOR``` (geoserver admin),
+ * extractorapp: german translation,
+ * extractorapp: the privileged user is allowed to use imp-username/imp-roles headers to impersonate an arbitrary user for security check,
  * extractorapp: improved GDAL/OGR handling,
  * extractorapp: proper reporting in case the OGRDataStore cannot be created, with an invitation to check the GDAL libraries setup,
- * extractorapp: dropped support for geoserver 1.x, which results in better startup performance, see [#640](https://github.com/georchestra/georchestra/issues/640)
- * extractorapp: improved db connection pooling wrt download form
- * geoserver: the project now provides a basic data_dir with sensible defaults for geOrchestra, see https://github.com/georchestra/georchestra/blob/master/INSTALL.md#geoserver and https://github.com/georchestra/geoserver_minimal_datadir
+ * extractorapp: dropped support for geoserver 1.x, which results in better startup performance, see [#640](https://github.com/georchestra/georchestra/issues/640),
+ * extractorapp: improved db connection pooling wrt download form,
+ * geoserver: the project now provides a [basic data_dir](https://github.com/georchestra/geoserver_minimal_datadir) with sensible defaults for geOrchestra - see [INSTALL.md#geoserver](INSTALL.md#geoserver),
  * geofence: performance improvement for getcapabilities requests,
  * geofence: allows dynamic styles and remote layers by default,
  * geofence: conforms to the global logging strategy as set by shared maven filters,
  * geofence: allow dynamic geofencing based on inetOrgPerson's "l" field storing the limiting EWKT geometry,
- * ldapadmin: improved compatibility with geofence, by automatic management of unique numeric identifiers for users and groups.
- * ldapadmin: SSHA password encryption
+ * ldapadmin: improved compatibility with geofence, by automatic management of unique numeric identifiers for users and groups,
+ * ldapadmin: SSHA password encryption,
  * ldapadmin: much improved test coverage,
- * ldapadmin: now take into account shared.ldap.* values
+ * ldapadmin: now take into account shared.ldap.* values,
  * ldapadmin: now uses configured LDAP users and groups DN instead of hardcoded values,
  * mapfishapp: improved testsuite coverage,
  * mapfishapp: annotation addon improved (outline and fill colors),
  * mapfishapp: using adequate XML exception format string, depending on WMS version,
- * mapfishapp: max_features and max_length set to higher numbers
- * mapfishapp: german translation, including for the supported addons (thanks to CIGALsace)
- * mapfishapp: display SLD title before its name - see [#597](https://github.com/georchestra/georchestra/issues/597)
+ * mapfishapp: max_features and max_length set to higher numbers,
+ * mapfishapp: german translation, including for the supported addons (thanks to CIGALsace),
+ * mapfishapp: display SLD title before its name - see [#597](https://github.com/georchestra/georchestra/issues/597),
  * mapfishapp: file upload is now using a pure JSON implementation,
  * mapfishapp: file upload checks that a SRS can be guessed by OGRFeatureReader, or else falling back onto the pure GeoTools implementation,
  * mapfishapp: file upload supports OSM files to some extent,
- * mapfishapp: local proj4js definitions to prevent mixed active content warning in case of HTTPS access, see [#602]( https://github.com/georchestra/georchestra/issues/602)
- * server-deploy: now supports deploying geofence-webapp
- * all modules are now using the same database by default - see [#601](https://github.com/georchestra/georchestra/issues/601)
- * system wide favicon
+ * mapfishapp: local proj4js definitions to prevent mixed active content warning in case of HTTPS access, see [#602]( https://github.com/georchestra/georchestra/issues/602),
+ * server-deploy: now supports deploying geofence-webapp,
+ * all modules are now using the same database by default - see [#601](https://github.com/georchestra/georchestra/issues/601),
+ * system wide favicon.
 
 Bug fixes:
- * extractorapp: fixed several client-side issues regarding handling of namespaced layer names and virtual services - see [#517](https://github.com/georchestra/georchestra/issues/517#issuecomment-40697504) and [#634](https://github.com/georchestra/georchestra/issues/634)
+ * extractorapp: fixed several client-side issues regarding handling of namespaced layer names and virtual services - see [#517](https://github.com/georchestra/georchestra/issues/517#issuecomment-40697504) and [#634](https://github.com/georchestra/georchestra/issues/634),
  * extractorapp: fixed too early expiration of archive download link,
- * extractorapp: fixed protected layer cannot be extracted - see [#633](https://github.com/georchestra/georchestra/issues/633)
- * extractorapp: fixed KML export. Note: MIF export via OGR can only work with a patched version of GDAL, or GDAL >= 1.11.1, see [gdal#5477](http://trac.osgeo.org/gdal/ticket/5477).
- * geofence: avoid NPE with dynamic geofencing - [#629](https://github.com/georchestra/georchestra/issues/629)
- * geonetwork: shared.geonetwork.language enforced - [#595](https://github.com/georchestra/georchestra/issues/595)
- * ldapadmin: fixed wrong users count in groups, in case several of them share the same ```sn``` field - see [0d7ab2](https://github.com/georchestra/georchestra/commit/0d7ab2ae1767e13af17d7f7d5f87ad22b728162d)
- * ldapadmin: group description editing does not detach users form group anymore - see [#650](https://github.com/georchestra/georchestra/issues/650)
- * mapfishapp: restored getfeatureinfo on aggregated layers - [#658](https://github.com/georchestra/georchestra/issues/658)
- * mapfishapp: truly independant tabs in resultspanel - [#671](https://github.com/georchestra/georchestra/issues/671)
- * mapfishapp: fixed missing drillDown option for getFeatureInfo control - [#674](https://github.com/georchestra/georchestra/issues/674)
- * mapfishapp: multilayer querier tool - several issues fixed
- * mapfishapp: fixed file upload limits values (8Mb limit really enforced) - [#592](https://github.com/georchestra/georchestra/issues/592)
- * mapfishapp: fixed thesaurus keywords request lang - [#624](https://github.com/georchestra/georchestra/issues/624)
- * mapfishapp: compatibility with WMS 1.1.0 servers - [#663](https://github.com/georchestra/georchestra/issues/663)
- * mapfishapp: fixed IE10-specific issue with Ext.data.XmlReader
- * proxy: ignores non HTTPS request check, to allow OGC web service usage, see [a24c74](https://github.com/georchestra/georchestra/commit/a24c7427a484028a5be211c3d6cbe516dbf2c04b)
- * proxy: returns earlier in case of 403|404 error code - see [#506](https://github.com/georchestra/georchestra/issues/506)
- * proxy: really customizable error pages
- * proxy: always remove incoming sec-* headers
- * proxy: added QuantumGIS to the list of clients triggering basic auth, thus allowing access to protected layers (along with uDig and ArcGIS clients)
+ * extractorapp: fixed protected layer cannot be extracted - see [#633](https://github.com/georchestra/georchestra/issues/633),
+ * extractorapp: fixed KML export. Note: MIF export via OGR can only work with a patched version of GDAL, or GDAL >= 1.11.1, see [gdal#5477](http://trac.osgeo.org/gdal/ticket/5477),
+ * geofence: avoid NPE with dynamic geofencing - [#629](https://github.com/georchestra/georchestra/issues/629),
+ * geonetwork: shared.geonetwork.language enforced - [#595](https://github.com/georchestra/georchestra/issues/595),
+ * ldapadmin: fixed wrong users count in groups, in case several of them share the same ```sn``` field - see [0d7ab2](https://github.com/georchestra/georchestra/commit/0d7ab2ae1767e13af17d7f7d5f87ad22b728162d),
+ * ldapadmin: group description editing does not detach users form group anymore - see [#650](https://github.com/georchestra/georchestra/issues/650),
+ * mapfishapp: restored getfeatureinfo on aggregated layers - [#658](https://github.com/georchestra/georchestra/issues/658),
+ * mapfishapp: truly independant tabs in resultspanel - [#671](https://github.com/georchestra/georchestra/issues/671),
+ * mapfishapp: fixed missing drillDown option for getFeatureInfo control - [#674](https://github.com/georchestra/georchestra/issues/674),
+ * mapfishapp: multilayer querier tool - several issues fixed,
+ * mapfishapp: fixed file upload limits values (8Mb limit really enforced) - [#592](https://github.com/georchestra/georchestra/issues/592),
+ * mapfishapp: fixed thesaurus keywords request lang - [#624](https://github.com/georchestra/georchestra/issues/624),
+ * mapfishapp: compatibility with WMS 1.1.0 servers - [#663](https://github.com/georchestra/georchestra/issues/663),
+ * mapfishapp: fixed IE10-specific issue with Ext.data.XmlReader,
+ * proxy: ignores non HTTPS request check, to allow OGC web service usage, see [a24c74](https://github.com/georchestra/georchestra/commit/a24c7427a484028a5be211c3d6cbe516dbf2c04b),
+ * proxy: returns earlier in case of 403|404 error code - see [#506](https://github.com/georchestra/georchestra/issues/506),
+ * proxy: really customizable error pages,
+ * proxy: always remove incoming sec-* headers,
+ * proxy: added QuantumGIS to the list of clients triggering basic auth, thus allowing access to protected layers (along with uDig and ArcGIS clients).
 
 
 UPGRADING: WORK IN PROGRESS
