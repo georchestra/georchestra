@@ -36,7 +36,7 @@ javax.servlet.jsp.jstl.core.Config.set(
     new javax.servlet.jsp.jstl.fmt.LocalizationContext(resource)
 );
 
-String extractor = false;
+Boolean extractor = false;
 String sec_roles = request.getHeader("sec-roles");
 if(sec_roles != null) {
     String[] roles = sec_roles.split(",");
