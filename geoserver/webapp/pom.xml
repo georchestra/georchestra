@@ -298,16 +298,21 @@
                 </dependency>
             </dependencies>
         </profile>
-        <profile>
+          <profile>
             <id>dxf</id>
             <dependencies>
-                <dependency>
-                    <groupId>org.geoserver</groupId>
-                    <artifactId>gs-dxf</artifactId>
-                    <version>${gs.version}</version> 
-                </dependency>
+              <dependency>
+                <groupId>org.geoserver.extension</groupId>
+                <artifactId>gs-dxf-core</artifactId>
+                <version>${gs.version}</version>
+              </dependency>
+              <dependency>
+                <groupId>org.geoserver.extension</groupId>
+                <artifactId>gs-dxf-wps</artifactId>
+                <version>${gs.version}</version>
+              </dependency>
             </dependencies>
-        </profile>
+          </profile>
         <profile>
             <id>istyler</id>
             <dependencies>
@@ -393,16 +398,16 @@
                 </dependency>
             </dependencies>
         </profile>
-        <profile>
+          <profile>
             <id>css</id>
             <dependencies>
-                <dependency>
-                    <groupId>org.geoserver.community</groupId>
-                    <artifactId>gs-css</artifactId>
-                    <version>${gs.version}</version>
-                </dependency>
+              <dependency>
+                <groupId>org.geoserver.extension</groupId>
+                <artifactId>gs-css</artifactId>
+                <version>${gs.version}</version>
+              </dependency>
             </dependencies>
-        </profile>
+          </profile>
         <profile>
             <id>gss</id>
             <dependencies>
@@ -730,15 +735,15 @@
                 </dependency>
             </dependencies>
         </profile>
-        <profile>
+          <profile>
             <id>libjpeg-turbo</id>
             <dependencies>
-                <dependency>
-                    <groupId>org.geoserver.community</groupId>
-                    <artifactId>gs-libjpeg-turbo</artifactId>
-                    <version>${gs.version}</version>
-                </dependency>
+              <dependency>
+                <groupId>org.geoserver.extension</groupId>
+                <artifactId>gs-libjpeg-turbo</artifactId>
+                <version>${gs.version}</version>
+              </dependency>
             </dependencies>
-        </profile>  
+          </profile>
     </profiles>
 </project>
