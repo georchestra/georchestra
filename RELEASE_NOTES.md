@@ -92,7 +92,7 @@ The way geOrchestra is configured has been streamlined:
  - there are also **shared parameters which have to be customized** for your own instance. These can be found in the build_support/shared.maven.filters file inside your own configuration directory. As your config dir inherits from the template config dir, it should be very similar to [georchestra/template:build_support/shared.maven.filters](https://github.com/georchestra/template/blob/master/build_support/shared.maven.filters). The shared maven filters from this file override those from [config/defaults](config/defaults)
  - finally, there are parameters for (nearly) every individual geOrchestra module (geoserver, geofence, mapfishapp, extractorapp, proxy, ldapadmin, header), which can be customized via the build_support/GenerateConfig.groovy in your own config dir. Have a look at the one provided by the template config for an example:  [georchestra/template:build_support/GenerateConfig.groovy](https://github.com/georchestra/template/blob/master/build_support/GenerateConfig.groovy).
 
-As a result, a "standard geOrchestra configuration" should not require you to edit more than 2 files: one for the shared parameters, and an other one for module-specific parameters.
+As a result, a "standard geOrchestra configuration" should not require you to edit more than 2 files: one for the shared parameters, and an other one for module-specific parameters.  
 Note: copying maven.filter files in your own configuration dir (which was an older practice) is not anymore recommended because it is very difficult to maintain when upgrading version.
 => you should remove any maven.filter file from your own configuration, and eventually copy the values you had customized into build_support/GenerateConfig.groovy
 
@@ -101,7 +101,7 @@ Note: copying maven.filter files in your own configuration dir (which was an old
 
 The "Jetty Maven2" Repository provided by oss.sonatype.org requires HTTPS now. The fix was pushed to the georchestra and geonetwork repositories, but in the mean time, your /home/$USER/.m2 local repository might have gotten corrupted with html files rather than jars. If you experience compilation errors, you might need to clean your local maven repo, by running ```rm -rf ~/.m2/repository/org/apache/maven```
 
-Upgrading your build is a 2-steps process.
+Upgrading your build is a 2-steps process.  
 Let's assume your local geOrchestra source code repository is located in ```/path_to_georchestra_root/```.
 
 First you have to update the sources from the remote origin and update yours:
@@ -119,7 +119,7 @@ cd /path_to_georchestra_root/config/configuration/<yours>
 git fetch upstream
 git merge upstream/14.06
 ```
-Then you'll probably have to fix some conflicts.
+Then you'll probably have to fix some conflicts.  
 Note: if you do not know how to fix these conflicts, you're probably better off starting again with a fresh fork of the template config directory.
 
 
@@ -134,7 +134,7 @@ The LDAP repository holds branches for the 13.09, 14.01 and 14.06 releases.
 In 13.09, groups are instances of posixGroup. From 14.01 on, they are instances of groupOfNames.
 
 Between 14.01 and 14.06 branches, here are the differences:
- - the MOD_EXTRACTORAPP group was created. You should assign to it the users which already had access to extractorapp (typically members of SV_USER)
+ - the ```MOD_EXTRACTORAPP``` group was created. You should assign to it the users which already had access to extractorapp (typically members of ```SV_USER```)
  - the privileged geoserver user ("shared.privileged.geoserver.user") was renamed from ```extractorapp_privileged_admin``` to ```geoserver_privileged_user``` because it is no more used only for the extractor.
 
 
@@ -143,7 +143,7 @@ Between 14.01 and 14.06 branches, here are the differences:
 In this release, the GeoNetwork database was merged into the unique default georchestra database. 
 It is now a schema inside the main database.
 
-It requires that a "geonetwork" db user is created and granted rights:
+This change requires that a "geonetwork" db user is created and granted rights:
 ```
 createuser -SDRIP geonetwork (the expected password for the default config is "www-data")
 psql -d georchestra -c 'CREATE SCHEMA geonetwork;'
@@ -191,7 +191,7 @@ Hint: search for privateKey in your GenerateConfig.groovy.
 French projections (typically EPSG:2154) have been removed from the extractorapp and mapfishapp config files.  
 Be sure to check your GEOR_custom.js files if you need them.
 
-mapfishapp: GEONETWORK_URL was renamed into GEONETWORK_BASE_URL.  
+mapfishapp: ```GEONETWORK_URL``` was renamed into ```GEONETWORK_BASE_URL```.  
 Caution: the expected string for this config option has changed too: from eg. "http://geobretagne.fr/geonetwork/srv/fre" to: "http://geobretagne.fr/geonetwork".
 
 
