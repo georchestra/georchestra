@@ -657,4 +657,5 @@ The recommended production setup is to have 2 or 3 tomcat instances:
  - one for geoserver
  - one for all the other webapps
 
-There is no tutorial for this at the moment, so feel free to ask for guidance on the https://groups.google.com/forum/#!forum/georchestra-dev mailing list.
+The following [contributed guide](http://geo.viennagglo.fr/doc/index.html) explains how to setup a geOrchestra instance with 3 tomcats. It is a recommended reading, but it is only available in French at the moment.
+Feel free to ask for guidance on the https://groups.google.com/forum/#!forum/georchestra-dev mailing list if you need help.
