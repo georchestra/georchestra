@@ -3,6 +3,7 @@
 
 language=@shared.language@
 headerHeight=@shared.header.height@
+publicContextPath=@shared.ldapadmin.contextpath@
 
 # LDAP
 ldapUrl=@shared.ldapUrl@
@@ -41,7 +42,6 @@ moderatorEmail=@shared.administrator.email@
 # filled by GenerateConfig.groovy
 privateKey=
 publicKey=
-publicContextPath=
 subject.account.created=
 subject.account.in.process=
 subject.requires.moderation=
