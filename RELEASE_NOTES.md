@@ -132,7 +132,7 @@ This is not the case anymore. This implies that the security proxy now resides i
 
 **LDAP:**
 
-The LDAP repository holds branches for the 13.09, 14.01 and 14.06 releases.
+The [LDAP repository](https://github.com/georchestra/LDAP) holds branches for the 13.09, 14.01 and 14.06 releases.
 In 13.09, groups are instances of posixGroup. From 14.01 on, they are instances of groupOfNames.
 
 Between 14.01 and 14.06 branches, here are the differences:
