@@ -37,7 +37,7 @@ public class UserUtils {
 	}
 	
 	/**
-	 * An user identifier (uid) valid only can contain characters, numbers or dot. It must begin with a character.
+	 * An user identifier (uid) valid only can contain characters, numbers, dot, hyphen. It must begin with a character.
 	 * 
 	 * @param uid user identifier
 	 * @return true if the uid is valid
@@ -50,7 +50,7 @@ public class UserUtils {
 		}
 		for(int i=1; i < uid.length(); i++){
 			
-			if( !(Character.isLetter( uid.charAt(i)) ||  Character.isDigit( uid.charAt(i)) || ( uid.charAt(i) == '.')) ){
+			if( !(Character.isLetter( uid.charAt(i)) ||  Character.isDigit( uid.charAt(i)) || ( uid.charAt(i) == '.') || ( uid.charAt(i) == '-')) ){
 				
 				return false;
 			} 
