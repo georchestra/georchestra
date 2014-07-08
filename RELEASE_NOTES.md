@@ -111,6 +111,8 @@ First you have to update the sources from the remote origin and update yours:
 cd /path_to_georchestra_root/
 git fetch origin
 git checkout 14.06
+git submodule sync
+git submodule update --init
 ```
 
 Then you need to update your configuration directory to align it with the template configuration, [branch 14.06](https://github.com/georchestra/template/tree/14.06).
