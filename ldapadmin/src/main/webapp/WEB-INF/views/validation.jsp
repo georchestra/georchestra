@@ -208,13 +208,13 @@ function isFieldRequired(id) {
  * Test if a uid string is valid
  * 
  * The first character must be a letter, and the uid must contain only
- * letters, digits and/or the '.' character
+ * letters, digits, and/or the '.' or '-' character
  * 
  * @param {String} uid
  * @returns {boolean}
  */
 function isUidValid(uid) {
-	if (uid.charAt(0).match(/[a-z]/ig) && (uid.match(/[a-z0-9\.]/ig).length == uid.length)) {
+	if (uid.charAt(0).match(/[a-z]/ig) && (uid.match(/[a-z0-9\.-]/ig).length == uid.length)) {
 		return true;
 	} else {
 		return false;
