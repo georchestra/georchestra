@@ -776,7 +776,9 @@ GEOR.managelayers = (function() {
             });
         }
 
-        if (hasEquivalentWFS || hasEquivalentWCS || isWFS) {
+        if ((hasEquivalentWFS || hasEquivalentWCS || isWFS) 
+            && (GEOR.config.ROLES.indexOf("ROLE_MOD_EXTRACTORAPP") >= 0)) {
+
             insertSep();
             menuItems.push({
                 iconCls: 'geor-btn-download',
