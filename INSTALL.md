@@ -279,8 +279,6 @@ Apache
     ProxyPass /geofence/ ajp://localhost:8009/geofence/ 
     ProxyPassReverse /geofence/ ajp://localhost:8009/geofence/
 
-    ProxyPass /geowebcache/ ajp://localhost:8009/geowebcache/ 
-    ProxyPassReverse /geowebcache/ ajp://localhost:8009/geowebcache/
 
     <Proxy ajp://localhost:8009/ldapadmin/*>
         Order deny,allow
