@@ -55,6 +55,7 @@ Enhancements:
  * mapfishapp: file upload supports OSM files to some extent,
  * mapfishapp: proj4js definitions are now local to prevent mixed active content warning in case of HTTPS access, see [#602]( https://github.com/georchestra/georchestra/issues/602),
  * mapfishapp: only members of the ```MOD_EXTRACTORAPP``` group see the "download data" link - see [#717](https://github.com/georchestra/georchestra/issues/717)
+ * mapfishapp: the "remove layer" icon was changed - see [#728](https://github.com/georchestra/georchestra/issues/728)
  * server-deploy: now supports deploying geofence-webapp,
  * all modules now use the same "georchestra" database by default, including GeoNetwork - see [#601](https://github.com/georchestra/georchestra/issues/601),
  * system wide favicon.
