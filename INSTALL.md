@@ -263,6 +263,15 @@ Apache
     ProxyPass /geoserver/ ajp://localhost:8009/geoserver/ 
     ProxyPassReverse /geoserver/ ajp://localhost:8009/geoserver/
 
+
+    <Proxy ajp://localhost:8009/geowebcache/*>
+        Order deny,allow
+        Allow from all
+    </Proxy>
+    ProxyPass /geowebcache/ ajp://localhost:8009/geowebcache/ 
+    ProxyPassReverse /geowebcache/ ajp://localhost:8009/geowebcache/
+
+
     <Proxy ajp://localhost:8009/geofence/*>
         Order deny,allow
         Allow from all
