@@ -22,7 +22,7 @@ The complete fix chosen by the geOrchestra community has been to:
 
 # Using distribution packages
 
-It is important to use a gdal.jar binding which , but Geotools and ImageIO-ext provide their own version of the gdal.jar as a dependency. After having several troubles with classloading and webapp isolation, it has been decided in geOrchestra to blacklist the bindings when building the webapps, but this introduced some extra work needed to have a correctly configured tomcat.
+It is important to use a gdal.jar binding which comes along with the underlying GDAL/OGR library (i.e. compiled with the same sources), but Geotools and ImageIO-ext provide their own version of the gdal.jar as a dependency. After having several troubles with classloading and webapp isolation, it has been decided in geOrchestra to blacklist the bindings when building the webapps, but this introduced some extra work needed to have a correctly configured tomcat.
 
 Before this change, the solution was to isolate each webapp into their own tomcat, but 
 
