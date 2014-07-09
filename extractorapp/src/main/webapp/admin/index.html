@@ -10,19 +10,28 @@
     <script type="text/javascript" src="extjs/locale/ext-lang-fr.js"></script>
     <script type="text/javascript" src="extjs/examples/shared/examples.js"></script>
     <script type="text/javascript" src="app.js"></script>
+    <script type="text/javascript" src="/header/js/header.js"></script>
 </head>
 <body>
+
+<div id="go_head">
+    <!-- see http://stackoverflow.com/questions/1037839/how-to-force-link-from-iframe-to-be-opened-in-the-parent-window -->
+    <iframe src="/header/?lang=<%= lang %>&active=extractorapp" style="width:100%;height:90px;border:none;overflow:hidden;" scrolling="no" frameborder="0" onload="_headerOnLoad(this)"></iframe>
+</div>
+
+<div id="content">
     <h1>Tâches d'extraction</h1>
-<p>Le tableau ci-dessous présente les tâches d'extraction en cours de traitement.</p>
+    <p>Le tableau ci-dessous présente les tâches d'extraction en cours de traitement.</p>
 
-<p>Vous avez la possibilité de modifier l'ordre d'exécution des tâches en :</p>
-<ul>
-<li>- leur assignant des priorités supérieures ou inférieures,</li>
-<li>- les mettant en pause,</li>
-<li>- les annulant.</li>
-</ul>
+    <p>Vous avez la possibilité de modifier l'ordre d'exécution des tâches en :</p>
+    <ul>
+    <li>- leur assignant des priorités supérieures ou inférieures,</li>
+    <li>- les mettant en pause,</li>
+    <li>- les annulant.</li>
+    </ul>
 
-<p>Note : la tâche en cours d'exécution ne peut être modifiée.</p>
+    <p>Note : la tâche en cours d'exécution ne peut être modifiée.</p>
+</div>
 
 </body>
 </html>

@@ -32,6 +32,7 @@ Enhancements:
  * extractorapp: proper reporting in case the OGRDataStore cannot be created, with an invitation to check the GDAL libraries setup,
  * extractorapp: dropped support for geoserver 1.x, which results in better startup performance, see [#640](https://github.com/georchestra/georchestra/issues/640),
  * extractorapp: improved db connection pooling wrt download form,
+ * extractorapp admin: includes the standard geOrchestra header - see [#729](https://github.com/georchestra/georchestra/issues/729),
  * geoserver: the project now provides a [basic data_dir](https://github.com/georchestra/geoserver_minimal_datadir) with sensible defaults for geOrchestra - see [INSTALL.md#geoserver](INSTALL.md#geoserver),
  * geofence: performance improvement for GetCapabilities requests,
  * geofence: allows dynamic styles and remote layers by default,
