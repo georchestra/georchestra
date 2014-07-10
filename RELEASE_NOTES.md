@@ -33,11 +33,11 @@ Enhancements:
  * extractorapp: dropped support for geoserver 1.x, which results in better startup performance, see [#640](https://github.com/georchestra/georchestra/issues/640),
  * extractorapp: improved db connection pooling wrt download form,
  * extractorapp admin: includes the standard geOrchestra header - see [#729](https://github.com/georchestra/georchestra/issues/729),
- * geonetwork: rolling logs + gzipping - see [#200](https://github.com/georchestra/georchestra/issues/200)
- * geonetwork: improved IE10 compatibility
- * geonetwork: disable user management for non-administrators
- * geonetwork: improved links to WMS and WMC got from ISO19139 records, "distribution" section - see [5e7671](https://github.com/georchestra/geonetwork/commit/5e7671e5c498cc18f0150dd33e5b123553161453) and [c53e77](https://github.com/georchestra/geonetwork/commit/c53e7748938fb82afc2786614b228175172ad744)
- * geonetwork: added the possibility to search on a field and suggest on another one - see [4a3a34](https://github.com/georchestra/geonetwork/commit/4a3a34b031f2e1ceeec860e7cb5bb162da76fafa)
+ * geonetwork: rolling logs + gzipping - see [#200](https://github.com/georchestra/georchestra/issues/200),
+ * geonetwork: improved IE10 compatibility,
+ * geonetwork: disable user management for non-administrators,
+ * geonetwork: improved links to WMS and WMC got from ISO19139 records, "distribution" section - see [5e7671](https://github.com/georchestra/geonetwork/commit/5e7671e5c498cc18f0150dd33e5b123553161453) and [c53e77](https://github.com/georchestra/geonetwork/commit/c53e7748938fb82afc2786614b228175172ad744),
+ * geonetwork: added the possibility to search on a field and suggest on another one - see [4a3a34](https://github.com/georchestra/geonetwork/commit/4a3a34b031f2e1ceeec860e7cb5bb162da76fafa),
  * geonetwork: improved iso19139.fra schema - see [62057e](https://github.com/georchestra/geonetwork/commit/62057e5ce6db4cfaafd67c288df20c1b7511ceeb), [fd086f](https://github.com/georchestra/geonetwork/commit/fd086f69161032f5fdfa34d2f29e90dfec0b2097) and [0eba33](https://github.com/georchestra/geonetwork/commit/0eba333269bce331e46f79c8a461f822544f0ec0),
  * geoserver: the project now provides a [basic data_dir](https://github.com/georchestra/geoserver_minimal_datadir) with sensible defaults for geOrchestra - see [INSTALL.md#geoserver](INSTALL.md#geoserver),
  * geofence: performance improvement for GetCapabilities requests,
@@ -75,9 +75,9 @@ Bug fixes:
  * geofence: avoid NPE with dynamic geofencing - [#629](https://github.com/georchestra/georchestra/issues/629),
  * geonetwork: shared.geonetwork.language enforced - see [#595](https://github.com/georchestra/georchestra/issues/595),
  * geonetwork: keywords-based extent suggestion does not fail anymore with aceentuated chars - see [652e87](https://github.com/georchestra/geonetwork/commit/652e87c073e438d9b75150fc786c823f6c346467),
- * geonetwork: fixed extent map cursor position after panel has been scrolled - see [95aa65](https://github.com/georchestra/geonetwork/commit/95aa659dc0def87dab33642b9d761d08c746700a)
- * geonetwork: fixed classification of spatial data service for better INSPIRE compatibility - see [c1017d](https://github.com/georchestra/geonetwork/commit/c1017d41971219369ed2671c5d1132e6167c4e90)
- * geonetwork: avoid JS error when the WMS layer title contains a quote - see [7bbc34](https://github.com/georchestra/geonetwork/commit/7bbc34c902b1390935799f93aa6e3f7d90edd092)
+ * geonetwork: fixed extent map cursor position after panel has been scrolled - see [95aa65](https://github.com/georchestra/geonetwork/commit/95aa659dc0def87dab33642b9d761d08c746700a),
+ * geonetwork: fixed classification of spatial data service for better INSPIRE compatibility - see [c1017d](https://github.com/georchestra/geonetwork/commit/c1017d41971219369ed2671c5d1132e6167c4e90),
+ * geonetwork: avoid JS error when the WMS layer title contains a quote - see [7bbc34](https://github.com/georchestra/geonetwork/commit/7bbc34c902b1390935799f93aa6e3f7d90edd092),
  * ldapadmin: fixed wrong users count in groups, in case several of them share the same ```sn``` field - see [0d7ab2](https://github.com/georchestra/georchestra/commit/0d7ab2ae1767e13af17d7f7d5f87ad22b728162d),
  * ldapadmin: group description editing does not detach users from group anymore - see [#650](https://github.com/georchestra/georchestra/issues/650),
  * mapfishapp: restored GetFeatureiInfo queries on aggregated layers - see [#658](https://github.com/georchestra/georchestra/issues/658),
