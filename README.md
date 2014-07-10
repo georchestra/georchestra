@@ -34,7 +34,7 @@ Notes:
 
 Then clone the repository (either the stable branch or master if you're feeling lucky):
 
-    git clone -b 14.01 --recursive https://github.com/georchestra/georchestra.git
+    git clone -b 14.06 --recursive https://github.com/georchestra/georchestra.git
 
 ...and build:
 
@@ -89,7 +89,7 @@ To install the required packages and setup the system, follow the [install guide
 Once the system is ready, collect WAR files in a dedicated directory and rename them:
 
     PROFILE=myprofile
-    VERSION=14.01
+    VERSION=14.06
     mkdir -p /tmp/georchestra_deploy_tmp
     cd /tmp/georchestra_deploy_tmp
     cp `find ~/.m2/repository/ -name "*-${VERSION}-${PROFILE}.war"` ./

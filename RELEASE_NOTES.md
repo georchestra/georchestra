@@ -1,10 +1,10 @@
 The development branch is master. It can be used for testing and reporting errors.
 
-For production systems, you are advised to use the stable branch (currently 14.01).
+For production systems, you are advised to use the stable branch (currently 14.06).
 This branch receives bug fixes as they arrive, during 6 months at least.
 
 
-Version 14.06 (dev version)
+Version 14.06 (current stable version)
 ======================================
 
 Contributions from Rennes, CIGAL, GeoBretagne, GeoPicardie, PIGMA, GeoBolivia, ViennAgglo & developers on their free time.  
@@ -216,8 +216,8 @@ Caution: the expected string for this config option has changed too: from eg. "h
 
 
 
-Version 14.01 (current stable version)
-======================================
+Version 14.01
+==============
 
 This release was supported by the GeoPicardie, PIGMA, CIGALsace and GeoBretagne projects. 
 The CRAIG (Centre Régional Auvergnat de l'Information Géographique) is also to be thanked for some nice patches.
