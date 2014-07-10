@@ -6,6 +6,9 @@
     font-family:helvetica,tahoma,verdana,sans-serif;
     font-size:13px;
 }
+.x-panel {
+	margin-left: 20px;
+}
 p {
     margin-top:15px;
 }
