@@ -51,6 +51,7 @@ Enhancements:
  * ldapadmin: now takes into account shared.ldap.* values,
  * ldapadmin: now uses configured LDAP users and groups DN instead of hardcoded values,
  * ldapadmin: public context path now set via a shared maven filter - see [#721](https://github.com/georchestra/georchestra/issues/721)
+ * ldapadmin: hyphens are now allowed in user identifiers - see [#725](https://github.com/georchestra/georchestra/pull/725),
  * mapfishapp: improved testsuite coverage,
  * mapfishapp: annotation addon improved (outline and fill colors added),
  * mapfishapp: using adequate XML exception format string, depending on WMS version,
@@ -92,6 +93,7 @@ Bug fixes:
  * proxy: returns earlier in case of 403|404 error code - see [#506](https://github.com/georchestra/georchestra/issues/506),
  * proxy: really customizable error pages,
  * proxy: always remove incoming sec-* headers,
+ * proxy: members of the ```ADMINISTRATOR``` group do not need to belong to another ```SV_*``` group anymore - see [ad6784](https://github.com/georchestra/georchestra/commit/ad67845c41af94ee9f2636cc54da7fe88d29c22b),
  * proxy: added QuantumGIS to the list of clients triggering basic auth, thus allowing access to protected layers (along with uDig and ArcGIS clients).
 
 
