@@ -66,6 +66,10 @@ new PostTreatment().run(this, log, ant, project.basedir, params.projectDir, serv
           <failOnNoGitDirectory>false</failOnNoGitDirectory>
           <skipPoms>false</skipPoms>
           <verbose>false</verbose>
+          <!-- see https://github.com/ktoso/maven-git-commit-id-plugin/issues/61#issuecomment-27995746 -->
+          <gitDescribe>
+            <skip>true</skip>
+          </gitDescribe>
         </configuration>
       </plugin>
     </plugins>
