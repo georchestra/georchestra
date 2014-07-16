@@ -36,6 +36,7 @@ javax.servlet.jsp.jstl.core.Config.set(
     new javax.servlet.jsp.jstl.fmt.LocalizationContext(resource)
 );
 
+Boolean extractor = false;
 String sec_roles = request.getHeader("sec-roles");
 if(sec_roles != null) {
     String[] roles = sec_roles.split(",");
@@ -47,6 +48,9 @@ if(sec_roles != null) {
         }
         if (roles[i].equals("ROLE_SV_EDITOR") || roles[i].equals("ROLE_SV_REVIEWER") || roles[i].equals("ROLE_SV_ADMIN") || roles[i].equals("ROLE_SV_ADMINISTRATOR") || roles[i].equals("ROLE_SV_USER")) {
             anonymous = false;
+        }
+        if (roles[i].equals("ROLE_MOD_EXTRACTORAPP")) {
+            extractor = true;
         }
     }
 }
@@ -186,12 +190,16 @@ if(sec_roles != null) {
         </c:choose>
 
         <c:choose>
-            <c:when test='<%= active.equals("extractorapp") %>'>
+            <c:when test='<%= extractor == true %>'>
+            <c:choose>
+                <c:when test='<%= active.equals("extractorapp") %>'>
             <li class="active"><a><fmt:message key="extractor"/></a></li>
-            </c:when>
-            <c:otherwise>
+                </c:when>
+                <c:otherwise>
             <li><a href="/extractorapp/"><fmt:message key="extractor"/></a></li>
-            </c:otherwise>
+                </c:otherwise>
+            </c:choose>
+            </c:when>
         </c:choose>
 
         <c:choose>
@@ -207,7 +215,7 @@ if(sec_roles != null) {
         <c:choose>
             <c:when test='<%= anonymous == false %>'>
         <p class="logged">
-            <a href="/ldapadmin/account/userdetails"><%=request.getHeader("sec-username") %></a><span class="light"> | </span><a href="/j_spring_security_logout"><fmt:message key="logout"/></a>
+            <a href="${ldapadminPublicContextPath}/account/userdetails"><%=request.getHeader("sec-username") %></a><span class="light"> | </span><a href="/j_spring_security_logout"><fmt:message key="logout"/></a>
         </p>
             </c:when>
             <c:otherwise>

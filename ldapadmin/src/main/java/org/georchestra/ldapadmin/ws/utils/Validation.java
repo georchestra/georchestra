@@ -1,10 +1,10 @@
 /**
- * 
+ *
  */
 package org.georchestra.ldapadmin.ws.utils;
 
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.util.StringUtils;
@@ -12,7 +12,7 @@ import org.springframework.validation.Errors;
 
 /**
  * Validation class for all forms
- * 
+ *
  * @author Sylvain Lesage
  *
  */
@@ -32,6 +32,9 @@ public class Validation {
 		this.requiredFields = r;
 	}
 	public static boolean isFieldRequired (String field) {
+	    if (requiredFields == null)
+	        return false;
+
 		for (String f : requiredFields) {
 			if (field.equals(f)) {
 				return true;

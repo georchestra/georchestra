@@ -4,88 +4,112 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.extractorapp.ws.extractor.task.ExtractionTask;
 
-
 public class CheckFormAcceptance {
-	
-	private BasicDataSource basicDataSource;
-	private boolean activated = false;
 
-	private static final Log LOG = LogFactory.getLog(ExtractionTask.class.getPackage().getName());
+    private BasicDataSource basicDataSource;
+    private boolean activated = false;
 
-	public CheckFormAcceptance(String _activated, String jdbcUrl) {
+    private static final Log LOG = LogFactory.getLog(ExtractionTask.class
+            .getPackage().getName());
 
-		activated = "true".equalsIgnoreCase(_activated);
-		
-		if (activated) {
-			basicDataSource = new BasicDataSource();
+    private final static String CHECK_FORM_ACCEPTANCE_QUERY = "SELECT "
+            + "           COUNT(id) "
+            + "FROM "
+            + "           downloadform.extractorapp_log "
+            + "WHERE "
+            + "           (username = null AND sessionid = ?) OR (username = ?  AND username IS NOT null) "
+            + "AND " + "           json_spec = ?;";
 
-			basicDataSource.setDriverClassName("org.postgresql.Driver");
+    public CheckFormAcceptance(boolean _activated, String jdbcUrl) {
 
-			basicDataSource.setTestOnBorrow(true);
+        activated = _activated;
 
-			basicDataSource.setPoolPreparedStatements(true);
-			basicDataSource.setMaxOpenPreparedStatements(-1);
+        if (activated) {
+            basicDataSource = new BasicDataSource();
 
-			basicDataSource.setDefaultReadOnly(false);
-			basicDataSource.setDefaultAutoCommit(false);
+            basicDataSource.setDriverClassName("org.postgresql.Driver");
 
-			basicDataSource.setUrl(jdbcUrl);
-		}
-	}
-	public boolean isFormAccepted(String session, String username, String jsonSpec) {
+            basicDataSource.setTestOnBorrow(true);
 
-		if (activated == false) return true;
+            basicDataSource.setPoolPreparedStatements(true);
+            basicDataSource.setMaxOpenPreparedStatements(-1);
 
-		boolean ret = false;
-		
-		Connection connection = null;
-		PreparedStatement checkformentryst = null;
-		ResultSet rs = null;
-		
-		try {
-			connection = basicDataSource.getConnection();
+            basicDataSource.setDefaultReadOnly(false);
+            basicDataSource.setDefaultAutoCommit(false);
 
-			
-			String sel = "SELECT " +
-						"			COUNT(id) " +
-						"FROM " +
-						"			downloadform.extractorapp_log " +
-						"WHERE " +
-						"           (username = null AND sessionid = ?) OR (username = ?  AND username IS NOT null) " + 
-						"AND " +
-						"           json_spec = ?;";
-			
-			checkformentryst  = connection.prepareStatement(sel);
-			// TODO : session is useless here, because
-			// it is not a stable identifier between security-proxified webapps
-			// anyway it is not used in case of anonymous extraction requests.
-			checkformentryst.setString(1, session);
-			checkformentryst.setString(2, username);
-			// Extra \n to be removed with the trim() call
-			checkformentryst.setString(3, jsonSpec.trim());
-			
-			rs = checkformentryst.executeQuery();
-			
-			rs.next();
-			int numResults = rs.getInt(1);
-			
-			ret = (numResults > 0);
-			
-			
-		} catch (Exception e) {
-			LOG.error("Error occured while trying to check form validation", e);
-		} finally {
-			if (rs != null) try { rs.close(); } catch (Exception e) {}
-			if (checkformentryst != null) try { checkformentryst.close(); } catch (Exception e) {}
-			if (connection != null) try { connection.close(); } catch (Exception e) {}
-		}
-		return ret;
-	}
+            basicDataSource.setUrl(jdbcUrl);
+        }
+    }
+
+    public boolean isFormAccepted(String session, String username,
+            String jsonSpec) {
+
+        if (activated == false)
+            return true;
+
+        Connection connection = null;
+        PreparedStatement checkformentryst = null;
+        ResultSet rs = null;
+
+        try {
+            connection = basicDataSource.getConnection();
+
+            checkformentryst = connection
+                    .prepareStatement(CHECK_FORM_ACCEPTANCE_QUERY);
+            // The available sessionid is not a stable identifier across
+            // security-proxified webapps,
+            // and it is not available in case of anonymous extraction requests.
+            // As a result, it is not used to check if the user actually
+            // validated the form.
+            checkformentryst.setString(1, session);
+            checkformentryst.setString(2, username);
+            // Extra \n to be removed with the trim() call
+            checkformentryst.setString(3, jsonSpec.trim());
+
+            rs = checkformentryst.executeQuery();
+
+            rs.next();
+            int numResults = rs.getInt(1);
+
+            return (numResults > 0);
+
+        } catch (Exception e) {
+            LOG.error("Error occured while trying to check form validation", e);
+            return false;
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (Exception e) {
+                    LOG.error(
+                            "Error occured while trying to close the resultset: ",
+                            e);
+                }
+            }
+            if (checkformentryst != null) {
+                try {
+                    checkformentryst.close();
+                } catch (Exception e) {
+                    LOG.error(
+                            "Error occured while trying to close the SQL statement: ",
+                            e);
+                }
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (Exception e) {
+                    LOG.error(
+                            "Error occured while trying to close the SQL connection: ",
+                            e);
+                }
+            }
+        }
+    }
 
 }

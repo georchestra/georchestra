@@ -19,6 +19,9 @@ Typical configuration to include in your GEOR_custom.js file:
             "es": "This addon allows one to download data from the layers visible on the map",
             "fr": "Cet addon permet de télécharger les données des couches visibles sur la carte"
         },
+        "roles": [
+            "ROLE_MOD_EXTRACTORAPP"
+        ],
         "options": {
             "srsData": [
                 ["EPSG:4326", "WGS84 (EPSG:4326)"],

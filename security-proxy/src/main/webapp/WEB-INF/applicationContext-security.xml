@@ -4,7 +4,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.4.xsd">
+        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd">
 
     <bean id="properties-loader"
         class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
@@ -23,7 +23,7 @@
         <s:intercept-url pattern="/ldapadmin/private/.*" access="ROLE_MOD_LDAPADMIN" />
         <s:intercept-url pattern="/testPage" access="IS_AUTHENTICATED_FULLY" />
 <!--        <sec:intercept-url pattern=".*\?.*login.*" access="IS_AUTHENTICATED_FULLY" />-->
-        <s:intercept-url pattern=".*" access="IS_AUTHENTICATED_ANONYMOUSLY,ROLE_SV_USER,ROLE_SV_EDITOR,ROLE_SV_REVIEWER,ROLE_SV_ADMIN" />
+        <s:intercept-url pattern=".*" access="IS_AUTHENTICATED_ANONYMOUSLY,ROLE_SV_USER,ROLE_SV_EDITOR,ROLE_SV_REVIEWER,ROLE_SV_ADMIN,ROLE_ADMINISTRATOR" />
         <!-- s:form-login / -->
         <s:custom-filter ref="basicAuthChallengeByUserAgent" before="CAS_FILTER" />
         <s:custom-filter ref="casFilter" after="CAS_FILTER" />
@@ -47,6 +47,7 @@
                 <value>.*QGIS.*</value>
             </list>
         </property>
+        <property name="ignoreHttps" value="true" />
         <property name="ignoreFailure" value="false"/>
         <property name="credentialsCharset" value="UTF-8"/>
         <property name="authenticationManager" ref="authenticationManager"/>
@@ -117,10 +118,6 @@
                 <property name="defaultTargetUrl" value="/"/>
             </bean>
         </property>
-        
-<!--        <property name="useRelativeContext" value="true" />-->
-        <property name="proxyGrantingTicketStorage" ref="proxyGrantingTicketStorage" />
-        <property name="proxyReceptorUrl" value="/receptor" />
     </bean>
 
     <bean id="casFilter"
@@ -139,15 +136,9 @@
         <property name="ticketValidator">
                 <bean class="org.jasig.cas.client.validation.Cas20ServiceTicketValidator">
                         <constructor-arg index="0" value="${casTicketValidation}" />
-                        <property name="proxyGrantingTicketStorage" ref="proxyGrantingTicketStorage" />
-                        <property name="proxyCallbackUrl" value="${casCallbackUrl}" />
             </bean>
         </property>
         <property name="key" value="security-proxy"/>
-    </bean>
-
-    <bean id="proxyGrantingTicketStorage" class="org.jasig.cas.client.proxy.ProxyGrantingTicketStorageImpl">
-      <constructor-arg index="0" value="7200000" />
     </bean>
 
     <bean id="serviceProperties" class="org.springframework.security.cas.ServiceProperties">

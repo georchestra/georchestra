@@ -46,7 +46,7 @@ public final class FileUtils {
         if(!file.getPath().startsWith(baseFile.getPath())) {
             throw new IOException("When performing a Zip all files must be within the baseFile: "+file+" not contained by "+baseFile);
         }
-        
+
         if (file.isDirectory()) {
             for (File f : file.listFiles()) {
                 zipDir(zip, baseFile, f);
@@ -57,9 +57,9 @@ public final class FileUtils {
             zip.putNextEntry(next);
             FileInputStream in = new FileInputStream(file);
             try {
-              in.getChannel().transferTo(0, file.length(), Channels.newChannel(zip));  
+              in.getChannel().transferTo(0, file.length(), Channels.newChannel(zip));
             } finally {
-              in.close();  
+              in.close();
             }
         }
     }
@@ -102,10 +102,11 @@ public final class FileUtils {
 
     public static String getZipEntryAsString(File archive, String name) throws IOException {
         FileInputStream fileIn = null;
+        ZipInputStream zip = null;
         try {
             fileIn = new FileInputStream(archive);
             BufferedInputStream buffered = new BufferedInputStream(fileIn);
-            ZipInputStream zip = new ZipInputStream(buffered);
+            zip = new ZipInputStream(buffered);
             ArrayList<String> entries = new ArrayList<String>();
             ZipEntry next = zip.getNextEntry();
             while (next != null) {
@@ -118,12 +119,15 @@ public final class FileUtils {
             zip.close();
             return null;
         } finally {
+            if (zip != null) {
+                zip.close();
+            }
             if (fileIn != null) {
                 fileIn.close();
             }
         }
     }
-    
+
     public static void moveFile(File from, File to) throws FileNotFoundException,
             IOException {
         if (!from.renameTo(to)) {
@@ -158,74 +162,9 @@ public final class FileUtils {
         return buffer.toString();
     }
 
-    public static File storageFile(String filename) {
-        String baseStorageDir = getExtractorStorageDir();
-        if(filename==null || filename.length()==0){
-            return new File(baseStorageDir);
-        } else {
-            String safeFilename = toSafeFileName(filename);
-            File storageFile = new File(baseStorageDir, safeFilename );
-            return storageFile;
-        }
-    }
-
-    public static String getExtractorStorageDir() {
-        String baseStorageDir = System.getProperty("extractor.storage.dir");
-        
-        if(baseStorageDir==null){
-            baseStorageDir = System.getenv("extractor.storage.dir");
-        } 
-        /* still null ? let's try something else */ 
-        if (baseStorageDir == null){
-            baseStorageDir = System.getProperty("java.io.tmpdir")+File.separator+"extractorStorage";
-        }
-        return baseStorageDir;
-    }
-
+    // TODO: Not sure it handles every special cases,
+    // we should use a lib to manage the safe transformation instead
     public static String toSafeFileName(String filename) {
         return filename.replaceAll("\\\\|/|:|\\||<|>|\\*|\"", "_");
     }
-
-    public static File createTempDirectory() {
-        File tmpDir = new File(getExtractorStorageDir(),"temp");
-        tmpDir.mkdirs();
-        int tries = 0;
-        final int MAX_TRIES = 30;
-        while (tries < MAX_TRIES) {
-            try {
-                File baseDir = File.createTempFile("WcsCoverageReader", null, tmpDir);
-                if (!baseDir.delete() || !baseDir.mkdirs()) {
-                    tries++;
-                    continue;
-                } else {
-                    return baseDir;
-                }
-            } catch (IOException ioe) {
-                tries++;
-                if (tries > MAX_TRIES) {
-                    throw new RuntimeException(ioe);
-                }
-            }
-        }
-        throw new AssertionError("Unable to make a temporary director in base: "+tmpDir);
-    }
-// XXX this function is specific of extractor app     
-//	public static String createFileName(final String baseDir, final SimpleFeatureType type, final FileFormat ext){
-//		
-//		String layerName = type.getTypeName();
-//		Class<?> geomClass = type.getGeometryDescriptor().getType().getBinding();
-//				
-//        GeomType geomType = WfsExtractor.GeomType.lookup (geomClass);
-//				
-//        String newName = FileUtils.toSafeFileName(layerName + "_" + geomType+"."+ext);
-//        
-//        File file = new File(newName);
-//        for (int i = 1; file.exists(); i++) {
-//            newName = layerName + "_" + geomType + i;
-//            newName = FileUtils.toSafeFileName(newName+"."+ext);
-//            file = new File(baseDir, newName + "." + ext);
-//        }        
-//        
-//        return newName;
-//	}    
 }

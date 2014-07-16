@@ -18,6 +18,9 @@ shared.ldap.uid=uid
 shared.ldap.userSearchFilter=@shared.ldap.uid@=%u
 shared.ldap.groupSearchBaseDN=ou=groups
 shared.ldap.admin.dn=cn=admin,@shared.ldap.baseDn@
+shared.ldap.groupSearchFilter=(member=uid={1},@shared.ldap.userSearchBaseDN@,@shared.ldap.baseDn@)
+shared.ldap.ldapPendingGroupName=PENDING_USERS
+shared.ldap.groupRoleAttribute=cn
 
 shared.psql.host=localhost
 shared.psql.port=5432
@@ -54,6 +57,7 @@ shared.download_form.db=georchestra
 shared.download_form.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.download_form.db@
 shared.download_form.pdfurl=
 
+shared.ldapadmin.contextpath=/ldapadmin
 shared.ldapadmin.db=georchestra
 shared.ldapadmin.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.ldapadmin.db@
 
@@ -63,3 +67,15 @@ shared.mapfishapp.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port
 shared.geonetwork.db=georchestra
 
 shared.geofence.db=georchestra
+
+
+# --------------------------------------------------
+# HEALTH CHECK properties
+# --------------------------------------------------
+
+# If the HEALTH CHECK feature is activated, the security proxy 
+# monitors db connections and reports when a limit is reached.
+
+shared.checkhealth.activated=false
+shared.psql.checkhealth.db=@shared.psql.geonetwork.db@
+shared.checkhealth.max_db_connections=170

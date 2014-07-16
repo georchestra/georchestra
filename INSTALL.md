@@ -263,6 +263,15 @@ Apache
     ProxyPass /geoserver/ ajp://localhost:8009/geoserver/ 
     ProxyPassReverse /geoserver/ ajp://localhost:8009/geoserver/
 
+
+    <Proxy ajp://localhost:8009/geowebcache/*>
+        Order deny,allow
+        Allow from all
+    </Proxy>
+    ProxyPass /geowebcache/ ajp://localhost:8009/geowebcache/ 
+    ProxyPassReverse /geowebcache/ ajp://localhost:8009/geowebcache/
+
+
     <Proxy ajp://localhost:8009/geofence/*>
         Order deny,allow
         Allow from all
@@ -270,8 +279,6 @@ Apache
     ProxyPass /geofence/ ajp://localhost:8009/geofence/ 
     ProxyPassReverse /geofence/ ajp://localhost:8009/geofence/
 
-    ProxyPass /geowebcache/ ajp://localhost:8009/geowebcache/ 
-    ProxyPassReverse /geowebcache/ ajp://localhost:8009/geowebcache/
 
     <Proxy ajp://localhost:8009/ldapadmin/*>
         Order deny,allow
@@ -657,4 +664,5 @@ The recommended production setup is to have 2 or 3 tomcat instances:
  - one for geoserver
  - one for all the other webapps
 
-There is no tutorial for this at the moment, so feel free to ask for guidance on the https://groups.google.com/forum/#!forum/georchestra-dev mailing list.
+The following [contributed guide](http://geo.viennagglo.fr/doc/index.html) explains how to setup a geOrchestra instance with 3 tomcats. It is a recommended reading, but it is only available in French at the moment.
+Feel free to ask for guidance on the https://groups.google.com/forum/#!forum/georchestra-dev mailing list if you need help.

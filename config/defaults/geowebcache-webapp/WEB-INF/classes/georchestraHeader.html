@@ -1,10 +1,22 @@
 <html>
-    <body>
-        <!-- @@georchestraSharedHeader@@ will be replaced by the text that is loaded from the url provided in the gwc.properties
-              The text in the body will be kept and the rest discarded -->
-      <p>@@georchestraSharedHeader@@</p>
-      <!-- @@username@@ will be replaced by the username before writing -->
-      <p><a id="loginLink" href="#" onclick="alert('this will redirect to cas')">Login</a></p>
-      <p id="userInfo" >@@username@@</p>
-      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-      <script type="application/javascript">if ('@@username@@' !== 'anonymousUser') $('#loginLink').hide(); else $('#userInfo').hide();</script>
+<head>
+<title>GeoWebCache - @shared.instance.name@</title>
+<style type="text/css">
+body, td {
+font-family: Verdana,Arial,'Bitstream Vera Sans',Helvetica,sans-serif;
+font-size: 0.85em;
+vertical-align: top;
+}
+a#logo {
+display:none;
+}
+</style>
+</head>
+<body>
+<!-- geOrchestra header -->
+<script type="text/javascript" src="/header/js/header.js"></script>
+<div id="go_head">
+    <!-- see http://stackoverflow.com/questions/1037839/how-to-force-link-from-iframe-to-be-opened-in-the-parent-window -->
+    <iframe src="/header/?active=geowebcache" style="width:100%;height:@shared.header.height@px;border:none;overflow:hidden;" scrolling="no" frameborder="0" onload="_headerOnLoad(this)"></iframe>
+</div>
+<!-- end of geOrchestra header -->

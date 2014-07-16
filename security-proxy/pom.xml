@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.georchestra</groupId>
 		<artifactId>root</artifactId>
-		<version>14.06-SNAPSHOT</version>
+		<version>14.12-SNAPSHOT</version>
 	</parent>
 	<artifactId>security-proxy</artifactId>
 	<packaging>war</packaging>
@@ -12,7 +12,7 @@
 	<url>http://www.georchestra.org</url>
 	<properties>
 		<spring.version>3.0.7.RELEASE</spring.version>
-		<security.version>3.0.5.RELEASE</security.version>
+		<security.version>3.1.6.RELEASE</security.version>
 		<maven.test.skip>false</maven.test.skip>
 	</properties>
 	<dependencies>
@@ -31,7 +31,7 @@
 		<dependency>
 			<groupId>org.tuckey</groupId>
 			<artifactId>urlrewritefilter</artifactId>
-			<version>3.1.0</version>
+			<version>4.0.3</version>
 			<exclusions>
 				<exclusion>
 					<groupId>commons-logging</groupId>
@@ -83,7 +83,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-cas-client</artifactId>
+			<artifactId>spring-security-cas</artifactId>
 			<version>${security.version}</version>
 		</dependency>
 		<dependency>
@@ -129,7 +129,7 @@
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>jstl</artifactId>
-			<version>1.1.2</version>
+			<version>1.2</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
