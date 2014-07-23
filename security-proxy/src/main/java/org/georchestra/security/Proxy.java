@@ -1,6 +1,39 @@
 package org.georchestra.security;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Timer;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.methods.HttpOptions;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.methods.HttpTrace;
+import org.apache.http.client.params.ClientPNames;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.InputStreamEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.ProxySelectorRoutePlanner;
+import org.apache.http.message.BasicNameValuePair;
+import org.georchestra.ogcservstatistics.log4j.OGCServiceMessageFormatter;
+import org.georchestra.security.healthcenter.DatabaseHealthCenter;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.DefaultRedirectStrategy;
+import org.springframework.security.web.RedirectStrategy;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -25,47 +58,13 @@ import java.util.zip.DeflaterInputStream;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
-
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpHead;
-import org.apache.http.client.methods.HttpOptions;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.client.methods.HttpTrace;
-import org.apache.http.client.params.ClientPNames;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.entity.InputStreamEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.ProxySelectorRoutePlanner;
-import org.apache.http.message.BasicNameValuePair;
-import org.georchestra.security.healthcenter.DatabaseHealthCenter;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.DefaultRedirectStrategy;
-import org.springframework.security.web.RedirectStrategy;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import org.georchestra.ogcservstatistics.log4j.OGCServiceMessageFormatter;
-import org.georchestra.security.healthcenter.DatabaseHealthCenter;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 
 /**
@@ -104,6 +103,8 @@ public class Proxy {
     protected enum RequestType {
         GET, POST, DELETE, PUT, TRACE, OPTIONS, HEAD
     }
+
+    private MetricRegistry metricRegistry;
 
     /**
      * must be defined
@@ -292,7 +293,9 @@ public class Proxy {
 
             logger.debug("handlePathEncodedRequests: -- Handling Request: "+requestType+":"+forwardRequestURI+" from: "+request.getRemoteAddr());
 
-            String sURL = findTarget(forwardRequestURI);
+
+            final Target target = findTarget(forwardRequestURI);
+            String sURL = target.targetUri;
 
             if(sURL == null){
                 response.sendError(404);
@@ -328,7 +331,12 @@ public class Proxy {
                 sURL += query;
             }
 
-            handleRequest(request, response, requestType, sURL, true);
+            Timer.Context timerContext = this.metricRegistry.timer(Proxy.class.getName() + ".targetServer." + target.targetServer).time();
+            try {
+                handleRequest(request, response, requestType, sURL, true);
+            } finally {
+                timerContext.close();
+            }
         } catch (IOException e) {
             logger.error("Error connecting to client", e);
         }
@@ -339,7 +347,7 @@ public class Proxy {
         return sameserver && url.getPort() == request.getServerPort();
     }
 
-    private String findTarget(String requestURI) {
+    private Target findTarget(String requestURI) {
         String[] segments;
         if(requestURI.charAt(0) == '/') {
             segments = requestURI.substring(1).split("/");
@@ -348,12 +356,13 @@ public class Proxy {
         }
 
         if(segments.length == 0){
-            return concat(defaultTarget, new StringBuilder(requestURI));
+            return new Target("unmappedTarget", concat(defaultTarget, new StringBuilder(requestURI)));
         }
-        String target = targets.get(segments[0]);
-        if(target==null){
-            target=defaultTarget;
-            return concat(defaultTarget, new StringBuilder(requestURI));
+        Target target;
+        String targetServer = targets.get(segments[0]);
+        if(targetServer==null){
+            targetServer=defaultTarget;
+            target = new Target(targetServer, concat(defaultTarget, new StringBuilder(requestURI)));
         } else {
             StringBuilder builder = new StringBuilder("/");
             for (int i = 1; i < segments.length; i++) {
@@ -367,8 +376,10 @@ public class Proxy {
                 builder.append('/');
             }
 
-            return concat(target,builder);
+            target = new Target(targetServer, concat(targetServer, builder));
         }
+
+        return target;
     }
 
     private String concat(String target, StringBuilder builder) {
@@ -1107,5 +1118,20 @@ public class Proxy {
      */
 	public void setRedirectStrategy(RedirectStrategy redirectStrategy) {
     	this.redirectStrategy = redirectStrategy;
+    }
+
+    public void setMetricRegistry(MetricRegistry metricRegistry) {
+        this.metricRegistry = metricRegistry;
+    }
+
+
+    private static final class Target {
+        String targetServer;
+        String targetUri;
+
+        private Target(String targetServer, String targetUri) {
+            this.targetServer = targetServer;
+            this.targetUri = targetUri;
+        }
     }
 }

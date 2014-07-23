@@ -13,6 +13,7 @@
 	<properties>
 		<spring.version>3.0.7.RELEASE</spring.version>
 		<security.version>3.1.6.RELEASE</security.version>
+		<metrics.version>3.0.2</metrics.version>
 		<maven.test.skip>false</maven.test.skip>
 	</properties>
 	<dependencies>
@@ -103,7 +104,6 @@
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>1.4.3</version>
 			<scope>runtime</scope>
-			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -144,6 +144,37 @@
 			<version>2.1</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.codahale.metrics</groupId>
+			<artifactId>metrics-core</artifactId>
+			<version>${metrics.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.codahale.metrics</groupId>
+			<artifactId>metrics-servlet</artifactId>
+			<version>${metrics.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.codahale.metrics</groupId>
+			<artifactId>metrics-servlets</artifactId>
+			<version>${metrics.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.codahale.metrics</groupId>
+			<artifactId>metrics-httpclient</artifactId>
+			<version>${metrics.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.codahale.metrics</groupId>
+			<artifactId>metrics-jvm</artifactId>
+			<version>${metrics.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.codahale.metrics</groupId>
+			<artifactId>metrics-log4j</artifactId>
+			<version>${metrics.version}</version>
+		</dependency>
+
 	</dependencies>
 	<build>
 		<resources>

@@ -9,7 +9,6 @@
          It is too hard for me to access the links so I am renaming 
          the following for login and logout
          -->
-
     <rule>
         <from>^/geoserver/admin/login.do$</from>
         <to type="redirect" last="true">/geoserver?login</to>
