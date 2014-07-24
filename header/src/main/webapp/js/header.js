@@ -26,11 +26,10 @@ for (var i = 0; i < pairs.length; i++) {
         active = val;
 }
 
-var logo = '//'+window.location.host+'/IMG/png/logo.png';
-
+var logo = ''+getUrlLogo();
 document.write('<div id="go_head">');
 document.write('<a id="go_home" href="#">');
-document.write('<img src="img/logo.png" height="50"/>');
+document.write('<img src="'+logo+'" height="50"/>');
 document.write('</a>');
 
 document.write('<ul>');

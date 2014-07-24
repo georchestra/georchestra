@@ -74,3 +74,7 @@ function getExtractor(){
 	}
 	return thisval;
 }
+
+function getUrlLogo(){
+	return '//<%=request.getHeader("host")%>/header/img/logo.png';
+}
