@@ -78,3 +78,14 @@ function getExtractor(){
 function getUrlLogo(){
 	return '//<%=request.getHeader("host")%>/header/img/logo.png';
 }
+
+function i18n(key){
+	var msg;
+	switch(key){
+		case "catalogue": msg = "<fmt:message key='catalogue'/>"; break;
+		case "viewer": msg = "<fmt:message key='viewer'/>"; break;
+		case "extractor": msg = "<fmt:message key='extractor'/>"; break;
+		case "services": msg = "<fmt:message key='services'/>"; break;
+	}
+	return msg;
+}
