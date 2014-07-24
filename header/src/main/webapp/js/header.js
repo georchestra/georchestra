@@ -46,7 +46,7 @@ for ( var i in menu) {
 }
 document.write('</ul>');//end ul
 
-if(getAnonymous() === true){
+if(getAnonymous() === false){
 	document.write('<p class="logged">');
 	document.write('<a href="/ldapadmin/account/userdetails">'+getUserName()+'</a>');
 	document.write('<span class="light"> | </span>');
@@ -58,3 +58,21 @@ if(getAnonymous() === true){
 	document.write('</p>');
 }
 document.write('</div>'); //end div go_head
+
+(function(){
+	// required to get the correct redirect after login, see https://github.com/georchestra/georchestra/issues/170
+	var url,
+		a = document.getElementById("login_a");
+	if (a !== null) {
+		url = parent.window.location.href;
+		if (/\/cas\//.test(url)) {
+			a.href = "/cas/login";
+		} else {
+			/* Taken from https://github.com/openlayers/openlayers/blob/master/lib/OpenLayers/Util.js#L557 */
+			var paramStr="login", parts = (url + " ").split(/[?&]/);
+			a.href = url + (parts.pop() === " " ?
+				paramStr :
+				parts.length ? "&" + paramStr : "?" + paramStr);
+		}
+	}
+})();
