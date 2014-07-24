@@ -36,12 +36,12 @@ document.write('</a>');
 document.write('<ul>');
 for ( var i in menu) {
 	if (menu[i].show === true) {
-		document.write("<li>");
 		if (active === menu[i].id) {
-			document.write('<a class="active" href="' + menu[i].url	+ '" class="menu">' + menu[i].name + '</a>');
+			document.write('<li class="active" >');
 		} else {
-			document.write('<a href="' + menu[i].url + '">' + menu[i].name + '</a>');
+			document.write("<li>");
 		}
+		document.write('<a href="' + menu[i].url + '">' + menu[i].name + '</a>');
 		document.write('</li>');
 	}
 }
