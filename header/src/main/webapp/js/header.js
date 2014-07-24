@@ -2,7 +2,7 @@ var menu = [
     {id: 'geonetwork', name: i18n('catalogue'), url: '/geonetwork/apps/georchestra/', show: true},
     {id: 'mapfishapp', name: i18n('viewer'), url: '/mapfishapp/', show: true},
     {id: 'extractorapp', name: i18n('extractor'), url: '/extractorapp/', show: getExtractor()},
-    {id: 'geoserver', name: i18n('services'), url: '/geoserver/web/', show: true},
+    {id: 'geoserver', name: i18n('services'), url: '/geoserver/web/', show: true}
 ];
 var active;
 
