@@ -53,5 +53,24 @@ if(sec_roles != null) {
         }
     }
 }
-
 %>
+
+function getAnonymous(){
+	var thisval = '<%=anonymous%>';
+	if (thisval === "true" || thisval === "false") {
+		thisval = (thisval === "true");
+	}
+	return thisval;
+}
+
+function getUserName(){
+	return '<%=request.getHeader("sec-username")%>';
+}
+
+function getExtractor(){
+	var thisval = '<%=extractor%>';
+	if (thisval === "true" || thisval === "false") {
+		thisval = (thisval === "true");
+	}
+	return thisval;
+}
