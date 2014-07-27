@@ -526,15 +526,6 @@ public final class AccountDaoImpl implements AccountDao {
             return a;
         }
 
-		 // update the entry in the ldap tree
-		Name dn = buildDn(uid);
-		DirContextOperations context = ldapTemplate.lookupContext(dn);
-		
-		// the following action removes the old password. It there are two passwords (old and new password), they will
-		// be replaced by a single user password
-		LdapShaPasswordEncoder lspe = new LdapShaPasswordEncoder();
-		String encrypted = lspe.encodePassword(password,
-					String.valueOf(System.currentTimeMillis()).getBytes());
     }
 
     private boolean isNullValue(Object value) {

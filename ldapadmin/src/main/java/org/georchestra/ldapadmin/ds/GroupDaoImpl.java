@@ -319,13 +319,6 @@ public class GroupDaoImpl implements GroupDao {
 
 	}
 
-	private void setMemberField(DirContextOperations context, String memberAttr, List<String> users) {
-	    List<String> usersFullDn = new ArrayList<String>(users.size());
-	    for (String uid : users) {
-	        usersFullDn.add(buildUserDn(uid).encode());
-	    }
-	    context.setAttributeValues(memberAttr,usersFullDn.toArray());
-	}
 
     private void setMemberField(DirContextOperations context,
             String memberAttr, List<String> users) {
