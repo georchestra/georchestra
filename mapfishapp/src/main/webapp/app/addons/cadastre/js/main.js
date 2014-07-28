@@ -407,7 +407,8 @@ GEOR.Addons.Cadastre.prototype = {
     createTab2Form: function() {
         var fields = [], protocol, store,
             // field1 from tab1 here is not a bug, it's a feature:
-            c = this.options.tab1.field1;
+            c = this.options.tab1.field1,
+            d = this.options.tab2.field2;
 
         fields.push(new Ext.form.ComboBox(Ext.apply({
             name: "tab2field1",
@@ -437,19 +438,18 @@ GEOR.Addons.Cadastre.prototype = {
             }
         }, GEOR.Addons.Cadastre.BaseComboConfig)));
 
-        c = this.options.tab2.field2;
-
+        
         protocol = GEOR.ows.WFSProtocol({
-            typeName: c.typename,
-            owsURL: c.wfs
+            typeName: d.typename,
+            owsURL: d.wfs
         }, this.map);
 
         store = new GeoExt.data.FeatureStore({
             // template is not supported for tab2 field2, contrary to tab1 fields:
-            fields: [c.displayfield, c.valuefield, "bbox"], 
+            fields: [d.displayfield, d.valuefield, "bbox"], 
             // it's OK to client-side sort, since the store count is not high
             sortInfo: {
-                field: c.displayfield,
+                field: d.displayfield,
                 direction: 'ASC'
             },
             proxy: new GeoExt.data.ProtocolProxy({
@@ -465,7 +465,7 @@ GEOR.Addons.Cadastre.prototype = {
                         filters: [
                             new OpenLayers.Filter.Comparison({
                                 type: OpenLayers.Filter.Comparison.LIKE,
-                                property: c.valuefield,
+                                property: d.valuefield,
                                 // we need to replace accentuated chars by their unaccentuated version
                                 // and toUpperCase is required, since all the DBF data is UPPERCASED
                                 value: GEOR.util.stringDeaccentuate(params['query']).toUpperCase() + '*'
@@ -473,12 +473,12 @@ GEOR.Addons.Cadastre.prototype = {
                             new OpenLayers.Filter.Comparison({
                                 type: "==",
                                 // only one matching property is supported in here:
-                                property: c.matchingproperties.field1,
+                                property: d.matchingproperties.field1,
                                 value: fields[0].getValue()
                             })
                         ]
                     });
-                    options.propertyNames = [c.valuefield, c.displayfield]; 
+                    options.propertyNames = [d.valuefield, d.displayfield]; 
                     options.headers = {
                         // for dev purposes:
                         //"Authorization": "Basic XXX_token_XXX"
@@ -501,11 +501,11 @@ GEOR.Addons.Cadastre.prototype = {
             pageSize: 0,
             fieldLabel: OpenLayers.i18n("tab2field2label"),
             store: store,
-            valueField: c.valuefield,
-            displayField: c.displayfield,
+            valueField: d.valuefield,
+            displayField: d.displayfield,
             tpl: new Ext.XTemplate(
                 '<tpl for=".">',
-                    '<div class="x-combo-list-item" ext:qtip="{'+c.displayfield+'}">' + (c.template || '{'+c.displayfield+'}') + '</div>',
+                    '<div class="x-combo-list-item" ext:qtip="{'+d.displayfield+'}">' + (d.template || '{'+d.displayfield+'}') + '</div>',
                 '</tpl>'
             ),
             editable: true,
@@ -513,7 +513,7 @@ GEOR.Addons.Cadastre.prototype = {
             mode: 'remote',
             listeners: {
                 "select": function(cb, r) {
-                    this.getGeometry(r, c, function(geom, box) {
+                    this.getGeometry(r, d, function(geom, box) {
                         this.zoomToGeometry(geom, box, true);
                     });
                 },
