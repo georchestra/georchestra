@@ -39,7 +39,7 @@ Then clone the repository (either the stable branch or master if you're feeling 
 ...and build:
 
     cd georchestra
-    ./mvn -Dmaven.test.skip=true -Ptemplate install
+    ./mvn -Dmaven.test.skip=true -Ptemplate clean install
 
 
 How to customize ?
@@ -54,7 +54,7 @@ You can then edit files in myprofile to match your needs.
 
 Finally, to build geOrchestra with your own configuration profile:
 
-    ./mvn -Dmaven.test.skip=true -Dserver=myprofile install
+    ./mvn -Dmaven.test.skip=true -Dserver=myprofile clean install
 
 Note: if you're planning to use geOrchestra on the long term, you're better off forking the [georchestra/template](https://github.com/georchestra/template) configuration repository into a private git repository.
 This way, you'll be able to merge into your branch the changes from upstream.
