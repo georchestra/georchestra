@@ -312,8 +312,8 @@ GEOR.Addons.Cadastre.prototype = {
             } else {
                 geom = box.toGeometry();
             }
-            cb.call(scope, geom, box);
         }
+        cb.call(scope, geom, box);
     },
 
 
@@ -478,7 +478,10 @@ GEOR.Addons.Cadastre.prototype = {
                             })
                         ]
                     });
-                    options.propertyNames = [d.valuefield, d.displayfield]; 
+                    options.propertyNames = [d.valuefield, d.displayfield];
+                    if (d.hasOwnProperty("geometry")) {
+                        options.propertyNames.push(d.geometry);
+                    }
                     options.headers = {
                         // for dev purposes:
                         //"Authorization": "Basic XXX_token_XXX"
