@@ -301,6 +301,7 @@ GEOR.Addons.Cadastre.prototype = {
                 },
                 scope: this
             });
+            return;
         } else {
             // no zoom
             return;
