@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+﻿<?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
@@ -13,16 +13,15 @@
 	<properties>
 		<spring.version>3.0.7.RELEASE</spring.version>
 		<security.version>3.0.5.RELEASE</security.version>
-		<maven.test.skip>true</maven.test.skip>
 	</properties>
 	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
+	    <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
 			<version>4.11</version>
-			<scope>test</scope>
-		</dependency>
-        <dependency>
+            <scope>test</scope>
+        </dependency>
+		<dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <version>${spring.version}</version>
@@ -56,10 +55,26 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
+            <version>1.4.7</version>
+        </dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-oxm</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${spring.version}</version>
+            <scope>test</scope>
+        </dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-aop</artifactId>
@@ -144,6 +159,12 @@
 			<version>2.1</version>
 			<scope>provided</scope>
 		</dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>17.0</version>
+        </dependency>
 	</dependencies>
 	<build>
 		<resources>
@@ -164,9 +185,9 @@
 				<artifactId>gmaven-plugin</artifactId>
 				<dependencies>
 					<dependency>
-						<groupId>org.georchestra</groupId>
-						<artifactId>config</artifactId>
-						<version>${project.version}</version>
+							<groupId>org.georchestra</groupId>
+							<artifactId>config</artifactId>
+							<version>${project.version}</version>
 					</dependency>
 				</dependencies>
 			</plugin>
@@ -185,11 +206,11 @@
 			</plugin>
 			<plugin>
 				<!--
-					Copy du fichier default.wmc.example si il n'existe
-					pas de fichier default.wmc dans le repertoire src/main/webapp.
-					Ce fichier n'est pas écrasé si le packageur de l'application
-					a placé son propre fichier default.wmc
-				-->
+                      Copy du fichier default.wmc.example si il n'existe
+                      pas de fichier default.wmc dans le repertoire src/main/webapp.
+                      Ce fichier n'est pas écrasé si le packageur de l'application
+                      a placé son propre fichier default.wmc
+                -->
 				<artifactId>maven-antrun-plugin</artifactId>
 				<executions>
 					<execution>
