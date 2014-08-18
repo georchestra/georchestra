@@ -21,7 +21,7 @@
     <confdir>${project.build.directory}/conf</confdir>
     <encoding>UTF-8</encoding>
     <georchestra.version>${project.version}</georchestra.version>
-    <postTreatmentScript><![CDATA[
+ <!--    <postTreatmentScript><![CDATA[
 def server=project.properties['server']
 def subTarget=project.properties['subTarget']
 						
@@ -35,7 +35,7 @@ def params = new Parameters(
 params.init(false)
 
 new PostTreatment().run(this, log, ant, project.basedir, params.projectDir, server, subTarget, project.build.directory)
-]]></postTreatmentScript>
+]]></postTreatmentScript> -->
   </properties>
   <modules>
     <module>config</module>
@@ -52,7 +52,7 @@ new PostTreatment().run(this, log, ant, project.basedir, params.projectDir, serv
        <plugin>
          <groupId>pl.project13.maven</groupId>
          <artifactId>git-commit-id-plugin</artifactId>
-         <version>2.1.4</version>
+         <version>2.1.10</version>
          <executions>
            <execution>
              <goals>
@@ -70,7 +70,7 @@ new PostTreatment().run(this, log, ant, project.basedir, params.projectDir, serv
     </plugins>
     <pluginManagement>
       <plugins>
-		<plugin>
+<!-- 		<plugin>
 			<groupId>org.codehaus.groovy.maven</groupId>
 			<artifactId>gmaven-plugin</artifactId>
 		    <version>1.0</version>
@@ -115,7 +115,7 @@ class PostTreatment {
 					</configuration>
 				</execution>
 			</executions>
-		</plugin>
+		</plugin> -->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
