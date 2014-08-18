@@ -3,9 +3,9 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
     xmlns:p="http://www.springframework.org/schema/p"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans 
-						http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+						http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
-    <bean id="proxy" 
+    <bean id="proxy"  init-method="init"
           class="org.georchestra.security.Proxy">
 <!--          <property name="defaultTarget" value="${proxy.defaultTarget}/sec/"/>-->
           <property name="headerManagement" ref="headerManagementBean"/>
@@ -21,7 +21,8 @@
           <property name="port" value="${psql.port}"/> -->
           <property name="user" value="${psql.user}"/>
           <property name="password" value="${psql.pass}"/>
-          
+          <property name="proxyPermissionsFile" value="permissions.xml"/>
+
           <property name="targets">
                <map>
 ${proxy.mapping}
