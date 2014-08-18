@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:p="http://www.springframework.org/schema/p"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans 
-						http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-    <bean id="proxy" 
+    <bean id="proxy" init-method="init"
           class="org.georchestra.security.Proxy">
 <!--          <property name="defaultTarget" value="${proxy.defaultTarget}/sec/"/>-->
           <property name="headerManagement" ref="headerManagementBean"/>
@@ -21,6 +21,7 @@
           <property name="port" value="${psql.port}"/> -->
           <property name="user" value="${psql.user}"/>
           <property name="password" value="${psql.pass}"/>
+          <property name="proxyPermissions" value="/WEB-INF/permissions.properties"/>
           
           <property name="targets">
                <map>
@@ -56,7 +57,6 @@ ${proxy.mapping}
              own referrer header
 
              Comment out property to use client referrer instead of this host -->
-        <property name="referer" value="${public.host}"/>
         <property name="headerProviders">
             <list>
                 <bean class="org.georchestra.security.SecurityRequestHeaderProvider"/>
@@ -72,16 +72,6 @@ ${proxy.mapping}
         </property>
         <property name="filters">
             <list>
-                <bean class="org.georchestra.security.SecurityRequestHeaderFilter">
-                    <property name="trustedHosts">
-                        <list>
-                            <value>localhost</value>
-                            <value>127.0.0.1</value>
-                            <value>127.0.1.1</value>
-                            <value>${public.host}</value>
-                        </list>
-                    </property>
-                </bean>
             </list>
         </property>
     </bean>
@@ -89,5 +79,5 @@ ${proxy.mapping}
     <bean id="properties-loader"
         class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
         p:locations="/WEB-INF/security-proxy.properties" />
-    
+
 </beans>

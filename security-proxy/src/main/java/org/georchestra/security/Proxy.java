@@ -1,36 +1,8 @@
 package org.georchestra.security;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.InetAddress;
-import java.net.MalformedURLException;
-import java.net.ProxySelector;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.zip.DeflaterInputStream;
-import java.util.zip.DeflaterOutputStream;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
-
-import javax.servlet.ServletException;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.Maps;
+import com.google.common.io.Closer;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -53,7 +25,14 @@ import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.ProxySelectorRoutePlanner;
 import org.apache.http.message.BasicNameValuePair;
+import org.georchestra.ogcservstatistics.log4j.OGCServiceMessageFormatter;
 import org.georchestra.security.healthcenter.DatabaseHealthCenter;
+import org.georchestra.security.permissions.Permissions;
+import org.georchestra.security.permissions.UriMatcher;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.oxm.xstream.XStreamMarshaller;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.DefaultRedirectStrategy;
@@ -63,8 +42,39 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import org.georchestra.ogcservstatistics.log4j.OGCServiceMessageFormatter;
-import org.georchestra.security.healthcenter.DatabaseHealthCenter;
+import java.io.Closeable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.ProxySelector;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.net.UnknownHostException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.zip.DeflaterInputStream;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.xml.transform.stream.StreamSource;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 
 /**
@@ -96,10 +106,13 @@ import org.georchestra.security.healthcenter.DatabaseHealthCenter;
  */
 @Controller
 @RequestMapping("/*")
-public class Proxy {
+public class Proxy implements ApplicationContextAware {
     protected static final Log logger = LogFactory.getLog(Proxy.class.getPackage().getName());
     protected static final Log statsLogger = LogFactory.getLog(Proxy.class.getPackage().getName() + ".statistics");
-    
+    private String proxyPermissionsFile;
+    private Permissions proxyPermissions = new Permissions();
+    private ApplicationContext applicationContext;
+
     protected enum RequestType {
         GET, POST, DELETE, PUT, TRACE, OPTIONS, HEAD
     }
@@ -122,7 +135,7 @@ public class Proxy {
     
     /*  ----------  Required for  DatabaseHealthCenter -------------------- */
     
-    private static Boolean checkHealth;
+    private static Boolean checkHealth = false;
 	private String database;
     private String user;
     private String password;
@@ -130,7 +143,45 @@ public class Proxy {
     
     /*  ----------  start work around for no gateway option  -------------- */
     private Gateway gateway = new Gateway();
-    
+
+    public void init() throws IOException, ClassNotFoundException {
+        if (targets != null) {
+            for (String url : targets.values()) {
+                new URL(url); // test that it is a valid URL
+            }
+        }
+        if (proxyPermissionsFile != null) {
+            Closer closer = Closer.create();
+            try {
+                InputStream inStream = null;
+                if (proxyPermissionsFile.startsWith("file:") || proxyPermissionsFile.startsWith("http:") ||
+                    proxyPermissionsFile.startsWith("https:")) {
+                    try {
+                        inStream = closer.register(new URL(proxyPermissionsFile).openStream());
+                    } catch (MalformedURLException e) {
+                        // try to load from servlet context then
+                    }
+                }
+
+                if (inStream == null) {
+                    ServletContext servletContext = applicationContext.getBean(ServletContext.class);
+                    inStream = closer.register(servletContext.getResource(proxyPermissionsFile).openStream());
+                }
+
+                Map<String, Class<?>> aliases = Maps.newHashMap();
+                aliases.put(Permissions.class.getSimpleName().toLowerCase(), Permissions.class);
+                aliases.put(UriMatcher.class.getSimpleName().toLowerCase(), UriMatcher.class);
+
+                XStreamMarshaller unmarshaller = new XStreamMarshaller();
+                unmarshaller.setAliasesByType(aliases);
+
+                setProxyPermissions((Permissions) unmarshaller.unmarshal(new StreamSource(inStream)));
+            } finally {
+                closer.close();
+            }
+        }
+    }
+
     @RequestMapping(value="/gateway", method={GET,POST} )
     public void gateway(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         gateway.loadCredentialsPage(request, response);
@@ -142,7 +193,6 @@ public class Proxy {
     }
     /*  ----------  end work around for no gateway option  -------------- */
 
-    
     @RequestMapping(params="login", method={GET,POST} )
     public void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String uri = request.getRequestURI();
@@ -161,42 +211,100 @@ public class Proxy {
     
     // ----------------- Method calls where request is encoded in a url parameter of request ----------------- //
     @RequestMapping(params={"url","!login"}, method=RequestMethod.POST)
-    public void handleUrlPOSTRequest(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) {
+    public void handleUrlPOSTRequest(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) throws
+            IOException {
         handleUrlParamRequest(request, response, RequestType.POST, sURL);
     }
 
     @RequestMapping(params={"url","!login"}, method=RequestMethod.GET)
-    public void handleUrlGETRequest(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) {   
+    public void handleUrlGETRequest(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) throws
+            IOException {
         handleUrlParamRequest(request, response, RequestType.GET, sURL);
     }
     @RequestMapping(params={"url","!login"}, method=RequestMethod.DELETE)
-    public void handleUrlDELETERequest(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) {   
+    public void handleUrlDELETERequest(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) throws IOException {
         handleUrlParamRequest(request, response, RequestType.DELETE, sURL);
     }
     @RequestMapping(params={"url","!login"}, method=RequestMethod.HEAD)
-    public void handleUrlHEADRequest(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) {   
+    public void handleUrlHEADRequest(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) throws
+            IOException {
         handleUrlParamRequest(request, response, RequestType.HEAD, sURL);
     }
     @RequestMapping(params={"url","!login"}, method=RequestMethod.OPTIONS)
-    public void handleUrlOPTIONSRequest(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) {   
+    public void handleUrlOPTIONSRequest(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) throws IOException {
         handleUrlParamRequest(request, response, RequestType.OPTIONS, sURL);
     }
     @RequestMapping(params={"url","!login"}, method=RequestMethod.PUT)
-    public void handleUrlPUTRequest(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) {   
+    public void handleUrlPUTRequest(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) throws
+            IOException {
         handleUrlParamRequest(request, response, RequestType.PUT, sURL);
     }
     @RequestMapping(params={"url","!login"}, method=RequestMethod.TRACE)
-    public void handleUrlTRACERequest(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) {   
+    public void handleUrlTRACERequest(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) throws IOException {
         handleUrlParamRequest(request, response, RequestType.TRACE, sURL);
     }
 
-    private void handleUrlParamRequest(HttpServletRequest request, HttpServletResponse response, RequestType type, String sURL) {
+    private void handleUrlParamRequest(HttpServletRequest request, HttpServletResponse response, RequestType type, String sURL) throws
+            IOException {
         if(request.getRequestURI().startsWith("/sec/proxy/")){
             testLegalContentType(request);
+            URL url = null;
+            try {
+                url = new URL(sURL);
+            } catch (MalformedURLException e) { // not an url
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+                return;
+            }
+
+            if (proxyPermissions.isDenied(url) || urlIsProtected(request, url)) {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "URL is not allowed.");
+                return;
+            }
             handleRequest(request, response, type, sURL, false);
         } else {
             handlePathEncodedRequests(request, response, type);
         }
+    }
+
+    private boolean urlIsProtected(HttpServletRequest request, URL url) throws IOException {
+        if (isSameServer(request, url)) {
+            String requestURI = url.getPath();
+
+            String[] requestSegments = splitRequestPath(requestURI);
+            for (String target : targets.values()) {
+
+                if (samePathPrefix(requestSegments, target)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean isSameServer(HttpServletRequest request, URL url) throws UnknownHostException {
+        return InetAddress.getByName(request.getServerName()).equals(InetAddress.getByName(url.getHost()));
+    }
+
+    private boolean samePathPrefix(String[] requestSegments, String target) throws MalformedURLException {
+        String[] targetSegments = splitRequestPath(new URL(target).getPath());
+        for (int i = 0; i < targetSegments.length; i++) {
+            String targetSegment = targetSegments[i];
+            if (!targetSegment.equals(requestSegments[i])) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private String[] splitRequestPath(String requestURI) {
+        String[] requestSegments;
+        if(requestURI.charAt(0) == '/') {
+            requestSegments = StringUtils.split(requestURI.substring(1), '/');
+        } else {
+            requestSegments = StringUtils.split(requestURI, '/');
+        }
+        return requestSegments;
     }
 
     /**
@@ -281,6 +389,7 @@ public class Proxy {
             
             if(sURL == null){
                 response.sendError(404);
+                return;
             }
 
             URL url;
@@ -320,8 +429,7 @@ public class Proxy {
     }
 
     private boolean isSameHostAndPort(HttpServletRequest request, URL url) throws IOException {
-        boolean sameserver = InetAddress.getByName(request.getServerName()).equals(InetAddress.getByName(url.getHost()));
-        return sameserver && url.getPort() == request.getServerPort();
+        return isSameServer(request, url) && url.getPort() == request.getServerPort();
     }
 
     private String findTarget(String requestURI) {
@@ -377,13 +485,8 @@ public class Proxy {
     }
     
     private String findMatchingTarget(String requestURI) {
-    	
-        String[] segments;
-        if(requestURI.charAt(0) == '/') {
-            segments = StringUtils.split(requestURI.substring(1), '/');
-        } else {
-            segments = StringUtils.split(requestURI, '/');
-        }
+
+        String[] segments = splitRequestPath(requestURI);
         
         if(segments.length == 0){
         	return null;
@@ -460,7 +563,7 @@ public class Proxy {
 		        //
 		        // Hack for geoserver
 		        // Should not be here. We must use a ProxyTarget class and define
-		        // if Host header should be formwared or not.
+		        // if Host header should be forwared or not.
 		        //
 		        request.getHeader("Host");
 		        proxyingRequest.setHeader("Host", request.getHeader("Host"));
@@ -469,7 +572,7 @@ public class Proxy {
 		        	logger.debug("Host header set to: " + proxyingRequest.getFirstHeader("Host").getValue() + " for proxy request.");
 		        }
             }
-            HttpResponse proxiedResponse = httpclient.execute(proxyingRequest);
+            HttpResponse proxiedResponse = executeHttpRequest(httpclient, proxyingRequest);
 
             org.apache.http.StatusLine statusLine = proxiedResponse
                     .getStatusLine();
@@ -528,6 +631,11 @@ public class Proxy {
         } finally {
             httpclient.getConnectionManager().shutdown();
         }
+    }
+
+    @VisibleForTesting
+    protected HttpResponse executeHttpRequest(HttpClient httpclient, HttpRequestBase proxyingRequest) throws IOException {
+        return httpclient.execute(proxyingRequest);
     }
 
     private void copyLocationHeaders(HttpResponse proxiedResponse, HttpServletResponse finalResponse) {
@@ -1063,8 +1171,6 @@ public class Proxy {
 		return this.checkHealth.booleanValue();
 	}
 
-
-    
     public void setRequireCharsetContentTypes(List<String> requireCharsetContentTypes) {
         this.requireCharsetContentTypes = requireCharsetContentTypes;
     }
@@ -1086,5 +1192,23 @@ public class Proxy {
      */
 	public void setRedirectStrategy(RedirectStrategy redirectStrategy) {
     	this.redirectStrategy = redirectStrategy;
+    }
+
+    public void setProxyPermissionsFile(String proxyPermissionsFile) {
+        this.proxyPermissionsFile = proxyPermissionsFile;
+    }
+
+    public void setProxyPermissions(Permissions proxyPermissions) throws UnknownHostException {
+        this.proxyPermissions = proxyPermissions;
+        this.proxyPermissions.init();
+    }
+
+    public Permissions getProxyPermissions() {
+        return proxyPermissions;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
 }

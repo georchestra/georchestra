@@ -52,7 +52,7 @@ new PostTreatment().run(this, log, ant, project.basedir, params.projectDir, serv
        <plugin>
          <groupId>pl.project13.maven</groupId>
          <artifactId>git-commit-id-plugin</artifactId>
-         <version>2.1.4</version>
+         <version>2.1.10</version>
          <executions>
            <execution>
              <goals>

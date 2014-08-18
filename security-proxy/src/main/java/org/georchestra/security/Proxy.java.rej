@@ -1,0 +1,44 @@
+diff a/security-proxy/src/main/java/org/georchestra/security/Proxy.java b/security-proxy/src/main/java/org/georchestra/security/Proxy.java	(rejected hunks)
+@@ -66,8 +66,42 @@
+  import org.springframework.web.bind.annotation.RequestMethod;
+  import org.springframework.web.bind.annotation.RequestParam;
+  
+++<<<<<<< Updated upstream
+ +import org.georchestra.ogcservstatistics.log4j.OGCServiceMessageFormatter;
+ +import org.georchestra.security.healthcenter.DatabaseHealthCenter;
+++=======
++ import java.io.Closeable;
++ import java.io.IOException;
++ import java.io.InputStream;
++ import java.io.OutputStream;
++ import java.net.InetAddress;
++ import java.net.MalformedURLException;
++ import java.net.ProxySelector;
++ import java.net.URI;
++ import java.net.URISyntaxException;
++ import java.net.URL;
++ import java.net.URLEncoder;
++ import java.nio.charset.Charset;
++ import java.util.ArrayList;
++ import java.util.Collections;
++ import java.util.Enumeration;
++ import java.util.List;
++ import java.util.Map;
++ import java.util.regex.Matcher;
++ import java.util.regex.Pattern;
++ import java.util.zip.DeflaterInputStream;
++ import java.util.zip.DeflaterOutputStream;
++ import java.util.zip.GZIPInputStream;
++ import java.util.zip.GZIPOutputStream;
++ import javax.servlet.ServletContext;
++ import javax.servlet.ServletException;
++ import javax.servlet.ServletInputStream;
++ import javax.servlet.http.HttpServletRequest;
++ import javax.servlet.http.HttpServletResponse;
++ 
++ import static org.springframework.web.bind.annotation.RequestMethod.GET;
++ import static org.springframework.web.bind.annotation.RequestMethod.POST;
+++>>>>>>> Stashed changes
+  
+  
+  /**
