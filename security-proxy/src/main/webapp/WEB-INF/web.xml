@@ -7,9 +7,18 @@
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>
-            /WEB-INF/applicationContext-security.xml
+            /WEB-INF/applicationContext-security.xml,/WEB-INF/applicationContext-metrics.xml,
         </param-value>
     </context-param>
+
+    <filter>
+        <filter-name>instrumentedFilter</filter-name>
+        <filter-class>com.codahale.metrics.servlet.InstrumentedFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>instrumentedFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
     <filter>
         <filter-name>UTF8Filter</filter-name>
@@ -25,7 +34,7 @@
         -1 denotes no reload check, default -1) -->
         <init-param>
             <param-name>confReloadCheckInterval</param-name>
-            <param-value>10</param-value>
+            <param-value>-1</param-value>
         </init-param>
         
            <init-param>
@@ -86,6 +95,18 @@
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
 
+    <listener>
+        <listener-class>org.georchestra.security.metrics.MetricsRegistryContextListener</listener-class>
+    </listener>
+
+    <listener>
+        <listener-class>org.georchestra.security.metrics.HealthCheckRegistryContextListener</listener-class>
+    </listener>
+
+    <listener>
+        <listener-class>org.georchestra.security.metrics.ProxyInstrumentedFilterContextListener</listener-class>
+    </listener>
+
     <!--
       - Publishes events for session creation and destruction through the application
       - context. Optional unless concurrent session control is being used.
@@ -95,6 +116,23 @@
     -->
 
 	<!-- servlets -->
+
+    <servlet>
+        <servlet-name>metrics-servlet</servlet-name>
+        <servlet-class>com.codahale.metrics.servlets.AdminServlet</servlet-class>
+    </servlet>
+
+    <!-- single mapping to spring, this only works properly if the advanced dispatch filter is
+         active -->
+    <servlet-mapping>
+        <servlet-name>metrics-servlet</servlet-name>
+        <url-pattern>/metrics</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>metrics-servlet</servlet-name>
+        <url-pattern>/metrics/*</url-pattern>
+    </servlet-mapping>
+
     <servlet>
         <servlet-name>proxy</servlet-name>
         <servlet-class>
