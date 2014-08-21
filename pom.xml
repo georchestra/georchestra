@@ -23,12 +23,12 @@
     <confdir>${project.build.directory}/conf</confdir>
     <encoding>UTF-8</encoding>
     <georchestra.version>${project.version}</georchestra.version>
-    <postTreatmentScript><![CDATA[
+    <!--    <postTreatmentScript><![CDATA[
 def server=project.properties['server']
 def subTarget=project.properties['subTarget']
 						
 def params = new Parameters(
-	project: project,
+    project: project,
 	target: server,
 	subTarget: subTarget,
 	log: log,
@@ -37,57 +37,54 @@ def params = new Parameters(
 params.init(false)
 
 new PostTreatment().run(this, log, ant, project.basedir, params.projectDir, server, subTarget, project.build.directory)
-]]></postTreatmentScript>
+]]></postTreatmentScript> -->
   </properties>
   <modules>
-    <module>geotools</module>
     <module>config</module>
-    <module>header</module>
+    <module>gt-mif</module>
+    <!-- <module>gt-ogr</module> now the geotools implementation is used -->
+    <module>static</module>
     <module>epsg-extension</module>
     <module>ogc-server-statistics</module>
     <module>server-deploy-support</module>
   </modules>
   <build>
     <plugins>
-      <!-- initialize git revision info -->
-      <plugin>
-        <groupId>pl.project13.maven</groupId>
-        <artifactId>git-commit-id-plugin</artifactId>
-        <version>2.1.4</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>revision</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <prefix>build</prefix>
-          <failOnNoGitDirectory>false</failOnNoGitDirectory>
-          <skipPoms>false</skipPoms>
-          <verbose>false</verbose>
-          <!-- see https://github.com/ktoso/maven-git-commit-id-plugin/issues/61#issuecomment-27995746 -->
-          <gitDescribe>
-            <skip>true</skip>
-          </gitDescribe>
-        </configuration>
-      </plugin>
+       <!-- initialize git revision info -->
+       <plugin>
+         <groupId>pl.project13.maven</groupId>
+         <artifactId>git-commit-id-plugin</artifactId>
+         <version>2.1.10</version>
+         <executions>
+           <execution>
+             <goals>
+               <goal>revision</goal>
+             </goals>
+           </execution>
+         </executions>
+         <configuration>
+           <prefix>build</prefix>
+           <failOnNoGitDirectory>false</failOnNoGitDirectory>
+           <skipPoms>false</skipPoms>
+           <verbose>false</verbose>
+         </configuration>
+       </plugin>
     </plugins>
     <pluginManagement>
       <plugins>
-        <plugin>
-          <groupId>org.codehaus.groovy.maven</groupId>
-          <artifactId>gmaven-plugin</artifactId>
-          <version>${gmaven.version}</version>
-          <executions>
-            <execution>
-              <id>create-missingpost-treatment</id>
-              <phase>prepare-package</phase>
-              <goals>
-                <goal>execute</goal>
-              </goals>
-              <configuration>
-                <source><![CDATA[
+<!-- 		<plugin>
+			<groupId>org.codehaus.groovy.maven</groupId>
+			<artifactId>gmaven-plugin</artifactId>
+		    <version>1.0</version>
+			<executions>
+				<execution>
+					<id>create-missingpost-treatment</id>
+					<phase>prepare-package</phase>
+					<goals>
+						<goal>execute</goal>
+					</goals>
+					<configuration>
+						<source><![CDATA[
 def confDir = new File(project.build.directory, "conf")
 def treatmentFile = new File(confDir, project.artifactId+"/PostTreatment.groovy")
 if(confDir.exists() && !treatmentFile.exists()){
@@ -101,25 +98,26 @@ class PostTreatment {
 }
 """
 }
-]]></source>
-              </configuration>
-            </execution>
-            <execution>
-              <id>post-treatment-script</id>
-              <phase>prepare-package</phase>
-              <goals>
-                <goal>execute</goal>
-              </goals>
-              <configuration>
-                <scriptpath>
-                  <element>${project.build.directory}/conf/${project.artifactId}</element>
-                  <element>${project.build.directory}/conf/scripts</element>
-                </scriptpath>
-                <source>${postTreatmentScript}</source>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
+
+						]]></source>
+					</configuration>
+				</execution>
+				<execution>
+					<id>post-treatment-script</id>
+					<phase>prepare-package</phase>
+					<goals>
+						<goal>execute</goal>
+					</goals>
+					<configuration>
+						<scriptpath>
+							<element>${project.build.directory}/conf/${project.artifactId}</element>
+							<element>${project.build.directory}/conf/scripts</element>
+						</scriptpath>
+						<source>${postTreatmentScript}</source>
+					</configuration>
+				</execution>
+			</executions>
+		</plugin> -->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
@@ -359,6 +357,16 @@ class PostTreatment {
       <id>jetty-repository</id>
       <name>Jetty Maven2 Repository</name>
       <url>https://oss.sonatype.org/content/groups/jetty/</url>
+    </repository>
+    <repository>
+      <id>jasig-repository</id>
+      <name>JA-SIG Maven2 Repository</name>
+      <url>http://developer.ja-sig.org/maven2</url>
+    </repository>
+    <repository>
+      <id>scala-tools.org</id>
+      <name>Scala-tools Maven2 Repository</name>
+      <url>http://scala-tools.org/repo-releases</url>
     </repository>
   </repositories>
   <pluginRepositories>
