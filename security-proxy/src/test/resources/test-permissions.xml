@@ -1,0 +1,15 @@
+<permissions>
+    <allowByDefault>true</allowByDefault>
+    <allowed>
+        <urimatcher>
+            <host>localhost</host>
+        </urimatcher>
+    </allowed>
+    <denied>
+        <urimatcher>
+            <host>localhost</host>
+            <port>433</port>
+            <path>/geonetwork/</path>
+        </urimatcher>
+    </denied>
+</permissions>
