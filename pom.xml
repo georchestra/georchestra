@@ -41,9 +41,7 @@ new PostTreatment().run(this, log, ant, project.basedir, params.projectDir, serv
   </properties>
   <modules>
     <module>config</module>
-    <module>gt-mif</module>
     <!-- <module>gt-ogr</module> now the geotools implementation is used -->
-    <module>static</module>
     <module>epsg-extension</module>
     <module>ogc-server-statistics</module>
     <module>server-deploy-support</module>
