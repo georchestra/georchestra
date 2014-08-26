@@ -142,7 +142,7 @@ GEOR.map = (function() {
                 maxRatio: 128,
                 layers: [
                     new OpenLayers.Layer.OSM("_OSM", [
-                        'http://a'+u, 'http://b'+u, 'http://c'+u
+                        'https://a'+u, 'https://b'+u, 'https://c'+u
                     ], {
                         transitionEffect: 'resize',
                         buffer: 0,
