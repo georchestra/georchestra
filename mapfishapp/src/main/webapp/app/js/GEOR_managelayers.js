@@ -446,13 +446,10 @@ GEOR.managelayers = (function() {
             var identifier;
             onStyleItemCheck = function(item, checked) {
                 if (checked === true) {
-                    // correct way of doing:
+                    // works from geowebcache 1.5.x on
+                    // see https://github.com/GeoWebCache/geowebcache/issues/194
                     layer.style = item.value;
-                    //layer.redraw(); (will be required once the hack below is removed)
-                    
-                    // incorrect way of doing, but mandatory because of 
-                    // https://github.com/GeoWebCache/geowebcache/issues/194
-                    observable.fireEvent("selectstyle", this, item.value);
+                    layer.redraw();
                 }
             };
             for (var i=0, len=styles.length; i<len; i++) {
