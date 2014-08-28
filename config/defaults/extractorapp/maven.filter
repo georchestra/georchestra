@@ -6,7 +6,7 @@ instance=@shared.instance.name@
 language=@shared.language@
 
 # The base url of the extractorapp as accessible from outside the intranet
-servletUrl=http://@shared.server.name@:@shared.server.port@/extractorapp
+servletUrl=@shared.url.scheme@://@shared.server.name@:@shared.server.port@/extractorapp
 
 # Hostname of the geoserver that is secured for geOrchestra.
 secureHost=@shared.server.name@
