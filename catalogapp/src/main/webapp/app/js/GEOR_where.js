@@ -122,7 +122,7 @@ GEOR.where = (function() {
             theme: null,
             projection: epsg900913,
             layers: [
-                new OpenLayers.Layer.OSM('OSM', 'http://tile.openstreetmap.org/${z}/${x}/${y}.png', {
+                new OpenLayers.Layer.OSM('OSM', 'https://tile.openstreetmap.org/${z}/${x}/${y}.png', {
                     buffer: 0,
                     attribution: "Carte CC-By-SA <a href='http://openstreetmap.org/' target='_blank'>OpenStreetMap</a>"
                 })
