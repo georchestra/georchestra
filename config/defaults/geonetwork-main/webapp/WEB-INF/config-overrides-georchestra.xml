@@ -70,7 +70,7 @@
     </file>
     <file name=".*/WEB-INF/config-gui.xml">
         <addXml xpath="">
-            <geoserver.url>http://${wfs.host}:${wfs.port}/geoserver/</geoserver.url>
+            <geoserver.url>@shared.url.scheme@://${wfs.host}:${wfs.port}/geoserver/</geoserver.url>
         </addXml>
         <replaceAtt xpath="client" attName="widget" value="true"/>
         <replaceAtt xpath="client" attName="url" value="../../apps/georchestra/"/>
