@@ -24,19 +24,19 @@
     <encoding>UTF-8</encoding>
     <georchestra.version>${project.version}</georchestra.version>
     <postTreatmentScript><![CDATA[
-      def server=project.properties['server']
-      def subTarget=project.properties['subTarget']
-      
-      def params = new Parameters(
-          project: project,
-          target: server,
-          subTarget: subTarget,
-          log: log,
-          ant: ant
-      )
-      params.init(false)
-      
-      new PostTreatment().run(this, log, ant, project.basedir, params.projectDir, server, subTarget, project.build.directory)
+       def server=project.properties['server']
+       def subTarget=project.properties['subTarget']
+       
+       def params = new Parameters(
+           project: project,
+           target: server,
+           subTarget: subTarget,
+           log: log,
+           ant: ant
+       )
+       params.init(false)
+       
+       new PostTreatment().run(this, log, ant, project.basedir, params.projectDir, server, subTarget, project.build.directory)
 ]]></postTreatmentScript>
   </properties>
   <modules>
@@ -395,4 +395,5 @@
       <url>http://dev.mapfish.org/maven/repository</url>
     </pluginRepository>
   </pluginRepositories>
+>>>>>>> 14.06
 </project>
