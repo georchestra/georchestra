@@ -273,10 +273,11 @@ GEOR.config = (function() {
         /**
          * Constant: MAP_DOTS_PER_INCH
          * {Float} Sets the resolution used for scale computation.
-         * Defaults to GeoServer defaults, which is 25.4 / 0.28
+         * Defaults to 1000 / 39.37 / 0.28
+         * see https://github.com/georchestra/georchestra/issues/736
          */
         MAP_DOTS_PER_INCH: getCustomParameter("MAP_DOTS_PER_INCH",
-            25.4 / 0.28),
+            1000 / 39.37 / 0.28),
 
         /**
          * Constant: GLOBAL_EPSG
