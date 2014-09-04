@@ -262,8 +262,8 @@ GEOR.print = (function() {
     };
     
     var updateBounds = function() {
-        // closest matching print extent will be chosen:
-        printPage.fit(layerStore.map, {mode: "closest"});
+        // the print extent is fully shown:
+        printPage.fit(layerStore.map, {mode: "screen"});
         var bbox = printPage.getPrintExtent(layerStore.map);
         boundsLayer.destroyFeatures();
         boundsLayer.addFeatures([
