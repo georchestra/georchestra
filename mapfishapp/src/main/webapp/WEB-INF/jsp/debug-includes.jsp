@@ -46,6 +46,7 @@
     <script type="text/javascript" src="<%= context %>/lib/externals/styler/lib/Styler/widgets/CircleSegment.js"></script>
     <script type="text/javascript" src="<%= context %>/lib/externals/styler/lib/Styler/lang/<%= lang %>.js"></script>
 
+    <script type="text/javascript" src="<%= context %>/app/js/Ext.state.LocalStorageProvider.js"></script>
     <script type="text/javascript" src="<%= context %>/app/js/GEOR_config.js"></script>
     <script type="text/javascript" src="<%= context %>/app/js/GEOR_Lang/<%= lang %>.js"></script>
     <script type="text/javascript" src="<%= context %>/app/js/GEOR_querier.js"></script>
