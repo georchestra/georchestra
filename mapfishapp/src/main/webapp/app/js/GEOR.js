@@ -520,6 +520,18 @@ Ext.namespace("GEOR");
         GEOR.managelayers.events.on({
             "selectstyle": function(layerRecord, styles) {
                 updateLayerParams(layerRecord, null, styles);
+            },
+            "beforecontextcleared": function() {
+                // warn other modules about what's goign on
+                // (gfi, selectfeature, querier, editor, styler)
+                // so that they can properly shutdown.
+                if (GEOR.edit) {
+                    GEOR.edit.deactivate();
+                }
+                GEOR.styler.deactivate();
+                GEOR.selectfeature.deactivate();
+                GEOR.getfeatureinfo.deactivate();
+                southPanel.collapse();
             }
         });
 

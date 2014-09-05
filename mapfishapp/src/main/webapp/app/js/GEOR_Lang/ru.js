@@ -173,6 +173,8 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Push up this layer": "Переместить этот слой вверх",
     "Push down this layer": "Опустить этот слой",
     "Add layers": "Добавить слои",
+    //"Remove all layers": "Supprimer toutes les couches", // TODO: translate
+    //"Are you sure you want to remove all layers ?": "Voulez vous réellement supprimer toutes les couches ?", // TODO: translate
     "source: ": "источник : ",
     "unknown": "неизвестный",
     "Actions": "Действия",

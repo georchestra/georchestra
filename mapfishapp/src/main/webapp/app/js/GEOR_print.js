@@ -93,7 +93,7 @@ GEOR.print = (function() {
      * Constant: VECTOR_LAYER_NAME
      * {String} The vector layer name, as used across this module
      */
-    var VECTOR_LAYER_NAME = '_print_bounds_';
+    var VECTOR_LAYER_NAME = '__georchestra_print_bounds_';
 
     /**
      * property: defaultCustomParams

@@ -217,6 +217,8 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Push up this layer": "Monter cette couche",
     "Push down this layer": "descendre cette couche",
     "Add layers": "Ajouter des couches",
+    "Remove all layers": "Supprimer toutes les couches",
+    "Are you sure you want to remove all layers ?": "Voulez vous réellement supprimer toutes les couches ?",
     "source: ": "source : ",
     "unknown": "inconnue",
     "Actions": "Actions",

@@ -222,6 +222,8 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Push up this layer": "Subir esta capa",
     "Push down this layer": "Bajar esta capa",
     "Add layers": "Añadir capas",
+    "Remove all layers": "Retirar todas las capas",
+    "Are you sure you want to remove all layers ?": "¿Seguro que desea retirar todas las capas?",
     "source: ": "fuente: ",
     "unknown": "desconocido",
     "Actions": "Acciones",

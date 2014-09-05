@@ -173,7 +173,7 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
      *
      */
     _createVectorLayer: function() {
-        this._vectorLayer = new OpenLayers.Layer.Vector("search_results_"+this.id, {
+        this._vectorLayer = new OpenLayers.Layer.Vector("_search_results_"+this.id, {
             displayInLayerSwitcher: false,
             styleMap: GEOR.util.getStyleMap(),
             rendererOptions: {

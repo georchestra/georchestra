@@ -137,7 +137,9 @@ div.olMapViewport {
 .x-btn .btn-add {
     background-image: url(../img/famfamfam/add.png);
 }
-
+.x-btn .btn-removeall {
+    background-image: url(../img/famfamfam/cross.gif);
+}
 .geor-save-map {
     background-image: url(../img/famfamfam/folder_page.gif) !important;
 }

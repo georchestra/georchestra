@@ -63,7 +63,12 @@ GEOR.managelayers = (function() {
          * Event: selectstyle
          * Fires when a new wms layer style has been selected
          */
-        "selectstyle"
+        "selectstyle",
+        /**
+         * Event: beforecontextcleared
+         * Fired before all layers are removed from map
+         */
+        "beforecontextcleared"
     );
 
     /**
@@ -147,12 +152,12 @@ GEOR.managelayers = (function() {
                     ),
                     width: 360,
                     yesCallback: function() {
-                        layer.destroy();
+                        layer.map.removeLayer(layer);
                     },
                     scope: this
                 });
             } else {
-                layer.destroy();
+                layer.map.removeLayer(layer);
             }
             break;
         }
@@ -308,8 +313,6 @@ GEOR.managelayers = (function() {
             }
         };
     };
-
-
 
     /**
      * Method: createFormatMenu
@@ -824,6 +827,27 @@ GEOR.managelayers = (function() {
     };
 
     /**
+     * Method: removeAllLayers
+     *
+     * Parameters:
+     * map - {OpenLayers.Map}
+     */
+    var removeAllLayers = function(map) {
+        // warn other modules about what's goign on
+        // (gfi, selectfeature, querier, editor, styler)
+        // so that they can properly shutdown.
+        observable.fireEvent("beforecontextcleared");
+        // remove layers except the lowest index one
+        // (our fake base layer) and "our" layers (eg: measure, print, etc)
+        var re = /^(__georchestra|OpenLayers.Handler)/;
+        for (var i = map.layers.length - 1; i >= 1; i--) {
+            if (!re.test(map.layers[i].name)) {
+                map.removeLayer(map.layers[i]);
+            }
+        }
+    };
+
+    /**
      * Method: createEditionItems
      *
      * Parameters:
@@ -1143,6 +1167,26 @@ GEOR.managelayers = (function() {
                 rootVisible: false,
                 root: layerContainer,
                 buttons: [{
+                    text: "",
+                    tooltip: tr("Remove all layers"),
+                    iconCls: 'btn-removeall',
+                    handler: function() {
+                        if (GEOR.config.CONFIRM_LAYER_REMOVAL) {
+                            GEOR.util.confirmDialog({
+                                msg: tr(
+                                    "Are you sure you want to remove all layers ?"
+                                ),
+                                width: 360,
+                                yesCallback: function() {
+                                    removeAllLayers(layerStore.map);
+                                },
+                                scope: this
+                            });
+                        } else {
+                            removeAllLayers(layerStore.map);
+                        }
+                    }
+                }, {
                     text: tr("Add layers"),
                     iconCls: 'btn-add',
                     handler: function() {
