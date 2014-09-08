@@ -280,10 +280,15 @@ GEOR.map = (function() {
                     }
                 });
             }
-
-            // Errors should be non-blocking since http://applis-bretagne.fr/redmine/issues/1749
-            // so we "keep" every layer, and only display a warning message
-            keep.push(r);
+            
+            // we discard WMS layers without a valid URL (see )
+            if (!(layer.CLASS_NAME === "OpenLayers.Layer.WMS" && !layer.url)) {
+                // Errors should be non-blocking since http://applis-bretagne.fr/redmine/issues/1749
+                // so we "keep" every layer, and only display a warning message
+                keep.push(r);
+            } else {
+                errors.push(tr("Problem restoring a context saved with buggy Chrome 36 or 37"));
+            }
         });
 
         if (errors.length > 0) {

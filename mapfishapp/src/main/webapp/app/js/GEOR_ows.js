@@ -306,10 +306,6 @@ GEOR.ows = (function() {
                 layer = layer.get("layer");
             }
             options = options || {};
-            if (!layer.url) {
-                // see https://code.google.com/p/chromium/issues/detail?id=390879
-                alert(OpenLayers.i18n("Problem restoring a context saved with buggy Chrome 36 or 37"));
-            }
             var storeOptions = Ext.applyIf({
                 // For some reason, if layer.url ends up with ?
                 // the generated request URL is not correct
