@@ -267,6 +267,8 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     /* GEOR_ows.js strings */
     "The NAME layer was not found in WMS service.":
         "La couche ${NAME} n'a pas été trouvée dans le service WMS.",
+    "Problem restoring a context saved with buggy Chrome 36 or 37":
+        "Nous ne pouvons restaurer un contexte enregistré avec Chrome 36 ou 37",
     /* GEOR_print.js strings */
     "Sources: ": "Sources : ",
     "Source: ": "Source : ",
