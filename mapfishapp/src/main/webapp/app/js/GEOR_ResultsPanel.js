@@ -209,6 +209,62 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
 
         var bbar = [
             {
+                text: tr("Select"),
+                menu: new Ext.menu.Menu({
+                    items: [{
+                        text: tr("All"),
+                        handler: function() {
+                            var grid = this.findByType("grid")[0];
+                            if (grid) {
+                                grid.getSelectionModel().selectAll();
+                            }
+                        },
+                        scope: this
+                    },{
+                        text: tr("None"),
+                        handler: function() {
+                            var grid = this.findByType("grid")[0];
+                            if (grid) {
+                                grid.getSelectionModel().clearSelections();
+                            }
+                        },
+                        scope: this
+                    },{
+                        text: tr("Invert selection"),
+                        handler: function() {
+                            var grid = this.findByType("grid")[0];
+                            if (grid) {
+                                var sm = grid.getSelectionModel(),                            
+                                    recordsToSelect = [];
+                                this._store.each(function(record) {
+                                    if (!sm.isSelected(record)) {
+                                        recordsToSelect.push(record);
+                                    }
+                                });
+                                sm.clearSelections();
+                                sm.selectRecords(recordsToSelect);
+                            }
+                        },
+                        scope: this
+                    }]
+                })
+            }, {
+                text: tr("Actions on selection"),
+                menu: new Ext.menu.Menu({
+                    //plain: true,
+                    items: [{
+                        text: tr("Zoom"),
+                        tooltip: tr("Zoom to results extent"),
+                        handler: this._zoomToLayerExtent,
+                        scope: this
+                    },{
+                        text: tr("CSV Export"),
+                        tooltip: tr("Export results as CSV"),
+                        handler: this._csvExportBtnHandler,
+                        scope: this
+                    }]
+                })
+            }, '->', tbtext, '|', {
                 text: tr("Clean"),
                 tooltip: tr("Clean all results on the map and in the table"),
                 handler: function() {
@@ -216,16 +272,6 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
                     this._layerBounds = null;
                     tbtext.hide();
                 },
-                scope: this
-            }, tbtext, '->', {
-                text: tr("Zoom"),
-                tooltip: tr("Zoom to results extent"),
-                handler: this._zoomToLayerExtent,
-                scope: this
-            },{
-                text: tr("CSV Export"),
-                tooltip: tr("Export results as CSV"),
-                handler: this._csvExportBtnHandler,
                 scope: this
             }
         ];
