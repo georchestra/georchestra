@@ -282,36 +282,41 @@ GEOR.map = (function() {
                 });
             }
 
-            // Errors should be non-blocking since http://applis-bretagne.fr/redmine/issues/1749
-            // so we "keep" every layer, and only display a warning message
-            keep.push(r);
-
-            // WMSDescribeLayer for each new WMS Layer
-            if (r.get("type") == "WMS" && r.get("_described") !== true) {
-                GEOR.waiter.show();
-                GEOR.ows.WMSDescribeLayer(r, {
-                    success: function(store, records) {
-                        var wfsRecord = GEOR.ows.getWfsInfo(records);
-                        if (wfsRecord) {
-                            r.set("WFS_typeName", wfsRecord.get("typeName"));
-                            r.set("WFS_URL", wfsRecord.get("owsURL"));
-                        }
-                        var wcsRecord = GEOR.ows.getWcsInfo(records);
-                        if (wcsRecord) {
-                            r.set("WCS_typeName", wcsRecord.get("typeName"));
-                            r.set("WCS_URL", wcsRecord.get("owsURL"));
-                        }
-                        r.set("_described", true);
-                        // fire event to let the whole app know about it.
-                        observable.fireEvent("describelayer", r);
-                    },
-                    failure: function() {
-                        r.set("_described", true);
-                        // fire event
-                        observable.fireEvent("describelayer", r);
-                    },
-                    scope: this
-                });
+            // we discard WMS layers without a valid URL (see https://github.com/georchestra/georchestra/issues/759)
+            if (!(layer.CLASS_NAME === "OpenLayers.Layer.WMS" && !layer.url)) {
+                // Errors should be non-blocking since http://applis-bretagne.fr/redmine/issues/1749
+                // so we "keep" every layer, and only display a warning message
+                keep.push(r);
+                
+                // WMSDescribeLayer for each new WMS Layer
+                if (r.get("type") == "WMS" && r.get("_described") !== true) {
+                    GEOR.waiter.show();
+                    GEOR.ows.WMSDescribeLayer(r, {
+                        success: function(store, records) {
+                            var wfsRecord = GEOR.ows.getWfsInfo(records);
+                            if (wfsRecord) {
+                                r.set("WFS_typeName", wfsRecord.get("typeName"));
+                                r.set("WFS_URL", wfsRecord.get("owsURL"));
+                            }
+                            var wcsRecord = GEOR.ows.getWcsInfo(records);
+                            if (wcsRecord) {
+                                r.set("WCS_typeName", wcsRecord.get("typeName"));
+                                r.set("WCS_URL", wcsRecord.get("owsURL"));
+                            }
+                            r.set("_described", true);
+                            // fire event to let the whole app know about it.
+                            observable.fireEvent("describelayer", r);
+                        },
+                        failure: function() {
+                            r.set("_described", true);
+                            // fire event
+                            observable.fireEvent("describelayer", r);
+                        },
+                        scope: this
+                    });
+                }
+            } else {
+                errors.push(tr("Problem restoring a context saved with buggy Chrome 36 or 37"));
             }
         });
 

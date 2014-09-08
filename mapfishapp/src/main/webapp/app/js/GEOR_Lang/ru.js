@@ -211,6 +211,8 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "scale picker": "масштаб",
     /* GEOR_ows.js strings */
     "The NAME layer was not found in WMS service.": "Слой ${NAME} не был найден в сервисе WMS (Web Map Service : Cервис Веб-Карт).",
+    //"Problem restoring a context saved with buggy Chrome 36 or 37":
+    //    "Nous ne pouvons restaurer un contexte enregistré avec Chrome 36 ou 37", // TODO: translate
     /* GEOR_print.js strings */
     "Sources: ": "Источники",
     "Source: ": "Источник",
