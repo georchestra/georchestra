@@ -266,6 +266,8 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     /* GEOR_ows.js strings */
     "The NAME layer was not found in WMS service.":
         "La capa ${NAME} no se encuentra en el servicio WMS",
+    "Problem restoring a context saved with buggy Chrome 36 or 37":
+        "No se puede restaurar un contexto cartográfico guardado con Chrome 36 o 37",
     /* GEOR_print.js strings */
     "Sources: ": "Fuentes: ",
     "Source: ": "Fuente: ",
