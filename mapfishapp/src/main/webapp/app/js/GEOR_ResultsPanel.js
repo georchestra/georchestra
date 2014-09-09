@@ -78,12 +78,6 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
     _model: null,
 
     /**
-     * Private: layerBounds
-     * {OpenLayers.Bounds} The cached vector layer bounds
-     */
-    _layerBounds: null,
-
-    /**
      * Method: _csvExportBtnHandler
      * Triggers the download dialog for CSV export of the store's content
      */
@@ -93,13 +87,27 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
             return;
         }
         GEOR.waiter.show();
-        var data = new Array(t), att, fields = this._model.getFields();
+        var data = [], att, record, raw,
+            fields = this._model.getFields(),
+            grid = this.findByType("grid")[0];
+        if (!grid) {
+            return;
+        }
+        var sm = grid.getSelectionModel(),
+            bypass = false;
+        if (sm.getCount() == 0) {
+            bypass = true;
+        }
         for (var i=0; i<t; i++) {
-            data[i] = [];
-            att = this._store.getAt(i).get('feature').attributes;
-            // see http://applis-bretagne.fr/redmine/issues/4084
-            for (var j=0, ll=fields.length; j<ll; j++) {
-                data[i].push(att[fields[j]] || '');
+            record = this._store.getAt(i);
+            if (bypass || sm.isSelected(record)) {
+                raw = [];
+                att = record.get('feature').attributes;
+                // see http://applis-bretagne.fr/redmine/issues/4084
+                for (var j=0, ll=fields.length; j<ll; j++) {
+                    raw.push(att[fields[j]] || '');
+                }
+                data.push(raw);
             }
         }
         var format = new OpenLayers.Format.JSON();
@@ -151,20 +159,6 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
             map.zoomToExtent(layerBounds);
         } else if (bounds.getWidth() === 0 && bounds.getHeight() === 0) {
             map.setCenter(bounds.getCenterLonLat());
-        }
-        this._layerBounds = layerBounds;
-    },
-
-    /**
-     * Method: _zoomToLayerExtent
-     * Sets the map extent in order to see all results
-     * Caches the vector layer extent if required
-     */
-    _zoomToLayerExtent: function() {
-        if (!this._layerBounds) {
-            this._layerBounds = this._zoomToFeatures(this._vectorLayer.features);
-        } else {
-            this._vectorLayer.map.zoomToExtent(this._layerBounds);
         }
     },
 
@@ -249,13 +243,26 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
                     }]
                 })
             }, {
-                text: tr("Actions on selection"),
+                text: tr("Actions"),
+                tooltip: tr("Actions on the selection or on all results if no row is selected"),
                 menu: new Ext.menu.Menu({
-                    //plain: true,
                     items: [{
                         text: tr("Zoom"),
                         tooltip: tr("Zoom to results extent"),
-                        handler: this._zoomToLayerExtent,
+                        handler: function() {
+                            var grid = this.findByType("grid")[0];
+                            if (grid) {
+                                var sm = grid.getSelectionModel(),
+                                    selectedFeatures = []
+                                    bypass = (sm.getCount() == 0);
+                                this._store.each(function(record) {
+                                    if (bypass || sm.isSelected(record)) {
+                                        selectedFeatures.push(record.get("feature"));
+                                    }
+                                });
+                                this._zoomToFeatures(selectedFeatures);
+                            }
+                        },
                         scope: this
                     },{
                         text: tr("CSV Export"),
@@ -269,7 +276,6 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
                 tooltip: tr("Clean all results on the map and in the table"),
                 handler: function() {
                     this._vectorLayer.destroyFeatures();
-                    this._layerBounds = null;
                     tbtext.hide();
                 },
                 scope: this
@@ -314,7 +320,6 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
                 },
                 "beforedestroy": function() {
                     me._vectorLayer.destroyFeatures();
-                    me._layerBounds = null;
                     this.selModel.unbind(); // required to handle issue 256
                     // http://applis-bretagne.fr/redmine/issues/show/256
                     // this deactivates Feature handler,
@@ -335,9 +340,6 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
      */
     populate: function(options) {
         var tr = OpenLayers.i18n;
-
-        // we clear the bounds cache:
-        this._layerBounds = null;
 
         var features = options.features;
         if (!features || features.length === 0) {
@@ -414,7 +416,6 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
     clean: function() {
         if (this._vectorLayer) {
             this._vectorLayer.setVisibility(false);
-            this._layerBounds = null;
         }
     },
 
