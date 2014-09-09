@@ -529,58 +529,91 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
         // see http://osgeo-org.1560.n6.nabble.com/CSW-GetRecords-problem-with-spaces-tp3862749p3862750.html
         var v = this.getValue(),
             words = v.replace(new RegExp("[,;:/%()!*.\\[\\]~&=]","g"), ' ').split(' '),
-            // adding wms in the filters list helps getting records where a WMS layer is referenced:
-            filters = [
-                // improve relevance of results: (might not be relevant with other csw servers than geonetwork)
-                new OpenLayers.Filter.Comparison({
-                    type: "~",
-                    property: "AnyText",
-                    value: '*wms*'
-                }),
-                // do not request dc:type = service, just dc:type = dataset OR series
-                new OpenLayers.Filter.Logical({
-                    type: "||",
-                    filters: [
-                        new OpenLayers.Filter.Comparison({
-                            type: "~",
-                            property: "type",
-                            value: 'dataset'
-                        }),
-                        new OpenLayers.Filter.Comparison({
-                            type: "~",
-                            property: "type",
-                            value: 'series'
-                        })
-                    ]
-                })
-            ];
+            // data type filters
+            // improve relevance of results: (might not be relevant with other csw servers than geonetwork)
+            byTypes = new OpenLayers.Filter.Logical({
+                type: "&&",
+                filters: [
+                    new OpenLayers.Filter.Comparison({
+                        type: "~",
+                        property: "AnyText",
+                        value: '*wms*'
+                    }),
+                    // do not request dc:type = service, just dc:type = dataset OR series
+                    new OpenLayers.Filter.Logical({
+                        type: "||",
+                        filters: [
+                            new OpenLayers.Filter.Comparison({
+                                type: "~",
+                                property: "type",
+                                value: 'dataset'
+                            }),
+                            new OpenLayers.Filter.Comparison({
+                                type: "~",
+                                property: "type",
+                                value: 'series'
+                            })
+                        ]
+                    })
+                ]
+            }),
+            // exact match filters
+            // to return direct hits on same id, titles
+            byIds =  new OpenLayers.Filter.Logical({
+                type: "||",
+                filters: [
+                    new OpenLayers.Filter.Comparison({
+                        type: "==",
+                        property: "Title",
+                        value: v
+                    }),
+                    new OpenLayers.Filter.Comparison({
+                        type: "==",
+                        property: "AlternateTitle",
+                        value: v
+                    }),
+                    new OpenLayers.Filter.Comparison({
+                        type: "==",
+                        property: "Identifier",
+                        value: v
+                    }),
+                    new OpenLayers.Filter.Comparison({
+                        type: "==",
+                        property: "ResourceIdentifier",
+                        value: v
+                    })
+                ]
+            }),
+            // word filters
+            byWords = [];
+
         Ext.each(words, function(word) {
             if (word) {
-                // #word : search in keywords
+                // #word : search in keywords, use _ for space
                 if (/^#.+$/.test(word)) {
-                    filters.push(
+                    byWords.push(
                         new OpenLayers.Filter.Comparison({
-                            type: "~",
+                            type: "==",
                             property: "Subject",
-                            value: word.substr(1) + "*",
+                            value: word.replace("_", " ").substr(1),
                             matchCase: false
                         })
                     );
                 }
-                // @word : search for organizations
+                // @word : search for organizations, use _ for space
                 else if (/^@.+$/.test(word)) {
-                    filters.push(
+                    byWords.push(
                         new OpenLayers.Filter.Comparison({
-                            type: "~",
+                            type: "==",
                             property: "OrganisationName",
-                            value: word.substr(1) + "*",
+                            value: word.replace("_", " ").substr(1),
                             matchCase: false
                         })
                     );
                 }
-                // -word : suppress entries with a specific pattern
+                // -word : exclude a specific word
                 else if (/^-.+$/.test(word)) {
-                    filters.push(
+                    byWords.push(
                         new OpenLayers.Filter.Logical({
                             type: "!",
                             filters: [
@@ -596,20 +629,20 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
                 }
                 // ?word : AnyText search
                 else if (/^\?.+$/.test(word)) {
-                    filters.push(
+                    byWords.push(
                         new OpenLayers.Filter.Comparison({
-                            type: "*",
+                            type: "~",
                             property: "AnyText",
                             value: word.substr(1) + "*",
                             matchCase: false
                         })
                     );
                 }
-                // word : search for exact match on predefined queryable properties
+                // word : search for hits on any property defined in CSW_FILTER_PROPERTIES
                 else {
-                    var defaultFilters = [];
+                    var byWordProp = [];
                     Ext.each(GEOR.config.CSW_FILTER_PROPERTIES, function(property) {
-                        defaultFilters.push(
+                        byWordProp.push(
                             new OpenLayers.Filter.Comparison({
                                 type: '~',
                                 property: property,
@@ -618,23 +651,37 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
                             })
                         );
                      });
-                    filters.push(
+                    byWords.push(
                         new OpenLayers.Filter.Logical({
                             type: "||",
-                            filters: defaultFilters
+                            filters: byWordProp
                         })
                     );
                 }
             }
         });
-        if (filters.length === 1) {
-            return filters[0];
-        } else {
-            return new OpenLayers.Filter.Logical({
-                type: "&&",
-                filters: filters
-            });
-        }
+
+        // combine filters alltogether
+        return new OpenLayers.Filter.Logical({
+            type: "&&",
+            filters: [
+                // data types
+                byTypes,
+                // query
+                new OpenLayers.Filter.Logical({
+                    type: "||",
+                    filters: [
+                        // exact matches
+                        byIds,
+                        // word matches
+                        new OpenLayers.Filter.Logical({
+                            type: "&&",
+                            filters: byWords
+                        })
+                    ]
+                })
+            ]
+        });
     },
 
     // search
