@@ -335,14 +335,12 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Invert selection": "Invertir la selección",
     "Actions on the selection or on all results if no row is selected":
         "Acciones en la selección o en todos los resultados, si no se selecciona ninguna fila",
-    /*
     "Store the geometry": 
         "Guardar la geometría",
     "Aggregates the geometries of the selected features and stores it in your browser for later use in the querier": 
         "La geometría de los objetos seleccionados se almacenan en el navegador para su uso posterior en consultas",
     "Geometry successfully stored in this browser": 
         "La geometría fue registrada correctamente en el navegador",
-    */
     "Clean all results on the map and in the table": "Quitar los resultados" +
         "del mapa y en la tabla",
     "Zoom": "Zoom",
