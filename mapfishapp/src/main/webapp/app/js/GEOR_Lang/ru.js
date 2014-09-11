@@ -36,6 +36,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "File submission failed or invalid file": "Ошибка отправки файла – возможно, что файл недействителен",
     "Type": "Тип",
     "Title": "Заголовок",
+    "Actions": "Действия",
     /* GEOR.js strings */
     "Cities": "Населённые пункты",
     "Recentering on GeoNames cities": "Переориентация на населённые пункты<br /> GeoNames.",
@@ -177,7 +178,6 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     //"Are you sure you want to remove all layers ?": "Voulez vous réellement supprimer toutes les couches ?", // TODO: translate
     "source: ": "источник : ",
     "unknown": "неизвестный",
-    "Actions": "Действия",
     //"Draw new point": "Dessiner un nouveau point",
     //"Draw new line": "Dessiner une nouvelle ligne",
     //"Draw new polygon": "Dessiner un nouveau polygone",
@@ -258,6 +258,17 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "One result": "Один результат",
     "No result": "Никакого результата нет",
     "Clean": "Стереть",
+    //"All": "Tous", // TODO: translate
+    //"None": "Aucun",
+    //"Invert selection": "Inverser la sélection",
+    //"Actions on the selection or on all results if no row is selected":
+    //    "Actions sur la sélection ou sur tous les résultats si aucun n'est sélectionné",
+    //"Store the geometry": 
+    //    "Enregistrer la géométrie",
+    //"Aggregates the geometries of the selected features and stores it in your browser for later use in the querier": 
+    //    "La géométrie des objets sélectionnés est enregistrée pour un usage ultérieur dans le requêteur",
+    //"Geometry successfully stored in this browser": 
+    //    "Géométrie enregistrée avec succès sur ce navigateur",
     "Clean all results on the map and in the table": "Удалить все результаты с карты и таблицы.",
     "Zoom": "Zoom",
     "Zoom to results extent": "Применить величину зума карты на результаты.",
