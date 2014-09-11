@@ -50,6 +50,72 @@ It is also possible to POST a JSON string to the home controller, for instance :
 In response, the viewer will add the above two layers to the map, and display a dialog window showing the layers from the http://ids.pigma.org/geoserver/ign_r/wms WMS server.
 
 
+CSWquerier
+========================
+
+CSWquerier is the function behind the "find in catalog" form. It performs csw queries on remote catalogs to find datas.
+
+
+
+Data types
+----------------
+The CSWquerier limits search on type=dataset||series. Other types will be ignored.
+
+Words
+---------
+CSWquerier splits the search phrase into words, using ,;:/%()!*.[]~&= as word separators. Then it builds filters
+based on the CSW_FILTER_PROPERTIES parameter (see GEOR_Custom.js).
+
+Such a search phrase
+
+    "edoras cadastral parcel"
+    
+becomes this filter set
+
+    (Title like edoras*
+    OR AlternateTitle like edoras*
+    OR Abstract like edoras*
+    OR Subject like edoras*
+    OR OrganisationName like edoras*)
+    AND
+    (Title like edoras*
+    OR AlternateTitle like cadastral*
+    OR Abstract like cadastral*
+    OR Subject like cadastral*
+    OR OrganisationName like cadastral*)
+    AND
+    (Title like edoras*
+    OR AlternateTitle like parcel*
+    OR Abstract like parcel*
+    OR Subject like parcel*
+    OR OrganisationName like parcel*)
+
+focusing on specific ISO queryables and avoiding false positive results. If you find it too restrictive, 
+you can opt for the 'AnyText' property :
+    
+    CSW_FILTER_PROPERTIES = ['AnyText']
+
+
+Special words
+--------------------
+Words prefixed with special characters always will limit the search on respective ISO queryable filters.
+
+    # for Subject (keywords) search, example #Cadastral will look for md with subject="Cadastral"
+    @ for OrganisationName search, example #DREAL will look for md with OrganisationName="DREAL"
+    ? for AnyText search, example ?fishermen will look for md with AnyText~"fishermen*"
+    - to exclude a term on AnyText, example -fishermen will exclude md matching AnyText~"fishermen*"
+
+Beware : those searches may be case sensitive depending on the CSW service implementation.
+
+
+Exact title/id match
+----------------------------
+A common usecase is metadata exact match : copy-paste the metadata title, alternate title or id to quickly discover the data.
+CSWquerier will always add 
+  "OR Title='searchphrase*' OR AlternateTitle='searchphrase' OR Identifier='searchphrase' OR ResourceIdentifier='searchphrase' filters for that purpose.
+
+
+
 Recenter on referentials
 ========================
 
