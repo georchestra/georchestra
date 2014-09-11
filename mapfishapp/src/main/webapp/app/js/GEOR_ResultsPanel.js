@@ -298,7 +298,7 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
                             var grid = this.findByType("grid")[0];
                             if (grid) {
                                 var sm = grid.getSelectionModel(),
-                                    selectedFeatures = []
+                                    selectedFeatures = [],
                                     bypass = (sm.getCount() == 0);
                                 this._store.each(function(record) {
                                     if (bypass || sm.isSelected(record)) {
