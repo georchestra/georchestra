@@ -177,6 +177,51 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
     },
 
     /**
+     * Method: _storeGeometry
+     * Aggregates selected features' geometries and stores it in LocalStorage
+     * for later use in querier.
+     *
+     */
+    _storeGeometry: function() {
+        // compute aggregation of geometries
+        var features = (this._vectorLayer.selectedFeatures.length ? 
+            this._vectorLayer.selectedFeatures : this._vectorLayer.features),
+            components = [], type;
+        Ext.each(features, function(feature) {
+            if (feature.geometry.components) {
+                // multi-geometry
+                Ext.each(feature.geometry.components, function(cmp) {
+                    // check that we are not adding pears with bananas
+                    if (!type) {
+                        type = cmp.CLASS_NAME;
+                        components.push(cmp.clone());
+                    } else if (cmp.CLASS_NAME == type){
+                        components.push(cmp.clone());
+                    }
+                });
+            } else {
+                // simple geometry
+                if (!type) {
+                    type = feature.geometry.CLASS_NAME;
+                    components.push(feature.geometry.clone());
+                } else if (feature.geometry.CLASS_NAME == type){
+                    components.push(feature.geometry.clone());
+                }
+            }
+        });
+        // store the geometry for later use
+        var singleType = type.substr(type.lastIndexOf('.')+1),
+            geometry = new OpenLayers.Geometry["Multi"+singleType](components);
+        var provider = Ext.state.Manager.getProvider();
+        provider.set('geometry',
+            provider.encodeValue(geometry.toString())
+        );
+        GEOR.util.infoDialog({
+            msg: OpenLayers.i18n("Geometry successfully stored in this browser")
+        });
+    },
+
+    /**
      * Method: _createGridPanel
      * Empties the container panel, creates and loads the gridPanel into it
      *
@@ -268,6 +313,11 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
                         text: tr("CSV Export"),
                         tooltip: tr("Export results as CSV"),
                         handler: this._csvExportBtnHandler,
+                        scope: this
+                    },{
+                        text: tr("Store the geometry"),
+                        tooltip: tr("Aggregates the geometries of the selected features and stores it in your browser for later use in the querier"),
+                        handler: this._storeGeometry,
                         scope: this
                     }]
                 })

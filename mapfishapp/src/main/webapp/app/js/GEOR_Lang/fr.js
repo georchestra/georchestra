@@ -333,6 +333,12 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Invert selection": "Inverser la sélection",
     "Actions on the selection or on all results if no row is selected":
         "Actions sur la sélection ou sur tous les résultats si aucun n'est sélectionné",
+    "Store the geometry": 
+        "Enregistrer la géométrie",
+    "Aggregates the geometries of the selected features and stores it in your browser for later use in the querier": 
+        "La géométrie des objets sélectionnés est enregistrée pour un usage ultérieur dans le requêteur",
+    "Geometry successfully stored in this browser": 
+        "Géométrie enregistrée avec succès sur ce navigateur",
     "Clean all results on the map and in the table": "Supprimer les " +
         "résultats affichés sur la carte et dans le tableau",
     "Zoom": "Zoom",
