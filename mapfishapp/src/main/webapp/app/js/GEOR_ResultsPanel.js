@@ -188,7 +188,7 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
             this._vectorLayer.selectedFeatures : this._vectorLayer.features),
             components = [], type;
         Ext.each(features, function(feature) {
-            if (feature.geometry.components) {
+            if (/OpenLayers\.Geometry\.Multi.*/.test(feature.geometry.CLASS_NAME)) {
                 // multi-geometry
                 Ext.each(feature.geometry.components, function(cmp) {
                     // check that we are not adding pears with bananas
