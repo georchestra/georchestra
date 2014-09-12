@@ -247,7 +247,7 @@ if(sec_roles != null) {
             // handle menus
             if (!window.addEventListener || !document.querySelectorAll) return;
             var each = function(els, callback) {
-                for (var i = 0, l=els.length ; i<l ; i++) {
+                for (var i = 0, l=els.length ; i<l ; i++) {
                     callback(els[i]);
                 }
             }
