@@ -58,6 +58,7 @@
 				<directory>${conf.base}</directory>
 				<filtering>true</filtering>
 				<excludes>
+                                        <exclude>excluded/**</exclude>
 					<exclude>build_support/**</exclude>
 					<exclude>**/*.class</exclude>
 					<exclude>**/*.jar</exclude>
