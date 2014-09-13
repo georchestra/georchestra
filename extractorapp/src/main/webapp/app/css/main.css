@@ -51,8 +51,7 @@
 #waiter span {
 	background:#EFAE00 none repeat scroll 0 0;
 	padding:2px;
-	-moz-border-radius: 0 0 4px 4px;
-	-webkit-border-radius: 0 0 4px 4px;
+	border-radius: 0 0 4px 4px;
 }
 
 .x-form-trigger-no-width {
