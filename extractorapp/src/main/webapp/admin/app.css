@@ -33,7 +33,6 @@ ul {
 }
 #msg-div .msg {
     border-radius: 8px;
-    -moz-border-radius: 8px;
     background: #F6F6F6;
     border: 2px solid #ccc;
     margin-top: 2px;
