@@ -158,7 +158,12 @@ div.olMapViewport {
 .geor-edit-osm {
     background-image: url(../img/osm_logo.png) !important;
 }
-
+.geor-csv-export {
+    background-image: url(../img/famfamfam/table_save.png) !important;
+}
+.geor-geom-save {
+    background-image: url(../img/famfamfam/disk.png) !important;
+}
 /* make sure that menu width is correct in IE8 strict mode (See http://extjs.com/forum/showthread.php?t=70701) */
 .x-layer[style]{
  width: auto !important;

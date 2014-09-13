@@ -248,6 +248,16 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
 
         var bbar = [
             {
+                text: tr("Clean"),
+                tooltip: tr("Clean all results on the map and in the table"),
+                handler: function() {
+                    this._vectorLayer.destroyFeatures();
+                    tbtext.hide();
+                },
+                scope: this
+            }, 
+            '->', tbtext, '-',
+            {
                 text: tr("Select"),
                 menu: new Ext.menu.Menu({
                     items: [{
@@ -287,12 +297,13 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
                         scope: this
                     }]
                 })
-            }, {
+            }, '-', {
                 text: tr("Actions"),
                 tooltip: tr("Actions on the selection or on all results if no row is selected"),
                 menu: new Ext.menu.Menu({
                     items: [{
                         text: tr("Zoom"),
+                        iconCls: 'geor-btn-zoom',
                         tooltip: tr("Zoom to results extent"),
                         handler: function() {
                             var grid = this.findByType("grid")[0];
@@ -311,25 +322,19 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
                         scope: this
                     },{
                         text: tr("CSV Export"),
+                        iconCls: 'geor-csv-export',
                         tooltip: tr("Export results as CSV"),
                         handler: this._csvExportBtnHandler,
                         scope: this
                     },{
                         text: tr("Store the geometry"),
+                        iconCls: 'geor-geom-save',
                         tooltip: tr("Aggregates the geometries of the selected features and stores it in your browser for later use in the querier"),
                         handler: this._storeGeometry,
                         scope: this
                     }]
                 })
-            }, '->', tbtext, '|', {
-                text: tr("Clean"),
-                tooltip: tr("Clean all results on the map and in the table"),
-                handler: function() {
-                    this._vectorLayer.destroyFeatures();
-                    tbtext.hide();
-                },
-                scope: this
-            }
+            } 
         ];
 
         if (!this.sfControl) {
