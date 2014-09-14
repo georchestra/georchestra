@@ -38,6 +38,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "File submission failed or invalid file": "Sendung abgebrochen - fehlerhafte Datei",
     "Type": "Typ",
     "Title": "Titel",
+    "Actions": "Aktionen",
     /* GEOR.js strings */
     "Cities": "Standorte",
     "Recentering on GeoNames cities": "Auf die Standorte der GeoNames <br />Datenbasis neu ausrichten",
@@ -220,7 +221,6 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Are you sure you want to remove all layers ?": "Sind Sie sicher, dass Sie alle Layers löschen wollen ?",
     "source: ": "Quelle : ",
     "unknown": "Unbekannt",
-    "Actions": "Aktionen",
     "Draw new point": "Neuen Punkt zeichnen",
     "Draw new line": "Neue Linie zeichnen",
     "Draw new polygon": "Neuen Polygon zeichnen",
@@ -326,6 +326,19 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "One result": "1 Ergebnis",
     "No result": "kein Ergebnis",
     "Clean": "löchen",
+    "All": "Alle",
+    "None": "Keiner",
+    "Invert selection": "Auswahl umkehren",
+    "Actions on the selection or on all results if no row is selected":
+        "Aktien an der Auswahl oder an alle Ergebnisse, wenn keine Zeile ausgewählt ist",
+    "Store the geometry": 
+        "Diese Geometrie speichern",
+/*
+    "Aggregates the geometries of the selected features and stores it in your browser for later use in the querier":
+        "La géométrie des objets sélectionnés est enregistrée pour un usage ultérieur dans le requêteur",
+*/
+    "Geometry successfully stored in this browser": 
+        "Geometrie auf dem Navigator gespeichert.",
     "Clean all results on the map and in the table": "Löschen " +
         "der aufgezeichneten Ergebnisse auf Karte und Liste",
     "Zoom": "Zoom",
