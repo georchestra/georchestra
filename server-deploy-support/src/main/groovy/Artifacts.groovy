@@ -23,8 +23,12 @@ class Artifacts {
         if (artifact.name.startsWith("cas-server-webapp")) return "cas.war"
         else if (artifact.name.startsWith("security-proxy")) return "ROOT.war"
         else if (artifact.name.startsWith("geonetwork-main")) return "geonetwork.war"
+        else if (artifact.name.startsWith("geoserver-webapp")) return "geoserver.war"
+        else if (artifact.name.startsWith("geofence-webapp")) return "geofence.war"
+        else if (artifact.name.startsWith("geowebcache-webapp")) return "geowebcache.war"
         else return null
     }
+
     /**
      * The default aliasFunction.
      *
