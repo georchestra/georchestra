@@ -636,7 +636,7 @@ sudo nano /etc/default/tomcat6
 ```
 
 ```
-LD_LIBRARY_PATH=/lib:/usr/lib/:/var/sig/gdal/NativeLibs/:$LD_LIBRARY_PATH
+LD_LIBRARY_PATH=/usr/lib/jni:/var/sig/gdal/NativeLibs/:$LD_LIBRARY_PATH
 ```
 Then you will have to make sure that the Tomcat will share the `gdal.jar` across the different webapps ; you can do this by creating a file in your `${catalina.base}/conf` directory, named `catalina.properties`, containing:
 
