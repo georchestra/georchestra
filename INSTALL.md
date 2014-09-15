@@ -483,6 +483,17 @@ You may have to install the "core fonts for the web" on your server if you need 
 
 Restart your geoserver tomcat and check on /geoserver/web/?wicket:bookmarkablePage=:org.geoserver.web.admin.JVMFontsPage that these are loaded.
 
+* Native JAI
+ 
+GeoServer and GeoWebCache take great advantage of the native JAI availability.
+
+	sudo apt-get install libjai-imageio-core-java
+
+Then, make sure that the following 5 jars are loaded by your geoserver and geowebcache tomcats classloaders: jai_codec.jar, jai_core.jar, jai_imageio.jar, clibwrapper_jiio.jar, mlibwrapper_jai.jar
+
+This is usually done by symlinking them from their original location (something like /usr/share/java) to the ```${catalina.base}/conf``` directory
+
+
 * Fine tuning (optional but highly recommended)
 
 Please refer to the excellent "[Running in a Production Environment](http://docs.geoserver.org/stable/en/user/production/index.html)" section of the GeoServer documentation.
