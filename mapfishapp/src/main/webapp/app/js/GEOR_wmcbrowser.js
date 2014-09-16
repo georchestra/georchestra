@@ -84,14 +84,18 @@ GEOR.wmcbrowser = (function() {
      *
      * Parameters:
      * wmcURI - {String} the WMC URI
+     * noReset - {Boolean} if true, do not reset the map. 
+     *           Defaults to false.
      */
-    var fetchAndRestoreWMC = function(wmcURI) {
+    var fetchAndRestoreWMC = function(wmcURI, noReset) {
         GEOR.waiter.show();
+        noReset = noReset || false;
         OpenLayers.Request.GET({
             url: wmcURI,
             success: function(response) {
                 var status = observable.fireEvent("contextselected", {
-                    wmcString: response.responseXML || response.responseText
+                    wmcString: response.responseXML || response.responseText,
+                    noReset: noReset
                 });
                 if (!status) {
                     onFailure("The provided file is not a valid OGC context");
@@ -109,12 +113,14 @@ GEOR.wmcbrowser = (function() {
      * view - {Ext.DataView}
      * index - {Integer} not used internally
      * nodes - {Array}
+     * e - {Ext.EventObject} unused
+     * noReset - {Boolean} defaults to false
      */
-    var onDblclick = function(view, index, node) {
+    var onDblclick = function(view, index, node, e, noReset) {
         var record = view.getRecord(node);
         if (record) {
             fetchAndRestoreWMC(
-                GEOR.util.getValidURI(record.get("wmc"))
+                GEOR.util.getValidURI(record.get("wmc")), noReset
             );
         }
     };
@@ -174,13 +180,15 @@ GEOR.wmcbrowser = (function() {
             return;
         };
         var fbar = popup.getFooterToolbar(),
-            btn = fbar.getComponent('load'),
+            btn1 = fbar.getComponent('add'),
+            btn2 = fbar.getComponent('load'),
             cbx = fbar.getComponent('cbx'),
             viewHasSelection = selections.length === 1,
             lsAvailable = GEOR.ls.available,
             cbxChecked;
 
-        btn.setDisabled(!viewHasSelection);
+        btn1.setDisabled(!viewHasSelection);
+        btn2.setDisabled(!viewHasSelection);
         if (viewHasSelection) {
             cbxChecked = GEOR.util.getValidURI(view.getSelectedRecords()[0].get("wmc")) === 
                 GEOR.ls.get("default_context");
@@ -204,10 +212,12 @@ GEOR.wmcbrowser = (function() {
     var onUploadFormValidation = function(form, valid) {
         if (valid) {
             var fbar = popup.getFooterToolbar(),
-                btn = fbar.getComponent('load'),
+                btn1 = fbar.getComponent('add'),
+                btn2 = fbar.getComponent('load'),
                 cbx = fbar.getComponent('cbx');
 
-            btn.enable();
+            btn1.enable();
+            btn2.enable();
             silentCheck(cbx, false);
             cbx.disable();
             // we suppress event to prevent retroaction on this field
@@ -346,6 +356,35 @@ GEOR.wmcbrowser = (function() {
                     popup.hide();
                 }
             }, {
+                text: tr("Add"),
+                disabled: true,
+                itemId: 'add',
+                minWidth: 90,
+                iconCls: 'geor-add-map',
+                handler: function() {
+                    var form;
+                    // we need to check whether to load from view or from form
+                    if (view.getSelectionCount() === 1) {
+                        onDblclick(view, null, view.getSelectedNodes()[0], null, true); // TRUE for noReset
+                    } else {
+                        form = formPanel.getForm();
+                        if (form.isValid()) {
+                            form.submit({
+                                url: GEOR.config.PATHNAME + "/ws/wmc/",
+                                // Beware: form submission requires a *success* parameter in json response
+                                // As said in http://extjs.com/learn/Manual:RESTful_Web_Services
+                                // "Ext.form.BasicForm hopefully becomes HTTP Status Code aware!"
+                                success: function(form, action) {
+                                    var o = Ext.decode(action.response.responseText);
+                                    fetchAndRestoreWMC(GEOR.config.PATHNAME + "/" + o.filepath, true); // TRUE for noReset
+                                },
+                                failure: onFailure.createCallback("File submission failed or invalid file"),
+                                scope: this
+                            });
+                        }
+                    }
+                }
+            }, {
                 text: tr("Load"),
                 disabled: true,
                 itemId: 'load',
@@ -364,7 +403,7 @@ GEOR.wmcbrowser = (function() {
                 autoEl: {
                     tag: 'div',
                     cls: 'box-as-panel',
-                    html: tr("Replace current map composition with one of these contexts:")
+                    html: tr("Alter the current map composition with one of these contexts:")
                 }
             }, view, formPanel]
         });

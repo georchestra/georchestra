@@ -348,7 +348,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
 /* GEOR_wmcbrowser.js strings */
     "Could not find WMC file": "Невозможно найти WMC файл",
     "... or a custom context": "...или индивидуальный контекст",
-    "Replace current map composition with one of these contexts:": "Заменить составляющую текущей карты одним из предложенных контекстов:",
+    ////"Alter the current map composition with one of these contexts:": "Заменить составляющую текущей карты одним из предложенных контекстов:",
     "A unique OSM layer": "Единый слой OpenStreetMap",
     "default viewer context": "контекст вьюера по умолчанию",
     /* GEOR_workspace.js strings */

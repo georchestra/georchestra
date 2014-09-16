@@ -262,18 +262,18 @@ GEOR.wmc = (function() {
                 newContext.projection = map.getProjection();
             }
 
-            // remove all current layers except the lowest index one
-            // (our fake base layer)
-            // FIXME: should not this code be subject to resetMap option ?
-            for (var i = map.layers.length -1; i >= 1; i--) {
-                map.removeLayer(map.layers[i]);
-            }
-
             var maxExtent = newContext.maxExtent;
-            if (resetMap === true && maxExtent) {
-                map.setOptions({maxExtent: maxExtent});
-                var fakeBaseLayer = map.layers[0];
-                fakeBaseLayer.addOptions({maxExtent: maxExtent});
+            if (resetMap === true) {
+                // remove all current layers except the lowest index one
+                // (our fake base layer)
+                for (var i = map.layers.length -1; i >= 1; i--) {
+                    map.removeLayer(map.layers[i]);
+                }
+                if (maxExtent) {
+                    map.setOptions({maxExtent: maxExtent});
+                    var fakeBaseLayer = map.layers[0];
+                    fakeBaseLayer.addOptions({maxExtent: maxExtent});
+                }
             }
             records = wmcReader.readRecords(newContext).records;
             // fire event to let the whole app know about it.

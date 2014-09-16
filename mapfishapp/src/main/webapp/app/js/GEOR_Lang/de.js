@@ -429,7 +429,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     /* GEOR_wmcbrowser.js strings */
     "Could not find WMC file": "Gewählte Karte nicht vorhanden",
     "... or a custom context": "... oder einer personalisierten Karte",
-    "Replace current map composition with one of these contexts:": "Aktuelle Karte ersetzen durch :",
+    //"Alter the current map composition with one of these contexts:": "Aktuelle Karte ersetzen durch :",
     "A unique OSM layer": "Ein einziger Layer OpenStreetMap",
     "default viewer context": "Standarteinstellung",
     "(default)": "<br/>(Standardeinstellung)",

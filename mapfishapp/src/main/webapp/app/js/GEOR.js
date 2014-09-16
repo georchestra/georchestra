@@ -546,7 +546,7 @@ Ext.namespace("GEOR");
 
         GEOR.wmcbrowser.events.on({
             "contextselected": function(o) {
-                return GEOR.wmc.read(o.wmcString, true, true);
+                return GEOR.wmc.read(o.wmcString, !o.noReset, true);
             }
         });
     });
