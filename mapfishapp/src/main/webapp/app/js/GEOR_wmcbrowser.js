@@ -128,12 +128,15 @@ GEOR.wmcbrowser = (function() {
     /**
      * Method: loadBtnHandler
      * Handler for the button triggering the WMC loading
+     *
+     * Parameters:
+     * noReset - {Boolean}
      */
-    var loadBtnHandler = function() {
+    var loadBtnHandler = function(noReset) {
         var form;
         // we need to check whether to load from view or from form
         if (view.getSelectionCount() === 1) {
-            onDblclick(view, null, view.getSelectedNodes()[0]);
+            onDblclick(view, null, view.getSelectedNodes()[0], null, noReset);
         } else {
             form = formPanel.getForm();
             if (form.isValid()) {
@@ -144,7 +147,7 @@ GEOR.wmcbrowser = (function() {
                     // "Ext.form.BasicForm hopefully becomes HTTP Status Code aware!"
                     success: function(form, action) {
                         var o = Ext.decode(action.response.responseText);
-                        fetchAndRestoreWMC(GEOR.config.PATHNAME + "/" + o.filepath);
+                        fetchAndRestoreWMC(GEOR.config.PATHNAME + "/" + o.filepath, noReset);
                     },
                     failure: onFailure.createCallback("File submission failed or invalid file"),
                     scope: this
@@ -361,36 +364,14 @@ GEOR.wmcbrowser = (function() {
                 itemId: 'add',
                 minWidth: 90,
                 iconCls: 'geor-add-map',
-                handler: function() {
-                    var form;
-                    // we need to check whether to load from view or from form
-                    if (view.getSelectionCount() === 1) {
-                        onDblclick(view, null, view.getSelectedNodes()[0], null, true); // TRUE for noReset
-                    } else {
-                        form = formPanel.getForm();
-                        if (form.isValid()) {
-                            form.submit({
-                                url: GEOR.config.PATHNAME + "/ws/wmc/",
-                                // Beware: form submission requires a *success* parameter in json response
-                                // As said in http://extjs.com/learn/Manual:RESTful_Web_Services
-                                // "Ext.form.BasicForm hopefully becomes HTTP Status Code aware!"
-                                success: function(form, action) {
-                                    var o = Ext.decode(action.response.responseText);
-                                    fetchAndRestoreWMC(GEOR.config.PATHNAME + "/" + o.filepath, true); // TRUE for noReset
-                                },
-                                failure: onFailure.createCallback("File submission failed or invalid file"),
-                                scope: this
-                            });
-                        }
-                    }
-                }
+                handler: loadBtnHandler.createCallback(true)
             }, {
                 text: tr("Load"),
                 disabled: true,
                 itemId: 'load',
                 minWidth: 90,
                 iconCls: 'geor-load-map',
-                handler: loadBtnHandler,
+                handler: loadBtnHandler.createCallback(false),
                 listeners: {
                     "enable": function(btn) {
                         btn.focus();
