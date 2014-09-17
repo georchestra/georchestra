@@ -376,7 +376,7 @@ new PostTreatment().run(this, log, ant, project.basedir, params.projectDir, serv
     <repository>
       <id>opengeo</id>
       <name>OpenGeo Maven Repository</name>
-      <url>http://repo.opengeo.org/</url>
+      <url>http://repo.boundlessgeo.com/</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
@@ -412,7 +412,7 @@ new PostTreatment().run(this, log, ant, project.basedir, params.projectDir, serv
     <pluginRepository>
       <id>opengeo</id>
       <name>OpenGeo Maven Repository</name>
-      <url>http://repo.opengeo.org/</url>
+      <url>http://repo.boundlessgeo.com/</url>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
