@@ -476,6 +476,85 @@ GEOR.mapinit = (function() {
                 } else {
                     loadDefaultWMC();
                 }
+                if (GEOR.config.CUSTOM_FILE) {
+                    // load the given file on top of the WMC
+
+                    // note that the form could be dynamically generated
+                    // "fileupload" is the form element's id. 
+                    var form = new Ext.form.BasicForm("fileupload", {
+                        items: [{
+                            xtype: 'textfield',
+                            name: 'url',
+                            value: GEOR.config.CUSTOM_FILE
+                        }, {
+                            xtype: 'hidden',
+                            name: 'srs',
+                            value: ls.map.getProjection()
+                        }]
+                    });
+
+                    form.submit({
+                        url: GEOR.config.PATHNAME + "/ws/togeojson/",
+                        success: function(form, action) {
+                            var features,
+                                fc = (new OpenLayers.Format.JSON()).read(action.response.responseText);
+                            if (!fc) {
+                                GEOR.util.errorDialog({
+                                    title: tr("Error while loading file"),
+                                    msg: OpenLayers.i18n("Incorrect server response.")
+                                });
+                                return;
+                            } else if (fc.success !== "true") {
+                                GEOR.util.errorDialog({
+                                    title: tr("Error while loading file"),
+                                    msg: OpenLayers.i18n(fc.error)
+                                });
+                                return;
+                            }
+
+                            features = (new OpenLayers.Format.GeoJSON()).read(fc.geojson);
+                            if (!features || features.length == 0) {
+                                GEOR.util.errorDialog({
+                                    title: tr("Error while loading file"),
+                                    msg: OpenLayers.i18n("No features found.")
+                                });
+                                return;
+                            }
+
+                            var recordType = GeoExt.data.LayerRecord.create(
+                                GEOR.ows.getRecordFields()
+                            );
+
+                            var filename, 
+                                cmpts = GEOR.config.CUSTOM_FILE.split('/');
+                            if (cmpts.length) {
+                                filename = cmpts[cmpts.length-1];
+                            } else {
+                                filename = "geofile";
+                            }
+                            var name = GEOR.util.shortenLayerName(filename),
+                                layer = new OpenLayers.Layer.Vector(name, {
+                                    styleMap: GEOR.util.getStyleMap(),
+                                    rendererOptions: {
+                                        zIndexing: true
+                                    }
+                                });
+
+                            layer.addFeatures(features);
+
+                            ls.addSorted(new recordType({
+                                layer: layer
+                            }));
+                        },
+                        failure: function(form, action) {
+                            GEOR.util.errorDialog({
+                                title: tr("Error while loading file"),
+                                msg: OpenLayers.i18n(action.result.error)
+                            });
+                        },
+                        scope: this
+                    });
+                }
                 return;
             }
 

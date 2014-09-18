@@ -108,6 +108,8 @@ if(sec_roles != null) {
     <!-- invisible iframe for actions such as "load in JOSM" -->
     <iframe style="position: absolute; width: 1px; height: 1px; top: -1em;visibility:hidden;" tabindex="-1" aria-hidden="true" frameborder="0" width="0" height="0" marginheight="0" marginwidth="0" scrolling="no"></iframe>
     
+    <!-- invisible form for file submission -->
+    <form id="fileupload"></form>
 
     <script type="text/javascript" src="<%= context %>/lib/externals/ext/adapter/ext/ext-base.js"></script>
     
@@ -149,7 +151,11 @@ if(sec_roles != null) {
         GEOR.config.CUSTOM_WMC = '<%=request.getParameter("wmc") %>';
         </c:when>
     </c:choose>
-
+    <c:choose>
+        <c:when test='<%= request.getParameter("file") != null %>'>
+        GEOR.config.CUSTOM_FILE = '<%=request.getParameter("file") %>';
+        </c:when>
+    </c:choose>
         // custom startup zoom parameters (override the WMC bbox):
         GEOR.config.CUSTOM_BBOX = "${c.bbox}";
         GEOR.config.CUSTOM_CENTER = "${c.lon},${c.lat}";
