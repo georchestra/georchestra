@@ -437,7 +437,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     /* GEOR_wmcbrowser.js strings */
     "Could not find WMC file": "Le contexte spécifié n'existe pas",
     "... or a custom context": "... ou un contexte personnalisé",
-    "Replace current map composition with one of these contexts:": "Remplacer la composition actuelle de la carte par l'un de ces contextes :",
+    "Load or add the layers from one of these map contexts:": "Charger ou ajouter les couches de l'un de ces contextes :",
     "A unique OSM layer": "Une unique couche OpenStreetMap",
     "default viewer context": "contexte par défaut",
     "(default)": "<br/>(contexte par défaut actuel)",
