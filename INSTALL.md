@@ -9,7 +9,7 @@ LDAP
 
 * sample data import
 
- * getting the data, where XX stands for the geOrchestra version you're using (eg: ```13.09```, ```14.01``` or ```master``` for unstable)
+ * getting the data, where XX stands for the geOrchestra version you're using (eg: ```14.06``` for stable or ```master``` for unstable)
  
             git clone -b XX git://github.com/georchestra/LDAP.git
 	
