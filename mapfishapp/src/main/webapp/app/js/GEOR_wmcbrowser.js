@@ -384,7 +384,7 @@ GEOR.wmcbrowser = (function() {
                 autoEl: {
                     tag: 'div',
                     cls: 'box-as-panel',
-                    html: tr("Alter the current map composition with one of these contexts:")
+                    html: tr("Load or add the layers from one of these map contexts:")
                 }
             }, view, formPanel]
         });
