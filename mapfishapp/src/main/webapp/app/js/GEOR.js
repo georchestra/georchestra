@@ -46,7 +46,9 @@ Ext.namespace("GEOR");
     // see http://applis-bretagne.fr/redmine/issues/4536
     var fn = OpenLayers.Format.XML.prototype.write;
     OpenLayers.Format.XML.prototype.write = function(node) {
-        return '<?xml version="1.0" encoding="UTF-8"?>' + fn.apply(this, [node]);
+        return '<?xml version="1.0" encoding="UTF-8"?>' + 
+            // fix for https://github.com/georchestra/georchestra/issues/773 :
+            fn.apply(this, [node]).replace(new RegExp('xmlns:NS\\d+="" NS\\d+:', 'g'), '');
     };
 
     var checkRoles = function(module, okRoles) {
