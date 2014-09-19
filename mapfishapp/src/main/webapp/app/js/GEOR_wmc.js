@@ -280,10 +280,11 @@ GEOR.wmc = (function() {
             observable.fireEvent("beforecontextrestore", records.length);
             Ext.each(records, function(r) {
                 // restore metadataURLs in record
-                var context = null;
+                var context = null,
+                    layer = r.get('layer');
                 for (var i=0, l = newContext.layersContext.length; i<l; i++) {
                     if (newContext.layersContext[i]['name'] === r.get('name') &&
-                        newContext.layersContext[i]['url'] === r.get('layer').url) {
+                        newContext.layersContext[i]['url'] === layer.url) {
                         context = newContext.layersContext[i];
                         break;
                     }
@@ -293,9 +294,11 @@ GEOR.wmc = (function() {
                 }
                 // set as type as WMS (might need to be changed when we support more types from OWSContext)
                 r.set("type", "WMS");
+                // restore opaque status from transitionEffect:
+                r.set("opaque", layer.transitionEffect == "resize");
                 // change exception format depending on the WMS version: 
                 // (see https://github.com/camptocamp/georchestra-pigma-configuration/issues/112)
-                var params = r.get('layer').params;
+                var params = layer.params;
                 params.EXCEPTIONS = GEOR.ows.wmsVersionToExceptionsMapping[params.VERSION];
                 // add layer from wmc to the current map
                 layerStore.addSorted(r);
