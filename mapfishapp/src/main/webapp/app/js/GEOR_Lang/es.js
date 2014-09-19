@@ -439,7 +439,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Warning: trying to restore WMC with a different projection (PROJCODE1, while map SRS is PROJCODE2). Strange things might occur !": "Advertencia: para cargar el contexto WMC, se necesita reproyectar desde ${PROJCODE1} hacía la proyección del mapa ${PROJCODE2}. ¡El resultado puede ser diferente de lo esperado!",
     /* GEOR_wmcbrowser.js strings */
     "Could not find WMC file": "El contexto WMC especificado no existe",
-    "... or a custom context": "... o un contexto personalizado",
+    "... or a local context": "... o un contexto local",
     //"Load or add the layers from one of these map contexts:" :
 	//	"Remplazar la composición actual del mapa por uno de estos contextos:",
     "A unique OSM layer": "Una capa OpenStreetMap única",

@@ -320,7 +320,7 @@ GEOR.wmcbrowser = (function() {
                 inputType: 'file',
                 name: 'wmc',
                 labelSeparator: tr("labelSeparator"),
-                fieldLabel: tr("... or a custom context"),
+                fieldLabel: tr("... or a local context"),
                 allowBlank: false,
                 blankText: tr("The file is required.")
             }],

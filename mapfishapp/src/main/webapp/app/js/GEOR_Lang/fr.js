@@ -436,7 +436,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Warning: trying to restore WMC with a different projection (PROJCODE1, while map SRS is PROJCODE2). Strange things might occur !": "Attention: le contexte restauré avait été sauvegardé en ${PROJCODE1} alors que la carte actuelle est en ${PROJCODE2}. Il pourrait y avoir des comportements inattendus.",
     /* GEOR_wmcbrowser.js strings */
     "Could not find WMC file": "Le contexte spécifié n'existe pas",
-    "... or a custom context": "... ou un contexte personnalisé",
+    "... or a local context": "... ou un contexte local",
     "Load or add the layers from one of these map contexts:": "Charger ou ajouter les couches de l'un de ces contextes :",
     "A unique OSM layer": "Une unique couche OpenStreetMap",
     "default viewer context": "contexte par défaut",

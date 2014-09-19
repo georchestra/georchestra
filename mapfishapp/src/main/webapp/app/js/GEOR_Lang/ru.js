@@ -347,7 +347,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Warning: trying to restore WMC with a different projection (PROJCODE1, while map SRS is PROJCODE2). Strange things might occur !": "Предупреждение : попытка восстановления WMC в одной проекции ${PROJCODE1}, тогда как данная карта SRS находится в другой ${PROJCODE2}. Здесь возможны непредвиденные обстоятельства",
 /* GEOR_wmcbrowser.js strings */
     "Could not find WMC file": "Невозможно найти WMC файл",
-    "... or a custom context": "...или индивидуальный контекст",
+    //"... or a local context": "...или индивидуальный контекст", // TODO: update translation
     //"Load or add the layers from one of these map contexts:" : "Заменить составляющую текущей карты одним из предложенных контекстов:",
     "A unique OSM layer": "Единый слой OpenStreetMap",
     "default viewer context": "контекст вьюера по умолчанию",
