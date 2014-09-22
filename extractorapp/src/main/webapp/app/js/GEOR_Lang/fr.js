@@ -52,6 +52,9 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
         "Paramètres d'extraction spécifiques à la couche ${NAME} (raster)",
     "Extraction parameters only for the NAME layer (vector)":
         "Paramètres d'extraction spécifiques à la couche ${NAME} (vecteur)",
+    "Oversized coverage extraction": "Aire d'extraction de couche raster trop importante",
+    "Extraction area for layers LAYERS is too large.<br/><br/>We cannot produce images with more than MAX million RGB pixels.<br/>Continue anyway ?": 
+        "L'aire d'extraction des couches ${LAYERS} est trop importante.<br/><br/>Nous ne pouvons produire des images contenant plus de ${MAX} millions de pixels RGB.<br/>Souhaitez vous tout de même poursuivre ?",
     /* GEOR_ajaxglobal.js */
     "The server did not return nothing.": "Le serveur n'a pas répondu.",
     "The server did not allow access.": "Le serveur a refusé de répondre.",
