@@ -31,6 +31,11 @@ import org.springframework.web.servlet.ModelAndView;
 public class HomeController {
     private static final String SESSION_POST_DATA_STORE = "SESSION_POST_DATA_STORE";
 
+	private long maxCoverageExtractionSize = Long.MAX_VALUE;
+	public void setMaxCoverageExtractionSize(long maxCoverageExtractionSize) {
+		this.maxCoverageExtractionSize = maxCoverageExtractionSize;
+	}
+
     /**
      * POST entry point.
      * @param request. Must contains information from the layers and services to be extracted
@@ -100,6 +105,7 @@ public class HomeController {
             model = new HashMap<String,Object>();
             model.put("fake", false);
         }
+        model.put("maxCoverageExtractionSize", this.maxCoverageExtractionSize);
         return model;
     }
 
