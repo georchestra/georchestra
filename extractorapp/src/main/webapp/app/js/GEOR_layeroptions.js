@@ -107,32 +107,6 @@ GEOR.layeroptions = (function() {
     };
 
     /**
-     * Method: getNumberField
-     * Return the numberfield corresponding to ref
-     * {Ext.form.NumberField}
-     */
-    var getNumberField = function(ref, options) {
-        if(!numberfields[ref]) {
-            var opts = {
-                anchor: '-20',
-                decimalPrecision: 2
-            };
-            numberfields[ref] = new Ext.form.NumberField(
-                Ext.apply(opts, options));
-            numberfields[ref].showAll = function() {
-                numberfields[ref].getEl().up('div.x-form-item').show();
-            };
-            numberfields[ref].hideAll = function() {
-                numberfields[ref].getEl().up('div.x-form-item').hide();
-            };
-            numberfields[ref].isAllVisible = function() {
-                numberfields[ref].getEl().up('div.x-form-item').isVisible();
-            };
-        }
-        return numberfields[ref];
-    };
-
-    /**
      * Method: getFieldSet
      * Return the fieldset corresponding to ref
      * {Ext.form.FieldSet}
@@ -248,10 +222,10 @@ GEOR.layeroptions = (function() {
                 var formats, projections = GEOR.config.SUPPORTED_REPROJECTIONS;
                 if(options.owsType == "WFS") {
                     formats = GEOR.config.SUPPORTED_VECTOR_FORMATS;
-                    getCombo('customResolution').hideAll();
+                    getCombo('customResolution').hide();
                 } else {
                     formats = GEOR.config.SUPPORTED_RASTER_FORMATS;
-                    getCombo('customResolution').showAll();
+                    getCombo('customResolution').show();
                 }
                 getCombo('customFormats').getStore().loadData(formats);
                 getCombo('customFormats').clearValue();
