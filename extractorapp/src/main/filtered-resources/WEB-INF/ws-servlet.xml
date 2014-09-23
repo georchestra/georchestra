@@ -12,9 +12,14 @@
 
     <!--  url mapping is directly handled with the spring annotations written in the following controllers -->
     <bean id="homecontroller" 
-          class="org.georchestra.extractorapp.ws.doc.HomeController"/>
-        <bean id="ogcproxy" 
+          class="org.georchestra.extractorapp.ws.doc.HomeController">
+        <property name="maxCoverageExtractionSize"
+                  value="${maxCoverageExtractionSize}"/>
+    </bean>
+
+    <bean id="ogcproxy" 
           class="org.georchestra.extractorapp.ws.doc.OGCProxy"/>
+
     <bean id="expire-daemon" init-method="startup" 
           class="org.georchestra.extractorapp.ws.extractor.ExpiredArchiveDaemon">
       <property name="expiry" value="10"/> <!-- days -->

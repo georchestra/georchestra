@@ -29,6 +29,8 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
         "Extraction parameters only for the ${NAME} layer (raster)",
     "Extraction parameters only for the NAME layer (vector)":
         "Extraction parameters only for the ${NAME} layer (vector)",
+    "Extraction area for layers LAYERS is too large.<br/><br/>We cannot produce images with more than MAX million RGB pixels.<br/>Continue anyway ?": 
+        "Extraction area for layers ${LAYERS} is too large.<br/><br/>We cannot produce images with more than ${MAX} million RGB pixels.<br/>Continue anyway ?",
     /* GEOR_ajaxglobal.js */
     "ajaxglobal.error.406":
         "The remote server returned an inesperated answer. If you are using " +

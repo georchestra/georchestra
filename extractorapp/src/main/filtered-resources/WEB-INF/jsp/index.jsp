@@ -146,6 +146,8 @@ if(sec_roles != null) {
         GEOR.config.LAYERS_CHECKED = true;
         </c:otherwise>
     </c:choose>
+
+        GEOR.config.MAX_COVERAGE_EXTRACTION_SIZE = ${c.maxCoverageExtractionSize};
     </script>
 
     <c:choose>
