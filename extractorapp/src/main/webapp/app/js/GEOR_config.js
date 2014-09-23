@@ -242,6 +242,20 @@ GEOR.config = (function() {
         ]),
 
         /**
+         * Constant: SUPPORTED_RESOLUTIONS
+         * List of supported resolutions.
+         * Defaults to 0.2 0.5 1 2 5 10 meters
+         */
+        SUPPORTED_RESOLUTIONS: getCustomParameter("SUPPORTED_RESOLUTIONS", [
+            ["0.2", "0.2"],
+            ["0.5", "0.5"],
+            ["1", "1"],
+            ["2", "2"],
+            ["5", "5"],
+            ["10", "10"]
+        ]),
+
+        /**
          * Constant: GEOSERVER_WMS_URL
          * The URL to GeoServer WMS.
          */
