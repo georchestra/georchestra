@@ -199,8 +199,6 @@ Dedicated to groups:
  * button to remove a group (users will **not** be deleted)
 
 
-Members of the MOD_LDAPADMIN group will have the same UI, but some buttons will not be shown (or disabled) : group add/remove, "selected users" > "add/remove from group"
-They will have the right to create/read/update/delete users only from the same EL_* groups they belong to.
 
 Notes
 -----

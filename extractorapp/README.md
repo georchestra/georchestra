@@ -3,7 +3,7 @@ Extractorapp
 
 Extractorapp allows SDI users to download data bundles from existing OGC web services (WFS for vector and WCS for rasters).
 Extraction jobs are queued and can be managed by any admin user. 
-The application notifies by email the requesting user that the job has been take into account, and when it is finished.
+The application notifies by email the requesting user that the job has been taken into account, and when it is finished.
 
 By default, the application allows extraction of layers and services which have been configured through the STARTUP_LAYERS and STARTUP_SERVICES configuration variables in the profile's GEOR_custom.js
 
@@ -30,7 +30,7 @@ Note that it is possible to use a classical form submission and send this JSON s
 The application also accepts several GET parameters :
  * **debug** when set to true, the application loads unminified javascript files
  * **noheader** when set to true, the application does not load the header
- * **lang** can be set to any of the following : fr, en, es
+ * **lang** can be set to any of the following : fr, en, es, de
 
 
 Metadata extraction
