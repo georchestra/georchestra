@@ -190,6 +190,31 @@ GEOR.layeroptions = (function() {
         },
 
         /**
+         * APIMethod: getGlobalResolution
+         * Gets the global resolution
+         *
+         * Returns:
+         * res - {Float} resolution (in meters)
+         */
+        getGlobalResolution: function() {
+            return getCombo('globalResolution').getValue();
+        },
+
+        /**
+         * APIMethod: setGlobalResolution
+         * Sets the global resolution
+         *
+         * Parameters:
+         * res - {Float} resolution to set (in meters)
+         */
+        setGlobalResolution: function(res) {
+            if (res && (res > 0)) {
+                var combo = getCombo('globalResolution');
+                combo.setValue(res);
+            }
+        },
+
+        /**
          * APIMethod: setOptions
          * Load layer options in the panel.
          *
@@ -308,8 +333,9 @@ GEOR.layeroptions = (function() {
                                     }),
                                     getCombo('globalResolution', {
                                         fieldLabel: tr('Raster resolution (m/pixel)'),
-                                        //value: GEOR.config.GLOBAL_MAX_EXTENT.getWidth() / GEOR.config.DEFAULT_WCS_EXTRACTION_WIDTH
-                                        value: 0.5,
+                                        value: GEOR.config.DEFAULT_RESOLUTION,
+                                        // Note: value will be lowered if 
+                                        // a raster layer linked metadata says its resolution is lower.
                                         editable: true,
                                         forceSelection: false,
                                         store_data: GEOR.config.SUPPORTED_RESOLUTIONS,

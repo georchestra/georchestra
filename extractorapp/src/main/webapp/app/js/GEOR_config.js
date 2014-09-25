@@ -256,6 +256,14 @@ GEOR.config = (function() {
         ]),
 
         /**
+         * Constant: DEFAULT_RESOLUTION
+         * Defaults to 10 meters
+         * Please read https://github.com/georchestra/georchestra/issues/726
+         */
+        DEFAULT_RESOLUTION: getCustomParameter("DEFAULT_RESOLUTION", 
+            10),
+
+        /**
          * Constant: GEOSERVER_WMS_URL
          * The URL to GeoServer WMS.
          */
@@ -413,6 +421,15 @@ GEOR.config = (function() {
          */
         DEFAULT_BUFFER_VALUE: getCustomParameter("DEFAULT_BUFFER_VALUE",
             0),
+
+        /**
+         * Constant: METADATA_RESOLUTION_XPATH
+         * The XPath to use on the layer metadata 
+         * in order to fetch the metric value of raster resolution
+         *
+         */
+        METADATA_RESOLUTION_XPATH: getCustomParameter("METADATA_RESOLUTION_XPATH",
+            "/gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:spatialResolution/gmd:MD_Resolution/gmd:distance/gco:Distance"),
 
         /**
          * Constant: STARTUP_LAYERS

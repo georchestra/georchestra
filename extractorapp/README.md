@@ -69,11 +69,19 @@ Note that various metadata URLs may be specified for a layer in the WMS server, 
 </MetadataURL>
 ```
 
+Raster resolution
+=================
+
+The default raster resolution is set by the value of the ```DEFAULT_RESOLUTION``` config option (defaults to 10 meters).
+
+Note that, since [#726](https://github.com/georchestra/georchestra/issues/726) (released with 14.12), any layer with a MetadataURL pointing to a valid XML document mentioning the raster resolution will be extracted with this native resolution by default.  
+To this end, administrators will have to make sure that the XPATH expression provided by the ```METADATA_RESOLUTION_XPATH``` config option is correct for their setup.
+
 
 Admin UI
 ========
 
-Members of the ```ADMINISTRATOR``` LDAP group have the ability to manage extraction jobs at this URL : http(s)://you.sdi.org/extractorapp/admin/
+Members of the ```ADMINISTRATOR``` LDAP group have the ability to manage extraction jobs at this URL : /extractorapp/admin/
 
 Jobs (except the running one) can be manually paused, cancelled, set to a higher or a lower priority.
 
