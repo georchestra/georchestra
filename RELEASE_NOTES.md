@@ -3,6 +3,74 @@ The development branch is master. It can be used for testing and reporting error
 For production systems, you are advised to use the stable branch (currently 14.06).
 This branch receives bug fixes as they arrive, during 6 months at least.
 
+Version 14.12 (development version)
+===================================
+
+Contributions from GeoBretagne, GéoPicardie, Rennes Métropole, Le Puy en Velay, Université de Franche-Comté
+
+Not yet funded, but would be really nice to have:
+ * config: make it easy to have different jdbc parameters for each module - see [#716](https://github.com/georchestra/georchestra/issues/716)
+ * geofence: include the geOrchestra header - see [#553](https://github.com/georchestra/georchestra/issues/553)
+ * geonetwork: integration of version 3
+ * geoserver: update to 2.5.x with geofence - see [#677](https://github.com/georchestra/georchestra/issues/677)
+ * ldapadmin: send login back in password recovery email - see [#562](https://github.com/georchestra/georchestra/issues/562)
+ * mapfishapp: use google closure compiler for faster loading times - see [#378](https://github.com/georchestra/georchestra/issues/378)
+ * mapfishapp: give easy access to WMS/WFS layer details - see [#346](https://github.com/georchestra/georchestra/issues/346)
+ * mapfishapp: support read/write WMTS layer types from/to OWSContext - see [#360](https://github.com/georchestra/georchestra/issues/360)
+ * mapfishapp: take into account quotes in csw queries - see [#706](https://github.com/georchestra/georchestra/issues/706)
+ * georchestra: use the browser-advertised preferred language by default (and give the user a chance to select the correct one with a combobox in the header) - see [#589](https://github.com/georchestra/georchestra/issues/589)
+ * georchestra: validate on Tomcat 7/8 - see [#504](https://github.com/georchestra/georchestra/issues/504)
+
+Funded, but not done:
+ * geofence: ability to configure map SRS - see [#732](https://github.com/georchestra/georchestra/issues/732) - Rennes Metropole
+ * extractorapp: better emails - see [#750](https://github.com/georchestra/georchestra/issues/750) - GéoPicardie
+ * mapfishapp: export current map context as a "map metadata" - see [#751](https://github.com/georchestra/georchestra/issues/751) - GéoPicardie
+ * mapfishapp: load data from catalog improvement - see [#756](https://github.com/georchestra/georchestra/issues/756) - GeoBretagne
+ * mapfishapp: streetview addon - see [#774](https://github.com/georchestra/georchestra/issues/774) - GeoBretagne
+ * mapfishapp: direct geodata file loading via URL - see [#754](https://github.com/georchestra/georchestra/issues/754) - GéoPicardie
+ * ldapadmin: delegated administrators - see [#786](https://github.com/georchestra/georchestra/issues/786) - GeoBretagne
+
+New features:
+ * extractorapp: warn user when the extraction area is too large before the extraction is fired - see [#726](https://github.com/georchestra/georchestra/issues/726)
+ * extractorapp: native raster resolution extracted by default - see [#726](https://github.com/georchestra/georchestra/issues/726)
+ * mapfishapp: context restoring - option to reset map or not - see [#302](https://github.com/georchestra/georchestra/issues/302)
+ * mapfishapp: spatial query using previous results' geometries - see [#752](https://github.com/georchestra/georchestra/issues/752)
+
+Enhancements:
+ * extractorapp: editable combobox for resolution selection - see [#726](https://github.com/georchestra/georchestra/issues/726)
+ * config: fixed proxy targets wrong connector for geoserver - see [c2dca7](https://github.com/georchestra/template/commit/c2dca72c647e9e33662655232212601fb5f5ac45)
+ * mapfishapp: print extend fully visible
+ * mapfishapp: added a button to remove all layers - see [#753](https://github.com/georchestra/georchestra/issues/753)
+ * mapfishapp: geometry from query stored forever in browser/LocalStorage (rather than cookie)
+ * mapfishapp: warn users about chrome 36/37 issue
+ * mapfishapp: csw querier with better filters,
+ * mapfishapp: i18n neutral nopreview image for csw querier - see [#775](https://github.com/georchestra/georchestra/issues/775)
+ * georchestra: german translations generalized - see [#777](https://github.com/georchestra/georchestra/issues/777)
+
+Bug fixes:
+ * build: fixed by migrating from OpenGeo to Boundless repository
+ * geonetwork: fixed LDAP sync - see [6a7e69](https://github.com/georchestra/geonetwork/commit/6a7e692daaabe3b27793b4c75de2bc91ffe43840)
+ * geonetwork: in associated resource panel from editor, fixed failure to add link to service metadata record
+ * geonetwork: schema iso / fra - fixed missing description for "funder"
+ * mapfishapp: modified MAP_DOTS_PER_INCH value in order to fix WMS/WMTS layer overlay - see [#736](https://github.com/georchestra/georchestra/issues/736)
+ * mapfishapp: fixed WMTS style switch for GeoWebCache versions >= 1.5
+ * mapfishapp: workaround for IE11 bug, see [#773](https://github.com/georchestra/georchestra/issues/773)
+ * many small fixed related to HTTPS support, eg [#745](https://github.com/georchestra/georchestra/issues/745) and [#780](https://github.com/georchestra/georchestra/issues/780)
+ * mapfishapp: fixed several programming errors in the cadastre addon
+ * mapfishapp: restore record opaque status from layer transitionEffect
+ * proxy: Fix for a vulnerability where client could access localhost resources via proxy url, see [5c9b4d](https://github.com/georchestra/georchestra/commit/5c9b4db1a8c004a582d2be4f2a909c68843cad59)
+ * proxy: prevented the use of the ogcproxy in production (it is required for development purposes only)
+ * server-deploy: fixed wrong webapp names (geoserver-webapp, geofence-webapp, geowebcache-webapp)
+ * georchestra: css3 border-radius property replaces browser (moz and webkit) implementations
+
+UPGRADING:
+
+We introduced a new global config option: ```shared.url.scheme``` which defaults to http.  
+Set to https (along with ```shared.server.port``` to 443) if your SDI requires it.
+
+Note the addition of an ```excluded``` directory in the template configuration. The content of this directory will be ignored when creating the configuration jar, which is deployed in each webapp. This is a convenient way to store scripts and so on, versioned with your configuration.
+
+In extractorapp, several new javascript config options have been added, related to [#726](https://github.com/georchestra/georchestra/issues/726): ```SUPPORTED_RESOLUTIONS```, ```DEFAULT_RESOLUTION```, ```METADATA_RESOLUTION_XPATH```. Make sure your configuration is up to date with the template configuration, or you will get these variable defaults.
 
 Version 14.06 (current stable version)
 ======================================
