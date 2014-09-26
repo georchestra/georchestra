@@ -60,7 +60,7 @@ Bug fixes:
  * proxy: Fix for a vulnerability where client could access localhost resources via proxy url, see [5c9b4d](https://github.com/georchestra/georchestra/commit/5c9b4db1a8c004a582d2be4f2a909c68843cad59)
  * proxy: prevented the use of the ogcproxy in production (it is required for development purposes only)
  * server-deploy: fixed wrong webapp names (geoserver-webapp, geofence-webapp, geowebcache-webapp)
- * georchestra: many small fixed related to HTTPS support, eg [#745](https://github.com/georchestra/georchestra/issues/745) and [#780](https://github.com/georchestra/georchestra/issues/780)
+ * georchestra: many small fixes related to HTTPS support, eg [#745](https://github.com/georchestra/georchestra/issues/745) and [#780](https://github.com/georchestra/georchestra/issues/780)
  * georchestra: css3 border-radius property replaces browser (moz and webkit) implementations
 
 UPGRADING:
