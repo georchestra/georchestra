@@ -123,7 +123,7 @@
             "annotation.no_title": "Sans titre"
         },
         "de": {
-            "annotation.drawing_tools": "Malutensilien",
+            "annotation.drawing_tools": "Zeichenwerkzeug",
             "annotation.delete_feature": "Objekt löschen",
             "annotation.delete_confirm": "Wollen Sie wirklich das Objekt löschen ?",
             "annotation.delete": "Löschen",

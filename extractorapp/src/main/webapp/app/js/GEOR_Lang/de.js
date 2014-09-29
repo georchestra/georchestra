@@ -28,12 +28,12 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
         "Alles extrahieren ?",
     "Yes": "Ya",
     "No": "Nein",
-    "Cancel": "Annulieren",
+    "Cancel": "Abbrechen",
     "Extraction parameters applied by default to all cart layers":
         "Standard Parameter für alle Layers anwendbar " +
         "im Warenkorb",
     "paneltext1":
-        "Benutzen Sie die Tafel rechts um die allgemeinen " +
+        "Benutzen Sie die Liste rechts um die allgemeinen " +
         "Parameter der Extraktion zu definieren.",
     "paneltext2":
         "Sie können jetzt extrahieren veranlassen, indem " +
@@ -67,7 +67,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "ajaxglobal.toobig":
         "Datei zu groß.<br />" +
         "Der Rechner sendet ${WEIGHT}KO (das Limit ist " +
-        "${LIMIT}KO). <br />Wollen Sie weitergehen?",
+        "${LIMIT}KO). <br />Wollen Sie weitermachen?",
     /* GEOR_config.js */
     "None": "kein",
     "BUFFER meters": "${BUFFER} meter",
@@ -82,14 +82,14 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Applications": "Applikation",
     "Comments": "Kommentaren",
     "dlform.blanktext":
-        "Zur Akzeptanz der Bedingungen bitte ankreuzen",
+        "Zur Zustimmung der Bedingungen bitte ankreuzen",
     "dlform.checkbox":
         "<span style='font-weight:bold;'>Ich akzeptiere <a href='" +
-        "${URL}' target='_blank'>die Benutzerbedingungen </a> " +
+        "${URL}' target='_blank'>die Nutzerbedingungen </a> " +
         "der Dateien.</span>",
     "Invalid form": "Formular ungültig",
     "dlform.save.error":
-        "Formular sichern unmöglich. " +
+        "Formular sichern nicht möglich. " +
         "Kontaktieren Sie den Administrator.",
     "Take one minute to indicate how you use the data":
         "Nehmen Sie sich bitte etwas Zeit, uns die Benutzung der Angaben anzugeben",
@@ -118,7 +118,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
         "Maximale Anzahl erreicht : nur " +
         "${NB} Objekte sind angezeigt.",
     "layerstree.qtip.missingwfs":
-        "WFS Layer <b>${NAME}</b> existiert nicht auf diesem Service " +
+        "WFS Layer <b>${NAME}</b> existiert nicht in diesem Service " +
         "(${URL})",
     "layerstree.qtip.unavailablewfs":
         "WFS Service <b>${NAME}</b> nicht verfügbar<br/>${URL}",
@@ -127,7 +127,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
         "Keine vergleichbare Projektion gefunden " +
         "für den WMS Layer <b>${NAME}</b>",
     "layerstree.qtip.missingwms":
-        "WMS Layer <b>${NAME}</b> existiert nicht auf diesem Service " +
+        "WMS Layer <b>${NAME}</b> existiert nicht in diesem Service " +
         "(${URL})",
     "layerstree.qtip.unavailablewms":
         "WMS Service <b>${NAME}</b> nicht verfügbar<br/>${URL}",
@@ -174,7 +174,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Recenter on": "Rezentrieren auf",
     "location ?": "Standorte ?",
     "referentials.help":
-        "<span>Dieses Modul berechnet die Extraktion der Kartenansicht " +
+        "<span>Dieses Modul berechnet den Ausschnitt der Kartenansicht " +
         "aus einem Referenzort.</span>",
     /* GEOR_toolbar.js */
     "Zoom on the global extent of the map":
@@ -189,7 +189,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Login": "Login",
     "Logout": "Logout",
     "toolbar.confirm.login":
-        "Sie verlassen diese Seite und verlieren die geschaffenen Karten ",
+        "Sie verlassen diese Seite und verlieren die erstellte Karten ",
     /* GEOR_util.js */
     "Confirm": "Bestätigung",
     "Information": "Information",
