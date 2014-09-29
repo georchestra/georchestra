@@ -12,7 +12,6 @@ Not yet funded, but would be really nice to have:
  * config: make it easy to have different jdbc parameters for each module - see [#716](https://github.com/georchestra/georchestra/issues/716)
  * geofence: include the geOrchestra header - see [#553](https://github.com/georchestra/georchestra/issues/553)
  * geonetwork: integration of version 3
- * geoserver: update to 2.5.x with geofence - see [#677](https://github.com/georchestra/georchestra/issues/677)
  * ldapadmin: send login back in password recovery email - see [#562](https://github.com/georchestra/georchestra/issues/562)
  * mapfishapp: use google closure compiler for faster loading times - see [#378](https://github.com/georchestra/georchestra/issues/378)
  * mapfishapp: give easy access to WMS/WFS layer details - see [#346](https://github.com/georchestra/georchestra/issues/346)
@@ -22,6 +21,7 @@ Not yet funded, but would be really nice to have:
  * georchestra: validate on Tomcat 7/8 - see [#504](https://github.com/georchestra/georchestra/issues/504)
 
 Funded, but not done:
+ * geoserver: update to 2.5.x with geofence - see [#677](https://github.com/georchestra/georchestra/issues/677) - CIGALsace & GeoBretagne
  * geofence: ability to configure map SRS - see [#732](https://github.com/georchestra/georchestra/issues/732) - Rennes Metropole
  * extractorapp: better emails - see [#750](https://github.com/georchestra/georchestra/issues/750) - GéoPicardie
  * mapfishapp: export current map context as a "map metadata" - see [#751](https://github.com/georchestra/georchestra/issues/751) - GéoPicardie
