@@ -71,6 +71,7 @@ GEOR.Addons.Streetview.prototype = {
             resizable: true,
             layout: 'fit',
             bufferResize: 200,
+            constrainHeader: true,
             items: [{
                 width: this.options.initial_window_size,
                 height: this.options.initial_window_size,
