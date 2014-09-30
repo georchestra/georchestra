@@ -35,7 +35,7 @@ GEOR.Addons.Streetview.prototype = {
             }),
             eventListeners: {
                 "featuremodified": function(o) {
-                    this._updateView(o.feature);
+                    this._updateView();
                     this._window.show();
                 },
                 scope: this
@@ -47,7 +47,7 @@ GEOR.Addons.Streetview.prototype = {
                     this._drawControl.deactivate();
                     this.map.removeControl(this._drawControl);
                     this._modifyControl.selectFeature(o.feature);
-                    this._updateView(o.feature);
+                    this._updateView();
                     this._window.show();
                 },
                 scope: this
@@ -63,9 +63,14 @@ GEOR.Addons.Streetview.prototype = {
             closable: true,
             x: 0,
             y: 0,
+            minHeight: 200,
+            minWidth: 200,
+            boxMaxHeight: 640,
+            boxMaxWidth: 640,
             closeAction: "hide",
             resizable: true,
             layout: 'fit',
+            bufferResize: 200,
             items: [{
                 width: this.options.initial_window_size,
                 height: this.options.initial_window_size,
@@ -75,6 +80,7 @@ GEOR.Addons.Streetview.prototype = {
                 "hide": function() {
                     item.setChecked(false);
                 },
+                "resize": this._updateView,
                 "show": {
                     fn: function() {
                         GEOR.helper.msg("StreetView", 
@@ -104,7 +110,11 @@ GEOR.Addons.Streetview.prototype = {
      * Method: _updateView
      * 
      */
-    _updateView: function(feature) {
+    _updateView: function() {
+        var feature = this._layer.features[0];
+        if (!feature) { 
+            return;
+        }
         var geom = feature.geometry.clone();
         geom.transform(this.map.getProjectionObject(), new OpenLayers.Projection("EPSG:4326"));
         this._window.show();
@@ -117,10 +127,11 @@ GEOR.Addons.Streetview.prototype = {
      */
     _buildURL: function(lon, lat) {
         var base = "http://maps.googleapis.com/maps/api/streetview?",
-            o = this.options;
+            o = this.options,
+            cmp = this._window;
         return base + OpenLayers.Util.getParameterString({
             key: o.api_key,
-            size: o.initial_window_size+"x"+o.initial_window_size,
+            size: cmp.getInnerWidth()+"x"+cmp.getInnerHeight(),
             location: lat+","+lon,
             fov: o.initial_fov,
             heading: 0,
