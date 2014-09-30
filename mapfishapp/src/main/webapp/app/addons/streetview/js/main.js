@@ -54,7 +54,6 @@ GEOR.Addons.Streetview.prototype = {
                 "featureadded": function(o) {
                     // Handling regular polygon feature
                     this._drawControl.deactivate();
-                    this.map.removeControl(this._drawControl);
                     this._modifyControl.selectFeature(this._layer.features[0]);
                     this._updateView();
                     this._window.show();
@@ -63,11 +62,13 @@ GEOR.Addons.Streetview.prototype = {
             }
         });
         this._drawControl = new OpenLayers.Control.DrawFeature(this._layer, OpenLayers.Handler.Point, {});
+        this.map.addControl(this._drawControl);
         this._modifyControl = new OpenLayers.Control.StreetviewModifyFeature(this._layer, {
             standalone: true,
             mode: OpenLayers.Control.ModifyFeature.ROTATE | 
                 OpenLayers.Control.ModifyFeature.DRAG
         });
+        this.map.addControl(this._modifyControl);
         this._window = new Ext.Window({
             title: OpenLayers.i18n("StreetView"),
             closable: true,
@@ -127,11 +128,13 @@ GEOR.Addons.Streetview.prototype = {
             return;
         }
         // unselect
-        this._modifyControl.unselectFeature(f);
+        if (this._modifyControl.feature) {
+            this._modifyControl.unselectFeature(f);
+        }
         // keep feature geometry apparent diameter
         this._layer.removeAllFeatures();
         this._createRegularPolygonFromPoint(f.geometry.getCentroid(), f.geometry.angle);
-        // select again the feature:
+        // select again the new feature:
         this._modifyControl.selectFeature(this._layer.features[0]);
     },
 
@@ -192,15 +195,12 @@ GEOR.Addons.Streetview.prototype = {
     _onCheckchange: function(item, checked) {
         if (checked) {
             this.map.addLayer(this._layer);
-            this.map.addControl(this._modifyControl);
             this._modifyControl.activate();
             if (!this._layer.features.length) {
-                this.map.addControl(this._drawControl);
                 this._drawControl.activate();
             } else {
-                // TODO: update feature geom size ... maybe with:
-                // this._onMapZoomend();
-                this._modifyControl.selectFeature(this._layer.features[0]);
+                // update feature geom size, and select again feature with:
+                this._onMapZoomend();
                 this._window.show();
             }
             if (!this._helpShown) {
@@ -216,10 +216,8 @@ GEOR.Addons.Streetview.prototype = {
             this._window.hide();
             if (OpenLayers.Util.indexOf(this.map.controls, this._drawControl) > -1) {
                 this._drawControl.deactivate();
-                this.map.removeControl(this._drawControl);
             }
             this._modifyControl.deactivate();
-            this.map.removeControl(this._modifyControl);
             this.map.removeLayer(this._layer);
             this.map.events.un({
                 "zoomend": this._onMapZoomend,
