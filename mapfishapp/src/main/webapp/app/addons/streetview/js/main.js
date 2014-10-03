@@ -84,7 +84,20 @@ GEOR.Addons.Streetview.prototype = {
             bufferResize: 200,
             constrainHeader: true,
             tools:[{
-                id:'pin',
+                id: 'plus',
+                qtip: OpenLayers.i18n("Fullscreen in a new window"),
+                handler: function(){
+                    var pos = this._getMarkerPosition();
+                    if (!pos.x) {
+                        return;
+                    }
+                    // cbll = position
+                    // cbp = window size, bearing, tilt, zoom, pitch
+                    window.open("http://maps.google.com/maps?q=&layer=c&cbll="+pos.y+","+pos.x+"&cbp=12,"+pos.angle+",0,0,0");
+                },
+                scope: this
+            },{
+                id: 'pin',
                 qtip: OpenLayers.i18n("Recenter on the marker"),
                 handler: function(){
                     this.map.setCenter(this._layer.features[0].geometry.getBounds().getCenterLonLat());
@@ -147,6 +160,24 @@ GEOR.Addons.Streetview.prototype = {
     },
 
     /**
+     * Method: _getMarkerPosition
+     * 
+     */
+    _getMarkerPosition: function() {
+        var feature = this._layer.features[0];
+        if (!feature) {
+            return;
+        }
+        var geom = feature.geometry.getCentroid();
+        geom.transform(this.map.getProjectionObject(), new OpenLayers.Projection("EPSG:4326"));
+        return {
+            x: geom.x,
+            y: geom.y,
+            angle: feature.geometry.angle
+        };
+    },
+
+    /**
      * Method: _createRegularPolygonFromPoint
      * 
      */
@@ -164,14 +195,12 @@ GEOR.Addons.Streetview.prototype = {
      * 
      */
     _updateView: function() {
-        var feature = this._layer.features[0];
-        if (!feature) {
+        var pos = this._getMarkerPosition();
+        if (!pos.x) {
             return;
         }
-        var geom = feature.geometry.getCentroid();
-        geom.transform(this.map.getProjectionObject(), new OpenLayers.Projection("EPSG:4326"));
         this._window.show();
-        this._window.items.get(0).update('<img src="'+this._buildURL(geom.x, geom.y, feature.geometry.angle)+'" />');
+        this._window.items.get(0).update('<img src="'+this._buildURL(pos.x, pos.y, pos.angle)+'" />');
     },
 
     /**
