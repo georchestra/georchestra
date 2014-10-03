@@ -23,9 +23,6 @@ OpenLayers.Control.StreetviewModifyFeature = OpenLayers.Class(OpenLayers.Control
             center.lat + Math.cos((geometry.angle)/180*Math.PI) * 0.7 * bounds.getWidth()
         );
         var radius = new OpenLayers.Feature.Vector(radiusGeometry);
-        var resize = (this.mode & OpenLayers.Control.ModifyFeature.RESIZE);
-        var reshape = (this.mode & OpenLayers.Control.ModifyFeature.RESHAPE);
-        var rotate = (this.mode & OpenLayers.Control.ModifyFeature.ROTATE);
 
         radiusGeometry.move = function(x, y) {
             OpenLayers.Geometry.Point.prototype.move.call(this, x, y);
@@ -33,14 +30,12 @@ OpenLayers.Control.StreetviewModifyFeature = OpenLayers.Class(OpenLayers.Control
             var dy1 = this.y - originGeometry.y;
             var dx0 = dx1 - x;
             var dy0 = dy1 - y;
-            if(rotate) {
-                var a0 = Math.atan2(dy0, dx0);
-                var a1 = Math.atan2(dy1, dx1);
-                var angle = a1 - a0;
-                angle *= 180 / Math.PI;
-                geometry.rotate(angle, originGeometry);
-                geometry.angle -= angle;
-            }
+            var a0 = Math.atan2(dy0, dx0);
+            var a1 = Math.atan2(dy1, dx1);
+            var angle = a1 - a0;
+            angle *= 180 / Math.PI;
+            geometry.rotate(angle, originGeometry);
+            geometry.angle -= angle;
         };
         radius._sketch = true;
         this.radiusHandle = radius;
