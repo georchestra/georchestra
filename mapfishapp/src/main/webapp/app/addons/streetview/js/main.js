@@ -83,6 +83,14 @@ GEOR.Addons.Streetview.prototype = {
             layout: 'fit',
             bufferResize: 200,
             constrainHeader: true,
+            tools:[{
+                id:'pin',
+                qtip: OpenLayers.i18n("Recenter on the marker"),
+                handler: function(){
+                    this.map.setCenter(this._layer.features[0].geometry.getBounds().getCenterLonLat());
+                },
+                scope: this
+            }],
             items: [{
                 width: this.options.initial_window_size,
                 height: this.options.initial_window_size,
