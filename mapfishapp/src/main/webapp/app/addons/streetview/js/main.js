@@ -12,9 +12,6 @@ GEOR.Addons.Streetview.prototype = {
     _drawControl: null,
     _window: null,
     _helpShown: false,
-    _x: null,
-    _y: null,
-    _heading: null,
 
     /**
      * Method: init
@@ -330,6 +327,8 @@ GEOR.Addons.Streetview.prototype = {
                 this._drawControl.deactivate();
             }
             this._modifyControl.deactivate();
+            this._layer.removeAllFeatures(); // reset marker position
+            this._fovLayer.removeAllFeatures();
             this.map.removeLayer(this._layer);
             this.map.removeLayer(this._fovLayer);
             this.map.events.un({
