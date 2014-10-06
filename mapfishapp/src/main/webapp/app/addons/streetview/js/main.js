@@ -7,10 +7,14 @@ GEOR.Addons.Streetview = function(map, options) {
 
 GEOR.Addons.Streetview.prototype = {
     _layer: null,
+    _fovLayer: null,
     _modifyControl: null,
     _drawControl: null,
     _window: null,
     _helpShown: false,
+    _x: null,
+    _y: null,
+    _heading: null,
 
     /**
      * Method: init
@@ -19,13 +23,10 @@ GEOR.Addons.Streetview.prototype = {
      * record - {Ext.data.record} a record with the addon parameters
      */
     init: function(record) {
-        var style = { // TODO: let the admin configure this style
-            graphicWidth: 10,
-            graphicHeight: 10,
-            graphicOpacity: 1,
-            graphicZIndex: 10000,
+        var style = {
             cursor: "pointer",
-            fillOpacity: 0, 
+            fillOpacity: 0.3, 
+            fillColor: "#fff",
             strokeColor: "#67b6f9",
             strokeOpacity: 0.8,
             strokeWidth: 3,
@@ -40,6 +41,7 @@ GEOR.Addons.Streetview.prototype = {
             eventListeners: {
                 "featuremodified": function(o) {
                     this._updateView();
+                    this._updateFOV();
                     this._window.show();
                 },
                 "sketchcomplete": function(o) {
@@ -60,6 +62,16 @@ GEOR.Addons.Streetview.prototype = {
                 },
                 scope: this
             }
+        });
+        this._fovLayer = new OpenLayers.Layer.Vector("addon_streetview_fov", {
+            displayInLayerSwitcher: false,
+            styleMap: new OpenLayers.StyleMap({
+                "default": Ext.applyIf({
+                    strokeColor: "#f00", 
+                    strokeWidth: 2
+                }, style),
+                "select": Ext.applyIf({}, style)
+            })
         });
         this._drawControl = new OpenLayers.Control.DrawFeature(this._layer, OpenLayers.Handler.Point, {});
         this.map.addControl(this._drawControl);
@@ -154,6 +166,9 @@ GEOR.Addons.Streetview.prototype = {
         }
         // keep feature geometry apparent diameter
         this._layer.removeAllFeatures();
+        // remove previous FOV:
+        this._fovLayer.removeAllFeatures();
+        // will update both features in both layers:
         this._createRegularPolygonFromPoint(f.geometry.getCentroid(), f.geometry.angle);
         // select again the new feature:
         this._modifyControl.selectFeature(this._layer.features[0]);
@@ -178,16 +193,75 @@ GEOR.Addons.Streetview.prototype = {
     },
 
     /**
+     * Method: _updateFOV
+     * updates the second feature in the layer (the one which represents the FOV)
+     */
+    _updateFOV: function() {
+        if (!this._fovLayer.features[0]) {
+            return;
+        }
+        var origin = this._layer.features[0].geometry.getCentroid();
+        var angle = this._layer.features[0].geometry.angle;
+        var geom = this._fovLayer.features[0].geometry;
+        if ((origin.x != geom.x) &&  (origin.y != geom.y)) {
+            geom.move(origin.x - geom.x, origin.y - geom.y);
+            geom.x = origin.x;
+            geom.y = origin.y;
+        }
+        var new_angle = 90 - angle;
+        geom.rotate(new_angle - geom.angle, origin); 
+        geom.angle = new_angle;
+        this._fovLayer.redraw();
+    },
+
+    /**
+     * Method: _createFOV
+     * Creates the FOV geometry (= a portion of a circle)
+     * 
+     * Parameters:
+     * origin - {<OpenLayers.Geometry.Point>}
+     * radius - {Float} the FOV radius value in meters
+     * angle - {Float} the view heading in degrees
+     * fov - {Integer} the field of view in degrees (around the "angle" direction)
+     *
+     * Returns: 
+     * {geom} The FOV geometry
+     */
+    _createFOV: function(origin, radius, angle, fov) {
+        var points = [];
+        points.push(origin.clone());
+        for(var i=0; i<=10; ++i) {
+            var x = origin.x + (radius * Math.sin((angle+fov/2-i*(fov/10))/180*Math.PI));
+            var y = origin.y + (radius * Math.cos((angle+fov/2-i*(fov/10))/180*Math.PI));
+            points.push(new OpenLayers.Geometry.Point(x, y));
+        }
+        var ring = new OpenLayers.Geometry.LinearRing(points);
+        var geom = new OpenLayers.Geometry.Polygon([ring]);
+        geom.x = origin.x;
+        geom.y = origin.y;
+        geom.angle = 90; // the first direction we show is North (counted counterclockwise from the positive x axis)
+        return geom;
+    },
+
+    /**
      * Method: _createRegularPolygonFromPoint
      * 
      */
     _createRegularPolygonFromPoint: function(geometry, angle) {
-        // radius for 20 px diameter icon size:
-        var radius = 10 * this.map.getResolution();
+        // radius small enough to make the circular geom disappear
+        // behind the central (=drag) point handler:
+        var radius = 1 * this.map.getResolution();
         var geom = OpenLayers.Geometry.Polygon.createRegularPolygon(geometry, radius, 20, 0);
         // we're assuming an initial heading of 0 degrees (North):
         geom.angle = angle || 0;
+        geom.x = geometry.getCentroid().x;
+        geom.y = geometry.getCentroid().y;
+        // draw FOV
+        var geom2 = this._createFOV(geometry, 15*radius, angle, this.options.initial_fov);
+        // get back fov inner angle: (fov angle is measured counterclockwise form the positive x axis)
+        geom2.angle = 90 - geom.angle;
         this._layer.addFeatures([new OpenLayers.Feature.Vector(geom)]);
+        this._fovLayer.addFeatures([new OpenLayers.Feature.Vector(geom2)]);
     },
 
     /**
@@ -232,6 +306,7 @@ GEOR.Addons.Streetview.prototype = {
     _onCheckchange: function(item, checked) {
         if (checked) {
             this.map.addLayer(this._layer);
+            this.map.addLayer(this._fovLayer);
             this._modifyControl.activate();
             if (!this._layer.features.length) {
                 this._drawControl.activate();
@@ -256,6 +331,7 @@ GEOR.Addons.Streetview.prototype = {
             }
             this._modifyControl.deactivate();
             this.map.removeLayer(this._layer);
+            this.map.removeLayer(this._fovLayer);
             this.map.events.un({
                 "zoomend": this._onMapZoomend,
                 scope: this
@@ -277,9 +353,11 @@ GEOR.Addons.Streetview.prototype = {
         this._modifyControl && this._modifyControl.destroy();
         this._modifyControl = null;
         this.map.removeLayer(this._layer);
+        this.map.removeLayer(this._fovLayer);
         this._window.destroy();
         this._window = null;
         this._layer = null;
+        this._fovLayer = null;
         this.map = null;
     }
 };

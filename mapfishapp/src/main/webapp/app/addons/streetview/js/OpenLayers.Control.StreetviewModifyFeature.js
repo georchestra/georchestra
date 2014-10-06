@@ -19,8 +19,8 @@ OpenLayers.Control.StreetviewModifyFeature = OpenLayers.Class(OpenLayers.Control
         // create this radiusGeometry point geometry at a given distance from the center of bbox, 
         // which is a bit bigger than the original bbox and at the correct angle.
         var radiusGeometry = new OpenLayers.Geometry.Point(
-            center.lon + Math.sin((geometry.angle)/180*Math.PI) * 0.7 * bounds.getWidth(), 
-            center.lat + Math.cos((geometry.angle)/180*Math.PI) * 0.7 * bounds.getWidth()
+            center.lon + Math.sin((geometry.angle)/180*Math.PI) * 12 * bounds.getWidth(),
+            center.lat + Math.cos((geometry.angle)/180*Math.PI) * 12 * bounds.getWidth()
         );
         var radius = new OpenLayers.Feature.Vector(radiusGeometry);
 
@@ -41,10 +41,6 @@ OpenLayers.Control.StreetviewModifyFeature = OpenLayers.Class(OpenLayers.Control
         this.radiusHandle = radius;
         this.radiusHandle.renderIntent = this.vertexRenderIntent;
         this.layer.addFeatures([this.radiusHandle], {silent: true});
-        // required to notify that the geometry has changed (rotated)
-        this.layer.events.triggerEvent(
-            "featuremodified", {feature: this.feature}
-        );
     },
     CLASS_NAME: "OpenLayers.Control.StreetviewModifyFeature"
 });
