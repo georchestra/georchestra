@@ -29,7 +29,7 @@
         },
         "fr": {
             "StreetView": "StreetView",
-            "Fullscreen in a new window": "",
+            "Fullscreen in a new window": "Vue plein écran dans une nouvelle fenêtre",
             "Recenter on the marker": "Recentrer la carte sur le marqueur",
             "Move the marker to update the view": "Déplacez le marqueur pour mettre à jour la vue",
             "Click on the map to get a glimpse of the surroundings": "Cliquez sur la carte pour obtenir une vue de l'endroit"
