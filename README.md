@@ -61,7 +61,7 @@ This way, you'll be able to merge into your branch the changes from upstream.
 Example workflow:
 
     cd config/configurations
-    git clone git@github.com:georchestra/template.git myprofile
+    git clone https://github.com/georchestra/template.git myprofile
     cd myprofile
     git remote rename origin upstream
     (feel free to add a new origin to a private server)
