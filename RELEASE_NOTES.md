@@ -20,13 +20,12 @@ Not yet funded, but would be really nice to have:
  * georchestra: use the browser-advertised preferred language by default (and give the user a chance to select the correct one with a combobox in the header) - see [#589](https://github.com/georchestra/georchestra/issues/589)
  * georchestra: validate on Tomcat 7/8 - see [#504](https://github.com/georchestra/georchestra/issues/504)
 
-Funded, but not done:
+Funded, but not yet done:
  * geoserver: update to 2.5.x with geofence - see [#677](https://github.com/georchestra/georchestra/issues/677) - CIGALsace & GeoBretagne
  * geofence: ability to configure map SRS - see [#732](https://github.com/georchestra/georchestra/issues/732) - Rennes Metropole
  * extractorapp: better emails - see [#750](https://github.com/georchestra/georchestra/issues/750) - GéoPicardie
  * mapfishapp: export current map context as a "map metadata" - see [#751](https://github.com/georchestra/georchestra/issues/751) - GéoPicardie
  * mapfishapp: load data from catalog improvement - see [#756](https://github.com/georchestra/georchestra/issues/756) - GeoBretagne
- * mapfishapp: streetview addon - see [#774](https://github.com/georchestra/georchestra/issues/774) - GeoBretagne
  * mapfishapp: direct geodata file loading via URL - see [#754](https://github.com/georchestra/georchestra/issues/754) - GéoPicardie
  * ldapadmin: delegated administrators - see [#786](https://github.com/georchestra/georchestra/issues/786) - GeoBretagne
 
@@ -35,6 +34,7 @@ New features:
  * extractorapp: native raster resolution extracted by default - see [#726](https://github.com/georchestra/georchestra/issues/726)
  * mapfishapp: context restoring - option to reset map or not - see [#302](https://github.com/georchestra/georchestra/issues/302)
  * mapfishapp: spatial query using previous results' geometries - see [#752](https://github.com/georchestra/georchestra/issues/752)
+ * mapfishapp: streetview addon - see [#774](https://github.com/georchestra/georchestra/issues/774) - GeoBretagne
 
 Enhancements:
  * extractorapp: editable combobox for resolution selection - see [#726](https://github.com/georchestra/georchestra/issues/726)
