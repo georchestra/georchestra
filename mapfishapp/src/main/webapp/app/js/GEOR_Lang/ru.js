@@ -97,7 +97,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Find": "Найти",
     "in": "B",
     /* To be translated ...
-    "No layer": "Aucune couche",
+    "No linked layer.": "Aucune couche.",
     "One layer found.": "Une couche trouvée.",
     "NB layers found.": "${NB} couches trouvées.",
     "NB metadata match the query.": "${NB} métadonnées correspondent à la requête.",

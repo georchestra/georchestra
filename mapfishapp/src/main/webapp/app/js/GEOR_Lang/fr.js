@@ -119,7 +119,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Catalogue": "Catalogue",
     "Find": "Chercher",
     "in": "dans",
-    "No layer": "Aucune couche",
+    "No linked layer.": "Aucune couche.",
     "One layer found.": "Une couche trouvée.",
     "NB layers found.": "${NB} couches trouvées.",
     "NB metadata match the query.": "${NB} métadonnées correspondent à la requête.",

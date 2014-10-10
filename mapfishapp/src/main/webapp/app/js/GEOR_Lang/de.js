@@ -119,7 +119,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Catalogue": "Katalog",
     "Find": "suchen",
     "in": "in",
-    "No layer": "Kein Layer",
+    "No linked layer.": "Kein Layer.",
     "One layer found.": "Layer gefunden.",
     "NB layers found.": "${NB} Layer gefunden.",
     "NB metadata match the query.": "${NB} Metadaten entsprechen der Abfrage",
