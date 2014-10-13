@@ -332,6 +332,14 @@
         <enabled>true</enabled>
         <checksumPolicy>ignore</checksumPolicy>
       </snapshots>
+      <id>georchestra</id>
+      <url>http://sdi.georchestra.org/maven/repository</url>
+    </repository>
+    <repository>
+      <snapshots>
+        <enabled>true</enabled>
+        <checksumPolicy>ignore</checksumPolicy>
+      </snapshots>
       <id>mapfish</id>
       <url>http://dev.mapfish.org/maven/repository</url>
     </repository>
