@@ -40,8 +40,8 @@ public abstract class AbstractApplication {
     private static List<String> allowedDirections = Arrays.asList("ASC", "DESC");
 
 	/**
-	 * check all the parameters from the request and fill class attributes.
-	 * Return false if any parameters is missing or bad composed.
+	 * Checks all the parameters from the request and fill class attributes.
+	 * Return false if any parameters is missing or malformed.
 	 *
 	 * @param request
 	 * @param msg
@@ -76,7 +76,7 @@ public abstract class AbstractApplication {
 	}
 
 	/**
-	 * Check the month and yea parameters and fill the class attributes.
+	 * Check the month and year parameters and fill the class attributes.
 	 * Return false if one's missing or bad formatted
 	 * @param request
 	 * @return
@@ -129,10 +129,10 @@ public abstract class AbstractApplication {
 	}
 
 	/**
-	 * Update the response ContentType and header to make the navigator download the CSV file
+	 * Updates the response ContentType and header to make the browser download the CSV file
 	 *
 	 * @param csv the CSV content as String
-	 * @param filename the filename the CSV will be saved
+	 * @param filename the filename the CSV will be saved under
 	 * @param response
 	 * @throws Exception
 	 */
@@ -144,16 +144,16 @@ public abstract class AbstractApplication {
 	}
 
 	/**
-	 * Generic method from all WS. Will call the stretegy.process method which refer to the
-	 * WS' model. This model will return result as JSONObject. This object will be return
+	 * Generic method from all WS. Will call the strategy.process method which refer to the
+	 * WS' model. This model will return result as JSONObject. This object will be returned
 	 * in response. If no error occurs, the response will contain success:true, the total
-	 * number of result, and a array of results.
-	 * If an error is thrown during the request, a JSON response with success:false will be return.
-	 * If an error occurs during SQL or JSON process, an exception will be returned.
+	 * number of results, and an array of results.
+	 * If an exception is thrown during the request, a JSON response with success:false will be returned.
+	 * If an error occurs during SQL or JSON process, an exception will be thrown.
 	 *
 	 * @param request
 	 * @param response
-	 * @param strategy contain the method to call the model an retrieve results
+	 * @param strategy contains the method to call the model and retrieve the results
 	 * @throws Exception
 	 */
 	protected void getStats(HttpServletRequest request, HttpServletResponse response, StrategyController strategy) throws Exception {
@@ -176,9 +176,9 @@ public abstract class AbstractApplication {
 	}
 
 	/**
-	 * Generic method from all WS. Will call the stretegy.process method which refer to the
+	 * Generic method from all WS. Will call the strategy.process method which refers to the
 	 * WS' model. This model will return result as JSONObject. This object will then be
-	 * parsed to write a CSV file which be return in the response, using response header as
+	 * parsed to write a CSV file which will be returned in the response, using response header as
 	 * CSV file.
 	 *
 	 * @param request
