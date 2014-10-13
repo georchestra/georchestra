@@ -25,7 +25,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "No": "Nein",
     "OK": "OK",
     "or": "oder",
-    "Cancel": "Annulieren",
+    "Cancel": "Abbrechen",
     "Save": "Speichern",
     "Loading...": "im Aufbau...",
     "File": "Datei",
@@ -38,6 +38,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "File submission failed or invalid file": "Sendung abgebrochen - fehlerhafte Datei",
     "Type": "Typ",
     "Title": "Titel",
+    "Actions": "Aktionen",
     /* GEOR.js strings */
     "Cities": "Standorte",
     "Recentering on GeoNames cities": "Auf die Standorte der GeoNames <br />Datenbasis neu ausrichten",
@@ -118,10 +119,10 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Catalogue": "Katalog",
     "Find": "suchen",
     "in": "in",
-    "No layer": "Kein Layer",
+    "No linked layer.": "Kein Layer.",
     "One layer found.": "Layer gefunden.",
-    "NB layers found.": "${NB} Layers gefunden.",
-    "NB metadata match the query.": "${NB} Metadaten entsprechen der Anfrage",
+    "NB layers found.": "${NB} Layer gefunden.",
+    "NB metadata match the query.": "${NB} Metadaten entsprechen der Abfrage",
     "A single metadata matches the query.": "eine einzige Metadatei entspricht der Anfrage",
     "Precise your request.": "Präzisieren Sie Ihre Suche",
     "No metadata matches the query.":
@@ -141,7 +142,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "fileupload_error_outOfMemory": "Speicherkapazität nicht ausreichend",
     "fileupload_error_sizeError": "Datei zu groß.",
     "fileupload_error_unsupportedFormat": "Dateiformat ungültig.",
-    "fileupload_error_projectionError": "Lesefehler der geografischen Koordinaten. Überprüfen Sie die Projektioninformation.",
+    "fileupload_error_projectionError": "Lesefehler der geografischen Koordinaten. Überprüfen Sie die Projektionsinformation.",
     "server upload error: ERROR":
         "Fehler beim Dateihochladen. ${ERROR}",
     "Incorrect server response.": "Server Antwort fehlerhaft.",
@@ -175,7 +176,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Add layers from a ...": "Layer hinzufügen aus einem...",
     "Malformed URL": "URL ungültig.",
     "Queryable": "abfragbar",
-    "Opaque": "Undurchlässig",
+    "Opaque": "nicht Transparent",
     "Choose a WMS server: ": "Wählen Sie einen WMS Server: ",
     "The server is publishing one layer with an incompatible projection":
         "der Server zeigt Layer mit nicht kompatibler Projektion",
@@ -216,9 +217,10 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Push up this layer": "Layer darüberlegen",
     "Push down this layer": "Layer darunterlegen",
     "Add layers": "Layer hinzufügen",
+    "Remove all layers": "Alle Layers löschen",
+    "Are you sure you want to remove all layers ?": "Sind Sie sicher, dass Sie alle Layers löschen wollen ?",
     "source: ": "Quelle : ",
     "unknown": "Unbekannt",
-    "Actions": "Aktionen",
     "Draw new point": "Neuen Punkt zeichnen",
     "Draw new line": "Neue Linie zeichnen",
     "Draw new polygon": "Neuen Polygon zeichnen",
@@ -246,13 +248,13 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
         "Layer aus WMS Service hinzufügen",
     "Add layers from WFS services":
         "Layer aus WFS Service hinzufügen",
-    "NB layers not imported": "${NB} Layers nicht zugefügt",
+    "NB layers not imported": "${NB} Layers nicht hinzugefügt",
     "One layer not imported": "Layer nicht zugefügt",
     "mapinit.layers.load.error":
-        "Layerlist ${LIST} keine Ladung erfolgt.  " +
+        "Layerlist ${LIST} nicht geladen.  " +
         "Möglicher Grund : nicht ausreichende Zugriffsrechte " +
 		"SRS nicht kompatibel oder Layer existiert nicht... ",
-    "NB layers imported": "${NB} Layers zufügen",
+    "NB layers imported": "${NB} Layers hinzufügen",
     "One layer imported": "Layer zugefügt",
     "No layer imported": "kein Layer zugefügt",
     "The provided context is not valid": "WMC ungültig",
@@ -288,7 +290,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Comments": "Kommentare",
     "Scale: ": "Maβstab : ",
     "Date: ": "Datum : ",
-    "Minimap": "Minikarte",
+    "Minimap": "Miniaturkarte",
     "North": "Norden",
     "Scale": "Maβstab",
     "Date": "Datum",
@@ -324,6 +326,19 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "One result": "1 Ergebnis",
     "No result": "kein Ergebnis",
     "Clean": "löchen",
+    "All": "Alle",
+    "None": "Keiner",
+    "Invert selection": "Auswahl umkehren",
+    "Actions on the selection or on all results if no row is selected":
+        "Aktien an der Auswahl oder an alle Ergebnisse, wenn keine Zeile ausgewählt ist",
+    "Store the geometry": 
+        "Diese Geometrie speichern",
+/*
+    "Aggregates the geometries of the selected features and stores it in your browser for later use in the querier":
+        "La géométrie des objets sélectionnés est enregistrée pour un usage ultérieur dans le requêteur",
+*/
+    "Geometry successfully stored in this browser": 
+        "Geometrie auf dem Navigator gespeichert.",
     "Clean all results on the map and in the table": "Löschen " +
         "der aufgezeichneten Ergebnisse auf Karte und Liste",
     "Zoom": "Zoom",
@@ -359,7 +374,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Untitled": "Ohne Titel",
     "styler.guidelines":
         "Benutzen Sie den Button \"+\" Um eine Klasse zu schaffen und den Button " +
-        "\"Analyse\" Um eine Gesamtklasse der thematischen Analyse zu schaffen.</p>", 
+        "\"Analyse\" Um eine Gesamtklasse der thematischen Analyse zu erstellen.</p>", 
     "Analyze": "Analyse",
     "Add a class": "Klasse hinzufügen",
     "Delete the selected class": "Gewählte Klasse löschen",
@@ -382,7 +397,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Query all active layers": "Alle aktivierten Layer abfragen",
     "Show legend": "Legende anzeigen",
     "Leave this page ? You will lose the current cartographic context.":
-        "Sie verlassen diese Seite und verlieren die geschaffenen Karten",
+        "Sie verlassen diese Seite und verlieren die erstellte Karten",
     "Online help": "Hilfe",
     "Display the user guide": "Hilfe anzeigen",
     "Contextual help": "Hinweise",
@@ -391,14 +406,14 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "distance measure": "Distanz messen",
     "area measure": "Oberfläche messen",
     "Measure": "Maß",
-    "Tools": "Utensilien",
-    "tools": "Utensilien",
-    "tool": "Utensil",
-    "No tool": "kein Utensil",
-    "Manage tools": "Utensilien verwalten",
+    "Tools": "Werkzeug",
+    "tools": "Werkzeuge",
+    "tool": "Werkzeuge",
+    "No tool": "kein Tool",
+    "Manage tools": "Werkzeuge verwalten",
     "remember the selection": "Erinnern der Selektion",
-    "Available tools:": "Utensilien vorhanden :",
-    "Click to select or deselect the tool": "Klicken um Utensil abzuwählen",
+    "Available tools:": "Werkzeuge vorhanden :",
+    "Click to select or deselect the tool": "Klicken um das Tool abzuwählen",
     "Could not load addon ADDONNAME": "${ADDONNAME} Addon laden unmöglich ",
     /* GEOR_util.js strings */
     "Characters": "Zeichen",
@@ -410,11 +425,11 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     /* GEOR_waiter.js strings */
     /* GEOR_wmc.js strings */
     "The provided file is not a valid OGC context": "OGC entspricht nicht dieser Datei",
-    "Warning: trying to restore WMC with a different projection (PROJCODE1, while map SRS is PROJCODE2). Strange things might occur !": "Achtung: die restaurierte Karte wurde mit ${PROJCODE1} abgespeichert, die aktuelle Karte mit ${PROJCODE2}. Unerwartete Probleme können auftreten.",
+    "Warning: trying to restore WMC with a different projection (PROJCODE1, while map SRS is PROJCODE2). Strange things might occur !": "Achtung: die wiederhergestellte Karte wurde mit ${PROJCODE1} abgespeichert, die aktuelle Karte mit ${PROJCODE2}. Unerwartete Probleme können auftreten.",
     /* GEOR_wmcbrowser.js strings */
     "Could not find WMC file": "Gewählte Karte nicht vorhanden",
-    "... or a custom context": "... oder einer personalisierten Karte",
-    "Replace current map composition with one of these contexts:": "Aktuelle Karte ersetzen durch :",
+    "... or a local context": "... oder einer lokal Karte",
+    //"Load or add the layers from one of these map contexts:" : "Aktuelle Karte ersetzen durch :",
     "A unique OSM layer": "Ein einziger Layer OpenStreetMap",
     "default viewer context": "Standarteinstellung",
     "(default)": "<br/>(Standardeinstellung)",
@@ -428,7 +443,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
         "fassung",
     "Context saving": "Kontextspeicherung",
     "The file is required.": "Dateiname nötig.",
-    "Context restoring": "Kontext restaurieren",
+    "Context restoring": "Kontext wiederherstellen",
     "<p>Please note that the WMC must be UTF-8 encoded</p>": "<p>der WMC muss UTF8 kodiert sein</p>",
     "Load": "laden",
     "Workspace": "Menü",
@@ -442,7 +457,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "JOSM must be started with the remote control option": "Bitte " +
         "vorher JOSM und Distanzkontrolle aktivieren",
     "with Potlatch": "mit Potlatch",
-    "Recommended scale is 1:10.000": "Empfohlener Maßstab : 1/10000",
+    "Recommended scale is 1:10.000": "Empfohlener Maßstab 1:10000",
     "with Potlatch2": "mit Potlatch2",
     "with Walking Papers": "mit Walking Papers",
     /* GEOR_edit.js */
@@ -463,9 +478,9 @@ GeoExt.Lang.add("fr", {
         deleteMsg: "löschen bestätigen ?",
         deleteButtonText: "löschen",
         deleteButtonTooltip: "Objekt löschen",
-        cancelMsgTitle: "Annulierung",
+        cancelMsgTitle: "Abbrechen",
         cancelMsg: "Objekt verändert. Bestätigen Sie das Löschen der Änderung ?",
-        cancelButtonText: "Annulieren",
+        cancelButtonText: "Abbrechen",
         cancelButtonTooltip: "Aktuelle Änderungen verwerfen",
         saveButtonText: "speichern",
         saveButtonTooltip: "Änderungen speichern",

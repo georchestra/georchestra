@@ -870,6 +870,15 @@ GEOR.styler = (function() {
         events: observable,
 
         /**
+         * APIMethod: deactivate
+         *
+         */
+        deactivate: function() {
+            mask && mask.hide();
+            win && win.close();
+        },
+
+        /**
          * APIMethod: create
          * Create and open the styler window.
          *

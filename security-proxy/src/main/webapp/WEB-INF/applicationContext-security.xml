@@ -11,8 +11,8 @@
         p:locations="/WEB-INF/security-proxy.properties" />
         
     <s:http entry-point-ref="casProcessingFilterEntryPoint" path-type="regex" realm="${realmName}" >
-        <s:intercept-url pattern=".*\?.*login.*" access="ROLE_SV_USER,ROLE_SV_EDITOR,ROLE_SV_REVIEWER,ROLE_SV_ADMIN" />
-        <s:intercept-url pattern=".*\?.*casLogin.*" access="ROLE_SV_USER,ROLE_SV_EDITOR,ROLE_SV_REVIEWER,ROLE_SV_ADMIN" />
+        <s:intercept-url pattern=".*\?.*login.*" access="ROLE_SV_USER,ROLE_SV_EDITOR,ROLE_SV_REVIEWER,ROLE_SV_ADMIN,ROLE_ADMINISTRATOR" />
+        <s:intercept-url pattern=".*\?.*casLogin.*" access="ROLE_SV_USER,ROLE_SV_EDITOR,ROLE_SV_REVIEWER,ROLE_SV_ADMIN,ROLE_ADMINISTRATOR" />
         <s:intercept-url pattern="/extractorapp/admin/.*" access="ROLE_ADMINISTRATOR" />
         <s:intercept-url pattern="/extractorapp/.*" access="ROLE_MOD_EXTRACTORAPP" />
         <s:intercept-url pattern="/geofence/.*" access="ROLE_ADMINISTRATOR" />
@@ -22,6 +22,8 @@
         <!-- ldapadmin private ui web services: -->
         <s:intercept-url pattern="/ldapadmin/private/.*" access="ROLE_MOD_LDAPADMIN" />
         <s:intercept-url pattern="/testPage" access="IS_AUTHENTICATED_FULLY" />
+        <!-- the integrated ogc proxy should not be used on production systems -->
+        <s:intercept-url pattern=".*/ogcproxy/.*" access="ROLE_NO_ONE" />
 <!--        <sec:intercept-url pattern=".*\?.*login.*" access="IS_AUTHENTICATED_FULLY" />-->
         <s:intercept-url pattern=".*" access="IS_AUTHENTICATED_ANONYMOUSLY,ROLE_SV_USER,ROLE_SV_EDITOR,ROLE_SV_REVIEWER,ROLE_SV_ADMIN,ROLE_ADMINISTRATOR" />
         <!-- s:form-login / -->

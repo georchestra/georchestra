@@ -24,61 +24,58 @@
     <encoding>UTF-8</encoding>
     <georchestra.version>${project.version}</georchestra.version>
     <postTreatmentScript><![CDATA[
-def server=project.properties['server']
-def subTarget=project.properties['subTarget']
-						
-def params = new Parameters(
-	project: project,
-	target: server,
-	subTarget: subTarget,
-	log: log,
-	ant: ant
-)
-params.init(false)
 
-new PostTreatment().run(this, log, ant, project.basedir, params.projectDir, server, subTarget, project.build.directory)
+       def server=project.properties['server']
+       def subTarget=project.properties['subTarget']
+       
+       def params = new Parameters(
+           project: project,
+           target: server,
+           subTarget: subTarget,
+           log: log,
+           ant: ant
+       )
+       params.init(false)
+       
+       new PostTreatment().run(this, log, ant, project.basedir, params.projectDir, server, subTarget, project.build.directory)
+
 ]]></postTreatmentScript>
   </properties>
   <modules>
-    <module>geotools</module>
     <module>config</module>
-    <module>header</module>
+    <!-- <module>gt-ogr</module> now the geotools implementation is used -->
     <module>epsg-extension</module>
     <module>ogc-server-statistics</module>
     <module>server-deploy-support</module>
   </modules>
   <build>
     <plugins>
-      <!-- initialize git revision info -->
-      <plugin>
-        <groupId>pl.project13.maven</groupId>
-        <artifactId>git-commit-id-plugin</artifactId>
-        <version>2.1.4</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>revision</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <prefix>build</prefix>
-          <failOnNoGitDirectory>false</failOnNoGitDirectory>
-          <skipPoms>false</skipPoms>
-          <verbose>false</verbose>
-          <!-- see https://github.com/ktoso/maven-git-commit-id-plugin/issues/61#issuecomment-27995746 -->
-          <gitDescribe>
-            <skip>true</skip>
-          </gitDescribe>
-        </configuration>
-      </plugin>
+       <!-- initialize git revision info -->
+       <plugin>
+         <groupId>pl.project13.maven</groupId>
+         <artifactId>git-commit-id-plugin</artifactId>
+         <version>2.1.10</version>
+         <executions>
+           <execution>
+             <goals>
+               <goal>revision</goal>
+             </goals>
+           </execution>
+         </executions>
+         <configuration>
+           <prefix>build</prefix>
+           <failOnNoGitDirectory>false</failOnNoGitDirectory>
+           <skipPoms>false</skipPoms>
+           <verbose>false</verbose>
+         </configuration>
+       </plugin>
     </plugins>
     <pluginManagement>
       <plugins>
         <plugin>
           <groupId>org.codehaus.groovy.maven</groupId>
           <artifactId>gmaven-plugin</artifactId>
-          <version>${gmaven.version}</version>
+          <version>1.0</version>
           <executions>
             <execution>
               <id>create-missingpost-treatment</id>
@@ -88,20 +85,20 @@ new PostTreatment().run(this, log, ant, project.basedir, params.projectDir, serv
               </goals>
               <configuration>
                 <source><![CDATA[
-def confDir = new File(project.build.directory, "conf")
-def treatmentFile = new File(confDir, project.artifactId+"/PostTreatment.groovy")
-if(confDir.exists() && !treatmentFile.exists()){
-	treatmentFile.parentFile.mkdirs()
-	treatmentFile << """
-class PostTreatment {
-	def run(def project, def log, def ant, def basedirFile, def configDir,
-					def target, def subTarget, def targetDir) {
-			log.info("No post treatment required for this project")
-		}
-}
-"""
-}
-]]></source>
+                  def confDir = new File(project.build.directory, "conf")
+                  def treatmentFile = new File(confDir, project.artifactId+"/PostTreatment.groovy")
+                  if(confDir.exists() && !treatmentFile.exists()){
+                    treatmentFile.parentFile.mkdirs()
+                    treatmentFile << """
+                      class PostTreatment {
+                        def run(def project, def log, def ant, def basedirFile, def configDir,
+                                def target, def subTarget, def targetDir) {
+                                  log.info("No post treatment required for this project")
+                            }
+                        }
+                    """
+                  }
+                  ]]></source>
               </configuration>
             </execution>
             <execution>
@@ -335,6 +332,14 @@ class PostTreatment {
         <enabled>true</enabled>
         <checksumPolicy>ignore</checksumPolicy>
       </snapshots>
+      <id>georchestra</id>
+      <url>http://sdi.georchestra.org/maven/repository</url>
+    </repository>
+    <repository>
+      <snapshots>
+        <enabled>true</enabled>
+        <checksumPolicy>ignore</checksumPolicy>
+      </snapshots>
       <id>mapfish</id>
       <url>http://dev.mapfish.org/maven/repository</url>
     </repository>
@@ -350,7 +355,7 @@ class PostTreatment {
     <repository>
       <id>opengeo</id>
       <name>OpenGeo Maven Repository</name>
-      <url>http://repo.opengeo.org/</url>
+      <url>http://repo.boundlessgeo.com/main/</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
@@ -359,6 +364,11 @@ class PostTreatment {
       <id>jetty-repository</id>
       <name>Jetty Maven2 Repository</name>
       <url>https://oss.sonatype.org/content/groups/jetty/</url>
+    </repository>
+    <repository>
+      <id>scala-tools.org</id>
+      <name>Scala-tools Maven2 Repository</name>
+      <url>http://scala-tools.org/repo-releases</url>
     </repository>
   </repositories>
   <pluginRepositories>
@@ -376,7 +386,7 @@ class PostTreatment {
     <pluginRepository>
       <id>opengeo</id>
       <name>OpenGeo Maven Repository</name>
-      <url>http://repo.opengeo.org/</url>
+      <url>http://repo.boundlessgeo.com/</url>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>

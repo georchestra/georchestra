@@ -144,10 +144,17 @@ GEOR.cswquerier = (function() {
     );
 
     /**
-     * Property: GeoExt.data.CSWRecordsStore
+     * Property: CSWRecordsStore
      * {GeoExt.data.CSWRecordsStore} store reading its records from the CSW service
      */
     var CSWRecordsStore;
+
+    /**
+     * Property: servicesStore
+     * {GeoExt.data.CSWRecordsStore} store reading its records from the CSW service
+     * dedicated to "plan B" ie: fetching the service metadata.
+     */
+    var servicesStore;
 
     /**
      * Property: customStore
@@ -181,6 +188,68 @@ GEOR.cswquerier = (function() {
     var tr = null;
 
     /**
+     * Property: uuidsToDig
+     * {Array} a cache of csw records for "plan B"
+     */
+    var uuidsToDig = null;
+
+    /**
+     * Method: onServicesStoreLoad
+     * Callback on ServicesStore load event
+     *
+     * Parameters:
+     * s - {GeoExt.data.CSWRecordsStore} the store
+     * serviceRecords - {Array(GeoExt.data.CSWRecord)} loaded records
+     */
+    var onServicesStoreLoad = function(s, serviceRecords) {
+        // transfer results to customStore:
+        Ext.each(uuidsToDig, function(o) {
+            var uuid = o.uuid,
+                record = o.record;
+            Ext.each(serviceRecords, function(serviceRecord) {
+                // check that the service has a correct service URL
+                var serviceURL,
+                    identificationInfo = serviceRecord.get("identificationInfo"),
+                    operations = identificationInfo[0].containsOperations;
+                Ext.each(operations, function(op) {
+                    // get the WMS one, whose operationName is GetCapabilities
+                    if (op.operationName.characterString == "GetCapabilities" &&
+                        op.connectPoint[0] &&
+                        op.connectPoint[0].linkage &&
+                        GEOR.util.isUrl(op.connectPoint[0].linkage.URL, true) && // strict URL checking
+                        op.connectPoint[0].protocol &&
+                        op.connectPoint[0].protocol.characterString == "OGC:WMS") {
+                        // get the service URL
+                        serviceURL = op.connectPoint[0].linkage.URL;
+                    }
+                });
+                // if no service end point, abort
+                if (!serviceURL) {
+                    return;
+                }
+                // get the SV_CoupledResource 
+                // whose identifier matches the one found in the first query
+                // and whose operationName is GetMap
+                var resources = identificationInfo[0].coupledResource;
+                Ext.each(resources, function(resource) {
+                    if (resource.identifier.characterString == uuid &&
+                        resource.operationName.characterString == "GetMap" &&
+                        resource.scopedName) {
+                        // enrich the original record with correct server name and layer name:
+                        record.set("URI", record.get("URI").concat({
+                            name: resource.scopedName, 
+                            value: serviceURL, 
+                            protocol: "OGC:WMS"
+                        }));
+                        // feed the DataView (cumulatively adding the record):
+                        customStore.loadData([record], true);
+                    }
+                });
+            });
+        });
+    };
+
+    /**
      * Method: onCSWRecordsStoreLoad
      * Callback on CSWRecordsStore load event
      *
@@ -189,8 +258,79 @@ GEOR.cswquerier = (function() {
      * cswRecords - {Array(GeoExt.data.CSWRecord)} loaded records
      */
     var onCSWRecordsStoreLoad = function(s, cswRecords) {
+        uuidsToDig = [];
+        // empty store:
+        customStore.loadData([]);
         // transfer results to customStore:
-        customStore.loadData(cswRecords);
+        Ext.each(cswRecords, function(r) {
+            var c = customStore.getCount();
+            customStore.loadData([r], true); // cumulatively adding records
+            if (customStore.getCount() == c) {
+                // ... means that the record did not contain information about a linked WMS layer.
+                // This is the place to hook into for "plan B" 
+                // see https://github.com/georchestra/georchestra/issues/756
+                uuidsToDig.push({
+                    uuid: r.data.identifier,
+                    record: r
+                });
+            }
+        });
+
+        if (uuidsToDig.length) {
+            var filter, filters = [];
+            if (uuidsToDig == 1) {
+                filter = new OpenLayers.Filter.Comparison({
+                    type: "==",
+                    property: "operatesOnIdentifier",
+                    value: uuidsToDig[0].uuid
+                });
+            } else {
+                Ext.each(uuidsToDig, function(o) {
+                    filters.push(new OpenLayers.Filter.Comparison({
+                        type: "==",
+                        property: "operatesOnIdentifier",
+                        value: o.uuid
+                    }));
+                });
+                filter = new OpenLayers.Filter.Logical({
+                    type: "||",
+                    filters: filters
+                });
+            }
+            // TODO: use a GeoExt.data.ProtocolProxy for this store, 
+            // with an OpenLayers.Protocol.CSW protocol
+            // and a GeoExt.data.CSWRecordsReader reader
+            servicesStore.load({
+                params: {
+                    xmlData: new OpenLayers.Format.CSWGetRecords().write({
+                        resultType: "results",
+                        outputSchema: "http://www.isotc211.org/2005/gmd", // to get ISO19139 XML
+                        Query: {
+                            ElementSetName: {
+                                value: "full"
+                            },
+                            Constraint: {
+                                version: "1.1.0",
+                                Filter: new OpenLayers.Filter.Logical({
+                                    type: "&&",
+                                    filters: [
+                                        new OpenLayers.Filter.Comparison({
+                                            type: "==",
+                                            property: "ServiceType",
+                                            value: "view"
+                                        }),
+                                        filter
+                                    ]
+                                })
+                            }
+                        },
+                        startPosition: 1
+                    })
+                },
+                scope: this,
+                add: false
+            });
+        }
         // scroll dataview to top:
         var el = dataview.getEl();
         var f = el && el.first();
@@ -335,6 +475,13 @@ GEOR.cswquerier = (function() {
 
                 CSWRecordsStore = new GeoExt.data.CSWRecordsStore({
                     url: GEOR.config.DEFAULT_CSW_URL,
+                    fields: [
+                        {name: "identifier"},
+                        {name: "title"},
+                        {name: "URI"},
+                        {name: "abstract"},
+                        {name: "BoundingBox", mapping: "bounds"}
+                    ],
                     listeners: {
                         "load": onCSWRecordsStoreLoad,
                         "beforeload": function() {
@@ -347,6 +494,17 @@ GEOR.cswquerier = (function() {
                         "exception": function() {
                             mask && mask.hide();
                         }
+                    }
+                });
+
+                servicesStore = new GeoExt.data.CSWRecordsStore({
+                    url: GEOR.config.DEFAULT_CSW_URL,
+                    fields: [
+                        {name: "identifier", mapping: "fileIdentifier"},
+                        {name: "identificationInfo"}
+                    ],
+                    listeners: {
+                        "load": onServicesStoreLoad
                     }
                 });
 
@@ -443,6 +601,7 @@ GEOR.cswquerier = (function() {
                         listeners: {
                             "select": function(cb, rec) {
                                 CSWRecordsStore.proxy.setUrl(rec.get('url'), true);
+                                servicesStore.proxy.setUrl(rec.get('url'), true);
                                 // then trigger search, if first field has search.
                                 if (textField.hasSearch) {
                                     textField.onTrigger2Click.call(textField);
@@ -529,58 +688,91 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
         // see http://osgeo-org.1560.n6.nabble.com/CSW-GetRecords-problem-with-spaces-tp3862749p3862750.html
         var v = this.getValue(),
             words = v.replace(new RegExp("[,;:/%()!*.\\[\\]~&=]","g"), ' ').split(' '),
-            // adding wms in the filters list helps getting records where a WMS layer is referenced:
-            filters = [
-                // improve relevance of results: (might not be relevant with other csw servers than geonetwork)
-                new OpenLayers.Filter.Comparison({
-                    type: "~",
-                    property: "AnyText",
-                    value: '*wms*'
-                }),
-                // do not request dc:type = service, just dc:type = dataset OR series
-                new OpenLayers.Filter.Logical({
-                    type: "||",
-                    filters: [
-                        new OpenLayers.Filter.Comparison({
-                            type: "~",
-                            property: "type",
-                            value: 'dataset'
-                        }),
-                        new OpenLayers.Filter.Comparison({
-                            type: "~",
-                            property: "type",
-                            value: 'series'
-                        })
-                    ]
-                })
-            ];
+            // data type filters
+            // improve relevance of results: (might not be relevant with other csw servers than geonetwork)
+            byTypes = new OpenLayers.Filter.Logical({
+                type: "&&",
+                filters: [
+                    new OpenLayers.Filter.Comparison({
+                        type: "~",
+                        property: "AnyText",
+                        value: '*wms*'
+                    }),
+                    // do not request dc:type = service, just dc:type = dataset OR series
+                    new OpenLayers.Filter.Logical({
+                        type: "||",
+                        filters: [
+                            new OpenLayers.Filter.Comparison({
+                                type: "~",
+                                property: "type",
+                                value: 'dataset'
+                            }),
+                            new OpenLayers.Filter.Comparison({
+                                type: "~",
+                                property: "type",
+                                value: 'series'
+                            })
+                        ]
+                    })
+                ]
+            }),
+            // exact match filters
+            // to return direct hits on same id, titles
+            byIds =  new OpenLayers.Filter.Logical({
+                type: "||",
+                filters: [
+                    new OpenLayers.Filter.Comparison({
+                        type: "==",
+                        property: "Title",
+                        value: v
+                    }),
+                    new OpenLayers.Filter.Comparison({
+                        type: "==",
+                        property: "AlternateTitle",
+                        value: v
+                    }),
+                    new OpenLayers.Filter.Comparison({
+                        type: "==",
+                        property: "Identifier",
+                        value: v
+                    }),
+                    new OpenLayers.Filter.Comparison({
+                        type: "==",
+                        property: "ResourceIdentifier",
+                        value: v
+                    })
+                ]
+            }),
+            // word filters
+            byWords = [];
+
         Ext.each(words, function(word) {
             if (word) {
-                // #word : search in keywords
+                // #word : search in keywords, use _ for space
                 if (/^#.+$/.test(word)) {
-                    filters.push(
+                    byWords.push(
                         new OpenLayers.Filter.Comparison({
-                            type: "~",
+                            type: "==",
                             property: "Subject",
-                            value: word.substr(1) + "*",
+                            value: word.replace("_", " ").substr(1),
                             matchCase: false
                         })
                     );
                 }
-                // @word : search for organizations
+                // @word : search for organizations, use _ for space
                 else if (/^@.+$/.test(word)) {
-                    filters.push(
+                    byWords.push(
                         new OpenLayers.Filter.Comparison({
-                            type: "~",
+                            type: "==",
                             property: "OrganisationName",
-                            value: word.substr(1) + "*",
+                            value: word.replace("_", " ").substr(1),
                             matchCase: false
                         })
                     );
                 }
-                // -word : suppress entries with a specific pattern
+                // -word : exclude a specific word
                 else if (/^-.+$/.test(word)) {
-                    filters.push(
+                    byWords.push(
                         new OpenLayers.Filter.Logical({
                             type: "!",
                             filters: [
@@ -596,20 +788,20 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
                 }
                 // ?word : AnyText search
                 else if (/^\?.+$/.test(word)) {
-                    filters.push(
+                    byWords.push(
                         new OpenLayers.Filter.Comparison({
-                            type: "*",
+                            type: "~",
                             property: "AnyText",
                             value: word.substr(1) + "*",
                             matchCase: false
                         })
                     );
                 }
-                // word : search for exact match on predefined queryable properties
+                // word : search for hits on any property defined in CSW_FILTER_PROPERTIES
                 else {
-                    var defaultFilters = [];
+                    var byWordProp = [];
                     Ext.each(GEOR.config.CSW_FILTER_PROPERTIES, function(property) {
-                        defaultFilters.push(
+                        byWordProp.push(
                             new OpenLayers.Filter.Comparison({
                                 type: '~',
                                 property: property,
@@ -618,23 +810,37 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
                             })
                         );
                      });
-                    filters.push(
+                    byWords.push(
                         new OpenLayers.Filter.Logical({
                             type: "||",
-                            filters: defaultFilters
+                            filters: byWordProp
                         })
                     );
                 }
             }
         });
-        if (filters.length === 1) {
-            return filters[0];
-        } else {
-            return new OpenLayers.Filter.Logical({
-                type: "&&",
-                filters: filters
-            });
-        }
+
+        // combine filters alltogether
+        return new OpenLayers.Filter.Logical({
+            type: "&&",
+            filters: [
+                // data types
+                byTypes,
+                // query
+                new OpenLayers.Filter.Logical({
+                    type: "||",
+                    filters: [
+                        // exact matches
+                        byIds,
+                        // word matches
+                        new OpenLayers.Filter.Logical({
+                            type: "&&",
+                            filters: byWords
+                        })
+                    ]
+                })
+            ]
+        });
     },
 
     // search

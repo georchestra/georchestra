@@ -17,8 +17,7 @@ div.olMapViewport {
  * ovmap styling
  */
 .olControlOverviewMapElement {
-  -moz-border-radius: 1em 0 0 0;
-  -webkit-border-radius: 1em 0 0 0;
+  border-radius: 1em 0 0 0;
   background-color:#e0e0e0;
   padding:10px 18px 10px 10px;
 }
@@ -137,12 +136,17 @@ div.olMapViewport {
 .x-btn .btn-add {
     background-image: url(../img/famfamfam/add.png);
 }
-
+.x-btn .btn-removeall {
+    background-image: url(../img/famfamfam/cross.gif);
+}
 .geor-save-map {
     background-image: url(../img/famfamfam/folder_page.gif) !important;
 }
 .geor-load-map {
     background-image: url(../img/famfamfam/map_go.gif) !important;
+}
+.geor-add-map {
+    background-image: url(../img/famfamfam/map_add.png) !important;
 }
 .geor-load-tools {
     background-image: url(../img/fugue/wrench--plus.png) !important;
@@ -156,7 +160,12 @@ div.olMapViewport {
 .geor-edit-osm {
     background-image: url(../img/osm_logo.png) !important;
 }
-
+.geor-csv-export {
+    background-image: url(../img/famfamfam/table_save.png) !important;
+}
+.geor-geom-save {
+    background-image: url(../img/famfamfam/disk.png) !important;
+}
 /* make sure that menu width is correct in IE8 strict mode (See http://extjs.com/forum/showthread.php?t=70701) */
 .x-layer[style]{
  width: auto !important;
@@ -173,8 +182,7 @@ div.olMapViewport {
 #waiter span {
 	background:#EFAE00 none repeat scroll 0 0;
 	padding:2px;
-	-moz-border-radius: 0 0 4px 4px;
-	-webkit-border-radius: 0 0 4px 4px;
+	border-radius: 0 0 4px 4px;
 }
 
 .olControlLoadingPanel {

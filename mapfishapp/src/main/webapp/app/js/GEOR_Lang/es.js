@@ -39,6 +39,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
         "verificar si el archivo es valido",
     "Type": "Tipo",
     "Title": "Título",
+    "Actions": "Acciones",
     /* GEOR.js strings */
     "Cities": "Ciudades",
     "Recentering on GeoNames cities":
@@ -222,9 +223,10 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Push up this layer": "Subir esta capa",
     "Push down this layer": "Bajar esta capa",
     "Add layers": "Añadir capas",
+    "Remove all layers": "Retirar todas las capas",
+    "Are you sure you want to remove all layers ?": "¿Seguro que desea retirar todas las capas?",
     "source: ": "fuente: ",
     "unknown": "desconocido",
-    "Actions": "Acciones",
     "Draw new point": "Dibujar un nuevo punto",
     "Draw new line": "Dibujar una nueva línea",
     "Draw new polygon": "Dibujar un nuevo polígono",
@@ -266,6 +268,8 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     /* GEOR_ows.js strings */
     "The NAME layer was not found in WMS service.":
         "La capa ${NAME} no se encuentra en el servicio WMS",
+    "Problem restoring a context saved with buggy Chrome 36 or 37":
+        "No se puede restaurar un contexto cartográfico guardado con Chrome 36 o 37",
     /* GEOR_print.js strings */
     "Sources: ": "Fuentes: ",
     "Source: ": "Fuente: ",
@@ -328,6 +332,17 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "One result": "1 resultado",
     "No result": "Ningún resultado",
     "Clean": "Quitar",
+    "All": "Todos",
+    "None": "Ninguno",
+    "Invert selection": "Invertir la selección",
+    "Actions on the selection or on all results if no row is selected":
+        "Acciones en la selección o en todos los resultados, si no se selecciona ninguna fila",
+    "Store the geometry": 
+        "Guardar la geometría",
+    "Aggregates the geometries of the selected features and stores it in your browser for later use in the querier": 
+        "La geometría de los objetos seleccionados se almacenan en el navegador para su uso posterior en consultas",
+    "Geometry successfully stored in this browser": 
+        "La geometría fue registrada correctamente en el navegador",
     "Clean all results on the map and in the table": "Quitar los resultados" +
         "del mapa y en la tabla",
     "Zoom": "Zoom",
@@ -424,9 +439,9 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Warning: trying to restore WMC with a different projection (PROJCODE1, while map SRS is PROJCODE2). Strange things might occur !": "Advertencia: para cargar el contexto WMC, se necesita reproyectar desde ${PROJCODE1} hacía la proyección del mapa ${PROJCODE2}. ¡El resultado puede ser diferente de lo esperado!",
     /* GEOR_wmcbrowser.js strings */
     "Could not find WMC file": "El contexto WMC especificado no existe",
-    "... or a custom context": "... o un contexto personalizado",
-    "Replace current map composition with one of these contexts:":
-		"Remplazar la composición actual del mapa por uno de estos contextos:",
+    "... or a local context": "... o un contexto local",
+    //"Load or add the layers from one of these map contexts:" :
+	//	"Remplazar la composición actual del mapa por uno de estos contextos:",
     "A unique OSM layer": "Una capa OpenStreetMap única",
     "default viewer context": "contexto por omisión",
     "(default)": "<br/>(contexto por omisión actual)",

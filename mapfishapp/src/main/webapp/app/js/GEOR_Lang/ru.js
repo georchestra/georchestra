@@ -36,6 +36,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "File submission failed or invalid file": "Ошибка отправки файла – возможно, что файл недействителен",
     "Type": "Тип",
     "Title": "Заголовок",
+    "Actions": "Действия",
     /* GEOR.js strings */
     "Cities": "Населённые пункты",
     "Recentering on GeoNames cities": "Переориентация на населённые пункты<br /> GeoNames.",
@@ -96,7 +97,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Find": "Найти",
     "in": "B",
     /* To be translated ...
-    "No layer": "Aucune couche",
+    "No linked layer.": "Aucune couche.",
     "One layer found.": "Une couche trouvée.",
     "NB layers found.": "${NB} couches trouvées.",
     "NB metadata match the query.": "${NB} métadonnées correspondent à la requête.",
@@ -173,9 +174,10 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Push up this layer": "Переместить этот слой вверх",
     "Push down this layer": "Опустить этот слой",
     "Add layers": "Добавить слои",
+    //"Remove all layers": "Supprimer toutes les couches", // TODO: translate
+    //"Are you sure you want to remove all layers ?": "Voulez vous réellement supprimer toutes les couches ?", // TODO: translate
     "source: ": "источник : ",
     "unknown": "неизвестный",
-    "Actions": "Действия",
     //"Draw new point": "Dessiner un nouveau point",
     //"Draw new line": "Dessiner une nouvelle ligne",
     //"Draw new polygon": "Dessiner un nouveau polygone",
@@ -211,6 +213,8 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "scale picker": "масштаб",
     /* GEOR_ows.js strings */
     "The NAME layer was not found in WMS service.": "Слой ${NAME} не был найден в сервисе WMS (Web Map Service : Cервис Веб-Карт).",
+    //"Problem restoring a context saved with buggy Chrome 36 or 37":
+    //    "Nous ne pouvons restaurer un contexte enregistré avec Chrome 36 ou 37", // TODO: translate
     /* GEOR_print.js strings */
     "Sources: ": "Источники",
     "Source: ": "Источник",
@@ -254,6 +258,17 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "One result": "Один результат",
     "No result": "Никакого результата нет",
     "Clean": "Стереть",
+    //"All": "Tous", // TODO: translate
+    //"None": "Aucun",
+    //"Invert selection": "Inverser la sélection",
+    //"Actions on the selection or on all results if no row is selected":
+    //    "Actions sur la sélection ou sur tous les résultats si aucun n'est sélectionné",
+    //"Store the geometry": 
+    //    "Enregistrer la géométrie",
+    //"Aggregates the geometries of the selected features and stores it in your browser for later use in the querier": 
+    //    "La géométrie des objets sélectionnés est enregistrée pour un usage ultérieur dans le requêteur",
+    //"Geometry successfully stored in this browser": 
+    //    "Géométrie enregistrée avec succès sur ce navigateur",
     "Clean all results on the map and in the table": "Удалить все результаты с карты и таблицы.",
     "Zoom": "Zoom",
     "Zoom to results extent": "Применить величину зума карты на результаты.",
@@ -332,8 +347,8 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Warning: trying to restore WMC with a different projection (PROJCODE1, while map SRS is PROJCODE2). Strange things might occur !": "Предупреждение : попытка восстановления WMC в одной проекции ${PROJCODE1}, тогда как данная карта SRS находится в другой ${PROJCODE2}. Здесь возможны непредвиденные обстоятельства",
 /* GEOR_wmcbrowser.js strings */
     "Could not find WMC file": "Невозможно найти WMC файл",
-    "... or a custom context": "...или индивидуальный контекст",
-    "Replace current map composition with one of these contexts:": "Заменить составляющую текущей карты одним из предложенных контекстов:",
+    //"... or a local context": "...или индивидуальный контекст", // TODO: update translation
+    //"Load or add the layers from one of these map contexts:" : "Заменить составляющую текущей карты одним из предложенных контекстов:",
     "A unique OSM layer": "Единый слой OpenStreetMap",
     "default viewer context": "контекст вьюера по умолчанию",
     /* GEOR_workspace.js strings */

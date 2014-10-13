@@ -159,3 +159,5 @@ git push origin master
 ```
 
 geOrchestra 13.12 is now released, congrats !
+
+Finally, change the default branch to latest stable in the [georchestra](https://github.com/georchestra/georchestra/settings), [template](https://github.com/georchestra/template/settings) and [LDAP](https://github.com/georchestra/LDAP/settings) repositories

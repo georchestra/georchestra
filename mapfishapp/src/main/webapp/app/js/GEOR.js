@@ -46,7 +46,9 @@ Ext.namespace("GEOR");
     // see http://applis-bretagne.fr/redmine/issues/4536
     var fn = OpenLayers.Format.XML.prototype.write;
     OpenLayers.Format.XML.prototype.write = function(node) {
-        return '<?xml version="1.0" encoding="UTF-8"?>' + fn.apply(this, [node]);
+        return '<?xml version="1.0" encoding="UTF-8"?>' + 
+            // fix for https://github.com/georchestra/georchestra/issues/773 :
+            fn.apply(this, [node]).replace(new RegExp('xmlns:NS\\d+="" NS\\d+:', 'g'), '');
     };
 
     var checkRoles = function(module, okRoles) {
@@ -520,6 +522,18 @@ Ext.namespace("GEOR");
         GEOR.managelayers.events.on({
             "selectstyle": function(layerRecord, styles) {
                 updateLayerParams(layerRecord, null, styles);
+            },
+            "beforecontextcleared": function() {
+                // warn other modules about what's goign on
+                // (gfi, selectfeature, querier, editor, styler)
+                // so that they can properly shutdown.
+                if (GEOR.edit) {
+                    GEOR.edit.deactivate();
+                }
+                GEOR.styler.deactivate();
+                GEOR.selectfeature.deactivate();
+                GEOR.getfeatureinfo.deactivate();
+                southPanel.collapse();
             }
         });
 
@@ -534,7 +548,7 @@ Ext.namespace("GEOR");
 
         GEOR.wmcbrowser.events.on({
             "contextselected": function(o) {
-                return GEOR.wmc.read(o.wmcString, true, true);
+                return GEOR.wmc.read(o.wmcString, !o.noReset, true);
             }
         });
     });

@@ -25,7 +25,7 @@ if (active == null) {
 }
 
 String lang = request.getParameter("lang");
-if (lang == null || (!lang.equals("en") && !lang.equals("es") && !lang.equals("ru") && !lang.equals("fr"))) {
+if (lang == null || (!lang.equals("en") && !lang.equals("es") && !lang.equals("ru") && !lang.equals("fr") && !lang.equals("de"))) {
     lang = "${language}";
 }
 Locale l = new Locale(lang);
@@ -247,7 +247,7 @@ if(sec_roles != null) {
             // handle menus
             if (!window.addEventListener || !document.querySelectorAll) return;
             var each = function(els, callback) {
-                for (var i = 0, l=els.length ; i<l ; i++) {
+                for (var i = 0, l=els.length ; i<l ; i++) {
                     callback(els[i]);
                 }
             }

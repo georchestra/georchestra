@@ -93,7 +93,7 @@ GEOR.print = (function() {
      * Constant: VECTOR_LAYER_NAME
      * {String} The vector layer name, as used across this module
      */
-    var VECTOR_LAYER_NAME = '_print_bounds_';
+    var VECTOR_LAYER_NAME = '__georchestra_print_bounds_';
 
     /**
      * property: defaultCustomParams
@@ -262,8 +262,8 @@ GEOR.print = (function() {
     };
     
     var updateBounds = function() {
-        // closest matching print extent will be chosen:
-        printPage.fit(layerStore.map, {mode: "closest"});
+        // the print extent is fully shown:
+        printPage.fit(layerStore.map, {mode: "screen"});
         var bbox = printPage.getPrintExtent(layerStore.map);
         boundsLayer.destroyFeatures();
         boundsLayer.addFeatures([

@@ -3,10 +3,10 @@ geOrchestra
 
 geOrchestra is a complete **Spatial Data Infrastructure** solution.
 
-It features a **metadata catalog** (GeoNetwork 2.10), an **OGC server** (GeoServer 2.3.2) with fine-grained access control (based on GeoFence), an **advanced viewer and editor**, an **extractor** and **many more** (security and auth system based on proxy/CAS/LDAP, analytics, admin UIs, ...)
+It features a **metadata catalog** (GeoNetwork 2.10), an **OGC server** (GeoServer 2.3.2 and GeoWebCache 1.5.1) with fine-grained access control (based on GeoFence), an **advanced viewer and editor**, an **extractor** and **many more** (security and auth system based on proxy/CAS/LDAP, analytics, admin UIs, ...)
 
 More information in the modules README:
- * [catalog](https://github.com/georchestra/geonetwork/blob/georchestra-29/README.md) (aka GeoNetwork)
+ * [catalog](https://github.com/georchestra/geonetwork/blob/georchestra-14.06/README.md) (aka GeoNetwork)
  * [viewer](mapfishapp/README.md) (aka mapfishapp)
  * [extractor](extractorapp/README.md) (aka extractorapp)
  * [geofence](https://github.com/georchestra/geofence/blob/georchestra/georchestra.md)
@@ -25,12 +25,11 @@ How to build ?
 
 First, install the required packages: 
 
-    sudo apt-get install ant ant-optional openjdk-7-jdk python-virtualenv libjai-imageio-core-java
+    sudo apt-get install ant ant-optional openjdk-7-jdk python-virtualenv
 
 Notes: 
  * openjdk-6-jdk works too 
  * GeoServer is [known](http://research.geodan.nl/2012/10/openjdk7-vs-oracle-jdk7-with-geoserver/) to perform better with Oracle JDK.
- * libjai-imageio-core-java is a non-free package
 
 Then clone the repository (either the stable branch or master if you're feeling lucky):
 
@@ -39,7 +38,7 @@ Then clone the repository (either the stable branch or master if you're feeling 
 ...and build:
 
     cd georchestra
-    ./mvn -Dmaven.test.skip=true -Ptemplate install
+    ./mvn -Dmaven.test.skip=true -Ptemplate clean install
 
 
 How to customize ?
@@ -54,7 +53,7 @@ You can then edit files in myprofile to match your needs.
 
 Finally, to build geOrchestra with your own configuration profile:
 
-    ./mvn -Dmaven.test.skip=true -Dserver=myprofile install
+    ./mvn -Dmaven.test.skip=true -Dserver=myprofile clean install
 
 Note: if you're planning to use geOrchestra on the long term, you're better off forking the [georchestra/template](https://github.com/georchestra/template) configuration repository into a private git repository.
 This way, you'll be able to merge into your branch the changes from upstream.
@@ -62,7 +61,7 @@ This way, you'll be able to merge into your branch the changes from upstream.
 Example workflow:
 
     cd config/configurations
-    git clone git@github.com:georchestra/template.git myprofile
+    git clone https://github.com/georchestra/template.git myprofile
     cd myprofile
     git remote rename origin upstream
     (feel free to add a new origin to a private server)

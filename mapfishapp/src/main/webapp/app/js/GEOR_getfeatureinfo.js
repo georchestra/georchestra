@@ -286,6 +286,39 @@ GEOR.getfeatureinfo = (function() {
         OpenLayers.Element.removeClass(map.viewPortDiv, "olDrawBox");
     };
 
+    /**
+     * Method: deactivate
+     */
+    var deactivate = function(collapse) {
+        // we clicked on a toolbar button, which means we have
+        // to stop gfi requests.
+        //
+        // note: IE produces a js error when reloading the page
+        // with the gfi control activated, this is because
+        // ctrl.deactivate() is called here while the control
+        // has been destroyed and its events property set to
+        // null, let's guard against that by not attempting
+        // to deactivate the control if ctrl.events is null.
+        if (ctrl.events !== null) {
+            ctrl.deactivate();
+        }
+        // we need to collapse the south panel.
+        if (collapse) {
+            observable.fireEvent("shutdown");
+        }
+        // remove visibility events from previous array of layers
+        Ext.each(ctrl.layers, function(l) {
+            l.events.un({
+                "visibilitychanged": onLayerVisibilitychanged,
+                scope: this
+            });
+        });
+        map.events.un({
+            "removelayer": onLayerRemoved,
+            scope: this
+        });  
+    };
+
     /*
      * Public
      */
@@ -307,6 +340,16 @@ GEOR.getfeatureinfo = (function() {
             tr = OpenLayers.i18n;
             map = l.map;
             layerStore = l;
+        },
+
+        /**
+         * APIMethod: deactivate
+         * deactivates this module
+         */
+        deactivate: function() {
+            if (ctrl) {
+                deactivate();
+            }
         },
 
         /**
@@ -399,55 +442,29 @@ GEOR.getfeatureinfo = (function() {
                 });
 
             } else {
-                // we only want to deactivate if the layers array is the same as
+                // we only want to shutdown if the layers array is the same as
                 // ctrl.layers, which would mean that we toggled up the button
                 // which was already toggled down. Otherwise, it means we went
                 // from querying a layer to another, or from/to a single-layer
                 // query to a multi-layer query
-                var deactivate = false;
+                var shutdown = false;
                 if (layers.length === ctrl.layers.length) {
-                    deactivate = true;
+                    shutdown = true;
                     for (var i = 0; i < layers.length; i++) {
                         if (ctrl.layers[i] != layers[i]) {
-                            deactivate = false;
+                            shutdown = false;
                         }
                     }
                 }
-                var collapse = deactivate;
+                var collapse = shutdown;
                 var ctrls = map.getControlsBy('active',true);
                 for (var i = 0 ; i < ctrls.length; i++) {
                     if (ctrls[i].CLASS_NAME == "OpenLayers.Control.SelectFeature") {
                         collapse = false;
                     }
                 };
-                if (deactivate) {
-                    // we clicked on a toolbar button, which means we have
-                    // to stop gfi requests.
-                    //
-                    // note: IE produces a js error when reloading the page
-                    // with the gfi control activated, this is because
-                    // ctrl.deactivate() is called here while the control
-                    // has been destroyed and its events property set to
-                    // null, let's guard against that by not attempting
-                    // to deactivate the control if ctrl.events is null.
-                    if (ctrl.events !== null) {
-                        ctrl.deactivate();
-                    }
-                    // we need to collapse the south panel.
-                    if (collapse) {
-                        observable.fireEvent("shutdown");
-                    }
-                    // remove visibility events from previous array of layers
-                    Ext.each(ctrl.layers, function(l) {
-                        l.events.un({
-                            "visibilitychanged": onLayerVisibilitychanged,
-                            scope: this
-                        });
-                    });
-                    map.events.un({
-                        "removelayer": onLayerRemoved,
-                        scope: this
-                    });
+                if (shutdown) {
+                    deactivate(collapse);
                 } else {
                     // we asked for gfi on another layer
                 }
