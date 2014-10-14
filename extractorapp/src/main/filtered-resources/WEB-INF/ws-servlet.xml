@@ -99,6 +99,8 @@
                   value="/WEB-INF/templates/extractor-email-template.txt"/>
         <property name="emailAckTemplateFile" 
                   value="/WEB-INF/templates/extractor-email-ack-template.txt"/>
+        <property name="extraKeywordsFile"
+                  value="/org/georchestra/extractorapp/i18n/extra_keywords_en.properties" />
         <property name="emailSubject"
                   value="${emailsubject}"/>       
     </bean>
