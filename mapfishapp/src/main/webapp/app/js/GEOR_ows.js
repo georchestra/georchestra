@@ -182,6 +182,19 @@ GEOR.ows = (function() {
         },
 
         /**
+         * Property: wmsVersionToSLDVersionMapping
+         * {Object} Starting with WMS 1.3, the SLD_VERSION parameter is mandatory.
+         * But the SLD_VERSION parameter value changes with the WMS version ...
+         * see https://github.com/georchestra/georchestra/issues/636
+         */
+        wmsVersionToSLDVersionMapping: {
+            "1.0.0": "1.0.0",
+            "1.1.0": "1.0.0",
+            "1.1.1": "1.0.0",
+            "1.3.0": "1.1.0"
+        },
+
+        /**
          * Property: defaultWMSLayerOptions
          * {Object} Default OpenLayers WMS layer options
          */
@@ -319,6 +332,8 @@ GEOR.ows = (function() {
                     "VERSION": "1.1.1", //rather than layer.params.VERSION, 
                     // this is because describe layer 1.3.0 is not yet supported by GeoServer
                     // see: https://github.com/georchestra/georchestra/issues/186
+                    "SLD_VERSION": "1.0.0", // force here a correct "SLD_VERSION" for WMS 1.1.1
+                    // (to be removed when the WMS DescribeLayer VERSION value is dynamic again)
                     //
                     // WIDTH and HEIGHT params seem to be required for
                     // some versions of MapServer (typ. 5.6.1)

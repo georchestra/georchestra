@@ -272,6 +272,9 @@ GEOR.wmc = (function() {
                 // (see https://github.com/camptocamp/georchestra-pigma-configuration/issues/112)
                 var params = r.get('layer').params;
                 params.EXCEPTIONS = GEOR.ows.wmsVersionToExceptionsMapping[params.VERSION];
+                // same is true for the SLD_VERSION parameter:
+                // see https://github.com/georchestra/georchestra/issues/636
+                params.SLD_VERSION = GEOR.ows.wmsVersionToSLDVersionMapping[params.VERSION];
                 // add layer from wmc to the current map
                 layerStore.addSorted(r);
             });
