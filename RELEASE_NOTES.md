@@ -14,8 +14,6 @@ Not yet funded, but would be really nice to have:
  * geonetwork: integration of version 3
  * ldapadmin: send login back in password recovery email - see [#562](https://github.com/georchestra/georchestra/issues/562)
  * mapfishapp: use google closure compiler for faster loading times - see [#378](https://github.com/georchestra/georchestra/issues/378)
- * mapfishapp: give easy access to WMS/WFS layer details - see [#346](https://github.com/georchestra/georchestra/issues/346)
- * mapfishapp: support read/write WMTS layer types from/to OWSContext - see [#360](https://github.com/georchestra/georchestra/issues/360)
  * mapfishapp: take into account quotes in csw queries - see [#706](https://github.com/georchestra/georchestra/issues/706)
  * georchestra: use the browser-advertised preferred language by default (and give the user a chance to select the correct one with a combobox in the header) - see [#589](https://github.com/georchestra/georchestra/issues/589)
  * georchestra: validate on Tomcat 7/8 - see [#504](https://github.com/georchestra/georchestra/issues/504)
@@ -25,8 +23,9 @@ Funded, but not yet done:
  * geofence: ability to configure map SRS - see [#732](https://github.com/georchestra/georchestra/issues/732) - Rennes Metropole
  * extractorapp: better emails - see [#750](https://github.com/georchestra/georchestra/issues/750) - GéoPicardie
  * mapfishapp: export current map context as a "map metadata" - see [#751](https://github.com/georchestra/georchestra/issues/751) - GéoPicardie
- * mapfishapp: load data from catalog improvement - see [#756](https://github.com/georchestra/georchestra/issues/756) - GeoBretagne
  * mapfishapp: direct geodata file loading via URL - see [#754](https://github.com/georchestra/georchestra/issues/754) - GéoPicardie
+ * mapfishapp: give easy access to WMS/WFS layer details - see [#346](https://github.com/georchestra/georchestra/issues/346) - CIGALsace
+ * mapfishapp: support read/write WMTS layer types from/to OWSContext - see [#360](https://github.com/georchestra/georchestra/issues/360) - CIGALsace
  * ldapadmin: delegated administrators - see [#786](https://github.com/georchestra/georchestra/issues/786) - GeoBretagne
 
 New features:
@@ -35,6 +34,7 @@ New features:
  * mapfishapp: context restoring - option to reset map or not - see [#302](https://github.com/georchestra/georchestra/issues/302)
  * mapfishapp: spatial query using previous results' geometries - see [#752](https://github.com/georchestra/georchestra/issues/752)
  * mapfishapp: streetview addon - see [#774](https://github.com/georchestra/georchestra/issues/774) - GeoBretagne
+ * mapfishapp: load data from catalog improvement - see [#756](https://github.com/georchestra/georchestra/issues/756) - GeoBretagne
 
 Enhancements:
  * extractorapp: editable combobox for resolution selection - see [#726](https://github.com/georchestra/georchestra/issues/726)
