@@ -40,6 +40,9 @@ Then clone the repository (either the stable branch or master if you're feeling 
     cd georchestra
     ./mvn -Dmaven.test.skip=true -Ptemplate clean install
 
+Are you having problems with the build ?  
+Take a look at our [Jenkins CI](https://sdi.georchestra.org/ci/job/georchestra-template/)
+
 
 How to customize ?
 ==================

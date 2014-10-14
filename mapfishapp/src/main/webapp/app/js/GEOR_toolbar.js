@@ -36,6 +36,9 @@
 
 Ext.namespace("GEOR");
 
+// see https://github.com/camptocamp/georchestra-geopicardie-configuration/issues/341
+GeoExt.WMSLegend.prototype.defaultStyleIsFirst = false;
+
 GEOR.toolbar = (function() {
     /*
      * Private
