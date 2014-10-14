@@ -205,7 +205,8 @@ GEOR.cswquerier = (function() {
         // transfer results to customStore:
         Ext.each(uuidsToDig, function(o) {
             var uuid = o.uuid,
-                record = o.record;
+                record = o.record,
+                md_title = o.record.get("title");
             Ext.each(serviceRecords, function(serviceRecord) {
                 // check that the service has a correct service URL
                 var serviceURL,
@@ -230,7 +231,8 @@ GEOR.cswquerier = (function() {
                 // get the SV_CoupledResource 
                 // whose identifier matches the one found in the first query
                 // and whose operationName is GetMap
-                var resources = identificationInfo[0].coupledResource;
+                var resources = identificationInfo[0].coupledResource,
+                    serviceTitle = identificationInfo[0].citation.title.characterString;
                 Ext.each(resources, function(resource) {
                     if (resource.identifier.characterString == uuid &&
                         resource.operationName.characterString == "GetMap" &&
@@ -238,7 +240,11 @@ GEOR.cswquerier = (function() {
                         // enrich the original record with correct server name and layer name:
                         record.set("URI", record.get("URI").concat({
                             name: resource.scopedName, 
-                            value: serviceURL, 
+                            value: serviceURL,
+                            description: md_title || OpenLayers.i18n("NAME layer on VALUE", {
+                                'NAME': resource.scopedName,
+                                'VALUE': serviceTitle || serviceURL
+                            }),
                             protocol: "OGC:WMS"
                         }));
                         // feed the DataView (cumulatively adding the record):
@@ -352,7 +358,7 @@ GEOR.cswquerier = (function() {
                 '<div class="x-view-item">',
                     '<table style="width:100%;"><tr><td style="vertical-align:text-top;">',
                         '<p><b>{layer_description}</b></p>',
-                        '<p>{md_title} - {[this.abstract(values.md_abstract)]}&nbsp;',
+                        '<p>{[this.abstract(values.md_abstract)]}&nbsp;',
                         '<a href="{[this.metadataURL(values)]}" ext:qtip="' +
                             tr("Show metadata sheet in a new window") + '" ',
                         'target="_blank" onclick="window.open(this.href);return false;">' +
@@ -394,8 +400,8 @@ GEOR.cswquerier = (function() {
                 // 1) shorten text
                 // 2) replace url links with <a href="XXX">lien</a>
                 //    (long links can break the dataview layout)
-                if (text.length >= 300) {
-                    text = text.slice(0, 299) + ' ... ';
+                if (text.length >= 400) {
+                    text = text.slice(0, 399) + ' ... ';
                 }
                 var regexp = /(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/gi;
                 return text.replace(regexp,
