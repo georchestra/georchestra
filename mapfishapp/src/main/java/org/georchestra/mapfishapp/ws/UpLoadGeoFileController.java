@@ -9,17 +9,22 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
+import java.net.URL;
 import java.util.Iterator;
 import java.util.UUID;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.mapfishapp.ws.upload.FileDescriptor;
-import org.georchestra.mapfishapp.ws.upload.FileFormat;
 import org.georchestra.mapfishapp.ws.upload.UpLoadFileManagement;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.operation.projection.ProjectionException;
@@ -37,6 +42,9 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXParseException;
 
 
 /**
@@ -164,10 +172,6 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 	private long gmlSizeLimit;
 	private long osmSizeLimit;
 
-
-	private UpLoadFileManagement fileManagement = UpLoadFileManagement.create();
-
-
 	/**
 	 * The current file that was upload an is in processing
 	 *
@@ -247,68 +251,155 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 	 * The file is maintained in a temporal store that will be cleaned when the response has be done.
 	 * </p>
 	 *
-	 * @param request The expected parameters are geofile and srs
+	 * @param request The expected parameters are geofile (or url) and srs.
+	 *  In case a url is provided, the file can be fetched remotely and analyzed as if it was posted.
+	 *
 	 * @param response
 	 * @throws IOException
 	 */
 	@RequestMapping(value="/togeojson/*", method = RequestMethod.POST)
 	public void toGeoJson(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-		if( !(request instanceof MultipartHttpServletRequest) ){
+	    String urlProvided = request.getParameter("url");
+
+		if( !(request instanceof MultipartHttpServletRequest) && StringUtils.isBlank(urlProvided)) {
 			final String msg = "MultipartHttpServletRequest is expected";
 			LOG.fatal(msg);
 			throw new IOException(msg);
 		}
 
 		String workDirectory = null;
-		try{
-			MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+		try {
+		    UpLoadFileManagement fileManagement = UpLoadFileManagement.create();
+		    FileDescriptor currentFile = null;
+		    MultipartFile upLoadFile = null;
 
-			// create the file descriptor using the original file name which is in the multipartRequest object
-			Iterator<?> fileNames = multipartRequest.getFileNames();
-			if(! fileNames.hasNext() ){
-				final String msg = "a file is expected";
-				LOG.error(msg);
-				throw new IOException(msg);
-			}
-			String fileName = (String) fileNames.next();
-			MultipartFile upLoadFile = multipartRequest.getFile(fileName);
-			FileDescriptor currentFile = createFileDescriptor(upLoadFile.getOriginalFilename());
-			// process the uploaded file
+            workDirectory = makeDirectoryForRequest(this.tempDirectory);
+
+            fileManagement.setWorkDirectory(workDirectory);
+
+		    long fileSize = 0;
+
+		    // upload file action
+            if (request instanceof MultipartHttpServletRequest) {
+                MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+
+                // create the file descriptor using the original file name which
+                // is in the multipartRequest object
+                Iterator<?> fileNames = multipartRequest.getFileNames();
+                if (!fileNames.hasNext()) {
+                    final String msg = "a file is expected";
+                    LOG.error(msg);
+                    throw new IOException(msg);
+                }
+                String fileName = (String) fileNames.next();
+                upLoadFile = multipartRequest.getFile(fileName);
+                fileSize = upLoadFile.getSize();
+                currentFile = createFileDescriptor(upLoadFile.getOriginalFilename());
+		    }
+
+		    // download file
+		    else if (StringUtils.isNotBlank(urlProvided)) {
+
+		        URL toDl = new URL(urlProvided);
+		        String tempName = UUID.randomUUID().toString();
+		        File destFile = new File(workDirectory + File.separator + tempName);
+		        FileUtils.copyURLToFile(toDl, destFile);
+
+		        // naive file detection
+		        // the downloaded file should either be a zip file or an XML derivative
+		        // at the current state of supported formats (see
+		        // FileDescriptor.isValidFormat())
+		        String guessedExtension = "";
+		        try {
+		            ZipFile zif = new ZipFile(destFile.getCanonicalPath());
+		            guessedExtension = "zip";
+		            zif.close();
+		        } catch (ZipException e) {
+                    LOG.debug("provided file is not a ZIP file");
+		        }
+		        if (StringUtils.isBlank(guessedExtension)) {
+		            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		            DocumentBuilder builder;
+
+		            try {
+		                builder = factory.newDocumentBuilder();
+		                Document doc = builder.parse(destFile);
+
+		                // manages messed-up xml documents, selects the first
+		                // significant element (i.e. which is not a comment).
+		                NodeList lst = doc.getChildNodes();
+		                String rootElement = "";
+                        int i = 0;
+		                do {
+		                    rootElement = lst.item(i++).getNodeName();
+		                } while ("#comment".equals(rootElement));
+
+		                if ("osm".equals(rootElement)) {
+		                    guessedExtension = "osm";
+		                } else if ("kml".equals(rootElement)) {
+                            guessedExtension = "kml";
+		                }  else if ("gpx".equals(rootElement)) {
+                            guessedExtension = "gpx";
+                        }  else if (rootElement.contains("FeatureCollection")) {
+                            guessedExtension = "gml";
+                        }
+		            } catch (SAXParseException e) {
+	                    LOG.debug("provided file is not an XML file either, giving up.");
+		            }
+		        }
+		        // if guessedExtension is still blank, give up
+		        if (StringUtils.isBlank(guessedExtension)) {
+	                writeErrorResponse(response, Status.unsupportedFormat);
+	                return;
+		        }
+
+		        File renamedFile = new File(destFile.getAbsoluteFile() + "." + guessedExtension);
+		        FileUtils.moveFile(destFile, renamedFile);
+		        currentFile = new FileDescriptor(renamedFile.getCanonicalPath());
+		        fileSize = renamedFile.length();
+	            fileManagement.setFileDescriptor(currentFile);
+
+		        fileManagement.setSaveFile(renamedFile);
+		    }
+
+            // validates the format
+            if( ! currentFile.isValidFormat() ) {
+                writeErrorResponse(response, Status.unsupportedFormat);
+                return;
+            }
+
+
+			// processes the uploaded || downloaded file
 			Status st = Status.ready;
 
-			workDirectory = makeDirectoryForRequest(this.tempDirectory);
 
-			// validate the format
-			if( ! currentFile.isValidFormat() ) {
-				writeErrorResponse(response, Status.unsupportedFormat);
-				return;
-			}
-			// validate the size - it's a double-check, since normally
+			// validates the size, depending on the file type.
+			// - it's a double-check, since normally
 			// a MaxUploadSizeExceededException has already been
 			// launched and handled
 			long limit = getSizeLimit(currentFile.originalFileExt);
-			if(  upLoadFile.getSize()  > limit ){
-
-				long size = limit / 1048576; // converts to Mb
+			if(fileSize  > limit ){
+				long size = limit / MEGABYTE; // converts to Mb
 				final String msg = Status.sizeError.getMessage( size + "MB");
-
 				writeErrorResponse(response, Status.sizeError, msg, HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE);
 				return;
 			}
 
-			// save the file in the temporal directory
 
-			this.fileManagement.setWorkDirectory(workDirectory);
-			this.fileManagement.setFileDescriptor(currentFile);
-
-			this.fileManagement.save(upLoadFile);
+			// geofile uploaded - in case of downloaded file,
+			// this has already been done.
+			if (upLoadFile != null) {
+		         // saves the file in the temporary directory
+	            fileManagement.setFileDescriptor(currentFile);
+			    fileManagement.save(upLoadFile);
+			}
 
 			// if the uploaded file is a zip file then checks its content
-			if (this.fileManagement.containsZipFile()) {
-				this.fileManagement.unzip();
+			if (fileManagement.containsZipFile()) {
+				fileManagement.unzip();
 
-				st  = checkGeoFiles(this.fileManagement);
+				st  = checkGeoFiles(fileManagement);
 				if (st != Status.ok) {
 					writeErrorResponse(response, st);
 					return;
@@ -331,7 +422,7 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 			}
 
 			// retrieves the feature collection and write the response
-			writeOKResponse(response, this.fileManagement, crs);
+			writeOKResponse(response, fileManagement, crs);
 
 		} catch (IOException e) {
 			LOG.error(e);

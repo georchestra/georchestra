@@ -9,21 +9,21 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Feature geofile reader interface.
- * 
+ *
  * <p>
- * The implementations of this interface provide the access to the feature which are stored in specific file formats. 
+ * The implementations of this interface provide the access to the feature which are stored in specific file formats.
  * </p>
- * 
+ *
  * @author Mauricio Pazos
  */
 interface FeatureGeoFileReader {
 
     /**
      * Returns the set of features maintained in the geofile.
-     * 
+     *
      * @param file
      * @param fileFormat
-     * 
+     *
      * @return {@link SimpleFeatureCollection}
      * @throws IOException
      *             , UnsupportedGeofileFormatException
@@ -36,14 +36,14 @@ interface FeatureGeoFileReader {
     /**
      * Returns the set of features maintained in the geofile, reprojected in the
      * target CRS.
-     * 
+     *
      * @param file
      *            path and file name
      * @param fileFormat
      * @param targetCrs
-     * 
+     *
      * @return {@link SimpleFeatureCollection} in the target CRS
-     * 
+     *
      * @throws IOException
      *             , UnsupportedGeofileFormatException
      */
@@ -59,7 +59,7 @@ interface FeatureGeoFileReader {
 
     /**
      * Returns true if the file format is supported
-     * 
+     *
      * @param fileFormat
      * @return
      */

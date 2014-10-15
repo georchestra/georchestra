@@ -192,7 +192,7 @@ public class AbstractFeatureGeoFileReader implements FeatureGeoFileReader {
                 LOG.info("It cannot create OGR implementation, Geotools will be set.");
             }
         }
-        // if the ogr implementation cannot be created the use the Geotools
+        // if the ogr implementation cannot be created, then use the Geotools
         // implementation.
         if (ogrReader == null) {
             return new GeotoolsFeatureReader();
