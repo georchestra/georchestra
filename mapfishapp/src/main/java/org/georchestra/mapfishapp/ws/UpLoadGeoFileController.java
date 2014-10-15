@@ -223,45 +223,22 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 	@RequestMapping(value="/formats", method = RequestMethod.GET)
 	public void formats(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-		FileFormat[] formatList = this.fileManagement.getFormatList();
+	    UpLoadFileManagement fileManagement = UpLoadFileManagement.create();
+		JSONArray formatList = fileManagement.getFormatListAsJSON();
 
 		response.setCharacterEncoding(responseCharset);
-		response.setContentType("text/html");
+		response.setContentType("application/json");
 
 		PrintWriter out = response.getWriter();
 		try {
-			out.println(fileFormatListToJSON( formatList));
-		} finally {
+			out.println(formatList.toString(4));
+		} catch (JSONException e) {
+		    out.println("[]");
+        } finally {
 			out.close();
 		}
 	}
 
-	public String fileFormatListToJSON() {
-		try {
-			FileFormat[] formatList = this.fileManagement.getFormatList();
-			return fileFormatListToJSON(formatList);
-		} catch (IOException e) {
-			LOG.error(e.getMessage());
-			return "";
-		}
-	}
-
-	private String fileFormatListToJSON(FileFormat[] formatList) throws IOException {
-
-		try {
-			JSONArray jsonFormatArray = new JSONArray();
-			for (int i=0; i < formatList.length; i++) {
-
-				jsonFormatArray.put(i, formatList[i].toString());
-			}
-			return jsonFormatArray.toString();
-		} catch (JSONException e) {
-
-			LOG.error(e.getMessage());
-
-			throw new IOException("The file formats aren't available");
-		}
-	}
 
 	/**
 	 * Load the file provide in the request. The content of this file is returned as a json object.
