@@ -427,4 +427,7 @@ public class UpLoadFileManagement {
         this.fileDescriptor = geoFile;
     }
 
+    public void setSaveFile(File f) {
+        this.fileDescriptor.savedFile = f;
+    }
 }
