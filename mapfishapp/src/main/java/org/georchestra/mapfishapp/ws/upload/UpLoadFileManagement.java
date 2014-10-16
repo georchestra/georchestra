@@ -436,4 +436,11 @@ public class UpLoadFileManagement {
         return this.reader.getFormatListAsJSON();
     }
 
+    public void addFileExtension(String extension) {
+        this.fileDescriptor.listOfExtensions.add(extension);
+    }
+    public void addFile(File file) {
+        this.fileDescriptor.listOfFiles.add(file.getAbsolutePath());
+    }
+
 }
