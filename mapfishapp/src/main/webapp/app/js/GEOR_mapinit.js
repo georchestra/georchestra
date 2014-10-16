@@ -478,6 +478,7 @@ GEOR.mapinit = (function() {
                 }
                 if (GEOR.config.CUSTOM_FILE) {
                     // load the given file on top of the WMC
+                    GEOR.waiter.show();
                     Ext.Ajax.request({
                         method: 'POST',
                         disableCaching: true,
@@ -532,12 +533,16 @@ GEOR.mapinit = (function() {
                                 });
 
                             layer.addFeatures(features);
+                            // we need to manually hide the waiter since
+                            // GEOR.ajaxglobal.init has not run yet:
+                            GEOR.waiter.hide();
 
                             ls.addSorted(new recordType({
                                 layer: layer
                             }, layer.id));
                         },
                         failure: function(resp) {
+                            GEOR.waiter.hide();
                             var fc = (new OpenLayers.Format.JSON()).read(resp.responseText);
                             GEOR.util.errorDialog({
                                 title: tr("Error while loading file"),
