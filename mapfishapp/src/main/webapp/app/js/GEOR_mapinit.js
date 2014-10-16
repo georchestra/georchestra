@@ -539,7 +539,7 @@ GEOR.mapinit = (function() {
 
                             ls.addSorted(new recordType({
                                 layer: layer
-                            }));
+                            }, layer.id));
                         },
                         failure: function(form, action) {
                             GEOR.util.errorDialog({
