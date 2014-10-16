@@ -20,13 +20,14 @@ import org.apache.commons.logging.LogFactory;
 
 public abstract class Email {
 
-	protected static final Log LOG = LogFactory.getLog(Email.class.getPackage().getName());
+    protected static final Log LOG = LogFactory.getLog(Email.class.getPackage()
+            .getName());
 
     private final int DEB_MODEM = 56;
     private final int DEB_ADSL = 2000;
     private final int DEB_T1 = 20000;
 
-	private String smtpHost;
+    private String smtpHost;
     private int smtpPort = -1;
     private String emailHtml;
     private String replyTo;
@@ -37,31 +38,34 @@ public abstract class Email {
     private String[] recipients;
     private String subject;
 
-	public Email(HttpServletRequest request, String[] recipients,
-			final String emailSubject, final String smtpHost, final int smtpPort, final String emailHtml,
-			final String replyTo, final String from, final String bodyEncoding,
-			final String subjectEncoding, final String[] languages) {
+    public Email(HttpServletRequest request, String[] recipients,
+            final String emailSubject, final String smtpHost,
+            final int smtpPort, final String emailHtml, final String replyTo,
+            final String from, final String bodyEncoding,
+            final String subjectEncoding, final String[] languages) {
 
-		this.recipients = recipients;
-		this.subject = emailSubject;
-		this.smtpHost = smtpHost;
-		this.smtpPort = smtpPort;
-		this.emailHtml = emailHtml;
-		this.replyTo = replyTo;
-		this.from = from;
-		this.bodyEncoding = bodyEncoding;
-		this.subjectEncoding = subjectEncoding;
-		this.languages = languages;
-	}
+        this.recipients = recipients;
+        this.subject = emailSubject;
+        this.smtpHost = smtpHost;
+        this.smtpPort = smtpPort;
+        this.emailHtml = emailHtml;
+        this.replyTo = replyTo;
+        this.from = from;
+        this.bodyEncoding = bodyEncoding;
+        this.subjectEncoding = subjectEncoding;
+        this.languages = languages;
+    }
 
-	public abstract void sendAck() throws AddressException, MessagingException;
+    public abstract void sendAck() throws AddressException, MessagingException;
 
-	public abstract void sendDone(List<String> successes, List<String> failures,
-            List<String> oversized, long fileSize) throws MessagingException;
+    public abstract void sendDone(List<String> successes,
+            List<String> failures, List<String> oversized, long fileSize)
+            throws MessagingException;
 
-	protected void sendMsg(final String msg) throws AddressException, MessagingException {
+    protected void sendMsg(final String msg) throws AddressException,
+            MessagingException {
 
-		final Properties props = System.getProperties();
+        final Properties props = System.getProperties();
         props.put("mail.smtp.host", smtpHost);
         props.put("mail.protocol.port", smtpPort);
         final Session session = Session.getInstance(props, null);
@@ -80,8 +84,9 @@ public abstract class Email {
         }
 
         if (!validRecipients) {
-	    LOG.error("Mail could not be sent, none of the recipients are valid: " + recipients.toString());
-	    return;
+            LOG.error("Mail could not be sent, none of the recipients are valid: "
+                    + recipients.toString());
+            return;
         } else {
             message.setSubject(subject, subjectEncoding);
         }
@@ -99,9 +104,9 @@ public abstract class Email {
         Transport.send(message);
         LOG.debug("extraction email has been sent to:\n"
                 + Arrays.toString(recipients));
-	}
+    }
 
-	protected static boolean isValidEmailAddress(String address) {
+    protected static boolean isValidEmailAddress(String address) {
         if (address == null) {
             return false;
         }
@@ -119,47 +124,52 @@ public abstract class Email {
         return mainPartNotEmpty && hostPartNotEmpty;
     }
 
-	protected String format(List<String> list) {
-	    return format(list, "");
-	}
-	protected String format(List<String> list, String extraStatus) {
-		if ("true".equalsIgnoreCase(emailHtml)) {
-			StringBuilder b = new StringBuilder("<ul>");
-			for (String string : list) {
-				b.append("<li>");
-				b.append(string);
-				if (extraStatus != null && ! extraStatus.isEmpty())
-				    b.append(String.format(" - %s", extraStatus));
-				b.append("</li>");
-			}
-			b.append("</ul>");
-			return b.toString();
-		} else {
-			StringBuilder b = new StringBuilder("\n");
-			for (String string : list) {
-				b.append("* ");
-				b.append(string);
-				if (extraStatus != null && ! extraStatus.isEmpty())
-                    b.append(String.format(" - %s", extraStatus));
-				b.append("\n");
-			}
-			b.append("\n");
-			return b.toString();
-		}
+    protected String format(List<String> list) {
+        return format(list, "");
     }
 
-	protected String formatTimeEstimation(String msg, final long fileSize) {
+    protected String format(List<String> list, String extraStatus) {
+        if ("true".equalsIgnoreCase(emailHtml)) {
+            StringBuilder b = new StringBuilder("<ul>");
+            for (String string : list) {
+                b.append("<li>");
+                b.append(string);
+                if (extraStatus != null && !extraStatus.isEmpty())
+                    b.append(String.format(" - %s", extraStatus));
+                b.append("</li>");
+            }
+            b.append("</ul>");
+            return b.toString();
+        } else {
+            StringBuilder b = new StringBuilder("\n");
+            for (String string : list) {
+                b.append("* ");
+                b.append(string);
+                if (extraStatus != null && !extraStatus.isEmpty())
+                    b.append(String.format(" - %s", extraStatus));
+                b.append("\n");
+            }
+            b.append("\n");
+            return b.toString();
+        }
+    }
 
-    	long fSizeBits = fileSize*8;
-    	long tModem = fSizeBits / DEB_MODEM;
-    	long tADSL = fSizeBits / DEB_ADSL;
-    	long tT1 = fSizeBits / DEB_T1;
+    protected String formatTimeEstimation(String msg, final long fileSize) {
 
-    	msg = msg.replace("{fSize}", String.valueOf(fileSize));
-    	msg = msg.replace("{tModem}", String.format("%02d:%02d", tModem/3600, (tModem%3600)/60));
-    	msg = msg.replace("{tADSL}", String.format("%02d:%02d", tADSL/3600, (tADSL%3600)/60));
-    	msg = msg.replace("{tT1}", String.format("%02d:%02d", tT1/3600, (tT1%3600)/60));
+        long fSizeBits = fileSize * 8;
+        long tModem = fSizeBits / DEB_MODEM;
+        long tADSL = fSizeBits / DEB_ADSL;
+        long tT1 = fSizeBits / DEB_T1;
 
-    	return msg;
+        msg = msg.replace("{fSize}", String.valueOf(fileSize));
+        msg = msg
+                .replace("{tModem}", String.format("%02d:%02d", tModem / 3600,
+                        (tModem % 3600) / 60));
+        msg = msg.replace("{tADSL}",
+                String.format("%02d:%02d", tADSL / 3600, (tADSL % 3600) / 60));
+        msg = msg.replace("{tT1}",
+                String.format("%02d:%02d", tT1 / 3600, (tT1 % 3600) / 60));
+
+        return msg;
     }
 }
