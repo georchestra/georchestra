@@ -482,19 +482,14 @@ GEOR.mapinit = (function() {
                     // note that the form could be dynamically generated
                     // "fileupload" is the form element's id. 
                     var form = new Ext.form.BasicForm("fileupload", {
-                        items: [{
-                            xtype: 'textfield',
-                            name: 'url',
-                            value: GEOR.config.CUSTOM_FILE
-                        }, {
-                            xtype: 'hidden',
-                            name: 'srs',
-                            value: ls.map.getProjection()
-                        }]
+                        method: 'POST'
                     });
-
                     form.submit({
                         url: GEOR.config.PATHNAME + "/ws/togeojson/",
+                        params: {
+                            "url": GEOR.config.CUSTOM_FILE,
+                            "srs": ls.map.getProjection()
+                        },
                         success: function(form, action) {
                             var features,
                                 fc = (new OpenLayers.Format.JSON()).read(action.response.responseText);
