@@ -296,7 +296,7 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
     public void toGeoJson(HttpServletRequest request,
             HttpServletResponse response) throws Exception {
 
-        String urlProvided = request.getParameter("url");
+        String urlProvided = request.getParameter("file");
 
         if (!(request instanceof MultipartHttpServletRequest)
                 && StringUtils.isBlank(urlProvided)) {
@@ -348,8 +348,7 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
                     return;
                 }
                 String tempName = UUID.randomUUID().toString();
-                File destFile = new File(workDirectory + File.separator
-                        + tempName);
+                File destFile = new File(workDirectory, tempName);
                 FileUtils.copyURLToFile(toDl, destFile);
 
                 // naive file detection
@@ -415,7 +414,9 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
                 fileManagement.setFileDescriptor(currentFile);
                 fileManagement.setSaveFile(renamedFile);
                 fileManagement.addFileExtension(guessedExtension);
-                fileManagement.addFile(renamedFile);
+                // single file (not zip)
+                if (! "zip".equals(guessedExtension))
+                    fileManagement.addFile(renamedFile);
 
             }
 
