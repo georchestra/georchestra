@@ -542,7 +542,7 @@ GEOR.print = (function() {
                 action = new Ext.Action({
                     iconCls: 'mf-print-action',
                     text: '',
-                    tooltip: tr("Print current map"),
+                    tooltip: OpenLayers.i18n("Print current map"),
                     handler: showWindow
                 });
             }
