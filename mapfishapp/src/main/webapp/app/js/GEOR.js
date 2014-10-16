@@ -124,9 +124,6 @@ Ext.namespace("GEOR");
         if (GEOR.edit) {
             GEOR.edit.init(map);
         }
-        if (GEOR.print) {
-            GEOR.print.init(layerStore);
-        }
         if (GEOR.querier) {
             GEOR.querier.init(map);
         }
@@ -351,6 +348,9 @@ Ext.namespace("GEOR");
         GEOR.mapinit.init(layerStore, function() {
             GEOR.ajaxglobal.init();
             GEOR.tools.restore();
+            if (GEOR.print) {
+                GEOR.print.init(layerStore);
+            }
         });
         // Note: we're providing GEOR.ajaxglobal.init as a callback, so that
         // errors when loading WMC are not catched by GEOR.ajaxglobal
