@@ -296,11 +296,10 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
     public void toGeoJson(HttpServletRequest request,
             HttpServletResponse response) throws Exception {
 
-        String urlProvided = request.getParameter("file");
+        String urlProvided = request.getParameter("url");
 
-        if (!(request instanceof MultipartHttpServletRequest)
-                && StringUtils.isBlank(urlProvided)) {
-            final String msg = "MultipartHttpServletRequest is expected";
+        if (!(request instanceof MultipartHttpServletRequest) && StringUtils.isBlank(urlProvided)) {
+            final String msg = "Multipart form or Post form with file parameter expected";
             LOG.fatal(msg);
             throw new IOException(msg);
         }
