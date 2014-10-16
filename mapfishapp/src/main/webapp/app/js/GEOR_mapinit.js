@@ -478,21 +478,17 @@ GEOR.mapinit = (function() {
                 }
                 if (GEOR.config.CUSTOM_FILE) {
                     // load the given file on top of the WMC
-
-                    // note that the form could be dynamically generated
-                    // "fileupload" is the form element's id. 
-                    var form = new Ext.form.BasicForm("fileupload", {
-                        method: 'POST'
-                    });
-                    form.submit({
+                    Ext.Ajax.request({
+                        method: 'POST',
+                        disableCaching: true,
                         url: GEOR.config.PATHNAME + "/ws/togeojson/",
                         params: {
                             "url": GEOR.config.CUSTOM_FILE,
                             "srs": ls.map.getProjection()
                         },
-                        success: function(form, action) {
+                        success: function(resp) {
                             var features,
-                                fc = (new OpenLayers.Format.JSON()).read(action.response.responseText);
+                                fc = (new OpenLayers.Format.JSON()).read(resp.responseText);
                             if (!fc) {
                                 GEOR.util.errorDialog({
                                     title: tr("Error while loading file"),
@@ -541,10 +537,11 @@ GEOR.mapinit = (function() {
                                 layer: layer
                             }, layer.id));
                         },
-                        failure: function(form, action) {
+                        failure: function(resp) {
+                            var fc = (new OpenLayers.Format.JSON()).read(resp.responseText);
                             GEOR.util.errorDialog({
                                 title: tr("Error while loading file"),
-                                msg: OpenLayers.i18n(action.result.error)
+                                msg: OpenLayers.i18n(fc.error)
                             });
                         },
                         scope: this
