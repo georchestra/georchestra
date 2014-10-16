@@ -19,6 +19,9 @@
  * @include GEOR_waiter.js
  * @include GEOR_config.js
  * @include OpenLayers/Control/SelectFeature.js
+ * Required for cross-browser document.evaluate use,
+ * see https://github.com/georchestra/georchestra/issues/726:
+ * @include wgxpath.install.js
  */
 
 Ext.namespace("GEOR");
@@ -537,7 +540,7 @@ GEOR.layerstree = (function() {
                         exportinfo: {
                             srs: srs,
                             bbox: maxExtent,
-                            isoMetadataUrl: getIsoMetadataUrl(record)
+                            isoMetadataUrl: getIsoMetadataUrl(record) // ISO19139 MD URL
                         }
                     };
                     owsinfo.layer.addOptions({
@@ -563,7 +566,6 @@ GEOR.layerstree = (function() {
                     if(index >= 0) {
                         appendRecord(records[index]);
                     } else {
-
                         layersNode.appendChild(new Ext.tree.TreeNode({
                             text: GEOR.util.shortenLayerName(wmsinfo.layername, maxLayerNameLength),
                             disabled: true,
@@ -644,7 +646,8 @@ GEOR.layerstree = (function() {
                         owsinfo.exportinfo.owsType = records[0].get("owsType");
                         owsinfo.exportinfo.owsUrl = records[0].get("owsURL");
                         owsinfo.exportinfo.layerName = records[0].get("typeName");
-                        // typeName is "geor:sdi" while layerName might just be "sdi", see https://github.com/georchestra/georchestra/issues/517
+                        // typeName is "geor:sdi" while layerName might just be "sdi", 
+                        // see https://github.com/georchestra/georchestra/issues/517
                         owsinfo.exportinfo.layerType = records[0].get("layerType");
                         
                         var cfg = {
@@ -653,12 +656,75 @@ GEOR.layerstree = (function() {
                         };
                         
                         if (owsinfo.exportinfo.owsType == 'WCS') { // RASTER
-                            Ext.apply(cfg, {
-                                iconCls: 'raster-layer',
-                                owsinfo: owsinfo,
-                                checked: GEOR.config.LAYERS_CHECKED,
-                                qtip: '<b>'+owsinfo.text+'</b><br/>' + tip
-                            });
+                            // Here, we are trying to find the native raster resolution
+                            // from the associated ISO19139 metadata.
+                            // see https://github.com/georchestra/georchestra/issues/726
+                            if (owsinfo.exportinfo.isoMetadataUrl && 
+                                GEOR.util.isUrl(owsinfo.exportinfo.isoMetadataUrl, true)) {
+                                counter += 1; // une requete XHR (b) en plus est necessaire ()
+                                //console.log('compteur incrémenté de 1 (b) -> '+counter);
+                                Ext.Ajax.request({
+                                    url: owsinfo.exportinfo.isoMetadataUrl,
+                                    disableCaching: false,
+                                    success: function(response) {
+                                        // use document.evaluate on the XML response to fetch the 
+                                        // /gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification
+                                        // /gmd:spatialResolution/gmd:MD_Resolution/gmd:distance/gco:Distance
+                                        var res = document.evaluate(
+                                            GEOR.config.METADATA_RESOLUTION_XPATH, 
+                                            response.responseXML, 
+                                            GEOR.util.mdNSResolver, 
+                                            XPathResult.NUMBER_TYPE, 
+                                            null
+                                        ).numberValue, // typically 0.5
+                                        unit = document.evaluate(
+                                            GEOR.config.METADATA_RESOLUTION_XPATH+'/@uom', 
+                                            response.responseXML, 
+                                            GEOR.util.mdNSResolver, 
+                                            XPathResult.STRING_TYPE, 
+                                            null
+                                        ).stringValue; // typically "m"
+                                        if (!isNaN(res) && !!unit && GEOR.util.uomMetricRatio.hasOwnProperty(unit)) {
+                                            // normalize resolution into meters
+                                            res = GEOR.util.uomMetricRatio[unit] * res;
+                                            // force local resolution:
+                                            owsinfo.exportinfo.resolution = res;
+                                            // force global resolution to the lowest numerical one:
+                                            if (res < GEOR.layeroptions.getGlobalResolution()) {
+                                                GEOR.layeroptions.setGlobalResolution(res);
+                                                globalPropertiesNode.attributes.owsinfo.exportinfo.resolution = res;
+                                            }
+                                        }
+                                        Ext.apply(cfg, {
+                                            iconCls: 'raster-layer',
+                                            owsinfo: owsinfo,
+                                            checked: GEOR.config.LAYERS_CHECKED,
+                                            qtip: '<b>'+owsinfo.text+'</b><br/>' + tip
+                                        });
+                                        parentNode.appendChild(new Ext.tree.TreeNode(cfg));
+                                        checkNullCounter(); // XHR (b)
+                                    },
+                                    failure: function(response) {
+                                        Ext.apply(cfg, {
+                                            iconCls: 'raster-layer',
+                                            owsinfo: owsinfo,
+                                            checked: GEOR.config.LAYERS_CHECKED,
+                                            qtip: '<b>'+owsinfo.text+'</b><br/>' + tip
+                                        });
+                                        parentNode.appendChild(new Ext.tree.TreeNode(cfg));
+                                        checkNullCounter(); // XHR (b)
+                                    },
+                                    scope: this
+                                 });
+                            } else {
+                                Ext.apply(cfg, {
+                                    iconCls: 'raster-layer',
+                                    owsinfo: owsinfo,
+                                    checked: GEOR.config.LAYERS_CHECKED,
+                                    qtip: '<b>'+owsinfo.text+'</b><br/>' + tip
+                                });
+                                parentNode.appendChild(new Ext.tree.TreeNode(cfg));
+                            }
                         } else if (owsinfo.exportinfo.owsType == 'WFS') { // VECTOR
                             Ext.apply(cfg, {
                                 iconCls: 'vector-layer',
@@ -666,15 +732,16 @@ GEOR.layerstree = (function() {
                                 checked: GEOR.config.LAYERS_CHECKED,
                                 qtip: '<b>'+owsinfo.text+'</b><br/>' + tip
                             });
+                            parentNode.appendChild(new Ext.tree.TreeNode(cfg));
                         } else { // ERROR
                             Ext.apply(cfg, {
                                 iconCls: 'error-layer',
                                 checked: false,
                                 qtip: tr('layerstree.qtip.noextraction', {'NAME': owsinfo.text})
                             });
+                            parentNode.appendChild(new Ext.tree.TreeNode(cfg));
                         }
-                        
-                        parentNode.appendChild(new Ext.tree.TreeNode(cfg));
+
                         checkNullCounter(); // XHR (a)
                     },
                     failure: function() {

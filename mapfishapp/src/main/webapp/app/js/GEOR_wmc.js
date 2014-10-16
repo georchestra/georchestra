@@ -262,28 +262,29 @@ GEOR.wmc = (function() {
                 newContext.projection = map.getProjection();
             }
 
-            // remove all current layers except the lowest index one
-            // (our fake base layer)
-            // FIXME: should not this code be subject to resetMap option ?
-            for (var i = map.layers.length -1; i >= 1; i--) {
-                map.removeLayer(map.layers[i]);
-            }
-
             var maxExtent = newContext.maxExtent;
-            if (resetMap === true && maxExtent) {
-                map.setOptions({maxExtent: maxExtent});
-                var fakeBaseLayer = map.layers[0];
-                fakeBaseLayer.addOptions({maxExtent: maxExtent});
+            if (resetMap === true) {
+                // remove all current layers except the lowest index one
+                // (our fake base layer)
+                for (var i = map.layers.length -1; i >= 1; i--) {
+                    map.removeLayer(map.layers[i]);
+                }
+                if (maxExtent) {
+                    map.setOptions({maxExtent: maxExtent});
+                    var fakeBaseLayer = map.layers[0];
+                    fakeBaseLayer.addOptions({maxExtent: maxExtent});
+                }
             }
             records = wmcReader.readRecords(newContext).records;
             // fire event to let the whole app know about it.
             observable.fireEvent("beforecontextrestore", records.length);
             Ext.each(records, function(r) {
                 // restore metadataURLs in record
-                var context = null;
+                var context = null,
+                    layer = r.get('layer');
                 for (var i=0, l = newContext.layersContext.length; i<l; i++) {
                     if (newContext.layersContext[i]['name'] === r.get('name') &&
-                        newContext.layersContext[i]['url'] === r.get('layer').url) {
+                        newContext.layersContext[i]['url'] === layer.url) {
                         context = newContext.layersContext[i];
                         break;
                     }
@@ -293,10 +294,15 @@ GEOR.wmc = (function() {
                 }
                 // set as type as WMS (might need to be changed when we support more types from OWSContext)
                 r.set("type", "WMS");
+                // restore opaque status from transitionEffect:
+                r.set("opaque", layer.transitionEffect == "resize");
                 // change exception format depending on the WMS version: 
                 // (see https://github.com/camptocamp/georchestra-pigma-configuration/issues/112)
-                var params = r.get('layer').params;
+                var params = layer.params;
                 params.EXCEPTIONS = GEOR.ows.wmsVersionToExceptionsMapping[params.VERSION];
+                // same is true for the SLD_VERSION parameter:
+                // see https://github.com/georchestra/georchestra/issues/636
+                params.SLD_VERSION = GEOR.ows.wmsVersionToSLDVersionMapping[params.VERSION];
                 // add layer from wmc to the current map
                 layerStore.addSorted(r);
             });

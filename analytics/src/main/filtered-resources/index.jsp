@@ -8,7 +8,7 @@
 <%@ page isELIgnored="false" %>
 <%
     String lang = request.getParameter("lang");
-    if (lang == null || (!lang.equals("en") && !lang.equals("es") && !lang.equals("fr"))) {
+    if (lang == null || (!lang.equals("en") && !lang.equals("es") && !lang.equals("fr") && !lang.equals("de"))) {
         lang = "${language}";
     }
     Locale l = new Locale(lang);
@@ -39,13 +39,6 @@
                 padding: 2px;
                 z-index: 20001;
                 height: auto;
-            }
-            .admin_only {
-                padding-left: 40px;
-                color:red;
-                font-family : 'Yanone Kaffeesatz', arial,verdana,helvetica;
-                font-size: 13px;
-
             }
             #loading-msg {
                 font: normal 12px arial,tahoma,sans-serif;

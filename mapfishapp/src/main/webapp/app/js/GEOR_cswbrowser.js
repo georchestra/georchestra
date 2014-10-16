@@ -99,7 +99,7 @@ GEOR.cswbrowser = (function() {
 
     /**
      * Method: filterCswRecord
-     * Keep only WMS-1.1.1 records with a correct layer name and server URL
+     * Keep only WMS records with a correct layer name and server URL
      *
      * Parameters:
      * records - {Array} array of records

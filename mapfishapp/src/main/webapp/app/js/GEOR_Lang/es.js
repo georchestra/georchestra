@@ -425,6 +425,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Available tools:": "Herramientas disponibles:",
     "Click to select or deselect the tool": "Haga clic para (de)seleccionar la herramienta",
     "Could not load addon ADDONNAME": "No se pudo cargar el addon ${ADDONNAME}",
+    "Your new tools are now available in the tools menu.": 'Sus nuevos herramientas ya están disponibles en el menú "herramientas"',
     /* GEOR_util.js strings */
     "Characters": "Caracteres",
     "Digital": "Digital",
@@ -439,9 +440,9 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Warning: trying to restore WMC with a different projection (PROJCODE1, while map SRS is PROJCODE2). Strange things might occur !": "Advertencia: para cargar el contexto WMC, se necesita reproyectar desde ${PROJCODE1} hacía la proyección del mapa ${PROJCODE2}. ¡El resultado puede ser diferente de lo esperado!",
     /* GEOR_wmcbrowser.js strings */
     "Could not find WMC file": "El contexto WMC especificado no existe",
-    "... or a custom context": "... o un contexto personalizado",
-    "Replace current map composition with one of these contexts:":
-		"Remplazar la composición actual del mapa por uno de estos contextos:",
+    "... or a local context": "... o un contexto local",
+    //"Load or add the layers from one of these map contexts:" :
+	//	"Remplazar la composición actual del mapa por uno de estos contextos:",
     "A unique OSM layer": "Una capa OpenStreetMap única",
     "default viewer context": "contexto por omisión",
     "(default)": "<br/>(contexto por omisión actual)",

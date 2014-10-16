@@ -178,6 +178,7 @@ GEOR.print = (function() {
 
         // The printProvider that connects us to the print service
         var serviceUrl = GEOR.config.PATHNAME + '/pdf';
+        GEOR.waiter.show(); // an XHR is required here for the print capabilities
         printProvider = new GeoExt.data.PrintProvider({
             url: serviceUrl,
             autoLoad: true,

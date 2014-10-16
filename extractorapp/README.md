@@ -3,7 +3,7 @@ Extractorapp
 
 Extractorapp allows SDI users to download data bundles from existing OGC web services (WFS for vector and WCS for rasters).
 Extraction jobs are queued and can be managed by any admin user. 
-The application notifies by email the requesting user that the job has been take into account, and when it is finished.
+The application notifies by email the requesting user that the job has been taken into account, and when it is finished.
 
 By default, the application allows extraction of layers and services which have been configured through the STARTUP_LAYERS and STARTUP_SERVICES configuration variables in the profile's GEOR_custom.js
 
@@ -30,7 +30,7 @@ Note that it is possible to use a classical form submission and send this JSON s
 The application also accepts several GET parameters :
  * **debug** when set to true, the application loads unminified javascript files
  * **noheader** when set to true, the application does not load the header
- * **lang** can be set to any of the following : fr, en, es
+ * **lang** can be set to any of the following : fr, en, es, de
 
 
 Metadata extraction
@@ -69,11 +69,19 @@ Note that various metadata URLs may be specified for a layer in the WMS server, 
 </MetadataURL>
 ```
 
+Raster resolution
+=================
+
+The default raster resolution is set by the value of the ```DEFAULT_RESOLUTION``` config option (defaults to 10 meters).
+
+Note that, since [#726](https://github.com/georchestra/georchestra/issues/726) (released with 14.12), any layer with a MetadataURL pointing to a valid XML document mentioning the raster resolution will be extracted with this native resolution by default.  
+To this end, administrators will have to make sure that the XPATH expression provided by the ```METADATA_RESOLUTION_XPATH``` config option is correct for their setup.
+
 
 Admin UI
 ========
 
-Members of the ```ADMINISTRATOR``` LDAP group have the ability to manage extraction jobs at this URL : http(s)://you.sdi.org/extractorapp/admin/
+Members of the ```ADMINISTRATOR``` LDAP group have the ability to manage extraction jobs at this URL : /extractorapp/admin/
 
 Jobs (except the running one) can be manually paused, cancelled, set to a higher or a lower priority.
 

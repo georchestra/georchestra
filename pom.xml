@@ -332,6 +332,14 @@
         <enabled>true</enabled>
         <checksumPolicy>ignore</checksumPolicy>
       </snapshots>
+      <id>georchestra</id>
+      <url>http://sdi.georchestra.org/maven/repository</url>
+    </repository>
+    <repository>
+      <snapshots>
+        <enabled>true</enabled>
+        <checksumPolicy>ignore</checksumPolicy>
+      </snapshots>
       <id>mapfish</id>
       <url>http://dev.mapfish.org/maven/repository</url>
     </repository>
@@ -347,7 +355,7 @@
     <repository>
       <id>opengeo</id>
       <name>OpenGeo Maven Repository</name>
-      <url>http://repo.opengeo.org/</url>
+      <url>http://repo.boundlessgeo.com/main/</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
@@ -378,7 +386,7 @@
     <pluginRepository>
       <id>opengeo</id>
       <name>OpenGeo Maven Repository</name>
-      <url>http://repo.opengeo.org/</url>
+      <url>http://repo.boundlessgeo.com/</url>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>

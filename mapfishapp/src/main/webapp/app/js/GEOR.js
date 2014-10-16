@@ -46,7 +46,9 @@ Ext.namespace("GEOR");
     // see http://applis-bretagne.fr/redmine/issues/4536
     var fn = OpenLayers.Format.XML.prototype.write;
     OpenLayers.Format.XML.prototype.write = function(node) {
-        return '<?xml version="1.0" encoding="UTF-8"?>' + fn.apply(this, [node]);
+        return '<?xml version="1.0" encoding="UTF-8"?>' + 
+            // fix for https://github.com/georchestra/georchestra/issues/773 :
+            fn.apply(this, [node]).replace(new RegExp('xmlns:NS\\d+="" NS\\d+:', 'g'), '');
     };
 
     var checkRoles = function(module, okRoles) {
@@ -121,9 +123,6 @@ Ext.namespace("GEOR");
         GEOR.tools.init(layerStore);
         if (GEOR.edit) {
             GEOR.edit.init(map);
-        }
-        if (GEOR.print) {
-            GEOR.print.init(layerStore);
         }
         if (GEOR.querier) {
             GEOR.querier.init(map);
@@ -349,6 +348,9 @@ Ext.namespace("GEOR");
         GEOR.mapinit.init(layerStore, function() {
             GEOR.ajaxglobal.init();
             GEOR.tools.restore();
+            if (GEOR.print) {
+                GEOR.print.init(layerStore);
+            }
         });
         // Note: we're providing GEOR.ajaxglobal.init as a callback, so that
         // errors when loading WMC are not catched by GEOR.ajaxglobal
@@ -546,7 +548,7 @@ Ext.namespace("GEOR");
 
         GEOR.wmcbrowser.events.on({
             "contextselected": function(o) {
-                return GEOR.wmc.read(o.wmcString, true, true);
+                return GEOR.wmc.read(o.wmcString, !o.noReset, true);
             }
         });
     });

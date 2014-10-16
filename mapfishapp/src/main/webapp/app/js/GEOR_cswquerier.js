@@ -144,10 +144,17 @@ GEOR.cswquerier = (function() {
     );
 
     /**
-     * Property: GeoExt.data.CSWRecordsStore
+     * Property: CSWRecordsStore
      * {GeoExt.data.CSWRecordsStore} store reading its records from the CSW service
      */
     var CSWRecordsStore;
+
+    /**
+     * Property: servicesStore
+     * {GeoExt.data.CSWRecordsStore} store reading its records from the CSW service
+     * dedicated to "plan B" ie: fetching the service metadata.
+     */
+    var servicesStore;
 
     /**
      * Property: customStore
@@ -181,6 +188,74 @@ GEOR.cswquerier = (function() {
     var tr = null;
 
     /**
+     * Property: uuidsToDig
+     * {Array} a cache of csw records for "plan B"
+     */
+    var uuidsToDig = null;
+
+    /**
+     * Method: onServicesStoreLoad
+     * Callback on ServicesStore load event
+     *
+     * Parameters:
+     * s - {GeoExt.data.CSWRecordsStore} the store
+     * serviceRecords - {Array(GeoExt.data.CSWRecord)} loaded records
+     */
+    var onServicesStoreLoad = function(s, serviceRecords) {
+        // transfer results to customStore:
+        Ext.each(uuidsToDig, function(o) {
+            var uuid = o.uuid,
+                record = o.record,
+                md_title = o.record.get("title");
+            Ext.each(serviceRecords, function(serviceRecord) {
+                // check that the service has a correct service URL
+                var serviceURL,
+                    identificationInfo = serviceRecord.get("identificationInfo"),
+                    operations = identificationInfo[0].containsOperations;
+                Ext.each(operations, function(op) {
+                    // get the WMS one, whose operationName is GetCapabilities
+                    if (op.operationName.characterString == "GetCapabilities" &&
+                        op.connectPoint[0] &&
+                        op.connectPoint[0].linkage &&
+                        GEOR.util.isUrl(op.connectPoint[0].linkage.URL, true) && // strict URL checking
+                        op.connectPoint[0].protocol &&
+                        op.connectPoint[0].protocol.characterString == "OGC:WMS") {
+                        // get the service URL
+                        serviceURL = op.connectPoint[0].linkage.URL;
+                    }
+                });
+                // if no service end point, abort
+                if (!serviceURL) {
+                    return;
+                }
+                // get the SV_CoupledResource 
+                // whose identifier matches the one found in the first query
+                // and whose operationName is GetMap
+                var resources = identificationInfo[0].coupledResource,
+                    serviceTitle = identificationInfo[0].citation.title.characterString;
+                Ext.each(resources, function(resource) {
+                    if (resource.identifier.characterString == uuid &&
+                        resource.operationName.characterString == "GetMap" &&
+                        resource.scopedName) {
+                        // enrich the original record with correct server name and layer name:
+                        record.set("URI", record.get("URI").concat({
+                            name: resource.scopedName, 
+                            value: serviceURL,
+                            description: md_title || OpenLayers.i18n("NAME layer on VALUE", {
+                                'NAME': resource.scopedName,
+                                'VALUE': serviceTitle || serviceURL
+                            }),
+                            protocol: "OGC:WMS"
+                        }));
+                        // feed the DataView (cumulatively adding the record):
+                        customStore.loadData([record], true);
+                    }
+                });
+            });
+        });
+    };
+
+    /**
      * Method: onCSWRecordsStoreLoad
      * Callback on CSWRecordsStore load event
      *
@@ -189,8 +264,79 @@ GEOR.cswquerier = (function() {
      * cswRecords - {Array(GeoExt.data.CSWRecord)} loaded records
      */
     var onCSWRecordsStoreLoad = function(s, cswRecords) {
+        uuidsToDig = [];
+        // empty store:
+        customStore.loadData([]);
         // transfer results to customStore:
-        customStore.loadData(cswRecords);
+        Ext.each(cswRecords, function(r) {
+            var c = customStore.getCount();
+            customStore.loadData([r], true); // cumulatively adding records
+            if (customStore.getCount() == c) {
+                // ... means that the record did not contain information about a linked WMS layer.
+                // This is the place to hook into for "plan B" 
+                // see https://github.com/georchestra/georchestra/issues/756
+                uuidsToDig.push({
+                    uuid: r.data.identifier,
+                    record: r
+                });
+            }
+        });
+
+        if (uuidsToDig.length) {
+            var filter, filters = [];
+            if (uuidsToDig == 1) {
+                filter = new OpenLayers.Filter.Comparison({
+                    type: "==",
+                    property: "operatesOnIdentifier",
+                    value: uuidsToDig[0].uuid
+                });
+            } else {
+                Ext.each(uuidsToDig, function(o) {
+                    filters.push(new OpenLayers.Filter.Comparison({
+                        type: "==",
+                        property: "operatesOnIdentifier",
+                        value: o.uuid
+                    }));
+                });
+                filter = new OpenLayers.Filter.Logical({
+                    type: "||",
+                    filters: filters
+                });
+            }
+            // TODO: use a GeoExt.data.ProtocolProxy for this store, 
+            // with an OpenLayers.Protocol.CSW protocol
+            // and a GeoExt.data.CSWRecordsReader reader
+            servicesStore.load({
+                params: {
+                    xmlData: new OpenLayers.Format.CSWGetRecords().write({
+                        resultType: "results",
+                        outputSchema: "http://www.isotc211.org/2005/gmd", // to get ISO19139 XML
+                        Query: {
+                            ElementSetName: {
+                                value: "full"
+                            },
+                            Constraint: {
+                                version: "1.1.0",
+                                Filter: new OpenLayers.Filter.Logical({
+                                    type: "&&",
+                                    filters: [
+                                        new OpenLayers.Filter.Comparison({
+                                            type: "==",
+                                            property: "ServiceType",
+                                            value: "view"
+                                        }),
+                                        filter
+                                    ]
+                                })
+                            }
+                        },
+                        startPosition: 1
+                    })
+                },
+                scope: this,
+                add: false
+            });
+        }
         // scroll dataview to top:
         var el = dataview.getEl();
         var f = el && el.first();
@@ -212,7 +358,7 @@ GEOR.cswquerier = (function() {
                 '<div class="x-view-item">',
                     '<table style="width:100%;"><tr><td style="vertical-align:text-top;">',
                         '<p><b>{layer_description}</b></p>',
-                        '<p>{md_title} - {[this.abstract(values.md_abstract)]}&nbsp;',
+                        '<p>{[this.abstract(values.md_abstract)]}&nbsp;',
                         '<a href="{[this.metadataURL(values)]}" ext:qtip="' +
                             tr("Show metadata sheet in a new window") + '" ',
                         'target="_blank" onclick="window.open(this.href);return false;">' +
@@ -254,8 +400,8 @@ GEOR.cswquerier = (function() {
                 // 1) shorten text
                 // 2) replace url links with <a href="XXX">lien</a>
                 //    (long links can break the dataview layout)
-                if (text.length >= 300) {
-                    text = text.slice(0, 299) + ' ... ';
+                if (text.length >= 400) {
+                    text = text.slice(0, 399) + ' ... ';
                 }
                 var regexp = /(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/gi;
                 return text.replace(regexp,
@@ -335,6 +481,13 @@ GEOR.cswquerier = (function() {
 
                 CSWRecordsStore = new GeoExt.data.CSWRecordsStore({
                     url: GEOR.config.DEFAULT_CSW_URL,
+                    fields: [
+                        {name: "identifier"},
+                        {name: "title"},
+                        {name: "URI"},
+                        {name: "abstract"},
+                        {name: "BoundingBox", mapping: "bounds"}
+                    ],
                     listeners: {
                         "load": onCSWRecordsStoreLoad,
                         "beforeload": function() {
@@ -347,6 +500,17 @@ GEOR.cswquerier = (function() {
                         "exception": function() {
                             mask && mask.hide();
                         }
+                    }
+                });
+
+                servicesStore = new GeoExt.data.CSWRecordsStore({
+                    url: GEOR.config.DEFAULT_CSW_URL,
+                    fields: [
+                        {name: "identifier", mapping: "fileIdentifier"},
+                        {name: "identificationInfo"}
+                    ],
+                    listeners: {
+                        "load": onServicesStoreLoad
                     }
                 });
 
@@ -443,6 +607,7 @@ GEOR.cswquerier = (function() {
                         listeners: {
                             "select": function(cb, rec) {
                                 CSWRecordsStore.proxy.setUrl(rec.get('url'), true);
+                                servicesStore.proxy.setUrl(rec.get('url'), true);
                                 // then trigger search, if first field has search.
                                 if (textField.hasSearch) {
                                     textField.onTrigger2Click.call(textField);

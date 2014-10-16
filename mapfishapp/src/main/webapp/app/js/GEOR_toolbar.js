@@ -25,7 +25,7 @@
  * @include OpenLayers/Rule.js
  * @include GeoExt/widgets/Action.js
  * @include GeoExt/widgets/LegendPanel.js
- * @include GeoExt/widgets/WMSLegend.js
+ * @requires GeoExt/widgets/WMSLegend.js
  * @include GeoExt/widgets/WMTSLegend.js
  * @include GEOR_workspace.js
  * @include GEOR_print.js
@@ -35,6 +35,9 @@
  */
 
 Ext.namespace("GEOR");
+
+// see https://github.com/camptocamp/georchestra-geopicardie-configuration/issues/341
+GeoExt.WMSLegend.prototype.defaultStyleIsFirst = false;
 
 GEOR.toolbar = (function() {
     /*

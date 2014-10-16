@@ -25,7 +25,7 @@ if (active == null) {
 }
 
 String lang = request.getParameter("lang");
-if (lang == null || (!lang.equals("en") && !lang.equals("es") && !lang.equals("ru") && !lang.equals("fr"))) {
+if (lang == null || (!lang.equals("en") && !lang.equals("es") && !lang.equals("ru") && !lang.equals("fr") && !lang.equals("de"))) {
     lang = "${language}";
 }
 Locale l = new Locale(lang);

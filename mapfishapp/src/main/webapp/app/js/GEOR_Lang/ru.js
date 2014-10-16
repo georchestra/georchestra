@@ -97,7 +97,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Find": "Найти",
     "in": "B",
     /* To be translated ...
-    "No layer": "Aucune couche",
+    "No linked layer.": "Aucune couche.",
     "One layer found.": "Une couche trouvée.",
     "NB layers found.": "${NB} couches trouvées.",
     "NB metadata match the query.": "${NB} métadonnées correspondent à la requête.",
@@ -334,6 +334,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Available tools:": "Инструменты в распоряжении",
     "Click to select or deselect the tool": "Щёлкните для того, чтобы выбрать инструмент или отменить его",
     "Could not load addon ADDONNAME": "Невозможно загрузить аддон ${ADDONNAME}",
+    //"Your new tools are now available in the tools menu.": 'Vos nouveaux outils sont disponibles dans le menu "outils"',
     /* GEOR_util.js strings */
     "Characters": "Письменность",
     "Digital": "Цифровой",
@@ -347,8 +348,8 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Warning: trying to restore WMC with a different projection (PROJCODE1, while map SRS is PROJCODE2). Strange things might occur !": "Предупреждение : попытка восстановления WMC в одной проекции ${PROJCODE1}, тогда как данная карта SRS находится в другой ${PROJCODE2}. Здесь возможны непредвиденные обстоятельства",
 /* GEOR_wmcbrowser.js strings */
     "Could not find WMC file": "Невозможно найти WMC файл",
-    "... or a custom context": "...или индивидуальный контекст",
-    "Replace current map composition with one of these contexts:": "Заменить составляющую текущей карты одним из предложенных контекстов:",
+    //"... or a local context": "...или индивидуальный контекст", // TODO: update translation
+    //"Load or add the layers from one of these map contexts:" : "Заменить составляющую текущей карты одним из предложенных контекстов:",
     "A unique OSM layer": "Единый слой OpenStreetMap",
     "default viewer context": "контекст вьюера по умолчанию",
     /* GEOR_workspace.js strings */

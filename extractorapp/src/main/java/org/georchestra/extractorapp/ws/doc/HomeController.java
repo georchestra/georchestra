@@ -31,6 +31,11 @@ import org.springframework.web.servlet.ModelAndView;
 public class HomeController {
     private static final String SESSION_POST_DATA_STORE = "SESSION_POST_DATA_STORE";
 
+	private long maxCoverageExtractionSize = Long.MAX_VALUE;
+	public void setMaxCoverageExtractionSize(long maxCoverageExtractionSize) {
+		this.maxCoverageExtractionSize = maxCoverageExtractionSize;
+	}
+
     /**
      * POST entry point.
      * @param request. Must contains information from the layers and services to be extracted
@@ -56,7 +61,7 @@ public class HomeController {
             }
         }
 
-        Map<String, Object> model = createModelFromStringOrSession(request, str,false);
+        Map<String, Object> model = createModelFromStringOrSession(request, str, false);
 
         return new ModelAndView("index", "c", model);
     }
@@ -96,12 +101,11 @@ public class HomeController {
         } else if(allowFake){
             model = new HashMap<String,Object>();
             model.put("fake", true);
-            model.put("debug", Boolean.parseBoolean(request.getParameter("debug")));
         } else {
             model = new HashMap<String,Object>();
             model.put("fake", false);
-            model.put("debug", Boolean.parseBoolean(request.getParameter("debug")));            
         }
+        model.put("maxCoverageExtractionSize", this.maxCoverageExtractionSize);
         return model;
     }
 
@@ -112,19 +116,7 @@ public class HomeController {
         try {
             jsonData = new JSONObject(str);
         } catch (JSONException e) {
-            throw new RuntimeException("Cannot parse the json post data", e);
-        }
-        
-        boolean debug;
-        if (request.getParameter("debug") == null) {
-            try {
-                debug = jsonData.getBoolean("debug");
-            } catch (JSONException e) {
-                debug = false;
-            }
-        }
-        else {
-            debug = Boolean.parseBoolean(request.getParameter("debug"));
+            throw new RuntimeException("Cannot parse the JSON post data", e);
         }
 
         try {
@@ -142,7 +134,6 @@ public class HomeController {
 
         Map<String,Object> model = new HashMap<String,Object>();
         model.put("fake", false);
-        model.put("debug", debug);
         model.put("layers", layers);
         model.put("services", services);
         return model;

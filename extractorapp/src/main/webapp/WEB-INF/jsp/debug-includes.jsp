@@ -6,7 +6,7 @@
     <script type="text/javascript" src="resources/lib/externals/openlayers/lib/OpenLayers/Lang/<%= lang %>.js"></script>
     <script type="text/javascript" src="resources/lib/externals/geoext/lib/GeoExt.js"></script>
     <script type="text/javascript" src="resources/lib/GeoExt.ux/lib/GeoExt.ux.js"></script>
-    
+    <script type="text/javascript" src="resources/lib/wicked-good-xpath/wgxpath.install.js"></script>
     <script type="text/javascript" src="resources/lib/addins/loadingPanel/trunk/lib/OpenLayers/Control/LoadingPanel.js"></script>
     <script type="text/javascript" src="resources/app/js/OpenLayers.Control.OutOfRangeLayers.js"></script>
     
@@ -27,6 +27,5 @@
     <script type="text/javascript" src="resources/app/js/GEOR_ajaxglobal.js"></script>
     <script type="text/javascript" src="resources/app/js/GEOR.js"></script>
     <script type="text/javascript" src="resources/app/js/GEOR_Lang/<%= lang %>.js"></script>
-    <script type="text/javascript" src="https://getfirebug.com/firebug-lite-beta.js"></script>
     
     <script type="text/javascript" src="resources/lib/externals/ext/examples/ux/MultiSelect.js"></script>
