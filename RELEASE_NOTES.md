@@ -21,9 +21,7 @@ Not yet funded, but would be really nice to have:
 Funded, but not yet done:
  * geoserver: update to 2.5.x with geofence - see [#677](https://github.com/georchestra/georchestra/issues/677) - CIGALsace & GeoBretagne
  * geofence: ability to configure map SRS - see [#732](https://github.com/georchestra/georchestra/issues/732) - Rennes Metropole
- * extractorapp: better emails - see [#750](https://github.com/georchestra/georchestra/issues/750) - GéoPicardie
  * mapfishapp: export current map context as a "map metadata" - see [#751](https://github.com/georchestra/georchestra/issues/751) - GéoPicardie
- * mapfishapp: direct geodata file loading via URL - see [#754](https://github.com/georchestra/georchestra/issues/754) - GéoPicardie
  * mapfishapp: give easy access to WMS/WFS layer details - see [#346](https://github.com/georchestra/georchestra/issues/346) - CIGALsace
  * mapfishapp: support read/write WMTS layer types from/to OWSContext - see [#360](https://github.com/georchestra/georchestra/issues/360) - CIGALsace
  * ldapadmin: delegated administrators - see [#786](https://github.com/georchestra/georchestra/issues/786) - GeoBretagne
@@ -31,10 +29,12 @@ Funded, but not yet done:
 New features:
  * extractorapp: warn user when the extraction area is too large before the extraction is fired - see [#726](https://github.com/georchestra/georchestra/issues/726)
  * extractorapp: native raster resolution extracted by default - see [#726](https://github.com/georchestra/georchestra/issues/726)
+ * extractorapp: better emails - see [#750](https://github.com/georchestra/georchestra/issues/750) - GéoPicardie
  * mapfishapp: context restoring - option to reset map or not - see [#302](https://github.com/georchestra/georchestra/issues/302)
  * mapfishapp: spatial query using previous results' geometries - see [#752](https://github.com/georchestra/georchestra/issues/752)
  * mapfishapp: streetview addon - see [#774](https://github.com/georchestra/georchestra/issues/774) - GeoBretagne
  * mapfishapp: load data from catalog improvement - see [#756](https://github.com/georchestra/georchestra/issues/756) - GeoBretagne
+ * mapfishapp: direct geodata file loading via URL - see [#754](https://github.com/georchestra/georchestra/issues/754) - GéoPicardie
 
 Enhancements:
  * extractorapp: editable combobox for resolution selection - see [#726](https://github.com/georchestra/georchestra/issues/726)
