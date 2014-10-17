@@ -37,6 +37,8 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Type": "Тип",
     "Title": "Заголовок",
     "Actions": "Действия",
+    // TODO "Incorrect server response.": "Incorrect server response.",
+    // TODO "No features found.": "No features found.",
     /* GEOR.js strings */
     "Cities": "Населённые пункты",
     "Recentering on GeoNames cities": "Переориентация на населённые пункты<br /> GeoNames.",
@@ -122,8 +124,6 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "fileupload_error_sizeError": "This file is too large to be uploaded.",
     "fileupload_error_unsupportedFormat": "This format is not supported.",*/
     // TODO "server upload error: ERROR": "Upload failed. ${ERROR}",
-    // TODO "Incorrect server response.": "Incorrect server response.",
-    // TODO "No features found.": "No features found.",
     /* GEOR_geonames.js strings */
     /* GEOR_getfeatureinfo.js strings */
     "<div>Searching...</div>": "<div>Идёт поиск...</div>",
@@ -208,6 +208,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "No layer imported": "Не закачано ни одного слоя.",
     "The provided context is not valid": "Предложенный контекст недействителен",
     "The default context is not defined (and it is a BIG problem!)": "Контекст по умолчанию не определён. Это представляет собой серьёзную проблему!",
+    //"Error while loading file": "Erreur au chargement du fichier",
     /* GEOR_mappanel.js strings */
     "Coordinates in ": "Координаты в ",
     "scale picker": "масштаб",

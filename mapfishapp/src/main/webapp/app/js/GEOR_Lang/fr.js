@@ -39,6 +39,8 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Type": "Type",
     "Title": "Titre",
     "Actions": "Actions",
+    "Incorrect server response.": "Réponse du serveur incorrecte.",
+    "No features found.": "Aucun objet trouvé.",
     /* GEOR.js strings */
     "Cities": "Localités",
     "Recentering on GeoNames cities": "Recentrage sur localités<br />de la base GeoNames",
@@ -145,8 +147,6 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "fileupload_error_projectionError": "Une erreur est survenue lors de la lecture des coordonnées géographiques. Êtes-vous sûr que le fichier contient les informations de projection ?",
     "server upload error: ERROR":
         "L'upload du fichier a échoué. ${ERROR}",
-    "Incorrect server response.": "Réponse du serveur incorrecte.",
-    "No features found.": "Aucun objet trouvé.",
     /* GEOR_geonames.js strings */
     /* GEOR_getfeatureinfo.js strings */
     "<div>Searching...</div>": "<div>Recherche en cours...</div>",
@@ -261,6 +261,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "The default context is not defined (and it is a BIG problem!)":
         "Le contexte par défaut n'est pas défini " +
         "(et ce n'est pas du tout normal !)",
+    "Error while loading file": "Erreur au chargement du fichier",
     /* GEOR_mappanel.js strings */
     "Coordinates in ": "Coordonnées en ",
     "scale picker": "échelle",

@@ -39,6 +39,8 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Type": "Typ",
     "Title": "Titel",
     "Actions": "Aktionen",
+    "Incorrect server response.": "Server Antwort fehlerhaft.",
+    "No features found.": "Kein Betreff gefunden.",
     /* GEOR.js strings */
     "Cities": "Standorte",
     "Recentering on GeoNames cities": "Auf die Standorte der GeoNames <br />Datenbasis neu ausrichten",
@@ -145,8 +147,6 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "fileupload_error_projectionError": "Lesefehler der geografischen Koordinaten. Überprüfen Sie die Projektionsinformation.",
     "server upload error: ERROR":
         "Fehler beim Dateihochladen. ${ERROR}",
-    "Incorrect server response.": "Server Antwort fehlerhaft.",
-    "No features found.": "Kein Betreff gefunden.",
     /* GEOR_geonames.js strings */
     /* GEOR_getfeatureinfo.js strings */
     "<div>Searching...</div>": "<div>suchen...</div>",
@@ -260,6 +260,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "The provided context is not valid": "WMC ungültig",
     "The default context is not defined (and it is a BIG problem!)":
         "Standard WMC nicht definiert(and it is a BIG problem!)",
+    "Error while loading file": "Fehler beim Laden der Datei",
     /* GEOR_mappanel.js strings */
     "Coordinates in ": "Koordinaten im ",
     "scale picker": "Maβstab",
