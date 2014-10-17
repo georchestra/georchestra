@@ -6,64 +6,74 @@ This branch receives bug fixes as they arrive, during 6 months at least.
 Version 14.12 (development version)
 ===================================
 
-Contributions from GeoBretagne, GéoPicardie, Rennes Métropole, Le Puy en Velay, Université de Franche-Comté
+Contributions from GeoBretagne, GéoPicardie, CIGALsace, Rennes Métropole, Le Puy en Velay, Université de Franche-Comté.  
+End-of-life for 13.09 release.
 
 Not yet funded, but would be really nice to have:
- * config: make it easy to have different jdbc parameters for each module - see [#716](https://github.com/georchestra/georchestra/issues/716)
- * geofence: include the geOrchestra header - see [#553](https://github.com/georchestra/georchestra/issues/553)
- * geonetwork: integration of version 3
- * ldapadmin: send login back in password recovery email - see [#562](https://github.com/georchestra/georchestra/issues/562)
- * mapfishapp: use google closure compiler for faster loading times - see [#378](https://github.com/georchestra/georchestra/issues/378)
- * mapfishapp: take into account quotes in csw queries - see [#706](https://github.com/georchestra/georchestra/issues/706)
- * georchestra: use the browser-advertised preferred language by default (and give the user a chance to select the correct one with a combobox in the header) - see [#589](https://github.com/georchestra/georchestra/issues/589)
- * georchestra: validate on Tomcat 7/8 - see [#504](https://github.com/georchestra/georchestra/issues/504)
+ * config: make it easy to have different jdbc parameters for each module - see [#716](https://github.com/georchestra/georchestra/issues/716),
+ * geofence: include the geOrchestra header - see [#553](https://github.com/georchestra/georchestra/issues/553),
+ * geonetwork: integration of version 3,
+ * ldapadmin: send login back in password recovery email - see [#562](https://github.com/georchestra/georchestra/issues/562),
+ * mapfishapp: use google closure compiler for faster loading times - see [#378](https://github.com/georchestra/georchestra/issues/378),
+ * mapfishapp: take into account quotes in csw queries - see [#706](https://github.com/georchestra/georchestra/issues/706),
+ * georchestra: use the browser-advertised preferred language by default (and give the user a chance to select the correct one with a combobox in the header) - see [#589](https://github.com/georchestra/georchestra/issues/589),
+ * georchestra: validate on Tomcat 7/8 - see [#504](https://github.com/georchestra/georchestra/issues/504),
 
 Funded, but not yet done:
- * geoserver: update to 2.5.x with geofence - see [#677](https://github.com/georchestra/georchestra/issues/677) - CIGALsace & GeoBretagne
- * geofence: ability to configure map SRS - see [#732](https://github.com/georchestra/georchestra/issues/732) - Rennes Metropole
- * mapfishapp: export current map context as a "map metadata" - see [#751](https://github.com/georchestra/georchestra/issues/751) - GéoPicardie
- * mapfishapp: give easy access to WMS/WFS layer details - see [#346](https://github.com/georchestra/georchestra/issues/346) - CIGALsace
- * mapfishapp: support read/write WMTS layer types from/to OWSContext - see [#360](https://github.com/georchestra/georchestra/issues/360) - CIGALsace
- * ldapadmin: delegated administrators - see [#786](https://github.com/georchestra/georchestra/issues/786) - GeoBretagne
+ * geoserver: update to 2.5.x with geofence - see [#677](https://github.com/georchestra/georchestra/issues/677) - CIGALsace & GeoBretagne,
+ * geofence: ability to configure map SRS - see [#732](https://github.com/georchestra/georchestra/issues/732) - Rennes Metropole,
+ * mapfishapp: export current map context as a "map metadata" - see [#751](https://github.com/georchestra/georchestra/issues/751) - GéoPicardie,
+ * mapfishapp: give easy access to WMS/WFS layer details - see [#346](https://github.com/georchestra/georchestra/issues/346) - CIGALsace,
+ * mapfishapp: support read/write WMTS layer types from/to OWSContext - see [#360](https://github.com/georchestra/georchestra/issues/360) - CIGALsace,
+ * ldapadmin: delegated administrators - see [#786](https://github.com/georchestra/georchestra/issues/786) - GeoBretagne,
 
 New features:
- * extractorapp: warn user when the extraction area is too large before the extraction is fired - see [#726](https://github.com/georchestra/georchestra/issues/726)
- * extractorapp: native raster resolution extracted by default - see [#726](https://github.com/georchestra/georchestra/issues/726)
- * extractorapp: better emails - see [#750](https://github.com/georchestra/georchestra/issues/750) - GéoPicardie
- * mapfishapp: context restoring - option to reset map or not - see [#302](https://github.com/georchestra/georchestra/issues/302)
- * mapfishapp: spatial query using previous results' geometries - see [#752](https://github.com/georchestra/georchestra/issues/752)
- * mapfishapp: streetview addon - see [#774](https://github.com/georchestra/georchestra/issues/774) - GeoBretagne
- * mapfishapp: load data from catalog improvement - see [#756](https://github.com/georchestra/georchestra/issues/756) - GeoBretagne
- * mapfishapp: direct geodata file loading via URL - see [#754](https://github.com/georchestra/georchestra/issues/754) - GéoPicardie
+ * extractorapp: native raster resolution extracted by default - see [#726](https://github.com/georchestra/georchestra/issues/726),
+ * mapfishapp: context restoring - option to reset map or not - see [#302](https://github.com/georchestra/georchestra/issues/302),
+ * mapfishapp: spatial query using previous results' geometries - see [#752](https://github.com/georchestra/georchestra/issues/752),
+ * mapfishapp: streetview addon - see [#774](https://github.com/georchestra/georchestra/issues/774),
+ * mapfishapp: direct geodata file loading via URL - see [#754](https://github.com/georchestra/georchestra/issues/754),
+ * mapfishapp: added a button to remove all layers - see [#753](https://github.com/georchestra/georchestra/issues/753),
 
 Enhancements:
- * extractorapp: editable combobox for resolution selection - see [#726](https://github.com/georchestra/georchestra/issues/726)
- * config: fixed proxy targets wrong connector for geoserver - see [c2dca7](https://github.com/georchestra/template/commit/c2dca72c647e9e33662655232212601fb5f5ac45)
- * mapfishapp: print extend fully visible
- * mapfishapp: added a button to remove all layers - see [#753](https://github.com/georchestra/georchestra/issues/753)
- * mapfishapp: geometry from query stored forever in browser/LocalStorage (rather than cookie)
- * mapfishapp: warn users about chrome 36/37 issue
+ * extractorapp: editable combobox for resolution selection - see [#726](https://github.com/georchestra/georchestra/issues/726),
+ * extractorapp: warn user when the extraction area is too large before the extraction is fired - see [#726](https://github.com/georchestra/georchestra/issues/726),
+ * extractorapp: better emails - see [#750](https://github.com/georchestra/georchestra/issues/750),
+ * mapfishapp: print extend fully visible,
+ * mapfishapp: help message popping down when tools are loaded and available,
+ * mapfishapp: geometry from query stored forever in browser/LocalStorage (rather than cookie),
+ * mapfishapp: warn users about chrome 36/37 issue,
  * mapfishapp: csw querier with better filters,
- * mapfishapp: i18n neutral nopreview image for csw querier - see [#775](https://github.com/georchestra/georchestra/issues/775)
- * georchestra: german translations generalized - see [#777](https://github.com/georchestra/georchestra/issues/777)
+ * mapfishapp: i18n neutral nopreview image for csw querier - see [#775](https://github.com/georchestra/georchestra/issues/775),
+ * mapfishapp: load data from catalog improvement - see [#756](https://github.com/georchestra/georchestra/issues/756),
+ * georchestra: german translations generalized - see [#777](https://github.com/georchestra/georchestra/issues/777),
 
 Bug fixes:
- * build: fixed by migrating from OpenGeo to Boundless repository
- * geonetwork: fixed LDAP sync - see [6a7e69](https://github.com/georchestra/geonetwork/commit/6a7e692daaabe3b27793b4c75de2bc91ffe43840)
- * geonetwork: in associated resource panel from editor, fixed failure to add link to service metadata record
- * geonetwork: schema iso / fra - fixed missing description for "funder"
- * mapfishapp: modified MAP_DOTS_PER_INCH value in order to fix WMS/WMTS layer overlay - see [#736](https://github.com/georchestra/georchestra/issues/736)
- * mapfishapp: fixed WMTS style switch for GeoWebCache versions >= 1.5
- * mapfishapp: workaround for IE11 bug, see [#773](https://github.com/georchestra/georchestra/issues/773)
- * mapfishapp: fixed several programming errors in the cadastre addon
- * mapfishapp: restore record opaque status from layer transitionEffect
- * proxy: Fix for a vulnerability where client could access localhost resources via proxy url, see [5c9b4d](https://github.com/georchestra/georchestra/commit/5c9b4db1a8c004a582d2be4f2a909c68843cad59)
- * proxy: prevented the use of the ogcproxy in production (it is required for development purposes only)
- * server-deploy: fixed wrong webapp names (geoserver-webapp, geofence-webapp, geowebcache-webapp)
- * georchestra: many small fixes related to HTTPS support, eg [#745](https://github.com/georchestra/georchestra/issues/745) and [#780](https://github.com/georchestra/georchestra/issues/780)
- * georchestra: css3 border-radius property replaces browser (moz and webkit) implementations
+ * build: fixed by migrating from OpenGeo to Boundless repository and also by setting up our own repository,
+ * config: fixed proxy targets wrong connector for geoserver - see [c2dca7](https://github.com/georchestra/template/commit/c2dca72c647e9e33662655232212601fb5f5ac45),
+ * geonetwork: fixed LDAP sync - see [6a7e69](https://github.com/georchestra/geonetwork/commit/6a7e692daaabe3b27793b4c75de2bc91ffe43840),
+ * geonetwork: in associated resource panel from editor, fixed failure to add link to service metadata record,
+ * geonetwork: schema iso / fra - fixed missing description for "funder",
+ * mapfishapp: fixed missing SLD_VERSION WMS parameter, which is mandatory from version 1.3.0 on - see [#636](https://github.com/georchestra/georchestra/issues/636),
+ * mapfishapp: modified MAP_DOTS_PER_INCH value in order to fix WMS/WMTS layer overlay - see [#736](https://github.com/georchestra/georchestra/issues/736),
+ * mapfishapp: fixed WMTS style switch for GeoWebCache versions >= 1.5,
+ * mapfishapp: workaround for IE11 bug, see [#773](https://github.com/georchestra/georchestra/issues/773),
+ * mapfishapp: fixed several programming errors in the cadastre addon,
+ * mapfishapp: restore record opaque status from layer transitionEffect,
+ * proxy: Fix for a vulnerability where client could access localhost resources via proxy url, see [5c9b4d](https://github.com/georchestra/georchestra/commit/5c9b4db1a8c004a582d2be4f2a909c68843cad59),
+ * proxy: prevented the use of the ogcproxy in production (it is required for development purposes only),
+ * server-deploy: fixed wrong webapp names (geoserver-webapp, geofence-webapp, geowebcache-webapp),
+ * georchestra: many small fixes related to HTTPS support, eg [#745](https://github.com/georchestra/georchestra/issues/745) and [#780](https://github.com/georchestra/georchestra/issues/780),
+ * georchestra: css3 border-radius property replaces browser (moz and webkit) implementations,
 
 UPGRADING:
+
+First of all, if you experience build issues, please clear your local maven repository (rm -rf ~/.m2/repository/), then try again.  
+Our [continuous integration process](https://sdi.georchestra.org/ci/job/georchestra-template/) now checks every day that all geOrchestra modules (including GeoFence) build smoothly.  
+We also make sure that the following geoserver extensions are compatible: app-schema, authkey, charts, control-flow, css, csw, dds, dxf, feature-aggregate, feature-pregeneralized, geosearch, gdal, imagemap, inspire, istyler, kml, libjpeg-turbo, mysql, ogr, pyramid, script, spatialite, xslt, wps, w3ds. They can be integrated in your geoserver deployment by adding them in the build command line, eg with 
+```
+./mvn -Dserver=template -Dmaven.test.skip=true -Pgeofence -Pcontrol-flow,css,csw,gdal,inspire,kml,libjpeg-turbo,ogr,pyramid,spatialite,wps,w3ds clean install
+```
 
 We introduced a new global config option: ```shared.url.scheme``` which defaults to http.  
 Set to https (along with ```shared.server.port``` to 443) if your SDI requires it.
