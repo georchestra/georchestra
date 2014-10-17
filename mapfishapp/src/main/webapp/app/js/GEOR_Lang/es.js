@@ -40,6 +40,8 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Type": "Tipo",
     "Title": "Título",
     "Actions": "Acciones",
+    "Incorrect server response.": "Respuesta incorrecta del servidor.",
+    "No features found.": "No se encontró ningún objeto geográfico.",
     /* GEOR.js strings */
     "Cities": "Ciudades",
     "Recentering on GeoNames cities":
@@ -150,8 +152,6 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "fileupload_error_projectionError": "Error al leer las coordenadas geográficas.",
     "server upload error: ERROR":
         "El archivo local no pudó ser subido. ${ERROR}",
-    "Incorrect server response.": "Respuesta incorrecta del servidor.",
-    "No features found.": "No se encontró ningún objeto geográfico.",
     /* GEOR_geonames.js strings */
     /* GEOR_getfeatureinfo.js strings */
     "<div>Searching...</div>": "<div>Buscando...</div>",
@@ -262,6 +262,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "The provided context is not valid": "El contexto proveído no es valido",
     "The default context is not defined (and it is a BIG problem!)":
         "El contexto por omisión no está definido ",
+    "Error while loading file": "Error al cargar el archivo",
     /* GEOR_mappanel.js strings */
     "Coordinates in ": "Coordenadas en ",
     "scale picker": "Escala",

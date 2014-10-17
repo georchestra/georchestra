@@ -23,6 +23,7 @@ import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.geojson.feature.FeatureJSON;
 import org.geotools.geojson.geom.GeometryJSON;
 import org.geotools.referencing.operation.projection.ProjectionException;
+import org.json.JSONArray;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.springframework.web.multipart.MultipartFile;
@@ -425,6 +426,21 @@ public class UpLoadFileManagement {
 
     public void setFileDescriptor(FileDescriptor geoFile) {
         this.fileDescriptor = geoFile;
+    }
+
+    public void setSaveFile(File f) {
+        this.fileDescriptor.savedFile = f;
+    }
+
+    public JSONArray getFormatListAsJSON() {
+        return this.reader.getFormatListAsJSON();
+    }
+
+    public void addFileExtension(String extension) {
+        this.fileDescriptor.listOfExtensions.add(extension);
+    }
+    public void addFile(File file) {
+        this.fileDescriptor.listOfFiles.add(file.getAbsolutePath());
     }
 
 }
