@@ -1,15 +1,16 @@
-The extraction job you submitted to the geOrchestra platform has finished.
+Your extraction has completed with the following status: {global_status}
 
-Download your file at {link}. It will be available during {expiry} days.
+By layer:
 
-The following layers have been extracted successfully:
 {successes}
-
-The following layers could not be extracted. The failures.html file contains more informations:
 {failures}
-
-The following layers' extraction has been canceled. The requested area is too large:
 {oversized}
+
+Your extraction can be downloaded during {expiry} days at the following address:
+
+{link}
+
+For more information, please contact your SDI administrator
 
 ---
 Sent by @shared.instance.name@ (@shared.homepage.url@)
