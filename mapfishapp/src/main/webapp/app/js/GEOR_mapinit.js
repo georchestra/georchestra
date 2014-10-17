@@ -20,6 +20,8 @@
  * @include GEOR_waiter.js
  * @include GEOR_localStorage.js
  * @include OpenLayers/Projection.js
+ * @include OpenLayers/Format/JSON.js
+ * @include OpenLayers/Format/GeoJSON.js
  * @include GeoExt/data/LayerRecord.js
  * @include GeoExt/data/LayerStore.js
  * @include GeoExt/data/WMSCapabilitiesReader.js
@@ -441,6 +443,61 @@ GEOR.mapinit = (function() {
         }
     };
 
+    /**
+     * Method: toGeoJSONSuccess
+     * Success callback for file to geojson conversion 
+     *
+     */
+    var toGeoJSONSuccess = function(resp) {
+        var features,
+            fc = (new OpenLayers.Format.JSON()).read(resp.responseText);
+        if (!fc) {
+            GEOR.util.errorDialog({
+                title: tr("Error while loading file"),
+                msg: OpenLayers.i18n("Incorrect server response.")
+            });
+            return;
+        } else if (fc.success !== "true") {
+            GEOR.util.errorDialog({
+                title: tr("Error while loading file"),
+                msg: OpenLayers.i18n(fc.error)
+            });
+            return;
+        }
+        features = (new OpenLayers.Format.GeoJSON()).read(fc.geojson);
+        if (!features || features.length == 0) {
+            GEOR.util.errorDialog({
+                title: tr("Error while loading file"),
+                msg: OpenLayers.i18n("No features found.")
+            });
+            return;
+        }
+        var recordType = GeoExt.data.LayerRecord.create(
+            GEOR.ows.getRecordFields()
+        );
+        var filename, 
+            cmpts = GEOR.config.CUSTOM_FILE.split('/');
+        if (cmpts.length) {
+            filename = cmpts[cmpts.length-1];
+        } else {
+            filename = "geofile";
+        }
+        var name = GEOR.util.shortenLayerName(filename),
+        layer = new OpenLayers.Layer.Vector(name, {
+            styleMap: GEOR.util.getStyleMap(),
+            rendererOptions: {
+                zIndexing: true
+            }
+        });
+        layer.addFeatures(features);
+        // we need to manually hide the waiter since
+        // GEOR.ajaxglobal.init has not run yet:
+        GEOR.waiter.hide();
+        layerStore.addSorted(new recordType({
+            layer: layer
+        }, layer.id));
+    };
+
     return {
 
         /**
@@ -487,60 +544,7 @@ GEOR.mapinit = (function() {
                             "url": GEOR.config.CUSTOM_FILE,
                             "srs": ls.map.getProjection()
                         },
-                        success: function(resp) {
-                            var features,
-                                fc = (new OpenLayers.Format.JSON()).read(resp.responseText);
-                            if (!fc) {
-                                GEOR.util.errorDialog({
-                                    title: tr("Error while loading file"),
-                                    msg: OpenLayers.i18n("Incorrect server response.")
-                                });
-                                return;
-                            } else if (fc.success !== "true") {
-                                GEOR.util.errorDialog({
-                                    title: tr("Error while loading file"),
-                                    msg: OpenLayers.i18n(fc.error)
-                                });
-                                return;
-                            }
-
-                            features = (new OpenLayers.Format.GeoJSON()).read(fc.geojson);
-                            if (!features || features.length == 0) {
-                                GEOR.util.errorDialog({
-                                    title: tr("Error while loading file"),
-                                    msg: OpenLayers.i18n("No features found.")
-                                });
-                                return;
-                            }
-
-                            var recordType = GeoExt.data.LayerRecord.create(
-                                GEOR.ows.getRecordFields()
-                            );
-
-                            var filename, 
-                                cmpts = GEOR.config.CUSTOM_FILE.split('/');
-                            if (cmpts.length) {
-                                filename = cmpts[cmpts.length-1];
-                            } else {
-                                filename = "geofile";
-                            }
-                            var name = GEOR.util.shortenLayerName(filename),
-                                layer = new OpenLayers.Layer.Vector(name, {
-                                    styleMap: GEOR.util.getStyleMap(),
-                                    rendererOptions: {
-                                        zIndexing: true
-                                    }
-                                });
-
-                            layer.addFeatures(features);
-                            // we need to manually hide the waiter since
-                            // GEOR.ajaxglobal.init has not run yet:
-                            GEOR.waiter.hide();
-
-                            ls.addSorted(new recordType({
-                                layer: layer
-                            }, layer.id));
-                        },
+                        success: toGeoJSONSuccess,
                         failure: function(resp) {
                             GEOR.waiter.hide();
                             var fc = (new OpenLayers.Format.JSON()).read(resp.responseText);
