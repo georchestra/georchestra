@@ -16,11 +16,12 @@ sh="/bin/sh"
 cp="/bin/cp"
 
 #
-# MapFish.js build
+# build
 #
 if [ -d ${releasepath} ]; then
     ${rm} -rf ${releasepath}
 fi
+
 ${mkdir} -p ${releasepath} ${releasepath}/lang
 
 (cd ${buildpath};
@@ -35,8 +36,13 @@ ${mkdir} -p ${releasepath} ${releasepath}/lang
 
  echo "running jsbuild for main app..."
  ${venv}/bin/jsbuild -o "${releasepath}" main.cfg
- echo "done.")
+ echo "done."
+)
 
+if [ ! -e ${releasepath}/extractorapp.js ]; then
+    echo "\033[01;31m[NOK]\033[00m jsbuild failure"
+    exit 1
+fi;
 #
 # OpenLayers resources
 #

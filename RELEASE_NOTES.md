@@ -47,6 +47,7 @@ Enhancements:
  * mapfishapp: i18n neutral nopreview image for csw querier - see [#775](https://github.com/georchestra/georchestra/issues/775),
  * mapfishapp: load data from catalog improvement - see [#756](https://github.com/georchestra/georchestra/issues/756),
  * georchestra: german translations generalized - see [#777](https://github.com/georchestra/georchestra/issues/777),
+ * georchestra: the maven build is now aware of the javascript build outcome - see [#809](https://github.com/georchestra/georchestra/issues/809),
 
 Bug fixes:
  * build: fixed by migrating from OpenGeo to Boundless repository and also by setting up our own repository,
