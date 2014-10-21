@@ -377,10 +377,11 @@ public class GroupDaoImpl implements GroupDao {
             }
         }
 
+        DistinguishedName sourceDn = buildGroupDn(groupName);
+        DistinguishedName destDn = buildGroupDn(group.getName());
 
-        DistinguishedName dn = buildGroupDn(groupName);
 
-        Integer uniqueNumber = (Integer) ldapTemplate.lookup(dn, new AttributesMapper() {
+        Integer uniqueNumber = (Integer) ldapTemplate.lookup(sourceDn, new AttributesMapper() {
             @Override
             public Object mapFromAttributes(Attributes attributes) throws NamingException {
                 final Attribute attribute = attributes.get(uniqueNumberField);
@@ -395,19 +396,19 @@ public class GroupDaoImpl implements GroupDao {
             }
         });
 
-                // because cn is part of distinguish name it cannot be updated. So the group is removed to include a new one with the new values
-		delete(groupName);
+        // because cn is part of distinguish name it cannot be updated. So the group is removed to include a new one with the new values
+        delete(groupName);
 
         if (uniqueNumber == -1) {
             // no unique number defined so just insert it and which will assign a unique number
             insert(group);
         } else {
             // inserts the new group
-            DirContextAdapter context = new DirContextAdapter(dn);
+            DirContextAdapter context = new DirContextAdapter(destDn);
             mapToContext(uniqueNumber, group, context);
 
             try {
-                this.ldapTemplate.bind(dn, context, null);
+                this.ldapTemplate.bind(destDn, context, null);
             } catch (org.springframework.ldap.NamingException e) {
                 LOG.error(e);
                 throw new DataServiceException(e);
