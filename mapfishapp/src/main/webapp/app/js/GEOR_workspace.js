@@ -42,6 +42,29 @@ GEOR.workspace = (function() {
     var tr = null;
 
     /**
+     * Method: saveMDBtnHandler
+     * Handler for the button triggering the WMC save to catalog
+     */
+    var saveMDBtnHandler = function() {
+        var formPanel = this.findParentByType('form'), 
+            form = formPanel.getForm();
+        GEOR.waiter.show();
+        OpenLayers.Request.POST({
+            url: GEOR.config.GEONETWORK_BASE_URL + "/srv/fre/customService", // TODO: service name
+            data: GEOR.wmc.write({
+                "title": form.findField('title').getValue(),
+                "abstract": form.findField('abstract').getValue()
+            }),
+            success: function(response) {
+                formPanel.ownerCt.close();
+                var o = Ext.decode(response.responseText);
+                // TODO: get metadata uuid and open link to MD
+            },
+            scope: this
+        });
+    };
+
+    /**
      * Method: saveBtnHandler
      * Handler for the button triggering the WMC save dialog
      */
@@ -52,7 +75,7 @@ GEOR.workspace = (function() {
         OpenLayers.Request.POST({
             url: GEOR.config.PATHNAME + "/ws/wmc/",
             data: GEOR.wmc.write({
-                title: form.findField('title').getValue(),
+                "title": form.findField('title').getValue(),
                 "abstract": form.findField('abstract').getValue()
             }),
             success: function(response) {
@@ -117,6 +140,30 @@ GEOR.workspace = (function() {
      * Triggers the save dialog.
      */
     var saveWMC = function() {
+        var btns = [{
+            text: tr("Cancel"),
+            handler: cancelBtnHandler
+        }];
+        if (GEOR.config.ROLES.indexOf("ROLE_SV_EDITOR") >= 0 ||
+            GEOR.config.ROLES.indexOf("ROLE_SV_ADMIN") >= 0 ) {
+            btns.push({
+                text: tr("Save to metadata"),
+                minWidth: 100,
+                iconCls: 'geor-btn-download',
+                itemId: 'save-md',
+                handler: saveMDBtnHandler,
+                formBind: true
+            });
+        }
+        btns.push({
+            text: tr("Save"),
+            minWidth: 100,
+            iconCls: 'geor-btn-download',
+            itemId: 'save',
+            handler: saveBtnHandler,
+            formBind: true
+        });
+
         var popup = new Ext.Window({
             title: tr("Context saving"),
             layout: 'fit',
@@ -174,17 +221,7 @@ GEOR.workspace = (function() {
                         }
                     }
                 }],
-                buttons: [{
-                    text: tr("Cancel"),
-                    handler: cancelBtnHandler
-                },{
-                    text: tr("Save"),
-                    minWidth: 100,
-                    iconCls: 'geor-btn-download',
-                    itemId: 'save',
-                    handler: saveBtnHandler,
-                    formBind: true
-                }]
+                buttons: btns
             }]
         });
         popup.show();
