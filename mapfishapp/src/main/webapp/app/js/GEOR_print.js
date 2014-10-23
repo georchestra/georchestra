@@ -182,6 +182,7 @@ GEOR.print = (function() {
         printProvider = new GeoExt.data.PrintProvider({
             url: serviceUrl,
             autoLoad: true,
+            outputFormatsEnabled: true,
             baseParams: {
                 url: serviceUrl
             },
@@ -436,6 +437,20 @@ GEOR.print = (function() {
                             this.value = v;
                             return this;
                         }
+                    }, {
+                        xtype: "combo",
+                        store: printProvider.outputFormats,
+                        displayField: "name",
+                        valueField: "name",
+                        fieldLabel: tr("Type"),
+                        width: 300,
+                        forceSelection: true,
+                        editable: false,
+                        mode: "local",
+                        triggerAction: "all",
+                        plugins: new GeoExt.plugins.PrintProviderField({
+                            printProvider: printProvider
+                        })
                     }
                 ]
             });
