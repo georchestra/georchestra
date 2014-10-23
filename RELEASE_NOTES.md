@@ -37,7 +37,7 @@ New features:
  * mapfishapp: streetview addon - see [#774](https://github.com/georchestra/georchestra/issues/774),
  * mapfishapp: direct geodata file loading via URL - see [#754](https://github.com/georchestra/georchestra/issues/754),
  * mapfishapp: added a button to remove all layers - see [#753](https://github.com/georchestra/georchestra/issues/753),
- * mapfishapp: improved syntax for CSW querier - see [#760](https://github.com/georchestra/georchestra/issues/760),
+ * mapfishapp: new syntax for CSW querier - see [#760](https://github.com/georchestra/georchestra/issues/760) and the [README](https://github.com/georchestra/georchestra/blob/master/mapfishapp/README.md#cswquerier),
 
 Enhancements:
  * extractorapp: editable combobox for resolution selection - see [#726](https://github.com/georchestra/georchestra/issues/726),
