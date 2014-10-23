@@ -37,6 +37,7 @@ New features:
  * mapfishapp: streetview addon - see [#774](https://github.com/georchestra/georchestra/issues/774),
  * mapfishapp: direct geodata file loading via URL - see [#754](https://github.com/georchestra/georchestra/issues/754),
  * mapfishapp: added a button to remove all layers - see [#753](https://github.com/georchestra/georchestra/issues/753),
+ * mapfishapp: improved syntax for CSW querier - see [#760](https://github.com/georchestra/georchestra/issues/760),
 
 Enhancements:
  * extractorapp: editable combobox for resolution selection - see [#726](https://github.com/georchestra/georchestra/issues/726),
@@ -46,7 +47,6 @@ Enhancements:
  * mapfishapp: help message popping down when tools are loaded and available,
  * mapfishapp: geometry from query stored forever in browser/LocalStorage (rather than cookie),
  * mapfishapp: warn users about chrome 36/37 issue,
- * mapfishapp: csw querier with better filters,
  * mapfishapp: i18n neutral nopreview image for csw querier - see [#775](https://github.com/georchestra/georchestra/issues/775),
  * mapfishapp: load data from catalog improvement - see [#756](https://github.com/georchestra/georchestra/issues/756),
  * georchestra: german translations generalized - see [#777](https://github.com/georchestra/georchestra/issues/777),
