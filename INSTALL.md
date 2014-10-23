@@ -542,7 +542,7 @@ Restart your geoserver tomcat and check on /geoserver/web/?wicket:bookmarkablePa
 
 * Native JAI
  
-GeoServer and GeoWebCache take great advantage of the native JAI availability.
+GeoServer, GeoWebCache & Mapfishapp print take great advantage of the native JAI availability.
 
 	sudo apt-get install libjai-imageio-core-java
 
