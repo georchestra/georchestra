@@ -39,11 +39,19 @@ Ext.namespace("GEOR");
 
     // monkey patching OpenLayers XML format to add the XML prolog
     // see http://applis-bretagne.fr/redmine/issues/4536
-    var fn = OpenLayers.Format.XML.prototype.write;
-    OpenLayers.Format.XML.prototype.write = function(node) {
+    var p = OpenLayers.Format.XML.prototype, fn = p.write;
+    p.write = function(node) {
         return '<?xml version="1.0" encoding="UTF-8"?>' + 
             // fix for https://github.com/georchestra/georchestra/issues/773 :
             fn.apply(this, [node]).replace(new RegExp('xmlns:NS\\d+="" NS\\d+:', 'g'), '');
+    };
+    var sa = p.setAttributeNS;
+    p.setAttributeNS = function(node, uri) {
+        sa.apply(this, arguments);
+        // fix Chrome 36/37 issue, see https://github.com/georchestra/georchestra/issues/759
+        if (uri == this.namespaces.xlink) {
+            node.setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:xlink', this.namespaces.xlink);
+        }
     };
 
     var checkRoles = function(module, okRoles) {
