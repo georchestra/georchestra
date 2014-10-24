@@ -55,6 +55,8 @@ public class EmailFactoryDefault extends AbstractEmailFactory {
                                 extraKeywords.get(key));
                     }
                 }
+                // Normalize newlines
+                msg = msg.replaceAll("\n[\n]+", "\n\n");
                 sendMsg(msg);
             }
 
