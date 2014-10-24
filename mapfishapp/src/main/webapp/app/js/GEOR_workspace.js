@@ -47,18 +47,34 @@ GEOR.workspace = (function() {
      */
     var saveMDBtnHandler = function() {
         var formPanel = this.findParentByType('form'), 
-            form = formPanel.getForm();
-        GEOR.waiter.show();
-        OpenLayers.Request.POST({
-            url: GEOR.config.GEONETWORK_BASE_URL + "/srv/fre/customService", // TODO: service name
-            data: GEOR.wmc.write({
+            form = formPanel.getForm(),
+            wmc_string = GEOR.wmc.write({
                 "title": form.findField('title').getValue(),
                 "abstract": form.findField('abstract').getValue()
-            }),
+            });
+        GEOR.waiter.show();
+        OpenLayers.Request.POST({
+            url: GEOR.config.PATHNAME + "/ws/wmc/",
+            data: wmc_string,
             success: function(response) {
                 formPanel.ownerCt.close();
-                var o = Ext.decode(response.responseText);
-                // TODO: get metadata uuid and open link to MD
+                var o = Ext.decode(response.responseText),
+                    wmc_url = GEOR.util.getValidURI(o.filepath);
+                GEOR.waiter.show();
+                OpenLayers.Request.POST({
+                    url: GEOR.config.GEONETWORK_BASE_URL + "/srv/fre/customService", // TODO: service name
+                    data: {
+                        "wmc_string": wmc_string,
+                        "wmc_url": wmc_url,
+                        "viewer_url": GEOR.util.getValidURI("?wmc="+encodeURIComponent(wmc_url))
+                    },
+                    success: function(response) {
+                        formPanel.ownerCt.close();
+                        var o = Ext.decode(response.responseText);
+                        // TODO: get metadata uuid and open link to MD
+                    },
+                    scope: this
+                });
             },
             scope: this
         });
@@ -279,16 +295,11 @@ GEOR.workspace = (function() {
                 }),
                 success: function(response) {
                     var o = Ext.decode(response.responseText),
-                        id =  /^.+(\w{32}).wmc$/.exec(o.filepath)[1],
-                        basePath = [
-                            window.location.protocol, 
-                            '//', window.location.host,
-                            GEOR.config.PATHNAME, '/'
-                        ].join('');
+                        id =  /^.+(\w{32}).wmc$/.exec(o.filepath)[1];
                     var url = new Ext.XTemplate(options.url).apply({
-                        context_url: basePath + o.filepath,
-                        map_url: basePath + 'map/' + id,
-                        id: id
+                        "context_url": encodeURIComponent(GEOR.util.getValidURI(o.filepath)),
+                        "map_url": GEOR.util.getValidURI('map/' + id),
+                        "id": id
                     });
                     window.open(url);
                 },
