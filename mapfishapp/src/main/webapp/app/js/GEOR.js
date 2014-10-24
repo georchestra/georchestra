@@ -54,7 +54,7 @@ Ext.namespace("GEOR");
     p.setAttributeNS = function(node, uri) {
         sa.apply(this, arguments);
         // fix Chrome 36/37 issue, see https://github.com/georchestra/georchestra/issues/759
-        if (uri == this.namespaces.xlink) {
+        if (uri == this.namespaces.xlink && node.setAttributeNS) {
             node.setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:xlink', this.namespaces.xlink);
         }
     };
