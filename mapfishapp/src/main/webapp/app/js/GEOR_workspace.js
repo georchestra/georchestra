@@ -63,11 +63,11 @@ GEOR.workspace = (function() {
                 GEOR.waiter.show();
                 OpenLayers.Request.POST({
                     url: GEOR.config.GEONETWORK_BASE_URL + "/srv/fre/customService", // TODO: service name
-                    data: {
+                    data: Ext.encode({ // TODO: adjust parameters and eventually format ...
                         "wmc_string": wmc_string,
                         "wmc_url": wmc_url,
                         "viewer_url": GEOR.util.getValidURI("?wmc="+encodeURIComponent(wmc_url))
-                    },
+                    }),
                     success: function(response) {
                         formPanel.ownerCt.close();
                         var o = Ext.decode(response.responseText);
