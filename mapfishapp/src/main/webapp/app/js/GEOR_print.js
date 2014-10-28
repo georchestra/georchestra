@@ -369,158 +369,178 @@ GEOR.print = (function() {
             // The form with fields controlling the print output
             var formPanel = new Ext.form.FormPanel({
                 bodyStyle: "padding:5px",
-                labelSeparator: tr("labelSeparator"),
+                hideLabels: true,
                 items: [{
-                        xtype: 'textfield',
-                        fieldLabel: tr("Title"),
-                        width: 300,
-                        name: 'mapTitle',
-                        enableKeyEvents: true,
-                        selectOnFocus: true,
-                        plugins: new GeoExt.plugins.PrintPageField({
-                            printPage: printPage
-                        }),
-                        listeners: {
-                            "keypress": function(f, e) {
-                                // transfer focus on Print button on ENTER
-                                if (e.getKey() === e.ENTER) {
-                                    win.getFooterToolbar().getComponent('print').focus();
-                                }
+                    xtype: 'textfield',
+                    emptyText: tr("Title"),
+                    width: 420,
+                    name: 'mapTitle',
+                    enableKeyEvents: true,
+                    selectOnFocus: true,
+                    plugins: new GeoExt.plugins.PrintPageField({
+                        printPage: printPage
+                    }),
+                    listeners: {
+                        "keypress": function(f, e) {
+                            // transfer focus on Print button on ENTER
+                            if (e.getKey() === e.ENTER) {
+                                win.getFooterToolbar().getComponent('print').focus();
                             }
                         }
-                    }, {
-                        xtype: 'textarea',
-                        fieldLabel: tr("Comments"),
-                        width: 300,
-                        name: 'mapComments',
-                        grow: true,
-                        enableKeyEvents: false,
-                        selectOnFocus: true,
-                        plugins: new GeoExt.plugins.PrintPageField({
-                            printPage: printPage
-                        })
-                    }, {
-                        xtype: 'hidden',
-                        name: 'copyright',
-                        plugins: new GeoExt.plugins.PrintPageField({
-                            printPage: printPage
-                        })
-                    }, {
-                        xtype: 'hidden',
-                        name: 'projection',
-                        plugins: new GeoExt.plugins.PrintPageField({
-                            printPage: printPage
-                        })
-                    }, {
-                        xtype: 'checkbox',
-                        fieldLabel: tr("Minimap"),
-                        name: 'showOverview',
-                        checked: defaultCustomParams.showOverview,
-                        plugins: new GeoExt.plugins.PrintPageField({
-                            printPage: printPage
-                        })
-                    }, {
-                        xtype: 'checkbox',
-                        fieldLabel: tr("North"),
-                        name: 'showNorth',
-                        checked: defaultCustomParams.showNorth,
-                        plugins: new GeoExt.plugins.PrintPageField({
-                            printPage: printPage
-                        })
-                    }, {
-                        xtype: 'checkbox',
-                        fieldLabel: tr("Scale"),
-                        name: 'showScalebar',
-                        checked: defaultCustomParams.showScalebar,
-                        plugins: new GeoExt.plugins.PrintPageField({
-                            printPage: printPage
-                        })
-
-                    },{
-                        xtype: 'checkbox',
-                        fieldLabel: tr("Date"),
-                        name: 'showDate',
-                        checked: defaultCustomParams.showDate,
-                        plugins: new GeoExt.plugins.PrintPageField({
-                            printPage: printPage
-                        })
-                    }, {
-                        xtype: 'checkbox',
-                        fieldLabel: tr("Legend"),
-                        name: 'showLegend',
-                        checked: defaultCustomParams.showLegend,
-                        plugins: new GeoExt.plugins.PrintPageField({
-                            printPage: printPage
-                        })
-                    }, {
-                        xtype: "combo",
-                        store: printProvider.layouts,
-                        lastQuery: '', // required to apply rights filter
-                        displayField: "name",
-                        valueField: "name",
-                        fieldLabel: tr("Format"),
-                        width: 300,
-                        forceSelection: true,
-                        editable: false,
-                        mode: "local",
-                        triggerAction: "all",
-                        plugins: new GeoExt.plugins.PrintProviderField({
-                            printProvider: printProvider
-                        })
-                    }, {
-                        xtype: "combo",
-                        store: printProvider.dpis,
-                        displayField: "name",
-                        valueField: "value",
-                        fieldLabel: tr("Resolution"),
-                        width: 300,
-                        forceSelection: true,
-                        editable: false,
-                        tpl: '<tpl for="."><div class="x-combo-list-item">{name} dpi</div></tpl>',
-                        mode: "local",
-                        triggerAction: "all",
-                        plugins: new GeoExt.plugins.PrintProviderField({
-                            printProvider: printProvider
-                        }),
-                        // the plugin will work even if we modify a combo value
-                        setValue: function(v) {
-                            var text = v;
-                            if (this.valueField) {
-                                var r = this.findRecord(this.valueField, v);
-                                if (r) {
-                                    text = r.data[this.displayField];
-                                }
-                            }
-                            text = parseInt(v) + " dpi";
-                            this.lastSelectionText = text;
-                            Ext.form.ComboBox.superclass.setValue.call(this, text);
-                            this.value = v;
-                            return this;
-                        }
-                    }, {
-                        xtype: "combo",
-                        fieldLabel: tr("Scale"),
-                        store: printProvider.scales,
-                        forceSelection: true,
-                        editable: false,
-                        width: 300,
-                        displayField: "name",
-                        mode: "local",
-                        triggerAction: "all",
-                        plugins: new GeoExt.plugins.PrintPageField({
-                            printPage: printPage
-                        })
-                    }, {
-                        xtype: "numberfield",
-                        fieldLabel: tr("Rotation"),
-                        width: 300,
-                        name: "rotation",
-                        enableKeyEvents: true,
-                        plugins: new GeoExt.plugins.PrintPageField({
-                            printPage: printPage
-                        })
                     }
-                ]
+                }, {
+                    xtype: 'textarea',
+                    emptyText: tr("Comments"),
+                    width: 420,
+                    name: 'mapComments',
+                    grow: true,
+                    enableKeyEvents: false,
+                    selectOnFocus: true,
+                    plugins: new GeoExt.plugins.PrintPageField({
+                        printPage: printPage
+                    })
+                }, {
+                    xtype: 'hidden',
+                    name: 'copyright',
+                    plugins: new GeoExt.plugins.PrintPageField({
+                        printPage: printPage
+                    })
+                }, {
+                    xtype: 'hidden',
+                    name: 'projection',
+                    plugins: new GeoExt.plugins.PrintPageField({
+                        printPage: printPage
+                    })
+                }, {
+                    layout: 'column',
+                    bodyStyle: 'padding:5px',
+                    border: false,
+                    items: [{
+                        columnWidth: .5,
+                        layout: 'form',
+                        border: false,
+                        labelAlign: 'left',
+                        labelSeparator: tr("labelSeparator"),
+                        labelWidth: 70,
+                        items: [{
+                            xtype: 'checkbox',
+                            fieldLabel: tr("Minimap"),
+                            name: 'showOverview',
+                            checked: defaultCustomParams.showOverview,
+                            plugins: new GeoExt.plugins.PrintPageField({
+                                printPage: printPage
+                            })
+                        }, /*{
+                            xtype: 'checkbox',
+                            fieldLabel: tr("North"),
+                            name: 'showNorth',
+                            checked: defaultCustomParams.showNorth,
+                            plugins: new GeoExt.plugins.PrintPageField({
+                                printPage: printPage
+                            })
+                        }, */{
+                            xtype: 'checkbox',
+                            fieldLabel: tr("Scale"),
+                            name: 'showScalebar',
+                            checked: defaultCustomParams.showScalebar,
+                            plugins: new GeoExt.plugins.PrintPageField({
+                                printPage: printPage
+                            })
+                        }, {
+                            xtype: "combo",
+                            store: printProvider.layouts,
+                            lastQuery: '', // required to apply rights filter
+                            displayField: "name",
+                            valueField: "name",
+                            fieldLabel: tr("Format"),
+                            width: 110,
+                            forceSelection: true,
+                            editable: false,
+                            mode: "local",
+                            triggerAction: "all",
+                            plugins: new GeoExt.plugins.PrintProviderField({
+                                printProvider: printProvider
+                            })
+                        }, {
+                            xtype: "combo",
+                            store: printProvider.dpis,
+                            displayField: "name",
+                            valueField: "value",
+                            fieldLabel: tr("Resolution"),
+                            width: 110,
+                            forceSelection: true,
+                            editable: false,
+                            tpl: '<tpl for="."><div class="x-combo-list-item">{name} dpi</div></tpl>',
+                            mode: "local",
+                            triggerAction: "all",
+                            plugins: new GeoExt.plugins.PrintProviderField({
+                                printProvider: printProvider
+                            }),
+                            // the plugin will work even if we modify a combo value
+                            setValue: function(v) {
+                                var text = v;
+                                if (this.valueField) {
+                                    var r = this.findRecord(this.valueField, v);
+                                    if (r) {
+                                        text = r.data[this.displayField];
+                                    }
+                                }
+                                text = parseInt(v) + " dpi";
+                                this.lastSelectionText = text;
+                                Ext.form.ComboBox.superclass.setValue.call(this, text);
+                                this.value = v;
+                                return this;
+                            }
+                        }]
+                    }, {
+                        columnWidth: .5,
+                        layout: 'form',
+                        border: false,
+                        labelAlign: 'left',
+                        defaultType: 'textfield',
+                        labelSeparator: tr("labelSeparator"),
+                        labelWidth: 70,
+                        items: [{
+                            xtype: 'checkbox',
+                            fieldLabel: tr("Date"),
+                            name: 'showDate',
+                            checked: defaultCustomParams.showDate,
+                            plugins: new GeoExt.plugins.PrintPageField({
+                                printPage: printPage
+                            })
+                        }, {
+                            xtype: 'checkbox',
+                            fieldLabel: tr("Legend"),
+                            name: 'showLegend',
+                            checked: defaultCustomParams.showLegend,
+                            plugins: new GeoExt.plugins.PrintPageField({
+                                printPage: printPage
+                            })
+                        }, {
+                            xtype: "combo",
+                            fieldLabel: tr("Scale"),
+                            store: printProvider.scales,
+                            forceSelection: true,
+                            editable: false,
+                            width: 110,
+                            displayField: "name",
+                            mode: "local",
+                            triggerAction: "all",
+                            plugins: new GeoExt.plugins.PrintPageField({
+                                printPage: printPage
+                            })
+                        }, {
+                            xtype: "numberfield",
+                            fieldLabel: tr("Rotation"),
+                            width: 110,
+                            name: "rotation",
+                            enableKeyEvents: true,
+                            plugins: new GeoExt.plugins.PrintPageField({
+                                printPage: printPage
+                            })
+                        }]
+                    }]
+                }]
             });
 
             win = new Ext.Window({
@@ -540,9 +560,15 @@ GEOR.print = (function() {
                         // show print extent:
                         printExtent.addPage(printPage);
                         printExtent.show();
+                        /*
                         // focus first field on show
                         var field = formPanel.getForm().findField('mapTitle');
                         field.focus('', 50);
+                        */
+                        var btn = win.getFooterToolbar().getComponent('print');
+                        (function(){
+                            btn.focus();
+                        }).defer(50);
                     },
                     "hide": function() {
                         printExtent.removePage(printPage);
