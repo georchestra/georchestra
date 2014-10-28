@@ -560,7 +560,7 @@ GEOR.print = (function() {
                 border: false,
                 width: 450,
                 x: 0,
-                y: 32 + GEOR.config.HEADER_HEIGHT,
+                y: Ext.get(layerStore.map.div).getTop() + 1,
                 autoHeight: true,
                 closeAction: 'hide',
                 items: [formPanel],
@@ -618,7 +618,6 @@ GEOR.print = (function() {
                 }]
             });
         }
-
         win.show();
 
         if (!mask) {
