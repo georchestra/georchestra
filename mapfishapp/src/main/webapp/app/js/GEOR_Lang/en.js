@@ -105,6 +105,9 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
     "print.unknown.resolution":
          "Configuration error: DEFAULT_PRINT_RESOLUTION " +
          "${RESOLUTION} not found in print capabilities",
+    "print.unknown.format":
+        "Configuration error: the " +
+        "${FORMAT} format is not supported by the print server",
     /* GEOR_querier.js strings */
     "Request on NAME": "Request on ${NAME}",
     "querier.layer.no.geom":
