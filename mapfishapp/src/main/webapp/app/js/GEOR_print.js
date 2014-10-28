@@ -560,7 +560,7 @@ GEOR.print = (function() {
                 border: false,
                 width: 450,
                 x: 0,
-                y: 32,
+                y: 32 + GEOR.config.HEADER_HEIGHT,
                 autoHeight: true,
                 closeAction: 'hide',
                 items: [formPanel],
