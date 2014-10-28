@@ -26,7 +26,6 @@ Funded, but not yet done:
  * mapfishapp: give easy access to WMS/WFS layer details - see [#346](https://github.com/georchestra/georchestra/issues/346) & [#399](https://github.com/georchestra/georchestra/issues/399) - CIGALsace,
  * mapfishapp: support read/write WMTS layer types from/to OWSContext - see [#360](https://github.com/georchestra/georchestra/issues/360) - CIGALsace,
  * mapfishapp: revamp of the "add layers" window - see [#718](https://github.com/georchestra/georchestra/issues/718) - CIGALsace,
- * mapfishapp: print extent handling improvement - see [#813](https://github.com/georchestra/georchestra/issues/813) - CIGALsace,
  * ldapadmin: delegated administrators - see [#786](https://github.com/georchestra/georchestra/issues/786) - GeoBretagne,
 
 New features:
@@ -38,6 +37,7 @@ New features:
  * mapfishapp: added a button to remove all layers - see [#753](https://github.com/georchestra/georchestra/issues/753),
  * mapfishapp: new syntax for CSW querier - see [#760](https://github.com/georchestra/georchestra/issues/760) and the [README](https://github.com/georchestra/georchestra/blob/master/mapfishapp/README.md#cswquerier),
  * mapfishapp: png printing - see [#814](https://github.com/georchestra/georchestra/issues/814),
+ * mapfishapp: print extent handling improvement - see [#813](https://github.com/georchestra/georchestra/issues/813),
 
 Enhancements:
  * extractorapp: editable combobox for resolution selection - see [#726](https://github.com/georchestra/georchestra/issues/726),
