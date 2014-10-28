@@ -15,10 +15,12 @@
 /*
  * @include GEOR_config.js
  * @include GEOR_util.js
+ * @include GeoExt/widgets/MapPanel.js
  * @requires GeoExt/data/PrintProvider.js
  * @include GeoExt/data/PrintPage.js
  * @include GeoExt/plugins/PrintPageField.js
  * @include GeoExt/plugins/PrintProviderField.js
+ * @include GeoExt/plugins/PrintExtent.js
  * @include OpenLayers/Format/GeoJSON.js
  * @include OpenLayers/Layer/Vector.js
  * @include OpenLayers/Feature/Vector.js
@@ -64,6 +66,12 @@ GEOR.print = (function() {
      * {GeoExt.data.PrintProvider} The print provider.
      */
     var printProvider = null;
+
+    /**
+     * Property: printExtent
+     * {GeoExt.plugins.PrintExtent} The print extent.
+     */
+    var printExtent;
 
     /**
      * property: printpage
@@ -175,6 +183,39 @@ GEOR.print = (function() {
 
         layerStore = ls;
         tr = OpenLayers.i18n;
+        boundsLayer = new OpenLayers.Layer.Vector(VECTOR_LAYER_NAME, {
+            displayInLayerSwitcher: false,
+            styleMap: new OpenLayers.StyleMap({
+                "default": new OpenLayers.Style({
+                    fillColor: "#000000",
+                    fillOpacity: 0,
+                    strokeColor: "#ff0000",
+                    strokeDashstyle: "dash",
+                    strokeWidth: 2,
+                    strokeOpacity: 1
+                }),
+                "rotate": new OpenLayers.Style({
+                    externalGraphic: GEOR.config.PATHNAME + "/app/img/print-rotate.png",
+                    fillOpacity: 1.0,
+                    graphicXOffset: 8,
+                    graphicYOffset: 8,
+                    graphicWidth: 20,
+                    graphicHeight: 20,
+                    cursor: "pointer",
+                    display: "${display}",
+                    rotation: "${rotation}"
+                }, {
+                    context: {
+                        display: function(f) {
+                            return f.attributes.role == "se-rotate" ? "" : "none";
+                        },
+                        rotation: function(f) {
+                            return printPage.rotation;
+                        }
+                    }
+                })
+            })
+        });
 
         // The printProvider that connects us to the print service
         var serviceUrl = GEOR.config.PATHNAME + '/pdf';
@@ -206,11 +247,19 @@ GEOR.print = (function() {
                         }
                         return false;
                     });
-                    // create printPage:
+                    // create printPage & printExtent
                     printPage = new GeoExt.data.PrintPage({
                         printProvider: printProvider,
                         customParams: defaultCustomParams
                     });
+                    printExtent = new GeoExt.plugins.PrintExtent({
+                        layer: boundsLayer,
+                        printProvider: printProvider,
+                        transformFeatureOptions: {
+                            rotationHandleSymbolizer: "rotate"
+                        }
+                    });
+                    printExtent.init(GeoExt.MapPanel.guess());
                 },
                 "beforeencodelayer": function(printProvider, layer) {
                     if ((layer.CLASS_NAME === "OpenLayers.Layer.Vector") &&
@@ -262,18 +311,11 @@ GEOR.print = (function() {
             }
         });
     };
-    
-    var updateBounds = function() {
-        // the print extent is fully shown:
-        printPage.fit(layerStore.map, {mode: "screen"});
-        var bbox = printPage.getPrintExtent(layerStore.map);
-        boundsLayer.destroyFeatures();
-        boundsLayer.addFeatures([
-            new OpenLayers.Feature.Vector(bbox.toGeometry())
-        ]);
-    };
-    var updateBoundsTask = new Ext.util.DelayedTask(updateBounds);
 
+    /**
+     * Method: showWindow
+     *
+     */
     var showWindow = function() {
         if (!printPage) {
             GEOR.util.errorDialog({
@@ -401,9 +443,6 @@ GEOR.print = (function() {
                         editable: false,
                         mode: "local",
                         triggerAction: "all",
-                        listeners: {
-                            "select": function() {updateBoundsTask.delay(50);}
-                        },
                         plugins: new GeoExt.plugins.PrintProviderField({
                             printProvider: printProvider
                         })
@@ -451,6 +490,28 @@ GEOR.print = (function() {
                         plugins: new GeoExt.plugins.PrintProviderField({
                             printProvider: printProvider
                         })
+                    },{
+                        xtype: "combo",
+                        fieldLabel: tr("Scale"),
+                        store: printProvider.scales,
+                        forceSelection: true,
+                        editable: false,
+                        width: 300,
+                        displayField: "name",
+                        mode: "local",
+                        triggerAction: "all",
+                        plugins: new GeoExt.plugins.PrintPageField({
+                            printPage: printPage
+                        })
+                    }, {
+                        xtype: "numberfield",
+                        fieldLabel: tr("Rotation"),
+                        width: 300,
+                        name: "rotation",
+                        enableKeyEvents: true,
+                        plugins: new GeoExt.plugins.PrintPageField({
+                            printPage: printPage
+                        })
                     }
                 ]
             });
@@ -462,39 +523,23 @@ GEOR.print = (function() {
                 animateTarget: GEOR.config.ANIMATE_WINDOWS && this.el,
                 border: false,
                 width: 450,
+                x: 0,
+                y: 32,
                 autoHeight: true,
                 closeAction: 'hide',
                 items: [formPanel],
                 listeners: {
                     "show": function() {
-                        // display print bounds
-                        if (!boundsLayer) {
-                            boundsLayer = new OpenLayers.Layer.Vector(VECTOR_LAYER_NAME, {
-                                displayInLayerSwitcher: false,
-                                styleMap: new OpenLayers.StyleMap({
-                                    "default": new OpenLayers.Style({
-                                        fillColor: "#000000",
-                                        fillOpacity: 0,
-                                        strokeColor: "#ff0000",
-                                        strokeDashstyle: "dash",
-                                        strokeWidth: 2,
-                                        strokeOpacity: 1
-                                    })
-                                })
-                            });
-                            layerStore.map.addLayer(boundsLayer);
-                        }
-                        boundsLayer.setVisibility(true);
-                        updateBounds();
-                        layerStore.map.events.register("moveend", this, updateBounds);
-                        
+                        // show print extent:
+                        printExtent.addPage(printPage);
+                        printExtent.show();
                         // focus first field on show
                         var field = formPanel.getForm().findField('mapTitle');
                         field.focus('', 50);
                     },
                     "hide": function() {
-                        layerStore.map.events.unregister("moveend", this, updateBounds);
-                        boundsLayer.setVisibility(false);
+                        printExtent.removePage(printPage);
+                        printExtent.hide();
                     }
                 },
                 buttons: [{
