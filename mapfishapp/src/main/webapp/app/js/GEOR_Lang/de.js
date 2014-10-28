@@ -288,6 +288,10 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "print.unknown.resolution":
         "Konfigurationsfehler: DEFAULT_PRINT_RESOLUTION " +
         "${RESOLUTION} befindet sich nicht in der Druckbildauflösungsliste",
+    "print.unknown.format":
+        "Konfigurationsfehler: " +
+        "${FORMAT} befindet sich nicht in der Druckformatliste",
+    "Pick an output format": "Wählen Sie ein Ausgabeformat",
     "Comments": "Kommentare",
     "Scale: ": "Maβstab : ",
     "Date: ": "Datum : ",

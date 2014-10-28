@@ -270,6 +270,10 @@ GEOR.print = (function() {
                 },
                 "beforeprint": function(pp) {
                     mask.show();
+                    pp.customParams.copyright = getLayerSources();
+                    pp.customParams.projection = getProjection();
+                    pp.customParams.scaleLbl = tr("Scale: ");
+                    pp.customParams.dateLbl = tr("Date: ");
                     // set a custom PDF file name:
                     pp.customParams.outputFilename = GEOR.config.PDF_FILENAME;
                 },
@@ -310,6 +314,23 @@ GEOR.print = (function() {
                 }
             }
         });
+    };
+
+    /**
+     * Method: formatHandler
+     * Callback for checkHandler
+     *
+     * Parameters:
+     * format - {String} The output format (eg: "png" or "pdf")
+     */
+    var formatHandler = function(format) {
+        var r = printProvider.outputFormats.find("name", format);
+        if (r >= 0) {
+            printProvider.setOutputFormat(printProvider.outputFormats.getAt(r));
+        } else {
+            alert(tr("print.unknown.format",
+                {'FORMAT': format}));
+        }
     };
 
     /**
@@ -478,20 +499,6 @@ GEOR.print = (function() {
                         }
                     }, {
                         xtype: "combo",
-                        store: printProvider.outputFormats,
-                        displayField: "name",
-                        valueField: "name",
-                        fieldLabel: tr("Type"),
-                        width: 300,
-                        forceSelection: true,
-                        editable: false,
-                        mode: "local",
-                        triggerAction: "all",
-                        plugins: new GeoExt.plugins.PrintProviderField({
-                            printProvider: printProvider
-                        })
-                    },{
-                        xtype: "combo",
                         fieldLabel: tr("Scale"),
                         store: printProvider.scales,
                         forceSelection: true,
@@ -548,19 +555,31 @@ GEOR.print = (function() {
                         win.hide();
                     }
                 }, {
+                    xtype: "splitbutton",
                     text: tr("Print"),
+                    arrowTooltip: tr("Pick an output format"),
                     minWidth: 90,
                     itemId: 'print',
                     iconCls: 'mf-print-action',
                     handler: function() {
-                        printPage.customParams.copyright = getLayerSources();
-                        printPage.customParams.projection = getProjection();
-                        printPage.customParams.scaleLbl = tr("Scale: ");
-                        printPage.customParams.dateLbl = tr("Date: ");
                         printProvider.print(layerStore.map, printPage, {
                             legend: legendPanel
                         });
-                    }
+                    },
+                    menuAlign: "tr-br",
+                    menu: new Ext.menu.Menu({
+                        items: [{
+                            checked: true,
+                            group: 'print-format',
+                            text: tr("PDF"),
+                            checkHandler: formatHandler.createCallback("pdf")
+                        }, {
+                            checked: false,
+                            group: 'print-format',
+                            text: tr("PNG"),
+                            checkHandler: formatHandler.createCallback("png")
+                        }]
+                    })
                 }]
             });
         }
