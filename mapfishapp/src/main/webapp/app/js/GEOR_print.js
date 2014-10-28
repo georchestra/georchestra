@@ -187,12 +187,21 @@ GEOR.print = (function() {
             displayInLayerSwitcher: false,
             styleMap: new OpenLayers.StyleMap({
                 "default": new OpenLayers.Style({
-                    fillColor: "#000000",
+                    //fillColor: '#ee9900',
+                    //fillOpacity: 0.25,
                     fillOpacity: 0,
-                    strokeColor: "#ff0000",
-                    strokeDashstyle: "dash",
-                    strokeWidth: 2,
-                    strokeOpacity: 1
+                    strokeColor: "#000000",
+                    strokeOpacity: 1,
+                    strokeWidth: 2
+                }),
+                "temporary": new OpenLayers.Style({
+                    fillColor: "#ffffff",
+                    fillOpacity: 1,
+                    strokeColor: "#000000",
+                    strokeOpacity: 0.6,
+                    strokeWidth: 1,
+                    pointRadius: 5,
+                    cursor: "${role}"
                 }),
                 "rotate": new OpenLayers.Style({
                     externalGraphic: GEOR.config.PATHNAME + "/app/img/print-rotate.png",
