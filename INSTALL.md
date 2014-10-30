@@ -551,7 +551,7 @@ GeoServer and GeoWebCache take great advantage of the native JAI availability.
 
 Then, make sure that the following 5 jars are loaded by your geoserver and geowebcache tomcats classloaders: jai_codec.jar, jai_core.jar, jai_imageio.jar, clibwrapper_jiio.jar, mlibwrapper_jai.jar
 
-This is usually done by symlinking them from their original location (something like /usr/share/java) to the ```${catalina.base}/conf``` directory
+This is usually done by symlinking them from their original location (something like ```/usr/share/java```) to the ```${catalina.base}/lib``` directory (for the common classloader).
 
 
 * Fine tuning (optional but highly recommended)
