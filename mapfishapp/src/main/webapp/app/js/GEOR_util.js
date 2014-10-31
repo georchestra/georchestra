@@ -57,6 +57,54 @@ GEOR.util = (function() {
     return {
 
         /**
+         * APIMethod: getProtocol
+         * Returns the protocol name for a layer
+         *
+         * Parameters:
+         * layer - {GeoExt.data.LayerRecord | OpenLayers.Layer}
+         */
+        getProtocol: function(layer) {
+            if (layer instanceof OpenLayers.Layer.WMS) {
+                return {
+                    protocol: "WMS", 
+                    version: layer.params.VERSION,
+                    service: layer.url,
+                    layer: layer.params.LAYERS
+                };
+            } else if (layer instanceof OpenLayers.Layer.WMTS) {
+                return {
+                    protocol: "WMTS", 
+                    version: layer.version,
+                    service: layer.url,
+                    layer: layer.layer
+                };
+            } else if (layer instanceof OpenLayers.Layer.Vector &&
+                layer.protocol &&
+                /OpenLayers\.Protocol\.WFS/.test(layer.protocol.CLASS_NAME)) {
+                    return {
+                        protocol: "WFS", 
+                        version: layer.protocol.version,
+                        service: layer.protocol.url,
+                        layer: layer.protocol.featureType
+                    };
+            } else if (layer instanceof GeoExt.data.LayerRecord) {
+                return GEOR.util.getProtocol(layer.get('layer'));
+            }
+        },
+
+        /**
+         * APIMethod: shorten
+         * Returns a shorter string to a given length
+         *
+         * Parameters:
+         * t - {String}
+         * length - {Integer}
+         */
+        shorten: function(t, length) {
+            return ((t.length > length) ? t.substr(0, length-3) + '...' : t);
+        },
+
+        /**
          * APIMethod: shortenLayerName
          * Returns a shorter string for a layer name (if required).
          *
@@ -76,7 +124,7 @@ GEOR.util = (function() {
                 // there's a pb, we silently ignore it
                 return '';
             }
-            return ((t.length > 40) ? t.substr(0,37) + '...' : t);
+            return GEOR.util.shorten(t, 40);
         },
 
         /**

@@ -42,7 +42,27 @@ GEOR.managelayers = (function() {
      */
     var LayerNode = Ext.extend(GeoExt.tree.LayerNode, {
         constructor: function(config) {
-            config.qtip = config.layer.name;
+            var record;
+            config.layerStore.each(function(r){
+                if (r.getLayer() == config.layer) {
+                    record = r;
+                    return false;
+                }
+            });
+            // Apply template for tooltip:
+            if (record) {
+                var p = GEOR.util.getProtocol(config.layer),
+                data = Ext.applyIf({
+                    "title": record.get("title") || config.layer.name,
+                    "protocol": (p && p.protocol) || "File",
+                    "protocol_color": (p && GEOR.config.PROTOCOL_COLOR[p.protocol]) || "",
+                    "protocol_version": (p && p.version) || "",
+                    "service": (p && p.service) || OpenLayers.i18n("local"),
+                    "layername": (p && p.layer) || config.layer.name,
+                    "short_abstract": GEOR.util.shorten(record.get("abstract") || "", 300)
+                }, record.data);
+                config.qtip = (new Ext.Template(GEOR.config.LAYER_INFO_TEMPLATE)).apply(data);
+            }
             LayerNode.superclass.constructor.apply(this, [config]);
             this.on("rendernode", function(node) {
                 if (config.layer.transitionEffect == 'resize') {
