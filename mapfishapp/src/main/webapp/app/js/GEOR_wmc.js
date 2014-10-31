@@ -107,14 +107,17 @@ GEOR.wmc = (function() {
             // Note: this fixes http://applis-bretagne.fr/redmine/issues/4510
             var layerContext = wmcFormat.layerToContext(layer); 
             
-            var queryable = record.get('queryable');
-            var styles = record.get('styles');
-            var formats = record.get('formats');
+            var queryable = record.get('queryable'),
+                styles = record.get('styles'),
+                abs = record.get('abstract'),
+                formats = record.get('formats');
 
             if (queryable !== undefined) {
                 layerContext.queryable = queryable;
             }
-
+            if (abs !== undefined) {
+                layerContext["abstract"] = abs;
+            }
             if (styles !== undefined && styles.length > 0) {
                 // if the context style has its href property
                 // set, which means the layer has an SLD
