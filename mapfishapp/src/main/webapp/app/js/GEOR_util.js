@@ -57,6 +57,17 @@ GEOR.util = (function() {
     return {
 
         /**
+         * ISO639 correspondance hash
+         */
+        ISO639: {
+            'de': 'ger', 
+            'en': 'eng', 
+            'es': 'spa', 
+            'fr': 'fre', 
+            'ru': 'rus'
+        },
+
+        /**
          * APIMethod: shortenLayerName
          * Returns a shorter string for a layer name (if required).
          *

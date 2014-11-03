@@ -62,8 +62,13 @@ GEOR.workspace = (function() {
                     wmc_url = GEOR.util.getValidURI(o.filepath);
                 GEOR.waiter.show();
                 OpenLayers.Request.POST({
-                    url: GEOR.config.GEONETWORK_BASE_URL + "/srv/fre/customService", // TODO: service name
-                    data: Ext.encode({ // TODO: adjust parameters and eventually format ...
+                    url: [ 
+                        GEOR.config.GEONETWORK_BASE_URL,
+                        "/srv/",
+                        GEOR.util.ISO639[GEOR.config.LANG],
+                        "/wmc.import"
+                    ].join(''),
+                    data: OpenLayers.Util.getParameterString({
                         "wmc_string": wmc_string,
                         "wmc_url": wmc_url,
                         "viewer_url": GEOR.util.getValidURI("?wmc="+encodeURIComponent(wmc_url))
