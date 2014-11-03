@@ -24,7 +24,8 @@ Funded, but not yet done:
  * geofence: ability to configure map SRS - see [#732](https://github.com/georchestra/georchestra/issues/732) - Rennes Metropole,
  * mapfishapp: export current map context as a "map metadata" - see [#751](https://github.com/georchestra/georchestra/issues/751) - GéoPicardie,
  * mapfishapp: give easy access to WMS/WFS layer details - see [#346](https://github.com/georchestra/georchestra/issues/346) - CIGALsace,
- * mapfishapp: support read/write WMTS layer types from/to OWSContext - see [#360](https://github.com/georchestra/georchestra/issues/360) - CIGALsace,
+ * mapfishapp: support read/write WMTS layer types from/to OWSContext - see [#360](https://github.com/georchestra/georchestra/issues/360) & [#399](https://github.com/georchestra/georchestra/issues/399) - CIGALsace,
+ * mapfishapp: revamp of the "add layers" window - see [#718](https://github.com/georchestra/georchestra/issues/718) - CIGALsace,
  * ldapadmin: delegated administrators - see [#786](https://github.com/georchestra/georchestra/issues/786) - GeoBretagne,
 
 New features:
@@ -34,16 +35,18 @@ New features:
  * mapfishapp: streetview addon - see [#774](https://github.com/georchestra/georchestra/issues/774),
  * mapfishapp: direct geodata file loading via URL - see [#754](https://github.com/georchestra/georchestra/issues/754),
  * mapfishapp: added a button to remove all layers - see [#753](https://github.com/georchestra/georchestra/issues/753),
+ * mapfishapp: new syntax for CSW querier - see [#760](https://github.com/georchestra/georchestra/issues/760) and the [README](https://github.com/georchestra/georchestra/blob/master/mapfishapp/README.md#cswquerier),
+ * mapfishapp: png printing - see [#814](https://github.com/georchestra/georchestra/issues/814),
+ * mapfishapp: print extent handling improvement - see [#813](https://github.com/georchestra/georchestra/issues/813),
 
 Enhancements:
  * extractorapp: editable combobox for resolution selection - see [#726](https://github.com/georchestra/georchestra/issues/726),
  * extractorapp: warn user when the extraction area is too large before the extraction is fired - see [#726](https://github.com/georchestra/georchestra/issues/726),
  * extractorapp: better emails - see [#750](https://github.com/georchestra/georchestra/issues/750),
- * mapfishapp: print extend fully visible,
+ * mapfishapp: print extent fully visible,
  * mapfishapp: help message popping down when tools are loaded and available,
  * mapfishapp: geometry from query stored forever in browser/LocalStorage (rather than cookie),
  * mapfishapp: warn users about chrome 36/37 issue,
- * mapfishapp: csw querier with better filters,
  * mapfishapp: i18n neutral nopreview image for csw querier - see [#775](https://github.com/georchestra/georchestra/issues/775),
  * mapfishapp: load data from catalog improvement - see [#756](https://github.com/georchestra/georchestra/issues/756),
  * georchestra: german translations generalized - see [#777](https://github.com/georchestra/georchestra/issues/777),
@@ -55,9 +58,11 @@ Bug fixes:
  * geonetwork: fixed LDAP sync - see [6a7e69](https://github.com/georchestra/geonetwork/commit/6a7e692daaabe3b27793b4c75de2bc91ffe43840),
  * geonetwork: in associated resource panel from editor, fixed failure to add link to service metadata record,
  * geonetwork: schema iso / fra - fixed missing description for "funder",
+ * ldapadmin: fixed renaming group name leads to corrupted LDAP entry - see [#810](https://github.com/georchestra/georchestra/issues/810),
  * mapfishapp: fixed missing SLD_VERSION WMS parameter, which is mandatory from version 1.3.0 on - see [#636](https://github.com/georchestra/georchestra/issues/636),
  * mapfishapp: modified MAP_DOTS_PER_INCH value in order to fix WMS/WMTS layer overlay - see [#736](https://github.com/georchestra/georchestra/issues/736),
  * mapfishapp: fixed WMTS style switch for GeoWebCache versions >= 1.5,
+ * mapfishapp: fixed WMTS legend printing issue,
  * mapfishapp: workaround for IE11 bug, see [#773](https://github.com/georchestra/georchestra/issues/773),
  * mapfishapp: fixed several programming errors in the cadastre addon,
  * mapfishapp: restore record opaque status from layer transitionEffect,
@@ -82,6 +87,8 @@ Set to https (along with ```shared.server.port``` to 443) if your SDI requires i
 Note the addition of an ```excluded``` directory in the template configuration. The content of this directory will be ignored when creating the configuration jar, which is deployed in each webapp. This is a convenient way to store scripts and so on, versioned with your configuration.
 
 In extractorapp, several new javascript config options have been added, related to [#726](https://github.com/georchestra/georchestra/issues/726): ```SUPPORTED_RESOLUTIONS```, ```DEFAULT_RESOLUTION```, ```METADATA_RESOLUTION_XPATH```. Make sure your configuration is up to date with the template configuration, or you will get these variable defaults.
+
+We also decided to publish resources for your server "htdocs" folder. Have a look at our [georchestra/htdocs](https://github.com/georchestra/htdocs) repository.
 
 Version 14.06 (current stable version)
 ======================================

@@ -292,6 +292,10 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "print.unknown.resolution":
          "Error de configuración: DEFAULT_PRINT_RESOLUTION " +
          "${RESOLUTION} no se encuentra en las resoluciones de impresión",
+    "print.unknown.format":
+        "Error de configuración: " +
+        "${FORMAT} no se encuentra en los formatos de impresión",
+    "Pick an output format": "Seleccione un formato de salida",
     "Comments": "Comentarios",
     "Scale: ": "Escala: ",
     "Date: ": "Fecha: ",

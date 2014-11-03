@@ -229,6 +229,12 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "The print server is currently unreachable": "Сервер печати временно недоступен.",
     "print.unknown.layout": "Ошибка конфигурации : DEFAULT_PRINT_LAYOUT ${LAYOUT} отсутствует в списке печатных форматов",
     "print.unknown.resolution": "Ошибка конфигурации : DEFAULT_PRINT_RESOLUTION ${RESOLUTION} не находится в списке резолюций печати.",
+    /*
+    "print.unknown.format":
+        "Erreur de configuration: le format " +
+        "${FORMAT} n'est pas supporté par le serveur d'impression",
+    "Pick an output format": "Choisissez un format de sortie",
+    */
     "Comments": "Комментарии",
     "Scale: ": "Масштаб",
     "Date: ": "Дата : ",

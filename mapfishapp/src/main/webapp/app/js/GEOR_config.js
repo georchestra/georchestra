@@ -513,6 +513,31 @@ GEOR.config = (function() {
         DISPLAY_VISIBILITY_RANGE: getCustomParameter("DISPLAY_VISIBILITY_RANGE", true),
 
         /**
+         * Constant: LAYER_INFO_TEMPLATE
+         * {String} The template used to format the layer tooltip
+         * The available variables are those of a GeoExt record 
+         * and protocol, protocol_color, protocol_version, service, layername and short_abstract
+         */
+        LAYER_INFO_TEMPLATE: getCustomParameter("LAYER_INFO_TEMPLATE", [
+            '<div style="width:250px;">',
+                '<span style="background:{protocol_color};padding:0 0.2em;margin:0 0.4em 0 0;',
+                'border-radius:0.2em;color:#fff;border:0;position:absolute;right:0;top:3px;">{protocol}</span>',
+                '<b>{title}</b>',
+                '<br/><br/>',
+                '{short_abstract}',
+            '</div>'].join('')),
+
+        /**
+         * Constant: PROTOCOL_COLOR
+         * {Object} Association between protocol and color displayed by LAYER_INFO_TEMPLATE
+         */
+        PROTOCOL_COLOR: getCustomParameter("PROTOCOL_COLOR", {
+            "WMS": "#009d00",
+            "WFS": "#ff0243",
+            "WMTS":"#55006a"
+        }),
+
+        /**
          * Constant: ROLES_FOR_STYLER
          * {Array} roles required for the styler to show up
          * Empty array means the module is available for everyone

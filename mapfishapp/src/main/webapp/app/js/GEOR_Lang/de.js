@@ -288,6 +288,10 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "print.unknown.resolution":
         "Konfigurationsfehler: DEFAULT_PRINT_RESOLUTION " +
         "${RESOLUTION} befindet sich nicht in der Druckbildauflösungsliste",
+    "print.unknown.format":
+        "Konfigurationsfehler: " +
+        "${FORMAT} befindet sich nicht in der Druckformatliste",
+    "Pick an output format": "Wählen Sie ein Ausgabeformat",
     "Comments": "Kommentare",
     "Scale: ": "Maβstab : ",
     "Date: ": "Datum : ",
@@ -333,13 +337,11 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Actions on the selection or on all results if no row is selected":
         "Aktien an der Auswahl oder an alle Ergebnisse, wenn keine Zeile ausgewählt ist",
     "Store the geometry": 
-        "Diese Geometrie speichern",
-/*
+        "Geometrie speichern",
     "Aggregates the geometries of the selected features and stores it in your browser for later use in the querier":
-        "La géométrie des objets sélectionnés est enregistrée pour un usage ultérieur dans le requêteur",
-*/
+        "Das ausgewählte Geometrieobjekt ist für eine künftige Benutzung im Suchfilter gespeichert",
     "Geometry successfully stored in this browser": 
-        "Geometrie auf dem Navigator gespeichert.",
+        "Geometrie erfolgreich im Webbrowser gespeichert.",
     "Clean all results on the map and in the table": "Löschen " +
         "der aufgezeichneten Ergebnisse auf Karte und Liste",
     "Zoom": "Zoom",

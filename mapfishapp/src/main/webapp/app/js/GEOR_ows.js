@@ -32,6 +32,7 @@
  * @include OpenLayers/Format/WFSCapabilities/v2_0_0.js
  * @include OpenLayers/Strategy/Fixed.js
  * @include OpenLayers/Layer/Vector.js
+ * @requires OpenLayers/Layer/WMS.js
  * @include OpenLayers/Layer/WMTS.js
  * @requires GEOR_config.js
  * @include GEOR_waiter.js
@@ -738,5 +739,19 @@ GEOR.ows = (function() {
             }, options || {});
             return new OpenLayers.Protocol.WFS(options);
         }
+    };
+})();
+
+// hack for SLD_VERSION override in case the SLD is produced by mapfishapp
+// see https://github.com/georchestra/georchestra/issues/636
+(function() {
+    var p = OpenLayers.Layer.WMS.prototype, fn = p.getFullRequestString;
+    p.getFullRequestString = function() {
+        var params = this.params;
+        if (params.VERSION == "1.3.0" && /mapfishapp/.test(params.SLD)) {
+            // force SLD version when handling our own SLD documents:
+            params.SLD_VERSION = "1.0.0";
+        }
+        return fn.apply(this, arguments);
     };
 })();
