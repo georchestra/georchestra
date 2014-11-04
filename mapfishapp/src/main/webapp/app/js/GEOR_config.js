@@ -521,7 +521,7 @@ GEOR.config = (function() {
         LAYER_INFO_TEMPLATE: getCustomParameter("LAYER_INFO_TEMPLATE", [
             '<div style="width:250px;">',
                 '<span style="background:{protocol_color};padding:0 0.2em;margin:0 0.4em 0 0;',
-                'border-radius:0.2em;color:#fff;border:0;position:absolute;right:0;top:3px;">{protocol}</span>',
+                'border-radius:0.2em;color:#fff;border:0;float:right;">{protocol}</span>',
                 '<b>{title}</b>',
                 '<br/><br/>',
                 '{short_abstract}',
