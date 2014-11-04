@@ -132,7 +132,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     /* GEOR_fileupload.js strings */
     "2D only": "nur 2D",
     "Local file": "Datei",
-    "The service is inactive": "Dienstleistung ist nicht aktiv",
+    "The service is inactive": "Service ist nicht aktiv",
     "Upload a vector data file.": "Laden einer Datei mit vektoriellen Daten",
     "The allowed formats are the following: ": "folgende Formate sind gestattet : ",
     "Use ZIP compression for multifiles formats, such as": "Benützen Sie ZIP um Multidatei-Format zu komprimieren wie",
@@ -192,6 +192,9 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
         "Datenmenge zu groß...",
     "WFS server": "WFS Server",
     /* GEOR_managelayers.js strings */
+    "Service": "Service",
+    "Protocol": "Protokoll",
+    "About this layer": "Über dieser Schicht",
     "Set as overlay": "Wechseln in nächsthöhere Schicht",
     "Set as baselayer": "Wechseln in nächsttiefere Schicht",
     "Confirm NAME layer deletion ?":
@@ -266,7 +269,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "scale picker": "Maβstab",
     /* GEOR_ows.js strings */
     "The NAME layer was not found in WMS service.":
-        "Layer ${NAME} im WMS Servier nicht gefunden.",
+        "Layer ${NAME} im WMS Service nicht gefunden.",
     /* GEOR_print.js strings */
     "Sources: ": "Quellen : ",
     "Source: ": "Quelle : ",

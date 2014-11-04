@@ -109,6 +109,9 @@ div.olMapViewport {
 .geor-btn-style {
     background-image: url(../img/famfamfam/map_edit.png) !important;
 }
+.geor-btn-layerinfo {
+    background-image: url(../img/fugue/question-white.png) !important;
+}
 .geor-btn-zoom {
     background-image: url(../img/famfamfam/arrow_out.png) !important;
 }

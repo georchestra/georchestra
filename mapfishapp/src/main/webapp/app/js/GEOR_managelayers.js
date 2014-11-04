@@ -42,13 +42,7 @@ GEOR.managelayers = (function() {
      */
     var LayerNode = Ext.extend(GeoExt.tree.LayerNode, {
         constructor: function(config) {
-            var record;
-            config.layerStore.each(function(r){
-                if (r.getLayer() == config.layer) {
-                    record = r;
-                    return false;
-                }
-            });
+            var record = config.layerStore.getById(config.layer.id);
             // Apply template for tooltip:
             if (record) {
                 var p = GEOR.util.getProtocol(config.layer),
@@ -621,6 +615,7 @@ GEOR.managelayers = (function() {
             isWMS = type === "WMS",
             isWMTS = type === "WMTS",
             isWFS = type === "WFS",
+            isOGC = isWMS || isWMTS || isWFS,
             hasEquivalentWFS = (type === "WMS") ?
                 layerRecord.hasEquivalentWFS() : false,
             hasEquivalentWCS = (type === "WMS") ?
@@ -728,20 +723,7 @@ GEOR.managelayers = (function() {
                 sepInserted = true;
             }
         };
-        
-        // metadata action
-        if (layer.metadataURL) {
-            insertSep();
-            menuItems.push({
-                iconCls: 'geor-btn-metadata',
-                text: tr("Show metadata"),
-                listeners: {
-                    "click": function(btn, pressed) {
-                        window.open(layer.metadataURL);
-                    }
-                }
-            });
-        }
+
         if (GEOR.styler && hasEquivalentWFS) {
             insertSep();
             menuItems.push({
@@ -843,6 +825,68 @@ GEOR.managelayers = (function() {
                 }
             });
         }
+
+        // metadata action
+        if (layer.metadataURL || isOGC) {
+            menuItems.push("-");
+        }
+        if (layer.metadataURL) {
+            menuItems.push({
+                iconCls: 'geor-btn-metadata',
+                text: tr("Show metadata"),
+                listeners: {
+                    "click": function(btn, pressed) {
+                        window.open(layer.metadataURL);
+                    }
+                }
+            });
+        }
+        if (isOGC) {
+            menuItems.push({
+                iconCls: 'geor-btn-layerinfo',
+                text: tr("About this layer"),
+                handler: function() {
+                    var p = GEOR.util.getProtocol(layer),
+                    win = new Ext.Window({
+                        title: GEOR.util.shorten(layerRecord.get("title"), 70),
+                        layout: "fit",
+                        width: 500,
+                        height: 150,
+                        closeAction: 'close',
+                        constrainHeader: true,
+                        animateTarget: GEOR.config.ANIMATE_WINDOWS && this.el,
+                        modal: false,
+                        items: {
+                            layout: 'form',
+                            labelSeparator: tr("labelSeparator"),
+                            bodyStyle: 'padding:5px;',
+                            border: false,
+                            items: [{
+                                xtype: 'displayfield',
+                                fieldLabel: tr("Service"),
+                                value: '<a href="'+p.service+'">'+p.service+'</a>',
+                            },{
+                                xtype: 'displayfield',
+                                fieldLabel: tr("FeatureType"),
+                                value: p.layer
+                            },{
+                                xtype: 'displayfield',
+                                fieldLabel: tr("Protocol"),
+                                value: p.protocol + " " + p.version
+                            }]
+                        },
+                        buttons: [{
+                            text: tr("Close"),
+                            handler: function() {
+                                win.close();
+                            }
+                        }]
+                    });
+                    win.show();
+                }
+            });
+        }
+
         return menuItems;
     };
 

@@ -193,6 +193,9 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
         "serveur injoignable, trop de données, etc.",
     "WFS server": "Serveur WFS",
     /* GEOR_managelayers.js strings */
+    "Service": "Service",
+    "Protocol": "Protocole",
+    "About this layer": "A propos de cette couche",
     "Set as overlay": "Passer en calque",
     "Set as baselayer": "Passer en couche de fond",
     "Confirm NAME layer deletion ?":
