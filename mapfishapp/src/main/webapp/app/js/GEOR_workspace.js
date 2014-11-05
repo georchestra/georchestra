@@ -68,6 +68,9 @@ GEOR.workspace = (function() {
                         GEOR.util.ISO639[GEOR.config.LANG],
                         "/wmc.import"
                     ].join(''),
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
                     data: OpenLayers.Util.getParameterString({
                         "wmc_string": wmc_string,
                         "wmc_url": wmc_url,
