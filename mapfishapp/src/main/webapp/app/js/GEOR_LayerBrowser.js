@@ -15,6 +15,10 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
     
     mapSRS: null,
 
+    defaults: {
+        border: false
+    },
+
     /**
      * Property: dataview
      * {Ext.DataView}
@@ -118,7 +122,6 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
         this.items = [{
             region: 'north',
             layout: 'form',
-            border: false,
             labelSeparator: tr("labelSeparator"),
             labelWidth: 170,
             bodyStyle: 'padding: 5px;',
@@ -147,7 +150,10 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
                     scope: this
                 }
             }, this.combo, this.urlField]
-        }, this.dataview];
+        }, {
+            region: 'center',
+            items: this.dataview
+        }];
 
         GEOR.LayerBrowser.superclass.initComponent.call(this);
     },
