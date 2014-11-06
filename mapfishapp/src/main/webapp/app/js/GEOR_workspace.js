@@ -42,6 +42,53 @@ GEOR.workspace = (function() {
     var tr = null;
 
     /**
+     * Method: saveMDBtnHandler
+     * Handler for the button triggering the WMC save to catalog
+     */
+    var saveMDBtnHandler = function() {
+        var formPanel = this.findParentByType('form'), 
+            form = formPanel.getForm(),
+            wmc_string = GEOR.wmc.write({
+                "title": form.findField('title').getValue(),
+                "abstract": form.findField('abstract').getValue()
+            });
+        GEOR.waiter.show();
+        OpenLayers.Request.POST({
+            url: GEOR.config.PATHNAME + "/ws/wmc/",
+            data: wmc_string,
+            success: function(response) {
+                formPanel.ownerCt.close();
+                var o = Ext.decode(response.responseText),
+                    wmc_url = GEOR.util.getValidURI(o.filepath);
+                GEOR.waiter.show();
+                OpenLayers.Request.POST({
+                    url: [ 
+                        GEOR.config.GEONETWORK_BASE_URL,
+                        "/srv/",
+                        GEOR.util.ISO639[GEOR.config.LANG],
+                        "/wmc.import"
+                    ].join(''),
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    data: OpenLayers.Util.getParameterString({
+                        "wmc_string": wmc_string,
+                        "wmc_url": wmc_url,
+                        "viewer_url": GEOR.util.getValidURI("?wmc="+encodeURIComponent(wmc_url))
+                    }),
+                    success: function(response) {
+                        formPanel.ownerCt.close();
+                        var o = Ext.decode(response.responseText);
+                        // TODO: get metadata uuid and open link to MD
+                    },
+                    scope: this
+                });
+            },
+            scope: this
+        });
+    };
+
+    /**
      * Method: saveBtnHandler
      * Handler for the button triggering the WMC save dialog
      */
@@ -52,7 +99,7 @@ GEOR.workspace = (function() {
         OpenLayers.Request.POST({
             url: GEOR.config.PATHNAME + "/ws/wmc/",
             data: GEOR.wmc.write({
-                title: form.findField('title').getValue(),
+                "title": form.findField('title').getValue(),
                 "abstract": form.findField('abstract').getValue()
             }),
             success: function(response) {
@@ -117,6 +164,30 @@ GEOR.workspace = (function() {
      * Triggers the save dialog.
      */
     var saveWMC = function() {
+        var btns = [{
+            text: tr("Cancel"),
+            handler: cancelBtnHandler
+        }];
+        if (GEOR.config.ROLES.indexOf("ROLE_SV_EDITOR") >= 0 ||
+            GEOR.config.ROLES.indexOf("ROLE_SV_ADMIN") >= 0 ) {
+            btns.push({
+                text: tr("Save to metadata"),
+                minWidth: 100,
+                iconCls: 'geor-btn-download',
+                itemId: 'save-md',
+                handler: saveMDBtnHandler,
+                formBind: true
+            });
+        }
+        btns.push({
+            text: tr("Save"),
+            minWidth: 100,
+            iconCls: 'geor-btn-download',
+            itemId: 'save',
+            handler: saveBtnHandler,
+            formBind: true
+        });
+
         var popup = new Ext.Window({
             title: tr("Context saving"),
             layout: 'fit',
@@ -174,17 +245,7 @@ GEOR.workspace = (function() {
                         }
                     }
                 }],
-                buttons: [{
-                    text: tr("Cancel"),
-                    handler: cancelBtnHandler
-                },{
-                    text: tr("Save"),
-                    minWidth: 100,
-                    iconCls: 'geor-btn-download',
-                    itemId: 'save',
-                    handler: saveBtnHandler,
-                    formBind: true
-                }]
+                buttons: btns
             }]
         });
         popup.show();
@@ -242,16 +303,11 @@ GEOR.workspace = (function() {
                 }),
                 success: function(response) {
                     var o = Ext.decode(response.responseText),
-                        id =  /^.+(\w{32}).wmc$/.exec(o.filepath)[1],
-                        basePath = [
-                            window.location.protocol, 
-                            '//', window.location.host,
-                            GEOR.config.PATHNAME, '/'
-                        ].join('');
+                        id =  /^.+(\w{32}).wmc$/.exec(o.filepath)[1];
                     var url = new Ext.XTemplate(options.url).apply({
-                        context_url: basePath + o.filepath,
-                        map_url: basePath + 'map/' + id,
-                        id: id
+                        "context_url": encodeURIComponent(GEOR.util.getValidURI(o.filepath)),
+                        "map_url": GEOR.util.getValidURI('map/' + id),
+                        "id": id
                     });
                     window.open(url);
                 },
