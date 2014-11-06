@@ -847,10 +847,27 @@ GEOR.managelayers = (function() {
                 text: tr("About this layer"),
                 handler: function() {
                     var p = GEOR.util.getProtocol(layer),
+                    o = OpenLayers.Util.createUrlObject(p.service),
+                    port = o.port == "80" ? "" : ":" + o.port,
+                    caps = OpenLayers.Util.urlAppend([
+                        o.protocol,
+                        "//",
+                        o.host,
+                        port,
+                        o.pathname
+                    ].join(''), OpenLayers.Util.getParameterString(
+                        Ext.apply(
+                            OpenLayers.Util.upperCaseObject(o.args), 
+                            {
+                                SERVICE: p.protocol,
+                                REQUEST: "GetCapabilities"
+                            }
+                        )
+                    )),
                     win = new Ext.Window({
                         title: GEOR.util.shorten(layerRecord.get("title"), 70),
                         layout: "fit",
-                        width: 500,
+                        width: 650,
                         height: 150,
                         closeAction: 'close',
                         constrainHeader: true,
@@ -864,7 +881,7 @@ GEOR.managelayers = (function() {
                             items: [{
                                 xtype: 'displayfield',
                                 fieldLabel: tr("Service"),
-                                value: '<a href="'+p.service+'">'+p.service+'</a>',
+                                value: '<a href="'+caps+'">'+caps+'</a>',
                             },{
                                 xtype: 'displayfield',
                                 fieldLabel: tr("FeatureType"),
