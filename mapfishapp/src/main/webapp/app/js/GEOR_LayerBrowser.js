@@ -5,10 +5,6 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
     /* public */
     store: null,
 
-    servers: null,
-    
-    columns: null,
-
     /* private */
     
     layout: 'border',
@@ -25,12 +21,16 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
      */
     dataview: null,
 
+    serverStore: null,
+
     /*
      * Method: initComponent.
      * Overridden constructor. Set up widgets and lay them out
      */
     initComponent: function() {
-        var tr = OpenLayers.i18n;
+        var tr = OpenLayers.i18n,
+        default_svt = GEOR.config.DEFAULT_SERVICE_TYPE;
+
         this.dataview = new Ext.DataView({
             store: this.store,
             region: 'center',
@@ -52,7 +52,20 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
                 }
             }
         });
-
+        this.serverStore = new Ext.data.Store({
+            proxy: new Ext.data.HttpProxy({
+                url: GEOR.util.getValidURI(
+                    GEOR.config.OGC_SERVERS_URL[default_svt]
+                ),
+                method: 'GET',
+                disableCaching: false
+            }),
+            autoLoad: true,
+            reader: new Ext.data.JsonReader({
+                fields: ['name', 'url'],
+                root: 'servers'
+            })
+        });
         this.combo = new Ext.form.ComboBox({
             editable: false,
             triggerAction: 'all',
@@ -61,12 +74,7 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
             fieldLabel: this.fieldLabel,
             loadingText: tr("Loading..."),
             mode: 'local',
-            store: new Ext.data.Store({
-                data: this.servers,
-                reader: new Ext.data.JsonReader({
-                    fields: ['name', 'url']
-                })
-            }),
+            store: this.serverStore,
             listeners: {
                 "select": this.onComboSelect,
                 scope: this
@@ -119,29 +127,67 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
                 xtype: 'radiogroup',
                 fieldLabel: tr("Service type"),
                 items: [{
-                    boxLabel: 'WMS', 
+                    boxLabel: 'WMS',
                     name: 'svtype',
                     inputValue: 'wms',
-                    checked: true
+                    checked: default_svt == "WMS"
                 },{
                     boxLabel: 'WMTS',
+                    name: 'svtype',
                     inputValue: 'wmts',
-                    name: 'svtype'
+                    checked: default_svt == "WMTS"
                 },{
                     boxLabel: 'WFS',
+                    name: 'svtype',
                     inputValue: 'wfs',
-                    name: 'svtype'
-                }]
+                    checked: default_svt == "WFS"
+                }],
+                listeners: {
+                    "change": this.onServiceTypeChange,
+                    scope: this
+                }
             }, this.combo, this.urlField]
         }, this.dataview];
 
         GEOR.LayerBrowser.superclass.initComponent.call(this);
     },
 
+    /**
+     * Method: onServiceTypeChange
+     * 
+     */
+    onServiceTypeChange: function(rg, checked) {
+        // clear twintriggerfield:
+        this.urlField.onTrigger1Click();
+        // clear results
+        this.dataview.clearSelections();
+        // clear combo
+        this.combo.clearValue();
+        // load servers list
+        this.serverStore.proxy.setUrl(
+            GEOR.util.getValidURI(
+                GEOR.config.OGC_SERVERS_URL[
+                    checked.inputValue.toUpperCase()
+                ]
+            )
+        );
+        this.serverStore.load();
+        // try to focus combo
+        this.combo.focus();
+    },
+
+    /**
+     * Method: onSelectionchange
+     * 
+     */
     onSelectionchange: function(sm) {
         this.fireEvent("selectionchanged", sm.getSelections());
     },
 
+    /**
+     * Method: onComboSelect
+     * 
+     */
     onComboSelect: function(cmb, rec, idx) {
         if (GEOR.config.DISPLAY_SELECTED_OWS_URL) {
             this.urlField.setValue(rec.get('url'));
@@ -161,7 +207,7 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
         tpl = [
             '<tpl for=".">',
                 '<div class="x-view-item">',
-                    '<table style="width:100%;"><tr><td style="vertical-align:text-top;">',
+                    '<table style="width:100%;"><tr><td style="vertical-align:text-top;">', // TODO: queryable label top right corner
                         '<p><b>{[this.title(values.title)]}</b></p>',
                         '<p>{[this.abstract(values.abstract)]}&nbsp;',
                         '<a href="{[this.metadataURL(values)]}" ext:qtip="' +

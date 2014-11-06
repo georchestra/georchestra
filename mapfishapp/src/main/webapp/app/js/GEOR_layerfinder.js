@@ -127,11 +127,6 @@ GEOR.layerfinder = (function() {
             tabTip: tr("Find layers from keywords")
         });
 
-        var r = function(val) {
-            return (val ? '<img src="'+GEOR.config.PATHNAME+'/app/img/famfamfam/tick.gif" alt="' + tr("Yes") + '">' : 
-                '<img src="'+GEOR.config.PATHNAME+'/app/img/nope.gif" alt="' + tr("No") + '">');
-        };
-
         var mapSRS = layerStore.map.getProjection(),
         commonStoreOptions = {
             // url should not be empty unless we want the following
@@ -144,7 +139,7 @@ GEOR.layerfinder = (function() {
                 field: 'title',
                 direction: 'ASC'
             }
-        },
+        };/*,
         layerColumn = {
             header: tr("Layer"), 
             dataIndex: "title", 
@@ -164,7 +159,7 @@ GEOR.layerfinder = (function() {
             width: 75,
             align: "center",
             renderer: r
-        };
+        };*/
 
         // WMTS
         /*
@@ -196,14 +191,15 @@ GEOR.layerfinder = (function() {
             store: new GEOR.ows.WMSCapabilities({
                 storeOptions: commonStoreOptions
             }),
-            servers: GEOR.config.WMS_SERVERS,
             mapSRS: mapSRS,
+            /*
             columns: [
                 layerColumn,
                 queryableColumn,
                 {id: "opaque", header: tr("Opaque"), dataIndex: "opaque", sortable: true, width: 50, align: "center", renderer: r},
                 descriptionColumn
             ],
+            */
             listeners: {
                 "selectionchanged": selectionChangedListener.call(this, "wms")
             }
@@ -502,15 +498,17 @@ GEOR.layerfinder = (function() {
                     case "cswquerier":
                         GEOR.cswquerier.clearSelection();
                         break;
-                    case "wmts":
-                        panels["wmts"].clearSelection();
+                    case "ogc":
+                        panels["ogc"].clearSelection();
                         break;
+                    /*
                     case "wms":
                         panels["wms"].clearSelection();
                         break;
                     case "wfs":
                         panels["wfs"].clearSelection();
                         break;
+                    */
                     case "file":
                         GEOR.fileupload.clearSelection();
                         break;
