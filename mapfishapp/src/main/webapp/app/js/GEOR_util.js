@@ -224,6 +224,32 @@ GEOR.util = (function() {
         },
 
         /**
+         * APIMethod: setMetadataURL
+         * Given a GeoExt Layer Record, sets the correct MetadataURL
+         * at layer level
+         *
+         * Parameters:
+         * r - {GeoExt.data.LayerRecord}
+         */
+        setMetadataURL: function(layer, metadataURLs) {
+            var murls = metadataURLs; //r.get("metadataURLs"),
+                //layer = r.getLayer();
+            if (murls && murls.length > 0) {
+                var murl = murls[0];
+                // default to first entry
+                layer.metadataURL = (murl.href) ? murl.href : murl;
+                Ext.each(murls, function(murl) {
+                    // prefer text/html format if found
+                    if (murl.format && murl.format == 'text/html') {
+                        layer.metadataURL = (murl.href) ? murl.href : murl;
+                        return false; // stop looping
+                    }
+                });
+            }
+            return layer.metadataURL;
+        },
+
+        /**
          * APIMethod: confirmDialog
          * Shows a confirm dialog box
          *

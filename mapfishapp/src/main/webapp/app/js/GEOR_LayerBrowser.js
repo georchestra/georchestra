@@ -256,13 +256,11 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
         tpl = [
             '<tpl for=".">',
                 '<div class="x-view-item">',
-                    '<table style="width:100%;"><tr><td style="vertical-align:text-top;">', // TODO: queryable label top right corner
+                    '<table style="width:100%;"><tr><td style="vertical-align:text-top;">',
+                        '{[this.queryable(values)]}',
                         '<p><b>{[this.title(values.title)]}</b></p>',
                         '<p>{[this.abstract(values.abstract)]}&nbsp;',
-                        '<a href="{[this.metadataURL(values)]}" ext:qtip="' +
-                            tr("Show metadata sheet in a new window") + '" ',
-                        'target="_blank" onclick="window.open(this.href);return false;">' +
-                            tr('more') + '</a></p>',
+                        '{[this.mdlink(values)]}',
                     '</td></tr></table>',
                 '</div>',
             '</tpl>'
@@ -270,10 +268,22 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
 
         var context = {
             "title": function(t) {
-                return GEOR.util.shorten(t, 200);
+                // shorten to 65 to take into account uppercased layer titles
+                return GEOR.util.shorten(t, 65);
             },
-            "metadataURL": function(values) {
-                return ""; // FIXME
+            "queryable": function(values) {
+                return values.queryable ?
+                    '<div style="float:right;"><img src="'+GEOR.config.PATHNAME+'/app/img/famfamfam/information.png" /></div>' :
+                    "";
+            },
+            "mdlink": function(values) {
+                var url = GEOR.util.setMetadataURL(values.layer, values.metadataURLs);
+                return url ? [
+                    '&nbsp;-&nbsp;<a href="', url, '" ext:qtip="',
+                        tr("Show metadata sheet in a new window"), '" ',
+                        'target="_blank" onclick="window.open(this.href);return false;">',
+                        tr('metadata'), '</a></p>'
+                ].join('') : "";
             },
             "abstract": function(t) {
                 // two things here:

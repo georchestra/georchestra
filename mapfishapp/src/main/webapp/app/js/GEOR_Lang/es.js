@@ -161,6 +161,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
          "Haga clic sobre el mapa.</div>",
     "WMS GetFeatureInfo at ": "GetFeatureInfo WMS sobre ",
     /* GEOR_layerfinder.js strings */
+    "metadata": "metadatos",
     "Add layers from local files": "Añadir capas a partir de archivos locales",
     "Find layers searching in metadata":
         "Encontrar capas buscando en los metadatos",

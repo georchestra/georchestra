@@ -129,6 +129,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "<div>Searching...</div>": "<div>Идёт поиск...</div>",
     "<div>Search on objects active for NAME layer. Click on the map.</div>": "<div>Поиск объектов запущен на слое ${NAME}. Щёлкните мышкой на карте.</div>",
     /* GEOR_layerfinder.js strings */
+    //"metadata": "métadonnée",
     "Add layers from local files": "Добавить слои из локальных файлов.",
     "Find layers searching in metadata": "Найти слои, проводя поиск в базе метаданных.",
     "Find layers from keywords": "Отыщите слои посредством ключевых слов.",

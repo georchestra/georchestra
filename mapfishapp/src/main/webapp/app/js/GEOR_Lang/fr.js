@@ -156,6 +156,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
          "Cliquez sur la carte.</div>",
     "WMS GetFeatureInfo at ": "GetFeatureInfo WMS sur ",
     /* GEOR_layerfinder.js strings */
+    "metadata": "métadonnée",
     "Add layers from local files": "Ajouter des couches en uploadant un fichier depuis votre ordinateur",
     "Find layers searching in metadata":
         "Trouvez des couches en cherchant dans les métadonnées",
