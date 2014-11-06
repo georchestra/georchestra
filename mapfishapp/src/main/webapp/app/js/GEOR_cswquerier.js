@@ -400,10 +400,8 @@ GEOR.cswquerier = (function() {
                 // 1) shorten text
                 // 2) replace url links with <a href="XXX">lien</a>
                 //    (long links can break the dataview layout)
-                if (text.length >= 400) {
-                    text = text.slice(0, 399) + ' ... ';
-                }
-                var regexp = /(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/gi;
+                text = GEOR.util.shorten(text, 400);
+                var regexp = /(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/gi; // TODO: factorize this regexp in GEOR.util
                 return text.replace(regexp,
                     '[<a href="$&" ext:qtip="'+
                         tr("Open the URL url in a new window", {'URL': '$&'})
