@@ -27,6 +27,12 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
 
     serverStore: null,
 
+    /**
+     * Property: mask
+     * {Ext.LoadMask} the dataview mask
+     */
+    mask: null,
+
     /*
      * Method: initComponent.
      * Overridden constructor. Set up widgets and lay them out
@@ -34,7 +40,8 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
     initComponent: function() {
         var tr = OpenLayers.i18n,
         default_svt = GEOR.config.DEFAULT_SERVICE_TYPE;
-
+        this.store.on("load", this.onStoreLoad, this);
+        this.store.on("beforeload", this.onStoreBeforeload, this);
         this.dataview = new Ext.DataView({
             store: this.store,
             region: 'center',
@@ -152,7 +159,22 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
             }, this.combo, this.urlField]
         }, {
             region: 'center',
-            items: this.dataview
+            autoScroll: true,
+            layout: 'fit',
+            items: this.dataview,
+            listeners: {
+                "afterlayout": function() {
+                    // defer is required to get correct mask position
+                    if (!this.mask) {
+                        (function() {
+                            this.mask = new Ext.LoadMask(this.dataview.ownerCt.getEl(), {
+                                msg: tr("Loading...")
+                            });
+                        }).defer(1000, this);
+                    }
+                },
+                scope: this
+            }
         }];
 
         GEOR.LayerBrowser.superclass.initComponent.call(this);
@@ -180,6 +202,27 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
         this.serverStore.load();
         // try to focus combo
         this.combo.focus();
+    },
+
+    /**
+     * Method: onStoreBeforeload
+     * 
+     */
+    onStoreBeforeload: function() {
+        this.mask && this.mask.show();
+    },
+
+    /**
+     * Method: onStoreLoad
+     * 
+     */
+    onStoreLoad: function() {
+        // hide mask
+        this.mask && this.mask.hide();
+        // scroll dataview to top:
+        var el = this.dataview.getEl();
+        var f = el && el.first();
+        f && f.scrollIntoView(this.dataview.container);
     },
 
     /**
@@ -263,7 +306,8 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
      */
     destroy: function() {
         this.combo.un("select", this.onComboSelect, this);
-        //this.cbxSm.un("selectionchange", this.onSelectionchange, this);
+        this.store.un("load", this.onStoreLoad, this);
+        this.store.un("beforeload", this.onStoreBeforeload, this);
         GEOR.LayerBrowser.superclass.destroy.call(this);
     }
 });
