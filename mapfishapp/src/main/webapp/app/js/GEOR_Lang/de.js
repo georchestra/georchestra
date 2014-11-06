@@ -160,10 +160,8 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Find layers searching in metadata":
         "Layer finden durch Suche in Metadaten",
     "Find layers from keywords": "Layer finden durch Suche mit Schlüsselwörtern",
-    "Find layers querying WMS servers":
-        "Layer finden durch Abfrage des Servers WMS",
-    "Find layers querying WFS servers":
-        "Layer finden durch Abfrage des Servers WFS",
+    "Find layers querying OGC services":
+        "Layer finden durch Abfrage des Servers OGC",
     "layerfinder.layer.unavailable":
         "Layer ${NAME} im WMS Service nicht gefunden.<br/<br/>" +
         "Mögliche Gründe : " +
@@ -177,20 +175,18 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Malformed URL": "URL ungültig.",
     "Queryable": "abfragbar",
     "Opaque": "nicht Transparent",
-    "Choose a WMS server: ": "Wählen Sie einen WMS Server: ",
+    "OGC server": "OGC Server",
+    "Service type": "Art der Server",
+    "Choose a server": "Wählen Sie einen Server",
+    "... or enter its address": "... oder geben Sie Ihre",
     "The server is publishing one layer with an incompatible projection":
         "der Server zeigt Layer mit nicht kompatibler Projektion",
     "The server is publishing NB layers with an incompatible projection":
         "der Server zeigt  ${NB} Layers mit nicht kompatibler Projektion",
     "WMS server": "WMS Server",
-    "Choose a WMTS server: ": "Wählen Sie einen WMTS Server: ",
-    "WMTS server": "WMTS Server",
-    "Choose a WFS server: ": "Wählen Sie einen WFS Server: ",
-    "... or enter its address: ": "... oder geben Sie Ihre:",
     "Unreachable server or insufficient rights": "Server nicht erreichbar " +
         " oder nicht ausreichende Zugriffsrechte, " +
         "Datenmenge zu groß...",
-    "WFS server": "WFS Server",
     /* GEOR_managelayers.js strings */
     "Service": "Service",
     "Protocol": "Protokoll",

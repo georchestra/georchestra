@@ -40,7 +40,7 @@ GEOR.layerfinder = (function() {
     /**
      * Property: currentTab
      * {String} a local cache of the currently active tab
-     * (one of "cswquerier", "cswbrowser", "wms", "wfs", "file")
+     * (one of "cswquerier", "cswbrowser", "ogc", "file")
      */
     var currentTab = "cswquerier";
 
@@ -51,9 +51,12 @@ GEOR.layerfinder = (function() {
     var panels = {
         "cswquerier": null,
         "cswbrowser": null,
+        "ogc": null,
+        /*
         "wmts": null,
         "wms": null,
         "wfs": null,
+        */
         "file": null
     };
 
@@ -64,9 +67,11 @@ GEOR.layerfinder = (function() {
     var selectedRecords = {
         "cswquerier": [],
         "cswbrowser": [],
-        "wmts": [],
+        "ogc": [],
+        /*
         "wms": [],
         "wfs": [],
+        */
         "file": []
     };
 
@@ -162,6 +167,7 @@ GEOR.layerfinder = (function() {
         };
 
         // WMTS
+        /*
         panels["wmts"] = new GEOR.LayerBrowser({
             title: tr("WMTS server"),
             tabTip: tr("Find layers querying WMTS servers"),
@@ -180,12 +186,13 @@ GEOR.layerfinder = (function() {
                 "selectionchanged": selectionChangedListener.call(this, "wmts")
             }
         });
+        */
 
         // WMS
-        panels["wms"] = new GEOR.LayerBrowser({
-            title: tr("WMS server"),
-            tabTip: tr("Find layers querying WMS servers"),
-            fieldLabel: tr("Choose a WMS server: "),
+        panels["ogc"] = new GEOR.LayerBrowser({
+            title: tr("OGC server"),
+            tabTip: tr("Find layers querying OGC services"),
+            fieldLabel: tr("Choose a server"), // still useful here ?
             store: new GEOR.ows.WMSCapabilities({
                 storeOptions: commonStoreOptions
             }),
@@ -204,6 +211,7 @@ GEOR.layerfinder = (function() {
 
         
         // WFS
+        /*
         panels["wfs"] = new GEOR.LayerBrowser({
             title: tr("WFS server"),
             tabTip: tr("Find layers querying WFS servers"),
@@ -260,6 +268,7 @@ GEOR.layerfinder = (function() {
                 "selectionchanged": selectionChangedListener.call(this, "wfs")
             }
         });
+        */
         panels["file"] = GEOR.fileupload.getPanel({
             srs: mapSRS,
             tabTip: tr("Add layers from local files")
@@ -272,8 +281,8 @@ GEOR.layerfinder = (function() {
             deferredRender: true,
             items: [
                 panels["cswquerier"], panels["cswbrowser"], 
-                panels["wmts"], panels["wms"], panels["wfs"], 
-                panels["file"]
+                //panels["wmts"], panels["wms"], panels["wfs"], 
+                panels["ogc"], panels["file"]
             ],
             listeners: {
                 'tabchange': function (tp, p) {
@@ -284,15 +293,17 @@ GEOR.layerfinder = (function() {
                     case panels["cswbrowser"]:
                         currentTab = "cswbrowser";
                         break;
-                    case panels["wmts"]:
-                        currentTab = "wmts";
+                    case panels["ogc"]:
+                        currentTab = "ogc";
                         break;
+                    /*
                     case panels["wms"]:
                         currentTab = "wms";
                         break;
                     case panels["wfs"]:
                         currentTab = "wfs";
                         break;
+                    */
                     case panels["file"]:
                         currentTab = "file";
                         break;

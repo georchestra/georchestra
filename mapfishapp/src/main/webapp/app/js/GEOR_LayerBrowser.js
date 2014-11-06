@@ -79,7 +79,8 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
             tpl: '<tpl for="."><div ext:qtip="<b>{name}</b><br/>{url}" class="x-combo-list-item">{name}</div></tpl>'
         });
         this.urlField = new Ext.app.OWSUrlField({
-            fieldLabel: tr("... or enter its address: "),
+            labelSeparator: tr("labelSeparator"),
+            fieldLabel: tr("... or enter its address"),
             callback: function(r, options, success) {
                 // We don't want to display layers
                 // which cannot be served in map's native SRS
@@ -113,11 +114,28 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
             region: 'north',
             layout: 'form',
             border: false,
-            labelSeparator: '',
+            labelSeparator: tr("labelSeparator"),
             labelWidth: 170,
             bodyStyle: 'padding: 5px;',
-            height: 65,
-            items: [this.combo, this.urlField]
+            height: 90,
+            items: [{
+                xtype: 'radiogroup',
+                fieldLabel: tr("Service type"),
+                items: [{
+                    boxLabel: 'WMS', 
+                    name: 'svtype',
+                    inputValue: 'wms',
+                    checked: true
+                },{
+                    boxLabel: 'WMTS',
+                    inputValue: 'wmts',
+                    name: 'svtype'
+                },{
+                    boxLabel: 'WFS',
+                    inputValue: 'wfs',
+                    name: 'svtype'
+                }]
+            }, this.combo, this.urlField]
         }, grid];
 
         GEOR.LayerBrowser.superclass.initComponent.call(this);
