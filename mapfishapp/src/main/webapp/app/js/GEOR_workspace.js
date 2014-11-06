@@ -77,7 +77,6 @@ GEOR.workspace = (function() {
                         "viewer_url": GEOR.util.getValidURI("?wmc="+encodeURIComponent(wmc_url))
                     }),
                     success: function(response) {
-                        formPanel.ownerCt.close();
                         var o = Ext.decode(response.responseText);
                         // TODO: get metadata uuid and open link to MD
                     },
