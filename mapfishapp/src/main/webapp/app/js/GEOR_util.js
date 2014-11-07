@@ -225,20 +225,21 @@ GEOR.util = (function() {
 
         /**
          * APIMethod: setMetadataURL
-         * Given a GeoExt Layer Record, sets the correct MetadataURL
-         * at layer level
+         * Given a layer, and a bunch of metadataURLs, sets the best metadata url
          *
          * Parameters:
-         * r - {GeoExt.data.LayerRecord}
+         * layer - {OpenLayers.Layer}
+         * metadataURLs - {Array}
+         *
+         * Returns:
+         * {String} the "best" metadataURL for WMC storage
          */
         setMetadataURL: function(layer, metadataURLs) {
-            var murls = metadataURLs; //r.get("metadataURLs"),
-                //layer = r.getLayer();
-            if (murls && murls.length > 0) {
-                var murl = murls[0];
+            if (metadataURLs && metadataURLs.length > 0) {
+                var murl = metadataURLs[0];
                 // default to first entry
                 layer.metadataURL = (murl.href) ? murl.href : murl;
-                Ext.each(murls, function(murl) {
+                Ext.each(metadataURLs, function(murl) {
                     // prefer text/html format if found
                     if (murl.format && murl.format == 'text/html') {
                         layer.metadataURL = (murl.href) ? murl.href : murl;
