@@ -76,9 +76,17 @@ GEOR.workspace = (function() {
                         "wmc_url": wmc_url,
                         "viewer_url": GEOR.util.getValidURI("?wmc="+encodeURIComponent(wmc_url))
                     }),
-                    success: function(response) {
-                        var o = Ext.decode(response.responseText);
-                        // TODO: get metadata uuid and open link to MD
+                    success: function(resp) {
+                        if (resp.responseText) {
+                            var r =  /<uuid>(.{36})<\/uuid>/.exec(resp.responseText);
+                            if (r && r[1]) {
+                                window.open(GEOR.config.GEONETWORK_BASE_URL+"/?uuid="+r[1]);
+                                return;
+                            }
+                        }
+                        GEOR.util.errorDialog({
+                            msg: tr("There was an error creating the metadata.")
+                        });
                     },
                     scope: this
                 });
