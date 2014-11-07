@@ -881,7 +881,7 @@ GEOR.managelayers = (function() {
                             items: [{
                                 xtype: 'displayfield',
                                 fieldLabel: tr("Service"),
-                                value: '<a href="'+caps+'">'+caps+'</a>',
+                                value: '<a href="'+caps+'">'+caps+'</a>'
                             },{
                                 xtype: 'displayfield',
                                 fieldLabel: tr("FeatureType"),

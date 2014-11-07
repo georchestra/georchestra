@@ -140,17 +140,18 @@ GEOR.cswbrowser = (function() {
                                 rights.push(r.value);
                             });
                         }
-                        this.push({
+                        var out = {
                             name: name,
                             layer_name: item.name,
                             service_url: item.value,
                             metadataURL: metadataURL,
                             rights: rights.join(' - ') || "",
-                            abstract: record.abstract ?
-                                record.abstract[0] : "",
                             source: (record.source && record.source[0]) ?
                                 record.source[0].value : ""
-                        });
+                        };
+                        out["abstract"] = record.hasOwnProperty("abstract") ?
+                                record["abstract"][0] : "";
+                        this.push(out);
                     }
                 }, this);
             }
