@@ -75,7 +75,7 @@ Do whatever updates you want in the master branch, and regularly merge the upstr
     git fetch upstream
     git merge upstream/master
 
-Note: merge upstream/master into your config if you're using geOrchestra master, or upstream/14.01 if you're using geOrchestra stable.
+Note: merge upstream/master into your config if you're using geOrchestra master, or upstream/14.06 if you're using geOrchestra stable.
 
 Read more about the [configuration process](config/README.md).
 
