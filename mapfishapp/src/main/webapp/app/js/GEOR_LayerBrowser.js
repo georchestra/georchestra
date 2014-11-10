@@ -2,35 +2,24 @@ Ext.namespace("GEOR");
 
 GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
 
-    /* public */
-    store: null,
-
-    /* private */
-    
     layout: 'border',
-    
-    combo: null,
-    
-    urlField: null,
-    
     mapSRS: null,
-
     defaults: {
         border: false
     },
 
-    /**
-     * Property: dataview
-     * {Ext.DataView}
-     */
-    dataview: null,
-
+    // the servers list combo
+    combo: null,
+    // the store behind the combo
     serverStore: null,
 
-    /**
-     * Property: mask
-     * {Ext.LoadMask} the dataview mask
-     */
+    // the twin trigger field
+    urlField: null,
+    // the layer store
+    store: null,
+
+    dataview: null,
+
     mask: null,
 
     /*
@@ -38,8 +27,8 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
      * Overridden constructor. Set up widgets and lay them out
      */
     initComponent: function() {
-        var tr = OpenLayers.i18n,
-        default_svt = GEOR.config.DEFAULT_SERVICE_TYPE;
+        var tr = OpenLayers.i18n;
+        this.fieldLabel = tr("Choose a server");
         this.store.on("load", this.onStoreLoad, this);
         this.store.on("beforeload", this.onStoreBeforeload, this);
         this.dataview = new Ext.DataView({
@@ -57,21 +46,18 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
             autoHeight: true,
             tpl: this.getTemplate(),
             listeners: {
-                "click": function(dv) {
-                    // TODO
-                    //observable.fireEvent("selectionchanged", dv.getSelectedRecords());
-                }
+                "selectionchange": this.onSelectionchange,
+                scope: this
             }
         });
         this.serverStore = new Ext.data.Store({
             proxy: new Ext.data.HttpProxy({
                 url: GEOR.util.getValidURI(
-                    GEOR.config.OGC_SERVERS_URL[default_svt]
+                    GEOR.config.OGC_SERVERS_URL[this.id]
                 ),
                 method: 'GET',
                 disableCaching: false
             }),
-            autoLoad: true,
             reader: new Ext.data.JsonReader({
                 fields: ['name', 'url'],
                 root: 'servers'
@@ -125,38 +111,17 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
             height: 30,
             width: 400
         });
-
         this.items = [{
             region: 'north',
             layout: 'form',
             labelSeparator: tr("labelSeparator"),
             labelWidth: 170,
             bodyStyle: 'padding: 5px;',
-            height: 90,
-            items: [{
-                xtype: 'radiogroup',
-                fieldLabel: tr("Service type"),
-                items: [{
-                    boxLabel: 'WMS',
-                    name: 'svtype',
-                    inputValue: 'wms',
-                    checked: default_svt == "WMS"
-                },{
-                    boxLabel: 'WMTS',
-                    name: 'svtype',
-                    inputValue: 'wmts',
-                    checked: default_svt == "WMTS"
-                },{
-                    boxLabel: 'WFS',
-                    name: 'svtype',
-                    inputValue: 'wfs',
-                    checked: default_svt == "WFS"
-                }],
-                listeners: {
-                    "change": this.onServiceTypeChange,
-                    scope: this
-                }
-            }, this.combo, this.urlField]
+            height: 65,
+            items: [
+                this.combo, 
+                this.urlField
+            ]
         }, {
             region: 'center',
             autoScroll: true,
@@ -164,13 +129,16 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
             items: this.dataview,
             listeners: {
                 "afterlayout": function() {
-                    // defer is required to get correct mask position
                     if (!this.mask) {
+                        // async load servers list:
+                        this.serverStore.load();
+                        // build mask
                         (function() {
                             this.mask = new Ext.LoadMask(this.dataview.ownerCt.getEl(), {
                                 msg: tr("Loading...")
                             });
                         }).defer(1000, this);
+                        // defer is required to get correct mask position
                     }
                 },
                 scope: this
@@ -178,30 +146,13 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
         }];
 
         GEOR.LayerBrowser.superclass.initComponent.call(this);
-    },
 
-    /**
-     * Method: onServiceTypeChange
-     * 
-     */
-    onServiceTypeChange: function(rg, checked) {
-        // clear twintriggerfield:
-        this.urlField.onTrigger1Click();
-        // clear results
-        this.dataview.clearSelections();
-        // clear combo
-        this.combo.clearValue();
-        // load servers list
-        this.serverStore.proxy.setUrl(
-            GEOR.util.getValidURI(
-                GEOR.config.OGC_SERVERS_URL[
-                    checked.inputValue.toUpperCase()
-                ]
-            )
+        this.addEvents(
+            /**
+             * @event selectionchanged
+             */
+            "selectionchanged"
         );
-        this.serverStore.load();
-        // try to focus combo
-        this.combo.focus();
     },
 
     /**
@@ -229,8 +180,8 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
      * Method: onSelectionchange
      * 
      */
-    onSelectionchange: function(sm) {
-        this.fireEvent("selectionchanged", sm.getSelections());
+    onSelectionchange: function(dv, selections) {
+        this.fireEvent("selectionchanged", dv.getRecords(selections));
     },
 
     /**
