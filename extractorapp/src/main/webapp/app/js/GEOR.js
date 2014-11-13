@@ -57,7 +57,7 @@ Ext.namespace("GEOR");
      * Handler for extract all checked layers button.
      */
     var extractHandler = function(b) {
-        var emailRegexp = /^([\w\-\'\-]+)(\.[\w-\'\-]+)*@([\w\-]+\.){1,5}([A-Za-z]){2,4}$/;
+        var emailRegexp = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
         var email = GEOR.data.email || (localStorage && localStorage.getItem('email'));
         if (emailRegexp.test(email)) {
             handleDlForm(email, b);
