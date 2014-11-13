@@ -138,4 +138,4 @@ You are now ready to [build your own geOrchestra](build.md) !
 
 ## More
 
-For the most curious of you, we have interesting reading about the [geOrchestra configuration process](config/README.md) here.
+For the most curious of you, we have interesting reading about the [geOrchestra configuration process](../config/README.md) here.
