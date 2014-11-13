@@ -4,13 +4,12 @@ Contrary to other projects such as GeoServer, we do not provide generic WARs.
 
 Let's bootstrap your config directory from the template we provide:
 ```
-cd ~
-git clone https://github.com/georchestra/template.git myprofile
-cd myprofile
+git clone https://github.com/georchestra/template.git ~/myprofile
+cd ~/myprofile
 git remote rename origin upstream
 ```
 
-First thing to note is that you end up in the stable branch (14.06) matching the latest stable geOrchestra version (also 14.06).  
+First thing to note is that you end up in the stable branch (14.06) matching the latest stable geOrchestra version (also 14.06). 
 This is exactly what we want, nice !
 
 Remember: every stable geOrchestra version has its own template configuration, hosted in a branch named by the release version.
@@ -53,7 +52,7 @@ Eg: ```~/myprofile/mapfishapp/app/js/GEOR_custom.js``` will be copied to ```~/ge
 
 ### Shared parameters
 
-Let's focus on the **build_support** directory first.
+Let's focus on the ```build_support``` directory first.
 
 The first file you'll have to edit is **shared.maven.filters**. This one contains all the configuration options which are shared between our modules.
 To make it clear, we prefixed all variables with the ```shared``` keyword. Eg: ```shared.log.dir``` is the directory where **all** webapps will write their logs to.
@@ -67,7 +66,7 @@ Once you've finished, we think you should **at least** update these shared maven
 
 ### Module-specific parameters
 
-The second file you have to edit in build_support is **GenerateConfig.groovy**. This one is a groovy script which is used to customize application-specific configuration files.
+The second file you have to edit in ```build_support``` is **GenerateConfig.groovy**. This one is a groovy script which is used to customize application-specific configuration files.
 Most of the server-side application config options can be customized by the way of this script.
 
 The most important lines in this file are those matching this pattern:
@@ -123,7 +122,7 @@ Let's imagine you don't want animations on window openings ... you would have to
 
 ## Versioning the configuration directory
 
-The good news is that, configuration being mostly text files, it can be versionned very easily !
+The good news is that, configuration being mostly text files, it can be versionned very easily !  
 Let's take advantage of this right now.
 
 Since the configuration folder is already a git repository, you just have to commit regularly the changes you make:
