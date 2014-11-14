@@ -1,3 +1,8 @@
+At this stage, if you don't have the geOrchestra sources, you need to download them:
+```
+git clone --recursive https://github.com/georchestra/georchestra.git ~/georchestra
+```
+
 How to build ?
 ==============
 

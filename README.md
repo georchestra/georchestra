@@ -22,7 +22,7 @@ The development branch is ```master```. Please refer to the [release notes](RELE
 
 To download the latest stable version, use the following command line:
 ```
-git clone --recursive https://github.com/georchestra/georchestra.git
+git clone --recursive https://github.com/georchestra/georchestra.git ~/georchestra
 ```
 
 To install geOrchestra, you will have to:

@@ -89,6 +89,7 @@ This provides an easy way to customize stylesheets and images, but also to pass 
 The most important files to customize are probably:
  * ```~/myprofile/extractorapp/app/js/GEOR_custom.js``` - client-side parameters for the extractor
  * ```~/myprofile/mapfishapp/app/js/GEOR_custom.js``` - client-side parameters for the viewer
+ * ```~/myprofile/mapfishapp/WEB-INF/print/config.yaml``` - print layouts for the viewer
  * ```~/myprofile/geonetwork-client/apps/georchestra/js/Settings.js``` - client-side parameters for the catalog
  * ```~/myprofile/geonetwork-client/apps/georchestra/js/map/Settings.js``` - client-side parameters for the catalog mini-map
  * ```~/myprofile/header/img/logo.png``` - your SDI logo
@@ -134,8 +135,24 @@ cd ~/myprofile
 git commit -am "mapfishapp: ANIMATE_WINDOWS set to false"
 ```
 
+Now, let's backup your config in the cloud. This is an optional but recommended step.  
+In the following example, we're using [GitLab](https://gitlab.com/) hosting, but it could be any other provider such as [GitHub](https://github.com/) or [Bitbucket](https://bitbucket.org/), **provided the repository is private**. 
+
+Here are steps:
+ * create an account, 
+ * upload your public SSH key,
+ * create a private repository - for instance one named "myprofile"
+ 
+Ready ?  
+Let's add the remote to your config directory:  
+```
+cd ~/myprofile
+git remote add origin git@gitlab.com:USER/myprofile.git (where USER stands for your GitLab username)
+git push origin master
+```
+
 Congrats !  
-You are now ready to [build your own geOrchestra](build.md) !
+Your config is safe, and you are now ready to [build your own geOrchestra](build.md) !
 
 ## More
 
