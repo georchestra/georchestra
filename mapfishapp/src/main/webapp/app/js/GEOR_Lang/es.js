@@ -453,6 +453,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "default viewer context": "contexto por omisión",
     "(default)": "<br/>(contexto por omisión actual)",
     /* GEOR_workspace.js strings */
+    "There was an error creating the metadata.": "Se ha producido un error al crear los metadatos.",
     "Share this map": "Comparte este mapa",
     /*
     "Mobile viewer": "Visualiseur mobile",

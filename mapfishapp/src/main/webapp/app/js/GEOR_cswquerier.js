@@ -744,7 +744,6 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
             }),
             // word filters
             byWords = [];
-
         Ext.each(words, function(word) {
             if (word) {
                 // #word : search in keywords, use _ for space
@@ -797,7 +796,7 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
                     );
                 }
                 // word : search for hits on any property defined in CSW_FILTER_PROPERTIES
-                else {
+                else if (word !== "") {
                     var byWordProp = [];
                     Ext.each(GEOR.config.CSW_FILTER_PROPERTIES, function(property) {
                         byWordProp.push(
@@ -808,7 +807,7 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
                                 matchCase: false
                             })
                         );
-                     });
+                    });
                     byWords.push(
                         new OpenLayers.Filter.Logical({
                             type: "||",
@@ -819,27 +818,32 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
             }
         });
 
-        // combine filters alltogether
-        return new OpenLayers.Filter.Logical({
-            type: "&&",
-            filters: [
-                // data types
-                byTypes,
-                // query
-                new OpenLayers.Filter.Logical({
-                    type: "||",
-                    filters: [
-                        // exact matches
-                        byIds,
-                        // word matches
-                        new OpenLayers.Filter.Logical({
-                            type: "&&",
-                            filters: byWords
-                        })
-                    ]
-                })
-            ]
-        });
+        if (byWords.length > 0) {
+            // combine filters alltogether
+            return new OpenLayers.Filter.Logical({
+                type: "&&",
+                filters: [
+                    // data types
+                    byTypes,
+                    // query
+                    new OpenLayers.Filter.Logical({
+                        type: "||",
+                        filters: [
+                            // exact matches
+                            byIds,
+                            // word matches
+                            new OpenLayers.Filter.Logical({
+                                type: "&&",
+                                filters: byWords
+                            })
+                        ]
+                    })
+                ]
+            })
+        }
+        else {
+            return byTypes;
+        }
     },
 
     // search
