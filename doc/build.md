@@ -1,3 +1,7 @@
+# Building geOrchestra
+
+Here are the steps...
+
 ## Get the sources
 
 At this stage, if you don't have the geOrchestra sources, you need to download them:
@@ -56,7 +60,7 @@ In case you only want to build one module or a collection, the syntax is a bit d
 ```
 ... where ```moduleX``` can be one of: ```analytics```, ```cas```, ```catalogapp```, ```downloadform```, ```extractorapp```, ```geonetwork```, ```geofence```, ```geoserver```, ```geowebcache```, ```header```, ```ldapadmin```, ```mapfishapp```, ```proxy```.
 
-As a result of the build process, your artifacts should be copied into the subfolders of the ```~/.m2/repository/org/georchestra/``` directory.
+As a result of the build process, you should find the geOrchestra artifacts into the subfolders of the ```~/.m2/repository/org/georchestra/``` directory.
 
 Are you having problems with the build ?  
 Please have a look at our [continuous integration](https://sdi.georchestra.org/ci/job/georchestra-template/). If it builds and yours doesn't, the error is probably on your side.

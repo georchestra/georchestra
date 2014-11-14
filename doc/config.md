@@ -1,3 +1,5 @@
+# Creating a custom configuration
+
 At the moment, building geOrchestra requires that you prepare a configuration directory.  
 Contrary to other projects such as GeoServer, we do not provide generic WARs.
 
