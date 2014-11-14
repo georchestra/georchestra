@@ -168,7 +168,7 @@ GEOR.util = (function() {
         stringDeaccentuate: function(str) {
             str = str.replace(/ç/g, 'c');
             str = str.replace(/(á|à|ä|â|å|Â|Ä|Á|À|Ã)/g, 'a');
-            str = str.replace(/(é|è|ë|ê|Ê|Ë|É|É|È|Ę)/g, 'e');
+            str = str.replace(/(é|è|ë|ê|Ê|Ë|É|È|Ę)/g, 'e');
             str = str.replace(/(í|ì|ï|î|Î|Ï|Í|Ì|Į)/g, 'i');
             str = str.replace(/(ó|ò|ö|ô|ø|Ô|Ö|Ó|Ò)/g, 'o');
             return str.replace(/(ú|ù|ü|û|Û|Ü|Ú|Ù|Ų)/g, 'u');
