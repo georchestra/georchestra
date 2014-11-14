@@ -259,7 +259,7 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
                 '<div class="x-view-item">',
                     '<table style="width:100%;"><tr><td style="vertical-align:text-top;">',
                         '{[this.queryable(values)]}',
-                        '<p><b>{[this.title(values.title)]}</b></p>',
+                        '<p><b ext:qtip="{title}">{[this.title(values.title)]}</b></p>',
                         '<p>{[this.abstract(values.abstract)]}&nbsp;',
                         '{[this.mdlink(values)]}',
                     '</td></tr></table>',
@@ -279,7 +279,7 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
             },
             "queryable": function(values) {
                 return values.queryable ?
-                    '<div style="float:right;"><img src="'+GEOR.config.PATHNAME+'/app/img/famfamfam/information.png" /></div>' :
+                    '<div style="float:right;"><img src="'+GEOR.config.PATHNAME+'/app/img/famfamfam/information.png" ext:qtip="'+tr("Queryable")+'"/></div>' :
                     "";
             },
             "mdlink": function(values) {
