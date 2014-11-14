@@ -59,6 +59,7 @@ To make it clear, we prefixed all variables with the ```shared``` keyword. Eg: `
 
 This file has lots of comments: you should read them all.
 Once you've finished, we think you should **at least** update these shared maven filters:
+ * ```shared.server.name```, is the server Fully Qualified Domain Name,
  * ```shared.ldap.admin.password``` is the ldap administrative account password,
  * ```shared.privileged.geoserver.pass``` is the password for a special geOrchestra admin user which is internally used, (see the [setup/openldap.md](ldap setup documentation)),
  * ```shared.email.*``` are the settings related to email sending (used by ldapadmin and extractorapp)
