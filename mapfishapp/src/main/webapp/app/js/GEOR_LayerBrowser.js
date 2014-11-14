@@ -22,6 +22,8 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
 
     mask: null,
 
+    filterPanel: null,
+
     /*
      * Method: initComponent.
      * Overridden constructor. Set up widgets and lay them out
@@ -29,7 +31,8 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
     initComponent: function() {
         var tr = OpenLayers.i18n;
         this.fieldLabel = tr("Choose a server");
-        this.store.on("load", this.onStoreLoad, this);
+        this.store.on("datachanged", this.onStoreDatachanged, this);
+        this.store.on("clear", this.onStoreClear, this); // triggered by store.removeAll(), not catched by "datachanged"
         this.store.on("beforeload", this.onStoreBeforeload, this);
         this.dataview = new Ext.DataView({
             store: this.store,
@@ -84,6 +87,8 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
             labelSeparator: tr("labelSeparator"),
             fieldLabel: tr("... or enter its address"),
             callback: function(r, options, success) {
+                // clear filter:
+                this.filterPanel.items.get(0).reset();
                 // We don't want to display layers
                 // which cannot be served in map's native SRS
                 if (this.mapSRS) {
@@ -111,6 +116,30 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
             height: 30,
             width: 400
         });
+
+        this.filterPanel = new Ext.FormPanel({
+            region: "south",
+            layout: 'column',
+            disabled: true,
+            hideLabels: true,
+            bodyStyle: 'padding: 5px;',
+            border: false,
+            height: 31,
+            items: [new Ext.ux.form.SearchField({
+                store: this.store,
+                emptyText: tr("I'm looking for ..."),
+                width: 150
+            }), {
+                xtype: "displayfield",
+                value: "",
+                style: {
+                    textAlign: "right",
+                    margin: "5px"
+                },
+                columnWidth: 1
+            }]
+        });
+
         this.items = [{
             region: 'north',
             layout: 'form',
@@ -143,7 +172,7 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
                 },
                 scope: this
             }
-        }];
+        }, this.filterPanel]; // TODO: instead of a new panel, try with a bottom bar attached to the dataview ?
 
         GEOR.LayerBrowser.superclass.initComponent.call(this);
 
@@ -160,20 +189,40 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
      * 
      */
     onStoreBeforeload: function() {
+        this.filterPanel.disable();
         this.mask && this.mask.show();
     },
 
     /**
-     * Method: onStoreLoad
-     * 
+     * Method: onStoreDatachanged 
+     * ... equivalent to "load" or "filtered"
      */
-    onStoreLoad: function() {
+    onStoreDatachanged: function(store) {
+        this.filterPanel.enable();
         // hide mask
         this.mask && this.mask.hide();
+        // focus search field:
+        this.filterPanel.items.get(0).focus();
+        // update store count:
+        this.filterPanel.items.get(1).setRawValue(
+            store.getCount() + " " + OpenLayers.i18n("layers")
+        );
         // scroll dataview to top:
         var el = this.dataview.getEl();
         var f = el && el.first();
         f && f.scrollIntoView(this.dataview.container);
+    },
+
+    /**
+     * Method: onStoreClear
+     * 
+     */
+    onStoreClear: function(store) {
+        // update store count:
+        this.filterPanel.items.get(1).setRawValue(
+            store.getCount() + " " + OpenLayers.i18n("layers")
+        );
+        this.filterPanel.disable();
     },
 
     /**
@@ -216,6 +265,11 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
                 '</div>',
             '</tpl>'
         ].join('');
+        // Ideas to make it lighter :
+        // - border-botttom: 1px thin line
+        // - white background
+        // - metadata link in a new p at the end
+        // - metadata link lighter color : not blue, but grey.
 
         var context = {
             "title": function(t) {
@@ -267,8 +321,56 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
      */
     destroy: function() {
         this.combo.un("select", this.onComboSelect, this);
-        this.store.un("load", this.onStoreLoad, this);
+        this.store.un("datachanged", this.onStoreDatachanged, this);
+        this.store.un("clear", this.onStoreClear, this);
         this.store.un("beforeload", this.onStoreBeforeload, this);
         GEOR.LayerBrowser.superclass.destroy.call(this);
+    }
+});
+
+
+
+Ext.ns('Ext.ux.form');
+Ext.ux.form.SearchField = Ext.extend(Ext.form.TwinTriggerField, {
+    initComponent : function(){
+        Ext.ux.form.SearchField.superclass.initComponent.call(this);
+        this.on('keyup', function(f, e){
+            this.filter();
+            if (this.getRawValue() == "") {
+                this.triggers[0].hide();
+            }
+        }, this);
+    },
+    enableKeyEvents: true,
+    trigger1Class: 'x-form-clear-trigger',
+    hideTrigger1: true,
+    hideTrigger2: true,
+    width:180,
+    hasSearch: false,
+
+    // cancel
+    onTrigger1Click: function(){
+        if(this.hasSearch){
+            this.reset();
+            this.store.clearFilter();
+            this.triggers[0].hide();
+            this.hasSearch = false;
+        }
+    },
+
+    // search
+    filter: function(){
+        var v = this.getRawValue().toUpperCase();
+        this.store.filter([{
+            fn: function(r) {
+                var t = r.get('title'),
+                    a = r.get('abstract');
+                // TODO: improve matching ;-) (accents, spaces, special chars ...)
+                return (t && t.toUpperCase().indexOf(v) > -1) ||
+                    (a && a.toUpperCase().indexOf(v) > -1);
+            }
+        }]);
+        this.hasSearch = true;
+        this.triggers[0].show();
     }
 });

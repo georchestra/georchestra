@@ -264,7 +264,7 @@ GEOR.layerfinder = (function() {
             items: [
                 panels["cswquerier"], panels["cswbrowser"], 
                 {
-                    title: tr("OGC servers"),
+                    title: tr("OGC server"),
                     tabTip: tr("Find layers querying OGC services"),
                     layout: 'border',
                     border: false,
@@ -534,7 +534,7 @@ GEOR.layerfinder = (function() {
                 layout: 'fit',
                 animateTarget: GEOR.config.ANIMATE_WINDOWS && animateFrom,
                 width: 650,
-                height: 450,
+                height: 500,
                 closeAction: 'hide',
                 modal: false,
                 items: createTabPanel(),
