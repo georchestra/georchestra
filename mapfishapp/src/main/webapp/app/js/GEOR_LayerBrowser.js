@@ -364,11 +364,11 @@ Ext.ux.form.SearchField = Ext.extend(Ext.form.TwinTriggerField, {
         var v = this.getRawValue().toUpperCase();
         this.store.filter([{
             fn: function(r) {
-                var t = r.get('title'),
-                    a = r.get('abstract');
-                // TODO: improve matching ;-) (accents, spaces, special chars ...)
-                return (t && t.toUpperCase().indexOf(v) > -1) ||
-                    (a && a.toUpperCase().indexOf(v) > -1);
+                var haystack = GEOR.util.prepareString(
+                    r.get('title') + r.get('abstract')
+                ),
+                needle = GEOR.util.prepareString(v);
+                return new RegExp(needle).test(haystack);
             }
         }]);
         this.hasSearch = true;

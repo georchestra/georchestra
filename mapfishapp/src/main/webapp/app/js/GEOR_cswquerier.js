@@ -691,7 +691,7 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
     createFilter: function() {
         // see http://osgeo-org.1560.n6.nabble.com/CSW-GetRecords-problem-with-spaces-tp3862749p3862750.html
         var v = this.getValue(),
-            words = v.replace(new RegExp("[,;:/%()!*.\\[\\]~&=]","g"), ' ').split(' '),
+            words = v.replace(GEOR.util.specialCharsRegExp, ' ').split(' '),
             // data type filters
             // improve relevance of results: (might not be relevant with other csw servers than geonetwork)
             byTypes = new OpenLayers.Filter.Logical({

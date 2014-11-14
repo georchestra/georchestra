@@ -166,12 +166,34 @@ GEOR.util = (function() {
          * {String}
          */
         stringDeaccentuate: function(str) {
-            str = str.replace(/ç/, 'c');
-            str = str.replace(/(á|à|ä|â|å|Â|Ä|Á|À|Ã)/, 'a');
-            str = str.replace(/(é|è|ë|ê|Ê|Ë|É|È|Ę)/, 'e');
-            str = str.replace(/(í|ì|ï|î|Î|Ï|Í|Ì|Į)/, 'i');
-            str = str.replace(/(ó|ò|ö|ô|ø|Ô|Ö|Ó|Ò)/, 'o');
-            return str.replace(/(ú|ù|ü|û|Û|Ü|Ú|Ù|Ų)/, 'u');
+            str = str.replace(/ç/g, 'c');
+            str = str.replace(/(á|à|ä|â|å|Â|Ä|Á|À|Ã)/g, 'a');
+            str = str.replace(/(é|è|ë|ê|Ê|Ë|É|É|È|Ę)/g, 'e');
+            str = str.replace(/(í|ì|ï|î|Î|Ï|Í|Ì|Į)/g, 'i');
+            str = str.replace(/(ó|ò|ö|ô|ø|Ô|Ö|Ó|Ò)/g, 'o');
+            return str.replace(/(ú|ù|ü|û|Û|Ü|Ú|Ù|Ų)/g, 'u');
+        },
+
+        /**
+         * APIProperty: specialCharsRegExp
+         */
+        specialCharsRegExp: new RegExp("[,;:/%()!*.\\[\\]~&=-]","g"),
+
+        /**
+         * APIMethod: prepareString
+         * Returns a string without accents or special chars, uppercased
+         *
+         * Parameters:
+         * str - {String}
+         *
+         * Returns:
+         * {String}
+         */
+        prepareString: function(str) {
+            // remove special chars and spaces
+            var t = str.replace(GEOR.util.specialCharsRegExp, '').replace(/ /g, '');
+            // substitue accents & uppercase:
+            return GEOR.util.stringDeaccentuate(t).toUpperCase();
         },
 
         /**
