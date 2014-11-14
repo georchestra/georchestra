@@ -358,7 +358,7 @@ GEOR.cswquerier = (function() {
                 '<div class="x-view-item">',
                     '<table style="width:100%;"><tr><td style="vertical-align:text-top;">',
                         '<p><b>{layer_description}</b></p>',
-                        '<p>{[this.abstract(values.md_abstract)]}&nbsp;',
+                        '<p style="padding-top: 2px">{[this.abstract(values.md_abstract)]}&nbsp;',
                         '<a href="{[this.metadataURL(values)]}" ext:qtip="' +
                             tr("Show metadata sheet in a new window") + '" ',
                         'target="_blank" onclick="window.open(this.href);return false;">' +

@@ -260,8 +260,8 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
                     '<table style="width:100%;"><tr><td style="vertical-align:text-top;">',
                         '{[this.queryable(values)]}',
                         '<p><b ext:qtip="{title}">{[this.title(values.title)]}</b></p>',
-                        '<p>{[this.abstract(values.abstract)]}&nbsp;',
-                        '{[this.mdlink(values)]}',
+                        '<p style="padding-top: 2px">{[this.abstract(values.abstract)]}</p>',
+                        '<p>{[this.mdlink(values)]}</p>',
                     '</td></tr></table>',
                 '</div>',
             '</tpl>'
@@ -285,10 +285,10 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
             "mdlink": function(values) {
                 var url = GEOR.util.setMetadataURL(values.layer, values.metadataURLs);
                 return url ? [
-                    '&nbsp;-&nbsp;<a href="', url, '" ext:qtip="',
+                    '<a href="', url, '" ext:qtip="',
                         tr("Show metadata sheet in a new window"), '" ',
                         'target="_blank" onclick="window.open(this.href);return false;">',
-                        tr('metadata'), '</a></p>'
+                        tr('metadata'), '</a>'
                 ].join('') : "";
             },
             "abstract": function(t) {
@@ -364,9 +364,11 @@ Ext.ux.form.SearchField = Ext.extend(Ext.form.TwinTriggerField, {
         var v = this.getRawValue().toUpperCase();
         this.store.filter([{
             fn: function(r) {
-                var haystack = GEOR.util.prepareString(
-                    r.get('title') + r.get('abstract')
-                ),
+                var haystack = GEOR.util.prepareString([
+                    r.get('title'),
+                    r.get('abstract'),
+                    Ext.pluck(r.get('keywords'), "value").join('')
+                ].join()),
                 needle = GEOR.util.prepareString(v);
                 return new RegExp(needle).test(haystack);
             }

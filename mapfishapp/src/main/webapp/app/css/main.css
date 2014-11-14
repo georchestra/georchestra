@@ -351,6 +351,9 @@ div.olMapViewport {
 	border: 1px solid #bbb;
 	max-width: 180px; /* to cope with larger images (geonetwork has 180px thumbnails)*/
 }
+.x-list a {
+	color: #777;
+}
 
 /* Bold layer names in layer manager http://applis-bretagne.fr/redmine/issues/4532 */
 .geor-tree-node a.x-tree-node-anchor span {
