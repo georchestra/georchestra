@@ -18,10 +18,10 @@ Not yet funded, but would be really nice to have:
  * mapfishapp: take into account quotes in csw queries - see [#706](https://github.com/georchestra/georchestra/issues/706),
  * georchestra: use the browser-advertised preferred language by default (and give the user a chance to select the correct one with a combobox in the header) - see [#589](https://github.com/georchestra/georchestra/issues/589),
  * georchestra: validate on Tomcat 7/8 - see [#504](https://github.com/georchestra/georchestra/issues/504),
+ * mapfishapp: support read/write WMTS layer types from/to OWSContext - see [#360](https://github.com/georchestra/georchestra/issues/360) & [#399](https://github.com/georchestra/georchestra/issues/399),
 
 Funded, but not yet done:
  * geoserver: update to 2.5.x with geofence - see [#677](https://github.com/georchestra/georchestra/issues/677) - CIGALsace & GeoBretagne,
- * mapfishapp: support read/write WMTS layer types from/to OWSContext - see [#360](https://github.com/georchestra/georchestra/issues/360) & [#399](https://github.com/georchestra/georchestra/issues/399) - CIGALsace,
  * ldapadmin: delegated administrators - see [#786](https://github.com/georchestra/georchestra/issues/786) - GeoBretagne,
 
 New features:
