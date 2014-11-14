@@ -138,7 +138,7 @@ git commit -am "mapfishapp: ANIMATE_WINDOWS set to false"
 Now, let's backup your config in the cloud. This is an optional but recommended step.  
 In the following example, we're using [GitLab](https://gitlab.com/) hosting, but it could be any other provider such as [GitHub](https://github.com/) or [Bitbucket](https://bitbucket.org/), **provided the repository is private**. 
 
-Here are steps:
+Here are the steps:
  * create an account, 
  * upload your public SSH key,
  * create a private repository - for instance one named "myprofile"
