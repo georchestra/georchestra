@@ -534,6 +534,7 @@ GEOR.layerfinder = (function() {
                 layout: 'fit',
                 animateTarget: GEOR.config.ANIMATE_WINDOWS && animateFrom,
                 width: 650,
+                minWidth: 630,
                 height: 500,
                 closeAction: 'hide',
                 modal: false,

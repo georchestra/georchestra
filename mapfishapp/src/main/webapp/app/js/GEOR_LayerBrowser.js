@@ -70,7 +70,7 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
             editable: false,
             triggerAction: 'all',
             height: 30,
-            width: 400,
+            anchor: '95%',
             fieldLabel: this.fieldLabel,
             loadingText: tr("Loading..."),
             mode: 'local',
@@ -85,6 +85,7 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
         });
         this.urlField = new Ext.app.OWSUrlField({
             labelSeparator: tr("labelSeparator"),
+            anchor: '95%',
             fieldLabel: tr("... or enter its address"),
             callback: function(r, options, success) {
                 // clear filter:
