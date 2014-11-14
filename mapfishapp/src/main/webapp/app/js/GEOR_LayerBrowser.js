@@ -173,7 +173,7 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
                 },
                 scope: this
             }
-        }, this.filterPanel]; // TODO: instead of a new panel, try with a bottom bar attached to the dataview ?
+        }, this.filterPanel];
 
         GEOR.LayerBrowser.superclass.initComponent.call(this);
 
@@ -269,8 +269,6 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
         // Ideas to make it lighter :
         // - border-botttom: 1px thin line
         // - white background
-        // - metadata link in a new p at the end
-        // - metadata link lighter color : not blue, but grey.
 
         var context = {
             "title": function(t) {

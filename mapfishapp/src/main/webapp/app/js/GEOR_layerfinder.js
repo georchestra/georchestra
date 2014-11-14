@@ -40,7 +40,7 @@ GEOR.layerfinder = (function() {
     /**
      * Property: currentTab
      * {String} a local cache of the currently active tab
-     * (one of "cswquerier", "cswbrowser", "ogc", "file")
+     * (one of "cswquerier", "cswbrowser", "file")
      */
     var currentTab = "cswquerier";
 
