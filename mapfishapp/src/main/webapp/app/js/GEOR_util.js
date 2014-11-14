@@ -177,12 +177,34 @@ GEOR.util = (function() {
          * {String}
          */
         stringDeaccentuate: function(str) {
-            str = str.replace(/ç/, 'c');
-            str = str.replace(/(á|à|ä|â|å|Â|Ä|Á|À|Ã)/, 'a');
-            str = str.replace(/(é|è|ë|ê|Ê|Ë|É|È|Ę)/, 'e');
-            str = str.replace(/(í|ì|ï|î|Î|Ï|Í|Ì|Į)/, 'i');
-            str = str.replace(/(ó|ò|ö|ô|ø|Ô|Ö|Ó|Ò)/, 'o');
-            return str.replace(/(ú|ù|ü|û|Û|Ü|Ú|Ù|Ų)/, 'u');
+            str = str.replace(/ç/g, 'c');
+            str = str.replace(/(á|à|ä|â|å|Â|Ä|Á|À|Ã)/g, 'a');
+            str = str.replace(/(é|è|ë|ê|Ê|Ë|É|È|Ę)/g, 'e');
+            str = str.replace(/(í|ì|ï|î|Î|Ï|Í|Ì|Į)/g, 'i');
+            str = str.replace(/(ó|ò|ö|ô|ø|Ô|Ö|Ó|Ò)/g, 'o');
+            return str.replace(/(ú|ù|ü|û|Û|Ü|Ú|Ù|Ų)/g, 'u');
+        },
+
+        /**
+         * APIProperty: specialCharsRegExp
+         */
+        specialCharsRegExp: new RegExp("[,;:/%()!*.\\[\\]~&=-]","g"),
+
+        /**
+         * APIMethod: prepareString
+         * Returns a string without accents or special chars, uppercased
+         *
+         * Parameters:
+         * str - {String}
+         *
+         * Returns:
+         * {String}
+         */
+        prepareString: function(str) {
+            // remove special chars and spaces
+            var t = str.replace(GEOR.util.specialCharsRegExp, '').replace(/ /g, '');
+            // substitue accents & uppercase:
+            return GEOR.util.stringDeaccentuate(t).toUpperCase();
         },
 
         /**
@@ -232,6 +254,33 @@ GEOR.util = (function() {
                 window.location.protocol, '//', window.location.host,
                 GEOR.config.PATHNAME, '/', input
             ].join('');
+        },
+
+        /**
+         * APIMethod: setMetadataURL
+         * Given a layer, and a bunch of metadataURLs, sets the best metadata url
+         *
+         * Parameters:
+         * layer - {OpenLayers.Layer}
+         * metadataURLs - {Array}
+         *
+         * Returns:
+         * {String} the "best" metadataURL for WMC storage
+         */
+        setMetadataURL: function(layer, metadataURLs) {
+            if (metadataURLs && metadataURLs.length > 0) {
+                var murl = metadataURLs[0];
+                // default to first entry
+                layer.metadataURL = (murl.href) ? murl.href : murl;
+                Ext.each(metadataURLs, function(murl) {
+                    // prefer text/html format if found
+                    if (murl.format && murl.format == 'text/html') {
+                        layer.metadataURL = (murl.href) ? murl.href : murl;
+                        return false; // stop looping
+                    }
+                });
+            }
+            return layer.metadataURL;
         },
 
         /**

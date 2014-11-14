@@ -358,7 +358,7 @@ GEOR.cswquerier = (function() {
                 '<div class="x-view-item">',
                     '<table style="width:100%;"><tr><td style="vertical-align:text-top;">',
                         '<p><b>{layer_description}</b></p>',
-                        '<p>{[this.abstract(values.md_abstract)]}&nbsp;',
+                        '<p style="padding-top: 2px">{[this.abstract(values.md_abstract)]}&nbsp;',
                         '<a href="{[this.metadataURL(values)]}" ext:qtip="' +
                             tr("Show metadata sheet in a new window") + '" ',
                         'target="_blank" onclick="window.open(this.href);return false;">' +
@@ -400,10 +400,8 @@ GEOR.cswquerier = (function() {
                 // 1) shorten text
                 // 2) replace url links with <a href="XXX">lien</a>
                 //    (long links can break the dataview layout)
-                if (text.length >= 400) {
-                    text = text.slice(0, 399) + ' ... ';
-                }
-                var regexp = /(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/gi;
+                text = GEOR.util.shorten(text, 400);
+                var regexp = /(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/gi; // TODO: factorize this regexp in GEOR.util
                 return text.replace(regexp,
                     '[<a href="$&" ext:qtip="'+
                         tr("Open the URL url in a new window", {'URL': '$&'})
@@ -693,7 +691,7 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
     createFilter: function() {
         // see http://osgeo-org.1560.n6.nabble.com/CSW-GetRecords-problem-with-spaces-tp3862749p3862750.html
         var v = this.getValue(),
-            words = v.replace(new RegExp("[,;:/%()!*.\\[\\]~&=]","g"), ' ').split(' '),
+            words = v.replace(GEOR.util.specialCharsRegExp, ' ').split(' '),
             // data type filters
             // improve relevance of results: (might not be relevant with other csw servers than geonetwork)
             byTypes = new OpenLayers.Filter.Logical({

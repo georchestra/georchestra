@@ -30,6 +30,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Loading...": "Cargando...",
     "File": "Archivo",
     "Layer": "Capa",
+    "layers": "capas",
     "Description": "Descripción",
     "Error": "Error",
     "Server": "Servidor",
@@ -161,14 +162,13 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
          "Haga clic sobre el mapa.</div>",
     "WMS GetFeatureInfo at ": "GetFeatureInfo WMS sobre ",
     /* GEOR_layerfinder.js strings */
+    "metadata": "metadatos",
     "Add layers from local files": "Añadir capas a partir de archivos locales",
     "Find layers searching in metadata":
         "Encontrar capas buscando en los metadatos",
     "Find layers from keywords": "Encontrar capas desde palabras clave",
-    "Find layers querying WMS servers":
-        "Encontrar capas interrogando servicios WMS",
-    "Find layers querying WFS servers":
-        "Encontrar capas interrogando servicios WFS",
+    "Find layers querying OGC services":
+        "Encontrar capas interrogando servicios OGC",
     "layerfinder.layer.unavailable":
         "La capa ${NAME} no pudo ser encontrada en el servicio WMS.<br/<br/>" +
         "Tiene el derecho de acceder a esta capa ? " +
@@ -182,21 +182,19 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Malformed URL": "URL mal formada.",
     "Queryable": "Interrogable",
     "Opaque": "Opaco",
-    "Choose a WMS server: ": "Elija un servicio WMS: ",
-    "... or enter its address: ": "... o llene su dirección: ",
+    "OGC server": "OGC servicio",
+    "I'm looking for ...": "Estoy buscando ...",
+    "Service type": "Tipo de servicio",
+    "Choose a server": "Elija un servicio",
+    "... or enter its address": "... o llene su dirección",
     "The server is publishing one layer with an incompatible projection":
         "El servicio está publicando una capa cuya proyección no es compatible",
     "The server is publishing NB layers with an incompatible projection":
         "El servicio esta publicando ${NB} capas cuya proyección no es " +
         "compatible",
-    "WMS server": "Servicio WMS",
-    "Choose a WMTS server: ": "Elija un servicio WMTS: ",
-    "WMTS server": "Servicio WMTS",
-    "Choose a WFS server: ": "Elija un servicio WFS: ",
     "Unreachable server or insufficient rights": "Respuesta del servidor " +
         "invalida. Razones posibles: datos demasiado pesados, derechos insuficientes, " +
         "servidor inalcanzable, etc.",
-    "WFS server": "Servicio WFS",
     /* GEOR_managelayers.js strings */
     "Service": "Service",
     "Protocol": "Servicio",

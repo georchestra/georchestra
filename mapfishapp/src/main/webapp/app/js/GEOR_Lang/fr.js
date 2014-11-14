@@ -30,6 +30,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Loading...": "Chargement...",
     "File": "Fichier",
     "Layer": "Couche",
+    "layers": "couches",
     "Description": "Description",
     "Error": "Erreur",
     "Server": "Serveur",
@@ -156,14 +157,13 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
          "Cliquez sur la carte.</div>",
     "WMS GetFeatureInfo at ": "GetFeatureInfo WMS sur ",
     /* GEOR_layerfinder.js strings */
+    "metadata": "métadonnée",
     "Add layers from local files": "Ajouter des couches en uploadant un fichier depuis votre ordinateur",
     "Find layers searching in metadata":
         "Trouvez des couches en cherchant dans les métadonnées",
     "Find layers from keywords": "Trouvez des couches par mots clés",
-    "Find layers querying WMS servers":
-        "Trouvez des couches en interrogeant des serveurs WMS",
-    "Find layers querying WFS servers":
-        "Trouvez des couches en interrogeant des serveurs WFS",
+    "Find layers querying OGC services":
+        "Trouvez des couches en interrogeant des services OGC",
     "layerfinder.layer.unavailable":
         "La couche ${NAME} n'a pas été trouvée dans le service WMS.<br/<br/>" +
         "Peut-être n'avez-vous pas le droit d'y accéder " +
@@ -177,21 +177,19 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Malformed URL": "URL non conforme.",
     "Queryable": "Interrogeable",
     "Opaque": "Opaque",
-    "Choose a WMS server: ": "Choisissez un serveur WMS : ",
+    "OGC server": "Serveur OGC",
+    "I'm looking for ...": "Je recherche ...",
+    "Service type": "Type de service",
+    "Choose a server": "Choisissez un serveur",
+    "... or enter its address": "... ou saisissez son adresse",
     "The server is publishing one layer with an incompatible projection":
         "Le serveur publie une couche dont la projection n'est pas compatible",
     "The server is publishing NB layers with an incompatible projection":
         "Le serveur publie ${NB} couches dont la projection n'est pas " +
         "compatible",
-    "WMS server": "Serveur WMS",
-    "Choose a WMTS server: ": "Choisissez un serveur WMTS : ",
-    "WMTS server": "Serveur WMTS",
-    "Choose a WFS server: ": "Choisissez un serveur WFS : ",
-    "... or enter its address: ": "... ou saisissez son adresse : ",
     "Unreachable server or insufficient rights": "Réponse invalide du " +
         "serveur. Raisons possibles : droits insuffisants, " +
         "serveur injoignable, trop de données, etc.",
-    "WFS server": "Serveur WFS",
     /* GEOR_managelayers.js strings */
     "Service": "Service",
     "Protocol": "Protocole",
