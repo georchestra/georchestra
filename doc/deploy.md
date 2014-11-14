@@ -1,10 +1,10 @@
 # How to deploy ?
 
-There are several procedures, from the most straightforward (see "Quick win" below) to the most sofisticated (see "Automating ...")
+There are several procedures, from the most straightforward (see "Quick win" below) to the most sophisticated (see "Automating ...")
 
 ## Hardware considerations
 
-geOrchestra runs well on Debian boxes with Tomcat6 (version 7 might hang your geonetwork, see #418).
+geOrchestra runs well on Debian boxes with Tomcat6 (version 7 might hang your geonetwork, see [#418](https://github.com/georchestra/georchestra/issues/418)).
 The minimum system requirement is 2 cores and 4Gb RAM. More is better ;-)
 
 ## Quick win
