@@ -65,7 +65,7 @@ As a result of the build process, you should find the geOrchestra artifacts into
 Are you having problems with the build ?  
 Please have a look at our [continuous integration](https://sdi.georchestra.org/ci/job/georchestra-template/). If it builds and yours doesn't, the error is probably on your side.
 
-## Advanced options
+## Advanced build options
 
 ### sub.target
 
@@ -89,11 +89,10 @@ As a result, the JAI classes are useless for GeoServer.
 
 Build GeoServer with:
 ```
-./mvn -P-all,geoserver -Dmaven.test.skip=true -Dserver=myprofile '-Dgeoserver.war.excludes=WEB-INF/lib/*gwc*.jar' clean install
+./mvn -P-all,geoserver '-Dgeoserver.war.excludes=WEB-INF/lib/jai_*.jar' -Dserver=myprofile -Dmaven.test.skip=true clean install
 ```
 
 Another use of the property is when building GeoServer without the integrated GeoWebCache:
 ```
-./mvn -P-all,geoserver -Dmaven.test.skip=true -Dserver=myprofile '-Dgeoserver.war.excludes=WEB-INF/lib/*gwc*.jar,WEB-INF/lib/*gwc*.jar' clean install
+./mvn -P-all,geoserver '-Dgeoserver.war.excludes=WEB-INF/lib/*gwc*.jar,WEB-INF/lib/jai_*.jar' -Dserver=myprofile -Dmaven.test.skip=true clean install
 ```
-
