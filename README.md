@@ -30,3 +30,6 @@ To install geOrchestra, you will have to:
  * [build the web applications](doc/build.md) with your config,
  * [setup the middleware](doc/setup.md) (apache, tomcat, postgresql, openldap ...),
  * [deploy the webapps](doc/deploy.md).
+
+The minimum system requirement is 2 cores and 4Gb RAM.  
+But more is better...
