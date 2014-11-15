@@ -80,3 +80,9 @@ However, this requires the build process to happen on the production host (or a 
 
 One can fully automate the above steps with custom crafted deployment scripts.  
 An [example](server-deploy/linux_deploy_scripts/) is provided in the server-deploy module.
+
+```
+cd server-deploy
+../mvn -Pupgrade -Dserver=myprofile -Dmaven.test.skip=true -Dnon-interactive=true
+```
+

@@ -64,3 +64,36 @@ As a result of the build process, you should find the geOrchestra artifacts into
 
 Are you having problems with the build ?  
 Please have a look at our [continuous integration](https://sdi.georchestra.org/ci/job/georchestra-template/). If it builds and yours doesn't, the error is probably on your side.
+
+## Advanced options
+
+### sub.target
+
+With the same config directory, it is possible to manage several environments (typically a production and a test server).
+This is achieved through the use of the ```sub.target``` property in the maven command line.
+
+Example:
+```
+./mvn -Dmaven.test.skip=true -Dserver=myprofile -Dsub.target=prod clean install
+```
+
+Depending on the ```sub.target``` value, it is possible to alter one or several config options (typically: shared maven filters). 
+The magic happens in your profile's ```build_support/GenerateConfig.groovy``` script.
+
+### geoserver.war.excludes
+
+As the name suggests, the ```geoserver.war.excludes``` property allows you to exclude files from the final GeoServer build.
+
+Typically, you will have the native JAI installed, because it performs far better than the java version.
+As a result, the JAI classes are useless for GeoServer.
+
+Build GeoServer with:
+```
+./mvn -P-all,geoserver -Dmaven.test.skip=true -Dserver=myprofile '-Dgeoserver.war.excludes=WEB-INF/lib/*gwc*.jar' clean install
+```
+
+Another use of the property is when building GeoServer without the integrated GeoWebCache:
+```
+./mvn -P-all,geoserver -Dmaven.test.skip=true -Dserver=myprofile '-Dgeoserver.war.excludes=WEB-INF/lib/*gwc*.jar,WEB-INF/lib/*gwc*.jar' clean install
+```
+
