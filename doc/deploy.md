@@ -2,9 +2,6 @@
 
 There are several procedures, from the most straightforward (see "Quick win" below) to the most sophisticated (see "Automating ...")
 
-## OS and Hardware considerations
-
-
 ## Quick win
 
 Once your system is ready, collect WAR files in a dedicated directory and rename them:
@@ -50,7 +47,7 @@ Finally, dispatch geOrchestra webapps into your 3 Tomcat instances:
 Instead of copying the webapps to the tomcat instances, it is possible to symlink them.
 Tomcat is smart enough to detect when the link target is updated, and redeploy it on the fly.
 
-This however requires the build process to happen on the production host (or a NFS mount).
+However, this requires the build process to happen on the production host (or a NFS mount).
 
     PROFILE=myprofile
     VERSION=14.06
@@ -79,11 +76,7 @@ This however requires the build process to happen on the production host (or a N
     sudo service tomcat-georchestra start
 
 
-TODO
-
 ## Automating the deploy to remote hosts
-
-TODO
 
 One can fully automate the above steps with custom crafted deployment scripts.  
 An [example](server-deploy/linux_deploy_scripts/) is provided in the server-deploy module.
