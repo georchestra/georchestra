@@ -61,11 +61,16 @@ In case you only want to build one module or a collection, the syntax is a bit d
 ... where ```moduleX``` can be one of: ```analytics```, ```cas```, ```catalogapp```, ```downloadform```, ```extractorapp```, ```geonetwork```, ```geofence```, ```geoserver```, ```geowebcache```, ```header```, ```ldapadmin```, ```mapfishapp```, ```proxy```.
 
 As a result of the build process, you should find the geOrchestra artifacts into the subfolders of the ```~/.m2/repository/org/georchestra/``` directory.
+Now, let's [prepare the system](setup.md) to receive the webapps.
 
 Are you having problems with the build ?  
 Please have a look at our [continuous integration](https://sdi.georchestra.org/ci/job/georchestra-template/). If it builds and yours doesn't, the error is probably on your side.
 
+
+
 ## Advanced build options
+
+These options are not required to build geOrchestra but they can make your life easier.
 
 ### sub.target
 
@@ -74,11 +79,51 @@ This is achieved through the use of the ```sub.target``` property in the maven c
 
 Example:
 ```
-./mvn -Dmaven.test.skip=true -Dserver=myprofile -Dsub.target=prod clean install
+./mvn -Dserver=myprofile -Dsub.target=prod -Dmaven.test.skip=true clean install
 ```
 
-Depending on the ```sub.target``` value, it is possible to alter one or several config options (typically: shared maven filters). 
-The magic happens in your profile's ```build_support/GenerateConfig.groovy``` script.
+Depending on the ```sub.target``` value, it is possible to alter one or several config options (typically: shared maven filters, but not exclusively). 
+The magic happens in your profile's ```build_support/GenerateConfig.groovy``` script, eg with:
+
+```groovy
+    def generate(def project, def log, def ant, def basedirFile,
+      def target, def subTarget, def targetDir,
+      def buildSupportDir, def outputDir) {
+
+        // method added here:
+        updateSharedMavenFilters(subTarget)
+        
+        updateGeoServerProperties()
+        updateGeoFenceProperties()
+        updateMapfishappMavenFilters()
+        updateExtractorappMavenFilters()
+        updateSecProxyMavenFilters()
+        updateLDAPadminMavenFilters()
+    } 
+
+    /**
+     * updateSharedMavenFilters
+     */
+    def updateSharedMavenFilters(subTarget) {
+        switch (subTarget) {
+            case "test":
+                new PropertyUpdate(
+                    to: 'shared.maven.filters').update { properties ->
+                        properties['shared.server.name'] = "test.georchestra.org"
+                        properties['shared.default.log.level'] = "DEBUG"
+                        properties['shared.instance.name'] = "geOrchestra demo - TEST"
+                }
+                break
+            case "prod":
+                new PropertyUpdate(
+                    to: 'shared.maven.filters').update { properties ->
+                        properties['shared.server.name'] = "sdi.georchestra.org"
+                        properties['shared.default.log.level'] = "WARN"
+                }
+                break
+        }
+    }
+```
 
 ### geoserver.war.excludes
 

@@ -44,7 +44,7 @@ There is roughly one folder per geOrchestra module.
 Several folders and files are special:
  * the **build_support** dir contains the two most important files to configure your instance,
  * the **excluded** dir is empty. It can be used for versioning useful files related to your configuration.
- * the **DeployScript.groovy** file is optional. It allows you to automate webapps deployment, but we'll see that later.
+ * the **DeployScript.groovy** file is optional. It allows you to [automate webapps deployment](deploy.md#automating-the-deploy-to-remote-hosts), but we'll see that later.
 
 During the build process, files in the other folders will be copied into their respective webapps (or will overwrite the files that are already there).  
 Eg: ```~/myprofile/mapfishapp/app/js/GEOR_custom.js``` will be copied to ```~/georchestra/mapfishapp/src/main/webapp/app/js/GEOR_custom.js```
