@@ -2,6 +2,9 @@
 
 There are several procedures, from the most straightforward (see "Quick win" below) to the most sophisticated (see "Automating ...")
 
+Note that all webapps are not required.  
+You could just start with the viewer alone or the viewer and proxy + cas if you need an authentication system. Or viewer + cas + proxy + geoserver ... and add other modules later when required.
+
 ## Quick win
 
 Once your system is ready, collect WAR files in a dedicated directory and rename them:
