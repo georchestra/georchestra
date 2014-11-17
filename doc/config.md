@@ -82,7 +82,7 @@ You should update the values for several properties, typically:
  * ```proxy.mapping``` in the ```updateSecProxyMavenFilters``` method, (see also the [setup/tomcat.md](tomcat setup documentation))
  * ```publicKey```, ```privateKey``` and all the ```subject.*``` properties in the ```updateLDAPadminMavenFilters``` method.
 
-### Client-side overrides
+### Webapp overrides
 
 The files from the ```analytics```, ```cas-server-webapp```, ```catalogapp```, ```extractorapp```, ```geonetwork-client```, ```geonetwork-main```, ```header``` and ```mapfishapp``` directories are just overriding those from the webapps.
 

@@ -60,7 +60,7 @@ In case you only want to build one module or a collection, the syntax is a bit d
 ```
 ... where ```moduleX``` can be one of: ```analytics```, ```cas```, ```catalogapp```, ```downloadform```, ```extractorapp```, ```geonetwork```, ```geofence```, ```geoserver```, ```geowebcache```, ```header```, ```ldapadmin```, ```mapfishapp```, ```proxy```.
 
-As a result of the build process, you should find the geOrchestra artifacts into the subfolders of the ```~/.m2/repository/org/georchestra/``` directory.
+As a result of the build process, you should find the geOrchestra artifacts into the subfolders of the ```~/.m2/repository/org/``` directory.
 Now, let's [prepare the system](setup.md) to receive the webapps.
 
 Are you having problems with the build ?  
@@ -129,7 +129,7 @@ The magic happens in your profile's ```build_support/GenerateConfig.groovy``` sc
 
 As the name suggests, the ```geoserver.war.excludes``` property allows you to exclude files from the final GeoServer build.
 
-Typically, you will have the native JAI installed, because it performs far better than the java version.
+Typically, you will have the native JAI installed, because it performs far better than the java version. 
 As a result, the JAI classes are useless for GeoServer.
 
 Build GeoServer with:
@@ -138,6 +138,11 @@ Build GeoServer with:
 ```
 
 Another use of the property is when building GeoServer without the integrated GeoWebCache:
+```
+./mvn -P-all,geoserver '-Dgeoserver.war.excludes=WEB-INF/lib/*gwc*.jar' -Dserver=myprofile -Dmaven.test.skip=true clean install
+```
+
+Both can be combined with:
 ```
 ./mvn -P-all,geoserver '-Dgeoserver.war.excludes=WEB-INF/lib/*gwc*.jar,WEB-INF/lib/jai_*.jar' -Dserver=myprofile -Dmaven.test.skip=true clean install
 ```
