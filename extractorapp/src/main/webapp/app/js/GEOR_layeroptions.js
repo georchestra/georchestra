@@ -155,18 +155,20 @@ GEOR.layeroptions = (function() {
          */
         getOptions: function() {
             // for each widget, get its value
-            var options = {};
+            var options = {}, res;
             if(layerOptionsPanel.getLayout().activeItem.id == 'globalLayerOptions') {
                 // global properties
                 options.projection = getCombo('globalProjections').getValue();
-                options.resolution = getCombo('globalResolution').getValue();
+                res = getCombo('globalResolution').getValue();
+                options.resolution = res ? parseFloat(res) : null;
                 options.globalRasterFormat = getCombo('globalRasterFormats').getValue();
                 options.globalVectorFormat = getCombo('globalVectorFormats').getValue();
                 options.bbox = getFieldSet('globalBbox').items.itemAt(0).getBbox();
             }
             else if(layerOptionsPanel.getLayout().activeItem.id == 'customLayerOptions') {
                 options.projection = getCombo('customProjections').getValue();
-                options.resolution = getCombo('customResolution').getValue();
+                res = getCombo('customResolution').getValue();
+                options.resolution = res ? parseFloat(res) : null;
                 options.format = getCombo('customFormats').getValue();
                 options.bbox = getFieldSet('customBbox').items.itemAt(0).getBbox();
                 options.bboxFromGlobal = getFieldSet('customBbox').collapsed;
