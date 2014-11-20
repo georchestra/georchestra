@@ -44,6 +44,7 @@ cd ~/georchestra/config
 SUCCESS ? Good, you're ready for the next step.  
 If not, you should review carefully the error messages and [ask for help](http://www.georchestra.org/community.html) if you don't understand what happens.
 
+Note that if you're connecting to the internet through proxies, you need to [tell maven how to reach public repositories](http://maven.apache.org/guides/mini/guide-proxies.html).
 
 ## Build the modules
 
