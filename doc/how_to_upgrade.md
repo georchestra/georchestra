@@ -6,7 +6,7 @@ We suppose that your configuration is versioned with git, and that it has two re
  * **origin** points to your own private repository
  * **upstream** points to the template georchestra configuration
 
-When typing "git remote -v" in your config folder, you should see something like this:
+When typing ```git remote -v``` in your config folder, you should see something like this:
 ```
 origin	git@gitlab.com:user/myprofile.git (fetch)
 origin	git@gitlab.com:user/myprofile.git (push)
@@ -52,6 +52,7 @@ In your georchestra sources directory, update to the new "14.12" branch:
 cd ~/georchestra
 git fetch origin
 git checkout 14.12
+git submodule update --init
 ```
 
 Then, make sure that your configuration is also pointing to the same branch:
