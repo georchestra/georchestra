@@ -13,7 +13,7 @@ sudo apt-get install slapd ldap-utils git-core postgresql postgresql-9.1-postgis
  
  * [set up the application database](setup/postgresql.md)
  
- * [create the LDAP tree](setup/openlap.md)
+ * [create the LDAP tree](setup/openldap.md)
  
  * configure the front web server:
  

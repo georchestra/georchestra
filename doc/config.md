@@ -63,7 +63,7 @@ This file has lots of comments: you should read them all.
 Once you've finished, we think you should **at least** update these shared maven filters:
  * ```shared.server.name```, is the server Fully Qualified Domain Name,
  * ```shared.ldap.admin.password``` is the ldap administrative account password,
- * ```shared.privileged.geoserver.pass``` is the password for a special geOrchestra admin user which is internally used, (see the [setup/openldap.md](ldap setup documentation)),
+ * ```shared.privileged.geoserver.pass``` is the password for a special geOrchestra admin user which is internally used, (see the [ldap setup documentation](setup/openldap.md)),
  * ```shared.email.*``` are the settings related to email sending (used by ldapadmin and extractorapp)
  * ```shared.administrator.email``` is your email.
 
@@ -79,7 +79,7 @@ properties['key'] = "value"
 
 You should update the values for several properties, typically:
  * ```emailsubject``` in the ```updateExtractorappMavenFilters``` method,
- * ```proxy.mapping``` in the ```updateSecProxyMavenFilters``` method, (see also the [setup/tomcat.md](tomcat setup documentation))
+ * ```proxy.mapping``` in the ```updateSecProxyMavenFilters``` method, (see also the [tomcat setup documentation](setup/tomcat.md))
  * ```publicKey```, ```privateKey``` and all the ```subject.*``` properties in the ```updateLDAPadminMavenFilters``` method.
 
 ### Webapp overrides
