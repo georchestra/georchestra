@@ -135,7 +135,7 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
      */
     _zoomToFeatures: function(features) {
         var bounds, layerBounds = null;
-        var map = this._vectorLayer.map;
+        var map = this.map;
 
         if (features && features[0]) {
             bounds = new OpenLayers.Bounds();
