@@ -16,6 +16,7 @@
  * Spanish translation file
  */
 Analytics.Lang.es = {
+    "Loading...": "Cargando...",
     "Page": "Página",
     "of N1": "de {0}",
     "Name": "Nombre",

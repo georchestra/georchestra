@@ -16,6 +16,7 @@
  * French translation file
  */
 Analytics.Lang.fr = {
+    "Loading...": "Chargement...",
     "Page": "Page",
     "of N1": "sur {0}",
     "Name": "Nom",
