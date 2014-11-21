@@ -670,14 +670,18 @@ GEOR.layerstree = (function() {
                                         // use document.evaluate on the XML response to fetch the 
                                         // /gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification
                                         // /gmd:spatialResolution/gmd:MD_Resolution/gmd:distance/gco:Distance
-                                        var res = document.evaluate(
+                                        if (!response || !response.responseXML) {
+                                            checkNullCounter(); // XHR (b)
+                                            return;
+                                        }
+                                        var res = response.responseXML.evaluate(
                                             GEOR.config.METADATA_RESOLUTION_XPATH, 
                                             response.responseXML, 
                                             GEOR.util.mdNSResolver, 
                                             XPathResult.NUMBER_TYPE, 
                                             null
                                         ).numberValue, // typically 0.5
-                                        unit = document.evaluate(
+                                        unit = response.responseXML.evaluate(
                                             GEOR.config.METADATA_RESOLUTION_XPATH+'/@uom', 
                                             response.responseXML, 
                                             GEOR.util.mdNSResolver, 
