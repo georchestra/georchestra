@@ -86,6 +86,8 @@ Set to https (along with ```shared.server.port``` to 443) if your SDI requires i
 
 Note the addition of an ```excluded``` directory in the template configuration. The content of this directory will be ignored when creating the configuration jar, which is deployed in each webapp. This is a convenient way to store scripts and so on, versioned with your configuration.
 
+In mapfishapp's GEOR_custom.js, the ```WMS_SERVERS```, ```WMTS_SERVERS```, ```WFS_SERVERS``` config options have been removed. The server definitions are now loaded via separate XHR's. You should migrate your content into the newly introduced ```myprofile/mapfishapp/*.json``` files.
+
 In extractorapp, several new javascript config options have been added, related to [#726](https://github.com/georchestra/georchestra/issues/726): ```SUPPORTED_RESOLUTIONS```, ```DEFAULT_RESOLUTION```, ```METADATA_RESOLUTION_XPATH```. Make sure your configuration is up to date with the template configuration, or you will get these variable defaults.
 
 CAS pages are now loading the header module through the proxy gateway. This is to have the header refreshed on logging in, so that it gets your username. As a result, your front web server needs the ProxyPass/ProxyPassReverse definition for /gateway, see [5aec52](https://github.com/georchestra/georchestra/commit/5aec5251d15102db5275be92e42e56b13ac1131b).
