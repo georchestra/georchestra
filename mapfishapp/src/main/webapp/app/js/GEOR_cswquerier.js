@@ -543,12 +543,12 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
                     filters: [
                         new OpenLayers.Filter.Comparison({
                             type: "~",
-                            property: "type",
+                            property: "Type",
                             value: 'dataset'
                         }),
                         new OpenLayers.Filter.Comparison({
                             type: "~",
-                            property: "type",
+                            property: "Type",
                             value: 'series'
                         })
                     ]
