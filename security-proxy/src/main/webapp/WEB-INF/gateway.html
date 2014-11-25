@@ -9,23 +9,17 @@
     }
 
     function checkLogin() {
-      var loggedIn;
-      
-      try {
-        loggedIn = $("iframe").contents().find("#userLoggedIn").length > 0;
-      } catch (e) {
-        loggedIn = false;
-      }
+      var iframe = document.getElementsByTagName("iframe")[0];
+      // weak validation: relies on the fact that cas/login page has a body id="cas":
+      var loggedIn = !!!(iframe.contentDocument.getElementById("cas"));
 
       var url = getUrlVars().url;
       if (!url) {
         url = "/";
       } 
-
       if(url[0] != "/"){
         url = '/'+url;
       }
-    
       window.location = url;
     }
   </script>
