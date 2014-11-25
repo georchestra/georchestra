@@ -15,7 +15,7 @@ import org.apache.commons.io.IOUtils;
  * 
  * <p>In summary the way this works is proxy will call use this class if the requested url is 
  * <em>gateway</em>.  When this class gets called it returns the contents of 
- * WEB-INF/gateway/load.html to the user.  The load.html page has an iframe that attempts to load
+ * WEB-INF/gateway.html to the user.  The gateway.html page has an iframe that attempts to load
  * testPage?login.  The testPage is restricted to logged in users so it forces a redirect to cas.  If the user has
  * logged in then the proxy will get the login information and the user is forwarded to the final destination (as provided by url parameter) 
  * </p>
