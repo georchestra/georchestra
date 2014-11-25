@@ -214,6 +214,14 @@ Apache
 
     ProxyPass /gateway ajp://localhost:8009/gateway 
     ProxyPassReverse /gateway ajp://localhost:8009/gateway
+    
+    <Proxy ajp://localhost:8009/testPage*>
+       Order deny,allow
+       Allow from all
+     </Proxy>
+
+     ProxyPass /testPage ajp://localhost:8009/testPage 
+     ProxyPassReverse /testPage ajp://localhost:8009/testPage
 
     <Proxy ajp://localhost:8009/analytics/*>
         Order deny,allow
