@@ -47,11 +47,17 @@ GEOR.workspace = (function() {
      */
     var saveMDBtnHandler = function() {
         var formPanel = this.findParentByType('form'), 
-            form = formPanel.getForm(),
-            wmc_string = GEOR.wmc.write({
-                "title": form.findField('title').getValue(),
-                "abstract": form.findField('abstract').getValue()
+            form = formPanel.getForm();
+        if (form.findField('title').getValue().length < 3) {
+            GEOR.util.errorDialog({
+                msg: tr("The context title is mandatory")
             });
+            return;
+        }
+        var wmc_string = GEOR.wmc.write({
+            "title": form.findField('title').getValue(),
+            "abstract": form.findField('abstract').getValue()
+        });
         GEOR.waiter.show();
         OpenLayers.Request.POST({
             url: GEOR.config.PATHNAME + "/ws/wmc/",
@@ -80,7 +86,10 @@ GEOR.workspace = (function() {
                         if (resp.responseText) {
                             var r =  /<uuid>(.{36})<\/uuid>/.exec(resp.responseText);
                             if (r && r[1]) {
-                                window.open(GEOR.config.GEONETWORK_BASE_URL+"/?uuid="+r[1]);
+                                // wait a while for the MD to be made available:
+                                new Ext.util.DelayedTask(function(){
+                                    window.open(GEOR.config.GEONETWORK_BASE_URL+"/?uuid="+r[1]);
+                                }).delay(1000);
                                 return;
                             }
                         }
