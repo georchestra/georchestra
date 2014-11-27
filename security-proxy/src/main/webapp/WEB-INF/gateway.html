@@ -9,9 +9,10 @@
     }
 
     function checkLogin() {
-      var iframe = document.getElementsByTagName("iframe")[0];
+      var iframe = document.getElementsByTagName("iframe")[0],
+          innerDoc = iframe.contentDocument || iframe.contentWindow.document;
       // weak validation: relies on the fact that cas/login page has a body id="cas":
-      var loggedIn = !!!(iframe.contentDocument.getElementById("cas"));
+      var loggedIn = !!!(innerDoc.getElementById("cas"));
 
       var url = getUrlVars().url;
       if (!url) {
