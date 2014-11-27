@@ -185,7 +185,8 @@ GEOR.workspace = (function() {
             text: tr("Cancel"),
             handler: cancelBtnHandler
         }];
-        if (GEOR.config.ROLES.indexOf("ROLE_SV_EDITOR") >= 0 ||
+        if (GEOR.config.ROLES.indexOf("ROLE_SV_EDITOR") >= 0 || 
+            GEOR.config.ROLES.indexOf("ROLE_SV_REVIEWER") >= 0 ||
             GEOR.config.ROLES.indexOf("ROLE_SV_ADMIN") >= 0 ) {
             btns.push({
                 text: tr("Save to metadata"),
