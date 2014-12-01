@@ -125,7 +125,7 @@ Finally, you need to create a ```/home/deploy/.m2/settings.xml``` file like this
 
 ### Deploying
 
-It's as easy as:
+Being the ```deploy``` user, it's as easy as:
 ```
 cd server-deploy
 ../mvn -Pupgrade -Dserver=myprofile -Dmaven.test.skip=true -Dnon-interactive=true
