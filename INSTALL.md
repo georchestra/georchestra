@@ -276,11 +276,11 @@ Apache
         Order deny,allow
         Allow from all
     </Proxy>
+    ProxyPass /geoserver/ ajp://localhost:8009/geoserver/ 
+    ProxyPassReverse /geoserver/ ajp://localhost:8009/geoserver/
     <Location /geoserver>
       Header set Access-Control-Allow-Origin "*"
       Header set Access-Control-Allow-Headers "Origin, X-Requested-With, Content-Type, Accept"
-      ProxyPass /geoserver/ ajp://localhost:8009/geoserver/ 
-      ProxyPassReverse /geoserver/ ajp://localhost:8009/geoserver/
     </Location>
 
     <Proxy ajp://localhost:8009/geowebcache/*>
