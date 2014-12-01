@@ -47,6 +47,7 @@
                 <value>.*ArcGIS.*</value>
                 <value>.*uDig.*</value>
                 <value>.*QGIS.*</value>
+                <value>.*Jakarta.*</value> <!-- GeoFence UA for GeoServer REST -->
             </list>
         </property>
         <property name="ignoreHttps" value="true" />
