@@ -121,6 +121,7 @@ Finally, you need to create a ```/home/deploy/.m2/settings.xml``` file like this
 	</servers>
 </settings>
 ```
+... in which the ```id``` fields are the server domain names you want to deploy to.
 
 ### Deploying
 
