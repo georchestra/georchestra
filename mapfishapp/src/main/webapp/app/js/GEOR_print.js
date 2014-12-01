@@ -402,7 +402,7 @@ GEOR.print = (function() {
                     emptyText: tr("Comments"),
                     width: 420,
                     name: 'mapComments',
-                    grow: true,
+                    grow: false,
                     enableKeyEvents: false,
                     selectOnFocus: true,
                     plugins: new GeoExt.plugins.PrintPageField({
