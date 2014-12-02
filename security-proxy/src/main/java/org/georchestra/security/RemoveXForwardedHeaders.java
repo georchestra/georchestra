@@ -11,7 +11,8 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Remove the
+ * Remove the x-forwarded-* headers for selected servers.
+ *
  * @author Jesse on 12/2/2014.
  */
 public class RemoveXForwardedHeaders implements HeaderFilter {
