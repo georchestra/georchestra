@@ -83,6 +83,19 @@ ${proxy.mapping}
                         </list>
                     </property>
                 </bean>
+                <bean class="org.georchestra.security.RemoveXForwardedHeaders">
+                    <!-- Only one of includes or excludes may have elements -->
+                    <property name="includes">
+                        <list>
+                            <!-- set the patterns of urls that (when matched) will have the x-forwarded-* headers removed -->
+                        </list>
+                    </property>
+                    <property name="excludes">
+                        <list>
+                            <!-- set the patterns of urls that (when matched) will NOT have the x-forwarded-* headers removed -->
+                        </list>
+                    </property>
+                </bean>
             </list>
         </property>
     </bean>
