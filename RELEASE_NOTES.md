@@ -90,8 +90,6 @@ In mapfishapp's GEOR_custom.js, the ```WMS_SERVERS```, ```WMTS_SERVERS```, ```WF
 
 In extractorapp, several new javascript config options have been added, related to [#726](https://github.com/georchestra/georchestra/issues/726): ```SUPPORTED_RESOLUTIONS```, ```DEFAULT_RESOLUTION```, ```METADATA_RESOLUTION_XPATH```. Make sure your configuration is up to date with the template configuration, or you will get these variable defaults.
 
-CAS pages are now loading the header module through the proxy gateway. This is to have the header refreshed on logging in, so that it gets your username. As a result, your front web server needs the ProxyPass/ProxyPassReverse definition for /gateway, see [5aec52](https://github.com/georchestra/georchestra/commit/5aec5251d15102db5275be92e42e56b13ac1131b).
-
 We also decided to publish resources for your server "htdocs" folder. Have a look at our [georchestra/htdocs](https://github.com/georchestra/htdocs) repository.
 
 Version 14.06 (current stable version)
