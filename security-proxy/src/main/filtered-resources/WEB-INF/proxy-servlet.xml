@@ -80,7 +80,29 @@ ${proxy.mapping}
         </property>
         <property name="filters">
             <list>
-                <bean class="org.georchestra.security.SecurityRequestHeaderFilter" />
+                <bean class="org.georchestra.security.SecurityRequestHeaderFilter">
+                    <property name="trustedHosts">
+                        <list>
+                            <value>localhost</value>
+                            <value>127.0.0.1</value>
+                            <value>127.0.1.1</value>
+                            <value>${public.host}</value>
+                        </list>
+                    </property>
+                </bean>
+                <bean class="org.georchestra.security.RemoveXForwardedHeaders">
+                    <!-- Only one of includes or excludes may have elements -->
+                    <property name="includes">
+                        <list>
+                            <!-- set the patterns of urls that (when matched) will have the x-forwarded-* headers removed -->
+                        </list>
+                    </property>
+                    <property name="excludes">
+                        <list>
+                            <!-- set the patterns of urls that (when matched) will NOT have the x-forwarded-* headers removed -->
+                        </list>
+                    </property>
+                </bean>
             </list>
         </property>
     </bean>
