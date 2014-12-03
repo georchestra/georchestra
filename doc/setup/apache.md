@@ -40,7 +40,7 @@ Let's first deactivate the default virtualhosts, and create ours:
 sudo a2dissite default default-ssl
 ```
 
-In /etc/apache2/sites-available/georchestra:
+In /etc/apache2/sites-available/georchestra.conf:
 ```
 <VirtualHost *:80>
     ServerName vm-georchestra
@@ -64,6 +64,12 @@ In /etc/apache2/sites-available/georchestra:
     SSLCACertificateFile /etc/ssl/certs/ca-certificates.crt
     ServerSignature Off
 </VirtualHost>
+```
+
+
+Update your hosts files (in /etc/hosts):
+```
+127.0.0.1       vm-georchestra
 ```
 
 Once this is done, enable the georchestra site with:
@@ -90,8 +96,6 @@ Three of these files are required:
 </IfModule>
 
 RewriteEngine On
-RewriteLog /tmp/rewrite.log
-RewriteLogLevel 3
 
 SetEnv no-gzip on
 ProxyTimeout 999999999
@@ -305,7 +309,7 @@ sudo openssl genrsa -des3 -out georchestra.key 1024
 sudo openssl req -new -key georchestra.key -out georchestra.csr
 ```
 
-* fill the form without providing a password
+Fill the form without providing a password, and when asked for the Common Name, fill the server FQDN (here: vm-georchestra)
 ```
 Common Name (eg, YOUR name) []: put your server name (eg: vm-georchestra)
 ```
@@ -314,13 +318,6 @@ Common Name (eg, YOUR name) []: put your server name (eg: vm-georchestra)
 ```
 sudo openssl rsa -in georchestra.key -out georchestra-unprotected.key
 sudo openssl x509 -req -days 365 -in georchestra.csr -signkey georchestra.key -out georchestra.crt
-```
-
-* update your hosts
-
-In /etc/hosts:
-```
-127.0.0.1       vm-georchestra
 ```
 
 * restart apache
