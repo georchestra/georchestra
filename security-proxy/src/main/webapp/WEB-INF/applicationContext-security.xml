@@ -10,7 +10,7 @@
         class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
         p:locations="/WEB-INF/security-proxy.properties" />
         
-    <s:http entry-point-ref="casProcessingFilterEntryPoint" path-type="regex" realm="${realmName}" >
+    <s:http entry-point-ref="casProcessingFilterEntryPoint" path-type="regex" realm="${realmName}" disable-url-rewriting="true">
         <s:intercept-url pattern=".*\?.*login.*" access="ROLE_SV_USER,ROLE_SV_EDITOR,ROLE_SV_REVIEWER,ROLE_SV_ADMIN,ROLE_ADMINISTRATOR" />
         <s:intercept-url pattern=".*\?.*casLogin.*" access="ROLE_SV_USER,ROLE_SV_EDITOR,ROLE_SV_REVIEWER,ROLE_SV_ADMIN,ROLE_ADMINISTRATOR" />
         <s:intercept-url pattern="/extractorapp/admin/.*" access="ROLE_ADMINISTRATOR" />
