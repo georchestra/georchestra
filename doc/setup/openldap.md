@@ -1,17 +1,83 @@
 # Setting up OpenLDAP and a basic LDAP tree
 
-## install the required packages
+There are 2 main ways of having OpenLDAP configured :
+ * One using a single conf file (on debian/ubuntu systems, located in /etc/ldap/sldapd.conf)
+ * A new one which tends to store the configuration into a specific LDAP branch (name cn=config), and composed of several files located generally into /etc/ldap/slapd.d).
 
-        sudo apt-get install slapd ldap-utils git-core
+We document here the second case (slapd.d-style configuration).
 
-## sample data import
 
- * getting the data, where XX stands for the geOrchestra version you're using (eg: ```14.06``` for stable or ```master``` for unstable)
- 
-            git clone -b XX git://github.com/georchestra/LDAP.git
-	
- * inserting the data: follow the instructions in https://github.com/georchestra/LDAP/blob/master/README.md
+## Prerequisites
 
- * check everything is OK:
- 
-            ldapsearch -x -bdc=georchestra,dc=org | less
+```
+sudo apt-get install slapd ldap-utils
+```
+
+You will need to provide the LDAP administrator password. Choose a strong one.
+
+
+Let's also get the data by cloning our LDAP repository:
+```
+git clone -b YY.MM git://github.com/georchestra/LDAP.git
+```
+In the above, YY.MM stands for the geOrchestra version you're using (eg: ```14.06``` for the latest stable)
+
+
+## Database entry
+
+The file **georchestra-bootstrap.ldif** creates the database:
+
+```
+sudo ldapadd -Y EXTERNAL -H ldapi:/// -f georchestra-bootstrap.ldif
+```
+
+If successful, the above command should display: ```adding new entry "olcDatabase=hdb,cn=config"```.
+
+It also creates a default administrator account with:
+```
+dn: cn=admin,dc=georchestra,dc=org
+password: secret
+```
+
+
+## Root DN
+
+To create the root DN, use the **georchestra-root.ldif** file:
+
+```
+ldapadd -D"cn=admin,dc=georchestra,dc=org" -W -f georchestra-root.ldif
+```
+
+This will ask the password for the ```cn=admin,dc=georchestra,dc=org``` dn, which is "secret".
+
+
+
+## geOrchestra users and groups
+
+The **georchestra.ldif** file creates the default geOrchestra users & groups:
+
+```
+ldapadd -D"cn=admin,dc=georchestra,dc=org" -W -f georchestra.ldif
+```
+
+This will also ask the password for the ```cn=admin,dc=georchestra,dc=org``` dn.
+
+
+Note that you are free to customize the users (entries under the "users" OrganizationUnit) to fit your needs, provided you keep the required geoserver_privileged_user.
+
+
+## The "memberof" overlay
+
+The optional "memberof" overlay is great to check if a user is a member of a given group.
+Use the **georchestra-memberof.ldif** file to add the module and configure the overlay.
+
+
+# Managing the directory
+
+To manage the directory from the command line, use ldapvi (install with ```sudo apt-get install ldapvi```):
+
+```
+ldapvi --host localhost -D "cn=admin,dc=georchestra,dc=org" -w "secret" -b "dc=georchestra,dc=org"
+```
+
+Another option is [Apache Directory Studio](http://directory.apache.org/studio/), a powerful desktop client.
