@@ -16,7 +16,7 @@ cd /var/www
 sudo mkdir georchestra
 cd georchestra
 sudo mkdir conf htdocs logs ssl
-``
+```
 
 Debian apache user being www-data, we have to grant write on logs to www-data:
 ```
