@@ -8,21 +8,15 @@ Here are the steps:
 
  * install the dependencies:
 ```
-sudo apt-get install slapd ldap-utils git-core postgresql postgresql-9.1-postgis postgis apache2 tomcat6 libgdal1
+sudo apt-get install postgresql postgresql-9.1-postgis postgis apache2 tomcat6 libgdal1
 ```
  
  * [set up the application database](setup/postgresql.md)
  
  * [create the LDAP tree](setup/openldap.md)
  
- * configure the front web server:
- 
-    * either [with apache](setup/apache.md) 
-    * or [with nginx]() (TODO)
-    
- * setup tomcat instances
-    
-    * either a [single tomcat instance](setup/tomcat-single.md) (not recommended)
-    * or [several of them](setup/tomcat.md) (in this guide, we assume 3 instances)
+ * configure the front web server ([apache](setup/apache.md))
+
+ * setup [tomcat instances](setup/tomcat.md) (in this guide, we assume 3 instances)
     
  * install the [native libs](setup/native_libs.md)

@@ -1,265 +1,329 @@
 # Setting up Apache
 
 
-* modules setup
+## Modules setup
 
-        sudo a2enmod proxy_connect proxy_http proxy ssl rewrite headers
-        sudo service apache2 graceful
-
-* VirtualHost setup
-
-        cd /etc/apache2/sites-available
-        sudo a2dissite default default-ssl
-        sudo nano georchestra
-
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   	<VirtualHost *:80>
-		 ServerName vm-georchestra
-		 DocumentRoot /var/www/georchestra/htdocs
-		 LogLevel warn
-		 ErrorLog /var/www/georchestra/logs/error.log
-		 CustomLog /var/www/georchestra/logs/access.log "combined"
-		 Include /var/www/georchestra/conf/*.conf
-		 ServerSignature Off
-	</VirtualHost>
-	<VirtualHost *:443>
-		 ServerName vm-georchestra
-		 DocumentRoot /var/www/georchestra/htdocs
-		 LogLevel warn
-		 ErrorLog /var/www/georchestra/logs/error.log
-		 CustomLog /var/www/georchestra/logs/access.log "combined"
-		 Include /var/www/georchestra/conf/*.conf
-		 SSLEngine On
-		 SSLCertificateFile /var/www/georchestra/ssl/georchestra.crt
-		 SSLCertificateKeyFile /var/www/georchestra/ssl/georchestra-unprotected.key
-		 SSLCACertificateFile /etc/ssl/certs/ca-certificates.crt
-		 ServerSignature Off
-	</VirtualHost>
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        sudo a2ensite georchestra
-   
-* web directories for geOrchestra
-
-        cd /var/www
-        sudo mkdir georchestra
-        cd georchestra
-        sudo mkdir conf htdocs logs ssl
-
-    Debian apache user is www-data
-
-        sudo id www-data
-
-    we have to grant write on logs to www-data:
-
-        sudo chgrp www-data logs/
-        sudo chmod g+w logs/
-
-* Error documents (useful when tomcat restarts for maintenance)
-
-        mkdir -p /var/www/georchestra/htdocs/errors
-        wget http://sdi.georchestra.org/errors/50x.html -O /var/www/georchestra/htdocs/errors/50x.html
+```
+sudo a2enmod proxy_connect proxy_http proxy ssl rewrite headers
+sudo service apache2 restart
+```
 
 
-* Apache config
+## Directory structure
 
-        cd conf/
-        sudo nano /var/www/georchestra/conf/proxypass.conf
-        
-    should have something like:
-        
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    <IfModule !mod_proxy.c>
-        LoadModule proxy_module /usr/lib/apache2/modules/mod_proxy.so
-    </IfModule>
-    <IfModule !mod_proxy_http.c>
-        LoadModule proxy_http_module /usr/lib/apache2/modules/mod_proxy_http.so
-    </IfModule>
+```
+cd /var/www
+sudo mkdir georchestra
+cd georchestra
+sudo mkdir conf htdocs logs ssl
+``
 
-    RewriteLog /tmp/rewrite.log
-    RewriteLogLevel 3
+Debian apache user being www-data, we have to grant write on logs to www-data:
+```
+sudo chgrp www-data logs/
+sudo chmod g+w logs/
+```
 
-    SetEnv no-gzip on
-    ProxyTimeout 999999999
-    
-    AddType application/vnd.ogc.context+xml .wmc
-
-    RewriteEngine On
-    RewriteRule ^/analytics$ /analytics/ [R]
-    RewriteRule ^/cas$ /cas/ [R]
-    RewriteRule ^/catalogapp$ /catalogapp/ [R]
-    RewriteRule ^/downloadform$ /downloadform/ [R]
-    RewriteRule ^/extractorapp$ /extractorapp/ [R]
-    RewriteRule ^/extractorapp/admin$ /extractorapp/admin/ [R]
-    RewriteRule ^/geonetwork$ /geonetwork/ [R]
-    RewriteRule ^/geoserver$ /geoserver/ [R]
-    RewriteRule ^/geofence$ /geofence/ [R]
-    RewriteRule ^/geowebcache$ /geowebcache/ [R]
-    RewriteRule ^/header$ /header/ [R]
-    RewriteRule ^/ldapadmin$ /ldapadmin/ [R]
-    RewriteRule ^/ldapadmin/privateui$ /ldapadmin/privateui/ [R]
-    RewriteRule ^/mapfishapp$ /mapfishapp/ [R]
-    RewriteRule ^/proxy$ /proxy/ [R]
-    
-    ErrorDocument 502 /errors/50x.html
-    ErrorDocument 503 /errors/50x.html
-
-    ProxyPass /casfailed.jsp ajp://localhost:8009/casfailed.jsp 
-    ProxyPassReverse /casfailed.jsp ajp://localhost:8009/casfailed.jsp
-
-    ProxyPass /j_spring_cas_security_check ajp://localhost:8009/j_spring_cas_security_check 
-    ProxyPassReverse /j_spring_cas_security_check ajp://localhost:8009/j_spring_cas_security_check
-
-    ProxyPass /j_spring_security_logout ajp://localhost:8009/j_spring_security_logout 
-    ProxyPassReverse /j_spring_security_logout ajp://localhost:8009/j_spring_security_logout
-
-    <Proxy ajp://localhost:8009/analytics/*>
-        Order deny,allow
-        Allow from all
-    </Proxy>
-    ProxyPass /analytics/ ajp://localhost:8009/analytics/ 
-    ProxyPassReverse /analytics/ ajp://localhost:8009/analytics/
-
-    <Proxy ajp://localhost:8009/cas/*>
-        Order deny,allow
-        Allow from all
-    </Proxy>
-    ProxyPass /cas/ ajp://localhost:8009/cas/ 
-    ProxyPassReverse /cas/ ajp://localhost:8009/cas/
-
-    <Proxy ajp://localhost:8009/catalogapp/*>
-        Order deny,allow
-        Allow from all
-    </Proxy>
-    ProxyPass /catalogapp/ ajp://localhost:8009/catalogapp/ 
-    ProxyPassReverse /catalogapp/ ajp://localhost:8009/catalogapp/
-
-    <Proxy ajp://localhost:8009/downloadform/*>
-        Order deny,allow
-        Allow from all
-    </Proxy>
-    ProxyPass /downloadform/ ajp://localhost:8009/downloadform/ 
-    ProxyPassReverse /downloadform/ ajp://localhost:8009/downloadform/
-
-    <Proxy ajp://localhost:8009/extractorapp/*>
-        Order deny,allow
-        Allow from all
-    </Proxy>
-    ProxyPass /extractorapp/ ajp://localhost:8009/extractorapp/ 
-    ProxyPassReverse /extractorapp/ ajp://localhost:8009/extractorapp/
-
-    <Proxy ajp://localhost:8009/geonetwork/*>
-        Order deny,allow
-        Allow from all
-    </Proxy>
-    ProxyPass /geonetwork/ ajp://localhost:8009/geonetwork/ 
-    ProxyPassReverse /geonetwork/ ajp://localhost:8009/geonetwork/
-
-    <Proxy ajp://localhost:8009/geonetwork-private/*>
-        Order deny,allow
-        Allow from all
-    </Proxy>
-    ProxyPass /geonetwork-private/ ajp://localhost:8009/geonetwork-private/ 
-    ProxyPassReverse /geonetwork-private/ ajp://localhost:8009/geonetwork-private/
-
-    <Proxy ajp://localhost:8009/geoserver/*>
-        Order deny,allow
-        Allow from all
-    </Proxy>
-    <Location /geoserver>
-      Header set Access-Control-Allow-Origin "*"
-      Header set Access-Control-Allow-Headers "Origin, X-Requested-With, Content-Type, Accept"
-      ProxyPass /geoserver/ ajp://localhost:8009/geoserver/ 
-      ProxyPassReverse /geoserver/ ajp://localhost:8009/geoserver/
-    </Location>
-
-    <Proxy ajp://localhost:8009/geowebcache/*>
-        Order deny,allow
-        Allow from all
-    </Proxy>
-    ProxyPass /geowebcache/ ajp://localhost:8009/geowebcache/ 
-    ProxyPassReverse /geowebcache/ ajp://localhost:8009/geowebcache/
+We publish sample files for your htdocs folder in the [georchestra/htdocs](https://github.com/georchestra/htdocs) repository:
+```
+cd /var/www/georchestra/
+git clone https://github.com/georchestra/htdocs.git
+```
+It is recommended to edit them to match your setup.
 
 
-    <Proxy ajp://localhost:8009/geofence/*>
-        Order deny,allow
-        Allow from all
-    </Proxy>
-    ProxyPass /geofence/ ajp://localhost:8009/geofence/ 
-    ProxyPassReverse /geofence/ ajp://localhost:8009/geofence/
+
+## VirtualHosts
+
+Let's first deactivate the default virtualhosts, and create ours:
+```
+sudo a2dissite default default-ssl
+```
+
+In /etc/apache2/sites-available/georchestra:
+```
+<VirtualHost *:80>
+    ServerName vm-georchestra
+    DocumentRoot /var/www/georchestra/htdocs
+    LogLevel warn
+    ErrorLog /var/www/georchestra/logs/error.log
+    CustomLog /var/www/georchestra/logs/access.log "combined"
+    Include /var/www/georchestra/conf/*.conf
+    ServerSignature Off
+</VirtualHost>
+<VirtualHost *:443>
+    ServerName vm-georchestra
+    DocumentRoot /var/www/georchestra/htdocs
+    LogLevel warn
+    ErrorLog /var/www/georchestra/logs/error.log
+    CustomLog /var/www/georchestra/logs/access.log "combined"
+    Include /var/www/georchestra/conf/*.conf
+    SSLEngine On
+    SSLCertificateFile /var/www/georchestra/ssl/georchestra.crt
+    SSLCertificateKeyFile /var/www/georchestra/ssl/georchestra-unprotected.key
+    SSLCACertificateFile /etc/ssl/certs/ca-certificates.crt
+    ServerSignature Off
+</VirtualHost>
+```
+
+Once this is done, enable the georchestra site with:
+```
+sudo a2ensite georchestra
+```
 
 
-    <Proxy ajp://localhost:8009/ldapadmin/*>
-        Order deny,allow
-        Allow from all
-    </Proxy>
-    ProxyPass /ldapadmin/ ajp://localhost:8009/ldapadmin/
-    ProxyPassReverse /ldapadmin/ ajp://localhost:8009/ldapadmin/
+## Configuration
 
-    <Proxy ajp://localhost:8009/mapfishapp/*>
-        Order deny,allow
-        Allow from all
-    </Proxy>
-    ProxyPass /mapfishapp/ ajp://localhost:8009/mapfishapp/ 
-    ProxyPassReverse /mapfishapp/ ajp://localhost:8009/mapfishapp/
+In ```/var/www/georchestra/conf/```, we will create several files, which will be loaded by both virtualhosts.
+In these files, we will make the assumption that the tomcat hosting the security proxy listens on port 8180. You may need to adapt this to your setup.
 
-    <Proxy ajp://localhost:8009/proxy/*>
-        Order deny,allow
-        Allow from all
-    </Proxy>
-    ProxyPass /proxy/ ajp://localhost:8009/proxy/ 
-    ProxyPassReverse /proxy/ ajp://localhost:8009/proxy/
+Three of these files are required:
 
-    <Proxy ajp://localhost:8009/header/*>
-        Order deny,allow
-        Allow from all
-    </Proxy>
-    ProxyPass /header/ ajp://localhost:8009/header/
-    ProxyPassReverse /header/ ajp://localhost:8009/header/
+* ```global.conf```:
 
-    <Proxy ajp://localhost:8009/_static/*>
-        Order deny,allow
-        Allow from all
-    </Proxy>
-    ProxyPass /_static/ ajp://localhost:8009/_static/
-    ProxyPassReverse /_static/ ajp://localhost:8009/_static/
+```
+<IfModule !mod_proxy.c>
+    LoadModule proxy_module /usr/lib/apache2/modules/mod_proxy.so
+</IfModule>
+<IfModule !mod_proxy_http.c>
+    LoadModule proxy_http_module /usr/lib/apache2/modules/mod_proxy_http.so
+</IfModule>
 
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+RewriteEngine On
+RewriteLog /tmp/rewrite.log
+RewriteLogLevel 3
 
- 
+SetEnv no-gzip on
+ProxyTimeout 999999999
+
+AddType application/vnd.ogc.context+xml .wmc
+
+ErrorDocument 502 /errors/50x.html
+ErrorDocument 503 /errors/50x.html
+```
+
+* ```proxy.conf```:
+
+```
+RewriteRule ^/proxy$ /proxy/ [R]
+
+ProxyPass /casfailed.jsp http://localhost:8180/casfailed.jsp
+ProxyPassReverse /casfailed.jsp http://localhost:8180/casfailed.jsp
+
+ProxyPass /j_spring_cas_security_check http://localhost:8180/j_spring_cas_security_check 
+ProxyPassReverse /j_spring_cas_security_check http://localhost:8180/j_spring_cas_security_check
+
+ProxyPass /j_spring_security_logout http://localhost:8180/j_spring_security_logout 
+ProxyPassReverse /j_spring_security_logout http://localhost:8180/j_spring_security_logout
+
+ProxyPass /gateway http://localhost:8180/gateway
+ProxyPassReverse /gateway http://localhost:8180/gateway
+
+ProxyPass /testPage http://localhost:8180/testPage
+ProxyPassReverse /testPage http://localhost:8180/testPage
+
+<Proxy http://localhost:8180/_static/*>
+    Order deny,allow
+    Allow from all
+</Proxy>
+ProxyPass /_static/ http://localhost:8180/_static/
+ProxyPassReverse /_static/ http://localhost:8180/_static/
+
+<Proxy http://localhost:8180/proxy/*>
+    Order deny,allow
+    Allow from all
+</Proxy>
+ProxyPass /proxy/ http://localhost:8180/proxy/ 
+ProxyPassReverse /proxy/ http://localhost:8180/proxy/
+```
+
+* ```cas.conf```:
+
+```
+RewriteRule ^/cas$ /cas/ [R]
+<Proxy http://localhost:8180/cas/*>
+    Order deny,allow
+    Allow from all
+</Proxy>
+ProxyPass /cas/ http://localhost:8180/cas/ 
+ProxyPassReverse /cas/ http://localhost:8180/cas/
+```
+
+For the other ones, pick only those you need, depending on the modules you plan to install:
+
+* ```analytics.conf```:
+
+```
+RewriteRule ^/analytics$ /analytics/ [R]
+<Proxy http://localhost:8180/analytics/*>
+    Order deny,allow
+    Allow from all
+</Proxy>
+ProxyPass /analytics/ http://localhost:8180/analytics/ 
+ProxyPassReverse /analytics/ http://localhost:8180/analytics/
+```
+
+* ```catalogapp.conf```:
+
+```
+RewriteRule ^/catalogapp$ /catalogapp/ [R]
+<Proxy http://localhost:8180/catalogapp/*>
+    Order deny,allow
+    Allow from all
+</Proxy>
+ProxyPass /catalogapp/ http://localhost:8180/catalogapp/ 
+ProxyPassReverse /catalogapp/ http://localhost:8180/catalogapp/
+```
+
+* ```downloadform.conf```:
+
+```
+RewriteRule ^/downloadform$ /downloadform/ [R]
+<Proxy http://localhost:8180/downloadform/*>
+    Order deny,allow
+    Allow from all
+</Proxy>
+ProxyPass /downloadform/ http://localhost:8180/downloadform/ 
+ProxyPassReverse /downloadform/ http://localhost:8180/downloadform/
+```
+
+* ```extractorapp.conf```:
+
+```
+RewriteRule ^/extractorapp$ /extractorapp/ [R]
+RewriteRule ^/extractorapp/admin$ /extractorapp/admin/ [R]
+<Proxy http://localhost:8180/extractorapp/*>
+    Order deny,allow
+    Allow from all
+</Proxy>
+ProxyPass /extractorapp/ http://localhost:8180/extractorapp/ 
+ProxyPassReverse /extractorapp/ http://localhost:8180/extractorapp/
+```
+
+* ```geonetwork.conf```:
+
+```
+RewriteRule ^/geonetwork$ /geonetwork/ [R]
+<Proxy http://localhost:8180/geonetwork/*>
+    Order deny,allow
+    Allow from all
+</Proxy>
+ProxyPass /geonetwork/ http://localhost:8180/geonetwork/ 
+ProxyPassReverse /geonetwork/ http://localhost:8180/geonetwork/
+```
+
+* ```geoserver.conf```:
+
+```
+RewriteRule ^/geoserver$ /geoserver/ [R]
+<Proxy http://localhost:8180/geoserver/*>
+    Order deny,allow
+    Allow from all
+</Proxy>
+<Location /geoserver>
+  Header set Access-Control-Allow-Origin "*"
+  Header set Access-Control-Allow-Headers "Origin, X-Requested-With, Content-Type, Accept"
+</Location>
+ProxyPass /geoserver/ http://localhost:8180/geoserver/ 
+ProxyPassReverse /geoserver/ http://localhost:8180/geoserver/
+```
+
+* ```geofence.conf```:
+
+```
+RewriteRule ^/geofence$ /geofence/ [R]
+<Proxy http://localhost:8180/geofence/*>
+    Order deny,allow
+    Allow from all
+</Proxy>
+ProxyPass /geofence/ http://localhost:8180/geofence/ 
+ProxyPassReverse /geofence/ http://localhost:8180/geofence/
+```
+
+* ```geowebcache.conf```:
+
+```
+RewriteRule ^/geowebcache$ /geowebcache/ [R]
+<Proxy http://localhost:8180/geowebcache/*>
+    Order deny,allow
+    Allow from all
+</Proxy>
+ProxyPass /geowebcache/ http://localhost:8180/geowebcache/ 
+ProxyPassReverse /geowebcache/ http://localhost:8180/geowebcache/
+```
+
+* ```header.conf```:
+
+```
+RewriteRule ^/header$ /header/ [R]
+<Proxy http://localhost:8180/header/*>
+    Order deny,allow
+    Allow from all
+</Proxy>
+ProxyPass /header/ http://localhost:8180/header/
+ProxyPassReverse /header/ http://localhost:8180/header/
+```
+
+* ```ldapadmin.conf```:
+
+```
+RewriteRule ^/ldapadmin$ /ldapadmin/ [R]
+RewriteRule ^/ldapadmin/privateui$ /ldapadmin/privateui/ [R]
+<Proxy http://localhost:8180/ldapadmin/*>
+    Order deny,allow
+    Allow from all
+</Proxy>
+ProxyPass /ldapadmin/ http://localhost:8180/ldapadmin/
+ProxyPassReverse /ldapadmin/ http://localhost:8180/ldapadmin/
+```
+
+* ```mapfishapp.conf```:
+
+```
+RewriteRule ^/mapfishapp$ /mapfishapp/ [R]
+<Proxy http://localhost:8180/mapfishapp/*>
+    Order deny,allow
+    Allow from all
+</Proxy>
+ProxyPass /mapfishapp/ http://localhost:8180/mapfishapp/ 
+ProxyPassReverse /mapfishapp/ http://localhost:8180/mapfishapp/
+```
+
+
 ## SSL certificate
 
+The SSL certificate is absolutely required, at least for the CAS module, if not for the whole SDI.
 
 * private key generation (enter a passphrase)
-
-        cd /var/www/georchestra/ssl
-        sudo openssl genrsa -des3 -out georchestra.key 1024
+```
+cd /var/www/georchestra/ssl
+sudo openssl genrsa -des3 -out georchestra.key 1024
+```
 
 * certificate generated for this key
-
-        sudo openssl req -new -key georchestra.key -out georchestra.csr
+```
+sudo openssl req -new -key georchestra.key -out georchestra.csr
+```
 
 * fill the form without providing a password
-
-        Common Name (eg, YOUR name) []: put your server name (eg: vm-georchestra)
+```
+Common Name (eg, YOUR name) []: put your server name (eg: vm-georchestra)
+```
 
 * create an unprotected key
+```
+sudo openssl rsa -in georchestra.key -out georchestra-unprotected.key
+sudo openssl x509 -req -days 365 -in georchestra.csr -signkey georchestra.key -out georchestra.crt
+```
 
-        sudo openssl rsa -in georchestra.key -out georchestra-unprotected.key
-        sudo openssl x509 -req -days 365 -in georchestra.csr -signkey georchestra.key -out georchestra.crt
-
-* restart apache
-
-        sudo service apache2 graceful
-        
 * update your hosts
 
-        sudo nano /etc/hosts
+In /etc/hosts:
+```
+127.0.0.1       vm-georchestra
+```
 
-
-        127.0.0.1       vm-georchestra
-
-* testing
-
-  * http://vm-georchestra
-  * https://vm-georchestra
+* restart apache
+```
+sudo service apache2 restart
+``` 
