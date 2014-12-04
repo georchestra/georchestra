@@ -1,16 +1,15 @@
 package org.georchestra.security;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import javax.servlet.http.HttpSession;
-
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import javax.servlet.http.HttpSession;
 
 public class SecurityRequestHeaderProvider extends HeaderProvider {
 
@@ -19,7 +18,7 @@ public class SecurityRequestHeaderProvider extends HeaderProvider {
 
         Authentication authentication = SecurityContextHolder.getContext()
                 .getAuthentication();
-        Collection<GrantedAuthority> authorities = authentication.getAuthorities();
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         List<Header> headers = new ArrayList<Header>();
         if (authentication.getName().equals("anonymousUser"))
              return headers;

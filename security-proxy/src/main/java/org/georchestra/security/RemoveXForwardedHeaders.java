@@ -2,6 +2,8 @@ package org.georchestra.security;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.springframework.util.Assert;
 
@@ -16,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Jesse on 12/2/2014.
  */
 public class RemoveXForwardedHeaders implements HeaderFilter {
+    protected static final Log logger = LogFactory.getLog(Proxy.class);
     static final String HOST = "x-forwarded-host";
     static final String PORT = "x-forwarded-port";
     static final String PROTOCOL = "x-forwarded-proto";
@@ -38,23 +41,32 @@ public class RemoveXForwardedHeaders implements HeaderFilter {
         }
 
         final String url = originalRequest.getRequestURL().toString();
+        boolean removeHeader = false;
         if (!includes.isEmpty()) {
+            logger.debug("Checking requestURL: '"+url+"' against include patterns: " + this.includes);
+            removeHeader = false;
             for (Pattern include : includes) {
                 if (include.matcher(url).matches()) {
-                    return true;
+                    removeHeader = true;
+                    break;
                 }
             }
-            return false;
         } else if (!excludes.isEmpty()) {
+            logger.debug("Checking requestURL: '"+url+"' against exclude patterns: " + this.excludes);
+            removeHeader = true;
             for (Pattern exclude : excludes) {
                 if (exclude.matcher(url).matches()) {
-                    return false;
+                    removeHeader = false;
                 }
             }
-            return true;
         }
 
-        return false;
+        if (removeHeader) {
+            logger.debug("Removing header: " + headerName);
+        } else {
+            logger.debug("Keeping header: " + headerName);
+        }
+        return removeHeader;
     }
 
     public void setIncludes(List<String> includes) {
