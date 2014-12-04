@@ -12,16 +12,16 @@ sudo service apache2 restart
 ## Directory structure
 
 ```
-cd /var/www
-sudo mkdir georchestra
-cd georchestra
-sudo mkdir conf htdocs logs ssl
+sudo mkdir -p /var/www/georchestra/htdocs
+sudo mkdir /var/www/georchestra/conf 
+sudo mkdir /var/www/georchestra/logs 
+sudo mkdir /var/www/georchestra/ssl
 ```
 
 Debian apache user being www-data, we have to grant write on logs to www-data:
 ```
-sudo chgrp www-data logs/
-sudo chmod g+w logs/
+sudo chgrp www-data /var/www/georchestra/logs/
+sudo chmod g+w /var/www/georchestra/logs/
 ```
 
 We publish sample files for your htdocs folder in the [georchestra/htdocs](https://github.com/georchestra/htdocs) repository:
