@@ -74,10 +74,13 @@ Use the **georchestra-memberof.ldif** file to add the module and configure the o
 
 # Managing the directory
 
-To manage the directory from the command line, use ldapvi (install with ```sudo apt-get install ldapvi```):
+To manage the directory, there are (at least) 3 options:
+
+ * from the command line, use ldapvi (install with ```sudo apt-get install ldapvi```):
 
 ```
 ldapvi --host localhost -D "cn=admin,dc=georchestra,dc=org" -w "secret" -b "dc=georchestra,dc=org"
 ```
 
-Another option is [Apache Directory Studio](http://directory.apache.org/studio/), a powerful desktop client.
+ * [Apache Directory Studio](http://directory.apache.org/studio/), a powerful desktop client.
+ * our own [ldapadmin](/ldapadmin/README.md) web application, available at /ldapadmin/privateui/ to  members of the ```MOD_LDAPADMIN``` group, is probably the easiest one.
