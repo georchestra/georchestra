@@ -106,7 +106,7 @@ JAVA_OPTS="$JAVA_OPTS \
               -Dhttp.proxyHost=proxy.mycompany.com \ 
               -Dhttp.proxyPort=XXXX \
               -Dhttps.proxyHost=proxy.mycompany.com \
-              -Dhttps.proxyPort=XXXX" \
+              -Dhttps.proxyPort=XXXX"
 ```
 
 ### Configure connectors 
@@ -249,7 +249,7 @@ JAVA_OPTS="$JAVA_OPTS \
             -XX:+UseParNewGC -XX:ParallelGCThreads=2 \
             -XX:SoftRefLRUPolicyMSPerMB=36000 \
             -XX:NewRatio=2 \
-            -XX:+AggressiveOpts "
+            -XX:+AggressiveOpts"
 ```
 This allocates 2Gb of your server RAM to GeoServer.
 
