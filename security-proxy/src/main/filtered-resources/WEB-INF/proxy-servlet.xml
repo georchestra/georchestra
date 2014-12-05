@@ -86,6 +86,7 @@ ${proxy.mapping}
                     <property name="includes">
                         <list>
                             <!-- set the patterns of urls that (when matched) will have the x-forwarded-* headers removed -->
+                            ${remove.xforwarded.headers}
                         </list>
                     </property>
                     <property name="excludes">
