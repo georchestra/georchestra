@@ -32,6 +32,7 @@ private.ssl=
 proxy.defaultTarget=
 proxy.mapping=
 header.mapping=
+remove.xforwarded.headers=
 
 privileged_admin_name=@shared.privileged.geoserver.user@
 
