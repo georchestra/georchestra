@@ -2,8 +2,12 @@ package org.georchestra.security;
 
 import com.google.common.collect.Lists;
 import junit.framework.TestCase;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
+
+import java.net.URI;
+import java.net.URISyntaxException;
 
 public class RemoveXForwardedHeadersTest extends TestCase {
 
@@ -17,19 +21,23 @@ public class RemoveXForwardedHeadersTest extends TestCase {
         headers.checkConfiguration();
 
         assertFalse(headers.filter(RemoveXForwardedHeaders.HOST,
-                new MockHttpServletRequest("GET", "extractorapp"), null));
+                null, createProxyRequest("extractorapp")));
         assertFalse(headers.filter(RemoveXForwardedHeaders.FOR,
-                new MockHttpServletRequest("GET", "extractorapp"), null));
+                null, createProxyRequest("extractorapp")));
         assertFalse(headers.filter("header",
-                new MockHttpServletRequest("GET", "extractorapp"), null));
+                null, createProxyRequest("extractorapp")));
         assertFalse(headers.filter("header",
-                new MockHttpServletRequest("GET", "geoserver/wms?SERVICE=WMS"), null));
+                null, createProxyRequest("geoserver/wms?SERVICE=WMS")));
         assertTrue(headers.filter(RemoveXForwardedHeaders.HOST,
-                new MockHttpServletRequest("GET", "geoserver/wms?SERVICE=WMS"), null));
+                null, createProxyRequest("geoserver/wms?SERVICE=WMS")));
         assertTrue(headers.filter(RemoveXForwardedHeaders.HOST,
-                new MockHttpServletRequest("GET", "geoserver/wms?Service=wms"), null));
+                null, createProxyRequest("geoserver/wms?Service=wms")));
         assertTrue(headers.filter(RemoveXForwardedHeaders.FOR,
-                new MockHttpServletRequest("GET", "geoserver/wms?Service=wms"), null));
+                null, createProxyRequest("geoserver/wms?Service=wms")));
+    }
+
+    private HttpRequestBase createProxyRequest(String uriFragment) throws URISyntaxException {
+        return new HttpGet(new URI("http://localhost:8080/" + uriFragment));
     }
 
     @Test
@@ -42,19 +50,19 @@ public class RemoveXForwardedHeadersTest extends TestCase {
         headers.checkConfiguration();
 
         assertTrue(headers.filter(RemoveXForwardedHeaders.HOST,
-                new MockHttpServletRequest("GET", "extractorapp"), null));
+                null, createProxyRequest("extractorapp")));
         assertTrue(headers.filter(RemoveXForwardedHeaders.FOR,
-                new MockHttpServletRequest("GET", "extractorapp"), null));
+                null, createProxyRequest("extractorapp")));
         assertFalse(headers.filter("header",
-                new MockHttpServletRequest("GET", "extractorapp"), null));
+                null, createProxyRequest("extractorapp")));
         assertFalse(headers.filter("header",
-                new MockHttpServletRequest("GET", "geoserver/wms?SERVICE=WMS"), null));
+                null, createProxyRequest("geoserver/wms?SERVICE=WMS")));
         assertFalse(headers.filter(RemoveXForwardedHeaders.HOST,
-                new MockHttpServletRequest("GET", "geoserver/wms?SERVICE=WMS"), null));
+                null, createProxyRequest("geoserver/wms?SERVICE=WMS")));
         assertFalse(headers.filter(RemoveXForwardedHeaders.HOST,
-                new MockHttpServletRequest("GET", "geoserver/wms?Service=wms"), null));
+                null, createProxyRequest("geoserver/wms?Service=wms")));
         assertFalse(headers.filter(RemoveXForwardedHeaders.FOR,
-                new MockHttpServletRequest("GET", "geoserver/wms?Service=wms"), null));
+                null, createProxyRequest("geoserver/wms?Service=wms")));
     }
 
     @Test(expected = IllegalArgumentException.class)

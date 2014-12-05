@@ -40,7 +40,7 @@ public class RemoveXForwardedHeaders implements HeaderFilter {
             return false;
         }
 
-        final String url = originalRequest.getRequestURL().toString();
+        final String url = proxyRequest.getURI().toString();
         boolean removeHeader = false;
         if (!includes.isEmpty()) {
             logger.debug("Checking requestURL: '"+url+"' against include patterns: " + this.includes);
