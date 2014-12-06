@@ -31,16 +31,16 @@ Once your system is ready, collect WAR files in a dedicated directory and rename
 Finally, dispatch geOrchestra webapps into your 3 Tomcat instances:
 
     sudo service tomcat-proxycas stop
-    sudo mv /tmp/georchestra/ROOT.war /opt/tomcat-proxycas/webapps
-    sudo mv /tmp/georchestra/cas.war /opt/tomcat-proxycas/webapps
+    sudo mv /tmp/georchestra/ROOT.war /var/lib/tomcat-proxycas/webapps
+    sudo mv /tmp/georchestra/cas.war /var/lib/tomcat-proxycas/webapps
     sudo service tomcat-proxycas start
 
-    sudo service tomcat-geoserver stop
-    sudo mv /tmp/georchestra/geoserver.war /opt/tomcat-geoserver/webapps
-    sudo service tomcat-geoserver start
+    sudo service tomcat-geoserver0 stop
+    sudo mv /tmp/georchestra/geoserver.war /var/lib/tomcat-geoserver0/webapps
+    sudo service tomcat-geoserver0 start
 
     sudo service tomcat-georchestra stop
-    sudo mv /tmp/georchestra/* /opt/tomcat-georchestra/webapps
+    sudo mv /tmp/georchestra/* /var/lib/tomcat-georchestra/webapps
     sudo service tomcat-georchestra start
 
 
@@ -56,18 +56,18 @@ However, this requires the build process to happen on the production host (or a 
     VERSION=14.06
 
     sudo service tomcat-proxycas stop
-    cd /opt/tomcat-proxycas/webapps
+    cd /var/lib/tomcat-proxycas/webapps
     sudo ln -s ~/.m2/repository/org/georchestra/security-proxy/${VERSION}-SNAPSHOT/security-proxy-${VERSION}-SNAPSHOT-${PROFILE}.war ROOT.war
     sudo ln -s ~/.m2/repository/org/georchestra/cas-server-webapp/${VERSION}-SNAPSHOT/cas-server-webapp-${VERSION}-SNAPSHOT-${PROFILE}.war cas.war
     sudo service tomcat-proxycas start
 
     sudo service tomcat-geoserver stop
-    cd /opt/tomcat-geoserver/webapps
+    cd /var/lib/tomcat-geoserver/webapps
     sudo ln -s ~/.m2/repository/org/georchestra/geoserver-webapp/${VERSION}-SNAPSHOT/geoserver-webapp-${VERSION}-SNAPSHOT-${PROFILE}.war geoserver.war
     sudo service tomcat-geoserver start
     
     sudo service tomcat-georchestra stop
-    cd /opt/tomcat-georchestra/webapps
+    cd /var/lib/tomcat-georchestra/webapps
     sudo ln -s ~/.m2/repository/org/georchestra/analytics/${VERSION}-SNAPSHOT/analytics-${VERSION}-SNAPSHOT-${PROFILE}.war analytics.war
     sudo ln -s ~/.m2/repository/org/georchestra/catalogapp/${VERSION}-SNAPSHOT/catalogapp-${VERSION}-SNAPSHOT-${PROFILE}.war catalogapp.war
     sudo ln -s ~/.m2/repository/org/georchestra/downloadform/${VERSION}-SNAPSHOT/downloadform-${VERSION}-SNAPSHOT-${PROFILE}.war downloadform.war
@@ -174,21 +174,21 @@ non-interactive is enabled so using system property 'passphrase' as the privateK
 [INFO]  scp target/wars/header-14.06-SNAPSHOT-myprofile.war deploy@sdi.georchestra.org:/tmp/georchestra_deploy_tmp/header.war
 [INFO]  scp complete: 3.6MB copied
 [INFO]  executing sudo /etc/init.d/tomcat-georchestra stop
-[INFO]  executing rm -rf /srv/tomcat/georchestra/webapps/ldapadmin
-[INFO]  executing rm -f /srv/tomcat/georchestra/webapps/ldapadmin.war   
-[INFO]  executing rm -rf /srv/tomcat/georchestra/webapps/extractorapp   
-[INFO]  executing rm -f /srv/tomcat/georchestra/webapps/extractorapp.war
-[INFO]  executing rm -rf /srv/tomcat/georchestra/webapps/geofence
-[INFO]  executing rm -f /srv/tomcat/georchestra/webapps/geofence.war
-[INFO]  executing rm -rf /srv/tomcat/georchestra/webapps/mapfishapp
-[INFO]  executing rm -f /srv/tomcat/georchestra/webapps/mapfishapp.war  
-[INFO]  executing rm -rf /srv/tomcat/georchestra/webapps/analytics
-[INFO]  executing rm -f /srv/tomcat/georchestra/webapps/analytics.war   
-[INFO]  executing rm -rf /srv/tomcat/georchestra/webapps/geonetwork
-[INFO]  executing rm -f /srv/tomcat/georchestra/webapps/geonetwork.war  
-[INFO]  executing rm -rf /srv/tomcat/georchestra/webapps/header
-[INFO]  executing rm -f /srv/tomcat/georchestra/webapps/header.war
-[INFO]  executing cp /tmp/georchestra_deploy_tmp/* /srv/tomcat/georchestra/webapps
+[INFO]  executing rm -rf /var/lib/tomcat-georchestra/webapps/ldapadmin
+[INFO]  executing rm -f /var/lib/tomcat-georchestra/webapps/ldapadmin.war   
+[INFO]  executing rm -rf /var/lib/tomcat-georchestra/webapps/extractorapp   
+[INFO]  executing rm -f /var/lib/tomcat-georchestra/webapps/extractorapp.war
+[INFO]  executing rm -rf /var/lib/tomcat-georchestra/webapps/geofence
+[INFO]  executing rm -f /var/lib/tomcat-georchestra/webapps/geofence.war
+[INFO]  executing rm -rf /var/lib/tomcat-georchestra/webapps/mapfishapp
+[INFO]  executing rm -f /var/lib/tomcat-georchestra/webapps/mapfishapp.war  
+[INFO]  executing rm -rf /var/lib/tomcat-georchestra/webapps/analytics
+[INFO]  executing rm -f /var/lib/tomcat-georchestra/webapps/analytics.war   
+[INFO]  executing rm -rf /var/lib/tomcat-georchestra/webapps/geonetwork
+[INFO]  executing rm -f /var/lib/tomcat-georchestra/webapps/geonetwork.war  
+[INFO]  executing rm -rf /var/lib/tomcat-georchestra/webapps/header
+[INFO]  executing rm -f /var/lib/tomcat-georchestra/webapps/header.war
+[INFO]  executing cp /tmp/georchestra_deploy_tmp/* /var/lib/tomcat-georchestra/webapps
 [INFO]  executing sudo /etc/init.d/tomcat-georchestra start
 [INFO]  executing rm -rf /tmp/georchestra_deploy_tmp
 [INFO]  executing mkdir -p /tmp/georchestra_deploy_tmp
@@ -197,11 +197,11 @@ non-interactive is enabled so using system property 'passphrase' as the privateK
 [INFO]  scp target/wars/cas-server-webapp-14.06-SNAPSHOT-myprofile.war deploy@sdi.georchestra.org:/tmp/georchestra_deploy_tmp/cas.war
 [INFO]  scp complete: 12.5MB copied
 [INFO]  executing sudo /etc/init.d/tomcat-proxycas stop
-[INFO]  executing rm -rf /srv/tomcat/proxycas/webapps/ROOT
-[INFO]  executing rm -f /srv/tomcat/proxycas/webapps/ROOT.war
-[INFO]  executing rm -rf /srv/tomcat/proxycas/webapps/cas
-[INFO]  executing rm -f /srv/tomcat/proxycas/webapps/cas.war
-[INFO]  executing cp /tmp/georchestra_deploy_tmp/* /srv/tomcat/proxycas/webapps
+[INFO]  executing rm -rf /var/lib/tomcat-proxycas/webapps/ROOT
+[INFO]  executing rm -f /var/lib/tomcat-proxycas/webapps/ROOT.war
+[INFO]  executing rm -rf /var/lib/tomcat-proxycas/webapps/cas
+[INFO]  executing rm -f /var/lib/tomcat-proxycas/webapps/cas.war
+[INFO]  executing cp /tmp/georchestra_deploy_tmp/* /var/lib/tomcat-proxycas/webapps
 [INFO]  executing sudo /etc/init.d/tomcat-proxycas start
 [INFO]  executing rm -rf /tmp/georchestra_deploy_tmp
 non-interactive is enabled so using system property 'passphrase' as the privateKey passphrase
@@ -209,9 +209,9 @@ non-interactive is enabled so using system property 'passphrase' as the privateK
 [INFO]  scp target/wars/geoserver-webapp-14.06-SNAPSHOT-myprofile.war deploy@sdi.georchestra.org:/tmp/georchestra_deploy_tmp/geoserver.war
 [INFO]  scp complete: 135.7MB copied
 [INFO]  executing sudo /etc/init.d/tomcat-geoserver0 stop
-[INFO]  executing rm -rf /srv/tomcat/geoserver0/webapps/geoserver
-[INFO]  executing rm -f /srv/tomcat/geoserver0/webapps/geoserver.war
-[INFO]  executing cp /tmp/georchestra_deploy_tmp/* /srv/tomcat/geoserver0/webapps
+[INFO]  executing rm -rf /var/lib/tomcat-geoserver0/webapps/geoserver
+[INFO]  executing rm -f /var/lib/tomcat-geoserver0/webapps/geoserver.war
+[INFO]  executing cp /tmp/georchestra_deploy_tmp/* /var/lib/tomcat-geoserver0/webapps
 [INFO]  executing sudo /etc/init.d/tomcat-geoserver0 start
 [INFO]  executing rm -rf /tmp/georchestra_deploy_tmp
 [INFO] ------------------------------------------------------------------------
