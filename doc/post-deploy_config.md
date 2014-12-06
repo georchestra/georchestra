@@ -50,6 +50,16 @@ sudo apt-get install ttf-mscorefonts-installer
 
 Restart tomcat-geoserver0 and check on the /geoserver/web/?wicket:bookmarkablePage=:org.geoserver.web.admin.JVMFontsPage page that these are loaded.
 
+### Supported SRS
+
+By default, GeoServer supports more than 2000 spatial reference systems.  
+This is really a lot, but you're probably not interested in 99% of them, and they clutter your GetCapabilities documents.
+
+It's easy to restrict the list to the most useful ones: in the WMS and WCS admin pages, fill the "Limited SRS list" textarea with, eg:
+```
+2154, 3857, 3942, 3943, 3944, 3945, 3946, 3947, 3948, 3949, 3950, 4171, 4258, 4326, 23030, 23031, 23032, 32630, 32631, 32632, 4171, 4271, 3758
+```
+... and don't forget to submit the form.
 
 ### Fine tuning
 
