@@ -201,9 +201,16 @@ JAVA_OPTS="$JAVA_OPTS \
 In case your connection to the internet is proxied, you should also add the -Dhttp.proxy* options here.
 
 
-### Configure connectors 
+### Configure connector
 
-TODO
+In ```/var/lib/tomcat-georchestra/conf/server.xml```:
+```
+    <Connector port="8181" protocol="HTTP/1.1" 
+               connectionTimeout="20000" 
+               URIEncoding="UTF-8"
+               redirectPort="8443" />
+
+```
 
 ### Start the instance
 
@@ -265,9 +272,21 @@ JAVA_OPTS="$JAVA_OPTS \
 
 In case your connection to the internet is proxied, you should also add the -Dhttp.proxy* options here.
 
-### Configure connectors 
+### Configure connector
 
-TODO
+For GeoServer, it is advised to lower the number of simultaneous threads handling incoming requests.
+By default Tomcat assumes 200 threads, but experiments show that 20 is a better value.
+
+In ```/var/lib/tomcat-geoserver0/conf/server.xml```:
+```
+    <Connector port="8190" protocol="HTTP/1.1" 
+               connectionTimeout="20000" 
+               URIEncoding="UTF-8"
+               maxThreads="20" 
+               minSpareThreads="20"
+               redirectPort="8443" />
+
+```
 
 ### Start the instance
 

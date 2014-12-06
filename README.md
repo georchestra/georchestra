@@ -33,3 +33,6 @@ Additional information can be found in the [georchestra.org](http://www.georches
  * [analytics](analytics/README.md): admin-oriented module, a front-end to the [ogc-server-statistics](ogc-server-statistics/README.md) and [downloadform](downloadform/README.md) modules,
  * [ldapadmin](ldapadmin/README.md): also an admin-oriented module, to manage users and groups,
  * [header](header/README.md): the common header which is used by all modules.
+
+If you need more information, please ask on the [geOrchestra mailing list](https://groups.google.com/forum/#!forum/georchestra).  
+For help setting up your instance, or for dev-related questions, use our [dev/tech list](https://groups.google.com/forum/#!forum/georchestra-dev).
