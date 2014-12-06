@@ -1,6 +1,6 @@
 # Post-deploy configuration
 
-This is a higly recommended reading !
+This is a highly recommended reading !
 
 ## GeoServer / GeoWebCache
 
