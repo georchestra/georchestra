@@ -63,7 +63,9 @@ It's easy to restrict the list to the most useful ones: in the WMS and WCS admin
 
 ### Fine tuning
 
-Please refer to the excellent "[Running in a Production Environment](http://docs.geoserver.org/stable/en/user/production/index.html)" section of the GeoServer documentation.
+Please refer to these excellent references:
+ * "[Running in a Production Environment](http://docs.geoserver.org/stable/en/user/production/index.html)" section of the official GeoServer documentation,
+ * [GeoServer training](http://geoserver.geo-solutions.it/edu/en/index.html) by GeoSolutions
 
 For GeoWebCache, a collection of tips and tricks can be found here: [http://geo-solutions.blogspot.fr/2012/05/tips-tricks-geowebcache-tweaks.html](http://geo-solutions.blogspot.fr/2012/05/tips-tricks-geowebcache-tweaks.html)
 
