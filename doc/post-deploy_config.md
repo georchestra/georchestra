@@ -24,8 +24,8 @@ sudo apt-get install libjai-core-java libjai-imageio-core-java
 ```
 
 Then, make sure that the following 5 jars are loaded by your geoserver and geowebcache tomcat classloaders:
- * jai_codec.jar, jai_core.jar, mlibwrapper_jai.jar for the native JAI
- * jai_imageio.jar, clibwrapper_jiio.jar for ImageIO
+ * ```jai_codec.jar```, ```jai_core.jar```, ```mlibwrapper_jai.jar``` for the native JAI
+ * ```jai_imageio.jar```, ```clibwrapper_jiio.jar``` for ImageIO
 
 This is usually done by symlinking them from their original location (something like ```/usr/share/java```) to the ```${catalina.base}/lib``` directory (for the common classloader).
 
