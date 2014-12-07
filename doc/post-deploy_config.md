@@ -20,7 +20,7 @@ By default, GeoServer and GeoWebCache ship with a the JAVA JAI classes, which ru
 Raster operations will be ~ two times faster when the native JAI and imageio are installed: 
 
 ```
-sudo apt-get install libjai-imageio-core-java
+sudo apt-get install libjai-core-java libjai-imageio-core-java
 ```
 
 Then, make sure that the following 5 jars are loaded by your geoserver and geowebcache tomcat classloaders: jai_codec.jar, jai_core.jar, jai_imageio.jar, clibwrapper_jiio.jar, mlibwrapper_jai.jar
