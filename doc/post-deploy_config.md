@@ -14,7 +14,7 @@ After saving the form, you should check in the WMS capabilities that the service
 
 For the standalone GeoWebCache, TODO 
 
-### Native JAI
+### Native JAI & ImageIO
 
 By default, GeoServer and GeoWebCache ship with a the JAVA JAI classes, which run everywhere, but are not as fast as the native one.
 Raster operations will be ~ two times faster when the native JAI and imageio are installed: 
@@ -23,10 +23,21 @@ Raster operations will be ~ two times faster when the native JAI and imageio are
 sudo apt-get install libjai-core-java libjai-imageio-core-java
 ```
 
-Then, make sure that the following 5 jars are loaded by your geoserver and geowebcache tomcat classloaders: jai_codec.jar, jai_core.jar, jai_imageio.jar, clibwrapper_jiio.jar, mlibwrapper_jai.jar
+Then, make sure that the following 5 jars are loaded by your geoserver and geowebcache tomcat classloaders:
+ * jai_codec.jar, jai_core.jar, mlibwrapper_jai.jar for the native JAI
+ * jai_imageio.jar, clibwrapper_jiio.jar for ImageIO
 
 This is usually done by symlinking them from their original location (something like ```/usr/share/java```) to the ```${catalina.base}/lib``` directory (for the common classloader).
 
+eg:
+```
+cd /var/lib/tomcat-geoserver0/lib
+sudo ln -s /usr/share/java/jai_core.jar .
+sudo ln -s /usr/share/java/jai_codec.jar .
+sudo ln -s /usr/share/java/mlibwrapper_jai.jar .
+sudo ln -s /usr/share/java/jai_imageio.jar .
+sudo ln -s /usr/share/java/clibwrapper_jiio.jar .
+```
 
 ### Control-Flow
 
