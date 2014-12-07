@@ -16,7 +16,7 @@ For the standalone GeoWebCache, TODO
 
 ### Native JAI & ImageIO
 
-By default, GeoServer and GeoWebCache ship with a the java JAI classes which run everywhere, but are not as fast as the native ones.  
+By default, GeoServer and GeoWebCache ship with the java JAI classes which run everywhere, but are not as fast as the native ones.  
 Raster operations will be ~ two times faster when the native JAI and imageio are installed, so: 
 
 ```
