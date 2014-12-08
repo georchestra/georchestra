@@ -14,6 +14,7 @@ After saving the form, you should check in the WMS capabilities that the service
 
 For the standalone GeoWebCache, TODO 
 
+
 ### Native JAI & ImageIO
 
 By default, GeoServer and GeoWebCache ship with the java JAI classes which run everywhere, but are not as fast as the native ones.  
@@ -46,6 +47,31 @@ Then, head to the "Settings" > "JAI" section:
  * allow a bigger fraction of the geoserver heap size to be used for the JAI: 0.75 rather than 0.5
  * check the Tile Recycling, JPEG Native Acceleration, PNG Native Acceleration & Mosaic Native Acceleration boxes
 
+
+### Marlin Renderer
+
+Marlin is an antialised rendering engine, which plugs into the JVM to replace the native implementation. 
+Marlin combines the advantages of both rendering engines it replaces: it has the scalability of OpenJDK's "Pisces", and the speed of Oracle's "Ductus". 
+Note that it only works on recent versions of Oracle and OpenJDK (>= 7).
+
+Installing it is not difficult:
+ * [grab the latest release](https://github.com/bourgesl/marlin-renderer/releases)
+ * put the ```marlin-0.4.4.jar``` file into ```/usr/share/tomcat6/lib/``` (don't forget to chmod a+r marlin*.jar)
+ * in ```/etc/defaults/tomcat-geoserver0```, add the following:
+
+```
+JAVA_OPTS="$JAVA_OPTS \
+            -Xbootclasspath/a:"/usr/share/tomcat6/lib/marlin-0.4.4.jar" \
+            -Dsun.java2d.renderer=org.marlin.pisces.PiscesRenderingEngine"
+```
+
+Finally, restart tomcat-geoserver0 and check the jar has been loaded with:
+```
+cat /var/lib/tomcat-geoserver0/logs/catalina.out | grep Marlin
+```
+It should display "Marlin software rasterizer = ENABLED"
+
+
 ### Control-Flow
 
 For fairness reasons, you should setup limits to the number of concurrent requests handled by your GeoServer. 
@@ -56,6 +82,7 @@ If you have followed this guide, your geoserver probably also uses our recommend
 
 If not, you should create a custom ```controlflow.properties``` file in your geoserver "data dir".  
 Please refer to the [control-flow module documentation](http://docs.geoserver.org/latest/en/user/extensions/controlflow/index.html) for the syntax.
+
 
 ### Fonts
 
@@ -68,6 +95,7 @@ sudo apt-get install ttf-mscorefonts-installer
 
 Restart tomcat-geoserver0 and check on the /geoserver/web/?wicket:bookmarkablePage=:org.geoserver.web.admin.JVMFontsPage page that these are loaded.
 
+
 ### Supported SRS
 
 By default, GeoServer supports more than 2000 spatial reference systems.  
@@ -78,6 +106,7 @@ It's easy to restrict the list to the most useful ones: in the WMS and WCS admin
 2154, 3857, 3942, 3943, 3944, 3945, 3946, 3947, 3948, 3949, 3950, 4171, 4258, 4326, 23030, 23031, 23032, 32630, 32631, 32632, 4171, 4271, 3758
 ```
 ... and don't forget to submit the form.
+
 
 ### Fine tuning
 
@@ -93,7 +122,7 @@ For GeoWebCache, a collection of tips and tricks can be found here: [http://geo-
 
 TODO:
  * proxied base url
- *
+ 
 
 ## GeoFence
 
