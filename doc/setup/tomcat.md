@@ -76,7 +76,7 @@ Then:
 ```
 sudo mkdir /var/lib/tomcat-proxycas/conf/policy.d
 sudo touch /var/lib/tomcat-proxycas/conf/policy.d/empty.policy
-sudo chown -R tomcat6:tomcat6 /var/lib/proxycas
+sudo chown -R tomcat6:tomcat6 /var/lib/tomcat-proxycas
 sudo cp /etc/init.d/tomcat6 /etc/init.d/tomcat-proxycas
 sudo cp /etc/default/tomcat6 /etc/default/tomcat-proxycas
 ```
