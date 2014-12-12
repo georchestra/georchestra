@@ -16,7 +16,7 @@ sudo apt-get install slapd ldap-utils
 You will need to provide the LDAP administrator password. Choose a strong one.
 
 
-Let's also get the data by cloning our LDAP repository:
+Let's also get the data by cloning our LDAP repository (and have a look at the [users and groups](https://github.com/georchestra/LDAP/blob/master/README.md) it creates by default):
 ```
 git clone -b YY.MM git://github.com/georchestra/LDAP.git
 ```
