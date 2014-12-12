@@ -39,7 +39,7 @@ sudo -u tomcat6 git commit -m "initial repository state"
 
 Let's also ignore the changes to the ```logs``` and ```temp``` folders:
 ```
-$ sudo -u tomcat6 cat > /path/to/your/geoserver_data_dir/.gitignore << EOF
+sudo -u tomcat6 cat > /path/to/your/geoserver_data_dir/.gitignore << EOF
 logs
 temp
 EOF
