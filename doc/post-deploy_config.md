@@ -2,7 +2,7 @@
 
 This is a highly recommended reading !
 
-## GeoServer / GeoWebCache
+## GeoServer
 
 ### Proxy base URL
 
@@ -12,7 +12,10 @@ This is one of the first thing to do once your geoserver instance is deployed, o
 The proxy base URL should be set to something like this: http(s)://your.server.fqdn/geoserver without a trailing slash.
 After saving the form, you should check in the WMS capabilities that the service URLs are as expected.
 
-For the standalone GeoWebCache, TODO 
+
+### GeoWebCache
+
+For the standalone GeoWebCache, the proxy should be automatically configured. 
 
 ### Fonts
 

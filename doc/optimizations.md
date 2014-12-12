@@ -31,7 +31,7 @@ sudo ln -s /usr/share/java/clibwrapper_jiio.jar .
 sudo service tomcat-geoserver0 restart
 ```
 
-To see if they are correctly installed, open the GeoServer "server status" page (/geoserver/web/?wicket:bookmarkablePage=:org.geoserver.web.admin.StatusPage) and check that the "Native JAI" and "Native JAI ImageIO" values	are set to true.
+To see if they are correctly installed, open the GeoServer "server status" page (````/geoserver/web/?wicket:bookmarkablePage=:org.geoserver.web.admin.StatusPage```) and check that the "Native JAI" and "Native JAI ImageIO" values are set to true.
 
 Then, head to the "Settings" > "JAI" section:
  * allow a bigger fraction of the geoserver heap size to be used for the JAI: 0.75 rather than 0.5

@@ -13,6 +13,8 @@ Well, we found several advantages to this, and now, we're doing it everytime we 
 
 ## Setting up the repository
 
+### From the template one 
+
 If you're creating a new geoserver instance, you should really start from the "data dir" we provide:
 
 ```
@@ -24,6 +26,8 @@ sudo -u tomcat6 git remote rename origin upstream
 ```
 
 At this stage, you already have a local repository for your geoserver "data dir".
+
+### From an existing "data dir"
 
 In case you're starting from an existing "data dir":
 ```
@@ -121,13 +125,13 @@ upstream	https://github.com/georchestra/geoserver_minimal_data_dir.git (fetch)
 upstream	https://github.com/georchestra/geoserver_minimal_data_dir.git (push)
 ```
 
-In case you do not see any remote where you have the right to push to, you may add one with, eg:
+In case you do not see any remote, you may add one with, eg:
 ```
 sudo -u tomcat6 git remote add origin git@gitlab.com:USER/myprofile.git
 ```
 
 Once your "origin" remote is setup, you don't have to do this anymore.  
-Just to push the changes with:
+Just push the changes with:
 ```
 sudo -u tomcat6 git push origin
 ```
