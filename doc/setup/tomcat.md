@@ -184,11 +184,11 @@ This allocates 2Gb of your server RAM to all geOrchestra webapps (except proxy, 
 If GeoNetwork is deployed:
 ```
 JAVA_OPTS="$JAVA_OPTS \
-              -Dgeonetwork.dir=/path/to/geonetwork-data-dir \
+              -Dgeonetwork.dir=/path/to/your/geonetwork_data_dir \
               -Dgeonetwork.schema.dir=/var/lib/tomcat-georchestra/webapps/geonetwork/WEB-INF/data/config/schema_plugins \
               -Dgeonetwork.jeeves.configuration.overrides.file=/var/lib/tomcat-georchestra/webapps/geonetwork/WEB-INF/config-overrides-georchestra.xml"
 ```
-... where /path/to/geonetwork-data-dir is a directory owned by tomcat6, created by checking out this repository [georchestra/geonetwork_minimal_datadir](https://github.com/georchestra/geonetwork_minimal_datadir)
+... where /path/to/your/geonetwork_data_dir is a directory owned by tomcat6, created by checking out this repository [georchestra/geonetwork_minimal_datadir](https://github.com/georchestra/geonetwork_minimal_datadir)
 
 If the extractor application is deployed:
 ```
@@ -248,8 +248,8 @@ And later add these lines:
 ```
 JAVA_OPTS="$JAVA_OPTS \
             -Xms2G -Xmx2G -XX:PermSize=256m -XX:MaxPermSize=256m \
-            -DGEOSERVER_DATA_DIR=/path/to/geoserver/data/dir \
-            -DGEOWEBCACHE_CACHE_DIR=/path/to/geowebcache/cache/dir \
+            -DGEOSERVER_DATA_DIR=/path/to/your/geoserver_data_dir \
+            -DGEOWEBCACHE_CACHE_DIR=/path/to/your/geowebcache_cache_dir \
             -Dfile.encoding=UTF8 \
             -Djavax.servlet.request.encoding=UTF-8 \
             -Djavax.servlet.response.encoding=UTF-8 \
@@ -259,7 +259,7 @@ JAVA_OPTS="$JAVA_OPTS \
             -XX:NewRatio=2 \
             -XX:+AggressiveOpts"
 ```
-... where /path/to/geoserver/data/dir is a directory owned by tomcat6, created by checking out this repository [georchestra/geoserver_minimal_datadir](https://github.com/georchestra/geoserver_minimal_datadir)
+... where /path/to/your/geoserver_data_dir is a directory owned by tomcat6, created by checking out this repository [georchestra/geoserver_minimal_datadir](https://github.com/georchestra/geoserver_minimal_datadir)
 
 This allocates 2Gb of your server RAM to GeoServer.
 
