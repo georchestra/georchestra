@@ -38,6 +38,39 @@ Then, head to the "Settings" > "JAI" section:
  * check the Tile Recycling, JPEG Native Acceleration, PNG Native Acceleration & Mosaic Native Acceleration boxes
 
 
+### libjpeg-turbo Map Encoder
+
+Installing the libjpeg-turbo map encoder improves the throughput of your service by accelerating JPEG compression and decompression.
+
+It requires:
+ * native libs installed with eg. the [libjpeg-turbo-official debian package](http://sourceforge.net/projects/libjpeg-turbo/files/).
+```
+sudo dpkg -i libjpeg-turbo-official_1.3.1_amd64.deb
+```
+installs the following files:
+```
+/opt/libjpeg-turbo/lib64/libturbojpeg.so.0
+/opt/libjpeg-turbo/lib64/libjpeg.so
+/opt/libjpeg-turbo/lib64/libjpeg.so.62
+/opt/libjpeg-turbo/lib64/libturbojpeg.so
+```
+ * geoserver compiled using the ```libjpeg-turbo``` profile
+ 
+ eg:
+ ```./mvn -P-all,geoserver -Plibjpeg-turbo -Dserver=myprofile -Dmaven.test.skip=true clean install```
+
+ * in ```/etc/default/tomcat-geoserver0```:
+```
+JAVA_OPTS="$JAVA_OPTS \
+            -Djava.library.path=/opt/libjpeg-turbo/lib64/"
+```
+
+Restart tomcat and check the new libs are taken into account:
+```
+cat /var/log/tomcat6/geoserver0.log | grep turbo
+2014-12-13 16:57:34,092 WARN [turbojpeg.TurboJPEGMapResponse] - The turbo jpeg encoder is available for usage
+```
+
 ### Marlin Renderer
 
 Marlin is an antialised rendering engine, which plugs into the JVM to replace the native implementation. 
