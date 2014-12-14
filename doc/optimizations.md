@@ -65,11 +65,7 @@ JAVA_OPTS="$JAVA_OPTS \
             -Djava.library.path=/opt/libjpeg-turbo/lib64/"
 ```
 
-Restart tomcat and check the new libs are taken into account:
-```
-cat /var/log/tomcat6/geoserver0.log | grep turbo
-2014-12-13 16:57:34,092 WARN [turbojpeg.TurboJPEGMapResponse] - The turbo jpeg encoder is available for usage
-```
+Restart tomcat and check the new libs are taken into account: ```cat /var/log/tomcat6/geoserver0.log | grep turbo``` should display ```[turbojpeg.TurboJPEGMapResponse] - The turbo jpeg encoder is available for usage```
 
 ### Marlin Renderer
 
