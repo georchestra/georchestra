@@ -128,7 +128,7 @@ The magic happens in your profile's ```build_support/GenerateConfig.groovy``` sc
 
 ### GeoServer extensions
 
-To build GeoServer with one or several extensions, one can use the profiles defined in the [geoserver/extensions pom](https://github.com/georchestra/geoserver/blob/2.3.2-georchestra/src/extension/pom.xml).
+To build GeoServer with one or several extensions, one can use the profiles defined in the [geoserver/extension](https://github.com/georchestra/geoserver/blob/2.3.2-georchestra/src/extension/pom.xml) and [geoserver/community](https://github.com/georchestra/geoserver/blob/2.3.2-georchestra/src/community/pom.xml) poms.
 
 Example building geoserver only, with the control-flow, css, csw, gdal, inspire, pyramid and wps extensions:
 ```
