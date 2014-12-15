@@ -3,7 +3,7 @@
 ## GeoServer
 
 These steps are recommended, but they will not be very helpful if your data is not carefully prepared.
-Please refer to a recent "GeoServer on steroids" presentation for more information on GIS data optimizations. 
+Please refer to a recent "[GeoServer on steroids](http://fr.slideshare.net/geosolutions/gs-steroids-foss4ge2014)" presentation for more information on GIS data optimizations. 
 
 ### Native JAI & ImageIO
 
