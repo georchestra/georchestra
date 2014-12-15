@@ -102,7 +102,7 @@ sudo -u tomcat6 git checkout master
 
 This is achieved with:
 ```
-sudo -u tomcat6 git reset --hard xxxx --force
+sudo -u tomcat6 git reset --hard xxxxxx --force
 ```
 ... where xxxxxx is the revision hash you want to go to.
 
