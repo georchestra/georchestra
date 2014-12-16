@@ -128,9 +128,9 @@
             "annotation.delete_confirm": "Wollen Sie wirklich das Objekt löschen ?",
             "annotation.delete": "Löschen",
             "annotation.delete_all": "Alles löschen",
-            "annotation.export_as_kml": "exportieren",
-            "annotation.export_as_kml_tip": "exportieren in KML",
-            "annotation.modify": "ändern",
+            "annotation.export_as_kml": "Exportieren",
+            "annotation.export_as_kml_tip": "Exportieren in KML",
+            "annotation.modify": "Ändern",
             "annotation.linestring": "Linie",
             "annotation.multilinestring": "Multilinie",
             "annotation.point": "Punkt",
@@ -154,8 +154,10 @@
             "annotation.fontsize": "Größe",
             "annotation.strokewidth": "Stärke",
             "annotation.color": "Farbe",
+            "annotation.fillcolor": "Füllfarbe",
+            "annotation.outlinecolor": "Konturfarbe",
             "annotation.name": "Name",
-            "annotation.no_title": "ohne Titel"
+            "annotation.no_title": "Ohne Titel"
         }
     }
 }
