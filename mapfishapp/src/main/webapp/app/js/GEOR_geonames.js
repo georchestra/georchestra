@@ -40,10 +40,7 @@ GEOR.geonames = (function() {
 
         //Handles data coming from geonames WS
         var dsGeonames = new Ext.data.Store({
-            // uses geonames WS (ScriptTagProxy because remote server)
-            proxy: new Ext.data.ScriptTagProxy({
-                url: 'http://api.geonames.org/searchJSON'
-            }),
+            url: 'http://api.geonames.org/searchJSON',
             reader: new Ext.data.JsonReader({
                 root: 'geonames',
                 totalProperty: 'totalResultsCount'
