@@ -59,7 +59,7 @@ In case you only want to build one module or a collection, the syntax is a bit d
 ```
 ./mvn -Dmaven.test.skip=true -Dserver=myprofile -P-all,module1,module2 clean install
 ```
-... where ```moduleX``` can be one of: ```analytics```, ```cas```, ```catalogapp```, ```downloadform```, ```extractorapp```, ```geonetwork```, ```geofence```, ```geoserver```, ```geowebcache```, ```header```, ```ldapadmin```, ```mapfishapp```, ```proxy```.
+... where ```moduleX``` can be one of: ```analytics```, ```cas```, ```catalogapp```, ```downloadform```, ```extractorapp```, ```geonetwork```, ```geofence```, ```geoserver```, ```geowebcache```, ```header```, ```ldapadmin```, ```mapfishapp```, ```security-proxy```.
 
 As a result of the build process, you should find the geOrchestra artifacts into the subfolders of the ```~/.m2/repository/org/``` directory.
 Now, let's [prepare the system](setup.md) to receive the webapps.
