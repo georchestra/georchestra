@@ -78,6 +78,7 @@ GEOR.workspace = (function() {
                         "Content-Type": "application/x-www-form-urlencoded"
                     },
                     data: OpenLayers.Util.getParameterString({
+                        "group_id": this.group_id,
                         "wmc_string": wmc_string,
                         "wmc_url": wmc_url,
                         "viewer_url": GEOR.util.getValidURI("?wmc="+encodeURIComponent(wmc_url))
@@ -188,13 +189,49 @@ GEOR.workspace = (function() {
         if (GEOR.config.ROLES.indexOf("ROLE_SV_EDITOR") >= 0 || 
             GEOR.config.ROLES.indexOf("ROLE_SV_REVIEWER") >= 0 ||
             GEOR.config.ROLES.indexOf("ROLE_SV_ADMIN") >= 0 ) {
+
+            var menu = new Ext.menu.Menu({
+                showSeparator: false,
+                items: []
+            }),
+            isolang = GEOR.util.ISO639[GEOR.config.LANG],
+            store = new Ext.data.Store({
+                autoLoad: true,
+                url: [
+                    GEOR.config.GEONETWORK_BASE_URL,
+                    "/srv/",
+                    isolang,
+                    "/xml.info?type=groups&profile=Editor"
+                ].join(''),
+                reader: new Ext.data.XmlReader({
+                    record: 'group',
+                    idPath: '@id'
+                }, [
+                    {name: 'name', mapping: '/label/'+isolang},
+                    {name: 'description'}
+                ]),
+                listeners: {
+                    "load": function(s, records) {
+                        Ext.each(records, function(r) {
+                            menu.addItem({
+                                text: tr("in group") + " <b>" + r.get("name") + "</b>",
+                                group_id: r.id, // a convenient way to pass the group_id arg ...
+                                handler: saveMDBtnHandler
+                            });
+                        });
+                    },
+                    "loadexception": function() {
+                        alert("Oops, there was an error with the catalog");
+                    }
+                }
+            });
             btns.push({
                 text: tr("Save to metadata"),
                 minWidth: 100,
                 iconCls: 'geor-btn-download',
                 itemId: 'save-md',
-                handler: saveMDBtnHandler,
-                formBind: true
+                //menuAlign: "tr-br",
+                menu: menu
             });
         }
         btns.push({
@@ -202,8 +239,7 @@ GEOR.workspace = (function() {
             minWidth: 100,
             iconCls: 'geor-btn-download',
             itemId: 'save',
-            handler: saveBtnHandler,
-            formBind: true
+            handler: saveBtnHandler
         });
 
         var popup = new Ext.Window({
@@ -235,13 +271,11 @@ GEOR.workspace = (function() {
                     name: 'title',
                     width: 280,
                     fieldLabel: tr("Title"),
-                    //allowBlank: false,
-                    //blankText: tr("The file is required."),
                     enableKeyEvents: true,
                     selectOnFocus: true,
                     listeners: {
                         "keypress": function(f, e) {
-                            // transfer focus on Print button on ENTER
+                            // transfer focus on button on ENTER
                             if (e.getKey() === e.ENTER) {
                                 popup.items.get(0).getFooterToolbar().getComponent('save').focus();
                             }
@@ -256,7 +290,7 @@ GEOR.workspace = (function() {
                     selectOnFocus: true,
                     listeners: {
                         "keypress": function(f, e) {
-                            // transfer focus on Print button on ENTER
+                            // transfer focus on button on ENTER
                             if (e.getKey() === e.ENTER) {
                                 popup.items.get(0).getFooterToolbar().getComponent('save').focus();
                             }

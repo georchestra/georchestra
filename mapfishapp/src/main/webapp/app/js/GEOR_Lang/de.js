@@ -441,6 +441,8 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "default viewer context": "Standarteinstellung",
     "(default)": "<br/>(Standardeinstellung)",
     /* GEOR_workspace.js strings */
+    "Save to metadata": "Metadaten Erstellen",
+    "in group": "in der Gruppe",
     "The context title is mandatory": "Der Kontext Titel ist erforderlich",
     "There was an error creating the metadata.": "Es gab einen Fehler beim Erstellen der Metadaten.",
     "Share this map": "Karte teilen",
