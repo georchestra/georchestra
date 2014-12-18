@@ -87,6 +87,7 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
             labelSeparator: tr("labelSeparator"),
             anchor: '95%',
             fieldLabel: tr("... or enter its address"),
+            // TODO: improvement ... this callback should be set in GEOR_layerfinder.js rather than here ...
             callback: function(r, options, success) {
                 // clear filter:
                 this.filterPanel.items.get(0).reset();
@@ -108,6 +109,20 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
                             : tr("The server is publishing one layer with an incompatible projection");
                         GEOR.util.infoDialog({
                            msg: msg
+                        });
+                    }
+                }
+                // filter out records from services supporting only GET
+                if (this.id == "WFS") {
+                    var supportsPOST;
+                    // check records do not have an undefined protocol url:
+                    this.store.filterBy(function(r) {
+                        supportsPOST = !!r.get("layer").protocol.url;
+                        return supportsPOST;
+                    });
+                    if (!supportsPOST) {
+                        GEOR.util.infoDialog({
+                           msg: tr("This server does not support HTTP POST")
                         });
                     }
                 }

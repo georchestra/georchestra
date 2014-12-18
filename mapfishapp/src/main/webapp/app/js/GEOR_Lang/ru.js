@@ -150,6 +150,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "... or enter its address": "...или введите его адрес",
     "The server is publishing one layer with an incompatible projection": "Сервер публикует один слой с проекцией, которая не совместима",
     "The server is publishing NB layers with an incompatible projection": "Сервер публикует ${NB} число слоёв с несовместимой проекцией.",
+    //"This server does not support HTTP POST": "Ce serveur ne supporte pas HTTP POST",
     "Unreachable server or insufficient rights": "Ответ сервера недействителен. Возможные причины : недостаточные права, сервер недостижим, слишком много данных, и т.д...",
     /* GEOR_managelayers.js strings */
     //"Service": "Service",

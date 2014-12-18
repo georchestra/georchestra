@@ -187,6 +187,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "The server is publishing NB layers with an incompatible projection":
         "der Server zeigt  ${NB} Layers mit nicht kompatibler Projektion",
     "WMS server": "WMS Server",
+    "This server does not support HTTP POST": "Dieser Server unterstützt keine POST Requests",
     "Unreachable server or insufficient rights": "Server nicht erreichbar " +
         " oder nicht ausreichende Zugriffsrechte, " +
         "Datenmenge zu groß...",

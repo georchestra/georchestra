@@ -187,6 +187,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "The server is publishing NB layers with an incompatible projection":
         "Le serveur publie ${NB} couches dont la projection n'est pas " +
         "compatible",
+    "This server does not support HTTP POST": "Ce serveur ne supporte pas HTTP POST",
     "Unreachable server or insufficient rights": "Réponse invalide du " +
         "serveur. Raisons possibles : droits insuffisants, " +
         "serveur injoignable, trop de données, etc.",
