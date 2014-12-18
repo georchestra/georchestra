@@ -67,9 +67,9 @@ Let's create an instance named ```tomcat-proxycas```:
 
 ```
 cd /var/lib
-sudo tomcat6-instance-create -p 8180 -c 8005 tomcat-proxycas
+sudo tomcat6-instance-create -p 8180 -c 8105 tomcat-proxycas
 ```
-8180 will be the HTTP port and 8005 the stop port.
+8180 will be the HTTP port and 8105 the stop port.
 
 
 Then:
@@ -154,7 +154,7 @@ sudo service tomcat-proxycas start
 Same here ... just changing names and ports.
 ```
 cd /var/lib
-sudo tomcat6-instance-create -p 8181 -c 8006 tomcat-georchestra
+sudo tomcat6-instance-create -p 8280 -c 8205 tomcat-georchestra
 sudo mkdir /var/lib/tomcat-georchestra/conf/policy.d
 sudo touch /var/lib/tomcat-georchestra/conf/policy.d/empty.policy
 sudo chown -R tomcat6:tomcat6 /var/lib/tomcat-georchestra
@@ -205,7 +205,7 @@ In case your connection to the internet is proxied, you should also add the -Dht
 
 In ```/var/lib/tomcat-georchestra/conf/server.xml```:
 ```
-    <Connector port="8181" protocol="HTTP/1.1" 
+    <Connector port="8280" protocol="HTTP/1.1" 
                connectionTimeout="20000" 
                URIEncoding="UTF-8"
                redirectPort="8443" />
@@ -229,7 +229,7 @@ sudo service tomcat-georchestra start
 
 ```
 cd /var/lib
-sudo tomcat6-instance-create -p 8190 -c 8015 tomcat-geoserver0
+sudo tomcat6-instance-create -p 8380 -c 8305 tomcat-geoserver0
 sudo mkdir /var/lib/tomcat-geoserver0/conf/policy.d
 sudo touch /var/lib/tomcat-geoserver0/conf/policy.d/empty.policy
 sudo chown -R tomcat6:tomcat6 /var/lib/tomcat-geoserver0
@@ -279,7 +279,7 @@ By default Tomcat assumes 200 threads, but experiments show that 20 is a better 
 
 In ```/var/lib/tomcat-geoserver0/conf/server.xml```:
 ```
-    <Connector port="8190" protocol="HTTP/1.1" 
+    <Connector port="8380" protocol="HTTP/1.1" 
                connectionTimeout="20000" 
                URIEncoding="UTF-8"
                maxThreads="20" 
