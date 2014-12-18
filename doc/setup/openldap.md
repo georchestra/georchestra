@@ -18,7 +18,7 @@ You will need to provide the LDAP administrator password. Choose a strong one.
 
 Let's also get the data by cloning our LDAP repository (and have a look at the [users and groups](https://github.com/georchestra/LDAP/blob/master/README.md) it creates by default):
 ```
-git clone -b YY.MM git://github.com/georchestra/LDAP.git
+git clone -b YY.MM https://github.com/georchestra/LDAP.git
 ```
 In the above, YY.MM stands for the geOrchestra version you're using (eg: ```14.06``` for the latest stable)
 
