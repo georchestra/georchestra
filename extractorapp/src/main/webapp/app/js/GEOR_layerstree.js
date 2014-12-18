@@ -674,7 +674,8 @@ GEOR.layerstree = (function() {
                                             checkNullCounter(); // XHR (b)
                                             return;
                                         }
-                                        var res = response.responseXML.evaluate(
+                                        var resTip = '',
+                                        res = response.responseXML.evaluate(
                                             GEOR.config.METADATA_RESOLUTION_XPATH, 
                                             response.responseXML, 
                                             GEOR.util.mdNSResolver, 
@@ -691,6 +692,7 @@ GEOR.layerstree = (function() {
                                         if (!isNaN(res) && !!unit && GEOR.util.uomMetricRatio.hasOwnProperty(unit)) {
                                             // normalize resolution into meters
                                             res = GEOR.util.uomMetricRatio[unit] * res;
+                                            resTip = '(@'+ res + ' m)';
                                             // force local resolution:
                                             owsinfo.exportinfo.resolution = res;
                                             // force global resolution to the lowest numerical one:
@@ -703,7 +705,7 @@ GEOR.layerstree = (function() {
                                             iconCls: 'raster-layer',
                                             owsinfo: owsinfo,
                                             checked: GEOR.config.LAYERS_CHECKED,
-                                            qtip: '<b>'+owsinfo.text+'</b><br/>' + tip
+                                            qtip: '<b>'+owsinfo.text+'</b> '+resTip+'<br/>' + tip
                                         });
                                         parentNode.appendChild(new Ext.tree.TreeNode(cfg));
                                         checkNullCounter(); // XHR (b)
@@ -856,6 +858,9 @@ GEOR.layerstree = (function() {
             map = m;
             vectorLayer = v;
             callback = c;
+            // for https://github.com/georchestra/georchestra/issues/726,
+            // make sure that document.evaluate is defined:
+            wgxpath && wgxpath.install();
 
             globalPropertiesNode = new Ext.tree.TreeNode({
                 text: tr('Default parameters'),
