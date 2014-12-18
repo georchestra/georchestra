@@ -10,7 +10,7 @@ So, here are the steps:
 
  * first, install the dependencies:
 ```
-sudo apt-get install postgresql-9.4-postgis slapd ldap-utils apache2 tomcat6 tomcat6-user libgdal1h libgdal-java
+sudo apt-get install postgresql-9.4-postgis slapd apache2 tomcat6 tomcat6-user libgdal1h libgdal-java
 ```
  
  * [set up the application database](setup/postgresql.md)
