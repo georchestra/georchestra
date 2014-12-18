@@ -26,4 +26,4 @@ sudo apt-get install postgresql-9.4-postgis slapd apache2 tomcat6 tomcat6-user l
 
  * install the [native libs](setup/native_libs.md)
 
-Note: geOrchestra has been extensively tested on Debian 6 and 7 with Tomcat6 (version 7 is not yet compatible, see [#504](https://github.com/georchestra/georchestra/issues/504)). This guide assumes the OS is Debian 8 (Jessie).
+Note: geOrchestra has been extensively tested on Debian 6 and 7 with Tomcat6 (Tomcat version 7 is not yet compatible, see [#504](https://github.com/georchestra/georchestra/issues/504)). This guide assumes the OS is Debian 8 (Jessie).
