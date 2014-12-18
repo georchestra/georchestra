@@ -1,28 +1,25 @@
 /**
- * 
+ *
  */
 package org.georchestra.ldapadmin.ws.newaccount;
 
 import java.io.Serializable;
-import java.util.List;
-
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 /**
  * This model maintains the account form data.
- * 
+ *
  * @author Mauricio Pazos
  *
  */
 public class AccountFormBean implements Serializable{
 
 	private static final long serialVersionUID = 6955470190631684934L;
-	
+
 	private String uid;
 	private String firstName;
 	private String surname;
-	
+
 	private String org;
 	private String title;
 	private String email;
@@ -30,10 +27,10 @@ public class AccountFormBean implements Serializable{
 	private String description;
 	private String password;
 	private String confirmPassword;
-	
+
 	private String recaptcha_challenge_field;
-	private String recaptcha_response_field;	
-	
+	private String recaptcha_response_field;
+
 	public String getRecaptcha_challenge_field() {
 		return recaptcha_challenge_field;
 	}
@@ -46,8 +43,8 @@ public class AccountFormBean implements Serializable{
 	public void setRecaptcha_response_field(String recaptcha_response_field) {
 		this.recaptcha_response_field = recaptcha_response_field;
 	}
-	
-	
+
+
 	public String getUid() {
 		return uid;
 	}
@@ -72,7 +69,7 @@ public class AccountFormBean implements Serializable{
 	public void setTitle(String title) {
 		this.title = title;
 	}
-	
+
 	public String getEmail() {
 		return email;
 	}
@@ -104,11 +101,11 @@ public class AccountFormBean implements Serializable{
 	public void setConfirmPassword(String confirmPassword) {
 		this.confirmPassword = confirmPassword;
 	}
-	
+
 	public String getSurname() {
 		return surname;
 	}
-	
+
 	public void setSurname(String sn){
 
 		this.surname = sn;
@@ -124,7 +121,7 @@ public class AccountFormBean implements Serializable{
 				+ ", recaptcha_response_field=" + recaptcha_response_field
 				+ "]";
 	}
-	
 
-	
+
+
 }

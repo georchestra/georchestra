@@ -1,47 +1,37 @@
-package org.georchestra.lib.mailservice;
+package org.georchestra.ldapadmin.mailservice;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.InetAddress;
 
+import javax.servlet.http.HttpServletRequest;
 
-/**
- * The common parameters for sending emails. This class can be frozen if it is a
- * defaults class so that it cannot be changed after original configuration.
- *
- * @author jeichar
- */
-public class EmailDefaultParams {
-    private String smtpHost;
-    private int smtpPort = -1;
-    private String emailHtml;
-    private String replyTo;
-    private String from;
-    private String bodyEncoding;
-    private String subjectEncoding;
-    private String[] languages;
+// TODO REFACTOR this package was copied from extractrapp.
+// It should be refactored in a new module in order to share it.
+
+public abstract class AbstractEmailFactory {
+
+	protected String smtpHost;
+	protected int smtpPort = -1;
+	protected String emailHtml;
+	protected String replyTo;
+	protected String from;
+	protected String bodyEncoding;
+	protected String subjectEncoding;
+	protected String[] languages;
+	protected String  emailAckTemplateFile;
+	protected String  emailTemplateFile;
+	protected String  emailSubject;
 
     private boolean frozen = false;
 
-    public EmailDefaultParams() {
+    public AbstractEmailFactory() {
         // this is the default constructor for use by spring
     }
 
-    /**
-     * Copy constructor
-     * @param defaults the defaults to copy into this object
-     */
-    protected EmailDefaultParams(EmailDefaultParams defaults) {
-        smtpHost = defaults.smtpHost;
-        smtpPort = defaults.smtpPort;
-        emailHtml = defaults.emailHtml;
-        replyTo = defaults.replyTo;
-        from = defaults.from;
-        bodyEncoding = defaults.bodyEncoding;
-        subjectEncoding = defaults.subjectEncoding;
-        languages = defaults.languages;
-    }
-
-    // -------------- Not public API -------------- //
+	// -------------- Not public API -------------- //
     /**
      * Signals that the values for this object are set and may not
      * be changed.  This is to ensure that when the defaults are set
@@ -80,6 +70,20 @@ public class EmailDefaultParams {
         if (subjectEncoding == null) {
             subjectEncoding = bodyEncoding;
         }
+    }
+
+    protected String readFile(HttpServletRequest request, final String path) throws IOException {
+    	String realPath = request.getSession().getServletContext().getRealPath(path);
+    	BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(realPath), "UTF-8") );
+        StringBuilder builder = new StringBuilder();
+        try {
+            for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+                builder.append(line);
+            }
+        } finally {
+            reader.close();
+        }
+        return builder.toString();
     }
 
     private void checkState() {
@@ -145,4 +149,16 @@ public class EmailDefaultParams {
         checkState();
         this.languages = languages;
     }
+
+    public void setEmailAckTemplateFile(String emailAckTemplateFile) {
+		this.emailAckTemplateFile = emailAckTemplateFile;
+	}
+
+	public void setEmailTemplateFile(String emailTemplateFile) {
+		this.emailTemplateFile = emailTemplateFile;
+	}
+
+	public void setEmailSubject(String emailSubject) {
+		this.emailSubject = emailSubject;
+	}
 }

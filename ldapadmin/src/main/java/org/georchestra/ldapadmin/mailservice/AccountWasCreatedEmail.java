@@ -9,7 +9,6 @@ import javax.servlet.ServletContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.lib.mailservice.Email;
 
 /**
  * Email to inform that a new account was created. 

@@ -9,7 +9,6 @@ import javax.servlet.ServletContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.lib.mailservice.Email;
 
 /**
  * This mail is sent to the moderator when a new account is created.

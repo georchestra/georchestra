@@ -14,6 +14,10 @@
 
 	<mvc:annotation-driven />
 
+    <bean id="properties-loader"
+        class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
+        p:locations="/WEB-INF/spring/ldapadmin.properties" />
+
 	<!-- The controllers are autodetected POJOs labeled with the @Controller 
 		annotation. -->
 	<context:component-scan base-package="org.georchestra.ldapadmin.ws" />
@@ -42,9 +46,9 @@
 
 	<!-- LDAP connection -->
 	<bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource">
-		<property name="url" value="${ldapUrl}" />
-		<property name="base" value="${baseDN}" />
-		<property name="userDn" value="${ldapAdminDn}" />
+		<property name="url"      value="${ldapUrl}" />
+		<property name="base"     value="${baseDN}" />
+		<property name="userDn"   value="${ldapAdminDn}" />
 		<property name="password" value="${ldap.admin.password}" />
 	</bean>
 	
@@ -72,7 +76,7 @@
         <property name="listOfprotectedUsers">
             <description>Add one or more user identifiers (uid) of protected user</description>
             <list>
-                <value>${protectedUser.uid1}</value>
+                <value>geoserver_privileged_user</value>
                 <!--  to define an other uid you should add a value like is shown in the following example-->
                 <!--  <value>${protectedUser.uid2}</value> -->
             </list> 
@@ -80,11 +84,19 @@
     
     </bean>
     
-    <bean id="userTokenDao" class="org.georchestra.ldapadmin.ds.UserTokenDao">
-        <property name="databaseUser" value="${psql.user}" />
-        <property name="databasePassword" value="${psql.pass}" />
-        <property name="jdbcURL" value="${psql.url}" />
-    </bean>
+    <bean id="userTokenDao" class="org.georchestra.ldapadmin.ds.UserTokenDao" />
+
+	  <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+	    <property name="url" value="${psql.url}" />
+	    <property name="username" value="${psql.user}" />
+	    <property name="password" value="${psql.pass}" />
+	    <property name="driverClassName" value="org.postorg.postgresql.Driver" />
+	    <property name="testOnBorrow" value="true"/>
+	    <property name="poolPreparedStatements" value="true"/>
+	    <property name="maxOpenPreparedStatements" value="-1"/>
+	    <property name="defaultReadOnly" value="false"/>
+	    <property name="defaultAutoCommit" value="true"/>
+	  </bean>	
 
     <bean id="expiredTokenCleanTask" class="org.georchestra.ldapadmin.bs.ExpiredTokenCleanTask"/>
     
@@ -134,7 +146,7 @@
 	</bean>
 
 	<!-- Email Factory configuration -->
-    <bean id="emailFactory" class="org.georchestra.ldapadmin.mailservice.EmailFactoryImpl">
+    <bean id="emailFactory" class="org.georchestra.ldapadmin.mailservice.EmailFactoryImpl" init-method="freeze">
         <property name="smtpHost" value="${smtpHost}" />
         <property name="smtpPort" value="${smtpPort}" />
         <property name="emailHtml" value="${emailHtml}" />

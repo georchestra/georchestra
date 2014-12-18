@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.georchestra.lib.sqlcommand;
 
@@ -14,13 +14,13 @@ import org.georchestra.ogcservstatistics.dataservices.AbstractDataCommand;
 import org.georchestra.ogcservstatistics.dataservices.DataCommandException;
 
 /**
- * Maintains the abstract behavior required to execute a SQL query. 
+ * Maintains the abstract behavior required to execute a SQL query.
  * The subclass must implement the methods:
  * <pre>
- * {@link AbstractQueryCommand#prepareStatement()}  
+ * {@link AbstractQueryCommand#prepareStatement()}
  * {@link AbstractQueryCommand#getRow(ResultSet)}
  * </pre>
- * 
+ *
  * @author Mauricio Pazos
  */
 public abstract class AbstractQueryCommand extends AbstractDataCommand {
@@ -32,17 +32,17 @@ public abstract class AbstractQueryCommand extends AbstractDataCommand {
 	 */
 	@Override
 	public void execute() throws DataCommandException {
-		
-        assert this.connection != null: "database connection is null, use setConnection";
+
+        assert (this.connection != null) : "database connection is null, use setConnection";
 
         // executes the sql statement and  populates the list with the data present in the result set
         ResultSet rs = null;
         PreparedStatement pStmt=null;
         try {
             pStmt = prepareStatement();
-          
+
             rs = pStmt.executeQuery();
-            
+
 			this.resultList = new LinkedList<Map<String,Object>>();
 
             while (rs.next()) {
@@ -50,41 +50,41 @@ public abstract class AbstractQueryCommand extends AbstractDataCommand {
             }
 
         } catch (SQLException e) {
-            
+
             throw new DataCommandException(e.getMessage());
-            
+
         } finally{
             try {
                 if(rs != null) rs.close();
                 if(pStmt != null) pStmt.close();
-                
+
             } catch (SQLException e1) {
                 throw new DataCommandException(e1.getMessage());
-            } 
+            }
         }
 	}
 
 	/**
 	 * The subclass must to define the sql statement to exectue
-	 * 
+	 *
 	 * @return {@link PreparedStatement}}
 	 * @throws SQLException
 	 */
 	protected abstract PreparedStatement prepareStatement() throws SQLException;
 
-	
+
 	/**
-	 * Assigns the values of fields present in the {@link ResultSet} to the Map.  
+	 * Assigns the values of fields present in the {@link ResultSet} to the Map.
 	 * @param rs
 	 * @return a Map<fieldName, fieldValue>
 	 * @throws SQLException
 	 */
 	protected abstract Map<String, Object> getRow(ResultSet rs) throws SQLException;
-	
-	
-	
-	
-	
+
+
+
+
+
 	public List<Map<String, Object>> getResult() {
 		return this.resultList;
 	}
