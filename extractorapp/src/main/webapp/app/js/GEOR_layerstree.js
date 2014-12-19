@@ -19,9 +19,6 @@
  * @include GEOR_waiter.js
  * @include GEOR_config.js
  * @include OpenLayers/Control/SelectFeature.js
- * Required for cross-browser document.evaluate use,
- * see https://github.com/georchestra/georchestra/issues/726:
- * @include wgxpath.install.js
  */
 
 Ext.namespace("GEOR");
@@ -674,22 +671,33 @@ GEOR.layerstree = (function() {
                                             checkNullCounter(); // XHR (b)
                                             return;
                                         }
-                                        var resTip = '',
-                                        res = response.responseXML.evaluate(
-                                            GEOR.config.METADATA_RESOLUTION_XPATH, 
-                                            response.responseXML, 
-                                            GEOR.util.mdNSResolver, 
-                                            XPathResult.NUMBER_TYPE, 
-                                            null
-                                        ).numberValue, // typically 0.5
-                                        unit = response.responseXML.evaluate(
-                                            GEOR.config.METADATA_RESOLUTION_XPATH+'/@uom', 
-                                            response.responseXML, 
-                                            GEOR.util.mdNSResolver, 
-                                            XPathResult.STRING_TYPE, 
-                                            null
-                                        ).stringValue; // typically "m"
-                                        if (!isNaN(res) && !!unit && GEOR.util.uomMetricRatio.hasOwnProperty(unit)) {
+                                        var resTip = '', xmldoc = response.responseXML;
+                                        if (Ext.isIE) {
+                                            xmldoc.setProperty("SelectionLanguage", "XPath");
+                                            xmldoc.setProperty("SelectionNamespaces", 
+                                                "xmlns:gmd='http://www.isotc211.org/2005/gmd' xmlns:gco='http://www.isotc211.org/2005/gco' xmlns='http://www.isotc211.org/2005/gmd'");
+                                            var node = xmldoc.documentElement.selectSingleNode(GEOR.config.METADATA_RESOLUTION_XPATH);
+                                            if (node) {
+                                                var res = parseFloat(node.firstChild.nodeValue),
+                                                unit = node.getAttribute("uom");
+                                            }
+                                        } else {
+                                            var res = xmldoc.evaluate(
+                                                GEOR.config.METADATA_RESOLUTION_XPATH, 
+                                                xmldoc, 
+                                                GEOR.util.mdNSResolver, 
+                                                XPathResult.NUMBER_TYPE, 
+                                                null
+                                            ).numberValue, // typically 0.5
+                                            unit = xmldoc.evaluate(
+                                                GEOR.config.METADATA_RESOLUTION_XPATH+'/@uom', 
+                                                xmldoc, 
+                                                GEOR.util.mdNSResolver, 
+                                                XPathResult.STRING_TYPE, 
+                                                null
+                                            ).stringValue; // typically "m"
+                                        }
+                                        if (Ext.isNumber(res) && !!unit && GEOR.util.uomMetricRatio.hasOwnProperty(unit)) {
                                             // normalize resolution into meters
                                             res = GEOR.util.uomMetricRatio[unit] * res;
                                             resTip = '(@'+ res + ' m)';
@@ -858,9 +866,6 @@ GEOR.layerstree = (function() {
             map = m;
             vectorLayer = v;
             callback = c;
-            // for https://github.com/georchestra/georchestra/issues/726,
-            // make sure that document.evaluate is defined:
-            wgxpath && wgxpath.install();
 
             globalPropertiesNode = new Ext.tree.TreeNode({
                 text: tr('Default parameters'),
