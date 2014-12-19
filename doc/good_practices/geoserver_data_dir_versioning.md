@@ -8,7 +8,10 @@ Well, we found several advantages to this, and now, we're doing it everytime we 
  * it's a way to track changes when several people have admin rights,
  * it's so much easier to rollback to a previous state,
  * one gets a better insight of what happens behind the scene,
- * it can turn into a backup solution.
+ * it can turn into a backup solution,
+ * it can fork a GeoServer instance into a testing one, then pull back the changes once OK,
+ * it can distribute a config among a distributed stack of GeoServers
+ * ...
 
 
 ## Setting up the repository
@@ -37,13 +40,15 @@ sudo -u tomcat6 git add --all .
 sudo -u tomcat6 git commit -m "initial repository state"
 ```
 
-Let's also ignore the changes to the ```logs``` and ```temp``` folders:
+Let's also ignore the changes to the ```logs```, ```temp```, ```gwc``` folders:
 ```
 sudo -u tomcat6 cat > /path/to/your/geoserver_data_dir/.gitignore << EOF
 logs
 temp
+gwc
 EOF
 ```
+Also exclude folders containing datas if you don't want them to be versioned.
 
 Finally:
 ```
