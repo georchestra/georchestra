@@ -185,7 +185,7 @@ If GeoNetwork is deployed:
 ```
 JAVA_OPTS="$JAVA_OPTS \
               -Dgeonetwork.dir=/path/to/your/geonetwork_data_dir \
-              -Dgeonetwork.schema.dir=/var/lib/tomcat-georchestra/webapps/geonetwork/WEB-INF/data/config/schema_plugins \
+              -Dgeonetwork.schema.dir=/path/to/your/geonetwork_data_dir/config/schema_plugins \
               -Dgeonetwork.jeeves.configuration.overrides.file=/var/lib/tomcat-georchestra/webapps/geonetwork/WEB-INF/config-overrides-georchestra.xml"
 ```
 ... where /path/to/your/geonetwork_data_dir is a directory owned by tomcat6, created by checking out this repository [georchestra/geonetwork_minimal_datadir](https://github.com/georchestra/geonetwork_minimal_datadir)
