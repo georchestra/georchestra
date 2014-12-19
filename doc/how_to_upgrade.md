@@ -52,6 +52,7 @@ In your georchestra sources directory, update to the new "14.12" branch:
 cd ~/georchestra
 git fetch origin
 git checkout 14.12
+git submodule sync
 git submodule update --init
 ```
 
