@@ -78,8 +78,8 @@ properties['key'] = "value"
 ```
 
 You should update the values for several properties, typically:
+ * ```proxy.mapping``` in the ```updateSecProxyMavenFilters``` method, (see also the [tomcat setup documentation](setup/tomcat.md)), especially if you have modified the ports for the tomcat HTTP connectors, or the webapp names,
  * ```emailsubject``` in the ```updateExtractorappMavenFilters``` method,
- * ```proxy.mapping``` in the ```updateSecProxyMavenFilters``` method, (see also the [tomcat setup documentation](setup/tomcat.md))
  * ```publicKey```, ```privateKey``` and all the ```subject.*``` properties in the ```updateLDAPadminMavenFilters``` method.
 
 ### Webapp overrides
