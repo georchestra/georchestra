@@ -54,7 +54,7 @@ Finally:
 ```
 cd /path/to/your/geoserver_data_dir
 sudo -u tomcat6 git add .gitignore
-sudo -u tomcat6 git commit -m "git ignores temp and logs folders"
+sudo -u tomcat6 git commit -m "git ignores temp, logs and gwc folders"
 ```
 
 ## Managing the repository
