@@ -28,20 +28,20 @@ sudo keytool -genkey -alias georchestra_localhost -keystore keystore -storepass 
 
 The keytool command will ask a few questions (see below). Put "localhost" in "first name and second name" since the proxy and CAS webapps are on the same tomcat.
 ```
-Quels sont vos prénom et nom ?
-  [Unknown] :  localhost
-Quel est le nom de votre unité organisationnelle ?
-  [Unknown] :
-Quelle est le nom de votre organisation ?
-  [Unknown] :
-Quel est le nom de votre ville de résidence ?
-  [Unknown] :
-Quel est le nom de votre état ou province ?
-  [Unknown] :
-Quel est le code de pays ? deux lettres pour cette unit? ?
-  [Unknown] :
-Est-ce CN=localhost, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=Unknown ?
-  [non] :  oui
+What is your first and last name?
+  [Unknown]:  localhost
+What is the name of your organizational unit?
+  [Unknown]:  
+What is the name of your organization?
+  [Unknown]:  
+What is the name of your City or Locality?
+  [Unknown]:  
+What is the name of your State or Province?
+  [Unknown]:  
+What is the two-letter country code for this unit?
+  [Unknown]:  
+Is CN=localhost, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=Unknown correct?
+  [no]: yes
 ```
 
 In case the LDAP connection uses SSL, the certificate must be added to the keystore. First get the public key:
