@@ -37,7 +37,7 @@ It is recommended to edit them to match your setup.
 
 Let's first deactivate the default virtualhosts, and create ours:
 ```
-sudo a2dissite default default-ssl
+sudo a2dissite default 000-default default-ssl
 ```
 
 In /etc/apache2/sites-available/georchestra.conf:
