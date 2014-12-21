@@ -16,11 +16,8 @@ sudo apt-get install slapd ldap-utils
 You will need to provide the LDAP administrator password. Choose a strong one.
 
 
-Let's also get the data by cloning our LDAP repository (and have a look at the [users and groups](https://github.com/georchestra/LDAP/blob/master/README.md) it creates by default):
-```
-git clone -b YY.MM https://github.com/georchestra/LDAP.git
-```
-In the above, YY.MM stands for the geOrchestra version you're using (eg: ```14.06``` for the latest stable)
+Before creating the LDAP tree, you should have a look at the [users and groups](https://github.com/georchestra/LDAP/blob/master/README.md) we'll be adding.
+
 
 
 ## Database entry
@@ -28,8 +25,10 @@ In the above, YY.MM stands for the geOrchestra version you're using (eg: ```14.0
 The file **georchestra-bootstrap.ldif** creates the database:
 
 ```
-sudo ldapadd -Y EXTERNAL -H ldapi:/// -f georchestra-bootstrap.ldif
+wget https://raw.githubusercontent.com/georchestra/LDAP/YY.MM/georchestra-bootstrap.ldif -O /tmp/bootstrap.ldif
+sudo ldapadd -Y EXTERNAL -H ldapi:/// -f /tmp/bootstrap.ldif
 ```
+... where YY.MM stands for the georchestra version you're using (eg: 14.12). 
 
 If successful, the above command should display: ```adding new entry "olcDatabase=hdb,cn=config"```.
 
@@ -45,7 +44,8 @@ password: secret
 To create the root DN, use the **georchestra-root.ldif** file:
 
 ```
-ldapadd -D"cn=admin,dc=georchestra,dc=org" -W -f georchestra-root.ldif
+wget https://raw.githubusercontent.com/georchestra/LDAP/YY.MM/georchestra-root.ldif -O /tmp/root.ldif
+ldapadd -D"cn=admin,dc=georchestra,dc=org" -W -f /tmp/root.ldif
 ```
 
 This will ask the password for the ```cn=admin,dc=georchestra,dc=org``` dn, which is "secret".
@@ -57,7 +57,8 @@ This will ask the password for the ```cn=admin,dc=georchestra,dc=org``` dn, whic
 The **georchestra.ldif** file creates the default geOrchestra users & groups:
 
 ```
-ldapadd -D"cn=admin,dc=georchestra,dc=org" -W -f georchestra.ldif
+wget https://raw.githubusercontent.com/georchestra/LDAP/YY.MM/georchestra.ldif -O /tmp/georchestra.ldif
+ldapadd -D"cn=admin,dc=georchestra,dc=org" -W -f /tmp/georchestra.ldif
 ```
 
 This will also ask the password for the ```cn=admin,dc=georchestra,dc=org``` dn.
@@ -71,6 +72,12 @@ Note that you are free to customize the users (entries under the "users" Organiz
 The optional "memberof" overlay is great to check if a user is a member of a given group.
 Use the **georchestra-memberof.ldif** file to add the module and configure the overlay.
 
+```
+wget https://raw.githubusercontent.com/georchestra/LDAP/YY.MM/georchestra-memberof.ldif -O /tmp/memberof.ldif
+sudo ldapadd -Y EXTERNAL -H ldapi:/// -f /tmp/memberof.ldif 
+```
+
+Caution: by default, we're adding the overlay to the ```{1}hdb,cn=config``` database. You may have to customize this if your setup is different.
 
 # Managing the directory
 
