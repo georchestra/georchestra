@@ -81,6 +81,15 @@ sudo cp /etc/init.d/tomcat6 /etc/init.d/tomcat-proxycas
 sudo cp /etc/default/tomcat6 /etc/default/tomcat-proxycas
 ```
 
+Finally, edit the ```/etc/init.d/tomcat-proxycas``` script, find the following line:
+```
+# Provides:          tomcat6
+```
+... and replace it with:
+```
+# Provides:          tomcat-proxycas
+```
+
 ### Customize Java options
 
 In /etc/default/tomcat-proxycas, we need to remove the -Xmx128m option: 
@@ -161,6 +170,16 @@ sudo chown -R tomcat6:tomcat6 /var/lib/tomcat-georchestra
 sudo cp /etc/init.d/tomcat6 /etc/init.d/tomcat-georchestra
 sudo cp /etc/default/tomcat6 /etc/default/tomcat-georchestra
 ```
+
+Finally, edit the ```/etc/init.d/tomcat-georchestra``` script, find the following line:
+```
+# Provides:          tomcat6
+```
+... and replace it with:
+```
+# Provides:          tomcat-georchestra
+```
+
 ### Customize Java options
 
 In /etc/default/tomcat-georchestra, we need to remove the -Xmx128m option: 
@@ -235,6 +254,15 @@ sudo touch /var/lib/tomcat-geoserver0/conf/policy.d/empty.policy
 sudo chown -R tomcat6:tomcat6 /var/lib/tomcat-geoserver0
 sudo cp /etc/init.d/tomcat6 /etc/init.d/tomcat-geoserver0
 sudo cp /etc/default/tomcat6 /etc/default/tomcat-geoserver0
+```
+
+Finally, edit the ```/etc/init.d/tomcat-geoserver0``` script, find the following line:
+```
+# Provides:          tomcat6
+```
+... and replace it with:
+```
+# Provides:          tomcat-geoserver0
 ```
 
 ### Customize Java options
