@@ -190,6 +190,12 @@ JAVA_OPTS="$JAVA_OPTS \
 ```
 ... where /path/to/your/geonetwork_data_dir is a directory owned by tomcat6, created by checking out this repository [georchestra/geonetwork_minimal_datadir](https://github.com/georchestra/geonetwork_minimal_datadir)
 
+Example:
+```
+sudo git clone https://github.com/georchestra/geonetwork_minimal_datadir.git /opt/geonetwork_data_dir
+sudo chown -R tomcat6 /opt/geonetwork_data_dir
+```
+
 If the extractor application is deployed:
 ```
 JAVA_OPTS="$JAVA_OPTS \
@@ -259,7 +265,13 @@ JAVA_OPTS="$JAVA_OPTS \
             -XX:NewRatio=2 \
             -XX:+AggressiveOpts"
 ```
-... where /path/to/your/geoserver_data_dir is a directory owned by tomcat6, created by checking out this repository [georchestra/geoserver_minimal_datadir](https://github.com/georchestra/geoserver_minimal_datadir)
+... where /path/to/your/geoserver_data_dir is a directory owned by tomcat6, created by checking out this repository [georchestra/geoserver_minimal_datadir](https://github.com/georchestra/geoserver_minimal_datadir):
+
+Example:
+```
+sudo git clone https://github.com/georchestra/geoserver_minimal_datadir.git /opt/geoserver_data_dir
+sudo chown -R tomcat6 /opt/geoserver_data_dir
+```
 
 This allocates 2Gb of your server RAM to GeoServer.
 
