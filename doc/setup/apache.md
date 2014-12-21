@@ -27,7 +27,7 @@ sudo chmod g+w /var/www/georchestra/logs/
 We publish sample files for your htdocs folder in the [georchestra/htdocs](https://github.com/georchestra/htdocs) repository:
 ```
 cd /var/www/georchestra/
-git clone https://github.com/georchestra/htdocs.git
+sudo git clone https://github.com/georchestra/htdocs.git
 ```
 It is recommended to edit them to match your setup.
 
