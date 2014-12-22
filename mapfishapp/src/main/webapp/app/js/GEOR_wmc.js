@@ -315,6 +315,15 @@ GEOR.wmc = (function() {
                 // see http://applis-bretagne.fr/redmine/issues/2398)
                 map.zoomToExtent(newContext.bounds, true);
             }
+            // see https://github.com/georchestra/georchestra/issues/816:
+            if (GEOR.config.CONTEXT_LOADED_INDICATOR_DURATION !== 0 && 
+                (newContext.title || newContext["abstract"])) {
+                GEOR.helper.msg(
+                    newContext.title || "", 
+                    newContext["abstract"] || "", 
+                    GEOR.config.CONTEXT_LOADED_INDICATOR_DURATION
+                );
+            }
         }
     };
 })();
