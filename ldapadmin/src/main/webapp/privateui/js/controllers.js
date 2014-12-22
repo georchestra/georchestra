@@ -86,18 +86,34 @@ angular.module('ldapadmin.controllers', [])
 
     function selectGroup() {
       //$scope.users is inherited from UsersCtrl's scope
-      var index = findByAttr($scope.groups, 'cn', $routeParams.group);
-      var group = $scope.groups[index];
-      $scope.groupFilter = function(item) {
-        if (group) {
-          return group.users && group.users.indexOf(item.uid) != -1;
-        } else {
-          return true;
-        }
-      };
-      $rootScope.selectedGroup = group;
-
-      $scope.allSelected = false;
+      if ($routeParams.group == 'none') {
+        var groups = [
+          $scope.groups[findByAttr($scope.groups, 'cn', 'SV_ADMIN')],
+          $scope.groups[findByAttr($scope.groups, 'cn', 'SV_REVIEWER')],
+          $scope.groups[findByAttr($scope.groups, 'cn', 'SV_EDITOR')],
+          $scope.groups[findByAttr($scope.groups, 'cn', 'SV_USER')],
+        ];
+        $scope.groupFilter = function(item) {
+          return groups[0].users.indexOf(item.uid) == -1 &&
+            groups[1].users.indexOf(item.uid) == -1 &&
+            groups[2].users.indexOf(item.uid) == -1 &&
+            groups[3].users.indexOf(item.uid) == -1;
+        };
+        $rootScope.selectedGroup = "none";
+        $scope.allSelected = false;
+      } else {
+        var index = findByAttr($scope.groups, 'cn', $routeParams.group);
+        var group = $scope.groups[index];
+        $scope.groupFilter = function(item) {
+          if (group) {
+            return group.users && group.users.indexOf(item.uid) != -1;
+          } else {
+            return true;
+          }
+        };
+        $rootScope.selectedGroup = group;
+        $scope.allSelected = false;
+      }
     }
 
     // wait for groups to be loaded from service, prevents race condition
