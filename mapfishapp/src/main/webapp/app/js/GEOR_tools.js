@@ -15,6 +15,11 @@
 /*
  * @include GeoExt/widgets/Popup.js
  * @include OpenLayers/Format/JSON.js
+ * @include OpenLayers/Control/Measure.js
+ * @include OpenLayers/Handler/Path.js
+ * @include OpenLayers/Handler/Polygon.js
+ * @include OpenLayers/StyleMap.js
+ * @include OpenLayers/Rule.js
  * @include GEOR_waiter.js
  * @include GEOR_config.js
  * @include GEOR_localStorage.js
