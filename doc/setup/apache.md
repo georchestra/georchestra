@@ -106,7 +106,7 @@ ErrorDocument 502 /errors/50x.html
 ErrorDocument 503 /errors/50x.html
 ```
 
-* ```proxy.conf```:
+* ```proxy.conf```: replace the ```http://my\.sdi\.org``` string with your server address in the following:
 
 ```
 RewriteRule ^/proxy$ /proxy/ [R]
@@ -133,9 +133,11 @@ ProxyPassReverse /testPage http://localhost:8180/testPage
 ProxyPass /_static/ http://localhost:8180/_static/
 ProxyPassReverse /_static/ http://localhost:8180/_static/
 
+SetEnvIf Referer "^http://my\.sdi\.org/" mysdi
 <Proxy http://localhost:8180/proxy/*>
     Order deny,allow
-    Allow from all
+    Deny from all
+    Allow from env=mysdi
 </Proxy>
 ProxyPass /proxy/ http://localhost:8180/proxy/ 
 ProxyPassReverse /proxy/ http://localhost:8180/proxy/
