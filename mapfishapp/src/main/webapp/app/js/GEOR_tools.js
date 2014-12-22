@@ -129,6 +129,7 @@ GEOR.tools = (function() {
 
         var measureControl = new OpenLayers.Control.Measure(handlerType, {
             persist: true,
+            geodesic: true,
             handlerOptions: {
                 layerOptions: {styleMap: styleMap}
             }
