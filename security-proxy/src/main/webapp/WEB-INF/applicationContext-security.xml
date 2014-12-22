@@ -44,9 +44,11 @@
     <bean id="basicAuthChallengeByUserAgent" class="org.georchestra.security.BasicAuthChallengeByUserAgent">
         <property name="challengeUserAgents">
             <list>
-                <value>.*ArcGIS.*</value>
-                <value>.*uDig.*</value>
-                <value>.*QGIS.*</value>
+            	<!-- uncomment the lines for which you want a preemptive basic auth -->
+            	<!-- note that this will prevent access to public layers for users with no account -->
+                <!--value>.*ArcGIS.*</value-->
+                <!--value>.*uDig.*</value-->
+                <!--value>.*QGIS.*</value-->
                 <value>.*Jakarta.*</value> <!-- GeoFence UA for GeoServer REST -->
             </list>
         </property>
