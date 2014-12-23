@@ -1,7 +1,7 @@
 # Setting up the middleware
 
 In this section, you will learn how to install and setup the foundations of your geOrchestra SDI, according to the recommended architecture:
-![architecture](https://cloud.githubusercontent.com/assets/265319/5455391/6d1b2d30-853b-11e4-9310-cd59d819afe8.png)
+![architecture](https://cloud.githubusercontent.com/assets/265319/5538326/ea5a8e32-8ab1-11e4-8d21-00685457a912.png)
 
 The HAProxy / distributed GeoServer setup (in orange) is an alternative setup for high availability or high performance purposes, which will be documented later on.
 
