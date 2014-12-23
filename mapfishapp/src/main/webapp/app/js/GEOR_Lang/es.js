@@ -113,8 +113,8 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
         "la variable DEFAULT_THESAURUS_KEY no corresponde a ningún " +
         "valor exportado por GeoNetwork",
     /* GEOR_cswquerier.js strings */
-    "cswquerier.help.title": "Hints for advanced query",
-    "cswquerier.help.message": '<ul><li><b>@word</b> looks for "word" in the organization name.</li><li><b>#word</b> looks for "word" in the metadata keywords.</li><li><b>?word</b> broadens the search by looking for "word" in any metadata field.</li></ul>',
+    "cswquerier.help.title": "Ayuda para consulta avanzada",
+    "cswquerier.help.message": '<ul><li><b>@carretera</b> busca "carretera" en el nombre de la organización.</li><li><b>#carretera</b> busca "carretera" en las palabras-clave de los metadatos.</li><li><b>?carretera</b> abre la búsqueda de "carretera" a todos los campos de los metadatos.</li></ul>',
     "NAME layer on VALUE": "Capa ${NAME} sobre ${VALUE}",
     "Show metadata sheet in a new window":
         "Mostrar la ficha de metadatos en una nueva ventana",
