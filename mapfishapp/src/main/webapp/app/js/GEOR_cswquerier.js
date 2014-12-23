@@ -284,7 +284,7 @@ GEOR.cswquerier = (function() {
 
         if (uuidsToDig.length) {
             var filter, filters = [];
-            if (uuidsToDig == 1) {
+            if (uuidsToDig.length == 1) {
                 filter = new OpenLayers.Filter.Comparison({
                     type: "==",
                     property: "operatesOnIdentifier",
