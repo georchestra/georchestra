@@ -45,7 +45,7 @@ GEOR.Addons.Extractor.prototype = {
             fillOpacity: 0,
             cursor: "pointer"
         };
-        this.layer = new OpenLayers.Layer.Vector("addon_extractor_vectors", {
+        this.layer = new OpenLayers.Layer.Vector("__georchestra_extractor", {
             displayInLayerSwitcher: false,
             styleMap: new OpenLayers.StyleMap({
                 "default": Ext.applyIf({}, style),

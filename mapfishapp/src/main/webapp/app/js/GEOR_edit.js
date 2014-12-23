@@ -178,7 +178,7 @@ GEOR.edit = (function() {
                     // TODO: handle this case
                 }
             });
-            vectorLayer = new OpenLayers.Layer.Vector("_geor_edit", {
+            vectorLayer = new OpenLayers.Layer.Vector("__georchestra_edit", {
                 displayInLayerSwitcher: false,
                 styleMap: GEOR.util.getStyleMap(),
                 protocol: options.protocol,

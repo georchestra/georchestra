@@ -265,7 +265,7 @@ GEOR.querier = (function() {
             map: map,
             attributes: attStore,
             allowSpatial: true,
-            vectorLayer: new OpenLayers.Layer.Vector('_filter_builder',{
+            vectorLayer: new OpenLayers.Layer.Vector('__georchestra_filterbuilder',{
                 displayInLayerSwitcher: false,
                 styleMap: styleMap
             })
