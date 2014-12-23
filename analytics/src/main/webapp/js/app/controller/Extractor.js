@@ -21,6 +21,8 @@ Ext.define('Analytics.controller.Extractor', {
             	this.loadStoreWithDate(groupsStore, opCfg);
             },
             "modechanged": function(opCfg) {
+                this.month = opCfg.params.month;
+                this.year = opCfg.params.year;
             	this.loadStoreWithDate(usersStore, opCfg);
             	this.loadStoreWithDate(layersStore, opCfg);
             	this.loadStoreWithDate(groupsStore, opCfg);
