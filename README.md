@@ -23,7 +23,7 @@ To install geOrchestra, you will have to:
  * [create your own configuration repository](doc/config.md), based on the [template](https://github.com/georchestra/template) we provide,
  * [build the web applications](doc/build.md) with your config,
  * [setup the middleware](doc/setup.md) (apache, tomcat, postgresql, openldap),
- * [deploy the webapps](doc/deploy.md), and finally [configure](doc/post-deploy_config.md) them.
+ * [deploy the webapps](doc/deploy.md), [check](doc/check.md) they're working as expected and finally [configure](doc/post-deploy_config.md) them.
 
 There's also a short list of [optimizations](doc/optimizations.md) and [good practices](doc/good_practices.md).
 
