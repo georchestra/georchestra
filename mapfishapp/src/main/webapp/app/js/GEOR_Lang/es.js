@@ -468,8 +468,8 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Not required": "No requerido",
     "Synchronization failed.": "Error durante la sincronización.",
     "Edit activated": "Edición activada",
-    "Hover the feature you wish to edit, or choose \"new feature\" " +
-        "in the edit menu": "Sobrevolar los objetos de la capa que " +
+    "Hover the feature you wish to edit, or choose \"new feature\" in the edit menu": 
+        "Sobrevolar los objetos de la capa que " +
         "quiere modificar, o seleccionar \"nuevo objeto\" en el menú " +
         " de edición",
     /* GeoExt.data.CSW.js */
