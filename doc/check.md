@@ -10,7 +10,7 @@ curl "http://private:8380/geoserver/wms?SERVICE=WMS&REQUEST=GetCapabilities"
 Now, we want to check the http headers authentication.
 This should return a well formed capabilities document filled with public and protected layers:
 ```
-curl -H "sec-user: CURL" -H "sec-roles: ROLE_ADMINISTRATOR" "http://private:8380/geoserver/wms?SERVICE=WMS&REQUEST=GetCapabilities"
+curl -H "sec-username: CURL" -H "sec-roles: ROLE_ADMINISTRATOR" "http://private:8380/geoserver/wms?SERVICE=WMS&REQUEST=GetCapabilities"
 ```
 
 ## Proxy
@@ -31,9 +31,9 @@ curl --insecure --user "geoserver_privileged_user:password" "https://private:844
 
 Several potential issues if it's not :
  * the security proxy can't query the LDAP,
- * geoserver_privileged_user is not a valid LDAP account,
- * geoserver_privileged_user does not belong to the ```ADMINISTRATOR``` LDAP group,
- * geoserver_privileged_user's password is incorrect.
+ * ```geoserver_privileged_user``` is not a valid LDAP account,
+ * ```geoserver_privileged_user``` does not belong to the ```ADMINISTRATOR``` LDAP group,
+ * ```geoserver_privileged_user```'s password is incorrect.
 
 
 ## Apache
