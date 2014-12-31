@@ -312,7 +312,7 @@ sudo chmod 400 /var/www/georchestra/ssl/georchestra.key
 ```
 sudo openssl req \
     -key /var/www/georchestra/ssl/georchestra.key \
-    -subj "/C=FR/ST=None/L=None/O=None/CN=vm-georchestra" \
+    -subj "/C=FR/ST=None/L=None/O=None/OU=None/CN=vm-georchestra" \
     -newkey rsa:2048 -sha256 \
     -out /var/www/georchestra/ssl/georchestra.csr
 ```
