@@ -317,12 +317,13 @@ sudo openssl req \
     -out /var/www/georchestra/ssl/georchestra.csr
 ```
 
-Be sure to replace the ```/C=FR/ST=None/L=None/O=None/CN=vm-georchestra``` string with something more relevant:
+Be sure to replace the ```/C=FR/ST=None/L=None/O=None/OU=None/CN=vm-georchestra``` string with something more relevant:
  * ```C``` is the 2 letter Country Name code
  * ```ST``` is the State or Province Name
  * ```L``` is the Locality Name (eg, city)
  * ```O``` is the Organization Name (eg, company)
- * ```CN``` is the Common Name (typically your server FQDN)
+ * ```OU``` is the Organizational Unit (eg, company department)
+ * ```CN``` is the Common Name (***your server FQDN***)
 
 * Create an unprotected key:
 ```
