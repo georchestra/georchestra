@@ -277,14 +277,15 @@ GEOR.print = (function() {
                         return false;
                     }
                 },
-                "beforeprint": function(pp) {
+                "beforeprint": function(provider, map, pages, o) {
                     mask.show();
-                    pp.customParams.copyright = getLayerSources();
-                    pp.customParams.projection = getProjection();
-                    pp.customParams.scaleLbl = tr("Scale: ");
-                    pp.customParams.dateLbl = tr("Date: ");
+                    pages[0].customParams.copyright = getLayerSources();
+                    pages[0].customParams.projection = getProjection();
+                    pages[0].customParams.scaleLbl = tr("Scale: ");
+                    pages[0].customParams.dateLbl = tr("Date: ");
+                    provider.customParams.showLegend = pages[0].customParams.showLegend;
                     // set a custom PDF file name:
-                    pp.customParams.outputFilename = GEOR.config.PDF_FILENAME;
+                    provider.customParams.outputFilename = GEOR.config.PDF_FILENAME;
                 },
                 "print": function() {
                     mask.hide();

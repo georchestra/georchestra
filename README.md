@@ -1,28 +1,42 @@
-geOrchestra
-===========
+# geOrchestra
 
 geOrchestra is a complete **Spatial Data Infrastructure** solution.
 
 It features a **metadata catalog** (GeoNetwork 2.10), an **OGC server** (GeoServer 2.3.2 and GeoWebCache 1.5.1) with fine-grained access control (based on GeoFence), an **advanced viewer and editor**, an **extractor** and **many more** (security and auth system based on proxy/CAS/LDAP, analytics, admin UIs, ...)
 
+## Releases
+
 A new release is published every 6 months and is supported during 12 months. Stable versions are named by their release date, eg 14.06 was published in June 2014.  
+
 Before downloading, you might be interested in the [release notes](RELEASE_NOTES.md) and the [kanban board](https://huboard.com/georchestra/georchestra) we're using to manage issues.
+
+## Download
 
 To download the latest stable version (currently 14.06), use the following command line:
 ```
 git clone --recursive https://github.com/georchestra/georchestra.git ~/georchestra
 ```
 
+## Install
+
 To install geOrchestra, you will have to:
  * [create your own configuration repository](doc/config.md), based on the [template](https://github.com/georchestra/template) we provide,
  * [build the web applications](doc/build.md) with your config,
  * [setup the middleware](doc/setup.md) (apache, tomcat, postgresql, openldap),
- * [deploy the webapps](doc/deploy.md), and finally [configure](doc/post-deploy_config.md) them.
+ * [deploy the webapps](doc/deploy.md), [check](doc/check.md) they're working as expected and finally [configure](doc/post-deploy_config.md) them.
 
 There's also a short list of [optimizations](doc/optimizations.md) and [good practices](doc/good_practices.md).
 
 The minimum system requirement is 2 cores and 4Gb RAM.  
 More is better !
+
+## Community
+
+If you need more information, please ask on the [geOrchestra mailing list](https://groups.google.com/forum/#!forum/georchestra). 
+
+For help setting up your instance, or for dev-related questions, use our [dev/tech list](https://groups.google.com/forum/#!forum/georchestra-dev).
+
+## More
 
 Additional information can be found in the [georchestra.org](http://www.georchestra.org/) website and in the following links:
  * [catalog](https://github.com/georchestra/geonetwork/blob/georchestra-14.06/README.md): standard GeoNetwork with a light customization, 
@@ -35,6 +49,3 @@ Additional information can be found in the [georchestra.org](http://www.georches
  * [analytics](analytics/README.md): admin-oriented module, a front-end to the [ogc-server-statistics](ogc-server-statistics/README.md) and [downloadform](downloadform/README.md) modules,
  * [ldapadmin](ldapadmin/README.md): also an admin-oriented module, to manage users and groups,
  * [header](header/README.md): the common header which is used by all modules.
-
-If you need more information, please ask on the [geOrchestra mailing list](https://groups.google.com/forum/#!forum/georchestra).  
-For help setting up your instance, or for dev-related questions, use our [dev/tech list](https://groups.google.com/forum/#!forum/georchestra-dev).

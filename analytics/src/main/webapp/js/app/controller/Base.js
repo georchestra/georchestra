@@ -28,20 +28,27 @@ Ext.define('Analytics.controller.Base', {
     },
     
     handleExport: function(tool, evt) {
-        var month = parseInt(this.month || Ext.Date.format(new Date(), 'm'));
-        var year = parseInt(this.year || Ext.Date.format(new Date(), 'Y'));
+        var qso = {
+            month: this.month === null ? 
+                Ext.Date.format(new Date(), 'm') : this.month,
+            year: this.year === null ? 
+                Ext.Date.format(new Date(), 'Y') : this.year
+        };
         tool.bubble(function(p) {
             if (p && p.store) {
             	var a = new Array();
             	p.store.filters.each(function(it, idx, l) {
             		a.push({
-            			property : it.property,
-            			value : it.value
+            			property: it.property,
+            			value: it.value
             		});
             	});
-            	var f = p.store.filters.length >0 ? '&filter=' + Ext.JSON.encode(a) : '';
-                var storeId = p.store.storeId.toLowerCase().replace('filtered','');
-                window.location.href = "/analytics/ws/export/"+storeId+"?month="+month+"&year="+year+f
+            	if (p.store.filters.length > 0) {
+                    qso.filter = Ext.JSON.encode(a);
+                }
+                var service = "/analytics/ws/export/" + 
+                    p.store.storeId.toLowerCase().replace('filtered','');
+                window.location.href = service + "?" + Ext.Object.toQueryString(qso);
                 return false;
             }
         }, this);

@@ -18,11 +18,6 @@
  * @include OpenLayers/Control/ZoomOut.js
  * @include OpenLayers/Control/DragPan.js
  * @include OpenLayers/Control/NavigationHistory.js
- * @include OpenLayers/Control/Measure.js
- * @include OpenLayers/Handler/Path.js
- * @include OpenLayers/Handler/Polygon.js
- * @include OpenLayers/StyleMap.js
- * @include OpenLayers/Rule.js
  * @include GeoExt/widgets/Action.js
  * @include GeoExt/widgets/LegendPanel.js
  * @requires GeoExt/widgets/WMSLegend.js

@@ -18,6 +18,7 @@
  * @include OpenLayers/Filter/Comparison.js
  * @include OpenLayers/Filter/Logical.js
  * @include GEOR_util.js
+ * @include GEOR_helper.js
  * @include GEOR_config.js
  */
 
@@ -284,7 +285,7 @@ GEOR.cswquerier = (function() {
 
         if (uuidsToDig.length) {
             var filter, filters = [];
-            if (uuidsToDig == 1) {
+            if (uuidsToDig.length == 1) {
                 filter = new OpenLayers.Filter.Comparison({
                     type: "==",
                     property: "operatesOnIdentifier",
@@ -654,6 +655,13 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
             if (e.getKey() == e.ENTER) {
                 this.onTrigger2Click();
             }
+        }, this);
+        this.on('focus', function() {
+            GEOR.helper.msg(
+                OpenLayers.i18n("cswquerier.help.title"), 
+                OpenLayers.i18n("cswquerier.help.message"), 
+                10
+            );
         }, this);
     },
 

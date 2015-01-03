@@ -110,6 +110,8 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
         "die Variable DEFAULT_THESAURUS_KEY entspricht keinem" +
         " von GeoNetwork exportierten Wert",
     /* GEOR_cswquerier.js strings */
+    "cswquerier.help.title": "Hinweise zur erweiterten Suche",
+    "cswquerier.help.message": '<ul><li><b>@suchwort</b> Suche im Organisationsnamen.</li><li><b>#suchwort</b> Suche in den Metadaten-Tags.</li><li><b>?suchwort</b> Erweitert die Suche auf alle Metadaten-Felder.</li></ul>',
     "NAME layer on VALUE": "Layer ${NAME} auf ${VALUE}",
     "Show metadata sheet in a new window":
         "Metadatei in neuem Fenster öffnen",

@@ -29,7 +29,7 @@ GEOR.Addons.Streetview.prototype = {
             strokeWidth: 3,
             pointRadius: 3
         };
-        this._layer = new OpenLayers.Layer.Vector("addon_streetview_vectors", {
+        this._layer = new OpenLayers.Layer.Vector("__georchestra_streetview", {
             displayInLayerSwitcher: false,
             styleMap: new OpenLayers.StyleMap({
                 "default": Ext.applyIf({}, style),
@@ -60,7 +60,7 @@ GEOR.Addons.Streetview.prototype = {
                 scope: this
             }
         });
-        this._fovLayer = new OpenLayers.Layer.Vector("addon_streetview_fov", {
+        this._fovLayer = new OpenLayers.Layer.Vector("__georchestra_streetview_fov", {
             displayInLayerSwitcher: false,
             styleMap: new OpenLayers.StyleMap({
                 "default": Ext.applyIf({

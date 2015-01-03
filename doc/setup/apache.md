@@ -27,7 +27,7 @@ sudo chmod g+w /var/www/georchestra/logs/
 We publish sample files for your htdocs folder in the [georchestra/htdocs](https://github.com/georchestra/htdocs) repository:
 ```
 cd /var/www/georchestra/
-git clone https://github.com/georchestra/htdocs.git
+sudo git clone https://github.com/georchestra/htdocs.git
 ```
 It is recommended to edit them to match your setup.
 
@@ -37,7 +37,7 @@ It is recommended to edit them to match your setup.
 
 Let's first deactivate the default virtualhosts, and create ours:
 ```
-sudo a2dissite default default-ssl
+sudo a2dissite default 000-default default-ssl
 ```
 
 In /etc/apache2/sites-available/georchestra.conf:
@@ -98,6 +98,8 @@ Three of these files are required:
 RewriteEngine On
 
 SetEnv no-gzip on
+
+ProxyRequests Off
 ProxyTimeout 999999999
 
 AddType application/vnd.ogc.context+xml .wmc
@@ -106,7 +108,7 @@ ErrorDocument 502 /errors/50x.html
 ErrorDocument 503 /errors/50x.html
 ```
 
-* ```proxy.conf```:
+* ```proxy.conf```: replace the ```http://my\.sdi\.org``` string with your server address in the following:
 
 ```
 RewriteRule ^/proxy$ /proxy/ [R]
@@ -132,8 +134,9 @@ ProxyPassReverse /testPage http://localhost:8180/testPage
 ProxyPass /_static/ http://localhost:8180/_static/
 ProxyPassReverse /_static/ http://localhost:8180/_static/
 
+SetEnvIf Referer "^http://my\.sdi\.org/" mysdi
 <Proxy http://localhost:8180/proxy/*>
-    Require all granted
+    Require env mysdi
 </Proxy>
 ProxyPass /proxy/ http://localhost:8180/proxy/ 
 ProxyPassReverse /proxy/ http://localhost:8180/proxy/
@@ -284,29 +287,51 @@ ProxyPassReverse /mapfishapp/ http://localhost:8180/mapfishapp/
 
 The SSL certificate is absolutely required, at least for the CAS module, if not for the whole SDI.
 
-* private key generation (enter a passphrase)
+* Generate a private key (enter a good passphrase and keep it safe !)
 ```
-cd /var/www/georchestra/ssl
-sudo openssl genrsa -des3 -out georchestra.key 1024
-```
-
-* certificate generated for this key
-```
-sudo openssl req -new -key georchestra.key -out georchestra.csr
+sudo openssl genrsa -des3 2048 \
+    -out /var/www/georchestra/ssl/georchestra.key
 ```
 
-Fill the form without providing a password, and when asked for the Common Name, fill the server FQDN (here: vm-georchestra)
+Protect it with:
 ```
-Common Name (eg, YOUR name) []: put your server name (eg: vm-georchestra)
-```
-
-* create an unprotected key
-```
-sudo openssl rsa -in georchestra.key -out georchestra-unprotected.key
-sudo openssl x509 -req -days 365 -in georchestra.csr -signkey georchestra.key -out georchestra.crt
+sudo chmod 400 /var/www/georchestra/ssl/georchestra.key
 ```
 
-* restart apache
+* Generate a [Certificate Signing Request](http://en.wikipedia.org/wiki/Certificate_signing_request) (CSR) for this key, with eg:
+```
+sudo openssl req \
+    -key /var/www/georchestra/ssl/georchestra.key \
+    -subj "/C=FR/ST=None/L=None/O=None/OU=None/CN=vm-georchestra" \
+    -newkey rsa:2048 -sha256 \
+    -out /var/www/georchestra/ssl/georchestra.csr
+```
+
+Be sure to replace the ```/C=FR/ST=None/L=None/O=None/OU=None/CN=vm-georchestra``` string with something more relevant:
+ * ```C``` is the 2 letter Country Name code
+ * ```ST``` is the State or Province Name
+ * ```L``` is the Locality Name (eg, city)
+ * ```O``` is the Organization Name (eg, company)
+ * ```OU``` is the Organizational Unit (eg, company department)
+ * ```CN``` is the Common Name (***your server FQDN***)
+
+* Create an unprotected key:
+```
+sudo openssl rsa \
+    -in /var/www/georchestra/ssl/georchestra.key \
+    -out /var/www/georchestra/ssl/georchestra-unprotected.key
+```
+
+ * Finally generate a self-signed certificate (CRT):
+```
+sudo openssl x509 -req \
+    -days 365 \
+    -in /var/www/georchestra/ssl/georchestra.csr \
+    -signkey /var/www/georchestra/ssl/georchestra.key \
+    -out /var/www/georchestra/ssl/georchestra.crt
+```
+
+* Restart the web server:
 ```
 sudo service apache2 restart
 ``` 

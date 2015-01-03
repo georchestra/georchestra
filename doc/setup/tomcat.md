@@ -28,20 +28,20 @@ sudo keytool -genkey -alias georchestra_localhost -keystore keystore -storepass 
 
 The keytool command will ask a few questions (see below). Put "localhost" in "first name and second name" since the proxy and CAS webapps are on the same tomcat.
 ```
-Quels sont vos prénom et nom ?
-  [Unknown] :  localhost
-Quel est le nom de votre unité organisationnelle ?
-  [Unknown] :
-Quelle est le nom de votre organisation ?
-  [Unknown] :
-Quel est le nom de votre ville de résidence ?
-  [Unknown] :
-Quel est le nom de votre état ou province ?
-  [Unknown] :
-Quel est le code de pays ? deux lettres pour cette unit? ?
-  [Unknown] :
-Est-ce CN=localhost, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=Unknown ?
-  [non] :  oui
+What is your first and last name?
+  [Unknown]:  localhost
+What is the name of your organizational unit?
+  [Unknown]:  
+What is the name of your organization?
+  [Unknown]:  
+What is the name of your City or Locality?
+  [Unknown]:  
+What is the name of your State or Province?
+  [Unknown]:  
+What is the two-letter country code for this unit?
+  [Unknown]:  
+Is CN=localhost, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=Unknown correct?
+  [no]: yes
 ```
 
 In case the LDAP connection uses SSL, the certificate must be added to the keystore. First get the public key:
@@ -204,10 +204,16 @@ If GeoNetwork is deployed:
 ```
 JAVA_OPTS="$JAVA_OPTS \
               -Dgeonetwork.dir=/path/to/your/geonetwork_data_dir \
-              -Dgeonetwork.schema.dir=/var/lib/tomcat-georchestra/webapps/geonetwork/WEB-INF/data/config/schema_plugins \
+              -Dgeonetwork.schema.dir=/path/to/your/geonetwork_data_dir/config/schema_plugins \
               -Dgeonetwork.jeeves.configuration.overrides.file=/var/lib/tomcat-georchestra/webapps/geonetwork/WEB-INF/config-overrides-georchestra.xml"
 ```
 ... where /path/to/your/geonetwork_data_dir is a directory owned by tomcat6, created by checking out this repository [georchestra/geonetwork_minimal_datadir](https://github.com/georchestra/geonetwork_minimal_datadir)
+
+Example:
+```
+sudo git clone https://github.com/georchestra/geonetwork_minimal_datadir.git /opt/geonetwork_data_dir
+sudo chown -R tomcat6 /opt/geonetwork_data_dir
+```
 
 If the extractor application is deployed:
 ```
@@ -287,7 +293,13 @@ JAVA_OPTS="$JAVA_OPTS \
             -XX:NewRatio=2 \
             -XX:+AggressiveOpts"
 ```
-... where /path/to/your/geoserver_data_dir is a directory owned by tomcat6, created by checking out this repository [georchestra/geoserver_minimal_datadir](https://github.com/georchestra/geoserver_minimal_datadir)
+... where /path/to/your/geoserver_data_dir is a directory owned by tomcat6, created by checking out this repository [georchestra/geoserver_minimal_datadir](https://github.com/georchestra/geoserver_minimal_datadir):
+
+Example:
+```
+sudo git clone https://github.com/georchestra/geoserver_minimal_datadir.git /opt/geoserver_data_dir
+sudo chown -R tomcat6 /opt/geoserver_data_dir
+```
 
 This allocates 2Gb of your server RAM to GeoServer.
 

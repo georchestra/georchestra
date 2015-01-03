@@ -91,6 +91,8 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Thesaurus:": "Тезаурус",
     "cswbrowser.default.thesaurus.mismatch": "Администратор : проблема конфигурации переменная DEFAULT_THESAURUS_KEY не соответствует никакому из значений, отосланных GeoNetwork",
     /* GEOR_cswquerier.js strings */
+    "cswquerier.help.title": "Hints for advanced query",
+    "cswquerier.help.message": '<ul><li><b>@word</b> looks for "word" in the organization name.</li><li><b>#word</b> looks for "word" in the metadata keywords.</li><li><b>?word</b> broadens the search by looking for "word" in any metadata field.</li></ul>',
     "Show metadata sheet in a new window": "Показать список метаданных в новом окне",
     "more": "более, ещё...",
     "Click to select or deselect the layer": "Нажать, чтобы выбрать или отменить выделение слоя.",

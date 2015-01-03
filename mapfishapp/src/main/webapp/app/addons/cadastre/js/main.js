@@ -43,7 +43,7 @@ GEOR.Addons.Cadastre.prototype = {
         this.fieldNames.sort();
         this.jsonFormat = new OpenLayers.Format.JSON();
         this.geojsonFormat = new OpenLayers.Format.GeoJSON();
-        this.layer = new OpenLayers.Layer.Vector("addon_cadastre_vectors", {
+        this.layer = new OpenLayers.Layer.Vector("__georchestra_cadastre", {
             displayInLayerSwitcher: false,
             styleMap: new OpenLayers.StyleMap({
                 "default": {

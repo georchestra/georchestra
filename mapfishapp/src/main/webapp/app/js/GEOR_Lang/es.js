@@ -113,6 +113,8 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
         "la variable DEFAULT_THESAURUS_KEY no corresponde a ningún " +
         "valor exportado por GeoNetwork",
     /* GEOR_cswquerier.js strings */
+    "cswquerier.help.title": "Ayuda para consulta avanzada",
+    "cswquerier.help.message": '<ul><li><b>@carretera</b> busca "carretera" en el nombre de la organización.</li><li><b>#carretera</b> busca "carretera" en las palabras-clave de los metadatos.</li><li><b>?carretera</b> abre la búsqueda de "carretera" a todos los campos de los metadatos.</li></ul>',
     "NAME layer on VALUE": "Capa ${NAME} sobre ${VALUE}",
     "Show metadata sheet in a new window":
         "Mostrar la ficha de metadatos en una nueva ventana",
@@ -493,8 +495,8 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Not required": "No requerido",
     "Synchronization failed.": "Error durante la sincronización.",
     "Edit activated": "Edición activada",
-    "Hover the feature you wish to edit, or choose \"new feature\" " +
-        "in the edit menu": "Sobrevolar los objetos de la capa que " +
+    "Hover the feature you wish to edit, or choose \"new feature\" in the edit menu": 
+        "Sobrevolar los objetos de la capa que " +
         "quiere modificar, o seleccionar \"nuevo objeto\" en el menú " +
         " de edición",
     /* GeoExt.data.CSW.js */
