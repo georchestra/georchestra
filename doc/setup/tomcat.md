@@ -17,34 +17,25 @@ sudo update-rc.d -f tomcat6 remove
 sudo service tomcat6 stop
 ```
 
-## Keystore/Trustore
+## Keystore
 
 To create a Keystore, enter the following:
 ```
-cd /etc/tomcat6/
-sudo keytool -genkey -alias georchestra_localhost -keystore keystore -storepass STOREPASSWORD -keypass STOREPASSWORD -keyalg RSA -keysize 2048
+sudo keytool -genkey \
+    -alias georchestra_localhost \
+    -keystore /etc/tomcat6/keystore \
+    -storepass STOREPASSWORD \
+    -keypass STOREPASSWORD \
+    -keyalg RSA \
+    -keysize 2048 \
+    -dname "CN=localhost, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=FR" 
 ```
-... where STOREPASSWORD is a password you choose.
+... where ```STOREPASSWORD``` is a password you choose, and the ```dname``` string is customized.
 
-The keytool command will ask a few questions (see below). Put "localhost" in "first name and second name" since the proxy and CAS webapps are on the same tomcat.
-```
-What is your first and last name?
-  [Unknown]:  localhost
-What is the name of your organizational unit?
-  [Unknown]:  
-What is the name of your organization?
-  [Unknown]:  
-What is the name of your City or Locality?
-  [Unknown]:  
-What is the name of your State or Province?
-  [Unknown]:  
-What is the two-letter country code for this unit?
-  [Unknown]:  
-Is CN=localhost, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=Unknown correct?
-  [no]: yes
-```
 
-In case the LDAP connection uses SSL, the certificate must be added to the keystore. First get the public key:
+In case the LDAP connection uses SSL (which is not the default in the geOrchestra template configuration), the certificate must be added to the keystore. 
+
+First get the public key:
 ```
 echo "" | openssl s_client -connect LDAPHOST:LDAPPORT -showcerts 2>/dev/null | openssl x509 -out /tmp/certfile.txt
 ```
