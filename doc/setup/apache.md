@@ -98,6 +98,8 @@ Three of these files are required:
 RewriteEngine On
 
 SetEnv no-gzip on
+
+ProxyRequests Off
 ProxyTimeout 999999999
 
 AddType application/vnd.ogc.context+xml .wmc
