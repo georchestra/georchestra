@@ -127,15 +127,13 @@ ProxyPass /testPage http://localhost:8180/testPage
 ProxyPassReverse /testPage http://localhost:8180/testPage
 
 <Proxy http://localhost:8180/_static/*>
-    Order deny,allow
-    Allow from all
+    Require all granted
 </Proxy>
 ProxyPass /_static/ http://localhost:8180/_static/
 ProxyPassReverse /_static/ http://localhost:8180/_static/
 
 <Proxy http://localhost:8180/proxy/*>
-    Order deny,allow
-    Allow from all
+    Require all granted
 </Proxy>
 ProxyPass /proxy/ http://localhost:8180/proxy/ 
 ProxyPassReverse /proxy/ http://localhost:8180/proxy/
@@ -146,8 +144,7 @@ ProxyPassReverse /proxy/ http://localhost:8180/proxy/
 ```
 RewriteRule ^/cas$ /cas/ [R]
 <Proxy http://localhost:8180/cas/*>
-    Order deny,allow
-    Allow from all
+    Require all granted
 </Proxy>
 ProxyPass /cas/ http://localhost:8180/cas/ 
 ProxyPassReverse /cas/ http://localhost:8180/cas/
@@ -160,8 +157,7 @@ For the other ones, pick only those you need, depending on the modules you plan 
 ```
 RewriteRule ^/analytics$ /analytics/ [R]
 <Proxy http://localhost:8180/analytics/*>
-    Order deny,allow
-    Allow from all
+    Require all granted
 </Proxy>
 ProxyPass /analytics/ http://localhost:8180/analytics/ 
 ProxyPassReverse /analytics/ http://localhost:8180/analytics/
@@ -172,8 +168,7 @@ ProxyPassReverse /analytics/ http://localhost:8180/analytics/
 ```
 RewriteRule ^/catalogapp$ /catalogapp/ [R]
 <Proxy http://localhost:8180/catalogapp/*>
-    Order deny,allow
-    Allow from all
+    Require all granted
 </Proxy>
 ProxyPass /catalogapp/ http://localhost:8180/catalogapp/ 
 ProxyPassReverse /catalogapp/ http://localhost:8180/catalogapp/
@@ -184,8 +179,7 @@ ProxyPassReverse /catalogapp/ http://localhost:8180/catalogapp/
 ```
 RewriteRule ^/downloadform$ /downloadform/ [R]
 <Proxy http://localhost:8180/downloadform/*>
-    Order deny,allow
-    Allow from all
+    Require all granted
 </Proxy>
 ProxyPass /downloadform/ http://localhost:8180/downloadform/ 
 ProxyPassReverse /downloadform/ http://localhost:8180/downloadform/
@@ -197,8 +191,7 @@ ProxyPassReverse /downloadform/ http://localhost:8180/downloadform/
 RewriteRule ^/extractorapp$ /extractorapp/ [R]
 RewriteRule ^/extractorapp/admin$ /extractorapp/admin/ [R]
 <Proxy http://localhost:8180/extractorapp/*>
-    Order deny,allow
-    Allow from all
+    Require all granted
 </Proxy>
 ProxyPass /extractorapp/ http://localhost:8180/extractorapp/ 
 ProxyPassReverse /extractorapp/ http://localhost:8180/extractorapp/
@@ -209,8 +202,7 @@ ProxyPassReverse /extractorapp/ http://localhost:8180/extractorapp/
 ```
 RewriteRule ^/geonetwork$ /geonetwork/ [R]
 <Proxy http://localhost:8180/geonetwork/*>
-    Order deny,allow
-    Allow from all
+    Require all granted
 </Proxy>
 ProxyPass /geonetwork/ http://localhost:8180/geonetwork/ 
 ProxyPassReverse /geonetwork/ http://localhost:8180/geonetwork/
@@ -221,8 +213,7 @@ ProxyPassReverse /geonetwork/ http://localhost:8180/geonetwork/
 ```
 RewriteRule ^/geoserver$ /geoserver/ [R]
 <Proxy http://localhost:8180/geoserver/*>
-    Order deny,allow
-    Allow from all
+    Require all granted
 </Proxy>
 <Location /geoserver>
   Header set Access-Control-Allow-Origin "*"
@@ -237,8 +228,7 @@ ProxyPassReverse /geoserver/ http://localhost:8180/geoserver/
 ```
 RewriteRule ^/geofence$ /geofence/ [R]
 <Proxy http://localhost:8180/geofence/*>
-    Order deny,allow
-    Allow from all
+    Require all granted
 </Proxy>
 ProxyPass /geofence/ http://localhost:8180/geofence/ 
 ProxyPassReverse /geofence/ http://localhost:8180/geofence/
@@ -249,8 +239,7 @@ ProxyPassReverse /geofence/ http://localhost:8180/geofence/
 ```
 RewriteRule ^/geowebcache$ /geowebcache/ [R]
 <Proxy http://localhost:8180/geowebcache/*>
-    Order deny,allow
-    Allow from all
+    Require all granted
 </Proxy>
 ProxyPass /geowebcache/ http://localhost:8180/geowebcache/ 
 ProxyPassReverse /geowebcache/ http://localhost:8180/geowebcache/
@@ -261,8 +250,7 @@ ProxyPassReverse /geowebcache/ http://localhost:8180/geowebcache/
 ```
 RewriteRule ^/header$ /header/ [R]
 <Proxy http://localhost:8180/header/*>
-    Order deny,allow
-    Allow from all
+    Require all granted
 </Proxy>
 ProxyPass /header/ http://localhost:8180/header/
 ProxyPassReverse /header/ http://localhost:8180/header/
@@ -274,8 +262,7 @@ ProxyPassReverse /header/ http://localhost:8180/header/
 RewriteRule ^/ldapadmin$ /ldapadmin/ [R]
 RewriteRule ^/ldapadmin/privateui$ /ldapadmin/privateui/ [R]
 <Proxy http://localhost:8180/ldapadmin/*>
-    Order deny,allow
-    Allow from all
+    Require all granted
 </Proxy>
 ProxyPass /ldapadmin/ http://localhost:8180/ldapadmin/
 ProxyPassReverse /ldapadmin/ http://localhost:8180/ldapadmin/
@@ -286,8 +273,7 @@ ProxyPassReverse /ldapadmin/ http://localhost:8180/ldapadmin/
 ```
 RewriteRule ^/mapfishapp$ /mapfishapp/ [R]
 <Proxy http://localhost:8180/mapfishapp/*>
-    Order deny,allow
-    Allow from all
+    Require all granted
 </Proxy>
 ProxyPass /mapfishapp/ http://localhost:8180/mapfishapp/ 
 ProxyPassReverse /mapfishapp/ http://localhost:8180/mapfishapp/
