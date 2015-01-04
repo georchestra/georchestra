@@ -46,7 +46,7 @@ sudo keytool -import -alias cert_ldap -file /tmp/certfile.txt -keystore /etc/tom
 
 Finally, verify the list of keys in keystore:
 ```
-keytool -keystore keystore -list
+keytool -keystore /etc/tomcat6/keystore -list
 ```
 
 
