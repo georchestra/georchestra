@@ -11,13 +11,3 @@ JAVA_OPTS="$JAVA_OPTS \
 ```
 
 If there is no such property, the local [epsg.properties](src/main/resources/org/geotools/referencing/factory/epsg/epsg.properties) file is used.
-
-## building
-
-Extractor app and GeoServer both use different versions of this plugin because of dependencies.  
-So this plugin must be build with the correct parameters.
-
-eg:
-```
-mvn install -Dgt.version=9.2
-```
