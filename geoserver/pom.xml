@@ -12,8 +12,8 @@
 
 	<properties>
 		<maven.test.skip>true</maven.test.skip>
-		<gs.version>2.5.1</gs.version>
-    <gt.version>11.1</gt.version>
+		<gs.version>2.5.4</gs.version>
+    <gt.version>11.4</gt.version>
 		<geofence.version>2.2-SNAPSHOT</geofence.version>
 
 		<geoserver.webapp.groupId>org.geoserver.web</geoserver.webapp.groupId>
