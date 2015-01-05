@@ -10,4 +10,4 @@ For instance, in ```/etc/default/tomcat-georchestra```:
 JAVA_OPTS="$JAVA_OPTS -DCUSTOM_EPSG_FILE=/opt/epsg.properties"
 ```
 
-If there is no such property, the local [epsg.properties](src/main/resources/org/geotools/referencing/factory/epsg/epsg.properties) file is used.
+If there is no such property, the internal [epsg.properties](src/main/resources/org/geotools/referencing/factory/epsg/epsg.properties) file is used.
