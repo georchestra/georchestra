@@ -1,5 +1,7 @@
 # How to upgrade versions ?
 
+First of all, read the [release notes](../RELEASE_NOTES.md) matching the version you plan to install.
+
 ## Pre-requisites
 
 We suppose that your configuration is versioned with git, and that it has two remotes:
