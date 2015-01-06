@@ -127,7 +127,7 @@ Have a look at our [georchestra/htdocs](https://github.com/georchestra/htdocs) r
 As you may know, since geOrchestra 14.06, we recommend to start from our [minimal GeoServer "data dir"](https://github.com/georchestra/geoserver_minimal_datadir), rather than using GeoServer's default.
 For the 14.12 release, we also decided to publish a [minimal GeoNetwork data dir](https://github.com/georchestra/geonetwork_minimal_datadir) too !
 
-** apache configuration **
+**apache configuration**
 
 In geOrchestra's security proxy, there's an OGC proxy which we use to circumvent browser's [same origin policy](http://en.wikipedia.org/wiki/Same-origin_policy).
 To prevent anyone to use this proxy (see [#755](https://github.com/georchestra/georchestra/issues/755)), we recommend to restrict access to the proxy by checking the request [Referer header](http://en.wikipedia.org/wiki/HTTP_referer), eg for apache <= 2.2 with:
@@ -141,7 +141,7 @@ SetEnvIf Referer "^http://my\.sdi\.org/" mysdi
 </Proxy>
 ```
 
-** building **
+**building**
 
 If you experience build issues, please clear your local maven repository (rm -rf ~/.m2/repository/), then try again.  
 
