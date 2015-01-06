@@ -50,7 +50,7 @@ On the  ```/geonetwork/srv/eng/config``` page, you should:
 In the server section, fill the fields according to your setup, eg:
 ```
 Preferred Protocol  HTTP
-Host	￼               sdi.georchestra.org
+Host                sdi.georchestra.org
 Port                80 	￼     
 Secure Port	￼        8443
 ```
