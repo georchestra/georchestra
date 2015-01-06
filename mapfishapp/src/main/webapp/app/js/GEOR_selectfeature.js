@@ -107,7 +107,7 @@ GEOR.selectfeature = (function() {
         });
         observable.fireEvent("searchresults", {
             features: fs,
-            ctrl: ctrl,
+            //ctrl: ctrl, // commented out to fix https://github.com/georchestra/georchestra/issues/785
             tooltip: ctrl.layer.name + " - " + tr("OpenLayers SelectFeature"),
             title: GEOR.util.shortenLayerName(ctrl.layer.name),
             // we do not want the generated vector layer 

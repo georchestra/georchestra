@@ -457,6 +457,7 @@ Ext.namespace("GEOR");
                         var tab = new GEOR.ResultsPanel({
                             html: tr("resultspanel.emptytext"),
                             //itemId: featureType, // XXX assume only one tab per featuretype ?
+                            // better done with layer.id
                             tabTip: result.tooltip,
                             title: result.title,
                             map: map
@@ -493,14 +494,10 @@ Ext.namespace("GEOR");
                 },
                 "searchresults": function(options) {
                     removeActiveTab();
-                    /*
-                    // XXX disable the selectfeature control -> only remove the tab
-                    if (!options.model) {
-                        return;
-                    }*/
                     var tab = new GEOR.ResultsPanel({
                         html: tr("resultspanel.emptytext"),
                         tabTip: options.tooltip,
+                        noDelete: true, // deletion is useless: deactivate control in bbar
                         title: options.title,
                         sfControl: options.ctrl,
                         map: map
