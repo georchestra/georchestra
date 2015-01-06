@@ -13,10 +13,6 @@ The proxy base URL should be set to something like this: http(s)://your.server.f
 After saving the form, you should check in the WMS capabilities that the service URLs are as expected.
 
 
-### GeoWebCache
-
-For the standalone GeoWebCache, the proxy should be automatically configured. 
-
 ### Fonts
 
 GeoServer uses the fonts available to the JVM for WMS styling through SLD.
@@ -41,17 +37,34 @@ It's easy to restrict the list to the most useful ones: in the WMS and WCS admin
 ```
 ... and don't forget to submit the form.
 
+## Standalone GeoWebCache 
+
+For the standalone GeoWebCache, the proxy should be automatically configured (via [gwc.properties](https://github.com/georchestra/georchestra/blob/14.06/config/defaults/geowebcache-webapp/WEB-INF/classes/gwc.properties)). 
 
 ## GeoNetwork
 
-TODO:
- * proxied base url
- 
+On the  ```/geonetwork/srv/eng/config``` page, you should:
+
+* fill the "Site" and "Server" sections.  
+
+In the server section, fill the fields according to your setup, eg:
+```
+Preferred Protocol  HTTP
+Host	￼               sdi.georchestra.org
+Port                80 	￼     
+Secure Port	￼        8443
+```
+
+ * enable "XLINK RESOLVER"
+ * enable INSPIRE + search panel
+ * check "use Proxy" in case your connection to the internet is proxied
+ * set feedback email
 
 ## GeoFence
 
-  * configure geoserver instance with geoserver_privileged_user and his LDAP password (defaults to the one provided by 
-https://github.com/georchestra/template/blob/14.06/build_support/shared.maven.filters#L103)
-
-
-
+In GeoFence, you should configure your geoserver instance with:
+ * instance name = default-gs
+ * description = my geoserver instance
+ * base url = http://my.sdi.org/geoserver
+ * username = geoserver_privileged_user 
+ * password = the LDAP password of the above user, which should be the same as [the one referenced in your config](https://github.com/georchestra/template/blob/14.06/build_support/shared.maven.filters#L103).
