@@ -60,6 +60,12 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
     sfControl: null,
 
     /**
+     * Property: noDelete
+     * {Boolean} do not show the delete button
+     */
+    noDelete: false,
+
+    /**
      * Private: store
      * {GeoExt.data.FeatureStore}
      */
@@ -211,6 +217,7 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
             {
                 text: tr("Clean"),
                 tooltip: tr("Clean all results on the map and in the table"),
+                disabled: this.noDelete === true,
                 handler: function() {
                     this._vectorLayer.destroyFeatures();
                     this._layerBounds = null;
