@@ -40,7 +40,7 @@ Let's first deactivate the default virtualhosts, and create ours:
 sudo a2dissite default 000-default default-ssl
 ```
 
-In /etc/apache2/sites-available/georchestra.conf:
+In ```/etc/apache2/sites-available/georchestra```:
 ```
 <VirtualHost *:80>
     ServerName vm-georchestra
