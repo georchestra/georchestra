@@ -48,4 +48,5 @@ Additional information can be found in the [georchestra.org](http://www.georches
  * [simple catalog](catalogapp/README.md) (aka catalogapp): a very lightweight UI to query CSW services,
  * [analytics](analytics/README.md): admin-oriented module, a front-end to the [ogc-server-statistics](ogc-server-statistics/README.md) and [downloadform](downloadform/README.md) modules,
  * [ldapadmin](ldapadmin/README.md): also an admin-oriented module, to manage users and groups,
- * [header](header/README.md): the common header which is used by all modules.
+ * [header](header/README.md): the common header which is used by all modules,
+ * [epsg-extension](epsg-extension/README.md): a plugin to override the geotools srs definitions.
