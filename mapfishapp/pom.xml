@@ -308,6 +308,7 @@
         </executions>
         <configuration>
           <executable>jsbuild/${jsbuild.command}</executable>
+          <skip>false</skip>
         </configuration>
       </plugin>
       <plugin>
