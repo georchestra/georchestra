@@ -7,18 +7,15 @@ This branch receives bug fixes as they arrive, during 6 months at least.
 Version 15.06 (development version)
 ===================================
 
-Not yet funded, but would be really nice to have:
- * config: make it easy to have different jdbc parameters for each module - see [#716](https://github.com/georchestra/georchestra/issues/716),
- * geofence: include the geOrchestra header - see [#553](https://github.com/georchestra/georchestra/issues/553),
- * geonetwork: integration of version 3,
- * ldapadmin: send login back in password recovery email - see [#562](https://github.com/georchestra/georchestra/issues/562),
- * mapfishapp: use google closure compiler for faster loading times - see [#378](https://github.com/georchestra/georchestra/issues/378),
- * mapfishapp: take into account quotes in csw queries - see [#706](https://github.com/georchestra/georchestra/issues/706),
+Not yet funded, but would be **really nice** to have:
+ * georchestra: generic wars, see [#94](https://github.com/georchestra/georchestra/issues/94),
  * georchestra: use the browser-advertised preferred language by default (and give the user a chance to select the correct one with a combobox in the header) - see [#589](https://github.com/georchestra/georchestra/issues/589),
  * georchestra: validate on Tomcat 7/8 - see [#504](https://github.com/georchestra/georchestra/issues/504),
+ * geonetwork: integration of version 3,
  * mapfishapp: support read/write WMTS layer types from/to OWSContext - see [#360](https://github.com/georchestra/georchestra/issues/360) & [#399](https://github.com/georchestra/georchestra/issues/399),
+ * config: make it easy to have different jdbc parameters for each module - see [#716](https://github.com/georchestra/georchestra/issues/716),
+ * mapfishapp: use google closure compiler for faster loading times - see [#378](https://github.com/georchestra/georchestra/issues/378),
  * ldapadmin: delegated administrators - see [#786](https://github.com/georchestra/georchestra/issues/786)
-
 
 
 Version 14.12 (stable version)
