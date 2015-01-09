@@ -97,7 +97,7 @@ Bug fixes:
 
 ## UPGRADING:
 
-As said previously, the documentation was improved in order to reflect the most recent project changes. 
+As said previously, the [documentation](README.md) was improved in order to reflect the most recent project changes. 
 Most notably, it is now in line with the "3 tomcats"-based setup that drives the [template configuration](https://github.com/georchestra/template) since geOrchestra 14.06.   
 It also includes an interesting "[how to upgrade your config](doc/how_to_upgrade.md)" generic guide (that you should read, and maybe contribute to !).
 
