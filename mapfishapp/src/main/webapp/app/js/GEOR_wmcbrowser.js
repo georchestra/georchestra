@@ -39,6 +39,13 @@ GEOR.wmcbrowser = (function() {
     var view;
 
     /**
+     * Property: keywords
+     * {Array} unique context keywords
+     */
+    var keywords;
+    var ALL_CONTEXTS_STRING = "all contexts";
+
+    /**
      * Property: formPanel
      * {Ext.form.FormPanel} the WMC loading form panel
      */
@@ -265,8 +272,8 @@ GEOR.wmcbrowser = (function() {
      */
     var createPopup = function(animateFrom) {
         var storeData = GEOR.config.CONTEXTS.slice(0); // array cloning
-        var store = new Ext.data.ArrayStore({
-            fields: ['label', 'thumbnail', 'wmc', 'tooltip'],
+        var store = new Ext.data.JsonStore({
+            fields: ['label', 'thumbnail', 'wmc', 'tip', 'keywords'],
             data: storeData
         });
         view = new Ext.DataView({
@@ -283,7 +290,7 @@ GEOR.wmcbrowser = (function() {
                 disableFormats: true,
                 tr: function(v) {
                     var d = this.isDefault(v),
-                        out = tr(v.tooltip);
+                        out = tr(v.tip);
                     if (d !== "") {
                         out += " " + tr("(" + d + ")");
                     }
@@ -334,6 +341,7 @@ GEOR.wmcbrowser = (function() {
             layoutConfig: {
                 align: 'stretch'
             },
+            border: true,
             defaults: {
                 border: false
             },
@@ -379,13 +387,34 @@ GEOR.wmcbrowser = (function() {
                 }
             }],
             items: [{
-                xtype: 'box',
+                xtype: 'form',
+                bodyStyle: 'padding:5px',
+                labelWidth: 350,
                 height: 30,
-                autoEl: {
-                    tag: 'div',
-                    cls: 'box-as-panel',
-                    html: tr("Load or add the layers from one of these map contexts:")
-                }
+                items: [{
+                    xtype: "combo",
+                    width: 150,
+                    mode: 'local',
+                    forceSelection: true,
+                    triggerAction: "all",
+                    labelSeparator: '',
+                    fieldLabel: tr("Load or add the layers from one of these map contexts:"),
+                    editable: false,
+                    value: tr(ALL_CONTEXTS_STRING),
+                    store: keywords,
+                    listeners: {
+                        "select": function(cb, record) {
+                            var selected = record.get("field1");
+                            if (selected == tr(ALL_CONTEXTS_STRING)) {
+                                store.clearFilter();
+                                return;
+                            }
+                            store.filterBy(function(r) {
+                                return r.get("keywords").indexOf(selected) > -1;
+                            });
+                        }
+                    }
+                }]
             }, view, formPanel]
         });
     };
@@ -401,6 +430,27 @@ GEOR.wmcbrowser = (function() {
         events: observable,
 
         /**
+         * APIMethod: init
+         * 
+         */
+        init: function() {
+            tr = OpenLayers.i18n;
+            // create array of unique keywords
+            keywords = [];
+            var K = {};
+            Ext.each(GEOR.config.CONTEXTS, function(c) {
+                Ext.each(c.keywords, function(k) {
+                    K[k] = true;
+                });
+            });
+            Ext.iterate(K, function(k, v) {
+                keywords.push(k);
+            });
+            keywords.sort(GEOR.util.sortFn);
+            keywords = [tr(ALL_CONTEXTS_STRING)].concat(keywords);
+        },
+
+        /**
          * APIMethod: show
          * Shows the context selector window.
          */
@@ -408,7 +458,6 @@ GEOR.wmcbrowser = (function() {
             var target = (GEOR.config.ANIMATE_WINDOWS) ? 
                 this.el : undefined;
             if (!popup) {
-                tr = OpenLayers.i18n;
                 popup = createPopup(target);
             }
             popup.show(target);

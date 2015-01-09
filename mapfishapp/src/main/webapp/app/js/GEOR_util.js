@@ -104,6 +104,18 @@ GEOR.util = (function() {
         },
 
         /**
+         * APIMethod: sortFn
+         * Function used to sort alphabetically
+         */
+        sortFn: function(a, b) {
+            var aa = a.toLowerCase(),
+                bb = b.toLowerCase();
+            if (aa > bb) return 1;
+            if (aa < bb) return -1;
+            return 0;
+        },
+
+        /**
          * APIMethod: shorten
          * Returns a shorter string to a given length
          *

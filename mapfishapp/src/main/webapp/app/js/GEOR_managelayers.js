@@ -418,12 +418,11 @@ GEOR.managelayers = (function() {
             if (styles && styles.length > 0) {
                 styles = styles.concat([]); // to prevent modification of original styles
                 var defaultStyleName = styles[0].name;
-                styles.sort(function(a,b) {
-                    var aa = (a.name || a.title).toLowerCase(),
-                        bb = (b.name || b.title).toLowerCase();
-                    if (aa > bb) return 1;
-                    if (aa < bb) return -1;
-                    return 0;
+                styles.sort(function(a, b){
+                    return GEOR.util.sortFn(
+                        a.name || a.title, 
+                        b.name || b.title
+                    );
                 });
                 var checked, style, text, cfg;
                 for (var i=0, len=styles.length; i<len; i++) {

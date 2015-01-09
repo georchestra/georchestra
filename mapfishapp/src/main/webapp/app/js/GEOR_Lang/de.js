@@ -436,6 +436,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "The provided file is not a valid OGC context": "OGC entspricht nicht dieser Datei",
     "Warning: trying to restore WMC with a different projection (PROJCODE1, while map SRS is PROJCODE2). Strange things might occur !": "Achtung: die wiederhergestellte Karte wurde mit ${PROJCODE1} abgespeichert, die aktuelle Karte mit ${PROJCODE2}. Unerwartete Probleme können auftreten.",
     /* GEOR_wmcbrowser.js strings */
+    "all contexts": "alle Karten",
     "Could not find WMC file": "Gewählte Karte nicht vorhanden",
     "... or a local context": "... oder einer lokal Karte",
     //"Load or add the layers from one of these map contexts:" : "Aktuelle Karte ersetzen durch :",
