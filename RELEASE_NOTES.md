@@ -17,7 +17,7 @@ Not yet funded, but would be **really nice** to have:
  * mapfishapp: use google closure compiler for faster loading times - see [#378](https://github.com/georchestra/georchestra/issues/378),
  * ldapadmin: delegated administrators - see [#786](https://github.com/georchestra/georchestra/issues/786)
 
-[Contact us](psc@georchestra.org) if you're interested in these improvements.
+[Contact us](mailto:psc@georchestra.org) if you're interested in these improvements.
 
 Version 14.12 (stable version)
 ==============================
