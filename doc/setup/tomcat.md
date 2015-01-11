@@ -57,8 +57,7 @@ keytool -keystore /etc/tomcat6/keystore -list
 Let's create an instance named ```tomcat-proxycas```:
 
 ```
-cd /var/lib
-sudo tomcat6-instance-create -p 8180 -c 8105 tomcat-proxycas
+sudo tomcat6-instance-create -p 8180 -c 8105 /var/lib/tomcat-proxycas
 ```
 8180 will be the HTTP port and 8105 the stop port.
 
@@ -153,8 +152,7 @@ sudo service tomcat-proxycas start
 
 Same here ... just changing names and ports.
 ```
-cd /var/lib
-sudo tomcat6-instance-create -p 8280 -c 8205 tomcat-georchestra
+sudo tomcat6-instance-create -p 8280 -c 8205 /var/lib/tomcat-georchestra
 sudo mkdir /var/lib/tomcat-georchestra/conf/policy.d
 sudo touch /var/lib/tomcat-georchestra/conf/policy.d/empty.policy
 sudo chown -R tomcat6:tomcat6 /var/lib/tomcat-georchestra
@@ -244,8 +242,7 @@ sudo service tomcat-georchestra start
 ### Create the instance
 
 ```
-cd /var/lib
-sudo tomcat6-instance-create -p 8380 -c 8305 tomcat-geoserver0
+sudo tomcat6-instance-create -p 8380 -c 8305 /var/lib/tomcat-geoserver0
 sudo mkdir /var/lib/tomcat-geoserver0/conf/policy.d
 sudo touch /var/lib/tomcat-geoserver0/conf/policy.d/empty.policy
 sudo chown -R tomcat6:tomcat6 /var/lib/tomcat-geoserver0
