@@ -111,9 +111,16 @@ In mapfishapp's GEOR_custom.js:
  * ```CONTEXT_LOADED_INDICATOR_DURATION``` was added to handle the "context loaded" popping down indicator duration. It defaults to 5 seconds. Set to 0 to disable the indicator.
  * ```CONTEXTS``` was an array of arrays. It is now an array of objects. 
  
-Eg, in 14.06: ```[["OpenStreetMap", "app/img/contexts/osm.png", "default.wmc", "A unique OSM layer"], [...]]```.  
+Eg, in 14.06: 
+```js
+[
+    ["OpenStreetMap", "app/img/contexts/osm.png", "default.wmc", "A unique OSM layer"], 
+    [...]
+]
+```
+
 From 14.12 on: 
-```json
+```js
 [{
     label: "OpenStreetMap",
     thumbnail: "app/img/contexts/osm.png",
