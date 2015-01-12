@@ -475,27 +475,21 @@ GEOR.layerstree = (function() {
                 }
 
                 var appendRecord = function(record) {
-                    var maxExtent, srs;
-                    var bbox = record.get("bbox");
+                    var srs, bbox = record.get("bbox");
                     // trying to keep the main SRS, as requested by the administrator:
                     if (bbox.hasOwnProperty(GEOR.config.GLOBAL_EPSG)) {
                         srs = bbox[GEOR.config.GLOBAL_EPSG].srs;
-                        maxExtent = OpenLayers.Bounds.fromArray(bbox[GEOR.config.GLOBAL_EPSG].bbox);
                     }
                     // fallback 1
-                    if(!(srs && maxExtent)) {
+                    if(!srs) {
                         for(var p in bbox) {
                             srs = bbox[p].srs;
-                            maxExtent = OpenLayers.Bounds.fromArray(bbox[p].bbox);
                             break;
                         }
                     }
                     // fallback 2
-                    if(!(srs && maxExtent)) {
-                        // no bbox found!
-                        // we need to build one here...
+                    if(!srs) {
                         var srslist = record.get("srs");
-
                         for (var key in srslist) {
                             if (!srslist.hasOwnProperty(key)) {
                                 continue;
@@ -509,11 +503,14 @@ GEOR.layerstree = (function() {
                                 break;
                             }
                         }
-                        var llbbox = record.get("llbbox");
-                        maxExtent = OpenLayers.Bounds.fromArray(llbbox).transform(
+                    }
+                    // always compute maxExtent from llbox, 
+                    // which does not suffer the http://jira.codehaus.org/browse/GEOS-4283 bug
+                    var llbbox = record.get("llbbox");
+                    var maxExtent = OpenLayers.Bounds.fromArray(llbbox).transform(
                             new OpenLayers.Projection("EPSG:4326"),
                             new OpenLayers.Projection(srs));
-                    }
+
                     // we should never end up here, since llbbox is required.
                     if(!(srs && maxExtent)) {
                         // append error node here
