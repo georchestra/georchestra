@@ -359,6 +359,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "The provided file is not a valid OGC context": "Данный файл не является действительным контекстом OGC",
     "Warning: trying to restore WMC with a different projection (PROJCODE1, while map SRS is PROJCODE2). Strange things might occur !": "Предупреждение : попытка восстановления WMC в одной проекции ${PROJCODE1}, тогда как данная карта SRS находится в другой ${PROJCODE2}. Здесь возможны непредвиденные обстоятельства",
 /* GEOR_wmcbrowser.js strings */
+    //"all contexts": "tous les contextes",
     "Could not find WMC file": "Невозможно найти WMC файл",
     //"... or a local context": "...или индивидуальный контекст", // TODO: update translation
     //"Load or add the layers from one of these map contexts:" : "Заменить составляющую текущей карты одним из предложенных контекстов:",
