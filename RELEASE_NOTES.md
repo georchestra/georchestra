@@ -95,7 +95,7 @@ Bug fixes:
  * georchestra: many small fixes related to HTTPS support, eg [#745](https://github.com/georchestra/georchestra/issues/745), [#840](https://github.com/georchestra/georchestra/issues/840) and [#780](https://github.com/georchestra/georchestra/issues/780),
  * georchestra: css3 border-radius property replaces browser (moz and webkit) implementations.
 
-## UPGRADING:
+### UPGRADING:
 
 As said previously, the [documentation](README.md) was improved in order to reflect the most recent project changes. 
 Most notably, it is now in line with the "3 tomcats"-based setup that drives the [template configuration](https://github.com/georchestra/template) since geOrchestra 14.06.   
@@ -109,6 +109,21 @@ Set to https (along with ```shared.server.port``` to 443) if your SDI requires i
 In mapfishapp's GEOR_custom.js:
  * the ```WMS_SERVERS```, ```WMTS_SERVERS```, ```WFS_SERVERS``` config options have been removed. The server definitions are now loaded via separate XHR's. You should migrate your content into the newly introduced ```myprofile/mapfishapp/*.json``` files.
  * ```CONTEXT_LOADED_INDICATOR_DURATION``` was added to handle the "context loaded" popping down indicator duration. It defaults to 5 seconds. Set to 0 to disable the indicator.
+ * ```CONTEXTS``` was an array of arrays. It is now an array of objects. 
+ 
+Eg, in 14.06: ```[["OpenStreetMap", "app/img/contexts/osm.png", "default.wmc", "A unique OSM layer"], [...]]```.  
+From 14.12 on: 
+```json
+[{
+    label: "OpenStreetMap",
+    thumbnail: "app/img/contexts/osm.png",
+    wmc: "default.wmc",
+    tip: "A unique OSM layer",
+    keywords: ["OpenStreetMap", "Basemap"]
+}, {
+    ...
+}]
+```
 
 Also, the print templates have been improved.  
 If you made changes to the previous templates, you have to migrate them, or you may also keep your older templates.
@@ -248,7 +263,7 @@ Bug fixes:
 Please refer to [this guide](INSTALL.md).
 
 
-## UPGRADING:
+### UPGRADING:
 
 The way geOrchestra is configured has been streamlined:
  - there are **default parameters which are shared by several modules**, in [config/shared.maven.filters](config/shared.maven.filters). A "standard" install should not require you to bother about them. But if your setup is different from the default one, you may have to copy one or more of theses properties into your own shared maven filters (read on), in order to be able to customize them.
@@ -502,7 +517,7 @@ Bug fixes:
  * header: maintains existing URI parameters when adding the "login" param - see [#175](https://github.com/georchestra/georchestra/issues/175)
  * build now passes on windows.
 
-## UPGRADING:
+### UPGRADING:
  * As a result of [#569](https://github.com/georchestra/georchestra/issues/569), LDAP groups are now ```groupOfNames``` instances rather than ```posixGroup``` instances. You have to migrate your LDAP tree, according to the following procedure (please change the ```dc=georchestra,dc=org``` string for your own base DN):
    * dump your ldap **groups** with:
 
@@ -644,7 +659,7 @@ Bug fixes:
  * mapfishapp: fixed broken help url
 
 
-## UPGRADING:
+### UPGRADING:
  * mapfishapp:
    * default projection changes from EPSG:2154 to EPSG:3857 (aka Spherical Web Mercator). Your users might need to clear their localStorage, or force loading of the new default context.
    * default MAP_SCALES changes to match the OGC WMTS spec,
@@ -697,7 +712,7 @@ Bug fixes:
  * mapfishapp: more robust handling of incoming WMS server URLs (eg: those with a mapfile GET parameter),
  * geonetwork: fixed ldap attribute mapping.
  
-## UPGRADING:
+### UPGRADING:
  * mapfishapp's default thesaurus has been set to local.theme.test, which is the only one exported by GeoNetwork by default. Feel free to customize to suit your needs,
  * geonetwork upgrade instructions are available [here](https://github.com/georchestra/geonetwork/blob/georchestra-29/README.md).
 
@@ -746,7 +761,7 @@ Bug fixes:
  * mapfishapp: WFS layer redraw was throwing an error, see http://applis-bretagne.fr/redmine/issues/4544
  * LDAP: group membership is now declared with memberUid = user uid rather than full dn, see https://github.com/georchestra/georchestra/pull/91
 
-## UPGRADING:
+### UPGRADING:
  * LDAP tree needs to be migrated as a result of https://github.com/georchestra/georchestra/pull/91 :
     * ldif export: ldapsearch -xLLL -D "cn=admin,dc=georchestra,dc=org" -W > dump.ldif
     * migration: sed 's/\(memberUid: uid=\)\(.*\)\(,ou=users,dc=georchestra,dc=org\)/memberUid: \2/' dump.ldif > new.ldif
